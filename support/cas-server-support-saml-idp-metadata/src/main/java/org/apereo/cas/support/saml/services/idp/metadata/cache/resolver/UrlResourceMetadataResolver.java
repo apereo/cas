@@ -183,6 +183,11 @@ public class UrlResourceMetadataResolver extends BaseSamlRegisteredServiceMetada
         return false;
     }
 
+    @Override
+    public String getSourceId() {
+        return "https://";
+    }
+
     protected boolean shouldHttpResponseStatusBeProcessed(final HttpStatus status) {
         return status.is2xxSuccessful();
     }

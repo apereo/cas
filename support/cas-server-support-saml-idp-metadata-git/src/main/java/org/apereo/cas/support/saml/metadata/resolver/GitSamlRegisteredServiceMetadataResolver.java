@@ -97,8 +97,13 @@ public class GitSamlRegisteredServiceMetadataResolver extends BaseSamlRegistered
         }
         val metadataLocation = service.getMetadataLocation();
         return metadataLocation != null
-               && (metadataLocation.trim().startsWith("git://")
+               && (metadataLocation.trim().startsWith(getSourceId())
                    || (metadataLocation.trim().startsWith("http") && metadataLocation.trim().endsWith(".git")));
+    }
+
+    @Override
+    public String getSourceId() {
+        return "git://";
     }
 
     @Override

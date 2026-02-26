@@ -9,6 +9,7 @@ import org.apereo.cas.support.saml.OpenSamlConfigBean;
 import org.apereo.cas.support.saml.services.SamlRegisteredService;
 import org.apereo.cas.support.saml.services.idp.metadata.SamlMetadataDocument;
 import org.apereo.cas.support.saml.services.idp.metadata.cache.resolver.BaseSamlRegisteredServiceMetadataResolver;
+import org.apereo.cas.support.saml.services.idp.metadata.cache.resolver.SamlRegisteredServiceMetadataManager;
 import org.apereo.cas.util.LoggingUtils;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -16,6 +17,8 @@ import net.shibboleth.shared.resolver.CriteriaSet;
 import org.apereo.inspektr.audit.annotation.Audit;
 import org.opensaml.saml.metadata.resolver.MetadataResolver;
 import org.springframework.data.mongodb.core.MongoOperations;
+import org.springframework.data.mongodb.core.query.Criteria;
+import org.springframework.data.mongodb.core.query.Query;
 
 /**
  * This is {@link MongoDbSamlRegisteredServiceMetadataResolver}.
@@ -24,7 +27,8 @@ import org.springframework.data.mongodb.core.MongoOperations;
  * @since 5.2.0
  */
 @Slf4j
-public class MongoDbSamlRegisteredServiceMetadataResolver extends BaseSamlRegisteredServiceMetadataResolver {
+public class MongoDbSamlRegisteredServiceMetadataResolver extends BaseSamlRegisteredServiceMetadataResolver
+    implements SamlRegisteredServiceMetadataManager {
     private final MongoOperations mongoTemplate;
     private final String collectionName;
 
@@ -54,7 +58,7 @@ public class MongoDbSamlRegisteredServiceMetadataResolver extends BaseSamlRegist
     public boolean supports(final SamlRegisteredService service) {
         try {
             val metadataLocation = service.getMetadataLocation();
-            return metadataLocation.trim().startsWith("mongodb://");
+            return metadataLocation.trim().startsWith(getSourceId());
         } catch (final Exception e) {
             LoggingUtils.error(LOGGER, e);
         }
@@ -62,8 +66,48 @@ public class MongoDbSamlRegisteredServiceMetadataResolver extends BaseSamlRegist
     }
 
     @Override
-    public void saveOrUpdate(final SamlMetadataDocument document) {
-        this.mongoTemplate.save(document, this.collectionName);
+    public SamlMetadataDocument store(final SamlMetadataDocument document) {
+        return mongoTemplate.save(document, this.collectionName);
+    }
+
+    @Override
+    public void removeById(final long id) {
+        val query = new Query();
+        query.addCriteria(Criteria.where("id").is(id));
+        this.mongoTemplate.remove(query, SamlMetadataDocument.class, this.collectionName);
+    }
+
+    @Override
+    public void removeByName(final String name) {
+        val query = new Query();
+        query.addCriteria(Criteria.where("name").is(name));
+        this.mongoTemplate.remove(query, SamlMetadataDocument.class, this.collectionName);
+    }
+
+    @Override
+    public Optional<SamlMetadataDocument> findByName(final String name) {
+        val query = new Query();
+        query.addCriteria(Criteria.where("name").is(name));
+        val document = mongoTemplate.findOne(query, SamlMetadataDocument.class, this.collectionName);
+        return Optional.ofNullable(document);
+    }
+
+    @Override
+    public Optional<SamlMetadataDocument> findById(final long id) {
+        val query = new Query();
+        query.addCriteria(Criteria.where("id").is(id));
+        val document = mongoTemplate.findOne(query, SamlMetadataDocument.class, this.collectionName);
+        return Optional.ofNullable(document);
+    }
+
+    @Override
+    public List<SamlMetadataDocument> load() {
+        return mongoTemplate.findAll(SamlMetadataDocument.class, this.collectionName);
+    }
+
+    @Override
+    public String getSourceId() {
+        return "mongodb://";
     }
 
     @Override

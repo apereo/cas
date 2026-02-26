@@ -109,4 +109,9 @@ public class FileSystemResourceMetadataResolver extends BaseSamlRegisteredServic
         }
         return new InMemoryResourceMetadataResolver(metadataResource, configBean);
     }
+
+    @Override
+    public String getSourceId() {
+        return "file:";
+    }
 }

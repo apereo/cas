@@ -68,9 +68,14 @@ public class DynamoDbSamlRegisteredServiceMetadataResolver extends BaseSamlRegis
     public boolean supports(final SamlRegisteredService service) {
         if (service != null) {
             val metadataLocation = service.getMetadataLocation();
-            return StringUtils.isNotBlank(metadataLocation) && metadataLocation.trim().startsWith("dynamodb://");
+            return StringUtils.isNotBlank(metadataLocation) && metadataLocation.trim().startsWith(getSourceId());
         }
         return false;
+    }
+
+    @Override
+    public String getSourceId() {
+        return "dynamodb://";
     }
 
     @Override
