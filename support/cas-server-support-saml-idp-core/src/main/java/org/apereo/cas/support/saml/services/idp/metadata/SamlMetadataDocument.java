@@ -4,6 +4,7 @@ import module java.base;
 import org.apereo.cas.util.EncodingUtils;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.google.errorprone.annotations.CanIgnoreReturnValue;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -66,5 +67,18 @@ public class SamlMetadataDocument implements Serializable {
             return EncodingUtils.decodeBase64ToString(value);
         }
         return value;
+    }
+
+    /**
+     * Assign id if necessary.
+     *
+     * @return the saml metadata document
+     */
+    @CanIgnoreReturnValue
+    public SamlMetadataDocument assignIdIfNecessary() {
+        if (id <= 0) {
+            id = System.nanoTime();
+        }
+        return this;
     }
 }
