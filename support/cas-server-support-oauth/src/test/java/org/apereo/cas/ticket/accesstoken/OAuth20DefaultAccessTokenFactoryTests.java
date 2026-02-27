@@ -10,10 +10,13 @@ import org.apereo.cas.support.oauth.services.DefaultRegisteredServiceOAuthAccess
 import org.apereo.cas.support.oauth.services.OAuthRegisteredService;
 import org.apereo.cas.ticket.TicketGrantingTicket;
 import lombok.val;
+import org.apereo.cas.ticket.accesstoken.OAuth20AccessTokenExpirationPolicy.OAuthAccessTokenSovereignExpirationPolicy;
+import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.test.context.TestPropertySource;
 import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 /**
  * This is {@link OAuth20DefaultAccessTokenFactoryTests}.
@@ -22,44 +25,84 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.2.0
  */
 @Tag("OAuthToken")
-@TestPropertySource(properties = "cas.ticket.track-descendant-tickets=true")
 class OAuth20DefaultAccessTokenFactoryTests extends AbstractOAuth20Tests {
 
-    @Test
-    void verifyOperationCreate() throws Throwable {
-        val registeredService = getRegisteredService("https://app.oauth.org", "clientid-at", "secret-at");
-        registeredService.setAccessTokenExpirationPolicy(new DefaultRegisteredServiceOAuthAccessTokenExpirationPolicy("PT10S", "PT10S", 0));
-        servicesManager.save(registeredService);
-        val token = createAccessToken(new MockTicketGrantingTicket("casuser"), registeredService);
-        assertNotNull(token);
-        assertNotNull(defaultAccessTokenFactory.get(OAuth20AccessToken.class));
-    }
+    @Nested
+    @TestPropertySource(properties = "cas.ticket.track-descendant-tickets=true")
+    class TrackingDescendantTicketsEnabled extends AbstractOAuth20Tests {
 
-    @Test
-    void verifyMaxActiveTokensAllowed() throws Throwable {
-        val registeredService = getRegisteredService(UUID.randomUUID().toString(), UUID.randomUUID().toString(), UUID.randomUUID().toString());
-        registeredService.setAccessTokenExpirationPolicy(new DefaultRegisteredServiceOAuthAccessTokenExpirationPolicy("PT10S", "PT10S", 3));
-        servicesManager.save(registeredService);
+        @Test
+        void verifyOperationCreate() throws Throwable {
+            val registeredService = getRegisteredService("https://app.oauth.org", "clientid-at", "secret-at");
+            registeredService.setAccessTokenExpirationPolicy(new DefaultRegisteredServiceOAuthAccessTokenExpirationPolicy("PT10S", "PT10S", 0));
+            servicesManager.save(registeredService);
+            val token = createAccessToken(new MockTicketGrantingTicket("casuser"), registeredService);
+            assertNotNull(token);
+            assertNotNull(defaultAccessTokenFactory.get(OAuth20AccessToken.class));
+        }
 
-        val tgt = new MockTicketGrantingTicket("casuser");
-        ticketRegistry.addTicket(tgt);
-        for (var i = 0; i < 3; i++) {
+        @Test
+        void verifyMaxActiveTokensAllowed() throws Throwable {
+            val registeredService = getRegisteredService(UUID.randomUUID().toString(), UUID.randomUUID().toString(), UUID.randomUUID().toString());
+            registeredService.setAccessTokenExpirationPolicy(new DefaultRegisteredServiceOAuthAccessTokenExpirationPolicy("PT10S", "PT10S", 3));
+            servicesManager.save(registeredService);
+
+            val tgt = new MockTicketGrantingTicket("casuser");
+            ticketRegistry.addTicket(tgt);
+            for (var i = 0; i < 3; i++) {
+                val token = createAccessToken(tgt, registeredService);
+                assertNotNull(token);
+                ticketRegistry.addTicket(token);
+            }
+            ticketRegistry.updateTicket(tgt);
+            assertThrows(IllegalArgumentException.class, () -> createAccessToken(tgt, registeredService));
+        }
+
+        @Test
+        void verifyOperationWithExpPolicy() throws Throwable {
+            val registeredService = getRegisteredService(UUID.randomUUID().toString(), UUID.randomUUID().toString(), UUID.randomUUID().toString());
+            registeredService.setAccessTokenExpirationPolicy(new DefaultRegisteredServiceOAuthAccessTokenExpirationPolicy("PT10S", "PT10S", 0));
+            servicesManager.save(registeredService);
+
+            val tgt = new MockTicketGrantingTicket("casuser");
+            ticketRegistry.addTicket(tgt);
             val token = createAccessToken(tgt, registeredService);
             assertNotNull(token);
-            ticketRegistry.addTicket(token);
+            assertInstanceOf(OAuth20AccessTokenExpirationPolicy.class, token.getExpirationPolicy());
         }
-        ticketRegistry.updateTicket(tgt);
-        assertThrows(IllegalArgumentException.class, () -> createAccessToken(tgt, registeredService));
+
+        private OAuth20AccessToken createAccessToken(
+                final TicketGrantingTicket ticketGrantingTicket,
+                final OAuthRegisteredService registeredService) throws Throwable {
+            return defaultAccessTokenFactory.create(
+                    RegisteredServiceTestUtils.getService(registeredService.getServiceId()),
+                    RegisteredServiceTestUtils.getAuthentication(),
+                    ticketGrantingTicket,
+                    Set.of("Scope1", "Scope2"), null, registeredService.getClientId(), Map.of(),
+                    OAuth20ResponseTypes.CODE, OAuth20GrantTypes.AUTHORIZATION_CODE);
+        }
     }
 
-    private OAuth20AccessToken createAccessToken(
-        final TicketGrantingTicket ticketGrantingTicket,
-        final OAuthRegisteredService registeredService) throws Throwable {
-        return defaultAccessTokenFactory.create(
-            RegisteredServiceTestUtils.getService(registeredService.getServiceId()),
-            RegisteredServiceTestUtils.getAuthentication(),
-            ticketGrantingTicket,
-            Set.of("Scope1", "Scope2"), null, registeredService.getClientId(), Map.of(),
-            OAuth20ResponseTypes.CODE, OAuth20GrantTypes.AUTHORIZATION_CODE);
+    @Nested
+    @TestPropertySource(properties = "cas.ticket.track-descendant-tickets=false")
+    class TrackingDescendantTicketsDisabled extends AbstractOAuth20Tests {
+
+        @Test
+        void verifyOperationWithExpPolicy() throws Throwable {
+            val registeredService = getRegisteredService(UUID.randomUUID().toString(), UUID.randomUUID().toString(), UUID.randomUUID().toString());
+            registeredService.setAccessTokenExpirationPolicy(new DefaultRegisteredServiceOAuthAccessTokenExpirationPolicy("PT10S", "PT10S", 0));
+            servicesManager.save(registeredService);
+
+            val tgt = new MockTicketGrantingTicket("casuser");
+            ticketRegistry.addTicket(tgt);
+            val token = defaultAccessTokenFactory.create(
+                    RegisteredServiceTestUtils.getService(registeredService.getServiceId()),
+                    RegisteredServiceTestUtils.getAuthentication(),
+                    tgt,
+                    Set.of("Scope1", "Scope2"), null, registeredService.getClientId(), Map.of(),
+                    OAuth20ResponseTypes.CODE, OAuth20GrantTypes.AUTHORIZATION_CODE);
+            assertNotNull(token);
+            assertInstanceOf(OAuthAccessTokenSovereignExpirationPolicy.class, token.getExpirationPolicy());
+        }
     }
 }
