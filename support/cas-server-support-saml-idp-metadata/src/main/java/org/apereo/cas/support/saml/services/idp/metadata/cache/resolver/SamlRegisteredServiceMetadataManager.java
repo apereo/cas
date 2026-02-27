@@ -60,4 +60,11 @@ public interface SamlRegisteredServiceMetadataManager extends NamedObject {
      * Remove all.
      */
     void removeAll();
+
+    /**
+     * Gets source.
+     *
+     * @return the source
+     */
+    String getSourceId();
 }

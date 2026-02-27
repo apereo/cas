@@ -31,7 +31,8 @@ SAML service definitions must then be designed as follows to allow CAS to fetch 
 ```
 
 Give the above definition, the expectation is that the git repository
-contains a `SAMLService.xml` file which may optionally also be accompanied by a `SAMLService.pem` file.
+contains a `SAMLService.xml` file which may optionally also be accompanied 
+by a `SAMLService.pem` file. Such artifacts are generally expected to be found under a `sp-metadata` directory.
 
 <div class="alert alert-info">:information_source: <strong>Metadata Location</strong><p>
 The metadata location in the registration record above needs to be specified as <code>git://</code> to signal to CAS that 
@@ -46,6 +47,12 @@ By default, SAML2 service provider metadata is pulled from git repositories when
 You could also configure CAS to activate and turn on a background job to pull metadata periodically using a background scheduler. 
 
 {% include_cached casproperties.html properties="cas.authn.saml-idp.metadata.git.schedule" id="scheduler" %}
+
+### Actuator Endpoints
+
+The following endpoints are provided by CAS:
+
+{% include_cached actuators.html endpoints="samlIdPRegisteredServiceMetadata" %}
 
 ## Identity Provider Metadata
 

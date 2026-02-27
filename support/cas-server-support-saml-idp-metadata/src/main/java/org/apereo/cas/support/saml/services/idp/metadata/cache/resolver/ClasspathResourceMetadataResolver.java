@@ -73,8 +73,4 @@ public class ClasspathResourceMetadataResolver extends BaseSamlRegisteredService
         return supports(service);
     }
 
-    @Override
-    public String getSourceId() {
-        return "classpath:";
-    }
 }

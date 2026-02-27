@@ -25,8 +25,6 @@ dependencies {
     implementation project(":support:cas-server-support-saml-idp-core")
 
     implementation libraries.shibutiljavasupport
-
-
     
     testImplementation project(":core:cas-server-core-scripting")
     testImplementation project(":core:cas-server-core-web")

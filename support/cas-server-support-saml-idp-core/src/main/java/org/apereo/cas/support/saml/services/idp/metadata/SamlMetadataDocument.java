@@ -2,6 +2,7 @@ package org.apereo.cas.support.saml.services.idp.metadata;
 
 import module java.base;
 import org.apereo.cas.util.EncodingUtils;
+import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.google.errorprone.annotations.CanIgnoreReturnValue;
@@ -11,6 +12,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.experimental.SuperBuilder;
 import org.springframework.data.annotation.Id;
+import tools.jackson.databind.ObjectMapper;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -31,7 +33,9 @@ import jakarta.persistence.Table;
 @NoArgsConstructor
 @SuperBuilder
 public class SamlMetadataDocument implements Serializable {
-
+    private static final ObjectMapper MAPPER = JacksonObjectMapperFactory.builder()
+        .defaultTypingEnabled(false).build().toObjectMapper();
+    
     @Serial
     private static final long serialVersionUID = -721955605616455236L;
     
@@ -80,5 +84,15 @@ public class SamlMetadataDocument implements Serializable {
             id = System.nanoTime();
         }
         return this;
+    }
+
+    /**
+     * To json string.
+     *
+     * @return the string
+     */
+    @JsonIgnore
+    public String toJson() {
+        return MAPPER.writeValueAsString(this);
     }
 }

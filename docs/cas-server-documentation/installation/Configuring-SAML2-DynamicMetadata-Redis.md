@@ -36,6 +36,12 @@ SAML metadata for registered service provider must be fetched from Redis data so
 
 {% include_cached casproperties.html properties="cas.authn.saml-idp.metadata.redis" %}
 
+## Actuator Endpoints
+
+The following endpoints are provided by CAS:
+
+{% include_cached actuators.html endpoints="samlIdPRegisteredServiceMetadata" %}
+
 ## Identity Provider Metadata
 
 Metadata artifacts that belong to CAS as a SAML2 identity provider may also be managed and stored via Redis.
