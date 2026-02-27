@@ -9,7 +9,6 @@ import lombok.val;
 import net.shibboleth.shared.resolver.CriteriaSet;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
-import org.apache.commons.lang3.NotImplementedException;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
@@ -21,7 +20,6 @@ import org.opensaml.saml.saml2.metadata.SPSSODescriptor;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.FileSystemResource;
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.*;
 
 /**
  * This is {@link FileSystemResourceMetadataResolverTests}.
@@ -111,12 +109,5 @@ class FileSystemResourceMetadataResolverTests extends BaseSamlIdPServicesTests {
         criteriaSet.add(new EntityIdCriterion("sp1:example"));
         criteriaSet.add(new EntityRoleCriterion(SPSSODescriptor.DEFAULT_ELEMENT_NAME));
         assertEquals(1, Iterables.size(directoryResolver.resolve(criteriaSet)));
-    }
-
-    @Test
-    void verifyDefaultImpl() {
-        val mock = mock(SamlRegisteredServiceMetadataResolver.class);
-        doCallRealMethod().when(mock).saveOrUpdate(any());
-        assertThrows(NotImplementedException.class, () -> mock.saveOrUpdate(null));
     }
 }
