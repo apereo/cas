@@ -89,7 +89,9 @@ public class FileSystemResourceMetadataResolver extends BaseSamlRegisteredServic
     }
 
     private static boolean isMetadataFileSystemResource(final String location) {
-        val metadataResource = FunctionUtils.doUnchecked(() -> ResourceUtils.isUrl(location) ? null : ResourceUtils.getResourceFrom(location));
+        val metadataResource = FunctionUtils.doUnchecked(() -> ResourceUtils.isUrl(location)
+            ? null
+            : ResourceUtils.getResourceFrom(location));
         val scriptFactory = ExecutableCompiledScriptFactory.findExecutableCompiledScriptFactory();
         return metadataResource instanceof FileSystemResource
             && (scriptFactory.isEmpty() || !scriptFactory.get().isScript(location));
@@ -108,10 +110,5 @@ public class FileSystemResourceMetadataResolver extends BaseSamlRegisteredServic
             return new LocalDynamicMetadataResolver(LOCAL_DYNAMIC_METADATA_RESOLVER_TIMER, manager, sourceStrategy);
         }
         return new InMemoryResourceMetadataResolver(metadataResource, configBean);
-    }
-
-    @Override
-    public String getSourceId() {
-        return "file:";
     }
 }

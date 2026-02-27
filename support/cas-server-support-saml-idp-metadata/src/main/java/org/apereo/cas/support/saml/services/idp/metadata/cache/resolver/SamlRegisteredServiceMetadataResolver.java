@@ -70,11 +70,4 @@ public interface SamlRegisteredServiceMetadataResolver extends NamedObject {
         }
         return Optional.empty();
     }
-
-    /**
-     * Gets source.
-     *
-     * @return the source
-     */
-    String getSourceId();
 }

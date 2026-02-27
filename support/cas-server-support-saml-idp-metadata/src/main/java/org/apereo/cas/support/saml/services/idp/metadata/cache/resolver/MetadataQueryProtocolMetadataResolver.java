@@ -111,11 +111,6 @@ public class MetadataQueryProtocolMetadataResolver extends UrlResourceMetadataRe
     }
 
     @Override
-    public String getSourceId() {
-        return "mdq://";
-    }
-
-    @Override
     protected Set<String> getMetadataLocationsForService(final SamlRegisteredService service, final CriteriaSet criteriaSet) {
         LOGGER.trace("Getting metadata location dynamically for [{}] based on criteria [{}]", service.getName(), criteriaSet);
         val entityIdCriteria = criteriaSet.get(EntityIdCriterion.class);
