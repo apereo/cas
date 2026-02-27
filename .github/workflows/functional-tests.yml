@@ -164,7 +164,7 @@ jobs:
             export RUNNER_OS=${{ runner.os }}
             ./ci/tests/puppeteer/run.sh --scenario $PWD/ci/tests/puppeteer/scenarios/${{matrix.scenario}}
       - name: Upload screenshots
-        uses: actions/upload-artifact@v6
+        uses: actions/upload-artifact@v7
         continue-on-error: true
         if: ${{ always() }}
         with:
@@ -221,7 +221,7 @@ jobs:
             export RUNNER_OS=${{ runner.os }}
             ./ci/tests/puppeteer/run.sh --scenario $PWD/ci/tests/puppeteer/scenarios/${{matrix.scenario}}
       - name: Upload screenshots
-        uses: actions/upload-artifact@v6
+        uses: actions/upload-artifact@v7
         continue-on-error: true
         if: ${{ always() }}
         with:
@@ -278,7 +278,7 @@ jobs:
             export RUNNER_OS=${{ runner.os }}
             ./ci/tests/puppeteer/run.sh --scenario $PWD/ci/tests/puppeteer/scenarios/${{matrix.scenario}}
       - name: Upload screenshots
-        uses: actions/upload-artifact@v6
+        uses: actions/upload-artifact@v7
         continue-on-error: true
         if: ${{ always() }}
         with:
