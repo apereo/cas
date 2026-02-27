@@ -16,7 +16,6 @@ import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.test.context.TestPropertySource;
 import static org.junit.jupiter.api.Assertions.*;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 /**
  * This is {@link OAuth20DefaultAccessTokenFactoryTests}.
