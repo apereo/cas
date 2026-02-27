@@ -29,7 +29,7 @@ class DynamoDbSamlRegisteredServiceMetadataResolverTests extends BaseDynamoDbSam
         md.setName("SP");
         md.setValue(IOUtils.toString(res.getInputStream(), StandardCharsets.UTF_8));
         val metadataManager = resolver.getMetadataManager().orElseThrow();
-        md = metadataManager.store(md);
+        metadataManager.store(md);
 
         val service = new SamlRegisteredService();
         service.setName("SAML Service");

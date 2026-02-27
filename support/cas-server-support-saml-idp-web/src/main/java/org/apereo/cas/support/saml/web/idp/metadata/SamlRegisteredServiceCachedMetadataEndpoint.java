@@ -103,7 +103,7 @@ public class SamlRegisteredServiceCachedMetadataEndpoint extends BaseCasRestActu
         val registeredService = findRegisteredService(serviceId);
         val criteriaSet = new CriteriaSet();
         val effectiveEntityId = StringUtils.defaultIfBlank(entityId, registeredService.getServiceId());
-        criteriaSet.add(new EntityIdCriterion(effectiveEntityId));
+        criteriaSet.add(new EntityIdCriterion(Objects.requireNonNull(effectiveEntityId)));
         criteriaSet.add(new EntityRoleCriterion(SPSSODescriptor.DEFAULT_ELEMENT_NAME));
         cachingMetadataResolver.getObject().invalidate(registeredService, criteriaSet);
         LOGGER.info("Invalidated SAML2 registered service metadata cache entry for [{}]", registeredService);
