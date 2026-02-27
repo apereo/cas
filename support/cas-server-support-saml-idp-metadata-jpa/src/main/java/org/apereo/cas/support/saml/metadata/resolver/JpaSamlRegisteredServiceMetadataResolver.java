@@ -10,6 +10,7 @@ import org.apereo.cas.support.saml.OpenSamlConfigBean;
 import org.apereo.cas.support.saml.services.SamlRegisteredService;
 import org.apereo.cas.support.saml.services.idp.metadata.SamlMetadataDocument;
 import org.apereo.cas.support.saml.services.idp.metadata.cache.resolver.BaseSamlRegisteredServiceMetadataResolver;
+import org.apereo.cas.support.saml.services.idp.metadata.cache.resolver.SamlRegisteredServiceMetadataManager;
 import org.apereo.cas.util.LoggingUtils;
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
@@ -32,7 +33,8 @@ import jakarta.persistence.PersistenceContext;
 @Transactional(transactionManager = "transactionManagerSamlMetadata")
 @Slf4j
 @ToString
-public class JpaSamlRegisteredServiceMetadataResolver extends BaseSamlRegisteredServiceMetadataResolver {
+public class JpaSamlRegisteredServiceMetadataResolver extends BaseSamlRegisteredServiceMetadataResolver
+    implements SamlRegisteredServiceMetadataManager {
     private static final int DATA_SOURCE_VALIDITY_TIMEOUT_SECONDS = 5;
 
     private static final String SELECT_QUERY = String.format("SELECT r from %s r ", SamlMetadataDocument.class.getSimpleName());
@@ -61,7 +63,7 @@ public class JpaSamlRegisteredServiceMetadataResolver extends BaseSamlRegistered
     public boolean supports(final SamlRegisteredService service) {
         try {
             val metadataLocation = service.getMetadataLocation();
-            return metadataLocation.trim().startsWith("jdbc://");
+            return metadataLocation.trim().startsWith(getSourceId());
         } catch (final Exception e) {
             LoggingUtils.error(LOGGER, e);
         }
@@ -74,8 +76,43 @@ public class JpaSamlRegisteredServiceMetadataResolver extends BaseSamlRegistered
     }
 
     @Override
-    public void saveOrUpdate(final SamlMetadataDocument document) {
-        this.entityManager.merge(document);
+    public List<SamlMetadataDocument> load() {
+        return this.entityManager.createQuery(SELECT_QUERY, SamlMetadataDocument.class).getResultList();
+    }
+
+    @Override
+    public SamlMetadataDocument store(final SamlMetadataDocument document) {
+        return this.entityManager.merge(document);
+    }
+
+    @Override
+    public void removeById(final long id) {
+        findById(id).ifPresent(this.entityManager::remove);
+    }
+
+    @Override
+    public void removeByName(final String name) {
+        findByName(name).ifPresent(this.entityManager::remove);
+    }
+
+    @Override
+    public Optional<SamlMetadataDocument> findByName(final String name) {
+        val query = SELECT_QUERY + "WHERE r.name = :name";
+        return this.entityManager.createQuery(query, SamlMetadataDocument.class)
+            .setParameter("name", name)
+            .getResultStream()
+            .findFirst();
+    }
+
+    @Override
+    public Optional<SamlMetadataDocument> findById(final long id) {
+        return Optional.ofNullable(this.entityManager.find(SamlMetadataDocument.class, id));
+    }
+
+    @Override
+    public void removeAll() {
+        val query = String.format("DELETE FROM %s", SamlMetadataDocument.class.getSimpleName());
+        this.entityManager.createQuery(query).executeUpdate();
     }
 
     @Override
@@ -86,4 +123,5 @@ public class JpaSamlRegisteredServiceMetadataResolver extends BaseSamlRegistered
         }
         return false;
     }
+    
 }
