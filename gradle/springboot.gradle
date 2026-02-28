@@ -148,9 +148,13 @@ if (project.ext.forceBootifulArtifact || (!rootProject.publishFlag && !rootProje
 
         list.add("-XX:+AllowEnhancedClassRedefinition")
 
-        def agentPath = rootProject.file("etc").absolutePath
-        list.add("-javaagent:${agentPath}/hotswap-agent.jar=autoHotswap=true")
-        
+        if (rootProject.skipHotSwap) {
+            ansi.yellow "HotSwap Agent will be disabled for this run."
+        } else {
+            def agentPath = rootProject.file("etc").absolutePath
+            list.add("-javaagent:${agentPath}/hotswap-agent.jar=autoHotswap=true")
+        }
+
         if (rootProject.enableRemoteDebugging) {
             def port = findAvailableTcpPort(5000..5010)
             if (port > 0) {
