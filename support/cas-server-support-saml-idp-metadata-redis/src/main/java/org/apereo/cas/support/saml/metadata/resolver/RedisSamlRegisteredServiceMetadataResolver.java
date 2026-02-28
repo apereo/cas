@@ -32,16 +32,12 @@ public class RedisSamlRegisteredServiceMetadataResolver extends BaseSamlRegister
 
     private final CasRedisTemplate<String, SamlMetadataDocument> redisTemplate;
 
-    private final long scanCount;
-
     public RedisSamlRegisteredServiceMetadataResolver(
         final SamlIdPProperties samlIdPProperties,
         final OpenSamlConfigBean configBean,
-        final CasRedisTemplate<String, SamlMetadataDocument> redisTemplate,
-        final long scanCount) {
+        final CasRedisTemplate<String, SamlMetadataDocument> redisTemplate) {
         super(samlIdPProperties, configBean);
         this.redisTemplate = redisTemplate;
-        this.scanCount = scanCount;
     }
 
     private static String getPatternRedisKey() {
@@ -53,7 +49,7 @@ public class RedisSamlRegisteredServiceMetadataResolver extends BaseSamlRegister
         resourceResolverName = AuditResourceResolvers.SAML2_METADATA_RESOLUTION_RESOURCE_RESOLVER)
     @Override
     public Collection<? extends MetadataResolver> resolve(final SamlRegisteredService service, final CriteriaSet criteriaSet) {
-        try (val results = redisTemplate.scan(getPatternRedisKey(), this.scanCount)) {
+        try (val results = redisTemplate.scan(getPatternRedisKey())) {
             return results
                 .map(redisKey -> redisTemplate.boundValueOps(redisKey).get())
                 .filter(Objects::nonNull)
@@ -83,7 +79,7 @@ public class RedisSamlRegisteredServiceMetadataResolver extends BaseSamlRegister
 
     @Override
     public List<SamlMetadataDocument> load() {
-        try (val results = redisTemplate.scan(getPatternRedisKey(), this.scanCount)) {
+        try (val results = redisTemplate.scan(getPatternRedisKey())) {
             return results
                 .map(redisKey -> redisTemplate.boundValueOps(redisKey).get())
                 .filter(Objects::nonNull)
@@ -93,7 +89,7 @@ public class RedisSamlRegisteredServiceMetadataResolver extends BaseSamlRegister
 
     @Override
     public void removeById(final long id) {
-        try (val results = redisTemplate.scan(getPatternRedisKey(), this.scanCount)) {
+        try (val results = redisTemplate.scan(getPatternRedisKey())) {
             results
                 .filter(redisKey -> redisKey.endsWith(":" + id))
                 .forEach(redisTemplate::delete);
@@ -103,14 +99,14 @@ public class RedisSamlRegisteredServiceMetadataResolver extends BaseSamlRegister
     @Override
     public void removeByName(final String name) {
         val pattern = CAS_PREFIX + name + ":*";
-        try (val results = redisTemplate.scan(pattern, this.scanCount)) {
+        try (val results = redisTemplate.scan(pattern)) {
             results.forEach(redisTemplate::delete);
         }
     }
 
     @Override
     public void removeAll() {
-        try (val results = redisTemplate.scan(getPatternRedisKey(), this.scanCount)) {
+        try (val results = redisTemplate.scan(getPatternRedisKey())) {
             results.forEach(redisTemplate::delete);
         }
     }
@@ -118,7 +114,7 @@ public class RedisSamlRegisteredServiceMetadataResolver extends BaseSamlRegister
     @Override
     public Optional<SamlMetadataDocument> findByName(final String name) {
         val pattern = CAS_PREFIX + name + ":*";
-        try (val results = redisTemplate.scan(pattern, this.scanCount)) {
+        try (val results = redisTemplate.scan(pattern)) {
             return results
                 .map(redisKey -> redisTemplate.boundValueOps(redisKey).get())
                 .filter(Objects::nonNull)
@@ -128,7 +124,7 @@ public class RedisSamlRegisteredServiceMetadataResolver extends BaseSamlRegister
 
     @Override
     public Optional<SamlMetadataDocument> findById(final long id) {
-        try (val results = redisTemplate.scan(getPatternRedisKey(), this.scanCount)) {
+        try (val results = redisTemplate.scan(getPatternRedisKey())) {
             return results
                 .filter(redisKey -> redisKey.endsWith(":" + id))
                 .map(redisKey -> redisTemplate.boundValueOps(redisKey).get())
