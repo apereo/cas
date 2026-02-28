@@ -113,6 +113,18 @@ assuming the underlying storage is one that is noted above.
 
 The [Palantir Admin Console](../installation/Admin-Dashboard.html) is also updated to support interacting 
 with this actuator.
+ 
+### Apache Tomcat Connectors
+
+When running CAS with an embedded Apache Tomcat, all connectors are now initially put into a *paused state* 
+until the CAS server is fully able and ready to accept requests at which point such collectors are instructed to resume operations. 
+This allows the server to perform all necessary startup and (lazy) initialization tasks before accepting any 
+incoming traffic and potentially running into a deadlocked state.
+
+<div class="alert alert-info">:information_source: <strong>Note</strong>
+<p>Again, this capability only applies to deployments running with an embedded Apache Tomcat.
+It has no effect on other container types such as Jetty, or those deployments that run
+inside an external self-managed Apache Tomcat environment.</p></div>
 
 ## Other Stuff
 

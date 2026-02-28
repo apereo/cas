@@ -52,6 +52,7 @@ ext {
     skipArtifactSigning = providers.systemProperty("skipArtifactSigning").present
     terminateCompilerOnWarning = providers.systemProperty("terminateCompilerOnWarning").getOrElse("true") == "true"
     skipNullAway = providers.systemProperty("skipNullAway").getOrElse("false") == "true"
+    skipHotSwap = providers.systemProperty("skipHotSwap").getOrElse("false") == "true"
 
     enableRemoteDebugging = providers.systemProperty("enableRemoteDebugging").present
     remoteDebuggingSuspend = providers.systemProperty("remoteDebuggingSuspend").getOrElse("false") == "true" ? "y" : "n"

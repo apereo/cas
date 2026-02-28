@@ -3,6 +3,7 @@ package org.apereo.cas.config;
 import module java.base;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.features.CasFeatureModule;
+import org.apereo.cas.tomcat.CasTomcatConnectorLifecycleListener;
 import org.apereo.cas.tomcat.CasTomcatServletWebServerFactory;
 import org.apereo.cas.tomcat.CasTomcatServletWebServerFactoryCustomizer;
 import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
@@ -16,8 +17,10 @@ import org.springframework.boot.tomcat.autoconfigure.TomcatServerProperties;
 import org.springframework.boot.web.server.WebServerFactoryCustomizer;
 import org.springframework.boot.web.server.autoconfigure.ServerProperties;
 import org.springframework.boot.web.server.servlet.ServletWebServerFactory;
+import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.core.Ordered;
 
 /**
@@ -44,9 +47,21 @@ class CasEmbeddedContainerTomcatConfiguration {
     @ConditionalOnMissingBean(name = "casTomcatEmbeddedServletContainerCustomizer")
     @Bean
     public WebServerFactoryCustomizer casTomcatEmbeddedServletContainerCustomizer(
+        final ConfigurableApplicationContext applicationContext,
         final ServerProperties serverProperties,
         final TomcatServerProperties tomcatServerProperties,
         final CasConfigurationProperties casProperties) {
-        return new CasTomcatServletWebServerFactoryCustomizer(serverProperties, tomcatServerProperties, casProperties);
+        return new CasTomcatServletWebServerFactoryCustomizer(
+            applicationContext, serverProperties, tomcatServerProperties, casProperties);
     }
+
+    @Bean
+    @Lazy(false)
+    public CasTomcatConnectorLifecycleListener casTomcatConnectorReady(
+        final CasConfigurationProperties casProperties) {
+        return CasTomcatConnectorLifecycleListener.resumeConnectorOnReady();
+    }
+
+
+
 }

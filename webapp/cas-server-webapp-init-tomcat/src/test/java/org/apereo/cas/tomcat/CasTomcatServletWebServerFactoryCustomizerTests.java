@@ -17,6 +17,7 @@ import org.springframework.boot.tomcat.autoconfigure.TomcatServerProperties;
 import org.springframework.boot.tomcat.servlet.TomcatServletWebServerFactory;
 import org.springframework.boot.web.server.autoconfigure.ServerProperties;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
+import org.springframework.context.ConfigurableApplicationContext;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
@@ -40,6 +41,9 @@ class CasTomcatServletWebServerFactoryCustomizerTests {
 
     @Autowired
     protected TomcatServerProperties tomcatServerProperties;
+
+    @Autowired
+    protected ConfigurableApplicationContext applicationContext;
     
     private static TomcatServletWebServerFactory execCustomize(final CasTomcatServletWebServerFactoryCustomizer customizer) {
         val factory = mock(TomcatServletWebServerFactory.class);
@@ -59,7 +63,7 @@ class CasTomcatServletWebServerFactoryCustomizerTests {
             .setPattern(".+")
             .setDirectory(FileUtils.getTempDirectoryPath());
 
-        val customizer = new CasTomcatServletWebServerFactoryCustomizer(serverProperties, tomcatServerProperties, casProperties);
+        val customizer = buildCustomizer(casProperties);
         execCustomize(customizer);
     }
 
@@ -67,7 +71,7 @@ class CasTomcatServletWebServerFactoryCustomizerTests {
     void verifyHttp2ProtocolProxy() {
         val casProperties = new CasConfigurationProperties();
         casProperties.getServer().getTomcat().getHttpProxy().setEnabled(true).setProtocol("HTTP/2");
-        val customizer = new CasTomcatServletWebServerFactoryCustomizer(serverProperties, tomcatServerProperties, casProperties);
+        val customizer = buildCustomizer(casProperties);
         val factory = execCustomize(customizer);
         factory.getConnectorCustomizers().forEach(c -> c.customize(new Connector()));
     }
@@ -76,7 +80,7 @@ class CasTomcatServletWebServerFactoryCustomizerTests {
     void verifyAjp2ProtocolProxy() {
         val casProperties = new CasConfigurationProperties();
         casProperties.getServer().getTomcat().getHttpProxy().setEnabled(true).setProtocol("AJP/2");
-        val customizer = new CasTomcatServletWebServerFactoryCustomizer(serverProperties, tomcatServerProperties, casProperties);
+        val customizer = buildCustomizer(casProperties);
         val factory = execCustomize(customizer);
         factory.getConnectorCustomizers().forEach(c -> c.customize(new Connector()));
     }
@@ -85,7 +89,7 @@ class CasTomcatServletWebServerFactoryCustomizerTests {
     void verifyAjp13ProtocolProxy() {
         val casProperties = new CasConfigurationProperties();
         casProperties.getServer().getTomcat().getHttpProxy().setEnabled(true).setProtocol("AJP/1.3");
-        val customizer = new CasTomcatServletWebServerFactoryCustomizer(serverProperties, tomcatServerProperties, casProperties);
+        val customizer = buildCustomizer(casProperties);
         val factory = execCustomize(customizer);
         factory.getConnectorCustomizers().forEach(c -> c.customize(new Connector()));
     }
@@ -94,7 +98,7 @@ class CasTomcatServletWebServerFactoryCustomizerTests {
     void verifyAprProtocolProxy() {
         val casProperties = new CasConfigurationProperties();
         casProperties.getServer().getTomcat().getHttpProxy().setEnabled(true).setProtocol("APR");
-        val customizer = new CasTomcatServletWebServerFactoryCustomizer(serverProperties, tomcatServerProperties, casProperties);
+        val customizer = buildCustomizer(casProperties);
         val factory = execCustomize(customizer);
         factory.getConnectorCustomizers().forEach(c -> c.customize(new Connector()));
     }
@@ -103,7 +107,7 @@ class CasTomcatServletWebServerFactoryCustomizerTests {
     void verifyHttp12ProtocolProxy() {
         val casProperties = new CasConfigurationProperties();
         casProperties.getServer().getTomcat().getHttpProxy().setEnabled(true).setProtocol("HTTP/1.2");
-        val customizer = new CasTomcatServletWebServerFactoryCustomizer(serverProperties, tomcatServerProperties, casProperties);
+        val customizer = buildCustomizer(casProperties);
         val factory = execCustomize(customizer);
         factory.getConnectorCustomizers().forEach(c -> c.customize(new Connector()));
     }
@@ -112,10 +116,16 @@ class CasTomcatServletWebServerFactoryCustomizerTests {
     void verifyHttp11ProtocolProxy() {
         val casProperties = new CasConfigurationProperties();
         casProperties.getServer().getTomcat().getHttpProxy().setEnabled(true).setProtocol("HTTP/1.1");
-        val customizer = new CasTomcatServletWebServerFactoryCustomizer(serverProperties, tomcatServerProperties, casProperties);
+        val customizer = buildCustomizer(casProperties);
         val factory = execCustomize(customizer);
-        factory.getConnectorCustomizers().forEach(c ->
-            assertDoesNotThrow(() -> c.customize(new Connector())));
+        factory.getConnectorCustomizers().forEach(custom ->
+            assertDoesNotThrow(() -> custom.customize(new Connector())));
+    }
+
+    private CasTomcatServletWebServerFactoryCustomizer buildCustomizer(
+        final CasConfigurationProperties casProperties) {
+        return new CasTomcatServletWebServerFactoryCustomizer(applicationContext,
+            serverProperties, tomcatServerProperties, casProperties);
     }
 
 }
