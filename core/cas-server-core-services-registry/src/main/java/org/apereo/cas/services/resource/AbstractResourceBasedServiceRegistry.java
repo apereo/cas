@@ -164,13 +164,15 @@ public abstract class AbstractResourceBasedServiceRegistry extends AbstractServi
      * Enable default watcher service.
      */
     public void enableDefaultWatcherService() {
-        LOGGER.info("Watching service registry directory at [{}]", serviceRegistryDirectory);
-        serviceRegistryWatcherService.close();
-        val onCreate = new CreateResourceBasedRegisteredServiceWatcher(this);
-        val onDelete = new DeleteResourceBasedRegisteredServiceWatcher(this);
-        val onModify = new ModifyResourceBasedRegisteredServiceWatcher(this);
-        serviceRegistryWatcherService = new PathWatcherService(serviceRegistryDirectory, onCreate, onModify, onDelete);
-        serviceRegistryWatcherService.start(getClass().getSimpleName());
+        if (serviceRegistryWatcherService != null) {
+            LOGGER.info("Watching service registry directory at [{}]", serviceRegistryDirectory);
+            serviceRegistryWatcherService.close();
+            val onCreate = new CreateResourceBasedRegisteredServiceWatcher(this);
+            val onDelete = new DeleteResourceBasedRegisteredServiceWatcher(this);
+            val onModify = new ModifyResourceBasedRegisteredServiceWatcher(this);
+            serviceRegistryWatcherService = new PathWatcherService(serviceRegistryDirectory, onCreate, onModify, onDelete);
+            serviceRegistryWatcherService.start(getClass().getSimpleName());
+        }
     }
 
     @Override
@@ -332,7 +334,9 @@ public abstract class AbstractResourceBasedServiceRegistry extends AbstractServi
 
     @Override
     public void destroy() {
-        this.serviceRegistryWatcherService.close();
+        if (serviceRegistryWatcherService != null) {
+            this.serviceRegistryWatcherService.close();
+        }
     }
 
     protected void removeRegisteredService(final RegisteredService service) {
@@ -415,8 +419,10 @@ public abstract class AbstractResourceBasedServiceRegistry extends AbstractServi
         Assert.isTrue(file.isDirectory(), this.serviceRegistryDirectory + " is not a directory");
         LOGGER.trace("Service registry directory is specified at [{}]", file);
 
-        this.serviceRegistryWatcherService = serviceRegistryConfigWatcher;
-        this.serviceRegistryWatcherService.start(getClass().getSimpleName());
+        if (serviceRegistryConfigWatcher != null) {
+            this.serviceRegistryWatcherService = serviceRegistryConfigWatcher;
+            this.serviceRegistryWatcherService.start(getClass().getSimpleName());
+        }
     }
 
 }
