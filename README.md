@@ -7,6 +7,7 @@
 [![License](https://img.shields.io/hexpm/l/plug.svg?style=for-the-badge&logo=apache)](https://github.com/apereo/cas/blob/master/LICENSE)
 [![Slack](https://img.shields.io/badge/Slack-join%20chat-blue.svg?style=for-the-badge&logo=slack)][casslack]
 [![Support](https://img.shields.io/badge/Support-Mailing%20Lists-green.svg?colorB=ff69b4&style=for-the-badge)][cassupport]
+[![Gurubase](https://img.shields.io/badge/Gurubase-Ask%20CAS%20Guru-006BFF?style=for-the-badge)](https://gurubase.io/g/cas)
 
 ## Introduction
 
