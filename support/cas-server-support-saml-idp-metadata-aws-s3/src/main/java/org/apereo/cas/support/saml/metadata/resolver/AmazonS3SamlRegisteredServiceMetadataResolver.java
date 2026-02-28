@@ -49,6 +49,13 @@ public class AmazonS3SamlRegisteredServiceMetadataResolver extends BaseSamlRegis
         this.bucketName = SpringExpressionLanguageValueResolver.getInstance()
             .resolve(samlIdPProperties.getMetadata().getAmazonS3().getBucketName());
         this.s3Client = s3Client;
+
+        if (s3Client.listBuckets(ListBucketsRequest.builder().build())
+            .buckets().stream().noneMatch(bucket -> bucket.name().equalsIgnoreCase(bucketName))) {
+            LOGGER.trace("Bucket [{}] does not exist. Creating...", bucketName);
+            val bucket = s3Client.createBucket(CreateBucketRequest.builder().bucket(bucketName.toLowerCase(Locale.ENGLISH)).build());
+            LOGGER.debug("Created bucket [{}]", bucket.location());
+        }
     }
 
     @Audit(action = AuditableActions.SAML2_METADATA_RESOLUTION,
@@ -109,14 +116,8 @@ public class AmazonS3SamlRegisteredServiceMetadataResolver extends BaseSamlRegis
 
     @Override
     public SamlMetadataDocument store(final SamlMetadataDocument document) {
-        if (s3Client.listBuckets(ListBucketsRequest.builder().build())
-            .buckets().stream().noneMatch(bucket -> bucket.name().equalsIgnoreCase(bucketName))) {
-            LOGGER.trace("Bucket [{}] does not exist. Creating...", bucketName);
-            val bucket = s3Client.createBucket(CreateBucketRequest.builder().bucket(bucketName.toLowerCase(Locale.ENGLISH)).build());
-            LOGGER.debug("Created bucket [{}]", bucket.location());
-        }
-
         val metadata = new LinkedHashMap<String, String>();
+        document.assignIdIfNecessary();
         metadata.put("id", String.valueOf(document.getId()));
         if (StringUtils.isNotBlank(document.getSignature())) {
             metadata.put("signature", document.getSignature());
