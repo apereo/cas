@@ -4,9 +4,9 @@ import module java.base;
 import org.apereo.cas.util.EncodingUtils;
 import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.google.errorprone.annotations.CanIgnoreReturnValue;
-import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -32,6 +32,7 @@ import jakarta.persistence.Table;
 @Setter
 @NoArgsConstructor
 @SuperBuilder
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class SamlMetadataDocument implements Serializable {
     private static final ObjectMapper MAPPER = JacksonObjectMapperFactory.builder()
         .defaultTypingEnabled(false).build().toObjectMapper();
@@ -42,9 +43,8 @@ public class SamlMetadataDocument implements Serializable {
     @JsonProperty("id")
     @jakarta.persistence.Id
     @Id
-    @Builder.Default
     @GeneratedValue(strategy = GenerationType.AUTO, generator = "native")
-    private long id = -1;
+    private long id;
 
     @JsonProperty("name")
     @Column(nullable = false)
@@ -58,6 +58,7 @@ public class SamlMetadataDocument implements Serializable {
     @JsonProperty("signature")
     @Lob
     @Column(name = "signature", length = Integer.MAX_VALUE)
+    @JsonInclude(JsonInclude.Include.NON_NULL)
     private String signature;
 
     /**
