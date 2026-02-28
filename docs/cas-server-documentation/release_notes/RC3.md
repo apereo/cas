@@ -89,6 +89,30 @@ It’s a method where an OAuth client authenticates to CAS using its SPIFFE-issu
 instead of a static secret or manually managed certificate. 
 [CAS gains the ability](../authentication/OIDC-Authentication-AccessToken-AuthMethods.html) to extract and identify the SPIFFE ID 
 in the certtificate and map it to the client application definition. 
+ 
+### SAML2 Service Provider Metadata Management
+
+CAS may be configured to use and locate SAML2 service provider metadata in external resources, such as MongoDb.
+The existing integration for persistence layer is now improved to fully support common metadata management tasks
+such as create, read, update and delete (CRUD) operations. This allows one to manage SAML2 service provider metadata
+without having to manually interact with the underlying database.
+
+The storage options that can take advantage of this include:
+
+- [MongoDb](../installation/Configuring-SAML2-DynamicMetadata-MongoDb.html)
+- [SQL Databases](../installation/Configuring-SAML2-DynamicMetadata-JPA.html)
+- [Amazon S3](../installation/Configuring-SAML2-DynamicMetadata-AmazonS3.html)
+- [Amazon DynamoDb](../installation/Configuring-SAML2-DynamicMetadata-DynamoDb.html)
+- [Git](../installation/Configuring-SAML2-DynamicMetadata-Git.html)
+- [Redis](../installation/Configuring-SAML2-DynamicMetadata-Redis.html)
+- [REST](../installation/Configuring-SAML2-DynamicMetadata-REST.html)
+
+There is also a new actuator endpoint, `samlIdPRegisteredServiceMetadata`, that allows one to interact with
+the SAML2 service provider metadata management API and perform CRUD operations on the metadata of registered services
+assuming the underlying storage is one that is noted above.
+
+The [Palantir Admin Console](../installation/Admin-Dashboard.html) is also updated to support interacting 
+with this actuator.
 
 ## Other Stuff
 
