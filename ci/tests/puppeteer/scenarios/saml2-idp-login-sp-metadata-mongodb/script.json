@@ -1,0 +1,39 @@
+{
+  "dependencies": "saml-idp,scripting,saml-idp-metadata-mongo",
+  "conditions": {
+    "docker": "true"
+  },
+  "properties": [
+    "--cas.authn.saml-idp.core.entity-id=https://cas.apereo.org/saml/idp",
+    "--cas.authn.saml-idp.metadata.file-system.location=file:${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/saml-md",
+
+    "--cas.server.name=https://localhost:8443",
+    "--cas.server.prefix=https://localhost:8443/cas",
+    "--cas.server.scope=example.net",
+
+    "--cas.monitor.endpoints.endpoint.defaults.access=ANONYMOUS",
+
+    "--cas.authn.attribute-repository.stub.attributes.phone=13477464523",
+    "--cas.authn.attribute-repository.stub.attributes.mail=casuser@example.org",
+
+    "--management.endpoints.web.exposure.include=*",
+    "--management.endpoint.health.show-details=always",
+    "--management.endpoints.access.default=UNRESTRICTED",
+    
+    "--cas.service-registry.core.init-from-json=true",
+    "--cas.service-registry.json.location=file:${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/services",
+
+    "--CasFeatureModule.SAMLIdentityProviderMetadata.mongo.enabled=false",
+    
+    "--cas.authn.saml-idp.metadata.mongo.database-name=saml-metadata",
+    "--cas.authn.saml-idp.metadata.mongo.drop-collection=true",
+    "--cas.authn.saml-idp.metadata.mongo.collection=saml-sp-metadata",
+    "--cas.authn.saml-idp.metadata.mongo.host=localhost",
+    "--cas.authn.saml-idp.metadata.mongo.port=27017",
+    "--cas.authn.saml-idp.metadata.mongo.user-id=root",
+    "--cas.authn.saml-idp.metadata.mongo.password=secret",
+    "--cas.authn.saml-idp.metadata.mongo.authentication-database-name=admin"
+  ],
+  "initScript": "${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/init.sh",
+  "readyScript": "${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/ready.sh"
+}

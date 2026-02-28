@@ -67,7 +67,7 @@ public class MongoDbSamlRegisteredServiceMetadataResolver extends BaseSamlRegist
 
     @Override
     public SamlMetadataDocument store(final SamlMetadataDocument document) {
-        return mongoTemplate.save(document, this.collectionName);
+        return mongoTemplate.save(document.assignIdIfNecessary(), this.collectionName);
     }
 
     @Override

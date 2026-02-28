@@ -41,7 +41,7 @@ public class FileSystemResourceMetadataResolver extends BaseSamlRegisteredServic
             public void schedule(final TimerTask task, final long time, final long period) {
             }
         };
-    
+
     public FileSystemResourceMetadataResolver(final SamlIdPProperties samlIdPProperties,
                                               final OpenSamlConfigBean configBean) {
         super(samlIdPProperties, configBean);
@@ -89,9 +89,11 @@ public class FileSystemResourceMetadataResolver extends BaseSamlRegisteredServic
     }
 
     private static boolean isMetadataFileSystemResource(final String location) {
-        val metadataResource = FunctionUtils.doUnchecked(() -> ResourceUtils.isUrl(location)
-            ? null
-            : ResourceUtils.getResourceFrom(location));
+        val metadataResource = FunctionUtils.doAndHandle(
+            () -> ResourceUtils.isUrl(location) || location.endsWith("://")
+                ? null
+                : ResourceUtils.getResourceFrom(location)
+        );
         val scriptFactory = ExecutableCompiledScriptFactory.findExecutableCompiledScriptFactory();
         return metadataResource instanceof FileSystemResource
             && (scriptFactory.isEmpty() || !scriptFactory.get().isScript(location));
@@ -101,7 +103,7 @@ public class FileSystemResourceMetadataResolver extends BaseSamlRegisteredServic
     public boolean isAvailable(final SamlRegisteredService service) {
         return supports(service);
     }
-    
+
     private AbstractMetadataResolver getMetadataResolver(final AbstractResource metadataResource,
                                                          final File metadataFile) throws Exception {
         if (metadataFile.isDirectory()) {

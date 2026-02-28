@@ -46,7 +46,7 @@ public class SamlRegisteredServiceMetadataEndpoint extends BaseCasRestActuatorEn
      */
     @GetMapping(
         path = "/managers",
-        consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE,
+        consumes = MediaType.ALL_VALUE,
         produces = {
             MediaType.APPLICATION_JSON_VALUE,
             MEDIA_TYPE_SPRING_BOOT_V2_JSON,
@@ -65,7 +65,6 @@ public class SamlRegisteredServiceMetadataEndpoint extends BaseCasRestActuatorEn
             .toList();
     }
 
-
     /**
      * Gets metadata entries by manager.
      *
@@ -74,7 +73,7 @@ public class SamlRegisteredServiceMetadataEndpoint extends BaseCasRestActuatorEn
      */
     @GetMapping(
         path = "/managers/{name}",
-        consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE,
+        consumes = MediaType.ALL_VALUE,
         produces = {
             MediaType.APPLICATION_JSON_VALUE,
             MEDIA_TYPE_SPRING_BOOT_V2_JSON,
@@ -108,7 +107,7 @@ public class SamlRegisteredServiceMetadataEndpoint extends BaseCasRestActuatorEn
      */
     @GetMapping(
         path = "/managers/{name}/{id}",
-        consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE,
+        consumes = MediaType.ALL_VALUE,
         produces = {
             MediaType.APPLICATION_JSON_VALUE,
             MEDIA_TYPE_SPRING_BOOT_V2_JSON,
