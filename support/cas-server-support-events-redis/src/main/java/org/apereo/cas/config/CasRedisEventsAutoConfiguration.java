@@ -73,7 +73,6 @@ public class CasRedisEventsAutoConfiguration {
         @Qualifier("redisEventRepositoryFilter")
         final CasEventRepositoryFilter redisEventRepositoryFilter,
         final CasConfigurationProperties casProperties) {
-        return new RedisCasEventRepository(redisEventRepositoryFilter, redisEventTemplate,
-            casProperties.getEvents().getRedis().getScanCount());
+        return new RedisCasEventRepository(redisEventRepositoryFilter, redisEventTemplate);
     }
 }
