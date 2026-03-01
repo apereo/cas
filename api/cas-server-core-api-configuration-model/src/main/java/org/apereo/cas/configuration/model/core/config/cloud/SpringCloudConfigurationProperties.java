@@ -61,6 +61,11 @@ public class SpringCloudConfigurationProperties implements Serializable {
          * AWS DynamoDb config settings.
          */
         private AmazonDynamoDb dynamoDb = new AmazonDynamoDb();
+
+        /**
+         * Etcd config settings.
+         */
+        private Etcd etcd = new Etcd();
     }
 
     @RequiresModule(name = "cas-server-support-configuration-cloud-mongo")
@@ -191,4 +196,18 @@ public class SpringCloudConfigurationProperties implements Serializable {
         private static final long serialVersionUID = -123404249388429120L;
     }
 
+    @RequiresModule(name = "cas-server-support-configuration-cloud-etcd")
+    @Getter
+    @Accessors(chain = true)
+    @Setter
+    public static class Etcd implements Serializable {
+        @Serial
+        private static final long serialVersionUID = -4865731693591907366L;
+
+        /**
+         * Comma-separated list of etcd endpoints. For example: {@code http://localhost:2379,http://localhost:4001}
+         */
+        @RequiredProperty
+        private String endpoints;
+    }
 }

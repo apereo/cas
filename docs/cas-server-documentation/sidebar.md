@@ -73,6 +73,7 @@ layout: null
             *   [Amazon SSM](/cas/{{ version }}/configuration/Configuration-Server-Management-SpringCloud-AmazonSSM.html)
             *   [Azure KeyVault](/cas/{{ version }}/configuration/Configuration-Server-Management-SpringCloud-AzureKeyVault.html)
             *   [DynamoDb](/cas/{{ version }}/configuration/Configuration-Server-Management-SpringCloud-DynamoDb.html)
+            *   [Etcd](/cas/{{ version }}/configuration/Configuration-Server-Management-SpringCloud-Etcd.html)
             *   [MongoDb](/cas/{{ version }}/configuration/Configuration-Server-Management-SpringCloud-MongoDb.html)
             *   [HashiCorp Consul](/cas/{{ version }}/configuration/Configuration-Server-Management-SpringCloud-HashiCorpConsul.html)
             *   [HashiCorp Vault](/cas/{{ version }}/configuration/Configuration-Server-Management-SpringCloud-HashiCorpVault.html)

@@ -126,6 +126,11 @@ incoming traffic and potentially running into a deadlocked state.
 It has no effect on other container types such as Jetty, or those deployments that run
 inside an external self-managed Apache Tomcat environment.</p></div>
 
+### Etcd Configuration Source
+
+CAS is now able to use [etcd](../configuration/Configuration-Server-Management-SpringCloud-Etcd.html) 
+as a configuration source to locate properties and settings.
+
 ## Other Stuff
 
 - SAML2 logout requests for SOAP bindings correct the `Content-Type` header and formatted body.

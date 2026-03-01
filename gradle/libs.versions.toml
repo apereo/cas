@@ -125,6 +125,7 @@ jclouds = "2.7.0"
 jcloudsGoogleEngine = "1.9.3"
 jcpiAnnotations = "1.0-1"
 jdom = "2.0.6.1"
+jetcd = "0.8.6"
 jetty = "12.1.6"
 jgit = "7.5.0.202512021534-r"
 jodaTime = "2.14.0"
@@ -466,6 +467,7 @@ jclouds-allcompute = { module = "org.apache.jclouds:jclouds-allcompute", version
 jclouds-compute = { module = "org.apache.jclouds:jclouds-compute", version.ref = "jclouds" }
 jdbc-yugabytedb = { module = "com.yugabyte:jdbc-yugabytedb", version.ref = "yugabytedb" }
 jdom2 = { module = "org.jdom:jdom2", version.ref = "jdom" }
+jetcd-core = { module = "io.etcd:jetcd-core", version.ref = "jetcd" }
 jetty-alpn-java-server = { module = "org.eclipse.jetty:jetty-alpn-java-server", version.ref = "jetty" }
 jetty-http2-server = { module = "org.eclipse.jetty.http2:jetty-http2-server", version.ref = "jetty" }
 jmustache = { module = "com.samskivert:jmustache", version.ref = "mustache" }

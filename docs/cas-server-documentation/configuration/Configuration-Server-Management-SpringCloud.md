@@ -114,6 +114,7 @@ Various configuration profiles exist to determine how configuration server shoul
 - [Amazon SSM](Configuration-Server-Management-SpringCloud-AmazonSSM.html)
 - [Azure KeyVault](Configuration-Server-Management-SpringCloud-AzureKeyVault.html)
 - [DynamoDb](Configuration-Server-Management-SpringCloud-DynamoDb.html)
+- [Etcd](Configuration-Server-Management-SpringCloud-Etcd.html)
 - [HashiCorp Consul](Configuration-Server-Management-SpringCloud-HashiCorpConsul.html)
 - [HashiCorp Vault](Configuration-Server-Management-SpringCloud-HashiCorpVault.html)
 - [JDBC](Configuration-Server-Management-SpringCloud-JDBC.html)
