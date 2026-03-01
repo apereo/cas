@@ -50,9 +50,7 @@ class CasJdbcCloudConfigBootstrapAutoConfigurationTests {
             try {
                 Files.walk(path)
                     .sorted(Comparator.reverseOrder())
-                    .forEach(p -> {
-                        FileUtils.deleteQuietly(p.toFile());
-                    });
+                    .forEach(p -> FileUtils.deleteQuietly(p.toFile()));
             } catch (final IOException e) {
                 throw new RuntimeException(e);
             }
