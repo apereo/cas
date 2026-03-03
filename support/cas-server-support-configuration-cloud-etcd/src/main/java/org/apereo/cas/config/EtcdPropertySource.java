@@ -3,6 +3,7 @@ package org.apereo.cas.config;
 import module java.base;
 import org.apereo.cas.configuration.api.MutablePropertySource;
 import org.apereo.cas.util.function.FunctionUtils;
+import com.google.errorprone.annotations.CanIgnoreReturnValue;
 import io.etcd.jetcd.ByteSequence;
 import io.etcd.jetcd.Client;
 import io.etcd.jetcd.options.GetOption;
@@ -35,6 +36,7 @@ public class EtcdPropertySource extends EnumerablePropertySource<Client> impleme
     }
 
     @Override
+    @CanIgnoreReturnValue
     public MutablePropertySource setProperty(final String name, final Object value) {
         val profileName = propertyNames
             .stream()

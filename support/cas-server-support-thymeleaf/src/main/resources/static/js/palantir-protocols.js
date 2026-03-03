@@ -431,6 +431,30 @@ async function initializeSAML2ProtocolOperations() {
         });
 
 
+        if (CasActuatorEndpoints.samlIdpRegisteredServiceMetadata()) {
+            showElements($("#saml2metadatamgmt-li"));
+            $("#saml2MetadataManagersSelect").empty().selectmenu({
+                width: "500px"
+            });
+            $.get(`${CasActuatorEndpoints.samlIdpRegisteredServiceMetadata()}/managers`, response => {
+                response.forEach((manager, idx) => {
+                    $("#saml2MetadataManagersSelect").append(
+                        $("<option>", {
+                            value: manager.sourceId,
+                            text: manager.name,
+                            selected: idx === 0
+                        })
+                    );
+                });
+                $("#saml2MetadataManagersSelect").selectmenu("refresh");
+            }).fail((xhr, status, error) => {
+                console.error("Error fetching data:", error);
+                displayBanner(xhr);
+            });
+        } else {
+            hideElements($("#saml2metadatamgmt-li"));
+        }
+
         if (CasActuatorEndpoints.env()) {
             const saml2ConfigurationPropsTable = $("#saml2ConfigurationPropsTable").DataTable({
                 lengthChange: false,
