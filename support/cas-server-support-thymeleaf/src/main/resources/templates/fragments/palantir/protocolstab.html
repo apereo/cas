@@ -108,177 +108,204 @@
 
             <div id="saml2protocol-tab">
                 <section id="saml2ProtocolContainer">
+                    <p>Manage and test SAML2 identity provider features, including entity configuration,
+                        request/response simulation, metadata cache operations, and review of active configuration properties.</p>
+                    <div class="jqueryui-tabs" id="saml2-inner-tabs">
+                        <ul>
+                            <li><a id="saml2entityid" href="#saml2entityid-tab">Entity ID</a></li>
+                            <li><a id="saml2requests" href="#saml2requests-tab">Requests/Responses</a></li>
+                            <li><a id="saml2metadata" href="#saml2metadata-tab">Metadata Cache</a></li>
+                            <li class="d-none" id="saml2metadatamgmt-li"><a id="saml2metadatamgmt" href="#saml2metadatamgmt-tab">Metadata Management</a></li>
+                            <li><a id="saml2configprops" href="#saml2configprops-tab">Configuration</a></li>
+                        </ul>
 
-                    <div>
-                        <h3>SAML2 Entity ID</h3>
-                        <p>Your entity ID is a globally-unique identifier for CAS acting as a SAML2 identity provider. This id is
-                            usually a URL or a URI, although it doesn't have to point to an actual web resource.</p>
-                        <pre><code id="saml2EntityId" class="border-rounded language-html"></code></pre>
-                        <p>Your SAML2 entity id must also match and be specified in your <a href="javascript:showSaml2IdPMetadata()">
-                            SAML2 Identity Provider Metadata.</a></p>
-                    </div>
+                        <div id="saml2entityid-tab">
+                            <div>
+                                <h3>SAML2 Entity ID</h3>
+                                <p>Your entity ID is a globally-unique identifier for CAS acting as a SAML2 identity provider. This id is
+                                    usually a URL or a URI, although it doesn't have to point to an actual web resource.</p>
+                                <pre><code id="saml2EntityId" class="border-rounded language-html"></code></pre>
+                                <p>Your SAML2 entity id must also match and be specified in your <a href="javascript:showSaml2IdPMetadata()">
+                                    SAML2 Identity Provider Metadata.</a></p>
+                            </div>
+                        </div>
 
+                        <div id="saml2requests-tab">
+                            <h3>SAML2 Requests/Responses</h3>
+                            <p>You can simulate SAML2 responses for SAML2 service providers.</p>
+                            <form id="fmSaml2Protocol" class="d-block">
+                                <section class="saml2-field form-group my-3 mdc-input-group d-flex">
+                                    <div class="mdc-input-group-field mdc-input-group-field-append w-100">
+                                        <label for="saml2ProtocolEntityId"
+                                               class="mdc-text-field mdc-text-field--outlined control-label mdc-text-field--with-trailing-icon mb-2">
+                                            <span class="mdc-notched-outline">
+                                                <span class="mdc-notched-outline__leading"></span>
+                                                <span class="mdc-notched-outline__notch">
+                                                    <span class="mdc-floating-label">Entity ID</span>
+                                                </span>
+                                                <span class="mdc-notched-outline__trailing"></span>
+                                            </span>
+                                            <input class="mdc-text-field__input form-control" type="text"
+                                                   name="saml2ProtocolEntityId" data-param-name="entityId" tabindex="0"
+                                                   id="saml2ProtocolEntityId" size="50" autocomplete="off" required/>
+                                        </label>
+                                        <label for="saml2ProtocolUsername"
+                                               class="mdc-text-field mdc-text-field--outlined control-label mdc-text-field--with-trailing-icon mb-2">
+                                            <span class="mdc-notched-outline">
+                                                <span class="mdc-notched-outline__leading"></span>
+                                                <span class="mdc-notched-outline__notch">
+                                                    <span class="mdc-floating-label">Username</span>
+                                                </span>
+                                                <span class="mdc-notched-outline__trailing"></span>
+                                            </span>
+                                            <input class="mdc-text-field__input form-control" type="text"
+                                                   name="saml2ProtocolUsername" data-param-name="username"
+                                                   tabindex="0" id="saml2ProtocolUsername" size="50" autocomplete="off" required/>
+                                        </label>
+                                        <label for="saml2ProtocolPassword"
+                                               class="mdc-text-field mdc-text-field--outlined control-label mdc-text-field--with-trailing-icon mb-2">
+                                            <span class="mdc-notched-outline">
+                                                <span class="mdc-notched-outline__leading"></span>
+                                                <span class="mdc-notched-outline__notch">
+                                                    <span class="mdc-floating-label">Password</span>
+                                                </span>
+                                                <span class="mdc-notched-outline__trailing"></span>
+                                            </span>
+                                            <input class="mdc-text-field__input form-control pwd" type="password"
+                                                   name="saml2ProtocolPassword" data-param-name="password" tabindex="0"
+                                                   id="saml2ProtocolPassword" size="50" autocomplete="off"/>
+                                            <button
+                                                    class="reveal-password align-self-end mdc-button mdc-button--raised btn btn-primary mdc-input-group-append mdc-icon-button"
+                                                    tabindex="-1"
+                                                    type="button">
+                                                <i class="mdi mdi-eye fas fa-eye reveal-password-icon" style="vertical-align: middle;"
+                                                   aria-hidden="true"></i>
+                                                <span class="visually-hidden">Toggle Token</span>
+                                            </button>
+                                        </label>
+                                    </div>
 
-                    <h3>SAML2 Requests/Responses</h3>
-                    <p>You can simulate SAML2 responses for SAML2 service providers.</p>
-                    <form id="fmSaml2Protocol" class="d-block">
-                        <section class="saml2-field form-group my-3 mdc-input-group d-flex">
-                            <div class="mdc-input-group-field mdc-input-group-field-append w-100">
-                                <label for="saml2ProtocolEntityId"
-                                       class="mdc-text-field mdc-text-field--outlined control-label mdc-text-field--with-trailing-icon mb-2">
-                                    <span class="mdc-notched-outline">
-                                        <span class="mdc-notched-outline__leading"></span>
-                                        <span class="mdc-notched-outline__notch">
-                                            <span class="mdc-floating-label">Entity ID</span>
-                                        </span>
-                                        <span class="mdc-notched-outline__trailing"></span>
-                                    </span>
-                                    <input class="mdc-text-field__input form-control" type="text"
-                                           name="saml2ProtocolEntityId" data-param-name="entityId" tabindex="0"
-                                           id="saml2ProtocolEntityId" size="50" autocomplete="off" required/>
-                                </label>
-                                <label for="saml2ProtocolUsername"
-                                       class="mdc-text-field mdc-text-field--outlined control-label mdc-text-field--with-trailing-icon mb-2">
-                                    <span class="mdc-notched-outline">
-                                        <span class="mdc-notched-outline__leading"></span>
-                                        <span class="mdc-notched-outline__notch">
-                                            <span class="mdc-floating-label">Username</span>
-                                        </span>
-                                        <span class="mdc-notched-outline__trailing"></span>
-                                    </span>
-                                    <input class="mdc-text-field__input form-control" type="text"
-                                           name="saml2ProtocolUsername" data-param-name="username"
-                                           tabindex="0" id="saml2ProtocolUsername" size="50" autocomplete="off" required/>
-                                </label>
-                                <label for="saml2ProtocolPassword"
-                                       class="mdc-text-field mdc-text-field--outlined control-label mdc-text-field--with-trailing-icon mb-2">
-                                    <span class="mdc-notched-outline">
-                                        <span class="mdc-notched-outline__leading"></span>
-                                        <span class="mdc-notched-outline__notch">
-                                            <span class="mdc-floating-label">Password</span>
-                                        </span>
-                                        <span class="mdc-notched-outline__trailing"></span>
-                                    </span>
-                                    <input class="mdc-text-field__input form-control pwd" type="password"
-                                           name="saml2ProtocolPassword" data-param-name="password" tabindex="0"
-                                           id="saml2ProtocolPassword" size="50" autocomplete="off"/>
-                                    <button
-                                            class="reveal-password align-self-end mdc-button mdc-button--raised btn btn-primary mdc-input-group-append mdc-icon-button"
-                                            tabindex="-1"
-                                            type="button">
-                                        <i class="mdi mdi-eye fas fa-eye reveal-password-icon" style="vertical-align: middle;"
-                                           aria-hidden="true"></i>
-                                        <span class="visually-hidden">Toggle Token</span>
+                                </section>
+                                <div class="d-flex">
+                                    <button type="button" name="saml2ProtocolPostButton"
+                                            title="Simulate a SAML2 POST Response"
+                                            id="saml2ProtocolPostButton"
+                                            class="mdc-button mdc-button--raised">
+                                        <span class="mdc-button__label"><i class="mdc-tab__icon mdi mdi-check-all"
+                                                                           aria-hidden="true"></i>POST Response</span>
                                     </button>
-                                </label>
+                                    <button type="button" name="saml2ProtocolLogoutButton"
+                                            title="Simulate a SAML2 Logout Request"
+                                            id="saml2ProtocolLogoutButton"
+                                            class="mdc-button mdc-button--raised">
+                                        <span class="mdc-button__label"><i class="mdc-tab__icon mdi mdi-exit-run"
+                                                                           aria-hidden="true"></i>Logout Request</span>
+                                    </button>
+                                </div>
+                            </form>
+                            <section class="my-3 d-flex h-450px d-none" id="saml2ProtocolEditorContainer">
+                                <pre class="ace-editor ace-relative w-100 h-100" id="saml2ProtocolEditor"></pre>
+                                <pre class="ace-editor ace-relative w-100 h-100 d-none" id="saml2ProtocolLogoutEditor"></pre>
+                            </section>
+                        </div>
+
+                        <div id="saml2metadata-tab">
+                            <h3>SAML2 Metadata Cache</h3>
+                            <p>You may also fetch, refresh or invalidate SAML2 metadata entries that are cached by CAS.
+                                The service could be the registered service numeric identifier, its name or actual service id.
+                                In case the SAML2 service definition points to an aggregate, you may also specify an entity id to locate the
+                                SAML2 service provider within that aggregate. If you do not specify a service, all entries in
+                                the SAML2 metadata cache will be invalidated.</p>
+
+                            <form id="fmSaml2MetadataCache" class="d-block">
+                                <section class="saml2-field form-group my-3 mdc-input-group d-flex">
+                                    <div class="mdc-input-group-field mdc-input-group-field-append w-100">
+                                        <label for="saml2MetadataCacheService"
+                                               class="mdc-text-field mdc-text-field--outlined control-label mdc-text-field--with-trailing-icon mb-2">
+                                            <span class="mdc-notched-outline">
+                                                <span class="mdc-notched-outline__leading"></span>
+                                                <span class="mdc-notched-outline__notch">
+                                                    <span class="mdc-floating-label">Service</span>
+                                                </span>
+                                                <span class="mdc-notched-outline__trailing"></span>
+                                            </span>
+                                            <input class="mdc-text-field__input form-control" type="text"
+                                                   name="saml2MetadataCacheService" data-param-name="service" tabindex="0"
+                                                   id="saml2MetadataCacheService" size="50" autocomplete="off"/>
+                                        </label>
+                                        <label for="saml2MetadataCacheEntityId"
+                                               class="mdc-text-field mdc-text-field--outlined control-label mdc-text-field--with-trailing-icon mb-2">
+                                            <span class="mdc-notched-outline">
+                                                <span class="mdc-notched-outline__leading"></span>
+                                                <span class="mdc-notched-outline__notch">
+                                                    <span class="mdc-floating-label">Entity ID</span>
+                                                </span>
+                                                <span class="mdc-notched-outline__trailing"></span>
+                                            </span>
+                                            <input class="mdc-text-field__input form-control" type="text"
+                                                   name="saml2MetadataCacheEntityId" data-param-name="entityId" tabindex="0"
+                                                   id="saml2MetadataCacheEntityId" size="50" autocomplete="off"/>
+                                        </label>
+                                    </div>
+
+                                </section>
+                                <div class="d-flex">
+                                    <button type="button" name="saml2MetadataCacheFetchButton"
+                                            title="Fetch SAML2 Metadata Cache Entry"
+                                            id="saml2MetadataCacheFetchButton"
+                                            class="mdc-button mdc-button--raised">
+                                        <span class="mdc-button__label"><i class="mdc-tab__icon mdi mdi-download"
+                                                                           aria-hidden="true"></i>Fetch</span>
+                                    </button>
+                                    <button type="button" name="saml2MetadataCacheInvalidateButton"
+                                            title="Invalidate SAML2 Metadata Cache Entry"
+                                            id="saml2MetadataCacheInvalidateButton"
+                                            class="mdc-button mdc-button--raised">
+                                        <span class="mdc-button__label"><i class="mdc-tab__icon mdi mdi-delete" aria-hidden="true"></i>Invalidate</span>
+                                    </button>
+                                </div>
+                            </form>
+                            <p class="d-none" id="saml2MetadataCacheDetails"></p>
+                            <section class="my-3 d-flex h-450px d-none" id="saml2MetadataCacheEditorContainer">
+                                <pre class="ace-editor ace-relative w-100 h-100" id="saml2MetadataCacheEditor"></pre>
+                            </section>
+                        </div>
+
+                        <div id="saml2metadatamgmt-tab">
+                            <h3>SAML2 Metadata Management</h3>
+                            <p>Manage SAML2 metadata sources registered with CAS. Select a metadata manager from the dropdown below
+                                to view and work with its configuration.</p>
+                            <label for="saml2MetadataManagersSelect">
+                                Metadata Manager:
+                                <select id="saml2MetadataManagersSelect" class="jqueryui-selectmenu">
+                                </select>
+                            </label>
+                        </div>
+
+                        <div id="saml2configprops-tab">
+                            <div class="min-height-90" id="saml2ConfigurationPropsPanel">
+                                <div class="mdc-card p-4 gradient-card">
+                                    <h3>
+                                        <i class="p-1 mdc-tab__icon mdi" style="vertical-align:baseline;" aria-hidden="true"></i>
+                                        Configuration Properties
+                                    </h3>
+                                </div>
+                                <div class="p-2" style="background: white;">
+                                    <table id="saml2ConfigurationPropsTable" class="mdc-data-table__table table table-striped noborder">
+                                        <thead>
+                                        <tr class="mdc-data-table__header-row">
+                                            <th class="mdc-data-table__header-cell" role="columnheader" scope="col">Property</th>
+                                            <th class="mdc-data-table__header-cell" role="columnheader" scope="col">Description</th>
+                                        </tr>
+                                        </thead>
+                                        <tbody class="mdc-data-table__content">
+
+                                        </tbody>
+                                    </table>
+                                </div>
                             </div>
-
-                        </section>
-                        <div class="d-flex">
-                            <button type="button" name="saml2ProtocolPostButton"
-                                    title="Simulate a SAML2 POST Response"
-                                    id="saml2ProtocolPostButton"
-                                    class="mdc-button mdc-button--raised">
-                                <span class="mdc-button__label"><i class="mdc-tab__icon mdi mdi-check-all"
-                                                                   aria-hidden="true"></i>POST Response</span>
-                            </button>
-                            <button type="button" name="saml2ProtocolLogoutButton"
-                                    title="Simulate a SAML2 Logout Request"
-                                    id="saml2ProtocolLogoutButton"
-                                    class="mdc-button mdc-button--raised">
-                                <span class="mdc-button__label"><i class="mdc-tab__icon mdi mdi-exit-run"
-                                                                   aria-hidden="true"></i>Logout Request</span>
-                            </button>
-                        </div>
-                    </form>
-                    <section class="my-3 d-flex h-450px d-none" id="saml2ProtocolEditorContainer">
-                        <pre class="ace-editor ace-relative w-100 h-100" id="saml2ProtocolEditor"></pre>
-                        <pre class="ace-editor ace-relative w-100 h-100 d-none" id="saml2ProtocolLogoutEditor"></pre>
-                    </section>
-
-                    <h3 class="py-3">SAML2 Metadata Cache</h3>
-                    <p>You may also fetch, refresh or invalidate SAML2 metadata entries that are cached by CAS.
-                        The service could be the registered service numeric identifier, its name or actual service id.
-                        In case the SAML2 service definition points to an aggregate, you may also specify an entity id to locate the
-                        SAML2 service provider within that aggregate. If you do not specify a service, all entries in
-                        the SAML2 metadata cache will be invalidated.</p>
-
-                    <form id="fmSaml2MetadataCache" class="d-block">
-                        <section class="saml2-field form-group my-3 mdc-input-group d-flex">
-                            <div class="mdc-input-group-field mdc-input-group-field-append w-100">
-                                <label for="saml2MetadataCacheService"
-                                       class="mdc-text-field mdc-text-field--outlined control-label mdc-text-field--with-trailing-icon mb-2">
-                                    <span class="mdc-notched-outline">
-                                        <span class="mdc-notched-outline__leading"></span>
-                                        <span class="mdc-notched-outline__notch">
-                                            <span class="mdc-floating-label">Service</span>
-                                        </span>
-                                        <span class="mdc-notched-outline__trailing"></span>
-                                    </span>
-                                    <input class="mdc-text-field__input form-control" type="text"
-                                           name="saml2MetadataCacheService" data-param-name="service" tabindex="0"
-                                           id="saml2MetadataCacheService" size="50" autocomplete="off"/>
-                                </label>
-                                <label for="saml2MetadataCacheEntityId"
-                                       class="mdc-text-field mdc-text-field--outlined control-label mdc-text-field--with-trailing-icon mb-2">
-                                    <span class="mdc-notched-outline">
-                                        <span class="mdc-notched-outline__leading"></span>
-                                        <span class="mdc-notched-outline__notch">
-                                            <span class="mdc-floating-label">Entity ID</span>
-                                        </span>
-                                        <span class="mdc-notched-outline__trailing"></span>
-                                    </span>
-                                    <input class="mdc-text-field__input form-control" type="text"
-                                           name="saml2MetadataCacheEntityId" data-param-name="entityId" tabindex="0"
-                                           id="saml2MetadataCacheEntityId" size="50" autocomplete="off"/>
-                                </label>
-                            </div>
-
-                        </section>
-                        <div class="d-flex">
-                            <button type="button" name="saml2MetadataCacheFetchButton"
-                                    title="Fetch SAML2 Metadata Cache Entry"
-                                    id="saml2MetadataCacheFetchButton"
-                                    class="mdc-button mdc-button--raised">
-                                <span class="mdc-button__label"><i class="mdc-tab__icon mdi mdi-download"
-                                                                   aria-hidden="true"></i>Fetch</span>
-                            </button>
-                            <button type="button" name="saml2MetadataCacheInvalidateButton"
-                                    title="Invalidate SAML2 Metadata Cache Entry"
-                                    id="saml2MetadataCacheInvalidateButton"
-                                    class="mdc-button mdc-button--raised">
-                                <span class="mdc-button__label"><i class="mdc-tab__icon mdi mdi-delete" aria-hidden="true"></i>Invalidate</span>
-                            </button>
-                        </div>
-                    </form>
-                    <p class="d-none" id="saml2MetadataCacheDetails"></p>
-                    <section class="my-3 d-flex h-450px d-none" id="saml2MetadataCacheEditorContainer">
-                        <pre class="ace-editor ace-relative w-100 h-100" id="saml2MetadataCacheEditor"></pre>
-                    </section>
-
-                    <p class="pb-3">
-                    <div class="min-height-90 hide" id="saml2ConfigurationPropsPanel">
-                        <div class="mdc-card p-4 gradient-card">
-                            <h3>
-                                <i class="p-1 mdc-tab__icon mdi" style="vertical-align:baseline;" aria-hidden="true"></i>
-                                Configuration Properties
-                            </h3>
-                        </div>
-                        <div class="p-2" style="background: white;">
-                            <table id="saml2ConfigurationPropsTable" class="mdc-data-table__table table table-striped noborder">
-                                <thead>
-                                <tr class="mdc-data-table__header-row">
-                                    <th class="mdc-data-table__header-cell" role="columnheader" scope="col">Property</th>
-                                    <th class="mdc-data-table__header-cell" role="columnheader" scope="col">Description</th>
-                                </tr>
-                                </thead>
-                                <tbody class="mdc-data-table__content">
-
-                                </tbody>
-                            </table>
                         </div>
                     </div>
-                    
                 </section>
 
                 <div class="mdc-dialog modal" id="saml2MetadataDialog" role="alertdialog"

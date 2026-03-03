@@ -191,6 +191,10 @@ class CasActuatorEndpoints {
         return actuatorEndpoints.entityhistory || actuatorEndpoints.entityHistory;
     }
 
+    static samlIdpRegisteredServiceMetadata() {
+        return actuatorEndpoints.samlidpregisteredservicemetadata || actuatorEndpoints.samlIdpRegisteredServiceMetadata;
+    }
+
     static samlIdpRegisteredServiceMetadataCache() {
         return actuatorEndpoints.samlidpregisteredservicemetadatacache || actuatorEndpoints.samlIdpRegisteredServiceMetadataCache;
     }
