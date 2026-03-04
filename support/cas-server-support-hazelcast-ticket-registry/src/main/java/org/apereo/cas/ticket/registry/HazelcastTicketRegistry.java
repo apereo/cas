@@ -20,6 +20,7 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
 import org.springframework.beans.factory.DisposableBean;
 import org.springframework.context.ConfigurableApplicationContext;
 
@@ -301,15 +302,13 @@ public class HazelcastTicketRegistry extends AbstractTicketRegistry implements A
         shutdown();
     }
 
-    private IMap<String, HazelcastTicketDocument> getTicketMapInstanceByMetadata(final TicketDefinition metadata) {
+    private @Nullable IMap<String, HazelcastTicketDocument> getTicketMapInstanceByMetadata(final TicketDefinition metadata) {
         val mapName = metadata.getProperties().getStorageName();
         LOGGER.debug("Locating map name [{}] for ticket definition [{}]", mapName, metadata);
         return getTicketMapInstance(mapName);
     }
 
-    private IMap<String, HazelcastTicketDocument> getTicketMapInstance(
-        @NonNull
-        final String mapName) {
+    private @Nullable IMap<String, HazelcastTicketDocument> getTicketMapInstance(@NonNull final String mapName) {
         return FunctionUtils.doAndHandle(() -> {
             val inst = hazelcastInstance.<String, HazelcastTicketDocument>getMap(mapName);
             LOGGER.debug("Located Hazelcast map instance [{}]", mapName);

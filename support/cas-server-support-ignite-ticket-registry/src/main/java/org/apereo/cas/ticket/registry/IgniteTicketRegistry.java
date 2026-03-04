@@ -77,7 +77,7 @@ public class IgniteTicketRegistry extends AbstractTicketRegistry implements Disp
         if (ticket instanceof final EncodedTicket encoded) {
             entry.set("ticket", encoded.getEncodedTicket());
         } else {
-            entry.set("ticket", getSerializeAndEncode(ticket));
+            entry.set("ticket", serializeAndEncodeTicket(ticket));
         }
         kvView.put(null, Tuple.create().set("id", encodedTicket.getId()), entry);
         return ticket;
