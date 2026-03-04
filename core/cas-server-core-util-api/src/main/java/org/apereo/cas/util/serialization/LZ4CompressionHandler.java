@@ -28,7 +28,13 @@ public class LZ4CompressionHandler {
         this.decompressor = factory.fastDecompressor();
     }
 
-    public byte[] compress(final byte[] raw) {
+    /**
+     * Compress byte [].
+     *
+     * @param raw the raw
+     * @return the byte []
+     */
+    public byte @Nullable [] compress(final byte[] raw) {
         if (raw == null || raw.length == 0) {
             return raw;
         }
@@ -42,6 +48,12 @@ public class LZ4CompressionHandler {
         return Arrays.copyOf(compressed, 4 + compressedLength);
     }
 
+    /**
+     * Decompress byte[].
+     *
+     * @param bytes the bytes
+     * @return the byte[]
+     */
     public byte @Nullable [] decompress(final byte @Nullable [] bytes) {
         if (bytes == null || bytes.length <= HEADER_LENGTH) {
             return bytes;
