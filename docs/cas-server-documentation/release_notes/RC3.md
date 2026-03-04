@@ -81,7 +81,14 @@ CAS codebase is now annotated with [JSpecify](https://jspecify.dev/) annotations
 return types and fields. We will gradually extend the coverage of such annotations across the entire codebase in future releases
 and will integrate the Gradle build tool with tools such as [NullAway](https://github.com/uber/NullAway) to prevent nullness contract violations
 during compile time.
-   
+
+### Java 26
+
+As described earlier, the JDK baseline requirement for this CAS release is and MUST be 
+JDK `25`. CAS is however able to compile and run with Java `26` as well with an updated 
+version of the Gradle build tool. Again, remember that the baseline requirement will remain 
+unchanged and this is just a preparatory step to ensure CAS is ready for the next version of Java.
+
 ### SPIFFE Support
 
 CAS now supports [SPIFFE](https://spiffe.io/), used for client mTLS authentication in OAuth and OpenID Connect flows.
