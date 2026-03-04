@@ -16,11 +16,6 @@ import org.springframework.data.redis.serializer.SerializationException;
  */
 @RequiredArgsConstructor
 public class LZ4CompressionRedisSerializer<T> implements RedisSerializer<@NonNull T> {
-    /**
-     * Bytes reserved to store original length.
-     */
-    private static final int HEADER_LENGTH = Integer.BYTES;
-
     private final RedisSerializer<@NonNull T> delegate;
     private final LZ4CompressionHandler compressionHandler;
 
