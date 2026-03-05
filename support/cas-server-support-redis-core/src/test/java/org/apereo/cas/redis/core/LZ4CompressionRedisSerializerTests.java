@@ -1,6 +1,7 @@
 package org.apereo.cas.redis.core;
 
 import module java.base;
+import org.apereo.cas.util.serialization.LZ4CompressionHandler;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
@@ -8,18 +9,18 @@ import org.springframework.data.redis.serializer.StringRedisSerializer;
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
- * This is {@link Lz4CompressionRedisSerializerTests}.
+ * This is {@link LZ4CompressionRedisSerializerTests}.
  *
  * @author Misagh Moayyed
  * @since 8.0.0
  */
 @Tag("Redis")
-class Lz4CompressionRedisSerializerTests {
+class LZ4CompressionRedisSerializerTests {
 
     @Test
     void verifyOperation() throws Exception {
         val stringRedisSerializer = new StringRedisSerializer();
-        val serializer = new Lz4CompressionRedisSerializer(stringRedisSerializer);
+        val serializer = new LZ4CompressionRedisSerializer(stringRedisSerializer, new LZ4CompressionHandler());
         val original = "This is a test string for LZ4 compression serializer in Redis.";
         val serialized = serializer.serialize(original);
         assertNotNull(serialized);
@@ -29,7 +30,7 @@ class Lz4CompressionRedisSerializerTests {
 
     @Test
     void verifyMismatchOperation() {
-        val serializer = new Lz4CompressionRedisSerializer(new StringRedisSerializer());
+        val serializer = new LZ4CompressionRedisSerializer(new StringRedisSerializer(), new LZ4CompressionHandler());
         val notCompressed = new byte[] {
             (byte) 0xAD,
             (byte) 0xB2,

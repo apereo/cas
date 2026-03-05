@@ -466,7 +466,11 @@ async function fetchServices(callback) {
                     });
                     metadataSourcesCount++;
                 }
-                $("#saml2metadataproviders").toggle(metadataSourcesCount > 0);
+                if (metadataSourcesCount > 0) {
+                    showElements($("#saml2metadataproviders").parent());
+                } else {
+                    hideElements($("#saml2metadataproviders").parent());
+                }
             }
 
             applicationsTable.on("draw", async () => {

@@ -6,13 +6,12 @@ import org.apereo.cas.audit.AuditResourceResolvers;
 import org.apereo.cas.audit.AuditableActions;
 import org.apereo.cas.configuration.model.support.saml.idp.SamlIdPProperties;
 import org.apereo.cas.git.GitRepository;
-import org.apereo.cas.git.PathRegexPatternTreeFilter;
 import org.apereo.cas.support.saml.OpenSamlConfigBean;
 import org.apereo.cas.support.saml.services.SamlRegisteredService;
 import org.apereo.cas.support.saml.services.idp.metadata.SamlMetadataDocument;
 import org.apereo.cas.support.saml.services.idp.metadata.cache.resolver.BaseSamlRegisteredServiceMetadataResolver;
+import org.apereo.cas.support.saml.services.idp.metadata.cache.resolver.SamlRegisteredServiceMetadataManager;
 import org.apereo.cas.util.LoggingUtils;
-import org.apereo.cas.util.RegexUtils;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import net.shibboleth.shared.resolver.CriteriaSet;
@@ -21,6 +20,7 @@ import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.inspektr.audit.annotation.Audit;
+import org.jspecify.annotations.Nullable;
 import org.opensaml.saml.metadata.resolver.MetadataResolver;
 
 /**
@@ -30,10 +30,9 @@ import org.opensaml.saml.metadata.resolver.MetadataResolver;
  * @since 6.3.0
  */
 @Slf4j
-public class GitSamlRegisteredServiceMetadataResolver extends BaseSamlRegisteredServiceMetadataResolver {
-    private static final Pattern PATTERN_METADATA_FILES = RegexUtils.createPattern(".+\\.xml", Pattern.CASE_INSENSITIVE);
-
-    private static final Pattern PATTERN_SIGNATURE_FILES = RegexUtils.createPattern(".+\\.pem", Pattern.CASE_INSENSITIVE);
+public class GitSamlRegisteredServiceMetadataResolver extends BaseSamlRegisteredServiceMetadataResolver
+    implements SamlRegisteredServiceMetadataManager {
+    private static final char SEPARATOR = '-';
 
     private final GitRepository gitRepository;
 
@@ -44,28 +43,6 @@ public class GitSamlRegisteredServiceMetadataResolver extends BaseSamlRegistered
         this.gitRepository = gitRepository;
     }
 
-    private static void removeFile(final File metadataFile) throws IOException {
-        val result = !metadataFile.exists() || metadataFile.delete();
-        LOGGER.trace("Deleted service definition file [{}]: [{}]",
-            metadataFile.getCanonicalPath(), BooleanUtils.toStringYesNo(result));
-    }
-
-    private static SamlMetadataDocument parseGitObjectContentIntoSamlMetadataDocument(final GitRepository.GitObject gitObject,
-                                                                                      final Collection<GitRepository.GitObject> signatureFiles) {
-        val name = FilenameUtils.removeExtension(gitObject.getPath());
-        val signature = signatureFiles.stream()
-            .filter(sigFile -> name.equalsIgnoreCase(FilenameUtils.removeExtension(sigFile.getPath())))
-            .findFirst()
-            .map(GitRepository.GitObject::getContent)
-            .orElse(StringUtils.EMPTY);
-
-        return SamlMetadataDocument.builder()
-            .id(System.nanoTime())
-            .name(name)
-            .value(gitObject.getContent())
-            .signature(signature)
-            .build();
-    }
 
     @Audit(action = AuditableActions.SAML2_METADATA_RESOLUTION,
         actionResolverName = AuditActionResolvers.SAML2_METADATA_RESOLUTION_ACTION_RESOLVER,
@@ -73,18 +50,8 @@ public class GitSamlRegisteredServiceMetadataResolver extends BaseSamlRegistered
     @Override
     public Collection<? extends MetadataResolver> resolve(final SamlRegisteredService service,
                                                           final CriteriaSet criteriaSet) throws Exception {
-        if (gitRepository.pull()) {
-            LOGGER.debug("Successfully pulled metadata changes from the remote repository");
-        } else {
-            LOGGER.warn("Unable to pull changes from the remote repository. Metadata files may be stale.");
-        }
-        val metadataFiles = gitRepository.getObjectsInRepository(new PathRegexPatternTreeFilter(PATTERN_METADATA_FILES));
-        val signatureFiles = gitRepository.getObjectsInRepository(new PathRegexPatternTreeFilter(PATTERN_SIGNATURE_FILES));
-
-        return metadataFiles
+        return load()
             .stream()
-            .filter(Objects::nonNull)
-            .map(object -> parseGitObjectContentIntoSamlMetadataDocument(object, signatureFiles))
             .map(doc -> buildMetadataResolverFrom(service, doc))
             .filter(Objects::nonNull)
             .collect(Collectors.toList());
@@ -97,32 +64,158 @@ public class GitSamlRegisteredServiceMetadataResolver extends BaseSamlRegistered
         }
         val metadataLocation = service.getMetadataLocation();
         return metadataLocation != null
-               && (metadataLocation.trim().startsWith("git://")
-                   || (metadataLocation.trim().startsWith("http") && metadataLocation.trim().endsWith(".git")));
+            && (metadataLocation.trim().startsWith(getSourceId())
+            || (metadataLocation.trim().startsWith("http") && metadataLocation.trim().endsWith(".git")));
     }
 
     @Override
-    public void saveOrUpdate(final SamlMetadataDocument document) {
+    public String getSourceId() {
+        return "git://";
+    }
+
+    @Override
+    public List<SamlMetadataDocument> load() {
         try {
-            val repoDirectory = this.gitRepository.getRepositoryDirectory();
+            if (gitRepository.pull()) {
+                LOGGER.debug("Successfully pulled metadata changes from the remote repository");
+            } else {
+                LOGGER.warn("Unable to pull changes from the remote repository. Metadata files may be stale.");
+            }
+            val repoDirectory = getMetadataDirectory();
+            val metadataFiles = FileUtils.listFiles(repoDirectory, new String[]{"xml"}, false);
+            return metadataFiles
+                .stream()
+                .map(GitSamlRegisteredServiceMetadataResolver::parseFileIntoSamlMetadataDocument)
+                .filter(Objects::nonNull)
+                .collect(Collectors.toList());
+        } catch (final Exception e) {
+            LoggingUtils.error(LOGGER, e);
+        }
+        return List.of();
+    }
 
-            val metadataFile = new File(repoDirectory, document.getName() + ".xml");
-            removeFile(metadataFile);
+    @Override
+    public SamlMetadataDocument store(final SamlMetadataDocument document) {
+        try {
+            document.assignIdIfNecessary();
 
-            val signatureFile = new File(repoDirectory, document.getName() + ".pem");
-            removeFile(signatureFile);
+            val repoDirectory = getMetadataDirectory();
+            removeDocumentFiles(repoDirectory, document.getName());
+
+            val filePrefix = document.getId() + String.valueOf(SEPARATOR) + document.getName();
+            val metadataFile = new File(repoDirectory, filePrefix + ".xml");
+            val signatureFile = new File(repoDirectory, filePrefix + ".pem");
 
             FileUtils.writeStringToFile(metadataFile, document.getValue(), StandardCharsets.UTF_8);
             FileUtils.writeStringToFile(signatureFile, document.getSignature(), StandardCharsets.UTF_8);
-            this.gitRepository.commitAll("Committed " + document.getName());
-            this.gitRepository.push();
+            gitRepository.commitAll("Committed " + document.getName());
+            gitRepository.push();
+        } catch (final Exception e) {
+            LoggingUtils.error(LOGGER, e);
+        }
+        return document;
+    }
+
+    @Override
+    public void removeById(final long id) {
+        findById(id).ifPresent(document -> removeByName(document.getName()));
+    }
+
+    @Override
+    public void removeByName(final String name) {
+        try {
+            val repoDirectory = getMetadataDirectory();
+            removeDocumentFiles(repoDirectory, name);
+            gitRepository.commitAll("Removed " + name);
+            gitRepository.push();
         } catch (final Exception e) {
             LoggingUtils.error(LOGGER, e);
         }
     }
 
     @Override
+    public Optional<SamlMetadataDocument> findByName(final String name) {
+        return load()
+            .stream()
+            .filter(document -> name.equalsIgnoreCase(document.getName()))
+            .findFirst();
+    }
+
+    @Override
+    public Optional<SamlMetadataDocument> findById(final long id) {
+        return load()
+            .stream()
+            .filter(document -> document.getId() == id)
+            .findFirst();
+    }
+
+    @Override
+    public void removeAll() {
+        try {
+            val repoDirectory = getMetadataDirectory();
+            FileUtils.cleanDirectory(repoDirectory);
+            gitRepository.commitAll("Removed all metadata documents");
+            gitRepository.push();
+        } catch (final Exception e) {
+            LoggingUtils.error(LOGGER, e);
+        }
+    }
+
+
+    @Override
     public boolean isAvailable(final SamlRegisteredService service) {
         return supports(service);
+    }
+
+    protected File getMetadataDirectory() {
+        val directory = new File(gitRepository.getRepositoryDirectory(), "sp-metadata");
+        if (directory.mkdirs()) {
+            LOGGER.trace("Created metadata directory [{}]", directory);
+        }
+        return directory;
+    }
+
+    private static void removeFile(final File metadataFile) throws IOException {
+        val result = !metadataFile.exists() || metadataFile.delete();
+        LOGGER.trace("Deleted service definition file [{}]: [{}]",
+            metadataFile.getCanonicalPath(), BooleanUtils.toStringYesNo(result));
+    }
+
+    private static void removeDocumentFiles(final File repoDirectory, final String name) throws IOException {
+        val files = repoDirectory.listFiles((dir, fileName) -> {
+            val baseName = FilenameUtils.removeExtension(fileName);
+            val parsed = baseName.indexOf(SEPARATOR);
+            return parsed > 0 && baseName.substring(parsed + 1).equalsIgnoreCase(name);
+        });
+        if (files != null) {
+            for (val file : files) {
+                removeFile(file);
+            }
+        }
+    }
+
+    private static @Nullable SamlMetadataDocument parseFileIntoSamlMetadataDocument(final File metadataFile) {
+        try {
+            val baseName = FilenameUtils.removeExtension(metadataFile.getName());
+            val separatorIndex = baseName.indexOf(SEPARATOR);
+            val id = separatorIndex > 0 ? Long.parseLong(baseName.substring(0, separatorIndex)) : System.nanoTime();
+            val name = separatorIndex > 0 ? baseName.substring(separatorIndex + 1) : baseName;
+
+            val value = FileUtils.readFileToString(metadataFile, StandardCharsets.UTF_8);
+            val signatureFile = new File(metadataFile.getParentFile(), baseName + ".pem");
+            val signature = signatureFile.exists()
+                ? FileUtils.readFileToString(signatureFile, StandardCharsets.UTF_8)
+                : StringUtils.EMPTY;
+
+            return SamlMetadataDocument.builder()
+                .id(id)
+                .name(name)
+                .value(value)
+                .signature(signature)
+                .build();
+        } catch (final Exception e) {
+            LoggingUtils.error(LOGGER, e);
+        }
+        return null;
     }
 }

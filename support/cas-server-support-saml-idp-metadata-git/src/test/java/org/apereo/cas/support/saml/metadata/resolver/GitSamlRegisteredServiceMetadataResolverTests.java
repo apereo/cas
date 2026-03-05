@@ -33,13 +33,13 @@ import static org.junit.jupiter.api.Assertions.*;
     "cas.authn.saml-idp.metadata.http.metadata-backup-location=file://${java.io.tmpdir}/metadata-backups",
 
     "cas.authn.saml-idp.metadata.git.schedule.enabled=true",
-    
+
     "cas.authn.saml-idp.metadata.git.sign-commits=false",
     "cas.authn.saml-idp.metadata.git.push-changes=true",
     "cas.authn.saml-idp.metadata.git.idp-metadata-enabled=true",
     "cas.authn.saml-idp.metadata.git.crypto.enabled=false",
     "cas.authn.saml-idp.metadata.git.repository-url=file://${java.io.tmpdir}/cas-metadata-data",
-    "cas.authn.saml-idp.metadata.git.clone-directory.location=file://${java.io.tmpdir}/cas-saml-metadata-gsrsmrt"
+    "cas.authn.saml-idp.metadata.git.clone-directory.location=file://${java.io.tmpdir}/cas-saml-metadata-cloned"
 })
 @Slf4j
 @Tag("Git")
@@ -47,7 +47,7 @@ class GitSamlRegisteredServiceMetadataResolverTests extends BaseGitSamlMetadataT
     @Autowired
     @Qualifier("gitSamlRegisteredServiceRepositoryScheduler")
     private Runnable gitSamlRegisteredServiceRepositoryScheduler;
-    
+
     @BeforeAll
     public static void setup() {
         try {
@@ -73,7 +73,7 @@ class GitSamlRegisteredServiceMetadataResolverTests extends BaseGitSamlMetadataT
             FunctionUtils.doAndHandle(
                 _ -> PathUtils.deleteDirectory(gitRepoDir.toPath(), StandardDeleteOption.OVERRIDE_READ_ONLY));
         }
-        val cloneDirectory = "cas-saml-metadata-gsrsmrt";
+        val cloneDirectory = "cas-saml-metadata-cloned";
         val gitCloneRepoDir = new File(FileUtils.getTempDirectory(), cloneDirectory);
         if (gitCloneRepoDir.exists()) {
             FunctionUtils.doAndHandle(
@@ -83,11 +83,12 @@ class GitSamlRegisteredServiceMetadataResolverTests extends BaseGitSamlMetadataT
 
     @Test
     void verifyResolver() throws Throwable {
-        val md = new SamlMetadataDocument();
+        var md = new SamlMetadataDocument();
         md.setName("SP");
         md.setValue(IOUtils.toString(new ClassPathResource("sp-metadata.xml").getInputStream(), StandardCharsets.UTF_8));
         md.setSignature(IOUtils.toString(new ClassPathResource("cert.pem").getInputStream(), StandardCharsets.UTF_8));
-        resolver.saveOrUpdate(md);
+        val metadataManager = resolver.getMetadataManager().orElseThrow();
+        metadataManager.store(md);
 
         val service = new SamlRegisteredService();
         service.setName("SAML Service");
@@ -104,10 +105,109 @@ class GitSamlRegisteredServiceMetadataResolverTests extends BaseGitSamlMetadataT
 
         assertDoesNotThrow(() -> {
             gitSamlRegisteredServiceRepositoryScheduler.run();
-            
             resolver.resolve(null, null);
-            resolver.saveOrUpdate(null);
-
+            metadataManager.store(null);
         });
+    }
+
+    @Test
+    void verifyLoad() throws Throwable {
+        val metadataManager = resolver.getMetadataManager().orElseThrow();
+        metadataManager.removeAll();
+        assertTrue(metadataManager.load().isEmpty());
+
+        var md = new SamlMetadataDocument();
+        md.setName("SP");
+        md.setValue(IOUtils.toString(new ClassPathResource("sp-metadata.xml").getInputStream(), StandardCharsets.UTF_8));
+        md.setSignature(IOUtils.toString(new ClassPathResource("cert.pem").getInputStream(), StandardCharsets.UTF_8));
+        metadataManager.store(md);
+
+        val documents = metadataManager.load();
+        assertEquals(1, documents.size());
+        assertEquals("SP", documents.getFirst().getName());
+    }
+
+    @Test
+    void verifyFindByName() throws Throwable {
+        val metadataManager = resolver.getMetadataManager().orElseThrow();
+        metadataManager.removeAll();
+
+        var md = new SamlMetadataDocument();
+        md.setName("SP");
+        md.setValue(IOUtils.toString(new ClassPathResource("sp-metadata.xml").getInputStream(), StandardCharsets.UTF_8));
+        md.setSignature(IOUtils.toString(new ClassPathResource("cert.pem").getInputStream(), StandardCharsets.UTF_8));
+        metadataManager.store(md);
+
+        val found = metadataManager.findByName("SP");
+        assertTrue(found.isPresent());
+        assertEquals("SP", found.get().getName());
+        assertTrue(metadataManager.findByName("Unknown").isEmpty());
+    }
+
+    @Test
+    void verifyFindById() throws Throwable {
+        val metadataManager = resolver.getMetadataManager().orElseThrow();
+        metadataManager.removeAll();
+
+        var md = new SamlMetadataDocument();
+        md.setName("SP");
+        md.setValue(IOUtils.toString(new ClassPathResource("sp-metadata.xml").getInputStream(), StandardCharsets.UTF_8));
+        md.setSignature(IOUtils.toString(new ClassPathResource("cert.pem").getInputStream(), StandardCharsets.UTF_8));
+        metadataManager.store(md);
+
+        val loaded = metadataManager.findByName("SP").orElseThrow();
+        val found = metadataManager.findById(loaded.getId());
+        assertTrue(found.isPresent());
+        assertEquals("SP", found.get().getName());
+        assertTrue(metadataManager.findById(-999).isEmpty());
+    }
+
+    @Test
+    void verifyRemoveByName() throws Throwable {
+        val metadataManager = resolver.getMetadataManager().orElseThrow();
+        metadataManager.removeAll();
+
+        var md = new SamlMetadataDocument();
+        md.setName("SP");
+        md.setValue(IOUtils.toString(new ClassPathResource("sp-metadata.xml").getInputStream(), StandardCharsets.UTF_8));
+        md.setSignature(IOUtils.toString(new ClassPathResource("cert.pem").getInputStream(), StandardCharsets.UTF_8));
+        metadataManager.store(md);
+
+        metadataManager.removeByName("SP");
+        assertTrue(metadataManager.findByName("SP").isEmpty());
+        assertTrue(metadataManager.load().isEmpty());
+    }
+
+    @Test
+    void verifyRemoveById() throws Throwable {
+        val metadataManager = resolver.getMetadataManager().orElseThrow();
+        metadataManager.removeAll();
+
+        var md = new SamlMetadataDocument();
+        md.setName("SP");
+        md.setValue(IOUtils.toString(new ClassPathResource("sp-metadata.xml").getInputStream(), StandardCharsets.UTF_8));
+        md.setSignature(IOUtils.toString(new ClassPathResource("cert.pem").getInputStream(), StandardCharsets.UTF_8));
+        metadataManager.store(md);
+
+        val loaded = metadataManager.findByName("SP").orElseThrow();
+        metadataManager.removeById(loaded.getId());
+        assertTrue(metadataManager.findByName("SP").isEmpty());
+        assertTrue(metadataManager.load().isEmpty());
+    }
+
+    @Test
+    void verifyRemoveAll() throws Throwable {
+        val metadataManager = resolver.getMetadataManager().orElseThrow();
+        metadataManager.removeAll();
+
+        val md = new SamlMetadataDocument();
+        md.setName("SP");
+        md.setValue(IOUtils.toString(new ClassPathResource("sp-metadata.xml").getInputStream(), StandardCharsets.UTF_8));
+        md.setSignature(IOUtils.toString(new ClassPathResource("cert.pem").getInputStream(), StandardCharsets.UTF_8));
+        metadataManager.store(md);
+        assertFalse(metadataManager.load().isEmpty());
+
+        metadataManager.removeAll();
+        assertTrue(metadataManager.load().isEmpty());
     }
 }

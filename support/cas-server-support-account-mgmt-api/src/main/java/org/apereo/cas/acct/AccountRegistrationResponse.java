@@ -9,6 +9,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
 import lombok.experimental.Accessors;
+import org.jspecify.annotations.Nullable;
 
 /**
  * This is {@link AccountRegistrationResponse}.
@@ -56,7 +57,7 @@ public class AccountRegistrationResponse implements Serializable {
      */
     @JsonIgnore
     public boolean isSuccess() {
-        return containsProperty("success") && getProperty("success", Boolean.class);
+        return containsProperty("success") && Boolean.TRUE.equals(getProperty("success", Boolean.class));
     }
 
     /**
@@ -78,7 +79,7 @@ public class AccountRegistrationResponse implements Serializable {
      * @return the property
      */
     @JsonIgnore
-    public <T> T getProperty(final String name, final Class<T> clazz) {
+    public <T> @Nullable T getProperty(final String name, final Class<T> clazz) {
         return clazz.cast(properties.get(name));
     }
 
@@ -100,8 +101,10 @@ public class AccountRegistrationResponse implements Serializable {
      * @return the account registration response
      */
     @CanIgnoreReturnValue
-    public AccountRegistrationResponse putProperty(final String name, final Object value) {
-        this.properties.put(name, value);
+    public AccountRegistrationResponse putProperty(final String name, @Nullable final Object value) {
+        if (value != null) {
+            this.properties.put(name, value);
+        }
         return this;
     }
 

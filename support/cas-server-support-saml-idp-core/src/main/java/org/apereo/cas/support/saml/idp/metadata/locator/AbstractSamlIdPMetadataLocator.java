@@ -16,6 +16,7 @@ import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.jooq.lambda.Unchecked;
 import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
 import org.springframework.context.ApplicationContext;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.core.io.Resource;
@@ -139,5 +140,5 @@ public abstract class AbstractSamlIdPMetadataLocator implements SamlIdPMetadataL
         return getResource(decodedContent);
     }
 
-    protected abstract SamlIdPMetadataDocument fetchInternal(Optional<SamlRegisteredService> registeredService) throws Exception;
+    protected abstract @Nullable SamlIdPMetadataDocument fetchInternal(Optional<SamlRegisteredService> registeredService) throws Exception;
 }
