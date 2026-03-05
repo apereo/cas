@@ -11,6 +11,7 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import net.spy.memcached.MemcachedClientIF;
 import org.apache.commons.pool2.ObjectPool;
+import org.jspecify.annotations.Nullable;
 import org.springframework.beans.factory.DisposableBean;
 import org.springframework.context.ConfigurableApplicationContext;
 
@@ -44,12 +45,12 @@ public class MemcachedTicketRegistry extends AbstractTicketRegistry implements D
     }
 
     @Override
-    public Ticket updateTicket(final Ticket ticketToUpdate) throws Exception {
+    public @Nullable Ticket updateTicket(final Ticket ticketToUpdate) throws Exception {
         val ticket = encodeTicket(ticketToUpdate);
         LOGGER.debug("Updating ticket [{}]", ticket);
         val clientFromPool = getClientFromPool();
         try {
-            clientFromPool.replace(ticket.getId(), getTimeout(ticketToUpdate), ticket);
+            clientFromPool.replace(Objects.requireNonNull(ticket).getId(), getTimeout(ticketToUpdate), ticket);
         } catch (final Exception e) {
             LOGGER.error("Failed updating [{}]", ticket);
             LoggingUtils.error(LOGGER, e);
@@ -65,7 +66,7 @@ public class MemcachedTicketRegistry extends AbstractTicketRegistry implements D
         try {
             val ticket = encodeTicket(ticketToAdd);
             LOGGER.trace("Adding ticket [{}]", ticket);
-            clientFromPool.set(ticket.getId(), getTimeout(ticketToAdd), ticket);
+            clientFromPool.set(Objects.requireNonNull(ticket).getId(), getTimeout(ticketToAdd), ticket);
         } catch (final Exception e) {
             LOGGER.error("Failed adding [{}]", ticketToAdd);
             LoggingUtils.error(LOGGER, e);
@@ -97,14 +98,14 @@ public class MemcachedTicketRegistry extends AbstractTicketRegistry implements D
     }
 
     @Override
-    public Ticket getTicket(final String ticketIdToGet, final Predicate<Ticket> predicate) {
+    public @Nullable Ticket getTicket(final String ticketIdToGet, final Predicate<Ticket> predicate) {
         val clientFromPool = getClientFromPool();
         val ticketId = digestIdentifier(ticketIdToGet);
         try {
             val ticketFromCache = (Ticket) clientFromPool.get(ticketId);
             if (ticketFromCache != null) {
                 val result = decodeTicket(ticketFromCache);
-                if (predicate.test(result)) {
+                if (result != null && predicate.test(result)) {
                     return result;
                 }
                 return null;
@@ -154,9 +155,7 @@ public class MemcachedTicketRegistry extends AbstractTicketRegistry implements D
 
     private void returnClientToPool(final MemcachedClientIF clientFromPool) {
         try {
-            if (clientFromPool != null) {
-                this.connectionPool.returnObject(clientFromPool);
-            }
+            connectionPool.returnObject(clientFromPool);
         } catch (final Exception e) {
             LoggingUtils.error(LOGGER, e);
         }

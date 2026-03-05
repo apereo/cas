@@ -6,7 +6,6 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import net.spy.memcached.MemcachedClientIF;
 import org.apache.commons.pool2.ObjectPool;
-import org.jspecify.annotations.NonNull;
 import org.springframework.boot.health.contributor.Health;
 
 /**
@@ -28,7 +27,7 @@ public class MemcachedHealthIndicator extends AbstractCacheHealthIndicator {
     }
 
     @Override
-    protected void doHealthCheck(final Health.@NonNull Builder builder) {
+    protected void doHealthCheck(final Health.Builder builder) {
         try {
             val client = getClientFromPool();
             if (client.getAvailableServers().isEmpty()) {

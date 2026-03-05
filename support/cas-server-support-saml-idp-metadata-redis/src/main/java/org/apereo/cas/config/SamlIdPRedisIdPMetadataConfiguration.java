@@ -133,8 +133,7 @@ class SamlIdPRedisIdPMetadataConfiguration {
             .supply(() -> new RedisSamlIdPMetadataLocator(samlIdPMetadataGeneratorCipherExecutor,
                 samlIdPMetadataCache,
                 redisSamlIdPMetadataTemplate,
-                applicationContext,
-                casProperties.getAuthn().getSamlIdp().getMetadata().getRedis().getScanCount()))
+                applicationContext))
             .otherwiseProxy()
             .get();
     }

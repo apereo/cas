@@ -57,7 +57,7 @@ public class SubmitAccountRegistrationAction extends BaseCasWebflowAction {
     protected @Nullable Event doExecuteInternal(final RequestContext requestContext) {
         try {
             val registrationRequest = buildRegistrationRequest(requestContext);
-            val username = accountRegistrationService.getAccountRegistrationUsernameBuilder().build(registrationRequest);
+            val username = Objects.requireNonNull(accountRegistrationService.getAccountRegistrationUsernameBuilder().build(registrationRequest));
             AccountRegistrationUtils.putAccountRegistrationRequest(requestContext, registrationRequest);
             AccountRegistrationUtils.putAccountRegistrationRequestUsername(requestContext, username);
 
@@ -89,7 +89,7 @@ public class SubmitAccountRegistrationAction extends BaseCasWebflowAction {
 
     protected boolean sendAccountRegistrationActivationSms(
         final RequestContext requestContext, final AccountRegistrationRequest registrationRequest,
-        final String url) throws Throwable {
+        final String url) {
         if (StringUtils.isNotBlank(registrationRequest.getPhone())) {
             val smsProps = casProperties.getAccountRegistration().getSms();
             val message = SmsBodyBuilder.builder().properties(smsProps).parameters(Map.of("url", url)).build().get();
@@ -104,8 +104,7 @@ public class SubmitAccountRegistrationAction extends BaseCasWebflowAction {
         }
         return false;
     }
-
-
+    
     protected EmailCommunicationResult sendAccountRegistrationActivationEmail(final AccountRegistrationRequest registrationRequest,
                                                                               final String url,
                                                                               final RequestContext requestContext) {

@@ -118,7 +118,7 @@ class Cas20ResponseViewTests extends AbstractServiceValidateControllerTests {
         val sId = getCentralAuthenticationService().grantServiceTicket(tId.getId(), service, ctx);
         request.addParameter(CasProtocolConstants.PARAMETER_TICKET, sId.getId());
         
-        val modelAndView = this.serviceValidateController.handleRequestInternal(request, new MockHttpServletResponse());
+        val modelAndView = serviceValidateController.handleRequestInternal(request, new MockHttpServletResponse());
         assertNotNull(modelAndView);
         assertNotNull(modelAndView.getView());
         assertTrue(modelAndView.getView().toString().contains("Failure"));
@@ -140,7 +140,7 @@ class Cas20ResponseViewTests extends AbstractServiceValidateControllerTests {
         request.addParameter(CasProtocolConstants.PARAMETER_PROXY_GRANTING_TICKET_URL, SERVICE.getId());
         request.addParameter(CasProtocolConstants.PARAMETER_SERVICE, SERVICE.getId());
         request.addParameter(CasProtocolConstants.PARAMETER_TICKET, sId.getId());
-        val modelAndView = this.serviceValidateController.handleRequestInternal(request, new MockHttpServletResponse());
+        val modelAndView = serviceValidateController.handleRequestInternal(request, new MockHttpServletResponse());
         assertNotNull(modelAndView);
         assertNotNull(modelAndView.getView());
         assertTrue(modelAndView.getView().toString().contains("Failure"));

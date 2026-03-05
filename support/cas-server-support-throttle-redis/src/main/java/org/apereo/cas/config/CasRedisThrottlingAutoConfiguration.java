@@ -79,9 +79,8 @@ public class CasRedisThrottlingAutoConfiguration {
         final CasConfigurationProperties casProperties) {
         return BeanSupplier.of(ThrottledSubmissionHandlerInterceptor.class)
             .when(CONDITION.given(applicationContext.getEnvironment()))
-            .supply(() -> new RedisThrottledSubmissionHandlerInterceptorAdapter(authenticationThrottlingConfigurationContext,
-                throttleRedisTemplate,
-                casProperties.getAudit().getRedis().getScanCount()))
+            .supply(() -> new RedisThrottledSubmissionHandlerInterceptorAdapter(
+                authenticationThrottlingConfigurationContext, throttleRedisTemplate))
             .otherwise(ThrottledSubmissionHandlerInterceptor::noOp)
             .get();
     }
