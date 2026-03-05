@@ -65,7 +65,9 @@ public class SamlIdPMetadataController {
         metadataAndCertificatesGenerationService.generate(registeredService);
         response.setContentType(CONTENT_TYPE);
         response.setStatus(HttpServletResponse.SC_OK);
-        try (val md = samlIdPMetadataLocator.resolveMetadata(registeredService).getInputStream()) {
+        val metadata = samlIdPMetadataLocator.resolveMetadata(registeredService);
+        Objects.requireNonNull(metadata, "Unable to resolve and locate identity provider metadata source");
+        try (val md = metadata.getInputStream()) {
             val contents = IOUtils.toString(md, StandardCharsets.UTF_8);
             try (val writer = response.getWriter()) {
                 LOGGER.debug("Producing metadata for the response");

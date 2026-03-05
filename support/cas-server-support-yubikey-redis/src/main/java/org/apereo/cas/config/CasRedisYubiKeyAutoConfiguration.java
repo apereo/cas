@@ -83,8 +83,7 @@ public class CasRedisYubiKeyAutoConfiguration {
         return BeanSupplier.of(YubiKeyAccountRegistry.class)
             .when(CONDITION.given(applicationContext.getEnvironment()))
             .supply(() -> {
-                val registry = new RedisYubiKeyAccountRegistry(yubiKeyAccountValidator, redisYubiKeyTemplate,
-                    casProperties.getAuthn().getMfa().getYubikey().getRedis().getScanCount());
+                val registry = new RedisYubiKeyAccountRegistry(yubiKeyAccountValidator, redisYubiKeyTemplate);
                 registry.setCipherExecutor(yubikeyAccountCipherExecutor);
                 return registry;
             })

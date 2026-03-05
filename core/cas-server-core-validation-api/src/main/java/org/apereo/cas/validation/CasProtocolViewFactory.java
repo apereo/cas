@@ -2,6 +2,7 @@ package org.apereo.cas.validation;
 
 import module java.base;
 import org.apache.commons.lang3.StringUtils;
+import org.jspecify.annotations.Nullable;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.web.servlet.View;
 
@@ -31,9 +32,9 @@ public interface CasProtocolViewFactory {
      * @param contentType        the content type
      * @return the view
      */
-    View create(ConfigurableApplicationContext applicationContext,
-                String viewName,
-                String contentType);
+    @Nullable View create(ConfigurableApplicationContext applicationContext,
+                          String viewName,
+                          String contentType);
 
     /**
      * Create view.
@@ -42,7 +43,7 @@ public interface CasProtocolViewFactory {
      * @param viewName           the view name
      * @return the view
      */
-    default View create(final ConfigurableApplicationContext applicationContext, final String viewName) {
+    default @Nullable View create(final ConfigurableApplicationContext applicationContext, final String viewName) {
         return create(applicationContext, viewName, StringUtils.EMPTY);
     }
 }

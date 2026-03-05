@@ -19,6 +19,7 @@ dependencies {
     implementation libraries.oshi
     implementation libraries.apachevelocity
     implementation libraries.springsecurityweb
+    implementation libraries.lz4
     
     testImplementation libraries.nimbus
     

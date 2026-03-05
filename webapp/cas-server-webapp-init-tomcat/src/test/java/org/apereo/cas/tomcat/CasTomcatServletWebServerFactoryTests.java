@@ -4,16 +4,20 @@ import module java.base;
 import org.apereo.cas.config.CasEmbeddedContainerTomcatAutoConfiguration;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import lombok.val;
+import org.apache.commons.lang3.ArrayUtils;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.builder.SpringApplicationBuilder;
+import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.tomcat.autoconfigure.TomcatServerProperties;
 import org.springframework.boot.web.server.autoconfigure.ServerProperties;
 import org.springframework.boot.web.server.autoconfigure.servlet.ServletWebServerFactoryCustomizer;
 import org.springframework.boot.web.server.servlet.ConfigurableServletWebServerFactory;
+import org.springframework.context.ConfigurableApplicationContext;
 
 /**
  * This is {@link CasTomcatServletWebServerFactoryTests}.
@@ -76,12 +80,17 @@ class CasTomcatServletWebServerFactoryTests {
     @Qualifier("casTomcatEmbeddedServletContainerCustomizer")
     private ServletWebServerFactoryCustomizer casTomcatEmbeddedServletContainerCustomizer;
 
+    @Autowired
+    private ConfigurableApplicationContext applicationContext;
+    
     @Test
     void verifyOperation() {
+        val springApplication = new SpringApplicationBuilder(CasTomcatServletWebServerFactoryTests.class).build();
         casTomcatEmbeddedServletContainerCustomizer.customize(casServletWebServerFactory);
         val server = casServletWebServerFactory.getWebServer();
         try {
             server.start();
+            applicationContext.publishEvent(new ApplicationReadyEvent(springApplication, ArrayUtils.EMPTY_STRING_ARRAY, applicationContext, Duration.ofSeconds(2)));
         } finally {
             server.stop();
         }

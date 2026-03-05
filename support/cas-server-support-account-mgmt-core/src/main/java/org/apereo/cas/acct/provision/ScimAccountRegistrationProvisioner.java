@@ -30,10 +30,11 @@ public class ScimAccountRegistrationProvisioner implements AccountRegistrationPr
     public AccountRegistrationResponse provision(final AccountRegistrationRequest request) throws Throwable {
         val attributes = new LinkedHashMap<String, List<Object>>();
         request.asMap().forEach((key, value) -> attributes.put(key, CollectionUtils.wrapList(value)));
-        val principal = principalFactory.createPrincipal(request.getUsername(), attributes);
-        val credential = new UsernamePasswordCredential(request.getUsername(), request.getPassword());
+        val username = Objects.requireNonNull(request.getUsername());
+        val principal = Objects.requireNonNull(principalFactory.createPrincipal(username, attributes));
+        val credential = new UsernamePasswordCredential(username, request.getPassword());
         val result = principalProvisioner.provision(principal, credential);
-        LOGGER.debug("Provisioned account registration request for [{}]: [{}]", request.getUsername(),
+        LOGGER.debug("Provisioned account registration request for [{}]: [{}]", username,
             BooleanUtils.toString(result, "success", "failure"));
         return result ? AccountRegistrationResponse.success() : new AccountRegistrationResponse();
     }

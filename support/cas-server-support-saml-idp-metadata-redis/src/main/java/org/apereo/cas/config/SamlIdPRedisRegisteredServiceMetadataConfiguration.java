@@ -52,8 +52,7 @@ class SamlIdPRedisRegisteredServiceMetadataConfiguration {
             .supply(() -> {
                 val idp = casProperties.getAuthn().getSamlIdp();
                 return new RedisSamlRegisteredServiceMetadataResolver(idp, openSamlConfigBean,
-                    redisSamlRegisteredServiceMetadataResolverTemplate,
-                    casProperties.getAuthn().getSamlIdp().getMetadata().getRedis().getScanCount());
+                    redisSamlRegisteredServiceMetadataResolverTemplate);
             })
             .otherwiseProxy()
             .get();

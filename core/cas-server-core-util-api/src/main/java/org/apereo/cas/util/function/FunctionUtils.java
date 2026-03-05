@@ -305,7 +305,7 @@ public class FunctionUtils {
      * @param falseFunction the false function
      * @return the supplier
      */
-    public static <R> Supplier<R> doIfNull(final Object input,
+    public static <R> Supplier<R> doIfNull(final @Nullable Object input,
                                            final Supplier<R> trueFunction,
                                            final Supplier<R> falseFunction) {
         return () -> {

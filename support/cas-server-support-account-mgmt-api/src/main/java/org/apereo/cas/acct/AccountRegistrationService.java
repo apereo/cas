@@ -2,6 +2,7 @@ package org.apereo.cas.acct;
 
 import module java.base;
 import org.apereo.cas.acct.provision.AccountRegistrationProvisioner;
+import org.jspecify.annotations.Nullable;
 
 /**
  * This is {@link AccountRegistrationService}.
@@ -58,5 +59,5 @@ public interface AccountRegistrationService {
      * @return the account registration request
      * @throws Exception the exception
      */
-    AccountRegistrationRequest validateToken(String token) throws Exception;
+    @Nullable AccountRegistrationRequest validateToken(String token) throws Exception;
 }
