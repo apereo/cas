@@ -19,6 +19,7 @@ import lombok.experimental.SuperBuilder;
 @JsonTypeInfo(use = JsonTypeInfo.Id.CLASS)
 @SuperBuilder
 @NoArgsConstructor
+@SuppressWarnings("NullAway.Init")
 public class AccountRegistrationProperty implements Serializable {
     @Serial
     private static final long serialVersionUID = -7637969227639901358L;

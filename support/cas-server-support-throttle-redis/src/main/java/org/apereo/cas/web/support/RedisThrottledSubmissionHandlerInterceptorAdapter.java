@@ -21,15 +21,11 @@ import jakarta.servlet.http.HttpServletRequest;
 public class RedisThrottledSubmissionHandlerInterceptorAdapter extends AbstractInspektrAuditHandlerInterceptorAdapter {
     private final CasRedisTemplate<String, Object> redisTemplate;
 
-    private final long scanCount;
-
     public RedisThrottledSubmissionHandlerInterceptorAdapter(
         final ThrottledSubmissionHandlerConfigurationContext configurationContext,
-        final CasRedisTemplate<String, Object> redisTemplate,
-        final long scanCount) {
+        final CasRedisTemplate<String, Object> redisTemplate) {
         super(configurationContext);
         this.redisTemplate = redisTemplate;
-        this.scanCount = scanCount;
     }
 
     @Override
@@ -37,7 +33,7 @@ public class RedisThrottledSubmissionHandlerInterceptorAdapter extends AbstractI
         val clientInfo = ClientInfoHolder.getClientInfo();
         val remoteAddress = clientInfo.getClientIpAddress();
         val throttle = getConfigurationContext().getCasProperties().getAuthn().getThrottle();
-        try (val keys = redisTemplate.scan(RedisAuditTrailManager.CAS_AUDIT_CONTEXT_PREFIX + '*', this.scanCount)) {
+        try (val keys = redisTemplate.scan(RedisAuditTrailManager.CAS_AUDIT_CONTEXT_PREFIX + '*')) {
             val username = getUsernameParameterFromRequest(request);
             val failures = keys
                 .map((Function<String, BoundValueOperations>) redisTemplate::boundValueOps)

@@ -62,11 +62,11 @@ public class JsonResourceMetadataResolver extends BaseSamlRegisteredServiceMetad
 
         this.jsonResource = new FileSystemResource(new File(metadataDir, "saml-sp-metadata.json"));
         LOGGER.debug("Service provider metadata as JSON may be found at [{}]", jsonResource);
-        if (this.jsonResource.exists()) {
-            this.metadataMap = readDecisionsFromJsonResource();
-            this.watcherService = FunctionUtils.doUnchecked(() -> new FileWatcherService(jsonResource.getFile(),
+        if (jsonResource.exists()) {
+            metadataMap = readDecisionsFromJsonResource();
+            watcherService = FunctionUtils.doUnchecked(() -> new FileWatcherService(jsonResource.getFile(),
                 file -> this.metadataMap = readDecisionsFromJsonResource()));
-            this.watcherService.start(getClass().getSimpleName());
+            watcherService.start(getClass().getSimpleName());
         }
     }
 
@@ -94,8 +94,8 @@ public class JsonResourceMetadataResolver extends BaseSamlRegisteredServiceMetad
 
     @Override
     public boolean supports(final SamlRegisteredService service) {
-        val metadataLocation = service.getMetadataLocation();
-        return metadataLocation.trim().startsWith("json://");
+        val metadataLocation = Objects.requireNonNull(service).getMetadataLocation();
+        return metadataLocation.trim().startsWith(getSourceId());
     }
 
     @Override
@@ -108,6 +108,10 @@ public class JsonResourceMetadataResolver extends BaseSamlRegisteredServiceMetad
         if (this.watcherService != null) {
             this.watcherService.close();
         }
+    }
+
+    private static String getSourceId() {
+        return "json://";
     }
 
     /**
