@@ -38,7 +38,7 @@ async function initializeHeimdallOperations() {
         const heimdallViewResourceEditor = initializeAceEditor("heimdallViewResourceEditor", "json");
         heimdallViewResourceEditor.setReadOnly(true);
 
-        function fetchHeimdallResources(heimdallViewResourceEditor) {
+        function fetchHeimdallResources() {
             $.get(`${CasActuatorEndpoints.heimdall()}/resources`, response => {
                 heimdallResourcesTable.clear();
                 for (const [key, value] of Object.entries(response)) {
@@ -87,7 +87,7 @@ async function initializeHeimdallOperations() {
             });
         }
 
-        fetchHeimdallResources(heimdallViewResourceEditor);
+        fetchHeimdallResources();
 
         setInterval(() => {
             if (currentActiveTab === Tabs.ACCESS_STRATEGY.index) {
