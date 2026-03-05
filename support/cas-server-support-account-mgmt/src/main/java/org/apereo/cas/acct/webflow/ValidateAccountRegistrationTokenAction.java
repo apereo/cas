@@ -35,12 +35,12 @@ public class ValidateAccountRegistrationTokenAction extends BaseCasWebflowAction
         var accountRegTicket = (TransientSessionTicket) null;
         try {
             val activationToken = WebUtils.getRequestParameterOrAttribute(requestContext, AccountRegistrationUtils.REQUEST_PARAMETER_ACCOUNT_REGISTRATION_ACTIVATION_TOKEN).orElseThrow();
-            accountRegTicket = ticketRegistry.getTicket(activationToken, TransientSessionTicket.class);
+            accountRegTicket = Objects.requireNonNull(ticketRegistry.getTicket(activationToken, TransientSessionTicket.class));
             val token = accountRegTicket.getProperty(AccountRegistrationUtils.PROPERTY_ACCOUNT_REGISTRATION_ACTIVATION_TOKEN, String.class);
-            val registrationRequest = accountRegistrationService.validateToken(token);
+            val registrationRequest = Objects.requireNonNull(accountRegistrationService.validateToken(Objects.requireNonNull(token)));
             accountRegTicket.update();
 
-            val username = accountRegistrationService.getAccountRegistrationUsernameBuilder().build(registrationRequest);
+            val username = Objects.requireNonNull(accountRegistrationService.getAccountRegistrationUsernameBuilder().build(registrationRequest));
             AccountRegistrationUtils.putAccountRegistrationRequest(requestContext, registrationRequest);
             AccountRegistrationUtils.putAccountRegistrationRequestUsername(requestContext, username);
 

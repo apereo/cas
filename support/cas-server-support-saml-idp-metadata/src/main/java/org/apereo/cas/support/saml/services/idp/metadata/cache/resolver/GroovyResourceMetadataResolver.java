@@ -62,4 +62,5 @@ public class GroovyResourceMetadataResolver extends BaseSamlRegisteredServiceMet
         }
         return false;
     }
+
 }

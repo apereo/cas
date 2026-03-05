@@ -62,8 +62,8 @@ public abstract class AbstractServiceValidateControllerTests extends AbstractCen
     void onSetUp() throws Exception {
         val context = new StaticApplicationContext();
         context.refresh();
-        this.serviceValidateController = getServiceValidateControllerInstance();
-        this.serviceValidateController.setApplicationContext(context);
+        serviceValidateController = getServiceValidateControllerInstance();
+        serviceValidateController.setApplicationContext(context);
 
         val requestContext = MockRequestContext.create(context);
         requestContext
@@ -90,7 +90,7 @@ public abstract class AbstractServiceValidateControllerTests extends AbstractCen
 
     @Test
     void verifyEmptyParams() throws Throwable {
-        assertNotNull(this.serviceValidateController.handleRequestInternal(
+        assertNotNull(serviceValidateController.handleRequestInternal(
             new MockHttpServletRequest(), new MockHttpServletResponse()).getModel().get("code"));
     }
 
@@ -106,8 +106,8 @@ public abstract class AbstractServiceValidateControllerTests extends AbstractCen
         request.addParameter(CasProtocolConstants.PARAMETER_TICKET, sId.getId());
         request.addParameter(CasProtocolConstants.PARAMETER_PROXY_GRANTING_TICKET_URL, SERVICE.getId());
 
-        this.serviceValidateController.getServiceValidateConfigurationContext().setProxyHandler((credential, __) -> null);
-        val modelAndView = this.serviceValidateController.handleRequestInternal(request, new MockHttpServletResponse());
+        serviceValidateController.getServiceValidateConfigurationContext().setProxyHandler((credential, __) -> null);
+        val modelAndView = serviceValidateController.handleRequestInternal(request, new MockHttpServletResponse());
         assertFalse(Objects.requireNonNull(modelAndView.getView()).toString().contains(SUCCESS));
         assertNull(modelAndView.getModel().get(CasProtocolConstants.PARAMETER_PROXY_GRANTING_TICKET_IOU));
     }
@@ -123,19 +123,19 @@ public abstract class AbstractServiceValidateControllerTests extends AbstractCen
         request.addParameter(CasProtocolConstants.PARAMETER_SERVICE, SERVICE.getId());
         request.addParameter(CasProtocolConstants.PARAMETER_TICKET, sId.getId());
 
-        val mv = this.serviceValidateController.handleRequestInternal(request, new MockHttpServletResponse());
+        val mv = serviceValidateController.handleRequestInternal(request, new MockHttpServletResponse());
         assertTrue(Objects.requireNonNull(mv.getView()).toString().contains(SUCCESS));
     }
 
     @Test
     void verifyValidServiceTicketInvalidSpec() throws Throwable {
-        assertFalse(Objects.requireNonNull(this.serviceValidateController.handleRequestInternal(getHttpServletRequest(),
+        assertFalse(Objects.requireNonNull(serviceValidateController.handleRequestInternal(getHttpServletRequest(),
             new MockHttpServletResponse()).getView()).toString().contains(SUCCESS));
     }
 
     @Test
     void verifyRenewSpecFailsCorrectly() throws Throwable {
-        assertFalse(Objects.requireNonNull(this.serviceValidateController.handleRequestInternal(getHttpServletRequest(),
+        assertFalse(Objects.requireNonNull(serviceValidateController.handleRequestInternal(getHttpServletRequest(),
             new MockHttpServletResponse()).getView()).toString().contains(SUCCESS));
     }
 
@@ -153,7 +153,7 @@ public abstract class AbstractServiceValidateControllerTests extends AbstractCen
         request.addParameter(CasProtocolConstants.PARAMETER_SERVICE, SERVICE.getId());
         request.addParameter(CasProtocolConstants.PARAMETER_TICKET, sId.getId());
 
-        assertFalse(Objects.requireNonNull(this.serviceValidateController.handleRequestInternal(request,
+        assertFalse(Objects.requireNonNull(serviceValidateController.handleRequestInternal(request,
             new MockHttpServletResponse()).getView()).toString().contains(SUCCESS));
     }
 
@@ -169,7 +169,7 @@ public abstract class AbstractServiceValidateControllerTests extends AbstractCen
         request.addParameter(CasProtocolConstants.PARAMETER_TICKET, sId.getId());
         request.addParameter(CasProtocolConstants.PARAMETER_PROXY_GRANTING_TICKET_URL, SERVICE.getId());
 
-        val modelAndView = this.serviceValidateController.handleRequestInternal(request, new MockHttpServletResponse());
+        val modelAndView = serviceValidateController.handleRequestInternal(request, new MockHttpServletResponse());
         assertTrue(Objects.requireNonNull(modelAndView.getView()).toString().contains(SUCCESS));
         assertNotNull(modelAndView.getModel().get(CasProtocolConstants.PARAMETER_PROXY_GRANTING_TICKET_IOU));
     }
@@ -186,7 +186,7 @@ public abstract class AbstractServiceValidateControllerTests extends AbstractCen
         request.addParameter(CasProtocolConstants.PARAMETER_TICKET, sId.getId());
         request.addParameter(CasProtocolConstants.PARAMETER_PROXY_GRANTING_TICKET_URL, DEFAULT_SERVICE.getId());
 
-        val modelAndView = this.serviceValidateController.handleRequestInternal(request, new MockHttpServletResponse());
+        val modelAndView = serviceValidateController.handleRequestInternal(request, new MockHttpServletResponse());
         assertTrue(Objects.requireNonNull(modelAndView.getView()).toString().contains(SUCCESS));
         assertNull(modelAndView.getModel().get(CasProtocolConstants.PARAMETER_PROXY_GRANTING_TICKET_IOU));
     }
@@ -204,7 +204,7 @@ public abstract class AbstractServiceValidateControllerTests extends AbstractCen
         request.addParameter(CasProtocolConstants.PARAMETER_TICKET, sId.getId());
         request.addParameter(CasProtocolConstants.PARAMETER_PROXY_GRANTING_TICKET_URL, "http://www.github.com");
 
-        val modelAndView = this.serviceValidateController.handleRequestInternal(request, new MockHttpServletResponse());
+        val modelAndView = serviceValidateController.handleRequestInternal(request, new MockHttpServletResponse());
         assertFalse(Objects.requireNonNull(modelAndView.getView()).toString().contains(SUCCESS));
         assertNull(modelAndView.getModel().get(CasProtocolConstants.PARAMETER_PROXY_GRANTING_TICKET_IOU));
     }
@@ -222,7 +222,7 @@ public abstract class AbstractServiceValidateControllerTests extends AbstractCen
         request.addParameter(CasProtocolConstants.PARAMETER_TICKET, sId.getId());
         request.addParameter(CasProtocolConstants.PARAMETER_FORMAT, ValidationResponseType.JSON.name());
 
-        val modelAndView = this.serviceValidateController.handleRequestInternal(request, new MockHttpServletResponse());
+        val modelAndView = serviceValidateController.handleRequestInternal(request, new MockHttpServletResponse());
         assertTrue(Objects.requireNonNull(modelAndView.getView()).toString().contains("Json"));
     }
 
@@ -234,7 +234,7 @@ public abstract class AbstractServiceValidateControllerTests extends AbstractCen
         request.addParameter(CasProtocolConstants.PARAMETER_TICKET, "ST-123456");
         request.addParameter(CasProtocolConstants.PARAMETER_PROXY_CALLBACK_URL, GITHUB_URL);
 
-        val modelAndView = this.serviceValidateController.handleRequestInternal(request, new MockHttpServletResponse());
+        val modelAndView = serviceValidateController.handleRequestInternal(request, new MockHttpServletResponse());
         assertFalse(Objects.requireNonNull(modelAndView.getView()).toString().contains(SUCCESS));
     }
 
@@ -246,7 +246,7 @@ public abstract class AbstractServiceValidateControllerTests extends AbstractCen
         request.addParameter(CasProtocolConstants.PARAMETER_TICKET, "ST-123456");
         request.addParameter(CasProtocolConstants.PARAMETER_PROXY_CALLBACK_URL, GITHUB_URL);
 
-        val modelAndView = this.serviceValidateController.handleRequestInternal(request, new MockHttpServletResponse());
+        val modelAndView = serviceValidateController.handleRequestInternal(request, new MockHttpServletResponse());
         assertFalse(Objects.requireNonNull(modelAndView.getView()).toString().contains(SUCCESS));
     }
 
@@ -264,7 +264,7 @@ public abstract class AbstractServiceValidateControllerTests extends AbstractCen
         request.addParameter(CasProtocolConstants.PARAMETER_TICKET, sId.getId());
         request.addParameter(CasProtocolConstants.PARAMETER_FORMAT, "NOTHING");
 
-        val modelAndView = this.serviceValidateController.handleRequestInternal(request, new MockHttpServletResponse());
+        val modelAndView = serviceValidateController.handleRequestInternal(request, new MockHttpServletResponse());
         assertTrue(Objects.requireNonNull(modelAndView.getView()).toString().contains(SUCCESS));
     }
 
@@ -291,14 +291,14 @@ public abstract class AbstractServiceValidateControllerTests extends AbstractCen
         request.addParameter(CasProtocolConstants.PARAMETER_SERVICE, RegisteredServiceTestUtils.getService(reqSvc).getId());
         request.addParameter(CasProtocolConstants.PARAMETER_TICKET, sId.getId());
 
-        this.serviceValidateController.getServiceValidateConfigurationContext().setProxyHandler(new Cas10ProxyHandler());
-        assertTrue(Objects.requireNonNull(this.serviceValidateController.handleRequestInternal(request,
+        serviceValidateController.getServiceValidateConfigurationContext().setProxyHandler(new Cas10ProxyHandler());
+        assertTrue(Objects.requireNonNull(serviceValidateController.handleRequestInternal(request,
             new MockHttpServletResponse()).getView()).toString().contains(SUCCESS));
     }
 
     @Test
     void verifyValidServiceTicketWithSecurePgtUrl() throws Throwable {
-        this.serviceValidateController.getServiceValidateConfigurationContext().setProxyHandler(new Cas10ProxyHandler());
+        serviceValidateController.getServiceValidateConfigurationContext().setProxyHandler(new Cas10ProxyHandler());
         val modelAndView = getModelAndViewUponServiceValidationWithSecurePgtUrl(SERVICE);
         assertTrue(Objects.requireNonNull(modelAndView.getView()).toString().contains(SUCCESS));
     }
@@ -314,8 +314,8 @@ public abstract class AbstractServiceValidateControllerTests extends AbstractCen
         request.addParameter(CasProtocolConstants.PARAMETER_SERVICE, SERVICE.getId());
         request.addParameter(CasProtocolConstants.PARAMETER_TICKET, sId.getId());
         request.addParameter(CasProtocolConstants.PARAMETER_PROXY_GRANTING_TICKET_URL, SERVICE.getId());
-        this.serviceValidateController.getServiceValidateConfigurationContext().setProxyHandler(new Cas10ProxyHandler());
-        assertTrue(Objects.requireNonNull(this.serviceValidateController.handleRequestInternal(request, new MockHttpServletResponse())
+        serviceValidateController.getServiceValidateConfigurationContext().setProxyHandler(new Cas10ProxyHandler());
+        assertTrue(Objects.requireNonNull(serviceValidateController.handleRequestInternal(request, new MockHttpServletResponse())
             .getView()).toString().contains(SUCCESS));
     }
 
@@ -334,8 +334,8 @@ public abstract class AbstractServiceValidateControllerTests extends AbstractCen
         val request = new MockHttpServletRequest();
         request.addParameter(CasProtocolConstants.PARAMETER_SERVICE, RegisteredServiceTestUtils.getService(reqSvc).getId());
         request.addParameter(CasProtocolConstants.PARAMETER_TICKET, sId.getId());
-        this.serviceValidateController.getServiceValidateConfigurationContext().setProxyHandler(new Cas10ProxyHandler());
-        assertTrue(Objects.requireNonNull(this.serviceValidateController.handleRequestInternal(request, new MockHttpServletResponse()).getView())
+        serviceValidateController.getServiceValidateConfigurationContext().setProxyHandler(new Cas10ProxyHandler());
+        assertTrue(Objects.requireNonNull(serviceValidateController.handleRequestInternal(request, new MockHttpServletResponse()).getView())
             .toString().contains(SUCCESS));
     }
 
@@ -350,8 +350,8 @@ public abstract class AbstractServiceValidateControllerTests extends AbstractCen
         request.addParameter(CasProtocolConstants.PARAMETER_SERVICE, SERVICE.getId());
         request.addParameter(CasProtocolConstants.PARAMETER_TICKET, sId.getId());
         request.addParameter(CasProtocolConstants.PARAMETER_PROXY_GRANTING_TICKET_URL, "duh");
-        this.serviceValidateController.getServiceValidateConfigurationContext().setProxyHandler(new Cas10ProxyHandler());
-        val modelAndView = this.serviceValidateController.handleRequestInternal(request, new MockHttpServletResponse());
+        serviceValidateController.getServiceValidateConfigurationContext().setProxyHandler(new Cas10ProxyHandler());
+        val modelAndView = serviceValidateController.handleRequestInternal(request, new MockHttpServletResponse());
         assertTrue(Objects.requireNonNull(modelAndView.getView()).toString().contains(SUCCESS));
         assertNull(modelAndView.getModel().get(CasProtocolConstants.PARAMETER_PROXY_GRANTING_TICKET_IOU));
     }
@@ -369,7 +369,7 @@ public abstract class AbstractServiceValidateControllerTests extends AbstractCen
         request.addParameter(CasProtocolConstants.PARAMETER_TICKET, sId.getId());
         request.addParameter(CasProtocolConstants.PARAMETER_PROXY_GRANTING_TICKET_URL, GITHUB_URL);
 
-        return this.serviceValidateController.handleRequestInternal(request, new MockHttpServletResponse());
+        return serviceValidateController.handleRequestInternal(request, new MockHttpServletResponse());
     }
 
     public abstract AbstractServiceValidateController getServiceValidateControllerInstance();

@@ -27,6 +27,7 @@ dependencies {
     implementation project(":support:cas-server-support-saml-mdui-core")
     implementation project(":support:cas-server-support-saml-idp-core")
     implementation project(":support:cas-server-support-saml-idp-ticket")
+    implementation project(":support:cas-server-support-saml-idp-metadata")
 
     implementation libraries.shibutiljavasupport
     implementation libraries.springsecurityweb
@@ -35,7 +36,6 @@ dependencies {
     compileOnly libraries.pac4jsaml
 
     testImplementation libraries.pac4jsaml
-
     
     testImplementation project(":core:cas-server-core-web")
     testImplementation project(":core:cas-server-core-util")

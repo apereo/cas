@@ -91,17 +91,6 @@ public class BaseRedisProperties implements Serializable, CasFeatureModule {
     private RedisClusterProperties cluster = new RedisClusterProperties();
 
     /**
-     * Redis scan count option. When and if specified, SCAN operations would be "counted" or limited by this setting.
-     * While SCAN does not provide guarantees about the number of elements returned
-     * at every iteration, it is possible to empirically adjust the behavior
-     * of SCAN using the COUNT option. Basically with COUNT the user specified
-     * the amount of work that should be done at every call in order to retrieve
-     * elements from the collection. This is just a hint for the implementation,
-     * however generally speaking this is what you could expect most of the times from the implementation.
-     */
-    private long scanCount;
-
-    /**
      * Whether or not to use SSL for connection factory.
      */
     private boolean useSsl;
@@ -177,6 +166,25 @@ public class BaseRedisProperties implements Serializable, CasFeatureModule {
      */
     private String keyPassword;
 
+    /**
+     * The maximum number of keepalive probes TCP should send before dropping the connection.
+     * By default, leaving this number at zero disables keepalive.
+     */
+    private int keepAliveCount;
+
+    /**
+     * The time the connection needs to remain idle before TCP starts
+     * sending keepalive probes if keepalive is enabled.
+     */
+    @DurationCapable
+    private String keepAliveIdleTimeout = "PT2H";
+
+    /**
+     * The time the connection needs to remain idle before TCP starts sending keepalive probes.
+     */
+    @DurationCapable
+    private String keepAliveInterval = "PT60S";
+    
     /**
      * The Lettuce library {@code ReadFrom} types that determine how Lettuce routes read operations to replica nodes.
      */

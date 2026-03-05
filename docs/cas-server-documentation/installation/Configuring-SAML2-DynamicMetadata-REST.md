@@ -48,6 +48,12 @@ a successful `200 - OK` response status, CAS expects the body of the HTTP respon
 
 {% include_cached casproperties.html properties="cas.authn.saml-idp.metadata.rest" %}
 
+## Actuator Endpoints
+
+The following endpoints are provided by CAS:
+
+{% include_cached actuators.html endpoints="samlIdPRegisteredServiceMetadata" %}
+
 ## Identity Provider Metadata
 
 Metadata artifacts that belong to CAS as a SAML2 identity provider
