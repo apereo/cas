@@ -25,27 +25,24 @@ public class RedisWebAuthnCredentialRepository extends BaseWebAuthnCredentialRep
 
     private final CasRedisTemplate<String, RedisWebAuthnCredentialRegistration> redisTemplate;
 
-    private final long scanCount;
-
     public RedisWebAuthnCredentialRepository(
         final CasRedisTemplate<String, RedisWebAuthnCredentialRegistration> redisTemplate,
         final CasConfigurationProperties properties,
         final CipherExecutor<String, String> cipherExecutor) {
         super(properties, cipherExecutor);
         this.redisTemplate = redisTemplate;
-        this.scanCount = properties.getAuthn().getMfa().getWebAuthn().getRedis().getScanCount();
     }
 
     @Override
     public Collection<CredentialRegistration> getRegistrationsByUsername(final String username) {
-        try (val keys = redisTemplate.scan(buildRedisKeyForRecord(username), this.scanCount)) {
+        try (val keys = redisTemplate.scan(buildRedisKeyForRecord(username))) {
             return toCredentialRegistrationsAsStream(keys).collect(Collectors.toSet());
         }
     }
 
     @Override
     public Stream<CredentialRegistration> stream() {
-        try (val keys = redisTemplate.scan(getPatternRedisKey(), this.scanCount)) {
+        try (val keys = redisTemplate.scan(getPatternRedisKey())) {
             return toCredentialRegistrationsAsStream(keys);
         }
     }

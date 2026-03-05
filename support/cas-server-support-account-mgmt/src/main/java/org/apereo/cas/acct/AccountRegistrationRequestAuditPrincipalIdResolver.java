@@ -8,6 +8,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import lombok.val;
 import org.aspectj.lang.JoinPoint;
+import org.jspecify.annotations.Nullable;
 import org.springframework.core.Ordered;
 import org.springframework.webflow.execution.RequestContextHolder;
 
@@ -26,8 +27,8 @@ public class AccountRegistrationRequestAuditPrincipalIdResolver implements Audit
     private int order = Ordered.LOWEST_PRECEDENCE;
 
     @Override
-    public String getPrincipalIdFrom(final JoinPoint auditTarget, final Authentication authentication,
-                                     final Object resultValue, final Exception exception) {
+    public @Nullable String getPrincipalIdFrom(final JoinPoint auditTarget, @Nullable final Authentication authentication,
+                                               @Nullable final Object resultValue, @Nullable final Exception exception) {
         if (resultValue instanceof final AccountRegistrationRequest request) {
             return request.getUsername();
         }
@@ -36,8 +37,8 @@ public class AccountRegistrationRequestAuditPrincipalIdResolver implements Audit
     }
 
     @Override
-    public boolean supports(final JoinPoint auditTarget, final Authentication authentication,
-                            final Object resultValue, final Exception exception) {
+    public boolean supports(final JoinPoint auditTarget, @Nullable final Authentication authentication,
+                            @Nullable final Object resultValue, @Nullable final Exception exception) {
         val context = RequestContextHolder.getRequestContext();
         return resultValue instanceof AccountRegistrationRequest
             || (context != null && AccountRegistrationUtils.getAccountRegistrationRequest(context) != null);

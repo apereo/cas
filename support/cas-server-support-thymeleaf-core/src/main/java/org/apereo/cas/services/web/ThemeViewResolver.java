@@ -7,7 +7,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
 import org.springframework.boot.autoconfigure.template.TemplateLocation;
 import org.springframework.boot.thymeleaf.autoconfigure.ThymeleafProperties;
 import org.springframework.context.ApplicationContext;
@@ -28,6 +28,7 @@ import org.thymeleaf.spring6.view.AbstractThymeleafView;
 @Slf4j
 @Setter
 @RequiredArgsConstructor
+@SuppressWarnings("NullAway.Init")
 public class ThemeViewResolver extends AbstractCachingViewResolver {
 
     private final ViewResolver delegate;
@@ -38,20 +39,15 @@ public class ThemeViewResolver extends AbstractCachingViewResolver {
 
     private final List<CasThymeleafViewResolverConfigurer> thymeleafViewResolverConfigurers;
 
-    @NonNull
     @Override
     protected Object getCacheKey(
-        @NonNull
-        final String viewName, @NonNull
+        final String viewName,
         final Locale locale) {
         return String.format("%s#%s", theme, super.getCacheKey(viewName, locale));
     }
 
     @Override
-    protected View loadView(
-        @NonNull
-        final String viewName, @NonNull
-        final Locale locale) throws Exception {
+    protected @Nullable View loadView(final String viewName, final Locale locale) throws Exception {
         LOGGER.trace("Attempting to resolve view [{}] via locale [{}]", viewName, locale);
         val applicationContext = obtainApplicationContext();
         val view = applicationContext.containsBean(viewName)

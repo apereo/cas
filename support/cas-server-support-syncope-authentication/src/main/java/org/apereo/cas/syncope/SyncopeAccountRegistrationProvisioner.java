@@ -49,7 +49,7 @@ public class SyncopeAccountRegistrationProvisioner implements AccountRegistratio
             .stream()
             .map(Unchecked.function(domain -> submitRequest(request, domain)))
             .forEach(result -> {
-                response.putProperty(result.getProperty("domain", String.class), result);
+                response.putProperty(Objects.requireNonNull(result.getProperty("domain", String.class)), result);
                 response.putProperty("success", result.isSuccess());
             });
         return response;
@@ -66,7 +66,7 @@ public class SyncopeAccountRegistrationProvisioner implements AccountRegistratio
             headers.putAll(properties.getHeaders());
 
             val entity = MAPPER.writeValueAsString(SyncopeUtils.convertToUserCreateEntity(request.getProperties(),
-                new UsernamePasswordCredential(request.getUsername(), request.getPassword()), getSyncopeRealm(request)));
+                new UsernamePasswordCredential(Objects.requireNonNull(request.getUsername()), request.getPassword()), getSyncopeRealm(request)));
 
             val exec = HttpExecutionRequest.builder()
                 .method(HttpMethod.POST)

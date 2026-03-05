@@ -15,7 +15,6 @@ import org.apache.logging.log4j.core.config.plugins.PluginConfiguration;
 import org.apache.logging.log4j.core.config.plugins.PluginElement;
 import org.apache.logging.log4j.core.config.plugins.PluginFactory;
 import org.apache.logging.log4j.core.layout.PatternLayout;
-import org.jspecify.annotations.NonNull;
 
 /**
  * This is {@link SplunkAppender}.
@@ -29,7 +28,7 @@ public class SplunkAppender extends AbstractAppender {
     private final Configuration config;
     private final AppenderRef appenderRef;
 
-    public SplunkAppender(final String name, final @NonNull Configuration config, final @NonNull AppenderRef appenderRef) {
+    public SplunkAppender(final String name, final Configuration config, final AppenderRef appenderRef) {
         super(name, null, PatternLayout.createDefaultLayout(), false, Property.EMPTY_ARRAY);
         this.config = config;
         this.appenderRef = appenderRef;
