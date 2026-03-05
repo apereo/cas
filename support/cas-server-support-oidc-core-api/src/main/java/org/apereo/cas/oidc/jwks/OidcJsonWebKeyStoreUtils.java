@@ -25,6 +25,7 @@ import org.jose4j.jwk.RsaJwkGenerator;
 import org.jose4j.jws.AlgorithmIdentifiers;
 import org.jose4j.keys.AesKey;
 import org.jose4j.keys.EllipticCurves;
+import org.jspecify.annotations.Nullable;
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.ResourceLoader;
@@ -162,8 +163,8 @@ public class OidcJsonWebKeyStoreUtils {
         return Optional.of(new JsonWebKeySet(jsonWebKey));
     }
 
-    private static Resource getJsonWebKeySetResource(final OidcRegisteredService service,
-                                                     final ResourceLoader resourceLoader) {
+    private static @Nullable Resource getJsonWebKeySetResource(final OidcRegisteredService service,
+                                                               final ResourceLoader resourceLoader) {
         val serviceJwks = SpringExpressionLanguageValueResolver.getInstance().resolve(service.getJwks());
         if (StringUtils.isNotBlank(serviceJwks)) {
             if (ResourceUtils.doesResourceExist(serviceJwks)) {

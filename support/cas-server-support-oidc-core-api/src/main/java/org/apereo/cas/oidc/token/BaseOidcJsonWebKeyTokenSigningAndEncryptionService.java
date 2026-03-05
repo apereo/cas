@@ -26,6 +26,7 @@ import org.jose4j.jwk.JsonWebKeySet;
 import org.jose4j.jwk.PublicJsonWebKey;
 import org.jose4j.jwt.JwtClaims;
 import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
 
 /**
  * This is {@link BaseOidcJsonWebKeyTokenSigningAndEncryptionService}.
@@ -123,7 +124,7 @@ public abstract class BaseOidcJsonWebKeyTokenSigningAndEncryptionService extends
         return finalKey.orElseGet(() -> (PublicJsonWebKey) jsonWebKeys.getFirst());
     }
 
-    protected PublicJsonWebKey getJsonWebKeyForEncryption(final OAuthRegisteredService registeredService) {
+    protected @Nullable PublicJsonWebKey getJsonWebKeyForEncryption(final OAuthRegisteredService registeredService) {
         LOGGER.debug("Service [{}] is set to encrypt tokens", registeredService);
         val oidcService = (OidcRegisteredService) registeredService;
         val jwks = serviceJsonWebKeystoreCache.get(new OidcJsonWebKeyCacheKey(registeredService, OidcJsonWebKeyUsage.ENCRYPTION));
