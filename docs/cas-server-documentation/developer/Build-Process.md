@@ -69,6 +69,7 @@ The following commandline boolean flags are supported by the build and can be pa
 | `skipSonarqube`               | Ignore reporting results to Sonarqube.                                                               |
 | `skipErrorProneCompiler`      | Skip running the `error-prone` static-analysis compiler.                                             |
 | `skipNullAway`                | Skip running the `nullaway` static-analysis checks to ensure `null` correctness.                     |
+| `skipHotSwapAgent`            | Skip enabling and including the HotSwap Agent, used for dynamic code modifications at runtime.       |
 | `skipArtifactSigning`         | Skip signing artifacts when publishing modules, primarily for `SNAPSHOT` artifacts.                  |
 | `skipBootifulArtifact`        | Do not apply the Spring Boot plugin to bootify application artifacts.                                |
 | `skipAot`                     | Skip running AOT processes when building Graal VM native images.                                     |

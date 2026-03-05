@@ -138,7 +138,7 @@ public class CasGoogleAuthenticatorRedisAutoConfiguration {
             .supply(() -> {
                 val gauth = casProperties.getAuthn().getMfa().getGauth();
                 return new GoogleAuthenticatorRedisTokenRepository(redisAccountsGoogleAuthenticatorTemplate,
-                    gauth.getCore().getTimeStepSize(), gauth.getRedis().getScanCount());
+                    gauth.getCore().getTimeStepSize());
             })
             .otherwiseProxy()
             .get();

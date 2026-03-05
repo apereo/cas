@@ -2,6 +2,7 @@ package org.apereo.cas.web.view;
 
 import module java.base;
 import lombok.Getter;
+import org.jspecify.annotations.Nullable;
 import org.springframework.core.annotation.AnnotationAwareOrderComparator;
 import org.thymeleaf.IEngineConfiguration;
 import org.thymeleaf.templateresolver.AbstractConfigurableTemplateResolver;
@@ -43,12 +44,12 @@ public class ChainingTemplateViewResolver extends AbstractConfigurableTemplateRe
     }
 
     @Override
-    protected ITemplateResource computeTemplateResource(final IEngineConfiguration configuration,
-                                                        final String ownerTemplate,
-                                                        final String template,
-                                                        final String resourceName,
-                                                        final String characterEncoding,
-                                                        final Map<String, Object> templateResolutionAttributes) {
+    protected @Nullable ITemplateResource computeTemplateResource(final IEngineConfiguration configuration,
+                                                                  final String ownerTemplate,
+                                                                  final String template,
+                                                                  final String resourceName,
+                                                                  final String characterEncoding,
+                                                                  final Map<String, Object> templateResolutionAttributes) {
         return this.resolvers
             .stream()
             .map(r -> r.resolveTemplate(configuration, ownerTemplate, template, templateResolutionAttributes))
