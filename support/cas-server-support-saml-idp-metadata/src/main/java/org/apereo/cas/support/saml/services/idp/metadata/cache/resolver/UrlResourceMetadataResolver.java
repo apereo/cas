@@ -182,7 +182,7 @@ public class UrlResourceMetadataResolver extends BaseSamlRegisteredServiceMetada
         }
         return false;
     }
-
+    
     protected boolean shouldHttpResponseStatusBeProcessed(final HttpStatus status) {
         return status.is2xxSuccessful();
     }

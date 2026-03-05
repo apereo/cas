@@ -277,6 +277,7 @@ while (( "$#" )); do
                 task+="testFileSystem "
                 ;;
             config|casconfig|ccfg|cfg|cas-config|casconfiguration)
+                isDockerOnLinux && ./ci/tests/etcd/run-etcd-server.sh || exit 1
                 task+="testCasConfiguration "
                 ;;
             geolocation|geo)

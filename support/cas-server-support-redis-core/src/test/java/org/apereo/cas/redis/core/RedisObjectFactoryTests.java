@@ -25,6 +25,7 @@ class RedisObjectFactoryTests {
     @Test
     void verifyConnection() throws Throwable {
         val props = new BaseRedisProperties();
+        props.setKeepAliveCount(3);
         props.setHost("localhost");
         props.setPort(6379);
         props.getPool().setMinEvictableIdleTimeMillis(2000);

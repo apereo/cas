@@ -81,7 +81,14 @@ CAS codebase is now annotated with [JSpecify](https://jspecify.dev/) annotations
 return types and fields. We will gradually extend the coverage of such annotations across the entire codebase in future releases
 and will integrate the Gradle build tool with tools such as [NullAway](https://github.com/uber/NullAway) to prevent nullness contract violations
 during compile time.
-   
+
+### Java 26
+
+As described earlier, the JDK baseline requirement for this CAS release is and MUST be 
+JDK `25`. CAS is however able to compile and run with Java `26` as well with an updated 
+version of the Gradle build tool. Again, remember that the baseline requirement will remain 
+unchanged and this is just a preparatory step to ensure CAS is ready for the next version of Java.
+
 ### SPIFFE Support
 
 CAS now supports [SPIFFE](https://spiffe.io/), used for client mTLS authentication in OAuth and OpenID Connect flows.
@@ -89,7 +96,49 @@ It’s a method where an OAuth client authenticates to CAS using its SPIFFE-issu
 instead of a static secret or manually managed certificate. 
 [CAS gains the ability](../authentication/OIDC-Authentication-AccessToken-AuthMethods.html) to extract and identify the SPIFFE ID 
 in the certtificate and map it to the client application definition. 
+ 
+### SAML2 Service Provider Metadata Management
+
+CAS may be configured to use and locate SAML2 service provider metadata in external resources, such as MongoDb.
+The existing integration for persistence layer is now improved to fully support common metadata management tasks
+such as create, read, update and delete (CRUD) operations. This allows one to manage SAML2 service provider metadata
+without having to manually interact with the underlying database.
+
+The storage options that can take advantage of this include:
+
+- [MongoDb](../installation/Configuring-SAML2-DynamicMetadata-MongoDb.html)
+- [SQL Databases](../installation/Configuring-SAML2-DynamicMetadata-JPA.html)
+- [Amazon S3](../installation/Configuring-SAML2-DynamicMetadata-AmazonS3.html)
+- [Amazon DynamoDb](../installation/Configuring-SAML2-DynamicMetadata-DynamoDb.html)
+- [Git](../installation/Configuring-SAML2-DynamicMetadata-Git.html)
+- [Redis](../installation/Configuring-SAML2-DynamicMetadata-Redis.html)
+- [REST](../installation/Configuring-SAML2-DynamicMetadata-REST.html)
+
+There is also a new actuator endpoint, `samlIdPRegisteredServiceMetadata`, that allows one to interact with
+the SAML2 service provider metadata management API and perform CRUD operations on the metadata of registered services
+assuming the underlying storage is one that is noted above.
+
+The [Palantir Admin Console](../installation/Admin-Dashboard.html) is also updated to support interacting 
+with this actuator endpoint.
+ 
+### Apache Tomcat Connectors
+
+When running CAS with an embedded Apache Tomcat, all connectors are now initially put into a *paused state* 
+until the CAS server is fully able and ready to accept requests at which point these connectors are instructed to resume operations. 
+This allows the server to perform all necessary startup and (lazy) initialization tasks before accepting any 
+incoming traffic and potentially running into a deadlocked state.
+
+<div class="alert alert-info">:information_source: <strong>Note</strong>
+<p>Again, this capability only applies to deployments running with an embedded Apache Tomcat.
+It has no effect on other container types such as Jetty, or those deployments that run
+inside an external self-managed Apache Tomcat environment.</p></div>
+
+### Etcd Configuration Source
+
+CAS is now able to use [etcd](../configuration/Configuration-Server-Management-SpringCloud-Etcd.html) 
+as a configuration source to locate properties and settings.
 
 ## Other Stuff
 
-- SAML logout requests for SOAP bindings correct the `Content-Type` header and formatted body.
+- SAML2 logout requests for SOAP bindings correct the `Content-Type` header and formatted body.
+- JSON web keys that use the `EC` algorithm can now be used for token validation operations.

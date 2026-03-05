@@ -3,11 +3,9 @@ package org.apereo.cas.support.saml;
 import module java.base;
 import org.apereo.cas.config.CasSamlIdPRedisIdPMetadataAutoConfiguration;
 import org.apereo.cas.configuration.CasConfigurationProperties;
-import org.apereo.cas.redis.core.CasRedisTemplate;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.saml.idp.metadata.generator.SamlIdPMetadataGenerator;
 import org.apereo.cas.support.saml.idp.metadata.locator.SamlIdPMetadataLocator;
-import org.apereo.cas.support.saml.services.idp.metadata.SamlMetadataDocument;
 import org.apereo.cas.support.saml.services.idp.metadata.cache.resolver.SamlRegisteredServiceMetadataResolver;
 import org.apereo.cas.test.CasTestExtension;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -31,10 +29,6 @@ import org.springframework.boot.test.context.SpringBootTest;
 public abstract class BaseRedisSamlMetadataTests {
     @Autowired
     protected CasConfigurationProperties casProperties;
-
-    @Autowired
-    @Qualifier("redisSamlRegisteredServiceMetadataResolverTemplate")
-    protected CasRedisTemplate<String, SamlMetadataDocument> redisSamlRegisteredServiceMetadataResolverTemplate;
 
     @Autowired
     @Qualifier("redisSamlRegisteredServiceMetadataResolver")

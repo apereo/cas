@@ -2,14 +2,17 @@ package org.apereo.cas.support.saml.services.idp.metadata;
 
 import module java.base;
 import org.apereo.cas.util.EncodingUtils;
+import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import lombok.Builder;
+import com.google.errorprone.annotations.CanIgnoreReturnValue;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.experimental.SuperBuilder;
 import org.springframework.data.annotation.Id;
+import tools.jackson.databind.ObjectMapper;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -29,17 +32,19 @@ import jakarta.persistence.Table;
 @Setter
 @NoArgsConstructor
 @SuperBuilder
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class SamlMetadataDocument implements Serializable {
-
+    private static final ObjectMapper MAPPER = JacksonObjectMapperFactory.builder()
+        .defaultTypingEnabled(false).build().toObjectMapper();
+    
     @Serial
     private static final long serialVersionUID = -721955605616455236L;
     
     @JsonProperty("id")
     @jakarta.persistence.Id
     @Id
-    @Builder.Default
     @GeneratedValue(strategy = GenerationType.AUTO, generator = "native")
-    private long id = -1;
+    private long id;
 
     @JsonProperty("name")
     @Column(nullable = false)
@@ -53,6 +58,7 @@ public class SamlMetadataDocument implements Serializable {
     @JsonProperty("signature")
     @Lob
     @Column(name = "signature", length = Integer.MAX_VALUE)
+    @JsonInclude(JsonInclude.Include.NON_NULL)
     private String signature;
 
     /**
@@ -66,5 +72,28 @@ public class SamlMetadataDocument implements Serializable {
             return EncodingUtils.decodeBase64ToString(value);
         }
         return value;
+    }
+
+    /**
+     * Assign id if necessary.
+     *
+     * @return the saml metadata document
+     */
+    @CanIgnoreReturnValue
+    public SamlMetadataDocument assignIdIfNecessary() {
+        if (id <= 0) {
+            id = System.nanoTime();
+        }
+        return this;
+    }
+
+    /**
+     * To json string.
+     *
+     * @return the string
+     */
+    @JsonIgnore
+    public String toJson() {
+        return MAPPER.writeValueAsString(this);
     }
 }

@@ -14,6 +14,9 @@ import org.apereo.cas.util.spring.RestActuatorEndpointFilter;
 import org.apereo.cas.util.thread.Cleanable;
 import com.fasterxml.jackson.annotation.ObjectIdGenerator;
 import lombok.val;
+import net.jpountz.lz4.LZ4Compressor;
+import net.jpountz.lz4.LZ4FastDecompressor;
+import net.jpountz.lz4.LZ4SafeDecompressor;
 import org.apache.commons.lang3.ClassUtils;
 import org.jspecify.annotations.Nullable;
 import org.slf4j.LoggerFactory;
@@ -45,6 +48,10 @@ public class CasCoreUtilRuntimeHints implements CasRuntimeHintsRegistrar {
     public void registerHints(final RuntimeHints hints, final @Nullable ClassLoader classLoader) {
         hints.resources().registerType(CasVersion.class);
 
+        registerReflectionHints(hints, findSubclassesInPackage(LZ4Compressor.class, LZ4Compressor.class.getPackageName()));
+        registerReflectionHints(hints, findSubclassesInPackage(LZ4FastDecompressor.class, LZ4FastDecompressor.class.getPackageName()));
+        registerReflectionHints(hints, findSubclassesInPackage(LZ4SafeDecompressor.class, LZ4SafeDecompressor.class.getPackageName()));
+        
         registerProxyHints(hints, List.of(
             ComponentSerializationPlanConfigurer.class,
             InitializingBean.class,

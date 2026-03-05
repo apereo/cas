@@ -1,0 +1,17 @@
+description = "Apereo CAS Configuration - etcd"
+ext {
+    publishMetadata = true
+    projectMetadata = [
+            category: "Configuration Management",
+            title: "Configuration Management via etcd"
+    ]
+}
+dependencies {
+    implementation libraries.springcloudbootstrap
+    implementation libraries.jetcd
+
+    implementation project(":core:cas-server-core-util-api")
+    implementation project(":core:cas-server-core-configuration-api")
+
+    testImplementation project(path: ":core:cas-server-core-util-api", configuration: "tests")
+}

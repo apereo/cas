@@ -15,9 +15,11 @@ import lombok.val;
 import net.shibboleth.shared.resolver.CriteriaSet;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
+import org.junit.jupiter.api.RepeatedTest;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.core.io.ClassPathResource;
+import org.springframework.core.io.FileSystemResource;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
@@ -29,6 +31,23 @@ import static org.mockito.Mockito.*;
  */
 @Tag("SAMLMetadata")
 class SamlRegisteredServiceMetadataResolverCacheLoaderTests extends BaseSamlIdPServicesTests {
+    @RepeatedTest(2)
+    void verifyLocalDynamicDirectories() throws Exception {
+        val service = new SamlRegisteredService();
+        service.setId(RandomUtils.nextLong());
+        service.setName(RandomUtils.randomAlphabetic(4));
+        service.setServiceId("https://example.org/saml");
+        val file = new FileSystemResource("src/test/resources/md-dir").getFile().getCanonicalPath();
+        service.setMetadataLocation(file);
+        val resolver = new FileSystemResourceMetadataResolver(new SamlIdPProperties(), openSamlConfigBean);
+        val loader = buildCacheLoader(resolver);
+        val key = new SamlRegisteredServiceCacheKey(service, new CriteriaSet());
+        for (var i = 0; i < 4; i++) {
+            assertNotNull(loader.load(key));
+        }
+        resolver.destroy();
+    }
+
     @Test
     void verifyInMemoryXmlMetadata() throws Throwable {
         val content = IOUtils.toString(new ClassPathResource("sample-sp.xml").getInputStream(), StandardCharsets.UTF_8);
@@ -101,7 +120,8 @@ class SamlRegisteredServiceMetadataResolverCacheLoaderTests extends BaseSamlIdPS
         return buildCacheLoader(new FileSystemResourceMetadataResolver(props, openSamlConfigBean));
     }
 
-    private SamlRegisteredServiceMetadataResolverCacheLoader buildCacheLoader(final SamlRegisteredServiceMetadataResolver resolver) {
+    private SamlRegisteredServiceMetadataResolverCacheLoader buildCacheLoader(
+        final SamlRegisteredServiceMetadataResolver resolver) {
         val plan = new DefaultSamlRegisteredServiceMetadataResolutionPlan();
         plan.registerMetadataResolver(resolver);
         return new SamlRegisteredServiceMetadataResolverCacheLoader(openSamlConfigBean, httpClient, plan);

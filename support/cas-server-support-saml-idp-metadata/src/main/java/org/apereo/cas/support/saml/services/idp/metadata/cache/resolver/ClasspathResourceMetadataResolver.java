@@ -72,4 +72,5 @@ public class ClasspathResourceMetadataResolver extends BaseSamlRegisteredService
     public boolean isAvailable(final SamlRegisteredService service) {
         return supports(service);
     }
+
 }

@@ -25,10 +25,11 @@ class DynamoDbSamlRegisteredServiceMetadataResolverTests extends BaseDynamoDbSam
     @Test
     void verifyResolver() throws Throwable {
         val res = new ClassPathResource("sp-metadata.xml");
-        val md = new SamlMetadataDocument();
+        var md = new SamlMetadataDocument();
         md.setName("SP");
         md.setValue(IOUtils.toString(res.getInputStream(), StandardCharsets.UTF_8));
-        resolver.saveOrUpdate(md);
+        val metadataManager = resolver.getMetadataManager().orElseThrow();
+        metadataManager.store(md);
 
         val service = new SamlRegisteredService();
         service.setName("SAML Service");
@@ -47,7 +48,8 @@ class DynamoDbSamlRegisteredServiceMetadataResolverTests extends BaseDynamoDbSam
         val md = new SamlMetadataDocument();
         md.setName("SP");
         md.setValue(IOUtils.toString(res.getInputStream(), StandardCharsets.UTF_8));
-        resolver.saveOrUpdate(md);
+        val metadataManager = resolver.getMetadataManager().orElseThrow();
+        metadataManager.store(md);
 
         val service = new SamlRegisteredService();
         service.setName("SAML Service");

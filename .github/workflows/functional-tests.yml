@@ -29,7 +29,7 @@ env:
   TERM: xterm-256color
   JDK_CURRENT: 25
   JDK_DISTRIBUTION: "corretto"
-  NODE_CURRENT: '25.7.0'
+  NODE_CURRENT: '25.8.0'
   MAX_ATTEMPTS: 3
   RETRY_MINUTES: 20
   SCENARIO_REGEX: ".*"
@@ -164,7 +164,7 @@ jobs:
             export RUNNER_OS=${{ runner.os }}
             ./ci/tests/puppeteer/run.sh --scenario $PWD/ci/tests/puppeteer/scenarios/${{matrix.scenario}}
       - name: Upload screenshots
-        uses: actions/upload-artifact@v6
+        uses: actions/upload-artifact@v7
         continue-on-error: true
         if: ${{ always() }}
         with:
@@ -221,7 +221,7 @@ jobs:
             export RUNNER_OS=${{ runner.os }}
             ./ci/tests/puppeteer/run.sh --scenario $PWD/ci/tests/puppeteer/scenarios/${{matrix.scenario}}
       - name: Upload screenshots
-        uses: actions/upload-artifact@v6
+        uses: actions/upload-artifact@v7
         continue-on-error: true
         if: ${{ always() }}
         with:
@@ -278,7 +278,7 @@ jobs:
             export RUNNER_OS=${{ runner.os }}
             ./ci/tests/puppeteer/run.sh --scenario $PWD/ci/tests/puppeteer/scenarios/${{matrix.scenario}}
       - name: Upload screenshots
-        uses: actions/upload-artifact@v6
+        uses: actions/upload-artifact@v7
         continue-on-error: true
         if: ${{ always() }}
         with:

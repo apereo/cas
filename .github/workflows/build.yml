@@ -106,7 +106,7 @@ jobs:
         shell: bash
       - name: Build with JDK ${{ matrix.jdk }}
         run: ./gradlew build --quiet -PsourceCompatibility=${{ matrix.jdk }} -PtargetCompatibility=${{ matrix.jdk }} ${{ env.GRADLE_BUILD_OPTIONS }}
-      - uses: actions/upload-artifact@v6
+      - uses: actions/upload-artifact@v7
         with:
           name: binary-artifacts-${{ matrix.jdk }}
           path: ./**/build/libs/*.*

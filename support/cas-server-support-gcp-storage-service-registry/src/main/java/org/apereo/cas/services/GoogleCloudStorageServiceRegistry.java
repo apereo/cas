@@ -7,6 +7,7 @@ import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.util.serialization.StringSerializer;
 import com.google.cloud.storage.BlobId;
 import com.google.cloud.storage.BlobInfo;
+import com.google.cloud.storage.Bucket;
 import com.google.cloud.storage.BucketInfo;
 import com.google.cloud.storage.Storage;
 import lombok.extern.slf4j.Slf4j;
@@ -90,7 +91,8 @@ public class GoogleCloudStorageServiceRegistry extends AbstractServiceRegistry {
     @Override
     public Collection<RegisteredService> load() {
         val buckets = cloudStorage.list(Storage.BucketListOption.prefix(BUCKET_PREFIX));
-        return buckets.streamAll()
+        return buckets
+            .streamAll()
             .map(bucket -> {
                 val bucketName = bucket.getName();
                 LOGGER.debug("Loading services from bucket [{}]", bucketName);
@@ -123,12 +125,13 @@ public class GoogleCloudStorageServiceRegistry extends AbstractServiceRegistry {
         return null;
     }
 
-    protected void createBucketIfNecessary(final String bucketName) {
-        val bucket = cloudStorage.get(bucketName);
+    protected Bucket createBucketIfNecessary(final String bucketName) {
+        var bucket = cloudStorage.get(bucketName);
         if (bucket == null) {
             LOGGER.info("Creating bucket [{}]", bucketName);
-            cloudStorage.create(BucketInfo.newBuilder(bucketName).build());
+            bucket = cloudStorage.create(BucketInfo.newBuilder(bucketName).build());
         }
+        return bucket;
     }
 
     protected String determineBucketForRegisteredService(final RegisteredService registeredService) {

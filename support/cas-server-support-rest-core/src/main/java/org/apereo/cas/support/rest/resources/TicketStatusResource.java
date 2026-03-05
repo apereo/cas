@@ -47,7 +47,7 @@ public class TicketStatusResource {
     public ResponseEntity<String> getTicketStatus(@PathVariable final String id) {
         try {
             val ticket = ticketRegistry.getTicket(id, Ticket.class);
-            return new ResponseEntity<>(ticket.getId(), HttpStatus.OK);
+            return new ResponseEntity<>(Objects.requireNonNull(ticket).getId(), HttpStatus.OK);
         } catch (final InvalidTicketException e) {
             return new ResponseEntity<>("Ticket could not be found", HttpStatus.NOT_FOUND);
         } catch (final Exception e) {

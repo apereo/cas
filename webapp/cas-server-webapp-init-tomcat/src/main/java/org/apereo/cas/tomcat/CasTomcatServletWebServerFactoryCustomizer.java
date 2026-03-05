@@ -38,6 +38,7 @@ import org.springframework.boot.tomcat.servlet.TomcatServletWebServerFactory;
 import org.springframework.boot.web.server.autoconfigure.ServerProperties;
 import org.springframework.boot.web.server.autoconfigure.servlet.ServletWebServerFactoryCustomizer;
 import org.springframework.boot.web.server.servlet.ConfigurableServletWebServerFactory;
+import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.core.io.Resource;
 import org.springframework.util.ReflectionUtils;
 import jakarta.servlet.ServletException;
@@ -57,12 +58,17 @@ public class CasTomcatServletWebServerFactoryCustomizer extends ServletWebServer
 
     private final TomcatServerProperties tomcatServerProperties;
 
-    public CasTomcatServletWebServerFactoryCustomizer(final ServerProperties serverProperties,
-                                                      final TomcatServerProperties tomcatServerProperties,
-                                                      final CasConfigurationProperties casProperties) {
+    private final ConfigurableApplicationContext applicationContext;
+
+    public CasTomcatServletWebServerFactoryCustomizer(
+        final ConfigurableApplicationContext applicationContext,
+        final ServerProperties serverProperties,
+        final TomcatServerProperties tomcatServerProperties,
+        final CasConfigurationProperties casProperties) {
         super(serverProperties);
         this.casProperties = casProperties;
         this.tomcatServerProperties = tomcatServerProperties;
+        this.applicationContext = applicationContext;
     }
 
     private static void configureConnectorForProtocol(final Connector connector,
@@ -146,6 +152,10 @@ public class CasTomcatServletWebServerFactoryCustomizer extends ServletWebServer
             if (socket.getPerformanceLatency() >= 0) {
                 connector.setProperty("socket.performanceLatency", String.valueOf(socket.getPerformanceLatency()));
             }
+        });
+        tomcat.addConnectorCustomizers(connector -> {
+            connector.pause();
+            applicationContext.publishEvent(new CasTomcatConnectorPausedEvent(connector));
         });
     }
 

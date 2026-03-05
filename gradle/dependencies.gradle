@@ -12,6 +12,14 @@ ext.libraries = [
                     exclude(group: "org.slf4j", module: "slf4j-api")
                 }
         ],
+        jetcd : [
+                dependencies.create(libs.jetcd.core.get()) {
+                    exclude(group: "org.slf4j", module: "slf4j-api")
+                    exclude(group: "com.google.guava", module: "guava")
+                    exclude(group: "ch.qos.logback", module: "logback-core")
+                    exclude(group: "ch.qos.logback", module: "logback-classic")
+                }
+        ],
         googlecloudstorage          : [
                 dependencies.create(libs.spring.cloud.gcp.starter.storage.get()) {
                     exclude(group: "org.slf4j", module: "slf4j-api")

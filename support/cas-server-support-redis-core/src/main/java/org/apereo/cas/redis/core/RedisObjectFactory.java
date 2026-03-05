@@ -5,6 +5,7 @@ import org.apereo.cas.authentication.CasSSLContext;
 import org.apereo.cas.configuration.model.support.redis.BaseRedisProperties;
 import org.apereo.cas.configuration.support.Beans;
 import org.apereo.cas.util.function.FunctionUtils;
+import org.apereo.cas.util.serialization.LZ4CompressionHandler;
 import io.lettuce.core.ClientOptions;
 import io.lettuce.core.ReadFrom;
 import io.lettuce.core.SocketOptions;
@@ -59,8 +60,8 @@ public class RedisObjectFactory {
 
         template.setKeySerializer(stringRedisSerializer);
         template.setHashKeySerializer(stringRedisSerializer);
-        
-        val compressedSerializer = new Lz4CompressionRedisSerializer(valueSerializer);
+
+        val compressedSerializer = new LZ4CompressionRedisSerializer(valueSerializer, new LZ4CompressionHandler());
         template.setValueSerializer(compressedSerializer);
         template.setHashValueSerializer(compressedSerializer);
 
@@ -237,7 +238,18 @@ public class RedisObjectFactory {
         val clientOptionsBuilder = initializeClientOptionsBuilder(redis);
         if (StringUtils.hasText(redis.getConnectTimeout())) {
             val connectTimeout = Beans.newDuration(redis.getConnectTimeout());
-            clientOptionsBuilder.socketOptions(SocketOptions.builder().connectTimeout(connectTimeout).build());
+            val keepAliveOptions = SocketOptions.KeepAliveOptions.builder()
+                .enable(redis.getKeepAliveCount() > 0)
+                .idle(Beans.newDuration(redis.getKeepAliveIdleTimeout()))
+                .interval(Beans.newDuration(redis.getKeepAliveInterval()))
+                .count(redis.getKeepAliveCount())
+                .build();
+            clientOptionsBuilder.socketOptions(
+                SocketOptions.builder()
+                    .connectTimeout(connectTimeout)
+                    .keepAlive(keepAliveOptions)
+                    .build()
+            );
         }
         val sslOptionsBuilder = SslOptions.builder()
             .jdkSslProvider()

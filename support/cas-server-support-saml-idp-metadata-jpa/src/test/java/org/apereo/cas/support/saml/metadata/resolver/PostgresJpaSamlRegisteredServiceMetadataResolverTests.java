@@ -1,0 +1,24 @@
+package org.apereo.cas.support.saml.metadata.resolver;
+
+import module java.base;
+import org.apereo.cas.util.junit.EnabledIfListeningOnPort;
+import org.junit.jupiter.api.Tag;
+import org.springframework.test.context.TestPropertySource;
+
+/**
+ * This is {@link JpaSamlRegisteredServiceMetadataResolverTests}.
+ *
+ * @author Misagh Moayyed
+ * @since 6.3.0
+ */
+@TestPropertySource(properties = {
+    "cas.authn.saml-idp.metadata.jpa.user=postgres",
+    "cas.authn.saml-idp.metadata.jpa.password=password",
+    "cas.authn.saml-idp.metadata.jpa.driver-class=org.postgresql.Driver",
+    "cas.authn.saml-idp.metadata.jpa.url=jdbc:postgresql://localhost:5432/saml",
+    "cas.authn.saml-idp.metadata.jpa.dialect=org.hibernate.dialect.PostgreSQLDialect"
+})
+@EnabledIfListeningOnPort(port = 5432)
+@Tag("Postgres")
+class PostgresJpaSamlRegisteredServiceMetadataResolverTests extends JpaSamlRegisteredServiceMetadataResolverTests {
+}

@@ -23,6 +23,7 @@ import org.opensaml.saml.metadata.resolver.MetadataResolver;
 import org.opensaml.saml.metadata.resolver.impl.AbstractMetadataResolver;
 import org.opensaml.saml.metadata.resolver.impl.DefaultLocalDynamicSourceKeyGenerator;
 import org.opensaml.saml.metadata.resolver.impl.LocalDynamicMetadataResolver;
+import org.springframework.beans.factory.DisposableBean;
 import org.springframework.core.io.AbstractResource;
 import org.springframework.core.io.FileSystemResource;
 
@@ -33,7 +34,14 @@ import org.springframework.core.io.FileSystemResource;
  * @since 5.2.0
  */
 @Slf4j
-public class FileSystemResourceMetadataResolver extends BaseSamlRegisteredServiceMetadataResolver {
+public class FileSystemResourceMetadataResolver extends BaseSamlRegisteredServiceMetadataResolver implements DisposableBean {
+    private static final Timer LOCAL_DYNAMIC_METADATA_RESOLVER_TIMER =
+        new Timer("local-dynamic-metadata-resolver-timer", true) {
+            @Override
+            public void schedule(final TimerTask task, final long time, final long period) {
+            }
+        };
+
     public FileSystemResourceMetadataResolver(final SamlIdPProperties samlIdPProperties,
                                               final OpenSamlConfigBean configBean) {
         super(samlIdPProperties, configBean);
@@ -43,7 +51,8 @@ public class FileSystemResourceMetadataResolver extends BaseSamlRegisteredServic
         actionResolverName = AuditActionResolvers.SAML2_METADATA_RESOLUTION_ACTION_RESOLVER,
         resourceResolverName = AuditResourceResolvers.SAML2_METADATA_RESOLUTION_RESOURCE_RESOLVER)
     @Override
-    public Collection<? extends MetadataResolver> resolve(final SamlRegisteredService service, final CriteriaSet criteriaSet) {
+    public Collection<? extends MetadataResolver> resolve(final SamlRegisteredService service,
+                                                          final CriteriaSet criteriaSet) {
         val listOfResolvers = new ArrayList<MetadataResolver>();
         try {
             val metadataLocations = org.springframework.util.StringUtils.commaDelimitedListToSet(
@@ -74,8 +83,17 @@ public class FileSystemResourceMetadataResolver extends BaseSamlRegisteredServic
         }, throwable -> false).get();
     }
 
+    @Override
+    public void destroy() {
+        LOCAL_DYNAMIC_METADATA_RESOLVER_TIMER.cancel();
+    }
+
     private static boolean isMetadataFileSystemResource(final String location) {
-        val metadataResource = FunctionUtils.doUnchecked(() -> ResourceUtils.isUrl(location) ? null : ResourceUtils.getResourceFrom(location));
+        val metadataResource = FunctionUtils.doAndHandle(
+            () -> ResourceUtils.isUrl(location) || location.endsWith("://")
+                ? null
+                : ResourceUtils.getResourceFrom(location)
+        );
         val scriptFactory = ExecutableCompiledScriptFactory.findExecutableCompiledScriptFactory();
         return metadataResource instanceof FileSystemResource
             && (scriptFactory.isEmpty() || !scriptFactory.get().isScript(location));
@@ -91,7 +109,7 @@ public class FileSystemResourceMetadataResolver extends BaseSamlRegisteredServic
         if (metadataFile.isDirectory()) {
             val sourceStrategy = new DefaultLocalDynamicSourceKeyGenerator(StringUtils.EMPTY, ".xml", StringUtils.EMPTY);
             val manager = new FilesystemLoadSaveManager<>(metadataFile, configBean.getParserPool());
-            return new LocalDynamicMetadataResolver(manager, sourceStrategy);
+            return new LocalDynamicMetadataResolver(LOCAL_DYNAMIC_METADATA_RESOLVER_TIMER, manager, sourceStrategy);
         }
         return new InMemoryResourceMetadataResolver(metadataResource, configBean);
     }

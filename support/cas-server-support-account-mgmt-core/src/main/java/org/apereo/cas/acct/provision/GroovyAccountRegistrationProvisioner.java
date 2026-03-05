@@ -25,6 +25,6 @@ public class GroovyAccountRegistrationProvisioner implements AccountRegistration
     @Override
     public AccountRegistrationResponse provision(final AccountRegistrationRequest request) throws Throwable {
         val args = new Object[]{request, applicationContext, LOGGER};
-        return watchableScript.execute(args, AccountRegistrationResponse.class);
+        return Objects.requireNonNull(watchableScript.execute(args, AccountRegistrationResponse.class));
     }
 }

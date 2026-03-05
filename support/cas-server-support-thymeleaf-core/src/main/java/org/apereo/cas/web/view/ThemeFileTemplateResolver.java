@@ -37,7 +37,7 @@ public class ThemeFileTemplateResolver extends FileTemplateResolver {
     protected ITemplateResource computeTemplateResource(final IEngineConfiguration configuration, final String ownerTemplate,
                                                         final String template, final String resourceName, final String characterEncoding,
                                                         final Map<String, Object> templateResolutionAttributes) {
-        val request = HttpRequestUtils.getHttpServletRequestFromRequestAttributes();
+        val request = Objects.requireNonNull(HttpRequestUtils.getHttpServletRequestFromRequestAttributes());
         val themeName = this.themeResolver.resolveThemeName(request);
 
         if (StringUtils.isNotBlank(themeName)) {

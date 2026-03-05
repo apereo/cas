@@ -10,6 +10,7 @@ import org.apereo.cas.util.crypto.CipherExecutor;
 import com.github.benmanes.caffeine.cache.Cache;
 import lombok.val;
 import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
 import org.springframework.context.ConfigurableApplicationContext;
 
 /**
@@ -27,22 +28,18 @@ public class RedisSamlIdPMetadataLocator extends AbstractSamlIdPMetadataLocator 
 
     private final CasRedisTemplate<String, SamlIdPMetadataDocument> redisTemplate;
 
-    private final long scanCount;
-
     public RedisSamlIdPMetadataLocator(final CipherExecutor<String, String> metadataCipherExecutor,
                                        final Cache<@NonNull String, SamlIdPMetadataDocument> metadataCache,
                                        final CasRedisTemplate<String, SamlIdPMetadataDocument> redisTemplate,
-                                       final ConfigurableApplicationContext applicationContext,
-                                       final long scanCount) {
+                                       final ConfigurableApplicationContext applicationContext) {
         super(metadataCipherExecutor, metadataCache, applicationContext);
         this.redisTemplate = redisTemplate;
-        this.scanCount = scanCount;
     }
 
     @Override
-    public SamlIdPMetadataDocument fetchInternal(final Optional<SamlRegisteredService> registeredService) {
+    public @Nullable SamlIdPMetadataDocument fetchInternal(final Optional<SamlRegisteredService> registeredService) {
         val appliesTo = getAppliesToFor(registeredService);
-        try (val keys = redisTemplate.scan(CAS_PREFIX + appliesTo + ":*", this.scanCount)) {
+        try (val keys = redisTemplate.scan(CAS_PREFIX + appliesTo + ":*")) {
             return keys.findFirst()
                 .map(key -> redisTemplate.boundValueOps(key).get())
                 .orElse(null);

@@ -9,6 +9,7 @@ import org.apereo.cas.web.theme.ThemeSource;
 import lombok.RequiredArgsConstructor;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
+import org.jspecify.annotations.Nullable;
 import org.springframework.webflow.execution.RequestContextHolder;
 import org.thymeleaf.context.WebEngineContext;
 import org.thymeleaf.util.EvaluationUtils;
@@ -141,11 +142,11 @@ public class CasThymeleafTemplatesDirector {
      * @param code the code
      * @return the value attributed to the code
      */
-    public String theme(final String code) {
+    public @Nullable String theme(final String code) {
         val request = HttpRequestUtils.getHttpServletRequestFromRequestAttributes();
         Objects.requireNonNull(request, "Http request cannot be null or undefined");
         val themeName = themeResolver.resolveThemeName(request);
-        val theme = themeSource.getTheme(themeName);
+        val theme = themeSource.getTheme(Objects.requireNonNull(themeName));
         Objects.requireNonNull(theme, "Theme cannot be null or undefined");
         return theme.getMessageSource().getMessage(code, null, StringUtils.EMPTY, request.getLocale());
     }
