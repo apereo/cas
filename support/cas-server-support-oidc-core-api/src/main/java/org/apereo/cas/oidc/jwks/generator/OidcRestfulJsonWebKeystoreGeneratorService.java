@@ -13,6 +13,7 @@ import org.apache.commons.io.IOUtils;
 import org.apache.hc.core5.http.HttpEntityContainer;
 import org.jose4j.jwk.JsonWebKey;
 import org.jose4j.jwk.JsonWebKeySet;
+import org.jspecify.annotations.Nullable;
 import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
 import org.springframework.core.io.ByteArrayResource;
@@ -40,7 +41,7 @@ public class OidcRestfulJsonWebKeystoreGeneratorService implements OidcJsonWebKe
     }
 
     @Override
-    public Resource generate() throws Exception {
+    public @Nullable Resource generate() throws Exception {
         val rest = oidcProperties.getJwks().getRest();
         val exec = HttpExecutionRequest.builder()
             .basicAuthPassword(rest.getBasicAuthPassword())

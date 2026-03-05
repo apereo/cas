@@ -9,6 +9,7 @@ import org.apereo.cas.token.JwtBuilder;
 import org.apereo.cas.util.LoggingUtils;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.jspecify.annotations.Nullable;
 import org.pac4j.core.context.CallContext;
 import org.pac4j.core.credentials.TokenCredentials;
 import org.pac4j.core.profile.CommonProfile;
@@ -28,9 +29,9 @@ public class OidcClientConfigurationAccessTokenAuthenticator extends OAuth20Acce
     }
 
     @Override
-    protected CommonProfile buildUserProfile(final TokenCredentials tokenCredentials,
-                                             final CallContext callContext,
-                                             final OAuth20AccessToken accessToken) {
+    protected @Nullable CommonProfile buildUserProfile(final TokenCredentials tokenCredentials,
+                                                       final CallContext callContext,
+                                                       final OAuth20AccessToken accessToken) {
         try {
             val profile = super.buildUserProfile(tokenCredentials, callContext, accessToken);
             LOGGER.trace("Examining access token [{}] for required scope [{}]", accessToken, OidcConstants.CLIENT_CONFIGURATION_SCOPE);
