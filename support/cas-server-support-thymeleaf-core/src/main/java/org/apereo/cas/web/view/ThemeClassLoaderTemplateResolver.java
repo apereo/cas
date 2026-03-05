@@ -30,7 +30,7 @@ public class ThemeClassLoaderTemplateResolver extends ClassLoaderTemplateResolve
         final String resourceName, final String characterEncoding,
         final Map<String, Object> templateResolutionAttributes) {
 
-        val request = HttpRequestUtils.getHttpServletRequestFromRequestAttributes();
+        val request = Objects.requireNonNull(HttpRequestUtils.getHttpServletRequestFromRequestAttributes());
         val themeName = themeResolver.resolveThemeName(request);
 
         if (StringUtils.isNotBlank(themeName)) {

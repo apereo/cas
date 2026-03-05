@@ -384,11 +384,11 @@ public abstract class AbstractTicketRegistry implements TicketRegistry {
 
     protected Ticket createEncodedTicket(final Ticket ticket) throws Exception {
         LOGGER.debug("Encoding ticket [{}]", ticket);
-        val encodedTicketObject = getSerializeAndEncode(ticket);
+        val encodedTicketObject = serializeAndEncodeTicket(ticket);
         return toEncodedTicket(ticket, encodedTicketObject);
     }
 
-    protected byte[] getSerializeAndEncode(final Ticket ticket) {
+    protected byte[] serializeAndEncodeTicket(final Ticket ticket) {
         return SerializationUtils.serializeAndEncodeObject(cipherExecutor, ticket);
     }
 

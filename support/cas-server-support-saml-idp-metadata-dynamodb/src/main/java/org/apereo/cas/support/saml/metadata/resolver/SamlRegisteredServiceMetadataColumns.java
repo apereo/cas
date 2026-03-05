@@ -14,6 +14,10 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public enum SamlRegisteredServiceMetadataColumns {
     /**
+     * Id column.
+     */
+    ID("id"),
+    /**
      * Name column.
      */
     NAME("name"),

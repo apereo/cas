@@ -1,6 +1,7 @@
 package org.apereo.cas.services.web;
 
 import module java.base;
+import org.jspecify.annotations.Nullable;
 import org.springframework.core.Ordered;
 import org.thymeleaf.spring6.view.AbstractThymeleafView;
 import org.thymeleaf.spring6.view.ThymeleafViewResolver;
@@ -38,7 +39,7 @@ public interface CasThymeleafViewResolverConfigurer extends Ordered {
      *
      * @return the template resolver
      */
-    default ITemplateResolver registerTemplateResolver() {
+    default @Nullable ITemplateResolver registerTemplateResolver() {
         return null;
     }
 }

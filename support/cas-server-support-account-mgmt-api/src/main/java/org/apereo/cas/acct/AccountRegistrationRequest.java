@@ -5,6 +5,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.jspecify.annotations.Nullable;
 
 /**
  * This is {@link AccountRegistrationRequest}.
@@ -41,7 +42,7 @@ public class AccountRegistrationRequest implements Serializable {
      * @return the username
      */
     @JsonIgnore
-    public String getUsername() {
+    public @Nullable String getUsername() {
         return getProperty("username", String.class);
     }
 
@@ -51,7 +52,7 @@ public class AccountRegistrationRequest implements Serializable {
      * @return the password
      */
     @JsonIgnore
-    public String getPassword() {
+    public @Nullable String getPassword() {
         return getProperty("password", String.class);
     }
 
@@ -61,7 +62,7 @@ public class AccountRegistrationRequest implements Serializable {
      * @return the first name
      */
     @JsonIgnore
-    public String getFirstName() {
+    public @Nullable String getFirstName() {
         return getProperty("firstName", String.class);
     }
 
@@ -71,7 +72,7 @@ public class AccountRegistrationRequest implements Serializable {
      * @return the last name
      */
     @JsonIgnore
-    public String getLastName() {
+    public @Nullable String getLastName() {
         return getProperty("lastName", String.class);
     }
 
@@ -81,7 +82,7 @@ public class AccountRegistrationRequest implements Serializable {
      * @return the email
      */
     @JsonIgnore
-    public String getEmail() {
+    public @Nullable String getEmail() {
         return getProperty("email", String.class);
     }
 
@@ -91,7 +92,7 @@ public class AccountRegistrationRequest implements Serializable {
      * @return the phone
      */
     @JsonIgnore
-    public String getPhone() {
+    public @Nullable String getPhone() {
         return getProperty("phone", String.class);
     }
 
@@ -104,7 +105,7 @@ public class AccountRegistrationRequest implements Serializable {
      * @return the property
      */
     @JsonIgnore
-    public <T> T getProperty(final String name, final Class<T> clazz) {
+    public <T> @Nullable T getProperty(final String name, final Class<T> clazz) {
         return clazz.cast(properties.get(name));
     }
 
