@@ -10,7 +10,6 @@ import lombok.Setter;
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-import org.jspecify.annotations.NonNull;
 import org.jspecify.annotations.Nullable;
 import org.springframework.dao.IncorrectResultSizeDataAccessException;
 import org.springframework.dao.support.DataAccessUtils;
@@ -62,7 +61,7 @@ public abstract class BasePersonAttributeDao implements PersonAttributeDao {
     }
 
     protected Map<String, List<Object>> toMultivaluedMap(final Map<String, Object> seed) {
-        val multiSeed = new LinkedCaseInsensitiveMap<@NonNull List<Object>>(seed.size());
+        val multiSeed = new LinkedCaseInsensitiveMap<List<Object>>(seed.size());
         for (val seedEntry : seed.entrySet()) {
             val seedName = seedEntry.getKey();
             val seedValue = seedEntry.getValue();
