@@ -34,6 +34,7 @@ import org.apache.commons.lang3.Strings;
 import org.hjson.JsonValue;
 import org.hjson.Stringify;
 import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.data.redis.connection.DataType;
@@ -41,6 +42,7 @@ import org.springframework.data.redis.core.RedisCallback;
 import org.springframework.data.redis.core.RedisKeyValueAdapter;
 import org.springframework.data.redis.core.ScanOptions;
 import org.springframework.data.redis.core.convert.RedisData;
+import org.springframework.data.redis.core.types.Expiration;
 import org.springframework.data.redis.serializer.StringRedisSerializer;
 
 /**
@@ -482,8 +484,8 @@ public class RedisTicketRegistry extends AbstractTicketRegistry implements Clean
         });
     }
 
-    protected Ticket getTicketFromRedis(final Predicate<Ticket> predicate, final String redisKeyPattern,
-                                        final RedisKeyGenerator redisKeyGenerator) {
+    protected @Nullable Ticket getTicketFromRedis(final Predicate<Ticket> predicate, final String redisKeyPattern,
+                                                  final RedisKeyGenerator redisKeyGenerator) {
         val rawTicketId = redisKeyGenerator.rawKey(redisKeyPattern);
         val cachedTicket = ticketCache.stream()
             .map(cache -> cache.getIfPresent(rawTicketId))
@@ -529,7 +531,7 @@ public class RedisTicketRegistry extends AbstractTicketRegistry implements Clean
         val ticketDocument = buildTicketAsDocument(ticket);
 
         val valueOps = casRedisTemplates.getTicketsRedisTemplate().boundValueOps(redisKeyPattern);
-        valueOps.set(ticketDocument, timeout, TimeUnit.SECONDS);
+        valueOps.set(ticketDocument, Expiration.from(timeout, TimeUnit.SECONDS));
 
         val keyspace = redisKeyGenerator.getKeyspace();
         val redisDataItem = new RedisData();
