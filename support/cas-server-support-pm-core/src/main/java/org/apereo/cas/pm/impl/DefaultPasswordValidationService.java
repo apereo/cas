@@ -55,7 +55,7 @@ public class DefaultPasswordValidationService implements PasswordValidationServi
     public boolean isAcceptedByPasswordPolicy(final String password) {
         val policyPattern = casProperties.getAuthn().getPm().getCore().getPasswordPolicyPattern();
         LOGGER.debug("Checking provided password against pattern required for password policy: [{}]", policyPattern);
-        return RegexUtils.find(policyPattern, password);
+        return RegexUtils.find(policyPattern, password, Pattern.COMMENTS);
     }
 
     protected boolean validatePassword(final PasswordChangeRequest bean) {
