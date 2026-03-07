@@ -3,7 +3,6 @@ package org.apereo.cas.mfa.twilio;
 import module java.base;
 import org.apereo.cas.authentication.AbstractMultifactorAuthenticationProvider;
 import org.apereo.cas.configuration.model.support.mfa.twilio.CasTwilioMultifactorAuthenticationProperties;
-import org.apereo.cas.services.RegisteredService;
 import lombok.NoArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
 
@@ -22,11 +21,6 @@ public class CasTwilioMultifactorAuthenticationProvider extends AbstractMultifac
     @Override
     public String getId() {
         return StringUtils.defaultIfBlank(super.getId(), CasTwilioMultifactorAuthenticationProperties.DEFAULT_IDENTIFIER);
-    }
-
-    @Override
-    public boolean isAvailable(final RegisteredService service) {
-        return true;
     }
 
     @Override
