@@ -27,7 +27,7 @@ public class TokenWebApplicationServiceResponseBuilder extends WebApplicationSer
     @Serial
     private static final long serialVersionUID = -2863268279032438778L;
 
-    private final transient TokenTicketBuilder tokenTicketBuilder;
+    private final TokenTicketBuilder tokenTicketBuilder;
 
     public TokenWebApplicationServiceResponseBuilder(final ServicesManager servicesManager,
                                                      final TokenTicketBuilder tokenTicketBuilder,
@@ -72,7 +72,7 @@ public class TokenWebApplicationServiceResponseBuilder extends WebApplicationSer
 
     protected String generateToken(final WebApplicationService service, final Map<String, String> parameters) {
         return FunctionUtils.doUnchecked(() -> {
-            val ticketId = parameters.get(CasProtocolConstants.PARAMETER_TICKET);
+            val ticketId = Objects.requireNonNull(parameters.get(CasProtocolConstants.PARAMETER_TICKET));
             return tokenTicketBuilder.build(ticketId, service);
         });
     }
