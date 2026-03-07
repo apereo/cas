@@ -11,6 +11,7 @@ import org.apereo.cas.web.flow.resolver.CasWebflowEventResolver;
 import org.apereo.cas.web.support.WebUtils;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.jspecify.annotations.Nullable;
 import org.springframework.webflow.execution.RequestContext;
 
 /**
@@ -36,7 +37,7 @@ public class X509CertificateCredentialsRequestHeaderAction extends X509Certifica
     }
 
     @Override
-    protected Credential constructCredentialsFromRequest(final RequestContext context) {
+    protected @Nullable Credential constructCredentialsFromRequest(final RequestContext context) {
         val request = WebUtils.getHttpServletRequestFromExternalWebflowContext(context);
         if (context.getRequestScope().contains(REQUEST_ATTRIBUTE_X509_ERROR)) {
             LOGGER.debug("Not getting certificates from header because error found in the request.");
@@ -58,12 +59,5 @@ public class X509CertificateCredentialsRequestHeaderAction extends X509Certifica
             LOGGER.trace("No certificate extractor was configured");
         }
         return null;
-    }
-
-    @Override
-    protected void onError(final RequestContext requestContext) {
-        WebUtils.putCasLoginFormViewable(requestContext,
-            WebUtils.isCasLoginFormSetToViewable(requestContext) || casProperties.getAuthn().getX509().isMixedMode());
-        requestContext.getRequestScope().put(REQUEST_ATTRIBUTE_X509_ERROR, "true");
     }
 }

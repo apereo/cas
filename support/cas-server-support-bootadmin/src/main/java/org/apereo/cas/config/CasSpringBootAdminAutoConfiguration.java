@@ -29,7 +29,6 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Conditional;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.ScopedProxyMode;
-import org.springframework.core.Ordered;
 import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
 import org.springframework.http.client.reactive.ReactorClientHttpConnector;
 import org.springframework.scheduling.annotation.EnableAsync;
@@ -106,10 +105,6 @@ public class CasSpringBootAdminAutoConfiguration {
         @ConditionalOnMissingBean(name = "springBootAdminEndpointConfigurer")
         public CasWebSecurityConfigurer<HttpSecurity> springBootAdminEndpointConfigurer(final AdminServerProperties properties) {
             return new CasWebSecurityConfigurer<>() {
-                @Override
-                public int getOrder() {
-                    return Ordered.LOWEST_PRECEDENCE;
-                }
 
                 @Override
                 public CasWebSecurityConfigurer<HttpSecurity> finish(final HttpSecurity http) throws Exception {

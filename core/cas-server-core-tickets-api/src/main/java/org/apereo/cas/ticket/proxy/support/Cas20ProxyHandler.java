@@ -12,6 +12,7 @@ import org.apereo.cas.util.http.HttpClient;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.jspecify.annotations.Nullable;
 
 /**
  * Proxy Handler to handle the default callback functionality of CAS 2.0.
@@ -33,7 +34,7 @@ public class Cas20ProxyHandler implements ProxyHandler {
     private final UniqueTicketIdGenerator uniqueTicketIdGenerator;
 
     @Override
-    public String handle(final Credential credential, final Ticket proxyGrantingTicket) throws Throwable {
+    public @Nullable String handle(final Credential credential, final Ticket proxyGrantingTicket) throws Throwable {
         val serviceCredentials = (HttpBasedServiceCredential) credential;
         val proxyIou = uniqueTicketIdGenerator.getNewTicketId(ProxyGrantingTicket.PROXY_GRANTING_TICKET_IOU_PREFIX);
 
@@ -66,10 +67,5 @@ public class Cas20ProxyHandler implements ProxyHandler {
 
         LOGGER.debug("Failed to send ProxyIou of [{}] for service: [{}]", proxyIou, serviceCredentials);
         return null;
-    }
-
-    @Override
-    public boolean canHandle(final Credential credential) {
-        return true;
     }
 }
