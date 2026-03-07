@@ -5,6 +5,7 @@ import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.principal.WebApplicationService;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.ticket.AuthenticationAwareTicket;
+import org.jspecify.annotations.Nullable;
 
 /**
  * This is {@link TokenTicketBuilder}.
@@ -60,7 +61,7 @@ public interface TokenTicketBuilder {
      * @return the string
      * @throws Throwable the throwable
      */
-    default String build(final Authentication authentication, final RegisteredService registeredService) throws Throwable {
+    default String build(final Authentication authentication, @Nullable final RegisteredService registeredService) throws Throwable {
         return build(authentication, registeredService, UUID.randomUUID().toString(), Map.of());
     }
 
@@ -75,8 +76,8 @@ public interface TokenTicketBuilder {
      * @return the token
      * @throws Throwable the throwable
      */
-    String build(Authentication authentication,
-                 RegisteredService registeredService,
+    String build(@Nullable Authentication authentication,
+                 @Nullable RegisteredService registeredService,
                  String jwtIdentifier,
                  Map<String, List<Object>> claims) throws Throwable;
 }

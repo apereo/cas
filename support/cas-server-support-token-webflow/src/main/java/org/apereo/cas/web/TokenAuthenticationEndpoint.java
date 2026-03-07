@@ -10,6 +10,7 @@ import org.apereo.cas.authentication.principal.PrincipalResolver;
 import org.apereo.cas.authentication.principal.ServiceFactory;
 import org.apereo.cas.authentication.principal.WebApplicationService;
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.services.RegisteredServiceAccessStrategyUtils;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.token.authentication.TokenAuthenticationSecurity;
 import org.apereo.cas.util.CollectionUtils;
@@ -18,7 +19,6 @@ import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.enums.ParameterIn;
 import lombok.val;
 import org.apache.commons.lang3.math.NumberUtils;
-import org.jspecify.annotations.NonNull;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.boot.actuate.endpoint.Access;
 import org.springframework.boot.actuate.endpoint.annotation.Endpoint;
@@ -36,22 +36,22 @@ import org.springframework.util.Assert;
  */
 @Endpoint(id = "tokenAuth", defaultAccess = Access.NONE)
 public class TokenAuthenticationEndpoint extends BaseCasActuatorEndpoint {
-    private final ObjectProvider<@NonNull PrincipalResolver> principalResolver;
-    private final ObjectProvider<@NonNull ServicesManager> servicesManager;
+    private final ObjectProvider<PrincipalResolver> principalResolver;
+    private final ObjectProvider<ServicesManager> servicesManager;
 
-    private final ObjectProvider<@NonNull AuditableExecution> registeredServiceAccessStrategyEnforcer;
+    private final ObjectProvider<AuditableExecution> registeredServiceAccessStrategyEnforcer;
 
-    private final ObjectProvider<@NonNull ServiceFactory<WebApplicationService>> serviceFactory;
+    private final ObjectProvider<ServiceFactory<WebApplicationService>> serviceFactory;
 
-    private final ObjectProvider<@NonNull PrincipalFactory> principalFactory;
+    private final ObjectProvider<PrincipalFactory> principalFactory;
 
     public TokenAuthenticationEndpoint(
-        final ObjectProvider<@NonNull CasConfigurationProperties> casProperties,
-        final ObjectProvider<@NonNull PrincipalResolver> principalResolver,
-        final ObjectProvider<@NonNull ServicesManager> servicesManager,
-        final ObjectProvider<@NonNull AuditableExecution> registeredServiceAccessStrategyEnforcer,
-        final ObjectProvider<@NonNull ServiceFactory<WebApplicationService>> serviceFactory,
-        final ObjectProvider<@NonNull PrincipalFactory> principalFactory) {
+        final ObjectProvider<CasConfigurationProperties> casProperties,
+        final ObjectProvider<PrincipalResolver> principalResolver,
+        final ObjectProvider<ServicesManager> servicesManager,
+        final ObjectProvider<AuditableExecution> registeredServiceAccessStrategyEnforcer,
+        final ObjectProvider<ServiceFactory<WebApplicationService>> serviceFactory,
+        final ObjectProvider<PrincipalFactory> principalFactory) {
         super(casProperties.getObject());
         this.principalResolver = principalResolver;
         this.servicesManager = servicesManager;
@@ -79,9 +79,10 @@ public class TokenAuthenticationEndpoint extends BaseCasActuatorEndpoint {
         val registeredService = NumberUtils.isCreatable(service)
             ? servicesManager.getObject().findServiceBy(Long.parseLong(service))
             : servicesManager.getObject().findServiceBy(selectedService);
+        val givenPrincipal = principalFactory.getObject().createPrincipal(username);
         val principal = principalResolver.getObject().resolve(new BasicIdentifiableCredential(username),
-            Optional.of(principalFactory.getObject().createPrincipal(username)),
-            Optional.empty(), Optional.of(selectedService));
+            Optional.ofNullable(givenPrincipal),
+            Optional.empty(), Optional.ofNullable(selectedService));
         val authentication = DefaultAuthenticationBuilder.newInstance().setPrincipal(principal).build();
         val audit = AuditableContext.builder()
             .service(selectedService)
@@ -90,7 +91,7 @@ public class TokenAuthenticationEndpoint extends BaseCasActuatorEndpoint {
             .build();
         val accessResult = registeredServiceAccessStrategyEnforcer.getObject().execute(audit);
         accessResult.throwExceptionIfNeeded();
-        val token = TokenAuthenticationSecurity.forRegisteredService(registeredService).generateTokenFor(authentication);
+        val token = TokenAuthenticationSecurity.forRegisteredService(Objects.requireNonNull(registeredService)).generateTokenFor(authentication);
         return Map.of("registeredService", registeredService, "token", token);
     }
 
@@ -113,10 +114,11 @@ public class TokenAuthenticationEndpoint extends BaseCasActuatorEndpoint {
         val registeredService = NumberUtils.isCreatable(service)
             ? servicesManager.getObject().findServiceBy(Long.parseLong(service))
             : servicesManager.getObject().findServiceBy(selectedService);
-        val profile = TokenAuthenticationSecurity.forRegisteredService(registeredService).validateToken(token);
+        RegisteredServiceAccessStrategyUtils.ensureServiceAccessIsAllowed(registeredService);
+        val profile = TokenAuthenticationSecurity.forRegisteredService(Objects.requireNonNull(registeredService)).validateToken(token);
         Assert.notNull(profile, "Authentication attempt failed to produce an authenticated profile");
         val attributes = CollectionUtils.toMultiValuedMap(profile.getAttributes());
-        val principal = principalFactory.getObject().createPrincipal(profile.getId(), attributes);
+        val principal = Objects.requireNonNull(principalFactory.getObject().createPrincipal(profile.getId(), attributes));
         val audit = AuditableContext.builder()
             .service(selectedService)
             .principal(principal)

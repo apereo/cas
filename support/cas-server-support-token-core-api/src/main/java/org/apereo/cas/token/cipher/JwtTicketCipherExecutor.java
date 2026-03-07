@@ -5,6 +5,7 @@ import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.RegisteredServiceProperty;
 import org.apereo.cas.util.cipher.BaseStringCipherExecutor;
 import lombok.val;
+import org.jspecify.annotations.Nullable;
 
 
 /**
@@ -18,9 +19,9 @@ public class JwtTicketCipherExecutor extends BaseStringCipherExecutor {
         this(null, null, null, false, false, 0, 0);
     }
 
-    public JwtTicketCipherExecutor(final String secretKeyEncryption,
-                                   final String secretKeySigning,
-                                   final String contentEncryptionAlgorithmIdentifier,
+    public JwtTicketCipherExecutor(@Nullable final String secretKeyEncryption,
+                                   @Nullable final String secretKeySigning,
+                                   @Nullable final String contentEncryptionAlgorithmIdentifier,
                                    final boolean encryptionEnabled,
                                    final boolean signingEnabled,
                                    final int signingKeySize,
@@ -84,7 +85,7 @@ public class JwtTicketCipherExecutor extends BaseStringCipherExecutor {
     protected Optional<CipherOperationsStrategyType> getCipherOperationsStrategyType(final RegisteredService registeredService) {
         val property = getCipherStrategyTypeRegisteredServiceProperty(registeredService);
         if (property.isAssignedTo(registeredService)) {
-            val order = property.getPropertyValue(registeredService).value();
+            val order = Objects.requireNonNull(property.getPropertyValue(registeredService)).value();
             return Optional.of(CipherOperationsStrategyType.valueOf(order));
         }
         return Optional.empty();
