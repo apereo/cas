@@ -12,7 +12,6 @@ import org.apereo.cas.authentication.bypass.HttpRequestMultifactorAuthentication
 import org.apereo.cas.authentication.bypass.MultifactorAuthenticationProviderBypassEvaluator;
 import org.apereo.cas.authentication.bypass.PrincipalMultifactorAuthenticationProviderBypassEvaluator;
 import org.apereo.cas.authentication.bypass.RegisteredServiceMultifactorAuthenticationProviderBypassEvaluator;
-import org.apereo.cas.authentication.bypass.RegisteredServicePrincipalAttributeMultifactorAuthenticationProviderBypassEvaluator;
 import org.apereo.cas.authentication.bypass.RestMultifactorAuthenticationProviderBypassEvaluator;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.features.CasFeatureModule;
@@ -162,11 +161,11 @@ class DuoSecurityMultifactorProviderBypassConfiguration {
             .get();
     }
 
-    @ConditionalOnMissingBean(name = "duoSecurityRegisteredServicePrincipalAttributeMultifactorAuthenticationProviderBypassEvaluator")
+    @ConditionalOnMissingBean(name = "duoSecurityRegisteredServiceMultifactorAuthenticationProviderBypassEvaluator")
     @Bean
     @DuoSecurityBypassEvaluator
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-    public MultifactorAuthenticationProviderBypassEvaluator duoSecurityRegisteredServicePrincipalAttributeMultifactorAuthenticationProviderBypassEvaluator(
+    public MultifactorAuthenticationProviderBypassEvaluator duoSecurityRegisteredServiceMultifactorAuthenticationProviderBypassEvaluator(
         final ConfigurableApplicationContext applicationContext,
         final CasConfigurationProperties casProperties) {
         return BeanSupplier.of(MultifactorAuthenticationProviderBypassEvaluator.class)
@@ -175,7 +174,7 @@ class DuoSecurityMultifactorProviderBypassConfiguration {
                 val duoProps = casProperties.getAuthn().getMfa().getDuo();
                 val bypass = new DefaultChainingMultifactorAuthenticationBypassProvider(applicationContext);
                 duoProps.forEach(duo -> bypass.addMultifactorAuthenticationProviderBypassEvaluator(
-                    new RegisteredServicePrincipalAttributeMultifactorAuthenticationProviderBypassEvaluator(duo.getId(), applicationContext)));
+                    new RegisteredServiceMultifactorAuthenticationProviderBypassEvaluator(duo.getId(), applicationContext)));
                 return bypass;
             })
             .otherwiseProxy()
