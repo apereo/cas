@@ -3,6 +3,7 @@ package org.apereo.cas.web;
 import module java.base;
 import org.apereo.cas.token.TokenConstants;
 import org.apache.commons.lang3.StringUtils;
+import org.jspecify.annotations.Nullable;
 import jakarta.servlet.http.HttpServletRequest;
 
 /**
@@ -29,7 +30,7 @@ public interface TokenRequestExtractor {
      * @param request the request
      * @return the string
      */
-    default String extract(final HttpServletRequest request) {
+    default @Nullable String extract(final HttpServletRequest request) {
         var authTokenValue = request.getParameter(TokenConstants.PARAMETER_NAME_TOKEN);
         if (StringUtils.isBlank(authTokenValue)) {
             authTokenValue = request.getHeader(TokenConstants.PARAMETER_NAME_TOKEN);

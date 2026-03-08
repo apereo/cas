@@ -64,7 +64,7 @@ public class TokenAuthenticationAction extends AbstractNonInteractiveCredentials
     protected @Nullable Credential constructCredentialsFromRequest(final RequestContext requestContext) {
         val request = WebUtils.getHttpServletRequestFromExternalWebflowContext(requestContext);
         val service = resolveServiceFromRequest(requestContext);
-        return Optional.of(tokenRequestExtractor.extract(request))
+        return Optional.ofNullable(tokenRequestExtractor.extract(request))
             .or(() -> {
                 val tokenValue = Objects.requireNonNull(service).getAttributes().get(TokenConstants.PARAMETER_NAME_TOKEN);
                 return CollectionUtils.firstElement(tokenValue).map(Object::toString);
