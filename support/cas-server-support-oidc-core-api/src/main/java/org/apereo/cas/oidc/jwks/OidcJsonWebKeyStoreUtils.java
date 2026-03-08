@@ -25,6 +25,7 @@ import org.jose4j.jwk.RsaJwkGenerator;
 import org.jose4j.jws.AlgorithmIdentifiers;
 import org.jose4j.keys.AesKey;
 import org.jose4j.keys.EllipticCurves;
+import org.jspecify.annotations.Nullable;
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.ResourceLoader;
@@ -45,9 +46,9 @@ public class OidcJsonWebKeyStoreUtils {
     /**
      * Gets json web key set.
      *
-     * @param oidcRegisteredService        the service
-     * @param resourceLoader the resource loader
-     * @param usage          the usage
+     * @param oidcRegisteredService the service
+     * @param resourceLoader        the resource loader
+     * @param usage                 the usage
      * @return the json web key set
      */
     public static Optional<JsonWebKeySet> getJsonWebKeySet(final OidcRegisteredService oidcRegisteredService,
@@ -55,8 +56,6 @@ public class OidcJsonWebKeyStoreUtils {
                                                            final Optional<OidcJsonWebKeyUsage> usage) {
         return FunctionUtils.doAndHandle(
                 () -> {
-                    val serviceJwks = SpringExpressionLanguageValueResolver.getInstance().resolve(oidcRegisteredService.getJwks());
-                    LOGGER.trace("Loading JSON web key from [{}]", serviceJwks);
                     val resource = getJsonWebKeySetResource(oidcRegisteredService, resourceLoader);
                     if (resource == null) {
                         LOGGER.debug("No JSON web keys or keystore resource could be found for [{}]", oidcRegisteredService.getServiceId());
@@ -162,8 +161,8 @@ public class OidcJsonWebKeyStoreUtils {
         return Optional.of(new JsonWebKeySet(jsonWebKey));
     }
 
-    private static Resource getJsonWebKeySetResource(final OidcRegisteredService service,
-                                                     final ResourceLoader resourceLoader) {
+    private static @Nullable Resource getJsonWebKeySetResource(final OidcRegisteredService service,
+                                                               final ResourceLoader resourceLoader) {
         val serviceJwks = SpringExpressionLanguageValueResolver.getInstance().resolve(service.getJwks());
         if (StringUtils.isNotBlank(serviceJwks)) {
             if (ResourceUtils.doesResourceExist(serviceJwks)) {

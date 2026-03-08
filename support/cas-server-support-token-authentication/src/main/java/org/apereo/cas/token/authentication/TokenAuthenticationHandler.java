@@ -42,10 +42,10 @@ public class TokenAuthenticationHandler extends AbstractPreAndPostProcessingAuth
         try {
             val tokenCredential = (BasicIdentifiableCredential) credential;
             val registeredService = servicesManager.findServiceBy(service);
-            val profile = TokenAuthenticationSecurity.forRegisteredService(registeredService).validateToken(tokenCredential.getId());
+            val profile = TokenAuthenticationSecurity.forRegisteredService(Objects.requireNonNull(registeredService)).validateToken(tokenCredential.getId());
             Assert.notNull(profile, "Authentication attempt failed to produce an authenticated profile");
             val attributes = CollectionUtils.toMultiValuedMap(profile.getAttributes());
-            val principal = principalFactory.createPrincipal(profile.getId(), attributes);
+            val principal = Objects.requireNonNull(principalFactory.createPrincipal(profile.getId(), attributes));
             tokenCredential.setId(principal.getId());
             return createHandlerResult(tokenCredential, principal, new ArrayList<>());
         } catch (final Throwable e) {

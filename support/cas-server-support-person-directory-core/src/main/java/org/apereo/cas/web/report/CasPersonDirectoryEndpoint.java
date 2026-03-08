@@ -81,10 +81,7 @@ public class CasPersonDirectoryEndpoint extends BaseCasRestActuatorEndpoint {
         return attributeRepositoryPlan.getObject()
             .getAttributeRepositories()
             .stream()
-            .map(repository -> new AttributeRepository(
-                List.of(repository.getId()),
-                repository.getOrder(),
-                repository.getTags()))
+            .map(repository -> new AttributeRepository(List.of(repository.getId()), repository.getOrder(), repository.getTags()))
             .toList();
     }
 

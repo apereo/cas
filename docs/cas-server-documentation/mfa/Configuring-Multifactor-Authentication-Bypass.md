@@ -51,8 +51,13 @@ additional attributes are supplanted to let the application know multifactor aut
 ### Bypass Per Service
 
 MFA Bypass rules can be overridden per application via the CAS service registry. This is useful when
-MFA may be turned on globally for all applications and services, yet a few selectively need to be excluded. Services
-whose access should bypass MFA may be defined as such in the CAS service registry:
+MFA may be turned on globally for all applications and services, yet a few selectively need to be excluded.
+
+{% tabs bypassmfaforservice %}
+
+{% tab bypassmfaforservice Toggle %}
+
+Services whose access should bypass MFA may be defined as such in the CAS service registry:
 
 ```json
 {
@@ -67,11 +72,14 @@ whose access should bypass MFA may be defined as such in the CAS service registr
 }
 ```
 
-### Bypass Per Principal Attribute & Service
+Setting this flag activates the bypass for the registered application and the specified provider regardless of all other bypass rules.
 
-This is similar to the above option, except that bypass is only activated for
-the registered application if the authenticated principal contains an attribute
-with the specified value(s). 
+{% endtab %}
+
+{% tab bypassmfaforservice Principal Attribute %}
+
+This bypass rule is only activated for the registered application if the authenticated principal contains an attribute
+with the specified value(s).
 
 ```json
 {
@@ -81,7 +89,7 @@ with the specified value(s).
   "multifactorPolicy" : {
     "@class" : "org.apereo.cas.services.DefaultRegisteredServiceMultifactorPolicy",
     "bypassPrincipalAttributeName": "attributeForBypass",
-    "bypassPrincipalAttributeValue": "^bypass-value-[A-Z].+"
+    "bypassPrincipalAttributeValue": "^bypass-value-[A-Z].+",
     "bypassIfMissingPrincipalAttribute": false
   }
 }
@@ -93,6 +101,28 @@ Matching and comparison operations are case insensitive.
 <p>Setting the <code>bypassEnabled</code> flag here is unnecessary and may cause side-effects. Once principal attribute name and match value
 are defined, the <code>bypassEnabled</code> is expected to be <code>true</code> anyway.</p>
 </div>
+
+{% endtab %}
+
+{% tab bypassmfaforservice IP Address %}
+
+This bypass rule is only activated for the registered application if the request comes from a specific IP address or range of addresses.
+
+```json
+{
+  "@class" : "org.apereo.cas.services.CasRegisteredService",
+  "serviceId" : "^(https|imaps)://.*",
+  "id" : 100,
+  "multifactorPolicy" : {
+    "@class" : "org.apereo.cas.services.DefaultRegisteredServiceMultifactorPolicy",
+    "bypassForRequestIpAddress": "^172\\.16\\.0\\.[0-9]+$",
+  }
+}
+```
+
+{% endtab %}
+
+{% endtabs %}
 
 ## Other Bypass Providers
 

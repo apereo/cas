@@ -51,11 +51,6 @@ public class DefaultAuditPrincipalResolver implements PrincipalResolver {
         return getCurrentPrincipal(auditTarget, null, exception);
     }
 
-    @Override
-    public String resolve() {
-        return UNKNOWN_USER;
-    }
-
     protected String getCurrentPrincipal(final JoinPoint auditTarget,
                                          @Nullable final Object returnValue,
                                          @Nullable final Exception exception) {

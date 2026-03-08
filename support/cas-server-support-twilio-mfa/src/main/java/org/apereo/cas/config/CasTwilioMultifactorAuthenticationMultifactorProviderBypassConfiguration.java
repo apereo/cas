@@ -9,7 +9,6 @@ import org.apereo.cas.authentication.bypass.HttpRequestMultifactorAuthentication
 import org.apereo.cas.authentication.bypass.MultifactorAuthenticationProviderBypassEvaluator;
 import org.apereo.cas.authentication.bypass.PrincipalMultifactorAuthenticationProviderBypassEvaluator;
 import org.apereo.cas.authentication.bypass.RegisteredServiceMultifactorAuthenticationProviderBypassEvaluator;
-import org.apereo.cas.authentication.bypass.RegisteredServicePrincipalAttributeMultifactorAuthenticationProviderBypassEvaluator;
 import org.apereo.cas.authentication.bypass.RestMultifactorAuthenticationProviderBypassEvaluator;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.features.CasFeatureModule;
@@ -115,15 +114,15 @@ class CasTwilioMultifactorAuthenticationMultifactorProviderBypassConfiguration {
             .get();
     }
 
-    @ConditionalOnMissingBean(name = "casTwilioRegisteredServicePrincipalAttributeMultifactorAuthenticationProviderBypassEvaluator")
+    @ConditionalOnMissingBean(name = "casTwilioRegisteredServiceMultifactorAuthenticationProviderBypassEvaluator")
     @Bean
     @CasTwilioMultifactorBypassEvaluator
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-    public MultifactorAuthenticationProviderBypassEvaluator casTwilioRegisteredServicePrincipalAttributeMultifactorAuthenticationProviderBypassEvaluator(
+    public MultifactorAuthenticationProviderBypassEvaluator casTwilioRegisteredServiceMultifactorAuthenticationProviderBypassEvaluator(
         final ConfigurableApplicationContext applicationContext,
         final CasConfigurationProperties casProperties) {
         val twilio = casProperties.getAuthn().getMfa().getTwilio();
-        return new RegisteredServicePrincipalAttributeMultifactorAuthenticationProviderBypassEvaluator(twilio.getId(), applicationContext);
+        return new RegisteredServiceMultifactorAuthenticationProviderBypassEvaluator(twilio.getId(), applicationContext);
     }
 
     @Bean
