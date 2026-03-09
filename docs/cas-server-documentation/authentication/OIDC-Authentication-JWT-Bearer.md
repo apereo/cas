@@ -42,3 +42,12 @@ Applications that wish to take advantage of this capability can be registered wi
   "supportedGrantTypes": [ "java.util.HashSet", [ "urn:ietf:params:oauth:client-assertion-type:jwt-bearer" ] ]
 }
 ```
+  
+Note that JWT validation operations may also be performed via public keys that are 
+[dynamically registered](OIDC-Authentication-JWKS-Clients.html) with CAS.
+In doing so, it is recommended that the provided JWT here contains a `kid` field that points to the registered public key 
+that should be used for validation. Alternatively, the JWT may have a `jwk` header whose thumbprint matches the 
+registered public key. Without the appropriate `kid` or `jwk` CAS may not be able to determine which public key to 
+use for validation.
+
+Please [see this guide](OIDC-Authentication-JWKS-Clients.html) for more info.
