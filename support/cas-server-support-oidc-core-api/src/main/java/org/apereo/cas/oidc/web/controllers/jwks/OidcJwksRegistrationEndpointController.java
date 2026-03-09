@@ -85,13 +85,12 @@ public class OidcJwksRegistrationEndpointController extends BaseOidcController {
         }
 
         val jws = JWSObject.parse(registrationRequest.proof());
-        val jwk = jws.getHeader().getJWK();
-        val jkt = jwk.computeThumbprint().toString();
 
         val alg = jws.getHeader().getAlgorithm();
         FunctionUtils.throwIf(!JWSAlgorithm.Family.EC.contains(alg) && !JWSAlgorithm.Family.RSA.contains(alg) && !JWSAlgorithm.EdDSA.equals(alg),
             () -> new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Invalid algorithm: " + alg));
-        
+
+        val jwk = jws.getHeader().getJWK();
         val verifier = switch (jwk) {
             case ECKey ecKey -> new ECDSAVerifier(ecKey);
             case RSAKey rsaKey -> new RSASSAVerifier(rsaKey);
@@ -101,6 +100,7 @@ public class OidcJwksRegistrationEndpointController extends BaseOidcController {
         if (!jws.verify((JWSVerifier) verifier)) {
             throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Invalid signature");
         }
+        val jkt = jwk.computeThumbprint().toString();
         clientJwksRegistrationStore.save(jkt, jwk.toPublicJWK().toJSONString());
         return ResponseEntity.ok(new ClientJwksRegistrationResponse(jkt));
     }
