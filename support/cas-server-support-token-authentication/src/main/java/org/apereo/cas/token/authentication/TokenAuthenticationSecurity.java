@@ -25,6 +25,7 @@ import lombok.val;
 import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.jose4j.keys.RsaKeyUtil;
+import org.jspecify.annotations.Nullable;
 import org.pac4j.core.profile.UserProfile;
 import org.pac4j.jwt.config.encryption.EncryptionConfiguration;
 import org.pac4j.jwt.config.encryption.RSAEncryptionConfiguration;
@@ -108,21 +109,21 @@ public class TokenAuthenticationSecurity {
         return authn;
     }
 
-    private static String getRegisteredServiceJwtProperty(final RegisteredService registeredService,
-                                                          final RegisteredServiceProperties propName) {
+    private static @Nullable String getRegisteredServiceJwtProperty(final RegisteredService registeredService,
+                                                                    final RegisteredServiceProperties propName) {
         if (registeredService == null || !registeredService.getAccessStrategy().isServiceAccessAllowed(registeredService, null)) {
             LOGGER.debug("Service is not defined/found or its access is disabled in the registry");
             throw UnauthorizedServiceException.denied("Denied");
         }
         if (propName.isAssignedTo(registeredService)) {
-            val propertyValue = propName.getPropertyValue(registeredService).value();
+            val propertyValue = Objects.requireNonNull(propName.getPropertyValue(registeredService)).value();
             return SpringExpressionLanguageValueResolver.getInstance().resolve(propertyValue);
         }
         LOGGER.trace("Service [{}] does not define a property [{}] in the registry", registeredService.getServiceId(), propName);
         return null;
     }
 
-    private static SignatureConfiguration getSignatureConfiguration(final RegisteredService registeredService) {
+    private static @Nullable SignatureConfiguration getSignatureConfiguration(final RegisteredService registeredService) {
         val signingSecret = getRegisteredServiceJwtSigningSecret(registeredService);
         if (StringUtils.isNotBlank(signingSecret)) {
             val signingAlg = determineSigningAlgorithm(registeredService);
@@ -146,7 +147,7 @@ public class TokenAuthenticationSecurity {
         return null;
     }
 
-    private static EncryptionConfiguration getEncryptionConfiguration(final RegisteredService registeredService) {
+    private static @Nullable EncryptionConfiguration getEncryptionConfiguration(final RegisteredService registeredService) {
         val encryptionSecret = getRegisteredServiceJwtEncryptionSecret(registeredService);
         if (StringUtils.isNotBlank(encryptionSecret)) {
             val encryptionAlgorithm = determineEncryptionAlgorithm(registeredService);
@@ -224,11 +225,11 @@ public class TokenAuthenticationSecurity {
         return findAlgorithmFamily(sets, encryptionSecretAlg, JWEAlgorithm.class);
     }
 
-    private static String getRegisteredServiceJwtEncryptionSecret(final RegisteredService registeredService) {
+    private static @Nullable String getRegisteredServiceJwtEncryptionSecret(final RegisteredService registeredService) {
         return getRegisteredServiceJwtProperty(registeredService, RegisteredServiceProperties.TOKEN_SECRET_ENCRYPTION);
     }
 
-    private static String getRegisteredServiceJwtSigningSecret(final RegisteredService registeredService) {
+    private static @Nullable String getRegisteredServiceJwtSigningSecret(final RegisteredService registeredService) {
         return getRegisteredServiceJwtProperty(registeredService, RegisteredServiceProperties.TOKEN_SECRET_SIGNING);
     }
 
@@ -262,7 +263,7 @@ public class TokenAuthenticationSecurity {
     @Data
     @Setter
     private static final class RegisteredServiceSecurityConfiguration {
-        private SignatureConfiguration signatureConfiguration;
-        private EncryptionConfiguration encryptionConfiguration;
+        private @Nullable SignatureConfiguration signatureConfiguration;
+        private @Nullable EncryptionConfiguration encryptionConfiguration;
     }
 }

@@ -7,7 +7,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.jose4j.jwk.JsonWebKeySet;
-import org.jspecify.annotations.NonNull;
 import org.springframework.context.ApplicationContext;
 
 /**
@@ -19,7 +18,7 @@ import org.springframework.context.ApplicationContext;
 @RequiredArgsConstructor
 @Slf4j
 public class OidcRegisteredServiceJsonWebKeystoreCacheLoader
-    implements CacheLoader<@NonNull OidcJsonWebKeyCacheKey, Optional<JsonWebKeySet>> {
+    implements CacheLoader<OidcJsonWebKeyCacheKey, Optional<JsonWebKeySet>> {
     private final ApplicationContext applicationContext;
 
     @Override
@@ -36,7 +35,7 @@ public class OidcRegisteredServiceJsonWebKeystoreCacheLoader
             LOGGER.debug("Locating requested key [{}] for service [{}]", requestedKid, oidcService);
             val keyset = OidcJsonWebKeyStoreUtils.getJsonWebKeyFromJsonWebKeySet(jwks.get(),
                 requestedKid, Optional.of(cacheKey.getUsage()));
-            keyset.ifPresent(k -> LOGGER.debug("Located requested key [{}] for service [{}]", k, oidcService));
+            keyset.ifPresent(keySet -> LOGGER.debug("Located requested key [{}] for service [{}]", keySet, oidcService));
             return keyset;
         }
         return Optional.empty();

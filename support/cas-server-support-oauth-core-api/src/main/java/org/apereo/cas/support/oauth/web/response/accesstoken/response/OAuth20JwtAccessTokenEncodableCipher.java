@@ -26,6 +26,7 @@ import lombok.experimental.Accessors;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
+import org.jspecify.annotations.Nullable;
 
 /**
  * This is {@link OAuth20JwtAccessTokenEncodableCipher}.
@@ -156,8 +157,8 @@ class OAuth20JwtAccessTokenEncodableCipher implements EncodableCipher<String, St
         return this.forceEncodeAsJwt || accessTokenAsJwt || refreshTokenAsJwt || dpopRequest;
     }
 
-    private Principal buildPrincipalForAttributeFilter(final OAuth20Token token,
-                                                       final RegisteredService registeredService) throws Throwable {
+    private @Nullable Principal buildPrincipalForAttributeFilter(final OAuth20Token token,
+                                                                 final RegisteredService registeredService) throws Throwable {
         val authentication = token.getAuthentication();
         val attributes = new HashMap<>(authentication.getPrincipal().getAttributes());
         val authnAttributes = configurationContext.getAuthenticationAttributeReleasePolicy()

@@ -1027,6 +1027,7 @@ function createRegisteredServiceMultifactorPolicy() {
         title: "Specifies the principal attribute name that bypasses multifactor authentication."
     });
 
+
     createInputField({
         paramType: "org.apereo.cas.services.DefaultRegisteredServiceMultifactorPolicy",
         cssClasses: "advanced-option",
@@ -1037,6 +1038,24 @@ function createRegisteredServiceMultifactorPolicy() {
         containerId: "editServiceWizardMenuItemMfaPolicy",
         title: "Specifies the principal attribute value that bypasses multifactor authentication."
     });
+
+    createInputField({
+        paramType: "org.apereo.cas.services.DefaultRegisteredServiceMultifactorPolicy",
+        cssClasses: "advanced-option",
+        labelTitle: "Request IP Pattern Bypass",
+        name: "registeredServiceMfaBypassRequestIpPattern",
+        paramName: "multifactorPolicy.bypassForRequestIpAddress",
+        required: false,
+        containerId: "editServiceWizardMenuItemMfaPolicy",
+        title: "Specifies the request IP address pattern that bypasses multifactor authentication."
+    }).after(`
+       <button class="mdc-button mdc-button--unelevated mdc-input-group-append mdc-icon-button mr-2" 
+                type="button"
+                onclick="validatePattern(this, '#registeredServiceMfaBypassRequestIpPattern')">
+            <i class="mdi mdi-check-circle" aria-hidden="true"></i>
+            <span class="sr-only">Validate</span>
+        </button>
+    `);
 
     if (scriptFactoryAvailable) {
         createInputField({

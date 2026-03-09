@@ -90,4 +90,12 @@ class DefaultPasswordValidationServiceTests {
         passwordHistoryService.store(request);
         assertFalse(passwordValidationService.isValid(request));
     }
+
+    @Test
+    void verifyCaseSensitivity() throws Throwable {
+        val request = new PasswordChangeRequest("casuser", "current-psw".toCharArray(), "th!sIsT3st".toCharArray(), "th!sIsT3st".toCharArray());
+        assertFalse(passwordValidationService.isValid(request));
+    }
 }
+
+

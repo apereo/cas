@@ -32,6 +32,7 @@ import org.apache.commons.lang3.Strings;
 import org.jooq.lambda.Unchecked;
 import org.jose4j.jwt.consumer.JwtConsumer;
 import org.jose4j.jwt.consumer.JwtConsumerBuilder;
+import org.jspecify.annotations.Nullable;
 import org.pac4j.core.context.CallContext;
 import org.pac4j.core.context.WebContext;
 import org.pac4j.core.credentials.Credentials;
@@ -65,8 +66,8 @@ public class OidcJwtAuthenticator implements Authenticator {
 
     protected final OidcServerDiscoverySettings oidcServerDiscoverySettings;
 
-    protected JWT verifyCredentials(final UsernamePasswordCredentials credentials,
-                                    final WebContext webContext) {
+    protected @Nullable JWT verifyCredentials(final UsernamePasswordCredentials credentials,
+                                              final WebContext webContext) {
         if (!Strings.CI.equals(OAuth20Constants.CLIENT_ASSERTION_TYPE_JWT_BEARER, credentials.getUsername())) {
             LOGGER.debug("client assertion type is not set to [{}]", OAuth20Constants.CLIENT_ASSERTION_TYPE_JWT_BEARER);
             return null;
@@ -138,7 +139,7 @@ public class OidcJwtAuthenticator implements Authenticator {
         }).get();
     }
 
-    protected OidcRegisteredService getOidcRegisteredService(final CallContext callContext) throws Throwable {
+    protected @Nullable OidcRegisteredService getOidcRegisteredService(final CallContext callContext) throws Throwable {
         val webContext = callContext.webContext();
         val code = webContext.getRequestParameter(OAuth20Constants.CODE)
             .map(String::valueOf).orElse(StringUtils.EMPTY);

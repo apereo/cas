@@ -11,6 +11,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.jose4j.jwk.JsonWebKeySet;
 import org.jose4j.jwk.PublicJsonWebKey;
 import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
 import org.springframework.core.io.Resource;
 
 /**
@@ -45,7 +46,7 @@ public record OidcDefaultJsonWebKeystoreCacheLoader(OidcJsonWebKeystoreGenerator
     }
 
     @Override
-    public JsonWebKeySet load(final OidcJsonWebKeyCacheKey cacheKey) {
+    public @Nullable JsonWebKeySet load(final OidcJsonWebKeyCacheKey cacheKey) {
         val jwks = buildJsonWebKeySet(cacheKey);
         if (jwks.isEmpty()) {
             LOGGER.warn("JSON web keystore retrieved is empty for issuer [{}]", cacheKey.getIssuer());

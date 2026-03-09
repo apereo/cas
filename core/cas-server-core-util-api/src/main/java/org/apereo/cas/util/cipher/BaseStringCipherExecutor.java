@@ -51,7 +51,7 @@ public abstract class BaseStringCipherExecutor extends AbstractCipherExecutor<Se
 
     private int signingKeySize = SigningJwtCryptoProperties.DEFAULT_STRINGABLE_SIGNING_KEY_SIZE;
 
-    private String secretKeyEncryption;
+    private @Nullable String secretKeyEncryption;
 
     private String secretKeySigning;
 
@@ -88,9 +88,9 @@ public abstract class BaseStringCipherExecutor extends AbstractCipherExecutor<Se
     }
 
 
-    protected BaseStringCipherExecutor(final String secretKeyEncryption,
-                                       final String secretKeySigning,
-                                       final String contentEncryptionAlgorithmIdentifier,
+    protected BaseStringCipherExecutor(@Nullable final String secretKeyEncryption,
+                                       @Nullable final String secretKeySigning,
+                                       @Nullable final String contentEncryptionAlgorithmIdentifier,
                                        final boolean encryptionEnabled,
                                        final boolean signingEnabled,
                                        final int signingKeyLength,
@@ -307,7 +307,7 @@ public abstract class BaseStringCipherExecutor extends AbstractCipherExecutor<Se
         return encoded;
     }
 
-    private String signAndEncrypt(final Serializable value, final Key encryptionKey, final Key signingKey) {
+    private String signAndEncrypt(final Serializable value, final Key encryptionKey, @Nullable final Key signingKey) {
         val encoded = FunctionUtils.doIf(this.signingEnabled,
             () -> {
                 LOGGER.trace("Attempting to sign value based on signing key defined by [{}]", getSigningKeySetting());

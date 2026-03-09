@@ -3,6 +3,7 @@ package org.apereo.cas.services;
 import module java.base;
 import org.apereo.cas.authentication.principal.Service;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
+import org.jspecify.annotations.Nullable;
 import org.springframework.core.Ordered;
 
 /**
@@ -24,7 +25,7 @@ public interface RegisteredServiceAccessStrategy extends Serializable, Ordered {
      * @return true /false if service is enabled
      */
     default boolean isServiceAccessAllowed(final RegisteredService registeredService,
-                                           final Service service) {
+                                           @Nullable final Service service) {
         return true;
     }
 
