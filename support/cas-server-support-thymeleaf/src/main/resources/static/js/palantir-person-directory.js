@@ -2,7 +2,7 @@ async function initializePersonDirectoryOperations() {
     const personDirectoryTable = $("#personDirectoryTable").DataTable({
         pageLength: 10,
         autoWidth: false,
-        drawCallback: settings => {
+        drawCallback: () => {
             $("#personDirectoryTable tr").addClass("mdc-data-table__row");
             $("#personDirectoryTable td").addClass("mdc-data-table__cell");
         }
@@ -11,7 +11,7 @@ async function initializePersonDirectoryOperations() {
     const attributeDefinitionsTable = $("#attributeDefinitionsTable").DataTable({
         pageLength: 10,
         autoWidth: false,
-        drawCallback: settings => {
+        drawCallback: () => {
             $("#attributeDefinitionsTable tr").addClass("mdc-data-table__row");
             $("#attributeDefinitionsTable td").addClass("mdc-data-table__cell");
         }
@@ -20,7 +20,7 @@ async function initializePersonDirectoryOperations() {
     const attributeRepositoriesTable = $("#attributeRepositoriesTable").DataTable({
         pageLength: 10,
         autoWidth: false,
-        drawCallback: settings => {
+        drawCallback: () => {
             $("#attributeRepositoriesTable tr").addClass("mdc-data-table__row");
             $("#attributeRepositoriesTable td").addClass("mdc-data-table__cell");
         }
@@ -47,9 +47,6 @@ async function initializePersonDirectoryOperations() {
                             url: `${CasActuatorEndpoints.personDirectory()}/cache/${username}`,
                             type: "DELETE",
                             contentType: "application/json",
-                            success: (response, status, xhr) => {
-
-                            },
                             error: (xhr, status, error) => {
                                 console.error("Error fetching data:", error);
                                 displayBanner(xhr);
@@ -93,17 +90,20 @@ async function initializePersonDirectoryOperations() {
     let attributeDefinitions = 0;
     if (CasActuatorEndpoints.attributeDefinitions()) {
         $.get(CasActuatorEndpoints.attributeDefinitions(), response => {
+            const checked = `<i class='mdc-tab__icon mdi mdi-check-circle' aria-hidden='true'></i>`;
+            const unchecked = `<i class='mdc-tab__icon mdi mdi-checkbox-blank-circle-outline' aria-hidden='true'></i>`;
+            
             for (const definition of response) {
                 attributeDefinitionsTable.row.add({
                     0: `<code>${definition.key ?? "N/A"}</code>`,
                     1: `<code>${definition.name ?? "N/A"}</code>`,
-                    2: `<code>${definition.scoped ?? "false"}</code>`,
-                    3: `<code>${definition.encrypted ?? "false"}</code>`,
-                    4: `<code>${definition.singleValue ?? "false"}</code>`,
+                    2: `<code>${definition.scoped ? checked : unchecked}</code>`,
+                    3: `<code>${definition.encrypted ? checked : unchecked}</code>`,
+                    4: `<code>${definition.singleValue ? checked : unchecked}</code>`,
                     5: `<code>${definition.attribute ?? "N/A"}</code>`,
                     6: `<code>${definition.patternFormat ?? "N/A"}</code>`,
                     7: `<code>${definition.canonicalizationMode ?? "N/A"}</code>`,
-                    8: `<code>${definition.flattened ?? "false"}</code>`,
+                    8: `<code>${definition.flattened ? checked : unchecked}</code>`,
                     9: `<code>${definition?.friendlyName ?? "N/A"}</code>`,
                     10: `<code>${definition?.urn ?? "N/A"}</code>`
                 });

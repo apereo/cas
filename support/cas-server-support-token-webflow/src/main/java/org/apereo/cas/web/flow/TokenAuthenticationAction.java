@@ -22,6 +22,7 @@ import org.apereo.cas.web.support.WebUtils;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
+import org.jspecify.annotations.Nullable;
 import org.springframework.webflow.execution.RequestContext;
 
 /**
@@ -60,26 +61,26 @@ public class TokenAuthenticationAction extends AbstractNonInteractiveCredentials
     }
 
     @Override
-    protected Credential constructCredentialsFromRequest(final RequestContext requestContext) {
+    protected @Nullable Credential constructCredentialsFromRequest(final RequestContext requestContext) {
         val request = WebUtils.getHttpServletRequestFromExternalWebflowContext(requestContext);
         val service = resolveServiceFromRequest(requestContext);
         return Optional.ofNullable(tokenRequestExtractor.extract(request))
             .or(() -> {
-                val tokenValue = service.getAttributes().get(TokenConstants.PARAMETER_NAME_TOKEN);
+                val tokenValue = Objects.requireNonNull(service).getAttributes().get(TokenConstants.PARAMETER_NAME_TOKEN);
                 return CollectionUtils.firstElement(tokenValue).map(Object::toString);
             })
             .filter(StringUtils::isNotBlank)
             .map(authTokenValue -> {
                 val registeredService = servicesManager.findServiceBy(service);
                 RegisteredServiceAccessStrategyUtils.ensureServiceAccessIsAllowed(service, registeredService);
-                val credential = new TokenCredential(authTokenValue, service);
+                val credential = new TokenCredential(authTokenValue, Objects.requireNonNull(service));
                 LOGGER.debug("Received token authentication request [{}] ", credential);
                 return credential;
             })
             .orElse(null);
     }
 
-    protected Service resolveServiceFromRequest(final RequestContext requestContext) {
+    protected @Nullable Service resolveServiceFromRequest(final RequestContext requestContext) {
         return FunctionUtils.doUnchecked(() -> {
             val givenService = Optional.ofNullable(WebUtils.getService(requestContext))
                 .orElseGet(() -> webApplicationServiceFactory.createService(casProperties.getServer().getPrefix()));

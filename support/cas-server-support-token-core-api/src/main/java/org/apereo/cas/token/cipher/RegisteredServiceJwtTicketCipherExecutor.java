@@ -13,6 +13,7 @@ import lombok.val;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.jspecify.annotations.Nullable;
 
 /**
  * This is {@link RegisteredServiceJwtTicketCipherExecutor}.
@@ -25,7 +26,7 @@ import org.apache.commons.lang3.StringUtils;
 public class RegisteredServiceJwtTicketCipherExecutor extends JwtTicketCipherExecutor implements RegisteredServiceCipherExecutor {
 
     @Override
-    public String decode(final String data, final Optional<RegisteredService> service) {
+    public @Nullable String decode(final String data, final Optional<RegisteredService> service) {
         if (service.isPresent()) {
             val registeredService = service.get();
             if (supports(registeredService)) {
@@ -55,7 +56,7 @@ public class RegisteredServiceJwtTicketCipherExecutor extends JwtTicketCipherExe
     }
 
     @Override
-    public boolean supports(final RegisteredService registeredService) {
+    public boolean supports(@Nullable final RegisteredService registeredService) {
         return getSigningKey(registeredService).isPresent() || getEncryptionKey(registeredService).isPresent();
     }
 
@@ -83,7 +84,7 @@ public class RegisteredServiceJwtTicketCipherExecutor extends JwtTicketCipherExe
             StringUtils.isNotBlank(encryptionKey), StringUtils.isNotBlank(signingKey), 0, 0);
 
         val encryptionAlg = getEncryptionAlgRegisteredServiceProperty().isAssignedTo(registeredService)
-            ? getEncryptionAlgRegisteredServiceProperty().getPropertyValue(registeredService).value()
+            ? Objects.requireNonNull(getEncryptionAlgRegisteredServiceProperty().getPropertyValue(registeredService)).value()
             : EncryptionJwtCryptoProperties.DEFAULT_CONTENT_ENCRYPTION_ALGORITHM;
         cipher.setContentEncryptionAlgorithmIdentifier(encryptionAlg);
         cipher.getCommonHeaders().putAll(CollectionUtils.wrap(CUSTOM_HEADER_REGISTERED_SERVICE_ID, registeredService.getId()));
@@ -96,10 +97,10 @@ public class RegisteredServiceJwtTicketCipherExecutor extends JwtTicketCipherExe
      * @param registeredService the registered service
      * @return the signing key
      */
-    public Optional<String> getSigningKey(final RegisteredService registeredService) {
+    public Optional<String> getSigningKey(@Nullable final RegisteredService registeredService) {
         val property = getSigningKeyRegisteredServiceProperty();
         if (property.isAssignedTo(registeredService)) {
-            val signingKey = property.getPropertyValue(registeredService).value();
+            val signingKey = Objects.requireNonNull(property.getPropertyValue(registeredService)).value();
             return Optional.of(signingKey);
         }
         return Optional.empty();
@@ -111,10 +112,10 @@ public class RegisteredServiceJwtTicketCipherExecutor extends JwtTicketCipherExe
      * @param registeredService the registered service
      * @return the encryption key
      */
-    public Optional<String> getEncryptionKey(final RegisteredService registeredService) {
+    public Optional<String> getEncryptionKey(@Nullable final RegisteredService registeredService) {
         val property = getEncryptionKeyRegisteredServiceProperty();
         if (property.isAssignedTo(registeredService)) {
-            val key = property.getPropertyValue(registeredService).value();
+            val key = Objects.requireNonNull(property.getPropertyValue(registeredService)).value();
             return Optional.of(key);
         }
         return Optional.empty();

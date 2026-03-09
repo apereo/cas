@@ -144,7 +144,19 @@ public class RegexUtils {
      * @return true/false
      */
     public static boolean find(@Nullable final String pattern, @Nullable final String value) {
-        return StringUtils.isNotBlank(value) && createPattern(pattern, Pattern.CASE_INSENSITIVE).matcher(value).find();
+        return find(pattern, value, Pattern.CASE_INSENSITIVE);
+    }
+
+    /**
+     * Find match.
+     *
+     * @param pattern the pattern
+     * @param value   the value
+     * @param flags   the flags
+     * @return true/false
+     */
+    public static boolean find(@Nullable final String pattern, @Nullable final String value, final int flags) {
+        return StringUtils.isNotBlank(value) && createPattern(pattern, flags).matcher(value).find();
     }
 
     /**

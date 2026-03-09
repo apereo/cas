@@ -31,6 +31,7 @@ import lombok.With;
 import lombok.experimental.SuperBuilder;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.apache.commons.lang3.StringUtils;
 import org.jspecify.annotations.Nullable;
 import org.springframework.context.ApplicationContext;
 
@@ -85,7 +86,9 @@ public class JwtBuilder {
      */
     public static Optional<JWTClaimsSet> tryParse(@Nullable final String jwt) {
         try {
-            return Optional.ofNullable(JWTParser.parse(jwt).getJWTClaimsSet());
+            return StringUtils.isNotBlank(jwt)
+                ? Optional.ofNullable(JWTParser.parse(jwt).getJWTClaimsSet())
+                : Optional.empty();
         } catch (final Exception e) {
             LOGGER.trace("Unable to parse [{}] JWT; trying JWT claim set...", jwt);
             try {
@@ -254,7 +257,7 @@ public class JwtBuilder {
         val jwtJson = claimsSet.toString();
         LOGGER.debug("Generated JWT [{}]", jwtJson);
 
-        if (registeredServiceCipherExecutor.supports(registeredService)) {
+        if (registeredService != null && registeredServiceCipherExecutor.supports(registeredService)) {
             LOGGER.trace("Encoding JWT based on keys provided by service [{}]", registeredService.getServiceId());
             RegisteredServiceAccessStrategyUtils.ensureServiceAccessIsAllowed(registeredService);
             return registeredServiceCipherExecutor.encode(jwtJson, Optional.of(registeredService));
@@ -269,7 +272,7 @@ public class JwtBuilder {
         return token;
     }
 
-    protected RegisteredService locateRegisteredService(final String serviceAudience) {
+    protected @Nullable RegisteredService locateRegisteredService(final String serviceAudience) {
         val service = webApplicationServiceFactory.createService(serviceAudience);
         return servicesManager.findServiceBy(service);
     }

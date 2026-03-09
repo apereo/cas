@@ -10,6 +10,7 @@ import org.apereo.cas.pm.impl.BasePasswordManagementService;
 import org.apereo.cas.util.crypto.CipherExecutor;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
+import org.jspecify.annotations.Nullable;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
@@ -59,7 +60,7 @@ public class RestPasswordManagementService extends BasePasswordManagementService
     }
 
     @Override
-    public String findUsername(final PasswordManagementQuery query) {
+    public @Nullable String findUsername(final PasswordManagementQuery query) {
         val rest = casProperties.getAuthn().getPm().getRest();
         if (StringUtils.isBlank(rest.getEndpointUrlUser())) {
             return null;
@@ -76,7 +77,7 @@ public class RestPasswordManagementService extends BasePasswordManagementService
     }
 
     @Override
-    public String findEmail(final PasswordManagementQuery query) {
+    public @Nullable String findEmail(final PasswordManagementQuery query) {
         val rest = casProperties.getAuthn().getPm().getRest();
         if (StringUtils.isBlank(rest.getEndpointUrlEmail())) {
             return null;
@@ -94,7 +95,7 @@ public class RestPasswordManagementService extends BasePasswordManagementService
     }
 
     @Override
-    public String findPhone(final PasswordManagementQuery query) {
+    public @Nullable String findPhone(final PasswordManagementQuery query) {
         val rest = casProperties.getAuthn().getPm().getRest();
         if (StringUtils.isBlank(rest.getEndpointUrlPhone())) {
             return null;
@@ -123,7 +124,7 @@ public class RestPasswordManagementService extends BasePasswordManagementService
         val result = restTemplate.exchange(request, Map.class);
 
         if (result.getStatusCode().value() == HttpStatus.OK.value() && result.hasBody()) {
-            return result.getBody();
+            return Objects.requireNonNull(result.getBody());
         }
         return Map.of();
     }

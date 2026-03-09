@@ -3,6 +3,7 @@ package org.apereo.cas.ticket;
 import module java.base;
 import org.apereo.cas.services.RegisteredServiceDefinition;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
+import org.jspecify.annotations.Nullable;
 
 /**
  * Strategy that contains configuration and metadata to construct ticket expiration policies.
@@ -49,7 +50,7 @@ public interface ExpirationPolicyBuilder<T extends Ticket> extends Serializable 
      * @param registeredService the registered service
      * @return the optional
      */
-    default ExpirationPolicy buildTicketExpirationPolicyFor(final RegisteredServiceDefinition registeredService) {
+    default ExpirationPolicy buildTicketExpirationPolicyFor(@Nullable final RegisteredServiceDefinition registeredService) {
         return buildTicketExpirationPolicy();
     }
 

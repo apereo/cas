@@ -1,13 +1,13 @@
 function hideElements(elements) {
     $(elements)
-        .hide()
+        .css("display", "none")
         .addClass("hide")
         .addClass("d-none");
 }
 
 function showElements(elements) {
     $(elements)
-        .show()
+        .css("display", "")
         .removeClass("hide")
         .removeClass("d-none");
 }

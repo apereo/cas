@@ -146,6 +146,7 @@ public class GrouperPersonAttributeDao extends BasePersonAttributeDao {
          */
         EXTENSION
     }
+    
     public enum GrouperSubjectType {
         /**
          * Subject id type.

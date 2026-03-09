@@ -11,7 +11,4 @@ import org.apereo.cas.util.PublisherIdentifier;
  */
 public abstract class BaseDistributedCacheManager<K extends Serializable, V extends DistributedCacheObject>
     implements DistributedCacheManager<K, V, PublisherIdentifier> {
-    @Override
-    public void close() {
-    }
 }

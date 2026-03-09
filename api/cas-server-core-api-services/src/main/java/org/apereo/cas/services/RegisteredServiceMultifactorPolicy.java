@@ -82,6 +82,13 @@ public interface RegisteredServiceMultifactorPolicy extends Serializable {
     String getBypassPrincipalAttributeValue();
 
     /**
+     * Gets bypass for request ip address.
+     *
+     * @return the bypass for request ip address
+     */
+    String getBypassForRequestIpAddress();
+
+    /**
      * Indicates whether bypass should be enabled and activated
      * if the defined bypass principal attribute is not found.
      *

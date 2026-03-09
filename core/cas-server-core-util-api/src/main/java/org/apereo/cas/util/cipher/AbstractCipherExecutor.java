@@ -99,7 +99,7 @@ public abstract class AbstractCipherExecutor<T, R> implements CipherExecutor<T, 
      * @param signingKey the signing key
      * @return the byte [ ]
      */
-    protected byte[] sign(final byte[] value, final Key signingKey) {
+    protected byte[] sign(final byte[] value, @Nullable final Key signingKey) {
         if (signingKey == null) {
             return value;
         }

@@ -31,21 +31,8 @@ public interface AuthenticationHandler extends Ordered, NamedObject {
      * @return the authentication handler
      */
     static AuthenticationHandler disabled() {
-        return new AuthenticationHandler() {
-            @Override
-            public AuthenticationHandlerExecutionResult authenticate(final Credential credential, final Service service) throws PreventedException {
-                throw new PreventedException("Authentication handler is disabled");
-            }
-
-            @Override
-            public boolean supports(final Credential credential) {
-                return false;
-            }
-
-            @Override
-            public boolean supports(final Class<? extends Credential> clazz) {
-                return false;
-            }
+        return (credential, service) -> {
+            throw new PreventedException("Authentication handler is disabled");
         };
     }
 

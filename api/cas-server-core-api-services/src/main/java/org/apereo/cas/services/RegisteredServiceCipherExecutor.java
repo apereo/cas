@@ -1,6 +1,7 @@
 package org.apereo.cas.services;
 
 import module java.base;
+import org.jspecify.annotations.Nullable;
 
 /**
  * Defines how to encrypt data based on registered service's public key, etc.
@@ -91,7 +92,7 @@ public interface RegisteredServiceCipherExecutor {
      * @param registeredService the registered service
      * @return true/false
      */
-    default boolean supports(final RegisteredService registeredService) {
+    default boolean supports(@Nullable final RegisteredService registeredService) {
         return true;
     }
 }

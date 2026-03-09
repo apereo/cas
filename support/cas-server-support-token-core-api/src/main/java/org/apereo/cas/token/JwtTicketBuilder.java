@@ -18,6 +18,7 @@ import org.apereo.cas.validation.TicketValidator;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.jspecify.annotations.Nullable;
 
 /**
  * This is {@link JwtTicketBuilder}.
@@ -48,7 +49,8 @@ public class JwtTicketBuilder implements TokenTicketBuilder {
         val registeredService = servicesManager.findServiceBy(webApplicationService);
         RegisteredServiceAccessStrategyUtils.ensureServiceAccessIsAllowed(registeredService);
 
-        val finalAttributes = ProtocolAttributeEncoder.decodeAttributes(attributes, registeredService, webApplicationService);
+        val finalAttributes = ProtocolAttributeEncoder.decodeAttributes(attributes,
+            Objects.requireNonNull(registeredService), webApplicationService);
         LOGGER.debug("Final attributes decoded are [{}]", finalAttributes);
 
         val expirationPolicy = ticketFactory.get(ServiceTicket.class).getExpirationPolicyBuilder();
@@ -70,11 +72,11 @@ public class JwtTicketBuilder implements TokenTicketBuilder {
     }
 
     @Override
-    public String build(final Authentication authentication,
-                        final RegisteredService registeredService,
+    public String build(@Nullable final Authentication authentication,
+                        @Nullable final RegisteredService registeredService,
                         final String jwtIdentifier,
                         final Map<String, List<Object>> claims) throws Throwable {
-        val attributes = new HashMap<>(authentication.getAttributes());
+        val attributes = new HashMap<>(Objects.requireNonNull(authentication).getAttributes());
         attributes.putAll(authentication.getPrincipal().getAttributes());
         attributes.putAll(claims);
 
@@ -97,7 +99,7 @@ public class JwtTicketBuilder implements TokenTicketBuilder {
     }
 
     protected Long getTimeToLive(final ExpirationPolicyBuilder expirationPolicy,
-                                 final RegisteredService registeredService) {
+                                 @Nullable final RegisteredService registeredService) {
         val timeToLive = expirationPolicy.buildTicketExpirationPolicyFor(registeredService).getTimeToLive();
         return Long.MAX_VALUE == timeToLive ? Long.valueOf(Integer.MAX_VALUE) : timeToLive;
     }

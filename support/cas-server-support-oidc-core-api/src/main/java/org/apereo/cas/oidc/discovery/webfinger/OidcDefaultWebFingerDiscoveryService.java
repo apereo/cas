@@ -13,6 +13,7 @@ import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.Strings;
 import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.util.UriComponents;
@@ -98,7 +99,7 @@ public class OidcDefaultWebFingerDiscoveryService implements OidcWebFingerDiscov
         return new ResponseEntity<>(CollectionUtils.wrap("message", message), HttpStatus.NOT_FOUND);
     }
 
-    protected UriComponents normalize(final String resource) {
+    protected @Nullable UriComponents normalize(final String resource) {
         val builder = UriComponentsBuilder.newInstance();
 
         val resourcePattern = RegexUtils.createPattern(properties.getResourcePattern());

@@ -37,7 +37,7 @@ public class TokenAuthenticationPostProcessor implements AuthenticationPostProce
                 .build();
             val accessResult = registeredServiceAccessStrategyEnforcer.execute(audit);
             accessResult.throwExceptionIfNeeded();
-            val token = TokenAuthenticationSecurity.forRegisteredService(registeredService).generateTokenFor(authentication);
+            val token = TokenAuthenticationSecurity.forRegisteredService(Objects.requireNonNull(registeredService)).generateTokenFor(authentication);
             builder.addAttribute(TokenConstants.PARAMETER_NAME_TOKEN, token);
         });
     }
