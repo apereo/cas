@@ -248,6 +248,7 @@ textEncoding = "0.7.0"
 textMagic = "3.0.43863"
 thymeleaf = "3.1.3.RELEASE"
 thymeleafDialect = "3.2.0"
+googleTink = "1.20.0"
 tomcat = "11.0.18"
 tomSelect = "2.5.2"
 twilio = "11.3.4"
@@ -387,6 +388,7 @@ google-api-client = { module = "com.google.api-client:google-api-client", versio
 google-cloud-logging = { module = "com.google.cloud:google-cloud-logging", version.ref = "googleCloudLogging" }
 google-cloud-monitoring = { module = "com.google.cloud:google-cloud-monitoring", version.ref = "googleCloudMonitor" }
 google-compute-engine = { module = "org.apache.jclouds.labs:google-compute-engine", version.ref = "jcloudsGoogleEngine" }
+google-crypto-tink = { module = "com.google.crypto.tink:tink", version.ref = "googleTink" }
 google-maps-services = { module = "com.google.maps:google-maps-services", version.ref = "googleMapsGeoCoding" }
 googleauth = { module = "com.warrenstrange:googleauth", version.ref = "googleAuth" }
 graal-sdk = { module = "org.graalvm.sdk:graal-sdk", version.ref = "graalVm" }
