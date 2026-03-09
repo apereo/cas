@@ -14,8 +14,10 @@ import com.nimbusds.jose.JWSAlgorithm;
 import com.nimbusds.jose.JWSObject;
 import com.nimbusds.jose.JWSVerifier;
 import com.nimbusds.jose.crypto.ECDSAVerifier;
+import com.nimbusds.jose.crypto.Ed25519Verifier;
 import com.nimbusds.jose.crypto.RSASSAVerifier;
 import com.nimbusds.jose.jwk.ECKey;
+import com.nimbusds.jose.jwk.OctetKeyPair;
 import com.nimbusds.jose.jwk.RSAKey;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -87,12 +89,13 @@ public class OidcJwksRegistrationEndpointController extends BaseOidcController {
         val jkt = jwk.computeThumbprint().toString();
 
         val alg = jws.getHeader().getAlgorithm();
-        if (!JWSAlgorithm.Family.EC.contains(alg) && !JWSAlgorithm.Family.RSA.contains(alg)) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Unsupported algorithm: " + alg);
-        }
+        FunctionUtils.throwIf(!JWSAlgorithm.Family.EC.contains(alg) && !JWSAlgorithm.Family.RSA.contains(alg) && !JWSAlgorithm.EdDSA.equals(alg),
+            () -> new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Invalid algorithm: " + alg));
+        
         val verifier = switch (jwk) {
             case ECKey ecKey -> new ECDSAVerifier(ecKey);
             case RSAKey rsaKey -> new RSASSAVerifier(rsaKey);
+            case OctetKeyPair okp -> new Ed25519Verifier(okp.toPublicJWK());
             default -> throw new IllegalArgumentException("Unsupported key type: " + jwk.getKeyType());
         };
         if (!jws.verify((JWSVerifier) verifier)) {
@@ -109,6 +112,7 @@ public class OidcJwksRegistrationEndpointController extends BaseOidcController {
      * @return the response entity
      */
     @ExceptionHandler(Exception.class)
+    @SuppressWarnings("UnusedMethod")
     private static ResponseEntity<String> handle(final Exception ex) {
         LoggingUtils.error(LOGGER, ex);
         if (ex instanceof final ResponseStatusException rse) {
