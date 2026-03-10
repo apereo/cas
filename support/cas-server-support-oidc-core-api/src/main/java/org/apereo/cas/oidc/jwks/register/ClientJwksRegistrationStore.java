@@ -14,8 +14,9 @@ public interface ClientJwksRegistrationStore {
      *
      * @param jkt the jkt
      * @param jwk the jwk
+     * @return the client jwks registration entry
      */
-    void save(String jkt, String jwk);
+    ClientJwksRegistrationEntry save(String jkt, String jwk);
 
     /**
      * Find by jkt optional.
@@ -24,4 +25,23 @@ public interface ClientJwksRegistrationStore {
      * @return the optional
      */
     Optional<ClientJwksRegistrationEntry> findByJkt(String jkt);
+
+    /**
+     * Load list.
+     *
+     * @return the list
+     */
+    List<ClientJwksRegistrationEntry> load();
+
+    /**
+     * Remove by jkt.
+     *
+     * @param jkt the jkt
+     */
+    void removeByJkt(String jkt);
+
+    /**
+     * Remove all.
+     */
+    void removeAll();
 }

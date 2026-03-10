@@ -331,6 +331,7 @@ async function fetchAndUpdateAllCharts() {
     } catch (error) {
         // Silently fail on refresh errors to avoid spamming the user
     }
+    await updateNavigationSidebar();
 }
 
 /**
