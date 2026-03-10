@@ -254,11 +254,6 @@ async function initializeAllCharts() {
 
 }
 
-/**
- * Initialize Prometheus charts by discovering all available metrics and rendering them.
- * Since Spring Boot's /actuator/prometheus doesn't have a query API, we manually
- * fetch and parse the metrics text format.
- */
 async function initializePrometheusCharts() {
     prometheusEndpointUrl = CasActuatorEndpoints.prometheus();
 
@@ -282,34 +277,24 @@ async function initializePrometheusCharts() {
 
     prometheusRefreshInterval = palantirSettings().refreshInterval;
 
-    // Parse metrics and render all charts
     const parsedMetrics = parsePrometheusMetrics(metricsText);
     prometheusAvailableMetrics = Object.keys(parsedMetrics).sort();
 
-    // Create charts for all metrics
     for (const metricName of prometheusAvailableMetrics) {
         createPrometheusChart(metricName, parsedMetrics[metricName]);
     }
 
-    // Start periodic refresh
     startPrometheusRefresh();
 }
 
-/**
- * Start periodic refresh of all Prometheus charts
- */
 function startPrometheusRefresh() {
     if (prometheusRefreshTimer) {
         clearInterval(prometheusRefreshTimer);
     }
 
-    // Set up periodic refresh
     prometheusRefreshTimer = setInterval(fetchAndUpdateAllCharts, prometheusRefreshInterval);
 }
 
-/**
- * Fetch metrics and update all charts
- */
 async function fetchAndUpdateAllCharts() {
     if (Object.keys(prometheusCharts).length === 0) {
         return;
@@ -324,21 +309,15 @@ async function fetchAndUpdateAllCharts() {
         const metricsText = await response.text();
         const parsedMetrics = parsePrometheusMetrics(metricsText);
 
-        // Update each chart with new data
         for (const metricName of Object.keys(prometheusCharts)) {
             updatePrometheusChart(metricName, parsedMetrics[metricName]);
         }
     } catch (error) {
-        // Silently fail on refresh errors to avoid spamming the user
+        console.error(error);
     }
     await updateNavigationSidebar();
 }
 
-/**
- * Parse Prometheus text format into metric values
- * @param {string} text - The Prometheus format text
- * @returns {Object} Parsed metrics with their values
- */
 function parsePrometheusMetrics(text) {
     const metrics = {};
     const lines = text.split("\n");
@@ -365,31 +344,22 @@ function parsePrometheusMetrics(text) {
     return metrics;
 }
 
-/**
- * Create a Prometheus chart for the specified metric
- * @param {string} metricName - The metric name
- * @param {Array} metricData - Array of {labels, value} objects
- */
 function createPrometheusChart(metricName, metricData) {
     const chartsRow = document.getElementById("prometheusChartsRow");
     if (!chartsRow || !metricData || metricData.length === 0) return;
 
-    // Create a unique ID for this chart
     const chartId = `prometheusChart_${metricName.replace(/[^a-zA-Z0-9]/g, "_")}`;
 
-    // Create the chart container
     const chartCell = document.createElement("div");
     chartCell.className = "mdc-layout-grid__cell mdc-layout-grid__cell--span-4";
     chartCell.id = `${chartId}_container`;
     chartCell.style.cursor = "pointer";
     chartCell.title = "Click to enlarge";
 
-    // Create header with title
     const header = document.createElement("div");
     header.className = "mb-1";
     header.innerHTML = `<h6 class="mb-0" title="${metricName}" style="font-size: 11px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">${metricName}</h6>`;
 
-    // Create canvas
     const canvas = document.createElement("canvas");
     canvas.id = chartId;
     canvas.style.maxHeight = "150px";
@@ -398,12 +368,10 @@ function createPrometheusChart(metricName, metricData) {
     chartCell.appendChild(canvas);
     chartsRow.appendChild(chartCell);
 
-    // Prepare data for the chart
     const labels = metricData.map(item => formatSeriesLabel(item.labels));
     const values = metricData.map(item => item.value);
     const colors = generateColors(metricData.length);
 
-    // Store chart data for dialog display
     const chartConfig = {
         labels: labels,
         values: values,
@@ -411,7 +379,6 @@ function createPrometheusChart(metricName, metricData) {
         metricName: metricName
     };
 
-    // Create the chart
     const chart = new Chart(canvas.getContext("2d"), {
         type: "line",
         data: {
@@ -458,7 +425,6 @@ function createPrometheusChart(metricName, metricData) {
         }
     });
 
-    // Add click handler to show maximized chart
     chartCell.addEventListener("click", () => {
         showMaximizedChart(chartConfig);
     });
@@ -466,15 +432,9 @@ function createPrometheusChart(metricName, metricData) {
     prometheusCharts[metricName] = chart;
 }
 
-/**
- * Show a maximized view of a Prometheus chart in a jQuery UI dialog
- * @param {Object} chartConfig - The chart configuration with labels, values, colors, and metricName
- */
 function showMaximizedChart(chartConfig) {
-    // Remove existing dialog if present
     $("#prometheusChartDialog").remove();
 
-    // Create dialog container
     const dialogHtml = `
         <div id="prometheusChartDialog" title="${chartConfig.metricName}">
             <canvas id="prometheusChartDialogCanvas" style="width: 100%; height: 100%;"></canvas>
@@ -482,7 +442,6 @@ function showMaximizedChart(chartConfig) {
     `;
     $("body").append(dialogHtml);
 
-    // Initialize jQuery UI dialog
     $("#prometheusChartDialog").dialog({
         modal: true,
         width: Math.min($(window).width() * 0.85, 1200),
@@ -497,7 +456,6 @@ function showMaximizedChart(chartConfig) {
             $(this).dialog("destroy").remove();
         },
         open: function() {
-            // Create the maximized chart after dialog opens
             const canvas = document.getElementById("prometheusChartDialogCanvas");
             if (canvas) {
                 window.prometheusDialogChart = new Chart(canvas.getContext("2d"), {
@@ -552,11 +510,6 @@ function showMaximizedChart(chartConfig) {
     });
 }
 
-/**
- * Update a Prometheus chart with new data
- * @param {string} metricName - The metric name
- * @param {Array} metricData - Array of {labels, value} objects
- */
 function updatePrometheusChart(metricName, metricData) {
     const chart = prometheusCharts[metricName];
     if (!chart || !metricData) return;
@@ -569,15 +522,11 @@ function updatePrometheusChart(metricName, metricData) {
     chart.update("none");
 }
 
-/**
- * Format a series label (from Prometheus labels) for display
- */
 function formatSeriesLabel(labelsString) {
     if (!labelsString || labelsString === "") {
         return "value";
     }
 
-    // Extract key parts from labels like {area="heap",id="G1 Eden Space"}
     const parts = [];
     const matches = labelsString.matchAll(/(\w+)="([^"]+)"/g);
     for (const match of matches) {
@@ -589,12 +538,9 @@ function formatSeriesLabel(labelsString) {
     }
 
     const label = parts.join("/");
-    return label.length > 20 ? label.substring(0, 17) + "..." : label;
+    return label.length > 20 ? `${label.substring(0, 17)}...` : label;
 }
 
-/**
- * Generate colors for chart bars
- */
 function generateColors(count) {
     const baseColors = [
         "rgba(54, 162, 235, 1)",
