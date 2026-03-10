@@ -14,19 +14,20 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 /**
- * This is {@link OidcJwksRotationEndpointTests}.
+ * This is {@link OidcJwksEndpointTests}.
  *
  * @author Misagh Moayyed
  * @since 6.5.0
  */
 @TestPropertySource(properties = {
+    "CasFeatureModule.OpenIDConnect.client-jwks-registration.enabled=true",
     "cas.authn.oidc.jwks.file-system.jwks-file=file:${#systemProperties['java.io.tmpdir']}/oidc-jwks.jwks",
     "management.endpoint.oidcJwks.access=UNRESTRICTED"
 })
 @Tag("ActuatorEndpoint")
 @Import(AbstractOidcTests.SharedTestConfiguration.class)
 @ExtendWith(CasTestExtension.class)
-class OidcJwksRotationEndpointTests extends AbstractCasEndpointTests {
+class OidcJwksEndpointTests extends AbstractCasEndpointTests {
 
     @Test
     void verifyRotation() throws Throwable {
@@ -44,5 +45,21 @@ class OidcJwksRotationEndpointTests extends AbstractCasEndpointTests {
                 .accept(MediaType.APPLICATION_JSON))
             .andExpect(status().isOk())
             .andExpect(jsonPath("$.keys").isArray());
+    }
+
+    @Test
+    void verifyClientJwksLoadOp() throws Throwable {
+        mockMvc.perform(get("/actuator/oidcJwks/clients")
+                .contentType(MediaType.APPLICATION_JSON)
+                .accept(MediaType.APPLICATION_JSON))
+            .andExpect(status().isOk());
+    }
+
+    @Test
+    void verifyClientJwksRemoval() throws Throwable {
+        mockMvc.perform(delete("/actuator/oidcJwks/clients/%s".formatted(UUID.randomUUID().toString()))
+                .contentType(MediaType.APPLICATION_JSON)
+                .accept(MediaType.APPLICATION_JSON))
+            .andExpect(status().isNoContent());
     }
 }
