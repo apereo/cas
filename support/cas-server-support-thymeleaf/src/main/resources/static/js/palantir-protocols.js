@@ -23,15 +23,15 @@ async function initializeCasProtocolOperations() {
             casProtocolServiceEditor.setValue(JSON.stringify(data.registeredService, null, 2));
             casProtocolServiceEditor.gotoLine(1);
 
-            $("#casProtocolEditorContainer").removeClass("d-none");
-            $("#casProtocolServiceEditorContainer").removeClass("d-none");
+            showElements("#casProtocolEditorContainer");
+            showElements("#casProtocolServiceEditorContainer");
 
             updateNavigationSidebar();
             $("#casProtocolServiceNavigation").off().on("click", () => navigateToApplication(data.registeredService.id));
         }).fail((xhr, status, error) => {
             displayBanner(xhr);
-            $("#casProtocolEditorContainer").addClass("d-none");
-            $("#casProtocolServiceEditorContainer").addClass("d-none");
+            hideElements("#casProtocolEditorContainer");
+            hideElements("#casProtocolServiceEditorContainer");
         });
     }
 
@@ -55,7 +55,7 @@ async function initializeSAML1ProtocolOperations() {
             password: password,
             service: service
         }, data => {
-            $("#saml1ProtocolEditorContainer").removeClass("d-none");
+            showElements("#saml1ProtocolEditorContainer");
             const editor = initializeAceEditor("saml1ProtocolEditor", "xml");
             editor.setReadOnly(true);
             editor.setValue(data.assertion);
@@ -67,7 +67,7 @@ async function initializeSAML1ProtocolOperations() {
             serviceEditor.gotoLine(1);
         }).fail((xhr, status, error) => {
             displayBanner(xhr);
-            $("#saml2ProtocolEditorContainer").addClass("d-none");
+            hideElements("#saml2ProtocolEditorContainer");
         });
     });
 
@@ -246,10 +246,10 @@ async function initializeOidcProtocolOperations() {
                             console.error("Error fetching data:", error);
                             displayBanner(xhr);
                         });
-                        $("#oidcProtocolEditorContainer").removeClass("d-none");
+                        showElements("#oidcProtocolEditorContainer");
                     },
                     error: (xhr, textStatus, errorThrown) => {
-                        $("#oidcProtocolEditorContainer").addClass("d-none");
+                        hideElements("#oidcProtocolEditorContainer");
                         console.error("Error fetching data:", errorThrown);
                         displayBanner(xhr);
                     }
@@ -258,7 +258,7 @@ async function initializeOidcProtocolOperations() {
             }).fail((xhr, status, error) => {
                 console.error("Error fetching data:", error);
                 displayBanner(xhr);
-                $("#oidcProtocolEditorContainer").addClass("d-none");
+                hideElements("#oidcProtocolEditorContainer");
             });
 
 
@@ -286,6 +286,78 @@ async function initializeOidcProtocolOperations() {
             });
         } else {
             hideElements("#oidcConfigurationPropsPanel");
+        }
+
+        if (CasActuatorEndpoints.oidcJwks() && CAS_FEATURES.includes("OpenIDConnect.client-jwks-registration")) {
+            showElements($("#oidcclientjwks-li"));
+
+            const oidcClientJwksTable = $("#oidcClientJwksTable").DataTable({
+                pageLength: 10,
+                autoWidth: false,
+                drawCallback: settings => {
+                    $("#oidcClientJwksTable tr").addClass("mdc-data-table__row");
+                    $("#oidcClientJwksTable td").addClass("mdc-data-table__cell");
+                }
+            });
+
+            $.get(`${CasActuatorEndpoints.oidcJwks()}/clients`, response => {
+                oidcClientJwksTable.clear();
+                for (const entry of response) {
+                    const deleteButton = `
+                        <button type="button" name="deleteOidcClientJwksEntry" href="#"
+                            data-jkt="${entry.jkt}"
+                            title="Delete"
+                            class="mdc-button mdc-button--raised btn btn-link min-width-32x">
+                            <i class="mdi mdi-delete min-width-32x" aria-hidden="true"></i>
+                        </button>
+                    `;
+                    oidcClientJwksTable.row.add({
+                        0: `<code>${entry.jkt}</code>`,
+                        1: `<code>${entry.createdAt}</code>`,
+                        2: `<code>${entry.jwk}</code>`,
+                        3: deleteButton
+                    });
+                }
+                oidcClientJwksTable.draw();
+
+                $("button[name=deleteOidcClientJwksEntry]").off().on("click", function () {
+                    const jkt = $(this).data("jkt");
+                    const row = $(this).closest("tr");
+                    Swal.fire({
+                        title: "Are you sure you want to delete this client JWKS entry?",
+                        text: "Once deleted, the change will take effect immediately.",
+                        icon: "question",
+                        showConfirmButton: true,
+                        showDenyButton: true
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            $.ajax({
+                                url: `${CasActuatorEndpoints.oidcJwks()}/clients/${jkt}`,
+                                type: "DELETE",
+                                success: (response, textStatus, jqXHR) => {
+                                    Swal.fire({
+                                        title: "Done!",
+                                        text: "Client JWKS entry has been deleted successfully.",
+                                        showConfirmButton: false,
+                                        icon: "success",
+                                        timer: 1500
+                                    });
+                                    oidcClientJwksTable.row(row).remove().draw();
+                                },
+                                error: (jqXHR, textStatus, errorThrown) => {
+                                    console.error("Error deleting client JWKS entry:", errorThrown);
+                                    displayBanner(jqXHR);
+                                }
+                            });
+                        }
+                    });
+                });
+            }).fail((xhr, status, error) => {
+                console.error("Error fetching data:", error);
+                displayBanner(xhr);
+            });
+        } else {
+            hideElements($("#oidcclientjwks-li"));
         }
     }
 }
@@ -320,11 +392,11 @@ async function initializeSAML2ProtocolOperations() {
                 editor.setReadOnly(true);
                 editor.setValue(new XMLSerializer().serializeToString(data));
                 editor.gotoLine(1);
-                $("#saml2ProtocolEditorContainer").removeClass("d-none");
-                $("#saml2ProtocolLogoutEditor").addClass("d-none");
+                showElements("#saml2ProtocolEditorContainer");
+                hideElements("#saml2ProtocolLogoutEditor");
             }).fail((xhr, status, error) => {
                 displayBanner(xhr);
-                $("#saml2ProtocolEditorContainer").addClass("d-none");
+                hideElements("#saml2ProtocolEditorContainer");
             });
         });
 
@@ -352,20 +424,20 @@ async function initializeSAML2ProtocolOperations() {
                     saml2ProtocolLogoutEditor.setValue(logoutRequest);
                     saml2ProtocolLogoutEditor.gotoLine(1);
 
-                    $("#saml2ProtocolEditorContainer").removeClass("d-none");
-                    $("#saml2ProtocolLogoutEditor").removeClass("d-none");
+                    showElements("#saml2ProtocolEditorContainer");
+                    showElements("#saml2ProtocolLogoutEditor");
                 },
-                error: (jqXHR, textStatus, errorThrown) => {
+                error: (xhr, textStatus, errorThrown) => {
                     displayBanner(xhr);
-                    $("#saml2ProtocolEditorContainer").addClass("d-none");
-                    $("#saml2ProtocolLogoutEditor").addClass("d-none");
+                    hideElements("#saml2ProtocolEditorContainer");
+                    hideElements("#saml2ProtocolLogoutEditor");
                 }
             });
         });
 
         $("button[name=saml2MetadataCacheInvalidateButton]").off().on("click", () => {
             hideBanner();
-            $("#saml2MetadataCacheEditorContainer").addClass("d-none");
+            hideElements("#saml2MetadataCacheEditorContainer");
 
             Swal.fire({
                 title: "Are you sure you want to invalidate the cache entry?",
@@ -416,14 +488,14 @@ async function initializeSAML2ProtocolOperations() {
                         $("#saml2MetadataCacheDetails").html(`<i class="mdc-tab__icon mdi mdi-clock" aria-hidden="true"></i> Cache Instant: <code>${entry.cachedInstant}</code>`);
                     }
                     editor.gotoLine(1);
-                    $("#saml2MetadataCacheEditorContainer").removeClass("d-none");
-                    $("#saml2MetadataCacheDetails").removeClass("d-none");
+                    showElements("#saml2MetadataCacheEditorContainer");
+                    showElements("#saml2MetadataCacheDetails");
                     $(this).prop("disabled", false);
                 },
                 error: (jqXHR, textStatus, errorThrown) => {
                     displayBanner(jqXHR);
-                    $("#saml2MetadataCacheEditorContainer").addClass("d-none");
-                    $("#saml2MetadataCacheDetails").addClass("d-none");
+                    hideElements("#saml2MetadataCacheEditorContainer");
+                    hideElements("#saml2MetadataCacheDetails");
                     $(this).prop("disabled", false);
                 }
             });
@@ -648,8 +720,8 @@ async function initializeSAML2ProtocolOperations() {
                         $("#saml2MetadataUploadSignatureFile").val("");
                         metadataXmlEditor.setValue("");
                         signatureEditor.setValue("");
-                        hideElements($("#saml2MetadataUploadXmlEditorContainer"));
-                        hideElements($("#saml2MetadataUploadSignatureEditorContainer"));
+                        hideElements("#saml2MetadataUploadXmlEditorContainer");
+                        hideElements("#saml2MetadataUploadSignatureEditorContainer");
                         $("#saml2MetadataUploadName").focus();
                     },
                     close: function () {
@@ -684,7 +756,7 @@ async function initializeSAML2ProtocolOperations() {
                 displayBanner(xhr);
             });
         } else {
-            hideElements($("#saml2metadatamgmt-li"));
+            hideElements("#saml2metadatamgmt-li");
         }
 
         if (CasActuatorEndpoints.env()) {

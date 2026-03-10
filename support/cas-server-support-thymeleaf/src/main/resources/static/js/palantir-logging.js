@@ -151,7 +151,7 @@ async function initializeLoggingOperations() {
             $("#logFileStream").parent().addClass("w-50");
             $("#logDataStream").parent().addClass("w-50");
         } else {
-            $("#logFileStream").parent().addClass("d-none");
+            hideElements($("#logFileStream").parent());
             $("#logDataStream").parent().addClass("w-100");
         }
 
@@ -252,7 +252,7 @@ async function initializeLoggingOperations() {
         });
 
     } else {
-        $("#loggingDataStreamOps").parent().addClass("d-none");
+        hideElements($("#loggingDataStreamOps").parent());
     }
 
 }

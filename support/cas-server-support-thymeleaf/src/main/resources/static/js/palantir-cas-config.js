@@ -643,7 +643,7 @@ async function initializeConfigurationOperations() {
 
     function encryptOrDecryptConfig(op) {
         hideBanner();
-        $("#configEncryptionResult").addClass("d-none");
+        hideElements("#configEncryptionResult");
 
         const form = document.getElementById("fmConfigEncryption");
         if (!form.reportValidity()) {
@@ -658,10 +658,10 @@ async function initializeConfigurationOperations() {
             }, data => {
                 $("#configEncryptionResult pre code").text(data);
                 highlightElements();
-                $("#configEncryptionResult").removeClass("d-none");
+                showElements("#configEncryptionResult");
             }).fail((xhr, status, error) => {
                 displayBanner(xhr);
-                $("#configEncryptionResult").addClass("d-none");
+                hideElements("#configEncryptionResult");
             });
         }
     }

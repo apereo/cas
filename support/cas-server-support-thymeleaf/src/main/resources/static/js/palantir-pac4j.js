@@ -182,21 +182,21 @@ async function loadExternalIdentityProvidersTable() {
                 }
             }
             delegatedClientsTable.draw();
-            $("#delegatedClientsContainer").removeClass("d-none");
-            $("#delegatedclients").parent().removeClass("d-none");
+            showElements("#delegatedClientsContainer");
+            showElements($("#delegatedclients").parent());
             updateNavigationSidebar();
             configureSaml2ClientMetadataButtons();
             Swal.close();
         }).fail((xhr, status, error) => {
             console.error("Error fetching data:", error);
-            $("#delegatedClientsContainer").addClass("d-none");
-            $("#delegatedclients").parent().addClass("d-none");
+            hideElements("#delegatedClientsContainer");
+            hideElements($("#delegatedclients").parent());
             displayBanner(xhr);
             Swal.close();
         });
     } else {
-        $("#delegatedClientsContainer").addClass("d-none");
-        $("#delegatedclients").parent().addClass("d-none");
+        hideElements("#delegatedClientsContainer");
+        hideElements($("#delegatedclients").parent());
     }
 }
 
