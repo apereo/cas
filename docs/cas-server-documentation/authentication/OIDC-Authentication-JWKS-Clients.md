@@ -65,7 +65,7 @@ in fact a mobile device whose keys are tied to the device and not the applicatio
       
 Once the feature is enabled, clients that wish to use this API must first obtain an access token that contains
 the scope `client_jwks_registration_scope`. This scope need to be enabled and registered with the CAS server. Once the token 
-is obtained, to register public keys the client can then submit a `POST` request to the endpoint `/oidc/jwks/clients/register`, passing 
+is obtained, to register public keys the client can then submit a `POST` request to the endpoint `/oidc/jwks/clients`, passing 
 the access token as a `Bearer` token or a request parameter under `token` with the following payload:
 
 ```json

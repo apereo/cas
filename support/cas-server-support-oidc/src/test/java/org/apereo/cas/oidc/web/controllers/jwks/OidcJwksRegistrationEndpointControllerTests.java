@@ -67,7 +67,7 @@ class OidcJwksRegistrationEndpointControllerTests extends AbstractOidcTests {
     @Test
     void verifyWithoutAccessToken() throws Exception {
         val content = new ClientJwksRegistrationRequest(UUID.randomUUID().toString()).toJson();
-        mockMvc.perform(post("/cas/oidc/" + OidcConstants.JWKS_URL + "/clients/register")
+        mockMvc.perform(post("/cas/oidc/" + OidcConstants.JWKS_URL + "/clients")
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
                 .content(content)
                 .with(withHttpRequestProcessor()))
@@ -79,8 +79,9 @@ class OidcJwksRegistrationEndpointControllerTests extends AbstractOidcTests {
         val accessToken = getAccessToken();
         ticketRegistry.addTicket(accessToken);
         val content = new ClientJwksRegistrationRequest(UUID.randomUUID().toString()).toJson();
-        mockMvc.perform(post("/cas/oidc/" + OidcConstants.JWKS_URL + "/clients/register")
+        mockMvc.perform(post("/cas/oidc/" + OidcConstants.JWKS_URL + "/clients")
                 .queryParam(OAuth20Constants.TOKEN, accessToken.getId())
+                .contentType(MediaType.APPLICATION_JSON_VALUE)
                 .content(content)
                 .with(withHttpRequestProcessor()))
             .andExpect(status().isUnauthorized());
@@ -95,7 +96,7 @@ class OidcJwksRegistrationEndpointControllerTests extends AbstractOidcTests {
 
         val proof = buildProof(algorithm);
         val registrationRequest = new ClientJwksRegistrationRequest(proof.proof());
-        val output = mockMvc.perform(post("/cas/oidc/" + OidcConstants.JWKS_URL + "/clients/register")
+        val output = mockMvc.perform(post("/cas/oidc/" + OidcConstants.JWKS_URL + "/clients")
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
                 .queryParam(OAuth20Constants.TOKEN, accessToken.getId())
                 .content(registrationRequest.toJson())
