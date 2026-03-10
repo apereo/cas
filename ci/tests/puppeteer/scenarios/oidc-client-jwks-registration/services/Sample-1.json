@@ -1,0 +1,13 @@
+{
+  "@class": "org.apereo.cas.services.OidcRegisteredService",
+  "clientId": "client",
+  "clientSecret": "secret",
+  "serviceId": ".*",
+  "name": "Sample",
+  "id": 1,
+  "jwtAccessToken": true,
+  "description": "Sample Service",
+  "scopes" : [ "java.util.HashSet", [ "openid", "profile", "email", "client_jwks_registration_scope"] ],
+  "generateRefreshToken": true,
+  "supportedGrantTypes": [ "java.util.HashSet", [ "authorization_code", "client_credentials", "urn:ietf:params:oauth:client-assertion-type:jwt-bearer" ] ]
+}

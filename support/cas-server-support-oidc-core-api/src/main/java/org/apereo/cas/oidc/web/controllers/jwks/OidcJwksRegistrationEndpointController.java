@@ -26,6 +26,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -58,10 +59,10 @@ public class OidcJwksRegistrationEndpointController extends BaseOidcController {
      * @return the response entity
      * @throws Throwable the throwable
      */
-    @PostMapping({
-        '/' + OidcConstants.BASE_OIDC_URL + '/' + OidcConstants.JWKS_URL + "/clients/register",
-        "/**/" + OidcConstants.JWKS_URL + "/clients/register"
-    })
+    @PostMapping(value = {
+        '/' + OidcConstants.BASE_OIDC_URL + '/' + OidcConstants.JWKS_URL + "/clients",
+        "/**/" + OidcConstants.JWKS_URL + "/clients"
+    }, consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     @Operation(summary = "Handle client JWKS registration request",
         description = "This endpoint allows clients to register their JSON Web Keys (JWKs) for use in OpenID Connect operations",
         requestBody = @io.swagger.v3.oas.annotations.parameters.RequestBody(
