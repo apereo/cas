@@ -1,6 +1,5 @@
 package org.apereo.cas.pm.impl;
 
-import module java.base;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.pm.PasswordChangeRequest;
 import org.apereo.cas.pm.PasswordHistoryService;
@@ -53,9 +52,9 @@ public class DefaultPasswordValidationService implements PasswordValidationServi
 
     @Override
     public boolean isAcceptedByPasswordPolicy(final String password) {
-        val policyPattern = casProperties.getAuthn().getPm().getCore().getPasswordPolicyPattern();
+        val policyPattern = RegexUtils.createPattern(casProperties.getAuthn().getPm().getCore().getPasswordPolicyPattern(), 0);
         LOGGER.debug("Checking provided password against pattern required for password policy: [{}]", policyPattern);
-        return RegexUtils.find(policyPattern, password, Pattern.COMMENTS);
+        return RegexUtils.find(policyPattern, password);
     }
 
     protected boolean validatePassword(final PasswordChangeRequest bean) {
