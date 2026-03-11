@@ -14,3 +14,10 @@ Support is enabled by including the following module in the WAR Overlay:
 {% include_cached casmodule.html group="org.apereo.cas" module="cas-server-support-oidc-mongo" %}
 
 {% include_cached casproperties.html properties="cas.authn.oidc.jwks.mongo" %}
+
+## Application JWKS Management
+
+Note that this module also provides the ability 
+to [manage application JWKS entries](../authentication/OIDC-Authentication-JWKS-Clients.html) in MongoDb.
+
+{% include_cached featuretoggles.html features="CasFeatureModule.OpenIDConnect.client-jwks-registration" %}
