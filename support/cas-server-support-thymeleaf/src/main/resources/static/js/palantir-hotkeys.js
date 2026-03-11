@@ -30,6 +30,12 @@ async function initializeHotKeyOperations() {
                 event.preventDefault();
                 $("#newExternalIdentityProvider:visible").click();
             }
+
+            if (currentActiveTab === Tabs.AUTHENTICATION.index && $("#authenticationhandlers").is(":visible")) {
+                event.preventDefault();
+                $("#newAuthenticationHandlerButton:visible").click();
+            }
+
             
             break;
         default:
