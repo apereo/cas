@@ -11,6 +11,9 @@ import lombok.val;
 import org.apache.commons.lang3.ArrayUtils;
 import org.jooq.lambda.Unchecked;
 import org.jose4j.jwa.AlgorithmConstraints;
+import org.jose4j.jwk.EllipticCurveJsonWebKey;
+import org.jose4j.jwk.OctetKeyPairJsonWebKey;
+import org.jose4j.jwk.RsaJsonWebKey;
 import org.jose4j.jws.JsonWebSignature;
 import org.jose4j.jwt.JwtClaims;
 
@@ -35,7 +38,7 @@ public class JsonWebTokenSigner {
 
     @Builder.Default
     private final String mediaType = "JWT";
-    
+
     @Builder.Default
     private final Map<String, Object> headers = new LinkedHashMap<>();
 
@@ -88,6 +91,17 @@ public class JsonWebTokenSigner {
             jws.setKey(key);
             FunctionUtils.doIfNotNull(this.keyId, jws::setKeyIdHeaderValue);
         }
+        EncodingUtils.extractPublicKeyFrom(jws.getKey()).ifPresent(publicKey -> {
+            if (publicKey instanceof final RSAPublicKey rsa) {
+                jws.setJwkHeader(new RsaJsonWebKey(rsa));
+            }
+            if (publicKey instanceof final ECPublicKey ec) {
+                jws.setJwkHeader(new EllipticCurveJsonWebKey(ec));
+            }
+            if (publicKey instanceof final EdECPublicKey edec) {
+                jws.setJwkHeader(new OctetKeyPairJsonWebKey(edec));
+            }
+        });
         headers.forEach((header, value) -> jws.setHeader(header, value.toString()));
         LOGGER.trace("Signing ID token with key id header value [{}] and algorithm header value [{}]",
             jws.getKeyIdHeaderValue(), jws.getAlgorithmHeaderValue());

@@ -127,7 +127,6 @@
                         </ul>
 
                         <div id="saml2requests-tab">
-                            <h3>SAML2 Requests/Responses</h3>
                             <p>You can simulate SAML2 responses for SAML2 service providers.</p>
                             <form id="fmSaml2Protocol" class="d-block">
                                 <section class="saml2-field form-group my-3 mdc-input-group d-flex">
@@ -206,7 +205,6 @@
                         </div>
 
                         <div id="saml2metadata-tab">
-                            <h3>SAML2 Metadata Cache</h3>
                             <p>You may also fetch, refresh or invalidate SAML2 metadata entries that are cached by CAS.
                                 The service could be the registered service numeric identifier, its name or actual service id.
                                 In case the SAML2 service definition points to an aggregate, you may also specify an entity id to locate the
@@ -268,7 +266,6 @@
                         </div>
 
                         <div id="saml2metadatamgmt-tab">
-                            <h3>SAML2 Service Provider Metadata Management</h3>
                             <p>Manage SAML2 service provider metadata sources registered with CAS.</p>
                             <div class="d-flex align-items-end">
                                 <label for="saml2MetadataManagersSelect">
@@ -486,152 +483,180 @@
                         <pre><code id="oidcIssuer" class="border-rounded language-html"></code></pre>
                     </div>
 
-                    <p>You can simulate OpenID connect responses to relying party applications and clients.</p>
+                    <div class="jqueryui-tabs" id="oidc-inner-tabs">
+                        <ul>
+                            <li><a id="oidctokenexchange" href="#oidctokenexchange-tab">Token Exchange</a></li>
+                            <li><a id="oidckeyrotation" href="#oidckeyrotation-tab">Key Rotation</a></li>
+                            <li class="d-none" id="oidcclientjwks-li"><a id="oidcclientjwks" href="#oidcclientjwks-tab">Client JWKS Management</a></li>
+                            <li><a id="oidcdiscovery" href="#oidcdiscovery-tab">Discovery Profile</a></li>
+                            <li><a id="oidcconfigprops" href="#oidcconfigprops-tab">Configuration</a></li>
+                        </ul>
 
-                    <form id="fmOidcProtocol" class="d-block">
-                        <section class="oidc-field form-group my-3 mdc-input-group d-flex">
-                            <div class="mdc-input-group-field mdc-input-group-field-append w-100">
-                                <label for="oidcProtocolClientId"
-                                       class="mdc-text-field mdc-text-field--outlined control-label mdc-text-field--with-trailing-icon mb-2">
-                                    <span class="mdc-notched-outline">
-                                        <span class="mdc-notched-outline__leading"></span>
-                                        <span class="mdc-notched-outline__notch">
-                                            <span class="mdc-floating-label">Client ID</span>
-                                        </span>
-                                        <span class="mdc-notched-outline__trailing"></span>
-                                    </span>
-                                    <input class="mdc-text-field__input form-control" type="text"
-                                           name="oidcProtocolClientId" data-param-name="entityId" tabindex="0"
-                                           id="oidcProtocolClientId" size="50" autocomplete="off" required/>
-                                </label>
-                                <label for="oidcProtocolClientSecret"
-                                       class="mdc-text-field mdc-text-field--outlined control-label mdc-text-field--with-trailing-icon mb-2">
-                                    <span class="mdc-notched-outline">
-                                        <span class="mdc-notched-outline__leading"></span>
-                                        <span class="mdc-notched-outline__notch">
-                                            <span class="mdc-floating-label">Client Secret</span>
-                                        </span>
-                                        <span class="mdc-notched-outline__trailing"></span>
-                                    </span>
-                                    <input class="mdc-text-field__input form-control pwd" type="password"
-                                           name="oidcProtocolClientSecret" data-param-name="password" tabindex="0"
-                                           id="oidcProtocolClientSecret" size="50" autocomplete="off" required/>
-                                    <button
-                                            class="reveal-password align-self-end mdc-button mdc-button--raised btn btn-primary mdc-input-group-append mdc-icon-button"
-                                            tabindex="-1"
-                                            type="button">
-                                        <i class="mdi mdi-eye fas fa-eye reveal-password-icon"
-                                           style="vertical-align: middle;"
-                                           aria-hidden="true"></i>
-                                        <span class="visually-hidden">Toggle Token</span>
+                        <div id="oidctokenexchange-tab">
+                            <p>You can simulate OpenID connect responses to relying party applications and clients.</p>
+
+                            <form id="fmOidcProtocol" class="d-block">
+                                <section class="oidc-field form-group my-3 mdc-input-group d-flex">
+                                    <div class="mdc-input-group-field mdc-input-group-field-append w-100">
+                                        <label for="oidcProtocolClientId"
+                                               class="mdc-text-field mdc-text-field--outlined control-label mdc-text-field--with-trailing-icon mb-2">
+                                            <span class="mdc-notched-outline">
+                                                <span class="mdc-notched-outline__leading"></span>
+                                                <span class="mdc-notched-outline__notch">
+                                                    <span class="mdc-floating-label">Client ID</span>
+                                                </span>
+                                                <span class="mdc-notched-outline__trailing"></span>
+                                            </span>
+                                            <input class="mdc-text-field__input form-control" type="text"
+                                                   name="oidcProtocolClientId" data-param-name="entityId" tabindex="0"
+                                                   id="oidcProtocolClientId" size="50" autocomplete="off" required/>
+                                        </label>
+                                        <label for="oidcProtocolClientSecret"
+                                               class="mdc-text-field mdc-text-field--outlined control-label mdc-text-field--with-trailing-icon mb-2">
+                                            <span class="mdc-notched-outline">
+                                                <span class="mdc-notched-outline__leading"></span>
+                                                <span class="mdc-notched-outline__notch">
+                                                    <span class="mdc-floating-label">Client Secret</span>
+                                                </span>
+                                                <span class="mdc-notched-outline__trailing"></span>
+                                            </span>
+                                            <input class="mdc-text-field__input form-control pwd" type="password"
+                                                   name="oidcProtocolClientSecret" data-param-name="password" tabindex="0"
+                                                   id="oidcProtocolClientSecret" size="50" autocomplete="off" required/>
+                                            <button
+                                                    class="reveal-password align-self-end mdc-button mdc-button--raised btn btn-primary mdc-input-group-append mdc-icon-button"
+                                                    tabindex="-1"
+                                                    type="button">
+                                                <i class="mdi mdi-eye fas fa-eye reveal-password-icon"
+                                                   style="vertical-align: middle;"
+                                                   aria-hidden="true"></i>
+                                                <span class="visually-hidden">Toggle Token</span>
+                                            </button>
+                                        </label>
+                                        <div id="oidcProtocolScopesTooltip" class="mdc-tooltip" role="tooltip"
+                                             aria-hidden="true">
+                                            <div class="mdc-tooltip__surface mdc-tooltip__surface-animation">
+                                                OpenID Connect scopes are used to request specific sets of information about the authenticated user
+                                                and must be separated by spaces. The default scope is <code>openid</code>.
+                                            </div>
+                                        </div>
+                                        <label for="oidcProtocolScopes"
+                                               class="mdc-text-field mdc-text-field--outlined control-label mdc-text-field--with-trailing-icon mb-2">
+                                            <span class="mdc-notched-outline">
+                                                <span class="mdc-notched-outline__leading"></span>
+                                                <span class="mdc-notched-outline__notch">
+                                                    <span class="mdc-floating-label">Scope(s)</span>
+                                                </span>
+                                                <span class="mdc-notched-outline__trailing"></span>
+                                            </span>
+
+                                            <input class="mdc-text-field__input form-control"
+                                                   aria-describedby="oidcProtocolScopesTooltip"
+                                                   type="text" value="openid"
+                                                   name="oidcProtocolScopes" data-param-name="scope" tabindex="0"
+                                                   id="oidcProtocolScopes" size="50" autocomplete="off" required/>
+                                        </label>
+                                    </div>
+
+                                </section>
+                                <div class="d-flex">
+                                    <button type="button" name="oidcProtocolButton" id="oidcProtocolButton"
+                                            class="mdc-button mdc-button--raised">
+                                        <span class="mdc-button__label">
+                                            <i class="mdc-tab__icon mdi mdi-swap-horizontal"
+                                               aria-hidden="true"></i>Exchange</span>
                                     </button>
-                                </label>
-                                <div id="oidcProtocolScopesTooltip" class="mdc-tooltip" role="tooltip"
-                                     aria-hidden="true">
-                                    <div class="mdc-tooltip__surface mdc-tooltip__surface-animation">
-                                        OpenID Connect scopes are used to request specific sets of information about the authenticated user
-                                        and must be separated by spaces. The default scope is <code>openid</code>.
+                                </div>
+
+                                <section class="mb-4 d-flex h-450px d-none" id="oidcProtocolEditorContainer">
+                                    <pre class="ace-editor ace-relative w-100 h-100" id="oidcProtocolEditorTokens"></pre>
+                                    <pre class="ace-editor ace-relative w-100 h-100" id="oidcProtocolEditorIdTokenClaims"></pre>
+                                    <pre class="ace-editor ace-relative w-100 h-100" id="oidcProtocolEditorProfile"></pre>
+                                </section>
+                            </form>
+                        </div>
+
+                        <div id="oidckeyrotation-tab">
+                            <p>You can instruct CAS to rotate or revoke keys in the <a href="javascript:showOidcJwks()">OpenID Connect JSON web keystore (JWKS).</a></p>
+
+                            <div class="d-flex">
+                                <button type="button" name="oidcKeyRotationButton" id="oidcKeyRotationButton"
+                                        class="mdc-button mdc-button--raised">
+                                    <span class="mdc-button__label"><i class="mdc-tab__icon mdi mdi-rotate-3d-variant"
+                                                                       aria-hidden="true"></i>Rotate</span>
+                                </button>
+                                <button type="button" name="oidcKeyRevocationButton" id="oidcKeyRevocationButton"
+                                        class="mdc-button mdc-button--raised">
+                                    <span class="mdc-button__label"><i class="mdc-tab__icon mdi mdi-trash-can"
+                                                                       aria-hidden="true"></i>Revoke</span>
+                                </button>
+                            </div>
+                        </div>
+
+                        <div id="oidcclientjwks-tab">
+                            <div class="mt-3" id="oidcClientJwksPanel">
+                                <table id="oidcClientJwksTable" class="mdc-data-table__table table table-striped noborder">
+                                    <thead>
+                                    <tr class="mdc-data-table__header-row">
+                                        <th class="mdc-data-table__header-cell" role="columnheader" scope="col">JKT</th>
+                                        <th class="mdc-data-table__header-cell" role="columnheader" scope="col">Created At</th>
+                                        <th class="mdc-data-table__header-cell" role="columnheader" scope="col">JWK</th>
+                                        <th class="mdc-data-table__header-cell" role="columnheader" scope="col"></th>
+                                    </tr>
+                                    </thead>
+                                    <tbody class="mdc-data-table__content">
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+
+                        <div id="oidcdiscovery-tab">
+                            <p>You can examine the discovery profile of CAS as an OpenID Connect Provider (OP).</p>
+                            <div class="d-flex">
+                                <button type="button" name="oidcOpConfigurationButton" id="oidcOpConfigurationButton"
+                                        class="mdc-button mdc-button--raised">
+                                    <span class="mdc-button__label"><i class="mdc-tab__icon mdi mdi-cog" aria-hidden="true"></i>Discovery Profile</span>
+                                </button>
+                            </div>
+
+                            <div class="mdc-dialog modal" id="oidcOpConfigurationDialog" role="alertdialog"
+                                 aria-modal="true" aria-labelledby="oidcOpConfigurationDialog-title"
+                                 aria-describedby="dialog-content">
+                                <div class="mdc-dialog__container w-100 modal-dialog">
+                                    <div class="mdc-dialog__surface mw-100 w-75 modal-content min-height-60">
+                                        <div class="mdc-dialog__content modal-body" id="oidcOpConfigurationDialog-content">
+                                            <div class="ace-editor ace-absolute" id="oidcOpConfigurationDialogEditor"></div>
+                                        </div>
                                     </div>
                                 </div>
-                                <label for="oidcProtocolScopes"
-                                       class="mdc-text-field mdc-text-field--outlined control-label mdc-text-field--with-trailing-icon mb-2">
-                                    <span class="mdc-notched-outline">
-                                        <span class="mdc-notched-outline__leading"></span>
-                                        <span class="mdc-notched-outline__notch">
-                                            <span class="mdc-floating-label">Scope(s)</span>
-                                        </span>
-                                        <span class="mdc-notched-outline__trailing"></span>
-                                    </span>
-
-                                    <input class="mdc-text-field__input form-control"
-                                           aria-describedby="oidcProtocolScopesTooltip"
-                                           type="text" value="openid"
-                                           name="oidcProtocolScopes" data-param-name="scope" tabindex="0"
-                                           id="oidcProtocolScopes" size="50" autocomplete="off" required/>
-                                </label>
+                                <div class="mdc-dialog__scrim"></div>
                             </div>
-
-                        </section>
-                        <div class="d-flex">
-                            <button type="button" name="oidcProtocolButton" id="oidcProtocolButton"
-                                    class="mdc-button mdc-button--raised">
-                                <span class="mdc-button__label">
-                                    <i class="mdc-tab__icon mdi mdi-swap-horizontal"
-                                       aria-hidden="true"></i>Exchange</span>
-                            </button>
                         </div>
 
-                        <section class="mb-4 d-flex h-450px d-none" id="oidcProtocolEditorContainer">
-                            <pre class="ace-editor ace-relative w-100 h-100" id="oidcProtocolEditorTokens"></pre>
-                            <pre class="ace-editor ace-relative w-100 h-100" id="oidcProtocolEditorIdTokenClaims"></pre>
-                            <pre class="ace-editor ace-relative w-100 h-100" id="oidcProtocolEditorProfile"></pre>
-                        </section>
-                    </form>
-                    <p>
+                        <div id="oidcconfigprops-tab">
+                            <div class="min-height-90" id="oidcConfigurationPropsPanel">
+                                <div class="mdc-card p-4 gradient-card">
+                                    <h3>
+                                        <i class="p-1 mdc-tab__icon mdi" style="vertical-align:baseline;" aria-hidden="true"></i>
+                                        Configuration Properties
+                                    </h3>
+                                </div>
+                                <div class="p-2" style="background: white;">
+                                    <table id="oidcConfigurationPropsTable" class="mdc-data-table__table table table-striped noborder">
+                                        <thead>
+                                        <tr class="mdc-data-table__header-row">
+                                            <th class="mdc-data-table__header-cell" role="columnheader" scope="col">Property</th>
+                                            <th class="mdc-data-table__header-cell" role="columnheader" scope="col">Description</th>
+                                        </tr>
+                                        </thead>
+                                        <tbody class="mdc-data-table__content">
 
-                    <h3>Key Rotation</h3>
-                    <p>You can instruct CAS to rotate or revoke keys in the <a href="javascript:showOidcJwks()">OpenID Connect JSON web keystore (JWKS).</a></p>
-
-                    <div class="d-flex">
-                        <button type="button" name="oidcKeyRotationButton" id="oidcKeyRotationButton"
-                                class="mdc-button mdc-button--raised">
-                            <span class="mdc-button__label"><i class="mdc-tab__icon mdi mdi-rotate-3d-variant"
-                                                               aria-hidden="true"></i>Rotate</span>
-                        </button>
-                        <button type="button" name="oidcKeyRevocationButton" id="oidcKeyRevocationButton"
-                                class="mdc-button mdc-button--raised">
-                            <span class="mdc-button__label"><i class="mdc-tab__icon mdi mdi-trash-can"
-                                                               aria-hidden="true"></i>Revoke</span>
-                        </button>
-                    </div>
-                    <p>
-
-                    <h3>Discovery Profile</h3>
-                    <p>You can examine the discovery profile of CAS as an OpenID Connect Provider (OP).</p>
-                     <div class="d-flex">
-
-                        <button type="button" name="oidcOpConfigurationButton" id="oidcOpConfigurationButton"
-                                class="mdc-button mdc-button--raised">
-                            <span class="mdc-button__label"><i class="mdc-tab__icon mdi mdi-cog" aria-hidden="true"></i>Discovery Profile</span>
-                        </button>
-                    </div>
-                    <p class="pb-3">
-                    
-                    <div class="min-height-90 hide" id="oidcConfigurationPropsPanel">
-                        <div class="mdc-card p-4 gradient-card">
-                            <h3>
-                                <i class="p-1 mdc-tab__icon mdi" style="vertical-align:baseline;" aria-hidden="true"></i>
-                                Configuration Properties
-                            </h3>
-                        </div>
-                        <div class="p-2" style="background: white;">
-                            <table id="oidcConfigurationPropsTable" class="mdc-data-table__table table table-striped noborder">
-                                <thead>
-                                <tr class="mdc-data-table__header-row">
-                                    <th class="mdc-data-table__header-cell" role="columnheader" scope="col">Property</th>
-                                    <th class="mdc-data-table__header-cell" role="columnheader" scope="col">Description</th>
-                                </tr>
-                                </thead>
-                                <tbody class="mdc-data-table__content">
-
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
-
-                    <div class="mdc-dialog modal" id="oidcOpConfigurationDialog" role="alertdialog"
-                         aria-modal="true" aria-labelledby="oidcOpConfigurationDialog-title"
-                         aria-describedby="dialog-content">
-                        <div class="mdc-dialog__container w-100 modal-dialog">
-                            <div class="mdc-dialog__surface mw-100 w-75 modal-content min-height-60">
-                                <div class="mdc-dialog__content modal-body" id="oidcOpConfigurationDialog-content">
-                                    <div class="ace-editor ace-absolute" id="oidcOpConfigurationDialogEditor"></div>
+                                        </tbody>
+                                    </table>
                                 </div>
                             </div>
                         </div>
-                        <div class="mdc-dialog__scrim"></div>
                     </div>
-                    
                 </section>
             </div>
         </div>
