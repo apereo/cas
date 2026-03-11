@@ -1,8 +1,6 @@
 package org.apereo.cas.ticket.accesstoken;
 
 import module java.base;
-
-import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.support.Beans;
 import org.apereo.cas.services.RegisteredServiceDefinition;
@@ -11,6 +9,7 @@ import org.apereo.cas.ticket.ExpirationPolicy;
 import org.apereo.cas.ticket.ExpirationPolicyBuilder;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import lombok.val;
+import org.apache.commons.lang3.StringUtils;
 
 /**
  * This is {@link OAuth20AccessTokenExpirationPolicyBuilder}.
@@ -20,7 +19,7 @@ import lombok.val;
  */
 @JsonTypeInfo(use = JsonTypeInfo.Id.CLASS)
 public record OAuth20AccessTokenExpirationPolicyBuilder(CasConfigurationProperties casProperties)
-        implements ExpirationPolicyBuilder<OAuth20AccessToken> {
+    implements ExpirationPolicyBuilder<OAuth20AccessToken> {
     @Serial
     private static final long serialVersionUID = -3597980180617072826L;
 
@@ -43,13 +42,8 @@ public record OAuth20AccessTokenExpirationPolicyBuilder(CasConfigurationProperti
         }
         return toTicketExpirationPolicy();
     }
-
-    /**
-     * To ticket expiration policy.
-     *
-     * @return the expiration policy
-     */
-    public ExpirationPolicy toTicketExpirationPolicy() {
+    
+    private ExpirationPolicy toTicketExpirationPolicy() {
         val oauth = casProperties.getAuthn().getOauth().getAccessToken();
         val maxTimeInSeconds = Beans.newDuration(oauth.getMaxTimeToLiveInSeconds()).toSeconds();
         val ttlInSeconds = Beans.newDuration(oauth.getTimeToKillInSeconds()).toSeconds();

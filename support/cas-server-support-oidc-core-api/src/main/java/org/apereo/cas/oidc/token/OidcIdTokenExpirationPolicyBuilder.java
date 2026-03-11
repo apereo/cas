@@ -31,7 +31,7 @@ public record OidcIdTokenExpirationPolicyBuilder(CasConfigurationProperties casP
      *
      * @return the expiration policy
      */
-    public ExpirationPolicy toTicketExpirationPolicy() {
+    private ExpirationPolicy toTicketExpirationPolicy() {
         val timeout = Beans.newDuration(casProperties.getAuthn().getOidc().getIdToken().getMaxTimeToLiveInSeconds());
         return new HardTimeoutExpirationPolicy(timeout.toSeconds());
     }

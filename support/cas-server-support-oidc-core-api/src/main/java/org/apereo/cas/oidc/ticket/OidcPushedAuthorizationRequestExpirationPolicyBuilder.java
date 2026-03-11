@@ -33,7 +33,7 @@ public record OidcPushedAuthorizationRequestExpirationPolicyBuilder(CasConfigura
      *
      * @return the expiration policy
      */
-    public ExpirationPolicy toTicketExpirationPolicy() {
+    private ExpirationPolicy toTicketExpirationPolicy() {
         val par = casProperties.getAuthn().getOidc().getPar();
         val exp = Beans.newDuration(par.getMaxTimeToLiveInSeconds());
         return new OidcPushedAuthorizationRequestExpirationPolicy(par.getNumberOfUses(), exp.toSeconds());

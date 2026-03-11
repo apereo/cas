@@ -30,7 +30,7 @@ public record UmaPermissionTicketExpirationPolicyBuilder(CasConfigurationPropert
      *
      * @return the expiration policy
      */
-    public ExpirationPolicy toTicketExpirationPolicy() {
+    private ExpirationPolicy toTicketExpirationPolicy() {
         val uma = casProperties.getAuthn().getOauth().getUma();
         return new HardTimeoutExpirationPolicy(Beans.newDuration(uma.getPermissionTicket().getMaxTimeToLiveInSeconds()).toSeconds());
     }

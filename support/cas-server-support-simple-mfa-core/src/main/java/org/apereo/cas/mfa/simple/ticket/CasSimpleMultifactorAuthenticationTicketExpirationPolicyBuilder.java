@@ -30,7 +30,7 @@ public record CasSimpleMultifactorAuthenticationTicketExpirationPolicyBuilder(Ca
      *
      * @return the expiration policy
      */
-    public ExpirationPolicy toTicketExpirationPolicy() {
+    private ExpirationPolicy toTicketExpirationPolicy() {
         val simple = casProperties.getAuthn().getMfa().getSimple();
         return new HardTimeoutExpirationPolicy(simple.getToken().getCore().getTimeToKillInSeconds());
     }
