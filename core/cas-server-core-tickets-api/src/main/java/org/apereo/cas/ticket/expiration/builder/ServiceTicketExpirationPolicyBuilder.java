@@ -8,6 +8,7 @@ import org.apereo.cas.ticket.ExpirationPolicyBuilder;
 import org.apereo.cas.ticket.ServiceTicket;
 import org.apereo.cas.ticket.expiration.MultiTimeUseOrTimeoutExpirationPolicy;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
+import lombok.RequiredArgsConstructor;
 import lombok.val;
 
 /**
@@ -17,9 +18,11 @@ import lombok.val;
  * @since 6.1.0
  */
 @JsonTypeInfo(use = JsonTypeInfo.Id.CLASS)
-public record ServiceTicketExpirationPolicyBuilder(CasConfigurationProperties casProperties) implements ExpirationPolicyBuilder<ServiceTicket> {
+@RequiredArgsConstructor
+public class ServiceTicketExpirationPolicyBuilder implements ExpirationPolicyBuilder<ServiceTicket> {
     @Serial
     private static final long serialVersionUID = -3597980180617072826L;
+    private final CasConfigurationProperties casProperties;
 
     @Override
     public ExpirationPolicy buildTicketExpirationPolicy() {

@@ -7,6 +7,7 @@ import org.apereo.cas.ticket.ExpirationPolicyBuilder;
 import org.apereo.cas.ticket.TransientSessionTicket;
 import org.apereo.cas.ticket.expiration.HardTimeoutExpirationPolicy;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
+import lombok.RequiredArgsConstructor;
 import lombok.val;
 
 /**
@@ -16,9 +17,11 @@ import lombok.val;
  * @since 6.1.0
  */
 @JsonTypeInfo(use = JsonTypeInfo.Id.CLASS)
-public record CasSimpleMultifactorAuthenticationTicketExpirationPolicyBuilder(CasConfigurationProperties casProperties) implements ExpirationPolicyBuilder<TransientSessionTicket> {
+@RequiredArgsConstructor
+public class CasSimpleMultifactorAuthenticationTicketExpirationPolicyBuilder implements ExpirationPolicyBuilder<TransientSessionTicket> {
     @Serial
     private static final long serialVersionUID = -3597980180617072826L;
+    private final CasConfigurationProperties casProperties;
 
     @Override
     public ExpirationPolicy buildTicketExpirationPolicy() {
@@ -34,4 +37,5 @@ public record CasSimpleMultifactorAuthenticationTicketExpirationPolicyBuilder(Ca
         val simple = casProperties.getAuthn().getMfa().getSimple();
         return new HardTimeoutExpirationPolicy(simple.getToken().getCore().getTimeToKillInSeconds());
     }
+
 }

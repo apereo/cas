@@ -9,6 +9,7 @@ import org.apereo.cas.ticket.expiration.MultiTimeUseOrTimeoutExpirationPolicy;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
+import lombok.RequiredArgsConstructor;
 import lombok.ToString;
 import lombok.val;
 
@@ -19,9 +20,11 @@ import lombok.val;
  * @since 6.5.0
  */
 @JsonTypeInfo(use = JsonTypeInfo.Id.CLASS)
-public record OidcPushedAuthorizationRequestExpirationPolicyBuilder(CasConfigurationProperties casProperties) implements ExpirationPolicyBuilder<OidcPushedAuthorizationRequest> {
+@RequiredArgsConstructor
+public class OidcPushedAuthorizationRequestExpirationPolicyBuilder implements ExpirationPolicyBuilder<OidcPushedAuthorizationRequest> {
     @Serial
     private static final long serialVersionUID = -372536596516253646L;
+    private final CasConfigurationProperties casProperties;
 
     @Override
     public ExpirationPolicy buildTicketExpirationPolicy() {
@@ -47,10 +50,8 @@ public record OidcPushedAuthorizationRequestExpirationPolicyBuilder(CasConfigura
 
         @JsonCreator
         public OidcPushedAuthorizationRequestExpirationPolicy(
-            @JsonProperty("numberOfUses")
-            final long numberOfUses,
-            @JsonProperty("timeToLive")
-            final long timeToKillInSeconds) {
+            @JsonProperty("numberOfUses") final long numberOfUses,
+            @JsonProperty("timeToLive") final long timeToKillInSeconds) {
             super(numberOfUses, timeToKillInSeconds);
         }
     }
