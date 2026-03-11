@@ -1,7 +1,6 @@
 package org.apereo.cas.ticket.expiration.builder;
 
 import module java.base;
-import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.ticket.ExpirationPolicy;
 import org.apereo.cas.ticket.ExpirationPolicyBuilder;
 import org.apereo.cas.ticket.TicketGrantingTicket;
