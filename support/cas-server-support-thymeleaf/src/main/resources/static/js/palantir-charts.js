@@ -344,6 +344,14 @@ function parsePrometheusMetrics(text) {
     return metrics;
 }
 
+function determinePrometheusChartType(metricName) {
+    const name = metricName.toLowerCase();
+    if (name.endsWith("_count") || name.endsWith("_total") || name.endsWith("_sum") || name.endsWith("_max")) {
+        return "bar";
+    }
+    return "line";
+}
+
 function createPrometheusChart(metricName, metricData) {
     const chartsRow = document.getElementById("prometheusChartsRow");
     if (!chartsRow || !metricData || metricData.length === 0) return;
@@ -372,15 +380,17 @@ function createPrometheusChart(metricName, metricData) {
     const values = metricData.map(item => item.value);
     const colors = generateColors(metricData.length);
 
+    const chartType = determinePrometheusChartType(metricName);
     const chartConfig = {
         labels: labels,
         values: values,
         colors: colors,
-        metricName: metricName
+        metricName: metricName,
+        chartType: chartType
     };
 
     const chart = new Chart(canvas.getContext("2d"), {
-        type: "line",
+        type: chartType,
         data: {
             labels: labels,
             datasets: [{
@@ -459,7 +469,7 @@ function showMaximizedChart(chartConfig) {
             const canvas = document.getElementById("prometheusChartDialogCanvas");
             if (canvas) {
                 window.prometheusDialogChart = new Chart(canvas.getContext("2d"), {
-                    type: "line",
+                    type: chartConfig.chartType,
                     data: {
                         labels: chartConfig.labels,
                         datasets: [{

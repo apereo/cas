@@ -23,7 +23,6 @@ public class ProxyGrantingTicketExpirationPolicyBuilder
     private static final long serialVersionUID = -1597980180617072826L;
 
     private final ExpirationPolicyBuilder<TicketGrantingTicket> ticketGrantingTicketExpirationPolicyBuilder;
-    private final CasConfigurationProperties casProperties;
 
     @Override
     public ExpirationPolicy buildTicketExpirationPolicy() {
