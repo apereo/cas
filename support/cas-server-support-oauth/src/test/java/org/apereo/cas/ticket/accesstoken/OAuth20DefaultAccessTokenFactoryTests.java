@@ -9,8 +9,8 @@ import org.apereo.cas.support.oauth.OAuth20ResponseTypes;
 import org.apereo.cas.support.oauth.services.DefaultRegisteredServiceOAuthAccessTokenExpirationPolicy;
 import org.apereo.cas.support.oauth.services.OAuthRegisteredService;
 import org.apereo.cas.ticket.TicketGrantingTicket;
-import lombok.val;
 import org.apereo.cas.ticket.accesstoken.OAuth20AccessTokenExpirationPolicy.OAuthAccessTokenSovereignExpirationPolicy;
+import lombok.val;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
@@ -71,14 +71,14 @@ class OAuth20DefaultAccessTokenFactoryTests extends AbstractOAuth20Tests {
         }
 
         private OAuth20AccessToken createAccessToken(
-                final TicketGrantingTicket ticketGrantingTicket,
-                final OAuthRegisteredService registeredService) throws Throwable {
+            final TicketGrantingTicket ticketGrantingTicket,
+            final OAuthRegisteredService registeredService) throws Throwable {
             return defaultAccessTokenFactory.create(
-                    RegisteredServiceTestUtils.getService(registeredService.getServiceId()),
-                    RegisteredServiceTestUtils.getAuthentication(),
-                    ticketGrantingTicket,
-                    Set.of("Scope1", "Scope2"), null, registeredService.getClientId(), Map.of(),
-                    OAuth20ResponseTypes.CODE, OAuth20GrantTypes.AUTHORIZATION_CODE);
+                RegisteredServiceTestUtils.getService(registeredService.getServiceId()),
+                RegisteredServiceTestUtils.getAuthentication(),
+                ticketGrantingTicket,
+                Set.of("Scope1", "Scope2"), null, registeredService.getClientId(), Map.of(),
+                OAuth20ResponseTypes.CODE, OAuth20GrantTypes.AUTHORIZATION_CODE);
         }
     }
 
@@ -95,11 +95,11 @@ class OAuth20DefaultAccessTokenFactoryTests extends AbstractOAuth20Tests {
             val tgt = new MockTicketGrantingTicket("casuser");
             ticketRegistry.addTicket(tgt);
             val token = defaultAccessTokenFactory.create(
-                    RegisteredServiceTestUtils.getService(registeredService.getServiceId()),
-                    RegisteredServiceTestUtils.getAuthentication(),
-                    tgt,
-                    Set.of("Scope1", "Scope2"), null, registeredService.getClientId(), Map.of(),
-                    OAuth20ResponseTypes.CODE, OAuth20GrantTypes.AUTHORIZATION_CODE);
+                RegisteredServiceTestUtils.getService(registeredService.getServiceId()),
+                RegisteredServiceTestUtils.getAuthentication(),
+                tgt,
+                Set.of("Scope1", "Scope2"), null, registeredService.getClientId(), Map.of(),
+                OAuth20ResponseTypes.CODE, OAuth20GrantTypes.AUTHORIZATION_CODE);
             assertNotNull(token);
             assertInstanceOf(OAuthAccessTokenSovereignExpirationPolicy.class, token.getExpirationPolicy());
         }

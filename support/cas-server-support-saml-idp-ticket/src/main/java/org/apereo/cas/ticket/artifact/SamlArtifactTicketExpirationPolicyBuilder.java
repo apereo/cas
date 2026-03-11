@@ -29,7 +29,7 @@ public record SamlArtifactTicketExpirationPolicyBuilder(CasConfigurationProperti
      *
      * @return the expiration policy
      */
-    public ExpirationPolicy toTicketExpirationPolicy() {
+    private ExpirationPolicy toTicketExpirationPolicy() {
         val timeToKillInSeconds = Beans.newDuration(casProperties.getTicket().getSt().getTimeToKillInSeconds()).toSeconds();
         return new SamlArtifactTicketExpirationPolicy(timeToKillInSeconds);
     }

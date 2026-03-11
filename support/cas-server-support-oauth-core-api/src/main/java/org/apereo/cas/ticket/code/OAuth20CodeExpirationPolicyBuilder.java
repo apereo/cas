@@ -28,7 +28,7 @@ public record OAuth20CodeExpirationPolicyBuilder(CasConfigurationProperties casP
      *
      * @return the expiration policy
      */
-    public ExpirationPolicy toTicketExpirationPolicy() {
+    private ExpirationPolicy toTicketExpirationPolicy() {
         val oauth = casProperties.getAuthn().getOauth();
         return new OAuth20CodeExpirationPolicy(oauth.getCode().getNumberOfUses(),
             oauth.getCode().getTimeToKillInSeconds());

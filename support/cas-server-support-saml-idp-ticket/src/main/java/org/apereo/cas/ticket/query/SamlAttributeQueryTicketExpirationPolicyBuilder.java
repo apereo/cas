@@ -30,7 +30,7 @@ public record SamlAttributeQueryTicketExpirationPolicyBuilder(CasConfigurationPr
      *
      * @return the expiration policy
      */
-    public ExpirationPolicy toTicketExpirationPolicy() {
+    private ExpirationPolicy toTicketExpirationPolicy() {
         val timeToKillInSeconds = casProperties.getAuthn().getSamlIdp()
             .getTicket().getAttributeQuery().getTimeToKillInSeconds();
         return timeToKillInSeconds <= 0
