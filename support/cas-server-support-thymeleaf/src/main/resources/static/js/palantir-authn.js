@@ -517,6 +517,34 @@ function openNewAuthenticationHandlerDialog() {
     });
 
 
+    const savedEditorPref = localStorage.getItem("showAuthnHandlerEditorPreference");
+    if (savedEditorPref !== null) {
+        const $editorInput = $("#addAuthenticationHandlerDialogFields #showAuthnHandlerEditor");
+        $editorInput.val(savedEditorPref);
+        const $editorBtn = $("#addAuthenticationHandlerDialogFields #showAuthnHandlerEditorButton");
+        if (savedEditorPref === "true") {
+            $editorBtn.removeClass("mdc-switch--unselected").addClass("mdc-switch--selected");
+            $editorBtn.attr("aria-checked", "true");
+        } else {
+            $editorBtn.removeClass("mdc-switch--selected").addClass("mdc-switch--unselected");
+            $editorBtn.attr("aria-checked", "false");
+        }
+    }
+
+    const savedAdvancedPref = localStorage.getItem("showAuthnHandlerAdvancedOptionsPreference");
+    if (savedAdvancedPref !== null) {
+        const $advancedInput = $("#addAuthenticationHandlerDialogFields #showAuthnHandlerAdvancedOptions");
+        $advancedInput.val(savedAdvancedPref);
+        const $advancedBtn = $("#addAuthenticationHandlerDialogFields #showAuthnHandlerAdvancedOptionsButton");
+        if (savedAdvancedPref === "true") {
+            $advancedBtn.removeClass("mdc-switch--unselected").addClass("mdc-switch--selected");
+            $advancedBtn.attr("aria-checked", "true");
+        } else {
+            $advancedBtn.removeClass("mdc-switch--selected").addClass("mdc-switch--unselected");
+            $advancedBtn.attr("aria-checked", "false");
+        }
+    }
+
     const alwaysShowClones = [];
     $("#addAuthenticationHandlerDialogFields").children().each(function () {
         const $clone = $(this).clone(true);
@@ -729,22 +757,7 @@ function openNewAuthenticationHandlerDialog() {
             const authnEditor = initializeAceEditor("authnHandlerEditor", "properties");
             authnEditor.setReadOnly(true);
 
-            const savedEditorPref = localStorage.getItem("showAuthnHandlerEditorPreference");
-            const currentEditorValue = $("#showAuthnHandlerEditor").val();
-            if (savedEditorPref !== null) {
-                if ((savedEditorPref === "true") !== (currentEditorValue === "true")) {
-                    $("#showAuthnHandlerEditorButton").click();
-                }
-            }
             toggleAuthnHandlerEditorVisibility();
-
-            const savedAdvancedPref = localStorage.getItem("showAuthnHandlerAdvancedOptionsPreference");
-            const currentAdvancedValue = $("#showAuthnHandlerAdvancedOptions").val();
-            if (savedAdvancedPref !== null) {
-                if ((savedAdvancedPref === "true") !== (currentAdvancedValue === "true")) {
-                    $("#showAuthnHandlerAdvancedOptionsButton").click();
-                }
-            }
             toggleAuthnHandlerAdvancedOptions();
         },
         close: function () {
