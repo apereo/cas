@@ -52,4 +52,12 @@ class CasDiscoveryProfile {
     static multifactorAuthenticationProviders() {
         return this.profile?.multifactorAuthenticationProviderTypesSupported ?? [];
     }
+
+    static jdbcDrivers() {
+        return this.profile?.details?.jdbcInfo?.drivers ?? [];
+    }
+
+    static jdbcDialects() {
+        return this.profile?.details?.jdbcInfo?.dialects ?? [];
+    }
 }
