@@ -190,6 +190,18 @@ public class SyncopePasswordManagementService extends BasePasswordManagementServ
             .orElseThrow(() -> new IllegalArgumentException("No user or its key can be found for username: " + username));
     }
 
+    protected boolean fetchSyncopeUserMustChangePassword(final String username) {
+        val query = PasswordManagementQuery.builder().username(username).build();
+        return searchUser(query)
+                   .stream()
+                   .findFirst()
+                   .map(syncopeUser -> syncopeUser.getOrDefault("mustChangePassword", syncopeUser.get("syncopeUserMustChangePassword")))
+                   .filter(Objects::nonNull)
+                   .filter(values -> !values.isEmpty())
+                   .map(values -> Boolean.valueOf(values.getFirst().toString()))
+                   .orElseThrow(() -> new IllegalArgumentException("No user can be found for username: " + username));
+    }
+
     protected Optional<String> getUserAttribute(final PasswordManagementQuery query, final String attributeName) {
         return searchUser(query)
             .stream()
@@ -216,6 +228,13 @@ public class SyncopePasswordManagementService extends BasePasswordManagementServ
         return passwordPatch;
     }
 
+    protected static JsonNode getMustChangePasswordPatch(final boolean value) {
+        val passwordPatch = MAPPER.createObjectNode();
+        passwordPatch.put("operation", "ADD_REPLACE");
+        passwordPatch.put("value", value);
+        return passwordPatch;
+    }
+
     protected static JsonNode getUserPasswordUpdateRequest(final PasswordChangeRequest bean,
                                                            final String userKey) {
         val userPatch = MAPPER.createObjectNode();
@@ -235,14 +254,23 @@ public class SyncopePasswordManagementService extends BasePasswordManagementServ
         return passwordPatch;
     }
 
-    protected HttpExecutionRequest buildPasswordChangeHttpRequest(final PasswordChangeRequest bean, final String url, final String domain) {
+    protected static JsonNode getUserMustChangePasswordPatch(final String userKey) {
+        val userPatch = MAPPER.createObjectNode();
+        userPatch.put("_class", "org.apache.syncope.common.lib.request.UserUR");
+        userPatch.put("key", userKey);
+        userPatch.set("mustChangePassword", getMustChangePasswordPatch(true));
+        return userPatch;
+    }
+
+    protected HttpExecutionRequest buildPasswordChangeHttpRequest(final PasswordChangeRequest bean, final Map<String, String> url, final String domain) {
         return FunctionUtils.doUnchecked(() -> {
             LOGGER.debug("Changing password for user [{}] via [{}]", bean.getUsername(), url);
+
+            val userKey = fetchSyncopeUserKey(bean.getUsername());
             if (StringUtils.isBlank(bean.toCurrentPassword())) {
-                val userKey = UriComponentsBuilder.fromUriString(url).build().getPathSegments().getLast();
                 return HttpExecutionRequest.builder()
                     .method(HttpMethod.PATCH)
-                    .url(url)
+                    .url(Objects.requireNonNull(url.get("url")))
                     .basicAuthUsername(casProperties.getAuthn().getPm().getSyncope().getBasicAuthUsername())
                     .basicAuthPassword(casProperties.getAuthn().getPm().getSyncope().getBasicAuthPassword())
                     .headers(Map.of(
@@ -254,9 +282,28 @@ public class SyncopePasswordManagementService extends BasePasswordManagementServ
                     .build();
             }
 
+            if (!Boolean.parseBoolean(url.get("mustChangePassword"))) {
+                val exec = HttpExecutionRequest.builder()
+                    .method(HttpMethod.PATCH)
+                    .url(determineMustChangePasswordUrl(userKey))
+                    .basicAuthUsername(casProperties.getAuthn().getPm().getSyncope().getBasicAuthUsername())
+                    .basicAuthPassword(casProperties.getAuthn().getPm().getSyncope().getBasicAuthPassword())
+                    .headers(Map.of(
+                        SyncopeUtils.SYNCOPE_HEADER_DOMAIN, casProperties.getAuthn().getPm().getSyncope().getDomain(),
+                        HttpHeaders.ACCEPT, MediaType.APPLICATION_JSON_VALUE,
+                        HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE))
+                    .entity(MAPPER.writeValueAsString(getUserMustChangePasswordPatch(userKey)))
+                    .maximumRetryAttempts(1)
+                    .build();
+                val response = Objects.requireNonNull(HttpUtils.execute(exec));
+                if (Objects.requireNonNull(HttpStatus.resolve(response.getCode())).isError()) {
+                    LOGGER.debug("Error updating the account mustChangePassword flag on Apache Syncope for [{}]", bean.getUsername());
+                }
+            }
+
             return HttpExecutionRequest.builder()
                 .method(HttpMethod.POST)
-                .url(url)
+                .url(Objects.requireNonNull(url.get("url")))
                 .basicAuthUsername(bean.getUsername())
                 .basicAuthPassword(bean.toCurrentPassword())
                 .headers(Map.of(
@@ -269,19 +316,28 @@ public class SyncopePasswordManagementService extends BasePasswordManagementServ
         });
     }
 
-    private String determinePasswordResetUrl(final PasswordChangeRequest bean) {
+    private Map<String, String> determinePasswordResetUrl(final PasswordChangeRequest bean) {
         val currentPassword = bean.toCurrentPassword();
         if (StringUtils.isBlank(currentPassword)) {
             val userKey = fetchSyncopeUserKey(bean.getUsername());
-            return Strings.CI.appendIfMissing(
+            return Map.of("url", Strings.CI.appendIfMissing(
                 SpringExpressionLanguageValueResolver.getInstance().resolve(
                     casProperties.getAuthn().getPm().getSyncope().getUrl()),
-                "/rest/users/%s".formatted(userKey));
+                "/rest/users/%s".formatted(userKey)));
         }
 
+        val isMustChangePassword = fetchSyncopeUserMustChangePassword(bean.getUsername());
+        return Map.of("url", Strings.CI.appendIfMissing(
+                          SpringExpressionLanguageValueResolver.getInstance().resolve(
+                              casProperties.getAuthn().getPm().getSyncope().getUrl()),
+                          "/rest/users/self/mustChangePassword"),
+                      "mustChangePassword", String.valueOf(isMustChangePassword));
+    }
+
+    private String determineMustChangePasswordUrl(final String userKey) {
         return Strings.CI.appendIfMissing(
             SpringExpressionLanguageValueResolver.getInstance().resolve(
                 casProperties.getAuthn().getPm().getSyncope().getUrl()),
-            "/rest/users/self/mustChangePassword");
+            "/rest/users/%s".formatted(userKey));
     }
 }

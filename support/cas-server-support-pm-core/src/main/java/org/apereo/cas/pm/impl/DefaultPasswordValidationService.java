@@ -53,7 +53,7 @@ public class DefaultPasswordValidationService implements PasswordValidationServi
 
     @Override
     public boolean isAcceptedByPasswordPolicy(final String password) {
-        val policyPattern = casProperties.getAuthn().getPm().getCore().getPasswordPolicyPattern();
+        val policyPattern = RegexUtils.createPattern(casProperties.getAuthn().getPm().getCore().getPasswordPolicyPattern(), 0);
         LOGGER.debug("Checking provided password against pattern required for password policy: [{}]", policyPattern);
         return RegexUtils.find(policyPattern, password);
     }

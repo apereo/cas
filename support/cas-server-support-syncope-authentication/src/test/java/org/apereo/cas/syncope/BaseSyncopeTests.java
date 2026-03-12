@@ -63,12 +63,9 @@ public abstract class BaseSyncopeTests {
         val user = MAPPER.createObjectNode();
         user.put("key", UUID.randomUUID().toString());
         user.put("username", "casuser");
+        user.put("mustChangePassword", "false");
         user.putArray("roles").add("role1");
-        user.putArray("dynRoles").add("DynRole1");
-        user.putArray("dynRealms").add("Realm1");
         user.putArray("memberships")
-            .add(MAPPER.createObjectNode().put("groupName", "G1"));
-        user.putArray("dynMemberships")
             .add(MAPPER.createObjectNode().put("groupName", "G1"));
         user.putArray("relationships")
             .add(MAPPER.createObjectNode().put("type", "T1").put("otherEndName", "Other1"));
@@ -82,11 +79,6 @@ public abstract class BaseSyncopeTests {
         derAttrs.put("schema", "S2");
         derAttrs.putArray("values").add("V2");
         user.putArray("derAttrs").add(derAttrs);
-
-        val virAttrs = MAPPER.createObjectNode();
-        virAttrs.put("schema", "S3");
-        virAttrs.putArray("values").add("V3");
-        user.putArray("virAttrs").add(virAttrs);
 
         user.put("securityQuestion", "Q1");
         user.put("status", "OK");
@@ -103,11 +95,8 @@ public abstract class BaseSyncopeTests {
         val user = MAPPER.createObjectNode();
         user.put("key", UUID.randomUUID().toString());
         user.put("username", "casuser");
+        user.put("mustChangePassword", "false");
         user.putArray("roles").add("role1");
-        user.putArray("dynRoles").add("DynRole1");
-        user.putArray("dynRealms").add("Realm1");
-        user.putArray("dynMemberships").add(MAPPER.createObjectNode()
-            .put("groupName", "G1"));
         user.putArray("relationships").add(MAPPER.createObjectNode()
             .put("type", "T1").put("otherEndName", "Other1"));
 
@@ -138,11 +127,6 @@ public abstract class BaseSyncopeTests {
         derAttrs.put("schema", "S2");
         derAttrs.putArray("values").add("V2");
         user.putArray("derAttrs").add(derAttrs);
-
-        val virAttrs = MAPPER.createObjectNode();
-        virAttrs.put("schema", "S3");
-        virAttrs.putArray("values").add("V3");
-        user.putArray("virAttrs").add(virAttrs);
 
         user.put("securityQuestion", "Q1");
         user.put("status", "OK");
