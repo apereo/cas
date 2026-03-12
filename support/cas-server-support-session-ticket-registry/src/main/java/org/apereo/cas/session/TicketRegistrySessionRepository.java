@@ -14,6 +14,7 @@ import lombok.val;
 import org.apache.commons.lang3.tuple.Pair;
 import org.jspecify.annotations.NonNull;
 import org.jspecify.annotations.Nullable;
+import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.session.DelegatingIndexResolver;
 import org.springframework.session.FindByIndexNameSessionRepository;
 import org.springframework.session.IndexResolver;
@@ -34,11 +35,11 @@ import org.springframework.transaction.annotation.Transactional;
 public class TicketRegistrySessionRepository extends MapSessionRepository implements FindByIndexNameSessionRepository<MapSession> {
     private final IndexResolver<Session> indexResolver = new DelegatingIndexResolver<>(new PrincipalNameIndexResolver<>());
 
-    private final TicketRegistry ticketRegistry;
-    private final TicketFactory ticketFactory;
+    private final ObjectProvider<TicketRegistry> ticketRegistry;
+    private final ObjectProvider<TicketFactory> ticketFactory;
 
-    public TicketRegistrySessionRepository(final TicketRegistry ticketRegistry,
-                                           final TicketFactory ticketFactory) {
+    public TicketRegistrySessionRepository(final ObjectProvider<TicketRegistry> ticketRegistry,
+                                           final ObjectProvider<TicketFactory> ticketFactory) {
         super(new ConcurrentHashMap<>());
         this.ticketRegistry = ticketRegistry;
         this.ticketFactory = ticketFactory;
@@ -52,16 +53,16 @@ public class TicketRegistrySessionRepository extends MapSessionRepository implem
             }
             val ticketId = TransientSessionTicketFactory.normalizeTicketId(session.getId());
             try {
-                val currentTicket = ticketRegistry.getTicket(ticketId, TransientSessionTicket.class);
+                val currentTicket = ticketRegistry.getObject().getTicket(ticketId, TransientSessionTicket.class);
                 currentTicket.getProperties().putAll(convertSessionAttributes(session));
                 LOGGER.trace("Updating session [{}] with properties [{}]", currentTicket.getId(), currentTicket);
-                ticketRegistry.updateTicket(currentTicket);
+                ticketRegistry.getObject().updateTicket(currentTicket);
             } catch (final InvalidTicketException e) {
-                val factory = (TransientSessionTicketFactory) ticketFactory.get(TransientSessionTicket.class);
+                val factory = (TransientSessionTicketFactory) ticketFactory.getObject().get(TransientSessionTicket.class);
                 val properties = convertSessionAttributes(session);
                 val ticket = factory.create(ticketId, properties);
                 LOGGER.trace("Saving session [{}] with properties [{}]", ticket.getId(), ticket);
-                ticketRegistry.addTicket(ticket);
+                ticketRegistry.getObject().addTicket(ticket);
             }
         });
     }
@@ -71,7 +72,7 @@ public class TicketRegistrySessionRepository extends MapSessionRepository implem
         try {
             val ticketId = TransientSessionTicketFactory.normalizeTicketId(id);
             LOGGER.trace("Finding session by id [{}]", ticketId);
-            val ticket = ticketRegistry.getTicket(ticketId, TransientSessionTicket.class);
+            val ticket = ticketRegistry.getObject().getTicket(ticketId, TransientSessionTicket.class);
             return convertTicketToSession(ticket);
         } catch (final InvalidTicketException e) {
             LOGGER.trace("Session with id [{}] not found", id, e);
@@ -97,13 +98,13 @@ public class TicketRegistrySessionRepository extends MapSessionRepository implem
     public void deleteById(final String id) {
         FunctionUtils.doUnchecked(_ -> {
             LOGGER.trace("Deleting session by id [{}]", id);
-            ticketRegistry.deleteTicket(id);
+            ticketRegistry.getObject().deleteTicket(id);
         });
     }
 
     @Override
     public Map findByIndexNameAndIndexValue(final String indexName, final String indexValue) {
-        return ticketRegistry.getTickets(ticket -> ticket instanceof final TransientSessionTicket tst
+        return ticketRegistry.getObject().getTickets(ticket -> ticket instanceof final TransientSessionTicket tst
                 && indexValue.equals(tst.getProperty(indexName, String.class)))
             .map(TransientSessionTicket.class::cast)
             .map(TicketRegistrySessionRepository::convertTicketToSession)
