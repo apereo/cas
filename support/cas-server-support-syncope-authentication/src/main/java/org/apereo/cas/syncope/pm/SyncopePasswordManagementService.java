@@ -278,17 +278,17 @@ public class SyncopePasswordManagementService extends BasePasswordManagementServ
 
             if (!Boolean.parseBoolean(url.get("mustChangePassword"))) {
                 val exec = HttpExecutionRequest.builder()
-                               .method(HttpMethod.PATCH)
-                               .url(determineMustChangePasswordUrl(userKey))
-                               .basicAuthUsername(casProperties.getAuthn().getPm().getSyncope().getBasicAuthUsername())
-                               .basicAuthPassword(casProperties.getAuthn().getPm().getSyncope().getBasicAuthPassword())
-                               .headers(Map.of(
-                                   SyncopeUtils.SYNCOPE_HEADER_DOMAIN, casProperties.getAuthn().getPm().getSyncope().getDomain(),
-                                   HttpHeaders.ACCEPT, MediaType.APPLICATION_JSON_VALUE,
-                                   HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE))
-                               .entity(MAPPER.writeValueAsString(getUserMustChangePasswordPatch(userKey)))
-                               .maximumRetryAttempts(1)
-                               .build();
+                    .method(HttpMethod.PATCH)
+                    .url(determineMustChangePasswordUrl(userKey))
+                    .basicAuthUsername(casProperties.getAuthn().getPm().getSyncope().getBasicAuthUsername())
+                    .basicAuthPassword(casProperties.getAuthn().getPm().getSyncope().getBasicAuthPassword())
+                    .headers(Map.of(
+                        SyncopeUtils.SYNCOPE_HEADER_DOMAIN, casProperties.getAuthn().getPm().getSyncope().getDomain(),
+                        HttpHeaders.ACCEPT, MediaType.APPLICATION_JSON_VALUE,
+                        HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE))
+                    .entity(MAPPER.writeValueAsString(getUserMustChangePasswordPatch(userKey)))
+                    .maximumRetryAttempts(1)
+                    .build();
                 val response = Objects.requireNonNull(HttpUtils.execute(exec));
                 if (Objects.requireNonNull(HttpStatus.resolve(response.getCode())).isError()) {
                     LOGGER.debug("Error updating the account mustChangePassword flag on Apache Syncope for [{}]", bean.getUsername());
