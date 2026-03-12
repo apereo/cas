@@ -65,9 +65,9 @@ function openNewAuthenticationHandlerDialog() {
         labelTitle: "Authentication Type:",
         id: "ldapAuthenticationHandlerType",
         options: [
+            {value: "AUTHENTICATED", text: "AUTHENTICATED"},
             {value: "AD", text: "ACTIVE DIRECTORY"},
-            {value: "DIRECT", text: "DIRECT"},
-            {value: "AUTHENTICATED", text: "AUTHENTICATED"}
+            {value: "DIRECT", text: "DIRECT"}
         ],
         cssClasses: "LDAP",
         labelCssClasses: "display-flex"
@@ -181,15 +181,109 @@ function openNewAuthenticationHandlerDialog() {
         paramName: "principal-dn-attribute-name"
     }).val("principalLdapDn");
 
-    createInputField({
-        labelTitle: "Driver",
-        name: "authnHandlerJdbcDriver",
-        required: true,
+    createSelectField({
         containerId: controlsPanel,
-        title: "Define the JDBC driver class name.",
-        cssClasses: "JDBC hide",
-        paramName: "driver"
+        labelTitle: "Deref Aliases:",
+        id: "authnHandlerDerefAliases",
+        options: [
+            {value: "NEVER", text: "NEVER"},
+            {value: "SEARCHING", text: "SEARCHING"},
+            {value: "FINDING", text: "FINDING"},
+            {value: "ALWAYS", text: "ALWAYS"}
+        ],
+        cssClasses: "LDAP",
+        labelCssClasses: "display-flex"
     });
+
+    createInputField({
+        labelTitle: "Connection Timeout",
+        name: "authnHandlerLdapConnectionTimeout",
+        required: false,
+        containerId: controlsPanel,
+        title: "Define the LDAP connection timeout.",
+        cssClasses: "LDAP hide",
+        paramName: "connection-timeout"
+    }).val("PT5S");
+    createInputField({
+        labelTitle: "Response Timeout",
+        name: "authnHandlerLdapResponseTimeout",
+        required: false,
+        containerId: controlsPanel,
+        title: "Define the LDAP response timeout.",
+        cssClasses: "LDAP hide",
+        paramName: "response-timeout"
+    }).val("PT5S");
+    createInputField({
+        labelTitle: "Idle Time",
+        name: "authnHandlerLdapIdleTime",
+        required: false,
+        containerId: controlsPanel,
+        title: "Define the LDAP connection idle time.",
+        cssClasses: "LDAP hide",
+        paramName: "idle-time"
+    }).val("PT10M");
+    createInputField({
+        labelTitle: "Min Pool Size",
+        name: "authnHandlerLdapMinPoolSize",
+        required: false,
+        dataType: "number",
+        containerId: controlsPanel,
+        title: "Define the minimum LDAP connection pool size.",
+        cssClasses: "LDAP hide",
+        paramName: "min-pool-size"
+    }).val("3");
+    createInputField({
+        labelTitle: "Max Pool Size",
+        name: "authnHandlerLdapMaxPoolSize",
+        required: false,
+        dataType: "number",
+        containerId: controlsPanel,
+        title: "Define the maximum LDAP connection pool size.",
+        cssClasses: "LDAP hide",
+        paramName: "max-pool-size"
+    }).val("10");
+
+    createInputField({
+        labelTitle: "Validate Timeout",
+        name: "authnHandlerLdapValidateTimeout",
+        required: false,
+        containerId: controlsPanel,
+        title: "Define the timeout for connection validation.",
+        cssClasses: "LDAP hide",
+        paramName: "validate-timeout"
+    }).val("PT5S");
+    createInputField({
+        labelTitle: "Validate Period",
+        name: "authnHandlerLdapValidatePeriod",
+        required: false,
+        containerId: controlsPanel,
+        title: "Define the period for periodic connection validation.",
+        cssClasses: "LDAP hide",
+        paramName: "validate-period"
+    }).val("PT5M");
+    createSelectField({
+        containerId: controlsPanel,
+        labelTitle: "Pool Passivator:",
+        id: "authnHandlerLdapPoolPassivator",
+        options: [
+            {value: "BIND", text: "BIND"},
+            {value: "NONE", text: "NONE"}
+        ],
+        cssClasses: "LDAP",
+        labelCssClasses: "display-flex"
+    });
+    createSelectField({
+        containerId: controlsPanel,
+        labelTitle: "Hostname Verifier:",
+        id: "authnHandlerLdapHostnameVerifier",
+        options: [
+            {value: "DEFAULT", text: "DEFAULT"},
+            {value: "ANY", text: "ANY"}
+        ],
+        cssClasses: "LDAP",
+        labelCssClasses: "display-flex"
+    });
+
     createInputField({
         labelTitle: "URL",
         name: "authnHandlerJdbcUrl",
@@ -199,15 +293,62 @@ function openNewAuthenticationHandlerDialog() {
         cssClasses: "JDBC hide",
         paramName: "url"
     });
-    createInputField({
-        labelTitle: "Dialect",
-        name: "authnHandlerJdbcDialect",
-        required: true,
+    createSelectField({
         containerId: controlsPanel,
-        title: "Define the SQL dialect for the database.",
-        cssClasses: "JDBC hide",
-        paramName: "dialect"
+        labelTitle: "State:",
+        id: "authnHandlerJdbcState",
+        options: [
+            {value: "ACTIVE", text: "ACTIVE"},
+            {value: "STANDBY", text: "STANDBY"}
+        ],
+        cssClasses: "JDBC",
+        labelCssClasses: "display-flex"
     });
+    createInputField({
+        labelTitle: "Default Catalog",
+        name: "authnHandlerJdbcDefaultCatalog",
+        required: false,
+        containerId: controlsPanel,
+        title: "Define the default catalog for the JDBC connection.",
+        cssClasses: "JDBC hide",
+        paramName: "default-catalog"
+    });
+    createInputField({
+        labelTitle: "Default Schema",
+        name: "authnHandlerJdbcDefaultSchema",
+        required: false,
+        containerId: controlsPanel,
+        title: "Define the default schema for the JDBC connection.",
+        cssClasses: "JDBC hide",
+        paramName: "default-schema"
+    });
+    createInputField({
+        labelTitle: "Health Query",
+        name: "authnHandlerJdbcHealthQuery",
+        required: false,
+        containerId: controlsPanel,
+        title: "Define the SQL query used to validate the health of the connection.",
+        cssClasses: "JDBC hide",
+        paramName: "health-query"
+    });
+    createInputField({
+        labelTitle: "Connection Timeout",
+        name: "authnHandlerJdbcConnectionTimeout",
+        required: false,
+        containerId: controlsPanel,
+        title: "Define the connection timeout in milliseconds.",
+        cssClasses: "JDBC hide",
+        paramName: "connection-timeout"
+    });
+    createInputField({
+        labelTitle: "Leak Threshold",
+        name: "authnHandlerJdbcLeakThreshold",
+        required: false,
+        containerId: controlsPanel,
+        title: "Define the connection leak detection threshold in milliseconds.",
+        cssClasses: "JDBC hide",
+        paramName: "leak-threshold"
+    }).val("PT6S");
     createInputField({
         labelTitle: "SQL",
         name: "authnHandlerJdbcSql",
@@ -361,6 +502,37 @@ function openNewAuthenticationHandlerDialog() {
                 text: attr
             }));
 
+            const driverOptions = CasDiscoveryProfile.jdbcDrivers().map(driver => ({
+                value: driver,
+                text: driver
+            }));
+            const dialectOptions = CasDiscoveryProfile.jdbcDialects().map(dialect => ({
+                value: dialect,
+                text: dialect
+            }));
+
+            createMultiSelectField({
+                id: "authnHandlerJdbcDriver",
+                containerId: "authnHandlerControlsPanel",
+                labelTitle: "Driver:",
+                paramName: "driver",
+                options: driverOptions,
+                allowCreateOption: true,
+                singleSelect: true,
+                cssClasses: "JDBC hide"
+            });
+
+            createMultiSelectField({
+                id: "authnHandlerJdbcDialect",
+                containerId: "authnHandlerControlsPanel",
+                labelTitle: "Dialect:",
+                paramName: "dialect",
+                options: dialectOptions,
+                allowCreateOption: true,
+                singleSelect: true,
+                cssClasses: "JDBC hide"
+            });
+
             createMultiSelectField({
                 id: "authnHandlerPrincipalAttributeList",
                 containerId: "authnHandlerControlsPanel",
@@ -383,12 +555,18 @@ function openNewAuthenticationHandlerDialog() {
 
             hideElements($("#authnHandlerPrincipalAttributeListSelectContainer"));
             hideElements($("#authnHandlerAdditionalAttributesSelectContainer"));
+            hideElements($("#authnHandlerJdbcDriverSelectContainer"));
+            hideElements($("#authnHandlerJdbcDialectSelectContainer"));
             const currentType = $("#authenticationHandlerType").val();
             if (currentType === "LDAP" || currentType === "JDBC") {
                 showElements($("#authnHandlerPrincipalAttributeListSelectContainer"));
             }
             if (currentType === "LDAP") {
                 showElements($("#authnHandlerAdditionalAttributesSelectContainer"));
+            }
+            if (currentType === "JDBC") {
+                showElements($("#authnHandlerJdbcDriverSelectContainer"));
+                showElements($("#authnHandlerJdbcDialectSelectContainer"));
             }
         });
 
@@ -451,7 +629,12 @@ function openNewAuthenticationHandlerDialog() {
             }
         },
         open: function () {
-            $(this).css("overflow", "visible");
+            const maxHeight = $(window).height() - 250;
+            $(this).css({
+                "max-height": maxHeight + "px",
+                "overflow-y": "auto",
+                "overflow-x": "visible"
+            });
             $(this).closest(".ui-dialog").css("overflow", "visible");
 
             const $buttonPane = $(this).closest(".ui-dialog").find(".ui-dialog-buttonpane");

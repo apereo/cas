@@ -40,6 +40,9 @@
                     <div th:replace="~{fragments/switchbutton :: switchbutton (id='authnHandlerCollectDnAttribute', label='#Collect DN Attribute', cssClass='LDAP hide mt-1 pb-1')}"/>
                     <div th:replace="~{fragments/switchbutton :: switchbutton (id='authnHandlerAllowMultiplePrincipalAttributeValues', label='#Allow Multiple Principal Attribute Values', cssClass='LDAP hide mt-1 pb-1')}"/>
                     <div th:replace="~{fragments/switchbutton :: switchbutton (id='authnHandlerAllowMissingPrincipalAttributeValue', label='#Allow Missing Principal Attribute Value', cssClass='LDAP hide mt-1 pb-1', selected=true)}"/>
+                    <div th:replace="~{fragments/switchbutton :: switchbutton (id='authnHandlerValidateOnCheckout', label='#Validate On Checkout', cssClass='LDAP hide mt-1 pb-1', selected=true)}"/>
+                    <div th:replace="~{fragments/switchbutton :: switchbutton (id='authnHandlerValidatePeriodically', label='#Validate Periodically', cssClass='LDAP hide mt-1 pb-1', selected=true)}"/>
+                    <div th:replace="~{fragments/switchbutton :: switchbutton (id='authnHandlerFailFast', label='#Fail Fast', cssClass='LDAP hide mt-1 pb-1', selected=true)}"/>
                 </div>
             </div>
             
