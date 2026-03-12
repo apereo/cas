@@ -30,6 +30,21 @@
                     <tbody class="mdc-data-table__content">
                     </tbody>
                 </table>
+
+                <div id="addAuthenticationHandlerDialogFields" style="display:none;">
+                    <div th:replace="~{fragments/switchbutton :: switchbutton (id='showAuthnHandlerEditor', label='#Show Configuration', cssClass='always-show pb-2 pt-2', selected=true, dataAttrs='changeEventHandler=toggleAuthnHandlerEditorVisibility')}"/>
+                    <div th:replace="~{fragments/switchbutton :: switchbutton (id='showAuthnHandlerAdvancedOptions', label='#Show Advanced Options', cssClass='always-show pb-2 pt-2 pl-2', selected=false, dataAttrs='changeEventHandler=toggleAuthnHandlerAdvancedOptions')}"/>
+                    <div th:replace="~{fragments/switchbutton :: switchbutton (id='authnHandlerSubtreeSearch', label='#Subtree Search', cssClass='LDAP hide pt-1 pb-1 advanced-option')}"/>
+                    <div th:replace="~{fragments/switchbutton :: switchbutton (id='authnHandlerFollowReferrals', label='#Follow Referrals', cssClass='LDAP hide mt-1 pb-1 advanced-option')}"/>
+                    <div th:replace="~{fragments/switchbutton :: switchbutton (id='authnHandlerUseStartTls', label='#Use StartTLS', cssClass='LDAP hide mt-1 pb-1 advanced-option')}"/>
+                    <div th:replace="~{fragments/switchbutton :: switchbutton (id='authnHandlerEnhanceWithEntryResolver', label='#Enhance With Entry Resolver', cssClass='LDAP hide mt-1 pb-1 advanced-option')}"/>
+                    <div th:replace="~{fragments/switchbutton :: switchbutton (id='authnHandlerCollectDnAttribute', label='#Collect DN Attribute', cssClass='LDAP hide mt-1 pb-1 advanced-option')}"/>
+                    <div th:replace="~{fragments/switchbutton :: switchbutton (id='authnHandlerAllowMultiplePrincipalAttributeValues', label='#Allow Multiple Principal Attribute Values', cssClass='LDAP hide mt-1 pb-1 advanced-option')}"/>
+                    <div th:replace="~{fragments/switchbutton :: switchbutton (id='authnHandlerAllowMissingPrincipalAttributeValue', label='#Allow Missing Principal Attribute Value', cssClass='LDAP hide mt-1 pb-1 advanced-option', selected=true)}"/>
+                    <div th:replace="~{fragments/switchbutton :: switchbutton (id='authnHandlerValidateOnCheckout', label='#Validate On Checkout', cssClass='LDAP hide mt-1 pb-1 advanced-option', selected=true)}"/>
+                    <div th:replace="~{fragments/switchbutton :: switchbutton (id='authnHandlerValidatePeriodically', label='#Validate Periodically', cssClass='LDAP hide mt-1 pb-1 advanced-option', selected=true)}"/>
+                    <div th:replace="~{fragments/switchbutton :: switchbutton (id='authnHandlerFailFast', label='#Fail Fast', cssClass='LDAP hide mt-1 pb-1 advanced-option', selected=true)}"/>
+                </div>
             </div>
             
             <div id="authenticationpolicies-tab">
