@@ -244,6 +244,48 @@ fi
 
 echo -e "\n-----------------\n"
 
+echo "Creating sample user: weakPasswordUser..."
+curl -X 'POST' \
+  'http://localhost:18080/syncope/rest/users?storePassword=true' \
+  -H 'accept: application/json' \
+  -H 'Prefer: return-content' \
+  -H 'X-Syncope-Null-Priority-Async: false' \
+  -H 'Authorization: Basic YWRtaW46cGFzc3dvcmQ=' \
+  -H 'Content-Type: application/json' \
+  -d '{
+  "_class": "org.apache.syncope.common.lib.request.UserCR",
+  "realm": "/",
+  "username": "weakPasswordUser",
+  "password": "Test",
+  "mustChangePassword": false,
+  "plainAttrs": [
+    {
+      "schema": "email",
+      "values": [
+        "weakPasswordUser@syncope.org"
+      ]
+    },
+    {
+      "schema": "phoneNumber",
+      "values": [
+        "3456789012"
+      ]
+    }
+  ],
+  "derAttrs": [
+    {
+      "schema": "description"
+    }
+  ]
+}'
+
+if [ $? -ne 0 ]; then
+  printred "Failed to create sample user"
+  exit 1
+fi
+
+echo -e "\n-----------------\n"
+
 for i in {0..4}; do
   suffix=$([ "$i" -eq 0 ] && echo "" || echo "$i")
   echo -e "Creating sample user: syncopepasschange${suffix}...\n"
