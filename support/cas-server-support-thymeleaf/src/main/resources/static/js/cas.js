@@ -1,20 +1,40 @@
 function randomWord() {
-    let things = ["admiring", "adoring", "affectionate", "agitated", "amazing",
+    let things = [
+        "admiring", "adoring", "affectionate", "agitated", "amazing",
         "angry", "awesome", "beautiful", "blissful", "bold", "boring",
         "brave", "busy", "charming", "clever", "cool", "compassionate", "competent",
         "confident", "dazzling", "determined", "sweet", "sad", "silly",
         "relaxed", "romantic", "sad", "serene", "sharp", "quirky", "scared",
         "sleepy", "stoic", "strange", "suspicious", "sweet", "tender", "thirsty",
         "trusting", "unruffled", "upbeat", "vibrant", "vigilant", "vigorous",
-        "wizardly", "wonderful", "youthful", "zealous", "zen"];
+        "wizardly", "wonderful", "youthful", "zealous", "zen",
+        "ambitious", "amiable", "astute", "bubbly", "calm",
+        "carefree", "cheerful", "curious", "daring", "delightful",
+        "eager", "earnest", "ecstatic", "elegant", "energetic",
+        "fearless", "festive", "friendly", "gentle", "gleeful",
+        "graceful", "grateful", "happy", "hopeful", "humble",
+        "inspired", "jolly", "jovial", "kind", "lively",
+        "loyal", "merry", "mindful", "noble", "optimistic",
+        "patient", "playful", "proud", "radiant", "spirited"
+    ];
 
-    let names = ["austin", "borg", "bohr", "wozniak", "bose", "wu", "wing", "wilson",
+    let names = [
+        "austin", "borg", "bohr", "wozniak", "bose", "wu", "wing", "wilson",
         "boyd", "guss", "jobs", "hawking", "hertz", "ford", "solomon", "spence",
         "turing", "torvalds", "morse", "ford", "penicillin", "lovelace", "davinci",
         "darwin", "buck", "brown", "benz", "boss", "allen", "gates", "bose",
         "edison", "einstein", "feynman", "ferman", "franklin", "lincoln", "jefferson",
         "mandela", "gandhi", "curie", "newton", "tesla", "faraday", "bell",
-        "aristotle", "hubble", "nobel", "pascal", "washington", "galileo"];
+        "aristotle", "hubble", "nobel", "pascal", "washington", "galileo",
+        "archimedes", "babbage", "banach", "bernerslee", "brahe",
+        "brattain", "carson", "cerf", "chandrasekhar", "crick",
+        "dijkstra", "dirac", "euler", "fermi", "fleming",
+        "goodall", "heisenberg", "hopper", "kepler", "lamarr",
+        "leibniz", "liskov", "maxwell", "meitner", "mendel",
+        "noether", "oppenheimer", "pasteur", "planck", "raman",
+        "ritchie", "rubin", "schrodinger", "shannon", "shockley",
+        "sutherland", "vonneumann", "watson", "watt", "zhukovsky"
+    ];
 
     const n1 = things[Math.floor(Math.random() * things.length)];
     const n2 = names[Math.floor(Math.random() * names.length)];

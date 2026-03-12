@@ -5,6 +5,7 @@
 
 .ts-dropdown, .jqueryui-multiselectmenu {
     background-color: #d7ebf9 !important;
+    z-index: 10000 !important;
 }
 
 .jqueryui-multiselectmenu {
@@ -90,6 +91,11 @@
     box-shadow: 0 18px 45px rgba(0, 0, 0, 0.25);
 }
 
+.display-flex {
+    display: flex !important;
+    align-items: center;
+    gap: 10px;
+}
 
 .shortcut-item {
     display: flex;

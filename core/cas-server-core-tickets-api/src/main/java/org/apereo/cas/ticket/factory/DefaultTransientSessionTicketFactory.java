@@ -41,10 +41,11 @@ public class DefaultTransientSessionTicketFactory implements TransientSessionTic
         return createTransientSessionTicket(TransientSessionTicketFactory.normalizeTicketId(id), expirationPolicy, service, properties);
     }
 
-    private static TransientSessionTicketImpl createTransientSessionTicket(final String id,
-                                                                           final ExpirationPolicy expirationPolicy,
-                                                                           final Service service,
-                                                                           final Map<String, Serializable> properties) {
+    private static TransientSessionTicketImpl createTransientSessionTicket(
+        final String id,
+        final ExpirationPolicy expirationPolicy,
+        final Service service,
+        final Map<String, Serializable> properties) {
         val ticket = new TransientSessionTicketImpl(id, expirationPolicy, service, properties);
         FunctionUtils.doIfNotNull(service, _ -> ticket.setTenantId(service.getTenant()));
         return ticket;

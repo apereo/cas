@@ -18,8 +18,7 @@ class ProxyGrantingTicketExpirationPolicyBuilderTests {
     @Test
     void verifyType() {
         val input = new ProxyGrantingTicketExpirationPolicyBuilder(
-            new TicketGrantingTicketExpirationPolicyBuilder(new CasConfigurationProperties()),
-            new CasConfigurationProperties());
+            new TicketGrantingTicketExpirationPolicyBuilder(new CasConfigurationProperties()));
         assertNotNull(input.buildTicketExpirationPolicy());
     }
 }

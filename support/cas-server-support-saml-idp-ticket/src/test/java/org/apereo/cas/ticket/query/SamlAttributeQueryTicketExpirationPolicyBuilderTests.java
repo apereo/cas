@@ -25,10 +25,10 @@ class SamlAttributeQueryTicketExpirationPolicyBuilderTests {
 
         val ticket = mock(TicketGrantingTicketAwareTicket.class);
         when(ticket.getCreationTime()).thenReturn(ZonedDateTime.now(Clock.systemUTC()).plusSeconds(2));
-        assertFalse(builder.toTicketExpirationPolicy().isExpired(ticket));
+        assertFalse(builder.buildTicketExpirationPolicy().isExpired(ticket));
 
         when(ticket.getCreationTime()).thenReturn(ZonedDateTime.now(Clock.systemUTC()).minusSeconds(30));
-        assertTrue(builder.toTicketExpirationPolicy().isExpired(ticket));
+        assertTrue(builder.buildTicketExpirationPolicy().isExpired(ticket));
     }
 
     @Test
@@ -38,6 +38,6 @@ class SamlAttributeQueryTicketExpirationPolicyBuilderTests {
         val builder = new SamlAttributeQueryTicketExpirationPolicyBuilder(properties);
         val ticket = mock(TicketGrantingTicketAwareTicket.class);
         when(ticket.getCreationTime()).thenReturn(ZonedDateTime.now(Clock.systemUTC()).minusDays(2));
-        assertFalse(builder.toTicketExpirationPolicy().isExpired(ticket));
+        assertFalse(builder.buildTicketExpirationPolicy().isExpired(ticket));
     }
 }

@@ -5,6 +5,7 @@ import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.ticket.ExpirationPolicy;
 import org.apereo.cas.ticket.ExpirationPolicyBuilder;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
+import lombok.RequiredArgsConstructor;
 import lombok.val;
 
 /**
@@ -14,10 +15,13 @@ import lombok.val;
  * @since 6.1.0
  */
 @JsonTypeInfo(use = JsonTypeInfo.Id.CLASS)
-public record OAuth20CodeExpirationPolicyBuilder(CasConfigurationProperties casProperties) implements ExpirationPolicyBuilder<OAuth20Code> {
+@RequiredArgsConstructor
+public class OAuth20CodeExpirationPolicyBuilder implements ExpirationPolicyBuilder<OAuth20Code> {
     @Serial
     private static final long serialVersionUID = -3597980180617072826L;
 
+    private final CasConfigurationProperties casProperties;
+        
     @Override
     public ExpirationPolicy buildTicketExpirationPolicy() {
         return toTicketExpirationPolicy();
@@ -28,7 +32,7 @@ public record OAuth20CodeExpirationPolicyBuilder(CasConfigurationProperties casP
      *
      * @return the expiration policy
      */
-    public ExpirationPolicy toTicketExpirationPolicy() {
+    private ExpirationPolicy toTicketExpirationPolicy() {
         val oauth = casProperties.getAuthn().getOauth();
         return new OAuth20CodeExpirationPolicy(oauth.getCode().getNumberOfUses(),
             oauth.getCode().getTimeToKillInSeconds());

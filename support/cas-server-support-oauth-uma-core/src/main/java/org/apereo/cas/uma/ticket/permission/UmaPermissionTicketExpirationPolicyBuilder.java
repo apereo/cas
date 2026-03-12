@@ -7,6 +7,7 @@ import org.apereo.cas.ticket.ExpirationPolicy;
 import org.apereo.cas.ticket.ExpirationPolicyBuilder;
 import org.apereo.cas.ticket.expiration.HardTimeoutExpirationPolicy;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
+import lombok.RequiredArgsConstructor;
 import lombok.val;
 
 /**
@@ -16,9 +17,12 @@ import lombok.val;
  * @since 6.1.0
  */
 @JsonTypeInfo(use = JsonTypeInfo.Id.CLASS)
-public record UmaPermissionTicketExpirationPolicyBuilder(CasConfigurationProperties casProperties) implements ExpirationPolicyBuilder<UmaPermissionTicket> {
+@RequiredArgsConstructor
+public class UmaPermissionTicketExpirationPolicyBuilder implements ExpirationPolicyBuilder<UmaPermissionTicket> {
     @Serial
     private static final long serialVersionUID = -3897980180617072826L;
+
+    private final CasConfigurationProperties casProperties;
 
     @Override
     public ExpirationPolicy buildTicketExpirationPolicy() {
@@ -30,7 +34,7 @@ public record UmaPermissionTicketExpirationPolicyBuilder(CasConfigurationPropert
      *
      * @return the expiration policy
      */
-    public ExpirationPolicy toTicketExpirationPolicy() {
+    private ExpirationPolicy toTicketExpirationPolicy() {
         val uma = casProperties.getAuthn().getOauth().getUma();
         return new HardTimeoutExpirationPolicy(Beans.newDuration(uma.getPermissionTicket().getMaxTimeToLiveInSeconds()).toSeconds());
     }

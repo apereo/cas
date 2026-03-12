@@ -368,6 +368,10 @@ ext.libraries = [
                 dependencies.create(libs.arrow.memory.unsafe.get()) {
                 }
         ],
+        checkerqual : [
+                dependencies.create(libs.checker.qual.get()) {
+                }
+        ],
         bouncycastle               : [
                 dependencies.create(libs.bcpkix.jdk18on.get()) {
                     exclude(group: "commons-cli", module: "commons-cli")
@@ -1716,6 +1720,8 @@ ext.libraries = [
                 dependencies.create(libs.junit.platform.suite.api.get()) {
                 },
                 dependencies.create(libs.junit.platform.launcher.get()) {
+                },
+                dependencies.create(libs.google.crypto.tink.get()) {
                 },
                 dependencies.create(libs.awaitility.get()) {
                     exclude(group: "org.hamcrest", module: "hamcrest")

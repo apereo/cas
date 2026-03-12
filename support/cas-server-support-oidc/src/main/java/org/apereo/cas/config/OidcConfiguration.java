@@ -47,6 +47,7 @@ import org.apereo.cas.oidc.issuer.OidcIssuerService;
 import org.apereo.cas.oidc.jwks.OidcJsonWebKeyCacheKey;
 import org.apereo.cas.oidc.jwks.OidcRegisteredServiceJsonWebKeystoreCacheLoader;
 import org.apereo.cas.oidc.jwks.OidcServiceJsonWebKeystoreCacheExpirationPolicy;
+import org.apereo.cas.oidc.jwks.register.ClientJwksRegistrationStore;
 import org.apereo.cas.oidc.nativesso.OidcDeviceSecretGenerator;
 import org.apereo.cas.oidc.profile.OidcProfileScopeToAttributesFilter;
 import org.apereo.cas.oidc.profile.OidcTokenIntrospectionSigningAndEncryptionService;
@@ -464,7 +465,7 @@ class OidcConfiguration {
             return new OidcDefaultTokenGenerator(ticketFactory, ticketRegistry,
                 principalResolver, profileScopeToAttributesFilter, casProperties);
         }
-        
+
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @ConditionalOnMissingBean(name = "oidcTokenSigningAndEncryptionService")
@@ -642,12 +643,15 @@ class OidcConfiguration {
             @Qualifier(AuditableExecution.AUDITABLE_EXECUTION_REGISTERED_SERVICE_ACCESS)
             final AuditableExecution registeredServiceAccessStrategyEnforcer,
             @Qualifier(OidcServerDiscoverySettings.BEAN_NAME_FACTORY)
-            final OidcServerDiscoverySettings oidcServerDiscoverySettings) {
+            final OidcServerDiscoverySettings oidcServerDiscoverySettings,
+            @Qualifier("clientJwksRegistrationStore")
+            final ObjectProvider<ClientJwksRegistrationStore> clientJwksRegistrationStore) {
             return () -> {
                 val authenticator = new OidcJwtAuthenticator(oidcIssuerService,
                     servicesManager, registeredServiceAccessStrategyEnforcer,
                     ticketRegistry, webApplicationServiceFactory,
-                    casProperties, applicationContext, oidcServerDiscoverySettings);
+                    casProperties, applicationContext,
+                    oidcServerDiscoverySettings, clientJwksRegistrationStore);
                 val privateKeyJwtClient = new DirectFormClient(authenticator);
                 privateKeyJwtClient.setName(OidcConstants.CAS_OAUTH_CLIENT_PRIVATE_KEY_JWT_AUTHN);
                 privateKeyJwtClient.setUsernameParameter(OAuth20Constants.CLIENT_ASSERTION_TYPE);
@@ -1109,7 +1113,7 @@ class OidcConfiguration {
         public ExpirationPolicyBuilder cibaRequestExpirationPolicy(final CasConfigurationProperties casProperties) {
             return new OidcCibaRequestExpirationPolicyBuilder(casProperties);
         }
-        
+
         @ConditionalOnMissingBean(name = "oidcCibaRequestFactory")
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
@@ -1238,7 +1242,7 @@ class OidcConfiguration {
         }
 
     }
-    
+
     @Configuration(value = "OidcAssuranceConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
     static class OidcAssuranceConfiguration {

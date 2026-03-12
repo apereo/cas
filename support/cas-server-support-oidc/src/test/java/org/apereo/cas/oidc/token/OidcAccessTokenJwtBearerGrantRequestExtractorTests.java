@@ -5,6 +5,7 @@ import org.apereo.cas.oidc.AbstractOidcTests;
 import org.apereo.cas.oidc.OidcConstants;
 import org.apereo.cas.oidc.jwks.OidcJsonWebKeyCacheKey;
 import org.apereo.cas.oidc.jwks.OidcJsonWebKeyUsage;
+import org.apereo.cas.oidc.jwks.register.ClientJwksRegistrationStore;
 import org.apereo.cas.services.OidcRegisteredService;
 import org.apereo.cas.services.UnauthorizedServiceException;
 import org.apereo.cas.support.oauth.OAuth20Constants;
@@ -13,10 +14,13 @@ import org.apereo.cas.support.oauth.OAuth20ResponseTypes;
 import org.apereo.cas.support.oauth.web.response.accesstoken.ext.AccessTokenGrantRequestExtractor;
 import org.apereo.cas.token.JwtBuilder;
 import org.apereo.cas.util.EncodingUtils;
+import org.apereo.cas.util.cipher.BasicIdentifiableKey;
+import com.nimbusds.jose.jwk.RSAKey;
 import com.nimbusds.jwt.JWTClaimsSet;
 import lombok.val;
 import org.jose4j.jwk.PublicJsonWebKey;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.pac4j.core.context.WebContext;
@@ -25,6 +29,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
+import org.springframework.test.context.TestPropertySource;
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
@@ -34,69 +39,127 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 8.0.0
  */
 @Tag("OIDC")
-class OidcAccessTokenJwtBearerGrantRequestExtractorTests extends AbstractOidcTests {
-    @Autowired
-    @Qualifier("accessTokenJwtBearerGrantRequestExtractor")
-    private AccessTokenGrantRequestExtractor extractor;
-    
-    private WebContext webContext;
-    private MockHttpServletRequest request;
-    private OidcRegisteredService registeredService;
+class OidcAccessTokenJwtBearerGrantRequestExtractorTests {
+    @Nested
+    class DefaultTests extends AbstractOidcTests {
+        @Autowired
+        @Qualifier("accessTokenJwtBearerGrantRequestExtractor")
+        private AccessTokenGrantRequestExtractor extractor;
 
-    @BeforeEach
-    void setup() {
-        registeredService = getOidcRegisteredService(UUID.randomUUID().toString());
-        registeredService.setSupportedGrantTypes(Set.of(OAuth20GrantTypes.JWT_BEARER.getType()));
-        servicesManager.save(registeredService);
-        request = new MockHttpServletRequest();
-        val response = new MockHttpServletResponse();
-        webContext = new JEEContext(request, response);
+        private WebContext webContext;
+        private MockHttpServletRequest request;
+        private OidcRegisteredService registeredService;
+
+        @BeforeEach
+        void setup() {
+            registeredService = getOidcRegisteredService(UUID.randomUUID().toString());
+            registeredService.setSupportedGrantTypes(Set.of(OAuth20GrantTypes.JWT_BEARER.getType()));
+            servicesManager.save(registeredService);
+            request = new MockHttpServletRequest();
+            val response = new MockHttpServletResponse();
+            webContext = new JEEContext(request, response);
+        }
+
+        @Test
+        void verifyUnknownClientId() throws Throwable {
+            request.setParameter(OAuth20Constants.GRANT_TYPE, OAuth20GrantTypes.JWT_BEARER.getType());
+            request.setParameter(OAuth20Constants.SCOPE, OidcConstants.StandardScopes.OPENID.getScope());
+            val assertion = JwtBuilder.buildPlain(JWTClaimsSet.parse(Map.of()), Optional.of(registeredService));
+            request.setParameter(OAuth20Constants.ASSERTION, assertion);
+
+            assertTrue(extractor.supports(webContext));
+            assertEquals(OAuth20ResponseTypes.NONE, extractor.getResponseType());
+            assertThrows(UnauthorizedServiceException.class, () -> extractor.extract(webContext));
+        }
+
+        @Test
+        void verifyPlainAssertion() throws Throwable {
+            request.setParameter(OAuth20Constants.GRANT_TYPE, OAuth20GrantTypes.JWT_BEARER.getType());
+            request.setParameter(OAuth20Constants.SCOPE, OidcConstants.StandardScopes.OPENID.getScope());
+            val claims = JWTClaimsSet.parse(Map.of(OAuth20Constants.CLIENT_ID, registeredService.getClientId()));
+            val assertion = JwtBuilder.buildPlain(claims, Optional.of(registeredService));
+            request.setParameter(OAuth20Constants.ASSERTION, assertion);
+            assertThrows(IllegalArgumentException.class, () -> extractor.extract(webContext));
+        }
+
+        @Test
+        void verifyAssertion() throws Throwable {
+            request.setParameter(OAuth20Constants.GRANT_TYPE, OAuth20GrantTypes.JWT_BEARER.getType());
+            request.setParameter(OAuth20Constants.SCOPE, OidcConstants.StandardScopes.OPENID.getScope());
+
+            val claims = JWTClaimsSet.parse(Map.of(
+                OAuth20Constants.CLAIM_EXP, LocalDateTime.now(Clock.systemUTC()).plusDays(1).toEpochSecond(ZoneOffset.UTC),
+                OAuth20Constants.CLAIM_SUB, "casuser",
+                OidcConstants.ISS, registeredService.getClientId(),
+                OAuth20Constants.CLIENT_ID, registeredService.getClientId(),
+                OidcConstants.AUD, casProperties.getServer().getPrefix() + '/' + OidcConstants.BASE_OIDC_URL + '/' + OAuth20Constants.ACCESS_TOKEN_URL
+            ));
+            val jsonWebKey = (PublicJsonWebKey) oidcServiceJsonWebKeystoreCache
+                .get(new OidcJsonWebKeyCacheKey(registeredService, OidcJsonWebKeyUsage.SIGNING))
+                .orElseThrow()
+                .getJsonWebKeys()
+                .getFirst();
+            val signAssertion = EncodingUtils.signJwsRSASha512(jsonWebKey.getPrivateKey(),
+                claims.toString().getBytes(StandardCharsets.UTF_8), Map.of());
+            request.setParameter(OAuth20Constants.ASSERTION, new String(signAssertion, StandardCharsets.UTF_8));
+            val tokenRequestContext = extractor.extract(webContext);
+            assertNotNull(tokenRequestContext);
+            assertNotNull(tokenRequestContext.getAuthentication());
+        }
     }
 
-    @Test
-    void verifyUnknownClientId() throws Throwable {
-        request.setParameter(OAuth20Constants.GRANT_TYPE, OAuth20GrantTypes.JWT_BEARER.getType());
-        request.setParameter(OAuth20Constants.SCOPE, OidcConstants.StandardScopes.OPENID.getScope());
-        val assertion = JwtBuilder.buildPlain(JWTClaimsSet.parse(Map.of()), Optional.of(registeredService));
-        request.setParameter(OAuth20Constants.ASSERTION, assertion);
+    @Nested
+    @TestPropertySource(properties = "CasFeatureModule.OpenIDConnect.client-jwks-registration.enabled=true")
+    class DynamicJwksTests extends AbstractOidcTests {
+        @Autowired
+        @Qualifier("accessTokenJwtBearerGrantRequestExtractor")
+        private AccessTokenGrantRequestExtractor extractor;
 
-        assertTrue(extractor.supports(webContext));
-        assertEquals(OAuth20ResponseTypes.NONE, extractor.getResponseType());
-        assertThrows(UnauthorizedServiceException.class, () -> extractor.extract(webContext));
-    }
+        @Autowired
+        @Qualifier("clientJwksRegistrationStore")
+        private ClientJwksRegistrationStore clientJwksRegistrationStore;
 
-    @Test
-    void verifyPlainAssertion() throws Throwable {
-        request.setParameter(OAuth20Constants.GRANT_TYPE, OAuth20GrantTypes.JWT_BEARER.getType());
-        request.setParameter(OAuth20Constants.SCOPE, OidcConstants.StandardScopes.OPENID.getScope());
-        val claims = JWTClaimsSet.parse(Map.of(OAuth20Constants.CLIENT_ID, registeredService.getClientId()));
-        val assertion = JwtBuilder.buildPlain(claims, Optional.of(registeredService));
-        request.setParameter(OAuth20Constants.ASSERTION, assertion);
-        assertThrows(IllegalArgumentException.class, () -> extractor.extract(webContext));
-    }
+        private WebContext webContext;
+        private MockHttpServletRequest request;
+        private OidcRegisteredService registeredService;
 
-    @Test
-    void verifyAssertion() throws Throwable {
-        request.setParameter(OAuth20Constants.GRANT_TYPE, OAuth20GrantTypes.JWT_BEARER.getType());
-        request.setParameter(OAuth20Constants.SCOPE, OidcConstants.StandardScopes.OPENID.getScope());
+        @BeforeEach
+        void setup() {
+            registeredService = getOidcRegisteredService(UUID.randomUUID().toString());
+            registeredService.setSupportedGrantTypes(Set.of(OAuth20GrantTypes.JWT_BEARER.getType()));
+            servicesManager.save(registeredService);
+            request = new MockHttpServletRequest();
+            val response = new MockHttpServletResponse();
+            webContext = new JEEContext(request, response);
+        }
 
-        val claims = JWTClaimsSet.parse(Map.of(
-            OAuth20Constants.CLAIM_EXP, LocalDateTime.now(Clock.systemUTC()).plusDays(1).toEpochSecond(ZoneOffset.UTC),
-            OAuth20Constants.CLAIM_SUB, "casuser",
-            OidcConstants.ISS, registeredService.getClientId(),
-            OAuth20Constants.CLIENT_ID, registeredService.getClientId(),
-            OidcConstants.AUD, casProperties.getServer().getPrefix() + '/' + OidcConstants.BASE_OIDC_URL + '/' + OAuth20Constants.ACCESS_TOKEN_URL
-        ));
-        val jsonWebKey = (PublicJsonWebKey) oidcServiceJsonWebKeystoreCache
-            .get(new OidcJsonWebKeyCacheKey(registeredService, OidcJsonWebKeyUsage.SIGNING))
-            .orElseThrow()
-            .getJsonWebKeys()
-            .getFirst();
-        val signAssertion = EncodingUtils.signJwsRSASha512(jsonWebKey.getPrivateKey(),
-            claims.toString().getBytes(StandardCharsets.UTF_8), Map.of());
-        request.setParameter(OAuth20Constants.ASSERTION, new String(signAssertion, StandardCharsets.UTF_8));
-        val tokenRequestContext = extractor.extract(webContext);
-        assertNotNull(tokenRequestContext);
-        assertNotNull(tokenRequestContext.getAuthentication());
+        @Test
+        void verifyAssertion() throws Throwable {
+            request.setParameter(OAuth20Constants.GRANT_TYPE, OAuth20GrantTypes.JWT_BEARER.getType());
+            request.setParameter(OAuth20Constants.SCOPE, OidcConstants.StandardScopes.OPENID.getScope());
+
+            val claims = JWTClaimsSet.parse(Map.of(
+                OAuth20Constants.CLAIM_EXP, LocalDateTime.now(Clock.systemUTC()).plusDays(1).toEpochSecond(ZoneOffset.UTC),
+                OAuth20Constants.CLAIM_SUB, "casuser",
+                OidcConstants.ISS, registeredService.getClientId(),
+                OAuth20Constants.CLIENT_ID, registeredService.getClientId(),
+                OidcConstants.AUD, casProperties.getServer().getPrefix() + '/' + OidcConstants.BASE_OIDC_URL + '/' + OAuth20Constants.ACCESS_TOKEN_URL
+            ));
+
+            val gen = KeyPairGenerator.getInstance("RSA");
+            gen.initialize(2048);
+            val keyPair = gen.generateKeyPair();
+            val publicJwk = new RSAKey.Builder((RSAPublicKey) keyPair.getPublic()).build();
+            val jkt = publicJwk.computeThumbprint().toString();
+            clientJwksRegistrationStore.save(jkt, publicJwk.toPublicJWK().toJSONString());
+            
+            val signAssertion = EncodingUtils.signJwsRSASha512(new BasicIdentifiableKey(jkt, keyPair.getPrivate()),
+                claims.toString().getBytes(StandardCharsets.UTF_8), Map.of());
+            request.setParameter(OAuth20Constants.ASSERTION, new String(signAssertion, StandardCharsets.UTF_8));
+            val tokenRequestContext = extractor.extract(webContext);
+            assertNotNull(tokenRequestContext);
+            assertNotNull(tokenRequestContext.getAuthentication());
+        }
+        
     }
 }

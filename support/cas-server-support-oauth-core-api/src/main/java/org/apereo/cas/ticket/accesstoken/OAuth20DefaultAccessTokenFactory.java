@@ -3,7 +3,6 @@ package org.apereo.cas.ticket.accesstoken;
 import module java.base;
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.principal.Service;
-import org.apereo.cas.configuration.support.Beans;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.oauth.OAuth20GrantTypes;
 import org.apereo.cas.support.oauth.OAuth20ResponseTypes;
@@ -22,7 +21,6 @@ import org.apereo.cas.util.function.FunctionUtils;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.val;
-import org.apache.commons.lang3.StringUtils;
 
 /**
  * Default OAuth access token factory.
@@ -103,16 +101,6 @@ public class OAuth20DefaultAccessTokenFactory implements OAuth20AccessTokenFacto
     }
 
     protected ExpirationPolicy determineExpirationPolicyForService(final OAuthRegisteredService registeredService) {
-        if (registeredService != null && registeredService.getAccessTokenExpirationPolicy() != null) {
-            val policy = registeredService.getAccessTokenExpirationPolicy();
-            val maxTime = policy.getMaxTimeToLive();
-            val ttl = policy.getTimeToKill();
-            if (StringUtils.isNotBlank(maxTime) && StringUtils.isNotBlank(ttl)) {
-                return new OAuth20AccessTokenExpirationPolicy(
-                    Beans.newDuration(maxTime).toSeconds(),
-                    Beans.newDuration(ttl).toSeconds());
-            }
-        }
-        return expirationPolicyBuilder.buildTicketExpirationPolicy();
+        return expirationPolicyBuilder.buildTicketExpirationPolicyFor(registeredService);
     }
 }

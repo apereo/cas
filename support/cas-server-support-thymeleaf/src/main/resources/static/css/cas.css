@@ -1117,6 +1117,13 @@ body {
     width: 80px;
     background-color: var(--mdc-theme-primary, #6200ee);
     float: left;
+    transition: width 0.25s ease;
+    overflow: hidden;
+    white-space: nowrap;
+}
+
+.sidebar-navigation:hover {
+    width: 260px;
 }
 
 .sidebar-navigation ul {
@@ -1131,45 +1138,52 @@ body {
 }
 
 .sidebar-navigation ul li {
-    padding: 28px 0;
+    padding: 16px 0;
     cursor: pointer;
-    text-align: center;
+    text-align: left;
     transition: all ease-out 120ms;
     border-radius: 10px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding-left: 28px;
 }
 
 .sidebar-navigation ul li i {
-    display: block;
+    display: inline-block;
     font-size: 24px;
     transition: all ease 450ms;
+    min-width: 24px;
+    text-align: center;
 }
 
 .sidebar-navigation ul li .tooltip {
-    display: flex;
-    flex-direction: column;
-    position: absolute;
-    background-color: #313443;
-    padding: 8px 10px;
-    border-radius: 3px;
-    margin-top: 5px;
-    left: 130px;
+    display: inline;
+    position: static;
+    background-color: transparent;
+    padding: 0;
+    border-radius: 0;
+    margin-top: 0;
+    left: auto;
     opacity: 0;
     visibility: hidden;
-    font-size: 13px;
-    letter-spacing: 0.5px;
-    z-index: 100;
+    font-size: 14px;
+    letter-spacing: 0.3px;
+    z-index: auto;
+    color: white;
+    transition: opacity 0.2s ease;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
 .sidebar-navigation ul li .tooltip:before {
-    content: "";
-    display: block;
-    position: absolute;
-    left: -4px;
-    top: 5px;
-    transform: rotate(45deg);
-    width: 10px;
-    height: 10px;
-    background-color: inherit;
+    display: none;
+}
+
+.sidebar-navigation:hover ul li .tooltip {
+    visibility: visible;
+    opacity: 1;
 }
 
 .sidebar-navigation ul li:hover {

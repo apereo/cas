@@ -1,13 +1,24 @@
 description = "Apereo CAS JPA Utilities and Support"
+ext {
+    publishMetadata = true
+    projectMetadata = [
+            category: "Relational Databases (JDBC & JPA)",
+            title: "JPA Utilities"
+    ]
+}
 dependencies {
     implementation libraries.hikaricp
     implementation libraries.jakartapersistence
     implementation libraries.springbootjdbc
+    compileOnly libraries.databasedrivers
 
     implementation project(":core:cas-server-core-util-api")
+    
+    implementation project(":support:cas-server-support-jdbc-drivers")
+    
+    compileOnly project(":support:cas-server-support-discovery-profile-core")
 
-    runtimeOnly project(":support:cas-server-support-jdbc-drivers")
-
+    testImplementation project(":support:cas-server-support-discovery-profile-core")
     testImplementation project(":core:cas-server-core-util")
     testImplementation project(":core:cas-server-core-scripting")
 

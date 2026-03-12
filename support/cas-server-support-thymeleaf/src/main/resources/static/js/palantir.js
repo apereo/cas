@@ -58,7 +58,7 @@ async function initializePalantir() {
                 }
             });
         }, 2);
-        $("#dashboard").removeClass("d-none");
+        showElements("#dashboard");
     } catch (error) {
         console.error("An error occurred:", error);
     }
