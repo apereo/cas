@@ -9,7 +9,6 @@ import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.pm.PasswordChangeRequest;
 import org.apereo.cas.pm.PasswordManagementQuery;
 import org.apereo.cas.pm.PasswordManagementService;
-import org.apereo.cas.pm.WeakPasswordException;
 import org.apereo.cas.syncope.BaseSyncopeTests;
 import org.apereo.cas.test.CasTestExtension;
 import org.apereo.cas.util.junit.EnabledIfListeningOnPort;
