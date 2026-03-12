@@ -56,7 +56,7 @@ class SamlProfileSamlConditionsBuilderTests {
             val buildContext = getSamlProfileBuilderContext(service);
             val result = samlProfileSamlConditionsBuilder.build(buildContext);
             assertNotNull(result);
-            val diff = Duration.between(result.getNotBefore(), result.getNotOnOrAfter()).getSeconds();
+            val diff = Duration.between(result.getNotBefore(), result.getNotOnOrAfter()).toSeconds();
             assertEquals((long) service.getSkewAllowance() << 1, diff);
         }
     }
@@ -70,7 +70,7 @@ class SamlProfileSamlConditionsBuilderTests {
             val buildContext = getSamlProfileBuilderContext(service);
             val result = samlProfileSamlConditionsBuilder.build(buildContext);
             assertNotNull(result);
-            val diff = Duration.between(result.getNotBefore(), result.getNotOnOrAfter()).getSeconds();
+            val diff = Duration.between(result.getNotBefore(), result.getNotOnOrAfter()).toSeconds();
             assertEquals(10, diff);
         }
     }
@@ -87,7 +87,7 @@ class SamlProfileSamlConditionsBuilderTests {
             val buildContext = getSamlProfileBuilderContext(service);
             val result = samlProfileSamlConditionsBuilder.build(buildContext);
             assertNotNull(result);
-            val diff = Duration.between(result.getNotBefore(), result.getNotOnOrAfter()).getSeconds();
+            val diff = Duration.between(result.getNotBefore(), result.getNotOnOrAfter()).toSeconds();
             assertEquals(4, diff);
         }
     }
