@@ -4,7 +4,6 @@ import module java.base;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.features.CasFeatureModule;
 import org.apereo.cas.discovery.CasServerProfileCustomizer;
-import org.apereo.cas.util.ReflectionUtils;
 import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
 import com.microsoft.sqlserver.jdbc.SQLServerDriver;
 import lombok.val;
@@ -23,7 +22,6 @@ import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.ScopedProxyMode;
-import org.springframework.data.relational.core.dialect.Dialect;
 
 /**
  * This is {@link CasJpaUtilAutoConfiguration}.

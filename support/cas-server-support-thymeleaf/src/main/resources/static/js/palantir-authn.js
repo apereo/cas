@@ -18,6 +18,44 @@ function toggleAuthnHandlerEditorVisibility() {
     }
 }
 
+function toggleAuthnHandlerAdvancedOptions() {
+    const showAdvanced = $("#showAuthnHandlerAdvancedOptions").val();
+    localStorage.setItem("showAuthnHandlerAdvancedOptionsPreference", showAdvanced);
+
+    const currentType = $("#authenticationHandlerType").val();
+    if (!currentType) {
+        return;
+    }
+
+    let currentSubtype = null;
+    if (currentType === "LDAP") {
+        currentSubtype = $("#ldapAuthenticationHandlerType").val();
+    } else if (currentType === "JDBC") {
+        currentSubtype = $("#jdbcAuthenticationHandlerType").val();
+    }
+    const combo = currentSubtype ? `${currentType}-${currentSubtype}` : null;
+
+    const advancedElements = $("#addAuthenticationHandlerDialog .advanced-option").filter(function () {
+        const classes = $(this).attr("class").split(/\s+/);
+        const belongsToType = classes.includes(currentType);
+        const belongsToCombo = combo && classes.includes(combo);
+        const isSubtypeSpecific = classes.some(cls => cls.startsWith(`${currentType}-`));
+        return belongsToType || belongsToCombo || (isSubtypeSpecific && !belongsToType);
+    });
+
+    if (showAdvanced === "true" || showAdvanced === true) {
+        advancedElements.each(function () {
+            const classes = $(this).attr("class").split(/\s+/);
+            const isSubtypeSpecific = classes.some(cls => cls.startsWith(`${currentType}-`));
+            if (!isSubtypeSpecific || (combo && classes.includes(combo))) {
+                showElements($(this));
+            }
+        });
+    } else {
+        hideElements(advancedElements);
+    }
+}
+
 function openNewAuthenticationHandlerDialog() {
     const dialogContainer = $("<div>", {
         id: "addAuthenticationHandlerDialog"
@@ -159,7 +197,7 @@ function openNewAuthenticationHandlerDialog() {
         required: false,
         containerId: controlsPanel,
         title: "Define the credential criteria pattern for authentication.",
-        cssClasses: "LDAP hide",
+        cssClasses: "LDAP hide advanced-option",
         paramName: "credential-criteria"
     });
     createInputField({
@@ -168,7 +206,7 @@ function openNewAuthenticationHandlerDialog() {
         required: false,
         containerId: controlsPanel,
         title: "Define the attribute to use as the principal identifier.",
-        cssClasses: "LDAP hide",
+        cssClasses: "LDAP hide advanced-option",
         paramName: "principal-attribute-id"
     });
     createInputField({
@@ -177,7 +215,7 @@ function openNewAuthenticationHandlerDialog() {
         required: false,
         containerId: controlsPanel,
         title: "Define the LDAP DN attribute name to use for the principal.",
-        cssClasses: "LDAP hide",
+        cssClasses: "LDAP hide advanced-option",
         paramName: "principal-dn-attribute-name"
     }).val("principalLdapDn");
 
@@ -191,7 +229,7 @@ function openNewAuthenticationHandlerDialog() {
             {value: "FINDING", text: "FINDING"},
             {value: "ALWAYS", text: "ALWAYS"}
         ],
-        cssClasses: "LDAP",
+        cssClasses: "LDAP advanced-option",
         labelCssClasses: "display-flex"
     });
 
@@ -201,7 +239,7 @@ function openNewAuthenticationHandlerDialog() {
         required: false,
         containerId: controlsPanel,
         title: "Define the LDAP connection timeout.",
-        cssClasses: "LDAP hide",
+        cssClasses: "LDAP hide advanced-option",
         paramName: "connection-timeout"
     }).val("PT5S");
     createInputField({
@@ -210,7 +248,7 @@ function openNewAuthenticationHandlerDialog() {
         required: false,
         containerId: controlsPanel,
         title: "Define the LDAP response timeout.",
-        cssClasses: "LDAP hide",
+        cssClasses: "LDAP hide advanced-option",
         paramName: "response-timeout"
     }).val("PT5S");
     createInputField({
@@ -219,7 +257,7 @@ function openNewAuthenticationHandlerDialog() {
         required: false,
         containerId: controlsPanel,
         title: "Define the LDAP connection idle time.",
-        cssClasses: "LDAP hide",
+        cssClasses: "LDAP hide advanced-option",
         paramName: "idle-time"
     }).val("PT10M");
     createInputField({
@@ -229,7 +267,7 @@ function openNewAuthenticationHandlerDialog() {
         dataType: "number",
         containerId: controlsPanel,
         title: "Define the minimum LDAP connection pool size.",
-        cssClasses: "LDAP hide",
+        cssClasses: "LDAP hide advanced-option",
         paramName: "min-pool-size"
     }).val("3");
     createInputField({
@@ -239,7 +277,7 @@ function openNewAuthenticationHandlerDialog() {
         dataType: "number",
         containerId: controlsPanel,
         title: "Define the maximum LDAP connection pool size.",
-        cssClasses: "LDAP hide",
+        cssClasses: "LDAP hide advanced-option",
         paramName: "max-pool-size"
     }).val("10");
 
@@ -249,7 +287,7 @@ function openNewAuthenticationHandlerDialog() {
         required: false,
         containerId: controlsPanel,
         title: "Define the timeout for connection validation.",
-        cssClasses: "LDAP hide",
+        cssClasses: "LDAP hide advanced-option",
         paramName: "validate-timeout"
     }).val("PT5S");
     createInputField({
@@ -258,7 +296,7 @@ function openNewAuthenticationHandlerDialog() {
         required: false,
         containerId: controlsPanel,
         title: "Define the period for periodic connection validation.",
-        cssClasses: "LDAP hide",
+        cssClasses: "LDAP hide advanced-option",
         paramName: "validate-period"
     }).val("PT5M");
     createSelectField({
@@ -269,7 +307,7 @@ function openNewAuthenticationHandlerDialog() {
             {value: "BIND", text: "BIND"},
             {value: "NONE", text: "NONE"}
         ],
-        cssClasses: "LDAP",
+        cssClasses: "LDAP advanced-option",
         labelCssClasses: "display-flex"
     });
     createSelectField({
@@ -280,7 +318,7 @@ function openNewAuthenticationHandlerDialog() {
             {value: "DEFAULT", text: "DEFAULT"},
             {value: "ANY", text: "ANY"}
         ],
-        cssClasses: "LDAP",
+        cssClasses: "LDAP advanced-option",
         labelCssClasses: "display-flex"
     });
 
@@ -301,7 +339,7 @@ function openNewAuthenticationHandlerDialog() {
             {value: "ACTIVE", text: "ACTIVE"},
             {value: "STANDBY", text: "STANDBY"}
         ],
-        cssClasses: "JDBC",
+        cssClasses: "JDBC advanced-option",
         labelCssClasses: "display-flex"
     });
     createInputField({
@@ -310,7 +348,7 @@ function openNewAuthenticationHandlerDialog() {
         required: false,
         containerId: controlsPanel,
         title: "Define the default catalog for the JDBC connection.",
-        cssClasses: "JDBC hide",
+        cssClasses: "JDBC hide advanced-option",
         paramName: "default-catalog"
     });
     createInputField({
@@ -319,7 +357,7 @@ function openNewAuthenticationHandlerDialog() {
         required: false,
         containerId: controlsPanel,
         title: "Define the default schema for the JDBC connection.",
-        cssClasses: "JDBC hide",
+        cssClasses: "JDBC hide advanced-option",
         paramName: "default-schema"
     });
     createInputField({
@@ -328,7 +366,7 @@ function openNewAuthenticationHandlerDialog() {
         required: false,
         containerId: controlsPanel,
         title: "Define the SQL query used to validate the health of the connection.",
-        cssClasses: "JDBC hide",
+        cssClasses: "JDBC hide advanced-option",
         paramName: "health-query"
     });
     createInputField({
@@ -337,7 +375,7 @@ function openNewAuthenticationHandlerDialog() {
         required: false,
         containerId: controlsPanel,
         title: "Define the connection timeout in milliseconds.",
-        cssClasses: "JDBC hide",
+        cssClasses: "JDBC hide advanced-option",
         paramName: "connection-timeout"
     });
     createInputField({
@@ -346,7 +384,7 @@ function openNewAuthenticationHandlerDialog() {
         required: false,
         containerId: controlsPanel,
         title: "Define the connection leak detection threshold in milliseconds.",
-        cssClasses: "JDBC hide",
+        cssClasses: "JDBC hide advanced-option",
         paramName: "leak-threshold"
     }).val("PT6S");
     createInputField({
@@ -364,7 +402,7 @@ function openNewAuthenticationHandlerDialog() {
         required: true,
         containerId: controlsPanel,
         title: "Define the database user for the JDBC connection.",
-        cssClasses: "JDBC-QUERY JDBC-QUERY_ENCODE JDBC-STORED_PROCEDURE hide",
+        cssClasses: "JDBC-BIND JDBC-QUERY JDBC-QUERY_ENCODE JDBC-STORED_PROCEDURE hide",
         paramName: "user"
     });
     createInputField({
@@ -374,7 +412,7 @@ function openNewAuthenticationHandlerDialog() {
         dataType: "password",
         containerId: controlsPanel,
         title: "Define the database password for the JDBC connection.",
-        cssClasses: "JDBC-QUERY JDBC-QUERY_ENCODE JDBC-STORED_PROCEDURE hide",
+        cssClasses: "JDBC-BIND JDBC-QUERY JDBC-QUERY_ENCODE JDBC-STORED_PROCEDURE hide",
         paramName: "password"
     });
     createInputField({
@@ -419,7 +457,7 @@ function openNewAuthenticationHandlerDialog() {
         required: false,
         containerId: controlsPanel,
         title: "Define the encoding algorithm name (e.g. MD5, SHA-256).",
-        cssClasses: "JDBC-QUERY_ENCODE hide",
+        cssClasses: "JDBC-QUERY_ENCODE hide advanced-option",
         paramName: "algorithm-name"
     });
     createInputField({
@@ -429,7 +467,7 @@ function openNewAuthenticationHandlerDialog() {
         dataType: "number",
         containerId: controlsPanel,
         title: "Define the number of hashing iterations.",
-        cssClasses: "JDBC-QUERY_ENCODE hide",
+        cssClasses: "JDBC-QUERY_ENCODE hide advanced-option",
         paramName: "number-of-iterations"
     });
     createInputField({
@@ -438,7 +476,7 @@ function openNewAuthenticationHandlerDialog() {
         required: false,
         containerId: controlsPanel,
         title: "Define the static salt value used for encoding.",
-        cssClasses: "JDBC-QUERY_ENCODE hide",
+        cssClasses: "JDBC-QUERY_ENCODE hide advanced-option",
         paramName: "static-salt"
     });
     createInputField({
@@ -447,7 +485,7 @@ function openNewAuthenticationHandlerDialog() {
         required: false,
         containerId: controlsPanel,
         title: "Define the column name that indicates an expired account.",
-        cssClasses: "JDBC-QUERY_ENCODE hide",
+        cssClasses: "JDBC-QUERY_ENCODE hide advanced-option",
         paramName: "expired-field-name"
     });
     createInputField({
@@ -456,7 +494,7 @@ function openNewAuthenticationHandlerDialog() {
         required: false,
         containerId: controlsPanel,
         title: "Define the column name that indicates a disabled account.",
-        cssClasses: "JDBC-QUERY_ENCODE hide",
+        cssClasses: "JDBC-QUERY_ENCODE hide advanced-option",
         paramName: "disabled-field-name"
     });
     createInputField({
@@ -474,7 +512,7 @@ function openNewAuthenticationHandlerDialog() {
         required: false,
         containerId: controlsPanel,
         title: "Define the credential criteria pattern for authentication.",
-        cssClasses: "JDBC hide",
+        cssClasses: "JDBC hide advanced-option",
         paramName: "credential-criteria"
     });
 
@@ -550,7 +588,7 @@ function openNewAuthenticationHandlerDialog() {
                 paramName: "additional-attributes",
                 options: attrOptions,
                 allowCreateOption: true,
-                cssClasses: "LDAP hide"
+                cssClasses: "LDAP hide advanced-option"
             });
 
             hideElements($("#authnHandlerPrincipalAttributeListSelectContainer"));
@@ -580,6 +618,7 @@ function openNewAuthenticationHandlerDialog() {
         showElements($(`#addAuthenticationHandlerDialog [id$='FieldContainer'].${handlerType}`));
         showElements($(`#addAuthenticationHandlerDialog [id$='SwitchButtonPanel'].${handlerType}`));
         showElements($(`#addAuthenticationHandlerDialog [id$='SelectContainer'].${handlerType}`));
+        toggleAuthnHandlerAdvancedOptions();
     }
 
     function handleAuthenticationHandlerTypeChange(type) {
@@ -608,6 +647,7 @@ function openNewAuthenticationHandlerDialog() {
                 handleAuthenticationHandlerSubtypeChange(type, subtype);
             }
         }
+        toggleAuthnHandlerAdvancedOptions();
     }
 
     dialogContainer.dialog({
@@ -639,10 +679,13 @@ function openNewAuthenticationHandlerDialog() {
 
             const $buttonPane = $(this).closest(".ui-dialog").find(".ui-dialog-buttonpane");
             $buttonPane.css({"display": "flex", "align-items": "center"});
+            const $togglesContainer = $("<div>", {
+                css: {"display": "flex", "align-items": "center", "margin-right": "auto"}
+            });
             for (const $clone of alwaysShowClones) {
-                $clone.css({"margin-right": "auto"});
-                $buttonPane.prepend($clone);
+                $togglesContainer.append($clone);
             }
+            $buttonPane.prepend($togglesContainer);
 
             $("#addAuthenticationHandlerDialog .jqueryui-selectmenu").selectmenu({
                 width: "70%",
@@ -694,6 +737,15 @@ function openNewAuthenticationHandlerDialog() {
                 }
             }
             toggleAuthnHandlerEditorVisibility();
+
+            const savedAdvancedPref = localStorage.getItem("showAuthnHandlerAdvancedOptionsPreference");
+            const currentAdvancedValue = $("#showAuthnHandlerAdvancedOptions").val();
+            if (savedAdvancedPref !== null) {
+                if ((savedAdvancedPref === "true") !== (currentAdvancedValue === "true")) {
+                    $("#showAuthnHandlerAdvancedOptionsButton").click();
+                }
+            }
+            toggleAuthnHandlerAdvancedOptions();
         },
         close: function () {
             $("#authenticationhandlers-tab").append($detachedFields);
