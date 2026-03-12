@@ -368,6 +368,10 @@ ext.libraries = [
                 dependencies.create(libs.arrow.memory.unsafe.get()) {
                 }
         ],
+        checkerqual : [
+                dependencies.create(libs.checker.qual.get()) {
+                }
+        ],
         bouncycastle               : [
                 dependencies.create(libs.bcpkix.jdk18on.get()) {
                     exclude(group: "commons-cli", module: "commons-cli")

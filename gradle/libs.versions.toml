@@ -30,6 +30,7 @@ casClient = "4.0.4"
 cbor = "4.5.6"
 chartJsCore = "4.5.1"
 checkstyle = "13.3.0"
+checkerQual = "3.54.0"
 classgraph = "4.8.184"
 commonsBeans = "1.11.0"
 commonsCli = "1.11.0"
@@ -323,6 +324,7 @@ caffeine = { module = "com.github.ben-manes.caffeine:caffeine", version.ref = "c
 cas-client-core = { module = "org.apereo.cas.client:cas-client-core", version.ref = "casClient" }
 cbor = { module = "com.upokecenter:cbor", version.ref = "cbor" }
 chart-js-core = { module = "org.webjars.npm:chart.js", version.ref = "chartJsCore" }
+checker-qual = { module = "org.checkerframework:checker-qual", version.ref = "checkerQual" }
 classgraph = { module = "io.github.classgraph:classgraph", version.ref = "classgraph" }
 client = { module = "com.nexmo:client", version.ref = "nexmo" }
 clouddirectory = { module = "software.amazon.awssdk:clouddirectory", version.ref = "amazonSdk" }
