@@ -33,7 +33,7 @@
 
                 <div id="addAuthenticationHandlerDialogFields" style="display:none;">
                     <div th:replace="~{fragments/switchbutton :: switchbutton (id='showAuthnHandlerEditor', label='#Show Configuration', cssClass='always-show pb-2 pt-2', selected=true, dataAttrs='changeEventHandler=toggleAuthnHandlerEditorVisibility')}"/>
-                    <div th:replace="~{fragments/switchbutton :: switchbutton (id='showAuthnHandlerAdvancedOptions', label='#Show Advanced Options', cssClass='always-show pb-2 pt-2 pl-2', selected=true, dataAttrs='changeEventHandler=toggleAuthnHandlerAdvancedOptions')}"/>
+                    <div th:replace="~{fragments/switchbutton :: switchbutton (id='showAuthnHandlerAdvancedOptions', label='#Show Advanced Options', cssClass='always-show pb-2 pt-2 pl-2', selected=false, dataAttrs='changeEventHandler=toggleAuthnHandlerAdvancedOptions')}"/>
                     <div th:replace="~{fragments/switchbutton :: switchbutton (id='authnHandlerSubtreeSearch', label='#Subtree Search', cssClass='LDAP hide pt-1 pb-1 advanced-option')}"/>
                     <div th:replace="~{fragments/switchbutton :: switchbutton (id='authnHandlerFollowReferrals', label='#Follow Referrals', cssClass='LDAP hide mt-1 pb-1 advanced-option')}"/>
                     <div th:replace="~{fragments/switchbutton :: switchbutton (id='authnHandlerUseStartTls', label='#Use StartTLS', cssClass='LDAP hide mt-1 pb-1 advanced-option')}"/>
