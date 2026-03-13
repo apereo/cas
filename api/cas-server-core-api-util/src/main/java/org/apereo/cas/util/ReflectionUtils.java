@@ -4,6 +4,7 @@ import module java.base;
 import io.github.classgraph.ClassGraph;
 import io.github.classgraph.ClassInfo;
 import lombok.experimental.UtilityClass;
+import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.ClassUtils;
 import org.jooq.lambda.Unchecked;
@@ -16,6 +17,7 @@ import java.lang.annotation.Annotation;
  * @since 6.6.0
  */
 @UtilityClass
+@Slf4j
 public class ReflectionUtils {
 
     /**
@@ -55,10 +57,11 @@ public class ReflectionUtils {
         final List<ClassLoader> classLoaders,
         final Collection<Class<? extends Annotation>> annotations,
         final String... packageName) {
-        
+
         var classGraph = new ClassGraph()
             .acceptPackages(packageName)
             .enableAnnotationInfo()
+            .ignoreClassVisibility()
             .disableModuleScanning();
         if (!classLoaders.isEmpty()) {
             classGraph = classGraph.overrideClassLoaders(classLoaders.toArray(new ClassLoader[0]));
@@ -68,7 +71,15 @@ public class ReflectionUtils {
                 .stream()
                 .map(annotation -> scanResult.getClassesWithAnnotation(annotation).getNames())
                 .flatMap(List::stream)
-                .map(Unchecked.function(ClassUtils::getClass))
+                .map(name -> {
+                    try {
+                        return ClassUtils.getClass(name);
+                    } catch (final Exception e) {
+                        LOGGER.debug("Unable to load class [{}]", name, e);
+                    }
+                    return null;
+                })
+                .filter(Objects::nonNull)
                 .collect(Collectors.toList());
         }
     }

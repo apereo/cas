@@ -11,6 +11,7 @@ import org.apereo.cas.ticket.TransientSessionTicketFactory;
 import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
 import lombok.val;
+import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -41,11 +42,11 @@ public class CasTicketRegistrySessionAutoConfiguration {
         @Qualifier("ticketRegistrySessionIdGenerator")
         final SessionIdGenerator ticketRegistrySessionIdGenerator,
         @Qualifier(TicketFactory.BEAN_NAME)
-        final TicketFactory ticketFactory,
+        final ObjectProvider<TicketFactory> ticketFactory,
         @Qualifier(TicketRegistry.BEAN_NAME)
-        final TicketRegistry ticketRegistry) {
+        final ObjectProvider<TicketRegistry> ticketRegistry) {
         val repository = new TicketRegistrySessionRepository(ticketRegistry, ticketFactory);
-        val factory = (TransientSessionTicketFactory) ticketFactory.get(TransientSessionTicket.class);
+        val factory = (TransientSessionTicketFactory) ticketFactory.getObject().get(TransientSessionTicket.class);
         repository.setSessionIdGenerator(ticketRegistrySessionIdGenerator);
         val expirationPolicy = factory.getExpirationPolicyBuilder().buildTicketExpirationPolicy();
         repository.setDefaultMaxInactiveInterval(Duration.ofSeconds(expirationPolicy.getTimeToLive()));

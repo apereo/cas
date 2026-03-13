@@ -447,6 +447,7 @@ subprojects {
         api libraries.jspecify
         
         compileOnly libraries.jakartapersistence
+        compileOnly libraries.checkerqual
 
         annotationProcessor libraries.springindexer
 
