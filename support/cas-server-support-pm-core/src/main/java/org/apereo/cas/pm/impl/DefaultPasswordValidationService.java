@@ -1,6 +1,5 @@
 package org.apereo.cas.pm.impl;
 
-import module java.base;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.pm.PasswordChangeRequest;
 import org.apereo.cas.pm.PasswordHistoryService;
@@ -10,6 +9,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.springframework.util.StringUtils;
+import java.util.regex.Pattern;
 
 /**
  * This is {@link DefaultPasswordValidationService}.

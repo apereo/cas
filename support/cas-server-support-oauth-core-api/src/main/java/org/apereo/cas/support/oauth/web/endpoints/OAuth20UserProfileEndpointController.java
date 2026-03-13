@@ -14,9 +14,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.tuple.Pair;
 import org.jspecify.annotations.NonNull;
-import org.pac4j.core.context.HttpConstants;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -129,19 +127,5 @@ public class OAuth20UserProfileEndpointController<T extends OAuth20Configuration
             }
         }
     }
-
-    protected Pair<String, String> getAccessTokenFromRequest(final HttpServletRequest request) {
-        var accessToken = StringUtils.defaultIfBlank(
-            request.getParameter(OAuth20Constants.ACCESS_TOKEN),
-            request.getParameter(OAuth20Constants.TOKEN));
-        if (StringUtils.isBlank(accessToken)) {
-            val authHeader = request.getHeader(HttpConstants.AUTHORIZATION_HEADER);
-            if (StringUtils.isNotBlank(authHeader) && authHeader.toLowerCase(Locale.ENGLISH)
-                .startsWith(OAuth20Constants.TOKEN_TYPE_BEARER.toLowerCase(Locale.ENGLISH) + ' ')) {
-                accessToken = authHeader.substring(OAuth20Constants.TOKEN_TYPE_BEARER.length() + 1);
-            }
-        }
-        LOGGER.debug("[{}]: [{}]", OAuth20Constants.ACCESS_TOKEN, accessToken);
-        return Pair.of(accessToken, extractAccessTokenFrom(accessToken));
-    }
+    
 }
