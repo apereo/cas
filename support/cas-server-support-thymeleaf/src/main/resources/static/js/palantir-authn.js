@@ -1,3 +1,106 @@
+function generateAuthnHandlerConfiguration() {
+    const editor = ace.edit("authnHandlerEditor");
+    if (!editor) {
+        return;
+    }
+    const currentType = $("#authenticationHandlerType").val();
+    if (currentType !== "LDAP" && currentType !== "JDBC") {
+        return;
+    }
+
+    let prefix;
+    const lines = [];
+
+    if (currentType === "LDAP") {
+        const subtype = $("#ldapAuthenticationHandlerType").val();
+        prefix = "cas.authn.ldap[]";
+        lines.push(`${prefix}.type=${subtype}`);
+    } else {
+        prefix = $("#jdbcAuthenticationHandlerType option:selected").data("prefix");
+    }
+
+    $("#addAuthenticationHandlerDialog input[data-param-name]").each(function () {
+        const $el = $(this);
+        const $container = $el.closest("[id$='FieldContainer'], [id$='SwitchButtonPanel']");
+        if ($container.length > 0 && !$container.is(":visible")) {
+            return;
+        }
+        if ($el.attr("type") === "hidden" && $el.attr("data-switch-btn")) {
+            return;
+        }
+        const paramName = $el.attr("data-param-name");
+        if (!paramName) {
+            return;
+        }
+        const val = $el.val();
+        const defaultVal = $el.data("default-value");
+        if (val !== undefined && val !== null && val.toString().trim().length > 0
+            && val.toString() !== (defaultVal !== undefined ? defaultVal.toString() : "")) {
+            lines.push(`${prefix}.${paramName}=${val}`);
+        }
+    });
+
+    $("#addAuthenticationHandlerDialog input[data-switch-btn]").each(function () {
+        const $el = $(this);
+        const $panel = $el.closest("[id$='SwitchButtonPanel']");
+        if ($panel.length > 0 && !$panel.is(":visible")) {
+            return;
+        }
+        const paramName = $el.attr("data-param-name");
+        if (paramName) {
+            const val = $el.val();
+            const defaultVal = $el.data("default-value");
+            if (val !== undefined && val.toString() !== (defaultVal !== undefined ? defaultVal.toString() : "")) {
+                lines.push(`${prefix}.${paramName}=${val}`);
+            }
+        }
+    });
+
+    $("#addAuthenticationHandlerDialog select.jqueryui-selectmenu").each(function () {
+        const $el = $(this);
+        const elId = $el.attr("id");
+        if (elId === "authenticationHandlerType" || elId === "ldapAuthenticationHandlerType" || elId === "jdbcAuthenticationHandlerType") {
+            return;
+        }
+        const $container = $el.closest("[id$='SelectContainer']");
+        if ($container.length > 0 && !$container.is(":visible")) {
+            return;
+        }
+        const paramName = $el.attr("data-param-name");
+        if (!paramName) {
+            return;
+        }
+        const val = $el.val();
+        const defaultVal = $el.data("default-value");
+        if (val !== undefined && val !== null && val.toString().trim().length > 0
+            && val.toString() !== (defaultVal !== undefined ? defaultVal.toString() : "")) {
+            lines.push(`${prefix}.${paramName}=${val}`);
+        }
+    });
+
+    $("#addAuthenticationHandlerDialog select.jqueryui-multiselectmenu").each(function () {
+        const $el = $(this);
+        const $container = $el.closest("[id$='SelectContainer']");
+        if ($container.length > 0 && !$container.is(":visible")) {
+            return;
+        }
+        const paramName = $el.attr("data-param-name");
+        if (!paramName) {
+            return;
+        }
+        const tomSelectInstance = $el[0].tomselect;
+        if (tomSelectInstance) {
+            const values = tomSelectInstance.getValue();
+            if (values && values.length > 0) {
+                const valStr = Array.isArray(values) ? values.join(",") : values;
+                lines.push(`${prefix}.${paramName}=${valStr}`);
+            }
+        }
+    });
+
+    editor.setValue(lines.join("\n"), -1);
+}
+
 function toggleAuthnHandlerEditorVisibility() {
     const showEditor = $("#showAuthnHandlerEditor").val();
     const $editorContainer = $("#authnHandlerEditorContainer");
@@ -116,11 +219,11 @@ function openNewAuthenticationHandlerDialog() {
         labelTitle: "Authentication Type:",
         id: "jdbcAuthenticationHandlerType",
         options: [
-            {value: "BIND", text: "BIND"},
-            {value: "QUERY", text: "QUERY"},
-            {value: "QUERY_ENCODE", text: "QUERY & ENCODE"},
-            {value: "SEARCH", text: "SEARCH"},
-            {value: "STORED_PROCEDURE", text: "STORED PROCEDURE"}
+            {value: "BIND", text: "BIND", data: {prefix: "cas.authn.jdbc.bind[]"}},
+            {value: "QUERY", text: "QUERY", data: {prefix: "cas.authn.jdbc.query[]"}},
+            {value: "QUERY_ENCODE", text: "QUERY & ENCODE", data: {prefix: "cas.authn.jdbc.encode[]"}},
+            {value: "SEARCH", text: "SEARCH", data: {prefix: "cas.authn.jdbc.search[]"}},
+            {value: "STORED_PROCEDURE", text: "STORED PROCEDURE", data: {prefix: "cas.authn.jdbc.procedure[]"}}
         ],
         cssClasses: "JDBC",
         labelCssClasses: "display-flex"
@@ -223,6 +326,7 @@ function openNewAuthenticationHandlerDialog() {
         containerId: controlsPanel,
         labelTitle: "Deref Aliases:",
         id: "authnHandlerDerefAliases",
+        paramName: "deref-aliases",
         options: [
             {value: "NEVER", text: "NEVER"},
             {value: "SEARCHING", text: "SEARCHING"},
@@ -303,6 +407,7 @@ function openNewAuthenticationHandlerDialog() {
         containerId: controlsPanel,
         labelTitle: "Pool Passivator:",
         id: "authnHandlerLdapPoolPassivator",
+        paramName: "pool-passivator",
         options: [
             {value: "BIND", text: "BIND"},
             {value: "NONE", text: "NONE"}
@@ -314,6 +419,7 @@ function openNewAuthenticationHandlerDialog() {
         containerId: controlsPanel,
         labelTitle: "Hostname Verifier:",
         id: "authnHandlerLdapHostnameVerifier",
+        paramName: "hostname-verifier",
         options: [
             {value: "DEFAULT", text: "DEFAULT"},
             {value: "ANY", text: "ANY"}
@@ -623,6 +729,16 @@ function openNewAuthenticationHandlerDialog() {
             hideElements($("#authnHandlerAdditionalAttributesSelectContainer"));
             hideElements($("#authnHandlerJdbcDriverSelectContainer"));
             hideElements($("#authnHandlerJdbcDialectSelectContainer"));
+
+            ["authnHandlerPrincipalAttributeList", "authnHandlerAdditionalAttributes",
+             "authnHandlerJdbcDriver", "authnHandlerJdbcDialect"].forEach(selectId => {
+                const el = document.getElementById(selectId);
+                if (el && el.tomselect) {
+                    el.tomselect.on("item_add", () => generateAuthnHandlerConfiguration());
+                    el.tomselect.on("item_remove", () => generateAuthnHandlerConfiguration());
+                }
+            });
+
             const currentType = $("#authenticationHandlerType").val();
             if (currentType === "LDAP" || currentType === "JDBC") {
                 showElements($("#authnHandlerPrincipalAttributeListSelectContainer"));
@@ -647,6 +763,7 @@ function openNewAuthenticationHandlerDialog() {
         showElements($(`#addAuthenticationHandlerDialog [id$='SwitchButtonPanel'].${handlerType}`));
         showElements($(`#addAuthenticationHandlerDialog [id$='SelectContainer'].${handlerType}`));
         toggleAuthnHandlerAdvancedOptions();
+        generateAuthnHandlerConfiguration();
     }
 
     function handleAuthenticationHandlerTypeChange(type) {
@@ -676,6 +793,7 @@ function openNewAuthenticationHandlerDialog() {
             }
         }
         toggleAuthnHandlerAdvancedOptions();
+        generateAuthnHandlerConfiguration();
     }
 
     dialogContainer.dialog({
@@ -727,6 +845,7 @@ function openNewAuthenticationHandlerDialog() {
                         const handlerType = $("#authenticationHandlerType").val();
                         handleAuthenticationHandlerSubtypeChange(handlerType, ui.item.value);
                     }
+                    generateAuthnHandlerConfiguration();
                 }
             });
             cas.init("#addAuthenticationHandlerDialog");
@@ -757,8 +876,23 @@ function openNewAuthenticationHandlerDialog() {
             const authnEditor = initializeAceEditor("authnHandlerEditor", "properties");
             authnEditor.setReadOnly(true);
 
+            $("#addAuthenticationHandlerDialog").on("input", "input[data-param-name]", function () {
+                generateAuthnHandlerConfiguration();
+            });
+            $("#addAuthenticationHandlerDialog").on("change", "input[data-switch-btn]", function () {
+                generateAuthnHandlerConfiguration();
+            });
+
+            $("#addAuthenticationHandlerDialog input[data-param-name]").each(function () {
+                $(this).data("default-value", $(this).val() || "");
+            });
+            $("#addAuthenticationHandlerDialog select.jqueryui-selectmenu").each(function () {
+                $(this).data("default-value", $(this).val() || "");
+            });
+
             toggleAuthnHandlerEditorVisibility();
             toggleAuthnHandlerAdvancedOptions();
+            generateAuthnHandlerConfiguration();
         },
         close: function () {
             $("#authenticationhandlers-tab").append($detachedFields);
