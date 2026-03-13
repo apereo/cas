@@ -330,7 +330,8 @@ public class CasDocumentationApplication {
             LOGGER.debug("Unable to create directory");
         }
 
-        var subTypes = ReflectionUtils.findClassesWithAnnotationsInPackage(List.of(ConditionalOnFeatureEnabled.class), CentralAuthenticationService.NAMESPACE);
+        var subTypes = ReflectionUtils.findClassesWithAnnotationsInPackage(List.of(),
+            List.of(ConditionalOnFeatureEnabled.class), CentralAuthenticationService.NAMESPACE);
         var properties = new ArrayList<Map<?, ?>>();
 
         var allToggleProps = new HashSet<String>();
