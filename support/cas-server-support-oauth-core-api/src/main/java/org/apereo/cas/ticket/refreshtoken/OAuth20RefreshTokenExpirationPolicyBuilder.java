@@ -8,6 +8,7 @@ import org.apereo.cas.support.oauth.services.OAuthRegisteredService;
 import org.apereo.cas.ticket.ExpirationPolicy;
 import org.apereo.cas.ticket.ExpirationPolicyBuilder;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
+import lombok.RequiredArgsConstructor;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 
@@ -18,9 +19,12 @@ import org.apache.commons.lang3.StringUtils;
  * @since 6.1.0
  */
 @JsonTypeInfo(use = JsonTypeInfo.Id.CLASS)
-public record OAuth20RefreshTokenExpirationPolicyBuilder(CasConfigurationProperties casProperties) implements ExpirationPolicyBuilder<OAuth20RefreshToken> {
+@RequiredArgsConstructor
+public class OAuth20RefreshTokenExpirationPolicyBuilder implements ExpirationPolicyBuilder<OAuth20RefreshToken> {
     @Serial
     private static final long serialVersionUID = -3597980180617072826L;
+
+    private final CasConfigurationProperties casProperties;
 
     @Override
     public ExpirationPolicy buildTicketExpirationPolicy() {
@@ -32,7 +36,7 @@ public record OAuth20RefreshTokenExpirationPolicyBuilder(CasConfigurationPropert
      *
      * @return the expiration policy
      */
-    public ExpirationPolicy toTicketExpirationPolicy() {
+    private ExpirationPolicy toTicketExpirationPolicy() {
         val rtProps = casProperties.getAuthn().getOauth().getRefreshToken();
         val timeout = Beans.newDuration(rtProps.getTimeToKillInSeconds()).toSeconds();
         return buildExpirationPolicyFor(timeout);

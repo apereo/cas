@@ -58,7 +58,7 @@ to build and verify Graal VM native images and we plan to extend the coverage to
 ### Testing Strategy
 
 The collection of end-to-end [browser tests based on Puppeteer](../../developer/Test-Process.html) continue to grow to cover more use cases
-and scenarios. At the moment, total number of jobs stands at approximately `539` distinct scenarios. The overall
+and scenarios. At the moment, total number of jobs stands at approximately `543` distinct scenarios. The overall
 test coverage of the CAS codebase is approximately `94%`.
 
 Furthermore the test scenario construction logic is given the ability to limit its run to a pre-specified
@@ -67,7 +67,7 @@ not be available at all times.
 
 ### Gradle 9.4
 
-CAS is now built with Gradle `9.4` and the build process has been updated to use the latest Gradle
+CAS is now built with Gradle `9.4.x` and the build process has been updated to use the latest Gradle
 features and capabilities. This also prepares future CAS versions to build and run against JDK `26`.
 
 ### Spring Boot 4.1
@@ -120,7 +120,13 @@ assuming the underlying storage is one that is noted above.
 
 The [Palantir Admin Console](../installation/Admin-Dashboard.html) is also updated to support interacting 
 with this actuator endpoint.
- 
+
+### Palantir Admin Console 
+
+Significant changes across the board for [Palantir Admin Console](../installation/Admin-Dashboard.html)
+to, among many smaller fixes, allow registering authentication sources and handlers for LDAP, JDBC, etc. This capability
+is still in early stages of development and is expected to improve in future releases.
+
 ### Apache Tomcat Connectors
 
 When running CAS with an embedded Apache Tomcat, all connectors are now initially put into a *paused state* 
@@ -137,8 +143,23 @@ inside an external self-managed Apache Tomcat environment.</p></div>
 
 CAS is now able to use [etcd](../configuration/Configuration-Server-Management-SpringCloud-Etcd.html) 
 as a configuration source to locate properties and settings.
+ 
+### Relying Party JWKS Registration
+
+CAS allows applications and OpenID Connect relying parties 
+to [register their JWKS dynamically](../authentication/OIDC-Authentication-JWKS-Clients.html) with the server.
+
+The [Palantir Admin Console](../installation/Admin-Dashboard.html) is also updated to support interacting
+with this feature.
 
 ## Other Stuff
 
 - SAML2 logout requests for SOAP bindings correct the `Content-Type` header and formatted body.
 - JSON web keys that use the `EC` algorithm can now be used for token validation operations.
+- Password management now employs a case-sensitive scheme to verify password reset operations.
+- Bypassing multifactor authentication attempts can now be activated by IP address patterns on a per-application basis.
+- Small fixes to how Apache Syncope integration handles password management operations and weak password detection.
+- The expiration policy of OAuth2 access tokens can be independent of the underlying ticket-granting ticket's expiration policy per system configuration.
+- Calculation of skew allowance for SAML2 `Conditions` elements is corrected to handle overrides on a per-service basis.
+- CAS discovery profile can report back on supported JDBC drivers and dialects.
+- Small improvements to session management features backed by Spring Session to handle context refresh operations correctly.
