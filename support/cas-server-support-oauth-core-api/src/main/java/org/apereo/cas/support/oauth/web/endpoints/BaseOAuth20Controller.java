@@ -1,6 +1,7 @@
 package org.apereo.cas.support.oauth.web.endpoints;
 
 import module java.base;
+import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.support.oauth.services.OAuthRegisteredService;
 import org.apereo.cas.support.oauth.util.OAuth20Utils;
 import org.apereo.cas.support.oauth.web.response.accesstoken.response.OAuth20JwtAccessTokenEncoder;
@@ -15,7 +16,10 @@ import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.tuple.Pair;
 import org.jooq.lambda.Unchecked;
+import org.pac4j.core.context.HttpConstants;
 import org.pac4j.core.context.WebContext;
 import org.pac4j.core.profile.ProfileManager;
 import jakarta.servlet.http.HttpServletRequest;
@@ -97,4 +101,18 @@ public abstract class BaseOAuth20Controller<T extends OAuth20ConfigurationContex
         return getConfigurationContext().getTicketRegistry().deleteTicket(token) > 0;
     }
 
+    protected Pair<String, String> getAccessTokenFromRequest(final HttpServletRequest request) {
+        var accessToken = StringUtils.defaultIfBlank(
+            request.getParameter(OAuth20Constants.ACCESS_TOKEN),
+            request.getParameter(OAuth20Constants.TOKEN));
+        if (StringUtils.isBlank(accessToken)) {
+            val authHeader = request.getHeader(HttpConstants.AUTHORIZATION_HEADER);
+            if (StringUtils.isNotBlank(authHeader) && authHeader.toLowerCase(Locale.ENGLISH)
+                .startsWith(OAuth20Constants.TOKEN_TYPE_BEARER.toLowerCase(Locale.ENGLISH) + ' ')) {
+                accessToken = authHeader.substring(OAuth20Constants.TOKEN_TYPE_BEARER.length() + 1);
+            }
+        }
+        LOGGER.debug("[{}]: [{}]", OAuth20Constants.ACCESS_TOKEN, accessToken);
+        return Pair.of(accessToken, extractAccessTokenFrom(accessToken));
+    }
 }
