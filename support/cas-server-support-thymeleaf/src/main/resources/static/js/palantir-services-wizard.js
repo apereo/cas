@@ -2740,6 +2740,7 @@ function createSelectField(config) {
         options,
         serviceClass = "",
         cssClasses = "",
+        labelCssClasses = "",
         changeEventHandlers = "",
         id = ""
     } = config;
@@ -2756,6 +2757,7 @@ function createSelectField(config) {
         .addClass("pt-2")
         .addClass("mb-2")
         .addClass(cssClasses ?? "")
+        .addClass(labelCssClasses ?? "")
         .css("display", "block")
         .attr("for", selectId).text(`${labelTitle} `);
 

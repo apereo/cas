@@ -4,6 +4,7 @@ import module java.base;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.features.CasFeatureModule;
 import org.apereo.cas.configuration.support.Beans;
+import org.apereo.cas.oidc.OidcConfigurationContext;
 import org.apereo.cas.oidc.jwks.OidcDefaultJsonWebKeyStoreListener;
 import org.apereo.cas.oidc.jwks.OidcDefaultJsonWebKeystoreCacheLoader;
 import org.apereo.cas.oidc.jwks.OidcJsonWebKeyCacheKey;
@@ -12,8 +13,11 @@ import org.apereo.cas.oidc.jwks.generator.OidcDefaultJsonWebKeystoreGeneratorSer
 import org.apereo.cas.oidc.jwks.generator.OidcGroovyJsonWebKeystoreGeneratorService;
 import org.apereo.cas.oidc.jwks.generator.OidcJsonWebKeystoreGeneratorService;
 import org.apereo.cas.oidc.jwks.generator.OidcRestfulJsonWebKeystoreGeneratorService;
+import org.apereo.cas.oidc.jwks.register.ClientJwksRegistrationStore;
+import org.apereo.cas.oidc.jwks.register.SimpleClientJwksRegistrationStore;
 import org.apereo.cas.oidc.jwks.rotation.OidcDefaultJsonWebKeystoreRotationService;
 import org.apereo.cas.oidc.jwks.rotation.OidcJsonWebKeystoreRotationService;
+import org.apereo.cas.oidc.web.controllers.jwks.OidcJwksRegistrationEndpointController;
 import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.util.spring.beans.BeanCondition;
 import org.apereo.cas.util.spring.beans.BeanSupplier;
@@ -219,4 +223,28 @@ class OidcJwksConfiguration {
         }
     }
 
+    @Configuration(value = "OidcEndpointsJwksRegistrationConfiguration", proxyBeanMethods = false)
+    @EnableConfigurationProperties(CasConfigurationProperties.class)
+    @ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.OpenIDConnect, module = "client-jwks-registration", enabledByDefault = false)
+    static class OidcEndpointsJwksRegistrationConfiguration {
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+        @ConditionalOnMissingBean(name = "oidcJwksRegistrationEndpointController")
+        @Bean
+        public OidcJwksRegistrationEndpointController oidcJwksRegistrationEndpointController(
+            @Qualifier(OidcConfigurationContext.BEAN_NAME)
+            final OidcConfigurationContext oidcConfigurationContext,
+            @Qualifier("clientJwksRegistrationStore")
+            final ClientJwksRegistrationStore clientJwksRegistrationStore) {
+            return new OidcJwksRegistrationEndpointController(
+                oidcConfigurationContext, clientJwksRegistrationStore);
+        }
+        
+
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+        @ConditionalOnMissingBean(name = "clientJwksRegistrationStore")
+        @Bean
+        public ClientJwksRegistrationStore clientJwksRegistrationStore() {
+            return new SimpleClientJwksRegistrationStore();
+        }
+    }
 }

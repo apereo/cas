@@ -15,6 +15,7 @@ import org.apereo.cas.ticket.expiration.ThrottledUseAndTimeoutExpirationPolicy;
 import org.apereo.cas.ticket.expiration.TicketGrantingTicketExpirationPolicy;
 import org.apereo.cas.ticket.expiration.TimeoutExpirationPolicy;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
@@ -27,9 +28,12 @@ import org.apache.commons.lang3.StringUtils;
  */
 @JsonTypeInfo(use = JsonTypeInfo.Id.CLASS)
 @Slf4j
-public record TicketGrantingTicketExpirationPolicyBuilder(CasConfigurationProperties casProperties) implements ExpirationPolicyBuilder<TicketGrantingTicket> {
+@RequiredArgsConstructor
+public class TicketGrantingTicketExpirationPolicyBuilder implements ExpirationPolicyBuilder<TicketGrantingTicket> {
     @Serial
     private static final long serialVersionUID = -4197980180617072826L;
+
+    private final CasConfigurationProperties casProperties;
 
     @Override
     public ExpirationPolicy buildTicketExpirationPolicy() {

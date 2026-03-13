@@ -8,6 +8,8 @@ import org.apereo.cas.oidc.OidcConfigurationContext;
 import org.apereo.cas.oidc.OidcConstants;
 import org.apereo.cas.oidc.jwks.OidcJsonWebKeyCacheKey;
 import org.apereo.cas.oidc.jwks.OidcJsonWebKeyUsage;
+import org.apereo.cas.oidc.jwks.register.ClientJwksRegistrationEntry;
+import org.apereo.cas.oidc.jwks.register.ClientJwksRegistrationStore;
 import org.apereo.cas.services.OidcRegisteredService;
 import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.support.oauth.OAuth20GrantTypes;
@@ -16,19 +18,21 @@ import org.apereo.cas.support.oauth.services.OAuthRegisteredService;
 import org.apereo.cas.support.oauth.util.OAuth20Utils;
 import org.apereo.cas.support.oauth.web.response.accesstoken.ext.AccessTokenRequestContext;
 import org.apereo.cas.support.oauth.web.response.accesstoken.ext.BaseAccessTokenGrantRequestExtractor;
+import org.apereo.cas.token.JwtBuilder;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.EncodingUtils;
 import com.github.benmanes.caffeine.cache.LoadingCache;
+import com.nimbusds.jose.JWSHeader;
 import com.nimbusds.jose.proc.SimpleSecurityContext;
 import com.nimbusds.jwt.JWTClaimsSet;
 import com.nimbusds.jwt.proc.DefaultJWTClaimsVerifier;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
+import org.jooq.lambda.Unchecked;
 import org.jose4j.jwk.JsonWebKeySet;
 import org.jose4j.jwk.PublicJsonWebKey;
 import org.jose4j.jwt.JwtClaims;
-import org.jspecify.annotations.NonNull;
 import org.pac4j.core.context.WebContext;
 import org.pac4j.core.profile.CommonProfile;
 import org.springframework.beans.factory.ObjectProvider;
@@ -41,13 +45,16 @@ import org.springframework.beans.factory.ObjectProvider;
  */
 @Slf4j
 public class OidcAccessTokenJwtBearerGrantRequestExtractor extends BaseAccessTokenGrantRequestExtractor<OidcConfigurationContext> {
-    private final ObjectProvider<@NonNull LoadingCache<@NonNull OidcJsonWebKeyCacheKey, Optional<JsonWebKeySet>>> oidcServiceJsonWebKeystoreCacheProvider;
+    private final ObjectProvider<LoadingCache<OidcJsonWebKeyCacheKey, Optional<JsonWebKeySet>>> oidcServiceJsonWebKeystoreCacheProvider;
+    private final ObjectProvider<ClientJwksRegistrationStore> clientJwksRegistrationStore;
 
     public OidcAccessTokenJwtBearerGrantRequestExtractor(
-        final ObjectProvider<@NonNull OidcConfigurationContext> config,
-        final ObjectProvider<@NonNull LoadingCache<@NonNull OidcJsonWebKeyCacheKey, Optional<JsonWebKeySet>>> oidcServiceJsonWebKeystoreCache) {
+        final ObjectProvider<OidcConfigurationContext> config,
+        final ObjectProvider<LoadingCache<OidcJsonWebKeyCacheKey, Optional<JsonWebKeySet>>> oidcServiceJsonWebKeystoreCache,
+        final ObjectProvider<ClientJwksRegistrationStore> clientJwksRegistrationStore) {
         super(config);
         this.oidcServiceJsonWebKeystoreCacheProvider = oidcServiceJsonWebKeystoreCache;
+        this.clientJwksRegistrationStore = clientJwksRegistrationStore;
     }
 
     @Override
@@ -111,8 +118,8 @@ public class OidcAccessTokenJwtBearerGrantRequestExtractor extends BaseAccessTok
         return service;
     }
 
-    protected JwtClaims extractAssertionClaims(final OidcRegisteredService registeredService, final String assertion) throws Exception {
-        val jsonWebKeys = getJsonWebKeyToVerifyAssertion(registeredService);
+    protected JwtClaims extractAssertionClaims(final OidcRegisteredService registeredService, final String assertion) throws Throwable {
+        val jsonWebKeys = getJsonWebKeyToVerifyAssertion(registeredService, assertion);
         val verifiedAssertion = verifyAssertion(assertion, jsonWebKeys);
         val claims = JwtClaims.parse(verifiedAssertion);
 
@@ -174,10 +181,31 @@ public class OidcAccessTokenJwtBearerGrantRequestExtractor extends BaseAccessTok
         return OAuth20ResponseTypes.NONE;
     }
 
-    protected List<PublicJsonWebKey> getJsonWebKeyToVerifyAssertion(final OAuthRegisteredService registeredService) {
-        val result = oidcServiceJsonWebKeystoreCacheProvider.getObject()
-            .get(new OidcJsonWebKeyCacheKey(registeredService, OidcJsonWebKeyUsage.SIGNING));
-        return Objects.requireNonNull(result)
+    protected List<PublicJsonWebKey> getJsonWebKeyToVerifyAssertion(
+        final OAuthRegisteredService registeredService, final String assertion) {
+        val keys = new JsonWebKeySet();
+
+        oidcServiceJsonWebKeystoreCacheProvider.getObject()
+            .get(new OidcJsonWebKeyCacheKey(registeredService, OidcJsonWebKeyUsage.SIGNING))
+            .ifPresent(set -> set.getJsonWebKeys().forEach(keys::addJsonWebKey));
+
+        clientJwksRegistrationStore.ifAvailable(Unchecked.consumer(store -> {
+            val jwtHeader = JwtBuilder.parseHeader(assertion);
+            if (jwtHeader instanceof JWSHeader jwsHeader) {
+                val jwk = jwsHeader.getJWK();
+                val kid = jwsHeader.getKeyID();
+                val jkt = jwk != null ? jwk.computeThumbprint().toString() : StringUtils.EMPTY;
+                store.findByJkt(jkt)
+                    .or(() -> store.findByJkt(kid))
+                    .map(ClientJwksRegistrationEntry::jwk)
+                    .ifPresent(registereredKey -> {
+                        val webKey = EncodingUtils.newJsonWebKey(registereredKey);
+                        keys.addJsonWebKey(webKey);
+                    });
+            }
+        }));
+
+        return Optional.of(keys)
             .stream()
             .map(JsonWebKeySet::getJsonWebKeys)
             .flatMap(List::stream)
