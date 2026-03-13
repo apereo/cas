@@ -2,6 +2,7 @@ package org.apereo.cas.oidc;
 
 import module java.base;
 import lombok.Getter;
+import lombok.RequiredArgsConstructor;
 import org.apache.commons.text.WordUtils;
 
 /**
@@ -212,6 +213,12 @@ public interface OidcConstants {
     String CLIENT_REGISTRATION_SCOPE = "client_registration_scope";
 
     /**
+     * The registration scope assigned to an access token,
+     * required to register client JWKS.
+     */
+    String CLIENT_JWKS_REGISTRATION_SCOPE = "client_jwks_registration_scope";
+
+    /**
      * Client configuration endpoint URL.
      */
     String CLIENT_CONFIGURATION_URL = "clientConfig";
@@ -290,6 +297,7 @@ public interface OidcConstants {
      * Standard openid connect scopes.
      */
     @Getter
+    @RequiredArgsConstructor
     enum StandardScopes {
 
         /**
@@ -329,10 +337,7 @@ public interface OidcConstants {
         OFFLINE_ACCESS("offline_access");
 
         private final String scope;
-
-        StandardScopes(final String scope) {
-            this.scope = scope;
-        }
+        
 
         public String getFriendlyName() {
             return WordUtils.capitalize(this.scope.replace('_', ' '));
