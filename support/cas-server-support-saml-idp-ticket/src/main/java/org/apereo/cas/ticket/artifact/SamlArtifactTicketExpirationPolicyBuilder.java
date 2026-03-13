@@ -6,6 +6,7 @@ import org.apereo.cas.configuration.support.Beans;
 import org.apereo.cas.ticket.ExpirationPolicy;
 import org.apereo.cas.ticket.ExpirationPolicyBuilder;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
+import lombok.RequiredArgsConstructor;
 import lombok.val;
 
 /**
@@ -15,9 +16,11 @@ import lombok.val;
  * @since 6.1.0
  */
 @JsonTypeInfo(use = JsonTypeInfo.Id.CLASS)
-public record SamlArtifactTicketExpirationPolicyBuilder(CasConfigurationProperties casProperties) implements ExpirationPolicyBuilder<SamlArtifactTicket> {
+@RequiredArgsConstructor
+public class SamlArtifactTicketExpirationPolicyBuilder implements ExpirationPolicyBuilder<SamlArtifactTicket> {
     @Serial
     private static final long serialVersionUID = -3597980180617072826L;
+    private final CasConfigurationProperties casProperties;
 
     @Override
     public ExpirationPolicy buildTicketExpirationPolicy() {
@@ -29,9 +32,10 @@ public record SamlArtifactTicketExpirationPolicyBuilder(CasConfigurationProperti
      *
      * @return the expiration policy
      */
-    public ExpirationPolicy toTicketExpirationPolicy() {
+    private ExpirationPolicy toTicketExpirationPolicy() {
         val timeToKillInSeconds = Beans.newDuration(casProperties.getTicket().getSt().getTimeToKillInSeconds()).toSeconds();
         return new SamlArtifactTicketExpirationPolicy(timeToKillInSeconds);
     }
+
 }
 

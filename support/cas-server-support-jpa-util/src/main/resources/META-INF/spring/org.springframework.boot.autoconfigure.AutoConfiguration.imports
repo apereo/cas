@@ -1,1 +1,2 @@
 org.apereo.cas.config.CasConditionalDataSourceAutoConfiguration
+org.apereo.cas.config.CasJpaUtilAutoConfiguration
