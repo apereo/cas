@@ -151,6 +151,11 @@ to [register their JWKS dynamically](../authentication/OIDC-Authentication-JWKS-
 
 The [Palantir Admin Console](../installation/Admin-Dashboard.html) is also updated to support interacting
 with this feature.
+ 
+### Google Cloud Storage SAML2 Metadata
+
+CAS is now able to use Google Cloud Storage as a storage and management option for SAML2 identity provider metadata.
+See [this guide](../installation/Configuring-SAML2-DynamicMetadata-GCP-Storage.html) for more details.
 
 ## Other Stuff
 
