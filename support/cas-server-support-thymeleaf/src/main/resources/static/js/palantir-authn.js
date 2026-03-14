@@ -13,7 +13,7 @@ function generateAuthnHandlerConfiguration() {
 
     if (currentType === "LDAP") {
         const subtype = $("#ldapAuthenticationHandlerType").val();
-        prefix = "cas.authn.ldap[]";
+        prefix = $("#ldapAuthenticationHandlerType option:selected").data("prefix");
         lines.push(`${prefix}.type=${subtype}`);
     } else {
         prefix = $("#jdbcAuthenticationHandlerType option:selected").data("prefix");
@@ -206,9 +206,9 @@ function openNewAuthenticationHandlerDialog() {
         labelTitle: "Authentication Type:",
         id: "ldapAuthenticationHandlerType",
         options: [
-            {value: "AUTHENTICATED", text: "AUTHENTICATED"},
-            {value: "AD", text: "ACTIVE DIRECTORY"},
-            {value: "DIRECT", text: "DIRECT"}
+            {value: "AUTHENTICATED", text: "AUTHENTICATED", data: {prefix: "cas.authn.ldap[]"}},
+            {value: "AD", text: "ACTIVE DIRECTORY", data: {prefix: "cas.authn.ldap[]"}},
+            {value: "DIRECT", text: "DIRECT", data: {prefix: "cas.authn.ldap[]"}}
         ],
         cssClasses: "LDAP",
         labelCssClasses: "display-flex"
@@ -809,6 +809,68 @@ function openNewAuthenticationHandlerDialog() {
         title: "New Authentication Handler",
         buttons: {
             "Add Authentication Handler": function () {
+                const $dialog = $(this);
+                const editor = ace.edit("authnHandlerEditor");
+                const editorContent = editor ? editor.getValue().trim() : "";
+                function submitAuthenticationHandler(propertySource) {
+                    const payload = [];
+                    editorContent.split(/\r?\n/).forEach(line => {
+                        line = line.trim();
+                        if (!line || line.startsWith("#") || line.startsWith("!")) {
+                            return;
+                        }
+                        const idx = line.indexOf("=");
+                        if (idx === -1) {
+                            return;
+                        }
+                        const entry = {
+                            name: line.substring(0, idx).trim(),
+                            value: line.substring(idx + 1).trim()
+                        };
+                        if (propertySource) {
+                            entry.propertySource = propertySource;
+                        }
+                        payload.push(entry);
+                    });
+
+                    $.ajax({
+                        url: `${CasActuatorEndpoints.casConfig()}/update`,
+                        method: "POST",
+                        contentType: "application/json",
+                        data: JSON.stringify(payload),
+                        success: response => {
+                            $dialog.dialog("close");
+                            $.get(CasActuatorEndpoints.env(), async res => {
+                                reloadConfigurationTable(res);
+                                refreshCasServerConfiguration(`New Authentication Handler Created`);
+                            })
+                                .fail((xhr) => {
+                                    displayBanner(xhr);
+                                });
+                        },
+                        error: (xhr, status, error) => {
+                            console.error(`Error: ${status} / ${error} / ${xhr.responseText}`);
+                            displayBanner(xhr);
+                        }
+                    });
+                }
+
+                if (mutablePropertySources.length === 1) {
+                    submitAuthenticationHandler(mutablePropertySources[0]);
+                } else {
+                    Swal.fire({
+                        title: "Which property source should receive the configuration?",
+                        input: "select",
+                        icon: "question",
+                        inputOptions: mutablePropertySources,
+                        inputPlaceholder: "Choose a property source...",
+                        showCancelButton: true
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            submitAuthenticationHandler(mutablePropertySources[Number(result.value)]);
+                        }
+                    });
+                }
             },
             Cancel: function () {
                 $(this).dialog("close");
@@ -902,6 +964,27 @@ function openNewAuthenticationHandlerDialog() {
     dialogContainer.dialog("open");
 }
 
+function reloadAuthenticationHandlersTable() {
+    const authenticationHandlersTable = $("#authenticationHandlersTable").DataTable();
+    authenticationHandlersTable.clear();
+    if (CasActuatorEndpoints.authenticationHandlers()) {
+        $.get(CasActuatorEndpoints.authenticationHandlers(), response => {
+            for (const handler of response) {
+                authenticationHandlersTable.row.add({
+                    0: `${handler.name}`,
+                    1: `<code>${handler.type}</code>`,
+                    2: `<code>${handler.state}</code>`,
+                    3: `<code>${handler.order}</code>`
+                });
+            }
+            authenticationHandlersTable.draw();
+        }).fail((xhr, status, error) => {
+            console.error("Error fetching data:", error);
+            displayBanner(xhr);
+        });
+    }
+}
+
 async function initializeAuthenticationOperations() {
     const authnHandlersToolbar = document.createElement("div");
     let authnHandlersToolbarEntries = "";
@@ -946,23 +1029,7 @@ async function initializeAuthenticationOperations() {
         }
     });
 
-    authenticationHandlersTable.clear();
-    if (CasActuatorEndpoints.authenticationHandlers()) {
-        $.get(CasActuatorEndpoints.authenticationHandlers(), response => {
-            for (const handler of response) {
-                authenticationHandlersTable.row.add({
-                    0: `${handler.name}`,
-                    1: `<code>${handler.type}</code>`,
-                    2: `<code>${handler.state}</code>`,
-                    3: `<code>${handler.order}</code>`
-                });
-            }
-            authenticationHandlersTable.draw();
-        }).fail((xhr, status, error) => {
-            console.error("Error fetching data:", error);
-            displayBanner(xhr);
-        });
-    }
+    reloadAuthenticationHandlersTable();
 
     const authenticationPoliciesTable = $("#authenticationPoliciesTable").DataTable({
         pageLength: 10,
