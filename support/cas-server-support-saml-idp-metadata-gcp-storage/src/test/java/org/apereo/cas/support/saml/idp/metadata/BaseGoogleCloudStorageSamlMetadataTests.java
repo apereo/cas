@@ -18,6 +18,7 @@ import com.google.cloud.spring.core.UserAgentHeaderProvider;
 import com.google.cloud.storage.Storage;
 import com.google.cloud.storage.StorageOptions;
 import lombok.val;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -45,6 +46,7 @@ import org.springframework.context.annotation.Bean;
 })
 @ExtendWith(CasTestExtension.class)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
+@Tag("GCP")
 abstract class BaseGoogleCloudStorageSamlMetadataTests {
     @Autowired
     protected CasConfigurationProperties casProperties;
