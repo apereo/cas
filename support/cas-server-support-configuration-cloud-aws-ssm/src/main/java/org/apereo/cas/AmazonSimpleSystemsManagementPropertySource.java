@@ -87,7 +87,12 @@ public class AmazonSimpleSystemsManagementPropertySource extends EnumerablePrope
 
     @Override
     public void removeAll() {
-        properties.keySet().forEach(this::removeProperty);
+        val iterator = properties.keySet().iterator();
+        while (iterator.hasNext()) {
+            val path = properties.get(iterator.next()).path();
+            getSource().deleteParameter(builder -> builder.name(path).build());
+            iterator.remove();
+        }
         properties.clear();
     }
 
