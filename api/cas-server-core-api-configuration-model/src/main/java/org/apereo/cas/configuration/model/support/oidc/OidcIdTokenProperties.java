@@ -45,13 +45,10 @@ public class OidcIdTokenProperties implements Serializable {
      * as a last resort, to stay compliant with the specification as much as possible.
      * <strong>DO NOT</strong> use this setting without due consideration.
      * <p>
-     * Note that this setting is set to {@code true} by default mainly
-     * provided to preserve backward compatibility with
-     * previous CAS versions that included claims into the ID token without considering
-     * the response type. The behavior of this setting may change and it may be removed
+     * Note that the behavior of this setting may change and it may be removed
      * in future CAS releases.
      */
-    private boolean includeIdTokenClaims = true;
+    private boolean includeIdTokenClaims = false;
 
     /**
      * Flag to indicate whether the JWT bearer grant type is supported
