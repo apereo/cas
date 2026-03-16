@@ -14,6 +14,7 @@ import org.apereo.cas.authentication.principal.DefaultDelegatedAuthenticationCre
 import org.apereo.cas.authentication.principal.DelegatedAuthenticationCredentialExtractor;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.authentication.principal.PrincipalFactoryUtils;
+import org.apereo.cas.authentication.principal.PrincipalNameTransformerUtils;
 import org.apereo.cas.authentication.principal.PrincipalResolver;
 import org.apereo.cas.authentication.principal.provision.ChainingDelegatedClientUserProfileProvisioner;
 import org.apereo.cas.authentication.principal.provision.DelegatedClientUserProfileProvisioner;
@@ -217,6 +218,7 @@ class DelegatedAuthenticationEventExecutionPlanConfiguration {
                 delegatedClientDistributedSessionStore, applicationContext);
             handler.setTypedIdUsed(pac4j.isTypedIdUsed());
             handler.setPrincipalAttributeId(pac4j.getPrincipalIdAttribute());
+            handler.setPrincipalNameTransformer(PrincipalNameTransformerUtils.newPrincipalNameTransformer(pac4j.getPrincipalTransformation()));
             return handler;
         }
 
