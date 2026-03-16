@@ -75,7 +75,7 @@ class SLOSamlIdPPostProfileHandlerControllerTests {
         }
 
         @Test
-        void verifyUnsignedRequestFails() throws Throwable {
+        void verifyUnsignedRequestFails() {
             val request = new MockHttpServletRequest();
             request.setMethod("POST");
             val response = new MockHttpServletResponse();

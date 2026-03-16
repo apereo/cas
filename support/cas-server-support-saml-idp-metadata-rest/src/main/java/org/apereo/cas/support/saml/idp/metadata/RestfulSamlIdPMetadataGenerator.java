@@ -52,7 +52,7 @@ public class RestfulSamlIdPMetadataGenerator extends BaseSamlIdPMetadataGenerato
 
     @Override
     protected SamlIdPMetadataDocument finalizeMetadataDocument(final SamlIdPMetadataDocument doc,
-                                                               final Optional<SamlRegisteredService> registeredService) throws Exception {
+                                                               final Optional<SamlRegisteredService> registeredService) {
         doc.setAppliesTo(getAppliesToFor(registeredService));
         val properties = getConfigurationContext().getCasProperties().getAuthn().getSamlIdp().getMetadata().getRest();
         val url = Strings.CI.appendIfMissing(properties.getUrl(), "/").concat("idp");

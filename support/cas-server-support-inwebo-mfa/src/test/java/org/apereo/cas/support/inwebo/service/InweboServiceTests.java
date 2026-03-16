@@ -167,7 +167,7 @@ class InweboServiceTests {
     }
 
     @Test
-    void verifyCheckPushResult() throws Throwable {
+    void verifyCheckPushResult() {
         val data = MAPPER.writeValueAsString(Map.of("err", "OK", "name", "Device", "sessionId", "123456"));
         try (val webServer = new MockWebServer(serviceApiPort,
             new ByteArrayResource(data.getBytes(StandardCharsets.UTF_8), "REST Output"),
@@ -178,7 +178,7 @@ class InweboServiceTests {
     }
 
     @Test
-    void verifyAuthExtended() throws Throwable {
+    void verifyAuthExtended() {
         val data = MAPPER.writeValueAsString(Map.of("err", "OK", "name", "Device", "sessionId", "123456"));
         try (val webServer = new MockWebServer(serviceApiPort,
             new ByteArrayResource(data.getBytes(StandardCharsets.UTF_8), "REST Output"),
@@ -189,7 +189,7 @@ class InweboServiceTests {
     }
 
     @Test
-    void verifyPush() throws Throwable {
+    void verifyPush() {
         val data = MAPPER.writeValueAsString(Map.of("err", "OK", "name", "Device", "sessionId", "123456"));
         try (val webServer = new MockWebServer(serviceApiPort,
             new ByteArrayResource(data.getBytes(StandardCharsets.UTF_8), "REST Output"),

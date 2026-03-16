@@ -7,6 +7,7 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.Strings;
+import org.jspecify.annotations.NonNull;
 import org.jspecify.annotations.Nullable;
 import org.springframework.core.env.EnumerablePropertySource;
 import software.amazon.awssdk.services.ssm.SsmClient;
@@ -89,7 +90,7 @@ public class AmazonSimpleSystemsManagementPropertySource extends EnumerablePrope
     public void removeAll() {
         val iterator = properties.keySet().iterator();
         while (iterator.hasNext()) {
-            val path = properties.get(iterator.next()).path();
+            val path = Objects.requireNonNull(properties.get(iterator.next())).path();
             getSource().deleteParameter(builder -> builder.name(path).build());
             iterator.remove();
         }

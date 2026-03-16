@@ -124,7 +124,7 @@ class InMemoryGoogleAuthenticatorTokenCredentialRepositoryTests {
         private OneTimeTokenCredentialRepository googleAuthenticatorAccountRegistry;
 
         @Test
-        void verifyCreate() throws Throwable {
+        void verifyCreate() {
             val casuser = UUID.randomUUID().toString();
             val account = googleAuthenticatorAccountRegistry.create(casuser);
             account.setTenant("shire");

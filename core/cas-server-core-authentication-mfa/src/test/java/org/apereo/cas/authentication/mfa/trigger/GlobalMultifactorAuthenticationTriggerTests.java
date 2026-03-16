@@ -76,7 +76,7 @@ class GlobalMultifactorAuthenticationTriggerTests {
     @Import(BaseMultifactorAuthenticationTriggerTests.TestMultifactorTestConfiguration.class)
     class ManyProvidersTests extends BaseMultifactorAuthenticationTriggerTests {
         @Test
-        void verifyOperationByManyProviders() throws Throwable {
+        void verifyOperationByManyProviders() {
             assertThrows(AuthenticationException.class,
                 () -> globalMultifactorAuthenticationTrigger.isActivated(
                     CoreAuthenticationTestUtils.getAuthentication(), CoreAuthenticationTestUtils.getRegisteredService(),
@@ -120,7 +120,7 @@ class GlobalMultifactorAuthenticationTriggerTests {
     @TestPropertySource(properties = "cas.authn.mfa.triggers.global.global-provider-id=mfa-unknown")
     class UnresolvedProviderTests extends BaseMultifactorAuthenticationTriggerTests {
         @Test
-        void verifyProvider() throws Throwable {
+        void verifyProvider() {
             assertThrows(AuthenticationException.class,
                 () -> globalMultifactorAuthenticationTrigger.isActivated(
                     CoreAuthenticationTestUtils.getAuthentication(), CoreAuthenticationTestUtils.getRegisteredService(),

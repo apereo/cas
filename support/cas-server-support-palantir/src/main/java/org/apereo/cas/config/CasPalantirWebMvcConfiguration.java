@@ -60,7 +60,7 @@ class CasPalantirWebMvcConfiguration {
     public CasWebSecurityConfigurer<HttpSecurity> palantirEndpointWebSecurityConfigurer() {
         return new CasWebSecurityConfigurer<>() {
             @Override
-            public CasWebSecurityConfigurer<HttpSecurity> finish(final HttpSecurity http) throws Exception {
+            public CasWebSecurityConfigurer<HttpSecurity> finish(final HttpSecurity http) {
                 val successHandler = new SavedRequestAwareAuthenticationSuccessHandler();
                 successHandler.setTargetUrlParameter("redirectTo");
                 successHandler.setDefaultTargetUrl(PalantirConstants.URL_PATH_PALANTIR);

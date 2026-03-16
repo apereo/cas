@@ -214,7 +214,7 @@ public class CasWebSecurityConfigurerAdapter {
             }));
     }
 
-    protected void configureEndpointAccessForStaticResources(final HttpSecurity requests) throws Exception {
+    protected void configureEndpointAccessForStaticResources(final HttpSecurity requests) {
         requests.authorizeHttpRequests(customizer -> {
             customizer.requestMatchers(PathRequest.toStaticResources().atCommonLocations()).permitAll();
             customizer.requestMatchers(PathPatternRequestMatcher.withDefaults().matcher("/resources/**")).permitAll();
@@ -235,7 +235,7 @@ public class CasWebSecurityConfigurerAdapter {
         });
     }
 
-    protected void configureEndpointAccessByFormLogin(final HttpSecurity http) throws Exception {
+    protected void configureEndpointAccessByFormLogin(final HttpSecurity http) {
         if (casProperties.getMonitor().getEndpoints().isFormLoginEnabled()) {
             http.formLogin(customize -> customize.loginPage(CasWebSecurityConfigurer.ENDPOINT_URL_ADMIN_FORM_LOGIN));
         } else {
@@ -258,31 +258,31 @@ public class CasWebSecurityConfigurerAdapter {
     }
 
     protected void configureEndpointAccessPermitAll(final HttpSecurity requests,
-                                                    final EndpointRequest.EndpointRequestMatcher endpoint) throws Exception {
+                                                    final EndpointRequest.EndpointRequestMatcher endpoint) {
         requests.authorizeHttpRequests(customizer -> customizer.requestMatchers(endpoint).permitAll());
     }
 
     protected void configureEndpointAccessToDenyAll(final HttpSecurity requests,
-                                                    final EndpointRequest.EndpointRequestMatcher endpoint) throws Exception {
+                                                    final EndpointRequest.EndpointRequestMatcher endpoint) {
         requests.authorizeHttpRequests(customizer -> customizer.requestMatchers(endpoint).denyAll());
     }
 
     protected void configureEndpointAccessAnonymously(final HttpSecurity requests,
-                                                      final EndpointRequest.EndpointRequestMatcher endpoint) throws Exception {
+                                                      final EndpointRequest.EndpointRequestMatcher endpoint) {
 
         requests.authorizeHttpRequests(customizer -> customizer.requestMatchers(endpoint).permitAll());
     }
 
     protected void configureEndpointAccessByIpAddress(final HttpSecurity requests,
                                                       final ActuatorEndpointProperties properties,
-                                                      final EndpointRequest.EndpointRequestMatcher endpoint) throws Exception {
+                                                      final EndpointRequest.EndpointRequestMatcher endpoint) {
         requests.authorizeHttpRequests(customizer -> customizer.requestMatchers(endpoint)
             .access(new IpAddressAuthorizationManager(casProperties, properties)));
     }
 
     protected void configureEndpointAccessAuthenticated(
         final HttpSecurity http,
-        final EndpointRequest.EndpointRequestMatcher endpoint) throws Exception {
+        final EndpointRequest.EndpointRequestMatcher endpoint) {
         http.authorizeHttpRequests(customizer -> customizer.requestMatchers(endpoint).authenticated())
             .httpBasic(customizer -> customizer.addObjectPostProcessor(basicAuthFilterPostProcessor));
     }
@@ -290,7 +290,7 @@ public class CasWebSecurityConfigurerAdapter {
     protected void configureEndpointAccessByRole(
         final HttpSecurity http,
         final ActuatorEndpointProperties properties,
-        final EndpointRequest.EndpointRequestMatcher endpoint) throws Exception {
+        final EndpointRequest.EndpointRequestMatcher endpoint) {
         http.authorizeHttpRequests(customizer -> customizer.requestMatchers(endpoint)
                 .hasAnyRole(properties.getRequiredRoles().toArray(ArrayUtils.EMPTY_STRING_ARRAY)))
             .httpBasic(customizer -> customizer.addObjectPostProcessor(basicAuthFilterPostProcessor));
@@ -299,7 +299,7 @@ public class CasWebSecurityConfigurerAdapter {
     protected void configureEndpointAccessByAuthority(
         final HttpSecurity http,
         final ActuatorEndpointProperties properties,
-        final EndpointRequest.EndpointRequestMatcher endpoint) throws Exception {
+        final EndpointRequest.EndpointRequestMatcher endpoint) {
         http.authorizeHttpRequests(customizer -> customizer.requestMatchers(endpoint)
                 .hasAnyAuthority(properties.getRequiredAuthorities().toArray(ArrayUtils.EMPTY_STRING_ARRAY)))
             .httpBasic(customizer -> customizer.addObjectPostProcessor(basicAuthFilterPostProcessor));

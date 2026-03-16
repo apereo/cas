@@ -103,14 +103,14 @@ class RestfulServiceRegistryTests extends AbstractServiceRegistryTests {
             }
 
             @PostMapping(produces = MediaType.APPLICATION_JSON_VALUE)
-            public ResponseEntity save(@RequestBody final String service) throws Exception {
+            public ResponseEntity save(@RequestBody final String service) {
                 val registeredService = MAPPER.readValue(service, RegisteredService.class);
                 serviceRegistry.save(registeredService);
                 return ResponseEntity.ok(MAPPER.writeValueAsString(registeredService));
             }
 
             @GetMapping(path = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
-            public ResponseEntity findServiceById(@PathVariable(name = "id") final String id) throws Exception {
+            public ResponseEntity findServiceById(@PathVariable(name = "id") final String id) {
                 if (NumberUtils.isParsable(id)) {
                     return ResponseEntity.ok(MAPPER.writeValueAsString(serviceRegistry.findServiceById(Long.parseLong(id))));
                 }
@@ -118,7 +118,7 @@ class RestfulServiceRegistryTests extends AbstractServiceRegistryTests {
             }
 
             @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
-            public ResponseEntity load() throws Exception {
+            public ResponseEntity load() {
                 return ResponseEntity.ok(MAPPER.writeValueAsString(serviceRegistry.load()));
             }
         }

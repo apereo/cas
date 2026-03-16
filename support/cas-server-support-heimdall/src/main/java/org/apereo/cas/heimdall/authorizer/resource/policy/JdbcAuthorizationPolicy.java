@@ -57,7 +57,7 @@ public class JdbcAuthorizationPolicy implements ResourceAuthorizationPolicy {
     private transient NamedParameterJdbcTemplate jdbcTemplate;
 
     @Override
-    public AuthorizationResult evaluate(final AuthorizableResource resource, final AuthorizationRequest request) throws Throwable {
+    public AuthorizationResult evaluate(final AuthorizableResource resource, final AuthorizationRequest request) {
         this.jdbcTemplate = Objects.requireNonNullElseGet(this.jdbcTemplate, this::buildJdbcTemplate);
         val parameters = buildMapSqlParameterSource(request);
         return jdbcTemplate.query(query, parameters, rs -> {

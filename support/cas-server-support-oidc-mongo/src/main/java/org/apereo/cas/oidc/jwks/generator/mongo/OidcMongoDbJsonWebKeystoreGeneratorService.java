@@ -31,7 +31,7 @@ public class OidcMongoDbJsonWebKeystoreGeneratorService implements OidcJsonWebKe
     private final OidcProperties oidcProperties;
 
     @Override
-    public Resource generate() throws Exception {
+    public Resource generate() {
         return find()
             .orElseGet(Unchecked.supplier(() -> {
                 val jsonWebKeySet = OidcJsonWebKeystoreGeneratorService.generateJsonWebKeySet(oidcProperties);

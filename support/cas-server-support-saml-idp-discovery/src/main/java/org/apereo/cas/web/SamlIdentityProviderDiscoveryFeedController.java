@@ -112,7 +112,7 @@ public class SamlIdentityProviderDiscoveryFeedController extends AbstractRestCon
         @RequestParam("entityID")
         final String entityID,
         final HttpServletRequest httpServletRequest,
-        final HttpServletResponse httpServletResponse) throws Throwable {
+        final HttpServletResponse httpServletResponse) {
         val provider = samlIdentityProviderDiscoveryFeedService.getProvider(entityID, httpServletRequest, httpServletResponse);
         return new RedirectView('/' + provider.getRedirectUrl(), true, true, true);
     }

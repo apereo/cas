@@ -28,7 +28,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @ExtendWith(CasTestExtension.class)
 class JacksonObjectMapperFactoryTests {
     @Test
-    void verifyYamlFactory() throws Throwable {
+    void verifyYamlFactory() {
         val mapper = JacksonObjectMapperFactory.builder()
             .jsonFactory(new YAMLFactory())
             .build()
@@ -40,7 +40,7 @@ class JacksonObjectMapperFactoryTests {
     }
 
     @Test
-    void verifyXMLFactory() throws Throwable {
+    void verifyXMLFactory() {
         val mapper = JacksonObjectMapperFactory.builder()
             .jsonFactory(new XmlFactory())
             .build()
@@ -52,7 +52,7 @@ class JacksonObjectMapperFactoryTests {
     }
 
     @Test
-    void verifyInjectableWithoutValue() throws Throwable {
+    void verifyInjectableWithoutValue() {
         val mapper = JacksonObjectMapperFactory.builder()
             .defaultTypingEnabled(false)
             .injectableValues(Map.of("firstName", "CAS"))
@@ -63,7 +63,7 @@ class JacksonObjectMapperFactoryTests {
     }
 
     @Test
-    void verifyInjectableWithValue() throws Throwable {
+    void verifyInjectableWithValue() {
         val values = new HashMap<String, Object>();
         values.put("firstName", "CAS");
         values.put("status", "true");
@@ -82,7 +82,7 @@ class JacksonObjectMapperFactoryTests {
     }
 
     @Test
-    void verifyEmptyInjectable() throws Throwable {
+    void verifyEmptyInjectable() {
         val mapper = JacksonObjectMapperFactory.builder()
             .defaultTypingEnabled(false)
             .build()

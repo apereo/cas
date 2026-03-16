@@ -119,7 +119,7 @@ class SyncopePersonAttributeDaoTests {
         private PersonAttributeDao attributeRepository;
 
         @Test
-        void verifyUserIsFound() throws Throwable {
+        void verifyUserIsFound() {
             val result = MAPPER.createObjectNode();
             result.putArray("result").add(user());
             try (val _ = startMockSever(result, HttpStatus.OK, 8095)) {
@@ -134,7 +134,7 @@ class SyncopePersonAttributeDaoTests {
         }
 
         @Test
-        void verifyUserIsNotFound() throws Throwable {
+        void verifyUserIsNotFound() {
             val result = MAPPER.createObjectNode();
             result.putArray("result");
             try (val _ = startMockSever(result, HttpStatus.OK, 8095)) {
@@ -145,7 +145,7 @@ class SyncopePersonAttributeDaoTests {
         }
 
         @Test
-        void verifySyncopeDown() throws Throwable {
+        void verifySyncopeDown() {
             val result = MAPPER.createObjectNode();
             result.putArray("result").add(user());
             try (val _ = startMockSever(result, HttpStatus.INTERNAL_SERVER_ERROR, 8095)) {

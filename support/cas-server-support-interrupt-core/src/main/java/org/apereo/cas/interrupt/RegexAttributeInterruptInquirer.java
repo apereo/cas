@@ -43,9 +43,6 @@ public class RegexAttributeInterruptInquirer extends BaseInterruptInquirer {
                 return values.stream().anyMatch(value -> value.toString().matches(this.interruptAttributeValue));
             })
             .findAny();
-        if (result.isPresent()) {
-            return InterruptResponse.interrupt();
-        }
-        return InterruptResponse.none();
+        return result.isPresent() ? InterruptResponse.interrupt() : InterruptResponse.none();
     }
 }

@@ -25,7 +25,7 @@ public class GoogleAuthenticatorAuthorizeTokenAttemptAction extends BaseCasWebfl
     private final CasConfigurationProperties casProperties;
 
     @Override
-    protected @Nullable Event doExecuteInternal(final RequestContext requestContext) throws Throwable {
+    protected @Nullable Event doExecuteInternal(final RequestContext requestContext) {
         val maxAllowedAttempts = casProperties.getAuthn().getMfa().getGauth().getCore().getMaximumAuthenticationAttempts();
         val credential = Objects.requireNonNull(WebUtils.getCredential(requestContext));
         var attemptCounter = requestContext.getFlowScope().get(FLOW_SCOPE_ATTEMPT_COUNTER, Integer.class, 0);
