@@ -108,7 +108,9 @@ async function passwordResetFlowWithAccountProfileWithoutTrustedDevice(browser) 
     await cas.goto(page, "https://localhost:8443/cas/account");
     await cas.sleep(1000);
     await cas.click(page, "#linkPasswordManagement");
-    await cas.sleep(10000);
+    await cas.sleep(1000);
+    await cas.click(page, ".swal2-confirm");
+    await cas.sleep(5000);
     await cas.assertCookie(page, false);
     await cas.assertInnerText(page, "#content h2", "Answer Security Questions");
     await cas.type(page, "#q0", "Salad");
