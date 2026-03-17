@@ -39,6 +39,7 @@ dependencies {
     implementation libraries.snakeyaml
     implementation libraries.jose4j
     implementation libraries.springsecurityweb
+    implementation libraries.springsecuritycas
     implementation libraries.springsecurityconfig
 
     runtimeOnly libraries.webjars

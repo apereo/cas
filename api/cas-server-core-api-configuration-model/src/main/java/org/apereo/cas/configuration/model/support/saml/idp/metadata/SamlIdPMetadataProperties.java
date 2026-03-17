@@ -90,4 +90,10 @@ public class SamlIdPMetadataProperties implements Serializable {
      */
     @NestedConfigurationProperty
     private MDQSamlMetadataProperties mdq = new MDQSamlMetadataProperties();
+
+    /**
+     * Metadata management settings via GCP Storage.
+     */
+    @NestedConfigurationProperty
+    private GoogleCloudStorageSamlMetadataProperties gcp = new GoogleCloudStorageSamlMetadataProperties();
 }

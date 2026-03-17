@@ -7,6 +7,7 @@ import org.apereo.cas.util.scripting.ExecutableCompiledScript;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.jspecify.annotations.Nullable;
 import org.springframework.beans.factory.DisposableBean;
 
 /**
@@ -21,7 +22,7 @@ public class GroovyRegisteredServiceAccessStrategyEnforcer implements Registered
     private final ExecutableCompiledScript script;
 
     @Override
-    public AuditableExecutionResult execute(final AuditableContext context) throws Throwable {
+    public @Nullable AuditableExecutionResult execute(final AuditableContext context) throws Throwable {
         val args = new Object[]{context, LOGGER};
         return script.execute(args, AuditableExecutionResult.class, true);
     }

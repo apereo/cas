@@ -20,7 +20,7 @@ public class PasswordStrengthAuthenticationPostProcessor implements Authenticati
     private final PasswordValidationService passwordValidationService;
 
     @Override
-    public void process(final AuthenticationBuilder builder, final AuthenticationTransaction transaction) throws Throwable {
+    public void process(final AuthenticationBuilder builder, final AuthenticationTransaction transaction) {
         val primaryCredential = (UsernamePasswordCredential) transaction.getPrimaryCredential().orElseThrow();
         if (!passwordValidationService.isAcceptedByPasswordPolicy(primaryCredential.toPassword())) {
             throw new WeakPasswordException(primaryCredential);

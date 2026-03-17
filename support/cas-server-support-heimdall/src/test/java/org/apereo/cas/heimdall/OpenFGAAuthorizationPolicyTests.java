@@ -43,7 +43,7 @@ class OpenFGAAuthorizationPolicyTests {
 
     @ParameterizedTest
     @ValueSource(booleans = {true, false})
-    void verifyOperation(final boolean allowed) throws Throwable {
+    void verifyOperation(final boolean allowed) {
         val mapper = JacksonObjectMapperFactory.builder().defaultTypingEnabled(false).build().toObjectMapper();
         val strategy = new OpenFGAAuthorizationPolicy();
         strategy.setRelation("reader");

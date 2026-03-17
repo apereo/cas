@@ -146,7 +146,7 @@ public class RestfulConsentRepository implements ConsentRepository {
     }
 
     @Override
-    public ConsentDecision storeConsentDecision(final ConsentDecision decision) throws Throwable {
+    public ConsentDecision storeConsentDecision(final ConsentDecision decision) {
         HttpResponse response = null;
         try {
             val headers = new HashMap<String, String>();

@@ -12,6 +12,7 @@ import org.apereo.cas.services.query.RegisteredServiceQuery;
 import lombok.Getter;
 import lombok.val;
 import org.apereo.inspektr.audit.annotation.Audit;
+import org.jspecify.annotations.Nullable;
 import org.springframework.core.annotation.AnnotationAwareOrderComparator;
 
 /**
@@ -40,7 +41,7 @@ public class DefaultChainingServicesManager implements ChainingServicesManager {
         actionResolverName = AuditActionResolvers.SAVE_SERVICE_ACTION_RESOLVER,
         resourceResolverName = AuditResourceResolvers.SAVE_SERVICE_RESOURCE_RESOLVER)
     @Override
-    public RegisteredService save(final RegisteredService registeredService) {
+    public @Nullable RegisteredService save(final RegisteredService registeredService) {
         val manager = findServicesManager(registeredService);
         return manager.map(servicesManager -> servicesManager.save(registeredService)).orElse(null);
     }
@@ -49,7 +50,7 @@ public class DefaultChainingServicesManager implements ChainingServicesManager {
         actionResolverName = AuditActionResolvers.SAVE_SERVICE_ACTION_RESOLVER,
         resourceResolverName = AuditResourceResolvers.SAVE_SERVICE_RESOURCE_RESOLVER)
     @Override
-    public RegisteredService save(final RegisteredService registeredService, final boolean publishEvent) {
+    public @Nullable RegisteredService save(final RegisteredService registeredService, final boolean publishEvent) {
         val manager = findServicesManager(registeredService);
         return manager.map(servicesManager -> servicesManager.save(registeredService, publishEvent)).orElse(null);
     }
@@ -158,7 +159,9 @@ public class DefaultChainingServicesManager implements ChainingServicesManager {
     public Collection<RegisteredService> load() {
         return serviceManagers
             .stream()
-            .flatMap(manager -> manager.load().stream())
+            .map(ServicesManager::load)
+            .filter(Objects::nonNull)
+            .flatMap(Collection::stream)
             .collect(Collectors.toList());
     }
 

@@ -56,7 +56,7 @@ class RegisteredServiceMutantRegexAttributeFilterTests {
     }
 
     @Test
-    void verifySerializeARegisteredServiceRegexAttributeFilterToJson() throws IOException {
+    void verifySerializeARegisteredServiceRegexAttributeFilterToJson() {
         this.filter.setPatterns(Map.of("memberOf", CollectionUtils.wrapList("^mar(.+)", "^mat(.+)", "prefix$1")));
         this.filter.setExcludeUnmappedAttributes(true);
         this.filter.setCaseInsensitive(true);

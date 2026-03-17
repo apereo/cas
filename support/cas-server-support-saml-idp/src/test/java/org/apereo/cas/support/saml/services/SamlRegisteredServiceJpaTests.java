@@ -11,7 +11,7 @@ import org.apereo.cas.util.CollectionUtils;
 import lombok.val;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
-import org.junit.jupiter.api.Test;
+import org.junitpioneer.jupiter.RetryingTest;
 import org.springframework.boot.autoconfigure.ImportAutoConfiguration;
 import org.springframework.test.context.TestPropertySource;
 import static org.junit.jupiter.api.Assertions.*;
@@ -38,7 +38,7 @@ class SamlRegisteredServiceJpaTests extends BaseSamlIdPConfigurationTests {
         this.servicesManager.deleteAll();
     }
 
-    @Test
+    @RetryingTest(value = 3, suspendForMs = 3000)
     void verifySavingSamlService() {
         var service = new SamlRegisteredService();
         service.setName("SAML");

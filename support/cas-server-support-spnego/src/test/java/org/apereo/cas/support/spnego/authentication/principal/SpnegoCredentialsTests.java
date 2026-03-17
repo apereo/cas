@@ -47,7 +47,7 @@ class SpnegoCredentialsTests {
     }
 
     @Test
-    void verifyToStringWithToken() throws Throwable {
+    void verifyToStringWithToken() {
         val credentials = new SpnegoCredential(new byte[16]);
         credentials.setNextToken(new byte[16]);
         assertFalse(MAPPER.writeValueAsString(credentials).contains("initToken"));
@@ -56,7 +56,7 @@ class SpnegoCredentialsTests {
     }
 
     @Test
-    void verifyJsonWithToken() throws Throwable {
+    void verifyJsonWithToken() {
         val credentials = new SpnegoCredential(new byte[16]);
         credentials.setNextToken(new byte[16]);
         assertFalse(MAPPER.writeValueAsString(credentials).contains("initToken"));

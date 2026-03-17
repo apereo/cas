@@ -35,7 +35,7 @@ public class SimpleInterruptTrackingEngine implements InterruptTrackingEngine {
     private final CasConfigurationProperties casProperties;
 
     @Override
-    public void trackInterrupt(final RequestContext requestContext, final InterruptResponse response) throws Throwable {
+    public void trackInterrupt(final RequestContext requestContext, final InterruptResponse response) {
         val httpRequest = WebUtils.getHttpServletRequestFromExternalWebflowContext(requestContext);
         val httpResponse = WebUtils.getHttpServletResponseFromExternalWebflowContext(requestContext);
         val authentication = WebUtils.getAuthentication(requestContext);

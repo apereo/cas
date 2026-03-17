@@ -5,7 +5,6 @@ import org.apereo.cas.authentication.AuthenticationHandlerExecutionResult;
 import org.apereo.cas.authentication.AuthenticationPasswordPolicyHandlingStrategy;
 import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.authentication.credential.UsernamePasswordCredential;
-import org.apereo.cas.authentication.handler.PrincipalNameTransformer;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.authentication.support.password.PasswordPolicyContext;
@@ -40,9 +39,7 @@ public abstract class AbstractUsernamePasswordAuthenticationHandler extends Abst
     protected AuthenticationPasswordPolicyHandlingStrategy passwordPolicyHandlingStrategy = (o, o2) -> new ArrayList<>();
 
     private PasswordEncoder passwordEncoder = NoOpPasswordEncoder.getInstance();
-
-    private PrincipalNameTransformer principalNameTransformer = String::trim;
-
+    
     private PasswordPolicyContext passwordPolicyConfiguration;
 
     protected AbstractUsernamePasswordAuthenticationHandler(final @Nullable String name, final PrincipalFactory principalFactory, final Integer order) {
@@ -92,19 +89,7 @@ public abstract class AbstractUsernamePasswordAuthenticationHandler extends Abst
         }
         userPass.assignPassword(transformedPsw);
     }
-
-    protected void transformUsername(final UsernamePasswordCredential userPass) throws Throwable {
-        if (StringUtils.isBlank(userPass.getUsername())) {
-            throw new AccountNotFoundException("Username is null.");
-        }
-        LOGGER.debug("Transforming credential username via [{}]", principalNameTransformer.getClass().getName());
-        val transformedUsername = principalNameTransformer.transform(userPass.getUsername());
-        if (StringUtils.isBlank(transformedUsername)) {
-            throw new AccountNotFoundException("Transformed username is null.");
-        }
-        userPass.setUsername(transformedUsername);
-    }
-
+    
     /**
      * Authenticates a username/password credential by an arbitrary strategy with extra parameter original credential password before
      * encoding password. Override it if implementation need to use original password for authentication.

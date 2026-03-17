@@ -36,7 +36,7 @@ class PrincipalBearingCredentialsTests {
     }
 
     @Test
-    void verifySerializeAPrincipalBearingCredentialToJson() throws IOException {
+    void verifySerializeAPrincipalBearingCredentialToJson() {
         MAPPER.writeValue(JSON_FILE, principalBearingCredentials);
         val credentialRead = MAPPER.readValue(JSON_FILE, PrincipalBearingCredential.class);
         assertEquals(principalBearingCredentials, credentialRead);

@@ -60,15 +60,22 @@ class CasPalantirWebMvcConfiguration {
     public CasWebSecurityConfigurer<HttpSecurity> palantirEndpointWebSecurityConfigurer() {
         return new CasWebSecurityConfigurer<>() {
             @Override
-            public CasWebSecurityConfigurer<HttpSecurity> finish(final HttpSecurity http) throws Exception {
+            public CasWebSecurityConfigurer<HttpSecurity> finish(final HttpSecurity http) {
                 val successHandler = new SavedRequestAwareAuthenticationSuccessHandler();
                 successHandler.setTargetUrlParameter("redirectTo");
                 successHandler.setDefaultTargetUrl(PalantirConstants.URL_PATH_PALANTIR);
                 http.authorizeHttpRequests(customizer -> customizer
-                        .requestMatchers(PathPatternRequestMatcher.withDefaults().matcher(PalantirConstants.URL_PATH_PALANTIR + "/**")).authenticated()
+                        .requestMatchers(PathPatternRequestMatcher.withDefaults()
+                            .matcher(PalantirConstants.URL_PATH_PALANTIR + "/**")).authenticated()
                     )
-                    .formLogin(customizer -> customizer.loginPage(CasWebSecurityConfigurer.ENDPOINT_URL_ADMIN_FORM_LOGIN)
-                        .permitAll().successHandler(successHandler));
+                    .logout(logout -> logout
+                        .logoutUrl(PalantirConstants.URL_PATH_PALANTIR + "/dashboard/logout")
+                        .logoutSuccessUrl(PalantirConstants.URL_PATH_PALANTIR + "/dashboard")
+                    )
+                    .formLogin(customizer -> customizer
+                        .loginPage(CasWebSecurityConfigurer.ENDPOINT_URL_ADMIN_FORM_LOGIN)
+                        .permitAll()
+                        .successHandler(successHandler));
                 return this;
             }
         };

@@ -111,6 +111,8 @@ async function verifyAccountManagementFlow(browser) {
 
     await cas.click(page, "#linkPasswordManagement");
     await cas.sleep(1000);
+    await cas.click(page, ".swal2-confirm");
+    await cas.sleep(1000);
     await cas.assertCookie(page, false);
 
     await cas.assertInnerText(page, "#content h2", "Answer Security Questions");

@@ -154,7 +154,7 @@ public class PasswordManagementEndpoint extends BaseCasRestActuatorEndpoint {
             : ResponseEntity.unprocessableEntity().body("Failed to send password reset instructions to %s".formatted(username));
     }
 
-    protected boolean sendPasswordResetSmsToAccount(final String to, final URL url) throws Throwable {
+    protected boolean sendPasswordResetSmsToAccount(final String to, final URL url) {
         if (StringUtils.isNotBlank(to)) {
             LOGGER.debug("Sending password reset URL [{}] via SMS to [{}]", url.toExternalForm(), to);
             val reset = casProperties.getAuthn().getPm().getReset().getSms();

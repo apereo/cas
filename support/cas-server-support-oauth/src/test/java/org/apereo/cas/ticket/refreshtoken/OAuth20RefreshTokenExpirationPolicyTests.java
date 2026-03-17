@@ -39,7 +39,7 @@ class OAuth20RefreshTokenExpirationPolicyTests extends BaseOAuth20ExpirationPoli
     }
 
     @Test
-    void verifySerializeAnOAuthRefreshTokenExpirationPolicyToJson() throws Throwable {
+    void verifySerializeAnOAuthRefreshTokenExpirationPolicyToJson() {
         val policyWritten = new OAuth20RefreshTokenExpirationPolicy(1234L);
         MAPPER.writeValue(JSON_FILE, policyWritten);
         val policyRead = MAPPER.readValue(JSON_FILE, OAuth20RefreshTokenExpirationPolicy.class);

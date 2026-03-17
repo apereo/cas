@@ -12,7 +12,7 @@ apacheFediz = "1.7.1"
 apacheIgnite = "3.1.0"
 apacheVelocityEngine = "2.4.1"
 apiGuardian = "1.1.2"
-arrow = "18.3.0"
+arrow = "19.0.0"
 aspectj = "1.9.25.1"
 awaitility = "4.3.0"
 awsmemcached = "1.2.3"
@@ -84,7 +84,7 @@ hazelcast = "5.6.0"
 hazelcastSession = "4.0.0"
 hazelcastJClouds = "3.7.2"
 hazelcastZooKeeper = "4.0.2"
-hibernate = "7.3.0.CR2"
+hibernate = "7.3.0.Final"
 hibernateValidator = "9.1.0.Final"
 highlightJs = "11.11.1"
 hikari = "7.0.2"
@@ -117,7 +117,7 @@ jansi = "2.4.2"
 jasypt = "1.9.3"
 javaMelody = "2.6.0"
 javaParser = "3.28.0"
-javers = "7.10.0"
+javers = "7.11.0"
 jaxbApi = "4.0.5"
 jaxbImpl = "4.0.7"
 jaxbRuntime = "4.0.3"
@@ -747,6 +747,7 @@ spring-security-crypto = { module = "org.springframework.security:spring-securit
 spring-security-rsa = { module = "org.springframework.security:spring-security-rsa", version.ref = "springSecurityRsa" }
 spring-security-test = { module = "org.springframework.security:spring-security-test", version.ref = "springSecurity" }
 spring-security-web = { module = "org.springframework.security:spring-security-web", version.ref = "springSecurity" }
+spring-security-cas = { module = "org.springframework.security:spring-security-cas", version.ref = "springSecurity" }
 spring-session-core = { module = "org.springframework.session:spring-session-core", version.ref = "springSession" }
 spring-session-data-redis = { module = "org.springframework.session:spring-session-data-redis", version.ref = "springSession" }
 spring-session-jdbc = { module = "org.springframework.session:spring-session-jdbc", version.ref = "springSession" }
