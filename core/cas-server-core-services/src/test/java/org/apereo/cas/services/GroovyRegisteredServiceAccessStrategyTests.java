@@ -53,7 +53,7 @@ class GroovyRegisteredServiceAccessStrategyTests {
     }
 
     @Test
-    void verifySerializationToJson() throws IOException {
+    void verifySerializationToJson() {
         val accessStrategy = new GroovyRegisteredServiceAccessStrategy();
         accessStrategy.setGroovyScript("classpath:GroovyServiceAccessStrategy.groovy");
         MAPPER.writeValue(JSON_FILE, accessStrategy);

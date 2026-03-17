@@ -243,7 +243,7 @@ class OidcEndpointsConfiguration {
                 }
 
                 @Override
-                public CasWebSecurityConfigurer<HttpSecurity> configure(final HttpSecurity http) throws Exception {
+                public CasWebSecurityConfigurer<HttpSecurity> configure(final HttpSecurity http) {
                     http.authorizeHttpRequests(customizer -> {
                         val authEndpoints = PathPatternRequestMatcher.withDefaults().matcher('/' + OidcConstants.CIBA_URL + "/**");
                         customizer.requestMatchers(authEndpoints).anonymous();

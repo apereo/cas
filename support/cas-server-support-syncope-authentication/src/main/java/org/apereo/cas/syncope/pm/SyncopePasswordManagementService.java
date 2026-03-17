@@ -77,7 +77,7 @@ public class SyncopePasswordManagementService extends BasePasswordManagementServ
     }
 
     @Override
-    public Map<String, String> getSecurityQuestions(final PasswordManagementQuery query) throws Throwable {
+    public Map<String, String> getSecurityQuestions(final PasswordManagementQuery query) {
         val users = searchUser(PasswordManagementQuery.builder().username(query.getUsername()).build());
         return users
             .stream()
@@ -115,7 +115,7 @@ public class SyncopePasswordManagementService extends BasePasswordManagementServ
     }
 
     @Override
-    public boolean unlockAccount(final Credential credential) throws Throwable {
+    public boolean unlockAccount(final Credential credential) {
         val userKey = fetchSyncopeUserKey(credential.getId());
         val userStatusUrl = Strings.CI.appendIfMissing(
             SpringExpressionLanguageValueResolver.getInstance().resolve(

@@ -7,6 +7,7 @@ import org.apereo.cas.util.scripting.ExecutableCompiledScriptFactory;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.jspecify.annotations.Nullable;
 import org.springframework.core.io.Resource;
 
 /**
@@ -26,7 +27,7 @@ public class GroovyPrincipalNameTransformer implements PrincipalNameTransformer 
     }
 
     @Override
-    public String transform(final String formUserId) throws Throwable {
+    public @Nullable String transform(final String formUserId) throws Throwable {
         return watchableScript.execute(new Object[]{formUserId, LOGGER}, String.class, true);
     }
 }

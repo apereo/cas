@@ -35,7 +35,7 @@ class GrouperFacadeTests {
     }
 
     @Test
-    void verifyGroups() throws Throwable {
+    void verifyGroups() {
         val facade = new DefaultGrouperFacade() {
             @Override
             public WsGetGroupsResult[] fetchGroupsFor(final String subjectId) {
@@ -62,7 +62,7 @@ class GrouperFacadeTests {
     }
 
     @Test
-    void verifyEmptyGroups() throws Throwable {
+    void verifyEmptyGroups() {
         val facade = new DefaultGrouperFacade() {
             @Override
             public WsGetGroupsResult[] fetchGroupsFor(final String subjectId) {
@@ -73,7 +73,7 @@ class GrouperFacadeTests {
     }
 
     @Test
-    void verifyFailedGroups() throws Throwable {
+    void verifyFailedGroups() {
         val facade = new DefaultGrouperFacade() {
             @Override
             public WsGetGroupsResult[] fetchGroupsFor(final String subjectId) {

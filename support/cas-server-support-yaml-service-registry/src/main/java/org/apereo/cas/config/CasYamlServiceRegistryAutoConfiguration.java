@@ -49,7 +49,7 @@ public class CasYamlServiceRegistryAutoConfiguration {
             final CasConfigurationProperties casProperties,
             @Qualifier("registeredServiceReplicationStrategy")
             final RegisteredServiceReplicationStrategy registeredServiceReplicationStrategy,
-            final ObjectProvider<@NonNull List<ServiceRegistryListener>> serviceRegistryListeners) throws Exception {
+            final ObjectProvider<@NonNull List<ServiceRegistryListener>> serviceRegistryListeners) {
 
             val registry = casProperties.getServiceRegistry();
             val yaml = new YamlServiceRegistry(registry.getYaml().getLocation(),

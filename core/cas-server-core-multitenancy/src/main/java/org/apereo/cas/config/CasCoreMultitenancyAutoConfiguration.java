@@ -85,7 +85,7 @@ public class CasCoreMultitenancyAutoConfiguration {
         return new CasWebSecurityConfigurer<>() {
             @Override
             @CanIgnoreReturnValue
-            public CasWebSecurityConfigurer<HttpSecurity> configure(final HttpSecurity http) throws Exception {
+            public CasWebSecurityConfigurer<HttpSecurity> configure(final HttpSecurity http) {
                 http.authorizeHttpRequests(customizer -> {
                     val authEndpoints = PathPatternRequestMatcher.withDefaults().matcher("/tenants/**");
                     customizer.requestMatchers(authEndpoints).permitAll();

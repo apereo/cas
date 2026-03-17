@@ -78,7 +78,7 @@ public class RestfulDelegatedIdentityProviderFactory extends BaseDelegatedIdenti
         return List.of();
     }
 
-    protected List<BaseClient> buildClientsBasedPac4jProperties(final String result) throws Exception {
+    protected List<BaseClient> buildClientsBasedPac4jProperties(final String result) {
         val clients = MAPPER.readValue(JsonValue.readHjson(result).toString(), Map.class);
         LOGGER.trace("Delegated clients received are [{}]", clients);
         val callbackUrl = (String) clients.getOrDefault("callbackUrl", null);

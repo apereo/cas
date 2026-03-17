@@ -6,8 +6,10 @@ import org.apereo.cas.authentication.principal.ClientCredential;
 import org.apereo.cas.authentication.principal.DelegatedAuthenticationPreProcessor;
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.authentication.principal.PrincipalFactoryUtils;
+import org.apereo.cas.authentication.principal.PrincipalNameTransformerUtils;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.authentication.principal.provision.DelegatedClientUserProfileProvisioner;
+import org.apereo.cas.configuration.model.core.authentication.PrincipalTransformationProperties;
 import org.apereo.cas.configuration.model.support.pac4j.Pac4jDelegatedAuthenticationCoreProperties;
 import org.apereo.cas.multitenancy.TenantExtractor;
 import org.apereo.cas.pac4j.client.DelegatedIdentityProviderFactory;
@@ -72,10 +74,16 @@ class DelegatedClientAuthenticationHandlerTests {
         when(factory.rebuild()).thenReturn(List.of(fbClient));
         val clients = new DefaultDelegatedIdentityProviders(factory, mock(TenantExtractor.class));
 
-        handler = new DelegatedClientAuthenticationHandler(new Pac4jDelegatedAuthenticationCoreProperties(),
+        val properties = new Pac4jDelegatedAuthenticationCoreProperties()
+            .setPrincipalTransformation(new PrincipalTransformationProperties()
+                .setCaseConversion(PrincipalTransformationProperties.CaseConversion.UPPERCASE));
+        handler = new DelegatedClientAuthenticationHandler(
+            properties,
             PrincipalFactoryUtils.newPrincipalFactory(), clients,
             DelegatedClientUserProfileProvisioner.noOp(),
             new JEESessionStore(), applicationContext);
+        handler.setPrincipalNameTransformer(
+            PrincipalNameTransformerUtils.newPrincipalNameTransformer(properties.getPrincipalTransformation()));
         handler.setTypedIdUsed(true);
 
         val credentials = new OAuth20Credentials(null);
@@ -92,7 +100,7 @@ class DelegatedClientAuthenticationHandlerTests {
         fbClient.setProfileCreator((callContext, sessionStore) -> Optional.of(facebookProfile));
         val result = handler.authenticate(clientCredential, mock(Service.class));
         val principal = result.getPrincipal();
-        assertEquals(FacebookProfile.class.getName() + '#' + ID, principal.getId());
+        assertEquals((FacebookProfile.class.getName() + '#' + ID).toUpperCase(Locale.ROOT), principal.getId());
     }
 
     @Test
@@ -100,9 +108,8 @@ class DelegatedClientAuthenticationHandlerTests {
         val facebookProfile = new FacebookProfile();
         facebookProfile.setId(ID);
         fbClient.setProfileCreator((callContext, sessionStore) -> Optional.of(facebookProfile));
-
-        val cc = new ClientCredential(new AnonymousCredentials(), "UnknownClient");
-        assertThrows(PreventedException.class, () -> handler.authenticate(cc, mock(Service.class)));
+        val credential = new ClientCredential(new AnonymousCredentials(), "UnknownClient");
+        assertThrows(PreventedException.class, () -> handler.authenticate(credential, mock(Service.class)));
     }
 
     @Test

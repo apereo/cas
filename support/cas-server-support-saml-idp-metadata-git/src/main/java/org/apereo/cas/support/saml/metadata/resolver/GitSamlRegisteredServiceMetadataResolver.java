@@ -49,7 +49,7 @@ public class GitSamlRegisteredServiceMetadataResolver extends BaseSamlRegistered
         resourceResolverName = AuditResourceResolvers.SAML2_METADATA_RESOLUTION_RESOURCE_RESOLVER)
     @Override
     public Collection<? extends MetadataResolver> resolve(final SamlRegisteredService service,
-                                                          final CriteriaSet criteriaSet) throws Exception {
+                                                          final CriteriaSet criteriaSet) {
         return load()
             .stream()
             .map(doc -> buildMetadataResolverFrom(service, doc))

@@ -48,7 +48,7 @@ public class CasGeoLocationMaxmindAutoConfiguration {
     @Bean
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @ConditionalOnMissingBean(name = "maxMindGeoLocationService")
-    public GeoLocationService maxMindGeoLocationService(final CasConfigurationProperties casProperties) throws Exception {
+    public GeoLocationService maxMindGeoLocationService(final CasConfigurationProperties casProperties) {
         val properties = casProperties.getGeoLocation().getMaxmind();
         val cityDatabase = readDatabase(properties.getCityDatabase());
         val countryDatabase = readDatabase(properties.getCountryDatabase());
