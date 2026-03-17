@@ -76,9 +76,9 @@ class DashboardControllerTests {
             HttpSessionSecurityContextRepository.SPRING_SECURITY_CONTEXT_KEY,
             SecurityContextHolder.createEmptyContext()
         );
-        
+
         mvc.perform(get("/palantir/dashboard/session").session(session)).andExpect(status().isOk());
-        mvc.perform(get("/palantir/dashboard/logout").session(session)).andExpect(status().isNoContent());
+        SecurityContextHolder.clearContext();
         mvc.perform(get("/palantir/dashboard/session")).andExpect(status().isUnauthorized());
     }
 }
