@@ -85,7 +85,7 @@ class RestMultifactorAuthenticationTrustStorageTests {
     private CasConfigurationProperties casProperties;
 
     @Test
-    void verifyRemovalByKey() throws Throwable {
+    void verifyRemovalByKey() {
         val port = URI.create(casProperties.getAuthn().getMfa().getTrusted().getRest().getUrl()).getPort();
 
         try (val webServer = new MockWebServer(port)) {

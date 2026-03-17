@@ -124,7 +124,7 @@ class SurrogateRestAuthenticationServiceTests extends BaseSurrogateAuthenticatio
     }
 
     @Test
-    void verifyBadResponse() throws Throwable {
+    void verifyBadResponse() {
         var data = MAPPER.writeValueAsString("@@@");
         try (val webServer = new MockWebServer(data)) {
             webServer.start();

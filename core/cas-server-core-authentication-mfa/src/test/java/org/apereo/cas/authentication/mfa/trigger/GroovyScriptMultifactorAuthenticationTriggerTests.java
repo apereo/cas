@@ -74,7 +74,7 @@ class GroovyScriptMultifactorAuthenticationTriggerTests {
     @Nested
     class NoProvidersTests extends BaseMultifactorAuthenticationTriggerTests {
         @Test
-        void verifyNoProvider() throws Throwable {
+        void verifyNoProvider() {
             assertThrows(AuthenticationException.class,
                 () -> groovyScriptMultifactorAuthenticationTrigger.isActivated(
                     CoreAuthenticationTestUtils.getAuthentication(), CoreAuthenticationTestUtils.getRegisteredService(),

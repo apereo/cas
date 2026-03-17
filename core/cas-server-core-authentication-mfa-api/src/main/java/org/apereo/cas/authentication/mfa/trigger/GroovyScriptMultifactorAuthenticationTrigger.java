@@ -76,7 +76,7 @@ public class GroovyScriptMultifactorAuthenticationTrigger implements Multifactor
             }
             val principal = multifactorAuthenticationProviderResolver.resolvePrincipal(authentication.getPrincipal());
             if (provider.equals(ChainingMultifactorAuthenticationProvider.DEFAULT_IDENTIFIER)) {
-                return Optional.of(multifactorAuthenticationProviderSelector.resolve(providerMap.values(), registeredService, principal));
+                return Optional.ofNullable(multifactorAuthenticationProviderSelector.resolve(providerMap.values(), registeredService, principal));
             }
             return MultifactorAuthenticationUtils.resolveProvider(providerMap, provider);
         });

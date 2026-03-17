@@ -584,7 +584,7 @@ class WebAuthnConfiguration {
                     @Override
                     @CanIgnoreReturnValue
                     @SuppressWarnings("UnnecessaryMethodReference")
-                    public CasWebSecurityConfigurer<HttpSecurity> configure(final HttpSecurity http) throws Exception {
+                    public CasWebSecurityConfigurer<HttpSecurity> configure(final HttpSecurity http) {
                         http.csrf(customizer -> webAuthnCsrfTokenRepository.ifAvailable(repository -> {
                             val pattern = PathPatternRequestMatcher.withDefaults().matcher(BaseWebAuthnController.BASE_ENDPOINT_WEBAUTHN + "/**");
                             val delegate = new XorCsrfTokenRequestAttributeHandler();

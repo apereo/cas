@@ -65,7 +65,7 @@ class DefaultServicesManagerRegisteredServiceLocatorTests {
     }
 
     @Test
-    void verifyUnmatchedExtendedServices() throws Throwable {
+    void verifyUnmatchedExtendedServices() {
         val service = new ExtendedRegisteredService() {
             @Serial
             private static final long serialVersionUID = 3435937253967470900L;

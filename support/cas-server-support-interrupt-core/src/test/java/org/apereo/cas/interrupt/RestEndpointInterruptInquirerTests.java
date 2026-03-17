@@ -41,7 +41,7 @@ class RestEndpointInterruptInquirerTests {
     private MockWebServer webServer;
 
     @BeforeEach
-    void initialize() throws Exception {
+    void initialize() {
         val response = new InterruptResponse();
         response.setSsoEnabled(true);
         response.setInterrupt(true);

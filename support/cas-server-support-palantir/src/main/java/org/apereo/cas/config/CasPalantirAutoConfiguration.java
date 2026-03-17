@@ -17,6 +17,9 @@ import org.springframework.context.annotation.Import;
 @AutoConfiguration
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.Palantir)
-@Import(CasPalantirWebMvcConfiguration.class)
+@Import({
+    CasPalantirWebMvcConfiguration.class,
+    CasPalantirCasAuthenticationConfiguration.class
+})
 public class CasPalantirAutoConfiguration {
 }

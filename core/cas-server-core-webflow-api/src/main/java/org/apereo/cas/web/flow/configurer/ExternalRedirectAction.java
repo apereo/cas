@@ -23,7 +23,7 @@ public class ExternalRedirectAction extends AbstractAction {
     private final Expression resourceUri;
 
     @Override
-    protected Event doExecute(final RequestContext context) throws Exception {
+    protected Event doExecute(final RequestContext context) {
         val location = (String) this.resourceUri.getValue(context);
         if (StringUtils.isNotBlank(location)) {
             val response = WebUtils.getHttpServletResponseFromExternalWebflowContext(context);

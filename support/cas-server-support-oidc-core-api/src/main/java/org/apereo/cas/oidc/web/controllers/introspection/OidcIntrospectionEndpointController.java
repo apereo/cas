@@ -121,7 +121,7 @@ public class OidcIntrospectionEndpointController extends OAuth20IntrospectionEnd
     }
 
     private JwtClaims convertIntrospectionIntoClaims(final OAuth20IntrospectionAccessTokenResponse introspect,
-                                                     final OAuthRegisteredService registeredService) throws Exception {
+                                                     final OAuthRegisteredService registeredService) {
         val signingAndEncryptionService = getConfigurationContext().getIntrospectionSigningAndEncryptionService();
         val claims = new JwtClaims();
         claims.setIssuer(signingAndEncryptionService.resolveIssuer(Optional.of(registeredService)));

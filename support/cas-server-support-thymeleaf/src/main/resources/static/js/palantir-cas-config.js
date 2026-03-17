@@ -404,6 +404,7 @@ function refreshCasServerConfiguration(title) {
                     const endpoint = CasActuatorEndpoints.refresh();
                     $.post(endpoint)
                         .done(() => {
+                            reloadAuthenticationHandlersTable();
                             loadExternalIdentityProvidersTable().then(r => {
                                 Swal.close();
                                 Swal.fire({

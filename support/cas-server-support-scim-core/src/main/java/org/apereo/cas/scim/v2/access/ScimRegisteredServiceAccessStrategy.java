@@ -36,7 +36,7 @@ public class ScimRegisteredServiceAccessStrategy extends BaseRegisteredServiceAc
     private Map<String, Set<String>> requiredAttributes = new HashMap<>();
 
     @Override
-    public boolean authorizeRequest(final RegisteredServiceAccessStrategyRequest request) throws Throwable {
+    public boolean authorizeRequest(final RegisteredServiceAccessStrategyRequest request) {
         val service = request.getApplicationContext().getBean(ScimService.BEAN_NAME, ScimService.class);
         val scimService = service.getScimRequestBuilder(Optional.of(request.getRegisteredService()));
         val response = service.findUser(scimService, request.getPrincipalId());

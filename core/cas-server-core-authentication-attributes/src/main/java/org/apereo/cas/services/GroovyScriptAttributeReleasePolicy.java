@@ -39,7 +39,7 @@ public class GroovyScriptAttributeReleasePolicy extends AbstractRegisteredServic
 
     private Map<String, List<Object>> fetchAttributeValueFromExternalGroovyScript(final String file,
                                                                                   final RegisteredServiceAttributeReleasePolicyContext context,
-                                                                                  final Map<String, List<Object>> attributes) throws Throwable {
+                                                                                  final Map<String, List<Object>> attributes) {
         val cacheMgr = ApplicationContextProvider.getScriptResourceCacheManager().orElseThrow();
         val script = cacheMgr.resolveScriptableResource(file, file);
         return script != null
@@ -50,7 +50,7 @@ public class GroovyScriptAttributeReleasePolicy extends AbstractRegisteredServic
     protected Map<String, List<Object>> fetchAttributeValueFromScript(
         final ExecutableCompiledScript script,
         final RegisteredServiceAttributeReleasePolicyContext context,
-        final Map<String, List<Object>> attributes) throws Throwable {
+        final Map<String, List<Object>> attributes) {
         val args = new Object[]{attributes, LOGGER, context.getPrincipal(), context.getRegisteredService()};
         val result = (Map<String, List<Object>>) script.execute(args, Map.class, false);
         if (result != null) {

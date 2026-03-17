@@ -69,7 +69,7 @@ class RestfulDelegatedIdentityProviderFactoryTests {
     })
     class DefaultTests extends BaseTests {
         @Test
-        void verifyAction() throws Throwable {
+        void verifyAction() {
             val clients = new HashMap<String, Object>();
             clients.put("callbackUrl", "https://sso.example.org/cas/login");
             clients.put("properties", getProperties());
@@ -106,7 +106,7 @@ class RestfulDelegatedIdentityProviderFactoryTests {
     class CasPropertiesTests extends BaseTests {
 
         @Test
-        void verifyAction() throws Throwable {
+        void verifyAction() {
             val clients = new HashMap<String, Object>();
             clients.put("cas.authn.pac4j.cas[0].login-url", "https://localhost:8444/cas/login");
             clients.put("cas.authn.pac4j.cas[0].protocol", "CAS30");

@@ -77,7 +77,7 @@ public class RegisteredServiceAccessStrategyAuditableEnforcer extends BaseAudita
 
     protected void ensurePrincipalAccessIsAllowedForService(final RegisteredService registeredService,
                                                             final Service service,
-                                                            final Authentication authentication) throws Throwable {
+                                                            final Authentication authentication) {
         val attributes = CollectionUtils.merge(authentication.getAttributes(), authentication.getPrincipal().getAttributes());
         principalAccessStrategyEnforcer.authorize(
             RegisteredServicePrincipalAccessStrategyEnforcer.PrincipalAccessStrategyContext.builder()

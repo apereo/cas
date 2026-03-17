@@ -116,7 +116,7 @@ class SamlServiceTests extends AbstractOpenSamlTests {
     }
 
     @Test
-    void verifySerializeASamlServiceToJson() throws IOException {
+    void verifySerializeASamlServiceToJson() {
         val body = "<SOAP-ENV:Envelope xmlns:SOAP-ENV=\"http://schemas.xmlsoap.org/soap/envelope/\">"
             + "<SOAP-ENV:Header/><SOAP-ENV:Body><samlp:Request xmlns:samlp=\"urn:oasis:names:tc:SAML:1.0:protocol\" MajorVersion=\"1\" "
             + "MinorVersion=\"1\" RequestID=\"_192.168.16.51.1024506224022\" IssueInstant=\"2002-06-19T17:03:44.022Z\">"

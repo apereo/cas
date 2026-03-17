@@ -55,7 +55,7 @@ class CredentialTests {
     }
 
     @Test
-    void verifyValid() throws Throwable {
+    void verifyValid() {
         val credential = new AbstractCredential() {
             @Serial
             private static final long serialVersionUID = -1746359565306558329L;

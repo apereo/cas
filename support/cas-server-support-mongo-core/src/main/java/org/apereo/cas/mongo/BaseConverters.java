@@ -23,7 +23,6 @@ import org.bson.codecs.EncoderContext;
 import org.bson.codecs.configuration.CodecProvider;
 import org.bson.codecs.configuration.CodecRegistry;
 import org.bson.types.ObjectId;
-import org.jspecify.annotations.NonNull;
 import org.slf4j.Logger;
 import org.springframework.core.convert.converter.Converter;
 import org.springframework.data.convert.ReadingConverter;
@@ -45,11 +44,11 @@ public abstract class BaseConverters {
      * @param <I> the type parameter
      * @param <O> the type parameter
      */
-    public static class NullConverter<I, O> implements Converter<@NonNull I, @NonNull O> {
+    public static class NullConverter<I, O> implements Converter<I, O> {
 
         @Override
         public O convert(
-            @NonNull final I i) {
+            final I i) {
             return null;
         }
     }
@@ -155,10 +154,10 @@ public abstract class BaseConverters {
     /**
      * The type Date to zoned date time converter.
      */
-    public static class DateToZonedDateTimeConverter implements Converter<@NonNull Date, @NonNull ZonedDateTime> {
+    public static class DateToZonedDateTimeConverter implements Converter<Date, ZonedDateTime> {
         @Override
         public ZonedDateTime convert(
-            @NonNull final Date source) {
+            final Date source) {
             return Optional.of(source)
                 .map(date -> ZonedDateTime.ofInstant(date.toInstant(), ZoneId.systemDefault()))
                 .orElse(null);
@@ -169,10 +168,10 @@ public abstract class BaseConverters {
      * The type String to zoned date time converter.
      */
     @ReadingConverter
-    static class StringToZonedDateTimeConverter implements Converter<@NonNull String, @NonNull ZonedDateTime> {
+    static class StringToZonedDateTimeConverter implements Converter<String, ZonedDateTime> {
         @Override
         public ZonedDateTime convert(
-            @NonNull final String source) {
+            final String source) {
             if (StringUtils.isBlank(source)) {
                 return null;
             }
@@ -181,7 +180,7 @@ public abstract class BaseConverters {
     }
 
     @ReadingConverter
-    static class ObjectIdToLongConverter implements Converter<@NonNull ObjectId, @NonNull String> {
+    static class ObjectIdToLongConverter implements Converter<ObjectId, String> {
         @Override
         public String convert(final ObjectId source) {
             return source.toHexString();
@@ -191,10 +190,10 @@ public abstract class BaseConverters {
     /**
      * The type Zoned date time to date converter.
      */
-    public static class ZonedDateTimeToDateConverter implements Converter<@NonNull ZonedDateTime, @NonNull Date> {
+    public static class ZonedDateTimeToDateConverter implements Converter<ZonedDateTime, Date> {
         @Override
         public Date convert(
-            @NonNull final ZonedDateTime source) {
+            final ZonedDateTime source) {
             return Optional.of(source).map(zonedDateTime -> Date.from(zonedDateTime.toInstant())).orElse(null);
         }
     }
@@ -203,10 +202,10 @@ public abstract class BaseConverters {
      * The type Zoned date time to string converter.
      */
     @WritingConverter
-    public static class ZonedDateTimeToStringConverter implements Converter<@NonNull ZonedDateTime, @NonNull String> {
+    public static class ZonedDateTimeToStringConverter implements Converter<ZonedDateTime, String> {
         @Override
         public String convert(
-            @NonNull final ZonedDateTime source) {
+            final ZonedDateTime source) {
             return Optional.of(source).map(ZonedDateTime::toString).orElse(null);
         }
     }
@@ -214,7 +213,7 @@ public abstract class BaseConverters {
     /**
      * The type BsonTimestamp to date converter.
      */
-    public static class BsonTimestampToDateConverter implements Converter<@NonNull BsonTimestamp, @NonNull Date> {
+    public static class BsonTimestampToDateConverter implements Converter<BsonTimestamp, Date> {
         @Override
         public Date convert(final BsonTimestamp source) {
             return new Date(source.getTime());
@@ -222,10 +221,10 @@ public abstract class BaseConverters {
     }
 
     @ReadingConverter
-    static class StringToPatternConverter implements Converter<@NonNull String, @NonNull Pattern> {
+    static class StringToPatternConverter implements Converter<String, Pattern> {
         @Override
         public Pattern convert(
-            @NonNull final String source) {
+            final String source) {
             if (StringUtils.isBlank(source)) {
                 return null;
             }
@@ -237,7 +236,7 @@ public abstract class BaseConverters {
      * The type Pattern to string converter.
      */
     @WritingConverter
-    public static class PatternToStringConverter implements Converter<@NonNull Pattern, @NonNull String> {
+    public static class PatternToStringConverter implements Converter<Pattern, String> {
         @Override
         public String convert(final Pattern source) {
             return source.pattern();
@@ -247,7 +246,7 @@ public abstract class BaseConverters {
     /**
      * The type BsonTimestamp to String converter.
      */
-    public static class BsonTimestampToStringConverter implements Converter<@NonNull BsonTimestamp, @NonNull String> {
+    public static class BsonTimestampToStringConverter implements Converter<BsonTimestamp, String> {
         @Override
         public String convert(final BsonTimestamp source) {
             return String.valueOf(source.getTime());

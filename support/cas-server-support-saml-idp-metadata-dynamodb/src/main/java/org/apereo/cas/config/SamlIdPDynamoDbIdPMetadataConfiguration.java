@@ -112,7 +112,7 @@ class SamlIdPDynamoDbIdPMetadataConfiguration {
     @ConditionalOnMissingBean(name = "amazonDynamoDbSamlIdPMetadataClient")
     public DynamoDbClient amazonDynamoDbSamlIdPMetadataClient(
         final ConfigurableApplicationContext applicationContext,
-        final CasConfigurationProperties casProperties) throws Exception {
+        final CasConfigurationProperties casProperties) {
         return BeanSupplier.of(DynamoDbClient.class)
             .when(CONDITION.given(applicationContext.getEnvironment()))
             .supplyUnchecked(() -> {

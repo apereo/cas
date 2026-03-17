@@ -134,7 +134,7 @@ class RegisteredServiceRegexAttributeFilterTests {
     }
 
     @Test
-    void verifySerializeARegisteredServiceRegexAttributeFilterToJson() throws IOException {
+    void verifySerializeARegisteredServiceRegexAttributeFilterToJson() {
         MAPPER.writeValue(JSON_FILE, filter);
         val filterRead = MAPPER.readValue(JSON_FILE, RegisteredServiceRegexAttributeFilter.class);
         assertEquals(filter, filterRead);

@@ -107,7 +107,7 @@ public class CasSpringBootAdminAutoConfiguration {
             return new CasWebSecurityConfigurer<>() {
 
                 @Override
-                public CasWebSecurityConfigurer<HttpSecurity> finish(final HttpSecurity http) throws Exception {
+                public CasWebSecurityConfigurer<HttpSecurity> finish(final HttpSecurity http) {
                     val adminContextPath = Strings.CI.prependIfMissing(properties.getContextPath(), "/");
                     val successHandler = new SavedRequestAwareAuthenticationSuccessHandler();
                     successHandler.setTargetUrlParameter("redirectTo");
