@@ -10,12 +10,15 @@ import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.features.CasFeatureModule;
 import org.apereo.cas.palantir.PalantirConstants;
 import org.apereo.cas.services.ServicesManager;
+import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.InternalTicketValidator;
+import org.apereo.cas.util.RegexUtils;
 import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
 import org.apereo.cas.validation.AuthenticationAttributeReleasePolicy;
 import org.apereo.cas.validation.TicketValidator;
 import org.apereo.cas.web.CasWebSecurityConfigurer;
+import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -24,15 +27,17 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.InsufficientAuthenticationException;
 import org.springframework.security.authentication.ProviderManager;
 import org.springframework.security.cas.ServiceProperties;
+import org.springframework.security.cas.authentication.CasAssertionAuthenticationToken;
 import org.springframework.security.cas.authentication.CasAuthenticationProvider;
 import org.springframework.security.cas.web.CasAuthenticationEntryPoint;
 import org.springframework.security.cas.web.CasAuthenticationFilter;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.AuthenticationUserDetailsService;
 import org.springframework.security.core.userdetails.User;
-import org.springframework.security.core.userdetails.UserDetailsByNameServiceWrapper;
-import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.web.servlet.util.matcher.PathPatternRequestMatcher;
 
 /**
@@ -45,6 +50,7 @@ import org.springframework.security.web.servlet.util.matcher.PathPatternRequestM
 @ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.Palantir, module = "cas-authentication", enabledByDefault = false)
 @Configuration(value = "CasPalantirCasAuthenticationConfiguration", proxyBeanMethods = false)
 @Lazy(false)
+@Slf4j
 class CasPalantirCasAuthenticationConfiguration {
 
     @Bean
@@ -107,11 +113,25 @@ class CasPalantirCasAuthenticationConfiguration {
 
     @Bean
     @ConditionalOnMissingBean(name = "palantirUserDetailsService")
-    public UserDetailsService palantirUserDetailsService() {
-        return username -> User.withUsername(username)
-            .password("{noop}N/A")
-            .authorities("ROLE_USER")
-            .build();
+    public AuthenticationUserDetailsService palantirUserDetailsService(
+        final CasConfigurationProperties casProperties) {
+        return (AuthenticationUserDetailsService<CasAssertionAuthenticationToken>) token -> {
+            val assertion = token.getAssertion();
+            val attributes = assertion.getPrincipal().getAttributes();
+            val username = assertion.getPrincipal().getName();
+
+            val casAuthentication = casProperties.getPalantir().getCasAuthentication();
+            val requiredAttributeName = casAuthentication.getRequiredAttributeName();
+            val requiredAttributeValue = RegexUtils.createPattern(casAuthentication.getRequiredAttributeValue());
+            
+            val requiredAttributeValues = CollectionUtils.toCollection(attributes.get(requiredAttributeName));
+            if (requiredAttributeValues.stream().noneMatch(value -> RegexUtils.find(requiredAttributeValue, value.toString()))) {
+                LOGGER.warn("Required attribute [{}] with value [{}] is not found in the CAS assertion for user [{}]",
+                    requiredAttributeName, requiredAttributeValue.pattern(), username);
+                throw new InsufficientAuthenticationException("Unable to grant access to %s".formatted(username));
+            }
+            return new User(username, "N/A", List.of(new SimpleGrantedAuthority("ROLE_USER")));
+        };
     }
 
     @Bean
@@ -139,7 +159,7 @@ class CasPalantirCasAuthenticationConfiguration {
         @Qualifier("palantirTicketValidator")
         final TicketValidator palantirTicketValidator,
         @Qualifier("palantirUserDetailsService")
-        final UserDetailsService userDetailsService) {
+        final AuthenticationUserDetailsService userDetailsService) {
         val provider = new CasAuthenticationProvider();
         provider.setServiceProperties(serviceProperties);
         provider.setTicketValidator((ticket, service) -> FunctionUtils.doUnchecked(() -> {
@@ -148,7 +168,7 @@ class CasPalantirCasAuthenticationConfiguration {
                 (Map) validationResult.getPrincipal().getAttributes());
             return new AssertionImpl(attributePrincipal);
         }));
-        provider.setAuthenticationUserDetailsService(new UserDetailsByNameServiceWrapper<>(userDetailsService));
+        provider.setAuthenticationUserDetailsService(userDetailsService);
         provider.setKey("cas-palantir-authentication-provider");
         return provider;
     }

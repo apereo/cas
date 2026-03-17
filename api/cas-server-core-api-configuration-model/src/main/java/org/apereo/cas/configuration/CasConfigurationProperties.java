@@ -27,6 +27,7 @@ import org.apereo.cas.configuration.model.core.web.security.HttpRequestPropertie
 import org.apereo.cas.configuration.model.core.web.view.ViewProperties;
 import org.apereo.cas.configuration.model.support.account.AccountManagementRegistrationProperties;
 import org.apereo.cas.configuration.model.support.acme.AcmeProperties;
+import org.apereo.cas.configuration.model.support.admin.PalantirProperties;
 import org.apereo.cas.configuration.model.support.analytics.GoogleAnalyticsProperties;
 import org.apereo.cas.configuration.model.support.apn.APNMessagingProperties;
 import org.apereo.cas.configuration.model.support.aup.AcceptableUsagePolicyProperties;
@@ -404,6 +405,12 @@ public class CasConfigurationProperties implements Serializable {
      */
     @NestedConfigurationProperty
     private MultitenancyProperties multitenancy = new MultitenancyProperties();
+
+    /**
+     * Admin console / Palantir properties.
+     */
+    @NestedConfigurationProperty
+    private PalantirProperties palantir = new PalantirProperties();
 
     /**
      * Bind from map.

@@ -40,6 +40,12 @@ disabled by default and needs to be explicitly enabled.
 
 {% include_cached featuretoggles.html features="Palantir.cas-authentication" %}
 
+Once enabled, you may create an application registration entry for Palantir and assign a specific access strategy
+to it to only allow access to authorized users, or you may instruct Palantir to reject authentication attempts
+that do not pass the access requirement rules.
+
+{% include_cached casproperties.html properties="cas.palantir.cas-authenication" %}
+
 Furthermore, note that Palantir requires a number of actuator endpoints, such as `info`, `env`, etc that are 
 provided by CAS and Spring Boot. It essentially sits on top of actuator endpoints and consumes and renders data. You
 will need to make sure these endpoints are enabled and exposed for your CAS deployment. There are startup checks in 
