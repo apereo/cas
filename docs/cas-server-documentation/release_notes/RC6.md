@@ -6,7 +6,7 @@ category: Planning
 
 {% include variables.html %}
 
-# 8.0.0-RC4 Release Notes
+# 8.0.0-RC6 Release Notes
 
 We strongly recommend that you take advantage of the release candidates as they come out. Waiting for a `GA` release is only going to set
 you up for unpleasant surprises. A `GA` is [a tag and nothing more](https://apereo.github.io/2017/03/08/the-myth-of-ga-rel/). Note
@@ -60,11 +60,6 @@ to build and verify Graal VM native images and we plan to extend the coverage to
 The collection of end-to-end [browser tests based on Puppeteer](../../developer/Test-Process.html) continue to grow to cover more use cases
 and scenarios. At the moment, total number of jobs stands at approximately `543` distinct scenarios. The overall
 test coverage of the CAS codebase is approximately `94%`.
-
-### Spring Boot 4.1
-
-CAS is now built with Spring Boot `4.1.x`. This is a major platform upgrade that affects almost all aspects of the codebase
-including many of the third-party core libraries used by CAS as well as some CAS functionality.
 
 ### JSpecify & NullAway
 

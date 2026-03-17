@@ -14,7 +14,7 @@ category: Planning
   </thead>
   <tbody>
 
-    {% for i in (1..4) %}
+    {% for i in (1..6) %}
         <tr>
             <td>RC{{ i }}</td>
             <td><a href="RC{{ i }}.html">See this guide</a>.</td>
