@@ -65,10 +65,13 @@ class CasPalantirWebMvcConfiguration {
                 successHandler.setTargetUrlParameter("redirectTo");
                 successHandler.setDefaultTargetUrl(PalantirConstants.URL_PATH_PALANTIR);
                 http.authorizeHttpRequests(customizer -> customizer
-                        .requestMatchers(PathPatternRequestMatcher.withDefaults().matcher(PalantirConstants.URL_PATH_PALANTIR + "/**")).authenticated()
+                        .requestMatchers(PathPatternRequestMatcher.withDefaults()
+                            .matcher(PalantirConstants.URL_PATH_PALANTIR + "/**")).authenticated()
                     )
-                    .formLogin(customizer -> customizer.loginPage(CasWebSecurityConfigurer.ENDPOINT_URL_ADMIN_FORM_LOGIN)
-                        .permitAll().successHandler(successHandler));
+                    .formLogin(customizer -> customizer
+                        .loginPage(CasWebSecurityConfigurer.ENDPOINT_URL_ADMIN_FORM_LOGIN)
+                        .permitAll()
+                        .successHandler(successHandler));
                 return this;
             }
         };

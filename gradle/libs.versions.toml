@@ -747,6 +747,7 @@ spring-security-crypto = { module = "org.springframework.security:spring-securit
 spring-security-rsa = { module = "org.springframework.security:spring-security-rsa", version.ref = "springSecurityRsa" }
 spring-security-test = { module = "org.springframework.security:spring-security-test", version.ref = "springSecurity" }
 spring-security-web = { module = "org.springframework.security:spring-security-web", version.ref = "springSecurity" }
+spring-security-cas = { module = "org.springframework.security:spring-security-cas", version.ref = "springSecurity" }
 spring-session-core = { module = "org.springframework.session:spring-session-core", version.ref = "springSession" }
 spring-session-data-redis = { module = "org.springframework.session:spring-session-data-redis", version.ref = "springSession" }
 spring-session-jdbc = { module = "org.springframework.session:spring-session-jdbc", version.ref = "springSession" }
