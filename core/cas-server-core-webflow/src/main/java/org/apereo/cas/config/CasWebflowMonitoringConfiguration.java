@@ -61,7 +61,7 @@ class CasWebflowMonitoringConfiguration {
             return ExecutableObserver.observe(observerProvider, joinPoint, task -> task
                 .withName(taskName)
                 .withBoundedValue("flowId", flowId)
-                .withBoundedValue("url", WebUtils.getHttpRequestFullUrl(httpRequest)));
+                .withUnboundedValue("url", WebUtils.getHttpRequestFullUrl(httpRequest)));
         }
 
         @Pointcut("within(org.springframework.webflow.executor.FlowExecutor+) && execution(* launchExecution(String,*,org.springframework.webflow.context.ExternalContext,..))")

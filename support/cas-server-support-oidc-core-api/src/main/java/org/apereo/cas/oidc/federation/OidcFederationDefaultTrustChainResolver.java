@@ -45,7 +45,7 @@ public class OidcFederationDefaultTrustChainResolver implements OidcFederationTr
         return Optional.empty();
     }
 
-    protected OidcRegisteredService extractRegisteredService(final EntityID entityId, final OIDCClientMetadata rpMetadata) throws Exception {
+    protected OidcRegisteredService extractRegisteredService(final EntityID entityId, final OIDCClientMetadata rpMetadata) {
         val registeredService = new OidcRegisteredService();
         registeredService.assignIdIfNecessary();
 

@@ -75,7 +75,6 @@ function loadSidebarForActiveVersion() {
 
       topLevelUl.each(function () {
         const el = $(this);
-        //console.log("Top level UL: " + el);
         el.attr({
           'data-bs-parent': '#sidebarTopics'
         });
@@ -86,12 +85,10 @@ function loadSidebarForActiveVersion() {
       });
 
       subLevel.each(function () {
-        //console.log("Sub level: " + this);
         sidebarSubNav($(this));
       });
 
       nestedMenu.each(function () {
-        //console.log("Sub level nested: " + this);
         sidebarTopNav($(this));
       });
 
@@ -108,7 +105,6 @@ function loadSidebarForActiveVersion() {
       let element = $(`#sidebarTopics a[href*='/${uri.filename()}']`);
       let parent = element.parent();
       while (parent !== null && parent !== undefined) {
-        // parent.collapse('toggle');
         let id = parent.attr("id");
         if (id === "sidebarTopics" || count >= 10) {
           break;
@@ -125,7 +121,6 @@ function loadSidebarForActiveVersion() {
       if (uri.fragment() == null || uri.fragment() === "") {
         setTimeout(() => {
           let top = $(element).offset().top;
-          // console.log("Element top position: " + top);
           let offset = top <= 200 ? 30 : 150;
           $("#sidebar").animate({scrollTop: offset }, 1000);
         }, 100);
@@ -135,7 +130,6 @@ function loadSidebarForActiveVersion() {
 }
 
 function sidebarTopNav(el) {
-  // If the link is an anchor, then wire up toggle functionality, otherwise leave it.
   if (el.attr('href').search(/(?:^|)#/g) >= 0) {
     el.attr({
       'data-bs-toggle': "collapse",

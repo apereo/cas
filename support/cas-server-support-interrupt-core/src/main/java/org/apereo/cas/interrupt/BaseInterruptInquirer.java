@@ -30,12 +30,6 @@ public abstract class BaseInterruptInquirer implements InterruptInquirer {
         return inquireInternal(authentication, registeredService, service, credential, requestContext);
     }
 
-    /**
-     * Should skip interrupt for registered service.
-     *
-     * @param registeredService the registered service
-     * @return true/false
-     */
     protected boolean shouldSkipInterruptForRegisteredService(final RegisteredService registeredService) {
         if (registeredService != null) {
             LOGGER.trace("Checking interrupt rules for service [{}]", registeredService.getName());

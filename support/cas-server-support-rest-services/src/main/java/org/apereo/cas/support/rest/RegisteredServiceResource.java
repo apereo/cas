@@ -66,7 +66,6 @@ public class RegisteredServiceResource {
      * @param request  the request
      * @param response the response
      * @return {@link ResponseEntity} representing RESTful response
-     * @throws Throwable the throwable
      */
     @PostMapping(value = "/v1/services", consumes = MediaType.APPLICATION_JSON_VALUE)
     @Operation(summary = "Create registered service",
@@ -80,7 +79,7 @@ public class RegisteredServiceResource {
         ))
     public ResponseEntity<String> createService(@RequestBody final RegisteredService service,
                                                 final HttpServletRequest request,
-                                                final HttpServletResponse response) throws Throwable {
+                                                final HttpServletResponse response) {
         try {
             val auth = authenticateRequest(request);
             if (auth == null) {

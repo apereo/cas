@@ -653,6 +653,7 @@ layout: null
                     *   [Groovy](/cas/{{ version }}/installation/Configuring-SAML2-DynamicMetadata-Groovy.html)
                     *   [Amazon S3](/cas/{{ version }}/installation/Configuring-SAML2-DynamicMetadata-AmazonS3.html)
                     *   [DynamoDb](/cas/{{ version }}/installation/Configuring-SAML2-DynamicMetadata-DynamoDb.html)
+                    *   [Google Cloud Storage](/cas/{{ version }}/installation/Configuring-SAML2-DynamicMetadata-GCP-Storage.html)
                 *   [Metadata Filtering](/cas/{{ version }}/installation/SAML2-ServiceProvider-Metadata-Filtering.html)  
             *   [Attribute Release](#saml2attrrelease)
                 *   [Attribute Policies](/cas/{{ version }}/installation/Configuring-SAML2-Attribute-Release.html)

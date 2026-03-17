@@ -61,7 +61,7 @@ This is useful in scenarios where the application may not have a static JWKS, or
 or that the application is registered with CAS already and yet the *real client* is
 in fact a mobile device whose keys are tied to the device and not the application itself. 
 
-{% include_cached featuretoggles.html features="CasFeatureModule.OpenIDConnect.client-jwks-registration" %}
+{% include_cached featuretoggles.html features="OpenIDConnect.client-jwks-registration" %}
       
 Once the feature is enabled, clients that wish to use this API must first obtain an access token that contains
 the scope `client_jwks_registration_scope`. This scope need to be enabled and registered with the CAS server. Once the token 

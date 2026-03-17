@@ -18,7 +18,7 @@ import static org.junit.jupiter.api.Assertions.*;
 class LZ4CompressionRedisSerializerTests {
 
     @Test
-    void verifyOperation() throws Exception {
+    void verifyOperation() {
         val stringRedisSerializer = new StringRedisSerializer();
         val serializer = new LZ4CompressionRedisSerializer(stringRedisSerializer, new LZ4CompressionHandler());
         val original = "This is a test string for LZ4 compression serializer in Redis.";

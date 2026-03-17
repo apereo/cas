@@ -9,6 +9,7 @@ import org.apereo.cas.util.scripting.ExecutableCompiledScript;
 import org.apereo.cas.util.scripting.ExecutableCompiledScriptFactory;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.jspecify.annotations.Nullable;
 import org.springframework.core.io.Resource;
 import org.springframework.webflow.execution.RequestContext;
 
@@ -28,11 +29,11 @@ public class GroovyScriptInterruptInquirer extends BaseInterruptInquirer {
     }
 
     @Override
-    public InterruptResponse inquireInternal(final Authentication authentication,
-                                             final RegisteredService registeredService,
-                                             final Service service,
-                                             final Credential credential,
-                                             final RequestContext requestContext) throws Throwable {
+    public @Nullable InterruptResponse inquireInternal(final Authentication authentication,
+                                                       final RegisteredService registeredService,
+                                                       final Service service,
+                                                       final Credential credential,
+                                                       final RequestContext requestContext) throws Throwable {
         val principal = authentication.getPrincipal();
         val attributes = new HashMap<String, Object>(principal.getAttributes());
         attributes.putAll(authentication.getAttributes());

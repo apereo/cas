@@ -34,6 +34,11 @@ Accessing the Palantir dashboard will by default require a form-based user authe
 used to access this feature are those presented by Spring Security configuration:
 
 {% include_cached casproperties.html thirdPartyStartsWith="spring.security.user" %}
+  
+Palantir also supports routing authentication requests to the CAS server itself. This feature is 
+disabled by default and needs to be explicitly enabled.
+
+{% include_cached featuretoggles.html features="Palantir.cas-authentication" %}
 
 Furthermore, note that Palantir requires a number of actuator endpoints, such as `info`, `env`, etc that are 
 provided by CAS and Spring Boot. It essentially sits on top of actuator endpoints and consumes and renders data. You
@@ -44,11 +49,6 @@ and expose all actuator endpoints and certainly require authentication access fo
 Once enabled, Palantir is available at `/cas/palantir`.
 
 {% endtab %}
-
-Palantir access will by default require a form-based user authentication. The credentials
-used to access this feature are those backed by Spring Security configuration:
-
-{% include_cached casproperties.html thirdPartyStartsWith="spring.security.user" %}
 
 {% tab casadminoptions Spring Boot Admin %}
 

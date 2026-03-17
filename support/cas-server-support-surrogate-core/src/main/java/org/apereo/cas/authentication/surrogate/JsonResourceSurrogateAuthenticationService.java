@@ -27,7 +27,7 @@ public class JsonResourceSurrogateAuthenticationService extends SimpleSurrogateA
     public JsonResourceSurrogateAuthenticationService(final File json, final ServicesManager servicesManager,
                                                       final CasConfigurationProperties casProperties,
                                                       final RegisteredServicePrincipalAccessStrategyEnforcer principalAccessStrategyEnforcer,
-                                                      final ConfigurableApplicationContext applicationContext) throws Exception {
+                                                      final ConfigurableApplicationContext applicationContext) {
         super(readAccountsFromFile(json), servicesManager, casProperties, principalAccessStrategyEnforcer, applicationContext);
         this.watcherService = new FileWatcherService(json, this::loadServices);
         this.watcherService.start(getClass().getSimpleName());
@@ -41,7 +41,7 @@ public class JsonResourceSurrogateAuthenticationService extends SimpleSurrogateA
             principalAccessStrategyEnforcer, applicationContext);
     }
 
-    private static Map readAccountsFromFile(final File json) throws Exception {
+    private static Map readAccountsFromFile(final File json) {
         return MAPPER.readValue(json, Map.class);
     }
 

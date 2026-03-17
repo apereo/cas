@@ -47,7 +47,7 @@ class RestfulDelegatedIdentityProviderFactoryOidcTests {
     })
     class DefaultTests extends BaseTests {
         @Test
-        void verifyAction() throws Throwable {
+        void verifyAction() {
             val clients = new HashMap<String, Object>();
             clients.put("callbackUrl", "https://sso.example.org/cas/login");
             clients.put("properties", getProperties());

@@ -24,7 +24,7 @@ public class AmazonS3PropertySourceLocator implements PropertySourceLocator, Dis
     private final String bucketName;
 
     @Override
-    public void destroy() throws Exception {
+    public void destroy() {
         s3Client.close();
     }
 

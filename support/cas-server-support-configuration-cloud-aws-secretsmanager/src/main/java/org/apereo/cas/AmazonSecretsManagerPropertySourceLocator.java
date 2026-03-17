@@ -29,7 +29,7 @@ public class AmazonSecretsManagerPropertySourceLocator implements PropertySource
     }
 
     @Override
-    public void destroy() throws Exception {
+    public void destroy() {
         secretsManagerClient.close();
     }
 }

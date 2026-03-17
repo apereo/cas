@@ -33,15 +33,15 @@
                 </li>
                 <li th:if="${auditLog}" onclick="showPanel('#divAuditLog');" id="linkAuditLog" href="#divAuditLog">
                     <i class="mdi mdi-account-reactivate" aria-hidden="true"></i>
-                    <span class="tooltip">Audit Log & Activity</span>
+                    <span class="tooltip">Audits</span>
                 </li>
                 <li th:if="${multifactorRegisteredAccounts}" onclick="showPanel('#divMfaRegisteredAccounts');" id="linkMfaRegisteredAccounts" href="#divMfaRegisteredAccounts">
                     <i class="mdi mdi-cellphone" aria-hidden="true"></i>
-                    <span class="tooltip">Registered Multifactor Authentication Devices</span>
+                    <span class="tooltip">Multifactor Devices</span>
                 </li>
                 <li th:if="${multifactorTrustedDevices}" onclick="showPanel('#divMultifactorTrustedDevices');" id="linkMfaTrustedDevices" href="#divMultifactorTrustedDevices">
                     <i class="mdi mdi-cellphone-check" aria-hidden="true"></i>
-                    <span class="tooltip">Registered Trusted Multifactor Authentication Devices</span>
+                    <span class="tooltip">Trusted Multifactor Devices</span>
                 </li>
                 <li th:if="${consentDecisions}"
                     onclick="showPanel('#divConsentDecisions');" id="linkConsentDecisions" href="#divConsentDecisions">
@@ -55,10 +55,10 @@
                 </li>
 
                 <li th:if="${passwordManagementEnabled != null && passwordManagementEnabled}"
-                    onclick="document.forms.fmChangePsw.submit()"
+                    onclick="initPasswordReset();"
                     id="linkPasswordManagement">
                     <i class="mdi mdi-form-textbox-password" aria-hidden="true"></i>
-                    <span class="tooltip">Change your password. <span th:text="#{screen.account.tooltip.logout}"></span></span>
+                    <span class="tooltip">Reset Password</span>
 
                     <form method="post" id="fmChangePsw" name="fmChangePsw">
                         <input type="hidden" name="execution" th:value="${flowExecutionKey}"/>
@@ -78,12 +78,14 @@
                 <script type="text/javascript" th:inline="javascript">
                     /*<![CDATA[*/
                     const casServerLogoutUrl = /*[[@{/logout}]]*/;
+                    const passwordResetText = /*[[#{screen.account.pwreset}]]*/;
                     /*]]>*/
 
                     function logout() {
                         Swal.fire({
-                            title: `Are you sure you want to logout?`,
-                            icon: "warning",
+                            title: `Logout`,
+                            text: `Are you sure you want to logout`,
+                            icon: "question",
                             showConfirmButton: true,
                             showDenyButton: true
                         })
@@ -92,6 +94,21 @@
                                 window.location.href = casServerLogoutUrl;
                             }
                         });
+                    }
+
+                    function initPasswordReset() {
+                        Swal.fire({
+                            text: passwordResetText,
+                            title: "Password Reset",
+                            icon: "question",
+                            showConfirmButton: true,
+                            showDenyButton: true
+                        })
+                            .then((result) => {
+                                if (result.isConfirmed) {
+                                    document.forms.fmChangePsw.submit();
+                                }
+                            });
                     }
                 </script>
             </ul>

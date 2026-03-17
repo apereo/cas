@@ -193,7 +193,7 @@ class CasWebSecurityConfiguration {
             @Qualifier("securityContextRepository")
             final SecurityContextRepository securityContextRepository,
             final HttpSecurity http,
-            final ObjectProvider<@NonNull PathMappedEndpoints> pathMappedEndpoints,
+            final ObjectProvider<PathMappedEndpoints> pathMappedEndpoints,
             final List<CasWebSecurityConfigurer> configurersList,
             final WebEndpointProperties webEndpointProperties,
             final ManagementServerProperties managementServerProperties,

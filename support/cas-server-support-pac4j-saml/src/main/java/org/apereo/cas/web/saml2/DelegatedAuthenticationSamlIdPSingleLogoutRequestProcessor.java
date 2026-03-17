@@ -52,7 +52,7 @@ public class DelegatedAuthenticationSamlIdPSingleLogoutRequestProcessor implemen
     }
 
     @Override
-    public void restore(final RequestContext requestContext) throws Exception {
+    public void restore(final RequestContext requestContext) {
         val request = WebUtils.getHttpServletRequestFromExternalWebflowContext(requestContext);
         val response = WebUtils.getHttpServletResponseFromExternalWebflowContext(requestContext);
         var registeredService = WebUtils.getRegisteredService(request);
@@ -82,7 +82,7 @@ public class DelegatedAuthenticationSamlIdPSingleLogoutRequestProcessor implemen
     }
 
     protected void createSamlLogoutRequestCookie(final HttpServletRequest request, final HttpServletResponse response,
-                                                 final LogoutRequest logoutRequest, final MessageContext messageContext) throws Exception {
+                                                 final LogoutRequest logoutRequest, final MessageContext messageContext) {
         val relayState = StringUtils.defaultString(SAMLBindingSupport.getRelayState(messageContext));
         val issuer = SamlIdPUtils.getIssuerFromSamlObject(logoutRequest);
         val sloRequest = StringUtils.defaultString(WebUtils.getSingleLogoutRequest(request));

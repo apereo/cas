@@ -144,7 +144,7 @@ class SamlIdPSingleLogoutServiceMessageHandlerTests extends BaseSamlIdPConfigura
     }
 
     @Test
-    void verifySoapMessagePreparation() throws Throwable {
+    void verifySoapMessagePreparation() {
         val properties = new HashMap<String, String>();
         properties.put(SamlIdPSingleLogoutServiceLogoutUrlBuilder.PROPERTY_NAME_SINGLE_LOGOUT_BINDING, SAMLConstants.SAML2_SOAP11_BINDING_URI);
         val logoutRequest = DefaultSingleLogoutRequestContext.builder().properties(properties).build();
