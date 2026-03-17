@@ -68,6 +68,10 @@ class CasPalantirWebMvcConfiguration {
                         .requestMatchers(PathPatternRequestMatcher.withDefaults()
                             .matcher(PalantirConstants.URL_PATH_PALANTIR + "/**")).authenticated()
                     )
+                    .logout(logout -> logout
+                        .logoutUrl(PalantirConstants.URL_PATH_PALANTIR + "/dashboard/logout")
+                        .logoutSuccessUrl(PalantirConstants.URL_PATH_PALANTIR + "/dashboard")
+                    )
                     .formLogin(customizer -> customizer
                         .loginPage(CasWebSecurityConfigurer.ENDPOINT_URL_ADMIN_FORM_LOGIN)
                         .permitAll()

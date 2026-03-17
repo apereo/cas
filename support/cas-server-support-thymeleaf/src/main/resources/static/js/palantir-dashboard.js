@@ -81,25 +81,15 @@ function activateDashboardTab(idx) {
                 $("#palantirSettingsDialog").dialog("open");
                 break;
             case Tabs.LOGOUT.index:
-                if (CAS_FEATURES.includes("Palantir.cas-authentication")) {
-                    let url = new URL(location.href).pathname;
-                    if (!url.endsWith("/dashboard")) {
-                        url += "/dashboard";
-                    }
-                    const form = document.createElement('form');
-                    form.method = 'POST';
-                    form.action = `${url}/logout`;
-                    document.body.appendChild(form);
-                    form.submit();
-                } else {
-                    const url = new URL(location.href);
-                    fetch(`${url.pathname}/logout`, {
-                        method: 'GET',
-                        credentials: 'include'
-                    }).then((response) => {
-                        window.location.reload();
-                    });
+                let url = new URL(location.href).pathname;
+                if (!url.endsWith("/dashboard")) {
+                    url += "/dashboard";
                 }
+                const form = document.createElement('form');
+                form.method = 'POST';
+                form.action = `${url}/logout`;
+                document.body.appendChild(form);
+                form.submit();
                 break;
             default:
                 let tabs = new mdc.tabBar.MDCTabBar(document.querySelector("#dashboardTabBar"));
