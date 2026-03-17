@@ -22,7 +22,7 @@ import static org.mockito.Mockito.*;
 class AmazonClientConfigurationBuilderTests {
 
     @Test
-    void verifyOperation() throws Throwable {
+    void verifyOperation() {
         val properties = new AbstractDynamoDbProperties() {
             @Serial
             private static final long serialVersionUID = -3599433486448467450L;

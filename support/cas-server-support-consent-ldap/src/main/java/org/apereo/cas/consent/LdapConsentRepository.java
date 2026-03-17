@@ -47,7 +47,7 @@ public class LdapConsentRepository implements ConsentRepository, DisposableBean 
         }, throwable -> null).get();
     }
 
-    private static String mapToJson(final ConsentDecision consent) throws Exception {
+    private static String mapToJson(final ConsentDecision consent) {
         val json = MAPPER.writeValueAsString(consent);
         LOGGER.trace("Transformed consent object [{}] as JSON value [{}]", consent, json);
         return json;

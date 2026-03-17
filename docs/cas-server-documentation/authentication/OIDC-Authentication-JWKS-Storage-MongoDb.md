@@ -20,4 +20,4 @@ Support is enabled by including the following module in the WAR Overlay:
 Note that this module also provides the ability 
 to [manage application JWKS entries](../authentication/OIDC-Authentication-JWKS-Clients.html) in MongoDb.
 
-{% include_cached featuretoggles.html features="CasFeatureModule.OpenIDConnect.client-jwks-registration" %}
+{% include_cached featuretoggles.html features="OpenIDConnect.client-jwks-registration" %}

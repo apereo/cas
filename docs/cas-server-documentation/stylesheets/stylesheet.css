@@ -857,3 +857,7 @@ ul.tab-content li.active:not(.property-name):not(.property-tab) {
         display: none
     }
 }
+
+.popover {
+    max-width: 100%;
+}

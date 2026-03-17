@@ -21,7 +21,7 @@ import static org.junit.jupiter.api.Assertions.*;
 class OidcJsonWebKeyStoreJacksonDeserializerTests extends AbstractOidcTests {
 
     @Test
-    void verifyOperation() throws Throwable {
+    void verifyOperation() {
         val module = new SimpleModule();
         module.addDeserializer(JsonWebKeySet.class, new OidcJsonWebKeyStoreJacksonDeserializer());
         val mapper = JacksonObjectMapperFactory.builder()

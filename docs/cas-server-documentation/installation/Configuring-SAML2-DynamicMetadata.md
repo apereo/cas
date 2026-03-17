@@ -66,18 +66,19 @@ and wish to gradually allow service providers to pick up the new metadata:
             
 Service provider or identity provider metadata can also be managed using any one of the following strategies. 
 
-| Storage                 | Description                                                        |
-|-------------------------|--------------------------------------------------------------------|
-| Metadata Query Protocol | [See this guide](Configuring-SAML2-DynamicMetadata-MDQ.html).      |
-| HTTP/HTTPS              | [See this guide](Configuring-SAML2-DynamicMetadata-HTTP.html).     |
-| REST                    | [See this guide](Configuring-SAML2-DynamicMetadata-REST.html).     |
-| Git                     | [See this guide](Configuring-SAML2-DynamicMetadata-Git.html).      |
-| MongoDb                 | [See this guide](Configuring-SAML2-DynamicMetadata-MongoDb.html).  |
-| Redis                   | [See this guide](Configuring-SAML2-DynamicMetadata-Redis.html).    |
-| JPA                     | [See this guide](Configuring-SAML2-DynamicMetadata-JPA.html).      |
-| Groovy                  | [See this guide](Configuring-SAML2-DynamicMetadata-Groovy.html).   |
-| Amazon S3               | [See this guide](Configuring-SAML2-DynamicMetadata-AmazonS3.html). |
-| DynamoDb                | [See this guide](Configuring-SAML2-DynamicMetadata-DynamoDb.html). |
+| Storage                 | Description                                                           |
+|-------------------------|-----------------------------------------------------------------------|
+| Metadata Query Protocol | [See this guide](Configuring-SAML2-DynamicMetadata-MDQ.html).         |
+| HTTP/HTTPS              | [See this guide](Configuring-SAML2-DynamicMetadata-HTTP.html).        |
+| REST                    | [See this guide](Configuring-SAML2-DynamicMetadata-REST.html).        |
+| Git                     | [See this guide](Configuring-SAML2-DynamicMetadata-Git.html).         |
+| MongoDb                 | [See this guide](Configuring-SAML2-DynamicMetadata-MongoDb.html).     |
+| Redis                   | [See this guide](Configuring-SAML2-DynamicMetadata-Redis.html).       |
+| JPA                     | [See this guide](Configuring-SAML2-DynamicMetadata-JPA.html).         |
+| Groovy                  | [See this guide](Configuring-SAML2-DynamicMetadata-Groovy.html).      |
+| Amazon S3               | [See this guide](Configuring-SAML2-DynamicMetadata-AmazonS3.html).    |
+| DynamoDb                | [See this guide](Configuring-SAML2-DynamicMetadata-DynamoDb.html).    |
+| Google Cloud Storage    | [See this guide](Configuring-SAML2-DynamicMetadata-GCP-Storage.html). |
 
 ## SAML Services
 

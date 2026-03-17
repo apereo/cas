@@ -1,6 +1,7 @@
 package org.apereo.cas.support.saml.services.idp.metadata;
 
 import module java.base;
+import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
@@ -11,6 +12,7 @@ import lombok.Setter;
 import lombok.experimental.SuperBuilder;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.data.annotation.Id;
+import tools.jackson.databind.ObjectMapper;
 import jakarta.persistence.Column;
 import jakarta.persistence.Lob;
 import jakarta.persistence.MappedSuperclass;
@@ -29,7 +31,9 @@ import jakarta.persistence.Transient;
 @JsonTypeInfo(use = JsonTypeInfo.Id.CLASS)
 @SuperBuilder
 public class SamlIdPMetadataDocument implements Serializable {
-
+    private static final ObjectMapper MAPPER = JacksonObjectMapperFactory.builder()
+        .defaultTypingEnabled(false).build().toObjectMapper();
+    
     @Serial
     private static final long serialVersionUID = -705737727407407083L;
     /**
@@ -105,5 +109,25 @@ public class SamlIdPMetadataDocument implements Serializable {
             && StringUtils.isNotBlank(getSigningKey())
             && StringUtils.isNotBlank(getEncryptionCertificate())
             && StringUtils.isNotBlank(getEncryptionKey());
+    }
+
+    /**
+     * Convert this record into JSON.
+     *
+     * @return the string
+     */
+    @JsonIgnore
+    public String toJson() {
+        return MAPPER.writerWithDefaultPrettyPrinter().writeValueAsString(this);
+    }
+
+    /**
+     * From json saml idp metadata document.
+     *
+     * @param body the body
+     * @return the saml idp metadata document
+     */
+    public static SamlIdPMetadataDocument fromJson(final String body) {
+        return MAPPER.readValue(body, SamlIdPMetadataDocument.class);
     }
 }

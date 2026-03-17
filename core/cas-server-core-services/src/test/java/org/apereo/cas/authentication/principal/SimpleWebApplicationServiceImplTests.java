@@ -43,7 +43,7 @@ class SimpleWebApplicationServiceImplTests {
     protected ServiceFactory<WebApplicationService> webApplicationServiceFactory;
     
     @Test
-    void verifySerializeACompletePrincipalToJson() throws IOException {
+    void verifySerializeACompletePrincipalToJson() {
         val request = new MockHttpServletRequest();
         request.setParameter(CasProtocolConstants.PARAMETER_SERVICE, RegisteredServiceTestUtils.CONST_TEST_URL);
         val serviceWritten = webApplicationServiceFactory.createService(request);

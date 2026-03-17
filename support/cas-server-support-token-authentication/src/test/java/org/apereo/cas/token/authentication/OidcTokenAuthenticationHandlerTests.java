@@ -54,7 +54,7 @@ class OidcTokenAuthenticationHandlerTests extends BaseTokenAuthenticationTests {
     private IdTokenGeneratorService oidcIdTokenGenerator;
     
     @Test
-    void verifyFailsOperation() throws Throwable {
+    void verifyFailsOperation() {
         val serviceId = "https://token.example.org/%s".formatted(UUID.randomUUID().toString());
         val service = RegisteredServiceTestUtils.getService(serviceId);
         val credential = new TokenCredential(UUID.randomUUID().toString(), service);

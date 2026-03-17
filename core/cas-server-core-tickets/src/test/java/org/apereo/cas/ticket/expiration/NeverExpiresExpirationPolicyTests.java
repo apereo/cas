@@ -25,7 +25,7 @@ class NeverExpiresExpirationPolicyTests {
         .defaultTypingEnabled(true).build().toObjectMapper();
 
     @Test
-    void verifySerializeANeverExpiresExpirationPolicyToJson() throws IOException {
+    void verifySerializeANeverExpiresExpirationPolicyToJson() {
         val policyWritten = NeverExpiresExpirationPolicy.INSTANCE;
         MAPPER.writeValue(JSON_FILE, policyWritten);
         val policyRead = MAPPER.readValue(JSON_FILE, NeverExpiresExpirationPolicy.class);

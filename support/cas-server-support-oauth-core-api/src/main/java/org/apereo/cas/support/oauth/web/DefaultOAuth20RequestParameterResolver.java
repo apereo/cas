@@ -248,7 +248,7 @@ public class DefaultOAuth20RequestParameterResolver implements OAuth20RequestPar
     }
 
     @Override
-    public Set<String> resolveUserInfoRequestClaims(final WebContext context) throws Exception {
+    public Set<String> resolveUserInfoRequestClaims(final WebContext context) {
         val requestedClaims = resolveRequestClaims(context);
         return requestedClaims.getOrDefault(OAuth20Constants.CLAIMS_USERINFO, new HashMap<>()).keySet();
     }

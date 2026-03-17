@@ -19,7 +19,7 @@ import static org.mockito.Mockito.*;
 @Tag("Utility")
 class SecurityContextUtilsTests {
     @Test
-    void verifyOperation() throws Exception {
+    void verifyOperation() {
         val principal = mock(Principal.class);
         when(principal.getId()).thenReturn("id");
         when(principal.getAttributes()).thenReturn(Map.of("name", List.of("CAS")));
@@ -29,7 +29,7 @@ class SecurityContextUtilsTests {
     }
 
     @Test
-    void verifyTicketOperation() throws Exception {
+    void verifyTicketOperation() {
         val principal = mock(Principal.class);
         when(principal.getId()).thenReturn("id");
         when(principal.getAttributes()).thenReturn(Map.of("name", List.of("CAS")));

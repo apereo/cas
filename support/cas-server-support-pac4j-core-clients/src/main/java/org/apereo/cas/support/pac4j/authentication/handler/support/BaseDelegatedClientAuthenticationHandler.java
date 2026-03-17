@@ -2,6 +2,7 @@ package org.apereo.cas.support.pac4j.authentication.handler.support;
 
 import module java.base;
 import org.apereo.cas.authentication.AuthenticationHandlerExecutionResult;
+import org.apereo.cas.authentication.credential.BasicIdentifiableCredential;
 import org.apereo.cas.authentication.handler.support.AbstractPreAndPostProcessingAuthenticationHandler;
 import org.apereo.cas.authentication.principal.ClientCredential;
 import org.apereo.cas.authentication.principal.ClientCustomPropertyConstants;
@@ -54,7 +55,8 @@ public abstract class BaseDelegatedClientAuthenticationHandler extends AbstractP
             throw new FailedLoginException("Authentication did not produce a user profile for: " + credentials);
         }
 
-        val id = determinePrincipalIdFrom(profile, client);
+        val extractedCredential = new BasicIdentifiableCredential(determinePrincipalIdFrom(profile, client));
+        val id = transformUsername(extractedCredential);
         if (StringUtils.isBlank(id)) {
             throw new FailedLoginException("No identifier found for this user profile: " + profile);
         }
@@ -99,13 +101,6 @@ public abstract class BaseDelegatedClientAuthenticationHandler extends AbstractP
                                                           final Service service) throws Throwable {
     }
 
-    /**
-     * Determine principal id from profile.
-     *
-     * @param profile the profile
-     * @param client  the client
-     * @return the id
-     */
     protected String determinePrincipalIdFrom(final UserProfile profile, final BaseClient client) {
         var id = profile.getId();
         val properties = client != null ? client.getCustomProperties() : new HashMap<>();

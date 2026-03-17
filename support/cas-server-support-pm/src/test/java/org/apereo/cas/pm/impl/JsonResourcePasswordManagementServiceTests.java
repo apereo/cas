@@ -160,7 +160,7 @@ class JsonResourcePasswordManagementServiceTests {
     }
 
     @Test
-    void verifyToken() throws Throwable {
+    void verifyToken() {
         val token = passwordChangeService.createToken(PasswordManagementQuery.builder().username("casuser").build());
         assertNotNull(token);
         val parsed = passwordChangeService.parseToken(token);

@@ -25,7 +25,7 @@ class FixedInstantExpirationPolicyTests {
         .defaultTypingEnabled(true).minimal(false).build().toObjectMapper();
 
     @Test
-    void verifyPolicy() throws Throwable {
+    void verifyPolicy() {
         val expirationPolicy = new FixedInstantExpirationPolicy(Instant.now(Clock.systemUTC()));
         val result = SerializationUtils.serialize(expirationPolicy);
         val policyRead = SerializationUtils.deserialize(result, FixedInstantExpirationPolicy.class);

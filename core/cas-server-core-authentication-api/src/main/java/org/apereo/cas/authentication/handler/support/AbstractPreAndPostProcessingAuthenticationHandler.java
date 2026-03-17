@@ -6,10 +6,16 @@ import org.apereo.cas.authentication.AuthenticationHandlerExecutionResult;
 import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.authentication.DefaultAuthenticationHandlerExecutionResult;
 import org.apereo.cas.authentication.MessageDescriptor;
+import org.apereo.cas.authentication.MutableCredential;
 import org.apereo.cas.authentication.PrePostAuthenticationHandler;
+import org.apereo.cas.authentication.handler.PrincipalNameTransformer;
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.authentication.principal.Service;
+import lombok.Setter;
+import lombok.extern.slf4j.Slf4j;
+import lombok.val;
+import org.apache.commons.lang3.StringUtils;
 import org.jspecify.annotations.Nullable;
 
 /**
@@ -21,7 +27,11 @@ import org.jspecify.annotations.Nullable;
  * @author Marvin S. Addison
  * @since 3.1
  */
+@Slf4j
+@Setter
 public abstract class AbstractPreAndPostProcessingAuthenticationHandler extends AbstractAuthenticationHandler implements PrePostAuthenticationHandler {
+
+    protected PrincipalNameTransformer principalNameTransformer = String::trim;
 
     protected AbstractPreAndPostProcessingAuthenticationHandler(final @Nullable String name,
                                                                 final PrincipalFactory principalFactory,
@@ -41,36 +51,30 @@ public abstract class AbstractPreAndPostProcessingAuthenticationHandler extends 
     protected abstract AuthenticationHandlerExecutionResult doAuthentication(Credential credential, Service service)
         throws Throwable;
 
-    /**
-     * Helper method to construct a handler result
-     * on successful authentication events.
-     *
-     * @param credential the credential on which the authentication was successfully performed.
-     *                   Note that this credential instance may be different from what was originally provided
-     *                   as transformation of the username may have occurred, if one is in fact defined.
-     * @param principal  the resolved principal
-     * @param warnings   the warnings
-     * @return the constructed handler result
-     */
     protected AuthenticationHandlerExecutionResult createHandlerResult(final Credential credential,
                                                                        @Nullable final Principal principal,
                                                                        @Nullable final List<MessageDescriptor> warnings) {
         return new DefaultAuthenticationHandlerExecutionResult(this, credential, principal, warnings);
     }
 
-    /**
-     * Helper method to construct a handler result
-     * on successful authentication events.
-     *
-     * @param credential the credential on which the authentication was successfully performed.
-     *                   Note that this credential instance may be different from what was originally provided
-     *                   as transformation of the username may have occurred, if one is in fact defined.
-     * @param principal  the resolved principal
-     * @return the constructed handler result
-     */
     protected AuthenticationHandlerExecutionResult createHandlerResult(final Credential credential,
                                                                        final Principal principal) {
         return new DefaultAuthenticationHandlerExecutionResult(this, credential,
             principal, new ArrayList<>());
+    }
+
+    protected String transformUsername(final Credential credential) throws Throwable {
+        if (StringUtils.isBlank(credential.getId())) {
+            throw new AccountNotFoundException("Username is null.");
+        }
+        LOGGER.debug("Transforming credential username via [{}]", principalNameTransformer.getClass().getName());
+        val transformedUsername = principalNameTransformer.transform(credential.getId());
+        if (StringUtils.isBlank(transformedUsername)) {
+            throw new AccountNotFoundException("Transformed username is null.");
+        }
+        if (credential instanceof final MutableCredential mc) {
+            mc.setId(transformedUsername);
+        }
+        return transformedUsername;
     }
 }
