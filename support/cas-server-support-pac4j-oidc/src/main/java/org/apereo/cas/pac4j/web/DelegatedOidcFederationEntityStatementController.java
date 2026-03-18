@@ -11,7 +11,6 @@ import org.pac4j.oidc.federation.entity.DefaultEntityConfigurationGenerator;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import jakarta.servlet.http.HttpServletRequest;
@@ -23,7 +22,6 @@ import jakarta.servlet.http.HttpServletResponse;
  * @author Jerome LELEU
  * @since 8.0.0
  */
-@RequestMapping
 @RequiredArgsConstructor
 public class DelegatedOidcFederationEntityStatementController extends AbstractController {
 
@@ -43,7 +41,7 @@ public class DelegatedOidcFederationEntityStatementController extends AbstractCo
         produces = DefaultEntityConfigurationGenerator.CONTENT_TYPE)
     @ResponseBody
     public String getOpenIdFederationEndpoint(
-            @PathVariable("clientName") final String clientName,
+            @PathVariable final String clientName,
             final HttpServletRequest request,
             final HttpServletResponse response) {
         val webContext = new JEEContext(request, response);

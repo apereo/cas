@@ -1,10 +1,13 @@
 package org.apereo.cas.configuration.model.support.pac4j.oidc;
 
 import module java.base;
+import org.apereo.cas.configuration.model.SpringResourceProperties;
 import org.apereo.cas.configuration.support.RequiresModule;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
+import org.springframework.boot.context.properties.NestedConfigurationProperty;
+
 import java.io.Serial;
 
 /**
@@ -22,7 +25,8 @@ public class Pac4jOidcClientPrivateKeyJwtProperties implements Serializable {
     private static final long serialVersionUID = 5192010226236750446L;
 
     /**
-     * Specific JWKS path for the private_key_jwt client authentication method.
+     * Specific JWKS for the private_key_jwt client authentication method.
      */
-    private String jwksPath;
+    @NestedConfigurationProperty
+    private SpringResourceProperties jwks;
 }

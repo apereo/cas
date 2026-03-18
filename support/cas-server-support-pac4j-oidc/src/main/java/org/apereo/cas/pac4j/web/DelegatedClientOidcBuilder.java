@@ -355,7 +355,7 @@ public class DelegatedClientOidcBuilder implements ConfigurableDelegatedClientBu
                 cfg.setClientAuthenticationMethod(clientAuth);
                 if (ClientAuthenticationMethod.PRIVATE_KEY_JWT.equals(clientAuth)) {
                     val privateKeyJwtJwks = new JwksProperties();
-                    privateKeyJwtJwks.setJwksPath(oidc.getPrivateKeyJwt().getJwksPath());
+                    privateKeyJwtJwks.setJwksResource(oidc.getPrivateKeyJwt().getJwks().getLocation());
                     privateKeyJwtJwks.setKid("privatekeyjwt-" + oidc.getClientName());
                     cfg.setPrivateKeyJwtClientAuthnMethodConfig(new PrivateKeyJwtClientAuthnMethodConfig(privateKeyJwtJwks));
                 }
@@ -379,7 +379,7 @@ public class DelegatedClientOidcBuilder implements ConfigurableDelegatedClientBu
             val cfgFede = cfg.getFederation();
 
             val jwks = new JwksProperties();
-            jwks.setJwksPath(oidcFede.getJwksPath());
+            jwks.setJwksResource(oidcFede.getJwks().getLocation());
             jwks.setKid("fedekey-" + oidc.getClientName());
             cfgFede.setJwks(jwks);
             cfgFede.setValidityInDays(oidcFede.getValidityInDays());
