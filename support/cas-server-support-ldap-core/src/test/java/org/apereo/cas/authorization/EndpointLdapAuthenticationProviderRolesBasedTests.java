@@ -37,9 +37,8 @@ class EndpointLdapAuthenticationProviderRolesBasedTests extends BaseEndpointLdap
         val securityProperties = new SecurityProperties();
         securityProperties.getUser().setRoles(List.of("ROLE_888"));
         val ldap = casProperties.getMonitor().getEndpoints().getLdap();
-        val connectionFactory = LdapUtils.newLdaptiveConnectionFactory(ldap);
         val authenticator = LdapUtils.newLdaptiveAuthenticator(ldap);
-        val provider = new EndpointLdapAuthenticationProvider(ldap, securityProperties, connectionFactory, authenticator);
+        val provider = new EndpointLdapAuthenticationProvider(ldap, securityProperties, authenticator);
         assertTrue(provider.supports(UsernamePasswordAuthenticationToken.class));
         val token = provider.authenticate(new UsernamePasswordAuthenticationToken("authzcas", "123456"));
         assertNotNull(token);
@@ -51,9 +50,8 @@ class EndpointLdapAuthenticationProviderRolesBasedTests extends BaseEndpointLdap
         val securityProperties = new SecurityProperties();
         securityProperties.getUser().setRoles(List.of("SOME_BAD_ROLE"));
         val ldap = casProperties.getMonitor().getEndpoints().getLdap();
-        val connectionFactory = LdapUtils.newLdaptiveConnectionFactory(ldap);
         val authenticator = LdapUtils.newLdaptiveAuthenticator(ldap);
-        val provider = new EndpointLdapAuthenticationProvider(ldap, securityProperties, connectionFactory, authenticator);
+        val provider = new EndpointLdapAuthenticationProvider(ldap, securityProperties, authenticator);
         assertThrows(BadCredentialsException.class, () -> provider.authenticate(new UsernamePasswordAuthenticationToken("authzcas", "123456")));
         assertAll(provider::destroy);
     }
@@ -63,9 +61,8 @@ class EndpointLdapAuthenticationProviderRolesBasedTests extends BaseEndpointLdap
         val securityProperties = new SecurityProperties();
         securityProperties.getUser().setRoles(List.of("SOME_BAD_ROLE"));
         val ldap = casProperties.getMonitor().getEndpoints().getLdap();
-        val connectionFactory = LdapUtils.newLdaptiveConnectionFactory(ldap);
         val authenticator = LdapUtils.newLdaptiveAuthenticator(ldap);
-        val provider = new EndpointLdapAuthenticationProvider(ldap, securityProperties, connectionFactory, authenticator);
+        val provider = new EndpointLdapAuthenticationProvider(ldap, securityProperties, authenticator);
         assertThrows(InsufficientAuthenticationException.class,
             () -> provider.authenticate(new UsernamePasswordAuthenticationToken("UNKNOWN_USER", "123456")));
         assertAll(provider::destroy);
@@ -76,9 +73,8 @@ class EndpointLdapAuthenticationProviderRolesBasedTests extends BaseEndpointLdap
         val securityProperties = new SecurityProperties();
         securityProperties.getUser().setRoles(List.of("SOME_BAD_ROLE"));
         val ldap = casProperties.getMonitor().getEndpoints().getLdap();
-        val connectionFactory = LdapUtils.newLdaptiveConnectionFactory(ldap);
         val authenticator = LdapUtils.newLdaptiveAuthenticator(ldap);
-        val provider = new EndpointLdapAuthenticationProvider(ldap, securityProperties, connectionFactory, authenticator);
+        val provider = new EndpointLdapAuthenticationProvider(ldap, securityProperties, authenticator);
         assertThrows(BadCredentialsException.class,
             () -> provider.authenticate(new UsernamePasswordAuthenticationToken("authzcas", "BAD_PASSWORD")));
         assertAll(provider::destroy);
