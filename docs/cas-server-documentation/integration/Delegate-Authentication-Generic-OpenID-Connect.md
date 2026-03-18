@@ -18,6 +18,10 @@ Support is enabled by including the following dependency in the WAR overlay:
 
 {% include_cached casproperties.html properties="cas.authn.pac4j.oidc[].generic" %}
 
+## Federation configuration
+
+{% include_cached casproperties.html properties="cas.authn.pac4j.oidc[].generic.federation" %}
+
 ## Per Service Customizations
 
 Th configuration for the external OpenID Connect identity provider is typically done at build time
