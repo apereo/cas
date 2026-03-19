@@ -2,6 +2,10 @@ package org.apereo.cas.pac4j.web;
 
 import org.apereo.cas.pac4j.client.DelegatedIdentityProviders;
 import org.apereo.cas.web.AbstractController;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.enums.ParameterIn;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
@@ -22,6 +26,7 @@ import jakarta.servlet.http.HttpServletResponse;
  * @author Jerome LELEU
  * @since 8.0.0
  */
+@Tag(name = "Delegated Authentication")
 @RequiredArgsConstructor
 public class DelegatedOidcFederationEntityStatementController extends AbstractController {
 
@@ -37,6 +42,10 @@ public class DelegatedOidcFederationEntityStatementController extends AbstractCo
      *
      * @return the entity statement
      */
+    @Operation(summary = "Display the entity statement of the delegated OIDC client (RP)",
+        parameters = {
+            @Parameter(name = "clientName", description = "The client name", in = ParameterIn.PATH)
+        })
     @GetMapping(path = BASE_ENDPOINT_RELYING_PARTY + "/{clientName}/.well-known/openid-federation", consumes = MediaType.ALL_VALUE,
         produces = DefaultEntityConfigurationGenerator.CONTENT_TYPE)
     @ResponseBody

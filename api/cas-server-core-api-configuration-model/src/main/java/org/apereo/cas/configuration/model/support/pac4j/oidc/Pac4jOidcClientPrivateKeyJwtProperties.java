@@ -1,7 +1,6 @@
 package org.apereo.cas.configuration.model.support.pac4j.oidc;
 
 import module java.base;
-import org.apereo.cas.configuration.model.SpringResourceProperties;
 import org.apereo.cas.configuration.support.RequiresModule;
 import lombok.Getter;
 import lombok.Setter;
@@ -28,5 +27,5 @@ public class Pac4jOidcClientPrivateKeyJwtProperties implements Serializable {
      * Specific JWKS for the private_key_jwt client authentication method.
      */
     @NestedConfigurationProperty
-    private SpringResourceProperties jwks;
+    private Pac4jOidcClientJwksProperties jwks = new Pac4jOidcClientJwksProperties();
 }

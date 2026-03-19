@@ -154,6 +154,7 @@ class DefaultDelegatedIdentityProviderFactoryOidcTests {
         "cas.authn.pac4j.oidc[0].generic.client-name=federatedOidcClient",
         "cas.authn.pac4j.oidc[0].generic.federation.enabled=true",
         "cas.authn.pac4j.oidc[0].generic.federation.jwks.location=classpath:federation.jwks",
+        "cas.authn.pac4j.oidc[0].generic.federation.jwks.kid=fedekey-federatedOidcClient",
         "cas.authn.pac4j.oidc[0].generic.federation.validity-in-days=30",
         "cas.authn.pac4j.oidc[0].generic.federation.application-type=web",
         "cas.authn.pac4j.oidc[0].generic.federation.response-types[0]=code",

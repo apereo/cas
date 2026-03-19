@@ -1,6 +1,5 @@
 package org.apereo.cas.configuration.model.support.pac4j.oidc;
 
-import org.apereo.cas.configuration.model.SpringResourceProperties;
 import org.apereo.cas.configuration.support.RequiresModule;
 import lombok.Getter;
 import lombok.Setter;
@@ -13,6 +12,7 @@ import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Stream;
 
 /**
  * This is {@link Pac4jOidcClientFederationProperties}.
@@ -37,7 +37,7 @@ public class Pac4jOidcClientFederationProperties implements Serializable {
      * Specific JWKS for the federation.
      */
     @NestedConfigurationProperty
-    private SpringResourceProperties jwks;
+    private Pac4jOidcClientJwksProperties jwks = new Pac4jOidcClientJwksProperties();
 
     /**
      * Validity in days of the RP (client) entity statement.
@@ -52,22 +52,22 @@ public class Pac4jOidcClientFederationProperties implements Serializable {
     /**
      * Response types for the RP (client) entity statement.
      */
-    private List<String> responseTypes = new ArrayList<>(List.of("code"));
+    private List<String> responseTypes = Stream.of("code").toList();
 
     /**
      * Grant types for the RP (client) entity statement.
      */
-    private List<String> grantTypes = new ArrayList<>(List.of("authorization_code"));
+    private List<String> grantTypes = Stream.of("authorization_code").toList();
 
     /**
      * Scopes for the RP (client) entity statement.
      */
-    private List<String> scopes = new ArrayList<>(List.of("openid", "email", "profile"));
+    private List<String> scopes = Stream.of("openid", "email", "profile").toList();
 
     /**
      * Registration types for the RP (client) entity statement.
      */
-    private List<String> clientRegistrationTypes = new ArrayList<>(List.of("explicit", "automatic"));
+    private List<String> clientRegistrationTypes = Stream.of("explicit", "automatic").toList();
 
     /**
      * The trust anchors to use for federation.

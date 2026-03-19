@@ -159,7 +159,7 @@ See [this guide](../installation/Configuring-SAML2-DynamicMetadata-GCP-Storage.h
 
 ### OpenID Federation support
 
-With pac4j v6.4.0-RC1, the OpenID Federation protocol is supported in the authentication delegation for OIDC clients.
+The OpenID Federation protocol is supported in the authentication delegation for OIDC clients.
 See [this guide](../integration/Delegate-Authentication-Generic-OpenID-Connect.html) for more details.
 
 ## Other Stuff
