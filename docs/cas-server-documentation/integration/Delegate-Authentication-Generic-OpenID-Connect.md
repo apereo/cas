@@ -16,39 +16,25 @@ Support is enabled by including the following dependency in the WAR overlay:
 
 ## Configuration
 
-{% include_cached casproperties.html properties="cas.authn.pac4j.oidc[].generic" %}
+{% include_cached casproperties.html properties="cas.authn.pac4j.oidc[].generic" excludes=".federation" %}
 
 ## Federation configuration
 
-The federation nature of a delegated OIDC client must be explicitely enabled:
+The federation nature of a delegated OIDC client must be explicitely enabled via CAS configuration. 
 
-```properties
-cas.authn.pac4j.oidc[0].generic.federation.enabled=true
-```
+Federation support translates into two aspects:
 
-Federation translates into two aspects:
-1. Exposing the entity statement of the OIDC client
+1. Exposing the entity statement of the OIDC client (The CAS server itself)
 2. Resolving the trust chain to retrieve the target provider via the trust anchors.
 
-For exposing the entity statement, a JWKS must be defined as a resource (file or URL) with an optional key identifier.
+{% include_cached casproperties.html properties="cas.authn.pac4j.oidc[].generic.federation" %}
 
-For example:
+For exposing the entity statement, a JWKS must be defined as a resource (file or URL) with an optional key identifier. The 
+entity statement is exposed on the `/rp/{clientName}/.well-known/openid-federation` URL of the CAS server.
 
-```properties
-cas.authn.pac4j.oidc[0].generic.federation.jwks.location=file:/path/fedejwks-myoidclient.json
-cas.authn.pac4j.oidc[0].generic.federation.jwks.kid=fedekey-clientName
-```
-
-The entity statement is exposed on the `/rp/{clientName}/.well-known/openid-federation` URL of the CAS server.
-
-For resolving the trust chain and authenticating on a target provider, the OP issuer must be defined as the `targetOp` property along with one or more trust anchors as a map (the key is the trust anchor issuer and the value is the JWKS URL of the trust anchor).
-
-For example:
-
-```properties
-cas.authn.pac4j.oidc[0].generic.federation.target-op=https://oidcprovider
-cas.authn.pac4j.oidc[0].generic.federation.trust-anchors[https://ta]=https://ta/jwks
-```
+For resolving the trust chain and authenticating on a target provider, the OP issuer 
+must be defined as the `targetOp` property along with one or more 
+trust anchors.
 
 {% include_cached casproperties.html properties="cas.authn.pac4j.oidc[].generic.federation" %}
 

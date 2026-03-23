@@ -71,6 +71,8 @@ public class Pac4jOidcClientFederationProperties implements Serializable {
 
     /**
      * The trust anchors to use for federation.
+     * This is defined as a map; the key is the trust anchor issuer and the value
+     * is the JWKS URL of the trust anchor.
      */
     private Map<String, String> trustAnchors = new LinkedHashMap<>();
 
