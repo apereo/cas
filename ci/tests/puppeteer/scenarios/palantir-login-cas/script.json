@@ -1,0 +1,24 @@
+{
+  "dependencies": "reports,palantir",
+  "properties": [
+    "--CasFeatureModule.Palantir.cas-authentication.enabled=true",
+    
+    "--cas.server.name=https://localhost:8443",
+    "--cas.server.prefix=${cas.server.name}/cas",
+
+    "--cas.service-registry.core.init-from-json=true",
+    "--cas.service-registry.json.location=file:${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/services",
+
+    "--cas.http-web-request.header.content-security-policy=",
+    
+    "--cas.monitor.endpoints.endpoint.defaults.access=ANONYMOUS",
+    "--management.endpoints.web.exposure.include=*",
+    "--management.endpoints.access.default=UNRESTRICTED",
+
+    "--cas.authn.attribute-repository.stub.attributes.uid=casuser",
+    "--cas.authn.attribute-repository.stub.attributes.memberOf=admin,staff,superuser",
+    
+    "--cas.palantir.cas-authentication.required-attribute-name=memberOf",
+    "--cas.palantir.cas-authentication.required-attribute-value=^s.+$"
+  ]
+}

@@ -48,9 +48,8 @@ class EndpointLdapAuthenticationProviderGroupsBasedTests extends BaseEndpointLda
         val securityProperties = new SecurityProperties();
         securityProperties.getUser().setRoles(List.of("ROLE_888"));
         val ldap = casProperties.getMonitor().getEndpoints().getLdap();
-        val connectionFactory = LdapUtils.newLdaptiveConnectionFactory(ldap);
         val authenticator = LdapUtils.newLdaptiveAuthenticator(ldap);
-        val provider = new EndpointLdapAuthenticationProvider(ldap, securityProperties, connectionFactory, authenticator);
+        val provider = new EndpointLdapAuthenticationProvider(ldap, securityProperties, authenticator);
         assertNotNull(provider.authenticate(new UsernamePasswordAuthenticationToken("authzcas", "123456")));
         assertAll(provider::destroy);
     }

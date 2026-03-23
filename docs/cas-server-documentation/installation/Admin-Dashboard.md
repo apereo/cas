@@ -44,7 +44,7 @@ Once enabled, you may create an application registration entry for Palantir and 
 to it to only allow access to authorized users, or you may instruct Palantir to reject authentication attempts
 that do not pass the access requirement rules.
 
-{% include_cached casproperties.html properties="cas.palantir.cas-authenication" %}
+{% include_cached casproperties.html properties="cas.palantir.cas-authentication" %}
 
 Furthermore, note that Palantir requires a number of actuator endpoints, such as `info`, `env`, etc that are 
 provided by CAS and Spring Boot. It essentially sits on top of actuator endpoints and consumes and renders data. You
