@@ -1,6 +1,6 @@
 services:
   mongodb:
-    image: mongo:6.0
+    image: mongo:8.2
     restart: unless-stopped
     command: ["--bind_ip_all"]
     healthcheck:
