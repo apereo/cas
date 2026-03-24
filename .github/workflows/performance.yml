@@ -104,7 +104,7 @@ jobs:
       - name: Setup Gradle
         uses: gradle/actions/setup-gradle@v5
       - name: JMeter Performance Tests ${{ matrix.protocols }} / ${{ matrix.category }}
-        uses: nick-fields/retry@v3
+        uses: nick-fields/retry@v4
         with:
           max_attempts: 2
           timeout_minutes: 15
@@ -145,7 +145,7 @@ jobs:
       - name: Setup Gradle
         uses: gradle/actions/setup-gradle@v5
       - name: Artillery Performance Tests ${{ matrix.protocols }} / ${{ matrix.category }}
-        uses: nick-fields/retry@v3
+        uses: nick-fields/retry@v4
         with:
           max_attempts: 2
           timeout_minutes: 15

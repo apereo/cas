@@ -141,10 +141,8 @@ class LdapAuthenticationConfiguration {
             private void configureLdapAuthenticationProvider(final HttpSecurity http,
                                                              final LdapSecurityActuatorEndpointsMonitorProperties ldap) {
                 if (isLdapAuthorizationActive()) {
-                    val connectionFactory = LdapUtils.newLdaptiveConnectionFactory(ldap);
                     val authenticator = LdapUtils.newLdaptiveAuthenticator(ldap);
-                    this.endpointLdapAuthenticationProvider = new EndpointLdapAuthenticationProvider(ldap,
-                        securityProperties, connectionFactory, authenticator);
+                    this.endpointLdapAuthenticationProvider = new EndpointLdapAuthenticationProvider(ldap, securityProperties, authenticator);
                     http.authenticationProvider(endpointLdapAuthenticationProvider);
                 }
             }

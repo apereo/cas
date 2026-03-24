@@ -189,16 +189,16 @@ public class CookieRetrievingCookieGenerator implements Serializable, CasCookieB
                                                final HttpServletRequest request,
                                                final HttpServletResponse response) {
         val builder = new StringBuilder();
-        builder.append(String.format("%s=%s;", cookie.getName(), cookie.getValue()));
+        builder.append(cookie.getName()).append('=').append(cookie.getValue()).append(';');
 
         if (cookie.getMaxAge() > -1) {
-            builder.append(String.format(" Max-Age=%s;", cookie.getMaxAge()));
+            builder.append(" Max-Age=").append(cookie.getMaxAge()).append(';');
         }
         if (StringUtils.isNotBlank(cookie.getDomain())) {
-            builder.append(String.format(" Domain=%s;", cookie.getDomain()));
+            builder.append(" Domain=").append(cookie.getDomain()).append(';');
         }
         val path = cleanCookiePath(cookie.getPath());
-        builder.append(String.format(" Path=%s;", path));
+        builder.append(" Path=").append(path).append(';');
 
         val sameSitePolicy = casCookieValueManager.getCookieSameSitePolicy();
         val sameSiteResult = sameSitePolicy.build(request, response, cookieGenerationContext);

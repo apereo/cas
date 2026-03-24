@@ -83,7 +83,6 @@ import org.ldaptive.auth.FormatDnResolver;
 import org.ldaptive.auth.SearchDnResolver;
 import org.ldaptive.auth.SearchEntryResolver;
 import org.ldaptive.auth.SimpleBindAuthenticationHandler;
-import org.ldaptive.auth.User;
 import org.ldaptive.auth.ext.ActiveDirectoryAuthenticationResponseHandler;
 import org.ldaptive.auth.ext.EDirectoryAuthenticationResponseHandler;
 import org.ldaptive.auth.ext.FreeIPAAuthenticationResponseHandler;
@@ -427,7 +426,7 @@ public class LdapUtils {
         val request = newLdaptiveSearchRequest(baseDn, filterQuery, params, returnAttributes.toArray(ArrayUtils.EMPTY_STRING_ARRAY));
         operation.setRequest(request);
         operation.setTemplate(newLdaptiveSearchFilter(filterQuery, params));
-        return operation;                                          
+        return operation;
     }
 
     /**
@@ -448,23 +447,10 @@ public class LdapUtils {
      * @return the authenticator
      */
     public static Authenticator newLdaptiveAuthenticator(final AbstractLdapAuthenticationProperties props) {
+        LOGGER.debug("Creating authenticator for [{}]", props.getLdapUrl());
         return switch (props.getType()) {
-            case AD -> {
-                LOGGER.debug("Creating active directory authenticator for [{}]", props.getLdapUrl());
-                yield getActiveDirectoryAuthenticator(props);
-            }
-            case DIRECT -> {
-                LOGGER.debug("Creating direct-bind authenticator for [{}]", props.getLdapUrl());
-                yield getDirectBindAuthenticator(props);
-            }
-            case AUTHENTICATED -> {
-                LOGGER.debug("Creating authenticated authenticator for [{}]", props.getLdapUrl());
-                yield getAuthenticatedOrAnonSearchAuthenticator(props);
-            }
-            default -> {
-                LOGGER.debug("Creating anonymous authenticator for [{}]", props.getLdapUrl());
-                yield getAuthenticatedOrAnonSearchAuthenticator(props);
-            }
+            case AD, DIRECT -> getDnFormatAuthenticator(props);
+            case AUTHENTICATED, ANONYMOUS -> getAuthenticatedOrAnonSearchAuthenticator(props);
         };
     }
 
@@ -801,37 +787,30 @@ public class LdapUtils {
         if (StringUtils.isBlank(properties.getSearchFilter())) {
             throw new IllegalArgumentException("User filter cannot be empty/blank for authenticated/anonymous authentication");
         }
-        val connectionFactoryForSearch = newLdaptiveConnectionFactory(properties);
-        val resolver = buildAggregateDnResolver(properties, connectionFactoryForSearch);
+        val connectionFactory = newLdaptiveConnectionFactory(properties);
+        val resolver = buildAggregateDnResolver(properties, connectionFactory);
 
         val auth = StringUtils.isBlank(properties.getPrincipalAttributePassword())
-            ? new Authenticator(resolver, getBindAuthenticationHandler(newLdaptiveConnectionFactory(properties)))
-            : new Authenticator(resolver, getCompareAuthenticationHandler(properties, newLdaptiveConnectionFactory(properties)));
+            ? new Authenticator(resolver, getBindAuthenticationHandler(connectionFactory))
+            : new Authenticator(resolver, getCompareAuthenticationHandler(properties, connectionFactory));
 
         if (properties.isEnhanceWithEntryResolver()) {
-            auth.setEntryResolver(newLdaptiveSearchEntryResolver(properties, newLdaptiveConnectionFactory(properties)));
+            auth.setEntryResolver(newLdaptiveSearchEntryResolver(properties, connectionFactory));
         }
         return auth;
     }
 
-    private static Authenticator getDirectBindAuthenticator(final AbstractLdapAuthenticationProperties properties) {
+    private static Authenticator getDnFormatAuthenticator(final AbstractLdapAuthenticationProperties properties) {
         if (StringUtils.isBlank(properties.getDnFormat())) {
-            throw new IllegalArgumentException("Dn format cannot be empty/blank for direct bind authentication");
-        }
-        return getAuthenticatorViaDnFormat(properties, newLdaptiveConnectionFactory(properties));
-    }
-
-    private static Authenticator getActiveDirectoryAuthenticator(final AbstractLdapAuthenticationProperties properties) {
-        if (StringUtils.isBlank(properties.getDnFormat())) {
-            throw new IllegalArgumentException("Dn format cannot be empty/blank for active directory authentication");
+            throw new IllegalArgumentException("Dn format cannot be empty/blank for authentication");
         }
         return getAuthenticatorViaDnFormat(properties, newLdaptiveConnectionFactory(properties));
     }
 
     private static Authenticator getAuthenticatorViaDnFormat(final AbstractLdapAuthenticationProperties properties,
-                                                             @Nullable final ConnectionFactory factory) {
+                                                             final ConnectionFactory factory) {
         val resolver = new FormatDnResolver(properties.getDnFormat());
-        val authenticator = new Authenticator(resolver, getBindAuthenticationHandler(newLdaptiveConnectionFactory(properties)));
+        val authenticator = new Authenticator(resolver, getBindAuthenticationHandler(factory));
 
         if (properties.isEnhanceWithEntryResolver()) {
             authenticator.setEntryResolver(newLdaptiveSearchEntryResolver(properties, factory));
@@ -1104,25 +1083,6 @@ public class LdapUtils {
         LOGGER.debug("Initializing LDAP authentication handler for [{}]", props.getLdapUrl());
         handler.initialize();
         return handler;
-    }
-
-    @SuppressWarnings("UnusedVariable")
-    private record ChainingLdapDnResolver(List<? extends DnResolver> resolvers) implements DnResolver {
-        @Override
-        public @Nullable String resolve(final User user) {
-            return resolvers
-                .stream()
-                .map(resolver -> FunctionUtils.doAndHandle(
-                        () -> resolver.resolve(user),
-                        throwable -> {
-                            LoggingUtils.warn(LOGGER, throwable);
-                            return null;
-                        })
-                    .get())
-                .filter(Objects::nonNull)
-                .findFirst()
-                .orElseThrow(() -> new RuntimeException(new AccountNotFoundException("Unable to resolve user dn for " + user.getIdentifier())));
-        }
     }
 
     @SuppressWarnings("UnusedVariable")
