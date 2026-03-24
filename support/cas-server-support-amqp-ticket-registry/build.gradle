@@ -9,7 +9,7 @@ ext {
 dependencies {
     api project(":api:cas-server-core-api-util")
     
-    implementation libraries.springamqp
+    implementation libraries.springrabbitmq
     
     implementation project(":core:cas-server-core-tickets")
     implementation project(":core:cas-server-core-tickets-api")

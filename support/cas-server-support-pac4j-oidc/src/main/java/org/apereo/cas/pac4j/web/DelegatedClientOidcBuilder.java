@@ -20,6 +20,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
+import org.pac4j.core.config.properties.JwksProperties;
 import org.pac4j.oauth.client.BitbucketClient;
 import org.pac4j.oauth.client.DropBoxClient;
 import org.pac4j.oauth.client.FacebookClient;
@@ -43,6 +44,8 @@ import org.pac4j.oidc.config.AppleOidcConfiguration;
 import org.pac4j.oidc.config.AzureAd2OidcConfiguration;
 import org.pac4j.oidc.config.KeycloakOidcConfiguration;
 import org.pac4j.oidc.config.OidcConfiguration;
+import org.pac4j.oidc.config.method.PrivateKeyJwtClientAuthnMethodConfig;
+import org.pac4j.oidc.federation.config.OidcTrustAnchorProperties;
 
 /**
  * This is {@link DelegatedClientOidcBuilder}.
@@ -347,7 +350,16 @@ public class DelegatedClientOidcBuilder implements ConfigurableDelegatedClientBu
         });
 
         FunctionUtils.doIfNotBlank(oidc.getClientAuthenticationMethod(),
-            method -> cfg.setClientAuthenticationMethod(ClientAuthenticationMethod.parse(method)));
+            method -> {
+                val clientAuth = ClientAuthenticationMethod.parse(method);
+                cfg.setClientAuthenticationMethod(clientAuth);
+                if (ClientAuthenticationMethod.PRIVATE_KEY_JWT.equals(clientAuth)) {
+                    val privateKeyJwtJwks = new JwksProperties();
+                    privateKeyJwtJwks.setJwksResource(oidc.getPrivateKeyJwt().getJwks().getLocation());
+                    privateKeyJwtJwks.setKid(oidc.getPrivateKeyJwt().getJwks().getKid());
+                    cfg.setPrivateKeyJwtClientAuthnMethodConfig(new PrivateKeyJwtClientAuthnMethodConfig(privateKeyJwtJwks));
+                }
+            });
 
         if (StringUtils.isNotBlank(oidc.getTokenExpirationAdvance())) {
             cfg.setTokenExpirationAdvance((int) Beans.newDuration(oidc.getTokenExpirationAdvance()).toSeconds());
@@ -361,6 +373,30 @@ public class DelegatedClientOidcBuilder implements ConfigurableDelegatedClientBu
         }
         cfg.setSslSocketFactory(casSslContext.getSslContext().getSocketFactory());
         cfg.setHostnameVerifier(casSslContext.getHostnameVerifier());
+
+        val oidcFede = oidc.getFederation();
+        if (oidcFede != null && oidcFede.isEnabled()) {
+            val cfgFede = cfg.getFederation();
+
+            val jwks = new JwksProperties();
+            jwks.setJwksResource(oidcFede.getJwks().getLocation());
+            jwks.setKid(oidcFede.getJwks().getKid());
+            cfgFede.setJwks(jwks);
+            cfgFede.setValidityInDays(oidcFede.getValidityInDays());
+            cfgFede.setApplicationType(oidcFede.getApplicationType());
+            cfgFede.setResponseTypes(oidcFede.getResponseTypes());
+            cfgFede.setGrantTypes(oidcFede.getGrantTypes());
+            cfgFede.setScopes(oidcFede.getScopes());
+            cfgFede.setClientRegistrationTypes(oidcFede.getClientRegistrationTypes());
+            cfgFede.setTargetOp(oidcFede.getTargetOp());
+            oidcFede.getTrustAnchors().entrySet().stream()
+                .map(e -> new OidcTrustAnchorProperties(e.getKey(), e.getValue()))
+                .forEach(cfgFede.getTrustAnchors()::add);
+            cfgFede.setContactName(oidcFede.getContactName());
+            cfgFede.setContactEmails(oidcFede.getContactEmails());
+
+        }
+
         return cfg;
     }
 

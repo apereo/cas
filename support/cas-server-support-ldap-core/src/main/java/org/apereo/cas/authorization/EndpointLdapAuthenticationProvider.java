@@ -4,6 +4,7 @@ import module java.base;
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.authentication.principal.PrincipalFactoryUtils;
 import org.apereo.cas.configuration.model.core.monitor.LdapSecurityActuatorEndpointsMonitorProperties;
+import org.apereo.cas.util.ChainingLdapDnResolver;
 import org.apereo.cas.util.LdapUtils;
 import org.apereo.cas.util.LoggingUtils;
 import lombok.RequiredArgsConstructor;
@@ -11,12 +12,13 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.Strings;
-import org.ldaptive.ConnectionFactory;
+import org.ldaptive.ConnectionFactoryManager;
 import org.ldaptive.Credential;
 import org.ldaptive.ReturnAttributes;
 import org.ldaptive.SearchOperation;
 import org.ldaptive.auth.AuthenticationRequest;
 import org.ldaptive.auth.Authenticator;
+import org.springframework.beans.factory.DisposableBean;
 import org.springframework.boot.security.autoconfigure.SecurityProperties;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.BadCredentialsException;
@@ -34,12 +36,10 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
  */
 @Slf4j
 @RequiredArgsConstructor
-public class EndpointLdapAuthenticationProvider implements AuthenticationProvider {
+public class EndpointLdapAuthenticationProvider implements AuthenticationProvider, DisposableBean {
     private final LdapSecurityActuatorEndpointsMonitorProperties ldapProperties;
 
     private final SecurityProperties securityProperties;
-
-    private final ConnectionFactory connectionFactory;
 
     private final Authenticator authenticator;
 
@@ -53,8 +53,8 @@ public class EndpointLdapAuthenticationProvider implements AuthenticationProvide
     /**
      * Destroy.
      */
+    @Override
     public void destroy() {
-        connectionFactory.close();
         authenticator.close();
     }
 
@@ -123,16 +123,16 @@ public class EndpointLdapAuthenticationProvider implements AuthenticationProvide
         if (isGroupBasedAuthorization()) {
             LOGGER.debug("Handling LDAP authorization based on groups");
             return new LdapUserGroupsToRolesAuthorizationGenerator(
-                ldapAuthorizationGeneratorUserSearchOperation(connectionFactory),
+                ldapAuthorizationGeneratorUserSearchOperation(),
                 properties.isAllowMultipleResults(),
                 properties.getGroupAttribute(),
                 properties.getGroupPrefix(),
-                ldapAuthorizationGeneratorGroupSearchOperation(connectionFactory));
+                ldapAuthorizationGeneratorGroupSearchOperation());
         }
         if (isUserBasedAuthorization()) {
             LOGGER.debug("Handling LDAP authorization based on attributes and roles");
             return new LdapUserAttributesToRolesAuthorizationGenerator(
-                ldapAuthorizationGeneratorUserSearchOperation(connectionFactory),
+                ldapAuthorizationGeneratorUserSearchOperation(),
                 properties.isAllowMultipleResults(),
                 properties.getRoleAttribute(),
                 properties.getRolePrefix());
@@ -156,23 +156,26 @@ public class EndpointLdapAuthenticationProvider implements AuthenticationProvide
         return StringUtils.isNotBlank(properties.getBaseDn()) && StringUtils.isNotBlank(properties.getSearchFilter());
     }
 
-    protected SearchOperation ldapAuthorizationGeneratorUserSearchOperation(final ConnectionFactory factory) {
+    protected SearchOperation ldapAuthorizationGeneratorUserSearchOperation() {
         val properties = ldapProperties.getLdapAuthz();
-        val searchOperation = LdapUtils.newLdaptiveSearchOperation(properties.getBaseDn(), properties.getSearchFilter(),
-            List.of(), List.of());
-        searchOperation.setConnectionFactory(factory);
-        return searchOperation;
+        return prepareSearchOperation(LdapUtils.newLdaptiveSearchOperation(properties.getBaseDn(), properties.getSearchFilter()));
     }
 
-    protected SearchOperation ldapAuthorizationGeneratorGroupSearchOperation(final ConnectionFactory factory) {
+    protected SearchOperation ldapAuthorizationGeneratorGroupSearchOperation() {
         val properties = ldapProperties.getLdapAuthz();
-        val searchOperation = LdapUtils.newLdaptiveSearchOperation(
-            properties.getGroupBaseDn(),
-            properties.getGroupFilter(),
-            List.of(),
-            List.of());
-        searchOperation.setConnectionFactory(factory);
-        return searchOperation;
+        return prepareSearchOperation(LdapUtils.newLdaptiveSearchOperation(properties.getGroupBaseDn(), properties.getGroupFilter()));
+    }
+
+    protected SearchOperation prepareSearchOperation(final SearchOperation op) {
+        val dnResolver = authenticator.getDnResolver();
+        if (dnResolver instanceof final ChainingLdapDnResolver r
+            && r.getResolvers().getFirst() instanceof final ConnectionFactoryManager mgr) {
+            op.setConnectionFactory(mgr.getConnectionFactory());
+        }
+        if (dnResolver instanceof final ConnectionFactoryManager mgr) {
+            op.setConnectionFactory(mgr.getConnectionFactory());
+        }
+        return op;
     }
 }
 

@@ -1,0 +1,51 @@
+services:
+  mongodb:
+    image: mongo:6.0
+    restart: unless-stopped
+    command: ["--bind_ip_all"]
+    healthcheck:
+      test: ["CMD", "mongosh", "--quiet", "mongodb://127.0.0.1:27017/test", "--eval", "db.runCommand({ ping: 1 }).ok"]
+      interval: 10s
+      timeout: 5s
+      retries: 12
+      start_period: 20s
+    networks:
+      oidf:
+        aliases:
+          - mongodb
+
+  oidc-conformance-suite:
+    image: mmoayyed/oidc-conformance-suite:latest
+    container_name: oidc-suite
+    depends_on:
+      mongodb:
+        condition: service_healthy
+    command:
+      - java
+      - -jar
+      - target/fapi-test-suite.jar
+      - --fintechlabs.base_url=https://localhost:9443
+      - --fintechlabs.base_mtls_url=https://localhost:8444
+      - --spring.data.mongodb.uri=mongodb://mongodb:27017/test?directConnection=true
+    ports:
+      - "8080:8080"
+      - "8444:8444"
+    networks:
+      - oidf
+
+  nginx:
+    image: nginx:alpine
+    container_name: oidf-nginx
+    depends_on:
+      - oidc-conformance-suite
+    ports:
+      - "9443:9443"
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf:ro
+      - ./certs:/etc/nginx/certs:ro
+    networks:
+      - oidf
+
+networks:
+  oidf:
+    driver: bridge

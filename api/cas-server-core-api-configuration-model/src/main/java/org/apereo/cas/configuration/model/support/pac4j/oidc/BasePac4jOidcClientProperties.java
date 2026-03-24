@@ -9,6 +9,7 @@ import org.apereo.cas.configuration.support.RequiresModule;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
+import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
 /**
  * This is {@link BasePac4jOidcClientProperties}.
@@ -134,6 +135,12 @@ public abstract class BasePac4jOidcClientProperties extends Pac4jIdentifiableCli
     private String clientAuthenticationMethod;
 
     /**
+     * The specific configuration for the private_key_jwt client authentication method.
+     */
+    @NestedConfigurationProperty
+    private Pac4jOidcClientPrivateKeyJwtProperties privateKeyJwt = new Pac4jOidcClientPrivateKeyJwtProperties();
+
+    /**
      * Control the list of supported client authentication methods
      * that can be accepted and understood by this integration.
      * Multiple methods may be specified and separated via a comma.
@@ -146,4 +153,10 @@ public abstract class BasePac4jOidcClientProperties extends Pac4jIdentifiableCli
      * for the correct signature, etc.
      */
     private boolean validateLogoutToken = true;
+
+    /**
+     * Federation configuration of this OIDC client as RP.
+     */
+    @NestedConfigurationProperty
+    private Pac4jOidcClientFederationProperties federation = new Pac4jOidcClientFederationProperties();
 }

@@ -1,0 +1,17 @@
+{
+  "dependencies": "pac4j-webflow,pac4j-oidc",
+  "properties": [
+    "--cas.server.name=https://localhost:8443",
+    "--cas.server.prefix=https://localhost:8443/cas",
+
+    "--cas.authn.pac4j.oidc[0].generic.client-name=oidcprovider",
+    "--cas.authn.pac4j.oidc[0].generic.client-authentication-method=private_key_jwt",
+    "--cas.authn.pac4j.oidc[0].generic.private-key-jwt.jwks.location=file:${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/metadata/privatekeyjwks",
+    "--cas.authn.pac4j.oidc[0].generic.federation.enabled=true",
+    "--cas.authn.pac4j.oidc[0].generic.federation.target-op=https://oidcprovider",
+    "--cas.authn.pac4j.oidc[0].generic.federation.jwks.location=file:${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/metadata/fedejwks",
+    "--cas.authn.pac4j.oidc[0].generic.federation.trust-anchors[https://ta]=https://ta/jwks",
+    "--cas.authn.pac4j.oidc[0].generic.federation.contact-name=Jerome_LELEU",
+    "--cas.authn.pac4j.oidc[0].generic.federation.contact-emails[0]=jerome@casinthecloud.com"
+  ]
+}

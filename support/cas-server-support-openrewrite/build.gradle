@@ -15,7 +15,7 @@ tasks.register("createOpenRewriteRecipe") {
     def outputFile = file(recipeFileName)
 
     outputs.file(outputFile)
-    outputs.cacheIf { true }
+    outputs.cacheIf { false }
 
     /**
      * All properties that could have an effect on the generation of
@@ -46,7 +46,8 @@ tasks.register("createOpenRewriteRecipe") {
 
         outputFile.write(recipe)
         println "OpenRewrite recipe created at ${outputFile}"
-        println "The following recipes are available:\n${outputFile.parentFile.listFiles().collect { it.name} }"
+        println "The following recipes are available:
+${outputFile.parentFile.listFiles().collect { it.name} }"
     }
 }
 sourceSets.main.output.dir file("recipes"), builtBy: "createOpenRewriteRecipe"

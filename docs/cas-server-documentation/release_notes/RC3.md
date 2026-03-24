@@ -157,6 +157,11 @@ with this feature.
 CAS is now able to use Google Cloud Storage as a storage and management option for SAML2 identity provider metadata.
 See [this guide](../installation/Configuring-SAML2-DynamicMetadata-GCP-Storage.html) for more details.
 
+### OpenID Federation & Delegation
+
+The OpenID Federation protocol is supported in the authentication delegation for OIDC clients.
+See [this guide](../integration/Delegate-Authentication-Generic-OpenID-Connect.html) for more details.
+
 ## Other Stuff
 
 - SAML2 logout requests for SOAP bindings correct the `Content-Type` header and formatted body.
