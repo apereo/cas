@@ -1204,15 +1204,15 @@ ext.libraries = [
                 dependencies.create(libs.expressly.get()) {
                 }
         ],
-        springamqp                 : [
-                dependencies.create(libs.spring.boot.starter.amqp.get()) {
+        springrabbitmq                 : [
+                dependencies.create(libs.spring.boot.starter.rabbitmq.get()) {
                     exclude(group: "org.slf4j", module: "slf4j-api")
                     exclude(group: "org.springframework", module: "spring-context")
                     exclude(group: "org.springframework", module: "spring-core")
                     exclude(group: "org.springframework", module: "spring-aop")
                     exclude(group: "org.springframework.boot", module: "spring-boot-starter")
                 },
-                dependencies.create(libs.spring.boot.amqp.get()) {
+                dependencies.create(libs.spring.boot.rabbitmq.get()) {
                     exclude(group: "org.slf4j", module: "slf4j-api")
                     exclude(group: "org.springframework", module: "spring-context")
                     exclude(group: "org.springframework", module: "spring-core")

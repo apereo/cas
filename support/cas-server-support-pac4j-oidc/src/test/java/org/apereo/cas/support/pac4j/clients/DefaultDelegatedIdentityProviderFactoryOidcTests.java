@@ -2,11 +2,14 @@ package org.apereo.cas.support.pac4j.clients;
 
 import module java.base;
 import org.apereo.cas.config.CasDelegatedAuthenticationOidcAutoConfiguration;
+import com.nimbusds.oauth2.sdk.auth.ClientAuthenticationMethod;
 import lombok.val;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.pac4j.oauth.client.GitHubClient;
+import org.pac4j.oidc.client.OidcClient;
+import org.pac4j.oidc.config.method.PrivateKeyJwtClientAuthnMethodConfig;
 import org.springframework.boot.autoconfigure.ImportAutoConfiguration;
 import org.springframework.test.context.TestPropertySource;
 import static org.junit.jupiter.api.Assertions.*;
@@ -116,6 +119,79 @@ class DefaultDelegatedIdentityProviderFactoryOidcTests {
         void verifyClient() {
             val clients = delegatedIdentityProviderFactory.build();
             assertEquals(4, clients.size());
+        }
+    }
+
+    @Nested
+    @TestPropertySource(properties = {
+        "cas.authn.pac4j.oidc[0].generic.client-name=privateKeyJwtClient",
+        "cas.authn.pac4j.oidc[0].generic.id=123",
+        "cas.authn.pac4j.oidc[0].generic.secret=123",
+        "cas.authn.pac4j.oidc[0].generic.discovery-uri=https://localhost:8443/.well-known/openid-configuration",
+        "cas.authn.pac4j.oidc[0].generic.client-authentication-method=private_key_jwt",
+        "cas.authn.pac4j.oidc[0].generic.private-key-jwt.jwks.location=classpath:private-key-jwt.jwks",
+        "cas.authn.pac4j.core.lazy-init=true"
+    })
+    class PrivateKeyJwtOidcClient extends BaseTests {
+        @Test
+        void verifyPrivateKeyJwtClientAuthenticationMethod() {
+            val clients = delegatedIdentityProviderFactory.build();
+            assertEquals(1, clients.size());
+
+            val client = (OidcClient) clients.getFirst();
+            val config = client.getConfiguration();
+            assertEquals(ClientAuthenticationMethod.PRIVATE_KEY_JWT, config.getClientAuthenticationMethod());
+            assertNotNull(config.getPrivateKeyJwtClientAuthnMethodConfig());
+            val privateKeyJwtConfig = config.getPrivateKeyJwtClientAuthnMethodConfig();
+            assertTrue(privateKeyJwtConfig instanceof PrivateKeyJwtClientAuthnMethodConfig);
+            val castedPrivateKeyJwtClient = (PrivateKeyJwtClientAuthnMethodConfig) privateKeyJwtConfig;
+            assertEquals("class path resource [private-key-jwt.jwks]", castedPrivateKeyJwtClient.getJwks().getJwksResource().toString());
+        }
+    }
+
+    @Nested
+    @TestPropertySource(properties = {
+        "cas.authn.pac4j.oidc[0].generic.client-name=federatedOidcClient",
+        "cas.authn.pac4j.oidc[0].generic.federation.enabled=true",
+        "cas.authn.pac4j.oidc[0].generic.federation.jwks.location=classpath:federation.jwks",
+        "cas.authn.pac4j.oidc[0].generic.federation.jwks.kid=fedekey-federatedOidcClient",
+        "cas.authn.pac4j.oidc[0].generic.federation.validity-in-days=30",
+        "cas.authn.pac4j.oidc[0].generic.federation.application-type=web",
+        "cas.authn.pac4j.oidc[0].generic.federation.response-types[0]=code",
+        "cas.authn.pac4j.oidc[0].generic.federation.grant-types[0]=authorization_code",
+        "cas.authn.pac4j.oidc[0].generic.federation.scopes[0]=openid",
+        "cas.authn.pac4j.oidc[0].generic.federation.scopes[1]=profile",
+        "cas.authn.pac4j.oidc[0].generic.federation.client-registration-types[0]=explicit",
+        "cas.authn.pac4j.oidc[0].generic.federation.target-op=https://target-op.example.org",
+        "cas.authn.pac4j.oidc[0].generic.federation.trust-anchors[anchor]=https://trust-anchor.example.org/entity",
+        "cas.authn.pac4j.oidc[0].generic.federation.contact-name=CAS Team",
+        "cas.authn.pac4j.oidc[0].generic.federation.contact-emails[0]=cas@example.org",
+        "cas.authn.pac4j.core.lazy-init=true"
+    })
+    class FederationOidcClient extends BaseTests {
+        @Test
+        void verifyFederationConfigurationAndCustomization() {
+            val clients = delegatedIdentityProviderFactory.build();
+            assertEquals(1, clients.size());
+
+            val client = (OidcClient) clients.getFirst();
+            val config = client.getConfiguration();
+            val federation = config.getFederation();
+            assertTrue(config.isFederation());
+            assertEquals("https://target-op.example.org", federation.getTargetOp());
+            assertEquals("class path resource [federation.jwks]", federation.getJwks().getJwksResource().toString());
+            assertEquals("fedekey-federatedOidcClient", federation.getJwks().getKid());
+            assertEquals(1, federation.getTrustAnchors().size());
+            assertEquals(30, federation.getValidityInDays());
+            assertEquals("web", federation.getApplicationType());
+            assertEquals(List.of("code"), federation.getResponseTypes());
+            assertEquals(List.of("authorization_code"), federation.getGrantTypes());
+            assertEquals(List.of("openid", "profile"), federation.getScopes());
+            assertEquals(List.of("explicit"), federation.getClientRegistrationTypes());
+            assertEquals("CAS Team", federation.getContactName());
+            assertEquals(List.of("cas@example.org"), federation.getContactEmails());
+            assertNotNull(federation.getEntityId());
+            assertEquals("https://cas.example.org:8443/cas/rp/federatedOidcClient", federation.getEntityId());
         }
     }
 

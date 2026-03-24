@@ -26,7 +26,7 @@ bootstrapSelect = "1.13.18"
 bouncyCastle = "1.83"
 bucket4j = "8.10.1"
 caffeine = "3.2.3"
-casClient = "4.0.4"
+casClient = "4.1.0"
 cbor = "4.5.6"
 chartJsCore = "4.5.1"
 checkstyle = "13.3.0"
@@ -69,7 +69,7 @@ geode = "2.0.0"
 googleApiClient = "2.9.0"
 googleAuth = "1.5.0"
 googleCloudLogging = "3.28.0"
-googleCloudMonitor = "3.88.0"
+googleCloudMonitor = "3.89.0"
 googleCloudSdk = "8.0.1"
 googleMapsGeoCoding = "2.2.0"
 googleZxing = "3.5.4"
@@ -193,7 +193,7 @@ opensaml = "5.2.1"
 oracleJdbc = "23.26.1.0.0"
 oshi = "6.10.0"
 otel = "1.60.1"
-pac4j = "6.3.3"
+pac4j = "6.4.0-RC1"
 permitio = "2.2.5"
 postgresql = "42.7.10"
 pulsar = "4.1.3"
@@ -634,7 +634,7 @@ spring-beans = { module = "org.springframework:spring-beans", version.ref = "spr
 spring-binding = { module = "org.springframework.webflow:spring-binding", version.ref = "springWebflow" }
 spring-boot-core = { module = "org.springframework.boot:spring-boot", version.ref = "springBoot" }
 spring-boot-actuator = { module = "org.springframework.boot:spring-boot-actuator", version.ref = "springBoot" }
-spring-boot-amqp = { module = "org.springframework.boot:spring-boot-amqp", version.ref = "springBoot" }
+spring-boot-rabbitmq = { module = "org.springframework.boot:spring-boot-rabbitmq", version.ref = "springBoot" }
 spring-boot-health = { module = "org.springframework.boot:spring-boot-health", version.ref = "springBoot" }
 spring-boot-integration = { module = "org.springframework.boot:spring-boot-integration", version.ref = "springBoot" }
 spring-boot-jackson = { module = "org.springframework.boot:spring-boot-jackson", version.ref = "springBoot" }
@@ -669,7 +669,7 @@ spring-boot-cache = { module = "org.springframework.boot:spring-boot-cache", ver
 spring-boot-devtools = { module = "org.springframework.boot:spring-boot-devtools", version.ref = "springBoot" }
 spring-boot-properties-migrator = { module = "org.springframework.boot:spring-boot-properties-migrator", version.ref = "springBoot" }
 spring-boot-starter-actuator = { module = "org.springframework.boot:spring-boot-starter-actuator", version.ref = "springBoot" }
-spring-boot-starter-amqp = { module = "org.springframework.boot:spring-boot-starter-amqp", version.ref = "springBoot" }
+spring-boot-starter-rabbitmq = { module = "org.springframework.boot:spring-boot-starter-rabbitmq", version.ref = "springBoot" }
 spring-boot-starter-aspectj = { module = "org.springframework.boot:spring-boot-starter-aspectj", version.ref = "springBoot" }
 spring-boot-starter-data-jdbc = { module = "org.springframework.boot:spring-boot-starter-data-jdbc", version.ref = "springBoot" }
 spring-boot-starter-data-mongodb = { module = "org.springframework.boot:spring-boot-starter-data-mongodb", version.ref = "springBoot" }

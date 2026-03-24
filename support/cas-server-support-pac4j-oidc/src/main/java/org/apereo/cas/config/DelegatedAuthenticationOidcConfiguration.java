@@ -5,23 +5,30 @@ import org.apereo.cas.authentication.CasSSLContext;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.features.CasFeatureModule;
 import org.apereo.cas.logout.slo.SingleLogoutRequestExecutor;
+import org.apereo.cas.pac4j.client.DelegatedIdentityProviders;
 import org.apereo.cas.pac4j.web.DelegatedClientOidcBuilder;
 import org.apereo.cas.pac4j.web.DelegatedClientOidcSessionManager;
 import org.apereo.cas.pac4j.web.DelegatedClientsOidcEndpointContributor;
+import org.apereo.cas.pac4j.web.DelegatedOidcFederationEntityStatementController;
 import org.apereo.cas.pac4j.web.flow.DelegatedAuthenticationOidcWebflowConfigurer;
 import org.apereo.cas.pac4j.web.flow.DelegatedClientOidcLogoutAction;
 import org.apereo.cas.support.pac4j.authentication.clients.ConfigurableDelegatedClientBuilder;
+import org.apereo.cas.support.pac4j.authentication.clients.DelegatedClientFactoryCustomizer;
 import org.apereo.cas.support.pac4j.authentication.clients.DelegatedClientSessionManager;
 import org.apereo.cas.support.pac4j.authentication.clients.DelegatedClientsEndpointContributor;
 import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.util.spring.beans.BeanSupplier;
 import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
+import org.apereo.cas.web.CasWebSecurityConfigurer;
 import org.apereo.cas.web.flow.CasWebflowConfigurer;
 import org.apereo.cas.web.flow.CasWebflowConstants;
 import org.apereo.cas.web.flow.CasWebflowExecutionPlanConfigurer;
 import org.apereo.cas.web.flow.DelegatedClientAuthenticationConfigurationContext;
 import org.apereo.cas.web.flow.actions.WebflowActionBeanSupplier;
+import lombok.val;
+import org.apache.commons.lang3.Strings;
 import org.jspecify.annotations.NonNull;
+import org.pac4j.oidc.client.OidcClient;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -51,7 +58,6 @@ class DelegatedAuthenticationOidcConfiguration {
     public DelegatedClientsEndpointContributor delegatedClientsOidcEndpointContributor() {
         return new DelegatedClientsOidcEndpointContributor();
     }
-
 
     @Bean
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
@@ -118,4 +124,41 @@ class DelegatedAuthenticationOidcConfiguration {
             .get();
     }
 
+    @Bean
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+    @ConditionalOnMissingBean(name = "oidcRpEndpointFederationCustomizer")
+    public DelegatedClientFactoryCustomizer oidcRpEndpointFederationCustomizer(final CasConfigurationProperties casProperties) {
+        return client -> {
+            if (client instanceof final OidcClient oidcClient) {
+                val federation = oidcClient.getConfiguration().getFederation();
+                if (federation != null) {
+                    val entityId = Strings.CI.appendIfMissing(casProperties.getServer().getPrefix(), "/")
+                        .concat(DelegatedOidcFederationEntityStatementController.BASE_ENDPOINT_RELYING_PARTY.substring(1)
+                                + "/" + oidcClient.getName());
+                    federation.setEntityId(entityId);
+                }
+            }
+        };
+    }
+
+    @Bean
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+    @ConditionalOnMissingBean(name = "delegatedClientOidcEndpointConfigurer")
+    public CasWebSecurityConfigurer<Void> delegatedClientOidcEndpointConfigurer() {
+        return new CasWebSecurityConfigurer<>() {
+            @Override
+            public List<String> getIgnoredEndpoints() {
+                return List.of(Strings.CI.prependIfMissing(DelegatedOidcFederationEntityStatementController.BASE_ENDPOINT_RELYING_PARTY, "/"));
+            }
+        };
+    }
+
+    @Bean
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+    @ConditionalOnMissingBean(name = "delegatedOidcFederationEntityStatementController")
+    public DelegatedOidcFederationEntityStatementController delegatedOidcFederationEntityStatementController(
+        @Qualifier(DelegatedIdentityProviders.BEAN_NAME)
+        final DelegatedIdentityProviders identityProviders) {
+        return new DelegatedOidcFederationEntityStatementController(identityProviders);
+    }
 }
