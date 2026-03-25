@@ -11,16 +11,11 @@ tasks.register("createOpenRewriteRecipe") {
 
     def inputFile = file("recipes/current.gtemplate")
     def templateContents = inputFile.text
-    def recipeFileName = "recipes/META-INF/rewrite/${recipeName}.yml"
-    def outputFile = file(recipeFileName)
+    def outputFile = layout.buildDirectory.file("generated-recipes/META-INF/rewrite/${recipeName}.yml")
 
     outputs.file(outputFile)
-    outputs.cacheIf { false }
+    outputs.cacheIf { true }
 
-    /**
-     * All properties that could have an effect on the generation of
-     * the recipe must be defined as inputs to the task.
-     */
     inputs.property("casVersion", casVersion)
     inputs.property("tomcatVersion", tomcatVersion)
     inputs.property("sourceCompatibility", sourceCompatibility)
@@ -28,7 +23,6 @@ tasks.register("createOpenRewriteRecipe") {
     inputs.property("jibVersion", jibVersion)
     inputs.property("gradleVersion", gradleVersion)
     inputs.property("recipeName", recipeName)
-    inputs.property("recipeFileName", recipeFileName)
     inputs.file(inputFile).withPropertyName("openrewrite-template").withPathSensitivity(PathSensitivity.RELATIVE)
 
     doFirst {
@@ -44,9 +38,23 @@ tasks.register("createOpenRewriteRecipe") {
         def engine = new groovy.text.GStringTemplateEngine()
         def recipe = engine.createTemplate(templateContents).make(model).toString()
 
-        outputFile.write(recipe)
-        println "OpenRewrite recipe created at ${outputFile}"
-        println "The following recipes are available: ${outputFile.parentFile.listFiles().collect { it.name} }"
+        def out = outputFile.get().asFile
+        out.parentFile.mkdirs()
+        out.write(recipe)
+        println "OpenRewrite recipe created at ${out}"
     }
 }
-sourceSets.main.output.dir file("recipes"), builtBy: "createOpenRewriteRecipe"
+
+tasks.register("syncRecipe", Copy) {
+    dependsOn("createOpenRewriteRecipe")
+    from layout.buildDirectory.dir("generated-recipes/META-INF/rewrite")
+    into file("recipes/META-INF/rewrite")
+}
+
+sourceSets.main.resources.srcDirs file("recipes"), layout.buildDirectory.dir("generated-recipes")
+
+tasks.named("processResources").configure {
+    dependsOn("createOpenRewriteRecipe")
+    exclude("current.gtemplate")
+    duplicatesStrategy = DuplicatesStrategy.INCLUDE
+}
