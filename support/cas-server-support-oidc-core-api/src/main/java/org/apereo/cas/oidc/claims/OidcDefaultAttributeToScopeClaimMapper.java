@@ -49,7 +49,8 @@ public class OidcDefaultAttributeToScopeClaimMapper implements OidcAttributeToSc
         }
         val result = getClaimMappingsForPolicy(registeredService.getAttributeReleasePolicy());
         val finalResult = Stream.concat(finalMap, result);
-        return finalResult.collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
+        return finalResult.collect(Collectors.toMap(Map.Entry::getKey,
+            Map.Entry::getValue, (existing, replacement) -> replacement));
     }
 
     private static Stream<Map.Entry<String, String>> getClaimMappingsForPolicy(final RegisteredServiceAttributeReleasePolicy policy) {
