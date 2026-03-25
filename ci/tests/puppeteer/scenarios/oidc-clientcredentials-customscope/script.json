@@ -1,0 +1,31 @@
+{
+  "dependencies": "oidc",
+  "conditions": {
+    "docker": "true"
+  },
+  "properties": [
+    "--cas.server.name=https://localhost:8443",
+    "--cas.server.prefix=${cas.server.name}/cas",
+    
+    "--logging.level.PROTOCOL_MESSAGE=info",
+
+    "--cas.authn.oidc.core.issuer=https://localhost:8443/cas/oidc",
+    "--cas.authn.oidc.jwks.file-system.jwks-file=file:${#systemProperties['java.io.tmpdir']}/keystore.jwks",
+
+    "--cas.authn.attribute-repository.stub.id=Static",
+    "--cas.authn.attribute-repository.stub.attributes.uid=casuser",
+    "--cas.authn.attribute-repository.stub.attributes.lastname=Apereo",
+    "--cas.authn.attribute-repository.stub.attributes.firstname=CAS",
+    "--cas.authn.attribute-repository.stub.attributes.city=London",
+
+    "--cas.authn.oidc.discovery.claims=sub,uid,lastname,firstname,city",
+    "--cas.authn.oidc.discovery.scopes=openid,Gordon",
+
+    "--cas.authn.oidc.core.user-defined-scopes.Gordon=uid,lastname,firstname,city",
+    
+    "--cas.service-registry.core.init-from-json=true",
+    "--cas.service-registry.json.location=file:${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/services"
+  ],
+  "initScript": "${PWD}/ci/tests/httpbin/run-httpbin-server.sh"
+}
+

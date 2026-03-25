@@ -19,6 +19,7 @@ import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
 import org.jooq.lambda.Unchecked;
+import org.jspecify.annotations.Nullable;
 import org.pac4j.core.context.HttpConstants;
 import org.pac4j.core.context.WebContext;
 import org.pac4j.core.profile.ProfileManager;
@@ -37,23 +38,23 @@ import jakarta.servlet.http.HttpServletRequest;
 public abstract class BaseOAuth20Controller<T extends OAuth20ConfigurationContext> extends AbstractController {
     protected final T configurationContext;
 
-    protected OAuth20AccessToken resolveAccessToken(final Ticket givenAccessToken) {
+    protected @Nullable OAuth20AccessToken resolveAccessToken(final Ticket givenAccessToken) {
         return resolveToken(givenAccessToken, OAuth20AccessToken.class);
     }
 
-    protected <U extends Ticket> U resolveToken(final Ticket token, final Class<U> clazz) {
+    protected @Nullable <U extends Ticket> U resolveToken(final Ticket token, final Class<U> clazz) {
         return token.isStateless()
             ? configurationContext.getTicketRegistry().getTicket(token.getId(), clazz)
             : clazz.cast(token);
     }
 
-    protected String extractAccessTokenFrom(final String token) {
+    protected @Nullable String extractAccessTokenFrom(final String token) {
         val decodableCipher = OAuth20JwtAccessTokenEncoder.toDecodableCipher(getConfigurationContext().getAccessTokenJwtBuilder());
         return decodableCipher.decode(token);
     }
 
     protected void ensureSessionReplicationIsAutoconfiguredIfNeedBe(final HttpServletRequest request) {
-        val replicationProps = getConfigurationContext().getCasProperties().getAuthn().getPac4j().getCore().getSessionReplication();
+        val replicationProps = getConfigurationContext().getCasProperties().getAuthn().getOauth().getSessionReplication();
         val cookieAutoconfigured = replicationProps.getCookie().isAutoConfigureCookiePath();
         if (replicationProps.isReplicateSessions() && cookieAutoconfigured) {
             val cookieBuilder = getConfigurationContext().getOauthDistributedSessionCookieGenerator();
@@ -66,7 +67,7 @@ public abstract class BaseOAuth20Controller<T extends OAuth20ConfigurationContex
         return manager.getProfile().isPresent();
     }
 
-    protected OAuthRegisteredService getRegisteredServiceByClientId(final String clientId) {
+    protected @Nullable OAuthRegisteredService getRegisteredServiceByClientId(final String clientId) {
         return OAuth20Utils.getRegisteredOAuthServiceByClientId(getConfigurationContext().getServicesManager(), clientId);
     }
 

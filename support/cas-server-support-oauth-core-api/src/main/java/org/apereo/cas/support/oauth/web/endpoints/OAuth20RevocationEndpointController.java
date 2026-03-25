@@ -2,6 +2,7 @@ package org.apereo.cas.support.oauth.web.endpoints;
 
 import module java.base;
 import org.apereo.cas.audit.AuditableContext;
+import org.apereo.cas.services.RegisteredServiceAccessStrategyUtils;
 import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.support.oauth.util.OAuth20Utils;
 import org.apereo.cas.ticket.OAuth20Token;
@@ -65,8 +66,9 @@ public class OAuth20RevocationEndpointController<T extends OAuth20ConfigurationC
         val clientId = getConfigurationContext().getRequestParameterResolver()
             .resolveClientIdAndClientSecret(callContext).getLeft();
         val registeredService = getRegisteredServiceByClientId(clientId);
-
-        if (OAuth20Utils.doesServiceNeedAuthentication(registeredService)) {
+        RegisteredServiceAccessStrategyUtils.ensureServiceAccessIsAllowed(registeredService);
+        
+        if (OAuth20Utils.doesServiceNeedAuthentication(Objects.requireNonNull(registeredService))) {
             if (manager.getProfile().isEmpty()) {
                 LOGGER.warn("Service [{}] requests authentication", clientId);
                 return OAuth20Utils.writeError(response, OAuth20Constants.ACCESS_DENIED);
@@ -123,7 +125,7 @@ public class OAuth20RevocationEndpointController<T extends OAuth20ConfigurationC
         val validator = getConfigurationContext().getAccessTokenGrantRequestValidators().getObject()
             .stream()
             .filter(BeanSupplier::isNotProxy)
-            .filter(Unchecked.predicate(b -> b.supports(context)))
+            .filter(Unchecked.predicate(requestValidator -> requestValidator.supports(context)))
             .findFirst()
             .orElse(null);
         if (validator == null) {
