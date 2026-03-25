@@ -86,3 +86,4 @@ cas/lib
 *.aot
 ci/tests/keycloak/data/server.*
 ci/docs/package-lock.json
+ci/tests/oidc/certs/
