@@ -99,7 +99,6 @@ public class DefaultOidcAttributeReleasePolicyFactory implements OidcAttributeRe
             .stream()
             .filter(OidcCustomScopeAttributeReleasePolicy.class::isInstance)
             .map(OidcCustomScopeAttributeReleasePolicy.class::cast)
-            .filter(policy -> !policies.containsKey(policy.getScopeName()))
             .forEach(policy -> policies.put(policy.getScopeName(), policy));
         listOfOidcPolicies
             .stream()
