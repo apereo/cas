@@ -11,6 +11,7 @@ import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.test.context.TestPropertySource;
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
@@ -20,6 +21,9 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.4.0
  */
 @Tag("OIDCAttributes")
+@TestPropertySource(properties =
+    "cas.authn.oidc.core.user-defined-scopes.Gordon=name,lastname,color"
+)
 class DefaultOidcAttributeReleasePolicyFactoryTests extends AbstractOidcTests {
     @Autowired
     @Qualifier(OidcAttributeReleasePolicyFactory.BEAN_NAME)
@@ -46,9 +50,9 @@ class DefaultOidcAttributeReleasePolicyFactoryTests extends AbstractOidcTests {
             new OidcScopeFreeAttributeReleasePolicy(List.of("dev_user")),
             new OidcScopeFreeAttributeReleasePolicy(List.of("adm_user")));
         registeredService.setAttributeReleasePolicy(chain);
-        
+
         val policies = oidcAttributeReleasePolicyFactory.resolvePolicies(registeredService);
-        assertEquals(10, policies.size());
+        assertEquals(11, policies.size());
         assertTrue(policies.containsKey("eduPerson"));
         assertTrue(policies.containsKey(OidcConstants.StandardScopes.EMAIL.getScope()));
         assertTrue(policies.containsKey(OidcConstants.StandardScopes.PROFILE.getScope()));
@@ -69,4 +73,19 @@ class DefaultOidcAttributeReleasePolicyFactoryTests extends AbstractOidcTests {
         assertTrue(policies.containsKey(OidcConstants.StandardScopes.EMAIL.getScope()));
         assertTrue(policies.containsKey(OidcConstants.StandardScopes.PROFILE.getScope()));
     }
+
+
+    @Test
+    void verifyChainWithCustomScopeOverride() {
+        val registeredService = getOidcRegisteredService(UUID.randomUUID().toString());
+        registeredService.setScopes(Set.of("Gordon"));
+        val policy = new OidcCustomScopeAttributeReleasePolicy("Gordon", List.of("color"));
+        val chain = new ChainingAttributeReleasePolicy().addPolicies(policy);
+        registeredService.setAttributeReleasePolicy(chain);
+        val policies = oidcAttributeReleasePolicyFactory.resolvePolicies(registeredService);
+        assertTrue(policies.containsKey("Gordon"));
+        val gordon = policies.get("Gordon");
+        assertEquals(policy, gordon);
+    }
 }
+
