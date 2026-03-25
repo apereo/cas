@@ -143,8 +143,18 @@ function publish {
     printgreen "Current commit is ${currentCommit}"
 
     printgreen "Checking release tag ${releaseTag} against the previous tag to identify contributors..."
+    git fetch --force --tags origin
     git cat-file -t "$releaseTag"
     previousTag=$(git describe --tags --abbrev=0 "${releaseTag}^{}^" 2>/dev/null)
+    if [[ -z $previousTag ]]; then
+      previousTag=$(
+        git tag --sort=-version:refname \
+        | awk -v tag="$releaseTag" '
+            found { print; exit }
+            $0 == tag { found=1 }
+          '
+      )
+    fi
     echo "Previous tag: ${previousTag}. Now looking at commits in range: $previousTag..$releaseTag"
       
     if [[ -n "${previousTag}" && -n "${releaseTag}" ]]; then
