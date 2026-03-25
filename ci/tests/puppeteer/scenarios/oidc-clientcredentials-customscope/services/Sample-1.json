@@ -1,0 +1,33 @@
+{
+  "@class": "org.apereo.cas.services.OidcRegisteredService",
+  "serviceId": "^https://localhost:9859/anything/app1.*",
+  "name": "Sample",
+  "id": 1,
+  "attributeReleasePolicy": {
+    "@class": "org.apereo.cas.oidc.claims.OidcCustomScopeAttributeReleasePolicy",
+    "scopeName": "Gordon",
+    "allowedAttributes": [
+      "java.util.ArrayList",
+      [
+        "uid",
+        "firstname"
+      ]
+    ]
+  },
+  "clientSecret": "secret",
+  "clientId": "client",
+  "jwtAccessToken": true,
+  "supportedGrantTypes": [
+    "java.util.HashSet",
+    [
+      "client_credentials"
+    ]
+  ],
+  "scopes": [
+    "java.util.HashSet",
+    [
+      "Gordon",
+      "openid"
+    ]
+  ]
+}
