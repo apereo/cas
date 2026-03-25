@@ -16,6 +16,8 @@ services:
 
   oidc-conformance-suite:
     image: mmoayyed/oidc-conformance-suite:latest
+    environment:
+      OPENID_MONGODB_TARGETFEATURECOMPATIBILITYVERSION: "8.2"
     container_name: oidc-suite
     depends_on:
       mongodb:
