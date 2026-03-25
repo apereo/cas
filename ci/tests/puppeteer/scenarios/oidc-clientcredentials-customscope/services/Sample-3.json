@@ -1,0 +1,22 @@
+{
+  "@class": "org.apereo.cas.services.OidcRegisteredService",
+  "serviceId": "^https://localhost:9859/anything/app3.*",
+  "name": "Sample",
+  "id": 3,
+  "clientSecret": "secret3",
+  "clientId": "client3",
+  "jwtAccessToken": true,
+  "supportedGrantTypes": [
+    "java.util.HashSet",
+    [
+      "client_credentials"
+    ]
+  ],
+  "scopes": [
+    "java.util.HashSet",
+    [
+      "Gordon",
+      "openid"
+    ]
+  ]
+}

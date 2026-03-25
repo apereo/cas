@@ -1,4 +1,4 @@
-FROM redis:8.6.1
+FROM redis:8.6.2
 
 COPY docker-entrypoint.sh /usr/local/bin/docker-entrypoint.sh
 RUN chmod +x /usr/local/bin/docker-entrypoint.sh
