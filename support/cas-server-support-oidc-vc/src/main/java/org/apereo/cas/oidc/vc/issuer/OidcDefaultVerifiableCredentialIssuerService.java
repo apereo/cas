@@ -29,7 +29,7 @@ public class OidcDefaultVerifiableCredentialIssuerService implements OidcVerifia
             val authentication = Objects.requireNonNull(context.accessToken().getAuthentication());
             val principal = configurationContext.getPrincipalResolver().resolve(
                 new BasicIdentifiableCredential(authentication.getPrincipal().getId()));
-            
+
             val vcClaims = produceClaims(Objects.requireNonNull(principal), context);
 
             val configurationId = context.credentialRequest().getCredentialConfigurationId();
@@ -42,7 +42,6 @@ public class OidcDefaultVerifiableCredentialIssuerService implements OidcVerifia
             payload.put("credential_configuration_id", configurationId);
             payload.put("claims", vcClaims);
 
-
             val signedCredential = signVerifiableCredential(payload, context);
             val response = new VerifiableCredentialResponse();
             response.setFormat(configuration.getFormat());
@@ -51,8 +50,8 @@ public class OidcDefaultVerifiableCredentialIssuerService implements OidcVerifia
         });
     }
 
-    private String signVerifiableCredential(final Map<String, Object> payload,
-                                            final CredentialRequestValidationContext context) throws Throwable {
+    protected String signVerifiableCredential(final Map<String, Object> payload,
+                                              final CredentialRequestValidationContext context) throws Throwable {
         val jwtClaims = new JwtClaims();
         jwtClaims.setSubject(payload.get("sub").toString());
         jwtClaims.setIssuedAtToNow();

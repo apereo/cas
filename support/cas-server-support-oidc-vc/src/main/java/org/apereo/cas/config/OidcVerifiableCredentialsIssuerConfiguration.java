@@ -38,9 +38,10 @@ class OidcVerifiableCredentialsIssuerConfiguration {
     @ConditionalOnMissingBean(name = "oidcCredentialIssuerMetadataController")
     @Bean
     public OidcCredentialIssuerMetadataController oidcCredentialIssuerMetadataController(
-        final CasConfigurationProperties casProperties,
+        @Qualifier(OidcConfigurationContext.BEAN_NAME)
+        final OidcConfigurationContext oidcConfigurationContext,
         final OidcCredentialIssuerMetadataService metadataService) {
-        return new OidcCredentialIssuerMetadataController(metadataService);
+        return new OidcCredentialIssuerMetadataController(oidcConfigurationContext, metadataService);
     }
 
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)

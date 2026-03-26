@@ -99,7 +99,7 @@ class OidcCredentialEndpointControllerTests {
             val request = new VerifiableCredentialRequest();
             request.setCredentialConfigurationId("myorg");
 
-            val response = mockMvc.perform(get(CREDENTIAL_ENDPOINT_URL)
+            val response = mockMvc.perform(post(CREDENTIAL_ENDPOINT_URL)
                     .with(withHttpRequestProcessor())
                     .contentType(MediaType.APPLICATION_JSON)
                     .header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken.getId())
@@ -131,7 +131,7 @@ class OidcCredentialEndpointControllerTests {
             val request = new VerifiableCredentialRequest();
             request.setCredentialConfigurationId("myorg");
 
-            mockMvc.perform(get(CREDENTIAL_ENDPOINT_URL)
+            mockMvc.perform(post(CREDENTIAL_ENDPOINT_URL)
                     .with(withHttpRequestProcessor())
                     .contentType(MediaType.APPLICATION_JSON)
                     .param(OAuth20Constants.ACCESS_TOKEN, accessToken.getId())
@@ -159,7 +159,7 @@ class OidcCredentialEndpointControllerTests {
             val request = new VerifiableCredentialRequest();
             request.setCredentialConfigurationId("myorg");
 
-            mockMvc.perform(get(CREDENTIAL_ENDPOINT_URL)
+            mockMvc.perform(post(CREDENTIAL_ENDPOINT_URL)
                     .with(withHttpRequestProcessor())
                     .contentType(MediaType.APPLICATION_JSON)
                     .param(OAuth20Constants.TOKEN, accessToken.getId())
@@ -186,7 +186,7 @@ class OidcCredentialEndpointControllerTests {
             val request = new VerifiableCredentialRequest();
             request.setCredentialConfigurationId("myorg");
 
-            mockMvc.perform(get(CREDENTIAL_ENDPOINT_URL)
+            mockMvc.perform(post(CREDENTIAL_ENDPOINT_URL)
                     .with(withHttpRequestProcessor())
                     .contentType(MediaType.APPLICATION_JSON)
                     .header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken.getId())
@@ -216,7 +216,7 @@ class OidcCredentialEndpointControllerTests {
             val request = new VerifiableCredentialRequest();
             request.setCredentialConfigurationId("myorg");
 
-            mockMvc.perform(get(CREDENTIAL_ENDPOINT_URL)
+            mockMvc.perform(post(CREDENTIAL_ENDPOINT_URL)
                     .with(withHttpRequestProcessor())
                     .contentType(MediaType.APPLICATION_JSON)
                     .header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken.getId())
@@ -234,7 +234,7 @@ class OidcCredentialEndpointControllerTests {
             val request = new VerifiableCredentialRequest();
             request.setCredentialConfigurationId("myorg");
 
-            mockMvc.perform(get(CREDENTIAL_ENDPOINT_URL)
+            mockMvc.perform(post(CREDENTIAL_ENDPOINT_URL)
                     .with(withHttpRequestProcessor())
                     .contentType(MediaType.APPLICATION_JSON)
                     .content(MAPPER.writeValueAsString(request)))
@@ -246,7 +246,7 @@ class OidcCredentialEndpointControllerTests {
             val request = new VerifiableCredentialRequest();
             request.setCredentialConfigurationId("myorg");
 
-            mockMvc.perform(get(CREDENTIAL_ENDPOINT_URL)
+            mockMvc.perform(post(CREDENTIAL_ENDPOINT_URL)
                     .with(withHttpRequestProcessor())
                     .contentType(MediaType.APPLICATION_JSON)
                     .header(HttpHeaders.AUTHORIZATION, "Bearer AT-invalid-token-id")
@@ -269,7 +269,7 @@ class OidcCredentialEndpointControllerTests {
             val request = new VerifiableCredentialRequest();
             request.setCredentialConfigurationId("strict");
 
-            mockMvc.perform(get(CREDENTIAL_ENDPOINT_URL)
+            mockMvc.perform(post(CREDENTIAL_ENDPOINT_URL)
                     .with(withHttpRequestProcessor())
                     .contentType(MediaType.APPLICATION_JSON)
                     .header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken.getId())
@@ -292,7 +292,7 @@ class OidcCredentialEndpointControllerTests {
             val request = new VerifiableCredentialRequest();
             request.setCredentialConfigurationId("strict");
 
-            mockMvc.perform(get(CREDENTIAL_ENDPOINT_URL)
+            mockMvc.perform(post(CREDENTIAL_ENDPOINT_URL)
                     .with(withHttpRequestProcessor())
                     .contentType(MediaType.APPLICATION_JSON)
                     .header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken.getId())
@@ -305,7 +305,7 @@ class OidcCredentialEndpointControllerTests {
             val request = new VerifiableCredentialRequest();
             request.setCredentialConfigurationId("myorg");
 
-            mockMvc.perform(get(CREDENTIAL_ENDPOINT_URL)
+            mockMvc.perform(post(CREDENTIAL_ENDPOINT_URL)
                     .with(withHttpRequestProcessor())
                     .header(HttpHeaders.AUTHORIZATION, "Bearer AT-12345")
                     .content(MAPPER.writeValueAsString(request)))
