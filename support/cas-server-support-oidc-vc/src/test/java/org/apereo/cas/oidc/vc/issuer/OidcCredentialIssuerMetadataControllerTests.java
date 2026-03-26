@@ -37,11 +37,30 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 })
 class OidcCredentialIssuerMetadataControllerTests extends AbstractOidcTests {
 
+    private static final String METADATA_ENDPOINT_URL =
+        "/cas/" + OidcConstants.BASE_OIDC_URL + '/' + OidcConstants.WELL_KNOWN_OPENID_CREDENTIAL_ISSUER_URL;
+
     @Test
-    void verifyOperationWithValidTicketAsJwtSignedEncrypted() throws Throwable {
-        mockMvc.perform(get("/cas/" + OidcConstants.BASE_OIDC_URL + '/' + OidcConstants.WELL_KNOWN_OPENID_CREDENTIAL_ISSUER_URL)
+    void verifyMetadataEndpointReturnsOk() throws Throwable {
+        mockMvc.perform(get(METADATA_ENDPOINT_URL)
                 .with(withHttpRequestProcessor()))
-            .andExpect(status().isOk());
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$.credential_issuer").value(casProperties.getAuthn().getOidc().getCore().getIssuer()))
+            .andExpect(jsonPath("$.authorization_servers").isArray())
+            .andExpect(jsonPath("$.credential_endpoint").exists())
+            .andExpect(jsonPath("$.credential_configurations_supported").exists());
+    }
+
+    @Test
+    void verifyMetadataEndpointCredentialConfigurations() throws Throwable {
+        mockMvc.perform(get(METADATA_ENDPOINT_URL)
+                .with(withHttpRequestProcessor()))
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$.credential_configurations_supported.myorg.format").value("vc+sd-jwt"))
+            .andExpect(jsonPath("$.credential_configurations_supported.myorg.scope").value("UniversityIDCredential"))
+            .andExpect(jsonPath("$.credential_configurations_supported.myorg.proof_types_supported.jwt").exists())
+            .andExpect(jsonPath("$.credential_configurations_supported.myorg.claims.given_name.mandatory").value(true))
+            .andExpect(jsonPath("$.credential_configurations_supported.myorg.claims.email.mandatory").value(false));
     }
 
 }

@@ -33,12 +33,16 @@ public class OidcVerifiableCredentialsIssuerProperties implements Serializable {
         private static final long serialVersionUID = 6236647635085072105L;
 
         private String format;
+        
         private String scope;
-        private List<String> cryptographicBindingMethodsSupported = new ArrayList<>();
-        private List<String> credentialSigningAlgValuesSupported = new ArrayList<>();
-        private List<String> proofSigningAlgValuesSupported = new ArrayList<>();
-        private Map<String, ClaimProperties> claims = new LinkedHashMap<>();
 
+        private List<String> cryptographicBindingMethodsSupported = Stream.of("jwk").toList();
+        private List<String> credentialSigningAlgValuesSupported = Stream.of("ES256", "RS256").toList();
+
+        private List<String> proofSigningAlgValuesSupported = Stream.of("ES256", "RS256").toList();
+
+        private Map<String, ClaimProperties> claims = new LinkedHashMap<>();
+        
         @Getter
         @Setter
         @Accessors(chain = true)
