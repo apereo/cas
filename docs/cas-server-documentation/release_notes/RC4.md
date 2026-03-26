@@ -58,7 +58,7 @@ to build and verify Graal VM native images and we plan to extend the coverage to
 ### Testing Strategy
 
 The collection of end-to-end [browser tests based on Puppeteer](../../developer/Test-Process.html) continue to grow to cover more use cases
-and scenarios. At the moment, total number of jobs stands at approximately `543` distinct scenarios. The overall
+and scenarios. At the moment, total number of jobs stands at approximately `546` distinct scenarios. The overall
 test coverage of the CAS codebase is approximately `94%`.
 
 ### Spring Boot 4.1
@@ -73,6 +73,12 @@ return types and fields. We will gradually extend the coverage of such annotatio
 and will integrate the Gradle build tool with tools such as [NullAway](https://github.com/uber/NullAway) to prevent nullness contract violations
 during compile time.
 
+### Gradle 9.5
+
+CAS is now built with Gradle `9.5.x` and the build process has been updated to use the latest Gradle
+features and capabilities. 
+
 ## Other Stuff
               
-- 
+- Claims assigned to OpenID Connect custom scopes can now be overridden per client application.
+- Minor Gradle build improvements to better handle cacheability of build artifacts.

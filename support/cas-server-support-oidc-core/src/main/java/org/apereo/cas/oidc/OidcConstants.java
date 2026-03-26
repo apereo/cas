@@ -184,6 +184,11 @@ public interface OidcConstants {
     String PROFILE_URL = "oidcProfile";
 
     /**
+     * Oidc VC credential url path segment.
+     */
+    String VC_CREDENTIAL_URL = "oidcVcCredential";
+
+    /**
      * Oidc pushed authorization request url path segment url.
      */
     String PUSHED_AUTHORIZE_URL = "oidcPushAuthorize";
@@ -258,6 +263,10 @@ public interface OidcConstants {
      * .well-known/openid-federation path url.
      */
     String WELL_KNOWN_OPENID_FEDERATION_URL = WELL_KNOWN_URL + "/openid-federation";
+    /**
+     * .well-known/openid-credential-issuer path url.
+     */
+    String WELL_KNOWN_OPENID_CREDENTIAL_ISSUER_URL = WELL_KNOWN_URL + "/openid-credential-issuer";
 
     /**
      * .well-known/oauth-authorization-server path url.
