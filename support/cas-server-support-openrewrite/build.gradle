@@ -27,13 +27,13 @@ tasks.register("createOpenRewriteRecipe") {
 
     doFirst {
         def model = [:]
-        (model["recipeName"] = recipeName)
-        (model["tomcatVersion"] = tomcatVersion)
-        (model["casVersion"] = casVersion)
-        (model["javaVersion"] = sourceCompatibility)
-        (model["jibVersion"] = jibVersion)
-        (model["gradleVersion"] = gradleVersion)
-        (model["springBootVersion"] = springBootVersion)
+        model["recipeName"] = recipeName
+        model["tomcatVersion"] = tomcatVersion
+        model["casVersion"] = casVersion
+        model["javaVersion"] = sourceCompatibility
+        model["jibVersion"] = jibVersion
+        model["gradleVersion"] = gradleVersion
+        model["springBootVersion"] = springBootVersion
 
         def engine = new groovy.text.GStringTemplateEngine()
         def recipe = engine.createTemplate(templateContents).make(model).toString()
@@ -45,7 +45,7 @@ tasks.register("createOpenRewriteRecipe") {
     }
 }
 
-tasks.register("syncRecipe", Copy) {
+tasks.register("syncOpenRewriteRecipe", Copy) {
     dependsOn("createOpenRewriteRecipe")
     from layout.buildDirectory.dir("generated-recipes/META-INF/rewrite")
     into file("recipes/META-INF/rewrite")
@@ -56,5 +56,9 @@ sourceSets.main.resources.srcDirs file("recipes"), layout.buildDirectory.dir("ge
 tasks.named("processResources").configure {
     dependsOn("createOpenRewriteRecipe")
     exclude("current.gtemplate")
+    duplicatesStrategy = DuplicatesStrategy.INCLUDE
+}
+
+tasks.named("sourcesJar").configure {
     duplicatesStrategy = DuplicatesStrategy.INCLUDE
 }
