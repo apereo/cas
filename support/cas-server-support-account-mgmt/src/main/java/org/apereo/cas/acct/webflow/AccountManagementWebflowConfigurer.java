@@ -68,9 +68,19 @@ public class AccountManagementWebflowConfigurer extends AbstractCasWebflowConfig
             AccountRegistrationUtils.putAccountRegistrationSecurityQuestionsCount(context, properties.getCore().getSecurityQuestionsCount());
         }));
 
+        val sendTicketGrantingTicket = createActionState(acctRegFlow, "sendTicketGrantingTicket",
+            CasWebflowConstants.ACTION_ID_SEND_TICKET_GRANTING_TICKET);
+        createTransitionForState(sendTicketGrantingTicket,
+            CasWebflowConstants.TRANSITION_ID_SUCCESS, "accountRegistrationCompletedView");
+        
+        val createTicketGrantingTicket = createActionState(acctRegFlow, "createTicketGrantingTicket",
+            CasWebflowConstants.ACTION_ID_CREATE_TICKET_GRANTING_TICKET);
+        createTransitionForState(createTicketGrantingTicket, CasWebflowConstants.TRANSITION_ID_SUCCESS,
+            sendTicketGrantingTicket.getId());
+        
         createTransitionForState(completeView, CasWebflowConstants.TRANSITION_ID_SUBMIT, "finalizeRegistrationRequest");
         val finalize = createActionState(acctRegFlow, "finalizeRegistrationRequest", CasWebflowConstants.ACTION_ID_FINALIZE_ACCOUNT_REGISTRATION_REQUEST);
-        createTransitionForState(finalize, CasWebflowConstants.TRANSITION_ID_SUCCESS, "accountRegistrationCompletedView");
+        createTransitionForState(finalize, CasWebflowConstants.TRANSITION_ID_SUCCESS, createTicketGrantingTicket.getId());
         createTransitionForState(finalize, CasWebflowConstants.TRANSITION_ID_ERROR, CasWebflowConstants.STATE_ID_COMPLETE_ACCOUNT_REGISTRATION);
 
         val completedView = createViewState(acctRegFlow, "accountRegistrationCompletedView", "acct-mgmt/casAccountSignupViewCompleted");
