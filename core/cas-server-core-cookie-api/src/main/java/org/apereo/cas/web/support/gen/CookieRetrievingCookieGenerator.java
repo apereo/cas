@@ -202,7 +202,7 @@ public class CookieRetrievingCookieGenerator implements Serializable, CasCookieB
 
         val sameSitePolicy = casCookieValueManager.getCookieSameSitePolicy();
         val sameSiteResult = sameSitePolicy.build(request, response, cookieGenerationContext);
-        sameSiteResult.ifPresent(result -> builder.append(String.format(" %s", result)));
+        sameSiteResult.ifPresent(result -> builder.append(' ').append(result));
         if (cookie.getSecure() || (sameSiteResult.isPresent() && Strings.CI.equals(sameSiteResult.get(), "none"))) {
             builder.append(" Secure;");
             LOGGER.trace("Marked cookie [{}] as secure as indicated by cookie configuration or the configured same-site policy", cookie.getName());
