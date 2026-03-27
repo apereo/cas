@@ -23,35 +23,5 @@ public class OidcVerifiableCredentialsIssuerProperties implements Serializable {
     /**
      * Supported credential configurations keyed by identifier.
      */
-    private Map<String, CredentialConfigurationProperties> credentialConfigurations = new LinkedHashMap<>();
-
-    @Getter
-    @Setter
-    @Accessors(chain = true)
-    public static class CredentialConfigurationProperties implements Serializable {
-        @Serial
-        private static final long serialVersionUID = 6236647635085072105L;
-
-        private String format;
-        
-        private String scope;
-
-        private List<String> cryptographicBindingMethodsSupported = Stream.of("jwk").toList();
-        private List<String> credentialSigningAlgValuesSupported = Stream.of("ES256", "RS256").toList();
-
-        private List<String> proofSigningAlgValuesSupported = Stream.of("ES256", "RS256").toList();
-
-        private Map<String, ClaimProperties> claims = new LinkedHashMap<>();
-        
-        @Getter
-        @Setter
-        @Accessors(chain = true)
-        public static class ClaimProperties implements Serializable {
-            @Serial
-            private static final long serialVersionUID = -611478635714944538L;
-
-            private boolean mandatory;
-            private String valueType;
-        }
-    }
+    private Map<String, OidcVerifiableCredentialConfigurationProperties> credentialConfigurations = new LinkedHashMap<>();
 }
