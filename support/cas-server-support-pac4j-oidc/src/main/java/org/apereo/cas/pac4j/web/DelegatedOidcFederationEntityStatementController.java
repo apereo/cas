@@ -60,7 +60,7 @@ public class DelegatedOidcFederationEntityStatementController extends AbstractCo
             if (client instanceof final OidcClient oidcClient) {
                 val federation = oidcClient.getConfiguration().getFederation();
                 if (StringUtils.isNotBlank(federation.getTargetOp())) {
-                    return federation.getEntityConfigurationGenerator().generate();
+                    return federation.getEntityConfigurationGenerator().generateEntityStatement();
                 }
             }
         }

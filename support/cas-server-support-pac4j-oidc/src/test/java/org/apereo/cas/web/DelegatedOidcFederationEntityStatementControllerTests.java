@@ -67,7 +67,7 @@ class DelegatedOidcFederationEntityStatementControllerTests {
         oidcConfig.getFederation().setTargetOp("https//targetop");
         val entityConfigurationGenerator = mock(EntityConfigurationGenerator.class);
         oidcConfig.getFederation().setEntityConfigurationGenerator(entityConfigurationGenerator);
-        when(entityConfigurationGenerator.generate()).thenReturn(FAKE_ENTITY_STATEMENT);
+        when(entityConfigurationGenerator.generateEntityStatement()).thenReturn(FAKE_ENTITY_STATEMENT);
         doReturn(Optional.of(oidcClient)).when(identityProviders).findClient(eq(CLIENT_NAME), any(WebContext.class));
 
         val result = controller.getOpenIdFederationEndpoint(CLIENT_NAME, new MockHttpServletRequest(), new MockHttpServletResponse());
