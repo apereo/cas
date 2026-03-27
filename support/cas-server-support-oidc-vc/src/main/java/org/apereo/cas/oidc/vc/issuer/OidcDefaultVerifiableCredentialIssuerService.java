@@ -22,10 +22,13 @@ import org.jose4j.jwt.JwtClaims;
 @RequiredArgsConstructor
 public class OidcDefaultVerifiableCredentialIssuerService implements OidcVerifiableCredentialIssuerService {
     private final OidcConfigurationContext configurationContext;
-
+    private final OidcVerifiableCredentialProofValidator credentialProofValidator;
+    
     @Override
     public VerifiableCredentialResponse issue(final CredentialRequestValidationContext context) {
         return FunctionUtils.doUnchecked(() -> {
+            val proof = credentialProofValidator.validate(context.credentialRequest());
+            
             val authentication = Objects.requireNonNull(context.accessToken().getAuthentication());
             val principal = configurationContext.getPrincipalResolver().resolve(
                 new BasicIdentifiableCredential(authentication.getPrincipal().getId()));
@@ -41,6 +44,7 @@ public class OidcDefaultVerifiableCredentialIssuerService implements OidcVerifia
             payload.put("client_id", context.accessToken().getClientId());
             payload.put("credential_configuration_id", configurationId);
             payload.put("claims", vcClaims);
+            payload.put("cnf", proof.holderJwk().toJSONObject());
 
             val signedCredential = signVerifiableCredential(payload, context);
             val response = new VerifiableCredentialResponse();

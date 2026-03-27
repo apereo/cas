@@ -8,6 +8,8 @@ import org.apereo.cas.oidc.vc.issuer.OidcCredentialIssuerMetadataController;
 import org.apereo.cas.oidc.vc.issuer.OidcCredentialIssuerMetadataService;
 import org.apereo.cas.oidc.vc.issuer.OidcDefaultVerifiableCredentialIssuerService;
 import org.apereo.cas.oidc.vc.issuer.OidcVerifiableCredentialIssuerService;
+import org.apereo.cas.oidc.vc.issuer.OidcVerifiableCredentialJwtProofValidator;
+import org.apereo.cas.oidc.vc.issuer.OidcVerifiableCredentialProofValidator;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -45,12 +47,23 @@ class OidcVerifiableCredentialsIssuerConfiguration {
     }
 
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+    @ConditionalOnMissingBean(name = "oidcVerifiableCredentialProofValidator")
+    @Bean
+    public OidcVerifiableCredentialProofValidator oidcVerifiableCredentialProofValidator(
+        final CasConfigurationProperties casProperties) {
+        return new OidcVerifiableCredentialJwtProofValidator(casProperties);
+    }
+    
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @ConditionalOnMissingBean(name = "oidcVerifiableCredentialIssuerService")
     @Bean
     public OidcVerifiableCredentialIssuerService oidcVerifiableCredentialIssuerService(
+        @Qualifier("oidcVerifiableCredentialProofValidator")
+        final OidcVerifiableCredentialProofValidator oidcVerifiableCredentialProofValidator,
         @Qualifier(OidcConfigurationContext.BEAN_NAME)
         final OidcConfigurationContext oidcConfigurationContext) {
-        return new OidcDefaultVerifiableCredentialIssuerService(oidcConfigurationContext);
+        return new OidcDefaultVerifiableCredentialIssuerService(
+            oidcConfigurationContext, oidcVerifiableCredentialProofValidator);
     }
 
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
