@@ -1,5 +1,32 @@
 const cas = require("../../cas.js");
 const assert = require("assert");
+const fs = require("fs");
+const path = require("path");
+const jwkToPem = require("jwk-to-pem");
+
+const key = JSON.parse(fs.readFileSync(path.join(__dirname, "/keystore.json"))).keys[0];
+const privateKey = jwkToPem(key, {private: true});
+
+async function createPublicKey() {
+    const publicJwk = {
+        kty: key.kty,
+        n: key.n,
+        e: key.e,
+        kid: key.kid,
+        use: key.use,
+        alg: key.alg
+    };
+
+    return cas.createJwt({
+        "jti": "THJZGsQDP26OuwQn",
+        "iss": "client",
+        "aud": "https://localhost:8443/cas/oidc"
+    }, privateKey, "RS256", {
+        header: {
+            jwk: publicJwk
+        }
+    });
+}
 
 (async () => {
     await cas.doGet("https://localhost:8443/cas/oidc/.well-known/openid-credential-issuer",
@@ -30,8 +57,14 @@ const assert = require("assert");
     url = "https://localhost:8443/cas/oidc/oidcVcCredential";
     await cas.log(`Calling ${url}`);
 
+    const proof = await createPublicKey();
+    
     const body = JSON.stringify({
-        credential_configuration_id: "myorg"
+        credential_configuration_id: "myorg",
+        proof: {
+            proof_type: "jwt",
+            jwt: proof
+        }
     });
     const result = JSON.parse(await cas.doRequest(url, "POST", {
         "Content-Type": "application/json",
