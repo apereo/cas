@@ -7,6 +7,7 @@ import org.apereo.cas.web.flow.CasWebflowConstants;
 import org.apereo.cas.web.flow.actions.ConsumerExecutionAction;
 import org.apereo.cas.web.flow.configurer.AbstractCasWebflowConfigurer;
 import org.apereo.cas.web.support.WebUtils;
+import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.webflow.definition.registry.FlowDefinitionRegistry;
@@ -19,6 +20,7 @@ import org.springframework.webflow.engine.builder.support.FlowBuilderServices;
  * @author Misagh Moayyed
  * @since 6.5.0
  */
+@Slf4j
 public class AccountManagementWebflowConfigurer extends AbstractCasWebflowConfigurer {
     /**
      * Subflow id.
@@ -84,6 +86,7 @@ public class AccountManagementWebflowConfigurer extends AbstractCasWebflowConfig
         createTransitionForState(finalize, CasWebflowConstants.TRANSITION_ID_ERROR, CasWebflowConstants.STATE_ID_COMPLETE_ACCOUNT_REGISTRATION);
 
         val completedView = createViewState(acctRegFlow, "accountRegistrationCompletedView", "acct-mgmt/casAccountSignupViewCompleted");
+        completedView.getRenderActionList().add(createEvaluateAction(CasWebflowConstants.ACTION_ID_DISPLAY_ACCOUNT_REGISTRATION_COMPLETED));
         createStateDefaultTransition(completedView, "accountRegistrationCompleted");
 
         acctRegFlow.setStartState(completeView);

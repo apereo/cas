@@ -3,9 +3,11 @@ const cas = require("../../cas.js");
 const assert = require("assert");
 
 (async () => {
+    const service = "https://localhost:9859/anything/cas";
     const browser = await cas.newBrowser(cas.browserOptions());
     const page = await cas.newPage(browser);
-    await cas.gotoLogin(page);
+    await cas.gotoLogout(page);
+    await cas.gotoLogin(page, service);
 
     await cas.sleep(2000);
     await cas.assertTextContent(page, "#accountSignUpLink", "Sign Up");
@@ -39,11 +41,13 @@ const assert = require("assert");
         await cas.type(page, `#securityanswer${i}`, `Security answer ${i}`);
     }
     await cas.click(page, "#submit");
-    await cas.sleep(5000);
+    await cas.sleep(500);
     await cas.assertInnerText(page, "#content h2", "Account Registration");
     await cas.assertInnerTextStartsWith(page, "#content p", "Thank you! Your account is now activated");
     await cas.assertCookie(page);
-    
+    await cas.sleep(3000);
+    await cas.logPage(page);
+    await cas.assertPageUrl(page, service);
     await cas.closeBrowser(browser);
 })();
 
