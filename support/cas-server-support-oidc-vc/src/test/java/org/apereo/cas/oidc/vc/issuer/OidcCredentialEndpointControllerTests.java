@@ -8,6 +8,8 @@ import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
+import com.google.common.base.Splitter;
+import com.google.common.collect.Iterables;
 import com.nimbusds.jose.JWSAlgorithm;
 import com.nimbusds.jose.JWSHeader;
 import com.nimbusds.jose.crypto.ECDSASigner;
@@ -690,9 +692,10 @@ class OidcCredentialEndpointControllerTests {
                 val tamperedJwt = new SignedJWT(tamperedHeader, claims);
                 tamperedJwt.sign(new ECDSASigner(ecKey));
 
-                val forgedHeaderJwt = signedJwt.serialize().split("\\.")[0]
-                    + "." + tamperedJwt.serialize().split("\\.")[1]
-                    + "." + tamperedJwt.serialize().split("\\.")[2];
+                val split = Splitter.on('.').split(signedJwt.serialize());
+                val forgedHeaderJwt = Iterables.get(split, 0)
+                    + '.' + Iterables.get(split, 1)
+                    + '.' + Iterables.get(split, 2);
 
                 val request = new VerifiableCredentialRequest();
                 request.setCredentialConfigurationId("myorg");
