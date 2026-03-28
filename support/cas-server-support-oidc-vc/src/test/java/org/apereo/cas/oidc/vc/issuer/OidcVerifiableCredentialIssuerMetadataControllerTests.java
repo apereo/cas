@@ -12,7 +12,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 /**
- * This is {@link OidcCredentialIssuerMetadataControllerTests}.
+ * This is {@link OidcVerifiableCredentialIssuerMetadataControllerTests}.
  *
  * @author Misagh Moayyed
  * @since 8.0.0
@@ -35,7 +35,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
     "cas.authn.oidc.vc.issuer.credential-configurations.myorg.claims.student_id.mandatory=true",
     "cas.authn.oidc.vc.issuer.credential-configurations.myorg.claims.student_id.value-type=string"
 })
-class OidcCredentialIssuerMetadataControllerTests extends AbstractOidcTests {
+class OidcVerifiableCredentialIssuerMetadataControllerTests extends AbstractOidcTests {
 
     private static final String METADATA_ENDPOINT_URL =
         "/cas/" + OidcConstants.BASE_OIDC_URL + '/' + OidcConstants.WELL_KNOWN_OPENID_CREDENTIAL_ISSUER_URL;

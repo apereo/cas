@@ -4,12 +4,13 @@ import module java.base;
 import org.apereo.cas.config.CasOidcVerifiableCredentialsAutoConfiguration;
 import org.apereo.cas.oidc.AbstractOidcTests;
 import org.apereo.cas.oidc.OidcConstants;
+import org.apereo.cas.oidc.vc.issuer.metadata.OidcCredentialIssuerMetadataService;
+import org.apereo.cas.oidc.vc.issuer.nonce.OidcVerifiableCredentialNonceService;
+import org.apereo.cas.oidc.vc.issuer.proof.OidcVerifiableCredentialProofValidator;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
-import com.google.common.base.Splitter;
-import com.google.common.collect.Iterables;
 import com.nimbusds.jose.JWSAlgorithm;
 import com.nimbusds.jose.JWSHeader;
 import com.nimbusds.jose.crypto.ECDSASigner;
@@ -22,6 +23,7 @@ import com.nimbusds.jose.jwk.gen.RSAKeyGenerator;
 import com.nimbusds.jwt.JWTClaimsSet;
 import com.nimbusds.jwt.SignedJWT;
 import lombok.val;
+import org.apache.commons.lang3.StringUtils;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
@@ -37,13 +39,13 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 /**
- * This is {@link OidcCredentialEndpointControllerTests}.
+ * This is {@link OidcVerifiableCredentialEndpointControllerTests}.
  *
  * @author Misagh Moayyed
  * @since 8.0.0
  */
 @Tag("OIDCWeb")
-class OidcCredentialEndpointControllerTests {
+class OidcVerifiableCredentialEndpointControllerTests {
 
     @ImportAutoConfiguration(CasOidcVerifiableCredentialsAutoConfiguration.class)
     @TestPropertySource(properties = {
@@ -96,6 +98,10 @@ class OidcCredentialEndpointControllerTests {
         @Qualifier("oidcVerifiableCredentialProofValidator")
         protected OidcVerifiableCredentialProofValidator oidcVerifiableCredentialProofValidator;
 
+        @Autowired
+        @Qualifier("oidcVerifiableCredentialNonceService")
+        protected OidcVerifiableCredentialNonceService oidcVerifiableCredentialNonceService;
+
         protected static RSAKey generateRsaHolderKey() throws Exception {
             return new RSAKeyGenerator(2048).keyID("holder-rsa").generate();
         }
@@ -104,8 +110,8 @@ class OidcCredentialEndpointControllerTests {
             return new ECKeyGenerator(Curve.P_256).keyID("holder-ec").generate();
         }
 
-        protected static String buildProofJwt(final RSAKey holderKey, final String audience,
-                                              final Date issuedAt) throws Exception {
+        protected String buildProofJwt(final RSAKey holderKey, final String audience,
+                                       final Date issuedAt) throws Exception {
             val header = new JWSHeader.Builder(JWSAlgorithm.RS256)
                 .jwk(holderKey.toPublicJWK())
                 .build();
@@ -114,14 +120,15 @@ class OidcCredentialEndpointControllerTests {
                 .audience(audience)
                 .subject("casuser")
                 .issueTime(issuedAt)
+                .claim("nonce", oidcVerifiableCredentialNonceService.create().value())
                 .build();
             val signedJwt = new SignedJWT(header, claims);
             signedJwt.sign(new RSASSASigner(holderKey));
             return signedJwt.serialize();
         }
 
-        protected static String buildProofJwt(final ECKey holderKey, final JWSAlgorithm algorithm,
-                                              final String audience, final Date issuedAt) throws Exception {
+        protected String buildProofJwt(final ECKey holderKey, final JWSAlgorithm algorithm,
+                                       final String audience, final Date issuedAt) throws Exception {
             val header = new JWSHeader.Builder(algorithm)
                 .jwk(holderKey.toPublicJWK())
                 .build();
@@ -130,18 +137,19 @@ class OidcCredentialEndpointControllerTests {
                 .audience(audience)
                 .subject("casuser")
                 .issueTime(issuedAt)
+                .claim("nonce", oidcVerifiableCredentialNonceService.create().value())
                 .build();
             val signedJwt = new SignedJWT(header, claims);
             signedJwt.sign(new ECDSASigner(holderKey));
             return signedJwt.serialize();
         }
 
-        protected static String buildValidRsaProofJwt() throws Exception {
+        protected String buildValidRsaProofJwt() throws Exception {
             return buildProofJwt(generateRsaHolderKey(), CREDENTIAL_ISSUER, new Date());
         }
 
-        protected static VerifiableCredentialRequest.Proof buildProof(final String jwt) {
-            val proof = new VerifiableCredentialRequest.Proof();
+        protected static OidcVerifiableCredentialRequest.Proof buildProof(final String jwt) {
+            val proof = new OidcVerifiableCredentialRequest.Proof();
             proof.setProofType("jwt");
             proof.setJwt(jwt);
             return proof;
@@ -166,7 +174,7 @@ class OidcCredentialEndpointControllerTests {
             ticketRegistry.addTicket(accessToken.getTicketGrantingTicket());
             ticketRegistry.addTicket(accessToken);
 
-            val request = new VerifiableCredentialRequest();
+            val request = new OidcVerifiableCredentialRequest();
             request.setCredentialConfigurationId("myorg");
             request.setProof(buildProof(buildValidRsaProofJwt()));
 
@@ -199,7 +207,7 @@ class OidcCredentialEndpointControllerTests {
             ticketRegistry.addTicket(accessToken.getTicketGrantingTicket());
             ticketRegistry.addTicket(accessToken);
 
-            val request = new VerifiableCredentialRequest();
+            val request = new OidcVerifiableCredentialRequest();
             request.setCredentialConfigurationId("myorg");
             request.setProof(buildProof(buildValidRsaProofJwt()));
 
@@ -228,7 +236,7 @@ class OidcCredentialEndpointControllerTests {
             ticketRegistry.addTicket(accessToken.getTicketGrantingTicket());
             ticketRegistry.addTicket(accessToken);
 
-            val request = new VerifiableCredentialRequest();
+            val request = new OidcVerifiableCredentialRequest();
             request.setCredentialConfigurationId("myorg");
             request.setProof(buildProof(buildValidRsaProofJwt()));
 
@@ -256,7 +264,7 @@ class OidcCredentialEndpointControllerTests {
             ticketRegistry.addTicket(accessToken.getTicketGrantingTicket());
             ticketRegistry.addTicket(accessToken);
 
-            val request = new VerifiableCredentialRequest();
+            val request = new OidcVerifiableCredentialRequest();
             request.setCredentialConfigurationId("myorg");
             request.setProof(buildProof(buildValidRsaProofJwt()));
 
@@ -287,7 +295,7 @@ class OidcCredentialEndpointControllerTests {
             ticketRegistry.addTicket(accessToken.getTicketGrantingTicket());
             ticketRegistry.addTicket(accessToken);
 
-            val request = new VerifiableCredentialRequest();
+            val request = new OidcVerifiableCredentialRequest();
             request.setCredentialConfigurationId("myorg");
             request.setProof(buildProof(buildValidRsaProofJwt()));
 
@@ -319,7 +327,7 @@ class OidcCredentialEndpointControllerTests {
             val ecKey = generateEcHolderKey();
             val proofJwt = buildProofJwt(ecKey, JWSAlgorithm.ES256, CREDENTIAL_ISSUER, new Date());
 
-            val request = new VerifiableCredentialRequest();
+            val request = new OidcVerifiableCredentialRequest();
             request.setCredentialConfigurationId("myorg");
             request.setProof(buildProof(proofJwt));
 
@@ -338,7 +346,7 @@ class OidcCredentialEndpointControllerTests {
     class CredentialIssuanceFailureTests extends BaseTests {
         @Test
         void verifyMissingAccessTokenReturnsError() throws Throwable {
-            val request = new VerifiableCredentialRequest();
+            val request = new OidcVerifiableCredentialRequest();
             request.setCredentialConfigurationId("myorg");
             request.setProof(buildProof(buildValidRsaProofJwt()));
 
@@ -351,7 +359,7 @@ class OidcCredentialEndpointControllerTests {
 
         @Test
         void verifyInvalidAccessTokenReturnsError() throws Throwable {
-            val request = new VerifiableCredentialRequest();
+            val request = new OidcVerifiableCredentialRequest();
             request.setCredentialConfigurationId("myorg");
             request.setProof(buildProof(buildValidRsaProofJwt()));
 
@@ -375,7 +383,7 @@ class OidcCredentialEndpointControllerTests {
             ticketRegistry.addTicket(accessToken.getTicketGrantingTicket());
             ticketRegistry.addTicket(accessToken);
 
-            val request = new VerifiableCredentialRequest();
+            val request = new OidcVerifiableCredentialRequest();
             request.setCredentialConfigurationId("strict");
             request.setProof(buildProof(buildValidRsaProofJwt()));
 
@@ -399,7 +407,7 @@ class OidcCredentialEndpointControllerTests {
             ticketRegistry.addTicket(accessToken.getTicketGrantingTicket());
             ticketRegistry.addTicket(accessToken);
 
-            val request = new VerifiableCredentialRequest();
+            val request = new OidcVerifiableCredentialRequest();
             request.setCredentialConfigurationId("strict");
             request.setProof(buildProof(buildValidRsaProofJwt()));
 
@@ -413,7 +421,7 @@ class OidcCredentialEndpointControllerTests {
 
         @Test
         void verifyMissingContentTypeReturnsError() throws Throwable {
-            val request = new VerifiableCredentialRequest();
+            val request = new OidcVerifiableCredentialRequest();
             request.setCredentialConfigurationId("myorg");
             request.setProof(buildProof(buildValidRsaProofJwt()));
 
@@ -439,7 +447,7 @@ class OidcCredentialEndpointControllerTests {
             ticketRegistry.addTicket(accessToken.getTicketGrantingTicket());
             ticketRegistry.addTicket(accessToken);
 
-            val request = new VerifiableCredentialRequest();
+            val request = new OidcVerifiableCredentialRequest();
             request.setCredentialConfigurationId("myorg");
             request.setProof(buildProof("not-a-valid-jwt"));
 
@@ -467,7 +475,7 @@ class OidcCredentialEndpointControllerTests {
             ticketRegistry.addTicket(accessToken);
 
             val proofJwt = buildProofJwt(generateRsaHolderKey(), "https://wrong-issuer.example.org", new Date());
-            val request = new VerifiableCredentialRequest();
+            val request = new OidcVerifiableCredentialRequest();
             request.setCredentialConfigurationId("myorg");
             request.setProof(buildProof(proofJwt));
 
@@ -496,9 +504,62 @@ class OidcCredentialEndpointControllerTests {
 
             val oldDate = Date.from(Instant.now().minus(Duration.ofMinutes(10)));
             val proofJwt = buildProofJwt(generateRsaHolderKey(), CREDENTIAL_ISSUER, oldDate);
-            val request = new VerifiableCredentialRequest();
+            val request = new OidcVerifiableCredentialRequest();
             request.setCredentialConfigurationId("myorg");
             request.setProof(buildProof(proofJwt));
+
+            mockMvc.perform(post(CREDENTIAL_ENDPOINT_URL)
+                    .with(withHttpRequestProcessor())
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken.getId())
+                    .content(MAPPER.writeValueAsString(request)))
+                .andExpect(status().is4xxClientError());
+        }
+
+        @Test
+        void verifyMissingProofReturnsError() throws Throwable {
+            val clientId = UUID.randomUUID().toString();
+            val registeredService = getOidcRegisteredService(clientId);
+            servicesManager.save(registeredService);
+
+            val principal = RegisteredServiceTestUtils.getPrincipal("casuser",
+                CollectionUtils.wrap("given_name", List.of("CAS"),
+                    "family_name", List.of("User"),
+                    "email", List.of("casuser@example.org"),
+                    "student_id", List.of("S12345")));
+            val accessToken = getAccessToken(principal, clientId);
+            ticketRegistry.addTicket(accessToken.getTicketGrantingTicket());
+            ticketRegistry.addTicket(accessToken);
+
+            val request = new OidcVerifiableCredentialRequest();
+            request.setCredentialConfigurationId("myorg");
+
+            mockMvc.perform(post(CREDENTIAL_ENDPOINT_URL)
+                    .with(withHttpRequestProcessor())
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken.getId())
+                    .content(MAPPER.writeValueAsString(request)))
+                .andExpect(status().is4xxClientError());
+        }
+
+        @Test
+        void verifyNullJwtInProofReturnsError() throws Throwable {
+            val clientId = UUID.randomUUID().toString();
+            val registeredService = getOidcRegisteredService(clientId);
+            servicesManager.save(registeredService);
+
+            val principal = RegisteredServiceTestUtils.getPrincipal("casuser",
+                CollectionUtils.wrap("given_name", List.of("CAS"),
+                    "family_name", List.of("User"),
+                    "email", List.of("casuser@example.org"),
+                    "student_id", List.of("S12345")));
+            val accessToken = getAccessToken(principal, clientId);
+            ticketRegistry.addTicket(accessToken.getTicketGrantingTicket());
+            ticketRegistry.addTicket(accessToken);
+
+            val request = new OidcVerifiableCredentialRequest();
+            request.setCredentialConfigurationId("myorg");
+            request.setProof(buildProof(null));
 
             mockMvc.perform(post(CREDENTIAL_ENDPOINT_URL)
                     .with(withHttpRequestProcessor())
@@ -517,7 +578,7 @@ class OidcCredentialEndpointControllerTests {
             val holderKey = generateRsaHolderKey();
             val proofJwt = buildProofJwt(holderKey, CREDENTIAL_ISSUER, new Date());
 
-            val request = new VerifiableCredentialRequest();
+            val request = new OidcVerifiableCredentialRequest();
             request.setCredentialConfigurationId("myorg");
             request.setProof(buildProof(proofJwt));
 
@@ -534,7 +595,7 @@ class OidcCredentialEndpointControllerTests {
             val holderKey = generateEcHolderKey();
             val proofJwt = buildProofJwt(holderKey, JWSAlgorithm.ES256, CREDENTIAL_ISSUER, new Date());
 
-            val request = new VerifiableCredentialRequest();
+            val request = new OidcVerifiableCredentialRequest();
             request.setCredentialConfigurationId("myorg");
             request.setProof(buildProof(proofJwt));
 
@@ -563,7 +624,7 @@ class OidcCredentialEndpointControllerTests {
                 val signedJwt = new SignedJWT(header, claims);
                 signedJwt.sign(new RSASSASigner(signingKey));
 
-                val request = new VerifiableCredentialRequest();
+                val request = new OidcVerifiableCredentialRequest();
                 request.setCredentialConfigurationId("myorg");
                 request.setProof(buildProof(signedJwt.serialize()));
                 oidcVerifiableCredentialProofValidator.validate(request);
@@ -576,7 +637,7 @@ class OidcCredentialEndpointControllerTests {
                 val holderKey = generateRsaHolderKey();
                 val proofJwt = buildProofJwt(holderKey, "https://wrong.example.org", new Date());
 
-                val request = new VerifiableCredentialRequest();
+                val request = new OidcVerifiableCredentialRequest();
                 request.setCredentialConfigurationId("myorg");
                 request.setProof(buildProof(proofJwt));
                 oidcVerifiableCredentialProofValidator.validate(request);
@@ -598,7 +659,7 @@ class OidcCredentialEndpointControllerTests {
                 val signedJwt = new SignedJWT(header, claims);
                 signedJwt.sign(new RSASSASigner(holderKey));
 
-                val request = new VerifiableCredentialRequest();
+                val request = new OidcVerifiableCredentialRequest();
                 request.setCredentialConfigurationId("myorg");
                 request.setProof(buildProof(signedJwt.serialize()));
                 oidcVerifiableCredentialProofValidator.validate(request);
@@ -620,7 +681,7 @@ class OidcCredentialEndpointControllerTests {
                 val signedJwt = new SignedJWT(header, claims);
                 signedJwt.sign(new RSASSASigner(holderKey));
 
-                val request = new VerifiableCredentialRequest();
+                val request = new OidcVerifiableCredentialRequest();
                 request.setCredentialConfigurationId("myorg");
                 request.setProof(buildProof(signedJwt.serialize()));
                 oidcVerifiableCredentialProofValidator.validate(request);
@@ -634,7 +695,7 @@ class OidcCredentialEndpointControllerTests {
                 val futureDate = Date.from(Instant.now().plus(Duration.ofMinutes(5)));
                 val proofJwt = buildProofJwt(holderKey, CREDENTIAL_ISSUER, futureDate);
 
-                val request = new VerifiableCredentialRequest();
+                val request = new OidcVerifiableCredentialRequest();
                 request.setCredentialConfigurationId("myorg");
                 request.setProof(buildProof(proofJwt));
                 oidcVerifiableCredentialProofValidator.validate(request);
@@ -648,7 +709,7 @@ class OidcCredentialEndpointControllerTests {
                 val oldDate = Date.from(Instant.now().minus(Duration.ofMinutes(10)));
                 val proofJwt = buildProofJwt(holderKey, CREDENTIAL_ISSUER, oldDate);
 
-                val request = new VerifiableCredentialRequest();
+                val request = new OidcVerifiableCredentialRequest();
                 request.setCredentialConfigurationId("myorg");
                 request.setProof(buildProof(proofJwt));
                 oidcVerifiableCredentialProofValidator.validate(request);
@@ -661,47 +722,12 @@ class OidcCredentialEndpointControllerTests {
             val nearBoundary = Date.from(Instant.now().minus(Duration.ofMinutes(4)));
             val proofJwt = buildProofJwt(holderKey, CREDENTIAL_ISSUER, nearBoundary);
 
-            val request = new VerifiableCredentialRequest();
+            val request = new OidcVerifiableCredentialRequest();
             request.setCredentialConfigurationId("myorg");
             request.setProof(buildProof(proofJwt));
 
             val result = oidcVerifiableCredentialProofValidator.validate(request);
             assertNotNull(result);
-        }
-
-        @Test
-        void verifyRsaKeyWithEcAlgorithmFails() {
-            assertThrows(Exception.class, () -> {
-                val holderKey = generateRsaHolderKey();
-                val header = new JWSHeader.Builder(JWSAlgorithm.RS256)
-                    .jwk(holderKey.toPublicJWK())
-                    .build();
-                val claims = new JWTClaimsSet.Builder()
-                    .jwtID(UUID.randomUUID().toString())
-                    .audience(CREDENTIAL_ISSUER)
-                    .subject("casuser")
-                    .issueTime(new Date())
-                    .build();
-                val signedJwt = new SignedJWT(header, claims);
-                signedJwt.sign(new RSASSASigner(holderKey));
-
-                val ecKey = generateEcHolderKey();
-                val tamperedHeader = new JWSHeader.Builder(JWSAlgorithm.ES256)
-                    .jwk(ecKey.toPublicJWK())
-                    .build();
-                val tamperedJwt = new SignedJWT(tamperedHeader, claims);
-                tamperedJwt.sign(new ECDSASigner(ecKey));
-
-                val split = Splitter.on('.').split(signedJwt.serialize());
-                val forgedHeaderJwt = Iterables.get(split, 0)
-                    + '.' + Iterables.get(split, 1)
-                    + '.' + Iterables.get(split, 2);
-
-                val request = new VerifiableCredentialRequest();
-                request.setCredentialConfigurationId("myorg");
-                request.setProof(buildProof(forgedHeaderJwt));
-                oidcVerifiableCredentialProofValidator.validate(request);
-            });
         }
 
         @Test
@@ -714,12 +740,13 @@ class OidcCredentialEndpointControllerTests {
                 .jwtID(UUID.randomUUID().toString())
                 .audience(CREDENTIAL_ISSUER)
                 .subject("casuser")
+                .claim("nonce", oidcVerifiableCredentialNonceService.create().value())
                 .issueTime(new Date())
                 .build();
             val signedJwt = new SignedJWT(header, claims);
             signedJwt.sign(new ECDSASigner(holderKey));
 
-            val request = new VerifiableCredentialRequest();
+            val request = new OidcVerifiableCredentialRequest();
             request.setCredentialConfigurationId("myorg");
             request.setProof(buildProof(signedJwt.serialize()));
 
@@ -739,12 +766,13 @@ class OidcCredentialEndpointControllerTests {
                 .jwtID(jwtId)
                 .audience(CREDENTIAL_ISSUER)
                 .subject("testsubject")
+                .claim("nonce", oidcVerifiableCredentialNonceService.create().value())
                 .issueTime(new Date())
                 .build();
             val signedJwt = new SignedJWT(header, claims);
             signedJwt.sign(new RSASSASigner(holderKey));
 
-            val request = new VerifiableCredentialRequest();
+            val request = new OidcVerifiableCredentialRequest();
             request.setCredentialConfigurationId("myorg");
             request.setProof(buildProof(signedJwt.serialize()));
 
@@ -758,7 +786,7 @@ class OidcCredentialEndpointControllerTests {
             val holderKey = generateRsaHolderKey();
             val proofJwt = buildProofJwt(holderKey, CREDENTIAL_ISSUER, new Date());
 
-            val request = new VerifiableCredentialRequest();
+            val request = new OidcVerifiableCredentialRequest();
             request.setCredentialConfigurationId("myorg");
             request.setProof(buildProof(proofJwt));
 
@@ -770,7 +798,7 @@ class OidcCredentialEndpointControllerTests {
         @Test
         void verifyMalformedJwtStringFails() {
             assertThrows(Exception.class, () -> {
-                val request = new VerifiableCredentialRequest();
+                val request = new OidcVerifiableCredentialRequest();
                 request.setCredentialConfigurationId("myorg");
                 request.setProof(buildProof("this.is.not.a.jwt"));
                 oidcVerifiableCredentialProofValidator.validate(request);
@@ -780,7 +808,7 @@ class OidcCredentialEndpointControllerTests {
         @Test
         void verifyCompletelyInvalidJwtFails() {
             assertThrows(Exception.class, () -> {
-                val request = new VerifiableCredentialRequest();
+                val request = new OidcVerifiableCredentialRequest();
                 request.setCredentialConfigurationId("myorg");
                 request.setProof(buildProof("garbage-data"));
                 oidcVerifiableCredentialProofValidator.validate(request);
@@ -793,7 +821,7 @@ class OidcCredentialEndpointControllerTests {
             val slightlyFuture = Date.from(Instant.now().plus(Duration.ofSeconds(10)));
             val proofJwt = buildProofJwt(holderKey, CREDENTIAL_ISSUER, slightlyFuture);
 
-            val request = new VerifiableCredentialRequest();
+            val request = new OidcVerifiableCredentialRequest();
             request.setCredentialConfigurationId("myorg");
             request.setProof(buildProof(proofJwt));
 
@@ -808,7 +836,7 @@ class OidcCredentialEndpointControllerTests {
                 val futureDate = Date.from(Instant.now().plus(Duration.ofSeconds(60)));
                 val proofJwt = buildProofJwt(holderKey, CREDENTIAL_ISSUER, futureDate);
 
-                val request = new VerifiableCredentialRequest();
+                val request = new OidcVerifiableCredentialRequest();
                 request.setCredentialConfigurationId("myorg");
                 request.setProof(buildProof(proofJwt));
                 oidcVerifiableCredentialProofValidator.validate(request);
@@ -826,11 +854,12 @@ class OidcCredentialEndpointControllerTests {
                 .audience(List.of("https://other.example.org", CREDENTIAL_ISSUER))
                 .subject("casuser")
                 .issueTime(new Date())
+                .claim("nonce", oidcVerifiableCredentialNonceService.create().value())
                 .build();
             val signedJwt = new SignedJWT(header, claims);
             signedJwt.sign(new RSASSASigner(holderKey));
 
-            val request = new VerifiableCredentialRequest();
+            val request = new OidcVerifiableCredentialRequest();
             request.setCredentialConfigurationId("myorg");
             request.setProof(buildProof(signedJwt.serialize()));
 
@@ -854,11 +883,213 @@ class OidcCredentialEndpointControllerTests {
                 val signedJwt = new SignedJWT(header, claims);
                 signedJwt.sign(new RSASSASigner(holderKey));
 
-                val request = new VerifiableCredentialRequest();
+                val request = new OidcVerifiableCredentialRequest();
                 request.setCredentialConfigurationId("myorg");
                 request.setProof(buildProof(signedJwt.serialize()));
                 oidcVerifiableCredentialProofValidator.validate(request);
             });
+        }
+
+        @Test
+        void verifyNullProofJwtFails() {
+            assertThrows(Exception.class, () -> {
+                val request = new OidcVerifiableCredentialRequest();
+                request.setCredentialConfigurationId("myorg");
+                request.setProof(buildProof(null));
+                oidcVerifiableCredentialProofValidator.validate(request);
+            });
+        }
+
+        @Test
+        void verifyEmptyStringJwtFails() {
+            assertThrows(Exception.class, () -> {
+                val request = new OidcVerifiableCredentialRequest();
+                request.setCredentialConfigurationId("myorg");
+                request.setProof(buildProof(StringUtils.EMPTY));
+                oidcVerifiableCredentialProofValidator.validate(request);
+            });
+        }
+
+        @Test
+        void verifyProofWithNoHeaderJwkFails() {
+            assertThrows(Exception.class, () -> {
+                val holderKey = generateRsaHolderKey();
+                val header = new JWSHeader.Builder(JWSAlgorithm.RS256).build();
+                val claims = new JWTClaimsSet.Builder()
+                    .jwtID(UUID.randomUUID().toString())
+                    .audience(CREDENTIAL_ISSUER)
+                    .subject("casuser")
+                    .issueTime(new Date())
+                    .build();
+                val signedJwt = new SignedJWT(header, claims);
+                signedJwt.sign(new RSASSASigner(holderKey));
+
+                val request = new OidcVerifiableCredentialRequest();
+                request.setCredentialConfigurationId("myorg");
+                request.setProof(buildProof(signedJwt.serialize()));
+                oidcVerifiableCredentialProofValidator.validate(request);
+            });
+        }
+
+        @Test
+        void verifyProofWithNoSubjectSucceeds() throws Throwable {
+            val holderKey = generateRsaHolderKey();
+            val header = new JWSHeader.Builder(JWSAlgorithm.RS256)
+                .jwk(holderKey.toPublicJWK())
+                .build();
+            val claims = new JWTClaimsSet.Builder()
+                .jwtID(UUID.randomUUID().toString())
+                .audience(CREDENTIAL_ISSUER)
+                .issueTime(new Date())
+                .claim("nonce", oidcVerifiableCredentialNonceService.create().value())
+                .build();
+            val signedJwt = new SignedJWT(header, claims);
+            signedJwt.sign(new RSASSASigner(holderKey));
+
+            val request = new OidcVerifiableCredentialRequest();
+            request.setCredentialConfigurationId("myorg");
+            request.setProof(buildProof(signedJwt.serialize()));
+
+            val result = oidcVerifiableCredentialProofValidator.validate(request);
+            assertNotNull(result);
+            assertNull(result.subject());
+        }
+
+        @Test
+        void verifyProofWithNoJwtIdSucceeds() throws Throwable {
+            val holderKey = generateRsaHolderKey();
+            val header = new JWSHeader.Builder(JWSAlgorithm.RS256)
+                .jwk(holderKey.toPublicJWK())
+                .build();
+            val claims = new JWTClaimsSet.Builder()
+                .audience(CREDENTIAL_ISSUER)
+                .subject("casuser")
+                .claim("nonce", oidcVerifiableCredentialNonceService.create().value())
+                .issueTime(new Date())
+                .build();
+            val signedJwt = new SignedJWT(header, claims);
+            signedJwt.sign(new RSASSASigner(holderKey));
+
+            val request = new OidcVerifiableCredentialRequest();
+            request.setCredentialConfigurationId("myorg");
+            request.setProof(buildProof(signedJwt.serialize()));
+
+            val result = oidcVerifiableCredentialProofValidator.validate(request);
+            assertNotNull(result);
+            assertNull(result.jwtId());
+        }
+
+        @Test
+        void verifyEcKeyWithRsaAlgorithmFails() {
+            assertThrows(Exception.class, () -> {
+                val ecKey = generateEcHolderKey();
+                val rsaKey = generateRsaHolderKey();
+                val header = new JWSHeader.Builder(JWSAlgorithm.ES256)
+                    .jwk(rsaKey.toPublicJWK())
+                    .build();
+                val claims = new JWTClaimsSet.Builder()
+                    .jwtID(UUID.randomUUID().toString())
+                    .audience(CREDENTIAL_ISSUER)
+                    .subject("casuser")
+                    .issueTime(new Date())
+                    .build();
+                val signedJwt = new SignedJWT(header, claims);
+                signedJwt.sign(new ECDSASigner(ecKey));
+
+                val request = new OidcVerifiableCredentialRequest();
+                request.setCredentialConfigurationId("myorg");
+                request.setProof(buildProof(signedJwt.serialize()));
+                oidcVerifiableCredentialProofValidator.validate(request);
+            });
+        }
+
+        @Test
+        void verifyRsaProofWithRS384Algorithm() throws Throwable {
+            val holderKey = generateRsaHolderKey();
+            val header = new JWSHeader.Builder(JWSAlgorithm.RS384)
+                .jwk(holderKey.toPublicJWK())
+                .build();
+            val claims = new JWTClaimsSet.Builder()
+                .jwtID(UUID.randomUUID().toString())
+                .audience(CREDENTIAL_ISSUER)
+                .subject("casuser")
+                .issueTime(new Date())
+                .claim("nonce", oidcVerifiableCredentialNonceService.create().value())
+                .build();
+            val signedJwt = new SignedJWT(header, claims);
+            signedJwt.sign(new RSASSASigner(holderKey));
+
+            val request = new OidcVerifiableCredentialRequest();
+            request.setCredentialConfigurationId("myorg");
+            request.setProof(buildProof(signedJwt.serialize()));
+
+            val result = oidcVerifiableCredentialProofValidator.validate(request);
+            assertNotNull(result);
+            assertEquals("jwt", result.proofType());
+        }
+
+        @Test
+        void verifyRsaProofWithRS512Algorithm() throws Throwable {
+            val holderKey = generateRsaHolderKey();
+            val header = new JWSHeader.Builder(JWSAlgorithm.RS512)
+                .jwk(holderKey.toPublicJWK())
+                .build();
+            val claims = new JWTClaimsSet.Builder()
+                .jwtID(UUID.randomUUID().toString())
+                .audience(CREDENTIAL_ISSUER)
+                .subject("casuser")
+                .issueTime(new Date())
+                .claim("nonce", oidcVerifiableCredentialNonceService.create().value())
+                .build();
+            val signedJwt = new SignedJWT(header, claims);
+            signedJwt.sign(new RSASSASigner(holderKey));
+
+            val request = new OidcVerifiableCredentialRequest();
+            request.setCredentialConfigurationId("myorg");
+            request.setProof(buildProof(signedJwt.serialize()));
+
+            val result = oidcVerifiableCredentialProofValidator.validate(request);
+            assertNotNull(result);
+            assertEquals("jwt", result.proofType());
+        }
+
+        @Test
+        void verifyEcProofWithES512Algorithm() throws Throwable {
+            val holderKey = new ECKeyGenerator(Curve.P_521).keyID("holder-ec-521").generate();
+            val header = new JWSHeader.Builder(JWSAlgorithm.ES512)
+                .jwk(holderKey.toPublicJWK())
+                .build();
+            val claims = new JWTClaimsSet.Builder()
+                .jwtID(UUID.randomUUID().toString())
+                .audience(CREDENTIAL_ISSUER)
+                .subject("casuser")
+                .claim("nonce", oidcVerifiableCredentialNonceService.create().value())
+                .issueTime(new Date())
+                .build();
+            val signedJwt = new SignedJWT(header, claims);
+            signedJwt.sign(new ECDSASigner(holderKey));
+
+            val request = new OidcVerifiableCredentialRequest();
+            request.setCredentialConfigurationId("myorg");
+            request.setProof(buildProof(signedJwt.serialize()));
+
+            val result = oidcVerifiableCredentialProofValidator.validate(request);
+            assertNotNull(result);
+            assertEquals("jwt", result.proofType());
+        }
+
+        @Test
+        void verifySingleAudienceExactMatchSucceeds() throws Throwable {
+            val holderKey = generateRsaHolderKey();
+            val proofJwt = buildProofJwt(holderKey, CREDENTIAL_ISSUER, new Date());
+
+            val request = new OidcVerifiableCredentialRequest();
+            request.setCredentialConfigurationId("myorg");
+            request.setProof(buildProof(proofJwt));
+
+            val result = oidcVerifiableCredentialProofValidator.validate(request);
+            assertNotNull(result);
+            assertEquals("casuser", result.subject());
         }
     }
 

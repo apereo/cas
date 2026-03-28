@@ -3,13 +3,16 @@ package org.apereo.cas.config;
 import module java.base;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.oidc.OidcConfigurationContext;
-import org.apereo.cas.oidc.vc.issuer.OidcCredentialEndpointController;
-import org.apereo.cas.oidc.vc.issuer.OidcCredentialIssuerMetadataController;
-import org.apereo.cas.oidc.vc.issuer.OidcCredentialIssuerMetadataService;
 import org.apereo.cas.oidc.vc.issuer.OidcDefaultVerifiableCredentialIssuerService;
 import org.apereo.cas.oidc.vc.issuer.OidcVerifiableCredentialIssuerService;
-import org.apereo.cas.oidc.vc.issuer.OidcVerifiableCredentialJwtProofValidator;
-import org.apereo.cas.oidc.vc.issuer.OidcVerifiableCredentialProofValidator;
+import org.apereo.cas.oidc.vc.issuer.metadata.OidcCredentialIssuerMetadataService;
+import org.apereo.cas.oidc.vc.issuer.nonce.OidcVerifiableCredentialDefaultNonceService;
+import org.apereo.cas.oidc.vc.issuer.nonce.OidcVerifiableCredentialNonceService;
+import org.apereo.cas.oidc.vc.issuer.proof.OidcVerifiableCredentialJwtProofValidator;
+import org.apereo.cas.oidc.vc.issuer.proof.OidcVerifiableCredentialProofValidator;
+import org.apereo.cas.oidc.vc.issuer.web.OidcVerifiableCredentialEndpointController;
+import org.apereo.cas.oidc.vc.issuer.web.OidcVerifiableCredentialIssuerMetadataController;
+import org.apereo.cas.oidc.vc.issuer.web.OidcVerifiableCredentialNonceEndpointController;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -39,21 +42,24 @@ class OidcVerifiableCredentialsIssuerConfiguration {
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @ConditionalOnMissingBean(name = "oidcCredentialIssuerMetadataController")
     @Bean
-    public OidcCredentialIssuerMetadataController oidcCredentialIssuerMetadataController(
+    public OidcVerifiableCredentialIssuerMetadataController oidcCredentialIssuerMetadataController(
         @Qualifier(OidcConfigurationContext.BEAN_NAME)
         final OidcConfigurationContext oidcConfigurationContext,
+        @Qualifier("oidcCredentialIssuerMetadataService")
         final OidcCredentialIssuerMetadataService metadataService) {
-        return new OidcCredentialIssuerMetadataController(oidcConfigurationContext, metadataService);
+        return new OidcVerifiableCredentialIssuerMetadataController(oidcConfigurationContext, metadataService);
     }
 
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @ConditionalOnMissingBean(name = "oidcVerifiableCredentialProofValidator")
     @Bean
     public OidcVerifiableCredentialProofValidator oidcVerifiableCredentialProofValidator(
+        @Qualifier("oidcVerifiableCredentialNonceService")
+        final OidcVerifiableCredentialNonceService oidcVerifiableCredentialNonceService,
         final CasConfigurationProperties casProperties) {
-        return new OidcVerifiableCredentialJwtProofValidator(casProperties);
+        return new OidcVerifiableCredentialJwtProofValidator(casProperties, oidcVerifiableCredentialNonceService);
     }
-    
+
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @ConditionalOnMissingBean(name = "oidcVerifiableCredentialIssuerService")
     @Bean
@@ -69,10 +75,31 @@ class OidcVerifiableCredentialsIssuerConfiguration {
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @ConditionalOnMissingBean(name = "oidcCredentialEndpointController")
     @Bean
-    public OidcCredentialEndpointController oidcCredentialEndpointController(
+    public OidcVerifiableCredentialEndpointController oidcCredentialEndpointController(
         @Qualifier(OidcConfigurationContext.BEAN_NAME)
         final OidcConfigurationContext oidcConfigurationContext,
         final OidcVerifiableCredentialIssuerService oidcVerifiableCredentialIssuerService) {
-        return new OidcCredentialEndpointController(oidcConfigurationContext, oidcVerifiableCredentialIssuerService);
+        return new OidcVerifiableCredentialEndpointController(
+            oidcConfigurationContext, oidcVerifiableCredentialIssuerService);
+    }
+
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+    @ConditionalOnMissingBean(name = "oidcVerifiableCredentialNonceService")
+    @Bean
+    public OidcVerifiableCredentialNonceService oidcVerifiableCredentialNonceService(
+        @Qualifier(OidcConfigurationContext.BEAN_NAME)
+        final OidcConfigurationContext oidcConfigurationContext) {
+        return new OidcVerifiableCredentialDefaultNonceService(oidcConfigurationContext);
+    }
+    
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+    @ConditionalOnMissingBean(name = "oidcVerifiableCredentialNonceEndpointController")
+    @Bean
+    public OidcVerifiableCredentialNonceEndpointController oidcVerifiableCredentialNonceEndpointController(
+        @Qualifier("oidcVerifiableCredentialNonceService")
+        final OidcVerifiableCredentialNonceService oidcVerifiableCredentialNonceService,
+        @Qualifier(OidcConfigurationContext.BEAN_NAME)
+        final OidcConfigurationContext oidcConfigurationContext) {
+        return new OidcVerifiableCredentialNonceEndpointController(oidcConfigurationContext, oidcVerifiableCredentialNonceService);
     }
 }

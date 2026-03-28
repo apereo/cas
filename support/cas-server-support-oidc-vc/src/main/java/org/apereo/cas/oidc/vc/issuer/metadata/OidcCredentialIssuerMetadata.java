@@ -1,4 +1,4 @@
-package org.apereo.cas.oidc.vc.issuer;
+package org.apereo.cas.oidc.vc.issuer.metadata;
 
 import module java.base;
 import com.fasterxml.jackson.annotation.JsonInclude;
@@ -29,6 +29,9 @@ public class OidcCredentialIssuerMetadata implements Serializable {
 
     @JsonProperty("credential_endpoint")
     private String credentialEndpoint;
+
+    @JsonProperty("nonce_endpoint")
+    private String nonceEndpoint;
 
     @JsonProperty("credential_configurations_supported")
     private Map<String, CredentialConfiguration> credentialConfigurationsSupported;

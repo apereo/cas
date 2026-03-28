@@ -1,4 +1,4 @@
-package org.apereo.cas.oidc.vc.issuer;
+package org.apereo.cas.oidc.vc.issuer.metadata;
 
 import module java.base;
 import org.apereo.cas.configuration.CasConfigurationProperties;
@@ -29,6 +29,8 @@ public class OidcCredentialIssuerMetadataService {
         metadata.setAuthorizationServers(List.of(properties.getCore().getIssuer()));
         metadata.setCredentialEndpoint(properties.getCore().getIssuer()
             + '/' + OidcConstants.BASE_OIDC_URL + '/' + OidcConstants.VC_CREDENTIAL_URL);
+        metadata.setNonceEndpoint(properties.getCore().getIssuer()
+            + '/' + OidcConstants.BASE_OIDC_URL + '/' + OidcConstants.VC_NONCE_URL);
 
         val supported = new LinkedHashMap<String, OidcCredentialIssuerMetadata.CredentialConfiguration>();
         properties.getVc().getIssuer().getCredentialConfigurations().forEach((key, value) -> {

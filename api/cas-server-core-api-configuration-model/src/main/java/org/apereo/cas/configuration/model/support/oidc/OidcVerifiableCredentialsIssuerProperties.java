@@ -1,6 +1,7 @@
 package org.apereo.cas.configuration.model.support.oidc;
 
 import module java.base;
+import org.apereo.cas.configuration.support.DurationCapable;
 import org.apereo.cas.configuration.support.RequiresModule;
 import lombok.Getter;
 import lombok.Setter;
@@ -24,4 +25,10 @@ public class OidcVerifiableCredentialsIssuerProperties implements Serializable {
      * Supported credential configurations keyed by identifier.
      */
     private Map<String, OidcVerifiableCredentialConfigurationProperties> credentialConfigurations = new LinkedHashMap<>();
+
+    /**
+     * Control how long a nonce should last.
+     */
+    @DurationCapable
+    private String nonceTtl = "PT60S";
 }

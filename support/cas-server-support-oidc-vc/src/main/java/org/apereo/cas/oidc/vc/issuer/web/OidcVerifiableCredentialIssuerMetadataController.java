@@ -1,8 +1,9 @@
-package org.apereo.cas.oidc.vc.issuer;
+package org.apereo.cas.oidc.vc.issuer.web;
 
 import module java.base;
 import org.apereo.cas.oidc.OidcConfigurationContext;
 import org.apereo.cas.oidc.OidcConstants;
+import org.apereo.cas.oidc.vc.issuer.metadata.OidcCredentialIssuerMetadataService;
 import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.support.oauth.util.OAuth20Utils;
 import org.apereo.cas.support.oauth.web.endpoints.BaseOAuth20Controller;
@@ -18,19 +19,19 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
 /**
- * This is {@link OidcCredentialIssuerMetadataController}.
+ * This is {@link OidcVerifiableCredentialIssuerMetadataController}.
  *
  * @author Misagh Moayyed
  * @since 8.0.0
  */
 @Tag(name = "OpenID Connect")
 @Slf4j
-public class OidcCredentialIssuerMetadataController extends BaseOAuth20Controller<OidcConfigurationContext> {
+public class OidcVerifiableCredentialIssuerMetadataController extends BaseOAuth20Controller<OidcConfigurationContext> {
 
     private final OidcCredentialIssuerMetadataService metadataService;
 
-    public OidcCredentialIssuerMetadataController(final OidcConfigurationContext configurationContext,
-                                                  final OidcCredentialIssuerMetadataService metadataService) {
+    public OidcVerifiableCredentialIssuerMetadataController(final OidcConfigurationContext configurationContext,
+                                                            final OidcCredentialIssuerMetadataService metadataService) {
         super(configurationContext);
         this.metadataService = metadataService;
     }

@@ -7,7 +7,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 /**
- * This is {@link VerifiableCredentialResponse}.
+ * This is {@link OidcVerifiableCredentialResponse}.
  *
  * @author Misagh Moayyed
  * @since 8.0.0
@@ -15,7 +15,7 @@ import lombok.Setter;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @Getter
 @Setter
-public class VerifiableCredentialResponse implements Serializable {
+public class OidcVerifiableCredentialResponse implements Serializable {
     @Serial
     private static final long serialVersionUID = -8698053273429306216L;
 

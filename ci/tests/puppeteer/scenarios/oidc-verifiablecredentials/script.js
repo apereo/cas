@@ -8,6 +8,15 @@ const key = JSON.parse(fs.readFileSync(path.join(__dirname, "/keystore.json"))).
 const privateKey = jwkToPem(key, {private: true});
 
 async function createPublicKey() {
+    const nonce = await cas.doPost("https://localhost:8443/cas/oidc/oidcVcNonce", "", {
+        "Content-Type": "application/json"
+    }, (res) => {
+        cas.log(res.data);
+        return res.data.c_nonce;
+    }, (error) => {
+        throw `Operation failed: ${error}`;
+    });
+    
     const publicJwk = {
         kty: key.kty,
         n: key.n,
@@ -20,6 +29,7 @@ async function createPublicKey() {
     return cas.createJwt({
         "jti": "THJZGsQDP26OuwQn",
         "iss": "client",
+        "nonce": nonce,
         "aud": "https://localhost:8443/cas/oidc"
     }, privateKey, "RS256", {
         header: {

@@ -8,7 +8,7 @@ import lombok.Setter;
 import jakarta.validation.constraints.NotBlank;
 
 /**
- * This is {@link VerifiableCredentialRequest}.
+ * This is {@link OidcVerifiableCredentialRequest}.
  *
  * @author Misagh Moayyed
  * @since 8.0.0
@@ -16,7 +16,7 @@ import jakarta.validation.constraints.NotBlank;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @Getter
 @Setter
-public class VerifiableCredentialRequest implements Serializable {
+public class OidcVerifiableCredentialRequest implements Serializable {
     @Serial
     private static final long serialVersionUID = -700734371623770443L;
 

@@ -19,11 +19,11 @@ public interface OidcVerifiableCredentialIssuerService {
      * @param context the context
      * @return the verifiable credential response
      */
-    VerifiableCredentialResponse issue(CredentialRequestValidationContext context);
+    OidcVerifiableCredentialResponse issue(CredentialRequestValidationContext context);
 
     record CredentialRequestValidationContext(
         OAuth20AccessToken accessToken,
-        VerifiableCredentialRequest credentialRequest,
+        OidcVerifiableCredentialRequest credentialRequest,
         HttpServletRequest httpRequest) {
     }
 }

@@ -1,7 +1,9 @@
-package org.apereo.cas.oidc.vc.issuer;
+package org.apereo.cas.oidc.vc.issuer.proof;
 
 import module java.base;
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.oidc.vc.issuer.OidcVerifiableCredentialRequest;
+import org.apereo.cas.oidc.vc.issuer.nonce.OidcVerifiableCredentialNonceService;
 import com.nimbusds.jose.Algorithm;
 import com.nimbusds.jose.JWSAlgorithm;
 import com.nimbusds.jose.JWSVerifier;
@@ -26,9 +28,10 @@ public class OidcVerifiableCredentialJwtProofValidator implements OidcVerifiable
     private static final int MINUTES_IN_PAST = 5;
 
     private final CasConfigurationProperties casProperties;
+    private final OidcVerifiableCredentialNonceService oidcVerifiableCredentialNonceService;
 
     @Override
-    public VerifiableCredentialProofResult validate(final VerifiableCredentialRequest request) throws Exception {
+    public VerifiableCredentialProofResult validate(final OidcVerifiableCredentialRequest request) throws Exception {
         val proof = request.getProof();
         val signedJwt = SignedJWT.parse(proof.getJwt());
         val holderJwk = signedJwt.getHeader().getJWK();
@@ -37,6 +40,7 @@ public class OidcVerifiableCredentialJwtProofValidator implements OidcVerifiable
         verifyAlgorithm(signedJwt, holderJwk);
         verifyAudience(signedJwt);
         verifyFreshness(signedJwt);
+        verifyNonce(signedJwt);
 
         val claims = signedJwt.getJWTClaimsSet();
         return new VerifiableCredentialProofResult(
@@ -45,6 +49,15 @@ public class OidcVerifiableCredentialJwtProofValidator implements OidcVerifiable
             claims.getSubject(),
             holderJwk
         );
+    }
+
+    protected void verifyNonce(final SignedJWT signedJwt) throws Exception {
+        val claims = signedJwt.getJWTClaimsSet();
+        val nonce = claims.getStringClaim("nonce");
+        if (nonce == null || !oidcVerifiableCredentialNonceService.exists(nonce)) {
+            throw new IllegalArgumentException("Proof nonce is invalid or missing");
+        }
+        oidcVerifiableCredentialNonceService.remove(nonce);
     }
 
     protected void verifySignature(final SignedJWT signedJwt, final JWK holderJwk) throws Exception {
@@ -58,7 +71,7 @@ public class OidcVerifiableCredentialJwtProofValidator implements OidcVerifiable
             throw new IllegalArgumentException("Proof JWT signature validation failed");
         }
     }
-    
+
     protected void verifyAudience(final SignedJWT signedJwt) throws ParseException {
         val audiences = signedJwt.getJWTClaimsSet().getAudience();
         val credentialIssuer = casProperties.getAuthn().getOidc().getCore().getIssuer();

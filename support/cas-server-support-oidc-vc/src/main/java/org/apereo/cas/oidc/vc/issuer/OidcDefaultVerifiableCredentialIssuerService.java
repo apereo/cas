@@ -4,6 +4,7 @@ import module java.base;
 import org.apereo.cas.authentication.credential.BasicIdentifiableCredential;
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.oidc.OidcConfigurationContext;
+import org.apereo.cas.oidc.vc.issuer.proof.OidcVerifiableCredentialProofValidator;
 import org.apereo.cas.support.oauth.util.OAuth20Utils;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.function.FunctionUtils;
@@ -25,7 +26,7 @@ public class OidcDefaultVerifiableCredentialIssuerService implements OidcVerifia
     private final OidcVerifiableCredentialProofValidator credentialProofValidator;
     
     @Override
-    public VerifiableCredentialResponse issue(final CredentialRequestValidationContext context) {
+    public OidcVerifiableCredentialResponse issue(final CredentialRequestValidationContext context) {
         return FunctionUtils.doUnchecked(() -> {
             val proof = credentialProofValidator.validate(context.credentialRequest());
             
@@ -47,7 +48,7 @@ public class OidcDefaultVerifiableCredentialIssuerService implements OidcVerifia
             payload.put("cnf", proof.holderJwk().toJSONObject());
 
             val signedCredential = signVerifiableCredential(payload, context);
-            val response = new VerifiableCredentialResponse();
+            val response = new OidcVerifiableCredentialResponse();
             response.setFormat(configuration.getFormat());
             response.setCredential(signedCredential);
             return response;

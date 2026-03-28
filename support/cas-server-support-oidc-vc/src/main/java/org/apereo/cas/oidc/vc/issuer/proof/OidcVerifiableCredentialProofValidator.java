@@ -1,6 +1,7 @@
-package org.apereo.cas.oidc.vc.issuer;
+package org.apereo.cas.oidc.vc.issuer.proof;
 
 import module java.base;
+import org.apereo.cas.oidc.vc.issuer.OidcVerifiableCredentialRequest;
 import com.nimbusds.jose.jwk.JWK;
 
 /**
@@ -18,7 +19,7 @@ public interface OidcVerifiableCredentialProofValidator {
      * @return the verifiable credential proof result
      * @throws Exception the exception
      */
-    VerifiableCredentialProofResult validate(VerifiableCredentialRequest request) throws Exception;
+    VerifiableCredentialProofResult validate(OidcVerifiableCredentialRequest request) throws Exception;
 
     record VerifiableCredentialProofResult(
         String proofType,
