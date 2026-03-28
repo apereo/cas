@@ -52,6 +52,9 @@ configurations.configureEach {
                 if (requested.group == "com.h2database") {
                     details.useVersion(libs.h2.get().version)
                 }
+                if (requested.group == "io.prometheus") {
+                    details.useVersion(libs.prometheus.get().version)
+                }
                 if (requested.group == "com.google.code.gson") {
                     details.useVersion(libs.gson.get().version)
                 }

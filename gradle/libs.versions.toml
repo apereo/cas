@@ -196,6 +196,7 @@ otel = "1.60.1"
 pac4j = "6.4.0"
 permitio = "2.2.5"
 postgresql = "42.7.10"
+prometheus = "1.5.1"
 pulsar = "4.1.3"
 pushy = "0.15.4"
 quartz = "2.5.2"
@@ -609,6 +610,7 @@ pac4j-saml = { module = "org.pac4j:pac4j-saml", version.ref = "pac4j" }
 permit-sdk-java = { module = "io.permit:permit-sdk-java", version.ref = "permitio" }
 polyglot = { module = "org.graalvm.polyglot:polyglot", version.ref = "graalVm" }
 postgresql = { module = "org.postgresql:postgresql", version.ref = "postgresql" }
+prometheus = { module = "io.prometheus:prometheus-metrics-exposition-formats", version.ref = "prometheus" }
 pulsar-client-api = { module = "org.apache.pulsar:pulsar-client-api", version.ref = "pulsar" }
 pushy = { module = "com.eatthepath:pushy", version.ref = "pushy" }
 quartz = { module = "org.quartz-scheduler:quartz", version.ref = "quartz" }
