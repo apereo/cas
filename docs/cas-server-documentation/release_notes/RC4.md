@@ -72,11 +72,21 @@ CAS codebase is now annotated with [JSpecify](https://jspecify.dev/) annotations
 return types and fields. We will gradually extend the coverage of such annotations across the entire codebase in future releases
 and will integrate the Gradle build tool with tools such as [NullAway](https://github.com/uber/NullAway) to prevent nullness contract violations
 during compile time.
+  
+### OpenId Connect & Verifiable Credentials
+
+An [initial implementation](../authentication/OIDC-Authentication-Verifiable-Credentials.html) 
+of OpenID Connect Verifiable Credentials (OIDC4VCI) is now available in CAS. 
 
 ### Gradle 9.5
 
 CAS is now built with Gradle `9.5.x` and the build process has been updated to use the latest Gradle
 features and capabilities. 
+
+### OpenId Connect Federation & Delegation
+
+Small improvements to OpenID Federation protocol and its support for authentication delegation for OIDC clients.
+See [this guide](../integration/Delegate-Authentication-Generic-OpenID-Connect.html) for more details.
 
 ## Other Stuff
               
