@@ -88,6 +88,13 @@ features and capabilities.
 Small improvements to OpenID Federation protocol and its support for authentication delegation for OIDC clients.
 See [this guide](../integration/Delegate-Authentication-Generic-OpenID-Connect.html) for more details.
 
+### Account Registration
+
+[Account registration flow](../registration/Account-Registration-Overview.html) will automatically 
+establish a single sign-on session once the process and flow
+is complete. It may also redirect back to the original application if the registration process 
+was initiated from a protected resource.
+
 ## Other Stuff
               
 - Claims assigned to OpenID Connect custom scopes can now be overridden per client application.
