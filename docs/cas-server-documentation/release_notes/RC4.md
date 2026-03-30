@@ -73,6 +73,10 @@ return types and fields. We will gradually extend the coverage of such annotatio
 and will integrate the Gradle build tool with tools such as [NullAway](https://github.com/uber/NullAway) to prevent nullness contract violations
 during compile time.
 
+### OpenID Federation
+
+The OpenID Federation support (server) is now in its own dedicated module: `cas-server-support-oidc-federation`.
+
 ## Other Stuff
               
 - 

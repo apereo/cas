@@ -9,24 +9,14 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.context.annotation.Import;
 
 /**
- * This is {@link CasOidcAutoConfiguration}.
+ * This is {@link CasOidcFederationAutoConfiguration}.
  *
- * @author Misagh Moayyed
- * @since 7.1.0
+ * @author Jerome LELEU
+ * @since 8.0.0
  */
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.OpenIDConnect)
 @AutoConfiguration
-@Import({
-    OidcConfiguration.class,
-    OidcResponseConfiguration.class,
-    OidcJwksConfiguration.class,
-    OidcEndpointsConfiguration.class,
-    OidcLogoutConfiguration.class,
-    OidcComponentSerializationConfiguration.class,
-    OidcThrottleConfiguration.class,
-    OidcAuditConfiguration.class,
-    OidcWebflowConfiguration.class
-})
-public class CasOidcAutoConfiguration {
+@Import(OidcFederationConfiguration.class)
+public class CasOidcFederationAutoConfiguration {
 }
