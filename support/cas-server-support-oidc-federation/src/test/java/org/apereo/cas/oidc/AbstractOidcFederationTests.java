@@ -28,7 +28,6 @@ import org.springframework.boot.SpringBootConfiguration;
 import org.springframework.boot.autoconfigure.ImportAutoConfiguration;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc;
 import org.springframework.http.HttpHeaders;
 import org.springframework.mock.web.MockHttpServletRequest;
 
@@ -52,7 +51,6 @@ import org.springframework.mock.web.MockHttpServletRequest;
         "cas.authn.oidc.core.issuer=https://sso.example.org/cas/oidc"
     }, webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-@AutoConfigureMockMvc
 public abstract class AbstractOidcFederationTests {
 
     @Autowired
