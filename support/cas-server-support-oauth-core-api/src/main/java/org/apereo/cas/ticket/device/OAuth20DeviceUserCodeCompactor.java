@@ -31,10 +31,10 @@ public class OAuth20DeviceUserCodeCompactor implements TicketCompactor<OAuth20De
     @Override
     public String compact(final StringBuilder builder, final Ticket ticket) throws Exception {
         val code = (OAuth20DeviceUserCode) ticket;
-        builder.append(String.format("%s%s", DELIMITER, code.getService().getShortenedId()));
+        builder.append(DELIMITER).append(code.getService().getShortenedId());
         val approved = BooleanUtils.toString(code.isUserCodeApproved(), "1", "0");
-        builder.append(String.format("%s%s", DELIMITER, approved));
-        builder.append(String.format("%s%s", DELIMITER, ticket.getId()));
+        builder.append(DELIMITER).append(approved);
+        builder.append(DELIMITER).append(ticket.getId());
         return builder.toString();
     }
 
