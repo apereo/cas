@@ -27,7 +27,7 @@ import org.springframework.context.annotation.ScopedProxyMode;
  * @since 6.4.0
  */
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-@ConditionalOnClass(DelegatedAuthenticationWebflowConfiguration.class)
+@ConditionalOnClass({DelegatedAuthenticationWebflowConfiguration.class, SAML2Client.class})
 @ConditionalOnFeaturesEnabled({
     @ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.DelegatedAuthentication),
     @ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.SAMLIdentityProvider)
@@ -38,7 +38,6 @@ class SamlIdPDelegatedAuthenticationConfiguration {
     @Bean
     @ConditionalOnMissingBean(name = "saml2DelegatedClientAuthenticationRequestCustomizer")
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-    @ConditionalOnClass(SAML2Client.class)
     public DelegatedClientAuthenticationRequestCustomizer saml2DelegatedClientAuthenticationRequestCustomizer(
         @Qualifier(ServicesManager.BEAN_NAME)
         final ServicesManager servicesManager,
