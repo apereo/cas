@@ -42,13 +42,13 @@ public class OAuth20CodeCompactor implements TicketCompactor<OAuth20Code> {
     @Override
     public String compact(final StringBuilder builder, final Ticket ticket) throws Exception {
         val code = (OAuth20Code) ticket;
-        builder.append(String.format("%s%s", DELIMITER, code.getService().getShortenedId()));
-        builder.append(String.format("%s%s", DELIMITER, code.getClientId()));
-        builder.append(String.format("%s%s", DELIMITER, String.join("|", code.getScopes())));
-        builder.append(String.format("%s%s", DELIMITER, StringUtils.defaultString(code.getCodeChallenge())));
-        builder.append(String.format("%s%s", DELIMITER, StringUtils.defaultString(code.getCodeChallengeMethod())));
-        builder.append(String.format("%s%s", DELIMITER, code.getResponseType() != null ? code.getResponseType().ordinal() : OAuth20ResponseTypes.CODE.ordinal()));
-        builder.append(String.format("%s%s", DELIMITER, code.getGrantType() != null ? code.getGrantType().ordinal() : OAuth20GrantTypes.AUTHORIZATION_CODE.ordinal()));
+        builder.append(DELIMITER).append(code.getService().getShortenedId());
+        builder.append(DELIMITER).append(code.getClientId());
+        builder.append(DELIMITER).append(String.join("|", code.getScopes()));
+        builder.append(DELIMITER).append(StringUtils.defaultString(code.getCodeChallenge()));
+        builder.append(DELIMITER).append(StringUtils.defaultString(code.getCodeChallengeMethod()));
+        builder.append(DELIMITER).append(code.getResponseType() != null ? code.getResponseType().ordinal() : OAuth20ResponseTypes.CODE.ordinal());
+        builder.append(DELIMITER).append(code.getGrantType() != null ? code.getGrantType().ordinal() : OAuth20GrantTypes.AUTHORIZATION_CODE.ordinal());
         builder.append(compactAuthenticationAttempt(code).toString());
         return builder.toString();
     }
@@ -106,7 +106,7 @@ public class OAuth20CodeCompactor implements TicketCompactor<OAuth20Code> {
             val principalId = authentication.getPrincipal().getId();
             val credentialTypes = authentication.getCredentials().stream()
                 .map(credential -> credential.getClass().getSimpleName()).collect(Collectors.joining("#"));
-            builder.append(String.format("%s%s:%s:%s", DELIMITER, principalId, handlers, credentialTypes));
+            builder.append(DELIMITER).append(principalId).append(':').append(handlers).append(':').append(credentialTypes);
         }
         return builder;
     }

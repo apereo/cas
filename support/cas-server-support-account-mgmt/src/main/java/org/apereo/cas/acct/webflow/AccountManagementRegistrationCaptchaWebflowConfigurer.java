@@ -28,7 +28,6 @@ public class AccountManagementRegistrationCaptchaWebflowConfigurer extends Abstr
     protected void doInitialize() {
         val flow = getLoginFlow();
         if (flow != null && casProperties.getAccountRegistration().getGoogleRecaptcha().isEnabled()) {
-
             flow.getStartActionList().add(createEvaluateAction(CasWebflowConstants.ACTION_ID_ACCOUNT_REGISTRATION_INIT_CAPTCHA));
             prependActionsToActionStateExecutionList(flow, CasWebflowConstants.STATE_ID_SUBMIT_ACCOUNT_REGISTRATION,
                 CasWebflowConstants.ACTION_ID_ACCOUNT_REGISTRATION_VALIDATE_CAPTCHA);
