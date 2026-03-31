@@ -47,20 +47,20 @@ public class ServiceTicketCompactor implements TicketCompactor<ServiceTicket> {
     @Override
     public String compact(final StringBuilder builder, final Ticket ticket) throws Exception {
         if (ticket instanceof final ServiceAwareTicket sat && Objects.nonNull(sat.getService())) {
-            builder.append(String.format("%s%s", DELIMITER, StringUtils.defaultString(sat.getService().getShortenedId())));
+            builder.append(DELIMITER).append(StringUtils.defaultString(sat.getService().getShortenedId()));
         } else {
-            builder.append("%s*".formatted(DELIMITER));
+            builder.append(DELIMITER).append('*');
         }
         if (ticket instanceof final RenewableServiceTicket rst) {
-            builder.append(String.format("%s%s", DELIMITER, BooleanUtils.toString(rst.isFromNewLogin(), "1", "0")));
+            builder.append(DELIMITER).append(BooleanUtils.toString(rst.isFromNewLogin(), "1", "0"));
         } else {
-            builder.append("%s0".formatted(DELIMITER));
+            builder.append(DELIMITER).append('0');
         }
 
         if (ticket instanceof final AuthenticationAwareTicket aat) {
             builder.append(compactAuthenticationAttempt(aat).toString());
         } else {
-            builder.append("%s*%s0".formatted(DELIMITER, DELIMITER));
+            builder.append(DELIMITER).append('*').append(DELIMITER).append('0');
         }
         return builder.toString();
     }
@@ -92,10 +92,10 @@ public class ServiceTicketCompactor implements TicketCompactor<ServiceTicket> {
             val principalId = authentication.getPrincipal().getId();
             val credentialTypes = authentication.getCredentials().stream()
                 .map(credential -> credential.getClass().getSimpleName()).collect(Collectors.joining("#"));
-            builder.append(String.format("%s%s:%s:%s", DELIMITER, principalId, handlers, credentialTypes));
+            builder.append(DELIMITER).append(principalId).append(':').append(handlers).append(':').append(credentialTypes);
 
             val rememberMe = BooleanUtils.toString(CoreAuthenticationUtils.isRememberMeAuthentication(authentication), "1", "0");
-            builder.append(String.format("%s%s", DELIMITER, rememberMe));
+            builder.append(DELIMITER).append(rememberMe);
         }
         return builder;
     }

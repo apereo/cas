@@ -16,7 +16,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.jose4j.jwk.JsonWebKey;
 import org.jose4j.jwk.JsonWebKeySet;
 import org.jose4j.jws.AlgorithmIdentifiers;
-import org.jspecify.annotations.NonNull;
 
 /**
  * This is {@link OidcIdTokenSigningAndEncryptionService}.
@@ -29,8 +28,8 @@ public class OidcIdTokenSigningAndEncryptionService extends BaseOidcJsonWebKeyTo
     private final OidcServerDiscoverySettings discoverySettings;
 
     public OidcIdTokenSigningAndEncryptionService(
-        final LoadingCache<@NonNull OidcJsonWebKeyCacheKey, JsonWebKeySet> defaultJsonWebKeystoreCache,
-        final LoadingCache<@NonNull OidcJsonWebKeyCacheKey, Optional<JsonWebKeySet>> serviceJsonWebKeystoreCache,
+        final LoadingCache<OidcJsonWebKeyCacheKey, JsonWebKeySet> defaultJsonWebKeystoreCache,
+        final LoadingCache<OidcJsonWebKeyCacheKey, Optional<JsonWebKeySet>> serviceJsonWebKeystoreCache,
         final OidcIssuerService issuerService,
         final OidcServerDiscoverySettings discoverySettings,
         final CasConfigurationProperties casProperties) {
