@@ -75,7 +75,7 @@ during compile time.
 
 ### OpenID Federation
 
-The OpenID Federation support (server) is now in its own dedicated module: `cas-server-support-oidc-federation`.
+The OpenID Federation support (server) is now in its [own dedicated module](../authentication/OIDC-Authentication-Federation.html).
 
 ## Other Stuff
               

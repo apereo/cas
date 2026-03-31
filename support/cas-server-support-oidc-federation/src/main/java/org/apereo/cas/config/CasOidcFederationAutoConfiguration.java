@@ -15,7 +15,7 @@ import org.springframework.context.annotation.Import;
  * @since 8.0.0
  */
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-@ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.OpenIDConnect)
+@ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.OpenIDConnect, module = "federation")
 @AutoConfiguration
 @Import(OidcFederationConfiguration.class)
 public class CasOidcFederationAutoConfiguration {
