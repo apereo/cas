@@ -38,7 +38,6 @@ There is no need for special ceremony to create separate issues. The pull reques
 |--------------------------------------------------------------------------------------------|--------------------------------------------------|
 | ![](https://img.shields.io/badge/Development-WIP-blue.svg?style=for-the-badge&logo=github) | [Link](https://apereo.github.io/cas/development) |
 | ![](https://img.shields.io/badge/7.3.x-Current-green.svg?style=for-the-badge&logo=github)  | [Link](https://apereo.github.io/cas/7.3.x)       |
-| ![](https://img.shields.io/badge/7.2.x-Current-green.svg?style=for-the-badge&logo=github)  | [Link](https://apereo.github.io/cas/7.2.x)       |
 
 Additional resources are available as follows:
 

@@ -323,10 +323,7 @@ class OAuth20AuthorizeEndpointControllerTests extends AbstractOAuth20Tests {
         mockRequest.setScheme(CAS_SCHEME);
         mockRequest.setContextPath(StringUtils.EMPTY);
         val mockResponse = new MockHttpServletResponse();
-
-        val oauthContext = authorizeController.getConfigurationContext();
-        oauthContext.getCasProperties().getAuthn().getOauth().getSessionReplication().getCookie().setAutoConfigureCookiePath(false);
-        oauthContext.getOauthDistributedSessionCookieGenerator().setCookiePath(StringUtils.EMPTY);
+        
 
         val profile = buildCasProfile();
         val sessionStore = authorizeController.getConfigurationContext().getSessionStore();
@@ -354,6 +351,7 @@ class OAuth20AuthorizeEndpointControllerTests extends AbstractOAuth20Tests {
         assertEquals(FIRST_NAME, principalAttributes.get(FIRST_NAME_ATTRIBUTE).getFirst());
         val expiresIn = StringUtils.substringAfter(redirectUrl, "&expires_in=");
         assertEquals(getDefaultAccessTokenExpiration(), Long.parseLong(expiresIn));
+
     }
 
     @Test
