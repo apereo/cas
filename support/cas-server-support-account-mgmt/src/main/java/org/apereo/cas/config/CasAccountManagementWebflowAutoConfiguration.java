@@ -18,6 +18,7 @@ import org.apereo.cas.acct.provision.RestfulAccountRegistrationProvisioner;
 import org.apereo.cas.acct.provision.ScimAccountRegistrationProvisioner;
 import org.apereo.cas.acct.webflow.AccountManagementRegistrationCaptchaWebflowConfigurer;
 import org.apereo.cas.acct.webflow.AccountManagementWebflowConfigurer;
+import org.apereo.cas.acct.webflow.DisplayAccountRegistrationCompletedAction;
 import org.apereo.cas.acct.webflow.FinalizeAccountRegistrationAction;
 import org.apereo.cas.acct.webflow.LoadAccountRegistrationPropertiesAction;
 import org.apereo.cas.acct.webflow.SubmitAccountRegistrationAction;
@@ -27,8 +28,11 @@ import org.apereo.cas.audit.AuditPrincipalIdProvider;
 import org.apereo.cas.audit.AuditResourceResolvers;
 import org.apereo.cas.audit.AuditTrailConstants;
 import org.apereo.cas.audit.AuditTrailRecordResolutionPlanConfigurer;
+import org.apereo.cas.authentication.AuthenticationSystemSupport;
 import org.apereo.cas.authentication.principal.PrincipalFactoryUtils;
 import org.apereo.cas.authentication.principal.PrincipalProvisioner;
+import org.apereo.cas.authentication.principal.ServiceFactory;
+import org.apereo.cas.authentication.principal.WebApplicationService;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.features.CasFeatureModule;
 import org.apereo.cas.multitenancy.TenantExtractor;
@@ -273,13 +277,15 @@ public class CasAccountManagementWebflowAutoConfiguration {
         @Bean
         public Action finalizeAccountRegistrationRequestAction(
             final ConfigurableApplicationContext applicationContext,
+            @Qualifier(AuthenticationSystemSupport.BEAN_NAME)
+            final AuthenticationSystemSupport authenticationSystemSupport,
             final CasConfigurationProperties casProperties,
             @Qualifier(AccountRegistrationService.BEAN_NAME)
             final AccountRegistrationService accountMgmtRegistrationService) {
             return WebflowActionBeanSupplier.builder()
                 .withApplicationContext(applicationContext)
                 .withProperties(casProperties)
-                .withAction(() -> new FinalizeAccountRegistrationAction(accountMgmtRegistrationService))
+                .withAction(() -> new FinalizeAccountRegistrationAction(accountMgmtRegistrationService, authenticationSystemSupport))
                 .withId(CasWebflowConstants.ACTION_ID_FINALIZE_ACCOUNT_REGISTRATION_REQUEST)
                 .build()
                 .get();
@@ -327,6 +333,26 @@ public class CasAccountManagementWebflowAutoConfiguration {
                 .build()
                 .get();
         }
+        
+        @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+        @ConditionalOnMissingBean(name = CasWebflowConstants.ACTION_ID_DISPLAY_ACCOUNT_REGISTRATION_COMPLETED)
+        public Action displayAccountRegistrationCompletedAction(
+            @Qualifier(WebApplicationService.BEAN_NAME_FACTORY)
+            final ServiceFactory<WebApplicationService> serviceFactory,
+            @Qualifier(ServicesManager.BEAN_NAME)
+            final ServicesManager servicesManager,
+            final ConfigurableApplicationContext applicationContext,
+            final CasConfigurationProperties casProperties) {
+            return WebflowActionBeanSupplier.builder()
+                .withApplicationContext(applicationContext)
+                .withProperties(casProperties)
+                .withAction(() -> new DisplayAccountRegistrationCompletedAction(serviceFactory, servicesManager))
+                .withId(CasWebflowConstants.ACTION_ID_DISPLAY_ACCOUNT_REGISTRATION_COMPLETED)
+                .build()
+                .get();
+        }
+        
     }
 
     @Configuration(value = "CasAccountManagementWebflowAuditConfiguration", proxyBeanMethods = false)

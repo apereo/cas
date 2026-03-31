@@ -1,0 +1,49 @@
+{
+  "dependencies": "oidc-vc",
+  "conditions": {
+    "docker": "true"
+  },
+  "properties": [
+    "--cas.server.tomcat.http[0].enabled=true",
+    "--cas.server.tomcat.http[0].port=8282",
+
+    "--cas.server.name=https://localhost:8443",
+    "--cas.server.prefix=${cas.server.name}/cas",
+
+    "--cas.authn.attribute-repository.stub.attributes.given_name=CAS",
+    "--cas.authn.attribute-repository.stub.attributes.family_name=User",
+    "--cas.authn.attribute-repository.stub.attributes.email=casuser@example.org",
+    "--cas.authn.attribute-repository.stub.attributes.student_id=S12345",
+    "--cas.authn.attribute-repository.stub.attributes.active=true",
+    "--cas.authn.attribute-repository.stub.attributes.score=95.5",
+    "--cas.authn.attribute-repository.stub.attributes.roles=admin,user",
+
+    "--cas.authn.oidc.core.issuer=https://localhost:8443/cas/oidc",
+    "--cas.authn.oidc.jwks.file-system.jwks-file=file:${#systemProperties['java.io.tmpdir']}/keystore.jwks",
+
+    "--cas.service-registry.core.init-from-json=true",
+    "--cas.service-registry.json.location=file:${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/services",
+    
+    "--cas.authn.oidc.vc.issuer.credential-configurations.myorg.format=vc+sd-jwt",
+    "--cas.authn.oidc.vc.issuer.credential-configurations.myorg.scope=SystemCredential",
+
+    "--cas.authn.oidc.vc.issuer.credential-configurations.myorg.claims.roles.mandatory=true",
+    "--cas.authn.oidc.vc.issuer.credential-configurations.myorg.claims.roles.value-type=array",
+    
+    "--cas.authn.oidc.vc.issuer.credential-configurations.myorg.claims.score.mandatory=true",
+    "--cas.authn.oidc.vc.issuer.credential-configurations.myorg.claims.score.value-type=number",
+    
+    "--cas.authn.oidc.vc.issuer.credential-configurations.myorg.claims.given_name.mandatory=true",
+    "--cas.authn.oidc.vc.issuer.credential-configurations.myorg.claims.given_name.value-type=string",
+    
+    "--cas.authn.oidc.vc.issuer.credential-configurations.myorg.claims.family_name.mandatory=true",
+    "--cas.authn.oidc.vc.issuer.credential-configurations.myorg.claims.family_name.value-type=string",
+
+    "--cas.authn.oidc.vc.issuer.credential-configurations.myorg.claims.email.mandatory=false",
+    "--cas.authn.oidc.vc.issuer.credential-configurations.myorg.claims.email.value-type=string",
+
+    "--cas.authn.oidc.vc.issuer.credential-configurations.myorg.claims.student_id.mandatory=true",
+    "--cas.authn.oidc.vc.issuer.credential-configurations.myorg.claims.student_id.value-type=string"
+  ],
+  "initScript": "${PWD}/ci/tests/httpbin/run-httpbin-server.sh"
+}

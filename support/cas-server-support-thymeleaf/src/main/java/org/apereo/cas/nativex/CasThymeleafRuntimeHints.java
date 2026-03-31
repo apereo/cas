@@ -13,6 +13,12 @@ import org.springframework.context.ApplicationContextAware;
 import org.thymeleaf.DialectConfiguration;
 import org.thymeleaf.engine.IterationStatusVar;
 import org.thymeleaf.engine.StandardModelFactory;
+import org.thymeleaf.expression.Bools;
+import org.thymeleaf.expression.Dates;
+import org.thymeleaf.expression.Lists;
+import org.thymeleaf.expression.Maps;
+import org.thymeleaf.expression.Objects;
+import org.thymeleaf.expression.Strings;
 import org.thymeleaf.model.ICloseElementTag;
 import org.thymeleaf.model.IOpenElementTag;
 import org.thymeleaf.standard.expression.FragmentExpression;
@@ -46,7 +52,13 @@ public class CasThymeleafRuntimeHints implements CasRuntimeHintsRegistrar {
             IOpenElementTag.class,
             ICloseElementTag.class,
             StandardModelFactory.class,
-            DialectConfiguration.class
+            DialectConfiguration.class,
+            Strings.class,
+            Objects.class,
+            Lists.class,
+            Maps.class,
+            Bools.class,
+            Dates.class
         ));
 
         registerReflectionHints(hints, List.of("org.thymeleaf.engine.Text"));
