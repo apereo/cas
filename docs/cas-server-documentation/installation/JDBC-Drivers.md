@@ -20,7 +20,7 @@ The details below are listed for reference and may be of use in advanced scenari
 
 ### Hibernate
 
-[Hibernate ORM](https://hibernate.org/) is an object–relational mapping tool for the Java programming 
+[Hibernate ORM](https://github.com/hibernate/hibernate-orm) is an object–relational mapping tool for the Java programming 
 language. It provides a framework for mapping an object-oriented domain model to a relational database.
 
 {% include_cached casmodule.html group="org.apereo.cas" module="cas-server-support-jpa-hibernate" %}

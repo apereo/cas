@@ -141,8 +141,9 @@ import static org.junit.jupiter.api.Assertions.*;
         
         "cas.authn.attribute-repository.stub.attributes.uid=cas",
         "cas.authn.attribute-repository.stub.attributes.givenName=apereo-cas",
-
+        
         "cas.authn.oauth.session-replication.replicate-sessions=true",
+        "cas.authn.oauth.session-replication.cookie.auto-configure-cookie-path=true",
         "cas.authn.oauth.session-replication.cookie.crypto.enabled=true",
         "cas.authn.oauth.session-replication.cookie.crypto.alg=" + ContentEncryptionAlgorithmIdentifiers.AES_128_CBC_HMAC_SHA_256,
         "cas.authn.oauth.session-replication.cookie.crypto.encryption.key=3RXtt06xYUAli7uU-Z915ZGe0MRBFw3uDjWgOEf1GT8",
