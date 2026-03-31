@@ -24,8 +24,6 @@ dependencies {
     implementation project(":support:cas-server-support-spnego")
     implementation project(":support:cas-server-support-ldap-core")
 
-    implementation files(project(":support:cas-server-support-spnego").file("lib/jcifs-ext.jar"))
-
     implementation libraries.jcifs
     implementation libraries.ldaptive
 
