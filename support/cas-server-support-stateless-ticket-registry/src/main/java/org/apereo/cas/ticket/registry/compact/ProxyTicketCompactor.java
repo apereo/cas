@@ -50,7 +50,7 @@ public class ProxyTicketCompactor implements TicketCompactor<ProxyTicket> {
     @Override
     public String compact(final StringBuilder builder, final Ticket ticket) throws Exception {
         val proxyTicket = (ProxyTicket) ticket;
-        builder.append(String.format("%s%s", DELIMITER, proxyTicket.getService().getShortenedId()));
+        builder.append(DELIMITER).append(proxyTicket.getService().getShortenedId());
         builder.append(compactAuthenticationAttempt(proxyTicket).toString());
         return builder.toString();
     }
@@ -90,9 +90,9 @@ public class ProxyTicketCompactor implements TicketCompactor<ProxyTicket> {
                 .flatMap(List::stream)
                 .map(Object::toString)
                 .collect(Collectors.joining("#"));
-            builder.append(String.format("%s%s:%s:%s", DELIMITER, principalId, handlers, credentialTypes));
+            builder.append(DELIMITER).append(principalId).append(':').append(handlers).append(':').append(credentialTypes);
             val rememberMe = BooleanUtils.toString(CoreAuthenticationUtils.isRememberMeAuthentication(authentication), "1", "0");
-            builder.append(String.format("%s%s", DELIMITER, rememberMe));
+            builder.append(DELIMITER).append(rememberMe);
         }
         return builder;
     }
