@@ -84,6 +84,15 @@ public class SubmitAccountRegistrationAction extends BaseCasWebflowAction {
             registrationRequest.putProperty(entry.getName(), value);
         });
         accountRegistrationService.getAccountRegistrationRequestValidator().validate(registrationRequest);
+
+        Optional.ofNullable(WebUtils.getService(requestContext))
+            .ifPresent(service -> registrationRequest.putProperty("service", service.getId()));
+        Optional.ofNullable(WebUtils.getRegisteredService(requestContext))
+            .ifPresent(service -> {
+                registrationRequest.putProperty("registeredServiceNumericId", service.getId());
+                registrationRequest.putProperty("registeredServiceId", service.getServiceId());
+            });
+        
         return registrationRequest;
     }
 
