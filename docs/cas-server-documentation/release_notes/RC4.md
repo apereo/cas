@@ -58,7 +58,7 @@ to build and verify Graal VM native images and we plan to extend the coverage to
 ### Testing Strategy
 
 The collection of end-to-end [browser tests based on Puppeteer](../../developer/Test-Process.html) continue to grow to cover more use cases
-and scenarios. At the moment, total number of jobs stands at approximately `543` distinct scenarios. The overall
+and scenarios. At the moment, total number of jobs stands at approximately `546` distinct scenarios. The overall
 test coverage of the CAS codebase is approximately `94%`.
 
 ### Spring Boot 4.1
@@ -72,7 +72,30 @@ CAS codebase is now annotated with [JSpecify](https://jspecify.dev/) annotations
 return types and fields. We will gradually extend the coverage of such annotations across the entire codebase in future releases
 and will integrate the Gradle build tool with tools such as [NullAway](https://github.com/uber/NullAway) to prevent nullness contract violations
 during compile time.
+  
+### OpenId Connect & Verifiable Credentials
+
+An [initial implementation](../authentication/OIDC-Authentication-Verifiable-Credentials.html) 
+of OpenID Connect Verifiable Credentials (OIDC4VCI) is now available in CAS. 
+
+### Gradle 9.5
+
+CAS is now built with Gradle `9.5.x` and the build process has been updated to use the latest Gradle
+features and capabilities. 
+
+### OpenId Connect Federation & Delegation
+
+Small improvements to OpenID Federation protocol and its support for authentication delegation for OIDC clients.
+See [this guide](../integration/Delegate-Authentication-Generic-OpenID-Connect.html) for more details.
+
+### Account Registration
+
+[Account registration flow](../registration/Account-Registration-Overview.html) will automatically 
+establish a single sign-on session once the process and flow
+is complete. It may also redirect back to the original application if the registration process 
+was initiated from a protected resource.
 
 ## Other Stuff
               
-- 
+- Claims assigned to OpenID Connect custom scopes can now be overridden per client application.
+- Minor Gradle build improvements to better handle cacheability of build artifacts.
