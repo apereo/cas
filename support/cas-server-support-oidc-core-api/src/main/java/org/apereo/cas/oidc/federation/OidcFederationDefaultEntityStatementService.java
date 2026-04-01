@@ -11,7 +11,6 @@ import com.nimbusds.openid.connect.sdk.federation.entities.FederationEntityMetad
 import com.nimbusds.openid.connect.sdk.op.OIDCProviderMetadata;
 import lombok.RequiredArgsConstructor;
 import lombok.val;
-import org.springframework.beans.factory.ObjectProvider;
 
 /**
  * This is {@link OidcFederationDefaultEntityStatementService}.
@@ -22,15 +21,13 @@ import org.springframework.beans.factory.ObjectProvider;
 @RequiredArgsConstructor
 public class OidcFederationDefaultEntityStatementService implements OidcFederationEntityStatementService {
     private final OidcFederationJsonWebKeystoreService jsonWebKeystoreService;
-    private final ObjectProvider<OidcServerDiscoverySettings> serverDiscoverySettings;
+    private final OidcServerDiscoverySettings serverDiscoverySettings;
     private final OidcProperties oidcProperties;
 
     @Override
     public EntityStatement createAndSign() throws Exception {
-        val settings = serverDiscoverySettings.getObject();
-        val issuer = settings.getIssuer();
-        val iss = new EntityID(issuer);
-        val sub = new EntityID(issuer);
+        val iss = new EntityID(serverDiscoverySettings.getIssuer());
+        val sub = new EntityID(serverDiscoverySettings.getIssuer());
 
         val iat = DateTimeUtils.dateOf(LocalDate.now(Clock.systemUTC()));
         val exp = DateTimeUtils.dateOf(LocalDate.now(Clock.systemUTC()).plusYears(10));
@@ -45,7 +42,7 @@ public class OidcFederationDefaultEntityStatementService implements OidcFederati
         val authorityHints = oidcProperties.getFederation().getAuthorityHints().stream().map(EntityID::new).toList();
         claims.setAuthorityHints(authorityHints);
         
-        val discovery = settings.toJson();
+        val discovery = serverDiscoverySettings.toJson();
         val opMetadata = OIDCProviderMetadata.parse(discovery);
         claims.setOPMetadata(opMetadata);
         

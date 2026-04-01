@@ -1,11 +1,11 @@
 package org.apereo.cas.oidc.federation;
 
 import module java.base;
+import org.apereo.cas.oidc.OidcConfigurationContext;
 import org.apereo.cas.oidc.OidcConstants;
-import org.apereo.cas.oidc.issuer.OidcIssuerService;
+import org.apereo.cas.oidc.web.controllers.BaseOidcController;
 import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.support.oauth.util.OAuth20Utils;
-import org.apereo.cas.web.AbstractController;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.val;
@@ -25,13 +25,12 @@ import jakarta.servlet.http.HttpServletResponse;
  * @since 7.3.0
  */
 @Tag(name = "OpenID Connect")
-public class OidcWellKnownFederationEndpointController extends AbstractController {
-    private final OidcIssuerService oidcIssuerService;
+public class OidcWellKnownFederationEndpointController extends BaseOidcController {
     private final OidcFederationEntityStatementService federationEntityStatementService;
 
-    public OidcWellKnownFederationEndpointController(final OidcIssuerService oidcIssuerService,
+    public OidcWellKnownFederationEndpointController(final OidcConfigurationContext configurationContext,
                                                      final OidcFederationEntityStatementService federationEntityStatementService) {
-        this.oidcIssuerService = oidcIssuerService;
+        super(configurationContext);
         this.federationEntityStatementService = federationEntityStatementService;
     }
 
@@ -52,7 +51,7 @@ public class OidcWellKnownFederationEndpointController extends AbstractControlle
         final HttpServletRequest request, final HttpServletResponse response) throws Exception {
 
         val webContext = new JEEContext(request, response);
-        if (!oidcIssuerService.validateIssuer(webContext, List.of(OidcConstants.WELL_KNOWN_OPENID_FEDERATION_URL))) {
+        if (!getConfigurationContext().getIssuerService().validateIssuer(webContext, List.of(OidcConstants.WELL_KNOWN_OPENID_FEDERATION_URL))) {
             val body = OAuth20Utils.getErrorResponseBody(OAuth20Constants.INVALID_REQUEST, "Invalid issuer");
             return ResponseEntity.badRequest()
                 .header(HttpHeaders.ACCEPT, MediaType.APPLICATION_JSON_VALUE)

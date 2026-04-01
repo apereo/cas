@@ -95,10 +95,6 @@ establish a single sign-on session once the process and flow
 is complete. It may also redirect back to the original application if the registration process 
 was initiated from a protected resource.
 
-### OpenID Federation
-
-The OpenID Federation support (server) is now in its [own dedicated module](../authentication/OIDC-Authentication-Federation.html).
-
 ## Other Stuff
               
 - Claims assigned to OpenID Connect custom scopes can now be overridden per client application.
