@@ -627,6 +627,7 @@ layout: null
             *   [WebFinger Discovery](/cas/{{ version }}/authentication/OIDC-Authentication-WebFinger.html)
             *   [Identity Assurance](/cas/{{ version }}/authentication/OIDC-Authentication-Identity-Assurance.html)
             *   [Native SSO](/cas/{{ version }}/authentication/OIDC-Authentication-NativeSSO-MobileApps.html)
+            *   [Federation](/cas/{{ version }}/authentication/OIDC-Authentication-Federation.html)
             *   [Verifiable Credentials](/cas/{{ version }}/authentication/OIDC-Authentication-Verifiable-Credentials.html)
         *   [Delegation](/cas/{{ version }}/integration/Delegate-Authentication.html)
     *   [WS-Federation](#wsfedprotocol)

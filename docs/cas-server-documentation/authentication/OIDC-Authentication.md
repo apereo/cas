@@ -30,7 +30,8 @@ The current implementation provides support for:
 - Administration and registration of [OIDC clients and relying parties](../services/Service-Management.html).
 - Administration and registration of [OIDC clients and relying parties](../services/Service-Management.html) via [Dynamic Client Registration protocol](https://tools.ietf.org/html/draft-ietf-oauth-dyn-reg-management-01).
 - Ability to [resolve, map and release claims](../integration/Attribute-Release-Policies.html).
-- Ability to configure expiration policies for various tokens.
+- Ability to configure expiration policies for various tokens
+- [Federation](../authentication/OIDC-Authentication-Federation.html).
 
 ## Endpoints
 
@@ -38,6 +39,7 @@ The current implementation provides support for:
 |------------------------------------------|---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | `/oidc/.well-known`                      | The discovery endpoint used to query for CAS OIDC configuration information and metadata.                                                                                                                                                                                                               |
 | `/oidc/.well-known/openid-configuration` | Same as `.well-known` discovery endpoint.                                                                                                                                                                                                                                                               |
+| `/oidc/.well-known/openid-federation`    | The specific federation endpoint.
 | `/oidc/.well-known/webfinger`            | [WebFinger](https://tools.ietf.org/html/rfc7033) discovery endpoint                                                                                                                                                                                                                                     |
 | `/oidc/jwks`                             | Contains the [server’s public keys](OIDC-Authentication-JWKS.html), which clients may use to verify the digital signatures of access tokens and ID tokens issued by CAS. Accepts an optional `state` query parameter to narrow down keys by their current state (i.e. `current`, `previous`, `future`). |
 | `/oidc/authorize`                        | Authorization requests are handled here.                                                                                                                                                                                                                                                                |

@@ -1,7 +1,7 @@
 package org.apereo.cas.oidc.federation;
 
 import module java.base;
-import org.apereo.cas.oidc.AbstractOidcTests;
+import org.apereo.cas.oidc.AbstractOidcFederationTests;
 import org.apereo.cas.oidc.OidcConstants;
 import com.nimbusds.oauth2.sdk.GrantType;
 import com.nimbusds.oauth2.sdk.ResponseType;
@@ -41,7 +41,7 @@ class OidcFederationDefaultTrustChainResolverTests {
         "CasFeatureModule.OpenIDConnect.federation.enabled=true",
         "cas.authn.oidc.federation.jwks-file=file:${#systemProperties['java.io.tmpdir']}/federation.jwks"
     })
-    abstract static class BaseTests extends AbstractOidcTests {
+    abstract static class BaseTests extends AbstractOidcFederationTests {
         @Autowired
         @Qualifier(OidcFederationTrustChainResolver.BEAN_NAME)
         protected OidcFederationTrustChainResolver oidcFederationTrustChainResolver;
