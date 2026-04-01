@@ -14,7 +14,7 @@ function printgreen() {
 }
 
 echo "Running Pulsar docker container..."
-export DOCKER_IMAGE="apachepulsar/pulsar:4.1.3"
+export DOCKER_IMAGE="apachepulsar/pulsar:4.2.0"
 docker stop pulsar-server || true
 
 docker run --rm -d --name "pulsar-server" \
