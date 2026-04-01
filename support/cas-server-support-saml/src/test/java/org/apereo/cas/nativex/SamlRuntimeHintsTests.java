@@ -21,6 +21,6 @@ class SamlRuntimeHintsTests {
     void verifyHints() {
         val hints = new RuntimeHints();
         new SamlRuntimeHints().registerHints(hints, getClass().getClassLoader());
-        assertTrue(RuntimeHintsPredicates.serialization().onType(SamlService.class).test(hints));
+        assertTrue(RuntimeHintsPredicates.reflection().onType(SamlService.class).test(hints));
     }
 }

@@ -21,6 +21,6 @@ class DelegatedAuthenticationRuntimeHintsTests {
     void verifyHints() {
         val hints = new RuntimeHints();
         new DelegatedAuthenticationRuntimeHints().registerHints(hints, getClass().getClassLoader());
-        assertTrue(RuntimeHintsPredicates.serialization().onType(CommonProfile.class).test(hints));
+        assertTrue(RuntimeHintsPredicates.reflection().onType(CommonProfile.class).test(hints));
     }
 }

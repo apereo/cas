@@ -28,11 +28,8 @@ class CasCoreAuthenticationRuntimeHintsTests {
         assertTrue(RuntimeHintsPredicates.proxies()
             .forInterfaces(AuthenticationEventExecutionPlanConfigurer.class)
             .test(hints));
-        assertTrue(RuntimeHintsPredicates.serialization().onType(SimplePrincipal.class).test(hints));
-        assertTrue(RuntimeHintsPredicates.serialization().onType(DefaultAuthentication.class).test(hints));
-        assertTrue(RuntimeHintsPredicates.serialization().onType(UsernamePasswordCredential.class).test(hints));
-        assertTrue(RuntimeHintsPredicates.serialization().onType(AbstractCredential.class).test(hints));
-
+        assertTrue(RuntimeHintsPredicates.reflection().onType(DefaultAuthentication.class).test(hints));
+        assertTrue(RuntimeHintsPredicates.reflection().onType(AbstractCredential.class).test(hints));
         assertTrue(RuntimeHintsPredicates.reflection().onType(SimplePrincipal.class).test(hints));
         assertTrue(RuntimeHintsPredicates.reflection().onType(UsernamePasswordCredential.class).test(hints));
     }

@@ -21,6 +21,6 @@ class Pac4jCoreRuntimeHintsTests {
     void verifyHints() {
         val hints = new RuntimeHints();
         new Pac4jCoreRuntimeHints().registerHints(hints, getClass().getClassLoader());
-        assertTrue(RuntimeHintsPredicates.serialization().onType(DelegatedAuthenticationCandidateProfile.class).test(hints));
+        assertTrue(RuntimeHintsPredicates.reflection().onType(DelegatedAuthenticationCandidateProfile.class).test(hints));
     }
 }

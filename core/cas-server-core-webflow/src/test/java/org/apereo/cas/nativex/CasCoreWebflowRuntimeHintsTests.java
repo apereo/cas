@@ -26,7 +26,7 @@ class CasCoreWebflowRuntimeHintsTests {
         val hints = new RuntimeHints();
         new CasCoreWebflowRuntimeHints().registerHints(hints, getClass().getClassLoader());
         assertTrue(RuntimeHintsPredicates.proxies().forInterfaces(CasWebflowConfigurer.class).test(hints));
-        assertTrue(RuntimeHintsPredicates.serialization().onType(ClientFlowExecutionRepository.SerializedFlowExecutionState.class).test(hints));
+        assertTrue(RuntimeHintsPredicates.reflection().onType(ClientFlowExecutionRepository.SerializedFlowExecutionState.class).test(hints));
         assertTrue(RuntimeHintsPredicates.reflection().onType(FlowExecutionImpl.class).test(hints));
         assertTrue(RuntimeHintsPredicates.reflection().onType(DefaultMessageContext.class).test(hints));
     }

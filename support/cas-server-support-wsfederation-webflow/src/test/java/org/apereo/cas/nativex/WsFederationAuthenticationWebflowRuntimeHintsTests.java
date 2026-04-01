@@ -22,6 +22,6 @@ class WsFederationAuthenticationWebflowRuntimeHintsTests {
     void verifyHints() {
         val hints = new RuntimeHints();
         new WsFederationAuthenticationWebflowRuntimeHints().registerHints(hints, getClass().getClassLoader());
-        assertTrue(RuntimeHintsPredicates.serialization().onType(WsFedClient.class).test(hints));
+        assertTrue(RuntimeHintsPredicates.reflection().onType(WsFedClient.class).test(hints));
     }
 }

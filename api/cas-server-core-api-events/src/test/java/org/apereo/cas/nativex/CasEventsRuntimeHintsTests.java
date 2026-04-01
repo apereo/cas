@@ -21,6 +21,6 @@ class CasEventsRuntimeHintsTests {
     void verifyHints() {
         val hints = new RuntimeHints();
         new CasEventsRuntimeHints().registerHints(hints, getClass().getClassLoader());
-        assertTrue(RuntimeHintsPredicates.serialization().onType(CasConfigurationCreatedEvent.class).test(hints));
+        assertTrue(RuntimeHintsPredicates.reflection().onType(CasConfigurationCreatedEvent.class).test(hints));
     }
 }

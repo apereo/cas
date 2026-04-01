@@ -22,6 +22,6 @@ class CasConsentRuntimeHintsTests {
     void verifyHints() {
         val hints = new RuntimeHints();
         new CasConsentRuntimeHints().registerHints(hints, getClass().getClassLoader());
-        assertTrue(RuntimeHintsPredicates.serialization().onType(ConsentDecision.class).test(hints));
+        assertTrue(RuntimeHintsPredicates.reflection().onType(ConsentDecision.class).test(hints));
     }
 }

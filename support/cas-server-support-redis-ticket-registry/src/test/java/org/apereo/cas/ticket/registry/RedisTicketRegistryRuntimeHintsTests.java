@@ -22,6 +22,6 @@ class RedisTicketRegistryRuntimeHintsTests {
     void verifyHints() {
         val hints = new RuntimeHints();
         new RedisTicketRegistryRuntimeHints().registerHints(hints, getClass().getClassLoader());
-        assertTrue(RuntimeHintsPredicates.serialization().onType(PublisherIdentifier.class).test(hints));
+        assertTrue(RuntimeHintsPredicates.reflection().onType(PublisherIdentifier.class).test(hints));
     }
 }

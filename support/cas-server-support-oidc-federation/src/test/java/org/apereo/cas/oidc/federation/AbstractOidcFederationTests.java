@@ -1,4 +1,4 @@
-package org.apereo.cas.oidc;
+package org.apereo.cas.oidc.federation;
 
 import module java.base;
 import org.apereo.cas.config.CasCoreAuthenticationAutoConfiguration;
@@ -42,16 +42,13 @@ import org.springframework.mock.web.MockHttpServletRequest;
 @SpringBootTest(
     classes = AbstractOidcFederationTests.SharedTestConfiguration.class,
     properties = {
-        "spring.threads.virtual.enabled=true",
-        "cas.audit.slf4j.use-single-line=true",
-
         "cas.server.name=https://sso.example.org/",
         "cas.server.prefix=https://sso.example.org/cas",
-
+        "cas.authn.oidc.federation.jwks-file=file:${#systemProperties['java.io.tmpdir']}/federation.jwks",
         "cas.authn.oidc.core.issuer=https://sso.example.org/cas/oidc"
     }, webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-public abstract class AbstractOidcFederationTests {
+abstract class AbstractOidcFederationTests {
 
     @Autowired
     protected CasConfigurationProperties casProperties;

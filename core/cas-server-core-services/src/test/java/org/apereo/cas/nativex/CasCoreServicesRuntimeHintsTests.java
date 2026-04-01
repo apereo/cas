@@ -27,7 +27,7 @@ class CasCoreServicesRuntimeHintsTests {
         assertTrue(RuntimeHintsPredicates.proxies().forInterfaces(ServiceRegistryInitializer.class).test(hints));
         assertTrue(RuntimeHintsPredicates.proxies().forInterfaces(ServiceRegistry.class).test(hints));
 
-        assertTrue(RuntimeHintsPredicates.serialization().onType(CasRegisteredService.class).test(hints));
-        assertTrue(RuntimeHintsPredicates.serialization().onType(BaseRegisteredService.class).test(hints));
+        assertTrue(RuntimeHintsPredicates.reflection().onType(CasRegisteredService.class).test(hints));
+        assertTrue(RuntimeHintsPredicates.reflection().onType(BaseRegisteredService.class).test(hints));
     }
 }

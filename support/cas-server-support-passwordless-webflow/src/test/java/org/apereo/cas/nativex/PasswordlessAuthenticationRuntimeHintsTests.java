@@ -21,6 +21,6 @@ class PasswordlessAuthenticationRuntimeHintsTests {
     void verifyHints() {
         val hints = new RuntimeHints();
         new PasswordlessAuthenticationRuntimeHints().registerHints(hints, getClass().getClassLoader());
-        assertTrue(RuntimeHintsPredicates.serialization().onType(PasswordlessUserAccount.class).test(hints));
+        assertTrue(RuntimeHintsPredicates.reflection().onType(PasswordlessUserAccount.class).test(hints));
     }
 }

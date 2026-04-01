@@ -21,6 +21,6 @@ class CasMultitenancyRuntimeHintsTests {
     void verifyHints() {
         val hints = new RuntimeHints();
         new CasMultitenancyRuntimeHints().registerHints(hints, getClass().getClassLoader());
-        assertTrue(RuntimeHintsPredicates.serialization().onType(TenantDefinition.class).test(hints));
+        assertTrue(RuntimeHintsPredicates.reflection().onType(TenantDefinition.class).test(hints));
     }
 }

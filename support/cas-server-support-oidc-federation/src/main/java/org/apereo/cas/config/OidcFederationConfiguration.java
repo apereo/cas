@@ -43,7 +43,7 @@ import static org.apereo.cas.oidc.OidcConstants.WELL_KNOWN_OPENID_FEDERATION_URL
  */
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Slf4j
-@ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.OpenIDConnect, module = "federation", enabledByDefault = false)
+@ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.OpenIDConnect, module = "federation")
 @Configuration(value = "OidcFederationConfiguration", proxyBeanMethods = false)
 class OidcFederationConfiguration {
 

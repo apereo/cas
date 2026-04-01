@@ -22,7 +22,7 @@ class CasCoreConfigurationRuntimeHintsTests {
     void verifyHints() {
         val hints = new RuntimeHints();
         new CasCoreConfigurationRuntimeHints().registerHints(hints, getClass().getClassLoader());
-        assertTrue(RuntimeHintsPredicates.serialization().onType(CustomLoginFieldViewProperties.class).test(hints));
+        assertTrue(RuntimeHintsPredicates.reflection().onType(CustomLoginFieldViewProperties.class).test(hints));
     }
 }
 

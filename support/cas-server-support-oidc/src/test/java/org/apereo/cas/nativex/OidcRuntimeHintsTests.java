@@ -29,6 +29,5 @@ class OidcRuntimeHintsTests {
         assertTrue(RuntimeHintsPredicates.reflection().onType(OidcJwtAccessTokenCipherExecutor.class).test(hints));
         assertTrue(RuntimeHintsPredicates.reflection().onType(OidcOpenIdScopeAttributeReleasePolicy.class).test(hints));
         assertTrue(RuntimeHintsPredicates.reflection().onType(OidcCustomScopeAttributeReleasePolicy.class).test(hints));
-        assertTrue(RuntimeHintsPredicates.serialization().onType(OidcOpenIdScopeAttributeReleasePolicy.class).test(hints));
     }
 }

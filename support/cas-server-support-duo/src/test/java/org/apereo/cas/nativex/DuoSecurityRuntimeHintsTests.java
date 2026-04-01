@@ -22,8 +22,6 @@ class DuoSecurityRuntimeHintsTests {
     void verifyHints() {
         val hints = new RuntimeHints();
         new DuoSecurityRuntimeHints().registerHints(hints, getClass().getClassLoader());
-        assertTrue(RuntimeHintsPredicates.serialization().onType(DuoSecurityUniversalPromptCredential.class).test(hints));
-        assertTrue(RuntimeHintsPredicates.serialization().onType(DuoSecurityPasscodeCredential.class).test(hints));
         assertTrue(RuntimeHintsPredicates.reflection().onType(DuoSecurityUniversalPromptCredential.class).test(hints));
         assertTrue(RuntimeHintsPredicates.reflection().onType(DuoSecurityPasscodeCredential.class).test(hints));
     }

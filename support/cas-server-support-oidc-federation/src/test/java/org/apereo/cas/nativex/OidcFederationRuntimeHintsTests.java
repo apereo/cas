@@ -27,6 +27,5 @@ class OidcFederationRuntimeHintsTests {
         assertTrue(RuntimeHintsPredicates.reflection().onType(OidcRegisteredService.class).test(hints));
         assertTrue(RuntimeHintsPredicates.reflection().onType(OidcOpenIdScopeAttributeReleasePolicy.class).test(hints));
         assertTrue(RuntimeHintsPredicates.reflection().onType(OidcCustomScopeAttributeReleasePolicy.class).test(hints));
-        assertTrue(RuntimeHintsPredicates.serialization().onType(OidcOpenIdScopeAttributeReleasePolicy.class).test(hints));
     }
 }

@@ -1,7 +1,6 @@
 package org.apereo.cas.oidc.federation;
 
 import module java.base;
-import org.apereo.cas.oidc.AbstractOidcFederationTests;
 import org.apereo.cas.oidc.OidcConstants;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
@@ -9,7 +8,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpStatus;
 import org.springframework.mock.web.MockHttpServletResponse;
-import org.springframework.test.context.TestPropertySource;
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
@@ -19,10 +17,6 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 7.3.0
  */
 @Tag("OIDCWeb")
-@TestPropertySource(properties = {
-    "CasFeatureModule.OpenIDConnect.federation.enabled=true",
-    "cas.authn.oidc.federation.jwks-file=file:${#systemProperties['java.io.tmpdir']}/federation.jwks"
-})
 class OidcWellKnownFederationEndpointControllerTests extends AbstractOidcFederationTests {
     @Autowired
     @Qualifier("oidcWellKnownFederationController")

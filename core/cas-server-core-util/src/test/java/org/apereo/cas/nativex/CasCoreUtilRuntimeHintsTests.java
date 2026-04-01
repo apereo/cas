@@ -25,9 +25,9 @@ class CasCoreUtilRuntimeHintsTests {
         assertTrue(RuntimeHintsPredicates.proxies().forInterfaces(ComponentSerializationPlanConfigurer.class).test(hints));
         assertTrue(RuntimeHintsPredicates.proxies().forInterfaces(Supplier.class).test(hints));
 
-        assertTrue(RuntimeHintsPredicates.serialization().onType(ZonedDateTime.class).test(hints));
-        assertTrue(RuntimeHintsPredicates.serialization().onType(LinkedHashMap.class).test(hints));
-        assertTrue(RuntimeHintsPredicates.serialization().onType(TreeSet.class).test(hints));
+        assertTrue(RuntimeHintsPredicates.reflection().onType(ZonedDateTime.class).test(hints));
+        assertTrue(RuntimeHintsPredicates.reflection().onType(LinkedHashMap.class).test(hints));
+        assertTrue(RuntimeHintsPredicates.reflection().onType(TreeSet.class).test(hints));
 
         assertTrue(RuntimeHintsPredicates.reflection().onType(Map.Entry.class).test(hints));
         assertTrue(RuntimeHintsPredicates.reflection().onType(Map.class).test(hints));

@@ -27,8 +27,8 @@ class CasCoreTicketsRuntimeHintsTests {
         new CasCoreTicketsRuntimeHints().registerHints(hints, getClass().getClassLoader());
         assertTrue(RuntimeHintsPredicates.proxies().forInterfaces(TicketFactoryExecutionPlanConfigurer.class).test(hints));
         assertTrue(RuntimeHintsPredicates.reflection().onType(TicketGrantingCookieCipherExecutor.class).test(hints));
-        assertTrue(RuntimeHintsPredicates.serialization().onType(TicketGrantingTicketImpl.class).test(hints));
-        assertTrue(RuntimeHintsPredicates.serialization().onType(ServiceTicketImpl.class).test(hints));
-        assertTrue(RuntimeHintsPredicates.serialization().onType(TimeoutExpirationPolicy.class).test(hints));
+        assertTrue(RuntimeHintsPredicates.reflection().onType(TicketGrantingTicketImpl.class).test(hints));
+        assertTrue(RuntimeHintsPredicates.reflection().onType(ServiceTicketImpl.class).test(hints));
+        assertTrue(RuntimeHintsPredicates.reflection().onType(TimeoutExpirationPolicy.class).test(hints));
     }
 }

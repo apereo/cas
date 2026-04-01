@@ -21,6 +21,6 @@ class CasGeodeRuntimeHintsTests {
     void verifyHints() {
         val hints = new RuntimeHints();
         new CasGeodeRuntimeHints().registerHints(hints, getClass().getClassLoader());
-        assertTrue(RuntimeHintsPredicates.serialization().onType(GeodeTicketDocument.class).test(hints));
+        assertTrue(RuntimeHintsPredicates.reflection().onType(GeodeTicketDocument.class).test(hints));
     }
 }
