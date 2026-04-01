@@ -24,12 +24,16 @@ import org.apereo.cas.util.spring.boot.SpringBootTestAutoConfigurations;
 import lombok.val;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.SpringBootConfiguration;
 import org.springframework.boot.autoconfigure.ImportAutoConfiguration;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc;
 import org.springframework.http.HttpHeaders;
 import org.springframework.mock.web.MockHttpServletRequest;
+import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.request.RequestPostProcessor;
 
 /**
  * This is {@link AbstractOidcFederationTests}.
@@ -48,19 +52,25 @@ import org.springframework.mock.web.MockHttpServletRequest;
         "cas.authn.oidc.core.issuer=https://sso.example.org/cas/oidc"
     }, webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
+@AutoConfigureMockMvc
 abstract class AbstractOidcFederationTests {
 
     @Autowired
     protected CasConfigurationProperties casProperties;
 
-    protected static MockHttpServletRequest getHttpRequestForEndpoint(final String endpoint) {
-        val request = new MockHttpServletRequest();
-        request.setScheme("https");
-        request.setServerName("sso.example.org");
-        request.setServerPort(443);
-        request.setRequestURI("/cas/oidc/" + endpoint);
-        request.addHeader(HttpHeaders.USER_AGENT, "MSIE");
-        return request;
+    @Autowired
+    @Qualifier("mockMvc")
+    protected MockMvc mockMvc;
+
+    protected static RequestPostProcessor withHttpRequestProcessor() {
+        return request -> {
+            request.setScheme("https");
+            request.setServerName("sso.example.org");
+            request.setContextPath("/cas");
+            request.setServletPath("/cas");
+            request.setServerPort(443);
+            return request;
+        };
     }
 
     @SpringBootConfiguration(proxyBeanMethods = false)

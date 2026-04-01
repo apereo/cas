@@ -2,7 +2,6 @@ package org.apereo.cas.config;
 
 import module java.base;
 import org.apereo.cas.configuration.CasConfigurationProperties;
-import org.apereo.cas.configuration.features.CasFeatureModule;
 import org.apereo.cas.multitenancy.TenantExtractor;
 import org.apereo.cas.oidc.discovery.OidcServerDiscoverySettings;
 import org.apereo.cas.oidc.federation.OidcFederationDefaultEntityStatementService;
@@ -14,7 +13,6 @@ import org.apereo.cas.oidc.federation.OidcFederationTrustChainResolver;
 import org.apereo.cas.oidc.federation.OidcWellKnownFederationEndpointController;
 import org.apereo.cas.oidc.issuer.OidcDefaultIssuerService;
 import org.apereo.cas.oidc.issuer.OidcIssuerService;
-import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
 import org.apereo.cas.web.CasWebSecurityConfigurer;
 import com.nimbusds.openid.connect.sdk.federation.entities.EntityID;
 import com.nimbusds.openid.connect.sdk.federation.trust.TrustChainResolver;
@@ -46,11 +44,9 @@ import static org.apereo.cas.oidc.OidcConstants.WELL_KNOWN_OPENID_FEDERATION_URL
 @Configuration(value = "OidcFederationConfiguration", proxyBeanMethods = false)
 class OidcFederationConfiguration {
 
-    private static final String OIDC_FEDERATION_ISSUER_SERVICE = "oidcFederationIssuerService";
-
     @Bean
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-    @ConditionalOnMissingBean(name = OIDC_FEDERATION_ISSUER_SERVICE)
+    @ConditionalOnMissingBean(name = "oidcFederationIssuerService")
     public OidcIssuerService oidcFederationIssuerService(
         @Qualifier(TenantExtractor.BEAN_NAME)
         final TenantExtractor tenantExtractor,
@@ -62,7 +58,7 @@ class OidcFederationConfiguration {
     @ConditionalOnMissingBean(name = "oidcWellKnownFederationController")
     @Bean
     public OidcWellKnownFederationEndpointController oidcWellKnownFederationController(
-        @Qualifier(OIDC_FEDERATION_ISSUER_SERVICE)
+        @Qualifier("oidcFederationIssuerService")
         final OidcIssuerService oidcFederationIssuerService,
         @Qualifier(OidcFederationEntityStatementService.BEAN_NAME)
         final OidcFederationEntityStatementService oidcFederationEntityStatementService) {
@@ -114,7 +110,7 @@ class OidcFederationConfiguration {
     @ConditionalOnMissingBean(name = "oidcFederationProtocolEndpointConfigurer")
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     public CasWebSecurityConfigurer<HttpSecurity> oidcFederationProtocolEndpointConfigurer(
-        @Qualifier(OIDC_FEDERATION_ISSUER_SERVICE)
+        @Qualifier("oidcFederationIssuerService")
         final OidcIssuerService oidcIssuerService,
         final CasConfigurationProperties casProperties) {
         val baseEndpoint = getOidcBaseEndpoint(oidcIssuerService, casProperties);

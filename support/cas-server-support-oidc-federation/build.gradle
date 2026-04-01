@@ -8,6 +8,9 @@ ext {
 }
 
 dependencies {
+    implementation project(":support:cas-server-support-oauth-api")
+    implementation project(":support:cas-server-support-oauth-core-api")
+    
     implementation project(":support:cas-server-support-oidc-core")
     implementation project(":support:cas-server-support-oidc-core-api")
     implementation project(":support:cas-server-support-oidc-services")
@@ -17,8 +20,10 @@ dependencies {
     implementation project(":core:cas-server-core-services-api")
     implementation project(":core:cas-server-core-web-api")
 
-    api libraries.nimbus
-
+    implementation libraries.nimbus
+    implementation libraries.jose4j
+    implementation libraries.pac4jcore
+    
     testImplementation project(":core:cas-server-core-multitenancy")
     testImplementation project(":core:cas-server-core-configuration")
     testImplementation project(":core:cas-server-core-services")

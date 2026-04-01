@@ -4,11 +4,8 @@ import module java.base;
 import org.apereo.cas.oidc.OidcConstants;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.http.HttpStatus;
-import org.springframework.mock.web.MockHttpServletResponse;
-import static org.junit.jupiter.api.Assertions.*;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 /**
  * This is {@link OidcWellKnownFederationEndpointControllerTests}.
@@ -18,19 +15,29 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 @Tag("OIDCWeb")
 class OidcWellKnownFederationEndpointControllerTests extends AbstractOidcFederationTests {
-    @Autowired
-    @Qualifier("oidcWellKnownFederationController")
-    protected OidcWellKnownFederationEndpointController oidcWellKnownController;
+
+    private static final String FEDERATION_ENDPOINT_URL =
+        "/cas/" + OidcConstants.BASE_OIDC_URL + '/' + OidcConstants.WELL_KNOWN_OPENID_FEDERATION_URL;
+    
+    @Test
+    void verifyInvalidIssuer() throws Exception {
+        mockMvc.perform(get(FEDERATION_ENDPOINT_URL)
+                .with(request -> {
+                    request.setScheme("https");
+                    request.setServerName("unknown.example.org");
+                    request.setContextPath("/cas");
+                    request.setServletPath("/cas");
+                    request.setServerPort(443);
+                    return request;
+                }))
+            .andExpect(status().isBadRequest())
+            .andExpect(jsonPath("$.error").value("invalid_request"));
+    }
 
     @Test
     void verifyOperation() throws Exception {
-        var request = getHttpRequestForEndpoint("unknown/" + OidcConstants.WELL_KNOWN_OPENID_FEDERATION_URL);
-        request.setRequestURI("unknown/issuer");
-        var entity = oidcWellKnownController.getWellKnownDiscoveryConfiguration(request, new MockHttpServletResponse());
-        assertEquals(HttpStatus.BAD_REQUEST, entity.getStatusCode());
-
-        request = getHttpRequestForEndpoint(OidcConstants.WELL_KNOWN_OPENID_FEDERATION_URL);
-        entity = oidcWellKnownController.getWellKnownDiscoveryConfiguration(request, new MockHttpServletResponse());
-        assertEquals(HttpStatus.OK, entity.getStatusCode());
+        mockMvc.perform(get(FEDERATION_ENDPOINT_URL)
+                .with(withHttpRequestProcessor()))
+            .andExpect(status().isOk());
     }
 }

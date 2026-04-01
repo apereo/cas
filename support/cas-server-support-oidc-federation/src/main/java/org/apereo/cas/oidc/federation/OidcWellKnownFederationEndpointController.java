@@ -8,10 +8,12 @@ import org.apereo.cas.support.oauth.util.OAuth20Utils;
 import org.apereo.cas.web.AbstractController;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import lombok.RequiredArgsConstructor;
 import lombok.val;
 import org.pac4j.jee.context.JEEContext;
 import org.springframework.http.CacheControl;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -25,15 +27,10 @@ import jakarta.servlet.http.HttpServletResponse;
  * @since 7.3.0
  */
 @Tag(name = "OpenID Connect")
+@RequiredArgsConstructor
 public class OidcWellKnownFederationEndpointController extends AbstractController {
     private final OidcIssuerService oidcIssuerService;
     private final OidcFederationEntityStatementService federationEntityStatementService;
-
-    public OidcWellKnownFederationEndpointController(final OidcIssuerService oidcIssuerService,
-                                                     final OidcFederationEntityStatementService federationEntityStatementService) {
-        this.oidcIssuerService = oidcIssuerService;
-        this.federationEntityStatementService = federationEntityStatementService;
-    }
 
     /**
      * Gets well known discovery federation configuration.
@@ -54,10 +51,7 @@ public class OidcWellKnownFederationEndpointController extends AbstractControlle
         val webContext = new JEEContext(request, response);
         if (!oidcIssuerService.validateIssuer(webContext, List.of(OidcConstants.WELL_KNOWN_OPENID_FEDERATION_URL))) {
             val body = OAuth20Utils.getErrorResponseBody(OAuth20Constants.INVALID_REQUEST, "Invalid issuer");
-            return ResponseEntity.badRequest()
-                .header(HttpHeaders.ACCEPT, MediaType.APPLICATION_JSON_VALUE)
-                .contentType(MediaType.APPLICATION_FORM_URLENCODED)
-                .body(body);
+            return new ResponseEntity<>(body, HttpStatus.BAD_REQUEST);
         }
 
         val entityStatement = federationEntityStatementService.createAndSign();
