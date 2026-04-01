@@ -31,8 +31,8 @@ public class OAuth20DeviceTokenCompactor implements TicketCompactor<OAuth20Devic
     @Override
     public String compact(final StringBuilder builder, final Ticket ticket) throws Exception {
         val code = (OAuth20DeviceToken) ticket;
-        builder.append(String.format("%s%s", DELIMITER, code.getService().getShortenedId()));
-        builder.append(String.format("%s%s", DELIMITER, code.getUserCode()));
+        builder.append(DELIMITER).append(code.getService().getShortenedId());
+        builder.append(DELIMITER).append(code.getUserCode());
         return builder.toString();
     }
 

@@ -31,8 +31,8 @@ public class TransientSessionTicketCompactor implements TicketCompactor<Transien
     @Override
     public String compact(final StringBuilder builder, final Ticket ticket) throws Exception {
         val transientTicket = (TransientSessionTicket) ticket;
-        builder.append(String.format("%s%s", DELIMITER, transientTicket.getService() != null
-            ? transientTicket.getService().getShortenedId() : StringUtils.EMPTY));
+        builder.append(DELIMITER).append(transientTicket.getService() != null
+            ? transientTicket.getService().getShortenedId() : StringUtils.EMPTY);
         
         val properties = transientTicket.getProperties()
             .entrySet()
@@ -46,7 +46,7 @@ public class TransientSessionTicketCompactor implements TicketCompactor<Transien
             })
             .reduce((s1, s2) -> s1 + '|' + s2)
             .orElse(StringUtils.EMPTY);
-        builder.append(String.format("%s%s", DELIMITER, properties));
+        builder.append(DELIMITER).append(properties);
         return builder.toString();
     }
 

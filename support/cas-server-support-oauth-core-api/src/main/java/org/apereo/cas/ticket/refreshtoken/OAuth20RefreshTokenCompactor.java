@@ -43,11 +43,11 @@ public class OAuth20RefreshTokenCompactor implements TicketCompactor<OAuth20Refr
     @Override
     public String compact(final StringBuilder builder, final Ticket ticket) throws Exception {
         val refreshToken = (OAuth20RefreshToken) ticket;
-        builder.append(String.format("%s%s", DELIMITER, refreshToken.getService().getShortenedId()));
-        builder.append(String.format("%s%s", DELIMITER, refreshToken.getClientId()));
-        builder.append(String.format("%s%s", DELIMITER, String.join("|", refreshToken.getScopes())));
-        builder.append(String.format("%s%s", DELIMITER, refreshToken.getResponseType() != null ? refreshToken.getResponseType().ordinal() : OAuth20ResponseTypes.CODE.ordinal()));
-        builder.append(String.format("%s%s", DELIMITER, refreshToken.getGrantType() != null ? refreshToken.getGrantType().ordinal() : OAuth20GrantTypes.AUTHORIZATION_CODE.ordinal()));
+        builder.append(DELIMITER).append(refreshToken.getService().getShortenedId());
+        builder.append(DELIMITER).append(refreshToken.getClientId());
+        builder.append(DELIMITER).append(String.join("|", refreshToken.getScopes()));
+        builder.append(DELIMITER).append(refreshToken.getResponseType() != null ? refreshToken.getResponseType().ordinal() : OAuth20ResponseTypes.CODE.ordinal());
+        builder.append(DELIMITER).append(refreshToken.getGrantType() != null ? refreshToken.getGrantType().ordinal() : OAuth20GrantTypes.AUTHORIZATION_CODE.ordinal());
         builder.append(compactAuthenticationAttempt(refreshToken).toString());
         return builder.toString();
     }
@@ -101,7 +101,7 @@ public class OAuth20RefreshTokenCompactor implements TicketCompactor<OAuth20Refr
             val principalId = authentication.getPrincipal().getId();
             val credentialTypes = authentication.getCredentials().stream()
                 .map(credential -> credential.getClass().getSimpleName()).collect(Collectors.joining("#"));
-            builder.append(String.format("%s%s:%s:%s", DELIMITER, principalId, handlers, credentialTypes));
+            builder.append(DELIMITER).append(principalId).append(':').append(handlers).append(':').append(credentialTypes);
         }
         return builder;
     }
