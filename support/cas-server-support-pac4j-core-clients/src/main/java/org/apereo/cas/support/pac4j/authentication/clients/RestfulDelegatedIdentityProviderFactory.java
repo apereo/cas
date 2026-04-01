@@ -54,7 +54,7 @@ public class RestfulDelegatedIdentityProviderFactory extends BaseDelegatedIdenti
         if (response != null && HttpStatus.valueOf(response.getCode()).is2xxSuccessful()) {
             try (val content = ((HttpEntityContainer) response).getEntity().getContent()) {
                 val result = IOUtils.toString(content, StandardCharsets.UTF_8);
-                return buildClientsBasedCasProperties(result);
+                return buildClientsBasedProperties(result);
             } finally {
                 HttpUtils.close(response);
             }
@@ -62,7 +62,7 @@ public class RestfulDelegatedIdentityProviderFactory extends BaseDelegatedIdenti
         return new ArrayList<>();
     }
 
-    protected List<BaseClient> buildClientsBasedCasProperties(final String result) throws Exception {
+    protected List<BaseClient> buildClientsBasedProperties(final String result) throws Exception {
         val payload = MAPPER.readValue(JsonValue.readHjson(result).toString(), Map.class);
         LOGGER.trace("CAS properties received as [{}]", payload);
         val bindingContext = CasConfigurationProperties.bindFrom(payload);
