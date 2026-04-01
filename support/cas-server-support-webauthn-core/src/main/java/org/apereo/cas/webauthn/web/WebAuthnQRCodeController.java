@@ -12,7 +12,6 @@ import org.apereo.cas.util.spring.SecurityContextUtils;
 import org.apereo.cas.web.flow.CasWebflowConstants;
 import org.apereo.cas.webauthn.WebAuthnCredential;
 import com.yubico.core.RegistrationStorage;
-import com.yubico.core.SessionManager;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.enums.ParameterIn;
@@ -56,7 +55,6 @@ public class WebAuthnQRCodeController extends BaseWebAuthnController {
     protected final TicketRegistry ticketRegistry;
     protected final TicketFactory ticketFactory;
     protected final RegistrationStorage webAuthnCredentialRepository;
-    protected final SessionManager sessionManager;
     protected final SecurityContextRepository securityContextRepository;
 
     /**
@@ -120,6 +118,10 @@ public class WebAuthnQRCodeController extends BaseWebAuthnController {
             }
             Assert.notNull(webAuthnCredential, "WebAuthn credential not found in the ticket");
             val principal = transientTicket.getProperty(Principal.class.getName(), Principal.class);
+<<<<<<< HEAD
+=======
+
+>>>>>>> a6b12664271b (Fix the WebAuthn QR authn)
             ticketRegistry.deleteTicket(ticketId);
             return ResponseEntity.ok(Map.of("principal", principal, "sessionToken", webAuthnCredential.getToken()));
         } catch (final Exception e) {
@@ -158,10 +160,6 @@ public class WebAuthnQRCodeController extends BaseWebAuthnController {
             Assert.isTrue(webAuthnCredentialRepository.userExists(principalId), "Principal not found");
             val principal = Objects.requireNonNull(transientTicket.getProperty(Principal.class.getName(), Principal.class));
             val credential = new WebAuthnCredential(sessionToken);
-            val session = sessionManager.getSession(request, WebAuthnCredential.from(credential));
-            FunctionUtils.throwIf(session.isEmpty(), () -> new IllegalStateException("Session not found for the given credential"));
-            val result = webAuthnCredentialRepository.getUsernameForUserHandle(session.get());
-            FunctionUtils.throwIf(result.isEmpty(), () -> new IllegalStateException("Unable to locate user based on the given user handle"));
             transientTicket.putProperty(WebAuthnCredential.class.getName(), credential);
             ticketRegistry.updateTicket(transientTicket);
             return new ModelAndView(CasWebflowConstants.VIEW_ID_WEBAUTHN_QRCODE_VERIFY_DONE,

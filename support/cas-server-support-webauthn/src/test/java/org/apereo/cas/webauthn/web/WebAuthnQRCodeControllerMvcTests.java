@@ -30,7 +30,6 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
-import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpSession;
 import org.springframework.security.web.csrf.CsrfToken;
 import org.springframework.security.web.csrf.CsrfTokenRepository;
@@ -146,48 +145,6 @@ class WebAuthnQRCodeControllerMvcTests {
             .andExpect(status().isUnprocessableContent());
         mvc.perform(get(BASE_ENDPOINT + "/{ticket}/status", UUID.randomUUID().toString()))
             .andExpect(status().isBadRequest());
-    }
-
-    @Test
-    void verifyQRCodeWithInvalidSession() throws Exception {
-        val context = MockRequestContext.create(webApplicationContext);
-        val authn = RegisteredServiceTestUtils.getAuthentication(UUID.randomUUID().toString());
-        val request = new MockHttpServletRequest();
-        val ticket = getQRCodeTicket(context, authn);
-        val csrfToken = createCsrfToken(context);
-        val sessionToken = UUID.randomUUID().toString();
-        val sessionId = webAuthnSessionManager.createSession(request, ByteArray.fromBase64Url(sessionToken));
-        val mv = mvc.perform(post(BASE_ENDPOINT)
-                .cookie(context.getHttpServletResponse().getCookie("XSRF-TOKEN"))
-                .queryParam("token", sessionId.getBase64Url())
-                .queryParam("ticket", ticket.getId())
-                .queryParam("principal", authn.getPrincipal().getId())
-                .header("X-CSRF-TOKEN", csrfToken.getToken())
-            )
-            .andExpect(status().isOk())
-            .andReturn()
-            .getModelAndView();
-        assertFalse((Boolean) mv.getModel().get("success"));
-    }
-
-    @Test
-    void verifyQRCodeWithoutSession() throws Exception {
-        val context = MockRequestContext.create(webApplicationContext);
-        val authn = RegisteredServiceTestUtils.getAuthentication(UUID.randomUUID().toString());
-        val ticket = getQRCodeTicket(context, authn);
-        val csrfToken = createCsrfToken(context);
-        val sessionToken = UUID.randomUUID().toString();
-        var mv = mvc.perform(post(BASE_ENDPOINT)
-                .cookie(context.getHttpServletResponse().getCookie("XSRF-TOKEN"))
-                .queryParam("token", sessionToken)
-                .queryParam("ticket", ticket.getId())
-                .queryParam("principal", authn.getPrincipal().getId())
-                .header("X-CSRF-TOKEN", csrfToken.getToken())
-            )
-            .andExpect(status().isOk())
-            .andReturn()
-            .getModelAndView();
-        assertFalse((Boolean) mv.getModel().get("success"));
     }
 
     @Test

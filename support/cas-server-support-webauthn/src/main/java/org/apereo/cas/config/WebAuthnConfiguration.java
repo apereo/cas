@@ -507,8 +507,6 @@ class WebAuthnConfiguration {
             @Bean
             @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
             public WebAuthnQRCodeController webAuthnQRCodeController(
-                @Qualifier(SessionManager.BEAN_NAME)
-                final SessionManager webAuthnSessionManager,
                 final CasConfigurationProperties casProperties,
                 @Qualifier(TicketFactory.BEAN_NAME)
                 final TicketFactory ticketFactory,
@@ -520,8 +518,7 @@ class WebAuthnConfiguration {
                 @Qualifier("securityContextRepository")
                 final SecurityContextRepository securityContextRepository) {
                 return new WebAuthnQRCodeController(casProperties, ticketRegistry,
-                    ticketFactory, webAuthnCredentialRepository,
-                    webAuthnSessionManager, securityContextRepository);
+                    ticketFactory, webAuthnCredentialRepository, securityContextRepository);
             }
         }
 
