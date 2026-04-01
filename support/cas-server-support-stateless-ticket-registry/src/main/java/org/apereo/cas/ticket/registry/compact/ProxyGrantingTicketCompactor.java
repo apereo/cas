@@ -44,7 +44,7 @@ public class ProxyGrantingTicketCompactor implements TicketCompactor<ProxyGranti
     @Override
     public String compact(final StringBuilder builder, final Ticket ticket) throws Exception {
         val proxyGrantingTicket = (ProxyGrantingTicket) ticket;
-        builder.append(String.format("%s%s", DELIMITER, proxyGrantingTicket.getProxiedBy().getShortenedId()));
+        builder.append(DELIMITER).append(proxyGrantingTicket.getProxiedBy().getShortenedId());
         builder.append(compactAuthenticationAttempt(proxyGrantingTicket).toString());
         return builder.toString();
     }
@@ -98,8 +98,8 @@ public class ProxyGrantingTicketCompactor implements TicketCompactor<ProxyGranti
             val principalId = EncodingUtils.encodeUrlSafeBase64(authentication.getPrincipal().getId());
             val credentialTypes = authentication.getCredentials().stream()
                 .map(credential -> credential.getClass().getSimpleName()).collect(Collectors.joining("#"));
-            builder.append(String.format("%s%s:%s:%s", DELIMITER, principalId, handlers, credentialTypes));
-            builder.append(String.format("%s%s", DELIMITER, BooleanUtils.toString(CoreAuthenticationUtils.isRememberMeAuthentication(authentication), "1", "0")));
+            builder.append(DELIMITER).append(principalId).append(':').append(handlers).append(':').append(credentialTypes);
+            builder.append(DELIMITER).append(BooleanUtils.toString(CoreAuthenticationUtils.isRememberMeAuthentication(authentication), "1", "0"));
         }
         return builder;
     }

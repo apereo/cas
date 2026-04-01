@@ -3,10 +3,12 @@ package org.apereo.cas.acct.webflow;
 import module java.base;
 import org.apereo.cas.config.CasAccountManagementWebflowAutoConfiguration;
 import org.apereo.cas.config.CasCoreTicketsAutoConfiguration;
+import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.util.MockRequestContext;
 import org.apereo.cas.util.junit.EnabledIfListeningOnPort;
 import org.apereo.cas.web.flow.BaseWebflowConfigurerTests;
 import org.apereo.cas.web.flow.CasWebflowConstants;
+import org.apereo.cas.web.support.WebUtils;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
@@ -51,6 +53,8 @@ class SubmitAccountRegistrationActionTests extends BaseWebflowConfigurerTests {
         context.setRemoteAddr("127.0.0.1");
         context.setLocalAddr("127.0.0.1");
         context.setClientInfo();
+        WebUtils.putServiceIntoFlowScope(context, RegisteredServiceTestUtils.getService());
+        WebUtils.putRegisteredService(context, RegisteredServiceTestUtils.getRegisteredService());
         val results = submitAccountRegistrationAction.execute(context);
         assertEquals(CasWebflowConstants.TRANSITION_ID_SUCCESS, results.getId());
     }
@@ -58,6 +62,8 @@ class SubmitAccountRegistrationActionTests extends BaseWebflowConfigurerTests {
     @Test
     void verifyFailingOperation() throws Throwable {
         val context = MockRequestContext.create(applicationContext);
+        WebUtils.putServiceIntoFlowScope(context, RegisteredServiceTestUtils.getService());
+        WebUtils.putRegisteredService(context, RegisteredServiceTestUtils.getRegisteredService());
         val results = submitAccountRegistrationAction.execute(context);
         assertEquals(CasWebflowConstants.TRANSITION_ID_ERROR, results.getId());
     }

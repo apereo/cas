@@ -1924,6 +1924,11 @@ public interface CasWebflowConstants {
     String ACTION_ID_ACCOUNT_REGISTRATION_SUBMIT = "submitAccountRegistrationAction";
 
     /**
+     * Action id 'displayAccountRegistrationCompletedAction .
+     */
+    String ACTION_ID_DISPLAY_ACCOUNT_REGISTRATION_COMPLETED = "displayAccountRegistrationCompletedAction";
+
+    /**
      * Action id 'determineDuoUserAccountAction .
      */
     String ACTION_ID_DETERMINE_DUO_USER_ACCOUNT = "determineDuoUserAccountAction";

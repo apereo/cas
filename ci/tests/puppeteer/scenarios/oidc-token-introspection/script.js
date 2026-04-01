@@ -3,9 +3,7 @@ const cas = require("../../cas.js");
 
 (async () => {
 
-    let params = "grant_type=client_credentials&";
-    params += "scope=openid";
-
+    const params = "grant_type=client_credentials&scope=openid";
     const url = `https://localhost:8443/cas/oidc/token?${params}`;
     await cas.log(`Calling ${url}`);
 
