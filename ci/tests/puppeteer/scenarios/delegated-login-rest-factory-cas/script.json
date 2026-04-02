@@ -8,7 +8,6 @@
     "--cas.authn.pac4j.core.cache-duration=PT2S",
 
     "--cas.authn.pac4j.rest.url=http://localhost:5432/delegatedauthn",
-    "--cas.authn.pac4j.rest.type=cas",
     
     "--cas.monitor.endpoints.endpoint.defaults.access=ANONYMOUS",
     "--management.endpoints.web.exposure.include=*",
