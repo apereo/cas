@@ -17,7 +17,7 @@ import org.springframework.aot.hint.RuntimeHints;
 public class TrustedAuthenticationRuntimeHints implements CasRuntimeHintsRegistrar {
     @Override
     public void registerHints(final @NonNull RuntimeHints hints, final @Nullable ClassLoader classLoader) {
-        registerSerializationHints(hints, PrincipalBearingCredential.class);
+        registerReflectionHints(hints, PrincipalBearingCredential.class);
 
         registerReflectionHints(hints, List.of(
             PrincipalBearingCredential.class,

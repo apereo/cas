@@ -27,7 +27,7 @@ public class DuoSecurityRuntimeHints implements CasRuntimeHintsRegistrar {
 
         registerReflectionHints(hints, Http.class, Client.Builder.class);
         
-        registerSerializationHints(hints,
+        registerReflectionHints(hints,
             DuoSecurityUniversalPromptCredential.class,
             DuoSecurityPasscodeCredential.class,
             DuoSecurityDirectCredential.class);

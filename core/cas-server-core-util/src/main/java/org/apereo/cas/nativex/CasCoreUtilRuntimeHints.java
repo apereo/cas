@@ -63,7 +63,7 @@ public class CasCoreUtilRuntimeHints implements CasRuntimeHintsRegistrar {
             CorsConfigurationSource.class
         ));
 
-        registerSerializationHints(hints);
+        registerReflectionHints(hints);
 
         registerReflectionHintForDeclaredMethod(hints, Map.Entry.class, "getKey");
         registerReflectionHintForDeclaredMethod(hints, Map.Entry.class, "getValue");
@@ -173,8 +173,8 @@ public class CasCoreUtilRuntimeHints implements CasRuntimeHintsRegistrar {
         });
     }
 
-    private void registerSerializationHints(final RuntimeHints hints) {
-        registerSerializationHints(hints,
+    private void registerReflectionHints(final RuntimeHints hints) {
+        registerReflectionHints(hints,
             Boolean.class,
             Double.class,
             Integer.class,
@@ -211,6 +211,6 @@ public class CasCoreUtilRuntimeHints implements CasRuntimeHintsRegistrar {
 
             TypeReference.of("java.lang.String$CaseInsensitiveComparator"));
 
-        registerSerializationHints(hints, findSubclassesInPackage(Clock.class, Clock.class.getPackageName()));
+        registerReflectionHints(hints, findSubclassesInPackage(Clock.class, Clock.class.getPackageName()));
     }
 }

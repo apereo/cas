@@ -19,6 +19,6 @@ public class CasWebAppRuntimeHints implements CasRuntimeHintsRegistrar {
     public void registerHints(final @NonNull RuntimeHints hints, final @Nullable ClassLoader classLoader) {
         val csrfTokens = findSubclassesInPackage(CsrfToken.class, CsrfToken.class.getPackageName());
         registerReflectionHints(hints, csrfTokens);
-        registerSerializationHints(hints, csrfTokens);
+        registerReflectionHints(hints, csrfTokens);
     }
 }

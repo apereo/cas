@@ -22,7 +22,7 @@ public class RedisTicketRegistryRuntimeHints implements CasRuntimeHintsRegistrar
 
     @Override
     public void registerHints(final @NonNull RuntimeHints hints, final @Nullable ClassLoader classLoader) {
-        registerSerializationHints(hints, RedisMessagePayload.RedisMessageTypes.class,
+        registerReflectionHints(hints, RedisMessagePayload.RedisMessageTypes.class,
             PublisherIdentifier.class,
             RedisTicketDocument.class,
             RedisMessagePayload.class);

@@ -18,6 +18,6 @@ public class JpaServiceRegistryRuntimeHints implements CasRuntimeHintsRegistrar 
     public void registerHints(final @NonNull RuntimeHints hints, final @Nullable ClassLoader classLoader) {
         registerReflectionHints(hints, List.of(JpaRegisteredServiceEntity.class));
 
-        registerSerializationHints(hints, JpaRegisteredServiceEntity.class);
+        registerReflectionHints(hints, JpaRegisteredServiceEntity.class);
     }
 }

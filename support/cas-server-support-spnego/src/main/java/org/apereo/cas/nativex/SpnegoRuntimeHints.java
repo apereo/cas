@@ -17,7 +17,7 @@ import org.springframework.aot.hint.RuntimeHints;
 public class SpnegoRuntimeHints implements CasRuntimeHintsRegistrar {
     @Override
     public void registerHints(final @NonNull RuntimeHints hints, final @Nullable ClassLoader classLoader) {
-        registerSerializationHints(hints, SpnegoCredential.class);
+        registerReflectionHints(hints, SpnegoCredential.class);
 
         registerReflectionHints(hints, List.of(
             SpnegoCredential.class,

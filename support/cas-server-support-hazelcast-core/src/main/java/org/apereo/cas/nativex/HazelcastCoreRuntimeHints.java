@@ -158,7 +158,7 @@ public class HazelcastCoreRuntimeHints implements CasRuntimeHintsRegistrar {
         );
         val classes = findSubclassesInPackage(Converter.class, "com.hazelcast.sql");
         registerReflectionHints(hints, classes);
-        registerSerializationHints(hints, classes);
+        registerReflectionHints(hints, classes);
 
         registerReflectionHints(hints,
             findSubclassesInPackage(Function.class, "com.hazelcast"));

@@ -17,7 +17,7 @@ public class PasswordlessAuthenticationRuntimeHints implements CasRuntimeHintsRe
     @Override
     public void registerHints(final @NonNull RuntimeHints hints, final @Nullable ClassLoader classLoader) {
         registerReflectionHints(hints, List.of(PasswordlessUserAccount.class));
-        registerSerializationHints(hints, List.of(PasswordlessUserAccount.class));
+        registerReflectionHints(hints, List.of(PasswordlessUserAccount.class));
     }
 
 }

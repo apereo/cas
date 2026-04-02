@@ -107,7 +107,7 @@ public class CasCoreServicesRuntimeHints implements CasRuntimeHintsRegistrar {
         registerSpringProxyHints(hints, ChainingServiceRegistry.class, ServiceRegistry.class);
         registerSerializableSpringProxyHints(hints, ServiceRegistryInitializerEventListener.class);
 
-        registerSerializationHints(hints,
+        registerReflectionHints(hints,
             BaseRegisteredService.class,
             BaseWebBasedRegisteredService.class,
             CasRegisteredService.class,
@@ -186,7 +186,7 @@ public class CasCoreServicesRuntimeHints implements CasRuntimeHintsRegistrar {
         );
 
         if (isGroovyPresent(classLoader)) {
-            registerSerializationHints(hints, List.of(
+            registerReflectionHints(hints, List.of(
                 GroovyRegisteredServiceAccessStrategy.class,
                 GroovyRegisteredServiceUsernameProvider.class,
                 GroovyRegisteredServiceAttributeReleaseActivationCriteria.class,
@@ -204,7 +204,7 @@ public class CasCoreServicesRuntimeHints implements CasRuntimeHintsRegistrar {
         ));
 
         val classes = findSubclassesOf(RegisteredServicePasswordlessPolicy.class);
-        registerSerializationHints(hints, classes);
+        registerReflectionHints(hints, classes);
         registerReflectionHints(hints, classes);
     }
 }

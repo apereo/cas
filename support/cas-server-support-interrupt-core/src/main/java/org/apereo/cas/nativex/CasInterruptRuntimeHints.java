@@ -21,6 +21,6 @@ public class CasInterruptRuntimeHints implements CasRuntimeHintsRegistrar {
     @Override
     public void registerHints(final @NonNull RuntimeHints hints, final @Nullable ClassLoader classLoader) {
         registerProxyHints(hints, InterruptInquiryExecutionPlan.class, InterruptInquiryExecutionPlanConfigurer.class, InterruptInquirer.class);
-        registerSerializationHints(hints, InterruptResponse.class);
+        registerReflectionHints(hints, InterruptResponse.class);
     }
 }

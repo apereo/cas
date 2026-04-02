@@ -26,7 +26,7 @@ import org.springframework.aot.hint.RuntimeHints;
 public class CasOAuth20RuntimeHints implements CasRuntimeHintsRegistrar {
     @Override
     public void registerHints(final @NonNull RuntimeHints hints, final @Nullable ClassLoader classLoader) {
-        registerSerializationHints(hints,
+        registerReflectionHints(hints,
             OAuthRegisteredService.class,
             BaseOAuth20Token.class,
             OAuth20DefaultAccessToken.class,

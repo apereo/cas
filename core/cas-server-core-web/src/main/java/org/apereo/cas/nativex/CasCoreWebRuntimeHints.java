@@ -18,7 +18,7 @@ public class CasCoreWebRuntimeHints implements CasRuntimeHintsRegistrar {
     @Override
     public void registerHints(final RuntimeHints hints, final @Nullable ClassLoader classLoader) {
         hints.resources().registerResourceBundle("cas_common_messages");
-        registerSerializationHints(hints, DefaultBrowserStorage.class);
+        registerReflectionHints(hints, DefaultBrowserStorage.class);
         registerReflectionHints(hints, List.of("org.springframework.web.servlet.handler.AbstractHandlerMethodMapping$EmptyHandler"));
 
         registerSpringProxyHints(hints, WebServerFactoryCustomizer.class, Ordered.class);

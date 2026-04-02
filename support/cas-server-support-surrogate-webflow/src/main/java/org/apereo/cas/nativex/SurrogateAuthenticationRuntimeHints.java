@@ -17,7 +17,7 @@ import org.springframework.aot.hint.RuntimeHints;
 public class SurrogateAuthenticationRuntimeHints implements CasRuntimeHintsRegistrar {
     @Override
     public void registerHints(final @NonNull RuntimeHints hints, final @Nullable ClassLoader classLoader) {
-        registerSerializationHints(hints, SurrogateCredentialTrait.class);
+        registerReflectionHints(hints, SurrogateCredentialTrait.class);
 
         registerReflectionHints(hints, List.of(
             SurrogateCredentialTrait.class,

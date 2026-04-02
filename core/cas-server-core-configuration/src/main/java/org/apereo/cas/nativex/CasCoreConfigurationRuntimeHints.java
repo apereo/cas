@@ -17,7 +17,7 @@ import org.springframework.boot.context.properties.bind.BindContext;
 public class CasCoreConfigurationRuntimeHints implements CasRuntimeHintsRegistrar {
     @Override
     public void registerHints(final @NonNull RuntimeHints hints, final @Nullable ClassLoader classLoader) {
-        registerSerializationHints(hints, CustomLoginFieldViewProperties.class);
+        registerReflectionHints(hints, CustomLoginFieldViewProperties.class);
         registerReflectionHints(hints, findSubclassesOf(BindContext.class));
     }
 }
