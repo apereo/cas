@@ -26,7 +26,7 @@ import org.springframework.test.context.TestPropertySource;
 })
 @TestPropertySource(properties = {
     "spring.pulsar.transaction.enabled=false",
-    "spring.pulsar.admin.service-url=http://localhost:8080",
+    "spring.pulsar.admin.service-url=http://localhost:9988",
     "spring.pulsar.client.service-url=pulsar://localhost:6650"
 })
 @Tag("Pulsar")
