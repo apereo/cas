@@ -48,7 +48,8 @@ import org.springframework.mock.web.MockHttpServletRequest;
         "cas.server.name=https://sso.example.org/",
         "cas.server.prefix=https://sso.example.org/cas",
 
-        "cas.authn.oidc.core.issuer=https://sso.example.org/cas/oidc"
+        "cas.authn.oidc.core.issuer=https://sso.example.org/cas/oidc",
+        "cas.authn.oidc.jwks.file-system.jwks-file=classpath:keystore.jwks"
     }, webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 public abstract class AbstractOidcFederationTests {
