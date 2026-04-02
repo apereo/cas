@@ -232,7 +232,7 @@ class OidcAccessTokenEndpointControllerTests {
             registeredService.setGenerateRefreshToken(true);
             servicesManager.save(registeredService);
 
-            val expirationPolicy = new TimeoutExpirationPolicy(2);
+            val expirationPolicy = new TimeoutExpirationPolicy(5);
             val ticketGrantingTicket = new TicketGrantingTicketImpl(UUID.randomUUID().toString(),
                 RegisteredServiceTestUtils.getAuthentication(), expirationPolicy);
             val expirationTime = expirationPolicy.getIdleExpirationTime(ticketGrantingTicket);
