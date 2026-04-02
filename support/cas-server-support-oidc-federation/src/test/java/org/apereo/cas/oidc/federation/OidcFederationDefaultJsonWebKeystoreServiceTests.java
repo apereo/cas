@@ -1,7 +1,7 @@
 package org.apereo.cas.oidc.federation;
 
 import module java.base;
-import org.apereo.cas.oidc.AbstractOidcTests;
+import org.apereo.cas.oidc.AbstractOidcFederationTests;
 import org.apereo.cas.util.ResourceUtils;
 import org.apereo.cas.util.spring.SpringExpressionLanguageValueResolver;
 import lombok.val;
@@ -29,7 +29,7 @@ public class OidcFederationDefaultJsonWebKeystoreServiceTests {
         "CasFeatureModule.OpenIDConnect.federation.enabled=true",
         "cas.authn.oidc.federation.jwks-file=file:${#systemProperties['java.io.tmpdir']}/corrupted.jwks"
     })
-    class KeystoreCorrupted extends AbstractOidcTests {
+    class KeystoreCorrupted extends AbstractOidcFederationTests {
         @Autowired
         @Qualifier(OidcFederationJsonWebKeystoreService.BEAN_NAME)
         private OidcFederationJsonWebKeystoreService oidcFederationWebKeystoreService;
@@ -52,7 +52,7 @@ public class OidcFederationDefaultJsonWebKeystoreServiceTests {
         "CasFeatureModule.OpenIDConnect.federation.enabled=true",
         "cas.authn.oidc.federation.jwks-file=file:${#systemProperties['java.io.tmpdir']}/keystore-missing.jwks"
     })
-    class KeystoreMissing extends AbstractOidcTests {
+    class KeystoreMissing extends AbstractOidcFederationTests {
         @Autowired
         @Qualifier(OidcFederationJsonWebKeystoreService.BEAN_NAME)
         private OidcFederationJsonWebKeystoreService oidcFederationWebKeystoreService;

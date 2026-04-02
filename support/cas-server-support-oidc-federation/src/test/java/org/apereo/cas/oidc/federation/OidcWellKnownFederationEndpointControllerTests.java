@@ -1,7 +1,7 @@
 package org.apereo.cas.oidc.federation;
 
 import module java.base;
-import org.apereo.cas.oidc.AbstractOidcTests;
+import org.apereo.cas.oidc.AbstractOidcFederationTests;
 import org.apereo.cas.oidc.OidcConstants;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
@@ -23,7 +23,7 @@ import static org.junit.jupiter.api.Assertions.*;
     "CasFeatureModule.OpenIDConnect.federation.enabled=true",
     "cas.authn.oidc.federation.jwks-file=file:${#systemProperties['java.io.tmpdir']}/federation.jwks"
 })
-class OidcWellKnownFederationEndpointControllerTests extends AbstractOidcTests {
+class OidcWellKnownFederationEndpointControllerTests extends AbstractOidcFederationTests {
     @Autowired
     @Qualifier("oidcWellKnownFederationController")
     protected OidcWellKnownFederationEndpointController oidcWellKnownController;
