@@ -14,7 +14,6 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
-import org.jspecify.annotations.NonNull;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -54,7 +53,7 @@ public class OAuth20UserProfileEndpointController<T extends OAuth20Configuration
         produces = MediaType.APPLICATION_JSON_VALUE)
     @Operation(summary = "Handle user profile request",
         parameters = @Parameter(name = "access_token", in = ParameterIn.QUERY, required = true, description = "Access token"))
-    public ResponseEntity<@NonNull String> handlePostRequest(final HttpServletRequest request,
+    public ResponseEntity<String> handlePostRequest(final HttpServletRequest request,
                                                              final HttpServletResponse response) throws Exception {
         return handleGetRequest(request, response);
     }
@@ -71,7 +70,7 @@ public class OAuth20UserProfileEndpointController<T extends OAuth20Configuration
         produces = MediaType.APPLICATION_JSON_VALUE)
     @Operation(summary = "Handle user profile request",
         parameters = @Parameter(name = "access_token", in = ParameterIn.QUERY, required = true, description = "Access token"))
-    public ResponseEntity<@NonNull String> handleGetRequest(final HttpServletRequest request,
+    public ResponseEntity<String> handleGetRequest(final HttpServletRequest request,
                                                             final HttpServletResponse response) throws Exception {
         response.setContentType(MediaType.APPLICATION_JSON_VALUE);
         val accessTokenResult = FunctionUtils.doAndHandle(() -> getAccessTokenFromRequest(request));
