@@ -127,7 +127,6 @@ or override log42.component.properties to turn off async
 
         <Logger name="org.springframework.boot" level="${sys:spring.boot.log.level}" />
         <Logger name="org.springframework.boot.context.embedded" level="info" />
-        <Logger name="org.springframework.boot.autoconfigure.security.servlet.UserDetailsServiceAutoConfiguration" level="${sys:spring.security.log.level}" />
         <Logger name="org.springframework.boot.autoconfigure.security" level="${sys:spring.security.log.level}" />
         <Logger name="org.springframework.boot.devtools" level="debug" />
 

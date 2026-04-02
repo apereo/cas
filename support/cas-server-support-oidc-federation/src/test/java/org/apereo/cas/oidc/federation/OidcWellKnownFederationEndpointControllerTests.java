@@ -2,6 +2,7 @@ package org.apereo.cas.oidc.federation;
 
 import module java.base;
 import org.apereo.cas.oidc.OidcConstants;
+import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
@@ -31,7 +32,7 @@ class OidcWellKnownFederationEndpointControllerTests extends AbstractOidcFederat
                     return request;
                 }))
             .andExpect(status().isBadRequest())
-            .andExpect(jsonPath("$.error").value("invalid_request"));
+            .andExpect(jsonPath("$.error").value(OAuth20Constants.INVALID_REQUEST));
     }
 
     @Test
