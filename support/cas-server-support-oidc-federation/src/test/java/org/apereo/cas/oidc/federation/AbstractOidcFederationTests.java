@@ -45,6 +45,7 @@ import org.springframework.test.web.servlet.request.RequestPostProcessor;
     properties = {
         "cas.server.name=https://sso.example.org/",
         "cas.server.prefix=https://sso.example.org/cas",
+        "cas.authn.oidc.jwks.file-system.jwks-file=file:${#systemProperties['java.io.tmpdir']}/oidc.jwks",
         "cas.authn.oidc.federation.jwks-file=file:${#systemProperties['java.io.tmpdir']}/federation.jwks",
         "cas.authn.oidc.core.issuer=https://sso.example.org/cas/oidc"
     }, webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
