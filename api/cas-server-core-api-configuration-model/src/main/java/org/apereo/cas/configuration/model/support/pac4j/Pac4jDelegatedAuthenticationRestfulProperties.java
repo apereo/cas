@@ -20,14 +20,4 @@ import lombok.experimental.Accessors;
 public class Pac4jDelegatedAuthenticationRestfulProperties extends RestEndpointProperties {
     @Serial
     private static final long serialVersionUID = 3659099897056632608L;
-
-    /**
-     * Specify the format of the payload that would be produced by the REST API.
-     * Accepted values are:
-     * <ul>
-     *     <li>{@code pac4j}: The output must confirm to the syntax controlled by pac4j's {@code PropertiesConfigFactory}</li>
-     *     <li>{@code cas}: The output must should contain properties that allow CAS to build delegated identity providers.</li>
-     * </ul>
-     */
-    private String type = "pac4j";
 }

@@ -13,9 +13,7 @@ import org.apache.commons.io.IOUtils;
 import org.apache.hc.core5.http.HttpEntityContainer;
 import org.hjson.JsonValue;
 import org.jspecify.annotations.NonNull;
-import org.pac4j.config.client.PropertiesConfigFactory;
 import org.pac4j.core.client.BaseClient;
-import org.pac4j.core.client.IndirectClient;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
@@ -49,7 +47,6 @@ public class RestfulDelegatedIdentityProviderFactory extends BaseDelegatedIdenti
             .basicAuthUsername(restProperties.getBasicAuthUsername())
             .method(HttpMethod.valueOf(restProperties.getMethod().toUpperCase(Locale.ENGLISH).trim()))
             .url(restProperties.getUrl())
-            .parameters(Map.of("type", restProperties.getType()))
             .headers(restProperties.getHeaders())
             .build();
 
@@ -57,10 +54,7 @@ public class RestfulDelegatedIdentityProviderFactory extends BaseDelegatedIdenti
         if (response != null && HttpStatus.valueOf(response.getCode()).is2xxSuccessful()) {
             try (val content = ((HttpEntityContainer) response).getEntity().getContent()) {
                 val result = IOUtils.toString(content, StandardCharsets.UTF_8);
-                if ("cas".equalsIgnoreCase(restProperties.getType())) {
-                    return buildClientsBasedCasProperties(result);
-                }
-                return buildClientsBasedPac4jProperties(result);
+                return buildClientsBasedProperties(result);
             } finally {
                 HttpUtils.close(response);
             }
@@ -68,7 +62,7 @@ public class RestfulDelegatedIdentityProviderFactory extends BaseDelegatedIdenti
         return new ArrayList<>();
     }
 
-    protected List<BaseClient> buildClientsBasedCasProperties(final String result) throws Exception {
+    protected List<BaseClient> buildClientsBasedProperties(final String result) throws Exception {
         val payload = MAPPER.readValue(JsonValue.readHjson(result).toString(), Map.class);
         LOGGER.trace("CAS properties received as [{}]", payload);
         val bindingContext = CasConfigurationProperties.bindFrom(payload);
@@ -76,20 +70,5 @@ public class RestfulDelegatedIdentityProviderFactory extends BaseDelegatedIdenti
             return buildFrom((CasConfigurationProperties) bindingContext.value());
         }
         return List.of();
-    }
-
-    protected List<BaseClient> buildClientsBasedPac4jProperties(final String result) {
-        val clients = MAPPER.readValue(JsonValue.readHjson(result).toString(), Map.class);
-        LOGGER.trace("Delegated clients received are [{}]", clients);
-        val callbackUrl = (String) clients.getOrDefault("callbackUrl", null);
-        val properties = (Map<String, String>)
-            clients.getOrDefault("properties", new HashMap<String, String>());
-        val factory = new PropertiesConfigFactory(callbackUrl, properties);
-        return factory.build()
-            .getClients()
-            .findAllClients()
-            .stream()
-            .map(IndirectClient.class::cast)
-            .collect(Collectors.toList());
     }
 }

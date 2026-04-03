@@ -83,34 +83,6 @@ Identity providers for delegated authentication can be provided to CAS using an 
 
 {% include_cached casproperties.html properties="cas.authn.pac4j.rest" %}
 
-The expected payload *type*, that is controlled via CAS settings, can be understood and consumed in the following ways.
-
-{% tabs clientpayloads %}
-
-{% tab clientpayloads Pac4j %}
-
-This allows the CAS server to reach to a remote REST endpoint whose responsibility is to produce the following payload in the response body:
-
-```json
-{
-    "callbackUrl": "https://sso.example.org/cas/login",
-    "properties": {
-        "github.id": "...",
-        "github.secret": "...",
-        
-        "cas.loginUrl.1": "...",
-        "cas.protocol.1": "..."
-    }
-}
-```
-
-The syntax and collection of available `properties` in the above payload is controlled by the [Pac4j library](https://github.com/pac4j/pac4j).
-The response that is returned must be accompanied by a `200` status code.
-
-{% endtab %}
-
-{% tab clientpayloads CAS %}
-
 This allows the CAS server to reach to a remote REST endpoint whose responsibility is to produce the following payload in the response body:
 
 ```json
@@ -127,9 +99,6 @@ This allows the CAS server to reach to a remote REST endpoint whose responsibili
 The payload is expected to contain CAS specific properties that would be used to construct external identity providers. The
 response that is returned must be accompanied by a `200` status code.
 
-{% endtab %}
-
-{% endtabs %}
 
 ## Caching
 

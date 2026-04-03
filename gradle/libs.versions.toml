@@ -599,7 +599,6 @@ opentelemetry-sdk-autoconfigure = { module = "io.opentelemetry:opentelemetry-sdk
 orgjson = { module = "org.json:json", version.ref = "json" }
 oshi-core = { module = "com.github.oshi:oshi-core", version.ref = "oshi" }
 pac4j-cas = { module = "org.pac4j:pac4j-cas", version.ref = "pac4j" }
-pac4j-config = { module = "org.pac4j:pac4j-config", version.ref = "pac4j" }
 pac4j-core = { module = "org.pac4j:pac4j-core", version.ref = "pac4j" }
 pac4j-http = { module = "org.pac4j:pac4j-http", version.ref = "pac4j" }
 pac4j-jakartaee = { module = "org.pac4j:pac4j-jakartaee", version.ref = "pac4j" }
