@@ -38,8 +38,9 @@ public class CasCoreTicketsRuntimeHints implements CasRuntimeHintsRegistrar {
         registerSpringProxyHints(hints, QueueableTicketRegistry.class, TicketRegistry.class);
         registerSpringProxyHints(hints, AutoCloseable.class, DisposableBean.class, TicketRegistry.class);
 
-        registerReflectionHints(hints, findSubclassesInPackage(Ticket.class, CentralAuthenticationService.NAMESPACE));
+        registerSerializationHints(hints, findSubclassesInPackage(Ticket.class, CentralAuthenticationService.NAMESPACE));
         val expirationPolicyClasses = findSubclassesInPackage(ExpirationPolicy.class, CentralAuthenticationService.NAMESPACE);
+        registerSerializationHints(hints, expirationPolicyClasses);
         registerReflectionHints(hints, expirationPolicyClasses);
 
         val ticketCompactors = findSubclassesInPackage(TicketCompactor.class, CentralAuthenticationService.NAMESPACE);

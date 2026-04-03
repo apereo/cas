@@ -117,6 +117,33 @@ public interface CasRuntimeHintsRegistrar extends RuntimeHintsRegistrar {
     }
 
     /**
+     * Register serialization hints.
+     *
+     * @param hints   the hints
+     * @param entries the entries
+     */
+    default void registerSerializationHints(final RuntimeHints hints, final Collection<Class> entries) {
+        entries.forEach(el -> hints.reflection().registerJavaSerialization(el));
+    }
+
+    /**
+     * Register serialization hints.
+     *
+     * @param hints   the hints
+     * @param entries the entries
+     */
+    default void registerSerializationHints(final RuntimeHints hints, final Object... entries) {
+        Arrays.stream(entries).forEach(el -> {
+            if (el instanceof final TypeReference tr) {
+                hints.reflection().registerType(tr, hint -> hint.withJavaSerialization(true));
+            }
+            if (el instanceof final Class clazz) {
+                hints.reflection().registerJavaSerialization(clazz);
+            }
+        });
+    }
+
+    /**
      * Register declared method as invocable.
      *
      * @param hints the hints
@@ -153,7 +180,7 @@ public interface CasRuntimeHintsRegistrar extends RuntimeHintsRegistrar {
      * @return the cas runtime hints registrar
      */
     @CanIgnoreReturnValue
-    default CasRuntimeHintsRegistrar registerReflectionHints(final RuntimeHints hints, final Object... entries) {
+    default CasRuntimeHintsRegistrar registerReflectionHints(final RuntimeHints hints, final Class... entries) {
         registerReflectionHints(hints, List.of(entries));
         return this;
     }

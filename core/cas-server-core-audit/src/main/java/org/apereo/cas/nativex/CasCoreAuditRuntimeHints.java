@@ -26,7 +26,7 @@ public class CasCoreAuditRuntimeHints implements CasRuntimeHintsRegistrar {
     @Override
     public void registerHints(final @NonNull RuntimeHints hints, final @Nullable ClassLoader classLoader) {
         registerProxyHints(hints, List.of(AuditTrailExecutionPlanConfigurer.class));
-        registerReflectionHints(hints, ClientInfo.class);
+        registerSerializationHints(hints, ClientInfo.class);
         
         registerReflectionHints(hints, List.of(
             AuditTrailExecutionPlan.class,

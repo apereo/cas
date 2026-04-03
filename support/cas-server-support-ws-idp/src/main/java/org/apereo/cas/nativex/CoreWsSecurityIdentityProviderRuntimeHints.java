@@ -16,7 +16,7 @@ import org.springframework.aot.hint.RuntimeHints;
 public class CoreWsSecurityIdentityProviderRuntimeHints implements CasRuntimeHintsRegistrar {
     @Override
     public void registerHints(final @NonNull RuntimeHints hints, final @Nullable ClassLoader classLoader) {
-        registerReflectionHints(hints, WSFederationRegisteredService.class);
+        registerSerializationHints(hints, WSFederationRegisteredService.class);
         registerReflectionHints(hints, List.of(
             WSFederationRegisteredService.class
         ));

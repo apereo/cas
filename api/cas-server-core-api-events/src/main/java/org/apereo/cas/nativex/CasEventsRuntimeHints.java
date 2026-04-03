@@ -18,6 +18,6 @@ public class CasEventsRuntimeHints implements CasRuntimeHintsRegistrar {
     @Override
     public void registerHints(final RuntimeHints hints, final @Nullable ClassLoader classLoader) {
         registerSpringProxyHints(hints, CasEventRepository.class, ApplicationEventPublisherAware.class);
-        registerReflectionHints(hints, findSubclassesOf(AbstractCasEvent.class));
+        registerSerializationHints(hints, findSubclassesOf(AbstractCasEvent.class));
     }
 }

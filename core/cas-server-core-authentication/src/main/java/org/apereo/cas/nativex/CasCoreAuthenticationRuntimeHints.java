@@ -45,7 +45,7 @@ import org.springframework.beans.factory.DisposableBean;
 public class CasCoreAuthenticationRuntimeHints implements CasRuntimeHintsRegistrar {
     @Override
     public void registerHints(final @NonNull RuntimeHints hints, final @Nullable ClassLoader classLoader) {
-        registerReflectionHints(hints, List.of(
+        registerSerializationHints(hints, List.of(
             IPAddressIntelligenceResponse.class,
             GeoLocationRequest.class,
             GeoLocationResponse.class,
@@ -59,7 +59,7 @@ public class CasCoreAuthenticationRuntimeHints implements CasRuntimeHintsRegistr
         subclassesInPackage.addAll(findSubclassesInPackage(Authentication.class, CentralAuthenticationService.NAMESPACE));
         subclassesInPackage.addAll(findSubclassesInPackage(AuthenticationHandlerExecutionResult.class, CentralAuthenticationService.NAMESPACE));
         subclassesInPackage.addAll(findSubclassesInPackage(Credential.class, CentralAuthenticationService.NAMESPACE));
-        registerReflectionHints(hints, subclassesInPackage);
+        registerSerializationHints(hints, subclassesInPackage);
 
         val credentials = findSubclassesInPackage(Credential.class, CentralAuthenticationService.NAMESPACE);
         registerReflectionHints(hints, credentials);

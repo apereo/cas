@@ -19,7 +19,7 @@ import org.springframework.aot.hint.RuntimeHints;
 public class MultifactorAuthenticationTrustedHints implements CasRuntimeHintsRegistrar {
     @Override
     public void registerHints(final @NonNull RuntimeHints hints, final @Nullable ClassLoader classLoader) {
-        registerReflectionHints(hints, MultifactorAuthenticationTrustRecord.class);
+        registerSerializationHints(hints, MultifactorAuthenticationTrustRecord.class);
         registerProxyHints(hints, DeviceFingerprintExtractor.class,
             MultifactorAuthenticationTrustStorage.class,
             MultifactorAuthenticationTrustRecordKeyGenerator.class);

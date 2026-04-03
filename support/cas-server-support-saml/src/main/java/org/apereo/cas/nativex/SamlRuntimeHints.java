@@ -16,7 +16,7 @@ import org.springframework.aot.hint.RuntimeHints;
 public class SamlRuntimeHints implements CasRuntimeHintsRegistrar {
     @Override
     public void registerHints(final @NonNull RuntimeHints hints, final @Nullable ClassLoader classLoader) {
-        registerReflectionHints(hints, SamlService.class);
+        registerSerializationHints(hints, SamlService.class);
         registerReflectionHints(hints, SamlService.class);
     }
 }

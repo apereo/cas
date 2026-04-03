@@ -23,23 +23,23 @@ import org.springframework.beans.factory.InitializingBean;
 public class CasMultitenancyRuntimeHints implements CasRuntimeHintsRegistrar {
     @Override
     public void registerHints(final RuntimeHints hints, final @Nullable ClassLoader classLoader) {
-        registerReflectionHints(hints, TenantDefinition.class);
+        registerSerializationHints(hints, classLoader, TenantDefinition.class);
         registerReflectionHints(hints, TenantDefinition.class);
 
         var classes = findSubclassesOf(TenantAuthenticationPolicy.class);
-        registerReflectionHints(hints, classes);
+        registerSerializationHints(hints, classLoader, classes);
         registerReflectionHints(hints, classes);
 
         classes = findSubclassesOf(TenantAuthenticationProtocolPolicy.class);
-        registerReflectionHints(hints, classes);
+        registerSerializationHints(hints, classLoader, classes);
         registerReflectionHints(hints, classes);
 
         classes = findSubclassesOf(TenantUserInterfacePolicy.class);
-        registerReflectionHints(hints, classes);
+        registerSerializationHints(hints, classLoader, classes);
         registerReflectionHints(hints, classes);
 
         classes = findSubclassesOf(TenantDelegatedAuthenticationPolicy.class);
-        registerReflectionHints(hints, classes);
+        registerSerializationHints(hints, classLoader, classes);
         registerReflectionHints(hints, classes);
         
         registerReflectionHints(hints, TenantExtractor.class);

@@ -16,6 +16,6 @@ import org.springframework.aot.hint.RuntimeHints;
 public class CasConsentRuntimeHints implements CasRuntimeHintsRegistrar {
     @Override
     public void registerHints(final @NonNull RuntimeHints hints, final @Nullable ClassLoader classLoader) {
-        registerReflectionHints(hints, ConsentDecision.class);
+        registerSerializationHints(hints, ConsentDecision.class);
     }
 }

@@ -28,7 +28,7 @@ import org.springframework.aot.hint.RuntimeHints;
 public class Pac4jCoreRuntimeHints implements CasRuntimeHintsRegistrar {
     @Override
     public void registerHints(final @NonNull RuntimeHints hints, final @Nullable ClassLoader classLoader) {
-        registerReflectionHints(hints, Credentials.class,
+        registerSerializationHints(hints, Credentials.class,
             DelegatedClientIdentityProviderConfiguration.class,
             DelegatedAuthenticationCandidateProfile.class);
         registerReflectionHints(hints,

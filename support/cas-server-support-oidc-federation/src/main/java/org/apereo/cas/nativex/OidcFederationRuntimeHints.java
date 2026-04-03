@@ -23,7 +23,7 @@ import org.springframework.beans.factory.DisposableBean;
 public class OidcFederationRuntimeHints implements CasRuntimeHintsRegistrar {
     @Override
     public void registerHints(final @NonNull RuntimeHints hints, final @Nullable ClassLoader classLoader) {
-        registerReflectionHints(hints, List.of(
+        registerSerializationHints(hints, List.of(
             OidcRegisteredService.class,
             OidcJsonWebKeyCacheKey.class,
             OidcJsonWebKeystoreEntity.class
@@ -36,7 +36,7 @@ public class OidcFederationRuntimeHints implements CasRuntimeHintsRegistrar {
 
         val releasePolicies = findSubclassesInPackage(OidcRegisteredServiceAttributeReleasePolicy.class, CentralAuthenticationService.NAMESPACE);
         registerReflectionHints(hints, releasePolicies);
-        registerReflectionHints(hints, releasePolicies);
+        registerSerializationHints(hints, releasePolicies);
 
         val entries = findSubclassesInPackage(OidcJsonWebKeystoreGeneratorService.class, CentralAuthenticationService.NAMESPACE);
         registerReflectionHints(hints, entries);

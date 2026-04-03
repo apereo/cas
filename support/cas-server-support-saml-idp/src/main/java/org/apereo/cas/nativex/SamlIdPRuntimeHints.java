@@ -29,7 +29,7 @@ public class SamlIdPRuntimeHints implements CasRuntimeHintsRegistrar {
         hints.resources()
             .registerPattern("metadata/*.xml");
 
-        registerReflectionHints(hints, JsonResourceMetadataResolver.SamlServiceProviderMetadata.class,
+        registerSerializationHints(hints, JsonResourceMetadataResolver.SamlServiceProviderMetadata.class,
             SamlRegisteredService.class,
             SamlArtifactTicketImpl.class,
             SamlAttributeQueryTicketImpl.class);

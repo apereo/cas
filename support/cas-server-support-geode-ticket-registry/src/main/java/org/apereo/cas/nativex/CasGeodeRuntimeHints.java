@@ -24,10 +24,10 @@ public class CasGeodeRuntimeHints implements CasRuntimeHintsRegistrar {
 
         val subclasses = findSubclassesOf(DataSerializableFixedID.class);
         registerReflectionHints(hints, subclasses);
-        registerReflectionHints(hints, subclasses);
+        registerSerializationHints(hints, subclasses);
 
-        registerReflectionHints(hints, GeodeTicketDocument.class);
-        registerReflectionHints(hints, InternalCacheBuilder.class);
+        registerSerializationHints(hints, GeodeTicketDocument.class);
+        registerSerializationHints(hints, InternalCacheBuilder.class);
 
     }
 }

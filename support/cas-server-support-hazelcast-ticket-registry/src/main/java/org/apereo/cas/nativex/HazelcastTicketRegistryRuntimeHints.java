@@ -18,7 +18,7 @@ public class HazelcastTicketRegistryRuntimeHints implements CasRuntimeHintsRegis
     @Override
     public void registerHints(final @NonNull RuntimeHints hints, final @Nullable ClassLoader classLoader) {
         registerReflectionHints(hints, List.of(MapAttributeValueExtractor.class));
-        registerReflectionHints(hints, List.of(HazelcastTicketDocument.class));
+        registerSerializationHints(hints, List.of(HazelcastTicketDocument.class));
     }
 
 }
