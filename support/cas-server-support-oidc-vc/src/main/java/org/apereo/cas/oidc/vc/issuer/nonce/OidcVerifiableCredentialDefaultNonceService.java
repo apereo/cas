@@ -8,6 +8,7 @@ import org.apereo.cas.ticket.TransientSessionTicketFactory;
 import org.apereo.cas.ticket.expiration.HardTimeoutExpirationPolicy;
 import org.apereo.cas.util.function.FunctionUtils;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 
 /**
@@ -17,6 +18,7 @@ import lombok.val;
  * @since 8.0.0
  */
 @RequiredArgsConstructor
+@Slf4j
 public class OidcVerifiableCredentialDefaultNonceService implements OidcVerifiableCredentialNonceService {
     private final OidcConfigurationContext configurationContext;
 
@@ -31,6 +33,8 @@ public class OidcVerifiableCredentialDefaultNonceService implements OidcVerifiab
             val expiresAt = Instant.now(Clock.systemUTC()).plusSeconds(seconds);
             ticket.setExpirationPolicy(new HardTimeoutExpirationPolicy(seconds));
             configurationContext.getTicketRegistry().addTicket(ticket);
+            LOGGER.debug("Added nonce [{}] to expire in [{}] seconds at [{}]",
+                ticket.getId(), seconds, expiresAt);
             return new VerifiableCredentialNonce(ticket.getId(), expiresAt);
         });
     }
@@ -44,6 +48,7 @@ public class OidcVerifiableCredentialDefaultNonceService implements OidcVerifiab
     public boolean exists(final String nonce) {
         return FunctionUtils.doUnchecked(() -> {
             val ticket = configurationContext.getTicketRegistry().getTicket(nonce);
+            LOGGER.debug("Found nonce ticket [{}} for [{}]", ticket, nonce);
             return ticket != null && !ticket.isExpired();
         });
     }
