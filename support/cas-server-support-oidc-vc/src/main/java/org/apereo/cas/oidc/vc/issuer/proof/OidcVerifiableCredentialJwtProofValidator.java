@@ -55,7 +55,7 @@ public class OidcVerifiableCredentialJwtProofValidator implements OidcVerifiable
         val claims = signedJwt.getJWTClaimsSet();
         val nonce = claims.getStringClaim("nonce");
         if (nonce == null || !oidcVerifiableCredentialNonceService.exists(nonce)) {
-            throw new IllegalArgumentException("Proof nonce is invalid or missing");
+            throw new IllegalArgumentException("Proof nonce %s is invalid or missing".formatted(nonce));
         }
         oidcVerifiableCredentialNonceService.remove(nonce);
     }
