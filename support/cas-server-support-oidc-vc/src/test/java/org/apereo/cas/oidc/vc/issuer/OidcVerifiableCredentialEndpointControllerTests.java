@@ -27,6 +27,8 @@ import org.apache.commons.lang3.StringUtils;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.parallel.Execution;
+import org.junit.jupiter.api.parallel.ExecutionMode;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.ImportAutoConfiguration;
@@ -45,6 +47,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
  * @since 8.0.0
  */
 @Tag("OIDCWeb")
+@Execution(ExecutionMode.SAME_THREAD)
 class OidcVerifiableCredentialEndpointControllerTests {
 
     @ImportAutoConfiguration(CasOidcVerifiableCredentialsAutoConfiguration.class)

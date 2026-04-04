@@ -535,7 +535,7 @@ function register(username, displayName, credentialNickname, csrfToken,
 
 function getAuthenticateRequest(urls, username) {
     const headers = {};
-    if (csrfToken !== undefined) {
+    if (csrfToken !== undefined && csrfToken !== null) {
         headers["X-CSRF-TOKEN"] = csrfToken;
     }
     return fetch(urls.authenticate, {

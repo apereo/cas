@@ -13,14 +13,14 @@ public class DefaultSessionManager implements SessionManager {
     private final WebAuthnCache<ByteArray> usersToSessionIds;
 
     @Override
-    public ByteArray createSession(final HttpServletRequest request, @NonNull final ByteArray userHandle) {
+    public ByteArray createSession(final HttpServletRequest request, final ByteArray userHandle) {
         var sessionId = usersToSessionIds.get(request, userHandle, _ -> SessionManager.generateRandom(32));
         sessionIdsToUsers.put(request, sessionId, userHandle);
         return sessionId;
     }
 
     @Override
-    public Optional<ByteArray> getSession(final HttpServletRequest request, @NonNull final ByteArray sessionId) {
+    public Optional<ByteArray> getSession(final HttpServletRequest request, final ByteArray sessionId) {
         return Optional.ofNullable(sessionIdsToUsers.getIfPresent(request, sessionId));
     }
 }
