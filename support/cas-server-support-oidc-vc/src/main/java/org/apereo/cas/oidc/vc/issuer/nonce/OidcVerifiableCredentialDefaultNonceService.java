@@ -41,7 +41,7 @@ public class OidcVerifiableCredentialDefaultNonceService implements OidcVerifiab
     public boolean exists(final String nonce) {
         return FunctionUtils.doUnchecked(() -> {
             val ticket = configurationContext.getTicketRegistry().getTicket(nonce);
-            LOGGER.debug("Found nonce ticket [{}} for [{}]", ticket, nonce);
+            LOGGER.debug("Found nonce ticket [{}] for [{}]", ticket, nonce);
             return ticket != null && !ticket.isExpired();
         });
     }

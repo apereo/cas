@@ -1,6 +1,7 @@
 package org.apereo.cas.nativex;
 
 import module java.base;
+import org.apereo.cas.redis.core.CasRedisTemplate;
 import org.apereo.cas.util.nativex.CasRuntimeHintsRegistrar;
 import io.lettuce.core.cluster.api.sync.RedisClusterCommands;
 import org.jspecify.annotations.NonNull;
@@ -18,6 +19,8 @@ public class RedisCoreRuntimeHints implements CasRuntimeHintsRegistrar {
     @Override
     public void registerHints(final @NonNull RuntimeHints hints, final @Nullable ClassLoader classLoader) {
         registerProxyHints(hints, RedisConnectionFactory.class);
+        registerProxyHints(hints, CasRedisTemplate.class);
+        
         registerReflectionHints(hints, List.of(
             RedisClusterCommands.class,
             RedisConnectionFactory.class));
