@@ -23,6 +23,7 @@ import lombok.val;
 import org.apache.commons.lang3.NotImplementedException;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.web.context.SecurityContextRepository;
+import org.springframework.security.web.csrf.CsrfToken;
 import org.springframework.util.Assert;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -72,7 +73,8 @@ public class WebAuthnQRCodeController extends BaseWebAuthnController {
     public ModelAndView startAuthentication(
         final HttpServletRequest request,
         final HttpServletResponse response,
-        @PathVariable final String ticketId) throws Throwable {
+        @PathVariable final String ticketId,
+        final CsrfToken csrfToken) throws Throwable {
         try {
             verifyQRCodeAuthenticationIsEnabled();
             val transientTicket = ticketRegistry.getTicket(ticketId, TransientSessionTicket.class);
@@ -80,9 +82,12 @@ public class WebAuthnQRCodeController extends BaseWebAuthnController {
             val context = SecurityContextUtils.createSecurityContext(transientTicket, request);
             securityContextRepository.saveContext(context, request, response);
 
-            val principal = transientTicket.getProperty(Principal.class.getName(), Principal.class);
+            val principal = Objects.requireNonNull(transientTicket.getProperty(Principal.class.getName(), Principal.class));
             return new ModelAndView(CasWebflowConstants.VIEW_ID_WEBAUTHN_QRCODE_VERIFY,
-                Map.of("QRCodeTicket", transientTicket, "principal", principal, "QRCodeAuthentication", true));
+                Map.of("QRCodeTicket", transientTicket,
+                    "_csrf", csrfToken,
+                    "principal", principal,
+                    "QRCodeAuthentication", true));
         } catch (final Exception e) {
             LoggingUtils.error(LOGGER, e);
             return new ModelAndView(CasWebflowConstants.VIEW_ID_WEBAUTHN_QRCODE_VERIFY_DONE, Map.of("success", false));
@@ -115,9 +120,6 @@ public class WebAuthnQRCodeController extends BaseWebAuthnController {
             }
             Assert.notNull(webAuthnCredential, "WebAuthn credential not found in the ticket");
             val principal = transientTicket.getProperty(Principal.class.getName(), Principal.class);
-
-            val session = sessionManager.getSession(request, WebAuthnCredential.from(webAuthnCredential));
-            Assert.isTrue(session.isPresent(), "Session is not found for the given credential");
             ticketRegistry.deleteTicket(ticketId);
             return ResponseEntity.ok(Map.of("principal", principal, "sessionToken", webAuthnCredential.getToken()));
         } catch (final Exception e) {
@@ -146,18 +148,15 @@ public class WebAuthnQRCodeController extends BaseWebAuthnController {
         })
     public ModelAndView verifyCode(
         final HttpServletRequest request,
-        @RequestParam("token")
-        final String sessionToken,
-        @RequestParam("ticket")
-        final String ticketId,
-        @RequestParam("principal")
-        final String principalId) throws Throwable {
+        @RequestParam("token") final String sessionToken,
+        @RequestParam("ticket") final String ticketId,
+        @RequestParam("principal") final String principalId) throws Throwable {
         try {
             verifyQRCodeAuthenticationIsEnabled();
             val transientTicket = ticketRegistry.getTicket(ticketId, TransientSessionTicket.class);
             Assert.isTrue(transientTicket != null && !transientTicket.isExpired(), "Ticket is not found or has expired");
             Assert.isTrue(webAuthnCredentialRepository.userExists(principalId), "Principal not found");
-            val principal = transientTicket.getProperty(Principal.class.getName(), Principal.class);
+            val principal = Objects.requireNonNull(transientTicket.getProperty(Principal.class.getName(), Principal.class));
             val credential = new WebAuthnCredential(sessionToken);
             val session = sessionManager.getSession(request, WebAuthnCredential.from(credential));
             FunctionUtils.throwIf(session.isEmpty(), () -> new IllegalStateException("Session not found for the given credential"));

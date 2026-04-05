@@ -34,6 +34,7 @@ import com.yubico.webauthn.data.UserIdentity;
 import com.yubico.webauthn.exception.AssertionFailedException;
 import com.yubico.webauthn.exception.RegistrationFailedException;
 import lombok.AllArgsConstructor;
+import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import lombok.Value;
@@ -56,6 +57,7 @@ public class WebAuthnServer {
     private final WebAuthnCache<RegistrationRequest> registerRequestStorage;
     private final WebAuthnCache<AssertionRequestWrapper> assertRequestStorage;
     private final RelyingParty relyingParty;
+    @Getter
     private final SessionManager sessionManager;
     private final CasConfigurationProperties casProperties;
 

@@ -64,7 +64,7 @@ public class WebAuthnController extends BaseWebAuthnController {
     }
 
     private static ResponseEntity<Object> finishResponse(final Either<List<String>, ?> result,
-                                                                  final String responseJson) throws Exception {
+                                                         final String responseJson) throws Exception {
         if (result.isRight()) {
             LOGGER.trace("Received: [{}]", responseJson);
             val json = writeJson(result.right().orElseThrow());
@@ -113,19 +113,15 @@ public class WebAuthnController extends BaseWebAuthnController {
         ))
     public ResponseEntity<Object> startRegistration(
         @NonNull
-        @RequestParam("displayName")
-        final String displayName,
-        @RequestParam(value = "credentialNickname", required = false, defaultValue = StringUtils.EMPTY)
-        final String credentialNickname,
-        @RequestParam(value = "requireResidentKey", required = false)
-        final boolean requireResidentKey,
-        @RequestParam(value = "sessionToken", required = false, defaultValue = StringUtils.EMPTY)
-        final String sessionTokenBase64,
+        @RequestParam("displayName") final String displayName,
+        @RequestParam(value = "credentialNickname", required = false, defaultValue = StringUtils.EMPTY) final String credentialNickname,
+        @RequestParam(value = "requireResidentKey", required = false) final boolean requireResidentKey,
+        @RequestParam(value = "sessionToken", required = false, defaultValue = StringUtils.EMPTY) final String sessionTokenBase64,
         final Principal authenticatedPrincipal,
         final HttpServletRequest request,
         final HttpServletResponse response)
         throws Exception {
-        
+
         val result = server.startRegistration(
             request,
             authenticatedPrincipal.getName(),
@@ -153,8 +149,7 @@ public class WebAuthnController extends BaseWebAuthnController {
     @Operation(summary = "Finish registration")
     public ResponseEntity<Object> finishRegistration(
         final HttpServletRequest request,
-        @RequestBody
-        final String responseJson) throws Exception {
+        @RequestBody final String responseJson) throws Exception {
         val result = server.finishRegistration(request, responseJson);
         return finishResponse(result, responseJson);
     }
@@ -189,9 +184,14 @@ public class WebAuthnController extends BaseWebAuthnController {
     @Operation(summary = "Finish authentication")
     public ResponseEntity<Object> finishAuthentication(
         final HttpServletRequest request,
-        @RequestBody
-        final String responseJson) throws Exception {
+        @RequestBody final String responseJson) throws Exception {
         val result = server.finishAuthentication(request, responseJson);
+        if (result.isRight()) {
+            val sessionToken = result.right().orElseThrow().getSessionToken();
+            val session = server.getSessionManager().getSession(request, sessionToken)
+                .orElseThrow(() -> new IllegalStateException("Session not found for the given session token"));
+            LOGGER.debug("Found valid session token [{}] to finish off authentication", session.getBase64());
+        }
         return finishResponse(result, responseJson);
     }
 

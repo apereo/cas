@@ -129,6 +129,7 @@ class WebAuthnQRCodeControllerMvcTests {
             .getModelAndView();
         assertTrue((Boolean) mv.getModel().get("success"));
         assertNotNull(mv.getModel().get("principal"));
+        assertNotNull(mv.getModel().get("_csrf"));
 
         mvc.perform(get(BASE_ENDPOINT + "/{ticket}/status", ticket.getId()).session(session)
             ).andExpect(status().isOk());

@@ -4,6 +4,10 @@
     "--cas.server.name=https://localhost:8443",
     "--cas.server.prefix=${cas.server.name}/cas",
 
+    "--cas.monitor.endpoints.endpoint.defaults.access=ANONYMOUS",
+    "--management.endpoints.web.exposure.include=*",
+    "--management.endpoints.access.default=UNRESTRICTED",
+
     "--cas.authn.mfa.web-authn.core.allow-untrusted-attestation=true",
     "--cas.authn.mfa.web-authn.core.qr-code-authentication-enabled=true",
     "--cas.authn.mfa.web-authn.core.allowed-origins=https://localhost:8443",

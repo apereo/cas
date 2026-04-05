@@ -64,11 +64,6 @@ public class WebAuthnAuthenticationHandler extends AbstractPreAndPostProcessingA
         if (credentials.isEmpty()) {
             throw new AccountNotFoundException("Unable to locate registration record for " + uid);
         }
-        val token = WebAuthnCredential.from(webAuthnCredential);
-        val request = WebUtils.getHttpServletRequestFromExternalWebflowContext();
-        if (sessionManager.getSession(request, token).isEmpty()) {
-            throw new FailedLoginException("Unable to validate session token " + webAuthnCredential);
-        }
         return createHandlerResult(webAuthnCredential, this.principalFactory.createPrincipal(uid));
     }
 }

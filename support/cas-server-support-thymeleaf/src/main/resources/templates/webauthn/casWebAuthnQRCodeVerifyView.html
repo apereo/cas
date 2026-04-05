@@ -9,6 +9,8 @@
     <script type="text/javascript" th:src="@{#{webjars.sweet-alert.js}}"></script>
     <link rel="stylesheet" type="text/css" th:href="@{#{webjars.sweet-alert.css}}" />
     <link rel="stylesheet" type="text/css" th:href="@{#{webjars.animate.css}}" />
+    <meta name="_csrf" th:if="${_csrf}" th:content="${_csrf.token}"/>
+    <meta name="_csrf_header" th:if="${_csrf}" th:content="${_csrf.headerName}"/>
 </head>
 
 <body>

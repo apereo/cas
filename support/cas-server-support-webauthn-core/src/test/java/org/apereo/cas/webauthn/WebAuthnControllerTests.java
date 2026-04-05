@@ -4,6 +4,7 @@ import module java.base;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.util.RandomUtils;
 import org.apereo.cas.webauthn.web.WebAuthnController;
+import com.yubico.core.SessionManager;
 import com.yubico.core.WebAuthnServer;
 import com.yubico.data.AssertionRequestWrapper;
 import com.yubico.data.AssertionResponse;
@@ -76,9 +77,11 @@ class WebAuthnControllerTests {
 
     @Test
     void verifyFinishAuthentication() throws Throwable {
+        val sessionManager = mock(SessionManager.class);
         val authn = RegisteredServiceTestUtils.getAuthentication();
 
         val server = mock(WebAuthnServer.class);
+        when(server.getSessionManager()).thenReturn(sessionManager);
         val controller = new WebAuthnController(server);
         val request = new MockHttpServletRequest();
 
@@ -125,10 +128,13 @@ class WebAuthnControllerTests {
         val response = new AssertionResponse(
             ByteArray.fromBase64Url(RandomUtils.randomAlphabetic(8)),
             publicKeyCredential);
+        var sessionToken = ByteArray.fromBase64Url(RandomUtils.randomAlphabetic(8));
         val authnResult = new WebAuthnServer.SuccessfulAuthenticationResult(assertion,
             response, List.of(registration),
-            "casuser", ByteArray.fromBase64Url(RandomUtils.randomAlphabetic(8)));
+            "casuser",
+            sessionToken);
 
+        when(sessionManager.getSession(any(), any())).thenReturn(Optional.of(sessionToken));
         when(server.finishAuthentication(any(), any())).thenReturn(Either.right(authnResult));
         result = controller.finishAuthentication(request, "casuser");
         assertEquals(HttpStatus.OK, result.getStatusCode());
