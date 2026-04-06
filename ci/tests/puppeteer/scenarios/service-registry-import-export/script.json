@@ -12,6 +12,9 @@
 
     "--management.endpoints.web.exposure.include=*",
     "--management.endpoint.health.show-details=always",
-    "--management.endpoints.access.default=UNRESTRICTED"
+    "--management.endpoints.access.default=UNRESTRICTED",
+    "--cas.server.name=https://localhost:8443",
+    "--cas.server.prefix=${cas.server.name}/cas"
+
   ]
 }

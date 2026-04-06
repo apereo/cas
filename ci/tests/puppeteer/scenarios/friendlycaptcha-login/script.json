@@ -2,6 +2,9 @@
   "dependencies": "captcha",
 
   "properties": [
+    "--cas.server.name=https://localhost:8443",
+    "--cas.server.prefix=${cas.server.name}/cas",
+
     "--cas.google-recaptcha.enabled=true",
     "--cas.google-recaptcha.verify-url=https://api.friendlycaptcha.com/api/v1/siteverify",
     "--cas.google-recaptcha.site-key=FCMHM02BOGDH75US",

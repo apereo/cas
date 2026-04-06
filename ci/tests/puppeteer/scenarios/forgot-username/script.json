@@ -5,6 +5,9 @@
   },
 
   "properties": [
+    "--cas.server.name=https://localhost:8443",
+    "--cas.server.prefix=${cas.server.name}/cas",
+
     "--cas.authn.pm.core.enabled=true",
 
     "--spring.mail.host=localhost",

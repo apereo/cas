@@ -5,6 +5,9 @@
   },
   "initScript": "${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/init.sh",
   "properties": [
+    "--cas.server.name=https://localhost:8443",
+    "--cas.server.prefix=${cas.server.name}/cas",
+
     "--logging.level.org.apereo.cas=warn",
     "--logging.level.org.springframework.kafka=info",
     "--logging.level.org.apache.kafka=warn",

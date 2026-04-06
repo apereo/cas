@@ -13,5 +13,9 @@
   },
   "exitScript": "${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/exit.sh",
   "buildScript": "${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/include.gradle",
-  "readyScript": "${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/ready.sh"
+  "readyScript": "${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/ready.sh",
+  "properties": [
+    "--cas.server.name=https://localhost:8443",
+    "--cas.server.prefix=${cas.server.name}/cas"
+  ]
 }

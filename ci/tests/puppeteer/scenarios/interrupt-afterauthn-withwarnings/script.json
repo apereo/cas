@@ -2,6 +2,8 @@
   "dependencies": "generic,interrupt-webflow",
 
   "properties": [
+    "--cas.server.name=https://localhost:8443",
+    "--cas.server.prefix=${cas.server.name}/cas",
 
     "--cas.interrupt.json.location=file:${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/interrupt.json",
     "--cas.interrupt.core.trigger-mode=AFTER_AUTHENTICATION",

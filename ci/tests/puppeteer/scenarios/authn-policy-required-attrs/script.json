@@ -4,6 +4,9 @@
     "docker": "true"
   },
   "properties": [
+    "--cas.server.name=https://localhost:8443",
+    "--cas.server.prefix=${cas.server.name}/cas",
+
     "--cas.authn.policy.required-attributes.enabled=true",
     "--cas.authn.policy.required-attributes.name=MyPolicy",
     "--cas.authn.policy.required-attributes.attributes.weblogin=true",

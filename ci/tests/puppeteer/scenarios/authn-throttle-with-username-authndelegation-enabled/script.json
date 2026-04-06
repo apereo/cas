@@ -2,6 +2,9 @@
   "dependencies": "throttle,pac4j-webflow",
 
   "properties": [
+    "--cas.server.name=https://localhost:8443",
+    "--cas.server.prefix=${cas.server.name}/cas",
+
     "--cas.authn.throttle.core.username-parameter=username",
     "--cas.authn.throttle.failure.threshold=1",
     "--cas.authn.throttle.failure.range-seconds=10",

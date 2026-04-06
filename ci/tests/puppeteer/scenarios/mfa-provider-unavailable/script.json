@@ -2,6 +2,9 @@
   "dependencies": "yubikey",
 
   "properties": [
+    "--cas.server.name=https://localhost:8443",
+    "--cas.server.prefix=${cas.server.name}/cas",
+
     "--cas.service-registry.core.init-from-json=true",
     "--cas.authn.mfa.triggers.global.global-provider-id=mfa-yubikey",
     "--cas.authn.mfa.yubikey.client-id=18420",

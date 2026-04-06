@@ -4,6 +4,9 @@
     "docker": "true"
   },
   "properties": [
+    "--cas.server.name=https://localhost:8443",
+    "--cas.server.prefix=${cas.server.name}/cas",
+
     "--cas.server.tomcat.remote-user-valve.remote-user-header=REMOTE_USER",
     "--cas.server.tomcat.remote-user-valve.allowed-ip-address-regex=.+"
   ],

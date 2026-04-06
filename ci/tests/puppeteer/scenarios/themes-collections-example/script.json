@@ -2,6 +2,8 @@
   "dependencies": "themes-collection",
 
   "properties": [
-    "--cas.theme.default-theme-name=example"
+    "--cas.theme.default-theme-name=example",
+    "--cas.server.name=https://localhost:8443",
+    "--cas.server.prefix=${cas.server.name}/cas"
   ]
 }

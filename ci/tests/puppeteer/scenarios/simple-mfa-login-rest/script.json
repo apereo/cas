@@ -11,6 +11,9 @@
     "--spring.mail.host=localhost",
     "--spring.mail.port=25000",
 
+    "--cas.server.name=https://localhost:8443",
+    "--cas.server.prefix=${cas.server.name}/cas",
+
     "--cas.authn.mfa.simple.trusted-device-enabled=true",
 
     "--cas.authn.mfa.simple.token.rest.url=http://localhost:5432",

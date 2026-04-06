@@ -2,6 +2,9 @@
   "dependencies": "themes-collection",
 
   "properties": [
+    "--cas.server.name=https://localhost:8443",
+    "--cas.server.prefix=${cas.server.name}/cas",
+
     "--cas.theme.default-theme-name=twbs"
   ]
 }

@@ -129,12 +129,12 @@ class WebAuthnQRCodeControllerMvcTests {
             .getModelAndView();
         assertTrue((Boolean) mv.getModel().get("success"));
         assertNotNull(mv.getModel().get("principal"));
-        assertNotNull(mv.getModel().get("_csrf"));
+     
 
-        mvc.perform(get(BASE_ENDPOINT + "/{ticket}/status", ticket.getId()).session(session)
-            ).andExpect(status().isOk());
-        mvc.perform(get(BASE_ENDPOINT + "/{ticket}/status", UUID.randomUUID().toString()).session(session)
-            ).andExpect(status().isBadRequest());
+        mvc.perform(get(BASE_ENDPOINT + "/{ticket}/status", ticket.getId()).session(session))
+            .andExpect(status().isOk());
+        mvc.perform(get(BASE_ENDPOINT + "/{ticket}/status", UUID.randomUUID().toString()).session(session))
+            .andExpect(status().isBadRequest());
     }
 
     @Test
@@ -203,6 +203,7 @@ class WebAuthnQRCodeControllerMvcTests {
         assertNotNull(mv.getModel());
         assertNotNull(mv.getModel().get("QRCodeTicket"));
         assertNotNull(mv.getModel().get("principal"));
+        assertNotNull(mv.getModel().get("_csrf"));
         assertTrue((Boolean) mv.getModel().get("QRCodeAuthentication"));
     }
 
