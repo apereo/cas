@@ -20,7 +20,7 @@ Support is enabled by including the following dependency in the WAR overlay:
 
 ## Federation configuration
 
-The federation nature of a delegated OIDC client must be explicitely enabled via CAS configuration. 
+The federation nature of a delegated OIDC client must be explicitly enabled via CAS configuration. 
 
 Federation support translates into two aspects:
 
