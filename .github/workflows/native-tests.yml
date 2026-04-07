@@ -118,7 +118,7 @@ jobs:
         if: ${{ env.NATIVE_BUILD_ENABLED == 'true' }}
         with:
           distribution: 'graalvm'
-          java-version: ${{ env.JDK_CURRENT }}
+          java-version: 'latest-ea'
           github-token: ${{ secrets.GITHUB_TOKEN }}
           cache: 'gradle'
           set-java-home: 'true'
@@ -174,7 +174,7 @@ jobs:
         if: ${{ env.NATIVE_BUILD_ENABLED == 'true' }}
         with:
           distribution: 'graalvm'
-          java-version: ${{ env.JDK_CURRENT }}
+          java-version: 'latest-ea'
           github-token: ${{ secrets.GITHUB_TOKEN }}
           cache: 'gradle'
           set-java-home: 'true'
@@ -231,7 +231,7 @@ jobs:
         if: ${{ env.NATIVE_BUILD_ENABLED == 'true' }}
         with:
           distribution: 'graalvm'
-          java-version: ${{ env.JDK_CURRENT }}
+          java-version: 'latest-ea'
           github-token: ${{ secrets.GITHUB_TOKEN }}
           cache: 'gradle'
           set-java-home: 'true'
