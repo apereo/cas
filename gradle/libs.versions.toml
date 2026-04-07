@@ -1,6 +1,6 @@
 [versions]
 aceEditor = "1.43.6"
-acmeClient = "5.0.0"
+acmeClient = "5.1.0"
 amazonDax = "2.0.7"
 amazonSdk = "2.42.29"
 azureInsights = "3.7.8"
