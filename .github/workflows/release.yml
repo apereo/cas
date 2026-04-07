@@ -15,6 +15,9 @@ env:
 
 ##########################################################################
 
+permissions:
+  contents: read
+  
 concurrency:
   group: "workflow = ${{ github.workflow }}, ref = ${{ github.event.ref }}"
   cancel-in-progress: true
@@ -52,6 +55,8 @@ jobs:
   release-to-central:
     runs-on: ubuntu-latest
     needs: [ check ]
+    permissions:
+      contents: write
     if: needs.check.outputs.is_snapshot == 'false'
     steps:
       - name: Checkout
@@ -68,14 +73,18 @@ jobs:
       - name: Configure PGP
         run: echo "$PGP_PRIVATE_KEY" | gpg --batch --import
       - name: Release CAS ${{ inputs.releaseVersion }}
+        env:
+          RELEASE_VERSION: ${{ inputs.releaseVersion }}
+          NEXT_VERSION_INPUT: ${{ inputs.nextVersion }}
         run: |
-          RELEASE_VERSION="${{ inputs.releaseVersion }}"
+          set -euo pipefail
+          echo "Release version: $RELEASE_VERSION"
           
-          if [ -z "${{ inputs.nextVersion }}" ]; then
-            casVersion=(`cat ./gradle.properties | grep "version" | cut -d= -f2`)
-            NEXT_VERSION="${casVersion}"
+          if [ -z "${NEXT_VERSION_INPUT:-}" ]; then
+            casVersion=$(grep '^version=' ./gradle.properties | cut -d= -f2)
+            NEXT_VERSION="$casVersion"
           else
-            NEXT_VERSION="${{ inputs.nextVersion }}"
+            NEXT_VERSION="$NEXT_VERSION_INPUT"
           fi
           
           chmod +x ./ci/release.sh
