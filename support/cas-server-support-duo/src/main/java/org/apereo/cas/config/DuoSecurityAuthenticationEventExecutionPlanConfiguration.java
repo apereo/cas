@@ -95,7 +95,7 @@ import org.springframework.webflow.execution.Action;
 @Configuration(value = "DuoSecurityAuthenticationEventExecutionPlanConfiguration", proxyBeanMethods = false)
 class DuoSecurityAuthenticationEventExecutionPlanConfiguration {
 
-    private static final int WEBFLOW_CONFIGURER_ORDER = 0;
+    private static final int WEBFLOW_CONFIGURER_ORDER = 100;
 
     @Configuration(value = "DuoSecurityAuthenticationEventExecutionConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
