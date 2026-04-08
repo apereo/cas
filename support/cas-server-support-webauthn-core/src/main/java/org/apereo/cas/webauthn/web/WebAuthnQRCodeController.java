@@ -118,10 +118,6 @@ public class WebAuthnQRCodeController extends BaseWebAuthnController {
             }
             Assert.notNull(webAuthnCredential, "WebAuthn credential not found in the ticket");
             val principal = transientTicket.getProperty(Principal.class.getName(), Principal.class);
-<<<<<<< HEAD
-=======
-
->>>>>>> a6b12664271b (Fix the WebAuthn QR authn)
             ticketRegistry.deleteTicket(ticketId);
             return ResponseEntity.ok(Map.of("principal", principal, "sessionToken", webAuthnCredential.getToken()));
         } catch (final Exception e) {
