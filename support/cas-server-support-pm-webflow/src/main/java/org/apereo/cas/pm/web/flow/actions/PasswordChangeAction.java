@@ -50,7 +50,10 @@ import org.springframework.webflow.execution.RequestContext;
 @Getter
 public class PasswordChangeAction extends BaseCasWebflowAction {
 
-    private static final String PASSWORD_VALIDATION_FAILURE_CODE = "pm.validationFailure";
+    /**
+     * The password validation failure code.
+     */
+    public static final String PASSWORD_VALIDATION_FAILURE_CODE = "pm.validationFailure";
 
     private static final String DEFAULT_MESSAGE = "Could not update the account password";
 
@@ -79,7 +82,8 @@ public class PasswordChangeAction extends BaseCasWebflowAction {
         val bean = getPasswordChangeRequest(requestContext);
 
         try {
-            if (CasWebflowConfigurer.FLOW_ID_LOGIN.equals(WebUtils.getActiveFlow(requestContext))) {
+            if (CasWebflowConfigurer.FLOW_ID_LOGIN.equals(WebUtils.getActiveFlow(requestContext))
+                && casProperties.getAuthn().getPm().getChange().isCurrentPasswordRequired()) {
                 LOGGER.debug("Attempting to validate current password for username [{}]", bean.getUsername());
                 val credential = WebUtils.getCredential(requestContext, UsernamePasswordCredential.class);
                 if (bean.getCurrentPassword() == null || bean.getCurrentPassword().length == 0 || !Arrays.equals(bean.getCurrentPassword(), credential.getPassword())) {

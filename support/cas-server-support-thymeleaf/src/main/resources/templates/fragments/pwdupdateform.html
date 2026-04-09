@@ -54,7 +54,7 @@
             </div>
 
             <div class="cas-field form-group mdc-input-group my-3"
-                 th:if="${activeFlowId} == 'login'">
+                 th:if="${activeFlowId} == 'login' and ${currentPasswordRequiredForChange}">
                 <div class="d-flex caps-check">
                     <label for="currentPassword" class="mdc-text-field mdc-text-field--outlined mdc-text-field--with-trailing-icon control-label">
                         <input class="mdc-text-field__input form-control pwd"

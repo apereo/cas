@@ -75,6 +75,12 @@ public class PasswordManagementProperties implements CasFeatureModule, Serializa
     private ResetPasswordManagementProperties reset = new ResetPasswordManagementProperties();
 
     /**
+     * Settings especially related to changing password.
+     */
+    @NestedConfigurationProperty
+    private ChangePasswordManagementProperties change = new ChangePasswordManagementProperties();
+
+    /**
      * Settings related to fetching usernames.
      */
     @NestedConfigurationProperty

@@ -822,6 +822,16 @@ public class WebUtils {
     }
 
     /**
+     * Put whether the current password is required for change password in the flow scope.
+     *
+     * @param context the context
+     * @param value   the value
+     */
+    public static void putCurrentPasswordRequiredForChange(final RequestContext context, final Boolean value) {
+        context.getFlowScope().put("currentPasswordRequiredForChange", value);
+    }
+
+    /**
      * Put forgot username enabled into flow scope.
      *
      * @param context the context

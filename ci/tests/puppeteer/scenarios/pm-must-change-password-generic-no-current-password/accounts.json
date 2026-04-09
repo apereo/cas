@@ -1,0 +1,8 @@
+{
+  "@class" : "java.util.LinkedHashMap",
+  "mustchangepswd" : {
+    "@class" : "org.apereo.cas.adaptors.generic.CasUserAccount",
+    "password" : "mustchangepswd",
+    "status" : "MUST_CHANGE_PASSWORD"
+  }
+}

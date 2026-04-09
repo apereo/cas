@@ -25,6 +25,8 @@ of existing single sign-on sessions when the user who already has logged in want
 
 {% include_cached casproperties.html properties="cas.authn.pm.reset" %}
 
+{% include_cached casproperties.html properties="cas.authn.pm.change" %}
+
 To learn more about available notification options, please [see this guide](../notifications/SMS-Messaging-Configuration.html)
 or [this guide](../notifications/Sending-Email-Configuration.html). 
 

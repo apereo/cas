@@ -29,17 +29,29 @@ import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.test.CasTestExtension;
 import org.apereo.cas.ticket.TicketFactory;
 import org.apereo.cas.ticket.registry.TicketRegistry;
+import org.apereo.cas.util.MockRequestContext;
 import org.apereo.cas.util.spring.boot.SpringBootTestAutoConfigurations;
 import org.apereo.cas.web.flow.CasWebflowConstants;
+import org.apereo.cas.web.flow.resolver.CurrentEventViewTargetStateResolver;
+import lombok.val;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.ArgumentCaptor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.binding.message.DefaultMessageResolver;
 import org.springframework.boot.SpringBootConfiguration;
 import org.springframework.boot.autoconfigure.ImportAutoConfiguration;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.ConfigurableApplicationContext;
+import org.springframework.webflow.core.collection.LocalAttributeMap;
+import org.springframework.webflow.engine.Transition;
 import org.springframework.webflow.execution.Action;
+import org.springframework.webflow.execution.Event;
+import org.springframework.webflow.execution.RequestContext;
+
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.*;
 
 /**
  * This is {@link BasePasswordManagementActionTests}.
@@ -115,7 +127,29 @@ public abstract class BasePasswordManagementActionTests {
     @Autowired
     @Qualifier(ServicesManager.BEAN_NAME)
     protected ServicesManager servicesManager;
-    
+
+    @Autowired
+    @Qualifier(CasWebflowConstants.ACTION_ID_PASSWORD_CHANGE)
+    protected Action passwordChangeAction;
+
+    protected MockRequestContext createFailingRequestContext() throws Exception {
+        val context = MockRequestContext.create(applicationContext);
+        val transition = new Transition(new CurrentEventViewTargetStateResolver(context.getRootFlow()));
+        transition.getAttributes().put(CasWebflowConstants.ATTRIBUTE_CURRENT_EVENT_VIEW, "mockState");
+        context.setCurrentTransition(transition);
+        val currentEvent = new Event(this, CasWebflowConstants.TRANSITION_ID_SUBMIT,
+                new LocalAttributeMap<>(CasWebflowConstants.ATTRIBUTE_CURRENT_EVENT_VIEW, "mockState"));
+        context.setCurrentEvent(currentEvent);
+        return context;
+    }
+
+    protected void assertCode(final RequestContext context, final String code) {
+        val messageCaptor = ArgumentCaptor.forClass(DefaultMessageResolver.class);
+        verify(context.getMessageContext()).addMessage(messageCaptor.capture());
+        val capturedMessage = messageCaptor.getValue();
+        assertEquals(code, capturedMessage.getCodes()[0]);
+    }
+
     @SpringBootTestAutoConfigurations
     @ImportAutoConfiguration({
         CasPasswordManagementAutoConfiguration.class,
