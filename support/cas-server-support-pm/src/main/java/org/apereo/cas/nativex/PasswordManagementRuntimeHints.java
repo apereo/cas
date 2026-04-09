@@ -2,6 +2,7 @@ package org.apereo.cas.nativex;
 
 import module java.base;
 import org.apereo.cas.pm.PasswordManagementExecutionPlan;
+import org.apereo.cas.pm.PasswordManagementService;
 import org.apereo.cas.util.nativex.CasRuntimeHintsRegistrar;
 import org.jspecify.annotations.NonNull;
 import org.jspecify.annotations.Nullable;
@@ -17,6 +18,7 @@ public class PasswordManagementRuntimeHints implements CasRuntimeHintsRegistrar 
     @Override
     public void registerHints(final @NonNull RuntimeHints hints, final @Nullable ClassLoader classLoader) {
         registerSpringProxyHints(hints, PasswordManagementExecutionPlan.class);
+        registerProxyHints(hints, PasswordManagementService.class);
     }
 }
 
