@@ -63,4 +63,13 @@ public interface PropertiesAwareTicket extends Ticket {
      */
     boolean containsProperty(String name);
 
+    /**
+     * Gets property as string.
+     *
+     * @param key the key
+     * @return the property as string
+     */
+    default @Nullable String getPropertyAsString(final String key) {
+        return getProperty(key, String.class);
+    }
 }

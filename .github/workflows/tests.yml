@@ -211,10 +211,12 @@ jobs:
           echo $files
           echo "COVERAGE_REPORTS=${files}" >> $GITHUB_ENV
       - name: Upload Coverage to Codacy
-        uses: codacy/codacy-coverage-reporter-action@v1
-        with:
-          project-token: ${{ secrets.CODACY_PROJECT_TOKEN }}
-          coverage-reports: ${{ env.COVERAGE_REPORTS }}
+        env:
+          CODACY_PROJECT_TOKEN: ${{ secrets.CODACY_PROJECT_TOKEN }}
+          CODACY_REPORTER_OPTIONS: --http-timeout 60000 --num-retries 8 --sleep-time 15000
+        run: |
+          bash <(curl -Ls https://coverage.codacy.com/get.sh) report -r "${{ env.COVERAGE_REPORTS }}"
+          bash <(curl -Ls https://coverage.codacy.com/get.sh) final
       - name: Upload to Codecov
         uses: codecov/codecov-action@v6
         if: ${{ env.CODECOV_TOKEN != null }}

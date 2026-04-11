@@ -187,6 +187,17 @@ public interface OidcConstants {
      * Oidc VC credential url path segment.
      */
     String VC_CREDENTIAL_URL = "oidcVcCredential";
+
+    /**
+     * Oidc VC credential offer url path segment.
+     */
+    String VC_CREDENTIAL_OFFER_URL = "oidcVcCredentialOffer";
+
+    /**
+     * Oidc VC credential offer transactions url path segment.
+     */
+    String VC_CREDENTIAL_OFFER_TRANSACTIONS_URL = "oidcVcCredentialOfferTransactions";
+
     /**
      * Oidc VC nonce url path segment.
      */
