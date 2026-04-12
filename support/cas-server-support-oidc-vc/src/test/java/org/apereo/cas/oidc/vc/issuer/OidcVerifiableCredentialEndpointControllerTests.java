@@ -4,6 +4,7 @@ import module java.base;
 import org.apereo.cas.config.CasOidcVerifiableCredentialsAutoConfiguration;
 import org.apereo.cas.oidc.AbstractOidcTests;
 import org.apereo.cas.oidc.OidcConstants;
+import org.apereo.cas.oidc.vc.issuer.metadata.CredentialConfigurationFormats;
 import org.apereo.cas.oidc.vc.issuer.metadata.OidcCredentialIssuerMetadataService;
 import org.apereo.cas.oidc.vc.issuer.nonce.OidcVerifiableCredentialNonceService;
 import org.apereo.cas.oidc.vc.issuer.proof.OidcVerifiableCredentialProofValidator;
@@ -85,7 +86,16 @@ class OidcVerifiableCredentialEndpointControllerTests {
         "cas.authn.oidc.vc.issuer.credential-configurations.strict.claims.national_id.mandatory=true",
         "cas.authn.oidc.vc.issuer.credential-configurations.strict.claims.national_id.value-type=string",
         "cas.authn.oidc.vc.issuer.credential-configurations.strict.claims.tax_number.mandatory=true",
-        "cas.authn.oidc.vc.issuer.credential-configurations.strict.claims.tax_number.value-type=string"
+        "cas.authn.oidc.vc.issuer.credential-configurations.strict.claims.tax_number.value-type=string",
+
+        "cas.authn.oidc.vc.issuer.credential-configurations.employee.format=jwt_vc_json",
+        "cas.authn.oidc.vc.issuer.credential-configurations.employee.scope=EmployeeCredential",
+        "cas.authn.oidc.vc.issuer.credential-configurations.employee.claims.given_name.mandatory=true",
+        "cas.authn.oidc.vc.issuer.credential-configurations.employee.claims.given_name.value-type=string",
+        "cas.authn.oidc.vc.issuer.credential-configurations.employee.claims.family_name.mandatory=true",
+        "cas.authn.oidc.vc.issuer.credential-configurations.employee.claims.family_name.value-type=string",
+        "cas.authn.oidc.vc.issuer.credential-configurations.employee.claims.email.mandatory=false",
+        "cas.authn.oidc.vc.issuer.credential-configurations.employee.claims.email.value-type=string"
     })
     abstract static class BaseTests extends AbstractOidcTests {
         protected static final ObjectMapper MAPPER = JacksonObjectMapperFactory.builder()
@@ -207,7 +217,7 @@ class OidcVerifiableCredentialEndpointControllerTests {
                     .header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken.getId())
                     .content(MAPPER.writeValueAsString(request)))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.format").value("vc+sd-jwt"))
+                .andExpect(jsonPath("$.format").value(CredentialConfigurationFormats.VC_SD_JWT.getFormat()))
                 .andExpect(jsonPath("$.credential").exists())
                 .andReturn()
                 .getResponse()
@@ -233,7 +243,7 @@ class OidcVerifiableCredentialEndpointControllerTests {
                     .param(OAuth20Constants.ACCESS_TOKEN, accessToken.getId())
                     .content(MAPPER.writeValueAsString(request)))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.format").value("vc+sd-jwt"))
+                .andExpect(jsonPath("$.format").value(CredentialConfigurationFormats.VC_SD_JWT.getFormat()))
                 .andExpect(jsonPath("$.credential").exists());
         }
 
@@ -255,7 +265,7 @@ class OidcVerifiableCredentialEndpointControllerTests {
                     .param(OAuth20Constants.TOKEN, accessToken.getId())
                     .content(MAPPER.writeValueAsString(request)))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.format").value("vc+sd-jwt"))
+                .andExpect(jsonPath("$.format").value(CredentialConfigurationFormats.VC_SD_JWT.getFormat()))
                 .andExpect(jsonPath("$.credential").exists());
         }
 
@@ -297,7 +307,7 @@ class OidcVerifiableCredentialEndpointControllerTests {
                     .header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken.getId())
                     .content(MAPPER.writeValueAsString(request)))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.format").value("vc+sd-jwt"))
+                .andExpect(jsonPath("$.format").value(CredentialConfigurationFormats.VC_SD_JWT.getFormat()))
                 .andExpect(jsonPath("$.credential").exists());
         }
 
@@ -322,11 +332,39 @@ class OidcVerifiableCredentialEndpointControllerTests {
                     .header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken.getId())
                     .content(MAPPER.writeValueAsString(request)))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.format").value("vc+sd-jwt"))
+                .andExpect(jsonPath("$.format").value(CredentialConfigurationFormats.VC_SD_JWT.getFormat()))
                 .andExpect(jsonPath("$.credential").exists());
         }
     }
 
+    @Nested
+    class CredentialIssuanceJsonTests extends BaseTests {
+        @Test
+        void verifyCredentialIssuanceWithBearerToken() throws Throwable {
+            val clientId = UUID.randomUUID().toString();
+            val registeredService = getOidcRegisteredService(clientId);
+            servicesManager.save(registeredService);
+
+            val accessToken = createOAuth20AccessToken(clientId);
+            val request = new OidcVerifiableCredentialRequest();
+            request.setCredentialConfigurationId("employee");
+            request.setProof(buildProof(buildValidRsaProofJwt()));
+
+            val response = mockMvc.perform(post(CREDENTIAL_ENDPOINT_URL)
+                    .with(withHttpRequestProcessor())
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken.getId())
+                    .content(MAPPER.writeValueAsString(request)))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.format").value(CredentialConfigurationFormats.JWT_VC_JSON.getFormat()))
+                .andExpect(jsonPath("$.credential").exists())
+                .andReturn()
+                .getResponse()
+                .getContentAsString();
+            assertNotNull(response);
+        }
+    }
+    
     @Nested
     class CredentialIssuanceFailureTests extends BaseTests {
         @Test
@@ -1069,7 +1107,7 @@ class OidcVerifiableCredentialEndpointControllerTests {
             assertFalse(metadata.getCredentialConfigurationsSupported().isEmpty());
             assertTrue(metadata.getCredentialConfigurationsSupported().containsKey("myorg"));
             val cfg = metadata.getCredentialConfigurationsSupported().get("myorg");
-            assertEquals("vc+sd-jwt", cfg.getFormat());
+            assertEquals(CredentialConfigurationFormats.VC_SD_JWT.getFormat(), cfg.getFormat());
             assertEquals("UniversityIDCredential", cfg.getScope());
         }
 

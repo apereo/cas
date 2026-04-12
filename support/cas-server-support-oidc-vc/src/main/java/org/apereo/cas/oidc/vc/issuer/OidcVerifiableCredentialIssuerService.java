@@ -16,6 +16,7 @@ public interface OidcVerifiableCredentialIssuerService {
      *
      * @param context the context
      * @return the verifiable credential response
+     * @throws Throwable the throwable
      */
-    OidcVerifiableCredentialResponse issue(OidcVerifiableCredentialValidationContext context);
+    OidcVerifiableCredentialResponse issue(OidcVerifiableCredentialValidationContext context) throws Throwable;
 }

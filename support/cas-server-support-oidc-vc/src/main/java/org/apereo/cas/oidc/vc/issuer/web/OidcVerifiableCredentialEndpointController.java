@@ -50,9 +50,11 @@ public class OidcVerifiableCredentialEndpointController extends BaseOAuth20Contr
     /**
      * Handle response entity.
      *
-     * @param request     the request
-     * @param httpRequest the http request
+     * @param request      the request
+     * @param httpRequest  the http request
+     * @param httpResponse the http response
      * @return the response entity
+     * @throws Throwable the throwable
      */
     @PostMapping(value = {
         '/' + OidcConstants.BASE_OIDC_URL + '/' + OidcConstants.VC_CREDENTIAL_URL,
@@ -63,7 +65,7 @@ public class OidcVerifiableCredentialEndpointController extends BaseOAuth20Contr
     public ResponseEntity handle(
         @RequestBody final OidcVerifiableCredentialRequest request,
         final HttpServletRequest httpRequest,
-        final HttpServletResponse httpResponse) {
+        final HttpServletResponse httpResponse) throws Throwable {
 
         val webContext = new JEEContext(httpRequest, httpResponse);
         if (!getConfigurationContext().getIssuerService().validateIssuer(webContext, List.of(OidcConstants.VC_CREDENTIAL_URL))) {
@@ -89,7 +91,7 @@ public class OidcVerifiableCredentialEndpointController extends BaseOAuth20Contr
         return accessToken != null && !accessToken.isExpired()
             && accessToken.getGrantType() == OAuth20GrantTypes.PRE_AUTHORIZED_CODE;
     }
-    
+
     /**
      * Handle errors.
      *
