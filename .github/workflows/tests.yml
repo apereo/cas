@@ -215,7 +215,13 @@ jobs:
           CODACY_PROJECT_TOKEN: ${{ secrets.CODACY_PROJECT_TOKEN }}
           CODACY_REPORTER_OPTIONS: --http-timeout 60000 --num-retries 8 --sleep-time 15000
         run: |
-          bash <(curl -Ls https://coverage.codacy.com/get.sh) report -r "${{ env.COVERAGE_REPORTS }}"
+          IFS=',' read -r -a reports <<< "${{ env.COVERAGE_REPORTS }}"
+          
+          for report in "${reports[@]}"; do
+            echo "Uploading coverage report: $report"
+            bash <(curl -Ls https://coverage.codacy.com/get.sh) report -r "$report" --partial
+          done
+          
           bash <(curl -Ls https://coverage.codacy.com/get.sh) final
       - name: Upload to Codecov
         uses: codecov/codecov-action@v6
