@@ -23,7 +23,8 @@ public class OidcVerifiableCredentialAccessTokenResponseCustomizer implements OA
                                          final Map<String, Object> model) {
         val nonce = oidcVerifiableCredentialNonceService.create();
         model.put(OidcConstants.C_NONCE, nonce.value());
-        model.put(OidcConstants.C_NONCE_EXPIRES_AT, nonce.expiresAt());
+        model.put(OidcConstants.C_NONCE_EXPIRES_AT, nonce.expiresAt().truncatedTo(ChronoUnit.SECONDS));
+        model.remove(OidcConstants.ID_TOKEN);
         return model;
     }
 }

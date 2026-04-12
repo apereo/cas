@@ -54,8 +54,8 @@ public class OidcVerifiableCredentialOfferEndpointController extends BaseOAuth20
      */
     @GetMapping(value = {
         '/' + OidcConstants.BASE_OIDC_URL + '/' + OidcConstants.VC_CREDENTIAL_OFFER_URL + "/{transactionId}",
-        "/**/" + OidcConstants.VC_CREDENTIAL_OFFER_URL + "/{transactionId}"
-    }, consumes = MediaType.APPLICATION_JSON_VALUE)
+        "/**/" + OidcConstants.VC_CREDENTIAL_OFFER_URL + "/{transactionId}"},
+        produces = MediaType.APPLICATION_JSON_VALUE)
     @Operation(summary = "Handle OIDC credential offer request",
         description = "Handles requests for OIDC credential offer issuance",
         parameters = @Parameter(name = "transactionId", in = ParameterIn.PATH, description = "Transaction ID"))
@@ -107,7 +107,6 @@ public class OidcVerifiableCredentialOfferEndpointController extends BaseOAuth20
                 .body(Map.of("error", "Unauthorized credential configuration id requested"));
         }
         val clientId = profile.getAttribute(OAuth20Constants.CLIENT_ID).toString();
-        
         val offer = credentialOfferService.create(clientId, request.principal(), request.credentialConfigurationIds());
         val txCode = offer.getGrants().getPreAuthorizedCodeGrant().getTxCode();
         val offerUri = getConfigurationContext().getCasProperties().getServer().getPrefix()
