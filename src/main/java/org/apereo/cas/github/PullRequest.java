@@ -196,6 +196,10 @@ public class PullRequest {
         return "dirty".equalsIgnoreCase(this.mergeableState);
     }
 
+    public boolean isAbandoned() {
+        return this.title.endsWith("- abandoned");
+    }
+
     public boolean isDraft() {
         return "draft".equalsIgnoreCase(this.mergeableState);
     }

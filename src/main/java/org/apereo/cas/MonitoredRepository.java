@@ -211,7 +211,6 @@ public class MonitoredRepository {
 
     public boolean autoMergePullRequest(final PullRequest pr) {
         if (pr.isMergeable() && pr.isBot()) {
-
             if (pr.isBehind()) {
                 var mergedPr = mergePullRequestWithBase(pr);
                 var files = getPullRequestFiles(mergedPr);
@@ -310,6 +309,10 @@ public class MonitoredRepository {
                 log.info("Merging admin-approved pull request {}", pr);
                 return approveAndMergePullRequest(pr);
             }
+        }
+
+        if (pr.isBot() && !pr.isMergeable() && pr.isDirty() && pr.isAbandoned()) {
+            closePullRequestWithInvalidChangeset(pr);
         }
         return false;
     }
