@@ -3,11 +3,20 @@ package org.apereo.cas.config;
 import module java.base;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.oidc.OidcConfigurationContext;
+import org.apereo.cas.oidc.vc.issuer.nonce.OidcVerifiableCredentialNonceService;
 import org.apereo.cas.oidc.vc.offer.OidcVerifiableCredentialDefaultOfferService;
 import org.apereo.cas.oidc.vc.offer.OidcVerifiableCredentialDefaultTransactionService;
 import org.apereo.cas.oidc.vc.offer.OidcVerifiableCredentialOfferService;
 import org.apereo.cas.oidc.vc.offer.OidcVerifiableCredentialTransactionService;
 import org.apereo.cas.oidc.vc.offer.web.OidcVerifiableCredentialOfferEndpointController;
+import org.apereo.cas.oidc.vc.token.AccessTokenPreAuthorizedCodeGrantRequestExtractor;
+import org.apereo.cas.oidc.vc.token.OidcVerifiableCredentialAccessTokenResponseCustomizer;
+import org.apereo.cas.oidc.vc.token.OidcVerifiableCredentialsPreAuthorizationCodeGrantRequestValidator;
+import org.apereo.cas.support.oauth.validator.token.OAuth20TokenRequestValidator;
+import org.apereo.cas.support.oauth.web.endpoints.OAuth20ConfigurationContext;
+import org.apereo.cas.support.oauth.web.response.accesstoken.ext.AccessTokenGrantRequestExtractor;
+import org.apereo.cas.support.oauth.web.response.accesstoken.response.OAuth20AccessTokenResponseCustomizer;
+import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -35,7 +44,6 @@ class OidcVerifiableCredentialsOfferConfiguration {
         return new OidcVerifiableCredentialDefaultTransactionService(oidcConfigurationContext);
     }
 
-
     @Bean
     @RefreshScope
     @ConditionalOnMissingBean(name = OidcVerifiableCredentialOfferService.BEAN_NAME)
@@ -58,5 +66,37 @@ class OidcVerifiableCredentialsOfferConfiguration {
         final OidcConfigurationContext oidcConfigurationContext) {
         return new OidcVerifiableCredentialOfferEndpointController(
             oidcConfigurationContext, oidcVcCredentialOfferService);
+    }
+
+    @Bean
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+    @ConditionalOnMissingBean(name = "oidcVerifiableCredentialsPreAuthorizationCodeGrantRequestValidator")
+    public OAuth20TokenRequestValidator oidcVerifiableCredentialsPreAuthorizationCodeGrantRequestValidator(
+        @Qualifier(OidcVerifiableCredentialTransactionService.BEAN_NAME)
+        final OidcVerifiableCredentialTransactionService oidcVerifiableCredentialTransactionService,
+        @Qualifier(OidcConfigurationContext.BEAN_NAME)
+        final ObjectProvider<OidcConfigurationContext> oidcConfigurationContext) {
+        return new OidcVerifiableCredentialsPreAuthorizationCodeGrantRequestValidator(
+            oidcConfigurationContext, oidcVerifiableCredentialTransactionService);
+    }
+
+    @Bean
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+    @ConditionalOnMissingBean(name = "accessTokenPreAuthorizedCodeGrantRequestExtractor")
+    public AccessTokenGrantRequestExtractor accessTokenPreAuthorizedCodeGrantRequestExtractor(
+        @Qualifier(OidcVerifiableCredentialTransactionService.BEAN_NAME)
+        final OidcVerifiableCredentialTransactionService oidcVerifiableCredentialTransactionService,
+        @Qualifier(OAuth20ConfigurationContext.BEAN_NAME)
+        final ObjectProvider<OAuth20ConfigurationContext> context) {
+        return new AccessTokenPreAuthorizedCodeGrantRequestExtractor(context, oidcVerifiableCredentialTransactionService);
+    }
+
+    @Bean
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+    @ConditionalOnMissingBean(name = "oidcVerifiableCredentialAccessTokenResponseCustomizer")
+    public OAuth20AccessTokenResponseCustomizer oidcVerifiableCredentialAccessTokenResponseCustomizer(
+        @Qualifier(OidcVerifiableCredentialNonceService.BEAN_NAME)
+        final OidcVerifiableCredentialNonceService oidcVerifiableCredentialNonceService) {
+        return new OidcVerifiableCredentialAccessTokenResponseCustomizer(oidcVerifiableCredentialNonceService);
     }
 }

@@ -14,15 +14,16 @@ public interface OidcVerifiableCredentialOfferService {
      * Default bean name.
      */
     String BEAN_NAME = "oidcVerifiableCredentialCredentialOfferService";
-    
+
     /**
      * Create oidc verifiable credential offer.
      *
+     * @param clientId                   the client id
      * @param principalId                the principal id
      * @param credentialConfigurationIds the credential configuration ids
      * @return the oidc verifiable credential offer
      */
-    OidcVerifiableCredentialOffer create(String principalId, List<String> credentialConfigurationIds);
+    OidcVerifiableCredentialOffer create(String clientId, String principalId, List<String> credentialConfigurationIds);
 
     /**
      * Consume oidc verifiable credential offer.

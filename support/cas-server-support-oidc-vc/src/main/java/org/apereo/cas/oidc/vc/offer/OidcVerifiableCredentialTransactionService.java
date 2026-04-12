@@ -15,15 +15,16 @@ public interface OidcVerifiableCredentialTransactionService {
      * Default bean name.
      */
     String BEAN_NAME = "oidcVerifiableCredentialTransactionService";
-    
+
     /**
      * Issue ticket.
      *
+     * @param clientId                   the client id
      * @param principalId                the principal id
      * @param credentialConfigurationIds the credential configuration ids
      * @return the transient session ticket
      */
-    @Nullable Ticket issue(String principalId, List<String> credentialConfigurationIds);
+    @Nullable Ticket issue(String clientId, String principalId, List<String> credentialConfigurationIds);
 
     /**
      * Consume ticket.

@@ -2,6 +2,7 @@ package org.apereo.cas.oidc.vc.offer;
 
 import module java.base;
 import org.apereo.cas.oidc.OidcConfigurationContext;
+import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.ticket.Ticket;
 import org.apereo.cas.ticket.TransientSessionTicket;
 import org.apereo.cas.ticket.TransientSessionTicketFactory;
@@ -24,12 +25,13 @@ public class OidcVerifiableCredentialDefaultTransactionService implements OidcVe
     private final OidcConfigurationContext configurationContext;
 
     @Override
-    public Ticket issue(final String principalId, final List<String> credentialConfigurationIds) {
+    public Ticket issue(final String clientId, final String principalId, final List<String> credentialConfigurationIds) {
         return FunctionUtils.doUnchecked(() -> {
             val transientFactory = (TransientSessionTicketFactory) configurationContext.getTicketFactory().get(TransientSessionTicket.class);
             val properties = new LinkedHashMap<>();
             properties.put("issuerState", UUID.randomUUID().toString());
             properties.put("principalId", principalId);
+            properties.put(OAuth20Constants.CLIENT_ID, clientId);
             properties.put("credentialConfigurationIds", credentialConfigurationIds);
             properties.put("preAuthorizedCode", RandomUtils.randomNumeric(10));
             val ticket = transientFactory.create(properties);

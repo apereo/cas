@@ -6,7 +6,9 @@ import org.apereo.cas.oidc.AbstractOidcTests;
 import org.apereo.cas.oidc.OidcConstants;
 import org.apereo.cas.oidc.vc.offer.OidcVerifiableCredentialTransactionService;
 import org.apereo.cas.support.oauth.OAuth20Constants;
+import org.apereo.cas.support.oauth.OAuth20GrantTypes;
 import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
+import com.jayway.jsonpath.JsonPath;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
@@ -20,6 +22,7 @@ import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.test.context.TestPropertySource;
 import tools.jackson.databind.ObjectMapper;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
@@ -50,8 +53,11 @@ class OidcVerifiableCredentialOfferEndpointControllerTests extends AbstractOidcT
 
     @Test
     void verifyFetchCredentialOffer() throws Exception {
-        val ticket = oidcVerifiableCredentialTransactionService.issue("casuser", List.of("UniversityDegreeCredential"));
-        mockMvc.perform(get(OFFER_URL + '/' + ticket.getId())
+        val registeredService = getOidcRegisteredService(UUID.randomUUID().toString());
+        servicesManager.save(registeredService);
+        
+        val ticket = oidcVerifiableCredentialTransactionService.issue(registeredService.getClientId(), "casuser", List.of("UniversityDegreeCredential"));
+        val responseBody = mockMvc.perform(get(OFFER_URL + '/' + ticket.getId())
                 .contentType(MediaType.APPLICATION_JSON)
                 .with(withHttpRequestProcessor()))
             .andExpect(status().isOk())
@@ -60,7 +66,33 @@ class OidcVerifiableCredentialOfferEndpointControllerTests extends AbstractOidcT
             .andExpect(jsonPath("$.grants").exists())
             .andExpect(jsonPath("$.grants.['urn:ietf:params:oauth:grant-type:pre-authorized_code'].tx_code").value(ticket.getId()))
             .andExpect(jsonPath("$.grants.['urn:ietf:params:oauth:grant-type:pre-authorized_code'].pre-authorized_code").exists())
-            .andExpect(jsonPath("$.grants.['urn:ietf:params:oauth:grant-type:pre-authorized_code'].issuer_state").exists());
+            .andExpect(jsonPath("$.grants.['urn:ietf:params:oauth:grant-type:pre-authorized_code'].issuer_state").exists())
+            .andReturn()
+            .getResponse()
+            .getContentAsString();
+
+        val txCode = JsonPath.read(responseBody, "$.grants.['urn:ietf:params:oauth:grant-type:pre-authorized_code'].tx_code").toString();
+        assertNotNull(txCode);
+        val preAuthorizedCode = JsonPath.read(responseBody, "$.grants.['urn:ietf:params:oauth:grant-type:pre-authorized_code'].pre-authorized_code").toString();
+        assertNotNull(preAuthorizedCode);
+
+
+        mockMvc
+            .perform(post("/cas/" + OidcConstants.BASE_OIDC_URL + '/' + OidcConstants.TOKEN_URL)
+                .secure(true)
+                .with(withHttpRequestProcessor())
+                .param(OAuth20Constants.CLIENT_ID, registeredService.getClientId())
+                .param(OAuth20Constants.CLIENT_SECRET, registeredService.getClientSecret())
+                .queryParam(OAuth20Constants.GRANT_TYPE, OAuth20GrantTypes.PRE_AUTHORIZED_CODE.getType())
+                .queryParam(OidcConstants.PRE_AUTHORIZED_CODE, preAuthorizedCode)
+                .queryParam(OidcConstants.TX_CODE, txCode)
+            )
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$." + OAuth20Constants.ACCESS_TOKEN).exists())
+            .andExpect(jsonPath("$." + OAuth20Constants.TOKEN_TYPE).exists())
+            .andExpect(jsonPath("$." + OAuth20Constants.EXPIRES_IN).exists())
+            .andExpect(jsonPath("$." + OidcConstants.C_NONCE).exists())
+            .andExpect(jsonPath("$." + OidcConstants.C_NONCE_EXPIRES_AT).exists());
     }
 
     @Test

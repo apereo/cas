@@ -34,8 +34,9 @@ class OidcVerifiableCredentialDefaultOfferServiceTests extends AbstractOidcTests
 
     @Test
     void verifyCreateOffer() {
+        val registeredService = getOidcRegisteredService();
         val credentialConfigIds = List.of("UniversityDegreeCredential");
-        val offer = oidcVerifiableCredentialOfferService.create("casuser", credentialConfigIds);
+        val offer = oidcVerifiableCredentialOfferService.create(registeredService.getClientId(), "casuser", credentialConfigIds);
         assertNotNull(offer);
         assertEquals(casProperties.getAuthn().getOidc().getCore().getIssuer(), offer.getCredentialIssuer());
         assertEquals(credentialConfigIds, offer.getCredentialConfigurationIds());
@@ -50,15 +51,17 @@ class OidcVerifiableCredentialDefaultOfferServiceTests extends AbstractOidcTests
 
     @Test
     void verifyCreateOfferWithMultipleCredentialConfigs() {
+        val registeredService = getOidcRegisteredService();
         val credentialConfigIds = List.of("UniversityDegreeCredential", "DriverLicenseCredential");
-        val offer = oidcVerifiableCredentialOfferService.create("casuser", credentialConfigIds);
+        val offer = oidcVerifiableCredentialOfferService.create(registeredService.getClientId(), "casuser", credentialConfigIds);
         assertNotNull(offer);
         assertEquals(credentialConfigIds, offer.getCredentialConfigurationIds());
     }
 
     @Test
     void verifyFetchOffer() {
-        val ticket = oidcVerifiableCredentialTransactionService.issue("casuser", List.of("VerifiableCredential"));
+        val registeredService = getOidcRegisteredService();
+        val ticket = oidcVerifiableCredentialTransactionService.issue(registeredService.getClientId(), "casuser", List.of("VerifiableCredential"));
         assertNotNull(ticket);
         val offer = oidcVerifiableCredentialOfferService.fetch(ticket.getId());
         assertNotNull(offer);

@@ -21,8 +21,8 @@ public class OidcVerifiableCredentialDefaultOfferService implements OidcVerifiab
     private final OidcVerifiableCredentialTransactionService transactionService;
 
     @Override
-    public OidcVerifiableCredentialOffer create(final String principalId, final List<String> credentialConfigurationIds) {
-        val transaction = (TransientSessionTicket) transactionService.issue(principalId, credentialConfigurationIds);
+    public OidcVerifiableCredentialOffer create(final String clientId, final String principalId, final List<String> credentialConfigurationIds) {
+        val transaction = (TransientSessionTicket) transactionService.issue(clientId, principalId, credentialConfigurationIds);
         return buildCredentialOffer(Objects.requireNonNull(transaction));
     }
 

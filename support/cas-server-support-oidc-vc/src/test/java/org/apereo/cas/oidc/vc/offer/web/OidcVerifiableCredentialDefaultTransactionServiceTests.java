@@ -27,9 +27,10 @@ class OidcVerifiableCredentialDefaultTransactionServiceTests extends AbstractOid
     private OidcVerifiableCredentialTransactionService oidcVerifiableCredentialTransactionService;
 
     @Test
-    void verifyIssueOperation(){
+    void verifyIssueOperation() {
+        val registeredService = getOidcRegisteredService();
         val credentialConfigIds = List.of("UniversityDegreeCredential", "DriverLicenseCredential");
-        val ticket = oidcVerifiableCredentialTransactionService.issue("casuser", credentialConfigIds);
+        val ticket = oidcVerifiableCredentialTransactionService.issue(registeredService.getClientId(), "casuser", credentialConfigIds);
         assertNotNull(ticket);
         assertNotNull(ticket.getId());
         assertTrue(ticket.getId().startsWith(TransientSessionTicket.PREFIX));
@@ -43,9 +44,10 @@ class OidcVerifiableCredentialDefaultTransactionServiceTests extends AbstractOid
     }
 
     @Test
-    void verifyIssueWithSingleCredentialConfigId(){
+    void verifyIssueWithSingleCredentialConfigId() {
+        val registeredService = getOidcRegisteredService();
         val credentialConfigIds = List.of("UniversityDegreeCredential");
-        val ticket = oidcVerifiableCredentialTransactionService.issue("casuser", credentialConfigIds);
+        val ticket = oidcVerifiableCredentialTransactionService.issue(registeredService.getClientId(), "casuser", credentialConfigIds);
         assertNotNull(ticket);
         val sessionTicket = (TransientSessionTicket) ticketRegistry.getTicket(ticket.getId());
         assertNotNull(sessionTicket);
@@ -53,8 +55,9 @@ class OidcVerifiableCredentialDefaultTransactionServiceTests extends AbstractOid
     }
 
     @Test
-    void verifyIssueWithEmptyCredentialConfigIds(){
-        val ticket = oidcVerifiableCredentialTransactionService.issue("casuser", List.of());
+    void verifyIssueWithEmptyCredentialConfigIds() {
+        val registeredService = getOidcRegisteredService();
+        val ticket = oidcVerifiableCredentialTransactionService.issue(registeredService.getClientId(), "casuser", List.of());
         assertNotNull(ticket);
         val sessionTicket = (TransientSessionTicket) ticketRegistry.getTicket(ticket.getId());
         assertNotNull(sessionTicket);
@@ -62,8 +65,9 @@ class OidcVerifiableCredentialDefaultTransactionServiceTests extends AbstractOid
     }
 
     @Test
-    void verifyFetchValidTicket(){
-        val ticket = oidcVerifiableCredentialTransactionService.issue("casuser", List.of("VerifiableCredential"));
+    void verifyFetchValidTicket() {
+        val registeredService = getOidcRegisteredService();
+        val ticket = oidcVerifiableCredentialTransactionService.issue(registeredService.getClientId(), "casuser", List.of("VerifiableCredential"));
         assertNotNull(ticket);
         val fetched = oidcVerifiableCredentialTransactionService.fetch(ticket.getId());
         assertNotNull(fetched);
@@ -71,14 +75,15 @@ class OidcVerifiableCredentialDefaultTransactionServiceTests extends AbstractOid
     }
 
     @Test
-    void verifyFetchUnknownTicket(){
+    void verifyFetchUnknownTicket() {
         val fetched = oidcVerifiableCredentialTransactionService.fetch("TST-unknown-ticket-id");
         assertNull(fetched);
     }
 
     @Test
-    void verifyFetchExpiredTicket(){
-        val ticket = oidcVerifiableCredentialTransactionService.issue("casuser", List.of("VerifiableCredential"));
+    void verifyFetchExpiredTicket() {
+        val registeredService = getOidcRegisteredService();
+        val ticket = oidcVerifiableCredentialTransactionService.issue(registeredService.getClientId(), "casuser", List.of("VerifiableCredential"));
         assertNotNull(ticket);
         val sessionTicket = (TransientSessionTicket) ticketRegistry.getTicket(ticket.getId());
         assertNotNull(sessionTicket);

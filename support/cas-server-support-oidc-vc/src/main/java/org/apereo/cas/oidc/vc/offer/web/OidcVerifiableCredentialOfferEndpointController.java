@@ -4,6 +4,7 @@ import module java.base;
 import org.apereo.cas.oidc.OidcConfigurationContext;
 import org.apereo.cas.oidc.OidcConstants;
 import org.apereo.cas.oidc.vc.offer.OidcVerifiableCredentialOfferService;
+import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.support.oauth.util.OAuth20Utils;
 import org.apereo.cas.support.oauth.web.endpoints.BaseOAuth20Controller;
 import org.apereo.cas.util.LoggingUtils;
@@ -105,7 +106,9 @@ public class OidcVerifiableCredentialOfferEndpointController extends BaseOAuth20
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
                 .body(Map.of("error", "Unauthorized credential configuration id requested"));
         }
-        val offer = credentialOfferService.create(request.principal(), request.credentialConfigurationIds());
+        val clientId = profile.getAttribute(OAuth20Constants.CLIENT_ID).toString();
+        
+        val offer = credentialOfferService.create(clientId, request.principal(), request.credentialConfigurationIds());
         val txCode = offer.getGrants().getPreAuthorizedCodeGrant().getTxCode();
         val offerUri = getConfigurationContext().getCasProperties().getServer().getPrefix()
             + '/' + OidcConstants.BASE_OIDC_URL + '/' + OidcConstants.VC_CREDENTIAL_OFFER_URL
