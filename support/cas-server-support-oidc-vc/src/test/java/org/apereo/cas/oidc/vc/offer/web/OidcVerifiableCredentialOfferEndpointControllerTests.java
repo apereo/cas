@@ -12,14 +12,10 @@ import com.jayway.jsonpath.JsonPath;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-import org.pac4j.core.profile.CommonProfile;
-import org.pac4j.core.profile.ProfileManager;
-import org.pac4j.jee.context.JEEContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.ImportAutoConfiguration;
 import org.springframework.http.MediaType;
-import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.test.context.TestPropertySource;
 import tools.jackson.databind.ObjectMapper;
 import static org.junit.jupiter.api.Assertions.*;
@@ -76,7 +72,6 @@ class OidcVerifiableCredentialOfferEndpointControllerTests extends AbstractOidcT
         val preAuthorizedCode = JsonPath.read(responseBody, "$.grants.['urn:ietf:params:oauth:grant-type:pre-authorized_code'].pre-authorized_code").toString();
         assertNotNull(preAuthorizedCode);
 
-
         mockMvc
             .perform(post("/cas/" + OidcConstants.BASE_OIDC_URL + '/' + OidcConstants.TOKEN_URL)
                 .secure(true)
@@ -105,6 +100,9 @@ class OidcVerifiableCredentialOfferEndpointControllerTests extends AbstractOidcT
 
     @Test
     void verifyOfferTransactionIssuance() throws Exception {
+        val registeredService = getOidcRegisteredService(UUID.randomUUID().toString());
+        servicesManager.save(registeredService);
+        
         val requestBody = MAPPER.writeValueAsString(
             Map.of("principal", "casuser",
                 "credentialConfigurationIds", List.of("UniversityDegreeCredential")));
@@ -112,16 +110,9 @@ class OidcVerifiableCredentialOfferEndpointControllerTests extends AbstractOidcT
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(requestBody)
                 .with(withHttpRequestProcessor())
-                .with(request -> {
-                    val response = new MockHttpServletResponse();
-                    val context = new JEEContext(request, response);
-                    val profileManager = new ProfileManager(context, oauthDistributedSessionStore);
-                    val userProfile = new CommonProfile();
-                    userProfile.setId("casuser");
-                    userProfile.addAttribute(OAuth20Constants.CLIENT_ID, getOidcRegisteredService().getClientId());
-                    profileManager.save(true, userProfile, false);
-                    return request;
-                }))
+                .param(OAuth20Constants.CLIENT_ID, registeredService.getClientId())
+                .param(OAuth20Constants.CLIENT_SECRET, registeredService.getClientSecret())
+            )
             .andExpect(status().isOk())
             .andExpect(jsonPath("$.transactionId").exists())
             .andExpect(jsonPath("$.credentialOfferUri").exists());
@@ -129,6 +120,9 @@ class OidcVerifiableCredentialOfferEndpointControllerTests extends AbstractOidcT
 
     @Test
     void verifyOfferTransactionWithUnauthorizedCredentialConfig() throws Exception {
+        val registeredService = getOidcRegisteredService(UUID.randomUUID().toString());
+        servicesManager.save(registeredService);
+        
         val requestBody = MAPPER.writeValueAsString(
             Map.of("principal", "casuser",
                 "credentialConfigurationIds", List.of("NonExistentCredential")));
@@ -136,16 +130,9 @@ class OidcVerifiableCredentialOfferEndpointControllerTests extends AbstractOidcT
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(requestBody)
                 .with(withHttpRequestProcessor())
-                .with(request -> {
-                    val response = new MockHttpServletResponse();
-                    val context = new JEEContext(request, response);
-                    val profileManager = new ProfileManager(context, oauthDistributedSessionStore);
-                    val userProfile = new CommonProfile();
-                    userProfile.setId("casuser");
-                    userProfile.addAttribute(OAuth20Constants.CLIENT_ID, getOidcRegisteredService().getClientId());
-                    profileManager.save(true, userProfile, false);
-                    return request;
-                }))
+                .param(OAuth20Constants.CLIENT_ID, registeredService.getClientId())
+                .param(OAuth20Constants.CLIENT_SECRET, registeredService.getClientSecret())
+            )
             .andExpect(status().isUnauthorized())
             .andExpect(jsonPath("$.error").exists());
     }
@@ -159,14 +146,19 @@ class OidcVerifiableCredentialOfferEndpointControllerTests extends AbstractOidcT
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(requestBody)
                 .with(withHttpRequestProcessor()))
-            .andExpect(status().isBadRequest());
+            .andExpect(status().isUnauthorized());
     }
 
     @Test
     void verifyOfferTransactionWithNoRequestBody() throws Exception {
+        val registeredService = getOidcRegisteredService(UUID.randomUUID().toString());
+        servicesManager.save(registeredService);
         mockMvc.perform(post(TRANSACTIONS_URL)
                 .contentType(MediaType.APPLICATION_JSON)
-                .with(withHttpRequestProcessor()))
+                .with(withHttpRequestProcessor())
+                .param(OAuth20Constants.CLIENT_ID, registeredService.getClientId())
+                .param(OAuth20Constants.CLIENT_SECRET, registeredService.getClientSecret())
+            )
             .andExpect(status().isBadRequest());
     }
 }

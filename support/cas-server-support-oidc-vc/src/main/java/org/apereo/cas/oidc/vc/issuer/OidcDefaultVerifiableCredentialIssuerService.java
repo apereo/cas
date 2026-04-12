@@ -26,7 +26,7 @@ public class OidcDefaultVerifiableCredentialIssuerService implements OidcVerifia
     private final OidcVerifiableCredentialProofValidator credentialProofValidator;
     
     @Override
-    public OidcVerifiableCredentialResponse issue(final CredentialRequestValidationContext context) {
+    public OidcVerifiableCredentialResponse issue(final OidcVerifiableCredentialValidationContext context) {
         return FunctionUtils.doUnchecked(() -> {
             val proof = credentialProofValidator.validate(context.credentialRequest());
             
@@ -56,7 +56,7 @@ public class OidcDefaultVerifiableCredentialIssuerService implements OidcVerifia
     }
 
     protected String signVerifiableCredential(final Map<String, Object> payload,
-                                              final CredentialRequestValidationContext context) throws Throwable {
+                                              final OidcVerifiableCredentialValidationContext context) throws Throwable {
         val jwtClaims = new JwtClaims();
         jwtClaims.setSubject(payload.get("sub").toString());
         jwtClaims.setIssuedAtToNow();
@@ -71,7 +71,7 @@ public class OidcDefaultVerifiableCredentialIssuerService implements OidcVerifia
             .encode(Objects.requireNonNull(registeredService), jwtClaims);
     }
 
-    protected Map<String, Object> produceClaims(final Principal principal, final CredentialRequestValidationContext context) {
+    protected Map<String, Object> produceClaims(final Principal principal, final OidcVerifiableCredentialValidationContext context) {
         val properties = configurationContext.getCasProperties().getAuthn().getOidc().getVc();
         val configurationId = context.credentialRequest().getCredentialConfigurationId();
         val configuration = properties.getIssuer().getCredentialConfigurations().get(configurationId);

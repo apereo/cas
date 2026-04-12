@@ -9,6 +9,8 @@ import org.apereo.cas.oidc.vc.issuer.nonce.OidcVerifiableCredentialNonceService;
 import org.apereo.cas.oidc.vc.issuer.proof.OidcVerifiableCredentialProofValidator;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.support.oauth.OAuth20Constants;
+import org.apereo.cas.support.oauth.OAuth20GrantTypes;
+import org.apereo.cas.ticket.accesstoken.OAuth20AccessToken;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
 import com.nimbusds.jose.JWSAlgorithm;
@@ -37,6 +39,7 @@ import org.springframework.http.MediaType;
 import org.springframework.test.context.TestPropertySource;
 import tools.jackson.databind.ObjectMapper;
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
@@ -165,6 +168,23 @@ class OidcVerifiableCredentialEndpointControllerTests {
             proof.setJwt(jwt);
             return proof;
         }
+
+        protected OAuth20AccessToken createOAuth20AccessToken(final String clientId) throws Throwable {
+            val principal = RegisteredServiceTestUtils.getPrincipal("casuser",
+                CollectionUtils.wrap("given_name", List.of("CAS"),
+                    "family_name", List.of("User"),
+                    "email", List.of("casuser@example.org"),
+                    "student_id", List.of("S12345"),
+                    "active", List.of("true"),
+                    "score", List.of("95.5"),
+                    "roles", List.of("admin", "user"))
+                );
+            val accessToken = getAccessToken(principal, clientId);
+            when(accessToken.getGrantType()).thenReturn(OAuth20GrantTypes.PRE_AUTHORIZED_CODE);
+            ticketRegistry.addTicket(Objects.requireNonNull(accessToken.getTicketGrantingTicket()));
+            ticketRegistry.addTicket(accessToken);
+            return accessToken;
+        }
     }
 
     @Nested
@@ -176,15 +196,7 @@ class OidcVerifiableCredentialEndpointControllerTests {
             val registeredService = getOidcRegisteredService(clientId);
             servicesManager.save(registeredService);
 
-            val principal = RegisteredServiceTestUtils.getPrincipal("casuser",
-                CollectionUtils.wrap("given_name", List.of("CAS"),
-                    "family_name", List.of("User"),
-                    "email", List.of("casuser@example.org"),
-                    "student_id", List.of("S12345")));
-            val accessToken = getAccessToken(principal, clientId);
-            ticketRegistry.addTicket(accessToken.getTicketGrantingTicket());
-            ticketRegistry.addTicket(accessToken);
-
+            val accessToken = createOAuth20AccessToken(clientId);
             val request = new OidcVerifiableCredentialRequest();
             request.setCredentialConfigurationId("myorg");
             request.setProof(buildProof(buildValidRsaProofJwt()));
@@ -209,14 +221,7 @@ class OidcVerifiableCredentialEndpointControllerTests {
             val registeredService = getOidcRegisteredService(clientId);
             servicesManager.save(registeredService);
 
-            val principal = RegisteredServiceTestUtils.getPrincipal("casuser",
-                CollectionUtils.wrap("given_name", List.of("CAS"),
-                    "family_name", List.of("User"),
-                    "email", List.of("casuser@example.org"),
-                    "student_id", List.of("S12345")));
-            val accessToken = getAccessToken(principal, clientId);
-            ticketRegistry.addTicket(accessToken.getTicketGrantingTicket());
-            ticketRegistry.addTicket(accessToken);
+            val accessToken = createOAuth20AccessToken(clientId);
 
             val request = new OidcVerifiableCredentialRequest();
             request.setCredentialConfigurationId("myorg");
@@ -238,14 +243,7 @@ class OidcVerifiableCredentialEndpointControllerTests {
             val registeredService = getOidcRegisteredService(clientId);
             servicesManager.save(registeredService);
 
-            val principal = RegisteredServiceTestUtils.getPrincipal("casuser",
-                CollectionUtils.wrap("given_name", List.of("CAS"),
-                    "family_name", List.of("User"),
-                    "email", List.of("casuser@example.org"),
-                    "student_id", List.of("S12345")));
-            val accessToken = getAccessToken(principal, clientId);
-            ticketRegistry.addTicket(accessToken.getTicketGrantingTicket());
-            ticketRegistry.addTicket(accessToken);
+            val accessToken = createOAuth20AccessToken(clientId);
 
             val request = new OidcVerifiableCredentialRequest();
             request.setCredentialConfigurationId("myorg");
@@ -267,13 +265,7 @@ class OidcVerifiableCredentialEndpointControllerTests {
             val registeredService = getOidcRegisteredService(clientId);
             servicesManager.save(registeredService);
 
-            val principal = RegisteredServiceTestUtils.getPrincipal("casuser",
-                CollectionUtils.wrap("given_name", List.of("CAS"),
-                    "family_name", List.of("User"),
-                    "student_id", List.of("S12345")));
-            val accessToken = getAccessToken(principal, clientId);
-            ticketRegistry.addTicket(accessToken.getTicketGrantingTicket());
-            ticketRegistry.addTicket(accessToken);
+            val accessToken = createOAuth20AccessToken(clientId);
 
             val request = new OidcVerifiableCredentialRequest();
             request.setCredentialConfigurationId("myorg");
@@ -294,18 +286,7 @@ class OidcVerifiableCredentialEndpointControllerTests {
             val registeredService = getOidcRegisteredService(clientId);
             servicesManager.save(registeredService);
 
-            val principal = RegisteredServiceTestUtils.getPrincipal("casuser",
-                CollectionUtils.wrap("given_name", List.of("CAS"),
-                    "family_name", List.of("User"),
-                    "email", List.of("casuser@example.org"),
-                    "student_id", List.of("S12345"),
-                    "active", List.of("true"),
-                    "score", List.of("95.5"),
-                    "roles", List.of("admin", "user")));
-            val accessToken = getAccessToken(principal, clientId);
-            ticketRegistry.addTicket(accessToken.getTicketGrantingTicket());
-            ticketRegistry.addTicket(accessToken);
-
+            val accessToken = createOAuth20AccessToken(clientId);
             val request = new OidcVerifiableCredentialRequest();
             request.setCredentialConfigurationId("myorg");
             request.setProof(buildProof(buildValidRsaProofJwt()));
@@ -326,14 +307,7 @@ class OidcVerifiableCredentialEndpointControllerTests {
             val registeredService = getOidcRegisteredService(clientId);
             servicesManager.save(registeredService);
 
-            val principal = RegisteredServiceTestUtils.getPrincipal("casuser",
-                CollectionUtils.wrap("given_name", List.of("CAS"),
-                    "family_name", List.of("User"),
-                    "email", List.of("casuser@example.org"),
-                    "student_id", List.of("S12345")));
-            val accessToken = getAccessToken(principal, clientId);
-            ticketRegistry.addTicket(accessToken.getTicketGrantingTicket());
-            ticketRegistry.addTicket(accessToken);
+            val accessToken = createOAuth20AccessToken(clientId);
 
             val ecKey = generateEcHolderKey();
             val proofJwt = buildProofJwt(ecKey, JWSAlgorithm.ES256, CREDENTIAL_ISSUER, new Date());
@@ -388,11 +362,7 @@ class OidcVerifiableCredentialEndpointControllerTests {
             val registeredService = getOidcRegisteredService(clientId);
             servicesManager.save(registeredService);
 
-            val principal = RegisteredServiceTestUtils.getPrincipal("casuser",
-                CollectionUtils.wrap("given_name", List.of("CAS")));
-            val accessToken = getAccessToken(principal, clientId);
-            ticketRegistry.addTicket(accessToken.getTicketGrantingTicket());
-            ticketRegistry.addTicket(accessToken);
+            val accessToken = createOAuth20AccessToken(clientId);
 
             val request = new OidcVerifiableCredentialRequest();
             request.setCredentialConfigurationId("strict");
@@ -412,11 +382,7 @@ class OidcVerifiableCredentialEndpointControllerTests {
             val registeredService = getOidcRegisteredService(clientId);
             servicesManager.save(registeredService);
 
-            val principal = RegisteredServiceTestUtils.getPrincipal("casuser",
-                CollectionUtils.wrap("email", List.of("casuser@example.org")));
-            val accessToken = getAccessToken(principal, clientId);
-            ticketRegistry.addTicket(accessToken.getTicketGrantingTicket());
-            ticketRegistry.addTicket(accessToken);
+            val accessToken = createOAuth20AccessToken(clientId);
 
             val request = new OidcVerifiableCredentialRequest();
             request.setCredentialConfigurationId("strict");
@@ -449,14 +415,7 @@ class OidcVerifiableCredentialEndpointControllerTests {
             val registeredService = getOidcRegisteredService(clientId);
             servicesManager.save(registeredService);
 
-            val principal = RegisteredServiceTestUtils.getPrincipal("casuser",
-                CollectionUtils.wrap("given_name", List.of("CAS"),
-                    "family_name", List.of("User"),
-                    "email", List.of("casuser@example.org"),
-                    "student_id", List.of("S12345")));
-            val accessToken = getAccessToken(principal, clientId);
-            ticketRegistry.addTicket(accessToken.getTicketGrantingTicket());
-            ticketRegistry.addTicket(accessToken);
+            val accessToken = createOAuth20AccessToken(clientId);
 
             val request = new OidcVerifiableCredentialRequest();
             request.setCredentialConfigurationId("myorg");
@@ -476,14 +435,7 @@ class OidcVerifiableCredentialEndpointControllerTests {
             val registeredService = getOidcRegisteredService(clientId);
             servicesManager.save(registeredService);
 
-            val principal = RegisteredServiceTestUtils.getPrincipal("casuser",
-                CollectionUtils.wrap("given_name", List.of("CAS"),
-                    "family_name", List.of("User"),
-                    "email", List.of("casuser@example.org"),
-                    "student_id", List.of("S12345")));
-            val accessToken = getAccessToken(principal, clientId);
-            ticketRegistry.addTicket(accessToken.getTicketGrantingTicket());
-            ticketRegistry.addTicket(accessToken);
+            val accessToken = createOAuth20AccessToken(clientId);
 
             val proofJwt = buildProofJwt(generateRsaHolderKey(), "https://wrong-issuer.example.org", new Date());
             val request = new OidcVerifiableCredentialRequest();
@@ -504,14 +456,7 @@ class OidcVerifiableCredentialEndpointControllerTests {
             val registeredService = getOidcRegisteredService(clientId);
             servicesManager.save(registeredService);
 
-            val principal = RegisteredServiceTestUtils.getPrincipal("casuser",
-                CollectionUtils.wrap("given_name", List.of("CAS"),
-                    "family_name", List.of("User"),
-                    "email", List.of("casuser@example.org"),
-                    "student_id", List.of("S12345")));
-            val accessToken = getAccessToken(principal, clientId);
-            ticketRegistry.addTicket(accessToken.getTicketGrantingTicket());
-            ticketRegistry.addTicket(accessToken);
+            val accessToken = createOAuth20AccessToken(clientId);
 
             val oldDate = Date.from(Instant.now().minus(Duration.ofMinutes(10)));
             val proofJwt = buildProofJwt(generateRsaHolderKey(), CREDENTIAL_ISSUER, oldDate);
@@ -533,14 +478,7 @@ class OidcVerifiableCredentialEndpointControllerTests {
             val registeredService = getOidcRegisteredService(clientId);
             servicesManager.save(registeredService);
 
-            val principal = RegisteredServiceTestUtils.getPrincipal("casuser",
-                CollectionUtils.wrap("given_name", List.of("CAS"),
-                    "family_name", List.of("User"),
-                    "email", List.of("casuser@example.org"),
-                    "student_id", List.of("S12345")));
-            val accessToken = getAccessToken(principal, clientId);
-            ticketRegistry.addTicket(accessToken.getTicketGrantingTicket());
-            ticketRegistry.addTicket(accessToken);
+            val accessToken = createOAuth20AccessToken(clientId);
 
             val request = new OidcVerifiableCredentialRequest();
             request.setCredentialConfigurationId("myorg");
@@ -559,15 +497,7 @@ class OidcVerifiableCredentialEndpointControllerTests {
             val registeredService = getOidcRegisteredService(clientId);
             servicesManager.save(registeredService);
 
-            val principal = RegisteredServiceTestUtils.getPrincipal("casuser",
-                CollectionUtils.wrap("given_name", List.of("CAS"),
-                    "family_name", List.of("User"),
-                    "email", List.of("casuser@example.org"),
-                    "student_id", List.of("S12345")));
-            val accessToken = getAccessToken(principal, clientId);
-            ticketRegistry.addTicket(accessToken.getTicketGrantingTicket());
-            ticketRegistry.addTicket(accessToken);
-
+            val accessToken = createOAuth20AccessToken(clientId);
             val request = new OidcVerifiableCredentialRequest();
             request.setCredentialConfigurationId("myorg");
             request.setProof(buildProof(null));

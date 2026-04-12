@@ -76,8 +76,8 @@ public class OidcHandlerInterceptorAdapter extends OAuth20HandlerInterceptorAdap
             return false;
         }
         
-        if (isPushedAuthorizationRequest(request.getRequestURI())) {
-            LOGGER.trace("OIDC pushed authorization request is protected at [{}]", request.getRequestURI());
+        if (isVerifiableCredentialTransactionRequest(request.getRequestURI()) || isPushedAuthorizationRequest(request.getRequestURI())) {
+            LOGGER.trace("OIDC request is protected at [{}]", request.getRequestURI());
             return requiresAuthenticationAccessTokenInterceptor.getObject().preHandle(request, response, handler);
         }
 
@@ -138,6 +138,10 @@ public class OidcHandlerInterceptorAdapter extends OAuth20HandlerInterceptorAdap
      */
     protected boolean isPushedAuthorizationRequest(final String requestPath) {
         return doesUriMatchPattern(requestPath, CollectionUtils.wrapList(OidcConstants.PUSHED_AUTHORIZE_URL));
+    }
+
+    protected boolean isVerifiableCredentialTransactionRequest(final String requestPath) {
+        return doesUriMatchPattern(requestPath, CollectionUtils.wrapList(OidcConstants.VC_CREDENTIAL_OFFER_TRANSACTIONS_URL));
     }
 
     @Override
