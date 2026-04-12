@@ -45,14 +45,15 @@ public class OidcDefaultVerifiableCredentialIssuerService implements OidcVerifia
 
         val payload = new LinkedHashMap<String, Object>();
         return switch (chosenFormat) {
-            case VC_SD_JWT:
+            case VC_SD_JWT -> {
                 payload.put("sub", principal.getId());
                 payload.put("client_id", context.accessToken().getClientId());
                 payload.put("credential_configuration_id", configurationId);
                 payload.put("claims", vcClaims);
                 payload.put("cnf", proof.holderJwk().toJSONObject());
                 yield signAndProduceCredentialResponse(context, payload);
-            case JWT_VC_JSON:
+            }
+            case JWT_VC_JSON -> {
                 val credentialSubject = new LinkedHashMap<String, Object>();
                 credentialSubject.put("id", principal.getId());
                 credentialSubject.putAll(vcClaims);
@@ -71,6 +72,8 @@ public class OidcDefaultVerifiableCredentialIssuerService implements OidcVerifia
                 payload.put("vc", vc);
                 payload.put("cnf", proof.holderJwk().toJSONObject());
                 yield signAndProduceCredentialResponse(context, payload);
+            }
+            
         };
     }
 
