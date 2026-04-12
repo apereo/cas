@@ -90,7 +90,7 @@ async function createPublicKey() {
             return {
                 txCode: res.data.grants["urn:ietf:params:oauth:grant-type:pre-authorized_code"]["tx_code"],
                 preAuthorizedCode: res.data.grants["urn:ietf:params:oauth:grant-type:pre-authorized_code"]["pre-authorized_code"]
-            }
+            };
         }, (error) => {
             throw `Operation failed ${error}`;
         });
