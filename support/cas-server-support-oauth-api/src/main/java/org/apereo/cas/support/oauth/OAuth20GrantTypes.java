@@ -51,6 +51,10 @@ public enum OAuth20GrantTypes {
      */
     UMA_TICKET("urn:ietf:params:oauth:grant-type:uma-ticket"),
     /**
+     * VC pre-authorized code.
+     */
+    PRE_AUTHORIZED_CODE("urn:ietf:params:oauth:grant-type:pre-authorized_code"),
+    /**
      * CIBA grant type.
      */
     CIBA("urn:openid:params:grant-type:ciba");

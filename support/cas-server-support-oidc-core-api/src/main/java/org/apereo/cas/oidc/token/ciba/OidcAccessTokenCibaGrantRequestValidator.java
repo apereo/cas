@@ -14,7 +14,6 @@ import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.BooleanUtils;
-import org.jspecify.annotations.NonNull;
 import org.pac4j.core.context.WebContext;
 import org.pac4j.core.profile.ProfileManager;
 import org.pac4j.core.profile.UserProfile;
@@ -32,7 +31,7 @@ import org.springframework.core.Ordered;
 public class OidcAccessTokenCibaGrantRequestValidator extends BaseOAuth20TokenRequestValidator<OidcConfigurationContext> {
     private final int order = Ordered.LOWEST_PRECEDENCE;
 
-    public OidcAccessTokenCibaGrantRequestValidator(final ObjectProvider<@NonNull OidcConfigurationContext> configurationContext) {
+    public OidcAccessTokenCibaGrantRequestValidator(final ObjectProvider<OidcConfigurationContext> configurationContext) {
         super(configurationContext);
     }
 

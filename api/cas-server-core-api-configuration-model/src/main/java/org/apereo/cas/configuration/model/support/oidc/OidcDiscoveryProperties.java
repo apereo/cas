@@ -120,6 +120,7 @@ public class OidcDiscoveryProperties implements Serializable {
         "client_credentials",
         "refresh_token",
         "urn:openid:params:grant-type:ciba",
+        "urn:ietf:params:oauth:grant-type:pre-authorized_code",
         "urn:ietf:params:oauth:grant-type:jwt-bearer",
         "urn:ietf:params:oauth:grant-type:token-exchange",
         "urn:ietf:params:oauth:grant-type:device_code",
