@@ -17,6 +17,9 @@ import org.springframework.context.annotation.Import;
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.OpenIDConnect, module = "verifiable-credentials")
 @AutoConfiguration
-@Import(OidcVerifiableCredentialsIssuerConfiguration.class)
+@Import({
+    OidcVerifiableCredentialsIssuerConfiguration.class,
+    OidcVerifiableCredentialsOfferConfiguration.class
+})
 public class CasOidcVerifiableCredentialsAutoConfiguration {
 }

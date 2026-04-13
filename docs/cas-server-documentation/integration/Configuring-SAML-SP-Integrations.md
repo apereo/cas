@@ -89,7 +89,7 @@ The following SAML SP integrations, as samples, are provided by CAS:
 <a href="https://get.slack.help/hc/en-us/articles/205168057">
 <img alt="Service provider logo" src="https://user-images.githubusercontent.com/1205228/233797093-200aebac-3c48-4563-9962-8ca591b44cdd.png" height="48" width="110"></a>
 
-<a href="https://support.zendesk.com/hc/en-us/articles/203663676-Using-SAML-for-single-sign-on-Professional-and-Enterprise-">
+<a href="https://zendesk.com">
 <img alt="Service provider logo" src="https://user-images.githubusercontent.com/1205228/233797108-625c0f96-9da1-4335-85a3-50241b5a811b.png" height="48" width="120"></a>
 
 <a href="javascript:void(0)">

@@ -4,6 +4,7 @@ import module java.base;
 import org.apereo.cas.util.nativex.CasRuntimeHintsRegistrar;
 import lombok.val;
 import org.apache.logging.log4j.core.async.AsyncLoggerContextSelector;
+import org.apache.logging.log4j.core.filter.AbstractFilter;
 import org.jspecify.annotations.NonNull;
 import org.jspecify.annotations.Nullable;
 import org.springframework.aot.hint.RuntimeHints;
@@ -30,6 +31,10 @@ public class CasCoreLoggingRuntimeHints implements CasRuntimeHintsRegistrar {
         registerReflectionHints(hints, entries);
         registerSpringProxyHints(hints, InitializingBean.class, View.class,
             BeanNameAware.class, ServletContextAware.class, ApplicationContextAware.class);
+        registerReflectionHintsWith(hints, AbstractFilter.AbstractFilterBuilder.class,
+            builder -> builder.withField("ATTR_ON_MISMATCH"));
     }
+
+
 }
 

@@ -19,7 +19,6 @@ import org.apereo.cas.ticket.refreshtoken.OAuth20RefreshToken;
 import org.apereo.cas.util.function.FunctionUtils;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-import org.jspecify.annotations.NonNull;
 import org.springframework.beans.factory.ObjectProvider;
 
 /**
@@ -31,7 +30,7 @@ import org.springframework.beans.factory.ObjectProvider;
 @Slf4j
 public class OidcAccessTokenResponseGenerator extends OAuth20DefaultAccessTokenResponseGenerator<OidcConfigurationContext> {
 
-    public OidcAccessTokenResponseGenerator(final ObjectProvider<@NonNull OidcConfigurationContext> oidcConfigurationContext) {
+    public OidcAccessTokenResponseGenerator(final ObjectProvider<OidcConfigurationContext> oidcConfigurationContext) {
         super(oidcConfigurationContext);
     }
 
