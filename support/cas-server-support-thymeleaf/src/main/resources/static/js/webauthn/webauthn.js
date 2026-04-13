@@ -2,10 +2,10 @@
  * Base64 Core
  **********************************/
 ((root, factory) => {
-    if (typeof define === 'function' && define.amd) {
+    if (typeof define === "function" && define.amd) {
         define(['base64js'], factory);
-    } else if (typeof module === 'object' && module.exports) {
-        module.exports = factory(require('base64js'));
+    } else if (typeof module === "object" && module.exports) {
+        module.exports = factory(require("base64js"));
     } else {
         root.base64url = factory(root.base64js);
     }
@@ -20,11 +20,11 @@
     }
 
     function base64UrlToMime(code) {
-        return code.replace(/-/g, '+').replace(/_/g, '/') + '===='.substring(0, (4 - (code.length % 4)) % 4);
+        return code.replace(/-/g, "+").replace(/_/g, '/') + '===='.substring(0, (4 - (code.length % 4)) % 4);
     }
 
     function mimeBase64ToUrl(code) {
-        return code.replace(/\+/g, '-').replace(/\//g, '_').replace(/=/g, '');
+        return code.replace(/\+/g, "-").replace(/\//g, '_').replace(/=/g, '');
     }
 
     function fromByteArray(bytes) {
@@ -36,8 +36,8 @@
     }
 
     return {
-        fromByteArray: fromByteArray,
-        toByteArray: toByteArray,
+        fromByteArray,
+        toByteArray,
     };
 
 });
@@ -49,9 +49,9 @@
 
 ((root, factory) => {
     if (typeof define === 'function' && define.amd) {
-        define(['base64url'], factory);
+        define(["base64url"], factory);
     } else if (typeof module === 'object' && module.exports) {
-        module.exports = factory(require('base64url'));
+        module.exports = factory(require("base64url"));
     } else {
         root.webauthn = factory(root.base64url);
     }
@@ -71,14 +71,14 @@
      *   `publicKey` parameter to `navigator.credentials.create()`
      */
     function decodePublicKeyCredentialCreationOptions(request) {
-        const excludeCredentials = request.excludeCredentials.map(credential => extend(
+        const excludeCredentials = request.excludeCredentials.map((credential) => extend(
             credential, {
                 id: base64url.toByteArray(credential.id),
             }));
 
         const publicKeyCredentialCreationOptions = extend(
             request, {
-                attestation: 'direct',
+                attestation: "direct",
                 user: extend(
                     request.user, {
                         id: base64url.toByteArray(request.user.id),
@@ -115,7 +115,7 @@
      *   `publicKey` parameter to `navigator.credentials.get()`
      */
     function decodePublicKeyCredentialRequestOptions(request) {
-        const allowCredentials = request.allowCredentials && request.allowCredentials.map(credential => extend(
+        const allowCredentials = request.allowCredentials && request.allowCredentials.map((credential) => extend(
             credential, {
                 id: base64url.toByteArray(credential.id),
             }));
@@ -253,7 +253,7 @@ function logout() {
 
 function updateSessionBox() {
     const disabled = session.username == null || session.username === '';
-    $('#logoutButton').prop('disabled', disabled);
+    $("#logoutButton").prop('disabled', disabled);
 }
 
 function rejected(err) {
@@ -261,15 +261,15 @@ function rejected(err) {
 }
 
 function setStatus(statusText) {
-    $('#status').val(statusText);
+    $("#status").val(statusText);
 }
 
 function addDeviceAttributeAsRow(name, value) {
-    let row = `<tr class="mdc-data-table__row">`
+    let row = "<tr class=\"mdc-data-table__row\">"
         + `<td class="mdc-data-table__cell"><code>${name}</code></td>`
         + `<td class="mdc-data-table__cell"><code>${value}</code></td>`
-        + `</tr>`;
-    $('#deviceTable tbody').append(row);
+        + "</tr>";
+    $("#deviceTable tbody").append(row);
 }
 
 function addMessage(message) {
@@ -291,14 +291,14 @@ function showJson(name, data) {
 }
 
 function showRequest(data) {
-    return showJson('request', data);
+    return showJson("request", data);
 }
 
 function showAuthenticatorResponse(data) {
     const clientDataJson = data && (data.response && data.response.clientDataJSON);
-    return showJson('authenticator-response', extend(
+    return showJson("authenticator-response", extend(
         data, {
-            _clientDataJson: data && JSON.parse(new TextDecoder('utf-8').decode(base64url.toByteArray(clientDataJson))),
+            _clientDataJson: data && JSON.parse(new TextDecoder("utf-8").decode(base64url.toByteArray(clientDataJson))),
         }));
 }
 
@@ -306,7 +306,7 @@ function showServerResponse(data) {
     if (data && data.messages) {
         addMessages(data.messages);
     }
-    return showJson('server-response', data);
+    return showJson("server-response", data);
 }
 
 function hideDeviceInfo() {
@@ -366,9 +366,9 @@ function getRegisterRequest(urls,
             sessionToken: session.sessionToken || null,
         }),
         headers: headers,
-        method: 'POST',
+        method: "POST",
     })
-        .then(response => response.json())
+        .then((response) => response.json())
         .then(updateSession)
         .then(rejectIfNotSuccess);
 }
@@ -407,7 +407,7 @@ function performCeremony(params) {
     resetDisplays();
 
     return getWebAuthnUrls()
-        .then(urls => {
+        .then((urls) => {
             setStatus(statusStrings.int);
             if (callbacks.init) {
                 callbacks.init(urls);
@@ -441,7 +441,7 @@ function finishCeremony(response) {
     const statusStrings = ceremonyState.statusStrings;
     const urls = ceremonyState.urls;
 
-    setStatus(statusStrings.serverRequest || 'Sending response to server...');
+    setStatus(statusStrings.serverRequest || "Sending response to server...");
     if (callbacks.serverRequest) {
         callbacks.serverRequest({urls, request, response});
     }
@@ -449,11 +449,11 @@ function finishCeremony(response) {
 
     const finishUrl = `${window.location.origin}${contextPath}${urls.finish}`;
     return submitResponse(finishUrl, request, response)
-        .then(data => {
+        .then((data) => {
             if (data && data.success) {
                 setStatus(statusStrings.success);
             } else {
-                setStatus('Error');
+                setStatus("Error");
             }
             showServerResponse(data);
             return data;
@@ -474,11 +474,11 @@ function register(username, displayName, credentialNickname, csrfToken,
         getWebAuthnUrls,
         getRequest: urls => getRequest(urls, username, displayName, credentialNickname, requireResidentKey, csrfToken),
         statusStrings: {
-            init: 'Initiating registration ceremony with server...',
-            authenticatorRequest: 'Asking authenticators to create credential...',
+            init: "Initiating registration ceremony with server...",
+            authenticatorRequest: "Asking authenticators to create credential...",
             success: 'Registration successful.',
         },
-        executeRequest: req => {
+        executeRequest: (req) => {
             request = req;
             return executeRegisterRequest(req);
         }
@@ -502,27 +502,27 @@ function register(username, displayName, credentialNickname, csrfToken,
                     addMessage("Attestation cannot be trusted.");
                 } else {
                     setTimeout(() => {
-                        $('#sessionToken').val(session.sessionToken);
+                        $("#sessionToken").val(session.sessionToken);
                         // console.log("Submitting registration form");
-                        $('#form').submit();
+                        $("#form").submit();
                     }, 2500);
                 }
             }
         })
         .catch((err) => {
-            setStatus('Registration failed.');
-            console.error('Registration failed', err);
+            setStatus("Registration failed.");
+            console.error("Registration failed", err);
             clearMessages();
             
-            if (err.name === 'NotAllowedError') {
+            if (err.name === "NotAllowedError") {
                 if (request.publicKeyCredentialCreationOptions.excludeCredentials
                     && request.publicKeyCredentialCreationOptions.excludeCredentials.length > 0
                 ) {
-                    addMessage('Credential creation failed, probably because an already registered credential is available.');
+                    addMessage("Credential creation failed, probably because an already registered credential is available.");
                 } else {
-                    addMessage('Credential creation failed for an unknown reason.');
+                    addMessage("Credential creation failed for an unknown reason.");
                 }
-            } else if (err.name === 'InvalidStateError') {
+            } else if (err.name === "InvalidStateError") {
                 addMessage(`This authenticator is already registered for the account "${username}".`)
             } else if (err.message) {
                 addMessage(`${err.message}`);
@@ -554,8 +554,8 @@ function executeAuthenticateRequest(request) {
 }
 
 function authenticate(username = null, getRequest = getAuthenticateRequest) {
-    $('#deviceTable tbody tr').remove();
-    $('#divDeviceInfo').hide();
+    $("#deviceTable tbody tr").remove();
+    $("#divDeviceInfo").hide();
     hideDeviceInfo();
     clearMessages();
 
@@ -568,19 +568,19 @@ function authenticate(username = null, getRequest = getAuthenticateRequest) {
     // console.log(`Starting authentication for username ${username}`);
     return performCeremony({
         getWebAuthnUrls,
-        getRequest: urls => getRequest(urls, username),
+        getRequest: (urls) => getRequest(urls, username),
         statusStrings: {
-            init: 'Initiating authentication ceremony...',
-            authenticatorRequest: 'Asking authenticators to perform assertion...',
-            success: 'Authentication successful.',
+            init: "Initiating authentication ceremony...",
+            authenticatorRequest: "Asking authenticators to perform assertion...",
+            success: "Authentication successful.",
         },
         executeRequest: executeAuthenticateRequest,
-    }).then(data => {
+    }).then((data) => {
         clearMessages();
         // console.log(`Received: ${JSON.stringify(data, undefined, 2)}`);
         if (data.registrations) {
             $('#divDeviceInfo').show();
-            data.registrations.forEach(reg => {
+            data.registrations.forEach((reg) => {
 
                 addDeviceAttributeAsRow("Username", reg.username);
                 addDeviceAttributeAsRow("Credential Nickname", reg.credentialNickname);
@@ -600,7 +600,7 @@ function authenticate(username = null, getRequest = getAuthenticateRequest) {
                 }
             });
 
-            $('#authnButton').hide();
+            $("#authnButton").hide();
 
             Swal.fire({
                 icon: "info",
@@ -612,7 +612,7 @@ function authenticate(username = null, getRequest = getAuthenticateRequest) {
             });
             
             setTimeout(() => {
-                $('#token').val(data.sessionToken);
+                $("#token").val(data.sessionToken);
                 const form = QRCodeAuthentication ? $("#webauthnQRCodeVerifyForm") : $('#webauthnLoginForm');
                 // console.log(`Submitting authentication form ${form.serialize()}`);
                 clearMessages();
@@ -625,15 +625,14 @@ function authenticate(username = null, getRequest = getAuthenticateRequest) {
     }).catch((err) => {
         setStatus(authFailTitle);
         clearMessages();
-        if (err.name === 'InvalidStateError') {
+        if (err.name === "InvalidStateError") {
             addMessage(`This authenticator is not registered for the account "${username}".`)
         } else if (err.message) {
             addMessage(`${err.name}: ${err.message}`);
         } else if (err.messages) {
             addMessages(err.messages);
         }
-        console.error('Authentication failed', err);
-        addMessage(authFailDesc);
+        console.error("Authentication failed", err);        addMessage(authFailDesc);
         return rejected(err);
     });
 }
