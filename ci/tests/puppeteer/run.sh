@@ -661,8 +661,6 @@ function buildAndRun() {
   if [[ "${REBUILD}" == "true" && "${RERUN}" != "true" ]]; then
     if [[ "${NATIVE_BUILD}" == "true" || "${NATIVE_RUN}" == "true" ]]; then
       DEFAULT_PUPPETEER_BUILD_CTR=45
-    elif [[ "${CI}" == "true" && ! -z "${GRADLE_BUILDCACHE_PSW}" ]]; then
-      DEFAULT_PUPPETEER_BUILD_CTR=20
     else
       DEFAULT_PUPPETEER_BUILD_CTR=20
     fi
