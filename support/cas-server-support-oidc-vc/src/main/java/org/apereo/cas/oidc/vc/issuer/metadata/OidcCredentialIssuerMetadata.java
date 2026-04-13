@@ -44,7 +44,7 @@ public class OidcCredentialIssuerMetadata implements Serializable {
         private static final long serialVersionUID = 7169398914160552045L;
 
         @JsonProperty("format")
-        private String format = "vc+sd-jwt";
+        private String format = CredentialConfigurationFormats.VC_SD_JWT.getFormat();
 
         @JsonProperty("scope")
         private String scope;
