@@ -132,7 +132,7 @@ async function createPublicKey() {
     }, 200, credentialRequest));
     await cas.log(result);
     assert(result.credential !== undefined);
-    assert(result.format === CredentialConfigurationFormats.VC);
+    assert(result.format === "vc+sd-jwt");
 
     const decoded = await cas.decodeJwt(result.credential);
     assert(decoded.sub === "client");
