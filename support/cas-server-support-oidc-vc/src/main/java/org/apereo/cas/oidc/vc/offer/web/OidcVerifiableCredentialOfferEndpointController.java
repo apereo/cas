@@ -45,7 +45,7 @@ public class OidcVerifiableCredentialOfferEndpointController extends BaseOAuth20
     }
 
     /**
-     * Handle and procuce response entity.
+     * Handle and produce response entity.
      *
      * @param transactionId the transaction id
      * @param httpRequest   the http request
