@@ -614,7 +614,6 @@ function authenticate(username = null, getRequest = getAuthenticateRequest) {
             setTimeout(() => {
                 $("#token").val(data.sessionToken);
                 const form = QRCodeAuthentication ? $("#webauthnQRCodeVerifyForm") : $('#webauthnLoginForm');
-                // console.log(`Submitting authentication form ${form.serialize()}`);
                 clearMessages();
                 hideDeviceInfo();
                 Swal.close();
@@ -632,7 +631,8 @@ function authenticate(username = null, getRequest = getAuthenticateRequest) {
         } else if (err.messages) {
             addMessages(err.messages);
         }
-        console.error("Authentication failed", err);        addMessage(authFailDesc);
+        console.error("Authentication failed", err);
+        addMessage(authFailDesc);
         return rejected(err);
     });
 }
