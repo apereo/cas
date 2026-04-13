@@ -3,6 +3,7 @@ package org.apereo.cas.uma.web.controllers;
 import module java.base;
 import org.apereo.cas.authentication.AuthenticationException;
 import org.apereo.cas.support.oauth.OAuth20Constants;
+import org.apereo.cas.support.oauth.util.OAuth20Utils;
 import org.apereo.cas.ticket.Ticket;
 import org.apereo.cas.ticket.accesstoken.OAuth20AccessToken;
 import org.apereo.cas.uma.UmaConfigurationContext;
@@ -16,7 +17,6 @@ import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.val;
 import org.jspecify.annotations.NonNull;
-import org.pac4j.core.profile.ProfileManager;
 import org.pac4j.core.profile.UserProfile;
 import org.pac4j.jee.context.JEEContext;
 import org.springframework.http.HttpStatus;
@@ -46,12 +46,7 @@ public abstract class BaseUmaEndpointController extends AbstractController {
                                                   final HttpServletResponse response,
                                                   final String requiredPermission) {
         val context = new JEEContext(request, response);
-        val manager = new ProfileManager(context, getUmaConfigurationContext().getSessionStore());
-        val profileResult = manager.getProfile();
-        if (profileResult.isEmpty()) {
-            throw new AuthenticationException("Unable to locate authenticated profile");
-        }
-        val profile = profileResult.get();
+        val profile = OAuth20Utils.getAuthenticatedUserProfile(context, getUmaConfigurationContext().getSessionStore());
         if (!profile.getRoles().contains(requiredPermission)) {
             throw new AuthenticationException("Authenticated profile does not carry the UMA protection scope");
         }

@@ -1,8 +1,6 @@
 package org.apereo.cas.oidc.vc.issuer;
 
 import module java.base;
-import org.apereo.cas.ticket.accesstoken.OAuth20AccessToken;
-import jakarta.servlet.http.HttpServletRequest;
 
 /**
  * This is {@link OidcVerifiableCredentialIssuerService}.
@@ -18,12 +16,7 @@ public interface OidcVerifiableCredentialIssuerService {
      *
      * @param context the context
      * @return the verifiable credential response
+     * @throws Throwable the throwable
      */
-    OidcVerifiableCredentialResponse issue(CredentialRequestValidationContext context);
-
-    record CredentialRequestValidationContext(
-        OAuth20AccessToken accessToken,
-        OidcVerifiableCredentialRequest credentialRequest,
-        HttpServletRequest httpRequest) {
-    }
+    OidcVerifiableCredentialResponse issue(OidcVerifiableCredentialValidationContext context) throws Throwable;
 }
