@@ -54,7 +54,7 @@ class OidcVerifiableCredentialsIssuerConfiguration {
     @ConditionalOnMissingBean(name = "oidcVerifiableCredentialProofValidator")
     @Bean
     public OidcVerifiableCredentialProofValidator oidcVerifiableCredentialProofValidator(
-        @Qualifier("oidcVerifiableCredentialNonceService")
+        @Qualifier(OidcVerifiableCredentialNonceService.BEAN_NAME)
         final OidcVerifiableCredentialNonceService oidcVerifiableCredentialNonceService,
         final CasConfigurationProperties casProperties) {
         return new OidcVerifiableCredentialJwtProofValidator(casProperties, oidcVerifiableCredentialNonceService);
@@ -96,7 +96,7 @@ class OidcVerifiableCredentialsIssuerConfiguration {
     @ConditionalOnMissingBean(name = "oidcVerifiableCredentialNonceEndpointController")
     @Bean
     public OidcVerifiableCredentialNonceEndpointController oidcVerifiableCredentialNonceEndpointController(
-        @Qualifier("oidcVerifiableCredentialNonceService")
+        @Qualifier(OidcVerifiableCredentialNonceService.BEAN_NAME)
         final OidcVerifiableCredentialNonceService oidcVerifiableCredentialNonceService,
         @Qualifier(OidcConfigurationContext.BEAN_NAME)
         final OidcConfigurationContext oidcConfigurationContext) {

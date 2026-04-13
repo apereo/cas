@@ -4,6 +4,7 @@ import module java.base;
 import org.apereo.cas.config.CasOidcVerifiableCredentialsAutoConfiguration;
 import org.apereo.cas.oidc.AbstractOidcTests;
 import org.apereo.cas.oidc.OidcConstants;
+import org.apereo.cas.oidc.vc.issuer.metadata.CredentialConfigurationFormats;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.autoconfigure.ImportAutoConfiguration;
@@ -56,7 +57,7 @@ class OidcVerifiableCredentialIssuerMetadataControllerTests extends AbstractOidc
         mockMvc.perform(get(METADATA_ENDPOINT_URL)
                 .with(withHttpRequestProcessor()))
             .andExpect(status().isOk())
-            .andExpect(jsonPath("$.credential_configurations_supported.myorg.format").value("vc+sd-jwt"))
+            .andExpect(jsonPath("$.credential_configurations_supported.myorg.format").value(CredentialConfigurationFormats.VC_SD_JWT.getFormat()))
             .andExpect(jsonPath("$.credential_configurations_supported.myorg.scope").value("UniversityIDCredential"))
             .andExpect(jsonPath("$.credential_configurations_supported.myorg.proof_types_supported.jwt").exists())
             .andExpect(jsonPath("$.credential_configurations_supported.myorg.claims.given_name.mandatory").value(true))

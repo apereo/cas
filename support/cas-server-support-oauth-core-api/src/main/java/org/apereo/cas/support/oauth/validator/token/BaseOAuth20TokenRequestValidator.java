@@ -17,7 +17,7 @@ import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
-import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
 import org.pac4j.core.context.WebContext;
 import org.pac4j.core.profile.ProfileManager;
 import org.pac4j.core.profile.UserProfile;
@@ -36,7 +36,7 @@ import org.springframework.http.HttpMethod;
 @Getter
 @Setter
 public abstract class BaseOAuth20TokenRequestValidator<T extends OAuth20ConfigurationContext> implements OAuth20TokenRequestValidator {
-    private final ObjectProvider<@NonNull T> configurationContext;
+    private final ObjectProvider<T> configurationContext;
 
     private int order = Ordered.LOWEST_PRECEDENCE;
 
@@ -102,7 +102,7 @@ public abstract class BaseOAuth20TokenRequestValidator<T extends OAuth20Configur
 
     protected abstract OAuth20GrantTypes getGrantType();
 
-    protected static Authentication resolveAuthenticationFrom(final OAuth20Code oauthCode) {
+    protected static @Nullable Authentication resolveAuthenticationFrom(final OAuth20Code oauthCode) {
         return oauthCode.isStateless()
             ? oauthCode.getAuthentication()
             : ((AuthenticationAwareTicket) oauthCode.getTicketGrantingTicket()).getAuthentication();
