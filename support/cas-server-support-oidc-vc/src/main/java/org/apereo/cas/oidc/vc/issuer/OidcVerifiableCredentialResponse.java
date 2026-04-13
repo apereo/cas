@@ -28,6 +28,6 @@ public class OidcVerifiableCredentialResponse implements Serializable {
     @JsonProperty("c_nonce")
     private String cNonce;
 
-    @JsonProperty("c_nonce_expires_in")
-    private Long cNonceExpiresIn;
+    @JsonProperty("c_nonce_expires_at")
+    private Long cNonceExpiresAt;
 }

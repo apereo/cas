@@ -15,7 +15,6 @@ import org.apereo.cas.util.spring.beans.BeanSupplier;
 import lombok.RequiredArgsConstructor;
 import lombok.val;
 import org.jooq.lambda.Unchecked;
-import org.jspecify.annotations.NonNull;
 import org.pac4j.core.context.CallContext;
 import org.pac4j.core.context.WebContext;
 import org.pac4j.core.context.session.SessionStore;
@@ -38,28 +37,28 @@ public class OAuth20HandlerInterceptorAdapter implements AsyncHandlerInterceptor
     /**
      * Access token interceptor.
      */
-    protected final ObjectProvider<@NonNull HandlerInterceptor> requiresAuthenticationAccessTokenInterceptor;
+    protected final ObjectProvider<HandlerInterceptor> requiresAuthenticationAccessTokenInterceptor;
 
     /**
      * Authorization interceptor.
      */
-    protected final ObjectProvider<@NonNull HandlerInterceptor> requiresAuthenticationAuthorizeInterceptor;
+    protected final ObjectProvider<HandlerInterceptor> requiresAuthenticationAuthorizeInterceptor;
 
-    private final ObjectProvider<@NonNull List<AccessTokenGrantRequestExtractor>> accessTokenGrantRequestExtractors;
+    private final ObjectProvider<List<AccessTokenGrantRequestExtractor>> accessTokenGrantRequestExtractors;
 
-    private final ObjectProvider<@NonNull ServicesManager> servicesManager;
+    private final ObjectProvider<ServicesManager> servicesManager;
 
-    private final ObjectProvider<@NonNull SessionStore> sessionStore;
+    private final ObjectProvider<SessionStore> sessionStore;
 
-    private final ObjectProvider<@NonNull List<OAuth20AuthorizationRequestValidator>> oauthAuthorizationRequestValidators;
+    private final ObjectProvider<List<OAuth20AuthorizationRequestValidator>> oauthAuthorizationRequestValidators;
 
-    private final ObjectProvider<@NonNull OAuth20RequestParameterResolver> requestParameterResolver;
+    private final ObjectProvider<OAuth20RequestParameterResolver> requestParameterResolver;
 
     @Override
     public boolean preHandle(
-        final @NonNull HttpServletRequest request,
-        final @NonNull HttpServletResponse response,
-        final @NonNull Object handler) throws Exception {
+        final HttpServletRequest request,
+        final HttpServletResponse response,
+        final Object handler) throws Exception {
         if (requestRequiresAuthentication(request, response)) {
             return requiresAuthenticationAccessTokenInterceptor.getObject().preHandle(request, response, handler);
         }
@@ -89,7 +88,7 @@ public class OAuth20HandlerInterceptorAdapter implements AsyncHandlerInterceptor
         val registeredService = OAuth20Utils.getRegisteredOAuthServiceByClientId(servicesManager.getObject(), clientId);
         return registeredService == null || OAuth20Utils.doesServiceNeedAuthentication(registeredService);
     }
-    
+
     protected boolean isRevokeTokenRequest(final HttpServletRequest request, final HttpServletResponse response) {
         val requestPath = request.getRequestURI();
         return doesUriMatchPattern(requestPath, getRevocationUrls());
@@ -113,7 +112,7 @@ public class OAuth20HandlerInterceptorAdapter implements AsyncHandlerInterceptor
         val requestPath = request.getRequestURI();
         return doesUriMatchPattern(requestPath, CollectionUtils.wrapList(OAuth20Constants.DEVICE_AUTHZ_URL));
     }
-    
+
     protected boolean requestRequiresAuthentication(final HttpServletRequest request,
                                                     final HttpServletResponse response) {
         val context = new JEEContext(request, response);
@@ -134,7 +133,7 @@ public class OAuth20HandlerInterceptorAdapter implements AsyncHandlerInterceptor
             }
             return true;
         }
-        
+
         if (extractor.isPresent()) {
             val ext = extractor.get();
             return ext.requestMustBeAuthenticated();
