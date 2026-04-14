@@ -169,6 +169,7 @@ graalvmNative {
             buildArgs.add('--initialize-at-build-time=com.sun.xml.stream.buffer.sax.DefaultWithLexicalHandler')
             buildArgs.add('--initialize-at-build-time=org.apache.xerces.jaxp.datatype')
 
+            buildArgs.add('--initialize-at-run-time=org.codehaus.groovy.vmplugin.v8')
             buildArgs.add('--initialize-at-run-time=com.sun.xml.ws')
             buildArgs.add('--initialize-at-run-time=groovy.grape.GrapeIvy')
             buildArgs.add("--initialize-at-run-time=org.bouncycastle.jcajce.provider.drbg.DRBG\$Default")
