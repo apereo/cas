@@ -78,7 +78,7 @@ public class SubmitAccountRegistrationAction extends BaseCasWebflowAction {
         val properties = accountRegistrationService.getAccountRegistrationPropertyLoader().load().values();
         val registrationRequest = new AccountRegistrationRequest();
         properties.forEach(entry -> {
-            var value = entry.isRequired()
+            val value = entry.isRequired()
                 ? requestContext.getRequestParameters().getRequired(entry.getName())
                 : requestContext.getRequestParameters().get(entry.getName());
             registrationRequest.putProperty(entry.getName(), value);
@@ -86,7 +86,11 @@ public class SubmitAccountRegistrationAction extends BaseCasWebflowAction {
         accountRegistrationService.getAccountRegistrationRequestValidator().validate(registrationRequest);
 
         Optional.ofNullable(WebUtils.getService(requestContext))
-            .ifPresent(service -> registrationRequest.putProperty("service", service.getId()));
+            .ifPresent(service -> {
+                registrationRequest.putProperty("service", service.getId());
+                val fullRequestUrl = service.getHttpRequestAttribute("fullRequestUrl", String.class);
+                registrationRequest.putProperty("fullRequestUrl", fullRequestUrl);
+            });
         Optional.ofNullable(WebUtils.getRegisteredService(requestContext))
             .ifPresent(service -> {
                 registrationRequest.putProperty("registeredServiceNumericId", service.getId());

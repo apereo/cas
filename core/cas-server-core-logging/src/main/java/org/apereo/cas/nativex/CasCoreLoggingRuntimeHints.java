@@ -32,7 +32,10 @@ public class CasCoreLoggingRuntimeHints implements CasRuntimeHintsRegistrar {
         registerSpringProxyHints(hints, InitializingBean.class, View.class,
             BeanNameAware.class, ServletContextAware.class, ApplicationContextAware.class);
         registerReflectionHintsWith(hints, AbstractFilter.AbstractFilterBuilder.class,
-            builder -> builder.withField("ATTR_ON_MISMATCH"));
+            builder -> {
+                builder.withField("ATTR_ON_MISMATCH");
+                builder.withField("ATTR_ON_MATCH");
+            });
     }
 
 

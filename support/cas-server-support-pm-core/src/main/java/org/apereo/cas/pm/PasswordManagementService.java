@@ -4,6 +4,7 @@ import module java.base;
 import org.apereo.cas.authentication.Credential;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
+import org.jspecify.annotations.Nullable;
 
 /**
  * This is {@link PasswordManagementService}.
@@ -62,7 +63,7 @@ public interface PasswordManagementService {
      * @return the string
      * @throws Throwable the throwable
      */
-    default String findEmail(final PasswordManagementQuery query) throws Throwable {
+    default @Nullable String findEmail(final PasswordManagementQuery query) throws Throwable {
         return null;
     }
 
@@ -73,7 +74,7 @@ public interface PasswordManagementService {
      * @return the string
      * @throws Throwable the throwable
      */
-    default String findPhone(final PasswordManagementQuery query) throws Throwable {
+    default @Nullable String findPhone(final PasswordManagementQuery query) throws Throwable {
         return null;
     }
 
@@ -84,7 +85,7 @@ public interface PasswordManagementService {
      * @return the string
      * @throws Throwable the throwable
      */
-    default String findUsername(final PasswordManagementQuery query) throws Throwable {
+    default @Nullable String findUsername(final PasswordManagementQuery query) throws Throwable {
         return null;
     }
 

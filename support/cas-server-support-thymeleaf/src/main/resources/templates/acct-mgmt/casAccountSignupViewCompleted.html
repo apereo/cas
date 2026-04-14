@@ -19,8 +19,10 @@
         <span th:if="${service}" th:remove="tag">
             <script th:inline="javascript">
                 /*<![CDATA[*/
-                const service = /*[[${service.id}]]*/;
+                const fullRequestUrl = /*[[${fullRequestUrl}]]*/;
+                console.info("Redirecting to", fullRequestUrl);
                 /*]]>*/
+                
                 Swal.fire({
                     title: 'Redirecting to Application',
                     text: 'CAS is preparing to redirect to the original application...',
@@ -34,7 +36,7 @@
                         Swal.showLoading(); 
                     },
                     willClose: () => {
-                        window.location.href = service;
+                        window.location.href = fullRequestUrl;
                     }
                 });
             </script>

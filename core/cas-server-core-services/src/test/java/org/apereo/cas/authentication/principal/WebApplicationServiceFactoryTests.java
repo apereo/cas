@@ -15,7 +15,6 @@ import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
-import jakarta.servlet.http.HttpServletRequest;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
@@ -44,14 +43,15 @@ class WebApplicationServiceFactoryTests {
         RequestContextHolder.setRequestAttributes(new ServletRequestAttributes(request, new MockHttpServletResponse()));
         val service = serviceFactory.createService(request);
         assertNotNull(service);
-        assertEquals(7, service.getAttributes().size());
+        assertEquals(8, service.getAttributes().size());
         assertTrue(service.getAttributes().containsKey("p1"));
         assertTrue(service.getAttributes().containsKey("p2"));
         assertTrue(service.getAttributes().containsKey("p3"));
         assertTrue(service.getAttributes().containsKey("p4"));
-        assertTrue(service.getAttributes().containsKey("%s.requestURL".formatted(HttpServletRequest.class.getName())));
-        assertTrue(service.getAttributes().containsKey("%s.localeName".formatted(HttpServletRequest.class.getName())));
         assertFalse(service.getAttributes().containsKey(CasProtocolConstants.PARAMETER_PASSWORD));
+        assertNotNull(service.getHttpRequestAttribute("fullRequestUrl", String.class));
+        assertNotNull(service.getHttpRequestAttribute("requestURL", String.class));
+        assertNotNull(service.getHttpRequestAttribute("localeName", String.class));
     }
 
     @Test

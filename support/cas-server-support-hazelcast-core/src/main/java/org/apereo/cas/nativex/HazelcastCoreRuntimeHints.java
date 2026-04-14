@@ -7,6 +7,7 @@ import com.hazelcast.internal.cluster.Versions;
 import com.hazelcast.internal.dynamicconfig.DynamicConfigurationAwareConfig;
 import com.hazelcast.internal.partition.impl.MigrationStats;
 import com.hazelcast.internal.serialization.DataSerializerHook;
+import com.hazelcast.jet.sql.impl.OptimizerContext;
 import com.hazelcast.jet.sql.impl.connector.SqlConnector;
 import com.hazelcast.jet.sql.impl.connector.SqlConnectorCache;
 import com.hazelcast.jet.sql.impl.opt.metadata.HazelcastRelMdBoundedness;
@@ -145,6 +146,7 @@ public class HazelcastCoreRuntimeHints implements CasRuntimeHintsRegistrar {
                 MetadataDef.class,
                 DynamicConfigurationAwareConfig.class,
 
+                OptimizerContext.class,
                 SqlConnectorCache.class,
                 HazelcastRelMdRowCount.class,
                 HazelcastRelMdBoundedness.class,
