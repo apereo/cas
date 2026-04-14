@@ -44,10 +44,12 @@ const assert = require("assert");
     await cas.sleep(500);
     await cas.assertInnerText(page, "#content h2", "Account Registration");
     await cas.assertInnerTextStartsWith(page, "#content p", "Thank you! Your account is now activated");
-    await cas.assertCookie(page);
     await cas.sleep(3000);
     await cas.logPage(page);
-    await cas.assertPageUrl(page, service);
+    await cas.assertPageUrlStartsWith(page, service);
+    await cas.assertTicketParameter(page);
+    await cas.gotoLogin(page);
+    await cas.assertCookie(page);
     await cas.closeBrowser(browser);
 })();
 

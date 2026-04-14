@@ -6,6 +6,7 @@ import org.apereo.cas.multitenancy.TenantDefinition;
 import org.apereo.cas.multitenancy.TenantExtractor;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.function.FunctionUtils;
+import org.apereo.cas.util.http.HttpRequestUtils;
 import org.apereo.cas.web.UrlValidator;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -107,7 +108,10 @@ public abstract class AbstractServiceFactory<T extends Service> implements Servi
             .map(entry -> Pair.of(entry.getKey(), CollectionUtils.toCollection(entry.getValue(), ArrayList.class)))
             .collect(Collectors.toMap(Pair::getKey, Pair::getValue));
         attributes.putAll(extractQueryParameters(service));
-
+        
+        val fullUrl = HttpRequestUtils.getFullRequestUrl(request);
+        collectHttpRequestProperty("fullRequestUrl", fullUrl, attributes);
+        
         val collectAttributes = Objects.requireNonNullElse((Boolean) request.getAttribute(COLLECT_SERVICE_ATTRIBUTES), Boolean.TRUE);
         if (collectAttributes) {
             FunctionUtils.doIfNotBlank(request.getPathInfo(), value -> collectHttpRequestProperty("pathInfo", value, attributes));

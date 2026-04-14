@@ -7,6 +7,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.hc.core5.net.URIBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import jakarta.servlet.http.HttpServletRequest;
 
 /**
  * Marker interface for Services. Services are generally either remote
@@ -123,6 +124,19 @@ public interface Service extends Serializable {
         return values == null || values.isEmpty() ? null : clazz.cast(values.getFirst());
     }
 
+    /**
+     * Gets http request attribute.
+     *
+     * @param <T>   the type parameter
+     * @param name  the name
+     * @param clazz the clazz
+     * @return the http request attribute
+     */
+    default <T> T getHttpRequestAttribute(final String name, final Class<T> clazz) {
+        val attrName = HttpServletRequest.class.getName() + '.' + name;
+        return getFirstAttribute(attrName, clazz);
+    }
+    
     /**
      * Gets shortened id.
      *

@@ -33,6 +33,10 @@ public class DisplayAccountRegistrationCompletedAction extends BaseCasWebflowAct
             val registeredService = servicesManager.findServiceBy(serviceNumericId);
             WebUtils.putRegisteredService(requestContext, registeredService);
         }
+        if (registrationRequest.containsProperty("fullRequestUrl")) {
+            requestContext.getFlowScope().put("fullRequestUrl",
+                registrationRequest.getProperty("fullRequestUrl", String.class));
+        }
         return null;
     }
 }

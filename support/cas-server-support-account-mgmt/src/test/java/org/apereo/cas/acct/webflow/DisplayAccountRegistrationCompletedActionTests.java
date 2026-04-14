@@ -54,10 +54,12 @@ class DisplayAccountRegistrationCompletedActionTests extends BaseWebflowConfigur
         val registrationRequest = new AccountRegistrationRequest(Map.of("username", "casuser"));
         registrationRequest.putProperty("service", service.getId());
         registrationRequest.putProperty("registeredServiceNumericId", registeredService.getId());
+        registrationRequest.putProperty("fullRequestUrl", service.getOriginalUrl());
         AccountRegistrationUtils.putAccountRegistrationRequest(context, registrationRequest);
         val result = action.execute(context);
         assertNull(result);
         assertNotNull(WebUtils.getService(context));
         assertNotNull(WebUtils.getRegisteredService(context));
+        assertTrue(context.getFlowScope().contains("fullRequestUrl", String.class));
     }
 }
