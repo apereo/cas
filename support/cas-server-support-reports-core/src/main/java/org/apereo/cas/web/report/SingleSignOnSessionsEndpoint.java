@@ -28,7 +28,6 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.Strings;
-import org.jspecify.annotations.NonNull;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.boot.actuate.endpoint.Access;
 import org.springframework.boot.actuate.endpoint.annotation.Endpoint;
@@ -65,15 +64,15 @@ public class SingleSignOnSessionsEndpoint extends BaseCasRestActuatorEndpoint {
             + "ticket registry and store is able to store, maintain and return a collection tickets that represent the single sign-on session. "
             + "You will not be able to collect and review sessions, if the ticket registry does not have this capability";
 
-    private final ObjectProvider<@NonNull TicketRegistry> ticketRegistryProvider;
+    private final ObjectProvider<TicketRegistry> ticketRegistryProvider;
 
-    private final ObjectProvider<@NonNull SingleLogoutRequestExecutor> singleLogoutRequestExecutor;
+    private final ObjectProvider<SingleLogoutRequestExecutor> singleLogoutRequestExecutor;
 
     public SingleSignOnSessionsEndpoint(
-        final ObjectProvider<@NonNull TicketRegistry> ticketRegistry,
+        final ObjectProvider<TicketRegistry> ticketRegistry,
         final ConfigurableApplicationContext applicationContext,
         final CasConfigurationProperties casProperties,
-        final ObjectProvider<@NonNull SingleLogoutRequestExecutor> singleLogoutRequestExecutor) {
+        final ObjectProvider<SingleLogoutRequestExecutor> singleLogoutRequestExecutor) {
         super(casProperties, applicationContext);
         this.ticketRegistryProvider = ticketRegistry;
         this.singleLogoutRequestExecutor = singleLogoutRequestExecutor;
@@ -88,9 +87,15 @@ public class SingleSignOnSessionsEndpoint extends BaseCasRestActuatorEndpoint {
     @GetMapping(path = "/users/{username}", produces = MediaType.APPLICATION_JSON_VALUE)
     @Operation(summary = "Get all single sign-on sessions for username. " + MESSAGE_FEATURE_SUPPORTED_TICKET_REGISTRY,
         parameters = @Parameter(name = "username", required = true, in = ParameterIn.PATH, description = "The username to look up"))
-    public Map<String, Object> getSsoSessionsForUser(
-        @PathVariable final String username) {
-        return getSsoSessions(new SsoSessionsRequest().withUsername(username));
+    public Map<String, Object> getSsoSessionsForUser(@PathVariable final String username) {
+        val activeSsoSessions = ticketRegistryProvider.getObject().getSessionsFor(username)
+            .sorted(Comparator.comparing(Ticket::getId))
+            .map(TicketGrantingTicket.class::cast)
+            .map(tgt -> buildSingleSignOnSessionFromTicketGrantingTicket(SsoSessionReportOptions.ALL, tgt))
+            .toList();
+        val sessionsMap = new HashMap<String, Object>();
+        sessionsMap.put("activeSsoSessions", activeSsoSessions);
+        return sessionsMap;
     }
 
     /**
@@ -139,9 +144,10 @@ public class SingleSignOnSessionsEndpoint extends BaseCasRestActuatorEndpoint {
      * This will also remove any "leftover" tickets that may be been
      * created for the principal attached to the ticket for which
      * the parent ticket is now gone/deleted.
+     *
      * @param ticketGrantingTicketId the ticket granting ticket
-     * @param request              the request
-     * @param response             the response
+     * @param request                the request
+     * @param response               the response
      * @return result map
      */
     @DeleteMapping(path = "/{ticketGrantingTicketId}", produces = MediaType.APPLICATION_JSON_VALUE)
@@ -343,8 +349,9 @@ public class SingleSignOnSessionsEndpoint extends BaseCasRestActuatorEndpoint {
             .map(tgt -> buildSingleSignOnSessionFromTicketGrantingTicket(option, tgt));
     }
 
-    private static Map<String, Object> buildSingleSignOnSessionFromTicketGrantingTicket(final SsoSessionReportOptions option,
-                                                                                        final TicketGrantingTicket tgt) {
+    private static Map<String, Object> buildSingleSignOnSessionFromTicketGrantingTicket(
+        final SsoSessionReportOptions option,
+        final TicketGrantingTicket tgt) {
         val authentication = tgt.getAuthentication();
         val principal = authentication.getPrincipal();
         val sso = new LinkedHashMap<String, Object>(SsoSessionAttributeKeys.values().length);
