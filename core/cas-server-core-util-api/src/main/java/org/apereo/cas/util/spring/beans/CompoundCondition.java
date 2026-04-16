@@ -24,7 +24,9 @@ class CompoundCondition implements BeanCondition {
     private static final Pattern EXPRESSION_PATTERN = RegexUtils.createPattern("\\$\\{.+\\}");
 
     private final Deque<Condition> conditionList = new ArrayDeque<>();
-    
+
+    private MatchStrategy matchStrategy = MatchStrategy.ALL;
+
     CompoundCondition(final String name) {
         and(name);
     }
@@ -111,6 +113,7 @@ class CompoundCondition implements BeanCondition {
     @CanIgnoreReturnValue
     public BeanCondition and(final String name) {
         conditionList.push(new PropertyCondition(name));
+        matchStrategy = MatchStrategy.ALL;
         return this;
     }
 
@@ -118,6 +121,7 @@ class CompoundCondition implements BeanCondition {
     @CanIgnoreReturnValue
     public BeanCondition and(final Supplier<Boolean> booleanSupplier) {
         conditionList.push(new BooleanCondition(booleanSupplier.get()));
+        matchStrategy = MatchStrategy.ALL;
         return this;
     }
 
@@ -125,6 +129,15 @@ class CompoundCondition implements BeanCondition {
     @CanIgnoreReturnValue
     public BeanCondition and(final Condition... condition) {
         Arrays.stream(condition).forEach(conditionList::push);
+        matchStrategy = MatchStrategy.ALL;
+        return this;
+    }
+
+    @Override
+    @CanIgnoreReturnValue
+    public BeanCondition or(final String name) {
+        conditionList.push(new PropertyCondition(name));
+        matchStrategy = MatchStrategy.ANY;
         return this;
     }
 
@@ -136,30 +149,35 @@ class CompoundCondition implements BeanCondition {
 
     @Override
     public Supplier<Boolean> given(final PropertyResolver propertyResolver) {
-        return () -> conditionList
-            .stream()
-            .allMatch(cond -> {
-                if (cond instanceof final PropertyCondition condition) {
-                    if (condition.isMatchIfMissing() && !propertyResolver.containsProperty(condition.getPropertyName())) {
-                        return true;
-                    }
-                    val result = resolvePropertyValue(propertyResolver, condition);
-                    if (condition.getHavingValue() != null) {
-                        return condition.getHavingValue().toString().equalsIgnoreCase(result);
-                    }
-                    if (condition.isUrl() && StringUtils.isNotBlank(result)) {
-                        return RegexUtils.find("^https*:\\/\\/.+", result);
-                    }
-                    if (condition.isExists()) {
-                        return ResourceUtils.doesResourceExist(result);
-                    }
-                    return StringUtils.isNotBlank(result);
+        return switch (matchStrategy) {
+            case ANY -> () -> conditionList.stream().anyMatch(withPropertyResolverPredicate(propertyResolver));
+            case ALL -> () -> conditionList.stream().allMatch(withPropertyResolverPredicate(propertyResolver));
+        };
+    }
+
+    private static Predicate<Condition> withPropertyResolverPredicate(final PropertyResolver propertyResolver) {
+        return cond -> {
+            if (cond instanceof final PropertyCondition condition) {
+                if (condition.isMatchIfMissing() && !propertyResolver.containsProperty(condition.getPropertyName())) {
+                    return true;
                 }
-                if (cond instanceof BooleanCondition(var value)) {
-                    return BooleanUtils.toBoolean(value);
+                val result = resolvePropertyValue(propertyResolver, condition);
+                if (condition.getHavingValue() != null) {
+                    return condition.getHavingValue().toString().equalsIgnoreCase(result);
                 }
-                return false;
-            });
+                if (condition.isUrl() && StringUtils.isNotBlank(result)) {
+                    return RegexUtils.find("^https*:\\/\\/.+", result);
+                }
+                if (condition.isExists()) {
+                    return ResourceUtils.doesResourceExist(result);
+                }
+                return StringUtils.isNotBlank(result);
+            }
+            if (cond instanceof BooleanCondition(var value)) {
+                return BooleanUtils.toBoolean(value);
+            }
+            return false;
+        };
     }
 
     @SuppressWarnings("UnusedVariable")
@@ -181,4 +199,8 @@ class CompoundCondition implements BeanCondition {
         private boolean url;
     }
 
+    private enum MatchStrategy {
+        ALL,
+        ANY
+    }
 }

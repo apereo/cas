@@ -83,7 +83,6 @@ public class DefaultSurrogateAuthenticationEventListener implements SurrogateAut
     protected void sendEmail(final Principal principal, final String emailAttribute,
                              final String eventDetails, final ClientInfo clientInfo) {
         val mail = casProperties.getAuthn().getSurrogate().getMail();
-
         val resolvedAttribute = SpringExpressionLanguageValueResolver.getInstance().resolve(emailAttribute);
         val to = principal.getAttributes().get(resolvedAttribute);
         if (to != null) {
@@ -97,7 +96,7 @@ public class DefaultSurrogateAuthenticationEventListener implements SurrogateAut
                 val emailRequest = EmailMessageRequest.builder()
                     .emailProperties(mail)
                     .to(List.of(address.toString()))
-                    .tenant(Objects.requireNonNull(clientInfo.getTenant()))
+                    .tenant(clientInfo.getTenant())
                     .body(body)
                     .build();
                 communicationsManager.email(emailRequest);
