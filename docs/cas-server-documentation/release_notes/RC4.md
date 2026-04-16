@@ -76,12 +76,18 @@ during compile time.
 ### OpenId Connect & Verifiable Credentials
 
 An [initial implementation](../authentication/OIDC-Authentication-Verifiable-Credentials.html) 
-of OpenID Connect Verifiable Credentials (OIDC4VCI) is now available in CAS. 
+of OpenID Connect Verifiable Credentials (OIDC4VCI) is now available in CAS.
 
 ### Gradle 9.5
 
 CAS is now built with Gradle `9.5.x` and the build process has been updated to use the latest Gradle
 features and capabilities. 
+
+### OpenID Connect Federation
+
+The OpenID Federation server support is now in 
+its [own dedicated module](../authentication/OIDC-Authentication-Federation.html). Functionality here
+will eventually be expanded to allow CAS to participate in OpenID connect federations.
 
 ### OpenId Connect Federation & Delegation
 
@@ -94,10 +100,15 @@ See [this guide](../integration/Delegate-Authentication-Generic-OpenID-Connect.h
 establish a single sign-on session once the process and flow
 is complete. It may also redirect back to the original application if the registration process 
 was initiated from a protected resource.
+ 
+### Delegated Authentication & Impersonation
 
-### OpenID Connect Federation
+Delegated authentication flows now support impersonation of the authenticated user, allowing
+the user to go through the impersonation account selection process after having successfully
+authenticated with the external identity provider. This behavior, off by default, needs to be
+expicitly enabled in CAS configuration settings.
 
-The OpenID Federation support (server) is now in its [own dedicated module](../authentication/OIDC-Authentication-Federation.html).
+See [this guide](../integration/Delegate-Authentication.html) for more details.
 
 ## Other Stuff
               
