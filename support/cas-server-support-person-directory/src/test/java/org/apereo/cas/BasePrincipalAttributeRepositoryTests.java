@@ -2,7 +2,7 @@ package org.apereo.cas;
 
 import module java.base;
 import org.apereo.cas.authentication.attribute.AttributeDefinitionStore;
-import org.apereo.cas.authentication.attribute.DefaultAttributeDefinitionStore;
+import org.apereo.cas.authentication.attribute.JsonAttributeDefinitionStore;
 import org.apereo.cas.config.CasCoreAuthenticationAutoConfiguration;
 import org.apereo.cas.config.CasCoreAutoConfiguration;
 import org.apereo.cas.config.CasCoreEnvironmentBootstrapAutoConfiguration;
@@ -57,7 +57,7 @@ public abstract class BasePrincipalAttributeRepositoryTests {
                 final CasConfigurationProperties casProperties) throws Exception {
                 val resource = casProperties.getAuthn().getAttributeRepository()
                     .getAttributeDefinitionStore().getJson().getLocation();
-                val store = new DefaultAttributeDefinitionStore(resource);
+                val store = new JsonAttributeDefinitionStore(resource);
                 store.setScope(casProperties.getServer().getScope());
                 return store;
             }

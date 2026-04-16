@@ -4,9 +4,7 @@ import module java.base;
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.services.RegisteredService;
-import org.apereo.cas.util.ResourceUtils;
 import org.apereo.cas.util.function.FunctionUtils;
-import org.apereo.cas.util.io.FileWatcherService;
 import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
 import com.google.errorprone.annotations.CanIgnoreReturnValue;
 import lombok.EqualsAndHashCode;
@@ -20,45 +18,34 @@ import org.apache.commons.lang3.Strings;
 import org.apache.commons.lang3.tuple.Pair;
 import org.hjson.JsonValue;
 import org.springframework.beans.factory.DisposableBean;
-import org.springframework.core.io.FileSystemResource;
 import org.springframework.core.io.Resource;
 import tools.jackson.core.type.TypeReference;
 import tools.jackson.databind.ObjectMapper;
 
 /**
- * This is {@link DefaultAttributeDefinitionStore}.
+ * This is {@link AbstractAttributeDefinitionStore}.
  *
  * @author Misagh Moayyed
- * @author Travis Schmidt
- * @since 6.2.0
+ * @since 8.0.0
  */
 @Slf4j
 @EqualsAndHashCode(of = "attributeDefinitions")
 @ToString(of = "attributeDefinitions")
-@SuppressWarnings("NullAway.Init")
-public class DefaultAttributeDefinitionStore implements AttributeDefinitionStore, DisposableBean, AutoCloseable {
-    private static final ObjectMapper MAPPER = JacksonObjectMapperFactory.builder()
+public abstract class AbstractAttributeDefinitionStore implements AttributeDefinitionStore, DisposableBean, AutoCloseable {
+    protected static final ObjectMapper MAPPER = JacksonObjectMapperFactory.builder()
         .defaultTypingEnabled(true).build().toObjectMapper();
 
-    private final Map<String, AttributeDefinition> attributeDefinitions = Collections.synchronizedMap(new ConcurrentHashMap<>());
-
-    private FileWatcherService storeWatcherService;
+    protected final Map<String, AttributeDefinition> attributeDefinitions =
+        Collections.synchronizedMap(new ConcurrentHashMap<>());
 
     @Setter
     @Getter
     private String scope = StringUtils.EMPTY;
 
-    public DefaultAttributeDefinitionStore(final Resource resource) throws Exception {
-        if (ResourceUtils.doesResourceExist(resource)) {
-            importStore(resource);
-            watchStore(resource);
-        }
-    }
-
-    public DefaultAttributeDefinitionStore(final AttributeDefinition... definitions) {
+    protected AbstractAttributeDefinitionStore(final AttributeDefinition... definitions) {
         Arrays.stream(definitions).forEach(this::registerAttributeDefinition);
     }
-
+    
     /**
      * Register attribute definitions.
      *
@@ -90,20 +77,6 @@ public class DefaultAttributeDefinitionStore implements AttributeDefinitionStore
         LOGGER.trace("Registering attribute definition [{}] by key [{}]", definition, key);
         val keyToUse = getAttributeDefinitionKey(key, definition);
         attributeDefinitions.put(keyToUse, definition);
-        return this;
-    }
-
-    @Override
-    @CanIgnoreReturnValue
-    public AttributeDefinitionStore removeAttributeDefinition(final String key) {
-        LOGGER.debug("Removing attribute definition by key [{}]", key);
-
-        if (this.attributeDefinitions.containsKey(key)) {
-            val definition = this.attributeDefinitions.remove(key);
-            LOGGER.debug("Attribute definition [{}] has been removed from the definition store", definition);
-        } else {
-            LOGGER.debug("Attribute definition with the registered key [{}] was not found and the store was not altered", key);
-        }
         return this;
     }
 
@@ -217,19 +190,27 @@ public class DefaultAttributeDefinitionStore implements AttributeDefinitionStore
     }
 
     @Override
-    @CanIgnoreReturnValue
-    public AttributeDefinitionStore store(final Resource resource) {
-        return FunctionUtils.doUnchecked(() -> {
-            val json = MAPPER.writerWithDefaultPrettyPrinter().writeValueAsString(this.attributeDefinitions);
-            LOGGER.trace("Storing attribute definitions as [{}] to [{}]", json, resource);
-            try (val writer = Files.newBufferedWriter(resource.getFile().toPath(), StandardCharsets.UTF_8)) {
-                writer.write(json);
-                writer.flush();
-            }
-            return this;
-        });
+    public void destroy() throws Exception {
+        close();
     }
-    
+
+    @Override
+    public void close() {
+    }
+
+    @Override
+    @CanIgnoreReturnValue
+    public AttributeDefinitionStore removeAttributeDefinition(final String key) {
+        LOGGER.debug("Removing attribute definition by key [{}]", key);
+
+        if (this.attributeDefinitions.containsKey(key)) {
+            val definition = this.attributeDefinitions.remove(key);
+            LOGGER.debug("Attribute definition [{}] has been removed from the definition store", definition);
+        } else {
+            LOGGER.debug("Attribute definition with the registered key [{}] was not found and the store was not altered", key);
+        }
+        return this;
+    }
 
     /**
      * Import store.
@@ -245,18 +226,6 @@ public class DefaultAttributeDefinitionStore implements AttributeDefinitionStore
         }
     }
 
-    @Override
-    public void close() {
-        if (this.storeWatcherService != null) {
-            this.storeWatcherService.close();
-        }
-    }
-
-    @Override
-    public void destroy() {
-        close();
-    }
-
     private static List<Object> determineValuesForAttributeDefinition(final Map<String, List<Object>> attributes,
                                                                       final String entry,
                                                                       final AttributeDefinition definition) {
@@ -265,20 +234,6 @@ public class DefaultAttributeDefinitionStore implements AttributeDefinitionStore
             return attributes.get(attributeKey);
         }
         return new ArrayList<>();
-    }
-
-    /**
-     * Watch store.
-     *
-     * @param resource the resource
-     * @throws Exception the exception
-     */
-    public void watchStore(final Resource resource) throws Exception {
-        if (ResourceUtils.isFile(resource)) {
-            this.storeWatcherService = new FileWatcherService(resource.getFile(),
-                file -> importStore(new FileSystemResource(file)));
-            this.storeWatcherService.start(getClass().getSimpleName());
-        }
     }
 
     /**
