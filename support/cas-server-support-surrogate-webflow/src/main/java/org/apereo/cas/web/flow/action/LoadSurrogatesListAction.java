@@ -73,7 +73,7 @@ public class LoadSurrogatesListAction extends BaseCasWebflowAction {
                 .stream()
                 .anyMatch(trait -> StringUtils.isNotBlank(trait.getSurrogateUsername()))) {
                 val authenticationResultBuilder = WebUtils.getAuthenticationResultBuilder(requestContext);
-                val registeredService = Objects.requireNonNull(WebUtils.getRegisteredService(requestContext));
+                val registeredService = WebUtils.getRegisteredService(requestContext);
                 val result = surrogatePrincipalBuilder.buildSurrogateAuthenticationResult(
                     authenticationResultBuilder, currentCredential, registeredService);
                 result.ifPresent(builder -> WebUtils.putAuthenticationResultBuilder(builder, requestContext));
