@@ -106,7 +106,7 @@ was initiated from a protected resource.
 Delegated authentication flows now support impersonation of the authenticated user, allowing
 the user to go through the impersonation account selection process after having successfully
 authenticated with the external identity provider. This behavior, off by default, needs to be
-expicitly enabled in CAS configuration settings.
+enabled in CAS configuration settings.
 
 See [this guide](../integration/Delegate-Authentication.html) for more details.
 
