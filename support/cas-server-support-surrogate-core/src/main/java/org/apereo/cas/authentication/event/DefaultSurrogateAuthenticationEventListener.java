@@ -63,7 +63,7 @@ public class DefaultSurrogateAuthenticationEventListener implements SurrogateAut
                         .principal(principal)
                         .attribute(SpringExpressionLanguageValueResolver.getInstance().resolve(attribute))
                         .from(sms.getFrom())
-                        .tenant(event.getClientInfo().getTenant())
+                        .tenant(Objects.requireNonNull(event.getClientInfo().getTenant()))
                         .text(text)
                         .build())
                 .collect(Collectors.<SmsRequest>toList());
@@ -97,7 +97,7 @@ public class DefaultSurrogateAuthenticationEventListener implements SurrogateAut
                 val emailRequest = EmailMessageRequest.builder()
                     .emailProperties(mail)
                     .to(List.of(address.toString()))
-                    .tenant(clientInfo.getTenant())
+                    .tenant(Objects.requireNonNull(clientInfo.getTenant()))
                     .body(body)
                     .build();
                 communicationsManager.email(emailRequest);

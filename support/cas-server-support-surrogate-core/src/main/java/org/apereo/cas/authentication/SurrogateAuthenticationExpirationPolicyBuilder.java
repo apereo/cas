@@ -31,11 +31,6 @@ public class SurrogateAuthenticationExpirationPolicyBuilder implements Expiratio
         return toTicketExpirationPolicy();
     }
 
-    /**
-     * To ticket expiration policy.
-     *
-     * @return the expiration policy
-     */
     private ExpirationPolicy toTicketExpirationPolicy() {
         val su = casProperties.getAuthn().getSurrogate();
         val surrogatePolicy = new HardTimeoutExpirationPolicy(su.getTgt().getTimeToKillInSeconds());
