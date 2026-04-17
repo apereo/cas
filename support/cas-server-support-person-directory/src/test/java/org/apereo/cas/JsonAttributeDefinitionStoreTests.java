@@ -5,6 +5,7 @@ import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.authentication.attribute.AttributeDefinition;
 import org.apereo.cas.authentication.attribute.AttributeDefinitionResolutionContext;
 import org.apereo.cas.authentication.attribute.AttributeDefinitionStore;
+import org.apereo.cas.authentication.attribute.AttributeDefinitionStoreConfigurer;
 import org.apereo.cas.authentication.attribute.DefaultAttributeDefinition;
 import org.apereo.cas.authentication.attribute.JsonAttributeDefinitionStore;
 import org.apereo.cas.authentication.principal.PrincipalResolver;
@@ -26,7 +27,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.context.ConfigurableApplicationContext;
+import org.springframework.context.annotation.Bean;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.FileSystemResource;
 import tools.jackson.databind.ObjectMapper;
@@ -40,7 +43,10 @@ import static org.mockito.Mockito.*;
  * @since 6.2.0
  */
 @SpringBootTest(
-    classes = BasePrincipalAttributeRepositoryTests.SharedTestConfiguration.class,
+    classes = {
+        BasePrincipalAttributeRepositoryTests.SharedTestConfiguration.class,
+        JsonAttributeDefinitionStoreTests.JsonAttributeDefinitionStoreTestConfiguration.class
+    },
     properties = {
         "cas.authn.attribute-repository.stub.attributes.uid=cas-user-id",
         "cas.authn.attribute-repository.stub.attributes.givenName=cas-given-name",
@@ -133,6 +139,14 @@ class JsonAttributeDefinitionStoreTests {
             assertTrue(attrs.containsKey("common-name"));
             assertTrue(attrs.containsKey("cname"));
         }
+    }
+
+    @Test
+    void verifyJsonDefinitionOverrides() {
+        val defn = attributeDefinitionStore.locateAttributeDefinition("eppn").orElseThrow();
+        assertEquals("uid", defn.getAttribute());
+        assertEquals("urn:oid:1.3.6.1.4.1.5923.1.1.1.6", defn.getName());
+        assertTrue(defn.isScoped());
     }
 
     @Test
@@ -380,7 +394,8 @@ class JsonAttributeDefinitionStoreTests {
     void verifyExternalImport() throws Throwable {
         try (val store = new JsonAttributeDefinitionStore(new ClassPathResource("AttributeDefns.json"))) {
             assertFalse(store.getAttributeDefinitions().isEmpty());
-            assertNotNull(store.locateAttributeDefinition("eduPersonPrincipalName"));
+            val definition = store.locateAttributeDefinition("eduPersonPrincipalName");
+            assertNotNull(definition);
         }
     }
 
@@ -463,4 +478,19 @@ class JsonAttributeDefinitionStoreTests {
         assertTrue(attributeDefinitionStore.locateAttributeDefinitionByName("interesting-attribute", AttributeDefinition.class).isPresent());
     }
 
+
+    @TestConfiguration(proxyBeanMethods = false)
+    static class JsonAttributeDefinitionStoreTestConfiguration {
+        @Bean
+        public AttributeDefinitionStoreConfigurer testAttributeDefinitionStoreConfigurer() {
+            return () ->
+                Map.of("eppn", DefaultAttributeDefinition
+                    .builder()
+                    .key("eppn")
+                    .attribute("cn")
+                    .scoped(true)
+                    .build());
+            
+        }
+    }
 }

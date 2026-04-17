@@ -1,8 +1,6 @@
 package org.apereo.cas;
 
 import module java.base;
-import org.apereo.cas.authentication.attribute.AttributeDefinitionStore;
-import org.apereo.cas.authentication.attribute.JsonAttributeDefinitionStore;
 import org.apereo.cas.config.CasCoreAuthenticationAutoConfiguration;
 import org.apereo.cas.config.CasCoreAutoConfiguration;
 import org.apereo.cas.config.CasCoreEnvironmentBootstrapAutoConfiguration;
@@ -15,14 +13,9 @@ import org.apereo.cas.config.CasCoreTicketsAutoConfiguration;
 import org.apereo.cas.config.CasCoreUtilAutoConfiguration;
 import org.apereo.cas.config.CasCoreWebAutoConfiguration;
 import org.apereo.cas.config.CasPersonDirectoryAutoConfiguration;
-import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.util.spring.boot.SpringBootTestAutoConfigurations;
-import lombok.val;
 import org.springframework.boot.SpringBootConfiguration;
 import org.springframework.boot.autoconfigure.ImportAutoConfiguration;
-import org.springframework.boot.test.context.TestConfiguration;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Import;
 
 /**
  * This is {@link BasePrincipalAttributeRepositoryTests}.
@@ -47,20 +40,6 @@ public abstract class BasePrincipalAttributeRepositoryTests {
         CasCoreScriptingAutoConfiguration.class
     })
     @SpringBootConfiguration(proxyBeanMethods = false)
-    @Import(SharedTestConfiguration.AttributeDefinitionsTestConfiguration.class)
     public static class SharedTestConfiguration {
-
-        @TestConfiguration(value = "AttributeDefinitionsTestConfiguration", proxyBeanMethods = false)
-        public static class AttributeDefinitionsTestConfiguration {
-            @Bean
-            public AttributeDefinitionStore attributeDefinitionStore(
-                final CasConfigurationProperties casProperties) throws Exception {
-                val resource = casProperties.getAuthn().getAttributeRepository()
-                    .getAttributeDefinitionStore().getJson().getLocation();
-                val store = new JsonAttributeDefinitionStore(resource);
-                store.setScope(casProperties.getServer().getScope());
-                return store;
-            }
-        }
     }
 }

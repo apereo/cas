@@ -64,7 +64,7 @@ public class JsonAttributeDefinitionStore extends AbstractAttributeDefinitionSto
      * @param resource the resource
      * @throws Exception the exception
      */
-    private void watchStore(final Resource resource) throws Exception {
+    public void watchStore(final Resource resource) throws Exception {
         if (ResourceUtils.isFile(resource)) {
             this.storeWatcherService = new FileWatcherService(resource.getFile(),
                 file -> importStore(new FileSystemResource(file)));
