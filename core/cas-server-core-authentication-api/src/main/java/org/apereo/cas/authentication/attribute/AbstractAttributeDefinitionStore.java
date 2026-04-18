@@ -6,6 +6,7 @@ import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.configuration.model.core.cache.SimpleCacheProperties;
 import org.apereo.cas.configuration.support.Beans;
 import org.apereo.cas.services.RegisteredService;
+import org.apereo.cas.util.ResourceUtils;
 import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -35,7 +36,7 @@ import tools.jackson.databind.ObjectMapper;
  */
 @Slf4j
 @ToString(of = "attributeDefinitionsCache")
-@JsonIgnoreProperties({"attributeDefinitionsCache"})
+@JsonIgnoreProperties("attributeDefinitionsCache")
 public abstract class AbstractAttributeDefinitionStore implements AttributeDefinitionStore, DisposableBean, AutoCloseable {
     protected static final ObjectMapper MAPPER = JacksonObjectMapperFactory.builder()
         .defaultTypingEnabled(true).build().toObjectMapper();
@@ -238,6 +239,22 @@ public abstract class AbstractAttributeDefinitionStore implements AttributeDefin
         return getAttributeDefinitionsMap().keySet().containsAll(givenMap.keySet());
     }
 
+    @Override
+    @CanIgnoreReturnValue
+    public AttributeDefinitionStore store(final Resource resource) {
+        return FunctionUtils.doUnchecked(() -> {
+            if (ResourceUtils.isFile(resource)) {
+                val json = MAPPER.writerWithDefaultPrettyPrinter().writeValueAsString(getAttributeDefinitionsMap());
+                LOGGER.trace("Storing attribute definitions as [{}] to [{}]", json, resource);
+                try (val writer = Files.newBufferedWriter(resource.getFile().toPath(), StandardCharsets.UTF_8)) {
+                    writer.write(json);
+                    writer.flush();
+                }
+            }
+            return this;
+        });
+    }
+    
     /**
      * Import store.
      *
@@ -280,33 +297,20 @@ public abstract class AbstractAttributeDefinitionStore implements AttributeDefin
             }, Map::<String, AttributeDefinition>of).get();
     }
 
-    private static class AttributeDefinitionExpiry implements Expiry<String, AttributeDefinition> {
+    private static final class AttributeDefinitionExpiry implements Expiry<String, AttributeDefinition> {
         @Override
         public long expireAfterCreate(final String key, final AttributeDefinition value, final long currentTime) {
-            return getExpirationTime(value);
+            return value.distanceToExpiration();
         }
 
         @Override
         public long expireAfterUpdate(final String key, final AttributeDefinition value, final long currentTime, final long currentDuration) {
-            return getExpirationTime(value);
+            return currentDuration;
         }
 
         @Override
         public long expireAfterRead(final String key, final AttributeDefinition value, final long currentTime, final long currentDuration) {
-            return getExpirationTime(value);
+            return currentDuration;
         }
-
-        private static long getExpirationTime(final AttributeDefinition value) {
-            if (value.getExpirationTime() != null) {
-                val now = ZonedDateTime.now(Clock.systemUTC()).truncatedTo(ChronoUnit.SECONDS);
-                val remaining = Duration.between(now, value.getExpirationTime().truncatedTo(ChronoUnit.SECONDS));
-                if (remaining.isNegative() || remaining.isZero()) {
-                    return 0;
-                }
-                return remaining.toNanos();
-            }
-            return Long.MAX_VALUE;
-        }
-
     }
 }

@@ -180,7 +180,7 @@ class CasCoreAuthenticationPrincipalConfiguration {
                 .forEach(store::registerAttributeDefinitions);
             val resource = casProperties.getAuthn().getAttributeRepository().getAttributeDefinitionStore().getJson().getLocation();
             store.importStore(resource);
-            store.watchStore(resource);
+            store.watchStore();
             return store;
         }
     }

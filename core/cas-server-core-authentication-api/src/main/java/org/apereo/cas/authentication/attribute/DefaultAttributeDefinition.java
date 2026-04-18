@@ -77,7 +77,7 @@ public class DefaultAttributeDefinition implements AttributeDefinition {
 
     private String hashingStrategy;
 
-    private ZonedDateTime expirationTime;
+    private String expiration;
     
     private static List<Object> formatValuesWithScope(final String scope, final List<Object> currentValues) {
         return currentValues

@@ -1,9 +1,12 @@
 package org.apereo.cas.authentication.attribute;
 
 import module java.base;
+import org.apereo.cas.configuration.support.Beans;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
+import io.micrometer.common.util.StringUtils;
+import lombok.val;
 
 /**
  * This is {@link AttributeDefinition}.
@@ -51,6 +54,7 @@ public interface AttributeDefinition extends Serializable, Comparable<AttributeD
     /**
      * Indicate if the attribute value should be rendered a single element
      * if the container that carries the attribute values has a size of 1.
+     *
      * @return true/false
      */
     boolean isSingleValue();
@@ -104,10 +108,11 @@ public interface AttributeDefinition extends Serializable, Comparable<AttributeD
     Map<String, String> getPatterns();
 
     /**
-     * Indicate the date/time at which this definition is expired.
-     * @return expiration date/time
+     * Indicate expiration window duration once the definition is created.
+     *
+     * @return expiration duration
      */
-    ZonedDateTime getExpirationTime();
+    String getExpiration();
 
     /**
      * Flatten the final values produced for this definition
@@ -137,5 +142,21 @@ public interface AttributeDefinition extends Serializable, Comparable<AttributeD
         return isSingleValue() && givenValues instanceof final Collection values && values.size() == 1
             ? values.iterator().next()
             : givenValues;
+    }
+
+    /**
+     * Distance to expiration in nanos.
+     *
+     * @return nanos to expiration
+     */
+    default long distanceToExpiration() {
+        if (StringUtils.isBlank(getExpiration())) {
+            return Long.MAX_VALUE;
+        }
+        val duration = Beans.newDuration(getExpiration());
+        if (duration.isZero() || duration.isNegative()) {
+            return 0L;
+        }
+        return duration.toNanos();
     }
 }

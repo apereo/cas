@@ -76,7 +76,7 @@ The following settings can be specified by an attribute definition:
 | `flattened`            | (Optional) Indicate whether attribute definitions with multiple values should be flattened into a single value, separated by the assigned delimiter.                                               |
 | `singleValue`          | (Optional) Default is `false`. Determines if the attribute should be produced as a single-value claim if it has only a single value.                                                               |
 | `hashingStrategy`      | (Optional) Attempts to *hash* the attribute value based on `hex`, `base64`, `sha1`, `sha256` or `sha512` hashing function.                                                                         |
-| `expirationTime`       | (Optional) A date/time UTC-zoned value, truncated to seconds, indicating when the attribute definition should expire and be removed from the cache.                                                |
+| `expiration`           | (Optional) A duration value (i.e. `PT5S`) indicating when the attribute definition should expire and be removed from the cache.                                                                    |
 
 The following operations in the order given should take place, if an attribute definition is to produce values:
 
