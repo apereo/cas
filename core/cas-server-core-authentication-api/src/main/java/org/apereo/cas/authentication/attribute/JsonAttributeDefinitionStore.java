@@ -5,9 +5,11 @@ import org.apereo.cas.util.ResourceUtils;
 import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.util.io.FileWatcherService;
 import com.google.errorprone.annotations.CanIgnoreReturnValue;
+import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.jspecify.annotations.Nullable;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.core.io.Resource;
 
@@ -21,14 +23,17 @@ import org.springframework.core.io.Resource;
 @Slf4j
 @SuppressWarnings("NullAway.Init")
 @NoArgsConstructor
+@EqualsAndHashCode(callSuper = true, onlyExplicitlyIncluded = true)
 public class JsonAttributeDefinitionStore extends AbstractAttributeDefinitionStore {
 
     private FileWatcherService storeWatcherService;
-
+    private @Nullable Resource resource;
+    
     public JsonAttributeDefinitionStore(final Resource resource) throws Exception {
         if (ResourceUtils.doesResourceExist(resource)) {
             importStore(resource);
             watchStore(resource);
+            this.resource = resource;
         }
     }
 
@@ -40,7 +45,7 @@ public class JsonAttributeDefinitionStore extends AbstractAttributeDefinitionSto
     @CanIgnoreReturnValue
     public AttributeDefinitionStore store(final Resource resource) {
         return FunctionUtils.doUnchecked(() -> {
-            val json = MAPPER.writerWithDefaultPrettyPrinter().writeValueAsString(this.attributeDefinitions);
+            val json = MAPPER.writerWithDefaultPrettyPrinter().writeValueAsString(getAttributeDefinitionsMap());
             LOGGER.trace("Storing attribute definitions as [{}] to [{}]", json, resource);
             try (val writer = Files.newBufferedWriter(resource.getFile().toPath(), StandardCharsets.UTF_8)) {
                 writer.write(json);

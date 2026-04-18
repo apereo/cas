@@ -27,7 +27,6 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.jooq.lambda.Unchecked;
-import org.jspecify.annotations.NonNull;
 import org.jspecify.annotations.Nullable;
 
 /**
@@ -78,6 +77,8 @@ public class DefaultAttributeDefinition implements AttributeDefinition {
 
     private String hashingStrategy;
 
+    private ZonedDateTime expirationTime;
+    
     private static List<Object> formatValuesWithScope(final String scope, final List<Object> currentValues) {
         return currentValues
             .stream()
@@ -120,7 +121,7 @@ public class DefaultAttributeDefinition implements AttributeDefinition {
                 return fetchAttributeValueFromScript(script, attributeName, currentValues, context);
             }
         }
-        LOGGER.warn("No groovy script cache manager is available to execute attribute mappings");
+        LOGGER.warn("No groovy script cache manager is available for attribute definition [{}]", attributeName);
         return new ArrayList<>();
     }
 
@@ -133,7 +134,7 @@ public class DefaultAttributeDefinition implements AttributeDefinition {
                 val script = cacheManager.resolveScriptableResource(inlineGroovy, attributeName, inlineGroovy);
                 return fetchAttributeValueFromScript(Objects.requireNonNull(script), attributeName, currentValues, context);
             })).orElseGet(() -> {
-                LOGGER.warn("No groovy script cache manager is available to execute attribute mappings");
+                LOGGER.warn("No groovy script cache manager is available for attribute definition [{}]", attributeName);
                 return new ArrayList<>();
             });
     }
@@ -151,7 +152,7 @@ public class DefaultAttributeDefinition implements AttributeDefinition {
     }
 
     @Override
-    public int compareTo(@NonNull final AttributeDefinition definition) {
+    public int compareTo(final AttributeDefinition definition) {
         return Comparator.comparing(AttributeDefinition::getKey).compare(this, definition);
     }
 

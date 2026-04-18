@@ -62,20 +62,21 @@ during the attribute resolution phase instead.</p></div>
 
 The following settings can be specified by an attribute definition:
 
-| Name                   | Description                                                                                                                                                                                                   |
-|------------------------|---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| `key`                  | Attribute name, as resolved by the CAS [attribute resolution engine](Attribute-Resolution.html).                                                                                                              |
-| `name`                 | Comma-separated list of attribute name(s) to virtually rename/remap and share with the target application during attribute release.                                                                           |
-| `scoped`               | (Optional) If `true`, the attribute value will be scoped to the scope of the CAS server deployment defined in settings.                                                                                       |
-| `encrypted`            | (Optional) If `true`, the attribute value will be encrypted and encoded in base-64 using the service definition's defined public key.                                                                         |
-| `attribute`            | (Optional) The source attribute to provide values for the attribute definition itself, replacing that of the original source.                                                                                 |
-| `patternFormat`        | (Optional) Template used in a `java.text.MessageFormat` to decorate the attribute values.                                                                                                                     |
-| `script`               | (Optional) Groovy script, external or embedded to process and produce attributes values. This field supports the [Spring Expression Language](../configuration/Configuration-Spring-Expressions.html) syntax. |
-| `canonicalizationMode` | (Optional) Control transformation of attribute values; allowed values are `UPPER`, `LOWER` or `NONE`.                                                                                                         |
-| `patterns`             | (Optional) A map of regular expression patterns to static/dynamic constructs to build values, in scenarios where the attribute definition is built off of an existing attribute.                              |
-| `flattened`            | (Optional) Indicate whether attribute definitions with multiple values should be flattened into a single value, separated by the assigned delimiter.                                                          |
-| `singleValue`          | (Optional) Default is `false`. Determines if the attribute should be produced as a single-value claim if it has only a single value.                                                                          |
-| `hashingStrategy`      | (Optional) Attempts to *hash* the attribute value based on `hex`, `base64`, `sha1`, `sha256` or `sha512` hashing function.                                                                                    |
+| Name                   | Description                                                                                                                                                                                        |
+|------------------------|----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| `key`                  | Attribute name, as resolved by the CAS [attribute resolution engine](Attribute-Resolution.html).                                                                                                   |
+| `name`                 | Comma-separated list of attribute name(s) to virtually rename/remap and share with the target application during attribute release.                                                                |
+| `scoped`               | (Optional) If `true`, the attribute value will be scoped to the scope of the CAS server deployment defined in settings.                                                                            |
+| `encrypted`            | (Optional) If `true`, the attribute value will be encrypted and encoded in base-64 using the service definition's defined public key.                                                              |
+| `attribute`            | (Optional) The source attribute to provide values for the attribute definition itself, replacing that of the original source.                                                                      |
+| `patternFormat`        | (Optional) Template used in a `java.text.MessageFormat` to decorate the attribute values.                                                                                                          |
+| `script`               | (Optional) Groovy script, external or embedded, to produce attributes values. This field supports the [Spring Expression Language](../configuration/Configuration-Spring-Expressions.html) syntax. |
+| `canonicalizationMode` | (Optional) Control transformation of attribute values; allowed values are `UPPER`, `LOWER` or `NONE`.                                                                                              |
+| `patterns`             | (Optional) A map of regular expression patterns to static/dynamic constructs to build values, in scenarios where the attribute definition is built off of an existing attribute.                   |
+| `flattened`            | (Optional) Indicate whether attribute definitions with multiple values should be flattened into a single value, separated by the assigned delimiter.                                               |
+| `singleValue`          | (Optional) Default is `false`. Determines if the attribute should be produced as a single-value claim if it has only a single value.                                                               |
+| `hashingStrategy`      | (Optional) Attempts to *hash* the attribute value based on `hex`, `base64`, `sha1`, `sha256` or `sha512` hashing function.                                                                         |
+| `expirationTime`       | (Optional) A date/time UTC-zoned value, truncated to seconds, indicating when the attribute definition should expire and be removed from the cache.                                                |
 
 The following operations in the order given should take place, if an attribute definition is to produce values:
 
@@ -113,7 +114,7 @@ as usual with the following definition:
 
 ```json
 ...
-  "attributeReleasePolicy" : {
+  "attributeReleasePolicy": {
     "@class" : "org.apereo.cas.services.ReturnAllowedAttributeReleasePolicy",
     "allowedAttributes" : [ "java.util.ArrayList", [ "employeeId" ] ]
   }
@@ -128,12 +129,12 @@ Same use case as above, except the attribute value will be encrypted and encoded
 
 ```json 
 {
-    "@class" : "java.util.TreeMap",
-    "employeeId" : {
-      "@class" : "org.apereo.cas.authentication.attribute.DefaultAttributeDefinition",
-      "key" : "employeeId",
-      "encrypted" : true,
-      "attribute" : "empl_identifier"
+    "@class": "java.util.TreeMap",
+    "employeeId": {
+      "@class": "org.apereo.cas.authentication.attribute.DefaultAttributeDefinition",
+      "key": "employeeId",
+      "encrypted": true,
+      "attribute": "empl_identifier"
     }
 }
 ```  
@@ -142,10 +143,10 @@ The service definition should have specified a public key definition:
 
 ```json
 ...
-  "publicKey" : {
-    "@class" : "org.apereo.cas.services.RegisteredServicePublicKeyImpl",
-    "location" : "classpath:public.key",
-    "algorithm" : "RSA"
+  "publicKey": {
+    "@class"  "org.apereo.cas.services.RegisteredServicePublicKeyImpl",
+    "location": "classpath:public.key",
+    "algorithm": "RSA"
   }
 ...
 ```
@@ -164,15 +165,15 @@ Define an attribute definition to produce values based on a pattern format:
 
 ```json 
 {
-    "@class" : "java.util.TreeMap",
-    "eduPersonPrincipalName" : {
-      "@class" : "org.apereo.cas.authentication.attribute.DefaultAttributeDefinition",
-      "key" : "eduPersonPrincipalName",
-      "name" : "urn:oid:1.3.6.1.4.1.5923.1.1.1.6",
-      "friendlyName" : "eduPersonPrincipalName",
-      "scoped" : true,
+    "@class": "java.util.TreeMap",
+    "eduPersonPrincipalName": {
+      "@class": "org.apereo.cas.authentication.attribute.DefaultAttributeDefinition",
+      "key": "eduPersonPrincipalName",
+      "name": "urn:oid:1.3.6.1.4.1.5923.1.1.1.6",
+      "friendlyName": "eduPersonPrincipalName",
+      "scoped": true,
       "patternFormat": "hello,{0}",
-      "attribute" : "uid"
+      "attribute": "uid"
     }
 }
 ```
@@ -188,13 +189,13 @@ Same use case as above, except the attribute value be additional processed by an
 
 ```json 
 {
-    "@class" : "java.util.TreeMap",
-    "eduPersonPrincipalName" : {
-      "@class" : "org.apereo.cas.authentication.attribute.DefaultAttributeDefinition",
-      "key" : "eduPersonPrincipalName",
-      "name" : "urn:oid:1.3.6.1.4.1.5923.1.1.1.6",
-      "friendlyName" : "eduPersonPrincipalName",
-      "scoped" : true,
+    "@class": "java.util.TreeMap",
+    "eduPersonPrincipalName": {
+      "@class": "org.apereo.cas.authentication.attribute.DefaultAttributeDefinition",
+      "key": "eduPersonPrincipalName",
+      "name": "urn:oid:1.3.6.1.4.1.5923.1.1.1.6",
+      "friendlyName": "eduPersonPrincipalName",
+      "scoped": true,
       "script": "groovy { logger.info(\" name: ${attributeName}, values: ${attributeValues} \"); return ['Hi', attributes['firstname']] }"
     }
 }
@@ -210,13 +211,13 @@ Same use case as above, except the attribute value be additionally processed by 
 
 ```json 
 {
-    "@class" : "java.util.TreeMap",
-    "eduPersonPrincipalName" : {
-      "@class" : "org.apereo.cas.authentication.attribute.DefaultAttributeDefinition",
-      "key" : "eduPersonPrincipalName",
-      "name" : "urn:oid:1.3.6.1.4.1.5923.1.1.1.6",
-      "friendlyName" : "eduPersonPrincipalName",
-      "scoped" : true,
+    "@class": "java.util.TreeMap",
+    "eduPersonPrincipalName": {
+      "@class": "org.apereo.cas.authentication.attribute.DefaultAttributeDefinition",
+      "key": "eduPersonPrincipalName",
+      "name": "urn:oid:1.3.6.1.4.1.5923.1.1.1.6",
+      "friendlyName": "eduPersonPrincipalName",
+      "scoped": true,
       "script": "file:/attribute-definitions.groovy"
     }
 }
@@ -248,16 +249,16 @@ If a pattern match is not found, then the value is skipped.
 
 ```json 
 {
-    "@class" : "java.util.TreeMap",
-    "memberships" : {
-        "@class" : "org.apereo.cas.authentication.attribute.DefaultAttributeDefinition",
+    "@class": "java.util.TreeMap",
+    "memberships": {
+        "@class": "org.apereo.cas.authentication.attribute.DefaultAttributeDefinition",
         "key": "memberships",
-        "attribute" : "memberships",
+        "attribute": "memberships",
         "name": "affiliations",
-        "patterns" : {
-          "@class" : "java.util.TreeMap",
-          "m[0-2].*" : "admins",
-          "m[3-6].*" : "groovy { return 'users' }"
+        "patterns": {
+          "@class": "java.util.TreeMap",
+          "m[0-2].*": "admins",
+          "m[3-6].*": "groovy { return 'users' }"
         }
     }
 }
@@ -282,11 +283,11 @@ the attribute definition may be instructed to flatten all values using the given
 
 ```json 
 {
-    "@class" : "java.util.TreeMap",
-    "allgroups" : {
-        "@class" : "org.apereo.cas.authentication.attribute.DefaultAttributeDefinition",
+    "@class": "java.util.TreeMap",
+    "allgroups": {
+        "@class": "org.apereo.cas.authentication.attribute.DefaultAttributeDefinition",
         "key": "allgroups",
-        "attribute" : "memberships",
+        "attribute": "memberships",
         "flattened": "/"
     }
 }

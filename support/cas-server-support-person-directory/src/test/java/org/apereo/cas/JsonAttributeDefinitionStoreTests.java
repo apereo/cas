@@ -33,6 +33,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.FileSystemResource;
 import tools.jackson.databind.ObjectMapper;
+import static org.awaitility.Awaitility.*;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
@@ -138,6 +139,28 @@ class JsonAttributeDefinitionStoreTests {
             assertTrue(attrs.containsKey("commonName"));
             assertTrue(attrs.containsKey("common-name"));
             assertTrue(attrs.containsKey("cname"));
+        }
+    }
+
+    @Test
+    void verifyAttributeDefinitionExpiration() {
+        try (val store = new JsonAttributeDefinitionStore()) {
+            store.setScope("example.org");
+            val defn = DefaultAttributeDefinition.builder()
+                .key("givenName")
+                .name("gName")
+                .expirationTime(ZonedDateTime.now(Clock.systemUTC()).plusSeconds(2))
+                .build();
+            store.registerAttributeDefinition(defn);
+            val attributes = CoreAuthenticationTestUtils.getAttributes();
+            val attrs = store.resolveAttributeValues(
+                attributes.keySet(),
+                attributes,
+                CoreAuthenticationTestUtils.getPrincipal(),
+                CoreAuthenticationTestUtils.getRegisteredService(),
+                CoreAuthenticationTestUtils.getService());
+            assertTrue(attrs.containsKey("gName"));
+            await().untilAsserted(() -> assertTrue(store.locateAttributeDefinition("givenName").isEmpty()));
         }
     }
 
@@ -381,13 +404,18 @@ class JsonAttributeDefinitionStoreTests {
             .key("eduPersonPrincipalName")
             .name("urn:oid:1.3.6.1.4.1.5923.1.1.1.6")
             .build();
-        val store = new JsonAttributeDefinitionStore(defn);
-        store.setScope("example.org");
-        val file = Files.createTempFile("attr", "json").toFile();
-        store.store(new FileSystemResource(file));
-        assertTrue(file.exists());
-        val store2 = new JsonAttributeDefinitionStore(new FileSystemResource(file));
-        assertEquals(store2, store);
+        try (val store = new JsonAttributeDefinitionStore(defn)) {
+            store.setScope("example.org");
+            val file = Files.createTempFile("attr", "json").toFile();
+            val resource = new FileSystemResource(file);
+            store.store(resource);
+            assertTrue(file.exists());
+            try (val store2 = new JsonAttributeDefinitionStore(resource)) {
+                assertEquals(store2, store);
+                assertEquals(store2, store2);
+                assertNotEquals(store2, mock(AttributeDefinitionStore.class));
+            }
+        }
     }
 
     @Test
@@ -490,7 +518,7 @@ class JsonAttributeDefinitionStoreTests {
                     .attribute("cn")
                     .scoped(true)
                     .build());
-            
+
         }
     }
 }

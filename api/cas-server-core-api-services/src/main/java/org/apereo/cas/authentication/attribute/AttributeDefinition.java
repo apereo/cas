@@ -103,6 +103,11 @@ public interface AttributeDefinition extends Serializable, Comparable<AttributeD
      */
     Map<String, String> getPatterns();
 
+    /**
+     * Indicate the date/time at which this definition is expired.
+     * @return expiration date/time
+     */
+    ZonedDateTime getExpirationTime();
 
     /**
      * Flatten the final values produced for this definition
