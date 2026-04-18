@@ -9,7 +9,6 @@ import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-import org.jspecify.annotations.Nullable;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.core.io.Resource;
 
@@ -27,13 +26,11 @@ import org.springframework.core.io.Resource;
 public class JsonAttributeDefinitionStore extends AbstractAttributeDefinitionStore {
 
     private FileWatcherService storeWatcherService;
-    private @Nullable Resource resource;
-    
+
     public JsonAttributeDefinitionStore(final Resource resource) throws Exception {
         if (ResourceUtils.doesResourceExist(resource)) {
             importStore(resource);
             watchStore(resource);
-            this.resource = resource;
         }
     }
 

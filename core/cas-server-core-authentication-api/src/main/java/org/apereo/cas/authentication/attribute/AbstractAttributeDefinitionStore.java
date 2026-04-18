@@ -124,6 +124,7 @@ public abstract class AbstractAttributeDefinitionStore implements AttributeDefin
     }
 
     @JsonIgnore
+    @Override
     public Collection<AttributeDefinition> getAttributeDefinitions() {
         return attributeDefinitionsCache.asMap().values();
     }
