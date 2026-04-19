@@ -16,6 +16,7 @@ import org.springframework.boot.actuate.endpoint.Access;
 import org.springframework.boot.actuate.endpoint.annotation.Endpoint;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.http.MediaType;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -62,8 +63,24 @@ public class AttributeDefinitionsEndpoint extends BaseCasRestActuatorEndpoint {
             )
         ))
     public void registerAttributeDefinition(@RequestBody final List<AttributeDefinition> attributeDefinitions) {
+        val store = attributeDefinitionStore.getObject();
         for (val defn : attributeDefinitions) {
-            attributeDefinitionStore.getObject().registerAttributeDefinition(defn);
+            store.registerAttributeDefinition(defn);
+        }
+    }
+
+    /**
+     * Delete attribute definitions by their keys.
+     *
+     * @param keys the attribute definition keys to remove
+     */
+    @DeleteMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
+    @Operation(summary = "Delete attribute definitions registered with CAS by their keys",
+        parameters = @Parameter(description = "List of attribute definition keys to remove"))
+    public void deleteAttributeDefinitions(@RequestBody final List<String> keys) {
+        val store = attributeDefinitionStore.getObject();
+        for (val key : keys) {
+            store.removeAttributeDefinition(key);
         }
     }
 }

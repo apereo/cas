@@ -57,7 +57,7 @@ class ExpiringAttributeDefinitionStoreTests {
         }
     }
 
-    private static class ExpiringAttributeDefinitionStore extends AbstractAttributeDefinitionStore {
+    private static final class ExpiringAttributeDefinitionStore extends AbstractAttributeDefinitionStore {
         private final Map<String, AttributeDefinition> store = new ConcurrentHashMap<>();
 
         @Override
