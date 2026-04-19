@@ -45,6 +45,9 @@ async function initializePersonDirectoryOperations() {
     const attributeDefinitionsTable = $("#attributeDefinitionsTable").DataTable({
         pageLength: 10,
         autoWidth: false,
+        columnDefs: [
+            {width: "32px", targets: 0, className: "text-center"}
+        ],
         layout: {
             topStart: attrDefToolbar
         },
@@ -132,18 +135,24 @@ async function initializePersonDirectoryOperations() {
             
             for (const definition of response) {
                 attributeDefinitionsTable.row.add({
-                    0: `<code>${definition.key ?? "N/A"}</code>`,
-                    1: `<code>${definition.name ?? "N/A"}</code>`,
-                    2: `<code>${definition.scoped ? checked : unchecked}</code>`,
-                    3: `<code>${definition.encrypted ? checked : unchecked}</code>`,
-                    4: `<code>${definition.singleValue ? checked : unchecked}</code>`,
-                    5: `<code>${definition.attribute ?? "N/A"}</code>`,
-                    6: `<code>${definition.patternFormat ?? "N/A"}</code>`,
-                    7: `<code>${definition.canonicalizationMode ?? "N/A"}</code>`,
-                    8: `<code>${definition.flattened ? checked : unchecked}</code>`,
-                    9: `<code>${definition?.friendlyName ?? "N/A"}</code>`,
-                    10: `<code>${definition?.urn ?? "N/A"}</code>`,
-                    11: `<button type="button" name="deleteAttrDefn" href="#" data-key="${definition.key}"
+                    0: attrDefTypeIcon(definition),
+                    1: `<code>${definition.key ?? "N/A"}</code>`,
+                    2: `<code>${definition.name ?? "N/A"}</code>`,
+                    3: `<code>${definition.scoped ? checked : unchecked}</code>`,
+                    4: `<code>${definition.encrypted ? checked : unchecked}</code>`,
+                    5: `<code>${definition.singleValue ? checked : unchecked}</code>`,
+                    6: `<code>${definition.attribute ?? "N/A"}</code>`,
+                    7: `<code>${definition.patternFormat ?? "N/A"}</code>`,
+                    8: `<code>${definition.canonicalizationMode ?? "N/A"}</code>`,
+                    9: `<code>${definition.flattened ? checked : unchecked}</code>`,
+                    10: `<code>${definition?.friendlyName ?? "N/A"}</code>`,
+                    11: `<code>${definition?.urn ?? "N/A"}</code>`,
+                    12: `<button type="button" name="viewAttrDefn" href="#" data-key="${definition.key}"
+                                title="View Attribute Definition"
+                                class="mdc-button mdc-button--raised btn btn-link min-width-32x">
+                            <i class="mdi mdi-eye min-width-32x" aria-hidden="true"></i>
+                         </button>
+                         <button type="button" name="deleteAttrDefn" href="#" data-key="${definition.key}"
                                 title="Delete Attribute Definition"
                                 class="mdc-button mdc-button--raised btn btn-link min-width-32x">
                             <i class="mdi mdi-delete min-width-32x" aria-hidden="true"></i>
@@ -189,6 +198,18 @@ async function initializePersonDirectoryOperations() {
     }
 }
 
+function attrDefTypeIcon(definition) {
+    const cls = definition["@class"] || "";
+    if (cls.includes("SamlIdPAttributeDefinition")) {
+        return `<i title="SAML" class="mdi mdi-alpha-s-box-outline"></i>`;
+    } else if (cls.includes("OidcAttributeDefinition")) {
+        return `<i title="OpenID Connect" class="mdi mdi-alpha-o-box-outline"></i>`;
+    } else if (cls.includes("OAuthAttributeDefinition")) {
+        return `<i title="OAuth" class="mdi mdi-alpha-o-circle-outline"></i>`;
+    }
+    return `<i title="Default" class="mdi mdi-alpha-d-box-outline"></i>`;
+}
+
 function reloadAttributeDefinitionsTable() {
     if (!CasActuatorEndpoints.attributeDefinitions()) {
         return;
@@ -200,18 +221,24 @@ function reloadAttributeDefinitionsTable() {
         const unchecked = `<i class='mdc-tab__icon mdi mdi-checkbox-blank-circle-outline' aria-hidden='true'></i>`;
         for (const definition of response) {
             table.row.add({
-                0: `<code>${definition.key ?? "N/A"}</code>`,
-                1: `<code>${definition.name ?? "N/A"}</code>`,
-                2: `<code>${definition.scoped ? checked : unchecked}</code>`,
-                3: `<code>${definition.encrypted ? checked : unchecked}</code>`,
-                4: `<code>${definition.singleValue ? checked : unchecked}</code>`,
-                5: `<code>${definition.attribute ?? "N/A"}</code>`,
-                6: `<code>${definition.patternFormat ?? "N/A"}</code>`,
-                7: `<code>${definition.canonicalizationMode ?? "N/A"}</code>`,
-                8: `<code>${definition.flattened ? checked : unchecked}</code>`,
-                9: `<code>${definition?.friendlyName ?? "N/A"}</code>`,
-                10: `<code>${definition?.urn ?? "N/A"}</code>`,
-                11: `<button type="button" name="deleteAttrDefn" href="#" data-key="${definition.key}"
+                0: attrDefTypeIcon(definition),
+                1: `<code>${definition.key ?? "N/A"}</code>`,
+                2: `<code>${definition.name ?? "N/A"}</code>`,
+                3: `<code>${definition.scoped ? checked : unchecked}</code>`,
+                4: `<code>${definition.encrypted ? checked : unchecked}</code>`,
+                5: `<code>${definition.singleValue ? checked : unchecked}</code>`,
+                6: `<code>${definition.attribute ?? "N/A"}</code>`,
+                7: `<code>${definition.patternFormat ?? "N/A"}</code>`,
+                8: `<code>${definition.canonicalizationMode ?? "N/A"}</code>`,
+                9: `<code>${definition.flattened ? checked : unchecked}</code>`,
+                10: `<code>${definition?.friendlyName ?? "N/A"}</code>`,
+                11: `<code>${definition?.urn ?? "N/A"}</code>`,
+                12: `<button type="button" name="viewAttrDefn" href="#" data-key="${definition.key}"
+                            title="View Attribute Definition"
+                            class="mdc-button mdc-button--raised btn btn-link min-width-32x">
+                        <i class="mdi mdi-eye min-width-32x" aria-hidden="true"></i>
+                     </button>
+                     <button type="button" name="deleteAttrDefn" href="#" data-key="${definition.key}"
                             title="Delete Attribute Definition"
                             class="mdc-button mdc-button--raised btn btn-link min-width-32x">
                         <i class="mdi mdi-delete min-width-32x" aria-hidden="true"></i>
@@ -237,7 +264,7 @@ function deleteAllAttributeDefinitions() {
     const keys = [];
     table.rows().every(function () {
         const data = this.data();
-        const keyHtml = data[0];
+        const keyHtml = data[1];
         const key = $(keyHtml).text();
         if (key && key !== "N/A") {
             keys.push(key);
@@ -355,6 +382,25 @@ function bindAttrDefDeleteButtons() {
                         });
                     }
                 });
+        }
+    });
+
+    $("button[name=viewAttrDefn]").off().on("click", function () {
+        const key = $(this).attr("data-key");
+        if (CasActuatorEndpoints.attributeDefinitions()) {
+            $.get(`${CasActuatorEndpoints.attributeDefinitions()}/${key}`, response => {
+                const editor = initializeAceEditor("viewAttrDefEditor", "json");
+                editor.setReadOnly(true);
+                editor.setValue(JSON.stringify(response, null, 2), -1);
+                editor.gotoLine(1);
+                const beautify = ace.require("ace/ext/beautify");
+                beautify.beautify(editor.session);
+                const dialog = window.mdc.dialog.MDCDialog.attachTo(document.getElementById("viewAttrDefDialog"));
+                dialog["open"]();
+            }).fail((xhr, status, error) => {
+                console.error("Error fetching data:", error);
+                displayBanner(xhr);
+            });
         }
     });
 }

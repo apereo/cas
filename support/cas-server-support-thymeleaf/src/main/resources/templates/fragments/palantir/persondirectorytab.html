@@ -75,6 +75,7 @@
                 <table id="attributeDefinitionsTable" class="mdc-data-table__table table table-striped noborder">
                     <thead>
                     <tr class="mdc-data-table__header-row">
+                        <th class="mdc-data-table__header-cell" role="columnheader" scope="col"></th>
                         <th class="mdc-data-table__header-cell" role="columnheader" scope="col">Key</th>
                         <th class="mdc-data-table__header-cell" role="columnheader" scope="col">Name</th>
                         <th class="mdc-data-table__header-cell" role="columnheader" scope="col">Scoped</th>
@@ -111,6 +112,19 @@
                     </tbody>
                 </table>
             </div>
+        </div>
+
+        <div class="mdc-dialog modal" id="viewAttrDefDialog" role="alertdialog"
+             aria-modal="true" aria-labelledby="viewAttrDefDialog-title"
+             aria-describedby="dialog-content">
+            <div class="mdc-dialog__container w-100 modal-dialog">
+                <div class="mdc-dialog__surface mw-100 w-75 modal-content min-height-60">
+                    <div class="mdc-dialog__content modal-body" id="viewAttrDefDialog-content">
+                        <div class="ace-editor ace-absolute" id="viewAttrDefEditor"></div>
+                    </div>
+                </div>
+            </div>
+            <div class="mdc-dialog__scrim"></div>
         </div>
     </div>
 </span>
