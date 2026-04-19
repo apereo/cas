@@ -780,14 +780,13 @@ public class WebUtils {
      * @param context         the context
      * @param googleRecaptcha the properties
      */
-    public static void putRecaptchaPropertiesFlowScope(final RequestContext context, final GoogleRecaptchaProperties googleRecaptcha) {
+    public static void putRecaptchaPropertiesFlowScope(final RequestContext context,
+                                                       final GoogleRecaptchaProperties googleRecaptcha) {
         val flowScope = context.getFlowScope();
-        if (googleRecaptcha.isEnabled()) {
-            flowScope.put("recaptchaSiteKey", SpringExpressionLanguageValueResolver.getInstance().resolve(googleRecaptcha.getSiteKey()));
-            flowScope.put("recaptchaInvisible", googleRecaptcha.isInvisible());
-            flowScope.put("recaptchaPosition", googleRecaptcha.getPosition());
-            flowScope.put("recaptchaVersion", googleRecaptcha.getVersion().name().toLowerCase(Locale.ENGLISH));
-        }
+        flowScope.put("recaptchaSiteKey", SpringExpressionLanguageValueResolver.getInstance().resolve(googleRecaptcha.getSiteKey()));
+        flowScope.put("recaptchaInvisible", googleRecaptcha.isInvisible());
+        flowScope.put("recaptchaPosition", googleRecaptcha.getPosition());
+        flowScope.put("recaptchaVersion", googleRecaptcha.getVersion().name().toLowerCase(Locale.ENGLISH));
     }
 
     /**

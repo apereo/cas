@@ -12,6 +12,11 @@ import jakarta.servlet.http.HttpServletRequest;
  */
 public interface CaptchaValidator {
     /**
+     * Default bean name.
+     */
+    String BEAN_NAME = "captchaValidator";
+
+    /**
      * Gets instance.
      *
      * @param googleRecaptcha the google recaptcha

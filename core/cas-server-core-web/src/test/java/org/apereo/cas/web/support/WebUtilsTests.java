@@ -81,7 +81,7 @@ class WebUtilsTests {
             WebUtils.putAvailableAuthenticationHandleNames(context, List.of());
             WebUtils.putPasswordManagementEnabled(context, true);
             WebUtils.putForgotUsernameEnabled(context, true);
-            WebUtils.putRecaptchaPropertiesFlowScope(context, new GoogleRecaptchaProperties().setEnabled(true));
+            WebUtils.putRecaptchaPropertiesFlowScope(context, new GoogleRecaptchaProperties());
             WebUtils.putLogoutUrls(context, Map.of());
             WebUtils.putWarnCookieIfRequestParameterPresent(null, context);
             WebUtils.putTicketGrantingTicketInScopes(context, "ticket-id");
