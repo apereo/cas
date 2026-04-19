@@ -4,33 +4,33 @@ async function makeBrowserStorageUnavailable(page) {
     await page.evaluateOnNewDocument(() => {
         const makeBrokenStorage = () => ({
             getItem() {
-                throw new TypeError('Storage API unavailable');
+                throw new TypeError("Storage API unavailable");
             },
             setItem() {
-                throw new TypeError('Storage API unavailable');
+                throw new TypeError("Storage API unavailable");
             },
             removeItem() {
-                throw new TypeError('Storage API unavailable');
+                throw new TypeError("Storage API unavailable");
             },
             clear() {
-                throw new TypeError('Storage API unavailable');
+                throw new TypeError("Storage API unavailable");
             },
             key() {
-                throw new TypeError('Storage API unavailable');
+                throw new TypeError("Storage API unavailable");
             },
             get length() {
-                throw new TypeError('Storage API unavailable');
+                throw new TypeError("Storage API unavailable");
             }
         });
 
-        Object.defineProperty(window, 'localStorage', {
+        Object.defineProperty(window, "localStorage", {
             configurable: true,
             get() {
                 return makeBrokenStorage();
             }
         });
 
-        Object.defineProperty(window, 'sessionStorage', {
+        Object.defineProperty(window, "sessionStorage", {
             configurable: true,
             get() {
                 return makeBrokenStorage();
