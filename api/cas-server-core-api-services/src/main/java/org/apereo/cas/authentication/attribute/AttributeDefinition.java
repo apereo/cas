@@ -97,6 +97,13 @@ public interface AttributeDefinition extends Serializable, Comparable<AttributeD
     String getCanonicalizationMode();
 
     /**
+     * Describes the hashing strategy of the attribute value(s) if any.
+     * Example values would be {@code HEX, SHA1}, etc.
+     * @return hashing strategy
+     */
+    String getHashingStrategy();
+
+    /**
      * A map of regular expression patterns to values.
      * If an attribute definition is to build its values off of an existing attribute,
      * each value is examined against patterns defined here. For each match, the linked entry

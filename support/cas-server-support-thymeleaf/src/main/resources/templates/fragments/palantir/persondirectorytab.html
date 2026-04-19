@@ -64,6 +64,14 @@
                     An attribute definition allows one to describe metadata about necessary attributes
                     with special decorations to be considered during attribute resolution and release.
                 </p>
+                <div id="newAttributeDefinitionDialogFields" style="display:none;">
+                    <div th:replace="~{fragments/switchbutton :: switchbutton (id='showAttrDefEditor', label='#Show JSON Editor', cssClass='always-show pb-2 pt-2', selected=true, dataAttrs='changeEventHandler=toggleAttrDefEditorVisibility')}"/>
+                    <div th:replace="~{fragments/switchbutton :: switchbutton (id='attributeDefinitionScoped', label='#Scoped', cssClass='always-show pt-1 pb-1')}"/>
+                    <div th:replace="~{fragments/switchbutton :: switchbutton (id='attributeDefinitionEncrypted', label='#Encrypted', cssClass='always-show pt-1 pb-1')}"/>
+                    <div th:replace="~{fragments/switchbutton :: switchbutton (id='attributeDefinitionSingleValue', label='#Single Value', cssClass='always-show pt-1 pb-1')}"/>
+                    <div th:replace="~{fragments/switchbutton :: switchbutton (id='attributeDefinitionPersistent', label='#Persistent', cssClass='SAML hide pt-1 pb-1')}"/>
+                    <div th:replace="~{fragments/switchbutton :: switchbutton (id='attributeDefinitionStructured', label='#Structured', cssClass='OIDC hide pt-1 pb-1')}"/>
+                </div>
                 <table id="attributeDefinitionsTable" class="mdc-data-table__table table table-striped noborder">
                     <thead>
                     <tr class="mdc-data-table__header-row">
@@ -78,6 +86,7 @@
                         <th class="mdc-data-table__header-cell" role="columnheader" scope="col">Flattened</th>
                         <th class="mdc-data-table__header-cell" role="columnheader" scope="col">Friendly Name</th>
                         <th class="mdc-data-table__header-cell" role="columnheader" scope="col">URN</th>
+                        <th class="mdc-data-table__header-cell" role="columnheader" scope="col"></th>
                     </tr>
                     </thead>
                     <tbody class="mdc-data-table__content">
