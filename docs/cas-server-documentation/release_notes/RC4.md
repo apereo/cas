@@ -58,7 +58,7 @@ to build and verify Graal VM native images and we plan to extend the coverage to
 ### Testing Strategy
 
 The collection of end-to-end [browser tests based on Puppeteer](../../developer/Test-Process.html) continue to grow to cover more use cases
-and scenarios. At the moment, total number of jobs stands at approximately `543` distinct scenarios. The overall
+and scenarios. At the moment, total number of jobs stands at approximately `545` distinct scenarios. The overall
 test coverage of the CAS codebase is approximately `94%`.
 
 ### Spring Boot 4.1
@@ -89,9 +89,8 @@ The OpenID Federation server support is now in
 its [own dedicated module](../authentication/OIDC-Authentication-Federation.html). Functionality here
 will eventually be expanded to allow CAS to participate in OpenID connect federations.
 
-### OpenId Connect Federation & Delegation
-
-Small improvements to OpenID Federation protocol and its support for authentication delegation for OIDC clients.
+Furthermore, when it comes to OpenID Connect client support and delegation, there are now small improvements 
+in place to OpenID Federation protocol and its support for authentication delegation for OIDC clients.
 See [this guide](../integration/Delegate-Authentication-Generic-OpenID-Connect.html) for more details.
 
 ### Account Registration
@@ -109,8 +108,17 @@ authenticated with the external identity provider. This behavior, off by default
 enabled in CAS configuration settings.
 
 See [this guide](../integration/Delegate-Authentication.html) for more details.
+ 
+### reCAPTCHA per Application
+
+Previously, [reCAPTCHA support](../integration/Configuring-Google-reCAPTCHA.html) was only available at the 
+global level and could only be turned off for specific applications. Starting with this release, reCAPTCHA 
+can also now be enabled and configured on a per-application basis, allowing for more granular control 
+over when and where reCAPTCHA challenges are presented to users.
 
 ## Other Stuff
               
 - Claims assigned to OpenID Connect custom scopes can now be overridden per client application.
 - Minor Gradle build improvements to better handle cacheability of build artifacts.
+- Internal refactoring of [attribute definitions](../integration/Attribute-Definitions.html), allowing participating stores to honor attribute definition expiration policies.
+- Minor enhancements to [FIDO2 WebAuthn](../mfa/FIDO2-WebAuthn-Authentication.html) support to better parse FIDO metadata when additional fields are present in the metadata response.
