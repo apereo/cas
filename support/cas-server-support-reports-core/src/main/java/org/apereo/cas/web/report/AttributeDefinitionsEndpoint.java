@@ -10,14 +10,15 @@ import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.val;
-import org.jspecify.annotations.NonNull;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.boot.actuate.endpoint.Access;
 import org.springframework.boot.actuate.endpoint.annotation.Endpoint;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 
@@ -29,11 +30,11 @@ import org.springframework.web.bind.annotation.RequestBody;
  */
 @Endpoint(id = "attributeDefinitions", defaultAccess = Access.NONE)
 public class AttributeDefinitionsEndpoint extends BaseCasRestActuatorEndpoint {
-    private final ObjectProvider<@NonNull AttributeDefinitionStore> attributeDefinitionStore;
+    private final ObjectProvider<AttributeDefinitionStore> attributeDefinitionStore;
 
     public AttributeDefinitionsEndpoint(final CasConfigurationProperties casProperties,
                                         final ConfigurableApplicationContext applicationContext,
-                                        final ObjectProvider<@NonNull AttributeDefinitionStore> attributeDefinitionStore) {
+                                        final ObjectProvider<AttributeDefinitionStore> attributeDefinitionStore) {
         super(casProperties, applicationContext);
         this.attributeDefinitionStore = attributeDefinitionStore;
     }
@@ -47,6 +48,22 @@ public class AttributeDefinitionsEndpoint extends BaseCasRestActuatorEndpoint {
     @Operation(summary = "Get all attribute definitions registered with CAS")
     public Collection<AttributeDefinition> attributeDefinitions() {
         return attributeDefinitionStore.getObject().getAttributeDefinitions();
+    }
+
+    /**
+     * Produce an attribute definition by its key.
+     *
+     * @param key the attribute definition key
+     * @return the attribute definition
+     */
+    @GetMapping(path = "/{key}", produces = MediaType.APPLICATION_JSON_VALUE)
+    @Operation(summary = "Get an attribute definition registered with CAS by its key",
+        parameters = @Parameter(description = "The attribute definition key"))
+    public ResponseEntity<AttributeDefinition> attributeDefinition(@PathVariable final String key) {
+        return attributeDefinitionStore.getObject()
+            .locateAttributeDefinition(key)
+            .map(ResponseEntity::ok)
+            .orElseGet(() -> ResponseEntity.notFound().build());
     }
 
     /**
