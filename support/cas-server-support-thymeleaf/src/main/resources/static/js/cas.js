@@ -109,7 +109,7 @@ function isNumeric(str) {
 function copyToClipboard(str) {
     navigator.clipboard.writeText(str)
         .then(() => {
-            console.log("Copied!");
+            console.info("Copied text to clipboard");
         })
         .catch(err => {
             console.error("Failed to copy: ", err);
@@ -209,35 +209,35 @@ function isValidURL(str) {
 }
 
 function requestGeoPosition() {
-    // console.log('Requesting GeoLocation data from the browser...');
+    console.info('Requesting GeoLocation data from the browser...');
     if (navigator.geolocation) {
         navigator.geolocation.watchPosition(showGeoPosition, logGeoLocationError,
             {maximumAge: 600000, timeout: 5000, enableHighAccuracy: true});
     } else {
-        console.log("Browser does not support Geo Location");
+        console.error("Browser does not support Geo Location");
     }
 }
 
 function logGeoLocationError(error) {
     switch (error.code) {
     case error.PERMISSION_DENIED:
-        console.log("User denied the request for GeoLocation.");
+        console.info("User denied the request for GeoLocation.");
         break;
     case error.POSITION_UNAVAILABLE:
-        console.log("Location information is unavailable.");
+        console.info("Location information is unavailable.");
         break;
     case error.TIMEOUT:
-        console.log("The request to get user location timed out.");
+        console.info("The request to get user location timed out.");
         break;
     default:
-        console.log("An unknown error occurred.");
+        console.info("An unknown error occurred.");
         break;
     }
 }
 
 function showGeoPosition(position) {
     let loc = `${position.coords.latitude},${position.coords.longitude},${position.coords.accuracy},${position.timestamp}`;
-    // console.log(`Tracking geolocation for ${loc}`);
+    console.info(`Tracking geolocation for ${loc}`);
     $("[name=\"geolocation\"]").val(loc);
 }
 
@@ -245,9 +245,45 @@ function getCookie(name) {
     const value = `; ${document.cookie}`;
     const parts = value.split(`; ${name}=`);
     if (parts.length === 2) {
-        return parts.pop().split(";").shift();
+        const cookie = parts.pop().split(";").shift();
+        console.info("Found cookie", cookie);
+        return cookie;
     }
+    console.error(`Cookie ${name} missing in`, value);
     return null;
+}
+
+function removeCookie(name, path = '/') {
+    document.cookie = `${encodeURIComponent(name)}=; Max-Age=0; path=${path}; SameSite=Lax`;
+    console.info("Removed cookie", name);
+}
+
+function writeCookie(name, value, options = {}) {
+    const {
+        path = '/',
+        maxAge,
+        sameSite = 'Lax',
+        secure = window.location.protocol === 'https:'
+    } = options;
+
+    const cookieValue = `${encodeURIComponent(value)}`;
+    let cookie = `${encodeURIComponent(name)}=${cookieValue}; path=${path}; SameSite=${sameSite}`;
+
+    if (secure) {
+        cookie += '; Secure';
+    }
+
+    if (typeof maxAge === 'number') {
+        cookie += `; Max-Age=${maxAge}`;
+    }
+    document.cookie = cookie;
+    console.info(`Created cookie ${name} at path ${path}, marked secure=${secure}, maxAge=${maxAge}`);
+    const accepted = getCookie(name) === String(value);
+    if (!accepted) {
+        const length = new TextEncoder().encode(cookieValue).length;
+        throw `Cookie ${name} at path ${path} with length ${length} cannot be created`;
+    }
+    return value;
 }
 
 function preserveAnchorTagOnForm() {
@@ -260,7 +296,7 @@ function preserveAnchorTagOnForm() {
         } else {
             action += location.search + encodeURIComponent(location.hash);
         }
-        // console.log(`Preserving URL fragment in form action: ${action}`);
+        console.info(`Preserving URL fragment in form action: ${action}`);
         $("#fm1").attr("action", action);
 
     });
@@ -284,96 +320,119 @@ function captureAndStoreUsername() {
     const $panel = $("#publicWorkstationSwitchButtonPanel");
 
     if ($panel.length > 0 && $panel.is(":visible")) {
-        console.log("Public workstation mode is enabled; skipping username capture.");
+        console.info("Public workstation mode is enabled; skipping username capture.");
         return;
     }
 
-    $("form").submit(function () {
-        const username = $(this).find("input[name=\"username\"]").val();
-        if (username) {
-            localStorage.setItem("username", username);
+    if (isStorageAvailable("localStorage")) {
+        $("form").submit(function () {
+            const username = $(this).find("input[name=\"username\"]").val();
+            if (username) {
+                localStorage.setItem("username", username);
+            }
+            return true;
+        });
+        const savedUsername = localStorage.getItem("username");
+        $("#fm1 label[for='username']").removeClass("highlight-username");
+        if (savedUsername) {
+            $("#fm1 input[name='username']").val(savedUsername);
+            $("#fm1 input[name='password']").focus();
+            $("#fm1 label[for='username']").addClass("highlight-username");
         }
-        return true;
-    });
-    const savedUsername = localStorage.getItem("username");
-    $("#fm1 label[for='username']").removeClass("highlight-username");
-    if (savedUsername) {
-        $("#fm1 input[name='username']").val(savedUsername);
-        $("#fm1 input[name='password']").focus();
-        $("#fm1 label[for='username']").addClass("highlight-username");
     }
 }
 
 function writeToLocalStorage(browserStorage) {
-    if (typeof (Storage) === "undefined") {
-        console.log("Browser does not support local storage for write ops");
+    if (!isStorageAvailable("localStorage")) {
+        console.error("Browser does not support local storage for write ops");
+        return false;
     } else {
-        let payload = readFromLocalStorage(browserStorage);
+        let payload = readFromLocalStorage();
         window.localStorage.removeItem("CAS");
         payload[browserStorage.context] = browserStorage.payload;
         window.localStorage.setItem("CAS", JSON.stringify(payload));
-        // console.log(`Stored ${browserStorage.payload} in local storage under key ${browserStorage.context}`);
+        console.info(`Stored ${browserStorage.payload} in local storage under key ${browserStorage.context}`);
+        return true;
     }
 }
 
-function readFromLocalStorage(browserStorage) {
-    if (typeof (Storage) === "undefined") {
-        console.log("Browser does not support local storage for read ops");
+function readFromLocalStorage() {
+    if (!isStorageAvailable("localStorage")) {
+        console.error("Browser does not support local storage for read ops");
         return null;
     }
     try {
         let payload = window.localStorage.getItem("CAS");
-        // console.log(`Read ${payload} in local storage`);
+        console.info(`Read ${payload} in local storage`);
         return payload === null ? {} : JSON.parse(payload);
     } catch (e) {
-        console.log(`Failed to read from local storage: ${e}`);
+        console.error(`Failed to read from local storage: ${e}`);
         window.localStorage.removeItem("CAS");
         return {};
     }
 }
 
 function clearLocalStorage() {
-    if (typeof (Storage) === "undefined") {
-        console.log("Browser does not support local storage for write-ops");
+    if (!isStorageAvailable("localStorage")) {
+        console.error("Browser does not support local storage for write-ops");
     } else {
         window.localStorage.clear();
     }
 }
 
 function writeToSessionStorage(browserStorage) {
-    if (typeof (Storage) === "undefined") {
-        console.log("Browser does not support session storage for write-ops");
-    } else {
-        let payload = readFromSessionStorage(browserStorage);
-        window.sessionStorage.removeItem("CAS");
-        payload[browserStorage.context] = browserStorage.payload;
-        window.sessionStorage.setItem("CAS", JSON.stringify(payload));
-        // console.log(`Stored ${browserStorage.payload} in session storage under key ${browserStorage.context}`);
+    if (!isStorageAvailable("sessionStorage")) {
+        console.error("Browser does not support session storage for write-ops");
+        return false;
     }
+    let payload = readFromSessionStorage();
+    window.sessionStorage.removeItem("CAS");
+    payload[browserStorage.context] = browserStorage.payload;
+    window.sessionStorage.setItem("CAS", JSON.stringify(payload))
+    console.info(`Stored ${browserStorage.payload} in session storage`);
+    return true;
 }
 
 function clearSessionStorage() {
-    if (typeof (Storage) === "undefined") {
-        console.log("Browser does not support session storage for write-ops");
+    if (!isStorageAvailable("sessionStorage")) {
+        console.error("Browser does not support session storage for write-ops");
     } else {
         window.sessionStorage.clear();
-        // console.log("Cleared session storage");
+        console.info("Cleared session storage");
     }
 }
 
-function readFromSessionStorage(browserStorage) {
-    if (typeof (Storage) === "undefined") {
-        console.log("Browser does not support session storage for read-ops");
+function readFromSessionStorage() {
+    if (!isStorageAvailable("sessionStorage")) {
+        console.error("Browser does not support session storage for read-ops");
         return null;
     }
     try {
         let payload = window.sessionStorage.getItem("CAS");
-        // console.log(`Read ${payload} in session storage`);
+        console.info(`Read ${payload} in session storage`);
         return payload === null ? {} : JSON.parse(payload);
     } catch (e) {
-        console.log(`Failed to read from session storage: ${e}`);
+        console.error(`Failed to read from session storage: ${e}`);
         window.sessionStorage.removeItem("CAS");
         return {};
+    }
+}
+
+function isStorageAvailable(type) {
+    try {
+        const storage = window[type];
+        if (!storage) {
+            return false;
+        }
+
+        const testKey = '__storage_test__';
+        storage.setItem(testKey, '1');
+        storage.removeItem(testKey);
+        console.info("Storage API is available for", type)
+        return true;
+    } catch (e) {
+        console.error("Storage API is unavailable for", type);
+        return false;
     }
 }
 
@@ -437,7 +496,7 @@ function captureFingerprint(fieldName = "deviceFingerprint") {
             const fp = await FingerprintJS.load();
             const result = await fp.get();
             const fingerprint = result.visitorId;
-            console.log("Captured device fingerprint:", fingerprint);
+            console.info("Captured device fingerprint:", fingerprint);
             $(`[name="${fieldName}"]`).val(fingerprint);
         })();
     }

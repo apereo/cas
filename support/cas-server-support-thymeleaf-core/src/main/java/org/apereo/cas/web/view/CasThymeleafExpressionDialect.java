@@ -3,7 +3,6 @@ package org.apereo.cas.web.view;
 import module java.base;
 import org.apereo.cas.services.web.CasThymeleafTemplatesDirector;
 import lombok.RequiredArgsConstructor;
-import org.jspecify.annotations.NonNull;
 import org.springframework.beans.factory.ObjectProvider;
 import org.thymeleaf.context.IExpressionContext;
 import org.thymeleaf.dialect.IExpressionObjectDialect;
@@ -17,7 +16,7 @@ import org.thymeleaf.expression.IExpressionObjectFactory;
  */
 @RequiredArgsConstructor
 public class CasThymeleafExpressionDialect implements IExpressionObjectDialect {
-    private final ObjectProvider<@NonNull CasThymeleafTemplatesDirector> director;
+    private final ObjectProvider<CasThymeleafTemplatesDirector> director;
 
     @Override
     public String getName() {

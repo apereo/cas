@@ -112,7 +112,8 @@ class InitialFlowSetupActionTests {
             context.setContextPath(CONST_CONTEXT_PATH);
 
             action.execute(context);
-
+            assertEquals(context.getFlowScope().getRequiredString("contextPath"),
+                context.getExternalContext().getContextPath());
             assertEquals(CONST_CONTEXT_PATH + '/', warnCookieGenerator.getCookiePath());
             assertEquals(CONST_CONTEXT_PATH + '/', tgtCookieGenerator.getCookiePath());
         }

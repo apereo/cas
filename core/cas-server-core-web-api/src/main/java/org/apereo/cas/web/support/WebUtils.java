@@ -1957,4 +1957,15 @@ public class WebUtils {
         return request.getParameterMap().containsKey(REQUEST_PARAM_LOGOUT_REQUEST_CONFIRMED)
             && Boolean.parseBoolean(request.getParameter(REQUEST_PARAM_LOGOUT_REQUEST_CONFIRMED));
     }
+
+    /**
+     * Put context path.
+     *
+     * @param requestContext the request context
+     */
+    public static void putContextPath(final RequestContext requestContext) {
+        val request = WebUtils.getHttpServletRequestFromExternalWebflowContext(requestContext);
+        val contextPath = request.getContextPath();
+        requestContext.getFlowScope().put("contextPath", contextPath);
+    }
 }
