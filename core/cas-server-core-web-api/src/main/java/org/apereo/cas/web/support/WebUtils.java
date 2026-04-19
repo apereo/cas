@@ -1963,8 +1963,7 @@ public class WebUtils {
      * @param requestContext the request context
      */
     public static void putContextPath(final RequestContext requestContext) {
-        val request = WebUtils.getHttpServletRequestFromExternalWebflowContext(requestContext);
-        val contextPath = request.getContextPath();
-        requestContext.getFlowScope().put("contextPath", contextPath);
+        requestContext.getFlowScope().put("contextPath",
+            requestContext.getExternalContext().getContextPath());
     }
 }
