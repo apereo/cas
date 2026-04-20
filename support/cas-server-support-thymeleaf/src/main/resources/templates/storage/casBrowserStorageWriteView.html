@@ -34,29 +34,46 @@
 
         <script th:inline="javascript">
             document.addEventListener('DOMContentLoaded', () => {
-                /*<![CDATA[*/
-
-                try {
-                    const browserStorage = /*[[${browserStorage}]]*/ ;
-                    let payload;
-                    if (browserStorage.storageType === 'SESSION') {
-                        payload = writeToSessionStorage(browserStorage);
-                    } else {
-                        payload = writeToLocalStorage(browserStorage);
-                    }
-                    let url = browserStorage.destinationUrl;
-                    if (url !== undefined && url !== "" && url !== null) {
-                        window.location.href = url;
-                    } else {
-                        document.getElementById("fm1").submit();
-                    }
-                } catch (e) {
+                function handleError(e) {
                     console.error(e);
                     document.getElementById("mainPanel").classList.add('hide');
                     const errorPanel = document.getElementById("errorPanel");
                     errorPanel.classList.remove('hide');
-                    errorPanel.innerHTML = `<h3>Unable to proceed to the next step</h1><p>${e}</p>`;
+
+                    const failureTitle = [[#{ screen.browserstorage.failure.title }]];
+                    const failureDesc = [[#{ screen.browserstorage.failure.message }]];
+
+                    errorPanel.innerHTML = `
+                        <h3>${failureTitle}</h1>
+                        <p>${failureDesc}</p>
+                        <p>Error: ${e}</p>
+                    `;
                 }
+                
+                /*<![CDATA[*/
+
+                try {
+                    const browserStorage = /*[[${browserStorage}]]*/ ;
+                    let success;
+                    if (browserStorage.storageType === 'SESSION') {
+                        success = writeToSessionStorage(browserStorage);
+                    } else {
+                        success = writeToLocalStorage(browserStorage);
+                    }
+                    if (success) {
+                        let url = browserStorage.destinationUrl;
+                        if (url !== undefined && url !== "" && url !== null) {
+                            window.location.href = url;
+                        } else {
+                            document.getElementById("fm1").submit();
+                        }
+                    } else {
+                        handleError("Failed to write to browser storage. Storage may be full, unavailable, or blocked by the browser.");
+                    }
+                } catch (e) {
+                    handleError(e);
+                }
+                
                 /*]]>*/
             });
 

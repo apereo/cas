@@ -14,8 +14,11 @@ import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.features.CasFeatureModule;
 import org.apereo.cas.mongo.MongoDbConnectionFactory;
 import org.apereo.cas.services.ServicesManager;
+import org.apereo.cas.util.spring.beans.BeanCondition;
+import org.apereo.cas.util.spring.beans.BeanSupplier;
 import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
 import lombok.val;
+import org.jooq.lambda.Unchecked;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -56,13 +59,21 @@ public class CasMongoAuthenticationAutoConfiguration {
         final ServicesManager servicesManager,
         @Qualifier(CasSSLContext.BEAN_NAME)
         final CasSSLContext casSslContext) {
-        val mongo = casProperties.getAuthn().getMongo();
-        val factory = new MongoDbConnectionFactory(casSslContext.getSslContext());
-        val mongoTemplate = factory.buildMongoTemplate(mongo);
-        val handler = new MongoDbAuthenticationHandler(mongo.getName(), mongoPrincipalFactory, mongo, mongoTemplate);
-        handler.setPasswordEncoder(PasswordEncoderUtils.newPasswordEncoder(mongo.getPasswordEncoder(), applicationContext));
-        handler.setPrincipalNameTransformer(PrincipalNameTransformerUtils.newPrincipalNameTransformer(mongo.getPrincipalTransformation()));
-        return handler;
+        return BeanSupplier.of(AuthenticationHandler.class)
+            .when(BeanCondition.on("cas.authn.mongo.client-uri").or("cas.authn.mongo.host").given(applicationContext.getEnvironment()))
+            .and(BeanCondition.on("cas.authn.mongo.collection").given(applicationContext.getEnvironment()))
+            
+            .supply(Unchecked.supplier(() -> {
+                val mongo = casProperties.getAuthn().getMongo();
+                val factory = new MongoDbConnectionFactory(casSslContext.getSslContext());
+                val mongoTemplate = factory.buildMongoTemplate(mongo);
+                val handler = new MongoDbAuthenticationHandler(mongo.getName(), mongoPrincipalFactory, mongo, mongoTemplate);
+                handler.setPasswordEncoder(PasswordEncoderUtils.newPasswordEncoder(mongo.getPasswordEncoder(), applicationContext));
+                handler.setPrincipalNameTransformer(PrincipalNameTransformerUtils.newPrincipalNameTransformer(mongo.getPrincipalTransformation()));
+                return handler;
+            }))
+            .otherwiseProxy()
+            .get();
     }
 
     @ConditionalOnMissingBean(name = "mongoAuthenticationEventExecutionPlanConfigurer")

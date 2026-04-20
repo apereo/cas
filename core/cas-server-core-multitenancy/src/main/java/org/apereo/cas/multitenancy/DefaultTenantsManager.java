@@ -57,7 +57,7 @@ public class DefaultTenantsManager implements TenantsManager, DisposableBean, In
     }
 
     @Override
-    public Optional<TenantDefinition> findTenant(final String tenantId) {
+    public Optional<TenantDefinition> findTenant(@Nullable final String tenantId) {
         return tenantDefinitionList
             .stream()
             .filter(t -> t.getId().equalsIgnoreCase(tenantId))

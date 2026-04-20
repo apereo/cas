@@ -3,13 +3,18 @@ package org.apereo.cas.authentication.attribute;
 import module java.base;
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.authentication.principal.Service;
+import org.apereo.cas.configuration.model.core.cache.SimpleCacheProperties;
+import org.apereo.cas.configuration.support.Beans;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.util.ResourceUtils;
 import org.apereo.cas.util.function.FunctionUtils;
-import org.apereo.cas.util.io.FileWatcherService;
 import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.github.benmanes.caffeine.cache.Cache;
+import com.github.benmanes.caffeine.cache.Expiry;
 import com.google.errorprone.annotations.CanIgnoreReturnValue;
-import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
@@ -20,42 +25,31 @@ import org.apache.commons.lang3.Strings;
 import org.apache.commons.lang3.tuple.Pair;
 import org.hjson.JsonValue;
 import org.springframework.beans.factory.DisposableBean;
-import org.springframework.core.io.FileSystemResource;
 import org.springframework.core.io.Resource;
-import tools.jackson.core.type.TypeReference;
 import tools.jackson.databind.ObjectMapper;
 
 /**
- * This is {@link DefaultAttributeDefinitionStore}.
+ * This is {@link AbstractAttributeDefinitionStore}.
  *
  * @author Misagh Moayyed
- * @author Travis Schmidt
- * @since 6.2.0
+ * @since 8.0.0
  */
 @Slf4j
-@EqualsAndHashCode(of = "attributeDefinitions")
-@ToString(of = "attributeDefinitions")
-@SuppressWarnings("NullAway.Init")
-public class DefaultAttributeDefinitionStore implements AttributeDefinitionStore, DisposableBean, AutoCloseable {
-    private static final ObjectMapper MAPPER = JacksonObjectMapperFactory.builder()
+@ToString(of = "attributeDefinitionsCache")
+@JsonIgnoreProperties("attributeDefinitionsCache")
+public abstract class AbstractAttributeDefinitionStore implements AttributeDefinitionStore, DisposableBean, AutoCloseable {
+    protected static final ObjectMapper MAPPER = JacksonObjectMapperFactory.builder()
         .defaultTypingEnabled(true).build().toObjectMapper();
 
-    private final Map<String, AttributeDefinition> attributeDefinitions = Collections.synchronizedMap(new ConcurrentHashMap<>());
-
-    private FileWatcherService storeWatcherService;
-
+    @JsonIgnore
+    private final Cache<String, AttributeDefinition> attributeDefinitionsCache =
+        Beans.newCache(new SimpleCacheProperties(), new AttributeDefinitionExpiry());
+    
     @Setter
     @Getter
     private String scope = StringUtils.EMPTY;
 
-    public DefaultAttributeDefinitionStore(final Resource resource) throws Exception {
-        if (ResourceUtils.doesResourceExist(resource)) {
-            importStore(resource);
-            watchStore(resource);
-        }
-    }
-
-    public DefaultAttributeDefinitionStore(final AttributeDefinition... definitions) {
+    protected AbstractAttributeDefinitionStore(final AttributeDefinition... definitions) {
         Arrays.stream(definitions).forEach(this::registerAttributeDefinition);
     }
 
@@ -67,7 +61,7 @@ public class DefaultAttributeDefinitionStore implements AttributeDefinitionStore
     public void registerAttributeDefinitions(final Map<String, AttributeDefinition> entries) {
         entries.forEach(this::registerAttributeDefinition);
     }
-
+    
     private static String getAttributeDefinitionKey(final String key, final AttributeDefinition definition) {
         if (StringUtils.isNotBlank(definition.getKey()) && !Strings.CI.equals(definition.getKey(), key)) {
             LOGGER.warn("Attribute definition contains a key property [{}] that differs from its registering key [{}]. "
@@ -89,27 +83,14 @@ public class DefaultAttributeDefinitionStore implements AttributeDefinitionStore
     public AttributeDefinitionStore registerAttributeDefinition(final String key, final AttributeDefinition definition) {
         LOGGER.trace("Registering attribute definition [{}] by key [{}]", definition, key);
         val keyToUse = getAttributeDefinitionKey(key, definition);
-        attributeDefinitions.put(keyToUse, definition);
-        return this;
-    }
-
-    @Override
-    @CanIgnoreReturnValue
-    public AttributeDefinitionStore removeAttributeDefinition(final String key) {
-        LOGGER.debug("Removing attribute definition by key [{}]", key);
-
-        if (this.attributeDefinitions.containsKey(key)) {
-            val definition = this.attributeDefinitions.remove(key);
-            LOGGER.debug("Attribute definition [{}] has been removed from the definition store", definition);
-        } else {
-            LOGGER.debug("Attribute definition with the registered key [{}] was not found and the store was not altered", key);
-        }
+        attributeDefinitionsCache.put(keyToUse, definition);
         return this;
     }
 
     @Override
     public Optional<AttributeDefinition> locateAttributeDefinitionByName(final String name) {
-        return attributeDefinitions
+        return attributeDefinitionsCache
+            .asMap()
             .values()
             .stream()
             .filter(entry -> StringUtils.isNotBlank(entry.getName()))
@@ -119,37 +100,40 @@ public class DefaultAttributeDefinitionStore implements AttributeDefinitionStore
 
     @Override
     public Optional<AttributeDefinition> locateAttributeDefinition(final String key) {
-        LOGGER.trace("Locating attribute definition for [{}]", key);
-        return Optional.ofNullable(attributeDefinitions.get(key));
+        LOGGER.trace("Locating attribute definition for attribute key [{}]", key);
+        return Optional.ofNullable(attributeDefinitionsCache.getIfPresent(key));
     }
 
     @Override
     public <T extends AttributeDefinition> Optional<T> locateAttributeDefinition(final String key, final Class<T> clazz) {
-        LOGGER.trace("Locating attribute definition for [{}]", key);
-        val attributeDefinition = attributeDefinitions.get(key);
-        if (attributeDefinition != null && clazz.isAssignableFrom(attributeDefinition.getClass())) {
-            return Optional.of((T) attributeDefinition);
+        val attributeDefinition = locateAttributeDefinition(key);
+        if (attributeDefinition.isPresent() && clazz.isAssignableFrom(attributeDefinition.get().getClass())) {
+            return attributeDefinition.map(clazz::cast);
         }
         return Optional.empty();
     }
 
     @Override
     public <T extends AttributeDefinition> Optional<T> locateAttributeDefinition(final Predicate<AttributeDefinition> predicate) {
-        return attributeDefinitions.values()
+        return attributeDefinitionsCache
+            .asMap()
+            .values()
             .stream()
             .filter(predicate)
             .map(definition -> (T) definition)
             .findFirst();
     }
 
+    @JsonIgnore
     @Override
     public Collection<AttributeDefinition> getAttributeDefinitions() {
-        return attributeDefinitions.values();
+        return attributeDefinitionsCache.asMap().values();
     }
 
     @Override
     public <T extends AttributeDefinition> Stream<T> getAttributeDefinitionsBy(final Class<T> type) {
-        return attributeDefinitions
+        return attributeDefinitionsCache
+            .asMap()
             .values()
             .stream()
             .filter(definition -> type.isAssignableFrom(definition.getClass()))
@@ -213,24 +197,64 @@ public class DefaultAttributeDefinitionStore implements AttributeDefinitionStore
 
     @Override
     public boolean isEmpty() {
-        return attributeDefinitions.isEmpty();
+        return attributeDefinitionsCache.estimatedSize() <= 0;
+    }
+
+    @Override
+    public void destroy() throws Exception {
+        close();
+    }
+
+    @Override
+    public void close() {
+    }
+
+    @JsonProperty("attributeDefinitions")
+    public Map<String, AttributeDefinition> getAttributeDefinitionsMap() {
+        return new TreeMap<>(attributeDefinitionsCache.asMap());
+    }
+
+    @Override
+    @CanIgnoreReturnValue
+    public AttributeDefinitionStore removeAttributeDefinition(final String key) {
+        LOGGER.debug("Removing attribute definition by key [{}]", key);
+        attributeDefinitionsCache.invalidate(key);
+        return this;
+    }
+
+    @Override
+    public int hashCode() {
+        return getAttributeDefinitions().hashCode();
+    }
+
+    @Override
+    public boolean equals(final Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (!(obj instanceof final AbstractAttributeDefinitionStore other)) {
+            return false;
+        }
+        val givenMap = other.getAttributeDefinitionsMap();
+        return getAttributeDefinitionsMap().keySet().containsAll(givenMap.keySet());
     }
 
     @Override
     @CanIgnoreReturnValue
     public AttributeDefinitionStore store(final Resource resource) {
         return FunctionUtils.doUnchecked(() -> {
-            val json = MAPPER.writerWithDefaultPrettyPrinter().writeValueAsString(this.attributeDefinitions);
-            LOGGER.trace("Storing attribute definitions as [{}] to [{}]", json, resource);
-            try (val writer = Files.newBufferedWriter(resource.getFile().toPath(), StandardCharsets.UTF_8)) {
-                writer.write(json);
-                writer.flush();
+            if (ResourceUtils.isFile(resource)) {
+                val json = MAPPER.writerWithDefaultPrettyPrinter().writeValueAsString(getAttributeDefinitionsMap());
+                LOGGER.trace("Storing attribute definitions as [{}] to [{}]", json, resource);
+                try (val writer = Files.newBufferedWriter(resource.getFile().toPath(), StandardCharsets.UTF_8)) {
+                    writer.write(json);
+                    writer.flush();
+                }
             }
             return this;
         });
     }
     
-
     /**
      * Import store.
      *
@@ -241,20 +265,8 @@ public class DefaultAttributeDefinitionStore implements AttributeDefinitionStore
             val map = from(resource);
             map.forEach(this::registerAttributeDefinition);
         } finally {
-            LOGGER.debug("Loaded [{}] attribute definition(s).", attributeDefinitions.size());
+            LOGGER.debug("Loaded [{}] attribute definition(s).", attributeDefinitionsCache.estimatedSize());
         }
-    }
-
-    @Override
-    public void close() {
-        if (this.storeWatcherService != null) {
-            this.storeWatcherService.close();
-        }
-    }
-
-    @Override
-    public void destroy() {
-        close();
     }
 
     private static List<Object> determineValuesForAttributeDefinition(final Map<String, List<Object>> attributes,
@@ -265,20 +277,6 @@ public class DefaultAttributeDefinitionStore implements AttributeDefinitionStore
             return attributes.get(attributeKey);
         }
         return new ArrayList<>();
-    }
-
-    /**
-     * Watch store.
-     *
-     * @param resource the resource
-     * @throws Exception the exception
-     */
-    public void watchStore(final Resource resource) throws Exception {
-        if (ResourceUtils.isFile(resource)) {
-            this.storeWatcherService = new FileWatcherService(resource.getFile(),
-                file -> importStore(new FileSystemResource(file)));
-            this.storeWatcherService.start(getClass().getSimpleName());
-        }
     }
 
     /**
@@ -294,9 +292,25 @@ public class DefaultAttributeDefinitionStore implements AttributeDefinitionStore
                     LOGGER.trace("Loading attribute definitions from [{}]", resource);
                     val json = new String(is.readAllBytes(), StandardCharsets.UTF_8);
                     LOGGER.trace("Loaded attribute definitions [{}] from [{}]", json, resource);
-                    return MAPPER.readValue(JsonValue.readHjson(json).toString(), new TypeReference<>() {
-                    });
+                    return MAPPER.readValue(JsonValue.readHjson(json).toString(), TreeMap.class);
                 }
             }, Map::<String, AttributeDefinition>of).get();
+    }
+
+    private static final class AttributeDefinitionExpiry implements Expiry<String, AttributeDefinition> {
+        @Override
+        public long expireAfterCreate(final String key, final AttributeDefinition value, final long currentTime) {
+            return value.distanceToExpiration();
+        }
+
+        @Override
+        public long expireAfterUpdate(final String key, final AttributeDefinition value, final long currentTime, final long currentDuration) {
+            return currentDuration;
+        }
+
+        @Override
+        public long expireAfterRead(final String key, final AttributeDefinition value, final long currentTime, final long currentDuration) {
+            return currentDuration;
+        }
     }
 }

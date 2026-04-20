@@ -35,7 +35,10 @@ async function initializeHotKeyOperations() {
                 event.preventDefault();
                 $("#newAuthenticationHandlerButton:visible").click();
             }
-
+            if (currentActiveTab === Tabs.PERSON_DIRECTORY.index && $("#attributeDefinitionsTab").is(":visible")) {
+                event.preventDefault();
+                $("#newAttributeDefinitionButton:visible").click();
+            }
             
             break;
         default:

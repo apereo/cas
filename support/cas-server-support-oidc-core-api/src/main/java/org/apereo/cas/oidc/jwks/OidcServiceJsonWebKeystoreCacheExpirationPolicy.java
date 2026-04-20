@@ -10,7 +10,6 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.jose4j.jwk.JsonWebKeySet;
-import org.jspecify.annotations.NonNull;
 
 /**
  * This is {@link OidcServiceJsonWebKeystoreCacheExpirationPolicy}.
@@ -21,7 +20,7 @@ import org.jspecify.annotations.NonNull;
 @RequiredArgsConstructor
 @Slf4j
 public class OidcServiceJsonWebKeystoreCacheExpirationPolicy
-    implements Expiry<@NonNull OidcJsonWebKeyCacheKey, @NonNull Optional<JsonWebKeySet>> {
+    implements Expiry<OidcJsonWebKeyCacheKey, Optional<JsonWebKeySet>> {
     private final CasConfigurationProperties casProperties;
 
     @Override

@@ -15,12 +15,13 @@ async function normalAuthenticationFlow(context) {
     await cas.assertVisibility(page, "#table_with_attributes");
     const authData = JSON.parse(await cas.innerHTML(page, "details pre"));
     await cas.log(authData);
-
+    
+    assert(authData["Attributes"]["user-id"][0] === "casuser");
     assert(authData["Attributes"]["username"][0] === "casuser");
     assert(authData["Attributes"]["urn:oid:2.5.4.4"][0] === "CAS");
-    assert(authData["Attributes"]["urn:oid:1.1.1.1.4.1.6666.1.1.1.10"].join(" ") === "Hi casuser");
     assert(authData["Attributes"]["urn:oid:0.9.2342.19200300.100.1.3"][0] === "casuser@example.org");
-
+    assert(authData["Attributes"]["urn:oid:1.1.1.1.4.1.6666.1.1.1.10"].join(" ") === "Hi casuser");
+    
     assert(authData["Attributes"]["group"].includes("sys-admin"));
     assert(authData["Attributes"]["group"].includes("sys-control"));
     assert(authData["Attributes"]["group"].includes("sys-super"));

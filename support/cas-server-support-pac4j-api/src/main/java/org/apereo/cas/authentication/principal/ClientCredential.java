@@ -1,6 +1,7 @@
 package org.apereo.cas.authentication.principal;
 
 import module java.base;
+import org.apereo.cas.authentication.MutableCredential;
 import org.apereo.cas.authentication.credential.AbstractCredential;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import lombok.AllArgsConstructor;
@@ -29,7 +30,7 @@ import org.pac4j.core.profile.UserProfile;
 @AllArgsConstructor
 @JsonTypeInfo(use = JsonTypeInfo.Id.CLASS)
 @SuppressWarnings("NullAway.Init")
-public class ClientCredential extends AbstractCredential {
+public class ClientCredential extends AbstractCredential implements MutableCredential {
 
     /**
      * The prefix used when building an identifier for an unauthenticated user.

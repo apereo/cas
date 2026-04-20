@@ -1,5 +1,38 @@
 const assert = require("assert");
 const cas = require("../../cas.js");
+const querystring = require("querystring");
+
+async function verifySsoSessions() {
+    const formData = {
+        username: "casuser",
+        password: "Mellon"
+    };
+    const postData = querystring.stringify(formData);
+    for (let i = 0; i < 10; i++) {
+        const tgt = await executeRequest("https://localhost:8443/cas/v1/tickets", "POST",
+            201, "application/x-www-form-urlencoded", postData);
+        assert(tgt !== undefined);
+    }
+
+    const baseUrl = "https://localhost:8443/cas/actuator/ssoSessions";
+    await cas.doGet(`${baseUrl}/users/casuser`, (res) => {
+        assert(res.status === 200);
+        assert(Object.keys(res.data.activeSsoSessions).length > 1);
+    }, (err) => {
+        throw err;
+    });
+}
+
+async function executeRequest(url, method, statusCode,
+    contentType = "application/x-www-form-urlencoded", requestBody = undefined) {
+    return cas.doRequest(url, method,
+        {
+            "Accept": "application/json",
+            "Content-Length": requestBody === undefined ? 0 : Buffer.byteLength(requestBody),
+            "Content-Type": contentType
+        },
+        statusCode, requestBody);
+}
 
 (async () => {
     const browser = await cas.newBrowser(cas.browserOptions());
@@ -39,6 +72,9 @@ const cas = require("../../cas.js");
     await cas.sleep();
     await cas.assertPageTitle(page, "CAS - Central Authentication Service Log In Successful");
     await cas.assertInnerText(page, "#content div h2", "Log In Successful");
-
+    await cas.gotoLogout(page);
     await cas.closeBrowser(browser);
+
+    await verifySsoSessions();
+
 })();

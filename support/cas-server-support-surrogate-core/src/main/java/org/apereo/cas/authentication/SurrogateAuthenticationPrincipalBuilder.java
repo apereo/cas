@@ -52,5 +52,5 @@ public interface SurrogateAuthenticationPrincipalBuilder {
      */
     Optional<AuthenticationResultBuilder> buildSurrogateAuthenticationResult(AuthenticationResultBuilder authenticationResultBuilder,
                                                                              Credential mutableCredential,
-                                                                             RegisteredService registeredService) throws Throwable;
+                                                                             @Nullable RegisteredService registeredService) throws Throwable;
 }

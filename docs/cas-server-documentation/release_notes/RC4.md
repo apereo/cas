@@ -58,7 +58,7 @@ to build and verify Graal VM native images and we plan to extend the coverage to
 ### Testing Strategy
 
 The collection of end-to-end [browser tests based on Puppeteer](../../developer/Test-Process.html) continue to grow to cover more use cases
-and scenarios. At the moment, total number of jobs stands at approximately `543` distinct scenarios. The overall
+and scenarios. At the moment, total number of jobs stands at approximately `545` distinct scenarios. The overall
 test coverage of the CAS codebase is approximately `94%`.
 
 ### Spring Boot 4.1
@@ -76,16 +76,21 @@ during compile time.
 ### OpenId Connect & Verifiable Credentials
 
 An [initial implementation](../authentication/OIDC-Authentication-Verifiable-Credentials.html) 
-of OpenID Connect Verifiable Credentials (OIDC4VCI) is now available in CAS. 
+of OpenID Connect Verifiable Credentials (OIDC4VCI) is now available in CAS.
 
 ### Gradle 9.5
 
 CAS is now built with Gradle `9.5.x` and the build process has been updated to use the latest Gradle
 features and capabilities. 
 
-### OpenId Connect Federation & Delegation
+### OpenID Connect Federation
 
-Small improvements to OpenID Federation protocol and its support for authentication delegation for OIDC clients.
+The OpenID Federation server support is now in 
+its [own dedicated module](../authentication/OIDC-Authentication-Federation.html). Functionality here
+will eventually be expanded to allow CAS to participate in OpenID connect federations.
+
+Furthermore, when it comes to OpenID Connect client support and delegation, there are now small improvements 
+in place to OpenID Federation protocol and its support for authentication delegation for OIDC clients.
 See [this guide](../integration/Delegate-Authentication-Generic-OpenID-Connect.html) for more details.
 
 ### Account Registration
@@ -94,12 +99,26 @@ See [this guide](../integration/Delegate-Authentication-Generic-OpenID-Connect.h
 establish a single sign-on session once the process and flow
 is complete. It may also redirect back to the original application if the registration process 
 was initiated from a protected resource.
+ 
+### Delegated Authentication & Impersonation
 
-### OpenID Connect Federation
+Delegated authentication flows now support impersonation of the authenticated user, allowing
+the user to go through the impersonation account selection process after having successfully
+authenticated with the external identity provider. This behavior, off by default, needs to be
+enabled in CAS configuration settings.
 
-The OpenID Federation support (server) is now in its [own dedicated module](../authentication/OIDC-Authentication-Federation.html).
+See [this guide](../integration/Delegate-Authentication.html) for more details.
+ 
+### reCAPTCHA per Application
+
+Previously, [reCAPTCHA support](../integration/Configuring-Google-reCAPTCHA.html) was only available at the 
+global level and could only be turned off for specific applications. Starting with this release, reCAPTCHA 
+can also now be enabled and configured on a per-application basis, allowing for more granular control 
+over when and where reCAPTCHA challenges are presented to users.
 
 ## Other Stuff
               
 - Claims assigned to OpenID Connect custom scopes can now be overridden per client application.
 - Minor Gradle build improvements to better handle cacheability of build artifacts.
+- Internal refactoring of [attribute definitions](../integration/Attribute-Definitions.html), allowing participating stores to honor attribute definition expiration policies.
+- Minor enhancements to [FIDO2 WebAuthn](../mfa/FIDO2-WebAuthn-Authentication.html) support to better parse FIDO metadata when additional fields are present in the metadata response.

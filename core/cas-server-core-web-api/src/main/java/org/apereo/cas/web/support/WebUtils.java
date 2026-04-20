@@ -780,14 +780,13 @@ public class WebUtils {
      * @param context         the context
      * @param googleRecaptcha the properties
      */
-    public static void putRecaptchaPropertiesFlowScope(final RequestContext context, final GoogleRecaptchaProperties googleRecaptcha) {
+    public static void putRecaptchaPropertiesFlowScope(final RequestContext context,
+                                                       final GoogleRecaptchaProperties googleRecaptcha) {
         val flowScope = context.getFlowScope();
-        if (googleRecaptcha.isEnabled()) {
-            flowScope.put("recaptchaSiteKey", SpringExpressionLanguageValueResolver.getInstance().resolve(googleRecaptcha.getSiteKey()));
-            flowScope.put("recaptchaInvisible", googleRecaptcha.isInvisible());
-            flowScope.put("recaptchaPosition", googleRecaptcha.getPosition());
-            flowScope.put("recaptchaVersion", googleRecaptcha.getVersion().name().toLowerCase(Locale.ENGLISH));
-        }
+        flowScope.put("recaptchaSiteKey", SpringExpressionLanguageValueResolver.getInstance().resolve(googleRecaptcha.getSiteKey()));
+        flowScope.put("recaptchaInvisible", googleRecaptcha.isInvisible());
+        flowScope.put("recaptchaPosition", googleRecaptcha.getPosition());
+        flowScope.put("recaptchaVersion", googleRecaptcha.getVersion().name().toLowerCase(Locale.ENGLISH));
     }
 
     /**
@@ -1956,5 +1955,15 @@ public class WebUtils {
         val request = WebUtils.getHttpServletRequestFromExternalWebflowContext(requestContext);
         return request.getParameterMap().containsKey(REQUEST_PARAM_LOGOUT_REQUEST_CONFIRMED)
             && Boolean.parseBoolean(request.getParameter(REQUEST_PARAM_LOGOUT_REQUEST_CONFIRMED));
+    }
+
+    /**
+     * Put context path.
+     *
+     * @param requestContext the request context
+     */
+    public static void putContextPath(final RequestContext requestContext) {
+        requestContext.getFlowScope().put("contextPath",
+            requestContext.getExternalContext().getContextPath());
     }
 }

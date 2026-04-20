@@ -2,6 +2,7 @@ package org.apereo.cas.web;
 
 import module java.base;
 import org.apereo.cas.configuration.model.support.captcha.GoogleRecaptchaProperties;
+import org.apereo.cas.services.RegisteredServiceAccessStrategyUtils;
 import org.apereo.cas.services.RegisteredServiceProperty.RegisteredServiceProperties;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.util.RegexUtils;
@@ -26,8 +27,8 @@ import org.springframework.webflow.execution.RequestContext;
 public class DefaultCaptchaActivationStrategy implements CaptchaActivationStrategy {
     private final ServicesManager servicesManager;
 
-    private static Optional<GoogleRecaptchaProperties> evaluateResult(final boolean result,
-                                                                      final GoogleRecaptchaProperties properties) {
+    protected Optional<GoogleRecaptchaProperties> evaluateResult(final boolean result,
+                                                                 final GoogleRecaptchaProperties properties) {
         return result ? Optional.of(properties) : Optional.empty();
     }
 
@@ -35,25 +36,28 @@ public class DefaultCaptchaActivationStrategy implements CaptchaActivationStrate
     public Optional<GoogleRecaptchaProperties> shouldActivate(final RequestContext requestContext,
                                                               final GoogleRecaptchaProperties properties) {
         val service = WebUtils.getService(requestContext);
-        val registeredService = servicesManager.findServiceBy(service);
+        if (service != null) {
+            val registeredService = servicesManager.findServiceBy(service);
+            RegisteredServiceAccessStrategyUtils.ensureServiceAccessIsAllowed(registeredService);
 
-        if (RegisteredServiceProperties.CAPTCHA_ENABLED.isAssignedTo(registeredService)) {
-            LOGGER.trace("Checking for activation of captcha defined for service [{}]", registeredService);
+            if (RegisteredServiceProperties.CAPTCHA_ENABLED.isAssignedTo(registeredService)) {
+                LOGGER.trace("Checking for activation of captcha defined for service [{}]", registeredService);
 
-            if (RegisteredServiceProperties.CAPTCHA_IP_ADDRESS_PATTERN.isAssignedTo(registeredService)) {
-                val ip = Optional.ofNullable(ClientInfoHolder.getClientInfo())
-                    .map(ClientInfo::getClientIpAddress).orElse(StringUtils.EMPTY).trim();
-                LOGGER.trace("Checking for activation of captcha defined for service [{}] based on IP address [{}]", registeredService, ip);
-                val ipPattern = RegisteredServiceProperties.CAPTCHA_IP_ADDRESS_PATTERN.getPropertyValues(registeredService, Set.class);
-                val result = Objects.requireNonNull(ipPattern).stream().anyMatch(pattern -> RegexUtils.find(pattern.toString().trim(), ip));
+                if (RegisteredServiceProperties.CAPTCHA_IP_ADDRESS_PATTERN.isAssignedTo(registeredService)) {
+                    val ip = Optional.ofNullable(ClientInfoHolder.getClientInfo())
+                        .map(ClientInfo::getClientIpAddress).orElse(StringUtils.EMPTY).trim();
+                    LOGGER.trace("Checking for activation of captcha defined for service [{}] based on IP address [{}]", registeredService, ip);
+                    val ipPattern = RegisteredServiceProperties.CAPTCHA_IP_ADDRESS_PATTERN.getPropertyValues(registeredService, Set.class);
+                    val result = Objects.requireNonNull(ipPattern).stream().anyMatch(pattern -> RegexUtils.find(pattern.toString().trim(), ip));
+                    return evaluateResult(result, properties);
+                }
+
+                val result = RegisteredServiceProperties.CAPTCHA_ENABLED.getPropertyBooleanValue(registeredService);
                 return evaluateResult(result, properties);
             }
-
-            val result = RegisteredServiceProperties.CAPTCHA_ENABLED.getPropertyBooleanValue(registeredService);
-            return evaluateResult(result, properties);
         }
 
-        if (StringUtils.isNotBlank(properties.getActivateForIpAddressPattern())) {
+        if (properties.isEnabled() && StringUtils.isNotBlank(properties.getActivateForIpAddressPattern())) {
             val ip = Optional.ofNullable(ClientInfoHolder.getClientInfo())
                 .map(ClientInfo::getClientIpAddress).orElse(StringUtils.EMPTY);
             LOGGER.debug("Remote IP address [{}] will be checked against [{}]", ip, properties.getActivateForIpAddressPattern());
