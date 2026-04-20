@@ -122,7 +122,7 @@ public interface BeanCondition {
      * @return the bean condition
      */
     BeanCondition and(Condition... condition);
-
+    
     /**
      * And bean conditions.
      *
@@ -133,6 +133,14 @@ public interface BeanCondition {
         conditions.forEach(this::and);
         return this;
     }
+
+    /**
+     * Or bean condition.
+     *
+     * @param name the name
+     * @return the bean condition
+     */
+    BeanCondition or(String name);
 
     /**
      * To supplier.

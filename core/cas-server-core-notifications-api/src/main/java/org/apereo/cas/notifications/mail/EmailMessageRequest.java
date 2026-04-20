@@ -38,6 +38,7 @@ public class EmailMessageRequest {
 
     private final Locale locale;
 
+    @Nullable
     private final String tenant;
 
     @Builder.Default

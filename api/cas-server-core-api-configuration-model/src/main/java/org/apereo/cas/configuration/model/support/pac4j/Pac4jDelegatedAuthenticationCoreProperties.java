@@ -55,7 +55,16 @@ public class Pac4jDelegatedAuthenticationCoreProperties implements Serializable 
      */
     private Integer order;
 
-
+    /**
+     * When set to {@code true}, delegated authentication attrmpts
+     * that return to CAS and have successfully completed will be
+     * put through the account selection process of impersonation/surrogacy
+     * flow, assuming the feature is turned on and available to CAS.
+     * By default, this is off which means no externally-authenticated
+     * account is put through the impersonation flow.
+     */
+    private boolean allowImpersonation;
+    
     /**
      * Control the expiration policy of the cache
      * that holds onto the results.

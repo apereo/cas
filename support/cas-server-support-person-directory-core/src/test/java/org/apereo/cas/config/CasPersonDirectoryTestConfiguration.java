@@ -4,7 +4,7 @@ import module java.base;
 import org.apereo.cas.authentication.CoreAuthenticationUtils;
 import org.apereo.cas.authentication.attribute.AttributeDefinitionStore;
 import org.apereo.cas.authentication.attribute.AttributeRepositoryResolver;
-import org.apereo.cas.authentication.attribute.DefaultAttributeDefinitionStore;
+import org.apereo.cas.authentication.attribute.JsonAttributeDefinitionStore;
 import org.apereo.cas.authentication.attribute.StubPersonAttributeDao;
 import org.apereo.cas.authentication.principal.PrincipalFactoryUtils;
 import org.apereo.cas.authentication.principal.PrincipalResolutionExecutionPlanConfigurer;
@@ -55,7 +55,7 @@ public class CasPersonDirectoryTestConfiguration {
         final CasConfigurationProperties casProperties) throws Exception {
         val resource = casProperties.getAuthn().getAttributeRepository()
             .getAttributeDefinitionStore().getJson().getLocation();
-        val store = new DefaultAttributeDefinitionStore(resource);
+        val store = new JsonAttributeDefinitionStore(resource);
         store.setScope(casProperties.getServer().getScope());
         return store;
     }

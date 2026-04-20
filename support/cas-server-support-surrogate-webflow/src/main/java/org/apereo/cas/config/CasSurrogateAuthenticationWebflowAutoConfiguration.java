@@ -2,6 +2,7 @@ package org.apereo.cas.config;
 
 import module java.base;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
+import org.springframework.boot.autoconfigure.ImportAutoConfiguration;
 import org.springframework.context.annotation.Import;
 
 /**
@@ -16,5 +17,6 @@ import org.springframework.context.annotation.Import;
     SurrogateAuthenticationPasswordlessConfiguration.class,
     SurrogateAuthenticationWebflowConfiguration.class
 })
+@ImportAutoConfiguration(CasSurrogateAuthenticationAutoConfiguration.class)
 public class CasSurrogateAuthenticationWebflowAutoConfiguration {
 }

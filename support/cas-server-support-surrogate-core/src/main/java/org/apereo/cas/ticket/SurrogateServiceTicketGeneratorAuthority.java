@@ -18,7 +18,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.tuple.Pair;
-import org.jspecify.annotations.Nullable;
 import org.springframework.core.Ordered;
 
 /**
@@ -79,10 +78,10 @@ public class SurrogateServiceTicketGeneratorAuthority implements ServiceTicketGe
             .findFirst();
     }
 
-    protected @Nullable Principal resolvedPrincipal(final String username) throws Throwable {
-        val resolvedPrincipal = principalResolver.resolve(new BasicIdentifiableCredential(username));
+    protected Principal resolvedPrincipal(final String username) throws Throwable {
+        val resolvedPrincipal = Objects.requireNonNull(principalResolver.resolve(new BasicIdentifiableCredential(username)));
         return resolvedPrincipal instanceof NullPrincipal
-            ? PrincipalFactoryUtils.newPrincipalFactory().createPrincipal(username)
+            ? Objects.requireNonNull(PrincipalFactoryUtils.newPrincipalFactory().createPrincipal(username))
             : resolvedPrincipal;
     }
 }

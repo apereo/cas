@@ -51,14 +51,14 @@ dependencyResolutionManagement {
             }
         }
         mavenCentral()
-        maven {
-            url = "https://build.shibboleth.net/maven/snapshots"
-            mavenContent { snapshotsOnly() }
-            content {
-                includeGroupByRegex "org\\.opensaml.*"
-                includeGroupByRegex "net\\.shibboleth.*"
-            }
-        }
+//        maven {
+//            url = "https://build.shibboleth.net/maven/snapshots"
+//            mavenContent { snapshotsOnly() }
+//            content {
+//                includeGroupByRegex "org\\.opensaml.*"
+//                includeGroupByRegex "net\\.shibboleth.*"
+//            }
+//        }
         maven {
             url = "https://build.shibboleth.net/maven/releases/"
             mavenContent {releasesOnly() }

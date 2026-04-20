@@ -2571,8 +2571,11 @@ function createMappedInputField(config) {
         multipleValues = false,
         multipleValuesType = "java.util.ArrayList",
         valueFieldRenderer,
-        unwrapSingleElement = false
+        unwrapSingleElement = false,
+        onChangeCallback
     } = config;
+
+    const changeCallback = onChangeCallback || generateServiceDefinition;
 
     const sectionContainerId = `registeredService${capitalize(keyField)}MapContainer`;
     const addButtonId = `registeredService${capitalize(keyField)}AddButton`;
@@ -2665,13 +2668,13 @@ function createMappedInputField(config) {
     function configureRemoveMapRowEventHandler() {
         $(`button[name=${removeButtonId}]`).off().on("click", function () {
             $(this).closest(`.${keyField}-map-row`).remove();
-            generateServiceDefinition();
+            changeCallback();
         });
     }
 
     function configureInputEventHandler() {
         $(`#${sectionContainerId} input`).off().on("input", () => {
-            generateServiceDefinition();
+            changeCallback();
         });
     }
 
@@ -2698,12 +2701,14 @@ function createMappedInputField(config) {
         cas.attachFields();
         configureInputEventHandler();
         configureInputRenderer();
-        generateServiceDefinition();
+        changeCallback();
     });
 
     configureRemoveMapRowEventHandler();
     configureInputEventHandler();
     configureInputRenderer();
+
+    return $(`#${sectionContainerId}`);
 }
 
 function appendOptionsToDropDown(config) {

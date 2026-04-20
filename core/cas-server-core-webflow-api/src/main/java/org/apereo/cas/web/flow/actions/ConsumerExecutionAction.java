@@ -2,6 +2,7 @@ package org.apereo.cas.web.flow.actions;
 
 import module java.base;
 import org.apereo.cas.web.support.WebUtils;
+import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import lombok.experimental.Accessors;
@@ -23,10 +24,15 @@ import org.springframework.webflow.execution.RequestContext;
 @Accessors(chain = true)
 public class ConsumerExecutionAction extends BaseCasWebflowAction {
     /**
+     * Consumer action that does nothing, effectively being a no-op.
+     */
+    public static final Consumer<RequestContext> NO_OP_CONSUMER = ctx -> {
+    };
+
+    /**
      * Consumer action that does nothing and returns null, effectively being a no-op.
      */
-    public static final Action NONE = new ConsumerExecutionAction(ctx -> {
-    });
+    public static final Action NONE = new ConsumerExecutionAction(NO_OP_CONSUMER);
 
     /**
      * Consumer action that sets the response status to {@link HttpStatus#OK}
@@ -57,6 +63,7 @@ public class ConsumerExecutionAction extends BaseCasWebflowAction {
         }
     });
 
+    @Getter
     private final Consumer<RequestContext> task;
 
     @Setter

@@ -29,6 +29,7 @@ public class InitializeCaptchaAction extends BaseCasWebflowAction {
         activationStrategy.shouldActivate(requestContext, recaptchaProperties)
             .ifPresent(properties -> {
                 WebUtils.putRecaptchaPropertiesFlowScope(requestContext, properties);
+                requestContext.getFlowScope().put("recaptchaLoginEnabled", true);
                 onActivationConsumer.accept(requestContext);
             });
         return eventFactory.success(this);

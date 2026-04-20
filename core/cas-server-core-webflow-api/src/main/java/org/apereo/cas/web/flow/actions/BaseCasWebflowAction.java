@@ -63,7 +63,7 @@ public abstract class BaseCasWebflowAction extends AbstractAction {
     }
 
     @Override
-    protected final Event doExecute(final RequestContext requestContext) throws Exception {
+    protected final @Nullable Event doExecute(final RequestContext requestContext) throws Exception {
         val activeFlow = requestContext.getActiveFlow();
         val applicationContext = activeFlow.getApplicationContext();
         val transactionManager = getTransactionManager(requestContext);
@@ -71,6 +71,8 @@ public abstract class BaseCasWebflowAction extends AbstractAction {
 
         try {
             WebUtils.putActiveFlow(requestContext);
+            WebUtils.putContextPath(requestContext);
+            
             val clientInfo = ClientInfoHolder.getClientInfo();
             val scope = buildScopeMap(requestContext);
             applicationContext.publishEvent(new CasWebflowActionExecutingEvent(this, scope, clientInfo));

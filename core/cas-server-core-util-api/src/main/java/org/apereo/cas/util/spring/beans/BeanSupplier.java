@@ -68,9 +68,6 @@ public interface BeanSupplier<T> extends Supplier<T> {
         }
     }
 
-    @Override
-    T get();
-
     /**
      * Always true condition.
      *

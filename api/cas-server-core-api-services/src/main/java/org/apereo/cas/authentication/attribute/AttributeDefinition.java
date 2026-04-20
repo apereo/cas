@@ -1,9 +1,12 @@
 package org.apereo.cas.authentication.attribute;
 
 import module java.base;
+import org.apereo.cas.configuration.support.Beans;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
+import io.micrometer.common.util.StringUtils;
+import lombok.val;
 
 /**
  * This is {@link AttributeDefinition}.
@@ -51,6 +54,7 @@ public interface AttributeDefinition extends Serializable, Comparable<AttributeD
     /**
      * Indicate if the attribute value should be rendered a single element
      * if the container that carries the attribute values has a size of 1.
+     *
      * @return true/false
      */
     boolean isSingleValue();
@@ -93,6 +97,13 @@ public interface AttributeDefinition extends Serializable, Comparable<AttributeD
     String getCanonicalizationMode();
 
     /**
+     * Describes the hashing strategy of the attribute value(s) if any.
+     * Example values would be {@code HEX, SHA1}, etc.
+     * @return hashing strategy
+     */
+    String getHashingStrategy();
+
+    /**
      * A map of regular expression patterns to values.
      * If an attribute definition is to build its values off of an existing attribute,
      * each value is examined against patterns defined here. For each match, the linked entry
@@ -103,6 +114,12 @@ public interface AttributeDefinition extends Serializable, Comparable<AttributeD
      */
     Map<String, String> getPatterns();
 
+    /**
+     * Indicate expiration window duration once the definition is created.
+     *
+     * @return expiration duration
+     */
+    String getExpiration();
 
     /**
      * Flatten the final values produced for this definition
@@ -132,5 +149,21 @@ public interface AttributeDefinition extends Serializable, Comparable<AttributeD
         return isSingleValue() && givenValues instanceof final Collection values && values.size() == 1
             ? values.iterator().next()
             : givenValues;
+    }
+
+    /**
+     * Distance to expiration in nanos.
+     *
+     * @return nanos to expiration
+     */
+    default long distanceToExpiration() {
+        if (StringUtils.isBlank(getExpiration())) {
+            return Long.MAX_VALUE;
+        }
+        val duration = Beans.newDuration(getExpiration());
+        if (duration.isZero() || duration.isNegative()) {
+            return 0L;
+        }
+        return duration.toNanos();
     }
 }
