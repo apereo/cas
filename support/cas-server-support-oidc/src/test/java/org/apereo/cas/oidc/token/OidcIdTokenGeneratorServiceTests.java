@@ -487,7 +487,7 @@ class OidcIdTokenGeneratorServiceTests {
             val idTokenContext = IdTokenGenerationContext.builder()
                 .accessToken(accessToken)
                 .userProfile(profile)
-                .responseType(OAuth20ResponseTypes.ID_TOKEN)
+                .responseType(OAuth20ResponseTypes.CODE)
                 .grantType(OAuth20GrantTypes.AUTHORIZATION_CODE)
                 .registeredService(registeredService)
                 .build();
@@ -538,7 +538,7 @@ class OidcIdTokenGeneratorServiceTests {
             val idTokenContext = IdTokenGenerationContext.builder()
                 .accessToken(accessToken)
                 .userProfile(profile)
-                .responseType(OAuth20ResponseTypes.ID_TOKEN)
+                .responseType(OAuth20ResponseTypes.NONE)
                 .grantType(OAuth20GrantTypes.REFRESH_TOKEN)
                 .registeredService(registeredService)
                 .build();
