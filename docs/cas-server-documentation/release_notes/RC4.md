@@ -66,6 +66,11 @@ test coverage of the CAS codebase is approximately `94%`.
 CAS is now built with Spring Boot `4.1.x`. This is a major platform upgrade that affects almost all aspects of the codebase
 including many of the third-party core libraries used by CAS as well as some CAS functionality.
 
+### Gradle 9.5
+
+CAS is now built with Gradle `9.5.x` and the build process has been updated to use the latest Gradle
+features and capabilities.
+
 ### JSpecify & NullAway
 
 CAS codebase is now annotated with [JSpecify](https://jspecify.dev/) annotations to indicate nullness contracts on method parameters,
@@ -77,11 +82,6 @@ during compile time.
 
 An [initial implementation](../authentication/OIDC-Authentication-Verifiable-Credentials.html) 
 of OpenID Connect Verifiable Credentials (OIDC4VCI) is now available in CAS.
-
-### Gradle 9.5
-
-CAS is now built with Gradle `9.5.x` and the build process has been updated to use the latest Gradle
-features and capabilities. 
 
 ### OpenID Connect Federation
 
@@ -113,8 +113,12 @@ See [this guide](../integration/Delegate-Authentication.html) for more details.
 
 Previously, [reCAPTCHA support](../integration/Configuring-Google-reCAPTCHA.html) was only available at the 
 global level and could only be turned off for specific applications. Starting with this release, reCAPTCHA 
-can also now be enabled and configured on a per-application basis, allowing for more granular control 
-over when and where reCAPTCHA challenges are presented to users.
+can also now be enabled and configured on a per-application basis without requiring the server to enable the feature globally, 
+allowing for more granular control over when and where reCAPTCHA challenges are presented to users.
+
+### Attribute Definitions
+
+[Palantir](../installation/Admin-Dashboard.html) is given the ability to create, edit or delete attribute definitions.
 
 ## Other Stuff
               
