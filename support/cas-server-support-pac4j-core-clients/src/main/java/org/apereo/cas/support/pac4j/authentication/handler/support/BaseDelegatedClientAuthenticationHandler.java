@@ -36,9 +36,9 @@ public abstract class BaseDelegatedClientAuthenticationHandler extends AbstractP
      */
     protected final SessionStore sessionStore;
 
-    private String principalAttributeId;
+    protected String principalAttributeId;
 
-    private boolean isTypedIdUsed;
+    protected boolean isTypedIdUsed;
 
     protected BaseDelegatedClientAuthenticationHandler(final String name,
                                                        final PrincipalFactory principalFactory, final Integer order,
@@ -67,7 +67,7 @@ public abstract class BaseDelegatedClientAuthenticationHandler extends AbstractP
         if (profile instanceof final BasicUserProfile bup) {
             attributes.putAll(CollectionUtils.toMultiValuedMap(bup.getAuthenticationAttributes()));
         }
-        val initialPrincipal = principalFactory.createPrincipal(id, attributes);
+        val initialPrincipal = Objects.requireNonNull(principalFactory.createPrincipal(id, attributes));
         val principal = finalizeAuthenticationPrincipal(initialPrincipal, client, credentials, service);
         LOGGER.debug("Constructed authenticated principal [{}] based on user profile [{}]", principal, profile);
         return finalizeAuthenticationHandlerResult(credentials, principal, profile, client, service);

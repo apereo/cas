@@ -1,0 +1,23 @@
+{
+  "dependencies": "captcha",
+  "conditions": {
+    "docker": "true"
+  },
+
+  "properties": [
+    "--cas.server.name=https://localhost:8443",
+    "--cas.server.prefix=${cas.server.name}/cas",
+
+    "--cas.http-web-request.header.content-security-policy=",
+    
+    "--cas.google-recaptcha.enabled=false",
+    "--cas.google-recaptcha.verify-url=https://challenges.cloudflare.com/turnstile/v0/siteverify",
+    "--cas.google-recaptcha.site-key=0x4AAAAAAAcdWAsikHjWm_lV",
+    "--cas.google-recaptcha.secret=0x4AAAAAAAcdWHaIf6P3GB-Lhaf0-xO6YjU",
+    "--cas.google-recaptcha.version=TURNSTILE",
+
+    "--cas.service-registry.core.init-from-json=true",
+    "--cas.service-registry.json.location=file:${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/services"
+  ],
+  "initScript": "${PWD}/ci/tests/httpbin/run-httpbin-server.sh"
+}

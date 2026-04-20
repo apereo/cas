@@ -47,11 +47,6 @@ public class SurrogateWebflowConfigurer extends AbstractCasWebflowConfigurer {
             createEvaluateAction(CasWebflowConstants.ACTION_ID_SURROGATE_INITIAL_AUTHENTICATION));
     }
 
-    /**
-     * Create surrogate list view state.
-     *
-     * @param flow the flow
-     */
     protected void createSurrogateListViewState(final Flow flow) {
         val viewState = createViewState(flow, CasWebflowConstants.STATE_ID_SURROGATE_VIEW, "surrogate/casSurrogateAuthnListView");
         createTransitionForState(viewState, CasWebflowConstants.TRANSITION_ID_SUBMIT, CasWebflowConstants.STATE_ID_SELECT_SURROGATE);

@@ -14,7 +14,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
-import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
 import org.springframework.util.MultiValueMap;
 import jakarta.servlet.http.HttpServletRequest;
 
@@ -44,7 +44,7 @@ public class SurrogateAuthenticationRestHttpRequestCredentialFactory extends Use
     }
 
     @Override
-    public List<Credential> fromRequest(final HttpServletRequest request, final MultiValueMap<@NonNull String, String> requestBody) throws Throwable {
+    public List<Credential> fromRequest(final HttpServletRequest request, final MultiValueMap<String, String> requestBody) throws Throwable {
         val credentials = super.fromRequest(request, requestBody);
         if (credentials.isEmpty()) {
             return credentials;
@@ -65,8 +65,8 @@ public class SurrogateAuthenticationRestHttpRequestCredentialFactory extends Use
         return CollectionUtils.wrapList(prepareCredential(request, credential));
     }
 
-    protected MutableCredential extractCredential(final HttpServletRequest request,
-                                                  final List<Credential> credentials) {
+    protected @Nullable MutableCredential extractCredential(final HttpServletRequest request,
+                                                            final List<Credential> credentials) {
         val credential = (MutableCredential) credentials.getFirst();
         if (credential != null) {
             var surrogateUsername = request.getHeader(REQUEST_HEADER_SURROGATE_PRINCIPAL);

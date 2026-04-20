@@ -37,6 +37,18 @@ class BeanConditionTests {
     }
 
     @Test
+    void verifyOrConditions() {
+        val env = new MockEnvironment();
+        env.setProperty("cas.property1", "value1");
+        env.setProperty("cas.property2", "value2");
+        val condition = BeanCondition.on("cas.property3")
+            .or("cas.property1")
+            .given(env)
+            .get();
+        assertTrue(condition);
+    }
+
+    @Test
     void verifyExpressionLanguagePassing() {
         val env = new MockEnvironment();
         env.setProperty("cas.property1", "${#localDateTimeUtc}");

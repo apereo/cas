@@ -42,7 +42,9 @@ class SurrogateSelectionActionTests {
     @Test
     void verifyFails() throws Throwable {
         val context = MockRequestContext.create(applicationContext);
-        context.setExternalContext(mock(ServletExternalContext.class));
+        val externalContext = mock(ServletExternalContext.class);
+        when(externalContext.getContextPath()).thenReturn("/cas");
+        context.setExternalContext(externalContext);
         WebUtils.putCredential(context, CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword("casuser"));
         assertEquals(CasWebflowConstants.TRANSITION_ID_ERROR, selectSurrogateAction.execute(context).getId());
     }

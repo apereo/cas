@@ -36,13 +36,13 @@ public class GroovySurrogateAuthenticationService extends BaseSurrogateAuthentic
     @Override
     public boolean canImpersonateInternal(final String surrogate, final Principal principal, final Optional<? extends Service> service) throws Throwable {
         val args = new Object[]{surrogate, principal, service.orElse(null), LOGGER};
-        return watchableScript.execute("canAuthenticate", Boolean.class, args);
+        return Boolean.TRUE.equals(watchableScript.execute("canAuthenticate", Boolean.class, args));
     }
 
     @Override
     public Collection<String> getImpersonationAccounts(final String username, final Optional<? extends Service> service) throws Throwable {
         val args = new Object[]{username, service.orElse(null), LOGGER};
-        return watchableScript.execute("getAccounts", Collection.class, args);
+        return Objects.requireNonNullElseGet(watchableScript.execute("getAccounts", Collection.class, args), List::of);
     }
 
     @Override
@@ -50,7 +50,7 @@ public class GroovySurrogateAuthenticationService extends BaseSurrogateAuthentic
                                        final Optional<? extends Service> service) throws Throwable {
         val args = new Object[]{surrogate, principal, service.orElse(null), LOGGER};
         return super.isWildcardedAccount(surrogate, principal, service)
-            && watchableScript.execute("isWildcardAuthorized", Boolean.class, args);
+            && Boolean.TRUE.equals(watchableScript.execute("isWildcardAuthorized", Boolean.class, args));
     }
 
     @Override

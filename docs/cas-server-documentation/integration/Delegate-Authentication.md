@@ -86,6 +86,13 @@ via the following settings:
 
 Configuration settings for delegated authentication to any and all identity providers can be specified in a multitenant environment.
 Please [review this guide](../multitenancy/Multitenancy-Overview.html) for more information.
+   
+## Impersonation
+
+Accounts that are successfully authenticated via delegated authentication may be allowed
+to go through the impersonation flow. This behavior needs to be explicitly enabled in CAS configuration settings.
+
+Please [see this guide](../authentication/Surrogate-Authentication.html) for more information.
 
 ## Troubleshooting
 

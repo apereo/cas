@@ -1,6 +1,7 @@
 package org.apereo.cas.multitenancy;
 
 import module java.base;
+import org.jspecify.annotations.Nullable;
 
 /**
  * This is {@link TenantsManager}.
@@ -20,7 +21,7 @@ public interface TenantsManager {
      * @param tenantId the tenant id
      * @return the tenant definition
      */
-    Optional<TenantDefinition> findTenant(String tenantId);
+    Optional<TenantDefinition> findTenant(@Nullable String tenantId);
 
     /**
      * Find tenants list.

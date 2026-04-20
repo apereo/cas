@@ -71,7 +71,7 @@ public class DefaultSurrogateAuthenticationPrincipalBuilder implements Surrogate
     public Optional<AuthenticationResultBuilder> buildSurrogateAuthenticationResult(
         final AuthenticationResultBuilder authenticationResultBuilder,
         final Credential mutableCredential,
-        final RegisteredService registeredService) throws Throwable {
+        @Nullable final RegisteredService registeredService) throws Throwable {
         val initialAuthentication = authenticationResultBuilder.getInitialAuthentication();
         if (initialAuthentication.isPresent()) {
             val authentication = initialAuthentication.get();

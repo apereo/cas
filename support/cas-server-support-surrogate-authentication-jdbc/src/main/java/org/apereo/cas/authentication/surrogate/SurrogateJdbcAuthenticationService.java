@@ -64,6 +64,7 @@ public class SurrogateJdbcAuthenticationService extends BaseSurrogateAuthenticat
     @Setter
     @EqualsAndHashCode
     @NoArgsConstructor
+    @SuppressWarnings("NullAway.Init")
     public static class SurrogateAccount implements Serializable {
         @Serial
         private static final long serialVersionUID = 7734857552147825153L;
