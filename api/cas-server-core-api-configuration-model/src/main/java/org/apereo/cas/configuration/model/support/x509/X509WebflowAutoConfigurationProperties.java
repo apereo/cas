@@ -25,7 +25,7 @@ public class X509WebflowAutoConfigurationProperties extends WebflowAutoConfigura
     /**
      * Default order for webflow configuration.
      */
-    private static final int DEFAULT_ORDER = 80;
+    private static final int DEFAULT_ORDER = 120;
 
     /**
      * Port that is used to enact x509 client authentication

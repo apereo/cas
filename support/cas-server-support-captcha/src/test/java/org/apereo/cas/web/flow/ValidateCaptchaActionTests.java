@@ -48,7 +48,7 @@ class ValidateCaptchaActionTests {
     private Action validateCaptchaAction;
 
     @Autowired
-    @Qualifier("captchaActivationStrategy")
+    @Qualifier(CaptchaActivationStrategy.BEAN_NAME)
     private CaptchaActivationStrategy captchaActivationStrategy;
 
     @Autowired

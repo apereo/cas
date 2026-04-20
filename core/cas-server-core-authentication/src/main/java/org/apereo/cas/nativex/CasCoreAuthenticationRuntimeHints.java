@@ -17,6 +17,7 @@ import org.apereo.cas.authentication.CredentialMetadata;
 import org.apereo.cas.authentication.DefaultAuthentication;
 import org.apereo.cas.authentication.DefaultAuthenticationHandlerExecutionResult;
 import org.apereo.cas.authentication.MessageDescriptor;
+import org.apereo.cas.authentication.MultifactorAuthenticationHandler;
 import org.apereo.cas.authentication.PrePostAuthenticationHandler;
 import org.apereo.cas.authentication.PrincipalElectionStrategy;
 import org.apereo.cas.authentication.PrincipalElectionStrategyConflictResolver;
@@ -65,8 +66,10 @@ public class CasCoreAuthenticationRuntimeHints implements CasRuntimeHintsRegistr
         registerReflectionHints(hints, credentials);
 
         registerSpringProxyHints(hints, PrePostAuthenticationHandler.class, AuthenticationHandler.class);
+        registerSpringProxyHints(hints, MultifactorAuthenticationHandler.class,
+            PrePostAuthenticationHandler.class, AuthenticationHandler.class);
         registerSpringProxyHints(hints, WebApplicationService.class);
-
+        
         registerProxyHints(hints, List.of(
             AuthenticationMetaDataPopulator.class,
             AuthenticationAccountStateHandler.class,

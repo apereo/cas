@@ -740,35 +740,41 @@ exports.assertInnerTextStartsWith = async (page, selector, value) => {
     const header = await this.innerText(page, selector);
     await this.log(`Checking ${header} to start with ${value}`);
     assert(header.startsWith(value));
+    return header;
 };
 
 exports.assertInnerTextContains = async (page, selector, value) => {
     const header = await this.innerText(page, selector);
     await this.log(`Checking [${header}] to contain [${value}]`);
     assert(header.includes(value));
+    return header;
 };
 
 exports.assertInnerTextDoesNotContain = async (page, selector, value) => {
     const header = await this.innerText(page, selector);
     await this.log(`Checking ${header} to contain ${value}`);
     assert(!header.includes(value));
+    return header;
 };
 
 exports.assertInnerText = async (page, selector, value) => {
     const header = await this.innerText(page, selector);
     assert.equal(header, value);
+    return header;
 };
 
 exports.assertPageTitle = async (page, value) => {
     const title = await page.title();
     await this.log(`Page Title: ${title}`);
     assert.equal(title, value);
+    return title;
 };
 
 exports.assertPageTitleContains = async (page, value) => {
     const title = await page.title();
     await this.log(`Page Title: ${title}`);
     assert(title.includes(value));
+    return title;
 };
 
 exports.substring = async (text, word1, word2) => {

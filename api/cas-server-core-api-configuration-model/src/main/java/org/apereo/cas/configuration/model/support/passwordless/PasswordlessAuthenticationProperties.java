@@ -51,5 +51,5 @@ public class PasswordlessAuthenticationProperties implements Serializable {
      * The webflow configuration.
      */
     @NestedConfigurationProperty
-    private WebflowAutoConfigurationProperties webflow = new WebflowAutoConfigurationProperties().setOrder(70);
+    private WebflowAutoConfigurationProperties webflow = new WebflowAutoConfigurationProperties().setOrder(110);
 }

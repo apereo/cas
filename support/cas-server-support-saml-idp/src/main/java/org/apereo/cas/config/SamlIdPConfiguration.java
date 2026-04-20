@@ -9,7 +9,7 @@ import org.apereo.cas.audit.AuditTrailConstants;
 import org.apereo.cas.audit.AuditTrailRecordResolutionPlanConfigurer;
 import org.apereo.cas.authentication.attribute.AttributeDefinitionStore;
 import org.apereo.cas.authentication.attribute.AttributeDefinitionStoreConfigurer;
-import org.apereo.cas.authentication.attribute.DefaultAttributeDefinitionStore;
+import org.apereo.cas.authentication.attribute.JsonAttributeDefinitionStore;
 import org.apereo.cas.authentication.principal.PersistentIdGenerator;
 import org.apereo.cas.authentication.principal.ServiceFactory;
 import org.apereo.cas.configuration.CasConfigurationProperties;
@@ -594,7 +594,7 @@ class SamlIdPConfiguration {
         @ConditionalOnMissingBean(name = "samlIdPAttributeDefinitionStoreConfigurer")
         public AttributeDefinitionStoreConfigurer samlIdPAttributeDefinitionStoreConfigurer(
             final CasConfigurationProperties casProperties) {
-            return () -> DefaultAttributeDefinitionStore.from(new ClassPathResource("samlidp-attribute-definitions.json"));
+            return () -> JsonAttributeDefinitionStore.from(new ClassPathResource("samlidp-attribute-definitions.json"));
         }
     }
 }

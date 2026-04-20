@@ -8,6 +8,7 @@ import module java.base;
  * @author Misagh Moayyed
  * @since 7.1.0
  */
+@FunctionalInterface
 public interface AuditActionDateProvider extends Supplier<LocalDateTime> {
 
     /**
@@ -17,15 +18,5 @@ public interface AuditActionDateProvider extends Supplier<LocalDateTime> {
      */
     static AuditActionDateProvider utc() {
         return () -> LocalDateTime.now(Clock.systemUTC());
-    }
-
-    /**
-     * System audit action date provider.
-     *
-     * @return the audit action date provider
-     */
-    @SuppressWarnings("JavaTimeDefaultTimeZone")
-    static AuditActionDateProvider system() {
-        return () -> LocalDateTime.now(Clock.systemDefaultZone());
     }
 }

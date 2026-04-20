@@ -6,7 +6,7 @@ import org.apereo.cas.authentication.PrincipalElectionStrategy;
 import org.apereo.cas.authentication.PrincipalElectionStrategyConflictResolver;
 import org.apereo.cas.authentication.attribute.AttributeDefinitionStore;
 import org.apereo.cas.authentication.attribute.AttributeDefinitionStoreConfigurer;
-import org.apereo.cas.authentication.attribute.DefaultAttributeDefinitionStore;
+import org.apereo.cas.authentication.attribute.JsonAttributeDefinitionStore;
 import org.apereo.cas.authentication.principal.ChainingPrincipalElectionStrategy;
 import org.apereo.cas.authentication.principal.DefaultPrincipalAttributesRepository;
 import org.apereo.cas.authentication.principal.DefaultPrincipalElectionStrategy;
@@ -170,7 +170,7 @@ class CasCoreAuthenticationPrincipalConfiguration {
             final ConfigurableApplicationContext applicationContext,
             final CasConfigurationProperties casProperties) throws Exception {
             val builders = applicationContext.getBeansOfType(AttributeDefinitionStoreConfigurer.class).values();
-            val store = new DefaultAttributeDefinitionStore();
+            val store = new JsonAttributeDefinitionStore();
             store.setScope(casProperties.getServer().getScope());
             builders
                 .stream()
@@ -180,7 +180,7 @@ class CasCoreAuthenticationPrincipalConfiguration {
                 .forEach(store::registerAttributeDefinitions);
             val resource = casProperties.getAuthn().getAttributeRepository().getAttributeDefinitionStore().getJson().getLocation();
             store.importStore(resource);
-            store.watchStore(resource);
+            store.watchStore();
             return store;
         }
     }

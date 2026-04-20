@@ -181,12 +181,14 @@ public class OAuth20AccessTokenEndpointController<T extends OAuth20Configuration
             .filter(BeanSupplier::isNotProxy)
             .filter(Unchecked.predicate(ext -> ext.supports(context)))
             .findFirst()
-            .orElseThrow(() -> new UnsupportedOperationException(
-                """
-                        Access token request is not supported. The authentication request is malformed or
-                        the request cannot be processed by any of the configured access token request validators.
-                        Review the request and ensure it matches one of the supported grant/response types and parameters.
-                    """.stripIndent().strip().trim()))
+            .orElseThrow(() -> {
+                val message = """
+                    Access token request is not supported. The authentication request is malformed or
+                    the request cannot be processed by any of the configured access token request validators.
+                    Review the request and ensure it matches one of the supported grant/response types and parameters.
+                    """.stripIndent().strip().trim();
+                return new UnsupportedOperationException(StringUtils.normalizeSpace(message));
+            })
             .validate(context);
     }
 }

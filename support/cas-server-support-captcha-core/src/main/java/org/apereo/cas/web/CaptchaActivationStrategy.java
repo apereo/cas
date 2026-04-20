@@ -14,6 +14,11 @@ import org.springframework.webflow.execution.RequestContext;
 public interface CaptchaActivationStrategy {
 
     /**
+     * Default bean name.
+     */
+    String BEAN_NAME = "captchaActivationStrategy";
+
+    /**
      * Should activate captcha.
      *
      * @param requestContext            the request context

@@ -10,6 +10,11 @@ import module java.base;
  */
 public interface OidcVerifiableCredentialNonceService {
     /**
+     * Default bean name.
+     */
+    String BEAN_NAME = "oidcVerifiableCredentialNonceService";
+
+    /**
      * Create verifiable credential nonce.
      *
      * @return the verifiable credential nonce

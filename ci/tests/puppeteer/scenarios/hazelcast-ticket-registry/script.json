@@ -1,5 +1,5 @@
 {
-  "dependencies": "reports,hazelcast-ticket-registry,hazelcast-monitor,hazelcast-discovery-zookeeper",
+  "dependencies": "reports,hazelcast-ticket-registry,hazelcast-monitor,hazelcast-discovery-zookeeper,rest",
   "conditions": {
     "docker": "true"
   },

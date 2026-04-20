@@ -182,7 +182,7 @@ allprojects {
 
     idea {
         module {
-            downloadSources = false
+            downloadSources = true
             downloadJavadoc = false
             jdkName = project.targetCompatibility
             excludeDirs += file(".gradle")

@@ -18,8 +18,9 @@ import lombok.RequiredArgsConstructor;
 import lombok.val;
 import org.apache.commons.lang3.Strings;
 import org.apereo.inspektr.audit.annotation.Audit;
-import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
 import org.springframework.beans.factory.ObjectProvider;
+import org.springframework.core.annotation.AnnotationAwareOrderComparator;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.view.json.JacksonJsonView;
@@ -36,7 +37,7 @@ public class OAuth20DefaultAccessTokenResponseGenerator<T extends OAuth20Configu
     private static final JsonMapper MAPPER = JacksonObjectMapperFactory.builder()
         .defaultTypingEnabled(false).build().toJsonMapper();
 
-    protected final ObjectProvider<@NonNull T> configurationContext;
+    protected final ObjectProvider<T> configurationContext;
 
     private static boolean shouldGenerateDeviceFlowResponse(final OAuth20AccessTokenResponseResult result) {
         val generatedToken = result.getGeneratedToken();
@@ -78,7 +79,13 @@ public class OAuth20DefaultAccessTokenResponseGenerator<T extends OAuth20Configu
     }
 
     protected ModelAndView generateResponseForAccessToken(final OAuth20AccessTokenResponseResult result) {
-        val model = getAccessTokenResponseModel(result);
+        var model = getAccessTokenResponseModel(result);
+        val customizers = new ArrayList<>(configurationContext.getObject()
+            .getApplicationContext().getBeansOfType(OAuth20AccessTokenResponseCustomizer.class).values());
+        AnnotationAwareOrderComparator.sortIfNecessary(customizers);
+        for (val customizer : customizers) {
+            model = customizer.customize(result, model);
+        }
         val modelAndView = new ModelAndView(new JacksonJsonView(MAPPER), model);
         modelAndView.setStatus(HttpStatus.OK);
         return modelAndView;
@@ -126,13 +133,13 @@ public class OAuth20DefaultAccessTokenResponseGenerator<T extends OAuth20Configu
         return model;
     }
 
-    protected <TokenType extends OAuth20Token> TokenType resolveToken(final Ticket token, final Class<TokenType> clazz) {
+    protected @Nullable <TokenType extends OAuth20Token> TokenType resolveToken(@Nullable final Ticket token, final Class<TokenType> clazz) {
         return token == null
             ? null
             : (token.isStateless() ? configurationContext.getObject().getTicketRegistry().getTicket(token.getId(), clazz) : (TokenType) token);
     }
 
-    protected String encodeOAuthToken(final OAuth20Token token,
+    protected String encodeOAuthToken(@Nullable final OAuth20Token token,
                                       final OAuth20AccessTokenResponseResult result) {
         val cipher = OAuth20JwtAccessTokenEncoder.toEncodableCipher(configurationContext.getObject(), result, token);
         return cipher.encode(token.getId(), new Object[]{token, result});

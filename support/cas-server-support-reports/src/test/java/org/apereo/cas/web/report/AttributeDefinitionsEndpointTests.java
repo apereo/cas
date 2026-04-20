@@ -87,4 +87,55 @@ class AttributeDefinitionsEndpointTests extends AbstractCasEndpointTests {
         val registered = attributeDefinitionStore.locateAttributeDefinitionByName("my-common-name");
         assertTrue(registered.isPresent());
     }
+
+    @Test
+    void verifyFetchDefinitionByKey() throws Throwable {
+        attributeDefinitionStore.registerAttributeDefinition(
+            DefaultAttributeDefinition.builder()
+                .name("givenName")
+                .key("gn")
+                .scoped(false)
+                .encrypted(false)
+                .singleValue(true)
+                .build()
+        );
+        val result = MAPPER.readValue(mockMvc.perform(get("/actuator/attributeDefinitions/gn")
+                .contentType(MediaType.APPLICATION_FORM_URLENCODED)
+                .accept(MediaType.APPLICATION_JSON)
+            )
+            .andExpect(status().isOk())
+            .andReturn()
+            .getResponse()
+            .getContentAsString(), Map.class);
+        assertEquals("gn", result.get("key"));
+        assertEquals("givenName", result.get("name"));
+    }
+
+    @Test
+    void verifyFetchDefinitionByKeyNotFound() throws Throwable {
+        mockMvc.perform(get("/actuator/attributeDefinitions/unknown-key-xyz")
+                .contentType(MediaType.APPLICATION_FORM_URLENCODED)
+                .accept(MediaType.APPLICATION_JSON)
+            )
+            .andExpect(status().isNotFound());
+    }
+
+    @Test
+    void verifyDeleteDefinitions() throws Throwable {
+        attributeDefinitionStore.registerAttributeDefinition(
+            DefaultAttributeDefinition.builder()
+                .name("deleteMe")
+                .key("delete-key")
+                .build()
+        );
+        assertTrue(attributeDefinitionStore.locateAttributeDefinition("delete-key").isPresent());
+        val json = MAPPER.writeValueAsString(List.of("delete-key"));
+        mockMvc.perform(delete("/actuator/attributeDefinitions")
+                .contentType(MediaType.APPLICATION_JSON)
+                .accept(MediaType.APPLICATION_JSON)
+                .content(json)
+            )
+            .andExpect(status().isOk());
+        assertTrue(attributeDefinitionStore.locateAttributeDefinition("delete-key").isEmpty());
+    }
 }
