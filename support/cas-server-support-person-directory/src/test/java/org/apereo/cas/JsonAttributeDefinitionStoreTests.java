@@ -408,7 +408,7 @@ class JsonAttributeDefinitionStoreTests {
             store.setScope("example.org");
             val file = Files.createTempFile("attr", "json").toFile();
             val resource = new FileSystemResource(file);
-            store.store(resource);
+            store.export(resource);
             assertTrue(file.exists());
             try (val store2 = new JsonAttributeDefinitionStore(resource)) {
                 assertEquals(store2, store);
@@ -428,6 +428,22 @@ class JsonAttributeDefinitionStoreTests {
     }
 
     @Test
+    void verifySavingDefinitions() throws Throwable {
+        val resource = new FileSystemResource(Files.createTempFile("definitions", ".json"));
+        try (val store1 = new JsonAttributeDefinitionStore(resource)) {
+            val defn = DefaultAttributeDefinition.builder()
+                .key("eduPersonPrincipalName")
+                .name("urn:oid:1.3.6.1.4.1.5923.1.1.1.6")
+                .build();
+            store1.registerAttributeDefinition(defn);
+            store1.save();
+        }
+        try (val store2 = new JsonAttributeDefinitionStore(resource)) {
+            assertTrue(store2.getAttributeDefinitions().isEmpty());
+        }
+    }
+
+    @Test
     void verifyDefinitions() {
         val defn1 = DefaultAttributeDefinition.builder()
             .key("cn")
@@ -442,7 +458,6 @@ class JsonAttributeDefinitionStoreTests {
             store.setScope("example.org");
 
             val service = CoreAuthenticationTestUtils.getRegisteredService();
-
             val context = AttributeDefinitionResolutionContext.builder()
                 .attributeValues(List.of("common-name"))
                 .principal(CoreAuthenticationTestUtils.getPrincipal())

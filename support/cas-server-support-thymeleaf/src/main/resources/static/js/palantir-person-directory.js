@@ -653,7 +653,7 @@ function newAttributeDefinition() {
         labelTitle: "Hashing Strategy:",
         id: "attributeDefinitionHashingStrategy",
         options: [
-            {value: "", text: "NONE"},
+            {value: "NONE", text: "NONE"},
             {value: "HEX", text: "HEX"},
             {value: "BASE64", text: "BASE64"},
             {value: "SHA1", text: "SHA1"},

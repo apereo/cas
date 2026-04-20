@@ -60,7 +60,8 @@ public class AttributeDefinitionsEndpoint extends BaseCasRestActuatorEndpoint {
     @Operation(summary = "Get an attribute definition registered with CAS by its key",
         parameters = @Parameter(description = "The attribute definition key"))
     public ResponseEntity<AttributeDefinition> attributeDefinition(@PathVariable final String key) {
-        return attributeDefinitionStore.getObject()
+        return attributeDefinitionStore
+            .getObject()
             .locateAttributeDefinition(key)
             .map(ResponseEntity::ok)
             .orElseGet(() -> ResponseEntity.notFound().build());
@@ -84,6 +85,7 @@ public class AttributeDefinitionsEndpoint extends BaseCasRestActuatorEndpoint {
         for (val defn : attributeDefinitions) {
             store.registerAttributeDefinition(defn);
         }
+        store.save();
     }
 
     /**
@@ -99,5 +101,6 @@ public class AttributeDefinitionsEndpoint extends BaseCasRestActuatorEndpoint {
         for (val key : keys) {
             store.removeAttributeDefinition(key);
         }
+        store.save();
     }
 }
