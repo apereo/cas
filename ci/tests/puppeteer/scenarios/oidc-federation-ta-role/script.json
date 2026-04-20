@@ -1,0 +1,11 @@
+{
+  "dependencies": "oidc-federation",
+  "properties": [
+    "--cas.server.name=https://localhost:8443",
+    "--cas.server.prefix=https://localhost:8443/cas",
+
+    "--cas.authn.oidc.federation.role=TRUST_ANCHOR",
+    "--cas.authn.oidc.federation.jwks-file=file:${#systemProperties['java.io.tmpdir']}/tmpfederation.jwks",
+    "--cas.authn.oidc.core.issuer=https://localhost:8443/cas/oidc"
+  ]
+}

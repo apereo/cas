@@ -25,7 +25,7 @@ class OidcFederationDefaultJsonWebKeystoreServiceTests {
 
     @Nested
     @TestPropertySource(properties = "cas.authn.oidc.federation.jwks-file=file:${#systemProperties['java.io.tmpdir']}/corrupted.jwks")
-    class KeystoreCorrupted extends AbstractOidcFederationTests {
+    class KeystoreCorrupted extends AbstractOidcTaFederationTests {
         @Autowired
         @Qualifier(OidcFederationJsonWebKeystoreService.BEAN_NAME)
         private OidcFederationJsonWebKeystoreService oidcFederationWebKeystoreService;
@@ -45,7 +45,7 @@ class OidcFederationDefaultJsonWebKeystoreServiceTests {
 
     @Nested
     @TestPropertySource(properties = "cas.authn.oidc.federation.jwks-file=file:${#systemProperties['java.io.tmpdir']}/keystore-missing.jwks")
-    class KeystoreMissing extends AbstractOidcFederationTests {
+    class KeystoreMissing extends AbstractOidcTaFederationTests {
         @Autowired
         @Qualifier(OidcFederationJsonWebKeystoreService.BEAN_NAME)
         private OidcFederationJsonWebKeystoreService oidcFederationWebKeystoreService;

@@ -2,6 +2,8 @@ package org.apereo.cas.oidc.federation;
 
 import module java.base;
 import org.apereo.cas.configuration.model.support.oidc.OidcProperties;
+import org.apereo.cas.configuration.model.support.oidc.federation.OidcFederationRole;
+import org.apereo.cas.configuration.support.Beans;
 import org.apereo.cas.oidc.discovery.OidcServerDiscoverySettings;
 import org.apereo.cas.util.DateTimeUtils;
 import com.nimbusds.openid.connect.sdk.federation.entities.EntityID;
@@ -27,13 +29,27 @@ public class OidcFederationDefaultEntityStatementService implements OidcFederati
 
     @Override
     public EntityStatement createAndSign() throws Exception {
-        val settings = serverDiscoverySettings.getObject();
-        val issuer = settings.getIssuer();
+        val role = oidcProperties.getFederation().getRole();
+
+        val settings = serverDiscoverySettings.getIfAvailable();
+        var issuer = oidcProperties.getCore().getIssuer();
+        if (settings != null) {
+            if (role != OidcFederationRole.OPENID_PROVIDER) {
+                throw new IllegalArgumentException("Federation role [" + role + "] is not supported for OpenID Provider");
+            }
+            issuer = settings.getIssuer();
+        } else if (role != OidcFederationRole.TRUST_ANCHOR && role != OidcFederationRole.INTERMEDIATE) {
+            throw new IllegalArgumentException("Federation role [" + role + "] is not supported for Trust Anchor/Intermediate");
+        }
+
         val iss = new EntityID(issuer);
         val sub = new EntityID(issuer);
 
-        val iat = DateTimeUtils.dateOf(LocalDate.now(Clock.systemUTC()));
-        val exp = DateTimeUtils.dateOf(LocalDate.now(Clock.systemUTC()).plusYears(10));
+        val now = LocalDate.now(Clock.systemUTC());
+        val iat = DateTimeUtils.dateOf(now);
+        val entityStatementExpiration = Beans.newDuration(oidcProperties.getFederation().getEntityStatementExpiration());
+        val expDate = now.plusDays(entityStatementExpiration.toDays());
+        val exp = DateTimeUtils.dateOf(expDate);
         val claims = new EntityStatementClaimsSet(
             iss,
             sub,
@@ -42,12 +58,14 @@ public class OidcFederationDefaultEntityStatementService implements OidcFederati
             jsonWebKeystoreService.toJWKSet()
         );
 
-        val authorityHints = oidcProperties.getFederation().getAuthorityHints().stream().map(EntityID::new).toList();
-        claims.setAuthorityHints(authorityHints);
-        
-        val discovery = settings.toJson();
-        val opMetadata = OIDCProviderMetadata.parse(discovery);
-        claims.setOPMetadata(opMetadata);
+        if (settings != null) {
+            val authorityHints = oidcProperties.getFederation().getAuthorityHints().stream().map(EntityID::new).toList();
+            claims.setAuthorityHints(authorityHints);
+
+            val discovery = settings.toJson();
+            val opMetadata = OIDCProviderMetadata.parse(discovery);
+            claims.setOPMetadata(opMetadata);
+        }
         
         val fedMeta = new FederationEntityMetadata();
         fedMeta.setOrganizationName(oidcProperties.getFederation().getOrganization());
