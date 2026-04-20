@@ -68,7 +68,7 @@ class DefaultPasswordValidationServiceTests {
 
     @Test
     void verifyReuseOldPassword() throws Throwable {
-        val request = new PasswordChangeRequest("casuser", "current-psw".toCharArray(), "123456".toCharArray(), "123456".toCharArray());
+        val request = new PasswordChangeRequest("casuser", "123456".toCharArray(), "123456".toCharArray());
         assertFalse(passwordValidationService.isValid(request));
         request.setPassword("This!$P@$$".toCharArray());
         request.setConfirmedPassword("This!$P@$$".toCharArray());
@@ -78,13 +78,13 @@ class DefaultPasswordValidationServiceTests {
     @Test
     void verifyValidity() throws Throwable {
         assertFalse(passwordValidationService.isValid(
-            new PasswordChangeRequest("casuser", "current-psw".toCharArray(), null, null)));
+            new PasswordChangeRequest("casuser", null, null)));
         assertFalse(passwordValidationService.isValid(
-            new PasswordChangeRequest("casuser", "current-psw".toCharArray(), "password".toCharArray(), "password".toCharArray())));
+            new PasswordChangeRequest("casuser", "password".toCharArray(), "password".toCharArray())));
         assertFalse(passwordValidationService.isValid(
-            new PasswordChangeRequest("casuser", "current-psw".toCharArray(), "Th!sIsT3st".toCharArray(), "password".toCharArray())));
+            new PasswordChangeRequest("casuser", "Th!sIsT3st".toCharArray(), "password".toCharArray())));
 
-        val request = new PasswordChangeRequest("casuser", "current-psw".toCharArray(), "Th!sIsT3st".toCharArray(), "Th!sIsT3st".toCharArray());
+        val request = new PasswordChangeRequest("casuser", "Th!sIsT3st".toCharArray(), "Th!sIsT3st".toCharArray());
         assertTrue(passwordValidationService.isValid(request));
 
         passwordHistoryService.store(request);
@@ -93,7 +93,7 @@ class DefaultPasswordValidationServiceTests {
 
     @Test
     void verifyCaseSensitivity() throws Throwable {
-        val request = new PasswordChangeRequest("casuser", "current-psw".toCharArray(), "th!sIsT3st".toCharArray(), "th!sIsT3st".toCharArray());
+        val request = new PasswordChangeRequest("casuser", "th!sIsT3st".toCharArray(), "th!sIsT3st".toCharArray());
         assertFalse(passwordValidationService.isValid(request));
     }
 }

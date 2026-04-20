@@ -77,7 +77,7 @@ class GroovyResourcePasswordManagementServiceTests {
 
     @Test
     void verifyChangePassword() throws Throwable {
-        val request = new PasswordChangeRequest("casuser", "current-psw".toCharArray(), "password".toCharArray(), "password".toCharArray());
+        val request = new PasswordChangeRequest("casuser", "password".toCharArray(), "password".toCharArray());
         assertTrue(passwordChangeService.change(request));
     }
 

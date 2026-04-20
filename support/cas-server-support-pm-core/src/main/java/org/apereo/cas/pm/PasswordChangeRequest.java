@@ -6,7 +6,6 @@ import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import org.apache.commons.lang3.StringUtils;
 import jakarta.validation.constraints.Size;
 
 /**
@@ -25,20 +24,10 @@ public class PasswordChangeRequest implements Serializable {
     private static final long serialVersionUID = 8885460875620586503L;
 
     private String username;
-    private char[] currentPassword;
 
     private @Size(min = 1, message = "required.password") char[] password;
 
     private @Size(min = 1, message = "required.confirmedPassword") char[] confirmedPassword;
-
-    /**
-     * To current/old password string.
-     *
-     * @return the string
-     */
-    public String toCurrentPassword() {
-        return currentPassword == null ? StringUtils.EMPTY : new String(currentPassword);
-    }
 
     /**
      * To new password string.
