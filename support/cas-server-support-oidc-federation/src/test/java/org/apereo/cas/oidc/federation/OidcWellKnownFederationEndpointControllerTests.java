@@ -20,13 +20,13 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
  * @since 7.3.0
  */
 @Tag("OIDCWeb")
-class OidcWellKnownFederationEndpointControllerTests extends AbstractOidcTaFederationTests {
+class OidcWellKnownFederationEndpointControllerTests extends AbstractOidcTrustAnchorFederationTests {
 
     private static final String FEDERATION_ENDPOINT_URL =
         "/cas/" + OidcConstants.BASE_OIDC_URL + '/' + OidcConstants.WELL_KNOWN_OPENID_FEDERATION_URL;
 
     @Nested
-    class TaFederationEndpointTests extends AbstractOidcTaFederationTests {
+    class TrustAnchorFederationEndpointTests extends AbstractOidcTrustAnchorFederationTests {
 
         @Test
         void verifyTaInvalidIssuer() throws Exception {
@@ -63,7 +63,7 @@ class OidcWellKnownFederationEndpointControllerTests extends AbstractOidcTaFeder
     }
 
     @Nested
-    class OpFederationEndpointTests extends AbstractOidcOpFederationTests {
+    class OpenIdProviderFederationEndpointTests extends AbstractOidcOpenIdProviderFederationTests {
 
         @Test
         void verifyTaInvalidIssuer() throws Exception {

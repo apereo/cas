@@ -11,7 +11,7 @@ const assert = require("assert");
         });
 
     const decoded = await cas.decodeJwt(jwt);
-    cas.log(decoded);
+    await cas.log(decoded);
     const iss = decoded.iss;
     const sub = decoded.sub;
     assert(iss !== undefined);

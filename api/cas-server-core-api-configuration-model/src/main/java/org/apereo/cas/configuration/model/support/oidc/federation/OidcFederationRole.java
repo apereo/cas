@@ -8,15 +8,15 @@ package org.apereo.cas.configuration.model.support.oidc.federation;
  */
 public enum OidcFederationRole {
     /**
-     * OpenID provider role.
-     */
-    OPENID_PROVIDER,
-    /**
-     * Trust anchor role.
+     * The root of trust entity issuing statements about other entities.
      */
     TRUST_ANCHOR,
     /**
-     * Intermediate role.
+     * Intermediate entity between the trust anchor and the leaf entities.
      */
-    INTERMEDIATE
+    INTERMEDIATE,
+    /**
+     * Leaf entity playing the OpenID Connect provider protocol role.
+     */
+    OPENID_PROVIDER
 }

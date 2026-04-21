@@ -23,13 +23,13 @@ import org.springframework.boot.autoconfigure.ImportAutoConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
 
 /**
- * This is {@link AbstractOidcOpFederationTests}.
+ * This is {@link AbstractOidcOpenIdProviderFederationTests}.
  *
  * @author Jerome LELEU
  * @since 8.0.0
  */
 @SpringBootTest(
-    classes = AbstractOidcOpFederationTests.SharedTestConfiguration.class,
+    classes = AbstractOidcOpenIdProviderFederationTests.SharedTestConfiguration.class,
     properties = {
         "cas.server.name=https://sso.example.org/",
         "cas.server.prefix=https://sso.example.org/cas",
@@ -38,7 +38,7 @@ import org.springframework.boot.test.context.SpringBootTest;
         "cas.authn.oidc.federation.jwks-file=file:${#systemProperties['java.io.tmpdir']}/federation.jwks",
         "cas.authn.oidc.core.issuer=https://sso.example.org/cas/oidc"
     }, webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-abstract class AbstractOidcOpFederationTests extends AbstractOidcFederationTests {
+abstract class AbstractOidcOpenIdProviderFederationTests extends AbstractOidcFederationTests {
 
     @SpringBootConfiguration(proxyBeanMethods = false)
     @ImportAutoConfiguration({
