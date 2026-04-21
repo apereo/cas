@@ -430,7 +430,7 @@ class JsonAttributeDefinitionStoreTests {
     @Test
     void verifySavingDefinitions() throws Throwable {
         val resource = new FileSystemResource(Files.createTempFile("definitions", ".json"));
-        try (val store1 = new JsonAttributeDefinitionStore(resource)) {
+        try (val store1 = new JsonAttributeDefinitionStore(resource, true)) {
             val defn = DefaultAttributeDefinition.builder()
                 .key("eduPersonPrincipalName")
                 .name("urn:oid:1.3.6.1.4.1.5923.1.1.1.6")
@@ -438,8 +438,8 @@ class JsonAttributeDefinitionStoreTests {
             store1.registerAttributeDefinition(defn);
             store1.save();
         }
-        try (val store2 = new JsonAttributeDefinitionStore(resource)) {
-            assertTrue(store2.getAttributeDefinitions().isEmpty());
+        try (val store2 = new JsonAttributeDefinitionStore(resource, true)) {
+            assertFalse(store2.getAttributeDefinitions().isEmpty());
         }
     }
 

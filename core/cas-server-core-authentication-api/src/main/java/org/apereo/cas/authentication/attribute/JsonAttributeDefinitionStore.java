@@ -29,8 +29,12 @@ public class JsonAttributeDefinitionStore extends AbstractAttributeDefinitionSto
     private @Nullable FileWatcherService storeWatcherService;
     private @Nullable Resource resource;
 
+    public JsonAttributeDefinitionStore(final Resource resource, final boolean disableWatcher) throws Exception {
+        importDefinitionsFromResource(resource, disableWatcher);
+    }
+    
     public JsonAttributeDefinitionStore(final Resource resource) throws Exception {
-        importDefinitionsFromResource(resource);
+        this(resource, false);
     }
 
     public JsonAttributeDefinitionStore(final AttributeDefinition... definitions) {
@@ -39,7 +43,7 @@ public class JsonAttributeDefinitionStore extends AbstractAttributeDefinitionSto
 
     public JsonAttributeDefinitionStore(final Resource resource, final List<AttributeDefinition> definitions) {
         this(definitions.toArray(EMPTY_DEFINITIONS_ARRAY));
-        importDefinitionsFromResource(resource);
+        importDefinitionsFromResource(resource, false);
     }
 
     @Override
@@ -67,9 +71,11 @@ public class JsonAttributeDefinitionStore extends AbstractAttributeDefinitionSto
         export(resource);
     }
 
-    private void importDefinitionsFromResource(final Resource resource) {
+    private void importDefinitionsFromResource(final Resource resource, final boolean disableWatcher) {
         this.resource = resource;
         importStore(resource);
-        watchStore();
+        if (!disableWatcher) {
+            watchStore();
+        }
     }
 }
