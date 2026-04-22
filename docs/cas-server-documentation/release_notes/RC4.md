@@ -116,9 +116,13 @@ global level and could only be turned off for specific applications. Starting wi
 can also now be enabled and configured on a per-application basis without requiring the server to enable the feature globally, 
 allowing for more granular control over when and where reCAPTCHA challenges are presented to users.
 
-### Attribute Definitions
+### Palantir Admin Dashboard
 
-[Palantir](../installation/Admin-Dashboard.html) is given the ability to create, edit or delete attribute definitions.
+[Palantir](../installation/Admin-Dashboard.html) is given the ability to create, edit or 
+delete [attribute definitions](../integration/Attribute-Definitions.html). Furthermore, there is now 
+limited support for password management operations such as [reset](../password_management/Password-Management-Reset.html) 
+and [password history](../password_management/Password-Management-History.html) with additional REST-based endpoints
+to support such operations for the dashboard user interface. 
 
 ## Other Stuff
               
