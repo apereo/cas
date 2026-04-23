@@ -14,6 +14,7 @@
                 <li><a id="authenticationhandlers" href="#authenticationhandlers-tab">Authentication Handlers</a></li>
                 <li><a id="authenticationpolicies" href="#authenticationpolicies-tab">Authentication Policies</a></li>
                 <li class="d-none"><a id="delegatedclients" href="#delegatedclients-tab">External Identity Providers</a></li>
+                <li class="d-none"><a id="passwordmanagement" href="#passwordmanagement-tab">Password Management</a></li>
               </ul>
 
 
@@ -88,8 +89,89 @@
                         </div>
                         <div class="mdc-dialog__scrim"></div>
                     </div>
-                </section>
+                 </section>
             </div>
+
+            <div id="passwordmanagement-tab">
+                <h3 class="mt-2 mb-3">Initiate Password Reset</h3>
+                <form id="fmPasswordReset" class="d-block" onsubmit="return false;">
+                    <section class="cas-field form-group my-2 mdc-input-group d-flex">
+                        <div class="mdc-input-group-field mdc-input-group-field-append w-100">
+                            <label for="pmUsername"
+                                   class="mdc-text-field mdc-text-field--outlined control-label mdc-text-field--with-trailing-icon">
+                                <span class="mdc-notched-outline">
+                                    <span class="mdc-notched-outline__leading"></span>
+                                    <span class="mdc-notched-outline__notch">
+                                        <span class="mdc-floating-label">Username</span>
+                                    </span>
+                                    <span class="mdc-notched-outline__trailing"></span>
+                                </span>
+                                <input class="mdc-text-field__input form-control" type="text"
+                                       name="pmUsername" id="pmUsername" size="50"
+                                       autocomplete="off" required/>
+                            </label>
+                        </div>
+                    </section>
+                    <section class="cas-field form-group my-2 mdc-input-group d-flex">
+                        <div class="mdc-input-group-field mdc-input-group-field-append w-100">
+                            <label for="pmService"
+                                   class="mdc-text-field mdc-text-field--outlined control-label mdc-text-field--with-trailing-icon">
+                                <span class="mdc-notched-outline">
+                                    <span class="mdc-notched-outline__leading"></span>
+                                    <span class="mdc-notched-outline__notch">
+                                        <span class="mdc-floating-label">Service</span>
+                                    </span>
+                                    <span class="mdc-notched-outline__trailing"></span>
+                                </span>
+                                <input class="mdc-text-field__input form-control" type="text"
+                                       name="pmService" id="pmService" size="50"
+                                       autocomplete="off" required/>
+                            </label>
+                        </div>
+                    </section>
+                    <div class="d-flex">
+                        <button type="button" name="pmInitiateButton" id="pmInitiateButton" class="mdc-button mdc-button--raised">
+                            <span class="mdc-button__label"><i class="mdc-tab__icon mdi mdi-lock-reset" aria-hidden="true"></i>Initiate</span>
+                        </button>
+                    </div>
+                </form>
+
+                <hr/>
+                <h3 class="mt-3 mb-3">Password History</h3>
+                <form id="fmPasswordHistory" class="d-block" onsubmit="return false;">
+                <div class="d-flex align-items-center mb-2" id="pmHistorySearchContainer">
+                    <label for="pmHistoryUsername"
+                           class="mdc-text-field mdc-text-field--outlined control-label mdc-text-field--with-trailing-icon mr-2">
+                        <span class="mdc-notched-outline">
+                            <span class="mdc-notched-outline__leading"></span>
+                            <span class="mdc-notched-outline__notch">
+                                <span class="mdc-floating-label">Username</span>
+                            </span>
+                            <span class="mdc-notched-outline__trailing"></span>
+                        </span>
+                        <input class="mdc-text-field__input form-control" type="text"
+                               name="pmHistoryUsername" id="pmHistoryUsername" size="40"
+                               autocomplete="off" required/>
+                    </label>
+                </div>
+                <button type="button" id="pmFetchHistoryButton" class="mdc-button mdc-button--raised">
+                    <span class="mdc-button__label"><i class="mdc-tab__icon mdi mdi-history" aria-hidden="true"></i>Fetch History</span>
+                </button>
+                </form>
+                <table id="pmPasswordHistoryTable" class="mdc-data-table__table table table-striped noborder">
+                    <thead>
+                    <tr class="mdc-data-table__header-row">
+                        <th class="mdc-data-table__header-cell" role="columnheader" scope="col">ID</th>
+                        <th class="mdc-data-table__header-cell" role="columnheader" scope="col">Username</th>
+                        <th class="mdc-data-table__header-cell" role="columnheader" scope="col">Password</th>
+                        <th class="mdc-data-table__header-cell" role="columnheader" scope="col">Date</th>
+                    </tr>
+                    </thead>
+                    <tbody class="mdc-data-table__content">
+                    </tbody>
+                </table>
+            </div>
+
         </div>
     </div>
 </span>

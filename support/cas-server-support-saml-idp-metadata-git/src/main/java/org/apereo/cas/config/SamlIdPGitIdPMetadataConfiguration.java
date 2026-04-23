@@ -91,7 +91,7 @@ class SamlIdPGitIdPMetadataConfiguration {
         final ConfigurableApplicationContext applicationContext,
         @Qualifier("gitIdPMetadataRepositoryInstance")
         final GitRepository gitIdPMetadataRepositoryInstance,
-        @Qualifier("samlIdPMetadataGeneratorConfigurationContext")
+        @Qualifier(SamlIdPMetadataGeneratorConfigurationContext.DEFAULT_BEAN_NAME)
         final SamlIdPMetadataGeneratorConfigurationContext ctx) {
         return BeanSupplier.of(SamlIdPMetadataGenerator.class)
             .when(CONDITION_ENABLED.given(applicationContext.getEnvironment()))
