@@ -9,10 +9,10 @@ category: Protocols
 
 The CAS server supports the [OpenID Federation protocol](https://openid.net/specs/openid-federation-1_0.html).
 
-It can act as:
-- a Trust Anchor
-- an Intermediate
-- an OP.
+It can act as only one of the following roles (mutually exclusive):
+- Trust Anchor (TA)
+- Intermediate
+- OpenID Provider (OP).
 
 Support is enabled by including the following dependency in the WAR overlay:
 

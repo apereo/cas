@@ -1,6 +1,7 @@
-package org.apereo.cas.configuration.model.support.oidc;
+package org.apereo.cas.configuration.model.support.oidc.federation;
 
 import module java.base;
+import org.apereo.cas.configuration.support.DurationCapable;
 import org.apereo.cas.configuration.support.ExpressionLanguageCapable;
 import org.apereo.cas.configuration.support.RequiredProperty;
 import org.apereo.cas.configuration.support.RequiresModule;
@@ -22,6 +23,12 @@ public class OidcFederationProperties implements Serializable {
 
     @Serial
     private static final long serialVersionUID = 113328615694269276L;
+
+    /**
+     * The role of this server.
+     */
+    @RequiredProperty
+    private OidcFederationRole role;
 
     /**
      * Organization name to include in the federation metadata.
@@ -51,4 +58,10 @@ public class OidcFederationProperties implements Serializable {
     @RequiredProperty
     @ExpressionLanguageCapable
     private String jwksFile = "file:/etc/cas/config/federation-keystore.jwks";
+
+    /**
+     * Sets the time period during which the entity statement is not expired.
+     */
+    @DurationCapable
+    private String entityStatementExpiration = "P90D";
 }
