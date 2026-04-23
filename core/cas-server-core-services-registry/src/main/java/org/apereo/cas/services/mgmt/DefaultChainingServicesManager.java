@@ -112,7 +112,8 @@ public class DefaultChainingServicesManager implements ChainingServicesManager {
 
     @Override
     public RegisteredService findServiceBy(final long id) {
-        return serviceManagers.stream()
+        return serviceManagers
+            .stream()
             .map(manager -> manager.findServiceBy(id))
             .filter(Objects::nonNull)
             .findFirst()
@@ -127,7 +128,8 @@ public class DefaultChainingServicesManager implements ChainingServicesManager {
 
     @Override
     public RegisteredService findServiceByName(final String name) {
-        return serviceManagers.stream()
+        return serviceManagers
+            .stream()
             .map(manager -> manager.findServiceByName(name))
             .filter(Objects::nonNull)
             .findFirst()
@@ -142,14 +144,16 @@ public class DefaultChainingServicesManager implements ChainingServicesManager {
 
     @Override
     public Collection<RegisteredService> getAllServices() {
-        return serviceManagers.stream()
+        return serviceManagers
+            .stream()
             .flatMap(manager -> manager.getAllServices().stream())
             .collect(Collectors.toList());
     }
 
     @Override
     public <T extends RegisteredService> Collection<T> getAllServicesOfType(final Class<T> clazz) {
-        return serviceManagers.stream()
+        return serviceManagers
+            .stream()
             .filter(manager -> manager.supports(clazz))
             .flatMap(manager -> manager.getAllServicesOfType(clazz).stream())
             .collect(Collectors.toList());

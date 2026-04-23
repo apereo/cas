@@ -70,7 +70,7 @@ class AmazonS3SamlIdPMetadataConfiguration {
     public SamlIdPMetadataGenerator samlIdPMetadataGenerator(
         final ConfigurableApplicationContext applicationContext,
         final CasConfigurationProperties casProperties,
-        @Qualifier("samlIdPMetadataGeneratorConfigurationContext")
+        @Qualifier(SamlIdPMetadataGeneratorConfigurationContext.DEFAULT_BEAN_NAME)
         final SamlIdPMetadataGeneratorConfigurationContext samlIdPMetadataGeneratorConfigurationContext,
         @Qualifier("amazonS3Client")
         final S3Client amazonS3Client) {
