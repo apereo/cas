@@ -67,7 +67,7 @@ class SamlIdPRestfulIdPMetadataConfiguration {
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     public SamlIdPMetadataGenerator samlIdPMetadataGenerator(
         final ConfigurableApplicationContext applicationContext,
-        @Qualifier("samlIdPMetadataGeneratorConfigurationContext")
+        @Qualifier(SamlIdPMetadataGeneratorConfigurationContext.DEFAULT_BEAN_NAME)
         final SamlIdPMetadataGeneratorConfigurationContext ctx) {
         return BeanSupplier.of(SamlIdPMetadataGenerator.class)
             .when(CONDITION.given(applicationContext.getEnvironment()))

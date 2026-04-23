@@ -15,7 +15,7 @@ const assert = require("assert");
 
     const service = "https://localhost:9859/anything/cas";
     const baseEndpoint = "https://localhost:8443/cas/actuator";
-    await cas.doPost(`${baseEndpoint}/passwordManagement/reset/casuser?service=${service}`,
+    await cas.doPost(`${baseEndpoint}/passwordManagement/reset/requests/casuser?service=${service}`,
         "",
         {
             "Content-Type": "application/json"

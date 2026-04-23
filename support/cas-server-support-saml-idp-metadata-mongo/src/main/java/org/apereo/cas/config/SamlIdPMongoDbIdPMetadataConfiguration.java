@@ -95,7 +95,7 @@ class SamlIdPMongoDbIdPMetadataConfiguration {
         final CasConfigurationProperties casProperties,
         @Qualifier("mongoDbSamlIdPMetadataTemplate")
         final MongoOperations mongoDbSamlIdPMetadataTemplate,
-        @Qualifier("samlIdPMetadataGeneratorConfigurationContext")
+        @Qualifier(SamlIdPMetadataGeneratorConfigurationContext.DEFAULT_BEAN_NAME)
         final SamlIdPMetadataGeneratorConfigurationContext samlIdPMetadataGeneratorConfigurationContext) {
         return BeanSupplier.of(SamlIdPMetadataGenerator.class)
             .when(CONDITION.given(applicationContext.getEnvironment()))
