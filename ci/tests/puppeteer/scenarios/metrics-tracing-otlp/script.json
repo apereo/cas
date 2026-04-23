@@ -1,0 +1,23 @@
+{
+  "dependencies": "metrics,reports,tracing-otel",
+  "conditions": {
+    "docker": "true"
+  },
+  "properties": [
+    "--cas.server.name=https://localhost:8443",
+    "--cas.server.prefix=${cas.server.name}/cas",
+
+    "--management.tracing.export.enabled=true",
+    "--management.observations.annotations.enabled=true",
+    "--management.tracing.sampling.probability=1F",
+    
+    "--management.otlp.metrics.export.url=http://localhost:4318/v1/metrics",
+    "--management.opentelemetry.tracing.export.otlp.endpoint=http://localhost:4318/v1/traces",
+    "--management.opentelemetry.logging.export.otlp.endpoint=http://localhost:4318/v1/logs",
+
+    "--cas.monitor.endpoints.endpoint.defaults.access=ANONYMOUS",
+    "--management.endpoints.web.exposure.include=*",
+    "--management.endpoints.access.default=UNRESTRICTED"
+  ],
+  "initScript": "${PWD}/ci/tests/otel/run-otel-server.sh"
+}

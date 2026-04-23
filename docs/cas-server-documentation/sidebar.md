@@ -700,6 +700,8 @@ layout: null
 
 * [Account Registration](#acctregistration)
     *   [Overview](/cas/{{ version }}/registration/Account-Registration-Overview.html)
+    *   [Registration Requests](/cas/{{ version }}/registration/Account-Registration-Requests.html)
+    *   [Communication Strategy](/cas/{{ version }}/registration/Account-Registration-Communication.html)
     *   [Account Profile](/cas/{{ version }}/registration/Account-Management-Overview.html)
     *   [Provisioning](#acctregprovisioning)
         *   [Groovy](/cas/{{ version }}/registration/Account-Registration-Provisioning-Groovy.html)

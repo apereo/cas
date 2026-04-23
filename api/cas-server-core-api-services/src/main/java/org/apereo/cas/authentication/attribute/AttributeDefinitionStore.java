@@ -150,5 +150,11 @@ public interface AttributeDefinitionStore {
      * @param resource the resource
      * @return the attribute definition store
      */
-    AttributeDefinitionStore store(Resource resource);
+    AttributeDefinitionStore export(Resource resource);
+
+    /**
+     * Store attribute definitions that are registered.
+     */
+    default void save() {
+    }
 }
