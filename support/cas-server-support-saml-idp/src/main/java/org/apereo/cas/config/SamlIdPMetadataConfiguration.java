@@ -321,7 +321,7 @@ class SamlIdPMetadataConfiguration {
         @Bean(initMethod = "initialize")
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public SamlIdPMetadataGenerator samlIdPMetadataGenerator(
-            @Qualifier("samlIdPMetadataGeneratorConfigurationContext")
+            @Qualifier(SamlIdPMetadataGeneratorConfigurationContext.DEFAULT_BEAN_NAME)
             final SamlIdPMetadataGeneratorConfigurationContext samlIdPMetadataGeneratorConfigurationContext) {
             return new FileSystemSamlIdPMetadataGenerator(samlIdPMetadataGeneratorConfigurationContext);
         }
@@ -422,7 +422,7 @@ class SamlIdPMetadataConfiguration {
     @EnableConfigurationProperties(CasConfigurationProperties.class)
     static class SamlIdPMetadataContextConfiguration {
         @Bean
-        @ConditionalOnMissingBean(name = "samlIdPMetadataGeneratorConfigurationContext")
+        @ConditionalOnMissingBean(name = SamlIdPMetadataGeneratorConfigurationContext.DEFAULT_BEAN_NAME)
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public SamlIdPMetadataGeneratorConfigurationContext samlIdPMetadataGeneratorConfigurationContext(
             final CasConfigurationProperties casProperties,

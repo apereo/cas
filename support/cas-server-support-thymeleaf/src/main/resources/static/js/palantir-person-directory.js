@@ -152,6 +152,11 @@ async function initializePersonDirectoryOperations() {
                                 class="mdc-button mdc-button--raised btn btn-link min-width-32x">
                             <i class="mdi mdi-eye min-width-32x" aria-hidden="true"></i>
                          </button>
+                         <button type="button" name="editAttrDefn" href="#" data-key="${definition.key}"
+                                title="Edit Attribute Definition"
+                                class="mdc-button mdc-button--raised btn btn-link min-width-32x">
+                            <i class="mdi mdi-pencil min-width-32x" aria-hidden="true"></i>
+                         </button>
                          <button type="button" name="deleteAttrDefn" href="#" data-key="${definition.key}"
                                 title="Delete Attribute Definition"
                                 class="mdc-button mdc-button--raised btn btn-link min-width-32x">
@@ -237,6 +242,11 @@ function reloadAttributeDefinitionsTable() {
                             title="View Attribute Definition"
                             class="mdc-button mdc-button--raised btn btn-link min-width-32x">
                         <i class="mdi mdi-eye min-width-32x" aria-hidden="true"></i>
+                     </button>
+                     <button type="button" name="editAttrDefn" href="#" data-key="${definition.key}"
+                            title="Edit Attribute Definition"
+                            class="mdc-button mdc-button--raised btn btn-link min-width-32x">
+                        <i class="mdi mdi-pencil min-width-32x" aria-hidden="true"></i>
                      </button>
                      <button type="button" name="deleteAttrDefn" href="#" data-key="${definition.key}"
                             title="Delete Attribute Definition"
@@ -403,6 +413,11 @@ function bindAttrDefDeleteButtons() {
             });
         }
     });
+
+    $("button[name=editAttrDefn]").off().on("click", function () {
+        const key = $(this).attr("data-key");
+        editAttributeDefinition(key);
+    });
 }
 
 function toggleAttrDefEditorVisibility() {
@@ -414,7 +429,7 @@ function toggleAttrDefEditorVisibility() {
 
     if (showEditor === "true" || showEditor === true) {
         showElements($editorContainer);
-        $controlsPanel.removeClass("w-100").addClass("mmw-45");
+        $controlsPanel.css({"max-width": "520px"});
         const editor = ace.edit("attrDefEditor");
         if (editor) {
             editor.resize();
@@ -422,7 +437,7 @@ function toggleAttrDefEditorVisibility() {
         }
     } else {
         hideElements($editorContainer);
-        $controlsPanel.removeClass("mmw-45").addClass("w-100");
+        $controlsPanel.css({"max-width": "none"});
     }
 }
 
@@ -499,7 +514,8 @@ function generateAttrDefPayload() {
         addBool("structured", "attributeDefinitionStructured");
     }
 
-    editor.setValue(JSON.stringify(payload, null, 2), -1);
+    const hasContent = Object.keys(payload).some(k => k !== "@class");
+    editor.setValue(hasContent ? JSON.stringify(payload, null, 2) : "", -1);
 }
 
 function collectAttrDefPatterns() {
@@ -530,6 +546,11 @@ function newAttributeDefinition() {
     if (!CasActuatorEndpoints.attributeDefinitions()) {
         return;
     }
+    openAttributeDefinitionDialog(null);
+}
+
+function openAttributeDefinitionDialog(existingDefinition) {
+    const isEditMode = existingDefinition !== null;
 
     const dialogContainer = $("<div>", {
         id: "newAttributeDefinitionDialog"
@@ -542,7 +563,8 @@ function newAttributeDefinition() {
 
     const controlsPanel = $("<div>", {
         id: "attrDefControlsPanel",
-        class: "mr-2 mmw-45"
+        class: "mr-2",
+        css: {"min-width": "450px", "max-width": "520px"}
     });
 
     const editorContainer = $("<div>", {
@@ -653,7 +675,7 @@ function newAttributeDefinition() {
         labelTitle: "Hashing Strategy:",
         id: "attributeDefinitionHashingStrategy",
         options: [
-            {value: "", text: "NONE"},
+            {value: "NONE", text: "NONE"},
             {value: "HEX", text: "HEX"},
             {value: "BASE64", text: "BASE64"},
             {value: "SHA1", text: "SHA1"},
@@ -754,7 +776,7 @@ function newAttributeDefinition() {
 
 
     dialogContainer.dialog({
-        title: "New Attribute Definition",
+        title: isEditMode ? "Edit Attribute Definition" : "New Attribute Definition",
         modal: true,
         width: 1600,
         autoOpen: true,
@@ -823,7 +845,7 @@ function newAttributeDefinition() {
                     success: () => {
                         dialogContainer.dialog("close");
                         reloadAttributeDefinitionsTable();
-                        Swal.fire("Success", "Attribute definition created successfully.", "success");
+                        Swal.fire("Success", isEditMode ? "Attribute definition updated successfully." : "Attribute definition created successfully.", "success");
                     },
                     error: (xhr, status, error) => {
                         console.error(`Error: ${status} / ${error} / ${xhr.responseText}`);
@@ -878,7 +900,7 @@ function newAttributeDefinition() {
             const showEditor = localStorage.getItem("showAttrDefEditorPreference");
             if (showEditor === "false") {
                 hideElements($("#attrDefEditorContainer"));
-                $("#attrDefControlsPanel").removeClass("mmw-45").addClass("w-100");
+                $("#attrDefControlsPanel").css({"max-width": "none"});
             }
 
             $("#newAttributeDefinitionDialog .jqueryui-selectmenu").selectmenu({
@@ -909,6 +931,100 @@ function newAttributeDefinition() {
             });
 
             generateAttrDefPayload();
+
+            if (isEditMode) {
+                const cls = existingDefinition["@class"] || "";
+                let defType = "DEFAULT";
+                if (cls.includes("SamlIdPAttributeDefinition")) {
+                    defType = "SAML";
+                } else if (cls.includes("OidcAttributeDefinition")) {
+                    defType = "OIDC";
+                } else if (cls.includes("OAuthAttributeDefinition")) {
+                    defType = "OAUTH";
+                }
+                $("#attributeDefinitionType").val(defType);
+                $("#attributeDefinitionType").selectmenu("refresh");
+                handleAttributeDefinitionTypeChange(defType);
+
+                const setVal = (id, value) => {
+                    if (value !== undefined && value !== null) {
+                        const $input = $(`#${id}`);
+                        $input.val(value).trigger("input");
+                        const $label = $input.closest(".mdc-text-field").find(".mdc-floating-label");
+                        if ($label.length > 0 && String(value).length > 0) {
+                            $label.addClass("mdc-floating-label--float-above");
+                        }
+                    }
+                };
+                const setBool = (id, value) => {
+                    const el = $(`#newAttributeDefinitionDialog #${id}`);
+                    if (el.length > 0) {
+                        el.val(value === true ? "true" : "false");
+                        const btnId = el.attr("data-switch-btn");
+                        if (btnId) {
+                            const btn = $(`#${btnId}`);
+                            if (value === true) {
+                                btn.removeClass("mdc-switch--unselected").addClass("mdc-switch--selected");
+                                btn.attr("aria-checked", "true");
+                            } else {
+                                btn.removeClass("mdc-switch--selected").addClass("mdc-switch--unselected");
+                                btn.attr("aria-checked", "false");
+                            }
+                        }
+                    }
+                };
+
+                setVal("attributeDefinitionKey", existingDefinition.key);
+                setVal("attributeDefinitionName", existingDefinition.name);
+                setVal("attributeDefinitionAttribute", existingDefinition.attribute);
+                setVal("attributeDefinitionPatternFormat", existingDefinition.patternFormat);
+                setVal("attributeDefinitionScript", existingDefinition.script);
+                setVal("attributeDefinitionFlattened", existingDefinition.flattened);
+                setVal("attributeDefinitionExpiration", existingDefinition.expiration);
+
+                if (existingDefinition.canonicalizationMode) {
+                    $("#attributeDefinitionCanonicalizationMode").val(existingDefinition.canonicalizationMode);
+                    $("#attributeDefinitionCanonicalizationMode").selectmenu("refresh");
+                }
+                if (existingDefinition.hashingStrategy) {
+                    $("#attributeDefinitionHashingStrategy").val(existingDefinition.hashingStrategy);
+                    $("#attributeDefinitionHashingStrategy").selectmenu("refresh");
+                }
+
+                setBool("attributeDefinitionScoped", existingDefinition.scoped);
+                setBool("attributeDefinitionEncrypted", existingDefinition.encrypted);
+                setBool("attributeDefinitionSingleValue", existingDefinition.singleValue);
+
+                if (defType === "SAML") {
+                    setVal("attributeDefinitionFriendlyName", existingDefinition.friendlyName);
+                    setVal("attributeDefinitionUrn", existingDefinition.urn);
+                    setVal("attributeDefinitionSalt", existingDefinition.salt);
+                    setBool("attributeDefinitionPersistent", existingDefinition.persistent);
+                } else if (defType === "OIDC") {
+                    setVal("attributeDefinitionTrustFramework", existingDefinition.trustFramework);
+                    setBool("attributeDefinitionStructured", existingDefinition.structured);
+                }
+
+                if (existingDefinition.patterns) {
+                    for (const [patternKey, patternValue] of Object.entries(existingDefinition.patterns)) {
+                        if (patternKey !== "@class") {
+                            const $container = $("#registeredServiceAttrDefPatternKeyMapContainer");
+                            const $addBtn = $container.find("button[name=addAttrDefPatternKeyMapEntry]");
+                            if ($addBtn.length > 0) {
+                                $addBtn.trigger("click");
+                                const $rows = $container.find(".attrDefPatternKey-map-row");
+                                const $lastRow = $rows.last();
+                                $lastRow.find("input[id=registeredServiceAttrDefPatternKey]").val(patternKey);
+                                $lastRow.find("input[id=registeredServiceAttrDefPatternValue]").val(patternValue);
+                            }
+                        }
+                    }
+                }
+
+                generateAttrDefPayload();
+            }
+
+            $("#attributeDefinitionKey").trigger("focus");
         },
         close: function () {
             // Restore original fields for future dialog opens
@@ -916,5 +1032,17 @@ function newAttributeDefinition() {
             $(this).dialog("destroy");
             dialogContainer.remove();
         }
+    });
+}
+
+function editAttributeDefinition(key) {
+    if (!CasActuatorEndpoints.attributeDefinitions()) {
+        return;
+    }
+    $.get(`${CasActuatorEndpoints.attributeDefinitions()}/${key}`, response => {
+        openAttributeDefinitionDialog(response);
+    }).fail((xhr, status, error) => {
+        console.error("Error fetching attribute definition:", error);
+        displayBanner(xhr);
     });
 }

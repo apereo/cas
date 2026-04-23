@@ -24,6 +24,11 @@ import org.springframework.context.ConfigurableApplicationContext;
 @Setter
 @SuperBuilder
 public class SamlIdPMetadataGeneratorConfigurationContext {
+    /**
+     * Default bean name.
+     */
+    public static final String DEFAULT_BEAN_NAME = "samlIdPMetadataGeneratorConfigurationContext";
+
     private final SamlIdPMetadataLocator samlIdPMetadataLocator;
 
     private final SamlIdPCertificateAndKeyWriter samlIdPCertificateAndKeyWriter;
