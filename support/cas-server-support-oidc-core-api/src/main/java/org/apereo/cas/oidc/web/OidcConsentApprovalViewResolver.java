@@ -30,17 +30,14 @@ public class OidcConsentApprovalViewResolver extends OAuth20ConsentApprovalViewR
 
     private final TicketFactory ticketFactory;
 
-    private final OAuth20RequestParameterResolver oauthRequestParameterResolver;
-
     public OidcConsentApprovalViewResolver(final CasConfigurationProperties casProperties,
                                            final SessionStore sessionStore,
                                            final TicketRegistry ticketRegistry,
                                            final TicketFactory ticketFactory,
                                            final OAuth20RequestParameterResolver oauthRequestParameterResolver) {
-        super(casProperties, sessionStore);
+        super(casProperties, sessionStore, oauthRequestParameterResolver);
         this.ticketRegistry = ticketRegistry;
         this.ticketFactory = ticketFactory;
-        this.oauthRequestParameterResolver = oauthRequestParameterResolver;
     }
 
     @Override
@@ -56,6 +53,23 @@ public class OidcConsentApprovalViewResolver extends OAuth20ConsentApprovalViewR
             }
         }
         return super.isConsentApprovalBypassed(context, service);
+    }
+
+    @Override
+    protected Collection<String> resolveRequestedScopes(final WebContext context, final OAuthRegisteredService service) {
+        val supportedScopes = new HashSet<>(casProperties.getAuthn().getOidc().getDiscovery().getScopes());
+        supportedScopes.retainAll(service.getScopes());
+
+        var requestedScopes = new HashSet<>(super.resolveRequestedScopes(context, service));
+        context.getRequestParameter(OidcConstants.REQUEST_URI).ifPresent(Unchecked.consumer(uri -> {
+            val authzRequest = ticketRegistry.getTicket(uri, OidcPushedAuthorizationRequest.class);
+            val uriFactory = (OidcPushedAuthorizationRequestFactory) ticketFactory.get(OidcPushedAuthorizationRequest.class);
+            val holder = uriFactory.toAccessTokenRequest(authzRequest);
+            requestedScopes.addAll(holder.getScopes());
+        }));
+        supportedScopes.retainAll(requestedScopes);
+        supportedScopes.add(OidcConstants.StandardScopes.OPENID.getScope());
+        return supportedScopes;
     }
 
     @Override
@@ -77,21 +91,15 @@ public class OidcConsentApprovalViewResolver extends OAuth20ConsentApprovalViewR
                 model.put("dynamicTime", oidcRegisteredService.getProperties()
                     .get(RegisteredServiceProperties.OIDC_DYNAMIC_CLIENT_REGISTRATION_DATE.getPropertyName()).getValue(String.class));
             }
-            val supportedScopes = new HashSet<>(casProperties.getAuthn().getOidc().getDiscovery().getScopes());
-            supportedScopes.retainAll(oidcRegisteredService.getScopes());
 
-            val requestedScopes = oauthRequestParameterResolver.resolveRequestedScopes(webContext);
             val userInfoClaims = oauthRequestParameterResolver.resolveUserInfoRequestClaims(webContext);
             webContext.getRequestParameter(OidcConstants.REQUEST_URI).ifPresent(Unchecked.consumer(uri -> {
                 val authzRequest = ticketRegistry.getTicket(uri, OidcPushedAuthorizationRequest.class);
                 val uriFactory = (OidcPushedAuthorizationRequestFactory) ticketFactory.get(OidcPushedAuthorizationRequest.class);
                 val holder = uriFactory.toAccessTokenRequest(authzRequest);
                 userInfoClaims.addAll(holder.getClaims().keySet());
-                requestedScopes.addAll(holder.getScopes());
             }));
-            supportedScopes.retainAll(requestedScopes);
-            supportedScopes.add(OidcConstants.StandardScopes.OPENID.getScope());
-            model.put("scopes", supportedScopes);
+            model.put("scopes", resolveRequestedScopes(webContext, oidcRegisteredService));
             model.put("userInfoClaims", userInfoClaims);
         }
     }

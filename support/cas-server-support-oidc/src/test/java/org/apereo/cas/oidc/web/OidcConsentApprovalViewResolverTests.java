@@ -32,13 +32,14 @@ class OidcConsentApprovalViewResolverTests extends AbstractOidcTests {
 
     @Test
     void verifyBypassedBySession() throws Throwable {
-        val request = new MockHttpServletRequest();
-        request.addHeader(HttpHeaders.USER_AGENT, "MSIE");
-        val response = new MockHttpServletResponse();
-        val context = new JEEContext(request, response);
-        oauthDistributedSessionStore.set(context, OAuth20Constants.BYPASS_APPROVAL_PROMPT, "true");
         val service = getOidcRegisteredService(UUID.randomUUID().toString(), randomServiceUrl());
         servicesManager.save(service);
+        val request = new MockHttpServletRequest();
+        request.addHeader(HttpHeaders.USER_AGENT, "MSIE");
+        request.setParameter(OAuth20Constants.SCOPE, OidcConstants.StandardScopes.OPENID.getScope());
+        val response = new MockHttpServletResponse();
+        val context = new JEEContext(request, response);
+        oauthDistributedSessionStore.set(context, OAuth20Constants.BYPASS_APPROVAL_PROMPT + "_" + service.getClientId(), Set.of(OidcConstants.StandardScopes.OPENID.getScope()));
         assertFalse(consentApprovalViewResolver.resolve(context, service).hasView());
     }
 
@@ -47,7 +48,8 @@ class OidcConsentApprovalViewResolverTests extends AbstractOidcTests {
         val request = new MockHttpServletRequest();
         request.setRequestURI("https://cas.org/something");
         request.addHeader(HttpHeaders.USER_AGENT, "MSIE");
-        request.setQueryString(OAuth20Constants.PROMPT + '=' + OidcConstants.PROMPT_CONSENT);
+        request.setParameter(OAuth20Constants.SCOPE, OidcConstants.StandardScopes.OPENID.getScope());
+        request.setParameter(OAuth20Constants.PROMPT, OidcConstants.PROMPT_CONSENT);
 
         val response = new MockHttpServletResponse();
         val context = new JEEContext(request, response);
@@ -112,6 +114,7 @@ class OidcConsentApprovalViewResolverTests extends AbstractOidcTests {
         val request = new MockHttpServletRequest();
         request.addHeader(HttpHeaders.USER_AGENT, "MSIE");
         request.setRequestURI("https://cas.org/something");
+        request.setParameter(OAuth20Constants.SCOPE, OidcConstants.StandardScopes.OPENID.getScope());
 
         val response = new MockHttpServletResponse();
         val context = new JEEContext(request, response);

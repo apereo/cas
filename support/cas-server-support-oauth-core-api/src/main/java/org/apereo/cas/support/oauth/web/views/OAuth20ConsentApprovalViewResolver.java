@@ -9,6 +9,9 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.hc.core5.net.URIBuilder;
+import org.apereo.cas.support.oauth.web.OAuth20RequestParameterResolver;
+import org.apereo.cas.ticket.TicketFactory;
+import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.pac4j.core.context.WebContext;
 import org.pac4j.core.context.session.SessionStore;
 import org.springframework.web.servlet.ModelAndView;
@@ -33,18 +36,32 @@ public class OAuth20ConsentApprovalViewResolver implements ConsentApprovalViewRe
      */
     protected final SessionStore sessionStore;
 
+    protected final OAuth20RequestParameterResolver oauthRequestParameterResolver;
+
     @Override
     public ModelAndView resolve(final WebContext context, final OAuthRegisteredService service) throws Exception {
+        // do not store approval, if it is always bypassed
+        if (isConsentApprovalBypassed(context, service)) {
+            return new ModelAndView();
+        }
+
         var bypassApprovalParameter = context.getRequestParameter(OAuth20Constants.BYPASS_APPROVAL_PROMPT)
-            .map(String::valueOf).orElse(StringUtils.EMPTY);
-        if (StringUtils.isBlank(bypassApprovalParameter)) {
-            bypassApprovalParameter = sessionStore
-                .get(context, OAuth20Constants.BYPASS_APPROVAL_PROMPT)
-                .map(String::valueOf).orElse(StringUtils.EMPTY);
+            .map(String::valueOf).orElse(StringUtils.EMPTY).equalsIgnoreCase(Boolean.TRUE.toString());
+        val approvalKey = OAuth20Constants.BYPASS_APPROVAL_PROMPT + "_" + service.getClientId();
+        var approvedScopes = new HashSet<>(sessionStore
+                .get(context, approvalKey)
+                .map(o -> o instanceof Collection ? ((Collection<?>) o).stream()
+                                                    .map(String::valueOf)
+                                                    .collect(Collectors.toSet()) : null)
+                .orElse(Set.of()));
+        val requestedScopes = resolveRequestedScopes(context, service);
+        if (!bypassApprovalParameter && approvedScopes.containsAll(requestedScopes)) {
+            bypassApprovalParameter = true;
         }
         LOGGER.trace("Bypassing approval prompt for service [{}]: [{}]", service, bypassApprovalParameter);
-        if (Boolean.TRUE.toString().equalsIgnoreCase(bypassApprovalParameter) || isConsentApprovalBypassed(context, service)) {
-            sessionStore.set(context, OAuth20Constants.BYPASS_APPROVAL_PROMPT, Boolean.TRUE.toString());
+        if (bypassApprovalParameter) {
+            approvedScopes.addAll(requestedScopes);
+            sessionStore.set(context, approvalKey, approvedScopes);
             return new ModelAndView();
         }
         return redirectToApproveView(context, service);
@@ -60,6 +77,18 @@ public class OAuth20ConsentApprovalViewResolver implements ConsentApprovalViewRe
     protected boolean isConsentApprovalBypassed(final WebContext context, final OAuthRegisteredService service) {
         return service.isBypassApprovalPrompt()
                || casProperties.getAuthn().getOauth().getCore().isBypassApprovalPrompt();
+    }
+
+    /**
+     * Get a collection of requested scopes
+     * @param context the context
+     * @return a collection of requested scopes
+     */
+    protected Collection<String> resolveRequestedScopes(final WebContext context, final OAuthRegisteredService service) {
+        val supportedScopes = new HashSet<>(casProperties.getAuthn().getOidc().getDiscovery().getScopes());
+        supportedScopes.retainAll(service.getScopes());
+        supportedScopes.retainAll(oauthRequestParameterResolver.resolveRequestedScopes(context));
+        return supportedScopes;
     }
 
     /**

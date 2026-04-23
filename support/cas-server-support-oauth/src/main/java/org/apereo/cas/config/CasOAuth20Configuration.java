@@ -412,8 +412,10 @@ class CasOAuth20Configuration {
         public ConsentApprovalViewResolver consentApprovalViewResolver(
             @Qualifier("oauthDistributedSessionStore")
             final SessionStore oauthDistributedSessionStore,
+            @Qualifier(OAuth20RequestParameterResolver.BEAN_NAME)
+            final OAuth20RequestParameterResolver oauthRequestParameterResolver,
             final CasConfigurationProperties casProperties) {
-            return new OAuth20ConsentApprovalViewResolver(casProperties, oauthDistributedSessionStore);
+            return new OAuth20ConsentApprovalViewResolver(casProperties, oauthDistributedSessionStore, oauthRequestParameterResolver);
         }
 
         @ConditionalOnMissingBean(name = OAuth20UserProfileDataCreator.BEAN_NAME)

@@ -97,6 +97,7 @@ class OidcAuthorizeEndpointControllerTests {
             mockRequest.setParameter(OAuth20Constants.CLIENT_ID, id);
             mockRequest.setParameter(OAuth20Constants.REDIRECT_URI, "https://oauth.example.org/");
             mockRequest.setParameter(OAuth20Constants.RESPONSE_TYPE, OAuth20ResponseTypes.TOKEN.name().toLowerCase(Locale.ENGLISH));
+            mockRequest.setParameter(OAuth20Constants.SCOPE, OidcConstants.StandardScopes.OPENID.getScope());
             mockRequest.setContextPath(StringUtils.EMPTY);
             val mockResponse = new MockHttpServletResponse();
 
