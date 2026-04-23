@@ -18,25 +18,29 @@ import org.apereo.cas.notifications.mail.EmailMessageBodyBuilder;
 import org.apereo.cas.notifications.mail.EmailMessageRequest;
 import org.apereo.cas.notifications.sms.SmsBodyBuilder;
 import org.apereo.cas.notifications.sms.SmsRequest;
+import org.apereo.cas.pm.PasswordHistoryService;
 import org.apereo.cas.pm.PasswordManagementQuery;
 import org.apereo.cas.pm.PasswordManagementService;
 import org.apereo.cas.pm.PasswordResetUrlBuilder;
+import org.apereo.cas.pm.impl.history.PasswordHistoryEntity;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
 import org.apereo.cas.web.BaseCasRestActuatorEndpoint;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.enums.ParameterIn;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
-import org.jspecify.annotations.NonNull;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.boot.actuate.endpoint.Access;
 import org.springframework.boot.actuate.endpoint.annotation.Endpoint;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -59,42 +63,45 @@ public class PasswordManagementEndpoint extends BaseCasRestActuatorEndpoint {
     /**
      * The communication manager for SMS/emails.
      */
-    protected final ObjectProvider<@NonNull CommunicationsManager> communicationsManager;
+    protected final ObjectProvider<CommunicationsManager> communicationsManager;
 
     /**
      * The password management service.
      */
-    protected final ObjectProvider<@NonNull PasswordManagementService> passwordManagementService;
+    protected final ObjectProvider<PasswordManagementService> passwordManagementService;
 
     /**
      * Build the reset URL for the user.
      */
-    protected final ObjectProvider<@NonNull PasswordResetUrlBuilder> passwordResetUrlBuilder;
+    protected final ObjectProvider<PasswordResetUrlBuilder> passwordResetUrlBuilder;
 
-    protected final ObjectProvider<@NonNull ServiceFactory<WebApplicationService>> serviceFactory;
+    protected final ObjectProvider<ServiceFactory<WebApplicationService>> serviceFactory;
 
-    protected final ObjectProvider<@NonNull ServicesManager> servicesManager;
+    protected final ObjectProvider<ServicesManager> servicesManager;
 
     /**
      * The principal resolver to resolve the user
      * and fetch attributes for follow-up ops, such as email message body building.
      */
-    protected final ObjectProvider<@NonNull PrincipalResolver> principalResolver;
+    protected final ObjectProvider<PrincipalResolver> principalResolver;
 
-    protected final ObjectProvider<@NonNull AuthenticationSystemSupport> authenticationSystemSupport;
+    protected final ObjectProvider<AuthenticationSystemSupport> authenticationSystemSupport;
 
-    private final ObjectProvider<@NonNull AuditableExecution> registeredServiceAccessStrategyEnforcer;
+    private final ObjectProvider<AuditableExecution> registeredServiceAccessStrategyEnforcer;
+
+    private final ObjectProvider<PasswordHistoryService> passwordHistoryService;
 
     public PasswordManagementEndpoint(final CasConfigurationProperties casProperties,
                                       final ConfigurableApplicationContext applicationContext,
-                                      final ObjectProvider<@NonNull CommunicationsManager> communicationsManager,
-                                      final ObjectProvider<@NonNull PasswordManagementService> passwordManagementService,
-                                      final ObjectProvider<@NonNull PasswordResetUrlBuilder> passwordResetUrlBuilder,
-                                      final ObjectProvider<@NonNull ServiceFactory<WebApplicationService>> serviceFactory,
-                                      final ObjectProvider<@NonNull ServicesManager> servicesManager,
-                                      final ObjectProvider<@NonNull PrincipalResolver> principalResolver,
-                                      final ObjectProvider<@NonNull AuthenticationSystemSupport> authenticationSystemSupport,
-                                      final ObjectProvider<@NonNull AuditableExecution> registeredServiceAccessStrategyEnforcer) {
+                                      final ObjectProvider<CommunicationsManager> communicationsManager,
+                                      final ObjectProvider<PasswordManagementService> passwordManagementService,
+                                      final ObjectProvider<PasswordResetUrlBuilder> passwordResetUrlBuilder,
+                                      final ObjectProvider<ServiceFactory<WebApplicationService>> serviceFactory,
+                                      final ObjectProvider<ServicesManager> servicesManager,
+                                      final ObjectProvider<PrincipalResolver> principalResolver,
+                                      final ObjectProvider<AuthenticationSystemSupport> authenticationSystemSupport,
+                                      final ObjectProvider<AuditableExecution> registeredServiceAccessStrategyEnforcer,
+                                      final ObjectProvider<PasswordHistoryService> passwordHistoryService) {
         super(casProperties, applicationContext);
         this.communicationsManager = communicationsManager;
         this.passwordManagementService = passwordManagementService;
@@ -104,10 +111,40 @@ public class PasswordManagementEndpoint extends BaseCasRestActuatorEndpoint {
         this.principalResolver = principalResolver;
         this.authenticationSystemSupport = authenticationSystemSupport;
         this.registeredServiceAccessStrategyEnforcer = registeredServiceAccessStrategyEnforcer;
+        this.passwordHistoryService = passwordHistoryService;
     }
 
     /**
-     * Password reset ops.
+     * Fetch password history for the given username.
+     *
+     * @param username the username
+     * @return the response entity containing the list of password history entities
+     * @throws Throwable the throwable
+     */
+    @GetMapping(path = "/history/{username}", produces = MediaType.APPLICATION_JSON_VALUE)
+    @Operation(summary = "Fetch password history for a user",
+        parameters = @Parameter(name = "username", required = true, in = ParameterIn.PATH,
+            description = "The username whose password history is to be retrieved"))
+    public Collection<? extends PasswordHistoryEntity> fetchPasswordHistory(@PathVariable final String username) throws Throwable {
+        return passwordHistoryService.getObject().fetch(username);
+    }
+
+    /**
+     * Remove password history for the given username.
+     *
+     * @param username the username
+     * @throws Throwable the throwable
+     */
+    @DeleteMapping(path = "/history/{username}", produces = MediaType.APPLICATION_JSON_VALUE)
+    @Operation(summary = "Remove password history for a user",
+        parameters = @Parameter(name = "username", required = true, in = ParameterIn.PATH,
+            description = "The username whose password history is to be removed"))
+    public void removePasswordHistory(@PathVariable final String username) throws Throwable {
+        passwordHistoryService.getObject().remove(username);
+    }
+
+    /**
+     * Password reset request ops.
      *
      * @return the response entity
      */
@@ -116,7 +153,7 @@ public class PasswordManagementEndpoint extends BaseCasRestActuatorEndpoint {
             @Parameter(name = "username", description = "The username to reset the password for"),
             @Parameter(name = "service", description = "The service requesting the password reset")
         })
-    @PostMapping(path = "/reset/{username}", produces = MediaType.APPLICATION_JSON_VALUE)
+    @PostMapping(path = "/reset/requests/{username}", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity passwordReset(@PathVariable final String username,
                                         @RequestParam("service") final String service,
                                         final HttpServletRequest request) throws Throwable {
@@ -127,7 +164,7 @@ public class PasswordManagementEndpoint extends BaseCasRestActuatorEndpoint {
         if (StringUtils.isBlank(email) && StringUtils.isBlank(phone)) {
             val message = "No recipient is provided with a valid email/phone for %s".formatted(username);
             LOGGER.warn(message);
-            return ResponseEntity.unprocessableEntity().body(message);
+            return ResponseEntity.unprocessableContent().body(message);
         }
 
         val webApplicationService = serviceFactory.getObject().createService(service);
@@ -151,7 +188,7 @@ public class PasswordManagementEndpoint extends BaseCasRestActuatorEndpoint {
         val sendSms = sendPasswordResetSmsToAccount(phone, url);
         return sendEmail.isSuccess() || sendSms
             ? ResponseEntity.ok().build()
-            : ResponseEntity.unprocessableEntity().body("Failed to send password reset instructions to %s".formatted(username));
+            : ResponseEntity.unprocessableContent().body("Failed to send password reset instructions to %s".formatted(username));
     }
 
     protected boolean sendPasswordResetSmsToAccount(final String to, final URL url) {

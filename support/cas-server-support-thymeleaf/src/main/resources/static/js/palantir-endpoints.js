@@ -203,6 +203,10 @@ class CasActuatorEndpoints {
         return actuatorEndpoints.threaddump || actuatorEndpoints.threadDump;
     }
 
+    static passwordManagement() {
+        return actuatorEndpoints.passwordmanagement || actuatorEndpoints.passwordManagement;
+    }
+
     static all() {
         return Object.getOwnPropertyNames(CasActuatorEndpoints)
             .filter(name =>

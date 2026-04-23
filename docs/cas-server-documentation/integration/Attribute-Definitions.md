@@ -32,8 +32,8 @@ The following endpoints are provided by CAS:
 
 ## JSON Attribute Definitions
 
-Attribute definitions may be defined inside a JSON file whose location is provided via CAS settings. The structure of the JSON file
-may match the following:
+Attribute definitions by default may be defined inside a JSON file whose location is 
+provided via CAS settings. The structure of the JSON file may match the following:
 
 ```json 
 {
@@ -49,7 +49,7 @@ may match the following:
 
 Generally-speaking, attribute definitions are specified using a `Map` whose key is the 
 attribute name, as resolved by the CAS [attribute resolution engine](Attribute-Resolution.html).
-The attribute name as the key to the `Map` must match the `key` attribute of the attribute definition itself.
+The attribute name as the key to the `Map` **MUST** match the `key` attribute of the attribute definition itself.
 If the attribute in question is not already resolved as principal attribute with a valid set of values,
 it might be possible, depending on the [attribute release policy](Attribute-Release.html), to 
 resolve and create that attribute on the fly as an attribute definition that can produce values. 
@@ -125,7 +125,8 @@ as usual with the following definition:
 
 
 {% tab attrdefinitions <i class="fa fa-mask px-1"></i> Encrypted %}
-Same use case as above, except the attribute value will be encrypted and encoded using the service definition's public key:
+
+The attribute value will be encrypted and encoded using the service definition's public key:
 
 ```json 
 {
@@ -207,7 +208,7 @@ released as `urn:oid:1.3.6.1.4.1.5923.1.1.1.6` with a friendly name of `eduPerso
 {% endtab %}
 
 {% tab attrdefinitions <i class="fa fa-file-code px-1"></i>External Script %}
-Same use case as above, except the attribute value be additionally processed by an external Groovy script:
+Same use case as inline Groovy scripts, except the attribute value be additionally processed by an external Groovy script:
 
 ```json 
 {

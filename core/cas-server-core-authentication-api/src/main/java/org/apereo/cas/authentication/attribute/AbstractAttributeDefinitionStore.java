@@ -24,6 +24,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.Strings;
 import org.apache.commons.lang3.tuple.Pair;
 import org.hjson.JsonValue;
+import org.jspecify.annotations.Nullable;
 import org.springframework.beans.factory.DisposableBean;
 import org.springframework.core.io.Resource;
 import tools.jackson.databind.ObjectMapper;
@@ -44,7 +45,7 @@ public abstract class AbstractAttributeDefinitionStore implements AttributeDefin
     @JsonIgnore
     private final Cache<String, AttributeDefinition> attributeDefinitionsCache =
         Beans.newCache(new SimpleCacheProperties(), new AttributeDefinitionExpiry());
-    
+
     @Setter
     @Getter
     private String scope = StringUtils.EMPTY;
@@ -61,7 +62,7 @@ public abstract class AbstractAttributeDefinitionStore implements AttributeDefin
     public void registerAttributeDefinitions(final Map<String, AttributeDefinition> entries) {
         entries.forEach(this::registerAttributeDefinition);
     }
-    
+
     private static String getAttributeDefinitionKey(final String key, final AttributeDefinition definition) {
         if (StringUtils.isNotBlank(definition.getKey()) && !Strings.CI.equals(definition.getKey(), key)) {
             LOGGER.warn("Attribute definition contains a key property [{}] that differs from its registering key [{}]. "
@@ -241,9 +242,9 @@ public abstract class AbstractAttributeDefinitionStore implements AttributeDefin
 
     @Override
     @CanIgnoreReturnValue
-    public AttributeDefinitionStore store(final Resource resource) {
+    public AttributeDefinitionStore export(@Nullable final Resource resource) {
         return FunctionUtils.doUnchecked(() -> {
-            if (ResourceUtils.isFile(resource)) {
+            if (resource != null && ResourceUtils.isFile(resource)) {
                 val json = MAPPER.writerWithDefaultPrettyPrinter().writeValueAsString(getAttributeDefinitionsMap());
                 LOGGER.trace("Storing attribute definitions as [{}] to [{}]", json, resource);
                 try (val writer = Files.newBufferedWriter(resource.getFile().toPath(), StandardCharsets.UTF_8)) {
@@ -254,7 +255,7 @@ public abstract class AbstractAttributeDefinitionStore implements AttributeDefin
             return this;
         });
     }
-    
+
     /**
      * Import store.
      *
@@ -292,7 +293,9 @@ public abstract class AbstractAttributeDefinitionStore implements AttributeDefin
                     LOGGER.trace("Loading attribute definitions from [{}]", resource);
                     val json = new String(is.readAllBytes(), StandardCharsets.UTF_8);
                     LOGGER.trace("Loaded attribute definitions [{}] from [{}]", json, resource);
-                    return MAPPER.readValue(JsonValue.readHjson(json).toString(), TreeMap.class);
+                    return StringUtils.isNotBlank(json)
+                        ? MAPPER.readValue(JsonValue.readHjson(json).toString(), TreeMap.class)
+                        : new TreeMap<>();
                 }
             }, Map::<String, AttributeDefinition>of).get();
     }

@@ -108,7 +108,7 @@ class SamlIdPRedisIdPMetadataConfiguration {
         final ConfigurableApplicationContext applicationContext,
         @Qualifier("redisSamlIdPMetadataTemplate")
         final CasRedisTemplate<String, SamlIdPMetadataDocument> redisSamlIdPMetadataTemplate,
-        @Qualifier("samlIdPMetadataGeneratorConfigurationContext")
+        @Qualifier(SamlIdPMetadataGeneratorConfigurationContext.DEFAULT_BEAN_NAME)
         final SamlIdPMetadataGeneratorConfigurationContext samlIdPMetadataGeneratorConfigurationContext) {
         return BeanSupplier.of(SamlIdPMetadataGenerator.class)
             .when(CONDITION.given(applicationContext.getEnvironment()))

@@ -80,8 +80,7 @@ public class PathWatcherService implements WatcherService, Runnable, DisposableB
                     }
                 }
             } catch (final InterruptedException | ClosedWatchServiceException e) {
-                LOGGER.trace(e.getMessage(), e);
-                Thread.currentThread().interrupt();
+                LOGGER.trace(StringUtils.defaultIfBlank(e.getMessage(), "Watcher thread interrupted or closed"), e);
             }
         }
     }
