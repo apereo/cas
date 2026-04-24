@@ -255,7 +255,6 @@ tomcat = "11.0.21"
 tomSelect = "2.5.2"
 twilio = "12.0.0"
 unboundid = "7.0.4"
-undertow = "2.3.24.Final"
 whatWgFetch = "3.6.20"
 wsApi = "4.0.3"
 wsdl4j = "1.6.3"
@@ -687,7 +686,6 @@ spring-boot-starter-pulsar-test = { module = "org.springframework.boot:spring-bo
 spring-boot-starter-test = { module = "org.springframework.boot:spring-boot-starter-test", version.ref = "springBoot" }
 spring-boot-starter-thymeleaf = { module = "org.springframework.boot:spring-boot-starter-thymeleaf", version.ref = "springBoot" }
 spring-boot-starter-tomcat = { module = "org.springframework.boot:spring-boot-starter-tomcat", version.ref = "springBoot" }
-spring-boot-starter-undertow = { module = "org.springframework.boot:spring-boot-starter-undertow", version.ref = "springBoot" }
 spring-boot-starter-validation = { module = "org.springframework.boot:spring-boot-starter-validation", version.ref = "springBoot" }
 spring-boot-starter-web-sdk = { module = "org.springframework.boot:spring-boot-starter-web", version.ref = "springBoot" }
 spring-boot-starter-web-services = { module = "org.springframework.boot:spring-boot-starter-web-services", version.ref = "springBoot" }
@@ -786,7 +784,6 @@ tomcat-embed-websocket = { module = "org.apache.tomcat.embed:tomcat-embed-websoc
 tom-select = { module = "org.webjars.npm:tom-select", version.ref = "tomSelect" }
 twilio = { module = "com.twilio.sdk:twilio", version.ref = "twilio" }
 unboundid-ldapsdk = { module = "com.unboundid:unboundid-ldapsdk", version.ref = "unboundid" }
-undertow-servlet = { module = "io.undertow:undertow-servlet", version.ref = "undertow" }
 velocity-engine-core = { module = "org.apache.velocity:velocity-engine-core", version.ref = "apacheVelocityEngine" }
 verifiedpermissions = { module = "software.amazon.awssdk:verifiedpermissions", version.ref = "amazonSdk" }
 webauthn-server-attestation = { module = "com.yubico:webauthn-server-attestation", version.ref = "yubicoWebauthn" }
