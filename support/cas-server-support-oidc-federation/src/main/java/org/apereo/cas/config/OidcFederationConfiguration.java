@@ -117,7 +117,7 @@ class OidcFederationConfiguration {
         return new CasWebSecurityConfigurer<>() {
             @Override
             public List<String> getIgnoredEndpoints() {
-                return List.of(baseEndpoint + WELL_KNOWN_OPENID_FEDERATION_URL.substring(1));
+                return List.of(baseEndpoint + '/' + WELL_KNOWN_OPENID_FEDERATION_URL);
             }
         };
     }

@@ -35,7 +35,7 @@ import static org.mockito.Mockito.*;
 @Tag("OIDCWeb")
 class OidcFederationDefaultTrustChainResolverTests {
 
-    abstract static class BaseTests extends AbstractOidcFederationTests {
+    abstract static class BaseTests extends AbstractOidcTrustAnchorFederationTests {
         @Autowired
         @Qualifier(OidcFederationTrustChainResolver.BEAN_NAME)
         protected OidcFederationTrustChainResolver oidcFederationTrustChainResolver;

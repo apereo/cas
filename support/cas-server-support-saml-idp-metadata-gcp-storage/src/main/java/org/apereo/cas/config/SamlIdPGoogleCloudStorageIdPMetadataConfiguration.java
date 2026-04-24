@@ -55,7 +55,7 @@ class SamlIdPGoogleCloudStorageIdPMetadataConfiguration {
         final ConfigurableApplicationContext applicationContext,
         final CasConfigurationProperties casProperties,
         @Qualifier("storage") final Storage storage,
-        @Qualifier("samlIdPMetadataGeneratorConfigurationContext")
+        @Qualifier(SamlIdPMetadataGeneratorConfigurationContext.DEFAULT_BEAN_NAME)
         final SamlIdPMetadataGeneratorConfigurationContext samlIdPMetadataGeneratorConfigurationContext) {
         return new GoogleCloudStorageSamlIdPMetadataGenerator(samlIdPMetadataGeneratorConfigurationContext, storage);
     }

@@ -169,18 +169,20 @@ class CasCoreAuthenticationPrincipalConfiguration {
         public AttributeDefinitionStore attributeDefinitionStore(
             final ConfigurableApplicationContext applicationContext,
             final CasConfigurationProperties casProperties) throws Exception {
+            
             val builders = applicationContext.getBeansOfType(AttributeDefinitionStoreConfigurer.class).values();
-            val store = new JsonAttributeDefinitionStore();
-            store.setScope(casProperties.getServer().getScope());
-            builders
+            val loadedDefinitions = builders
                 .stream()
                 .filter(BeanSupplier::isNotProxy)
                 .sorted(AnnotationAwareOrderComparator.INSTANCE)
                 .map(AttributeDefinitionStoreConfigurer::load)
-                .forEach(store::registerAttributeDefinitions);
+                .flatMap(map -> map.entrySet().stream())
+                .map(Map.Entry::getValue)
+                .toList();
+
             val resource = casProperties.getAuthn().getAttributeRepository().getAttributeDefinitionStore().getJson().getLocation();
-            store.importStore(resource);
-            store.watchStore();
+            val store = new JsonAttributeDefinitionStore(resource, loadedDefinitions);
+            store.setScope(casProperties.getServer().getScope());
             return store;
         }
     }

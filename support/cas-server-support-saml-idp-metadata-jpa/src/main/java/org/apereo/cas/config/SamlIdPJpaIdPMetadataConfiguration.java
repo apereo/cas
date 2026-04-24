@@ -151,7 +151,7 @@ class SamlIdPJpaIdPMetadataConfiguration {
             final ConfigurableApplicationContext applicationContext,
             @Qualifier("transactionManagerSamlMetadataIdP")
             final PlatformTransactionManager mgr,
-            @Qualifier("samlIdPMetadataGeneratorConfigurationContext")
+            @Qualifier(SamlIdPMetadataGeneratorConfigurationContext.DEFAULT_BEAN_NAME)
             final SamlIdPMetadataGeneratorConfigurationContext ctx) {
             return BeanSupplier.of(SamlIdPMetadataGenerator.class)
                 .when(CONDITION.given(applicationContext.getEnvironment()))

@@ -29,6 +29,12 @@ import jakarta.servlet.http.HttpServletResponse;
 @Tag(name = "OpenID Connect")
 @RequiredArgsConstructor
 public class OidcWellKnownFederationEndpointController extends AbstractController {
+
+    /**
+     * The entity statement content type.
+     */
+    public static final MediaType ENTITY_STATEMENT_TYPE = new MediaType("application", "entity-statement+jwt");
+
     private final OidcIssuerService oidcIssuerService;
     private final OidcFederationEntityStatementService federationEntityStatementService;
 
@@ -57,8 +63,8 @@ public class OidcWellKnownFederationEndpointController extends AbstractControlle
         val entityStatement = federationEntityStatementService.createAndSign();
         return ResponseEntity.ok()
             .cacheControl(CacheControl.noStore().mustRevalidate())
-            .header(HttpHeaders.ACCEPT, "application/jose;charset=UTF-8")
-            .contentType(MediaType.APPLICATION_FORM_URLENCODED)
+            .header(HttpHeaders.ACCEPT, ENTITY_STATEMENT_TYPE.toString())
+            .contentType(ENTITY_STATEMENT_TYPE)
             .body(entityStatement.getSignedStatement().serialize());
     }
 }

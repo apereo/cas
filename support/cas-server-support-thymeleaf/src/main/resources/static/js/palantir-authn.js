@@ -1158,4 +1158,64 @@ async function initializeAuthenticationOperations() {
 
 
     await loadExternalIdentityProvidersTable();
+
+    if (CasActuatorEndpoints.passwordManagement()) {
+        showElements($("#passwordmanagement").parent());
+
+        $("#pmInitiateButton").on("click", () => {
+            const form = document.getElementById("fmPasswordReset");
+            if (!form.reportValidity()) {
+                return;
+            }
+            const username = $("#pmUsername").val().trim();
+            const service = $("#pmService").val().trim();
+            $.ajax({
+                url: `${CasActuatorEndpoints.passwordManagement()}/reset/requests/${encodeURIComponent(username)}`,
+                method: "POST",
+                data: {service: service},
+                statusCode: {
+                    200: () => {
+                        Swal.fire("Success", `Password reset instructions have been sent for <strong>${username}</strong>.`, "success");
+                    }
+                },
+                error: (xhr) => {
+                    const body = xhr.responseText || "An unknown error occurred.";
+                    Swal.fire("Error", `Failed to send password reset for <strong>${username}</strong>.<br/><code>${body}</code>`, "error");
+                }
+            });
+        });
+
+        const pmPasswordHistoryTable = $("#pmPasswordHistoryTable").DataTable({
+            pageLength: 10,
+            autoWidth: false,
+            order: [[0, "asc"]],
+            drawCallback: () => {
+                $("#pmPasswordHistoryTable tr").addClass("mdc-data-table__row");
+                $("#pmPasswordHistoryTable td").addClass("mdc-data-table__cell");
+            }
+        });
+
+        $("#pmFetchHistoryButton").on("click", () => {
+            const form = document.getElementById("fmPasswordHistory");
+            if (!form.reportValidity()) {
+                return;
+            }
+            const username = $("#pmHistoryUsername").val().trim();
+            $.get(`${CasActuatorEndpoints.passwordManagement()}/history/${encodeURIComponent(username)}`, records => {
+                pmPasswordHistoryTable.clear();
+                for (const record of records) {
+                    pmPasswordHistoryTable.row.add([
+                        `<code>${record.id}</code>`,
+                        record.username,
+                        `<code>${record.password}</code>`,
+                        record.recordDate
+                    ]);
+                }
+                pmPasswordHistoryTable.draw();
+            }).fail((xhr) => {
+                console.error("Error fetching password history:", xhr.responseText);
+                displayBanner(xhr);
+            });
+        });
+    }
 }
