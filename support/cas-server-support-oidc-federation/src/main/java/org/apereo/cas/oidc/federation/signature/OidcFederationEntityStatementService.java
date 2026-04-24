@@ -1,7 +1,9 @@
 package org.apereo.cas.oidc.federation.signature;
 
 import module java.base;
+import com.nimbusds.openid.connect.sdk.federation.entities.EntityID;
 import com.nimbusds.openid.connect.sdk.federation.entities.EntityStatement;
+import net.minidev.json.JSONObject;
 
 /**
  * This is {@link OidcFederationEntityStatementService}.
@@ -20,8 +22,12 @@ public interface OidcFederationEntityStatementService {
     /**
      * Create entity statement.
      *
+     * @param issuer the issuer
+     * @param subject the subject
+     * @param metadata the metadata
+     * @param authorityHints the authority hints
      * @return the entity statement
      * @throws Exception the exception
      */
-    EntityStatement createAndSign() throws Exception;
+    EntityStatement createAndSign(String issuer, String subject, JSONObject metadata, List<EntityID> authorityHints) throws Exception;
 }

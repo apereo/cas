@@ -2,48 +2,33 @@ package org.apereo.cas.oidc.federation.signature;
 
 import module java.base;
 import org.apereo.cas.configuration.model.support.oidc.OidcProperties;
-import org.apereo.cas.configuration.model.support.oidc.federation.OidcFederationRole;
 import org.apereo.cas.configuration.support.Beans;
-import org.apereo.cas.oidc.discovery.OidcServerDiscoverySettings;
 import org.apereo.cas.util.DateTimeUtils;
+import com.nimbusds.openid.connect.sdk.federation.entities.CommonFederationClaimsSet;
 import com.nimbusds.openid.connect.sdk.federation.entities.EntityID;
 import com.nimbusds.openid.connect.sdk.federation.entities.EntityStatement;
 import com.nimbusds.openid.connect.sdk.federation.entities.EntityStatementClaimsSet;
-import com.nimbusds.openid.connect.sdk.federation.entities.FederationEntityMetadata;
-import com.nimbusds.openid.connect.sdk.op.OIDCProviderMetadata;
 import lombok.RequiredArgsConstructor;
 import lombok.val;
-import org.springframework.beans.factory.ObjectProvider;
+import net.minidev.json.JSONObject;
 
 /**
  * This is {@link OidcFederationDefaultEntityStatementService}.
  *
  * @author Misagh Moayyed
+ * @author Jerome LELEU
  * @since 7.3.0
  */
 @RequiredArgsConstructor
 public class OidcFederationDefaultEntityStatementService implements OidcFederationEntityStatementService {
     private final OidcFederationJsonWebKeystoreService jsonWebKeystoreService;
-    private final ObjectProvider<OidcServerDiscoverySettings> serverDiscoverySettings;
     private final OidcProperties oidcProperties;
 
     @Override
-    public EntityStatement createAndSign() throws Exception {
-        val role = oidcProperties.getFederation().getRole();
-
-        val settings = serverDiscoverySettings.getIfAvailable();
-        var issuer = oidcProperties.getCore().getIssuer();
-        if (settings != null) {
-            if (role != OidcFederationRole.OPENID_PROVIDER) {
-                throw new IllegalArgumentException("Federation role [" + role + "] is not supported for OpenID Provider");
-            }
-            issuer = settings.getIssuer();
-        } else if (role != OidcFederationRole.TRUST_ANCHOR && role != OidcFederationRole.INTERMEDIATE) {
-            throw new IllegalArgumentException("Federation role [" + role + "] is not supported for Trust Anchor/Intermediate");
-        }
-
+    public EntityStatement createAndSign(final String issuer, final String subject,
+                                         final JSONObject metadata, final List<EntityID> authorityHints) throws Exception {
         val iss = new EntityID(issuer);
-        val sub = new EntityID(issuer);
+        val sub = new EntityID(subject);
 
         val now = LocalDate.now(Clock.systemUTC());
         val iat = DateTimeUtils.dateOf(now);
@@ -58,19 +43,11 @@ public class OidcFederationDefaultEntityStatementService implements OidcFederati
             jsonWebKeystoreService.toJWKSet()
         );
 
-        if (settings != null) {
-            val authorityHints = oidcProperties.getFederation().getAuthorityHints().stream().map(EntityID::new).toList();
+        if (authorityHints != null) {
             claims.setAuthorityHints(authorityHints);
-
-            val discovery = settings.toJson();
-            val opMetadata = OIDCProviderMetadata.parse(discovery);
-            claims.setOPMetadata(opMetadata);
         }
-        
-        val fedMeta = new FederationEntityMetadata();
-        fedMeta.setOrganizationName(oidcProperties.getFederation().getOrganization());
-        fedMeta.setContacts(oidcProperties.getFederation().getContacts());
-        claims.setFederationEntityMetadata(fedMeta);
+
+        claims.setClaim(CommonFederationClaimsSet.METADATA_CLAIM_NAME, metadata);
 
         return jsonWebKeystoreService.signEntityStatement(claims);
     }

@@ -22,7 +22,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
  * @since 7.3.0
  */
 @Tag("OIDCWeb")
-class OidcWellKnownFederationEndpointControllerTests extends AbstractOidcTrustAnchorFederationTests {
+class OidcWellKnownFederationEndpointControllerTests {
 
     private static final String FEDERATION_ENDPOINT_URL =
         "/cas/" + OidcConstants.BASE_OIDC_URL + '/' + OidcConstants.WELL_KNOWN_OPENID_FEDERATION_URL;
@@ -42,7 +42,8 @@ class OidcWellKnownFederationEndpointControllerTests extends AbstractOidcTrustAn
                                 return request;
                             }))
                     .andExpect(status().isBadRequest())
-                    .andExpect(jsonPath("$.error").value(OAuth20Constants.INVALID_REQUEST));
+                    .andExpect(jsonPath("$.error").value(OAuth20Constants.INVALID_REQUEST))
+                    .andExpect(jsonPath("$.error_description").value("Invalid issuer"));
         }
 
         @Test
@@ -50,7 +51,7 @@ class OidcWellKnownFederationEndpointControllerTests extends AbstractOidcTrustAn
             val result = mockMvc.perform(get(FEDERATION_ENDPOINT_URL)
                             .with(withHttpRequestProcessor()))
                     .andExpect(status().isOk())
-                    .andExpect(content().contentType(OidcWellKnownFederationEndpointController.ENTITY_STATEMENT_TYPE))
+                    .andExpect(content().contentType(OidcConstants.ENTITY_STATEMENT_CONTENT_TYPE))
                     .andReturn();
             val jwt = SignedJWT.parse(result.getResponse().getContentAsString());
             val claims = jwt.getJWTClaimsSet();
@@ -68,7 +69,7 @@ class OidcWellKnownFederationEndpointControllerTests extends AbstractOidcTrustAn
     class OpenIdProviderFederationEndpointTests extends AbstractOidcOpenIdProviderFederationTests {
 
         @Test
-        void verifyTaInvalidIssuer() throws Exception {
+        void verifyOpInvalidIssuer() throws Exception {
             mockMvc.perform(get(FEDERATION_ENDPOINT_URL)
                             .with(request -> {
                                 request.setScheme("https");
@@ -79,15 +80,16 @@ class OidcWellKnownFederationEndpointControllerTests extends AbstractOidcTrustAn
                                 return request;
                             }))
                     .andExpect(status().isBadRequest())
-                    .andExpect(jsonPath("$.error").value(OAuth20Constants.INVALID_REQUEST));
+                    .andExpect(jsonPath("$.error").value(OAuth20Constants.INVALID_REQUEST))
+                    .andExpect(jsonPath("$.error_description").value("Invalid issuer"));
         }
 
         @Test
-        void verifyTaOperation() throws Exception {
+        void verifyOpOperation() throws Exception {
             val result = mockMvc.perform(get(FEDERATION_ENDPOINT_URL)
                             .with(withHttpRequestProcessor()))
                     .andExpect(status().isOk())
-                    .andExpect(content().contentType(OidcWellKnownFederationEndpointController.ENTITY_STATEMENT_TYPE))
+                    .andExpect(content().contentType(OidcConstants.ENTITY_STATEMENT_CONTENT_TYPE))
                     .andReturn();
             val jwt = SignedJWT.parse(result.getResponse().getContentAsString());
             val claims = jwt.getJWTClaimsSet();
