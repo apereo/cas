@@ -13,17 +13,19 @@ async function verifyAccessTokenAndProfile(context, client, scopes, consent, def
         await cas.sleep(1000);
         await cas.loginWith(page);
     }
-    await cas.sleep(2000);
-    await cas.assertVisibility(page, "#scopes");
-    await cas.assertVisibility(page, "#informationUrl");
-    await cas.assertVisibility(page, "#privacyUrl");
-    for (const id of consent) {
-        await cas.assertVisibility(page, id);
-    }
+    if (consent.length) {
+        await cas.sleep(2000);
+        await cas.assertVisibility(page, "#scopes");
+        await cas.assertVisibility(page, "#informationUrl");
+        await cas.assertVisibility(page, "#privacyUrl");
+        for (const id of consent) {
+            await cas.assertVisibility(page, id);
+        }
 
-    if (await cas.isVisible(page, "#allow")) {
-        await cas.click(page, "#allow");
-        await cas.waitForNavigation(page);
+        if (await cas.isVisible(page, "#allow")) {
+            await cas.click(page, "#allow");
+            await cas.waitForNavigation(page);
+        }
     }
     await cas.sleep(2000);
     await cas.screenshot(page);
@@ -68,6 +70,7 @@ async function verifyAccessTokenAndProfile(context, client, scopes, consent, def
     await verifyAccessTokenAndProfile(context, 1, ["openid"], ["#openid"], ["sub"], true);
     await verifyAccessTokenAndProfile(context, 1, ["openid", "profile", "MyCustomScope"], ["#profile", "#MyCustomScope"], ["sub", "name", "family_name", "cn"], false);
     await verifyAccessTokenAndProfile(context, 2, ["openid", "profile", "MyCustomScope"], ["#openid", "#profile", "#MyCustomScope"], ["sub", "name", "family_name", "cn"], false);
+    await verifyAccessTokenAndProfile(context, 2, ["openid", "profile"], [], ["sub"], false);
     await context.close();
 
     await cas.closeBrowser(browser);
