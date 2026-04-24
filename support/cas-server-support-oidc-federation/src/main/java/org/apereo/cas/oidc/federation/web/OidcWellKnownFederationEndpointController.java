@@ -1,7 +1,8 @@
-package org.apereo.cas.oidc.federation;
+package org.apereo.cas.oidc.federation.web;
 
 import module java.base;
 import org.apereo.cas.oidc.OidcConstants;
+import org.apereo.cas.oidc.federation.signature.OidcFederationEntityStatementService;
 import org.apereo.cas.oidc.issuer.OidcIssuerService;
 import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.support.oauth.util.OAuth20Utils;

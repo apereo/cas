@@ -1,6 +1,7 @@
-package org.apereo.cas.oidc.federation;
+package org.apereo.cas.oidc.federation.signature;
 
 import module java.base;
+import org.apereo.cas.oidc.federation.AbstractOidcTrustAnchorFederationTests;
 import org.apereo.cas.util.ResourceUtils;
 import org.apereo.cas.util.spring.SpringExpressionLanguageValueResolver;
 import lombok.val;

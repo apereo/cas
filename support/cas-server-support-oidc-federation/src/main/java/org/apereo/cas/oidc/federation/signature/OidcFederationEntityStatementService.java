@@ -1,4 +1,4 @@
-package org.apereo.cas.oidc.federation;
+package org.apereo.cas.oidc.federation.signature;
 
 import module java.base;
 import com.nimbusds.openid.connect.sdk.federation.entities.EntityStatement;

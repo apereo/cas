@@ -1,7 +1,9 @@
-package org.apereo.cas.oidc.federation;
+package org.apereo.cas.oidc.federation.web;
 
 import module java.base;
 import org.apereo.cas.oidc.OidcConstants;
+import org.apereo.cas.oidc.federation.AbstractOidcOpenIdProviderFederationTests;
+import org.apereo.cas.oidc.federation.AbstractOidcTrustAnchorFederationTests;
 import org.apereo.cas.support.oauth.OAuth20Constants;
 import com.nimbusds.jwt.SignedJWT;
 import lombok.val;

@@ -1,7 +1,9 @@
-package org.apereo.cas.oidc.federation;
+package org.apereo.cas.oidc.federation.chain;
 
 import module java.base;
 import org.apereo.cas.oidc.OidcConstants;
+import org.apereo.cas.oidc.federation.AbstractOidcTrustAnchorFederationTests;
+import org.apereo.cas.oidc.federation.signature.OidcFederationEntityStatementService;
 import com.nimbusds.oauth2.sdk.GrantType;
 import com.nimbusds.oauth2.sdk.ResponseType;
 import com.nimbusds.oauth2.sdk.Scope;
