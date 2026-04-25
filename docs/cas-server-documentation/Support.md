@@ -73,8 +73,7 @@ Apereo commercial service providers if that is unacceptable. Also unless explici
 ### Chat Rooms
 
 Apereo has an official [Slack chat workspace](https://apereo.slack.com) where you may find a `#cas` 
-channel. The sign-up page is [available here](https://apereo.slack.com/signup). A 
-specific `cas` tag is also available for StackOverflow.
+channel. A specific `cas` tag is also available for StackOverflow.
 
 ### Mailing Lists
 
