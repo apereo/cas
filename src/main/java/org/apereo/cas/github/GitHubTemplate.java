@@ -626,7 +626,7 @@ public class GitHubTemplate implements GitHubOperations {
         return getSinglePage(builder.build().toUriString(), Workflow.class, Map.of(), new HttpHeaders(headers));
     }
 
-    private final static class ErrorLoggingMappingJackson2HttpMessageConverter extends JacksonJsonHttpMessageConverter {
+    private static final class ErrorLoggingMappingJackson2HttpMessageConverter extends JacksonJsonHttpMessageConverter {
 
         private static final Charset CHARSET_UTF_8 = StandardCharsets.UTF_8;
 

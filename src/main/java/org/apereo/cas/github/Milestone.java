@@ -50,7 +50,7 @@ public class Milestone implements Comparable<Milestone> {
                      @JsonProperty("created_at") final ZonedDateTime created,
                      @JsonProperty("updated_at") final ZonedDateTime updated,
                      @JsonProperty("due_on") final ZonedDateTime dueOn) {
-        this.title = title;
+        this.title = title.replace("-GA", "");
         this.description = description;
         this.url = url;
         this.number = number;
