@@ -12,6 +12,3 @@ test {
     enabled = false
 }
 
-ext {
-    publishable = false
-}

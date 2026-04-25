@@ -93,7 +93,17 @@ if (publishReleases || publishSnapshots) {
             publishingTimeout.set(Duration.ZERO)
             uploadSnapshotsParallelism.set(4)
         }
-        publishAllProjectsProbablyBreakingProjectIsolation()
+    }
+
+    subprojects { subproject ->
+        if (projectShouldBePublished(subproject)) {
+            subproject.apply plugin: "com.gradleup.nmcp"
+            dependencies {
+                rootProject.dependencies {
+                    add("nmcpAggregation", rootProject.project(subproject.path))
+                }
+            }
+        }
     }
 }
 
@@ -266,7 +276,7 @@ subprojects {
                             } else {
                                 artifact tasks['sourcesJar']
                                 artifact tasks['resourcesJar']
-                                artifact tasks['javadocJar']
+//                                artifact tasks['javadocJar']
                                 artifact tasks['testJar']
                             }
 
@@ -652,10 +662,20 @@ tasks.register('verifyDependencyVersions') { t ->
 
 
 boolean projectShouldBePublished(Project project) {
-    def publishable = project.hasProperty("publishable") ? project.publishable : true
-    project.ext.publishable = publishable
-    logger.info "Project ${project.name} is publishable: ${publishable}"
-    return publishable
+    def excluded = [
+            "api",
+            "core",
+            "docs",
+            "support",
+            "webapp",
+            "cas-server-documentation",
+            "cas-server-documentation-processor",
+            "cas-server-support-shell"
+    ]
+    logger.info "Checking if project ${project.name} should be published"
+    def result = !excluded.contains(project.name)
+    logger.info "Project ${project.name} should${result ? '' : ' not'} be published"
+    return result
 }
 
 boolean projectRequiresLombok(Project project) {

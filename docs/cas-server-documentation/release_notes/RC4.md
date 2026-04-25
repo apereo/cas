@@ -71,6 +71,18 @@ including many of the third-party core libraries used by CAS as well as some CAS
 CAS is now built with Gradle `9.5.x` and the build process has been updated to use the latest Gradle
 features and capabilities.
 
+### Maven Central Publications
+ 
+Javadoc artifacts packaged as `{cas-server-module}-javadoc.jar` are no longer
+published to Maven Central, in order to reduce the final upload size and speed up the process. 
+If you require Javadoc artifacts, you may need to build them locally from the source code. Skipping
+such artifacts reduces the final upload size by approximately `1.6GB`. 
+
+<div class="alert alert-warning">:warning: <strong>Pay Attention</strong><p>
+This is unlikely to affect you, but if you have a development/deployment environment that builds
+or relies on Javadoc artifacts or wants to link to them via an external dashboard, 
+you may need to take action to produce Javadocs on your own.</p></div>
+
 ### JSpecify & NullAway
 
 CAS codebase is now annotated with [JSpecify](https://jspecify.dev/) annotations to indicate nullness contracts on method parameters,

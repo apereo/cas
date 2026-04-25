@@ -211,6 +211,7 @@ jobs:
           echo $files
           echo "COVERAGE_REPORTS=${files}" >> $GITHUB_ENV
       - name: Upload Coverage to Codacy
+        continue-on-error: true
         env:
           CODACY_PROJECT_TOKEN: ${{ secrets.CODACY_PROJECT_TOKEN }}
           CODACY_REPORTER_OPTIONS: --http-timeout 60000 --num-retries 8 --sleep-time 15000
@@ -223,12 +224,3 @@ jobs:
           done
           
           bash <(curl -Ls https://coverage.codacy.com/get.sh) final
-      - name: Upload to Codecov
-        uses: codecov/codecov-action@v6
-        if: ${{ env.CODECOV_TOKEN != null }}
-        continue-on-error: true
-        with:
-          token: ${{ secrets.CODECOV_TOKEN }}
-          verbose: true
-          fail_ci_if_error: false
-          files: ${{ env.COVERAGE_REPORTS }}
