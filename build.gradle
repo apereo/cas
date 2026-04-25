@@ -276,7 +276,7 @@ subprojects {
                             } else {
                                 artifact tasks['sourcesJar']
                                 artifact tasks['resourcesJar']
-//                                artifact tasks['javadocJar']
+                                artifact tasks['javadocJar']
                                 artifact tasks['testJar']
                             }
 

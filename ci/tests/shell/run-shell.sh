@@ -32,11 +32,11 @@ printgreen "Running CAS command-line shell version ${casVersion}"
 java -Xdebug -Xrunjdwp:transport=dt_socket,server=y,suspend=n,address=5006 \
   -jar support/cas-server-support-shell/build/libs/cas-server-support-shell-${casVersion}.jar \
   @ci/tests/shell/cas-shell-script.sh.ignore \
-  --spring.shell.interactive.enabled=false > cas-shell.ignore
+  --spring.shell.interactive.enabled=false > cas-shell.ignore &
 pid=$!
 tail -F cas-shell.ignore &
 printgreen "Launched CAS command-line shell under process id ${pid}. Waiting for commands to finish..."
-sleep 5
+sleep 8
 exitRequest="Command quit returned an error: EXECUTION_ERROR"
 while :; do
     if grep -q "APPLICATION FAILED TO START" "cas-shell.ignore"; then

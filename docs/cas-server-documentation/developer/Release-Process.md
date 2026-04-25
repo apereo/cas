@@ -164,7 +164,7 @@ export REPOSITORY_PWD="..."
 - Build and release the project using the following command as an example:
 
 ```bash
-./ci/release.sh --release-version="8.0.0-RC1" --next-version="8.0.1-SNAPSHOT"
+./ci/release.sh --release-version "8.0.0-RC1" --next-version "8.0.1-SNAPSHOT"
 ```
 
 ## Housekeeping
