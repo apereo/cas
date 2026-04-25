@@ -78,7 +78,7 @@ The following features are supported by the CAS project:
 * Global and per-application user interface theme and branding.
 * Password management and password policy enforcement.
 * Integration options with Apache Syncope, SCIM, Swagger, Shibboleth IdP, Keycloak, Okta, and more.
-* Deployment options using Apache Tomcat, Jetty, Undertow, packaged and running as Docker containers.
+* Deployment options using Apache Tomcat and Jetty, packaged and running as Docker containers.
 
 The foundations of CAS are built upon: [Spring Boot][springboot] and
 [Spring Cloud][springcloud].

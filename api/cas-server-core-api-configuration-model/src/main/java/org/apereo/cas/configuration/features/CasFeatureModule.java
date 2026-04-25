@@ -134,10 +134,6 @@ public interface CasFeatureModule {
          */
         Jetty,
         /**
-         * Undertow webapp configuration.
-         */
-        Undertow,
-        /**
          * Spring Boot Admin Server.
          */
         SpringBootAdmin,

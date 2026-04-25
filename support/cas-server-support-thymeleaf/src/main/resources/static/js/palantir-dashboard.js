@@ -279,10 +279,12 @@ function navigateToApplication(serviceIdToFind) {
 }
 
 async function initializePalantirSession() {
-    setInterval(async () => {
+    const intervalId = setInterval(async () => {
         const url = new URL(location.href);
         const result = await fetch(`${url.pathname}/session`, { credentials: "include" });
         if (result.status !== 200) {
+            clearInterval(intervalId);
+            
             Swal.close();
             Swal.fire({
                 title: "Session Expired",
