@@ -17,7 +17,6 @@ While there is no official project support, the following containers should be c
 
 * [Apache Tomcat](https://tomcat.apache.org/) (At a minimum, Apache Tomcat `11` is required)
 * [Jetty](https://projects.eclipse.org/projects/rt.jetty) (At a minimum, Jetty `12.1` is required)
-* [Undertow](http://undertow.io/)
 * [JBoss](https://www.jboss.org/)
 * [Wildfly](https://wildfly.org/)
 * [GlassFish](https://glassfish.java.net/)
