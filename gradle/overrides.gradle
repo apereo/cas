@@ -97,9 +97,6 @@ configurations.configureEach {
                 if (requested.group.startsWith("org.eclipse.jetty")) {
                     details.useVersion(libs.versions.jetty.get())
                 }
-                if (requested.group.startsWith("io.undertow")) {
-                    details.useVersion(libs.versions.undertow.get())
-                }
                 if (requested.group.startsWith("org.apache.tomcat")) {
                     details.useVersion(libs.versions.tomcat.get())
                 }

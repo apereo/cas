@@ -10,7 +10,7 @@ Four-layer module hierarchy with strict dependency direction:
 api/     → Interfaces & contracts only (no implementations)
 core/    → Implementations of api/ contracts
 support/ → Feature modules (LDAP, OIDC, SAML, etc.) — depend on core/
-webapp/  → Deployable web applications (Tomcat, Jetty, Undertow)
+webapp/  → Deployable web applications (Tomcat, Jetty)
 ```
 
 Each feature follows this pattern: `api/cas-server-core-api-authentication` defines interfaces → `core/cas-server-core-authentication` implements them → `support/cas-server-support-ldap` extends with LDAP-specific behavior. Never add dependencies going upward (e.g., `api/` must not depend on `core/`).
