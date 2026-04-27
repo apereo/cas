@@ -108,7 +108,7 @@ public class SamlIdPServiceAttributeExtractor {
         final Class clazz) {
         val openSamlConfigBean = resolver.getOpenSamlConfigBean();
         val response = SamlUtils.convertToSamlObject(openSamlConfigBean, attributeValue, clazz);
-        if  (response != null) {
+        if (response != null) {
             openSamlConfigBean.logObject(response);
             return SamlIdPUtils.getIssuerFromSamlObject(response);
         }
