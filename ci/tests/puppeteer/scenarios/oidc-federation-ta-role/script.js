@@ -42,7 +42,7 @@ const assert = require("assert");
     assert(decoded2.jwks !== undefined);
 
     const metadata2 = decoded2.metadata;
-    assert(metadata2["federation_entity"] !== undefined);
+    assert(metadata2["federation_entity"] === undefined);
     assert(metadata2["openid_provider"] === undefined);
     assert(metadata2["openid_relying_party"] !== undefined);
     assert(decoded2["authority_hints"] === undefined);

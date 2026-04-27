@@ -26,11 +26,11 @@ public interface OidcFederationEntityStatementService {
      * @param issuer the issuer
      * @param subject the subject
      * @param metadata the metadata
-     * @param additionalKeys the additional keys
+     * @param federationKeys the federation keys
      * @param authorityHints the authority hints
      * @return the entity statement
      * @throws Exception the exception
      */
-    EntityStatement createAndSign(String issuer, String subject, JSONObject metadata, JsonNode additionalKeys,
+    EntityStatement createAndSign(String issuer, String subject, JSONObject metadata, JsonNode federationKeys,
                                   List<EntityID> authorityHints) throws Exception;
 }

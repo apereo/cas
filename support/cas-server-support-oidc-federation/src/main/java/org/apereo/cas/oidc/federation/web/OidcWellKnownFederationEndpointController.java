@@ -10,6 +10,7 @@ import org.apereo.cas.oidc.issuer.OidcIssuerService;
 import com.nimbusds.openid.connect.sdk.federation.entities.EntityID;
 import com.nimbusds.openid.connect.sdk.federation.entities.EntityType;
 import io.swagger.v3.oas.annotations.Operation;
+import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import net.minidev.json.JSONObject;
 import net.minidev.json.JSONValue;
@@ -27,6 +28,7 @@ import static org.apereo.cas.configuration.model.support.oidc.federation.OidcFed
  * @author Misagh Moayyed
  * @since 7.3.0
  */
+@Slf4j
 public class OidcWellKnownFederationEndpointController extends AbstractOidcFederationEndpointController {
 
     private final ObjectProvider<OidcServerDiscoverySettings> serverDiscoverySettings;
@@ -54,6 +56,8 @@ public class OidcWellKnownFederationEndpointController extends AbstractOidcFeder
         description = "Handles requests for well-known OIDC discovery federation configuration")
     public ResponseEntity getWellKnownDiscoveryConfiguration(
         final HttpServletRequest request, final HttpServletResponse response) throws Exception {
+
+        LOGGER.info("Generating federation entity statement");
 
         val error = retrieveInvalidIssuerError(request, response, OidcConstants.FETCH_FEDERATION_URL);
         if (error != null) {

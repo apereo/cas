@@ -1,0 +1,20 @@
+{
+  "@class" : "org.apereo.cas.oidc.federation.service.OidcFederationEntityService",
+  "id": 5,
+  "name": "Intermediate",
+  "serviceId" : "http://intermediate",
+  "metadata": {
+    "federation_entity": {
+      "federation_fetch_endpoint": "http://someurl",
+    }
+  },
+  "federationKeys": [
+    {
+      "kty": "RSA",
+      "e": "AQAB",
+      "use": "sig",
+      "kid": "PRRz",
+      "n": "vPZc7YQGa8p4ql8KpUdlj4KAgqkoWopHqtKrUFvXnRGlRXXrCwt5TGixe_LKWEFNnTm6xdIe0DoIRrUM02FeB9NuJzJCp5xhT__ahldgvtCzIpEg5VIQzRrcRt-hX6GZSe0mDEi1BKoVW5yP_-ZI_NYGSBPZQIdrmiNhzPOYsPrcz8i5BNXBiZpYHhgiiLGE587jQ5YITyOfNjcyQbqUz-DzIsRgzyb0_IB4XeOInk2nfv8SkzMGRXcTJmBasRJ3AHbvtDztDK6FbCJuU73sHYEOc6xyI_O5UAMwHyLPem7qXtKHmaodDs2pHZTv7CxxTuwmkjnr_yHLJ1Qcp3KZ5Q"
+    }
+  ]
+}

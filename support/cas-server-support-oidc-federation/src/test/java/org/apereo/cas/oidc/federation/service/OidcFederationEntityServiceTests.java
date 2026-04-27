@@ -53,6 +53,6 @@ class OidcFederationEntityServiceTests {
     @Test
     public void verifyOperation() {
         val entities = servicesManager.getAllServicesOfType(OidcFederationEntityService.class);
-        assertEquals(2, entities.size());
+        assertEquals(5, entities.size());
     }
 }

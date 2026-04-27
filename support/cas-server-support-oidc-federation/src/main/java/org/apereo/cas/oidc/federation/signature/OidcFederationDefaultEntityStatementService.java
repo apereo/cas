@@ -8,6 +8,7 @@ import com.nimbusds.openid.connect.sdk.federation.entities.CommonFederationClaim
 import com.nimbusds.openid.connect.sdk.federation.entities.EntityID;
 import com.nimbusds.openid.connect.sdk.federation.entities.EntityStatement;
 import com.nimbusds.openid.connect.sdk.federation.entities.EntityStatementClaimsSet;
+import com.nimbusds.openid.connect.sdk.federation.entities.EntityType;
 import lombok.RequiredArgsConstructor;
 import lombok.val;
 import net.minidev.json.JSONArray;
@@ -15,8 +16,7 @@ import net.minidev.json.JSONObject;
 import net.minidev.json.JSONValue;
 import tools.jackson.databind.JsonNode;
 
-import static org.apereo.cas.oidc.OidcConstants.JWKS;
-import static org.apereo.cas.oidc.OidcConstants.KEYS;
+import static org.apereo.cas.oidc.OidcConstants.*;
 
 /**
  * This is {@link OidcFederationDefaultEntityStatementService}.
@@ -32,7 +32,7 @@ public class OidcFederationDefaultEntityStatementService implements OidcFederati
 
     @Override
     public EntityStatement createAndSign(final String issuer, final String subject,
-                                         final JSONObject metadata, final JsonNode additionalKeys,
+                                         final JSONObject metadata, final JsonNode federationKeys,
                                          final List<EntityID> authorityHints) throws Exception {
         val iss = new EntityID(issuer);
         val sub = new EntityID(subject);
@@ -51,9 +51,9 @@ public class OidcFederationDefaultEntityStatementService implements OidcFederati
         );
 
         val jwks = (JSONObject) claims.getClaim(JWKS);
-        if (additionalKeys != null) {
+        if (federationKeys != null) {
             val keys = (List) jwks.get(KEYS);
-            val addKeys = (JSONArray) JSONValue.parse(additionalKeys.toString());
+            val addKeys = (JSONArray) JSONValue.parse(federationKeys.toString());
             keys.addAll(addKeys);
         }
 
@@ -62,6 +62,16 @@ public class OidcFederationDefaultEntityStatementService implements OidcFederati
         }
 
         claims.setClaim(CommonFederationClaimsSet.METADATA_CLAIM_NAME, metadata);
+
+        val federationEntity = (JSONObject) metadata.get(EntityType.FEDERATION_ENTITY.getValue());
+        if (federationEntity != null) {
+            val fetchEndpoint = federationEntity.get("federation_fetch_endpoint");
+            if (fetchEndpoint != null) {
+                val map = new HashMap<String, Object>();
+                map.put("max_path_length", 1);
+                claims.setClaim("constraints", map);
+            }
+        }
 
         return jsonWebKeystoreService.signEntityStatement(claims);
     }

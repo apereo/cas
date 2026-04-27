@@ -9,7 +9,6 @@ import org.apereo.cas.oidc.issuer.OidcIssuerService;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.support.oauth.util.OAuth20Utils;
-import com.nimbusds.openid.connect.sdk.federation.entities.EntityType;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import lombok.extern.slf4j.Slf4j;
@@ -61,6 +60,8 @@ public class OidcTrustAnchorFetchEndpointController extends AbstractOidcFederati
     public ResponseEntity fetchEntityStatement(@RequestParam(value = "sub", required = false) final String sub,
         final HttpServletRequest request, final HttpServletResponse response) throws Exception {
 
+        LOGGER.info("Building entity statement for subordinate: [{}]", sub);
+
         val role = oidcProperties.getFederation().getRole();
         if (!isTaOrIntermediate(role)) {
             throw new IllegalArgumentException("Federation role [" + role + "] is not supported for Trust Anchor/Intermediate");
@@ -81,15 +82,18 @@ public class OidcTrustAnchorFetchEndpointController extends AbstractOidcFederati
             val body = OAuth20Utils.getErrorResponseBody(OAuth20Constants.INVALID_REQUEST, "Invalid entity");
             return new ResponseEntity<>(body, HttpStatus.BAD_REQUEST);
         }
+        val serviceMetadata = requestedService.getMetadata();
+        if (serviceMetadata == null) {
+            throw new IllegalArgumentException("No metadata defined for entity");
+        }
+        val federationKeys = requestedService.getFederationKeys();
+        if (federationKeys == null || federationKeys.isEmpty()) {
+            throw new IllegalArgumentException("No federation keys defined for entity");
+        }
 
         val issuer = oidcProperties.getCore().getIssuer();
-        val federationMetadata = buildMetadata(issuer);
-
-        val metadata = (JSONObject) JSONValue.parse(requestedService.getMetadata().toString());
-        metadata.put(EntityType.FEDERATION_ENTITY.getValue(), federationMetadata.toJSONObject());
-
-        val additionalKeys = requestedService.getFederationKeys();
-        return buildEntityStatement(issuer, sub, metadata, additionalKeys, null);
+        val metadata = (JSONObject) JSONValue.parse(serviceMetadata.toString());
+        return buildEntityStatement(issuer, sub, metadata, federationKeys, null);
     }
 
     protected OidcFederationEntityService searchService(final String sub) {

@@ -66,7 +66,17 @@ For a trust anchor or intermediate, the suported entites, called subordinates, m
       ],
       "client_name": "RP test"
     }
-  }
+  },
+  "federationKeys": [
+    {
+      "kty": "EC",
+      "use": "sig",
+      "crv": "P-256",
+      "kid": "TJns",
+      "x": "iLPMKMGqb7HeCnov5xBwEnq2zUbX5gNbyoVn1EHpvSI",
+      "y": "1kcVTdS1_Y2_NnL0E9LpWhPWsoCNOFQR2Dd7VAJBYKY"
+    }
+  ]
 }
 ```
 
@@ -111,7 +121,7 @@ For a trust anchor or intermediate, the suported entites, called subordinates, m
         "HS256", "HS384", "HS512", "RS256", "RS384", "RS512", "PS256", "PS384", "PS512", "ES256", "ES256K", "ES384", "ES512"
       ],
       
-      ...
+      ...TRUNCATED...
       
       "userinfo_encryption_enc_values_supported": [
         "A128CBC-HS256", "A192CBC-HS384", "A256CBC-HS512", "A128GCM", "A192GCM", "A256GCM", "XC20P"
@@ -131,10 +141,25 @@ For a trust anchor or intermediate, the suported entites, called subordinates, m
       "backchannel_logout_supported": true,
       "backchannel_logout_session_supported": true
     }
-  }
+  },
+  "federationKeys": [
+    {
+      "kty": "RSA",
+      "e": "AQAB",
+      "use": "sig",
+      "kid": "PRRz",
+      "n": "vPZc7YQGa8p4ql8KpUdlj4KAgqkoWopHqtKrUFvXnRGlRXXrCwt5TGixe_LKWEFNnTm6xdIe0DoIRrUM02FeB9NuJzJCp5xhT__ahldgvtCzIpEg5VIQzRrcRt-hX6GZSe0mDEi1BKoVW5yP_-ZI_NYGSBPZQIdrmiNhzPOYsPrcz8i5BNXBiZpYHhgiiLGE587jQ5YITyOfNjcyQbqUz-DzIsRgzyb0_IB4XeOInk2nfv8SkzMGRXcTJmBasRJ3AHbvtDztDK6FbCJuU73sHYEOc6xyI_O5UAMwHyLPem7qXtKHmaodDs2pHZTv7CxxTuwmkjnr_yHLJ1Qcp3KZ5Q"
+    }
+  ]
 }
 ```
 
-The `metadata` section contains the metadata of the OP (from the `.well-known/openid-configuration` endpoint) or the metadata of the RP (from the `.well-known/openid-federation` endpoint).
+The `metadata` property contains the metadata of the entity:
+- for the RP, it comes from the `.well-known/openid-federation` endpoint
+- for other entities, it's from the `.well-known/openid-configuration` endpoint.
+
+The `federationKeys` property is the specific key(s) used for the federation.
+
+Both sections are mandatory in the federation entity definitions.
 
 Signed entity statements are returned from the `/oidc/fetch` endpoint, depending on the requested subordinate (`sub` request parameter).

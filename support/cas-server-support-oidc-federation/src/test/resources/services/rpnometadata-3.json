@@ -1,0 +1,16 @@
+{
+  "@class" : "org.apereo.cas.oidc.federation.service.OidcFederationEntityService",
+  "id": 3,
+  "name": "RP without metadata",
+  "serviceId" : "http://rpnometadata",
+  "federationKeys": [
+    {
+      "kty": "EC",
+      "use": "sig",
+      "crv": "P-256",
+      "kid": "TJns",
+      "x": "iLPMKMGqb7HeCnov5xBwEnq2zUbX5gNbyoVn1EHpvSI",
+      "y": "1kcVTdS1_Y2_NnL0E9LpWhPWsoCNOFQR2Dd7VAJBYKY"
+    }
+  ]
+}

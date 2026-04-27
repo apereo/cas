@@ -59,8 +59,8 @@ abstract class AbstractOidcFederationEndpointController extends AbstractControll
     }
 
     protected ResponseEntity buildEntityStatement(final String issuer, final String subject, final JSONObject metadata,
-                                                  final JsonNode additionalKeys, final List<EntityID> authorityHints) throws Exception {
-        val entityStatement = federationEntityStatementService.createAndSign(issuer, subject, metadata, additionalKeys, authorityHints);
+                                                  final JsonNode federationKeys, final List<EntityID> authorityHints) throws Exception {
+        val entityStatement = federationEntityStatementService.createAndSign(issuer, subject, metadata, federationKeys, authorityHints);
         return ResponseEntity.ok()
                 .cacheControl(CacheControl.noStore().mustRevalidate())
                 .header(HttpHeaders.ACCEPT, OidcConstants.ENTITY_STATEMENT_CONTENT_TYPE.toString())
