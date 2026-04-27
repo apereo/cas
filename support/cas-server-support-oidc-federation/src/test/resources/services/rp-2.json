@@ -1,7 +1,7 @@
 {
   "@class" : "org.apereo.cas.oidc.federation.service.OidcFederationEntityService",
   "id": 2,
-  "name": "My RP",
+  "name": "RP",
   "serviceId" : "http://rp",
   "metadata": {
     "openid_relying_party": {
@@ -39,5 +39,15 @@
         "jerome@casinthecloud.com"
       ]
     }
-  }
+  },
+  "federationKeys": [
+    {
+      "kty": "EC",
+      "use": "sig",
+      "crv": "P-256",
+      "kid": "TJns",
+      "x": "iLPMKMGqb7HeCnov5xBwEnq2zUbX5gNbyoVn1EHpvSI",
+      "y": "1kcVTdS1_Y2_NnL0E9LpWhPWsoCNOFQR2Dd7VAJBYKY"
+    }
+  ]
 }

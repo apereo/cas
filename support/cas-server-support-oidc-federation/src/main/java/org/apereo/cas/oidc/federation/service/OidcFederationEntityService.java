@@ -30,9 +30,11 @@ public class OidcFederationEntityService extends BaseWebBasedRegisteredService {
     public static final String OIDC_FEDERATION_ENTITY_SERVICE_FRIENDLY_NAME = "OpenID Connect Federation Entity";
 
     @Serial
-    private static final long serialVersionUID = 5072941836621189056L;
+    private static final long serialVersionUID = 7786340912407613562L;
 
     private JsonNode metadata;
+
+    private JsonNode federationKeys;
 
     @JsonIgnore
     @Override

@@ -97,7 +97,7 @@ class OidcFederationDefaultTrustChainResolverTests {
                 when(trustChain.resolveCombinedMetadataPolicy(any(EntityType.class))).thenReturn(metadataPolicy);
 
                 val leafConfiguration = oidcFederationEntityStatementService.createAndSign(issuer, issuer,
-                        metadata, authorityHints);
+                        metadata, null, authorityHints);
                 when(trustChain.getLeafConfiguration()).thenReturn(leafConfiguration);
                 when(trustChainSet.getShortest()).thenReturn(trustChain);
                 when(resolver.resolveTrustChains(any(EntityID.class))).thenReturn(trustChainSet);

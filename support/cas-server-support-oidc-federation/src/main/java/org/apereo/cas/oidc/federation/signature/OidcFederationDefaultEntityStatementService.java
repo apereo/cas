@@ -10,7 +10,13 @@ import com.nimbusds.openid.connect.sdk.federation.entities.EntityStatement;
 import com.nimbusds.openid.connect.sdk.federation.entities.EntityStatementClaimsSet;
 import lombok.RequiredArgsConstructor;
 import lombok.val;
+import net.minidev.json.JSONArray;
 import net.minidev.json.JSONObject;
+import net.minidev.json.JSONValue;
+import tools.jackson.databind.JsonNode;
+
+import static org.apereo.cas.oidc.OidcConstants.JWKS;
+import static org.apereo.cas.oidc.OidcConstants.KEYS;
 
 /**
  * This is {@link OidcFederationDefaultEntityStatementService}.
@@ -26,7 +32,8 @@ public class OidcFederationDefaultEntityStatementService implements OidcFederati
 
     @Override
     public EntityStatement createAndSign(final String issuer, final String subject,
-                                         final JSONObject metadata, final List<EntityID> authorityHints) throws Exception {
+                                         final JSONObject metadata, final JsonNode additionalKeys,
+                                         final List<EntityID> authorityHints) throws Exception {
         val iss = new EntityID(issuer);
         val sub = new EntityID(subject);
 
@@ -42,6 +49,13 @@ public class OidcFederationDefaultEntityStatementService implements OidcFederati
             exp,
             jsonWebKeystoreService.toJWKSet()
         );
+
+        val jwks = (JSONObject) claims.getClaim(JWKS);
+        if (additionalKeys != null) {
+            val keys = (List) jwks.get(KEYS);
+            val addKeys = (JSONArray) JSONValue.parse(additionalKeys.toString());
+            keys.addAll(addKeys);
+        }
 
         if (authorityHints != null) {
             claims.setAuthorityHints(authorityHints);

@@ -29,7 +29,7 @@ class OidcTrustAnchorFetchEndpointControllerTests extends AbstractOidcTrustAncho
 
     @Test
     void verifyInvalidIssuer() throws Exception {
-        mockMvc.perform(get(FETCH_ENDPOINT_URL + "?sub=" + OP)
+        mockMvc.perform(get(FETCH_ENDPOINT_URL + "?sub=" + RP)
                         .with(request -> {
                             request.setScheme("https");
                             request.setServerName("unknown.example.org");
@@ -73,7 +73,10 @@ class OidcTrustAnchorFetchEndpointControllerTests extends AbstractOidcTrustAncho
         assertEquals("https://sso.example.org/cas/oidc", claims.getIssuer());
         assertEquals(RP, claims.getSubject());
         assertNull(claims.getClaim("authority_hints"));
-        assertNotNull(claims.getClaim("jwks"));
+        val jwks = (Map) claims.getClaim("jwks");
+        assertNotNull(jwks);
+        val keys = (List) jwks.get("keys");
+        assertEquals(2, keys.size());
         val metadata = (Map) claims.getClaim("metadata");
         assertNotNull(metadata.get("federation_entity"));
         assertNull(metadata.get("openid_provider"));
@@ -92,7 +95,10 @@ class OidcTrustAnchorFetchEndpointControllerTests extends AbstractOidcTrustAncho
         assertEquals("https://sso.example.org/cas/oidc", claims.getIssuer());
         assertEquals(OP, claims.getSubject());
         assertNull(claims.getClaim("authority_hints"));
-        assertNotNull(claims.getClaim("jwks"));
+        val jwks = (Map) claims.getClaim("jwks");
+        assertNotNull(jwks);
+        val keys = (List) jwks.get("keys");
+        assertEquals(2, keys.size());
         val metadata = (Map) claims.getClaim("metadata");
         assertNotNull(metadata.get("federation_entity"));
         assertNotNull(metadata.get("openid_provider"));

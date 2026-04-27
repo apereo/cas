@@ -59,6 +59,14 @@ public interface OidcConstants {
      */
     String AUD = "aud";
     /**
+     * JWKS claim.
+     */
+    String JWKS = "jwks";
+    /**
+     * Keys claim.
+     */
+    String KEYS = "keys";
+    /**
      * VC pre authorized code parameter.
      */
     String PRE_AUTHORIZED_CODE = "pre-authorized_code";

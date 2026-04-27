@@ -20,6 +20,7 @@ import org.springframework.http.CacheControl;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import tools.jackson.databind.JsonNode;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
@@ -58,8 +59,8 @@ abstract class AbstractOidcFederationEndpointController extends AbstractControll
     }
 
     protected ResponseEntity buildEntityStatement(final String issuer, final String subject, final JSONObject metadata,
-                                                  final List<EntityID> authorityHints) throws Exception {
-        val entityStatement = federationEntityStatementService.createAndSign(issuer, subject, metadata, authorityHints);
+                                                  final JsonNode additionalKeys, final List<EntityID> authorityHints) throws Exception {
+        val entityStatement = federationEntityStatementService.createAndSign(issuer, subject, metadata, additionalKeys, authorityHints);
         return ResponseEntity.ok()
                 .cacheControl(CacheControl.noStore().mustRevalidate())
                 .header(HttpHeaders.ACCEPT, OidcConstants.ENTITY_STATEMENT_CONTENT_TYPE.toString())

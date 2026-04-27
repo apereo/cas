@@ -82,6 +82,6 @@ public class OidcWellKnownFederationEndpointController extends AbstractOidcFeder
         val federationMetadata = buildMetadata(issuer);
         metadata.put(EntityType.FEDERATION_ENTITY.getValue(), federationMetadata.toJSONObject());
 
-        return buildEntityStatement(issuer, issuer, metadata, authorityHints);
+        return buildEntityStatement(issuer, issuer, metadata, null, authorityHints);
     }
 }

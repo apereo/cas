@@ -12,6 +12,7 @@ import org.apereo.cas.support.oauth.util.OAuth20Utils;
 import com.nimbusds.openid.connect.sdk.federation.entities.EntityType;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
+import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import net.minidev.json.JSONObject;
 import net.minidev.json.JSONValue;
@@ -23,12 +24,15 @@ import org.springframework.web.bind.annotation.RequestParam;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
+import static org.apereo.cas.configuration.model.support.oidc.federation.OidcFederationRole.isTaOrIntermediate;
+
 /**
  * This is {@link OidcTrustAnchorFetchEndpointController}.
  *
  * @author Jerome LELEU
  * @since 8.0.0
  */
+@Slf4j
 public class OidcTrustAnchorFetchEndpointController extends AbstractOidcFederationEndpointController {
 
     private final ServicesManager servicesManager;
@@ -57,6 +61,11 @@ public class OidcTrustAnchorFetchEndpointController extends AbstractOidcFederati
     public ResponseEntity fetchEntityStatement(@RequestParam(value = "sub", required = false) final String sub,
         final HttpServletRequest request, final HttpServletResponse response) throws Exception {
 
+        val role = oidcProperties.getFederation().getRole();
+        if (!isTaOrIntermediate(role)) {
+            throw new IllegalArgumentException("Federation role [" + role + "] is not supported for Trust Anchor/Intermediate");
+        }
+
         val error = retrieveInvalidIssuerError(request, response, OidcConstants.FETCH_FEDERATION_URL);
         if (error != null) {
             return error;
@@ -79,7 +88,8 @@ public class OidcTrustAnchorFetchEndpointController extends AbstractOidcFederati
         val metadata = (JSONObject) JSONValue.parse(requestedService.getMetadata().toString());
         metadata.put(EntityType.FEDERATION_ENTITY.getValue(), federationMetadata.toJSONObject());
 
-        return buildEntityStatement(issuer, sub, metadata, null);
+        val additionalKeys = requestedService.getFederationKeys();
+        return buildEntityStatement(issuer, sub, metadata, additionalKeys, null);
     }
 
     protected OidcFederationEntityService searchService(final String sub) {
