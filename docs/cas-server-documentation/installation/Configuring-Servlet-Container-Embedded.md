@@ -51,4 +51,3 @@ The following embedded servlet containers are available:
 |---------------|--------------------------------------------------------------------------------|
 | Apache Tomcat | Please see [this guide](Configuring-Servlet-Container-Embedded-Tomcat.html).   |
 | Jetty         | Please see [this guide](Configuring-Servlet-Container-Embedded-Jetty.html).    |
-| Undertow      | Please see [this guide](Configuring-Servlet-Container-Embedded-Undertow.html). |

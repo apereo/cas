@@ -8,7 +8,6 @@ ext {
         aliases: ["shell"],
         selectable: false
     ]
-    publishable = rootProject.publishSnapshots
 }
 
 apply from: rootProject.file("gradle/springboot.gradle")

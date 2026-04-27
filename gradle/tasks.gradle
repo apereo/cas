@@ -97,9 +97,22 @@ tasks.register('resourcesJar', Jar) {
 }
 
 tasks.register('javadocJar', Jar) {
-    dependsOn javadoc
     archiveClassifier.set("javadoc")
-    from javadoc.destinationDir
+    
+    if (publishReleases || publishSnapshots) {
+        logger.info "Skipping Javadoc generation for ${project.name} as it is being published..."
+        def placeholderFile = layout.buildDirectory.file("generated/placeholder-javadoc/README.md")
+        from(placeholderFile)
+        doFirst {
+            def file = placeholderFile.get().asFile
+            file.parentFile.mkdirs()
+            file.text = "This is a placeholder Javadoc artifact."
+        }
+    } else {
+        logger.info "Generating Javadoc for ${project.name}..."
+        dependsOn javadoc
+        from javadoc.destinationDir
+    }
 }
 
 tasks.register('downloadDependencies') {
