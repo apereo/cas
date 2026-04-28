@@ -25,7 +25,7 @@ env:
   JDK_DISTRIBUTION: "corretto"
   RETRY_ATTEMPTS: 2
   RETRY_MINUTES: 45
-  CATEGORY_REGEX: ".*cas.*"
+  CATEGORY_REGEX: ".*"
 ##########################################################################
 
 on:
@@ -160,7 +160,7 @@ jobs:
           coverageReport="$PWD/build/reports/jacoco/jacocoRootReport/jacocoRootReport.xml"
           echo "Uploading coverage report to SonarCloud from $coverageReport"
           ./gradlew sonar --build-cache --configure-on-demand \
-            --no-daemon -DskipAot=true --parallel \
+            --no-daemon -DskipAot=true -q --parallel \
             -x javadoc -x test -DskipNestedConfigMetadataGen=true \
             -PsonarOrganization="${{ github.repository_owner }}" \
             -Dsonar.coverage.jacoco.xmlReportPaths="$coverageReport"
@@ -199,11 +199,6 @@ jobs:
           distribution: ${{ env.JDK_DISTRIBUTION }}
       - name: Setup Gradle
         uses: gradle/actions/setup-gradle@v6
-
-      - name: Download coverage files
-        uses: "actions/download-artifact@v8"
-        with:
-          path: "reports"
       - name: Collect Coverage Files
         id: coverage-files
         run: |
@@ -212,26 +207,7 @@ jobs:
           for file in $(find $PWD -type f -name 'jacocoRootReport.xml'); do export files="$file,${files}"; done
           export files="${files%?}"
           echo $files
-          
-          files_json=$(
-            find "$PWD" -type f -name 'jacocoRootReport.xml' -print | 
-            jq -R '
-            {
-              file: .,
-              name: (
-                  split("/")[-2] |
-                  sub("^cas-tests-"; "") |
-                  sub("\\.coverage$"; "")
-              )
-            }
-            ' |
-            jq -s -c .
-          )
-          
-          echo $files_json
-          
           echo "COVERAGE_REPORTS=${files}" >> $GITHUB_ENV
-          echo "coverage-files=$files_json" >> "$GITHUB_OUTPUT"
       - name: Upload Coverage to Codacy
         continue-on-error: true
         env:
@@ -244,43 +220,3 @@ jobs:
             bash <(curl -Ls https://coverage.codacy.com/get.sh) report -r "$report" --partial
           done
           bash <(curl -Ls https://coverage.codacy.com/get.sh) final
-      - name: Upload Coverage Reports
-        uses: actions/upload-artifact@v4
-        with:
-          name: coverage-reports
-          path: |
-            **/jacocoRootReport.xml
-  coveralls:
-    runs-on: ubuntu-latest
-    needs: [ coverage ]
-    name: Coveralls - ${{ matrix.coverage.name }}
-    if: (github.event_name == 'push' || github.event_name == 'workflow_dispatch' || github.event_name == 'schedule')
-    strategy:
-      fail-fast: false
-      matrix:
-        coverage: ${{ fromJson(needs.coverage.outputs.coverage-files) }}
-    steps:
-      - name: Download Coverage Reports
-        uses: actions/download-artifact@v4
-        with:
-          name: coverage-reports
-          path: .
-      - name: Upload to Coveralls
-        uses: coverallsapp/github-action@v2
-        continue-on-error: true
-        with:
-          github-token: ${{ secrets.GITHUB_TOKEN }}
-          file: ${{ matrix.coverage.file }}
-          format: jacoco
-          parallel: true
-          flag-name: jacoco-${{ strategy.job-index }}
-  coveralls-finish:
-    needs: coveralls
-    runs-on: ubuntu-latest
-    if: (github.event_name == 'push' || github.event_name == 'workflow_dispatch' || github.event_name == 'schedule')
-    steps:
-      - name: Finish Coveralls
-        uses: coverallsapp/github-action@v2
-        with:
-          github-token: ${{ secrets.GITHUB_TOKEN }}
-          parallel-finished: true
