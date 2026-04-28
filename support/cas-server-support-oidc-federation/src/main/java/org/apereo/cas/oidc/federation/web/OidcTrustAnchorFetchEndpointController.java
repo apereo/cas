@@ -23,8 +23,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
-import static org.apereo.cas.configuration.model.support.oidc.federation.OidcFederationRole.isTaOrIntermediate;
-
 /**
  * This is {@link OidcTrustAnchorFetchEndpointController}.
  *
@@ -63,7 +61,7 @@ public class OidcTrustAnchorFetchEndpointController extends AbstractOidcFederati
         LOGGER.info("Building entity statement for subordinate: [{}]", sub);
 
         val role = oidcProperties.getFederation().getRole();
-        if (!isTaOrIntermediate(role)) {
+        if (!role.isTaOrIntermediate()) {
             throw new IllegalArgumentException("Federation role [" + role + "] is not supported for Trust Anchor/Intermediate");
         }
 
