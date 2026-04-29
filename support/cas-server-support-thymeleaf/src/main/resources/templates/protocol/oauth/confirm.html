@@ -6,9 +6,24 @@
 </head>
 
 <body id="cas">
-    <div layout:fragment="content" class="banner banner-success mdc-card card p-4 m-auto w-lg-66">
+    <div layout:fragment="content" class="mdc-card card p-4 m-auto w-lg-66">
         <h2 th:text="#{screen.oauth.confirm.header}" />
-        <p th:text="#{screen.oauth.confirm.message(${serviceName})}" />
+        <p th:text="#{screen.oauth.confirm.message(${service.name})}" />
+
+        <div id="scopes" th:unless="${#sets.isEmpty(scopes)}">
+            <h3 class="border-bottom bg-primary p-2" th:text="#{screen.oauth.confirm.scopes}"/>
+            <p th:text="#{screen.oauth.confirm.asksinfo}"/>
+
+            <dl class="dl-class0 dl-class1">
+                <div th:each="scope : ${scopes}">
+                <span th:id="${scope}">
+                    <dt class="dt-class0 dt-class1 mdi mdi-cog"> <strong><code th:text="${scope}"/></strong></dt>
+                    <dd class="dd-class0 dd-class1" th:utext="#{screen.oauth.confirm.scope.__${scope}__}"/>
+                </span>
+                </div>
+            </dl>
+        </div>
+        
         <p>
             <a class="mdc-button mdc-button--raised btn btn-primary" id="allow" name="allow" th:href="@{${callbackUrl}}">
                 <span class="mdc-button__label" th:text="#{screen.oauth.confirm.allow}">Allow</span>

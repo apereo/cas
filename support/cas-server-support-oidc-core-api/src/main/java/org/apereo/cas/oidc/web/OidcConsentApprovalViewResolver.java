@@ -29,18 +29,16 @@ public class OidcConsentApprovalViewResolver extends OAuth20ConsentApprovalViewR
     private final TicketRegistry ticketRegistry;
 
     private final TicketFactory ticketFactory;
-
-    private final OAuth20RequestParameterResolver oauthRequestParameterResolver;
+    
 
     public OidcConsentApprovalViewResolver(final CasConfigurationProperties casProperties,
                                            final SessionStore sessionStore,
                                            final TicketRegistry ticketRegistry,
                                            final TicketFactory ticketFactory,
                                            final OAuth20RequestParameterResolver oauthRequestParameterResolver) {
-        super(casProperties, sessionStore);
+        super(casProperties, sessionStore, oauthRequestParameterResolver);
         this.ticketRegistry = ticketRegistry;
         this.ticketFactory = ticketFactory;
-        this.oauthRequestParameterResolver = oauthRequestParameterResolver;
     }
 
     @Override
@@ -65,10 +63,10 @@ public class OidcConsentApprovalViewResolver extends OAuth20ConsentApprovalViewR
 
     @Override
     protected void prepareApprovalViewModel(final Map<String, Object> model,
-                                            final WebContext webContext,
-                                            final OAuthRegisteredService registeredService) throws Exception {
-        super.prepareApprovalViewModel(model, webContext, registeredService);
-        if (registeredService instanceof final OidcRegisteredService oidcRegisteredService) {
+                                            final WebContext context,
+                                            final OAuthRegisteredService service) throws Exception {
+        super.prepareApprovalViewModel(model, context, service);
+        if (service instanceof final OidcRegisteredService oidcRegisteredService) {
 
             val dynamicRegistrationPropName = RegisteredServiceProperties.OIDC_DYNAMIC_CLIENT_REGISTRATION.getPropertyName();
             if (oidcRegisteredService.getProperties().containsKey(dynamicRegistrationPropName)) {
@@ -80,9 +78,9 @@ public class OidcConsentApprovalViewResolver extends OAuth20ConsentApprovalViewR
             val supportedScopes = new HashSet<>(casProperties.getAuthn().getOidc().getDiscovery().getScopes());
             supportedScopes.retainAll(oidcRegisteredService.getScopes());
 
-            val requestedScopes = oauthRequestParameterResolver.resolveRequestedScopes(webContext);
-            val userInfoClaims = oauthRequestParameterResolver.resolveUserInfoRequestClaims(webContext);
-            webContext.getRequestParameter(OidcConstants.REQUEST_URI).ifPresent(Unchecked.consumer(uri -> {
+            val requestedScopes = oauthRequestParameterResolver.resolveRequestedScopes(context);
+            val userInfoClaims = oauthRequestParameterResolver.resolveUserInfoRequestClaims(context);
+            context.getRequestParameter(OidcConstants.REQUEST_URI).ifPresent(Unchecked.consumer(uri -> {
                 val authzRequest = ticketRegistry.getTicket(uri, OidcPushedAuthorizationRequest.class);
                 val uriFactory = (OidcPushedAuthorizationRequestFactory) ticketFactory.get(OidcPushedAuthorizationRequest.class);
                 val holder = uriFactory.toAccessTokenRequest(authzRequest);
@@ -95,4 +93,5 @@ public class OidcConsentApprovalViewResolver extends OAuth20ConsentApprovalViewR
             model.put("userInfoClaims", userInfoClaims);
         }
     }
+    
 }

@@ -40,14 +40,14 @@ public class DefaultOAuth20RequestParameterResolver implements OAuth20RequestPar
     private static final ObjectMapper MAPPER = JacksonObjectMapperFactory.builder()
         .singleArrayElementUnwrapped(true).build().toObjectMapper();
 
-    private final JwtBuilder jwtBuilder;
+    protected final JwtBuilder jwtBuilder;
 
     @Override
     public OAuth20ResponseTypes resolveResponseType(final WebContext context) {
-        val responseTypesSupport = jwtBuilder.getCasProperties().getAuthn().getOidc().getDiscovery().getResponseTypesSupported();
+        val responseTypesSupport = getResponseTypesSupported(context);
         val responseType = resolveRequestParameter(context, OAuth20Constants.RESPONSE_TYPE)
             .map(String::valueOf)
-            .filter(typeName -> responseTypesSupport.stream().anyMatch(supported -> supported.equalsIgnoreCase(typeName)))
+            .filter(typeName -> responseTypesSupport.stream().anyMatch(supported -> "*".equalsIgnoreCase(supported) || supported.equalsIgnoreCase(typeName)))
             .orElse(StringUtils.EMPTY);
         val type = Arrays.stream(OAuth20ResponseTypes.values())
             .filter(t -> t.getType().equalsIgnoreCase(responseType))
@@ -56,13 +56,13 @@ public class DefaultOAuth20RequestParameterResolver implements OAuth20RequestPar
         LOGGER.debug("OAuth response type is [{}]", type);
         return type;
     }
-
+    
     @Override
     public OAuth20GrantTypes resolveGrantType(final WebContext context) {
-        val grantTypesSupport = jwtBuilder.getCasProperties().getAuthn().getOidc().getDiscovery().getGrantTypesSupported();
+        val grantTypesSupport = getGrantTypesSupported(context);
         val grantType = resolveRequestParameter(context, OAuth20Constants.GRANT_TYPE)
             .map(String::valueOf)
-            .filter(typeName -> grantTypesSupport.stream().anyMatch(supported -> supported.equalsIgnoreCase(typeName)))
+            .filter(typeName -> grantTypesSupport.stream().anyMatch(supported -> "*".equalsIgnoreCase(supported) || supported.equalsIgnoreCase(typeName)))
             .orElse(StringUtils.EMPTY);
         val type = Arrays.stream(OAuth20GrantTypes.values())
             .filter(t -> t.getType().equalsIgnoreCase(grantType))
@@ -74,10 +74,10 @@ public class DefaultOAuth20RequestParameterResolver implements OAuth20RequestPar
 
     @Override
     public OAuth20ResponseModeTypes resolveResponseModeType(final WebContext context) {
-        val supportedResponseModes = jwtBuilder.getCasProperties().getAuthn().getOidc().getDiscovery().getResponseModesSupported();
+        val supportedResponseModes = getResponseModesSupported(context);
         val responseType = resolveRequestParameter(context, OAuth20Constants.RESPONSE_MODE)
             .map(String::valueOf)
-            .filter(typeName -> supportedResponseModes.stream().anyMatch(supported -> supported.equalsIgnoreCase(typeName)))
+            .filter(typeName -> supportedResponseModes.stream().anyMatch(supported -> "*".equalsIgnoreCase(supported) || supported.equalsIgnoreCase(typeName)))
             .orElse(StringUtils.EMPTY);
         val type = Arrays.stream(OAuth20ResponseModeTypes.values())
             .filter(t -> t.getType().equalsIgnoreCase(responseType))
@@ -86,7 +86,7 @@ public class DefaultOAuth20RequestParameterResolver implements OAuth20RequestPar
         LOGGER.debug("OAuth response type is [{}]", type);
         return type;
     }
-
+    
     @Override
     public <T> T resolveJwtRequestParameter(final String jwtRequest, final RegisteredService registeredService,
                                             final String name, final Class<T> clazz) throws Exception {
@@ -138,7 +138,7 @@ public class DefaultOAuth20RequestParameterResolver implements OAuth20RequestPar
     public <T> Optional<T> resolveRequestParameter(final WebContext context,
                                                    final String name,
                                                    final Class<T> clazz) {
-        val supported = jwtBuilder.getCasProperties().getAuthn().getOidc().getDiscovery().isRequestParameterSupported();
+        val supported = isRequestParameterSupported(context);
         return context.getRequestParameter(OAuth20Constants.REQUEST)
             .filter(parameterValue -> supported)
             .map(Unchecked.function(jwtRequest -> resolveJwtRequestParameter(context, jwtRequest, name, clazz)))
@@ -166,6 +166,7 @@ public class DefaultOAuth20RequestParameterResolver implements OAuth20RequestPar
                 return Optional.empty();
             });
     }
+    
 
     @Override
     public Collection<String> resolveRequestedScopes(final WebContext context) {
@@ -173,9 +174,11 @@ public class DefaultOAuth20RequestParameterResolver implements OAuth20RequestPar
         if (map == null || map.isEmpty()) {
             return new HashSet<>();
         }
-        val supported = jwtBuilder.getCasProperties().getAuthn().getOidc().getDiscovery().getScopes();
+        val supported = getSupportedScopes(context);
         val results = new LinkedHashSet<>(map.get(OAuth20Constants.SCOPE));
-        results.retainAll(supported);
+        if (!supported.contains("*")) {
+            results.retainAll(supported);
+        }
         return results;
     }
 
@@ -227,15 +230,17 @@ public class DefaultOAuth20RequestParameterResolver implements OAuth20RequestPar
         if (parameterValues.isEmpty()) {
             return new HashSet<>();
         }
-        val supported = jwtBuilder.getCasProperties().getAuthn().getOidc().getDiscovery().getScopes();
+        val supported = getSupportedScopes(context);
         val results = CollectionUtils.wrapSet(parameterValues.get().split(" "));
-        results.retainAll(supported);
+        if (!supported.contains("*")) {
+            results.retainAll(supported);
+        }
         return results;
     }
 
     @Override
     public Map<String, Map<String, Object>> resolveRequestClaims(final WebContext context) {
-        val supported = jwtBuilder.getCasProperties().getAuthn().getOidc().getDiscovery().isClaimsParameterSupported();
+        val supported = isClaimsParameterSupported(context);
 
         val claims = FunctionUtils.doIf(supported,
             () -> resolveRequestParameter(context, OAuth20Constants.CLAIMS).map(String::valueOf).orElse(StringUtils.EMPTY),
@@ -246,6 +251,7 @@ public class DefaultOAuth20RequestParameterResolver implements OAuth20RequestPar
         }
         return MAPPER.readValue(JsonValue.readHjson(claims).toString(), Map.class);
     }
+    
 
     @Override
     public Set<String> resolveUserInfoRequestClaims(final WebContext context) {
@@ -266,18 +272,47 @@ public class DefaultOAuth20RequestParameterResolver implements OAuth20RequestPar
 
     @Override
     public Set<String> resolveSupportedPromptValues(final String url) {
-        val supported = jwtBuilder.getCasProperties().getAuthn().getOidc().getDiscovery().getPromptValuesSupported();
+        val supported = getPromptValuesSupported();
         return FunctionUtils.doUnchecked(() -> new URIBuilder(url).getQueryParams()
             .stream()
             .filter(p -> OAuth20Constants.PROMPT.equals(p.getName()))
             .map(param -> param.getValue().split(" "))
             .flatMap(Arrays::stream)
-            .filter(supported::contains)
+            .filter(value -> supported.stream().anyMatch(supportedValue -> "*".equalsIgnoreCase(supportedValue) || supportedValue.equalsIgnoreCase(value)))
             .collect(Collectors.toSet()));
     }
+    
 
     @Override
     public boolean isParameterOnQueryString(final WebContext context, final String name) {
         return WebContextHelper.isQueryStringParameter(context, name);
+    }
+
+    protected List<String> getSupportedScopes(final WebContext context) {
+        return List.of("*");
+    }
+    
+    protected List<String> getResponseTypesSupported(final WebContext context) {
+        return List.of("*");
+    }
+
+    protected List<String> getGrantTypesSupported(final WebContext context) {
+        return List.of("*");
+    }
+
+    protected List<String> getResponseModesSupported(final WebContext context) {
+        return List.of("*");
+    }
+
+    protected boolean isRequestParameterSupported(final WebContext context) {
+        return true;
+    }
+
+    protected boolean isClaimsParameterSupported(final WebContext context) {
+        return true;
+    }
+
+    protected List<String> getPromptValuesSupported() {
+        return List.of("*");
     }
 }

@@ -2,8 +2,8 @@
   "@class" : "org.apereo.cas.support.oauth.services.OAuthRegisteredService",
   "clientId": "client",
   "clientSecret": "secret",
-  "serviceId" : "https://localhost:9859/anything/cas.*",
-  "bypassApprovalPrompt": true,
+  "serviceId" : "^https://localhost:9859/anything/cas.*",
+  "bypassApprovalPrompt": false,
   "name" : "Sample",
   "id" : 1,
   "attributeReleasePolicy" : {
@@ -13,5 +13,6 @@
     "allowedAttributes" : [ "java.util.ArrayList", [ "email", "organization" ] ]
   },
   "supportedGrantTypes": [ "java.util.HashSet", [ "authorization_code" ] ],
-  "supportedResponseTypes": [ "java.util.HashSet", [ "code" ] ]
+  "supportedResponseTypes": [ "java.util.HashSet", [ "code" ] ],
+  "scopes": [ "java.util.HashSet", [ "read", "write", "profile", "email", "phone" ] ]
 }

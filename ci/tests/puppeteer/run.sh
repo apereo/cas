@@ -388,7 +388,7 @@ function validateScenario() {
 
   dockerRequired=$(jq -j '.conditions.docker // empty' "${config}")
   if [[ "${dockerRequired}" == "true" ]]; then
-    echo "Checking if Docker is available..."
+    printgreen "Checking if Docker is available..."
     if [[ "$CI" == "true" && "${RUNNER_OS}" != "Linux" ]]; then
       printyellow "Not running test in CI that requires Docker, because non-linux GitHub runner can't run Docker."
       exit 0

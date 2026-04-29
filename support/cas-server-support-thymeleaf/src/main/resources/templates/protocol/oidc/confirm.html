@@ -51,16 +51,16 @@
     <div th:if="${service.informationUrl}" class="my-2">
         <i class="mdi mdi-comment fas fa-comment" aria-hidden="true"></i>
         <a id="informationUrl" th:href="${service.informationUrl}"
-           th:utext="#{screen.oidc.confirm.infourl(${serviceName})}"/>
+           th:utext="#{screen.oidc.confirm.infourl(${service.name})}"/>
     </div>
     <div th:if="${service.privacyUrl}" class="my-2">
         <i class="mdi mdi-eye fas fa-eye" aria-hidden="true"></i>
         <a id="privacyUrl" th:href="${service.privacyUrl}"
-           th:utext="#{screen.oidc.confirm.privacyurl(${serviceName})}"/>
+           th:utext="#{screen.oidc.confirm.privacyurl(${service.name})}"/>
     </div>
 
     <h3 class="strong border-bottom pb-2 mt-4"
-        th:text="#{screen.oauth.confirm.message(${serviceName})}"/>
+        th:text="#{screen.oauth.confirm.message(${service.name})}"/>
     <div class="d-flex">
         <a class="mdc-button mdc-button--raised btn btn-primary me-2"
            id="allow"
