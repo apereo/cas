@@ -48,7 +48,7 @@ public class OidcMongoDbJsonWebKeystoreGeneratorService implements OidcJsonWebKe
         Optional.ofNullable(result)
             .ifPresentOrElse(entity -> {
                 val update = Update.update("data", json);
-                val query = new Query(Criteria.where("issuer").is(entity.getIssuer()));
+                val query = new Query(Criteria.where("_id").is(entity.getIssuer()));
                 mongoTemplate.updateFirst(query, update, collectionName);
             }, () -> {
                 val entity = new OidcJsonWebKeystoreEntity(issuer, json);
