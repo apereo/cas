@@ -175,6 +175,15 @@ jobs:
           name: ${{ matrix.category }}
           verbose: true
           fail_ci_if_error: false
+      - name: Upload to Coveralls
+        uses: coverallsapp/github-action@v2
+        continue-on-error: true
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          file: ./build/reports/jacoco/jacocoRootReport/jacocoRootReport.xml
+          format: jacoco
+          parallel: true
+          flag-name: ${{ matrix.category }}
       - name: Upload Coverage Report
         uses: "actions/upload-artifact@v7"
         if: github.event_name == 'push' || github.event_name == 'workflow_dispatch' || github.event_name == 'schedule'
@@ -220,3 +229,8 @@ jobs:
             bash <(curl -Ls https://coverage.codacy.com/get.sh) report -r "$report" --partial
           done
           bash <(curl -Ls https://coverage.codacy.com/get.sh) final
+      - name: Finish Coveralls
+        uses: coverallsapp/github-action@v2
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          parallel-finished: true
