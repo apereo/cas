@@ -77,6 +77,30 @@ including many of the third-party core libraries used by CAS as well as some CAS
 
 CAS is now built with Gradle `9.6.x` and the build process has been updated to use the latest Gradle
 features and capabilities.
+ 
+### OAuth / OpenID Connect Scope Approval
+
+OAuth and OpenID Connect have for long presented a feature where the user is required to approve scopes requested 
+by the client application. This release introduces a few changes to better remember user decisions:
+
+- Scope approval decisions are now remembered per user and client application.
+- The storage mechanism is the client browser's `IndexedDB`. The user is only prompted again if there is a change in the scopes requested by the client application or if the user clears their browser data.
+- There is no server-side storage of scope approval decisions and there is nothing sensitive in the data that is stored by the browser.
+
+<div class="alert alert-info">:information_source: <strong>Note</strong>
+<p>We are not talking about Attribute Consent; a standalone separate feature. This is specifically
+about the approval screen that lists all OAuth or OpenID Connect scopes requested by the relying party.
+</p></div>
+
+`IndexedDB` is supported by current versions of Chrome, Edge, Firefox, Safari, iOS Safari, and most modern mobile browsers. 
+Can I Use lists it as widely supported across modern browsers, with older versions showing partial or missing support. However, 
+very old browsers may not support `IndexedDB` or may support older/buggy versions. This matters most for old Android WebViews, 
+old iOS WebViews, old Safari, and legacy enterprise browsers.
+
+CAS tries to detect if `IndexedDB` is supported by the browser and will react accordingly. That said, if this prove problematic, 
+you can always disable scope approval requests either globally or per client application.
+          
+If you have already turned off scope approval, there is nothing here for you to. Keep calm and carry on. 
 
 ## Other Stuff
               

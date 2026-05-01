@@ -447,9 +447,11 @@ class OidcConfiguration {
             @Qualifier("oauthDistributedSessionStore")
             final SessionStore oauthDistributedSessionStore,
             final CasConfigurationProperties casProperties) {
-            return new OidcConsentApprovalViewResolver(casProperties,
+            return new OidcConsentApprovalViewResolver(
+                casProperties,
                 oauthDistributedSessionStore,
-                ticketRegistry, ticketFactory,
+                ticketRegistry,
+                ticketFactory,
                 oauthRequestParameterResolver);
         }
     }

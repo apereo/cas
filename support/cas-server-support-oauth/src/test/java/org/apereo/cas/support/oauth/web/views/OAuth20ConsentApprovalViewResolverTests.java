@@ -4,13 +4,17 @@ import module java.base;
 import org.apereo.cas.AbstractOAuth20Tests;
 import org.apereo.cas.services.DefaultRegisteredServiceAccessStrategy;
 import org.apereo.cas.support.oauth.OAuth20Constants;
+import org.apereo.cas.support.oauth.services.OAuthRegisteredService;
 import lombok.val;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.pac4j.core.context.WebContext;
+import org.pac4j.core.profile.BasicUserProfile;
+import org.pac4j.core.profile.ProfileManager;
 import org.pac4j.jee.context.JEEContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.http.HttpHeaders;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 import static org.junit.jupiter.api.Assertions.*;
@@ -28,34 +32,44 @@ class OAuth20ConsentApprovalViewResolverTests extends AbstractOAuth20Tests {
     @Qualifier("consentApprovalViewResolver")
     private ConsentApprovalViewResolver consentApprovalViewResolver;
 
-    @Test
-    void verifyBypassedBySession() throws Throwable {
-        val request = new MockHttpServletRequest();
-        request.addHeader(HttpHeaders.USER_AGENT, "MSIE");
+    private WebContext webContext;
+
+    private OAuthRegisteredService registeredService;
+
+    private MockHttpServletRequest request;
+
+    @BeforeEach
+    void setUp() {
+        request = new MockHttpServletRequest();
         val response = new MockHttpServletResponse();
-        val context = new JEEContext(request, response);
-        oauthDistributedSessionStore.set(context, OAuth20Constants.BYPASS_APPROVAL_PROMPT, "true");
-        val service = getRegisteredService(randomServiceUrl(), UUID.randomUUID().toString(), "secret");
-        servicesManager.save(service);
-        assertFalse(consentApprovalViewResolver.resolve(context, service).hasView());
+        webContext = new JEEContext(request, response);
+
+        val profile = new BasicUserProfile();
+        profile.setId("casuser");
+        val profileManager = new ProfileManager(webContext, oauthDistributedSessionStore);
+        profileManager.save(true, profile, false);
+
+        registeredService = getRegisteredService(randomServiceUrl(), UUID.randomUUID().toString(), "secret");
+        registeredService.setAccessStrategy(new DefaultRegisteredServiceAccessStrategy()
+            .setUnauthorizedRedirectUrl(URI.create("https://example.com")));
+        servicesManager.save(registeredService);
     }
 
     @Test
     void verifyRequireApproval() throws Throwable {
-        val request = new MockHttpServletRequest();
-        request.addHeader(HttpHeaders.USER_AGENT, "MSIE");
-        val response = new MockHttpServletResponse();
-        val context = new JEEContext(request, response);
-       
-        val service = getRegisteredService(randomServiceUrl(), UUID.randomUUID().toString(), "secret");
-        service.setAccessStrategy(new DefaultRegisteredServiceAccessStrategy()
-            .setUnauthorizedRedirectUrl(URI.create("https://example.com")));
-        servicesManager.save(service);
-        val modelAndView = consentApprovalViewResolver.resolve(context, service);
+        var modelAndView = consentApprovalViewResolver.resolve(webContext, registeredService);
         assertTrue(modelAndView.hasView());
-        assertTrue(modelAndView.getModel().containsKey("service"));
-        assertTrue(modelAndView.getModel().containsKey("callbackUrl"));
-        assertTrue(modelAndView.getModel().containsKey("deniedApprovalUrl"));
-        assertTrue(modelAndView.getModel().containsKey("scopes"));
+        val model = modelAndView.getModel();
+        assertTrue(model.containsKey("service"));
+        assertTrue(model.containsKey("callbackUrl"));
+        assertTrue(model.containsKey("deniedApprovalUrl"));
+        assertTrue(model.containsKey("scopes"));
+        assertTrue(model.containsKey("approvalKey"));
+        assertTrue(model.containsKey("recordKey"));
+
+        request.addParameter(OAuth20Constants.BYPASS_APPROVAL_PROMPT, Boolean.TRUE.toString());
+        request.addParameter(OAuth20Constants.SCOPES_APPROVAL_KEY, model.get("approvalKey").toString());
+        modelAndView = consentApprovalViewResolver.resolve(webContext, registeredService);
+        assertFalse(modelAndView.hasView());
     }
 }

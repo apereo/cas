@@ -366,7 +366,7 @@ cxf-rt-ws-policy = { module = "org.apache.cxf:cxf-rt-ws-policy", version.ref = "
 cxf-rt-ws-security = { module = "org.apache.cxf:cxf-rt-ws-security", version.ref = "apacheCxf" }
 cxf-services-sts-core = { module = "org.apache.cxf.services.sts:cxf-services-sts-core", version.ref = "apacheCxf" }
 datatables = { module = "org.webjars:datatables", version.ref = "datatables" }
-dexie = { module = "org.webjars.npm:github-com-dexie-Dexie-js", version.ref = "dexie" }
+dexie = { module = "org.webjars.npm:dexie", version.ref = "dexie" }
 disruptor = { module = "com.lmax:disruptor", version.ref = "disruptor" }
 dom4j = { module = "org.dom4j:dom4j", version.ref = "dom4j" }
 duo-client = { module = "com.duosecurity:duo-client", version.ref = "duoClient" }

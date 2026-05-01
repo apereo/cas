@@ -8,7 +8,7 @@ function randomWord() {
         "sleepy", "stoic", "strange", "suspicious", "sweet", "tender", "thirsty",
         "trusting", "unruffled", "upbeat", "vibrant", "vigilant", "vigorous",
         "wizardly", "wonderful", "youthful", "zealous", "zen",
-        "ambitious", "amiable", "astute", "bubbly", "calm",
+        "ambitious", "amiable", "astute", "bubbly", "calm", "nice",
         "carefree", "cheerful", "curious", "daring", "delightful",
         "eager", "earnest", "ecstatic", "elegant", "energetic",
         "fearless", "festive", "friendly", "gentle", "gleeful",
@@ -510,6 +510,91 @@ function autoHideElement(id, timeout = 1500) {
     }
 
     setTimeout(hideElement, timeout);
+}
+
+async function isIndexedDbAvailable() {
+    if (!("indexedDB" in window)) {
+        console.error("Browser does not support IndexedDb");
+        return false;
+    }
+    try {
+        const db = new Dexie("indexeddb-support-test");
+        db.version(1).stores({
+            test: "id"
+        });
+        await db.open();
+        db.close();
+        await Dexie.delete("indexeddb-support-test");
+        console.info("IndexedDB is supported");
+        return true;
+    } catch (e) {
+        console.error(`Browser does not support IndexedDb: ${e}`);
+        return false;
+    }
+}
+
+function handleScopeApproval(approvalKey, recordKey, dbName) {
+    const allowLink = document.getElementById("allow");
+    const targetUrl = allowLink.href;
+
+    function redirectToApplication() {
+        $("#progressPanel").removeClass("d-none");
+        $("#scopeContainer").addClass("d-none");
+        window.location.href = targetUrl;
+    }
+
+    isIndexedDbAvailable().then(available => {
+
+        
+        if (available) {
+            async function recordApproval() {
+                await db.approvals.delete(recordKey);
+                await db.approvals.put({
+                    recordKey: recordKey,
+                    approvalKey: approvalKey,
+                    createdAt: new Date().toISOString()
+                });
+            }
+
+            async function hasApproval() {
+                const entry = await db.approvals.get(recordKey);
+                if (entry) {
+                    return entry.approvalKey === approvalKey;
+                }
+                return false;
+            }
+
+            console.info("IndexedDB is available. Initializing database and checking for approval record...");
+            const db = new Dexie(dbName);
+            db.version(1).stores({
+                approvals: "recordKey, approvalKey, createdAt"
+            });
+
+            console.info(`Checking for existing approval record for ${recordKey} / ${approvalKey} in IndexedDB...`);
+            hasApproval().then(found => {
+                if (found) {
+                    console.info(`Found approval record; navigating to ${targetUrl}`);
+                    redirectToApplication();
+                } else {
+                    console.info(`Record needs to be approved...`);
+                    $("#scopeContainer").removeClass("d-none");
+
+                    allowLink.addEventListener("click", async function (event) {
+                        event.preventDefault();
+                        try {
+                            await recordApproval(approvalKey);
+                            console.info(`Approval recorded found IndexedDB. Navigating to ${targetUrl}`);
+                            redirectToApplication();
+                        } catch (e) {
+                            console.error(`Failed to record approval ${approvalKey} in IndexedDB.`, e);
+                        }
+                    });
+                }
+            })
+        } else {
+            redirectToApplication();
+        }
+    });
 }
 
 function initializeAceEditor(id, mode = "json") {

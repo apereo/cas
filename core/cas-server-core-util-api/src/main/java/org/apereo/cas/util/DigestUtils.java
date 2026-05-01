@@ -3,6 +3,8 @@ package org.apereo.cas.util;
 import module java.base;
 import lombok.experimental.UtilityClass;
 import lombok.val;
+import org.apache.commons.codec.digest.HmacAlgorithms;
+import org.apache.commons.codec.digest.HmacUtils;
 import org.apache.commons.codec.digest.MessageDigestAlgorithms;
 import org.apache.commons.lang3.StringUtils;
 
@@ -237,5 +239,16 @@ public class DigestUtils {
         val digest = MessageDigest.getInstance(alg);
         digest.reset();
         return digest;
+    }
+
+    /**
+     * Sha 512 hmac string.
+     *
+     * @param secretKey   the secret key
+     * @param approvalKey the approval key
+     * @return the string
+     */
+    public static String sha512Hmac(final String secretKey, final String approvalKey) {
+        return new HmacUtils(HmacAlgorithms.HMAC_SHA_512, secretKey).hmacHex(approvalKey);
     }
 }

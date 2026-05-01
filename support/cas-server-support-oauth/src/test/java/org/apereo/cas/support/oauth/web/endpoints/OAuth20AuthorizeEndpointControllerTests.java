@@ -135,7 +135,7 @@ class OAuth20AuthorizeEndpointControllerTests extends AbstractOAuth20Tests {
         val callbackUrl = ((WithLocationAction) redirect.get()).getLocation();
         val callback = RegisteredServiceTestUtils.getRegisteredService(callbackUrl);
         servicesManager.save(callback);
-        
+
         val tgt = new MockTicketGrantingTicket(UUID.randomUUID().toString());
         ticketRegistry.addTicket(tgt);
 
@@ -323,7 +323,7 @@ class OAuth20AuthorizeEndpointControllerTests extends AbstractOAuth20Tests {
         mockRequest.setScheme(CAS_SCHEME);
         mockRequest.setContextPath(StringUtils.EMPTY);
         val mockResponse = new MockHttpServletResponse();
-        
+
 
         val profile = buildCasProfile();
         val sessionStore = authorizeController.getConfigurationContext().getSessionStore();
@@ -524,9 +524,14 @@ class OAuth20AuthorizeEndpointControllerTests extends AbstractOAuth20Tests {
         val sessionStore = authorizeController.getConfigurationContext().getSessionStore();
         val context = new JEEContext(mockRequest, mockResponse);
         sessionStore.set(context, Pac4jConstants.USER_PROFILES, CollectionUtils.wrapLinkedHashMap(profile.getClientName(), profile));
-        sessionStore.set(context, OAuth20Constants.BYPASS_APPROVAL_PROMPT, "true");
 
-        val modelAndView = authorizeController.handleRequest(mockRequest, mockResponse);
+        var modelAndView = authorizeController.handleRequest(mockRequest, mockResponse);
+        assertEquals(OAuth20Constants.CONFIRM_VIEW, modelAndView.getViewName());
+
+        mockRequest.addParameter(OAuth20Constants.BYPASS_APPROVAL_PROMPT, Boolean.TRUE.toString());
+        mockRequest.addParameter(OAuth20Constants.SCOPES_APPROVAL_KEY, modelAndView.getModel().get("approvalKey").toString());
+        modelAndView = authorizeController.handleRequest(mockRequest, mockResponse);
+
         val view = modelAndView.getView();
         assertInstanceOf(RedirectView.class, view);
         val redirectView = (RedirectView) view;
@@ -535,7 +540,7 @@ class OAuth20AuthorizeEndpointControllerTests extends AbstractOAuth20Tests {
         assertEquals(REDIRECT_URI, redirectUrl);
 
         val code = modelAndView.getModelMap().get("code");
-        val oAuthCode = (OAuth20Code) this.ticketRegistry.getTicket(String.valueOf(code));
+        val oAuthCode = (OAuth20Code) ticketRegistry.getTicket(String.valueOf(code));
         assertNotNull(oAuthCode);
         val principal = oAuthCode.getAuthentication().getPrincipal();
         assertEquals(ID, principal.getId());
@@ -546,8 +551,6 @@ class OAuth20AuthorizeEndpointControllerTests extends AbstractOAuth20Tests {
 
     @Test
     void verifyTokenRedirectToClientApproved() throws Throwable {
-
-
         val service = getOAuthRegisteredService(REDIRECT_URI, SERVICE_NAME);
         service.setBypassApprovalPrompt(false);
         servicesManager.save(service);
@@ -569,10 +572,16 @@ class OAuth20AuthorizeEndpointControllerTests extends AbstractOAuth20Tests {
         val sessionStore = authorizeController.getConfigurationContext().getSessionStore();
         val context = new JEEContext(mockRequest, mockResponse);
 
-        sessionStore.set(context, Pac4jConstants.USER_PROFILES, CollectionUtils.wrapLinkedHashMap(profile.getClientName(), profile));
-        sessionStore.set(context, OAuth20Constants.BYPASS_APPROVAL_PROMPT, "true");
+        sessionStore.set(context, Pac4jConstants.USER_PROFILES,
+            CollectionUtils.wrapLinkedHashMap(profile.getClientName(), profile));
 
-        val modelAndView = authorizeController.handleRequest(mockRequest, mockResponse);
+        var modelAndView = authorizeController.handleRequest(mockRequest, mockResponse);
+        assertEquals(OAuth20Constants.CONFIRM_VIEW, modelAndView.getViewName());
+
+        mockRequest.addParameter(OAuth20Constants.BYPASS_APPROVAL_PROMPT, Boolean.TRUE.toString());
+        mockRequest.addParameter(OAuth20Constants.SCOPES_APPROVAL_KEY, modelAndView.getModel().get("approvalKey").toString());
+        modelAndView = authorizeController.handleRequest(mockRequest, mockResponse);
+
         val view = modelAndView.getView();
         assertInstanceOf(RedirectView.class, view);
         val redirectView = (RedirectView) view;
@@ -592,8 +601,6 @@ class OAuth20AuthorizeEndpointControllerTests extends AbstractOAuth20Tests {
 
     @Test
     void verifyRedirectToApproval() throws Throwable {
-
-
         val service = getOAuthRegisteredService(REDIRECT_URI, SERVICE_NAME);
         service.setBypassApprovalPrompt(false);
         servicesManager.save(service);
@@ -608,21 +615,15 @@ class OAuth20AuthorizeEndpointControllerTests extends AbstractOAuth20Tests {
         mockRequest.setScheme(CAS_SCHEME);
         val mockResponse = new MockHttpServletResponse();
 
-
         val profile = buildCasProfile();
 
         val session = new MockHttpSession();
         mockRequest.setSession(session);
         val sessionStore = authorizeController.getConfigurationContext().getSessionStore();
         val context = new JEEContext(mockRequest, mockResponse);
-
         sessionStore.set(context, Pac4jConstants.USER_PROFILES, CollectionUtils.wrapLinkedHashMap(profile.getClientName(), profile));
-
-        val modelAndView = authorizeController.handleRequest(mockRequest, mockResponse);
+        var modelAndView = authorizeController.handleRequest(mockRequest, mockResponse);
         assertEquals(OAuth20Constants.CONFIRM_VIEW, modelAndView.getViewName());
-        val model = modelAndView.getModel();
-        assertEquals(AUTHORIZE_URL + '?' + OAuth20Constants.BYPASS_APPROVAL_PROMPT + "=true", model.get("callbackUrl"));
-        assertEquals(SERVICE_NAME, model.get("serviceName"));
     }
 
     @Test
@@ -697,7 +698,7 @@ class OAuth20AuthorizeEndpointControllerTests extends AbstractOAuth20Tests {
         profile.addAttributes(attributes);
         return profile;
     }
-    
+
     protected static OAuthRegisteredService getOAuthRegisteredService(final String serviceId, final String name) {
         val service = new OAuthRegisteredService();
         service.setName(name);

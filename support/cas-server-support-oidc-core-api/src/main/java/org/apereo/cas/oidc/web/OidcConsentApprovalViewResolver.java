@@ -30,7 +30,6 @@ public class OidcConsentApprovalViewResolver extends OAuth20ConsentApprovalViewR
 
     private final TicketFactory ticketFactory;
     
-
     public OidcConsentApprovalViewResolver(final CasConfigurationProperties casProperties,
                                            final SessionStore sessionStore,
                                            final TicketRegistry ticketRegistry,
