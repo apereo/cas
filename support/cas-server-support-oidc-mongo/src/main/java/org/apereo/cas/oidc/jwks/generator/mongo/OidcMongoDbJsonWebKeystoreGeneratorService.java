@@ -13,9 +13,6 @@ import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
 import org.springframework.core.io.Resource;
 import org.springframework.data.mongodb.core.MongoOperations;
-import org.springframework.data.mongodb.core.query.Criteria;
-import org.springframework.data.mongodb.core.query.Query;
-import org.springframework.data.mongodb.core.query.Update;
 
 /**
  * This is {@link OidcMongoDbJsonWebKeystoreGeneratorService}.
@@ -43,17 +40,9 @@ public class OidcMongoDbJsonWebKeystoreGeneratorService implements OidcJsonWebKe
     public JsonWebKeySet store(final JsonWebKeySet jsonWebKeySet) {
         val issuer = oidcProperties.getCore().getIssuer();
         val collectionName = oidcProperties.getJwks().getMongo().getCollection();
-        val result = mongoTemplate.findById(issuer, OidcJsonWebKeystoreEntity.class, collectionName);
         val json = jsonWebKeySet.toJson(JsonWebKey.OutputControlLevel.INCLUDE_PRIVATE);
-        Optional.ofNullable(result)
-            .ifPresentOrElse(entity -> {
-                val update = Update.update("data", json);
-                val query = new Query(Criteria.where("issuer").is(entity.getIssuer()));
-                mongoTemplate.updateFirst(query, update, collectionName);
-            }, () -> {
-                val entity = new OidcJsonWebKeystoreEntity(issuer, json);
-                mongoTemplate.insert(entity, collectionName);
-            });
+        val entity = new OidcJsonWebKeystoreEntity(issuer, json);
+        mongoTemplate.save(entity, collectionName);
         return jsonWebKeySet;
     }
 
