@@ -3,6 +3,8 @@ package org.apereo.cas.oidc.jwks.generator;
 import module java.base;
 import org.apereo.cas.config.CasOidcJwksMongoDbAutoConfiguration;
 import org.apereo.cas.oidc.AbstractOidcTests;
+import org.apereo.cas.oidc.jwks.OidcJsonWebKeyUsage;
+import org.apereo.cas.oidc.jwks.rotation.OidcJsonWebKeystoreRotationService;
 import org.apereo.cas.util.junit.EnabledIfListeningOnPort;
 import lombok.val;
 import org.apache.commons.io.IOUtils;
@@ -10,6 +12,7 @@ import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.autoconfigure.ImportAutoConfiguration;
 import org.springframework.test.context.TestPropertySource;
+import tools.jackson.databind.ObjectMapper;
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
@@ -46,5 +49,17 @@ class OidcMongoDbJsonWebKeystoreGeneratorServiceTests extends AbstractOidcTests 
         assertNotNull(set1);
 
         assertTrue(oidcJsonWebKeystoreGeneratorService.find().isPresent());
+
+        val futureKeySigning = OidcJsonWebKeystoreGeneratorService.generateJsonWebKey(casProperties.getAuthn().getOidc(),
+                OidcJsonWebKeyUsage.SIGNING);
+        OidcJsonWebKeystoreRotationService.JsonWebKeyLifecycleStates.setJsonWebKeyState(futureKeySigning,
+                OidcJsonWebKeystoreRotationService.JsonWebKeyLifecycleStates.FUTURE);
+        set1.addJsonWebKey(futureKeySigning);
+
+        oidcJsonWebKeystoreGeneratorService.store(set1);
+        val resource3 = oidcJsonWebKeystoreGeneratorService.find();
+        val json3 = IOUtils.toString(resource3.get().getInputStream(), StandardCharsets.UTF_8);
+        val keys3 = new ObjectMapper().readTree(json3).get("keys");
+        assertEquals(set1.getJsonWebKeys().size(), keys3.size());
     }
 }
