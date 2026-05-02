@@ -9,8 +9,7 @@ category: Protocols
 # WS Federation Protocol
 
 CAS can act as a standalone identity provider, presenting support for 
-the [WS-Federation Passive Requester Profile](http://docs.oasis-open.org/wsfed/federation/v1.2/os/ws-federation-1.2-spec-os.html#_Toc223175002). 
-The core functionality is built on top of [Apache Fediz](http://cxf.apache.org/fediz.html) 
+the WS-Federation Passive Requester Profile. The core functionality is built on top of [Apache Fediz](http://cxf.apache.org/fediz.html) 
 whose architecture is described [here](http://cxf.apache.org/fediz-architecture.html).
 
 <div class="alert alert-info">:information_source: <strong>Remember</strong><p>The functionality described 
