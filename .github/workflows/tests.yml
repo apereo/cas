@@ -184,6 +184,9 @@ jobs:
           format: jacoco
           parallel: true
           flag-name: ${{ matrix.category }}
+          build-number: ${{ github.run_id }}-${{ github.run_attempt }}
+          build-url: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+          debug: true
       - name: Upload Coverage Report
         uses: "actions/upload-artifact@v7"
         if: github.event_name == 'push' || github.event_name == 'workflow_dispatch' || github.event_name == 'schedule'
@@ -234,3 +237,6 @@ jobs:
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           parallel-finished: true
+          build-number: ${{ github.run_id }}-${{ github.run_attempt }}
+          build-url: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+          debug: true
