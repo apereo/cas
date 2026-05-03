@@ -76,6 +76,12 @@ Please see [this guide](Surrogate-Authentication-Audit.html).
 
 Please see [this guide](Surrogate-Authentication-Principal-Resolution.html).
 
+## Actuator Endpoints
+
+The following endpoints are provided by CAS:
+
+{% include_cached actuators.html endpoints="impersonation" %}
+
 ## REST Protocol
 
 The feature extends the [CAS REST API](../protocol/REST-Protocol.html) communication model to surrogate authentication,

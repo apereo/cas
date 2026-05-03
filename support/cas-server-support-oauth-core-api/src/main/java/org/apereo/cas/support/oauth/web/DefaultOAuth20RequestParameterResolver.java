@@ -161,7 +161,9 @@ public class DefaultOAuth20RequestParameterResolver implements OAuth20RequestPar
                     if (Double.class.isAssignableFrom(clazz)){
                         return Optional.ofNullable(singleValue).map(Double::parseDouble).map(clazz::cast);
                     }
-                    return Optional.ofNullable(singleValue).map(clazz::cast);
+                    return Optional.ofNullable(singleValue)
+                        .filter(StringUtils::isNotBlank)
+                        .map(clazz::cast);
                 }
                 return Optional.empty();
             });

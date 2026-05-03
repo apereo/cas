@@ -58,7 +58,7 @@ to build and verify Graal VM native images and we plan to extend the coverage to
 ### Testing Strategy
 
 The collection of end-to-end [browser tests based on Puppeteer](../../developer/Test-Process.html) continue to grow to cover more use cases
-and scenarios. At the moment, total number of jobs stands at approximately `545` distinct scenarios. The overall
+and scenarios. At the moment, total number of jobs stands at approximately `548` distinct scenarios. The overall
 test coverage of the CAS codebase is approximately `94%`.
 
 ### JSpecify & NullAway
@@ -101,7 +101,14 @@ CAS tries to detect if `IndexedDB` is supported by the browser and will react ac
 you can always disable scope approval requests either globally or per client application.
           
 If you have already turned off scope approval, there is nothing here for you to. Keep calm and carry on. 
+ 
+### Impersonation
+               
+[Palantir](../installation/Admin-Dashboard.html) is given the ability to support 
+[impersonation features](../authentication/Surrogate-Authentication.html) of CAS
+and report back eligible impersonation accounts for a given username. This functionaity is supported by 
+the new actuator endpoint, `impersonation`, that can be used to query for eligible surrogate accounts.
 
 ## Other Stuff
               
-- 
+- Minor user interface adjustments to remove unneeded resources and script references from various pages.
