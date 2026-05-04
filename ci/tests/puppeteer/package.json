@@ -4,7 +4,7 @@
   "dependencies": {
     "@stomp/stompjs": "7.3.0",
     "archiver": "7.0.1",
-    "axios": "1.15.2",
+    "axios": "1.16.0",
     "basic-auth": "2.0.1",
     "colors": "1.4.0",
     "crypto-js": "4.2.0",
@@ -36,11 +36,11 @@
     "unzipper": "0.12.3",
     "wait-on": "9.0.5",
     "xml2js": "0.6.2",
-    "yaml": "2.8.3"
+    "yaml": "2.8.4"
   },
   "devDependencies": {
     "@eslint/js": "10.0.1",
-    "eslint": "10.2.1",
+    "eslint": "10.3.0",
     "globals": "17.5.0"
   }
 }
