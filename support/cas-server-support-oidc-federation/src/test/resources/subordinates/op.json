@@ -1,8 +1,5 @@
 {
-  "@class" : "org.apereo.cas.oidc.federation.service.OidcFederationEntityService",
-  "id": 1,
-  "name": "OP",
-  "serviceId" : "http://op",
+  "entityId" : "http://op",
   "metadata": {
     "openid_provider": {
       "authorization_endpoint": "http://op/c2id-login",

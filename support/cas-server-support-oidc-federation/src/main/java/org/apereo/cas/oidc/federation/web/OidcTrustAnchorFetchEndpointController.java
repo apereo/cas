@@ -3,10 +3,9 @@ package org.apereo.cas.oidc.federation.web;
 import module java.base;
 import org.apereo.cas.configuration.model.support.oidc.OidcProperties;
 import org.apereo.cas.oidc.OidcConstants;
-import org.apereo.cas.oidc.federation.service.OidcFederationEntityService;
 import org.apereo.cas.oidc.federation.signature.OidcFederationEntityStatementService;
+import org.apereo.cas.oidc.federation.subordinate.OidcFederationSubordinateRepository;
 import org.apereo.cas.oidc.issuer.OidcIssuerService;
-import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.support.oauth.util.OAuth20Utils;
 import io.swagger.v3.oas.annotations.Operation;
@@ -32,13 +31,13 @@ import jakarta.servlet.http.HttpServletResponse;
 @Slf4j
 public class OidcTrustAnchorFetchEndpointController extends AbstractOidcFederationEndpointController {
 
-    private final ServicesManager servicesManager;
+    private final OidcFederationSubordinateRepository subordinateRepository;
 
-    public OidcTrustAnchorFetchEndpointController(final ServicesManager servicesManager, final OidcIssuerService oidcIssuerService,
-                                                   final OidcFederationEntityStatementService federationEntityStatementService,
-                                                   final OidcProperties oidcProperties) {
+    public OidcTrustAnchorFetchEndpointController(final OidcFederationSubordinateRepository subordinateRepository, final OidcIssuerService oidcIssuerService,
+                                                  final OidcFederationEntityStatementService federationEntityStatementService,
+                                                  final OidcProperties oidcProperties) {
         super(oidcIssuerService, federationEntityStatementService, oidcProperties);
-        this.servicesManager = servicesManager;
+        this.subordinateRepository = subordinateRepository;
     }
 
     /**
@@ -75,16 +74,16 @@ public class OidcTrustAnchorFetchEndpointController extends AbstractOidcFederati
             return new ResponseEntity<>(body, HttpStatus.BAD_REQUEST);
         }
 
-        val requestedService = searchService(sub);
-        if (requestedService == null) {
+        val foundSubordinate = subordinateRepository.getSubordinates().get(sub);
+        if (foundSubordinate == null) {
             val body = OAuth20Utils.getErrorResponseBody(OAuth20Constants.INVALID_REQUEST, "Invalid entity");
             return new ResponseEntity<>(body, HttpStatus.BAD_REQUEST);
         }
-        val serviceMetadata = requestedService.getMetadata();
+        val serviceMetadata = foundSubordinate.getMetadata();
         if (serviceMetadata == null) {
             throw new IllegalArgumentException("No metadata defined for entity");
         }
-        val federationKeys = requestedService.getFederationKeys();
+        val federationKeys = foundSubordinate.getFederationKeys();
         if (federationKeys == null || federationKeys.isEmpty()) {
             throw new IllegalArgumentException("No federation keys defined for entity");
         }
@@ -92,15 +91,5 @@ public class OidcTrustAnchorFetchEndpointController extends AbstractOidcFederati
         val issuer = oidcProperties.getCore().getIssuer();
         val metadata = (JSONObject) JSONValue.parse(serviceMetadata.toString());
         return buildEntityStatement(issuer, sub, metadata, federationKeys, null);
-    }
-
-    protected OidcFederationEntityService searchService(final String sub) {
-        val oidcServices = servicesManager.getAllServicesOfType(OidcFederationEntityService.class);
-        for (val service : oidcServices) {
-            if (service.getServiceId().equals(sub)) {
-                return service;
-            }
-        }
-        return null;
     }
 }

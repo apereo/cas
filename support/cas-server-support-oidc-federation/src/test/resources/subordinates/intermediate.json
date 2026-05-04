@@ -1,11 +1,8 @@
 {
-  "@class" : "org.apereo.cas.oidc.federation.service.OidcFederationEntityService",
-  "id": 5,
-  "name": "Intermediate",
-  "serviceId" : "http://intermediate",
+  "entityId" : "http://intermediate",
   "metadata": {
     "federation_entity": {
-      "federation_fetch_endpoint": "http://someurl",
+      "federation_fetch_endpoint": "http://someurl"
     }
   },
   "federationKeys": [

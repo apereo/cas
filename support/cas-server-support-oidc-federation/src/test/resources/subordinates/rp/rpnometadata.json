@@ -1,8 +1,5 @@
 {
-  "@class" : "org.apereo.cas.oidc.federation.service.OidcFederationEntityService",
-  "id": 3,
-  "name": "RP without metadata",
-  "serviceId" : "http://rpnometadata",
+  "entityId" : "http://rpnometadata",
   "federationKeys": [
     {
       "kty": "EC",

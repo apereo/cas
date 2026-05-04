@@ -10,11 +10,11 @@ import org.apereo.cas.oidc.federation.signature.OidcFederationDefaultEntityState
 import org.apereo.cas.oidc.federation.signature.OidcFederationDefaultJsonWebKeystoreService;
 import org.apereo.cas.oidc.federation.signature.OidcFederationEntityStatementService;
 import org.apereo.cas.oidc.federation.signature.OidcFederationJsonWebKeystoreService;
+import org.apereo.cas.oidc.federation.subordinate.OidcFederationSubordinateRepository;
 import org.apereo.cas.oidc.federation.web.OidcTrustAnchorFetchEndpointController;
 import org.apereo.cas.oidc.federation.web.OidcWellKnownFederationEndpointController;
 import org.apereo.cas.oidc.issuer.OidcDefaultIssuerService;
 import org.apereo.cas.oidc.issuer.OidcIssuerService;
-import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.web.CasWebSecurityConfigurer;
 import com.nimbusds.openid.connect.sdk.federation.entities.EntityID;
 import com.nimbusds.openid.connect.sdk.federation.trust.TrustChainResolver;
@@ -48,6 +48,13 @@ import static org.apereo.cas.oidc.OidcConstants.WELL_KNOWN_OPENID_FEDERATION_URL
 class OidcFederationConfiguration {
     @Bean
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+    @ConditionalOnMissingBean(name = "oidcFederationSubordinateRepository")
+    public OidcFederationSubordinateRepository oidcFederationSubordinateRepository(final CasConfigurationProperties casProperties) {
+        return new OidcFederationSubordinateRepository(casProperties.getAuthn().getOidc());
+    }
+
+    @Bean
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @ConditionalOnMissingBean(name = "oidcFederationIssuerService")
     public OidcIssuerService oidcFederationIssuerService(
         @Qualifier(TenantExtractor.BEAN_NAME)
@@ -60,14 +67,13 @@ class OidcFederationConfiguration {
     @ConditionalOnMissingBean(name = "oidcTrustAnchorFetchEndpointController")
     @Bean
     public OidcTrustAnchorFetchEndpointController oidcTrustAnchorFetchEndpointController(
-        @Qualifier(ServicesManager.BEAN_NAME)
-        final ServicesManager servicesManager,
+        final OidcFederationSubordinateRepository oidcFederationSubordinateRepository,
         @Qualifier("oidcFederationIssuerService")
         final OidcIssuerService oidcFederationIssuerService,
         @Qualifier(OidcFederationEntityStatementService.BEAN_NAME)
         final OidcFederationEntityStatementService oidcFederationEntityStatementService,
         final CasConfigurationProperties casProperties) {
-        return new OidcTrustAnchorFetchEndpointController(servicesManager, oidcFederationIssuerService,
+        return new OidcTrustAnchorFetchEndpointController(oidcFederationSubordinateRepository, oidcFederationIssuerService,
                 oidcFederationEntityStatementService, casProperties.getAuthn().getOidc());
     }
 

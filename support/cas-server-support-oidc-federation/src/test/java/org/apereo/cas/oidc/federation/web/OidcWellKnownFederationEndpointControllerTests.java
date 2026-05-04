@@ -137,8 +137,7 @@ class OidcWellKnownFederationEndpointControllerTests {
             "cas.server.prefix=https://sso.example.org/cas",
             "cas.authn.oidc.federation.role=OPENID_PROVIDER",
             "cas.authn.oidc.federation.jwks-file=file:${#systemProperties['java.io.tmpdir']}/federation.jwks",
-            "cas.authn.oidc.core.issuer=https://sso.example.org/cas/oidc",
-            "cas.service-registry.json.location=classpath:/services"
+            "cas.authn.oidc.core.issuer=https://sso.example.org/cas/oidc"
         }, webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
     @Nested
     class BadRoleTrustAnchorFederationEndpointTests extends AbstractOidcTrustAnchorFederationTests {

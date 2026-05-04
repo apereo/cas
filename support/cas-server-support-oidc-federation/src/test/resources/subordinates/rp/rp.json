@@ -1,8 +1,5 @@
 {
-  "@class" : "org.apereo.cas.oidc.federation.service.OidcFederationEntityService",
-  "id": 2,
-  "name": "RP",
-  "serviceId" : "http://rp",
+  "entityId" : "http://rp",
   "metadata": {
     "openid_relying_party": {
       "redirect_uris": [

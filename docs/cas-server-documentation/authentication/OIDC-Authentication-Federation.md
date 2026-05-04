@@ -24,16 +24,13 @@ Support is enabled by including the following dependency in the WAR overlay:
 
 ## Subordinates
 
-For a trust anchor or intermediate, the suported entites, called subordinates, must be defined as `org.apereo.cas.oidc.federation.service.OidcFederationEntityService` in the service registry:
+For a trust anchor or intermediate, the suported entites, called subordinates, must be defined as JSON files with the `OidcFederationSubordinate` format:
 
 *Example of a RP subordinate:*
 
 ```json
 {
-  "@class" : "org.apereo.cas.oidc.federation.service.OidcFederationEntityService",
-  "id": 2,
-  "name": "My RP",
-  "serviceId" : "http://rp",
+  "entityId" : "http://rp",
   "metadata": {
     "openid_relying_party": {
       "redirect_uris": [
@@ -84,10 +81,7 @@ For a trust anchor or intermediate, the suported entites, called subordinates, m
 
 ```json
 {
-  "@class" : "org.apereo.cas.oidc.federation.service.OidcFederationEntityService",
-  "id": 1,
-  "name": "My OP",
-  "serviceId" : "http://op",
+  "entityId" : "http://op",
   "metadata": {
     "openid_provider": {
       "authorization_endpoint": "http://op/login",
@@ -154,11 +148,7 @@ For a trust anchor or intermediate, the suported entites, called subordinates, m
 }
 ```
 
-The `metadata` property contains the metadata of the entity:
-- for the RP, it comes from the `.well-known/openid-federation` endpoint
-- for other entities, it's from the `.well-known/openid-configuration` endpoint.
-
-The `federationKeys` property is the specific key(s) used for the federation.
+The `metadata` and `federationKeys` properties come both from the data in the `.well-known/openid-federation` endpoint.
 
 Both sections are mandatory in the federation entity definitions.
 
