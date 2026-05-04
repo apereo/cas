@@ -107,7 +107,7 @@ function isNumeric(str) {
 }
 
 function copyToClipboard(str) {
-    navigator.clipboard.writeText(str)
+    return navigator.clipboard.writeText(str)
         .then(() => {
             console.info("Copied text to clipboard");
         })
