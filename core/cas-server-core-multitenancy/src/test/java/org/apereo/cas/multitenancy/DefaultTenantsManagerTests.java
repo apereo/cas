@@ -3,7 +3,9 @@ package org.apereo.cas.multitenancy;
 import module java.base;
 import org.apereo.cas.configuration.support.CasConfigurationJasyptCipherExecutor;
 import org.apereo.cas.test.CasTestExtension;
+import org.apereo.cas.util.CollectionUtils;
 import lombok.val;
+import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -20,11 +22,6 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 7.2.0
  */
 @Tag("Web")
-@SpringBootTest(classes = BaseMultitenancyTests.SharedTestConfiguration.class)
-@TestPropertySource(properties = {
-    "cas.multitenancy.core.enabled=true",
-    "cas.multitenancy.json.location=classpath:/tenants.json"
-})
 @ExtendWith(CasTestExtension.class)
 class DefaultTenantsManagerTests {
 
@@ -33,15 +30,50 @@ class DefaultTenantsManagerTests {
         System.setProperty(CasConfigurationJasyptCipherExecutor.JasyptEncryptionParameters.INITIALIZATION_VECTOR.getPropertyName(), "true");
     }
 
-    @Autowired
-    @Qualifier(TenantsManager.BEAN_NAME)
-    private TenantsManager tenantsManager;
+    @Nested
+    @SpringBootTest(classes = BaseMultitenancyTests.SharedTestConfiguration.class)
+    @TestPropertySource(properties = {
+        "cas.multitenancy.core.enabled=true",
+        "cas.multitenancy.json.location=classpath:/tenants.json"
+    })
+    class DefaultTests {
+        @Autowired
+        @Qualifier(TenantsManager.BEAN_NAME)
+        private TenantsManager tenantsManager;
 
-    @Test
-    void verifyOperation() {
-        val definition = tenantsManager.findTenant("b9584c42");
-        assertTrue(definition.isPresent());
-        val hostedDefinition = tenantsManager.findTenant("hosted").orElseThrow();
-        assertEquals("sso.system.org", hostedDefinition.getProperties().get("cas.host.name"));
+        @Test
+        void verifyOperation() {
+            val definition = tenantsManager.findTenant("b9584c42");
+            assertTrue(definition.isPresent());
+            val hostedDefinition = tenantsManager.findTenant("hosted").orElseThrow();
+            assertEquals("sso.system.org", hostedDefinition.getProperties().get("cas.host.name"));
+        }
+    }
+
+    @Nested
+    @SpringBootTest(classes = BaseMultitenancyTests.SharedTestConfiguration.class)
+    @TestPropertySource(properties = {
+        "cas.multitenancy.core.enabled=true",
+        "cas.multitenancy.json.location=file://${java.io.tmpdir}/Tenants.json"
+    })
+    class ExternalTenantsTests {
+        @Autowired
+        @Qualifier(TenantsManager.BEAN_NAME)
+        private TenantsManager tenantsManager;
+
+        @Test
+        void verifyOperation() {
+            val id = UUID.randomUUID().toString();
+            var definition = tenantsManager.findTenant(id);
+            assertFalse(definition.isPresent());
+            tenantsManager.save(
+                TenantDefinition.builder()
+                    .id(id)
+                    .properties(CollectionUtils.wrap("cas.host.name", "sso.system.org"))
+                    .build());
+            tenantsManager.load();
+            definition = tenantsManager.findTenant(id);
+            assertTrue(definition.isPresent());
+        }
     }
 }

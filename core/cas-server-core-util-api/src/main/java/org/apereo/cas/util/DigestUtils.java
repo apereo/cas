@@ -245,10 +245,10 @@ public class DigestUtils {
      * Sha 512 hmac string.
      *
      * @param secretKey   the secret key
-     * @param approvalKey the approval key
+     * @param value the approval key
      * @return the string
      */
-    public static String sha512Hmac(final String secretKey, final String approvalKey) {
-        return new HmacUtils(HmacAlgorithms.HMAC_SHA_512, secretKey).hmacHex(approvalKey);
+    public static String sha512Hmac(final String secretKey, final String value) {
+        return new HmacUtils(HmacAlgorithms.HMAC_SHA_512, secretKey).hmacHex(value);
     }
 }

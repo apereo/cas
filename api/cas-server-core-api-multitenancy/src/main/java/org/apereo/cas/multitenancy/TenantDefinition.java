@@ -13,6 +13,10 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 import lombok.experimental.Accessors;
+import lombok.experimental.SuperBuilder;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
 
 /**
  * This is {@link TenantDefinition}.
@@ -27,12 +31,16 @@ import lombok.experimental.Accessors;
 @JsonTypeInfo(use = JsonTypeInfo.Id.CLASS)
 @NoArgsConstructor
 @Accessors(chain = true)
-@JsonInclude(JsonInclude.Include.NON_DEFAULT)
+@JsonInclude(JsonInclude.Include.NON_NULL)
 @SuppressWarnings("NullAway.Init")
+@SuperBuilder
 public class TenantDefinition implements Serializable {
     @Serial
     private static final long serialVersionUID = -9012299259747093234L;
 
+    @org.springframework.data.annotation.Id
+    @Id
+    @GeneratedValue(strategy = GenerationType.UUID)
     private String id;
 
     private String description;
