@@ -106,7 +106,7 @@ If you have already turned off scope approval, there is nothing here for you to.
                
 [Palantir](../installation/Admin-Dashboard.html) is given the ability to support 
 [impersonation features](../authentication/Surrogate-Authentication.html) of CAS
-and report back eligible impersonation accounts for a given username. This functionaity is supported by 
+and report back eligible impersonation accounts for a given username. This functionality is supported by 
 the new actuator endpoint, `impersonation`, that can be used to query for eligible surrogate accounts.
 
 ## Other Stuff

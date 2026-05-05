@@ -98,6 +98,15 @@ class DefaultServicesManagerTests {
         }
 
         @Test
+        void verifySaveWithoutServiceName() {
+            val svc = new CasRegisteredService();
+            svc.setId(RandomUtils.nextLong());
+            svc.setName(null);
+            svc.setServiceId("https://www.example.com/" + svc.getId());
+            assertNotNull(servicesManager.save(svc, false));
+        }
+
+        @Test
         void verifySaveInBulk() {
             servicesManager.deleteAll();
             servicesManager.save(() -> {
