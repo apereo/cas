@@ -813,15 +813,15 @@ public class LdapUtils {
         if (StringUtils.isBlank(properties.getSearchFilter())) {
             throw new IllegalArgumentException("User filter cannot be empty/blank for authenticated/anonymous authentication");
         }
-        val connectionFactory = newLdaptiveConnectionFactory(properties);
-        val resolver = buildAggregateDnResolver(properties, connectionFactory);
+        val connectionFactoryForSearch = newLdaptiveConnectionFactory(properties);
+        val resolver = buildAggregateDnResolver(properties, connectionFactoryForSearch);
 
         val auth = StringUtils.isBlank(properties.getPrincipalAttributePassword())
-            ? new Authenticator(resolver, getBindAuthenticationHandler(connectionFactory))
-            : new Authenticator(resolver, getCompareAuthenticationHandler(properties, connectionFactory));
+            ? new Authenticator(resolver, getBindAuthenticationHandler(newLdaptiveConnectionFactory(properties)))
+            : new Authenticator(resolver, getCompareAuthenticationHandler(properties, newLdaptiveConnectionFactory(properties)));
 
         if (properties.isEnhanceWithEntryResolver()) {
-            auth.setEntryResolver(newLdaptiveSearchEntryResolver(properties, connectionFactory));
+            auth.setEntryResolver(newLdaptiveSearchEntryResolver(properties, newLdaptiveConnectionFactory(properties)));
         }
         return auth;
     }

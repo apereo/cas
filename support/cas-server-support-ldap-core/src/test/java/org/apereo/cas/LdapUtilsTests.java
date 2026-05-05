@@ -28,6 +28,7 @@ import org.ldaptive.handler.CaseChangeEntryHandler;
 import org.ldaptive.sasl.Mechanism;
 import org.ldaptive.sasl.QualityOfProtection;
 import org.ldaptive.sasl.SecurityStrength;
+import org.mockito.MockedStatic;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -326,6 +327,25 @@ class LdapUtilsTests {
             val config1 = LdapUtils.newLdaptiveConnectionConfig(ldap);
             assertNotNull(config1);
         });
+    }
+
+    @Test
+    public void verifyLdapConnIsNotReused() {
+        val ldap = new Ldap();
+        ldap.setBaseDn("ou=people,dc=example,dc=org");
+        ldap.setLdapUrl("ldap://localhost:10389");
+        ldap.setBindDn("cn=Directory Manager");
+        ldap.setBindCredential("password");
+        ldap.setSearchFilter("cn=foo");
+
+        try (MockedStatic<LdapUtils> mocked = mockStatic(LdapUtils.class)) { 
+            mocked.when(() -> LdapUtils.getAuthenticatedOrAnonSearchAuthenticator(ldap)).thenCallRealMethod();
+
+            val auth = LdapUtils.getAuthenticatedOrAnonSearchAuthenticator(ldap);
+            assertNotNull(auth);
+
+            mocked.verify(() -> LdapUtils.newLdaptiveConnectionFactory(ldap), atLeast(2));
+        }
     }
 
     private static final class Ldap extends AbstractLdapAuthenticationProperties {
