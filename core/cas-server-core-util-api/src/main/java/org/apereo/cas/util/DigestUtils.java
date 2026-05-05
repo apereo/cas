@@ -21,13 +21,23 @@ public class DigestUtils {
     private static final int ABBREVIATE_MAX_WIDTH = 125;
 
     /**
+     * Sha 512 string.
+     *
+     * @param data the data
+     * @return the string
+     */
+    public static String sha512(final byte[] data) {
+        return digest(MessageDigestAlgorithms.SHA_512, data);
+    }
+    
+    /**
      * Computes hex encoded SHA512 digest.
      *
      * @param data data to be hashed
      * @return sha-512 hash
      */
     public static String sha512(final String data) {
-        return digest(MessageDigestAlgorithms.SHA_512, data.getBytes(StandardCharsets.UTF_8));
+        return sha512(data.getBytes(StandardCharsets.UTF_8));
     }
 
     /**
@@ -37,7 +47,17 @@ public class DigestUtils {
      * @return sha-256 hash
      */
     public static String sha256(final String data) {
-        return digest(MessageDigestAlgorithms.SHA_256, data.getBytes(StandardCharsets.UTF_8));
+        return sha256(data.getBytes(StandardCharsets.UTF_8));
+    }
+
+    /**
+     * Sha 256 string.
+     *
+     * @param data the data
+     * @return the string
+     */
+    public static String sha256(final byte[] data) {
+        return digest(MessageDigestAlgorithms.SHA_256, data);
     }
 
     /**
