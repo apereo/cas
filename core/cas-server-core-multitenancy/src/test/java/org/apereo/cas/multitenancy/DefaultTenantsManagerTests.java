@@ -74,6 +74,7 @@ class DefaultTenantsManagerTests {
             tenantsManager.load();
             definition = tenantsManager.findTenant(id);
             assertTrue(definition.isPresent());
+            assertTrue(tenantsManager.delete(id));
         }
     }
 }

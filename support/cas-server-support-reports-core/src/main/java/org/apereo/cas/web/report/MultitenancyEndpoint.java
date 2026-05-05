@@ -15,6 +15,7 @@ import org.springframework.boot.actuate.endpoint.annotation.Endpoint;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -96,5 +97,19 @@ public class MultitenancyEndpoint extends BaseCasRestActuatorEndpoint {
     public ResponseEntity<TenantDefinition> registerTenantDefinition(@RequestBody final TenantDefinition tenantDefinition) {
         val saved = tenantExtractor.getObject().getTenantsManager().save(tenantDefinition);
         return ResponseEntity.ok(saved);
+    }
+
+    /**
+     * Remove a tenant definition by id.
+     *
+     * @param tenantId the tenant id to remove
+     * @return 204 No Content if removed, 404 Not Found if no such tenant exists
+     */
+    @DeleteMapping(path = "/tenants/{tenantId}")
+    @Operation(summary = "Remove a tenant definition by its id",
+        parameters = @Parameter(name = "tenantId", required = true, description = "The tenant definition id to remove", in = ParameterIn.PATH))
+    public ResponseEntity<Void> deleteTenantDefinition(@PathVariable final String tenantId) {
+        val removed = tenantExtractor.getObject().getTenantsManager().delete(tenantId);
+        return removed ? ResponseEntity.noContent().build() : ResponseEntity.notFound().build();
     }
 }

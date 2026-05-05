@@ -66,13 +66,17 @@ public class DefaultTenantsManager implements TenantsManager, DisposableBean, In
     public TenantDefinition save(final TenantDefinition tenantDefinition) {
         tenantDefinitionList.removeIf(t -> t.getId().equalsIgnoreCase(tenantDefinition.getId()));
         tenantDefinitionList.add(tenantDefinition);
-        FunctionUtils.doAndHandle(_ -> {
-            if (ResourceUtils.isFile(jsonResource)) {
-                val writer = objectMapper.writerWithDefaultPrettyPrinter();
-                writer.writeValue(jsonResource.getFile(), tenantDefinitionList);
-            }
-        });
+        writeTenantDefinitionsToResource();
         return tenantDefinition;
+    }
+
+    @Override
+    public boolean delete(final String tenantId) {
+        val removed = tenantDefinitionList.removeIf(t -> t.getId().equalsIgnoreCase(tenantId));
+        if (removed) {
+            writeTenantDefinitionsToResource();
+        }
+        return removed;
     }
 
     @Override
@@ -102,5 +106,14 @@ public class DefaultTenantsManager implements TenantsManager, DisposableBean, In
             }
             return new ArrayList<>();
         }, throwable -> new ArrayList<>()).get();
+    }
+
+    private void writeTenantDefinitionsToResource() {
+        FunctionUtils.doAndHandle(_ -> {
+            if (ResourceUtils.isFile(jsonResource)) {
+                val writer = objectMapper.writerWithDefaultPrettyPrinter();
+                writer.writeValue(jsonResource.getFile(), tenantDefinitionList);
+            }
+        });
     }
 }

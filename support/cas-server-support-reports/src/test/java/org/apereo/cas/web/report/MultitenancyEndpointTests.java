@@ -70,6 +70,14 @@ class MultitenancyEndpointTests {
                     .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.id").value(tenant.getId()));
+
+            mockMvc.perform(delete("/actuator/multitenancy/tenants/{tenantId}", tenant.getId()))
+                .andExpect(status().isNoContent());
+            mockMvc.perform(get("/actuator/multitenancy/tenants/{tenantId}", tenant.getId())
+                    .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isNotFound());
+            mockMvc.perform(delete("/actuator/multitenancy/tenants/{tenantId}", tenant.getId()))
+                .andExpect(status().isNotFound());
         }
     }
 }
