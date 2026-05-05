@@ -7,6 +7,7 @@ import org.apereo.cas.util.serialization.DecodableCipherMap;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
+import lombok.Builder;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -46,12 +47,16 @@ public class TenantDefinition implements Serializable {
     private String description;
 
     @DecodableCipherMap
+    @Builder.Default
     private Map<String, Object> properties = new LinkedHashMap<>();
 
+    @Builder.Default
     private TenantAuthenticationPolicy authenticationPolicy = new DefaultTenantAuthenticationPolicy();
 
+    @Builder.Default
     private TenantUserInterfacePolicy userInterfacePolicy = new DefaultTenantUserInterfacePolicy();
-
+    
+    @Builder.Default
     private TenantDelegatedAuthenticationPolicy delegatedAuthenticationPolicy = new DefaultTenantDelegatedAuthenticationPolicy();
 
     /**
