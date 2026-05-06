@@ -280,6 +280,11 @@ public class MonitoredRepository {
                                 labelPullRequestAs(pr, CasLabels.LABEL_SKIP_CI);
                                 return approveAndMergePullRequest(pr, false);
                             }
+                            if (firstFile.endsWith("ci/tests/gcp/Dockerfile") && dependencyVersion.isQualifiedForMajorUpgrade()) {
+                                log.info("Merging major dependency upgrade {} from {} to {}", pr, startingVersion, endingVersion);
+                                labelPullRequestAs(pr, CasLabels.LABEL_SKIP_CI);
+                                return approveAndMergePullRequest(pr, false);
+                            }
                         }
 
                         if (stagingRepository) {

@@ -33,6 +33,8 @@ public class PullRequest {
     private final String number;
 
     private final String url;
+    
+    private final String htmlUrl;
 
     private final String commentsUrl;
 
@@ -71,6 +73,7 @@ public class PullRequest {
 
     @JsonCreator
     public PullRequest(@JsonProperty("url") final String url,
+                       @JsonProperty("html_url") final String htmlUrl,
                        @JsonProperty("comments_url") final String commentsUrl,
                        @JsonProperty("user") final User user,
                        @JsonProperty("labels") final List<Label> labels,
@@ -113,6 +116,7 @@ public class PullRequest {
         this.comments = comments;
 
         this.statusesUrl = statusesUrl;
+        this.htmlUrl = htmlUrl;
         this.draft = draft == null ? Boolean.FALSE : draft;
         this.mergeable = mergeable != null && Boolean.parseBoolean(mergeable);
         this.rebaseable = rebaseable != null && Boolean.parseBoolean(rebaseable);

@@ -22,7 +22,7 @@ public class StagingRepositoryJob {
             var pullRequests = repository.getOpenPullRequests();
             pullRequests.forEach(givenPullRequest -> {
                 val pr = repository.getPullRequest(givenPullRequest.getNumber());
-                log.info("Processing pull request {}", pr.getUrl());
+                log.info("Processing pull request {}", pr.getHtmlUrl());
                 repository.autoMergePullRequest(pr);
             });
             log.info("Processing workflow runs for {}", this.repository.getFullName());
