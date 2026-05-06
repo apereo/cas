@@ -1,9 +1,7 @@
-package org.apereo.cas.web.report;
+package org.apereo.cas.multitenancy;
 
 import module java.base;
 import org.apereo.cas.configuration.CasConfigurationProperties;
-import org.apereo.cas.multitenancy.TenantDefinition;
-import org.apereo.cas.multitenancy.TenantExtractor;
 import org.apereo.cas.web.BaseCasRestActuatorEndpoint;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
