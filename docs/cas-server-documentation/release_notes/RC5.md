@@ -102,13 +102,17 @@ you can always disable scope approval requests either globally or per client app
           
 If you have already turned off scope approval, there is nothing here for you to. Keep calm and carry on. 
  
-### Impersonation
+### Palantir
                
 [Palantir](../installation/Admin-Dashboard.html) is given the ability to support 
 [impersonation features](../authentication/Surrogate-Authentication.html) of CAS
 and report back eligible impersonation accounts for a given username. This functionality is supported by 
 the new actuator endpoint, `impersonation`, that can be used to query for eligible surrogate accounts.
 
+[Palantir](../installation/Admin-Dashboard.html) is also given the ability to add, edit, 
+duplicate or remove [tenant definitions](../multitenancy/Multitenancy-Overview.html).
+
 ## Other Stuff
               
 - Minor user interface adjustments to remove unneeded resources and script references from various pages.
+- Registered service definitions without a `name` are auto-assigned a name with a warning when the definition is saved.
