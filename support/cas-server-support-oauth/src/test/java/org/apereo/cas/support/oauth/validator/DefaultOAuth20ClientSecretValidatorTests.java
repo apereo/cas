@@ -9,6 +9,7 @@ import lombok.val;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.springframework.security.crypto.argon2.Argon2PasswordEncoder;
 import org.springframework.test.context.TestPropertySource;
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -43,6 +44,31 @@ class DefaultOAuth20ClientSecretValidatorTests extends AbstractOAuth20Tests {
     void verifyClientSecretIsWrong() {
         val secret = RandomUtils.randomAlphanumeric(12);
         val encodedSecret = oauth20ClientSecretValidator.getCipherExecutor().encode(secret);
+        val registeredService = new OAuthRegisteredService();
+        registeredService.setClientId("clientid");
+        registeredService.setClientSecret(encodedSecret);
+        val result = oauth20ClientSecretValidator.validate(registeredService, "badSecret");
+        assertFalse(result);
+    }
+
+    @Test
+    void verifyClientSecretCheckHash() {
+        val secret = RandomUtils.randomAlphanumeric(12);
+        val passwordEncoder = Argon2PasswordEncoder.defaultsForSpringSecurity_v5_8();
+        val encodedSecret = "{cas-hash}{argon2}" + passwordEncoder.encode(secret);
+        val registeredService = new OAuthRegisteredService();
+        registeredService.setClientId("clientid");
+        registeredService.setClientSecret(encodedSecret);
+        val result = oauth20ClientSecretValidator.validate(registeredService, secret);
+        assertTrue(result);
+        assertFalse(oauth20ClientSecretValidator.isClientSecretExpired(registeredService));
+    }
+
+    @Test
+    void verifyClientSecretIsWrongHash() {
+        val secret = RandomUtils.randomAlphanumeric(12);
+        val passwordEncoder = Argon2PasswordEncoder.defaultsForSpringSecurity_v5_8();
+        val encodedSecret = "{cas-hash}{argon2}" + passwordEncoder.encode(secret);
         val registeredService = new OAuthRegisteredService();
         registeredService.setClientId("clientid");
         registeredService.setClientSecret(encodedSecret);

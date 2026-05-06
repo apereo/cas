@@ -75,6 +75,21 @@ either manually or via the [CAS Command-line shell](../installation/Configuring-
 
 {% include_cached casproperties.html properties="cas.authn.oauth" %}
 
+## Hashed Client Secrets
+
+Client secrets for OAuth relying parties may be defined as hashed values prefixed with `{cas-hash}` using [Spring's DelegatingPasswordEncoder Storage Format](https://docs.spring.io/spring-security/reference/features/authentication/password-storage.html#authentication-password-storage-dpe-format):
+
+```json
+{
+  "@class": "org.apereo.cas.support.oauth.services.OAuthRegisteredService",
+  "clientId": "clientid",
+  "clientSecret": "{cas-hash}{argon2}$argon2id$v=19$m=16384,t=2,p=1$677d2HGv...",
+  "serviceId" : "^(https|imaps)://<redirect-uri>.*",
+  "name": "Sample",
+  "id": 100
+}
+```
+
 ## Attribute Release
 
 Attribute/claim filtering and release policies are defined per OAuth service.
