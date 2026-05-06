@@ -1,3 +1,5 @@
+let reloadTenantsTable = null;
+
 async function initializeMultitenancyOperations() {
     const tenantsToolbar = document.createElement("div");
     tenantsToolbar.innerHTML = `
@@ -6,6 +8,12 @@ async function initializeMultitenancyOperations() {
                 title="Create New Tenant"
                 class="mdc-button mdc-button--raised">
             <span class="mdc-button__label"><i class="mdc-tab__icon mdi mdi-plus-thick" aria-hidden="true"></i>New</span>
+        </button>
+        <button type="button" id="exportTenantsButton"
+                onclick="exportTenants()"
+                title="Export Tenants"
+                class="mdc-button mdc-button--raised ms-2">
+            <span class="mdc-button__label"><i class="mdc-tab__icon mdi mdi-download" aria-hidden="true"></i>Export</span>
         </button>
     `;
 
@@ -32,6 +40,18 @@ async function initializeMultitenancyOperations() {
                             class="mdc-button mdc-button--raised min-width-32x">
                         <i class="mdi mdi-eye min-width-32x" aria-hidden="true"></i>
                     </button>
+                    <button type="button" name="editTenantDefinition" href="#"
+                            title="Edit Tenant"
+                            data-tenant-id='${tenant.id}' onclick="editTenant('${tenant.id}')"
+                            class="mdc-button mdc-button--raised min-width-32x">
+                        <i class="mdi mdi-pencil min-width-32x" aria-hidden="true"></i>
+                    </button>
+                    <button type="button" name="duplicateTenantDefinition" href="#"
+                            title="Duplicate Tenant"
+                            data-tenant-id='${tenant.id}' onclick="duplicateTenant('${tenant.id}')"
+                            class="mdc-button mdc-button--raised min-width-32x">
+                        <i class="mdi mdi-content-copy min-width-32x" aria-hidden="true"></i>
+                    </button>
                     <button type="button" name="deleteTenantDefinition" href="#"
                             title="Delete Tenant"
                             data-tenant-id='${tenant.id}' onclick="deleteTenant('${tenant.id}', this)"
@@ -55,6 +75,7 @@ async function initializeMultitenancyOperations() {
     }
 
     fetchTenants();
+    reloadTenantsTable = fetchTenants;
     setInterval(() => {
         if (currentActiveTab === Tabs.MULTITENANCY.index) {
             fetchTenants();
@@ -182,7 +203,153 @@ function generateTenantPayload() {
     }
 }
 
-function newTenant() {
+function exportTenants() {
+    $.get(`${CasActuatorEndpoints.multitenancy()}/tenants`, response => {
+        const blob = new Blob([JSON.stringify(response, null, 2)], {type: "application/json"});
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement("a");
+        a.href = url;
+        a.download = "tenants.json";
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+    }).fail((xhr, status, error) => {
+        console.error("Error exporting data:", error);
+        displayBanner(xhr);
+    });
+}
+
+function editTenant(id) {
+    $.get(`${CasActuatorEndpoints.multitenancy()}/tenants/${id}`, response => {
+        newTenant(response, {editMode: true});
+    }).fail((xhr, status, error) => {
+        console.error("Error fetching data:", error);
+        displayBanner(xhr);
+    });
+}
+
+function duplicateTenant(id) {
+    $.get(`${CasActuatorEndpoints.multitenancy()}/tenants/${id}`, response => {
+        newTenant(response);
+    }).fail((xhr, status, error) => {
+        console.error("Error fetching data:", error);
+        displayBanner(xhr);
+    });
+}
+
+function extractArray(field) {
+    if (!field) {
+        return [];
+    }
+    if (Array.isArray(field) && field.length === 2 && typeof field[0] === "string" && Array.isArray(field[1])) {
+        return field[1];
+    }
+    if (Array.isArray(field)) {
+        return field;
+    }
+    return [];
+}
+
+function setFieldValue(selector, value) {
+    if (!value || String(value).trim().length === 0) {
+        return;
+    }
+    const $input = $(selector);
+    $input.val(value);
+    const $textField = $input.closest(".mdc-text-field");
+    $textField.addClass("mdc-text-field--label-floating");
+    $textField.find(".mdc-floating-label").addClass("mdc-floating-label--float-above");
+    $textField.find(".mdc-notched-outline").addClass("mdc-notched-outline--notched");
+}
+
+function prefillTenantDialog(data, editMode = false) {
+    setFieldValue("#tenantDescription", data.description);
+
+    const authPolicy = data.authenticationPolicy;
+    if (authPolicy) {
+        setFieldValue("#tenantAuthenticationHandlers", extractArray(authPolicy.authenticationHandlers).join(", "));
+        setFieldValue("#tenantAttributeRepositories", extractArray(authPolicy.attributeRepositories).join(", "));
+        const proto = authPolicy.authenticationProtocolPolicy;
+        if (proto) {
+            setFieldValue("#tenantSupportedProtocols", extractArray(proto.supportedProtocols).join(", "));
+        }
+    }
+
+    const delegated = data.delegatedAuthenticationPolicy;
+    if (delegated) {
+        setFieldValue("#tenantExternalIdentityProviders", extractArray(delegated.allowedProviders).join(", "));
+    }
+
+    const uiPolicy = data.userInterfacePolicy;
+    if (uiPolicy && uiPolicy.themeName) {
+        setFieldValue("#tenantThemeName", uiPolicy.themeName);
+    }
+
+    const properties = data.properties;
+    if (properties) {
+        // Handle both plain-object {"@class":"...", k:v} and typed-array ["java.util.TreeMap",{k:v}] formats
+        let propsObj = (Array.isArray(properties) && properties.length === 2 && typeof properties[1] === "object")
+            ? properties[1] : properties;
+        const entries = Object.entries(propsObj).filter(([k]) => k !== "@class");
+        if (entries.length > 0) {
+            // Scope through the first row's parent to avoid stale/duplicate global ID matches
+            const $firstRow = $("#registeredServiceTenantPropertyKeyMapContainer .tenantPropertyKey-map-row").first();
+            const $container = $firstRow.parent();
+            const $toAppend = $container.children("span[id$='ToAppend']");
+
+            for (let i = 1; i < entries.length; i++) {
+                const $newRow = $firstRow.clone(false);
+                $newRow.find("input").val("");
+                $newRow.find(".mdc-text-field").removeClass("mdc-text-field--label-floating");
+                $newRow.find(".mdc-floating-label").removeClass("mdc-floating-label--float-above");
+                if ($toAppend.length > 0) {
+                    $toAppend.append($newRow);
+                } else {
+                    // Fallback: insert after the first row
+                    $firstRow.after($newRow);
+                }
+            }
+
+            const allRows = $container.find(".tenantPropertyKey-map-row");
+
+            entries.forEach(([key, value], idx) => {
+                const row = allRows.eq(idx);
+                row.find("input").filter((_i, el) => el.id === "registeredServiceTenantPropertyKey").val(key);
+                row.find("input").filter((_i, el) => el.id === "registeredServiceTenantPropertyValue").val(value);
+                row.find("input").each(function () {
+                    if ($(this).val()) {
+                        const $tf = $(this).closest(".mdc-text-field");
+                        $tf.addClass("mdc-text-field--label-floating");
+                        $tf.find(".mdc-floating-label").addClass("mdc-floating-label--float-above");
+                        $tf.find(".mdc-notched-outline").addClass("mdc-notched-outline--notched");
+                    }
+                });
+            });
+
+            // Re-wire remove buttons and input-change callbacks for all rows
+            $container.find("button[name$='RemoveButton']")
+                .off("click").on("click", function () {
+                    $(this).closest(".tenantPropertyKey-map-row").remove();
+                    generateTenantPayload();
+                });
+            $container.find("input")
+                .off("input").on("input", () => generateTenantPayload());
+        }
+    }
+
+    if (editMode && data.id) {
+        setFieldValue("#tenantId", data.id);
+        $("#tenantId").prop("readonly", true).prop("disabled", true);
+        $("#tenantDescription").trigger("focus");
+    } else {
+        $("#tenantId").val("").trigger("focus");
+    }
+    generateTenantPayload();
+}
+
+function newTenant(prefillData = null, options = {}) {
+    const editMode = options.editMode === true;
     const dialogContainer = $("<div>", {
         id: "newTenantDialog"
     });
@@ -320,7 +487,7 @@ function newTenant() {
     }
 
     dialogContainer.dialog({
-        title: "New Tenant",
+        title: editMode ? "Edit Tenant" : "New Tenant",
         modal: true,
         width: 1400,
         autoOpen: false,
@@ -354,6 +521,9 @@ function newTenant() {
                     data: JSON.stringify(payload),
                     success: () => {
                         $dlg.dialog("close");
+                        if (reloadTenantsTable) {
+                            reloadTenantsTable();
+                        }
                     },
                     error: (xhr, status, error) => {
                         console.error(`Error: ${status} / ${error} / ${xhr.responseText}`);
@@ -421,7 +591,11 @@ function newTenant() {
                 generateTenantPayload();
             });
 
-            generateTenantPayload();
+            if (prefillData) {
+                prefillTenantDialog(prefillData, editMode);
+            } else {
+                generateTenantPayload();
+            }
 
             const showEditor = localStorage.getItem("showTenantJsonEditorPreference");
             if (showEditor === "false") {

@@ -78,7 +78,7 @@ public class MultitenancyEndpoint extends BaseCasRestActuatorEndpoint {
     /**
      * Register a tenant definition.
      *
-     * @param tenantDefinition the tenant definition to register
+     * @param requestBody the tenant definition to register
      * @return the registered tenant definition
      */
     @PostMapping(
@@ -92,10 +92,12 @@ public class MultitenancyEndpoint extends BaseCasRestActuatorEndpoint {
         })
     @Operation(summary = "Register or update a tenant definition",
         parameters = @Parameter(name = "tenantDefinition", required = true, description = "The tenant definition to register"))
-    public ResponseEntity<TenantDefinition> registerTenantDefinition(@RequestBody final TenantDefinition tenantDefinition) {
+    public ResponseEntity<TenantDefinition> registerTenantDefinition(@RequestBody final String requestBody) {
+        val tenantDefinition = MAPPER.readValue(requestBody, TenantDefinition.class);
         val saved = tenantExtractor.getObject().getTenantsManager().save(tenantDefinition);
         return ResponseEntity.ok(saved);
     }
+
 
     /**
      * Remove a tenant definition by id.
