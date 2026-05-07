@@ -77,6 +77,7 @@ public class PullRequestWebhookController {
     }
 
     private void handlePullRequestEvent(PullRequestEvent event) throws Exception {
+        log.info("Processing pull request event: {} / {} / {}", event.url(), event.title(), event.author());
         switch (event.action()) {
             case "opened", "reopened" -> handleOpened(event);
         }
@@ -84,7 +85,6 @@ public class PullRequestWebhookController {
 
     private void handleOpened(PullRequestEvent event) throws Exception {
         if (event.repository().equalsIgnoreCase(pullRequestListener.getRepository().getFullName())) {
-            log.info("Processing pull request event: {} / {} / {}", event.url(), event.title(), event.author());
             pullRequestListener.onOpenPullRequest(String.valueOf(event.pullRequestNumber()));
         }
     }
