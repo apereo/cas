@@ -4,6 +4,9 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import io.micrometer.common.util.StringUtils;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
+import org.apereo.cas.GitHubProperties;
+import org.apereo.cas.PullRequestListener;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
 import org.springframework.util.StreamUtils;
@@ -24,6 +27,12 @@ public class PullRequestWebhookController {
     @Value("${casbot.github.repository.webhook.secret}")
     private String webhookSecret;
 
+    @Autowired
+    private GitHubProperties.Repository repositoryProperties;
+
+    @Autowired
+    private PullRequestListener pullRequestListener;
+
     @PostMapping("/webhooks/pullrequests")
     public ResponseEntity<?> handlePullRequestWebhook(HttpServletRequest request) throws Exception {
         var rawBody = StreamUtils.copyToByteArray(request.getInputStream());
@@ -31,8 +40,7 @@ public class PullRequestWebhookController {
         var deliveryId = request.getHeader("X-GitHub-Delivery");
         var signature = request.getHeader("X-Hub-Signature-256");
 
-        log.info("Received event: {}", event);
-        
+        log.debug("Received event: {}", event);
         if ("ping".equals(event) || StringUtils.isBlank(event)) {
             return ResponseEntity.ok("pong");
         }
@@ -45,7 +53,7 @@ public class PullRequestWebhookController {
             return ResponseEntity.status(401).body("Invalid GitHub signature");
         }
 
-        log.info("Event received: {}", new String(rawBody, StandardCharsets.UTF_8));
+        log.debug("Event received: {}", new String(rawBody, StandardCharsets.UTF_8));
         var payload = objectMapper.readTree(rawBody);
         var action = payload.path("action").asText();
         var pullRequest = payload.path("pull_request");
@@ -71,14 +79,17 @@ public class PullRequestWebhookController {
         return ResponseEntity.ok("Processed pull request event");
     }
 
-    private static void handlePullRequestEvent(PullRequestEvent event) {
+    private void handlePullRequestEvent(PullRequestEvent event) throws Exception {
         switch (event.action()) {
             case "opened", "reopened" -> handleOpened(event);
         }
     }
 
-    private static void handleOpened(PullRequestEvent event) {
-        System.out.println("PR opened: " + event);
+    private void handleOpened(PullRequestEvent event) throws Exception {
+        log.info("Received event for pull request: {} / {}", event.url(), event.title());
+        if (event.repository().equalsIgnoreCase(repositoryProperties.getFullName())) {
+            pullRequestListener.onOpenPullRequest(String.valueOf(event.pullRequestNumber()));
+        }
     }
 
     private boolean isValidSignature(byte[] rawBody, String signatureHeader) throws Exception {

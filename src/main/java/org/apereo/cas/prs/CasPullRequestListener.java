@@ -1,5 +1,6 @@
 package org.apereo.cas.prs;
 
+import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
@@ -23,11 +24,17 @@ public class CasPullRequestListener implements PullRequestListener {
     private static final Pattern PATTERN_REVIEWED_BY = Pattern.compile("reviewed by:\\s*@*(\\w+)");
     private static final Pattern PATTERN_PUPPETEER = Pattern.compile(".*puppeteer.*scenarios.*script.*");
 
+    @Getter
     private final MonitoredRepository repository;
 
     @Override
     public void onOpenPullRequest(final PullRequest givenPullRequest) throws Exception {
-        val pr = repository.getPullRequest(givenPullRequest.getNumber());
+        onOpenPullRequest(givenPullRequest.getNumber());
+    }
+
+    @Override
+    public void onOpenPullRequest(String number) throws Exception {
+        val pr = repository.getPullRequest(String.valueOf(number));
         log.info("Processing pull request {}", pr.getHtmlUrl());
         if (shouldDisregardPullRequest(pr)) {
             log.info("{} is considered invalid and will not be processed", pr);
