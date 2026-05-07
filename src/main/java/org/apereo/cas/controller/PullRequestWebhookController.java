@@ -28,9 +28,6 @@ public class PullRequestWebhookController {
     private String webhookSecret;
 
     @Autowired
-    private GitHubProperties.Repository repositoryProperties;
-
-    @Autowired
     private PullRequestListener pullRequestListener;
 
     @PostMapping("/webhooks/pullrequests")
@@ -87,7 +84,7 @@ public class PullRequestWebhookController {
 
     private void handleOpened(PullRequestEvent event) throws Exception {
         log.info("Received event for pull request: {} / {}", event.url(), event.title());
-        if (event.repository().equalsIgnoreCase(repositoryProperties.getFullName())) {
+        if (event.repository().equalsIgnoreCase(pullRequestListener.getRepository().getFullName())) {
             pullRequestListener.onOpenPullRequest(String.valueOf(event.pullRequestNumber()));
         }
     }
