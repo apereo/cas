@@ -14,6 +14,8 @@ casbot:
       url: https://github.com/apereo/cas
       admins: mmoayyed,apereocas-bot
       committers: leleuj,mmoayyed,apereocas-bot
+      webhook:
+        secret: ${GITHUB_WEBHOOK_SECRET}
     staging-repository:
       organization: mmoayyed
       name: cas

@@ -39,17 +39,16 @@ import java.util.List;
 @Validated
 public class GitHubProperties {
 
-    @NestedConfigurationProperty
     @Valid
     private Repository repository = new Repository();
     
-    @NestedConfigurationProperty
     @Valid
     private Repository stagingRepository = new Repository();
 
     @NestedConfigurationProperty
     private PullRequestProperties prs = new PullRequestProperties();
-
+    
+    
     private long maximumChangedFiles = 40;
 
     private long staleWorkflowRunInDays = 3;
@@ -88,6 +87,9 @@ public class GitHubProperties {
         public String getFullName() {
             return organization + '/' + name;
         }
+
+        @Valid
+        private Webhook webhook = new Webhook();
     }
 
     /**
@@ -99,4 +101,9 @@ public class GitHubProperties {
         private String token;
     }
 
+    @Getter
+    @Setter
+    public static class Webhook {
+        private String secret;
+    }
 }
