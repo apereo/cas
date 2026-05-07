@@ -260,7 +260,6 @@ public abstract class BaseSamlIdPConfigurationTests {
         return AuthenticatedAssertionContext.builder()
             .name(user)
             .authenticationDate(ZonedDateTime.now(Clock.systemUTC()))
-            .validUntilDate(ZonedDateTime.now(Clock.systemUTC()).plusHours(1))
             .validFromDate(ZonedDateTime.now(Clock.systemUTC()))
             .attributes(attributes)
             .build();
