@@ -1,6 +1,7 @@
 package org.apereo.cas.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import io.micrometer.common.util.StringUtils;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -30,7 +31,9 @@ public class PullRequestWebhookController {
         var deliveryId = request.getHeader("X-GitHub-Delivery");
         var signature = request.getHeader("X-Hub-Signature-256");
 
-        if ("ping".equals(event)) {
+        log.info("Received event: {}", event);
+        
+        if ("ping".equals(event) || StringUtils.isBlank(event)) {
             return ResponseEntity.ok("pong");
         }
 
@@ -115,5 +118,5 @@ public class PullRequestWebhookController {
             String headSha
     ) {
     }
-    
+
 }
