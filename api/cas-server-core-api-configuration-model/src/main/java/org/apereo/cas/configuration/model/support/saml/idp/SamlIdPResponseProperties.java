@@ -22,7 +22,7 @@ import lombok.val;
 public class SamlIdPResponseProperties implements Serializable {
 
     @Serial
-    private static final long serialVersionUID = 7200477683583467619L;
+    private static final long serialVersionUID = 7200477683583467621L;
 
     /**
      * Indicate the encoding type of the credential used when rendering the saml response.
@@ -35,6 +35,12 @@ public class SamlIdPResponseProperties implements Serializable {
      */
     @DurationCapable
     private String skewAllowance = "PT30S";
+
+    /**
+     * Time defined for valid-until elements.
+     */
+    @DurationCapable
+    private String validityUntil = "PT1H";
 
     /**
      * Whether error responses should be signed.
