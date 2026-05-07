@@ -77,7 +77,8 @@ public class PullRequestWebhookController {
     }
 
     private void handlePullRequestEvent(PullRequestEvent event) throws Exception {
-        log.info("Processing pull request event: {} / {} / {}", event.url(), event.title(), event.author());
+        log.info("Pull request: {}: {} / {} / {}",
+                event.action(), event.url(), event.title(), event.author());
         switch (event.action()) {
             case "opened", "reopened" -> handleOpened(event);
         }
