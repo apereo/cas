@@ -45,6 +45,7 @@ public class PullRequestWebhookController {
             return ResponseEntity.status(401).body("Invalid GitHub signature");
         }
 
+        log.info("Event received: {}", new String(rawBody, StandardCharsets.UTF_8));
         var payload = objectMapper.readTree(rawBody);
         var action = payload.path("action").asText();
         var pullRequest = payload.path("pull_request");
