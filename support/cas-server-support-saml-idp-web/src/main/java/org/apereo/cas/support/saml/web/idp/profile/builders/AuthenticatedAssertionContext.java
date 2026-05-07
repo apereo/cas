@@ -17,13 +17,10 @@ import lombok.experimental.SuperBuilder;
 @ToString(of = "name")
 public class AuthenticatedAssertionContext implements Serializable {
     @Serial
-    private static final long serialVersionUID = 8177552946469646942L;
+    private static final long serialVersionUID = 8177552946469646943L;
 
     @Builder.Default
     private final ZonedDateTime validFromDate = ZonedDateTime.now(ZoneOffset.UTC);
-
-    @Builder.Default
-    private final ZonedDateTime validUntilDate = ZonedDateTime.now(ZoneOffset.UTC).plusHours(1);
 
     @Builder.Default
     private final ZonedDateTime authenticationDate = ZonedDateTime.now(ZoneOffset.UTC);
