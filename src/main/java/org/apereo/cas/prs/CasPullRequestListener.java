@@ -35,7 +35,7 @@ public class CasPullRequestListener implements PullRequestListener {
     @Override
     public void onOpenPullRequest(String number) throws Exception {
         val pr = repository.getPullRequest(String.valueOf(number));
-        log.info("Processing pull request {}", pr.getHtmlUrl());
+        log.info("Processing pull request {} by {}", pr.getHtmlUrl(), pr.getUser().getLogin());
         if (shouldDisregardPullRequest(pr)) {
             log.info("{} is considered invalid and will not be processed", pr);
             return;
