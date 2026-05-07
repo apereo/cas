@@ -154,6 +154,16 @@ function createRegisteredServiceSaml2Fields() {
 
     createInputField({
         cssClasses: "advanced-option",
+        labelTitle: "Validity Until",
+        name: "registeredServiceValidityUntil",
+        paramName: "validityUntil",
+        required: false,
+        containerId: "editServiceWizardSamlContainer",
+        title: "If defined, indicates the number of seconds from now used for the valid-until elements"
+    });
+
+    createInputField({
+        cssClasses: "advanced-option",
         labelTitle: "Signing Signature Reference Digest Methods",
         name: "registeredServiceSigningSignatureReferenceDigestMethods",
         paramName: "signingSignatureReferenceDigestMethods",
