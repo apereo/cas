@@ -77,6 +77,7 @@ public class PullRequestWebhookController {
     }
 
     private void handlePullRequestEvent(PullRequestEvent event) throws Exception {
+        log.info("Received event action: {}", event.action());
         switch (event.action()) {
             case "opened", "reopened" -> handleOpened(event);
         }
