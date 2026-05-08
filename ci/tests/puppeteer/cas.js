@@ -21,7 +21,7 @@ const pino = require("pino");
 const xml2js = require("xml2js");
 const {Docker} = require("node-docker-api");
 const docker = new Docker({socketPath: "/var/run/docker.sock"});
-const archiver = require("archiver");
+const {ZipArchive} = require("archiver");
 const unzipper = require("unzipper");
 const puppeteer = require("puppeteer");
 const speakeasy = require("speakeasy");
@@ -1286,7 +1286,7 @@ exports.updateYamlConfigurationSource = async(configDirectory, config) => {
 
 exports.createZipFile = async (file, callback) => {
     const zip = fs.createWriteStream(file);
-    const archive = archiver("zip", {
+    const archive = new ZipArchive({
         zlib: {level: 9}
     });
     archive.pipe(zip);
