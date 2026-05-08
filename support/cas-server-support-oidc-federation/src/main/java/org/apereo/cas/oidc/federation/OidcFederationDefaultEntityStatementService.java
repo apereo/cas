@@ -11,8 +11,10 @@ import com.nimbusds.openid.connect.sdk.federation.entities.EntityStatement;
 import com.nimbusds.openid.connect.sdk.federation.entities.EntityStatementClaimsSet;
 import com.nimbusds.openid.connect.sdk.federation.entities.FederationEntityMetadata;
 import com.nimbusds.openid.connect.sdk.op.OIDCProviderMetadata;
+import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.val;
+import org.jooq.lambda.Unchecked;
 import org.springframework.beans.factory.ObjectProvider;
 
 /**
@@ -22,6 +24,7 @@ import org.springframework.beans.factory.ObjectProvider;
  * @since 7.3.0
  */
 @RequiredArgsConstructor
+@Getter
 public class OidcFederationDefaultEntityStatementService implements OidcFederationEntityStatementService {
     private final OidcFederationJsonWebKeystoreService jsonWebKeystoreService;
     private final ObjectProvider<OidcServerDiscoverySettings> serverDiscoverySettings;
@@ -29,18 +32,7 @@ public class OidcFederationDefaultEntityStatementService implements OidcFederati
 
     @Override
     public EntityStatement createAndSign() throws Exception {
-        val role = oidcProperties.getFederation().getRole();
-
-        val settings = serverDiscoverySettings.getIfAvailable();
-        var issuer = oidcProperties.getCore().getIssuer();
-        if (settings != null) {
-            if (role != OidcFederationRole.OPENID_PROVIDER) {
-                throw new IllegalArgumentException("Federation role [" + role + "] is not supported for OpenID Provider");
-            }
-            issuer = settings.getIssuer();
-        } else if (role != OidcFederationRole.TRUST_ANCHOR && role != OidcFederationRole.INTERMEDIATE) {
-            throw new IllegalArgumentException("Federation role [" + role + "] is not supported for Trust Anchor/Intermediate");
-        }
+        val issuer = determineIssuer();
 
         val iss = new EntityID(issuer);
         val sub = new EntityID(issuer);
@@ -58,20 +50,35 @@ public class OidcFederationDefaultEntityStatementService implements OidcFederati
             jsonWebKeystoreService.toJWKSet()
         );
 
-        if (settings != null) {
+        serverDiscoverySettings.ifAvailable(Unchecked.consumer(settings -> {
             val authorityHints = oidcProperties.getFederation().getAuthorityHints().stream().map(EntityID::new).toList();
             claims.setAuthorityHints(authorityHints);
-
             val discovery = settings.toJson();
             val opMetadata = OIDCProviderMetadata.parse(discovery);
             claims.setOPMetadata(opMetadata);
-        }
-        
+        }));
+
         val fedMeta = new FederationEntityMetadata();
         fedMeta.setOrganizationName(oidcProperties.getFederation().getOrganization());
         fedMeta.setContacts(oidcProperties.getFederation().getContacts());
         claims.setFederationEntityMetadata(fedMeta);
 
         return jsonWebKeystoreService.signEntityStatement(claims);
+    }
+
+    protected String determineIssuer() {
+        val role = oidcProperties.getFederation().getRole();
+        val settings = serverDiscoverySettings.getIfAvailable();
+        var issuer = oidcProperties.getCore().getIssuer();
+        if (settings != null) {
+            if (role != OidcFederationRole.OPENID_PROVIDER) {
+                throw new IllegalArgumentException("Federation role [" + role + "] is not supported for OpenID Provider");
+            }
+            issuer = settings.getIssuer();
+        }
+        if (role != OidcFederationRole.TRUST_ANCHOR && role != OidcFederationRole.INTERMEDIATE) {
+            throw new IllegalArgumentException("Federation role [" + role + "] is not supported for Trust Anchor/Intermediate");
+        }
+        return issuer;
     }
 }

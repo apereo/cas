@@ -116,4 +116,5 @@ duplicate or remove [tenant definitions](../multitenancy/Multitenancy-Overview.h
               
 - Minor user interface adjustments to remove unneeded resources and script references from various pages.
 - Registered service definitions without a `name` are auto-assigned a name with a warning when the definition is saved.
+- Generated client secrets via [OpenID Connect Dynamic Registration](../authentication/OIDC-Authentication-Dynamic-Registration.html) are automatically ciphered, if configured.
 - A large number of dependencies and libraries have been updated to their latest versions. 
