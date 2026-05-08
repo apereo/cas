@@ -171,7 +171,7 @@ class SSOSamlIdPProfileCallbackHandlerControllerTests {
                                               final AuthnRequest authnRequest) throws Throwable {
             val adaptor = SamlRegisteredServiceMetadataAdaptor
                 .get(samlRegisteredServiceCachingMetadataResolver, samlRegisteredService,
-                    samlRegisteredService.getServiceId()).get();
+                    samlRegisteredService.getServiceId()).orElseThrow();
             return samlIdPObjectSigner.encode(authnRequest, samlRegisteredService,
                 adaptor, response, request, SAMLConstants.SAML2_POST_BINDING_URI, authnRequest, new MessageContext());
         }

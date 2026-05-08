@@ -24,6 +24,6 @@ class DefaultDelegatedClientAuthenticationFailureEvaluatorTests {
         val evaluator = new DefaultDelegatedClientAuthenticationFailureEvaluator(
                 mock(DelegatedClientAuthenticationConfigurationContext.class));
         val optModelAndView = evaluator.evaluate(new MockHttpServletRequest(), HttpStatus.LOCKED.value());
-        assertEquals("error/%s".formatted(HttpStatus.LOCKED.value()), optModelAndView.get().getViewName());
+        assertEquals("error/%s".formatted(HttpStatus.LOCKED.value()), optModelAndView.orElseThrow().getViewName());
     }
 }

@@ -297,7 +297,7 @@ class SamlIdPSaml2AttributeQueryProfileHandlerControllerTests {
 
             if (nameIdFormat.equals(NameIDType.ENCRYPTED)) {
                 val facade = SamlRegisteredServiceMetadataAdaptor.get(defaultSamlRegisteredServiceCachingMetadataResolver,
-                    samlRegisteredService, samlRegisteredService.getServiceId()).get();
+                    samlRegisteredService, samlRegisteredService.getServiceId()).orElseThrow();
                 val encryptedId = samlIdPObjectEncrypter.encode(nameId, samlRegisteredService, facade);
                 subject.setEncryptedID(encryptedId);
             } else {

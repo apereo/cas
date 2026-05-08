@@ -1,6 +1,7 @@
 package org.apereo.cas.support.saml.web.idp.profile.builders.authn;
 
 import module java.base;
+import org.apereo.cas.configuration.support.Beans;
 import org.apereo.cas.support.saml.BaseSamlIdPConfigurationTests;
 import org.apereo.cas.support.saml.services.SamlRegisteredService;
 import org.apereo.cas.support.saml.services.idp.metadata.SamlRegisteredServiceMetadataAdaptor;
@@ -14,9 +15,9 @@ import org.opensaml.saml.common.xml.SAMLConstants;
 import org.opensaml.saml.saml2.core.AuthnStatement;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
+import org.springframework.test.context.TestPropertySource;
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
@@ -28,79 +29,63 @@ import static org.junit.jupiter.api.Assertions.*;
 @Tag("SAMLResponse")
 class SamlProfileSamlAuthNStatementBuilderTests {
 
-    class AbstractValidityUntilSamlProfileSamlAuthNStatementBuilderTests extends BaseSamlIdPConfigurationTests {
-        protected static final int ONE_HOUR = 60;
-        private static final int ONE_MINUTE = 1;
-
+    private abstract static class BaseTests extends BaseSamlIdPConfigurationTests {
         @Autowired
         @Qualifier("samlProfileSamlAuthNStatementBuilder")
-        protected SamlProfileObjectBuilder<AuthnStatement> samlProfileSamlAuthNStatementBuilder;
+        private SamlProfileObjectBuilder<AuthnStatement> samlProfileSamlAuthNStatementBuilder;
 
-        protected void checkResultAndValidity(final SamlRegisteredService service, final int expectedValidity) throws Exception {
+        void checkResultAndValidity(final SamlRegisteredService service,
+                                            final String expectedValidity) throws Exception {
             val adaptor = SamlRegisteredServiceMetadataAdaptor.get(
-                    samlRegisteredServiceCachingMetadataResolver,
-                    service, service.getServiceId()).get();
+                samlRegisteredServiceCachingMetadataResolver,
+                service, service.getServiceId()).orElseThrow();
 
             val request = getAuthnRequestFor(UUID.randomUUID().toString());
             val buildContext = SamlProfileBuilderContext.builder()
-                    .samlRequest(request)
-                    .httpRequest(new MockHttpServletRequest())
-                    .httpResponse(new MockHttpServletResponse())
-                    .authenticatedAssertion(Optional.of(getAssertion()))
-                    .registeredService(service)
-                    .adaptor(adaptor)
-                    .binding(SAMLConstants.SAML2_POST_BINDING_URI)
-                    .build();
+                .samlRequest(request)
+                .httpRequest(new MockHttpServletRequest())
+                .httpResponse(new MockHttpServletResponse())
+                .authenticatedAssertion(Optional.of(getAssertion()))
+                .registeredService(service)
+                .adaptor(adaptor)
+                .binding(SAMLConstants.SAML2_POST_BINDING_URI)
+                .build();
 
             val result = samlProfileSamlAuthNStatementBuilder.build(buildContext);
             assertNotNull(result);
             val sessionNotOnOrAfter = result.getSessionNotOnOrAfter();
+            assertNotNull(sessionNotOnOrAfter);
             val now = ZonedDateTime.now(ZoneOffset.UTC);
-            assertTrue(sessionNotOnOrAfter.isAfter(now.plusMinutes(expectedValidity - ONE_MINUTE).toInstant()));
-            assertTrue(sessionNotOnOrAfter.isBefore(now.plusMinutes(expectedValidity + ONE_MINUTE).toInstant()));
+            assertTrue(sessionNotOnOrAfter.isAfter(now.plusMinutes(Beans.newDuration(expectedValidity)
+                .minusMinutes(1).toMinutes()).toInstant()));
+            assertTrue(sessionNotOnOrAfter.isBefore(now.plusMinutes(Beans.newDuration(expectedValidity)
+                .plusMinutes(1).toMinutes()).toInstant()));
         }
     }
 
     @Nested
-    class DefaultValidityUntilSamlProfileSamlAuthNStatementBuilderTests
-            extends AbstractValidityUntilSamlProfileSamlAuthNStatementBuilderTests {
+    class DefaultTests extends BaseTests {
         @Test
         void verifyOperationDefaultSettings() throws Throwable {
             val service = getSamlRegisteredServiceForTestShib(true, true);
-            checkResultAndValidity(service, ONE_HOUR);
+            checkResultAndValidity(service, "PT1H");
         }
 
         @Test
         void verifyOperationLongerValidityFromService() throws Throwable {
             val service = getSamlRegisteredServiceForTestShib(true, true);
-            service.setValidityUntil(3 * ONE_HOUR * 60);
-            checkResultAndValidity(service, 3 * ONE_HOUR);
+            service.setValidityUntil("PT1H");
+            checkResultAndValidity(service, "PT3H");
         }
     }
 
-    @SpringBootTest(
-        classes = BaseSamlIdPConfigurationTests.SharedTestConfiguration.class,
-        properties = {
-            "server.port=8383",
-            "cas.monitor.endpoints.endpoint.defaults.access=ANONYMOUS",
-            "management.endpoints.web.exposure.include=*",
-            "management.endpoints.access.default=UNRESTRICTED",
-
-            "cas.webflow.crypto.encryption.key=qLhvLuaobvfzMmbo9U_bYA",
-            "cas.webflow.crypto.signing.key=oZeAR5pEXsolruu4OQYsQKxf-FCvFzSsKlsVaKmfIl6pNzoPm6zPW94NRS1af7vT-0bb3DpPBeksvBXjloEsiA",
-            "cas.authn.saml-idp.core.entity-id=https://cas.example.org/idp",
-            "cas.authn.saml-idp.metadata.http.metadata-backup-location=file://${java.io.tmpdir}/metadata-backups",
-            "cas.authn.saml-idp.metadata.file-system.location=${#systemProperties['java.io.tmpdir']}/idp-metadata-${#randomNumber8}",
-            "cas.authn.saml-idp.response.validity-until=PT2H"
-        },
-        webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
+    @TestPropertySource(properties = "cas.authn.saml-idp.response.validity-until=PT2H")
     @Nested
-    class LongerValidityByConfigurationSamlProfileSamlAuthNStatementBuilderTests
-            extends AbstractValidityUntilSamlProfileSamlAuthNStatementBuilderTests {
+    class LongerValidityTests extends BaseTests {
         @Test
         void verifyOperation() throws Throwable {
             val service = getSamlRegisteredServiceForTestShib(true, true);
-            checkResultAndValidity(service, 2 * ONE_HOUR);
+            checkResultAndValidity(service, "PT2H");
         }
     }
 }

@@ -472,7 +472,7 @@ class JsonAttributeDefinitionStoreTests {
 
             when(service.getPublicKey()).thenReturn(mock(RegisteredServicePublicKey.class));
             results = store.resolveAttributeValues("cn", context);
-            assertTrue(results.get().getValue().isEmpty());
+            assertTrue(results.orElseThrow().getValue().isEmpty());
         }
     }
 

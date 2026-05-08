@@ -44,7 +44,7 @@ class MongoDbMultifactorAuthenticationTrustStorageTests extends AbstractMultifac
         
         val records = getMfaTrustEngine().get("casuser");
         assertEquals(1, records.size());
-        getMfaTrustEngine().remove(records.stream().findFirst().get().getRecordKey());
+        getMfaTrustEngine().remove(records.stream().findFirst().orElseThrow().getRecordKey());
         assertTrue(getMfaTrustEngine().get("casuser").isEmpty());
     }
 

@@ -61,8 +61,8 @@ public class SamlIdPProfileSingleLogoutMessageCreator extends AbstractSaml20Obje
         val id = '_' + String.valueOf(RandomUtils.nextLong());
 
         val samlService = (SamlRegisteredService) request.getRegisteredService();
-        val skewAllowance = samlService.getSkewAllowance() != 0
-            ? samlService.getSkewAllowance()
+        val skewAllowance = StringUtils.isNotBlank(samlService.getSkewAllowance())
+            ? Long.parseLong(samlService.getSkewAllowance())
             : Beans.newDuration(samlIdPProperties.getResponse().getSkewAllowance()).toSeconds();
 
         val issueInstant = ZonedDateTime.now(ZoneOffset.UTC).plusSeconds(skewAllowance);

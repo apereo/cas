@@ -110,7 +110,7 @@ class SamlIdPProfileSingleLogoutMessageCreatorTests extends BaseSamlIdPConfigura
     void verifySignByBasicCredOperation() throws Throwable {
         val samlRegisteredService = SamlIdPTestUtils.getSamlRegisteredService();
         samlRegisteredService.setSigningCredentialType("basic");
-        samlRegisteredService.setSkewAllowance(1000);
+        samlRegisteredService.setSkewAllowance("1000");
         val logoutRequest = DefaultSingleLogoutRequestContext.builder()
             .logoutUrl(new URI("https://sp.example.org/slo").toURL())
             .registeredService(samlRegisteredService)
