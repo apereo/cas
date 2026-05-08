@@ -32,7 +32,8 @@ public class DefaultOAuth20ClientSecretValidator implements OAuth20ClientSecretV
 
         val clientSecretAssigned = SpringExpressionLanguageValueResolver.getInstance().resolve(registeredService.getClientSecret());
         val definedSecret = cipherExecutor.decode(clientSecretAssigned, new Object[]{registeredService});
-        if (!Strings.CI.equals(definedSecret, clientSecret)) {
+        val givenSecret = cipherExecutor.decode(clientSecret, new Object[]{registeredService});
+        if (!Strings.CI.equals(definedSecret, givenSecret)) {
             LOGGER.error("Wrong client secret for service: [{}]. If you intend to use PKCE, note that it does not require a client secret and "
                        + "requests generally must not specify a client secret to CAS.\nFurthermore, you must make sure "
                        + "no client secret is assigned to this registered service in the CAS service registry.",

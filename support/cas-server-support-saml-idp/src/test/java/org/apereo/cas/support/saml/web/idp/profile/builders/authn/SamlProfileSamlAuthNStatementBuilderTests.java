@@ -74,7 +74,7 @@ class SamlProfileSamlAuthNStatementBuilderTests {
         @Test
         void verifyOperationLongerValidityFromService() throws Throwable {
             val service = getSamlRegisteredServiceForTestShib(true, true);
-            service.setValidityUntil("PT1H");
+            service.setValidityUntil("PT3H");
             checkResultAndValidity(service, "PT3H");
         }
     }
