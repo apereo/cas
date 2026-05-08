@@ -3,7 +3,7 @@
   "name": "functional-tests",
   "dependencies": {
     "@stomp/stompjs": "7.3.0",
-    "archiver": "7.0.1",
+    "archiver": "8.0.0",
     "axios": "1.16.0",
     "basic-auth": "2.0.1",
     "colors": "1.4.0",
