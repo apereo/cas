@@ -42,6 +42,6 @@ public class TicketRegistryStreamCriteria implements Serializable {
      */
     @JsonIgnore
     public boolean isInfiniteCount() {
-        return count == Long.MAX_VALUE;
+        return count == Long.MAX_VALUE || count <= 0;
     }
 }
