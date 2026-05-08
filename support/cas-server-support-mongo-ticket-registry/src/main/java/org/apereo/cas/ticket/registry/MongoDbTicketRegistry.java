@@ -148,9 +148,9 @@ public class MongoDbTicketRegistry extends AbstractTicketRegistry {
         return ticketCatalog.findAll()
             .stream()
             .map(this::getTicketCollectionInstanceByMetadata)
-            .map(map -> mongoTemplate.findAll(MongoDbTicketDocument.class, map))
-            .flatMap(List::stream)
+            .flatMap(map -> mongoTemplate.stream(new Query(), MongoDbTicketDocument.class, map))
             .map(ticket -> decodeTicket(deserializeTicket(ticket.getJson(), ticket.getType())))
+            .filter(Objects::nonNull)
             .filter(ticket -> !ticket.isExpired())
             .collect(Collectors.toSet());
     }
@@ -185,9 +185,16 @@ public class MongoDbTicketRegistry extends AbstractTicketRegistry {
             .findAll()
             .stream()
             .map(this::getTicketCollectionInstanceByMetadata)
-            .flatMap(map -> mongoTemplate.stream(new Query(), MongoDbTicketDocument.class, map))
-            .skip(criteria.getFrom())
-            .limit(criteria.getCount())
+            .flatMap(map -> {
+                val query = new Query();
+                if (criteria.getFrom() > 0) {
+                    query.skip(Math.toIntExact(criteria.getFrom()));
+                }
+                if (criteria.getCount() > 0 && !criteria.isInfiniteCount()) {
+                    query.limit(Math.toIntExact(criteria.getCount()));
+                }
+                return mongoTemplate.stream(query, MongoDbTicketDocument.class, map);
+            })
             .map(ticket -> decodeTicket(deserializeTicket(ticket.getJson(), ticket.getType())));
     }
 
@@ -307,16 +314,11 @@ public class MongoDbTicketRegistry extends AbstractTicketRegistry {
             .findAll()
             .stream()
             .map(this::getTicketCollectionInstanceByMetadata)
-            .flatMap(map -> {
+            .mapToLong(map -> {
                 val query = new Query(Criteria.where(MongoDbTicketDocument.FIELD_NAME_SERVICE).is(service.getId()));
-                return mongoTemplate.stream(query, MongoDbTicketDocument.class, map);
+                return mongoTemplate.count(query, map);
             })
-            .map(document -> {
-                val ticket = decodeTicket(deserializeTicket(document.getJson(), document.getType()));
-                return ticket != null ? !ticket.isExpired() : null;
-            })
-            .filter(Objects::nonNull)
-            .count();
+            .sum();
     }
 
     protected long countTicketsByTicketType(final Class<? extends Ticket> ticketType) {
