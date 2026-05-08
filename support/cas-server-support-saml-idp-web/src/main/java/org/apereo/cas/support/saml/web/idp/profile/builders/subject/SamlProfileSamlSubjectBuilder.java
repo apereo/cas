@@ -64,7 +64,7 @@ public class SamlProfileSamlSubjectBuilder extends AbstractSaml20ObjectBuilder i
             : getNameIdForService(context);
 
         val validFromDateSkew = StringUtils.isNotBlank(registeredService.getSkewAllowance())
-            ? Long.parseLong(registeredService.getSkewAllowance())
+            ? Beans.newDuration(registeredService.getSkewAllowance()).toSeconds()
             : Beans.newDuration(casProperties.getAuthn().getSamlIdp().getResponse().getSkewAllowance()).toSeconds();
         val notOnOrAfterDateTime = validFromDate.plusSeconds(validFromDateSkew);
         val notOnOrAfter = registeredService.isSkipGeneratingSubjectConfirmationNotOnOrAfter()

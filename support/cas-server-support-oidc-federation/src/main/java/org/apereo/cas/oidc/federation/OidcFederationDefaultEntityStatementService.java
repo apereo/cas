@@ -75,8 +75,7 @@ public class OidcFederationDefaultEntityStatementService implements OidcFederati
                 throw new IllegalArgumentException("Federation role [" + role + "] is not supported for OpenID Provider");
             }
             issuer = settings.getIssuer();
-        }
-        if (role != OidcFederationRole.TRUST_ANCHOR && role != OidcFederationRole.INTERMEDIATE) {
+        } else if (role != OidcFederationRole.TRUST_ANCHOR && role != OidcFederationRole.INTERMEDIATE) {
             throw new IllegalArgumentException("Federation role [" + role + "] is not supported for Trust Anchor/Intermediate");
         }
         return issuer;

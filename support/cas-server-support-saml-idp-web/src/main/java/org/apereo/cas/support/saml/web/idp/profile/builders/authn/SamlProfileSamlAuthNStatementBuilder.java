@@ -92,11 +92,11 @@ public class SamlProfileSamlAuthNStatementBuilder extends AbstractSaml20ObjectBu
         val now = ZonedDateTime.now(ZoneOffset.UTC);
 
         val validityUntil = StringUtils.isNotBlank(context.getRegisteredService().getValidityUntil())
-            ? Long.parseLong(context.getRegisteredService().getValidityUntil())
+            ? Beans.newDuration(context.getRegisteredService().getValidityUntil()).toSeconds()
             : Beans.newDuration(response.getValidityUntil()).toSeconds();
 
         val skewAllowance = StringUtils.isNotBlank(context.getRegisteredService().getSkewAllowance())
-            ? Long.parseLong(context.getRegisteredService().getSkewAllowance())
+            ? Beans.newDuration(context.getRegisteredService().getSkewAllowance()).toSeconds()
             : Beans.newDuration(response.getSkewAllowance()).toSeconds();
 
         return now.plusSeconds(validityUntil).plusSeconds(skewAllowance).toInstant();
