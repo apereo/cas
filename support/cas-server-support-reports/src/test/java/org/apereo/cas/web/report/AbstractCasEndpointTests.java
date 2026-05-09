@@ -65,6 +65,7 @@ import org.springframework.test.web.servlet.MockMvc;
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @ExtendWith(CasTestExtension.class)
 public abstract class AbstractCasEndpointTests {
+
     @Autowired
     @Qualifier("mockMvc")
     protected MockMvc mockMvc;
