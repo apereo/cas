@@ -80,7 +80,8 @@ features and capabilities.
  
 ### OAuth / OpenID Connect Scope Approval
 
-OAuth and OpenID Connect have for long presented a feature where the user is required to approve scopes requested 
+OAuth and OpenID Connect have for long presented a feature where the user is required to 
+[approve scopes requested](../authentication/OIDC-Authentication-Clients-ScopeApproval.html) 
 by the client application. This release introduces a few changes to better remember user decisions:
 
 - Scope approval decisions are now remembered per user and client application.
