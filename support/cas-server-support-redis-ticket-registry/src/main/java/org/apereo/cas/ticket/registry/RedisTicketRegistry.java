@@ -33,7 +33,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.Strings;
 import org.hjson.JsonValue;
 import org.hjson.Stringify;
-import org.jspecify.annotations.NonNull;
 import org.jspecify.annotations.Nullable;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.context.ConfigurableApplicationContext;
@@ -41,8 +40,8 @@ import org.springframework.data.redis.connection.DataType;
 import org.springframework.data.redis.core.RedisCallback;
 import org.springframework.data.redis.core.RedisKeyValueAdapter;
 import org.springframework.data.redis.core.ScanOptions;
-import org.springframework.data.redis.core.convert.RedisData;
 import org.springframework.data.redis.core.ZSetOperations;
+import org.springframework.data.redis.core.convert.RedisData;
 import org.springframework.data.redis.core.types.Expiration;
 import org.springframework.data.redis.serializer.StringRedisSerializer;
 
@@ -221,6 +220,30 @@ public class RedisTicketRegistry extends AbstractTicketRegistry implements Clean
             });
     }
 
+
+    @Override
+    public Stream<? extends Ticket> getTicketsFor(final Service service) {
+        return redisModulesOperations
+            .stream()
+            .map(command -> {
+                val originalUrl = URI.create(service.getOriginalUrl());
+                val host = String.format("%s?//%s", originalUrl.getScheme(), originalUrl.getHost());
+                val query = String.format("@%s:\"%s\"", RedisTicketDocument.FIELD_NAME_SERVICE, host);
+                LOGGER.debug("Executing search query [{}]", query);
+                return command.search(SEARCH_INDEX_NAME, query)
+                    .map(RedisTicketDocument::from)
+                    .filter(document -> StringUtils.isNotBlank(document.json()))
+                    .map(redisDoc -> {
+                        val ticket = deserializeTicket(redisDoc.json(), redisDoc.type());
+                        return decodeTicket(ticket);
+                    })
+                    .filter(Objects::nonNull)
+                    .filter(ticket -> !ticket.isExpired());
+            })
+            .findFirst()
+            .orElseGet(() -> (Stream<Ticket>) super.getTicketsFor(service));
+    }
+    
     @Override
     public Stream<? extends Ticket> getSessionsFor(final String principalId) {
         return redisKeyGeneratorFactory.getRedisKeyGenerator(Principal.class.getName())

@@ -81,7 +81,8 @@ public abstract class BaseStringCipherExecutor extends AbstractCipherExecutor<Se
             true, true, signingKeySize, encryptionKeySize);
     }
 
-    protected BaseStringCipherExecutor(final String secretKeyEncryption, final String secretKeySigning,
+    protected BaseStringCipherExecutor(final @Nullable String secretKeyEncryption,
+                                       final @Nullable String secretKeySigning,
                                        final int signingKeySize, final int encryptionKeySize) {
         this(secretKeyEncryption, secretKeySigning, EncryptionJwtCryptoProperties.DEFAULT_CONTENT_ENCRYPTION_ALGORITHM,
             true, true, signingKeySize, encryptionKeySize);

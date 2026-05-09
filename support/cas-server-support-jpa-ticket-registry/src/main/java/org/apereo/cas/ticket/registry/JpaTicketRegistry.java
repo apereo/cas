@@ -186,6 +186,20 @@ public class JpaTicketRegistry extends AbstractTicketRegistry {
     }
 
     @Override
+    public Stream<? extends Ticket> getTicketsFor(final Service service) {
+        val sql = String.format("SELECT t FROM %s t WHERE t.service=:service", ticketEntityFactory.getEntityName());
+        val query = entityManager.createQuery(sql, ticketEntityFactory.getType()).setParameter("service", service.getId());
+        query.setLockMode(LockModeType.NONE);
+        return jpaBeanFactory
+            .streamQuery(query)
+            .map(BaseTicketEntity.class::cast)
+            .map(ticketEntityFactory::toTicket)
+            .map(this::decodeTicket)
+            .filter(Objects::nonNull)
+            .filter(ticket -> !ticket.isExpired());
+    }
+    
+    @Override
     public Stream<? extends Ticket> getSessionsFor(final String principalId) {
         val sql = String.format("SELECT t FROM %s t WHERE t.type=:type AND t.principalId=:principalId", ticketEntityFactory.getEntityName());
         val query = entityManager.createQuery(sql, ticketEntityFactory.getType())
