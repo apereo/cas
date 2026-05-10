@@ -367,7 +367,8 @@ function newTenant(prefillData = null, options = {}) {
 
     const editorContainer = $("<div>", {
         id: "tenantEditorContainer",
-        class: "flex-grow-1 d-flex flex-column"
+        class: "flex-grow-1 d-flex flex-column",
+        css: {"max-height": "700px"}
     });
 
     editorContainer.append(`
