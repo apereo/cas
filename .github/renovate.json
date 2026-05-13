@@ -15,22 +15,24 @@
   "enabledManagers": [
     "gradle",
     "npm",
-    "regex",
+    "custom.regex",
     "dockerfile",
     "docker-compose",
     "github-actions"
   ],
   "rebaseWhen": "behind-base-branch",
   "automerge": false,
-  "regexManagers": [
+  "customManagers": [
     {
-      "fileMatch": ["run-.*\\.sh"],
+      "customType": "regex",
+      "fileMatch": ["run-.*\\.sh$"],
       "matchStrings": [
         "export\\s+DOCKER_IMAGE\\s*=\\s*\"(?<depName>[^\"]+):(?<currentValue>[^\"]+)\""
       ],
       "datasourceTemplate": "docker"
     },
     {
+      "customType": "regex",
       "fileMatch": [".github/workflows/.*\\.yml$"],
       "matchStrings": [
         "NODE_CURRENT:\\s*'(?<currentValue>\\d+\\.\\d+\\.\\d+)'"
@@ -40,6 +42,7 @@
       "versioningTemplate": "node"
     },
     {
+      "customType": "regex",
       "fileMatch": [".github/workflows/.*\\.yml$"],
       "matchStrings": [
         "PYTHON_VERSION:\\s*'(?<currentValue>\\d+\\.\\d+\\.\\d+)'"
@@ -49,6 +52,7 @@
       "versioningTemplate": "pep440"
     },
     {
+      "customType": "regex",
       "fileMatch": [".github/workflows/.*\\.yml$"],
       "matchStrings": [
         "RUBY_VERSION:\\s*'(?<currentValue>\\d+\\.\\d+\\.\\d+)'"
@@ -60,12 +64,10 @@
   ],
   "labels": ["Bot", "Renovate"],
   "schedule": [
-    "after 5pm and before 9am every day"
+    "after 5pm",
+    "before 9am"
   ],
   "gradle": {
-    "enabled": true
-  },
-  "docker": {
     "enabled": true
   },
   "dockerfile": {
@@ -76,11 +78,15 @@
   },
   "packageRules": [
     {
+      "matchCategories": ["docker"],
+      "enabled": true
+    },
+    {
       "matchPackageNames": ["com.google.guava:guava"],
       "excludeVersions": "/-android$/"
     },
     {
-      "matchPackageNames": ["software.amazon.awssdk:.*"],
+      "matchPackageNames": ["/^software\\.amazon\\.awssdk:.*/"],
       "matchUpdateTypes": ["major", "minor"]
     },
     {
@@ -89,12 +95,12 @@
     },
     {
       "matchManagers": ["dockerfile"],
-      "matchPaths": [".*oidc-login-strapi.*"],
-      "matchPackagePatterns": ["^node$"],
+      "matchFileNames": ["**/oidc-login-strapi/**"],
+      "matchPackageNames": ["node"],
       "enabled": false
     },
     {
-      "matchPaths": [".*radius.*/build.gradle"],
+      "matchFileNames": ["**/radius*/build.gradle"],
       "matchPackageNames": ["org.bouncycastle:bcprov-jdk15on"],
       "enabled": false
     }
