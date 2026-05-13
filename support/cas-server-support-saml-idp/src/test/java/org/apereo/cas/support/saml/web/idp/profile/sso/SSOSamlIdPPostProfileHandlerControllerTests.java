@@ -234,6 +234,7 @@ class SSOSamlIdPPostProfileHandlerControllerTests extends BaseSamlIdPConfigurati
         val issuer = (Issuer) builder.buildObject();
         issuer.setValue(samlRegisteredService.getServiceId());
         authnRequest.setIssuer(issuer);
+        authnRequest.setID(UUID.randomUUID().toString());
         return authnRequest;
     }
 }
