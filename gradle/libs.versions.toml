@@ -180,7 +180,7 @@ okio = "3.16.0"
 okioHttp = "2.7.5"
 oktaHttpClient = "8.2.5"
 oktaSdk = "3.0.0"
-opensaml = "5.1.6"
+opensaml = "5.2.2"
 oracleJdbc = "23.9.0.25.07"
 oshi = "6.9.0"
 otel = "1.54.1"
@@ -196,7 +196,7 @@ scimSdkClient = "1.28.0"
 semver = "3.1.0"
 sendGrid = "4.10.3"
 sentry = "8.23.0"
-shibbolethUtilJavaSupport = "9.1.6"
+shibbolethUtilJavaSupport = "9.2.2"
 slackClient = "1.45.4"
 slf4j = "2.0.17"
 snakeYaml = "2.5"
@@ -248,7 +248,6 @@ whatWgFetch = "3.6.20"
 wsApi = "4.0.2"
 wsdl4j = "1.6.3"
 wss4j = "4.0.0"
-xerces = "2.12.2"
 xmlSec = "4.0.4"
 yubico = "3.1.0"
 yubicoWebauthn = "2.7.0"
@@ -740,7 +739,6 @@ wss4j-ws-security-common = { module = "org.apache.wss4j:wss4j-ws-security-common
 wss4j-ws-security-dom = { module = "org.apache.wss4j:wss4j-ws-security-dom", version.ref = "wss4j" }
 wss4j-ws-security-policy-stax = { module = "org.apache.wss4j:wss4j-ws-security-policy-stax", version.ref = "wss4j" }
 wss4j-ws-security-stax = { module = "org.apache.wss4j:wss4j-ws-security-stax", version.ref = "wss4j" }
-xercesimpl = { module = "xerces:xercesImpl", version.ref = "xerces" }
 xmlsec = { module = "org.apache.santuario:xmlsec", version.ref = "xmlSec" }
 yubico-util = { module = "com.yubico:yubico-util", version.ref = "yubicoWebauthn" }
 yubico-validation-client2 = { module = "com.yubico:yubico-validation-client2", version.ref = "yubico" }

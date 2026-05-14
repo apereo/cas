@@ -15,7 +15,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.xerces.xs.XSObject;
+
 import org.jdom2.Document;
 import org.jdom2.input.DOMBuilder;
 import org.jdom2.input.SAXBuilder;
@@ -301,7 +301,7 @@ public abstract class AbstractSamlObjectBuilder {
             return attrValueObj;
         }
 
-        if (XSObject.class.getSimpleName().equalsIgnoreCase(valueType)) {
+        if ("XSObject".equalsIgnoreCase(valueType)) {
             return FunctionUtils.doUnchecked(() -> {
                 val builder = new XSAnyBuilder();
                 val attrValueObj = builder.buildObject(elementName);

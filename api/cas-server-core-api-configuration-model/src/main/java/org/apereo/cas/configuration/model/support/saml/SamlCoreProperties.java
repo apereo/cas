@@ -52,8 +52,10 @@ public class SamlCoreProperties implements Serializable {
 
     /**
      * Qualified name of the security manager class used for creating a SAML parser pool.
+     * @deprecated This property is removed in future CAS versions as well as Apache Xerces.
      */
-    private String securityManager = "org.apache.xerces.util.SecurityManager";
+    @Deprecated(forRemoval = true, since = "7.3.7")
+    private String securityManager;
 
     /**
      * Salt used to generate persistent or transient ids

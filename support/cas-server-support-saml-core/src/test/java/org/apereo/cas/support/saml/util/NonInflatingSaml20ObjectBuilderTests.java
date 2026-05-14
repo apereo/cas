@@ -10,7 +10,7 @@ import org.apereo.cas.util.EncodingUtils;
 import org.apereo.cas.util.InetAddressUtils;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.xerces.xs.XSObject;
+
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -108,7 +108,7 @@ class NonInflatingSaml20ObjectBuilderTests {
         assertNotNull(builder.newAttribute("email", "mail",
             List.of(new TicketGrantingTicketExpirationPolicy(100, 100)),
             Map.of("mail", "basic"), "basic",
-            Map.of("mail", XSObject.class.getSimpleName())));
+            Map.of("mail", "XSObject")));
     }
 
     @Test
@@ -117,7 +117,7 @@ class NonInflatingSaml20ObjectBuilderTests {
         assertNotNull(builder.newAttribute("email", "mail",
             List.of(),
             Map.of("mail", "basic"), "basic",
-            Map.of("mail", XSObject.class.getSimpleName())));
+            Map.of("mail", "XSObject")));
     }
 
     @Test
