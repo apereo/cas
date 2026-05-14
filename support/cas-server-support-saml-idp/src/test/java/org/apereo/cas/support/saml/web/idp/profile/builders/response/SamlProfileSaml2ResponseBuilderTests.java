@@ -10,7 +10,6 @@ import org.apereo.cas.ticket.query.SamlAttributeQueryTicket;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.web.support.WebUtils;
 import lombok.val;
-
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.parallel.Execution;

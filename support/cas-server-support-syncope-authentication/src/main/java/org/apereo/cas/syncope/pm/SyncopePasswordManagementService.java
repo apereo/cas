@@ -91,7 +91,6 @@ public class SyncopePasswordManagementService extends BasePasswordManagementServ
             .map(values -> values.getFirst().toString())
             .orElse(null);
         if (questionKey == null) {
-            // security questions are not always required for password change
             return Map.of();
         }
 
