@@ -7,6 +7,7 @@ import org.apereo.cas.configuration.features.CasFeatureModule;
 import org.apereo.cas.support.saml.DefaultOpenSamlConfigBean;
 import org.apereo.cas.support.saml.OpenSamlConfigBean;
 import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
+import io.micrometer.common.util.StringUtils;
 import lombok.val;
 import net.shibboleth.shared.xml.ParserPool;
 import net.shibboleth.shared.xml.impl.BasicParserPool;
@@ -87,10 +88,12 @@ public class CasCoreSamlAutoConfiguration {
         pool.setIgnoreComments(true);
         pool.setNamespaceAware(true);
 
-        val attributes = new HashMap<String, Object>();
-        val clazz = ClassUtils.getClass(casProperties.getSamlCore().getSecurityManager());
-        attributes.put("http://apache.org/xml/properties/security-manager", clazz.getDeclaredConstructor().newInstance());
-        pool.setBuilderAttributes(attributes);
+        if (StringUtils.isNotBlank(casProperties.getSamlCore().getSecurityManager())) {
+            val attributes = new HashMap<String, Object>();
+            val clazz = ClassUtils.getClass(casProperties.getSamlCore().getSecurityManager());
+            attributes.put("http://apache.org/xml/properties/security-manager", clazz.getDeclaredConstructor().newInstance());
+            pool.setBuilderAttributes(attributes);
+        }
 
         val features = new HashMap<String, Boolean>();
         features.put("http://apache.org/xml/features/disallow-doctype-decl", Boolean.TRUE);
