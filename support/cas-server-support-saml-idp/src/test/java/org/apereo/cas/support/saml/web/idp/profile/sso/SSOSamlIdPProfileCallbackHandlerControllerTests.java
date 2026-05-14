@@ -203,6 +203,7 @@ class SSOSamlIdPProfileCallbackHandlerControllerTests {
             issuer.setValue(samlRegisteredService.getServiceId());
             authnRequest.setIssuer(issuer);
             authnRequest.setIsPassive(passive);
+            authnRequest.setID(Saml20HexRandomIdGenerator.INSTANCE.getNewString());
             return authnRequest;
         }
 

@@ -9,6 +9,7 @@ import org.apereo.cas.support.saml.SamlProtocolConstants;
 import org.apereo.cas.support.saml.SamlUtils;
 import org.apereo.cas.support.saml.services.SamlRegisteredService;
 import org.apereo.cas.support.saml.services.idp.metadata.SamlRegisteredServiceMetadataAdaptor;
+import org.apereo.cas.support.saml.util.Saml20HexRandomIdGenerator;
 import org.apereo.cas.support.saml.web.idp.profile.slo.SamlIdPHttpRedirectDeflateEncoder;
 import org.apereo.cas.util.EncodingUtils;
 import org.apereo.cas.web.flow.CasWebflowConstants;
@@ -234,7 +235,7 @@ class SSOSamlIdPPostProfileHandlerControllerTests extends BaseSamlIdPConfigurati
         val issuer = (Issuer) builder.buildObject();
         issuer.setValue(samlRegisteredService.getServiceId());
         authnRequest.setIssuer(issuer);
-        authnRequest.setID(UUID.randomUUID().toString());
+        authnRequest.setID(Saml20HexRandomIdGenerator.INSTANCE.getNewString());
         return authnRequest;
     }
 }

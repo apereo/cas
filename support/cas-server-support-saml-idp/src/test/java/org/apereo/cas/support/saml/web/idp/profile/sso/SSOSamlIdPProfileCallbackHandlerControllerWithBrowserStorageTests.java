@@ -123,6 +123,7 @@ class SSOSamlIdPProfileCallbackHandlerControllerWithBrowserStorageTests extends 
         val issuer = (Issuer) builder.buildObject();
         issuer.setValue(samlRegisteredService.getServiceId());
         authnRequest.setIssuer(issuer);
+        authnRequest.setID(Saml20HexRandomIdGenerator.INSTANCE.getNewString());
         return authnRequest;
     }
 

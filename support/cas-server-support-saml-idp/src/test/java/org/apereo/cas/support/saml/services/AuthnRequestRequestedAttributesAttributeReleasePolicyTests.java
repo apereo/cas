@@ -8,6 +8,7 @@ import org.apereo.cas.support.saml.SamlIdPConstants;
 import org.apereo.cas.support.saml.SamlIdPTestUtils;
 import org.apereo.cas.support.saml.idp.MissingSamlAuthnRequestException;
 import org.apereo.cas.support.saml.idp.SamlIdPSessionManager;
+import org.apereo.cas.support.saml.util.Saml20HexRandomIdGenerator;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.http.HttpRequestUtils;
 import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
@@ -169,7 +170,7 @@ class AuthnRequestRequestedAttributesAttributeReleasePolicyTests extends BaseSam
         requestAttribute.setName("eduPersonPrincipalName");
         extensions.getUnknownXMLObjects().add(requestAttribute);
         authnRequest.setExtensions(extensions);
-        authnRequest.setID(UUID.randomUUID().toString());
+        authnRequest.setID(Saml20HexRandomIdGenerator.INSTANCE.getNewString());
 
         storeSamlAuthnRequest(authnRequest);
 
