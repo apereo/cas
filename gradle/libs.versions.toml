@@ -260,7 +260,6 @@ whatWgFetch = "3.6.20"
 wsApi = "4.0.3"
 wsdl4j = "1.6.3"
 wss4j = "4.0.1"
-xerces = "2.12.2"
 xmlSec = "4.0.4"
 yubico = "3.1.0"
 yubicoWebauthn = "2.9.0"
@@ -798,7 +797,6 @@ wss4j-ws-security-common = { module = "org.apache.wss4j:wss4j-ws-security-common
 wss4j-ws-security-dom = { module = "org.apache.wss4j:wss4j-ws-security-dom", version.ref = "wss4j" }
 wss4j-ws-security-policy-stax = { module = "org.apache.wss4j:wss4j-ws-security-policy-stax", version.ref = "wss4j" }
 wss4j-ws-security-stax = { module = "org.apache.wss4j:wss4j-ws-security-stax", version.ref = "wss4j" }
-xercesimpl = { module = "xerces:xercesImpl", version.ref = "xerces" }
 xmlsec = { module = "org.apache.santuario:xmlsec", version.ref = "xmlSec" }
 yubico-util = { module = "com.yubico:yubico-util", version.ref = "yubicoWebauthn" }
 yubico-validation-client2 = { module = "com.yubico:yubico-validation-client2", version.ref = "yubico" }

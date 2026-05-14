@@ -103,6 +103,21 @@ you can always disable scope approval requests either globally or per client app
           
 If you have already turned off scope approval, there is nothing here for you to. Keep calm and carry on. 
  
+### SAML2 & Apache Xerces
+
+CAS has long supported the use of Apache Xerces as the XML parser for SAML2 processing
+by using `org.apache.xerces.util.SecurityManager` as the default security manager implementation
+used by SAML2 parser pools.
+
+This release removes the use of `org.apache.xerces.util.SecurityManager` as the default security manager 
+implementation for SAML2 processing and removes the dependency on Apache Xerces as the default XML 
+parser. This is mainly done to allow the use of the XML parser provided by the JDK,
+which supports attributes such as `jdk.xml.maxElementDepth` that is set by default by OpenSAML to strengthen 
+defenses against XML-based attacks. 
+      
+We do not anticipate this to be a breaking change but it's worth noting that if you have code that 
+relies on Apache Xerces, you may need to adjust it to work with the default XML parser provided by the JDK.
+
 ### Palantir
                
 [Palantir](../installation/Admin-Dashboard.html) is given the ability to support 
