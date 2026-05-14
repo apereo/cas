@@ -15,7 +15,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
-
 import org.jdom2.Document;
 import org.jdom2.input.DOMBuilder;
 import org.jdom2.input.SAXBuilder;
@@ -88,7 +87,7 @@ public abstract class AbstractSamlObjectBuilder {
         .toObjectMapper();
 
     private static final String SIGNATURE_FACTORY_PROVIDER_CLASS = "org.jcp.xml.dsig.internal.dom.XMLDSigRI";
-    
+
     private static final String LOG_MESSAGE_ATTR_CREATED = "Created attribute value XMLObject: [{}]";
 
     /**
@@ -233,7 +232,6 @@ public abstract class AbstractSamlObjectBuilder {
         dbf.setFeature("http://xml.org/sax/features/external-parameter-entities", false);
         return dbf.newDocumentBuilder().parse(new ByteArrayInputStream(xmlBytes));
     }
-
 
 
     /**
