@@ -13,7 +13,6 @@ import org.springframework.cloud.context.environment.EnvironmentChangeEvent;
 import org.springframework.cloud.context.refresh.ContextRefresher;
 import org.springframework.cloud.context.scope.refresh.RefreshScopeRefreshedEvent;
 import org.springframework.context.ApplicationContext;
-import org.springframework.web.servlet.DispatcherServlet;
 
 import java.util.ArrayList;
 import java.util.Objects;
@@ -65,13 +64,7 @@ public class DefaultCasConfigurationEventListener implements CasConfigurationEve
             for (val beanName : applicationContext.getBeanDefinitionNames()) {
                 Objects.requireNonNull(applicationContext.getBean(beanName).getClass());
             }
-            if (applicationContext.containsBean("dispatcherServlet")) {
-                val servlet = applicationContext.getBean(DispatcherServlet.class);
-                servlet.setApplicationContext(applicationContext);
-                servlet.init();
-            }
         });
-
     }
 
     private void rebind() {
