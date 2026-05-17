@@ -122,11 +122,37 @@ relies on Apache Xerces, you may need to adjust it to work with the default XML 
                
 [Palantir](../installation/Admin-Dashboard.html) is given the ability to support 
 [impersonation features](../authentication/Surrogate-Authentication.html) of CAS
-and report back eligible impersonation accounts for a given username. This functionality is supported by 
+and reports back eligible impersonation accounts for a given username. This functionality is supported by 
 the new actuator endpoint, `impersonation`, that can be used to query for eligible surrogate accounts.
 
 [Palantir](../installation/Admin-Dashboard.html) is also given the ability to add, edit, 
 duplicate or remove [tenant definitions](../multitenancy/Multitenancy-Overview.html).
+ 
+### CAS Initializr
+
+The *Preview* functionality of the [CAS Initializr](../installation/WAR-Overlay-Initializr.html) has been 
+enhanced to use the Monaco Editor as its default editor for displaying generated configuration and build. This provides
+for a much easier way of viewing the generated build and navigating through different files. Conceptually, this is the
+same editor that powers the Visual Studio Code editor and provides a rich set of features such as 
+syntax highlighting, code folding, and more.
+
+[CAS Initializr](../installation/WAR-Overlay-Initializr.html) also supports building CAS overlays that generate
+a `cas.jar` file by providing a deployment option for `JAR`. This option conceptually is identical to
+existing options that build a `.war` file but no longer requires the build to download a premade CAS server web 
+application archive to go through the unpacking and overlay process using special plugins. As a result, one 
+key advantage and reason for doing this is that the CAS project no longer has to build and publish 
+a separate `cas-server-webapp-*` WAR artifact that is quite large and slow to publish and release.
+
+<div class="alert alert-info">:information_source: <strong>Note</strong><p>
+The existing deployment options that generate WAR artifacts using the existing WAR Overlay process
+continue to exist and will not be removed without notice and consideration. Producing JAR artifacts is a leaner
+option overall and makes for a better and more maintainable delivery long-term specially as repositories
+that house CAS-published artifacts start to put limits on the size of the published artifact.</p></div>
+
+[CAS Initializr](../installation/WAR-Overlay-Initializr.html) is also generating builds that support a `casModules`
+propertly at build time. This property allows users to specify a comma-separated list of CAS modules 
+to include in the build and it allows users to dynamically specify modules needed from the command-line
+programmatically. See the `README.md` file of the generated CAS overlay for details.
 
 ## Other Stuff
               
