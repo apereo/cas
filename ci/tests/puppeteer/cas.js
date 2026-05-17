@@ -228,6 +228,17 @@ exports.elementValue = async (page, selector, valueToSet = undefined) => {
     return text;
 };
 
+exports.clearValue = async(page, selector) => {
+    await page.locator(selector).fill("");
+}
+
+exports.selectValue = async(page, selector) => {
+    await page.$eval(selector, input => {
+        input.focus();
+        input.select();
+    });
+};
+
 exports.innerTexts = async (page, selector) =>
     page.evaluate((button) => {
         const results = [];
@@ -989,14 +1000,24 @@ exports.httpServer = async (root,
 exports.randomNumber = async (min = 1, max = 100) =>
     Math.floor(Math.random() * (max - min + 1)) + min;
 
-exports.randomWord = async (length = 12) => {
-    const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*[]{};:<>|";
+exports.randomWord = async (length = 12, specialChars = true, numbers = true) => {
+    let chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
+    if (numbers) {
+        chars += "0123456789";
+    }
+    if (specialChars) {
+        chars += "!@#$%^&*[]{};:<>|";
+    }
     let result = "";
     for (let i = 0; i < length; i++) {
         const idx = Math.floor(Math.random() * chars.length);
         result += chars.charAt(idx);
     }
     return result;
+};
+
+exports.uuid = async() => {
+    return crypto.randomUUID();
 };
 
 exports.killProcess = async (command, args) =>
