@@ -4,13 +4,15 @@ import module java.base;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.multitenancy.TenantExtractor;
 import org.apereo.cas.oidc.discovery.OidcServerDiscoverySettings;
-import org.apereo.cas.oidc.federation.OidcFederationDefaultEntityStatementService;
-import org.apereo.cas.oidc.federation.OidcFederationDefaultJsonWebKeystoreService;
-import org.apereo.cas.oidc.federation.OidcFederationDefaultTrustChainResolver;
-import org.apereo.cas.oidc.federation.OidcFederationEntityStatementService;
-import org.apereo.cas.oidc.federation.OidcFederationJsonWebKeystoreService;
-import org.apereo.cas.oidc.federation.OidcFederationTrustChainResolver;
-import org.apereo.cas.oidc.federation.OidcWellKnownFederationEndpointController;
+import org.apereo.cas.oidc.federation.chain.OidcFederationDefaultTrustChainResolver;
+import org.apereo.cas.oidc.federation.chain.OidcFederationTrustChainResolver;
+import org.apereo.cas.oidc.federation.signature.OidcFederationDefaultEntityStatementService;
+import org.apereo.cas.oidc.federation.signature.OidcFederationDefaultJsonWebKeystoreService;
+import org.apereo.cas.oidc.federation.signature.OidcFederationEntityStatementService;
+import org.apereo.cas.oidc.federation.signature.OidcFederationJsonWebKeystoreService;
+import org.apereo.cas.oidc.federation.subordinate.OidcFederationSubordinateRepository;
+import org.apereo.cas.oidc.federation.web.OidcTrustAnchorFetchEndpointController;
+import org.apereo.cas.oidc.federation.web.OidcWellKnownFederationEndpointController;
 import org.apereo.cas.oidc.issuer.OidcDefaultIssuerService;
 import org.apereo.cas.oidc.issuer.OidcIssuerService;
 import org.apereo.cas.web.CasWebSecurityConfigurer;
@@ -30,6 +32,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.ScopedProxyMode;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 
+import static org.apereo.cas.oidc.OidcConstants.FETCH_FEDERATION_URL;
 import static org.apereo.cas.oidc.OidcConstants.WELL_KNOWN_OPENID_FEDERATION_URL;
 
 /**
@@ -43,6 +46,12 @@ import static org.apereo.cas.oidc.OidcConstants.WELL_KNOWN_OPENID_FEDERATION_URL
 @Slf4j
 @Configuration(value = "OidcFederationConfiguration", proxyBeanMethods = false)
 class OidcFederationConfiguration {
+    @Bean
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+    @ConditionalOnMissingBean(name = "oidcFederationSubordinateRepository")
+    public OidcFederationSubordinateRepository oidcFederationSubordinateRepository(final CasConfigurationProperties casProperties) {
+        return new OidcFederationSubordinateRepository(casProperties.getAuthn().getOidc());
+    }
 
     @Bean
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
@@ -55,14 +64,32 @@ class OidcFederationConfiguration {
     }
 
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-    @ConditionalOnMissingBean(name = "oidcWellKnownFederationController")
+    @ConditionalOnMissingBean(name = "oidcTrustAnchorFetchEndpointController")
     @Bean
-    public OidcWellKnownFederationEndpointController oidcWellKnownFederationController(
+    public OidcTrustAnchorFetchEndpointController oidcTrustAnchorFetchEndpointController(
+        final OidcFederationSubordinateRepository oidcFederationSubordinateRepository,
         @Qualifier("oidcFederationIssuerService")
         final OidcIssuerService oidcFederationIssuerService,
         @Qualifier(OidcFederationEntityStatementService.BEAN_NAME)
-        final OidcFederationEntityStatementService oidcFederationEntityStatementService) {
-        return new OidcWellKnownFederationEndpointController(oidcFederationIssuerService, oidcFederationEntityStatementService);
+        final OidcFederationEntityStatementService oidcFederationEntityStatementService,
+        final CasConfigurationProperties casProperties) {
+        return new OidcTrustAnchorFetchEndpointController(oidcFederationSubordinateRepository, oidcFederationIssuerService,
+                oidcFederationEntityStatementService, casProperties.getAuthn().getOidc());
+    }
+
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+    @ConditionalOnMissingBean(name = "oidcWellKnownFederationController")
+    @Bean
+    public OidcWellKnownFederationEndpointController oidcWellKnownFederationController(
+            @Qualifier("oidcFederationIssuerService")
+            final OidcIssuerService oidcFederationIssuerService,
+            @Qualifier(OidcFederationEntityStatementService.BEAN_NAME)
+            final OidcFederationEntityStatementService oidcFederationEntityStatementService,
+            @Qualifier(OidcServerDiscoverySettings.BEAN_NAME_FACTORY)
+            final ObjectProvider<OidcServerDiscoverySettings> oidcServerDiscoverySettings,
+            final CasConfigurationProperties casProperties) {
+        return new OidcWellKnownFederationEndpointController(oidcServerDiscoverySettings, oidcFederationIssuerService,
+                oidcFederationEntityStatementService, casProperties.getAuthn().getOidc());
     }
 
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
@@ -79,12 +106,9 @@ class OidcFederationConfiguration {
     public OidcFederationEntityStatementService oidcFederationEntityStatementService(
         @Qualifier(OidcFederationJsonWebKeystoreService.BEAN_NAME)
         final OidcFederationJsonWebKeystoreService oidcFederationWebKeystoreService,
-        final CasConfigurationProperties casProperties,
-        @Qualifier(OidcServerDiscoverySettings.BEAN_NAME_FACTORY)
-        final ObjectProvider<OidcServerDiscoverySettings> oidcServerDiscoverySettings) {
+        final CasConfigurationProperties casProperties) {
         return new OidcFederationDefaultEntityStatementService(
             oidcFederationWebKeystoreService,
-            oidcServerDiscoverySettings,
             casProperties.getAuthn().getOidc());
     }
 
@@ -114,10 +138,18 @@ class OidcFederationConfiguration {
         final OidcIssuerService oidcIssuerService,
         final CasConfigurationProperties casProperties) {
         val baseEndpoint = getOidcBaseEndpoint(oidcIssuerService, casProperties);
+        val endpoints = new ArrayList<String>();
+        endpoints.add(baseEndpoint + '/' + WELL_KNOWN_OPENID_FEDERATION_URL);
+
+        val role = casProperties.getAuthn().getOidc().getFederation().getRole();
+        if (role.isTaOrIntermediate()) {
+            endpoints.add(baseEndpoint + FETCH_FEDERATION_URL);
+        }
+
         return new CasWebSecurityConfigurer<>() {
             @Override
             public List<String> getIgnoredEndpoints() {
-                return List.of(baseEndpoint + '/' + WELL_KNOWN_OPENID_FEDERATION_URL);
+                return endpoints;
             }
         };
     }
