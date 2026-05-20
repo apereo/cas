@@ -38,7 +38,7 @@ import org.springframework.boot.test.context.SpringBootTest;
         "cas.authn.oidc.federation.jwks-file=file:${#systemProperties['java.io.tmpdir']}/federation.jwks",
         "cas.authn.oidc.core.issuer=https://sso.example.org/cas/oidc"
     }, webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-abstract class AbstractOidcOpenIdProviderFederationTests extends AbstractOidcFederationTests {
+public abstract class AbstractOidcOpenIdProviderFederationTests extends AbstractOidcFederationTests {
 
     @SpringBootConfiguration(proxyBeanMethods = false)
     @ImportAutoConfiguration({
