@@ -1,4 +1,4 @@
-package org.apereo.cas.oidc.federation;
+package org.apereo.cas.oidc.federation.chain;
 
 import module java.base;
 import org.apereo.cas.services.DefaultRegisteredServiceContact;

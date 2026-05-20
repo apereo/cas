@@ -1,0 +1,50 @@
+{
+  "entityId" : "http://rp",
+  "metadata": {
+    "openid_relying_party": {
+      "redirect_uris": [
+        "http://rp/callback?client_name=OidcClient"
+      ],
+      "application_type": "web",
+      "response_types": [
+        "code"
+      ],
+      "grant_types": [
+        "authorization_code"
+      ],
+      "scope": "openid email profile",
+      "token_endpoint_auth_method": "private_key_jwt",
+      "token_endpoint_auth_signing_alg": "RS256",
+      "request_object_signing_alg": "RS256",
+      "jwks": {
+        "keys": [
+          {
+            "kty": "RSA",
+            "e": "AQAB",
+            "use": "sig",
+            "kid": "defaultjwks0326",
+            "n": "2moVQWw9fDRr891E9GWiCory0wA0QokXV9AQFPsqV9rQ_5kULyUcXyfyDyF5ixDGwFGBG8muxvx_T8991H4CVdJw3UyiAWso5qUyANqihXiwiUcxJ8MJZjhXDbvXo6sk2NHpsBON2jot-QQDg-2FIOFAaYW0D3vyu4nkortqSFvh09lxSbsfQzT5nMLyWUULafhdcC3KGqR3kUKyN0LUCHtSDmmAb7KGlx3_U8Ho80BiOrJ6oIu34WxyY9S572Iqen_rdysunMh5X1aGLtprN7UIBbiNFPg6-vkBu7rYW6T4U6sFoj1x2NmeROp2HM0KvhhI8_qO1_6t_Wk2_2aq7Q"
+          }
+        ]
+      },
+      "client_registration_types": [
+        "explicit",
+        "automatic"
+      ],
+      "client_name": "C2ID Test RP (Localhost)",
+      "contacts": [
+        "jerome@casinthecloud.com"
+      ]
+    }
+  },
+  "federationKeys": [
+    {
+      "kty": "EC",
+      "use": "sig",
+      "crv": "P-256",
+      "kid": "TJns",
+      "x": "iLPMKMGqb7HeCnov5xBwEnq2zUbX5gNbyoVn1EHpvSI",
+      "y": "1kcVTdS1_Y2_NnL0E9LpWhPWsoCNOFQR2Dd7VAJBYKY"
+    }
+  ]
+}

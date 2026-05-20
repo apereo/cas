@@ -18,5 +18,14 @@ public enum OidcFederationRole {
     /**
      * Leaf entity playing the OpenID Connect provider protocol role.
      */
-    OPENID_PROVIDER
+    OPENID_PROVIDER;
+
+    /**
+     * Returns if the role is TA or intermediate.
+     *
+     * @return whether the role is TA or intermediate.
+     */
+    public boolean isTaOrIntermediate() {
+        return this == TRUST_ANCHOR || this == INTERMEDIATE;
+    }
 }
