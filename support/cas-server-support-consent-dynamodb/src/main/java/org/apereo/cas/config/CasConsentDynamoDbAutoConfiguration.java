@@ -3,7 +3,7 @@ package org.apereo.cas.config;
 import module java.base;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.features.CasFeatureModule;
-import org.apereo.cas.consent.ConsentRepository;
+import org.apereo.cas.consent.ConsentRepositoryBuilder;
 import org.apereo.cas.consent.DynamoDbConsentFacilitator;
 import org.apereo.cas.consent.DynamoDbConsentRepository;
 import org.apereo.cas.dynamodb.AmazonDynamoDbClientFactory;
@@ -31,10 +31,11 @@ public class CasConsentDynamoDbAutoConfiguration {
 
     @Bean
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-    public ConsentRepository consentRepository(
+    @ConditionalOnMissingBean(name = "dynamoDbConsentRepositoryBuilder")
+    public ConsentRepositoryBuilder dynamoDbConsentRepositoryBuilder(
         @Qualifier("dynamoDbConsentFacilitator")
         final DynamoDbConsentFacilitator dynamoDbConsentFacilitator) {
-        return new DynamoDbConsentRepository(dynamoDbConsentFacilitator);
+        return () -> new DynamoDbConsentRepository(dynamoDbConsentFacilitator);
     }
 
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)

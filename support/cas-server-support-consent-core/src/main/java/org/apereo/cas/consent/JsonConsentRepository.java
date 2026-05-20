@@ -35,13 +35,15 @@ public class JsonConsentRepository extends BaseConsentRepository implements Disp
 
     private WatcherService watcherService;
 
-    public JsonConsentRepository(final Resource resource) throws Exception {
+    public JsonConsentRepository(final Resource resource) {
         this.jsonResource = resource;
         setConsentDecisions(readDecisionsFromJsonResource());
         if (ResourceUtils.isFile(this.jsonResource)) {
-            this.watcherService = new FileWatcherService(resource.getFile(),
-                _ -> setConsentDecisions(readDecisionsFromJsonResource()));
-            this.watcherService.start(getClass().getSimpleName());
+            FunctionUtils.doUnchecked(_ -> {
+                this.watcherService = new FileWatcherService(resource.getFile(),
+                    _ -> setConsentDecisions(readDecisionsFromJsonResource()));
+                this.watcherService.start(getClass().getSimpleName());
+            });
         }
     }
 

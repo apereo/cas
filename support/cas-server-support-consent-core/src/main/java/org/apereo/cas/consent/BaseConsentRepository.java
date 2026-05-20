@@ -11,6 +11,7 @@ import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import lombok.val;
+import org.jspecify.annotations.Nullable;
 
 /**
  * This is {@link BaseConsentRepository}.
@@ -29,9 +30,10 @@ public abstract class BaseConsentRepository implements ConsentRepository {
     private Set<ConsentDecision> consentDecisions = Collections.synchronizedSet(new LinkedHashSet<>());
 
     @Override
-    public ConsentDecision findConsentDecision(final Service service, final RegisteredService registeredService,
-                                               final Authentication authentication) {
-        return this.consentDecisions.stream()
+    public @Nullable ConsentDecision findConsentDecision(final Service service, final RegisteredService registeredService,
+                                                         final Authentication authentication) {
+        return consentDecisions
+            .stream()
             .filter(d -> d.getPrincipal().equals(authentication.getPrincipal().getId())
                 && d.getService().equals(service.getId()))
             .findFirst()
@@ -40,8 +42,9 @@ public abstract class BaseConsentRepository implements ConsentRepository {
 
     @Override
     public Collection<? extends ConsentDecision> findConsentDecisions(final String principal) {
-        return this.consentDecisions.stream()
-            .filter(d -> d.getPrincipal().equals(principal))
+        return this.consentDecisions
+            .stream()
+            .filter(decision -> decision.getPrincipal().equals(principal))
             .collect(Collectors.toSet());
     }
 
@@ -54,7 +57,7 @@ public abstract class BaseConsentRepository implements ConsentRepository {
     public ConsentDecision storeConsentDecision(final ConsentDecision decision) throws Throwable {
         val consent = getConsentDecisions()
             .stream()
-            .anyMatch(d -> d.getId() == decision.getId());
+            .anyMatch(consentDecision -> consentDecision.getId() == decision.getId());
         if (consent) {
             getConsentDecisions().remove(decision);
         } else {
@@ -66,7 +69,7 @@ public abstract class BaseConsentRepository implements ConsentRepository {
 
     @Override
     public boolean deleteConsentDecision(final long decisionId, final String principal) throws Throwable {
-        return this.consentDecisions.removeIf(d -> d.getId() == decisionId && d.getPrincipal().equalsIgnoreCase(principal));
+        return this.consentDecisions.removeIf(consentDecision -> consentDecision.getId() == decisionId && consentDecision.getPrincipal().equalsIgnoreCase(principal));
     }
 
     @Override

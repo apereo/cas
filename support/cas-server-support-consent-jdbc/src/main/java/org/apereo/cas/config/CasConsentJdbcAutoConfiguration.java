@@ -4,7 +4,7 @@ import module java.base;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.features.CasFeatureModule;
 import org.apereo.cas.configuration.support.JpaBeans;
-import org.apereo.cas.consent.ConsentRepository;
+import org.apereo.cas.consent.ConsentRepositoryBuilder;
 import org.apereo.cas.consent.JpaConsentDecision;
 import org.apereo.cas.consent.JpaConsentRepository;
 import org.apereo.cas.jpa.JpaBeanFactory;
@@ -45,8 +45,9 @@ public class CasConsentJdbcAutoConfiguration {
     static class CasConsentJdbcRepositoryConfiguration {
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-        public ConsentRepository consentRepository() {
-            return new JpaConsentRepository();
+        @ConditionalOnMissingBean(name = "jdbcConsentRepositoryBuilder")
+        public ConsentRepositoryBuilder jdbcConsentRepositoryBuilder() {
+            return () -> new JpaConsentRepository();
         }
     }
 

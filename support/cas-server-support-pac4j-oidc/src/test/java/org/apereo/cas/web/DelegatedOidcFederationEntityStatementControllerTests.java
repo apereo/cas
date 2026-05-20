@@ -13,9 +13,7 @@ import org.pac4j.oidc.config.OidcConfiguration;
 import org.pac4j.oidc.federation.entity.EntityConfigurationGenerator;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
-import java.util.Optional;
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.*;
 
 /**

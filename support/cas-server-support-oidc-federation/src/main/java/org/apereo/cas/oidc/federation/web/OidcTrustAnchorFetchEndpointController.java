@@ -33,9 +33,11 @@ public class OidcTrustAnchorFetchEndpointController extends AbstractOidcFederati
 
     private final OidcFederationSubordinateRepository subordinateRepository;
 
-    public OidcTrustAnchorFetchEndpointController(final OidcFederationSubordinateRepository subordinateRepository, final OidcIssuerService oidcIssuerService,
-                                                  final OidcFederationEntityStatementService federationEntityStatementService,
-                                                  final OidcProperties oidcProperties) {
+    public OidcTrustAnchorFetchEndpointController(
+        final OidcFederationSubordinateRepository subordinateRepository,
+        final OidcIssuerService oidcIssuerService,
+        final OidcFederationEntityStatementService federationEntityStatementService,
+        final OidcProperties oidcProperties) {
         super(oidcIssuerService, federationEntityStatementService, oidcProperties);
         this.subordinateRepository = subordinateRepository;
     }
@@ -43,7 +45,7 @@ public class OidcTrustAnchorFetchEndpointController extends AbstractOidcFederati
     /**
      * Gets the entity statement for the requested entity.
      *
-     * @param sub the entityId
+     * @param sub      the entityId
      * @param request  the request
      * @param response the response
      * @return the specific entity statement
@@ -51,10 +53,9 @@ public class OidcTrustAnchorFetchEndpointController extends AbstractOidcFederati
     @GetMapping('/' + OidcConstants.BASE_OIDC_URL + '/' + OidcConstants.FETCH_FEDERATION_URL)
     @Operation(summary = "Handle OIDC fetch federation request",
         description = "Handles requests for the fetch federation endpoint",
-        parameters = {
-            @Parameter(name = "sub", description = "entityId", required = true)
-        })
-    public ResponseEntity fetchEntityStatement(@RequestParam(value = "sub", required = false) final String sub,
+        parameters = @Parameter(name = "sub", description = "entityId", required = true))
+    public ResponseEntity fetchEntityStatement(
+        @RequestParam(value = "sub", required = false) final String sub,
         final HttpServletRequest request, final HttpServletResponse response) throws Exception {
 
         LOGGER.info("Building entity statement for subordinate: [{}]", sub);
@@ -90,6 +91,6 @@ public class OidcTrustAnchorFetchEndpointController extends AbstractOidcFederati
 
         val issuer = oidcProperties.getCore().getIssuer();
         val metadata = (JSONObject) JSONValue.parse(serviceMetadata.toString());
-        return buildEntityStatement(issuer, sub, metadata, federationKeys, null);
+        return buildEntityStatement(issuer, sub, metadata, federationKeys, List.of());
     }
 }

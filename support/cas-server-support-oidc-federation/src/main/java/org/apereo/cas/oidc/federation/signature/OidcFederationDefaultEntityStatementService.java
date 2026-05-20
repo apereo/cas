@@ -4,6 +4,7 @@ import module java.base;
 import org.apereo.cas.configuration.model.support.oidc.OidcProperties;
 import org.apereo.cas.configuration.support.Beans;
 import org.apereo.cas.util.DateTimeUtils;
+import org.apereo.cas.util.function.FunctionUtils;
 import com.nimbusds.openid.connect.sdk.federation.entities.CommonFederationClaimsSet;
 import com.nimbusds.openid.connect.sdk.federation.entities.EntityID;
 import com.nimbusds.openid.connect.sdk.federation.entities.EntityStatement;
@@ -14,9 +15,10 @@ import lombok.val;
 import net.minidev.json.JSONArray;
 import net.minidev.json.JSONObject;
 import net.minidev.json.JSONValue;
+import org.jspecify.annotations.Nullable;
 import tools.jackson.databind.JsonNode;
-
-import static org.apereo.cas.oidc.OidcConstants.*;
+import static org.apereo.cas.oidc.OidcConstants.JWKS;
+import static org.apereo.cas.oidc.OidcConstants.KEYS;
 
 /**
  * This is {@link OidcFederationDefaultEntityStatementService}.
@@ -31,9 +33,11 @@ public class OidcFederationDefaultEntityStatementService implements OidcFederati
     private final OidcProperties oidcProperties;
 
     @Override
-    public EntityStatement createAndSign(final String issuer, final String subject,
-                                         final JSONObject metadata, final JsonNode federationKeys,
-                                         final List<EntityID> authorityHints) throws Exception {
+    public EntityStatement createAndSign(final String issuer,
+                                         final String subject,
+                                         final JSONObject metadata,
+                                         @Nullable final JsonNode federationKeys,
+                                         @Nullable final List<EntityID> authorityHints) throws Exception {
         val iss = new EntityID(issuer);
         val sub = new EntityID(subject);
 
@@ -51,13 +55,13 @@ public class OidcFederationDefaultEntityStatementService implements OidcFederati
         );
 
         val jwks = (JSONObject) claims.getClaim(JWKS);
-        if (federationKeys != null) {
+        if (federationKeys != null && !federationKeys.isEmpty()) {
             val keys = (List) jwks.get(KEYS);
             val addKeys = (JSONArray) JSONValue.parse(federationKeys.toString());
             keys.addAll(addKeys);
         }
 
-        if (authorityHints != null) {
+        if (authorityHints != null && !authorityHints.isEmpty()) {
             claims.setAuthorityHints(authorityHints);
         }
 
@@ -66,11 +70,7 @@ public class OidcFederationDefaultEntityStatementService implements OidcFederati
         val federationEntity = (JSONObject) metadata.get(EntityType.FEDERATION_ENTITY.getValue());
         if (federationEntity != null) {
             val fetchEndpoint = federationEntity.get("federation_fetch_endpoint");
-            if (fetchEndpoint != null) {
-                val map = new HashMap<String, Object>();
-                map.put("max_path_length", 1);
-                claims.setClaim("constraints", map);
-            }
+            FunctionUtils.doIfNotNull(fetchEndpoint, _ -> claims.setClaim("constraints", Map.of("max_path_length", 1)));
         }
 
         return jsonWebKeystoreService.signEntityStatement(claims);
