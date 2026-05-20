@@ -1,0 +1,279 @@
+{
+  "entityId" : "http://op",
+  "metadata": {
+    "openid_provider": {
+      "authorization_endpoint": "http://op/c2id-login",
+      "token_endpoint": "http://op/c2id/token",
+      "registration_endpoint": "http://op/c2id/clients",
+      "introspection_endpoint": "http://op/c2id/token/introspect",
+      "revocation_endpoint": "http://op/c2id/token/revoke",
+      "pushed_authorization_request_endpoint": "http://op/c2id/par",
+      "federation_registration_endpoint": "http://op/c2id/federation/clients",
+      "issuer": "http://op/c2id",
+      "jwks_uri": "http://op/c2id/jwks.json",
+      "scopes_supported": [
+        "openid"
+      ],
+      "response_types_supported": [
+        "code",
+        "token",
+        "id_token",
+        "id_token token",
+        "code id_token",
+        "code id_token token"
+      ],
+      "response_modes_supported": [
+        "query",
+        "fragment",
+        "form_post",
+        "query.jwt",
+        "fragment.jwt",
+        "form_post.jwt",
+        "jwt"
+      ],
+      "grant_types_supported": [
+        "implicit",
+        "authorization_code",
+        "refresh_token",
+        "password",
+        "client_credentials",
+        "urn:ietf:params:oauth:grant-type:jwt-bearer"
+      ],
+      "code_challenge_methods_supported": [
+        "plain",
+        "S256"
+      ],
+      "token_endpoint_auth_methods_supported": [
+        "client_secret_basic",
+        "client_secret_post",
+        "client_secret_jwt",
+        "private_key_jwt",
+        "none"
+      ],
+      "token_endpoint_auth_signing_alg_values_supported": [
+        "HS256",
+        "HS384",
+        "HS512",
+        "RS256",
+        "RS384",
+        "RS512",
+        "PS256",
+        "PS384",
+        "PS512",
+        "ES256",
+        "ES256K",
+        "ES384",
+        "ES512"
+      ],
+      "request_object_signing_alg_values_supported": [
+        "HS256",
+        "HS384",
+        "HS512",
+        "RS256",
+        "RS384",
+        "RS512",
+        "PS256",
+        "PS384",
+        "PS512",
+        "ES256",
+        "ES256K",
+        "ES384",
+        "ES512"
+      ],
+      "request_object_encryption_alg_values_supported": [
+        "RSA-OAEP-256",
+        "RSA-OAEP-384",
+        "RSA-OAEP-512",
+        "ECDH-ES",
+        "ECDH-ES+A128KW",
+        "ECDH-ES+A192KW",
+        "ECDH-ES+A256KW",
+        "dir"
+      ],
+      "request_object_encryption_enc_values_supported": [
+        "A128CBC-HS256",
+        "A192CBC-HS384",
+        "A256CBC-HS512",
+        "A128GCM",
+        "A192GCM",
+        "A256GCM",
+        "XC20P"
+      ],
+      "request_parameter_supported": true,
+      "request_uri_parameter_supported": true,
+      "require_request_uri_registration": true,
+      "authorization_response_iss_parameter_supported": true,
+      "tls_client_certificate_bound_access_tokens": true,
+      "dpop_signing_alg_values_supported": [
+        "ES256K",
+        "PS384",
+        "ES384",
+        "RS384",
+        "ES256",
+        "RS256",
+        "ES512",
+        "PS256",
+        "PS512",
+        "RS512"
+      ],
+      "authorization_signing_alg_values_supported": [
+        "HS256",
+        "HS384",
+        "HS512",
+        "RS256",
+        "RS384",
+        "RS512",
+        "PS256",
+        "PS384",
+        "PS512",
+        "ES256",
+        "ES256K",
+        "ES384",
+        "ES512",
+        "EdDSA"
+      ],
+      "authorization_encryption_alg_values_supported": [
+        "RSA-OAEP-256",
+        "RSA-OAEP-384",
+        "RSA-OAEP-512",
+        "ECDH-ES",
+        "ECDH-ES+A128KW",
+        "ECDH-ES+A192KW",
+        "ECDH-ES+A256KW",
+        "dir"
+      ],
+      "authorization_encryption_enc_values_supported": [
+        "A128CBC-HS256",
+        "A192CBC-HS384",
+        "A256CBC-HS512",
+        "A128GCM",
+        "A192GCM",
+        "A256GCM",
+        "XC20P"
+      ],
+      "prompt_values_supported": [
+        "none",
+        "login",
+        "select_account",
+        "create",
+        "consent"
+      ],
+      "organization_name": "pac4j_test_c2id",
+      "signed_jwks_uri": "http://op/c2id/jwks.jwt",
+      "client_registration_types_supported": [
+        "explicit"
+      ],
+      "request_uri_quota": 10,
+      "subject_types_supported": [
+        "public",
+        "pairwise"
+      ],
+      "userinfo_endpoint": "http://op/c2id/userinfo",
+      "id_token_signing_alg_values_supported": [
+        "RS256",
+        "RS384",
+        "RS512",
+        "PS256",
+        "PS384",
+        "PS512",
+        "ES256",
+        "ES256K",
+        "ES384",
+        "ES512",
+        "HS256",
+        "HS384",
+        "HS512",
+        "EdDSA"
+      ],
+      "id_token_encryption_alg_values_supported": [
+        "RSA-OAEP-256",
+        "RSA-OAEP-384",
+        "RSA-OAEP-512",
+        "ECDH-ES",
+        "ECDH-ES+A128KW",
+        "ECDH-ES+A192KW",
+        "ECDH-ES+A256KW",
+        "dir",
+        "A128KW",
+        "A192KW",
+        "A256KW",
+        "A128GCMKW",
+        "A192GCMKW",
+        "A256GCMKW"
+      ],
+      "id_token_encryption_enc_values_supported": [
+        "A128CBC-HS256",
+        "A192CBC-HS384",
+        "A256CBC-HS512",
+        "A128GCM",
+        "A192GCM",
+        "A256GCM",
+        "XC20P"
+      ],
+      "userinfo_signing_alg_values_supported": [
+        "RS256",
+        "RS384",
+        "RS512",
+        "PS256",
+        "PS384",
+        "PS512",
+        "ES256",
+        "ES256K",
+        "ES384",
+        "ES512",
+        "HS256",
+        "HS384",
+        "HS512",
+        "EdDSA"
+      ],
+      "userinfo_encryption_alg_values_supported": [
+        "RSA-OAEP-256",
+        "RSA-OAEP-384",
+        "RSA-OAEP-512",
+        "ECDH-ES",
+        "ECDH-ES+A128KW",
+        "ECDH-ES+A192KW",
+        "ECDH-ES+A256KW",
+        "dir",
+        "A128KW",
+        "A192KW",
+        "A256KW",
+        "A128GCMKW",
+        "A192GCMKW",
+        "A256GCMKW"
+      ],
+      "userinfo_encryption_enc_values_supported": [
+        "A128CBC-HS256",
+        "A192CBC-HS384",
+        "A256CBC-HS512",
+        "A128GCM",
+        "A192GCM",
+        "A256GCM",
+        "XC20P"
+      ],
+      "display_values_supported": [
+        "page"
+      ],
+      "claim_types_supported": [
+        "normal"
+      ],
+      "claims_supported": [
+        "sub"
+      ],
+      "claims_parameter_supported": true,
+      "frontchannel_logout_supported": true,
+      "frontchannel_logout_session_supported": true,
+      "backchannel_logout_supported": true,
+      "backchannel_logout_session_supported": true
+    }
+  },
+  "federationKeys": [
+    {
+      "kty": "RSA",
+      "e": "AQAB",
+      "use": "sig",
+      "kid": "PRRz",
+      "n": "vPZc7YQGa8p4ql8KpUdlj4KAgqkoWopHqtKrUFvXnRGlRXXrCwt5TGixe_LKWEFNnTm6xdIe0DoIRrUM02FeB9NuJzJCp5xhT__ahldgvtCzIpEg5VIQzRrcRt-hX6GZSe0mDEi1BKoVW5yP_-ZI_NYGSBPZQIdrmiNhzPOYsPrcz8i5BNXBiZpYHhgiiLGE587jQ5YITyOfNjcyQbqUz-DzIsRgzyb0_IB4XeOInk2nfv8SkzMGRXcTJmBasRJ3AHbvtDztDK6FbCJuU73sHYEOc6xyI_O5UAMwHyLPem7qXtKHmaodDs2pHZTv7CxxTuwmkjnr_yHLJ1Qcp3KZ5Q"
+    }
+  ]
+}

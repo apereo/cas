@@ -1,7 +1,10 @@
-package org.apereo.cas.oidc.federation;
+package org.apereo.cas.oidc.federation.chain;
 
 import module java.base;
+import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.oidc.OidcConstants;
+import org.apereo.cas.oidc.federation.AbstractOidcTrustAnchorFederationTests;
+import org.apereo.cas.oidc.federation.signature.OidcFederationEntityStatementService;
 import com.nimbusds.oauth2.sdk.GrantType;
 import com.nimbusds.oauth2.sdk.ResponseType;
 import com.nimbusds.oauth2.sdk.Scope;
@@ -15,6 +18,7 @@ import com.nimbusds.openid.connect.sdk.federation.trust.TrustChainSet;
 import com.nimbusds.openid.connect.sdk.rp.ApplicationType;
 import com.nimbusds.openid.connect.sdk.rp.OIDCClientMetadata;
 import lombok.val;
+import net.minidev.json.JSONObject;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
@@ -64,7 +68,14 @@ class OidcFederationDefaultTrustChainResolverTests {
             @Bean
             public TrustChainResolver mockTrustChainResolver(
                 @Qualifier(OidcFederationEntityStatementService.BEAN_NAME)
-                final OidcFederationEntityStatementService oidcFederationEntityStatementService) throws Exception {
+                final OidcFederationEntityStatementService oidcFederationEntityStatementService,
+                final CasConfigurationProperties casProperties) throws Exception {
+
+                val issuer = casProperties.getAuthn().getOidc().getCore().getIssuer();
+                val metadata = new JSONObject();
+                val authorityHints = casProperties.getAuthn().getOidc()
+                        .getFederation().getAuthorityHints().stream().map(EntityID::new).toList();
+
                 val resolver = mock(TrustChainResolver.class);
                 val trustChainSet = mock(TrustChainSet.class);
                 val trustChain = mock(TrustChain.class);
@@ -85,7 +96,8 @@ class OidcFederationDefaultTrustChainResolverTests {
                 when(metadataPolicy.apply(any())).thenReturn(rpMetadata);
                 when(trustChain.resolveCombinedMetadataPolicy(any(EntityType.class))).thenReturn(metadataPolicy);
 
-                val leafConfiguration = oidcFederationEntityStatementService.createAndSign();
+                val leafConfiguration = oidcFederationEntityStatementService.createAndSign(issuer, issuer,
+                        metadata, null, authorityHints);
                 when(trustChain.getLeafConfiguration()).thenReturn(leafConfiguration);
                 when(trustChainSet.getShortest()).thenReturn(trustChain);
                 when(resolver.resolveTrustChains(any(EntityID.class))).thenReturn(trustChainSet);
