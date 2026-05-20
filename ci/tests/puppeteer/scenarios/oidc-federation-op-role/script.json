@@ -5,6 +5,7 @@
     "--cas.server.prefix=https://localhost:8443/cas",
 
     "--cas.authn.oidc.federation.role=OPENID_PROVIDER",
+    "--cas.authn.oidc.federation.organization=ApereoOP",
     "--cas.authn.oidc.jwks.file-system.jwks-file=file:${#systemProperties['java.io.tmpdir']}/tmpoidc.jwks",
     "--cas.authn.oidc.federation.jwks-file=file:${#systemProperties['java.io.tmpdir']}/tmpfederation.jwks",
     "--cas.authn.oidc.core.issuer=https://localhost:8443/cas/oidc",

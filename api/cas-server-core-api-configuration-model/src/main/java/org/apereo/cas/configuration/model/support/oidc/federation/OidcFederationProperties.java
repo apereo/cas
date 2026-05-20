@@ -22,7 +22,7 @@ import lombok.experimental.Accessors;
 public class OidcFederationProperties implements Serializable {
 
     @Serial
-    private static final long serialVersionUID = 113328615694269276L;
+    private static final long serialVersionUID = 113328615694269278L;
 
     /**
      * The role of this server.
@@ -64,4 +64,9 @@ public class OidcFederationProperties implements Serializable {
      */
     @DurationCapable
     private String entityStatementExpiration = "P90D";
+
+    /**
+     * For a TA or intermediate, the file directory where the subordinates are stored.
+     */
+    private String subordinateDirectory;
 }
