@@ -10,7 +10,7 @@ ext {
 dependencies {
     implementation project(":support:cas-server-support-oauth-api")
     implementation project(":support:cas-server-support-oauth-core-api")
-    
+
     implementation project(":support:cas-server-support-oidc-core")
     implementation project(":support:cas-server-support-oidc-core-api")
     implementation project(":support:cas-server-support-oidc-services")
@@ -23,7 +23,7 @@ dependencies {
     implementation libraries.nimbus
     implementation libraries.jose4j
     implementation libraries.pac4jcore
-    
+
     testImplementation project(":core:cas-server-core-multitenancy")
     testImplementation project(":core:cas-server-core-configuration")
     testImplementation project(":core:cas-server-core-services")
@@ -34,6 +34,7 @@ dependencies {
     testImplementation project(":core:cas-server-core-cookie")
     testImplementation project(":core:cas-server-core-tickets")
     testImplementation project(":core:cas-server-core")
+    testImplementation project(":core:cas-server-core-util")
     testImplementation project(":core:cas-server-core-logout")
     testImplementation project(":core:cas-server-core-webflow-mfa")
     testImplementation project(":core:cas-server-core-authentication-mfa")
