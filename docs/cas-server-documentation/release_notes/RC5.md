@@ -154,8 +154,12 @@ propertly at build time. This property allows users to specify a comma-separated
 to include in the build and it allows users to dynamically specify modules needed from the command-line
 programmatically. See the `README.md` file of the generated CAS overlay for details.
 
+[CAS Initializr](../installation/WAR-Overlay-Initializr.html) has also gained basid modest support to generate
+Terraform configuration files that can be used to deploy CAS on cloud platforms such as AWS, Azure, GCP, etc. 
+This capability is expected to evolve over time.
+
 ## Other Stuff
-              
+  
 - Minor user interface adjustments to remove unneeded resources and script references from various pages.
 - Registered service definitions without a `name` are auto-assigned a name with a warning when the definition is saved.
 - Generated client secrets via [OpenID Connect Dynamic Registration](../authentication/OIDC-Authentication-Dynamic-Registration.html) are automatically ciphered, if configured.
