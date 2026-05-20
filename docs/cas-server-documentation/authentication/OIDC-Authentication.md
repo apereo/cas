@@ -51,6 +51,7 @@ The current implementation provides support for:
 | `/oidc/register`                         | Register clients via the [dynamic client registration](https://tools.ietf.org/html/draft-ietf-oauth-dyn-reg-management-01) protocol.                                                                                                                                                                    |
 | `/oidc/initToken`                        | Obtain an initial *master* access token required for dynamic client registration when operating in `PROTECTED` mode.                                                                                                                                                                                    |
 | `/oidc/clientConfig`                     | [Update or retrieve client](OIDC-Authentication-Dynamic-Registration.html) application definitions, registered with the server.                                                                                                                                                                         |
+| `/oidc/fetch`                            | [For a trust anchor or intermediate in a federation](OIDC-Authentication-Federation.html), it returns the signed entity statements. |
 
 <div class="alert alert-warning">:warning: <strong>Use Discovery</strong><p>The above endpoints
 are not strictly defined in the OpenID Connect specification. The CAS software may choose to change URL endpoints
