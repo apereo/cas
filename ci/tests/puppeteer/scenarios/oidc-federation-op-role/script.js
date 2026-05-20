@@ -18,9 +18,20 @@ const assert = require("assert");
     assert(sub === iss);
     assert(decoded.exp !== undefined);
     assert(decoded.jwks !== undefined);
+
     const metadata = decoded.metadata;
-    assert(metadata["federation_entity"] !== undefined);
-    assert(metadata["openid_provider"] !== undefined);
+    const federationEntity = metadata["federation_entity"];
+    assert(federationEntity !== undefined);
+    const openidProvider = metadata["openid_provider"];
+    assert(openidProvider !== undefined);
     assert(decoded["authority_hints"] !== undefined);
+
+    assert(federationEntity["organization_name"] === "ApereoOP");
+    assert(federationEntity["federation_fetch_endpoint"] === undefined);
+    assert(federationEntity["contacts"] !== undefined);
+
+    const algValues = openidProvider["userinfo_signing_alg_values_supported"];
+    assert(algValues.includes("RS256"));
+    assert(algValues.includes("HS256"));
 
 })();

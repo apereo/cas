@@ -4,6 +4,7 @@ import module java.base;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.text.WordUtils;
+import org.springframework.http.MediaType;
 
 /**
  * This is {@link OidcConstants}.
@@ -57,6 +58,14 @@ public interface OidcConstants {
      * Audience claim.
      */
     String AUD = "aud";
+    /**
+     * JWKS claim.
+     */
+    String JWKS = "jwks";
+    /**
+     * Keys claim.
+     */
+    String KEYS = "keys";
     /**
      * VC pre authorized code parameter.
      */
@@ -266,6 +275,10 @@ public interface OidcConstants {
      */
     String WELL_KNOWN_OAUTH_AUTHORIZATION_SERVER_URL = WELL_KNOWN_URL + "/oauth-authorization-server";
     /**
+     * /fetch.
+     */
+    String FETCH_FEDERATION_URL = "/fetch";
+    /**
      * Scope assigned to access token internally
      * to access client config urls and look up relying parties.
      */
@@ -287,6 +300,10 @@ public interface OidcConstants {
      * JWT content type.
      */
     String CONTENT_TYPE_JWT = "application/jwt";
+    /**
+     * Entity statement content type.
+     */
+    MediaType ENTITY_STATEMENT_CONTENT_TYPE = new MediaType("application", "entity-statement+jwt");
     /**
      * The post logout redirect uri.
      */
