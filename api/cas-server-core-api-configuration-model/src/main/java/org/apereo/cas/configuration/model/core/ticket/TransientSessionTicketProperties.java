@@ -1,6 +1,7 @@
 package org.apereo.cas.configuration.model.core.ticket;
 
 import module java.base;
+import org.apereo.cas.configuration.support.DurationCapable;
 import org.apereo.cas.configuration.support.RequiresModule;
 import lombok.Getter;
 import lombok.Setter;
@@ -29,5 +30,6 @@ public class TransientSessionTicketProperties implements Serializable {
     /**
      * Number of seconds after which this ticket becomes invalid.
      */
-    private long timeToKillInSeconds = TimeUnit.MINUTES.toSeconds(15);
+    @DurationCapable
+    private String timeToKillInSeconds = "PT15M";
 }
