@@ -41,6 +41,8 @@ jobs:
       is_snapshot: ${{ steps.check.outputs.is_snapshot }}
     steps:
       - uses: actions/checkout@v6
+        with:
+          persist-credentials: false
       - name: Determine version
         id: check
         run: |
@@ -61,6 +63,8 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v6
+        with:
+          persist-credentials: false
       - name: Set up JDK
         uses: actions/setup-java@v5
         with:
