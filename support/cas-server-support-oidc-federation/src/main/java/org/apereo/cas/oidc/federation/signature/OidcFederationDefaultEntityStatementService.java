@@ -57,7 +57,7 @@ public class OidcFederationDefaultEntityStatementService implements OidcFederati
             keys.addAll(addKeys);
         }
 
-        if (authorityHints != null) {
+        if (authorityHints != null && authorityHints.size() > 0) {
             claims.setAuthorityHints(authorityHints);
         }
 

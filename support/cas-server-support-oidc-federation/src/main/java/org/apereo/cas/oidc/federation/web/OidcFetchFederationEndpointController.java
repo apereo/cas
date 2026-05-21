@@ -23,19 +23,19 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
 /**
- * This is {@link OidcTrustAnchorFetchEndpointController}.
+ * This is {@link OidcFetchFederationEndpointController}.
  *
  * @author Jerome LELEU
  * @since 8.0.0
  */
 @Slf4j
-public class OidcTrustAnchorFetchEndpointController extends AbstractOidcFederationEndpointController {
+public class OidcFetchFederationEndpointController extends AbstractOidcFederationEndpointController {
 
     private final OidcFederationSubordinateRepository subordinateRepository;
 
-    public OidcTrustAnchorFetchEndpointController(final OidcFederationSubordinateRepository subordinateRepository, final OidcIssuerService oidcIssuerService,
-                                                  final OidcFederationEntityStatementService federationEntityStatementService,
-                                                  final OidcProperties oidcProperties) {
+    public OidcFetchFederationEndpointController(final OidcFederationSubordinateRepository subordinateRepository, final OidcIssuerService oidcIssuerService,
+                                                 final OidcFederationEntityStatementService federationEntityStatementService,
+                                                 final OidcProperties oidcProperties) {
         super(oidcIssuerService, federationEntityStatementService, oidcProperties);
         this.subordinateRepository = subordinateRepository;
     }
@@ -60,7 +60,7 @@ public class OidcTrustAnchorFetchEndpointController extends AbstractOidcFederati
         LOGGER.info("Building entity statement for subordinate: [{}]", sub);
 
         val role = oidcProperties.getFederation().getRole();
-        if (!role.isTaOrIntermediate()) {
+        if (!role.isTrustAnchorOrIntermediate()) {
             throw new IllegalArgumentException("Federation role [" + role + "] is not supported for Trust Anchor/Intermediate");
         }
 

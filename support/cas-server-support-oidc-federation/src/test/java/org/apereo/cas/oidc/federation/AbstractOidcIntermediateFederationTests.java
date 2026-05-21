@@ -14,8 +14,6 @@ import org.apereo.cas.config.CasCoreServicesAutoConfiguration;
 import org.apereo.cas.config.CasCoreTicketsAutoConfiguration;
 import org.apereo.cas.config.CasCoreWebAutoConfiguration;
 import org.apereo.cas.config.CasCoreWebflowAutoConfiguration;
-import org.apereo.cas.config.CasOAuth20AutoConfiguration;
-import org.apereo.cas.config.CasOidcAutoConfiguration;
 import org.apereo.cas.config.CasOidcFederationAutoConfiguration;
 import org.apereo.cas.config.CasThymeleafAutoConfiguration;
 import org.springframework.boot.SpringBootConfiguration;
@@ -23,23 +21,23 @@ import org.springframework.boot.autoconfigure.ImportAutoConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
 
 /**
- * This is {@link AbstractOidcOpenIdProviderFederationTests}.
+ * This is {@link AbstractOidcIntermediateFederationTests}.
  *
  * @author Jerome LELEU
  * @since 8.0.0
  */
 @SpringBootTest(
-    classes = AbstractOidcOpenIdProviderFederationTests.SharedTestConfiguration.class,
+    classes = AbstractOidcIntermediateFederationTests.SharedTestConfiguration.class,
     properties = {
         "cas.server.name=https://sso.example.org/",
         "cas.server.prefix=https://sso.example.org/cas",
         "cas.authn.oidc.core.issuer=https://sso.example.org/cas/oidc",
-        "cas.authn.oidc.jwks.file-system.jwks-file=file:${#systemProperties['java.io.tmpdir']}/oidc.jwks",
-        "cas.authn.oidc.federation.role=OPENID_PROVIDER",
+        "cas.authn.oidc.federation.role=INTERMEDIATE",
         "cas.authn.oidc.federation.jwks-file=file:${#systemProperties['java.io.tmpdir']}/federation.jwks",
+        "cas.authn.oidc.federation.subordinate-directory=./src/test/resources/subordinates",
         "cas.authn.oidc.federation.authority-hints[0]=https://trustanchor"
     }, webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-public abstract class AbstractOidcOpenIdProviderFederationTests extends AbstractOidcFederationTests {
+public abstract class AbstractOidcIntermediateFederationTests extends AbstractOidcFederationTests {
 
     @SpringBootConfiguration(proxyBeanMethods = false)
     @ImportAutoConfiguration({
@@ -57,8 +55,6 @@ public abstract class AbstractOidcOpenIdProviderFederationTests extends Abstract
         CasCoreMultitenancyAutoConfiguration.class,
         CasCoreMultifactorAuthenticationWebflowAutoConfiguration.class,
         CasCoreMultifactorAuthenticationAutoConfiguration.class,
-        CasOidcAutoConfiguration.class,
-        CasOAuth20AutoConfiguration.class,
         CasOidcFederationAutoConfiguration.class
     })
     public static class SharedTestConfiguration {

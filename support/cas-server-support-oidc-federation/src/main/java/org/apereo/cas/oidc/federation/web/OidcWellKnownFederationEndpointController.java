@@ -66,18 +66,31 @@ public class OidcWellKnownFederationEndpointController extends AbstractOidcFeder
         val settings = serverDiscoverySettings.getIfAvailable();
         var issuer = oidcProperties.getCore().getIssuer();
         val metadata = new JSONObject();
-        var authorityHints = (List<EntityID>) null;
+        val authorityHints = (List<EntityID>) oidcProperties.getFederation().getAuthorityHints().stream().map(EntityID::new).toList();
         if (settings != null) {
             if (role != OidcFederationRole.OPENID_PROVIDER) {
                 throw new IllegalArgumentException("Federation role [" + role + "] is not supported for OpenID Provider");
             }
             issuer = settings.getIssuer();
 
-            authorityHints = oidcProperties.getFederation().getAuthorityHints().stream().map(EntityID::new).toList();
+            if (authorityHints.isEmpty()) {
+                throw new IllegalArgumentException("OpenID provider requires authority hint(s)");
+            }
 
             val json = JSONValue.parse(settings.toJson());
             metadata.put(EntityType.OPENID_PROVIDER.getValue(), json);
-        } else if (!role.isTaOrIntermediate()) {
+
+        } else if (role == OidcFederationRole.INTERMEDIATE) {
+            if (authorityHints.isEmpty()) {
+                throw new IllegalArgumentException("Intermediate requires authority hint(s)");
+            }
+
+        } else if (role == OidcFederationRole.TRUST_ANCHOR) {
+            if (!authorityHints.isEmpty()) {
+                throw new IllegalArgumentException("Trust anchor requires no authority hints");
+            }
+
+        } else {
             throw new IllegalArgumentException("Federation role [" + role + "] is not supported for Trust Anchor/Intermediate");
         }
 
