@@ -37,11 +37,7 @@ class TenantRestfulConsentRepositoryBuilderTests {
     @Autowired
     @Qualifier(ConsentEngine.BEAN_NAME)
     private ConsentEngine consentEngine;
-
-    @Autowired
-    @Qualifier(ConsentDecisionBuilder.BEAN_NAME)
-    private ConsentDecisionBuilder consentDecisionBuilder;
-
+    
     @Test
     void verifyOperation() throws Throwable {
         val principal = RegisteredServiceTestUtils.getPrincipal(UUID.randomUUID().toString(),
