@@ -51,7 +51,7 @@ public class DefaultOAuth20ClientSecretValidator implements OAuth20ClientSecretV
         return registeredService != null && StringUtils.isBlank(registeredService.getClientSecret());
     }
 
-    protected boolean isClientSecretCorrect(String definedSecret, String clientSecret) {
+    protected boolean isClientSecretCorrect(final String definedSecret, final String clientSecret) {
         return Strings.CI.equals(definedSecret, clientSecret);
     }
 }
