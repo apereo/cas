@@ -55,13 +55,13 @@ public class OidcFederationDefaultEntityStatementService implements OidcFederati
         );
 
         val jwks = (JSONObject) claims.getClaim(JWKS);
-        if (federationKeys != null && !federationKeys.isEmpty()) {
+        if (federationKeys != null) {
             val keys = (List) jwks.get(KEYS);
             val addKeys = (JSONArray) JSONValue.parse(federationKeys.toString());
             keys.addAll(addKeys);
         }
 
-        if (authorityHints != null && !authorityHints.isEmpty()) {
+        if (authorityHints != null) {
             claims.setAuthorityHints(authorityHints);
         }
 
