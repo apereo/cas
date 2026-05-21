@@ -6,6 +6,7 @@ import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.configuration.model.support.consent.RestfulConsentProperties;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.util.function.FunctionUtils;
+import org.apereo.cas.util.http.HttpClient;
 import org.apereo.cas.util.http.HttpExecutionRequest;
 import org.apereo.cas.util.http.HttpUtils;
 import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
@@ -39,10 +40,11 @@ public class RestfulConsentRepository extends BaseConsentRepository {
     private static final long serialVersionUID = 6583408864586270206L;
 
     private final RestfulConsentProperties properties;
-
+    private final HttpClient httpClient;
+    
     @Override
-    public Collection<? extends ConsentDecision> findConsentDecisions(final String principal) {
-        return FunctionUtils.doUnchecked(() -> {
+    public @Nullable Collection<? extends ConsentDecision> findConsentDecisions(final String principal) {
+        return FunctionUtils.doAndHandle(() -> {
             HttpResponse response = null;
             try {
                 val headers = new HashMap<String, String>();
@@ -60,6 +62,7 @@ public class RestfulConsentRepository extends BaseConsentRepository {
                     .method(HttpMethod.GET)
                     .url(url)
                     .headers(headers)
+                    .httpClient(this.httpClient)
                     .build();
                 response = HttpUtils.execute(exec);
                 if (response != null && HttpStatus.valueOf(response.getCode()).is2xxSuccessful()) {
@@ -77,8 +80,8 @@ public class RestfulConsentRepository extends BaseConsentRepository {
     }
 
     @Override
-    public Collection<? extends ConsentDecision> findConsentDecisions() {
-        return FunctionUtils.doUnchecked(() -> {
+    public @Nullable Collection<? extends ConsentDecision> findConsentDecisions() {
+        return FunctionUtils.doAndHandle(() -> {
             HttpResponse response = null;
             try {
                 val headers = new HashMap<String, String>();
@@ -93,6 +96,7 @@ public class RestfulConsentRepository extends BaseConsentRepository {
                     .method(HttpMethod.GET)
                     .url(resolveUrl())
                     .headers(headers)
+                    .httpClient(this.httpClient)
                     .build();
                 response = HttpUtils.execute(exec);
                 if (response != null && HttpStatus.valueOf(response.getCode()).is2xxSuccessful()) {
@@ -112,7 +116,7 @@ public class RestfulConsentRepository extends BaseConsentRepository {
     @Override
     public @Nullable ConsentDecision findConsentDecision(final Service service, final RegisteredService registeredService,
                                                          final Authentication authentication) {
-        return FunctionUtils.doUnchecked(() -> {
+        return FunctionUtils.doAndHandle(() -> {
             HttpResponse response = null;
             try {
                 val headers = new HashMap<String, String>();
@@ -131,6 +135,7 @@ public class RestfulConsentRepository extends BaseConsentRepository {
                     .method(HttpMethod.GET)
                     .url(url)
                     .headers(headers)
+                    .httpClient(this.httpClient)
                     .build();
                 response = HttpUtils.execute(exec);
                 if (response != null && HttpStatus.valueOf(response.getCode()).is2xxSuccessful()) {
@@ -147,7 +152,7 @@ public class RestfulConsentRepository extends BaseConsentRepository {
     }
 
     @Override
-    public ConsentDecision storeConsentDecision(final ConsentDecision decision) {
+    public @Nullable ConsentDecision storeConsentDecision(final ConsentDecision decision) {
         HttpResponse response = null;
         try {
             val headers = new HashMap<String, String>();
@@ -162,6 +167,7 @@ public class RestfulConsentRepository extends BaseConsentRepository {
                 .url(resolveUrl())
                 .headers(headers)
                 .entity(MAPPER.writeValueAsString(decision))
+                .httpClient(this.httpClient)
                 .build();
             response = HttpUtils.execute(exec);
             if (HttpStatus.valueOf(response.getCode()).is2xxSuccessful()) {
@@ -192,6 +198,7 @@ public class RestfulConsentRepository extends BaseConsentRepository {
                 .method(HttpMethod.DELETE)
                 .url(url)
                 .headers(headers)
+                .httpClient(this.httpClient)
                 .build();
             response = HttpUtils.execute(exec);
             return response != null && HttpStatus.valueOf(response.getCode()).is2xxSuccessful();
@@ -215,6 +222,7 @@ public class RestfulConsentRepository extends BaseConsentRepository {
                 .method(HttpMethod.DELETE)
                 .url(resolveUrl())
                 .headers(headers)
+                .httpClient(this.httpClient)
                 .build();
             response = HttpUtils.execute(exec);
         } finally {
@@ -242,6 +250,7 @@ public class RestfulConsentRepository extends BaseConsentRepository {
                 .method(HttpMethod.DELETE)
                 .url(url)
                 .headers(headers)
+                .httpClient(this.httpClient)
                 .build();
             response = HttpUtils.execute(exec);
             return response != null && HttpStatus.valueOf(response.getCode()).is2xxSuccessful();

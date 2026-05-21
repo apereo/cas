@@ -382,9 +382,11 @@ while (( "$#" )); do
                 task+="testJMX "
                 ;;
             restfulapiauthentication|restfulauthn|restauthn)
+                isDockerOnLinux && ./ci/tests/httpbin/run-httpbin-server.sh || exit 1
                 task+="testRestfulApiAuthentication "
                 ;;
             rest|restful|restapi|restfulapi)
+                isDockerOnLinux && ./ci/tests/httpbin/run-httpbin-server.sh || exit 1
                 task+="testRestfulApi "
                 ;;
             webflow-mfa-actions|swf-mfa_actions|webflowmfaactions)

@@ -158,6 +158,16 @@ programmatically. See the `README.md` file of the generated CAS overlay for deta
 Terraform configuration files that can be used to deploy CAS on cloud platforms such as AWS, Azure, GCP, etc. 
 This capability is expected to evolve over time.
 
+## Multitenancy & Attribute Consent
+
+[Multitenancy support](../multitenancy/Multitenancy-Overview.html) is now extended to support 
+distinct storage services for each tenant when it comes to storing 
+[attribute consent decisions](../integration/Attribute-Release-Consent.html). As of this release, this capability
+is made available to the following storage services:
+
+- [MongoDb](../integration/Attribute-Release-Consent-Storage-MongoDb.html)
+- [REST](../integration/Attribute-Release-Consent-Storage-REST.html)
+
 ## Other Stuff
   
 - Minor user interface adjustments to remove unneeded resources and script references from various pages.
