@@ -38,7 +38,6 @@ dependencies {
     testImplementation project(":core:cas-server-core-notifications")
     testImplementation project(":core:cas-server-core-scripting")
     testImplementation project(":core:cas-server-core-multitenancy")
-    testImplementation project(":core:cas-server-core-services-authentication")
 
     testImplementation project(":support:cas-server-support-person-directory")
     testImplementation project(":support:cas-server-support-webconfig")

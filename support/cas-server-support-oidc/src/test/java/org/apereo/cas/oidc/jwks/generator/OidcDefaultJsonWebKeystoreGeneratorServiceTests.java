@@ -8,6 +8,7 @@ import org.apereo.cas.util.RandomUtils;
 import lombok.val;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
+import org.awaitility.Awaitility;
 import org.jose4j.jwk.JsonWebKeySet;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
@@ -63,7 +64,7 @@ class OidcDefaultJsonWebKeystoreGeneratorServiceTests {
         void setup() {
             keystore = new File(FileUtils.getTempDirectoryPath(), "something.jwks");
             if (keystore.exists()) {
-                assertTrue(keystore.delete());
+                Awaitility.await().untilAsserted(() -> assertTrue(keystore.delete()));
             }
         }
 

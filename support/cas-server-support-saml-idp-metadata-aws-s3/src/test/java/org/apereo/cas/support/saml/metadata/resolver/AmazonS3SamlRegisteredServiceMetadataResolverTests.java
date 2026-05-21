@@ -32,7 +32,7 @@ import static org.junit.jupiter.api.Assertions.*;
     BaseSamlIdPMetadataTests.SharedTestConfiguration.class
 }, properties = {
     "cas.authn.saml-idp.metadata.file-system.location=${#systemProperties['java.io.tmpdir']}/saml22",
-    
+
     "cas.authn.saml-idp.metadata.amazon-s3.bucket-name=cassamlmetadata",
     "cas.authn.saml-idp.metadata.amazon-s3.endpoint=http://127.0.0.1:4566",
     "cas.authn.saml-idp.metadata.amazon-s3.region=us-east-1",
@@ -53,7 +53,7 @@ class AmazonS3SamlRegisteredServiceMetadataResolverTests {
         val metadataManager = resolver.getMetadataManager().orElseThrow();
         metadataManager.removeAll();
     }
-    
+
     @Test
     void verifyAction() throws Throwable {
         val service = new SamlRegisteredService();
@@ -77,14 +77,7 @@ class AmazonS3SamlRegisteredServiceMetadataResolverTests {
                 AQABoxIwEDAOBgNVHQ8BAf8EBAMCBPAwDQYJKoZIhvcNAQEFBQADgYEAW5wPR7cr1LAdq+IrR44i\
                 QlRG5ITCZXY9hI0PygLP2rHANh+PYfTmxbuOnykNGyhM6FjFLbW2uZHQTY1jMrPprjOrmyK5sjJR\
                 O4d1DeGHT/YnIjs9JogRKv4XHECwLtIVdAbIdWHEtVZJyMSktcyysFcvuhPQK8Qc/E/Wq8uHSCo=""";
-
-        val doc = SamlMetadataDocument.builder()
-            .id(RandomUtils.nextInt())
-            .name("SAMLDocument")
-            .signature(signature)
-            .value(IOUtils.toString(new ClassPathResource("sp-metadata.xml").getInputStream(), StandardCharsets.UTF_8))
-            .build();
-
+        val doc = buildDocument(signature);
         val metadataManager = resolver.getMetadataManager().orElseThrow();
         metadataManager.store(doc);
         assertFalse(resolver.resolve(service).isEmpty());
@@ -157,7 +150,10 @@ class AmazonS3SamlRegisteredServiceMetadataResolverTests {
                 AQABoxIwEDAOBgNVHQ8BAf8EBAMCBPAwDQYJKoZIhvcNAQEFBQADgYEAW5wPR7cr1LAdq+IrR44i\
                 QlRG5ITCZXY9hI0PygLP2rHANh+PYfTmxbuOnykNGyhM6FjFLbW2uZHQTY1jMrPprjOrmyK5sjJR\
                 O4d1DeGHT/YnIjs9JogRKv4XHECwLtIVdAbIdWHEtVZJyMSktcyysFcvuhPQK8Qc/E/Wq8uHSCo=""";
+        return buildDocument(signature);
+    }
 
+    private static SamlMetadataDocument buildDocument(final String signature) throws Exception {
         return SamlMetadataDocument.builder()
             .id(RandomUtils.nextInt())
             .name("SAMLDocument-%s".formatted(RandomUtils.nextInt()))

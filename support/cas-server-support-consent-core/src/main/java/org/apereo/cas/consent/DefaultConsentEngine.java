@@ -157,18 +157,16 @@ public class DefaultConsentEngine implements ConsentEngine {
                 .withConsentDecision(decision).withAuthentication(authentication);
         }
 
-        if (decision.getReminder() > 0) {
-            LOGGER.debug("Consent is not required yet for [{}]; checking for reminder options", service);
-            val unit = decision.getReminderTimeUnit();
-            val dt = decision.getCreatedDate().plus(decision.getReminder(), unit);
-            val now = LocalDateTime.now(ZoneId.systemDefault());
+        LOGGER.debug("Consent is not required yet for [{}]; checking for reminder options", service);
+        val unit = decision.getReminderTimeUnit();
+        val dt = decision.getCreatedDate().plus(decision.getReminder(), unit);
+        val now = LocalDateTime.now(ZoneId.systemDefault());
 
-            LOGGER.debug("Reminder threshold date/time is calculated as [{}]", dt);
-            if (now.isAfter(dt)) {
-                LOGGER.debug("Consent is required based on reminder options given now at [{}] is after [{}]", now, dt);
-                return ConsentQueryResult.required().withService(service)
-                    .withConsentDecision(decision).withAuthentication(authentication);
-            }
+        LOGGER.debug("Reminder threshold date/time is calculated as [{}]", dt);
+        if (now.isAfter(dt)) {
+            LOGGER.debug("Consent is required based on reminder options given now at [{}] is after [{}]", now, dt);
+            return ConsentQueryResult.required().withService(service)
+                .withConsentDecision(decision).withAuthentication(authentication);
         }
 
         LOGGER.debug("Consent is not required for service [{}]", service);
