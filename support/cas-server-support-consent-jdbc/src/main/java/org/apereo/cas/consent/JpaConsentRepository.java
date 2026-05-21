@@ -9,6 +9,8 @@ import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.ObjectUtils;
+import org.jspecify.annotations.Nullable;
+import org.springframework.beans.factory.DisposableBean;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 import org.springframework.transaction.annotation.Transactional;
 import jakarta.persistence.EntityManager;
@@ -24,7 +26,7 @@ import jakarta.persistence.PersistenceContext;
 @Transactional(transactionManager = "transactionManagerConsent")
 @Slf4j
 @ToString
-public class JpaConsentRepository implements ConsentRepository {
+public class JpaConsentRepository extends BaseConsentRepository implements DisposableBean {
 
     @Serial
     private static final long serialVersionUID = 6599902742493270206L;
@@ -34,12 +36,12 @@ public class JpaConsentRepository implements ConsentRepository {
     private static final String SELECT_QUERY = "SELECT r from " + ENTITY_NAME + " r ";
 
     @PersistenceContext(unitName = "jpaConsentContext")
-    private transient EntityManager entityManager;
+    private EntityManager entityManager;
 
     @Override
-    public ConsentDecision findConsentDecision(final Service service,
-                                               final RegisteredService registeredService,
-                                               final Authentication authentication) {
+    public @Nullable ConsentDecision findConsentDecision(final Service service,
+                                                         final RegisteredService registeredService,
+                                                         final Authentication authentication) {
         try {
             val query = SELECT_QUERY.concat("WHERE r.principal = :principal AND r.service = :service");
             return this.entityManager.createQuery(query, JpaConsentDecision.class)
@@ -117,5 +119,11 @@ public class JpaConsentRepository implements ConsentRepository {
     public void deleteAll() {
         val query = "DELETE FROM " + ENTITY_NAME;
         entityManager.createQuery(query).executeUpdate();
+    }
+
+
+    @Override
+    public void destroy() throws Exception {
+        entityManager.close();
     }
 }

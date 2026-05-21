@@ -24,7 +24,7 @@ import tools.jackson.databind.ObjectMapper;
  * @since 5.2.0
  */
 @Getter
-public class JsonConsentRepository extends BaseConsentRepository implements DisposableBean {
+public class JsonConsentRepository extends BaseSimpleConsentRepository implements DisposableBean {
     @Serial
     private static final long serialVersionUID = -402728417464783825L;
 

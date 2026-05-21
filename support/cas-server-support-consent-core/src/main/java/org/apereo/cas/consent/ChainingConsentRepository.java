@@ -5,8 +5,10 @@ import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.services.RegisteredService;
 import lombok.RequiredArgsConstructor;
+import lombok.val;
 import org.jooq.lambda.Unchecked;
 import org.jspecify.annotations.Nullable;
+import org.springframework.beans.factory.DisposableBean;
 
 /**
  * This is {@link ChainingConsentRepository}.
@@ -15,12 +17,12 @@ import org.jspecify.annotations.Nullable;
  * @since 8.0.0
  */
 @RequiredArgsConstructor
-public class ChainingConsentRepository implements ConsentRepository {
+public class ChainingConsentRepository extends BaseConsentRepository implements DisposableBean {
     @Serial
     private static final long serialVersionUID = -3921783863834236863L;
-    
+
     private final List<ConsentRepository> repositories;
-        
+
     @Override
     public @Nullable ConsentDecision findConsentDecision(final Service service,
                                                          final RegisteredService registeredService,
@@ -54,7 +56,7 @@ public class ChainingConsentRepository implements ConsentRepository {
     @Override
     public @Nullable ConsentDecision storeConsentDecision(final ConsentDecision decision) throws Throwable {
         ConsentDecision result = null;
-        for (final var repo : repositories) {
+        for (val repo : repositories) {
             result = repo.storeConsentDecision(decision);
         }
         return result;
@@ -77,5 +79,14 @@ public class ChainingConsentRepository implements ConsentRepository {
     @Override
     public void deleteAll() throws Throwable {
         repositories.forEach(Unchecked.consumer(ConsentRepository::deleteAll));
+    }
+
+    @Override
+    public void destroy() {
+        repositories
+            .stream()
+            .filter(DisposableBean.class::isInstance)
+            .map(DisposableBean.class::cast)
+            .forEach(Unchecked.consumer(DisposableBean::destroy));
     }
 }

@@ -16,7 +16,7 @@ import org.springframework.core.io.Resource;
  * @since 5.2.0
  */
 @Slf4j
-public class GroovyConsentRepository extends BaseConsentRepository implements DisposableBean {
+public class GroovyConsentRepository extends BaseSimpleConsentRepository implements DisposableBean {
     @Serial
     private static final long serialVersionUID = 3482998768083902246L;
 

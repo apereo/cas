@@ -16,6 +16,7 @@ import org.apache.commons.io.IOUtils;
 import org.apache.hc.core5.http.HttpEntityContainer;
 import org.apache.hc.core5.http.HttpResponse;
 import org.hjson.JsonValue;
+import org.jspecify.annotations.Nullable;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
@@ -30,7 +31,7 @@ import tools.jackson.databind.ObjectMapper;
  * @since 5.1.0
  */
 @RequiredArgsConstructor
-public class RestfulConsentRepository implements ConsentRepository {
+public class RestfulConsentRepository extends BaseConsentRepository {
     private static final ObjectMapper MAPPER = JacksonObjectMapperFactory.builder()
         .defaultTypingEnabled(true).build().toObjectMapper();
 
@@ -109,8 +110,8 @@ public class RestfulConsentRepository implements ConsentRepository {
     }
 
     @Override
-    public ConsentDecision findConsentDecision(final Service service, final RegisteredService registeredService,
-                                               final Authentication authentication) {
+    public @Nullable ConsentDecision findConsentDecision(final Service service, final RegisteredService registeredService,
+                                                         final Authentication authentication) {
         return FunctionUtils.doUnchecked(() -> {
             HttpResponse response = null;
             try {
