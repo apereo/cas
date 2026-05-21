@@ -3,7 +3,7 @@ package org.apereo.cas.config;
 import module java.base;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.features.CasFeatureModule;
-import org.apereo.cas.consent.ConsentRepository;
+import org.apereo.cas.consent.ConsentRepositoryBuilder;
 import org.apereo.cas.consent.LdapConsentRepository;
 import org.apereo.cas.util.LdapConnectionFactory;
 import org.apereo.cas.util.LdapUtils;
@@ -31,12 +31,13 @@ public class CasConsentLdapAutoConfiguration {
 
     @Bean
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-    public ConsentRepository consentRepository(
+    @ConditionalOnMissingBean(name = "ldapConsentRepositoryBuilder")
+    public ConsentRepositoryBuilder ldapConsentRepositoryBuilder(
         final CasConfigurationProperties casProperties,
         @Qualifier("consentLdapConnectionFactory")
         final ConnectionFactory consentLdapConnectionFactory) {
         val ldap = casProperties.getConsent().getLdap();
-        return new LdapConsentRepository(new LdapConnectionFactory(consentLdapConnectionFactory), ldap);
+        return () -> new LdapConsentRepository(new LdapConnectionFactory(consentLdapConnectionFactory), ldap);
     }
 
     @Bean

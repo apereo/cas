@@ -154,7 +154,7 @@ class DelegatedSaml2IdentityProviderTests {
             val saml2clients = delegatedIdentityProviderFactory.build();
             assertEquals(1, saml2clients.size());
 
-            val client = (SAML2Client) saml2clients.stream().findFirst().get();
+            val client = (SAML2Client) saml2clients.stream().findFirst().orElseThrow();
             assertInstanceOf(CustomAttributeConverterForTest.class, client.getConfiguration().getSamlAttributeConverter());
         }
     }

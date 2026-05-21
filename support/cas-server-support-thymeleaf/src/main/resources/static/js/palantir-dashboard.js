@@ -281,7 +281,11 @@ function navigateToApplication(serviceIdToFind) {
 async function initializePalantirSession() {
     const intervalId = setInterval(async () => {
         const url = new URL(location.href);
-        const result = await fetch(`${url.pathname}/session`, { credentials: "include" });
+        let basePath = url.pathname;
+        if (!basePath.endsWith("/dashboard")) {
+            basePath = `${basePath}/dashboard`;
+        }
+        const result = await fetch(`${basePath}/session`, { credentials: "include" });
         if (result.status !== 200) {
             clearInterval(intervalId);
             

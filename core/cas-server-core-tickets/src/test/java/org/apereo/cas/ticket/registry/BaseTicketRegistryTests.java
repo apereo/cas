@@ -310,6 +310,34 @@ public abstract class BaseTicketRegistryTests {
 
     @RepeatedTest(2)
     @Transactional(transactionManager = TicketRegistry.TICKET_TRANSACTION_MANAGER, readOnly = false)
+    void verifyFetchSessionsPerService() throws Throwable {
+        val serviceId = "https://app.example.com/%s".formatted(UUID.randomUUID().toString());
+        val service = RegisteredServiceTestUtils.getService(serviceId);
+        
+        val ticketGrantingTicketId = TestTicketIdentifiers.generate().ticketGrantingTicketId();
+        assumeTrue(canTicketRegistryIterate());
+        val id = UUID.randomUUID().toString();
+        val ticketGrantingTicket = new TicketGrantingTicketImpl(
+            ticketGrantingTicketId,
+            CoreAuthenticationTestUtils.getAuthentication(id),
+            NeverExpiresExpirationPolicy.INSTANCE);
+        ticketRegistry.addTicket(ticketGrantingTicket);
+
+        val serviceTicket = ticketGrantingTicket.grantServiceTicket(
+            TestTicketIdentifiers.generate().serviceTicketId(),
+            service,
+            NeverExpiresExpirationPolicy.INSTANCE,
+            false, serviceTicketSessionTrackingPolicy);
+        assertNotNull(serviceTicket);
+
+        ticketRegistry.updateTicket(ticketGrantingTicket);
+        ticketRegistry.addTicket(serviceTicket);
+        val sessions = ticketRegistry.getTicketsFor(service).toList();
+        assertEquals(1, sessions.size());
+    }
+
+    @RepeatedTest(2)
+    @Transactional(transactionManager = TicketRegistry.TICKET_TRANSACTION_MANAGER, readOnly = false)
     void verifyGetSsoSessionsPerUser() throws Throwable {
         val assumption = "Ticket registry %s does not support iteration".formatted(getClass().getName());
         assumeTrue(canTicketRegistryIterate(), assumption);

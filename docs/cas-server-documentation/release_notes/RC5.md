@@ -58,7 +58,7 @@ to build and verify Graal VM native images and we plan to extend the coverage to
 ### Testing Strategy
 
 The collection of end-to-end [browser tests based on Puppeteer](../../developer/Test-Process.html) continue to grow to cover more use cases
-and scenarios. At the moment, total number of jobs stands at approximately `545` distinct scenarios. The overall
+and scenarios. At the moment, total number of jobs stands at approximately `548` distinct scenarios. The overall
 test coverage of the CAS codebase is approximately `94%`.
 
 ### JSpecify & NullAway
@@ -77,7 +77,101 @@ including many of the third-party core libraries used by CAS as well as some CAS
 
 CAS is now built with Gradle `9.6.x` and the build process has been updated to use the latest Gradle
 features and capabilities.
+ 
+### OAuth / OpenID Connect Scope Approval
+
+OAuth and OpenID Connect have for long presented a feature where the user is required to 
+[approve scopes requested](../authentication/OIDC-Authentication-Clients-ScopeApproval.html) 
+by the client application. This release introduces a few changes to better remember user decisions:
+
+- Scope approval decisions are now remembered per user and client application.
+- The storage mechanism is the client browser's `IndexedDB`. The user is only prompted again if there is a change in the scopes requested by the client application or if the user clears their browser data.
+- There is no server-side storage of scope approval decisions and there is nothing sensitive in the data that is stored by the browser.
+
+<div class="alert alert-info">:information_source: <strong>Note</strong>
+<p>We are not talking about Attribute Consent; a standalone separate feature. This is specifically
+about the approval screen that lists all OAuth or OpenID Connect scopes requested by the relying party.
+</p></div>
+
+`IndexedDB` is supported by current versions of Chrome, Edge, Firefox, Safari, iOS Safari, and most modern mobile browsers. 
+Can I Use lists it as widely supported across modern browsers, with older versions showing partial or missing support. However, 
+very old browsers may not support `IndexedDB` or may support older/buggy versions. This matters most for old Android WebViews, 
+old iOS WebViews, old Safari, and legacy enterprise browsers.
+
+CAS tries to detect if `IndexedDB` is supported by the browser and will react accordingly. That said, if this prove problematic, 
+you can always disable scope approval requests either globally or per client application.
+          
+If you have already turned off scope approval, there is nothing here for you to. Keep calm and carry on. 
+ 
+### SAML2 & Apache Xerces
+
+CAS has long supported the use of Apache Xerces as the XML parser for SAML2 processing
+by using `org.apache.xerces.util.SecurityManager` as the default security manager implementation
+used by SAML2 parser pools.
+
+This release removes the use of `org.apache.xerces.util.SecurityManager` as the default security manager 
+implementation for SAML2 processing and removes the dependency on Apache Xerces as the default XML 
+parser. This is mainly done to allow the use of the XML parser provided by the JDK,
+which supports attributes such as `jdk.xml.maxElementDepth` that is set by default by OpenSAML to strengthen 
+defenses against XML-based attacks. 
+      
+We do not anticipate this to be a breaking change but it's worth noting that if you have code that 
+relies on Apache Xerces, you may need to adjust it to work with the default XML parser provided by the JDK.
+
+### Palantir
+               
+[Palantir](../installation/Admin-Dashboard.html) is given the ability to support 
+[impersonation features](../authentication/Surrogate-Authentication.html) of CAS
+and reports back eligible impersonation accounts for a given username. This functionality is supported by 
+the new actuator endpoint, `impersonation`, that can be used to query for eligible surrogate accounts.
+
+[Palantir](../installation/Admin-Dashboard.html) is also given the ability to add, edit, 
+duplicate or remove [tenant definitions](../multitenancy/Multitenancy-Overview.html).
+ 
+### CAS Initializr
+
+The *Preview* functionality of the [CAS Initializr](../installation/WAR-Overlay-Initializr.html) has been 
+enhanced to use the Monaco Editor as its default editor for displaying generated configuration and build. This provides
+for a much easier way of viewing the generated build and navigating through different files. Conceptually, this is the
+same editor that powers the Visual Studio Code editor and provides a rich set of features such as 
+syntax highlighting, code folding, and more.
+
+[CAS Initializr](../installation/WAR-Overlay-Initializr.html) also supports building CAS overlays that generate
+a `cas.jar` file by providing a deployment option for `JAR`. This option conceptually is identical to
+existing options that build a `.war` file but no longer requires the build to download a premade CAS server web 
+application archive to go through the unpacking and overlay process using special plugins. As a result, one 
+key advantage and reason for doing this is that the CAS project no longer has to build and publish 
+a separate `cas-server-webapp-*` WAR artifact that is quite large and slow to publish and release.
+
+<div class="alert alert-info">:information_source: <strong>Note</strong><p>
+The existing deployment options that generate WAR artifacts using the existing WAR Overlay process
+continue to exist and will not be removed without notice and consideration. Producing JAR artifacts is a leaner
+option overall and makes for a better and more maintainable delivery long-term specially as repositories
+that house CAS-published artifacts start to put limits on the size of the published artifact.</p></div>
+
+[CAS Initializr](../installation/WAR-Overlay-Initializr.html) is also generating builds that support a `casModules`
+propertly at build time. This property allows users to specify a comma-separated list of CAS modules 
+to include in the build and it allows users to dynamically specify modules needed from the command-line
+programmatically. See the `README.md` file of the generated CAS overlay for details.
+
+[CAS Initializr](../installation/WAR-Overlay-Initializr.html) has also gained basid modest support to generate
+Terraform configuration files that can be used to deploy CAS on cloud platforms such as AWS, Azure, GCP, etc. 
+This capability is expected to evolve over time.
+
+## Multitenancy & Attribute Consent
+
+[Multitenancy support](../multitenancy/Multitenancy-Overview.html) is now extended to support 
+distinct storage services for each tenant when it comes to storing 
+[attribute consent decisions](../integration/Attribute-Release-Consent.html). As of this release, this capability
+is made available to the following storage services:
+
+- [MongoDb](../integration/Attribute-Release-Consent-Storage-MongoDb.html)
+- [REST](../integration/Attribute-Release-Consent-Storage-REST.html)
 
 ## Other Stuff
-              
-- 
+  
+- Minor user interface adjustments to remove unneeded resources and script references from various pages.
+- Registered service definitions without a `name` are auto-assigned a name with a warning when the definition is saved.
+- Generated client secrets via [OpenID Connect Dynamic Registration](../authentication/OIDC-Authentication-Dynamic-Registration.html) are automatically ciphered, if configured.
+- A series of performance improvements to [MongoDb](../ticketing/MongoDb-Ticket-Registry.html), [Hazelcast](../ticketing/Hazelcast-Ticket-Registry.html) and [Redis](../ticketing/Redis-Ticket-Registry.html) ticket registry implementations.
+- A large number of dependencies and libraries have been updated to their latest versions. 

@@ -36,14 +36,14 @@ public class ConsentAccountProfilePrepareAction extends BaseCasWebflowAction {
         val decisions = consentEngine.getConsentRepository().findConsentDecisions(principal.getId());
         val resolved = decisions
             .stream()
-            .map(Unchecked.function(d -> {
+            .map(Unchecked.function(consentDecision -> {
                 val decision = AccountProfileConsentDecision.builder()
-                    .id(d.getId())
-                    .service(d.getService())
-                    .createdDateTime(d.getCreatedDate())
-                    .attributes(consentEngine.resolveConsentableAttributesFrom(d))
-                    .options("screen.account.consent." + d.getOptions().name().toLowerCase(Locale.ENGLISH))
-                    .reminder(String.format("%s - %s", d.getReminder(), d.getReminderTimeUnit()))
+                    .id(consentDecision.getId())
+                    .service(consentDecision.getService())
+                    .createdDateTime(consentDecision.getCreatedDate())
+                    .attributes(consentEngine.resolveConsentableAttributesFrom(consentDecision))
+                    .options("screen.account.consent." + consentDecision.getOptions().name().toLowerCase(Locale.ENGLISH))
+                    .reminder(String.format("%s - %s", consentDecision.getReminder(), consentDecision.getReminderTimeUnit()))
                     .build();
                 decision.setJson(MAPPER.writerWithDefaultPrettyPrinter().writeValueAsString(decision));
                 return decision;

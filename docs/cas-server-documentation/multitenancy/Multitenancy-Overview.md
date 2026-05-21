@@ -430,4 +430,39 @@ public FilterRegistrationBean tenantRoutingFilter() {
 
 {% endtab %}
 
+{% tab multitenancyexamples Attribute Consent %}
+
+The following tenant definition is allowed to define its 
+own [attribute consent storage](../integration/Attribute-Release-Consent.html) via MongoDb. 
+
+Depending on your choice of storage, the proper extension module must be 
+included in your CAS deployment. As ever, please verify that the module does actually support multitenancy. 
+
+```json
+[
+  "java.util.ArrayList",
+  [
+    {
+      "@class": "org.apereo.cas.multitenancy.TenantDefinition",
+      "id": "shire",
+      "properties": {
+        "@class": "java.util.LinkedHashMap",
+        "cas.consent.mongo.host": "localhost",
+        "cas.consent.mongo.port": "27017",
+        "cas.consent.mongo.user-id": "...",
+        "cas.consent.mongo.password": "...",
+        "cas.consent.mongo.collection": "TenantsConsentRepository",
+        "cas.consent.mongo.authentication-database-name": "admin",
+        "cas.consent.mongo.database-name": "consent"
+      }
+    }
+  ]
+]
+```
+    
+In the event that the tenant does not specify its own attribute consent storage, the default storage 
+defined globally in the CAS configuration for the entire CAS deployment will be used.
+
+{% endtab %}
+
 {% endtabs %}

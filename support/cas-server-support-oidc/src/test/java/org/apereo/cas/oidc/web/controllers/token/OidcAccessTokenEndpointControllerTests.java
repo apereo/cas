@@ -34,6 +34,8 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.parallel.Execution;
+import org.junit.jupiter.api.parallel.ExecutionMode;
 import org.pac4j.core.profile.CommonProfile;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -58,6 +60,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
  * @since 6.3.0
  */
 @Tag("OIDCWeb")
+@Execution(ExecutionMode.SAME_THREAD)
 class OidcAccessTokenEndpointControllerTests {
 
     @Nested

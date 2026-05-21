@@ -1,6 +1,7 @@
 package org.apereo.cas.ticket.registry;
 
 import module java.base;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -33,4 +34,14 @@ public class TicketRegistryStreamCriteria implements Serializable {
 
     @Builder.Default
     private long count = Long.MAX_VALUE;
+
+    /**
+     * Is count infinite?.
+     *
+     * @return true/false
+     */
+    @JsonIgnore
+    public boolean isInfiniteCount() {
+        return count == Long.MAX_VALUE || count <= 0;
+    }
 }

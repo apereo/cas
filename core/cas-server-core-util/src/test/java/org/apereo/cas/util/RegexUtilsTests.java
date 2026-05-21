@@ -41,7 +41,7 @@ class RegexUtilsTests {
     @Test
     void verifyPatternCollection() {
         val patterns = List.of("^abc", "^\\d{3}\\w+");
-        val result = RegexUtils.findFirst(patterns, List.of("hello", "world", "911/", "911Z")).get();
+        val result = RegexUtils.findFirst(patterns, List.of("hello", "world", "911/", "911Z")).orElseThrow();
         assertEquals("911Z", result);
     }
 

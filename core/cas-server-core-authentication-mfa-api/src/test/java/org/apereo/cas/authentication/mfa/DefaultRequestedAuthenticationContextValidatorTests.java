@@ -246,7 +246,7 @@ class DefaultRequestedAuthenticationContextValidatorTests {
         casProperties.getAuthn().getMfa().getCore()
             .setGlobalFailureMode(BaseMultifactorAuthenticationProviderProperties.MultifactorAuthenticationProviderFailureModes.CLOSED);
         val failureEvaluator = new DefaultMultifactorAuthenticationFailureModeEvaluator(casProperties);
-        ((AbstractMultifactorAuthenticationProvider) provider.get()).setFailureModeEvaluator(failureEvaluator);
+        ((AbstractMultifactorAuthenticationProvider) provider.orElseThrow()).setFailureModeEvaluator(failureEvaluator);
 
         val servicesManager = mock(ServicesManager.class);
         val validator = MultifactorAuthenticationTestUtils.mockRequestAuthnContextValidator(servicesManager,

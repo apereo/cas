@@ -1,6 +1,7 @@
 package org.apereo.cas.oidc.federation.subordinate;
 
 import org.apereo.cas.configuration.model.support.oidc.OidcProperties;
+import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
@@ -27,7 +28,7 @@ public class OidcFederationSubordinateRepository {
         .defaultTypingEnabled(false).build().toObjectMapper();
 
     @Getter
-    private Map<String, OidcFederationSubordinate> subordinates = new HashMap<>();
+    private final Map<String, OidcFederationSubordinate> subordinates = new HashMap<>();
 
     public OidcFederationSubordinateRepository(final OidcProperties oidcProperties) {
         loadSubordinates(oidcProperties.getFederation().getSubordinateDirectory());
@@ -38,18 +39,18 @@ public class OidcFederationSubordinateRepository {
             LOGGER.debug("Loading subordinates...");
             val dir = Paths.get(subordinateDirectory);
             if (!Files.exists(dir)) {
-                throw new IllegalArgumentException("subordinate directory [" + subordinateDirectory + "] does not exist");
+                throw new IllegalArgumentException("subordinate directory [%s] does not exist".formatted(subordinateDirectory));
             }
             if (!Files.isDirectory(dir)) {
-                throw new IllegalArgumentException("subordinate directory [" + subordinateDirectory + "] is not a directory");
+                throw new IllegalArgumentException("subordinate directory [%s] is not a directory".formatted(subordinateDirectory));
             }
-            try (val stream = Files.walk(dir)) {
-                stream.filter(Files::isRegularFile).forEach(f -> {
-                    val file = f.toFile();
-                    LOGGER.debug("Parsing [{}]...", f.toString());
+            try (val stream = Files.walk(dir).filter(Files::isRegularFile).filter(Files::isReadable)) {
+                stream.forEach(path -> FunctionUtils.doUnchecked(_ -> {
+                    val file = path.toFile();
+                    LOGGER.debug("Parsing [{}]...", file);
                     val subordinate = MAPPER.readValue(file, OidcFederationSubordinate.class);
                     subordinates.put(subordinate.getEntityId(), subordinate);
-                });
+                }));
             } catch (final IOException e) {
                 throw new IllegalArgumentException("Cannot read/load from subordinate directory", e);
             }

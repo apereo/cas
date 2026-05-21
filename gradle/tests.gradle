@@ -213,13 +213,15 @@ TestCategories.values().each({ testCategory ->
                 logger.info "Predictive test selection for ${project.name} with task ${taskName} is ${ptsEnabled ? 'enabled' : 'disabled'}."
 
                 systemProperty("junit.platform.discovery.issue.severity.critical", "info")
-                
+                systemProperty("junit.platform.execution.memory.cleanup.enabled", true)
+
                 if (testCategory.parallelEnabled) {
                     systemProperty("junit.jupiter.execution.parallel.enabled", true)
                     systemProperty("junit.jupiter.execution.parallel.mode.default", "concurrent")
                     systemProperty("junit.jupiter.execution.parallel.mode.classes.default", "concurrent")
                     systemProperty("junit.jupiter.execution.parallel.config.strategy", "dynamic")
                     systemProperty("junit.jupiter.execution.parallel.config.dynamic.factor", "8")
+                    systemProperty("junit.jupiter.execution.parallel.config.executor-service", "WORKER_THREAD_POOL")
                 }
 
                 if (!project.path.contains(":docs")) {

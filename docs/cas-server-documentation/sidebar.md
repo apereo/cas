@@ -594,6 +594,7 @@ layout: null
                 *   [Overview](/cas/{{ version }}/authentication/OIDC-Authentication-Clients.html) 
                 *   [Dynamic Registration](/cas/{{ version }}/authentication/OIDC-Authentication-Dynamic-Registration.html) 
                 *   [JWKS Management](/cas/{{ version }}/authentication/OIDC-Authentication-JWKS-Clients.html) 
+                *   [Scope Approval](/cas/{{ version }}/authentication/OIDC-Authentication-Clients-ScopeApproval.html)
             *   [Discovery](/cas/{{ version }}/authentication/OIDC-Authentication-Discovery.html)
             *   [DPoP](/cas/{{ version }}/authentication/OIDC-Authentication-DPoP.html)
             *   [Token Authentication](/cas/{{ version }}/authentication/OIDC-Authentication-AccessToken-AuthMethods.html)
@@ -917,7 +918,6 @@ layout: null
     *   [JDBC Drivers](/cas/{{ version }}/installation/JDBC-Drivers.html)
 
 * [Developer](#developer)
-    *   [Javadocs](https://www.javadoc.io/doc/org.apereo.cas)
     *   [Code Conventions](/cas/developer/Code-Conventions.html)
     *   [Release Process](/cas/developer/Release-Process.html)
     *   [Build Process](/cas/developer/Build-Process.html)

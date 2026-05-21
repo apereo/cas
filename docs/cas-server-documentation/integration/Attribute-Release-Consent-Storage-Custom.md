@@ -20,7 +20,7 @@ package org.apereo.cas.consent;
 public class MyConfiguration {
 
     @Bean
-    public ConsentRepository consentRepository() {
+    public ConsentRepositoryBuilder consentRepositoryBuilder() {
         ...
     }
 }

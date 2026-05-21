@@ -2,6 +2,7 @@ package org.apereo.cas.ticket.expiration.builder;
 
 import module java.base;
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.configuration.support.Beans;
 import org.apereo.cas.ticket.ExpirationPolicy;
 import org.apereo.cas.ticket.ExpirationPolicyBuilder;
 import org.apereo.cas.ticket.TransientSessionTicket;
@@ -36,8 +37,8 @@ public class TransientSessionTicketExpirationPolicyBuilder implements Expiration
      */
     public ExpirationPolicy toTransientSessionTicketExpirationPolicy() {
         val tst = casProperties.getTicket().getTst();
+        val timeToKillInSeconds = Beans.newDuration(tst.getTimeToKillInSeconds()).toSeconds();
         return new MultiTimeUseOrTimeoutExpirationPolicy.TransientSessionTicketExpirationPolicy(
-            tst.getNumberOfUses(),
-            tst.getTimeToKillInSeconds());
+            tst.getNumberOfUses(), timeToKillInSeconds);
     }
 }

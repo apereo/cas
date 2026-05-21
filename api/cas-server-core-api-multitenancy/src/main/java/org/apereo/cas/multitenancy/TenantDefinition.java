@@ -7,12 +7,17 @@ import org.apereo.cas.util.serialization.DecodableCipherMap;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
+import lombok.Builder;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 import lombok.experimental.Accessors;
+import lombok.experimental.SuperBuilder;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
 
 /**
  * This is {@link TenantDefinition}.
@@ -27,23 +32,31 @@ import lombok.experimental.Accessors;
 @JsonTypeInfo(use = JsonTypeInfo.Id.CLASS)
 @NoArgsConstructor
 @Accessors(chain = true)
-@JsonInclude(JsonInclude.Include.NON_DEFAULT)
+@JsonInclude(JsonInclude.Include.NON_NULL)
 @SuppressWarnings("NullAway.Init")
+@SuperBuilder
 public class TenantDefinition implements Serializable {
     @Serial
     private static final long serialVersionUID = -9012299259747093234L;
 
+    @org.springframework.data.annotation.Id
+    @Id
+    @GeneratedValue(strategy = GenerationType.UUID)
     private String id;
 
     private String description;
 
     @DecodableCipherMap
+    @Builder.Default
     private Map<String, Object> properties = new LinkedHashMap<>();
 
+    @Builder.Default
     private TenantAuthenticationPolicy authenticationPolicy = new DefaultTenantAuthenticationPolicy();
 
+    @Builder.Default
     private TenantUserInterfacePolicy userInterfacePolicy = new DefaultTenantUserInterfacePolicy();
-
+    
+    @Builder.Default
     private TenantDelegatedAuthenticationPolicy delegatedAuthenticationPolicy = new DefaultTenantDelegatedAuthenticationPolicy();
 
     /**

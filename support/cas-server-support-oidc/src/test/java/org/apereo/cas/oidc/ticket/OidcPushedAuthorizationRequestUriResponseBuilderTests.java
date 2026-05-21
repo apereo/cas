@@ -80,7 +80,7 @@ class OidcPushedAuthorizationRequestUriResponseBuilderTests extends AbstractOidc
         var context = new JEEContext(request, response);
 
         authzRequest = oidcPushedAuthorizationRequestResponseBuilder.toAuthorizationRequest(context,
-            holder.getAuthentication(), holder.getService(), holder.getRegisteredService()).get().build();
+            holder.getAuthentication(), holder.getService(), holder.getRegisteredService()).orElseThrow().build();
         assertNotNull(authzRequest);
         assertFalse(authzRequest.isSingleSignOnSessionRequired());
 

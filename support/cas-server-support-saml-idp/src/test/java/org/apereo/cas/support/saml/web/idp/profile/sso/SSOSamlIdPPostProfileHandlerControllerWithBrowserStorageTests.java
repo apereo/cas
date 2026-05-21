@@ -5,6 +5,7 @@ import org.apereo.cas.support.saml.BaseSamlIdPConfigurationTests;
 import org.apereo.cas.support.saml.SamlProtocolConstants;
 import org.apereo.cas.support.saml.SamlUtils;
 import org.apereo.cas.support.saml.services.SamlRegisteredService;
+import org.apereo.cas.support.saml.util.Saml20HexRandomIdGenerator;
 import org.apereo.cas.util.EncodingUtils;
 import org.apereo.cas.web.BrowserStorage;
 import org.apereo.cas.web.flow.CasWebflowConstants;
@@ -88,6 +89,7 @@ class SSOSamlIdPPostProfileHandlerControllerWithBrowserStorageTests extends Base
         val issuer = (Issuer) builder.buildObject();
         issuer.setValue(samlRegisteredService.getServiceId());
         authnRequest.setIssuer(issuer);
+        authnRequest.setID(Saml20HexRandomIdGenerator.INSTANCE.getNewString());
         return authnRequest;
     }
 }

@@ -5,7 +5,8 @@ const assert = require("assert");
 (async () => {
     const browser = await cas.newBrowser(cas.browserOptions());
     const page = await cas.newPage(browser);
-
+    await cas.gotoLogout(page);
+    
     await page.setRequestInterception(true);
 
     const redirectUrl = "https://localhost:9859/anything/cas";

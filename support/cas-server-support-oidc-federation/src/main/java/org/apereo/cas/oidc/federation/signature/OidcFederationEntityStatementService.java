@@ -4,6 +4,7 @@ import module java.base;
 import com.nimbusds.openid.connect.sdk.federation.entities.EntityID;
 import com.nimbusds.openid.connect.sdk.federation.entities.EntityStatement;
 import net.minidev.json.JSONObject;
+import org.jspecify.annotations.Nullable;
 import tools.jackson.databind.JsonNode;
 
 /**
@@ -31,6 +32,9 @@ public interface OidcFederationEntityStatementService {
      * @return the entity statement
      * @throws Exception the exception
      */
-    EntityStatement createAndSign(String issuer, String subject, JSONObject metadata, JsonNode federationKeys,
-                                  List<EntityID> authorityHints) throws Exception;
+    EntityStatement createAndSign(String issuer,
+                                  String subject,
+                                  JSONObject metadata,
+                                  @Nullable JsonNode federationKeys,
+                                  @Nullable List<EntityID> authorityHints) throws Exception;
 }

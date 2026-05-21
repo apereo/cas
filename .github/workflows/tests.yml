@@ -160,7 +160,7 @@ jobs:
           coverageReport="$PWD/build/reports/jacoco/jacocoRootReport/jacocoRootReport.xml"
           echo "Uploading coverage report to SonarCloud from $coverageReport"
           ./gradlew sonar --build-cache --configure-on-demand \
-            --no-daemon -DskipAot=true --parallel \
+            --no-daemon -DskipAot=true -q --parallel \
             -x javadoc -x test -DskipNestedConfigMetadataGen=true \
             -PsonarOrganization="${{ github.repository_owner }}" \
             -Dsonar.coverage.jacoco.xmlReportPaths="$coverageReport"
@@ -175,6 +175,16 @@ jobs:
           name: ${{ matrix.category }}
           verbose: true
           fail_ci_if_error: false
+      - name: Upload to Coveralls
+        uses: coverallsapp/github-action@v2
+        continue-on-error: true
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          file: ./build/reports/jacoco/jacocoRootReport/jacocoRootReport.xml
+          format: jacoco
+          parallel: true
+          build-number: ${{ github.run_id }}-${{ github.run_attempt }}
+          debug: true
       - name: Upload Coverage Report
         uses: "actions/upload-artifact@v7"
         if: github.event_name == 'push' || github.event_name == 'workflow_dispatch' || github.event_name == 'schedule'
@@ -187,6 +197,8 @@ jobs:
     runs-on: ubuntu-latest
     needs: [ tests ]
     if: (github.event_name == 'push' || github.event_name == 'workflow_dispatch' || github.event_name == 'schedule')
+    outputs:
+      coverage-files: ${{ steps.coverage-files.outputs.coverage-files }}
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v6
@@ -197,12 +209,8 @@ jobs:
           distribution: ${{ env.JDK_DISTRIBUTION }}
       - name: Setup Gradle
         uses: gradle/actions/setup-gradle@v6
-
-      - name: Download coverage files
-        uses: "actions/download-artifact@v8"
-        with:
-          path: "reports"
       - name: Collect Coverage Files
+        id: coverage-files
         run: |
           find $PWD -type f -name 'jacocoRootReport.xml'
           export files=''
@@ -217,10 +225,15 @@ jobs:
           CODACY_REPORTER_OPTIONS: --http-timeout 60000 --num-retries 8 --sleep-time 15000
         run: |
           IFS=',' read -r -a reports <<< "${{ env.COVERAGE_REPORTS }}"
-          
           for report in "${reports[@]}"; do
             echo "Uploading coverage report: $report"
             bash <(curl -Ls https://coverage.codacy.com/get.sh) report -r "$report" --partial
           done
-          
           bash <(curl -Ls https://coverage.codacy.com/get.sh) final
+      - name: Finish Coveralls
+        uses: coverallsapp/github-action@v2
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          parallel-finished: true
+          build-number: ${{ github.run_id }}-${{ github.run_attempt }}
+          debug: true

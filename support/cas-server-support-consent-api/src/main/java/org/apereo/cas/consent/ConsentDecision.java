@@ -2,6 +2,7 @@ package org.apereo.cas.consent;
 
 import module java.base;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
@@ -23,6 +24,7 @@ import jakarta.persistence.Transient;
 @ToString
 @Getter
 @Setter
+@EqualsAndHashCode(of = {"id", "principal", "service", "tenant"})
 public class ConsentDecision implements Serializable {
     @Serial
     private static final long serialVersionUID = -3240292729509593433L;

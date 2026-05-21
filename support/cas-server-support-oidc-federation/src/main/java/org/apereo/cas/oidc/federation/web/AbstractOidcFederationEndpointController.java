@@ -15,6 +15,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.val;
 import net.minidev.json.JSONObject;
+import org.jspecify.annotations.Nullable;
 import org.pac4j.jee.context.JEEContext;
 import org.springframework.http.CacheControl;
 import org.springframework.http.HttpHeaders;
@@ -38,7 +39,8 @@ abstract class AbstractOidcFederationEndpointController extends AbstractControll
     protected final OidcFederationEntityStatementService federationEntityStatementService;
     protected final OidcProperties oidcProperties;
 
-    protected ResponseEntity retrieveInvalidIssuerError(final HttpServletRequest request, final HttpServletResponse response, final String path) {
+    protected @Nullable ResponseEntity retrieveInvalidIssuerError(
+        final HttpServletRequest request, final HttpServletResponse response, final String path) {
         val webContext = new JEEContext(request, response);
         if (!oidcIssuerService.validateIssuer(webContext, List.of(path))) {
             val body = OAuth20Utils.getErrorResponseBody(OAuth20Constants.INVALID_REQUEST, "Invalid issuer");
@@ -47,7 +49,7 @@ abstract class AbstractOidcFederationEndpointController extends AbstractControll
         return null;
     }
 
-    protected FederationEntityMetadata buildMetadata(final String issuer) throws URISyntaxException{
+    protected FederationEntityMetadata buildMetadata(final String issuer) throws URISyntaxException {
         val fedMeta = new FederationEntityMetadata();
         fedMeta.setOrganizationName(oidcProperties.getFederation().getOrganization());
         fedMeta.setContacts(oidcProperties.getFederation().getContacts());
@@ -58,13 +60,16 @@ abstract class AbstractOidcFederationEndpointController extends AbstractControll
         return fedMeta;
     }
 
-    protected ResponseEntity buildEntityStatement(final String issuer, final String subject, final JSONObject metadata,
-                                                  final JsonNode federationKeys, final List<EntityID> authorityHints) throws Exception {
-        val entityStatement = federationEntityStatementService.createAndSign(issuer, subject, metadata, federationKeys, authorityHints);
+    protected ResponseEntity buildEntityStatement(
+        final String issuer, final String subject, final JSONObject metadata,
+        @Nullable final JsonNode federationKeys,
+        @Nullable final List<EntityID> authorityHints) throws Exception {
+        val entityStatement = federationEntityStatementService.createAndSign(
+            issuer, subject, metadata, federationKeys, authorityHints);
         return ResponseEntity.ok()
-                .cacheControl(CacheControl.noStore().mustRevalidate())
-                .header(HttpHeaders.ACCEPT, OidcConstants.ENTITY_STATEMENT_CONTENT_TYPE.toString())
-                .contentType(OidcConstants.ENTITY_STATEMENT_CONTENT_TYPE)
-                .body(entityStatement.getSignedStatement().serialize());
+            .cacheControl(CacheControl.noStore().mustRevalidate())
+            .header(HttpHeaders.ACCEPT, OidcConstants.ENTITY_STATEMENT_CONTENT_TYPE.toString())
+            .contentType(OidcConstants.ENTITY_STATEMENT_CONTENT_TYPE)
+            .body(entityStatement.getSignedStatement().serialize());
     }
 }

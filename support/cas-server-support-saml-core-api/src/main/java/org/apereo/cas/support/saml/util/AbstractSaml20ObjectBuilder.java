@@ -10,6 +10,7 @@ import org.apereo.cas.util.function.FunctionUtils;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
+import org.jspecify.annotations.Nullable;
 import org.opensaml.core.xml.ElementExtensibleXMLObject;
 import org.opensaml.core.xml.XMLObject;
 import org.opensaml.saml.common.SAMLObject;
@@ -119,7 +120,7 @@ public abstract class AbstractSaml20ObjectBuilder extends AbstractSamlObjectBuil
     }
 
     @Override
-    public Status newStatus(final String codeValue, final String statusMessage) {
+    public Status newStatus(final String codeValue, @Nullable final String statusMessage) {
         LOGGER.trace("Creating new SAML Status for code value: [{}], status message: [{}]", codeValue, statusMessage);
         val status = newSamlObject(Status.class);
         val statusCode = newSamlObject(StatusCode.class);

@@ -1,10 +1,11 @@
 package org.apereo.cas.config;
 
 import module java.base;
+import module java.sql;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.features.CasFeatureModule;
 import org.apereo.cas.configuration.support.JpaBeans;
-import org.apereo.cas.consent.ConsentRepository;
+import org.apereo.cas.consent.ConsentRepositoryBuilder;
 import org.apereo.cas.consent.JpaConsentDecision;
 import org.apereo.cas.consent.JpaConsentRepository;
 import org.apereo.cas.jpa.JpaBeanFactory;
@@ -23,10 +24,11 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.ScopedProxyMode;
 import org.springframework.orm.jpa.JpaTransactionManager;
 import org.springframework.orm.jpa.JpaVendorAdapter;
+import org.springframework.orm.jpa.SharedEntityManagerCreator;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
+import org.springframework.transaction.support.TransactionTemplate;
 import jakarta.persistence.EntityManagerFactory;
-import module java.sql;
 
 /**
  * This is {@link CasConsentJdbcAutoConfiguration}.
@@ -43,10 +45,20 @@ public class CasConsentJdbcAutoConfiguration {
     @Configuration(value = "CasConsentJdbcRepositoryConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
     static class CasConsentJdbcRepositoryConfiguration {
+        
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-        public ConsentRepository consentRepository() {
-            return new JpaConsentRepository();
+        @ConditionalOnMissingBean(name = "jdbcConsentRepositoryBuilder")
+        public ConsentRepositoryBuilder jdbcConsentRepositoryBuilder(
+            @Qualifier("transactionManagerConsent")
+            final PlatformTransactionManager transactionManagerConsent,
+            @Qualifier("consentEntityManagerFactory")
+            final EntityManagerFactory emf) {
+            return () -> {
+                val entityManager = SharedEntityManagerCreator.createSharedEntityManager(emf);
+                return new JpaConsentRepository(entityManager,
+                    new TransactionTemplate(transactionManagerConsent));
+            };
         }
     }
 

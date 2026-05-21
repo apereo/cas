@@ -53,7 +53,7 @@ class DefaultTicketCatalogTests {
 
     @Test
     void verifyUpdateAndFind() {
-        val defn = ticketCatalog.findTicketDefinition(TicketGrantingTicket.class).get();
+        val defn = ticketCatalog.findTicketDefinition(TicketGrantingTicket.class).orElseThrow();
         ticketCatalog.update(defn);
         assertTrue(ticketCatalog.contains(defn.getPrefix()));
     }

@@ -122,7 +122,7 @@ class DefaultDelegatedClientAuthenticationWebflowManagerTests {
         val client = new SAML2Client(config);
         val ticket = delegatedClientAuthenticationWebflowManager.store(requestContext, context, client);
         assertNotNull(ticketRegistry.getTicket(ticket.getId()));
-        assertEquals(ticket.getId(), delegatedClientDistributedSessionStore.get(context, SAML2StateGenerator.SAML_RELAY_STATE_ATTRIBUTE).get());
+        assertEquals(ticket.getId(), delegatedClientDistributedSessionStore.get(context, SAML2StateGenerator.SAML_RELAY_STATE_ATTRIBUTE).orElseThrow());
         requestContext.setParameter("RelayState", ticket.getId());
         val service = delegatedClientAuthenticationWebflowManager.retrieve(requestContext, context, client);
         assertNotNull(service);
@@ -141,7 +141,7 @@ class DefaultDelegatedClientAuthenticationWebflowManagerTests {
         val pair = setupTestContextFor(Files.createTempFile("sp-metadata", ".xml").toFile().getAbsolutePath(), "cas.example.sp");
         val ticket = delegatedClientAuthenticationWebflowManager.store(requestContext, context, pair.getLeft());
         assertNotNull(ticketRegistry.getTicket(ticket.getId()));
-        assertEquals(ticket.getId(), delegatedClientDistributedSessionStore.get(context, SAML2StateGenerator.SAML_RELAY_STATE_ATTRIBUTE).get());
+        assertEquals(ticket.getId(), delegatedClientDistributedSessionStore.get(context, SAML2StateGenerator.SAML_RELAY_STATE_ATTRIBUTE).orElseThrow());
 
         val builder = new SAML2AuthnRequestBuilder();
         val result = builder.build(pair.getRight());
@@ -165,7 +165,7 @@ class DefaultDelegatedClientAuthenticationWebflowManagerTests {
         val pair = setupTestContextFor(Files.createTempFile("sp-metadata", ".xml").toFile().getAbsolutePath(), "cas.example.sp");
         val ticket = delegatedClientAuthenticationWebflowManager.store(requestContext, context, pair.getLeft());
         assertNotNull(ticketRegistry.getTicket(ticket.getId()));
-        assertEquals(ticket.getId(), delegatedClientDistributedSessionStore.get(context, SAML2StateGenerator.SAML_RELAY_STATE_ATTRIBUTE).get());
+        assertEquals(ticket.getId(), delegatedClientDistributedSessionStore.get(context, SAML2StateGenerator.SAML_RELAY_STATE_ATTRIBUTE).orElseThrow());
 
         val builder = new SAML2AuthnRequestBuilder();
         val result = builder.build(pair.getRight());
@@ -195,7 +195,7 @@ class DefaultDelegatedClientAuthenticationWebflowManagerTests {
         val ticket = delegatedClientAuthenticationWebflowManager.store(requestContext, context, client);
         assertNotNull(ticketRegistry.getTicket(ticket.getId()));
         assertEquals(ticket.getId(), delegatedClientDistributedSessionStore.get(context,
-            SAML2StateGenerator.SAML_RELAY_STATE_ATTRIBUTE).get());
+            SAML2StateGenerator.SAML_RELAY_STATE_ATTRIBUTE).orElseThrow());
         requestContext.setParameter("RelayState", ticket.getId());
         ticket.markTicketExpired();
         assertThrows(UnauthorizedServiceException.class,
