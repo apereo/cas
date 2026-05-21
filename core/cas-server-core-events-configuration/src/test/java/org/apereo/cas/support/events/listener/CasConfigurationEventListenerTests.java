@@ -9,6 +9,7 @@ import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.support.events.config.CasConfigurationModifiedEvent;
 import org.apereo.cas.test.CasTestExtension;
 import org.apereo.cas.util.spring.boot.SpringBootTestAutoConfigurations;
+import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -19,7 +20,9 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.context.environment.EnvironmentChangeEvent;
 import org.springframework.cloud.context.scope.refresh.RefreshScopeRefreshedEvent;
 import org.springframework.context.ConfigurableApplicationContext;
+import org.springframework.web.servlet.DispatcherServlet;
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.*;
 
 /**
  * This is {@link CasConfigurationEventListenerTests}.
@@ -59,5 +62,22 @@ class CasConfigurationEventListenerTests {
             new CasConfigurationModifiedEvent(this, true, null)));
         assertDoesNotThrow(() -> applicationContext.publishEvent(
             new RefreshScopeRefreshedEvent()));
+    }
+
+    @Test
+    void verifyDispatcherServletIsNotInitialized() {
+        val context = mock(ConfigurableApplicationContext.class);
+        val dispatcherServlet = new DispatcherServlet();
+        when(context.getBeanDefinitionNames()).thenReturn(new String[] { "dispatcherServlet" });
+        when(context.getBean("dispatcherServlet")).thenReturn(dispatcherServlet);
+        when(context.containsBean("dispatcherServlet")).thenReturn(true);
+        when(context.getBean(DispatcherServlet.class)).thenReturn(dispatcherServlet);
+
+        val listener = new DefaultCasConfigurationEventListener(null, null, null, context);
+        assertDoesNotThrow(() -> listener.onRefreshScopeRefreshed(new RefreshScopeRefreshedEvent()));
+
+        verify(context).getBean("dispatcherServlet");
+        verify(context, never()).containsBean("dispatcherServlet");
+        verify(context, never()).getBean(DispatcherServlet.class);
     }
 }
