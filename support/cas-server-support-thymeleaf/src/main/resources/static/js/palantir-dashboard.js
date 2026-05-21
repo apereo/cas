@@ -81,10 +81,7 @@ function activateDashboardTab(idx) {
                 $("#palantirSettingsDialog").dialog("open");
                 break;
             case Tabs.LOGOUT.index:
-                let url = new URL(location.href).pathname;
-                if (!url.endsWith("/dashboard")) {
-                    url += "/dashboard";
-                }
+                const url = retrieveDashboardUrl();
                 const form = document.createElement('form');
                 form.method = 'POST';
                 form.action = `${url}/logout`;
@@ -101,6 +98,14 @@ function activateDashboardTab(idx) {
     } catch (e) {
         console.error("An error occurred while activating tab:", e);
     }
+}
+
+function retrieveDashboardUrl() {
+    let url = new URL(location.href).pathname;
+    if (!url.endsWith("/dashboard")) {
+        url += "/dashboard";
+    }
+    return url;
 }
 
 function selectSidebarMenuButton(selectedItem) {
@@ -280,8 +285,8 @@ function navigateToApplication(serviceIdToFind) {
 
 async function initializePalantirSession() {
     const intervalId = setInterval(async () => {
-        const url = new URL(location.href);
-        const result = await fetch(`${url.pathname}/dashboard/session`, { credentials: "include" });
+        const url = retrieveDashboardUrl();
+        const result = await fetch(`${url}/session`, { credentials: "include" });
         if (result.status !== 200) {
             clearInterval(intervalId);
             
