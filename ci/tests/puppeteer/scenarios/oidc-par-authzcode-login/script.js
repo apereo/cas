@@ -1,44 +1,42 @@
-
 const cas = require("../../cas.js");
 const assert = require("assert");
 
-(async () => {
+async function sendPushAuthorizationRequest(redirectUrl) {
+    const parameters = "response_type=code&"
+        + `client_id=client&scope=${encodeURIComponent("openid profile MyCustomScope")}&`
+        + `redirect_uri=${redirectUrl}&nonce=3d3a7457f9ad3&`
+        + "state=1735fd6c43c14&claims=%7B%22userinfo%22%3A%20%7B%20%22name%22%3A%20%7B%22essential"
+        + "%22%3A%20true%7D%2C%22phone_number%22%3A%20%7B%22essential%22%3A%20true%7D%7D%7D&"
+        + "client_secret=secret";
+
+    return await cas.doPost(`https://localhost:8443/cas/oidc/oidcPushAuthorize?${parameters}`, "",
+        {
+            "Content-Type": "application/x-www-form-urlencoded"
+        },
+        (res) => {
+            return res.data.request_uri;
+        }, (error) => {
+            cas.logr(`Operation failed to obtain request_uri: ${error}`);
+            return undefined;
+        }
+    );
+}
+
+async function verifyPushAuthorizationRequestSuccess() {
     const browser = await cas.newBrowser(cas.browserOptions());
     const page = await cas.newPage(browser);
     await cas.gotoLogout(page);
-    
-    await page.setRequestInterception(true);
 
     const redirectUrl = "https://localhost:9859/anything/cas";
-    page.once("request", (interceptedRequest) =>
-        interceptedRequest.continue({
-            "method": "POST",
-            "postData": "response_type=code&"
-                + `client_id=client&scope=${encodeURIComponent("openid profile MyCustomScope")}&`
-                + `redirect_uri=${redirectUrl}&nonce=3d3a7457f9ad3&`
-                + "state=1735fd6c43c14&claims=%7B%22userinfo%22%3A%20%7B%20%22name%22%3A%20%7B%22essential"
-                + "%22%3A%20true%7D%2C%22phone_number%22%3A%20%7B%22essential%22%3A%20true%7D%7D%7D&"
-                + "client_secret=secret",
-            headers: {
-                ...interceptedRequest.headers(),
-                "Content-Type": "application/x-www-form-urlencoded"
-            }
-        }));
+    let requestUri = await sendPushAuthorizationRequest(redirectUrl);
+    assert(requestUri !== undefined && requestUri !== null && requestUri.length > 0, "Request URI is missing");
 
-    const response = await page.goto("https://localhost:8443/cas/oidc/oidcPushAuthorize");
-    const responseBody = await response.text();
-    const data = JSON.parse(responseBody);
-    const requestUri = data.request_uri;
     await cas.sleep(3000);
-
-    page.setRequestInterception(false);
-
+    await cas.log(`Request URI ${requestUri}`);
     const url = `https://localhost:8443/cas/oidc/oidcAuthorize?response_type=code&client_id=client&request_uri=${requestUri}`;
-
     await cas.goto(page, url);
     await cas.sleep(3000);
     await cas.loginWith(page);
-
     await cas.sleep(3000);
 
     if (await cas.isVisible(page, "#allow")) {
@@ -68,12 +66,12 @@ const assert = require("assert");
     assert(decoded["identity-name"] === undefined);
     assert(decoded["common-name"] === undefined);
     assert(decoded["lastname"] === undefined);
-    
+
     assert(decoded["cn"] !== undefined);
     assert(decoded["family_name"] !== undefined);
     assert(decoded["name"] !== undefined);
 
-    const profileUrl = `https://localhost:8443/cas/oidc/profile?access_token=${payload.access_token }`;
+    const profileUrl = `https://localhost:8443/cas/oidc/profile?access_token=${payload.access_token}`;
     await cas.log(`Calling user profile ${profileUrl}`);
 
     await cas.doPost(profileUrl, "", {
@@ -89,6 +87,18 @@ const assert = require("assert");
     }, (error) => {
         throw `Operation failed: ${error}`;
     });
-
     await cas.closeBrowser(browser);
+}
+
+async function verifyPushAuthorizationFailure() {
+    await cas.log("Attempting push authorization request with invalid redirect URI...");
+    const result = await sendPushAuthorizationRequest("https://apereo.github.io");
+    if (result !== undefined) {
+        throw "Operation should have failed to obtain request_uri with invalid redirect URI";
+    }
+}
+
+(async () => {
+    await verifyPushAuthorizationRequestSuccess();
+    await verifyPushAuthorizationFailure();
 })();

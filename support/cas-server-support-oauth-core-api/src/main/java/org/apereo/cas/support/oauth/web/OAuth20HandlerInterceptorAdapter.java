@@ -184,4 +184,11 @@ public class OAuth20HandlerInterceptorAdapter implements AsyncHandlerInterceptor
             .filter(ext -> ext.supports(context))
             .findFirst();
     }
+    
+    protected static void writeErrorResponseBody(final HttpServletResponse response) throws Exception {
+        val body = OAuth20Utils.getErrorResponseBody(OAuth20Constants.INVALID_REQUEST, "Unable to accept this request");
+        try (val writer = response.getWriter()) {
+            writer.write(OAuth20Utils.toJson(body));
+        }
+    }
 }
