@@ -14,6 +14,8 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.parallel.Execution;
+import org.junit.jupiter.api.parallel.ExecutionMode;
 import org.springframework.beans.factory.DisposableBean;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.test.context.TestPropertySource;
@@ -57,6 +59,7 @@ class OidcDefaultJsonWebKeystoreGeneratorServiceTests {
 
     @TestPropertySource(properties = "cas.authn.oidc.jwks.file-system.jwks-file=file:${#systemProperties['java.io.tmpdir']}/something.jwks")
     @Nested
+    @Execution(ExecutionMode.SAME_THREAD)
     class DefaultTests extends AbstractOidcTests {
         private File keystore;
 
