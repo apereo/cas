@@ -2,7 +2,6 @@ package org.apereo.cas.oidc.federation.web;
 
 import module java.base;
 import org.apereo.cas.configuration.model.support.oidc.OidcProperties;
-import org.apereo.cas.configuration.model.support.oidc.federation.OidcFederationRole;
 import org.apereo.cas.oidc.OidcConstants;
 import org.apereo.cas.oidc.federation.signature.OidcFederationEntityStatementService;
 import org.apereo.cas.oidc.issuer.OidcIssuerService;
@@ -54,7 +53,7 @@ abstract class AbstractOidcFederationEndpointController extends AbstractControll
         fedMeta.setOrganizationName(oidcProperties.getFederation().getOrganization());
         fedMeta.setContacts(oidcProperties.getFederation().getContacts());
         val role = oidcProperties.getFederation().getRole();
-        if (role == OidcFederationRole.TRUST_ANCHOR) {
+        if (role.isTrustAnchorOrIntermediate()) {
             fedMeta.setFederationFetchEndpointURI(new URI(issuer + OidcConstants.FETCH_FEDERATION_URL));
         }
         return fedMeta;
