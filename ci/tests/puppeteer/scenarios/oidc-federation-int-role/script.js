@@ -47,4 +47,11 @@ const assert = require("assert");
     assert(metadata2["openid_relying_party"] !== undefined);
     assert(decoded2["authority_hints"] === undefined);
 
+    const listUrl = "https://localhost:8443/cas/oidc/list";
+    await cas.doGet(listUrl,
+        (res) => res.data,
+        (error) => {
+            throw `List endpoint not available: ${error}`;
+        });
+
 })();

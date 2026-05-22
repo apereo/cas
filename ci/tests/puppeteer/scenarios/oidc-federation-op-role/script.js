@@ -34,4 +34,12 @@ const assert = require("assert");
     assert(algValues.includes("RS256"));
     assert(algValues.includes("HS256"));
 
+    const listUrl = "https://localhost:8443/cas/oidc/list";
+    await cas.doGet(listUrl,
+        () => {
+            throw "Federation endpoint should not be available";
+        },
+        () => {
+        });
+
 })();
