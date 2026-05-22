@@ -150,7 +150,7 @@ option overall and makes for a better and more maintainable delivery long-term s
 that house CAS-published artifacts start to put limits on the size of the published artifact.</p></div>
 
 [CAS Initializr](../installation/WAR-Overlay-Initializr.html) is also generating builds that support a `casModules`
-propertly at build time. This property allows users to specify a comma-separated list of CAS modules 
+property at build time. This property allows users to specify a comma-separated list of CAS modules 
 to include in the build and it allows users to dynamically specify modules needed from the command-line
 programmatically. See the `README.md` file of the generated CAS overlay for details.
 

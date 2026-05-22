@@ -60,11 +60,11 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
  * @since 6.3.0
  */
 @Tag("OIDCWeb")
-@Execution(ExecutionMode.SAME_THREAD)
 class OidcAccessTokenEndpointControllerTests {
 
     @Nested
     @TestPropertySource(properties = "cas.authn.oidc.core.accepted-issuers-pattern=.*")
+    @Execution(ExecutionMode.SAME_THREAD)
     class MvcTests extends AbstractOidcTests {
         private MockMvc mvc;
 
