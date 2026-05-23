@@ -9,13 +9,12 @@ async function sendPushAuthorizationRequest(redirectUrl) {
         + "%22%3A%20true%7D%2C%22phone_number%22%3A%20%7B%22essential%22%3A%20true%7D%7D%7D&"
         + "client_secret=secret";
 
-    return await cas.doPost(`https://localhost:8443/cas/oidc/oidcPushAuthorize?${parameters}`, "",
+    return cas.doPost(`https://localhost:8443/cas/oidc/oidcPushAuthorize?${parameters}`, "",
         {
             "Content-Type": "application/x-www-form-urlencoded"
         },
-        (res) => {
-            return res.data.request_uri;
-        }, (error) => {
+        (res) => res.data.request_uri,
+        (error) => {
             cas.logr(`Operation failed to obtain request_uri: ${error}`);
             return undefined;
         }
@@ -28,7 +27,7 @@ async function verifyPushAuthorizationRequestSuccess() {
     await cas.gotoLogout(page);
 
     const redirectUrl = "https://localhost:9859/anything/cas";
-    let requestUri = await sendPushAuthorizationRequest(redirectUrl);
+    const requestUri = await sendPushAuthorizationRequest(redirectUrl);
     assert(requestUri !== undefined && requestUri !== null && requestUri.length > 0, "Request URI is missing");
 
     await cas.sleep(3000);
