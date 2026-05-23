@@ -19,8 +19,9 @@ public interface TenantConsentRepositoryBuilder {
      *
      * @param tenantDefinition the tenant definition
      * @return the consent repository
+     * @throws Exception the exception
      */
-    default List<ConsentRepository> build(final TenantDefinition tenantDefinition) {
+    default List<ConsentRepository> build(final TenantDefinition tenantDefinition) throws Exception{
         if (!tenantDefinition.getProperties().isEmpty()) {
             val bindingContext = tenantDefinition.bindProperties();
             return buildInternal(tenantDefinition, bindingContext);
@@ -29,13 +30,23 @@ public interface TenantConsentRepositoryBuilder {
     }
 
     /**
+     * No op builder.
+     *
+     * @return the builder
+     */
+    static TenantConsentRepositoryBuilder noOp() {
+        return (tenantDefinition, bindingContext) -> List.of();
+    }
+    
+    /**
      * Build internal consent repository.
      *
      * @param tenantDefinition the tenant definition
      * @param bindingContext   the cas properties
      * @return the consent repository
+     * @throws Exception the exception
      */
     List<ConsentRepository> buildInternal(
         TenantDefinition tenantDefinition,
-        ConfigurationPropertiesBindingContext<CasConfigurationProperties> bindingContext);
+        ConfigurationPropertiesBindingContext<CasConfigurationProperties> bindingContext) throws Exception;
 }

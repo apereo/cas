@@ -42,7 +42,7 @@ public class CasConsentMongoDbAutoConfiguration {
         final CasConfigurationProperties casProperties,
         @Qualifier(CasSSLContext.BEAN_NAME) final CasSSLContext casSslContext) {
         return BeanSupplier.of(ConsentRepositoryBuilder.class)
-            .when(BeanCondition.on("cas.consent.mongo.collection")
+            .when(BeanCondition.on("cas.consent.mongo.enabled").isTrue().evenIfMissing()
                 .given(applicationContext.getEnvironment()))
             .supply(() -> {
                 val mongo = casProperties.getConsent().getMongo();
@@ -64,8 +64,14 @@ public class CasConsentMongoDbAutoConfiguration {
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @ConditionalOnMissingBean(name = "mongoDbConsentMultitenancyRepositoryBuilder")
         public TenantConsentRepositoryBuilder mongoDbConsentMultitenancyRepositoryBuilder(
+            final ConfigurableApplicationContext applicationContext,
             @Qualifier(CasSSLContext.BEAN_NAME) final CasSSLContext casSslContext) {
-            return new TenantMongoDbConsentRepositoryBuilder(casSslContext);
+
+            return BeanSupplier.of(TenantConsentRepositoryBuilder.class)
+                .when(BeanCondition.on("cas.multitenancy.core.enabled").isTrue().given(applicationContext))
+                .supply(() -> new TenantMongoDbConsentRepositoryBuilder(casSslContext))
+                .otherwise(TenantConsentRepositoryBuilder::noOp)
+                .get();
         }
     }
 }

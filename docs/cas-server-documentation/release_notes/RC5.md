@@ -164,7 +164,8 @@ This capability is expected to evolve over time.
 distinct storage services for each tenant when it comes to storing 
 [attribute consent decisions](../integration/Attribute-Release-Consent.html). As of this release, this capability
 is made available to the following storage services:
-
+ 
+- [JDBC](../integration/Attribute-Release-Consent-Storage-JDBC.html)
 - [MongoDb](../integration/Attribute-Release-Consent-Storage-MongoDb.html)
 - [REST](../integration/Attribute-Release-Consent-Storage-REST.html)
 

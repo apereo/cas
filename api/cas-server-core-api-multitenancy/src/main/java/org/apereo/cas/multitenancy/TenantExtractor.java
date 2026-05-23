@@ -94,6 +94,16 @@ public interface TenantExtractor {
     }
 
     /**
+     * To tenant path.
+     *
+     * @param tenant the tenant
+     * @return the string
+     */
+    static String toTenantPath(final TenantDefinition tenant) {
+        return "/tenants/" + tenant.getId();
+    }
+    
+    /**
      * Get tenant key string.
      *
      * @param tenantDefinition the tenant definition

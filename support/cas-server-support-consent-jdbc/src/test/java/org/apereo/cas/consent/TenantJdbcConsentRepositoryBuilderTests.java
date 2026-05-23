@@ -1,13 +1,14 @@
 package org.apereo.cas.consent;
 
 import module java.base;
-import org.apereo.cas.config.CasConsentMongoDbAutoConfiguration;
+import org.apereo.cas.config.CasConsentJdbcAutoConfiguration;
+import org.apereo.cas.config.CasCoreMultitenancyAutoConfiguration;
+import org.apereo.cas.config.CasHibernateJpaAutoConfiguration;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.services.ReturnAllAttributeReleasePolicy;
 import org.apereo.cas.test.CasTestExtension;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.junit.EnabledIfListeningOnPort;
-import lombok.Getter;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
@@ -18,33 +19,33 @@ import org.springframework.boot.test.context.SpringBootTest;
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
- * This is {@link TenantMongoDbConsentRepositoryBuilderTests}.
+ * This is {@link TenantJdbcConsentRepositoryBuilderTests}.
  *
  * @author Misagh Moayyed
  * @since 8.0.0
  */
 @SpringBootTest(classes = {
-    CasConsentMongoDbAutoConfiguration.class,
+    CasCoreMultitenancyAutoConfiguration.class,
+    CasConsentJdbcAutoConfiguration.class,
+    CasHibernateJpaAutoConfiguration.class,
     BaseConsentRepositoryTests.SharedTestConfiguration.class
-},
-    properties = {
-        "cas.consent.mongo.enabled=false",
-        "cas.multitenancy.core.enabled=true",
-        "cas.multitenancy.json.location=classpath:/tenants.json"
-    })
-@Tag("MongoDb")
+}, properties = {
+    "cas.consent.jpa.enabled=false",
+    
+    "cas.multitenancy.core.enabled=true",
+    "cas.multitenancy.json.location=classpath:/tenants.json",
+
+    "cas.jdbc.show-sql=false",
+    "cas.consent.jpa.ddl-auto=create-drop"
+})
+@EnabledIfListeningOnPort(port = 5432)
+@Tag("Postgres")
 @ExtendWith(CasTestExtension.class)
-@Getter
-@EnabledIfListeningOnPort(port = 27017)
-class TenantMongoDbConsentRepositoryBuilderTests {
+class TenantJdbcConsentRepositoryBuilderTests {
     @Autowired
     @Qualifier(ConsentEngine.BEAN_NAME)
     private ConsentEngine consentEngine;
-
-    @Autowired
-    @Qualifier(ConsentDecisionBuilder.BEAN_NAME)
-    private ConsentDecisionBuilder consentDecisionBuilder;
-
+    
     @Test
     void verifyOperation() throws Throwable {
         val principal = RegisteredServiceTestUtils.getPrincipal(UUID.randomUUID().toString(),

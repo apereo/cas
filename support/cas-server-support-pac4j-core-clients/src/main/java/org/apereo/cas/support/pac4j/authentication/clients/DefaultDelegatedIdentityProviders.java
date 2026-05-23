@@ -42,7 +42,7 @@ public class DefaultDelegatedIdentityProviders implements DelegatedIdentityProvi
                     .flatMap(List::stream)
                     .collect(Collectors.toList());
                 val policy = definition.getDelegatedAuthenticationPolicy();
-                if (policy != null && !policy.getAllowedProviders().isEmpty()) {
+                if (policy != null && policy.getAllowedProviders() != null && !policy.getAllowedProviders().isEmpty()) {
                     val builtProviders = new ArrayList<>(delegatedIdentityProviderFactory.build());
                     builtProviders.removeIf(client -> !policy.getAllowedProviders().contains(client.getName()));
                     providers.addAll(builtProviders);

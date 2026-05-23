@@ -18,6 +18,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apereo.inspektr.audit.annotation.Audit;
+import org.jooq.lambda.Unchecked;
 import org.jooq.lambda.fi.util.function.CheckedFunction;
 import org.springframework.beans.factory.DisposableBean;
 import org.springframework.context.ConfigurableApplicationContext;
@@ -185,7 +186,7 @@ public class DefaultConsentEngine implements ConsentEngine {
                     .stream()
                     .filter(BeanSupplier::isNotProxy)
                     .sorted(AnnotationAwareOrderComparator.INSTANCE)
-                    .map(builder -> builder.build(tenantDefinition))
+                    .map(Unchecked.function(builder -> builder.build(tenantDefinition)))
                     .flatMap(List::stream)
                     .filter(BeanSupplier::isNotProxy)
                     .toList();

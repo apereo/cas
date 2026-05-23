@@ -14,14 +14,14 @@ Support is enabled by including the following module in the WAR Overlay:
 
 Endpoints must be designed to accept/process `application/json`.
 
-| Operation                        | Method   | Data                                            | Expected Response                                |
-|----------------------------------|----------|-------------------------------------------------|--------------------------------------------------|
-| Locate consent decision          | `GET`    | `service`, `principal` as query parameters.     | `200`. The consent decision object in the body.  |
-| Locate consent decision for user | `GET`    | `principal` as query parameter.                 | `200`. The consent decisions object in the body. |
-| Locate all consent decisions     | `GET`    | N/A                                             | `200`. The consent decisions object in the body. |
-| Store consent decision           | `POST`   | Consent decision object in the body.            | `200`.                                           |
+| Operation                        | Method   | Data                                             | Expected Response                                |
+|----------------------------------|----------|--------------------------------------------------|--------------------------------------------------|
+| Locate consent decision          | `GET`    | `service`, `principal` as query parameters.      | `200`. The consent decision object in the body.  |
+| Locate consent decision for user | `GET`    | `principal` as query parameter.                  | `200`. The consent decisions object in the body. |
+| Locate all consent decisions     | `GET`    | N/A                                              | `200`. The consent decisions object in the body. |
+| Store consent decision           | `POST`   | Consent decision object in the body.             | `200`.                                           |
 | Delete consent decision          | `DELETE` | `decisionId` and `principal` as query parameters | `200`.                                           |
-| Delete consent decisions         | `DELETE` | `principal` as query parameter.                 | `200`.                                           |
+| Delete consent decisions         | `DELETE` | `principal` as query parameter.                  | `200`.                                           |
 
 The consent decision object in transit will and must match the JSON structure above.
 
@@ -29,3 +29,8 @@ The consent decision object in transit will and must match the JSON structure ab
 
 {% include_cached casproperties.html properties="cas.consent.rest" %}
 
+
+## Multitenancy
+
+Configuration settings for attribute consent storage can be specified in a multitenant environment.
+Please [review this guide](../multitenancy/Multitenancy-Overview.html) for more information.
