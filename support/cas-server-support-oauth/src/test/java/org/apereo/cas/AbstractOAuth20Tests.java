@@ -50,9 +50,7 @@ import org.apereo.cas.support.oauth.services.OAuthRegisteredService;
 import org.apereo.cas.support.oauth.validator.OAuth20ClientSecretValidator;
 import org.apereo.cas.support.oauth.web.CasOAuth20AuthenticationEventExecutionPlanTestConfiguration;
 import org.apereo.cas.support.oauth.web.OAuth20RequestParameterResolver;
-import org.apereo.cas.support.oauth.web.endpoints.OAuth20AccessTokenEndpointController;
 import org.apereo.cas.support.oauth.web.endpoints.OAuth20ConfigurationContext;
-import org.apereo.cas.support.oauth.web.endpoints.OAuth20DeviceUserCodeApprovalEndpointController;
 import org.apereo.cas.support.oauth.web.response.OAuth20CasClientRedirectActionBuilder;
 import org.apereo.cas.support.oauth.web.response.accesstoken.OAuth20TokenGeneratedResult;
 import org.apereo.cas.support.oauth.web.response.accesstoken.OAuth20TokenGenerator;
@@ -113,9 +111,14 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.EnableAspectJAutoProxy;
 import org.springframework.context.annotation.Import;
 import org.springframework.http.HttpMethod;
+import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
+import org.springframework.mock.web.MockHttpSession;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.MvcResult;
+import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
+import org.springframework.test.web.servlet.request.RequestPostProcessor;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 import org.springframework.web.context.ConfigurableWebApplicationContext;
 import org.springframework.web.servlet.HandlerInterceptor;
@@ -248,10 +251,6 @@ public abstract class AbstractOAuth20Tests {
     protected ServicesManagerConfigurationContext servicesManagerConfigurationContext;
 
     @Autowired
-    @Qualifier("accessTokenController")
-    protected OAuth20AccessTokenEndpointController accessTokenController;
-
-    @Autowired
     @Qualifier(RegisteredServicePrincipalAccessStrategyEnforcer.BEAN_NAME)
     protected RegisteredServicePrincipalAccessStrategyEnforcer principalAccessStrategyEnforcer;
 
@@ -278,10 +277,6 @@ public abstract class AbstractOAuth20Tests {
     @Autowired
     @Qualifier(JwtBuilder.ACCESS_TOKEN_JWT_BUILDER_BEAN_NAME)
     protected JwtBuilder accessTokenJwtBuilder;
-
-    @Autowired
-    @Qualifier("deviceUserCodeApprovalEndpointController")
-    protected OAuth20DeviceUserCodeApprovalEndpointController deviceController;
 
     @Autowired
     @Qualifier("oauthResourceOwnerCredentialsResponseBuilder")
@@ -360,6 +355,78 @@ public abstract class AbstractOAuth20Tests {
     @Autowired
     @Qualifier("mockMvc")
     protected MockMvc mockMvc;
+
+    protected MvcResult performOAuthRequest(final MockHttpServletRequest request) throws Throwable {
+        var requestUri = Objects.requireNonNullElse(request.getRequestURI(), CONTEXT + OAuth20Constants.ACCESS_TOKEN_URL);
+        if (StringUtils.isBlank(requestUri)) {
+            requestUri = CONTEXT + OAuth20Constants.ACCESS_TOKEN_URL;
+        }
+        if (requestUri.isEmpty() || requestUri.charAt(0) != '/') {
+            requestUri = '/' + requestUri;
+        }
+        if (!requestUri.startsWith("/cas")) {
+            requestUri = "/cas" + requestUri;
+        }
+        val requestMethod = Objects.requireNonNullElse(request.getMethod(), HttpMethod.GET.name());
+        val contentType = Objects.requireNonNullElse(request.getContentType(), MediaType.APPLICATION_FORM_URLENCODED_VALUE);
+        val builder = MockMvcRequestBuilders.request(HttpMethod.valueOf(requestMethod), requestUri)
+            .with(withCasContext())
+            .contentType(contentType);
+
+        val parameterNames = request.getParameterNames();
+        while (parameterNames.hasMoreElements()) {
+            val parameterName = parameterNames.nextElement();
+            val parameterValues = request.getParameterValues(parameterName);
+            if (parameterValues != null) {
+                builder.param(parameterName, parameterValues);
+            }
+        }
+
+        val headerNames = request.getHeaderNames();
+        while (headerNames.hasMoreElements()) {
+            val headerName = headerNames.nextElement();
+            builder.header(headerName, Collections.list(request.getHeaders(headerName)).toArray());
+        }
+        val attributeNames = request.getAttributeNames();
+        while (attributeNames.hasMoreElements()) {
+            val attributeName = attributeNames.nextElement();
+            builder.requestAttr(attributeName, request.getAttribute(attributeName));
+        }
+        if (request.getCookies() != null) {
+            builder.cookie(request.getCookies());
+        }
+        if (request.getSession(false) instanceof final MockHttpSession session) {
+            builder.session(session);
+        }
+        return mockMvc.perform(builder).andReturn();
+    }
+
+    protected static ModelAndView getModelAndView(final MvcResult result) {
+        val modelAndView = result.getModelAndView();
+        if (modelAndView != null) {
+            return modelAndView;
+        }
+        val fallback = new ModelAndView();
+        val status = org.springframework.http.HttpStatusCode.valueOf(result.getResponse().getStatus());
+        fallback.setStatus(status);
+        val content = new String(result.getResponse().getContentAsByteArray(), StandardCharsets.UTF_8);
+        if (StringUtils.isNotBlank(content)) {
+            fallback.addAllObjects(MAPPER.readValue(content, Map.class));
+        } else if (status.value() == HttpStatus.SC_UNAUTHORIZED) {
+            fallback.addObject(OAuth20Constants.ERROR, OAuth20Constants.INVALID_GRANT);
+        }
+        return fallback;
+    }
+
+    private static RequestPostProcessor withCasContext() {
+        return request -> {
+            request.setContextPath("/cas");
+            request.setScheme(CAS_SCHEME);
+            request.setServerName(CAS_SERVER);
+            request.setServerPort(CAS_PORT);
+            return request;
+        };
+    }
 
     public static ExpirationPolicyBuilder alwaysExpiresExpirationPolicyBuilder() {
         return new ExpirationPolicyBuilder() {
@@ -539,13 +606,10 @@ public abstract class AbstractOAuth20Tests {
         }
 
         mockRequest.setParameter(OAuth20Constants.CODE, code.getId());
-        val mockResponse = new MockHttpServletResponse();
-
-        LOGGER.debug("Invoking authentication interceptor...");
-        requiresAuthenticationInterceptor.preHandle(mockRequest, mockResponse, null);
-
         LOGGER.debug("Submitting access token request...");
-        val mv = accessTokenController.handleRequest(mockRequest, mockResponse);
+        val result = performOAuthRequest(mockRequest);
+        val mockResponse = result.getResponse();
+        val mv = getModelAndView(result);
         assertNull(this.ticketRegistry.getTicket(code.getId()));
         assertEquals(HttpStatus.SC_OK, mockResponse.getStatus());
 
@@ -661,9 +725,9 @@ public abstract class AbstractOAuth20Tests {
         mockRequest.setParameter(OAuth20Constants.CLIENT_ID, service.getClientId());
         mockRequest.setParameter(OAuth20Constants.CLIENT_SECRET, service.getClientSecret());
         mockRequest.setParameter(OAuth20Constants.REFRESH_TOKEN, refreshToken.getId());
-        val mockResponse = new MockHttpServletResponse();
-        requiresAuthenticationInterceptor.preHandle(mockRequest, mockResponse, null);
-        val mv = accessTokenController.handleRequest(mockRequest, mockResponse);
+        val result = performOAuthRequest(mockRequest);
+        val mockResponse = result.getResponse();
+        val mv = getModelAndView(result);
         assertEquals(HttpStatus.SC_OK, mockResponse.getStatus());
 
         assertTrue(mv.getModel().containsKey(OAuth20Constants.ACCESS_TOKEN));

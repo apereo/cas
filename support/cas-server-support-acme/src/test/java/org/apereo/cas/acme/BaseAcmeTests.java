@@ -1,7 +1,6 @@
 package org.apereo.cas.acme;
 
 import module java.base;
-import org.apereo.cas.config.CasAcmeAutoConfiguration;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.test.CasTestExtension;
 import org.apereo.cas.util.spring.boot.SpringBootTestAutoConfigurations;
@@ -10,6 +9,8 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc;
+import org.springframework.test.web.servlet.MockMvc;
 
 /**
  * This is {@link BaseAcmeTests}.
@@ -23,7 +24,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 @ExtendWith(CasTestExtension.class)
 @SpringBootTestAutoConfigurations
 @Deprecated(since = "7.3.0", forRemoval = true)
-@SpringBootTest(classes = CasAcmeAutoConfiguration.class, properties = {
+@SpringBootTest(classes = org.apereo.cas.config.CasAcmeAutoConfiguration.class, properties = {
     "cas.acme.domains=cas.apereo.org",
     "cas.acme.server-url=acme://letsencrypt.org/staging",
     "cas.acme.user-key.location=file:${java.io.tmpdir}/user.key",
@@ -31,11 +32,8 @@ import org.springframework.boot.test.context.SpringBootTest;
     "cas.acme.domain-csr.location=file:${java.io.tmpdir}/domain.csr",
     "cas.acme.domain-chain.location=file:${java.io.tmpdir}/domain-chain.crt"
 })
+@AutoConfigureMockMvc
 public abstract class BaseAcmeTests {
-
-    @Autowired
-    @Qualifier("acmeWellKnownChallengeController")
-    protected AcmeWellKnownChallengeController acmeWellKnownChallengeController;
 
     @Autowired
     @Qualifier("acmeChallengeRepository")
@@ -43,5 +41,9 @@ public abstract class BaseAcmeTests {
 
     @Autowired
     protected CasConfigurationProperties casProperties;
+
+    @Autowired
+    @Qualifier("mockMvc")
+    protected MockMvc mockMvc;
 
 }

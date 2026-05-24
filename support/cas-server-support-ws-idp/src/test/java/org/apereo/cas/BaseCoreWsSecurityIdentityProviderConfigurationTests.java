@@ -21,11 +21,14 @@ import org.apereo.cas.config.CasWsSecurityIdentityProviderAutoConfiguration;
 import org.apereo.cas.config.CasWsSecuritySecurityTokenAutoConfiguration;
 import org.apereo.cas.util.spring.boot.SpringBootTestAutoConfigurations;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.SpringBootConfiguration;
 import org.springframework.boot.autoconfigure.ImportAutoConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Import;
+import org.springframework.test.web.servlet.MockMvc;
 
 /**
  * This is {@link BaseCoreWsSecurityIdentityProviderConfigurationTests}.
@@ -54,11 +57,16 @@ import org.springframework.context.annotation.Import;
         "cas.authn.wsfed-idp.sts.realm.key-password=realma",
         "cas.authn.wsfed-idp.sts.realm.issuer=CAS"
     })
+@AutoConfigureMockMvc
 public abstract class BaseCoreWsSecurityIdentityProviderConfigurationTests {
 
     @Autowired
     protected ConfigurableApplicationContext applicationContext;
 
+    @Autowired
+    @Qualifier("mockMvc")
+    protected MockMvc mockMvc;
+    
     @SpringBootTestAutoConfigurations
     @ImportAutoConfiguration({
         CasCoreSamlAutoConfiguration.class,

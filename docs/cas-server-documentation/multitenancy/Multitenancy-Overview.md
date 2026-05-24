@@ -7,10 +7,11 @@ category: Multitenancy
 
 # Multitenancy
 
-CAS supports the notion of multitenancy, where a single CAS server can be used to isolate parts of its configuration and policies
-per each tenant that is assigned to a unique url to interact with the CAS server. Each tenant registered with CAS may have its own set of capabilities
-such as authentication strategy and policies. Support for multitenancy is baked into CAS as a first class citizen
-and you will need to configure CAS to enable the feature, register your tenants and define their capabilities.
+CAS supports the notion of multitenancy, where a single CAS server can be used to isolate parts of its configuration
+and policies per each tenant that is assigned to a unique url to interact with the CAS server. Each tenant registered 
+with CAS may have its own set of capabilities such as authentication strategy and policies. Support for multitenancy 
+is baked into CAS as a first class citizen and you will need to configure CAS to enable the feature, register your 
+tenants and define their capabilities.
 
 {% include_cached casproperties.html properties="cas.multitenancy.core" %}
 
@@ -406,7 +407,8 @@ CAS to route requests from `https://sso.example.org/cas/login` to `https://${cas
    
 This setup is useful in scenarios where there is a reverse proxy that sits in front of CAS
 and is able to route traffic for predefined hosts to CAS tenants. For example, the setup below
-for nginx, combined with the tenant definitions, allows CAS to route traffic for `sso.example.com` to the `london` tenant definition that carries 
+for nginx, combined with the tenant definitions, allows CAS to route traffic for `sso.example.com` to 
+the `london` tenant definition that carries 
 its own host name noted above:
 
 ```conf

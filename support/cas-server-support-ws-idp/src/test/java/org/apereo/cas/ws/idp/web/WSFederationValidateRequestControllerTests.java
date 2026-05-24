@@ -5,18 +5,16 @@ import org.apereo.cas.BaseCoreWsSecurityIdentityProviderConfigurationTests;
 import org.apereo.cas.CasProtocolConstants;
 import org.apereo.cas.authentication.adaptive.UnauthorizedAuthenticationException;
 import org.apereo.cas.mock.MockTicketGrantingTicket;
-import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.services.ServicesManager;
-import org.apereo.cas.services.UnauthorizedServiceException;
 import org.apereo.cas.ticket.SecurityTokenTicket;
 import org.apereo.cas.ticket.expiration.NeverExpiresExpirationPolicy;
 import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.web.cookie.CasCookieBuilder;
+import org.apereo.cas.web.flow.CasWebflowConstants;
 import org.apereo.cas.ws.idp.WSFederationConstants;
 import org.apereo.cas.ws.idp.services.WSFederationRegisteredService;
 import lombok.val;
 import org.apache.cxf.ws.security.tokenstore.SecurityToken;
-import org.apache.hc.core5.http.HttpStatus;
 import org.apache.hc.core5.net.URIBuilder;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
@@ -25,8 +23,11 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.test.context.TestPropertySource;
+import org.springframework.test.web.servlet.MvcResult;
+
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 
 /**
  * This is {@link WSFederationValidateRequestControllerTests}.
@@ -37,10 +38,6 @@ import static org.mockito.Mockito.*;
 @TestPropertySource(properties = "cas.tgc.crypto.enabled=false")
 @Tag("WSFederation")
 class WSFederationValidateRequestControllerTests extends BaseCoreWsSecurityIdentityProviderConfigurationTests {
-    @Autowired
-    @Qualifier("federationValidateRequestController")
-    private WSFederationValidateRequestController federationValidateRequestController;
-
     @Autowired
     @Qualifier(ServicesManager.BEAN_NAME)
     private ServicesManager servicesManager;
@@ -54,91 +51,70 @@ class WSFederationValidateRequestControllerTests extends BaseCoreWsSecurityIdent
     private TicketRegistry ticketRegistry;
 
     @Test
-    void verifyNoWa() {
-        val request = new MockHttpServletRequest();
-        val response = new MockHttpServletResponse();
-        assertThrows(UnauthorizedAuthenticationException.class,
-            () -> federationValidateRequestController.handleFederationRequest(response, request));
+    void verifyNoWa() throws Throwable {
+        val result = performFederationRequest();
+        assertEquals(org.springframework.http.HttpStatus.BAD_REQUEST.value(), result.getResponse().getStatus());
+        assertNotNull(result.getModelAndView());
+        assertEquals(CasWebflowConstants.VIEW_ID_SERVICE_ERROR, result.getModelAndView().getViewName());
+        assertInstanceOf(UnauthorizedAuthenticationException.class,
+            result.getModelAndView().getModel().get(CasWebflowConstants.ATTRIBUTE_ERROR_ROOT_CAUSE_EXCEPTION));
     }
 
     @Test
-    void verifyLogoutWithReply() {
-        val request = new MockHttpServletRequest();
-        val response = new MockHttpServletResponse();
-
+    void verifyLogoutWithReply() throws Throwable {
         val registeredService = getWsFederationRegisteredService();
-        request.addParameter(WSFederationConstants.WTREALM, registeredService.getRealm());
-        request.addParameter(WSFederationConstants.WREPLY, registeredService.getServiceId());
-        request.addParameter(WSFederationConstants.WA, WSFederationConstants.WSIGNOUT10);
-        request.addParameter(WSFederationConstants.WHR, "whr");
-        request.addParameter(WSFederationConstants.WREQ, "wreq");
-
-        assertDoesNotThrow(() -> {
-            federationValidateRequestController.handleFederationRequest(response, request);
-            return null;
-        });
-        assertEquals(HttpStatus.SC_MOVED_TEMPORARILY, response.getStatus());
-        assertEquals("https://cas.example.org:8443/cas/logout?service=http://app.example5.org/wsfed-idp", response.getHeader("Location"));
+        val result = performFederationRequest(
+            WSFederationConstants.WTREALM, registeredService.getRealm(),
+            WSFederationConstants.WREPLY, registeredService.getServiceId(),
+            WSFederationConstants.WA, WSFederationConstants.WSIGNOUT10,
+            WSFederationConstants.WHR, "whr",
+            WSFederationConstants.WREQ, "wreq");
+        assertEquals(org.springframework.http.HttpStatus.FOUND.value(), result.getResponse().getStatus());
+        assertEquals("https://cas.example.org:8443/cas/logout?service=http://app.example5.org/wsfed-idp", result.getResponse().getHeader("Location"));
     }
 
     @Test
-    void verifyUnauthzServicesWithUnknownRealm() {
-        val request = new MockHttpServletRequest();
-
+    void verifyUnauthzServicesWithUnknownRealm() throws Throwable {
         val registeredService = getWsFederationRegisteredService();
-        request.addParameter(WSFederationConstants.WTREALM, "unknown");
-        request.addParameter(WSFederationConstants.WREPLY, registeredService.getServiceId());
-        request.addParameter(WSFederationConstants.WA, WSFederationConstants.WSIGNOUT10);
-        val wsFedRequest = WSFederationRequest.of(request);
-        val service = RegisteredServiceTestUtils.getService(registeredService.getServiceId());
-        assertThrows(UnauthorizedServiceException.class,
-            () -> federationValidateRequestController.findAndValidateFederationRequestForRegisteredService(service, wsFedRequest));
+        val result = performFederationRequest(
+            WSFederationConstants.WTREALM, "unknown",
+            WSFederationConstants.WREPLY, registeredService.getServiceId(),
+            WSFederationConstants.WA, WSFederationConstants.WSIGNIN10);
+        assertEquals(org.springframework.http.HttpStatus.BAD_REQUEST.value(), result.getResponse().getStatus());
+        assertNotNull(result.getModelAndView());
+        assertEquals(CasWebflowConstants.VIEW_ID_SERVICE_ERROR, result.getModelAndView().getViewName());
     }
 
     @Test
-    void verifyUnauthzServicesWithMismatchedRealm() {
-        val request = new MockHttpServletRequest();
-
+    void verifyUnauthzServicesWithMismatchedRealm() throws Throwable {
         val registeredService = getWsFederationRegisteredService("custom-realm");
-        request.addParameter(WSFederationConstants.WTREALM, "custom-realm");
-        request.addParameter(WSFederationConstants.WREPLY, registeredService.getServiceId());
-        request.addParameter(WSFederationConstants.WA, WSFederationConstants.WSIGNOUT10);
-        val wsFedRequest = WSFederationRequest.of(request);
-        val service = RegisteredServiceTestUtils.getService(registeredService.getServiceId());
-        assertThrows(UnauthorizedServiceException.class,
-            () -> federationValidateRequestController.findAndValidateFederationRequestForRegisteredService(service, wsFedRequest));
+        val result = performFederationRequest(
+            WSFederationConstants.WTREALM, "custom-realm",
+            WSFederationConstants.WREPLY, registeredService.getServiceId(),
+            WSFederationConstants.WA, WSFederationConstants.WSIGNIN10);
+        assertEquals(org.springframework.http.HttpStatus.BAD_REQUEST.value(), result.getResponse().getStatus());
+        assertNotNull(result.getModelAndView());
+        assertEquals(CasWebflowConstants.VIEW_ID_SERVICE_ERROR, result.getModelAndView().getViewName());
     }
 
 
     @Test
-    void verifyLogoutWithoutReply() {
-        val request = new MockHttpServletRequest();
-        val response = new MockHttpServletResponse();
-
-        request.addParameter(WSFederationConstants.WA, WSFederationConstants.WSIGNOUT10);
-
-        assertDoesNotThrow(() -> {
-            federationValidateRequestController.handleFederationRequest(response, request);
-            return null;
-        });
-        assertEquals(HttpStatus.SC_MOVED_TEMPORARILY, response.getStatus());
-        assertEquals("https://cas.example.org:8443/cas/logout", response.getHeader("Location"));
+    void verifyLogoutWithoutReply() throws Throwable {
+        val result = performFederationRequest(WSFederationConstants.WA, WSFederationConstants.WSIGNOUT10);
+        assertEquals(org.springframework.http.HttpStatus.FOUND.value(), result.getResponse().getStatus());
+        assertEquals("https://cas.example.org:8443/cas/logout", result.getResponse().getHeader("Location"));
     }
 
     @Test
     void verifyLogin() throws Throwable {
-        val request = new MockHttpServletRequest();
-        val response = new MockHttpServletResponse();
-
         val registeredService = getWsFederationRegisteredService();
-        request.addParameter(WSFederationConstants.WTREALM, registeredService.getRealm());
-        request.addParameter(WSFederationConstants.WREPLY, registeredService.getServiceId());
-        request.addParameter(WSFederationConstants.WA, WSFederationConstants.WSIGNIN10);
+        val result = performFederationRequest(
+            WSFederationConstants.WTREALM, registeredService.getRealm(),
+            WSFederationConstants.WREPLY, registeredService.getServiceId(),
+            WSFederationConstants.WA, WSFederationConstants.WSIGNIN10);
+        assertEquals(org.springframework.http.HttpStatus.FOUND.value(), result.getResponse().getStatus());
 
-        assertDoesNotThrow(() -> federationValidateRequestController.handleFederationRequest(response, request));
-        assertEquals(HttpStatus.SC_MOVED_TEMPORARILY, response.getStatus());
-
-        val builder = new URIBuilder(response.getHeader("Location"));
+        val builder = new URIBuilder(result.getResponse().getHeader("Location"));
         assertTrue(builder.getQueryParams().stream().anyMatch(p -> p.getName().equals(CasProtocolConstants.PARAMETER_SERVICE)));
         assertTrue(builder.getQueryParams().stream().anyMatch(p -> p.getName().equals(WSFederationConstants.WTREALM)));
         assertTrue(builder.getQueryParams().stream().anyMatch(p -> p.getName().equals(WSFederationConstants.WREPLY)));
@@ -146,21 +122,14 @@ class WSFederationValidateRequestControllerTests extends BaseCoreWsSecurityIdent
 
     @Test
     void verifyLoginRenewWithNoToken() throws Throwable {
-        val request = new MockHttpServletRequest();
-        val response = new MockHttpServletResponse();
-
         val registeredService = getWsFederationRegisteredService();
-        request.addParameter(WSFederationConstants.WTREALM, registeredService.getRealm());
-        request.addParameter(WSFederationConstants.WREPLY, registeredService.getServiceId());
-        request.addParameter(WSFederationConstants.WREFRESH, "5000");
-        request.addParameter(WSFederationConstants.WA, WSFederationConstants.WSIGNIN10);
-
-        val tgt = new MockTicketGrantingTicket("casuser");
-        ticketRegistry.addTicket(tgt);
-
-        assertDoesNotThrow(() -> federationValidateRequestController.handleFederationRequest(response, request));
-        assertEquals(HttpStatus.SC_MOVED_TEMPORARILY, response.getStatus());
-        val builder = new URIBuilder(response.getHeader("Location"));
+        val result = performFederationRequest(
+            WSFederationConstants.WTREALM, registeredService.getRealm(),
+            WSFederationConstants.WREPLY, registeredService.getServiceId(),
+            WSFederationConstants.WREFRESH, "5000",
+            WSFederationConstants.WA, WSFederationConstants.WSIGNIN10);
+        assertEquals(org.springframework.http.HttpStatus.FOUND.value(), result.getResponse().getStatus());
+        val builder = new URIBuilder(result.getResponse().getHeader("Location"));
         assertTrue(builder.getQueryParams().stream().anyMatch(p -> p.getName().equals(CasProtocolConstants.PARAMETER_SERVICE)));
         assertTrue(builder.getQueryParams().stream().anyMatch(p -> p.getName().equals(CasProtocolConstants.PARAMETER_RENEW)));
         assertTrue(builder.getQueryParams().stream().anyMatch(p -> p.getName().equals(WSFederationConstants.WTREALM)));
@@ -169,22 +138,14 @@ class WSFederationValidateRequestControllerTests extends BaseCoreWsSecurityIdent
 
     @Test
     void verifyLoginRenewDisabled() throws Throwable {
-        val request = new MockHttpServletRequest();
-        val response = new MockHttpServletResponse();
-
         val registeredService = getWsFederationRegisteredService();
-        request.addParameter(WSFederationConstants.WTREALM, registeredService.getRealm());
-        request.addParameter(WSFederationConstants.WREPLY, registeredService.getServiceId());
-        request.addParameter(WSFederationConstants.WREFRESH, "0");
-        request.addParameter(WSFederationConstants.WA, WSFederationConstants.WSIGNIN10);
-
-        val tgt = new MockTicketGrantingTicket("casuser");
-        ticketRegistry.addTicket(tgt);
-
-        assertDoesNotThrow(() -> federationValidateRequestController.handleFederationRequest(response, request));
-        assertNotNull(federationValidateRequestController.handleUnauthorizedServiceException(request, new RuntimeException()));
-        assertEquals(HttpStatus.SC_MOVED_TEMPORARILY, response.getStatus());
-        val builder = new URIBuilder(response.getHeader("Location"));
+        val result = performFederationRequest(
+            WSFederationConstants.WTREALM, registeredService.getRealm(),
+            WSFederationConstants.WREPLY, registeredService.getServiceId(),
+            WSFederationConstants.WREFRESH, "0",
+            WSFederationConstants.WA, WSFederationConstants.WSIGNIN10);
+        assertEquals(org.springframework.http.HttpStatus.FOUND.value(), result.getResponse().getStatus());
+        val builder = new URIBuilder(result.getResponse().getHeader("Location"));
         assertTrue(builder.getQueryParams().stream().anyMatch(p -> p.getName().equals(CasProtocolConstants.PARAMETER_SERVICE)));
         assertTrue(builder.getQueryParams().stream().anyMatch(p -> p.getName().equals(WSFederationConstants.WTREALM)));
         assertTrue(builder.getQueryParams().stream().anyMatch(p -> p.getName().equals(WSFederationConstants.WREPLY)));
@@ -192,15 +153,7 @@ class WSFederationValidateRequestControllerTests extends BaseCoreWsSecurityIdent
 
     @Test
     void verifyLoginRenewWithToken() throws Throwable {
-        val request = new MockHttpServletRequest();
-        val response = new MockHttpServletResponse();
-
         val registeredService = getWsFederationRegisteredService();
-        request.addParameter(WSFederationConstants.WTREALM, registeredService.getRealm());
-        request.addParameter(WSFederationConstants.WREPLY, registeredService.getServiceId());
-        request.addParameter(WSFederationConstants.WREFRESH, "1");
-        request.addParameter(WSFederationConstants.WA, WSFederationConstants.WSIGNIN10);
-
         val token = mock(SecurityToken.class);
         when(token.isExpired()).thenReturn(Boolean.FALSE);
         when(token.getCreated()).thenReturn(Instant.now(Clock.systemUTC()).minusSeconds(300));
@@ -219,16 +172,37 @@ class WSFederationValidateRequestControllerTests extends BaseCoreWsSecurityIdent
         val tgt = new MockTicketGrantingTicket("casuser");
         tgt.getDescendantTickets().add(id);
         ticketRegistry.addTicket(tgt);
-        ticketGrantingTicketCookieGenerator.addCookie(request, response, tgt.getId());
-        request.setCookies(response.getCookies());
 
-        assertDoesNotThrow(() -> federationValidateRequestController.handleFederationRequest(response, request));
-        assertEquals(HttpStatus.SC_MOVED_TEMPORARILY, response.getStatus());
-        val builder = new URIBuilder(response.getHeader("Location"));
+        val request = new MockHttpServletRequest();
+        val response = new MockHttpServletResponse();
+        ticketGrantingTicketCookieGenerator.addCookie(request, response, tgt.getId());
+        val result = performFederationRequest(response.getCookies(),
+            WSFederationConstants.WTREALM, registeredService.getRealm(),
+            WSFederationConstants.WREPLY, registeredService.getServiceId(),
+            WSFederationConstants.WREFRESH, "1",
+            WSFederationConstants.WA, WSFederationConstants.WSIGNIN10);
+        assertEquals(org.springframework.http.HttpStatus.FOUND.value(), result.getResponse().getStatus());
+        val builder = new URIBuilder(result.getResponse().getHeader("Location"));
         assertTrue(builder.getQueryParams().stream().anyMatch(p -> p.getName().equals(CasProtocolConstants.PARAMETER_SERVICE)));
         assertTrue(builder.getQueryParams().stream().anyMatch(p -> p.getName().equals(CasProtocolConstants.PARAMETER_RENEW)));
         assertTrue(builder.getQueryParams().stream().anyMatch(p -> p.getName().equals(WSFederationConstants.WTREALM)));
         assertTrue(builder.getQueryParams().stream().anyMatch(p -> p.getName().equals(WSFederationConstants.WREPLY)));
+    }
+
+    private MvcResult performFederationRequest(final String... parameters) throws Throwable {
+        return performFederationRequest(null, parameters);
+    }
+
+    private MvcResult performFederationRequest(final jakarta.servlet.http.Cookie[] cookies, final String... parameters) throws Throwable {
+        val builder = get(WSFederationConstants.ENDPOINT_FEDERATION_REQUEST);
+        if (cookies != null && cookies.length > 0) {
+            builder.cookie(cookies);
+        }
+        for (var i = 0; i < parameters.length; i += 2) {
+            builder.param(parameters[i], parameters[i + 1]);
+        }
+        return mockMvc.perform(builder)
+            .andReturn();
     }
 
     private WSFederationRegisteredService getWsFederationRegisteredService() {

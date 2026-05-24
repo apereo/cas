@@ -3,9 +3,9 @@ package org.apereo.cas.acme;
 import module java.base;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-import org.springframework.mock.web.MockHttpServletRequest;
-import org.springframework.mock.web.MockHttpServletResponse;
 import static org.junit.jupiter.api.Assertions.*;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 /**
  * This is {@link AcmeWellKnownChallengeControllerTests}.
@@ -22,8 +22,9 @@ class AcmeWellKnownChallengeControllerTests extends BaseAcmeTests {
     @Test
     void verifyOperation() throws Throwable {
         acmeChallengeRepository.add("token", "challenge");
-        assertNotNull(acmeWellKnownChallengeController.handleRequest("token",
-            new MockHttpServletRequest(), new MockHttpServletResponse()));
+        mockMvc.perform(get("/.well-known/acme-challenge/token"))
+            .andExpect(status().isOk())
+            .andExpect(content().string("challenge"));
         assertNotNull(acmeChallengeRepository.get("token"));
         Thread.sleep(3000);
         assertNull(acmeChallengeRepository.get("token"));

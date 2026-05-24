@@ -42,7 +42,7 @@ import jakarta.servlet.http.HttpServletRequest;
 @Endpoint(id = "attributeConsent", defaultAccess = Access.NONE)
 public class AttributeConsentReportEndpoint extends BaseCasRestActuatorEndpoint {
     private static final ObjectMapper MAPPER = JacksonObjectMapperFactory.builder()
-        .defaultTypingEnabled(false).build().toObjectMapper();
+        .build().toObjectMapper();
 
     private final ObjectProvider<ConsentEngine> consentEngine;
     
