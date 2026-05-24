@@ -7,8 +7,6 @@
     "urls": ["https://localhost:8443/cas/actuator/health"]
   },
   "properties": [
-    "--spring.data.jdbc.repositories.enabled=false",
-    
     "--cas.authn.accept.name=STATIC",
     
     "--cas.monitor.endpoints.endpoint.defaults.access=ANONYMOUS",

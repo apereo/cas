@@ -2,6 +2,8 @@ package org.apereo.cas.web.flow;
 
 import module java.base;
 import org.apereo.cas.consent.ConsentEngine;
+import org.apereo.cas.multitenancy.TenantDefinition;
+import org.apereo.cas.multitenancy.TenantExtractor;
 import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
 import org.apereo.cas.web.flow.actions.BaseCasWebflowAction;
 import org.apereo.cas.web.support.WebUtils;
@@ -10,6 +12,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import lombok.experimental.SuperBuilder;
 import lombok.val;
+import org.apache.commons.lang3.StringUtils;
 import org.jooq.lambda.Unchecked;
 import org.jspecify.annotations.Nullable;
 import org.springframework.webflow.execution.Event;
@@ -28,12 +31,16 @@ public class ConsentAccountProfilePrepareAction extends BaseCasWebflowAction {
         .defaultTypingEnabled(false).build().toObjectMapper();
 
     private final ConsentEngine consentEngine;
-
+    private final TenantExtractor tenantExtractor;
+    
     @Override
     protected @Nullable Event doExecuteInternal(final RequestContext requestContext) {
+        val tenantId = tenantExtractor.extract(requestContext)
+            .map(TenantDefinition::getId)
+            .orElse(StringUtils.EMPTY);
         val authentication = WebUtils.getAuthentication(requestContext);
         val principal = authentication.getPrincipal();
-        val decisions = consentEngine.getConsentRepository().findConsentDecisions(principal.getId());
+        val decisions = consentEngine.toConsentRepository(tenantId).findConsentDecisions(principal.getId());
         val resolved = decisions
             .stream()
             .map(Unchecked.function(consentDecision -> {

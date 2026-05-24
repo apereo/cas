@@ -221,10 +221,8 @@ public class CasConsentCoreAutoConfiguration {
             final ConfigurableApplicationContext applicationContext,
             @Qualifier(ConsentEngine.BEAN_NAME)
             final ObjectProvider<ConsentEngine> consentEngine,
-            @Qualifier(ConsentRepository.BEAN_NAME)
-            final ObjectProvider<ConsentRepository> consentRepository,
             final CasConfigurationProperties casProperties) {
-            return new AttributeConsentReportEndpoint(casProperties, applicationContext, consentRepository, consentEngine);
+            return new AttributeConsentReportEndpoint(casProperties, applicationContext, consentEngine);
         }
     }
 }

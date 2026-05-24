@@ -33,6 +33,11 @@ public interface TenantExtractor {
     String BEAN_NAME = "tenantExtractor";
 
     /**
+     * Tenant header id to extract from the request.
+     */
+    String HEADER_TENANT_ID = "X-Tenant-Id";
+
+    /**
      * Gets tenants manager.
      *
      * @return the tenants manager

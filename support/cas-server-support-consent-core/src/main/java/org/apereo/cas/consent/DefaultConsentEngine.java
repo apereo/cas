@@ -175,11 +175,10 @@ public class DefaultConsentEngine implements ConsentEngine {
             .withService(service).withAuthentication(authentication);
     }
 
-    protected ConsentRepository resolveConsentRepository(final Service service,
-                                                         final RegisteredService registeredService,
-                                                         final Authentication authentication) {
-        if (service != null && StringUtils.isNotBlank(service.getTenant())) {
-            val tenantDefinition = tenantExtractor.getTenantsManager().findTenant(service.getTenant()).orElseThrow();
+    @Override
+    public ConsentRepository toConsentRepository(final String tenant) {
+        if (StringUtils.isNotBlank(tenant)) {
+            val tenantDefinition = tenantExtractor.getTenantsManager().findTenant(tenant).orElseThrow();
             if (!tenantDefinition.getProperties().isEmpty()) {
                 val repositories = applicationContext.getBeansOfType(TenantConsentRepositoryBuilder.class)
                     .values()
@@ -206,7 +205,7 @@ public class DefaultConsentEngine implements ConsentEngine {
         final RegisteredService registeredService,
         final Authentication authentication,
         final CheckedFunction<ConsentRepository, ConsentDecision> executor) throws Throwable {
-        val effectiveRepository = resolveConsentRepository(service, registeredService, authentication);
+        val effectiveRepository = toConsentRepository(service.getTenant());
         try {
             return executor.apply(effectiveRepository);
         } finally {

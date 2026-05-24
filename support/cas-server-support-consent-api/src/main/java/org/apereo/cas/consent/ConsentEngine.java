@@ -87,7 +87,8 @@ public interface ConsentEngine extends Serializable {
     /**
      * Gets consent repository.
      *
+     * @param tenantId the tenant id
      * @return the consent repository
      */
-    ConsentRepository getConsentRepository();
+    ConsentRepository toConsentRepository(String tenantId);
 }
