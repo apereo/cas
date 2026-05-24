@@ -49,6 +49,14 @@ class DefaultTenantExtractorTests {
     @Qualifier(AuthenticationEventExecutionPlan.DEFAULT_BEAN_NAME)
     private AuthenticationEventExecutionPlan authenticationEventExecutionPlan;
 
+    @Test
+    void verifyExtractionByHeader() throws Exception {
+        val requestContext = MockRequestContext.create(applicationContext);
+        requestContext.addHeader(TenantExtractor.HEADER_TENANT_ID, "b9584c42");
+        val definition = tenantExtractor.extract(requestContext);
+        assertTrue(definition.isPresent());
+        assertFalse(definition.get().getAuthenticationPolicy().getAuthenticationHandlers().isEmpty());
+    }
 
     @Test
     void verifyOperation() throws Exception {

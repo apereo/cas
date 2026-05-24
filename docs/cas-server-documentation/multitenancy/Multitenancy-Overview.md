@@ -25,6 +25,16 @@ When multitenancy is enabled, registered tenants will each receive their own ded
 ```
 /cas/tenants/{TENANT_ID}/...
 ```
+ 
+Furthermore, in some cases you may also be able to pass along the tenant id as a request header, 
+and CAS will be able to resolve the tenant definition. This extraction logic is particularly employed
+for actuator endpoints that do support multitenancy:
+
+```bash
+curl --location 
+    'https://sso.example.org/cas/actuator/{ACTUATOR}' \
+    --header 'X-Tenant-Id: {TENANT_ID}'
+```
 
 ## Actuator Endpoints
 

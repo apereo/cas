@@ -58,6 +58,10 @@ public interface TenantExtractor {
      * @return the tenant id
      */
     default Optional<TenantDefinition> extract(final @Nullable HttpServletRequest request) {
+        val headerValue = request != null ? request.getHeader(HEADER_TENANT_ID) : null;
+        if (StringUtils.isNotBlank(headerValue)) {
+            return getTenantsManager().findTenant(headerValue);
+        }
         val flowId = request != null ? FLOW_URL_HANDLER.getFlowId(request) : StringUtils.EMPTY;
         return extract(flowId);
     }
