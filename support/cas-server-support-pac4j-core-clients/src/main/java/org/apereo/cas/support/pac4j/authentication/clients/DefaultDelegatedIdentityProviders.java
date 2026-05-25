@@ -53,6 +53,7 @@ public class DefaultDelegatedIdentityProviders implements DelegatedIdentityProvi
         }
 
         val providers = delegatedIdentityProviderFactory.build();
+        Objects.requireNonNull(providers, "Unable to build identity providers");
         LOGGER.trace("The following clients are built: [{}]", providers);
         return new ArrayList<>(providers);
     }
