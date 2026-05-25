@@ -12,6 +12,8 @@ import org.apereo.cas.config.CasCoreUtilAutoConfiguration;
 import org.apereo.cas.config.CasCoreWebAutoConfiguration;
 import org.apereo.cas.config.CasPersonDirectoryAutoConfiguration;
 import org.apereo.cas.config.CasRestServicesAutoConfiguration;
+import org.apereo.cas.services.CasRegisteredService;
+import org.apereo.cas.services.util.RegisteredServiceJsonSerializer;
 import org.apereo.cas.test.CasTestExtension;
 import org.apereo.cas.util.spring.boot.SpringBootTestAutoConfigurations;
 import org.junit.jupiter.api.Tag;
@@ -20,7 +22,13 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc;
+import org.springframework.context.support.StaticApplicationContext;
+import org.springframework.http.MediaType;
+import org.springframework.test.web.servlet.MockMvc;
 import static org.junit.jupiter.api.Assertions.*;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 /**
  * This is {@link RestServicesConfigurationTests}.
@@ -47,13 +55,38 @@ import static org.junit.jupiter.api.Assertions.*;
 })
 @Tag("CasConfiguration")
 @ExtendWith(CasTestExtension.class)
+@AutoConfigureMockMvc
 class RestServicesConfigurationTests {
     @Autowired
-    @Qualifier("registeredServiceResourceRestController")
-    private RegisteredServiceResource registeredServiceResourceRestController;
+    @Qualifier("mockMvc")
+    private MockMvc mockMvc;
 
     @Test
-    void verifyOperation() {
-        assertNotNull(registeredServiceResourceRestController);
+    void verifyOperation() throws Exception {
+        assertNotNull(mockMvc);
+        mockMvc.perform(post("/v1/services")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(serializeRegisteredService()))
+            .andExpect(status().isUnauthorized());
+    }
+
+    @Test
+    void verifyOperationWithInvalidCredentials() throws Exception {
+        mockMvc.perform(post("/v1/services")
+                .contentType(MediaType.APPLICATION_JSON)
+                .header("Authorization", "Basic Og==")
+                .content(serializeRegisteredService()))
+            .andExpect(status().isUnauthorized());
+    }
+
+    private static String serializeRegisteredService() {
+        try (var applicationContext = new StaticApplicationContext()) {
+            applicationContext.refresh();
+            var service = new CasRegisteredService();
+            service.setId(1000);
+            service.setName("TestService");
+            service.setServiceId("https://example.org/.+");
+            return new RegisteredServiceJsonSerializer(applicationContext).toString(service);
+        }
     }
 }

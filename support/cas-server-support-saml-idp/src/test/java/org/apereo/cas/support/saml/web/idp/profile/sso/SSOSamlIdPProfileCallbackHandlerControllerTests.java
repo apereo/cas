@@ -29,16 +29,16 @@ import org.opensaml.saml.saml2.core.Issuer;
 import org.opensaml.saml.saml2.core.Response;
 import org.opensaml.saml.saml2.core.StatusCode;
 import org.pac4j.jee.context.JEEContext;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
+import org.springframework.mock.web.MockHttpSession;
+import org.springframework.test.web.servlet.MvcResult;
+import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
 import org.springframework.test.context.TestPropertySource;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import static org.apereo.cas.util.junit.Assertions.assertThrowsWithRootCause;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
@@ -72,10 +72,6 @@ class SSOSamlIdPProfileCallbackHandlerControllerTests {
     @Nested
     @TestPropertySource(properties = "cas.authn.saml-idp.metadata.file-system.location=file:src/test/resources/metadata")
     class DefaultTests extends BaseSamlIdPConfigurationTests {
-        @Autowired
-        @Qualifier("ssoPostProfileCallbackHandlerController")
-        private SSOSamlIdPProfileCallbackHandlerController controller;
-
         private SamlRegisteredService samlRegisteredService;
 
         @BeforeEach
@@ -86,11 +82,17 @@ class SSOSamlIdPProfileCallbackHandlerControllerTests {
         }
 
         @Test
-        void verifyNoRequest() {
-            val request = new MockHttpServletRequest();
-            val response = new MockHttpServletResponse();
-            assertThrowsWithRootCause(RuntimeException.class, MissingSamlAuthnRequestException.class,
-                () -> controller.handleCallbackProfileRequestGet(response, request));
+        void verifyNoRequest() throws Exception {
+            val mv = mockMvc.perform(get(SamlIdPConstants.ENDPOINT_SAML2_SSO_PROFILE_CALLBACK)
+                .contentType(MediaType.APPLICATION_FORM_URLENCODED))
+                .andExpect(status().isBadRequest())
+                .andReturn()
+                .getModelAndView();
+            assertNotNull(mv);
+            assertEquals(SamlIdPConstants.VIEW_ID_SAML_IDP_ERROR, mv.getViewName());
+            assertTrue(mv.getModel().containsKey(CasWebflowConstants.ATTRIBUTE_ERROR_ROOT_CAUSE_EXCEPTION));
+            val error = mv.getModel().get(CasWebflowConstants.ATTRIBUTE_ERROR_ROOT_CAUSE_EXCEPTION);
+            assertInstanceOf(MissingSamlAuthnRequestException.class, error);
         }
 
         @Test
@@ -104,11 +106,11 @@ class SSOSamlIdPProfileCallbackHandlerControllerTests {
 
             storeAuthnRequest(request, response, authnRequest, context);
 
-            val mv = controller.handleCallbackProfileRequestGet(response, request);
-            assertNull(mv);
-            assertEquals(HttpStatus.OK.value(), response.getStatus());
+            val result = performCallbackGet(request, response, null);
+            assertNull(result.getModelAndView());
+            assertEquals(HttpStatus.OK.value(), result.getResponse().getStatus());
 
-            val samlResponse = (Response) request.getAttribute(Response.class.getName());
+            val samlResponse = (Response) result.getRequest().getAttribute(Response.class.getName());
             assertEquals(StatusCode.NO_PASSIVE, samlResponse.getStatus().getStatusCode().getValue());
         }
 
@@ -123,7 +125,8 @@ class SSOSamlIdPProfileCallbackHandlerControllerTests {
 
             storeAuthnRequest(request, response, authnRequest, context);
 
-            val mv = controller.handleCallbackProfileRequestGet(response, request);
+            val mv = performCallbackGet(request, response, null).getModelAndView();
+            assertNotNull(mv);
             assertEquals(HttpStatus.BAD_REQUEST, mv.getStatus());
         }
 
@@ -141,9 +144,8 @@ class SSOSamlIdPProfileCallbackHandlerControllerTests {
             storeAuthnRequest(request, response, authnRequest, context);
 
             val st1 = getServiceTicket();
-            request.addParameter(CasProtocolConstants.PARAMETER_TICKET, st1.getId());
-            controller.handleCallbackProfileRequestGet(response, request);
-            assertEquals(HttpStatus.OK.value(), response.getStatus());
+            val result = performCallbackGet(request, response, st1.getId());
+            assertEquals(HttpStatus.OK.value(), result.getResponse().getStatus());
         }
 
         @Test
@@ -161,9 +163,31 @@ class SSOSamlIdPProfileCallbackHandlerControllerTests {
             storeAuthnRequest(request, response, authnRequest, context);
 
             val st1 = getServiceTicket();
-            request.addParameter(CasProtocolConstants.PARAMETER_TICKET, st1.getId());
-            controller.handleCallbackProfileRequestGet(response, request);
-            assertEquals(HttpStatus.OK.value(), response.getStatus());
+            val result = performCallbackGet(request, response, st1.getId());
+            assertEquals(HttpStatus.OK.value(), result.getResponse().getStatus());
+        }
+
+        private MvcResult performCallbackGet(final MockHttpServletRequest request,
+                                             final MockHttpServletResponse response,
+                                             final String ticket) throws Exception {
+            val builder = callbackRequest(request, response, get(SamlIdPConstants.ENDPOINT_SAML2_SSO_PROFILE_CALLBACK)
+                .param(SamlIdPConstants.AUTHN_REQUEST_ID, request.getParameter(SamlIdPConstants.AUTHN_REQUEST_ID)));
+            if (ticket != null) {
+                builder.param(CasProtocolConstants.PARAMETER_TICKET, ticket);
+            }
+            return mockMvc.perform(builder).andReturn();
+        }
+
+        private MockHttpServletRequestBuilder callbackRequest(final MockHttpServletRequest request,
+                                                              final MockHttpServletResponse response,
+                                                              final MockHttpServletRequestBuilder builder) {
+            if (request.getSession(false) instanceof final MockHttpSession session) {
+                builder.session(session);
+            }
+            if (response.getCookies().length > 0) {
+                builder.cookie(response.getCookies());
+            }
+            return builder;
         }
 
         private AuthnRequest signAuthnRequest(final HttpServletRequest request,

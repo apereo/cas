@@ -69,8 +69,7 @@ class SamlIdPProfileHandlerControllerTests extends BaseSamlIdPConfigurationTests
         assertThrows(SAMLException.class,
             () -> controller.verifyAuthenticationContextSignature(context, request, authnRequest, adaptor, service));
     }
-
-
+    
     @Test
     void verifyException() {
         val request = new MockHttpServletRequest();

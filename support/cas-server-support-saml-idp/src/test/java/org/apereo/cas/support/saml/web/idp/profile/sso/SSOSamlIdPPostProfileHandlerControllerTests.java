@@ -5,6 +5,7 @@ import org.apereo.cas.authentication.PrincipalException;
 import org.apereo.cas.mock.MockTicketGrantingTicket;
 import org.apereo.cas.services.DefaultRegisteredServiceAccessStrategy;
 import org.apereo.cas.support.saml.BaseSamlIdPConfigurationTests;
+import org.apereo.cas.support.saml.SamlIdPConstants;
 import org.apereo.cas.support.saml.SamlProtocolConstants;
 import org.apereo.cas.support.saml.SamlUtils;
 import org.apereo.cas.support.saml.services.SamlRegisteredService;
@@ -28,15 +29,19 @@ import org.opensaml.saml.common.xml.SAMLConstants;
 import org.opensaml.saml.saml2.core.AuthnRequest;
 import org.opensaml.saml.saml2.core.Issuer;
 import org.pac4j.jee.context.JEEContext;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
+import org.springframework.mock.web.MockHttpSession;
 import org.springframework.test.context.TestPropertySource;
+import org.springframework.test.web.servlet.MvcResult;
+import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
+import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import static org.junit.jupiter.api.Assertions.*;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 
 /**
  * This is {@link SSOSamlIdPPostProfileHandlerControllerTests}.
@@ -51,9 +56,6 @@ import static org.junit.jupiter.api.Assertions.*;
     "cas.authn.saml-idp.metadata.file-system.location=file:src/test/resources/metadata"
 })
 class SSOSamlIdPPostProfileHandlerControllerTests extends BaseSamlIdPConfigurationTests {
-    @Autowired
-    @Qualifier("ssoPostProfileHandlerController")
-    private SSOSamlIdPPostProfileHandlerController controller;
 
     private SamlRegisteredService samlRegisteredService;
 
@@ -69,66 +71,53 @@ class SSOSamlIdPPostProfileHandlerControllerTests extends BaseSamlIdPConfigurati
     @Order(1)
     void verifyPostSignRequest() throws Throwable {
         val request = new MockHttpServletRequest();
-        request.setMethod("POST");
         val response = new MockHttpServletResponse();
         val authnRequest = signAuthnRequest(request, response, getAuthnRequest());
         val xml = SamlUtils.transformSamlObject(openSamlConfigBean, authnRequest).toString();
-        request.addParameter(SamlProtocolConstants.PARAMETER_SAML_REQUEST, EncodingUtils.encodeBase64(xml));
-        val mv = controller.handleSaml2ProfileSsoPostRequest(response, request);
-        assertEquals(HttpStatus.FOUND, mv.getStatus());
+        val result = performPostProfileRequest(request, response, EncodingUtils.encodeBase64(xml));
+        assertEquals(HttpStatus.FOUND.value(), result.getResponse().getStatus());
     }
 
     @Test
     @Order(2)
     void verifyRedirectRequest() throws Throwable {
         val request = new MockHttpServletRequest();
-        request.setMethod("GET");
         val response = new MockHttpServletResponse();
         val authnRequest = signAuthnRequest(request, response, getAuthnRequest());
 
         val encoder = new SamlIdPHttpRedirectDeflateEncoder("https://cas.example.org/login", authnRequest);
         encoder.doEncode();
-        val queryStrings = Strings.CI.remove(encoder.getRedirectUrl(), "https://cas.example.org/login?");
-        new URLBuilder(encoder.getRedirectUrl())
-            .getQueryParams().forEach(param -> request.addParameter(param.getFirst(), param.getSecond()));
-        request.setQueryString(queryStrings);
-
-        val mv = controller.handleSaml2ProfileSsoRedirectRequest(response, request);
-        assertEquals(HttpStatus.FOUND, mv.getStatus());
+        val result = performRedirectProfileRequest(request, response, encoder.getRedirectUrl());
+        assertEquals(HttpStatus.FOUND.value(), result.getResponse().getStatus());
     }
 
     @Test
     @Order(3)
-    void verifyPutRequest() {
+    void verifyPutRequest() throws Exception {
         val request = new MockHttpServletRequest();
-        request.setMethod("PUT");
         val response = new MockHttpServletResponse();
-        val mv = controller.handleSaml2ProfileSsoRedirectHeadRequest(response, request);
-        assertEquals(HttpStatus.BAD_REQUEST, mv.getStatus());
+        val result = performRedirectHeadRequest(request, response);
+        assertEquals(HttpStatus.BAD_REQUEST.value(), result.getResponse().getStatus());
     }
 
     @Test
     @Order(3)
     void verifyBadRequest() {
         val request = new MockHttpServletRequest();
-        request.setMethod("POST");
         val response = new MockHttpServletResponse();
-        request.addParameter(SamlProtocolConstants.PARAMETER_SAML_REQUEST, "Bad Data");
-        val mv = controller.handleSaml2ProfileSsoPostRequest(response, request);
-        assertEquals(HttpStatus.BAD_REQUEST, mv.getStatus());
+        val result = assertDoesNotThrow(() -> performPostProfileRequest(request, response, "Bad Data"));
+        assertEquals(HttpStatus.BAD_REQUEST.value(), result.getResponse().getStatus());
     }
 
     @Test
     @Order(4)
     void verifyPostRequest() {
         val request = new MockHttpServletRequest();
-        request.setMethod("POST");
         val response = new MockHttpServletResponse();
         val authnRequest = getAuthnRequest();
         val xml = SamlUtils.transformSamlObject(openSamlConfigBean, authnRequest).toString();
-        request.addParameter(SamlProtocolConstants.PARAMETER_SAML_REQUEST, EncodingUtils.encodeBase64(xml));
-        val mv = controller.handleSaml2ProfileSsoPostRequest(response, request);
-        assertEquals(HttpStatus.FOUND, mv.getStatus());
+        val result = assertDoesNotThrow(() -> performPostProfileRequest(request, response, EncodingUtils.encodeBase64(xml)));
+        assertEquals(HttpStatus.FOUND.value(), result.getResponse().getStatus());
     }
 
     @Test
@@ -140,16 +129,14 @@ class SSOSamlIdPPostProfileHandlerControllerTests extends BaseSamlIdPConfigurati
         ticketRegistry.addTicket(tgt);
         ticketGrantingTicketCookieGenerator.addCookie(request, response, tgt.getId());
         request.setCookies(response.getCookies());
-        request.setMethod("POST");
         val authnRequest = getAuthnRequest();
         val xml = SamlUtils.transformSamlObject(openSamlConfigBean, authnRequest).toString();
-        request.addParameter(SamlProtocolConstants.PARAMETER_SAML_REQUEST, EncodingUtils.encodeBase64(xml));
         samlIdPDistributedSessionStore.set(new JEEContext(request, response),
             SamlProtocolConstants.PARAMETER_SAML_RELAY_STATE, "relay-state");
-        val mv = controller.handleSaml2ProfileSsoPostRequest(response, request);
-        assertNull(mv);
-        assertEquals(HttpStatus.OK.value(), response.getStatus());
-        assertNotNull(response.getContentAsString());
+        val result = performPostProfileRequest(request, response, EncodingUtils.encodeBase64(xml));
+        assertNull(result.getModelAndView());
+        assertEquals(HttpStatus.OK.value(), result.getResponse().getStatus());
+        assertNotNull(result.getResponse().getContentAsString());
     }
 
     @Test
@@ -161,15 +148,13 @@ class SSOSamlIdPPostProfileHandlerControllerTests extends BaseSamlIdPConfigurati
         ticketRegistry.addTicket(tgt);
         ticketGrantingTicketCookieGenerator.addCookie(request, response, tgt.getId());
         request.setCookies(response.getCookies());
-        request.setMethod("POST");
         val authnRequest = getAuthnRequest();
         authnRequest.setForceAuthn(true);
         val xml = SamlUtils.transformSamlObject(openSamlConfigBean, authnRequest).toString();
-        request.addParameter(SamlProtocolConstants.PARAMETER_SAML_REQUEST, EncodingUtils.encodeBase64(xml));
         samlIdPDistributedSessionStore.set(new JEEContext(request, response),
             SamlProtocolConstants.PARAMETER_SAML_RELAY_STATE, "relay-state");
-        val mv = controller.handleSaml2ProfileSsoPostRequest(response, request);
-        assertEquals(HttpStatus.FOUND, mv.getStatus());
+        val result = performPostProfileRequest(request, response, EncodingUtils.encodeBase64(xml));
+        assertEquals(HttpStatus.FOUND.value(), result.getResponse().getStatus());
     }
 
     @Test
@@ -180,14 +165,12 @@ class SSOSamlIdPPostProfileHandlerControllerTests extends BaseSamlIdPConfigurati
         val tgt = new MockTicketGrantingTicket("casuser");
         ticketGrantingTicketCookieGenerator.addCookie(request, response, tgt.getId());
         request.setCookies(response.getCookies());
-        request.setMethod("POST");
         val authnRequest = getAuthnRequest();
         val xml = SamlUtils.transformSamlObject(openSamlConfigBean, authnRequest).toString();
-        request.addParameter(SamlProtocolConstants.PARAMETER_SAML_REQUEST, EncodingUtils.encodeBase64(xml));
         samlIdPDistributedSessionStore.set(new JEEContext(request, response),
             SamlProtocolConstants.PARAMETER_SAML_RELAY_STATE, "relay-state");
-        val mv = controller.handleSaml2ProfileSsoPostRequest(response, request);
-        assertEquals(HttpStatus.FOUND, mv.getStatus());
+        val result = assertDoesNotThrow(() -> performPostProfileRequest(request, response, EncodingUtils.encodeBase64(xml)));
+        assertEquals(HttpStatus.FOUND.value(), result.getResponse().getStatus());
     }
 
     @Test
@@ -202,19 +185,64 @@ class SSOSamlIdPPostProfileHandlerControllerTests extends BaseSamlIdPConfigurati
         ticketRegistry.addTicket(tgt);
         ticketGrantingTicketCookieGenerator.addCookie(request, response, tgt.getId());
         request.setCookies(response.getCookies());
-        request.setMethod("POST");
         val authnRequest = getAuthnRequest();
         val xml = SamlUtils.transformSamlObject(openSamlConfigBean, authnRequest).toString();
-        request.addParameter(SamlProtocolConstants.PARAMETER_SAML_REQUEST, EncodingUtils.encodeBase64(xml));
         samlIdPDistributedSessionStore.set(new JEEContext(request, response),
             SamlProtocolConstants.PARAMETER_SAML_RELAY_STATE, "relay-state");
-        val mv = controller.handleSaml2ProfileSsoPostRequest(response, request);
+        val mv = performPostProfileRequest(request, response, EncodingUtils.encodeBase64(xml)).getModelAndView();
         assertNotNull(mv);
         val ex = mv.getModel().get(CasWebflowConstants.ATTRIBUTE_ERROR_ROOT_CAUSE_EXCEPTION);
         assertInstanceOf(PrincipalException.class, ex);
         assertEquals(CasWebflowConstants.VIEW_ID_SERVICE_ERROR, mv.getViewName());
         assertEquals(HttpStatus.BAD_REQUEST, mv.getStatus());
     }
+
+    private MvcResult performPostProfileRequest(final MockHttpServletRequest request,
+                                                final MockHttpServletResponse response,
+                                                final String samlRequest) throws Exception {
+        val builder = prepareRequest(request, response, post(SamlIdPConstants.ENDPOINT_SAML2_SSO_PROFILE_POST)
+            .contentType(MediaType.APPLICATION_FORM_URLENCODED)
+            .param(SamlProtocolConstants.PARAMETER_SAML_REQUEST, samlRequest));
+        return mockMvc.perform(builder).andReturn();
+    }
+
+    private MvcResult performRedirectProfileRequest(final MockHttpServletRequest request,
+                                                    final MockHttpServletResponse response,
+                                                    final String redirectUrl) throws Exception {
+        val queryStrings = Strings.CI.remove(redirectUrl, "https://cas.example.org/login?");
+        val builder = prepareRequest(request, response, get(SamlIdPConstants.ENDPOINT_SAML2_SSO_PROFILE_REDIRECT));
+        new URLBuilder(redirectUrl)
+            .getQueryParams()
+            .forEach(param -> builder.queryParam(Objects.requireNonNull(param.getFirst()), Objects.requireNonNull(param.getSecond())));
+        builder.with(servletRequest -> {
+            servletRequest.setQueryString(queryStrings);
+            return servletRequest;
+        });
+        return mockMvc.perform(builder).andReturn();
+    }
+
+    private MvcResult performRedirectHeadRequest(final MockHttpServletRequest request,
+                                                 final MockHttpServletResponse response) throws Exception {
+        return mockMvc.perform(prepareRequest(request, response, head(SamlIdPConstants.ENDPOINT_SAML2_SSO_PROFILE_REDIRECT))).andReturn();
+    }
+
+    private static MockHttpServletRequestBuilder prepareRequest(final MockHttpServletRequest request,
+                                                                final MockHttpServletResponse response,
+                                                                final MockHttpServletRequestBuilder builder) {
+        if (request.getSession(false) instanceof final MockHttpSession session) {
+            builder.session(session);
+        }
+        val cookies = new ArrayList<Cookie>();
+        if (request.getCookies() != null) {
+            cookies.addAll(List.of(request.getCookies()));
+        }
+        cookies.addAll(List.of(response.getCookies()));
+        if (!cookies.isEmpty()) {
+            builder.cookie(cookies.toArray(Cookie[]::new));
+        }
+        return builder;
+    }
+
     private AuthnRequest signAuthnRequest(final HttpServletRequest request,
                                           final HttpServletResponse response,
                                           final AuthnRequest authnRequest) throws Exception {
@@ -228,11 +256,11 @@ class SSOSamlIdPPostProfileHandlerControllerTests extends BaseSamlIdPConfigurati
     private AuthnRequest getAuthnRequest() {
         var builder = (SAMLObjectBuilder) openSamlConfigBean.getBuilderFactory()
             .getBuilder(AuthnRequest.DEFAULT_ELEMENT_NAME);
-        val authnRequest = (AuthnRequest) builder.buildObject();
+        val authnRequest = (AuthnRequest) Objects.requireNonNull(builder).buildObject();
         authnRequest.setProtocolBinding(SAMLConstants.SAML2_POST_BINDING_URI);
         builder = (SAMLObjectBuilder) openSamlConfigBean.getBuilderFactory()
             .getBuilder(Issuer.DEFAULT_ELEMENT_NAME);
-        val issuer = (Issuer) builder.buildObject();
+        val issuer = (Issuer) Objects.requireNonNull(builder).buildObject();
         issuer.setValue(samlRegisteredService.getServiceId());
         authnRequest.setIssuer(issuer);
         authnRequest.setID(Saml20HexRandomIdGenerator.INSTANCE.getNewString());
