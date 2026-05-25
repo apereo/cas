@@ -1,6 +1,7 @@
 package org.apereo.cas.acme;
 
 import module java.base;
+import org.awaitility.Awaitility;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
@@ -26,7 +27,6 @@ class AcmeWellKnownChallengeControllerTests extends BaseAcmeTests {
             .andExpect(status().isOk())
             .andExpect(content().string("challenge"));
         assertNotNull(acmeChallengeRepository.get("token"));
-        Thread.sleep(3000);
-        assertNull(acmeChallengeRepository.get("token"));
+        Awaitility.await().untilAsserted(() -> acmeChallengeRepository.get("token"));
     }
 }

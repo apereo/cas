@@ -3,25 +3,22 @@ package org.apereo.cas.support.saml.web.idp.profile;
 import module java.base;
 import org.apereo.cas.services.UnauthorizedServiceException;
 import org.apereo.cas.support.saml.BaseSamlIdPConfigurationTests;
+import org.apereo.cas.support.saml.SamlIdPConstants;
+import org.apereo.cas.support.saml.SamlProtocolConstants;
+import org.apereo.cas.support.saml.SamlUtils;
 import org.apereo.cas.support.saml.services.SamlRegisteredService;
-import org.apereo.cas.support.saml.services.idp.metadata.SamlRegisteredServiceMetadataAdaptor;
-import org.apereo.cas.support.saml.web.idp.profile.sso.SSOSamlIdPPostProfileHandlerController;
+import org.apereo.cas.util.EncodingUtils;
 import org.apereo.cas.web.flow.CasWebflowConstants;
 import lombok.val;
-import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.tuple.Pair;
 import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestMethodOrder;
-import org.opensaml.messaging.context.MessageContext;
 import org.opensaml.saml.common.SAMLException;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.test.context.TestPropertySource;
+import org.springframework.test.web.servlet.MvcResult;
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.*;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 
 /**
  * This is {@link SamlIdPProfileHandlerControllerTests}.
@@ -33,52 +30,54 @@ import static org.mockito.Mockito.*;
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 @TestPropertySource(properties = "cas.authn.saml-idp.metadata.file-system.location=file:src/test/resources/metadata")
 class SamlIdPProfileHandlerControllerTests extends BaseSamlIdPConfigurationTests {
-    @Autowired
-    @Qualifier("ssoPostProfileHandlerController")
-    private SSOSamlIdPPostProfileHandlerController controller;
-
     @Test
-    void verifyNoMetadataForRequest() {
+    void verifyNoMetadataForRequest() throws Exception {
         val service = new SamlRegisteredService();
         service.setServiceId(UUID.randomUUID().toString());
         service.setName("SAML2Service");
         servicesManager.save(service);
 
-        val request = new MockHttpServletRequest();
-        val authnRequest = getAuthnRequestFor(service.getServiceId());
-
-        val context = Pair.of(authnRequest, new MessageContext());
-        assertThrows(UnauthorizedServiceException.class,
-            () -> controller.verifySamlAuthenticationRequest(context, request));
+        val result = performPostProfileRequest(getAuthnRequestFor(service.getServiceId()));
+        assertEquals(org.springframework.http.HttpStatus.BAD_REQUEST.value(), result.getResponse().getStatus());
+        assertNotNull(result.getModelAndView());
+        assertEquals(CasWebflowConstants.VIEW_ID_SERVICE_ERROR, result.getModelAndView().getViewName());
+        assertInstanceOf(UnauthorizedServiceException.class,
+            result.getModelAndView().getModel().get(CasWebflowConstants.ATTRIBUTE_ERROR_ROOT_CAUSE_EXCEPTION));
     }
 
     @Test
-    void verifyNoSignAuthnRequest() {
+    void verifyNoSignAuthnRequest() throws Exception {
         val service = new SamlRegisteredService();
-        service.setServiceId(UUID.randomUUID().toString());
-        service.setName("SAML2Service");
+        service.setName("SignedSaml2Service");
+        service.setServiceId("https://bard.zoom.us");
+        service.setMetadataLocation("classpath:metadata/sp-metadata-multicerts.xml");
         servicesManager.save(service);
 
-        val request = new MockHttpServletRequest();
-        val authnRequest = getAuthnRequestFor(service.getServiceId());
-
-        val adaptor = mock(SamlRegisteredServiceMetadataAdaptor.class);
-        when(adaptor.isAuthnRequestsSigned()).thenReturn(true);
-        val context = new MessageContext();
-        context.setMessage(authnRequest);
-        assertThrows(SAMLException.class,
-            () -> controller.verifyAuthenticationContextSignature(context, request, authnRequest, adaptor, service));
+        val result = performPostProfileRequest(getAuthnRequestFor(service.getServiceId()));
+        assertEquals(org.springframework.http.HttpStatus.BAD_REQUEST.value(), result.getResponse().getStatus());
+        assertNotNull(result.getModelAndView());
+        assertEquals(CasWebflowConstants.VIEW_ID_SERVICE_ERROR, result.getModelAndView().getViewName());
+        assertInstanceOf(SAMLException.class,
+            result.getModelAndView().getModel().get(CasWebflowConstants.ATTRIBUTE_ERROR_ROOT_CAUSE_EXCEPTION));
     }
     
     @Test
-    void verifyException() {
-        val request = new MockHttpServletRequest();
-        request.addParameter("username", "casuser");
-        val results = controller.handleUnauthorizedServiceException(request, new IllegalStateException());
-        assertEquals(CasWebflowConstants.VIEW_ID_SERVICE_ERROR, results.getViewName());
-        assertTrue(results.getModel().containsKey(CasWebflowConstants.ATTRIBUTE_ERROR_ROOT_CAUSE_EXCEPTION));
+    void verifyException() throws Exception {
+        val authnRequest = getAuthnRequestFor(" ");
+        val result = performPostProfileRequest(authnRequest);
+        assertEquals(org.springframework.http.HttpStatus.BAD_REQUEST.value(), result.getResponse().getStatus());
+        assertNotNull(result.getModelAndView());
+        assertEquals(CasWebflowConstants.VIEW_ID_SERVICE_ERROR, result.getModelAndView().getViewName());
+        assertTrue(result.getModelAndView().getModel().containsKey(CasWebflowConstants.ATTRIBUTE_ERROR_ROOT_CAUSE_EXCEPTION));
+        assertInstanceOf(UnauthorizedServiceException.class,
+            result.getModelAndView().getModel().get(CasWebflowConstants.ATTRIBUTE_ERROR_ROOT_CAUSE_EXCEPTION));
+    }
 
-        assertThrows(UnauthorizedServiceException.class,
-            () -> controller.verifySamlRegisteredService(StringUtils.EMPTY, request));
+    private MvcResult performPostProfileRequest(final org.opensaml.saml.saml2.core.AuthnRequest authnRequest) throws Exception {
+        val xml = SamlUtils.transformSamlObject(openSamlConfigBean, authnRequest).toString();
+        return mockMvc.perform(post(SamlIdPConstants.ENDPOINT_SAML2_SSO_PROFILE_POST)
+                .contentType(org.springframework.http.MediaType.APPLICATION_FORM_URLENCODED)
+                .param(SamlProtocolConstants.PARAMETER_SAML_REQUEST, EncodingUtils.encodeBase64(xml)))
+            .andReturn();
     }
 }

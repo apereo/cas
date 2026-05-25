@@ -17,15 +17,17 @@ import org.junit.jupiter.api.Test;
 import org.pac4j.cas.profile.CasProfile;
 import org.pac4j.core.util.Pac4jConstants;
 import org.pac4j.jee.context.JEEContext;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
+import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
+import org.springframework.mock.web.MockHttpSession;
 import org.springframework.test.context.TestPropertySource;
+import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
 import org.springframework.web.servlet.view.AbstractUrlBasedView;
 import org.springframework.web.servlet.view.RedirectView;
 import static org.junit.jupiter.api.Assertions.*;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 
 /**
  * This is {@link OidcAuthorizeEndpointControllerTests}.
@@ -39,18 +41,15 @@ class OidcAuthorizeEndpointControllerTests {
     @Nested
     @TestPropertySource(properties = "cas.authn.oidc.discovery.require-pushed-authorization-requests=true")
     class PushedAuthorizationRequests extends AbstractOidcTests {
-        @Autowired
-        @Qualifier("oidcAuthorizeController")
-        protected OidcAuthorizeEndpointController oidcAuthorizeEndpointController;
-
         @Test
-        void verifyBadEndpointRequest() throws Throwable {
+        void verifyBadEndpointRequest() throws Exception {
             val id = UUID.randomUUID().toString();
-            val request = getHttpRequestForEndpoint(OidcConstants.AUTHORIZE_URL);
-            request.setMethod(HttpMethod.GET.name());
-            request.setParameter(OAuth20Constants.CLIENT_ID, id);
-            val response = new MockHttpServletResponse();
-            val mv = oidcAuthorizeEndpointController.handleRequest(request, response);
+            val mv = mockMvc.perform(get("/cas/oidc/" + OidcConstants.AUTHORIZE_URL)
+                    .param(OAuth20Constants.CLIENT_ID, id)
+                    .with(withHttpRequestProcessor()))
+                .andReturn()
+                .getModelAndView();
+            assertNotNull(mv);
             assertEquals(HttpStatus.FORBIDDEN, mv.getStatus());
         }
 
@@ -58,34 +57,30 @@ class OidcAuthorizeEndpointControllerTests {
 
     @Nested
     class DefaultAuthorizationRequests extends AbstractOidcTests {
-        @Autowired
-        @Qualifier("oidcAuthorizeController")
-        protected OidcAuthorizeEndpointController oidcAuthorizeEndpointController;
-
         @Test
-        void verifyBadEndpointRequest() throws Throwable {
-            val request = getHttpRequestForEndpoint("unknown/issuer");
-            request.setRequestURI("unknown/issuer");
-            val response = new MockHttpServletResponse();
-            val mv = oidcAuthorizeEndpointController.handleRequest(request, response);
+        void verifyBadEndpointRequest() throws Exception {
+            val mv = mockMvc.perform(get("/cas/unknown/" + OidcConstants.AUTHORIZE_URL)
+                    .with(withHttpRequestProcessor()))
+                .andReturn()
+                .getModelAndView();
+            assertNotNull(mv);
             assertEquals(HttpStatus.BAD_REQUEST, mv.getStatus());
         }
 
         @Test
-        void verifyUnknownPrompt() throws Throwable {
+        void verifyUnknownPrompt() throws Exception {
             val id = UUID.randomUUID().toString();
             val service = getOidcRegisteredService(id);
             service.setBypassApprovalPrompt(true);
             servicesManager.save(service);
 
-            val mockRequest = getHttpRequestForEndpoint(OidcConstants.AUTHORIZE_URL);
-            mockRequest.setMethod(HttpMethod.GET.name());
-            mockRequest.setParameter(OAuth20Constants.CLIENT_ID, id);
-            mockRequest.setParameter(OAuth20Constants.PROMPT, "unknown");
-            mockRequest.setContextPath(StringUtils.EMPTY);
-            mockRequest.setQueryString(OAuth20Constants.PROMPT + "=unknown");
-            val mockResponse = new MockHttpServletResponse();
-            val mv = oidcAuthorizeEndpointController.handleRequest(mockRequest, mockResponse);
+            val mv = mockMvc.perform(get("/cas/oidc/" + OidcConstants.AUTHORIZE_URL)
+                    .param(OAuth20Constants.CLIENT_ID, id)
+                    .param(OAuth20Constants.PROMPT, "unknown")
+                    .with(withHttpRequestProcessor()))
+                .andReturn()
+                .getModelAndView();
+            assertNotNull(mv);
             assertEquals(HttpStatus.BAD_REQUEST, mv.getStatus());
         }
 
@@ -100,7 +95,7 @@ class OidcAuthorizeEndpointControllerTests {
             mockRequest.setContextPath(StringUtils.EMPTY);
             val mockResponse = new MockHttpServletResponse();
 
-            val oauthContext = oidcAuthorizeEndpointController.getConfigurationContext();
+            val oauthContext = oidcConfigurationContext;
             oauthContext.getCasProperties().getAuthn().getOauth().getSessionReplication().getCookie().setAutoConfigureCookiePath(false);
             oauthContext.getOauthDistributedSessionCookieGenerator().setCookiePath(StringUtils.EMPTY);
 
@@ -111,24 +106,43 @@ class OidcAuthorizeEndpointControllerTests {
             val profile = new CasProfile();
             profile.setId("casuser");
 
-            val sessionStore = oidcAuthorizeEndpointController.getConfigurationContext().getSessionStore();
+            val sessionStore = oauthContext.getSessionStore();
             val context = new JEEContext(mockRequest, mockResponse);
             val ticket = new MockTicketGrantingTicket("casuser");
-            oidcAuthorizeEndpointController.getConfigurationContext().getTicketRegistry().addTicket(ticket);
+            ticketRegistry.addTicket(ticket);
             profile.addAttribute(TicketGrantingTicket.class.getName(), ticket.getId());
             sessionStore.set(context, Pac4jConstants.USER_PROFILES,
                 CollectionUtils.wrapLinkedHashMap(profile.getClientName(), profile));
 
-            val modelAndView = oidcAuthorizeEndpointController.handleRequest(mockRequest, mockResponse);
+            val result = mockMvc.perform(prepareAuthorizeRequest(mockRequest, mockResponse)).andReturn();
+            val modelAndView = result.getModelAndView();
+            assertNotNull(modelAndView);
             val view = modelAndView.getView();
             assertInstanceOf(RedirectView.class, view);
             val url = ((AbstractUrlBasedView) view).getUrl();
+            assertNotNull(url);
             assertTrue(url.startsWith("https://oauth.example.org/"));
 
             val fragment = new URIBuilder(url).getFragment();
             assertTrue(fragment.contains(OAuth20Constants.ACCESS_TOKEN));
             assertTrue(fragment.contains(OAuth20Constants.EXPIRES_IN));
             assertTrue(fragment.contains(OAuth20Constants.TOKEN_TYPE));
+        }
+
+        private MockHttpServletRequestBuilder prepareAuthorizeRequest(final MockHttpServletRequest request,
+                                                                      final MockHttpServletResponse response) {
+            val builder = get("/cas/oidc/" + OidcConstants.AUTHORIZE_URL)
+                .param(OAuth20Constants.CLIENT_ID, request.getParameter(OAuth20Constants.CLIENT_ID))
+                .param(OAuth20Constants.REDIRECT_URI, request.getParameter(OAuth20Constants.REDIRECT_URI))
+                .param(OAuth20Constants.RESPONSE_TYPE, request.getParameter(OAuth20Constants.RESPONSE_TYPE))
+                .with(withHttpRequestProcessor());
+            if (request.getSession(false) instanceof final MockHttpSession session) {
+                builder.session(session);
+            }
+            if (response.getCookies().length > 0) {
+                builder.cookie(response.getCookies());
+            }
+            return builder;
         }
     }
 

@@ -271,8 +271,10 @@ properties="cas.monitor.endpoints.form-login-enabled,cas.monitor.endpoints.endpo
                                                 {%- endif -%}
 
                                                 {%- if param.selector == true -%}
-                                                    {%- assign paramTitle = paramTitle | append: " This parameter can be specified as a path variable." -%}
-                                                {%- else -%}
+                                                    {%- assign paramTitle = paramTitle | append: " This parameter must be specified as a path variable." -%}
+                                                {%- elsif param.header == true -%}
+                                                    {%- assign paramTitle = paramTitle | append: " This parameter must be specified as a request header." -%}
+                                                {%- elsif param.query == true -%}
                                                     {%- assign paramTitle = paramTitle | append: " This parameter can be specified as a query parameter." -%}
                                                     {%- assign allQueryParams = allQueryParams | append: paramName | append: "=...&" -%}
                                                 {%- endif -%}
