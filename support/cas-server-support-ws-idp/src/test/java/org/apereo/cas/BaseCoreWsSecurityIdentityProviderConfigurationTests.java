@@ -17,9 +17,14 @@ import org.apereo.cas.config.CasCoreWebAutoConfiguration;
 import org.apereo.cas.config.CasCoreWebflowAutoConfiguration;
 import org.apereo.cas.config.CasPersonDirectoryAutoConfiguration;
 import org.apereo.cas.config.CasRegisteredServicesTestConfiguration;
+import org.apereo.cas.config.CasThemesAutoConfiguration;
+import org.apereo.cas.config.CasThymeleafAutoConfiguration;
+import org.apereo.cas.config.CasValidationAutoConfiguration;
 import org.apereo.cas.config.CasWsSecurityIdentityProviderAutoConfiguration;
 import org.apereo.cas.config.CasWsSecuritySecurityTokenAutoConfiguration;
+import org.apereo.cas.test.CasTestExtension;
 import org.apereo.cas.util.spring.boot.SpringBootTestAutoConfigurations;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.SpringBootConfiguration;
@@ -58,6 +63,7 @@ import org.springframework.test.web.servlet.MockMvc;
         "cas.authn.wsfed-idp.sts.realm.issuer=CAS"
     })
 @AutoConfigureMockMvc
+@ExtendWith(CasTestExtension.class)
 public abstract class BaseCoreWsSecurityIdentityProviderConfigurationTests {
 
     @Autowired
@@ -83,6 +89,9 @@ public abstract class BaseCoreWsSecurityIdentityProviderConfigurationTests {
         CasCoreMultifactorAuthenticationAutoConfiguration.class,
         CasCoreMultifactorAuthenticationWebflowAutoConfiguration.class,
         CasCoreAutoConfiguration.class,
+        CasThymeleafAutoConfiguration.class,
+        CasThemesAutoConfiguration.class,
+        CasValidationAutoConfiguration.class,
         CasPersonDirectoryAutoConfiguration.class,
         CasWsSecurityIdentityProviderAutoConfiguration.class,
         CasWsSecuritySecurityTokenAutoConfiguration.class

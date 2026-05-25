@@ -5,16 +5,12 @@ import org.apereo.cas.CasProtocolConstants;
 import org.apereo.cas.services.DefaultRegisteredServiceProperty;
 import org.apereo.cas.services.RegisteredServiceProperty;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
-import org.apereo.cas.services.UnauthorizedServiceException;
 import org.apereo.cas.support.wsfederation.AbstractWsFederationTests;
-import org.apereo.cas.util.MockRequestContext;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.web.servlet.view.RedirectView;
 import static org.junit.jupiter.api.Assertions.*;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 
 /**
  * This is {@link WsFederationNavigationControllerTests}.
@@ -24,20 +20,8 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 @Tag("WSFederation")
 class WsFederationNavigationControllerTests extends AbstractWsFederationTests {
-
-    @Autowired
-    @Qualifier("wsFederationNavigationController")
-    private WsFederationNavigationController wsFederationNavigationController;
-
     @Test
     void verifyOperation() throws Throwable {
-        val context = MockRequestContext.create(applicationContext);
-
-        context.setRemoteAddr("185.86.151.11");
-        context.setLocalAddr("185.88.151.11");
-        context.withUserAgent();
-        context.setClientInfo();
-
         val config = wsFederationConfigurations.toList().getFirst();
         val registeredService = RegisteredServiceTestUtils.getRegisteredService("https://wsfedservice");
         registeredService.setProperties(Map.of(RegisteredServiceProperty.RegisteredServiceProperties.WSFED_RELYING_PARTY_ID.getPropertyName(),
@@ -45,22 +29,27 @@ class WsFederationNavigationControllerTests extends AbstractWsFederationTests {
         val service = RegisteredServiceTestUtils.getService(registeredService.getServiceId());
         servicesManager.save(registeredService);
 
-        context.setParameter(CasProtocolConstants.PARAMETER_SERVICE, service.getId());
         val id = config.getId();
-        context.setParameter(WsFederationNavigationController.PARAMETER_NAME, id);
-        val view = wsFederationNavigationController.redirectToProvider(id,
-            context.getHttpServletRequest(), context.getHttpServletResponse());
-        assertInstanceOf(RedirectView.class, view);
+        val result = mockMvc.perform(get(WsFederationNavigationController.ENDPOINT_REDIRECT)
+                .param(CasProtocolConstants.PARAMETER_SERVICE, service.getId())
+                .param(WsFederationNavigationController.PARAMETER_NAME, id)
+                .with(request -> {
+                    request.setRemoteAddr("185.86.151.11");
+                    request.setLocalAddr("185.88.151.11");
+                    request.addHeader("User-Agent", "Mozilla/5.0");
+                    return request;
+                }))
+            .andReturn();
+        assertEquals(302, result.getResponse().getStatus());
+        assertNotNull(result.getResponse().getRedirectedUrl());
     }
 
     @Test
-    void verifyMissingId() throws Throwable {
-        val context = MockRequestContext.create(applicationContext);
-
+    void verifyMissingId() throws Exception {
         val id = UUID.randomUUID().toString();
-        context.setParameter(WsFederationNavigationController.PARAMETER_NAME, id);
-        assertThrows(UnauthorizedServiceException.class,
-            () -> wsFederationNavigationController.redirectToProvider(id,
-                context.getHttpServletRequest(), context.getHttpServletResponse()));
+        val result = mockMvc.perform(get(WsFederationNavigationController.ENDPOINT_REDIRECT)
+                .param(WsFederationNavigationController.PARAMETER_NAME, id))
+            .andReturn();
+        assertEquals(403, result.getResponse().getStatus());
     }
 }

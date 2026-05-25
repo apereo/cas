@@ -29,14 +29,17 @@ import org.opensaml.saml.common.xml.SAMLConstants;
 import org.opensaml.saml.saml2.core.AuthnRequest;
 import org.opensaml.saml.saml2.core.Issuer;
 import org.pac4j.jee.context.JEEContext;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
+import org.springframework.mock.web.MockHttpSession;
 import org.springframework.test.context.TestPropertySource;
+import org.springframework.test.web.servlet.MvcResult;
+import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
 import tools.jackson.databind.ObjectMapper;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 
 /**
  * This is {@link SSOSamlIdPProfileCallbackHandlerControllerWithBrowserStorageTests}.
@@ -53,10 +56,6 @@ import static org.mockito.Mockito.*;
 class SSOSamlIdPProfileCallbackHandlerControllerWithBrowserStorageTests extends BaseSamlIdPConfigurationTests {
     private static final ObjectMapper MAPPER = JacksonObjectMapperFactory.builder()
         .defaultTypingEnabled(false).minimal(false).build().toObjectMapper();
-    
-    @Autowired
-    @Qualifier("ssoPostProfileCallbackHandlerController")
-    private SSOSamlIdPProfileCallbackHandlerController controller;
 
     private SamlRegisteredService samlRegisteredService;
 
@@ -77,8 +76,9 @@ class SSOSamlIdPProfileCallbackHandlerControllerWithBrowserStorageTests extends 
         storeAuthnRequest(request, response, authn);
 
         val st = getServiceTicket();
-        request.addParameter(CasProtocolConstants.PARAMETER_TICKET, st.getId());
-        val mv = controller.handleCallbackProfileRequestGet(response, request);
+        val result = performCallbackGet(request, response, st.getId());
+        val mv = result.getModelAndView();
+        assertNotNull(mv);
         assertEquals(CasWebflowConstants.VIEW_ID_BROWSER_STORAGE_READ, mv.getViewName());
         assertTrue(mv.getModel().containsKey(BrowserStorage.PARAMETER_BROWSER_STORAGE));
     }
@@ -93,15 +93,43 @@ class SSOSamlIdPProfileCallbackHandlerControllerWithBrowserStorageTests extends 
         storeAuthnRequest(request, response, authn);
 
         val st = getServiceTicket();
-        request.addParameter(CasProtocolConstants.PARAMETER_TICKET, st.getId());
         val storage = samlIdPDistributedSessionStore.getTrackableSession(new JEEContext(request, response))
             .map(BrowserStorage.class::cast)
             .orElseThrow();
-        request.addParameter(BrowserStorage.PARAMETER_BROWSER_STORAGE,
+        val result = performCallbackPost(request, response, st.getId(),
             MAPPER.writeValueAsString(Map.of(storage.getContext(), storage.getPayload())));
-        val mv = controller.handleCallbackProfileRequestPost(response, request);
-        assertNull(mv);
-        assertEquals(HttpStatus.SC_OK, response.getStatus());
+        assertNull(result.getModelAndView());
+        assertEquals(HttpStatus.SC_OK, result.getResponse().getStatus());
+    }
+
+    private MvcResult performCallbackGet(final MockHttpServletRequest request, final MockHttpServletResponse response,
+                                         final String ticketId) throws Exception {
+        val builder = callbackRequest(request, response, get(SamlIdPConstants.ENDPOINT_SAML2_SSO_PROFILE_CALLBACK)
+            .param(SamlIdPConstants.AUTHN_REQUEST_ID, request.getParameter(SamlIdPConstants.AUTHN_REQUEST_ID))
+            .param(CasProtocolConstants.PARAMETER_TICKET, ticketId));
+        return mockMvc.perform(builder).andReturn();
+    }
+
+    private MvcResult performCallbackPost(final MockHttpServletRequest request, final MockHttpServletResponse response,
+                                          final String ticketId, final String browserStorage) throws Exception {
+        val builder = callbackRequest(request, response, post(SamlIdPConstants.ENDPOINT_SAML2_SSO_PROFILE_CALLBACK)
+            .contentType(MediaType.APPLICATION_FORM_URLENCODED)
+            .param(SamlIdPConstants.AUTHN_REQUEST_ID, request.getParameter(SamlIdPConstants.AUTHN_REQUEST_ID))
+            .param(CasProtocolConstants.PARAMETER_TICKET, ticketId)
+            .param(BrowserStorage.PARAMETER_BROWSER_STORAGE, browserStorage));
+        return mockMvc.perform(builder).andReturn();
+    }
+
+    private MockHttpServletRequestBuilder callbackRequest(final MockHttpServletRequest request,
+                                                          final MockHttpServletResponse response,
+                                                          final MockHttpServletRequestBuilder builder) {
+        if (request.getSession(false) instanceof final MockHttpSession session) {
+            builder.session(session);
+        }
+        if (response.getCookies().length > 0) {
+            builder.cookie(response.getCookies());
+        }
+        return builder;
     }
 
     private void storeAuthnRequest(final MockHttpServletRequest request, final MockHttpServletResponse response,
@@ -116,11 +144,11 @@ class SSOSamlIdPProfileCallbackHandlerControllerWithBrowserStorageTests extends 
     private AuthnRequest getAuthnRequest() {
         var builder = (SAMLObjectBuilder) openSamlConfigBean.getBuilderFactory()
             .getBuilder(AuthnRequest.DEFAULT_ELEMENT_NAME);
-        var authnRequest = (AuthnRequest) builder.buildObject();
+        var authnRequest = (AuthnRequest) Objects.requireNonNull(builder).buildObject();
         authnRequest.setID(Saml20HexRandomIdGenerator.INSTANCE.getNewString());
         builder = (SAMLObjectBuilder) openSamlConfigBean.getBuilderFactory()
             .getBuilder(Issuer.DEFAULT_ELEMENT_NAME);
-        val issuer = (Issuer) builder.buildObject();
+        val issuer = (Issuer) Objects.requireNonNull(builder).buildObject();
         issuer.setValue(samlRegisteredService.getServiceId());
         authnRequest.setIssuer(issuer);
         authnRequest.setID(Saml20HexRandomIdGenerator.INSTANCE.getNewString());

@@ -14,10 +14,6 @@ import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.autoconfigure.ImportAutoConfiguration;
-import org.springframework.boot.test.context.TestConfiguration;
-import org.springframework.boot.thymeleaf.autoconfigure.ThymeleafProperties;
-import org.springframework.context.annotation.Bean;
-import org.thymeleaf.spring6.SpringTemplateEngine;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
@@ -86,18 +82,5 @@ class ProxyControllerTests extends AbstractCentralAuthenticationServiceTests {
         assertNotNull(result.getModelAndView());
         val map = result.getModelAndView().getModel();
         assertFalse(map.containsKey(CasProtocolConstants.PARAMETER_TICKET));
-    }
-
-    @TestConfiguration(value = "ProxyTestConfiguration", proxyBeanMethods = false)
-    private static class ProxyTestConfiguration {
-        @Bean
-        public SpringTemplateEngine springTemplateEngine() {
-            return new SpringTemplateEngine();
-        }
-
-        @Bean
-        public ThymeleafProperties thymeleafProperties() {
-            return new ThymeleafProperties();
-        }
     }
 }
