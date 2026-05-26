@@ -338,6 +338,14 @@ tasks.withType(Test).configureEach {
         showStandardStreams = verbose && testLoggingEvents.contains("STANDARD_OUT")
         showExceptions = verbose && testLoggingEvents.contains("FAILED")
         showCauses = verbose
+        
+        quiet {
+            events "failed"
+            exceptionFormat = "full"
+            showExceptions = true
+            showCauses = true
+            showStackTraces = true
+        }
     }
     
     def skipRetry = providers.systemProperty('skipTestRetry').present

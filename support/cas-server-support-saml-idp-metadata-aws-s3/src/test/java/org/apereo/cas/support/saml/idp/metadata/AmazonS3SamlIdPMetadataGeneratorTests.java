@@ -3,7 +3,6 @@ package org.apereo.cas.support.saml.idp.metadata;
 import module java.base;
 import org.apereo.cas.config.CasAmazonS3SamlMetadataAutoConfiguration;
 import org.apereo.cas.configuration.CasConfigurationProperties;
-import org.apereo.cas.services.ChainingServicesManager;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.saml.BaseSamlIdPMetadataTests;
 import org.apereo.cas.support.saml.idp.metadata.generator.SamlIdPMetadataGenerator;
