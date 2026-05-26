@@ -15,6 +15,9 @@ import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestMethodOrder;
 import org.opensaml.saml.common.SAMLException;
+import org.opensaml.saml.saml2.core.AuthnRequest;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.web.servlet.MvcResult;
 import static org.junit.jupiter.api.Assertions.*;
@@ -38,7 +41,7 @@ class SamlIdPProfileHandlerControllerTests extends BaseSamlIdPConfigurationTests
         servicesManager.save(service);
 
         val result = performPostProfileRequest(getAuthnRequestFor(service.getServiceId()));
-        assertEquals(org.springframework.http.HttpStatus.BAD_REQUEST.value(), result.getResponse().getStatus());
+        assertEquals(HttpStatus.BAD_REQUEST.value(), result.getResponse().getStatus());
         assertNotNull(result.getModelAndView());
         assertEquals(CasWebflowConstants.VIEW_ID_SERVICE_ERROR, result.getModelAndView().getViewName());
         assertInstanceOf(UnauthorizedServiceException.class,
@@ -54,7 +57,7 @@ class SamlIdPProfileHandlerControllerTests extends BaseSamlIdPConfigurationTests
         servicesManager.save(service);
 
         val result = performPostProfileRequest(getAuthnRequestFor(service.getServiceId()));
-        assertEquals(org.springframework.http.HttpStatus.BAD_REQUEST.value(), result.getResponse().getStatus());
+        assertEquals(HttpStatus.BAD_REQUEST.value(), result.getResponse().getStatus());
         assertNotNull(result.getModelAndView());
         assertEquals(CasWebflowConstants.VIEW_ID_SERVICE_ERROR, result.getModelAndView().getViewName());
         assertInstanceOf(SAMLException.class,
@@ -65,7 +68,7 @@ class SamlIdPProfileHandlerControllerTests extends BaseSamlIdPConfigurationTests
     void verifyException() throws Exception {
         val authnRequest = getAuthnRequestFor(" ");
         val result = performPostProfileRequest(authnRequest);
-        assertEquals(org.springframework.http.HttpStatus.BAD_REQUEST.value(), result.getResponse().getStatus());
+        assertEquals(HttpStatus.BAD_REQUEST.value(), result.getResponse().getStatus());
         assertNotNull(result.getModelAndView());
         assertEquals(CasWebflowConstants.VIEW_ID_SERVICE_ERROR, result.getModelAndView().getViewName());
         assertTrue(result.getModelAndView().getModel().containsKey(CasWebflowConstants.ATTRIBUTE_ERROR_ROOT_CAUSE_EXCEPTION));
@@ -73,10 +76,10 @@ class SamlIdPProfileHandlerControllerTests extends BaseSamlIdPConfigurationTests
             result.getModelAndView().getModel().get(CasWebflowConstants.ATTRIBUTE_ERROR_ROOT_CAUSE_EXCEPTION));
     }
 
-    private MvcResult performPostProfileRequest(final org.opensaml.saml.saml2.core.AuthnRequest authnRequest) throws Exception {
+    private MvcResult performPostProfileRequest(final AuthnRequest authnRequest) throws Exception {
         val xml = SamlUtils.transformSamlObject(openSamlConfigBean, authnRequest).toString();
         return mockMvc.perform(post(SamlIdPConstants.ENDPOINT_SAML2_SSO_PROFILE_POST)
-                .contentType(org.springframework.http.MediaType.APPLICATION_FORM_URLENCODED)
+                .contentType(MediaType.APPLICATION_FORM_URLENCODED)
                 .param(SamlProtocolConstants.PARAMETER_SAML_REQUEST, EncodingUtils.encodeBase64(xml)))
             .andReturn();
     }

@@ -18,6 +18,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
+import org.springframework.http.HttpStatus;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.mock.web.MockHttpSession;
@@ -38,7 +39,7 @@ class OAuth20DeviceUserCodeApprovalEndpointControllerTests extends AbstractOAuth
     @Test
     void verifyGet() throws Throwable {
         val result = performOAuthRequest(prepareDeviceApprovalRequest(HttpMethod.GET, null));
-        assertEquals(org.springframework.http.HttpStatus.FOUND.value(), result.getResponse().getStatus());
+        assertEquals(HttpStatus.FOUND.value(), result.getResponse().getStatus());
         assertNotNull(result.getResponse().getRedirectedUrl());
         assertTrue(result.getResponse().getRedirectedUrl().contains(OAuth20Constants.CALLBACK_AUTHORIZE_URL));
     }
@@ -46,12 +47,12 @@ class OAuth20DeviceUserCodeApprovalEndpointControllerTests extends AbstractOAuth
     @Test
     void verifyPostNoCode() throws Throwable {
         var result = performOAuthRequest(prepareDeviceApprovalRequest(HttpMethod.POST, null));
-        assertEquals(org.springframework.http.HttpStatus.FOUND.value(), result.getResponse().getStatus());
+        assertEquals(HttpStatus.FOUND.value(), result.getResponse().getStatus());
         assertNotNull(result.getResponse().getRedirectedUrl());
         assertFalse(result.getResponse().getRedirectedUrl().contains(OAuth20DeviceUserCodeApprovalEndpointController.PARAMETER_USER_CODE));
         val id = UUID.randomUUID().toString();
         result = performOAuthRequest(prepareDeviceApprovalRequest(HttpMethod.POST, id));
-        assertEquals(org.springframework.http.HttpStatus.FOUND.value(), result.getResponse().getStatus());
+        assertEquals(HttpStatus.FOUND.value(), result.getResponse().getStatus());
         assertNotNull(result.getResponse().getRedirectedUrl());
         assertTrue(result.getResponse().getRedirectedUrl().contains(OAuth20DeviceUserCodeApprovalEndpointController.PARAMETER_USER_CODE));
     }
@@ -62,14 +63,14 @@ class OAuth20DeviceUserCodeApprovalEndpointControllerTests extends AbstractOAuth
         val uc = defaultDeviceUserCodeFactory.createDeviceUserCode(devCode.getService());
         ticketRegistry.addTicket(uc);
         var result = performOAuthRequest(prepareDeviceApprovalRequest(HttpMethod.POST, uc.getId()));
-        assertEquals(org.springframework.http.HttpStatus.FOUND.value(), result.getResponse().getStatus());
+        assertEquals(HttpStatus.FOUND.value(), result.getResponse().getStatus());
         assertNotNull(result.getResponse().getRedirectedUrl());
         assertTrue(result.getResponse().getRedirectedUrl().contains(OAuth20Constants.CALLBACK_AUTHORIZE_URL));
         assertTrue(result.getResponse().getRedirectedUrl().contains(OAuth20DeviceUserCodeApprovalEndpointController.PARAMETER_USER_CODE));
         assertFalse(uc.isUserCodeApproved());
 
         result = performOAuthRequest(prepareDeviceApprovalRequest(HttpMethod.POST, uc.getId()));
-        assertEquals(org.springframework.http.HttpStatus.FOUND.value(), result.getResponse().getStatus());
+        assertEquals(HttpStatus.FOUND.value(), result.getResponse().getStatus());
         assertNotNull(result.getResponse().getRedirectedUrl());
         assertTrue(result.getResponse().getRedirectedUrl().contains(OAuth20DeviceUserCodeApprovalEndpointController.PARAMETER_USER_CODE));
     }

@@ -13,6 +13,7 @@ import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.test.context.TestPropertySource;
+import jakarta.servlet.http.Cookie;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
@@ -55,7 +56,7 @@ class SingleSignOnSessionStatusEndpointTests extends AbstractCasEndpointTests {
         ticketGrantingTicketCookieGenerator.addCookie(fakeRequest, fakeResponse, tgt.getId());
         val tgcCookie = fakeResponse.getCookies()[0];
         mockMvc.perform(get("/actuator/sso")
-                .cookie(new jakarta.servlet.http.Cookie(tgcCookie.getName(), tgcCookie.getValue()))
+                .cookie(new Cookie(tgcCookie.getName(), tgcCookie.getValue()))
                 .accept(MediaType.APPLICATION_JSON))
             .andExpect(status().is2xxSuccessful())
             .andExpect(jsonPath("$.principal").exists())
@@ -77,7 +78,7 @@ class SingleSignOnSessionStatusEndpointTests extends AbstractCasEndpointTests {
         ticketGrantingTicketCookieGenerator.addCookie(fakeRequest, fakeResponse, tgt.getId());
         val tgcCookie = fakeResponse.getCookies()[0];
         mockMvc.perform(get("/actuator/sso")
-                .cookie(new jakarta.servlet.http.Cookie(tgcCookie.getName(), tgcCookie.getValue()))
+                .cookie(new Cookie(tgcCookie.getName(), tgcCookie.getValue()))
                 .accept(MediaType.APPLICATION_JSON))
             .andExpect(status().is4xxClientError());
     }

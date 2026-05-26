@@ -1,6 +1,7 @@
 package org.apereo.cas.acme;
 
 import module java.base;
+import org.apereo.cas.config.CasAcmeAutoConfiguration;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.test.CasTestExtension;
 import org.apereo.cas.util.spring.boot.SpringBootTestAutoConfigurations;
@@ -24,7 +25,7 @@ import org.springframework.test.web.servlet.MockMvc;
 @ExtendWith(CasTestExtension.class)
 @SpringBootTestAutoConfigurations
 @Deprecated(since = "7.3.0", forRemoval = true)
-@SpringBootTest(classes = org.apereo.cas.config.CasAcmeAutoConfiguration.class, properties = {
+@SpringBootTest(classes = CasAcmeAutoConfiguration.class, properties = {
     "cas.acme.domains=cas.apereo.org",
     "cas.acme.server-url=acme://letsencrypt.org/staging",
     "cas.acme.user-key.location=file:${java.io.tmpdir}/user.key",

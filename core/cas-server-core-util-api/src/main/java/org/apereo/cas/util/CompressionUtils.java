@@ -9,6 +9,7 @@ import lombok.val;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.jooq.lambda.Unchecked;
+import org.jspecify.annotations.Nullable;
 import org.springframework.core.io.WritableResource;
 
 /**
@@ -53,7 +54,7 @@ public class CompressionUtils {
      * @param data the data
      * @return the byte [ ]
      */
-    public static byte[] deflateToByteArray(final String data) {
+    public static byte @Nullable [] deflateToByteArray(final String data) {
         val bais = new ByteArrayInputStream(data.getBytes(StandardCharsets.UTF_8));
         var bytesRead = -1;
         val buf = new byte[BUFFER_LENGTH];
@@ -91,9 +92,9 @@ public class CompressionUtils {
      * @param bytes the data to encode
      * @return the new string
      */
-    public static String inflateToString(final byte[] bytes) {
+    public static @Nullable String inflateToString(final byte[] bytes) {
         val inflated = inflateToByteArray(bytes);
-        return inflated != null? new String(inflated, StandardCharsets.UTF_8) : null;
+        return inflated != null ? new String(inflated, StandardCharsets.UTF_8) : null;
     }
 
     /**
@@ -102,29 +103,28 @@ public class CompressionUtils {
      * @param bytes the data to decode
      * @return the new string
      */
-    public static String inflate(final byte[] bytes) {
-        val inflater = new Inflater(true);
-        val xmlMessageBytes = new byte[INFLATED_ARRAY_LENGTH];
-
-        val extendedBytes = new byte[bytes.length + 1];
-        System.arraycopy(bytes, 0, extendedBytes, 0, bytes.length);
-        extendedBytes[bytes.length] = 0;
-        inflater.setInput(extendedBytes);
-
-        return FunctionUtils.doAndHandle(() -> {
-            val resultLength = inflater.inflate(xmlMessageBytes);
-            inflater.end();
-            return new String(xmlMessageBytes, 0, resultLength, StandardCharsets.UTF_8);
-        }, throwable -> null).get();
+    public static @Nullable String inflate(final byte[] bytes) {
+        try (val inflater = new Inflater(true)) {
+            val xmlMessageBytes = new byte[INFLATED_ARRAY_LENGTH];
+            val extendedBytes = new byte[bytes.length + 1];
+            System.arraycopy(bytes, 0, extendedBytes, 0, bytes.length);
+            extendedBytes[bytes.length] = 0;
+            inflater.setInput(extendedBytes);
+            return FunctionUtils.doAndHandle(() -> {
+                val resultLength = inflater.inflate(xmlMessageBytes);
+                inflater.end();
+                return new String(xmlMessageBytes, 0, resultLength, StandardCharsets.UTF_8);
+            }, throwable -> null).get();
+        }
     }
-    
+
     /**
      * Decode byte array byte [].
      *
      * @param bytes the bytes
      * @return the byte [ ]
      */
-    public static byte[] inflateToByteArray(final byte[] bytes) {
+    public static byte @Nullable [] inflateToByteArray(final byte[] bytes) {
         val bais = new ByteArrayInputStream(bytes);
         var bytesRead = -1;
         val buf = new byte[BUFFER_LENGTH];
@@ -141,7 +141,7 @@ public class CompressionUtils {
     }
 
     /**
-     * Use {@link java.util.zip.ZipOutputStream} to zip text to byte array, then convert
+     * Use {@link ZipOutputStream} to zip text to byte array, then convert
      * byte array to base64 string, so it can be transferred via http request.
      *
      * @param srcTxt the src txt
@@ -157,7 +157,7 @@ public class CompressionUtils {
     }
 
     /**
-     * Use {@link java.util.zip.ZipOutputStream} to zip text to byte array, then convert
+     * Use {@link ZipOutputStream} to zip text to byte array, then convert
      * byte array to base64 string, so it can be transferred via http request.
      *
      * @param srcTxt the src txt

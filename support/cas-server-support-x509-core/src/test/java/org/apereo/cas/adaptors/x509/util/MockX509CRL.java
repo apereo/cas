@@ -107,7 +107,7 @@ public class MockX509CRL extends X509CRL {
     }
 
     /**
-     * @see java.security.cert.CRL#isRevoked(Certificate)
+     * @see CRL#isRevoked(Certificate)
      */
     @Override
     public boolean isRevoked(final Certificate cert) {

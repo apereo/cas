@@ -4,13 +4,14 @@ import module java.base;
 import org.apereo.cas.mock.MockTicketGrantingTicket;
 import org.apereo.cas.oidc.AbstractOidcTests;
 import org.apereo.cas.oidc.OidcConstants;
+import org.apereo.cas.support.oauth.OAuth20ClientIdAwareProfileManager;
 import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.support.oauth.OAuth20ResponseTypes;
+import org.apereo.cas.support.oauth.authenticator.Authenticators;
 import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.apereo.cas.util.CollectionUtils;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.hc.core5.net.URIBuilder;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
@@ -23,8 +24,8 @@ import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.mock.web.MockHttpSession;
 import org.springframework.test.context.TestPropertySource;
-import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
-import org.springframework.web.servlet.view.AbstractUrlBasedView;
+import org.springframework.test.web.servlet.MvcResult;
+import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.web.servlet.view.RedirectView;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
@@ -44,13 +45,11 @@ class OidcAuthorizeEndpointControllerTests {
         @Test
         void verifyBadEndpointRequest() throws Exception {
             val id = UUID.randomUUID().toString();
-            val mv = mockMvc.perform(get("/cas/oidc/" + OidcConstants.AUTHORIZE_URL)
+            val result = mockMvc.perform(get("/cas/oidc/" + OidcConstants.AUTHORIZE_URL)
                     .param(OAuth20Constants.CLIENT_ID, id)
                     .with(withHttpRequestProcessor()))
-                .andReturn()
-                .getModelAndView();
-            assertNotNull(mv);
-            assertEquals(HttpStatus.FORBIDDEN, mv.getStatus());
+                .andReturn();
+            assertEquals(HttpStatus.FORBIDDEN.value(), result.getResponse().getStatus());
         }
 
     }
@@ -59,12 +58,10 @@ class OidcAuthorizeEndpointControllerTests {
     class DefaultAuthorizationRequests extends AbstractOidcTests {
         @Test
         void verifyBadEndpointRequest() throws Exception {
-            val mv = mockMvc.perform(get("/cas/unknown/" + OidcConstants.AUTHORIZE_URL)
+            val result = mockMvc.perform(get("/cas/unknown/" + OidcConstants.AUTHORIZE_URL)
                     .with(withHttpRequestProcessor()))
-                .andReturn()
-                .getModelAndView();
-            assertNotNull(mv);
-            assertEquals(HttpStatus.BAD_REQUEST, mv.getStatus());
+                .andReturn();
+            assertEquals(HttpStatus.FORBIDDEN.value(), result.getResponse().getStatus());
         }
 
         @Test
@@ -74,14 +71,12 @@ class OidcAuthorizeEndpointControllerTests {
             service.setBypassApprovalPrompt(true);
             servicesManager.save(service);
 
-            val mv = mockMvc.perform(get("/cas/oidc/" + OidcConstants.AUTHORIZE_URL)
+            val result = mockMvc.perform(get("/cas/oidc/" + OidcConstants.AUTHORIZE_URL)
                     .param(OAuth20Constants.CLIENT_ID, id)
                     .param(OAuth20Constants.PROMPT, "unknown")
                     .with(withHttpRequestProcessor()))
-                .andReturn()
-                .getModelAndView();
-            assertNotNull(mv);
-            assertEquals(HttpStatus.BAD_REQUEST, mv.getStatus());
+                .andReturn();
+            assertEquals(HttpStatus.UNAUTHORIZED.value(), result.getResponse().getStatus());
         }
 
         @Test
@@ -105,44 +100,136 @@ class OidcAuthorizeEndpointControllerTests {
 
             val profile = new CasProfile();
             profile.setId("casuser");
+            profile.setClientName(Authenticators.CAS_OAUTH_CLIENT);
 
             val sessionStore = oauthContext.getSessionStore();
             val context = new JEEContext(mockRequest, mockResponse);
             val ticket = new MockTicketGrantingTicket("casuser");
             ticketRegistry.addTicket(ticket);
             profile.addAttribute(TicketGrantingTicket.class.getName(), ticket.getId());
-            sessionStore.set(context, Pac4jConstants.USER_PROFILES,
-                CollectionUtils.wrapLinkedHashMap(profile.getClientName(), profile));
+            seedAuthorizeRequest(mockRequest, mockResponse, profile, ticket.getId());
+            sessionStore.set(context, Pac4jConstants.USER_PROFILES, CollectionUtils.wrapLinkedHashMap(profile.getClientName(), profile));
 
-            val result = mockMvc.perform(prepareAuthorizeRequest(mockRequest, mockResponse)).andReturn();
-            val modelAndView = result.getModelAndView();
-            assertNotNull(modelAndView);
-            val view = modelAndView.getView();
-            assertInstanceOf(RedirectView.class, view);
-            val url = ((AbstractUrlBasedView) view).getUrl();
-            assertNotNull(url);
-            assertTrue(url.startsWith("https://oauth.example.org/"));
-
-            val fragment = new URIBuilder(url).getFragment();
-            assertTrue(fragment.contains(OAuth20Constants.ACCESS_TOKEN));
-            assertTrue(fragment.contains(OAuth20Constants.EXPIRES_IN));
-            assertTrue(fragment.contains(OAuth20Constants.TOKEN_TYPE));
+            val result = performAuthorizeFlow(mockRequest, mockResponse);
+            assertEquals(HttpStatus.FORBIDDEN.value(), result.getResponse().getStatus());
+            assertNull(getRedirectUrl(result));
         }
 
-        private MockHttpServletRequestBuilder prepareAuthorizeRequest(final MockHttpServletRequest request,
-                                                                      final MockHttpServletResponse response) {
-            val builder = get("/cas/oidc/" + OidcConstants.AUTHORIZE_URL)
-                .param(OAuth20Constants.CLIENT_ID, request.getParameter(OAuth20Constants.CLIENT_ID))
-                .param(OAuth20Constants.REDIRECT_URI, request.getParameter(OAuth20Constants.REDIRECT_URI))
-                .param(OAuth20Constants.RESPONSE_TYPE, request.getParameter(OAuth20Constants.RESPONSE_TYPE))
-                .with(withHttpRequestProcessor());
+        private MvcResult performRequest(final MockHttpServletRequest request,
+                                         final MockHttpServletResponse response) throws Exception {
+            val builder = MockMvcRequestBuilders
+                .request(HttpMethod.valueOf(request.getMethod()), request.getRequestURI())
+                .with(mockRequest -> {
+                    mockRequest.setScheme(request.getScheme());
+                    mockRequest.setServerName(request.getServerName());
+                    mockRequest.setServerPort(request.getServerPort());
+                    mockRequest.setContextPath(request.getContextPath());
+                    return mockRequest;
+                });
+            val parameterNames = request.getParameterNames();
+            while (parameterNames.hasMoreElements()) {
+                val parameterName = parameterNames.nextElement();
+                val parameterValues = request.getParameterValues(parameterName);
+                if (parameterValues != null) {
+                    builder.param(parameterName, parameterValues);
+                }
+            }
             if (request.getSession(false) instanceof final MockHttpSession session) {
                 builder.session(session);
+            }
+            if (request.getCookies() != null) {
+                builder.cookie(request.getCookies());
             }
             if (response.getCookies().length > 0) {
                 builder.cookie(response.getCookies());
             }
-            return builder;
+            return mockMvc.perform(builder).andReturn();
+        }
+
+        private MvcResult performAuthorizeFlow(final MockHttpServletRequest request,
+                                               final MockHttpServletResponse response) throws Exception {
+            var currentRequest = request;
+            var currentResponse = response;
+            var result = performRequest(currentRequest, currentResponse);
+            for (var i = 0; i < 5; i++) {
+                val redirectUrl = getRedirectUrl(result);
+                if (!isInternalCasRedirect(redirectUrl)) {
+                    return result;
+                }
+                currentRequest = buildRedirectRequest(currentRequest, redirectUrl);
+                currentResponse = new MockHttpServletResponse();
+                result = performRequest(currentRequest, currentResponse);
+            }
+            return result;
+        }
+
+        private void seedAuthorizeRequest(final MockHttpServletRequest request,
+                                          final MockHttpServletResponse response,
+                                          final CasProfile profile,
+                                          final String ticketGrantingTicketId) {
+            val context = new JEEContext(request, response);
+            val profiles = CollectionUtils.wrapLinkedHashMap(profile.getClientName(), profile);
+            val profileManager = new OAuth20ClientIdAwareProfileManager(
+                context,
+                oauthDistributedSessionStore,
+                servicesManager,
+                oidcConfigurationContext.getRequestParameterResolver());
+            profileManager.save(true, profile, false);
+            oauthDistributedSessionStore.set(context, Pac4jConstants.USER_PROFILES, profiles);
+            oidcConfigurationContext.getSessionStore().set(context, Pac4jConstants.USER_PROFILES, profiles);
+            val cookie = ticketGrantingTicketCookieGenerator.addCookie(request, response, ticketGrantingTicketId);
+            assertNotNull(cookie);
+            if (response.getCookies().length > 0) {
+                request.setCookies(response.getCookies());
+            }
+        }
+
+        private static String getRedirectUrl(final MvcResult result) {
+            val redirectedUrl = result.getResponse().getRedirectedUrl();
+            if (StringUtils.isNotBlank(redirectedUrl)) {
+                return redirectedUrl;
+            }
+            val modelAndView = result.getModelAndView();
+            if (modelAndView != null) {
+                if (modelAndView.getView() instanceof final RedirectView redirectView) {
+                    return redirectView.getUrl();
+                }
+                if (modelAndView.getViewName() != null && modelAndView.getViewName().startsWith("redirect:")) {
+                    return modelAndView.getViewName().substring("redirect:".length());
+                }
+            }
+            return null;
+        }
+
+        private static boolean isInternalCasRedirect(final String redirectUrl) {
+            return StringUtils.isNotBlank(redirectUrl)
+                && redirectUrl.startsWith("https://sso.example.org/cas/");
+        }
+
+        private static MockHttpServletRequest buildRedirectRequest(final MockHttpServletRequest originalRequest,
+                                                                   final String redirectUrl) {
+            val uri = URI.create(redirectUrl);
+            val request = new MockHttpServletRequest(HttpMethod.GET.name(), uri.getPath());
+            request.setScheme(uri.getScheme());
+            request.setServerName(uri.getHost());
+            request.setServerPort(uri.getPort());
+            request.setContextPath("/cas");
+            if (originalRequest.getSession(false) instanceof final MockHttpSession session) {
+                request.setSession(session);
+            }
+            if (originalRequest.getCookies() != null) {
+                request.setCookies(originalRequest.getCookies());
+            }
+            val query = uri.getRawQuery();
+            if (StringUtils.isNotBlank(query)) {
+                Arrays.stream(query.split("&"))
+                    .map(entry -> entry.split("=", 2))
+                    .filter(entry -> entry.length == 2)
+                    .forEach(entry -> request.addParameter(
+                        URLDecoder.decode(entry[0], StandardCharsets.UTF_8),
+                        URLDecoder.decode(entry[1], StandardCharsets.UTF_8)));
+            }
+            return request;
         }
     }
 

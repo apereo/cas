@@ -1,6 +1,7 @@
 package org.apereo.cas.uma.web.controllers.authz;
 
 import module java.base;
+import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.support.oauth.OAuth20GrantTypes;
 import org.apereo.cas.uma.ticket.permission.UmaPermissionTicket;
 import org.apereo.cas.uma.ticket.resource.ResourceSetPolicy;
@@ -10,6 +11,7 @@ import org.apereo.cas.util.RandomUtils;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -33,12 +35,12 @@ class UmaAuthorizationRequestEndpointControllerTests extends BaseUmaEndpointCont
         var body = authzRequest.toJson();
 
         val ticket = ticketRegistry.getTicket(permissionTicket, UmaPermissionTicket.class);
-        ticket.getResourceSet().setPolicies(new HashSet<>());
+        Objects.requireNonNull(ticket.getResourceSet()).setPolicies(new HashSet<>());
         ticketRegistry.updateTicket(ticket);
 
-        var response = umaAuthorizationRequestEndpointController.handleAuthorizationRequest(body,
-            results.getLeft(), results.getMiddle());
-        assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
+        var result = performUmaRequest(HttpMethod.POST, OAuth20Constants.UMA_AUTHORIZATION_REQUEST_URL,
+            body, results.getLeft(), results.getMiddle());
+        assertEquals(HttpStatus.BAD_REQUEST.value(), result.getResponse().getStatus());
     }
 
     @Test
@@ -51,10 +53,10 @@ class UmaAuthorizationRequestEndpointControllerTests extends BaseUmaEndpointCont
         authzRequest.setGrantType(OAuth20GrantTypes.UMA_TICKET.getType());
         authzRequest.setTicket(permissionTicket);
         var body = authzRequest.toJson();
-        var response = umaAuthorizationRequestEndpointController.handleAuthorizationRequest(body,
-            results.getLeft(), results.getMiddle());
-        assertEquals(HttpStatus.OK, response.getStatusCode());
-        var model = (Map) response.getBody();
+        var result = performUmaRequest(HttpMethod.POST, OAuth20Constants.UMA_AUTHORIZATION_REQUEST_URL,
+            body, results.getLeft(), results.getMiddle());
+        assertEquals(HttpStatus.OK.value(), result.getResponse().getStatus());
+        var model = getMappedResponseBody(result);
         assertNotNull(model);
         assertTrue(model.containsKey("code"));
         assertTrue(model.containsKey("rpt"));
@@ -74,74 +76,79 @@ class UmaAuthorizationRequestEndpointControllerTests extends BaseUmaEndpointCont
         permission.getClaims().put("lastName", "Apereo");
 
         val ticket = ticketRegistry.getTicket(permissionTicket, UmaPermissionTicket.class);
-        ticket.getResourceSet().getScopes().add("hello");
+        val resourceSet = Objects.requireNonNull(ticket.getResourceSet());
+        resourceSet.getScopes().add("hello");
         val resourceSetPolicy = new ResourceSetPolicy().setId(2000);
         resourceSetPolicy.getPermissions().add(permission);
-        ticket.getResourceSet().getPolicies().add(resourceSetPolicy);
-        val response = umaAuthorizationRequestEndpointController.handleAuthorizationRequest(authzRequest,
-            results.getLeft(), results.getMiddle());
-        assertEquals(HttpStatus.PERMANENT_REDIRECT, response.getStatusCode());
+        resourceSet.getPolicies().add(resourceSetPolicy);
+        val result = performUmaRequest(HttpMethod.POST, OAuth20Constants.UMA_AUTHORIZATION_REQUEST_URL,
+            authzRequest, results.getLeft(), results.getMiddle());
+        assertEquals(HttpStatus.PERMANENT_REDIRECT.value(), result.getResponse().getStatus());
     }
 
     @Test
     void verifyMissingGrant() throws Throwable {
         var results = authenticateUmaRequestWithAuthorizationScope();
         var authzRequest = new UmaAuthorizationRequest().toJson();
-        var response = umaAuthorizationRequestEndpointController.handleAuthorizationRequest(authzRequest,
-            results.getLeft(), results.getMiddle());
-        assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
+        var result = performUmaRequest(HttpMethod.POST, OAuth20Constants.UMA_AUTHORIZATION_REQUEST_URL,
+            authzRequest, results.getLeft(), results.getMiddle());
+        assertEquals(HttpStatus.BAD_REQUEST.value(), result.getResponse().getStatus());
 
         authzRequest = new UmaAuthorizationRequest()
             .setGrantType(null)
             .toJson();
-        response = umaAuthorizationRequestEndpointController.handleAuthorizationRequest(authzRequest,
-            results.getLeft(), results.getMiddle());
-        assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
+        result = performUmaRequest(HttpMethod.POST, OAuth20Constants.UMA_AUTHORIZATION_REQUEST_URL,
+            authzRequest, results.getLeft(), results.getMiddle());
+        assertEquals(HttpStatus.BAD_REQUEST.value(), result.getResponse().getStatus());
 
         authzRequest = new UmaAuthorizationRequest()
             .setGrantType("unknown")
             .toJson();
-        response = umaAuthorizationRequestEndpointController.handleAuthorizationRequest(authzRequest,
-            results.getLeft(), results.getMiddle());
-        assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
+        result = performUmaRequest(HttpMethod.POST, OAuth20Constants.UMA_AUTHORIZATION_REQUEST_URL,
+            authzRequest, results.getLeft(), results.getMiddle());
+        assertEquals(HttpStatus.BAD_REQUEST.value(), result.getResponse().getStatus());
 
         authzRequest = new UmaAuthorizationRequest()
             .setGrantType(OAuth20GrantTypes.UMA_TICKET.getType())
             .setTicket(null)
             .toJson();
-        response = umaAuthorizationRequestEndpointController.handleAuthorizationRequest(authzRequest, results.getLeft(), results.getMiddle());
-        assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
+        result = performUmaRequest(HttpMethod.POST, OAuth20Constants.UMA_AUTHORIZATION_REQUEST_URL,
+            authzRequest, results.getLeft(), results.getMiddle());
+        assertEquals(HttpStatus.BAD_REQUEST.value(), result.getResponse().getStatus());
 
         authzRequest = new UmaAuthorizationRequest()
             .setGrantType(OAuth20GrantTypes.UMA_TICKET.getType())
             .setTicket("unknown-ticket")
             .toJson();
-        response = umaAuthorizationRequestEndpointController.handleAuthorizationRequest(authzRequest, results.getLeft(), results.getMiddle());
-        assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
+        result = performUmaRequest(HttpMethod.POST, OAuth20Constants.UMA_AUTHORIZATION_REQUEST_URL,
+            authzRequest, results.getLeft(), results.getMiddle());
+        assertEquals(HttpStatus.BAD_REQUEST.value(), result.getResponse().getStatus());
     }
 
     private String getPermissionTicketWith(final List<String> scopes) throws Throwable {
         var results = authenticateUmaRequestWithProtectionScope();
 
         var body = createUmaResourceRegistrationRequest(RandomUtils.nextInt(), scopes).toJson();
-        var response = umaCreateResourceSetRegistrationEndpointController.registerResourceSet(body, results.getLeft(), results.getMiddle());
-        assertEquals(HttpStatus.OK, response.getStatusCode());
+        var result = performUmaRequest(HttpMethod.POST, OAuth20Constants.UMA_RESOURCE_SET_REGISTRATION_URL,
+            body, results.getLeft(), results.getMiddle());
+        assertEquals(HttpStatus.OK.value(), result.getResponse().getStatus());
 
-        var model = (Map) response.getBody();
+        var model = getMappedResponseBody(result);
         assertNotNull(model);
-        val resourceId = (long) model.get("resourceId");
+        val resourceId = ((Number) model.get("resourceId")).longValue();
 
         val profile = getCurrentProfile(results.getLeft(), results.getMiddle());
         body = createUmaPolicyRegistrationRequest(profile, scopes).toJson();
 
-        response = umaCreatePolicyForResourceSetEndpointController.createPolicyForResourceSet(resourceId,
+        result = performUmaRequest(HttpMethod.POST, resourceId + "/" + OAuth20Constants.UMA_POLICY_URL,
             body, results.getLeft(), results.getMiddle());
-        assertEquals(HttpStatus.OK, response.getStatusCode());
+        assertEquals(HttpStatus.OK.value(), result.getResponse().getStatus());
 
         body = createUmaPermissionRegistrationRequest(resourceId).toJson();
-        response = umaPermissionRegistrationEndpointController.handle(body, results.getLeft(), results.getMiddle());
-        assertEquals(HttpStatus.OK, response.getStatusCode());
-        model = (Map) response.getBody();
+        result = performUmaRequest(HttpMethod.POST, OAuth20Constants.UMA_PERMISSION_URL,
+            body, results.getLeft(), results.getMiddle());
+        assertEquals(HttpStatus.OK.value(), result.getResponse().getStatus());
+        model = getMappedResponseBody(result);
         assertNotNull(model);
         return model.get("ticket").toString();
     }

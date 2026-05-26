@@ -111,6 +111,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.EnableAspectJAutoProxy;
 import org.springframework.context.annotation.Import;
 import org.springframework.http.HttpMethod;
+import org.springframework.http.HttpStatusCode;
 import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
@@ -407,7 +408,7 @@ public abstract class AbstractOAuth20Tests {
             return modelAndView;
         }
         val fallback = new ModelAndView();
-        val status = org.springframework.http.HttpStatusCode.valueOf(result.getResponse().getStatus());
+        val status = HttpStatusCode.valueOf(result.getResponse().getStatus());
         fallback.setStatus(status);
         val content = new String(result.getResponse().getContentAsByteArray(), StandardCharsets.UTF_8);
         if (StringUtils.isNotBlank(content)) {
