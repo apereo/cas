@@ -45,7 +45,7 @@ parallel="--parallel "
 dryRun=""
 info=""
 gradleCmd="./gradlew"
-flags="--no-daemon --configure-on-demand --build-cache -x javadoc -x check -Dverbose=true --no-watch-fs"
+flags="--configure-on-demand --build-cache -x javadoc -x check -Dverbose=true --no-watch-fs"
 coverageTask=""
 
 while (( "$#" )); do
@@ -72,6 +72,7 @@ while (( "$#" )); do
         shift
         ;;
     --with-coverage)
+        flags+=" -DenableJacocoAgent=true "
         currentDir=`pwd`
         case "${currentDir}" in
             *api*|*core*|*support*|*webapp*)
@@ -545,11 +546,6 @@ while (( "$#" )); do
         ;;
     esac
 done
-
-if [[ -n "$coverageTask" ]]; then
-  task=""
-  printf "${GREEN}Running code coverage task [${coverageTask}] will disable all other task executions. Make sure all test tasks that generate code coverage data have already executed.${ENDCOLOR}\n"
-fi
 
 if [[ -z "$task" ]] && [[ -z "$coverageTask" ]]; then
   printHelp
