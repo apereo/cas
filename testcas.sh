@@ -45,7 +45,7 @@ parallel="--parallel "
 dryRun=""
 info=""
 gradleCmd="./gradlew"
-flags="--configure-on-demand --build-cache -x javadoc -x check -Dverbose=true --no-watch-fs"
+flags="--configure-on-demand --build-cache -x javadoc -x check -Dverbose=true "
 coverageTask=""
 
 while (( "$#" )); do

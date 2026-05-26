@@ -65,8 +65,8 @@ public class DefaultRegisteredServiceExpirationPolicy implements RegisteredServi
         if (StringUtils.isBlank(this.expirationDate)) {
             return false;
         }
-        val now = LocalDateTime.now(ZoneId.systemDefault());
-        val expDate = DateTimeUtils.localDateTimeOf(this.expirationDate);
+        val now = ZonedDateTime.now(Clock.systemUTC());
+        val expDate = DateTimeUtils.zonedDateTimeOf(this.expirationDate);
         LOGGER.debug("Service expiration date is [{}] while now is [{}]", expirationDate, now);
         return now.isEqual(expDate) || now.isAfter(expDate);
     }

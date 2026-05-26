@@ -3,6 +3,8 @@ package org.apereo.cas.support.saml.idp.metadata;
 import module java.base;
 import org.apereo.cas.config.CasAmazonS3SamlMetadataAutoConfiguration;
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.services.ChainingServicesManager;
+import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.saml.BaseSamlIdPMetadataTests;
 import org.apereo.cas.support.saml.idp.metadata.generator.SamlIdPMetadataGenerator;
 import org.apereo.cas.support.saml.idp.metadata.locator.SamlIdPMetadataLocator;
@@ -65,6 +67,10 @@ class AmazonS3SamlIdPMetadataGeneratorTests {
     @Qualifier("samlIdPMetadataCache")
     private Cache<String, SamlIdPMetadataDocument> samlIdPMetadataCache;
 
+    @Autowired
+    @Qualifier(ServicesManager.BEAN_NAME)
+    private ServicesManager servicesManager;
+
     @Test
     void verifyOperation() throws Throwable {
         val registeredService = Optional.<SamlRegisteredService>empty();
@@ -94,8 +100,12 @@ class AmazonS3SamlIdPMetadataGeneratorTests {
     @Test
     void verifyService() throws Throwable {
         val service = new SamlRegisteredService();
-        service.setName("TestShib");
-        service.setId(1000);
+        service.setName(RandomUtils.randomAlphabetic(8));
+        service.setId(RandomUtils.nextLong());
+        service.setMetadataLocation("classpath:/sp-metadata.xml");
+        service.setServiceId(".+");
+        servicesManager.save(service);
+        
         val registeredService = Optional.of(service);
 
         samlIdPMetadataGenerator.generate(registeredService);
