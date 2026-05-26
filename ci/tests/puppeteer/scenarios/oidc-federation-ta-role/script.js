@@ -25,6 +25,7 @@ const assert = require("assert");
 
     assert(federationEntity["organization_name"] === "ApereoTA");
     assert(federationEntity["federation_fetch_endpoint"] === "https://localhost:8443/cas/oidc/fetch");
+    assert(federationEntity["federation_list_endpoint"] === "https://localhost:8443/cas/oidc/list");
     assert(federationEntity["contacts"] !== undefined);
 
     const fetchUrl = "https://localhost:8443/cas/oidc/fetch?sub=http%3A%2F%2Frp";

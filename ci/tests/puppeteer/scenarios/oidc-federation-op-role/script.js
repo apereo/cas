@@ -28,6 +28,7 @@ const assert = require("assert");
 
     assert(federationEntity["organization_name"] === "ApereoOP");
     assert(federationEntity["federation_fetch_endpoint"] === undefined);
+    assert(federationEntity["federation_list_endpoint"] === undefined);
     assert(federationEntity["contacts"] !== undefined);
 
     const algValues = openidProvider["userinfo_signing_alg_values_supported"];

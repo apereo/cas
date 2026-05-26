@@ -6,9 +6,11 @@ import org.apereo.cas.oidc.OidcConstants;
 import org.apereo.cas.oidc.federation.signature.OidcFederationEntityStatementService;
 import org.apereo.cas.oidc.federation.subordinate.OidcFederationSubordinateRepository;
 import org.apereo.cas.oidc.issuer.OidcIssuerService;
+import org.apereo.cas.support.oauth.util.OAuth20Utils;
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -23,6 +25,8 @@ import jakarta.servlet.http.HttpServletResponse;
  */
 @Slf4j
 public class OidcListFederationEndpointController extends AbstractOidcFederationEndpointController {
+
+    private static final List<String> UNSUPPORTED_PARAMETERS = Arrays.asList("entity_type", "trust_marked", "trust_mark_type", "intermediate");
 
     private final OidcFederationSubordinateRepository subordinateRepository;
 
@@ -50,6 +54,14 @@ public class OidcListFederationEndpointController extends AbstractOidcFederation
         val error = retrieveInvalidIssuerError(request, response, OidcConstants.LIST_FEDERATION_URL);
         if (error != null) {
             return error;
+        }
+
+        for (val parameter : UNSUPPORTED_PARAMETERS) {
+            val value = request.getParameter(parameter);
+            if (value != null) {
+                val body = OAuth20Utils.getErrorResponseBody(OidcConstants.UNSUPPORTED_PARAMETER, "The " + parameter + " parameter is not supported");
+                return new ResponseEntity<>(body, HttpStatus.BAD_REQUEST);
+            }
         }
 
         val subordinates = subordinateRepository.getSubordinates().keySet();

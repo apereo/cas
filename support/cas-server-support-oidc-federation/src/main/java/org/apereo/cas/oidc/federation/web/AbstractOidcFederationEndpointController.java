@@ -53,6 +53,7 @@ abstract class AbstractOidcFederationEndpointController extends AbstractControll
         val role = oidcProperties.getFederation().getRole();
         if (role.isTrustAnchorOrIntermediate()) {
             fedMeta.setFederationFetchEndpointURI(new URI(issuer + OidcConstants.FETCH_FEDERATION_URL));
+            fedMeta.setFederationListEndpointURI(new URI(issuer + OidcConstants.LIST_FEDERATION_URL));
         }
         return fedMeta;
     }

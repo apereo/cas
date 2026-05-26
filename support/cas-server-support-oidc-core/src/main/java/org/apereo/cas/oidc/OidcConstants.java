@@ -320,6 +320,10 @@ public interface OidcConstants {
      * Verifiable credentials nonce expiration.
      */
     String C_NONCE_EXPIRES_AT = "c_nonce_expires_at";
+    /**
+     * Unsupported parameter error.
+     */
+    String UNSUPPORTED_PARAMETER = "unsupported_parameter";
 
     /**
      * Standard openid connect scopes.
