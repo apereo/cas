@@ -1,0 +1,37 @@
+{
+  "dependencies": "reports,multitenancy,consent-jdbc,consent-webflow",
+  "conditions": {
+    "docker": "true"
+  },
+  "healthcheck": {
+    "urls": ["https://localhost:8443/cas/actuator/health"]
+  },
+  "properties": [
+    "--cas.authn.accept.name=STATIC",
+    
+    "--cas.monitor.endpoints.endpoint.defaults.access=ANONYMOUS",
+    "--management.endpoints.web.exposure.include=*",
+    "--management.endpoints.access.default=UNRESTRICTED",
+    
+    "--cas.server.name=https://localhost:8443",
+    "--cas.server.prefix=${cas.server.name}/cas",
+
+    "--spring.thymeleaf.cache=false",
+    
+    "--cas.multitenancy.core.enabled=true",
+    "--cas.multitenancy.json.location=file:${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/tenants.json",
+
+    "--cas.service-registry.core.init-from-json=true",
+    "--cas.service-registry.json.location=file:${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/services",
+    
+    "--cas.authn.attribute-repository.stub.attributes.email=casuser@apereo.org",
+    "--cas.authn.attribute-repository.stub.attributes.name=CAS",
+    "--cas.authn.attribute-repository.stub.attributes.gender=female",
+
+    "--cas.consent.jpa.enabled=false",
+    
+    "--cas.http-client.host-name-verifier=none"
+  ],
+  "buildScript": "${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/include.gradle",
+  "initScript": "${PWD}/ci/tests/httpbin/run-httpbin-server.sh,${PWD}/ci/tests/mysql/run-mysql-server.sh,${PWD}/ci/tests/postgres/run-postgres-server.sh"
+}

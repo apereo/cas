@@ -25,11 +25,15 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Import;
+import org.springframework.http.HttpStatus;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.test.context.TestPropertySource;
+import org.springframework.test.web.servlet.MvcResult;
+import jakarta.servlet.http.Cookie;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 
 /**
  * This is {@link WSFederationValidateRequestCallbackControllerTests}.
@@ -41,10 +45,6 @@ import static org.mockito.Mockito.*;
 @TestPropertySource(properties = "cas.tgc.crypto.enabled=false")
 @Import(WSFederationValidateRequestCallbackControllerTests.WSFederationValidateRequestCallbackControllerTestConfiguration.class)
 class WSFederationValidateRequestCallbackControllerTests extends BaseCoreWsSecurityIdentityProviderConfigurationTests {
-    @Autowired
-    @Qualifier("federationValidateRequestCallbackController")
-    private WSFederationValidateRequestCallbackController federationValidateRequestCallbackController;
-
     @Autowired
     @Qualifier(ServicesManager.BEAN_NAME)
     private ServicesManager servicesManager;
@@ -63,12 +63,20 @@ class WSFederationValidateRequestCallbackControllerTests extends BaseCoreWsSecur
         val response = new MockHttpServletResponse();
 
         val registeredService = getWsFederationRegisteredService();
-        request.addParameter(WSFederationConstants.WTREALM, registeredService.getRealm());
-        request.addParameter(WSFederationConstants.WREPLY, registeredService.getServiceId());
+        val realm = registeredService.getRealm();
+        val serviceId = registeredService.getServiceId();
+        assertNotNull(realm);
+        assertNotNull(serviceId);
+        request.addParameter(WSFederationConstants.WTREALM, realm);
+        request.addParameter(WSFederationConstants.WREPLY, serviceId);
         request.addParameter(WSFederationConstants.WA, WSFederationConstants.WSIGNIN10);
         request.addParameter(WSFederationConstants.WCTX, UUID.randomUUID().toString());
 
-        var mv = federationValidateRequestCallbackController.handleFederationRequest(response, request);
+        var result = performFederationRequest(request.getParameterMap());
+        var mv = result.getModelAndView();
+        assertNotNull(mv);
+        assertEquals(HttpStatus.FORBIDDEN.value(), result.getResponse().getStatus());
+        assertNotNull(mv.getViewName());
         assertEquals(CasWebflowConstants.VIEW_ID_ERROR, mv.getViewName());
 
         val token = new SecurityToken(UUID.randomUUID().toString());
@@ -96,9 +104,12 @@ class WSFederationValidateRequestCallbackControllerTests extends BaseCoreWsSecur
 
         request.addParameter(CasProtocolConstants.PARAMETER_TICKET, st.getId());
         ticketGrantingTicketCookieGenerator.addCookie(request, response, tgt.getId());
-        request.setCookies(response.getCookies());
+        result = performFederationRequest(request.getParameterMap(), response.getCookies());
 
-        mv = federationValidateRequestCallbackController.handleFederationRequest(response, request);
+        mv = result.getModelAndView();
+        assertNotNull(mv);
+        assertEquals(HttpStatus.OK.value(), result.getResponse().getStatus());
+        assertNotNull(mv.getViewName());
         assertEquals(CasWebflowConstants.VIEW_ID_POST_RESPONSE, mv.getViewName());
     }
 
@@ -108,8 +119,12 @@ class WSFederationValidateRequestCallbackControllerTests extends BaseCoreWsSecur
         val response = new MockHttpServletResponse();
 
         val registeredService = getWsFederationRegisteredService();
-        request.addParameter(WSFederationConstants.WTREALM, registeredService.getRealm());
-        request.addParameter(WSFederationConstants.WREPLY, registeredService.getServiceId());
+        val realm = registeredService.getRealm();
+        val serviceId = registeredService.getServiceId();
+        assertNotNull(realm);
+        assertNotNull(serviceId);
+        request.addParameter(WSFederationConstants.WTREALM, realm);
+        request.addParameter(WSFederationConstants.WREPLY, serviceId);
         request.addParameter(WSFederationConstants.WA, WSFederationConstants.WSIGNIN10);
         request.addParameter(WSFederationConstants.WCTX, UUID.randomUUID().toString());
 
@@ -124,10 +139,27 @@ class WSFederationValidateRequestCallbackControllerTests extends BaseCoreWsSecur
         request.addParameter(CasProtocolConstants.PARAMETER_TICKET, st.getId());
 
         ticketGrantingTicketCookieGenerator.addCookie(request, response, tgt.getId());
-        request.setCookies(response.getCookies());
+        val result = performFederationRequest(request.getParameterMap(), response.getCookies());
 
-        val mv = federationValidateRequestCallbackController.handleFederationRequest(response, request);
+        val mv = result.getModelAndView();
+        assertNotNull(mv);
+        assertEquals(HttpStatus.OK.value(), result.getResponse().getStatus());
+        assertNotNull(mv.getViewName());
         assertEquals(CasWebflowConstants.VIEW_ID_POST_RESPONSE, mv.getViewName());
+    }
+
+    private MvcResult performFederationRequest(final Map<String, String[]> parameters) throws Throwable {
+        return performFederationRequest(parameters, new Cookie[0]);
+    }
+
+    private MvcResult performFederationRequest(final Map<String, String[]> parameters,
+                                               final Cookie[] cookies) throws Throwable {
+        val builder = get(WSFederationConstants.ENDPOINT_FEDERATION_REQUEST_CALLBACK);
+        if (cookies != null && cookies.length > 0) {
+            builder.cookie(cookies);
+        }
+        parameters.forEach(builder::param);
+        return mockMvc.perform(builder).andReturn();
     }
 
 
@@ -144,7 +176,7 @@ class WSFederationValidateRequestCallbackControllerTests extends BaseCoreWsSecur
     }
 
     @TestConfiguration(value = "WSFederationValidateRequestCallbackControllerTestConfiguration", proxyBeanMethods = false)
-    static class WSFederationValidateRequestCallbackControllerTestConfiguration {
+    public static class WSFederationValidateRequestCallbackControllerTestConfiguration {
         @Bean
         public WSFederationRelyingPartyTokenProducer wsFederationRelyingPartyTokenProducer() throws Exception {
             val producer = mock(WSFederationRelyingPartyTokenProducer.class);

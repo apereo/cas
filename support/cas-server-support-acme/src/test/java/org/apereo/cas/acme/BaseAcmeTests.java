@@ -10,6 +10,8 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc;
+import org.springframework.test.web.servlet.MockMvc;
 
 /**
  * This is {@link BaseAcmeTests}.
@@ -31,11 +33,8 @@ import org.springframework.boot.test.context.SpringBootTest;
     "cas.acme.domain-csr.location=file:${java.io.tmpdir}/domain.csr",
     "cas.acme.domain-chain.location=file:${java.io.tmpdir}/domain-chain.crt"
 })
+@AutoConfigureMockMvc
 public abstract class BaseAcmeTests {
-
-    @Autowired
-    @Qualifier("acmeWellKnownChallengeController")
-    protected AcmeWellKnownChallengeController acmeWellKnownChallengeController;
 
     @Autowired
     @Qualifier("acmeChallengeRepository")
@@ -43,5 +42,9 @@ public abstract class BaseAcmeTests {
 
     @Autowired
     protected CasConfigurationProperties casProperties;
+
+    @Autowired
+    @Qualifier("mockMvc")
+    protected MockMvc mockMvc;
 
 }

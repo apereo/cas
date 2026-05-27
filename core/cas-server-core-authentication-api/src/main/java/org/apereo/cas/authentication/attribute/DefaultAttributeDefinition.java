@@ -78,7 +78,7 @@ public class DefaultAttributeDefinition implements AttributeDefinition {
     private String hashingStrategy;
 
     private String expiration;
-    
+
     private static List<Object> formatValuesWithScope(final String scope, final List<Object> currentValues) {
         return currentValues
             .stream()
@@ -139,12 +139,15 @@ public class DefaultAttributeDefinition implements AttributeDefinition {
             });
     }
 
-    private static @Nullable List<Object> fetchAttributeValueFromScript(final ExecutableCompiledScript scriptToExec,
-                                                                        final String attributeKey,
-                                                                        final List<Object> currentValues,
-                                                                        final AttributeDefinitionResolutionContext context) throws Throwable {
-        val args = CollectionUtils.<String, Object>wrap("attributeName", Objects.requireNonNull(attributeKey),
-            "attributeValues", currentValues, "logger", LOGGER,
+    private static @Nullable List<Object> fetchAttributeValueFromScript(
+        final ExecutableCompiledScript scriptToExec,
+        final String attributeKey,
+        final List<Object> currentValues,
+        final AttributeDefinitionResolutionContext context) throws Throwable {
+        val args = CollectionUtils.<String, Object>wrap(
+            "attributeName", Objects.requireNonNull(attributeKey),
+            "attributeValues", currentValues,
+            "logger", LOGGER,
             "registeredService", context.getRegisteredService(),
             "attributes", context.getAttributes());
         scriptToExec.setBinding(args);
@@ -198,12 +201,17 @@ public class DefaultAttributeDefinition implements AttributeDefinition {
     private List<Object> hashValues(final List<Object> currentValues) {
         return currentValues
             .stream()
+            .map(value ->
+                value instanceof final byte[] byteArray
+                    ? byteArray
+                    : value.toString().getBytes(StandardCharsets.UTF_8)
+            )
             .map(value -> switch (getHashingStrategy().toLowerCase(Locale.ENGLISH)) {
-                case "hex" -> Objects.requireNonNull(EncodingUtils.hexEncode(value.toString()));
-                case "base64" -> EncodingUtils.encodeBase64(value.toString());
-                case "sha", "sha1" -> DigestUtils.sha(value.toString());
-                case "sha256" -> DigestUtils.sha256(value.toString());
-                case "sha512" -> DigestUtils.sha512(value.toString());
+                case "hex" -> Objects.requireNonNull(EncodingUtils.hexEncode(value));
+                case "base64" -> EncodingUtils.encodeBase64(value);
+                case "sha", "sha1" -> DigestUtils.sha(value);
+                case "sha256" -> DigestUtils.sha256(value);
+                case "sha512" -> DigestUtils.sha512(value);
                 default -> value;
             })
             .collect(Collectors.toList());
@@ -255,8 +263,8 @@ public class DefaultAttributeDefinition implements AttributeDefinition {
     }
 
     private static String getScriptedPatternedValue(final Object currentValue,
-                                                              final String patternedValue,
-                                                              final AttributeDefinitionResolutionContext context) {
+                                                    final String patternedValue,
+                                                    final AttributeDefinitionResolutionContext context) {
 
         val scriptFactory = ExecutableCompiledScriptFactory.findExecutableCompiledScriptFactory();
         if (scriptFactory.isPresent() && scriptFactory.get().isInlineScript(patternedValue)) {

@@ -16,7 +16,6 @@ import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.time.StopWatch;
-import org.jspecify.annotations.NonNull;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.boot.actuate.endpoint.Access;
 import org.springframework.boot.actuate.endpoint.annotation.Endpoint;
@@ -38,17 +37,17 @@ import jakarta.validation.Valid;
 @Slf4j
 @Getter
 public class TicketRegistryEndpoint extends BaseCasRestActuatorEndpoint {
-    private final ObjectProvider<@NonNull TicketRegistry> ticketRegistryProvider;
-    private final ObjectProvider<@NonNull TicketRegistryCleaner> ticketRegistryCleanerProvider;
-    private final ObjectProvider<@NonNull TicketRegistrySupport> ticketRegistrySupportProvider;
-    private final ObjectProvider<@NonNull TicketCatalog> ticketCatalogProvider;
+    private final ObjectProvider<TicketRegistry> ticketRegistryProvider;
+    private final ObjectProvider<TicketRegistryCleaner> ticketRegistryCleanerProvider;
+    private final ObjectProvider<TicketRegistrySupport> ticketRegistrySupportProvider;
+    private final ObjectProvider<TicketCatalog> ticketCatalogProvider;
     
     public TicketRegistryEndpoint(final CasConfigurationProperties casProperties,
                                   final ConfigurableApplicationContext applicationContext,
-                                  final ObjectProvider<@NonNull TicketRegistry> ticketRegistryProvider,
-                                  final ObjectProvider<@NonNull TicketRegistryCleaner> ticketRegistryCleanerProvider,
-                                  final ObjectProvider<@NonNull TicketRegistrySupport> ticketRegistrySupportProvider,
-                                  final ObjectProvider<@NonNull TicketCatalog> ticketCatalogProvider) {
+                                  final ObjectProvider<TicketRegistry> ticketRegistryProvider,
+                                  final ObjectProvider<TicketRegistryCleaner> ticketRegistryCleanerProvider,
+                                  final ObjectProvider<TicketRegistrySupport> ticketRegistrySupportProvider,
+                                  final ObjectProvider<TicketCatalog> ticketCatalogProvider) {
         super(casProperties, applicationContext);
         this.ticketRegistryProvider = ticketRegistryProvider;
         this.ticketRegistrySupportProvider = ticketRegistrySupportProvider;
@@ -72,7 +71,7 @@ public class TicketRegistryEndpoint extends BaseCasRestActuatorEndpoint {
         })
     @Operation(summary = "Report registered ticket definitions from the ticket catalog")
     public ResponseEntity ticketCatalog() {
-        return ResponseEntity.ok(ticketCatalogProvider.getObject().findAll().parallelStream().toList());
+        return ResponseEntity.ok(ticketCatalogProvider.getObject().findAll().stream().toList());
     }
 
     /**
@@ -110,7 +109,7 @@ public class TicketRegistryEndpoint extends BaseCasRestActuatorEndpoint {
                 description = "Limit the number of objects and tickets returned in the response",
                 required = false, in = ParameterIn.QUERY)
         })
-    public List<?> query(@Valid @ModelAttribute final TicketRegistryQueryCriteria criteria) {
+    public List<? extends Serializable> query(@Valid @ModelAttribute final TicketRegistryQueryCriteria criteria) {
         return ticketRegistryProvider.getObject().query(criteria);
     }
 

@@ -213,10 +213,20 @@ public class HazelcastTicketRegistry extends AbstractTicketRegistry implements A
             return ticketCatalog.findAll()
                 .stream()
                 .mapToLong(ticketDefinition -> {
-                    val sql = String.format("DELETE FROM %s WHERE principal=?", ticketDefinition.getProperties().getStorageName());
-                    LOGGER.debug("Executing SQL query [{}]", sql);
-                    try (val _ = hazelcastInstance.getSql().execute(sql, digestIdentifier(principalId))) {
-                        return 1;
+                    val storageName = ticketDefinition.getProperties().getStorageName();
+                    val digestedPrincipal = digestIdentifier(principalId);
+                    val countSql = String.format("SELECT COUNT(*) FROM %s WHERE principal=?", storageName);
+                    LOGGER.debug("Executing SQL count query [{}]", countSql);
+                    try (val countResult = hazelcastInstance.getSql().execute(countSql, digestedPrincipal)) {
+                        val toBeDeleted = countResult.iterator().next().<Long>getObject(0);
+                        if (toBeDeleted > 0) {
+                            val deleteSql = String.format("DELETE FROM %s WHERE principal=?", storageName);
+                            LOGGER.debug("Executing SQL delete query [{}]", deleteSql);
+                            try (val _ = hazelcastInstance.getSql().execute(deleteSql, digestedPrincipal)) {
+                                LOGGER.debug("Total tickets deleted are [{}]", toBeDeleted);
+                            }
+                        }
+                        return toBeDeleted;
                     }
                 })
                 .sum();
@@ -267,7 +277,16 @@ public class HazelcastTicketRegistry extends AbstractTicketRegistry implements A
                     .stream();
             }
         }
-        return super.getSessionsFor(principalId);
+        val ticketDefinitions = ticketCatalog.findTicketDefinition(TicketGrantingTicket.class);
+        val digestedPrincipal = digestIdentifier(principalId);
+        return ticketDefinitions
+            .stream()
+            .map(this::getTicketMapInstanceByMetadata)
+            .filter(Objects::nonNull)
+            .flatMap(ticketMap -> ticketMap.values(Predicates.equal("principal", digestedPrincipal)).stream())
+            .map(doc -> decodeTicket(doc.getTicket()))
+            .filter(Objects::nonNull)
+            .filter(ticket -> !ticket.isExpired());
     }
 
     @Override
@@ -275,10 +294,28 @@ public class HazelcastTicketRegistry extends AbstractTicketRegistry implements A
         return ticketCatalog
             .findAll()
             .stream()
-            .map(metadata -> getTicketMapInstanceByMetadata(metadata).values())
-            .flatMap(tickets -> tickets.stream().map(HazelcastTicketDocument::getTicket))
-            .skip(criteria.getFrom())
-            .limit(criteria.getCount())
+            .map(this::getTicketMapInstanceByMetadata)
+            .filter(Objects::nonNull)
+            .flatMap(ticketMap -> {
+                if (criteria.getCount() > 0 && !criteria.isInfiniteCount()) {
+                    val pageSize = Long.valueOf(criteria.getCount()).intValue();
+                    val pagePredicate = Predicates.pagingPredicate(
+                        Map.Entry.<String, HazelcastTicketDocument>comparingByKey(),
+                        pageSize);
+                    if (criteria.getFrom() > 0) {
+                        val pageIndex = Math.toIntExact(criteria.getFrom() / pageSize);
+                        val pageOffset = criteria.getFrom() % pageSize;
+                        pagePredicate.setPage(pageIndex);
+                        return ticketMap.values(pagePredicate).stream()
+                            .skip(pageOffset)
+                            .map(HazelcastTicketDocument::getTicket);
+                    }
+                    return ticketMap.values(pagePredicate).stream()
+                        .map(HazelcastTicketDocument::getTicket);
+                }
+                return ticketMap.values().stream()
+                    .map(HazelcastTicketDocument::getTicket);
+            })
             .map(this::decodeTicket);
     }
 

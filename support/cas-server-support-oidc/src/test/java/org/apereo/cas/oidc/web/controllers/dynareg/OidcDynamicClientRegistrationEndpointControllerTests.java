@@ -9,6 +9,7 @@ import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.TestPropertySource;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
@@ -138,7 +139,7 @@ class OidcDynamicClientRegistrationEndpointControllerTests {
 
         @Test
         void verifyOperation() throws Throwable {
-            try (val webServer = new MockWebServer(org.springframework.http.HttpStatus.OK)) {
+            try (val webServer = new MockWebServer(HttpStatus.OK)) {
                 webServer.responseBodyJson(List.of("https://client.example.org/callback", "https://client.example.org/callback2"));
                 webServer.start();
 
@@ -183,7 +184,7 @@ class OidcDynamicClientRegistrationEndpointControllerTests {
 
         @Test
         void verifyNoClientNameOperation() throws Throwable {
-            try (val webServer = new MockWebServer(org.springframework.http.HttpStatus.OK)) {
+            try (val webServer = new MockWebServer(HttpStatus.OK)) {
                 webServer.responseBodyJson(List.of("https://client.example.org/callback", "https://client.example.org/callback2"));
                 webServer.start();
 
@@ -230,7 +231,7 @@ class OidcDynamicClientRegistrationEndpointControllerTests {
             val accessToken = getAccessToken(clientId, Set.of(OidcConstants.CLIENT_REGISTRATION_SCOPE));
             ticketRegistry.addTicket(accessToken);
 
-            try (val webServer = new MockWebServer(org.springframework.http.HttpStatus.OK)) {
+            try (val webServer = new MockWebServer(HttpStatus.OK)) {
                 webServer.responseBodyJson(List.of("https://client.example.org/callback", "https://client.example.org/callback2"));
                 webServer.start();
 

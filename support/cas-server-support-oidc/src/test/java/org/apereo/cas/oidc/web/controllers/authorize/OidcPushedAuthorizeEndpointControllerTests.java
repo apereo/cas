@@ -30,7 +30,9 @@ class OidcPushedAuthorizeEndpointControllerTests extends AbstractOidcTests {
         servicesManager.save(service);
         mockMvc.perform(get("/cas/oidc/" + OidcConstants.PUSHED_AUTHORIZE_URL)
                 .param(OAuth20Constants.CLIENT_ID, id)
+                .param(OAuth20Constants.REDIRECT_URI, "https://oauth.example.org/")
                 .param(OAuth20Constants.CLIENT_SECRET, service.getClientSecret())
+                .param(OAuth20Constants.RESPONSE_TYPE, OAuth20ResponseTypes.CODE.name().toLowerCase(Locale.ENGLISH))
                 .with(withHttpRequestProcessor())
             )
             .andExpect(status().isMethodNotAllowed());
@@ -40,7 +42,7 @@ class OidcPushedAuthorizeEndpointControllerTests extends AbstractOidcTests {
     void verifyPostWithoutRequiredParams() throws Exception {
         mockMvc.perform(post("/cas/oidc/" + OidcConstants.PUSHED_AUTHORIZE_URL)
                 .with(withHttpRequestProcessor()))
-            .andExpect(status().isUnauthorized());
+            .andExpect(status().isForbidden());
     }
 
     @Test
@@ -59,6 +61,22 @@ class OidcPushedAuthorizeEndpointControllerTests extends AbstractOidcTests {
             .andExpect(status().isCreated())
             .andExpect(jsonPath("$.request_uri").exists())
             .andExpect(jsonPath("$.expires_in").exists());
+    }
+
+    @Test
+    void verifyPostOperationInvalidRedirectUri() throws Exception {
+        val id = UUID.randomUUID().toString();
+        val service = getOidcRegisteredService(id, "https://valid.example.org");
+        service.setBypassApprovalPrompt(true);
+        servicesManager.save(service);
+
+        mockMvc.perform(post("/cas/oidc/" + OidcConstants.PUSHED_AUTHORIZE_URL)
+                .param(OAuth20Constants.CLIENT_ID, id)
+                .param(OAuth20Constants.CLIENT_SECRET, service.getClientSecret())
+                .param(OAuth20Constants.REDIRECT_URI, "https://invalid.example.org/")
+                .param(OAuth20Constants.RESPONSE_TYPE, OAuth20ResponseTypes.CODE.name().toLowerCase(Locale.ENGLISH))
+                .with(withHttpRequestProcessor()))
+            .andExpect(status().isForbidden());
     }
 
     @Test

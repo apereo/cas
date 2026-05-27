@@ -9,7 +9,7 @@ category: Ticketing
 # Hazelcast Ticket Registry - Kubernetes Auto Discovery
 
 This hazelcast discovery plugin provides the possibility to lookup IP addresses of other members by resolving
-those requests against a [Kubernetes](http://kubernetes.io/) Service Discovery system.
+those requests against a [Kubernetes](https://kubernetes.io/) Service Discovery system.
 
 This module supports two different options of resolving against the discovery registry:
 

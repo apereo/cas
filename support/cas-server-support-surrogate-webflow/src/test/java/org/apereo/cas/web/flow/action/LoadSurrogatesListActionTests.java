@@ -30,7 +30,8 @@ import static org.mockito.Mockito.*;
  * @since 5.3.0
  */
 @Tag("WebflowActions")
-@SpringBootTest(classes = BaseSurrogateAuthenticationTests.SharedTestConfiguration.class, properties = "cas.authn.surrogate.simple.surrogates.casuser=cassurrogate")
+@SpringBootTest(classes = BaseSurrogateAuthenticationTests.SharedTestConfiguration.class,
+    properties = "cas.authn.surrogate.simple.surrogates.casuser=cassurrogate")
 @ExtendWith(CasTestExtension.class)
 class LoadSurrogatesListActionTests extends BaseSurrogateAuthenticationTests {
     @Autowired

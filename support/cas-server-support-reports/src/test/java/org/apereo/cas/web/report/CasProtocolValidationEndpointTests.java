@@ -2,7 +2,6 @@ package org.apereo.cas.web.report;
 
 import module java.base;
 import org.apereo.cas.CasProtocolConstants;
-import org.apereo.cas.CasViewConstants;
 import org.apereo.cas.authentication.AcceptUsersAuthenticationHandler;
 import org.apereo.cas.authentication.AuthenticationEventExecutionPlanConfigurer;
 import org.apereo.cas.config.CasThymeleafAutoConfiguration;
@@ -11,6 +10,7 @@ import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.util.CollectionUtils;
 import lombok.val;
+import org.apache.commons.lang3.StringUtils;
 import org.apereo.inspektr.common.web.ClientInfo;
 import org.apereo.inspektr.common.web.ClientInfoHolder;
 import org.junit.jupiter.api.BeforeEach;
@@ -18,18 +18,15 @@ import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.NullAndEmptySource;
 import org.junit.jupiter.params.provider.ValueSource;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.ImportAutoConfiguration;
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Import;
+import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockHttpServletRequest;
-import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.test.context.TestPropertySource;
-import org.springframework.web.servlet.ModelAndView;
-import jakarta.servlet.http.HttpServletRequest;
-import static org.junit.jupiter.api.Assertions.*;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 /**
  * This is {@link CasProtocolValidationEndpointTests}.
@@ -45,10 +42,6 @@ import static org.junit.jupiter.api.Assertions.*;
     CasValidationAutoConfiguration.class
 })
 class CasProtocolValidationEndpointTests extends AbstractCasEndpointTests {
-    @Autowired
-    @Qualifier("casProtocolValidationEndpoint")
-    private CasProtocolValidationEndpoint endpoint;
-
     private RegisteredService registeredService;
 
     @BeforeEach
@@ -57,7 +50,7 @@ class CasProtocolValidationEndpointTests extends AbstractCasEndpointTests {
         request.setRemoteAddr("185.86.151.11");
         request.setLocalAddr("185.88.151.11");
         ClientInfoHolder.setClientInfo(ClientInfo.from(request));
-        
+
         registeredService = RegisteredServiceTestUtils.getRegisteredService(UUID.randomUUID().toString());
         servicesManager.save(registeredService);
     }
@@ -66,32 +59,35 @@ class CasProtocolValidationEndpointTests extends AbstractCasEndpointTests {
     @ValueSource(strings = "Mellon")
     @NullAndEmptySource
     void verifyEndpoints(final String password) throws Throwable {
-        val request = prepareRequest(password);
-        val response = new MockHttpServletResponse();
+        val passwordParam = StringUtils.defaultString(password);
+        val service = registeredService.getServiceId();
 
-        var mv = endpoint.validate(request, response);
-        assertModelAndView(mv);
-        mv = endpoint.serviceValidate(request, response);
-        assertModelAndView(mv);
-        mv = endpoint.p3ServiceValidate(request, response);
-        assertModelAndView(mv);
-    }
+        mockMvc.perform(post("/actuator/casValidate/validate")
+                .contentType(MediaType.APPLICATION_FORM_URLENCODED)
+                .param(CasProtocolConstants.PARAMETER_USERNAME, "casuser")
+                .param(CasProtocolConstants.PARAMETER_PASSWORD, passwordParam)
+                .param(CasProtocolConstants.PARAMETER_SERVICE, service)
+                .accept(MediaType.APPLICATION_JSON))
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$.response").exists());
 
-    private static void assertModelAndView(final ModelAndView mv) {
-        assertNotNull(mv);
-        assertTrue(mv.getStatus().is2xxSuccessful());
-        assertTrue(mv.getModel().containsKey(CasViewConstants.MODEL_ATTRIBUTE_REGISTERED_SERVICE));
-        assertTrue(mv.getModel().containsKey(CasViewConstants.MODEL_ATTRIBUTE_REGISTERED_SERVICE));
-        assertTrue(mv.getModel().containsKey(CasViewConstants.MODEL_ATTRIBUTE_NAME_ASSERTION));
-        assertTrue(mv.getModel().containsKey("response"));
-    }
+        mockMvc.perform(post("/actuator/casValidate/serviceValidate")
+                .contentType(MediaType.APPLICATION_FORM_URLENCODED)
+                .param(CasProtocolConstants.PARAMETER_USERNAME, "casuser")
+                .param(CasProtocolConstants.PARAMETER_PASSWORD, passwordParam)
+                .param(CasProtocolConstants.PARAMETER_SERVICE, service)
+                .accept(MediaType.APPLICATION_JSON))
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$.response").exists());
 
-    private HttpServletRequest prepareRequest(final String password) {
-        val request = new MockHttpServletRequest();
-        request.setParameter(CasProtocolConstants.PARAMETER_USERNAME, "casuser");
-        request.setParameter(CasProtocolConstants.PARAMETER_PASSWORD, password);
-        request.setParameter(CasProtocolConstants.PARAMETER_SERVICE, registeredService.getServiceId());
-        return request;
+        mockMvc.perform(post("/actuator/casValidate/p3/serviceValidate")
+                .contentType(MediaType.APPLICATION_FORM_URLENCODED)
+                .param(CasProtocolConstants.PARAMETER_USERNAME, "casuser")
+                .param(CasProtocolConstants.PARAMETER_PASSWORD, passwordParam)
+                .param(CasProtocolConstants.PARAMETER_SERVICE, service)
+                .accept(MediaType.APPLICATION_JSON))
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$.response").exists());
     }
 
     @TestConfiguration(value = "AuthenticationTestConfiguration", proxyBeanMethods = false)
@@ -100,7 +96,8 @@ class CasProtocolValidationEndpointTests extends AbstractCasEndpointTests {
         public AuthenticationEventExecutionPlanConfigurer surrogateAuthenticationEventExecutionPlanConfigurer() {
             return plan -> plan.registerAuthenticationHandler(new AcceptUsersAuthenticationHandler(CollectionUtils.wrap("casuser", "Mellon")));
         }
-
     }
 }
+
+
 

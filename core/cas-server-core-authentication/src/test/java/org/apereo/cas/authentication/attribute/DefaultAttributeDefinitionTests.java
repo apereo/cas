@@ -6,6 +6,7 @@ import org.apereo.cas.config.CasCoreScriptingAutoConfiguration;
 import org.apereo.cas.config.CasCoreUtilAutoConfiguration;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.test.CasTestExtension;
+import org.apereo.cas.util.EncodingUtils;
 import org.apereo.cas.util.RandomUtils;
 import org.apereo.cas.util.spring.boot.SpringBootTestAutoConfigurations;
 import lombok.val;
@@ -140,7 +141,7 @@ class DefaultAttributeDefinitionTests {
     }
 
     @ParameterizedTest
-    @ValueSource(strings = {"MD5", "SHA1", "SHA256", "SHA512", "BASE64", "UNKNOWN"})
+    @ValueSource(strings = {"MD5", "SHA1", "SHA", "HEX", "SHA256", "SHA512", "BASE64", "UNKNOWN"})
     void verifyHashingFunction(final String hashingStrategy) throws Throwable {
         val defn = DefaultAttributeDefinition.builder()
             .key("givenName")
@@ -149,5 +150,19 @@ class DefaultAttributeDefinitionTests {
         val context = getAttributeDefinitionResolutionContext();
         val values = defn.resolveAttributeValues(context);
         assertFalse(values.isEmpty());
+    }
+
+    @Test
+    void verifyBinaryAttribute() throws Throwable {
+        val defn = DefaultAttributeDefinition.builder()
+            .key("givenName")
+            .script("groovy { return ['hello world'.getBytes()] }")
+            .hashingStrategy("base64")
+            .build();
+        val context = getAttributeDefinitionResolutionContext();
+        val values = defn.resolveAttributeValues(context);
+        assertFalse(values.isEmpty());
+        val result = EncodingUtils.decodeBase64ToString(values.getFirst().toString());
+        assertEquals("hello world", result);
     }
 }

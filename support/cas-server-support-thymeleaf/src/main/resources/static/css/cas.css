@@ -77,6 +77,10 @@ aside, section, main {
 
 /* Material */
 
+.mdc-tab-bar {
+    background-color: var(--navbar-light-primary, "whitesmoke");
+}
+
 .mdc-drawer {
     top: 56px;
 }

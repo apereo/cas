@@ -14,6 +14,8 @@
 
     "--cas.authn.oidc.discovery.scopes=openid,profile,email",
     "--cas.authn.oidc.discovery.claims=sub,name,family_name,email",
+
+    "--cas.authn.oauth.code.time-to-kill-in-seconds=90",
     
     "--cas.service-registry.core.init-from-json=true",
     "--cas.service-registry.json.location=file:${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/services",

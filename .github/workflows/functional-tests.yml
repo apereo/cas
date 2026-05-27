@@ -69,6 +69,8 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v6
+        with:
+          persist-credentials: false
       - name: Set up JDK
         uses: actions/setup-java@v5
         with:
@@ -92,6 +94,8 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v6
+        with:
+          persist-credentials: false
       - name: Set up JDK
         uses: actions/setup-java@v5
         with:
@@ -132,6 +136,8 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v6
+        with:
+          persist-credentials: false
       - name: Set up JDK
         uses: actions/setup-java@v5
         with:
@@ -187,6 +193,8 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v6
+        with:
+          persist-credentials: false
       - name: Set up JDK
         uses: actions/setup-java@v5
         with:
@@ -244,6 +252,8 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v6
+        with:
+          persist-credentials: false
       - name: Set up JDK
         uses: actions/setup-java@v5
         with:

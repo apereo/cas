@@ -4,10 +4,10 @@
     "--cas.server.name=https://localhost:8443",
     "--cas.server.prefix=https://localhost:8443/cas",
 
+    "--cas.authn.oidc.core.issuer=https://localhost:8443/cas/oidc",
     "--cas.authn.oidc.federation.role=TRUST_ANCHOR",
     "--cas.authn.oidc.federation.organization=ApereoTA",
     "--cas.authn.oidc.federation.jwks-file=file:${#systemProperties['java.io.tmpdir']}/tmpfederation.jwks",
-    "--cas.authn.oidc.federation.subordinate-directory=${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/subordinates",
-    "--cas.authn.oidc.core.issuer=https://localhost:8443/cas/oidc"
+    "--cas.authn.oidc.federation.subordinate-directory=${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/subordinates"
   ]
 }

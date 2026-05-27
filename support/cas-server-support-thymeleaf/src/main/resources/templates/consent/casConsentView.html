@@ -29,7 +29,7 @@
 <body>
 <main class="container mt-3 mb-3">
     <div id="content" layout:fragment="content">
-        <h2 th:text="#{screen.consent.title}" class="text-center">Attribute Consent</h2>
+        <h2 th:text="#{screen.consent.title}" class="text-center mb-2">Attribute Consent</h2>
 
         <div id="consent-tabs" class="mdc-tab-bar" role="tablist">
             <div class="mdc-tab-scroller">
@@ -57,12 +57,15 @@
                 </div>
             </div>
         </div>
-        <form method="post" id="fm1" th:action="@{/login}" class="mdc-card card p-4 m-auto d-block mb-4">
+        <form method="post"
+              id="fm1"
+              th:action="@{${(tenantPath ?: '') + '/login'}}"
+              class="mdc-card card p-4 m-auto d-block mb-4">
+            
             <section id="consent-tab-0" class="consent-tab">
                 <div class="" id="attributesPanel" role="tabpanel" aria-labelledby="attributes-tab">
                     <p id="appTitle" th:utext="#{screen.consent.attributes.header(${service.id})}">
                         The following attributes will be released to application</p>
-
 
                     <div class="w-100 mdc-data-table table-responsive mx-auto my-4" id="divAttributes">
                         <table id="attributesTable" class="table table-striped auto-init">
@@ -242,7 +245,8 @@
             <hr class="my-4"/>
             <section class="cas-section form-actions mt-4 d-flex justify-content-center">
                 <div th:replace="~{fragments/submitbutton :: submitButton (messageKey='screen.consent.confirm', id='confirm', name='confirm')}"/>
-                <a class="mdc-button mdc-button--raised btn btn-outline-secondary button-cancel" id="cancel" name="cancel" th:href="@{/login}">
+                <a class="mdc-button mdc-button--raised btn btn-outline-secondary button-cancel"
+                   id="cancel" name="cancel" th:href="@{${(tenantPath ?: '') + '/login'}}">
                     <span class="mdc-button__label" th:text="#{screen.consent.cancel}">Cancel</span>
                 </a>
             </section>

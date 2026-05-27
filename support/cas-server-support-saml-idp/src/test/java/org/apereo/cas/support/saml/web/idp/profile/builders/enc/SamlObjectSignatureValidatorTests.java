@@ -106,7 +106,7 @@ class SamlObjectSignatureValidatorTests extends BaseSamlIdPConfigurationTests {
 
         val facade = SamlRegisteredServiceMetadataAdaptor.get(
             samlRegisteredServiceCachingMetadataResolver, service, service.getServiceId());
-        this.adaptor = facade.get();
+        this.adaptor = facade.orElseThrow();
     }
 
     @Test

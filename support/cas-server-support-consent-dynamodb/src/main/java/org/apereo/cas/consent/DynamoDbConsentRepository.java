@@ -5,6 +5,7 @@ import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.services.RegisteredService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.DisposableBean;
 
 /**
  * This is {@link DynamoDbConsentRepository}.
@@ -13,7 +14,7 @@ import lombok.RequiredArgsConstructor;
  * @since 6.5.0
  */
 @RequiredArgsConstructor
-public class DynamoDbConsentRepository implements ConsentRepository {
+public class DynamoDbConsentRepository extends BaseConsentRepository implements DisposableBean {
     @Serial
     private static final long serialVersionUID = 7894919721657056300L;
 
@@ -55,5 +56,10 @@ public class DynamoDbConsentRepository implements ConsentRepository {
     @Override
     public void deleteAll() {
         facilitator.removeAll();
+    }
+
+    @Override
+    public void destroy() throws Exception {
+        facilitator.getAmazonDynamoDBClient().close();
     }
 }

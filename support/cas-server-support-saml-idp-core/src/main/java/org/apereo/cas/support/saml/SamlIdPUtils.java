@@ -15,6 +15,7 @@ import net.shibboleth.shared.resolver.CriteriaSet;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
 import org.jooq.lambda.Unchecked;
+import org.jspecify.annotations.Nullable;
 import org.opensaml.messaging.context.MessageContext;
 import org.opensaml.saml.common.SAMLObject;
 import org.opensaml.saml.common.binding.SAMLBindingSupport;
@@ -210,15 +211,15 @@ public class SamlIdPUtils {
      * @param object the object
      * @return the issuer from saml object
      */
-    public static String getIssuerFromSamlObject(final SAMLObject object) {
+    public static @Nullable String getIssuerFromSamlObject(final SAMLObject object) {
         if (object instanceof final RequestAbstractType instance) {
-            return instance.getIssuer().getValue();
+            return Objects.requireNonNull(instance.getIssuer()).getValue();
         }
         if (object instanceof final StatusResponseType instance) {
-            return instance.getIssuer().getValue();
+            return Objects.requireNonNull(instance.getIssuer()).getValue();
         }
         if (object instanceof final Assertion instance) {
-            return instance.getIssuer().getValue();
+            return Objects.requireNonNull(instance.getIssuer()).getValue();
         }
         return null;
     }

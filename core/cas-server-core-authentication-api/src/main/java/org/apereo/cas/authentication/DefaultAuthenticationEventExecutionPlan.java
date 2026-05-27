@@ -212,7 +212,9 @@ public class DefaultAuthenticationEventExecutionPlan implements AuthenticationEv
             .filter(handler -> {
                 if (clientInfo != null && StringUtils.isNotBlank(clientInfo.getTenant())) {
                     val tenantDefinition = tenantExtractor.getTenantsManager().findTenant(clientInfo.getTenant()).orElseThrow();
-                    val authenticationHandlers = tenantDefinition.getAuthenticationPolicy().getAuthenticationHandlers();
+                    val authenticationHandlers = tenantDefinition.getAuthenticationPolicy() != null
+                        ? tenantDefinition.getAuthenticationPolicy().getAuthenticationHandlers()
+                        : List.of();
                     return authenticationHandlers == null || authenticationHandlers.isEmpty() || authenticationHandlers.contains(handler.getName());
                 }
                 return true;
@@ -240,7 +242,7 @@ public class DefaultAuthenticationEventExecutionPlan implements AuthenticationEv
         return new LinkedHashSet<>(CollectionUtils.wrapList(handlers));
     }
 
-    
+
     @Override
     public Collection<TenantAuthenticationHandlerBuilder> getTenantAuthenticationHandlerBuilders() {
         val list = new ArrayList<>(this.tenantAuthenticationHandlerBuilders);
@@ -274,7 +276,7 @@ public class DefaultAuthenticationEventExecutionPlan implements AuthenticationEv
 
     @Override
     public @Nullable PrincipalResolver getPrincipalResolver(final AuthenticationHandler handler,
-                                                  final AuthenticationTransaction transaction) {
+                                                            final AuthenticationTransaction transaction) {
         return authenticationHandlerPrincipalResolverMap.get(handler);
     }
 

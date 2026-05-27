@@ -30,7 +30,7 @@ async function verifyTenant(browser, tenantId) {
         await cas.assertInvisibility(page, "li #CasClient1");
         await cas.assertInnerTextStartsWith(page, "#securityNotice", "For security reasons");
 
-        response = await cas.loginWith(page, "casuser", "Mellon");
+        response = await cas.loginWith(page);
         assert(response.status() === 401);
         await cas.loginWith(page, "casweb", "p@ssw0rd");
         break;

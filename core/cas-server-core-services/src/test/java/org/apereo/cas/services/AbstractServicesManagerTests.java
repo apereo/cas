@@ -114,7 +114,7 @@ public abstract class AbstractServicesManagerTests {
         registeredService.setServiceId(registeredService.getName());
         val expirationPolicy = new DefaultRegisteredServiceExpirationPolicy();
         expirationPolicy.setNotifyWhenExpired(true);
-        expirationPolicy.setExpirationDate(LocalDateTime.now(ZoneOffset.UTC).minusDays(2).toString());
+        expirationPolicy.setExpirationDate(ZonedDateTime.now(ZoneOffset.UTC).minusDays(2).toString());
         registeredService.setExpirationPolicy(expirationPolicy);
         servicesManager.save(registeredService);
         assertNotNull(servicesManager.findServiceBy(RegisteredServiceTestUtils.getService(registeredService.getServiceId())));
@@ -128,7 +128,7 @@ public abstract class AbstractServicesManagerTests {
         registeredService.setServiceId(registeredService.getName());
         val expirationPolicy = new DefaultRegisteredServiceExpirationPolicy();
         expirationPolicy.setNotifyWhenExpired(true);
-        expirationPolicy.setExpirationDate(LocalDateTime.now(ZoneOffset.UTC).minusDays(2).toString());
+        expirationPolicy.setExpirationDate(ZonedDateTime.now(ZoneOffset.UTC).minusDays(2).toString());
         expirationPolicy.setDeleteWhenExpired(true);
         expirationPolicy.setNotifyWhenDeleted(true);
         registeredService.setExpirationPolicy(expirationPolicy);

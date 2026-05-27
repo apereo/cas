@@ -7,8 +7,6 @@ import lombok.Setter;
 import lombok.experimental.Accessors;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
-import java.io.Serial;
-
 /**
  * This is {@link Pac4jOidcClientPrivateKeyJwtProperties}.
  *

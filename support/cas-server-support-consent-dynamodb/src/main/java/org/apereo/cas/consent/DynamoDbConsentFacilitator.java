@@ -41,7 +41,6 @@ public class DynamoDbConsentFacilitator {
     private final DynamoDbConsentProperties dynamoDbProperties;
     private final DynamoDbClient amazonDynamoDBClient;
 
-
     private static Map<String, AttributeValue> buildTableAttributeValuesMap(final ConsentDecision record) {
         val values = new HashMap<String, AttributeValue>();
         values.put(ColumnNames.PRINCIPAL.getColumnName(), AttributeValue.builder().s(record.getPrincipal()).build());
