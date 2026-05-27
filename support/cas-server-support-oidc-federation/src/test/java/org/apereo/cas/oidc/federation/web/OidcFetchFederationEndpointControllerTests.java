@@ -31,7 +31,7 @@ class OidcFetchFederationEndpointControllerTests {
     private static final String RP_NO_KEYS = "http://rpnokeys";
     private static final String INTERMEDIATE = "http://intermediate";
 
-    private static final String FETCH_ENDPOINT_URL = "/cas/" + OidcConstants.BASE_OIDC_URL + '/' + OidcConstants.FETCH_FEDERATION_URL;
+    private static final String FETCH_ENDPOINT_URL = "/cas/" + OidcConstants.BASE_OIDC_URL + OidcConstants.FETCH_FEDERATION_URL;
 
     @Nested
     class TrustAnchorFetchFederationTests extends AbstractOidcTrustAnchorFederationTests {

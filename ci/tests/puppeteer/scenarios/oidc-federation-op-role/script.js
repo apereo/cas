@@ -28,10 +28,19 @@ const assert = require("assert");
 
     assert(federationEntity["organization_name"] === "ApereoOP");
     assert(federationEntity["federation_fetch_endpoint"] === undefined);
+    assert(federationEntity["federation_list_endpoint"] === undefined);
     assert(federationEntity["contacts"] !== undefined);
 
     const algValues = openidProvider["userinfo_signing_alg_values_supported"];
     assert(algValues.includes("RS256"));
     assert(algValues.includes("HS256"));
+
+    const listUrl = "https://localhost:8443/cas/oidc/list";
+    await cas.doGet(listUrl,
+        () => {
+            throw "Federation endpoint should not be available";
+        },
+        () => {
+        });
 
 })();

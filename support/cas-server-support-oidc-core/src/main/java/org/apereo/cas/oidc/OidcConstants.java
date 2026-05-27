@@ -275,9 +275,13 @@ public interface OidcConstants {
      */
     String WELL_KNOWN_OAUTH_AUTHORIZATION_SERVER_URL = WELL_KNOWN_URL + "/oauth-authorization-server";
     /**
-     * /fetch.
+     * /fetch federation URL.
      */
     String FETCH_FEDERATION_URL = "/fetch";
+    /**
+     * /list federation URL.
+     */
+    String LIST_FEDERATION_URL = "/list";
     /**
      * Scope assigned to access token internally
      * to access client config urls and look up relying parties.
@@ -316,6 +320,10 @@ public interface OidcConstants {
      * Verifiable credentials nonce expiration.
      */
     String C_NONCE_EXPIRES_AT = "c_nonce_expires_at";
+    /**
+     * Unsupported parameter error.
+     */
+    String UNSUPPORTED_PARAMETER = "unsupported_parameter";
 
     /**
      * Standard openid connect scopes.
