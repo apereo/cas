@@ -44,8 +44,10 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.SpringBootConfiguration;
 import org.springframework.boot.autoconfigure.ImportAutoConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Import;
+import org.springframework.test.web.servlet.MockMvc;
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
@@ -56,6 +58,7 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 @ExtendWith(CasTestExtension.class)
 @SpringBootTest(classes = AbstractOpenSamlTests.SharedTestConfiguration.class)
+@AutoConfigureMockMvc
 public abstract class AbstractOpenSamlTests {
     protected static final String SAML_REQUEST = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>"
         + "<samlp:AuthnRequest xmlns:samlp=\"urn:oasis:names:tc:SAML:2.0:protocol\" "
@@ -110,7 +113,11 @@ public abstract class AbstractOpenSamlTests {
     @Autowired
     @Qualifier(TenantExtractor.BEAN_NAME)
     protected TenantExtractor tenantExtractor;
-    
+
+    @Autowired
+    @Qualifier("mockMvc")
+    protected MockMvc mockMvc;
+
     @Test
     void autowireApplicationContext() {
         assertNotNull(this.applicationContext);

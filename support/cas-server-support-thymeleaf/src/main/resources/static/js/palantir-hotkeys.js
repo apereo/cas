@@ -39,6 +39,10 @@ async function initializeHotKeyOperations() {
                 event.preventDefault();
                 $("#newAttributeDefinitionButton:visible").click();
             }
+            if (currentActiveTab === Tabs.MULTITENANCY.index && $("#registeredTenantsTab").is(":visible")) {
+                event.preventDefault();
+                $("#newTenantButton:visible").click();
+            }
             
             break;
         default:

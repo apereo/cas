@@ -1,6 +1,7 @@
 package org.apereo.cas.oidc.web.controllers.dynareg;
 
 import module java.base;
+import org.apereo.cas.oidc.OidcConfigurationContext;
 import org.apereo.cas.oidc.OidcConstants;
 import org.apereo.cas.oidc.dynareg.OidcClientRegistrationResponse;
 import org.apereo.cas.oidc.jwks.generator.OidcJsonWebKeystoreGeneratorService;
@@ -34,16 +35,21 @@ public class OidcClientRegistrationUtils {
     /**
      * Gets client registration response.
      *
-     * @param registeredService the registered service
-     * @param serverPrefix      the server prefix
+     * @param registeredService    the registered service
+     * @param configurationContext the configuration context
      * @return the client registration response
      */
-    public static OidcClientRegistrationResponse getClientRegistrationResponse(final OidcRegisteredService registeredService,
-                                                                               final String serverPrefix) {
+    public static OidcClientRegistrationResponse getClientRegistrationResponse(
+        final OidcRegisteredService registeredService,
+        final OidcConfigurationContext configurationContext) {
         val clientResponse = new OidcClientRegistrationResponse();
         clientResponse.setApplicationType(registeredService.getApplicationType());
         clientResponse.setClientId(registeredService.getClientId());
-        clientResponse.setClientSecret(registeredService.getClientSecret());
+
+        val decodedSecret = configurationContext.getRegisteredServiceCipherExecutor()
+            .decode(registeredService.getClientSecret());
+        clientResponse.setClientSecret(decodedSecret);
+
         clientResponse.setSubjectType(registeredService.getSubjectType());
         clientResponse.setTokenEndpointAuthMethod(registeredService.getTokenEndpointAuthenticationMethod());
         clientResponse.setClientName(registeredService.getName());
@@ -86,6 +92,8 @@ public class OidcClientRegistrationUtils {
             clientResponse.setPolicyUri(registeredService.getInformationUrl());
             clientResponse.setTermsOfUseUri(registeredService.getPrivacyUrl());
             clientResponse.setRedirectUris(CollectionUtils.wrapList(registeredService.getServiceId()));
+
+            val serverPrefix = configurationContext.getCasProperties().getServer().getPrefix();
             val clientConfigUri = getClientConfigurationUri(registeredService, serverPrefix);
             clientResponse.setRegistrationClientUri(clientConfigUri);
         });

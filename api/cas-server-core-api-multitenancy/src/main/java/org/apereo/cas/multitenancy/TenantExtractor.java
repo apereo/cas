@@ -33,6 +33,11 @@ public interface TenantExtractor {
     String BEAN_NAME = "tenantExtractor";
 
     /**
+     * Tenant header id to extract from the request.
+     */
+    String HEADER_TENANT_ID = "X-Tenant-Id";
+
+    /**
      * Gets tenants manager.
      *
      * @return the tenants manager
@@ -53,6 +58,10 @@ public interface TenantExtractor {
      * @return the tenant id
      */
     default Optional<TenantDefinition> extract(final @Nullable HttpServletRequest request) {
+        val headerValue = request != null ? request.getHeader(HEADER_TENANT_ID) : null;
+        if (StringUtils.isNotBlank(headerValue)) {
+            return getTenantsManager().findTenant(headerValue);
+        }
         val flowId = request != null ? FLOW_URL_HANDLER.getFlowId(request) : StringUtils.EMPTY;
         return extract(flowId);
     }
@@ -93,6 +102,16 @@ public interface TenantExtractor {
         return null;
     }
 
+    /**
+     * To tenant path.
+     *
+     * @param tenant the tenant
+     * @return the string
+     */
+    static String toTenantPath(final TenantDefinition tenant) {
+        return "/tenants/" + tenant.getId();
+    }
+    
     /**
      * Get tenant key string.
      *

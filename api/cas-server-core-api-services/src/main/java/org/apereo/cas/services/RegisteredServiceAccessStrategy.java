@@ -75,7 +75,7 @@ public interface RegisteredServiceAccessStrategy extends Serializable, Ordered {
      * @return the redirect url
      * @since 4.2
      */
-    default URI getUnauthorizedRedirectUrl() {
+    default @Nullable URI getUnauthorizedRedirectUrl() {
         return null;
     }
 

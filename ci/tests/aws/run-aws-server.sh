@@ -1,8 +1,21 @@
 #!/bin/bash
 
 # while sleep 9m; do echo -e '\n=====[ Gradle build is still running ]====='; done &
+
+RED="\e[31m"
+GREEN="\e[32m"
+ENDCOLOR="\e[0m"
+
+function printgreen() {
+  printf "🍀 ${GREEN}$1${ENDCOLOR}\n"
+}
+
+function printred() {
+  printf "🚨  ${RED}$1${ENDCOLOR}\n"
+}
+
 export DOCKER_IMAGE="localstack/localstack:4.14.0"
-echo "Running localstack docker container..."
+printgreen "Running localstack docker container..."
 docker stop localstack || true && docker rm localstack || true
 docker run --rm -d -e 'DEBUG=1' -e 'SERVICES=kinesis,firehose,ses,ssm,events,cloudwatch,logs,s3,s3api,secretsmanager,sqs,sts' \
   -p 4560-4599:4560-4599 \
@@ -16,20 +29,20 @@ docker ps | grep "localstack"
 retVal=$?
 if [ $retVal == 0 ]; then
 
-    echo "Creating S3 bucket for Security Lake..."
+    printgreen "Creating S3 bucket for Security Lake..."
     export AWS_ENDPOINT_URL="http://localhost:4566"
     docker exec localstack bash -c "awslocal --endpoint-url=$AWS_ENDPOINT_URL s3api create-bucket --bucket security-lake-logs"
 
-    echo "Creating S3 bucket for Security Lake..."
+    printgreen "Creating S3 bucket for Security Lake..."
     docker exec localstack bash -c "awslocal --endpoint-url=$AWS_ENDPOINT_URL firehose create-delivery-stream \
         --delivery-stream-name security-lake-stream \
         --s3-destination-configuration RoleARN=\"arn:aws:iam::000000000000:role/test-role\",BucketARN=\"arn:aws:s3:::security-lake-logs\""
 
-    echo "Verifying email identity..."
+    printgreen "Verifying email identity..."
     docker exec localstack bash -c "awslocal ses verify-email-identity --email hello@example.com"
-    echo "Verified email identity."
+    printgreen "Verified email identity."
 
-    echo "Create Log group..."
+    printgreen "Create Log group..."
     docker exec localstack bash -c "awslocal logs create-log-group --log-group-name cas-log-group"
     docker exec localstack bash -c "awslocal logs create-log-stream --log-group-name cas-log-group --log-stream-name cas-log-stream"
 
@@ -44,8 +57,8 @@ if [ $retVal == 0 ]; then
           --log-events '[{\"timestamp\": '\"$(date +%s000)\"', \"message\": \"[${logLevel}] This is a ${logLevel} log message, id: ${i}\"}]'" >/dev/null 2>&1
     done
 
-    echo "localstack docker container is running."
+    printgreen "localstack docker container is running."
 else
-    echo "localstack docker container failed to start."
+    printred "localstack docker container failed to start."
     exit $retVal
 fi

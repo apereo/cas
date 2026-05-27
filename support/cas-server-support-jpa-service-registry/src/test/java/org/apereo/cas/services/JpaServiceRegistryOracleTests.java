@@ -12,12 +12,12 @@ import org.springframework.test.context.TestPropertySource;
  * @since 6.0.0
  */
 @TestPropertySource(properties = {
-    "cas.jdbc.show-sql=false",
+    "cas.jdbc.show-sql=true",
     "cas.service-registry.jpa.ddl-auto=create",
-    "cas.service-registry.jpa.user=system",
-    "cas.service-registry.jpa.password=Oradoc_db1",
+    "cas.service-registry.jpa.user=cas",
+    "cas.service-registry.jpa.password=cas",
     "cas.service-registry.jpa.driver-class=oracle.jdbc.driver.OracleDriver",
-    "cas.service-registry.jpa.url=jdbc:oracle:thin:@localhost:1521:FREE",
+    "cas.service-registry.jpa.url=jdbc:oracle:thin:@//localhost:1521/FREEPDB1",
     "cas.service-registry.jpa.dialect=org.hibernate.dialect.OracleDialect"
 })
 @EnabledIfListeningOnPort(port = 1521)

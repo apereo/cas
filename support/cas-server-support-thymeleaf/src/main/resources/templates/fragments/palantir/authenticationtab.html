@@ -15,6 +15,7 @@
                 <li><a id="authenticationpolicies" href="#authenticationpolicies-tab">Authentication Policies</a></li>
                 <li class="d-none"><a id="delegatedclients" href="#delegatedclients-tab">External Identity Providers</a></li>
                 <li class="d-none"><a id="passwordmanagement" href="#passwordmanagement-tab">Password Management</a></li>
+                <li class="d-none"><a id="surrogacy" href="#surrogacy-tab">Impersonation</a></li>
               </ul>
 
 
@@ -172,6 +173,40 @@
                 </table>
             </div>
 
+            <div id="surrogacy-tab">
+                <p>You may query CAS to fetch eligible accounts that can be impersonated by a primary user.</p>
+                
+                <form id="fmSurrogateAccounts" class="d-block" onsubmit="return false;">
+                    <section class="cas-field form-group my-2 mdc-input-group d-flex">
+                        <div class="mdc-input-group-field mdc-input-group-field-append w-100">
+                            <label for="pmUsername"
+                                   class="mdc-text-field mdc-text-field--outlined control-label mdc-text-field--with-trailing-icon">
+                                <span class="mdc-notched-outline">
+                                    <span class="mdc-notched-outline__leading"></span>
+                                    <span class="mdc-notched-outline__notch">
+                                        <span class="mdc-floating-label">Username</span>
+                                    </span>
+                                    <span class="mdc-notched-outline__trailing"></span>
+                                </span>
+                                <input class="mdc-text-field__input form-control" type="text"
+                                       name="surrogateUsername" id="surrogateUsername" size="50"
+                                       autocomplete="off" required/>
+                            </label>
+                        </div>
+                    </section>
+                    <div class="d-flex">
+                        <button type="button" name="fetchSurrogateAccountsButton" id="fetchSurrogateAccountsButton" class="mdc-button mdc-button--raised">
+                            <span class="mdc-button__label"><i class="mdc-tab__icon mdi mdi-check-all" aria-hidden="true"></i>Fetch</span>
+                        </button>
+                    </div>
+                </form>
+                <div id="surrogateAccountsContainer" class="d-none d-flex mt-3">
+                    <label for="surrogateAccountsDropdown">
+                        Surrogate Accounts: 
+                        <select id="surrogateAccountsDropdown" class="jqueryui-selectmenu"></select>
+                    </label>
+                </div>
+            </div>
         </div>
     </div>
 </span>

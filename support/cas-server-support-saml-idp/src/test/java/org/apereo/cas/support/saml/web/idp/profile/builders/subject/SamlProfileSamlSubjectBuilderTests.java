@@ -28,13 +28,13 @@ class SamlProfileSamlSubjectBuilderTests extends BaseSamlIdPConfigurationTests {
         val response = new MockHttpServletResponse();
 
         val service = getSamlRegisteredServiceForTestShib(true, true);
-        service.setSkewAllowance(1000);
+        service.setSkewAllowance("1000");
         service.setSkipGeneratingAssertionNameId(true);
         service.setSkipGeneratingSubjectConfirmationNotOnOrAfter(true);
         service.setSkipGeneratingSubjectConfirmationNameId(true);
         val adaptor = SamlRegisteredServiceMetadataAdaptor.get(
             samlRegisteredServiceCachingMetadataResolver,
-            service, service.getServiceId()).get();
+            service, service.getServiceId()).orElseThrow();
 
         val authnRequest = getAuthnRequestFor(service);
         val assertion = getAssertion();
@@ -58,16 +58,17 @@ class SamlProfileSamlSubjectBuilderTests extends BaseSamlIdPConfigurationTests {
         val response = new MockHttpServletResponse();
 
         val service = getSamlRegisteredServiceForTestShib(true, true);
-        service.setSkewAllowance(1000);
+        service.setSkewAllowance("1000");
         val adaptor = SamlRegisteredServiceMetadataAdaptor.get(
             samlRegisteredServiceCachingMetadataResolver,
-            service, service.getServiceId()).get();
+            service, service.getServiceId()).orElseThrow();
 
         val authnRequest = getAuthnRequestFor(service);
         val assertion = getAssertion();
 
         val now = ZonedDateTime.now(ZoneOffset.UTC)
-            .plusSeconds(service.getSkewAllowance()).toInstant().truncatedTo(ChronoUnit.SECONDS);
+            .plusSeconds(Long.parseLong(service.getSkewAllowance()))
+            .toInstant().truncatedTo(ChronoUnit.SECONDS);
 
         val buildContext = SamlProfileBuilderContext.builder()
             .samlRequest(authnRequest)
@@ -93,11 +94,11 @@ class SamlProfileSamlSubjectBuilderTests extends BaseSamlIdPConfigurationTests {
         val service = getSamlRegisteredServiceForTestShib(true, true);
         service.setSkipGeneratingSubjectConfirmationNameId(false);
         service.setSkipGeneratingSubjectConfirmationNotOnOrAfter(false);
-        service.setSkewAllowance(0);
+        service.setSkewAllowance("0");
 
         val adaptor = SamlRegisteredServiceMetadataAdaptor.get(
             samlRegisteredServiceCachingMetadataResolver,
-            service, service.getServiceId()).get();
+            service, service.getServiceId()).orElseThrow();
 
         val authnRequest = getAuthnRequestFor(service);
         val assertion = getAssertion();

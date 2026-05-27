@@ -31,7 +31,7 @@ async function login(service) {
         await cas.log(`Logging into CAS; attempt ${i}`);
         await cas.gotoLogin(page, service);
         if (i === 1) {
-            await cas.loginWith(page, "casuser", "Mellon");
+            await cas.loginWith(page);
         }
         await cas.assertTicketParameter(page);
     }

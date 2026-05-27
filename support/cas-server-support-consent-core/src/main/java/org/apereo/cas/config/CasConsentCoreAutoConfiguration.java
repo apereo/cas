@@ -8,10 +8,12 @@ import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.features.CasFeatureModule;
 import org.apereo.cas.consent.AttributeConsentReportEndpoint;
 import org.apereo.cas.consent.AttributeReleaseConsentCipherExecutor;
+import org.apereo.cas.consent.ChainingConsentRepository;
 import org.apereo.cas.consent.ConsentActivationStrategy;
 import org.apereo.cas.consent.ConsentDecisionBuilder;
 import org.apereo.cas.consent.ConsentEngine;
 import org.apereo.cas.consent.ConsentRepository;
+import org.apereo.cas.consent.ConsentRepositoryBuilder;
 import org.apereo.cas.consent.ConsentableAttributeBuilder;
 import org.apereo.cas.consent.DefaultConsentActivationStrategy;
 import org.apereo.cas.consent.DefaultConsentDecisionBuilder;
@@ -20,16 +22,17 @@ import org.apereo.cas.consent.GroovyConsentActivationStrategy;
 import org.apereo.cas.consent.GroovyConsentRepository;
 import org.apereo.cas.consent.InMemoryConsentRepository;
 import org.apereo.cas.consent.JsonConsentRepository;
+import org.apereo.cas.multitenancy.TenantExtractor;
 import org.apereo.cas.util.cipher.CipherExecutorUtils;
 import org.apereo.cas.util.crypto.CipherExecutor;
-import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.util.nativex.CasRuntimeHintsRegistrar;
+import org.apereo.cas.util.spring.beans.BeanCondition;
+import org.apereo.cas.util.spring.beans.BeanSupplier;
 import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apereo.inspektr.audit.spi.AuditActionResolver;
 import org.apereo.inspektr.audit.spi.AuditResourceResolver;
-import org.jspecify.annotations.NonNull;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.actuate.autoconfigure.endpoint.condition.ConditionalOnAvailableEndpoint;
@@ -68,10 +71,12 @@ public class CasConsentCoreAutoConfiguration {
             final ConsentDecisionBuilder consentDecisionBuilder,
             final List<ConsentableAttributeBuilder> builders,
             @Qualifier(ConsentRepository.BEAN_NAME)
-            final ConsentRepository consentRepository) {
+            final ConsentRepository consentRepository,
+            @Qualifier(TenantExtractor.BEAN_NAME)
+            final TenantExtractor tenantExtractor) {
             AnnotationAwareOrderComparator.sortIfNecessary(builders);
             return new DefaultConsentEngine(consentRepository, consentDecisionBuilder,
-                casProperties, builders, applicationContext);
+                casProperties, builders, applicationContext, tenantExtractor);
         }
     }
 
@@ -133,23 +138,54 @@ public class CasConsentCoreAutoConfiguration {
         @ConditionalOnMissingBean(name = ConsentRepository.BEAN_NAME)
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-        public ConsentRepository consentRepository(final CasConfigurationProperties casProperties) {
-            return FunctionUtils.doUnchecked(() -> {
-                val location = casProperties.getConsent().getJson().getLocation();
-                if (location != null) {
+        public ConsentRepository consentRepository(final ConfigurableApplicationContext applicationContext) {
+            val builders = applicationContext.getBeansOfType(ConsentRepositoryBuilder.class)
+                .values()
+                .stream()
+                .filter(BeanSupplier::isNotProxy)
+                .sorted(AnnotationAwareOrderComparator.INSTANCE)
+                .map(ConsentRepositoryBuilder::createConsentRepository)
+                .collect(Collectors.toList());
+            if (builders.isEmpty()) {
+                LOGGER.warn("Storing consent records in memory. This option is ONLY relevant for demos and testing purposes.");
+                builders.add(new InMemoryConsentRepository());
+            }
+            return new ChainingConsentRepository(builders);
+        }
+
+        @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+        @ConditionalOnMissingBean(name = "jsonConsentRepositoryBuilder")
+        public ConsentRepositoryBuilder jsonConsentRepositoryBuilder(
+            final ConfigurableApplicationContext applicationContext,
+            final CasConfigurationProperties casProperties) {
+            return BeanSupplier.of(ConsentRepositoryBuilder.class)
+                .when(BeanCondition.on("cas.consent.json.location").exists().given(applicationContext.getEnvironment()))
+                .supply(() -> {
+                    val location = casProperties.getConsent().getJson().getLocation();
                     LOGGER.warn("Storing consent records in [{}]. This MAY NOT be appropriate in production. "
                         + "Consider choosing an alternative repository format for storing consent decisions", location);
-                    return new JsonConsentRepository(location);
-                }
+                    return () -> new JsonConsentRepository(location);
+                })
+                .otherwiseProxy()
+                .get();
+        }
 
-                val groovy = casProperties.getConsent().getGroovy().getLocation();
-                if (groovy != null && CasRuntimeHintsRegistrar.notInNativeImage()) {
-                    return new GroovyConsentRepository(groovy);
-                }
-
-                LOGGER.warn("Storing consent records in memory. This option is ONLY relevant for demos and testing purposes.");
-                return new InMemoryConsentRepository();
-            });
+        @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+        @ConditionalOnMissingBean(name = "groovyConsentRepositoryBuilder")
+        public ConsentRepositoryBuilder groovyConsentRepositoryBuilder(
+            final ConfigurableApplicationContext applicationContext,
+            final CasConfigurationProperties casProperties) {
+            return BeanSupplier.of(ConsentRepositoryBuilder.class)
+                .when(BeanCondition.on("cas.consent.groovy.location").exists().given(applicationContext.getEnvironment()))
+                .and(CasRuntimeHintsRegistrar::notInNativeImage)
+                .supply(() -> {
+                    val groovy = casProperties.getConsent().getGroovy().getLocation();
+                    return () -> new GroovyConsentRepository(groovy);
+                })
+                .otherwiseProxy()
+                .get();
         }
     }
 
@@ -184,11 +220,9 @@ public class CasConsentCoreAutoConfiguration {
         public AttributeConsentReportEndpoint attributeConsentReportEndpoint(
             final ConfigurableApplicationContext applicationContext,
             @Qualifier(ConsentEngine.BEAN_NAME)
-            final ObjectProvider<@NonNull ConsentEngine> consentEngine,
-            @Qualifier(ConsentRepository.BEAN_NAME)
-            final ObjectProvider<@NonNull ConsentRepository> consentRepository,
+            final ObjectProvider<ConsentEngine> consentEngine,
             final CasConfigurationProperties casProperties) {
-            return new AttributeConsentReportEndpoint(casProperties, applicationContext, consentRepository, consentEngine);
+            return new AttributeConsentReportEndpoint(casProperties, applicationContext, consentEngine);
         }
     }
 }

@@ -130,7 +130,7 @@ public class GenerateSamlIdPMetadataCommand implements CasShellCommand {
             val generator = new FileSystemSamlIdPMetadataGenerator(context);
             generator.initialize();
             generator.generate(Optional.empty());
-            LOGGER.info("Generated metadata is available at [{}]", locator.resolveMetadata(Optional.empty()));
+            LOGGER.info("Generated metadata is available at [{}]", metadataLocation);
         } else {
             LOGGER.info("No metadata was generated; it might already exist at the specified path");
         }

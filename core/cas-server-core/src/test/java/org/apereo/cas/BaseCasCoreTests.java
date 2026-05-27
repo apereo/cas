@@ -48,11 +48,13 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.TestConfiguration;
+import org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.EnableAspectJAutoProxy;
 import org.springframework.context.annotation.Import;
 import org.springframework.scheduling.annotation.EnableScheduling;
+import org.springframework.test.web.servlet.MockMvc;
 
 /**
  * This is {@link BaseCasCoreTests}.
@@ -65,6 +67,7 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 @EnableScheduling
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @ExtendWith(CasTestExtension.class)
+@AutoConfigureMockMvc
 public abstract class BaseCasCoreTests {
 
     @Autowired
@@ -80,6 +83,10 @@ public abstract class BaseCasCoreTests {
     @Autowired
     @Qualifier(TenantExtractor.BEAN_NAME)
     protected TenantExtractor tenantExtractor;
+
+    @Autowired
+    @Qualifier("mockMvc")
+    protected MockMvc mockMvc;
     
     @SpringBootTestAutoConfigurations
     @ImportAutoConfiguration({

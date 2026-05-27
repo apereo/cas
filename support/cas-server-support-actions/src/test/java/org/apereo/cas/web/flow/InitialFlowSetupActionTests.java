@@ -7,6 +7,7 @@ import org.apereo.cas.authentication.AuthenticationServiceSelectionPlan;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.configuration.model.core.sso.SingleSignOnProperties;
 import org.apereo.cas.mock.MockTicketGrantingTicket;
+import org.apereo.cas.multitenancy.TenantExtractor;
 import org.apereo.cas.services.DefaultRegisteredServiceAccessStrategy;
 import org.apereo.cas.services.DefaultRegisteredServiceAuthenticationPolicy;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
@@ -44,6 +45,29 @@ import static org.mockito.Mockito.*;
 @Tag("WebflowActions")
 class InitialFlowSetupActionTests {
 
+    @TestPropertySource(properties = {
+        "cas.multitenancy.core.enabled=true",
+        "cas.multitenancy.json.location=classpath:/tenants.json"
+    })
+    @Nested
+    class MultitenancyTests extends AbstractWebflowActionsTests {
+        @Autowired
+        @Qualifier(CasWebflowConstants.ACTION_ID_INITIAL_FLOW_SETUP)
+        private Action action;
+        
+        @Test
+        void verifyOperation() throws Exception {
+            val context = MockRequestContext.create(applicationContext);
+            context.setContextPath("/tenants/shire/login");
+            action.execute(context);
+            assertTrue(context.getFlowScope().contains("tenantPath"));
+
+            val tenantDefinition = tenantExtractor.extract(context).orElseThrow();
+            assertEquals(TenantExtractor.toTenantPath(tenantDefinition),
+                context.getFlowScope().get("tenantPath", String.class));
+        }
+    }
+    
     @Nested
     class DefaultTests extends AbstractWebflowActionsTests {
 

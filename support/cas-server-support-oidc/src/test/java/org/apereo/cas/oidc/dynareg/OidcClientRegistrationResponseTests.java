@@ -26,7 +26,7 @@ class OidcClientRegistrationResponseTests extends AbstractOidcTests {
         val service = getOidcRegisteredService();
         val key = OidcJsonWebKeyStoreUtils.generateJsonWebKey("rsa", 2048, OidcJsonWebKeyUsage.SIGNING);
         service.setJwks(new JsonWebKeySet(key).toJson(JsonWebKey.OutputControlLevel.PUBLIC_ONLY));
-        val input = OidcClientRegistrationUtils.getClientRegistrationResponse(service, "https://example.com/cas");
+        val input = OidcClientRegistrationUtils.getClientRegistrationResponse(service, oidcConfigurationContext);
         assertNotNull(input.getGrantTypes());
         assertNotNull(input.getResponseTypes());
         assertNotNull(input.getRedirectUris());

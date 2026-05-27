@@ -46,7 +46,7 @@ class SamlIdPHttpRedirectDeflateEncoderTests extends BaseSamlIdPConfigurationTes
         logoutRequest.setIssuer(issuer);
 
         val adaptor = SamlRegisteredServiceMetadataAdaptor
-            .get(samlRegisteredServiceCachingMetadataResolver, service, service.getServiceId()).get();
+            .get(samlRegisteredServiceCachingMetadataResolver, service, service.getServiceId()).orElseThrow();
         logoutRequest = samlIdPObjectSigner.encode(logoutRequest, service,
             adaptor, response, request, SAMLConstants.SAML2_REDIRECT_BINDING_URI,
             logoutRequest, new MessageContext());

@@ -80,7 +80,7 @@ class SurrogateInitialAuthenticationActionTests {
         val credential = WebUtils.getCredential(context);
         assertEquals("casuser", credential.getId());
         assertEquals("cassurrogate", credential.getCredentialMetadata()
-            .getTrait(SurrogateCredentialTrait.class).get().getSurrogateUsername());
+            .getTrait(SurrogateCredentialTrait.class).orElseThrow().getSurrogateUsername());
     }
 
     @Test

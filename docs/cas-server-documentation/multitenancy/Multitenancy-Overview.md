@@ -7,10 +7,11 @@ category: Multitenancy
 
 # Multitenancy
 
-CAS supports the notion of multitenancy, where a single CAS server can be used to isolate parts of its configuration and policies
-per each tenant that is assigned to a unique url to interact with the CAS server. Each tenant registered with CAS may have its own set of capabilities
-such as authentication strategy and policies. Support for multitenancy is baked into CAS as a first class citizen
-and you will need to configure CAS to enable the feature, register your tenants and define their capabilities.
+CAS supports the notion of multitenancy, where a single CAS server can be used to isolate parts of its configuration
+and policies per each tenant that is assigned to a unique url to interact with the CAS server. Each tenant registered 
+with CAS may have its own set of capabilities such as authentication strategy and policies. Support for multitenancy 
+is baked into CAS as a first class citizen and you will need to configure CAS to enable the feature, register your 
+tenants and define their capabilities.
 
 {% include_cached casproperties.html properties="cas.multitenancy.core" %}
 
@@ -24,6 +25,16 @@ When multitenancy is enabled, registered tenants will each receive their own ded
 
 ```
 /cas/tenants/{TENANT_ID}/...
+```
+ 
+Furthermore, in some cases you may also be able to pass along the tenant id as a request header, 
+and CAS will be able to resolve the tenant definition. This extraction logic is particularly employed
+for actuator endpoints that do support multitenancy:
+
+```bash
+curl --location 
+    'https://sso.example.org/cas/actuator/{ACTUATOR}' \
+    --header 'X-Tenant-Id: {TENANT_ID}'
 ```
 
 ## Actuator Endpoints
@@ -396,7 +407,8 @@ CAS to route requests from `https://sso.example.org/cas/login` to `https://${cas
    
 This setup is useful in scenarios where there is a reverse proxy that sits in front of CAS
 and is able to route traffic for predefined hosts to CAS tenants. For example, the setup below
-for nginx, combined with the tenant definitions, allows CAS to route traffic for `sso.example.com` to the `london` tenant definition that carries 
+for nginx, combined with the tenant definitions, allows CAS to route traffic for `sso.example.com` to 
+the `london` tenant definition that carries 
 its own host name noted above:
 
 ```conf
@@ -427,6 +439,41 @@ public FilterRegistrationBean tenantRoutingFilter() {
     return fr;
 }
 ```
+
+{% endtab %}
+
+{% tab multitenancyexamples Attribute Consent %}
+
+The following tenant definition is allowed to define its 
+own [attribute consent storage](../integration/Attribute-Release-Consent.html) via MongoDb. 
+
+Depending on your choice of storage, the proper extension module must be 
+included in your CAS deployment. As ever, please verify that the module does actually support multitenancy. 
+
+```json
+[
+  "java.util.ArrayList",
+  [
+    {
+      "@class": "org.apereo.cas.multitenancy.TenantDefinition",
+      "id": "shire",
+      "properties": {
+        "@class": "java.util.LinkedHashMap",
+        "cas.consent.mongo.host": "localhost",
+        "cas.consent.mongo.port": "27017",
+        "cas.consent.mongo.user-id": "...",
+        "cas.consent.mongo.password": "...",
+        "cas.consent.mongo.collection": "TenantsConsentRepository",
+        "cas.consent.mongo.authentication-database-name": "admin",
+        "cas.consent.mongo.database-name": "consent"
+      }
+    }
+  ]
+]
+```
+    
+In the event that the tenant does not specify its own attribute consent storage, the default storage 
+defined globally in the CAS configuration for the entire CAS deployment will be used.
 
 {% endtab %}
 

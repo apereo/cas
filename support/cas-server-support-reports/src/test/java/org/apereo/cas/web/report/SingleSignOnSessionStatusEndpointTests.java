@@ -9,10 +9,13 @@ import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.test.context.TestPropertySource;
-import static org.junit.jupiter.api.Assertions.*;
+import jakarta.servlet.http.Cookie;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 /**
  * This is {@link SingleSignOnSessionStatusEndpointTests}.
@@ -27,10 +30,6 @@ import static org.junit.jupiter.api.Assertions.*;
 @Tag("ActuatorEndpoint")
 class SingleSignOnSessionStatusEndpointTests extends AbstractCasEndpointTests {
     @Autowired
-    @Qualifier("singleSignOnSessionStatusEndpoint")
-    private SingleSignOnSessionStatusEndpoint singleSignOnSessionStatusEndpoint;
-
-    @Autowired
     @Qualifier(CasCookieBuilder.BEAN_NAME_TICKET_GRANTING_COOKIE_BUILDER)
     private CasCookieBuilder ticketGrantingTicketCookieGenerator;
 
@@ -40,40 +39,47 @@ class SingleSignOnSessionStatusEndpointTests extends AbstractCasEndpointTests {
 
     @Test
     void verifyOperationByValue() throws Throwable {
-        val request = new MockHttpServletRequest();
         val tgt = new MockTicketGrantingTicket("casuser");
         ticketRegistry.addTicket(tgt);
-        val entity = singleSignOnSessionStatusEndpoint.ssoStatus(tgt.getId(), request);
-        assertTrue(entity.getStatusCode().is2xxSuccessful());
+        mockMvc.perform(get("/actuator/sso")
+                .param("tgc", tgt.getId())
+                .accept(MediaType.APPLICATION_JSON))
+            .andExpect(status().is2xxSuccessful());
     }
 
     @Test
     void verifyOperation() throws Throwable {
-        val request = new MockHttpServletRequest();
-        val response = new MockHttpServletResponse();
-
         val tgt = new MockTicketGrantingTicket("casuser");
         ticketRegistry.addTicket(tgt);
-        ticketGrantingTicketCookieGenerator.addCookie(request, response, tgt.getId());
-        request.setCookies(response.getCookies());
-        val entity = singleSignOnSessionStatusEndpoint.ssoStatus(null, request);
-        assertTrue(entity.getStatusCode().is2xxSuccessful());
-        val body = Objects.requireNonNull((Map) entity.getBody());
-        assertTrue(body.containsKey("principal"));
-        assertTrue(body.containsKey("authenticationDate"));
-        assertTrue(body.containsKey("ticketGrantingTicketCreationTime"));
-        assertTrue(body.containsKey("ticketGrantingTicketPreviousTimeUsed"));
-        assertTrue(body.containsKey("ticketGrantingTicketLastTimeUsed"));
+        val fakeRequest = new MockHttpServletRequest();
+        val fakeResponse = new MockHttpServletResponse();
+        ticketGrantingTicketCookieGenerator.addCookie(fakeRequest, fakeResponse, tgt.getId());
+        val tgcCookie = fakeResponse.getCookies()[0];
+        mockMvc.perform(get("/actuator/sso")
+                .cookie(new Cookie(tgcCookie.getName(), tgcCookie.getValue()))
+                .accept(MediaType.APPLICATION_JSON))
+            .andExpect(status().is2xxSuccessful())
+            .andExpect(jsonPath("$.principal").exists())
+            .andExpect(jsonPath("$.authenticationDate").exists())
+            .andExpect(jsonPath("$.ticketGrantingTicketCreationTime").exists())
+            .andExpect(jsonPath("$.ticketGrantingTicketPreviousTimeUsed").exists())
+            .andExpect(jsonPath("$.ticketGrantingTicketLastTimeUsed").exists());
     }
 
     @Test
-    void verifyNoTicket() {
-        val request = new MockHttpServletRequest();
-        assertTrue(singleSignOnSessionStatusEndpoint.ssoStatus(null, request).getStatusCode().is4xxClientError());
-        val response = new MockHttpServletResponse();
+    void verifyNoTicket() throws Throwable {
+        mockMvc.perform(get("/actuator/sso")
+                .accept(MediaType.APPLICATION_JSON))
+            .andExpect(status().is4xxClientError());
+
         val tgt = new MockTicketGrantingTicket("casuser");
-        ticketGrantingTicketCookieGenerator.addCookie(request, response, tgt.getId());
-        request.setCookies(response.getCookies());
-        assertTrue(singleSignOnSessionStatusEndpoint.ssoStatus(null, request).getStatusCode().is4xxClientError());
+        val fakeRequest = new MockHttpServletRequest();
+        val fakeResponse = new MockHttpServletResponse();
+        ticketGrantingTicketCookieGenerator.addCookie(fakeRequest, fakeResponse, tgt.getId());
+        val tgcCookie = fakeResponse.getCookies()[0];
+        mockMvc.perform(get("/actuator/sso")
+                .cookie(new Cookie(tgcCookie.getName(), tgcCookie.getValue()))
+                .accept(MediaType.APPLICATION_JSON))
+            .andExpect(status().is4xxClientError());
     }
 }

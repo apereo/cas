@@ -388,7 +388,7 @@ function validateScenario() {
 
   dockerRequired=$(jq -j '.conditions.docker // empty' "${config}")
   if [[ "${dockerRequired}" == "true" ]]; then
-    echo "Checking if Docker is available..."
+    printgreen "Checking if Docker is available..."
     if [[ "$CI" == "true" && "${RUNNER_OS}" != "Linux" ]]; then
       printyellow "Not running test in CI that requires Docker, because non-linux GitHub runner can't run Docker."
       exit 0
@@ -548,7 +548,9 @@ function prepareScenario() {
   random=$(openssl rand -hex 8)
 
   if [[ ! -d "${PUPPETEER_DIR}/node_modules/puppeteer" || "${INSTALL_PUPPETEER}" == "true" ]]; then
-    printgreen "Installing Puppeteer"
+    printgreen "Installing Puppeteer..."
+    rm -Rf "${PUPPETEER_DIR}/node_modules" >/dev/null 2>&1 || true
+    rm -Rf "${PUPPETEER_DIR}/package-lock.json" >/dev/null 2>&1 || true
     cd "$PUPPETEER_DIR"
     npm install --fetch-timeout 5000 --fetch-retries 3 --fetch-retry-maxtimeout 30000 --no-audit
     cd -

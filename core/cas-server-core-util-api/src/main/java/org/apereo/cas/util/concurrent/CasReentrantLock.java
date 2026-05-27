@@ -24,7 +24,7 @@ import org.jooq.lambda.fi.util.function.CheckedSupplier;
  */
 @Slf4j
 public class CasReentrantLock {
-    private static final int LOCK_TIMEOUT_SECONDS = 3;
+    private static final int LOCK_TIMEOUT_SECONDS = 5;
 
     private final ReentrantLock lock = new ReentrantLock();
 

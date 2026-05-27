@@ -12,7 +12,7 @@ function printgreen() {
 printgreen "Building Kafka image..."
 COMPOSE_FILE=./ci/tests/kafka/docker-compose.yml
 test -f $COMPOSE_FILE || COMPOSE_FILE=docker-compose.yml
-docker compose -f $COMPOSE_FILE up -d
+docker compose -f $COMPOSE_FILE up --quiet-pull -d
 docker compose -f $COMPOSE_FILE logs &
 sleep 10
 docker ps | grep "kafka-server"

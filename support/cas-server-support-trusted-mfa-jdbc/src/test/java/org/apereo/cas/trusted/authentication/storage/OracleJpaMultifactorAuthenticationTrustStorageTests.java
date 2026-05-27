@@ -15,10 +15,10 @@ import org.springframework.test.context.TestPropertySource;
     "cas.jdbc.show-sql=false",
     "cas.authn.mfa.trusted.jpa.ddl-auto=create-drop",
 
-    "cas.authn.mfa.trusted.jpa.user=system",
-    "cas.authn.mfa.trusted.jpa.password=Oradoc_db1",
+    "cas.authn.mfa.trusted.jpa.user=cas",
+    "cas.authn.mfa.trusted.jpa.password=cas",
     "cas.authn.mfa.trusted.jpa.driver-class=oracle.jdbc.driver.OracleDriver",
-    "cas.authn.mfa.trusted.jpa.url=jdbc:oracle:thin:@localhost:1521:FREE",
+    "cas.authn.mfa.trusted.jpa.url=jdbc:oracle:thin:@//localhost:1521/FREEPDB1",
     "cas.authn.mfa.trusted.jpa.dialect=org.hibernate.dialect.OracleDialect"
 })
 @EnabledIfListeningOnPort(port = 1521)

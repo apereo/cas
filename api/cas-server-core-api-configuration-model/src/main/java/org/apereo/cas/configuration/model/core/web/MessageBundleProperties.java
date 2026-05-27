@@ -42,7 +42,7 @@ public class MessageBundleProperties implements Serializable {
      * Flag that controls whether to fallback to the default system locale if no locale is specified explicitly.
      * Set whether to fall back to the system Locale if no files for a specific Locale have been found.
      * If this is turned off, the only fallback will be the default file (e.g. "messages.properties" for basename "messages").
-     * Falling back to the system Locale is the default behavior of {@link java.util.ResourceBundle}.
+     * Falling back to the system Locale is the default behavior of {@link ResourceBundle}.
      * However, this is often not desirable in an application server environment, where the system
      * Locale is not relevant to the application at all: set this flag to {@code false} in such a scenario.
      */
