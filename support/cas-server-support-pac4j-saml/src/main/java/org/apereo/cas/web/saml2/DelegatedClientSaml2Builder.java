@@ -267,6 +267,7 @@ public class DelegatedClientSaml2Builder implements ConfigurableDelegatedClientB
         DelegatedIdentityProviderFactory.configureClientName(singleClient, clientName);
         DelegatedIdentityProviderFactory.configureClientCustomProperties(singleClient, saml2Properties);
         DelegatedIdentityProviderFactory.configureClientCallbackUrl(singleClient, saml2Properties, properties.getServer().getLoginUrl());
+        DelegatedIdentityProviderFactory.configureLogoutPropagation(singleClient, saml2Properties);
         singleClient.getCustomProperties().put(ClientCustomPropertyConstants.CLIENT_CUSTOM_PROPERTY_IDENTITY_PROVIDER_METADATA_AGGREGATE, true);
 
         val idpSSODescriptor = entityDescriptor.getIDPSSODescriptor(SAMLConstants.SAML20P_NS);
