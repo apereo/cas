@@ -90,7 +90,7 @@ return types and fields. We will gradually extend the coverage of such annotatio
 and will integrate the Gradle build tool with tools such as [NullAway](https://github.com/uber/NullAway) to prevent nullness contract violations
 during compile time.
   
-### OpenId Connect & Verifiable Credentials
+### OpenID Connect & Verifiable Credentials
 
 An [initial implementation](../authentication/OIDC-Authentication-Verifiable-Credentials.html) 
 of OpenID Connect Verifiable Credentials (OIDC4VCI) is now available in CAS.

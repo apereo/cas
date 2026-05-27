@@ -16,10 +16,10 @@ import org.springframework.test.context.TestPropertySource;
 @TestPropertySource(properties = {
     "cas.jdbc.show-sql=false",
     "cas.consent.jpa.ddl-auto=create-drop",
-    "cas.consent.jpa.user=system",
-    "cas.consent.jpa.password=Oradoc_db1",
+    "cas.consent.jpa.user=cas",
+    "cas.consent.jpa.password=cas",
     "cas.consent.jpa.driver-class=oracle.jdbc.driver.OracleDriver",
-    "cas.consent.jpa.url=jdbc:oracle:thin:@localhost:1521:FREE",
+    "cas.consent.jpa.url=jdbc:oracle:thin:@//localhost:1521/FREEPDB1",
     "cas.consent.jpa.dialect=org.hibernate.dialect.OracleDialect"
 })
 class OracleJpaConsentRepositoryTests extends JpaConsentRepositoryTests {

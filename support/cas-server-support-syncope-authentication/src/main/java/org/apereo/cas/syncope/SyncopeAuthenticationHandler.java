@@ -44,7 +44,6 @@ public class SyncopeAuthenticationHandler extends AbstractUsernamePasswordAuthen
     private final String syncopeDomain;
 
     public SyncopeAuthenticationHandler(final SyncopeAuthenticationProperties properties,
-
                                         final PrincipalFactory principalFactory,
                                         final String syncopeDomain) {
         super(properties.getName(), principalFactory, properties.getOrder());

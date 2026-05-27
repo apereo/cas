@@ -122,6 +122,11 @@ public interface OAuth20Constants {
      * The approval prompt.
      */
     String BYPASS_APPROVAL_PROMPT = "bypass_approval_prompt";
+    /**
+     * Parameter to indicate the approval key
+     * when checking for scope consent.
+     */
+    String SCOPES_APPROVAL_KEY = "approvalKey";
 
     /**
      * The scope request.

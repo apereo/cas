@@ -1,4 +1,5 @@
 {
+    "@class": "org.apereo.cas.consent.ConsentDecision",
     "id": "1",
     "principal": "casuser",
     "service": "https://apereo.github.io",

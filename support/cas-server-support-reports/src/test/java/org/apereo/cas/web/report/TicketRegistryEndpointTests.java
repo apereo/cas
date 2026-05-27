@@ -2,19 +2,21 @@ package org.apereo.cas.web.report;
 
 import module java.base;
 import org.apereo.cas.mock.MockTicketGrantingTicket;
+import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.ticket.TicketGrantingTicket;
+import org.apereo.cas.ticket.TicketGrantingTicketImpl;
+import org.apereo.cas.ticket.expiration.NeverExpiresExpirationPolicy;
 import org.apereo.cas.ticket.registry.TicketRegistry;
-import org.apereo.cas.ticket.registry.TicketRegistryQueryCriteria;
 import lombok.val;
-import org.junit.jupiter.api.MethodOrderer;
-import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.TestMethodOrder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.http.MediaType;
 import org.springframework.test.context.TestPropertySource;
 import static org.junit.jupiter.api.Assertions.*;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 /**
  * This is {@link TicketRegistryEndpointTests}.
@@ -24,38 +26,38 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 @TestPropertySource(properties = "management.endpoint.ticketRegistry.access=UNRESTRICTED")
 @Tag("ActuatorEndpoint")
-@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 class TicketRegistryEndpointTests extends AbstractCasEndpointTests {
-    @Autowired
-    @Qualifier("ticketRegistryEndpoint")
-    private TicketRegistryEndpoint ticketRegistryEndpoint;
-
     @Autowired
     @Qualifier(TicketRegistry.BEAN_NAME)
     private TicketRegistry ticketRegistry;
 
     @Test
-    @Order(0)
-    void verifyOperationByType() {
-        val criteria = TicketRegistryQueryCriteria.builder().type(TicketGrantingTicket.PREFIX).build();
-        val results = ticketRegistryEndpoint.query(criteria);
-        assertTrue(results.isEmpty());
-    }
-
-    @Test
     void verifyOperationById() throws Throwable {
-        val ticket = new MockTicketGrantingTicket(UUID.randomUUID().toString());
+        mockMvc.perform(get("/actuator/ticketRegistry/query")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content("{\"type\":\"%s\"}".formatted(TicketGrantingTicket.PREFIX)))
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$").isArray())
+            .andExpect(jsonPath("$").isEmpty());
+
+        val ticket = new TicketGrantingTicketImpl("casuser",
+            RegisteredServiceTestUtils.getAuthentication(),
+            NeverExpiresExpirationPolicy.INSTANCE);
         ticketRegistry.addTicket(ticket);
-        val criteria = TicketRegistryQueryCriteria.builder()
-            .id(ticket.getId())
-            .type(TicketGrantingTicket.PREFIX).build();
-        val results = ticketRegistryEndpoint.query(criteria);
-        assertFalse(results.isEmpty());
+        
+        mockMvc.perform(get("/actuator/ticketRegistry/query")
+                .queryParam("id", ticket.getId())
+                .queryParam("type", TicketGrantingTicket.PREFIX)
+            )
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$").isArray())
+            .andExpect(jsonPath("$").isNotEmpty());
     }
 
     @Test
-    void verifyHead() {
-        assertTrue(ticketRegistryEndpoint.head().getStatusCode().is2xxSuccessful());
+    void verifyHead() throws Throwable {
+        mockMvc.perform(head("/actuator/ticketRegistry"))
+            .andExpect(status().is2xxSuccessful());
     }
 
     @Test
@@ -64,18 +66,21 @@ class TicketRegistryEndpointTests extends AbstractCasEndpointTests {
         ticketRegistry.addTicket(ticket);
         assertNotNull(ticketRegistry.getTicket(ticket.getId()));
         ticket.markTicketExpired();
-        val results = (Map) ticketRegistryEndpoint.clean().getBody();
-        assertNotNull(results);
-        assertTrue(results.containsKey("removed"));
-        assertTrue(results.containsKey("total"));
-        assertTrue(results.containsKey("duration"));
-        assertTrue(results.containsKey("startTime"));
-        assertTrue(results.containsKey("endTime"));
+        mockMvc.perform(delete("/actuator/ticketRegistry/clean")
+                .contentType(MediaType.APPLICATION_JSON))
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$.removed").exists())
+            .andExpect(jsonPath("$.total").exists())
+            .andExpect(jsonPath("$.duration").exists())
+            .andExpect(jsonPath("$.startTime").exists())
+            .andExpect(jsonPath("$.endTime").exists());
     }
 
     @Test
-    void verifyCatalog() {
-        val catalog = (List) ticketRegistryEndpoint.ticketCatalog().getBody();
-        assertFalse(catalog.isEmpty());
+    void verifyCatalog() throws Throwable {
+        mockMvc.perform(get("/actuator/ticketRegistry/ticketCatalog"))
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$").isArray())
+            .andExpect(jsonPath("$").isNotEmpty());
     }
 }

@@ -9,6 +9,7 @@ import org.apereo.cas.web.support.CookieUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.jspecify.annotations.Nullable;
 import org.pac4j.core.client.Client;
 import org.pac4j.core.context.CallContext;
 import org.pac4j.core.engine.DefaultSecurityLogic;
@@ -43,7 +44,7 @@ public class OAuth20TicketGrantingTicketAwareSecurityLogic extends DefaultSecuri
         return new ArrayList<>();
     }
 
-    protected Ticket getTicketGrantingTicket(final ProfileManager manager, final HttpServletRequest request) {
+    protected @Nullable Ticket getTicketGrantingTicket(final ProfileManager manager, final HttpServletRequest request) {
         return CookieUtils.getTicketGrantingTicketFromRequest(
             ticketGrantingTicketCookieGenerator, ticketRegistry, request);
     }

@@ -11,6 +11,7 @@ import org.apereo.cas.config.CasCoreCookieAutoConfiguration;
 import org.apereo.cas.config.CasCoreLogoutAutoConfiguration;
 import org.apereo.cas.config.CasCoreMultifactorAuthenticationAutoConfiguration;
 import org.apereo.cas.config.CasCoreMultifactorAuthenticationWebflowAutoConfiguration;
+import org.apereo.cas.config.CasCoreMultitenancyAutoConfiguration;
 import org.apereo.cas.config.CasCoreNotificationsAutoConfiguration;
 import org.apereo.cas.config.CasCoreScriptingAutoConfiguration;
 import org.apereo.cas.config.CasCoreServicesAutoConfiguration;
@@ -50,7 +51,8 @@ import static org.junit.jupiter.api.Assertions.*;
 @Getter
 @ExtendWith(CasTestExtension.class)
 public abstract class BaseConsentRepositoryTests {
-    protected static final DefaultConsentDecisionBuilder BUILDER = new DefaultConsentDecisionBuilder(CipherExecutor.noOpOfSerializableToString());
+    protected static final DefaultConsentDecisionBuilder BUILDER =
+        new DefaultConsentDecisionBuilder(CipherExecutor.noOpOfSerializableToString());
 
     protected static final Service SVC = RegisteredServiceTestUtils.getService();
 
@@ -87,11 +89,11 @@ public abstract class BaseConsentRepositoryTests {
         decision = repo.storeConsentDecision(decision);
         assertNotNull(decision);
 
-        val d = repo.findConsentDecision(SVC, REG_SVC, CoreAuthenticationTestUtils.getAuthentication(user));
-        assertNotNull(d);
-        assertEquals(user, d.getPrincipal());
+        val consentDecision = repo.findConsentDecision(SVC, REG_SVC, CoreAuthenticationTestUtils.getAuthentication(user));
+        assertNotNull(consentDecision);
+        assertEquals(user, consentDecision.getPrincipal());
 
-        assertTrue(repo.deleteConsentDecision(d.getId(), d.getPrincipal()));
+        assertTrue(repo.deleteConsentDecision(consentDecision.getId(), consentDecision.getPrincipal()));
         await().untilAsserted(() -> assertNull(repo.findConsentDecision(SVC, REG_SVC,
             CoreAuthenticationTestUtils.getAuthentication(user))));
 
@@ -131,6 +133,7 @@ public abstract class BaseConsentRepositoryTests {
         CasCoreMultifactorAuthenticationAutoConfiguration.class,
         CasCoreMultifactorAuthenticationWebflowAutoConfiguration.class,
         CasCoreAuthenticationAutoConfiguration.class,
+        CasCoreMultitenancyAutoConfiguration.class,
         CasCoreTicketsAutoConfiguration.class,
         CasCoreAuditAutoConfiguration.class,
         CasWebAppAutoConfiguration.class,

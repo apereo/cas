@@ -7,6 +7,7 @@ ENDCOLOR="\e[0m"
 
 casVersion=(`cat ./gradle.properties | grep "version" | cut -d= -f2`)
 nextVersion="${casVersion}"
+privateRelease="false"
 
 while (("$#")); do
   case "$1" in
@@ -17,6 +18,10 @@ while (("$#")); do
   --next-version)
     nextVersion=$2
     shift 2
+    ;;
+  --private)
+    privateRelease="true"
+    shift 1
     ;;
   esac
 done
@@ -89,6 +94,11 @@ function publish {
         exit 1
     fi
 
+    if [[ "${privateRelease}" == "true" ]]; then
+        printgreen "This is a private release. Skipping Git tagging and GitHub Release creation."
+        return 0
+    fi
+    
     if [[ "$CI" == "true" ]]; then
         git config --global user.email "cas@apereo.org"
         git config --global user.name "Apereo CAS"
@@ -224,7 +234,7 @@ EOF
 }
 
 function finished {
-    printgreen "Done! The release is now automatically published. There is nothing more for you to do. Thank you!"
+    printgreen "Done! The release is now automatically published. There is nothing more for you to do!"
 }
 
 function init {

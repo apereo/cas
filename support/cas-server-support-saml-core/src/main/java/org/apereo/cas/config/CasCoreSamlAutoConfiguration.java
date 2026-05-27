@@ -12,7 +12,6 @@ import lombok.val;
 import net.shibboleth.shared.xml.ParserPool;
 import net.shibboleth.shared.xml.impl.BasicParserPool;
 import org.apache.commons.io.FileUtils;
-import org.apache.commons.lang3.ClassUtils;
 import org.apache.velocity.app.VelocityEngine;
 import org.apache.velocity.runtime.RuntimeConstants;
 import org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader;
@@ -84,11 +83,6 @@ public class CasCoreSamlAutoConfiguration {
         pool.setExpandEntityReferences(false);
         pool.setIgnoreComments(true);
         pool.setNamespaceAware(true);
-
-        val attributes = new HashMap<String, Object>();
-        val clazz = ClassUtils.getClass(casProperties.getSamlCore().getSecurityManager());
-        attributes.put("http://apache.org/xml/properties/security-manager", clazz.getDeclaredConstructor().newInstance());
-        pool.setBuilderAttributes(attributes);
 
         val features = new HashMap<String, Boolean>();
         features.put("http://apache.org/xml/features/disallow-doctype-decl", Boolean.TRUE);

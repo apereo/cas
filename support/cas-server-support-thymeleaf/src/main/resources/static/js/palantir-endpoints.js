@@ -207,6 +207,10 @@ class CasActuatorEndpoints {
         return actuatorEndpoints.passwordmanagement || actuatorEndpoints.passwordManagement;
     }
 
+    static impersonation() {
+        return actuatorEndpoints.impersonation;
+    }
+
     static all() {
         return Object.getOwnPropertyNames(CasActuatorEndpoints)
             .filter(name =>

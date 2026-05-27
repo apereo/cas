@@ -224,7 +224,12 @@ public abstract class AbstractSamlIdPProfileHandlerController extends AbstractCo
                 BrowserStorage.PARAMETER_BROWSER_STORAGE, sessionStorage);
         }
         LOGGER.debug("Redirecting SAML authN request to [{}]", urlToRedirectTo);
-        val mv = new ModelAndView(new RedirectView(urlToRedirectTo));
+        val mv = new ModelAndView(new RedirectView(urlToRedirectTo),
+            Map.of(
+                SamlIdPConstants.AUTHN_REQUEST_ID, authnRequest.getID(),
+                SamlProtocolConstants.PARAMETER_ENTITY_ID, SamlIdPUtils.getIssuerFromSamlObject(authnRequest)
+            )
+        );
         mv.setStatus(HttpStatus.FOUND);
         return mv;
     }

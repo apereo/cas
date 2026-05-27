@@ -100,25 +100,28 @@ public class OAuth20RevocationEndpointController<T extends OAuth20ConfigurationC
         });
         if (registryToken == null) {
             LOGGER.error("Provided token [{}] has not been found in the ticket registry", token);
-        } else if (isRefreshToken(registryToken) || isAccessToken(registryToken)) {
+            val mv = new ModelAndView(new JacksonJsonView());
+            mv.setStatus(HttpStatus.NOT_FOUND);
+            return mv;
+        }
+        
+        if (isRefreshToken(registryToken) || isAccessToken(registryToken)) {
             if (!Strings.CI.equals(clientId, registryToken.getClientId())) {
                 LOGGER.warn("Provided token [{}] has not been issued for the service [{}]", token, clientId);
                 return OAuth20Utils.writeError(response, OAuth20Constants.INVALID_REQUEST);
             }
-
             if (isRefreshToken(registryToken)) {
                 revokeToken((OAuth20RefreshToken) registryToken);
             } else {
                 revokeToken(registryToken.getId());
             }
-        } else {
-            LOGGER.error("Provided token [{}] is either not a refresh token or not an access token", token);
-            return OAuth20Utils.writeError(response, OAuth20Constants.INVALID_REQUEST);
+            val mv = new ModelAndView(new JacksonJsonView());
+            mv.setStatus(HttpStatus.OK);
+            return mv;
         }
+        LOGGER.error("Provided token [{}] is either not a refresh token or an access token", token);
+        return OAuth20Utils.writeError(response, OAuth20Constants.INVALID_REQUEST);
 
-        val mv = new ModelAndView(new JacksonJsonView());
-        mv.setStatus(HttpStatus.OK);
-        return mv;
     }
 
     private boolean verifyRevocationRequest(final WebContext context) throws Throwable {

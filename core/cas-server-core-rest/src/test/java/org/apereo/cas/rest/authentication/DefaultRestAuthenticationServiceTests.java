@@ -85,7 +85,7 @@ class DefaultRestAuthenticationServiceTests {
         val body = new LinkedMultiValueMap<String, String>();
         body.add(RestHttpRequestCredentialFactory.PARAMETER_USERNAME, "casuser");
         body.add(RestHttpRequestCredentialFactory.PARAMETER_PASSWORD, "Mellon");
-        val result = restAuthenticationService.authenticate(body, request, response).get();
+        val result = restAuthenticationService.authenticate(body, request, response).orElseThrow();
         assertEquals("casuser", result.getAuthentication().getPrincipal().getId());
     }
 

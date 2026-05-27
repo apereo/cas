@@ -17,7 +17,10 @@ public class TenantWebflowDecorator implements WebflowDecorator {
 
     @Override
     public void decorate(final RequestContext requestContext) {
-        tenantExtractor.extract(requestContext).ifPresent(tenant ->
-            requestContext.getFlowScope().put("tenantUserInterfacePolicy", tenant.getUserInterfacePolicy()));
+        tenantExtractor.extract(requestContext)
+            .ifPresent(tenant -> {
+                requestContext.getFlowScope().put("tenantUserInterfacePolicy", tenant.getUserInterfacePolicy());
+                requestContext.getFlowScope().put("tenantPath", TenantExtractor.toTenantPath(tenant));
+            });
     }
 }

@@ -1218,4 +1218,40 @@ async function initializeAuthenticationOperations() {
             });
         });
     }
+
+    if (CasActuatorEndpoints.impersonation()) {
+        showElements($("#surrogacy").parent());
+
+        $("#fetchSurrogateAccountsButton").on("click", () => {
+            const form = document.getElementById("fmSurrogateAccounts");
+            if (!form.reportValidity()) {
+                return;
+            }
+            const username = $("#surrogateUsername").val().trim();
+            $.ajax({
+                url: `${CasActuatorEndpoints.impersonation()}/${encodeURIComponent(username)}`,
+                method: "GET",
+                contentType: "application/json",
+                success: accounts => {
+                    const $dropdown = $("#surrogateAccountsDropdown");
+                    $dropdown.empty();
+                    if (accounts.length > 0) {
+                        for (const account of accounts) {
+                            $dropdown.append($("<option>", {value: account, text: account}));
+                        }
+                        $dropdown.prop("selectedIndex", 0);
+                        $dropdown.selectmenu("refresh");
+                        showElements($("#surrogateAccountsContainer"));
+                    } else {
+                        hideElements($("#surrogateAccountsContainer"));
+                    }
+                },
+                error: (xhr) => {
+                    console.error("Error fetching surrogate accounts:", xhr.responseText);
+                    displayBanner(xhr);
+                }
+            });
+        });
+    }
+
 }

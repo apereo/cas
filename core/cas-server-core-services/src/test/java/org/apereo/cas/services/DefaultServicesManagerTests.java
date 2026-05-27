@@ -4,6 +4,7 @@ import module java.base;
 import org.apereo.cas.config.BaseAutoConfigurationTests;
 import org.apereo.cas.services.query.RegisteredServiceQuery;
 import org.apereo.cas.test.CasTestExtension;
+import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.RandomUtils;
 import lombok.val;
 import org.junit.jupiter.api.Assertions;
@@ -17,6 +18,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.core.Ordered;
+import org.springframework.test.context.ActiveProfiles;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
@@ -95,6 +97,15 @@ class DefaultServicesManagerTests {
             assertNotNull(servicesManager.save(svc, false));
             assertEquals(1, servicesManager.getDomains().count());
             assertFalse(servicesManager.getServicesForDomain("example.org").isEmpty());
+        }
+
+        @Test
+        void verifySaveWithoutServiceName() {
+            val svc = new CasRegisteredService();
+            svc.setId(RandomUtils.nextLong());
+            svc.setName(null);
+            svc.setServiceId("https://www.example.com/" + svc.getId());
+            assertNotNull(servicesManager.save(svc, false));
         }
 
         @Test
@@ -198,7 +209,7 @@ class DefaultServicesManagerTests {
         @Autowired
         @Qualifier(ServicesManager.BEAN_NAME)
         private ChainingServicesManager servicesManager;
-        
+
         @Test
         void verifyOperation() {
             val indexedServicesManager = (IndexableServicesManager) servicesManager.getServiceManagers().getFirst();
@@ -230,5 +241,27 @@ class DefaultServicesManagerTests {
     @SpringBootTest(classes = BaseAutoConfigurationTests.SharedTestConfiguration.class,
         properties = "cas.service-registry.cache.cache-size=0")
     class NoCacheTests extends AbstractServicesManagerTests {
+    }
+
+
+    @Nested
+    @SpringBootTest(classes = BaseAutoConfigurationTests.SharedTestConfiguration.class)
+    @ActiveProfiles({"prod1", "qa1"})
+    class EnvironmentTests extends AbstractServicesManagerTests {
+
+        @Test
+        void verifyServiceByEnvironment() {
+            val registeredService = new CasRegisteredService();
+            registeredService.setId(RandomUtils.nextLong());
+            registeredService.setName(getClass().getSimpleName());
+            registeredService.setServiceId(getClass().getSimpleName());
+            registeredService.setEnvironments(CollectionUtils.wrapHashSet("dev1"));
+            servicesManager.save(registeredService);
+            assertNull(servicesManager.findServiceBy(RegisteredServiceTestUtils.getService(getClass().getSimpleName())));
+            assertNull(servicesManager.findServiceBy(registeredService.getId()));
+            registeredService.setEnvironments(CollectionUtils.wrapHashSet("prod1"));
+            servicesManager.save(registeredService);
+            assertNotNull(servicesManager.findServiceBy(registeredService.getId()));
+        }
     }
 }

@@ -51,7 +51,7 @@ import jakarta.servlet.http.HttpServletRequest;
  * If the theme attribute in the service is not a file or URL resource, it will be evaluated as
  * a Spring expression and then a search for property files with the theme name as the base name
  * is done using configured template prefix locations.
- * If nothing is found in template prefix locations, the {@link java.util.ResourceBundle#getBundle(String, Locale)} method
+ * If nothing is found in template prefix locations, the {@link ResourceBundle#getBundle(String, Locale)} method
  * using the locale of the request is used to look for the theme properties to ensure it exists.
  * If theme properties don't exist for the specified theme name then the default theme will be used.
  *

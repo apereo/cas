@@ -4,7 +4,6 @@ import module java.base;
 import org.apereo.cas.configuration.model.support.jpa.AbstractJpaProperties;
 import org.apereo.cas.configuration.model.support.jpa.DatabaseProperties;
 import lombok.val;
-import org.jspecify.annotations.NonNull;
 import org.springframework.beans.factory.FactoryBean;
 import org.springframework.orm.jpa.JpaVendorAdapter;
 import jakarta.persistence.EntityManagerFactory;
@@ -51,8 +50,8 @@ public interface JpaBeanFactory {
      * @param jpaProperties the jpa properties
      * @return the local container entity manager factory bean
      */
-    FactoryBean<@NonNull EntityManagerFactory> newEntityManagerFactoryBean(JpaConfigurationContext config,
-                                                                           AbstractJpaProperties jpaProperties);
+    FactoryBean<EntityManagerFactory> newEntityManagerFactoryBean(JpaConfigurationContext config,
+                                                                  AbstractJpaProperties jpaProperties);
 
     /**
      * New persistence provider.

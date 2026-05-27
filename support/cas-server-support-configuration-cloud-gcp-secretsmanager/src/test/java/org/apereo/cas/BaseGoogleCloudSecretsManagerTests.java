@@ -7,6 +7,7 @@ import org.apereo.cas.test.CasTestExtension;
 import org.apereo.cas.util.spring.boot.SpringBootTestAutoConfigurations;
 import com.google.api.gax.core.CredentialsProvider;
 import com.google.api.gax.core.NoCredentialsProvider;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -33,6 +34,7 @@ import org.springframework.core.env.Environment;
 })
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @ExtendWith(CasTestExtension.class)
+@Tag("GCP")
 public abstract class BaseGoogleCloudSecretsManagerTests {
     @Autowired
     @Qualifier("googleCloudSecretsManagerPropertySourceLocator")

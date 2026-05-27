@@ -29,7 +29,7 @@ class MongoDbConnectionFactoryTests {
         props.setClientUri(URI);
         val template = factory.buildMongoTemplate(props);
         assertNotNull(template);
-        factory.createCollection(template, getClass().getSimpleName(), true);
+        MongoDbConnectionFactory.createCollection(template, getClass().getSimpleName(), true);
     }
 
     @Test

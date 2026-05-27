@@ -13,6 +13,7 @@ import lombok.val;
 import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.Strings;
+import org.jspecify.annotations.Nullable;
 import org.springframework.beans.factory.BeanFactoryUtils;
 import org.springframework.boot.context.properties.ConfigurationPropertiesBean;
 import org.springframework.boot.context.properties.bind.BindException;
@@ -83,7 +84,7 @@ public class CasConfigurationPropertiesValidator {
         return List.of();
     }
 
-    private List<CasConfigurationPropertyBindingResult> validateCasConfiguration() {
+    private @Nullable List<CasConfigurationPropertyBindingResult> validateCasConfiguration() {
         return FunctionUtils.doAndHandle(() -> configurationPropertyClasses.stream().map(this::validateConfiguration).flatMap(List::stream).toList());
     }
 

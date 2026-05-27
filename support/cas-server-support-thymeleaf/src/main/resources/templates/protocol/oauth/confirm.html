@@ -6,14 +6,53 @@
 </head>
 
 <body id="cas">
-    <div layout:fragment="content" class="banner banner-success mdc-card card p-4 m-auto w-lg-66">
-        <h2 th:text="#{screen.oauth.confirm.header}" />
-        <p th:text="#{screen.oauth.confirm.message(${serviceName})}" />
-        <p>
-            <a class="mdc-button mdc-button--raised btn btn-primary" id="allow" name="allow" th:href="@{${callbackUrl}}">
-                <span class="mdc-button__label" th:text="#{screen.oauth.confirm.allow}">Allow</span>
-            </a>
-        </p>
+    <div layout:fragment="content" class="mdc-card card p-4 m-auto w-lg-66">
+        <div id="scopeContainer" class="d-none">
+            <h2 th:text="#{screen.oauth.confirm.header}" />
+            <p th:text="#{screen.oauth.confirm.message(${service.name})}" />
+
+            <div id="scopes" th:unless="${#sets.isEmpty(scopes)}">
+                <h3 class="border-bottom bg-primary p-2" th:text="#{screen.oauth.confirm.scopes}"/>
+                <p th:text="#{screen.oauth.confirm.asksinfo}"/>
+
+                <dl class="dl-class0 dl-class1">
+                    <div th:each="scope : ${scopes}">
+                <span th:id="${scope}">
+                    <dt class="dt-class0 dt-class1 mdi mdi-cog"> <strong><code th:text="${scope}"/></strong></dt>
+                    <dd class="dd-class0 dd-class1" th:utext="#{screen.oauth.confirm.scope.__${scope}__}"/>
+                </span>
+                    </div>
+                </dl>
+            </div>
+            <p>
+                <a class="mdc-button mdc-button--raised btn btn-primary" id="allow" th:href="@{${callbackUrl}}">
+                    <span class="mdc-button__label" th:text="#{screen.oauth.confirm.allow}">Allow</span>
+                </a>
+            </p>
+        </div>
+
+        <div id="progressPanel" class="d-none">
+            <h2 id="processingTitle" th:utext="#{screen.processing.title}"></h2>
+            <p id="processingText" th:utext="#{screen.oauth.confirm.processing}"></p>
+            <div id="progressBar" role="progressbar" class="mdc-linear-progress mdc-linear-progress--indeterminate">
+                <div class="mdc-linear-progress__buffer">
+                    <div class="mdc-linear-progress__buffer-bar"></div>
+                    <div class="mdc-linear-progress__buffer-dots"></div>
+                </div>
+                <div class="mdc-linear-progress__bar mdc-linear-progress__primary-bar">
+                    <span class="mdc-linear-progress__bar-inner"></span>
+                </div>
+                <div class="mdc-linear-progress__bar mdc-linear-progress__secondary-bar">
+                    <span class="mdc-linear-progress__bar-inner"></span>
+                </div>
+            </div>
+        </div>
+        
+        <script th:inline="javascript">
+            const approvalKey = /*[[${approvalKey}]]*/ "";
+            const recordKey = /*[[${recordKey}]]*/ "";
+            handleScopeApproval(approvalKey, recordKey, "cas-oauth-consent-scope");
+        </script>
     </div>
 </body>
 

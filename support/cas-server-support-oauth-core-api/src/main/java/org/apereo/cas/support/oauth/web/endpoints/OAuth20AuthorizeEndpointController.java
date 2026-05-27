@@ -113,7 +113,7 @@ public class OAuth20AuthorizeEndpointController<T extends OAuth20ConfigurationCo
 
         if (isRequestAuthenticated(manager, context, registeredService)) {
             val mv = getConfigurationContext().getConsentApprovalViewResolver().resolve(context, registeredService);
-            if (!mv.isEmpty() && mv.hasView()) {
+            if (mv != null && !mv.isEmpty() && mv.hasView()) {
                 LOGGER.debug("Redirecting to consent-approval view with model [{}]", mv.getModel());
                 return mv;
             }

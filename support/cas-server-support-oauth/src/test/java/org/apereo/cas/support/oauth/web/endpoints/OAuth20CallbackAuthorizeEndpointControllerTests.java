@@ -9,11 +9,8 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.pac4j.core.util.Pac4jConstants;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.http.HttpMethod;
 import org.springframework.mock.web.MockHttpServletRequest;
-import org.springframework.mock.web.MockHttpServletResponse;
-import org.springframework.web.servlet.view.AbstractUrlBasedView;
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
@@ -24,83 +21,72 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 @Tag("OAuthWeb")
 class OAuth20CallbackAuthorizeEndpointControllerTests extends AbstractOAuth20Tests {
-    @Autowired
-    @Qualifier("callbackAuthorizeController")
-    private OAuth20CallbackAuthorizeEndpointController callbackAuthorizeController;
-
     private OAuthRegisteredService registeredService;
 
     @BeforeEach
     void initialize() {
-
         registeredService = addRegisteredService();
     }
 
     @Test
-    void verifyOperation() {
-        val request = new MockHttpServletRequest();
+    void verifyOperation() throws Throwable {
+        val request = new MockHttpServletRequest(HttpMethod.GET.name(), CONTEXT + OAuth20Constants.CALLBACK_AUTHORIZE_URL);
         request.addParameter(OAuth20Constants.CLIENT_ID, registeredService.getClientId());
         request.addParameter(OAuth20Constants.REDIRECT_URI, REDIRECT_URI);
-        val response = new MockHttpServletResponse();
-        val view = callbackAuthorizeController.handleRequest(request, response);
-        assertNotNull(view);
-        assertEquals(REDIRECT_URI, ((AbstractUrlBasedView) view.getView()).getUrl());
+        val result = performOAuthRequest(request);
+        assertEquals(302, result.getResponse().getStatus());
+        assertEquals(REDIRECT_URI, result.getResponse().getRedirectedUrl());
     }
 
     @Test
-    void verifyOperationClientsWithSameRedirectUri() {
+    void verifyOperationClientsWithSameRedirectUri() throws Throwable {
         addRegisteredService();
         val newRegisteredService = addRegisteredService();
         addRegisteredService();
 
-        val request = new MockHttpServletRequest();
+        val request = new MockHttpServletRequest(HttpMethod.GET.name(), CONTEXT + OAuth20Constants.CALLBACK_AUTHORIZE_URL);
         request.addParameter(OAuth20Constants.CLIENT_ID, newRegisteredService.getClientId());
         request.addParameter(OAuth20Constants.REDIRECT_URI, REDIRECT_URI);
-        val response = new MockHttpServletResponse();
-        val view = callbackAuthorizeController.handleRequest(request, response);
-        assertNotNull(view);
-        assertEquals(REDIRECT_URI, ((AbstractUrlBasedView) view.getView()).getUrl());
+        val result = performOAuthRequest(request);
+        assertEquals(302, result.getResponse().getStatus());
+        assertEquals(REDIRECT_URI, result.getResponse().getRedirectedUrl());
     }
 
     @Test
-    void verifyOperationWithoutRedirectUri() {
-        val request = new MockHttpServletRequest();
+    void verifyOperationWithoutRedirectUri() throws Throwable {
+        val request = new MockHttpServletRequest(HttpMethod.GET.name(), CONTEXT + OAuth20Constants.CALLBACK_AUTHORIZE_URL);
         request.addParameter(OAuth20Constants.CLIENT_ID, registeredService.getClientId());
-        val response = new MockHttpServletResponse();
-        val view = callbackAuthorizeController.handleRequest(request, response);
-        assertNotNull(view);
-        assertEquals(Pac4jConstants.DEFAULT_URL_VALUE, ((AbstractUrlBasedView) view.getView()).getUrl());
+        val result = performOAuthRequest(request);
+        assertEquals(302, result.getResponse().getStatus());
+        assertEquals(Pac4jConstants.DEFAULT_URL_VALUE, result.getResponse().getRedirectedUrl());
     }
 
     @Test
-    void verifyOperationWithoutClientId() {
-        val request = new MockHttpServletRequest();
+    void verifyOperationWithoutClientId() throws Throwable {
+        val request = new MockHttpServletRequest(HttpMethod.GET.name(), CONTEXT + OAuth20Constants.CALLBACK_AUTHORIZE_URL);
         request.addParameter(OAuth20Constants.REDIRECT_URI, REDIRECT_URI);
-        val response = new MockHttpServletResponse();
-        val view = callbackAuthorizeController.handleRequest(request, response);
-        assertNotNull(view);
-        assertEquals(Pac4jConstants.DEFAULT_URL_VALUE, ((AbstractUrlBasedView) view.getView()).getUrl());
+        val result = performOAuthRequest(request);
+        assertEquals(302, result.getResponse().getStatus());
+        assertEquals(Pac4jConstants.DEFAULT_URL_VALUE, result.getResponse().getRedirectedUrl());
     }
 
     @Test
-    void verifyOperationBadClientId() {
-        val request = new MockHttpServletRequest();
+    void verifyOperationBadClientId() throws Throwable {
+        val request = new MockHttpServletRequest(HttpMethod.GET.name(), CONTEXT + OAuth20Constants.CALLBACK_AUTHORIZE_URL);
         request.addParameter(OAuth20Constants.CLIENT_ID, "badClientId");
         request.addParameter(OAuth20Constants.REDIRECT_URI, REDIRECT_URI);
-        val response = new MockHttpServletResponse();
-        val view = callbackAuthorizeController.handleRequest(request, response);
-        assertNotNull(view);
-        assertEquals(Pac4jConstants.DEFAULT_URL_VALUE, ((AbstractUrlBasedView) view.getView()).getUrl());
+        val result = performOAuthRequest(request);
+        assertEquals(302, result.getResponse().getStatus());
+        assertEquals(Pac4jConstants.DEFAULT_URL_VALUE, result.getResponse().getRedirectedUrl());
     }
 
     @Test
-    void verifyOperationBadRedirectUri() {
-        val request = new MockHttpServletRequest();
+    void verifyOperationBadRedirectUri() throws Throwable {
+        val request = new MockHttpServletRequest(HttpMethod.GET.name(), CONTEXT + OAuth20Constants.CALLBACK_AUTHORIZE_URL);
         request.addParameter(OAuth20Constants.CLIENT_ID, registeredService.getClientId());
         request.addParameter(OAuth20Constants.REDIRECT_URI, "http://badredirecturi");
-        val response = new MockHttpServletResponse();
-        val view = callbackAuthorizeController.handleRequest(request, response);
-        assertNotNull(view);
-        assertEquals(Pac4jConstants.DEFAULT_URL_VALUE, ((AbstractUrlBasedView) view.getView()).getUrl());
+        val result = performOAuthRequest(request);
+        assertEquals(302, result.getResponse().getStatus());
+        assertEquals(Pac4jConstants.DEFAULT_URL_VALUE, result.getResponse().getRedirectedUrl());
     }
 }
