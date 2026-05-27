@@ -37,7 +37,7 @@ public abstract class AbstractServicesManager implements IndexableServicesManage
 
     protected final CasReentrantLock lock = new CasReentrantLock();
 
-    protected List<RegisteredService> sortedRegisteredServices;
+    protected @Nullable List<RegisteredService> sortedRegisteredServices;
 
     protected AbstractServicesManager(final ServicesManagerConfigurationContext configurationContext) {
         this.configurationContext = configurationContext;
@@ -71,6 +71,7 @@ public abstract class AbstractServicesManager implements IndexableServicesManage
                 val clientInfo = ClientInfoHolder.getClientInfo();
                 publishEvent(new CasRegisteredServicePreSaveEvent(this, registeredService, clientInfo));
                 flattenAttributeReleasePolicy(registeredService);
+                verifyServiceDefinition(registeredService);
                 val savedService = configurationContext.getServiceRegistry().save(registeredService);
                 cacheRegisteredService(savedService);
                 saveInternal(registeredService);
@@ -83,6 +84,7 @@ public abstract class AbstractServicesManager implements IndexableServicesManage
             return null;
         });
     }
+    
 
     @Override
     public void save(final Supplier<RegisteredService> supplier,
@@ -94,6 +96,7 @@ public abstract class AbstractServicesManager implements IndexableServicesManage
             if (registeredService != null && supports(registeredService)) {
                 publishEvent(new CasRegisteredServicePreSaveEvent(this, registeredService, clientInfo));
                 flattenAttributeReleasePolicy(registeredService);
+                verifyServiceDefinition(registeredService);
                 cacheRegisteredService(registeredService);
                 saveInternal(registeredService);
                 publishEvent(new CasRegisteredServiceSavedEvent(this, registeredService, clientInfo));
@@ -508,6 +511,17 @@ public abstract class AbstractServicesManager implements IndexableServicesManage
         if (registeredService.getAttributeReleasePolicy() instanceof final RegisteredServiceChainingAttributeReleasePolicy chain
             && chain.getPolicies().size() == 1) {
             registeredService.setAttributeReleasePolicy(chain.getPolicies().getFirst());
+        }
+    }
+
+    private static void verifyServiceDefinition(final RegisteredService registeredService) {
+        if (StringUtils.isBlank(registeredService.getName())) {
+            registeredService.setName("Service-" + registeredService.getId());
+            LOGGER.warn("Registered service with id [{}] and service id [{}] is not assigned a name. "
+                    + "This is a required field and failure to set this field correctly may lead to "
+                    + "unpredictable behavior. For now, CAS has automatically assigned a name to this service: [{}]."
+                    + "To remove this warning, please consider assigning a name to the application definition directly.",
+                registeredService.getId(), registeredService.getServiceId(), registeredService.getName());
         }
     }
 }

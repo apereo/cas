@@ -31,6 +31,12 @@ public class OAuth20RegisteredServiceCipherExecutor extends BaseStringCipherExec
         super(null, null, 0, 0);
     }
 
+    public OAuth20RegisteredServiceCipherExecutor(final String secretKeyEncryption,
+                                                  final String secretKeySigning,
+                                                  final String alg) {
+        super(secretKeyEncryption, secretKeySigning, alg, 0, 0);
+    }
+
     @Override
     public String getName() {
         return "OAuth Registered Service";

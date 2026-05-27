@@ -127,7 +127,7 @@ public abstract class AbstractCasWebflowConfigurer implements CasWebflowConfigur
 
     @Override
     public void initialize() {
-        FunctionUtils.doAndHandle(o -> {
+        FunctionUtils.doAndHandle(_ -> {
             LOGGER.trace("Initializing CAS webflow configuration...");
             if (casProperties.getWebflow().getAutoConfiguration().isEnabled()) {
                 doInitialize();

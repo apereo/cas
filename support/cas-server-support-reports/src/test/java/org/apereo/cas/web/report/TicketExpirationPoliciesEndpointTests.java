@@ -9,10 +9,10 @@ import org.apereo.cas.services.RegisteredServiceTestUtils;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.http.MediaType;
 import org.springframework.test.context.TestPropertySource;
-import static org.junit.jupiter.api.Assertions.*;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 /**
  * This is {@link TicketExpirationPoliciesEndpointTests}.
@@ -23,12 +23,8 @@ import static org.junit.jupiter.api.Assertions.*;
 @TestPropertySource(properties = "management.endpoint.ticketExpirationPolicies.access=UNRESTRICTED")
 @Tag("ActuatorEndpoint")
 class TicketExpirationPoliciesEndpointTests extends AbstractCasEndpointTests {
-    @Autowired
-    @Qualifier("ticketExpirationPoliciesEndpoint")
-    private TicketExpirationPoliciesEndpoint ticketExpirationPoliciesEndpoint;
-
     @Test
-    void verifyOperation() {
+    void verifyOperation() throws Exception {
         val service = RegisteredServiceTestUtils.getRegisteredService(UUID.randomUUID().toString());
         val tgtPolicy = new DefaultRegisteredServiceTicketGrantingTicketExpirationPolicy().setMaxTimeToLiveInSeconds(10);
         service.setTicketGrantingTicketExpirationPolicy(tgtPolicy);
@@ -37,13 +33,24 @@ class TicketExpirationPoliciesEndpointTests extends AbstractCasEndpointTests {
         service.setProxyGrantingTicketExpirationPolicy(new DefaultRegisteredServiceProxyGrantingTicketExpirationPolicy(10));
         servicesManager.save(service);
 
-        assertFalse(ticketExpirationPoliciesEndpoint.getExpirationPolicyBuilders().isEmpty());
-        assertNotNull(ticketExpirationPoliciesEndpoint.getServicesManagerProvider().getObject());
-        assertNotNull(ticketExpirationPoliciesEndpoint.getWebApplicationServiceFactory());
-        var results = ticketExpirationPoliciesEndpoint.handle(service.getServiceId());
-        assertFalse(results.isEmpty());
+        mockMvc.perform(get("/actuator/ticketExpirationPolicies")
+                .accept(MediaType.APPLICATION_JSON))
+            .andExpect(status().isOk())
+            .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
+            .andExpect(jsonPath("$").isNotEmpty());
 
-        results = ticketExpirationPoliciesEndpoint.handle(String.valueOf(service.getId()));
-        assertFalse(results.isEmpty());
+        mockMvc.perform(get("/actuator/ticketExpirationPolicies")
+                .param("serviceId", service.getServiceId())
+                .accept(MediaType.APPLICATION_JSON))
+            .andExpect(status().isOk())
+            .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
+            .andExpect(jsonPath("$").isNotEmpty());
+
+        mockMvc.perform(get("/actuator/ticketExpirationPolicies")
+                .param("serviceId", String.valueOf(service.getId()))
+                .accept(MediaType.APPLICATION_JSON))
+            .andExpect(status().isOk())
+            .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
+            .andExpect(jsonPath("$").isNotEmpty());
     }
 }

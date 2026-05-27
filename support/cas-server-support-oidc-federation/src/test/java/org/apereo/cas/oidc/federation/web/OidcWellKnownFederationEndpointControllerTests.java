@@ -2,6 +2,7 @@ package org.apereo.cas.oidc.federation.web;
 
 import module java.base;
 import org.apereo.cas.oidc.OidcConstants;
+import org.apereo.cas.oidc.federation.AbstractOidcIntermediateFederationTests;
 import org.apereo.cas.oidc.federation.AbstractOidcOpenIdProviderFederationTests;
 import org.apereo.cas.oidc.federation.AbstractOidcTrustAnchorFederationTests;
 import org.apereo.cas.support.oauth.OAuth20Constants;
@@ -69,6 +70,44 @@ class OidcWellKnownFederationEndpointControllerTests {
     }
 
     @Nested
+    class IntermediateFederationEndpointTests extends AbstractOidcIntermediateFederationTests {
+
+        @Test
+        void verifyInvalidIssuer() throws Exception {
+            mockMvc.perform(get(FEDERATION_ENDPOINT_URL)
+                            .with(request -> {
+                                request.setScheme("https");
+                                request.setServerName("unknown.example.org");
+                                request.setContextPath("/cas");
+                                request.setServletPath("/cas");
+                                request.setServerPort(443);
+                                return request;
+                            }))
+                    .andExpect(status().isBadRequest())
+                    .andExpect(jsonPath("$.error").value(OAuth20Constants.INVALID_REQUEST))
+                    .andExpect(jsonPath("$.error_description").value("Invalid issuer"));
+        }
+
+        @Test
+        void verifyOperation() throws Exception {
+            val result = mockMvc.perform(get(FEDERATION_ENDPOINT_URL)
+                            .with(withHttpRequestProcessor()))
+                    .andExpect(status().isOk())
+                    .andExpect(content().contentType(OidcConstants.ENTITY_STATEMENT_CONTENT_TYPE))
+                    .andReturn();
+            val jwt = SignedJWT.parse(result.getResponse().getContentAsString());
+            val claims = jwt.getJWTClaimsSet();
+            assertEquals("https://sso.example.org/cas/oidc", claims.getIssuer());
+            assertEquals("https://sso.example.org/cas/oidc", claims.getSubject());
+            assertNotNull(claims.getClaim("authority_hints"));
+            assertNotNull(claims.getClaim("jwks"));
+            val metadata = (Map) claims.getClaim("metadata");
+            assertNotNull(metadata.get("federation_entity"));
+            assertNull(metadata.get("openid_provider"));
+        }
+    }
+
+    @Nested
     class OpenIdProviderFederationEndpointTests extends AbstractOidcOpenIdProviderFederationTests {
 
         @Test
@@ -117,7 +156,7 @@ class OidcWellKnownFederationEndpointControllerTests {
             "cas.authn.oidc.core.issuer=https://sso.example.org/cas/oidc"
         }, webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
     @Nested
-    class BadRoleOpenIdProviderFederationEndpointTests extends AbstractOidcOpenIdProviderFederationTests {
+    class BadTrustAnchorRoleOpenIdProviderFederationEndpointTests extends AbstractOidcOpenIdProviderFederationTests {
 
         @Test
         void verifyOperation() throws Exception {
@@ -127,6 +166,30 @@ class OidcWellKnownFederationEndpointControllerTests {
             });
             assertTrue(thrown.getCause() instanceof IllegalArgumentException);
             assertEquals("Federation role [TRUST_ANCHOR] is not supported for OpenID Provider", thrown.getCause().getMessage());
+        }
+    }
+
+    @SpringBootTest(
+        classes = AbstractOidcOpenIdProviderFederationTests.SharedTestConfiguration.class,
+        properties = {
+            "cas.server.name=https://sso.example.org/",
+            "cas.server.prefix=https://sso.example.org/cas",
+            "cas.authn.oidc.federation.role=INTERMEDIATE",
+            "cas.authn.oidc.jwks.file-system.jwks-file=file:${#systemProperties['java.io.tmpdir']}/oidc.jwks",
+            "cas.authn.oidc.federation.jwks-file=file:${#systemProperties['java.io.tmpdir']}/federation.jwks",
+            "cas.authn.oidc.core.issuer=https://sso.example.org/cas/oidc"
+        }, webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
+    @Nested
+    class BadIntermediateRoleOpenIdProviderFederationEndpointTests extends AbstractOidcOpenIdProviderFederationTests {
+
+        @Test
+        void verifyOperation() throws Exception {
+            val thrown = assertThrows(ServletException.class, () -> {
+                mockMvc.perform(get(FEDERATION_ENDPOINT_URL)
+                        .with(withHttpRequestProcessor()));
+            });
+            assertTrue(thrown.getCause() instanceof IllegalArgumentException);
+            assertEquals("Federation role [INTERMEDIATE] is not supported for OpenID Provider", thrown.getCause().getMessage());
         }
     }
 
@@ -149,6 +212,79 @@ class OidcWellKnownFederationEndpointControllerTests {
             });
             assertTrue(thrown.getCause() instanceof IllegalArgumentException);
             assertEquals("Federation role [OPENID_PROVIDER] is not supported for Trust Anchor/Intermediate", thrown.getCause().getMessage());
+        }
+    }
+
+    @SpringBootTest(
+        classes = AbstractOidcOpenIdProviderFederationTests.SharedTestConfiguration.class,
+        properties = {
+            "cas.server.name=https://sso.example.org/",
+            "cas.server.prefix=https://sso.example.org/cas",
+            "cas.authn.oidc.core.issuer=https://sso.example.org/cas/oidc",
+            "cas.authn.oidc.jwks.file-system.jwks-file=file:${#systemProperties['java.io.tmpdir']}/oidc.jwks",
+            "cas.authn.oidc.federation.role=OPENID_PROVIDER",
+            "cas.authn.oidc.federation.jwks-file=file:${#systemProperties['java.io.tmpdir']}/federation.jwks"
+        }, webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
+    @Nested
+    class MissingAuthorityHintsOpenIdProviderFederationTests extends AbstractOidcOpenIdProviderFederationTests {
+
+        @Test
+        void verifyOperation() throws Exception {
+            val thrown = assertThrows(ServletException.class, () -> {
+                mockMvc.perform(get(FEDERATION_ENDPOINT_URL)
+                        .with(withHttpRequestProcessor()));
+            });
+            assertTrue(thrown.getCause() instanceof IllegalArgumentException);
+            assertEquals("OpenID provider requires authority hint(s)", thrown.getCause().getMessage());
+        }
+    }
+
+    @SpringBootTest(
+        classes = AbstractOidcIntermediateFederationTests.SharedTestConfiguration.class,
+        properties = {
+            "cas.server.name=https://sso.example.org/",
+            "cas.server.prefix=https://sso.example.org/cas",
+            "cas.authn.oidc.core.issuer=https://sso.example.org/cas/oidc",
+            "cas.authn.oidc.federation.role=INTERMEDIATE",
+            "cas.authn.oidc.federation.jwks-file=file:${#systemProperties['java.io.tmpdir']}/federation.jwks",
+            "cas.authn.oidc.federation.subordinate-directory=./src/test/resources/subordinates"
+        }, webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
+    @Nested
+    class MissingAuthorityHintsIntermediateFederationTests extends AbstractOidcIntermediateFederationTests {
+
+        @Test
+        void verifyOperation() throws Exception {
+            val thrown = assertThrows(ServletException.class, () -> {
+                mockMvc.perform(get(FEDERATION_ENDPOINT_URL)
+                        .with(withHttpRequestProcessor()));
+            });
+            assertTrue(thrown.getCause() instanceof IllegalArgumentException);
+            assertEquals("Intermediate requires authority hint(s)", thrown.getCause().getMessage());
+        }
+    }
+
+    @SpringBootTest(
+        classes = AbstractOidcTrustAnchorFederationTests.SharedTestConfiguration.class,
+        properties = {
+            "cas.server.name=https://sso.example.org/",
+            "cas.server.prefix=https://sso.example.org/cas",
+            "cas.authn.oidc.core.issuer=https://sso.example.org/cas/oidc",
+            "cas.authn.oidc.federation.role=TRUST_ANCHOR",
+            "cas.authn.oidc.federation.jwks-file=file:${#systemProperties['java.io.tmpdir']}/federation.jwks",
+            "cas.authn.oidc.federation.subordinate-directory=./src/test/resources/subordinates",
+            "cas.authn.oidc.federation.authority-hints[0]=https://trustanchor"
+        }, webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
+    @Nested
+    class ExistingAuthorityHintsTrustAnchorFederationTests extends AbstractOidcTrustAnchorFederationTests {
+
+        @Test
+        void verifyOperation() throws Exception {
+            val thrown = assertThrows(ServletException.class, () -> {
+                mockMvc.perform(get(FEDERATION_ENDPOINT_URL)
+                        .with(withHttpRequestProcessor()));
+            });
+            assertTrue(thrown.getCause() instanceof IllegalArgumentException);
+            assertEquals("Trust anchor requires no authority hints", thrown.getCause().getMessage());
         }
     }
 }

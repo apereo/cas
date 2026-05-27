@@ -638,15 +638,17 @@ function openAttributeDefinitionDialog(existingDefinition) {
         paramName: "patternFormat"
     });
 
-    createInputField({
-        labelTitle: "Script",
-        name: "attributeDefinitionScript",
-        required: false,
-        containerId: controlsPanel,
-        title: "The script to run for the attribute value.",
-        cssClasses: "always-show",
-        paramName: "script"
-    });
+    if (scriptFactoryAvailable) {
+        createInputField({
+            labelTitle: "Script",
+            name: "attributeDefinitionScript",
+            required: false,
+            containerId: controlsPanel,
+            title: "The script to run for the attribute value.",
+            cssClasses: "always-show",
+            paramName: "script"
+        });
+    }
 
     createSelectField({
         containerId: controlsPanel,

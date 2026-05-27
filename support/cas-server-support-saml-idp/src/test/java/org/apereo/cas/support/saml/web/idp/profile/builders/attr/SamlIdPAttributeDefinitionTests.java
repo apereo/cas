@@ -40,7 +40,7 @@ class SamlIdPAttributeDefinitionTests extends BaseSamlIdPConfigurationTests {
     @Test
     void verifyEduPersonTargetedID() throws Throwable {
         val defn = attributeDefinitionStore.locateAttributeDefinition("eduPersonTargetedID", SamlIdPAttributeDefinition.class)
-            .get().withSalt(UUID.randomUUID().toString());
+            .orElseThrow().withSalt(UUID.randomUUID().toString());
         val values = defn.resolveAttributeValues(getAttributeDefinitionResolutionContext());
         assertEquals(1, values.size());
     }

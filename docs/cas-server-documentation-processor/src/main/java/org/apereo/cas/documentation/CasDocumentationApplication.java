@@ -46,6 +46,7 @@ import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import jakarta.servlet.http.HttpServletRequest;
@@ -805,6 +806,18 @@ public class CasDocumentationApplication {
                         paramData.put("description", "Path variable selector");
                         paramData.put("required", true);
                         paramData.put("selector", true);
+                        parameters.add(paramData);
+                    }
+                    var requestHeaderAnn = parameter.getAnnotation(RequestHeader.class);
+                    if (requestHeaderAnn != null) {
+                        var paramData = new LinkedHashMap<String, Object>();
+                        var name = StringUtils.defaultIfBlank(requestHeaderAnn.name(), requestHeaderAnn.value());
+                        name = StringUtils.defaultIfBlank(name, parameter.getName());
+                        paramData.put("name", name);
+                        paramData.put("description", "Request header");
+                        paramData.put("required", requestHeaderAnn.required());
+                        paramData.put("defaultValue", requestHeaderAnn.defaultValue());
+                        paramData.put("header", true);
                         parameters.add(paramData);
                     }
                 }

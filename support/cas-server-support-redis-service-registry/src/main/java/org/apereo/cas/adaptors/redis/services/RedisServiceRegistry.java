@@ -84,15 +84,16 @@ public class RedisServiceRegistry extends AbstractServiceRegistry {
     @Override
     public void deleteAll() {
         try (val keys = getRegisteredServiceKeys()) {
-            keys.forEach(this.template::delete);
+            val keyList = keys.toList();
+            if (!keyList.isEmpty()) {
+                this.template.delete(keyList);
+            }
         }
     }
 
     @Override
     public long size() {
-        try (val keys = getRegisteredServiceKeys()) {
-            return keys.count();
-        }
+        return template.count(getPatternRegisteredServiceRedisKey());
     }
 
     @Override
@@ -100,12 +101,20 @@ public class RedisServiceRegistry extends AbstractServiceRegistry {
         val clientInfo = ClientInfoHolder.getClientInfo();
 
         try (val keys = getRegisteredServiceKeys()) {
-            val list = keys
-                .map(redisKey -> this.template.boundValueOps(redisKey).get())
+            val keyList = keys.toList();
+            if (keyList.isEmpty()) {
+                return List.of();
+            }
+            val values = template.opsForValue().multiGet(keyList);
+            if (values == null) {
+                return List.of();
+            }
+            val list = values
+                .stream()
                 .filter(Objects::nonNull)
                 .map(this::invokeServiceRegistryListenerPostLoad)
                 .filter(Objects::nonNull)
-                .collect(Collectors.toList());
+                .toList();
             LOGGER.trace("Loaded registered services [{}]", list);
             list.forEach(service -> publishEvent(new CasRegisteredServiceLoadedEvent(this, service, clientInfo)));
             return list;

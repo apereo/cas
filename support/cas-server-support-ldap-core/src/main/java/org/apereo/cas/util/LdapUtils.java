@@ -524,7 +524,7 @@ public class LdapUtils {
                 }
             }
         }
-        LOGGER.debug("Initializing ldap connection pool for [{}] and bindDn [{}]", props.getLdapUrl(), props.getBindDn());
+        LOGGER.debug("Initializing LDAP connection pool for [{}] and bindDn [{}]", props.getLdapUrl(), props.getBindDn());
         pooledCf.initialize();
         return pooledCf;
     }

@@ -23,6 +23,7 @@ public class CasProtocolVersionValidationSpecification implements CasProtocolVal
     public boolean isSatisfiedBy(final Assertion assertion, final HttpServletRequest request) {
         val tenantSupported = tenantExtractor.extract(request)
             .stream()
+            .filter(tenant -> Objects.nonNull(tenant.getAuthenticationPolicy()))
             .filter(tenant -> Objects.nonNull(tenant.getAuthenticationPolicy().getAuthenticationProtocolPolicy()))
             .map(tenant -> tenant.getAuthenticationPolicy().getAuthenticationProtocolPolicy())
             .filter(policy -> Objects.nonNull(policy.getSupportedProtocols()))

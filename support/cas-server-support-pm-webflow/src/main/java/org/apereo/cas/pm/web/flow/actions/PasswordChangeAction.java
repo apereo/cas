@@ -22,7 +22,6 @@ import org.apereo.cas.pm.event.PasswordChangeSuccessEvent;
 import org.apereo.cas.pm.web.flow.PasswordManagementWebflowConfigurer;
 import org.apereo.cas.pm.web.flow.PasswordManagementWebflowUtils;
 import org.apereo.cas.util.LoggingUtils;
-import org.apereo.cas.web.flow.CasWebflowConfigurer;
 import org.apereo.cas.web.flow.CasWebflowConstants;
 import org.apereo.cas.web.flow.actions.BaseCasWebflowAction;
 import org.apereo.cas.web.support.WebUtils;

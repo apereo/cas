@@ -32,31 +32,31 @@ The Secret Manager config data resource uses the following syntax to specify sec
 
 ```properties
 # 1. Long form - specify the project ID, secret ID, and version
-sm://projects/<project-id>/secrets/<secret-id>/versions/<version-id>}                           
+sm@projects/<project-id>/secrets/<secret-id>/versions/<version-id>}                           
 
 # 2.  Long form - specify project ID, secret ID, and use latest version
-sm://projects/<project-id>/secrets/<secret-id>
+sm@projects/<project-id>/secrets/<secret-id>
 
 # 3. Short form - specify project ID, secret ID, and version
-sm://<project-id>/<secret-id>/<version-id>
+sm@<project-id>/<secret-id>/<version-id>
 
 # 4. Short form - default project; specify secret + version
 #
 # The project is inferred from the spring.cloud.gcp.secretmanager.project-id setting
 # in your bootstrap.properties (see Configuration) or from application-default credentials if
 # this is not set.
-sm://<secret-id>/<version>
+sm@<secret-id>/<version>
 
 # 5. Shortest form - specify secret ID, use default project and latest version.
-sm://<secret-id>
+sm@<secret-id>
 ```
 
 You can use this syntax in your CAS configuration:
 
 ```properties
 # This may be optional
-# spring.config.import=sm://
+# spring.config.import=sm@
 
 # Example of the project-secret long-form syntax.
-cas.some.property=${sm://projects/<project-id>/secrets/cas_some_property}
+cas.some.property=${sm@projects/<project-id>/secrets/cas_some_property}
 ```

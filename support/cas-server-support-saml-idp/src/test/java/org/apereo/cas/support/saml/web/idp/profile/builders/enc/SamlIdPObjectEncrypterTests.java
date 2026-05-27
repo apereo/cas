@@ -36,7 +36,7 @@ class SamlIdPObjectEncrypterTests extends BaseSamlIdPConfigurationTests {
 
         val adaptor = SamlRegisteredServiceMetadataAdaptor
             .get(samlRegisteredServiceCachingMetadataResolver, registeredService,
-                registeredService.getServiceId()).get();
+                registeredService.getServiceId()).orElseThrow();
         assertNull(samlIdPObjectEncrypter.encode(mock(Assertion.class), registeredService, adaptor));
         assertNull(samlIdPObjectEncrypter.encode(mock(NameID.class), registeredService, adaptor));
     }
@@ -51,7 +51,7 @@ class SamlIdPObjectEncrypterTests extends BaseSamlIdPConfigurationTests {
 
         val adaptor = SamlRegisteredServiceMetadataAdaptor
             .get(samlRegisteredServiceCachingMetadataResolver, registeredService,
-                registeredService.getServiceId()).get();
+                registeredService.getServiceId()).orElseThrow();
         assertNull(samlIdPObjectEncrypter.encode(mock(Assertion.class), registeredService, adaptor));
     }
 
@@ -63,7 +63,7 @@ class SamlIdPObjectEncrypterTests extends BaseSamlIdPConfigurationTests {
 
         val adaptor = SamlRegisteredServiceMetadataAdaptor
             .get(samlRegisteredServiceCachingMetadataResolver, registeredService,
-                registeredService.getServiceId()).get();
+                registeredService.getServiceId()).orElseThrow();
         assertThrows(SamlException.class,
             () -> samlIdPObjectEncrypter.encode(mock(Assertion.class), registeredService, adaptor));
     }
@@ -77,7 +77,7 @@ class SamlIdPObjectEncrypterTests extends BaseSamlIdPConfigurationTests {
 
         val adaptor = SamlRegisteredServiceMetadataAdaptor
             .get(samlRegisteredServiceCachingMetadataResolver, registeredService,
-                registeredService.getServiceId()).get();
+                registeredService.getServiceId()).orElseThrow();
 
         val builder = new NameIDBuilder();
         val nameId = builder.buildObject();
@@ -95,7 +95,7 @@ class SamlIdPObjectEncrypterTests extends BaseSamlIdPConfigurationTests {
         val registeredService = getSamlRegisteredServiceForTestShib(true, false, true);
         val adaptor = SamlRegisteredServiceMetadataAdaptor
             .get(samlRegisteredServiceCachingMetadataResolver, registeredService,
-                registeredService.getServiceId()).get();
+                registeredService.getServiceId()).orElseThrow();
 
         val builder = new NameIDBuilder();
         val nameId = builder.buildObject();

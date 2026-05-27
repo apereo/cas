@@ -542,6 +542,18 @@ async function initializeSAML2ProtocolOperations() {
                                 class="mdc-button mdc-button--raised btn btn-link min-width-32x">
                                 <i class="mdi mdi-eye min-width-32x" aria-hidden="true"></i>
                             </button>
+                            <button type="button" name="copySaml2MetadataEntityId" href="#"
+                                data-entity-id="${entityId}"
+                                title="Copy Entity ID to Clipboard"
+                                class="mdc-button mdc-button--raised btn btn-link min-width-32x">
+                                <i class="mdi mdi-content-copy min-width-32x" aria-hidden="true"></i>
+                            </button>
+                            <button type="button" name="registerSaml2MetadataManagerEntry" href="#"
+                                data-entry-name="${entry.name}" data-entity-id="${entityId}"
+                                title="Register as SAML2 Service Provider"
+                                class="mdc-button mdc-button--raised btn btn-link min-width-32x">
+                                <i class="mdi mdi-plus-circle min-width-32x" aria-hidden="true"></i>
+                            </button>
                             <button type="button" name="deleteSaml2MetadataManagerEntry" href="#"
                                 data-entry-id="${entry.id}" data-manager-name="${managerName}"
                                 title="Delete Metadata"
@@ -570,6 +582,41 @@ async function initializeSAML2ProtocolOperations() {
                             console.error("Error fetching data:", error);
                             displayBanner(xhr);
                         });
+                    });
+
+                    $("button[name=copySaml2MetadataEntityId]").off().on("click", function () {
+                        const entityIdValue = $(this).data("entity-id");
+                        copyToClipboard(entityIdValue).then(() => {
+                            Swal.fire({
+                                title: "Copied",
+                                html: `Entity ID <code>${entityIdValue}</code> has been copied to the clipboard.`,
+                                showConfirmButton: false,
+                                icon: "success",
+                                timer: 2000
+                            });
+                        }).catch(err => {
+                            console.error("Failed to copy entity ID to clipboard:", err);
+                            displayBanner({responseJSON: {message: "Failed to copy entity ID to clipboard."}});
+                        });
+                    });
+
+                    $("button[name=registerSaml2MetadataManagerEntry]").off().on("click", function () {
+                        const saml2ServiceClass = Object.keys(supportedServiceTypes).find(cls => cls.includes("SamlRegisteredService"));
+                        if (saml2ServiceClass) {
+                            const entryName = $(this).data("entry-name");
+                            const entityIdValue = $(this).data("entity-id");
+                            const partialService = {
+                                "@class": saml2ServiceClass,
+                                "name": entryName,
+                                "serviceId": entityIdValue,
+                                "metadataLocation": "mongodb://"
+                            };
+                            activateDashboardTab(Tabs.APPLICATIONS.index);
+                            selectSidebarMenuTab(Tabs.APPLICATIONS.index);
+                            setTimeout(() => openRegisteredServiceWizardDialog(partialService), 150);
+                        } else {
+                            displayBanner("CAS is unable to register this entry as a SAML2 Service Provider");
+                        }
                     });
 
                     $("button[name=deleteSaml2MetadataManagerEntry]").off().on("click", function () {

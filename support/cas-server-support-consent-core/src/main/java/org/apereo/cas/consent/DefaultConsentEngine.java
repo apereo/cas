@@ -7,15 +7,22 @@ import org.apereo.cas.audit.AuditableActions;
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.multitenancy.TenantExtractor;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.RegisteredServiceAttributeReleasePolicyContext;
 import org.apereo.cas.util.function.FunctionUtils;
+import org.apereo.cas.util.spring.beans.BeanSupplier;
+import io.micrometer.common.util.StringUtils;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apereo.inspektr.audit.annotation.Audit;
+import org.jooq.lambda.Unchecked;
+import org.jooq.lambda.fi.util.function.CheckedFunction;
+import org.springframework.beans.factory.DisposableBean;
 import org.springframework.context.ConfigurableApplicationContext;
+import org.springframework.core.annotation.AnnotationAwareOrderComparator;
 
 /**
  * This is {@link DefaultConsentEngine}.
@@ -40,6 +47,8 @@ public class DefaultConsentEngine implements ConsentEngine {
 
     private final ConfigurableApplicationContext applicationContext;
 
+    private final TenantExtractor tenantExtractor;
+
     @Audit(action = AuditableActions.SAVE_CONSENT,
         actionResolverName = AuditActionResolvers.SAVE_CONSENT_ACTION_RESOLVER,
         resourceResolverName = AuditResourceResolvers.SAVE_CONSENT_RESOURCE_RESOLVER)
@@ -57,7 +66,7 @@ public class DefaultConsentEngine implements ConsentEngine {
                 .values(value)
                 .build();
 
-            for (val builder : this.consentableAttributeBuilders) {
+            for (val builder : consentableAttributeBuilders) {
                 LOGGER.trace("Preparing to build consentable attribute [{}] via [{}]", attr, builder.getName());
                 attr = builder.build(attr);
                 LOGGER.trace("Finalized consentable attribute [{}]", attr);
@@ -76,14 +85,16 @@ public class DefaultConsentEngine implements ConsentEngine {
         decision.setReminder(reminder);
         decision.setTenant(service.getTenant());
         decision.setReminderTimeUnit(reminderTimeUnit);
-        return consentRepository.storeConsentDecision(decision);
+        return executeRepositoryOperation(service, registeredService, authentication,
+            repository -> repository.storeConsentDecision(decision));
     }
 
     @Override
     public ConsentDecision findConsentDecision(final Service service,
                                                final RegisteredService registeredService,
-                                               final Authentication authentication) {
-        return consentRepository.findConsentDecision(service, registeredService, authentication);
+                                               final Authentication authentication) throws Throwable {
+        return executeRepositoryOperation(service, registeredService, authentication, repository ->
+            repository.findConsentDecision(service, registeredService, authentication));
     }
 
     @Override
@@ -114,7 +125,7 @@ public class DefaultConsentEngine implements ConsentEngine {
     public Map<String, List<Object>> resolveConsentableAttributesFrom(final ConsentDecision decision) {
         LOGGER.debug("Retrieving consentable attributes from existing decision made by [{}] for [{}]",
             decision.getPrincipal(), decision.getService());
-        return this.consentDecisionBuilder.getConsentableAttributesFrom(decision);
+        return consentDecisionBuilder.getConsentableAttributesFrom(decision);
     }
 
     @Audit(action = AuditableActions.VERIFY_CONSENT,
@@ -162,5 +173,45 @@ public class DefaultConsentEngine implements ConsentEngine {
         LOGGER.debug("Consent is not required for service [{}]", service);
         return ConsentQueryResult.ignored()
             .withService(service).withAuthentication(authentication);
+    }
+
+    @Override
+    public ConsentRepository toConsentRepository(final String tenant) {
+        if (StringUtils.isNotBlank(tenant)) {
+            val tenantDefinition = tenantExtractor.getTenantsManager().findTenant(tenant).orElseThrow();
+            if (!tenantDefinition.getProperties().isEmpty()) {
+                val repositories = applicationContext.getBeansOfType(TenantConsentRepositoryBuilder.class)
+                    .values()
+                    .stream()
+                    .filter(BeanSupplier::isNotProxy)
+                    .sorted(AnnotationAwareOrderComparator.INSTANCE)
+                    .map(Unchecked.function(builder -> builder.build(tenantDefinition)))
+                    .flatMap(List::stream)
+                    .filter(BeanSupplier::isNotProxy)
+                    .toList();
+                if (!repositories.isEmpty()) {
+                    return repositories.size() == 1
+                        ? repositories.getFirst()
+                        : new ChainingConsentRepository(repositories).markDisposable();
+                }
+            }
+        }
+
+        return consentRepository;
+    }
+
+    protected ConsentDecision executeRepositoryOperation(
+        final Service service,
+        final RegisteredService registeredService,
+        final Authentication authentication,
+        final CheckedFunction<ConsentRepository, ConsentDecision> executor) throws Throwable {
+        val effectiveRepository = toConsentRepository(service.getTenant());
+        try {
+            return executor.apply(effectiveRepository);
+        } finally {
+            if (effectiveRepository.isDisposable() && effectiveRepository instanceof final DisposableBean db) {
+                db.destroy();
+            }
+        }
     }
 }

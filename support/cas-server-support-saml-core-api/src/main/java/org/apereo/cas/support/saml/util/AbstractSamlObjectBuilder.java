@@ -1,7 +1,6 @@
 package org.apereo.cas.support.saml.util;
 
 import module java.base;
-import module java.xml;
 import module java.xml.crypto;
 import org.apereo.cas.support.saml.OpenSamlConfigBean;
 import org.apereo.cas.util.CollectionUtils;
@@ -15,7 +14,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.xerces.xs.XSObject;
 import org.jdom2.Document;
 import org.jdom2.input.DOMBuilder;
 import org.jdom2.input.SAXBuilder;
@@ -39,6 +37,7 @@ import org.opensaml.saml.common.xml.SAMLConstants;
 import org.opensaml.saml.saml2.core.NameIDType;
 import tools.jackson.databind.ObjectMapper;
 import tools.jackson.dataformat.xml.XmlFactory;
+import javax.xml.namespace.QName;
 
 /**
  * An abstract builder to serve as the template handler
@@ -278,7 +277,7 @@ public abstract class AbstractSamlObjectBuilder {
             return attrValueObj;
         }
 
-        if (XSObject.class.getSimpleName().equalsIgnoreCase(valueType)) {
+        if ("XSObject".equalsIgnoreCase(valueType)) {
             return FunctionUtils.doUnchecked(() -> {
                 val builder = new XSAnyBuilder();
                 val attrValueObj = builder.buildObject(elementName);

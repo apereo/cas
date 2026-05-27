@@ -410,6 +410,15 @@ public interface CasFeatureModule {
             return toFullFeatureName(module) + ".enabled";
         }
 
+        /**
+         * To property string.
+         *
+         * @return the string
+         */
+        public String toProperty() {
+            return toFullFeatureName(StringUtils.EMPTY) + ".enabled";
+        }
+
         private String toFullFeatureName(final String module) {
             var propertyName = CasFeatureModule.class.getSimpleName() + '.' + name();
             if (StringUtils.isNotBlank(module)) {

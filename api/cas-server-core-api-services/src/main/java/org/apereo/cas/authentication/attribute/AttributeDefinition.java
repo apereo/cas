@@ -68,7 +68,7 @@ public interface AttributeDefinition extends Serializable, Comparable<AttributeD
     String getAttribute();
 
     /**
-     * Template used in {@link java.text.MessageFormat} that will insert attribute value into the template.
+     * Template used in {@link MessageFormat} that will insert attribute value into the template.
      *
      * @return the template
      */

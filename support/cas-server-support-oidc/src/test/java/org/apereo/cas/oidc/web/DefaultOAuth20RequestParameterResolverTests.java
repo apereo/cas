@@ -117,7 +117,7 @@ class DefaultOAuth20RequestParameterResolverTests extends AbstractOidcTests {
     void verifyRequestAsSignedJwt() throws Exception {
         val service = getOidcRegisteredService("whatever");
         val serviceJsonWebKeys = oidcServiceJsonWebKeystoreCache.get(new OidcJsonWebKeyCacheKey(service, OidcJsonWebKeyUsage.SIGNING));
-        val jsonWebKey = (PublicJsonWebKey) serviceJsonWebKeys.get().getJsonWebKeys().getFirst();
+        val jsonWebKey = (PublicJsonWebKey) serviceJsonWebKeys.orElseThrow().getJsonWebKeys().getFirst();
         val claims = new JWTClaimsSet.Builder()
             .subject("cas")
             .claim("scope", new String[]{"openid", "profile"})

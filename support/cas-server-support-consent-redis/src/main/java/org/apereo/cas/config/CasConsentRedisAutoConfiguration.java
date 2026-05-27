@@ -4,7 +4,7 @@ import module java.base;
 import org.apereo.cas.authentication.CasSSLContext;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.features.CasFeatureModule;
-import org.apereo.cas.consent.ConsentRepository;
+import org.apereo.cas.consent.ConsentRepositoryBuilder;
 import org.apereo.cas.consent.RedisConsentRepository;
 import org.apereo.cas.redis.core.CasRedisTemplate;
 import org.apereo.cas.redis.core.RedisObjectFactory;
@@ -37,14 +37,15 @@ public class CasConsentRedisAutoConfiguration {
 
     @Bean
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-    public ConsentRepository consentRepository(
+    @ConditionalOnMissingBean(name = "redisConsentRepositoryBuilder")
+    public ConsentRepositoryBuilder redisConsentRepositoryBuilder(
         final ConfigurableApplicationContext applicationContext,
         @Qualifier("consentRedisTemplate")
         final CasRedisTemplate consentRedisTemplate,
         final CasConfigurationProperties casProperties) {
-        return BeanSupplier.of(ConsentRepository.class)
+        return BeanSupplier.of(ConsentRepositoryBuilder.class)
             .when(CONDITION.given(applicationContext.getEnvironment()))
-            .supply(() -> new RedisConsentRepository(consentRedisTemplate))
+            .supply(() -> () -> new RedisConsentRepository(consentRedisTemplate))
             .otherwiseProxy()
             .get();
     }

@@ -16,6 +16,7 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.hjson.JsonValue;
 import org.jooq.lambda.Unchecked;
+import org.jspecify.annotations.Nullable;
 import org.ldaptive.LdapAttribute;
 import org.ldaptive.LdapEntry;
 import org.springframework.beans.factory.DisposableBean;
@@ -29,7 +30,7 @@ import tools.jackson.databind.ObjectMapper;
  */
 @Slf4j
 @RequiredArgsConstructor
-public class LdapConsentRepository implements ConsentRepository, DisposableBean {
+public class LdapConsentRepository extends BaseConsentRepository implements DisposableBean {
     @Serial
     private static final long serialVersionUID = 8561763114482490L;
 
@@ -40,7 +41,7 @@ public class LdapConsentRepository implements ConsentRepository, DisposableBean 
 
     private final LdapConsentProperties ldapProperties;
 
-    private static ConsentDecision mapFromJson(final String json) {
+    private static @Nullable ConsentDecision mapFromJson(final String json) {
         return FunctionUtils.doAndHandle(() -> {
             LOGGER.trace("Mapping JSON value [{}] to consent object", json);
             return MAPPER.readValue(JsonValue.readHjson(json).toString(), ConsentDecision.class);
@@ -98,9 +99,9 @@ public class LdapConsentRepository implements ConsentRepository, DisposableBean 
     }
 
     @Override
-    public ConsentDecision findConsentDecision(final Service service,
-                                               final RegisteredService registeredService,
-                                               final Authentication authentication) {
+    public @Nullable ConsentDecision findConsentDecision(final Service service,
+                                                         final RegisteredService registeredService,
+                                                         final Authentication authentication) {
         val principal = authentication.getPrincipal().getId();
         val entry = readConsentEntry(principal);
         if (entry != null) {

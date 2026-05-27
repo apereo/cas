@@ -16,10 +16,10 @@ import org.springframework.test.context.TestPropertySource;
     "cas.audit.jdbc.ddl-auto=create-drop",
     "cas.audit.jdbc.date-formatter-function=TO_DATE('%s', '%s')",
     "cas.audit.jdbc.date-formatter-pattern=yyyy-MM-dd",
-    "cas.audit.jdbc.user=system",
-    "cas.audit.jdbc.password=Oradoc_db1",
+    "cas.audit.jdbc.user=cas",
+    "cas.audit.jdbc.password=cas",
     "cas.audit.jdbc.driver-class=oracle.jdbc.driver.OracleDriver",
-    "cas.audit.jdbc.url=jdbc:oracle:thin:@localhost:1521:FREE",
+    "cas.audit.jdbc.url=jdbc:oracle:thin:@//localhost:1521/FREEPDB1",
     "cas.audit.jdbc.dialect=org.hibernate.dialect.OracleDialect"
 })
 @EnabledIfListeningOnPort(port = 1521)

@@ -96,7 +96,7 @@ class SamlIdPUtilsTests extends BaseSamlIdPConfigurationTests {
         context.setMessage(authnRequest);
         val adapter = SamlRegisteredServiceMetadataAdaptor.get(samlRegisteredServiceCachingMetadataResolver, service, service.getServiceId());
         assertThrows(SamlException.class, () -> SamlIdPUtils.determineEndpointForRequest(Pair.of(authnRequest, context),
-            adapter.get(), SAMLConstants.SAML2_POST_BINDING_URI));
+            adapter.orElseThrow(), SAMLConstants.SAML2_POST_BINDING_URI));
     }
 
     @Test
@@ -115,7 +115,7 @@ class SamlIdPUtilsTests extends BaseSamlIdPConfigurationTests {
         val context = new MessageContext();
         context.setMessage(authnRequest);
         val adapter = SamlRegisteredServiceMetadataAdaptor.get(samlRegisteredServiceCachingMetadataResolver, service, service.getServiceId());
-        val acs = SamlIdPUtils.determineEndpointForRequest(Pair.of(authnRequest, context), adapter.get(), SAMLConstants.SAML2_POST_BINDING_URI);
+        val acs = SamlIdPUtils.determineEndpointForRequest(Pair.of(authnRequest, context), adapter.orElseThrow(), SAMLConstants.SAML2_POST_BINDING_URI);
         assertNotNull(acs);
         assertEquals("https://sp.testshib.org/Shibboleth.sso/SAML2/POST", acs.getResponseLocation());
         assertEquals("https://sp.testshib.org/Shibboleth.sso/SAML2/POST", acs.getLocation());
@@ -135,7 +135,7 @@ class SamlIdPUtilsTests extends BaseSamlIdPConfigurationTests {
         when(authnRequest.getAssertionConsumerServiceURL()).thenReturn(acsUrl);
 
         val adapter = SamlRegisteredServiceMetadataAdaptor.get(samlRegisteredServiceCachingMetadataResolver, service, service.getServiceId());
-        val acs = SamlIdPUtils.determineEndpointForRequest(Pair.of(authnRequest, new MessageContext()), adapter.get(), SAMLConstants.SAML2_POST_BINDING_URI);
+        val acs = SamlIdPUtils.determineEndpointForRequest(Pair.of(authnRequest, new MessageContext()), adapter.orElseThrow(), SAMLConstants.SAML2_POST_BINDING_URI);
         assertNotNull(acs);
         assertEquals(acsUrl, acs.getLocation());
     }
@@ -153,7 +153,7 @@ class SamlIdPUtilsTests extends BaseSamlIdPConfigurationTests {
         when(authnRequest.isSigned()).thenReturn(true);
 
         val adapter = SamlRegisteredServiceMetadataAdaptor.get(samlRegisteredServiceCachingMetadataResolver, service, service.getServiceId());
-        val acs = SamlIdPUtils.determineEndpointForRequest(Pair.of(authnRequest, new MessageContext()), adapter.get(), SAMLConstants.SAML2_POST_BINDING_URI);
+        val acs = SamlIdPUtils.determineEndpointForRequest(Pair.of(authnRequest, new MessageContext()), adapter.orElseThrow(), SAMLConstants.SAML2_POST_BINDING_URI);
         assertNotNull(acs);
         assertEquals("https://index9.testshib.org/Shibboleth.sso/SAML/POST", acs.getLocation());
         assertEquals(9, ((IndexedEndpoint) acs).getIndex());
@@ -174,7 +174,7 @@ class SamlIdPUtilsTests extends BaseSamlIdPConfigurationTests {
         val adapter = SamlRegisteredServiceMetadataAdaptor.get(samlRegisteredServiceCachingMetadataResolver, service, service.getServiceId());
         val context = new MessageContext();
         context.setMessage(authnRequest);
-        val acs = SamlIdPUtils.determineEndpointForRequest(Pair.of(authnRequest, context), adapter.get(), SAMLConstants.SAML2_POST_BINDING_URI);
+        val acs = SamlIdPUtils.determineEndpointForRequest(Pair.of(authnRequest, context), adapter.orElseThrow(), SAMLConstants.SAML2_POST_BINDING_URI);
         assertNotNull(acs);
         assertEquals("https://index9.testshib.org/Shibboleth.sso/SAML/POST", acs.getLocation());
         assertEquals(9, ((IndexedEndpoint) acs).getIndex());
@@ -194,7 +194,7 @@ class SamlIdPUtilsTests extends BaseSamlIdPConfigurationTests {
 
         val adapter = SamlRegisteredServiceMetadataAdaptor.get(samlRegisteredServiceCachingMetadataResolver, service, service.getServiceId());
         val acs = SamlIdPUtils.determineEndpointForRequest(Pair.of(authnRequest, new MessageContext()),
-            adapter.get(), SAMLConstants.SAML2_POST_BINDING_URI);
+            adapter.orElseThrow(), SAMLConstants.SAML2_POST_BINDING_URI);
         assertNotNull(acs);
         assertEquals("https://www.testshib.org/Shibboleth.sso/SAML2/POST", acs.getLocation());
         assertEquals(7, ((IndexedEndpoint) acs).getIndex());
@@ -219,7 +219,7 @@ class SamlIdPUtilsTests extends BaseSamlIdPConfigurationTests {
         binding.setRelayState(UUID.randomUUID().toString());
 
         val adapter = SamlRegisteredServiceMetadataAdaptor.get(samlRegisteredServiceCachingMetadataResolver, service, service.getServiceId());
-        val acs = SamlIdPUtils.determineEndpointForRequest(Pair.of(authnRequest, context), adapter.get(), SAMLConstants.SAML2_POST_BINDING_URI);
+        val acs = SamlIdPUtils.determineEndpointForRequest(Pair.of(authnRequest, context), adapter.orElseThrow(), SAMLConstants.SAML2_POST_BINDING_URI);
         assertNotNull(acs);
         assertEquals(acsUrl, acs.getLocation());
     }
@@ -239,7 +239,7 @@ class SamlIdPUtilsTests extends BaseSamlIdPConfigurationTests {
         val context = new MessageContext();
         context.setMessage(authnRequest);
         val adapter = SamlRegisteredServiceMetadataAdaptor.get(samlRegisteredServiceCachingMetadataResolver, service, service.getServiceId());
-        val acs = SamlIdPUtils.determineEndpointForRequest(Pair.of(authnRequest, context), adapter.get(), SAMLConstants.SAML2_POST_BINDING_URI);
+        val acs = SamlIdPUtils.determineEndpointForRequest(Pair.of(authnRequest, context), adapter.orElseThrow(), SAMLConstants.SAML2_POST_BINDING_URI);
         assertNotNull(acs);
         assertEquals(acsUrl, acs.getLocation());
     }
@@ -259,7 +259,7 @@ class SamlIdPUtilsTests extends BaseSamlIdPConfigurationTests {
         val context = new MessageContext();
         context.setMessage(authnRequest);
         val adapter = SamlRegisteredServiceMetadataAdaptor.get(samlRegisteredServiceCachingMetadataResolver, service, service.getServiceId());
-        val acs = SamlIdPUtils.determineEndpointForRequest(Pair.of(authnRequest, context), adapter.get(), SAMLConstants.SAML2_POST_BINDING_URI);
+        val acs = SamlIdPUtils.determineEndpointForRequest(Pair.of(authnRequest, context), adapter.orElseThrow(), SAMLConstants.SAML2_POST_BINDING_URI);
         assertNotNull(acs);
         assertEquals(acsUrl, acs.getLocation());
     }

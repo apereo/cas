@@ -3,8 +3,6 @@ package org.apereo.cas.nativex;
 import module java.base;
 import org.apereo.cas.util.nativex.CasRuntimeHintsRegistrar;
 import lombok.val;
-import org.apache.xerces.impl.dv.dtd.DTDDVFactoryImpl;
-import org.apache.xerces.parsers.XIncludeAwareParserConfiguration;
 import org.jspecify.annotations.NonNull;
 import org.jspecify.annotations.Nullable;
 import org.springframework.aot.hint.RuntimeHints;
@@ -23,8 +21,6 @@ public class InweboAuthenticationRuntimeHints implements CasRuntimeHintsRegistra
     @Override
     public void registerHints(final @NonNull RuntimeHints hints, final @Nullable ClassLoader classLoader) {
         val list = List.of(
-            XIncludeAwareParserConfiguration.class,
-            DTDDVFactoryImpl.class,
             SaajSoapMessageFactory.class,
             HttpUrlConnectionMessageSender.class,
             SoapFaultMessageResolver.class,

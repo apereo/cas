@@ -6,9 +6,14 @@ const path = require("path");
 const os = require("os");
 
 (async () => {
+    await cas.log("Removing previous consent decisions for casuser");
+    await cas.doDelete("https://localhost:8443/cas/actuator/attributeConsent/casuser");
+    
     const browser = await cas.newBrowser(cas.browserOptions());
     const page = await cas.newPage(browser);
 
+    await cas.gotoLogout(page);
+    
     await cas.gotoLogin(page);
     await cas.loginWith(page);
 

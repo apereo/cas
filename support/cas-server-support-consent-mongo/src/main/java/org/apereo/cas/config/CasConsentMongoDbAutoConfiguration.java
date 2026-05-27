@@ -4,16 +4,23 @@ import module java.base;
 import org.apereo.cas.authentication.CasSSLContext;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.features.CasFeatureModule;
-import org.apereo.cas.consent.ConsentRepository;
+import org.apereo.cas.consent.ConsentRepositoryBuilder;
 import org.apereo.cas.consent.MongoDbConsentRepository;
+import org.apereo.cas.consent.TenantConsentRepositoryBuilder;
+import org.apereo.cas.consent.TenantMongoDbConsentRepositoryBuilder;
 import org.apereo.cas.mongo.MongoDbConnectionFactory;
+import org.apereo.cas.util.spring.beans.BeanCondition;
+import org.apereo.cas.util.spring.beans.BeanSupplier;
 import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
 import lombok.val;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
+import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.ScopedProxyMode;
 
 /**
@@ -29,14 +36,42 @@ public class CasConsentMongoDbAutoConfiguration {
 
     @Bean
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-    public ConsentRepository consentRepository(
+    @ConditionalOnMissingBean(name = "mongoDbConsentRepositoryBuilder")
+    public ConsentRepositoryBuilder mongoDbConsentRepositoryBuilder(
+        final ConfigurableApplicationContext applicationContext,
         final CasConfigurationProperties casProperties,
-        @Qualifier(CasSSLContext.BEAN_NAME)
-        final CasSSLContext casSslContext) {
-        val mongo = casProperties.getConsent().getMongo();
-        val factory = new MongoDbConnectionFactory(casSslContext.getSslContext());
-        val mongoTemplate = factory.buildMongoTemplate(mongo);
-        MongoDbConnectionFactory.createCollection(mongoTemplate, mongo.getCollection(), mongo.isDropCollection());
-        return new MongoDbConsentRepository(mongoTemplate, mongo.getCollection());
+        @Qualifier(CasSSLContext.BEAN_NAME) final CasSSLContext casSslContext) {
+        return BeanSupplier.of(ConsentRepositoryBuilder.class)
+            .when(BeanCondition.on("cas.consent.mongo.enabled").isTrue().evenIfMissing()
+                .given(applicationContext.getEnvironment()))
+            .supply(() -> {
+                val mongo = casProperties.getConsent().getMongo();
+                val factory = new MongoDbConnectionFactory(casSslContext.getSslContext());
+                val mongoTemplate = factory.buildMongoTemplate(mongo);
+                MongoDbConnectionFactory.createCollection(mongoTemplate, mongo.getCollection(), mongo.isDropCollection());
+                return () -> new MongoDbConsentRepository(mongoTemplate, mongo.getCollection());
+            })
+            .otherwiseProxy()
+            .get();
+    }
+
+    @Configuration(value = "CasConsentMongoDbMultitenancyConfiguration", proxyBeanMethods = false)
+    @ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.Multitenancy)
+    @EnableConfigurationProperties(CasConfigurationProperties.class)
+    static class CasConsentMongoDbMultitenancyConfiguration {
+
+        @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+        @ConditionalOnMissingBean(name = "mongoDbConsentMultitenancyRepositoryBuilder")
+        public TenantConsentRepositoryBuilder mongoDbConsentMultitenancyRepositoryBuilder(
+            final ConfigurableApplicationContext applicationContext,
+            @Qualifier(CasSSLContext.BEAN_NAME) final CasSSLContext casSslContext) {
+
+            return BeanSupplier.of(TenantConsentRepositoryBuilder.class)
+                .when(BeanCondition.on("cas.multitenancy.core.enabled").isTrue().given(applicationContext))
+                .supply(() -> new TenantMongoDbConsentRepositoryBuilder(casSslContext))
+                .otherwise(TenantConsentRepositoryBuilder::noOp)
+                .get();
+        }
     }
 }
