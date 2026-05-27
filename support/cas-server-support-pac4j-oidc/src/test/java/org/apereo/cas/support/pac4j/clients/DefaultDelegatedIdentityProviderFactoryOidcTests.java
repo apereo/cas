@@ -7,9 +7,12 @@ import lombok.val;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.pac4j.core.context.CallContext;
+import org.pac4j.core.profile.CommonProfile;
 import org.pac4j.oauth.client.GitHubClient;
 import org.pac4j.oidc.client.OidcClient;
 import org.pac4j.oidc.config.method.PrivateKeyJwtClientAuthnMethodConfig;
+import org.pac4j.test.context.MockWebContext;
 import org.springframework.boot.autoconfigure.ImportAutoConfiguration;
 import org.springframework.test.context.TestPropertySource;
 import static org.junit.jupiter.api.Assertions.*;
@@ -42,6 +45,45 @@ class DefaultDelegatedIdentityProviderFactoryOidcTests {
             assertEquals(1, clients.size());
             val client = (GitHubClient) clients.getFirst();
             assertEquals("user", client.getScope());
+            assertTrue(client.getLogoutAction(new CallContext(MockWebContext.create(), null), new CommonProfile(), "url").isPresent());
+        }
+    }
+
+    @Nested
+    @TestPropertySource(properties = {
+            "cas.authn.pac4j.github.scope=user",
+            "cas.authn.pac4j.github.id=12345",
+            "cas.authn.pac4j.github.secret=s3cr3t",
+            "cas.authn.pac4j.github.propagate-logout=true",
+            "cas.authn.pac4j.core.lazy-init=true"
+    })
+    class GitHubClientsPropagateLogout extends BaseTests {
+        @Test
+        void verifyGitHubClient() {
+            val clients = delegatedIdentityProviderFactory.build();
+            assertEquals(1, clients.size());
+            val client = (GitHubClient) clients.getFirst();
+            assertEquals("user", client.getScope());
+            assertTrue(client.getLogoutAction(new CallContext(MockWebContext.create(), null), new CommonProfile(), "url").isPresent());
+        }
+    }
+
+    @Nested
+    @TestPropertySource(properties = {
+            "cas.authn.pac4j.github.scope=user",
+            "cas.authn.pac4j.github.id=12345",
+            "cas.authn.pac4j.github.secret=s3cr3t",
+            "cas.authn.pac4j.github.propagate-logout=false",
+            "cas.authn.pac4j.core.lazy-init=true"
+    })
+    class GitHubClientsDontPropagateLogout extends BaseTests {
+        @Test
+        void verifyGitHubClient() {
+            val clients = delegatedIdentityProviderFactory.build();
+            assertEquals(1, clients.size());
+            val client = (GitHubClient) clients.getFirst();
+            assertEquals("user", client.getScope());
+            assertFalse(client.getLogoutAction(new CallContext(MockWebContext.create(), null), new CommonProfile(), "url").isPresent());
         }
     }
 

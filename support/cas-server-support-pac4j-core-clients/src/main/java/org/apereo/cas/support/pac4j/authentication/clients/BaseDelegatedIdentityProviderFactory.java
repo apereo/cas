@@ -87,6 +87,7 @@ public abstract class BaseDelegatedIdentityProviderFactory implements DelegatedI
             DelegatedIdentityProviderFactory.configureClientName(client, clientProperties.getClientName());
             DelegatedIdentityProviderFactory.configureClientCustomProperties(client, clientProperties);
             DelegatedIdentityProviderFactory.configureClientCallbackUrl(client, clientProperties, casProperties.getServer().getLoginUrl());
+            DelegatedIdentityProviderFactory.configureLogoutPropagation(client, clientProperties);
         }
 
         invokeClientCustomizers(client);
