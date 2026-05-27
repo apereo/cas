@@ -98,4 +98,9 @@ public class Pac4jBaseClientProperties implements CasFeatureModule, Serializable
          */
         NONE
     }
+
+    /**
+     * Indicate whether the logout should be propagated from the CAS server to the delegated identity server.
+     */
+    private boolean propagateLogout = true;
 }

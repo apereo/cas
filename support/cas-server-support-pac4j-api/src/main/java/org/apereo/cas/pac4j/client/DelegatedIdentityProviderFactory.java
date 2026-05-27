@@ -132,4 +132,16 @@ public interface DelegatedIdentityProviderFactory extends DisposableBean {
             indirectClient.setCallbackUrlResolver(resolver);
         }
     }
+
+    /**
+     * Configure the logout propagation.
+     *
+     * @param client           the client
+     * @param clientProperties the client properties
+     */
+    static void configureLogoutPropagation(final BaseClient client, final Pac4jBaseClientProperties clientProperties) {
+        if (!clientProperties.isPropagateLogout() && client instanceof final IndirectClient indirectClient) {
+            indirectClient.setLogoutActionBuilder((ctx, profile, url) -> Optional.empty());
+        }
+    }
 }
