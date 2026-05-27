@@ -23,6 +23,8 @@ import org.apache.commons.io.FileUtils;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.jupiter.api.parallel.Execution;
+import org.junit.jupiter.api.parallel.ExecutionMode;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -61,6 +63,7 @@ import static org.mockito.Mockito.*;
 @Tag("Attributes")
 @ExtendWith(CasTestExtension.class)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
+@Execution(ExecutionMode.SAME_THREAD)
 class JsonAttributeDefinitionStoreTests {
 
     private static final File JSON_FILE = new File(FileUtils.getTempDirectoryPath(), "DefaultAttributeDefinitionStoreTests.json");
@@ -107,19 +110,7 @@ class JsonAttributeDefinitionStoreTests {
         assertTrue(attributes.containsKey("urn:oid:1.3.6.1.4.1.5923.1.1.1.6"));
         assertTrue(attributes.get("urn:oid:1.3.6.1.4.1.5923.1.1.1.6").contains("cas-user-id@cas.org"));
     }
-
-    private Map<String, List<Object>> getAllReleasedAttributesForCasUser() throws Throwable {
-        val person = attributeRepository.getPerson("casuser");
-        assertNotNull(person);
-        val policy = new ReturnAllAttributeReleasePolicy();
-        val releasePolicyContext = RegisteredServiceAttributeReleasePolicyContext.builder()
-            .registeredService(CoreAuthenticationTestUtils.getRegisteredService())
-            .service(CoreAuthenticationTestUtils.getService())
-            .applicationContext(applicationContext)
-            .principal(CoreAuthenticationTestUtils.getPrincipal(person.getAttributes()))
-            .build();
-        return policy.getAttributes(releasePolicyContext);
-    }
+    
 
     @Test
     void verifyMappedToMultipleNames() {
@@ -472,7 +463,7 @@ class JsonAttributeDefinitionStoreTests {
 
             when(service.getPublicKey()).thenReturn(mock(RegisteredServicePublicKey.class));
             results = store.resolveAttributeValues("cn", context);
-            assertTrue(results.get().getValue().isEmpty());
+            assertTrue(results.orElseThrow().getValue().isEmpty());
         }
     }
 
@@ -521,7 +512,19 @@ class JsonAttributeDefinitionStoreTests {
         assertTrue(attributeDefinitionStore.locateAttributeDefinitionByName("interesting-attribute", AttributeDefinition.class).isPresent());
     }
 
-
+    private Map<String, List<Object>> getAllReleasedAttributesForCasUser() throws Throwable {
+        val person = attributeRepository.getPerson("casuser");
+        assertNotNull(person);
+        val policy = new ReturnAllAttributeReleasePolicy();
+        val releasePolicyContext = RegisteredServiceAttributeReleasePolicyContext.builder()
+            .registeredService(CoreAuthenticationTestUtils.getRegisteredService())
+            .service(CoreAuthenticationTestUtils.getService())
+            .applicationContext(applicationContext)
+            .principal(CoreAuthenticationTestUtils.getPrincipal(person.getAttributes()))
+            .build();
+        return policy.getAttributes(releasePolicyContext);
+    }
+    
     @TestConfiguration(proxyBeanMethods = false)
     static class JsonAttributeDefinitionStoreTestConfiguration {
         @Bean

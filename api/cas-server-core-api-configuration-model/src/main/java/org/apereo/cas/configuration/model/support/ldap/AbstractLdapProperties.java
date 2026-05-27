@@ -388,7 +388,7 @@ public abstract class AbstractLdapProperties implements Serializable, CasFeature
     public enum LdapTrustManagerOptions {
         /**
          * Loads the trust managers from the
-         * default {@link javax.net.ssl.TrustManagerFactory} and delegates to those.
+         * default {@link TrustManagerFactory} and delegates to those.
          */
         DEFAULT,
         /**

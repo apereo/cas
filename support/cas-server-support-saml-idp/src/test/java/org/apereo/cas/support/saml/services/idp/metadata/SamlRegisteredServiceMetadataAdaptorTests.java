@@ -29,7 +29,7 @@ class SamlRegisteredServiceMetadataAdaptorTests extends BaseSamlIdPConfiguration
         val service = getSamlRegisteredServiceForTestShib();
         val authnRequest = getAuthnRequestFor(service);
         val adaptor = SamlRegisteredServiceMetadataAdaptor.get(samlRegisteredServiceCachingMetadataResolver,
-            service, authnRequest).get();
+            service, authnRequest).orElseThrow();
         assertNotNull(adaptor);
         assertNull(adaptor.getValidUntil());
         assertNull(adaptor.getOrganization());

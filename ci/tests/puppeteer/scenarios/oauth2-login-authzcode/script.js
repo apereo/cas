@@ -5,16 +5,23 @@ const cas = require("../../cas.js");
 (async () => {
     const browser = await cas.newBrowser(cas.browserOptions());
     const page = await cas.newPage(browser);
-
+    await cas.gotoLogout(page);
+    
     const redirectUri = "https://localhost:9859/anything/cas";
-    const url = `https://localhost:8443/cas/oauth2.0/authorize?response_type=code&redirect_uri=${redirectUri}&client_id=client&scope=profile&state=9qa3`;
+    const scopes = encodeURIComponent("read write profile email");
+    const parameters = `client_id=client&scope=${scopes}&state=9qa3&response_type=code&redirect_uri=${redirectUri}`;
+    const url = `https://localhost:8443/cas/oauth2.0/authorize?${parameters}`;
     
     await cas.goto(page, url);
     await cas.logPage(page);
     await cas.sleep(1000);
     await cas.loginWith(page);
     await cas.sleep(1000);
-
+    if (await cas.isVisible(page, "#allow")) {
+        await cas.click(page, "#allow");
+        await cas.waitForNavigation(page);
+    }
+    await cas.sleep(2000);
     const code = await cas.assertParameter(page, "code");
     await cas.log(`OAuth code ${code}`);
 
@@ -32,7 +39,13 @@ const cas = require("../../cas.js");
     }, (res) => {
         cas.log(res.data);
         assert(res.data.access_token !== undefined);
+        assert(res.data.scope !== undefined);
 
+        assert(res.data.scope.includes("read"));
+        assert(res.data.scope.includes("write"));
+        assert(res.data.scope.includes("profile"));
+        assert(res.data.scope.includes("email"));
+        
         accessToken = res.data.access_token;
     }, (error) => {
         throw `Operation failed to obtain access token: ${error}`;

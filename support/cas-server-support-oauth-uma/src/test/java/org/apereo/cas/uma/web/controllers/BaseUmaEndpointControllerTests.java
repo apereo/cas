@@ -9,26 +9,17 @@ import org.apereo.cas.uma.discovery.UmaServerDiscoverySettings;
 import org.apereo.cas.uma.ticket.resource.ResourceSetPolicy;
 import org.apereo.cas.uma.ticket.resource.ResourceSetPolicyPermission;
 import org.apereo.cas.uma.ticket.resource.repository.ResourceSetRepository;
-import org.apereo.cas.uma.web.controllers.authz.UmaAuthorizationRequestEndpointController;
-import org.apereo.cas.uma.web.controllers.claims.UmaRequestingPartyClaimsCollectionEndpointController;
-import org.apereo.cas.uma.web.controllers.permission.UmaPermissionRegistrationEndpointController;
 import org.apereo.cas.uma.web.controllers.permission.UmaPermissionRegistrationRequest;
-import org.apereo.cas.uma.web.controllers.policy.UmaCreatePolicyForResourceSetEndpointController;
-import org.apereo.cas.uma.web.controllers.policy.UmaDeletePolicyForResourceSetEndpointController;
-import org.apereo.cas.uma.web.controllers.policy.UmaFindPolicyForResourceSetEndpointController;
-import org.apereo.cas.uma.web.controllers.policy.UmaUpdatePolicyForResourceSetEndpointController;
-import org.apereo.cas.uma.web.controllers.resource.UmaCreateResourceSetRegistrationEndpointController;
-import org.apereo.cas.uma.web.controllers.resource.UmaDeleteResourceSetRegistrationEndpointController;
-import org.apereo.cas.uma.web.controllers.resource.UmaFindResourceSetRegistrationEndpointController;
 import org.apereo.cas.uma.web.controllers.resource.UmaResourceRegistrationRequest;
-import org.apereo.cas.uma.web.controllers.resource.UmaUpdateResourceSetRegistrationEndpointController;
-import org.apereo.cas.uma.web.controllers.rpt.UmaRequestingPartyTokenJwksEndpointController;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.web.SecurityLogicInterceptor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.tuple.Triple;
 import org.apache.hc.core5.http.HttpHeaders;
+import org.jspecify.annotations.Nullable;
+import org.junit.jupiter.api.parallel.Execution;
+import org.junit.jupiter.api.parallel.ExecutionMode;
 import org.pac4j.core.profile.ProfileManager;
 import org.pac4j.core.profile.UserProfile;
 import org.pac4j.jee.context.JEEContext;
@@ -36,9 +27,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.ImportAutoConfiguration;
 import org.springframework.http.HttpMethod;
+import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
+import org.springframework.mock.web.MockHttpSession;
 import org.springframework.test.context.TestPropertySource;
+import org.springframework.test.web.servlet.MvcResult;
+import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import static org.junit.jupiter.api.Assertions.*;
@@ -52,55 +47,9 @@ import static org.junit.jupiter.api.Assertions.*;
 @ImportAutoConfiguration(CasOAuthUmaAutoConfiguration.class)
 @TestPropertySource(properties = "cas.authn.oauth.uma.requesting-party-token.jwks-file.location=classpath:uma-keystore.jwks")
 @Slf4j
+@Execution(ExecutionMode.SAME_THREAD)
+@SuppressWarnings("unused")
 public abstract class BaseUmaEndpointControllerTests extends AbstractOAuth20Tests {
-    @Autowired
-    @Qualifier("umaPermissionRegistrationEndpointController")
-    protected UmaPermissionRegistrationEndpointController umaPermissionRegistrationEndpointController;
-
-    @Autowired
-    @Qualifier("umaRequestingPartyTokenJwksEndpointController")
-    protected UmaRequestingPartyTokenJwksEndpointController umaRequestingPartyTokenJwksEndpointController;
-
-    @Autowired
-    @Qualifier("umaRequestingPartyClaimsCollectionEndpointController")
-    protected UmaRequestingPartyClaimsCollectionEndpointController umaRequestingPartyClaimsCollectionEndpointController;
-
-    @Autowired
-    @Qualifier("umaCreateResourceSetRegistrationEndpointController")
-    protected UmaCreateResourceSetRegistrationEndpointController umaCreateResourceSetRegistrationEndpointController;
-
-    @Autowired
-    @Qualifier("umaDeleteResourceSetRegistrationEndpointController")
-    protected UmaDeleteResourceSetRegistrationEndpointController umaDeleteResourceSetRegistrationEndpointController;
-
-    @Autowired
-    @Qualifier("umaUpdateResourceSetRegistrationEndpointController")
-    protected UmaUpdateResourceSetRegistrationEndpointController umaUpdateResourceSetRegistrationEndpointController;
-
-    @Autowired
-    @Qualifier("umaFindResourceSetRegistrationEndpointController")
-    protected UmaFindResourceSetRegistrationEndpointController umaFindResourceSetRegistrationEndpointController;
-
-    @Autowired
-    @Qualifier("umaCreatePolicyForResourceSetEndpointController")
-    protected UmaCreatePolicyForResourceSetEndpointController umaCreatePolicyForResourceSetEndpointController;
-
-    @Autowired
-    @Qualifier("umaFindPolicyForResourceSetEndpointController")
-    protected UmaFindPolicyForResourceSetEndpointController umaFindPolicyForResourceSetEndpointController;
-
-    @Autowired
-    @Qualifier("umaDeletePolicyForResourceSetEndpointController")
-    protected UmaDeletePolicyForResourceSetEndpointController umaDeletePolicyForResourceSetEndpointController;
-
-    @Autowired
-    @Qualifier("umaUpdatePolicyForResourceSetEndpointController")
-    protected UmaUpdatePolicyForResourceSetEndpointController umaUpdatePolicyForResourceSetEndpointController;
-
-    @Autowired
-    @Qualifier("umaAuthorizationRequestEndpointController")
-    protected UmaAuthorizationRequestEndpointController umaAuthorizationRequestEndpointController;
-
     @Autowired
     @Qualifier("umaRequestingPartyTokenSecurityInterceptor")
     protected SecurityLogicInterceptor umaRequestingPartyTokenSecurityInterceptor;
@@ -183,12 +132,84 @@ public abstract class BaseUmaEndpointControllerTests extends AbstractOAuth20Test
         val manager = new ProfileManager(ctx, oauthDistributedSessionStore);
         val userProfileResult = manager.getProfile();
         if (userProfileResult.isEmpty()) {
-            LOGGER.info("Unable to determine the user profile from the context");
-            return null;
+            throw new IllegalStateException("Unable to determine the user profile from the context");
         }
         return userProfileResult.get();
     }
 
+    protected MvcResult performUmaRequest(final HttpMethod method, final String path) throws Throwable {
+        return performUmaRequest(method, path, null, null, new MockHttpServletRequest(), new MockHttpServletResponse());
+    }
+
+    protected MvcResult performUmaRequest(final HttpMethod method, final String path,
+                                          final String body) throws Throwable {
+        return performUmaRequest(method, path, body, null, new MockHttpServletRequest(), new MockHttpServletResponse());
+    }
+
+    protected MvcResult performUmaRequest(final HttpMethod method, final String path,
+                                          final HttpServletRequest request,
+                                          final HttpServletResponse response) throws Throwable {
+        return performUmaRequest(method, path, null, null, request, response);
+    }
+
+    protected MvcResult performUmaRequest(final HttpMethod method, final String path,
+                                          final String body,
+                                          final HttpServletRequest request,
+                                          final HttpServletResponse response) throws Throwable {
+        return performUmaRequest(method, path, body, null, request, response);
+    }
+
+    protected MvcResult performUmaRequest(final HttpMethod method, final String path,
+                                          final Map<String, String> parameters,
+                                          final HttpServletRequest request,
+                                          final HttpServletResponse response) throws Throwable {
+        return performUmaRequest(method, path, null, parameters, request, response);
+    }
+
+    private MvcResult performUmaRequest(final HttpMethod method, final String path,
+                                        @Nullable final String body,
+                                        final Map<String, String> parameters,
+                                        final HttpServletRequest request,
+                                        final HttpServletResponse response) throws Throwable {
+        val builder = MockMvcRequestBuilders
+            .request(method, "/cas" + CONTEXT + path)
+            .with(mockRequest -> {
+                mockRequest.setContextPath("/cas");
+                mockRequest.setScheme(CAS_SCHEME);
+                mockRequest.setServerName(CAS_SERVER);
+                mockRequest.setServerPort(CAS_PORT);
+                return mockRequest;
+            })
+            .contentType(MediaType.APPLICATION_JSON_VALUE);
+        if (parameters != null) {
+            parameters.forEach(builder::param);
+        }
+        if (body != null) {
+            builder.content(body.getBytes(StandardCharsets.UTF_8));
+        }
+        if (request != null) {
+            val headerNames = request.getHeaderNames();
+            while (headerNames.hasMoreElements()) {
+                val name = headerNames.nextElement();
+                builder.header(name, Collections.list(request.getHeaders(name)).toArray());
+            }
+            if (request.getSession(false) instanceof final MockHttpSession session) {
+                builder.session(session);
+            }
+            if (request.getCookies() != null) {
+                builder.cookie(request.getCookies());
+            }
+        }
+        if (response instanceof final MockHttpServletResponse mockResponse && mockResponse.getCookies().length > 0) {
+            builder.cookie(mockResponse.getCookies());
+        }
+        return mockMvc.perform(builder).andReturn();
+    }
+
+    protected Map getMappedResponseBody(final MvcResult result) {
+        return getModelAndView(result).getModel();
+    }
+    
     private Triple<HttpServletRequest, HttpServletResponse, String> authenticateUmaRequestWithScope(
         final String scope, final SecurityLogicInterceptor interceptor) throws Throwable {
         val service = addRegisteredService();
@@ -200,7 +221,7 @@ public abstract class BaseUmaEndpointControllerTests extends AbstractOAuth20Test
         mockRequest.addHeader(HttpHeaders.AUTHORIZATION, String.format("%s %s", OAuth20Constants.TOKEN_TYPE_BEARER, accessToken));
         mockRequest.addHeader(HttpHeaders.USER_AGENT, "MSIE");
         val mockResponse = new MockHttpServletResponse();
-        interceptor.preHandle(mockRequest, mockResponse, null);
+        interceptor.preHandle(mockRequest, mockResponse, new Object());
         return Triple.of(mockRequest, mockResponse, accessToken);
     }
 }

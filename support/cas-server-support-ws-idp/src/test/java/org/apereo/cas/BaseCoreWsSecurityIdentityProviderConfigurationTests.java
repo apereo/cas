@@ -17,15 +17,23 @@ import org.apereo.cas.config.CasCoreWebAutoConfiguration;
 import org.apereo.cas.config.CasCoreWebflowAutoConfiguration;
 import org.apereo.cas.config.CasPersonDirectoryAutoConfiguration;
 import org.apereo.cas.config.CasRegisteredServicesTestConfiguration;
+import org.apereo.cas.config.CasThemesAutoConfiguration;
+import org.apereo.cas.config.CasThymeleafAutoConfiguration;
+import org.apereo.cas.config.CasValidationAutoConfiguration;
 import org.apereo.cas.config.CasWsSecurityIdentityProviderAutoConfiguration;
 import org.apereo.cas.config.CasWsSecuritySecurityTokenAutoConfiguration;
+import org.apereo.cas.test.CasTestExtension;
 import org.apereo.cas.util.spring.boot.SpringBootTestAutoConfigurations;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.SpringBootConfiguration;
 import org.springframework.boot.autoconfigure.ImportAutoConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Import;
+import org.springframework.test.web.servlet.MockMvc;
 
 /**
  * This is {@link BaseCoreWsSecurityIdentityProviderConfigurationTests}.
@@ -54,11 +62,17 @@ import org.springframework.context.annotation.Import;
         "cas.authn.wsfed-idp.sts.realm.key-password=realma",
         "cas.authn.wsfed-idp.sts.realm.issuer=CAS"
     })
+@AutoConfigureMockMvc
+@ExtendWith(CasTestExtension.class)
 public abstract class BaseCoreWsSecurityIdentityProviderConfigurationTests {
 
     @Autowired
     protected ConfigurableApplicationContext applicationContext;
 
+    @Autowired
+    @Qualifier("mockMvc")
+    protected MockMvc mockMvc;
+    
     @SpringBootTestAutoConfigurations
     @ImportAutoConfiguration({
         CasCoreSamlAutoConfiguration.class,
@@ -75,6 +89,9 @@ public abstract class BaseCoreWsSecurityIdentityProviderConfigurationTests {
         CasCoreMultifactorAuthenticationAutoConfiguration.class,
         CasCoreMultifactorAuthenticationWebflowAutoConfiguration.class,
         CasCoreAutoConfiguration.class,
+        CasThymeleafAutoConfiguration.class,
+        CasThemesAutoConfiguration.class,
+        CasValidationAutoConfiguration.class,
         CasPersonDirectoryAutoConfiguration.class,
         CasWsSecurityIdentityProviderAutoConfiguration.class,
         CasWsSecuritySecurityTokenAutoConfiguration.class

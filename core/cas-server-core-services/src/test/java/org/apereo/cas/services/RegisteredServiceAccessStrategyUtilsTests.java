@@ -21,7 +21,16 @@ class RegisteredServiceAccessStrategyUtilsTests {
     void verifyExpired() {
         val service = RegisteredServiceTestUtils.getRegisteredService();
         service.setExpirationPolicy(new DefaultRegisteredServiceExpirationPolicy(false,
-            LocalDate.now(ZoneOffset.UTC).minusDays(1)));
+            ZonedDateTime.now(ZoneOffset.UTC).minusDays(2)));
+        assertThrows(UnauthorizedServiceException.class, () ->
+            RegisteredServiceAccessStrategyUtils.ensureServiceAccessIsAllowed(RegisteredServiceTestUtils.getService(), service));
+    }
+
+    @Test
+    void verifyExpiredByDate() {
+        val service = RegisteredServiceTestUtils.getRegisteredService();
+        service.setExpirationPolicy(new DefaultRegisteredServiceExpirationPolicy(false,
+            LocalDate.now(ZoneOffset.UTC).minusDays(2)));
         assertThrows(UnauthorizedServiceException.class, () ->
             RegisteredServiceAccessStrategyUtils.ensureServiceAccessIsAllowed(RegisteredServiceTestUtils.getService(), service));
     }

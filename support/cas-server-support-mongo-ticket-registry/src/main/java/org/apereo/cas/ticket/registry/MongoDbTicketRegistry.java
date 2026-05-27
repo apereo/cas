@@ -148,9 +148,9 @@ public class MongoDbTicketRegistry extends AbstractTicketRegistry {
         return ticketCatalog.findAll()
             .stream()
             .map(this::getTicketCollectionInstanceByMetadata)
-            .map(map -> mongoTemplate.findAll(MongoDbTicketDocument.class, map))
-            .flatMap(List::stream)
+            .flatMap(map -> mongoTemplate.stream(new Query(), MongoDbTicketDocument.class, map))
             .map(ticket -> decodeTicket(deserializeTicket(ticket.getJson(), ticket.getType())))
+            .filter(Objects::nonNull)
             .filter(ticket -> !ticket.isExpired())
             .collect(Collectors.toSet());
     }
@@ -185,10 +185,18 @@ public class MongoDbTicketRegistry extends AbstractTicketRegistry {
             .findAll()
             .stream()
             .map(this::getTicketCollectionInstanceByMetadata)
-            .flatMap(map -> mongoTemplate.stream(new Query(), MongoDbTicketDocument.class, map))
-            .skip(criteria.getFrom())
-            .limit(criteria.getCount())
-            .map(ticket -> decodeTicket(deserializeTicket(ticket.getJson(), ticket.getType())));
+            .flatMap(map -> {
+                val query = new Query();
+                if (criteria.getFrom() > 0) {
+                    query.skip(criteria.getFrom());
+                }
+                if (criteria.getCount() > 0 && !criteria.isInfiniteCount()) {
+                    query.limit(Math.toIntExact(criteria.getCount()));
+                }
+                return mongoTemplate.stream(query, MongoDbTicketDocument.class, map);
+            })
+            .map(ticket -> decodeTicket(deserializeTicket(ticket.getJson(), ticket.getType())))
+            .filter(Objects::nonNull);
     }
 
     @Override
@@ -212,6 +220,21 @@ public class MongoDbTicketRegistry extends AbstractTicketRegistry {
     }
 
     @Override
+    public Stream<? extends Ticket> getTicketsFor(final Service service) {
+        val ticketDefinitions = ticketCatalog.findAll();
+        return ticketDefinitions
+            .stream()
+            .map(this::getTicketCollectionInstanceByMetadata)
+            .flatMap(collection -> {
+                val query = new Query(Criteria.where(MongoDbTicketDocument.FIELD_NAME_SERVICE).is(service.getId()));
+                return mongoTemplate.stream(query, MongoDbTicketDocument.class, collection);
+            })
+            .map(ticket -> decodeTicket(deserializeTicket(ticket.getJson(), ticket.getType())))
+            .filter(Objects::nonNull)
+            .filter(ticket -> !ticket.isExpired());
+    }
+    
+    @Override
     public Stream<? extends Ticket> getSessionsFor(final String principalId) {
         val ticketDefinitions = ticketCatalog.findTicketDefinition(TicketGrantingTicket.class);
         return ticketDefinitions
@@ -224,6 +247,7 @@ public class MongoDbTicketRegistry extends AbstractTicketRegistry {
                 return mongoTemplate.stream(query, MongoDbTicketDocument.class, map);
             })
             .map(ticket -> decodeTicket(deserializeTicket(ticket.getJson(), ticket.getType())))
+            .filter(Objects::nonNull)
             .filter(ticket -> !ticket.isExpired());
     }
 
@@ -253,6 +277,7 @@ public class MongoDbTicketRegistry extends AbstractTicketRegistry {
                 return mongoTemplate.stream(query, MongoDbTicketDocument.class, map);
             })
             .map(ticket -> decodeTicket(deserializeTicket(ticket.getJson(), ticket.getType())))
+            .filter(Objects::nonNull)
             .filter(ticket -> !ticket.isExpired());
     }
 
@@ -266,7 +291,7 @@ public class MongoDbTicketRegistry extends AbstractTicketRegistry {
         val ticketId = digestIdentifier(ticketToDelete.getId());
         LOGGER.debug("Deleting ticket [{}]", ticketId);
         val metadata = ticketCatalog.find(ticketToDelete);
-        val collectionName = getTicketCollectionInstanceByMetadata(metadata);
+        val collectionName = getTicketCollectionInstanceByMetadata(Objects.requireNonNull(metadata));
         val query = new Query(Criteria.where(MongoDbTicketDocument.FIELD_NAME_ID).is(ticketId));
         val res = mongoTemplate.remove(query, collectionName);
         LOGGER.debug("Deleted ticket [{}] with result [{}]", ticketToDelete.getId(), res);
@@ -276,7 +301,7 @@ public class MongoDbTicketRegistry extends AbstractTicketRegistry {
     @Override
     public List<? extends Serializable> query(final TicketRegistryQueryCriteria criteria) {
         val ticketDefinitions = StringUtils.isNotBlank(criteria.getType())
-            ? List.of(ticketCatalog.find(criteria.getType()))
+            ? List.of(Objects.requireNonNull(ticketCatalog.find(criteria.getType())))
             : ticketCatalog.findAll();
         return ticketDefinitions
             .stream()
@@ -307,16 +332,11 @@ public class MongoDbTicketRegistry extends AbstractTicketRegistry {
             .findAll()
             .stream()
             .map(this::getTicketCollectionInstanceByMetadata)
-            .flatMap(map -> {
+            .mapToLong(map -> {
                 val query = new Query(Criteria.where(MongoDbTicketDocument.FIELD_NAME_SERVICE).is(service.getId()));
-                return mongoTemplate.stream(query, MongoDbTicketDocument.class, map);
+                return mongoTemplate.count(query, map);
             })
-            .map(document -> {
-                val ticket = decodeTicket(deserializeTicket(document.getJson(), document.getType()));
-                return ticket != null ? !ticket.isExpired() : null;
-            })
-            .filter(Objects::nonNull)
-            .count();
+            .sum();
     }
 
     protected long countTicketsByTicketType(final Class<? extends Ticket> ticketType) {

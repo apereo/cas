@@ -56,7 +56,7 @@ public abstract class BaseSamlIdPWebflowTests extends BaseWebflowConfigurerTests
                                             final AuthnRequest authnRequest, final SamlRegisteredService samlRegisteredService,
                                             final MessageContext messageContext) throws Exception {
         val adaptor = SamlRegisteredServiceMetadataAdaptor.get(samlRegisteredServiceCachingMetadataResolver,
-            samlRegisteredService, samlRegisteredService.getServiceId()).get();
+            samlRegisteredService, samlRegisteredService.getServiceId()).orElseThrow();
         return samlIdPObjectSigner.encode(authnRequest, samlRegisteredService,
             adaptor, response, request, SAMLConstants.SAML2_POST_BINDING_URI,
             authnRequest, messageContext);

@@ -20,6 +20,7 @@ import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
 import org.jooq.lambda.Unchecked;
+import org.jspecify.annotations.Nullable;
 import org.opensaml.messaging.context.MessageContext;
 import org.opensaml.saml.common.SignableSAMLObject;
 import org.opensaml.saml.common.binding.SAMLBindingSupport;
@@ -113,7 +114,7 @@ public class SamlIdPSessionManager {
      * @param requestValue the request value
      * @return the t
      */
-    public <T extends RequestAbstractType> T fetch(final Class<T> clazz, final String requestValue) {
+    public <T extends RequestAbstractType> @Nullable T fetch(final Class<T> clazz, final String requestValue) {
         return SamlUtils.convertToSamlObject(openSamlConfigBean, requestValue, clazz);
     }
 

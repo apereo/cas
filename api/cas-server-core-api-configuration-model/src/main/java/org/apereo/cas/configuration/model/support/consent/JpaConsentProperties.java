@@ -2,6 +2,7 @@ package org.apereo.cas.configuration.model.support.consent;
 
 import module java.base;
 import org.apereo.cas.configuration.model.support.jpa.AbstractJpaProperties;
+import org.apereo.cas.configuration.support.RequiredProperty;
 import org.apereo.cas.configuration.support.RequiresModule;
 import lombok.Getter;
 import lombok.Setter;
@@ -20,4 +21,12 @@ import lombok.experimental.Accessors;
 public class JpaConsentProperties extends AbstractJpaProperties {
     @Serial
     private static final long serialVersionUID = 1646689616653363554L;
+
+    /**
+     * Whether consent management is enabled or not. When disabled, the system
+     * will not attempt to store or retrieve any consent decisions.
+     */
+    @RequiredProperty
+    private boolean enabled = true;
+
 }

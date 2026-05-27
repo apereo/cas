@@ -1,13 +1,13 @@
 package org.apereo.cas.uma.web.controllers.policy;
 
 import module java.base;
+import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.uma.web.controllers.BaseUmaEndpointControllerTests;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
-import org.springframework.mock.web.MockHttpServletRequest;
-import org.springframework.mock.web.MockHttpServletResponse;
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
@@ -22,18 +22,19 @@ class UmaCreatePolicyForResourceSetEndpointControllerTests extends BaseUmaEndpoi
     void verifyOperation() throws Throwable {
         val results = authenticateUmaRequestWithProtectionScope();
         var body = createUmaResourceRegistrationRequest().toJson();
-        var response = umaCreateResourceSetRegistrationEndpointController.registerResourceSet(body, results.getLeft(), results.getMiddle());
+        var result = performUmaRequest(HttpMethod.POST, OAuth20Constants.UMA_RESOURCE_SET_REGISTRATION_URL,
+            body, results.getLeft(), results.getMiddle());
 
-        var model = (Map) response.getBody();
+        var model = getMappedResponseBody(result);
         assertNotNull(model);
-        val resourceId = (long) model.get("resourceId");
+        val resourceId = ((Number) model.get("resourceId")).longValue();
 
         body = createUmaPolicyRegistrationRequest(getCurrentProfile(results.getLeft(), results.getMiddle())).toJson();
 
-        response = umaCreatePolicyForResourceSetEndpointController.createPolicyForResourceSet(resourceId, body,
-            results.getLeft(), results.getMiddle());
-        assertEquals(HttpStatus.OK, response.getStatusCode());
-        model = (Map) response.getBody();
+        result = performUmaRequest(HttpMethod.POST, resourceId + "/" + OAuth20Constants.UMA_POLICY_URL,
+            body, results.getLeft(), results.getMiddle());
+        assertEquals(HttpStatus.OK.value(), result.getResponse().getStatus());
+        model = getMappedResponseBody(result);
         assertNotNull(model);
         assertTrue(model.containsKey("code"));
         assertTrue(model.containsKey("entity"));
@@ -43,16 +44,15 @@ class UmaCreatePolicyForResourceSetEndpointControllerTests extends BaseUmaEndpoi
     void verifyMissingOperation() throws Throwable {
         val results = authenticateUmaRequestWithProtectionScope();
         val body = createUmaPolicyRegistrationRequest(getCurrentProfile(results.getLeft(), results.getMiddle())).toJson();
-        val response = umaCreatePolicyForResourceSetEndpointController.createPolicyForResourceSet(210, body,
-            results.getLeft(), results.getMiddle());
-        assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
+        val result = performUmaRequest(HttpMethod.POST, 210 + "/" + OAuth20Constants.UMA_POLICY_URL,
+            body, results.getLeft(), results.getMiddle());
+        assertEquals(HttpStatus.BAD_REQUEST.value(), result.getResponse().getStatus());
     }
 
     @Test
-    void verifyNoAuthOperation() {
+    void verifyNoAuthOperation() throws Throwable {
         val body = createUmaResourceRegistrationRequest().toJson();
-        val response = umaCreatePolicyForResourceSetEndpointController.createPolicyForResourceSet(100, body,
-            new MockHttpServletRequest(), new MockHttpServletResponse());
-        assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
+        val result = performUmaRequest(HttpMethod.POST, 100 + "/" + OAuth20Constants.UMA_POLICY_URL, body);
+        assertEquals(HttpStatus.UNAUTHORIZED.value(), result.getResponse().getStatus());
     }
 }

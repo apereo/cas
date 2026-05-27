@@ -25,9 +25,7 @@ dependencies {
     implementation project(":core:cas-server-core-authentication-api")
     implementation project(":core:cas-server-core-validation-api")
     implementation project(":core:cas-server-core-logout-api")
-
-
-
+    
     testImplementation project(":core:cas-server-core")
     testImplementation project(":core:cas-server-core-authentication-mfa")
     testImplementation project(":core:cas-server-core-notifications")

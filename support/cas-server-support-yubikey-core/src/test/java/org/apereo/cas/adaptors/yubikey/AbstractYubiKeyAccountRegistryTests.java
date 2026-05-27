@@ -105,7 +105,7 @@ public abstract class AbstractYubiKeyAccountRegistryTests {
 
         account.get().getDevices().forEach(device -> getYubiKeyAccountRegistry().delete(username, device.getId()));
         account = getAccount(username);
-        assertTrue(account.get().getDevices().isEmpty());
+        assertTrue(account.orElseThrow().getDevices().isEmpty());
     }
 
     @Test

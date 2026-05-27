@@ -50,11 +50,6 @@ public class SamlCoreProperties implements Serializable {
     private boolean ticketidSaml2;
 
     /**
-     * Qualified name of the security manager class used for creating a SAML parser pool.
-     */
-    private String securityManager = "org.apache.xerces.util.SecurityManager";
-
-    /**
      * Salt used to generate persistent or transient ids
      * in particular when generating SAML2 responses or logout requests, etc.
      * When left undefined, CAS will generate a random salt. For production use,

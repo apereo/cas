@@ -8,7 +8,7 @@ import module java.base;
  * @author Misagh Moayyed
  * @since 5.2.0
  */
-public class InMemoryConsentRepository extends BaseConsentRepository {
+public class InMemoryConsentRepository extends BaseSimpleConsentRepository {
     @Serial
     private static final long serialVersionUID = 2701737592960770840L;
 }

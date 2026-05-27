@@ -85,7 +85,9 @@
 
 <main class="container mt-3 mb-3">
     <div layout:fragment="content" id="dashboard" class="d-none">
-        <div th:utext="${#lists}"
+        <script type="text/javascript" th:src="@{#{webjars.jqueryui.js}}"></script>
+        <script type="text/javascript" th:src="@{#{webjars.trumbowyg.js}}"></script>
+        
         <div th:replace="~{fragments/palantir/navigationsidebar :: main}"/>
         <div class="mdc-card p-2 m-1" style="min-height: 100vh;">
             <div th:replace="~{fragments/palantir/dashboardtabs :: main}"/>

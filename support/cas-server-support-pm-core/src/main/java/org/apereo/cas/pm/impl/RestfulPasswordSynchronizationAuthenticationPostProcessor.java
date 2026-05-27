@@ -49,7 +49,7 @@ public class RestfulPasswordSynchronizationAuthenticationPostProcessor implement
     private void synchronize(final AuthenticationTransaction transaction) {
         HttpResponse response = null;
         try {
-            val primaryCredential = (UsernamePasswordCredential) transaction.getPrimaryCredential().get();
+            val primaryCredential = (UsernamePasswordCredential) transaction.getPrimaryCredential().orElseThrow();
             val entity = MAPPER.writeValueAsString(Map.of("username", primaryCredential.getId(), "password", primaryCredential.toPassword()));
             val headers = CollectionUtils.<String, String>wrap(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE);
             headers.putAll(properties.getHeaders());

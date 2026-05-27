@@ -8,6 +8,7 @@ import org.apereo.cas.configuration.features.CasFeatureModule;
 import org.apereo.cas.consent.ConsentActivationStrategy;
 import org.apereo.cas.consent.ConsentEngine;
 import org.apereo.cas.consent.ConsentRepository;
+import org.apereo.cas.multitenancy.TenantExtractor;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.util.spring.beans.BeanCondition;
 import org.apereo.cas.util.spring.beans.BeanSupplier;
@@ -162,12 +163,14 @@ public class CasConsentWebflowAutoConfiguration {
         public Action consentAccountProfilePrepareAction(
             final ConfigurableApplicationContext applicationContext,
             final CasConfigurationProperties casProperties,
+            @Qualifier(TenantExtractor.BEAN_NAME)
+            final TenantExtractor tenantExtractor,
             @Qualifier(ConsentEngine.BEAN_NAME)
             final ConsentEngine consentEngine) {
             return WebflowActionBeanSupplier.builder()
                 .withApplicationContext(applicationContext)
                 .withProperties(casProperties)
-                .withAction(() -> new ConsentAccountProfilePrepareAction(consentEngine))
+                .withAction(() -> new ConsentAccountProfilePrepareAction(consentEngine, tenantExtractor))
                 .withId(CasWebflowConstants.ACTION_ID_CONSENT_ACCOUNT_PROFILE_PREPARE)
                 .build()
                 .get();

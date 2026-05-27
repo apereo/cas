@@ -18,12 +18,6 @@ import org.apache.velocity.runtime.resource.loader.ResourceLoader;
 import org.apache.velocity.runtime.resource.util.StringResourceRepository;
 import org.apache.velocity.util.introspection.TypeConversionHandler;
 import org.apache.velocity.util.introspection.Uberspect;
-import org.apache.xerces.impl.dv.dtd.DTDDVFactoryImpl;
-import org.apache.xerces.impl.dv.xs.ExtendedSchemaDVFactoryImpl;
-import org.apache.xerces.impl.dv.xs.SchemaDVFactoryImpl;
-import org.apache.xerces.impl.dv.xs.XSSimpleTypeDecl;
-import org.apache.xerces.parsers.XIncludeAwareParserConfiguration;
-import org.apache.xerces.util.SecurityManager;
 import org.jspecify.annotations.Nullable;
 import org.opensaml.core.xml.XMLObjectBuilder;
 import org.opensaml.core.xml.io.Marshaller;
@@ -41,8 +35,6 @@ public class CoreSamlRuntimeHints implements CasRuntimeHintsRegistrar {
     public void registerHints(final RuntimeHints hints, final @Nullable ClassLoader classLoader) {
         hints.resources()
             .registerResourceBundle("org/apache/xml/security/resource/xmlsecurity")
-            .registerResourceBundle("org/apache/xerces/impl/msg/XMLSchemaMessages")
-            .registerResourceBundle("org/apache/xerces/impl/xpath/regex/message")
             .registerPattern("templates/*.vm")
             .registerPattern("entitydescriptor-criterion-predicate-registry.properties")
             .registerPattern("roledescriptor-criterion-predicate-registry.properties")
@@ -77,13 +69,8 @@ public class CoreSamlRuntimeHints implements CasRuntimeHintsRegistrar {
         val list = List.of(
             DestructableComponent.class,
             InitializableComponent.class,
-            XIncludeAwareParserConfiguration.class,
-            SecurityManager.class,
-            XSSimpleTypeDecl.class,
-            BasicParserPool.class,
-            ExtendedSchemaDVFactoryImpl.class,
-            SchemaDVFactoryImpl.class,
-            DTDDVFactoryImpl.class);
+            BasicParserPool.class
+        );
         registerReflectionHints(hints, list);
 
     }

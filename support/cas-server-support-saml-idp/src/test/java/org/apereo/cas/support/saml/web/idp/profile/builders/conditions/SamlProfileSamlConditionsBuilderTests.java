@@ -27,7 +27,7 @@ class SamlProfileSamlConditionsBuilderTests {
         protected SamlProfileBuilderContext getSamlProfileBuilderContext(final SamlRegisteredService service) {
             val adaptor = SamlRegisteredServiceMetadataAdaptor.get(
                 samlRegisteredServiceCachingMetadataResolver,
-                service, service.getServiceId()).get();
+                service, service.getServiceId()).orElseThrow();
 
             return SamlProfileBuilderContext.builder()
                 .samlRequest(getAuthnRequestFor(service))
@@ -51,13 +51,13 @@ class SamlProfileSamlConditionsBuilderTests {
         void verifyWithSkewForService() throws Throwable {
             val service = getSamlRegisteredServiceForTestShib(true, true);
             service.setAssertionAudiences("https://www.example.com");
-            service.setSkewAllowance(3600);
+            service.setSkewAllowance("3600");
 
             val buildContext = getSamlProfileBuilderContext(service);
             val result = samlProfileSamlConditionsBuilder.build(buildContext);
             assertNotNull(result);
             val diff = Duration.between(result.getNotBefore(), result.getNotOnOrAfter()).toSeconds();
-            assertEquals((long) service.getSkewAllowance() << 1, diff);
+            assertEquals(Long.parseLong(service.getSkewAllowance()) << 1, diff);
         }
     }
 

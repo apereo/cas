@@ -10,21 +10,13 @@ import org.apereo.cas.config.CasValidationAutoConfiguration;
 import org.apereo.cas.ticket.ProxyGrantingTicketImpl;
 import org.apereo.cas.ticket.expiration.NeverExpiresExpirationPolicy;
 import org.apereo.cas.web.support.WebUtils;
-import org.apereo.cas.web.v2.ProxyController;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.ObjectProvider;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.ImportAutoConfiguration;
-import org.springframework.boot.test.context.TestConfiguration;
-import org.springframework.boot.thymeleaf.autoconfigure.ThymeleafProperties;
-import org.springframework.context.annotation.Bean;
-import org.springframework.mock.web.MockHttpServletRequest;
-import org.springframework.mock.web.MockHttpServletResponse;
-import org.thymeleaf.spring6.SpringTemplateEngine;
 import static org.junit.jupiter.api.Assertions.*;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 /**
  * @author Scott Battaglia
@@ -37,26 +29,26 @@ import static org.junit.jupiter.api.Assertions.*;
 })
 @Tag("CAS")
 class ProxyControllerTests extends AbstractCentralAuthenticationServiceTests {
-
-    @Autowired
-    @Qualifier("proxyController")
-    private ObjectProvider<ProxyController> proxyController;
-
     @Test
     void verifyNoParams() throws Throwable {
-        assertEquals(CasProtocolConstants.ERROR_CODE_INVALID_REQUEST_PROXY, this.proxyController.getObject()
-            .handleRequestInternal(new MockHttpServletRequest(), new MockHttpServletResponse()).getModel()
-            .get("code"));
+        val result = mockMvc.perform(get(CasProtocolConstants.ENDPOINT_PROXY))
+            .andExpect(status().isOk())
+            .andReturn();
+
+        assertNotNull(result.getModelAndView());
+        assertEquals(CasProtocolConstants.ERROR_CODE_INVALID_REQUEST_PROXY, result.getModelAndView().getModel().get("code"));
     }
 
     @Test
     void verifyNonExistentPGT() throws Throwable {
-        val request = new MockHttpServletRequest();
-        request.addParameter(CasProtocolConstants.PARAMETER_PROXY_GRANTING_TICKET, "TestService");
-        request.addParameter(CasProtocolConstants.PARAMETER_TARGET_SERVICE, "testDefault");
+        val result = mockMvc.perform(get(CasProtocolConstants.ENDPOINT_PROXY)
+                .param(CasProtocolConstants.PARAMETER_PROXY_GRANTING_TICKET, "TestService")
+                .param(CasProtocolConstants.PARAMETER_TARGET_SERVICE, "testDefault"))
+            .andExpect(status().isOk())
+            .andReturn();
 
-        assertTrue(this.proxyController.getObject().handleRequestInternal(request,
-            new MockHttpServletResponse()).getModel().containsKey("code"));
+        assertNotNull(result.getModelAndView());
+        assertTrue(result.getModelAndView().getModel().containsKey("code"));
     }
 
     @Test
@@ -65,15 +57,14 @@ class ProxyControllerTests extends AbstractCentralAuthenticationServiceTests {
             WebUtils.PARAMETER_TICKET_GRANTING_TICKET_ID, CoreAuthenticationTestUtils.getAuthentication(),
             NeverExpiresExpirationPolicy.INSTANCE);
         getTicketRegistry().addTicket(ticket);
-        val request = new MockHttpServletRequest();
-        request.addParameter(CasProtocolConstants.PARAMETER_PROXY_GRANTING_TICKET, ticket.getId());
-        request.addParameter(CasProtocolConstants.PARAMETER_TARGET_SERVICE, "testDefault");
+        val result = mockMvc.perform(get(CasProtocolConstants.ENDPOINT_PROXY)
+                .param(CasProtocolConstants.PARAMETER_PROXY_GRANTING_TICKET, ticket.getId())
+                .param(CasProtocolConstants.PARAMETER_TARGET_SERVICE, "testDefault"))
+            .andExpect(status().isOk())
+            .andReturn();
 
-        val response = new MockHttpServletResponse();
-        assertTrue(this.proxyController.getObject().canHandle(request, response));
-        assertTrue(this.proxyController.getObject().handleRequestInternal(request,
-            new MockHttpServletResponse()).getModel().containsKey(
-            CasProtocolConstants.PARAMETER_TICKET));
+        assertNotNull(result.getModelAndView());
+        assertTrue(result.getModelAndView().getModel().containsKey(CasProtocolConstants.PARAMETER_TICKET));
     }
 
     @Test
@@ -82,24 +73,14 @@ class ProxyControllerTests extends AbstractCentralAuthenticationServiceTests {
             CoreAuthenticationTestUtils.getAuthentication(),
             NeverExpiresExpirationPolicy.INSTANCE);
         getTicketRegistry().addTicket(ticket);
-        val request = new MockHttpServletRequest();
-        request.addParameter(CasProtocolConstants.PARAMETER_PROXY_GRANTING_TICKET, ticket.getId());
-        request.addParameter(CasProtocolConstants.PARAMETER_TARGET_SERVICE, "service");
+        val result = mockMvc.perform(get(CasProtocolConstants.ENDPOINT_PROXY)
+                .param(CasProtocolConstants.PARAMETER_PROXY_GRANTING_TICKET, ticket.getId())
+                .param(CasProtocolConstants.PARAMETER_TARGET_SERVICE, "service"))
+            .andExpect(status().isOk())
+            .andReturn();
 
-        val map = this.proxyController.getObject().handleRequestInternal(request, new MockHttpServletResponse()).getModel();
+        assertNotNull(result.getModelAndView());
+        val map = result.getModelAndView().getModel();
         assertFalse(map.containsKey(CasProtocolConstants.PARAMETER_TICKET));
-    }
-
-    @TestConfiguration(value = "ProxyTestConfiguration", proxyBeanMethods = false)
-    static class ProxyTestConfiguration {
-        @Bean
-        public SpringTemplateEngine springTemplateEngine() {
-            return new SpringTemplateEngine();
-        }
-
-        @Bean
-        public ThymeleafProperties thymeleafProperties() {
-            return new ThymeleafProperties();
-        }
     }
 }

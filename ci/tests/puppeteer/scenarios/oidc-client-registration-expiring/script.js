@@ -22,7 +22,7 @@ const assert = require("assert");
     assert(entity.client_secret !== undefined);
     await cas.log("Using registration entry to get a token...");
     await executeRequest(entity.client_id, entity.client_secret, false);
-    await cas.sleep(11000);
+    await cas.sleep(6000);
     await cas.log("Reusing a now-expired registration entry to get a token, which must fail...");
     await executeRequest(entity.client_id, entity.client_secret, true);
 

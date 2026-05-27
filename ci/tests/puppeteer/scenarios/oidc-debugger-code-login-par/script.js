@@ -5,7 +5,8 @@ const assert = require("assert");
 (async () => {
     const browser = await cas.newBrowser(cas.browserOptions());
     const page = await cas.newPage(browser);
-
+    await cas.gotoLogout(page);
+    
     const authzUrl = "https://localhost:8443/cas/oidc/oidcAuthorize";
     const params = "client_id=client&" +
         "redirect_uri=https://localhost:9859/post&" +
@@ -59,7 +60,7 @@ const assert = require("assert");
     response = await cas.goto(page, url);
     await cas.sleep(1000);
     await cas.log(`Status: ${response.status()} ${response.statusText()}`);
-    assert(response.status() === 403);
+    assert(response.status() === 400);
     
     await cas.closeBrowser(browser);
 })();

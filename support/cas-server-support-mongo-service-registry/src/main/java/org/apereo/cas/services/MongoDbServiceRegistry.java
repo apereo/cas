@@ -69,7 +69,7 @@ public class MongoDbServiceRegistry extends AbstractServiceRegistry {
 
     @Override
     public Collection<RegisteredService> load() {
-        val list = this.mongoTemplate.findAll(RegisteredService.class, this.collectionName);
+        val list = mongoTemplate.findAll(RegisteredService.class, this.collectionName);
         val clientInfo = ClientInfoHolder.getClientInfo();
         return list
             .stream()
@@ -83,13 +83,17 @@ public class MongoDbServiceRegistry extends AbstractServiceRegistry {
     public RegisteredService save(final RegisteredService svc) {
         svc.assignIdIfNecessary();
         invokeServiceRegistryListenerPreSave(svc);
-        this.mongoTemplate.save(svc, this.collectionName);
-        LOGGER.debug("Saved registered service: [{}]", svc);
-        return this.findServiceById(svc.getId());
+        LOGGER.debug("Saving registered service: [{}]", svc);
+        return mongoTemplate.save(svc, this.collectionName);
     }
 
     @Override
     public long size() {
-        return this.mongoTemplate.count(new Query(), RegisteredService.class, this.collectionName);
+        return mongoTemplate.count(new Query(), RegisteredService.class, this.collectionName);
+    }
+
+    @Override
+    public Stream<? extends RegisteredService> getServicesStream() {
+        return mongoTemplate.stream(new Query(), RegisteredService.class, this.collectionName);
     }
 }

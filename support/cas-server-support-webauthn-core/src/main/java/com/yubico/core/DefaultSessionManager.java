@@ -3,7 +3,6 @@ package com.yubico.core;
 import module java.base;
 import com.yubico.webauthn.data.ByteArray;
 import lombok.RequiredArgsConstructor;
-import org.jspecify.annotations.NonNull;
 import jakarta.servlet.http.HttpServletRequest;
 
 @RequiredArgsConstructor

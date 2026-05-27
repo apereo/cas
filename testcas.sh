@@ -45,7 +45,7 @@ parallel="--parallel "
 dryRun=""
 info=""
 gradleCmd="./gradlew"
-flags="--no-daemon --configure-on-demand --build-cache -x javadoc -x check -Dverbose=true --no-watch-fs"
+flags="--configure-on-demand --build-cache -x javadoc -x check --quiet "
 coverageTask=""
 
 while (( "$#" )); do
@@ -72,6 +72,7 @@ while (( "$#" )); do
         shift
         ;;
     --with-coverage)
+        flags+=" -DenableJacocoAgent=true "
         currentDir=`pwd`
         case "${currentDir}" in
             *api*|*core*|*support*|*webapp*)
@@ -382,9 +383,11 @@ while (( "$#" )); do
                 task+="testJMX "
                 ;;
             restfulapiauthentication|restfulauthn|restauthn)
+                isDockerOnLinux && ./ci/tests/httpbin/run-httpbin-server.sh || exit 1
                 task+="testRestfulApiAuthentication "
                 ;;
             rest|restful|restapi|restfulapi)
+                isDockerOnLinux && ./ci/tests/httpbin/run-httpbin-server.sh || exit 1
                 task+="testRestfulApi "
                 ;;
             webflow-mfa-actions|swf-mfa_actions|webflowmfaactions)
@@ -543,11 +546,6 @@ while (( "$#" )); do
         ;;
     esac
 done
-
-if [[ -n "$coverageTask" ]]; then
-  task=""
-  printf "${GREEN}Running code coverage task [${coverageTask}] will disable all other task executions. Make sure all test tasks that generate code coverage data have already executed.${ENDCOLOR}\n"
-fi
 
 if [[ -z "$task" ]] && [[ -z "$coverageTask" ]]; then
   printHelp

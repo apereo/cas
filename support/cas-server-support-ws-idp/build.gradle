@@ -54,8 +54,10 @@ dependencies {
     testImplementation project(":core:cas-server-core-scripting")
 
     testImplementation project(":support:cas-server-support-person-directory")
+    testImplementation project(":support:cas-server-support-validation")
     testImplementation project(":support:cas-server-support-themes")
-
+    testImplementation project(":support:cas-server-support-thymeleaf")
+    
     testImplementation project(path: ":core:cas-server-core-webflow", configuration: "tests")
     testImplementation project(path: ":core:cas-server-core", configuration: "tests")
     testImplementation project(path: ":core:cas-server-core-authentication", configuration: "tests")

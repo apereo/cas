@@ -10,9 +10,12 @@
     <div class="attribute-tab w-100 d-none" id="attribute-tab-14">
         <div class="jqueryui-tabs" id="tenancy-tabs">
             <ul>
-                <li><a id="mfaTenantsTab" href="#tenants-tab">Registered Tenants</a></li>
+                <li><a id="registeredTenantsTab" href="#tenants-tab">Registered Tenants</a></li>
             </ul>
             <div id="tenants-tab">
+                <div id="newTenantDialogFields" style="display:none;">
+                    <div th:replace="~{fragments/switchbutton :: switchbutton (id='showTenantJsonEditor', label='#Show JSON Editor', cssClass='always-show pb-2 pt-2', selected=true, dataAttrs='changeEventHandler=toggleTenantJsonEditorVisibility')}"/>
+                </div>
                 <table id="tenantsTable" class="mdc-data-table__table table table-striped noborder">
                     <thead>
                     <tr class="mdc-data-table__header-row">

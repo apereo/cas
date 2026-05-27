@@ -24,9 +24,32 @@ Support is enabled by including the following dependency in the WAR overlay:
 
 ## Subordinates
 
-For a trust anchor or intermediate, the suported entites, called subordinates, must be defined as JSON files with the `OidcFederationSubordinate` format:
+In OpenID Connect Federation, a subordinate is an entity that is “below” 
+another federation entity in the trust hierarchy. Simply put, a subordinate is an entity whose 
+federation metadata and trust relationship are vouched for by a 
+higher-level entity in the federation.
 
-*Example of a RP subordinate:*
+More concretely, a subordinate is an entity for which a superior entity, such 
+as a Trust Anchor or Intermediate Entity, can issue a Subordinate Statement. 
+That statement is a signed Entity Statement saying, in effect:
+
+> “I, the issuer, make authoritative claims about this subject entity.” 
+
+The `iss` is the superior, and the `sub` is the subordinate. 
+   
+```
+Trust Anchor
+  └── Intermediate Entity
+        └── OpenID Provider
+        └── Relying Party
+```
+
+For a trust anchor or intermediate, the supported subordinates must be defined 
+as JSON files with the `OidcFederationSubordinate` format:
+
+### Relying Party Subordinate
+
+Here is an example of an RP subordinate definition:
 
 ```json
 {
@@ -76,8 +99,10 @@ For a trust anchor or intermediate, the suported entites, called subordinates, m
   ]
 }
 ```
+       
+### OpenId Provider Subordinate
 
-*Example of an OP subordinate:*
+Here is an example of an OP subordinate definition:
 
 ```json
 {
@@ -97,28 +122,34 @@ For a trust anchor or intermediate, the suported entites, called subordinates, m
         "openid"
       ],
       "response_types_supported": [
-        "code", "token", "id_token", "id_token token", "code id_token", "code id_token token"
+        "code", "token", "id_token", "id_token token", 
+        "code id_token", "code id_token token"
       ],
       "response_modes_supported": [
-        "query", "fragment", "form_post", "query.jwt", "fragment.jwt", "form_post.jwt", "jwt"
+        "query", "fragment", "form_post", "query.jwt", 
+        "fragment.jwt", "form_post.jwt", "jwt"
       ],
       "grant_types_supported": [
-        "implicit", "authorization_code", "refresh_token", "password", "client_credentials", "urn:ietf:params:oauth:grant-type:jwt-bearer"
+        "implicit", "authorization_code", "refresh_token", "password", 
+        "client_credentials", "urn:ietf:params:oauth:grant-type:jwt-bearer"
       ],
       "code_challenge_methods_supported": [
         "plain", "S256"
       ],
       "token_endpoint_auth_methods_supported": [
-        "client_secret_basic", "client_secret_post", "client_secret_jwt", "private_key_jwt", "none"
+        "client_secret_basic", "client_secret_post", 
+        "client_secret_jwt", "private_key_jwt", "none"
       ],
       "token_endpoint_auth_signing_alg_values_supported": [
-        "HS256", "HS384", "HS512", "RS256", "RS384", "RS512", "PS256", "PS384", "PS512", "ES256", "ES256K", "ES384", "ES512"
+        "HS256", "HS384", "HS512", "RS256", "RS384", "RS512", 
+        "PS256", "PS384", "PS512", "ES256", "ES256K", "ES384", "ES512"
       ],
       
       ...TRUNCATED...
       
       "userinfo_encryption_enc_values_supported": [
-        "A128CBC-HS256", "A192CBC-HS384", "A256CBC-HS512", "A128GCM", "A192GCM", "A256GCM", "XC20P"
+        "A128CBC-HS256", "A192CBC-HS384", "A256CBC-HS512", 
+        "A128GCM", "A192GCM", "A256GCM", "XC20P"
       ],
       "display_values_supported": [
         "page"
@@ -142,14 +173,14 @@ For a trust anchor or intermediate, the suported entites, called subordinates, m
       "e": "AQAB",
       "use": "sig",
       "kid": "PRRz",
-      "n": "vPZc7YQGa8p4ql8KpUdlj4KAgqkoWopHqtKrUFvXnRGlRXXrCwt5TGixe_LKWEFNnTm6xdIe0DoIRrUM02FeB9NuJzJCp5xhT__ahldgvtCzIpEg5VIQzRrcRt-hX6GZSe0mDEi1BKoVW5yP_-ZI_NYGSBPZQIdrmiNhzPOYsPrcz8i5BNXBiZpYHhgiiLGE587jQ5YITyOfNjcyQbqUz-DzIsRgzyb0_IB4XeOInk2nfv8SkzMGRXcTJmBasRJ3AHbvtDztDK6FbCJuU73sHYEOc6xyI_O5UAMwHyLPem7qXtKHmaodDs2pHZTv7CxxTuwmkjnr_yHLJ1Qcp3KZ5Q"
+      "n": "vPZc7Y..."
     }
   ]
 }
 ```
 
-The `metadata` and `federationKeys` properties come both from the data in the `.well-known/openid-federation` endpoint.
+The `metadata` and `federationKeys` properties come both from the 
+data in the `.well-known/openid-federation` endpoint. Both sections are **mandatory** in the federation entity definitions.
 
-Both sections are mandatory in the federation entity definitions.
-
-Signed entity statements are returned from the `/oidc/fetch` endpoint, depending on the requested subordinate (`sub` request parameter).
+Signed entity statements are returned from the `/oidc/fetch` endpoint, 
+depending on the requested subordinate (`sub` request parameter).

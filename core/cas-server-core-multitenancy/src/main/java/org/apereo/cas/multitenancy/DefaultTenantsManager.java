@@ -33,19 +33,12 @@ public class DefaultTenantsManager implements TenantsManager, DisposableBean, In
     @Nullable
     private WatcherService watcherService;
 
-    private final List<TenantDefinition> tenantDefinitionList = new ArrayList<>();
+    private final List<TenantDefinition> tenantDefinitionList = new CopyOnWriteArrayList<>();
 
     private void initializeWatchService() {
         FunctionUtils.doAndHandle(_ -> {
             if (ResourceUtils.isFile(jsonResource)) {
-                watcherService = new FileWatcherService(jsonResource.getFile(),
-                    file -> {
-                        val resources = readFromJsonResource();
-                        if (!resources.isEmpty()) {
-                            tenantDefinitionList.clear();
-                            tenantDefinitionList.addAll(resources);
-                        }
-                    });
+                watcherService = new FileWatcherService(jsonResource.getFile(), _ -> load());
                 watcherService.start(getClass().getSimpleName());
             }
         });
@@ -69,6 +62,38 @@ public class DefaultTenantsManager implements TenantsManager, DisposableBean, In
         return List.copyOf(tenantDefinitionList);
     }
 
+    @Override
+    public TenantDefinition save(final TenantDefinition tenantDefinition) {
+        tenantDefinitionList.removeIf(t -> t.getId().equalsIgnoreCase(tenantDefinition.getId()));
+        tenantDefinitionList.add(tenantDefinition);
+        writeTenantDefinitionsToResource();
+        return tenantDefinition;
+    }
+
+    @Override
+    public boolean delete(final String tenantId) {
+        val removed = tenantDefinitionList.removeIf(t -> t.getId().equalsIgnoreCase(tenantId));
+        if (removed) {
+            writeTenantDefinitionsToResource();
+        }
+        return removed;
+    }
+
+    @Override
+    public void load() {
+        val resources = readFromJsonResource();
+        if (!resources.isEmpty()) {
+            tenantDefinitionList.clear();
+            tenantDefinitionList.addAll(resources);
+        }
+    }
+
+    @Override
+    public void afterPropertiesSet() throws Exception {
+        load();
+        initializeWatchService();
+    }
+
     private List<TenantDefinition> readFromJsonResource() {
         return FunctionUtils.doAndHandle((CheckedSupplier<List<TenantDefinition>>) () -> {
             if (ResourceUtils.doesResourceExist(jsonResource)) {
@@ -83,9 +108,12 @@ public class DefaultTenantsManager implements TenantsManager, DisposableBean, In
         }, throwable -> new ArrayList<>()).get();
     }
 
-    @Override
-    public void afterPropertiesSet() throws Exception {
-        tenantDefinitionList.addAll(readFromJsonResource());
-        initializeWatchService();
+    private void writeTenantDefinitionsToResource() {
+        FunctionUtils.doAndHandle(_ -> {
+            if (ResourceUtils.isFile(jsonResource)) {
+                val writer = objectMapper.writerWithDefaultPrettyPrinter();
+                writer.writeValue(jsonResource.getFile(), tenantDefinitionList);
+            }
+        });
     }
 }

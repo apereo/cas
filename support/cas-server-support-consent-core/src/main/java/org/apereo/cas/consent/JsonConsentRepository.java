@@ -24,7 +24,7 @@ import tools.jackson.databind.ObjectMapper;
  * @since 5.2.0
  */
 @Getter
-public class JsonConsentRepository extends BaseConsentRepository implements DisposableBean {
+public class JsonConsentRepository extends BaseSimpleConsentRepository implements DisposableBean {
     @Serial
     private static final long serialVersionUID = -402728417464783825L;
 
@@ -35,13 +35,15 @@ public class JsonConsentRepository extends BaseConsentRepository implements Disp
 
     private WatcherService watcherService;
 
-    public JsonConsentRepository(final Resource resource) throws Exception {
+    public JsonConsentRepository(final Resource resource) {
         this.jsonResource = resource;
         setConsentDecisions(readDecisionsFromJsonResource());
         if (ResourceUtils.isFile(this.jsonResource)) {
-            this.watcherService = new FileWatcherService(resource.getFile(),
-                _ -> setConsentDecisions(readDecisionsFromJsonResource()));
-            this.watcherService.start(getClass().getSimpleName());
+            FunctionUtils.doUnchecked(_ -> {
+                this.watcherService = new FileWatcherService(resource.getFile(),
+                    _ -> setConsentDecisions(readDecisionsFromJsonResource()));
+                this.watcherService.start(getClass().getSimpleName());
+            });
         }
     }
 

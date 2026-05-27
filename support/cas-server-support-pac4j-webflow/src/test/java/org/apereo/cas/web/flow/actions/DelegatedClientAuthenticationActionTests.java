@@ -31,6 +31,8 @@ import lombok.val;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.parallel.Execution;
+import org.junit.jupiter.api.parallel.ExecutionMode;
 import org.pac4j.core.util.Pac4jConstants;
 import org.pac4j.jee.context.JEEContext;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -104,6 +106,7 @@ class DelegatedClientAuthenticationActionTests {
     }
 
     @Nested
+    @Execution(ExecutionMode.SAME_THREAD)
     class DefaultTests extends BaseDelegatedClientAuthenticationActionTests {
         @Test
         void verifyStartAuthenticationNoService() throws Throwable {
@@ -263,7 +266,7 @@ class DelegatedClientAuthenticationActionTests {
 
             context.withUserAgent();
             val webContext = new JEEContext(context.getHttpServletRequest(), new MockHttpServletResponse());
-            val client = identityProviders.findClient("FakeClient", webContext).get();
+            val client = identityProviders.findClient("FakeClient", webContext).orElseThrow();
             val ticket = delegatedClientAuthenticationWebflowManager.store(context, webContext, client);
             context.setParameter(DelegatedClientAuthenticationWebflowManager.PARAMETER_CLIENT_ID, ticket.getId());
 
