@@ -66,19 +66,21 @@ class AccessTokenRefreshTokenGrantRequestExtractorTests extends AbstractOAuth20T
         request.addParameter(OAuth20Constants.REFRESH_TOKEN, "RT-1");
 
         request.addParameter(OAuth20Constants.SCOPE, "email");
-        var result = extractor.extract(new JEEContext(request, new MockHttpServletResponse()));
+        val webContext = new JEEContext(request, new MockHttpServletResponse());
+        
+        var result = extractor.extract(webContext);
         assertEquals(Set.of("email"), result.getScopes());
 
         request.setParameter(OAuth20Constants.SCOPE, StringUtils.EMPTY);
-        result = extractor.extract(new JEEContext(request, new MockHttpServletResponse()));
+        result = extractor.extract(webContext);
         assertEquals(Set.of("openid", "email"), result.getScopes());
 
         request.setParameter(OAuth20Constants.SCOPE, "openid email");
-        result = extractor.extract(new JEEContext(request, new MockHttpServletResponse()));
+        result = extractor.extract(webContext);
         assertEquals(Set.of("openid", "email"), result.getScopes());
 
         request.setParameter(OAuth20Constants.SCOPE, "email profile");
         assertThrows(OAuth20UnauthorizedScopeRequestException.class,
-            () -> extractor.extract(new JEEContext(request, new MockHttpServletResponse())));
+            () -> extractor.extract(webContext));
     }
 }

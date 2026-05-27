@@ -9,6 +9,7 @@ import org.apereo.cas.util.LoggingUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.jspecify.annotations.Nullable;
 
 /**
  * This is {@link RedisConsentRepository}.
@@ -18,7 +19,7 @@ import lombok.val;
  */
 @RequiredArgsConstructor
 @Slf4j
-public class RedisConsentRepository implements ConsentRepository {
+public class RedisConsentRepository extends BaseConsentRepository {
     /**
      * Redis key prefix.
      */
@@ -30,14 +31,14 @@ public class RedisConsentRepository implements ConsentRepository {
     private final CasRedisTemplate<String, ConsentDecision> redisTemplate;
 
     @Override
-    public ConsentDecision findConsentDecision(final Service service,
-                                               final RegisteredService registeredService,
-                                               final Authentication authentication) {
+    public @Nullable ConsentDecision findConsentDecision(final Service service,
+                                                         final RegisteredService registeredService,
+                                                         final Authentication authentication) {
         val results = findConsentDecisions(authentication.getPrincipal().getId());
         return results
             .stream()
             .map(ConsentDecision.class::cast)
-            .filter(d -> d.getService().equalsIgnoreCase(service.getId()))
+            .filter(decision -> decision.getService().equalsIgnoreCase(service.getId()))
             .findFirst()
             .orElse(null);
     }
@@ -63,7 +64,7 @@ public class RedisConsentRepository implements ConsentRepository {
     }
 
     @Override
-    public ConsentDecision storeConsentDecision(final ConsentDecision decision) {
+    public @Nullable ConsentDecision storeConsentDecision(final ConsentDecision decision) {
         try {
             val redisKey = CAS_CONSENT_DECISION_PREFIX + decision.getPrincipal() + ':' + decision.getId();
             redisTemplate.boundValueOps(redisKey).set(decision);
@@ -96,4 +97,6 @@ public class RedisConsentRepository implements ConsentRepository {
             return count != null && count.intValue() > 0;
         }
     }
+
+    
 }

@@ -3,6 +3,7 @@ package org.apereo.cas.support.saml.util;
 import module java.base;
 import module java.xml;
 import org.apereo.cas.support.saml.SamlUtils;
+import org.jspecify.annotations.Nullable;
 import org.opensaml.saml.common.SAMLObject;
 import org.opensaml.saml.saml2.core.Issuer;
 import org.opensaml.saml.saml2.core.LogoutRequest;
@@ -44,7 +45,7 @@ public interface Saml20ObjectBuilder {
      * @param statusMessage the status message
      * @return the status
      */
-    Status newStatus(String codeValue, String statusMessage);
+    Status newStatus(String codeValue, @Nullable String statusMessage);
 
     /**
      * New issuer.

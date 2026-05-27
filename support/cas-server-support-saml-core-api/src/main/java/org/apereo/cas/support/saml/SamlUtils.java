@@ -24,7 +24,6 @@ import org.opensaml.core.xml.util.XMLObjectSupport;
 import org.opensaml.saml.common.SAMLObject;
 import org.opensaml.saml.common.SAMLObjectBuilder;
 import org.opensaml.saml.metadata.resolver.filter.impl.SignatureValidationFilter;
-import org.opensaml.saml.saml2.core.RequestAbstractType;
 import org.opensaml.security.credential.BasicCredential;
 import org.opensaml.security.credential.impl.StaticCredentialResolver;
 import org.opensaml.soap.common.SOAPObject;
@@ -176,7 +175,7 @@ public class SamlUtils {
      * @return the t
      */
     public static <T extends XMLObject> @Nullable T transformSamlObject(final OpenSamlConfigBean configBean, final String xml,
-                                                              final Class<T> clazz) {
+                                                                        final Class<T> clazz) {
         return transformSamlObject(configBean, xml.getBytes(StandardCharsets.UTF_8), clazz);
     }
 
@@ -190,8 +189,8 @@ public class SamlUtils {
      * @return the type
      */
     public static <T extends XMLObject> @Nullable T transformSamlObject(final OpenSamlConfigBean configBean,
-                                                              final byte[] data,
-                                                              final Class<T> clazz) {
+                                                                        final byte[] data,
+                                                                        final Class<T> clazz) {
         if (data != null && data.length > 0) {
             try (val in = new ByteArrayInputStream(data)) {
                 val document = configBean.getParserPool().parse(in);
@@ -389,19 +388,22 @@ public class SamlUtils {
      * @param clazz              the clazz
      * @return the final xml object
      */
-    public static <T extends RequestAbstractType> T convertToSamlObject(final OpenSamlConfigBean openSamlConfigBean,
-                                                                        final String requestValue, final Class<T> clazz) {
+    public static @Nullable <T extends SAMLObject> T convertToSamlObject(
+        final OpenSamlConfigBean openSamlConfigBean,
+        final String requestValue, final Class<T> clazz) {
         try {
             LOGGER.trace("Retrieving SAML request from [{}]", requestValue);
             val decodedBytes = Base64Support.decode(requestValue);
             try (val is = new InflaterInputStream(new ByteArrayInputStream(decodedBytes), new Inflater(true))) {
-                return clazz.cast(XMLObjectSupport.unmarshallFromInputStream(openSamlConfigBean.getParserPool(), is));
+                val xmlObject = XMLObjectSupport.unmarshallFromInputStream(openSamlConfigBean.getParserPool(), is);
+                return clazz.cast(xmlObject);
             }
         } catch (final Throwable e) {
-            return FunctionUtils.doUnchecked(() -> {
+            return FunctionUtils.doAndHandle(() -> {
                 val encodedRequest = EncodingUtils.decodeBase64(requestValue.getBytes(StandardCharsets.UTF_8));
                 try (val is = new ByteArrayInputStream(encodedRequest)) {
-                    return clazz.cast(XMLObjectSupport.unmarshallFromInputStream(openSamlConfigBean.getParserPool(), is));
+                    val xmlObject = XMLObjectSupport.unmarshallFromInputStream(openSamlConfigBean.getParserPool(), is);
+                    return clazz.cast(xmlObject);
                 }
             });
         }

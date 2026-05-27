@@ -33,10 +33,11 @@ import org.springframework.boot.test.context.SpringBootTest;
     properties = {
         "cas.server.name=https://sso.example.org/",
         "cas.server.prefix=https://sso.example.org/cas",
-        "cas.authn.oidc.federation.role=OPENID_PROVIDER",
+        "cas.authn.oidc.core.issuer=https://sso.example.org/cas/oidc",
         "cas.authn.oidc.jwks.file-system.jwks-file=file:${#systemProperties['java.io.tmpdir']}/oidc.jwks",
+        "cas.authn.oidc.federation.role=OPENID_PROVIDER",
         "cas.authn.oidc.federation.jwks-file=file:${#systemProperties['java.io.tmpdir']}/federation.jwks",
-        "cas.authn.oidc.core.issuer=https://sso.example.org/cas/oidc"
+        "cas.authn.oidc.federation.authority-hints[0]=https://trustanchor"
     }, webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 public abstract class AbstractOidcOpenIdProviderFederationTests extends AbstractOidcFederationTests {
 

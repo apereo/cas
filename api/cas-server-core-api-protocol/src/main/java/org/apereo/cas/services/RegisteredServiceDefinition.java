@@ -33,6 +33,14 @@ public interface RegisteredServiceDefinition extends Serializable {
     RegisteredServiceDefinition setId(long id);
 
     /**
+     * Sets name.
+     *
+     * @param name the name
+     * @return the name
+     */
+    RegisteredServiceDefinition setName(String name);
+
+    /**
      * Returns the name of the service.
      *
      * @return the name of the service.

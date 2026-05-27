@@ -1,7 +1,7 @@
 {
   "@class" : "org.apereo.cas.support.oauth.services.OAuthRegisteredService",
   "clientId": "client2",
-  "clientSecret": "secret",
+  "clientSecret": "{cas-cipher}eyJhbGciOiJIUzUxMiIsInR5cCI6IkpXVCIsImtpZCI6ImZlY2Q2ZmVjLTJiOWQtNGJmZC05Nzc2LWFjZDZlNzc5ZmMzMCJ9.ZXlKaGJHY2lPaUprYVhJaUxDSmxibU1pT2lKQk1USTRRMEpETFVoVE1qVTJJaXdpWTNSNUlqb2lTbGRVSWl3aWRIbHdJam9pU2xkVUlpd2lhMmxrSWpvaU1EazVaVGM0WVdZdFpUazBNaTAwT1RabUxXRTBNV010WmpSbVl6a3dPRFJsWkRJd0luMC4uVDVpT25UY3V1Yl9CQ2FCVF9ENHlZZy5BZnl5clprbmRSSzRPVVlIN0Y0cVBRLjJSRGZNUWw1enRYcThSWWpBV3pRSkE.eqqUUhYGh-4g7evY-69K-Mw6yY4jM1kZuvCw2Epsfuef_BGLjoRsMHhjA0Vc12dFf-msuyQzi8trcJq1_mI-Bg",
   "serviceId" : "^http://localhost:9889/anything/app2.*",
   "bypassApprovalPrompt": true,
   "name" : "Sample",

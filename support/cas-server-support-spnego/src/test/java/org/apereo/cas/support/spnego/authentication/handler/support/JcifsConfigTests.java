@@ -19,16 +19,16 @@ class JcifsConfigTests {
 
     @Test
     void verifyKerbSysConfig() throws Throwable {
-        val applicationContext = new StaticApplicationContext();
-        applicationContext.refresh();
+        try (val applicationContext = new StaticApplicationContext()) {
+            applicationContext.refresh();
 
-        val path = new ClassPathResource("kerb5.conf").getFile().getCanonicalPath();
-        val loginConf = new ClassPathResource("jaas.conf").getFile().getCanonicalPath();
+            val path = new ClassPathResource("kerb5.conf").getFile().getCanonicalPath();
+            val loginConf = new ClassPathResource("jaas.conf").getFile().getCanonicalPath();
 
-        val settings = new JcifsConfig.SystemSettings();
-        settings.setKerberosDebug("true");
-        settings.setKerberosConf("file:" + path);
-        assertDoesNotThrow(() -> settings.initialize(applicationContext, "file:" + loginConf));
+            JcifsConfig.SystemSettings.setKerberosDebug("true");
+            JcifsConfig.SystemSettings.setKerberosConf("file:" + path);
+            assertDoesNotThrow(() -> JcifsConfig.SystemSettings.initialize(applicationContext, "file:" + loginConf));
+        }
     }
 
     @Test

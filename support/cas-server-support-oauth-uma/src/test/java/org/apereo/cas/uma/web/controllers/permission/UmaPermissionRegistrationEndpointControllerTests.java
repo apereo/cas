@@ -6,12 +6,8 @@ import org.apereo.cas.uma.web.controllers.BaseUmaEndpointControllerTests;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-import org.pac4j.core.profile.CommonProfile;
-import org.pac4j.core.profile.ProfileManager;
-import org.pac4j.jee.context.JEEContext;
+import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
-import org.springframework.mock.web.MockHttpServletRequest;
-import org.springframework.mock.web.MockHttpServletResponse;
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
@@ -26,28 +22,28 @@ class UmaPermissionRegistrationEndpointControllerTests extends BaseUmaEndpointCo
     void verifyPermissionRegistrationOperation() throws Throwable {
         val results = authenticateUmaRequestWithProtectionScope();
         val body = createUmaPermissionRegistrationRequest(100).toJson();
-        val response = umaPermissionRegistrationEndpointController.handle(body, results.getLeft(), results.getMiddle());
-        assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
-        assertNotNull(response.getBody());
-        val model = (Map) response.getBody();
+        val result = performUmaRequest(HttpMethod.POST, OAuth20Constants.UMA_PERMISSION_URL,
+            body, results.getLeft(), results.getMiddle());
+        assertEquals(HttpStatus.BAD_REQUEST.value(), result.getResponse().getStatus());
+        val model = getMappedResponseBody(result);
         assertTrue(model.containsKey("code"));
         assertTrue(model.containsKey("message"));
     }
 
     @Test
-    void verifyFailsAuthn() {
+    void verifyFailsAuthn() throws Throwable {
         val body = createUmaPermissionRegistrationRequest(100).toJson();
-        val response = umaPermissionRegistrationEndpointController.handle(body,
-            new MockHttpServletRequest(), new MockHttpServletResponse());
-        assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
+        val result = performUmaRequest(HttpMethod.POST, OAuth20Constants.UMA_PERMISSION_URL, body);
+        assertEquals(HttpStatus.UNAUTHORIZED.value(), result.getResponse().getStatus());
     }
 
     @Test
     void verifyBadInput() throws Throwable {
         val results = authenticateUmaRequestWithProtectionScope();
         var body = "###";
-        var response = umaPermissionRegistrationEndpointController.handle(body, results.getLeft(), results.getMiddle());
-        assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
+        var result = performUmaRequest(HttpMethod.POST, OAuth20Constants.UMA_PERMISSION_URL,
+            body, results.getLeft(), results.getMiddle());
+        assertEquals(HttpStatus.BAD_REQUEST.value(), result.getResponse().getStatus());
     }
 
     @Test
@@ -55,31 +51,26 @@ class UmaPermissionRegistrationEndpointControllerTests extends BaseUmaEndpointCo
         val results = authenticateUmaRequestWithProtectionScope();
 
         var body = createUmaResourceRegistrationRequest().toJson();
-        var response = umaCreateResourceSetRegistrationEndpointController.registerResourceSet(body, results.getLeft(), results.getMiddle());
+        var result = performUmaRequest(HttpMethod.POST, OAuth20Constants.UMA_RESOURCE_SET_REGISTRATION_URL,
+            body, results.getLeft(), results.getMiddle());
 
-        var model = (Map) response.getBody();
-        val resourceId = (long) model.get("resourceId");
+        var model = getMappedResponseBody(result);
+        val resourceId = ((Number) model.get("resourceId")).longValue();
 
         val profile = getCurrentProfile(results.getLeft(), results.getMiddle());
         body = createUmaPolicyRegistrationRequest(profile).toJson();
 
-        response = umaCreatePolicyForResourceSetEndpointController.createPolicyForResourceSet(resourceId,
+        result = performUmaRequest(HttpMethod.POST, resourceId + "/" + OAuth20Constants.UMA_POLICY_URL,
             body, results.getLeft(), results.getMiddle());
-        assertEquals(HttpStatus.OK, response.getStatusCode());
+        assertEquals(HttpStatus.OK.value(), result.getResponse().getStatus());
+
+        val resourceSet = umaResourceSetRepository.getById(resourceId).orElseThrow();
+        resourceSet.setOwner("testuser");
+        umaResourceSetRepository.save(resourceSet);
 
         body = createUmaPermissionRegistrationRequest(resourceId).toJson();
-
-        val context = new JEEContext(results.getLeft(), results.getMiddle());
-        val manager = new ProfileManager(context, oauthDistributedSessionStore);
-        manager.removeProfiles();
-
-        val commonProfile = new CommonProfile();
-        commonProfile.setClientName("CasClient");
-        commonProfile.setId("testuser");
-        commonProfile.setRoles(Set.of(OAuth20Constants.UMA_PROTECTION_SCOPE));
-        manager.save(true, commonProfile, false);
-
-        response = umaPermissionRegistrationEndpointController.handle(body, results.getLeft(), results.getMiddle());
-        assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
+        result = performUmaRequest(HttpMethod.POST, OAuth20Constants.UMA_PERMISSION_URL,
+            body, results.getLeft(), results.getMiddle());
+        assertEquals(HttpStatus.BAD_REQUEST.value(), result.getResponse().getStatus());
     }
 }

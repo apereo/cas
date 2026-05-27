@@ -12,7 +12,6 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.ObjectUtils;
 import org.jooq.lambda.Unchecked;
-import org.jspecify.annotations.NonNull;
 import org.pac4j.core.client.BaseClient;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.core.annotation.AnnotationAwareOrderComparator;
@@ -33,7 +32,7 @@ public abstract class BaseDelegatedIdentityProviderFactory implements DelegatedI
 
     protected final CasSSLContext casSSLContext;
 
-    protected final Cache<@NonNull String, List<BaseClient>> clientsCache;
+    protected final Cache<String, List<BaseClient>> clientsCache;
 
     protected final ConfigurableApplicationContext applicationContext;
 

@@ -70,7 +70,7 @@ class SamlProfileSamlAssertionBuilderTests {
             service.setName("ObjectSignerTest");
 
             val adaptor = SamlRegisteredServiceMetadataAdaptor
-                .get(samlRegisteredServiceCachingMetadataResolver, service, service.getServiceId()).get();
+                .get(samlRegisteredServiceCachingMetadataResolver, service, service.getServiceId()).orElseThrow();
 
             val buildContext = SamlProfileBuilderContext.builder()
                 .samlRequest(getAuthnRequestFor(service))

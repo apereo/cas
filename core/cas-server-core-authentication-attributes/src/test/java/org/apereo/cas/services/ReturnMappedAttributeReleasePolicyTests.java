@@ -242,7 +242,7 @@ class ReturnMappedAttributeReleasePolicyTests {
         assertTrue(result1.containsKey(attributeName));
         assertTrue(result1.containsValue(List.of("v1")));
 
-        val manager = ApplicationContextProvider.getScriptResourceCacheManager().get();
+        val manager = ApplicationContextProvider.getScriptResourceCacheManager().orElseThrow();
         assertTrue(manager.getKeys().stream().allMatch(key -> manager.get(key) != null));
 
         val allowed2 = ArrayListMultimap.<String, Object>create();

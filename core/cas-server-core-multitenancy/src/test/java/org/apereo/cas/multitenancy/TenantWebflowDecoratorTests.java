@@ -45,5 +45,6 @@ class TenantWebflowDecoratorTests {
         requestContext.setContextPath("/tenants/b9584c42/login");
         casMultitenancyWebflowDecorator.decorate(requestContext);
         assertTrue(requestContext.getFlowScope().contains("tenantUserInterfacePolicy"));
+        assertTrue(requestContext.getFlowScope().contains("tenantPath"));
     }
 }

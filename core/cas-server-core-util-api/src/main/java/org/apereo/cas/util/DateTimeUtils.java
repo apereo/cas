@@ -4,6 +4,7 @@ import module java.base;
 import org.apereo.cas.util.function.FunctionUtils;
 import lombok.experimental.UtilityClass;
 import lombok.val;
+import org.jspecify.annotations.Nullable;
 
 /**
  * Date/Time utility methods.
@@ -129,7 +130,7 @@ public class DateTimeUtils {
      * @param value the value
      * @return the date/time instance
      */
-    public static ZonedDateTime zonedDateTimeOf(final String value) {
+    public static @Nullable ZonedDateTime zonedDateTimeOf(final String value) {
         val parsers = List.of(DateTimeFormatter.ISO_ZONED_DATE_TIME, DateTimeFormatter.RFC_1123_DATE_TIME);
         return parsers
             .stream()

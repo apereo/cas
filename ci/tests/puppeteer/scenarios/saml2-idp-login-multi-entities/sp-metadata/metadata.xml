@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<md:EntitiesDescriptor
+        xmlns:md="urn:oasis:names:tc:SAML:2.0:metadata"
+        xmlns:ds="http://www.w3.org/2000/09/xmldsig#"
+        xmlns:shibmd="urn:mace:shibboleth:metadata:1.0"
+        Name="https://example.org/saml/metadata/sp-collection">
+
+    <!-- SP 1 -->
+    <md:EntityDescriptor entityID="https://sp.example.org/saml1">
+        <md:SPSSODescriptor
+                AuthnRequestsSigned="true"
+                WantAssertionsSigned="true"
+                protocolSupportEnumeration="urn:oasis:names:tc:SAML:2.0:protocol">
+
+            <md:NameIDFormat>
+                urn:oasis:names:tc:SAML:1.1:nameid-format:emailAddress
+            </md:NameIDFormat>
+
+            <md:AssertionConsumerService
+                    Binding="urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST"
+                    Location="https://sp.example.org/saml1/acs"
+                    index="0"
+                    isDefault="true"/>
+
+            <md:SingleLogoutService
+                    Binding="urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Redirect"
+                    Location="https://sp.example.org/saml1/logout"/>
+
+        </md:SPSSODescriptor>
+
+        <md:Organization>
+            <md:OrganizationName xml:lang="en">Example SP 1</md:OrganizationName>
+            <md:OrganizationDisplayName xml:lang="en">Example Service Provider 1</md:OrganizationDisplayName>
+            <md:OrganizationURL xml:lang="en">https://sp1.example.org</md:OrganizationURL>
+        </md:Organization>
+
+        <md:ContactPerson contactType="technical">
+            <md:GivenName>SP1 Technical Support</md:GivenName>
+            <md:EmailAddress>mailto:support@sp1.example.org</md:EmailAddress>
+        </md:ContactPerson>
+    </md:EntityDescriptor>
+
+    <!-- SP 2 -->
+    <md:EntityDescriptor entityID="https://sp.example.org/saml2">
+        <md:SPSSODescriptor
+                AuthnRequestsSigned="true"
+                WantAssertionsSigned="true"
+                protocolSupportEnumeration="urn:oasis:names:tc:SAML:2.0:protocol">
+
+            <md:NameIDFormat>
+                urn:oasis:names:tc:SAML:1.1:nameid-format:emailAddress
+            </md:NameIDFormat>
+
+            <md:AssertionConsumerService
+                    Binding="urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST"
+                    Location="https://sp.example.org/saml2/acs"
+                    index="0"
+                    isDefault="true"/>
+
+            <md:SingleLogoutService
+                    Binding="urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Redirect"
+                    Location="https://sp.example.org/saml2/logout"/>
+
+        </md:SPSSODescriptor>
+
+        <md:Organization>
+            <md:OrganizationName xml:lang="en">Example SP 2</md:OrganizationName>
+            <md:OrganizationDisplayName xml:lang="en">Example Service Provider 2</md:OrganizationDisplayName>
+            <md:OrganizationURL xml:lang="en">https://sp2.example.org</md:OrganizationURL>
+        </md:Organization>
+
+        <md:ContactPerson contactType="technical">
+            <md:GivenName>SP2 Technical Support</md:GivenName>
+            <md:EmailAddress>mailto:support@sp2.example.org</md:EmailAddress>
+        </md:ContactPerson>
+    </md:EntityDescriptor>
+
+    <!-- SP 3 -->
+    <md:EntityDescriptor entityID="https://sp.example.org/saml3">
+        <md:SPSSODescriptor
+                AuthnRequestsSigned="true"
+                WantAssertionsSigned="true"
+                protocolSupportEnumeration="urn:oasis:names:tc:SAML:2.0:protocol">
+
+            <md:NameIDFormat>
+                urn:oasis:names:tc:SAML:1.1:nameid-format:emailAddress
+            </md:NameIDFormat>
+
+            <md:AssertionConsumerService
+                    Binding="urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST"
+                    Location="https://sp.example.org/saml3/acs"
+                    index="0"
+                    isDefault="true"/>
+
+            <md:SingleLogoutService
+                    Binding="urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Redirect"
+                    Location="https://sp.example.org/saml3/logout"/>
+
+        </md:SPSSODescriptor>
+
+        <md:Organization>
+            <md:OrganizationName xml:lang="en">Example SP 3</md:OrganizationName>
+            <md:OrganizationDisplayName xml:lang="en">Example Service Provider 3</md:OrganizationDisplayName>
+            <md:OrganizationURL xml:lang="en">https://sp3.example.org</md:OrganizationURL>
+        </md:Organization>
+
+        <md:ContactPerson contactType="technical">
+            <md:GivenName>SP3 Technical Support</md:GivenName>
+            <md:EmailAddress>mailto:support@sp3.example.org</md:EmailAddress>
+        </md:ContactPerson>
+    </md:EntityDescriptor>
+
+</md:EntitiesDescriptor>

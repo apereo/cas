@@ -2,11 +2,11 @@ package org.apereo.cas.nativex;
 
 import module java.base;
 import lombok.val;
-import org.apache.xerces.parsers.XIncludeAwareParserConfiguration;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.aot.hint.RuntimeHints;
 import org.springframework.aot.hint.predicate.RuntimeHintsPredicates;
+import org.springframework.ws.soap.saaj.SaajSoapMessageFactory;
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
@@ -21,6 +21,6 @@ class InweboAuthenticationRuntimeHintsTests {
     void verifyHints() {
         val hints = new RuntimeHints();
         new InweboAuthenticationRuntimeHints().registerHints(hints, getClass().getClassLoader());
-        assertTrue(RuntimeHintsPredicates.reflection().onType(XIncludeAwareParserConfiguration.class).test(hints));
+        assertTrue(RuntimeHintsPredicates.reflection().onType(SaajSoapMessageFactory.class).test(hints));
     }
 }

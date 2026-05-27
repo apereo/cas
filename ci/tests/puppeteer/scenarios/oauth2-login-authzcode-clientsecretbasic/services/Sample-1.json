@@ -2,7 +2,7 @@
   "@class" : "org.apereo.cas.support.oauth.services.OAuthRegisteredService",
   "clientId": "client",
   "clientSecret": "my+secret",
-  "serviceId" : "https://localhost:9859/anything/cas.*",
+  "serviceId" : "^https://localhost:9859/anything/cas.*",
   "bypassApprovalPrompt": true,
   "name" : "Sample",
   "id" : 1,

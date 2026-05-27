@@ -25,7 +25,7 @@ public enum OidcFederationRole {
      *
      * @return whether the role is TA or intermediate.
      */
-    public boolean isTaOrIntermediate() {
+    public boolean isTrustAnchorOrIntermediate() {
         return this == TRUST_ANCHOR || this == INTERMEDIATE;
     }
 }

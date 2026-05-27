@@ -8,7 +8,7 @@ env:
   DEVELOCITY_ACCESS_KEY: ${{ secrets.GRADLE_ENTERPRISE_ACCESS_KEY }}
   GH_PACKAGE_REGISTRY_USER: ${{ secrets.GH_PACKAGE_REGISTRY_USER }}
   GH_PACKAGE_REGISTRY_TOKEN: ${{ secrets.GH_PACKAGE_REGISTRY_TOKEN }}
-  PYTHON_VERSION: '3.13.4'
+  PYTHON_VERSION: '3.14.5'
   JDK_CURRENT: 25
   JDK_DISTRIBUTION: "corretto"
 
@@ -31,6 +31,8 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v6
+        with:
+          persist-credentials: false
       - name: Set up JDK
         uses: actions/setup-java@v5
         with:
@@ -57,6 +59,8 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v6
+        with:
+          persist-credentials: false
       - name: Set up JDK
         uses: actions/setup-java@v5
         with:
@@ -92,6 +96,8 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v6
+        with:
+          persist-credentials: false
       - name: Set up JDK
         uses: actions/setup-java@v5
         with:
@@ -132,6 +138,8 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v6
+        with:
+          persist-credentials: false
       - name: Set up JDK
         uses: actions/setup-java@v5
         with:

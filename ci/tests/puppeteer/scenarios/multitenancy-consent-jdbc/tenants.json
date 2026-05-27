@@ -1,0 +1,33 @@
+[
+  "java.util.ArrayList",
+  [
+    {
+      "@class": "org.apereo.cas.multitenancy.TenantDefinition",
+      "id": "shire",
+      "description": "This is the Shire tenant definition",
+      "properties": {
+        "@class": "java.util.LinkedHashMap",
+        "cas.consent.jpa.ddl-auto": "create-drop",
+        "cas.consent.jpa.user": "postgres",
+        "cas.consent.jpa.password": "password",
+        "cas.consent.jpa.driver-class": "org.postgresql.Driver",
+        "cas.consent.jpa.url": "jdbc:postgresql://localhost:5432/audit",
+        "cas.consent.jpa.dialect": "org.hibernate.dialect.PostgreSQLDialect"
+      }
+    },
+    {
+      "@class": "org.apereo.cas.multitenancy.TenantDefinition",
+      "id": "moria",
+      "description": "This is the Moria tenant definition",
+      "properties": {
+        "@class": "java.util.LinkedHashMap",
+        "cas.consent.jpa.ddl-auto": "create-drop",
+        "cas.consent.jpa.user": "root",
+        "cas.consent.jpa.password": "password",
+        "cas.consent.jpa.driver-class": "com.mysql.cj.jdbc.Driver",
+        "cas.consent.jpa.url": "jdbc:mysql://localhost:3306/cas?allowPublicKeyRetrieval=true&characterEncoding=UTF-8&useSSL=FALSE",
+        "cas.consent.jpa.dialect": "org.hibernate.dialect.MySQLDialect"
+      }
+    }
+  ]
+]

@@ -7,6 +7,7 @@ import org.apereo.cas.logout.slo.BaseSingleLogoutServiceLogoutUrlBuilder;
 import org.apereo.cas.logout.slo.SingleLogoutUrl;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.ServicesManager;
+import org.apereo.cas.support.saml.authentication.SamlIdPServiceAttributeExtractor;
 import org.apereo.cas.support.saml.services.SamlRegisteredService;
 import org.apereo.cas.support.saml.services.idp.metadata.SamlRegisteredServiceMetadataAdaptor;
 import org.apereo.cas.support.saml.services.idp.metadata.cache.SamlRegisteredServiceCachingMetadataResolver;
@@ -16,6 +17,7 @@ import org.apereo.cas.web.UrlValidator;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
+import org.jspecify.annotations.Nullable;
 import org.opensaml.saml.saml2.metadata.SingleLogoutService;
 import org.springframework.core.Ordered;
 import jakarta.servlet.http.HttpServletRequest;
@@ -33,14 +35,8 @@ public class SamlIdPSingleLogoutServiceLogoutUrlBuilder extends BaseSingleLogout
      */
     public static final String PROPERTY_NAME_SINGLE_LOGOUT_BINDING = "singleLogoutSamlBinding";
 
-    /**
-     * The Saml registered service caching metadata resolver.
-     */
     protected final SamlRegisteredServiceCachingMetadataResolver samlRegisteredServiceCachingMetadataResolver;
 
-    /**
-     * The logout request bindings.
-     */
     protected final List<String> logoutRequestBindings;
 
     public SamlIdPSingleLogoutServiceLogoutUrlBuilder(final ServicesManager servicesManager,
@@ -84,21 +80,29 @@ public class SamlIdPSingleLogoutServiceLogoutUrlBuilder extends BaseSingleLogout
         return Ordered.HIGHEST_PRECEDENCE;
     }
 
-    private SingleLogoutUrl buildLogoutUrl(final RegisteredService registeredService,
-                                           final WebApplicationService singleLogoutService) {
+    private @Nullable SingleLogoutUrl buildLogoutUrl(final RegisteredService registeredService,
+                                                     final WebApplicationService singleLogoutService) {
         LOGGER.trace("Building logout url for SAML service [{}]", registeredService);
 
-        val entityID = singleLogoutService.getId();
+        val samlRegisteredService = (SamlRegisteredService) registeredService;
+        val extractionResult = SamlIdPServiceAttributeExtractor.extract(registeredService, singleLogoutService);
+        val entityID = extractionResult
+            .map(pair -> {
+                val attribute = pair.getLeft();
+                val attributeValue = pair.getRight();
+                LOGGER.trace("Located service attribute [{}] with value [{}]", attribute, attributeValue);
+                return attribute.getEntityIdFrom(samlRegisteredServiceCachingMetadataResolver, attributeValue);
+            })
+            .orElseGet(singleLogoutService::getId);
         LOGGER.trace("Located entity id [{}]", entityID);
 
-        val samlRegisteredService = (SamlRegisteredService) registeredService;
-        val adaptorRes = SamlRegisteredServiceMetadataAdaptor.get(samlRegisteredServiceCachingMetadataResolver, samlRegisteredService, entityID);
+        val adaptorRes = SamlRegisteredServiceMetadataAdaptor.get(
+            samlRegisteredServiceCachingMetadataResolver, samlRegisteredService, entityID);
         if (adaptorRes.isEmpty()) {
             LOGGER.warn("Cannot find metadata linked to [{}]", entityID);
             return null;
         }
         val adaptor = adaptorRes.get();
-
         for (val binding : this.logoutRequestBindings) {
             var sloService = adaptor.getSingleLogoutService(binding);
             if (sloService != null) {
@@ -109,12 +113,15 @@ public class SamlIdPSingleLogoutServiceLogoutUrlBuilder extends BaseSingleLogout
         return null;
     }
 
-    private static SingleLogoutUrl finalizeSingleLogoutUrl(final SingleLogoutService sloService, final SamlRegisteredService service) {
+    private static @Nullable SingleLogoutUrl finalizeSingleLogoutUrl(final SingleLogoutService sloService, final SamlRegisteredService service) {
         val location = StringUtils.isBlank(sloService.getResponseLocation())
             ? sloService.getLocation()
             : sloService.getResponseLocation();
-        val url = new SingleLogoutUrl(location, service.getLogoutType());
-        url.getProperties().put(PROPERTY_NAME_SINGLE_LOGOUT_BINDING, sloService.getBinding());
-        return url;
+        if (StringUtils.isNotBlank(location)) {
+            val url = new SingleLogoutUrl(location, service.getLogoutType());
+            url.getProperties().put(PROPERTY_NAME_SINGLE_LOGOUT_BINDING, sloService.getBinding());
+            return url;
+        }
+        return null;
     }
 }

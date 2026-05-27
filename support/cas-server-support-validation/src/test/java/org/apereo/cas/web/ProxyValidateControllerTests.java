@@ -16,8 +16,6 @@ import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.test.CasTestExtension;
 import org.apereo.cas.util.MockWebServer;
-import org.apereo.cas.web.v2.ProxyController;
-import org.apereo.cas.web.v2.ProxyValidateController;
 import lombok.Getter;
 import lombok.val;
 import org.apereo.inspektr.common.web.ClientInfo;
@@ -29,11 +27,14 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.mock.web.MockHttpServletRequest;
-import org.springframework.mock.web.MockHttpServletResponse;
+import org.springframework.test.web.servlet.MockMvc;
 import static org.junit.jupiter.api.Assertions.*;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 /**
  * This is {@link ProxyValidateControllerTests}.
@@ -51,6 +52,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @Tag("CAS")
 @ExtendWith(CasTestExtension.class)
 @Getter
+@AutoConfigureMockMvc
 class ProxyValidateControllerTests {
     protected static final String SUCCESS = "Success";
 
@@ -67,13 +69,8 @@ class ProxyValidateControllerTests {
     private CentralAuthenticationService centralAuthenticationService;
 
     @Autowired
-    @Qualifier("proxyValidateController")
-    private ProxyValidateController proxyValidateController;
-
-
-    @Autowired
-    @Qualifier("proxyController")
-    private ProxyController proxyController;
+    @Qualifier("mockMvc")
+    private MockMvc mockMvc;
 
     @BeforeEach
     void before() {
@@ -92,12 +89,12 @@ class ProxyValidateControllerTests {
         val tId = getCentralAuthenticationService().createTicketGrantingTicket(ctx);
         val sId = getCentralAuthenticationService().grantServiceTicket(tId.getId(), service, ctx);
 
-        val request = new MockHttpServletRequest();
-        request.addParameter(CasProtocolConstants.PARAMETER_SERVICE, service.getId());
-        request.addParameter(CasProtocolConstants.PARAMETER_TICKET, sId.getId());
-
-        val mv = proxyValidateController.handleRequestInternal(request, new MockHttpServletResponse());
-        assertTrue(Objects.requireNonNull(mv.getView()).toString().contains(SUCCESS));
+        val result = mockMvc.perform(get(CasProtocolConstants.ENDPOINT_PROXY_VALIDATE)
+                .param(CasProtocolConstants.PARAMETER_SERVICE, service.getId())
+                .param(CasProtocolConstants.PARAMETER_TICKET, sId.getId()))
+            .andExpect(status().isOk())
+            .andReturn();
+        assertTrue(result.getResponse().getContentAsString().contains(SUCCESS));
     }
 
     @Test
@@ -114,29 +111,33 @@ class ProxyValidateControllerTests {
             val tId = getCentralAuthenticationService().createTicketGrantingTicket(ctx);
             val sId = getCentralAuthenticationService().grantServiceTicket(tId.getId(), service, ctx);
 
-            val request = new MockHttpServletRequest();
-            request.addParameter(CasProtocolConstants.PARAMETER_SERVICE, service.getId());
-            request.addParameter(CasProtocolConstants.PARAMETER_TICKET, sId.getId());
-            request.addParameter(CasProtocolConstants.PARAMETER_PROXY_CALLBACK_URL, service.getId());
-
-            val response = new MockHttpServletResponse();
-            var mv = proxyValidateController.handleRequestInternal(request, response);
-            assertTrue(Objects.requireNonNull(mv.getView()).toString().contains(SUCCESS));
+            var result = mockMvc.perform(get(CasProtocolConstants.ENDPOINT_PROXY_VALIDATE)
+                    .param(CasProtocolConstants.PARAMETER_SERVICE, service.getId())
+                    .param(CasProtocolConstants.PARAMETER_TICKET, sId.getId())
+                    .param(CasProtocolConstants.PARAMETER_PROXY_CALLBACK_URL, service.getId()))
+                .andExpect(status().isOk())
+                .andReturn();
+            assertTrue(result.getResponse().getContentAsString().contains(SUCCESS));
+            var mv = result.getModelAndView();
+            assertNotNull(mv);
             val pgt = mv.getModelMap().get(CasViewConstants.MODEL_ATTRIBUTE_NAME_PROXY_GRANTING_TICKET).toString();
 
-            request.removeAllParameters();
-            request.addParameter(CasProtocolConstants.PARAMETER_TARGET_SERVICE, service.getId());
-            request.addParameter(CasProtocolConstants.PARAMETER_PROXY_GRANTING_TICKET, pgt);
-            mv = proxyController.handleRequestInternal(request, response);
+            result = mockMvc.perform(get(CasProtocolConstants.ENDPOINT_PROXY)
+                    .param(CasProtocolConstants.PARAMETER_TARGET_SERVICE, service.getId())
+                    .param(CasProtocolConstants.PARAMETER_PROXY_GRANTING_TICKET, pgt))
+                .andExpect(status().isOk())
+                .andReturn();
+            mv = result.getModelAndView();
+            assertNotNull(mv);
             val pt = mv.getModelMap().get(CasProtocolConstants.PARAMETER_TICKET).toString();
 
-            request.removeAllParameters();
-            request.addParameter(CasProtocolConstants.PARAMETER_SERVICE, service.getId());
-            request.addParameter(CasProtocolConstants.PARAMETER_TICKET, pt);
-            mv = proxyValidateController.handleRequestInternal(request, response);
-            assertTrue(Objects.requireNonNull(mv.getView()).toString().contains(SUCCESS));
-            mv.getView().render(mv.getModel(), request, response);
-            assertTrue(response.getContentAsString().contains("<cas:proxy>%s</cas:proxy>".formatted(service.getId())));
+            result = mockMvc.perform(get(CasProtocolConstants.ENDPOINT_PROXY_VALIDATE)
+                    .param(CasProtocolConstants.PARAMETER_SERVICE, service.getId())
+                    .param(CasProtocolConstants.PARAMETER_TICKET, pt))
+                .andExpect(status().isOk())
+                .andReturn();
+            assertTrue(result.getResponse().getContentAsString().contains(SUCCESS));
+            assertTrue(result.getResponse().getContentAsString().contains("<cas:proxy>%s</cas:proxy>".formatted(service.getId())));
         }
 
     }

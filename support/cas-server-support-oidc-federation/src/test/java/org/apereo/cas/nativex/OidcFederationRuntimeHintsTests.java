@@ -1,9 +1,7 @@
 package org.apereo.cas.nativex;
 
 import module java.base;
-import org.apereo.cas.oidc.claims.OidcCustomScopeAttributeReleasePolicy;
-import org.apereo.cas.oidc.claims.OidcOpenIdScopeAttributeReleasePolicy;
-import org.apereo.cas.services.OidcRegisteredService;
+import org.apereo.cas.oidc.jwks.generator.OidcJsonWebKeystoreEntity;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
@@ -24,8 +22,6 @@ class OidcFederationRuntimeHintsTests {
     void verifyHints() {
         val hints = new RuntimeHints();
         new OidcFederationRuntimeHints().registerHints(hints, getClass().getClassLoader());
-        assertTrue(RuntimeHintsPredicates.reflection().onType(OidcRegisteredService.class).test(hints));
-        assertTrue(RuntimeHintsPredicates.reflection().onType(OidcOpenIdScopeAttributeReleasePolicy.class).test(hints));
-        assertTrue(RuntimeHintsPredicates.reflection().onType(OidcCustomScopeAttributeReleasePolicy.class).test(hints));
+        assertTrue(RuntimeHintsPredicates.reflection().onType(OidcJsonWebKeystoreEntity.class).test(hints));
     }
 }

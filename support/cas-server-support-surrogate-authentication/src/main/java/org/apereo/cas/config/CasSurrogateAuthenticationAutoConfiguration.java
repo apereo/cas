@@ -16,7 +16,8 @@ import org.springframework.context.annotation.Import;
     SurrogateAuthenticationAuditConfiguration.class,
     SurrogateAuthenticationMetadataConfiguration.class,
     SurrogateComponentSerializationConfiguration.class,
-    SurrogateAuthenticationRestConfiguration.class
+    SurrogateAuthenticationRestConfiguration.class,
+    SurrogateAuthenticationWebConfiguration.class
 })
 public class CasSurrogateAuthenticationAutoConfiguration {
 }

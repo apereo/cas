@@ -48,6 +48,8 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v6
+        with:
+          persist-credentials: false
       - name: Determine JDKs
         id: determine-jdk
         run: |
@@ -75,6 +77,8 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v6
+        with:
+          persist-credentials: false
       - name: Set up JDK ${{ env.JDK_CURRENT }}
         uses: actions/setup-java@v5
         with:
@@ -101,6 +105,8 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v6
+        with:
+          persist-credentials: false
       - name: Set up JDK ${{ matrix.jdk }}
         uses: actions/setup-java@v5
         with:
@@ -136,6 +142,8 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v6
+        with:
+          persist-credentials: false
       - name: Set up JDK ${{ matrix.jdk }}
         uses: actions/setup-java@v5
         with:
@@ -171,6 +179,8 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v6
+        with:
+          persist-credentials: false
       - name: Set up JDK ${{ matrix.jdk }}
         uses: actions/setup-java@v5
         with:
@@ -203,6 +213,8 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v6
+        with:
+          persist-credentials: false
       - name: Set up JDK ${{ matrix.jdk }}
         uses: actions/setup-java@v5
         with:
