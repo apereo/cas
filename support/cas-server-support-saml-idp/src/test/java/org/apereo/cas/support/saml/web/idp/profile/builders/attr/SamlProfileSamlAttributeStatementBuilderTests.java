@@ -43,7 +43,7 @@ class SamlProfileSamlAttributeStatementBuilderTests extends BaseSamlIdPConfigura
         service.getAttributeValueTypes().put("customNameId", NameIDType.PERSISTENT);
 
         val adaptor = SamlRegisteredServiceMetadataAdaptor
-            .get(samlRegisteredServiceCachingMetadataResolver, service, service.getServiceId()).get();
+            .get(samlRegisteredServiceCachingMetadataResolver, service, service.getServiceId()).orElseThrow();
 
         val buildContext = SamlProfileBuilderContext.builder()
             .samlRequest(getAuthnRequestFor(service))
@@ -70,7 +70,7 @@ class SamlProfileSamlAttributeStatementBuilderTests extends BaseSamlIdPConfigura
         service.getAttributeValueTypes().put("customNameId", NameIDType.class.getSimpleName());
 
         val adaptor = SamlRegisteredServiceMetadataAdaptor
-            .get(samlRegisteredServiceCachingMetadataResolver, service, service.getServiceId()).get();
+            .get(samlRegisteredServiceCachingMetadataResolver, service, service.getServiceId()).orElseThrow();
 
         val buildContext = SamlProfileBuilderContext.builder()
             .samlRequest(getAuthnRequestFor(service))
@@ -95,7 +95,7 @@ class SamlProfileSamlAttributeStatementBuilderTests extends BaseSamlIdPConfigura
         val service = getSamlRegisteredServiceForTestShib();
 
         val adaptor = SamlRegisteredServiceMetadataAdaptor
-            .get(samlRegisteredServiceCachingMetadataResolver, service, service.getServiceId()).get();
+            .get(samlRegisteredServiceCachingMetadataResolver, service, service.getServiceId()).orElseThrow();
 
         val buildContext = SamlProfileBuilderContext.builder()
             .samlRequest(getAuthnRequestFor(service))

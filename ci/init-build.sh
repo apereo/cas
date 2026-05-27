@@ -32,5 +32,5 @@ echo -e "Configuring Gradle wrapper...\n"
 mkdir -p ~/.gradle && echo "org.gradle.daemon=false" >> ~/.gradle/gradle.properties
 chmod +x ./gradlew
 echo "Gradle Home directory:"
-./gradlew gradleHome --no-daemon --version
+./gradlew gradleHome --version
 echo -e "Configured build environment\n"

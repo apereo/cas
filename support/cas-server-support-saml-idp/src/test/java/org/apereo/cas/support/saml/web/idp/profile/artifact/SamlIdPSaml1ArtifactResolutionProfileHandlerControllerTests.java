@@ -4,6 +4,7 @@ import module java.base;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.mock.MockTicketGrantingTicket;
 import org.apereo.cas.support.saml.BaseSamlIdPConfigurationTests;
+import org.apereo.cas.support.saml.SamlIdPConstants;
 import org.apereo.cas.support.saml.SamlUtils;
 import org.apereo.cas.support.saml.services.SamlRegisteredService;
 import org.apereo.cas.ticket.artifact.SamlArtifactTicketFactory;
@@ -27,9 +28,9 @@ import org.opensaml.soap.soap11.Header;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.MediaType;
-import org.springframework.mock.web.MockHttpServletRequest;
-import org.springframework.mock.web.MockHttpServletResponse;
+import org.springframework.test.web.servlet.MvcResult;
 import static org.junit.jupiter.api.Assertions.*;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 
 /**
  * This is {@link SamlIdPSaml1ArtifactResolutionProfileHandlerControllerTests}.
@@ -40,10 +41,6 @@ import static org.junit.jupiter.api.Assertions.*;
 @Tag("SAML2Web")
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 class SamlIdPSaml1ArtifactResolutionProfileHandlerControllerTests extends BaseSamlIdPConfigurationTests {
-    @Autowired
-    @Qualifier("saml1ArtifactResolutionController")
-    private SamlIdPSaml1ArtifactResolutionProfileHandlerController controller;
-
     @Autowired
     @Qualifier("samlArtifactTicketFactory")
     private SamlArtifactTicketFactory samlArtifactTicketFactory;
@@ -60,12 +57,7 @@ class SamlIdPSaml1ArtifactResolutionProfileHandlerControllerTests extends BaseSa
 
     @Test
     @Order(1)
-    void verifyOK() throws Throwable {
-        val response = new MockHttpServletResponse();
-        val request = new MockHttpServletRequest();
-        request.setMethod("POST");
-        request.setContentType(MediaType.TEXT_XML_VALUE);
-
+    void verifyOK() throws Exception {
         var builder = (SOAPObjectBuilder) openSamlConfigBean.getBuilderFactory()
             .getBuilder(Envelope.DEFAULT_ELEMENT_NAME);
         var envelope = (Envelope) builder.buildObject();
@@ -83,25 +75,19 @@ class SamlIdPSaml1ArtifactResolutionProfileHandlerControllerTests extends BaseSa
         envelope.setBody(body);
 
         val xml = SamlUtils.transformSamlObject(openSamlConfigBean, envelope).toString();
-        request.setContent(xml.getBytes(StandardCharsets.UTF_8));
 
         val ticket = samlArtifactTicketFactory.create("https://cassp.example.org",
             CoreAuthenticationTestUtils.getAuthentication(),
             new MockTicketGrantingTicket("casuser"), "https://cas.example.org",
             "https://cassp.example.org", artifactResolve);
         ticketRegistry.addTicket(ticket);
-        controller.handlePostRequest(response, request);
-        assertEquals(HttpStatus.SC_OK, response.getStatus());
+        val result = performSoapPost(xml);
+        assertEquals(HttpStatus.SC_OK, result.getResponse().getStatus());
     }
 
     @Test
     @Order(2)
-    void verifyFault() throws Throwable {
-        val response = new MockHttpServletResponse();
-        val request = new MockHttpServletRequest();
-        request.setMethod("POST");
-        request.setContentType(MediaType.TEXT_XML_VALUE);
-
+    void verifyFault() throws Exception {
         var builder = (SOAPObjectBuilder) openSamlConfigBean.getBuilderFactory()
             .getBuilder(Envelope.DEFAULT_ELEMENT_NAME);
         var envelope = (Envelope) builder.buildObject();
@@ -119,10 +105,16 @@ class SamlIdPSaml1ArtifactResolutionProfileHandlerControllerTests extends BaseSa
         envelope.setBody(body);
 
         val xml = SamlUtils.transformSamlObject(openSamlConfigBean, envelope).toString();
-        request.setContent(xml.getBytes(StandardCharsets.UTF_8));
-        controller.handlePostRequest(response, request);
-        assertEquals(HttpStatus.SC_OK, response.getStatus());
-        assertNotNull(request.getAttribute(FaultString.class.getSimpleName()));
+        val result = performSoapPost(xml);
+        assertEquals(HttpStatus.SC_OK, result.getResponse().getStatus());
+        assertNotNull(result.getRequest().getAttribute(FaultString.class.getSimpleName()));
+    }
+
+    private MvcResult performSoapPost(final String xml) throws Exception {
+        return mockMvc.perform(post(SamlIdPConstants.ENDPOINT_SAML1_SOAP_ARTIFACT_RESOLUTION)
+            .contentType(MediaType.TEXT_XML)
+            .content(xml.getBytes(StandardCharsets.UTF_8)))
+            .andReturn();
     }
 
     private ArtifactResolve getArtifactResolve() {

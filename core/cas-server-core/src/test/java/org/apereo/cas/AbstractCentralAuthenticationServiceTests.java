@@ -90,7 +90,7 @@ public abstract class AbstractCentralAuthenticationServiceTests extends BaseCasC
     @Autowired
     @Qualifier(AttributeDefinitionStore.BEAN_NAME)
     private AttributeDefinitionStore attributeDefinitionStore;
-
+    
     @BeforeEach
     void before() {
         val request = new MockHttpServletRequest();

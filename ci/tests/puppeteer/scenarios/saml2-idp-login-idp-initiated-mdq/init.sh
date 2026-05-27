@@ -9,4 +9,4 @@ if [[ -z $TMPDIR ]]; then
 fi
 echo -e "Fetching InCommon MDQ signing certificate..."
 mkdir ${SCENARIO_FOLDER}/saml-md
-curl -k --retry 5 --retry-delay 2 --retry-connrefused --max-time 30 -o $TMPDIR/inc-md-cert-mdq.pem https://md.incommon.org/certs/inc-md-cert-mdq.pem
+curl -k --retry 5 --retry-delay 2 --retry-connrefused --max-time 30 -o $TMPDIR/inc-md-cert-mdq.pem https://mdq.incommon.org/certs/inc-md-cert-mdq.pem

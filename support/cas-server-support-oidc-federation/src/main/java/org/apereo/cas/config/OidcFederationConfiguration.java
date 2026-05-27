@@ -151,6 +151,7 @@ class OidcFederationConfiguration {
         @Qualifier("oidcFederationIssuerService")
         final OidcIssuerService oidcIssuerService,
         final CasConfigurationProperties casProperties) {
+        
         val baseEndpoint = getOidcBaseEndpoint(oidcIssuerService, casProperties);
         val endpoints = new ArrayList<String>();
         endpoints.add(baseEndpoint + '/' + WELL_KNOWN_OPENID_FEDERATION_URL);

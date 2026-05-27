@@ -30,7 +30,6 @@ import org.apache.hc.core5.http.HttpEntityContainer;
 import org.apache.hc.core5.http.HttpResponse;
 import org.apache.hc.core5.http.HttpStatus;
 import org.hjson.JsonValue;
-import org.jspecify.annotations.NonNull;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.http.HttpMethod;
 import org.springframework.util.Assert;
@@ -50,7 +49,7 @@ public class OidcDefaultClientRegistrationRequestTranslator implements OidcClien
 
     private static final int GENERATED_CLIENT_NAME_LENGTH = 8;
 
-    private final ObjectProvider<@NonNull OidcConfigurationContext> configurationContext;
+    private final ObjectProvider<OidcConfigurationContext> configurationContext;
 
     @Override
     public OidcRegisteredService translate(
@@ -108,7 +107,8 @@ public class OidcDefaultClientRegistrationRequestTranslator implements OidcClien
             registeredService.setClientId(context.getClientIdGenerator().getNewString());
         }
         if (StringUtils.isBlank(registeredService.getClientSecret())) {
-            registeredService.setClientSecret(context.getClientSecretGenerator().getNewString());
+            val clientSecret = context.getClientSecretGenerator().getNewString();
+            registeredService.setClientSecret(context.getRegisteredServiceCipherExecutor().encode(clientSecret));
         }
         registeredService.setEvaluationOrder(0);
         val urls = org.springframework.util.StringUtils.collectionToCommaDelimitedString(

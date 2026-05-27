@@ -1,7 +1,8 @@
-
 const cas = require("../../cas.js");
 
 (async () => {
+    await cas.doDelete("https://localhost:8443/cas/actuator/webAuthnDevices/casuser");
+    
     const browser = await cas.newBrowser(cas.browserOptions());
     const page = await cas.newPage(browser);
 
@@ -25,16 +26,17 @@ const cas = require("../../cas.js");
     await cas.click(page, "#webauthnRegistrationLink");
     await cas.sleep(2000);
 
-    await page.click("#credentialNickname", { clickCount: 3 });
-    await cas.pressBackspace(page);
-    await page.type("#credentialNickname", "mydevice");
-
+    await cas.clearValue(page, "#credentialNickname");
+    const deviceName = await cas.randomWord(12, false);
+    await cas.log(`Device Name: ${deviceName}`);
+    await page.type("#credentialNickname", deviceName);
+    await cas.sleep(1000);
     await cas.click(page, "#registerButton");
 
     await cas.sleep(4000);
 
     await cas.assertInnerText(page, "#mfaDevicesTable tbody tr td:first-child", "Web Authn");
-    await cas.assertInnerText(page, "#mfaDevicesTable tbody tr td:nth-child(3)", "mydevice");
+    await cas.assertInnerText(page, "#mfaDevicesTable tbody tr td:nth-child(3)", deviceName);
     await cas.sleep(2000);
 
     await cas.removeWebAuthnVirtualAuthenticator(virtualAuthenticator);

@@ -15,3 +15,8 @@ Support is enabled by including the following module in the WAR Overlay:
 ## Configuration
 
 {% include_cached casproperties.html properties="cas.consent.mongo" %}
+
+## Multitenancy
+
+Configuration settings for attribute consent storage can be specified in a multitenant environment.
+Please [review this guide](../multitenancy/Multitenancy-Overview.html) for more information.

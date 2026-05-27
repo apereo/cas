@@ -32,7 +32,7 @@ There is no need for special ceremony to create separate issues. The pull reques
   <img src="https://contrib.rocks/image?repo=apereo/cas" alt="Contributors"/>
 </a>
 
-## Documentation [![Javadoc](https://img.shields.io/badge/Documentation-Javadoc-ff69b4.svg?style=for-the-badge&logo=readme)][casjavadocs]
+## Documentation
 
 | Version                                                                                    | Reference                                        |
 |--------------------------------------------------------------------------------------------|--------------------------------------------------|
@@ -114,7 +114,6 @@ Commercial support options may be [found here][cassupport].
 [blog]: https://apereo.github.io/
 [casbuildprocess]: https://apereo.github.io/cas/developer/Build-Process.html
 [githubcontributors]: https://github.com/apereo/cas/graphs/contributors
-[casjavadocs]: https://www.javadoc.io/doc/org.apereo.cas
 [apereocas]: https://www.apereo.org/projects/cas
 [springboot]: https://projects.spring.io/spring-boot/
 [springcloud]: https://projects.spring.io/spring-cloud/

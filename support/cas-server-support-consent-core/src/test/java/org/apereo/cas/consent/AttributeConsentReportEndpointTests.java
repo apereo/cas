@@ -12,11 +12,12 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.ImportAutoConfiguration;
-import org.springframework.http.HttpStatus;
-import org.springframework.mock.web.MockHttpServletRequest;
+import org.springframework.http.MediaType;
 import org.springframework.test.context.TestPropertySource;
 import tools.jackson.databind.ObjectMapper;
-import static org.junit.jupiter.api.Assertions.*;
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 /**
  * This is {@link AttributeConsentReportEndpointTests}.
@@ -30,10 +31,6 @@ import static org.junit.jupiter.api.Assertions.*;
 class AttributeConsentReportEndpointTests extends AbstractCasEndpointTests {
     private static final ObjectMapper MAPPER = JacksonObjectMapperFactory.builder()
         .defaultTypingEnabled(false).build().toObjectMapper();
-
-    @Autowired
-    @Qualifier("attributeConsentReportEndpoint")
-    private AttributeConsentReportEndpoint attributeConsentReportEndpoint;
 
     @Autowired
     @Qualifier(ConsentRepository.BEAN_NAME)
@@ -51,17 +48,29 @@ class AttributeConsentReportEndpointTests extends AbstractCasEndpointTests {
             CoreAuthenticationTestUtils.getAttributes());
         consentRepository.storeConsentDecision(desc);
 
-        var results = attributeConsentReportEndpoint.consentDecisions(uid);
-        assertFalse(results.isEmpty());
-        results = attributeConsentReportEndpoint.consentDecisions();
-        assertFalse(results.isEmpty());
+        mockMvc.perform(get("/actuator/attributeConsent/{principal}", uid)
+                .accept(MediaType.APPLICATION_JSON))
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$[0]").exists());
 
-        val entity = attributeConsentReportEndpoint.export();
-        assertEquals(HttpStatus.OK, entity.getStatusCode());
+        mockMvc.perform(get("/actuator/attributeConsent")
+                .accept(MediaType.APPLICATION_JSON))
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$[0]").exists());
 
-        assertTrue(attributeConsentReportEndpoint.revokeConsents(desc.getPrincipal(), desc.getId()));
-        results = attributeConsentReportEndpoint.consentDecisions(uid);
-        assertTrue(results.isEmpty());
+        mockMvc.perform(get("/actuator/attributeConsent/export")
+                .accept(MediaType.APPLICATION_OCTET_STREAM))
+            .andExpect(status().isOk());
+
+        mockMvc.perform(delete("/actuator/attributeConsent/{principal}/{decisionId}", desc.getPrincipal(), desc.getId())
+                .with(csrf())
+                .accept(MediaType.APPLICATION_JSON))
+            .andExpect(status().isOk());
+
+        mockMvc.perform(get("/actuator/attributeConsent/{principal}", uid)
+                .accept(MediaType.APPLICATION_JSON))
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$").isEmpty());
     }
 
     @Test
@@ -70,9 +79,11 @@ class AttributeConsentReportEndpointTests extends AbstractCasEndpointTests {
         val toSave = consentDecisionBuilder.build(RegisteredServiceTestUtils.getService(),
             RegisteredServiceTestUtils.getRegisteredService(), uid,
             CoreAuthenticationTestUtils.getAttributes());
-        val request = new MockHttpServletRequest();
         val content = MAPPER.writeValueAsString(toSave);
-        request.setContent(content.getBytes(StandardCharsets.UTF_8));
-        assertEquals(HttpStatus.CREATED, attributeConsentReportEndpoint.importAccount(request).getStatusCode());
+        mockMvc.perform(post("/actuator/attributeConsent/import")
+                .with(csrf())
+                .content(content)
+                .contentType(MediaType.APPLICATION_JSON))
+            .andExpect(status().isCreated());
     }
 }

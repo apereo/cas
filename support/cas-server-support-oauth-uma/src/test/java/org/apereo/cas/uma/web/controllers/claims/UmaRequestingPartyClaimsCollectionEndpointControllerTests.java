@@ -1,15 +1,16 @@
 package org.apereo.cas.uma.web.controllers.claims;
 
 import module java.base;
-import org.apereo.cas.services.UnauthorizedServiceException;
-import org.apereo.cas.ticket.InvalidTicketException;
+import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.ticket.expiration.NeverExpiresExpirationPolicy;
 import org.apereo.cas.uma.ticket.permission.UmaPermissionTicket;
 import org.apereo.cas.uma.web.controllers.BaseUmaEndpointControllerTests;
+import org.apereo.cas.util.CollectionUtils;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-import org.springframework.web.servlet.view.RedirectView;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.HttpStatus;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
@@ -34,10 +35,15 @@ class UmaRequestingPartyClaimsCollectionEndpointControllerTests extends BaseUmaE
 
         ticketRegistry.addTicket(permissionTicket);
 
-        val view = umaRequestingPartyClaimsCollectionEndpointController.getClaims(id,
-            service.getServiceId(), ticketId,
-            "state", results.getLeft(), results.getMiddle());
-        assertInstanceOf(RedirectView.class, view);
+        val result = performUmaRequest(HttpMethod.GET, OAuth20Constants.UMA_CLAIMS_COLLECTION_URL,
+            CollectionUtils.wrap(
+                OAuth20Constants.CLIENT_ID, id,
+                OAuth20Constants.REDIRECT_URI, service.getServiceId(),
+                "ticket", ticketId,
+                OAuth20Constants.STATE, "state"
+            ), results.getLeft(), results.getMiddle());
+        assertEquals(HttpStatus.FOUND.value(), result.getResponse().getStatus());
+        assertNotNull(result.getResponse().getRedirectedUrl());
     }
 
     private static UmaPermissionTicket getUmaPermissionTicket(final String ticketId) {
@@ -62,10 +68,14 @@ class UmaRequestingPartyClaimsCollectionEndpointControllerTests extends BaseUmaE
         val permissionTicket = getUmaPermissionTicket(ticketId);
         ticketRegistry.addTicket(permissionTicket);
 
-        assertThrows(UnauthorizedServiceException.class,
-            () -> umaRequestingPartyClaimsCollectionEndpointController.getClaims(id,
-                "bad-redirect", ticketId,
-                "state", results.getLeft(), results.getMiddle()));
+        val result = performUmaRequest(HttpMethod.GET, OAuth20Constants.UMA_CLAIMS_COLLECTION_URL,
+            CollectionUtils.wrap(
+                OAuth20Constants.CLIENT_ID, id,
+                OAuth20Constants.REDIRECT_URI, "bad-redirect",
+                "ticket", ticketId,
+                OAuth20Constants.STATE, "state"
+            ), results.getLeft(), results.getMiddle());
+        assertEquals(HttpStatus.FORBIDDEN.value(), result.getResponse().getStatus());
     }
 
     @Test
@@ -81,9 +91,15 @@ class UmaRequestingPartyClaimsCollectionEndpointControllerTests extends BaseUmaE
         when(permissionTicket.isExpired()).thenReturn(Boolean.TRUE);
         ticketRegistry.addTicket(permissionTicket);
 
-        assertThrows(InvalidTicketException.class,
-            () -> umaRequestingPartyClaimsCollectionEndpointController.getClaims(id,
-                service.getServiceId(), ticketId,
-                "state", results.getLeft(), results.getMiddle()));
+        val exception = assertThrows(RuntimeException.class,
+            () -> performUmaRequest(HttpMethod.GET, OAuth20Constants.UMA_CLAIMS_COLLECTION_URL,
+                CollectionUtils.wrap(
+                    OAuth20Constants.CLIENT_ID, id,
+                    OAuth20Constants.REDIRECT_URI, service.getServiceId(),
+                    "ticket", ticketId,
+                    OAuth20Constants.STATE, "state"
+                ), results.getLeft(), results.getMiddle()));
+        assertTrue(exception.getMessage().contains("INVALID_TICKET"));
+        assertNotNull(exception.getCause());
     }
 }

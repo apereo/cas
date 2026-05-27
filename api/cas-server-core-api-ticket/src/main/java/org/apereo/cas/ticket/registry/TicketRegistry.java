@@ -194,6 +194,16 @@ public interface TicketRegistry {
     }
 
     /**
+     * Gets sessions for an application.
+     *
+     * @param service the service
+     * @return the sessions for
+     */
+    default Stream<? extends Ticket> getTicketsFor(final Service service) {
+        return Stream.empty();
+    }
+
+    /**
      * Gets tickets with authentication attributes.
      *
      * @param queryAttributes the query attributes
@@ -230,7 +240,7 @@ public interface TicketRegistry {
      * @return total count
      */
     default long countTicketsFor(final Service service) {
-        return 0;
+        return getTicketsFor(service).count();
     }
 
     /**

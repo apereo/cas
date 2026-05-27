@@ -14,6 +14,7 @@ import lombok.experimental.Accessors;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
+import org.jspecify.annotations.NonNull;
 
 /**
  * This is {@link DefaultRegisteredServiceExpirationPolicy}.
@@ -60,14 +61,25 @@ public class DefaultRegisteredServiceExpirationPolicy implements RegisteredServi
         this(deleteWhenExpired, false, false, expirationDate.toString());
     }
 
+    public DefaultRegisteredServiceExpirationPolicy(final boolean deleteWhenExpired, final ZonedDateTime expirationDate) {
+        this(deleteWhenExpired, false, false, expirationDate.toString());
+    }
+
     @Override
     public boolean isExpired() {
         if (StringUtils.isBlank(this.expirationDate)) {
             return false;
         }
-        val now = LocalDateTime.now(ZoneId.systemDefault());
-        val expDate = DateTimeUtils.localDateTimeOf(this.expirationDate);
+        val now = ZonedDateTime.now(Clock.systemUTC());
+        var expDate = convertExpirationDate();
         LOGGER.debug("Service expiration date is [{}] while now is [{}]", expirationDate, now);
         return now.isEqual(expDate) || now.isAfter(expDate);
+    }
+
+    private @NonNull ChronoZonedDateTime convertExpirationDate() {
+        val expDate = DateTimeUtils.zonedDateTimeOf(this.expirationDate);
+        return expDate != null
+            ? expDate
+            : DateTimeUtils.localDateTimeOf(this.expirationDate).atZone(ZoneOffset.UTC);
     }
 }

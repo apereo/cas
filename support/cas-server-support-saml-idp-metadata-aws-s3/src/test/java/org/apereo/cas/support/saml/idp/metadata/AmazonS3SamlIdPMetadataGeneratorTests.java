@@ -3,6 +3,7 @@ package org.apereo.cas.support.saml.idp.metadata;
 import module java.base;
 import org.apereo.cas.config.CasAmazonS3SamlMetadataAutoConfiguration;
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.saml.BaseSamlIdPMetadataTests;
 import org.apereo.cas.support.saml.idp.metadata.generator.SamlIdPMetadataGenerator;
 import org.apereo.cas.support.saml.idp.metadata.locator.SamlIdPMetadataLocator;
@@ -17,6 +18,8 @@ import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.jupiter.api.parallel.Execution;
+import org.junit.jupiter.api.parallel.ExecutionMode;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -45,6 +48,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @EnabledIfListeningOnPort(port = 4566)
 @Tag("AmazonWebServices")
 @ExtendWith(CasTestExtension.class)
+@Execution(ExecutionMode.SAME_THREAD)
 class AmazonS3SamlIdPMetadataGeneratorTests {
     @Autowired
     @Qualifier(SamlIdPMetadataLocator.BEAN_NAME)
@@ -64,6 +68,10 @@ class AmazonS3SamlIdPMetadataGeneratorTests {
     @Autowired
     @Qualifier("samlIdPMetadataCache")
     private Cache<String, SamlIdPMetadataDocument> samlIdPMetadataCache;
+
+    @Autowired
+    @Qualifier(ServicesManager.BEAN_NAME)
+    private ServicesManager servicesManager;
 
     @Test
     void verifyOperation() throws Throwable {
@@ -94,8 +102,12 @@ class AmazonS3SamlIdPMetadataGeneratorTests {
     @Test
     void verifyService() throws Throwable {
         val service = new SamlRegisteredService();
-        service.setName("TestShib");
-        service.setId(1000);
+        service.setName(RandomUtils.randomAlphabetic(8));
+        service.setId(RandomUtils.nextLong());
+        service.setMetadataLocation("classpath:/sp-metadata.xml");
+        service.setServiceId(".+");
+        servicesManager.save(service);
+        
         val registeredService = Optional.of(service);
 
         samlIdPMetadataGenerator.generate(registeredService);

@@ -25,6 +25,7 @@ import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.val;
+import org.jspecify.annotations.Nullable;
 
 /**
  * Mock ticket-granting ticket.
@@ -110,8 +111,9 @@ public class MockTicketGrantingTicket implements TicketGrantingTicket {
             principalAttributes);
     }
 
-    private static Principal getPrincipal(final String principalId, final Map<String, List<Object>> principalAttributes) {
-        return FunctionUtils.doUnchecked(() -> PrincipalFactoryUtils.newPrincipalFactory().createPrincipal(principalId, principalAttributes));
+    private static @Nullable Principal getPrincipal(final String principalId, final Map<String, List<Object>> principalAttributes) {
+        return FunctionUtils.doUnchecked(() -> PrincipalFactoryUtils.newPrincipalFactory()
+            .createPrincipal(principalId, principalAttributes));
     }
 
     public ServiceTicket grantServiceTicket(final Service service,
@@ -121,7 +123,8 @@ public class MockTicketGrantingTicket implements TicketGrantingTicket {
     }
 
     @Override
-    public ServiceTicket grantServiceTicket(final String id, final Service service, final ExpirationPolicy expirationPolicy,
+    public ServiceTicket grantServiceTicket(final String id, final Service service,
+                                            final ExpirationPolicy expirationPolicy,
                                             final boolean credentialProvided,
                                             final TicketTrackingPolicy trackingPolicy) {
         val st = new MockServiceTicket(id, service, this, expirationPolicy);
@@ -190,6 +193,7 @@ public class MockTicketGrantingTicket implements TicketGrantingTicket {
     }
 
     @Override
+    @CanIgnoreReturnValue
     public Ticket update() {
         usageCount++;
         return this;

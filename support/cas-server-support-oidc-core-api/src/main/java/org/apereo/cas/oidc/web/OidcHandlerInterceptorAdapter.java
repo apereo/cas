@@ -14,6 +14,7 @@ import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.hc.core5.http.HttpStatus;
 import org.pac4j.core.context.session.SessionStore;
+import org.pac4j.jee.context.JEEContext;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.http.HttpMethod;
 import org.springframework.web.servlet.HandlerInterceptor;
@@ -75,7 +76,14 @@ public class OidcHandlerInterceptorAdapter extends OAuth20HandlerInterceptorAdap
             response.setStatus(HttpStatus.SC_NOT_IMPLEMENTED);
             return false;
         }
-        
+
+        if (isPushedAuthorizationRequest(request.getRequestURI()) && !isValidAuthorizeRequest(new JEEContext(request, response))) {
+            LOGGER.warn("Invalid OIDC pushed authorization request at [{}]", request.getRequestURI());
+            response.setStatus(HttpStatus.SC_FORBIDDEN);
+            writeErrorResponseBody(response);
+            return false;
+        }
+
         if (isVerifiableCredentialTransactionRequest(request.getRequestURI()) || isPushedAuthorizationRequest(request.getRequestURI())) {
             LOGGER.trace("OIDC request is protected at [{}]", request.getRequestURI());
             return requiresAuthenticationAccessTokenInterceptor.getObject().preHandle(request, response, handler);

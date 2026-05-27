@@ -92,3 +92,16 @@ User consent decisions may be stored and remembered using one of the following o
 | Redis       | [See this guide](Attribute-Release-Consent-Storage-Redis.html).    |
 | REST        | [See this guide](Attribute-Release-Consent-Storage-REST.html).     |
 | Custom      | [See this guide](Attribute-Release-Consent-Storage-Custom.html).   |
+
+## Multitenancy
+
+Configuration settings for attribute consent storage can be specified in a multitenant environment. For example,
+one tenant may choose to store consent decisions in MongoDb, while another tenant may choose to use a SQL database.
+
+<div class="alert alert-info">:information_source: <strong>Remember</strong><p>
+Not every attribute consent storage service is multitenant-aware, and this capability is 
+limited to CAS features and modules that are explicitly designed to support 
+multitenancy. Please verify with the specific documentation for your storage service of choice. 
+</p></div>
+
+Please [review this guide](../multitenancy/Multitenancy-Overview.html) for more information on multitenancy.
