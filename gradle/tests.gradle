@@ -372,7 +372,7 @@ def shouldTest(Set sourceTestDirectories, String category) {
 }
 
 def hasTestsOfCategory(Set sourceTestDirectories, String category) {
-    def result = srcTagMap.computeIfAbsent(testTagCacheKey(sourceTestDirectories)) {
+    def result = rootProject.srcTagMap.computeIfAbsent(testTagCacheKey(sourceTestDirectories)) {
         loadTagsFromCache(sourceTestDirectories)
     } as Set<String>
     result.contains(category)

@@ -99,7 +99,7 @@ tasks.register('resourcesJar', Jar) {
 tasks.register('javadocJar', Jar) {
     archiveClassifier.set("javadoc")
     
-    if (publishReleases || publishSnapshots) {
+    if (rootProject.publishReleases || rootProject.publishSnapshots) {
         logger.info "Skipping Javadoc generation for ${project.name} as it is being published..."
         def placeholderFile = layout.buildDirectory.file("generated/placeholder-javadoc/README.md")
         from(placeholderFile)

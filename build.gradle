@@ -17,15 +17,15 @@ buildscript {
     }
 
     dependencies {
-        classpath libs.gradle.plugin.spring.boot
-        classpath libs.gradle.plugin.git.properties
-        classpath libs.gradle.plugin.lombok
-        classpath libs.gradle.plugin.versions
-        classpath libs.gradle.plugin.native
-        classpath libs.gradle.plugin.errorprone
-        classpath libs.gradle.plugin.nullaway
-        classpath libs.gradle.plugin.sonarqube
-        classpath libs.gradle.plugin.nmcp
+        classpath rootProject.libs.gradle.plugin.spring.boot
+        classpath rootProject.libs.gradle.plugin.git.properties
+        classpath rootProject.libs.gradle.plugin.lombok
+        classpath rootProject.libs.gradle.plugin.versions
+        classpath rootProject.libs.gradle.plugin.native
+        classpath rootProject.libs.gradle.plugin.errorprone
+        classpath rootProject.libs.gradle.plugin.nullaway
+        classpath rootProject.libs.gradle.plugin.sonarqube
+        classpath rootProject.libs.gradle.plugin.nmcp
     }
 }
 
@@ -141,7 +141,7 @@ allprojects {
     apply plugin: "jacoco"
 
     jacoco {
-        toolVersion = "${libs.versions.jacoco.get()}"
+        toolVersion = "${rootProject.libs.versions.jacoco.get()}"
     }
 
     if (gradle.startParameter.taskNames.any { task -> task.contains("publishToMavenLocal") }) {
@@ -184,7 +184,7 @@ allprojects {
     java {
         toolchain {
             languageVersion = JavaLanguageVersion.of(project.targetCompatibility)
-            if (!ci) {
+            if (!rootProject.ci) {
                 vendor = JvmVendorSpec.JETBRAINS
             }
         }
@@ -215,7 +215,7 @@ allprojects {
 }
 
 subprojects {
-    if (projectShouldBePublished(project)) {
+    if (rootProject.projectShouldBePublished(project)) {
         apply plugin: "maven-publish"
         apply plugin: "signing"
     }
@@ -242,7 +242,7 @@ subprojects {
      * evaluate sub-projects to apply plugins, etc.
      */
     afterEvaluate { project ->
-        if (projectShouldBePublished(project)) {
+        if (rootProject.projectShouldBePublished(project)) {
             logger.info "Project ${project.name} should be published"
             apply from: rootProject.file("gradle/maven.gradle")
 
@@ -271,7 +271,7 @@ subprojects {
                             logger.info "Project ${project.name} does not have a bootJar task, using default JAR"
                             from components.java
                             
-                            if (project.hasProperty("publishMinimalArtifacts") && project.publishMinimalArtifacts) {
+                            if (rootProject.publishMinimalArtifacts) {
                                 logger.info "Publishing minimal artifacts for project ${project.name}"
                             } else {
                                 artifact tasks['sourcesJar']
@@ -385,10 +385,10 @@ subprojects {
         it.options.compilerArgs += casCompilerArgs
     }
 
-    if (projectRequiresLombok(project)) {
+    if (rootProject.projectRequiresLombok(project)) {
         apply plugin: "io.freefair.lombok"
         lombok {
-            version = "${libs.versions.lombok.get()}"
+            version = "${rootProject.libs.versions.lombok.get()}"
         }
     }
 
@@ -413,7 +413,7 @@ subprojects {
                     "Implementation-Vendor": projectGroup,
                     "Created-By": projectGroup
             )
-            if (generateTimestamps) {
+            if (rootProject.generateTimestamps) {
                 attributes("Implementation-Date": java.time.ZonedDateTime.now(java.time.ZoneOffset.UTC))
             }
             attributes(
@@ -422,7 +422,7 @@ subprojects {
         }
     }
 
-    if (!providers.systemProperty("skipCheckstyle").present && projectShouldBePublished(project)) {
+    if (!providers.systemProperty("skipCheckstyle").present && rootProject.projectShouldBePublished(project)) {
         apply plugin: "checkstyle"
         checkstyle {
             configProperties = [
@@ -432,7 +432,7 @@ subprojects {
             configFile = new File(rootDir, "style/checkstyle-rules.xml")
             ignoreFailures = false
             showViolations = true
-            toolVersion = "${libs.versions.checkstyle.get()}"
+            toolVersion = "${rootProject.libs.versions.checkstyle.get()}"
         }
     }
 
@@ -462,8 +462,8 @@ subprojects {
         annotationProcessor libraries.springindexer
 
         if (!providers.systemProperty("skipErrorProneCompiler").present) {
-            errorprone libs.errorprone
-            errorprone libs.nullaway
+            errorprone rootProject.libs.errorprone
+            errorprone rootProject.libs.nullaway
         }
 
         testImplementation libraries.tests
@@ -475,10 +475,10 @@ subprojects {
         
         runtimeOnly libraries.httpclient4
 
-        jvmAgents(libs.mockito.core) {
+        jvmAgents(rootProject.libs.mockito.core) {
             transitive = false
         }
-        jvmAgents(libs.mockito.inline) {
+        jvmAgents(rootProject.libs.mockito.inline) {
             transitive = false
         }
 
@@ -678,6 +678,6 @@ boolean projectShouldBePublished(Project project) {
     return result
 }
 
-boolean projectRequiresLombok(Project project) {
+static boolean projectRequiresLombok(Project project) {
     return !["api", "core", "docs", "support", "webapp"].contains(project.name) && project.name != "cas-server-documentation"
 }

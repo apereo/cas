@@ -32,10 +32,10 @@ dependencies {
     rootProject.subprojects.each {
         if (it != project) {
             if (rootProject.projectShouldBePublished(it)) {
-                implementation it
+                implementation(project(it.path))
             } else {
                 logger.debug("Skipping project for documentation processing: ${it.name}")
-                compileOnly it
+                compileOnly(project(it.path))
             }
         }
     }
