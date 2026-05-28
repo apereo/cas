@@ -77,7 +77,7 @@ administrator (a member of domain administrators will not be able to use `ktpass
 Example:
 
 ```bash
-C:\Users\administrator.DOMAIN>ktpass /out myspnaccount.keytab /princ HTTP/cas.example.com@REALM /pass * /mapuser domain-account@YOUR.REALM /ptype KRB5_NT_PRINCIPAL /crypto RC4-HMAC-NT
+C:\Users\administrator.DOMAIN>ktpass /out myspnaccount.keytab /princ HTTP/cas.example.com@REALM /pass * /mapuser domain-account@YOUR.REALM /ptype KRB5_NT_PRINCIPAL /crypto AES256-SHA1
 Targeting domain controller: DC.YOUR.REALM
 Successfully mapped HTTP/cas.example.com to domain-account.
 Type the password for HTTP/cas.example.com:
@@ -86,8 +86,8 @@ Password successfully set!
 Key created.
 Output keytab to myspnaccount.keytab:
 Keytab version: 0x502
-keysize 69 HTTP/cas.example.com@REALM ptype 1 (KRB5_NT_PRINCIPAL) vno 3 etype 0x17 (RC4-HMAC) keylength 16
-(0x00112233445566778899aabbccddeeff)
+keysize 93 HTTP/cas.example.com@REALM ptype 1 (KRB5_NT_PRINCIPAL) vno 5 etype 0x12 (AES256-SHA1) keylength 32
+(0x00112233445566778899aabbccddeeff00112233445566778899aabbccddeeff)
 ```
 
 Using `ktpass` requires Active Directory admin permissions. If that is not an option, you may be able to use `ktab.exe` from `%JAVA_HOME%\bin\ktab.exe` that 
