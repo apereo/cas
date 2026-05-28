@@ -1,0 +1,89 @@
+import org.gradle.external.javadoc.JavadocMemberLevel
+import org.gradle.jvm.toolchain.JavaLanguageVersion
+import org.gradle.jvm.toolchain.JvmVendorSpec
+
+plugins {
+    id 'idea'
+    id 'eclipse'
+    id 'java-library'
+    id 'jacoco'
+}
+
+jacoco {
+    toolVersion = "${libs.versions.jacoco.get()}"
+}
+
+if (gradle.startParameter.taskNames.any { task -> task.contains('publishToMavenLocal') }) {
+    project.pluginManager.apply('maven-publish')
+}
+
+project.pluginManager.apply('org.apereo.cas.tasks-conventions')
+
+if (!rootProject.ext.has('casArchAdjusted')) {
+    def arch = System.getProperty('os.arch')
+    if (arch == 'aarch64') {
+        System.setProperty('os.arch', 'x86_64')
+        arch = System.getProperty('os.arch')
+        def name = System.getProperty('os.name')
+        logger.info("The OS platform architecture for this Gradle build is reset to ${arch} for ${name}")
+    }
+    rootProject.ext.set('casArchAdjusted', true)
+}
+
+project.ext['forceBootifulArtifact'] = null
+
+if (rootProject.generateGitProperties) {
+    project.pluginManager.apply('io.hndrs.git-properties')
+    tasks.named('generateGitProperties') {
+        def propertiesFile = project.layout.buildDirectory.file('resources/main/git.properties').get().asFile
+        def projectGroup = project.group
+        def projectName = project.name
+        def projectVersion = project.version
+        def projectDescription = project.description
+
+        it.dotGitDirectory.set(rootProject.layout.projectDirectory.dir('.git'))
+        it.output.set(propertiesFile)
+        doLast {
+            propertiesFile.withWriterAppend('UTF-8') { writer ->
+                writer << "project.group=${projectGroup}"
+                writer << "\nproject.name=${projectName}"
+                writer << "\nproject.version=${projectVersion}"
+                writer << "\nproject.description=${projectDescription}\n"
+            }
+        }
+    }
+}
+
+java {
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(Integer.parseInt(project.targetCompatibility.toString()))
+        if (!rootProject.ci) {
+            vendor = JvmVendorSpec.JETBRAINS
+        }
+    }
+}
+
+idea {
+    module {
+        downloadSources = true
+        downloadJavadoc = false
+        jdkName = project.targetCompatibility
+        excludeDirs += file('.gradle')
+        ['.settings', 'classes', 'bin', 'out', 'docs', 'dependency-cache', 'libs',
+         'reports', 'resources', 'test-results', 'tmp', 'gh-pages'].each {
+            excludeDirs += project.layout.buildDirectory.files(it)
+        }
+    }
+}
+
+tasks.named('javadoc') {
+    options.memberLevel = JavadocMemberLevel.PUBLIC
+    options.addBooleanOption('html5', true)
+    options.addStringOption('Xdoclint:html,reference,syntax', '-quiet')
+    options.addStringOption('encoding', 'UTF-8')
+    failOnError = providers.systemProperty('ignoreJavadocFailures').present
+    excludes = ['**/generated/**', '**/com/duosecurity/**']
+}
+
+
+

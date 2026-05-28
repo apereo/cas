@@ -1,3 +1,5 @@
+apply plugin: "org.apereo.cas.project-conventions"
+
 description = "Apereo CAS Sentry Monitoring and Tracking Support"
 ext {
     publishMetadata = true

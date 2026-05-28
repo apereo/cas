@@ -1,3 +1,5 @@
+apply plugin: "org.apereo.cas.project-conventions"
+
 description = "Apereo CAS Delegated Authentication OpenId Connect Support Using Pac4J"
 ext {
     publishMetadata = true

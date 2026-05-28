@@ -1,3 +1,5 @@
+apply plugin: "org.apereo.cas.project-conventions"
+
 description = "Apereo CAS Native Graal VM Web Application"
 
 apply plugin: "java"

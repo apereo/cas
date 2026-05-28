@@ -1,3 +1,7 @@
+apply plugin: "org.apereo.cas.project-conventions"
+
+import org.apereo.cas.gradle.CasProjectConventions
+
 description = "Apereo CAS Documentation Generator"
 
 ext {
@@ -6,7 +10,7 @@ ext {
     archiveFileName = "casdocsgen.jar"
 }
 
-apply from: rootProject.file("gradle/springboot.gradle")
+apply plugin: "org.apereo.cas.spring-boot-conventions"
 
 javadoc {
     enabled = false
@@ -31,7 +35,7 @@ dependencies {
 
     rootProject.subprojects.each {
         if (it != project) {
-            if (rootProject.projectShouldBePublished(it)) {
+            if (CasProjectConventions.shouldBePublished(it)) {
                 implementation(project(it.path))
             } else {
                 logger.debug("Skipping project for documentation processing: ${it.name}")

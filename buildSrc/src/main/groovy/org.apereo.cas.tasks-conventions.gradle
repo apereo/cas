@@ -1,0 +1,79 @@
+import org.apache.tools.ant.taskdefs.condition.Os
+import org.apereo.cas.gradle.Ansi
+import org.gradle.jvm.tasks.Jar
+
+Object.metaClass.ansi = new Ansi()
+project.ext.set('ansi', new Ansi())
+
+if (Os.isFamily(Os.FAMILY_WINDOWS)) {
+    tasks.register('pathingJar', Jar) {
+        description = "Produces a 'pathing' JAR whose manifest class-path contains project runtime dependencies"
+        dependsOn configurations.runtimeClasspath
+        archiveAppendix.set('pathing')
+
+        def files = configurations.runtimeClasspath.files
+        doFirst {
+            manifest {
+                attributes 'Class-Path': files.collect {
+                    it.toURI().toString().replaceFirst('/file:/+/', '/')
+                }.join(' ')
+            }
+        }
+    }
+}
+
+def testClassesTask = tasks.named('testClasses')
+def classesTask = tasks.named('classes')
+def javadocTask = tasks.named('javadoc')
+
+tasks.register('testJar', Jar) {
+    dependsOn testClassesTask
+    description = 'Archive the testClasses'
+    archiveClassifier.set('tests')
+    from sourceSets.test.output
+}
+
+tasks.register('sourcesJar', Jar) {
+    dependsOn classesTask
+    archiveClassifier.set('sources')
+    from sourceSets.main.allSource
+}
+
+tasks.register('resourcesJar', Jar) {
+    archiveClassifier.set('resources')
+    from project.file('src/main/resources')
+}
+
+tasks.register('javadocJar', Jar) {
+    archiveClassifier.set('javadoc')
+
+    if (rootProject.publishReleases || rootProject.publishSnapshots) {
+        logger.info "Skipping Javadoc generation for ${project.name} as it is being published..."
+        def placeholderFile = layout.buildDirectory.file('generated/placeholder-javadoc/README.md')
+        from(placeholderFile)
+        doFirst {
+            def file = placeholderFile.get().asFile
+            file.parentFile.mkdirs()
+            file.text = 'This is a placeholder Javadoc artifact.'
+        }
+    } else {
+        logger.info "Generating Javadoc for ${project.name}..."
+        dependsOn javadocTask
+        from(javadocTask.map { it.destinationDir })
+    }
+}
+
+tasks.register('downloadDependencies') {
+    description 'Pre-download project dependencies for all configurations'
+    doLast {
+        configurations.getAsMap().each { name, config ->
+            logger.info "Retrieving dependencies for $project:$name"
+            try {
+                config.files
+            } catch (e) {
+                project.logger.info e.message
+            }
+        }
+    }
+}
+
