@@ -19,9 +19,13 @@ final class CasProjectConventions {
 
     static boolean shouldBePublished(final Project project) {
         project.logger.info("Checking if project ${project.name} should be published")
-        def result = !EXCLUDED_PUBLISH_PROJECTS.contains(project.name)
+        def result = shouldBePublished(project.name)
         project.logger.info("Project ${project.name} should${result ? '' : ' not'} be published")
         result
+    }
+
+    static boolean shouldBePublished(final String projectName) {
+        !EXCLUDED_PUBLISH_PROJECTS.contains(projectName)
     }
 
     static boolean requiresLombok(final Project project) {

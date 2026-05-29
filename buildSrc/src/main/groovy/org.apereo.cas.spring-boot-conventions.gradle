@@ -1,9 +1,13 @@
 import org.apache.tools.ant.taskdefs.condition.Os
+import org.apereo.cas.gradle.CasBuildSettings
 import org.gradle.api.file.DuplicatesStrategy
 
 import java.net.ServerSocket
 
-if (project.ext.forceBootifulArtifact || (!rootProject.publishFlag && !rootProject.skipBootifulArtifact)) {
+if (project.ext.forceBootifulArtifact || (!publishFlag && !skipBootifulArtifact)) {
+    def projectGroup = CasBuildSettings.projectGroup(project)
+    def projectVersion = CasBuildSettings.projectVersion(project)
+
     project.pluginManager.apply('org.springframework.boot')
 
     sourceSets {
@@ -11,9 +15,9 @@ if (project.ext.forceBootifulArtifact || (!rootProject.publishFlag && !rootProje
             if (project.hasProperty('casWebApplication') && project.ext.casWebApplication) {
                 resources {
                     srcDirs new File('/etc/cas/templates/'),
-                        new File("${project(':webapp').getProjectDir()}/cas-server-webapp-resources/src/main/resources/"),
-                        new File("${project(':support').getProjectDir()}/cas-server-support-thymeleaf/src/main/resources/"),
-                        new File("${project(':support').getProjectDir()}/cas-server-support-themes-collection/src/main/resources/")
+                        new File(project.rootDir, 'webapp/cas-server-webapp-resources/src/main/resources/'),
+                        new File(project.rootDir, 'support/cas-server-support-thymeleaf/src/main/resources/'),
+                        new File(project.rootDir, 'support/cas-server-support-themes-collection/src/main/resources/')
                 }
             }
         }
@@ -23,7 +27,11 @@ if (project.ext.forceBootifulArtifact || (!rootProject.publishFlag && !rootProje
         mainClassName = project.ext.mainClassName
         buildInfo {
             properties {
-                if (!rootProject.generateTimestamps) {
+                artifact = project.name
+                group = projectGroup
+                name = project.name
+                version = projectVersion
+                if (!generateTimestamps) {
                     excludes = ['time']
                 }
             }
@@ -38,6 +46,7 @@ if (project.ext.forceBootifulArtifact || (!rootProject.publishFlag && !rootProje
         tasks.named('bootWar') {
             def propertiesFile = project.layout.buildDirectory.file('resources/main/git.properties').get().asFile
             def properties = new Properties()
+            def projectName = project.name
             if (propertiesFile.exists()) {
                 propertiesFile.withInputStream { stream ->
                     properties.load(stream)
@@ -48,18 +57,18 @@ if (project.ext.forceBootifulArtifact || (!rootProject.publishFlag && !rootProje
             mainClass.set(project.ext.mainClassName)
             manifest {
                 attributes(
-                    'Automatic-Module-Name': project.name.replace('-', '.'),
-                    'Implementation-Title': project.name,
-                    'Implementation-Vendor': project.group,
-                    'Created-By': project.group
+                    'Automatic-Module-Name': projectName.replace('-', '.'),
+                    'Implementation-Title': projectName,
+                    'Implementation-Vendor': projectGroup,
+                    'Created-By': projectGroup
                 )
-                if (rootProject.generateTimestamps) {
+                if (generateTimestamps) {
                     attributes('Implementation-Date': java.time.ZonedDateTime.now())
                 }
 
                 attributes(
                     'Specification-Version': "${-> projectSpecVersion}",
-                    'Implementation-Version': project.version
+                    'Implementation-Version': projectVersion
                 )
             }
             from "${project.layout.buildDirectory.getAsFile().get().path}/resources/main", { into 'WEB-INF/classes' }
@@ -75,10 +84,16 @@ if (project.ext.forceBootifulArtifact || (!rootProject.publishFlag && !rootProje
             duplicatesStrategy = DuplicatesStrategy.EXCLUDE
         }
 
-        configurations {
-            [apiElements, runtimeElements].each {
-                it.outgoing.artifacts.removeIf { artifact -> artifact.buildDependencies.getDependencies(null).contains(jar) }
-                it.outgoing.artifact(bootJar)
+        if (CasBuildSettings.isTaskRequested(project, 'bootJar')
+            || CasBuildSettings.isTaskRequested(project, 'assemble')
+            || CasBuildSettings.isTaskRequested(project, 'build')
+            || CasBuildSettings.isTaskRequested(project, 'publish')) {
+            configurations {
+                def jarArchive = tasks.named('jar').get().archiveFile.get().asFile
+                [apiElements, runtimeElements].each {
+                    it.outgoing.artifacts.removeIf { artifact -> artifact.file == jarArchive }
+                    it.outgoing.artifact(bootJar)
+                }
             }
         }
     }
@@ -96,7 +111,7 @@ if (project.ext.forceBootifulArtifact || (!rootProject.publishFlag && !rootProje
                 classpath = files(
                     "$project.layout.buildDirectory.getAsFile().get().path/classes/main",
                     "$project.layout.buildDirectory.getAsFile().get().path/resources/main",
-                    "${project(':webapp').getProjectDir()}/cas-server-webapp-resources/src/main/resources/",
+                    "${new File(project.rootDir, 'webapp/cas-server-webapp-resources/src/main/resources').path}/",
                     pathingJar.archivePath
                 )
             }
@@ -138,18 +153,18 @@ if (project.ext.forceBootifulArtifact || (!rootProject.publishFlag && !rootProje
 
         list.add('-XX:+AllowEnhancedClassRedefinition')
 
-        if (rootProject.skipHotSwapAgent) {
+        if (skipHotSwapAgent) {
             ansi.yellow 'HotSwap Agent will be disabled for this run.'
         } else {
-            def agentPath = rootProject.file('etc').absolutePath
+            def agentPath = new File(project.rootDir, 'etc').absolutePath
             list.add("-javaagent:${agentPath}/hotswap-agent.jar=autoHotswap=true")
         }
 
-        if (rootProject.enableRemoteDebugging) {
+        if (enableRemoteDebugging) {
             def port = findAvailableTcpPort(5000..5010)
             if (port > 0) {
-                ansi.green "Port ${port} will be available for remote debugging requests with suspend=${rootProject.remoteDebuggingSuspend}"
-                list.add("-Xrunjdwp:transport=dt_socket,address=${port},server=y,suspend=${rootProject.remoteDebuggingSuspend}")
+                ansi.green "Port ${port} will be available for remote debugging requests with suspend=${remoteDebuggingSuspend}"
+                list.add("-Xrunjdwp:transport=dt_socket,address=${port},server=y,suspend=${remoteDebuggingSuspend}")
             }
         }
 

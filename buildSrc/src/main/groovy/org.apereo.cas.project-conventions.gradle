@@ -1,15 +1,13 @@
 import org.apereo.cas.gradle.CasProjectConventions
 import org.apereo.cas.gradle.CasPomConfiguration
+import org.apereo.cas.gradle.CasBuildSettings
 
 plugins {
     id 'org.apereo.cas.base-conventions'
 }
 
-if (rootProject.publishFlag && CasProjectConventions.shouldBePublished(project)) {
+if (publishFlag && CasProjectConventions.shouldBePublished(project)) {
     project.pluginManager.apply('com.gradleup.nmcp')
-    rootProject.dependencies {
-        add('nmcpAggregation', rootProject.project(project.path))
-    }
 }
 
 if (CasProjectConventions.shouldBePublished(project)) {
@@ -17,14 +15,14 @@ if (CasProjectConventions.shouldBePublished(project)) {
     project.pluginManager.apply('signing')
 }
 
-if (!rootProject.skipErrorProneCompiler) {
+if (!skipErrorProneCompiler) {
     project.pluginManager.apply('net.ltgt.errorprone')
     project.pluginManager.apply('net.ltgt.nullaway')
 }
 
 project.pluginManager.apply('org.apereo.cas.tests-conventions')
 
-ext.libraries = rootProject.ext.libraries
+ext.libraries = CasBuildSettings.libraries
 
 configurations {
     tests
@@ -35,66 +33,68 @@ configurations {
 
 project.pluginManager.apply('org.apereo.cas.overrides-conventions')
 
-afterEvaluate {
-    if (CasProjectConventions.shouldBePublished(project)) {
-        logger.info "Project ${project.name} should be published"
+if (CasProjectConventions.shouldBePublished(project)) {
+    logger.info "Project ${project.name} should be published"
 
-        publishing {
-            publications {
-                def isWarPluginApplied = project.plugins.hasPlugin('war')
-                if (isWarPluginApplied) {
-                    logger.info "Project ${project.name} should be published as a WAR"
-                    mavenWeb(MavenPublication) {
-                        from components.web
-                        pom {
-                            CasPomConfiguration.createPom(it, project)
-                        }
-                        pom.withXml {
-                            CasPomConfiguration.createPomRepositories(asNode())
-                        }
+    publishing {
+        publications {
+            if (project.hasProperty('skipPublication') && project.skipPublication) {
+                logger.info "Skipping artifact publication for project ${project.name}"
+            } else if (project.name.contains('cas-server-support-bom')) {
+                logger.info "Project ${project.name} is published as a BOM"
+            } else {
+                logger.info "Project ${project.name} should be published as a JAR"
+                mavenJava(MavenPublication) {
+                    logger.info "Project ${project.name} does not have a bootJar task, using default JAR"
+                    from components.java
+
+                    if (publishMinimalArtifacts) {
+                        logger.info "Publishing minimal artifacts for project ${project.name}"
+                    } else {
+                        artifact tasks['sourcesJar']
+                        artifact tasks['resourcesJar']
+                        artifact tasks['javadocJar']
+                        artifact tasks['testJar']
                     }
-                } else if (project.hasProperty('skipPublication') && project.skipPublication) {
-                    logger.info "Skipping artifact publication for project ${project.name}"
-                } else if (project.name.contains('cas-server-support-bom')) {
-                    logger.info "Project ${project.name} is published as a BOM"
-                } else {
-                    logger.info "Project ${project.name} should be published as a JAR"
-                    mavenJava(MavenPublication) {
-                        logger.info "Project ${project.name} does not have a bootJar task, using default JAR"
-                        from components.java
 
-                        if (rootProject.publishMinimalArtifacts) {
-                            logger.info "Publishing minimal artifacts for project ${project.name}"
-                        } else {
-                            artifact tasks['sourcesJar']
-                            artifact tasks['resourcesJar']
-                            artifact tasks['javadocJar']
-                            artifact tasks['testJar']
-                        }
-
-                        pom {
-                            CasPomConfiguration.createPom(it, project)
-                        }
-                        pom.withXml {
-                            CasPomConfiguration.createPomRepositories(asNode())
-                        }
+                    pom {
+                        CasPomConfiguration.createPom(it, project)
+                    }
+                    pom.withXml {
+                        CasPomConfiguration.createPomRepositories(asNode())
                     }
                 }
             }
         }
+    }
 
-        signing {
-            required = rootProject.publishReleases && !rootProject.skipArtifactSigning
-            if (System.getenv('PGP_PRIVATE_KEY') && System.getenv('PGP_PASSPHRASE')) {
-                useInMemoryPgpKeys(System.getenv('PGP_PRIVATE_KEY'), System.getenv('PGP_PASSPHRASE'))
+    plugins.withId('war') {
+        if (!project.hasProperty('skipPublication') || !project.skipPublication) {
+            logger.info "Project ${project.name} should be published as a WAR"
+            publishing.publications.remove(publishing.publications.findByName('mavenJava'))
+            publishing.publications.create('mavenWeb', MavenPublication) {
+                from components.web
+                pom {
+                    CasPomConfiguration.createPom(it, project)
+                }
+                pom.withXml {
+                    CasPomConfiguration.createPomRepositories(asNode())
+                }
             }
-            sign publishing.publications
         }
+    }
+
+    signing {
+        required = publishReleases && !skipArtifactSigning
+        if (System.getenv('PGP_PRIVATE_KEY') && System.getenv('PGP_PASSPHRASE')) {
+            useInMemoryPgpKeys(System.getenv('PGP_PRIVATE_KEY'), System.getenv('PGP_PASSPHRASE'))
+        }
+        sign publishing.publications
     }
 }
 
 tasks.named('assemble') {
-    if (rootProject.publishFlag && !rootProject.publishMinimalArtifacts) {
+    if (publishFlag && !publishMinimalArtifacts) {
         dependsOn(sourcesJar, javadocJar, resourcesJar, testJar)
     } else {
         dependsOn(testJar)
@@ -127,11 +127,11 @@ sourceSets {
     }
 }
 
-ext.buildJarFile = new File(project.layout.buildDirectory.getAsFile().get(), "libs/${project.name}-${project.version}.jar")
+ext.buildJarFile = new File(project.layout.buildDirectory.getAsFile().get(), "libs/${project.name}-${CasBuildSettings.projectVersion(project)}.jar")
 
 [tasks.named('compileTestJava'), tasks.named('compileJava')].each { taskProvider ->
     taskProvider.configure {
-        if (rootProject.generateGitProperties) {
+        if (generateGitProperties) {
             dependsOn('generateGitProperties')
         }
 
@@ -140,12 +140,12 @@ ext.buildJarFile = new File(project.layout.buildDirectory.getAsFile().get(), "li
         options.incremental = true
 
         def casCompilerArgs = ['-parameters', '-Xlint:-removal']
-        if (rootProject.terminateCompilerOnWarning) {
+        if (terminateCompilerOnWarning) {
             casCompilerArgs.add('-Werror')
         }
 
-        if (!rootProject.skipErrorProneCompiler) {
-            options.errorprone.disableAllChecks = !rootProject.terminateCompilerOnWarning
+        if (!skipErrorProneCompiler) {
+            options.errorprone.disableAllChecks = !terminateCompilerOnWarning
             options.errorprone.allErrorsAsWarnings = false
             options.errorprone.disableWarningsInGeneratedCode = true
             options.errorprone.errorproneArgs = [
@@ -157,14 +157,14 @@ ext.buildJarFile = new File(project.layout.buildDirectory.getAsFile().get(), "li
             ]
             def taskName = name
             options.errorprone.nullaway {
-                if (rootProject.skipNullAway || taskName == 'compileTestJava') {
+                if (skipNullAway || taskName == 'compileTestJava') {
                     disable()
                 } else {
                     jspecifyMode = true
                     handleTestAssertionLibraries = true
                     suggestSuppressions = true
                     checkOptionalEmptiness = true
-                    if (rootProject.terminateCompilerOnWarning) {
+                    if (terminateCompilerOnWarning) {
                         error()
                     } else {
                         warn()
@@ -188,8 +188,8 @@ if (CasProjectConventions.requiresLombok(project)) {
 
 tasks.named('jar') {
     def projectName = project.name
-    def projectGroup = project.group
-    def projectVersion = project.version
+    def projectGroup = CasBuildSettings.projectGroup(project)
+    def projectVersion = CasBuildSettings.projectVersion(project)
 
     def propertiesFile = project.layout.buildDirectory.file('resources/main/git.properties').get().asFile
     def properties = new Properties()
@@ -207,7 +207,7 @@ tasks.named('jar') {
             'Implementation-Vendor': projectGroup,
             'Created-By': projectGroup
         )
-        if (rootProject.generateTimestamps) {
+        if (generateTimestamps) {
             attributes('Implementation-Date': java.time.ZonedDateTime.now(java.time.ZoneOffset.UTC))
         }
         attributes(
@@ -270,17 +270,16 @@ dependencies {
 
     runtimeOnly libraries.httpclient4
 
-    jvmAgents(rootProject.libs.mockito.core) {
+    jvmAgents(libs.mockito.core) {
         transitive = false
     }
-    jvmAgents(rootProject.libs.mockito.inline) {
+    jvmAgents(libs.mockito.inline) {
         transitive = false
     }
 
-    javadocClasspath project(path: project.path, configuration: 'compileClasspath')
 }
 
-if (!providers.systemProperty('skipErrorProneCompiler').present) {
+if (!skipErrorProneCompiler) {
     nullaway {
         onlyNullMarked = true
     }

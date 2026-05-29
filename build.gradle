@@ -1,3 +1,11 @@
+import org.apereo.cas.gradle.CasBuildSettings
+import org.apereo.cas.gradle.CasProjectConventions
+import org.gradle.api.attributes.Bundling
+import org.gradle.api.attributes.Category
+import org.gradle.api.attributes.DocsType
+import org.gradle.api.attributes.LibraryElements
+import org.gradle.api.attributes.Usage
+
 import java.util.concurrent.ConcurrentHashMap
 
 description = "Apereo Central Authentication Service $version"
@@ -61,23 +69,12 @@ ext {
 
 
     excludedFilesFromTestCoverage = [
-        '**/docs/**',
-        '**/org/springframework/**',
-        '**/soap/generated/**',
-        '**/net/jradius/**',
-        '**/com/yubico/**',
-        '**/saml/sts/SamlToken**',
-        '**/**ConfigurationMetadata**',
-        '**/**NimbusOAuthJacksonModule**',
-        '**/**Application**',
-        '**/**Application$**',
-        '**/**Exception$**',
-        '**/**Properties**',
-        '**/**Properties$**'
+        *CasBuildSettings.excludedFilesFromTestCoverage()
     ]
 }
 
 apply plugin: "org.apereo.cas.root-conventions"
+apply plugin: "org.apereo.cas.overrides-conventions"
 
 if (publishReleases || publishSnapshots) {
     apply plugin: "com.gradleup.nmcp.aggregation"
@@ -92,12 +89,23 @@ if (publishReleases || publishSnapshots) {
             uploadSnapshotsParallelism.set(4)
         }
     }
+    CasBuildSettings.includedProjectPaths(project)
+        .findAll { projectPath ->
+            projectPath != project.path && CasProjectConventions.shouldBePublished(CasBuildSettings.projectNameFromPath(projectPath))
+        }
+        .each { projectPath ->
+            dependencies.add('nmcpAggregation', project(projectPath))
+        }
 }
 
 apply from: rootProject.file("gradle/dependencies.gradle")
 apply from: rootProject.file("gradle/dependencyUpdates.gradle")
 
-if (!providers.systemProperty("skipSonarqube").present) {
+CasBuildSettings.setLibraries(libraries)
+
+def sonarqubeRequested = CasBuildSettings.isTaskRequested(project, 'sonar') || CasBuildSettings.isTaskRequested(project, 'sonarqube')
+
+if (!providers.systemProperty("skipSonarqube").present && sonarqubeRequested) {
     apply plugin: "org.sonarqube"
 
     sonar {
@@ -121,15 +129,57 @@ if (!providers.systemProperty("skipSonarqube").present) {
     }
 }
 
-if (!gradle.startParameter.excludedTaskNames.contains("javadoc") || rootProject.publishFlag) {
-    tasks.withType(Javadoc).configureEach {
-        source subprojects.collect { project -> project.sourceSets.main.allJava }
-        destinationDir = new File(project.layout.buildDirectory.getAsFile().get(), "javadoc")
-        if (project != rootProject) {
-            classpath = configurations.javadocClasspath
+if (!gradle.startParameter.excludedTaskNames.contains("javadoc")
+    && (CasBuildSettings.isTaskRequested(project, 'javadoc') || CasBuildSettings.isTaskRequested(project, 'aggregateJavadocsIntoJar'))) {
+    def aggregateJavadocProjectPaths = CasBuildSettings.includedProjectPaths(project)
+        .findAll { projectPath -> projectPath != project.path && CasBuildSettings.isJavadocEnabled(project, projectPath) }
+
+    def aggregateJavadocSources = configurations.create('aggregateJavadocSources') {
+        canBeConsumed = false
+        canBeResolved = true
+        visible = false
+        attributes {
+            attribute(Category.CATEGORY_ATTRIBUTE, objects.named(Category, Category.DOCUMENTATION))
+            attribute(Bundling.BUNDLING_ATTRIBUTE, objects.named(Bundling, Bundling.EXTERNAL))
+            attribute(DocsType.DOCS_TYPE_ATTRIBUTE, objects.named(DocsType, DocsType.SOURCES))
+            attribute(LibraryElements.LIBRARY_ELEMENTS_ATTRIBUTE, objects.named(LibraryElements, LibraryElements.JAR))
+            attribute(Usage.USAGE_ATTRIBUTE, objects.named(Usage, Usage.JAVA_RUNTIME))
         }
+    }
+
+    def aggregateJavadocClasspath = configurations.create('aggregateJavadocClasspath') {
+        canBeConsumed = false
+        canBeResolved = true
+        visible = false
+        attributes {
+            attribute(Category.CATEGORY_ATTRIBUTE, objects.named(Category, Category.LIBRARY))
+            attribute(Bundling.BUNDLING_ATTRIBUTE, objects.named(Bundling, Bundling.EXTERNAL))
+            attribute(LibraryElements.LIBRARY_ELEMENTS_ATTRIBUTE, objects.named(LibraryElements, LibraryElements.JAR))
+            attribute(Usage.USAGE_ATTRIBUTE, objects.named(Usage, Usage.JAVA_RUNTIME))
+        }
+    }
+
+    aggregateJavadocProjectPaths.each { projectPath ->
+        dependencies.add(aggregateJavadocSources.name, dependencies.project(path: projectPath, configuration: 'aggregateJavadocSourcesElements'))
+        dependencies.add(aggregateJavadocClasspath.name, dependencies.project(path: projectPath))
+    }
+
+    def aggregateJavadocSourceTrees = providers.provider {
+        aggregateJavadocSources.files.collect { sourceArchive ->
+            zipTree(sourceArchive).matching {
+                include '**/*.java'
+            }
+        }
+    }
+    def aggregateJavadocClasspathFiles = files(providers.provider { aggregateJavadocClasspath.files })
+
+    tasks.named('javadoc', Javadoc) {
+        dependsOn(aggregateJavadocSources)
+        source(aggregateJavadocSourceTrees)
+        classpath = aggregateJavadocClasspathFiles
+        destinationDir = new File(project.layout.buildDirectory.getAsFile().get(), 'javadoc')
         options.addBooleanOption('html5', true)
-        failOnError = providers.systemProperty("ignoreJavadocFailures").present
+        failOnError = providers.systemProperty('ignoreJavadocFailures').present
     }
 
     tasks.register('aggregateJavadocsIntoJar', Jar) {
@@ -144,7 +194,7 @@ if (rootProject.publishFlag) {
     tasks.register('rootSourcesJar', Jar) {
         description = "Build JAR for the root CAS module"
         archiveBaseName.set("${project.name}-sources")
-        from rootProject.file("src")
+        from new File(project.rootDir, 'src')
     }
 }
 
@@ -162,30 +212,61 @@ if (rootProject.publishFlag && !rootProject.publishMinimalArtifacts) {
     }
 }
 
-if (gradle.startParameter.taskNames.any { task -> task.startsWith("jacoco") }) {
+if (CasBuildSettings.isTaskRequested(project, 'jacocoRootReport')
+    || gradle.startParameter.taskNames.any { task -> task.startsWith("jacoco") }) {
+    def coveredProjectPaths = CasBuildSettings.includedProjectPaths(project)
+        .findAll { projectPath -> projectPath != project.path && !projectPath.startsWith(':docs') }
+
+    def aggregateCoverageData = configurations.create('aggregateCoverageData') {
+        canBeConsumed = false
+        canBeResolved = true
+        visible = false
+    }
+    def aggregateCoverageClasses = configurations.create('aggregateCoverageClasses') {
+        canBeConsumed = false
+        canBeResolved = true
+        visible = false
+    }
+    def aggregateCoverageSources = configurations.create('aggregateCoverageSources') {
+        canBeConsumed = false
+        canBeResolved = true
+        visible = false
+    }
+
+    coveredProjectPaths.each { projectPath ->
+        dependencies.add(aggregateCoverageData.name, dependencies.project(path: projectPath, configuration: 'aggregateCoverageDataElements'))
+        dependencies.add(aggregateCoverageClasses.name, dependencies.project(path: projectPath, configuration: 'aggregateCoverageClassDirectoriesElements'))
+        dependencies.add(aggregateCoverageSources.name, dependencies.project(path: projectPath, configuration: 'aggregateCoverageSourceDirectoriesElements'))
+    }
+
+    def executionDataTrees = providers.provider {
+        aggregateCoverageData.files.collect { buildDir ->
+            fileTree(buildDir) {
+                include 'jacoco/*.exec'
+                include '**/jacoco/*.exec'
+            }
+        }
+    }
+    def coverageSourceDirs = files(providers.provider {
+        aggregateCoverageSources.files.findAll { sourceDir -> sourceDir.exists() }
+    })
+    def coverageClassDirs = providers.provider {
+        aggregateCoverageClasses.files.collect { classesDir ->
+            fileTree(dir: classesDir,
+                include: ['**/*.*'],
+                exclude: rootProject.excludedFilesFromTestCoverage)
+        }
+    }
+
     tasks.register('jacocoRootReport', JacocoReport) { reportTask ->
         outputs.cacheIf { true }
 
-        def coveredSubprojects = subprojects.findAll { subproject ->
-            !subproject.path.contains(":docs")
-        }
+        dependsOn(aggregateCoverageData)
+        dependsOn(aggregateCoverageClasses)
 
-        def testTasks = coveredSubprojects.collect { subproject ->
-            subproject.tasks.withType(Test)
-        }
+        executionData.from(files(executionDataTrees))
 
-        dependsOn(testTasks)
-
-        def executionDataTrees = coveredSubprojects.collect { subproject ->
-            subproject.fileTree(subproject.layout.buildDirectory) {
-                include "jacoco/*.exec"
-                include "**/jacoco/*.exec"
-            }
-        }
-
-        executionData.from(executionDataTrees)
-
-        inputs.files(executionDataTrees)
+        inputs.files(files(executionDataTrees))
                 .withPropertyName('jacocoRootReport')
                 .withPathSensitivity(PathSensitivity.RELATIVE)
 
@@ -195,22 +276,16 @@ if (gradle.startParameter.taskNames.any { task -> task.startsWith("jacoco") }) {
             csv.required.set(true)
         }
 
-        additionalSourceDirs.setFrom(files(coveredSubprojects.sourceSets.main.allSource.srcDirs))
-        sourceDirectories.setFrom(files(coveredSubprojects.sourceSets.main.allSource.srcDirs))
+        additionalSourceDirs.setFrom(coverageSourceDirs)
+        sourceDirectories.setFrom(coverageSourceDirs)
 
-        classDirectories.setFrom(
-                files(coveredSubprojects.sourceSets.main.output).collect {
-                    fileTree(dir: it,
-                            include: ['**/*.*'],
-                            exclude: rootProject.excludedFilesFromTestCoverage)
-                }
-        )
+        classDirectories.setFrom(files(coverageClassDirs))
     }
 }
 
 tasks.register('casVersion') {
     description = "Display current CAS version"
-    def casVersion = rootProject.version
+    def casVersion = project.version
     doLast {
         println casVersion
     }
@@ -237,33 +312,43 @@ tasks.register('verifyRequiredJavaVersion') {
     }
 }
 
-tasks.register('generateProjectModulesMetadata') {
-    def outputFile = new File(project.layout.buildDirectory.getAsFile().get(), "modules.json")
-    def results = []
-    subprojects.each {
-        def publishMetadata = it.hasProperty("publishMetadata") ? it.property("publishMetadata") : false
-        if (publishMetadata) {
-            def metadata = it.ext.projectMetadata
-            if (!metadata.containsKey("title") || !metadata.containsKey("category")) {
-                throw new GradleException("Missing required project metadata for ${it.name}")
+if (CasBuildSettings.isTaskRequested(project, 'generateProjectModulesMetadata')) {
+    def modulesOutputFile = layout.buildDirectory.file('modules.json')
+    def projectVersion = version.toString().replaceAll('-SNAPSHOT', '')
+    def projectGroup = group.toString()
+    def moduleMetadataResults = CasBuildSettings.includedProjectPaths(project)
+        .findAll { projectPath -> projectPath != project.path }
+        .collectMany { projectPath ->
+            def moduleInfo = CasBuildSettings.projectModuleMetadata(project, projectPath)
+            if (!moduleInfo.publishMetadata) {
+                return []
             }
-            if (!metadata.containsKey("selectable")) {
-                metadata.put("selectable", true)
+            def projectName = CasBuildSettings.projectNameFromPath(projectPath)
+            def metadata = new LinkedHashMap<>(moduleInfo.projectMetadata as Map)
+            if (!metadata.containsKey('title') || !metadata.containsKey('category')) {
+                throw new GradleException("Missing required project metadata for ${projectName}")
             }
-            results += [
-                    name       : it.name,
-                    version    : it.version.replaceAll("-SNAPSHOT", ""),
-                    group      : it.group,
-                    description: it.description,
-                    details    : metadata
-            ]
+            if (!metadata.containsKey('selectable')) {
+                metadata.put('selectable', true)
+            }
+            return [[
+                name       : projectName,
+                version    : projectVersion,
+                group      : projectGroup,
+                description: moduleInfo.description,
+                details    : metadata
+            ]]
         }
-    }
-    doLast {
-        outputFile.getParentFile().mkdirs()
-        def json = groovy.json.JsonOutput.toJson(results)
-        outputFile.write json
-        println "Published project modules to ${outputFile}"
+    def moduleMetadataJson = groovy.json.JsonOutput.toJson(moduleMetadataResults)
+
+    tasks.register('generateProjectModulesMetadata') {
+        outputs.file(modulesOutputFile)
+        doLast {
+            def output = modulesOutputFile.get().asFile
+            output.getParentFile().mkdirs()
+            output.write moduleMetadataJson
+            println "Published project modules to ${output}"
+        }
     }
 }
 
@@ -287,6 +372,6 @@ tasks.register('verifyDependencyVersions') { t ->
 }
 
 tasks.named("clean") {
-    delete rootProject.file(".gradle/cas-test-tags")
+    delete new File(project.rootDir, '.gradle/cas-test-tags')
 }
 

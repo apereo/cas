@@ -1,6 +1,7 @@
 import org.gradle.external.javadoc.JavadocMemberLevel
 import org.gradle.jvm.toolchain.JavaLanguageVersion
 import org.gradle.jvm.toolchain.JvmVendorSpec
+import org.apereo.cas.gradle.CasBuildSettings
 
 plugins {
     id 'idea'
@@ -19,7 +20,9 @@ if (gradle.startParameter.taskNames.any { task -> task.contains('publishToMavenL
 
 project.pluginManager.apply('org.apereo.cas.tasks-conventions')
 
-if (!rootProject.ext.has('casArchAdjusted')) {
+CasBuildSettings.configureProjectExtensions(project)
+
+if (!CasBuildSettings.isArchAdjusted()) {
     def arch = System.getProperty('os.arch')
     if (arch == 'aarch64') {
         System.setProperty('os.arch', 'x86_64')
@@ -27,21 +30,21 @@ if (!rootProject.ext.has('casArchAdjusted')) {
         def name = System.getProperty('os.name')
         logger.info("The OS platform architecture for this Gradle build is reset to ${arch} for ${name}")
     }
-    rootProject.ext.set('casArchAdjusted', true)
+    CasBuildSettings.markArchAdjusted()
 }
 
 project.ext['forceBootifulArtifact'] = null
 
-if (rootProject.generateGitProperties) {
+if (generateGitProperties) {
     project.pluginManager.apply('io.hndrs.git-properties')
     tasks.named('generateGitProperties') {
         def propertiesFile = project.layout.buildDirectory.file('resources/main/git.properties').get().asFile
-        def projectGroup = project.group
+        def projectGroup = CasBuildSettings.projectGroup(project)
         def projectName = project.name
-        def projectVersion = project.version
+        def projectVersion = CasBuildSettings.projectVersion(project)
         def projectDescription = project.description
 
-        it.dotGitDirectory.set(rootProject.layout.projectDirectory.dir('.git'))
+        it.dotGitDirectory.set(new File(project.rootDir, '.git'))
         it.output.set(propertiesFile)
         doLast {
             propertiesFile.withWriterAppend('UTF-8') { writer ->
@@ -57,7 +60,7 @@ if (rootProject.generateGitProperties) {
 java {
     toolchain {
         languageVersion = JavaLanguageVersion.of(Integer.parseInt(project.targetCompatibility.toString()))
-        if (!rootProject.ci) {
+        if (!ci) {
             vendor = JvmVendorSpec.JETBRAINS
         }
     }

@@ -1,5 +1,58 @@
+import groovy.json.JsonOutput
+import org.apereo.cas.gradle.CasBuildSettings
+import org.apereo.cas.gradle.TestCategories
+
+import java.util.Collections
+import java.util.regex.Pattern
+
 plugins {
 	id 'org.apereo.cas.base-conventions'
 }
 
+if (CasBuildSettings.shouldRegisterRootTask(project, 'testCategories')) {
+	tasks.register('testCategories') {
+		description = 'Display all available test categories'
+		doLast {
+			def pattern = System.getenv()['CATEGORY_REGEX'] ?: '.*'
+			def categoryMatchPattern = Pattern.compile(pattern, Pattern.CASE_INSENSITIVE)
+			def result = TestCategories.values()
+				.findAll { it.name().find(categoryMatchPattern) }
+				.toSorted { o1, o2 ->
+					o1.name() <=> o2.name()
+				}
+				.collect { it.name().toLowerCase(Locale.ENGLISH) }
+			println(JsonOutput.toJson(result))
+		}
+	}
+}
+
+if (CasBuildSettings.shouldRegisterRootTask(project, 'puppeteerScenarios')) {
+	tasks.register('puppeteerScenarios') {
+		description = 'Display all available puppeteer scenarios'
+
+		def puppeteerScenariosFrom = providers.gradleProperty('puppeteerScenariosFrom').getOrNull()
+		def puppeteerScenariosTo = providers.gradleProperty('puppeteerScenariosTo').getOrNull()
+		def scenariosDirectory = new File(project.rootDir, 'ci/tests/puppeteer/scenarios')
+
+		doLast {
+			def scenarios = []
+			def pattern = System.getenv()['SCENARIO_REGEX'] ?: '.*'
+			def scenarioMatchPattern = Pattern.compile(pattern, Pattern.CASE_INSENSITIVE)
+
+			scenariosDirectory.eachDirMatch(scenarioMatchPattern) {
+				scenarios += it.getName()
+			}
+			Collections.sort(scenarios)
+			if (puppeteerScenariosFrom != null && puppeteerScenariosTo != null) {
+				def fromScenario = Integer.parseInt(puppeteerScenariosFrom)
+				def toScenario = Integer.parseInt(puppeteerScenariosTo)
+				if (toScenario > scenarios.size()) {
+					toScenario = scenarios.size()
+				}
+				scenarios = scenarios.subList(fromScenario, toScenario)
+			}
+			println(JsonOutput.toJson(scenarios))
+		}
+	}
+}
 

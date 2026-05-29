@@ -262,9 +262,12 @@ if [[ "${casVersion}" == v* ]]; then
     exit 1
 fi
 
+currentCommit="$(git rev-parse HEAD)"
+
 echo -e "\n"
 echo "***************************************************************"
 printgreen "Welcome to the release process for Apereo CAS ${casVersion}"
+printgreen "Current commit: ${currentCommit}"
 printgreen "Next development version: ${nextVersion}"
 echo -n $(java -version)
 echo -e "***************************************************************\n"

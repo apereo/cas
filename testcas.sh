@@ -46,7 +46,7 @@ parallel="--parallel "
 dryRun=""
 info=""
 gradleCmd="./gradlew"
-flags="--configure-on-demand --build-cache -x javadoc -x check --quiet "
+flags="--configure-on-demand --build-cache -x javadoc -x check --quiet -DskipNestedConfigMetadataGen=true "
 coverageTask=""
 
 while (( "$#" )); do

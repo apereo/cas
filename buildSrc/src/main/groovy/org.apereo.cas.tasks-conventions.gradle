@@ -1,5 +1,10 @@
 import org.apache.tools.ant.taskdefs.condition.Os
 import org.apereo.cas.gradle.Ansi
+import org.gradle.api.attributes.Bundling
+import org.gradle.api.attributes.Category
+import org.gradle.api.attributes.DocsType
+import org.gradle.api.attributes.LibraryElements
+import org.gradle.api.attributes.Usage
 import org.gradle.jvm.tasks.Jar
 
 Object.metaClass.ansi = new Ansi()
@@ -25,6 +30,7 @@ if (Os.isFamily(Os.FAMILY_WINDOWS)) {
 def testClassesTask = tasks.named('testClasses')
 def classesTask = tasks.named('classes')
 def javadocTask = tasks.named('javadoc')
+def testTasks = tasks.withType(Test)
 
 tasks.register('testJar', Jar) {
     dependsOn testClassesTask
@@ -39,6 +45,53 @@ tasks.register('sourcesJar', Jar) {
     from sourceSets.main.allSource
 }
 
+tasks.register('aggregateJavadocSourcesJar', Jar) {
+    archiveClassifier.set('aggregate-javadoc-sources')
+    from sourceSets.main.allJava
+}
+
+configurations {
+    aggregateJavadocSourcesElements {
+        canBeResolved = false
+        canBeConsumed = true
+        visible = false
+        attributes {
+            attribute(Category.CATEGORY_ATTRIBUTE, objects.named(Category, Category.DOCUMENTATION))
+            attribute(Bundling.BUNDLING_ATTRIBUTE, objects.named(Bundling, Bundling.EXTERNAL))
+            attribute(DocsType.DOCS_TYPE_ATTRIBUTE, objects.named(DocsType, DocsType.SOURCES))
+            attribute(LibraryElements.LIBRARY_ELEMENTS_ATTRIBUTE, objects.named(LibraryElements, LibraryElements.JAR))
+            attribute(Usage.USAGE_ATTRIBUTE, objects.named(Usage, Usage.JAVA_RUNTIME))
+        }
+        outgoing.artifact(tasks.named('aggregateJavadocSourcesJar'))
+    }
+    aggregateCoverageDataElements {
+        canBeResolved = false
+        canBeConsumed = true
+        visible = false
+        outgoing.artifact(layout.buildDirectory.dir('.')) {
+            builtBy(testTasks)
+        }
+    }
+    aggregateCoverageClassDirectoriesElements {
+        canBeResolved = false
+        canBeConsumed = true
+        visible = false
+        sourceSets.main.output.classesDirs.files.each { classesDir ->
+            outgoing.artifact(classesDir) {
+                builtBy(classesTask)
+            }
+        }
+    }
+    aggregateCoverageSourceDirectoriesElements {
+        canBeResolved = false
+        canBeConsumed = true
+        visible = false
+        sourceSets.main.allJava.srcDirs.each { sourceDir ->
+            outgoing.artifact(sourceDir)
+        }
+    }
+}
+
 tasks.register('resourcesJar', Jar) {
     archiveClassifier.set('resources')
     from project.file('src/main/resources')
@@ -47,7 +100,7 @@ tasks.register('resourcesJar', Jar) {
 tasks.register('javadocJar', Jar) {
     archiveClassifier.set('javadoc')
 
-    if (rootProject.publishReleases || rootProject.publishSnapshots) {
+    if (publishReleases || publishSnapshots) {
         logger.info "Skipping Javadoc generation for ${project.name} as it is being published..."
         def placeholderFile = layout.buildDirectory.file('generated/placeholder-javadoc/README.md')
         from(placeholderFile)

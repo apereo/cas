@@ -1,60 +1,17 @@
 import groovy.io.FileType
 import groovy.json.JsonOutput
 import groovy.json.JsonSlurper
+import org.apereo.cas.gradle.CasBuildSettings
 import org.apereo.cas.gradle.TestCategories
 import org.gradle.api.tasks.testing.Test
 
 import java.nio.charset.StandardCharsets
 import java.security.MessageDigest
+import java.util.concurrent.ConcurrentHashMap
 import java.util.Collections
 import java.util.regex.Pattern
 
-if (rootProject.tasks.findByName('testCategories') == null) {
-    rootProject.tasks.register('testCategories') {
-        description = 'Display all available test categories'
-        doLast {
-            def pattern = System.getenv()['CATEGORY_REGEX'] ?: '.*'
-            def categoryMatchPattern = Pattern.compile(pattern, Pattern.CASE_INSENSITIVE)
-            def result = TestCategories.values()
-                .findAll { it.name().find(categoryMatchPattern) }
-                .toSorted { o1, o2 ->
-                    o1.name() <=> o2.name()
-                }
-                .collect { it.name().toLowerCase(Locale.ENGLISH) }
-            println(JsonOutput.toJson(result))
-        }
-    }
-}
-
-if (rootProject.tasks.findByName('puppeteerScenarios') == null) {
-    rootProject.tasks.register('puppeteerScenarios') {
-        description = 'Display all available puppeteer scenarios'
-
-        def puppeteerScenariosFrom = project.providers.gradleProperty('puppeteerScenariosFrom').getOrNull()
-        def puppeteerScenariosTo = project.providers.gradleProperty('puppeteerScenariosTo').getOrNull()
-        def scenariosDirectory = rootProject.file('ci/tests/puppeteer/scenarios')
-
-        doLast {
-            def scenarios = []
-            def pattern = System.getenv()['SCENARIO_REGEX'] ?: '.*'
-            def scenarioMatchPattern = Pattern.compile(pattern, Pattern.CASE_INSENSITIVE)
-
-            scenariosDirectory.eachDirMatch(scenarioMatchPattern) {
-                scenarios += it.getName()
-            }
-            Collections.sort(scenarios)
-            if (puppeteerScenariosFrom != null && puppeteerScenariosTo != null) {
-                def fromScenario = Integer.parseInt(puppeteerScenariosFrom)
-                def toScenario = Integer.parseInt(puppeteerScenariosTo)
-                if (toScenario > scenarios.size()) {
-                    toScenario = scenarios.size()
-                }
-                scenarios = scenarios.subList(fromScenario, toScenario)
-            }
-            println(JsonOutput.toJson(scenarios))
-        }
-    }
-}
+ext.testTagMap = new ConcurrentHashMap<String, Set<String>>()
 
 TestCategories.values().each { testCategory ->
     def sourceTestDirs = project.sourceSets.test.java.srcDirs
@@ -78,7 +35,7 @@ TestCategories.values().each { testCategory ->
                     includeTags testCategory.name()
                 }
 
-                def ptsEnabled = shouldWeTest && testCategory.ptsEnabled && Boolean.valueOf(System.getProperty('PTS_ENABLED') ?: 'true') && !rootProject.publishReleases
+                def ptsEnabled = shouldWeTest && testCategory.ptsEnabled && Boolean.valueOf(System.getProperty('PTS_ENABLED') ?: 'true') && !publishReleases
                 develocity.predictiveTestSelection {
                     enabled = ptsEnabled
                     mergeCodeCoverage = true
@@ -100,7 +57,7 @@ TestCategories.values().each { testCategory ->
                 if (coverageEnabled && !project.path.contains(':docs')) {
                     jacoco {
                         dumpOnExit = true
-                        excludes = rootProject.excludedFilesFromTestCoverage
+                        excludes = excludedFilesFromTestCoverage
                         destinationFile = jacocoTestExecutionResultsFile
                         classDumpDir = layout.buildDirectory.dir('jacoco/classpathdumps').get().asFile
                     }
@@ -124,7 +81,7 @@ tasks.withType(Test).configureEach {
     forkEvery = 500
 
     def defaultParallelForks = Math.max(1, (Runtime.runtime.availableProcessors() / 2).intValue())
-    maxParallelForks = rootProject.ci ? Math.min(2, defaultParallelForks) : defaultParallelForks
+    maxParallelForks = ci ? Math.min(2, defaultParallelForks) : defaultParallelForks
 
     failFast = true
 
@@ -238,7 +195,7 @@ def shouldTest(final Set sourceTestDirectories, final String category) {
 }
 
 def hasTestsOfCategory(final Set sourceTestDirectories, final String category) {
-    def result = rootProject.srcTagMap.computeIfAbsent(testTagCacheKey(sourceTestDirectories)) {
+    def result = testTagMap.computeIfAbsent(testTagCacheKey(sourceTestDirectories)) {
         loadTagsFromCache(sourceTestDirectories)
     } as Set<String>
     result.contains(category)
@@ -261,7 +218,7 @@ static def testTagCacheKey(final Set sourceTestDirectories) {
 }
 
 def testTagCacheFile(final Set sourceTestDirectories) {
-    rootProject.file(".gradle/cas-test-tags/${testTagCacheKey(sourceTestDirectories)}.json")
+    new File(project.rootDir, ".gradle/cas-test-tags/${testTagCacheKey(sourceTestDirectories)}.json")
 }
 
 static def collectTestFiles(final Set sourceTestDirectories) {

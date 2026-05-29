@@ -1,7 +1,14 @@
+import org.apereo.cas.gradle.CasBuildSettings
+import org.gradle.api.artifacts.ProjectDependency
+
 configurations {
     configureEach {
         withDependencies { deps ->
-            def hasLogback = deps.any { it.group == 'org.apereo.cas' && it.name == 'cas-server-support-logback' }
+            def hasLogback = deps.any { dependency ->
+                dependency instanceof ProjectDependency
+                    ? dependency.path == ':support:cas-server-support-logback'
+                    : dependency.group == 'org.apereo.cas' && dependency.name == 'cas-server-support-logback'
+            }
             if (hasLogback) {
                 it.exclude(group: 'org.apache.logging.log4j', module: 'log4j-api')
                 it.exclude(group: 'org.apache.logging.log4j', module: 'log4j-jakarta-web')
@@ -50,10 +57,9 @@ dependencies {
     if (casModules != null && casModules.trim().length() > 0) {
         def dependencies = casModules.split(',')
         dependencies.findAll { it.length() > 0 }.each {
-            def projectsToAdd = rootProject.subprojects.findAll { candidateProject ->
-                def pattern = /cas-server-${it}|cas-server-core-${it}|cas-server-support-${it}/
-                logger.debug("Matching ${pattern} against CAS module ${candidateProject.name}")
-                candidateProject.name.matches(pattern)
+            def projectsToAdd = CasBuildSettings.matchingProjectPaths(project, it).findAll { candidatePath ->
+                logger.debug("Matching CAS module selector ${it} against ${candidatePath}")
+                candidatePath != project.path
             }
 
             if (projectsToAdd.isEmpty()) {
@@ -61,7 +67,7 @@ dependencies {
             } else {
                 ansi.green("Including CAS module(s): ${projectsToAdd}")
                 projectsToAdd.each {
-                    implementation it
+                    implementation project(path: it)
                 }
             }
         }
@@ -70,7 +76,7 @@ dependencies {
     implementation libraries.springcloudconfigclient
     implementation libraries.springcloudbootstrap
     implementation libraries.springbootpropertymigrator
-    if (!rootProject.publishFlag && !rootProject.skipSpringBootDevTools) {
+    if (!publishFlag && !skipSpringBootDevTools) {
         runtimeOnly libraries.springbootdevtools
     }
 }
