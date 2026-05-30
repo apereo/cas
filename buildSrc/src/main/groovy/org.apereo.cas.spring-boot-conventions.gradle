@@ -9,6 +9,7 @@ if (project.ext.forceBootifulArtifact || (!publishFlag && !skipBootifulArtifact)
     def projectVersion = CasBuildSettings.projectVersion(project)
 
     project.pluginManager.apply('org.springframework.boot')
+    def bootJarTask = tasks.named('bootJar')
 
     sourceSets {
         bootRun {
@@ -75,7 +76,7 @@ if (project.ext.forceBootifulArtifact || (!publishFlag && !skipBootifulArtifact)
             duplicatesStrategy = DuplicatesStrategy.EXCLUDE
         }
     } else {
-        tasks.named('bootJar') {
+        bootJarTask.configure {
             mainClass.set(project.ext.mainClassName)
             if (project.ext.has('archiveFileName')) {
                 archiveFileName = project.ext.archiveFileName
@@ -89,10 +90,9 @@ if (project.ext.forceBootifulArtifact || (!publishFlag && !skipBootifulArtifact)
             || CasBuildSettings.isTaskRequested(project, 'build')
             || CasBuildSettings.isTaskRequested(project, 'publish')) {
             configurations {
-                def jarArchive = tasks.named('jar').get().archiveFile.get().asFile
                 [apiElements, runtimeElements].each {
-                    it.outgoing.artifacts.removeIf { artifact -> artifact.file == jarArchive }
-                    it.outgoing.artifact(bootJar)
+                    it.outgoing.artifacts.removeIf { artifact -> artifact.extension == 'jar' && !artifact.classifier }
+                    it.outgoing.artifact(bootJarTask)
                 }
             }
         }
@@ -194,4 +194,3 @@ int findAvailableTcpPort(final List<Integer> portRange) {
     }
     -1
 }
-

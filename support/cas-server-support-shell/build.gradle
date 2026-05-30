@@ -1,9 +1,7 @@
 apply plugin: "org.apereo.cas.project-conventions"
 
-import org.apereo.cas.gradle.CasBuildSettings
-
 ext {
-    forceBootifulArtifact = !CasBuildSettings.isSkipBootifulArtifact(project)
+    forceBootifulArtifact = true
     mainClassName = "org.apereo.cas.CasCommandLineShellApplication"
     publishMetadata = true
     projectMetadata = [

@@ -122,19 +122,66 @@ dependencies {
 }
 
 plugins.withId("org.graalvm.buildtools.native") {
-    tasks.named("processAot") { task ->
-        task.notCompatibleWithConfigurationCache("processAot is not supported by the Gradle configuration cache")
-    }
+    plugins.withId("org.springframework.boot") {
+        tasks.named("processAot") { task ->
+            task.notCompatibleWithConfigurationCache("processAot is not supported by the Gradle configuration cache")
+        }
 
-    dependencies {
-        processAotClasspath libraries.graalvmsdk
-        processAotClasspath libraries.graalvmpolyglot
-        processTestAotClasspath libraries.graalvmsdk
-        processTestAotClasspath libraries.graalvmpolyglot
-    }
-}
+        dependencies {
+            processAotClasspath libraries.graalvmsdk
+            processAotClasspath libraries.graalvmpolyglot
+            processTestAotClasspath libraries.graalvmsdk
+            processTestAotClasspath libraries.graalvmpolyglot
+        }
 
-plugins.withId("org.graalvm.buildtools.native") {
+        tasks.named("processAot") {
+            enabled = !skipAot
+
+            def list = []
+            list.add("--add-opens")
+            list.add("java.base/java.lang=ALL-UNNAMED")
+            list.add("--add-opens")
+            list.add("java.base/java.util=ALL-UNNAMED")
+            list.add("--add-opens")
+            list.add("java.base/java.util.concurrent=ALL-UNNAMED")
+            list.add("--add-opens")
+            list.add("java.base/java.util.concurrent.locks=ALL-UNNAMED")
+            list.add("--add-opens")
+            list.add("java.base/java.time=ALL-UNNAMED")
+            list.add("--add-opens")
+            list.add("java.base/java.net=ALL-UNNAMED")
+            list.add("--add-opens")
+            list.add("java.base/java.nio=ALL-UNNAMED")
+            list.add("--add-opens")
+            list.add("java.base/sun.nio.ch=ALL-UNNAMED")
+            list.add("--add-opens")
+            list.add("java.management/sun.management=ALL-UNNAMED")
+            list.add("--add-opens")
+            list.add("jdk.management/com.sun.management.internal=ALL-UNNAMED")
+            list.add("--add-opens")
+            list.add("java.base/java.util.regex=ALL-UNNAMED")
+            list.add("--add-opens")
+            list.add("java.rmi/sun.rmi.transport=ALL-UNNAMED")
+            list.add("-Xdebug")
+            list.add("-Xrunjdwp:transport=dt_socket,address=*:5005,server=y,suspend=n")
+
+            jvmArgs = list
+//    systemProperties System.properties
+
+            def aotSpringActiveProfiles = providers.systemProperty("aotSpringActiveProfiles").getOrElse("native")
+            logger.info "AOT processing spring active profile: ${aotSpringActiveProfiles}"
+
+            args(
+                "--spring.profiles.active=${aotSpringActiveProfiles}",
+                "--spring.main.lazy-initialization=false",
+                "--logging.level.org.apereo.cas=info",
+                "--logging.level.org.springframework.core.env=info",
+                "--logging.level.org.springframework.boot=info",
+                "--logging.level.org.springframework.security=warn"
+            )
+        }
+    }
+    
     graalvmNative {
         metadataRepository {
             enabled = true
@@ -220,53 +267,5 @@ plugins.withId("org.graalvm.buildtools.native") {
             }
         }
     }
-}
 
-plugins.withId("org.graalvm.buildtools.native") {
-    tasks.named("processAot") {
-        enabled = !skipAot
-
-        def list = []
-        list.add("--add-opens")
-        list.add("java.base/java.lang=ALL-UNNAMED")
-        list.add("--add-opens")
-        list.add("java.base/java.util=ALL-UNNAMED")
-        list.add("--add-opens")
-        list.add("java.base/java.util.concurrent=ALL-UNNAMED")
-        list.add("--add-opens")
-        list.add("java.base/java.util.concurrent.locks=ALL-UNNAMED")
-        list.add("--add-opens")
-        list.add("java.base/java.time=ALL-UNNAMED")
-        list.add("--add-opens")
-        list.add("java.base/java.net=ALL-UNNAMED")
-        list.add("--add-opens")
-        list.add("java.base/java.nio=ALL-UNNAMED")
-        list.add("--add-opens")
-        list.add("java.base/sun.nio.ch=ALL-UNNAMED")
-        list.add("--add-opens")
-        list.add("java.management/sun.management=ALL-UNNAMED")
-        list.add("--add-opens")
-        list.add("jdk.management/com.sun.management.internal=ALL-UNNAMED")
-        list.add("--add-opens")
-        list.add("java.base/java.util.regex=ALL-UNNAMED")
-        list.add("--add-opens")
-        list.add("java.rmi/sun.rmi.transport=ALL-UNNAMED")
-        list.add("-Xdebug")
-        list.add("-Xrunjdwp:transport=dt_socket,address=*:5005,server=y,suspend=n")
-
-        jvmArgs = list
-//    systemProperties System.properties
-
-        def aotSpringActiveProfiles = providers.systemProperty("aotSpringActiveProfiles").getOrElse("native")
-        logger.info "AOT processing spring active profile: ${aotSpringActiveProfiles}"
-
-        args(
-            "--spring.profiles.active=${aotSpringActiveProfiles}",
-            "--spring.main.lazy-initialization=false",
-            "--logging.level.org.apereo.cas=info",
-            "--logging.level.org.springframework.core.env=info",
-            "--logging.level.org.springframework.boot=info",
-            "--logging.level.org.springframework.security=warn"
-        )
-    }
 }

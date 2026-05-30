@@ -641,6 +641,7 @@ spring-boot-integration = { module = "org.springframework.boot:spring-boot-integ
 spring-boot-jackson = { module = "org.springframework.boot:spring-boot-jackson", version.ref = "springBoot" }
 spring-boot-jdbc = { module = "org.springframework.boot:spring-boot-jdbc", version.ref = "springBoot" }
 spring-boot-kafka = { module = "org.springframework.boot:spring-boot-kafka", version.ref = "springBoot" }
+spring-boot-loader-tools = { module = "org.springframework.boot:spring-boot-loader-tools", version.ref = "springBoot" }
 spring-boot-mail = { module = "org.springframework.boot:spring-boot-mail", version.ref = "springBoot" }
 spring-boot-micrometer-metrics-test = { module = "org.springframework.boot:spring-boot-micrometer-metrics-test", version.ref = "springBoot" }
 spring-boot-micrometer-tracing-sdk = { module = "org.springframework.boot:spring-boot-micrometer-tracing", version.ref = "springBoot" }

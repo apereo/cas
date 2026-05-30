@@ -19,6 +19,7 @@ Guidance for AI coding agents working in the Apereo CAS source tree.
 - Configuration model classes usually live under `api/.../configuration/model/**`, use Lombok accessors, and carry `@RequiresModule(name = "...")`; example: `LdapAuthorizationProperties`.
 - Tests are organized by JUnit tags, not by the plain Gradle `test` task. The shared `buildSrc` test conventions disable `test` and generate tasks like `testAuthentication`, `testTickets`, etc. from `@Tag(...)` values found in `*Tests.java`.
 - Related test scenarios are often grouped with `@Nested`; example: `support/cas-server-support-token-core/.../JwtBuilderTests.java`.
+- Unalias Linux/macOS commands before you run them, specially `tree`, `find`, `grep`, `cat`, etc.
 
 ## Workflows that matter here
 
