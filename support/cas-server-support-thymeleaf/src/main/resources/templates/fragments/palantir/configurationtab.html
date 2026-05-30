@@ -43,20 +43,7 @@
                         <section class="cas-field form-group my-3 mdc-input-group d-flex">
                             <div id="newConfigurationMainPanel"
                                  class="mdc-input-group-field mdc-input-group-field-append w-100">
-                                <label for="newConfigPropertyName"
-                                       class="mdc-text-field mdc-text-field--outlined control-label mdc-text-field--with-trailing-icon mb-2">
-                                    <span class="mdc-notched-outline">
-                                        <span class="mdc-notched-outline__leading"></span>
-                                        <span class="mdc-notched-outline__notch">
-                                            <span class="mdc-floating-label">Name</span>
-                                        </span>
-                                        <span class="mdc-notched-outline__trailing"></span>
-                                    </span>
-                                    <input class="mdc-text-field__input form-control" type="text"
-                                           name="newConfigPropertyName" tabindex="0" id="newConfigPropertyName"
-                                           size="50"
-                                           autocomplete="off" required/>
-                                </label>
+                                
                                 <label for="newConfigPropertyValue"
                                        class="mdc-text-field mdc-text-field--outlined control-label mdc-text-field--with-trailing-icon mb-2">
                                     <span class="mdc-notched-outline">
@@ -116,10 +103,70 @@
                                         plugins: ['remove_button']
                                     };
                                     new TomSelect("#propertySourcesSelect", settings);
+
+
+                                    const propertyNameSection = $("<section>", {
+                                        id: `propertyNameSection`,
+                                    });
+                                    
+                                    const nameContainer = $("<span>", {
+                                        id: `propertyNameSelectContainer`,
+                                        class: `d-flex mb-2 mt-2`
+                                    });
+
+                                    const selectName = $("<select>")
+                                        .attr("id", "newConfigPropertyName")
+                                        .addClass("jqueryui-multiselectmenu");
+
+                                    const labelName = $("<label>")
+                                        .addClass("pt-2")
+                                        .addClass("pr-2")
+                                        .addClass("mb-2")
+                                        .attr("id", "propertyNameLabel")
+                                        .css("display", "block")
+                                        .css("min-width", "max-content")
+                                        .attr("for", "propertyNameSelectContainer").text("Property Name:");
+                                    nameContainer.append(labelName, selectName);
+                                    propertyNameSection.append(nameContainer);
+                                    $(`#newConfigurationMainPanel`).prepend(propertyNameSection);
+                                    
+                                    let nameSettings = {
+                                        create: true,
+                                        persist: false,
+                                        dropdownParent: 'body',
+                                        plugins: ['remove_button'],
+                                        valueField: "id",
+                                        labelField: "name",
+                                        searchField: ["id", "name", "description"],
+                                        onChange: function(value) {
+                                            hideElements("#configurationPropertyInfo");
+                                            
+                                            const selectedOption = this.options[value];
+                                            if (selectedOption) {
+                                                showElements("#configurationPropertyInfo");
+                                                $("#configurationPropertyInfo").empty();
+                                                if (selectedOption.description) {
+                                                    let description = selectedOption.description ?? "";
+                                                    description = description.replace(/\{@code\s+([^}]+)}/g, "<code>$1</code>");
+                                                    $("#configurationPropertyInfo").append(`Description: ${description} `);
+                                                }
+                                                $("#configurationPropertyInfo").append(`<p>Type: <code>${selectedOption.type ?? ""}</code> `);
+                                                if (selectedOption.defaultValue) {
+                                                    $("#configurationPropertyInfo").append(`Default: <code>${selectedOption.defaultValue ?? "false"}</code> `);
+                                                }
+                                                if (selectedOption.deprecated) {
+                                                    $("#configurationPropertyInfo").append(`Deprecated: <code>${selectedOption.deprecated ?? "false"}</code> `);
+                                                }
+                                            }
+                                        }
+                                    };
+                                    new TomSelect("#newConfigPropertyName", nameSettings);
                                 </script>
                             </div>
                         </section>
                         <div th:replace="~{fragments/switchbutton :: switchbutton (id='encryptConfigProperty', label='#Encrypt Value')}"/>
+
+                        <div id="configurationPropertyInfo" class="banner banner-info mt-3 hide text-justify pr-2"></div>
                   </form>
                 </div>
             </div>

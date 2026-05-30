@@ -80,6 +80,18 @@ return types and fields. We will gradually extend the coverage of such annotatio
 and will integrate the Gradle build tool with tools such as [NullAway](https://github.com/uber/NullAway) to prevent nullness contract violations
 during compile time.
 
+### Palantir
+
+[Palantir](../installation/Admin-Dashboard.html) now supports auto-complete and a small helper utility pane to explain
+available configuration properties when dynamic configuration sources are available. The drop-down that lists configuration
+properties also supports searching for fields based on `name` and `description`.
+
+![img.png](img.png)
+
+Note that the documentation for each configuration property is directly extracted from the CAS configuration catalog
+and may not be immediately available if the property is not fully documented, particularly if it's owned and managed by
+a third-party library.
+
 ## Other Stuff
               
 - [OpenID Connect logout requests](../authentication/OIDC-Authentication-Logout.html) may now also be submitted via `POST`. 
