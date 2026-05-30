@@ -95,6 +95,16 @@ class OidcLogoutEndpointControllerTests {
         }
 
         @Test
+        void verifyOidcLogoutWithPost() throws Throwable {
+            mockMvc.perform(post("/cas/oidc/logout")
+                    .with(withHttpRequestProcessor())
+                    .queryParam(OAuth20Constants.STATE, UUID.randomUUID().toString())
+                )
+                .andExpect(status().isOk())
+                .andExpect(request().attribute("status", HttpStatus.PERMANENT_REDIRECT));
+        }
+
+        @Test
         void verifyOidcLogoutIdTokenClientMismatch() throws Throwable {
             val oidcRegisteredService = getOidcRegisteredService(UUID.randomUUID().toString(), randomServiceUrl(), true, false);
             val claims = getClaims(oidcRegisteredService.getClientId());
