@@ -69,7 +69,7 @@ features and capabilities.
 The build system is also internally refactored and heavily optimized:
 
 - The build is made compatible with Gradle's [Isolated Projects](https://docs.gradle.org/current/userguide/isolated_projects.html) 
-feature. This required a significant refactoring of how project dependencies and coordinates are resolved during the build and bundling 
+feature by default. This required a significant refactoring of how project dependencies, plugins and coordinates are resolved during the build and bundling 
 process to ensure they are compliant with Spring Boot and Gradle's model for project isolation.
 - Running CAS integration and unit tests are now significantly faster locally, thanks to better parallelism and less instrumentation.
 
@@ -88,7 +88,8 @@ properties also supports searching for fields based on `name` and `description`.
 
 ![img.png](img.png)
 
-Note that the documentation for each configuration property is directly extracted from the CAS configuration catalog
+Note that the documentation for each configuration property is directly extracted from 
+the [CAS configuration catalog](../configuration/Configuration-Metadata-Repository.html)
 and may not be immediately available if the property is not fully documented, particularly if it's owned and managed by
 a third-party library.
 
