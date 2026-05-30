@@ -616,7 +616,7 @@ public class RedisTicketRegistry extends AbstractTicketRegistry implements Clean
             if (ticket.getExpirationPolicy() instanceof final IdleExpirationPolicy iep) {
                 ops.expireAt(iep.getIdleExpirationTime(ticket).toInstant());
             } else {
-                ops.expire(timeout, TimeUnit.SECONDS);
+                ops.expire(Expiration.from(timeout, TimeUnit.SECONDS));
             }
         }
     }
@@ -628,7 +628,7 @@ public class RedisTicketRegistry extends AbstractTicketRegistry implements Clean
             LOGGER.debug("Ticket [{}] will expire at [{}]", ticket.getId(), expirationInstant);
         } else {
             val timeoutSeconds = RedisKeyGenerator.getTicketExpirationInSeconds(ticket);
-            casRedisTemplates.getTicketsRedisTemplate().expire(redisKeyPattern, timeoutSeconds, TimeUnit.SECONDS);
+            casRedisTemplates.getTicketsRedisTemplate().expire(redisKeyPattern, Expiration.from(timeoutSeconds, TimeUnit.SECONDS));
             LOGGER.debug("Ticket [{}] will expire in [{}] second(s)", ticket.getId(), timeoutSeconds);
         }
     }

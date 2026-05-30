@@ -99,7 +99,7 @@ public class CRLDistributionPointRevocationChecker extends AbstractCRLRevocation
     private static void addURL(final List<URI> list, final String uriString) {
         try {
             try {
-                val url = new URL(URLDecoder.decode(uriString, StandardCharsets.UTF_8));
+                val url = URI.create(URLDecoder.decode(uriString, StandardCharsets.UTF_8)).toURL();
                 list.add(new URI(url.getProtocol(), url.getAuthority(), url.getPath(), url.getQuery(), null));
             } catch (final MalformedURLException e) {
                 list.add(new URI(uriString));
