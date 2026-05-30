@@ -1,6 +1,10 @@
 configurations.configureEach {
     resolutionStrategy {
         dependencySubstitution {
+            substitute module("org.ehcache:ehcache") using module("org.ehcache:ehcache:${libs.versions.ehcache3.get()}") withClassifier("jakarta")
+        }
+
+        dependencySubstitution {
             substitute module('org.lz4:lz4-java') using module("at.yawk.lz4:lz4-java:${libs.lz4.get().version}")
         }
 
