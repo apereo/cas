@@ -28,7 +28,6 @@ buildscript {
         classpath rootProject.libs.gradle.plugin.spring.boot
         classpath rootProject.libs.gradle.plugin.git.properties
         classpath rootProject.libs.gradle.plugin.lombok
-        classpath rootProject.libs.gradle.plugin.versions
         classpath rootProject.libs.gradle.plugin.native
         classpath rootProject.libs.gradle.plugin.errorprone
         classpath rootProject.libs.gradle.plugin.nullaway

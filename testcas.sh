@@ -277,6 +277,7 @@ while (( "$#" )); do
             config|casconfig|ccfg|cfg|cas-config|casconfiguration)
                 isDockerOnLinux && ./ci/tests/etcd/run-etcd-server.sh || exit 1
                 task+="testCasConfiguration "
+                flags="${flags/-DskipNestedConfigMetadataGen=true}"
                 ;;
             geolocation|geo)
                 task+="testGeoLocation "
