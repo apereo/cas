@@ -71,7 +71,7 @@ jobs:
       - name: Report Dependency Updates
         run: |
           ./gradlew dependencyUpdates --build-cache --configure-on-demand --no-daemon --no-parallel -x test -x javadoc \
-            -x check --no-configuration-cache -Drevision=release -DskipAot=true -DskipNestedConfigMetadataGen=true \
+            -x check  -Drevision=release -DskipAot=true -DskipNestedConfigMetadataGen=true \
             -DgradleReleaseChannel=current --max-workers=8 -DreportfileName=dependencies \
             -DoutputFormatter=json,plain -DoutputDir=./build/reports/dependency-updates
       - name: Upload Results

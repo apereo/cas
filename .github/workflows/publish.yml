@@ -139,7 +139,7 @@ jobs:
           mongosh --version
       - name: Build Modules Metadata
         run: |
-          ./gradlew generateProjectModulesMetadata --no-configuration-cache \
+          ./gradlew generateProjectModulesMetadata  \
               --build-cache --configure-on-demand --no-daemon \
               --parallel -x test -x javadoc -x check
       - name: Publish Modules Metadata

@@ -47,7 +47,7 @@ function printred() {
 }
 
 function clean {
-  ./gradlew clean --parallel --no-configuration-cache --no-daemon -quiet
+  ./gradlew clean --parallel  --no-daemon -quiet
   [ $? -ne 0 ] && { printred "Gradle clean task failed"; exit 1; }
 }
 
@@ -61,7 +61,7 @@ function snapshot() {
   ./gradlew assemble publishAggregationToCentralPortalSnapshots \
     -x test -x javadoc -x check --no-daemon --parallel --quiet \
     -DskipAot=true -DpublishSnapshots=true --stacktrace \
-    --no-configuration-cache --configure-on-demand \
+     --configure-on-demand \
     -DrepositoryUsername="$REPOSITORY_USER" \
     -DrepositoryPassword="$REPOSITORY_PWD"
   if [ $? -ne 0 ]; then
@@ -86,7 +86,7 @@ function publish {
     printgreen "Assembling and publishing CAS release ${casVersion}. This might take a while..."
     ./gradlew assemble publishAggregationToCentralPortal \
       -Pversion="${casVersion}" -PnextVersion="${nextVersion}" \
-      --parallel --no-daemon --no-configuration-cache -x test -x check \
+      --parallel --no-daemon  -x test -x check \
       -DskipAot=true -DpublishReleases=true --stacktrace --quiet \
       -DrepositoryUsername="$REPOSITORY_USER" -DrepositoryPassword="$REPOSITORY_PWD"
     if [ $? -ne 0 ]; then
