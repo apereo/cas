@@ -139,7 +139,7 @@ ext.buildJarFile = new File(project.layout.buildDirectory.getAsFile().get(), "li
         options.forkOptions.jvmArgs << '--sun-misc-unsafe-memory-access=allow'
         options.incremental = true
 
-        def casCompilerArgs = ['-parameters', '-Xlint:-removal']
+        def casCompilerArgs = ['-parameters', '-Xlint:-removal,-unchecked']
         if (terminateCompilerOnWarning) {
             casCompilerArgs.add('-Werror')
         }
