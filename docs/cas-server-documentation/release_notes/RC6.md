@@ -48,7 +48,7 @@ The following items are new improvements and enhancements presented in this rele
 CAS continues to produce and publish [OpenRewrite](https://docs.openrewrite.org/) recipes that allow the project to upgrade installations
 in place from one version to the next. [See this guide](../installation/OpenRewrite-Upgrade-Recipes.html) to learn more.
 
-### Graal VM Native Images
+### GraalVM Native Images
 
 A CAS server installation and deployment process can be tuned to build and run
 as a [Graal VM native image](../installation/GraalVM-NativeImage-Installation.html). We continue to polish native runtime hints.
@@ -61,6 +61,18 @@ The collection of end-to-end [browser tests based on Puppeteer](../../developer/
 and scenarios. At the moment, total number of jobs stands at approximately `543` distinct scenarios. The overall
 test coverage of the CAS codebase is approximately `94%`.
 
+### Gradle 9.6
+
+CAS is now built with Gradle `9.6.x` and the build process has been updated to use the latest Gradle
+features and capabilities.
+
+The build system is also internally refactored and heavily optimized:
+
+- The build is made compatible with Gradle's [Isolated Projects](https://docs.gradle.org/current/userguide/isolated_projects.html) 
+feature. This required a significant refactoring of how project dependencies and coordinates are resolved during the build and bundling 
+process to ensure they are compliant with Spring Boot and Gradle's model for project isolation.
+- Running CAS integration and unit tests are now significantly faster locally, thanks to better parallelism and less instrumentation.
+
 ### JSpecify & NullAway
 
 CAS codebase is now annotated with [JSpecify](https://jspecify.dev/) annotations to indicate nullness contracts on method parameters,
@@ -70,4 +82,4 @@ during compile time.
 
 ## Other Stuff
               
-- 
+- [OpenID Connect logout requests](../authentication/OIDC-Authentication-Logout.html) may now also be submitted via `POST`. 
