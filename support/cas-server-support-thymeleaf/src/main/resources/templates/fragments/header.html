@@ -52,7 +52,7 @@
                             class="custom-select mw-20">
                         <option th:each="lang : ${#cas.sort(#strings.arraySplit(#cas.theme('cas.locale-selection.languages'), ','))}"
                                 th:value="${lang}"
-                                th:selected="${#strings.trim(lang) == #locale.language}"
+                                th:selected="${#strings.trim(lang) == #locale.toString()}"
                                 th:text="${#strings.toUpperCase(lang)}">
                         </option>
                     </select>
