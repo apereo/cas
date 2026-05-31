@@ -82,9 +82,9 @@ during compile time.
 
 ### Palantir
 
-[Palantir](../installation/Admin-Dashboard.html) now supports auto-complete and a small helper utility pane to explain
-available configuration properties when dynamic configuration sources are available. The drop-down that lists configuration
-properties also supports searching for fields based on `name` and `description`.
+[Palantir](../installation/Admin-Dashboard.html) now supports auto-complete and a small info panel to explain
+available configuration properties when dynamic configuration sources are available and configuration metadata is enabled. 
+The drop-down that lists configuration properties also supports searching for fields based on `name` and `description`.
 
 ![img.png](img.png)
 
@@ -92,7 +92,24 @@ Note that the documentation for each configuration property is directly extracte
 the [CAS configuration catalog](../configuration/Configuration-Metadata-Repository.html)
 and may not be immediately available if the property is not fully documented, particularly if it's owned and managed by
 a third-party library.
+  
+### Redis Ticket Registry
+
+The [Redis Ticket Registry](../ticketing/Redis-Ticket-Registry.html) now presents several notable changes:
+                                                                   
+- Delete operation signals are now propagated to all other consumer CAS nodes when Redis messaging is enabled. 
+- Local cache invalidation is now restored to use the correct cache key when consumer CAS nodes receive a delete operation signal.
+- Removing SSO sessions based on a principal now also propagates delete operation signals to consumer CAS nodes and invalidates the local cache for the publisher CAS node.
+
+These fixes are particularly important when administrative logouts are exercised.
+
+### Google Authenticator via Redis
+
+[Google Authenticator](../mfa/GoogleAuthenticator-Authentication.html) 
+backed [by Redis](../mfa/GoogleAuthenticator-Authentication-Registration-Redis.html) is now correctly tracking
+and *updating* scratch codes assigned to the principal, removing the possibility of lingering scratch codes.
 
 ## Other Stuff
               
 - [OpenID Connect logout requests](../authentication/OIDC-Authentication-Logout.html) may now also be submitted via `POST`. 
+- Redis integration tests have switched to use Redis `8.8.x`.
