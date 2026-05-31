@@ -108,6 +108,13 @@ These fixes are particularly important when administrative logouts are exercised
 [Google Authenticator](../mfa/GoogleAuthenticator-Authentication.html) 
 backed [by Redis](../mfa/GoogleAuthenticator-Authentication-Registration-Redis.html) is now correctly tracking
 and *updating* scratch codes assigned to the principal, removing the possibility of lingering scratch codes.
+ 
+### Locale & Language Bundles
+
+CAS language bundles for all supported languages are now comprehensively translated and include
+all relevant language keys for each language. CAS themes also gain an option to enable and control a curated list of
+available languages for user selection and displays. The user interface is also instructed to automatically set the 
+`dir` attribute on appropriate fields to support right-to-left languages automatically using the browser.
 
 ## Other Stuff
               

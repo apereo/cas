@@ -99,7 +99,7 @@
                         <script>countMessages++;</script>
                         <h3 class="mdc-typography--headline6 mdi mdi-alert-circle fas fa-exclamation-circle"
                             th:utext="#{screen.defaultauthn.title}"/>
-                        <p class="text text-wrap small" th:utext="#{screen.defaultauthn.heading}">
+                        <p class="text text-wrap small text-justify" th:utext="#{screen.defaultauthn.heading}">
                             <i class="mdi mdi-google fas fa-google" aria-hidden="true"></i>
                             Static AuthN is ONLY useful for demo purposes. It is recommended that you connect CAS to
                             LDAP,
@@ -112,7 +112,7 @@
                         <h3 class="mdc-typography--headline6 mdi mdi-alert-circle fas fa-exclamation-circle"
                             th:utext="#{screen.nonsecure.title}"/>
                         <script>countMessages++;</script>
-                        <p class="text-wrap small" th:utext="#{screen.nonsecure.message}">
+                        <p class="text-wrap small text-justify" th:utext="#{screen.nonsecure.message}">
                             Unsure Connection
                         </p>
                     </div>
@@ -120,7 +120,7 @@
                     <div id="cookiesSupportedDiv" class="cas-notification-message mdc-typography--body1" style="display: none">
                         <h3 class="mdc-typography--headline6 mdi mdi-alert-circle fas fa-exclamation-circle"
                             th:utext="#{screen.cookies.disabled.title}"></h3>
-                        <p class="text-wrap small" th:utext="#{screen.cookies.disabled.message}">
+                        <p class="text-wrap small text-justify" th:utext="#{screen.cookies.disabled.message}">
                             Cookies are not supported by this browser.
                         </p>
                     </div>
