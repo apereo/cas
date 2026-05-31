@@ -9,6 +9,12 @@ import module java.base;
  * @since 7.0.0
  */
 public class RedisKeyGeneratorFactory {
+
+    /**
+     * Default bean name.
+     */
+    public static final String BEAN_NAME = "redisKeyGeneratorFactory";
+    
     private final Map<String, RedisKeyGenerator> keyGeneratorMap = new HashMap<>();
 
     /**

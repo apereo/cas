@@ -358,6 +358,7 @@ exports.containsCookie = async (page, cookieName = "TGC") => {
 };
 
 exports.assertCookie = async (page, cookieMustBePresent = true, cookieName = "TGC") => {
+    const url = await page.url()
     const cookies = (await page.cookies()).filter((c) => {
         this.log(`Checking cookie ${c.name}:${c.value}`);
         return c.name === cookieName;
@@ -365,7 +366,7 @@ exports.assertCookie = async (page, cookieMustBePresent = true, cookieName = "TG
     await this.log(`Found ${cookies.length} cookie(s)`);
     if (cookieMustBePresent) {
         await this.log(`Checking for cookie ${cookieName}, which MUST be present`);
-        assert(cookies.length !== 0, `Cookie ${cookieName} must be present`);
+        assert(cookies.length !== 0, `Cookie ${cookieName} must be present on ${url}`);
         await this.logg("Asserting cookies:");
         await this.logg(`${JSON.stringify(cookies, undefined, 2)}`);
         return cookies[0];
@@ -374,9 +375,18 @@ exports.assertCookie = async (page, cookieMustBePresent = true, cookieName = "TG
     if (cookies.length === 0) {
         await this.logg(`Correct! Cookie ${cookieName} cannot be found`);
     } else {
-        await this.logr(`Incorrect! Cookie ${cookieName} can be found but it must not be present`);
+        await this.logr(`Incorrect! Cookie ${cookieName} can be found but it must not be present on ${url}`);
         const ck = cookies[0];
-        const msg = `Found cookie => name: ${ck.name},value:${ck.value},path:${ck.path},domain:${ck.domain},httpOnly:${ck.httpOnly},secure:${ck.secure}`;
+        const msg = `
+        Page: ${url},
+        Found cookie => 
+            name: ${ck.name},
+            value:${ck.value},
+            path:${ck.path},
+            domain:${ck.domain},
+            httpOnly:${ck.httpOnly},
+            secure:${ck.secure}
+        `;
         await this.logb(msg);
         throw msg;
     }
@@ -573,8 +583,8 @@ exports.assertTicketParameter = async (page, found = true) => {
     return null;
 };
 
-exports.validateTicket = async (service, ticket, format = "JSON") => {
-    const body = await this.doRequest(`https://localhost:8443/cas/p3/serviceValidate?service=${service}&ticket=${ticket}&format=${format}`);
+exports.validateTicket = async (service, ticket, format = "JSON", port = 8443) => {
+    const body = await this.doRequest(`https://localhost:${port}/cas/p3/serviceValidate?service=${service}&ticket=${ticket}&format=${format}`);
     await this.log(body);
     if (format === "XML") {
         return body;
