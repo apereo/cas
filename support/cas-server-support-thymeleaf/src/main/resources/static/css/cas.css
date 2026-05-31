@@ -915,6 +915,10 @@ span button.toolbar {
     max-width: 20%;
 }
 
+.mw-10 {
+    max-width: 10%;
+}
+
 .mt-0 {
     margin-top: 0;
 }

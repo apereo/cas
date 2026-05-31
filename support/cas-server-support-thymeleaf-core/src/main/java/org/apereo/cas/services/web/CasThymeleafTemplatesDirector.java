@@ -150,4 +150,14 @@ public class CasThymeleafTemplatesDirector {
         Objects.requireNonNull(theme, "Theme cannot be null or undefined");
         return theme.getMessageSource().getMessage(code, null, StringUtils.EMPTY, request.getLocale());
     }
+
+    /**
+     * Sort object [].
+     *
+     * @param array the array
+     * @return the object []
+     */
+    public Object[] sort(final Object[] array) {
+        return Arrays.stream(array).sorted().toArray();
+    }
 }

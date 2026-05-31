@@ -65,7 +65,7 @@
                     </p>
                 </div>
             </section>
-            <button id="loginButton" class="mdc-button mdc-button--raised btn btn-primary" accesskey="l">
+            <button id="loginButton" class="mdc-button mdc-button--raised btn btn-primary">
                 <span class="mdc-button__label" th:text="#{screen.welcome.button.login}">Login</span>
             </button>
             <a class="mdc-button mdc-button--raised btn btn-primary button-cancel" id="cancel" name="cancel"
@@ -80,7 +80,7 @@
             <form method="post" id="fm3">
                 <input type="hidden" name="_eventId" value="select"/>
                 <input type="hidden" name="execution" th:value="${flowExecutionKey}"/>
-                <button id="selectDeviceButton" class="mdc-button mdc-button--raised btn btn-primary me-2" accesskey="s">
+                <button id="selectDeviceButton" class="mdc-button mdc-button--raised btn btn-primary me-2">
                     <span class="mdc-button__label" th:text="#{screen.authentication.gauth.selectdevice}">Select Device</span>
                 </button>
             </form>

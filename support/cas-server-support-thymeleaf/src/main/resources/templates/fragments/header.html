@@ -46,6 +46,17 @@
                     </div>
                 </section>
                 <section class="mdc-top-app-bar__section mdc-top-app-bar__section--align-end">
+                    <select th:if="${#cas.isTrue(#cas.theme('cas.locale-selection.enabled'))}"
+                            onchange="changeLanguage(this.value)"
+                            id="languageSelector"
+                            class="custom-select mw-20">
+                        <option th:each="lang : ${#cas.sort(#strings.arraySplit(#cas.theme('cas.locale-selection.languages'), ','))}"
+                                th:value="${lang}"
+                                th:selected="${#strings.trim(lang) == #locale.language}"
+                                th:text="${#strings.toUpperCase(lang)}">
+                        </option>
+                    </select>
+
                     <button id="cas-notifications-menu"
                             th:if="${#cas.isTrue(#cas.theme('cas.notifications-menu.enabled'))}"
                             class="mdc-icon-button mdc-top-app-bar__action-item cas-notification-toggle btn btn-outline-light"
