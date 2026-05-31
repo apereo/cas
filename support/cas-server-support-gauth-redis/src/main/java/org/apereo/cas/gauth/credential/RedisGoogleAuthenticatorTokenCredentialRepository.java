@@ -10,6 +10,7 @@ import lombok.Getter;
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.jspecify.annotations.Nullable;
 import org.springframework.data.redis.core.RedisCallback;
 import org.springframework.data.redis.core.ScanOptions;
 import java.nio.charset.StandardCharsets;
@@ -41,7 +42,7 @@ public class RedisGoogleAuthenticatorTokenCredentialRepository extends BaseGoogl
     }
 
     @Override
-    public OneTimeTokenAccount get(final String username, final long id) {
+    public @Nullable OneTimeTokenAccount get(final String username, final long id) {
         return get(username)
             .stream()
             .filter(account -> account.getId() == id)
@@ -95,8 +96,17 @@ public class RedisGoogleAuthenticatorTokenCredentialRepository extends BaseGoogl
 
         val redisPrincipalKey = RedisCompositeKey.forPrincipals().withPrincipal(encodedAccount).toKeyPattern();
         LOGGER.trace("Saving principal [{}] using key [{}]", encodedAccount, redisPrincipalKey);
-        casRedisTemplates.getPrincipalsRedisTemplate().boundSetOps(redisPrincipalKey).add(encodedAccount);
-
+        val principalOps = casRedisTemplates.getPrincipalsRedisTemplate().boundSetOps(redisPrincipalKey);
+        principalOps
+            .members()
+            .stream()
+            .filter(value -> {
+                val existingAccount = decode(value);
+                return account.getId() == existingAccount.getId();
+            })
+            .findFirst()
+            .ifPresent(principalOps::remove);
+        principalOps.add(encodedAccount);
         return encodedAccount;
     }
 
@@ -150,7 +160,8 @@ public class RedisGoogleAuthenticatorTokenCredentialRepository extends BaseGoogl
     @Override
     public long count(final String username) {
         val redisKeyPattern = RedisCompositeKey.forPrincipals().withPrincipal(username).toKeyPattern();
-        return casRedisTemplates.getPrincipalsRedisTemplate().boundSetOps(redisKeyPattern).size();
+        val members = casRedisTemplates.getPrincipalsRedisTemplate().boundSetOps(redisKeyPattern).members();
+        return members != null ? members.size() : 0;
     }
 
     @Data
