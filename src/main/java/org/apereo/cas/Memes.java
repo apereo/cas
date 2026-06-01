@@ -24,6 +24,9 @@ public class Memes {
     public static final Memes NO_TESTS = new Memes(
         "https://github.com/mmoayyed/cas/assets/1205228/8b8b8515-acce-4830-8a82-922442e4acad",
         "https://github.com/apereo/cas/assets/1205228/42a2e3c6-316a-41b3-96a0-2cc6fdb60f57",
+        "https://github.com/user-attachments/assets/4a734c3a-96e2-49e0-97d4-767179ec4490",
+        "https://github.com/user-attachments/assets/30bff293-20f1-4a4b-8337-3f400daac755",
+        "https://github.com/user-attachments/assets/d0efecd2-5530-4e1d-9353-8d4f715b25b9",
         "https://github.com/apereo/cas/assets/1205228/1c8e3d1e-1c03-4dbe-b4b5-10f9592d7714",
         "https://github.com/apereo/cas/assets/1205228/8a633d54-e7cf-4ebf-a404-a7353ec79956",
         "https://github.com/apereo/cas/assets/1205228/6d9e849b-4f66-4e2d-8f33-d69525750399",
@@ -80,6 +83,11 @@ public class Memes {
         "https://github.com/apereo/cas/assets/1205228/2a18efb5-c53e-4f91-bdaf-c38d57d0e485",
         "https://github.com/apereo/cas/assets/1205228/9481aa6c-1cd3-4bc9-8a6d-ca98f2bfdc1d",
         "https://github.com/apereo/cas/assets/1205228/ffa2d297-9095-4602-b38a-5844530ef017",
+        "https://github.com/user-attachments/assets/4c629631-b4dd-4a7d-bb70-5e2f3eff92af",
+        "https://github.com/user-attachments/assets/840e6daf-fc34-48ee-a016-3c556ea61aac",
+        "https://github.com/user-attachments/assets/35bedd57-7968-46b5-83aa-e9620d89070a",
+        "https://github.com/user-attachments/assets/e77ad088-6fd7-416d-bddb-186525846e19",
+        "https://github.com/user-attachments/assets/8195ee51-8bf5-4d0b-8b28-5e2c3ffc09cc",
         "https://github.com/apereo/cas/assets/1205228/865dee51-9fc6-473d-a68b-f06d60757124"
     );
 

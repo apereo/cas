@@ -155,16 +155,19 @@ public class CasPullRequestListener implements PullRequestListener {
         val modifiesJava = files.stream().anyMatch(file ->
                 !file.getFilename().contains("Tests") && file.getFilename().endsWith(".java"));
 
-        val modifiesUI = files.stream().anyMatch(file ->
-                file.getFilename().endsWith(".css") ||
+        val modifiesUI = files.stream().anyMatch(file -> {
+            var changesUI = file.getFilename().endsWith(".css") ||
                 file.getFilename().endsWith(".html") ||
-                file.getFilename().endsWith(".js"));
+                file.getFilename().endsWith(".js");
+            return changesUI && !file.getFilename().startsWith("docs/cas-server-documentation/");
+        });
 
         if (modifiesJava || modifiesUI) {
             val hasTests = files.stream().anyMatch(file -> file.getFilename().endsWith("Tests.java")
-                                                           || PATTERN_PUPPETEER.matcher(file.getFilename()).matches());
+                                                   || PATTERN_PUPPETEER.matcher(file.getFilename()).matches());
             if (!hasTests) {
-                var isCommitter = repository.getGitHubProperties().getRepository().getCommitters().contains(pr.getUser().getLogin());
+                var isCommitter = repository.getGitHubProperties().getRepository()
+                        .getCommitters().contains(pr.getUser().getLogin());
                 if (!isCommitter) {
                     log.info("Pull request {} does not have any tests", pr);
                     if (!pr.isLabeledAs(CasLabels.LABEL_PENDING_NEEDS_TESTS)) {
