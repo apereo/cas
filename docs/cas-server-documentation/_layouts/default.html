@@ -38,6 +38,14 @@
     </script>
 
     <script>
+        function systemTheme() {
+            return window.matchMedia && window.matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark';
+        }
+
+        function resolveTheme(preference) {
+            return preference === 'dark' || preference === 'light' ? preference : systemTheme();
+        }
+
         function changeTheme(theme) {
             if (theme !== 'dark' && theme !== 'light') {
                 return;
@@ -49,23 +57,22 @@
         }
 
         (() => {
-            let theme = localStorage.getItem('cas-docs-theme');
-            if (theme !== 'dark' && theme !== 'light') {
-                theme = window.matchMedia && window.matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark';
-                localStorage.setItem('cas-docs-theme', theme);
+            let preference = localStorage.getItem('cas-docs-theme');
+            if (preference !== 'dark' && preference !== 'light') {
+                preference = 'system';
+                localStorage.setItem('cas-docs-theme', preference);
             }
 
-            changeTheme(theme);
+            changeTheme(resolveTheme(preference));
 
             if (window.matchMedia) {
-                window.matchMedia('(prefers-color-scheme: light)').addEventListener('change', e => {
-                    if (localStorage.getItem('cas-docs-theme-manual') === 'true') {
+                window.matchMedia('(prefers-color-scheme: light)').addEventListener('change', () => {
+                    if (localStorage.getItem('cas-docs-theme') !== 'system') {
                         return;
                     }
-                    const systemTheme = e.matches ? 'light' : 'dark';
-                    console.log(`System theme changed to: ${systemTheme}`);
-                    changeTheme(systemTheme);
-                    localStorage.setItem('cas-docs-theme', systemTheme);
+                    const theme = systemTheme();
+                    console.log(`System theme changed to: ${theme}`);
+                    changeTheme(theme);
                 });
             }
         })();

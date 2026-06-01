@@ -195,7 +195,6 @@ function toggleDarkMode() {
     const newTheme = theme === "dark" ? "light" : "dark";
     $("html").attr('data-bs-theme', newTheme);
     localStorage.setItem('cas-docs-theme', newTheme);
-    localStorage.setItem('cas-docs-theme-manual', 'true');
     console.log(`New theme: ${newTheme}`);
 }
 
