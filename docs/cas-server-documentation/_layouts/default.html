@@ -45,6 +45,18 @@
                 localStorage.setItem('cas-docs-theme', theme);
             }
             document.documentElement.setAttribute('data-bs-theme', theme);
+
+            if (window.matchMedia) {
+                window.matchMedia('(prefers-color-scheme: light)').addEventListener('change', e => {
+                    if (localStorage.getItem('cas-docs-theme-manual') === 'true') {
+                        return;
+                    }
+                    const systemTheme = e.matches ? 'light' : 'dark';
+                    console.log(`System theme changed to: ${systemTheme}`);
+                    document.documentElement.setAttribute('data-bs-theme', systemTheme);
+                    localStorage.setItem('cas-docs-theme', systemTheme);
+                });
+            }
         })();
     </script>
 
