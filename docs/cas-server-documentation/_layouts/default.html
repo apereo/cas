@@ -38,13 +38,24 @@
     </script>
 
     <script>
+        function changeTheme(theme) {
+            if (theme !== 'dark' && theme !== 'light') {
+                return;
+            }
+
+            if (document.documentElement.getAttribute('data-bs-theme') !== theme) {
+                document.documentElement.setAttribute('data-bs-theme', theme);
+            }
+        }
+
         (() => {
             let theme = localStorage.getItem('cas-docs-theme');
             if (theme !== 'dark' && theme !== 'light') {
                 theme = window.matchMedia && window.matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark';
                 localStorage.setItem('cas-docs-theme', theme);
             }
-            document.documentElement.setAttribute('data-bs-theme', theme);
+
+            changeTheme(theme);
 
             if (window.matchMedia) {
                 window.matchMedia('(prefers-color-scheme: light)').addEventListener('change', e => {
@@ -53,7 +64,7 @@
                     }
                     const systemTheme = e.matches ? 'light' : 'dark';
                     console.log(`System theme changed to: ${systemTheme}`);
-                    document.documentElement.setAttribute('data-bs-theme', systemTheme);
+                    changeTheme(systemTheme);
                     localStorage.setItem('cas-docs-theme', systemTheme);
                 });
             }
