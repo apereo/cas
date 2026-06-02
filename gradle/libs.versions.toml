@@ -1,5 +1,5 @@
 [versions]
-aceEditor = "1.43.6"
+aceEditor = "1.44.0"
 acmeClient = "5.1.0"
 amazonDax = "2.0.9"
 amazonSdk = "2.44.14"
