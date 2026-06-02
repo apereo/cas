@@ -12,6 +12,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.TestPropertySource;
+import static org.hamcrest.Matchers.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
@@ -66,7 +67,8 @@ class OidcDynamicClientRegistrationEndpointControllerTests {
     @Nested
     @TestPropertySource(properties = {
         "cas.authn.oidc.registration.dynamic-client-registration-enabled=true",
-        "cas.authn.oidc.registration.client-secret-expiration=P14D"
+        "cas.authn.oidc.registration.client-secret-expiration=P14D",
+        "cas.authn.oidc.registration.dynamic-client-registration-mode=PROTECTED"
     })
     class DefaultTests extends AbstractOidcTests {
         @Test
@@ -274,6 +276,26 @@ class OidcDynamicClientRegistrationEndpointControllerTests {
                     )
                     .andExpect(status().isBadRequest());
             }
+        }
+
+        @Test
+        void verifyCanonicalRegistrationPathRequiresAuth() throws Throwable {
+            mockMvc.perform(post("/cas/oidc/" + OidcConstants.REGISTRATION_URL)
+                    .accept(MediaType.APPLICATION_JSON)
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .with(withHttpRequestProcessor())
+                    .content("{}"))
+                .andExpect(status().isUnauthorized());
+        }
+
+        @Test
+        void verifyInjectedSegmentBypassesAuth() throws Throwable {
+            mockMvc.perform(post("/cas/oidc/x/" + OidcConstants.REGISTRATION_URL)
+                    .accept(MediaType.APPLICATION_JSON)
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .with(withHttpRequestProcessor())
+                    .content("{}"))
+                .andExpect(status().isUnauthorized());
         }
     }
 }
