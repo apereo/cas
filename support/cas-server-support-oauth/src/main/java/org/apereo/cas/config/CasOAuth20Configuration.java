@@ -158,6 +158,7 @@ import org.apereo.cas.util.spring.beans.BeanContainer;
 import org.apereo.cas.util.spring.beans.BeanSupplier;
 import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
 import org.apereo.cas.validation.AuthenticationAttributeReleasePolicy;
+import org.apereo.cas.web.UrlValidator;
 import org.apereo.cas.web.cookie.CasCookieBuilder;
 import org.apereo.cas.web.support.ArgumentExtractor;
 import org.apereo.cas.web.support.CookieUtils;
@@ -353,9 +354,12 @@ class CasOAuth20Configuration {
             final HttpClient httpClient,
             @Qualifier(TenantExtractor.BEAN_NAME)
             final TenantExtractor tenantExtractor,
+            @Qualifier(UrlValidator.BEAN_NAME)
+            final UrlValidator urlValidator,
             @Qualifier("messageSource")
             final MessageSource messageSource) {
             return OAuth20ConfigurationContext.builder()
+                .urlValidator(urlValidator)
                 .argumentExtractor(argumentExtractor)
                 .httpClient(httpClient)
                 .messageSource(messageSource)
