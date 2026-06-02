@@ -74,7 +74,11 @@ const BROWSER_OPTIONS = {
         "--window-size=1920,1080",
         "--disable-features=BlockInsecurePrivateNetworkRequests",
         "--disable-features=PrivateNetworkAccessPreflight",
-        "--allow-insecure-localhost"
+        "--allow-insecure-localhost",
+        '--no-first-run',
+        '--no-default-browser-check',
+        '--disable-session-crashed-bubble',
+        '--disable-features=Translate,BackForwardCache'
     ]
 };
 
@@ -126,6 +130,12 @@ exports.newBrowser = async (options) => {
 exports.closeBrowser = async (browser, preClose = () => {}, postClose = () => {}) => {
     try {
         preClose(browser);
+        const pages = await browser.pages();
+        await Promise.all(
+            pages
+                .filter(page => !page.isClosed())
+                .map(page => page.close())
+        );
         await browser.close();
     } finally {
         postClose(browser);
@@ -134,29 +144,29 @@ exports.closeBrowser = async (browser, preClose = () => {}, postClose = () => {}
 
 exports.log = async (text, ...args) => {
     const toLog = inspect(text);
-    await LOGGER.debug(`🔷 ${colors.blue(toLog)}`, args);
+    LOGGER.debug(`🔷 ${colors.blue(toLog)}`, args);
 };
 
 exports.separator = async () => console.log("*".repeat(100));
 
 exports.logy = async (text) => {
     const toLog = inspect(text);
-    await LOGGER.warn(`⚠️ ${colors.yellow(toLog)}`);
+    LOGGER.warn(`⚠️ ${colors.yellow(toLog)}`);
 };
 
 exports.logb = async (text) => {
     const toLog = inspect(text);
-    await LOGGER.debug(`🔷 ${colors.blue(toLog)}`);
+    LOGGER.debug(`🔷 ${colors.blue(toLog)}`);
 };
 
 exports.logg = async (text) => {
     const toLog = inspect(text);
-    await LOGGER.info(`🍀 ${colors.green(toLog)}`);
+    LOGGER.info(`🍀 ${colors.green(toLog)}`);
 };
 
 exports.logr = async (text) => {
     const toLog = inspect(text);
-    await LOGGER.error(`📛 ${colors.red(toLog)}`);
+    LOGGER.error(`📛 ${colors.red(toLog)}`);
 };
 
 exports.logPage = async (page) => {
@@ -168,7 +178,7 @@ exports.logPage = async (page) => {
 exports.removeDirectoryOrFile = async (directory) => {
     this.logg(`Removing directory ${directory}`);
     if (fs.existsSync(directory)) {
-        await fs.rmSync(directory, {recursive: true});
+        fs.rmSync(directory, {recursive: true});
     }
     await this.logg(`Removed directory ${directory}`);
     if (fs.existsSync(directory)) {
@@ -468,16 +478,18 @@ exports.stopHar = async (har) => {
     await har.stop();
 };
 
-exports.newPage = async (browser) => {
+exports.newPage = async (browser, force = false) => {
     let page = undefined;
-    try {
-        page = (await browser.pages())[0];
-    } catch (e) {
-        this.logr(e);
-        await this.sleep(1000);
+    if (!force) {
+        try {
+            page = (await browser.pages())[0];
+        } catch (e) {
+            this.logr(e);
+            await this.sleep(1000);
+        }
     }
 
-    if (page === undefined) {
+    if (page === undefined || force) {
         let counter = 0;
         while (page === undefined && counter < 5) {
             try {
@@ -1311,7 +1323,7 @@ exports.updateYamlConfigurationSource = async(configDirectory, config) => {
     const configFilePath = path.join(configDirectory, "config.yml");
     const newConfig = await this.toYAML(config);
     await this.log(`Updated configuration:\n${newConfig}`);
-    await fs.writeFileSync(configFilePath, newConfig);
+    fs.writeFileSync(configFilePath, newConfig);
     await this.log(`Wrote changes to ${configFilePath}`);
 };
 
