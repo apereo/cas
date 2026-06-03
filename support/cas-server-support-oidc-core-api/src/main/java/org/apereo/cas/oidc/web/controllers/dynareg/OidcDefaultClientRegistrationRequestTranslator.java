@@ -88,12 +88,15 @@ public class OidcDefaultClientRegistrationRequestTranslator implements OidcClien
             registeredService.setUsernameAttributeProvider(new PairwiseOidcRegisteredServiceUsernameAttributeProvider());
         }
 
-        if (StringUtils.isNotBlank(registrationRequest.getJwksUri()) && context.getUrlValidator().isValid(registrationRequest.getJwksUri())) {
-            registeredService.setJwks(registrationRequest.getJwksUri());
+        if (StringUtils.isNotBlank(registrationRequest.getJwksUri())) {
+            if (context.getUrlValidator().isValid(registrationRequest.getJwksUri())) {
+                registeredService.setJwks(registrationRequest.getJwksUri());
+            }
         } else {
             val jwks = registrationRequest.getJwks();
             if (jwks != null && !jwks.getJsonWebKeys().isEmpty()) {
-                jwks.getJsonWebKeys().stream()
+                jwks.getJsonWebKeys()
+                    .stream()
                     .filter(key -> StringUtils.isBlank(key.getKeyId()))
                     .forEach(key -> key.setKeyId(RandomUtils.randomAlphabetic(6)));
                 registeredService.setJwks(jwks.toJson());
