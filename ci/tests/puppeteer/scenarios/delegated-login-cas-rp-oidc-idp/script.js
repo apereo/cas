@@ -69,11 +69,11 @@ const cas = require("../../cas.js");
     const logoutUrl = `https://localhost:8443/cas/login?logout_token=${jwt}&client_name=Keycloak`;
 
     await cas.doPost(logoutUrl, "", {
-            "Content-Type": "application/json"
-        }, (res) => assert(res.status === 200),
-        (error) => {
-            throw `Operation failed: ${error}`;
-        });
+        "Content-Type": "application/json"
+    }, (res) => assert(res.status === 200),
+    (error) => {
+        throw `Operation failed: ${error}`;
+    });
 
     await cas.gotoLogin(page);
     await cas.assertCookie(page, false);

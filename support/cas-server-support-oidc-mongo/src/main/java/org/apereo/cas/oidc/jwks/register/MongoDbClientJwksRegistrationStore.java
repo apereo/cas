@@ -28,7 +28,7 @@ public class MongoDbClientJwksRegistrationStore implements ClientJwksRegistratio
             .ifPresentOrElse(entity -> {
                 val update = Update.update("jwk", jwk);
                 val query = new Query(Criteria.where("jkt").is(entry.jkt()).and("clientId").is(entry.clientId()));
-                mongoTemplate.updateFirst(query, update, collectionName);
+                mongoTemplate.updateFirst(query, update, ClientJwksRegistrationEntry.class, collectionName);
             },
                 () -> mongoTemplate.insert(entry, collectionName));
         return entry;
@@ -48,7 +48,7 @@ public class MongoDbClientJwksRegistrationStore implements ClientJwksRegistratio
     @Override
     public void remove(final String clientId, final String jkt) {
         val query = new Query(Criteria.where("jkt").is(jkt).and("clientId").is(clientId));
-        mongoTemplate.remove(query, collectionName);
+        mongoTemplate.remove(query, ClientJwksRegistrationEntry.class, collectionName);
     }
 
     @Override
