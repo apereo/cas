@@ -9,6 +9,7 @@ import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.expression.spel.SpelEvaluationException;
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
@@ -38,7 +39,7 @@ class SpringExpressionLanguageValueResolverTests {
 
         assertEquals("Hello World", resolver.resolve("${'Hello World'}"));
         assertEquals("Literal Value", resolver.resolve("Literal Value"));
-        assertEquals("Hello World!", resolver.resolve("${'Hello World'.concat('!')}"));
+        assertThrows(SpelEvaluationException.class, () -> resolver.resolve("${'Hello World'.concat('!')}"));
 
         System.setProperty("cas.user", "Apereo CAS");
         assertEquals("Apereo CAS", resolver.resolve("${#systemProperties['cas.user']}"));
@@ -63,7 +64,6 @@ class SpringExpressionLanguageValueResolverTests {
         assertNotNull(resolver.resolve("${#localDateUtc}"));
         assertNotNull(resolver.resolve("${#zonedDateTime}"));
         assertNotNull(resolver.resolve("${#zonedDateTimeUtc}"));
-        
-        assertNotNull(resolver.resolve("${#applicationContext.get().id}"));
+        assertNotNull(resolver.resolve("${T(java.util.Locale).GERMAN.getLanguage()}"));
     }
 }
