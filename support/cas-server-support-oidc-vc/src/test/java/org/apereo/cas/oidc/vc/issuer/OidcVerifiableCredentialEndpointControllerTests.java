@@ -115,7 +115,7 @@ class OidcVerifiableCredentialEndpointControllerTests {
         protected OidcVerifiableCredentialProofValidator oidcVerifiableCredentialProofValidator;
 
         @Autowired
-        @Qualifier("oidcVerifiableCredentialNonceService")
+        @Qualifier(OidcVerifiableCredentialNonceService.BEAN_NAME)
         protected OidcVerifiableCredentialNonceService oidcVerifiableCredentialNonceService;
 
         protected static RSAKey generateRsaHolderKey() throws Exception {

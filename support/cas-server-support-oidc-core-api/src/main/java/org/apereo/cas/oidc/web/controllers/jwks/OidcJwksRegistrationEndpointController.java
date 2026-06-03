@@ -1,12 +1,15 @@
 package org.apereo.cas.oidc.web.controllers.jwks;
 
 import module java.base;
+import org.apereo.cas.audit.AuditableContext;
 import org.apereo.cas.oidc.OidcConfigurationContext;
 import org.apereo.cas.oidc.OidcConstants;
 import org.apereo.cas.oidc.jwks.register.ClientJwksRegistrationRequest;
 import org.apereo.cas.oidc.jwks.register.ClientJwksRegistrationResponse;
 import org.apereo.cas.oidc.jwks.register.ClientJwksRegistrationStore;
 import org.apereo.cas.oidc.web.controllers.BaseOidcController;
+import org.apereo.cas.services.OidcRegisteredService;
+import org.apereo.cas.support.oauth.util.OAuth20Utils;
 import org.apereo.cas.ticket.accesstoken.OAuth20AccessToken;
 import org.apereo.cas.util.LoggingUtils;
 import org.apereo.cas.util.function.FunctionUtils;
@@ -84,6 +87,16 @@ public class OidcJwksRegistrationEndpointController extends BaseOidcController {
             || !accessTokenTicket.getScopes().contains(OidcConstants.CLIENT_JWKS_REGISTRATION_SCOPE)) {
             throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Invalid access token");
         }
+        val clientId = accessTokenTicket.getClientId();
+        val registeredService = OAuth20Utils.getRegisteredOAuthServiceByClientId(
+            configurationContext.getServicesManager(), clientId, OidcRegisteredService.class);
+        val audit = AuditableContext.builder()
+            .registeredService(registeredService)
+            .authentication(accessTokenTicket.getAuthentication())
+            .build();
+        val accessResult = configurationContext.getRegisteredServiceAccessStrategyEnforcer().execute(audit);
+        accessResult.throwExceptionIfNeeded();
+        
         val jws = JWSObject.parse(registrationRequest.proof());
 
         val alg = jws.getHeader().getAlgorithm();
@@ -101,7 +114,7 @@ public class OidcJwksRegistrationEndpointController extends BaseOidcController {
             throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Invalid signature");
         }
         val jkt = jwk.computeThumbprint().toString();
-        clientJwksRegistrationStore.save(jkt, jwk.toPublicJWK().toJSONString());
+        clientJwksRegistrationStore.save(accessTokenTicket.getClientId(), jkt, jwk.toPublicJWK().toJSONString());
         return ResponseEntity.ok(new ClientJwksRegistrationResponse(jkt));
     }
 

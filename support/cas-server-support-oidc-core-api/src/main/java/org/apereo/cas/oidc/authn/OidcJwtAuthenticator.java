@@ -132,8 +132,8 @@ public class OidcJwtAuthenticator implements Authenticator {
                     val jwk = signedJWT.getHeader().getJWK();
                     val kid = signedJWT.getHeader().getKeyID();
                     val jkt = jwk != null ? jwk.computeThumbprint().toString() : StringUtils.EMPTY;
-                    store.findByJkt(jkt)
-                        .or(() -> store.findByJkt(kid))
+                    store.findBy(registeredService.getClientId(), jkt)
+                        .or(() -> store.findBy(registeredService.getClientId(), kid))
                         .map(ClientJwksRegistrationEntry::jwk)
                         .ifPresent(registereredKey -> {
                             val webKey = EncodingUtils.newJsonWebKey(registereredKey);

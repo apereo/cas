@@ -6,6 +6,8 @@ import org.apereo.cas.oidc.jwks.register.ClientJwksRegistrationStore;
 import org.apereo.cas.oidc.jwks.rotation.OidcJsonWebKeystoreRotationService;
 import org.apereo.cas.web.BaseCasRestActuatorEndpoint;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.enums.ParameterIn;
 import lombok.val;
 import org.jose4j.jwk.JsonWebKey;
 import org.springframework.beans.factory.ObjectProvider;
@@ -82,12 +84,20 @@ public class OidcJwksEndpoint extends BaseCasRestActuatorEndpoint {
     /**
      * Load client JWKS entries.
      *
+     * @param clientId the client id
+     * @param jkt      the jkt
      * @return the response entity
      */
-    @DeleteMapping(path = "/clients/{jkt}", produces = MediaType.APPLICATION_JSON_VALUE)
-    @Operation(summary = "Remove client JWKS entry by JKT")
-    public ResponseEntity removeClientJwksEntry(@PathVariable final String jkt) {
-        clientJwksRegistrationStore.getObject().removeByJkt(jkt);
+    @DeleteMapping(path = "/clients/{clientId}/{jkt}", produces = MediaType.APPLICATION_JSON_VALUE)
+    @Operation(summary = "Remove client JWKS entry by JKT",
+        parameters = {
+            @Parameter(name = "clientId", in = ParameterIn.PATH, description = "The client identifier", required = true),
+            @Parameter(name = "jkt", in = ParameterIn.PATH, description = "The JWK Thumbprint (JKT) of the key to remove", required = true)
+        })
+    public ResponseEntity removeClientJwksEntry(
+        @PathVariable final String clientId,
+        @PathVariable final String jkt) {
+        clientJwksRegistrationStore.getObject().remove(clientId, jkt);
         return ResponseEntity.noContent().build();
     }
 }

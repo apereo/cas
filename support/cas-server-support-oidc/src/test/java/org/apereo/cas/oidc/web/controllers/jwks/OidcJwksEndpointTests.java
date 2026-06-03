@@ -2,8 +2,11 @@ package org.apereo.cas.oidc.web.controllers.jwks;
 
 import module java.base;
 import org.apereo.cas.oidc.AbstractOidcTests;
+import org.apereo.cas.services.OidcRegisteredService;
 import org.apereo.cas.test.CasTestExtension;
+import org.apereo.cas.util.RandomUtils;
 import org.apereo.cas.web.report.AbstractCasEndpointTests;
+import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -57,9 +60,21 @@ class OidcJwksEndpointTests extends AbstractCasEndpointTests {
 
     @Test
     void verifyClientJwksRemoval() throws Throwable {
-        mockMvc.perform(delete("/actuator/oidcJwks/clients/%s".formatted(UUID.randomUUID().toString()))
+        val registeredService = newOidcRegisteredService(UUID.randomUUID().toString());
+        servicesManager.save(registeredService);
+        mockMvc.perform(delete("/actuator/oidcJwks/clients/%s/%s"
+                .formatted(registeredService.getClientId(), UUID.randomUUID().toString()))
                 .contentType(MediaType.APPLICATION_JSON)
                 .accept(MediaType.APPLICATION_JSON))
             .andExpect(status().isNoContent());
+    }
+
+    private static OidcRegisteredService newOidcRegisteredService(final String clientId) {
+        val oidcRegisteredService = new OidcRegisteredService();
+        oidcRegisteredService.setId(RandomUtils.nextLong());
+        oidcRegisteredService.setClientId(clientId);
+        oidcRegisteredService.setServiceId("^https://example.org/" + clientId);
+        oidcRegisteredService.setName(clientId);
+        return oidcRegisteredService;
     }
 }
