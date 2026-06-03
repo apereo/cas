@@ -1,3 +1,5 @@
+apply plugin: "org.apereo.cas.project-conventions"
+
 description = "Apereo CAS Service Registry Streaming Support with Kafka"
 ext {
     publishMetadata = true

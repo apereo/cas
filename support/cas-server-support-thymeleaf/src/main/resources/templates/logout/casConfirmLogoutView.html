@@ -12,9 +12,11 @@
 <body>
 <main class="container mt-3 mb-3">
     <div id="content" layout:fragment="content" class="mdc-card card p-4 m-auto">
-        <h2 th:if="${authentication}"
-            th:utext="#{screen.logout.confirm.header(${authentication.principal.id})}">Do you want to log out completely?</h2>
-        <h2 th:unless="${authentication}">Do you want to log out completely?</h2>
+        <h2 th:utext="${authentication != null}
+            ? #{screen.logout.confirm.header(${authentication.principal.id})}
+            : #{screen.logout.confirm.header.anonymous}">
+            Do you want to log out completely?
+        </h2>
         <p th:remove="tag" th:utext="#{screen.logout.confirm.text}">An application may have redirected you to the Central
             Authentication Service to completely log you out and destroy your single sign-on session. \
             If you choose to log out, you will be asked again to provide your credentials and \
@@ -50,7 +52,7 @@
             <input type="hidden" name="LogoutRequestConfirmed" value="true"/>
             <input type="hidden" name="execution" th:value="${flowExecutionKey}"/>
             <input type="hidden" name="_eventId" value="success"/>
-            <button id="logoutButton" class="mdc-button mdc-button--raised btn btn-primary" name="success" accesskey="l">
+            <button id="logoutButton" class="mdc-button mdc-button--raised btn btn-primary" name="success">
                 <span class="mdc-button__label" th:text="#{screen.welcome.button.logout}">Logout</span>
             </button>
         </form>

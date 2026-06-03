@@ -1,12 +1,17 @@
+apply plugin: "org.apereo.cas.project-conventions"
+
+import org.apereo.cas.gradle.CasBuildSettings
+import org.apereo.cas.gradle.CasProjectConventions
+
 description = "Apereo CAS Documentation Generator"
 
 ext {
     mainClassName = "org.apereo.cas.documentation.CasDocumentationApplication"
-    forceBootifulArtifact = true
+    forceBootifulArtifact = !CasBuildSettings.isSkipBootifulArtifact(project)
     archiveFileName = "casdocsgen.jar"
 }
 
-apply from: rootProject.file("gradle/springboot.gradle")
+apply plugin: "org.apereo.cas.spring-boot-conventions"
 
 javadoc {
     enabled = false
@@ -16,8 +21,10 @@ test {
     enabled = false
 }
 
-tasks.named("bootJar") {
-    enabled = !rootProject.skipBootifulArtifact
+plugins.withId("org.springframework.boot") {
+    tasks.named("bootJar") {
+        enabled = !skipBootifulArtifact
+    }
 }
 
 if (tasks.findByName("install") != null) {
@@ -29,13 +36,14 @@ dependencies {
         implementation it.value
     }
 
-    rootProject.subprojects.each {
-        if (it != project) {
-            if (rootProject.projectShouldBePublished(it)) {
-                implementation it
+    CasBuildSettings.includedProjectPaths(project).each { includedProjectPath ->
+        if (includedProjectPath != project.path) {
+            def includedProjectName = CasBuildSettings.projectNameFromPath(includedProjectPath)
+            if (CasProjectConventions.shouldBePublished(includedProjectName)) {
+                implementation(project(path: includedProjectPath))
             } else {
-                logger.debug("Skipping project for documentation processing: ${it.name}")
-                compileOnly it
+                logger.debug("Skipping project for documentation processing: ${includedProjectName}")
+                compileOnly(project(path: includedProjectPath))
             }
         }
     }

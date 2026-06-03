@@ -181,7 +181,7 @@ class SamlIdPDelegatedClientAuthenticationRequestCustomizerTests extends BaseSam
         val spMetadataPath = new File(FileUtils.getTempDirectory(), "sp-metadata-%s.xml".formatted(RandomUtils.nextInt())).getCanonicalPath();
         FileUtils.deleteQuietly(new File(spMetadataPath));
         val saml2Config = new SAML2Configuration(keystorePath, "changeit", "changeit", idpMetadata);
-        saml2Config.setForceKeystoreGeneration(true);
+        saml2Config.getKeystore().setForceKeystoreGeneration(true);
 
         saml2Config.setForceServiceProviderMetadataGeneration(true);
         saml2Config.setServiceProviderEntityId("cas:example:sp");

@@ -1,8 +1,8 @@
 [versions]
-aceEditor = "1.43.6"
+aceEditor = "1.44.0"
 acmeClient = "5.1.0"
 amazonDax = "2.0.9"
-amazonSdk = "2.44.14"
+amazonSdk = "2.46.2"
 azureInsights = "3.7.8"
 azureKustoLog4j = "1.0.0"
 animateCss = "4.1.1"
@@ -29,8 +29,8 @@ caffeine = "3.2.4"
 casClient = "4.1.1"
 cbor = "4.5.6"
 chartJsCore = "4.5.1"
-checkstyle = "13.4.2"
-checkerQual = "4.1.0"
+checkstyle = "13.5.0"
+checkerQual = "4.2.0"
 classgraph = "4.8.184"
 commonsBeans = "1.11.0"
 commonsCli = "1.11.0"
@@ -58,6 +58,7 @@ duoClient = "0.8.0"
 duoUniversalSdk = "1.3.1"
 eclipseAngusMail = "2.0.5"
 eclipseLink = "5.0.0"
+ehcache3 = "3.12.0"
 errorprone = "2.49.0"
 elasticApm = "1.55.6"
 eurekaClient = "2.0.6"
@@ -100,8 +101,9 @@ hypersistence = "3.15.3"
 influxDb = "1.9.0"
 ipGeoLocation = "3.0.0"
 jackson2 = "2.21.4"
+jackson2DataBind = "2.22.0"
 jackson = "3.1.4"
-jacksonAnnotations = "2.21"
+jacksonAnnotations = "2.22"
 jacksonAsl = "1.9.13"
 jacksonDataBind = "3.1.4"
 jacoco = "0.8.14"
@@ -172,7 +174,7 @@ micrometer = "1.17.0-RC1"
 micrometerTracing = "1.7.0-RC1"
 mockito = "5.23.0"
 mockitoInline = "5.2.0"
-mongoDriver = "5.7.1"
+mongoDriver = "5.8.0"
 mongoSpringSession = "4.0.0"
 mssqlServer = "13.4.0.jre11"
 mustache = "1.16"
@@ -201,7 +203,7 @@ prometheus = "1.6.1"
 pulsar = "4.2.1"
 pushy = "0.15.6"
 quartz = "2.5.2"
-redisLettuce = "7.5.2.RELEASE"
+redisLettuce = "7.6.0.RELEASE"
 retrofit = "3.0.0"
 saajImpl = "3.0.5"
 scimSdkClient = "1.32.0"
@@ -273,11 +275,10 @@ zxcvbn = "4.4.2"
 #################################################################
 gradleGit = "1.0.0"
 gradleLombok = "9.5.0"
-gradleDependencyVersions = "0.54.0"
 gradleErrorProne = "5.1.0"
 gradleNullAway = "3.0.0"
 gradleGraalVmNative = "1.1.1"
-gradleSonarqube = "7.3.0.8198"
+gradleSonarqube = "7.3.1.8318"
 gradleNmcpPublishing = "1.5.0"
 gradleJib = "3.5.3"
 
@@ -429,7 +430,7 @@ ignite-runner = { module = "org.apache.ignite:ignite-runner", version.ref = "apa
 influxdb-client-java = { module = "com.influxdb:influxdb3-java", version.ref = "influxDb" }
 ipgeolocation = { module = "io.ipgeolocation:ipgeolocation", version.ref = "ipGeoLocation" }
 jackson-core-lib2 = { module = "com.fasterxml.jackson.core:jackson-core", version.ref = "jackson2" }
-jackson-databind2 = { module = "com.fasterxml.jackson.core:jackson-databind", version.ref = "jackson2" }
+jackson-databind2 = { module = "com.fasterxml.jackson.core:jackson-databind", version.ref = "jackson2DataBind" }
 jackson-annotations = { module = "com.fasterxml.jackson.core:jackson-annotations", version.ref = "jacksonAnnotations" }
 jackson-core-lib = { module = "tools.jackson.core:jackson-core", version.ref = "jackson" }
 jackson-core-asl = { module = "org.codehaus.jackson:jackson-core-asl", version.ref = "jacksonAsl" }
@@ -438,7 +439,7 @@ jackson-dataformat-cbor = { module = "tools.jackson.dataformat:jackson-dataforma
 jackson-dataformat-properties = { module = "tools.jackson.dataformat:jackson-dataformat-properties", version.ref = "jackson" }
 jackson-dataformat-smile = { module = "tools.jackson.dataformat:jackson-dataformat-smile", version.ref = "jackson" }
 jackson-dataformat-xml = { module = "tools.jackson.dataformat:jackson-dataformat-xml", version.ref = "jackson" }
-jackson-dataformat-xml2 = { module = "com.fasterxml.jackson.dataformat:jackson-dataformat-xml", version.ref = "jackson2" }
+jackson-dataformat-xml2 = { module = "com.fasterxml.jackson.dataformat:jackson-dataformat-xml", version.ref = "jackson2DataBind" }
 jackson-dataformat-yaml = { module = "tools.jackson.dataformat:jackson-dataformat-yaml", version.ref = "jackson" }
 jackson-datatype-guava = { module = "tools.jackson.datatype:jackson-datatype-guava", version.ref = "jackson" }
 jackson-mapper-asl = { module = "org.codehaus.jackson:jackson-mapper-asl", version.ref = "jacksonAsl" }
@@ -641,6 +642,7 @@ spring-boot-integration = { module = "org.springframework.boot:spring-boot-integ
 spring-boot-jackson = { module = "org.springframework.boot:spring-boot-jackson", version.ref = "springBoot" }
 spring-boot-jdbc = { module = "org.springframework.boot:spring-boot-jdbc", version.ref = "springBoot" }
 spring-boot-kafka = { module = "org.springframework.boot:spring-boot-kafka", version.ref = "springBoot" }
+spring-boot-loader-tools = { module = "org.springframework.boot:spring-boot-loader-tools", version.ref = "springBoot" }
 spring-boot-mail = { module = "org.springframework.boot:spring-boot-mail", version.ref = "springBoot" }
 spring-boot-micrometer-metrics-test = { module = "org.springframework.boot:spring-boot-micrometer-metrics-test", version.ref = "springBoot" }
 spring-boot-micrometer-tracing-sdk = { module = "org.springframework.boot:spring-boot-micrometer-tracing", version.ref = "springBoot" }
@@ -811,7 +813,6 @@ zxcvbn = { module = "org.webjars:zxcvbn", version.ref = "zxcvbn" }
 gradle-plugin-spring-boot = { module = "org.springframework.boot:spring-boot-gradle-plugin", version.ref = "springBoot" }
 gradle-plugin-git-properties = { module = "io.hndrs.git-properties:io.hndrs.git-properties.gradle.plugin", version.ref = "gradleGit" }
 gradle-plugin-lombok = { module = "io.freefair.gradle:lombok-plugin", version.ref = "gradleLombok" }
-gradle-plugin-versions = { module = "com.github.ben-manes:gradle-versions-plugin", version.ref = "gradleDependencyVersions" }
 gradle-plugin-native = { module = "org.graalvm.buildtools:native-gradle-plugin", version.ref = "gradleGraalVmNative" }
 gradle-plugin-errorprone = { module = "net.ltgt.gradle:gradle-errorprone-plugin", version.ref = "gradleErrorProne" }
 gradle-plugin-nullaway = { module = "net.ltgt.nullaway:net.ltgt.nullaway.gradle.plugin", version.ref = "gradleNullAway" }

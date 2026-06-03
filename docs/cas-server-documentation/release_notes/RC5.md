@@ -36,7 +36,7 @@ maintenance and release planning, especially when it comes to addressing critica
 
 ## System Requirements
 
-The JDK baseline requirement for this CAS release is and **MUST** be JDK `25`. All compatible distributions
+The JDK baseline requirement for this CAS release is, and **MUST** be, JDK `25`. All compatible distributions
 such as Amazon Corretto, Zulu, Eclipse Temurin, etc should work and are implicitly supported.
 
 ## New & Noteworthy
@@ -48,7 +48,7 @@ The following items are new improvements and enhancements presented in this rele
 CAS continues to produce and publish [OpenRewrite](https://docs.openrewrite.org/) recipes that allow the project to upgrade installations
 in place from one version to the next. [See this guide](../installation/OpenRewrite-Upgrade-Recipes.html) to learn more.
 
-### Graal VM Native Images
+### GraalVM Native Images
 
 A CAS server installation and deployment process can be tuned to build and run
 as a [Graal VM native image](../installation/GraalVM-NativeImage-Installation.html). We continue to polish native runtime hints.
@@ -98,10 +98,10 @@ Can I Use lists it as widely supported across modern browsers, with older versio
 very old browsers may not support `IndexedDB` or may support older/buggy versions. This matters most for old Android WebViews, 
 old iOS WebViews, old Safari, and legacy enterprise browsers.
 
-CAS tries to detect if `IndexedDB` is supported by the browser and will react accordingly. That said, if this prove problematic, 
+CAS tries to detect if `IndexedDB` is supported by the browser and will react accordingly. That said, if this proves problematic, 
 you can always disable scope approval requests either globally or per client application.
           
-If you have already turned off scope approval, there is nothing here for you to. Keep calm and carry on. 
+If you have already turned off scope approval, there is nothing here for you to do. Keep calm and carry on. 
  
 ### SAML2 & Apache Xerces
 
@@ -131,7 +131,7 @@ duplicate or remove [tenant definitions](../multitenancy/Multitenancy-Overview.h
 ### CAS Initializr
 
 The *Preview* functionality of the [CAS Initializr](../installation/WAR-Overlay-Initializr.html) has been 
-enhanced to use the Monaco Editor as its default editor for displaying generated configuration and build. This provides
+enhanced to use the Monaco Editor as its default editor for displaying generated configuration and build files. This provides
 for a much easier way of viewing the generated build and navigating through different files. Conceptually, this is the
 same editor that powers the Visual Studio Code editor and provides a rich set of features such as 
 syntax highlighting, code folding, and more.
@@ -154,7 +154,7 @@ property at build time. This property allows users to specify a comma-separated 
 to include in the build and it allows users to dynamically specify modules needed from the command-line
 programmatically. See the `README.md` file of the generated CAS overlay for details.
 
-[CAS Initializr](../installation/WAR-Overlay-Initializr.html) has also gained basid modest support to generate
+[CAS Initializr](../installation/WAR-Overlay-Initializr.html) has also gained basic modest support to generate
 Terraform configuration files that can be used to deploy CAS on cloud platforms such as AWS, Azure, GCP, etc. 
 This capability is expected to evolve over time.
 

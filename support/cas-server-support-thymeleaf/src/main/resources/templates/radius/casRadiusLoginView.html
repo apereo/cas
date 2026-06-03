@@ -31,7 +31,6 @@
                                 type="password"
                                 name="token"
                                 id="token"
-                                th:accesskey="#{screen.welcome.label.password.accesskey}"
                                 th:field="*{token}"
                                 size="25"
                                 autocomplete="off"
@@ -51,7 +50,7 @@
                     </p>
                 </div>
             </section>
-            <button class="mdc-button mdc-button--raised btn btn-primary" accesskey="s">
+            <button class="mdc-button mdc-button--raised btn btn-primary">
                 <span class="mdc-button__label" th:text="#{screen.welcome.button.login}">Login</span>
             </button>
             <input type="hidden" name="_eventId_submit" value="Login"/>

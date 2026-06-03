@@ -1,3 +1,5 @@
+apply plugin: "org.apereo.cas.project-conventions"
+
 ext {
     mainClassName = "org.apereo.cas.web.CasWebApplication"
     publishMetadata = true
@@ -10,8 +12,8 @@ ext {
 
 description = "Apereo CAS Starter with Apache Tomcat"
 
-apply from: rootProject.file("gradle/springboot.gradle")
-apply from: rootProject.file("gradle/webapp-dependencies.gradle")
+apply plugin: "org.apereo.cas.spring-boot-conventions"
+apply plugin: "org.apereo.cas.webapp-dependencies-conventions"
 
 dependencies {
     implementation project(":webapp:cas-server-webapp-init-tomcat")

@@ -1,3 +1,5 @@
+apply plugin: "org.apereo.cas.project-conventions"
+
 description = "Apereo CAS Bootstrap Themes Support"
 ext {
     publishMetadata = true

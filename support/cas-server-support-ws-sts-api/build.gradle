@@ -1,3 +1,5 @@
+apply plugin: "org.apereo.cas.project-conventions"
+
 description = "Apereo CAS WS-Security Secure Token Service"
 dependencies {
     implementation libraries.opensaml

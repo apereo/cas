@@ -1,0 +1,26 @@
+plugins {
+    id 'groovy-gradle-plugin'
+}
+
+repositories {
+    gradlePluginPortal()
+    mavenCentral()
+}
+
+
+def rootGradleProperties = new Properties()
+file("../gradle.properties").withInputStream {
+    rootGradleProperties.load(it)
+}
+
+def targetJavaVersion = rootGradleProperties.getProperty("targetCompatibility") as Integer
+
+java {
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(targetJavaVersion)
+    }
+}
+
+dependencies {
+    implementation libs.spring.boot.loader.tools
+}

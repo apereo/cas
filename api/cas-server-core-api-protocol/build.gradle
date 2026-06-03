@@ -1,1 +1,3 @@
+apply plugin: "org.apereo.cas.project-conventions"
+
 description = "Apereo CAS Core Protocol APIs"

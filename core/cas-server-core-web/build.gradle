@@ -1,3 +1,5 @@
+apply plugin: "org.apereo.cas.project-conventions"
+
 description = "Apereo CAS Core Web"
 dependencies {
     api project(":api:cas-server-core-api-web")
@@ -57,7 +59,7 @@ jar.dependsOn 'deleteJar'
 
 tasks.register('deleteJar', Delete) {
     def jarFile = file("build/libs/${project.name}-${project.version}.jar")
-    def gradlePropFile = rootProject.file("gradle/libs.versions.toml")
+    def gradlePropFile = new File(project.rootDir, 'gradle/libs.versions.toml')
 
     def propModified = gradlePropFile.lastModified()
     def jarModified = jarFile.lastModified()

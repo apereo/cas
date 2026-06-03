@@ -64,7 +64,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v6
         with:
-          persist-credentials: false
+          persist-credentials: true
       - name: Set up JDK
         uses: actions/setup-java@v5
         with:

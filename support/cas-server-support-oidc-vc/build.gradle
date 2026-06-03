@@ -1,3 +1,5 @@
+apply plugin: "org.apereo.cas.project-conventions"
+
 description = "Apereo CAS Server OpenID Connect Verifiable Credentials Support"
 ext {
     publishMetadata = true

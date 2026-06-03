@@ -1,3 +1,5 @@
+apply plugin: "org.apereo.cas.project-conventions"
+
 description = "Apereo CAS JPA EclipseLink Support"
 ext {
     publishMetadata = true

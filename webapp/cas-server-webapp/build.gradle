@@ -1,2 +1,4 @@
-apply from: rootProject.file("gradle/war.gradle")
+apply plugin: "org.apereo.cas.project-conventions"
+
+apply plugin: "org.apereo.cas.war-conventions"
 description = "Apereo CAS Web Application"

@@ -1,3 +1,5 @@
+apply plugin: "org.apereo.cas.project-conventions"
+
 description = "Apereo CAS Web Application Spring Webflow Actions"
 dependencies {
     api project(":api:cas-server-core-api-webflow")

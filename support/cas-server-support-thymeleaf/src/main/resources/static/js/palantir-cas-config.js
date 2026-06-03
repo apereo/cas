@@ -1,3 +1,5 @@
+let CAS_CONFIG_METADATA = {}
+
 function overrideConfigPropertyValue(name, value) {
     openNewConfigurationPropertyDialog({
         name: name,
@@ -285,10 +287,22 @@ function openNewConfigurationPropertyDialog(config) {
     $("#newConfigurationDialog").dialog({
         autoOpen: false,
         modal: true,
-        width: 600,
+        position: {
+            my: "center top",
+            at: "center top+50",
+            of: window
+        },
+        width: 700,
         height: "auto",
         buttons: {
             OK: async function () {
+                const nameElem = $("#newConfigPropertyName")[0];
+                const selectedValue = nameElem.tomselect.getValue();
+                const typedValue = nameElem.tomselect.control_input.value?.trim();
+                if (!selectedValue && typedValue) {
+                    nameElem.tomselect.setValue(typedValue);
+                }
+
                 if (!$("#newConfigurationForm")[0].reportValidity()) {
                     return;
                 }
@@ -339,32 +353,44 @@ function openNewConfigurationPropertyDialog(config) {
                 $(this).dialog("close");
             }
         },
-        open: function () {
-            $(this).css("overflow", "visible");
+            open: function () {
+                $(this).css("overflow", "visible");
 
-            $("#newConfigPropertyName").val(config.name ?? "");
-            $("#newConfigPropertyValue").val(config.value ?? "");
+                const tomselect = $("#newConfigPropertyName")[0].tomselect;
+                if (config.name) {
+                    if (!tomselect.options[config.name]) {
+                        tomselect.addOption({
+                            value: config.name,
+                            text: config.name
+                        });
+                    }
+                    tomselect.setValue(config.name, true);
+                } else {
+                    tomselect.setValue("", true);
+                }
+                
+                $("#newConfigPropertyValue").val(config.value ?? "");
 
-            if (config.propertySource) {
-                $("#propertySourcesSelect").val(config.propertySource ?? "");
-            } else {
-                const ts = $("#propertySourcesSelect")[0].tomselect;
-                const options = Object.keys(ts.options);
-                if (options.length === 1) {
-                    ts.setValue(options[0], true);
+                if (config.propertySource) {
+                    $("#propertySourcesSelect").val(config.propertySource ?? "");
+                } else {
+                    const ts = $("#propertySourcesSelect")[0].tomselect;
+                    const options = Object.keys(ts.options);
+                    if (options.length === 1) {
+                        ts.setValue(options[0], true);
+                    }
+                }
+
+                if (config.updateEntry) {
+                    $("#newConfigPropertyName").parent().hide();
+                    $("#propertySourcesSection").hide();
+                    $("#newConfigPropertyValue").focus().select();
+                } else {
+                    $("#propertySourcesSection").show();
+                    $("#newConfigPropertyName").parent().show();
+                    $("#newConfigPropertyName")[0].tomselect.focus();
                 }
             }
-
-            if (config.updateEntry) {
-                $("#newConfigPropertyName").parent().hide();
-                $("#propertySourcesSection").hide();
-                $("#newConfigPropertyValue").focus().select();
-            } else {
-                $("#propertySourcesSection").show();
-                $("#newConfigPropertyName").parent().show();
-                $("#newConfigPropertyName").focus();
-            }
-        }
     });
     $("#newConfigurationDialog").dialog("open");
 }
@@ -552,6 +578,50 @@ function reloadConfigurationTable(response) {
     mutableConfigurationTable.search("").draw();
 }
 
+async function loadConfigurationMetadata() {
+    if (!CasActuatorEndpoints.configurationMetadata() || CAS_CONFIG_METADATA.length === 0) {
+        return;
+    }
+    const response = await fetch(CasActuatorEndpoints.configurationMetadata());
+    if (!response.ok) {
+        throw new Error(`Failed to load configuration metadata: ${response.status}`);
+    }
+    
+    CAS_CONFIG_METADATA = Object.values(await response.json());
+}
+
+async function populateConfigurationNameSelectOptions() {
+    const nameElem = $("#newConfigPropertyName")[0];
+    const ts = nameElem.tomselect;
+    const currentValue = ts.getValue();
+    const entries = [...new Map(
+        CAS_CONFIG_METADATA
+            .filter(entry => entry.id)
+            .map(entry => [
+                entry.id,
+                {
+                    id: entry.id,
+                    name: entry.id,
+                    type: entry.type,
+                    description: entry.description,
+                    defaultValue: entry.defaultValue ?? "",
+                    deprecated: entry.deprecated ?? false
+                }
+            ])
+    ).values()]
+        .sort((a, b) => a.id.localeCompare(b.id));
+    ts.clearOptions();
+    entries.forEach(entry => {
+        if (!ts.options[entry.id]) {
+            ts.addOption(entry);
+        }
+    });
+    ts.refreshOptions(false);
+    if (currentValue) {
+        ts.setValue(currentValue, true);
+    }
+}
+
 async function initializeConfigurationOperations() {
     const configurationTable = $("#configurationTable").DataTable({
         pageLength: 10,
@@ -692,8 +762,7 @@ async function initializeConfigurationOperations() {
             displayBanner(xhr);
         });
     }
-
-
+    
     const configPropsTable = $("#configPropsTable").DataTable({
         pageLength: 10,
         autoWidth: false,
@@ -763,6 +832,8 @@ async function initializeConfigurationOperations() {
     $("#decryptConfigButton").off().on("click", () => encryptOrDecryptConfig("decrypt"));
 
     if (CasActuatorEndpoints.configurationMetadata()) {
+        await loadConfigurationMetadata();
+        await populateConfigurationNameSelectOptions();
 
         const configSearchResultsTable = $("#configSearchResultsTable").DataTable({
             pageLength: 10,

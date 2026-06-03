@@ -23,7 +23,7 @@ import static org.junit.jupiter.api.Assertions.*;
 class OidcVerifiableCredentialDefaultNonceServiceTests extends AbstractOidcTests {
 
     @Autowired
-    @Qualifier("oidcVerifiableCredentialNonceService")
+    @Qualifier(OidcVerifiableCredentialNonceService.BEAN_NAME)
     private OidcVerifiableCredentialNonceService oidcVerifiableCredentialNonceService;
 
     @Test

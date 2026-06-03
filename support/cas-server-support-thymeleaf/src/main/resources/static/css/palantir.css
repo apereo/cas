@@ -26,6 +26,7 @@
     border-radius: 8px !important;
     height: 30px !important;
     padding-left: 5px !important;
+    padding-right: 5px !important;
     font-family: var(--mdc-typography-font-family) !important;
     font-size: 11pt !important;
 }
@@ -245,6 +246,10 @@ ul.ui-widget-header {
 
 #registeredServiceDescriptionEditorContainer .trumbowyg-editor {
     padding: 10px;
+}
 
+#configurationPropertyInfo {
+    font-size: small !important;
+    font-family: var(--mdc-typography-font-family) !important;
 }
 

@@ -43,6 +43,7 @@ import org.springframework.data.redis.core.ScanOptions;
 import org.springframework.data.redis.core.ZSetOperations;
 import org.springframework.data.redis.core.convert.RedisData;
 import org.springframework.data.redis.core.types.Expiration;
+import org.springframework.data.redis.serializer.RedisSerializer;
 import org.springframework.data.redis.serializer.StringRedisSerializer;
 
 /**
@@ -302,8 +303,10 @@ public class RedisTicketRegistry extends AbstractTicketRegistry implements Clean
         return deleted;
     }
 
-    private long deleteTicketsForPrincipal(final String target, final StringRedisSerializer principalFieldSerializer,
-                                           final List<String> windowKeys, final int delChunk) {
+    private long deleteTicketsForPrincipal(final String target,
+                                           final RedisSerializer principalFieldSerializer,
+                                           final List<String> windowKeys,
+                                           final int delChunk) {
         val principals = casRedisTemplates.getTicketsRedisTemplate()
             .executePipelined((RedisCallback<Object>) conn -> {
                 for (val key : windowKeys) {
@@ -313,18 +316,26 @@ public class RedisTicketRegistry extends AbstractTicketRegistry implements Clean
                 return null;
             }, principalFieldSerializer);
 
-        val toDelete = new ArrayList<byte[]>(principals.size());
+        val toDelete = new ArrayList<RedisTicketToDelete>(principals.size());
         for (var i = 0; i < windowKeys.size(); i++) {
             val givenPrincipal = principals.get(i);
             if (givenPrincipal != null && Strings.CI.equals(target, givenPrincipal.toString())) {
-                toDelete.add(windowKeys.get(i).getBytes(StandardCharsets.UTF_8));
+                val redisKey = windowKeys.get(i);
+                val compositeKey = RedisKeyGenerator.parse(redisKey);
+                val redisKeyGenerator = redisKeyGeneratorFactory.getRedisKeyGenerator(compositeKey.getPrefix()).orElseThrow();
+                val cacheKey = redisKeyGenerator.rawKey(redisKey);
+                toDelete.add(new RedisTicketToDelete(redisKey, cacheKey));
             }
         }
 
         var deleted = 0L;
-        for (int i = 0; i < toDelete.size(); i += delChunk) {
+        for (var i = 0; i < toDelete.size(); i += delChunk) {
             val end = Math.min(i + delChunk, toDelete.size());
-            val chunk = toDelete.subList(i, end).toArray(new byte[0][]);
+            val ticketChunk = toDelete.subList(i, end);
+            val chunk = ticketChunk
+                .stream()
+                .map(ticket -> ticket.redisKey().getBytes(StandardCharsets.UTF_8))
+                .toArray(byte[][]::new);
 
             val result = casRedisTemplates.getTicketsRedisTemplate()
                 .executePipelined((RedisCallback<Object>) conn -> {
@@ -335,6 +346,10 @@ public class RedisTicketRegistry extends AbstractTicketRegistry implements Clean
             if (!result.isEmpty() && result.getFirst() instanceof final Long count) {
                 deleted += count;
             }
+            ticketChunk.forEach(ticketToDelete -> {
+                ticketCache.ifAvailable(cache -> cache.invalidate(ticketToDelete.cacheKey()));
+                messagePublisher.ifAvailable(publisher -> publisher.deleteByKey(ticketToDelete.redisKey()));
+            });
         }
         return deleted;
     }
@@ -616,7 +631,7 @@ public class RedisTicketRegistry extends AbstractTicketRegistry implements Clean
             if (ticket.getExpirationPolicy() instanceof final IdleExpirationPolicy iep) {
                 ops.expireAt(iep.getIdleExpirationTime(ticket).toInstant());
             } else {
-                ops.expire(timeout, TimeUnit.SECONDS);
+                ops.expire(Expiration.from(timeout, TimeUnit.SECONDS));
             }
         }
     }
@@ -628,7 +643,7 @@ public class RedisTicketRegistry extends AbstractTicketRegistry implements Clean
             LOGGER.debug("Ticket [{}] will expire at [{}]", ticket.getId(), expirationInstant);
         } else {
             val timeoutSeconds = RedisKeyGenerator.getTicketExpirationInSeconds(ticket);
-            casRedisTemplates.getTicketsRedisTemplate().expire(redisKeyPattern, timeoutSeconds, TimeUnit.SECONDS);
+            casRedisTemplates.getTicketsRedisTemplate().expire(redisKeyPattern, Expiration.from(timeoutSeconds, TimeUnit.SECONDS));
             LOGGER.debug("Ticket [{}] will expire in [{}] second(s)", ticket.getId(), timeoutSeconds);
         }
     }
@@ -653,6 +668,9 @@ public class RedisTicketRegistry extends AbstractTicketRegistry implements Clean
                         indexesOnNamespaces.add(prefix);
                     }
                 }));
+    }
+
+    private record RedisTicketToDelete(String redisKey, String cacheKey) {
     }
 
     @Data

@@ -1,3 +1,5 @@
+apply plugin: "org.apereo.cas.project-conventions"
+
 ext {
     forceBootifulArtifact = true
     mainClassName = "org.apereo.cas.CasCommandLineShellApplication"
@@ -10,7 +12,7 @@ ext {
     ]
 }
 
-apply from: rootProject.file("gradle/springboot.gradle")
+apply plugin: "org.apereo.cas.spring-boot-conventions"
 
 description = "Apereo CAS Commandline Shell Support via Spring Shell"
 

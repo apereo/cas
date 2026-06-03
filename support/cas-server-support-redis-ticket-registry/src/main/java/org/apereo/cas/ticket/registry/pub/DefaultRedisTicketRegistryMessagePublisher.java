@@ -4,7 +4,9 @@ import module java.base;
 import org.apereo.cas.redis.core.CasRedisTemplate;
 import org.apereo.cas.ticket.Ticket;
 import org.apereo.cas.ticket.registry.RedisTicketDocument;
+import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.ticket.registry.key.RedisKeyGenerator;
+import org.apereo.cas.ticket.registry.key.RedisKeyGeneratorFactory;
 import org.apereo.cas.util.PublisherIdentifier;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -23,6 +25,10 @@ public class DefaultRedisTicketRegistryMessagePublisher implements RedisTicketRe
 
     private final PublisherIdentifier publisherIdentifier;
 
+    private final RedisKeyGeneratorFactory redisKeyGeneratorFactory;
+
+    private final TicketRegistry ticketRegistry;
+        
     @Override
     public void deleteAll() {
         val payload = getRedisMessagePayload(RedisMessagePayload.RedisMessageTypes.DELETE_ALL);
@@ -32,7 +38,23 @@ public class DefaultRedisTicketRegistryMessagePublisher implements RedisTicketRe
     @Override
     public void delete(final Ticket ticket) {
         if (ticket != null) {
-            val payload = getRedisMessagePayload(RedisMessagePayload.RedisMessageTypes.DELETE).withTicket(ticket);
+            val generator = redisKeyGeneratorFactory.getRedisKeyGenerator(ticket.getPrefix()).orElseThrow();
+            val redisKey = generator.forPrefixAndId(ticket.getPrefix(), ticket.getId());
+            val cacheKey = ticketRegistry.digestIdentifier(ticket.getId());
+            val payload = getRedisMessagePayload(RedisMessagePayload.RedisMessageTypes.DELETE)
+                .withTicket(ticket).withRedisKey(redisKey).withCacheKey(cacheKey);
+            sendPayload(payload);
+        }
+    }
+
+    @Override
+    public void deleteByKey(final String redisKey) {
+        if (redisKey != null) {
+            val compositeKey = RedisKeyGenerator.parse(redisKey);
+            val redisKeyGenerator = redisKeyGeneratorFactory.getRedisKeyGenerator(compositeKey.getPrefix()).orElseThrow();
+            val rawKey = redisKeyGenerator.rawKey(redisKey);
+            val payload = getRedisMessagePayload(RedisMessagePayload.RedisMessageTypes.DELETE)
+                .withRedisKey(redisKey).withCacheKey(rawKey);
             sendPayload(payload);
         }
     }
@@ -40,7 +62,11 @@ public class DefaultRedisTicketRegistryMessagePublisher implements RedisTicketRe
     @Override
     public void add(final Ticket ticket) {
         if (ticket != null) {
-            val payload = getRedisMessagePayload(RedisMessagePayload.RedisMessageTypes.ADD).withTicket(ticket);
+            val generator = redisKeyGeneratorFactory.getRedisKeyGenerator(ticket.getPrefix()).orElseThrow();
+            val redisKey = generator.forPrefixAndId(ticket.getPrefix(), ticket.getId());
+            val cacheKey = ticketRegistry.digestIdentifier(ticket.getId());
+            val payload = getRedisMessagePayload(RedisMessagePayload.RedisMessageTypes.ADD).withTicket(ticket)
+                .withRedisKey(redisKey).withCacheKey(cacheKey);
             sendPayload(payload);
         }
     }
@@ -48,7 +74,11 @@ public class DefaultRedisTicketRegistryMessagePublisher implements RedisTicketRe
     @Override
     public void update(final Ticket ticket) {
         if (ticket != null) {
-            val payload = getRedisMessagePayload(RedisMessagePayload.RedisMessageTypes.UPDATE).withTicket(ticket);
+            val generator = redisKeyGeneratorFactory.getRedisKeyGenerator(ticket.getPrefix()).orElseThrow();
+            val redisKey = generator.forPrefixAndId(ticket.getPrefix(), ticket.getId());
+            val cacheKey = ticketRegistry.digestIdentifier(ticket.getId());
+            val payload = getRedisMessagePayload(RedisMessagePayload.RedisMessageTypes.UPDATE).withTicket(ticket)
+                .withRedisKey(redisKey).withCacheKey(cacheKey);
             sendPayload(payload);
         }
     }

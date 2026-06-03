@@ -1,3 +1,5 @@
+apply plugin: "org.apereo.cas.project-conventions"
+
 description = "Apereo CAS Web Application Protocol Validation"
 dependencies {
     implementation project(":core:cas-server-core-authentication-attributes")

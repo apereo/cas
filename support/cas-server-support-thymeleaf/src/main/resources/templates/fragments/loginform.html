@@ -74,7 +74,6 @@
                                    type="text"
                                    th:readonly="!${#cas.isLoginFormUsernameInputVisible(#vars)}"
                                    th:field="*{username}"
-                                   th:accesskey="#{screen.welcome.label.netid.accesskey}"
                                    autocapitalize="none"
                                    spellcheck="false"
                                    aria-describedby="usernameValidationMessage"
@@ -119,7 +118,6 @@
                                        type="password"
                                        id="password"
                                        required
-                                       th:accesskey="#{screen.welcome.label.password.accesskey}"
                                        th:field="*{password}"
                                        aria-describedby="passwordValidationMessage"
                                        autocomplete="current-password"/>

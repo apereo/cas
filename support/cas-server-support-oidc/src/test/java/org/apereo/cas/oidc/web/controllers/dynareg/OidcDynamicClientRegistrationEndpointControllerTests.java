@@ -3,8 +3,12 @@ package org.apereo.cas.oidc.web.controllers.dynareg;
 import module java.base;
 import org.apereo.cas.oidc.AbstractOidcTests;
 import org.apereo.cas.oidc.OidcConstants;
+import org.apereo.cas.oidc.jwks.OidcJsonWebKeyStoreUtils;
+import org.apereo.cas.oidc.jwks.OidcJsonWebKeyUsage;
 import org.apereo.cas.util.MockWebServer;
 import lombok.val;
+import org.jose4j.jwk.JsonWebKey;
+import org.jose4j.jwk.JsonWebKeySet;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
@@ -12,6 +16,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.TestPropertySource;
+import static org.hamcrest.Matchers.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
@@ -66,7 +71,8 @@ class OidcDynamicClientRegistrationEndpointControllerTests {
     @Nested
     @TestPropertySource(properties = {
         "cas.authn.oidc.registration.dynamic-client-registration-enabled=true",
-        "cas.authn.oidc.registration.client-secret-expiration=P14D"
+        "cas.authn.oidc.registration.client-secret-expiration=P14D",
+        "cas.authn.oidc.registration.dynamic-client-registration-mode=PROTECTED"
     })
     class DefaultTests extends AbstractOidcTests {
         @Test
@@ -226,6 +232,45 @@ class OidcDynamicClientRegistrationEndpointControllerTests {
         }
 
         @Test
+        void verifyJwksKeyIdEvaluatesSystemProperties() throws Throwable {
+            val propertyName = "cas.oidc.jwks.leak";
+            val propertyValue = UUID.randomUUID().toString();
+            System.setProperty(propertyName, propertyValue);
+            try {
+                val key = OidcJsonWebKeyStoreUtils.generateJsonWebKey("rsa", 2048, OidcJsonWebKeyUsage.SIGNING);
+                key.setKeyId("${#systemProperties['cas.oidc.jwks.leak']}");
+                val jwks = new JsonWebKeySet(key).toJson(JsonWebKey.OutputControlLevel.PUBLIC_ONLY);
+
+                val clientId = UUID.randomUUID().toString();
+                val accessToken = getAccessToken(clientId, Set.of(OidcConstants.CLIENT_REGISTRATION_SCOPE));
+                ticketRegistry.addTicket(accessToken);
+
+                val registrationReq = """
+                    {
+                        "application_type": "web",
+                        "redirect_uris": ["https://client.example.org/callback"],
+                        "token_endpoint_auth_method": "client_secret_basic",
+                        "jwks": %s,
+                        "contacts": ["cas@example.org"]
+                    }
+                    """.formatted(jwks);
+
+                mockMvc
+                    .perform(post("/cas/oidc/" + OidcConstants.REGISTRATION_URL)
+                        .accept(MediaType.APPLICATION_JSON)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .with(withHttpRequestProcessor())
+                        .header(HttpHeaders.AUTHORIZATION, "Bearer %s".formatted(accessToken.getId()))
+                        .content(registrationReq)
+                    )
+                    .andExpect(status().isBadRequest())
+                    .andExpect(jsonPath("$.jwks").doesNotExist());
+            } finally {
+                System.clearProperty(propertyName);
+            }
+        }
+
+        @Test
         void verifyMissingBackchannelEndpoint() throws Throwable {
             val clientId = UUID.randomUUID().toString();
             val accessToken = getAccessToken(clientId, Set.of(OidcConstants.CLIENT_REGISTRATION_SCOPE));
@@ -274,6 +319,26 @@ class OidcDynamicClientRegistrationEndpointControllerTests {
                     )
                     .andExpect(status().isBadRequest());
             }
+        }
+
+        @Test
+        void verifyCanonicalRegistrationPathRequiresAuth() throws Throwable {
+            mockMvc.perform(post("/cas/oidc/" + OidcConstants.REGISTRATION_URL)
+                    .accept(MediaType.APPLICATION_JSON)
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .with(withHttpRequestProcessor())
+                    .content("{}"))
+                .andExpect(status().isUnauthorized());
+        }
+
+        @Test
+        void verifyInjectedSegmentBypassesAuth() throws Throwable {
+            mockMvc.perform(post("/cas/oidc/x/" + OidcConstants.REGISTRATION_URL)
+                    .accept(MediaType.APPLICATION_JSON)
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .with(withHttpRequestProcessor())
+                    .content("{}"))
+                .andExpect(status().isUnauthorized());
         }
     }
 }

@@ -181,18 +181,15 @@ function parseArguments() {
     --nbr)
       NATIVE_RUN="true"
       NATIVE_BUILD="true"
-      BUILDFLAGS="${BUILDFLAGS} --no-configuration-cache"
       QUIT_QUIETLY="true"
       shift 1
       ;;
     --nr | --native-run)
       NATIVE_RUN="true"
-      BUILDFLAGS="${BUILDFLAGS} --no-configuration-cache"
       shift 1
       ;;
     --native | --graalvm | --nb)
       NATIVE_BUILD="true"
-      BUILDFLAGS="${BUILDFLAGS} --no-configuration-cache"
       shift 1
       ;;
     --scenario | --sc)

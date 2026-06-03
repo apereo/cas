@@ -20,6 +20,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
+import org.jspecify.annotations.Nullable;
 import org.pac4j.core.config.properties.JwksProperties;
 import org.pac4j.oauth.client.BitbucketClient;
 import org.pac4j.oauth.client.DropBoxClient;
@@ -254,7 +255,7 @@ public class DelegatedClientOidcBuilder implements ConfigurableDelegatedClientBu
         return List.of();
     }
 
-    private ConfigurableDelegatedClient getOidcClientFrom(final Pac4jOidcClientProperties clientProperties) {
+    private @Nullable ConfigurableDelegatedClient getOidcClientFrom(final Pac4jOidcClientProperties clientProperties) {
         val resolver = SpringExpressionLanguageValueResolver.getInstance();
 
         if (clientProperties.getAzure().isEnabled() && StringUtils.isNotBlank(clientProperties.getAzure().getId())) {
@@ -330,7 +331,7 @@ public class DelegatedClientOidcBuilder implements ConfigurableDelegatedClientBu
         cfg.setReadTimeout((int) Beans.newDuration(oidc.getReadTimeout()).toMillis());
         cfg.setConnectTimeout((int) Beans.newDuration(oidc.getConnectTimeout()).toMillis());
         if (StringUtils.isNotBlank(oidc.getPreferredJwsAlgorithm())) {
-            cfg.setPreferredJwsAlgorithm(JWSAlgorithm.parse(oidc.getPreferredJwsAlgorithm().toUpperCase(Locale.ENGLISH)));
+            cfg.setIdTokenSigningAlgorithm(JWSAlgorithm.parse(oidc.getPreferredJwsAlgorithm().toUpperCase(Locale.ENGLISH)));
         }
         cfg.setMaxClockSkew(Long.valueOf(Beans.newDuration(oidc.getMaxClockSkew()).toSeconds()).intValue());
         cfg.setDiscoveryURI(oidc.getDiscoveryUri());

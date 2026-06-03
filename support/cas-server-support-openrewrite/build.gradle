@@ -1,7 +1,9 @@
+apply plugin: "org.apereo.cas.project-conventions"
+
 description = "Apereo CAS Open Rewrite Support"
 
 tasks.register("createOpenRewriteRecipe") {
-    def casVersion = rootProject.version.replaceAll(/-SNAPSHOT/, '')
+    def casVersion = project.version.toString().replaceAll(/-SNAPSHOT/, '')
     def tomcatVersion = libs.versions.tomcat.get()
     def sourceCompatibility = project.sourceCompatibility
     def springBootVersion = libs.versions.springBoot.get()

@@ -45,6 +45,48 @@ via dedicated CAS settings.
 The following endpoints are provided by CAS:
 
 {% include_cached actuators.html endpoints="redisTicketsCache" %}
+  
+### Design & Performance
+
+The Redis ticket registry treats Redis as the shared source of truth for CAS tickets, while each 
+CAS node may keep a local in-memory cache as a first-level optimization. The local cache is per-node 
+and is intended to reduce Redis reads and ticket deserialization for hot tickets. It should not be 
+treated as authoritative. Ticket lookups may be served from the local cache, but ticket lifecycle 
+operations still need to keep Redis and all node-local caches coherent.
+
+Cache keys are derived from the Redis ticket key format, not simply from the clear 
+ticket id in all cases. This matters when registry cryptography is enabled. In that mode, ticket 
+identifiers and principal identifiers are digested before being used in Redis keys, so the local cache 
+key for a ticket is also the digested form. Any cache invalidation mechanism must use the same canonical 
+cache key that the registry uses for reads and writes. Invalidating by the clear ticket id will miss 
+encrypted/digested cache entries and can leave stale tickets alive on other nodes.
+
+Cluster cache coherence is handled through Redis-backed pub/sub messages. When one CAS node adds, 
+updates, deletes, or clears tickets, it publishes a notification. Other CAS nodes receive that 
+notification and update or invalidate their local cache. Nodes should ignore their own messages 
+because the local registry operation has already updated the local cache directly. For deletes, 
+the notification does not need to carry the full ticket object; it only needs enough information 
+to identify the local cache entry, such as the Redis key or derived cache key. This avoids 
+unnecessary Redis fetches, deserialization, and decryption during delete-heavy operations.
+
+From a performance perspective, the important distinction is between operations that need 
+the ticket body and operations that only need to remove state. Add and update messages naturally 
+carry a ticket because peer caches may be populated with that object. Delete messages should avoid 
+materializing the ticket when the registry already knows the Redis key being removed. Bulk user/session 
+deletion paths are especially sensitive: scanning Redis, fetching each ticket, deserializing it, 
+and decrypting it just to publish a cache invalidation can be very expensive. A better design is to 
+scan only the required metadata, unlink matching Redis keys in batches, invalidate the local cache by 
+canonical key, and publish delete notifications by key.
+
+There are several operational caveats. Redis pub/sub is not durable; a node that is down, 
+disconnected, or misconfigured when a message is published can miss the notification and retain 
+stale local cache entries until expiration or manual cache clearing. CAS node queue identifiers 
+must be unique per node, or left unset so they are generated uniquely; if multiple nodes share 
+the same identifier, they may incorrectly treat each other’s notifications as self-published messages and 
+ignore them. Administrative logout cannot remove a user’s browser cookie directly, so correctness depends 
+on the server-side ticket deletion being authoritative across Redis and all local caches. For highly 
+conservative deployments, disabling the local cache or setting its size to zero trades performance 
+for simpler consistency semantics.
 
 ## Eviction Policy
 

@@ -1,14 +1,27 @@
+apply plugin: "org.apereo.cas.project-conventions"
+
+import org.apereo.cas.gradle.CasBuildSettings
+
 description = "Apereo CAS Bill of Material"
 
-def getProjectNamePattern() {
-    return "^cas-server-(core-api|core|support|webapp).*"
-}
+def projectName = project.name.toString()
+def projectPath = project.path.toString()
+def projectVersion = project.version.toString()
+def projectGroupId = project.group.toString()
+def projectScmUrl = project.projectScmUrl
+def projectLicenseName = project.projectLicenseName
+def projectLicenseUrl = project.projectLicenseUrl
+def projectIssueSystem = project.projectIssueSystem
+def projectIssueUrl = project.projectIssueUrl
+def projectInceptionYear = project.projectInceptionYear
+def includedProjectPaths = CasBuildSettings.includedProjectPaths(project)
+def projectLibraries = PomXmlSupport.normalizeLibraries(libraries)
 
 publishing {
     publications {
         mavenJava(MavenPublication) {
             pom.withXml {
-                logger.info "Creating BOM with all project dependencies for ${project.name}"
+                ansi.green "Creating BOM with all project dependencies for ${projectName}"
 
                 def iter = asNode().iterator()
                 while (iter.hasNext()) {
@@ -29,32 +42,22 @@ publishing {
                 def dependencyVersions = [:]
                 def allLibraries = []
 
-                rootProject.subprojects
-                        .findAll { p -> p != project && p.name.matches(getProjectNamePattern()) }
+                includedProjectPaths
+                        .findAll { p -> p != projectPath && CasBuildSettings.projectNameFromPath(p).matches(PomXmlSupport.getProjectNamePattern()) }
                         .each { p ->
-                            createDependency(dependencies, groupId, p.name,
-                                    p.version, dependencyVersions, allLibraries)
+                            PomXmlSupport.createDependency(dependencies, projectGroupId, CasBuildSettings.projectNameFromPath(p),
+                                    projectVersion, dependencyVersions, allLibraries)
                         }
 
-                libraries.each {
-                    def artifact = it.value
-                    if (artifact instanceof List) {
-                        artifact.each { art ->
-                            if (art.class.isArray()) {
-                                art.each { coords ->
-                                    def elem = coords.toString().split(":")
-                                    createDependency(dependencies, elem[0], elem[1], elem[2],
-                                            dependencyVersions, allLibraries)
-                                }
-                            } else {
-                                createDependency(dependencies, art.group, art.name,
-                                        art.version, dependencyVersions, allLibraries)
-                            }
-                        }
-                    } else {
-                        createDependency(dependencies, artifact.group, artifact.name,
-                                artifact.version, dependencyVersions, allLibraries)
-                    }
+                projectLibraries.each { artifact ->
+                    PomXmlSupport.createDependency(
+                            dependencies,
+                            artifact.group,
+                            artifact.name,
+                            artifact.version,
+                            dependencyVersions,
+                            allLibraries
+                    )
                 }
 
                 def properties = asNode().appendNode("properties")
@@ -65,24 +68,24 @@ publishing {
 
             pom {
                 url = "$projectUrl"
-                inceptionYear = project.projectInceptionYear
-                name = project.name
-                description = project.name
+                inceptionYear = projectInceptionYear
+                name = projectName
+                description = projectName
                 packaging = "pom"
                 issueManagement {
-                    system = project.projectIssueSystem
-                    url = project.projectIssueUrl
+                    system = projectIssueSystem
+                    url = projectIssueUrl
                 }
                 licenses {
                     license {
-                        name = project.projectLicenseName
-                        url = project.projectLicenseUrl
+                        name = projectLicenseName
+                        url = projectLicenseUrl
                     }
                 }
                 scm {
-                    connection = project.projectScmUrl
-                    developerConnection = project.projectScmUrl
-                    url = project.projectScmUrl
+                    connection = projectScmUrl
+                    developerConnection = projectScmUrl
+                    url = projectScmUrl
                 }
                 developers {
                     developer {
@@ -95,24 +98,107 @@ publishing {
     }
 }
 
-def createDependency(dependencies, group, name, version, dependencyVersions, allLibraries) {
-    def key = "${group}@${name}"
-    if (!allLibraries.contains(key)) {
-        logger.info "Dependency: ${group}:${name}:${version}"
-        
-        def dependency = dependencies.appendNode("dependency")
-        dependency.appendNode("groupId", group)
-        dependency.appendNode("artifactId", name)
+class PomXmlSupport {
+    static String getProjectNamePattern() {
+        return "^cas-server-(core-api|core|support|webapp).*"
+    }
 
-        if (name.matches(getProjectNamePattern())) {
-            dependency.appendNode("version", "\${cas.version}")
-            dependencyVersions.put("cas.version", version)
-        } else {
-            def versionProp = "${group}.${name}.version"
-            
-            dependency.appendNode("version", String.format("\${%s}", versionProp))
-            dependencyVersions.put(versionProp, version)
+    static List<Map<String, String>> normalizeLibraries(libraries) {
+        def results = []
+
+        libraries.each { entry ->
+            def artifact = entry.value
+
+            if (artifact instanceof List) {
+                artifact.each { art ->
+                    normalizeArtifact(art, results)
+                }
+            } else {
+                normalizeArtifact(artifact, results)
+            }
         }
-        allLibraries.add(key)
+
+        return results
+    }
+
+    private static void normalizeArtifact(Object artifact, List<Map<String, String>> results) {
+        if (artifact == null) {
+            return
+        }
+
+        if (artifact.class.isArray()) {
+            artifact.each { coords ->
+                addCoordinates(coords.toString(), results)
+            }
+            return
+        }
+
+        addDependencyLikeObject(artifact, results)
+    }
+
+    private static void addCoordinates(String coords, List<Map<String, String>> results) {
+        def elem = coords.split(":")
+        if (elem.length >= 3) {
+            results.add([
+                    group  : elem[0].toString(),
+                    name   : elem[1].toString(),
+                    version: elem[2].toString()
+            ])
+        }
+    }
+
+    private static void addDependencyLikeObject(Object artifact, List<Map<String, String>> results) {
+        def version = extractVersion(artifact)
+
+        results.add([
+                group  : artifact.group.toString(),
+                name   : artifact.name.toString(),
+                version: version.toString()
+        ])
+    }
+
+    private static String extractVersion(Object artifact) {
+        if (artifact.hasProperty("version") && artifact.version != null) {
+            return artifact.version.toString()
+        }
+
+        if (artifact.hasProperty("versionConstraint") && artifact.versionConstraint != null) {
+            def vc = artifact.versionConstraint
+
+            if (vc.requiredVersion) {
+                return vc.requiredVersion.toString()
+            }
+
+            if (vc.preferredVersion) {
+                return vc.preferredVersion.toString()
+            }
+
+            if (vc.strictVersion) {
+                return vc.strictVersion.toString()
+            }
+        }
+
+        throw new GradleException("Unable to determine version for dependency ${artifact}")
+    }
+
+    static void createDependency(dependencies, group, name, version, dependencyVersions, allLibraries) {
+        def key = "${group}@${name}"
+        if (!allLibraries.contains(key)) {
+            def dependency = dependencies.appendNode("dependency")
+            dependency.appendNode("groupId", group)
+            dependency.appendNode("artifactId", name)
+
+            if (name.matches(getProjectNamePattern())) {
+                dependency.appendNode("version", "\${cas.version}")
+                dependencyVersions.put("cas.version", version)
+            } else {
+                def versionProp = "${group}.${name}.version"
+
+                dependency.appendNode("version", String.format("\${%s}", versionProp))
+                dependencyVersions.put(versionProp, version)
+            }
+
+            allLibraries.add(key)
+        }
     }
 }

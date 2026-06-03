@@ -1,0 +1,289 @@
+import org.apereo.cas.gradle.CasProjectConventions
+import org.apereo.cas.gradle.CasPomConfiguration
+import org.apereo.cas.gradle.CasBuildSettings
+
+plugins {
+    id 'org.apereo.cas.base-conventions'
+}
+
+if (publishFlag && CasProjectConventions.shouldBePublished(project)) {
+    project.pluginManager.apply('com.gradleup.nmcp')
+}
+
+if (CasProjectConventions.shouldBePublished(project)) {
+    project.pluginManager.apply('maven-publish')
+    project.pluginManager.apply('signing')
+}
+
+if (!skipErrorProneCompiler) {
+    project.pluginManager.apply('net.ltgt.errorprone')
+    project.pluginManager.apply('net.ltgt.nullaway')
+}
+
+project.pluginManager.apply('org.apereo.cas.tests-conventions')
+
+ext.libraries = CasBuildSettings.libraries
+
+configurations {
+    tests
+    provided
+    jvmAgents
+    javadocClasspath
+}
+
+project.pluginManager.apply('org.apereo.cas.overrides-conventions')
+
+if (CasProjectConventions.shouldBePublished(project)) {
+    logger.info "Project ${project.name} should be published"
+
+    publishing {
+        publications {
+            if (project.hasProperty('skipPublication') && project.skipPublication) {
+                logger.info "Skipping artifact publication for project ${project.name}"
+            } else if (project.name.contains('cas-server-support-bom')) {
+                logger.info "Project ${project.name} is published as a BOM"
+            } else {
+                logger.info "Project ${project.name} should be published as a JAR"
+                mavenJava(MavenPublication) {
+                    logger.info "Project ${project.name} does not have a bootJar task, using default JAR"
+                    from components.java
+
+                    if (publishMinimalArtifacts) {
+                        logger.info "Publishing minimal artifacts for project ${project.name}"
+                    } else {
+                        artifact tasks['sourcesJar']
+                        artifact tasks['resourcesJar']
+                        artifact tasks['javadocJar']
+                        artifact tasks['testJar']
+                    }
+
+                    pom {
+                        CasPomConfiguration.createPom(it, project)
+                    }
+                    pom.withXml {
+                        CasPomConfiguration.createPomRepositories(asNode())
+                    }
+                }
+            }
+        }
+    }
+
+    plugins.withId('war') {
+        if (!project.hasProperty('skipPublication') || !project.skipPublication) {
+            logger.info "Project ${project.name} should be published as a WAR"
+            publishing.publications.remove(publishing.publications.findByName('mavenJava'))
+            publishing.publications.create('mavenWeb', MavenPublication) {
+                from components.web
+                pom {
+                    CasPomConfiguration.createPom(it, project)
+                }
+                pom.withXml {
+                    CasPomConfiguration.createPomRepositories(asNode())
+                }
+            }
+        }
+    }
+
+    signing {
+        required = publishReleases && !skipArtifactSigning
+        if (System.getenv('PGP_PRIVATE_KEY') && System.getenv('PGP_PASSPHRASE')) {
+            useInMemoryPgpKeys(System.getenv('PGP_PRIVATE_KEY'), System.getenv('PGP_PASSPHRASE'))
+        }
+        sign publishing.publications
+    }
+}
+
+tasks.named('assemble') {
+    if (publishFlag && !publishMinimalArtifacts) {
+        dependsOn(sourcesJar, javadocJar, resourcesJar, testJar)
+    } else {
+        dependsOn(testJar)
+    }
+}
+
+artifacts {
+    tests testJar
+}
+
+sourceSets {
+    main {
+        compileClasspath += configurations.provided
+        runtimeClasspath += configurations.provided
+
+        java {
+            srcDirs = ["${projectDir}/src/main/java"]
+        }
+        resources {
+            srcDirs = ["${projectDir}/src/main/resources"]
+        }
+    }
+    test {
+        java {
+            srcDirs = ["${projectDir}/src/test/java"]
+        }
+        resources {
+            srcDirs = ["${projectDir}/src/test/resources"]
+        }
+    }
+}
+
+ext.buildJarFile = new File(project.layout.buildDirectory.getAsFile().get(), "libs/${project.name}-${CasBuildSettings.projectVersion(project)}.jar")
+
+[tasks.named('compileTestJava'), tasks.named('compileJava')].each { taskProvider ->
+    taskProvider.configure {
+        if (generateGitProperties) {
+            dependsOn('generateGitProperties')
+        }
+
+        options.fork = true
+        options.forkOptions.jvmArgs << '--sun-misc-unsafe-memory-access=allow'
+        options.incremental = true
+
+        def casCompilerArgs = ['-parameters', '-Xlint:-removal,-unchecked']
+        if (terminateCompilerOnWarning) {
+            casCompilerArgs.add('-Werror')
+        }
+
+        if (!skipErrorProneCompiler) {
+            options.errorprone.disableAllChecks = !terminateCompilerOnWarning
+            options.errorprone.allErrorsAsWarnings = false
+            options.errorprone.disableWarningsInGeneratedCode = true
+            options.errorprone.errorproneArgs = [
+                '-Xep:JavaUtilDate:OFF',
+                '-Xep:RequireExplicitNullMarking:OFF',
+                '-Xep:BooleanLiteral:OFF',
+                '-Xep:StringConcatToTextBlock:OFF',
+                '-Xep:AddressSelection:OFF'
+            ]
+            def taskName = name
+            options.errorprone.nullaway {
+                if (skipNullAway || taskName == 'compileTestJava') {
+                    disable()
+                } else {
+                    jspecifyMode = true
+                    handleTestAssertionLibraries = true
+                    suggestSuppressions = true
+                    checkOptionalEmptiness = true
+                    if (terminateCompilerOnWarning) {
+                        error()
+                    } else {
+                        warn()
+                    }
+                }
+            }
+
+            casCompilerArgs.add('-XDcompilePolicy=byfile')
+            casCompilerArgs.add('-XDshould-stop.ifError=FLOW')
+        }
+        options.compilerArgs += casCompilerArgs
+    }
+}
+
+if (CasProjectConventions.requiresLombok(project)) {
+    project.pluginManager.apply('io.freefair.lombok')
+    lombok {
+        version = "${libs.versions.lombok.get()}"
+    }
+}
+
+tasks.named('jar') {
+    def projectName = project.name
+    def projectGroup = CasBuildSettings.projectGroup(project)
+    def projectVersion = CasBuildSettings.projectVersion(project)
+
+    def propertiesFile = project.layout.buildDirectory.file('resources/main/git.properties').get().asFile
+    def properties = new Properties()
+    if (propertiesFile.exists()) {
+        propertiesFile.withInputStream { stream ->
+            properties.load(stream)
+        }
+    }
+    def projectSpecVersion = properties.getProperty('git.commit.id', 'N/A')
+
+    manifest {
+        attributes(
+            'Automatic-Module-Name': project.name.replace('-', '.'),
+            'Implementation-Title': projectName,
+            'Implementation-Vendor': projectGroup,
+            'Created-By': projectGroup
+        )
+        if (generateTimestamps) {
+            attributes('Implementation-Date': java.time.ZonedDateTime.now(java.time.ZoneOffset.UTC))
+        }
+        attributes(
+            'Specification-Version': projectSpecVersion,
+            'Implementation-Version': projectVersion
+        )
+    }
+}
+
+if (!providers.systemProperty('skipCheckstyle').present && CasProjectConventions.shouldBePublished(project)) {
+    project.pluginManager.apply('checkstyle')
+    checkstyle {
+        configProperties = [
+            'checkstyle.suppressions.file' : new File(rootDir, 'style/checkstyle-suppressions.xml'),
+            'checkstyle.importcontrol.file': new File(rootDir, 'style/import-control.xml')
+        ]
+        configFile = new File(rootDir, 'style/checkstyle-rules.xml')
+        ignoreFailures = false
+        showViolations = true
+        toolVersion = "${libs.versions.checkstyle.get()}"
+    }
+}
+
+dependencies {
+    implementation libraries.aspectj
+
+    api libraries.swaggerannotations
+    api libraries.slf4j
+    api libraries.guava
+    api libraries.commons
+    api libraries.spring
+    api libraries.jackson
+    api libraries.httpclient
+    api libraries.quartz
+    api libraries.caffein
+    api libraries.springcloud
+    api libraries.springboot
+    api libraries.springsecurity
+    api libraries.springintegration
+    api libraries.springwebflow
+    api libraries.jakarta
+    api libraries.jspecify
+
+    compileOnly libraries.jakartapersistence
+    compileOnly libraries.checkerqual
+
+    annotationProcessor libraries.springindexer
+
+    if (!providers.systemProperty('skipErrorProneCompiler').present) {
+        errorprone libs.errorprone
+        errorprone libs.nullaway
+    }
+
+    testImplementation libraries.tests
+    testImplementation libraries.log4j
+    testImplementation libraries.hibernatevalidator
+    testImplementation libraries.jakartapersistence
+    testImplementation libraries.thymeleaf
+    testImplementation libraries.springboottomcat
+
+    runtimeOnly libraries.httpclient4
+
+    jvmAgents(libs.mockito.core) {
+        transitive = false
+    }
+    jvmAgents(libs.mockito.inline) {
+        transitive = false
+    }
+
+}
+
+if (!skipErrorProneCompiler) {
+    nullaway {
+        onlyNullMarked = true
+    }
+}
+
+
+

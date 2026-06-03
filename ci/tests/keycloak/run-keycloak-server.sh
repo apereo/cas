@@ -7,6 +7,11 @@
 
 GREEN="\e[32m"
 ENDCOLOR="\e[0m"
+RED="\e[31m"
+
+function printred() {
+  printf "🔥 ${RED}$1${ENDCOLOR}\n"
+}
 
 function printgreen() {
   printf "🍀 ${GREEN}$1${ENDCOLOR}\n"
@@ -43,14 +48,14 @@ docker run -d --rm --name keycloak \
   -v "$PWD"/ci/tests/keycloak/data/import:/opt/keycloak/data/import:ro \
   ${DOCKER_IMAGE} \
   start-dev --import-realm --log-level=INFO
+docker logs -f keycloak &
 printgreen "Waiting for Keycloak docker container to prepare..."
 sleep 15
 docker ps | grep "keycloak"
 retVal=$?
 if [ $retVal == 0 ]; then
     printgreen "Keycloak docker container is running."
-    docker logs -f keycloak &
 else
-    echo "Keycloak docker container failed to start."
+    printred "Keycloak docker container failed to start."
+    exit $retVal
 fi
-exit $retVal
