@@ -21,6 +21,11 @@ import org.pac4j.core.profile.BasicUserProfile;
 import org.pac4j.core.profile.ProfileManager;
 import org.pac4j.core.profile.UserProfile;
 import org.pac4j.core.util.Pac4jConstants;
+import javax.security.auth.login.FailedLoginException;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Abstract pac4j authentication handler which builds the CAS handler result from the pac4j user profile.
@@ -47,6 +52,25 @@ public abstract class BaseDelegatedClientAuthenticationHandler extends AbstractP
         this.sessionStore = sessionStore;
     }
 
+    private Map<String, List<Object>> getAttributesSafelyFromProfile(final Map<String, Object> profileAttributes) {
+        val simpleAttributes = new HashMap<String, Object>();
+        val complexAttributes = new HashMap<String, List<Object>>();
+
+        profileAttributes.forEach((key, value) -> {
+            if (value instanceof Map) {
+                val wrapped = List.of(value);
+                wrapped.add(value);
+                complexAttributes.put(key, wrapped);
+            } else {
+                simpleAttributes.put(key, value);
+            }
+        });
+
+        val attributes = CollectionUtils.toMultiValuedMap(simpleAttributes);
+        attributes.putAll(complexAttributes);
+        return attributes;
+    }
+    
     protected AuthenticationHandlerExecutionResult createResult(final ClientCredential credentials,
                                                                 final UserProfile profile,
                                                                 final BaseClient client,
@@ -62,7 +86,7 @@ public abstract class BaseDelegatedClientAuthenticationHandler extends AbstractP
         }
         credentials.setUserProfile(profile);
         credentials.setTypedIdUsed(isTypedIdUsed);
-        val attributes = CollectionUtils.toMultiValuedMap(profile.getAttributes());
+        val attributes = getAttributesSafelyFromProfile(profile.getAttributes());
         attributes.put(Pac4jConstants.CLIENT_NAME, CollectionUtils.wrap(profile.getClientName()));
         if (profile instanceof final BasicUserProfile bup) {
             attributes.putAll(CollectionUtils.toMultiValuedMap(bup.getAuthenticationAttributes()));
