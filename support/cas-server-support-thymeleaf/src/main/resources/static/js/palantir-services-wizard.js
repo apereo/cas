@@ -328,8 +328,7 @@ function createRegisteredServiceAttributeReleasePolicy() {
         keyLabel: "Environment Variable Name",
         valueField: "registeredServiceAttrReleasePolicyEnvVarAttrValue",
         valueLabel: "Attribute Name",
-        containerField: "attributeReleasePolicy.environmentVariables",
-        multipleValues: false
+        containerField: "attributeReleasePolicy.environmentVariables"
     });
 
     createMappedInputField({
@@ -340,8 +339,7 @@ function createRegisteredServiceAttributeReleasePolicy() {
         keyLabel: "System Property",
         valueField: "registeredServiceAttrReleasePolicySysPropAttrValue",
         valueLabel: "Attribute Name",
-        containerField: "attributeReleasePolicy.systemProperties",
-        multipleValues: false
+        containerField: "attributeReleasePolicy.systemProperties"
     });
 
 
@@ -920,8 +918,7 @@ function createRegisteredServiceAttributeReleaseValueFilters() {
         keyLabel: "Attribute Name",
         valueField: "registeredServiceAttrReleasePolicyAttributeValueFilterAttrValue",
         valueLabel: "Attribute Value",
-        containerField: "attributeReleasePolicy.attributeFilter.patterns",
-        multipleValues: false
+        containerField: "attributeReleasePolicy.attributeFilter.patterns"
     });
 
 }
@@ -1237,8 +1234,7 @@ function createRegisteredServiceAccessStrategy() {
         keyLabel: "Header Name",
         valueField: "registeredServiceAccessStrategyHttpRequestHeaderValue",
         valueLabel: "Header Value",
-        containerField: "accessStrategy.headers",
-        required: false
+        containerField: "accessStrategy.headers"
     });
 
     createSelectField({
@@ -1304,8 +1300,7 @@ function createRegisteredServiceAccessStrategy() {
         keyLabel: "Header Name",
         valueField: "registeredServiceAccessStrategyEndpointHeaderValue",
         valueLabel: "Header Value",
-        containerField: "accessStrategy.headers",
-        required: false
+        containerField: "accessStrategy.headers"
     });
 
     if (PalantirDashboardConfiguration.scriptFactoryAvailable()) {
@@ -1340,8 +1335,7 @@ function createRegisteredServiceAccessStrategy() {
         valueLabel: "Attribute Value",
         containerField: "accessStrategy.requiredAttributes",
         multipleValues: true,
-        multipleValuesType: "java.util.HashSet",
-        required: false
+        multipleValuesType: "java.util.HashSet"
     });
 
     createMappedInputField({
@@ -1354,8 +1348,7 @@ function createRegisteredServiceAccessStrategy() {
         valueLabel: "Attribute Value",
         containerField: "accessStrategy.rejectedAttributes",
         multipleValues: true,
-        multipleValuesType: "java.util.HashSet",
-        required: false
+        multipleValuesType: "java.util.HashSet"
     });
 
 
@@ -1457,8 +1450,7 @@ function createRegisteredServiceAccessStrategy() {
         keyLabel: "Attribute Name",
         valueField: "registeredServiceAccessStrategyOPAContextAttrValue",
         valueLabel: "Attribute Value",
-        containerField: "accessStrategy.context",
-        required: false
+        containerField: "accessStrategy.context"
     });
 
 
@@ -1935,8 +1927,7 @@ function createRegisteredServiceSsoParticipationPolicy() {
         valueField: "registeredServiceSSOParticipationAttrValue",
         valueLabel: "Attribute Value",
         containerField: "singleSignOnParticipationPolicy.attributes",
-        multipleValues: true,
-        multipleValuesType: "java.util.ArrayList"
+        multipleValues: true
     });
 }
 
