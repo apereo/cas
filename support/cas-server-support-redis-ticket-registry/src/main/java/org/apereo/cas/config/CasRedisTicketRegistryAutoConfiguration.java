@@ -140,6 +140,8 @@ public class CasRedisTicketRegistryAutoConfiguration {
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @Lazy(false)
         public MessageListener redisTicketRegistryMessageListener(
+            @Qualifier(TicketRegistry.BEAN_NAME)
+            final TicketRegistry ticketRegistry,
             @Qualifier("ticketRedisTemplate")
             final CasRedisTemplate<String, RedisTicketDocument> ticketRedisTemplate,
             @Qualifier("redisKeyGeneratorFactory")
@@ -149,7 +151,7 @@ public class CasRedisTicketRegistryAutoConfiguration {
             @Qualifier("redisTicketRegistryCache")
             final Cache<String, Ticket> redisTicketRegistryCache) {
             val adapter = new MessageListenerAdapter(
-                new DefaultRedisTicketRegistryMessageListener(redisTicketRegistryMessageIdentifier,
+                new DefaultRedisTicketRegistryMessageListener(ticketRegistry, redisTicketRegistryMessageIdentifier,
                     redisKeyGeneratorFactory, redisTicketRegistryCache));
             adapter.setSerializer(ticketRedisTemplate.getValueSerializer());
             adapter.setStringSerializer((RedisSerializer<String>) ticketRedisTemplate.getKeySerializer());

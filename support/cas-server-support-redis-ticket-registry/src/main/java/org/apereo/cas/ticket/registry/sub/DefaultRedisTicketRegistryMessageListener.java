@@ -1,6 +1,7 @@
 package org.apereo.cas.ticket.registry.sub;
 
 import org.apereo.cas.ticket.Ticket;
+import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.ticket.registry.key.RedisKeyGeneratorFactory;
 import org.apereo.cas.ticket.registry.pub.RedisMessagePayload;
 import org.apereo.cas.util.PublisherIdentifier;
@@ -18,6 +19,7 @@ import lombok.val;
 @RequiredArgsConstructor
 @Slf4j
 public class DefaultRedisTicketRegistryMessageListener implements RedisTicketRegistryMessageListener {
+    private final TicketRegistry ticketRegistry;
     private final PublisherIdentifier publisherIdentifier;
     private final RedisKeyGeneratorFactory redisKeyGeneratorFactory;
     private final Cache<String, Ticket> ticketCache;
@@ -29,11 +31,11 @@ public class DefaultRedisTicketRegistryMessageListener implements RedisTicketReg
             switch (command.getMessageType()) {
                 case ADD, UPDATE -> {
                     val result = getMessageResult(command);
-                    ticketCache.put(result.ticket().getId(), result.ticket());
+                    ticketCache.put(result.cacheKey(), result.ticket());
                 }
                 case DELETE -> {
                     val result = getMessageResult(command);
-                    ticketCache.invalidate(result.ticket().getId());
+                    ticketCache.invalidate(result.cacheKey());
                 }
                 case DELETE_ALL -> ticketCache.invalidateAll();
             }
@@ -44,9 +46,10 @@ public class DefaultRedisTicketRegistryMessageListener implements RedisTicketReg
         val ticket = (Ticket) command.getTicket();
         val generator = redisKeyGeneratorFactory.getRedisKeyGenerator(ticket.getPrefix()).orElseThrow();
         val redisKey = generator.forPrefixAndId(ticket.getPrefix(), ticket.getId());
-        return new MessageResult(ticket, redisKey);
+        val cacheKey = ticketRegistry.digestIdentifier(ticket.getId());
+        return new MessageResult(ticket, redisKey, cacheKey);
     }
 
-    private record MessageResult(Ticket ticket, String redisKey) {
+    private record MessageResult(Ticket ticket, String redisKey, String cacheKey) {
     }
 }
