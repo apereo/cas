@@ -107,7 +107,7 @@ These fixes are particularly important when administrative logouts are exercised
 
 [Google Authenticator](../mfa/GoogleAuthenticator-Authentication.html) 
 backed [by Redis](../mfa/GoogleAuthenticator-Authentication-Registration-Redis.html) is now correctly tracking
-and *updating* scratch codes assigned to the principal, removing the possibility of lingering scratch codes.
+and *updating* scratch codes assigned to the principal, removing the possibility of lingering orphaned scratch codes.
  
 ### Locale & Language Bundles
 
@@ -115,8 +115,21 @@ CAS language bundles for all supported languages are now comprehensively transla
 all relevant language keys for each language. CAS themes also gain an option to enable and control a curated list of
 available languages for user selection and displays. The user interface is also instructed to automatically set the 
 `dir` attribute on appropriate fields to support right-to-left languages automatically using the browser.
+  
+### OpenID Connect Dynamic Client Registration
+
+Several notable changes are now implemented 
+for [OpenID Connect Dynamic Client Registration](../authentication/OIDC-Authentication-Dynamic-Registration.html)
+to tighten and improve the security posture of registration request:
+
+- Security rules that control access to the dynamic client registration endpoint are now hardened to prevent abuse and unauthorized access.
+- `jwks_uri` field in dynamic client registration requests cannot be include any spring expressions.
+- `jwks`  field in dynamic client registration requests cannot be include any spring expressions.
+- Detailed error messages and root causes, as the result of invalid JSON keys, are no longer reported verbosely back.
 
 ## Other Stuff
               
 - [OpenID Connect logout requests](../authentication/OIDC-Authentication-Logout.html) may now also be submitted via `POST`. 
 - Redis integration tests have switched to use Redis `8.8.x`.
+- The [Spring Expression Language](../configuration/Configuration-Spring-Expressions.html) parser is tightened to run in a sandboxed environment.
+- [Delegated authentication](../integration/Delegate-Authentication.html) can now handle JSON serialization of complex attribute definitions that may carry maps. 
