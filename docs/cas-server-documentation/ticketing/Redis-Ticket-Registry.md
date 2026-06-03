@@ -94,6 +94,12 @@ Redis manages the internal eviction policy of cached objects via its time-alive 
 The timeout is the ticket's `timeToLive` value. So you need to ensure the cache is alive long enough to support the
 individual expiration policy of tickets, and let CAS clean the tickets as part of its own cleaner if necessary.
 
+Redis removes expired keys in two ways. Passive expiration happens when CAS accesses a 
+key and Redis notices that its TTL has elapsed; the key is deleted before the command proceeds. 
+Active expiration runs periodically in the background: Redis samples keys that have TTLs, deletes 
+the ones that are already expired, and repeats this work within a CPU-time budget. This means 
+expired keys are usually removed quickly, but deletion is not a continuous full scan of the keyspace.
+
 ## Ticket Registry Locking
 
 This ticket registry implementation automatically supports [distributed locking](../ticketing/Ticket-Registry-Locking.html).
