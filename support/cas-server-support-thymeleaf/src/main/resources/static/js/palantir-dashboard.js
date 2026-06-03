@@ -221,12 +221,12 @@ function processNavigationTabs() {
         hideElements($("#throttlesTabButton"));
         hideElements($(`#attribute-tab-${Tabs.THROTTLES.index}`));
     }
-    if (!CasActuatorEndpoints.mfaDevices() || availableMultifactorProviders.length === 0) {
+    if (!CasActuatorEndpoints.mfaDevices() || PalantirDashboardConfiguration.availableMultifactorProviders().length === 0) {
         hideElements($("#mfaTabButton"));
         hideElements($("#mfaDevicesTab").parent());
         hideElements($(`#attribute-tab-${Tabs.MFA.index}`));
     }
-    if (!CasActuatorEndpoints.multifactorTrustedDevices() || availableMultifactorProviders.length === 0) {
+    if (!CasActuatorEndpoints.multifactorTrustedDevices() || PalantirDashboardConfiguration.availableMultifactorProviders().length === 0) {
         hideElements($("#trustedMfaDevicesTab").parent());
     }
     if (!CasActuatorEndpoints.multitenancy() || !CAS_FEATURES.includes("Multitenancy")) {
@@ -238,7 +238,7 @@ function processNavigationTabs() {
     if (!CasActuatorEndpoints.shutdown()) {
         hideElements($("#shutdownServerButton"));
     }
-    if (!mutablePropertySourcesAvailable) {
+    if (!PalantirDashboardConfiguration.mutablePropertySourcesAvailable()) {
         hideElements($("#mutableConfigSources"));
     }
     return $("nav.sidebar-navigation ul li:visible").length;

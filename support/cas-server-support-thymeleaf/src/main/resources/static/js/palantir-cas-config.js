@@ -44,7 +44,7 @@ function effectiveConfigPropertyValue(name) {
 }
 
 function deleteConfigPropertyValue(button, name) {
-    if (mutablePropertySourcesAvailable && CasActuatorEndpoints.casConfig()) {
+    if (PalantirDashboardConfiguration.mutablePropertySourcesAvailable() && CasActuatorEndpoints.casConfig()) {
         const mutableConfigurationTable = $("#mutableConfigurationTable").DataTable();
         const currentRow = mutableConfigurationTable.row($(button).closest("tr"));
         const propertySource = $(button).data("source").replace("bootstrapProperties-", "");
@@ -84,7 +84,7 @@ function deleteConfigPropertyValue(button, name) {
 }
 
 function updateConfigPropertyValue(button, name) {
-    if (mutablePropertySourcesAvailable && CasActuatorEndpoints.casConfig()) {
+    if (PalantirDashboardConfiguration.mutablePropertySourcesAvailable() && CasActuatorEndpoints.casConfig()) {
         const mutableConfigurationTable = $("#mutableConfigurationTable").DataTable();
         const currentRow = mutableConfigurationTable.row($(button).closest("tr"));
         const propertySource = $(button).data("source").replace("bootstrapProperties-", "");
@@ -141,14 +141,14 @@ function deleteAllConfigurationProperties(button) {
 
     }
 
-    if (mutablePropertySources.length === 1) {
-        deletePropertiesFromSource(mutablePropertySources[0]);
+    if (PalantirDashboardConfiguration.mutablePropertySources().length === 1) {
+        deletePropertiesFromSource(PalantirDashboardConfiguration.mutablePropertySources()[0]);
     } else {
         Swal.fire({
             title: "Which property source do you want to clear?",
             input: "select",
             icon: "question",
-            inputOptions: mutablePropertySources,
+            inputOptions: PalantirDashboardConfiguration.mutablePropertySources(),
             inputPlaceholder: "Choose a property source...",
             showCancelButton: true
         }).then((result) => {
@@ -205,7 +205,7 @@ function importConfigurationProperties(button) {
     Swal.fire({
         title: "Are you sure you want to import configuration properties?",
         input: "select",
-        inputOptions: mutablePropertySources,
+        inputOptions: PalantirDashboardConfiguration.mutablePropertySources(),
         html: `
             <p class="text-justify">Properties will be imported and applied to the CAS server configuration. You may import multiple files at once.
             Supported file formats are .properties and .yml/.yaml files. You may choose the target property source to which the properties will be applied.</p>
@@ -215,7 +215,7 @@ function importConfigurationProperties(button) {
         showDenyButton: true
     }).then((result) => {
         if (result.isConfirmed) {
-            const propertySource = mutablePropertySources[Number(result.value)];
+            const propertySource = PalantirDashboardConfiguration.mutablePropertySources()[Number(result.value)];
 
             $("#configurationFilesToImport").click();
             $("#configurationFilesToImport").change(event => {
@@ -502,7 +502,7 @@ function reloadConfigurationTable(response) {
                     `;
                 }
 
-                if (mutablePropertySourcesAvailable && CasActuatorEndpoints.casConfig()) {
+                if (PalantirDashboardConfiguration.mutablePropertySourcesAvailable() && CasActuatorEndpoints.casConfig()) {
                     buttons += `
                             <button type="button" 
                             name="overrideConfigPropertyValueButton" href="#" 
@@ -523,7 +523,7 @@ function reloadConfigurationTable(response) {
                 });
 
 
-                if (mutablePropertySources.some(entry => source.name.endsWith(entry))) {
+                if (PalantirDashboardConfiguration.mutablePropertySources().some(entry => source.name.endsWith(entry))) {
                     const propertyName = key.replace(".value", "");
                     let buttons = `
                             <button type="button" name="effectiveConfigPropertyValueButton" href="#" 
@@ -660,7 +660,7 @@ async function initializeConfigurationOperations() {
                 <span class="mdc-button__label"><i class="mdc-tab__icon mdi mdi-database-arrow-down" aria-hidden="true"></i>Reload</span>
             </button>
     `;
-    if (mutablePropertySourcesAvailable) {
+    if (PalantirDashboardConfiguration.mutablePropertySourcesAvailable()) {
         toolbarEntries += `
             <button type="button" title="Create a new configuration property" onclick="createNewConfigurationProperty(this);" id="newConfigPropertyButton" class="mdc-button mdc-button--raised">
                 <span class="mdc-button__label"><i class="mdc-tab__icon mdi mdi-plus" aria-hidden="true"></i>New Property</span>

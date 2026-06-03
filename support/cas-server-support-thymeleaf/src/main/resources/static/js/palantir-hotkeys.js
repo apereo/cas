@@ -18,7 +18,7 @@ async function initializeHotKeyOperations() {
             openRegisteredServiceWizardDialog();
             break;
         case "n":
-            if (currentActiveTab === Tabs.CONFIGURATION.index && mutablePropertySourcesAvailable) {
+            if (currentActiveTab === Tabs.CONFIGURATION.index && PalantirDashboardConfiguration.mutablePropertySourcesAvailable()) {
                 event.preventDefault();
                 $("#newConfigPropertyButton:visible").click();
             }

@@ -111,7 +111,7 @@ function createRegisteredServiceAttributeReleasePolicy() {
                 text: "REST"
             },
             ...(
-                scriptFactoryAvailable
+                PalantirDashboardConfiguration.scriptFactoryAvailable()
                     ? [{
                         value: "org.apereo.cas.services.GroovyScriptAttributeReleasePolicy",
                         text: "GROOVY SCRIPT"
@@ -283,7 +283,7 @@ function createRegisteredServiceAttributeReleasePolicy() {
     });
 
 
-    if (scriptFactoryAvailable) {
+    if (PalantirDashboardConfiguration.scriptFactoryAvailable()) {
         createInputField({
             cssClasses: "hide GroovyScriptAttributeReleasePolicy",
             labelTitle: "Groovy Script",
@@ -621,7 +621,7 @@ function createRegisteredServiceAttributeReleasePolicyActivationCriteria() {
                 text: "ATTRIBUTES"
             },
             ...(
-                scriptFactoryAvailable
+                PalantirDashboardConfiguration.scriptFactoryAvailable()
                     ? [{
                         value: "org.apereo.cas.services.GroovyRegisteredServiceAttributeReleaseActivationCriteria",
                         text: "GROOVY"
@@ -657,7 +657,7 @@ function createRegisteredServiceAttributeReleasePolicyActivationCriteria() {
         multipleValues: true
     });
 
-    if (scriptFactoryAvailable) {
+    if (PalantirDashboardConfiguration.scriptFactoryAvailable()) {
         createInputField({
             paramType: "org.apereo.cas.services.GroovyRegisteredServiceAttributeReleaseActivationCriteria",
             cssClasses: "hide GroovyRegisteredServiceAttributeReleaseActivationCriteria",
@@ -864,7 +864,7 @@ function createRegisteredServiceAttributeReleaseValueFilters() {
                 text: "MUTANT MAPPED REGEX"
             },
             ...(
-                scriptFactoryAvailable
+                PalantirDashboardConfiguration.scriptFactoryAvailable()
                     ? [{
                         value: "org.apereo.cas.services.support.RegisteredServiceScriptedAttributeFilter",
                         text: "GROOVY"
@@ -887,7 +887,7 @@ function createRegisteredServiceAttributeReleaseValueFilters() {
         title: "Define the regex pattern to filter attribute values."
     });
 
-    if (scriptFactoryAvailable) {
+    if (PalantirDashboardConfiguration.scriptFactoryAvailable()) {
         createInputField({
             cssClasses: "hide RegisteredServiceScriptedAttributeFilter",
             labelTitle: "Groovy Script",
@@ -1057,7 +1057,7 @@ function createRegisteredServiceMultifactorPolicy() {
         </button>
     `);
 
-    if (scriptFactoryAvailable) {
+    if (PalantirDashboardConfiguration.scriptFactoryAvailable()) {
         createInputField({
             paramType: "org.apereo.cas.services.DefaultRegisteredServiceMultifactorPolicy",
             cssClasses: "advanced-option",
@@ -1187,7 +1187,7 @@ function createRegisteredServiceAccessStrategy() {
                 text: "TIME BASED"
             },
             ...(
-                scriptFactoryAvailable
+                PalantirDashboardConfiguration.scriptFactoryAvailable()
                     ? [{
                         value: "org.apereo.cas.services.GroovyRegisteredServiceAccessStrategy",
                         text: "GROOVY"
@@ -1308,7 +1308,7 @@ function createRegisteredServiceAccessStrategy() {
         required: false
     });
 
-    if (scriptFactoryAvailable) {
+    if (PalantirDashboardConfiguration.scriptFactoryAvailable()) {
         createInputField({
             cssClasses: "hide GroovyRegisteredServiceAccessStrategy",
             labelTitle: "Groovy Script",
@@ -1623,7 +1623,7 @@ function createRegisteredServiceAuthenticationPolicy() {
                 text: "NOT PREVENTED"
             },
             ...(
-                scriptFactoryAvailable
+                PalantirDashboardConfiguration.scriptFactoryAvailable()
                     ? [{
                         value: "org.apereo.cas.services.GroovyRegisteredServiceAuthenticationPolicyCriteria",
                         text: "GROOVY"
@@ -1676,7 +1676,7 @@ function createRegisteredServiceAuthenticationPolicy() {
         title: "Basic Auth Password"
     });
 
-    if (scriptFactoryAvailable) {
+    if (PalantirDashboardConfiguration.scriptFactoryAvailable()) {
         createInputField({
             cssClasses: "hide GroovyRegisteredServiceAuthenticationPolicyCriteria",
             labelTitle: "Groovy Script",
@@ -1864,7 +1864,7 @@ function createRegisteredServiceSsoParticipationPolicy() {
                 text: "AUTHENTICATION DATE"
             },
             ...(
-                scriptFactoryAvailable
+                PalantirDashboardConfiguration.scriptFactoryAvailable()
                     ? [{
                         value: "org.apereo.cas.services.GroovyRegisteredServiceSingleSignOnParticipationPolicy",
                         text: "GROOVY"
@@ -1899,7 +1899,7 @@ function createRegisteredServiceSsoParticipationPolicy() {
         title: "Specifies the time value for the SSO participation policy."
     });
 
-    if (scriptFactoryAvailable) {
+    if (PalantirDashboardConfiguration.scriptFactoryAvailable()) {
         createInputField({
             cssClasses: "hide GroovyRegisteredServiceSingleSignOnParticipationPolicy",
             labelTitle: "Groovy Script",
@@ -2006,7 +2006,7 @@ function createRegisteredServiceUsernameAttributeProvider() {
                 }
             },
             ...(
-                scriptFactoryAvailable
+                PalantirDashboardConfiguration.scriptFactoryAvailable()
                     ? [{
                         value: "org.apereo.cas.services.GroovyRegisteredServiceUsernameProvider",
                         text: "GROOVY"
@@ -2056,7 +2056,7 @@ function createRegisteredServiceUsernameAttributeProvider() {
 
         });
 
-    if (scriptFactoryAvailable) {
+    if (PalantirDashboardConfiguration.scriptFactoryAvailable()) {
         createInputField({
             cssClasses: "hide GroovyRegisteredServiceUsernameProvider",
             labelTitle: "Groovy Script",
@@ -2298,7 +2298,7 @@ function hideAdvancedRegisteredServiceOptions() {
         hideElements($("form#editServiceWizardForm [class*='class-']").not(`.class-${className}`).not(".always-show"));
     }
 
-    if (availableMultifactorProviders.length === 0) {
+    if (PalantirDashboardConfiguration.availableMultifactorProviders().length === 0) {
         hideElements($("#registeredServiceMfaPolicy"));
     }
     if (!CAS_FEATURES.includes("AcceptableUsagePolicy")) {
@@ -2892,8 +2892,8 @@ function initializeDescriptionEditor(containerId) {
         editorContainer.append(editorTextarea);
         $(`#${containerId}`).append(editorContainer);
 
-        if (typeof trumbowygIconsPath !== "undefined" && trumbowygIconsPath) {
-            $.trumbowyg.svgPath = trumbowygIconsPath;
+        if (PalantirDashboardConfiguration.trumbowygIconsPath()) {
+            $.trumbowyg.svgPath = PalantirDashboardConfiguration.trumbowygIconsPath();
         }
 
         $("#registeredServiceDescriptionEditor").trumbowyg({
@@ -3680,13 +3680,13 @@ function openRegisteredServiceWizardDialog(existingService = null) {
     if (existingService !== null) {
         const serviceClass = existingService["@class"];
         openWizardDialog(serviceClass, existingService);
-    } else if (Object.keys(supportedServiceTypes).length === 1) {
-        openWizardDialog(Object.keys(supportedServiceTypes)[0]);
+    } else if (Object.keys(PalantirDashboardConfiguration.supportedServiceTypes()).length === 1) {
+        openWizardDialog(Object.keys(PalantirDashboardConfiguration.supportedServiceTypes())[0]);
     } else {
-        const sortedServiceTypes = Object.keys(supportedServiceTypes)
+        const sortedServiceTypes = Object.keys(PalantirDashboardConfiguration.supportedServiceTypes())
             .sort()
             .reduce((acc, key) => {
-                acc[key] = supportedServiceTypes[key];
+                acc[key] = PalantirDashboardConfiguration.supportedServiceTypes()[key];
                 return acc;
             }, {});
         Swal.fire({
@@ -3702,4 +3702,3 @@ function openRegisteredServiceWizardDialog(existingService = null) {
         });
     }
 }
-
