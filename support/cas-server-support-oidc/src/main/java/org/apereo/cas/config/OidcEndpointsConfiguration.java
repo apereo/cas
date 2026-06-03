@@ -210,7 +210,7 @@ class OidcEndpointsConfiguration {
                         + "Failure to specify the correct value may interfere with OpenID Connect functionality.", baseEndpoint);
                     registry.addInterceptor(new RefreshableHandlerInterceptor(oauthInterceptor))
                         .order(100)
-                        .addPathPatterns(baseEndpoint.concat("/*"));
+                        .addPathPatterns(baseEndpoint.concat("/**"));
                 }
             };
         }
