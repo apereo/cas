@@ -2,6 +2,7 @@ package org.apereo.cas.oidc.authn;
 
 import module java.base;
 import org.apereo.cas.oidc.OidcConstants;
+import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.support.oauth.authenticator.OAuth20AccessTokenAuthenticator;
 import org.apereo.cas.ticket.accesstoken.OAuth20AccessToken;
 import org.apereo.cas.ticket.registry.TicketRegistry;
@@ -35,7 +36,9 @@ public class OidcClientConfigurationAccessTokenAuthenticator extends OAuth20Acce
         try {
             val profile = super.buildUserProfile(tokenCredentials, callContext, accessToken);
             LOGGER.trace("Examining access token [{}] for required scope [{}]", accessToken, OidcConstants.CLIENT_CONFIGURATION_SCOPE);
-            if (accessToken.getScopes().contains(OidcConstants.CLIENT_CONFIGURATION_SCOPE)) {
+            val clientId = profile.getAttribute(OAuth20Constants.CLIENT_ID, String.class);
+            if (accessToken.getClientId().equals(clientId)
+                && accessToken.getScopes().contains(OidcConstants.CLIENT_CONFIGURATION_SCOPE)) {
                 return profile;
             }
         } catch (final Exception e) {

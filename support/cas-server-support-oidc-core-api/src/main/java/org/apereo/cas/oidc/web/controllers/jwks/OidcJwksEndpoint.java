@@ -18,6 +18,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 
 /**
  * This is {@link OidcJwksEndpoint}.
@@ -44,7 +45,7 @@ public class OidcJwksEndpoint extends BaseCasRestActuatorEndpoint {
      *
      * @return the response entity
      */
-    @GetMapping(path = "/rotate", produces = MediaType.APPLICATION_JSON_VALUE)
+    @PostMapping(path = "/rotate", produces = MediaType.APPLICATION_JSON_VALUE)
     @Operation(summary = "Rotate keys in the keystore forcefully")
     public ResponseEntity<String> handleRotation() {
         val rotation = rotationService.getObject().rotate();
@@ -57,7 +58,7 @@ public class OidcJwksEndpoint extends BaseCasRestActuatorEndpoint {
      *
      * @return the response entity
      */
-    @GetMapping(path = "/revoke", produces = MediaType.APPLICATION_JSON_VALUE)
+    @PostMapping(path = "/revoke", produces = MediaType.APPLICATION_JSON_VALUE)
     @Operation(summary = "Revoke keys in the keystore forcefully")
     public ResponseEntity<String> handleRevocation() {
         val rotation = rotationService.getObject().revoke();

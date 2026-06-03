@@ -84,7 +84,6 @@ public class OidcJwksRegistrationEndpointController extends BaseOidcController {
             || !accessTokenTicket.getScopes().contains(OidcConstants.CLIENT_JWKS_REGISTRATION_SCOPE)) {
             throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Invalid access token");
         }
-
         val jws = JWSObject.parse(registrationRequest.proof());
 
         val alg = jws.getHeader().getAlgorithm();

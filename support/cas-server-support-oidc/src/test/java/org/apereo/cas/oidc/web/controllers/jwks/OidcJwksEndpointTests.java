@@ -31,7 +31,7 @@ class OidcJwksEndpointTests extends AbstractCasEndpointTests {
 
     @Test
     void verifyRotation() throws Throwable {
-        mockMvc.perform(get("/actuator/oidcJwks/rotate")
+        mockMvc.perform(post("/actuator/oidcJwks/rotate")
                 .contentType(MediaType.APPLICATION_JSON)
                 .accept(MediaType.APPLICATION_JSON))
             .andExpect(status().isOk())
@@ -40,7 +40,7 @@ class OidcJwksEndpointTests extends AbstractCasEndpointTests {
 
     @Test
     void verifyRevocation() throws Throwable {
-        mockMvc.perform(get("/actuator/oidcJwks/revoke")
+        mockMvc.perform(post("/actuator/oidcJwks/revoke")
                 .contentType(MediaType.APPLICATION_JSON)
                 .accept(MediaType.APPLICATION_JSON))
             .andExpect(status().isOk())
