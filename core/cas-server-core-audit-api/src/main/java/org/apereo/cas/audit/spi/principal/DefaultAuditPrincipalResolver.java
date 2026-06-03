@@ -59,7 +59,7 @@ public class DefaultAuditPrincipalResolver implements PrincipalResolver {
             val firstArgument = auditTarget.getArgs()[0];
             currentPrincipal = switch (firstArgument) {
                 case final RequestContext requestContext -> getPrincipalFromRequestContext(auditTarget, returnValue, exception, requestContext);
-                case final AuthenticationTransaction authenticationTransaction -> getPrincipalFromAuthenticationTransaction(authenticationTransaction);
+                case final AuthenticationTransaction authenticationTransaction -> getPrincipalFromAuthenticationTransaction(auditTarget, returnValue, exception, authenticationTransaction);
                 case final SingleLogoutExecutionRequest sloRequest -> getPrincipalFromSingleLogoutRequest(auditTarget, returnValue, exception, sloRequest);
                 case final Authentication authentication -> getPrincipalFromAuthentication(auditTarget, returnValue, exception, authentication);
                 case final AuthenticationResult authenticationResult -> getPrincipalFromAuthenticationResult(auditTarget, returnValue, exception, authenticationResult);
@@ -164,9 +164,16 @@ public class DefaultAuditPrincipalResolver implements PrincipalResolver {
         return StringUtils.defaultIfBlank(principalId, UNKNOWN_USER);
     }
 
-    protected String getPrincipalFromAuthenticationTransaction(final AuthenticationTransaction authenticationTransaction) {
-        val credentialId = authenticationTransaction.getPrimaryCredential().map(Credential::getId).orElse(UNKNOWN_USER);
-        return StringUtils.defaultIfBlank(credentialId, UNKNOWN_USER);
+    protected String getPrincipalFromAuthenticationTransaction(final JoinPoint auditTarget,
+                                                               @Nullable final Object returnValue,
+                                                               @Nullable final Exception exception,
+                                                               final AuthenticationTransaction authenticationTransaction) {
+        val authentications = authenticationTransaction.getAuthentications();
+        if (!authentications.isEmpty()) {
+            val principalId = auditPrincipalIdProvider.getPrincipalIdFrom(auditTarget, authentications.iterator().next(), returnValue, exception);
+            return StringUtils.defaultIfBlank(principalId, UNKNOWN_USER);
+        }
+        return UNKNOWN_USER;
     }
 
     protected String getPrincipalFromRequestContext(final JoinPoint auditTarget, @Nullable final Object returnValue,

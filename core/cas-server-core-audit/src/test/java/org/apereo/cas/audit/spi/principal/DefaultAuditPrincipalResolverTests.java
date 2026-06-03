@@ -5,6 +5,7 @@ import org.apereo.cas.audit.AuditableContext;
 import org.apereo.cas.audit.AuditableEntity;
 import org.apereo.cas.audit.spi.BaseAuditConfigurationTests;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
+import org.apereo.cas.authentication.DefaultAuthenticationTransaction;
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.logout.slo.SingleLogoutExecutionRequest;
@@ -122,8 +123,9 @@ class DefaultAuditPrincipalResolverTests {
         WebUtils.putAuthentication(authentication, context);
 
         val credentials = RegisteredServiceTestUtils.getCredentialsWithSameUsernameAndPassword(UUID.randomUUID().toString());
-        val transaction = CoreAuthenticationTestUtils.getAuthenticationTransactionFactory().newTransaction(credentials);
+        val transaction = (DefaultAuthenticationTransaction) CoreAuthenticationTestUtils.getAuthenticationTransactionFactory().newTransaction(credentials);
         val authenticationResult = CoreAuthenticationTestUtils.getAuthenticationResult(authentication);
+        transaction.collect(List.of(authentication));
 
         val ticketGrantingTicket = new TicketGrantingTicketImpl(UUID.randomUUID().toString(), authentication, NeverExpiresExpirationPolicy.INSTANCE);
         val sloRequest = SingleLogoutExecutionRequest.builder()
