@@ -991,16 +991,25 @@ function createRegisteredServiceMultifactorPolicy() {
         helpText: "Specifies the failure mode for multifactor authentication."
     });
 
-    createInputField({
-        paramType: "org.apereo.cas.services.DefaultRegisteredServiceMultifactorPolicy",
-        cssClasses: "advanced-option",
-        labelTitle: "Principal Attribute Name Trigger",
-        name: "registeredServiceMfaPrincipalAttributeNameTrigger",
-        paramName: "multifactorPolicy.principalAttributeNameTrigger",
-        required: false,
-        containerId: "editServiceWizardMenuItemMfaPolicy",
-        title: "Specifies the principal attribute name that triggers multifactor authentication."
-    });
+    CasDiscoveryProfile.fetchIfNeeded()
+        .done(async () => {
+            const options = CasDiscoveryProfile.availableAttributes().map(attr => ({
+                value: attr,
+                text: attr
+            }));
+
+            createMultiSelectField({
+                cssClasses: "hide advanced-option",
+                singleSelect: true,
+                containerId: "registeredServiceMultifactorPolicyfailureModeSelectContainer",
+                labelTitle: "Principal Attribute Name Trigger:",
+                paramName: "multifactorPolicy.principalAttributeNameTrigger",
+                title: "Specifies the principal attribute name that triggers multifactor authentication.",
+                options: options,
+                allowCreateOption: true,
+                inclusion: "after"
+            });
+        });
 
     createInputField({
         paramType: "org.apereo.cas.services.DefaultRegisteredServiceMultifactorPolicy",
@@ -1013,18 +1022,26 @@ function createRegisteredServiceMultifactorPolicy() {
         title: "Specifies the principal attribute value to match for triggering multifactor authentication."
     });
 
-    createInputField({
-        paramType: "org.apereo.cas.services.DefaultRegisteredServiceMultifactorPolicy",
-        cssClasses: "advanced-option",
-        labelTitle: "Principal Attribute Name Bypass",
-        name: "registeredServiceMfaBypassPrincipalAttributeName",
-        paramName: "multifactorPolicy.bypassPrincipalAttributeName",
-        required: false,
-        containerId: "editServiceWizardMenuItemMfaPolicy",
-        title: "Specifies the principal attribute name that bypasses multifactor authentication."
+    CasDiscoveryProfile.fetchIfNeeded()
+        .done(async () => {
+            const options = CasDiscoveryProfile.availableAttributes().map(attr => ({
+                value: attr,
+                text: attr
+            }));
+            
+            createMultiSelectField({
+                cssClasses: "hide advanced-option",
+                singleSelect: true,
+                containerId: "registeredServiceMfaBypassPrincipalAttributeValueFieldContainer",
+                labelTitle: "Principal Attribute Name Bypass:",
+                paramName: "multifactorPolicy.bypassPrincipalAttributeName",
+                title: "Specifies the principal attribute name that bypasses multifactor authentication.",
+                options: options,
+                allowCreateOption: true,
+                inclusion: "before"
+            });
     });
-
-
+    
     createInputField({
         paramType: "org.apereo.cas.services.DefaultRegisteredServiceMultifactorPolicy",
         cssClasses: "advanced-option",
@@ -1715,6 +1732,7 @@ function createRegisteredServiceProperties() {
         valueField: "registeredServicePropertyValue",
         valueLabel: "Property value(s) separated by comma",
         containerField: "properties",
+        autoComplete: PalantirDashboardConfiguration.serviceProperties(),
         valueFieldRenderer: function ($inputKey, $inputValue) {
             return {
                 "@class": "org.apereo.cas.services.DefaultRegisteredServiceProperty",
@@ -2563,7 +2581,8 @@ function createMappedInputField(config) {
         multipleValuesType = "java.util.ArrayList",
         valueFieldRenderer,
         unwrapSingleElement = false,
-        onChangeCallback
+        onChangeCallback,
+        autoComplete = []
     } = config;
 
     const changeCallback = onChangeCallback || generateServiceDefinition;
@@ -2578,7 +2597,7 @@ function createMappedInputField(config) {
     const inputFieldValueId = `registeredService${capitalize(valueField)}`;
     const rowElements = `
             <div class="d-flex justify-content-between pt-2 ${keyField}-map-row ${cssClasses}" id="${mapRowId}">
-                <label for="${keyField}"
+                <label for="${inputFieldKeyId}"
                        class="mdc-text-field mdc-text-field--outlined mdc-text-field--with-trailing-icon control-label ${cssClasses}">
                     <span class="mdc-notched-outline pr-2">
                         <span class="mdc-notched-outline__leading"></span>
@@ -2587,17 +2606,16 @@ function createMappedInputField(config) {
                         </span>
                         <span class="mdc-notched-outline__trailing"></span>
                     </span>
-                    <input class="mdc-text-field__input form-control "
+                    <input class="mdc-text-field__input"
                            id="${inputFieldKeyId}"
                            name="${inputFieldKeyId}"
-                           size="25"
                            type="text"
                            data-param-name="${containerField}"
                            data-param-type="${containerType}"
                            ${required ? "required" : ""}/>
                 </label>
 
-                <label for="${valueField}"
+                <label for="${inputFieldValueId}"
                        class="mdc-text-field mdc-text-field--outlined mdc-text-field--with-trailing-icon control-label ${cssClasses}">
                     <span class="mdc-notched-outline">
                         <span class="mdc-notched-outline__leading"></span>
@@ -2699,6 +2717,19 @@ function createMappedInputField(config) {
     configureInputEventHandler();
     configureInputRenderer();
 
+    if (autoComplete && autoComplete.length > 0) {
+       $(`#${inputFieldKeyId}`).autocomplete({
+           delay: 0,
+           source: autoComplete,
+           select: function (event, ui) {
+               $(this)
+                   .val(ui.item.value)
+                   .trigger("input")
+                   .trigger("change");
+               return false;
+           }
+       });
+    }
     return $(`#${sectionContainerId}`);
 }
 
@@ -2771,7 +2802,7 @@ function createSelectField(config) {
 
     $label.append($select);
 
-    const container = $("<span>", {
+    const container = $("<div>", {
         id: `${selectId}SelectContainer`,
         class: `${serviceClass ?? ""} ${cssClasses ?? ""}`
     });
