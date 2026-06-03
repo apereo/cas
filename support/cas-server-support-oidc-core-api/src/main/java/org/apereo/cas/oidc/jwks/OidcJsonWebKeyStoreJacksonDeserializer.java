@@ -2,8 +2,8 @@ package org.apereo.cas.oidc.jwks;
 
 import module java.base;
 import org.apereo.cas.util.function.FunctionUtils;
+import org.apereo.cas.util.spring.SpringExpressionLanguageValueResolver;
 import lombok.val;
-import org.apache.commons.lang3.Strings;
 import org.jose4j.jwk.JsonWebKeySet;
 import tools.jackson.core.JacksonException;
 import tools.jackson.core.JsonParser;
@@ -41,7 +41,7 @@ public class OidcJsonWebKeyStoreJacksonDeserializer extends ValueDeserializer<Js
     }
 
     private static void rejectSpringExpression(final String value) {
-        if (Strings.CS.contains(value, "${") || Strings.CS.contains(value, "#{")) {
+        if (SpringExpressionLanguageValueResolver.getInstance().hasExpressionMarkers(value)) {
             throw new IllegalArgumentException("JWKS cannot contain expressions");
         }
     }

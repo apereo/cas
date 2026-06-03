@@ -6,6 +6,7 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.Strings;
 import org.apache.commons.text.StringSubstitutor;
 import org.jspecify.annotations.NonNull;
 import org.jspecify.annotations.Nullable;
@@ -98,6 +99,16 @@ public class SpringExpressionLanguageValueResolver implements Function {
             ? resolve("${%s}".formatted(variable), parameters, String.class)
             : null);
         return expressionSub.replace(body);
+    }
+
+    /**
+     * Has expression markers.
+     *
+     * @param value the value
+     * @return the boolean
+     */
+    public boolean hasExpressionMarkers(final String value) {
+        return Strings.CS.contains(value, "${") || Strings.CS.contains(value, "#{");
     }
 
     /**
