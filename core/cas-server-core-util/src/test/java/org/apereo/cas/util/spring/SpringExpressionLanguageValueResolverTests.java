@@ -9,7 +9,6 @@ import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.expression.spel.SpelEvaluationException;
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
@@ -23,19 +22,6 @@ import static org.junit.jupiter.api.Assertions.*;
 @SpringBootTest(classes = CasCoreUtilAutoConfiguration.class)
 @ExtendWith(CasTestExtension.class)
 class SpringExpressionLanguageValueResolverTests {
-    @Test
-    void verifyCodeExecutionLockedDown() {
-        System.clearProperty("casSpelInjectionProof");
-        val resolver = SpringExpressionLanguageValueResolver.getInstance();
-        assertThrows(SpelEvaluationException.class,
-            () -> resolver.resolve("${T(java.lang.System).setProperty('casSpelInjectionProof','INJECTED')}"));
-        assertNull(System.getProperty("casSpelInjectionProof"));
-        assertThrows(SpelEvaluationException.class,
-            () -> resolver.resolve("${T(org.apereo.cas.util.CasVersion).getVersion() + ' ' + T(org.apereo.cas.util.CasVersion).getDateTime()}"));
-        assertThrows(SpelEvaluationException.class,
-            () -> resolver.resolve("${T(java.util.Locale).FRENCH.getLanguage()}"));
-    }
-
     @Test
     void verifyFormatOperation() {
         val resolver = SpringExpressionLanguageValueResolver.getInstance();

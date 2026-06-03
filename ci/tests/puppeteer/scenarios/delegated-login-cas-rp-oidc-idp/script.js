@@ -6,9 +6,7 @@ const cas = require("../../cas.js");
     const page = await cas.newPage(browser);
     const service = "https://localhost:9859/anything/cas";
 
-    const url = `https://localhost:8443/cas/login?service=${service}`;
-    await cas.goto(page, url);
-
+    await cas.gotoLogin(page, service);
     await cas.assertVisibility(page, "li #Keycloak");
     await cas.click(page, "li #Keycloak");
     await cas.waitForNavigation(page);
@@ -18,14 +16,9 @@ const cas = require("../../cas.js");
     await cas.sleep(1000);
 
     await cas.logPage(page);
-    const result = new URL(page.url());
-    await cas.log(result.searchParams.toString());
-
-    assert(result.searchParams.has("ticket") === true);
-
-    const ticket = result.searchParams.get("ticket");
-    const json = await cas.validateTicket(service, ticket);
-    const authenticationSuccess = json.serviceResponse.authenticationSuccess;
+    let ticket = await cas.assertTicketParameter(page);
+    let json = await cas.validateTicket(service, ticket);
+    let authenticationSuccess = json.serviceResponse.authenticationSuccess;
     assert(authenticationSuccess.user === "caskeycloak@example.org");
     assert(authenticationSuccess.attributes.name !== undefined);
     assert(authenticationSuccess.attributes.email !== undefined);
@@ -39,6 +32,22 @@ const cas = require("../../cas.js");
     await cas.assertCookie(page);
     await cas.separator();
 
+    await cas.gotoLogout(page, service);
+    await cas.sleep(2000);
+    await cas.logPage(page);
+    await cas.gotoLogin(page);
+    await cas.assertCookie(page, false);
+
+    await cas.log("Navigate back to keycloak to confirm keycloak session is destroted");
+    await cas.gotoLogin(page, service);
+    await cas.click(page, "li #Keycloak");
+    await cas.waitForNavigation(page);
+    await cas.sleep(2000);
+    await cas.loginWith(page, "caskeycloak", "r2RlZXz6f2h5");
+    await cas.sleep(2000);
+    ticket = await cas.assertTicketParameter(page);
+    json = await cas.validateTicket(service, ticket);
+    authenticationSuccess = json.serviceResponse.authenticationSuccess;
     const sid = authenticationSuccess.attributes.sid[0];
     /**
      * This logout token is not signed with a private key from the identity provider
@@ -60,11 +69,11 @@ const cas = require("../../cas.js");
     const logoutUrl = `https://localhost:8443/cas/login?logout_token=${jwt}&client_name=Keycloak`;
 
     await cas.doPost(logoutUrl, "", {
-        "Content-Type": "application/json"
-    }, (res) => assert(res.status === 200),
-    (error) => {
-        throw `Operation failed: ${error}`;
-    });
+            "Content-Type": "application/json"
+        }, (res) => assert(res.status === 200),
+        (error) => {
+            throw `Operation failed: ${error}`;
+        });
 
     await cas.gotoLogin(page);
     await cas.assertCookie(page, false);

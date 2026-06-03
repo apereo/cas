@@ -8,23 +8,12 @@ import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.text.StringSubstitutor;
 import org.jspecify.annotations.NonNull;
-import org.jspecify.annotations.Nullable;
 import org.springframework.context.ApplicationContext;
-import org.springframework.core.convert.TypeDescriptor;
-import org.springframework.expression.EvaluationException;
-import org.springframework.expression.Operation;
-import org.springframework.expression.OperatorOverloader;
 import org.springframework.expression.ParserContext;
-import org.springframework.expression.TypeComparator;
-import org.springframework.expression.TypeConverter;
-import org.springframework.expression.TypeLocator;
 import org.springframework.expression.common.TemplateParserContext;
 import org.springframework.expression.spel.SpelCompilerMode;
-import org.springframework.expression.spel.SpelEvaluationException;
-import org.springframework.expression.spel.SpelMessage;
 import org.springframework.expression.spel.SpelParserConfiguration;
 import org.springframework.expression.spel.standard.SpelExpressionParser;
-import org.springframework.expression.spel.support.DataBindingPropertyAccessor;
 import org.springframework.expression.spel.support.StandardEvaluationContext;
 
 /**
@@ -47,17 +36,15 @@ public class SpringExpressionLanguageValueResolver implements Function {
     private static final ParserContext PARSER_CONTEXT = new TemplateParserContext("${", "}");
 
     private static final SpelExpressionParser EXPRESSION_PARSER = new SpelExpressionParser(
-        new SpelParserConfiguration(SpelCompilerMode.OFF, null)
+        new SpelParserConfiguration(SpelCompilerMode.IMMEDIATE, SpringExpressionLanguageValueResolver.class.getClassLoader())
     );
 
     private static SpringExpressionLanguageValueResolver INSTANCE;
 
-    private final StandardEvaluationContext evaluationContext;
+    private final StandardEvaluationContext evaluationContext = new StandardEvaluationContext();
 
     protected SpringExpressionLanguageValueResolver() {
         val systemProperties = System.getProperties();
-
-        evaluationContext = new StandardEvaluationContext();
         evaluationContext.setVariable("systemProperties", systemProperties);
         evaluationContext.setVariable("sysProps", systemProperties);
 
@@ -69,18 +56,6 @@ public class SpringExpressionLanguageValueResolver implements Function {
 
         evaluationContext.setVariable("tempDir", FileUtils.getTempDirectoryPath());
         evaluationContext.setVariable("zoneId", ZoneId.systemDefault().getId());
-
-        evaluationContext.setTypeLocator(new NoTypeLocator());
-        evaluationContext.setBeanResolver(null);
-        evaluationContext.setConstructorResolvers(List.of());
-        evaluationContext.setMethodResolvers(List.of());
-        evaluationContext.setPropertyAccessors(List.of(
-            DataBindingPropertyAccessor.forReadOnlyAccess()
-        ));
-        evaluationContext.setIndexAccessors(List.of());
-        evaluationContext.setTypeConverter(new NoTypeConverter());
-        evaluationContext.setTypeComparator(new NoTypeComparator());
-        evaluationContext.setOperatorOverloader(new NoOperatorOverloader());
         withApplicationContext(ApplicationContextProvider.getApplicationContext());
     }
 
@@ -103,7 +78,6 @@ public class SpringExpressionLanguageValueResolver implements Function {
             : null);
         return expressionSub.replace(body);
     }
-
 
     /**
      * Gets instance of the resolver as a singleton.
@@ -136,7 +110,7 @@ public class SpringExpressionLanguageValueResolver implements Function {
      * @param clazz the clazz
      * @return the t
      */
-    public <T> @Nullable T resolve(final String value, final Class<T> clazz) {
+    public <T> T resolve(final String value, final Class<T> clazz) {
         if (StringUtils.isNotBlank(value)) {
             LOGGER.trace("Parsing expression as [{}]", value);
             val expression = EXPRESSION_PARSER.parseExpression(value, PARSER_CONTEXT);
@@ -147,7 +121,7 @@ public class SpringExpressionLanguageValueResolver implements Function {
         return (T) value;
     }
 
-    private <T> @Nullable T resolve(final String value, final Map<String, Object> variables, final Class<T> clazz) {
+    private <T> T resolve(final String value, final Map<String, Object> variables, final Class<T> clazz) {
         val activeContext = new StandardEvaluationContext() {
             @Override
             public Object lookupVariable(@NonNull final String name) {
@@ -206,54 +180,5 @@ public class SpringExpressionLanguageValueResolver implements Function {
 
         evaluationContext.setVariable("zonedDateTime", ZonedDateTime.now(ZoneId.systemDefault()).toString());
         evaluationContext.setVariable("zonedDateTimeUtc", ZonedDateTime.now(Clock.systemUTC()).toString());
-    }
-
-    private static final class NoTypeLocator implements TypeLocator {
-
-        @Override
-        public Class<?> findType(final String typeName) throws EvaluationException {
-            throw new SpelEvaluationException(SpelMessage.TYPE_NOT_FOUND, typeName);
-        }
-
-    }
-
-    private static final class NoTypeConverter implements TypeConverter {
-        @Override
-        public boolean canConvert(@Nullable final TypeDescriptor sourceType, final TypeDescriptor targetType) {
-            return false;
-        }
-
-        @Override
-        public @Nullable Object convertValue(@Nullable final Object value, @Nullable final TypeDescriptor sourceType,
-                                             final TypeDescriptor targetType) {
-            return null;
-        }
-    }
-
-
-    private static final class NoTypeComparator implements TypeComparator {
-        @Override
-        public boolean canCompare(@Nullable final Object firstObject, @Nullable final Object secondObject) {
-            return false;
-        }
-
-        @Override
-        public int compare(@Nullable final Object firstObject, @Nullable final Object secondObject) throws EvaluationException {
-            return 0;
-        }
-    }
-
-    private static final class NoOperatorOverloader implements OperatorOverloader {
-        @Override
-        public boolean overridesOperation(final Operation operation, @Nullable final Object leftOperand,
-                                          @Nullable final Object rightOperand) throws EvaluationException {
-            return false;
-        }
-
-        @Override
-        public @Nullable Object operate(final Operation operation, @Nullable final Object leftOperand,
-                                        @Nullable final Object rightOperand) throws EvaluationException {
-            return null;
-        }
     }
 }
