@@ -168,12 +168,12 @@ public class DefaultAuditPrincipalResolver implements PrincipalResolver {
                                                                @Nullable final Object returnValue,
                                                                @Nullable final Exception exception,
                                                                final AuthenticationTransaction authenticationTransaction) {
-        val authentications = authenticationTransaction.getAuthentications();
-        if (!authentications.isEmpty()) {
-            val principalId = auditPrincipalIdProvider.getPrincipalIdFrom(auditTarget, authentications.iterator().next(), returnValue, exception);
-            return StringUtils.defaultIfBlank(principalId, UNKNOWN_USER);
-        }
-        return UNKNOWN_USER;
+        return authenticationTransaction.getPrimaryAuthentication()
+            .map(authentication -> {
+                val principalId = auditPrincipalIdProvider.getPrincipalIdFrom(auditTarget, authentication, returnValue, exception);
+                return StringUtils.defaultIfBlank(principalId, UNKNOWN_USER);
+            })
+            .orElse(UNKNOWN_USER);
     }
 
     protected String getPrincipalFromRequestContext(final JoinPoint auditTarget, @Nullable final Object returnValue,
