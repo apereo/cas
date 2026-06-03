@@ -34,17 +34,18 @@ class OidcJsonWebKeyStoreJacksonDeserializerTests extends AbstractOidcTests {
 
     @Test
     void verifyMaliciousKeyId() {
-        System.clearProperty("casSpelInjectionProof");
         val key = OidcJsonWebKeyStoreUtils.generateJsonWebKey("rsa", 2048, OidcJsonWebKeyUsage.SIGNING);
         key.setKeyId("${T(java.lang.System).setProperty('casSpelInjectionProof','INJECTED')}");
         val keyset = new JsonWebKeySet(key).toJson(JsonWebKey.OutputControlLevel.INCLUDE_PRIVATE);
-        val parsed = MAPPER.readValue(keyset, JsonWebKeySet.class);
-        assertNotNull(parsed);
-        val service = getOidcRegisteredService(UUID.randomUUID().toString());
-        service.setJwks(parsed.toJson(JsonWebKey.OutputControlLevel.INCLUDE_PRIVATE));
-        OidcJsonWebKeyStoreUtils.getJsonWebKeySet(service, applicationContext,
-            Optional.of(OidcJsonWebKeyUsage.SIGNING));
-        assertNotEquals("INJECTED", System.getProperty("casSpelInjectionProof"));
+        assertThrows(IllegalArgumentException.class, () -> MAPPER.readValue(keyset, JsonWebKeySet.class));
+    }
+
+    @Test
+    void verifyMaliciousKeyIdInlined() {
+        val key = OidcJsonWebKeyStoreUtils.generateJsonWebKey("rsa", 2048, OidcJsonWebKeyUsage.SIGNING);
+        key.setKeyId("ThisIsMyKey-${T(java.lang.System).setProperty('casSpelInjectionProof','INJECTED')}");
+        val keyset = new JsonWebKeySet(key).toJson(JsonWebKey.OutputControlLevel.INCLUDE_PRIVATE);
+        assertThrows(IllegalArgumentException.class, () -> MAPPER.readValue(keyset, JsonWebKeySet.class));
     }
 
 }
