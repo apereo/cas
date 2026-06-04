@@ -1342,32 +1342,42 @@ function createRegisteredServiceAccessStrategy() {
         title: "Specifies the URL to redirect to when access is unauthorized."
     });
 
-    createMappedInputField({
-        cssClasses: "DefaultRegisteredServiceAccessStrategy GrouperRegisteredServiceAccessStrategy ScimRegisteredServiceAccessStrategy",
-        header: "Required Attributes",
-        containerId: "editServiceWizardMenuItemAccessStrategy",
-        keyField: "registeredServiceAccessStrategyReqAttrName",
-        keyLabel: "Attribute Name",
-        valueField: "registeredServiceAccessStrategyReqAttrValue",
-        valueLabel: "Attribute Value",
-        containerField: "accessStrategy.requiredAttributes",
-        multipleValues: true,
-        multipleValuesType: "java.util.HashSet"
-    });
+    CasDiscoveryProfile.fetchIfNeeded()
+        .done(async () => {
+            const options = CasDiscoveryProfile.availableAttributes().map(attr => ({
+                value: attr,
+                text: attr
+            }));
+            createMappedInputField({
+                cssClasses: "DefaultRegisteredServiceAccessStrategy GrouperRegisteredServiceAccessStrategy ScimRegisteredServiceAccessStrategy",
+                header: "Required Attributes",
+                containerId: "registeredServiceAccessStrategyUnauthorizedRedirectUrlFieldContainer",
+                keyField: "registeredServiceAccessStrategyReqAttrName",
+                keyLabel: "Attribute Name",
+                valueField: "registeredServiceAccessStrategyReqAttrValue",
+                valueLabel: "Attribute Value",
+                containerField: "accessStrategy.requiredAttributes",
+                multipleValues: true,
+                multipleValuesType: "java.util.HashSet",
+                autoComplete: options,
+                inclusion: "after"
+            });
 
-    createMappedInputField({
-        cssClasses: "DefaultRegisteredServiceAccessStrategy",
-        header: "Rejected Attributes",
-        containerId: "editServiceWizardMenuItemAccessStrategy",
-        keyField: "registeredServiceAccessStrategyRejectedAttrName",
-        keyLabel: "Attribute Name",
-        valueField: "registeredServiceAccessStrategyRejectedAttrValue",
-        valueLabel: "Attribute Value",
-        containerField: "accessStrategy.rejectedAttributes",
-        multipleValues: true,
-        multipleValuesType: "java.util.HashSet"
-    });
-
+            createMappedInputField({
+                cssClasses: "DefaultRegisteredServiceAccessStrategy",
+                header: "Rejected Attributes",
+                containerId: "registeredServiceAccessStrategyUnauthorizedRedirectUrlFieldContainer",
+                keyField: "registeredServiceAccessStrategyRejectedAttrName",
+                keyLabel: "Attribute Name",
+                valueField: "registeredServiceAccessStrategyRejectedAttrValue",
+                valueLabel: "Attribute Value",
+                containerField: "accessStrategy.rejectedAttributes",
+                multipleValues: true,
+                multipleValuesType: "java.util.HashSet",
+                autoComplete: options,
+                inclusion: "after"
+            });
+        });
 
     createInputField({
         cssClasses: "hide OpenFGARegisteredServiceAccessStrategy",
@@ -2721,12 +2731,13 @@ function createMappedInputField(config) {
        $(`#${inputFieldKeyId}`).autocomplete({
            delay: 0,
            source: autoComplete,
+           open: function( event, ui ) {
+                cas.attachFields();
+           },
            select: function (event, ui) {
-               $(this)
-                   .val(ui.item.value)
-                   .trigger("input")
-                   .trigger("change");
-               return false;
+                $(this).val(ui.item.value);
+                cas.attachFields();
+                return false;
            }
        });
     }

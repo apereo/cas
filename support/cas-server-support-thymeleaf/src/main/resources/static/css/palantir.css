@@ -257,3 +257,25 @@ select + span[role="combobox"] {
     font-family: var(--mdc-typography-font-family) !important;
 }
 
+.ui-autocomplete {
+    max-height: 250px;
+    overflow-y: auto;
+    overflow-x: hidden;
+    border: none;
+    background: #c5dff0 !important;
+    font-family: var(--mdc-typography-font-family) !important;
+    font-size: small !important;
+    z-index: 9999;
+}
+
+.ui-autocomplete .ui-menu-item-wrapper {
+    padding: 8px 12px;
+    cursor: pointer;
+}
+
+.ui-autocomplete .ui-menu-item-wrapper.ui-state-active {
+    background: var(--mdc-theme-primary);
+    color: whitesmoke;
+    border: none;
+}
+

@@ -43,6 +43,10 @@ async function initializeHotKeyOperations() {
                 event.preventDefault();
                 $("#newTenantButton:visible").click();
             }
+            if (currentActiveTab === Tabs.APPLICATIONS.index) {
+                event.preventDefault();
+                openRegisteredServiceWizardDialog();
+            }
             
             break;
         default:
