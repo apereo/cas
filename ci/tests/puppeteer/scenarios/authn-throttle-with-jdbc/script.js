@@ -2,6 +2,10 @@
 const cas = require("../../cas.js");
 
 (async () => {
+    await cas.updateLogLevel([{
+        "package": "org.apereo.cas.throttle",
+        "level": "DEBUG"
+    }]);
     await cas.doDelete("https://localhost:8443/cas/actuator/throttles?clear=true");
 
     const browser = await cas.newBrowser(cas.browserOptions());

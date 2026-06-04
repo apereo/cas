@@ -472,6 +472,16 @@ exports.attributeValue = async (page, selector, attribute, expectedValue = undef
     return value;
 };
 
+exports.updateLogLevel = async(payload) => {
+    for (const request of payload) {
+        const body = {
+            configuredLevel: request.level
+        }
+        await this.doRequest(`https://localhost:8443/cas/actuator/loggers/${request.package}`, "POST",
+            {"Content-Type": "application/json"}, 204, JSON.stringify(body, undefined, 2))
+    }
+}
+
 exports.startHar = async (page, harPath = "network.har") => {
     const har = new PuppeteerHar(page);
     await har.start({path: harPath});
