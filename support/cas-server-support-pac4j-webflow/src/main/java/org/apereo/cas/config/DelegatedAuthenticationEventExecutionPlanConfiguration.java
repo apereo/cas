@@ -25,6 +25,7 @@ import org.apereo.cas.configuration.support.Beans;
 import org.apereo.cas.configuration.support.JpaBeans;
 import org.apereo.cas.discovery.CasServerProfileCustomizer;
 import org.apereo.cas.logout.LogoutExecutionPlanConfigurer;
+import org.apereo.cas.logout.LogoutRedirectionStrategy;
 import org.apereo.cas.multitenancy.TenantExtractor;
 import org.apereo.cas.pac4j.TicketRegistrySessionStore;
 import org.apereo.cas.pac4j.client.DelegatedClientNameExtractor;
@@ -50,6 +51,8 @@ import org.apereo.cas.util.spring.beans.BeanSupplier;
 import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
 import org.apereo.cas.web.DelegatedClientAuthenticationDistributedSessionCookieCipherExecutor;
 import org.apereo.cas.web.cookie.CasCookieBuilder;
+import org.apereo.cas.web.flow.logout.DelegatedAuthenticationLogoutRedirectionStrtategy;
+import org.apereo.cas.web.support.ArgumentExtractor;
 import org.apereo.cas.web.support.CookieUtils;
 import org.apereo.cas.web.support.mgmr.DefaultCasCookieValueManager;
 import org.apereo.cas.web.support.mgmr.DefaultCookieSameSitePolicy;
@@ -405,12 +408,25 @@ class DelegatedAuthenticationEventExecutionPlanConfiguration {
     static class DelegatedAuthenticationEventExecutionPlanLogoutConfiguration {
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+        @ConditionalOnMissingBean(name = "delegatedAuthenticationLogoutRedirectionStrtategy")
+        public DelegatedAuthenticationLogoutRedirectionStrtategy delegatedAuthenticationLogoutRedirectionStrtategy(
+            @Qualifier(ArgumentExtractor.BEAN_NAME) final ArgumentExtractor argumentExtractor) {
+            return new DelegatedAuthenticationLogoutRedirectionStrtategy(argumentExtractor);
+        }
+        
+        
+        @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @ConditionalOnMissingBean(name = "delegatedAuthenticationLogoutExecutionPlanConfigurer")
         public LogoutExecutionPlanConfigurer delegatedAuthenticationLogoutExecutionPlanConfigurer(
+            @Qualifier("delegatedAuthenticationLogoutRedirectionStrtategy")
+            final LogoutRedirectionStrategy delegatedAuthenticationLogoutRedirectionStrtategy,
             final CasConfigurationProperties casProperties,
             @Qualifier("delegatedClientDistributedSessionStore")
             final SessionStore delegatedClientDistributedSessionStore) {
             return plan -> {
+                plan.registerLogoutRedirectionStrategy(delegatedAuthenticationLogoutRedirectionStrtategy);
+
                 val replicate = casProperties.getAuthn().getPac4j().getCore().getSessionReplication().isReplicateSessions();
                 if (replicate) {
                     plan.registerLogoutPostProcessor(ticketGrantingTicket -> {

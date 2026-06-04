@@ -147,7 +147,11 @@ exports.log = async (text, ...args) => {
     LOGGER.debug(`🔷 ${colors.blue(toLog)}`, args);
 };
 
-exports.separator = async () => console.log("*".repeat(100));
+exports.separator = async (count = 1) => {
+    for (let i = 0; i < count; i++) {
+        console.log("*".repeat(100));
+    }
+}
 
 exports.logy = async (text) => {
     const toLog = inspect(text);
@@ -1085,7 +1089,7 @@ exports.extractFromEmail = async (browser) => {
 
 exports.waitForNavigation = async (page) => page.waitForNavigation();
 
-exports.goto = async (page, url, retryCount = 5) => {
+exports.goto = async (page, url, retryCount = 1) => {
     let response = null;
     let attempts = 0;
     const timeout = 2000;

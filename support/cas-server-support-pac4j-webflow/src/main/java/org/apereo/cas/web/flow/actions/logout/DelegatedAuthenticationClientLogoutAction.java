@@ -101,7 +101,8 @@ public class DelegatedAuthenticationClientLogoutAction extends BaseCasWebflowAct
 
     protected DelegatedAuthenticationClientLogoutRequest captureDelegatedAuthenticationLogoutRequest(
         final RequestContext requestContext, final RedirectionAction action, final String targetUrl) {
-        val logoutActionBuilder = DelegatedAuthenticationClientLogoutRequest.builder()
+        val logoutActionBuilder = DelegatedAuthenticationClientLogoutRequest
+            .builder()
             .status(action.getCode())
             .message(action.getMessage())
             .target(targetUrl);
@@ -113,13 +114,14 @@ public class DelegatedAuthenticationClientLogoutAction extends BaseCasWebflowAct
         return logoutAction;
     }
 
-    protected UserProfile findCurrentProfile(final JEEContext webContext) {
+    protected @Nullable UserProfile findCurrentProfile(final JEEContext webContext) {
         val pm = new ProfileManager(webContext, this.sessionStore);
         val profile = pm.getProfile();
         return profile.orElse(null);
     }
 
-    protected Optional<? extends Client> findCurrentClient(final UserProfile currentProfile, final WebContext context) {
+    protected Optional<? extends Client> findCurrentClient(final @Nullable UserProfile currentProfile,
+                                                           final WebContext context) {
         return currentProfile == null
             ? Optional.empty()
             : identityProviders.findClient(currentProfile.getClientName(), context);
