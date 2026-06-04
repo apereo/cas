@@ -2,6 +2,8 @@
 const cas = require("../../cas.js");
 
 (async () => {
+    await cas.doDelete("https://localhost:8443/cas/actuator/throttles?clear=true");
+    
     let browser = await cas.newBrowser(cas.browserOptions());
     let page = await cas.newPage(browser);
 
