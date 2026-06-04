@@ -97,8 +97,7 @@ public class OidcDynamicClientRegistrationEndpointController extends BaseOidcCon
             return new ResponseEntity<>(clientResponse, HttpStatus.CREATED);
         } catch (final Throwable e) {
             LoggingUtils.error(LOGGER, e);
-            val map = OAuth20Utils.getErrorResponseBody("invalid_client_metadata",
-                StringUtils.defaultIfBlank(e.getMessage(), "None"));
+            val map = OAuth20Utils.getErrorResponseBody("invalid_client_metadata", "Invalid client metadata provided");
             return new ResponseEntity<>(map, HttpStatus.BAD_REQUEST);
         }
     }

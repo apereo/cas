@@ -35,4 +35,11 @@ class OidcJsonWebKeyStoreJacksonDeserializerTests extends AbstractOidcTests {
         assertNotNull(MAPPER.readValue(keyset, JsonWebKeySet.class));
     }
 
+    @Test
+    void verifyMaliciousKeyIdInlined() {
+        val key = OidcJsonWebKeyStoreUtils.generateJsonWebKey("rsa", 2048, OidcJsonWebKeyUsage.SIGNING);
+        key.setKeyId("ThisIsMyKey-${T(java.lang.System).setProperty('casSpelInjectionProof','INJECTED')}");
+        val keyset = new JsonWebKeySet(key).toJson(JsonWebKey.OutputControlLevel.INCLUDE_PRIVATE);
+        assertThrows(IllegalArgumentException.class, () -> MAPPER.readValue(keyset, JsonWebKeySet.class));
+    }
 }
