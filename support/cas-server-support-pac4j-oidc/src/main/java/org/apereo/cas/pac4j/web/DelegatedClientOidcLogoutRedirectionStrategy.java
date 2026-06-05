@@ -12,9 +12,9 @@ import lombok.RequiredArgsConstructor;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.pac4j.jee.context.JEEContext;
+import org.pac4j.oidc.client.OidcClient;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import org.pac4j.oidc.client.OidcClient;
 
 /**
  * This is {@link DelegatedClientOidcLogoutRedirectionStrategy}.

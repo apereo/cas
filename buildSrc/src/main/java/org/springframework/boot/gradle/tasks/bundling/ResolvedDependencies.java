@@ -1,5 +1,6 @@
 package org.springframework.boot.gradle.tasks.bundling;
 
+import org.springframework.boot.loader.tools.LibraryCoordinates;
 import org.gradle.api.Project;
 import org.gradle.api.artifacts.component.ComponentArtifactIdentifier;
 import org.gradle.api.artifacts.component.ModuleComponentIdentifier;
@@ -9,7 +10,6 @@ import org.gradle.api.provider.ListProperty;
 import org.gradle.api.provider.Provider;
 import org.gradle.api.tasks.Classpath;
 import org.gradle.api.tasks.Input;
-import org.springframework.boot.loader.tools.LibraryCoordinates;
 
 import java.io.File;
 import java.util.List;
@@ -23,8 +23,10 @@ import java.util.Set;
  * build and reading each project's {@code group} and {@code version}. CAS uses a
  * single group and version for all included projects, so project dependency
  * coordinates can be derived from Gradle properties and the dependency's path.
+ * @author Misagh Moayyed
  * @see <a href="https://github.com/spring-projects/spring-boot/issues/43755">Spring Boot issue</a>
  * @see <a href="https://github.com/gradle/gradle/issues/31973">Gradle issue</a>
+ * @since 8.0.0
  */
 public final class ResolvedDependencies {
     private final String projectGroup;
@@ -52,6 +54,11 @@ public final class ResolvedDependencies {
         return this.artifactFiles;
     }
 
+    /**
+     * Resolved artifacts.
+     *
+     * @param resolvedArtifacts the resolved artifacts
+     */
     public void resolvedArtifacts(final Provider<Set<ResolvedArtifactResult>> resolvedArtifacts) {
         this.artifactFiles.addAll(
             resolvedArtifacts.map(artifacts -> artifacts.stream().map(ResolvedArtifactResult::getFile).toList()));
@@ -59,6 +66,12 @@ public final class ResolvedDependencies {
             resolvedArtifacts.map(artifacts -> artifacts.stream().map(ResolvedArtifactResult::getId).toList()));
     }
 
+    /**
+     * Find dependency descriptor.
+     *
+     * @param file the file
+     * @return the dependency descriptor
+     */
     public DependencyDescriptor find(final File file) {
         var id = findArtifactIdentifier(file);
         if (id == null) {

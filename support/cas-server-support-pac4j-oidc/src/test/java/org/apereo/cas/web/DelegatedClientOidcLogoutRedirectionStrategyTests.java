@@ -37,7 +37,7 @@ import static org.junit.jupiter.api.Assertions.*;
         "cas.authn.pac4j.oidc[0].google.discovery-uri=https://localhost:8443/.well-known/openid-configuration"
     })
 @Tag("Delegation")
-class DelegatedClientOidcLogoutRedirectionStrategy {
+class DelegatedClientOidcLogoutRedirectionStrategyTests {
     @Autowired
     @Qualifier("delegatedOidcLogoutRedirectionStrategy")
     private LogoutRedirectionStrategy delegatedOidcLogoutRedirectionStrategy;
