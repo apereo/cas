@@ -2,10 +2,10 @@ const assert = require("assert");
 const cas = require("../../cas.js");
 
 async function exerciseFlow(page, service) {
-    await cas.log(`Running the flow with service ${service}`)
+    await cas.log(`Running the flow with service ${service}`);
 
     await cas.goto(page, "http://localhost:8988/realms/cas/protocol/openid-connect/logout");
-    await cas.sleep()
+    await cas.sleep();
     await cas.click(page, "#kc-logout");
     await page.waitForNavigation();
     await cas.sleep();
@@ -39,7 +39,7 @@ async function exerciseFlow(page, service) {
     await cas.assertCookie(page);
     await cas.separator();
 
-    await cas.log("Logging out of CAS...")
+    await cas.log("Logging out of CAS...");
     await cas.sleep(2000);
     await cas.gotoLogout(page, service);
     await cas.sleep(2000);

@@ -11,7 +11,7 @@
     "--cas.authn.throttle.schedule.enabled=false",
 
     "--cas.authn.throttle.failure.threshold=2",
-    "--cas.authn.throttle.failure.range-seconds=20",
+    "--cas.authn.throttle.failure.range-seconds=60",
     "--cas.authn.throttle.failure.code=AUTHENTICATION_FAILED"
 
   ]

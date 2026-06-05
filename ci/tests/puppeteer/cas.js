@@ -1099,7 +1099,7 @@ exports.extractFromEmail = async (browser) => {
 
 exports.waitForNavigation = async (page) => page.waitForNavigation();
 
-exports.goto = async (page, url, retryCount = 1) => {
+exports.goto = async (page, url, retryCount = 3) => {
     let response = null;
     let attempts = 0;
     const timeout = 2000;
@@ -1109,7 +1109,7 @@ exports.goto = async (page, url, retryCount = 1) => {
         attempts += 1;
         try {
             if (!navigated) {
-                await this.logg(`Navigating to: ${url}`);
+                await this.logg(`Navigating to ${url}`);
                 response = await page.goto(url, {
                     waitUntil: "domcontentloaded"
                 });

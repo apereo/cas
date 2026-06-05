@@ -57,6 +57,7 @@ FileUtils.rm_r("#{TARGET_DIRECTORY}/assets") if File.exist?("#{TARGET_DIRECTORY}
 FileUtils.rm_r("#{TARGET_DIRECTORY}/images") if File.exist?("#{TARGET_DIRECTORY}/images")
 FileUtils.rm_r("#{TARGET_DIRECTORY}/javascripts") if File.exist?("#{TARGET_DIRECTORY}/javascripts")
 FileUtils.rm_r("#{TARGET_DIRECTORY}/stylesheets") if File.exist?("#{TARGET_DIRECTORY}/stylesheets")
+FileUtils.rm_f(Dir.glob("#{TARGET_DIRECTORY}/developer/Release-Process-*.html'))
 
 # Copy project documentation
 puts "Copying #{SOURCE_DIRECTORY} to #{TARGET_DIRECTORY}"
