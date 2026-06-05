@@ -1164,6 +1164,13 @@ exports.gotoLogout = async (page, service = undefined, port = 8443) => {
     return this.goto(page, url);
 };
 
+exports.keycloakLogout = async(page) => {
+    await this.goto(page, "http://localhost:8988/realms/cas/protocol/openid-connect/logout");
+    await this.click(page, "#kc-logout");
+    await page.waitForNavigation();
+    await this.sleep();
+}
+
 exports.gotoLogoutForTenant = async (page, tenant, service = undefined, port = 8443) => {
     const url = `https://localhost:${port}/cas/tenants/${tenant}/logout${service === undefined ? "" : `?service=${service}`}`;
     return this.goto(page, url);

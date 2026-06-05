@@ -25,4 +25,6 @@ public class DelegatedAuthenticationClientLogoutRequest implements Serializable 
     private final String location;
 
     private final String target;
+
+    private final String clientName;
 }

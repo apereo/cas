@@ -88,7 +88,7 @@ public class DelegatedAuthenticationClientLogoutAction extends BaseCasWebflowAct
                 val callContext = new CallContext(context, sessionStore);
                 val actionResult = client.getLogoutAction(callContext, currentProfile, targetUrl);
                 actionResult.ifPresent(action -> {
-                    captureDelegatedAuthenticationLogoutRequest(requestContext, action, targetUrl);
+                    captureDelegatedAuthenticationLogoutRequest(requestContext, action, client, targetUrl);
                     LOGGER.debug("Adapting logout action [{}] for client [{}]", action, client);
                     JEEHttpActionAdapter.INSTANCE.adapt(action, context);
                 });
@@ -100,9 +100,11 @@ public class DelegatedAuthenticationClientLogoutAction extends BaseCasWebflowAct
     }
 
     protected DelegatedAuthenticationClientLogoutRequest captureDelegatedAuthenticationLogoutRequest(
-        final RequestContext requestContext, final RedirectionAction action, final String targetUrl) {
+        final RequestContext requestContext, final RedirectionAction action,
+        final Client client, @Nullable final String targetUrl) {
         val logoutActionBuilder = DelegatedAuthenticationClientLogoutRequest
             .builder()
+            .clientName(client.getName())
             .status(action.getCode())
             .message(action.getMessage())
             .target(targetUrl);

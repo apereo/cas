@@ -4,11 +4,7 @@ const cas = require("../../cas.js");
 async function exerciseFlow(page, service) {
     await cas.log(`Running the flow with service ${service}`);
 
-    await cas.goto(page, "http://localhost:8988/realms/cas/protocol/openid-connect/logout");
-    await cas.sleep();
-    await cas.click(page, "#kc-logout");
-    await page.waitForNavigation();
-    await cas.sleep();
+    await cas.keycloakLogout(page);
     await cas.gotoLogout(page);
 
     await cas.gotoLogin(page, service);
