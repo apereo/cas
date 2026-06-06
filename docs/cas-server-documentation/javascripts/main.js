@@ -196,13 +196,12 @@ function navigateSidebar() {
 }
 
 function toggleDarkMode() {
-    let theme = $("html").attr("data-bs-theme");
+    const theme = $("html").attr("data-bs-theme");
     console.log(`Current theme: ${theme}`);
-    if (theme === "dark") {
-      $("html").attr('data-bs-theme', 'light');
-    } else {
-      $("html").attr('data-bs-theme', 'dark');
-    }
+    const newTheme = theme === "dark" ? "light" : "dark";
+    $("html").attr('data-bs-theme', newTheme);
+    localStorage.setItem('cas-docs-theme', newTheme);
+    console.log(`New theme: ${newTheme}`);
 }
 
 function generateToolbarIcons() {
