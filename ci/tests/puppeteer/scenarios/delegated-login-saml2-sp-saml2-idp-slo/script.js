@@ -3,20 +3,30 @@ const cas = require("../../cas.js");
 const path = require("path");
 
 (async () => {
+    await cas.updateLogLevel([{
+        "package": "org.springframework.webflow",
+        "level": "DEBUG"
+    }]);
+    
     const browser = await cas.newBrowser(cas.browserOptions());
     const page = await cas.newPage(browser);
+
+    const har = await cas.startHar(page);
+    await cas.keycloakLogout(page);
+    await cas.gotoLogout(page);
+    await cas.doRequest("https://localhost:8443/cas/sp/metadata", "GET", {}, 200);
+    await cas.doRequest("https://localhost:8443/cas/sp/idp/metadata", "GET", {}, 200);
 
     const service = "https://localhost:8989/realms/cas/account";
     await cas.goto(page, service);
     await cas.sleep(1000);
-    await cas.doRequest("https://localhost:8443/cas/sp/metadata", "GET", {}, 200);
-    await cas.doRequest("https://localhost:8443/cas/sp/idp/metadata", "GET", {}, 200);
-
+    await cas.log("Logging into Keycloak using CAS as external SAML2 identity proviver...");
     await cas.sleep(1000);
     await cas.click(page, "#social-saml");
     await cas.sleep(3000);
     await cas.assertVisibility(page, "li #SAML2Client");
 
+    await cas.log("Logging into CAS using an external SAML2 identity proviver...");
     await cas.click(page, "li #SAML2Client");
     await cas.waitForNavigation(page);
     await cas.loginWith(page, "user1", "password");
@@ -36,12 +46,11 @@ const path = require("path");
     await cas.sleep(1000);
 
     await cas.goto(page, service);
-    await cas.sleep(1000);
-    await cas.logb("Logging out...");
+    await cas.logb("Logging out of Keycloak...");
     await cas.click(page, "button.pf-v5-c-menu-toggle");
     await cas.sleep(1000);
     await cas.click(page, "button[role=menuitem]");
-    await cas.sleep(5000);
+    await cas.sleep(3000);
     await cas.logPage(page);
 
     await cas.assertPageUrlStartsWith(page, "https://localhost:8989/realms/cas");
@@ -52,6 +61,7 @@ const path = require("path");
     await cas.gotoLogin(page);
     await cas.assertCookie(page, false);
 
+    await cas.stopHar(har);
     await cas.removeDirectoryOrFile(path.join(__dirname, "/saml-md"));
     await cas.closeBrowser(browser);
 })();
