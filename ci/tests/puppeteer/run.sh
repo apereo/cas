@@ -38,6 +38,7 @@ NATIVE_RUN="false"
 BUILD_SPAWN="background"
 QUIT_QUIETLY="false"
 DISABLE_LINTER="false"
+JFR_ARGS=""
 
 function printcyan() {
   printf "🔷 ${CYAN}$1${ENDCOLOR}\n"
@@ -178,6 +179,14 @@ function fetchCasVersion() {
 function parseArguments() {
   while (("$#")); do
     case "$1" in
+    --jfr)
+      JFR_ARGS="-DCAS_APP_STARTUP=jfr -XX:StartFlightRecording:filename=startup-$(date +%Y%m%d-%H%M%S).jfr,duration=90s,settings=profile,disk=true,dumponexit=true"
+      shift 1
+      ;;
+    --qq)
+      QUIT_QUIETLY="true"
+      shift 1
+      ;;
     --nbr)
       NATIVE_RUN="true"
       NATIVE_BUILD="true"
@@ -955,12 +964,16 @@ ${BUILD_SCRIPT:+ $BUILD_SCRIPT}${DAEMON:+ $DAEMON} \
               printgreen "The scenario ${scenarioName} will run with AOT"
               rm -rf ${PWD}/cas 2>/dev/null
               printcyan "Extracting CAS to ${PWD}/cas"
-              java ${runArgs//suspend=y/suspend=n} -Djarmode=tools -jar "$PWD"/cas.${projectType} extract >/dev/null 2>&1
+              aotArgs=${runArgs//suspend=y/suspend=n}
+              aotArgs=${aotArgs//address=*:$DEBUG_PORT/address=*:15555}
+              java ${aotArgs} -Djarmode=tools -jar "$PWD"/cas.${projectType} extract >/dev/null 2>&1
               printcyan "Launching CAS from ${PWD}/cas/cas.${projectType} to perform a training run"
-              java ${runArgs//suspend=y/suspend=n} -XX:AOTCacheOutput=${PWD}/cas/cas.aot -Dspring.context.exit=onRefresh -jar ${PWD}/cas/cas.${projectType} >/dev/null 2>&1
+              java ${aotArgs} -XX:AOTCacheOutput=${PWD}/cas/cas.aot -Dspring.context.exit=onRefresh -jar ${PWD}/cas/cas.${projectType} >/dev/null 2>&1
               printcyan "Generated archive cache file ${PWD}/cas/cas.aot"
               runArgs="${runArgs} -XX:AOTCache=${PWD}/cas/cas.aot"
               casArtifactToRun="${PWD}/cas/cas.${projectType}"
+              rm -Rf ${PWD}/*.jfr
+              sleep 6
             else
               printcyan "The scenario ${scenarioName} will run without AOT"
             fi
@@ -979,8 +992,10 @@ ${BUILD_SCRIPT:+ $BUILD_SCRIPT}${DAEMON:+ $DAEMON} \
                 --cas.audit.slf4j.use-single-line=true \
                 ${properties}
             else
+              rm -Rf ${PWD}/*.jfr
               printcyan "Launching CAS instance #${c} under port ${serverPort} from ${casArtifactToRun}"
               java ${runArgs} \
+                ${JFR_ARGS} \
                 -Dlog.console.stacktraces=true \
                 $systemProperties \
                 -jar "${casArtifactToRun}" \
@@ -1137,7 +1152,12 @@ ${BUILD_SCRIPT:+ $BUILD_SCRIPT}${DAEMON:+ $DAEMON} \
 
     for p in "${processIds[@]}"; do
       printgreen "Killing CAS process ${p}..."
-      kill -9 "$p" >/dev/null 2>&1 || true
+
+      if [[ -z ${JFR_ARGS} ]]; then
+        kill -9 "$p" >/dev/null 2>&1 || true
+      else
+        kill "$p" >/dev/null 2>&1 || true
+      fi
     done
 
     if [[ "${serverType:-external}" == "external" ]]; then

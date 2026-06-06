@@ -67,7 +67,7 @@ docker volume inspect samba_tls 2> /dev/null | grep samba_tls > /dev/null
 if [[ $? -ne 0 ]] ; then
     docker volume create samba_tls
     # running openssl in container b/c command has options requiring version > 1.1.1
-    docker run --rm \
+    docker run --quiet  --rm \
         --mount "type=volume,source=samba_tls,destination=/etc/samba/tls" \
         --entrypoint openssl ${IMAGE_NAME} \
         req -x509 -sha256 \
@@ -87,7 +87,7 @@ docker volume create samba_conf
 # Having complexity enabled could be used to test handling for password change errors
 # Currently allowing INSECURELDAP so JndiProvider can be tested until JDK-8217606 is fixed
 # This container only exposes LDAP related ports but container also does kerberos, etc
-docker run --rm --detach \
+docker run --quiet  --rm --detach \
     -e "DOMAIN=${ORG}.${DOMAIN}" \
     -e "DOMAINPASS=${DOMAINPASS}" \
     -e "DNSFORWARDER=NONE" \

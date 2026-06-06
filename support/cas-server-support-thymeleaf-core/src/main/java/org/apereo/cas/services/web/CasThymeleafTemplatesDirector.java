@@ -10,6 +10,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.jspecify.annotations.Nullable;
+import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.webflow.execution.RequestContextHolder;
 import org.thymeleaf.context.WebEngineContext;
 import org.thymeleaf.util.EvaluationUtils;
@@ -22,9 +23,9 @@ import org.thymeleaf.util.EvaluationUtils;
  */
 @RequiredArgsConstructor
 public class CasThymeleafTemplatesDirector {
-    private final CasWebflowExecutionPlan webflowExecutionPlan;
-    private final ThemeResolver themeResolver;
-    private final ThemeSource themeSource;
+    private final ObjectProvider<CasWebflowExecutionPlan> webflowExecutionPlan;
+    private final ObjectProvider<ThemeResolver> themeResolver;
+    private final ObjectProvider<ThemeSource> themeSource;
 
     /**
      * Gets the URL external form supplemented by a question mark or an ampersand.
@@ -58,7 +59,7 @@ public class CasThymeleafTemplatesDirector {
      */
     public boolean isLoginFormViewable(final WebEngineContext vars) {
         val requestContext = RequestContextHolder.getRequestContext();
-        val providers = webflowExecutionPlan.getWebflowLoginContextProviders();
+        val providers = webflowExecutionPlan.getObject().getWebflowLoginContextProviders();
         return requestContext != null
             && (WebUtils.isCasLoginFormViewable(requestContext) || providers.isEmpty()
             || providers.stream().noneMatch(provider -> provider.isLoginFormViewable(requestContext)));
@@ -72,7 +73,7 @@ public class CasThymeleafTemplatesDirector {
      */
     public boolean isLoginFormUsernameInputVisible(final WebEngineContext vars) {
         val requestContext = RequestContextHolder.getRequestContext();
-        val providers = webflowExecutionPlan.getWebflowLoginContextProviders();
+        val providers = webflowExecutionPlan.getObject().getWebflowLoginContextProviders();
         return requestContext != null
             && (WebUtils.isCasLoginFormViewable(requestContext) || providers.isEmpty()
             || providers.stream().anyMatch(provider -> provider.isLoginFormUsernameInputVisible(requestContext)));
@@ -88,7 +89,7 @@ public class CasThymeleafTemplatesDirector {
         val requestContext = RequestContextHolder.getRequestContext();
         return requestContext == null || !WebUtils.isCasLoginFormViewable(requestContext)
             || WebUtils.isGraphicalUserAuthenticationEnabled(requestContext)
-            || webflowExecutionPlan.getWebflowLoginContextProviders()
+            || webflowExecutionPlan.getObject().getWebflowLoginContextProviders()
             .stream()
             .anyMatch(provider -> provider.isLoginFormUsernameInputDisabled(requestContext));
     }
@@ -102,7 +103,7 @@ public class CasThymeleafTemplatesDirector {
     public String getLoginFormUsername(final WebEngineContext vars) {
         val context = RequestContextHolder.getRequestContext();
         if (context != null && WebUtils.isCasLoginFormViewable(context)) {
-            return webflowExecutionPlan.getWebflowLoginContextProviders()
+            return webflowExecutionPlan.getObject().getWebflowLoginContextProviders()
                 .stream()
                 .map(provider -> provider.getCandidateUsername(context))
                 .filter(Optional::isPresent)
@@ -145,8 +146,8 @@ public class CasThymeleafTemplatesDirector {
     public @Nullable String theme(final String code) {
         val request = HttpRequestUtils.getHttpServletRequestFromRequestAttributes();
         Objects.requireNonNull(request, "Http request cannot be null or undefined");
-        val themeName = themeResolver.resolveThemeName(request);
-        val theme = themeSource.getTheme(Objects.requireNonNull(themeName));
+        val themeName = themeResolver.getObject().resolveThemeName(request);
+        val theme = themeSource.getObject().getTheme(Objects.requireNonNull(themeName));
         Objects.requireNonNull(theme, "Theme cannot be null or undefined");
         return theme.getMessageSource().getMessage(code, null, StringUtils.EMPTY, request.getLocale());
     }

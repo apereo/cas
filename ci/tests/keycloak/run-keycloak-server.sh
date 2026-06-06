@@ -34,7 +34,7 @@ chmod 755 "$PWD"/ci/tests/keycloak/data/server.key
 
 #  -v "$PWD"/ci/tests/keycloak/data/data/h2:/opt/keycloak/data/h2 \
 
-docker run -d --rm --name keycloak \
+docker run --quiet  -d --rm --name keycloak \
   -p 8989:8443 -p 8988:8080 \
   -e KC_HTTPS_CERTIFICATE_FILE=/opt/keycloak/conf/server.crt \
   -e KC_HTTPS_CERTIFICATE_KEY_FILE=/opt/keycloak/conf/server.key \
