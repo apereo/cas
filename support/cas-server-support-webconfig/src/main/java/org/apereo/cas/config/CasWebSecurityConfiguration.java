@@ -191,10 +191,10 @@ class CasWebSecurityConfiguration {
         public SecurityFilterChain casWebSecurityConfigurerAdapter(
             final ConfigurableApplicationContext applicationContext,
             @Qualifier("securityContextRepository")
-            final SecurityContextRepository securityContextRepository,
+            final ObjectProvider<SecurityContextRepository> securityContextRepository,
             final HttpSecurity http,
             final ObjectProvider<PathMappedEndpoints> pathMappedEndpoints,
-            final List<CasWebSecurityConfigurer> configurersList,
+            final ObjectProvider<List<CasWebSecurityConfigurer>> configurersList,
             final WebEndpointProperties webEndpointProperties,
             final ManagementServerProperties managementServerProperties,
             final SecurityProperties securityProperties,
