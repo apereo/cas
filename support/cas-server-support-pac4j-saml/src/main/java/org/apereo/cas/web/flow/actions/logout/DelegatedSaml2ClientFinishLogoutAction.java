@@ -71,7 +71,7 @@ public class DelegatedSaml2ClientFinishLogoutAction extends BaseCasWebflowAction
             val context = new JEEContext(request, response);
 
             var clientName = DelegationWebflowUtils.getDelegatedAuthenticationClientName(requestContext);
-            if (clientName == null) {
+            if (StringUtils.isBlank(clientName)) {
                 clientName = requestContext.getRequestParameters().get(SamlProtocolConstants.PARAMETER_SAML_RELAY_STATE);
                 if (StringUtils.isNotBlank(clientName)) {
                     identityProviders.findClient(clientName, context)
