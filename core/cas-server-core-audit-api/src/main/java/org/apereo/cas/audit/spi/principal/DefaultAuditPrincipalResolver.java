@@ -173,7 +173,10 @@ public class DefaultAuditPrincipalResolver implements PrincipalResolver {
                 val principalId = auditPrincipalIdProvider.getPrincipalIdFrom(auditTarget, authentication, returnValue, exception);
                 return StringUtils.defaultIfBlank(principalId, UNKNOWN_USER);
             })
-            .orElse(UNKNOWN_USER);
+            .orElseGet(() -> {
+                val credentialId = authenticationTransaction.getPrimaryCredential().map(Credential::getId).orElse(UNKNOWN_USER);
+                return StringUtils.defaultIfBlank(credentialId, UNKNOWN_USER);
+            });
     }
 
     protected String getPrincipalFromRequestContext(final JoinPoint auditTarget, @Nullable final Object returnValue,

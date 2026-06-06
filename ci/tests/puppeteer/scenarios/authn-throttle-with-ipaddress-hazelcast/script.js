@@ -2,6 +2,11 @@
 const cas = require("../../cas.js");
 
 (async () => {
+    await cas.updateLogLevel([{
+        "package": "org.apereo.cas.throttle",
+        "level": "DEBUG"
+    }]);
+    
     let browser = await cas.newBrowser(cas.browserOptions());
     let page = await cas.newPage(browser);
 

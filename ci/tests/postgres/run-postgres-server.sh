@@ -17,7 +17,7 @@ docker build ci/tests/postgres/ -t cas/postgres:latest
 
 printgreen "Running Postgres docker container..."
 docker stop postgres-server || true >/dev/null 2>&1
-docker run --rm --name postgres-server --rm -e POSTGRES_PASSWORD=password -d -p 5432:5432 cas/postgres
+docker run --rm --quiet --name postgres-server --rm -e POSTGRES_PASSWORD=password -d -p 5432:5432 cas/postgres
 
 docker ps | grep "postgres-server"
 retVal=$?
@@ -29,7 +29,7 @@ else
 fi
 
 printgreen "Running TimescaleDB docker container..."
-docker run -d --rm --name timescaledb \
+docker run -d --quiet --rm --name timescaledb \
   -p 5433:5432 \
   -e POSTGRES_PASSWORD=password \
   -e POSTGRES_USER=postgres \
