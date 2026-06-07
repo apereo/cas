@@ -5,7 +5,6 @@ import org.apereo.cas.util.spring.RestActuatorControllerEndpoint;
 import org.apereo.cas.util.spring.RestActuatorEndpointDiscoverer;
 import org.apereo.cas.util.spring.RestActuatorEndpointHandlerMapping;
 import lombok.val;
-import org.jspecify.annotations.NonNull;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.actuate.autoconfigure.endpoint.web.CorsEndpointProperties;
