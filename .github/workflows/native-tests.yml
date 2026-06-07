@@ -32,12 +32,18 @@ env:
   NODE_CURRENT: '26.3.0'
   MAX_ATTEMPTS: 1
   RETRY_MINUTES: 20
-  SCENARIO_REGEX: ".*"
+  SCENARIO_REGEX: ${{ github.event.inputs.scenarioRegex || '.*' }}
 
 on:
 #  push:
 #    branches: [ master ]
   workflow_dispatch:
+    inputs:
+      scenarioRegex:
+        description: 'Regex used to select native test scenarios'
+        required: false
+        default: '.*'
+        type: string
   schedule:
     - cron: '0 10 */2 * *'
 
