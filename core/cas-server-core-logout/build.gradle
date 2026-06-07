@@ -1,6 +1,6 @@
 apply plugin: "org.apereo.cas.project-conventions"
 
-description = "Apereo CAS Core Logout"
+description = "Implements CAS logout behavior for local sessions and participating services."
 dependencies {
     api project(":api:cas-server-core-api-logout")
     

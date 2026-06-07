@@ -1,6 +1,6 @@
 apply plugin: "org.apereo.cas.project-conventions"
 
-description = "Apereo CAS Internet2 Grouper Integration"
+description = "Integrates Internet2 Grouper for group and membership data in CAS decisions."
 dependencies {
     api project(":api:cas-server-core-api-authentication")
     api project(":api:cas-server-core-api-webflow")

@@ -1,6 +1,6 @@
 apply plugin: "org.apereo.cas.project-conventions"
 
-description = "Apereo CAS X509 Webflow Support"
+description = "Adds browser login flow support for X.509 client certificate authentication."
 ext {
     publishMetadata = true
     projectMetadata = [

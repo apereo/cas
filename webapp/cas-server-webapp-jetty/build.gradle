@@ -10,7 +10,7 @@ ext {
     ]
 }
 apply plugin: "org.apereo.cas.war-conventions"
-description = "Apereo CAS Web Application via Jetty"
+description = "Builds a CAS web application packaged for Jetty-based deployments."
 
 dependencies {
     implementation libraries.springbootjetty

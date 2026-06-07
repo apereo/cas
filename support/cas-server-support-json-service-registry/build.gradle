@@ -1,6 +1,6 @@
 apply plugin: "org.apereo.cas.project-conventions"
 
-description = "Apereo CAS JSON Service Registry"
+description = "Stores registered service definitions in json for centralized CAS service management."
 ext {
     publishMetadata = true
     projectMetadata = [

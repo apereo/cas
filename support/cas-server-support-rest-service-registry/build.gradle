@@ -1,6 +1,6 @@
 apply plugin: "org.apereo.cas.project-conventions"
 
-description = "Apereo CAS RESTful Service Registry"
+description = "Stores registered service definitions in REST endpoints for centralized CAS service management."
 ext {
     publishMetadata = true
     projectMetadata = [

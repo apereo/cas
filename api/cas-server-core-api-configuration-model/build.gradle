@@ -3,7 +3,7 @@ apply plugin: "org.apereo.cas.project-conventions"
 import java.nio.file.Files
 import java.nio.file.StandardCopyOption
 
-description = "Apereo CAS Core Configuration Model"
+description = "Provides the CAS configuration property model used by documentation, metadata generation, and runtime configuration binding."
 def skipConfigurationMetadata = providers.systemProperty("skipNestedConfigMetadataGen").present
 
 sourceSets.test.resources.srcDirs += sourceSets.main.resources.srcDirs

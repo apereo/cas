@@ -1,6 +1,6 @@
 apply plugin: "org.apereo.cas.project-conventions"
 
-description = "Apereo CAS Passwordless Authentication Webflow Support"
+description = "Adds browser login flow screens for passwordless authentication."
 ext {
     publishMetadata = true
     projectMetadata = [

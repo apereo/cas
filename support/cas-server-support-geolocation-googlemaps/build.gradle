@@ -1,6 +1,6 @@
 apply plugin: "org.apereo.cas.project-conventions"
 
-description = "Apereo CAS GeoLocation Tracking Support"
+description = "Adds Google Maps geolocation lookup for contextual access decisions and audit data."
 ext {
     publishMetadata = true
     projectMetadata = [

@@ -1,6 +1,6 @@
 apply plugin: "org.apereo.cas.project-conventions"
 
-description = "Apereo CAS Core Authentication"
+description = "Implements the core authentication pipeline for validating credentials and producing authenticated principals."
 dependencies {
     api project(":api:cas-server-core-api-services")
     api project(":api:cas-server-core-api-ticket")

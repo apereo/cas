@@ -1,6 +1,6 @@
 apply plugin: "org.apereo.cas.project-conventions"
 
-description = "Apereo CAS SAML Identity Provider Metadata Support"
+description = "Manages SAML identity provider metadata used to sign, publish, and trust SAML integrations."
 dependencies {
     api project(":api:cas-server-core-api-scripting")
     api project(":api:cas-server-core-api-audit")

@@ -1,6 +1,6 @@
 apply plugin: "org.apereo.cas.project-conventions"
 
-description = "Apereo CAS Core Google Authenticator Support"
+description = "Provides shared Google Authenticator MFA behavior for time-based one-time password login flows."
 dependencies {
     api libraries.googleauth
     api libraries.zxingbarcode

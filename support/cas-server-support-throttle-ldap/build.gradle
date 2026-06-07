@@ -1,6 +1,6 @@
 apply plugin: "org.apereo.cas.project-conventions"
 
-description = "Apereo CAS LDAP Authentication Throttling"
+description = "Uses an LDAP directory to track authentication throttling state and slow abusive login attempts."
 ext {
     publishMetadata = true
     projectMetadata = [

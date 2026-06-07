@@ -1,6 +1,6 @@
 apply plugin: "org.apereo.cas.project-conventions"
 
-description = "Apereo CAS WebAuthN DynamoDb Support"
+description = "Stores WebAuthn/FIDO2 credential data in Amazon DynamoDB for passkey-based authentication."
 
 ext {
 

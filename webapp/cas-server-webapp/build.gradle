@@ -1,4 +1,4 @@
 apply plugin: "org.apereo.cas.project-conventions"
 
 apply plugin: "org.apereo.cas.war-conventions"
-description = "Apereo CAS Web Application"
+description = "Builds the standard CAS web application used as the base deployable server."

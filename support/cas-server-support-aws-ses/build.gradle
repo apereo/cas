@@ -1,6 +1,6 @@
 apply plugin: "org.apereo.cas.project-conventions"
 
-description = "Apereo CAS AWS Simple Email Service (SES) Support"
+description = "Sends CAS email messages through Amazon SES."
 ext {
     publishMetadata = true
     projectMetadata = [

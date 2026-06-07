@@ -1,6 +1,6 @@
 apply plugin: "org.apereo.cas.project-conventions"
 
-description = "Apereo CAS Configuration - HashiCorp Vault"
+description = "Loads CAS configuration from HashiCorp Vault so settings can be managed outside the application package."
 ext {
     publishMetadata = true
     projectMetadata = [

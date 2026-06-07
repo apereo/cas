@@ -1,6 +1,6 @@
 apply plugin: "org.apereo.cas.project-conventions"
 
-description = "Apereo CAS Inwebo MFA Support"
+description = "Adds Inwebo multifactor authentication for CAS login flows."
 ext {
     publishMetadata = true
     projectMetadata = [

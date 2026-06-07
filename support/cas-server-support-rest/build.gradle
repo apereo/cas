@@ -1,6 +1,6 @@
 apply plugin: "org.apereo.cas.project-conventions"
 
-description = "Apereo CAS REST Implementation"
+description = "Adds REST protocol support for CAS authentication, validation, and integration endpoints."
 ext {
     publishMetadata = true
     projectMetadata = [

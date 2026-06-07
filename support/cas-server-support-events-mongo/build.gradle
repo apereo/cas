@@ -1,6 +1,6 @@
 apply plugin: "org.apereo.cas.project-conventions"
 
-description = "Apereo CAS Events Consumer MongoDb"
+description = "Stores or publishes CAS events with MongoDB for operational processing and integrations."
 ext {
     publishMetadata = true
     projectMetadata = [

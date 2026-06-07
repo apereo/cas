@@ -1,6 +1,6 @@
 apply plugin: "org.apereo.cas.project-conventions"
 
-description = "Apereo CAS SAML Identity Provider Support"
+description = "Enables CAS to act as a SAML identity provider for SAML service providers."
 ext {
 
     publishMetadata = true

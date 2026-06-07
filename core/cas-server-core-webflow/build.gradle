@@ -1,6 +1,6 @@
 apply plugin: "org.apereo.cas.project-conventions"
 
-description = "Apereo CAS Core Webflow"
+description = "Implements the core browser login flow and related CAS interactions."
 dependencies {
     implementation libraries.jose4j
     implementation libraries.bouncycastle

@@ -1,6 +1,6 @@
 apply plugin: "org.apereo.cas.project-conventions"
 
-description = "Apereo CAS DynamoDb Ticket Registry"
+description = "Stores CAS tickets in Amazon DynamoDB for shared single sign-on state across server nodes."
 
 ext {
 

@@ -1,6 +1,6 @@
 apply plugin: "org.apereo.cas.project-conventions"
 
-description = "Apereo CAS Core Web APIs"
+description = "Defines web-layer contracts for CAS controllers, filters, and request handling."
 dependencies {
     api project(":api:cas-server-core-api-authentication")
 }

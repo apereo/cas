@@ -14,7 +14,7 @@ ext {
 
 apply plugin: "org.apereo.cas.spring-boot-conventions"
 
-description = "Apereo CAS Commandline Shell Support via Spring Shell"
+description = "Adds the CAS command-line shell for administrative and diagnostic operations."
 
 dependencies {
     api project(":api:cas-server-core-api-services")

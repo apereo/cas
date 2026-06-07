@@ -1,6 +1,6 @@
 apply plugin: "org.apereo.cas.project-conventions"
 
-description = "Apereo CAS Mailgun Support"
+description = "Sends CAS email messages through Mailgun."
 ext {
     publishMetadata = true
     projectMetadata = [

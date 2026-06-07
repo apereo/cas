@@ -1,6 +1,6 @@
 apply plugin: "org.apereo.cas.project-conventions"
 
-description = "Apereo CAS Open Rewrite Support"
+description = "Adds OpenRewrite recipes for maintaining and upgrading CAS overlays and customizations."
 
 tasks.register("createOpenRewriteRecipe") {
     def casVersion = project.version.toString().replaceAll(/-SNAPSHOT/, '')

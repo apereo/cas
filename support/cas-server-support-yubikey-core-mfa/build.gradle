@@ -1,6 +1,6 @@
 apply plugin: "org.apereo.cas.project-conventions"
 
-description = "Apereo CAS YubiKey Core Multifactor Authentication"
+description = "Provides shared YubiKey behavior for hardware-token authentication and MFA flows."
 dependencies {
     api project(":api:cas-server-core-api-util")
     

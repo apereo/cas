@@ -1,6 +1,6 @@
 apply plugin: "org.apereo.cas.project-conventions"
 
-description = "Apereo CAS OAuth Server API Support"
+description = "Defines shared OAuth provider contracts used by CAS OAuth features."
 dependencies {
     api project(":api:cas-server-core-api-throttle")
     api project(":api:cas-server-core-api-webflow")

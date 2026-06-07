@@ -1,6 +1,6 @@
 apply plugin: "org.apereo.cas.project-conventions"
 
-description = "Apereo CAS Heimdall Authorization Engine"
+description = "Integrates the Heimdall authorization engine for externalized access decisions."
 ext {
     publishMetadata = true
     projectMetadata = [

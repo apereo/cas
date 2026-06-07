@@ -1,6 +1,6 @@
 apply plugin: "org.apereo.cas.project-conventions"
 
-description = "Apereo CAS Notification/Interrupt Webflow"
+description = "Adds browser login flow support for interrupt notifications and required user actions."
 ext {
     publishMetadata = true
     projectMetadata = [

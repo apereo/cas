@@ -1,6 +1,6 @@
 apply plugin: "org.apereo.cas.project-conventions"
 
-description = "Apereo CAS Configuration - REST Support"
+description = "Loads CAS configuration from REST endpoints so settings can be managed outside the application package."
 ext {
     publishMetadata = true
     projectMetadata = [

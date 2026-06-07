@@ -1,6 +1,6 @@
 apply plugin: "org.apereo.cas.project-conventions"
 
-description = "Apereo CAS Memcached Support via AWS Elasticache"
+description = "Adds AWS ElastiCache support for Memcached-backed CAS features."
 ext {
     publishMetadata = true
     projectMetadata = [

@@ -1,6 +1,6 @@
 apply plugin: "org.apereo.cas.project-conventions"
 
-description = "Apereo CAS Core Events"
+description = "Publishes core CAS events for authentication, ticketing, services, and runtime activity."
 ext {
     publishMetadata = true
     projectMetadata = [

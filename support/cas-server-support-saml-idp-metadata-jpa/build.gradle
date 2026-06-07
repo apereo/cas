@@ -8,7 +8,7 @@ ext {
             title: "SAML2 Metadata Management via JDBC"
     ]
 }
-description = "Apereo CAS SAML Metadata Support via JDBC"
+description = "Stores and resolves SAML identity provider metadata from a JPA-compatible database."
 dependencies {
     implementation project(":core:cas-server-core-util-api")
     implementation project(":core:cas-server-core-webflow")

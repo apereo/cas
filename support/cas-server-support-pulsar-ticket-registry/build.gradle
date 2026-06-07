@@ -1,6 +1,6 @@
 apply plugin: "org.apereo.cas.project-conventions"
 
-description = "Apereo CAS Pulsar Ticket Registry"
+description = "Stores CAS tickets in Apache Pulsar for shared single sign-on state across server nodes."
 ext {
 
     publishMetadata = true

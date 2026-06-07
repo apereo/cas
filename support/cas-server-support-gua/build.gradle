@@ -1,6 +1,6 @@
 apply plugin: "org.apereo.cas.project-conventions"
 
-description = "Apereo CAS Graphical User Authentication Support"
+description = "Adds graphical user authentication challenges for interactive login flows."
 ext {
     publishMetadata = true
     projectMetadata = [

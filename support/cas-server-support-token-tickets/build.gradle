@@ -1,6 +1,6 @@
 apply plugin: "org.apereo.cas.project-conventions"
 
-description = "Apereo CAS JWT Token Authentication Support"
+description = "Adds JWT token authentication and ticket support for stateless service integrations."
 ext {
     publishMetadata = true
     projectMetadata = [

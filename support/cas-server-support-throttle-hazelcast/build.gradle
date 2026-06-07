@@ -1,6 +1,6 @@
 apply plugin: "org.apereo.cas.project-conventions"
 
-description = "Apereo CAS Hazelcast Authentication Throttling"
+description = "Uses Hazelcast to track authentication throttling state and slow abusive login attempts."
 ext {
     publishMetadata = true
     projectMetadata = [

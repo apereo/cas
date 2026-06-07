@@ -1,6 +1,6 @@
 apply plugin: "org.apereo.cas.project-conventions"
 
-description = "Apereo CAS Web Application Mongo Session Management"
+description = "Backs CAS web application sessions with MongoDB for clustered deployments."
 ext {
     publishMetadata = true
     projectMetadata = [

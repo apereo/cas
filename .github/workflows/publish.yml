@@ -140,7 +140,7 @@ jobs:
       - name: Build Modules Metadata
         run: |
           ./gradlew generateProjectModulesMetadata  \
-              --build-cache --configure-on-demand --no-daemon \
+              --build-cache --quiet --configure-on-demand --no-daemon \
               --parallel -x test -x javadoc -x check
       - name: Publish Modules Metadata
         if: ${{ env.CAS_MODULE_METADATA_MONGODB_URL != null }}

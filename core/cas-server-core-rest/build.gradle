@@ -1,6 +1,6 @@
 apply plugin: "org.apereo.cas.project-conventions"
 
-description = "Apereo CAS REST API"
+description = "Adds core REST endpoints for CAS operations and integrations."
 dependencies {
     api project(":api:cas-server-core-api")
     api project(":api:cas-server-core-api-services")

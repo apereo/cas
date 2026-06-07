@@ -1,6 +1,6 @@
 apply plugin: "org.apereo.cas.project-conventions"
 
-description = "Apereo CAS Bucket4j Core Support"
+description = "Provides Bucket4j rate-limiting support used by CAS throttling features."
 dependencies {
     implementation libraries.bucket4j
     

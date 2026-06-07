@@ -1,6 +1,6 @@
 apply plugin: "org.apereo.cas.project-conventions"
 
-description = "Apereo CAS Core Events - Configuration Events"
+description = "Publishes events when CAS configuration changes or refreshes."
 ext {
     publishMetadata = true
     projectMetadata = [

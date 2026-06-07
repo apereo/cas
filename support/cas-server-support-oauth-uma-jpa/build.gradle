@@ -1,6 +1,6 @@
 apply plugin: "org.apereo.cas.project-conventions"
 
-description = "Apereo CAS OAuth UMA Server Support"
+description = "Stores OAuth UMA permission and policy data in a JPA-compatible database."
 ext {
     publishMetadata = true
     projectMetadata = [

@@ -1,6 +1,6 @@
 apply plugin: "org.apereo.cas.project-conventions"
 
-description = "Apereo CAS Core Configuration Metadata Repository"
+description = "Publishes CAS configuration metadata so tools can present available settings accurately."
 ext {
     publishMetadata = true
     projectMetadata = [

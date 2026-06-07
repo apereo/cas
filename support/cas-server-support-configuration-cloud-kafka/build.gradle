@@ -1,6 +1,6 @@
 apply plugin: "org.apereo.cas.project-conventions"
 
-description = "Apereo CAS Configuration - Cloud Bus Kafka"
+description = "Propagates CAS configuration refresh events through Apache Kafka for clustered Spring Cloud deployments."
 ext {
     publishMetadata = true
     projectMetadata = [

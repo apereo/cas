@@ -1,6 +1,6 @@
 apply plugin: "org.apereo.cas.project-conventions"
 
-description = "Apereo CAS WS-Security Secure Token Service"
+description = "Enables CAS to issue WS-Security tokens for SOAP and federation integrations."
 dependencies {
     implementation libraries.opensaml
     implementation libraries.dropwizard

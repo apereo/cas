@@ -1,6 +1,6 @@
 apply plugin: "org.apereo.cas.project-conventions"
 
-description = "Apereo CAS Account Management and Registration Core Support"
+description = "Provides shared account management behavior for registration and profile workflows."
 dependencies {
     implementation libraries.jose4j
     

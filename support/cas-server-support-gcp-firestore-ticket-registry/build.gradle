@@ -1,6 +1,6 @@
 apply plugin: "org.apereo.cas.project-conventions"
 
-description = "Apereo CAS GCP Firestore Ticket Registry"
+description = "Stores CAS tickets in Google Cloud Firestore for shared single sign-on state across server nodes."
 ext {
     publishMetadata = true
     projectMetadata = [

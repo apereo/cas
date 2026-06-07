@@ -1,6 +1,6 @@
 apply plugin: "org.apereo.cas.project-conventions"
 
-description = "Apereo CAS Password Management - Core"
+description = "Adds browser login flow screens for password changes, resets, and account recovery."
 ext {
     publishMetadata = true
     projectMetadata = [

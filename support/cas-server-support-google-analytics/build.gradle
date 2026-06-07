@@ -1,6 +1,6 @@
 apply plugin: "org.apereo.cas.project-conventions"
 
-description = "Apereo CAS Support for Google Analytics"
+description = "Adds Google Analytics tracking for CAS web application usage."
 ext {
     publishMetadata = true
     projectMetadata = [

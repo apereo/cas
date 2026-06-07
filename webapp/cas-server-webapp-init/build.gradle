@@ -1,6 +1,6 @@
 apply plugin: "org.apereo.cas.project-conventions"
 
-description = "Apereo CAS Web Application Initializer"
+description = "Bootstraps the CAS web application and its startup customizations."
 dependencies {
     api project(":api:cas-server-core-api-configuration-model")
     

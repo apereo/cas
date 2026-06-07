@@ -1,6 +1,6 @@
 apply plugin: "org.apereo.cas.project-conventions"
 
-description = "Apereo CAS LDAP Monitor Support"
+description = "Monitors LDAP directory availability for CAS health and diagnostics."
 ext {
     publishMetadata = true
     projectMetadata = [

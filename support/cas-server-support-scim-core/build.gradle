@@ -1,6 +1,6 @@
 apply plugin: "org.apereo.cas.project-conventions"
 
-description = "Apereo CAS SCIM 2 Provisioning Core"
+description = "Provides shared SCIM provisioning behavior for identity lifecycle integrations."
 dependencies {
     api project(":api:cas-server-core-api-webflow")
 

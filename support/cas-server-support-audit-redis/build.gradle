@@ -1,6 +1,6 @@
 apply plugin: "org.apereo.cas.project-conventions"
 
-description = "Apereo CAS Redis Audit Support"
+description = "Sends CAS audit records to Redis for centralized security reporting."
 ext {
 
     publishMetadata = true

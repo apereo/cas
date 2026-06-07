@@ -1,6 +1,6 @@
 apply plugin: "org.apereo.cas.project-conventions"
 
-description = "Apereo CAS Configuration - Microsoft Azure KeyVault"
+description = "Loads CAS configuration from Azure Key Vault so settings can be managed outside the application package."
 ext {
     publishMetadata = true
     projectMetadata = [

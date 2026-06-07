@@ -1,6 +1,6 @@
 apply plugin: "org.apereo.cas.project-conventions"
 
-description = "Apereo CAS WebAuthN JPA Support"
+description = "Stores WebAuthn/FIDO2 credential data in a JPA-compatible database for passkey-based authentication."
 ext {
     publishMetadata = true
     projectMetadata = [

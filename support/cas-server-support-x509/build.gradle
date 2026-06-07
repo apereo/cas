@@ -1,6 +1,6 @@
 apply plugin: "org.apereo.cas.project-conventions"
 
-description = "Apereo CAS X.509 Client Certificate Support"
+description = "Adds X.509 client certificate authentication for CAS logins and validations."
 dependencies {
     api project(":api:cas-server-core-api-util")
     

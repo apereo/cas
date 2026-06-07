@@ -1,6 +1,6 @@
 apply plugin: "org.apereo.cas.project-conventions"
 
-description = "Apereo CAS Azure Cosmos DB Service Registry"
+description = "Stores registered service definitions in Azure Cosmos DB for centralized CAS service management."
 ext {
 
     publishMetadata = true

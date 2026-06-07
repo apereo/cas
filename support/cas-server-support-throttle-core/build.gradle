@@ -1,6 +1,6 @@
 apply plugin: "org.apereo.cas.project-conventions"
 
-description = "Apereo CAS Authentication Throttling Core"
+description = "Provides shared authentication throttling behavior for rate limiting and abuse prevention."
 dependencies {
     api project(":api:cas-server-core-api-audit")
     api project(":api:cas-server-core-api-throttle")

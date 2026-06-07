@@ -14,7 +14,7 @@ ext {
 
 apply plugin: "org.apereo.cas.spring-boot-conventions"
 
-description = "Apereo CAS Spring Cloud Configuration Web Application Server"
+description = "Builds the CAS Spring Cloud Config Server web application for serving externalized configuration."
 
 dependencies {
     implementation libraries.springboottomcat

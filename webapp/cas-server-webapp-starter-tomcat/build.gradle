@@ -10,7 +10,7 @@ ext {
     ]
 }
 
-description = "Apereo CAS Starter with Apache Tomcat"
+description = "Provides the Spring Boot starter used to run CAS with embedded Apache Tomcat."
 
 apply plugin: "org.apereo.cas.spring-boot-conventions"
 apply plugin: "org.apereo.cas.webapp-dependencies-conventions"

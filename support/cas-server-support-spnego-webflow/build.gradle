@@ -1,6 +1,6 @@
 apply plugin: "org.apereo.cas.project-conventions"
 
-description = "Apereo CAS SPNEGO Webflow Support"
+description = "Adds browser login flow support for SPNEGO and Kerberos authentication."
 ext {
     publishMetadata = true
     projectMetadata = [

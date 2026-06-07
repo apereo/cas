@@ -1,6 +1,6 @@
 apply plugin: "org.apereo.cas.project-conventions"
 
-description = "Apereo CAS Tracing OpenTelemetry Support"
+description = "Reports CAS distributed traces to OpenTelemetry for request observability."
 ext {
     publishMetadata = true
     projectMetadata = [

@@ -1,6 +1,6 @@
 apply plugin: "org.apereo.cas.project-conventions"
 
-description = "Apereo CAS YubiKey Redis Support"
+description = "Stores YubiKey account data in Redis for hardware-token authentication."
 ext {
     publishMetadata = true
     projectMetadata = [

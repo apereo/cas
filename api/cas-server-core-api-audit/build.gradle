@@ -1,6 +1,6 @@
 apply plugin: "org.apereo.cas.project-conventions"
 
-description = "Apereo CAS API Audit"
+description = "Defines audit contracts for recording security-relevant CAS activity across modules."
 dependencies {
     api project(":api:cas-server-core-api")
     api project(":api:cas-server-core-api-authentication")

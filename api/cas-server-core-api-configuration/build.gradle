@@ -1,6 +1,6 @@
 apply plugin: "org.apereo.cas.project-conventions"
 
-description = "Apereo CAS Core Configuration"
+description = "Defines configuration contracts used to bind and validate CAS settings."
 dependencies {
 
     implementation libraries.jasypt

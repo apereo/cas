@@ -1,6 +1,6 @@
 apply plugin: "org.apereo.cas.project-conventions"
 
-description = "Apereo CAS Apache Lucene Support"
+description = "Adds Apache Lucene indexing support for fast local search over CAS-managed data."
 ext {
     publishMetadata = true
     projectMetadata = [

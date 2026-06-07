@@ -1,6 +1,6 @@
 apply plugin: "org.apereo.cas.project-conventions"
 
-description = "Apereo CAS Trusted MFA Browser/Device REST Support"
+description = "Stores trusted browser and device records in REST endpoints so allowed users can avoid repeated MFA prompts."
 ext {
     publishMetadata = true
     projectMetadata = [

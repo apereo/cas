@@ -1,6 +1,6 @@
 apply plugin: "org.apereo.cas.project-conventions"
 
-description = "Apereo CAS Server OpenID Connect Support Services"
+description = "Adds registered service support for OpenID Connect relying parties and their policies."
 dependencies {
     api project(":api:cas-server-core-api-throttle")
     

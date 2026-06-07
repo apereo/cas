@@ -1,6 +1,6 @@
 apply plugin: "org.apereo.cas.project-conventions"
 
-description = "Apereo CAS SAML Server and Validation Support"
+description = "Adds SAML protocol support for CAS validation and identity provider scenarios."
 ext {
     publishMetadata = true
     projectMetadata = [

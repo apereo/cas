@@ -1,6 +1,6 @@
 apply plugin: "org.apereo.cas.project-conventions"
 
-description = "Apereo CAS Consent LDAP Support"
+description = "Stores user consent decisions in an LDAP directory for attribute release and privacy workflows."
 ext {
 
     publishMetadata = true

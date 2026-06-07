@@ -1,6 +1,6 @@
 apply plugin: "org.apereo.cas.project-conventions"
 
-description = "Apereo CAS AUP LDAP Support"
+description = "Stores acceptable usage policy acknowledgements in an LDAP directory."
 ext {
 
     publishMetadata = true

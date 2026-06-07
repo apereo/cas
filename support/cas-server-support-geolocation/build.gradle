@@ -1,6 +1,6 @@
 apply plugin: "org.apereo.cas.project-conventions"
 
-description = "Apereo CAS GeoLocation Tracking Support"
+description = "Adds geolocation lookup support for contextual access decisions and audit data."
 dependencies {
     api project(":api:cas-server-core-api-authentication")
 

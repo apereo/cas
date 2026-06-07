@@ -1,6 +1,6 @@
 apply plugin: "org.apereo.cas.project-conventions"
 
-description = "Apereo CAS Server OpenID Connect Support"
+description = "Defines shared OpenID Connect provider contracts used by CAS OIDC features."
 dependencies {
     api project(":api:cas-server-core-api")
     api project(":api:cas-server-core-api-webflow")

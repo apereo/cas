@@ -3,7 +3,7 @@ apply plugin: "org.apereo.cas.project-conventions"
 import org.apereo.cas.gradle.CasBuildSettings
 import org.gradle.api.artifacts.ProjectDependency
 
-description = "Apereo CAS Native Graal VM Web Application"
+description = "Builds the CAS web application for GraalVM native image deployments."
 
 def skipAot = providers.systemProperty("skipAot").getOrElse("false") == "true"
 

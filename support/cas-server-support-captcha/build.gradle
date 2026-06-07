@@ -1,6 +1,6 @@
 apply plugin: "org.apereo.cas.project-conventions"
 
-description = "Apereo CAS Captcha Support"
+description = "Adds CAPTCHA challenges to protect CAS forms from automated abuse."
 ext {
     publishMetadata = true
     projectMetadata = [

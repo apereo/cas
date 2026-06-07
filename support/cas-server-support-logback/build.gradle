@@ -1,6 +1,6 @@
 apply plugin: "org.apereo.cas.project-conventions"
 
-description = "Apereo CAS Core Logging Support for Logback"
+description = "Configures Logback support for CAS logging output and runtime log management."
 ext {
     publishMetadata = true
     projectMetadata = [

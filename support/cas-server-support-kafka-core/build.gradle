@@ -1,6 +1,6 @@
 apply plugin: "org.apereo.cas.project-conventions"
 
-description = "Apereo CAS Support with Kafka"
+description = "Adds shared Apache Kafka support used by CAS Kafka-backed features."
 dependencies {
     implementation libraries.springkafka
 

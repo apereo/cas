@@ -1,6 +1,6 @@
 apply plugin: "org.apereo.cas.project-conventions"
 
-description = "Apereo CAS Nexmo SMS Support"
+description = "Sends CAS SMS messages through Vonage/Nexmo."
 ext {
     publishMetadata = true
     projectMetadata = [

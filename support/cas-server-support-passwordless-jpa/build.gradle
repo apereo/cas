@@ -1,6 +1,6 @@
 apply plugin: "org.apereo.cas.project-conventions"
 
-description = "Apereo CAS Passwordless Authentication JPA Support"
+description = "Stores passwordless authentication records in a JPA-compatible database."
 ext {
     publishMetadata = true
     projectMetadata = [

@@ -1,6 +1,6 @@
 apply plugin: "org.apereo.cas.project-conventions"
 
-description = "Apereo CAS DynamoDb Audit Log Support"
+description = "Sends CAS audit records to Amazon DynamoDB for centralized security reporting."
 
 ext {
 

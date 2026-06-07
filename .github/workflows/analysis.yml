@@ -83,7 +83,7 @@ jobs:
       - name: Initialize
         run: find ./ci -type f -name "*.sh" -exec chmod +x "{}" \; && ./ci/init-build.sh
       - name: Run Analysis
-        run: ./gradlew --build-cache --no-watch-fs --configure-on-demand --parallel --no-daemon ${{ matrix.category }} -x test -x javadoc -DskipNestedConfigMetadataGen=true -Dverbose=true --max-workers=8
+        run: ./gradlew --build-cache --quiet --no-watch-fs --configure-on-demand --parallel --no-daemon ${{ matrix.category }} -x test -x javadoc -DskipNestedConfigMetadataGen=true
 
 ##########################################################################
   codeql-analysis:

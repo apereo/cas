@@ -1,6 +1,6 @@
 apply plugin: "org.apereo.cas.project-conventions"
 
-description = "Apereo CAS REST Audit Support"
+description = "Sends CAS audit records to REST endpoints for centralized security reporting."
 dependencies {
     api project(":api:cas-server-core-api")
     api project(":api:cas-server-core-api-audit")

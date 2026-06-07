@@ -1,6 +1,6 @@
 apply plugin: "org.apereo.cas.project-conventions"
 
-description = "Apereo CAS Shibboleth IdP/SP Extensions"
+description = "Adds Shibboleth integration extensions for SAML identity provider and service provider scenarios."
 ext {
     publishMetadata = true
     projectMetadata = [

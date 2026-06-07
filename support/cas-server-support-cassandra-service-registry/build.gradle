@@ -1,6 +1,6 @@
 apply plugin: "org.apereo.cas.project-conventions"
 
-description = "Apereo CAS Cassandra Service Registry"
+description = "Stores registered service definitions in Apache Cassandra for centralized CAS service management."
 ext {
     publishMetadata = true
     projectMetadata = [

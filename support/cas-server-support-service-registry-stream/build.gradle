@@ -1,6 +1,6 @@
 apply plugin: "org.apereo.cas.project-conventions"
 
-description = "Apereo CAS Service Registry Streaming Support"
+description = "Streams registered service changes so clustered CAS deployments stay synchronized."
 dependencies {
     implementation project(":core:cas-server-core-services")
     implementation project(":core:cas-server-core-services-registry")

@@ -1,6 +1,6 @@
 apply plugin: "org.apereo.cas.project-conventions"
 
-description = "Apereo CAS Redis Service Registry Support"
+description = "Stores registered service definitions in Redis for centralized CAS service management."
 ext {
 
     publishMetadata = true

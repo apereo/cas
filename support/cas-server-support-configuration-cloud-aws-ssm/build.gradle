@@ -1,6 +1,6 @@
 apply plugin: "org.apereo.cas.project-conventions"
 
-description = "Apereo CAS Configuration - AWS Parameter Store"
+description = "Loads CAS configuration from AWS Systems Manager Parameter Store so settings can be managed outside the application package."
 ext {
     publishMetadata = true
     projectMetadata = [

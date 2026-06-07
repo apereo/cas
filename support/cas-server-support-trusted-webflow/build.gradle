@@ -1,6 +1,6 @@
 apply plugin: "org.apereo.cas.project-conventions"
 
-description = "Apereo CAS Trusted Authentication Webflow Support"
+description = "Adds browser login flow screens for trusted authentication decisions."
 ext {
     publishMetadata = true
     projectMetadata = [

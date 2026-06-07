@@ -1,6 +1,6 @@
 apply plugin: "org.apereo.cas.project-conventions"
 
-description = "Apereo CAS YubiKey Support"
+description = "Adds YubiKey hardware-token authentication for CAS login and MFA flows."
 ext {
     publishMetadata = true
     projectMetadata = [

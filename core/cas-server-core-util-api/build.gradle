@@ -1,6 +1,6 @@
 apply plugin: "org.apereo.cas.project-conventions"
 
-description = "Apereo CAS Core Utilities"
+description = "Defines shared utility contracts used throughout CAS."
 dependencies {
     
     api project(":api:cas-server-core-api-authentication")

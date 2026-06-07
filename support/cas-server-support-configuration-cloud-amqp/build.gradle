@@ -1,6 +1,6 @@
 apply plugin: "org.apereo.cas.project-conventions"
 
-description = "Apereo CAS Configuration - Cloud Bus AMQP"
+description = "Propagates CAS configuration refresh events through AMQP brokers for clustered Spring Cloud deployments."
 ext {
     publishMetadata = true
     projectMetadata = [

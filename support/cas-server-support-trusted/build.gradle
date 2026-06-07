@@ -1,6 +1,6 @@
 apply plugin: "org.apereo.cas.project-conventions"
 
-description = "Apereo CAS Trusted User Support"
+description = "Adds trusted authentication support for flows that rely on pre-established user identity."
 dependencies {
 
 

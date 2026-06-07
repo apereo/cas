@@ -1,6 +1,6 @@
 apply plugin: "org.apereo.cas.project-conventions"
 
-description = "Apereo CAS JPA Utilities and Support"
+description = "Provides shared JPA utilities used by CAS database-backed persistence features."
 ext {
     publishMetadata = true
     projectMetadata = [

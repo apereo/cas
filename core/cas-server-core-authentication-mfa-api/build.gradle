@@ -1,6 +1,6 @@
 apply plugin: "org.apereo.cas.project-conventions"
 
-description = "Apereo CAS Core Multifactor Authentication"
+description = "Defines core contracts for multifactor authentication providers, triggers, and contexts."
 dependencies {
     api project(":api:cas-server-core-api-services")
     api project(":api:cas-server-core-api-ticket")

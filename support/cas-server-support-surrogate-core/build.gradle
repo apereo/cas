@@ -1,6 +1,6 @@
 apply plugin: "org.apereo.cas.project-conventions"
 
-description = "Apereo CAS Surrogate Authentication Core"
+description = "Provides shared surrogate authentication behavior for delegated user access."
 dependencies {
 
 

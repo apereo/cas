@@ -1,6 +1,6 @@
 apply plugin: "org.apereo.cas.project-conventions"
 
-description = "Apereo CAS JPA Ticket Registry Support"
+description = "Stores CAS tickets in a JPA-compatible database for shared single sign-on state across server nodes."
 ext {
 
     publishMetadata = true

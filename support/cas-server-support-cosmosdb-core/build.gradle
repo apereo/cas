@@ -1,6 +1,6 @@
 apply plugin: "org.apereo.cas.project-conventions"
 
-description = "Apereo CAS Cosmos DB Support Core"
+description = "Adds shared Azure Cosmos DB support used by CAS Cosmos DB-backed features."
 dependencies {
     api libraries.cosmosdb
     implementation project(":core:cas-server-core-util-api")

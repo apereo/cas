@@ -1,6 +1,6 @@
 apply plugin: "org.apereo.cas.project-conventions"
 
-description = "Apereo CAS Core Utility APIs"
+description = "Defines shared utility contracts used across CAS modules and extensions."
 dependencies {
     implementation libraries.jose4j
     implementation libraries.classgraph

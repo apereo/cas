@@ -1,6 +1,6 @@
 apply plugin: "org.apereo.cas.project-conventions"
 
-description = "Apereo CAS Server FCM Notifications Support"
+description = "Sends CAS notifications through Firebase Cloud Messaging."
 ext {
     publishMetadata = true
     projectMetadata = [

@@ -1,6 +1,6 @@
 apply plugin: "org.apereo.cas.project-conventions"
 
-description = "Apereo CAS Redis Authentication"
+description = "Adds Redis-backed authentication for validating users against Redis records."
 ext {
 
     publishMetadata = true

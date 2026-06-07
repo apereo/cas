@@ -1,6 +1,6 @@
 apply plugin: "org.apereo.cas.project-conventions"
 
-description = "Apereo CAS Redis Modules"
+description = "Adds shared Redis support used by CAS Redis-backed features."
 ext {
 
     publishMetadata = true

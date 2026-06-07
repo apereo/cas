@@ -1,6 +1,6 @@
 apply plugin: "org.apereo.cas.project-conventions"
 
-description = "Apereo CAS Core Services API"
+description = "Defines core contracts for registered services, access policies, and service matching."
 dependencies {
     api project(":api:cas-server-core-api-services")
     api project(":api:cas-server-core-api-events")

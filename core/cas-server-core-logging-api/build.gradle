@@ -1,6 +1,6 @@
 apply plugin: "org.apereo.cas.project-conventions"
 
-description = "Apereo CAS Core Logging Configuration"
+description = "Defines core logging contracts used by CAS logging configuration and management features."
 
 dependencies {
     api project(":api:cas-server-core-api-ticket")

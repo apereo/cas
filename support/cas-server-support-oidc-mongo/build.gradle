@@ -1,6 +1,6 @@
 apply plugin: "org.apereo.cas.project-conventions"
 
-description = "Apereo CAS Server OpenID Connect Support"
+description = "Stores OpenID Connect authorization data in MongoDB."
 ext {
     publishMetadata = true
     projectMetadata = [

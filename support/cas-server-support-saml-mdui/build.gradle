@@ -1,6 +1,6 @@
 apply plugin: "org.apereo.cas.project-conventions"
 
-description = "Apereo CAS SAML Server MDUI Support"
+description = "Adds SAML metadata user interface information so service providers can display friendly CAS identity provider details."
 ext {
     publishMetadata = true
     projectMetadata = [

@@ -1,6 +1,6 @@
 apply plugin: "org.apereo.cas.project-conventions"
 
-description = "Apereo CAS Support for Thymeleaf Template Engine"
+description = "Adds Thymeleaf view rendering for CAS web pages and templates."
 dependencies {
     api libraries.thymeleaf
 

@@ -1,6 +1,6 @@
 apply plugin: "org.apereo.cas.project-conventions"
 
-description = "Apereo CAS Cookie Management Core"
+description = "Defines core cookie contracts for creating and protecting browser state."
 dependencies {
     api project(":api:cas-server-core-api-cookie")
     api project(":api:cas-server-core-api-multitenancy")

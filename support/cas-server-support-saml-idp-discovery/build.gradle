@@ -1,6 +1,6 @@
 apply plugin: "org.apereo.cas.project-conventions"
 
-description = "Apereo CAS SAML2 Identity Provider Discovery Support"
+description = "Adds SAML identity provider discovery for selecting the right SAML provider during login."
 ext {
     publishMetadata = true
     projectMetadata = [

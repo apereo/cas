@@ -1,6 +1,6 @@
 apply plugin: "org.apereo.cas.project-conventions"
 
-description = "Apereo CAS Discovery Support"
+description = "Adds identity provider discovery so users can choose or be routed to the right provider."
 ext {
     publishMetadata = true
     projectMetadata = [

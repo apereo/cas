@@ -1,6 +1,6 @@
 apply plugin: "org.apereo.cas.project-conventions"
 
-description = "Apereo CAS Themes Collection"
+description = "Adds a collection of ready-made themes for customizing the CAS user interface."
 ext {
     publishMetadata = true
     projectMetadata = [

@@ -1,6 +1,6 @@
 apply plugin: "org.apereo.cas.project-conventions"
 
-description = "Apereo CAS Pac4j Webflow Support"
+description = "Adds browser login flow support for delegated authentication providers."
 ext {
     publishMetadata = true
     projectMetadata = [

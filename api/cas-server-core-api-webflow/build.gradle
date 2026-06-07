@@ -1,6 +1,6 @@
 apply plugin: "org.apereo.cas.project-conventions"
 
-description = "Apereo CAS Core Webflow APIs"
+description = "Defines login flow contracts used to compose CAS browser interactions."
 dependencies {
     api project(":api:cas-server-core-api-util")
     api project(":api:cas-server-core-api-authentication")

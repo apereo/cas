@@ -1,6 +1,6 @@
 apply plugin: "org.apereo.cas.project-conventions"
 
-description = "Apereo CAS AUP Mongo Support"
+description = "Stores acceptable usage policy acknowledgements in MongoDB."
 ext {
     publishMetadata = true
     projectMetadata = [

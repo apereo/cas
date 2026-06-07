@@ -1,6 +1,6 @@
 apply plugin: "org.apereo.cas.project-conventions"
 
-description = "Apereo CAS SAML Core/Common Functionality"
+description = "Provides shared SAML protocol support used by CAS SAML identity provider and validation features."
 dependencies {
     implementation libraries.shibutiljavasupport
     implementation libraries.opensaml

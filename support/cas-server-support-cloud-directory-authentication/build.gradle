@@ -1,6 +1,6 @@
 apply plugin: "org.apereo.cas.project-conventions"
 
-description = 'Apereo CAS Amazon Cloud Directory Authentication Support'
+description = "Adds Amazon Cloud Directory authentication for validating users against Cloud Directory entries."
 ext {
     publishMetadata = true
     projectMetadata = [

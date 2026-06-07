@@ -1,6 +1,6 @@
 apply plugin: "org.apereo.cas.project-conventions"
 
-description = "Apereo CAS Consent Core"
+description = "Provides shared consent behavior for attribute release and privacy workflows."
 dependencies {
     api project(":api:cas-server-core-api-audit")
     api project(":api:cas-server-core-api-services")

@@ -1,6 +1,6 @@
 apply plugin: "org.apereo.cas.project-conventions"
 
-description = "Apereo CAS Core Configuration API"
+description = "Defines core configuration contracts for loading, binding, and refreshing CAS settings."
 dependencies {
     implementation libraries.bouncycastle
     implementation libraries.jasypt

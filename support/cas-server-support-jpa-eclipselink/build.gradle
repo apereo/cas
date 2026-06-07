@@ -1,6 +1,6 @@
 apply plugin: "org.apereo.cas.project-conventions"
 
-description = "Apereo CAS JPA EclipseLink Support"
+description = "Adds EclipseLink as a JPA provider for CAS database-backed persistence features."
 ext {
     publishMetadata = true
     projectMetadata = [

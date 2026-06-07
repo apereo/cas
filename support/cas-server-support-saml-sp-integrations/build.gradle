@@ -1,6 +1,6 @@
 apply plugin: "org.apereo.cas.project-conventions"
 
-description = "Apereo CAS SAML SP Integrations"
+description = "Adds SAML service provider integration helpers for common CAS federation scenarios."
 ext {
     publishMetadata = true
     projectMetadata = [

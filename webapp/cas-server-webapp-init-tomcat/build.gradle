@@ -1,6 +1,6 @@
 apply plugin: "org.apereo.cas.project-conventions"
 
-description = "Apereo CAS Web Application via Apache Tomcat"
+description = "Provides Tomcat-specific initialization support for the CAS web application."
 
 dependencies {
     api libraries.springboottomcat

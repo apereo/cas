@@ -1,6 +1,6 @@
 apply plugin: "org.apereo.cas.project-conventions"
 
-description = "Apereo CAS Events Consumer JPA"
+description = "Stores or publishes CAS events with a JPA-compatible database for operational processing and integrations."
 ext {
     publishMetadata = true
     projectMetadata = [

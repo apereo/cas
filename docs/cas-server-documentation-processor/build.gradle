@@ -3,7 +3,7 @@ apply plugin: "org.apereo.cas.project-conventions"
 import org.apereo.cas.gradle.CasBuildSettings
 import org.apereo.cas.gradle.CasProjectConventions
 
-description = "Apereo CAS Documentation Generator"
+description = "Generates CAS documentation metadata from configuration and source annotations."
 
 ext {
     mainClassName = "org.apereo.cas.documentation.CasDocumentationApplication"

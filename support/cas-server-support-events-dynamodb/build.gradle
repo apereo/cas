@@ -1,6 +1,6 @@
 apply plugin: "org.apereo.cas.project-conventions"
 
-description = "Apereo CAS DynamoDb Events"
+description = "Stores or publishes CAS events with Amazon DynamoDB for operational processing and integrations."
 
 ext {
 

@@ -1,6 +1,6 @@
 apply plugin: "org.apereo.cas.project-conventions"
 
-description = "Apereo CAS Configuration - AWS Secrets Manager"
+description = "Loads CAS configuration from AWS Secrets Manager so settings can be managed outside the application package."
 ext {
     publishMetadata = true
     projectMetadata = [

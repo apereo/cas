@@ -1,6 +1,6 @@
 apply plugin: "org.apereo.cas.project-conventions"
 
-description = "Apereo CAS Spring Cloud Eureka Client"
+description = "Registers CAS with Eureka so other services can discover it in Spring Cloud environments."
 dependencies {
     implementation libraries.eurekaclient
     implementation libraries.springcloudeureka

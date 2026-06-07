@@ -1,6 +1,6 @@
 apply plugin: "org.apereo.cas.project-conventions"
 
-description = "Apereo CAS Core Authentication Attributes & Repositories"
+description = "Resolves and manages principal attributes returned during authentication."
 dependencies {
     implementation libraries.bouncycastle
 

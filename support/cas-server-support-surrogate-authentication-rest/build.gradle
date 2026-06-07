@@ -1,6 +1,6 @@
 apply plugin: "org.apereo.cas.project-conventions"
 
-description = "Apereo CAS Surrogate Authentication REST Support"
+description = "Uses REST endpoints to authorize surrogate authentication relationships."
 ext {
     publishMetadata = true
     projectMetadata = [

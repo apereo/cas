@@ -1,6 +1,6 @@
 apply plugin: "org.apereo.cas.project-conventions"
 
-description = "Apereo CAS Core Authentication APIs"
+description = "Defines authentication contracts for validating credentials, building principals, and integrating identity sources."
 dependencies {
     api project(":api:cas-server-core-api-protocol")
     api project(":api:cas-server-core-api-monitor")

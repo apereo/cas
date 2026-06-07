@@ -1,6 +1,6 @@
 apply plugin: "org.apereo.cas.project-conventions"
 
-description = "Apereo CAS JPA Service Registry Support"
+description = "Stores registered service definitions in a JPA-compatible database for centralized CAS service management."
 ext {
 
     publishMetadata = true

@@ -1,6 +1,6 @@
 apply plugin: "org.apereo.cas.project-conventions"
 
-description = "Apereo CAS SAML Identity Provider Core"
+description = "Provides the core SAML identity provider behavior used by CAS SAML integrations."
 dependencies {
     implementation libraries.shibutiljavasupport
     implementation libraries.pac4jcore

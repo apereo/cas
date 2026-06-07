@@ -1,6 +1,6 @@
 apply plugin: "org.apereo.cas.project-conventions"
 
-description = "Apereo CAS Surrogate Authentication LDAP Support"
+description = "Uses an LDAP directory to authorize surrogate authentication relationships."
 ext {
     publishMetadata = true
     projectMetadata = [

@@ -1,6 +1,6 @@
 apply plugin: "org.apereo.cas.project-conventions"
 
-description = "Apereo CAS Core Web"
+description = "Provides core web behavior for CAS requests, responses, views, and security filters."
 dependencies {
     api project(":api:cas-server-core-api-web")
     api project(":api:cas-server-core-api-ticket")

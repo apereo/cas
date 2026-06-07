@@ -1,6 +1,6 @@
 apply plugin: "org.apereo.cas.project-conventions"
 
-description = "Apereo CAS SAML Identity Provider Metadata Resolution Via REST"
+description = "Stores and resolves SAML identity provider metadata from REST endpoints."
 ext {
     publishMetadata = true
     projectMetadata = [

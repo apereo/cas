@@ -1,6 +1,6 @@
 apply plugin: "org.apereo.cas.project-conventions"
 
-description = "Apereo CAS SAML Identity Provider Metadata Resolution Via Amazon S3 Buckets"
+description = "Stores and resolves SAML identity provider metadata from Amazon S3."
 ext {
     publishMetadata = true
     projectMetadata = [

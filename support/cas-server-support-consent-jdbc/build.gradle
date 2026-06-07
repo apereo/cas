@@ -1,6 +1,6 @@
 apply plugin: "org.apereo.cas.project-conventions"
 
-description = "Apereo CAS Consent JDBC Support"
+description = "Stores user consent decisions in a JDBC-compatible database for attribute release and privacy workflows."
 ext {
     publishMetadata = true
     projectMetadata = [

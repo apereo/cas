@@ -2,7 +2,7 @@ apply plugin: "org.apereo.cas.project-conventions"
 
 import org.apereo.cas.gradle.CasBuildSettings
 
-description = "Apereo CAS Bill of Material"
+description = "Publishes the CAS bill of materials so overlays can align dependency versions consistently."
 
 def projectName = project.name.toString()
 def projectPath = project.path.toString()

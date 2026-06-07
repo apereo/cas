@@ -1,6 +1,6 @@
 apply plugin: "org.apereo.cas.project-conventions"
 
-description = 'Apereo CAS Microsoft Azure Active Directory Authentication'
+description = "Adds Microsoft Entra ID (Azure AD) authentication for signing users in through Microsoft-managed identities."
 ext {
     publishMetadata = true
     projectMetadata = [

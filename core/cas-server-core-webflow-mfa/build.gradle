@@ -1,6 +1,6 @@
 apply plugin: "org.apereo.cas.project-conventions"
 
-description = "Apereo CAS Core Webflow MFA"
+description = "Adds multifactor authentication steps to the CAS browser login flow."
 dependencies {
 
     implementation libraries.bouncycastle

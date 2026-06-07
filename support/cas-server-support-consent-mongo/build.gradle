@@ -1,6 +1,6 @@
 apply plugin: "org.apereo.cas.project-conventions"
 
-description = "Apereo CAS Consent Support via MongoDb"
+description = "Stores user consent decisions in MongoDB for attribute release and privacy workflows."
 ext {
     publishMetadata = true
     projectMetadata = [

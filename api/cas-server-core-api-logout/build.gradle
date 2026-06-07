@@ -1,6 +1,6 @@
 apply plugin: "org.apereo.cas.project-conventions"
 
-description = "Apereo CAS Core Logout APIs"
+description = "Defines logout contracts for ending local and single sign-on sessions cleanly."
 dependencies {
     api project(":api:cas-server-core-api-services")
     api project(":api:cas-server-core-api-authentication")

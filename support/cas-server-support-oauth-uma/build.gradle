@@ -1,6 +1,6 @@
 apply plugin: "org.apereo.cas.project-conventions"
 
-description = "Apereo CAS OAuth UMA Server Core Support"
+description = "Adds OAuth UMA support for user-managed access and resource protection policies."
 ext {
     publishMetadata = true
     projectMetadata = [

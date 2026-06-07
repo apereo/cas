@@ -1,6 +1,6 @@
 apply plugin: "org.apereo.cas.project-conventions"
 
-description = "Apereo CAS AUP Support"
+description = "Provides shared acceptable usage policy behavior for acknowledgement and enforcement flows."
 dependencies {
     api project(":api:cas-server-core-api-ticket")
     api project(":api:cas-server-core-api-authentication")

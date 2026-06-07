@@ -1,6 +1,6 @@
 apply plugin: "org.apereo.cas.project-conventions"
 
-description = "Apereo CAS Javers Support for object audits and diffs"
+description = "Adds JaVers auditing to track object changes and historical differences."
 ext {
     publishMetadata = true
     projectMetadata = [

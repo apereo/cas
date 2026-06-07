@@ -1,6 +1,6 @@
 apply plugin: "org.apereo.cas.project-conventions"
 
-description = "Apereo CAS Risk-based Authentication Support"
+description = "Adds risk-based authentication signals that help CAS challenge suspicious access attempts."
 ext {
     publishMetadata = true
     projectMetadata = [

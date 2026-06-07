@@ -1,6 +1,6 @@
 apply plugin: "org.apereo.cas.project-conventions"
 
-description = "Apereo CAS Shell Core Support via Spring Shell"
+description = "Provides shared command-line shell support for CAS administrative commands."
 
 dependencies {
     api project(":api:cas-server-core-api-services")

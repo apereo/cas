@@ -1,6 +1,6 @@
 apply plugin: "org.apereo.cas.project-conventions"
 
-description = "Apereo CAS GCP Storage Service Registry"
+description = "Stores registered service definitions in Google Cloud Storage for centralized CAS service management."
 
 ext {
 

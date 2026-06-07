@@ -1,6 +1,6 @@
 apply plugin: "org.apereo.cas.project-conventions"
 
-description = 'Apereo CAS Amazon Web Services Cognito Authentication'
+description = "Adds Amazon Cognito authentication for signing users in through Cognito user pools."
 ext {
     publishMetadata = true
     projectMetadata = [

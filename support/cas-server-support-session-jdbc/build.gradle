@@ -1,6 +1,6 @@
 apply plugin: "org.apereo.cas.project-conventions"
 
-description = "Apereo CAS Web Application JDBC Session Management"
+description = "Backs CAS web application sessions with a JDBC-compatible database for clustered deployments."
 ext {
     publishMetadata = true
     projectMetadata = [

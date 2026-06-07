@@ -1,6 +1,6 @@
 apply plugin: "org.apereo.cas.project-conventions"
 
-description = "Apereo CAS Cookie Management Core"
+description = "Manages CAS cookies used for browser sessions and single sign-on state."
 dependencies {
     api project(":api:cas-server-core-api-multitenancy")
     

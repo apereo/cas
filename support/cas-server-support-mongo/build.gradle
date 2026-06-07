@@ -1,6 +1,6 @@
 apply plugin: "org.apereo.cas.project-conventions"
 
-description = "Apereo CAS Mongo Authentication Support"
+description = "Adds MongoDB-backed authentication for validating users against MongoDB records."
 ext {
     publishMetadata = true
     projectMetadata = [

@@ -1,6 +1,6 @@
 apply plugin: "org.apereo.cas.project-conventions"
 
-description = "Apereo CAS Core Events - Spring Cloud Configuration Bus Events"
+description = "Propagates CAS configuration change events through Spring Cloud Bus for clustered deployments."
 dependencies {
     implementation project(":core:cas-server-core-configuration-api")
     implementation project(":core:cas-server-core-events")

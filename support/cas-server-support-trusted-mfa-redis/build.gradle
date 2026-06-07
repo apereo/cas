@@ -1,6 +1,6 @@
 apply plugin: "org.apereo.cas.project-conventions"
 
-description = "Apereo CAS Trusted MFA Browser/Device Redis Support"
+description = "Stores trusted browser and device records in Redis so allowed users can avoid repeated MFA prompts."
 ext {
     publishMetadata = true
     projectMetadata = [

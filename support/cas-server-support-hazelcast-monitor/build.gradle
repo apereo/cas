@@ -1,6 +1,6 @@
 apply plugin: "org.apereo.cas.project-conventions"
 
-description = "Apereo CAS Hazelcast Monitoring Support"
+description = "Monitors Hazelcast cluster availability for CAS health and diagnostics."
 ext {
     publishMetadata = true
     projectMetadata = [

@@ -1,6 +1,6 @@
 apply plugin: "org.apereo.cas.project-conventions"
 
-description = "Apereo CAS Event InfluxDb Repository"
+description = "Stores or publishes CAS events with InfluxDB for operational processing and integrations."
 ext {
     publishMetadata = true
     projectMetadata = [

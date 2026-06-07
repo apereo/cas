@@ -1,6 +1,6 @@
 apply plugin: "org.apereo.cas.project-conventions"
 
-description = "Apereo CAS Passwordless Authentication MongoDb Support"
+description = "Stores passwordless authentication records in MongoDB."
 ext {
     publishMetadata = true
     projectMetadata = [
