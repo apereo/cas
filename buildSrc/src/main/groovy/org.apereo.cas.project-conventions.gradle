@@ -129,7 +129,7 @@ sourceSets {
 
 ext.buildJarFile = new File(project.layout.buildDirectory.getAsFile().get(), "libs/${project.name}-${CasBuildSettings.projectVersion(project)}.jar")
 
-[tasks.named('compileTestJava'), tasks.named('compileJava')].each { taskProvider ->
+tasks.withType(JavaCompile).configureEach { taskProvider ->
     taskProvider.configure {
         if (generateGitProperties) {
             dependsOn('generateGitProperties')
@@ -155,6 +155,8 @@ ext.buildJarFile = new File(project.layout.buildDirectory.getAsFile().get(), "li
                 '-Xep:StringConcatToTextBlock:OFF',
                 '-Xep:AddressSelection:OFF'
             ]
+            options.errorprone.excludedPaths = ".*/build/generated/.*"
+
             def taskName = name
             options.errorprone.nullaway {
                 if (skipNullAway || taskName == 'compileTestJava') {
