@@ -443,7 +443,6 @@ exports.submitForm = async (page, selector, predicate = undefined, statusCode = 
 };
 
 exports.pressEnter = async (page) => {
-    this.screenshot(page);
     page.keyboard.press("Enter");
     this.sleep(1000);
 };

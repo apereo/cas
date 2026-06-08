@@ -8,6 +8,7 @@
     "--management.endpoints.web.exposure.include=*",
     "--management.endpoints.access.default=UNRESTRICTED",
 
+    "--cas.authn.throttle.schedule.repeat-interval=PT90S",
     "--cas.authn.throttle.schedule.enabled=false",
     
     "--cas.authn.throttle.failure.threshold=2",
