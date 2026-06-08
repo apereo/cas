@@ -22,7 +22,7 @@ async function initializeCasEventsOperations() {
                             casEventsTable.clear();
                             const jsonEvents = JSON.parse(response);
                             if (jsonEvents.length > 0) {
-                                for (const entry of Object.values(jsonEvents[1])) {
+                                for (const entry of jsonEvents) {
                                     const geoLocation = `${entry?.properties?.geoLatitude ?? ""} ${entry?.properties?.geoLongitude ?? ""} ${entry?.properties?.geoAccuracy ?? ""}`.trim();
                                     casEventsTable.row.add({
                                         0: `<code>${entry?.creationTime ?? "N/A"}</code>`,
