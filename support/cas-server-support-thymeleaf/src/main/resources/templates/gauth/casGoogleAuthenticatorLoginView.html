@@ -51,7 +51,7 @@
                         </div>
                     </div>
                     <button
-                        class="reveal-password align-self-end mdc-button mdc-button--raised btn btn-primary mdc-input-group-append mdc-icon-button"
+                        class="reveal-password align-self-end mdc-button mdc-button--raised btn btn-primary mdc-input-group-append mdc-icon-button drop-button"
                         tabindex="-1"
                         type="button">
                         <i class="mdi mdi-eye fas fa-eye reveal-password-icon" aria-hidden="true"></i>
@@ -65,10 +65,10 @@
                     </p>
                 </div>
             </section>
-            <button id="loginButton" class="mdc-button mdc-button--raised btn btn-primary" accesskey="l">
+            <button id="loginButton" class="mdc-button mdc-button--raised btn btn-primary drop-button">
                 <span class="mdc-button__label" th:text="#{screen.welcome.button.login}">Login</span>
             </button>
-            <a class="mdc-button mdc-button--raised btn btn-primary button-cancel" id="cancel" name="cancel"
+            <a class="mdc-button mdc-button--raised btn btn-primary button-cancel drop-button" id="cancel" name="cancel"
                onclick="location.href = location.href;">
                 <span class="mdc-button__label" th:utext="#{screen.authentication.gauth.cancel}">Cancel</span>
             </a>
@@ -80,7 +80,7 @@
             <form method="post" id="fm3">
                 <input type="hidden" name="_eventId" value="select"/>
                 <input type="hidden" name="execution" th:value="${flowExecutionKey}"/>
-                <button id="selectDeviceButton" class="mdc-button mdc-button--raised btn btn-primary me-2" accesskey="s">
+                <button id="selectDeviceButton" class="mdc-button mdc-button--raised btn btn-primary me-2 drop-button">
                     <span class="mdc-button__label" th:text="#{screen.authentication.gauth.selectdevice}">Select Device</span>
                 </button>
             </form>
@@ -91,7 +91,7 @@
             <p>
             <hr width="75%">
             <p th:utext="#{screen.authentication.gauth.reganotherdevice}"></p>
-            <button class="mdc-button mdc-button--raised btn btn-primary me-2"
+            <button class="mdc-button mdc-button--raised btn btn-primary me-2 drop-button"
                     onclick="cas.openDialog('confirm-reg-dialog')"
                     name="registerButton" id="registerButton">
                 <span class="mdc-button__label" th:text="#{screen.welcome.button.register}">Register</span>
@@ -148,7 +148,7 @@
                                                         </span>
                                                     </span>
                                                 </label>
-                                                <button class="reveal-password align-self-end mdc-button mdc-button--raised btn btn-primary mdc-input-group-append mdc-icon-button"
+                                                <button class="reveal-password align-self-end mdc-button mdc-button--raised btn btn-primary mdc-input-group-append mdc-icon-button drop-button"
                                                         tabindex="-1"
                                                         type="button">
                                                     <i class="mdi mdi-eye fas fa-eye reveal-password-icon" aria-hidden="true"></i>
@@ -209,7 +209,7 @@
                                 </div>
                             </div>
                             <footer class="mdc-dialog__actions">
-                                <button class="mdc-button mdc-button--raised btn btn-primary me-2" name="verifyButton" id="verifyButton">
+                                <button class="mdc-button mdc-button--raised btn btn-primary me-2 drop-button" name="verifyButton" id="verifyButton">
                                     <span class="mdc-button__label" th:text="#{screen.welcome.button.login}">Login</span>
                                 </button>
                                 <button type="button" class="mdc-button mdc-button--outline btn btn-outline-secondary button-cancel"

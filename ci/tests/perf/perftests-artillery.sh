@@ -22,7 +22,7 @@ echo "Using temp directory: ${TMPDIR}"
 
 gradle="./gradlew "
 gradleBuild=""
-gradleBuildOptions="--build-cache --configure-on-demand --no-daemon --parallel --max-workers=8 --no-configuration-cache "
+gradleBuildOptions="--build-cache --configure-on-demand --no-daemon --parallel --max-workers=8  "
 webAppServerType="${1:-tomcat}"
 testCategory="${2:-cas}"
 
@@ -55,7 +55,7 @@ retVal=0
 echo -e "******************************************************************************************"
 printgreen "Build started at $(date) for test category ${testCategory} and web application server ${webAppServerType}\n"
 echo -e "******************************************************************************************"
-gradleBuild="$gradleBuild clean :webapp:cas-server-webapp-${webAppServerType}:build -x check -x test -x javadoc --no-configuration-cache -DskipNestedConfigMetadataGen=true -DcasModules=${casModules} "
+gradleBuild="$gradleBuild clean :webapp:cas-server-webapp-${webAppServerType}:build -x check -x test -x javadoc  -DskipNestedConfigMetadataGen=true -DcasModules=${casModules} "
 tasks="$gradle $gradleBuildOptions $gradleBuild"
 printgreen "$tasks"
 echo -e "\n***************************************************************************************\n"

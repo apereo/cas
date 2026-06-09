@@ -1,4 +1,6 @@
-description = "Apereo CAS SAML Identity Provider Metadata Resolution Via DynamoDb"
+apply plugin: "org.apereo.cas.project-conventions"
+
+description = "Stores and resolves SAML identity provider metadata from Amazon DynamoDB."
 ext {
     publishMetadata = true
     projectMetadata = [

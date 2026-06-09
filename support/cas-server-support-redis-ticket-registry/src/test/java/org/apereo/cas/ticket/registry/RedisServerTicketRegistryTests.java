@@ -32,6 +32,7 @@ import org.apereo.cas.util.TicketGrantingTicketIdGenerator;
 import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.util.junit.EnabledIfListeningOnPort;
 import org.apereo.cas.util.thread.Cleanable;
+import com.github.benmanes.caffeine.cache.Cache;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -165,12 +166,35 @@ class RedisServerTicketRegistryTests {
         "cas.ticket.registry.redis.port=6379",
         "cas.ticket.registry.redis.pool.max-active=20",
         "cas.ticket.registry.redis.pool.enabled=true",
+        "cas.ticket.registry.redis.crypto.enabled=true",
         "cas.ticket.registry.redis.crypto.encryption.key=AZ5y4I9qzKPYUVNL2Td4RMbpg6Z-ldui8VEFg8hsj1M",
         "cas.ticket.registry.redis.crypto.signing.key=cAPyoHMrOMWrwydOXzBA-ufZQM-TilnLjbRgMQWlUlwFmy07bOtAgCIdNBma3c5P4ae_JV6n1OpOAYqSh2NkmQ"
     })
     class DefaultTests extends BaseRedisSentinelTicketRegistryTests {
 
         private static final int COUNT = 50;
+
+        @Autowired
+        @Qualifier("redisTicketRegistryCache")
+        private Cache<String, Ticket> redisTicketRegistryCache;
+        
+        @RepeatedTest(1)
+        @Tag("TicketRegistryTestWithEncryption")
+        void verifyDeleteTicketsForWithCacheAndListener() throws Throwable {
+            val authentication = CoreAuthenticationTestUtils.getAuthentication(UUID.randomUUID().toString());
+            val tgtId = new TicketGrantingTicketIdGenerator(10, StringUtils.EMPTY)
+                .getNewTicketId(TicketGrantingTicket.PREFIX);
+            val tgt = new TicketGrantingTicketImpl(tgtId, authentication, NeverExpiresExpirationPolicy.INSTANCE);
+            getNewTicketRegistry().addTicket(tgt);
+
+            val cacheKey = getNewTicketRegistry().digestIdentifier(tgt.getId());
+            assertNotNull(redisTicketRegistryCache.getIfPresent(cacheKey));
+
+            val deleted = getNewTicketRegistry().deleteTicketsFor(authentication.getPrincipal().getId());
+            assertTrue(deleted > 0);
+            assertNull(redisTicketRegistryCache.getIfPresent(cacheKey));
+            assertNull(getNewTicketRegistry().getTicket(tgt.getId()));
+        }
 
         @RepeatedTest(2)
         void verifyLargeDataset() {
@@ -379,7 +403,7 @@ class RedisServerTicketRegistryTests {
         private CasRedisTemplate<String, RedisTicketDocument> ticketRedisTemplate;
 
         @Autowired
-        @Qualifier("redisKeyGeneratorFactory")
+        @Qualifier(RedisKeyGeneratorFactory.BEAN_NAME)
         private RedisKeyGeneratorFactory redisKeyGeneratorFactory;
 
         @Test

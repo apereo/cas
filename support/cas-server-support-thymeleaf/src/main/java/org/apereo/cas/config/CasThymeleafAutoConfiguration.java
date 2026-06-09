@@ -213,9 +213,9 @@ public class CasThymeleafAutoConfiguration {
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public CasThymeleafTemplatesDirector casThymeleafTemplatesDirector(
-            @Qualifier("themeSource") final ThemeSource themeSource,
-            @Qualifier("themeResolver") final ThemeResolver themeResolver,
-            @Qualifier(CasWebflowExecutionPlan.BEAN_NAME) final CasWebflowExecutionPlan webflowExecutionPlan) {
+            @Qualifier("themeSource") final ObjectProvider<ThemeSource> themeSource,
+            @Qualifier("themeResolver") final ObjectProvider<ThemeResolver> themeResolver,
+            @Qualifier(CasWebflowExecutionPlan.BEAN_NAME) final ObjectProvider<CasWebflowExecutionPlan> webflowExecutionPlan) {
             return new CasThymeleafTemplatesDirector(webflowExecutionPlan, themeResolver, themeSource);
         }
     }

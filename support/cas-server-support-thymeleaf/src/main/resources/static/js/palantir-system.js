@@ -76,7 +76,7 @@ async function initializeSystemOperations() {
                 for (const exchange of response.exchanges) {
                     let timestamp = formatDateYearMonthDayHourMinute(exchange.timestamp);
                     let url = exchange.request.uri
-                        .replace(casServerPrefix, "")
+                        .replace(PalantirDashboardConfiguration.casServerPrefix(), "")
                         .replaceAll(/\?.+/gi, "");
 
                     if (urlIsAcceptable(url)) {
@@ -339,7 +339,7 @@ async function initializeSystemOperations() {
             systemTable.draw();
 
             highlightElements();
-            $("#casServerPrefix").text(casServerPrefix);
+            $("#casServerPrefix").text(PalantirDashboardConfiguration.casServerPrefix());
             $("#casServerHost").text(response.server["host"]);
         });
     }

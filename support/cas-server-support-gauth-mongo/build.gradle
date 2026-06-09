@@ -1,4 +1,6 @@
-description = "Apereo CAS Google Authenticator Mongo"
+apply plugin: "org.apereo.cas.project-conventions"
+
+description = "Stores Google Authenticator MFA account data in MongoDB."
 ext {
     publishMetadata = true
     projectMetadata = [

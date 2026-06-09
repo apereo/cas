@@ -74,7 +74,7 @@ async function initializeSAML1ProtocolOperations() {
 }
 
 function showSaml2IdPMetadata() {
-    $.get(`${casServerPrefix}/idp/metadata`, response => {
+    $.get(`${PalantirDashboardConfiguration.casServerPrefix()}/idp/metadata`, response => {
         let oidcOpConfigurationDialog = window.mdc.dialog.MDCDialog.attachTo(document.getElementById("saml2MetadataDialog"));
         const editor = initializeAceEditor("saml2MetadataDialogEditor", "xml");
         editor.setValue(new XMLSerializer().serializeToString(response));
@@ -88,7 +88,7 @@ function showSaml2IdPMetadata() {
 }
 
 function showOidcJwks() {
-    $.get(`${casServerPrefix}/oidc/jwks`, response => {
+    $.get(`${PalantirDashboardConfiguration.casServerPrefix()}/oidc/jwks`, response => {
         let oidcOpConfigurationDialog = window.mdc.dialog.MDCDialog.attachTo(document.getElementById("oidcOpConfigurationDialog"));
         const editor = initializeAceEditor("oidcOpConfigurationDialogEditor", "json");
         editor.setValue(JSON.stringify(response, null, 2));
@@ -103,14 +103,14 @@ function showOidcJwks() {
 
 async function initializeOidcProtocolOperations() {
     if (CAS_FEATURES.includes("OpenIDConnect")) {
-        $.get(`${casServerPrefix}/oidc/.well-known/openid-configuration`, response => {
+        $.get(`${PalantirDashboardConfiguration.casServerPrefix()}/oidc/.well-known/openid-configuration`, response => {
             highlightElements();
             $("#oidcIssuer").text(response.issuer);
         });
 
         $("button[name=oidcOpConfigurationButton]").off().on("click", () => {
             hideBanner();
-            $.get(`${casServerPrefix}/oidc/.well-known/openid-configuration`, response => {
+            $.get(`${PalantirDashboardConfiguration.casServerPrefix()}/oidc/.well-known/openid-configuration`, response => {
                 let oidcOpConfigurationDialog = window.mdc.dialog.MDCDialog.attachTo(document.getElementById("oidcOpConfigurationDialog"));
                 const editor = initializeAceEditor("oidcOpConfigurationDialogEditor", "json");
                 editor.setValue(JSON.stringify(response, null, 2));
@@ -205,7 +205,7 @@ async function initializeOidcProtocolOperations() {
                 return {};
             }
 
-            $.get(`${casServerPrefix}/oidc/.well-known/openid-configuration`, oidcConfiguration => {
+            $.get(`${PalantirDashboardConfiguration.casServerPrefix()}/oidc/.well-known/openid-configuration`, oidcConfiguration => {
 
                 const clientId = $("#oidcProtocolClientId").val();
                 const clientSecret = $("#oidcProtocolClientSecret").val();
@@ -601,7 +601,7 @@ async function initializeSAML2ProtocolOperations() {
                     });
 
                     $("button[name=registerSaml2MetadataManagerEntry]").off().on("click", function () {
-                        const saml2ServiceClass = Object.keys(supportedServiceTypes).find(cls => cls.includes("SamlRegisteredService"));
+                        const saml2ServiceClass = Object.keys(PalantirDashboardConfiguration.supportedServiceTypes()).find(cls => cls.includes("SamlRegisteredService"));
                         if (saml2ServiceClass) {
                             const entryName = $(this).data("entry-name");
                             const entityIdValue = $(this).data("entity-id");

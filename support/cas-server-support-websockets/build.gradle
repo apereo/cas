@@ -1,4 +1,6 @@
-description = "Apereo CAS WebSockets Support"
+apply plugin: "org.apereo.cas.project-conventions"
+
+description = "Adds WebSocket support for real-time CAS browser and server interactions."
 ext {
     publishMetadata = true
     projectMetadata = [

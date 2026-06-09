@@ -9,10 +9,12 @@ import org.apereo.cas.support.pac4j.authentication.DelegatedAuthenticationClient
 import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.web.flow.DelegationWebflowUtils;
 import org.apereo.cas.web.flow.actions.BaseCasWebflowAction;
+import org.apereo.cas.web.support.ArgumentExtractor;
 import org.apereo.cas.web.support.WebUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.apache.commons.lang3.StringUtils;
 import org.jspecify.annotations.Nullable;
 import org.pac4j.core.client.Client;
 import org.pac4j.core.context.CallContext;
@@ -53,6 +55,8 @@ public class DelegatedAuthenticationClientLogoutAction extends BaseCasWebflowAct
 
     protected final LogoutConfirmationResolver logoutConfirmationResolver;
 
+    protected final ArgumentExtractor argumentExtractor;
+
     @Override
     protected Event doPreExecute(final RequestContext requestContext) throws Exception {
         val request = WebUtils.getHttpServletRequestFromExternalWebflowContext(requestContext);
@@ -82,13 +86,13 @@ public class DelegatedAuthenticationClientLogoutAction extends BaseCasWebflowAct
                 val client = clientResult.get();
                 LOGGER.trace("Located client [{}]", client);
                 val service = WebUtils.getService(requestContext);
-                val targetUrl = Optional.ofNullable(service).map(Service::getId).orElse(null);
+                val targetUrl = Optional.ofNullable(service)
+                    .map(Service::getOriginalUrl).orElse(StringUtils.EMPTY);
                 LOGGER.debug("Logout target url based on service [{}] is [{}]", service, targetUrl);
-
                 val callContext = new CallContext(context, sessionStore);
                 val actionResult = client.getLogoutAction(callContext, currentProfile, targetUrl);
                 actionResult.ifPresent(action -> {
-                    captureDelegatedAuthenticationLogoutRequest(requestContext, action, targetUrl);
+                    captureDelegatedAuthenticationLogoutRequest(requestContext, action, client, targetUrl);
                     LOGGER.debug("Adapting logout action [{}] for client [{}]", action, client);
                     JEEHttpActionAdapter.INSTANCE.adapt(action, context);
                 });
@@ -100,8 +104,11 @@ public class DelegatedAuthenticationClientLogoutAction extends BaseCasWebflowAct
     }
 
     protected DelegatedAuthenticationClientLogoutRequest captureDelegatedAuthenticationLogoutRequest(
-        final RequestContext requestContext, final RedirectionAction action, final String targetUrl) {
-        val logoutActionBuilder = DelegatedAuthenticationClientLogoutRequest.builder()
+        final RequestContext requestContext, final RedirectionAction action,
+        final Client client, @Nullable final String targetUrl) {
+        val logoutActionBuilder = DelegatedAuthenticationClientLogoutRequest
+            .builder()
+            .clientName(client.getName())
             .status(action.getCode())
             .message(action.getMessage())
             .target(targetUrl);
@@ -110,16 +117,18 @@ public class DelegatedAuthenticationClientLogoutAction extends BaseCasWebflowAct
         }
         val logoutAction = logoutActionBuilder.build();
         DelegationWebflowUtils.putDelegatedAuthenticationLogoutRequest(requestContext, logoutAction);
+        LOGGER.debug("Delegated authentication logout request is [{}]", logoutAction);
         return logoutAction;
     }
 
-    protected UserProfile findCurrentProfile(final JEEContext webContext) {
+    protected @Nullable UserProfile findCurrentProfile(final JEEContext webContext) {
         val pm = new ProfileManager(webContext, this.sessionStore);
         val profile = pm.getProfile();
         return profile.orElse(null);
     }
 
-    protected Optional<? extends Client> findCurrentClient(final UserProfile currentProfile, final WebContext context) {
+    protected Optional<? extends Client> findCurrentClient(final @Nullable UserProfile currentProfile,
+                                                           final WebContext context) {
         return currentProfile == null
             ? Optional.empty()
             : identityProviders.findClient(currentProfile.getClientName(), context);

@@ -1,4 +1,6 @@
-description = "Apereo CAS Apache Syncope Authentication Support"
+apply plugin: "org.apereo.cas.project-conventions"
+
+description = "Adds Apache Syncope authentication for validating users against Syncope-managed identities."
 ext {
     publishMetadata = true
     projectMetadata = [

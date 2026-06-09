@@ -1,4 +1,6 @@
-description = "Apereo CAS Elastic Monitoring & Observability Support"
+apply plugin: "org.apereo.cas.project-conventions"
+
+description = "Sends CAS operational data to Elastic for monitoring, search, and observability."
 ext {
     publishMetadata = true
     projectMetadata = [

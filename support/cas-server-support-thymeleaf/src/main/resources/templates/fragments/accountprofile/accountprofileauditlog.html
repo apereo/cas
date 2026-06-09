@@ -13,9 +13,9 @@
 <body>
     <span th:fragment="auditlog">
         <script type="text/javascript">
-
             ((material, bootstrap) =>
                 document.addEventListener("DOMContentLoaded", () => {
+                    hljs.highlightAll();
                     $("#auditLogTable").DataTable();
                     let dialogId = "audit-dialog";
                     let dialog = material ?
@@ -26,7 +26,6 @@
                             let caller = event.target || event.srcElement;
                             let json = $(caller).next("span").text().trim();
                             $("#auditEntryDetails").text(json);
-                            hljs.highlightAll();
                             dialog[material ? "open" : "show"]();
                             event.preventDefault();
                         }, false));
@@ -90,10 +89,10 @@
                         th:utext="${entry.clientInfo.userAgent}">Value
                     </td>
                     <td class="mdc-data-table__cell">
-                        <button type="button" class="btn btn-link" name="viewAuditEntryDetails">
+                        <button type="button" class="mdc-button mdc-button--raised me-2 btn btn-link min-width-48x" name="viewAuditEntryDetails">
                             <i class="mdi mdi-account-details fas fa-eye" aria-hidden="true"></i>
-                            <span style="display: none" th:utext="${entry.json}" />
-                        </a>
+                            <span style="display: none" th:utext="${entry.json}"></span>
+                        </button>
                     </td>
                 </tr>
                 </tbody>

@@ -1,4 +1,6 @@
-description = "Apereo CAS Web Application Spring Webflow Actions Core"
+apply plugin: "org.apereo.cas.project-conventions"
+
+description = "Provides reusable webflow actions used by CAS login and account flows."
 dependencies {
     api project(":api:cas-server-core-api-webflow")
     api project(":api:cas-server-core-api-cookie")

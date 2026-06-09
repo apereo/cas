@@ -1,4 +1,6 @@
-description = "Apereo CAS Passwordless Authentication Support"
+apply plugin: "org.apereo.cas.project-conventions"
+
+description = "Stores passwordless authentication records in authentication."
 dependencies {
     implementation project(":core:cas-server-core-configuration-api")
     implementation project(":core:cas-server-core-authentication-api")

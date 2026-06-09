@@ -1,4 +1,6 @@
-description = "Apereo CAS Core Services/Authentication API"
+apply plugin: "org.apereo.cas.project-conventions"
+
+description = "Connects registered service policy decisions with authentication behavior."
 dependencies {
     implementation libraries.bouncycastle
 

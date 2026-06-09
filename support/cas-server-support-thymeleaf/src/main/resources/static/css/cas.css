@@ -915,6 +915,10 @@ span button.toolbar {
     max-width: 20%;
 }
 
+.mw-10 {
+    max-width: 10%;
+}
+
 .mt-0 {
     margin-top: 0;
 }
@@ -1239,4 +1243,96 @@ pre code.hljs {
     0%   { opacity: 0;   filter: blur(20px); }
     50%  { opacity: 0.5; filter: blur(10px); }
     100% { opacity: 1;   filter: blur(0);   }
+}
+
+.drop-button {
+    overflow: hidden;
+    isolation: isolate;
+    cursor: pointer;
+    box-shadow: 0 12px 24px rgba(37, 99, 235, 0.35);
+    transition:
+        transform 0.1s ease,
+        box-shadow 0.1s ease;
+}
+
+.drop-button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 16px 32px rgba(37, 99, 235, 0.45);
+}
+
+.drop-button:active {
+    transform: translateY(1px) scale(0.98);
+}
+
+.drop-button span {
+    position: relative;
+    z-index: 2;
+}
+
+.drop-button::before,
+.drop-button::after {
+    content: "";
+    position: absolute;
+    border-radius: 50%;
+    pointer-events: none;
+    z-index: 1;
+
+    opacity: 0;
+    transform: translate(-50%, -50%) scale(0);
+}
+
+.drop-button::before {
+    width: 3.5rem;
+    height: 3.5rem;
+    top: 50%;
+    left: 50%;
+    background: rgba(255, 255, 255, 0.35);
+}
+
+.drop-button::after {
+    width: 2rem;
+    height: 2rem;
+    top: 45%;
+    left: 42%;
+    border-radius: 50% 45% 55% 50%;
+    background: rgba(255, 255, 255, 0.25);
+}
+
+.drop-button:hover::before {
+    animation: water-drop 1.8s ease-in-out infinite;
+}
+
+.drop-button:hover::after {
+    animation: blob-pulse 2.4s ease-in-out infinite;
+}
+
+@keyframes water-drop {
+    0% {
+        transform: translate(-50%, -50%) scale(0.6);
+        opacity: 0.45;
+    }
+
+    50% {
+        transform: translate(-50%, -50%) scale(2.7);
+        opacity: 0.12;
+    }
+
+    100% {
+        transform: translate(-50%, -50%) scale(0.6);
+        opacity: 0.45;
+    }
+}
+
+@keyframes blob-pulse {
+    0%, 100% {
+        transform: translate(-50%, -50%) scale(1);
+        opacity: 0.35;
+        border-radius: 50% 45% 55% 50%;
+    }
+
+    50% {
+        transform: translate(-50%, -50%) scale(1.8);
+        opacity: 0.15;
+        border-radius: 45% 55% 48% 52%;
+    }
 }

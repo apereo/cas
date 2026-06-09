@@ -1,4 +1,6 @@
-description = "Apereo CAS YubiKey Core"
+apply plugin: "org.apereo.cas.project-conventions"
+
+description = "Provides shared YubiKey behavior for hardware-token authentication and MFA flows."
 dependencies {
     implementation project(":core:cas-server-core-authentication-api")
     implementation project(":core:cas-server-core-authentication-mfa-api")

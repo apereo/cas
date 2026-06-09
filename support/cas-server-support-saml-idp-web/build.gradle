@@ -1,4 +1,6 @@
-description = "Apereo CAS SAML Identity Provider Web Support"
+apply plugin: "org.apereo.cas.project-conventions"
+
+description = "Adds web endpoints and views required by the CAS SAML identity provider."
 dependencies {
     api project(":api:cas-server-core-api-audit")
     api project(":api:cas-server-core-api-webflow")

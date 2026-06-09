@@ -46,13 +46,13 @@ public class EncodingUtils {
      */
     public static final String JSON_WEB_KEY = "k";
 
-    private static final Base32 BASE32_CHUNKED_ENCODER = new Base32(76, new byte[]{10});
+    private static final Base32 BASE32_CHUNKED_ENCODER = Base32.builder().setLineLength(76).setLineSeparator(new byte[]{10}).get();
 
-    private static final Base32 BASE32_UNCHUNKED_ENCODER = new Base32(0, new byte[]{10});
+    private static final Base32 BASE32_UNCHUNKED_ENCODER = Base32.builder().setLineLength(0).setLineSeparator(new byte[]{10}).get();
 
-    private static final Base64 BASE64_CHUNKED_ENCODER = new Base64(76, new byte[]{10});
+    private static final Base64 BASE64_CHUNKED_ENCODER = Base64.builder().setLineLength(76).setLineSeparator(new byte[]{10}).get();
 
-    private static final Base64 BASE64_UNCHUNKED_ENCODER = new Base64(0, new byte[]{10});
+    private static final Base64 BASE64_UNCHUNKED_ENCODER = Base64.builder().setLineLength(0).setLineSeparator(new byte[]{10}).get();
 
     private static final BigInteger RSA_PUBLIC_KEY_EXPONENT = BigInteger.valueOf(65537);
 

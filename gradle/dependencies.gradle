@@ -4226,6 +4226,9 @@ ext.libraries = [
                     exclude(group: "org.slf4j", module: "slf4j-api")
                 },
                 dependencies.create(libs.fingerprintjs.get()) {
+                },
+                dependencies.create(libs.jquery.ui.get()) {
+                    exclude(group: "org.webjars", module: "jquery")
                 }
         ]
 ]

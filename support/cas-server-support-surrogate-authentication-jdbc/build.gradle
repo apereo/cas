@@ -1,4 +1,6 @@
-description = "Apereo CAS Surrogate Authentication JDBC Support"
+apply plugin: "org.apereo.cas.project-conventions"
+
+description = "Uses a JDBC-compatible database to authorize surrogate authentication relationships."
 ext {
     publishMetadata = true
     projectMetadata = [

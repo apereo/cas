@@ -1,4 +1,6 @@
-description = "Apereo CAS FIDO2 WebAuthn Support"
+apply plugin: "org.apereo.cas.project-conventions"
+
+description = "Adds WebAuthn/FIDO2 passkey authentication for phishing-resistant login and MFA flows."
 ext {
     publishMetadata = true
     projectMetadata = [

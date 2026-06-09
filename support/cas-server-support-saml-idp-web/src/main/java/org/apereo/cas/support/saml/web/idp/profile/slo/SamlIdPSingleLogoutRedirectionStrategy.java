@@ -144,7 +144,7 @@ public class SamlIdPSingleLogoutRedirectionStrategy implements LogoutRedirection
         val redirectUrl = encoder.getRedirectUrl();
         LOGGER.debug("Final logout redirect URL is [{}]", redirectUrl);
         WebUtils.putLogoutRedirectUrl(request, redirectUrl);
-        return null;
+        return LogoutRedirectionResponse.builder().logoutRedirectUrl(Optional.ofNullable(redirectUrl)).build();
     }
 
     protected LogoutRedirectionResponse produceSamlLogoutResponsePost(final SamlRegisteredServiceMetadataAdaptor adaptor,

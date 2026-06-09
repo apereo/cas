@@ -1,4 +1,6 @@
-description = "Apereo CAS Core Logging Splunk Support"
+apply plugin: "org.apereo.cas.project-conventions"
+
+description = "Routes CAS logs to Splunk for centralized log collection."
 ext {
     publishMetadata = true
     projectMetadata = [

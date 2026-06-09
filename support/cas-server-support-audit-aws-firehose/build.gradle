@@ -1,4 +1,6 @@
-description = "Apereo CAS AWS Firehose Audit Log Support"
+apply plugin: "org.apereo.cas.project-conventions"
+
+description = "Sends CAS audit records to Amazon Data Firehose for centralized security reporting."
 
 ext {
 

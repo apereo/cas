@@ -1,4 +1,6 @@
-description = "Apereo CAS Server OpenID Connect Support"
+apply plugin: "org.apereo.cas.project-conventions"
+
+description = "Enables CAS to act as an OpenID Connect provider for modern applications and relying parties."
 ext {
     publishMetadata = true
     projectMetadata = [
