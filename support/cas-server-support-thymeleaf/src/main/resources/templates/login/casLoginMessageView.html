@@ -28,7 +28,7 @@
                   th:if="${passwordManagementEnabled} AND ${passwordExpirationWarningFound}">
                   <input type="hidden" name="execution" th:value="${flowExecutionKey}" />
                   <input type="hidden" name="_eventId" value="changePassword" />
-                  <button class="mdc-button mdc-button--raised btn btn-primary mdc-card__actions_action mdc-card__actions_action--button"
+                  <button class="mdc-button mdc-button--raised btn btn-primary mdc-card__actions_action mdc-card__actions_action--button drop-button"
                      name="changePassword" th:value="#{screen.button.changePassword}"
                      id="changePassword" value="Change Password">
                   <span class="mdc-button__label" th:text="#{screen.button.changePassword}">Change Password</span>

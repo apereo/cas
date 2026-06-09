@@ -52,7 +52,7 @@
             <input type="hidden" name="LogoutRequestConfirmed" value="true"/>
             <input type="hidden" name="execution" th:value="${flowExecutionKey}"/>
             <input type="hidden" name="_eventId" value="success"/>
-            <button id="logoutButton" class="mdc-button mdc-button--raised btn btn-primary" name="success">
+            <button id="logoutButton" class="mdc-button mdc-button--raised btn btn-primary drop-button" name="success">
                 <span class="mdc-button__label" th:text="#{screen.welcome.button.logout}">Logout</span>
             </button>
         </form>

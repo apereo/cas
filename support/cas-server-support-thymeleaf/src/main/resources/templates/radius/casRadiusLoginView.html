@@ -37,7 +37,7 @@
                                 required />
                         </label>
                     </div>
-                    <button class="reveal-password align-self-end mdc-button mdc-button--raised btn btn-primary mdc-input-group-append mdc-icon-button"
+                    <button class="reveal-password align-self-end mdc-button mdc-button--raised btn btn-primary mdc-input-group-append mdc-icon-button drop-button"
                         tabindex="-1"
                         type="button" th:title="#{screen.pm.password.toggle}">
                         <i class="mdi mdi-eye fas fa-eye reveal-password-icon" aria-hidden="true"></i>
@@ -50,7 +50,7 @@
                     </p>
                 </div>
             </section>
-            <button class="mdc-button mdc-button--raised btn btn-primary">
+            <button class="mdc-button mdc-button--raised btn btn-primary drop-button">
                 <span class="mdc-button__label" th:text="#{screen.welcome.button.login}">Login</span>
             </button>
             <input type="hidden" name="_eventId_submit" value="Login"/>

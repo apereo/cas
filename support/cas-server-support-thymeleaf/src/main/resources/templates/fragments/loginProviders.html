@@ -59,7 +59,7 @@
                             th:switch="${entry.type}">
 
                             <form method="post" th:id="${'form' + entry.name}" th:action="@{/login}">
-                                <button class="mdc-button mdc-button--raised me-2 btn btn-primary d-block w-100"
+                                <button class="mdc-button mdc-button--raised me-2 btn btn-primary d-block w-100 drop-button"
                                         name="submitButton"
                                         id="submitButton"
                                         type="submit"
@@ -132,7 +132,7 @@
                             const link = $("<a>", {
                                 href: url,
                                 id: "saml2IdPDiscovery",
-                                class: "mdc-button mdc-button--raised d-block"
+                                class: "mdc-button mdc-button--raised d-block drop-button"
                             }).append(
                                 $("<i>", {
                                     class: "mdi mdi-shield",
@@ -168,7 +168,7 @@
                          th:style="'display:' + ${delegatedAuthenticationProviderPrimary != null ? 'none' : 'block'}">
                         <ul>
                             <li class="p-1 login-provider-item" th:each="entry: ${wsfedUrls}">
-                                <a class="mdc-button mdc-button--raised w-100"
+                                <a class="mdc-button mdc-button--raised w-100 drop-button"
                                    th:href="@{${entry.redirectUrl}}"
                                    th:inline="text" onload=""
                                    th:attr="autoRedirectType=${#strings.toLowerCase(entry.autoRedirectType)}"

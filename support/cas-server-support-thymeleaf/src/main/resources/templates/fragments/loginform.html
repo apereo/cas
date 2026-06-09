@@ -291,7 +291,7 @@
                     <input type="hidden" name="_eventId" value="discovery"/>
                     <span class="fa fa-unlock"></span>
                     <button th:id="selectProviderButton"
-                            class="mdc-button mdc-button--raised"
+                            class="mdc-button mdc-button--raised drop-button"
                             onclick="$('#providerDiscoveryForm').submit();"
                             th:value="#{screen.pac4j.button.selectprovider}">
                         <span class="mdc-button__label" th:text="#{screen.pac4j.button.selectprovider}">Select</span>
@@ -312,7 +312,7 @@
 
                         /*]]>*/
                     </script>
-                    <a id="x509LoginLink" class="mdc-button mdc-button--raised btn btn-primary"
+                    <a id="x509LoginLink" class="mdc-button mdc-button--raised btn btn-primary drop-button"
                        onclick="javascript:x509login();"
                        th:text="#{screen.welcome.button.loginx509}">X509 Login</a>
                 </span>
