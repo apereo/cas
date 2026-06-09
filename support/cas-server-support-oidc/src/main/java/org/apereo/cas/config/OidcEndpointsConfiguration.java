@@ -201,16 +201,14 @@ class OidcEndpointsConfiguration {
             final CasConfigurationProperties casProperties) {
             return new WebMvcConfigurer() {
                 @Override
-                public void addInterceptors(
-                    @NonNull
-                    final InterceptorRegistry registry) {
+                public void addInterceptors(@NonNull final InterceptorRegistry registry) {
                     val baseEndpoint = getOidcBaseEndpoint(oidcIssuerService, casProperties);
                     LOGGER.info("Registering CAS OpenID Connect endpoints under [{}]. Verify to make sure this value "
                         + "is correctly defined based on your issuer and server settings, defined in CAS configuration. "
                         + "Failure to specify the correct value may interfere with OpenID Connect functionality.", baseEndpoint);
                     registry.addInterceptor(new RefreshableHandlerInterceptor(oauthInterceptor))
                         .order(100)
-                        .addPathPatterns(baseEndpoint.concat("/*"));
+                        .addPathPatterns(baseEndpoint.concat("/**"));
                 }
             };
         }

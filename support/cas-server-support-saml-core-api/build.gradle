@@ -1,4 +1,6 @@
-description = "Apereo CAS SAML Core Functionality"
+apply plugin: "org.apereo.cas.project-conventions"
+
+description = "Provides shared SAML protocol support used by CAS SAML identity provider and validation features."
 dependencies {
     api libraries.opensaml
     api libraries.dropwizard

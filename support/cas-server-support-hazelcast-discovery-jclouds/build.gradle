@@ -1,4 +1,6 @@
-description = "Apereo CAS Hazelcast Discovery JClouds Support"
+apply plugin: "org.apereo.cas.project-conventions"
+
+description = "Adds Hazelcast discovery support for Hazelcast clusters."
 ext {
     publishMetadata = true
     projectMetadata = [

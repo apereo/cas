@@ -1,4 +1,6 @@
-description = "Apereo CAS Spring Cloud Consul Client"
+apply plugin: "org.apereo.cas.project-conventions"
+
+description = "Registers CAS configuration and discovery clients with HashiCorp Consul for Spring Cloud deployments."
 ext {
     publishMetadata = true
     projectMetadata = [

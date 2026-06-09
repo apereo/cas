@@ -3,7 +3,7 @@
   "id": 1,
   "serviceId": "^https://localhost:9859/anything/cas",
   "name":"Sample",
-  "evaluationOrder":605,
+  "evaluationOrder": 605,
   "attributeReleasePolicy" : {
     "@class" : "org.apereo.cas.services.ReturnAllowedAttributeReleasePolicy",
     "authorizedToReleaseAuthenticationAttributes": true,

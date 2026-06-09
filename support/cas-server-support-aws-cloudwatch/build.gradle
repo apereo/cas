@@ -1,4 +1,6 @@
-description = "Apereo CAS AWS CloudWatch"
+apply plugin: "org.apereo.cas.project-conventions"
+
+description = "Adds Amazon CloudWatch integration support for CAS cloud deployments."
 ext {
     publishMetadata = true
     projectMetadata = [

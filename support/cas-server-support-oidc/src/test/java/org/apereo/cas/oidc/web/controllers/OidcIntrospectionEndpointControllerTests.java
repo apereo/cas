@@ -184,7 +184,7 @@ class OidcIntrospectionEndpointControllerTests extends AbstractOidcTests {
                     request.setServerName("unknown.issuer.org");
                     return request;
                 }))
-            .andExpect(status().isUnauthorized());
+            .andExpect(status().isBadRequest());
     }
 
     @Test

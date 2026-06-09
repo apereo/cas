@@ -17,7 +17,7 @@ TARGET_DIR="/etc/cas/configserver"
 #  -e JVM_DEBUG=true \
 #  -p 5000:5000 \
 
-docker run --rm -d \
+docker run --quiet  --rm -d \
   --name=configserver \
   --mount type=bind,source="${CONFIG_SOURCE}",target="${TARGET_DIR}" \
   -e SERVER_SSL_ENABLED=false \

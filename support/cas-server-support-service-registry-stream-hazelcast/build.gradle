@@ -1,4 +1,6 @@
-description = "Apereo CAS Service Registry Streaming Support with Hazelcast"
+apply plugin: "org.apereo.cas.project-conventions"
+
+description = "Streams registered service changes through Hazelcast so clustered CAS deployments stay synchronized."
 ext {
     publishMetadata = true
     projectMetadata = [

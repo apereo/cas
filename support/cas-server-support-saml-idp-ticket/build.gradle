@@ -1,4 +1,6 @@
-description = "Apereo CAS SAML Identity Provider Ticket Support"
+apply plugin: "org.apereo.cas.project-conventions"
+
+description = "Adds SAML identity provider ticket support for SAML login and validation flows."
 dependencies {
     api project(":api:cas-server-core-api-audit")
     api project(":api:cas-server-core-api-webflow")

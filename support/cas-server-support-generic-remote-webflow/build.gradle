@@ -1,4 +1,6 @@
-description = "Apereo CAS Remote Address Authentication Webflow Support"
+apply plugin: "org.apereo.cas.project-conventions"
+
+description = "Adds login flow support for authenticating users by remote address."
 dependencies {
     implementation libraries.jose4j
     

@@ -68,6 +68,7 @@ public class GenericSuccessViewAction extends BaseCasWebflowAction {
                 if (casProperties.getView().isAuthorizedServicesOnSuccessfulLogin()) {
                     val authorizedServices = servicesManager.getAllServices()
                         .stream()
+                        .filter(registeredService -> !registeredService.isInternal())
                         .filter(registeredService -> {
                             try {
                                 return principalAccessStrategyEnforcer.authorize(

@@ -1,0 +1,28 @@
+project.pluginManager.apply('war')
+
+ext {
+    mainClassName = 'org.apereo.cas.web.CasWebApplication'
+    casWebApplication = true
+}
+description = 'Apereo CAS Web Application'
+
+sourceSets {
+    main {
+        resources {
+            srcDirs "${project.layout.buildDirectory.getAsFile().get().path}/generated-src/main/resources"
+        }
+    }
+}
+
+project.pluginManager.apply('org.apereo.cas.spring-boot-conventions')
+project.pluginManager.apply('org.apereo.cas.webapp-dependencies-conventions')
+
+def buildScript = providers.systemProperty('buildScript').getOrNull()
+if (buildScript?.trim()) {
+    def buildScriptFile = file(buildScript)
+    if (buildScriptFile.exists()) {
+        ansi.green "Applying build script ${buildScript}"
+        project.apply from: buildScriptFile
+    }
+}
+

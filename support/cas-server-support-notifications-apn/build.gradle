@@ -1,4 +1,6 @@
-description = "Apereo CAS Server APN Notifications Support"
+apply plugin: "org.apereo.cas.project-conventions"
+
+description = "Sends CAS notifications through Apple Push Notification service."
 ext {
     publishMetadata = true
     projectMetadata = [

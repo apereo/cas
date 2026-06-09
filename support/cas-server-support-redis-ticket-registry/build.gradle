@@ -1,4 +1,6 @@
-description = "Apereo CAS Redis Ticket Registry"
+apply plugin: "org.apereo.cas.project-conventions"
+
+description = "Stores CAS tickets in Redis for shared single sign-on state across server nodes."
 ext {
 
     publishMetadata = true

@@ -1,4 +1,6 @@
-description = "Apereo CAS Password Management LDAP Support"
+apply plugin: "org.apereo.cas.project-conventions"
+
+description = "Uses an LDAP directory for password management flows such as reset and account recovery."
 ext {
     publishMetadata = true
     projectMetadata = [

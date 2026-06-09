@@ -55,6 +55,15 @@ public class CoreGoogleAuthenticatorMultifactorProperties implements Serializabl
     private int windowSize = 3;
 
     /**
+     * Number of scratch codes to generate for the account. Scratch codes are used as a backup
+     * authentication mechanism when the user is unable to access their primary device. Each scratch code is a
+     * one-time use code that can be used to authenticate the user in case they lose access to their primary device
+     * or if the device is not functioning properly. By generating multiple scratch codes, users have a higher
+     * chance of successfully authenticating even if they encounter issues with their primary device.
+     */
+    private int numberOfScratchCodes = 5;
+
+    /**
      * Maximum number of authentication attempts allowed
      * for a token validation attempt. If the number of attempts
      * exceeds this value, authentication will halt.

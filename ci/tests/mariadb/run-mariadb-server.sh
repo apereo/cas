@@ -4,7 +4,7 @@
 export DOCKER_IMAGE="mariadb:12.3.2"
 echo "Running MariaDb docker container..."
 docker stop mariadb || true
-docker run --rm -p 3306:3306 --rm --name mariadb \
+docker run --quiet  --rm -p 3306:3306 --rm --name mariadb \
   -e MYSQL_ROOT_PASSWORD=mypass -d ${DOCKER_IMAGE}
 
 docker ps | grep "mariadb"

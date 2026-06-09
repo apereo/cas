@@ -1,4 +1,6 @@
-description = "Apereo CAS Core Monitor Support"
+apply plugin: "org.apereo.cas.project-conventions"
+
+description = "Adds core health and diagnostic monitoring for CAS runtime components."
 dependencies {
     api project(":api:cas-server-core-api-monitor")
     api project(":api:cas-server-core-api-ticket")

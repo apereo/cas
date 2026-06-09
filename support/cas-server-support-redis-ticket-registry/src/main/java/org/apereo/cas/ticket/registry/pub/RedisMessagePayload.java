@@ -31,6 +31,10 @@ public class RedisMessagePayload<T extends Serializable> implements Serializable
 
     private final T ticket;
 
+    private final String redisKey;
+
+    private final String cacheKey;
+
     public enum RedisMessageTypes {
         /**
          * Message type to add ticket to the cache.

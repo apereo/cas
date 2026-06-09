@@ -4,7 +4,7 @@
 export DOCKER_IMAGE="memcached:alpine"
 echo "Running image for memcached..."
 docker stop memcached || true && docker rm memcached || true
-docker run --rm  -p 11211:11211 --name memcached -d ${DOCKER_IMAGE} memcached -m 256
+docker run --quiet  --rm  -p 11211:11211 --name memcached -d ${DOCKER_IMAGE} memcached -m 256
 
 docker ps | grep "memcached"
 retVal=$?

@@ -1,4 +1,6 @@
-description = "Apereo CAS YubiKey DynamoDb Support"
+apply plugin: "org.apereo.cas.project-conventions"
+
+description = "Stores YubiKey account data in Amazon DynamoDB for hardware-token authentication."
 
 ext {
 

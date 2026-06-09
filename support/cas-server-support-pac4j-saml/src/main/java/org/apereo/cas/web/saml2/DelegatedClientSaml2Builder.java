@@ -88,12 +88,12 @@ public class DelegatedClientSaml2Builder implements ConfigurableDelegatedClientB
 
                 val configuration = new SAML2Configuration(keystorePath, saml.getKeystorePassword(),
                     saml.getPrivateKeyPassword(), identityProviderMetadataPath);
-                configuration.setForceKeystoreGeneration(saml.isForceKeystoreGeneration());
+                configuration.getKeystore().setForceKeystoreGeneration(saml.isForceKeystoreGeneration());
 
                 FunctionUtils.doIf(saml.getCertificateExpirationDays() > 0,
-                    _ -> configuration.setCertificateExpirationPeriod(Period.ofDays(saml.getCertificateExpirationDays()))).accept(saml);
+                    _ -> configuration.getKeystore().setCertificateExpirationPeriod(Period.ofDays(saml.getCertificateExpirationDays()))).accept(saml);
                 FunctionUtils.doIfNotNull(saml.getResponseBindingType(), configuration::setResponseBindingType);
-                FunctionUtils.doIfNotNull(saml.getCertificateSignatureAlg(), configuration::setCertificateSignatureAlg);
+                FunctionUtils.doIfNotNull(saml.getCertificateSignatureAlg(), alg -> configuration.getKeystore().setCertificateSignatureAlg(alg));
 
                 configuration.setPartialLogoutTreatedAsSuccess(saml.isPartialLogoutAsSuccess());
                 configuration.setResponseDestinationAttributeMandatory(saml.isResponseDestinationMandatory());
@@ -103,7 +103,7 @@ public class DelegatedClientSaml2Builder implements ConfigurableDelegatedClientB
                 FunctionUtils.doIfNotBlank(saml.getSingleLogoutServiceUrl(), _ -> configuration.setSingleSignOutServiceUrl(saml.getSingleLogoutServiceUrl()));
                 FunctionUtils.doIfNotBlank(saml.getLogoutResponseBindingType(), _ -> configuration.setSpLogoutResponseBindingType(saml.getLogoutResponseBindingType()));
 
-                configuration.setCertificateNameToAppend(StringUtils.defaultIfBlank(saml.getCertificateNameToAppend(), saml.getClientName()));
+                configuration.getKeystore().setCertificateNameToAppend(StringUtils.defaultIfBlank(saml.getCertificateNameToAppend(), saml.getClientName()));
                 configuration.setMaximumAuthenticationLifetime(Beans.newDuration(saml.getMaximumAuthenticationLifetime()).toSeconds());
                 val serviceProviderEntityId = SpringExpressionLanguageValueResolver.getInstance().resolve(saml.getServiceProviderEntityId());
                 configuration.setServiceProviderEntityId(serviceProviderEntityId);

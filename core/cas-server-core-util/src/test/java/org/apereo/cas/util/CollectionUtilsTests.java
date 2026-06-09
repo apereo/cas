@@ -3,7 +3,6 @@ package org.apereo.cas.util;
 import module java.base;
 import com.google.common.collect.Multimap;
 import lombok.val;
-import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
@@ -22,7 +21,7 @@ class CollectionUtilsTests {
         value.put("Hello", CollectionUtils.wrapList("People", "World"));
         val result = CollectionUtils.toCollection(value, ArrayList.class);
         assertEquals(1, result.size());
-        assertSame(ImmutablePair.class, result.getFirst().getClass());
+        assertSame(Couplet.class, result.getFirst().getClass());
     }
 
     @Test

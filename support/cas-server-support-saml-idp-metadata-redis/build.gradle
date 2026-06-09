@@ -1,4 +1,6 @@
-description = "Apereo CAS SAML Identity Provider Metadata Resolution Via Redis"
+apply plugin: "org.apereo.cas.project-conventions"
+
+description = "Stores and resolves SAML identity provider metadata from Redis."
 ext {
     publishMetadata = true
     projectMetadata = [

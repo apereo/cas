@@ -1,4 +1,6 @@
-description = "Apereo CAS Token Authentication Webflow Support"
+apply plugin: "org.apereo.cas.project-conventions"
+
+description = "Adds browser login flow support for token-based authentication."
 ext {
     publishMetadata = true
     projectMetadata = [

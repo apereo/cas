@@ -1,4 +1,6 @@
-description = "Apereo CAS Basic Authentication Support"
+apply plugin: "org.apereo.cas.project-conventions"
+
+description = "Adds HTTP Basic authentication support for CAS endpoints and integrations that require it."
 ext {
     publishMetadata = true
     projectMetadata = [

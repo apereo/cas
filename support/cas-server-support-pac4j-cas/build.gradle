@@ -1,4 +1,6 @@
-description = "Apereo CAS Delegated Authentication CAS Support Using Pac4J"
+apply plugin: "org.apereo.cas.project-conventions"
+
+description = "Adds delegated authentication to external CAS servers through pac4j."
 ext {
     publishMetadata = true
     projectMetadata = [

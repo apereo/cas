@@ -18,7 +18,7 @@ async function initializeHotKeyOperations() {
             openRegisteredServiceWizardDialog();
             break;
         case "n":
-            if (currentActiveTab === Tabs.CONFIGURATION.index && mutablePropertySourcesAvailable) {
+            if (currentActiveTab === Tabs.CONFIGURATION.index && PalantirDashboardConfiguration.mutablePropertySourcesAvailable()) {
                 event.preventDefault();
                 $("#newConfigPropertyButton:visible").click();
             }
@@ -42,6 +42,10 @@ async function initializeHotKeyOperations() {
             if (currentActiveTab === Tabs.MULTITENANCY.index && $("#registeredTenantsTab").is(":visible")) {
                 event.preventDefault();
                 $("#newTenantButton:visible").click();
+            }
+            if (currentActiveTab === Tabs.APPLICATIONS.index) {
+                event.preventDefault();
+                openRegisteredServiceWizardDialog();
             }
             
             break;

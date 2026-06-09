@@ -1,0 +1,273 @@
+import groovy.io.FileType
+import groovy.json.JsonOutput
+import groovy.json.JsonSlurper
+import org.apereo.cas.gradle.CasBuildSettings
+import org.apereo.cas.gradle.TestCategories
+import org.gradle.api.tasks.testing.Test
+
+import java.nio.charset.StandardCharsets
+import java.security.MessageDigest
+import java.util.concurrent.ConcurrentHashMap
+import java.util.Collections
+import java.util.regex.Pattern
+
+ext.testTagMap = new ConcurrentHashMap<String, Set<String>>()
+
+TestCategories.values().each { testCategory ->
+    def sourceTestDirs = project.sourceSets.test.java.srcDirs
+    if (hasTestsOfCategory(sourceTestDirs, testCategory.name())) {
+        def taskName = "test${testCategory.name()}"
+        if (!tasks.getNames().contains(taskName)) {
+            def jacocoTestExecutionResultsFile = project.layout.buildDirectory.file("jacoco/jacoco-${taskName}.exec").get().asFile
+            def shouldWeTest = shouldTest(sourceTestDirs, testCategory.name())
+            def coverageEnabled = isCoverageEnabled()
+            tasks.register(taskName, Test) {
+                description = "Run unit/integration tests to verify the test category: ${testCategory.name()}"
+                group = 'CAS Tests'
+                testClassesDirs = sourceSets.test.output.classesDirs
+                classpath = sourceSets.test.runtimeClasspath
+                enabled = shouldWeTest
+                if (coverageEnabled) {
+                    outputs.file(jacocoTestExecutionResultsFile)
+                }
+
+                useJUnitPlatform {
+                    includeTags testCategory.name()
+                }
+
+                def ptsEnabled = shouldWeTest && testCategory.ptsEnabled && Boolean.valueOf(System.getProperty('PTS_ENABLED') ?: 'true') && !publishReleases
+                develocity.predictiveTestSelection {
+                    enabled = ptsEnabled
+                    mergeCodeCoverage = true
+                }
+                logger.info "Predictive test selection for ${project.name} with task ${taskName} is ${ptsEnabled ? 'enabled' : 'disabled'}."
+
+                systemProperty('junit.platform.discovery.issue.severity.critical', 'info')
+                systemProperty('junit.platform.execution.memory.cleanup.enabled', true)
+
+                if (testCategory.parallelEnabled) {
+                    systemProperty('junit.jupiter.execution.parallel.enabled', true)
+                    systemProperty('junit.jupiter.execution.parallel.mode.default', 'concurrent')
+                    systemProperty('junit.jupiter.execution.parallel.mode.classes.default', 'concurrent')
+                    systemProperty('junit.jupiter.execution.parallel.config.strategy', 'dynamic')
+                    systemProperty('junit.jupiter.execution.parallel.config.dynamic.factor', '2')
+                    systemProperty('junit.jupiter.execution.parallel.config.executor-service', 'WORKER_THREAD_POOL')
+                }
+
+                if (coverageEnabled && !project.path.contains(':docs')) {
+                    jacoco {
+                        dumpOnExit = true
+                        excludes = excludedFilesFromTestCoverage
+                        destinationFile = jacocoTestExecutionResultsFile
+                        classDumpDir = layout.buildDirectory.dir('jacoco/classpathdumps').get().asFile
+                    }
+                }
+                jvmArgs += "-javaagent:${configurations.jvmAgents.asPath}"
+            }
+        }
+    }
+}
+
+tasks.named('test') {
+    enabled = false
+    onlyIf = {
+        false
+    }
+}
+
+tasks.withType(Test).configureEach {
+    scanForTestClasses = false
+    ignoreFailures = providers.systemProperty('ignoreTestFailures').present
+    forkEvery = 500
+
+    def defaultParallelForks = Math.max(1, (Runtime.runtime.availableProcessors() / 2).intValue())
+    maxParallelForks = ci ? Math.min(2, defaultParallelForks) : defaultParallelForks
+
+    failFast = true
+
+    def list = []
+    list.add('--enable-native-access=ALL-UNNAMED')
+    list.add('--add-modules')
+    list.add('java.se')
+
+    list.add('--add-exports')
+    list.add('java.base/jdk.internal.ref=ALL-UNNAMED')
+    list.add('--add-exports')
+    list.add('java.base/jdk.internal.misc=ALL-UNNAMED')
+    list.add('--add-exports')
+    list.add('java.xml.crypto/org.jcp.xml.dsig.internal.dom=ALL-UNNAMED')
+    list.add('--add-exports')
+    list.add('java.base/sun.nio.ch=ALL-UNNAMED')
+    list.add('--add-exports')
+    list.add('java.base/java.nio=ALL-UNNAMED')
+    list.add('--add-exports')
+    list.add('java.management/com.sun.jmx.mbeanserver=ALL-UNNAMED')
+    list.add('--add-exports')
+    list.add('jdk.internal.jvmstat/sun.jvmstat.monitor=ALL-UNNAMED')
+    list.add('--add-exports')
+    list.add('java.base/sun.reflect.generics.reflectiveObjects=ALL-UNNAMED')
+
+    list.add('--add-opens')
+    list.add('java.base/jdk.internal.misc=ALL-UNNAMED')
+    list.add('--add-opens')
+    list.add('java.base/jdk.internal.access=ALL-UNNAMED')
+    list.add('--add-opens')
+    list.add('java.base/java.lang=ALL-UNNAMED')
+    list.add('--add-opens')
+    list.add('java.base/java.lang.reflect=ALL-UNNAMED')
+    list.add('--add-opens')
+    list.add('java.base/java.lang.invoke=ALL-UNNAMED')
+    list.add('--add-opens')
+    list.add('java.base/java.io=ALL-UNNAMED')
+    list.add('--add-opens')
+    list.add('java.base/java.math=ALL-UNNAMED')
+    list.add('--add-opens')
+    list.add('java.base/java.util=ALL-UNNAMED')
+    list.add('--add-opens')
+    list.add('java.base/java.time=ALL-UNNAMED')
+    list.add('--add-opens')
+    list.add('java.base/java.util.concurrent=ALL-UNNAMED')
+    list.add('--add-opens')
+    list.add('java.base/java.util.concurrent.locks=ALL-UNNAMED')
+    list.add('--add-opens')
+    list.add('java.base/java.net=ALL-UNNAMED')
+    list.add('--add-opens')
+    list.add('java.base/java.nio=ALL-UNNAMED')
+    list.add('--add-opens')
+    list.add('java.base/sun.nio.ch=ALL-UNNAMED')
+    list.add('--add-opens')
+    list.add('java.management/sun.management=ALL-UNNAMED')
+    list.add('--add-opens')
+    list.add('jdk.management/com.sun.management.internal=ALL-UNNAMED')
+
+    list.add('-Dio.netty.tryReflectionSetAccessible=true')
+
+    list.add('-Xms512m')
+    list.add('-Xmx4g')
+
+    list.add('-Dspring.jmx.enabled=false')
+
+    list.add('-XX:+EnableDynamicAgentLoading')
+    jvmArgs = list
+
+    testLogging {
+        def testLoggingEvents = providers.systemProperty('testLoggingEvents')
+            .orElse('PASSED,SKIPPED,FAILED,STANDARD_OUT,STANDARD_ERROR').get().toUpperCase().split(',')
+        events testLoggingEvents
+        exceptionFormat = 'full'
+
+        def verbose = providers.systemProperty('verbose').present
+
+        showStandardStreams = verbose && testLoggingEvents.contains('STANDARD_OUT')
+        showExceptions = verbose && testLoggingEvents.contains('FAILED')
+        showCauses = verbose
+
+        quiet {
+            events 'failed'
+            exceptionFormat = 'full'
+            showExceptions = true
+            showCauses = true
+            showStackTraces = true
+        }
+    }
+
+    def skipRetry = providers.systemProperty('skipTestRetry').present
+    if (!skipRetry) {
+        develocity.testRetry {
+            maxRetries = 3
+            maxFailures = 5
+            failOnPassedAfterRetry = false
+        }
+    }
+
+    filter {
+        setFailOnNoMatchingTests(false)
+        excludeTestsMatching '*TestsSuite'
+    }
+}
+
+def shouldTest(final Set sourceTestDirectories, final String category) {
+    def foundTest = gradle.startParameter.taskNames.any { task -> task.matches(/^test${category}$/) }
+    if (!foundTest) {
+        logger.debug "No tests with category ${category} found"
+    }
+    !providers.systemProperty('skipTests').present && foundTest && hasTestsOfCategory(sourceTestDirectories, category)
+}
+
+def hasTestsOfCategory(final Set sourceTestDirectories, final String category) {
+    def result = testTagMap.computeIfAbsent(testTagCacheKey(sourceTestDirectories)) {
+        loadTagsFromCache(sourceTestDirectories)
+    } as Set<String>
+    result.contains(category)
+}
+
+def isCoverageEnabled() {
+    providers.systemProperty('enableJacocoAgent').orElse('false').get().toBoolean() ||
+        gradle.startParameter.taskNames.any { it.toLowerCase(Locale.ENGLISH).contains('jacoco') }
+}
+
+static def testTagCacheKey(final Set sourceTestDirectories) {
+    def digest = MessageDigest.getInstance('SHA-256')
+    def keyMaterial = sourceTestDirectories
+        .findAll { it.exists() }
+        .collect { it.canonicalPath }
+        .sort()
+        .join('|')
+    digest.update(keyMaterial.getBytes(StandardCharsets.UTF_8))
+    digest.digest().encodeHex().toString()
+}
+
+def testTagCacheFile(final Set sourceTestDirectories) {
+    new File(project.rootDir, ".gradle/cas-test-tags/${testTagCacheKey(sourceTestDirectories)}.json")
+}
+
+static def collectTestFiles(final Set sourceTestDirectories) {
+    def files = []
+    sourceTestDirectories.each { src ->
+        if (src.exists()) {
+            src.traverse(type: FileType.FILES, nameFilter: ~/.*Tests\.\w+/) { file ->
+                files << file
+            }
+        }
+    }
+    files
+}
+
+def loadTagsFromCache(final Set sourceTestDirectories) {
+    def cacheFile = testTagCacheFile(sourceTestDirectories)
+    cacheFile.parentFile.mkdirs()
+
+    def testFiles = collectTestFiles(sourceTestDirectories)
+    def cacheFingerprint = testFiles
+        .collect { "${it.canonicalPath}:${it.length()}:${it.lastModified()}" }
+        .sort()
+        .join('|')
+
+    if (cacheFile.exists()) {
+        try {
+            def cache = new JsonSlurper().parse(cacheFile)
+            if (cache.fingerprint == cacheFingerprint) {
+                return new HashSet<String>(cache.tags ?: [])
+            }
+        } catch (ignored) {
+            cacheFile.delete()
+        }
+    }
+
+    def tagPattern = ~/^\s*@Tag\("(\w+)"\)\s*$/
+    def tags = Collections.synchronizedSet(new HashSet<String>())
+    testFiles.parallelStream().forEach { file ->
+        file.readLines().each { line ->
+            def match = line =~ tagPattern
+            if (match.find()) {
+                tags.add(match.group(1))
+            }
+        }
+    }
+    cacheFile.text = JsonOutput.toJson([
+        fingerprint: cacheFingerprint,
+        tags       : tags.toSorted()
+    ])
+    tags
+}
+

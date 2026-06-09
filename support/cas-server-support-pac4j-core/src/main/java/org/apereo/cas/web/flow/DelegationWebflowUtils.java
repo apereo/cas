@@ -2,10 +2,12 @@ package org.apereo.cas.web.flow;
 
 import module java.base;
 import org.apereo.cas.ticket.Ticket;
+import org.apereo.cas.web.support.WebUtils;
 import lombok.experimental.UtilityClass;
 import lombok.val;
 import org.apache.commons.lang3.ObjectUtils;
 import org.springframework.webflow.execution.RequestContext;
+import jakarta.servlet.http.HttpServletRequest;
 
 /**
  * This is {@link DelegationWebflowUtils}.
@@ -63,7 +65,19 @@ public class DelegationWebflowUtils {
      */
     public static void putDelegatedAuthenticationLogoutRequest(final RequestContext requestContext,
                                                                final Serializable logoutAction) {
+        val request = WebUtils.getHttpServletRequestFromExternalWebflowContext(requestContext);
+        putDelegatedAuthenticationLogoutRequest(request, logoutAction);
         requestContext.getFlashScope().put("delegatedAuthenticationLogoutRequest", logoutAction);
+    }
+
+    /**
+     * Put delegated authentication logout request.
+     *
+     * @param request      the request
+     * @param logoutAction the logout action
+     */
+    public static void putDelegatedAuthenticationLogoutRequest(final HttpServletRequest request, final Serializable logoutAction) {
+        request.setAttribute("delegatedAuthenticationLogoutRequest", logoutAction);
     }
 
     /**
@@ -76,7 +90,22 @@ public class DelegationWebflowUtils {
      */
     public <T> T getDelegatedAuthenticationLogoutRequest(final RequestContext requestContext,
                                                          final Class<T> clazz) {
-        return requestContext.getFlashScope().get("delegatedAuthenticationLogoutRequest", clazz);
+        val request = WebUtils.getHttpServletRequestFromExternalWebflowContext(requestContext);
+        return getDelegatedAuthenticationLogoutRequest(request, clazz)
+            .orElseGet(() -> requestContext.getFlashScope().get("delegatedAuthenticationLogoutRequest", clazz));
+    }
+
+    /**
+     * Gets delegated authentication logout request.
+     *
+     * @param <T>     the type parameter
+     * @param request the request
+     * @param clazz   the clazz
+     * @return the delegated authentication logout request
+     */
+    public static <T> Optional<T> getDelegatedAuthenticationLogoutRequest(final HttpServletRequest request,
+                                                                   final Class<T> clazz) {
+        return Optional.ofNullable(request.getAttribute("delegatedAuthenticationLogoutRequest")).map(clazz::cast);
     }
 
     /**
@@ -204,8 +233,8 @@ public class DelegationWebflowUtils {
     /**
      * Put delegated authentication logout request ticket.
      *
-     * @param requestContext         the request context
-     * @param ticket the transient session ticket
+     * @param requestContext the request context
+     * @param ticket         the transient session ticket
      */
     public static void putDelegatedAuthenticationLogoutRequestTicket(final RequestContext requestContext,
                                                                      final Ticket ticket) {

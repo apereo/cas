@@ -1,4 +1,6 @@
-description = "Apereo CAS WS-Federation Webflow Support"
+apply plugin: "org.apereo.cas.project-conventions"
+
+description = "Adds browser login flow support for WS-Federation requests."
 ext {
     publishMetadata = true
     projectMetadata = [

@@ -90,7 +90,11 @@ class OidcJwksRegistrationEndpointControllerTests extends AbstractOidcTests {
     @ParameterizedTest
     @ValueSource(strings = {"Ed25519", "EC", "RSA"})
     void verifyChallengeWithAccessToken(final String algorithm) throws Throwable {
-        val accessToken = getAccessToken();
+        val registeredService = getOidcRegisteredService();
+        registeredService.setClientId(UUID.randomUUID().toString());
+        servicesManager.save(registeredService);
+        
+        val accessToken = getAccessToken(registeredService.getClientId());
         when(accessToken.getScopes()).thenReturn(Set.of(OidcConstants.CLIENT_JWKS_REGISTRATION_SCOPE));
         ticketRegistry.addTicket(accessToken);
 
@@ -111,10 +115,6 @@ class OidcJwksRegistrationEndpointControllerTests extends AbstractOidcTests {
         val request = new MockHttpServletRequest();
         val response = new MockHttpServletResponse();
         val context = new JEEContext(request, response);
-
-        val registeredService = getOidcRegisteredService();
-        registeredService.setClientId(UUID.randomUUID().toString());
-        servicesManager.save(registeredService);
 
         val authenticator = getAuthenticator();
         val claims = getClaims(registeredService.getClientId(),

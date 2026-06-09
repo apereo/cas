@@ -52,9 +52,9 @@ async function initializeServicesOperations() {
     await initializeFooterButtons();
 
     let serviceDefinitionsEntries = "";
-    for (let type in serviceDefinitions) {
+    for (let type in PalantirDashboardConfiguration.serviceDefinitions()) {
         serviceDefinitionsEntries += `<h3>${type} Templates</h3>`;
-        const entries = serviceDefinitions[type];
+        const entries = PalantirDashboardConfiguration.serviceDefinitions()[type];
         serviceDefinitionsEntries += "<div>";
         for (const entry of entries) {
             const definition = JSON.parse(entry);
@@ -74,7 +74,7 @@ async function initializeServicesOperations() {
         let type = $(this).data("type");
         let id = $(this).data("id");
 
-        const entries = serviceDefinitions[type];
+        const entries = PalantirDashboardConfiguration.serviceDefinitions()[type];
         for (const entry of entries) {
             const definition = JSON.parse(entry);
             if (definition.id === id) {

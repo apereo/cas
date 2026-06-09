@@ -1,4 +1,6 @@
-description = "Apereo CAS Core Services"
+apply plugin: "org.apereo.cas.project-conventions"
+
+description = "Implements registered service management and access policy evaluation."
 dependencies {
     api project(":api:cas-server-core-api-services")
     api project(":api:cas-server-core-api-audit")

@@ -1,4 +1,6 @@
-description = "Apereo CAS Tracing Zipkin Support"
+apply plugin: "org.apereo.cas.project-conventions"
+
+description = "Reports CAS distributed traces to Zipkin for request observability."
 ext {
     publishMetadata = true
     projectMetadata = [

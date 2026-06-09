@@ -1,4 +1,6 @@
-description = "Apereo CAS Events Consumer via Apache Kafka"
+apply plugin: "org.apereo.cas.project-conventions"
+
+description = "Stores or publishes CAS events with Apache Kafka for operational processing and integrations."
 ext {
     publishMetadata = true
     projectMetadata = [

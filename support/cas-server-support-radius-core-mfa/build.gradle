@@ -1,4 +1,6 @@
-description = "Apereo CAS RADIUS RSA MFA Support"
+apply plugin: "org.apereo.cas.project-conventions"
+
+description = "Adds RADIUS-backed multifactor authentication for CAS login flows."
 dependencies {
     api project(":api:cas-server-core-api-util")
     

@@ -1,4 +1,6 @@
-description = "Apereo CAS Captcha Support"
+apply plugin: "org.apereo.cas.project-conventions"
+
+description = "Provides shared CAPTCHA support for login and account protection flows."
 dependencies {
     api project(":api:cas-server-core-api-webflow")
 

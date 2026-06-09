@@ -169,7 +169,7 @@ jobs:
             -PsonarOrganization="${{ github.repository_owner }}" \
             -Dsonar.coverage.jacoco.xmlReportPaths="$coverageReport"
       - name: "Upload to Codecov"
-        uses: "codecov/codecov-action@v6"
+        uses: "codecov/codecov-action@v7"
         continue-on-error: true
         if: env.CODECOV_TOKEN != null && (github.event_name == 'push' || github.event_name == 'workflow_dispatch' || github.event_name == 'schedule')
         with:

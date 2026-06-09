@@ -111,7 +111,7 @@ function createRegisteredServiceAttributeReleasePolicy() {
                 text: "REST"
             },
             ...(
-                scriptFactoryAvailable
+                PalantirDashboardConfiguration.scriptFactoryAvailable()
                     ? [{
                         value: "org.apereo.cas.services.GroovyScriptAttributeReleasePolicy",
                         text: "GROOVY SCRIPT"
@@ -283,7 +283,7 @@ function createRegisteredServiceAttributeReleasePolicy() {
     });
 
 
-    if (scriptFactoryAvailable) {
+    if (PalantirDashboardConfiguration.scriptFactoryAvailable()) {
         createInputField({
             cssClasses: "hide GroovyScriptAttributeReleasePolicy",
             labelTitle: "Groovy Script",
@@ -328,8 +328,7 @@ function createRegisteredServiceAttributeReleasePolicy() {
         keyLabel: "Environment Variable Name",
         valueField: "registeredServiceAttrReleasePolicyEnvVarAttrValue",
         valueLabel: "Attribute Name",
-        containerField: "attributeReleasePolicy.environmentVariables",
-        multipleValues: false
+        containerField: "attributeReleasePolicy.environmentVariables"
     });
 
     createMappedInputField({
@@ -340,8 +339,7 @@ function createRegisteredServiceAttributeReleasePolicy() {
         keyLabel: "System Property",
         valueField: "registeredServiceAttrReleasePolicySysPropAttrValue",
         valueLabel: "Attribute Name",
-        containerField: "attributeReleasePolicy.systemProperties",
-        multipleValues: false
+        containerField: "attributeReleasePolicy.systemProperties"
     });
 
 
@@ -621,7 +619,7 @@ function createRegisteredServiceAttributeReleasePolicyActivationCriteria() {
                 text: "ATTRIBUTES"
             },
             ...(
-                scriptFactoryAvailable
+                PalantirDashboardConfiguration.scriptFactoryAvailable()
                     ? [{
                         value: "org.apereo.cas.services.GroovyRegisteredServiceAttributeReleaseActivationCriteria",
                         text: "GROOVY"
@@ -657,7 +655,7 @@ function createRegisteredServiceAttributeReleasePolicyActivationCriteria() {
         multipleValues: true
     });
 
-    if (scriptFactoryAvailable) {
+    if (PalantirDashboardConfiguration.scriptFactoryAvailable()) {
         createInputField({
             paramType: "org.apereo.cas.services.GroovyRegisteredServiceAttributeReleaseActivationCriteria",
             cssClasses: "hide GroovyRegisteredServiceAttributeReleaseActivationCriteria",
@@ -864,7 +862,7 @@ function createRegisteredServiceAttributeReleaseValueFilters() {
                 text: "MUTANT MAPPED REGEX"
             },
             ...(
-                scriptFactoryAvailable
+                PalantirDashboardConfiguration.scriptFactoryAvailable()
                     ? [{
                         value: "org.apereo.cas.services.support.RegisteredServiceScriptedAttributeFilter",
                         text: "GROOVY"
@@ -887,7 +885,7 @@ function createRegisteredServiceAttributeReleaseValueFilters() {
         title: "Define the regex pattern to filter attribute values."
     });
 
-    if (scriptFactoryAvailable) {
+    if (PalantirDashboardConfiguration.scriptFactoryAvailable()) {
         createInputField({
             cssClasses: "hide RegisteredServiceScriptedAttributeFilter",
             labelTitle: "Groovy Script",
@@ -920,8 +918,7 @@ function createRegisteredServiceAttributeReleaseValueFilters() {
         keyLabel: "Attribute Name",
         valueField: "registeredServiceAttrReleasePolicyAttributeValueFilterAttrValue",
         valueLabel: "Attribute Value",
-        containerField: "attributeReleasePolicy.attributeFilter.patterns",
-        multipleValues: false
+        containerField: "attributeReleasePolicy.attributeFilter.patterns"
     });
 
 }
@@ -994,16 +991,25 @@ function createRegisteredServiceMultifactorPolicy() {
         helpText: "Specifies the failure mode for multifactor authentication."
     });
 
-    createInputField({
-        paramType: "org.apereo.cas.services.DefaultRegisteredServiceMultifactorPolicy",
-        cssClasses: "advanced-option",
-        labelTitle: "Principal Attribute Name Trigger",
-        name: "registeredServiceMfaPrincipalAttributeNameTrigger",
-        paramName: "multifactorPolicy.principalAttributeNameTrigger",
-        required: false,
-        containerId: "editServiceWizardMenuItemMfaPolicy",
-        title: "Specifies the principal attribute name that triggers multifactor authentication."
-    });
+    CasDiscoveryProfile.fetchIfNeeded()
+        .done(async () => {
+            const options = CasDiscoveryProfile.availableAttributes().map(attr => ({
+                value: attr,
+                text: attr
+            }));
+
+            createMultiSelectField({
+                cssClasses: "hide advanced-option",
+                singleSelect: true,
+                containerId: "registeredServiceMultifactorPolicyfailureModeSelectContainer",
+                labelTitle: "Principal Attribute Name Trigger:",
+                paramName: "multifactorPolicy.principalAttributeNameTrigger",
+                title: "Specifies the principal attribute name that triggers multifactor authentication.",
+                options: options,
+                allowCreateOption: true,
+                inclusion: "after"
+            });
+        });
 
     createInputField({
         paramType: "org.apereo.cas.services.DefaultRegisteredServiceMultifactorPolicy",
@@ -1016,18 +1022,26 @@ function createRegisteredServiceMultifactorPolicy() {
         title: "Specifies the principal attribute value to match for triggering multifactor authentication."
     });
 
-    createInputField({
-        paramType: "org.apereo.cas.services.DefaultRegisteredServiceMultifactorPolicy",
-        cssClasses: "advanced-option",
-        labelTitle: "Principal Attribute Name Bypass",
-        name: "registeredServiceMfaBypassPrincipalAttributeName",
-        paramName: "multifactorPolicy.bypassPrincipalAttributeName",
-        required: false,
-        containerId: "editServiceWizardMenuItemMfaPolicy",
-        title: "Specifies the principal attribute name that bypasses multifactor authentication."
+    CasDiscoveryProfile.fetchIfNeeded()
+        .done(async () => {
+            const options = CasDiscoveryProfile.availableAttributes().map(attr => ({
+                value: attr,
+                text: attr
+            }));
+            
+            createMultiSelectField({
+                cssClasses: "hide advanced-option",
+                singleSelect: true,
+                containerId: "registeredServiceMfaBypassPrincipalAttributeValueFieldContainer",
+                labelTitle: "Principal Attribute Name Bypass:",
+                paramName: "multifactorPolicy.bypassPrincipalAttributeName",
+                title: "Specifies the principal attribute name that bypasses multifactor authentication.",
+                options: options,
+                allowCreateOption: true,
+                inclusion: "before"
+            });
     });
-
-
+    
     createInputField({
         paramType: "org.apereo.cas.services.DefaultRegisteredServiceMultifactorPolicy",
         cssClasses: "advanced-option",
@@ -1057,7 +1071,7 @@ function createRegisteredServiceMultifactorPolicy() {
         </button>
     `);
 
-    if (scriptFactoryAvailable) {
+    if (PalantirDashboardConfiguration.scriptFactoryAvailable()) {
         createInputField({
             paramType: "org.apereo.cas.services.DefaultRegisteredServiceMultifactorPolicy",
             cssClasses: "advanced-option",
@@ -1187,7 +1201,7 @@ function createRegisteredServiceAccessStrategy() {
                 text: "TIME BASED"
             },
             ...(
-                scriptFactoryAvailable
+                PalantirDashboardConfiguration.scriptFactoryAvailable()
                     ? [{
                         value: "org.apereo.cas.services.GroovyRegisteredServiceAccessStrategy",
                         text: "GROOVY"
@@ -1237,8 +1251,7 @@ function createRegisteredServiceAccessStrategy() {
         keyLabel: "Header Name",
         valueField: "registeredServiceAccessStrategyHttpRequestHeaderValue",
         valueLabel: "Header Value",
-        containerField: "accessStrategy.headers",
-        required: false
+        containerField: "accessStrategy.headers"
     });
 
     createSelectField({
@@ -1304,11 +1317,10 @@ function createRegisteredServiceAccessStrategy() {
         keyLabel: "Header Name",
         valueField: "registeredServiceAccessStrategyEndpointHeaderValue",
         valueLabel: "Header Value",
-        containerField: "accessStrategy.headers",
-        required: false
+        containerField: "accessStrategy.headers"
     });
 
-    if (scriptFactoryAvailable) {
+    if (PalantirDashboardConfiguration.scriptFactoryAvailable()) {
         createInputField({
             cssClasses: "hide GroovyRegisteredServiceAccessStrategy",
             labelTitle: "Groovy Script",
@@ -1330,34 +1342,42 @@ function createRegisteredServiceAccessStrategy() {
         title: "Specifies the URL to redirect to when access is unauthorized."
     });
 
-    createMappedInputField({
-        cssClasses: "DefaultRegisteredServiceAccessStrategy GrouperRegisteredServiceAccessStrategy ScimRegisteredServiceAccessStrategy",
-        header: "Required Attributes",
-        containerId: "editServiceWizardMenuItemAccessStrategy",
-        keyField: "registeredServiceAccessStrategyReqAttrName",
-        keyLabel: "Attribute Name",
-        valueField: "registeredServiceAccessStrategyReqAttrValue",
-        valueLabel: "Attribute Value",
-        containerField: "accessStrategy.requiredAttributes",
-        multipleValues: true,
-        multipleValuesType: "java.util.HashSet",
-        required: false
-    });
+    CasDiscoveryProfile.fetchIfNeeded()
+        .done(async () => {
+            const options = CasDiscoveryProfile.availableAttributes().map(attr => ({
+                value: attr,
+                text: attr
+            }));
+            createMappedInputField({
+                cssClasses: "DefaultRegisteredServiceAccessStrategy GrouperRegisteredServiceAccessStrategy ScimRegisteredServiceAccessStrategy",
+                header: "Required Attributes",
+                containerId: "registeredServiceAccessStrategyUnauthorizedRedirectUrlFieldContainer",
+                keyField: "registeredServiceAccessStrategyReqAttrName",
+                keyLabel: "Attribute Name",
+                valueField: "registeredServiceAccessStrategyReqAttrValue",
+                valueLabel: "Attribute Value",
+                containerField: "accessStrategy.requiredAttributes",
+                multipleValues: true,
+                multipleValuesType: "java.util.HashSet",
+                autoComplete: options,
+                inclusion: "after"
+            });
 
-    createMappedInputField({
-        cssClasses: "DefaultRegisteredServiceAccessStrategy",
-        header: "Rejected Attributes",
-        containerId: "editServiceWizardMenuItemAccessStrategy",
-        keyField: "registeredServiceAccessStrategyRejectedAttrName",
-        keyLabel: "Attribute Name",
-        valueField: "registeredServiceAccessStrategyRejectedAttrValue",
-        valueLabel: "Attribute Value",
-        containerField: "accessStrategy.rejectedAttributes",
-        multipleValues: true,
-        multipleValuesType: "java.util.HashSet",
-        required: false
-    });
-
+            createMappedInputField({
+                cssClasses: "DefaultRegisteredServiceAccessStrategy",
+                header: "Rejected Attributes",
+                containerId: "registeredServiceAccessStrategyUnauthorizedRedirectUrlFieldContainer",
+                keyField: "registeredServiceAccessStrategyRejectedAttrName",
+                keyLabel: "Attribute Name",
+                valueField: "registeredServiceAccessStrategyRejectedAttrValue",
+                valueLabel: "Attribute Value",
+                containerField: "accessStrategy.rejectedAttributes",
+                multipleValues: true,
+                multipleValuesType: "java.util.HashSet",
+                autoComplete: options,
+                inclusion: "after"
+            });
+        });
 
     createInputField({
         cssClasses: "hide OpenFGARegisteredServiceAccessStrategy",
@@ -1457,8 +1477,7 @@ function createRegisteredServiceAccessStrategy() {
         keyLabel: "Attribute Name",
         valueField: "registeredServiceAccessStrategyOPAContextAttrValue",
         valueLabel: "Attribute Value",
-        containerField: "accessStrategy.context",
-        required: false
+        containerField: "accessStrategy.context"
     });
 
 
@@ -1623,7 +1642,7 @@ function createRegisteredServiceAuthenticationPolicy() {
                 text: "NOT PREVENTED"
             },
             ...(
-                scriptFactoryAvailable
+                PalantirDashboardConfiguration.scriptFactoryAvailable()
                     ? [{
                         value: "org.apereo.cas.services.GroovyRegisteredServiceAuthenticationPolicyCriteria",
                         text: "GROOVY"
@@ -1676,7 +1695,7 @@ function createRegisteredServiceAuthenticationPolicy() {
         title: "Basic Auth Password"
     });
 
-    if (scriptFactoryAvailable) {
+    if (PalantirDashboardConfiguration.scriptFactoryAvailable()) {
         createInputField({
             cssClasses: "hide GroovyRegisteredServiceAuthenticationPolicyCriteria",
             labelTitle: "Groovy Script",
@@ -1723,6 +1742,7 @@ function createRegisteredServiceProperties() {
         valueField: "registeredServicePropertyValue",
         valueLabel: "Property value(s) separated by comma",
         containerField: "properties",
+        autoComplete: PalantirDashboardConfiguration.serviceProperties(),
         valueFieldRenderer: function ($inputKey, $inputValue) {
             return {
                 "@class": "org.apereo.cas.services.DefaultRegisteredServiceProperty",
@@ -1864,7 +1884,7 @@ function createRegisteredServiceSsoParticipationPolicy() {
                 text: "AUTHENTICATION DATE"
             },
             ...(
-                scriptFactoryAvailable
+                PalantirDashboardConfiguration.scriptFactoryAvailable()
                     ? [{
                         value: "org.apereo.cas.services.GroovyRegisteredServiceSingleSignOnParticipationPolicy",
                         text: "GROOVY"
@@ -1899,7 +1919,7 @@ function createRegisteredServiceSsoParticipationPolicy() {
         title: "Specifies the time value for the SSO participation policy."
     });
 
-    if (scriptFactoryAvailable) {
+    if (PalantirDashboardConfiguration.scriptFactoryAvailable()) {
         createInputField({
             cssClasses: "hide GroovyRegisteredServiceSingleSignOnParticipationPolicy",
             labelTitle: "Groovy Script",
@@ -1935,8 +1955,7 @@ function createRegisteredServiceSsoParticipationPolicy() {
         valueField: "registeredServiceSSOParticipationAttrValue",
         valueLabel: "Attribute Value",
         containerField: "singleSignOnParticipationPolicy.attributes",
-        multipleValues: true,
-        multipleValuesType: "java.util.ArrayList"
+        multipleValues: true
     });
 }
 
@@ -2006,7 +2025,7 @@ function createRegisteredServiceUsernameAttributeProvider() {
                 }
             },
             ...(
-                scriptFactoryAvailable
+                PalantirDashboardConfiguration.scriptFactoryAvailable()
                     ? [{
                         value: "org.apereo.cas.services.GroovyRegisteredServiceUsernameProvider",
                         text: "GROOVY"
@@ -2056,7 +2075,7 @@ function createRegisteredServiceUsernameAttributeProvider() {
 
         });
 
-    if (scriptFactoryAvailable) {
+    if (PalantirDashboardConfiguration.scriptFactoryAvailable()) {
         createInputField({
             cssClasses: "hide GroovyRegisteredServiceUsernameProvider",
             labelTitle: "Groovy Script",
@@ -2298,7 +2317,7 @@ function hideAdvancedRegisteredServiceOptions() {
         hideElements($("form#editServiceWizardForm [class*='class-']").not(`.class-${className}`).not(".always-show"));
     }
 
-    if (availableMultifactorProviders.length === 0) {
+    if (PalantirDashboardConfiguration.availableMultifactorProviders().length === 0) {
         hideElements($("#registeredServiceMfaPolicy"));
     }
     if (!CAS_FEATURES.includes("AcceptableUsagePolicy")) {
@@ -2572,7 +2591,8 @@ function createMappedInputField(config) {
         multipleValuesType = "java.util.ArrayList",
         valueFieldRenderer,
         unwrapSingleElement = false,
-        onChangeCallback
+        onChangeCallback,
+        autoComplete = []
     } = config;
 
     const changeCallback = onChangeCallback || generateServiceDefinition;
@@ -2587,7 +2607,7 @@ function createMappedInputField(config) {
     const inputFieldValueId = `registeredService${capitalize(valueField)}`;
     const rowElements = `
             <div class="d-flex justify-content-between pt-2 ${keyField}-map-row ${cssClasses}" id="${mapRowId}">
-                <label for="${keyField}"
+                <label for="${inputFieldKeyId}"
                        class="mdc-text-field mdc-text-field--outlined mdc-text-field--with-trailing-icon control-label ${cssClasses}">
                     <span class="mdc-notched-outline pr-2">
                         <span class="mdc-notched-outline__leading"></span>
@@ -2596,17 +2616,16 @@ function createMappedInputField(config) {
                         </span>
                         <span class="mdc-notched-outline__trailing"></span>
                     </span>
-                    <input class="mdc-text-field__input form-control "
+                    <input class="mdc-text-field__input"
                            id="${inputFieldKeyId}"
                            name="${inputFieldKeyId}"
-                           size="25"
                            type="text"
                            data-param-name="${containerField}"
                            data-param-type="${containerType}"
                            ${required ? "required" : ""}/>
                 </label>
 
-                <label for="${valueField}"
+                <label for="${inputFieldValueId}"
                        class="mdc-text-field mdc-text-field--outlined mdc-text-field--with-trailing-icon control-label ${cssClasses}">
                     <span class="mdc-notched-outline">
                         <span class="mdc-notched-outline__leading"></span>
@@ -2708,6 +2727,20 @@ function createMappedInputField(config) {
     configureInputEventHandler();
     configureInputRenderer();
 
+    if (autoComplete && autoComplete.length > 0) {
+       $(`#${inputFieldKeyId}`).autocomplete({
+           delay: 0,
+           source: autoComplete,
+           open: function( event, ui ) {
+                cas.attachFields();
+           },
+           select: function (event, ui) {
+                $(this).val(ui.item.value);
+                cas.attachFields();
+                return false;
+           }
+       });
+    }
     return $(`#${sectionContainerId}`);
 }
 
@@ -2780,7 +2813,7 @@ function createSelectField(config) {
 
     $label.append($select);
 
-    const container = $("<span>", {
+    const container = $("<div>", {
         id: `${selectId}SelectContainer`,
         class: `${serviceClass ?? ""} ${cssClasses ?? ""}`
     });
@@ -2892,8 +2925,8 @@ function initializeDescriptionEditor(containerId) {
         editorContainer.append(editorTextarea);
         $(`#${containerId}`).append(editorContainer);
 
-        if (typeof trumbowygIconsPath !== "undefined" && trumbowygIconsPath) {
-            $.trumbowyg.svgPath = trumbowygIconsPath;
+        if (PalantirDashboardConfiguration.trumbowygIconsPath()) {
+            $.trumbowyg.svgPath = PalantirDashboardConfiguration.trumbowygIconsPath();
         }
 
         $("#registeredServiceDescriptionEditor").trumbowyg({
@@ -3680,13 +3713,13 @@ function openRegisteredServiceWizardDialog(existingService = null) {
     if (existingService !== null) {
         const serviceClass = existingService["@class"];
         openWizardDialog(serviceClass, existingService);
-    } else if (Object.keys(supportedServiceTypes).length === 1) {
-        openWizardDialog(Object.keys(supportedServiceTypes)[0]);
+    } else if (Object.keys(PalantirDashboardConfiguration.supportedServiceTypes()).length === 1) {
+        openWizardDialog(Object.keys(PalantirDashboardConfiguration.supportedServiceTypes())[0]);
     } else {
-        const sortedServiceTypes = Object.keys(supportedServiceTypes)
+        const sortedServiceTypes = Object.keys(PalantirDashboardConfiguration.supportedServiceTypes())
             .sort()
             .reduce((acc, key) => {
-                acc[key] = supportedServiceTypes[key];
+                acc[key] = PalantirDashboardConfiguration.supportedServiceTypes()[key];
                 return acc;
             }, {});
         Swal.fire({
@@ -3702,4 +3735,3 @@ function openRegisteredServiceWizardDialog(existingService = null) {
         });
     }
 }
-

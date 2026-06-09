@@ -1,4 +1,6 @@
-description = "Apereo CAS Core"
+apply plugin: "org.apereo.cas.project-conventions"
+
+description = "Provides the core runtime behavior required by every CAS server."
 dependencies {
     api project(":api:cas-server-core-api-logout")
     api project(":api:cas-server-core-api")

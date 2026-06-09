@@ -1,4 +1,6 @@
-description = 'Apereo CAS Amazon Web Services Support'
+apply plugin: "org.apereo.cas.project-conventions"
+
+description = "Adds Amazon Web Services integration support for CAS cloud deployments."
 ext {
     publishMetadata = true
     projectMetadata = [

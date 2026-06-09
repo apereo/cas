@@ -855,19 +855,19 @@ function openNewAuthenticationHandlerDialog() {
                     });
                 }
 
-                if (mutablePropertySources.length === 1) {
-                    submitAuthenticationHandler(mutablePropertySources[0]);
+                if (PalantirDashboardConfiguration.mutablePropertySources().length === 1) {
+                    submitAuthenticationHandler(PalantirDashboardConfiguration.mutablePropertySources()[0]);
                 } else {
                     Swal.fire({
                         title: "Which property source should receive the configuration?",
                         input: "select",
                         icon: "question",
-                        inputOptions: mutablePropertySources,
+                        inputOptions: PalantirDashboardConfiguration.mutablePropertySources(),
                         inputPlaceholder: "Choose a property source...",
                         showCancelButton: true
                     }).then((result) => {
                         if (result.isConfirmed) {
-                            submitAuthenticationHandler(mutablePropertySources[Number(result.value)]);
+                            submitAuthenticationHandler(PalantirDashboardConfiguration.mutablePropertySources()[Number(result.value)]);
                         }
                     });
                 }
@@ -988,7 +988,7 @@ function reloadAuthenticationHandlersTable() {
 async function initializeAuthenticationOperations() {
     const authnHandlersToolbar = document.createElement("div");
     let authnHandlersToolbarEntries = "";
-    if (mutablePropertySourcesAvailable && CasActuatorEndpoints.casConfig()) {
+    if (PalantirDashboardConfiguration.mutablePropertySourcesAvailable() && CasActuatorEndpoints.casConfig()) {
         authnHandlersToolbarEntries += `
             <button type="button" id="newAuthenticationHandlerButton"
                     onclick="openNewAuthenticationHandlerDialog()"
@@ -1067,7 +1067,7 @@ async function initializeAuthenticationOperations() {
         </button>
     `;
 
-    if (mutablePropertySourcesAvailable && CasActuatorEndpoints.casConfig()) {
+    if (PalantirDashboardConfiguration.mutablePropertySourcesAvailable() && CasActuatorEndpoints.casConfig()) {
         toolbarEntries += `
             <button type="button" id="newExternalIdentityProvider"
                     onclick="newExternalIdentityProvider()"
@@ -1105,7 +1105,7 @@ async function initializeAuthenticationOperations() {
 
                         rows.data().each(entry => {
                             if (entry[0] === group) {
-                                if (mutablePropertySourcesAvailable && CasActuatorEndpoints.casConfig()) {
+                                if (PalantirDashboardConfiguration.mutablePropertySourcesAvailable() && CasActuatorEndpoints.casConfig()) {
                                     toolbarButtons = `
                                         <span class="px-2" style="float: right;">
                                             <button type="button" 
