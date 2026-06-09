@@ -59,6 +59,7 @@ public class CheckEnforceLombokAnnotations {
 
         Files.walk(Paths.get(arg))
             .filter(file -> Files.isRegularFile(file)
+                && !file.toFile().getPath().contains("buildSrc/")
                 && file.toFile().getPath().matches(".*\\.java"))
             .forEach(file -> {
                 var text = readFile(file);

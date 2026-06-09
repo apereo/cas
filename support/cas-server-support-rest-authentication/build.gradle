@@ -1,4 +1,6 @@
-description = "Apereo CAS Rest Authentication Support"
+apply plugin: "org.apereo.cas.project-conventions"
+
+description = "Adds REST-backed authentication so CAS can validate users through an external HTTP service."
 ext {
     publishMetadata = true
     projectMetadata = [

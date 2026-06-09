@@ -1,4 +1,6 @@
-description = "Apereo CAS Core Multitenancy APIs"
+apply plugin: "org.apereo.cas.project-conventions"
+
+description = "Defines contracts for running CAS with tenant-aware configuration and behavior."
 dependencies {
     api project(":api:cas-server-core-api-util")
     api project(":api:cas-server-core-api-configuration-model")

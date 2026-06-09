@@ -1,4 +1,6 @@
-description = "Apereo CAS Twilio Multifactor Authentication Support"
+apply plugin: "org.apereo.cas.project-conventions"
+
+description = "Adds Twilio-based multifactor authentication for delivering verification challenges."
 ext {
     publishMetadata = true
     projectMetadata = [

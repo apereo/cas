@@ -4,9 +4,12 @@ import module java.base;
 import org.apereo.cas.authentication.CasSSLContext;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.features.CasFeatureModule;
+import org.apereo.cas.logout.LogoutExecutionPlanConfigurer;
+import org.apereo.cas.logout.LogoutRedirectionStrategy;
 import org.apereo.cas.logout.slo.SingleLogoutRequestExecutor;
 import org.apereo.cas.pac4j.client.DelegatedIdentityProviders;
 import org.apereo.cas.pac4j.web.DelegatedClientOidcBuilder;
+import org.apereo.cas.pac4j.web.DelegatedClientOidcLogoutRedirectionStrategy;
 import org.apereo.cas.pac4j.web.DelegatedClientOidcSessionManager;
 import org.apereo.cas.pac4j.web.DelegatedClientsOidcEndpointContributor;
 import org.apereo.cas.pac4j.web.DelegatedOidcFederationEntityStatementController;
@@ -25,6 +28,7 @@ import org.apereo.cas.web.flow.CasWebflowConstants;
 import org.apereo.cas.web.flow.CasWebflowExecutionPlanConfigurer;
 import org.apereo.cas.web.flow.DelegatedClientAuthenticationConfigurationContext;
 import org.apereo.cas.web.flow.actions.WebflowActionBeanSupplier;
+import org.apereo.cas.web.support.ArgumentExtractor;
 import lombok.val;
 import org.apache.commons.lang3.Strings;
 import org.jspecify.annotations.NonNull;
@@ -160,5 +164,26 @@ class DelegatedAuthenticationOidcConfiguration {
         @Qualifier(DelegatedIdentityProviders.BEAN_NAME)
         final DelegatedIdentityProviders identityProviders) {
         return new DelegatedOidcFederationEntityStatementController(identityProviders);
+    }
+
+    @Bean
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+    @ConditionalOnMissingBean(name = "delegatedOidcLogoutRedirectionStrategy")
+    public LogoutRedirectionStrategy delegatedOidcLogoutRedirectionStrategy(
+        @Qualifier(DelegatedIdentityProviders.BEAN_NAME)
+        final DelegatedIdentityProviders identityProviders,
+        @Qualifier(ArgumentExtractor.BEAN_NAME)
+        final ArgumentExtractor argumentExtractor) {
+        return new DelegatedClientOidcLogoutRedirectionStrategy(argumentExtractor, identityProviders);
+    }
+
+    @Bean
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+    @ConditionalOnMissingBean(name = "delegatedOidcLogoutExecutionPlanConfigurer")
+    public LogoutExecutionPlanConfigurer delegatedOidcLogoutExecutionPlanConfigurer(
+        @Qualifier("delegatedOidcLogoutRedirectionStrategy")
+        final LogoutRedirectionStrategy delegatedOidcLogoutRedirectionStrategy,
+        final CasConfigurationProperties casProperties) {
+        return plan -> plan.registerLogoutRedirectionStrategy(delegatedOidcLogoutRedirectionStrategy);
     }
 }

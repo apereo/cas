@@ -1,4 +1,6 @@
-description = "Apereo CAS JDBC Monitor Support"
+apply plugin: "org.apereo.cas.project-conventions"
+
+description = "Monitors JDBC database availability for CAS health and diagnostics."
 ext {
     publishMetadata = true
     projectMetadata = [

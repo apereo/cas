@@ -149,8 +149,8 @@
 
                 <p th:utext="#{screen.authentication.gauth.reganotherdevice}"></p>
                 <div id="toolbar" class="mdc-menu-surface--anchor">
-                    <button id="register" name="register" accesskey="r" value="Register" type="button"
-                            class="mdc-button mdc-button--raised mdc-button--leading btn btn-primary me-2"
+                    <button id="register" name="register" value="Register" type="button"
+                            class="mdc-button mdc-button--raised mdc-button--leading btn btn-primary me-2 drop-button"
                             onclick="initializeMenus();">
                         <span class="mdc-button__ripple"></span>
                         <i class="mdi mdi-arrow-down" aria-hidden="true"></i>
@@ -170,7 +170,7 @@
                                         
                                         <button id="gauthRegistrationLink"
                                                 onclick="submitRegistrationRequest('gauth');"
-                                                class="mdc-button mdc-button--raised mb-2" aria-label="Create">
+                                                class="mdc-button mdc-button--raised mb-2 drop-button" aria-label="Create">
                                             <span class="mdc-button__label">
                                                 <i class="mdc-tab__icon mdi mdi-arrow-right valign-bottom" aria-hidden="true"></i>
                                                 <span th:remove="tag" th:utext="#{screen.welcome.button.register}"></span>
@@ -190,7 +190,7 @@
 
                                             <button id="webauthnRegistrationLink"
                                                     onclick="submitRegistrationRequest('webauthn');"
-                                                    class="mdc-button mdc-button--raised mb-2" aria-label="Create">
+                                                    class="mdc-button mdc-button--raised mb-2 drop-button" aria-label="Create">
                                                 <span class="mdc-button__label">
                                                     <i class="mdc-tab__icon mdi mdi-arrow-right valign-bottom" aria-hidden="true"></i>
                                                     <span th:remove="tag" th:utext="#{screen.welcome.button.register}"></span>

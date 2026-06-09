@@ -1,4 +1,6 @@
-description = "Apereo CAS Core Audit"
+apply plugin: "org.apereo.cas.project-conventions"
+
+description = "Records core CAS audit activity for authentication, ticketing, and service access."
 dependencies {
     api project(":api:cas-server-core-api")
     api project(":api:cas-server-core-api-events")

@@ -1,4 +1,6 @@
-description = "Apereo CAS Apache Cassandra Core Support"
+apply plugin: "org.apereo.cas.project-conventions"
+
+description = "Adds shared Apache Cassandra support used by CAS Cassandra-backed features."
 dependencies {
     implementation project(":core:cas-server-core-web-api")
     implementation project(":core:cas-server-core-configuration-api")

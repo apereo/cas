@@ -1,4 +1,6 @@
-description = "Apereo CAS SendGrid Support"
+apply plugin: "org.apereo.cas.project-conventions"
+
+description = "Sends CAS email messages through SendGrid."
 ext {
     publishMetadata = true
     projectMetadata = [

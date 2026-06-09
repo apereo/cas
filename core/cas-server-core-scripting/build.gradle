@@ -1,4 +1,6 @@
-description = "Apereo CAS Scripting with Apache Groovy"
+apply plugin: "org.apereo.cas.project-conventions"
+
+description = "Runs CAS customization scripts using Apache Groovy where scripting is enabled."
 ext {
     publishMetadata = true
     projectMetadata = [

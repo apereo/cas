@@ -140,7 +140,7 @@ public class GenerateDdlCommand implements CasShellCommand {
 
         val settings = new HashMap<String, Object>();
         settings.put(JdbcSettings.DIALECT, dialectName);
-        settings.put(JdbcSettings.URL, jdbcUrl);
+        settings.put(JdbcSettings.JAKARTA_JDBC_URL, jdbcUrl);
         settings.put(SchemaToolingSettings.HBM2DDL_AUTO, "none");
         settings.put(JdbcSettings.SHOW_SQL, "true");
         svcRegistry.applySettings(settings);

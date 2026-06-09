@@ -1,4 +1,6 @@
-description = "Apereo CAS QR Authentication Support"
+apply plugin: "org.apereo.cas.project-conventions"
+
+description = "Adds QR code authentication for passwordless or device-assisted login experiences."
 ext {
     publishMetadata = true
     projectMetadata = [

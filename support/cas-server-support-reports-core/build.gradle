@@ -1,4 +1,6 @@
-description = "Apereo CAS Web Application Reports"
+apply plugin: "org.apereo.cas.project-conventions"
+
+description = "Adds CAS reporting views for reviewing runtime, configuration, and operational information."
 dependencies {
     api project(":api:cas-server-core-api")
     

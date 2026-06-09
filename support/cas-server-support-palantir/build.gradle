@@ -1,4 +1,6 @@
-description = "Apereo CAS Admin UI"
+apply plugin: "org.apereo.cas.project-conventions"
+
+description = "Adds the CAS administrative UI for managing and reviewing server state."
 ext {
     publishMetadata = true
     projectMetadata = [

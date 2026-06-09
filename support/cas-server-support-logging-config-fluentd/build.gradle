@@ -1,4 +1,6 @@
-description = "Apereo CAS Core Logging Fluentd"
+apply plugin: "org.apereo.cas.project-conventions"
+
+description = "Routes CAS logs to Fluentd for centralized log collection."
 ext {
     publishMetadata = true
     projectMetadata = [

@@ -152,7 +152,7 @@ public class CollectionUtils {
             LOGGER.trace("Converting multi-valued element [{}]", obj);
         } else if (obj instanceof final Map map) {
             val set = (Set<Map.Entry>) map.entrySet();
-            resultingSet.addAll(set.stream().map(e -> Pair.of(e.getKey(), e.getValue())).collect(Collectors.toSet()));
+            resultingSet.addAll(set.stream().map(e -> Couplet.of(e.getKey(), e.getValue())).collect(Collectors.toSet()));
         } else if (obj.getClass().isArray()) {
             if (obj instanceof byte[]) {
                 resultingSet.add(obj);

@@ -1,4 +1,6 @@
-description = "Apereo CAS Core Authentication"
+apply plugin: "org.apereo.cas.project-conventions"
+
+description = "Provides core authentication contracts used by CAS authentication handlers and policies."
 dependencies {
 
     api project(":api:cas-server-core-api-scripting")

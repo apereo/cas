@@ -29,13 +29,19 @@ env:
   TERM: xterm-256color
   JDK_CURRENT: 25
   JDK_DISTRIBUTION: "corretto"
-  NODE_CURRENT: '25.9.0'
+  NODE_CURRENT: '26.3.0'
   MAX_ATTEMPTS: 3
   RETRY_MINUTES: 20
-  SCENARIO_REGEX: ".*"
+  SCENARIO_REGEX: ${{ github.event.inputs.scenarioRegex || '.*' }}
 
 on:
   workflow_dispatch:
+    inputs:
+      scenarioRegex:
+        description: 'Regex to match against scenario names'
+        required: false
+        default: '.*'
+        type: string
   schedule:
     - cron: '0 18 * * *'
   push:

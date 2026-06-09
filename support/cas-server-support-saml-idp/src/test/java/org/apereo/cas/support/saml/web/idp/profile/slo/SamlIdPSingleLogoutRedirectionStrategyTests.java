@@ -112,8 +112,9 @@ class SamlIdPSingleLogoutRedirectionStrategyTests {
                 val encodedRequest = EncodingUtils.encodeBase64(writer.toString().getBytes(StandardCharsets.UTF_8));
                 WebUtils.putSingleLogoutRequest(context.getHttpServletRequest(), encodedRequest);
             }
-            samlIdPSingleLogoutRedirectionStrategy.handle(context.getHttpServletRequest(), context.getHttpServletResponse());
+            val logoutResponse = samlIdPSingleLogoutRedirectionStrategy.handle(context.getHttpServletRequest(), context.getHttpServletResponse());
             assertNotNull(WebUtils.getLogoutRedirectUrl(context.getHttpServletRequest(), String.class));
+            assertTrue(logoutResponse.getLogoutRedirectUrl().isPresent());
         }
 
         @Test
@@ -171,8 +172,9 @@ class SamlIdPSingleLogoutRedirectionStrategyTests {
 
             assertTrue(samlIdPSingleLogoutRedirectionStrategy.supports(context.getHttpServletRequest(), context.getHttpServletResponse()));
             assertNotNull(samlIdPSingleLogoutRedirectionStrategy.getName());
-            samlIdPSingleLogoutRedirectionStrategy.handle(context.getHttpServletRequest(), context.getHttpServletResponse());
+            val logoutResponse = samlIdPSingleLogoutRedirectionStrategy.handle(context.getHttpServletRequest(), context.getHttpServletResponse());
             assertNull(WebUtils.getLogoutRedirectUrl(context.getHttpServletRequest(), String.class));
+            assertTrue(logoutResponse.getLogoutRedirectUrl().isEmpty());
         }
     }
 }

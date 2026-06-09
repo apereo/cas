@@ -1,4 +1,6 @@
-description = "Apereo CAS X.509 Client Certificate Core"
+apply plugin: "org.apereo.cas.project-conventions"
+
+description = "Provides shared X.509 client certificate authentication support."
 dependencies {
     implementation project(":core:cas-server-core-authentication-api")
     implementation project(":core:cas-server-core-configuration-api")

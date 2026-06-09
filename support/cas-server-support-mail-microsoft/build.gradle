@@ -1,4 +1,6 @@
-description = "Apereo CAS Microsoft AzureAD Email Support"
+apply plugin: "org.apereo.cas.project-conventions"
+
+description = "Sends CAS email messages through Microsoft email services."
 ext {
     publishMetadata = true
     projectMetadata = [

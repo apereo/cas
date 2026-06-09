@@ -1,4 +1,6 @@
-description = "Apereo CAS Core Services Registry and Manager"
+apply plugin: "org.apereo.cas.project-conventions"
+
+description = "Manages registered service definitions and the service registry lifecycle."
 dependencies {
     api project(":api:cas-server-core-api-services")
     api project(":api:cas-server-core-api-events")

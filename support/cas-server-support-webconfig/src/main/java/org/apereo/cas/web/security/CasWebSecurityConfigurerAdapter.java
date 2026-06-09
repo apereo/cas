@@ -78,9 +78,9 @@ public class CasWebSecurityConfigurerAdapter {
 
     private final ObjectProvider<PathMappedEndpoints> pathMappedEndpoints;
 
-    private final List<CasWebSecurityConfigurer> webSecurityConfigurers;
+    private final ObjectProvider<List<CasWebSecurityConfigurer>> webSecurityConfigurers;
 
-    private final SecurityContextRepository securityContextRepository;
+    private final ObjectProvider<SecurityContextRepository> securityContextRepository;
 
     private final WebProperties webProperties;
 
@@ -133,6 +133,7 @@ public class CasWebSecurityConfigurerAdapter {
             customizer.requestMatchers(matchers).permitAll();
         });
         webSecurityConfigurers
+            .getObject()
             .stream()
             .filter(BeanSupplier::isNotProxy)
             .forEach(Unchecked.consumer(cfg -> cfg.configure(http)));
@@ -149,8 +150,9 @@ public class CasWebSecurityConfigurerAdapter {
         val jaas = casProperties.getMonitor().getEndpoints().getJaas();
         FunctionUtils.doIfNotNull(jaas.getLoginConfig(), _ -> configureJaasAuthenticationProvider(http, jaas));
 
-        http.securityContext(securityContext -> securityContext.securityContextRepository(securityContextRepository));
+        http.securityContext(securityContext -> securityContext.securityContextRepository(securityContextRepository.getObject()));
         webSecurityConfigurers
+            .getObject()
             .stream()
             .filter(BeanSupplier::isNotProxy)
             .forEach(Unchecked.consumer(cfg -> cfg.finish(http)));
@@ -159,6 +161,7 @@ public class CasWebSecurityConfigurerAdapter {
 
     protected List<String> getAllowedPatternsToIgnore() {
         val patterns = webSecurityConfigurers
+            .getObject()
             .stream()
             .filter(BeanSupplier::isNotProxy)
             .map(CasWebSecurityConfigurer::getIgnoredEndpoints)

@@ -48,7 +48,7 @@ The following items are new improvements and enhancements presented in this rele
 CAS continues to produce and publish [OpenRewrite](https://docs.openrewrite.org/) recipes that allow the project to upgrade installations
 in place from one version to the next. [See this guide](../installation/OpenRewrite-Upgrade-Recipes.html) to learn more.
 
-### Graal VM Native Images
+### GraalVM Native Images
 
 A CAS server installation and deployment process can be tuned to build and run
 as a [Graal VM native image](../installation/GraalVM-NativeImage-Installation.html). We continue to polish native runtime hints.
@@ -58,8 +58,20 @@ to build and verify Graal VM native images and we plan to extend the coverage to
 ### Testing Strategy
 
 The collection of end-to-end [browser tests based on Puppeteer](../../developer/Test-Process.html) continue to grow to cover more use cases
-and scenarios. At the moment, total number of jobs stands at approximately `543` distinct scenarios. The overall
+and scenarios. At the moment, total number of jobs stands at approximately `551` distinct scenarios. The overall
 test coverage of the CAS codebase is approximately `94%`.
+
+### Gradle 9.6
+
+CAS is now built with Gradle `9.6.x` and the build process has been updated to use the latest Gradle
+features and capabilities.
+
+The build system is also internally refactored and heavily optimized:
+
+- The build is made compatible with Gradle's [Isolated Projects](https://docs.gradle.org/current/userguide/isolated_projects.html) 
+feature by default. This required a significant refactoring of how project dependencies, plugins and coordinates are resolved during the build and bundling 
+process to ensure they are compliant with Spring Boot and Gradle's model for project isolation.
+- Running CAS integration and unit tests are now significantly faster locally, thanks to better parallelism and less instrumentation.
 
 ### JSpecify & NullAway
 
@@ -68,6 +80,61 @@ return types and fields. We will gradually extend the coverage of such annotatio
 and will integrate the Gradle build tool with tools such as [NullAway](https://github.com/uber/NullAway) to prevent nullness contract violations
 during compile time.
 
+### Palantir
+
+[Palantir](../installation/Admin-Dashboard.html) now supports auto-complete and a small info panel to explain
+available configuration properties when dynamic configuration sources are available and configuration metadata is enabled. 
+The drop-down that lists configuration properties also supports searching for fields based on `name` and `description`.
+
+![img.png](img.png)
+
+Note that the documentation for each configuration property is directly extracted from 
+the [CAS configuration catalog](../configuration/Configuration-Metadata-Repository.html)
+and may not be immediately available if the property is not fully documented, particularly if it's owned and managed by
+a third-party library.
+  
+### Redis Ticket Registry
+
+The [Redis Ticket Registry](../ticketing/Redis-Ticket-Registry.html) now presents several notable changes, particularly important when administrative logouts are exercised:
+                                                                   
+- Delete operation signals are now propagated to all other consumer CAS nodes when Redis messaging is enabled. 
+- Local cache invalidation is now restored to use the correct cache key when consumer CAS nodes receive a delete operation signal.
+- Removing SSO sessions based on a principal now also propagates delete operation signals to consumer CAS nodes and invalidates the local cache for the publisher CAS node.
+
+There are also significant performance optimizations available to ensure entries in Redis carry smaller objects:
+
+- RedisSearch disabled/unavailable: often `45-70%` less memory per ticket record, because JSON documents stored are compressed and the registry stops writing `service` and `attributes` fields into entries.
+- RedisSearch enabled: likely `40-65%` less per ticket record, mostly from compressed JSON documents.
+- Crypto operations enabled: much smaller gain, often near `0-15%`, because CAS stores an encoded/encrypted ticket payload that is already high entropy. 
+
+### Google Authenticator via Redis
+
+[Google Authenticator](../mfa/GoogleAuthenticator-Authentication.html) 
+backed [by Redis](../mfa/GoogleAuthenticator-Authentication-Registration-Redis.html) is now correctly tracking
+and *updating* scratch codes assigned to the principal, removing the possibility of lingering orphaned scratch codes.
+ 
+### Locale & Language Bundles
+
+CAS language bundles for all supported languages are now comprehensively translated and include
+all relevant language keys for each language. CAS themes also gain an option to enable and control a curated list of
+available languages for user selection and displays. The user interface is also instructed to automatically set the 
+`dir` attribute on appropriate fields to support right-to-left languages automatically using the browser.
+  
+### OpenID Connect Dynamic Client Registration
+
+Several notable changes are now implemented 
+for [OpenID Connect Dynamic Client Registration](../authentication/OIDC-Authentication-Dynamic-Registration.html)
+to tighten and improve the security posture of registration request:
+
+- Security rules that control access to the dynamic client registration endpoint are now hardened to prevent abuse and unauthorized access.
+- `jwks_uri` field in dynamic client registration requests cannot be include any spring expressions.
+- `jwks`  field in dynamic client registration requests cannot be include any spring expressions.
+- Detailed error messages and root causes, as the result of invalid JSON keys, are no longer reported verbosely back.
+
 ## Other Stuff
               
-- 
+- [OpenID Connect logout requests](../authentication/OIDC-Authentication-Logout.html) may now also be submitted via `POST`. 
+- Redis integration tests have switched to use Redis `8.8.x`.
+- The [Spring Expression Language](../configuration/Configuration-Spring-Expressions.html) parser is tightened to run in a sandboxed environment.
+- [Delegated authentication](../integration/Delegate-Authentication.html) can now handle JSON serialization of complex attribute definitions that may carry maps. 
+- Small enhancements to [CAS audits](../audits/Audits.html) to correctly identify the audited principal.

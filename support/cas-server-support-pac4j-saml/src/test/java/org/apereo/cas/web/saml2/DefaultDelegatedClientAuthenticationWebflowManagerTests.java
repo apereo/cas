@@ -208,7 +208,7 @@ class DefaultDelegatedClientAuthenticationWebflowManagerTests {
         val saml2ClientConfiguration = new SAML2Configuration(keystorePath, "changeit", "changeit", idpMetadata);
         saml2ClientConfiguration.setServiceProviderEntityId(spEntityId);
         saml2ClientConfiguration.setServiceProviderMetadataPath(spMetadataPath);
-        saml2ClientConfiguration.setForceKeystoreGeneration(true);
+        saml2ClientConfiguration.getKeystore().setForceKeystoreGeneration(true);
         saml2ClientConfiguration.setForceServiceProviderMetadataGeneration(true);
         saml2ClientConfiguration.init();
 

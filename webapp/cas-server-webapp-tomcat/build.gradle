@@ -1,5 +1,7 @@
-apply from: rootProject.file("gradle/war.gradle")
-description = "Apereo CAS Web Application via Apache Tomcat"
+apply plugin: "org.apereo.cas.project-conventions"
+
+apply plugin: "org.apereo.cas.war-conventions"
+description = "Builds the standard CAS web application packaged for Apache Tomcat. Select this module when you want to deploy CAS as a ready-to-run Tomcat web application with the default webapp initialization support."
 
 ext {
     publishMetadata = true

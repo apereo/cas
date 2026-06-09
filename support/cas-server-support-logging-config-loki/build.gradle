@@ -1,4 +1,6 @@
-description = "Apereo CAS Core Logging Loki Support"
+apply plugin: "org.apereo.cas.project-conventions"
+
+description = "Routes CAS logs to Grafana Loki for centralized log collection."
 ext {
     publishMetadata = true
     projectMetadata = [

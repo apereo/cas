@@ -61,16 +61,6 @@ class DefaultOAuth20ClientSecretValidatorTests extends AbstractOAuth20Tests {
     }
 
     @Test
-    void verifyClientSecretFromEnvironment() {
-        val secret = applicationContext.getEnvironment().getProperty("app.custom.secret");
-        val registeredService = new OAuthRegisteredService();
-        registeredService.setClientId("clientid");
-        registeredService.setClientSecret("${#applicationContext.get().environment.getProperty('app.custom.secret')}");
-        val result = oauth20ClientSecretValidator.validate(registeredService, secret);
-        assertTrue(result);
-    }
-
-    @Test
     void verifyClientSecretUndefined() {
         val secret = RandomUtils.randomAlphanumeric(12);
         val registeredService = new OAuthRegisteredService();

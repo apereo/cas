@@ -5,7 +5,6 @@ import org.apereo.cas.util.spring.RestActuatorControllerEndpoint;
 import org.apereo.cas.util.spring.RestActuatorEndpointDiscoverer;
 import org.apereo.cas.util.spring.RestActuatorEndpointHandlerMapping;
 import lombok.val;
-import org.jspecify.annotations.NonNull;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.actuate.autoconfigure.endpoint.web.CorsEndpointProperties;
@@ -46,8 +45,8 @@ class CasCoreActuatorsConfiguration {
     @ConditionalOnMissingBean(name = "restControllerEndpointDiscoverer")
     public RestActuatorEndpointDiscoverer restControllerEndpointDiscoverer(
         final ConfigurableApplicationContext applicationContext,
-        final ObjectProvider<@NonNull PathMapper> endpointPathMappers,
-        final ObjectProvider<@NonNull Collection<EndpointFilter<@NonNull RestActuatorControllerEndpoint>>> filters) {
+        final ObjectProvider<PathMapper> endpointPathMappers,
+        final ObjectProvider<Collection<EndpointFilter<RestActuatorControllerEndpoint>>> filters) {
         return new RestActuatorEndpointDiscoverer(applicationContext,
             endpointPathMappers.orderedStream().toList(),
             filters.getIfAvailable(Collections::emptyList));
@@ -58,7 +57,7 @@ class CasCoreActuatorsConfiguration {
         final EndpointLinksResolver endpointLinksResolver,
         final WebEndpointsSupplier webEndpointsSupplier,
         @Qualifier("restControllerEndpointDiscoverer")
-        final EndpointsSupplier<@NonNull RestActuatorControllerEndpoint> restEndpointsSupplier,
+        final EndpointsSupplier<RestActuatorControllerEndpoint> restEndpointsSupplier,
         final EndpointMediaTypes endpointMediaTypes,
         final CorsEndpointProperties corsProperties,
         final WebEndpointProperties webEndpointProperties,
@@ -75,7 +74,7 @@ class CasCoreActuatorsConfiguration {
     public EndpointLinksResolver endpointLinksResolver(
         final WebEndpointsSupplier webEndpointsSupplier,
         @Qualifier("restControllerEndpointDiscoverer")
-        final EndpointsSupplier<@NonNull RestActuatorControllerEndpoint> restEndpointsSupplier,
+        final EndpointsSupplier<RestActuatorControllerEndpoint> restEndpointsSupplier,
         final EndpointMediaTypes endpointMediaTypes,
         final CorsEndpointProperties corsProperties,
         final WebEndpointProperties webEndpointProperties) {
@@ -91,7 +90,7 @@ class CasCoreActuatorsConfiguration {
     @ConditionalOnMissingBean(name = "restControllerEndpointHandlerMapping")
     public RestActuatorEndpointHandlerMapping restControllerEndpointHandlerMapping(
         @Qualifier("restControllerEndpointDiscoverer")
-        final EndpointsSupplier<@NonNull RestActuatorControllerEndpoint> restEndpointsSupplier,
+        final EndpointsSupplier<RestActuatorControllerEndpoint> restEndpointsSupplier,
         final CorsEndpointProperties corsProperties, final WebEndpointProperties webEndpointProperties) {
         val endpointMapping = new EndpointMapping(webEndpointProperties.getBasePath());
         return new RestActuatorEndpointHandlerMapping(endpointMapping, restEndpointsSupplier.getEndpoints(),

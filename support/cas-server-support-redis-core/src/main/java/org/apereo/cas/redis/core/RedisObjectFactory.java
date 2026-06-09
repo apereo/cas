@@ -281,9 +281,6 @@ public class RedisObjectFactory {
             if (StringUtils.hasText(redis.getCluster().getTopologyRefreshPeriod())) {
                 refreshBuilder.enablePeriodicRefresh(Beans.newDuration(redis.getCluster().getTopologyRefreshPeriod()));
             }
-            if (redis.getCluster().isAdaptiveTopologyRefresh()) {
-                refreshBuilder.enableAllAdaptiveRefreshTriggers();
-            }
             val clusterClientOptionsBuilder = ClusterClientOptions.builder();
             return clusterClientOptionsBuilder.topologyRefreshOptions(refreshBuilder.build());
         }

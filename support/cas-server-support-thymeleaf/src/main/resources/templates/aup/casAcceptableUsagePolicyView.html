@@ -33,10 +33,9 @@
 
                 <div class="form-actions d-flex">
                     <div th:replace="~{fragments/submitbutton :: submitButton (messageKey='screen.aup.button.accept', name='submit', id='aupSubmit')}"/>
-                    <button class="mdc-button mdc-button--outlined btn btn-outline-secondary"
+                    <button class="mdc-button mdc-button--outlined btn btn-outline-secondary drop-button"
                             name="cancel"
                             th:value="#{screen.aup.button.cancel}"
-                            accesskey="c"
                             id="aupCancel"
                             type="button"
                             onclick="location.href = location.href;">

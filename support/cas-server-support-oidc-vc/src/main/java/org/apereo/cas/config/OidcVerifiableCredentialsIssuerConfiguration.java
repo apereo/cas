@@ -84,7 +84,7 @@ class OidcVerifiableCredentialsIssuerConfiguration {
     }
 
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-    @ConditionalOnMissingBean(name = "oidcVerifiableCredentialNonceService")
+    @ConditionalOnMissingBean(name = OidcVerifiableCredentialNonceService.BEAN_NAME)
     @Bean
     public OidcVerifiableCredentialNonceService oidcVerifiableCredentialNonceService(
         @Qualifier(OidcConfigurationContext.BEAN_NAME)

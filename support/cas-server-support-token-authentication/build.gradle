@@ -1,4 +1,6 @@
-description = "Apereo CAS JWT Token Authentication Support"
+apply plugin: "org.apereo.cas.project-conventions"
+
+description = "Adds JWT token authentication and ticket support for stateless service integrations."
 dependencies {
     api project(":api:cas-server-core-api")
     
