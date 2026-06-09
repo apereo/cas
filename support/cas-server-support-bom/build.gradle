@@ -21,17 +21,13 @@ publishing {
     publications {
         mavenJava(MavenPublication) {
             pom.withXml {
-                ansi.green "Creating BOM with all project dependencies for ${projectName}"
-
                 def iter = asNode().iterator()
                 while (iter.hasNext()) {
                     def node = iter.next()
                     if (node.name().getLocalPart().equals("dependencies")) {
-                        ansi.green "Removing dependencies block from generated POM"
                         iter.remove()
                     }
                     if (node.name().getLocalPart().equals("properties")) {
-                        ansi.green "Removing properties block from generated POM"
                         iter.remove()
                     }
                 }

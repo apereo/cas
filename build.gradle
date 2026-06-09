@@ -98,9 +98,10 @@ if (publishReleases || publishSnapshots) {
 }
 
 apply from: rootProject.file("gradle/dependencies.gradle")
-apply from: rootProject.file("gradle/dependencyUpdates.gradle")
 
 CasBuildSettings.setLibraries(libraries)
+
+apply from: rootProject.file("gradle/dependencyUpdates.gradle")
 
 def sonarqubeRequested = CasBuildSettings.isTaskRequested(project, 'sonar') || CasBuildSettings.isTaskRequested(project, 'sonarqube')
 
@@ -128,8 +129,7 @@ if (!providers.systemProperty("skipSonarqube").present && sonarqubeRequested) {
     }
 }
 
-if (!gradle.startParameter.excludedTaskNames.contains("javadoc")
-    && (CasBuildSettings.isTaskRequested(project, 'javadoc') || CasBuildSettings.isTaskRequested(project, 'aggregateJavadocsIntoJar'))) {
+if (CasBuildSettings.isJavadocRequested(gradle, project)) {
     def aggregateJavadocProjectPaths = CasBuildSettings.includedProjectPaths(project)
         .findAll { projectPath -> projectPath != project.path && CasBuildSettings.isJavadocEnabled(project, projectPath) }
 
@@ -193,7 +193,17 @@ if (rootProject.publishFlag) {
     tasks.register('rootSourcesJar', Jar) {
         description = "Build JAR for the root CAS module"
         archiveBaseName.set("${project.name}-sources")
-        from new File(project.rootDir, 'src')
+        if (CasBuildSettings.isPrivateRelease(project)) {
+            def placeholderFile = layout.buildDirectory.file('generated/placeholder-root-sources/README.md')
+            from(placeholderFile)
+            doFirst {
+                def file = placeholderFile.get().asFile
+                file.parentFile.mkdirs()
+                file.text = 'This is a placeholder sources artifact for private releases.'
+            }
+        } else {
+            from new File(project.rootDir, 'src')
+        }
     }
 }
 
@@ -206,7 +216,9 @@ tasks.register('gradleHome') {
 
 if (rootProject.publishFlag && !rootProject.publishMinimalArtifacts) {
     artifacts {
-        archives tasks.named('aggregateJavadocsIntoJar')
+        if (!rootProject.publishSnapshots) {
+            archives tasks.named('aggregateJavadocsIntoJar')
+        }
         archives tasks.named('rootSourcesJar')
     }
 }
@@ -373,4 +385,3 @@ tasks.register('verifyDependencyVersions') { t ->
 tasks.named("clean") {
     delete new File(project.rootDir, '.gradle/cas-test-tags')
 }
-

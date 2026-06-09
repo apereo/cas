@@ -2,6 +2,10 @@ import org.apereo.cas.gradle.CasDependencyUpdatesTask
 import org.gradle.api.artifacts.repositories.MavenArtifactRepository
 import org.gradle.api.artifacts.result.ResolvedDependencyResult
 
+def dependencyUpdatesRequested = gradle.startParameter.taskNames.any {
+    it == 'dependencyUpdates' || it.endsWith(':dependencyUpdates')
+}
+
 def resolvedCoordinates = { configuration ->
     try {
         configuration.incoming.resolutionResult.root.dependencies
@@ -12,11 +16,15 @@ def resolvedCoordinates = { configuration ->
     }
 }
 
-def buildscriptDependencies = resolvedCoordinates(project.buildscript.configurations.classpath)
+def buildscriptDependencies = dependencyUpdatesRequested
+    ? resolvedCoordinates(project.buildscript.configurations.classpath)
+    : []
 
-def projectDependencies = project.configurations
-    .matching { it.canBeResolved }
-    .collectMany { resolvedCoordinates(it) }
+def projectDependencies = dependencyUpdatesRequested
+    ? project.configurations
+        .matching { it.canBeResolved }
+        .collectMany { resolvedCoordinates(it) }
+    : []
 
 def dependencyUpdateCoordinates = (buildscriptDependencies + projectDependencies).unique()
 

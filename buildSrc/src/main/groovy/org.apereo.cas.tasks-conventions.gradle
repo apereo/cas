@@ -1,5 +1,6 @@
 import org.apache.tools.ant.taskdefs.condition.Os
 import org.apereo.cas.gradle.Ansi
+import org.apereo.cas.gradle.CasBuildSettings
 import org.gradle.api.attributes.Bundling
 import org.gradle.api.attributes.Category
 import org.gradle.api.attributes.DocsType
@@ -40,9 +41,20 @@ tasks.register('testJar', Jar) {
 }
 
 tasks.register('sourcesJar', Jar) {
-    dependsOn classesTask
     archiveClassifier.set('sources')
-    from sourceSets.main.allSource
+
+    if (CasBuildSettings.isPrivateRelease(project)) {
+        def placeholderFile = layout.buildDirectory.file('generated/placeholder-sources/README.md')
+        from(placeholderFile)
+        doFirst {
+            def file = placeholderFile.get().asFile
+            file.parentFile.mkdirs()
+            file.text = 'This is a placeholder sources artifact for private releases.'
+        }
+    } else {
+        dependsOn classesTask
+        from sourceSets.main.allSource
+    }
 }
 
 tasks.register('aggregateJavadocSourcesJar', Jar) {
@@ -129,4 +141,3 @@ tasks.register('downloadDependencies') {
         }
     }
 }
-

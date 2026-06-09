@@ -68,7 +68,7 @@ features and capabilities.
 
 The build system is also internally refactored and heavily optimized:
 
-- The build is made compatible with Gradle's [Isolated Projects](https://docs.gradle.org/current/userguide/isolated_projects.html) 
+- The Gradle build is made compatible with Gradle's [Isolated Projects](https://docs.gradle.org/current/userguide/isolated_projects.html) 
 feature by default. This required a significant refactoring of how project dependencies, plugins and coordinates are resolved during the build and bundling 
 process to ensure they are compliant with Spring Boot and Gradle's model for project isolation.
 - Running CAS integration and unit tests are now significantly faster locally, thanks to better parallelism and less instrumentation.
@@ -138,3 +138,4 @@ to tighten and improve the security posture of registration request:
 - The [Spring Expression Language](../configuration/Configuration-Spring-Expressions.html) parser is tightened to run in a sandboxed environment.
 - [Delegated authentication](../integration/Delegate-Authentication.html) can now handle JSON serialization of complex attribute definitions that may carry maps. 
 - Small enhancements to [CAS audits](../audits/Audits.html) to correctly identify the audited principal.
+- [Delegated authentication](../integration/Delegate-Authentication.html) can now logout redirects to the original application when working with external OpenID Connect providers. 

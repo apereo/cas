@@ -1,6 +1,7 @@
 package org.apereo.cas.gradle
 
 import org.gradle.api.Project
+import org.gradle.api.invocation.Gradle
 
 import java.util.concurrent.ConcurrentHashMap
 import java.util.regex.Matcher
@@ -114,6 +115,12 @@ final class CasBuildSettings {
         project.providers.systemProperty('repositoryPassword').getOrElse(System.getenv('REPOSITORY_PWD'))
     }
 
+    static boolean isPrivateRelease(final Project project) {
+        isPublishFlag(project) && project.providers.systemProperty('privateRelease')
+            .map { value -> Boolean.valueOf(value) }
+            .getOrElse(false)
+    }
+    
     static List<String> excludedFilesFromTestCoverage() {
         EXCLUDED_FILES_FROM_TEST_COVERAGE
     }
@@ -147,6 +154,12 @@ final class CasBuildSettings {
         project.ext.set('generateGitProperties', isGenerateGitProperties(project))
         project.ext.set('generateTimestamps', isGenerateTimestamps(project))
         project.ext.set('excludedFilesFromTestCoverage', excludedFilesFromTestCoverage())
+    }
+
+    static boolean isJavadocRequested(final Gradle gradle, final Project project) {
+        !gradle.startParameter.excludedTaskNames.contains("javadoc")
+                && (isTaskRequested(project, 'javadoc')
+                || isTaskRequested(project, 'aggregateJavadocsIntoJar'))
     }
 
     static boolean isArchAdjusted() {
@@ -290,7 +303,6 @@ final class CasBuildSettings {
         project.gradle.startParameter.taskNames.any { it == taskName || it.endsWith(":${taskName}") }
     }
 }
-
 
 
 

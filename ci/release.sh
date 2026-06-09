@@ -86,7 +86,7 @@ function publish {
     printgreen "Assembling and publishing CAS release ${casVersion}. This might take a while..."
     ./gradlew assemble publishAggregationToCentralPortal \
       -Pversion="${casVersion}" -PnextVersion="${nextVersion}" \
-      --parallel --no-daemon  -x test -x check \
+      --parallel --no-daemon  -x test -x check -DprivateRelease=${privateRelease} \
       -DskipAot=true -DpublishReleases=true --stacktrace --quiet \
       -DrepositoryUsername="$REPOSITORY_USER" -DrepositoryPassword="$REPOSITORY_PWD"
     if [ $? -ne 0 ]; then
