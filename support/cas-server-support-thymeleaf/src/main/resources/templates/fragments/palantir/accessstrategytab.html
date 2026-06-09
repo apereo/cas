@@ -32,6 +32,7 @@
                                 </span>
                                 <input class="mdc-text-field__input form-control" type="text"
                                        name="accessService" data-param-name="service" tabindex="0" id="accessService" size="50"
+                                       title="The URL of the service/application to check access for"
                                        autocomplete="off" required/>
                             </label>
                             <label for="accessUsername"
@@ -45,7 +46,8 @@
                                 </span>
                                 <input class="mdc-text-field__input form-control" type="text"
                                        name="accessUsername" data-param-name="username" tabindex="0" id="accessUsername"
-                                       size="50" autocomplete="off" required/>
+                                       size="50" title="The username to verify access for"
+                                       autocomplete="off" required/>
                             </label>
                             <label for="accessPassword"
                                    class="mdc-text-field mdc-text-field--outlined control-label mdc-text-field--with-trailing-icon mb-2">
@@ -58,7 +60,8 @@
                                 </span>
                                 <input class="mdc-text-field__input form-control pwd" type="password"
                                        name="accessPassword" data-param-name="password" tabindex="0" id="accessPassword"
-                                       size="50" autocomplete="off"/>
+                                       size="50" title="The password credential for the given username"
+                                       autocomplete="off"/>
                                 <button
                                         class="reveal-password align-self-end mdc-button mdc-button--raised btn btn-primary mdc-input-group-append mdc-icon-button"
                                         tabindex="-1"
@@ -79,7 +82,8 @@
                                 </span>
                                 <input class="mdc-text-field__input form-control" type="text"
                                        name="accessClientId" data-param-name="client_id" tabindex="0" id="accessClientId"
-                                       size="50" autocomplete="off"/>
+                                       size="50" title="The OAuth/OIDC client ID associated with the service"
+                                       autocomplete="off"/>
                             </label>
                             <label for="accessEntityId" id="accessEntityIdLabel"
                                    class="mdc-text-field mdc-text-field--outlined control-label mdc-text-field--with-trailing-icon mb-2">
@@ -92,7 +96,8 @@
                                 </span>
                                 <input class="mdc-text-field__input form-control" type="text"
                                        name="accessEntityId" data-param-name="entityId" tabindex="0" id="accessEntityId"
-                                       size="50" autocomplete="off"/>
+                                       size="50" title="The SAML2 entity ID of the service provider"
+                                       autocomplete="off"/>
                             </label>
                         </div>
 
