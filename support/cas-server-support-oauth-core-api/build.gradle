@@ -1,4 +1,6 @@
-description = "Apereo CAS Server OAuth Provider Core APIs"
+apply plugin: "org.apereo.cas.project-conventions"
+
+description = "Defines shared OAuth provider contracts used by CAS OAuth features."
 dependencies {
     implementation libraries.pac4jcore
     implementation libraries.nimbus

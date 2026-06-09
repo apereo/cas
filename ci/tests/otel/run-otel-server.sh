@@ -17,7 +17,7 @@ function printred() {
 printgreen "Running OpenTelemetry Collector docker container..."
 export DOCKER_IMAGE="otel/opentelemetry-collector:0.153.0"
 docker stop otel-server || true && docker rm otel-server || true
-docker run --rm -p 4317:4317 -p 4318:4318 -p 8888:8888 -p 55679:55679 --name otel-server \
+docker run --quiet  --rm -p 4317:4317 -p 4318:4318 -p 8888:8888 -p 55679:55679 --name otel-server \
   -v "$PWD"/ci/tests/otel/otel-collector-config.yaml:/etc/otelcol/config.yaml \
   -d ${DOCKER_IMAGE}
 

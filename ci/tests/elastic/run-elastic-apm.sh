@@ -4,7 +4,7 @@
 export DOCKER_IMAGE="docker.elastic.co/apm/apm-server:9.4.2"
 echo "Running Elastic APM Server docker container"
 docker stop elastic-apm || true && docker rm elastic-apm || true
-docker run -d \
+docker run --quiet -d \
   -p 8800:8200 --rm \
   --name=elastic-apm \
   --user=apm-server \

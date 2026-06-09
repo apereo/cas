@@ -125,7 +125,6 @@ class RedisObjectFactoryTests {
 
         props.setTimeout(StringUtils.EMPTY);
         props.setConnectTimeout(StringUtils.EMPTY);
-        props.getCluster().setAdaptiveTopologyRefresh(true);
         props.getCluster().setDynamicRefreshSources(true);
         props.getCluster().setMaxRedirects(3);
         val connection = RedisObjectFactory.newRedisConnectionFactory(props, true, CasSSLContext.disabled());

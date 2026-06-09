@@ -9,7 +9,7 @@ echo "Generating security keys and certificates..."
 echo "Running Cassandra docker container..."
 docker stop cassandra || true && docker rm cassandra || true
 #docker run --rm --name cassandra -d -p 9042:9042 cassandra:4.0.6
-docker run --rm --name cassandra -d -p 7199:7199 -p 7000:7000 -p 7001:7001 -p 9042:9042 \
+docker run --quiet --rm --name cassandra -d -p 7199:7199 -p 7000:7000 -p 7001:7001 -p 9042:9042 \
   -v "$PWD"/ci/tests/cassandra/cassandra.yaml:/etc/cassandra/cassandra.yaml \
   -v "$PWD"/ci/tests/cassandra/cqlshrc:/root/.cassandra/cqlshrc \
   -v "$PWD"/ci/tests/cassandra/security:/security \

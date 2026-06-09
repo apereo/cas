@@ -1,4 +1,6 @@
-description = "Apereo CAS Surrogate Authentication Webflow"
+apply plugin: "org.apereo.cas.project-conventions"
+
+description = "Adds browser login flow support for surrogate authentication delegation."
 ext {
     publishMetadata = true
     projectMetadata = [

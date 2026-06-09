@@ -1,4 +1,6 @@
-description = "Apereo CAS Passwordless Authentication API"
+apply plugin: "org.apereo.cas.project-conventions"
+
+description = "Defines passwordless authentication contracts for account records, tokens, and login flows."
 dependencies {
     implementation project(":core:cas-server-core-configuration-api")
     implementation project(":core:cas-server-core-authentication-api")

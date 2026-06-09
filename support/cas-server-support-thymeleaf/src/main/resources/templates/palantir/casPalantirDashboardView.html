@@ -33,16 +33,21 @@
 
     <script th:inline="javascript">
         /*<![CDATA[*/
-        const casServerPrefix = /*[[${casServerPrefix}]]*/;
-        const actuatorEndpoints = /*[[${actuatorEndpoints}]]*/;
-        const serviceDefinitions = /*[[${serviceDefinitions}]]*/;
-        const supportedServiceTypes = /*[[${supportedServiceTypes}]]*/;
-        const availableMultifactorProviders = /*[[${availableMultifactorProviders}]]*/;
-        const scriptFactoryAvailable = /*[[${scriptFactoryAvailable}]]*/;
-        const mutablePropertySources = /*[[${mutablePropertySources}]]*/;
-        const mutablePropertySourcesAvailable = mutablePropertySources.length > 0;
-
-        const trumbowygIconsPath = /*[[@{#{webjars.trumbowyg.icons}}]]*/ '';
+        window.palantirDashboardConfiguration = (() => {
+            const mutablePropertySources = /*[[${mutablePropertySources}]]*/;
+            return Object.freeze({
+                casServerPrefix: /*[[${casServerPrefix}]]*/,
+                actuatorEndpoints: /*[[${actuatorEndpoints}]]*/,
+                serviceDefinitions: /*[[${serviceDefinitions}]]*/,
+                supportedServiceTypes: /*[[${supportedServiceTypes}]]*/,
+                serviceProperties: /*[[${serviceProperties}]]*/,
+                availableMultifactorProviders: /*[[${availableMultifactorProviders}]]*/,
+                scriptFactoryAvailable: /*[[${scriptFactoryAvailable}]]*/,
+                mutablePropertySources: mutablePropertySources,
+                mutablePropertySourcesAvailable: mutablePropertySources.length > 0,
+                trumbowygIconsPath: /*[[@{#{webjars.trumbowyg.icons}}]]*/ ""
+            });
+        })();
         /*]]>*/
     </script>
     <script type="text/javascript" th:src="@{/js/palantir.js}"></script>

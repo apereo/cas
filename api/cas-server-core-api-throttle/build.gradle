@@ -1,4 +1,6 @@
-description = "Apereo CAS Core Throttling APIs"
+apply plugin: "org.apereo.cas.project-conventions"
+
+description = "Defines throttling contracts for limiting abusive or repeated authentication attempts."
 dependencies {
     api project(":api:cas-server-core-api-authentication")
     api project(":api:cas-server-core-api-util")

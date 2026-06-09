@@ -1,4 +1,6 @@
-description = "Apereo CAS Server GraalVM Native Image Support"
+apply plugin: "org.apereo.cas.project-conventions"
+
+description = "Adds GraalVM native image support for building CAS as a native executable."
 
 ext {
     publishMetadata = true

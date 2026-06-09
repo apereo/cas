@@ -1,4 +1,6 @@
-description = "Apereo CAS Account Management and Registration API Support"
+apply plugin: "org.apereo.cas.project-conventions"
+
+description = "Defines account management contracts for registration and profile workflows."
 dependencies {
     api project(":api:cas-server-core-api-webflow")
     api project(":api:cas-server-core-api-ticket")

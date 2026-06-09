@@ -4,7 +4,7 @@
 export DOCKER_IMAGE="mmoayyed/radius-server:latest"
 echo "Running Radius docker container..."
 docker stop radius-server || true && docker rm radius-server || true
-docker run --rm --name radius-server -d -p 1812-1813:1812-1813/udp ${DOCKER_IMAGE}
+docker run --quiet  --rm --name radius-server -d -p 1812-1813:1812-1813/udp ${DOCKER_IMAGE}
 
 docker ps | grep "radius-server"
 retVal=$?

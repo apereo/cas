@@ -1,4 +1,6 @@
-description = "Apereo CAS Duo Security Core MFA"
+apply plugin: "org.apereo.cas.project-conventions"
+
+description = "Adds Duo Security multifactor authentication for CAS login flows."
 dependencies {
     api project(":api:cas-server-core-api-authentication")
 

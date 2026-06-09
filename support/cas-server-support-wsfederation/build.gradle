@@ -1,4 +1,6 @@
-description = "Apereo CAS WS-Federation Support"
+apply plugin: "org.apereo.cas.project-conventions"
+
+description = "Adds WS-Federation support for compatible relying parties."
 dependencies {
     api project(":api:cas-server-core-api-webflow")
     api project(":api:cas-server-core-api-cookie")

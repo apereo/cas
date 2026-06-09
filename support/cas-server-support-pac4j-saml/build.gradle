@@ -1,4 +1,6 @@
-description = "Apereo CAS Delegated Authentication SAML2 Support Using Pac4J"
+apply plugin: "org.apereo.cas.project-conventions"
+
+description = "Adds delegated authentication to SAML identity providers through pac4j."
 ext {
     publishMetadata = true
     projectMetadata = [

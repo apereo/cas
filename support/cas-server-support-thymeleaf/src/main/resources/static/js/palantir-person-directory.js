@@ -638,7 +638,7 @@ function openAttributeDefinitionDialog(existingDefinition) {
         paramName: "patternFormat"
     });
 
-    if (scriptFactoryAvailable) {
+    if (PalantirDashboardConfiguration.scriptFactoryAvailable()) {
         createInputField({
             labelTitle: "Script",
             name: "attributeDefinitionScript",

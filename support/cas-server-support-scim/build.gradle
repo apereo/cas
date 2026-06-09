@@ -1,4 +1,6 @@
-description = "Apereo CAS SCIM 2 Provisioning Support"
+apply plugin: "org.apereo.cas.project-conventions"
+
+description = "Adds SCIM provisioning support for identity lifecycle integrations."
 ext {
     publishMetadata = true
     projectMetadata = [

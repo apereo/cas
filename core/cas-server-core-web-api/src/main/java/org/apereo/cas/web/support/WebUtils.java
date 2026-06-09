@@ -886,7 +886,7 @@ public class WebUtils {
      * @param context the context
      * @param service the service
      */
-    public static void putLogoutRedirectUrl(final RequestContext context, final String service) {
+    public static void putLogoutRedirectUrl(final RequestContext context, @Nullable final String service) {
         context.getFlowScope().put("logoutRedirectUrl", service);
     }
 

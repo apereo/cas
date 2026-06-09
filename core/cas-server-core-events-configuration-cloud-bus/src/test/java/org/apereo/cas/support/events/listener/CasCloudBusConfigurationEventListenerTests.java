@@ -13,6 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.cloud.bus.event.PathDestinationFactory;
 import org.springframework.cloud.bus.event.RefreshRemoteApplicationEvent;
 import org.springframework.context.ConfigurableApplicationContext;
 import static org.junit.jupiter.api.Assertions.*;
@@ -43,7 +44,8 @@ class CasCloudBusConfigurationEventListenerTests {
     void verifyOperation() {
         assertNotNull(casCloudBusConfigurationEventListener);
         assertDoesNotThrow(() -> applicationContext.publishEvent(
-            new RefreshRemoteApplicationEvent(this, "service", "destination")));
+            new RefreshRemoteApplicationEvent(this, "service",
+                new PathDestinationFactory().getDestination("destination"))));
     }
 
 }

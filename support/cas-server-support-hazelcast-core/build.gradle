@@ -1,4 +1,6 @@
-description = "Apereo CAS Hazelcast Core Support"
+apply plugin: "org.apereo.cas.project-conventions"
+
+description = "Adds shared Hazelcast support for clustered CAS features."
 dependencies {
     implementation libraries.hazelcast
 

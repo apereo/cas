@@ -1,4 +1,6 @@
-description = "Apereo CAS Core Web"
+apply plugin: "org.apereo.cas.project-conventions"
+
+description = "Defines core web contracts used by CAS controllers, filters, and views."
 dependencies {
     api project(":api:cas-server-core-api-web")
     api project(":api:cas-server-core-api-ticket")

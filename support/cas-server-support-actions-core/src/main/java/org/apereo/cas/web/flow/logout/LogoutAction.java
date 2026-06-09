@@ -53,9 +53,10 @@ public class LogoutAction extends AbstractLogoutAction {
         logoutExecutionPlan.getLogoutRedirectionStrategies()
             .stream()
             .filter(strategy -> strategy.supports(request, response))
+            .findFirst()
             .map(Unchecked.function(strategy -> strategy.handle(request, response)))
             .filter(Objects::nonNull)
-            .forEach(logoutResponse -> {
+            .ifPresent(logoutResponse -> {
                 LOGGER.debug("Logout response is [{}]", logoutResponse);
                 logoutResponse.getService().ifPresent(service -> WebUtils.putServiceIntoFlowScope(requestContext, service));
                 logoutResponse.getLogoutRedirectUrl().ifPresent(url -> WebUtils.putLogoutRedirectUrl(requestContext, url));
@@ -64,7 +65,7 @@ public class LogoutAction extends AbstractLogoutAction {
                     WebUtils.putLogoutPostData(requestContext, logoutResponse.getLogoutPostData());
                 }
             });
-
+        
         if (needFrontSlo) {
             LOGGER.trace("Proceeding forward with front-channel single logout");
             return new Event(this, CasWebflowConstants.TRANSITION_ID_FRONT);

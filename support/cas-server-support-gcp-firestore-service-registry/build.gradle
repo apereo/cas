@@ -1,4 +1,6 @@
-description = "Apereo CAS GCP Firestore Service Registry"
+apply plugin: "org.apereo.cas.project-conventions"
+
+description = "Stores registered service definitions in Google Cloud Firestore for centralized CAS service management."
 ext {
     publishMetadata = true
     projectMetadata = [

@@ -1,4 +1,6 @@
-description = "Apereo CAS Core Utilities"
+apply plugin: "org.apereo.cas.project-conventions"
+
+description = "Provides shared utility behavior used by core CAS modules."
 dependencies {
     api project(":api:cas-server-core-api-authentication")
     api project(":api:cas-server-core-api-ticket")

@@ -1,4 +1,6 @@
-description = "Apereo CAS Trusted MFA Browser/Device Mongo Support"
+apply plugin: "org.apereo.cas.project-conventions"
+
+description = "Stores trusted browser and device records in MongoDB so allowed users can avoid repeated MFA prompts."
 ext {
     publishMetadata = true
     projectMetadata = [

@@ -1,4 +1,6 @@
-description = "Apereo CAS AUP Redis Support"
+apply plugin: "org.apereo.cas.project-conventions"
+
+description = "Stores acceptable usage policy acknowledgements in Redis."
 ext {
 
     publishMetadata = true

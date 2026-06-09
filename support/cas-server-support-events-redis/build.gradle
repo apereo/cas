@@ -1,4 +1,6 @@
-description = "Apereo CAS Events Consumer via Redis"
+apply plugin: "org.apereo.cas.project-conventions"
+
+description = "Stores or publishes CAS events with Redis for operational processing and integrations."
 ext {
     publishMetadata = true
     projectMetadata = [

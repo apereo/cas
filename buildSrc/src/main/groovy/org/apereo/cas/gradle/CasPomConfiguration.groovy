@@ -1,0 +1,197 @@
+package org.apereo.cas.gradle
+
+final class CasPomConfiguration {
+    private CasPomConfiguration() {
+    }
+
+    static void createPom(final pom, final project) {
+        pom.url = project.projectUrl
+        pom.inceptionYear = project.projectInceptionYear
+        pom.name = project.name
+        pom.description = project.name
+
+        pom.organization {
+            name = "Apereo Foundation"
+            url = "https://www.apereo.org"
+        }
+
+        pom.issueManagement {
+            system = project.projectIssueSystem
+            url = project.projectIssueUrl
+        }
+
+        pom.scm {
+            url = project.projectScmUrl
+            connection = project.projectScmUrl
+            developerConnection = project.projectScmUrl
+        }
+
+        pom.licenses {
+            license {
+                name = project.projectLicenseName
+                url = project.projectLicenseUrl
+                distribution = project.projectLicenseDistribution
+            }
+        }
+
+        pom.developers {
+            developer {
+                id = "leleuj"
+                name = "Jérôme Leleu"
+            }
+            developer {
+                id = "mmoayyed"
+                name = "Misagh Moayyed"
+            }
+            developer {
+                id = "hdeadman"
+                name = "Hal Deadman"
+            }
+        }
+
+        pom.contributors {
+            contributor {
+                name = "Dmitriy Kopylenko"
+            }
+            contributor {
+                name = "Timur Duehr"
+            }
+            contributor {
+                name = "Jeff Sittler"
+            }
+            contributor {
+                name = "Andrew Petro"
+            }
+            contributor {
+                name = "William G. Thompson"
+            }
+            contributor {
+                name = "Marvin S. Addison"
+            }
+            contributor {
+                name = "Scott Battaglia"
+            }
+            contributor {
+                name = "Travis Schmidt"
+            }
+            contributor {
+                name = "Robert Oschwald"
+            }
+            contributor {
+                name = "Daniel Frett"
+            }
+            contributor {
+                name = "Adam Rybicki"
+                email = "arybicki@unicon.net"
+            }
+            contributor {
+                name = "Andrew Tillinghast"
+                email = "atilling@conncoll.edu"
+            }
+            contributor {
+                name = "Arnaud Lesueur"
+                email = "arnaud.lesueur@gmail.com"
+            }
+            contributor {
+                name = "Drew Mazurek"
+                email = "dmazurek@unicon.net"
+            }
+            contributor {
+                name = "Eric Dalquist"
+                email = "eric.dalquist@doit.wisc.edu"
+            }
+            contributor {
+                name = "Eric Pierce"
+                email = "epierce@usf.edu"
+            }
+            contributor {
+                name = "Frederic Esnault"
+                email = "esnault.frederic@gmail.com"
+            }
+            contributor {
+                name = "Howard Gilbert"
+                email = "Howard.Gilbert@yale.edu"
+            }
+            contributor {
+                name = "Jan Van der Velpen"
+                email = "velpi@industria.be"
+            }
+            contributor {
+                name = "John Martin"
+                email = "jmartin@unicon.net"
+            }
+            contributor {
+                name = "MarcAntoine Garrigue"
+                email = "marc.antoine.garrigue@gmail.com"
+            }
+            contributor {
+                name = "Mihir Patel"
+                email = "exploremihir@gmail.com"
+            }
+            contributor {
+                name = "Fredrik Jönsson"
+                email = "fjo@kth.se"
+            }
+        }
+
+        pom.mailingLists {
+            mailingList {
+                name = "cas-user"
+                subscribe = "https://groups.google.com/a/apereo.org/forum/#!forum/cas-user"
+                unsubscribe = "https://groups.google.com/a/apereo.org/forum/#!forum/cas-user"
+                post = "cas-user@apereo.org"
+                archive = "https://groups.google.com/a/apereo.org/forum/#!forum/cas-user"
+            }
+            mailingList {
+                name = "cas-dev"
+                subscribe = "https://groups.google.com/a/apereo.org/forum/#!forum/cas-dev"
+                unsubscribe = "https://groups.google.com/a/apereo.org/forum/#!forum/cas-dev"
+                post = "cas-dev@apereo.org"
+                archive = "https://groups.google.com/a/apereo.org/forum/#!forum/cas-dev"
+            }
+            mailingList {
+                name = "cas-announce"
+                subscribe = "https://groups.google.com/a/apereo.org/forum/#!forum/cas-announce"
+                unsubscribe = "https://groups.google.com/a/apereo.org/forum/#!forum/cas-announce"
+                post = "cas-announce@apereo.org"
+                archive = "https://groups.google.com/a/apereo.org/forum/#!forum/cas-announce"
+            }
+        }
+    }
+
+    static void createPomRepositories(final node) {
+        def repositories = node.appendNode("repositories")
+
+        def repository = repositories.appendNode("repository")
+        repository.appendNode("id", "maven-central")
+        repository.appendNode("url", "https://repo.maven.apache.org/maven2")
+        repository.appendNode("releases").appendNode("enabled", "true")
+        repository.appendNode("snapshots").appendNode("enabled", "false")
+
+        repository = repositories.appendNode("repository")
+        repository.appendNode("id", "shib-release")
+        repository.appendNode("url", "https://build.shibboleth.net/maven/releases/")
+        repository.appendNode("releases").appendNode("enabled", "true")
+        repository.appendNode("snapshots").appendNode("enabled", "false")
+
+        repository = repositories.appendNode("repository")
+        repository.appendNode("id", "shib-snapshots")
+        repository.appendNode("url", "https://build.shibboleth.net/maven/snapshots/")
+        repository.appendNode("releases").appendNode("enabled", "false")
+        repository.appendNode("snapshots").appendNode("enabled", "true")
+
+        repository = repositories.appendNode("repository")
+        repository.appendNode("id", "sonatype-snapshot")
+        repository.appendNode("url", "https://central.sonatype.com/repository/maven-snapshots")
+        repository.appendNode("snapshots").appendNode("enabled", "true")
+        repository.appendNode("releases").appendNode("enabled", "false")
+
+        repository = repositories.appendNode("repository")
+        repository.appendNode("id", "spring-milestone")
+        repository.appendNode("url", "https://repo.spring.io/milestone")
+        repository.appendNode("snapshots").appendNode("enabled", "false")
+        repository.appendNode("releases").appendNode("enabled", "true")
+    }
+}
+
+

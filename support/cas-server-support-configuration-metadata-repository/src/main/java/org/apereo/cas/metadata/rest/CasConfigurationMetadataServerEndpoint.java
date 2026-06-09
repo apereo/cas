@@ -14,6 +14,7 @@ import org.springframework.boot.actuate.endpoint.Access;
 import org.springframework.boot.actuate.endpoint.annotation.Endpoint;
 import org.springframework.boot.configurationmetadata.ConfigurationMetadataProperty;
 import org.springframework.context.ConfigurableApplicationContext;
+import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 
@@ -40,7 +41,7 @@ public class CasConfigurationMetadataServerEndpoint extends BaseCasRestActuatorE
      *
      * @return the response entity
      */
-    @GetMapping
+    @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
     @Operation(summary = "Get all properties from the repository")
     public Map<String, ConfigurationMetadataProperty> properties() {
         return repository.getRepository().getAllProperties();
@@ -52,7 +53,7 @@ public class CasConfigurationMetadataServerEndpoint extends BaseCasRestActuatorE
      * @param term the term
      * @return the response entity
      */
-    @GetMapping("/{term}")
+    @GetMapping(path = "/{term}", produces = MediaType.APPLICATION_JSON_VALUE)
     @Operation(summary = "Get all properties from the repository that match the name or description", parameters =
         @Parameter(name = "term", required = true, description = "The search term to search for"))
     public List<ConfigurationMetadataSearchResult> search(
