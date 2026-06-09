@@ -1,4 +1,6 @@
-description = "Apereo CAS Core Validation APIs"
+apply plugin: "org.apereo.cas.project-conventions"
+
+description = "Defines validation contracts for CAS protocol responses and service ticket checks."
 dependencies {
     api project(":api:cas-server-core-api-authentication")
     api project(":api:cas-server-core-api-validation")

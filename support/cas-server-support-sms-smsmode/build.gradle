@@ -1,4 +1,6 @@
-description = "Apereo CAS SmsMode SMS Support"
+apply plugin: "org.apereo.cas.project-conventions"
+
+description = "Sends CAS SMS messages through SMSMode."
 ext {
     publishMetadata = true
     projectMetadata = [

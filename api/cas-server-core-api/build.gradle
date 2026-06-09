@@ -1,4 +1,6 @@
-description = "Apereo CAS Core APIs"
+apply plugin: "org.apereo.cas.project-conventions"
+
+description = "Defines the shared CAS extension contracts used by core services and optional features."
 dependencies {
     api project(":api:cas-server-core-api-protocol")
     api project(":api:cas-server-core-api-authentication")

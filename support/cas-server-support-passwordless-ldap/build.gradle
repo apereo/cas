@@ -1,4 +1,6 @@
-description = "Apereo CAS Passwordless Authentication LDAP Support"
+apply plugin: "org.apereo.cas.project-conventions"
+
+description = "Stores passwordless authentication records in an LDAP directory."
 ext {
     publishMetadata = true
     projectMetadata = [

@@ -81,6 +81,7 @@ public class DefaultCasGoogleAuthenticator implements CasGoogleAuthenticator {
         builder.setTimeStepSizeInMillis(TimeUnit.SECONDS.toMillis(gauth.getTimeStepSize()));
         builder.setWindowSize(gauth.getWindowSize());
         builder.setKeyRepresentation(KeyRepresentation.BASE32);
+        builder.setNumberOfScratchCodes(gauth.getNumberOfScratchCodes());
         val authenticator = new GoogleAuthenticator(builder.build());
         authenticator.setCredentialRepository(credentialRepository);
         return authenticator;

@@ -1,4 +1,6 @@
-description = "Apereo CAS Google Authenticator LDAP"
+apply plugin: "org.apereo.cas.project-conventions"
+
+description = "Stores Google Authenticator MFA account data in an LDAP directory."
 ext {
     publishMetadata = true
     projectMetadata = [

@@ -9,12 +9,13 @@ ENDCOLOR="\e[0m"
 find ./ci/tests -type f -name "*.sh" -exec chmod +x {} \;
 
 dockerPlatform="unknown"
+printf "\n👷 Checking Docker engine platform..."
 docker ps &> /dev/null
 if [[ $? -ne 0 ]] ; then
   printf "\n🔥 ${RED}Docker engine is not available.${ENDCOLOR}\n"
 else
   dockerPlatform=$(docker version --format '{{json .Server.Os}}')
-  printf "\nDocker engine platform is ${GREEN}%s${ENDCOLOR}\n" "$dockerPlatform."
+  printf "\n👷 Docker engine platform is ${GREEN}%s${ENDCOLOR}\n" "$dockerPlatform."
 fi
 
 function isDockerOnLinux() {
@@ -45,17 +46,13 @@ parallel="--parallel "
 dryRun=""
 info=""
 gradleCmd="./gradlew"
-flags="--configure-on-demand --build-cache -x javadoc -x check --quiet "
+flags="--configure-on-demand --build-cache -x javadoc -x check --quiet -DskipNestedConfigMetadataGen=true "
 coverageTask=""
 
 while (( "$#" )); do
     case "$1" in
     --max-workers)
         parallel="${parallel} --max-workers=8"
-        shift
-        ;;
-    --no-cache)
-        parallel="--no-configuration-cache "
         shift
         ;;
     --no-parallel)
@@ -280,6 +277,7 @@ while (( "$#" )); do
             config|casconfig|ccfg|cfg|cas-config|casconfiguration)
                 isDockerOnLinux && ./ci/tests/etcd/run-etcd-server.sh || exit 1
                 task+="testCasConfiguration "
+                flags="${flags/-DskipNestedConfigMetadataGen=true}"
                 ;;
             geolocation|geo)
                 task+="testGeoLocation "
@@ -553,19 +551,19 @@ if [[ -z "$task" ]] && [[ -z "$coverageTask" ]]; then
 fi
 
 cmd="$gradleCmd ${GREEN}$task $tests${ENDCOLOR}${flags}${debug}${dryRun}${info}${parallel}${GREEN}$coverageTask${ENDCOLOR}"
-printf "${cmd} \n"
+printf "👷 ${cmd} \n"
 echo
 cmd="$gradleCmd $task $tests $flags ${debug} ${parallel} ${dryRun} ${info} ${coverageTask}"
 eval "$cmd"
 retVal=$?
 echo -e "***************************************************************************************"
-printf "${CYAN}Gradle build finished at $(date) with exit code $retVal ${ENDCOLOR}\n"
+printf "👷 ${CYAN}Gradle build finished at $(date) with exit code $retVal ${ENDCOLOR}\n"
 echo -e "***************************************************************************************"
 
 if [ $retVal == 0 ]; then
-    printf "${GREEN}Gradle build finished successfully.${ENDCOLOR}\n"
+    printf "👷 ${GREEN}Gradle build finished successfully.${ENDCOLOR}\n"
     exit 0
 else
-    printf "${RED}Gradle build did NOT finish successfully.${ENDCOLOR}\n"
+    printf "🔥 ${RED}Gradle build did NOT finish successfully.${ENDCOLOR}\n"
     exit $retVal
 fi

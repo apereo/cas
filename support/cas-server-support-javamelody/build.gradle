@@ -1,4 +1,6 @@
-description = "Apereo CAS JavaMelody Support"
+apply plugin: "org.apereo.cas.project-conventions"
+
+description = "Adds JavaMelody monitoring for CAS performance, requests, and runtime diagnostics."
 ext {
     publishMetadata = true
     projectMetadata = [

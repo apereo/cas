@@ -1,4 +1,6 @@
-description = "Apereo CAS Delegated Authentication Support Using Pac4J"
+apply plugin: "org.apereo.cas.project-conventions"
+
+description = "Provides delegated authentication client support for external identity providers."
 dependencies {
     api project(":api:cas-server-core-api")
 

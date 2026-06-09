@@ -1,4 +1,6 @@
-description = "Apereo CAS Core API Events"
+apply plugin: "org.apereo.cas.project-conventions"
+
+description = "Defines event contracts for publishing and consuming CAS lifecycle and security events."
 dependencies {
     api project(":api:cas-server-core-api-ticket")
     api project(":api:cas-server-core-api-audit")

@@ -1,4 +1,6 @@
-description = "Apereo CAS Mailjet Support"
+apply plugin: "org.apereo.cas.project-conventions"
+
+description = "Sends CAS email messages through Mailjet."
 ext {
     publishMetadata = true
     projectMetadata = [

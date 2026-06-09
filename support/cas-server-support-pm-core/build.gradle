@@ -1,4 +1,6 @@
-description = "Apereo CAS Password Management - Core"
+apply plugin: "org.apereo.cas.project-conventions"
+
+description = "Provides shared password management behavior for changes, resets, and account recovery."
 dependencies {
     api project(":api:cas-server-core-api-audit")
     

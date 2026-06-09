@@ -1,4 +1,6 @@
-description = "Apereo CAS Apache Cassandra Authentication Support"
+apply plugin: "org.apereo.cas.project-conventions"
+
+description = "Adds Apache Cassandra-backed authentication for validating users against Cassandra records."
 
 ext {
 

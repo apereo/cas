@@ -1,4 +1,6 @@
-description = "Apereo CAS Core Tickets"
+apply plugin: "org.apereo.cas.project-conventions"
+
+description = "Implements CAS ticket creation, validation, expiration, and storage coordination."
 dependencies {
     api project(":api:cas-server-core-api-ticket")
     api project(":api:cas-server-core-api-monitor")

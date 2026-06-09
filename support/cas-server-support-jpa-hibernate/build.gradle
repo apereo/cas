@@ -1,4 +1,6 @@
-description = "Apereo CAS JPA Hibernate Support"
+apply plugin: "org.apereo.cas.project-conventions"
+
+description = "Adds Hibernate as a JPA provider for CAS database-backed persistence features."
 ext {
     publishMetadata = true
     projectMetadata = [

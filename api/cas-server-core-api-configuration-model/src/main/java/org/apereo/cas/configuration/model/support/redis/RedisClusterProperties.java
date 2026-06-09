@@ -58,9 +58,4 @@ public class RedisClusterProperties implements CasFeatureModule, Serializable {
      */
     @DurationCapable
     private String topologyRefreshPeriod;
-
-    /**
-     * Whether adaptive topology refreshing using all available refresh triggers should be used.
-     */
-    private boolean adaptiveTopologyRefresh;
 }

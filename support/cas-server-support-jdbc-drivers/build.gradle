@@ -1,4 +1,6 @@
-description = "Apereo CAS JDBC Driver Support"
+apply plugin: "org.apereo.cas.project-conventions"
+
+description = "Bundles common JDBC drivers so database-backed CAS features can connect to supported databases."
 ext {
     publishMetadata = true
     projectMetadata = [

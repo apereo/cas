@@ -44,7 +44,7 @@ import static org.junit.jupiter.api.Assertions.*;
 })
 class DefaultRedisKeyGeneratorTests {
     @Autowired
-    @Qualifier("redisKeyGeneratorFactory")
+    @Qualifier(RedisKeyGeneratorFactory.BEAN_NAME)
     private RedisKeyGeneratorFactory redisKeyGeneratorFactory;
 
     @ParameterizedTest

@@ -1,4 +1,6 @@
-description = "Apereo CAS MongoDB Monitoring"
+apply plugin: "org.apereo.cas.project-conventions"
+
+description = "Monitors MongoDB availability for CAS health and diagnostics."
 ext {
     publishMetadata = true
     projectMetadata = [

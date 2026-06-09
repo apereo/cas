@@ -78,7 +78,7 @@ public class SyncopeUtils {
         attributes.put(name, CollectionUtils.wrapList(user.get("status").asString()));
 
         name = attributeMappings.getOrDefault("mustChangePassword", "syncopeUserMustChangePassword");
-        attributes.put(name, CollectionUtils.wrapList(user.get("mustChangePassword").asText()));
+        attributes.put(name, CollectionUtils.wrapList(user.get("mustChangePassword").asString()));
 
         name = attributeMappings.getOrDefault("realm", "syncopeUserRealm");
         attributes.put(name, CollectionUtils.wrapList(user.get("realm").asString()));

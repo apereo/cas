@@ -1,4 +1,6 @@
-description = "Apereo CAS OAuth UMA Server Support"
+apply plugin: "org.apereo.cas.project-conventions"
+
+description = "Adds OAuth UMA support for user-managed access and resource protection policies."
 dependencies {
     api project(":api:cas-server-core-api-throttle")
     api project(":api:cas-server-core-api")

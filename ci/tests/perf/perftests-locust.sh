@@ -21,7 +21,7 @@ echo "Using temp directory: ${TMPDIR}"
 
 gradle="./gradlew "
 gradleBuild=""
-gradleBuildOptions="--build-cache --configure-on-demand --no-daemon --parallel --no-configuration-cache "
+gradleBuildOptions="--build-cache --configure-on-demand --no-daemon --parallel  "
 webAppServerType="$1"
 
 echo -e "***********************************************"

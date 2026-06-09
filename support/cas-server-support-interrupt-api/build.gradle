@@ -1,4 +1,6 @@
-description = "Apereo CAS Notification/Interrupt API"
+apply plugin: "org.apereo.cas.project-conventions"
+
+description = "Defines interrupt notification contracts for required user actions during login."
 dependencies {
     implementation project(":core:cas-server-core-util-api")
     implementation project(":core:cas-server-core-web-api")

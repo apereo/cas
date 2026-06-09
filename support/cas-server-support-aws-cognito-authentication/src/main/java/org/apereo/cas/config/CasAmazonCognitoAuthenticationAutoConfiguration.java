@@ -17,7 +17,7 @@ import org.apereo.cas.configuration.support.Beans;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
 import com.nimbusds.jose.JWSAlgorithm;
-import com.nimbusds.jose.jwk.source.RemoteJWKSet;
+import com.nimbusds.jose.jwk.source.JWKSourceBuilder;
 import com.nimbusds.jose.proc.JWSVerificationKeySelector;
 import com.nimbusds.jose.util.DefaultResourceRetriever;
 import com.nimbusds.jwt.proc.ConfigurableJWTProcessor;
@@ -111,7 +111,7 @@ public class CasAmazonCognitoAuthenticationAutoConfiguration {
         val region = StringUtils.defaultIfBlank(cognito.getRegion(), Region.AWS_GLOBAL.id());
         val url = String.format("https://cognito-idp.%s.amazonaws.com/%s/.well-known/jwks.json", region, cognito.getUserPoolId());
         val jwkSetURL = new URI(url).toURL();
-        val keySource = new RemoteJWKSet(jwkSetURL, resourceRetriever);
+        val keySource = JWKSourceBuilder.create(jwkSetURL, resourceRetriever).build();
         val jwtProcessor = new DefaultJWTProcessor();
         val keySelector = new JWSVerificationKeySelector(JWSAlgorithm.RS256, keySource);
         jwtProcessor.setJWSKeySelector(keySelector);

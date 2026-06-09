@@ -36,13 +36,13 @@ public abstract class BaseMappableThrottledSubmissionsStore<T extends ThrottledS
     /**
      * Computes the instantaneous rate in between two given dates corresponding to two submissions.
      *
-     * @param a First date.
-     * @param b Second date.
+     * @param now First date.
+     * @param entry Second date.
      * @return Instantaneous submission rate in submissions/sec, e.g. {@code a - b}.
      */
-    private static double submissionRate(final ZonedDateTime a, final ZonedDateTime b) {
-        val rate = SUBMISSION_RATE_DIVIDEND / (a.toInstant().toEpochMilli() - b.toInstant().toEpochMilli());
-        LOGGER.debug("Submission rate between [{}] and [{}] is [{}]", a, b, rate);
+    private static double submissionRate(final ZonedDateTime now, final ZonedDateTime entry) {
+        val rate = SUBMISSION_RATE_DIVIDEND / (now.toInstant().toEpochMilli() - entry.toInstant().toEpochMilli());
+        LOGGER.debug("Submission rate between [{}] and [{}] is [{}]", now, entry, rate);
         return rate;
     }
 
@@ -79,12 +79,12 @@ public abstract class BaseMappableThrottledSubmissionsStore<T extends ThrottledS
     @Override
     public boolean exceedsThreshold(final String key, final double thresholdRate) {
         val submissionEntry = get(key);
-        LOGGER.debug("Last throttling date for key [{}] is [{}]", key, submissionEntry);
+        LOGGER.debug("Last throttled submission for key [{}] is [{}]", key, submissionEntry);
         if (submissionEntry != null) {
             val now = ZonedDateTime.now(ZoneOffset.UTC);
             val submissionRate = submissionRate(now, submissionEntry.getValue());
             val result = submissionRate > thresholdRate;
-            LOGGER.debug("Current time is [{}] and submission date is [{}]. Submission rate between the dates is [{}] and your threshold rate [{}]. "
+            LOGGER.debug("Current time is [{}] and submission date is [{}]. Submission rate between these dates is [{}] and your threshold rate [{}]. "
                     + "The submission rate is [{}] than the threshold rate, so the request [{}] be throttled.",
                 now, submissionEntry.getValue(), submissionRate, thresholdRate,
                 BooleanUtils.toString(result, "greater", "less"),

@@ -24,6 +24,13 @@ public interface RedisTicketRegistryMessagePublisher {
     void delete(Ticket ticket);
 
     /**
+     * Delete by key.
+     *
+     * @param key the key
+     */
+    void deleteByKey(String key);
+
+    /**
      * Send notification to add.
      *
      * @param id the id

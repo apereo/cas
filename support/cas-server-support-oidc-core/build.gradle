@@ -1,4 +1,6 @@
-description = "Apereo CAS Server OpenID Connect Core"
+apply plugin: "org.apereo.cas.project-conventions"
+
+description = "Provides the core OpenID Connect provider behavior used by CAS OIDC features."
 dependencies {
     implementation libraries.jose4j
     implementation libraries.nimbus

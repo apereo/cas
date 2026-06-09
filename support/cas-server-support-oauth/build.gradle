@@ -1,4 +1,6 @@
-description = "Apereo CAS Server OAuth Provider Support"
+apply plugin: "org.apereo.cas.project-conventions"
+
+description = "Enables CAS to act as an OAuth authorization server for registered applications."
 dependencies {
     implementation libraries.casclient
     implementation libraries.pac4jcore

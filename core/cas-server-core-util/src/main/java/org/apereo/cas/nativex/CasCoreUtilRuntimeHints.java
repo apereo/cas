@@ -108,7 +108,8 @@ public class CasCoreUtilRuntimeHints implements CasRuntimeHintsRegistrar {
             ServiceLoader.class,
             Callable.class,
             Map.class,
-            Locale.class
+            Locale.class,
+            PrivilegedAction.class
         ));
 
         registerReflectionHintsForPublicElements(hints,

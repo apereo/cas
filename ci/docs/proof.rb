@@ -68,10 +68,10 @@ FileUtils.cp_r("#{SOURCE_DIRECTORY}/stylesheets", "#{TARGET_DIRECTORY}/styleshee
 FileUtils.cp_r("#{SOURCE_DIRECTORY}/javascripts", "#{TARGET_DIRECTORY}/javascripts")
 FileUtils.cp_r("#{SOURCE_DIRECTORY}/assets", "#{TARGET_DIRECTORY}/assets")
 files = Dir.glob("#{SOURCE_DIRECTORY}/*.html")
-for file in files 
+for file in files
   FileUtils.cp(file, TARGET_DIRECTORY)
 end
-
+FileUtils.rm_f(Dir.glob("#{TARGET_DIRECTORY}/developer/Release-Process-*.html"))
 
 # files = Dir.glob("#{TARGET_DIRECTORY}/**/*.*")
 # for file in files 

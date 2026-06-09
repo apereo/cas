@@ -1,4 +1,6 @@
-description = "Apereo CAS AUP Webflow Support"
+apply plugin: "org.apereo.cas.project-conventions"
+
+description = "Adds browser login flow screens for acceptable usage policy acknowledgement."
 ext {
     publishMetadata = true
     projectMetadata = [

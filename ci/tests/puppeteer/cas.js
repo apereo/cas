@@ -74,7 +74,11 @@ const BROWSER_OPTIONS = {
         "--window-size=1920,1080",
         "--disable-features=BlockInsecurePrivateNetworkRequests",
         "--disable-features=PrivateNetworkAccessPreflight",
-        "--allow-insecure-localhost"
+        "--allow-insecure-localhost",
+        '--no-first-run',
+        '--no-default-browser-check',
+        '--disable-session-crashed-bubble',
+        '--disable-features=Translate,BackForwardCache'
     ]
 };
 
@@ -126,6 +130,12 @@ exports.newBrowser = async (options) => {
 exports.closeBrowser = async (browser, preClose = () => {}, postClose = () => {}) => {
     try {
         preClose(browser);
+        const pages = await browser.pages();
+        await Promise.all(
+            pages
+                .filter(page => !page.isClosed())
+                .map(page => page.close())
+        );
         await browser.close();
     } finally {
         postClose(browser);
@@ -134,29 +144,33 @@ exports.closeBrowser = async (browser, preClose = () => {}, postClose = () => {}
 
 exports.log = async (text, ...args) => {
     const toLog = inspect(text);
-    await LOGGER.debug(`🔷 ${colors.blue(toLog)}`, args);
+    LOGGER.debug(`🔷 ${colors.blue(toLog)}`, args);
 };
 
-exports.separator = async () => console.log("*".repeat(100));
+exports.separator = async (count = 1) => {
+    for (let i = 0; i < count; i++) {
+        console.log("*".repeat(100));
+    }
+}
 
 exports.logy = async (text) => {
     const toLog = inspect(text);
-    await LOGGER.warn(`⚠️ ${colors.yellow(toLog)}`);
+    LOGGER.warn(`⚠️ ${colors.yellow(toLog)}`);
 };
 
 exports.logb = async (text) => {
     const toLog = inspect(text);
-    await LOGGER.debug(`🔷 ${colors.blue(toLog)}`);
+    LOGGER.debug(`🔷 ${colors.blue(toLog)}`);
 };
 
 exports.logg = async (text) => {
     const toLog = inspect(text);
-    await LOGGER.info(`🍀 ${colors.green(toLog)}`);
+    LOGGER.info(`🍀 ${colors.green(toLog)}`);
 };
 
 exports.logr = async (text) => {
     const toLog = inspect(text);
-    await LOGGER.error(`📛 ${colors.red(toLog)}`);
+    LOGGER.error(`📛 ${colors.red(toLog)}`);
 };
 
 exports.logPage = async (page) => {
@@ -168,7 +182,7 @@ exports.logPage = async (page) => {
 exports.removeDirectoryOrFile = async (directory) => {
     this.logg(`Removing directory ${directory}`);
     if (fs.existsSync(directory)) {
-        await fs.rmSync(directory, {recursive: true});
+        fs.rmSync(directory, {recursive: true});
     }
     await this.logg(`Removed directory ${directory}`);
     if (fs.existsSync(directory)) {
@@ -358,6 +372,7 @@ exports.containsCookie = async (page, cookieName = "TGC") => {
 };
 
 exports.assertCookie = async (page, cookieMustBePresent = true, cookieName = "TGC") => {
+    const url = await page.url()
     const cookies = (await page.cookies()).filter((c) => {
         this.log(`Checking cookie ${c.name}:${c.value}`);
         return c.name === cookieName;
@@ -365,7 +380,7 @@ exports.assertCookie = async (page, cookieMustBePresent = true, cookieName = "TG
     await this.log(`Found ${cookies.length} cookie(s)`);
     if (cookieMustBePresent) {
         await this.log(`Checking for cookie ${cookieName}, which MUST be present`);
-        assert(cookies.length !== 0, `Cookie ${cookieName} must be present`);
+        assert(cookies.length !== 0, `Cookie ${cookieName} must be present on ${url}`);
         await this.logg("Asserting cookies:");
         await this.logg(`${JSON.stringify(cookies, undefined, 2)}`);
         return cookies[0];
@@ -374,9 +389,18 @@ exports.assertCookie = async (page, cookieMustBePresent = true, cookieName = "TG
     if (cookies.length === 0) {
         await this.logg(`Correct! Cookie ${cookieName} cannot be found`);
     } else {
-        await this.logr(`Incorrect! Cookie ${cookieName} can be found but it must not be present`);
+        await this.logr(`Incorrect! Cookie ${cookieName} can be found but it must not be present on ${url}`);
         const ck = cookies[0];
-        const msg = `Found cookie => name: ${ck.name},value:${ck.value},path:${ck.path},domain:${ck.domain},httpOnly:${ck.httpOnly},secure:${ck.secure}`;
+        const msg = `
+        Page: ${url},
+        Found cookie => 
+            name: ${ck.name},
+            value:${ck.value},
+            path:${ck.path},
+            domain:${ck.domain},
+            httpOnly:${ck.httpOnly},
+            secure:${ck.secure}
+        `;
         await this.logb(msg);
         throw msg;
     }
@@ -419,7 +443,6 @@ exports.submitForm = async (page, selector, predicate = undefined, statusCode = 
 };
 
 exports.pressEnter = async (page) => {
-    this.screenshot(page);
     page.keyboard.press("Enter");
     this.sleep(1000);
 };
@@ -448,6 +471,16 @@ exports.attributeValue = async (page, selector, attribute, expectedValue = undef
     return value;
 };
 
+exports.updateLogLevel = async(payload) => {
+    for (const request of payload) {
+        const body = {
+            configuredLevel: request.level
+        }
+        await this.doRequest(`https://localhost:8443/cas/actuator/loggers/${request.package}`, "POST",
+            {"Content-Type": "application/json"}, 204, JSON.stringify(body, undefined, 2))
+    }
+}
+
 exports.startHar = async (page, harPath = "network.har") => {
     const har = new PuppeteerHar(page);
     await har.start({path: harPath});
@@ -458,16 +491,18 @@ exports.stopHar = async (har) => {
     await har.stop();
 };
 
-exports.newPage = async (browser) => {
+exports.newPage = async (browser, force = false) => {
     let page = undefined;
-    try {
-        page = (await browser.pages())[0];
-    } catch (e) {
-        this.logr(e);
-        await this.sleep(1000);
+    if (!force) {
+        try {
+            page = (await browser.pages())[0];
+        } catch (e) {
+            this.logr(e);
+            await this.sleep(1000);
+        }
     }
 
-    if (page === undefined) {
+    if (page === undefined || force) {
         let counter = 0;
         while (page === undefined && counter < 5) {
             try {
@@ -573,8 +608,8 @@ exports.assertTicketParameter = async (page, found = true) => {
     return null;
 };
 
-exports.validateTicket = async (service, ticket, format = "JSON") => {
-    const body = await this.doRequest(`https://localhost:8443/cas/p3/serviceValidate?service=${service}&ticket=${ticket}&format=${format}`);
+exports.validateTicket = async (service, ticket, format = "JSON", port = 8443) => {
+    const body = await this.doRequest(`https://localhost:${port}/cas/p3/serviceValidate?service=${service}&ticket=${ticket}&format=${format}`);
     await this.log(body);
     if (format === "XML") {
         return body;
@@ -1063,7 +1098,7 @@ exports.extractFromEmail = async (browser) => {
 
 exports.waitForNavigation = async (page) => page.waitForNavigation();
 
-exports.goto = async (page, url, retryCount = 5) => {
+exports.goto = async (page, url, retryCount = 3) => {
     let response = null;
     let attempts = 0;
     const timeout = 2000;
@@ -1073,7 +1108,7 @@ exports.goto = async (page, url, retryCount = 5) => {
         attempts += 1;
         try {
             if (!navigated) {
-                await this.logg(`Navigating to: ${url}`);
+                await this.logg(`Navigating to ${url}`);
                 response = await page.goto(url, {
                     waitUntil: "domcontentloaded"
                 });
@@ -1127,6 +1162,13 @@ exports.gotoLogout = async (page, service = undefined, port = 8443) => {
     const url = `https://localhost:${port}/cas/logout${service === undefined ? "" : `?service=${service}`}`;
     return this.goto(page, url);
 };
+
+exports.keycloakLogout = async(page) => {
+    await this.goto(page, "http://localhost:8988/realms/cas/protocol/openid-connect/logout");
+    await this.click(page, "#kc-logout");
+    await page.waitForNavigation();
+    await this.sleep();
+}
 
 exports.gotoLogoutForTenant = async (page, tenant, service = undefined, port = 8443) => {
     const url = `https://localhost:${port}/cas/tenants/${tenant}/logout${service === undefined ? "" : `?service=${service}`}`;
@@ -1301,7 +1343,7 @@ exports.updateYamlConfigurationSource = async(configDirectory, config) => {
     const configFilePath = path.join(configDirectory, "config.yml");
     const newConfig = await this.toYAML(config);
     await this.log(`Updated configuration:\n${newConfig}`);
-    await fs.writeFileSync(configFilePath, newConfig);
+    fs.writeFileSync(configFilePath, newConfig);
     await this.log(`Wrote changes to ${configFilePath}`);
 };
 

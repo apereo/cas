@@ -1,4 +1,6 @@
-description = "Apereo CAS Service Registry Streaming Support with Kafka"
+apply plugin: "org.apereo.cas.project-conventions"
+
+description = "Streams registered service changes through Apache Kafka so clustered CAS deployments stay synchronized."
 ext {
     publishMetadata = true
     projectMetadata = [

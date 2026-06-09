@@ -1,4 +1,6 @@
-description = "Apereo CAS Spring Boot Admin"
+apply plugin: "org.apereo.cas.project-conventions"
+
+description = "Registers CAS with Spring Boot Admin for centralized application monitoring and management."
 ext {
     publishMetadata = true
     projectMetadata = [

@@ -1,4 +1,6 @@
-description = "Apereo CAS Swagger API Support"
+apply plugin: "org.apereo.cas.project-conventions"
+
+description = "Publishes OpenAPI and Swagger UI documentation for CAS REST endpoints."
 ext {
     publishMetadata = true
     projectMetadata = [

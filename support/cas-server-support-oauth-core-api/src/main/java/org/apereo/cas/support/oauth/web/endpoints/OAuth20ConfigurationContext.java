@@ -40,6 +40,7 @@ import org.apereo.cas.util.gen.RandomStringGenerator;
 import org.apereo.cas.util.http.HttpClient;
 import org.apereo.cas.util.serialization.StringSerializer;
 import org.apereo.cas.validation.AuthenticationAttributeReleasePolicy;
+import org.apereo.cas.web.UrlValidator;
 import org.apereo.cas.web.cookie.CasCookieBuilder;
 import org.apereo.cas.web.support.ArgumentExtractor;
 import org.apereo.cas.web.support.CookieUtils;
@@ -164,6 +165,8 @@ public class OAuth20ConfigurationContext {
     private final TenantExtractor tenantExtractor;
 
     private final MessageSource messageSource;
+
+    private final UrlValidator urlValidator;
     
     /**
      * Gets ticket granting ticket.

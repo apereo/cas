@@ -1,4 +1,6 @@
-description = "Apereo CAS Twilio SMS Support"
+apply plugin: "org.apereo.cas.project-conventions"
+
+description = "Sends CAS SMS messages through Twilio."
 ext {
     publishMetadata = true
     projectMetadata = [

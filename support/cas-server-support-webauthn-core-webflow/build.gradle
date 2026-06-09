@@ -1,4 +1,6 @@
-description = "Apereo CAS FIDO2 WebAuthn Webflow Support"
+apply plugin: "org.apereo.cas.project-conventions"
+
+description = "Adds browser login flow screens for WebAuthn/FIDO2 passkey authentication."
 dependencies {
     api project(":api:cas-server-core-api-authentication")
     api project(":api:cas-server-core-api-util")

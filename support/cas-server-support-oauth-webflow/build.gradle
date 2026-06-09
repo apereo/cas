@@ -1,4 +1,6 @@
-description = "Apereo CAS OAuth Webflow Support"
+apply plugin: "org.apereo.cas.project-conventions"
+
+description = "Adds browser login flow support required by OAuth authorization requests."
 ext {
     publishMetadata = true
     projectMetadata = [

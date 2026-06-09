@@ -1,4 +1,6 @@
-description = "Apereo CAS AUP JDBC Support"
+apply plugin: "org.apereo.cas.project-conventions"
+
+description = "Stores acceptable usage policy acknowledgements in a JDBC-compatible database."
 ext {
     publishMetadata = true
     projectMetadata = [

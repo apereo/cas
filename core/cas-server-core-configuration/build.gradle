@@ -1,4 +1,6 @@
-description = "Apereo CAS Central Configuration"
+apply plugin: "org.apereo.cas.project-conventions"
+
+description = "Loads and manages central CAS configuration used by the runtime."
 dependencies {
     implementation libraries.jasypt
     implementation libraries.bouncycastle

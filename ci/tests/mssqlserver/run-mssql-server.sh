@@ -9,11 +9,11 @@ export DOCKER_IMAGE="mcr.microsoft.com/azure-sql-edge:latest"
 
 echo "Running SQL Server docker container..."
 docker stop mssql-server || true
-# docker run --rm -e 'ACCEPT_EULA=Y' -e 'SA_PASSWORD=p@ssw0rd' \
+# docker run --quiet  --rm -e 'ACCEPT_EULA=Y' -e 'SA_PASSWORD=p@ssw0rd' \
 #   --name "mssql-server" --rm -d \
 #   -p 1433:1433 mcr.microsoft.com/mssql/server:2022-latest
 
-docker run --platform linux/amd64 -d -e "ACCEPT_EULA=1" -e "MSSQL_SA_PASSWORD=p@ssw0rd" \
+docker run --quiet  --platform linux/amd64 -d -e "ACCEPT_EULA=1" -e "MSSQL_SA_PASSWORD=p@ssw0rd" \
     -p 1433:1433 --rm --name "mssql-server" ${DOCKER_IMAGE}
 docker logs -f mssql-server &
 sleep 20

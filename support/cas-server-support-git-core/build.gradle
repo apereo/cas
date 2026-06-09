@@ -1,4 +1,6 @@
-description = "Apereo CAS Git Service Registry Implementation"
+apply plugin: "org.apereo.cas.project-conventions"
+
+description = "Provides shared Git repository support used by CAS configuration and service registry features."
 dependencies {
 
     implementation project(":core:cas-server-core-configuration-api")

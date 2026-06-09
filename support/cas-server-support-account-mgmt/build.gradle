@@ -1,4 +1,6 @@
-description = "Apereo CAS Account Management and Registration Support"
+apply plugin: "org.apereo.cas.project-conventions"
+
+description = "Adds account management and registration workflows for CAS users."
 ext {
     publishMetadata = true
     projectMetadata = [

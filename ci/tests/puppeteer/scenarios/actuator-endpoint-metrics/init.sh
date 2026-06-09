@@ -2,7 +2,7 @@
 
 echo "Running Prometheus docker container..."
 docker stop prom-server || true && docker rm prom-server || true
-docker run --rm -d -p 9090:9090 --name "prom-server" \
+docker run --quiet  --rm -d -p 9090:9090 --name "prom-server" \
   -v "${SCENARIO_FOLDER}/prometheus.yml":/etc/prometheus/prometheus.yml \
   prom/prometheus
 sleep 1
@@ -19,7 +19,7 @@ fi
 
 echo "Running Grafana docker container..."
 docker stop grafana-server || true && docker rm grafana-server || true
-docker run --rm -d -p 3000:3000 --name "grafana-server" \
+docker run --quiet  --rm -d -p 3000:3000 --name "grafana-server" \
   -e GF_SECURITY_ADMIN_PASSWORD=admin \
   -e GF_SERVER_DOMAIN=localhost \
   -e GF_INSTALL_PLUGINS=grafana-clock-panel,grafana-simple-json-datasource \
