@@ -1,4 +1,6 @@
-description = "Apereo CAS YubiKey Jpa Support"
+apply plugin: "org.apereo.cas.project-conventions"
+
+description = "Stores YubiKey account data in a JPA-compatible database for hardware-token authentication."
 ext {
     publishMetadata = true
     projectMetadata = [

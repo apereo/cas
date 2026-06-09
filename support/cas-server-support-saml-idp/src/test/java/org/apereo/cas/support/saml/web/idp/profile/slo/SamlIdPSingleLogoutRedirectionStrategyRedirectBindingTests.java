@@ -62,6 +62,6 @@ class SamlIdPSingleLogoutRedirectionStrategyRedirectBindingTests extends BaseSam
         val response = new MockHttpServletResponse();
         val logoutResponse = samlIdPSingleLogoutRedirectionStrategy.handle(request, response);
         assertNotNull(WebUtils.getLogoutRedirectUrl(request, String.class));
-        assertNull(logoutResponse);
+        assertFalse(logoutResponse.getLogoutRedirectUrl().isEmpty());
     }
 }

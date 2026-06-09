@@ -137,6 +137,7 @@ function initializeDatePickers() {
 function initializeTooltips() {
     $( function() {
         $( document ).tooltip({
+            items: "[title]:not(a)",
             show: {
                 effect: "fade",
                 delay: 800,

@@ -1,4 +1,6 @@
-description = "Apereo CAS Core Notifications"
+apply plugin: "org.apereo.cas.project-conventions"
+
+description = "Defines notification contracts for email, SMS, push, and other CAS messages."
 dependencies {
     api project(":api:cas-server-core-api-authentication")
     api project(":api:cas-server-core-api-ticket")

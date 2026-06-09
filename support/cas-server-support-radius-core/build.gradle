@@ -1,4 +1,6 @@
-description = "Apereo CAS RADIUS Support"
+apply plugin: "org.apereo.cas.project-conventions"
+
+description = "Adds RADIUS authentication support for validating users against RADIUS servers."
 
 dependencies {
     api libraries.jradius

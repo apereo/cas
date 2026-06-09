@@ -1,4 +1,6 @@
-description = 'Apereo CAS Okta Authentication'
+apply plugin: "org.apereo.cas.project-conventions"
+
+description = "Adds Okta authentication for signing users in through Okta-managed identities."
 ext {
     publishMetadata = true
     projectMetadata = [

@@ -1,4 +1,6 @@
-description = "Apereo CAS SAML Identity Provider Metadata Resolution Via MongoDb"
+apply plugin: "org.apereo.cas.project-conventions"
+
+description = "Stores and resolves SAML identity provider metadata from MongoDB."
 ext {
     publishMetadata = true
     projectMetadata = [

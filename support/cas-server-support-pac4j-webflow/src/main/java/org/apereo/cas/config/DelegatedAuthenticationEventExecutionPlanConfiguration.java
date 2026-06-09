@@ -403,6 +403,7 @@ class DelegatedAuthenticationEventExecutionPlanConfiguration {
     @Configuration(value = "DelegatedAuthenticationEventExecutionPlanLogoutConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
     static class DelegatedAuthenticationEventExecutionPlanLogoutConfiguration {
+        
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @ConditionalOnMissingBean(name = "delegatedAuthenticationLogoutExecutionPlanConfigurer")

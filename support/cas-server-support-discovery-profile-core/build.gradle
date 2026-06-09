@@ -1,4 +1,6 @@
-description = "Apereo CAS Discovery Support"
+apply plugin: "org.apereo.cas.project-conventions"
+
+description = "Provides shared discovery profile support for selecting identity providers during login."
 dependencies {
     implementation project(":core:cas-server-core-util-api")
     implementation project(":core:cas-server-core-web-api")

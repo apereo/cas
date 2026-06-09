@@ -1,4 +1,6 @@
-description = "Apereo CAS MongoDb Core Support"
+apply plugin: "org.apereo.cas.project-conventions"
+
+description = "Adds shared MongoDB support used by CAS MongoDB-backed features."
 dependencies {
     implementation libraries.mongo
 

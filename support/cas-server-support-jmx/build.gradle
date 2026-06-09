@@ -1,4 +1,6 @@
-description = "Apereo CAS JMX Support"
+apply plugin: "org.apereo.cas.project-conventions"
+
+description = "Exposes CAS runtime information through JMX for monitoring and management tools."
 ext {
     publishMetadata = true
     projectMetadata = [

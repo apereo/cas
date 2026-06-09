@@ -1,4 +1,6 @@
-description = "Apereo CAS Bootstrap Themes Support"
+apply plugin: "org.apereo.cas.project-conventions"
+
+description = "Adds Bootstrap-based themes for customizing the CAS user interface."
 ext {
     publishMetadata = true
     projectMetadata = [

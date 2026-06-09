@@ -1,4 +1,6 @@
-description = "Apereo CAS Web Application Ticket Registry Session Management"
+apply plugin: "org.apereo.cas.project-conventions"
+
+description = "Stores CAS tickets in session for shared single sign-on state across server nodes."
 ext {
     publishMetadata = true
     projectMetadata = [

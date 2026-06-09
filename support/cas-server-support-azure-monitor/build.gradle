@@ -1,4 +1,6 @@
-description = "Apereo CAS Azure Monitor & Application Insights Support"
+apply plugin: "org.apereo.cas.project-conventions"
+
+description = "Sends CAS telemetry to Azure Monitor and Application Insights for cloud observability."
 ext {
     publishMetadata = true
     projectMetadata = [

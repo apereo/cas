@@ -1,4 +1,6 @@
-description = "Apereo CAS REST Core API"
+apply plugin: "org.apereo.cas.project-conventions"
+
+description = "Defines contracts for REST-based CAS operations and integrations."
 dependencies {
     api project(":api:cas-server-core-api")
     api project(":api:cas-server-core-api-services")

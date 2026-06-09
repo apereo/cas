@@ -195,6 +195,8 @@ The following command-line options are supported for test execution:
 | `--nbr`                                   | A combination of `--nb` and `--nr` flags.                                                |
 | `--nl`, `--no-lint`, `--nol`              | Disable the linter that validates scenario scripts.                                      |
 | `--hol`                                   | A combination of `--headless` and `--offline` flags with linter disabled.                |
+| `--jfr`                                   | Record application events with Java Flight Recorder and export to a file on exit.        |
+| `--qq`                                    | Quit and exit the test execution run quietly when execution is finished.                 |
 
 For example, the `login-success` test scenario with a remote debugger may be run using: 
 

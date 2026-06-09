@@ -93,7 +93,7 @@ class RedisGoogleAuthenticatorTokenCredentialRepositoryTests extends BaseOneTime
     @RetryingTest(2)
     void verifySaveAndUpdate() {
         val username = UUID.randomUUID().toString();
-        var validationCode = RandomUtils.nextInt(1, 999999);
+        val validationCode = RandomUtils.nextInt(1, 999999);
         val toSave = OneTimeTokenAccount.builder()
             .username(username)
             .secretKey("secret")
@@ -112,7 +112,9 @@ class RedisGoogleAuthenticatorTokenCredentialRepositoryTests extends BaseOneTime
         registry.update(tokenAccount);
 
         await().untilAsserted(() -> {
-            val s2 = registry.get(username).iterator().next();
+            val accounts = registry.get(username);
+            assertEquals(1, accounts.size());
+            val s2 = accounts.iterator().next();
             assertEquals(validationCode2, s2.getValidationCode());
             assertEquals("newSecret", s2.getSecretKey());
         });

@@ -46,7 +46,7 @@ public abstract class AbstractInMemoryThrottledSubmissionHandlerInterceptorAdapt
             .username(getUsernameParameterFromRequest(request))
             .clientIpAddress(ClientInfoHolder.getClientInfo().getClientIpAddress())
             .build();
-        LOGGER.info("Recording submission failure entry [{}]", submission);
+        LOGGER.debug("Recording submission failure entry [{}]", submission);
         getConfigurationContext().getThrottledSubmissionStore().put(submission);
         throttledSubmissionReceivers.forEach(Unchecked.consumer(receiver -> receiver.receive(submission)));
         LOGGER.info("Recorded submission failure [{}] for [{}]", submission, key);
@@ -78,7 +78,7 @@ public abstract class AbstractInMemoryThrottledSubmissionHandlerInterceptorAdapt
     @Override
     public void release() {
         try {
-            LOGGER.info("Beginning audit cleanup...");
+            LOGGER.debug("Beginning audit cleanup...");
             getConfigurationContext().getThrottledSubmissionStore().release(getThresholdRate());
         } finally {
             LOGGER.debug("Done releasing throttled entries.");

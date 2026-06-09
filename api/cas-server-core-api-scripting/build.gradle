@@ -1,4 +1,6 @@
-description = "Apereo CAS Scripting API"
+apply plugin: "org.apereo.cas.project-conventions"
+
+description = "Defines scripting contracts for customizing CAS behavior with external scripts."
 dependencies {
     api project(":api:cas-server-core-api-authentication")
     api project(":api:cas-server-core-api-util")

@@ -14,7 +14,7 @@ function printgreen() {
 export DOCKER_IMAGE="quay.io/influxdb/influxdb3-core:latest"
 printgreen "Running InfluxDb docker container..."
 docker stop influxdb-server || true && docker rm influxdb-server || true
-docker run -d --rm --name="influxdb-server" \
+docker run --quiet  -d --rm --name="influxdb-server" \
   -p 8181:8181 -p 8083:8083 -p 8086:8086 \
   -e INFLUXDB3_AUTH_TOKEN="${INFLUXDB3_AUTH_TOKEN}" \
   ${DOCKER_IMAGE} serve --node-id=node0 --object-store=memory

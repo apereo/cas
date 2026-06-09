@@ -135,11 +135,11 @@ class CasWebSecurityConfiguration {
 
         @Bean
         @ConditionalOnMissingBean(name = "casClientInfoLoggingFilter")
-        public FilterRegistrationBean<@NonNull ClientInfoThreadLocalFilter> casClientInfoLoggingFilter(
+        public FilterRegistrationBean<ClientInfoThreadLocalFilter> casClientInfoLoggingFilter(
             @Qualifier(TenantExtractor.BEAN_NAME)
             final TenantExtractor tenantExtractor,
             final CasConfigurationProperties casProperties) {
-            val bean = new FilterRegistrationBean<@NonNull ClientInfoThreadLocalFilter>();
+            val bean = new FilterRegistrationBean<ClientInfoThreadLocalFilter>();
             val audit = casProperties.getAudit().getEngine();
             val options = ClientInfoExtractionOptions.builder()
                 .alternateLocalAddrHeaderName(audit.getAlternateClientAddrHeaderName())
@@ -156,10 +156,10 @@ class CasWebSecurityConfiguration {
         }
 
         @Bean
-        public FilterRegistrationBean<@NonNull SecurityContextHolderFilter> securityContextHolderFilter(
+        public FilterRegistrationBean<SecurityContextHolderFilter> securityContextHolderFilter(
             @Qualifier("securityContextRepository")
             final SecurityContextRepository securityContextRepository) {
-            val bean = new FilterRegistrationBean<@NonNull SecurityContextHolderFilter>();
+            val bean = new FilterRegistrationBean<SecurityContextHolderFilter>();
             bean.setFilter(new SecurityContextHolderFilter(securityContextRepository));
             bean.setUrlPatterns(CollectionUtils.wrap("/*"));
             bean.setName("Spring Security Context Holder Filter");
@@ -172,9 +172,9 @@ class CasWebSecurityConfiguration {
         @ConditionalOnMissingBean(name = "casWebSecurityCustomizer")
         public WebSecurityCustomizer casWebSecurityCustomizer(
             @Qualifier("securityContextRepository")
-            final SecurityContextRepository securityContextRepository,
-            final ObjectProvider<@NonNull PathMappedEndpoints> pathMappedEndpoints,
-            final List<CasWebSecurityConfigurer> configurersList,
+            final ObjectProvider<SecurityContextRepository> securityContextRepository,
+            final ObjectProvider<PathMappedEndpoints> pathMappedEndpoints,
+            final ObjectProvider<List<CasWebSecurityConfigurer>> configurersList,
             final WebEndpointProperties webEndpointProperties,
             final ManagementServerProperties managementServerProperties,
             final CasConfigurationProperties casProperties,
@@ -191,10 +191,10 @@ class CasWebSecurityConfiguration {
         public SecurityFilterChain casWebSecurityConfigurerAdapter(
             final ConfigurableApplicationContext applicationContext,
             @Qualifier("securityContextRepository")
-            final SecurityContextRepository securityContextRepository,
+            final ObjectProvider<SecurityContextRepository> securityContextRepository,
             final HttpSecurity http,
             final ObjectProvider<PathMappedEndpoints> pathMappedEndpoints,
-            final List<CasWebSecurityConfigurer> configurersList,
+            final ObjectProvider<List<CasWebSecurityConfigurer>> configurersList,
             final WebEndpointProperties webEndpointProperties,
             final ManagementServerProperties managementServerProperties,
             final SecurityProperties securityProperties,

@@ -29,6 +29,8 @@ task is based on [Spring Initializr](https://github.com/spring-io/initializr).
 
 ## Overview
 
+CAS Initialize is available [here][initializr].
+
 The CAS Initializr can dynamically generate a starting project based on
 requested modules and dependencies needed for a deployment. This behavior
 can be tailored to the user’s experience based on that input and the
@@ -210,4 +212,4 @@ http <cas-initializr-url> Accept:application/json | jq
 
 CAS Initializr is set to use the [CAS BOM](BOM-Dependency-Management.html) for dependency management.
 
-[initializr]: https://getcas.apereo.org/ui
+[initializr]: https://getcas.apereo.org

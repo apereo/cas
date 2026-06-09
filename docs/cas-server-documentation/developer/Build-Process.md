@@ -315,14 +315,14 @@ function bc() {
     --configure-on-demand --build-cache \
     --parallel -x test -x javadoc -x check -DenableRemoteDebugging=true \
     --stacktrace -DskipNestedConfigMetadataGen=true \
-    -DremoteDebuggingSuspend=false --no-configuration-cache \
+    -DremoteDebuggingSuspend=false  \
     -DcasModules=${casmodules}
 }
 
 # Install JARs/WARs for use with a CAS overlay project
 alias bci='clear; cas; \
     ./gradlew clean build publishToMavenLocal \ 
-    --configure-on-demand --no-configuration-cache \
+    --configure-on-demand  \
     --build-cache --parallel \
     -x test -x javadoc -x check --stacktrace \
     -DskipNestedConfigMetadataGen=true \

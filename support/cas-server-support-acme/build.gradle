@@ -1,4 +1,6 @@
-description = "Apereo CAS Automatic Certificate Management Environment (ACME) protocol Support"
+apply plugin: "org.apereo.cas.project-conventions"
+
+description = "Adds ACME certificate management so CAS can request and renew certificates automatically."
 ext {
     publishMetadata = true
     projectMetadata = [

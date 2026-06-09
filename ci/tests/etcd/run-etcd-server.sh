@@ -4,7 +4,7 @@
 export DOCKER_IMAGE="registry.k8s.io/etcd:3.6.12-0"
 echo "Running etcd docker container"
 docker stop etcd-server || true && docker rm etcd-server || true
-docker run --rm -d --name etcd-server \
+docker run --quiet --rm -d --name etcd-server \
   -p 2379:2379 -p 2380:2380 \
   ${DOCKER_IMAGE} \
   /usr/local/bin/etcd \

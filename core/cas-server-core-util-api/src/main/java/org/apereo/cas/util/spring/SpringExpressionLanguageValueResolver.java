@@ -6,15 +6,31 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.Strings;
 import org.apache.commons.text.StringSubstitutor;
 import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
 import org.springframework.context.ApplicationContext;
+import org.springframework.core.convert.TypeDescriptor;
+import org.springframework.expression.AccessException;
+import org.springframework.expression.EvaluationContext;
+import org.springframework.expression.EvaluationException;
+import org.springframework.expression.MethodExecutor;
+import org.springframework.expression.MethodFilter;
+import org.springframework.expression.MethodResolver;
 import org.springframework.expression.ParserContext;
+import org.springframework.expression.TypeLocator;
 import org.springframework.expression.common.TemplateParserContext;
 import org.springframework.expression.spel.SpelCompilerMode;
+import org.springframework.expression.spel.SpelEvaluationException;
+import org.springframework.expression.spel.SpelMessage;
 import org.springframework.expression.spel.SpelParserConfiguration;
 import org.springframework.expression.spel.standard.SpelExpressionParser;
+import org.springframework.expression.spel.support.DataBindingPropertyAccessor;
+import org.springframework.expression.spel.support.ReflectiveMethodResolver;
 import org.springframework.expression.spel.support.StandardEvaluationContext;
+import org.springframework.integration.util.FixedMethodFilter;
+import org.springframework.util.ReflectionUtils;
 
 /**
  * This is {@link SpringExpressionLanguageValueResolver}.
@@ -24,6 +40,11 @@ import org.springframework.expression.spel.support.StandardEvaluationContext;
  */
 @Slf4j
 public class SpringExpressionLanguageValueResolver implements Function {
+    private static final List<AllowedTypes> ALLOWED_TYPES = List.of(
+        new AllowedTypes(Locale.class.getName(), Locale.class,
+            new FixedMethodFilter(Objects.requireNonNull(ReflectionUtils.findMethod(Locale.class, "getLanguage"))))
+    );
+
     private static final int STARTING_PORT_RANGE = 3000;
     private static final int ENDING_PORT_RANGE = 9999;
 
@@ -36,7 +57,7 @@ public class SpringExpressionLanguageValueResolver implements Function {
     private static final ParserContext PARSER_CONTEXT = new TemplateParserContext("${", "}");
 
     private static final SpelExpressionParser EXPRESSION_PARSER = new SpelExpressionParser(
-        new SpelParserConfiguration(SpelCompilerMode.IMMEDIATE, SpringExpressionLanguageValueResolver.class.getClassLoader())
+        new SpelParserConfiguration(SpelCompilerMode.OFF, null)
     );
 
     private static SpringExpressionLanguageValueResolver INSTANCE;
@@ -56,8 +77,9 @@ public class SpringExpressionLanguageValueResolver implements Function {
 
         evaluationContext.setVariable("tempDir", FileUtils.getTempDirectoryPath());
         evaluationContext.setVariable("zoneId", ZoneId.systemDefault().getId());
-        withApplicationContext(ApplicationContextProvider.getApplicationContext());
+        configureContext(evaluationContext);
     }
+
 
     /**
      * Format string using string substitution and Spring expressions.
@@ -77,6 +99,16 @@ public class SpringExpressionLanguageValueResolver implements Function {
             ? resolve("${%s}".formatted(variable), parameters, String.class)
             : null);
         return expressionSub.replace(body);
+    }
+
+    /**
+     * Has expression markers.
+     *
+     * @param value the value
+     * @return the boolean
+     */
+    public boolean hasExpressionMarkers(final String value) {
+        return Strings.CS.contains(value, "${") || Strings.CS.contains(value, "#{");
     }
 
     /**
@@ -121,7 +153,7 @@ public class SpringExpressionLanguageValueResolver implements Function {
         return (T) value;
     }
 
-    private <T> T resolve(final String value, final Map<String, Object> variables, final Class<T> clazz) {
+    private <T> @Nullable T resolve(final String value, final Map<String, Object> variables, final Class<T> clazz) {
         val activeContext = new StandardEvaluationContext() {
             @Override
             public Object lookupVariable(@NonNull final String name) {
@@ -129,6 +161,7 @@ public class SpringExpressionLanguageValueResolver implements Function {
             }
         };
         activeContext.setVariables(variables);
+        configureContext(activeContext);
         val expression = EXPRESSION_PARSER.parseExpression(value, PARSER_CONTEXT);
         return expression.getValue(activeContext, clazz);
     }
@@ -180,5 +213,49 @@ public class SpringExpressionLanguageValueResolver implements Function {
 
         evaluationContext.setVariable("zonedDateTime", ZonedDateTime.now(ZoneId.systemDefault()).toString());
         evaluationContext.setVariable("zonedDateTimeUtc", ZonedDateTime.now(Clock.systemUTC()).toString());
+    }
+
+    private static final class AllowListTypeLocator implements TypeLocator {
+        @Override
+        public Class<?> findType(final String typeName) throws EvaluationException {
+            val type = ALLOWED_TYPES
+                .stream()
+                .filter(entry -> entry.type().equals(typeName)).findFirst()
+                .orElseThrow(() -> new SpelEvaluationException(SpelMessage.TYPE_NOT_FOUND, typeName));
+            return type.clazz();
+        }
+
+    }
+
+    private static void configureContext(final StandardEvaluationContext context) {
+        context.setTypeLocator(new AllowListTypeLocator());
+        context.setBeanResolver(null);
+        context.setConstructorResolvers(List.of());
+        context.setPropertyAccessors(List.of(DataBindingPropertyAccessor.forReadOnlyAccess()));
+
+        val methodResolvers = ALLOWED_TYPES
+            .stream()
+            .map(type -> {
+                val methodResolver = new ReflectiveMethodResolver() {
+                    @Override
+                    public @Nullable MethodExecutor resolve(final EvaluationContext context,
+                                                            final Object targetObject, final String name,
+                                                            final List<TypeDescriptor> argumentTypes) throws AccessException {
+                        val targetType = targetObject instanceof final Class<?> clazz ? clazz : targetObject.getClass();
+                        if (type.clazz().equals(targetType)) {
+                            return super.resolve(context, targetObject, name, argumentTypes);
+                        }
+                        throw new AccessException("Method resolution is not allowed for type [%s]".formatted(targetType.getName()));
+                    }
+                };
+                methodResolver.registerMethodFilter(type.clazz(), type.filer());
+                return methodResolver;
+            })
+            .map(MethodResolver.class::cast)
+            .toList();
+        context.setMethodResolvers(methodResolvers);
+    }
+
+    private record AllowedTypes(String type, Class clazz, MethodFilter filer) {
     }
 }

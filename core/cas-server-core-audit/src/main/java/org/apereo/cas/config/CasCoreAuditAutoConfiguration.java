@@ -499,7 +499,8 @@ public class CasCoreAuditAutoConfiguration {
         @ConditionalOnMissingBean(name = AuditTrailExecutionPlan.BEAN_NAME)
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-        public AuditTrailExecutionPlan auditTrailExecutionPlan(final List<AuditTrailExecutionPlanConfigurer> configurers) {
+        public AuditTrailExecutionPlan auditTrailExecutionPlan(
+            final List<AuditTrailExecutionPlanConfigurer> configurers) {
             val plan = new DefaultAuditTrailExecutionPlan();
             configurers
                 .stream()

@@ -1,4 +1,6 @@
-description = "Apereo CAS Generic Support"
+apply plugin: "org.apereo.cas.project-conventions"
+
+description = "Adds generic CAS extension support used by broadly applicable integrations."
 ext {
     publishMetadata = true
     projectMetadata = [

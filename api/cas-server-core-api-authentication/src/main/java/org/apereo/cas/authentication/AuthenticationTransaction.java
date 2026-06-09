@@ -50,6 +50,15 @@ public interface AuthenticationTransaction extends Serializable {
     }
 
     /**
+     * Gets primary authentication.
+     *
+     * @return the primary authentication
+     */
+    default Optional<Authentication> getPrimaryAuthentication() {
+        return getAuthentications().stream().findFirst();
+    }
+
+    /**
      * Does this AuthenticationTransaction contain a credential of the given type?
      *
      * @param type the credential type to check for

@@ -1,4 +1,6 @@
-description = "Apereo CAS JDBC Audit Support"
+apply plugin: "org.apereo.cas.project-conventions"
+
+description = "Sends CAS audit records to a JDBC-compatible database for centralized security reporting."
 ext {
 
     publishMetadata = true

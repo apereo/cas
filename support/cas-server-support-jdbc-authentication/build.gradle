@@ -1,4 +1,6 @@
-description = "Apereo CAS JDBC Support"
+apply plugin: "org.apereo.cas.project-conventions"
+
+description = "Adds JDBC-backed authentication for validating users against database records."
 dependencies {
     implementation project(":core:cas-server-core-authentication-api")
     implementation project(":core:cas-server-core-util-api")

@@ -1,4 +1,6 @@
-description = "Apereo CAS Services REST Implementation"
+apply plugin: "org.apereo.cas.project-conventions"
+
+description = "Adds REST endpoints for managing registered CAS services."
 ext {
     publishMetadata = true
     projectMetadata = [

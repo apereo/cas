@@ -1,4 +1,6 @@
-description = "Apereo CAS Support for Thymeleaf Template Engine"
+apply plugin: "org.apereo.cas.project-conventions"
+
+description = "Provides shared Thymeleaf template support for CAS views."
 dependencies {
     api libraries.thymeleaf
 

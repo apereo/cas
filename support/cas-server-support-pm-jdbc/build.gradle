@@ -1,4 +1,6 @@
-description = "Apereo CAS Password Management JDBC Support"
+apply plugin: "org.apereo.cas.project-conventions"
+
+description = "Uses a JDBC-compatible database for password management flows such as reset and account recovery."
 ext {
     publishMetadata = true
     projectMetadata = [

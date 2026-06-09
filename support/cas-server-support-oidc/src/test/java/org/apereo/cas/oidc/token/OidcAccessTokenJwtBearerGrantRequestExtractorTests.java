@@ -151,7 +151,7 @@ class OidcAccessTokenJwtBearerGrantRequestExtractorTests {
             val keyPair = gen.generateKeyPair();
             val publicJwk = new RSAKey.Builder((RSAPublicKey) keyPair.getPublic()).build();
             val jkt = publicJwk.computeThumbprint().toString();
-            clientJwksRegistrationStore.save(jkt, publicJwk.toPublicJWK().toJSONString());
+            clientJwksRegistrationStore.save(registeredService.getClientId(), jkt, publicJwk.toPublicJWK().toJSONString());
             
             val signAssertion = EncodingUtils.signJwsRSASha512(new BasicIdentifiableKey(jkt, keyPair.getPrivate()),
                 claims.toString().getBytes(StandardCharsets.UTF_8), Map.of());

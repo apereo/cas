@@ -68,7 +68,7 @@ async function createRegisteredServiceOidcFields() {
 
     const features = await fetchCasFeatures();
     if (features.includes("OpenIDConnect")) {
-        await $.get(`${casServerPrefix}/oidc/.well-known/openid-configuration`, response => {
+        await $.get(`${PalantirDashboardConfiguration.casServerPrefix()}/oidc/.well-known/openid-configuration`, response => {
             const supportedScopes = response.scopes_supported.map(scope => ({value: scope, text: scope.toUpperCase()}));
             const supportedGrantTypes = response.grant_types_supported.map(scope => ({
                 value: scope,

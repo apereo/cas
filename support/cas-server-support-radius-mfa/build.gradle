@@ -1,3 +1,5 @@
+apply plugin: "org.apereo.cas.project-conventions"
+
 /*
  * The following resolution strategy
  * is required for JRadius library that relies
@@ -10,7 +12,7 @@ if (!dependencyUpdates) {
     })
 }
 
-description = "Apereo CAS RADIUS RSA MFA Support"
+description = "Adds RADIUS-backed multifactor authentication for CAS login flows."
 ext {
     publishMetadata = true
     projectMetadata = [

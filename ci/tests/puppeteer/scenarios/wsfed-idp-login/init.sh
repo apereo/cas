@@ -1,6 +1,6 @@
 #!/bin/bash
 echo "Running Fediz sample client web application using keystore ${CAS_KEYSTORE}"
-docker run --rm -d -p9876:9876 -p5008:5008 -p8976:8076 \
+docker run --quiet  --rm -d -p9876:9876 -p5008:5008 -p8976:8076 \
   -v "${CAS_KEYSTORE}":/etc/cas/thekeystore \
   -e SP_SSL_KEYSTORE_PATH="/etc/cas/thekeystore"\
   --name "fediz" apereo/fediz-client-webapp:2025

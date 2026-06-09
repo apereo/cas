@@ -1,4 +1,6 @@
-description = "Apereo CAS WS-Security IdP API"
+apply plugin: "org.apereo.cas.project-conventions"
+
+description = "Defines WS-Security identity provider contracts for SOAP-based integrations."
 dependencies {
     implementation libraries.opensaml
     implementation libraries.dropwizard

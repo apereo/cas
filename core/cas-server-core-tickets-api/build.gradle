@@ -1,4 +1,6 @@
-description = "Apereo CAS Core Tickets"
+apply plugin: "org.apereo.cas.project-conventions"
+
+description = "Defines core ticket contracts used by single sign-on, validation, and proxy flows."
 dependencies {
     api project(":api:cas-server-core-api-ticket")
     api project(":api:cas-server-core-api-logout")

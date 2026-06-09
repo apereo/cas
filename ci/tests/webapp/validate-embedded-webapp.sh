@@ -63,7 +63,7 @@ testUrl() {
 echo "Building CAS server web application with ${webAppServerType}"
 ./gradlew :webapp:cas-server-webapp-"${webAppServerType}":build \
   -DskipNestedConfigMetadataGen=true -x check -x javadoc \
-  --no-configuration-cache --no-daemon --build-cache --configure-on-demand --parallel
+   --no-daemon --quiet --build-cache --configure-on-demand --parallel
 retVal=$?
 if [[ ${retVal} -ne 0 ]]; then
   exit $retVal

@@ -2,6 +2,7 @@ package org.apereo.cas.support.pac4j.authentication;
 
 import module java.base;
 import lombok.Getter;
+import lombok.ToString;
 import lombok.experimental.SuperBuilder;
 
 /**
@@ -12,6 +13,7 @@ import lombok.experimental.SuperBuilder;
  */
 @SuperBuilder
 @Getter
+@ToString
 public class DelegatedAuthenticationClientLogoutRequest implements Serializable {
     @Serial
     private static final long serialVersionUID = 4280830773566610694L;
@@ -23,4 +25,6 @@ public class DelegatedAuthenticationClientLogoutRequest implements Serializable 
     private final String location;
 
     private final String target;
+
+    private final String clientName;
 }

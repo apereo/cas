@@ -43,15 +43,16 @@ class MongoDbClientJwksRegistrationStoreTests extends AbstractOidcTests {
     void verifyOperation() {
         val jkt = UUID.randomUUID().toString();
         val jwk = UUID.randomUUID().toString();
+        val clientId = UUID.randomUUID().toString();
         clientJwksRegistrationStore.removeAll();
-        clientJwksRegistrationStore.save(jkt, jwk);
-        val entry = clientJwksRegistrationStore.findByJkt(jkt);
+        clientJwksRegistrationStore.save(clientId, jkt, jwk);
+        val entry = clientJwksRegistrationStore.findBy(clientId, jkt);
         assertTrue(entry.isPresent());
         assertEquals(jwk, entry.get().jwk());
         val allEntries = clientJwksRegistrationStore.load();
         assertFalse(allEntries.isEmpty());
-        clientJwksRegistrationStore.removeByJkt(jkt);
-        val removedEntry = clientJwksRegistrationStore.findByJkt(jkt);
+        clientJwksRegistrationStore.remove(clientId, jkt);
+        val removedEntry = clientJwksRegistrationStore.findBy(clientId, jkt);
         assertFalse(removedEntry.isPresent());
     }
 }

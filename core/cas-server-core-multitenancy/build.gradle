@@ -1,4 +1,6 @@
-description = "Apereo CAS Multitenancy Core"
+apply plugin: "org.apereo.cas.project-conventions"
+
+description = "Adds tenant-aware behavior so one CAS deployment can serve multiple configuration contexts."
 dependencies {
     implementation libraries.pac4jcore
     implementation libraries.nimbus
