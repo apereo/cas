@@ -95,13 +95,17 @@ a third-party library.
   
 ### Redis Ticket Registry
 
-The [Redis Ticket Registry](../ticketing/Redis-Ticket-Registry.html) now presents several notable changes:
+The [Redis Ticket Registry](../ticketing/Redis-Ticket-Registry.html) now presents several notable changes, particularly important when administrative logouts are exercised:
                                                                    
 - Delete operation signals are now propagated to all other consumer CAS nodes when Redis messaging is enabled. 
 - Local cache invalidation is now restored to use the correct cache key when consumer CAS nodes receive a delete operation signal.
 - Removing SSO sessions based on a principal now also propagates delete operation signals to consumer CAS nodes and invalidates the local cache for the publisher CAS node.
 
-These fixes are particularly important when administrative logouts are exercised.
+There are also significant performance optimizations available to ensure entries in Redis carry smaller objects:
+
+- RedisSearch disabled/unavailable: often `45-70%` less memory per ticket record, because JSON documents stored are compressed and the registry stops writing `service` and `attributes` fields into entries.
+- RedisSearch enabled: likely `40-65%` less per ticket record, mostly from compressed JSON documents.
+- Crypto operations enabled: much smaller gain, often near `0-15%`, because CAS stores an encoded/encrypted ticket payload that is already high entropy. 
 
 ### Google Authenticator via Redis
 
