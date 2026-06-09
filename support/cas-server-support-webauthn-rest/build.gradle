@@ -1,4 +1,6 @@
-description = "Apereo CAS WebAuthN REST Support"
+apply plugin: "org.apereo.cas.project-conventions"
+
+description = "Stores WebAuthn/FIDO2 credential data in REST endpoints for passkey-based authentication."
 ext {
     publishMetadata = true
     projectMetadata = [

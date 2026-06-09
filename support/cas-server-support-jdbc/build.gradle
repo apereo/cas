@@ -1,4 +1,6 @@
-description = "Apereo CAS JDBC Support"
+apply plugin: "org.apereo.cas.project-conventions"
+
+description = "Adds shared JDBC database support used by CAS database-backed features."
 ext {
     publishMetadata = true
     projectMetadata = [

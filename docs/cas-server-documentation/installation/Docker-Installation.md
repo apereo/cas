@@ -21,7 +21,7 @@ docker pull apereo/cas
 Then:
 
 ```bash
-docker run --rm \
+docker run --quiet  --rm \
   -e SERVER_SSL_ENABLED=false -e SERVER_PORT=8080 \
   -p 8080:8080 --name casserver apereo/cas
 ```

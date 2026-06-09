@@ -3,7 +3,7 @@ export DOCKER_IMAGE="jaegertracing/all-in-one:1.76.0"
 echo "Running Jaeger docker container..."
 docker stop jaeger-server || true && docker rm jaeger-server || true
 
-docker run --rm --name="jaeger-server" \
+docker run --quiet  --rm --name="jaeger-server" \
   -p 6831:6831/udp \
   -p 6832:6832/udp \
   -p 4317:4317 \

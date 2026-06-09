@@ -1,4 +1,6 @@
-description = "Apereo CAS FIDO2 WebAuthn Core"
+apply plugin: "org.apereo.cas.project-conventions"
+
+description = "Provides shared WebAuthn/FIDO2 passkey authentication behavior."
 dependencies {
     api project(":api:cas-server-core-api-authentication")
     api project(":api:cas-server-core-api-util")

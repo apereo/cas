@@ -1,4 +1,6 @@
-description = "Apereo CAS WS-Security Identity Provider"
+apply plugin: "org.apereo.cas.project-conventions"
+
+description = "Enables CAS to act as a WS-Security identity provider for SOAP-based integrations."
 ext {
     publishMetadata = true
     projectMetadata = [

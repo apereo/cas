@@ -22,7 +22,6 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-import org.apache.commons.lang3.StringUtils;
 import org.pac4j.jee.context.JEEContext;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -95,8 +94,7 @@ public class OidcDynamicClientRegistrationEndpointController extends BaseOidcCon
             return new ResponseEntity<>(clientResponse, HttpStatus.CREATED);
         } catch (final Throwable e) {
             LoggingUtils.error(LOGGER, e);
-            val map = OAuth20Utils.getErrorResponseBody("invalid_client_metadata",
-                StringUtils.defaultIfBlank(e.getMessage(), "None"));
+            val map = OAuth20Utils.getErrorResponseBody("invalid_client_metadata", "Unable to accept client metadata");
             return new ResponseEntity<>(map, HttpStatus.BAD_REQUEST);
         }
     }

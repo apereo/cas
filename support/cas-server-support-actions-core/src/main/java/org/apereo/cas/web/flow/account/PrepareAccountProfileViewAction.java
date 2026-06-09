@@ -89,6 +89,7 @@ public class PrepareAccountProfileViewAction extends BaseCasWebflowAction {
             ticket.getAuthentication().getPrincipal().getAttributes());
         val authorizedServices = servicesManager.getAllServices()
             .stream()
+            .filter(registeredService -> !registeredService.isInternal())
             .filter(registeredService -> FunctionUtils.doAndHandle(
                 () -> principalAccessStrategyEnforcer.authorize(
                     RegisteredServicePrincipalAccessStrategyEnforcer.PrincipalAccessStrategyContext.builder()

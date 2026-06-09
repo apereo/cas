@@ -1,4 +1,6 @@
-description = "Apereo CAS Google Authenticator JPA"
+apply plugin: "org.apereo.cas.project-conventions"
+
+description = "Stores Google Authenticator MFA account data in a JPA-compatible database."
 ext {
 
     publishMetadata = true

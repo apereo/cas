@@ -1,4 +1,6 @@
-description = "Apereo CAS Server OpenID Connect Verifiable Credentials Support"
+apply plugin: "org.apereo.cas.project-conventions"
+
+description = "Adds OpenID Connect verifiable credential issuance support for credential-based identity workflows."
 ext {
     publishMetadata = true
     projectMetadata = [

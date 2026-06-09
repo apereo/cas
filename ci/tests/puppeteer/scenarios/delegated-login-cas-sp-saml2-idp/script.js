@@ -6,6 +6,9 @@ const cas = require("../../cas.js");
     const browser = await cas.newBrowser(cas.browserOptions());
     const page = await cas.newPage(browser);
 
+    await cas.keycloakLogout(page);
+    await cas.gotoLogout(page);
+    
     const service = "https://localhost:9859/anything/cas";
     await cas.gotoLogin(page, service);
     await cas.sleep(1000);
@@ -34,6 +37,7 @@ const cas = require("../../cas.js");
     await cas.assertInnerTextStartsWith(page, "#content div p", "You, caskeycloak@example.org, have successfully logged in");
 
     await cas.logb("Logging out...");
+    await cas.sleep(4000);
     await cas.gotoLogout(page, service);
     await cas.sleep(6000);
     await cas.logPage(page);

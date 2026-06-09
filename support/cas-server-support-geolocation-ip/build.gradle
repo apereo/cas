@@ -1,4 +1,6 @@
-description = "Apereo CAS GeoLocation Tracking Support"
+apply plugin: "org.apereo.cas.project-conventions"
+
+description = "Adds ip geolocation lookup for contextual access decisions and audit data."
 ext {
     publishMetadata = true
     projectMetadata = [

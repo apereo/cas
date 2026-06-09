@@ -3,6 +3,7 @@ package org.apereo.cas.web.flow.configurer;
 import module java.base;
 import org.apereo.cas.web.support.WebUtils;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.binding.expression.Expression;
@@ -19,6 +20,7 @@ import jakarta.servlet.http.HttpServletResponse;
  * @since 8.0.0
  */
 @RequiredArgsConstructor
+@Slf4j
 public class ExternalRedirectAction extends AbstractAction {
     private final Expression resourceUri;
 
@@ -29,6 +31,7 @@ public class ExternalRedirectAction extends AbstractAction {
             val response = WebUtils.getHttpServletResponseFromExternalWebflowContext(context);
             response.setStatus(HttpServletResponse.SC_FOUND);
             response.setHeader(HttpHeaders.LOCATION, location);
+            LOGGER.debug("Redirecting to [{}]", location);
         }
         return this.success();
     }

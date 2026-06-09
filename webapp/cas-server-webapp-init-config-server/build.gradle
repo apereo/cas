@@ -1,4 +1,6 @@
-description = "Apereo CAS Spring Cloud Configuration Server API"
+apply plugin: "org.apereo.cas.project-conventions"
+
+description = "Provides initialization support for the CAS Spring Cloud Config Server web application."
 
 dependencies {
     implementation libraries.snakeyaml

@@ -21,7 +21,7 @@ function runscript {
 export DOCKER_IMAGE="mongo:8.3"
 printgreen "Running MongoDb docker container..."
 docker stop mongodb-server || true && docker rm mongodb-server || true
-docker run --rm -d -p 27017:27017 -e MONGO_INITDB_ROOT_USERNAME=root \
+docker run --quiet  --rm -d -p 27017:27017 -e MONGO_INITDB_ROOT_USERNAME=root \
   -e MONGO_INITDB_ROOT_PASSWORD=secret --name="mongodb-server" \
   -v "$PWD"/ci/tests/mongodb/mongo-init.sh:/docker-entrypoint-initdb.d/mongo-init.sh:ro \
   ${DOCKER_IMAGE}

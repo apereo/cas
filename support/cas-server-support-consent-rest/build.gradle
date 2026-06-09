@@ -1,4 +1,6 @@
-description = "Apereo CAS Consent REST Support"
+apply plugin: "org.apereo.cas.project-conventions"
+
+description = "Stores user consent decisions in REST endpoints for attribute release and privacy workflows."
 ext {
     publishMetadata = true
     projectMetadata = [

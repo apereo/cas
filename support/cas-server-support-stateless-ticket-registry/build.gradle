@@ -1,4 +1,6 @@
-description = "Apereo CAS Stateless Ticket Registry Support"
+apply plugin: "org.apereo.cas.project-conventions"
+
+description = "Stores CAS tickets in stateless for shared single sign-on state across server nodes."
 ext {
     publishMetadata = true
     projectMetadata = [

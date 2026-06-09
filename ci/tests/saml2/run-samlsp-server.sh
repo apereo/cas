@@ -24,7 +24,7 @@ ${PWD}/ci/tests/httpbin/run-httpbin-server.sh
 
 echo "Launching SAML2 service provider..."
 docker stop saml2-sp || true && docker rm saml2-sp || true
-docker run -p 9876:9876 -p 8076:8076 \
+docker run --quiet  -p 9876:9876 -p 8076:8076 \
   -d -it --rm --name=saml2-sp \
   -e METADATA_TYPE=metadataFile \
   -e METADATA_LOCATION=/sp-webapp/src/main/resources/metadata/sp-metadata.xml \

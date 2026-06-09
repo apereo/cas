@@ -1,4 +1,6 @@
-description = "Apereo CAS DynamoDb Support"
+apply plugin: "org.apereo.cas.project-conventions"
+
+description = "Adds shared Amazon DynamoDB support used by CAS DynamoDB-backed features."
 dependencies {
     implementation libraries.awsjavadynamodb
     

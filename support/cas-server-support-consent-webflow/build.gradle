@@ -1,4 +1,6 @@
-description = "Apereo CAS Consent Webflow"
+apply plugin: "org.apereo.cas.project-conventions"
+
+description = "Adds browser login flow screens for collecting user consent decisions."
 ext {
     publishMetadata = true
     projectMetadata = [

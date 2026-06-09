@@ -1,4 +1,6 @@
-description = "Apereo CAS Simple Multifactor Authentication Support"
+apply plugin: "org.apereo.cas.project-conventions"
+
+description = "Adds a simple built-in multifactor authentication provider for lightweight MFA deployments."
 ext {
     publishMetadata = true
     projectMetadata = [

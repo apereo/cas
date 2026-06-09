@@ -1,4 +1,6 @@
-description = "Apereo CAS Google Authenticator Support"
+apply plugin: "org.apereo.cas.project-conventions"
+
+description = "Adds Google Authenticator time-based one-time password MFA for CAS logins."
 ext {
     publishMetadata = true
     projectMetadata = [

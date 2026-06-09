@@ -1,4 +1,6 @@
-description = "Apereo CAS Surrogate Authentication Support"
+apply plugin: "org.apereo.cas.project-conventions"
+
+description = "Adds surrogate authentication so authorized users can act on behalf of another account."
 dependencies {
 
     

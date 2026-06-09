@@ -1,4 +1,6 @@
-description = "Apereo CAS Support for Pac4j APIs"
+apply plugin: "org.apereo.cas.project-conventions"
+
+description = "Adds delegated authentication support so CAS can sign users in through external identity providers."
 dependencies {
     api libraries.pac4jcore
     

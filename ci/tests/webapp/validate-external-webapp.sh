@@ -58,7 +58,7 @@ clear
 echo -e "Building project ${project}..."
 ./gradlew :webapp:${project}:build \
   -DskipNestedConfigMetadataGen=true -x check -x javadoc -q \
-  --no-daemon --build-cache --configure-on-demand --parallel
+  --no-daemon --quiet --build-cache --configure-on-demand --parallel
 
 echo -e "Removing Apache Tomcat default web applications..."
 rm -Rf ${CATALINA_HOME}/webapps/examples ${CATALINA_HOME}/webapps/docs \

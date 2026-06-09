@@ -1,4 +1,6 @@
-description = "Apereo CAS Trusted MFA Browser/Device Core"
+apply plugin: "org.apereo.cas.project-conventions"
+
+description = "Provides shared trusted browser and device behavior used by CAS multifactor authentication flows."
 dependencies {
     api project(":api:cas-server-core-api-audit")
     api project(":api:cas-server-core-api-cookie")

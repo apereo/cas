@@ -1,4 +1,6 @@
-description = "Apereo CAS Core Logging AWS SQS"
+apply plugin: "org.apereo.cas.project-conventions"
+
+description = "Routes CAS logs to Amazon SQS for centralized log collection."
 ext {
     publishMetadata = true
     projectMetadata = [

@@ -1,4 +1,6 @@
-description = "Apereo CAS Heimdall Authorization Engine"
+apply plugin: "org.apereo.cas.project-conventions"
+
+description = "Integrates the Heimdall authorization engine for externalized access decisions."
 ext {
     publishMetadata = true
     projectMetadata = [

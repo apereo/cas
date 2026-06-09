@@ -1,4 +1,6 @@
-description = "Apereo CAS Mongo Integration"
+apply plugin: "org.apereo.cas.project-conventions"
+
+description = "Stores registered service definitions in MongoDB for centralized CAS service management."
 ext {
     publishMetadata = true
     projectMetadata = [

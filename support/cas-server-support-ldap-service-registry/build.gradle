@@ -1,4 +1,6 @@
-description = "Apereo CAS LDAP Service Registry Support"
+apply plugin: "org.apereo.cas.project-conventions"
+
+description = "Stores registered service definitions in an LDAP directory for centralized CAS service management."
 
 ext {
 

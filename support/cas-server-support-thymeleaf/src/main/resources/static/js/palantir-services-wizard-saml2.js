@@ -566,7 +566,7 @@ function createSamlRegisteredServiceAttributeReleasePolicy() {
             }
         },
         ...(
-            scriptFactoryAvailable
+            PalantirDashboardConfiguration.scriptFactoryAvailable()
                 ? [{
                     value: "org.apereo.cas.support.saml.services.GroovySamlRegisteredServiceAttributeReleasePolicy",
                     text: "GROOVY SAML"

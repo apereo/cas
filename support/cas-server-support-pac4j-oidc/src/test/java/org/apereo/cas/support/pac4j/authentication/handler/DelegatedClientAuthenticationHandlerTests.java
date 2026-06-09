@@ -15,6 +15,9 @@ import org.apereo.cas.multitenancy.TenantExtractor;
 import org.apereo.cas.pac4j.client.DelegatedIdentityProviderFactory;
 import org.apereo.cas.support.pac4j.authentication.clients.DefaultDelegatedIdentityProviders;
 import org.apereo.cas.support.pac4j.authentication.handler.support.DelegatedClientAuthenticationHandler;
+import org.apereo.cas.util.CollectionUtils;
+import org.apereo.cas.util.Couplet;
+import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
 import org.apereo.cas.util.spring.ApplicationContextProvider;
 import lombok.val;
 import org.junit.jupiter.api.BeforeEach;
@@ -32,6 +35,7 @@ import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.mock.web.MockServletContext;
 import org.springframework.webflow.context.ExternalContextHolder;
 import org.springframework.webflow.context.servlet.ServletExternalContext;
+import tools.jackson.databind.ObjectMapper;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
@@ -44,6 +48,9 @@ import static org.mockito.Mockito.*;
 @Tag("AuthenticationHandler")
 class DelegatedClientAuthenticationHandlerTests {
 
+    private static final ObjectMapper MAPPER = JacksonObjectMapperFactory.builder()
+        .defaultTypingEnabled(true).build().toObjectMapper();
+    
     private static final String CALLBACK_URL = "http://localhost:8080/callback";
 
     private static final String ID = "123456789";
@@ -124,6 +131,25 @@ class DelegatedClientAuthenticationHandlerTests {
         assertEquals(ID, principal.getId());
     }
 
+
+    @Test
+    void verifyProfileAttributesAsMap() throws Throwable {
+        handler.setTypedIdUsed(false);
+        val facebookProfile = new FacebookProfile();
+        facebookProfile.setId(ID);
+        facebookProfile.addAttribute("attributeMap", CollectionUtils.wrap("key1", "value1"));
+        fbClient.setProfileCreator((callContext, sessionStore) -> Optional.of(facebookProfile));
+        val result = handler.authenticate(clientCredential, mock(Service.class));
+        val principal = result.getPrincipal();
+        assertEquals(ID, principal.getId());
+        val serialized = MAPPER.writeValueAsString(principal);
+        val deserialized = MAPPER.readValue(serialized, Principal.class);
+        val couplet = (Couplet) deserialized.getAttributes().get("attributeMap").getFirst();
+        assertEquals("key1", couplet.getLeft());
+        assertEquals("value1", couplet.getRight());
+        assertNotNull(couplet.toPair());
+    }
+    
     @Test
     void verifyNoProfile() {
         assertThrows(PreventedException.class, () -> {

@@ -38,7 +38,7 @@ function runContainer() {
     ;;
  esac
 
- docker run --name gcp-$1-server --rm -d -p $ports cas/gcp-$1:latest
+ docker run --quiet --name gcp-$1-server --rm -d -p $ports cas/gcp-$1:latest
 # docker logs gcp-$1-server &
  sleep 5
  docker ps | grep "gcp-$1-server"
@@ -55,7 +55,7 @@ runContainer "firestore"
 runContainer "pubsub"
 
 printgreen "Running GCP storage server..."
-docker run -d --name gcp-storage-server -p 4553:4443 -p 8100:8000 \
+docker run --quiet  -d --name gcp-storage-server -p 4553:4443 -p 8100:8000 \
   fsouza/fake-gcs-server -scheme both
 sleep 5
 docker ps | grep "gcp-storage-server"
@@ -69,7 +69,7 @@ fi
 
 
 echo "Running GCP secret manager..."
-docker run --rm -d --name gcp-secret-manager -p 9090:9090 -p 8080:8080 \
+docker run --quiet  --rm -d --name gcp-secret-manager -p 9090:9090 -p 8080:8080 \
   ghcr.io/blackwell-systems/gcp-secret-manager-emulator-dual:latest
 sleep 5
 docker ps | grep "gcp-secret-manager"

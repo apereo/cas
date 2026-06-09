@@ -77,7 +77,7 @@ echo "${properties}" | jq
 docker stop casserver || true && docker rm casserver || true
 echo -e "Mapping CAS keystore in Docker container to ${CAS_KEYSTORE}"
 docker network create casserver-network
-docker run --rm -d \
+docker run --quiet --rm -d \
   --mount type=bind,source="${CAS_KEYSTORE}",target=/etc/cas/thekeystore \
   -e SPRING_APPLICATION_JSON="${properties}" --network casserver-network \
   -p 8797:8797 -p 8444:8443 --name casserver ${DOCKER_IMAGE}

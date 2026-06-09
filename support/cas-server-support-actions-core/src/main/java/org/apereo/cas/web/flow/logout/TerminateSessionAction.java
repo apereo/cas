@@ -59,7 +59,7 @@ public class TerminateSessionAction extends BaseCasWebflowAction {
         return eventFactory.event(this, CasWebflowConstants.STATE_ID_WARN);
     }
 
-    protected String getTicketGrantingTicket(final RequestContext context) {
+    protected @Nullable String getTicketGrantingTicket(final RequestContext context) {
         val tgtId = WebUtils.getTicketGrantingTicketId(context);
         if (StringUtils.isBlank(tgtId)) {
             val request = WebUtils.getHttpServletRequestFromExternalWebflowContext(context);

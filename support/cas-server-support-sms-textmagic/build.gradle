@@ -1,4 +1,6 @@
-description = "Apereo CAS TextMagic SMS Support"
+apply plugin: "org.apereo.cas.project-conventions"
+
+description = "Sends CAS SMS messages through TextMagic."
 ext {
     publishMetadata = true
     projectMetadata = [

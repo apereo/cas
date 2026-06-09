@@ -7,6 +7,8 @@
     "SQL_QUERY=SELECT * FROM simple_table1 WHERE {0}"
   ],
   "properties": [
+    "--logging.level.org.springframework.webflow=info",
+    
     "--cas.server.name=https://localhost:8443",
     "--cas.server.prefix=${cas.server.name}/cas",
 
@@ -54,7 +56,11 @@
     "--cas.ticket.registry.mongo.port=27017",
     "--cas.ticket.registry.mongo.drop-collection=true",
     "--cas.ticket.registry.mongo.user-id=root",
-    "--cas.ticket.registry.mongo.password=secret"
+    "--cas.ticket.registry.mongo.password=secret",
+
+    "--cas.ticket.st.time-to-kill-in-seconds=60",
+    
+    "--cas.logout.follow-service-redirects=true"
   ],
   "initScript": "${PWD}/ci/tests/httpbin/run-httpbin-server.sh,${PWD}/ci/tests/keycloak/run-keycloak-server.sh,${PWD}/ci/tests/postgres/run-postgres-server.sh,${PWD}/ci/tests/mongodb/run-mongodb-server.sh"
 }

@@ -1,4 +1,6 @@
-description = "Apereo CAS Web Application Authentication Throttling"
+apply plugin: "org.apereo.cas.project-conventions"
+
+description = "Adds authentication throttling to slow repeated or abusive login attempts."
 ext {
     publishMetadata = true
     projectMetadata = [

@@ -1,4 +1,6 @@
-description = "Apereo CAS Event Memory Repository"
+apply plugin: "org.apereo.cas.project-conventions"
+
+description = "Stores CAS events in memory for lightweight local event history and diagnostics."
 ext {
     publishMetadata = true
     projectMetadata = [

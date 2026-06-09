@@ -15,6 +15,7 @@
         <script type="text/javascript">
             ((material, bootstrap) =>
                 document.addEventListener("DOMContentLoaded", () => {
+                    hljs.highlightAll();
                     $("#consentTable").DataTable();
                     let dialogId = "attribute-consent-dialog";
                     let dialog = material ?
@@ -25,7 +26,6 @@
                             let caller = event.target || event.srcElement;
                             let json = $(caller).next("span").text().trim();
                             $("#consentEntryDetails").text(json);
-                            hljs.highlightAll();
                             dialog[material ? "open" : "show"]();
                             event.preventDefault();
                         }, false));
@@ -90,7 +90,8 @@
                     </td>
                     <td class="mdc-data-table__cell" th:utext="${entry.reminder}">Value</td>
                     <td class="mdc-data-table__cell">
-                        <button type="button" class="btn btn-link" name="viewConsentEntryDetails">
+                        <button type="button" class="mdc-button mdc-button--raised me-2 btn btn-link min-width-48x"
+                                name="viewConsentEntryDetails">
                             <i class="mdi mdi-account-details fas fa-eye" aria-hidden="true"></i>
                             <span style="display: none" th:utext="${entry.json}"/>
                         </button>

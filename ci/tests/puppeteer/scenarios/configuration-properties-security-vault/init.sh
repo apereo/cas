@@ -2,7 +2,7 @@
 
 echo Starting Vault
 docker stop vault || true && docker rm vault || true
-docker run -d --rm -e VAULT_SKIP_VERIFY=true \
+docker run --quiet  -d --rm -e VAULT_SKIP_VERIFY=true \
   -e VAULT_DEV_ROOT_TOKEN_ID=TorGUGeNTATePrE \
   -p 8200:8200 \
   --cap-add=IPC_LOCK --name=vault vault:1.13.3

@@ -1,4 +1,6 @@
-description = "Apereo CAS Web Application Themes Support"
+apply plugin: "org.apereo.cas.project-conventions"
+
+description = "Adds theme support for customizing CAS views, styles, and branding."
 dependencies {
     implementation libraries.thymeleaf
 

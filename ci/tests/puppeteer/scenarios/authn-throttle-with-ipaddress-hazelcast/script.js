@@ -2,6 +2,18 @@
 const cas = require("../../cas.js");
 
 (async () => {
+    await cas.updateLogLevel([{
+        "package": "org.apereo.cas.throttle",
+        "level": "DEBUG"
+    }, {
+        "package": "org.apereo.cas.web.support",
+        "level": "DEBUG"
+    }, {
+        "package": "com.hazelcast",
+        "level": "DEBUG"
+    }]);
+    await cas.doDelete("https://localhost:8443/cas/actuator/throttles?clear=true");
+    
     let browser = await cas.newBrowser(cas.browserOptions());
     let page = await cas.newPage(browser);
 
@@ -20,7 +32,7 @@ const cas = require("../../cas.js");
 
     browser = await cas.newBrowser(cas.browserOptions());
     page = await cas.newPage(browser);
-    await cas.log("Log in attempt: #2");
+    await cas.log("Log in attempt: #3");
     await submitLoginFailure(page);
     await cas.assertInnerText(page, "#content p", "You've entered the wrong password for the user too many times. You've been throttled.");
     await cas.closeBrowser(browser);

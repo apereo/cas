@@ -1,4 +1,6 @@
-description = "Apereo CAS GCP Firestore Ticket Registry"
+apply plugin: "org.apereo.cas.project-conventions"
+
+description = "Sends CAS logs to Google Cloud Logging for centralized cloud log analysis."
 ext {
     publishMetadata = true
     projectMetadata = [

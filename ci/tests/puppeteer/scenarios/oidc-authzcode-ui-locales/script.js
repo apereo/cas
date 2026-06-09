@@ -11,7 +11,7 @@ const cas = require("../../cas.js");
     
     await cas.loginWith(page);
     await cas.assertInnerText(page, "#allow", "ERLAUBEN");
-    await cas.assertInnerText(page, "#cancel", "VERBIETEN");
+    await cas.assertInnerText(page, "#cancel", "LEUGNEN");
 
     await cas.closeBrowser(browser);
 })();
