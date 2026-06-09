@@ -1,4 +1,6 @@
-description = "Apereo CAS X509 REST Implementation"
+apply plugin: "org.apereo.cas.project-conventions"
+
+description = "Adds REST support for X.509 client certificate authentication and validation scenarios."
 ext {
     publishMetadata = true
     projectMetadata = [

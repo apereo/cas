@@ -1,4 +1,6 @@
-description = "Apereo CAS Core Webflow"
+apply plugin: "org.apereo.cas.project-conventions"
+
+description = "Defines contracts for composing and customizing CAS browser flows."
 dependencies {
     api project(":api:cas-server-core-api-authentication")
     api project(":api:cas-server-core-api-ticket")

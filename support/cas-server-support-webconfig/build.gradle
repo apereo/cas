@@ -1,4 +1,6 @@
-description = "Apereo CAS Web Application Configuration"
+apply plugin: "org.apereo.cas.project-conventions"
+
+description = "Adds web-based configuration support for reviewing and managing CAS settings."
 ext {
     publishMetadata = true
     projectMetadata = [

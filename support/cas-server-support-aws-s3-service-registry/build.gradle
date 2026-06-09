@@ -1,4 +1,6 @@
-description = "Apereo CAS AWS S3 Service Registry Support"
+apply plugin: "org.apereo.cas.project-conventions"
+
+description = "Stores registered service definitions in Amazon S3 for centralized CAS service management."
 ext {
     publishMetadata = true
     projectMetadata = [

@@ -9,6 +9,7 @@ import org.apereo.cas.configuration.api.MutablePropertySource;
 import org.apereo.cas.palantir.PalantirConstants;
 import org.apereo.cas.services.BaseRegisteredService;
 import org.apereo.cas.services.RegisteredService;
+import org.apereo.cas.services.RegisteredServiceProperty;
 import org.apereo.cas.services.util.RegisteredServiceJsonSerializer;
 import org.apereo.cas.util.ReflectionUtils;
 import org.apereo.cas.util.http.HttpRequestUtils;
@@ -86,7 +87,7 @@ public class DashboardController extends AbstractController {
             "id", session.getId()
         ));
     }
-    
+
     private ModelAndView buildModelAndView(final Authentication authentication, final HttpServletRequest request) throws Exception {
         val mav = new ModelAndView("palantir/casPalantirDashboardView");
         mav.addObject("authentication", authentication);
@@ -113,6 +114,8 @@ public class DashboardController extends AbstractController {
 
         val mutablePropertySources = CasCoreConfigurationUtils.getMutablePropertySources(applicationContext);
         mav.addObject("mutablePropertySources", mutablePropertySources.stream().map(MutablePropertySource::getName).toList());
+        mav.addObject("serviceProperties", Arrays.stream(RegisteredServiceProperty.RegisteredServiceProperties.values())
+            .map(RegisteredServiceProperty.RegisteredServiceProperties::name).toList());
         return mav;
     }
 

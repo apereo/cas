@@ -1,4 +1,6 @@
-description = "Apereo CAS Core Logging"
+apply plugin: "org.apereo.cas.project-conventions"
+
+description = "Configures core CAS logging behavior and runtime log management."
 ext {
     publishMetadata = true
     projectMetadata = [

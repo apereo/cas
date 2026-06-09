@@ -17,9 +17,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.TestConfiguration;
+import org.springframework.boot.test.util.TestPropertyValues;
+import org.springframework.context.ApplicationContextInitializer;
+import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.test.context.ContextConfiguration;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -40,8 +44,8 @@ import tools.jackson.databind.ObjectMapper;
     RestfulConsentRepositoryTests.RestConsentRepositoryTestConfiguration.class,
     CasConsentRestAutoConfiguration.class,
     BaseConsentRepositoryTests.SharedTestConfiguration.class
-}, properties = "cas.consent.rest.url=http://localhost:${#applicationContext.get().environment.getProperty('local.server.port')}/consent",
-    webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
+}, webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT)
+@ContextConfiguration(initializers = RestfulConsentRepositoryTests.PortInitializer.class)
 @Getter
 @ExtendWith(CasTestExtension.class)
 class RestfulConsentRepositoryTests extends BaseConsentRepositoryTests {
@@ -56,6 +60,26 @@ class RestfulConsentRepositoryTests extends BaseConsentRepositoryTests {
     @Qualifier(ConsentRepository.BEAN_NAME)
     private ConsentRepository repository;
 
+    static class PortInitializer implements ApplicationContextInitializer<ConfigurableApplicationContext> {
+        @Override
+        public void initialize(final ConfigurableApplicationContext context) {
+            val port = findAvailableTcpPort();
+            TestPropertyValues.of(
+                "server.port=" + port,
+                "cas.consent.rest.url=http://localhost:%s/consent".formatted(port)
+            ).applyTo(context.getEnvironment());
+        }
+
+        private static int findAvailableTcpPort() {
+            try (val socket = new ServerSocket(0)) {
+                socket.setReuseAddress(true);
+                return socket.getLocalPort();
+            } catch (final IOException e) {
+                throw new UncheckedIOException(e);
+            }
+        }
+    }
+    
     @BeforeEach
     void initialize() {
         SpringExpressionLanguageValueResolver.getInstance().withApplicationContext(applicationContext);

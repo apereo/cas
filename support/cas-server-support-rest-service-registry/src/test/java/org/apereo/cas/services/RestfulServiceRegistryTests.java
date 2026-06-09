@@ -22,10 +22,13 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.TestConfiguration;
+import org.springframework.boot.test.util.TestPropertyValues;
+import org.springframework.context.ApplicationContextInitializer;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.test.context.ContextConfiguration;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -50,11 +53,9 @@ import tools.jackson.databind.ObjectMapper;
     CasThemesAutoConfiguration.class,
     CasWebAppAutoConfiguration.class
 },
-    properties = {
-        "cas.service-registry.rest.url=http://localhost:${#applicationContext.get().getEnvironment().getProperty('local.server.port')}/casservices",
-        "cas.service-registry.core.init-from-json=false"
-    },
-    webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
+    properties = "cas.service-registry.core.init-from-json=false",
+    webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT)
+@ContextConfiguration(initializers = RestfulServiceRegistryTests.PortInitializer.class)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Tag("RestfulApi")
 @ExtendWith(CasTestExtension.class)
@@ -64,9 +65,30 @@ class RestfulServiceRegistryTests extends AbstractServiceRegistryTests {
     private static final ObjectMapper MAPPER = JacksonObjectMapperFactory.builder()
         .defaultTypingEnabled(true).build().toObjectMapper();
 
+    static class PortInitializer implements ApplicationContextInitializer<ConfigurableApplicationContext> {
+        @Override
+        public void initialize(final ConfigurableApplicationContext context) {
+            val port = findAvailableTcpPort();
+            TestPropertyValues.of(
+                "server.port=" + port,
+                "cas.service-registry.rest.url=http://localhost:%s/casservices".formatted(port)
+            ).applyTo(context.getEnvironment());
+        }
+
+        private static int findAvailableTcpPort() {
+            try (val socket = new ServerSocket(0)) {
+                socket.setReuseAddress(true);
+                return socket.getLocalPort();
+            } catch (final IOException e) {
+                throw new UncheckedIOException(e);
+            }
+        }
+    }
+
     @Autowired
     @Qualifier("restfulServiceRegistry")
     private ServiceRegistry newServiceRegistry;
+
 
     @TestConfiguration(value = "RestfulServiceRegistryTestConfiguration", proxyBeanMethods = false)
     static class RestfulServiceRegistryTestConfiguration {
@@ -83,7 +105,7 @@ class RestfulServiceRegistryTests extends AbstractServiceRegistryTests {
                 }
             };
         }
-        
+
         @RestController("servicesController")
         @RequestMapping("/casservices")
         public class ServicesController {

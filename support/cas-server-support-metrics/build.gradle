@@ -1,4 +1,6 @@
-description = "Apereo CAS Metrics Support"
+apply plugin: "org.apereo.cas.project-conventions"
+
+description = "Exports CAS metrics for monitoring authentication, ticketing, and runtime behavior."
 ext {
     publishMetadata = true
     projectMetadata = [

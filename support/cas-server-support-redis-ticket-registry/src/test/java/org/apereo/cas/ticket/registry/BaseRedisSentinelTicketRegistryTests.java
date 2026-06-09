@@ -34,7 +34,7 @@ public abstract class BaseRedisSentinelTicketRegistryTests extends BaseTicketReg
     @Autowired
     @Qualifier("redisHealthIndicator")
     protected HealthIndicator redisHealthIndicator;
-
+    
     @Autowired
     @Qualifier(TicketRegistry.BEAN_NAME)
     private TicketRegistry newTicketRegistry;
@@ -42,5 +42,6 @@ public abstract class BaseRedisSentinelTicketRegistryTests extends BaseTicketReg
     @Autowired
     @Qualifier("casRedisTemplates")
     private CasRedisTemplates casRedisTemplates;
+
 
 }

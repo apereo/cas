@@ -1,4 +1,6 @@
-description = "Apereo CAS Password Management - Core Configuration"
+apply plugin: "org.apereo.cas.project-conventions"
+
+description = "Adds password management support for password changes, resets, and account recovery flows."
 dependencies {
     api project(":api:cas-server-core-api-audit")
     

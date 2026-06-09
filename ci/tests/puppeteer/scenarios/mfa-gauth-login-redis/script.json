@@ -1,0 +1,23 @@
+{
+  "dependencies": "gauth,gauth-redis,reports",
+  "conditions": {
+    "docker": "true"
+  },
+  "properties": [
+    "--cas.server.name=https://localhost:8443",
+    "--cas.server.prefix=${cas.server.name}/cas",
+
+    "--cas.monitor.endpoints.endpoint.defaults.access=ANONYMOUS",
+    "--management.endpoints.web.exposure.include=*",
+    "--management.endpoints.access.default=UNRESTRICTED",
+
+    "--cas.authn.mfa.gauth.id=GoogleAuth",
+    "--cas.authn.mfa.gauth.crypto.enabled=false",
+
+    "--cas.authn.mfa.gauth.redis.host=localhost",
+    "--cas.authn.mfa.gauth.redis.port=6379",
+
+    "--logging.level.org.springframework.webflow=warn"
+  ],
+  "initScript": "${PWD}/ci/tests/redis/run-redis-server.sh"
+}

@@ -1,221 +1,225 @@
 class CasActuatorEndpoints {
+    static endpoints() {
+        return PalantirDashboardConfiguration.actuatorEndpoints();
+    }
+
     static health() {
-        return actuatorEndpoints.health;
+        return this.endpoints().health;
     }
 
     static discoveryProfile() {
-        return actuatorEndpoints.discoveryprofile || actuatorEndpoints.discoveryProfile;
+        return this.endpoints().discoveryprofile || this.endpoints().discoveryProfile;
     }
 
     static casConfig() {
-        return actuatorEndpoints.casconfig || actuatorEndpoints.casConfig;
+        return this.endpoints().casconfig || this.endpoints().casConfig;
     }
 
     static env() {
-        return actuatorEndpoints.env;
+        return this.endpoints().env;
     }
 
     static info() {
-        return actuatorEndpoints.info;
+        return this.endpoints().info;
     }
 
     static throttles() {
-        return actuatorEndpoints.throttles;
+        return this.endpoints().throttles;
     }
 
     static statistics() {
-        return actuatorEndpoints.statistics;
+        return this.endpoints().statistics;
     }
 
     static metrics() {
-        return actuatorEndpoints.metrics;
+        return this.endpoints().metrics;
     }
 
     static prometheus() {
-        return actuatorEndpoints.prometheus;
+        return this.endpoints().prometheus;
     }
 
     static auditEvents() {
-        return actuatorEndpoints.auditevents || actuatorEndpoints.auditEvents;
+        return this.endpoints().auditevents || this.endpoints().auditEvents;
     }
 
     static personDirectory() {
-        return actuatorEndpoints.persondirectory || actuatorEndpoints.personDirectory;
+        return this.endpoints().persondirectory || this.endpoints().personDirectory;
     }
 
     static configProps() {
-        return actuatorEndpoints.configprops || actuatorEndpoints.configProps;
+        return this.endpoints().configprops || this.endpoints().configProps;
     }
 
     static mfaDevices() {
-        return actuatorEndpoints.mfadevices || actuatorEndpoints.mfaDevices;
+        return this.endpoints().mfadevices || this.endpoints().mfaDevices;
     }
 
     static refresh() {
-        return actuatorEndpoints.busrefresh || actuatorEndpoints.refresh;
+        return this.endpoints().busrefresh || this.endpoints().refresh;
     }
 
     static shutdown() {
-        return actuatorEndpoints.shutdown;
+        return this.endpoints().shutdown;
     }
 
     static restart() {
-        return actuatorEndpoints.restart;
+        return this.endpoints().restart;
     }
 
     static configurationMetadata() {
-        return actuatorEndpoints.configurationmetadata || actuatorEndpoints.configurationMetadata;
+        return this.endpoints().configurationmetadata || this.endpoints().configurationMetadata;
     }
 
     static attributeConsent() {
-        return actuatorEndpoints.attributeconsent || actuatorEndpoints.attributeConsent;
+        return this.endpoints().attributeconsent || this.endpoints().attributeConsent;
     }
 
     static httpExchanges() {
-        return actuatorEndpoints.httpexchanges || actuatorEndpoints.httpExchanges;
+        return this.endpoints().httpexchanges || this.endpoints().httpExchanges;
     }
 
     static serviceAccess() {
-        return actuatorEndpoints.serviceaccess || actuatorEndpoints.serviceAccess;
+        return this.endpoints().serviceaccess || this.endpoints().serviceAccess;
     }
 
     static springWebflow() {
-        return actuatorEndpoints.springwebflow || actuatorEndpoints.springWebflow;
+        return this.endpoints().springwebflow || this.endpoints().springWebflow;
     }
 
     static events() {
-        return actuatorEndpoints.events;
+        return this.endpoints().events;
     }
 
     static auditLog() {
-        return actuatorEndpoints.auditlog || actuatorEndpoints.auditLog;
+        return this.endpoints().auditlog || this.endpoints().auditLog;
     }
 
     static casFeatures() {
-        return actuatorEndpoints.casfeatures || actuatorEndpoints.casFeatures;
+        return this.endpoints().casfeatures || this.endpoints().casFeatures;
     }
 
     static loggers() {
-        return actuatorEndpoints.loggers;
+        return this.endpoints().loggers;
     }
 
     static loggingConfig() {
-        return actuatorEndpoints.loggingconfig || actuatorEndpoints.loggingConfig;
+        return this.endpoints().loggingconfig || this.endpoints().loggingConfig;
     }
 
     static ticketRegistry() {
-        return actuatorEndpoints.ticketregistry || actuatorEndpoints.ticketRegistry;
+        return this.endpoints().ticketregistry || this.endpoints().ticketRegistry;
     }
 
     static heapDump() {
-        return actuatorEndpoints.heapdump || actuatorEndpoints.heapDump;
+        return this.endpoints().heapdump || this.endpoints().heapDump;
     }
 
     static sessions() {
-        return actuatorEndpoints.sessions;
+        return this.endpoints().sessions;
     }
 
     static ssoSessions() {
-        return actuatorEndpoints.ssosessions || actuatorEndpoints.ssoSessions;
+        return this.endpoints().ssosessions || this.endpoints().ssoSessions;
     }
 
     static registeredServices() {
-        return actuatorEndpoints.registeredservices || actuatorEndpoints.registeredServices;
+        return this.endpoints().registeredservices || this.endpoints().registeredServices;
     }
 
     static oidcJwks() {
-        return actuatorEndpoints.oidcjwks || actuatorEndpoints.oidcJwks;
+        return this.endpoints().oidcjwks || this.endpoints().oidcJwks;
     }
 
     static heimdall() {
-        return actuatorEndpoints.heimdall;
+        return this.endpoints().heimdall;
     }
 
     static logFile() {
-        return actuatorEndpoints.logfile || actuatorEndpoints.logFile;
+        return this.endpoints().logfile || this.endpoints().logFile;
     }
 
     static scheduledTasks() {
-        return actuatorEndpoints.scheduledtasks || actuatorEndpoints.scheduledTasks;
+        return this.endpoints().scheduledtasks || this.endpoints().scheduledTasks;
     }
 
     static multifactorTrustedDevices() {
-        return actuatorEndpoints.multifactoreddevices || actuatorEndpoints.multifactorTrustedDevices;
+        return this.endpoints().multifactoreddevices || this.endpoints().multifactorTrustedDevices;
     }
 
     static multitenancy() {
-        return actuatorEndpoints.multitenancy;
+        return this.endpoints().multitenancy;
     }
 
     static samlPostProfileResponse() {
-        return actuatorEndpoints.samlpostprofileresponse || actuatorEndpoints.samlPostProfileResponse;
+        return this.endpoints().samlpostprofileresponse || this.endpoints().samlPostProfileResponse;
     }
 
     static casValidate() {
-        return actuatorEndpoints.casvalidate || actuatorEndpoints.casValidate;
+        return this.endpoints().casvalidate || this.endpoints().casValidate;
     }
 
     static samlValidate() {
-        return actuatorEndpoints.samlvalidate || actuatorEndpoints.samlValidate;
+        return this.endpoints().samlvalidate || this.endpoints().samlValidate;
     }
 
     static gcpLogs() {
-        return actuatorEndpoints.gcplogs || actuatorEndpoints.gcpLogs;
+        return this.endpoints().gcplogs || this.endpoints().gcpLogs;
     }
 
     static cloudWatchLogs() {
-        return actuatorEndpoints.cloudwatchlogs || actuatorEndpoints.cloudWatchLogs;
+        return this.endpoints().cloudwatchlogs || this.endpoints().cloudWatchLogs;
     }
 
     static attributeDefinitions() {
-        return actuatorEndpoints.attributedefinitions || actuatorEndpoints.attributeDefinitions;
+        return this.endpoints().attributedefinitions || this.endpoints().attributeDefinitions;
     }
 
     static delegatedClients() {
-        return actuatorEndpoints.delegatedclients || actuatorEndpoints.delegatedClients;
+        return this.endpoints().delegatedclients || this.endpoints().delegatedClients;
     }
 
     static authenticationHandlers() {
-        return actuatorEndpoints.authenticationhandlers || actuatorEndpoints.authenticationHandlers;
+        return this.endpoints().authenticationhandlers || this.endpoints().authenticationHandlers;
     }
 
     static ticketExpirationPolicies() {
-        return actuatorEndpoints.ticketexpirationpolicies || actuatorEndpoints.ticketExpirationPolicies;
+        return this.endpoints().ticketexpirationpolicies || this.endpoints().ticketExpirationPolicies;
     }
 
     static authenticationPolicies() {
-        return actuatorEndpoints.authenticationpolicies || actuatorEndpoints.authenticationPolicies;
+        return this.endpoints().authenticationpolicies || this.endpoints().authenticationPolicies;
     }
 
     static entityHistory() {
-        return actuatorEndpoints.entityhistory || actuatorEndpoints.entityHistory;
+        return this.endpoints().entityhistory || this.endpoints().entityHistory;
     }
 
     static samlIdpRegisteredServiceMetadata() {
-        return actuatorEndpoints.samlidpregisteredservicemetadata || actuatorEndpoints.samlIdpRegisteredServiceMetadata;
+        return this.endpoints().samlidpregisteredservicemetadata || this.endpoints().samlIdpRegisteredServiceMetadata;
     }
 
     static samlIdpRegisteredServiceMetadataCache() {
-        return actuatorEndpoints.samlidpregisteredservicemetadatacache || actuatorEndpoints.samlIdpRegisteredServiceMetadataCache;
+        return this.endpoints().samlidpregisteredservicemetadatacache || this.endpoints().samlIdpRegisteredServiceMetadataCache;
     }
 
     static threadDump() {
-        return actuatorEndpoints.threaddump || actuatorEndpoints.threadDump;
+        return this.endpoints().threaddump || this.endpoints().threadDump;
     }
 
     static passwordManagement() {
-        return actuatorEndpoints.passwordmanagement || actuatorEndpoints.passwordManagement;
+        return this.endpoints().passwordmanagement || this.endpoints().passwordManagement;
     }
 
     static impersonation() {
-        return actuatorEndpoints.impersonation;
+        return this.endpoints().impersonation;
     }
 
     static all() {
         return Object.getOwnPropertyNames(CasActuatorEndpoints)
             .filter(name =>
                 typeof CasActuatorEndpoints[name] === "function" &&
-                !["length", "name", "prototype", "all"].includes(name)
+                !["length", "name", "prototype", "all", "endpoints"].includes(name)
             )
             .map(name => ({ name, value: CasActuatorEndpoints[name]() }));
     }

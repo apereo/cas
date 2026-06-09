@@ -1,4 +1,6 @@
-description = "Apereo CAS Multifactor Authentication OTP Support"
+apply plugin: "org.apereo.cas.project-conventions"
+
+description = "Adds one-time password multifactor authentication for CAS login flows."
 dependencies {
     api libraries.googleauth
 

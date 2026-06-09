@@ -1,4 +1,6 @@
-description = "Apereo CAS InfluxDb Core"
+apply plugin: "org.apereo.cas.project-conventions"
+
+description = "Adds shared InfluxDB support used by CAS event and metrics features."
 dependencies {
     api project(":api:cas-server-core-api-ticket")
     api project(":api:cas-server-core-api-services")

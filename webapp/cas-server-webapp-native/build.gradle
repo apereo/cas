@@ -1,8 +1,24 @@
-description = "Apereo CAS Native Graal VM Web Application"
+apply plugin: "org.apereo.cas.project-conventions"
+
+import org.apereo.cas.gradle.CasBuildSettings
+import org.gradle.api.artifacts.ProjectDependency
+
+description = "Builds the CAS web application for GraalVM native image deployments."
+
+def skipAot = providers.systemProperty("skipAot").getOrElse("false") == "true"
 
 apply plugin: "java"
-apply plugin: "org.springframework.boot"
-apply plugin: "org.graalvm.buildtools.native"
+if (skipAot) {
+    logger.info "Skipping GraalVM native plugin for ${project.path} because skipAot=true"
+} else {
+    apply plugin: "org.graalvm.buildtools.native"
+}
+
+if (skipBootifulArtifact) {
+    logger.info "Skipping Spring Boot plugin for ${project.path} because skipBootifulArtifact=true"
+} else {
+    apply plugin: "org.springframework.boot"
+}
 
 ext {
     publishMetadata = true
@@ -14,16 +30,20 @@ ext {
     ]
 }
 
-["processAot", "nativeCompile"].each { name ->
-    tasks.named(name) { task ->
-        task.notCompatibleWithConfigurationCache("${name} is not supported by the Gradle configuration cache")
+plugins.withId("org.graalvm.buildtools.native") {
+    tasks.named("nativeCompile") { task ->
+        task.notCompatibleWithConfigurationCache("nativeCompile is not supported by the Gradle configuration cache")
     }
 }
 
 configurations {
     configureEach {
         withDependencies { deps ->
-            def hasLogback = deps.any { it.group == 'org.apereo.cas' && it.name == 'cas-server-support-logback' }
+            def hasLogback = deps.any { dependency ->
+                dependency instanceof ProjectDependency
+                    ? dependency.path == ':support:cas-server-support-logback'
+                    : dependency.group == 'org.apereo.cas' && dependency.name == 'cas-server-support-logback'
+            }
             if (hasLogback) {
                 it.exclude(group: "org.apache.logging.log4j", module: "log4j-api")
                 it.exclude(group: "org.apache.logging.log4j", module: "log4j-jakarta-web")
@@ -43,11 +63,6 @@ configurations {
 }
 
 dependencies {
-    processAotClasspath libraries.graalvmsdk
-    processAotClasspath libraries.graalvmpolyglot
-    processTestAotClasspath libraries.graalvmsdk
-    processTestAotClasspath libraries.graalvmpolyglot
-    
     implementation project(":webapp:cas-server-webapp-init")
     implementation project(":webapp:cas-server-webapp-resources")
     implementation project(":webapp:cas-server-webapp-init-tomcat")
@@ -88,16 +103,15 @@ dependencies {
     if (casModules != null) {
         def dependencies = casModules.split(",")
         dependencies.each {
-            def projectsToAdd = rootProject.subprojects.findAll {project ->
-                def pattern = /cas-server-${it}|cas-server-core-${it}|cas-server-support-${it}/
-                logger.debug("Matching ${pattern} against CAS module ${project.name}")
-                project.name.matches(pattern)
+            def projectsToAdd = CasBuildSettings.matchingProjectPaths(project, it).findAll { candidatePath ->
+                logger.debug("Matching CAS module selector ${it} against ${candidatePath}")
+                candidatePath != project.path
             }
 
             if (!projectsToAdd.isEmpty()) {
                 ansi.green("Including CAS module(s): ${projectsToAdd} in native web application")
                 projectsToAdd.each {
-                    implementation it
+                    implementation(project(path: it))
                 }
             }
         }
@@ -107,136 +121,151 @@ dependencies {
     testImplementation libraries.graalvmpolyglot
 }
 
-graalvmNative {
-    metadataRepository {
-        enabled = true
-        version = "${libs.versions.graalVmMetadataRepository.get()}"
+plugins.withId("org.graalvm.buildtools.native") {
+    plugins.withId("org.springframework.boot") {
+        tasks.named("processAot") { task ->
+            task.notCompatibleWithConfigurationCache("processAot is not supported by the Gradle configuration cache")
+        }
+
+        dependencies {
+            processAotClasspath libraries.graalvmsdk
+            processAotClasspath libraries.graalvmpolyglot
+            processTestAotClasspath libraries.graalvmsdk
+            processTestAotClasspath libraries.graalvmpolyglot
+        }
+
+        tasks.named("processAot") {
+            enabled = !skipAot
+
+            def list = []
+            list.add("--add-opens")
+            list.add("java.base/java.lang=ALL-UNNAMED")
+            list.add("--add-opens")
+            list.add("java.base/java.util=ALL-UNNAMED")
+            list.add("--add-opens")
+            list.add("java.base/java.util.concurrent=ALL-UNNAMED")
+            list.add("--add-opens")
+            list.add("java.base/java.util.concurrent.locks=ALL-UNNAMED")
+            list.add("--add-opens")
+            list.add("java.base/java.time=ALL-UNNAMED")
+            list.add("--add-opens")
+            list.add("java.base/java.net=ALL-UNNAMED")
+            list.add("--add-opens")
+            list.add("java.base/java.nio=ALL-UNNAMED")
+            list.add("--add-opens")
+            list.add("java.base/sun.nio.ch=ALL-UNNAMED")
+            list.add("--add-opens")
+            list.add("java.management/sun.management=ALL-UNNAMED")
+            list.add("--add-opens")
+            list.add("jdk.management/com.sun.management.internal=ALL-UNNAMED")
+            list.add("--add-opens")
+            list.add("java.base/java.util.regex=ALL-UNNAMED")
+            list.add("--add-opens")
+            list.add("java.rmi/sun.rmi.transport=ALL-UNNAMED")
+            list.add("-Xdebug")
+            list.add("-Xrunjdwp:transport=dt_socket,address=*:5005,server=y,suspend=n")
+
+            jvmArgs = list
+//    systemProperties System.properties
+
+            def aotSpringActiveProfiles = providers.systemProperty("aotSpringActiveProfiles").getOrElse("native")
+            logger.info "AOT processing spring active profile: ${aotSpringActiveProfiles}"
+
+            args(
+                "--spring.profiles.active=${aotSpringActiveProfiles}",
+                "--spring.main.lazy-initialization=false",
+                "--logging.level.org.apereo.cas=info",
+                "--logging.level.org.springframework.core.env=info",
+                "--logging.level.org.springframework.boot=info",
+                "--logging.level.org.springframework.security=warn"
+            )
+        }
     }
+    
+    graalvmNative {
+        metadataRepository {
+            enabled = true
+            version = "${libs.versions.graalVmMetadataRepository.get()}"
+        }
 
-    /*
-        The toolchain detection cannot distinguish between
-        GraalVM JDKs and standard JDKs without Native Image support.
-     */
-    toolchainDetection = false
+        /*
+            The toolchain detection cannot distinguish between
+            GraalVM JDKs and standard JDKs without Native Image support.
+         */
+        toolchainDetection = false
 
-    binaries {
-        main {
-            imageName = "cas"
-            quickBuild = true
-            debug = true
-            verbose = false
-            richOutput = true
-            sharedLibrary = false
-            mainClass = "org.apereo.cas.nativex.CasNativeWebApplication"
-            
-            configurationFileDirectories.from(file('src/graal'))
+        binaries {
+            main {
+                imageName = "cas"
+                quickBuild = true
+                debug = true
+                verbose = false
+                richOutput = true
+                sharedLibrary = false
+                mainClass = "org.apereo.cas.nativex.CasNativeWebApplication"
 
-            buildArgs.add('-H:+ReportExceptionStackTraces')
-            buildArgs.add('-H:+InlineBeforeAnalysis')
-            buildArgs.add('-H:+TraceSecurityServices')
-            buildArgs.add('-H:+PrintAnalysisCallTree')
-            buildArgs.add('-H:+AddAllCharsets')
-            buildArgs.add('-H:+ReportUnsupportedElementsAtRuntime')
-            buildArgs.add('-H:+UnlockExperimentalVMOptions')
-            
-            buildArgs.add('-J-Xmx14G')
-            buildArgs.add('-J-Xms4G')
-            buildArgs.add('--native-image-info')
-            buildArgs.add('--enable-sbom')
-            buildArgs.add('--emit build-report')
+                configurationFileDirectories.from(file('src/graal'))
 
-            def os = org.gradle.internal.os.OperatingSystem.current()
-            if (!os.isMacOsX()) {
-                buildArgs.add('--gc=G1')
-            }
-            buildArgs.add('--enable-monitoring=heapdump,jfr')
+                buildArgs.add('-H:+ReportExceptionStackTraces')
+                buildArgs.add('-H:+InlineBeforeAnalysis')
+                buildArgs.add('-H:+TraceSecurityServices')
+                buildArgs.add('-H:+PrintAnalysisCallTree')
+                buildArgs.add('-H:+AddAllCharsets')
+                buildArgs.add('-H:+ReportUnsupportedElementsAtRuntime')
+                buildArgs.add('-H:+UnlockExperimentalVMOptions')
 
-            buildArgs.add('-march=native')
+                buildArgs.add('-J-Xmx14G')
+                buildArgs.add('-J-Xms4G')
+                buildArgs.add('--native-image-info')
+                buildArgs.add('--enable-sbom')
+                buildArgs.add('--emit build-report')
+
+                def os = org.gradle.internal.os.OperatingSystem.current()
+                if (!os.isMacOsX()) {
+                    buildArgs.add('--gc=G1')
+                }
+                buildArgs.add('--enable-monitoring=heapdump,jfr')
+
+                buildArgs.add('-march=native')
 //            buildArgs.add('--pgo-instrument')
 //            def profileFile = rootProject.file("default.iprof")
 //            if (profileFile.exists()) {
 //                ansi.blue("Using data collected for profile-guided optimizations of AOT-compiled code")
 //                buildArgs.add("--pgo=${profileFile.path}")
 //            }
-            buildArgs.add('--initialize-at-build-time=java.beans')
-            buildArgs.add('--initialize-at-build-time=com.sun.beans')
-            buildArgs.add('--initialize-at-build-time=groovyjarjarantlr4.v4.runtime')
-            buildArgs.add('--initialize-at-build-time=org.codehaus.groovy')
-            buildArgs.add('--initialize-at-build-time=org.apache.groovy')
-            buildArgs.add('--initialize-at-build-time=groovy.lang')
-            buildArgs.add('--initialize-at-build-time=groovyjarjarasm.asm')
-            buildArgs.add('--initialize-at-build-time=com.sun.xml.stream.buffer.sax.DefaultWithLexicalHandler')
-            buildArgs.add('--initialize-at-build-time=org.codehaus.groovy.vmplugin.v16.Java16')
-            
-            buildArgs.add('--initialize-at-run-time=org.codehaus.groovy.vmplugin.v8')
-            buildArgs.add('--initialize-at-run-time=com.sun.xml.ws')
-            buildArgs.add('--initialize-at-run-time=groovy.grape.GrapeIvy')
-            buildArgs.add("--initialize-at-run-time=org.bouncycastle.jcajce.provider.drbg.DRBG\$Default")
-            buildArgs.add("--initialize-at-run-time=org.bouncycastle.jcajce.provider.drbg.DRBG\$NonceAndIV")
+                buildArgs.add('--initialize-at-build-time=java.beans')
+                buildArgs.add('--initialize-at-build-time=com.sun.beans')
+                buildArgs.add('--initialize-at-build-time=groovyjarjarantlr4.v4.runtime')
+                buildArgs.add('--initialize-at-build-time=org.codehaus.groovy')
+                buildArgs.add('--initialize-at-build-time=org.apache.groovy')
+                buildArgs.add('--initialize-at-build-time=groovy.lang')
+                buildArgs.add('--initialize-at-build-time=groovyjarjarasm.asm')
+                buildArgs.add('--initialize-at-build-time=com.sun.xml.stream.buffer.sax.DefaultWithLexicalHandler')
+                buildArgs.add('--initialize-at-build-time=org.codehaus.groovy.vmplugin.v16.Java16')
 
-            buildArgs.add('--features=org.apereo.cas.nativex.features.DefaultNativeImageFeature')
+                buildArgs.add('--initialize-at-run-time=org.codehaus.groovy.vmplugin.v8')
+                buildArgs.add('--initialize-at-run-time=com.sun.xml.ws')
+                buildArgs.add('--initialize-at-run-time=groovy.grape.GrapeIvy')
+                buildArgs.add("--initialize-at-run-time=org.bouncycastle.jcajce.provider.drbg.DRBG\$Default")
+                buildArgs.add("--initialize-at-run-time=org.bouncycastle.jcajce.provider.drbg.DRBG\$NonceAndIV")
 
-            buildArgs.add('--enable-url-protocols=jar,file,resource,http,https')
+                buildArgs.add('--features=org.apereo.cas.nativex.features.DefaultNativeImageFeature')
 
-            runtimeArgs.add('--add-opens=java.base/java.util=ALL-UNNAMED')
-            runtimeArgs.add('--add-opens=java.base/java.lang=ALL-UNNAMED')
-            runtimeArgs.add('--add-opens=java.base/java.util.concurrent=ALL-UNNAMED')
-            runtimeArgs.add('--add-opens=java.base/java.time=ALL-UNNAMED')
-            runtimeArgs.add('--add-opens=java.base/java.net=ALL-UNNAMED')
-            runtimeArgs.add('--add-opens=java.base/java.nio=ALL-UNNAMED')
-            runtimeArgs.add('--add-opens=java.base/java.util.regex=ALL-UNNAMED')
-            runtimeArgs.add('--add-opens=java.base/sun.nio.ch=ALL-UNNAMED')
-            runtimeArgs.add('--add-opens=java.management/sun.management=ALL-UNNAMED')
-            runtimeArgs.add('--add-opens=jdk.management/com.sun.management.internal=ALL-UNNAMED')
-            runtimeArgs.add('--add-opens=java.rmi/sun.rmi.transport=ALL-UNNAMED')
+                buildArgs.add('--enable-url-protocols=jar,file,resource,http,https')
+
+                runtimeArgs.add('--add-opens=java.base/java.util=ALL-UNNAMED')
+                runtimeArgs.add('--add-opens=java.base/java.lang=ALL-UNNAMED')
+                runtimeArgs.add('--add-opens=java.base/java.util.concurrent=ALL-UNNAMED')
+                runtimeArgs.add('--add-opens=java.base/java.time=ALL-UNNAMED')
+                runtimeArgs.add('--add-opens=java.base/java.net=ALL-UNNAMED')
+                runtimeArgs.add('--add-opens=java.base/java.nio=ALL-UNNAMED')
+                runtimeArgs.add('--add-opens=java.base/java.util.regex=ALL-UNNAMED')
+                runtimeArgs.add('--add-opens=java.base/sun.nio.ch=ALL-UNNAMED')
+                runtimeArgs.add('--add-opens=java.management/sun.management=ALL-UNNAMED')
+                runtimeArgs.add('--add-opens=jdk.management/com.sun.management.internal=ALL-UNNAMED')
+                runtimeArgs.add('--add-opens=java.rmi/sun.rmi.transport=ALL-UNNAMED')
+            }
         }
     }
-}
 
-processAot {
-    enabled = providers.systemProperty("skipAot").getOrElse("false") == "false"
-    notCompatibleWithConfigurationCache("processAot is not supported by the Gradle configuration cache")
-
-    def list = []
-    list.add("--add-opens")
-    list.add("java.base/java.lang=ALL-UNNAMED")
-    list.add("--add-opens")
-    list.add("java.base/java.util=ALL-UNNAMED")
-    list.add("--add-opens")
-    list.add("java.base/java.util.concurrent=ALL-UNNAMED")
-    list.add("--add-opens")
-    list.add("java.base/java.util.concurrent.locks=ALL-UNNAMED")
-    list.add("--add-opens")
-    list.add("java.base/java.time=ALL-UNNAMED")
-    list.add("--add-opens")
-    list.add("java.base/java.net=ALL-UNNAMED")
-    list.add("--add-opens")
-    list.add("java.base/java.nio=ALL-UNNAMED")
-    list.add("--add-opens")
-    list.add("java.base/sun.nio.ch=ALL-UNNAMED")
-    list.add("--add-opens")
-    list.add("java.management/sun.management=ALL-UNNAMED")
-    list.add("--add-opens")
-    list.add("jdk.management/com.sun.management.internal=ALL-UNNAMED")
-    list.add("--add-opens")
-    list.add("java.base/java.util.regex=ALL-UNNAMED")
-    list.add("--add-opens")
-    list.add("java.rmi/sun.rmi.transport=ALL-UNNAMED")
-    list.add("-Xdebug")
-    list.add("-Xrunjdwp:transport=dt_socket,address=*:5005,server=y,suspend=n")
-
-    jvmArgs = list
-//    systemProperties System.properties
-
-    def aotSpringActiveProfiles = providers.systemProperty("aotSpringActiveProfiles").getOrElse("native")
-    logger.info "AOT processing spring active profile: ${aotSpringActiveProfiles}"
-    
-    args(
-        "--spring.profiles.active=${aotSpringActiveProfiles}",
-        "--spring.main.lazy-initialization=false",
-        "--logging.level.org.apereo.cas=info",
-        "--logging.level.org.springframework.core.env=info",
-        "--logging.level.org.springframework.boot=info",
-        "--logging.level.org.springframework.security=warn"
-    )
 }

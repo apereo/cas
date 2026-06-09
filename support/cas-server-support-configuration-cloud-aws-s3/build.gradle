@@ -1,4 +1,6 @@
-description = "Apereo CAS Configuration - AWS S3 Objects"
+apply plugin: "org.apereo.cas.project-conventions"
+
+description = "Loads CAS configuration from Amazon S3 so settings can be managed outside the application package."
 ext {
     publishMetadata = true
     projectMetadata = [

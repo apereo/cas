@@ -1,4 +1,6 @@
-description = "Apereo CAS Web Resources"
+apply plugin: "org.apereo.cas.project-conventions"
+
+description = "Packages shared CAS web resources such as views, static assets, and localization files."
 
 dependencies {
     implementation project(":core:cas-server-core-util-api")

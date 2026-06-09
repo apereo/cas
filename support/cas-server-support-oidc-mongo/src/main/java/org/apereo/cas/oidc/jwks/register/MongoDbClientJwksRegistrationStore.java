@@ -21,22 +21,23 @@ public class MongoDbClientJwksRegistrationStore implements ClientJwksRegistratio
     private final String collectionName;
 
     @Override
-    public ClientJwksRegistrationEntry save(final String jkt, final String jwk) {
-        val entry = new ClientJwksRegistrationEntry(jkt, jwk, Instant.now(Clock.systemUTC()));
+    public ClientJwksRegistrationEntry save(final String clientId, final String jkt, final String jwk) {
+        val entry = new ClientJwksRegistrationEntry(jkt, clientId, jwk, Instant.now(Clock.systemUTC()));
         val result = mongoTemplate.findById(entry.jkt(), ClientJwksRegistrationEntry.class, collectionName);
         Optional.ofNullable(result)
             .ifPresentOrElse(entity -> {
                 val update = Update.update("jwk", jwk);
-                val query = new Query(Criteria.where("jkt").is(entry.jkt()));
-                mongoTemplate.updateFirst(query, update, collectionName);
+                val query = new Query(Criteria.where("jkt").is(entry.jkt()).and("clientId").is(entry.clientId()));
+                mongoTemplate.updateFirst(query, update, ClientJwksRegistrationEntry.class, collectionName);
             },
                 () -> mongoTemplate.insert(entry, collectionName));
         return entry;
     }
 
     @Override
-    public Optional<ClientJwksRegistrationEntry> findByJkt(final String jkt) {
-        return Optional.ofNullable(mongoTemplate.findById(jkt, ClientJwksRegistrationEntry.class, collectionName));
+    public Optional<ClientJwksRegistrationEntry> findBy(final String clientId, final String jkt) {
+        val query = new Query(Criteria.where("jkt").is(jkt).and("clientId").is(clientId));
+        return Optional.ofNullable(mongoTemplate.findOne(query, ClientJwksRegistrationEntry.class, collectionName));
     }
 
     @Override
@@ -45,8 +46,8 @@ public class MongoDbClientJwksRegistrationStore implements ClientJwksRegistratio
     }
 
     @Override
-    public void removeByJkt(final String jkt) {
-        val query = new Query(Criteria.where("jkt").is(jkt));
+    public void remove(final String clientId, final String jkt) {
+        val query = new Query(Criteria.where("jkt").is(jkt).and("clientId").is(clientId));
         mongoTemplate.remove(query, ClientJwksRegistrationEntry.class, collectionName);
     }
 

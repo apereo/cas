@@ -1,5 +1,5 @@
 function removeIdentityProvider(idp, type) {
-    if (mutablePropertySourcesAvailable && CasActuatorEndpoints.casConfig()) {
+    if (PalantirDashboardConfiguration.mutablePropertySourcesAvailable() && CasActuatorEndpoints.casConfig()) {
         Swal.fire({
             title: `Are you sure you want to delete ${idp}?`,
             text: `
@@ -127,7 +127,7 @@ function configureSaml2ClientMetadataButtons() {
 
     $("button[name=saml2ClientSpMetadata]").off().on("click", function () {
         $(this).prop("disabled", true);
-        const url = `${casServerPrefix}/sp/${$(this).attr("clientName")}/metadata`;
+        const url = `${PalantirDashboardConfiguration.casServerPrefix()}/sp/${$(this).attr("clientName")}/metadata`;
         $.get(url, payload => showSamlMetadata(payload))
             .always(() => $(this).prop("disabled", false));
 
@@ -135,7 +135,7 @@ function configureSaml2ClientMetadataButtons() {
     $("button[name=saml2ClientIdpMetadata]").off().on("click", function () {
         $(this).prop("disabled", true);
         const clientName = `${$(this).attr("clientName")}`;
-        const url = `${casServerPrefix}/sp/${clientName}/idp/metadata`;
+        const url = `${PalantirDashboardConfiguration.casServerPrefix()}/sp/${clientName}/idp/metadata`;
 
         Swal.fire({
             icon: "info",
@@ -201,7 +201,7 @@ async function loadExternalIdentityProvidersTable() {
 }
 
 function newExternalIdentityProvider() {
-    if (mutablePropertySourcesAvailable && CasActuatorEndpoints.casConfig()) {
+    if (PalantirDashboardConfiguration.mutablePropertySourcesAvailable() && CasActuatorEndpoints.casConfig()) {
         const dialogContainer = $("<div>", {
             id: "newExternalIdentityProviderDialog"
         });
@@ -587,6 +587,5 @@ function newExternalIdentityProvider() {
         dialogContainer.dialog("open");
     }
 }
-
 
 

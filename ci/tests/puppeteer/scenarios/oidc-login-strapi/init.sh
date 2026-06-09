@@ -12,7 +12,7 @@ else
     exit $retVal
 fi
 
-docker run -d -p 1337:1337 \
+docker run --quiet  -d -p 1337:1337 \
   --add-host host.docker.internal:host-gateway \
   --add-host localhost:host-gateway \
   --name="strapi-server" cas/strapi:latest

@@ -12,19 +12,21 @@ public interface ClientJwksRegistrationStore {
     /**
      * Save.
      *
-     * @param jkt the jkt
-     * @param jwk the jwk
+     * @param clientId the client id
+     * @param jkt      the jkt
+     * @param jwk      the jwk
      * @return the client jwks registration entry
      */
-    ClientJwksRegistrationEntry save(String jkt, String jwk);
+    ClientJwksRegistrationEntry save(String clientId, String jkt, String jwk);
 
     /**
      * Find by jkt optional.
      *
-     * @param jkt the jkt
+     * @param clientId the client id
+     * @param jkt      the jkt
      * @return the optional
      */
-    Optional<ClientJwksRegistrationEntry> findByJkt(String jkt);
+    Optional<ClientJwksRegistrationEntry> findBy(String clientId, String jkt);
 
     /**
      * Load list.
@@ -36,9 +38,10 @@ public interface ClientJwksRegistrationStore {
     /**
      * Remove by jkt.
      *
-     * @param jkt the jkt
+     * @param clientId the client id
+     * @param jkt      the jkt
      */
-    void removeByJkt(String jkt);
+    void remove(String clientId, String jkt);
 
     /**
      * Remove all.

@@ -1,4 +1,6 @@
-description = "Apereo CAS Web Application Protocol Validation"
+apply plugin: "org.apereo.cas.project-conventions"
+
+description = "Provides shared protocol validation behavior for CAS service ticket checks."
 dependencies {
     implementation project(":core:cas-server-core-authentication-attributes")
     implementation project(":core:cas-server-core-authentication-mfa")

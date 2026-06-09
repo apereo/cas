@@ -1,4 +1,6 @@
-description = "Apereo CAS Sentry Monitoring and Tracking Support"
+apply plugin: "org.apereo.cas.project-conventions"
+
+description = "Sends CAS errors and performance data to Sentry for monitoring and diagnostics."
 ext {
     publishMetadata = true
     projectMetadata = [

@@ -25,7 +25,8 @@ import org.pac4j.jee.context.JEEContext;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.util.Assert;
-import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.server.ResponseStatusException;
 import org.springframework.web.util.UriComponentsBuilder;
@@ -65,11 +66,11 @@ public class OidcLogoutEndpointController extends BaseOidcController {
      * @return the response entity
      * @throws Exception the exception
      */
-    @GetMapping({
+    @RequestMapping(path = {
         '/' + OidcConstants.BASE_OIDC_URL + '/' + OidcConstants.LOGOUT_URL,
         '/' + OidcConstants.BASE_OIDC_URL + "/logout",
         "/**/" + OidcConstants.LOGOUT_URL
-    })
+    }, method = {RequestMethod.GET, RequestMethod.POST})
     @Operation(summary = "Handle OIDC logout request",
         parameters = {
             @Parameter(name = OidcConstants.POST_LOGOUT_REDIRECT_URI,

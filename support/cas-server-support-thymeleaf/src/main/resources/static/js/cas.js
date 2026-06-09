@@ -123,6 +123,43 @@ function camelcaseToTitleCase(str) {
         .trim();
 }
 
+function changeLanguage(lang) {
+    const url = new URL(window.location.href);
+    url.searchParams.set('locale', lang);
+    window.location.href = url.toString();
+}
+
+function setDirectionOnFields() {
+    const textElements = [
+        "p",
+        "span",
+        "a",
+        "button",
+        "h1",
+        "h2",
+        "h3",
+        "h4",
+        "h5",
+        "h6",
+        "i",
+        "b",
+        "div",
+        "strong",
+        "label",
+        "li",
+        "td",
+        "th",
+        "option"
+    ].join(", ");
+
+    $(textElements)
+        .not("[dir]")
+        .attr("dir", "auto");
+    $("input[type='text'], input[type='search'], input[type='email'], textarea")
+        .not("[dir]")
+        .attr("dir", "auto");
+}
+
 function flattenJSON(data) {
     let result = {};
     let l = undefined;
@@ -487,6 +524,8 @@ function resourceLoadedSuccessfully() {
         if (typeof hljs !== "undefined") {
             hljs.highlightAll();
         }
+
+        setDirectionOnFields();
     });
 }
 

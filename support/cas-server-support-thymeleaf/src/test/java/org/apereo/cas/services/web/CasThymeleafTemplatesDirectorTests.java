@@ -73,6 +73,7 @@ class CasThymeleafTemplatesDirectorTests {
         assertFalse(director.isLoginFormUsernameInputDisabled(webEngine));
         assertFalse(director.getLoginFormUsername(webEngine).isEmpty());
         assertNotNull(director.format(LocalDateTime.now(Clock.systemUTC()), "yyyy/mm/dd"));
+        assertNotNull(director.sort(new Object[] {"a", "v", "c"}));
 
         assertNotNull(casThymeleafExpressionDialect.getName());
 

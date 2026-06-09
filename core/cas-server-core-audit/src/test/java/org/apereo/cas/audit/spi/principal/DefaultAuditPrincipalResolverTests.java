@@ -52,7 +52,7 @@ class DefaultAuditPrincipalResolverTests {
     @Autowired
     private ConfigurableApplicationContext applicationContext;
 
-    
+
     @ParameterizedTest
     @MethodSource("getAuditParameters")
     void verifyOperation(final Object argument, final Object returnValue) {
@@ -124,6 +124,7 @@ class DefaultAuditPrincipalResolverTests {
         val credentials = RegisteredServiceTestUtils.getCredentialsWithSameUsernameAndPassword(UUID.randomUUID().toString());
         val transaction = CoreAuthenticationTestUtils.getAuthenticationTransactionFactory().newTransaction(credentials);
         val authenticationResult = CoreAuthenticationTestUtils.getAuthenticationResult(authentication);
+        transaction.collect(List.of(authentication));
 
         val ticketGrantingTicket = new TicketGrantingTicketImpl(UUID.randomUUID().toString(), authentication, NeverExpiresExpirationPolicy.INSTANCE);
         val sloRequest = SingleLogoutExecutionRequest.builder()
@@ -143,7 +144,7 @@ class DefaultAuditPrincipalResolverTests {
 
         val httpRequest = new MockHttpServletRequest();
         httpRequest.setAttribute(Principal.class.getName(), authentication.getPrincipal());
-        
+
         return Stream.of(
             arguments(context, null),
             arguments(sloRequest, null),

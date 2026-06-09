@@ -1,4 +1,6 @@
-description = "Apereo CAS Memcached Support via Memcached"
+apply plugin: "org.apereo.cas.project-conventions"
+
+description = "Adds shared Memcached support for CAS caching and storage features."
 ext {
     publishMetadata = true
     projectMetadata = [

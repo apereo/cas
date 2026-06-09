@@ -1,4 +1,6 @@
-description = "Apereo CAS Consent Support via DynamoDb"
+apply plugin: "org.apereo.cas.project-conventions"
+
+description = "Stores user consent decisions in Amazon DynamoDB for attribute release and privacy workflows."
 ext {
     publishMetadata = true
     projectMetadata = [

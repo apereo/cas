@@ -1,4 +1,6 @@
-description = "Apereo CAS REST JWT Tickets Implementation"
+apply plugin: "org.apereo.cas.project-conventions"
+
+description = "Adds REST endpoints for issuing and managing JWT-backed CAS tickets."
 ext {
     publishMetadata = true
     projectMetadata = [

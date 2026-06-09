@@ -1,4 +1,6 @@
-description = "Apereo CAS WebAuthN LDAP Support"
+apply plugin: "org.apereo.cas.project-conventions"
+
+description = "Stores WebAuthn/FIDO2 credential data in an LDAP directory for passkey-based authentication."
 ext {
     publishMetadata = true
     projectMetadata = [

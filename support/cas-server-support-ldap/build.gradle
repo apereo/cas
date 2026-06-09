@@ -1,4 +1,6 @@
-description = "Apereo CAS LDAP Support"
+apply plugin: "org.apereo.cas.project-conventions"
+
+description = "Adds LDAP directory support for authentication, attributes, and directory-backed integrations."
 ext {
         publishMetadata = true
         projectMetadata = [

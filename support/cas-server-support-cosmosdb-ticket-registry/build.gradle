@@ -1,4 +1,6 @@
-description = "Apereo CAS Azure Cosmos DB Ticket Registry"
+apply plugin: "org.apereo.cas.project-conventions"
+
+description = "Stores CAS tickets in Azure Cosmos DB for shared single sign-on state across server nodes."
 ext {
 
     publishMetadata = true

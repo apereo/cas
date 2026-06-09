@@ -26,6 +26,7 @@
     border-radius: 8px !important;
     height: 30px !important;
     padding-left: 5px !important;
+    padding-right: 5px !important;
     font-family: var(--mdc-typography-font-family) !important;
     font-size: 11pt !important;
 }
@@ -233,6 +234,10 @@ ul.ui-widget-header {
     background-color: #c5dff0 !important;
 }
 
+select + span[role="combobox"] {
+    margin-bottom: .5rem !important;
+}
+
 #registeredServiceDescriptionEditorContainer {
     width: 100%;
 }
@@ -245,6 +250,32 @@ ul.ui-widget-header {
 
 #registeredServiceDescriptionEditorContainer .trumbowyg-editor {
     padding: 10px;
+}
 
+#configurationPropertyInfo {
+    font-size: small !important;
+    font-family: var(--mdc-typography-font-family) !important;
+}
+
+.ui-autocomplete {
+    max-height: 250px;
+    overflow-y: auto;
+    overflow-x: hidden;
+    border: none;
+    background: #c5dff0 !important;
+    font-family: var(--mdc-typography-font-family) !important;
+    font-size: small !important;
+    z-index: 9999;
+}
+
+.ui-autocomplete .ui-menu-item-wrapper {
+    padding: 8px 12px;
+    cursor: pointer;
+}
+
+.ui-autocomplete .ui-menu-item-wrapper.ui-state-active {
+    background: var(--mdc-theme-primary);
+    color: whitesmoke;
+    border: none;
 }
 

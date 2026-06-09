@@ -1,4 +1,6 @@
-description = "Apereo CAS Server Slack Notifications Support"
+apply plugin: "org.apereo.cas.project-conventions"
+
+description = "Sends CAS notifications through Slack."
 ext {
     publishMetadata = true
     projectMetadata = [

@@ -1,4 +1,6 @@
-description = "Apereo CAS Permit.io Integration"
+apply plugin: "org.apereo.cas.project-conventions"
+
+description = "Integrates Permit.io for externalized authorization decisions in CAS."
 ext {
     publishMetadata = true
     projectMetadata = [
