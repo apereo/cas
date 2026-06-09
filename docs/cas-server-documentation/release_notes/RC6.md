@@ -133,3 +133,4 @@ to tighten and improve the security posture of registration request:
 - Redis integration tests have switched to use Redis `8.8.x`.
 - The [Spring Expression Language](../configuration/Configuration-Spring-Expressions.html) parser is tightened to run in a sandboxed environment.
 - [Delegated authentication](../integration/Delegate-Authentication.html) can now handle JSON serialization of complex attribute definitions that may carry maps. 
+- Small enhancements to [CAS audits](../audits/Audits.html) to correctly identify the audited principal.
