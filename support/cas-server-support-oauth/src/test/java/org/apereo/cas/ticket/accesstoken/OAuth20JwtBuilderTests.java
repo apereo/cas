@@ -59,6 +59,7 @@ class OAuth20JwtBuilderTests extends AbstractOAuth20Tests {
         assertEquals("clientid2-jwt", claims.getAudience().getFirst());
         assertEquals("apereo-cas", claims.getClaim("givenName"));
         assertEquals("cas", claims.getClaim("uid"));
+        assertEquals("clientid2-jwt", claims.getClaim("client_id"));
 
     }
 }
