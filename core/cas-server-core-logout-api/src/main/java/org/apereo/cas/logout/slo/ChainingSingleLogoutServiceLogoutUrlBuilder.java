@@ -24,7 +24,7 @@ public class ChainingSingleLogoutServiceLogoutUrlBuilder implements SingleLogout
                                                           final Optional<HttpServletRequest> httpRequest) {
         return singleLogoutServiceLogoutUrlBuilders
             .stream()
-            .sorted(Comparator.comparing(SingleLogoutServiceLogoutUrlBuilder::getOrder))
+            .sorted(Comparator.comparingInt(SingleLogoutServiceLogoutUrlBuilder::getOrder))
             .filter(builder -> builder.supports(registeredService, singleLogoutService, httpRequest))
             .map(builder -> builder.determineLogoutUrl(registeredService, singleLogoutService, httpRequest))
             .flatMap(Collection::stream)

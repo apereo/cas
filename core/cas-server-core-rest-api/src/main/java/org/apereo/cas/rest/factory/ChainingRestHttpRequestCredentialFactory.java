@@ -25,7 +25,7 @@ public class ChainingRestHttpRequestCredentialFactory implements RestHttpRequest
 
     public ChainingRestHttpRequestCredentialFactory(final RestHttpRequestCredentialFactory... chain) {
         this.chain = Stream.of(chain)
-            .sorted(Comparator.comparing(RestHttpRequestCredentialFactory::getOrder))
+            .sorted(Comparator.comparingInt(RestHttpRequestCredentialFactory::getOrder))
             .collect(Collectors.toList());
     }
 
@@ -46,7 +46,7 @@ public class ChainingRestHttpRequestCredentialFactory implements RestHttpRequest
                                         final MultiValueMap<String, String> requestBody) {
         return this.chain
             .stream()
-            .sorted(Comparator.comparing(RestHttpRequestCredentialFactory::getOrder))
+            .sorted(Comparator.comparingInt(RestHttpRequestCredentialFactory::getOrder))
             .map(Unchecked.function(f -> f.fromRequest(request, requestBody)))
             .flatMap(List::stream)
             .collect(Collectors.toList());
@@ -59,7 +59,7 @@ public class ChainingRestHttpRequestCredentialFactory implements RestHttpRequest
                                                final MultifactorAuthenticationProvider provider) {
         return this.chain
             .stream()
-            .sorted(Comparator.comparing(RestHttpRequestCredentialFactory::getOrder))
+            .sorted(Comparator.comparingInt(RestHttpRequestCredentialFactory::getOrder))
             .map(f -> f.fromAuthentication(request, requestBody, authentication, provider))
             .flatMap(List::stream)
             .collect(Collectors.toList());

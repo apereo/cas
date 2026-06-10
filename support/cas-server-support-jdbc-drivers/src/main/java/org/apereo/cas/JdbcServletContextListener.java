@@ -32,7 +32,7 @@ public class JdbcServletContextListener implements ServletContextListener {
 
         while (drivers.hasNext()) {
             val driver = drivers.next();
-            if (driver.getClass().getClassLoader() == cl) {
+            if (Objects.equals(driver.getClass().getClassLoader(), cl)) {
                 try {
                     logger.fine("Attempting to deregister JDBC driver " + driver);
                     DriverManager.deregisterDriver(driver);

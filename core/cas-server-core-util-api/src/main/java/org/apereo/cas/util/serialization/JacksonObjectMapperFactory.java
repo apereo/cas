@@ -240,26 +240,16 @@ public class JacksonObjectMapperFactory {
     }
 
     private MapperBuilder determineMapperInstance() {
-        switch (jsonFactory) {
-            case final YAMLFactory factory -> {
-                return YAMLMapper.builder(factory);
-            }
-            case final XmlFactory factory -> {
-                return XmlMapper.builder(factory);
-            }
-            case final CBORFactory factory -> {
-                return CBORMapper.builder(factory);
-            }
-            case final SmileFactory factory -> {
-                return SmileMapper.builder(factory);
-            }
-            case final JsonFactory factory -> {
-                return JsonMapper.builder(factory)
-                    .configure(JsonReadFeature.ALLOW_UNESCAPED_CONTROL_CHARS, isQuoteFieldNames())
-                    .configure(JsonWriteFeature.QUOTE_PROPERTY_NAMES, isQuoteFieldNames());
-            }
+        return switch (jsonFactory) {
+            case final YAMLFactory factory -> YAMLMapper.builder(factory);
+            case final XmlFactory factory -> XmlMapper.builder(factory);
+            case final CBORFactory factory -> CBORMapper.builder(factory);
+            case final SmileFactory factory -> SmileMapper.builder(factory);
+            case final JsonFactory factory -> JsonMapper.builder(factory)
+                .configure(JsonReadFeature.ALLOW_UNESCAPED_CONTROL_CHARS, isQuoteFieldNames())
+                .configure(JsonWriteFeature.QUOTE_PROPERTY_NAMES, isQuoteFieldNames());
             default -> throw new IllegalStateException("Unexpected value: " + jsonFactory);
-        }
+        };
     }
 
     private static JacksonModule getCasJacksonModule() {

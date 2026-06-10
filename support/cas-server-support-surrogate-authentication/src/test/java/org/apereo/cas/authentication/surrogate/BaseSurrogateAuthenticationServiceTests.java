@@ -52,14 +52,15 @@ public abstract class BaseSurrogateAuthenticationServiceTests {
 
     @Test
     void verifyUserAllowedToProxy() throws Throwable {
-        assertFalse(getService().getImpersonationAccounts(getTestUser(), Optional.empty()).isEmpty());
+        assertUserIsAllowedToProxy();
     }
+    
 
     @Test
     void verifyUserNotAllowedToProxy() throws Throwable {
-        assertTrue(getService().getImpersonationAccounts("unknown-user", Optional.empty()).isEmpty());
+        assertUserIsNotAllowedToProxy();
     }
-
+    
     @Test
     void verifyProxying() throws Throwable {
         val service = Optional.of(RegisteredServiceTestUtils.getService(UUID.randomUUID().toString()));
@@ -76,6 +77,10 @@ public abstract class BaseSurrogateAuthenticationServiceTests {
 
     @Test
     void verifyWildcard() throws Throwable {
+        assertWildcardImpersonation();
+    }
+
+    protected void assertWildcardImpersonation() throws Throwable {
         val service = Optional.of(RegisteredServiceTestUtils.getService(UUID.randomUUID().toString()));
         val registeredService = RegisteredServiceTestUtils.getRegisteredService(service.get().getId());
         registeredService.setAccessStrategy(new DefaultRegisteredServiceAccessStrategy());
@@ -91,6 +96,14 @@ public abstract class BaseSurrogateAuthenticationServiceTests {
 
     public String getTestUser() {
         return "casuser";
+    }
+
+    protected void assertUserIsNotAllowedToProxy() throws Throwable {
+        assertTrue(getService().getImpersonationAccounts("unknown-user", Optional.empty()).isEmpty());
+    }
+    
+    protected void assertUserIsAllowedToProxy() throws Throwable {
+        assertFalse(getService().getImpersonationAccounts(getTestUser(), Optional.empty()).isEmpty());
     }
 
     @SpringBootTestAutoConfigurations

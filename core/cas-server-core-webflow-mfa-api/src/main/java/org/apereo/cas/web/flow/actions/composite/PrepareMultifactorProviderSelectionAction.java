@@ -59,7 +59,7 @@ public class PrepareMultifactorProviderSelectionAction extends BaseCasWebflowAct
             .filter(provider -> provider.isAvailable(registeredService)
                 && provider.getBypassEvaluator().shouldMultifactorAuthenticationProviderExecute(
                     authentication, registeredService, provider, request, service))
-            .sorted(Comparator.comparing(MultifactorAuthenticationProvider::getOrder))
+            .sorted(Comparator.comparingInt(MultifactorAuthenticationProvider::getOrder))
             .map(MultifactorAuthenticationProvider::getId)
             .collect(Collectors.toList());
         MultifactorAuthenticationWebflowUtils.putSelectableMultifactorAuthenticationProviders(requestContext, mfaProviders);
