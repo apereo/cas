@@ -28,14 +28,14 @@
 
             function showPanel(element) {
                 let effectiveElement = element;
-                if (element === null || element === '' && element === undefined) {
+                if (element === null || element === '' || element === undefined) {
                     effectiveElement = "#divOverview";
                 }
                 $('div.profile-content').hide();
                 $(effectiveElement).show();
-                $("#navigationMenu ul li").removeClass("active");
+                $("#navigationMenu ul li").removeClass("active").removeAttr("aria-current");
                 const liElement = effectiveElement.replace("#div", "#link");
-                $(liElement).addClass("active");
+                $(liElement).addClass("active").attr("aria-current", "page");
                 window.localStorage.setItem("AccountProfileSelectedTab", effectiveElement);
             }
         </script>

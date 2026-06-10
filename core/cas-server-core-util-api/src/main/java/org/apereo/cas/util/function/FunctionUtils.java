@@ -159,7 +159,7 @@ public class FunctionUtils {
      * @param trueFunction the true function
      * @return the @ nullable t
      */
-    public static <T> @Nullable T doIfNotBlank(final CharSequence input,
+    public static <T> T doIfNotBlank(final CharSequence input,
                                                final CheckedSupplier<T> trueFunction) {
         return doIfNotBlank(input, trueFunction, () -> null);
     }
@@ -173,7 +173,7 @@ public class FunctionUtils {
      * @param falseFunction the false function
      * @return the t
      */
-    public static <T> @Nullable T doIfNotBlank(final CharSequence input,
+    public static <T> T doIfNotBlank(final CharSequence input,
                                                final CheckedSupplier<T> trueFunction,
                                                final CheckedSupplier<T> falseFunction) {
         return doAndHandle(() -> StringUtils.isNotBlank(input) ? trueFunction.get() : falseFunction.get());

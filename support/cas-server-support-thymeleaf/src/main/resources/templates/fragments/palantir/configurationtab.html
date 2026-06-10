@@ -93,7 +93,7 @@
                                         .attr("id", "mylabel")
                                         .css("display", "block")
                                         .css("min-width", "max-content")
-                                        .attr("for", "propertySourcesSelectContainer").text("Property Source(s):");
+                                        .attr("for", "propertySourcesSelect").text("Property Source(s):");
                                     container.append(label, select);
                                     section.append(container);
                                     
@@ -125,7 +125,7 @@
                                         .attr("id", "propertyNameLabel")
                                         .css("display", "block")
                                         .css("min-width", "max-content")
-                                        .attr("for", "propertyNameSelectContainer").text("Property Name:");
+                                        .attr("for", "newConfigPropertyName").text("Property Name:");
                                     nameContainer.append(labelName, selectName);
                                     propertyNameSection.append(nameContainer);
                                     $(`#newConfigurationMainPanel`).prepend(propertyNameSection);
@@ -288,7 +288,7 @@
                     </section>
                     <div class="d-flex">
                         <button type="submit" name="configSearchButton" id="configSearchButton"
-                                class="mdc-button mdc-button--raised">
+                                class="mdc-button mdc-button--raised drop-button">
                             <span class="mdc-button__label"><i class="mdc-tab__icon mdi mdi-magnify"
                                                                aria-hidden="true"></i>Search</span>
                         </button>
