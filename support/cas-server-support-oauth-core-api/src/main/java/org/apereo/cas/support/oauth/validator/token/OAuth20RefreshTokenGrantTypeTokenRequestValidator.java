@@ -62,13 +62,13 @@ public class OAuth20RefreshTokenGrantTypeTokenRequestValidator extends BaseOAuth
         val accessResult = configurationContext.getRegisteredServiceAccessStrategyEnforcer().execute(audit);
         accessResult.throwExceptionIfNeeded();
 
-        if (!isGrantTypeSupportedBy(registeredService, grantType)) {
+        if (!isGrantTypeSupportedBy(Objects.requireNonNull(registeredService), grantType)) {
             LOGGER.warn("Requested grant type [{}] is not authorized by service definition [{}]",
                 grantType, Objects.requireNonNull(registeredService).getServiceId());
             return false;
         }
 
-        if (!Strings.CI.equals(refreshToken.getClientId(), clientId)) {
+        if (refreshToken != null && !Strings.CI.equals(refreshToken.getClientId(), clientId)) {
             LOGGER.warn("Provided refresh token [{}] does not belong to client [{}]", refreshToken.getId(), clientId);
             return false;
         }

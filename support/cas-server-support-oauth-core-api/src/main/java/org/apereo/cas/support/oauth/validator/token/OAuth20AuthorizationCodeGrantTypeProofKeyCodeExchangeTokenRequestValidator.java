@@ -2,7 +2,6 @@ package org.apereo.cas.support.oauth.validator.token;
 
 import module java.base;
 import org.apereo.cas.support.oauth.web.endpoints.OAuth20ConfigurationContext;
-import org.jspecify.annotations.NonNull;
 import org.springframework.beans.factory.ObjectProvider;
 
 /**
@@ -14,7 +13,7 @@ import org.springframework.beans.factory.ObjectProvider;
 public class OAuth20AuthorizationCodeGrantTypeProofKeyCodeExchangeTokenRequestValidator
     extends OAuth20AuthorizationCodeGrantTypeTokenRequestValidator {
     public OAuth20AuthorizationCodeGrantTypeProofKeyCodeExchangeTokenRequestValidator(
-        final ObjectProvider<@NonNull OAuth20ConfigurationContext> configurationContext) {
+        final ObjectProvider<OAuth20ConfigurationContext> configurationContext) {
         super(configurationContext);
     }
 }
