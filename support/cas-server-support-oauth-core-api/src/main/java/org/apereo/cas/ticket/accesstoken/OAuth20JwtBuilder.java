@@ -10,6 +10,7 @@ import org.apereo.cas.services.RegisteredServiceAttributeReleasePolicyContext;
 import org.apereo.cas.services.RegisteredServiceCipherExecutor;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.oauth.OAuth20Constants;
+import org.apereo.cas.support.oauth.services.OAuthRegisteredService;
 import org.apereo.cas.support.oauth.util.OAuth20Utils;
 import org.apereo.cas.token.JwtBuilder;
 import org.apereo.cas.util.crypto.CipherExecutor;
@@ -50,6 +51,9 @@ public class OAuth20JwtBuilder extends JwtBuilder {
         val jwtClaims = JwtClaims.parse(claimsSet.toString());
         if (jwtClaims.hasClaim(OAuth20Constants.SCOPE) && jwtClaims.isClaimValueStringList(OAuth20Constants.SCOPE)) {
             jwtClaims.setClaim(OAuth20Constants.SCOPE, String.join(" ", jwtClaims.getStringListClaimValue(OAuth20Constants.SCOPE)));
+        }
+        if (payload.getRegisteredService().isPresent()) {
+            jwtClaims.setClaim(OAuth20Constants.CLIENT_ID, ((OAuthRegisteredService) payload.getRegisteredService().get()).getClientId());
         }
         return JWTClaimsSet.parse(jwtClaims.getClaimsMap());
     }
