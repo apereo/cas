@@ -172,13 +172,14 @@ class OAuth20JwtAccessTokenEncoderTests {
             val encodedAccessToken = OAuth20JwtAccessTokenEncoder.toEncodableCipher(configurationContext, registeredService, accessToken).encode(accessToken.getId());
             assertNotNull(encodedAccessToken);
             val claims = JwtClaims.parse(JwtBuilder.parse(encodedAccessToken).toString());
-            assertEquals(6, claims.getClaimNames().size());
+            assertEquals(7, claims.getClaimNames().size());
             assertTrue(claims.hasClaim("sub"));
             assertTrue(claims.hasClaim("iss"));
             assertTrue(claims.hasClaim("aud"));
             assertTrue(claims.hasClaim("exp"));
             assertTrue(claims.hasClaim("iat"));
             assertTrue(claims.hasClaim("jti"));
+            assertTrue(claims.hasClaim("client_id"));
         }
     }
 
