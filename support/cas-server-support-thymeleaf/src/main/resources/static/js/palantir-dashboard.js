@@ -111,8 +111,8 @@ function retrieveDashboardUrl() {
 function selectSidebarMenuButton(selectedItem) {
     const index = $(selectedItem).data("tab-index");
     if (index !== Tabs.SETTINGS.index && index !== Tabs.LOGOUT.index) {
-        $("nav.sidebar-navigation ul li").removeClass("active");
-        $(selectedItem).addClass("active");
+        $("nav.sidebar-navigation ul li").removeClass("active").removeAttr("aria-current");
+        $(selectedItem).addClass("active").attr("aria-current", "page");
         window.localStorage.setItem("PalantirSelectedTab", index);
     }
     return index;

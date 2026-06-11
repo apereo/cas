@@ -121,6 +121,11 @@ document.addEventListener("DOMContentLoaded", () => {
         hideBanner();
         const index = selectSidebarMenuButton(this);
         activateDashboardTab(index);
+    }).on("keydown", function (event) {
+        if (event.key === "Enter" || event.key === " ") {
+            event.preventDefault();
+            $(this).trigger("click");
+        }
     });
     Swal.fire({
         icon: "info",

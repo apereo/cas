@@ -73,7 +73,8 @@ public class OAuth20Utils {
      * @return the model and view
      */
     public static ModelAndView writeError(final HttpServletResponse response,
-                                          final String error, final String description) {
+                                          final String error,
+                                          @Nullable final String description) {
         val model = getErrorResponseBody(error, description);
         val mv = new ModelAndView(new JacksonJsonView(MAPPER), model);
         mv.setStatus(HttpStatus.BAD_REQUEST);
@@ -88,7 +89,7 @@ public class OAuth20Utils {
      * @param description the description
      * @return the error response body
      */
-    public static Map<String, Object> getErrorResponseBody(final String error, final String description) {
+    public static Map<String, Object> getErrorResponseBody(final String error, @Nullable final String description) {
         val model = CollectionUtils.<String, Object>wrap(OAuth20Constants.ERROR, error);
         if (StringUtils.isNotBlank(description)) {
             model.put(OAuth20Constants.ERROR_DESCRIPTION, description);
@@ -112,8 +113,7 @@ public class OAuth20Utils {
             () -> {
                 val query = RegisteredServiceQuery.of(OAuthRegisteredService.class, "clientId", clientId).withIncludeAssignableTypes(true);
                 return servicesManager.findServicesBy(query).findFirst().map(clazz::cast).orElse(null);
-            },
-            () -> null);
+            });
     }
 
     /**
@@ -137,10 +137,9 @@ public class OAuth20Utils {
      */
     public static @Nullable OAuthRegisteredService getRegisteredOAuthServiceByRedirectUri(final ServicesManager servicesManager,
                                                                                           final String redirectUri) {
-        validateRedirectUri(redirectUri);
-        return FunctionUtils.doIfNotBlank(redirectUri,
-            () -> getRegisteredOAuthServiceByPredicate(servicesManager, service -> service.matches(redirectUri)),
-            () -> null);
+        return validateRedirectUri(redirectUri, false)
+            ? getRegisteredOAuthServiceByPredicate(servicesManager, service -> service.matches(redirectUri))
+            : null;
     }
 
     private static @Nullable OAuthRegisteredService getRegisteredOAuthServiceByPredicate(final ServicesManager servicesManager,
@@ -271,9 +270,11 @@ public class OAuth20Utils {
      */
     public static boolean checkCallbackValid(final @NonNull RegisteredService registeredService,
                                              final String redirectUri) {
-        val matchingStrategy = Optional.of(registeredService).map(RegisteredService::getMatchingStrategy).orElse(null);
-        validateRedirectUri(redirectUri);
-        if (matchingStrategy == null || !matchingStrategy.matches(registeredService, redirectUri)) {
+        val validRedirectUri = validateRedirectUri(redirectUri, false);
+        val matchingStrategy = Optional.of(registeredService)
+            .map(RegisteredService::getMatchingStrategy)
+            .orElse(null);
+        if (!validRedirectUri || matchingStrategy == null || !matchingStrategy.matches(registeredService, redirectUri)) {
             LOGGER.warn("Unsupported [{}]: [{}] does not match what is defined for registered service: [{}]. "
                     + "Service is considered unauthorized. Verify the service matching strategy used in the service "
                     + "definition is correct and does in fact match the client [{}]",
@@ -306,7 +307,7 @@ public class OAuth20Utils {
      * @param profile the profile
      * @return the client id from authenticated profile
      */
-    public static String getClientIdFromAuthenticatedProfile(final UserProfile profile) {
+    public static @Nullable String getClientIdFromAuthenticatedProfile(final UserProfile profile) {
         val attrs = new HashMap<>(profile.getAttributes());
         if (attrs.containsKey(OAuth20Constants.CLIENT_ID)) {
             val attribute = attrs.get(OAuth20Constants.CLIENT_ID);
@@ -354,11 +355,18 @@ public class OAuth20Utils {
      *
      * @param redirectUri the redirect uri
      */
-    public void validateRedirectUri(final String redirectUri) {
-        if (StringUtils.isNotBlank(redirectUri)) {
+    public boolean validateRedirectUri(final String redirectUri, final boolean throwOnFailure) {
+        return StringUtils.isNotBlank(redirectUri) && FunctionUtils.doAndHandle(() -> {
             RedirectURIValidator.ensureLegal(URI.create(redirectUri));
-        }
+            return true;
+        }, e -> {
+            if (throwOnFailure) {
+                throw e;
+            }
+            return false;
+        }).get();
     }
+
 
     /**
      * Is access token request?.

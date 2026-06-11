@@ -25,6 +25,7 @@ import lombok.val;
 import net.shibboleth.shared.resolver.CriteriaSet;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
+import org.jspecify.annotations.Nullable;
 import org.opensaml.core.criterion.EntityIdCriterion;
 import org.opensaml.messaging.context.MessageContext;
 import org.opensaml.saml.common.SAMLObject;
@@ -369,9 +370,9 @@ public class DefaultSamlIdPObjectSigner implements SamlIdPObjectSigner {
         return config;
     }
 
-    protected AbstractCredential getResolvedSigningCredential(final Credential credential,
-                                                              final PrivateKey privateKey,
-                                                              final SamlRegisteredService service) {
+    protected @Nullable AbstractCredential getResolvedSigningCredential(final Credential credential,
+                                                                        final PrivateKey privateKey,
+                                                                        final SamlRegisteredService service) {
         try {
             val samlIdp = casProperties.getAuthn().getSamlIdp();
             val credType = SamlIdPResponseProperties.SignatureCredentialTypes.valueOf(
@@ -379,26 +380,26 @@ public class DefaultSamlIdPObjectSigner implements SamlIdPObjectSigner {
                     samlIdp.getResponse().getCredentialType().name()).toUpperCase(Locale.ENGLISH));
             LOGGER.trace("Requested credential type [{}] is found for service [{}]", credType, service.getName());
 
-            switch (credType) {
+            return switch (credType) {
                 case BASIC -> {
                     LOGGER.debug("Building credential signing key [{}] based on requested credential type", credType);
                     if (credential.getPublicKey() == null) {
                         throw new IllegalArgumentException("Unable to identify the public key from the signing credential");
                     }
-                    return finalizeSigningCredential(new BasicCredential(credential.getPublicKey(), privateKey), credential);
+                    yield finalizeSigningCredential(new BasicCredential(credential.getPublicKey(), privateKey), credential);
                 }
                 case X509 -> {
                     if (credential instanceof final BasicX509Credential value) {
                         val certificate = value.getEntityCertificate();
                         LOGGER.debug("Locating signature signing certificate from credential [{}]", CertUtils.toString(certificate));
-                        return finalizeSigningCredential(new BasicX509Credential(certificate, privateKey), credential);
+                        yield finalizeSigningCredential(new BasicX509Credential(certificate, privateKey), credential);
                     }
                     val signingCert = samlIdPMetadataLocator.resolveSigningCertificate(Optional.of(service));
                     LOGGER.debug("Locating signature signing certificate file from [{}]", signingCert);
                     val certificate = SamlUtils.readCertificate(signingCert);
-                    return finalizeSigningCredential(new BasicX509Credential(certificate, privateKey), credential);
+                    yield finalizeSigningCredential(new BasicX509Credential(certificate, privateKey), credential);
                 }
-            }
+            };
         } catch (final Throwable e) {
             LoggingUtils.error(LOGGER, e);
         }

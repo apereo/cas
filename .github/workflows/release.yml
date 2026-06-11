@@ -70,6 +70,8 @@ jobs:
         with:
           java-version: ${{ env.JDK_CURRENT }}
           distribution: ${{ env.JDK_DISTRIBUTION }}
+      - name: Set up Gum
+        uses: unfunco/setup-gum@main
       - name: Setup Gradle
         uses: gradle/actions/setup-gradle@v6
       - name: Initialize

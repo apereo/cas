@@ -9,6 +9,7 @@ import io.swagger.v3.oas.annotations.Parameter;
 import lombok.Getter;
 import lombok.experimental.SuperBuilder;
 import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.boot.actuate.endpoint.Access;
 import org.springframework.boot.actuate.endpoint.annotation.Endpoint;
@@ -44,10 +45,10 @@ public class RegisteredAuthenticationPoliciesEndpoint extends BaseCasActuatorEnd
         MediaType.APPLICATION_JSON_VALUE, MEDIA_TYPE_SPRING_BOOT_V2_JSON, MEDIA_TYPE_CAS_YAML})
     @Operation(summary = "Get available authentication policies")
     public Collection<AuthenticationPolicyDetails> handle() {
-        return this.authenticationEventExecutionPlan.getObject().getAuthenticationPolicies()
+        return authenticationEventExecutionPlan.getObject().getAuthenticationPolicies()
             .stream()
             .map(policy -> AuthenticationPolicyDetails.builder().name(policy.getName()).order(policy.getOrder()).build())
-            .sorted(Comparator.comparing(AuthenticationPolicyDetails::getOrder))
+            .sorted(Comparator.comparingInt(AuthenticationPolicyDetails::getOrder))
             .collect(Collectors.toList());
     }
 
@@ -60,7 +61,7 @@ public class RegisteredAuthenticationPoliciesEndpoint extends BaseCasActuatorEnd
     @ReadOperation(produces = {
         MediaType.APPLICATION_JSON_VALUE, MEDIA_TYPE_SPRING_BOOT_V2_JSON, MEDIA_TYPE_CAS_YAML})
     @Operation(summary = "Get available authentication policy by name", parameters = @Parameter(name = "name", required = true, description = "The name of the policy to fetch"))
-    public AuthenticationPolicyDetails fetchPolicy(@Selector final String name) {
+    public @Nullable AuthenticationPolicyDetails fetchPolicy(@Selector final String name) {
         return this.authenticationEventExecutionPlan.getObject().getAuthenticationPolicies()
             .stream()
             .filter(authnHandler -> authnHandler.getName().equals(name))
@@ -72,7 +73,7 @@ public class RegisteredAuthenticationPoliciesEndpoint extends BaseCasActuatorEnd
     @SuperBuilder
     @Getter
     @SuppressWarnings("UnusedMethod")
-    private static final class AuthenticationPolicyDetails implements Serializable {
+    public static final class AuthenticationPolicyDetails implements Serializable {
         @Serial
         private static final long serialVersionUID = 6755362844006190415L;
 

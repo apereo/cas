@@ -133,7 +133,7 @@ public class SamlIdPServiceAttributeExtractor {
             return SamlIdPServiceAttributeExtractor
                 .values()
                 .stream()
-                .sorted(Comparator.comparing(SamlIdPServiceAttributeExtractor::getOrder))
+                .sorted(Comparator.comparingInt(SamlIdPServiceAttributeExtractor::getOrder))
                 .filter(attr -> attributes.containsKey(attr.getAttributeName()))
                 .map(attr -> Pair.of(attr, CollectionUtils.firstElement(attributes.get(attr.getAttributeName()))
                     .map(Object::toString).orElseThrow()))

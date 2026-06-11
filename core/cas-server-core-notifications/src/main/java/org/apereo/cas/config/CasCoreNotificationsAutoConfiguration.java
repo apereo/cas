@@ -128,7 +128,7 @@ public class CasCoreNotificationsAutoConfiguration {
                 LOGGER.trace("Configuring notification sender [{}]", cfg.getName());
                 return cfg.configureNotificationSender();
             })
-            .sorted(Comparator.comparing(NotificationSender::getOrder))
+            .sorted(Comparator.comparingInt(NotificationSender::getOrder))
             .collect(Collectors.toList());
         return new DefaultNotificationSender(results);
     }

@@ -50,7 +50,7 @@ public class RegisteredAuthenticationHandlersEndpoint extends BaseCasActuatorEnd
         return authenticationEventExecutionPlan.getObject().resolveAuthenticationHandlers()
             .stream()
             .map(RegisteredAuthenticationHandlersEndpoint::buildHandlerDetails)
-            .sorted(Comparator.comparing(AuthenticationHandlerDetails::getOrder))
+            .sorted(Comparator.comparingInt(AuthenticationHandlerDetails::getOrder))
             .collect(Collectors.toList());
     }
 

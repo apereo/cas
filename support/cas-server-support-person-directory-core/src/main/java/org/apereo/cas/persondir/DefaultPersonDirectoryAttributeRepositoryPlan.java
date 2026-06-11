@@ -35,7 +35,7 @@ public class DefaultPersonDirectoryAttributeRepositoryPlan implements PersonDire
                 LOGGER.trace("Registering attribute repository [{}] into the person directory plan", name);
             }
             attributeRepositoryCustomizers.stream()
-                .sorted(Comparator.comparing(PersonDirectoryAttributeRepositoryCustomizer::getOrder))
+                .sorted(Comparator.comparingInt(PersonDirectoryAttributeRepositoryCustomizer::getOrder))
                 .filter(cust -> cust.supports(repository))
                 .forEach(cust -> cust.customize(repository));
             attributeRepositories.add(repository);

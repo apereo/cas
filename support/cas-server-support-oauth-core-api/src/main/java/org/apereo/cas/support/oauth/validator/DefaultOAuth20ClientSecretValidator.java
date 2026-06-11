@@ -10,6 +10,7 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.Strings;
+import org.jspecify.annotations.Nullable;
 
 /**
  * This is {@link DefaultOAuth20ClientSecretValidator}.
@@ -51,7 +52,7 @@ public class DefaultOAuth20ClientSecretValidator implements OAuth20ClientSecretV
         return registeredService != null && StringUtils.isBlank(registeredService.getClientSecret());
     }
 
-    protected boolean isClientSecretCorrect(final String definedSecret, final String clientSecret) {
+    protected boolean isClientSecretCorrect(@Nullable final String definedSecret, final String clientSecret) {
         return Strings.CI.equals(definedSecret, clientSecret);
     }
 }
