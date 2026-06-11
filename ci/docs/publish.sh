@@ -166,8 +166,9 @@ if [[ "${CI}" == "true" ]]; then
   printgreen "Configuring git settings..."
   git config --global http.postbuffer 524288000
   git config --global credential.helper "cache --timeout=86400"
-  git config --global pack.threads "8"
+  git config --global pack.threads "$(nproc 2>/dev/null || sysctl -n hw.ncpu)"
   git config --global init.defaultBranch master
+  git config --global protocol.version 2
 fi
 
 echo "-------------------------------------------------------"
@@ -222,7 +223,8 @@ if [[ $cloneRepository == "true" ]]; then
   printgreen "Cloning ${REPOSITORY_NAME}'s [gh-pages] branch..."
   [[ -d "$PWD/gh-pages" ]] && rm -Rf "$PWD/gh-pages"
   mkdir -p "$PWD/gh-pages"
-  git clone --single-branch --depth 1 --branch gh-pages --quiet "${REPOSITORY_ADDR}" $PWD/gh-pages
+  git clone --single-branch --depth 1 --branch gh-pages \
+    --filter=blob:none --no-tags --quiet "${REPOSITORY_ADDR}" "$PWD/gh-pages"
 
   printgreen "Removing previous documentation from $branchVersion..."
   rm -Rf "$PWD/gh-pages/$branchVersion" >/dev/null
@@ -261,9 +263,10 @@ if [[ $cloneRepository == "true" ]]; then
   rm -Rf "$PWD"/docs-latest/_sass
   rm -Rf "$PWD/gh-pages/_sass"
 
-  cp -Rf "$PWD"/docs-includes/* "$PWD/gh-pages/_includes/$branchVersion"
-  cp -Rf "$PWD"/docs-layouts/* "$PWD/gh-pages/_layouts"
-  cp -Rf "$PWD"/docs-includes-site/* "$PWD/gh-pages/_includes"
+  cp -Rf "$PWD"/docs-includes/* "$PWD/gh-pages/_includes/$branchVersion" &
+  cp -Rf "$PWD"/docs-layouts/* "$PWD/gh-pages/_layouts" &
+  cp -Rf "$PWD"/docs-includes-site/* "$PWD/gh-pages/_includes" &
+  wait
 
   rm -Rf "$PWD/gh-pages/_data/$branchVersion" >/dev/null
   rm -Rf "$PWD/docs-latest"
@@ -306,7 +309,7 @@ if [[ $generateData == "true" ]]; then
   rm -rf "$PWD/gh-pages/spring-configuration-metadata.json" >/dev/null 2>&1
   unzip -p $configurationCatalog META-INF/spring-configuration-metadata.json > $PWD/gh-pages/spring-configuration-metadata.json
   rm -rf "$PWD/gh-pages/assets/data/$branchVersion"/index.json >/dev/null 2>&1
-  npm --prefix $PWD/ci/docs install
+  npm --prefix $PWD/ci/docs ci
   printgreen "Creating configuration metadata index..."
   mkdir -p "$PWD/gh-pages/assets/data/$branchVersion"
   node $PWD/ci/docs/index.js $PWD/gh-pages/spring-configuration-metadata.json $PWD/gh-pages/_data/$branchVersion/third-party/config.yml "$PWD/gh-pages/assets/data/$branchVersion"/index.json
@@ -332,25 +335,26 @@ if [[ $proofRead == "true" ]]; then
   printgreen "Looking for unused include fragments..."
   res=0
   files=$(ls $PWD/gh-pages/_includes/$branchVersion/*.md)
-  for f in $files; do
+  _PARALLEL_JOBS="$(nproc 2>/dev/null || sysctl -n hw.ncpu)"
+  _UNUSED_TMP=$(mktemp)
+  export _branchVersion="$branchVersion"
+  export _ghpages="$PWD/gh-pages"
+  echo "$files" | tr ' ' '\n' | \
+    xargs -P "$_PARALLEL_JOBS" -I{} bash -c '
+      f="{}"
+      fname=$(basename "$f")
+      grep -rql "$fname" "$_ghpages/$_branchVersion" --include="*.md" 2>/dev/null && exit 0
+      grep -rql "$fname" "$_ghpages/_includes/$_branchVersion" --include="*.md" 2>/dev/null && exit 0
+      grep -q "fragment:keep" "$f" 2>/dev/null && exit 0
+      echo "$f"
+    ' >> "$_UNUSED_TMP"
+  while IFS= read -r f; do
     fname=$(basename "$f")
-    #  echo "Looking for $fname in $PWD/gh-pages/$branchVersion";
-    grep -r $fname "$PWD/gh-pages/$branchVersion" --include \*.md >/dev/null 2>&1
-    docsVal=$?
-    if [ $docsVal == 1 ]; then
-      grep -r $fname "$PWD/gh-pages/_includes/$branchVersion" --include \*.md >/dev/null 2>&1
-      docsVal=$?
-    fi
-    if [ $docsVal == 1 ]; then
-      grep "fragment:keep" $f >/dev/null 2>&1
-      docsVal=$?
-      if [ $docsVal == 1 ]; then
-        printred "$f is unused."
-        rm "docs/cas-server-documentation/_includes/$fname"
-        res=1
-      fi
-    fi
-  done
+    printred "$f is unused."
+    rm "docs/cas-server-documentation/_includes/$fname"
+    res=1
+  done < "$_UNUSED_TMP"
+  rm -f "$_UNUSED_TMP"
 
   if [ $res == 1 ]; then
     printred "Found unused include fragments."
@@ -376,7 +380,8 @@ if [[ ${buildDocs} == "true" ]]; then
 
   printgreen "Installing documentation dependencies..."
   bundle config set force_ruby_platform true
-  bundle install
+  bundle config set path 'vendor/bundle'
+  bundle install --jobs "$(nproc 2>/dev/null || sysctl -n hw.ncpu)" --retry 3
   printgreen "Building documentation site for $branchVersion with data at $PWD/gh-pages/_data"
   echo -n "Starting at " && date
   jekyll --version
@@ -385,7 +390,7 @@ if [[ ${buildDocs} == "true" ]]; then
   if [[ ${serve} == "true" ]]; then
     bundle exec jekyll serve --profile --incremental --trace
   else
-    bundle exec jekyll build --profile --incremental --trace
+    bundle exec jekyll build --incremental --trace
   fi
   retVal=$?
 

@@ -19,6 +19,7 @@ exclude:
   - 4.1.x
   - 4.0.x
 markdown: kramdown
+lsi: false
 plugins:
   - jekyll-sitemap
   - jekyll-include-cache
