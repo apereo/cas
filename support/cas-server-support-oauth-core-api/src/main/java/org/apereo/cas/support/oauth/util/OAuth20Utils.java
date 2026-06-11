@@ -148,7 +148,12 @@ public class OAuth20Utils {
      */
     public static OAuthRegisteredService getRegisteredOAuthServiceByRedirectUri(final ServicesManager servicesManager,
                                                                                 final String redirectUri) {
-        validateRedirectUri(redirectUri);
+        try {
+            validateRedirectUri(redirectUri);
+        } catch (final Exception e) {
+            LOGGER.debug(e.getMessage(), e);
+            return null;
+        }
         return FunctionUtils.doIfNotBlank(redirectUri,
             () -> getRegisteredOAuthServiceByPredicate(servicesManager, service -> service.matches(redirectUri)),
             () -> null);
@@ -282,8 +287,13 @@ public class OAuth20Utils {
      */
     public static boolean checkCallbackValid(final @NonNull RegisteredService registeredService,
                                              final String redirectUri) {
+        try {
+            validateRedirectUri(redirectUri);
+        } catch (final Exception e) {
+            LOGGER.debug(e.getMessage(), e);
+            return false;
+        }
         val matchingStrategy = Optional.of(registeredService).map(RegisteredService::getMatchingStrategy).orElse(null);
-        validateRedirectUri(redirectUri);
         if (matchingStrategy == null || !matchingStrategy.matches(registeredService, redirectUri)) {
             LOGGER.warn("Unsupported [{}]: [{}] does not match what is defined for registered service: [{}]. "
                     + "Service is considered unauthorized. Verify the service matching strategy used in the service "
