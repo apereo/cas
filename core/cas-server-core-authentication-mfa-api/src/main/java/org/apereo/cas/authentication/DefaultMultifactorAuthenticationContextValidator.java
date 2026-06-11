@@ -122,7 +122,7 @@ public class DefaultMultifactorAuthenticationContextValidator implements Multifa
                 return List.of(provider);
             })
             .flatMap(Collection::stream)
-            .sorted(Comparator.comparing(MultifactorAuthenticationProvider::getOrder))
+            .sorted(Comparator.comparingInt(MultifactorAuthenticationProvider::getOrder))
             .filter(provider -> contexts.contains(provider.getId()))
             .collect(Collectors.toCollection(LinkedHashSet::new));
     }

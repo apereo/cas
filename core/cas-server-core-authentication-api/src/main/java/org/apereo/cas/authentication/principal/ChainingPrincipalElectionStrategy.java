@@ -50,7 +50,7 @@ public class ChainingPrincipalElectionStrategy implements PrincipalElectionStrat
                               final Map<String, List<Object>> principalAttributes) {
         val principal = this.chain
             .stream()
-            .sorted(Comparator.comparing(PrincipalElectionStrategy::getOrder))
+            .sorted(Comparator.comparingInt(PrincipalElectionStrategy::getOrder))
             .map(Unchecked.function(strategy -> strategy.nominate(authentications, principalAttributes)))
             .filter(Objects::nonNull)
             .findFirst()
@@ -63,7 +63,7 @@ public class ChainingPrincipalElectionStrategy implements PrincipalElectionStrat
     public Principal nominate(final List<Principal> principals, final Map<String, List<Object>> attributes) {
         val principal = this.chain
             .stream()
-            .sorted(Comparator.comparing(PrincipalElectionStrategy::getOrder))
+            .sorted(Comparator.comparingInt(PrincipalElectionStrategy::getOrder))
             .map(Unchecked.function(strategy -> strategy.nominate(principals, attributes)))
             .findFirst()
             .orElseThrow();

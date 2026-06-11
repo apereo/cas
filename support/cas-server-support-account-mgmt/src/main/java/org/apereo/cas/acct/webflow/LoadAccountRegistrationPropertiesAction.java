@@ -26,7 +26,7 @@ public class LoadAccountRegistrationPropertiesAction extends BaseCasWebflowActio
         requestContext.getFlowScope().put("registrationProperties", properties
             .values()
             .stream()
-            .sorted(Comparator.comparing(AccountRegistrationProperty::getOrder))
+            .sorted(Comparator.comparingInt(AccountRegistrationProperty::getOrder))
             .collect(Collectors.toList()));
         return null;
     }

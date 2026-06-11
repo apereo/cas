@@ -70,7 +70,8 @@ public class OAuth20ServicesManagerRegisteredServiceLocator extends BaseServices
                 .map(String.class::cast)
                 .orElse(StringUtils.EMPTY);
             val callbackService = OAuth20Utils.casOAuthCallbackUrl(casProperties.getServer().getPrefix());
-            return StringUtils.isBlank(source) || Strings.CI.startsWith(source, callbackService)
+            return StringUtils.isBlank(source)
+                || Strings.CI.startsWith(source, callbackService)
                 || OAuth20Utils.checkCallbackValid(registeredService, source);
         }
         return false;

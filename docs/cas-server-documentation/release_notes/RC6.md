@@ -138,4 +138,4 @@ to tighten and improve the security posture of registration request:
 - The [Spring Expression Language](../configuration/Configuration-Spring-Expressions.html) parser is tightened to run in a sandboxed environment.
 - [Delegated authentication](../integration/Delegate-Authentication.html) can now handle JSON serialization of complex attribute definitions that may carry maps. 
 - Small enhancements to [CAS audits](../audits/Audits.html) to correctly identify the audited principal.
-- [Delegated authentication](../integration/Delegate-Authentication.html) can now logout redirects to the original application when working with external OpenID Connect providers. 
+- [Delegated authentication](../integration/Delegate-Authentication.html) logout requests can now redirect to the original application as instructed when working with external OpenID Connect providers. 

@@ -76,14 +76,14 @@ public class CasCoreLogoutAutoConfiguration {
             final List<SingleLogoutServiceLogoutUrlBuilderConfigurer> configurers) {
             val results = configurers
                 .stream()
-                .sorted(Comparator.comparing(SingleLogoutServiceLogoutUrlBuilderConfigurer::getOrder))
+                .sorted(Comparator.comparingInt(SingleLogoutServiceLogoutUrlBuilderConfigurer::getOrder))
                 .map(cfg -> {
                     val builder = cfg.configureBuilder();
                     LOGGER.trace("Configuring single logout url builder [{}]", builder.getName());
                     return builder;
                 })
                 .filter(BeanSupplier::isNotProxy)
-                .sorted(Comparator.comparing(SingleLogoutServiceLogoutUrlBuilder::getOrder))
+                .sorted(Comparator.comparingInt(SingleLogoutServiceLogoutUrlBuilder::getOrder))
                 .collect(Collectors.toList());
             return new ChainingSingleLogoutServiceLogoutUrlBuilder(results);
         }

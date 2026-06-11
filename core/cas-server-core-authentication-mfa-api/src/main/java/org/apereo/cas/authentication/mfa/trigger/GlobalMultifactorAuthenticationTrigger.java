@@ -75,7 +75,7 @@ public class GlobalMultifactorAuthenticationTrigger implements MultifactorAuthen
             .map(provider -> MultifactorAuthenticationUtils.resolveProvider(providerMap, provider))
             .filter(Optional::isPresent)
             .map(Optional::get)
-            .sorted(Comparator.comparing(MultifactorAuthenticationProvider::getOrder))
+            .sorted(Comparator.comparingInt(MultifactorAuthenticationProvider::getOrder))
             .collect(Collectors.toList());
 
         if (resolvedProviders.size() != globalProviderIds.size()) {

@@ -58,6 +58,7 @@
                     </div>
 
                     <select name="timeUnit" id="timeUnit" class="custom-select" th:field="*{timeUnit}"
+                            aria-label="Expiration time unit"
                             onchange="let hide = this.value!=='FOREVER'; $('#expirationField').toggle(hide)">
                         <option value="SECONDS" th:text="#{screen.consent.options.timeunit.seconds}">Seconds</option>
                         <option value="MINUTES" th:text="#{screen.consent.options.timeunit.minutes}">Minutes</option>

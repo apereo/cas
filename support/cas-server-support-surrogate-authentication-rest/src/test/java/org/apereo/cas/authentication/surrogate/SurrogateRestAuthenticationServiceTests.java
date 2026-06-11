@@ -65,7 +65,7 @@ class SurrogateRestAuthenticationServiceTests extends BaseSurrogateAuthenticatio
             new ByteArrayResource(data.getBytes(StandardCharsets.UTF_8), "REST Output"), MediaType.APPLICATION_JSON_VALUE)) {
             webServer.start();
             assertTrue(webServer.isRunning());
-            super.verifyUserAllowedToProxy();
+            assertUserIsAllowedToProxy();
         }
     }
 
@@ -79,7 +79,7 @@ class SurrogateRestAuthenticationServiceTests extends BaseSurrogateAuthenticatio
             new ByteArrayResource(data.getBytes(StandardCharsets.UTF_8), "REST Output"), MediaType.APPLICATION_JSON_VALUE)) {
             webServer.start();
             assertTrue(webServer.isRunning());
-            super.verifyUserNotAllowedToProxy();
+            assertUserIsNotAllowedToProxy();
         }
     }
 
@@ -93,7 +93,7 @@ class SurrogateRestAuthenticationServiceTests extends BaseSurrogateAuthenticatio
             new ByteArrayResource(data.getBytes(StandardCharsets.UTF_8), "REST Output"), MediaType.APPLICATION_JSON_VALUE)) {
             webServer.start();
             assertTrue(webServer.isRunning());
-            super.verifyWildcard();
+            assertWildcardImpersonation();
         }
     }
 

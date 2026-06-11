@@ -148,7 +148,7 @@ class DuoSecurityAuthenticationEventExecutionPlanConfiguration {
                                 new DirectObjectProvider<>(provider),
                                 props.getOrder(), resolvers);
                         })
-                        .sorted(Comparator.comparing(DuoSecurityAuthenticationHandler::getOrder))
+                        .sorted(Comparator.comparingInt(DuoSecurityAuthenticationHandler::getOrder))
                         .collect(Collectors.toList()));
                 })
                 .otherwise(BeanContainer::empty)

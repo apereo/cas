@@ -154,6 +154,19 @@ public class FunctionUtils {
     /**
      * Do if not blank.
      *
+     * @param <T>          the type parameter
+     * @param input        the input
+     * @param trueFunction the true function
+     * @return the @ nullable t
+     */
+    public static <T> T doIfNotBlank(final CharSequence input,
+                                               final CheckedSupplier<T> trueFunction) {
+        return doIfNotBlank(input, trueFunction, () -> null);
+    }
+    
+    /**
+     * Do if not blank.
+     *
      * @param <T>           the type parameter
      * @param input         the input
      * @param trueFunction  the true function
@@ -161,8 +174,8 @@ public class FunctionUtils {
      * @return the t
      */
     public static <T> T doIfNotBlank(final CharSequence input,
-                                     final CheckedSupplier<T> trueFunction,
-                                     final CheckedSupplier<T> falseFunction) {
+                                               final CheckedSupplier<T> trueFunction,
+                                               final CheckedSupplier<T> falseFunction) {
         return doAndHandle(() -> StringUtils.isNotBlank(input) ? trueFunction.get() : falseFunction.get());
     }
 

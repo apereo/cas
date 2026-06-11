@@ -108,6 +108,7 @@ public class DefaultAuthentication implements Authentication {
     }
 
     @Override
+    @SuppressWarnings("ReferenceEquality")
     public boolean isEqualTo(final Authentication authn) {
         if (this == authn) {
             return true;

@@ -56,7 +56,7 @@ public class OAuth20TokenExchangeGrantTypeTokenRequestValidator<T extends OAuth2
         val accessResult = configurationContext.getRegisteredServiceAccessStrategyEnforcer().execute(audit);
         accessResult.throwExceptionIfNeeded();
 
-        if (!isGrantTypeSupportedBy(registeredService, getGrantType().getType(), true)) {
+        if (!isGrantTypeSupportedBy(Objects.requireNonNull(registeredService), getGrantType().getType(), true)) {
             LOGGER.warn("Requested grant type [{}] is not authorized by service definition [{}]",
                 grantType, Objects.requireNonNull(registeredService).getServiceId());
             return false;
@@ -86,7 +86,7 @@ public class OAuth20TokenExchangeGrantTypeTokenRequestValidator<T extends OAuth2
             case JWT -> {
                 val claimSet = configurationContext.getAccessTokenJwtBuilder().unpack(Optional.empty(), subjectToken);
                 jwtClaimsSetVerifier.verify(claimSet, new SimpleSecurityContext());
-                val service = configurationContext.getWebApplicationServiceServiceFactory().createService(claimSet.getIssuer());
+                val service = Objects.requireNonNull(configurationContext.getWebApplicationServiceServiceFactory().createService(claimSet.getIssuer()));
                 service.getAttributes().put(OAuth20Constants.CLIENT_ID, List.of(claimSet.getSubject()));
                 yield OAuth20Utils.getRegisteredOAuthServiceByClientId(configurationContext.getServicesManager(), claimSet.getSubject());
             }

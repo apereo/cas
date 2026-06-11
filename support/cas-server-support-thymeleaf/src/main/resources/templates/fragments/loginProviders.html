@@ -104,6 +104,7 @@
                    <div class="w-100 mt-2">
                        <select id="identityProviderOptions"
                                th:if="${#lists.size(delegatedAuthenticationProviderConfigurations) > 10}"
+                               aria-label="Identity provider"
                                class="d-flex flex-column m-0 flex-fill custom-select mw-100">
                            <option th:each="entry : ${delegatedAuthenticationProviderConfigurations}"
                                    th:title="${#strings.defaultString(entry.title,entry.name)}"
