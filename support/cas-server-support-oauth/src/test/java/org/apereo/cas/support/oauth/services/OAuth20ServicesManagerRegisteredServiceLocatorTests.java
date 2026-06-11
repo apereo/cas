@@ -2,6 +2,7 @@ package org.apereo.cas.support.oauth.services;
 
 import module java.base;
 import org.apereo.cas.AbstractOAuth20Tests;
+import org.apereo.cas.CasProtocolConstants;
 import org.apereo.cas.services.PartialRegexRegisteredServiceMatchingStrategy;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
@@ -32,7 +33,7 @@ class OAuth20ServicesManagerRegisteredServiceLocatorTests extends AbstractOAuth2
     @Autowired
     @Qualifier("oauthServicesManagerRegisteredServiceLocator")
     private ServicesManagerRegisteredServiceLocator oauthServicesManagerRegisteredServiceLocator;
-    
+
     @Test
     void verifyOperation() {
         assertNotNull(oauthServicesManagerRegisteredServiceLocator);
@@ -73,6 +74,22 @@ class OAuth20ServicesManagerRegisteredServiceLocatorTests extends AbstractOAuth2
         val service = serviceFactory.createService(url.toString());
         val result = servicesManager.findServiceBy(service);
         assertEquals(service1, result);
+    }
+
+    @Test
+    void verifyWithInvalidCallback() {
+        val registeredService = RegisteredServiceTestUtils.getRegisteredService("https://casapp.example.org.*");
+        servicesManager.save(registeredService);
+        val url = "https://casapp.example.org?redirect_uri=http://localhost:9090/callback"
+            + "&response_type=code&client_id=iQ6N0nAoS9&scope=FAR&"
+            + "code_challenge=6im-DKpTVViPqWih7AU_OISn3QNZoGNkpyIXMjwqtwc&state=xy12AB";
+        val request = new MockHttpServletRequest();
+        request.setRequestURI("/cas/login");
+        request.setParameter(CasProtocolConstants.PARAMETER_SERVICE, url);
+        val service = serviceFactory.createService(request);
+        val result = servicesManager.findServiceBy(service);
+        assertNotNull(result);
+        assertEquals(registeredService.getServiceId(), result.getServiceId());
     }
 
 }

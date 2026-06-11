@@ -58,7 +58,7 @@ public class FrontChannelLogoutAction extends AbstractLogoutAction {
                 LOGGER.debug("Using logout url [{}] for front-channel logout requests", sloContext.getLogoutUrl().toExternalForm());
                 logoutExecutionPlan.getSingleLogoutServiceMessageHandlers()
                     .stream()
-                    .sorted(Comparator.comparing(SingleLogoutServiceMessageHandler::getOrder))
+                    .sorted(Comparator.comparingInt(SingleLogoutServiceMessageHandler::getOrder))
                     .filter(handler -> handler.supports(sloContext.getExecutionRequest(), sloContext.getService()))
                     .forEach(Unchecked.consumer(handler -> {
                         val logoutMessage = handler.createSingleLogoutMessage(sloContext);

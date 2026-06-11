@@ -27,6 +27,8 @@
                     <button th:if="${#cas.isTrue(#cas.theme('cas.drawer-menu.enabled'))}"
                             class="mdc-icon-button mdc-top-app-bar__navigation-icon  btn btn-outline-light"
                             id="drawerButton"
+                            type="button"
+                            aria-label="Menu"
                             data-bs-toggle="offcanvas"
                             data-bs-target="#app-drawer">
                         <span class="mdi mdi-menu fa fa-bars" aria-hidden="true"></span>
@@ -49,6 +51,7 @@
                     <select th:if="${#cas.isTrue(#cas.theme('cas.locale-selection.enabled'))}"
                             onchange="changeLanguage(this.value)"
                             id="languageSelector"
+                            aria-label="Language"
                             class="custom-select mw-20">
                         <option th:each="lang : ${#cas.sort(#strings.arraySplit(#cas.theme('cas.locale-selection.languages'), ','))}"
                                 th:value="${lang}"
@@ -60,7 +63,8 @@
                     <button id="cas-notifications-menu"
                             th:if="${#cas.isTrue(#cas.theme('cas.notifications-menu.enabled'))}"
                             class="mdc-icon-button mdc-top-app-bar__action-item cas-notification-toggle btn btn-outline-light"
-                            aria-label="Bookmark this page"
+                            type="button"
+                            aria-label="Notifications"
                             data-bs-toggle="modal"
                             data-bs-target="#cas-notification-dialog">
                         <span class="mdi mdi-bell-alert fa fa-bell" aria-hidden="true"></span>
@@ -90,7 +94,7 @@
             th:if="${#cas.isTrue(#cas.theme('cas.notifications-menu.enabled'))}"
             class="mdc-dialog cas-notification-dialog modal"
             id="cas-notification-dialog" role="alertdialog"
-            aria-modal="true" aria-labelledby="notif-dialog-title"
+            aria-modal="true" aria-label="Notifications"
             aria-describedby="notif-dialog-content">
         <div class="mdc-dialog__container modal-dialog">
             <div class="mdc-dialog__surface modal-content">

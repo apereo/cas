@@ -73,7 +73,7 @@ public class DefaultLogoutManager implements LogoutManager {
             .stream()
             .map(entry -> sloHandlers
                 .stream()
-                .sorted(Comparator.comparing(SingleLogoutServiceMessageHandler::getOrder))
+                .sorted(Comparator.comparingInt(SingleLogoutServiceMessageHandler::getOrder))
                 .filter(handler -> handler.supports(context, entry.getValue()))
                 .map(handler -> {
                     val service = entry.getValue();

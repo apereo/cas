@@ -65,23 +65,21 @@ public class DuoSecurityAuthenticationHandler extends AbstractPreAndPostProcessi
      */
     @Override
     protected AuthenticationHandlerExecutionResult doAuthentication(final Credential credential, final Service service) throws Exception {
-        switch (credential) {
+        return switch (credential) {
             case final DuoSecurityPasscodeCredential duo -> {
                 LOGGER.debug("Attempting to authenticate credential via Duo Security passcode");
-                return authenticateDuoPasscodeCredential(duo);
+                yield authenticateDuoPasscodeCredential(duo);
             }
             case final DuoSecurityUniversalPromptCredential duo -> {
                 LOGGER.debug("Attempting to authenticate credential via Duo Security universal prompt");
-                return authenticateDuoUniversalPromptCredential(duo);
+                yield authenticateDuoUniversalPromptCredential(duo);
             }
             case final DuoSecurityDirectCredential duo -> {
                 LOGGER.debug("Attempting to directly authenticate credential against Duo");
-                return authenticateDuoApiCredential(duo);
+                yield authenticateDuoApiCredential(duo);
             }
-            default -> {
-                throw new FailedLoginException("Unknown Duo Security authentication attempt");
-            }
-        }
+            default -> throw new FailedLoginException("Unknown Duo Security authentication attempt");
+        };
     }
 
     /**

@@ -114,7 +114,7 @@ public class DefaultRequestedAuthenticationContextValidator implements Requested
 
         LOGGER.debug("Multifactor providers eligible for validation are [{}]", providers);
         return providers.stream()
-            .sorted(Comparator.comparing(MultifactorAuthenticationProvider::getOrder))
+            .sorted(Comparator.comparingInt(MultifactorAuthenticationProvider::getOrder))
             .map(provider -> authenticationContextValidator.validate(authentication, provider.getId(),
                 Optional.ofNullable(registeredService)))
             .filter(MultifactorAuthenticationContextValidationResult::isSuccess)

@@ -36,7 +36,8 @@
                         <div class="mdc-tab-scroller">
                             <div class="mdc-tab-scroller__scroll-area">
                                 <nav class="nav nav-tabs mdc-tab-scroller__scroll-content">
-                                    <button id="principal-tab" class="mdc-tab nav-link" role="tab" aria-selected="true" data-toggle="tab" data-target="attribute-tab-0">
+                                    <button id="principal-tab" type="button" class="mdc-tab nav-link" role="tab"
+                                            aria-selected="true" aria-controls="attribute-tab-0" data-toggle="tab" data-target="attribute-tab-0">
                                             <span class="mdc-tab__content">
                                                 <span class="mdc-tab__text-label">Principal</span>
                                             </span>
@@ -45,7 +46,8 @@
                                             </span>
                                         <span class="mdc-tab__ripple"></span>
                                     </button>
-                                    <button id="auth-tab" class="mdc-tab nav-link" role="tab" aria-selected="true" data-toggle="tab" data-target="attribute-tab-1">
+                                    <button id="auth-tab" type="button" class="mdc-tab nav-link" role="tab"
+                                            aria-selected="false" aria-controls="attribute-tab-1" data-toggle="tab" data-target="attribute-tab-1">
                                             <span class="mdc-tab__content">
                                                 <span class="mdc-tab__text-label">Authentication</span>
                                             </span>
@@ -54,8 +56,9 @@
                                             </span>
                                         <span class="mdc-tab__ripple"></span>
                                     </button>
-                                    <button id="services-tab" th:if="${authorizedServices}" class="mdc-tab nav-link" role="tab" aria-selected="true" data-toggle="tab"
-                                            data-target="attribute-tab-2">
+                                    <button id="services-tab" th:if="${authorizedServices}" type="button"
+                                            class="mdc-tab nav-link" role="tab" aria-selected="false"
+                                            aria-controls="attribute-tab-2" data-toggle="tab" data-target="attribute-tab-2">
                                             <span class="mdc-tab__content">
                                                 <span class="mdc-tab__text-label">Services</span>
                                             </span>
@@ -70,7 +73,7 @@
                     </div>
 
                     <section id="attribute-tab-0" class="attribute-tab tab-pane active">
-                        <div class="w-100 mdc-data-table table-responsive mx-auto my-4" id="divPrincipalAttributes" role="tabpanel" aria-labelledby="attributes-tab">
+                        <div class="w-100 mdc-data-table table-responsive mx-auto my-4" id="divPrincipalAttributes" role="tabpanel" aria-labelledby="principal-tab">
                             <table id="attributesTable" class="table table-striped auto-init" style="white-space: unset">
                                 <thead>
                                 <tr class="mdc-data-table__header-row">
@@ -93,7 +96,7 @@
                     </section>
 
                     <section id="attribute-tab-1" class="d-none attribute-tab tab-pane">
-                        <div class="w-100 mdc-data-table table-responsive mx-auto my-4" id="divAuthenticationAttributes" role="tabpanel" aria-labelledby="attributes-tab">
+                        <div class="w-100 mdc-data-table table-responsive mx-auto my-4" id="divAuthenticationAttributes" role="tabpanel" aria-labelledby="auth-tab">
                             <table id="attributesTable" class="mdc-data-table__table table table-striped auto-init" style="white-space: unset">
                                 <thead>
                                 <tr class="mdc-data-table__header-row">
@@ -116,7 +119,7 @@
                     </section>
 
                     <section id="attribute-tab-2" class="d-none attribute-tab tab-pane" th:if="${authorizedServices}">
-                        <div class="w-100 mdc-data-table mx-auto my-4" id="divAuthorizedServices" role="tabpanel" aria-labelledby="attributes-tab">
+                        <div class="w-100 mdc-data-table mx-auto my-4" id="divAuthorizedServices" role="tabpanel" aria-labelledby="services-tab">
                             <table id="attributesTable" class="mdc-data-table__table table table-striped auto-init" style="white-space: unset">
                                 <thead>
                                 <tr class="mdc-data-table__header-row">

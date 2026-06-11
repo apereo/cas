@@ -1194,11 +1194,13 @@ body {
     opacity: 1;
 }
 
-.sidebar-navigation ul li:hover {
+.sidebar-navigation ul li:hover,
+.sidebar-navigation ul li:focus-visible {
     background-color: deepskyblue;
 }
 
-.sidebar-navigation ul li:hover .tooltip {
+.sidebar-navigation ul li:hover .tooltip,
+.sidebar-navigation ul li:focus-visible .tooltip {
     visibility: visible;
     opacity: 1;
 }

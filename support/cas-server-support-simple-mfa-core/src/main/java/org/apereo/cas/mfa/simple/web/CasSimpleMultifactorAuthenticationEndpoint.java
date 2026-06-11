@@ -104,6 +104,6 @@ public class CasSimpleMultifactorAuthenticationEndpoint extends BaseCasRestActua
     }
 
     @SuppressWarnings("UnusedVariable")
-    private record MultifactorAuthenticationTokenResponse(String id, String principal, String service, long ttl) {
+    record MultifactorAuthenticationTokenResponse(String id, String principal, String service, long ttl) {
     }
 }

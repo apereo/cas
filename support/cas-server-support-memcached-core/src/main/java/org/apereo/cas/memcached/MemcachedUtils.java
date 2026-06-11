@@ -43,24 +43,24 @@ public class MemcachedUtils {
      */
     public static Transcoder newTranscoder(final BaseMemcachedProperties memcachedProperties,
                                            final Collection<Class> kryoSerializableClasses) {
-        switch (memcachedProperties.getTranscoder()) {
+        return switch (memcachedProperties.getTranscoder()) {
             case SERIAL -> {
                 val serial = new SerializingTranscoder();
                 serial.setCompressionThreshold(memcachedProperties.getTranscoderCompressionThreshold());
                 LOGGER.debug("Creating memcached transcoder [{}]", serial.getClass().getName());
-                return serial;
+                yield serial;
             }
             case WHALIN -> {
                 val whalin = new WhalinTranscoder();
                 whalin.setCompressionThreshold(memcachedProperties.getTranscoderCompressionThreshold());
                 LOGGER.debug("Creating memcached transcoder [{}]", whalin.getClass().getName());
-                return whalin;
+                yield whalin;
             }
             case WHALINV1 -> {
                 val whalinv1 = new WhalinV1Transcoder();
                 whalinv1.setCompressionThreshold(memcachedProperties.getTranscoderCompressionThreshold());
                 LOGGER.debug("Creating memcached transcoder [{}]", whalinv1.getClass().getName());
-                return whalinv1;
+                yield whalinv1;
             }
             default -> {
                 val kryoPool = new CasKryoPool(kryoSerializableClasses, true,
@@ -69,8 +69,8 @@ public class MemcachedUtils {
                     memcachedProperties.isKryoAutoReset());
                 val kryo = new CasKryoTranscoder(kryoPool);
                 LOGGER.debug("Creating memcached transcoder [{}]", kryo.getClass().getName());
-                return kryo;
+                yield kryo;
             }
-        }
+        };
     }
 }
