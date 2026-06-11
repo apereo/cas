@@ -232,7 +232,7 @@ if [[ $cloneRepository == "true" ]]; then
   rm -Rf "$PWD/gh-pages/_layouts/$branchVersion" >/dev/null
   rm -Rf "$PWD/gh-pages/_data/$branchVersion" >/dev/null
   rm -Rf "$PWD/gh-pages/_sass" >/dev/null
-  
+
   printgreen "Creating $branchVersion directory..."
   mkdir -p "$PWD/gh-pages/$branchVersion"
   mkdir -p "$PWD/gh-pages/_includes/$branchVersion"
@@ -241,7 +241,7 @@ if [[ $cloneRepository == "true" ]]; then
   mkdir -p "$PWD/gh-pages/stylesheets"
   mkdir -p "$PWD/gh-pages/_layouts"
   mkdir -p "$PWD/gh-pages/_data/$branchVersion"
-  
+
   printgreen "Copying new docs to $branchVersion..."
   mv "$PWD/docs-latest/Gemfile" "$PWD/gh-pages"
   mv "$PWD/docs-latest/Support.md" "$PWD/gh-pages"
@@ -299,7 +299,7 @@ if [[ $generateData == "true" ]]; then
     printred "Unable to generate documentation data. Aborting..."
     exit 1
   fi
-  
+
   printgreen "Generated documentation data at $PWD/gh-pages/_data/$dataDir..."
 
   casVersion=(`cat "$PWD"/gradle.properties | grep "version" | cut -d= -f2`)
@@ -309,7 +309,7 @@ if [[ $generateData == "true" ]]; then
   rm -rf "$PWD/gh-pages/spring-configuration-metadata.json" >/dev/null 2>&1
   unzip -p $configurationCatalog META-INF/spring-configuration-metadata.json > $PWD/gh-pages/spring-configuration-metadata.json
   rm -rf "$PWD/gh-pages/assets/data/$branchVersion"/index.json >/dev/null 2>&1
-  npm --prefix $PWD/ci/docs ci
+  npm --prefix $PWD/ci/docs install
   printgreen "Creating configuration metadata index..."
   mkdir -p "$PWD/gh-pages/assets/data/$branchVersion"
   node $PWD/ci/docs/index.js $PWD/gh-pages/spring-configuration-metadata.json $PWD/gh-pages/_data/$branchVersion/third-party/config.yml "$PWD/gh-pages/assets/data/$branchVersion"/index.json
@@ -335,26 +335,25 @@ if [[ $proofRead == "true" ]]; then
   printgreen "Looking for unused include fragments..."
   res=0
   files=$(ls $PWD/gh-pages/_includes/$branchVersion/*.md)
-  _PARALLEL_JOBS="$(nproc 2>/dev/null || sysctl -n hw.ncpu)"
-  _UNUSED_TMP=$(mktemp)
-  export _branchVersion="$branchVersion"
-  export _ghpages="$PWD/gh-pages"
-  echo "$files" | tr ' ' '\n' | \
-    xargs -P "$_PARALLEL_JOBS" -I{} bash -c '
-      f="{}"
-      fname=$(basename "$f")
-      grep -rql "$fname" "$_ghpages/$_branchVersion" --include="*.md" 2>/dev/null && exit 0
-      grep -rql "$fname" "$_ghpages/_includes/$_branchVersion" --include="*.md" 2>/dev/null && exit 0
-      grep -q "fragment:keep" "$f" 2>/dev/null && exit 0
-      echo "$f"
-    ' >> "$_UNUSED_TMP"
-  while IFS= read -r f; do
+  for f in $files; do
     fname=$(basename "$f")
-    printred "$f is unused."
-    rm "docs/cas-server-documentation/_includes/$fname"
-    res=1
-  done < "$_UNUSED_TMP"
-  rm -f "$_UNUSED_TMP"
+    #  echo "Looking for $fname in $PWD/gh-pages/$branchVersion";
+    grep -r $fname "$PWD/gh-pages/$branchVersion" --include \*.md >/dev/null 2>&1
+    docsVal=$?
+    if [ $docsVal == 1 ]; then
+      grep -r $fname "$PWD/gh-pages/_includes/$branchVersion" --include \*.md >/dev/null 2>&1
+      docsVal=$?
+    fi
+    if [ $docsVal == 1 ]; then
+      grep "fragment:keep" $f >/dev/null 2>&1
+      docsVal=$?
+      if [ $docsVal == 1 ]; then
+        printred "$f is unused."
+        rm "docs/cas-server-documentation/_includes/$fname"
+        res=1
+      fi
+    fi
+  done
 
   if [ $res == 1 ]; then
     printred "Found unused include fragments."
@@ -380,8 +379,7 @@ if [[ ${buildDocs} == "true" ]]; then
 
   printgreen "Installing documentation dependencies..."
   bundle config set force_ruby_platform true
-  bundle config set path 'vendor/bundle'
-  bundle install --jobs "$(nproc 2>/dev/null || sysctl -n hw.ncpu)" --retry 3
+  bundle install
   printgreen "Building documentation site for $branchVersion with data at $PWD/gh-pages/_data"
   echo -n "Starting at " && date
   jekyll --version
@@ -400,7 +398,7 @@ if [[ ${buildDocs} == "true" ]]; then
     exit ${retVal}
   fi
   popd
-  
+
   if [[ "$CI" == "true" ]]; then
     echo "Moving jekyll build artifacts into $PWD/jekyll"
     mkdir -p "$PWD/jekyll"
