@@ -17,7 +17,7 @@ import org.springframework.test.context.TestPropertySource;
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
- * This is {@link PrincipalAttributeRepositoryFetcherCascadeTests}.
+ * This is {@link PrincipalAttributeRepositoryFetcherTests}.
  *
  * @author Misagh Moayyed
  * @since 6.2.0
@@ -59,7 +59,6 @@ class PrincipalAttributeRepositoryFetcherTests {
         }
     }
 
-
     @TestPropertySource(properties = "cas.person-directory.active-attribute-repository-ids=")
     @Nested
     class NoActiveRepositoryTests extends BaseTests {
@@ -91,4 +90,25 @@ class PrincipalAttributeRepositoryFetcherTests {
         }
     }
 
+    @TestPropertySource(properties = {
+        "cas.authn.attribute-repository.stub.attributes.uid=cas",
+        "cas.authn.attribute-repository.stub.attributes.givenName=apereo-cas",
+        "cas.authn.attribute-repository.stub.attributes.eppn=casuser",
+        "cas.authn.attribute-repository.core.aggregation=CASCADE",
+        "cas.authn.attribute-repository.core.merger=MULTIVALUED"
+    })
+    @Nested
+    class CascadeTests extends BaseTests {
+        @Test
+        void verifyOperation() {
+            val attributes = PrincipalAttributeRepositoryFetcher.builder()
+                .attributeRepository(aggregatingAttributeRepository)
+                .principalId("casuser")
+                .currentPrincipal(CoreAuthenticationTestUtils.getPrincipal("current-cas"))
+                .build()
+                .fromAllAttributeRepositories()
+                .retrieve();
+            assertNotNull(attributes);
+        }
+    }
 }
