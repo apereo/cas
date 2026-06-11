@@ -58,6 +58,13 @@
                     {%- endif -%}
                     <p/>
                     <sub>
+                        <i class="fas fa-copy small" data-bs-toggle="tooltip" data-bs-placment="top" data-bs-html="true" title="Copy"></i>
+                        <a data-bs-toggle="modal" href="#" onclick="copyPropertyConfig(this); return false;">
+                            <small>Copy Configuration Property</small>
+                        </a>
+                        <span class="copy-status small text-success" style="display: none;">Copied!</span>
+                    </sub>
+                    <sub>
                         <i class="fas fa-cog small" data-bs-toggle="tooltip" data-bs-placment="top" data-bs-html="true" title="Configuration Strategy"></i>
                         <a data-bs-toggle="modal" href="#" data-bs-target="#{{singlePropertyKey}}PropertyConfig"><small>How can I configure this property?</small></a>
                     </sub>
