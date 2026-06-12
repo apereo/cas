@@ -11,7 +11,6 @@ import org.apereo.cas.services.ServiceRegistryExecutionPlanConfigurer;
 import org.apereo.cas.services.ServiceRegistryListener;
 import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
 import lombok.val;
-import org.jspecify.annotations.NonNull;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
@@ -21,9 +20,10 @@ import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ScopedProxyMode;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.mongodb.core.MongoOperations;
 import org.springframework.data.mongodb.core.MongoTemplate;
-import org.springframework.data.mongodb.core.index.TextIndexDefinition;
+import org.springframework.data.mongodb.core.index.Index;
 
 /**
  * This is {@link CasMongoDbServiceRegistryAutoConfiguration}.
@@ -48,9 +48,9 @@ public class CasMongoDbServiceRegistryAutoConfiguration {
         val mongoTemplate = factory.buildMongoTemplate(mongo);
         MongoDbConnectionFactory.createCollection(mongoTemplate, mongo.getCollection(), mongo.isDropCollection());
         val collection = mongoTemplate.getCollection(mongo.getCollection());
-        val columnsIndex = new TextIndexDefinition.TextIndexDefinitionBuilder().onField("id")
-            .onField("serviceId").onField("name").build();
-        MongoDbConnectionFactory.createOrUpdateIndexes(mongoTemplate, collection, List.of(columnsIndex));
+        val serviceIdIndex = new Index().named("IDX_SERVICE_ID").on("serviceId", Sort.Direction.ASC);
+        val serviceNameIndex = new Index().named("IDX_SERVICE_NAME").on("name", Sort.Direction.ASC);
+        MongoDbConnectionFactory.createOrUpdateIndexes(mongoTemplate, collection, List.of(serviceIdIndex, serviceNameIndex));
         return mongoTemplate.asMongoTemplate();
     }
 
@@ -60,7 +60,7 @@ public class CasMongoDbServiceRegistryAutoConfiguration {
     public ServiceRegistry mongoDbServiceRegistry(
         @Qualifier("mongoDbServiceRegistryTemplate")
         final MongoOperations mongoDbServiceRegistryTemplate,
-        final ObjectProvider<@NonNull List<ServiceRegistryListener>> serviceRegistryListeners,
+        final ObjectProvider<List<ServiceRegistryListener>> serviceRegistryListeners,
         final CasConfigurationProperties casProperties,
         final ConfigurableApplicationContext applicationContext) {
         val mongo = casProperties.getServiceRegistry().getMongo();

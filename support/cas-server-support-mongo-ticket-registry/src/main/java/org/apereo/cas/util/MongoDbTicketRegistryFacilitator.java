@@ -34,6 +34,8 @@ public class MongoDbTicketRegistryFacilitator {
     private static final String INDEX_NAME_ID = "IDX_ID";
     private static final String INDEX_NAME_PRINCIPAL = "IDX_PRINCIPAL";
     private static final String INDEX_NAME_EXPIRATION = "IDX_EXPIRATION";
+    private static final String INDEX_NAME_SERVICE = "IDX_SERVICE";
+    private static final String INDEX_NAME_ATTRIBUTES = "IDX_ATTRIBUTES";
 
     private final TicketCatalog ticketCatalog;
 
@@ -85,12 +87,23 @@ public class MongoDbTicketRegistryFacilitator {
             if (properties.getIndexes().isEmpty() || properties.getIndexes().contains(INDEX_NAME_EXPIRATION)) {
                 val expireIndex = new Index()
                     .named(INDEX_NAME_EXPIRATION)
-                    .on(MongoDbTicketDocument.FIELD_NAME_EXPIRE_AT, Sort.Direction.ASC);
-                val timeout = ticket.getProperties().getStorageTimeout();
-                if (timeout > 0 && timeout != Long.MAX_VALUE) {
-                    expireIndex.expire(Duration.ofSeconds(timeout));
-                }
+                    .on(MongoDbTicketDocument.FIELD_NAME_EXPIRE_AT, Sort.Direction.ASC)
+                    .expire(Duration.ZERO);
                 expectedIndexes.add(expireIndex);
+            }
+
+            if (properties.getIndexes().isEmpty() || properties.getIndexes().contains(INDEX_NAME_SERVICE)) {
+                val serviceIndex = new Index()
+                    .named(INDEX_NAME_SERVICE)
+                    .on(MongoDbTicketDocument.FIELD_NAME_SERVICE, Sort.Direction.ASC);
+                expectedIndexes.add(serviceIndex);
+            }
+
+            if (properties.getIndexes().isEmpty() || properties.getIndexes().contains(INDEX_NAME_ATTRIBUTES)) {
+                val attributeIndex = new Index()
+                    .named(INDEX_NAME_ATTRIBUTES)
+                    .on(MongoDbTicketDocument.FIELD_NAME_ATTRIBUTES + ".$**", Sort.Direction.ASC);
+                expectedIndexes.add(attributeIndex);
             }
 
             if (!expectedIndexes.isEmpty()) {

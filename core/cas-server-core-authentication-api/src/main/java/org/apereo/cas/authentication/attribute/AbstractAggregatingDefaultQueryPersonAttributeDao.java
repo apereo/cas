@@ -130,11 +130,11 @@ public abstract class AbstractAggregatingDefaultQueryPersonAttributeDao extends 
      * @param filter               the filter
      * @return The results from the call to the DAO.
      */
-    protected abstract Set<PersonAttributes> getAttributesFromDao(Map<String, List<Object>> seed,
-                                                                  boolean isFirstQuery,
-                                                                  PersonAttributeDao currentlyConsidering,
-                                                                  @Nullable Set<PersonAttributes> resultPeople,
-                                                                  @Nullable PersonAttributeDaoFilter filter);
+    protected abstract @Nullable Set<PersonAttributes> getAttributesFromDao(Map<String, List<Object>> seed,
+                                                                            boolean isFirstQuery,
+                                                                            PersonAttributeDao currentlyConsidering,
+                                                                            @Nullable Set<PersonAttributes> resultPeople,
+                                                                            @Nullable PersonAttributeDaoFilter filter);
 
 
     /**

@@ -50,12 +50,14 @@ public abstract class BasePersonAttributeDao implements PersonAttributeDao {
         this.id = id;
     }
     
-    protected @Nullable PersonAttributes getSinglePerson(final Set<PersonAttributes> people) {
+    protected @Nullable PersonAttributes getSinglePerson(final @Nullable Set<PersonAttributes> people) {
         try {
             return DataAccessUtils.singleResult(people);
         } catch (final IncorrectResultSizeDataAccessException e) {
             LOGGER.warn("Unexpected multiple people returned from person attribute DAO: [{}] : [{}]", e.getClass().getName(), e.getMessage());
-            people.forEach(p -> LOGGER.debug("Person: [{}]", p));
+            if (people != null) {
+                people.forEach(p -> LOGGER.debug("Person: [{}]", p));
+            }
             throw e;
         }
     }

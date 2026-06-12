@@ -11,6 +11,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.jspecify.annotations.Nullable;
 
 /**
  * An implementation of the {@link PersonAttributeDao} that is able to resolve attributes
@@ -45,9 +46,9 @@ public class GroovyPersonAttributeDao extends AbstractDefaultAttributePersonAttr
     }
 
     @Override
-    public Set<PersonAttributes> getPeopleWithMultivaluedAttributes(final Map<String, List<Object>> attributes,
-                                                                    final PersonAttributeDaoFilter filter,
-                                                                    final Set<PersonAttributes> resultPeople) {
+    public @Nullable Set<PersonAttributes> getPeopleWithMultivaluedAttributes(final Map<String, List<Object>> attributes,
+                                                                              final PersonAttributeDaoFilter filter,
+                                                                              final Set<PersonAttributes> resultPeople) {
         val personAttributesMap = groovyObject.getPersonAttributesFromMultivaluedAttributes(attributes, resultPeople);
         if (personAttributesMap != null) {
             LOGGER.debug("Creating person attributes: [{}]", personAttributesMap);

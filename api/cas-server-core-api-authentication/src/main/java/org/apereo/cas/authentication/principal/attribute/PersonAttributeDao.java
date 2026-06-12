@@ -136,7 +136,7 @@ public interface PersonAttributeDao extends Comparable<PersonAttributeDao>, Orde
      * found an empty {@link Set} is returned. If the query could not be run null is returned.
      * @throws IllegalArgumentException If {@code query} is {@code null.}
      */
-    default Set<PersonAttributes> getPeopleWithMultivaluedAttributes(final Map<String, List<Object>> query,
+    default @Nullable Set<PersonAttributes> getPeopleWithMultivaluedAttributes(final Map<String, List<Object>> query,
                                                                      @Nullable final PersonAttributeDaoFilter filter,
                                                                      @Nullable final Set<PersonAttributes> resultPeople) {
         return new LinkedHashSet<>();

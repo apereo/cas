@@ -52,9 +52,4 @@ public class MongoDbConnectionPoolProperties implements Serializable {
      * Minimum number of connections to keep around.
      */
     private int minSize = 1;
-
-    /**
-     * Total number of connections allowed per host.
-     */
-    private int perHost = 10;
 }

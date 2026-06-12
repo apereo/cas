@@ -12,7 +12,7 @@ def run(final Object... args) {
         return Map.of()
     }
     
-    return [username:[uid], likes:["cheese", "food"], id:[1234,2,3,4,5],
+    return [likes:["cheese", "food"], id:[1234,2,3,4,5],
            eppn:["casuser2"], groovyOldName: attributes['oldName'],
            groovyNewName: attributes['newName']]
 }
