@@ -1,14 +1,15 @@
 package org.apereo.cas.monitor;
 
 import module java.base;
+import com.hazelcast.cluster.Member;
 import com.hazelcast.core.HazelcastInstance;
 import com.hazelcast.instance.impl.HazelcastInstanceProxy;
 import com.hazelcast.internal.memory.MemoryStats;
 import com.hazelcast.map.IMap;
+import lombok.RequiredArgsConstructor;
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-import org.jspecify.annotations.NonNull;
 import org.springframework.beans.factory.ObjectProvider;
 
 /**
@@ -21,10 +22,10 @@ import org.springframework.beans.factory.ObjectProvider;
 @ToString
 public class HazelcastHealthIndicator extends AbstractCacheHealthIndicator {
 
-    private final ObjectProvider<@NonNull HazelcastInstance> instance;
+    private final ObjectProvider<HazelcastInstance> instance;
 
     public HazelcastHealthIndicator(final long evictionThreshold, final long threshold,
-                                    final ObjectProvider<@NonNull HazelcastInstance> instance) {
+                                    final ObjectProvider<HazelcastInstance> instance) {
         super(evictionThreshold, threshold);
         this.instance = instance;
     }
@@ -34,11 +35,12 @@ public class HazelcastHealthIndicator extends AbstractCacheHealthIndicator {
         val hazelcastInstance = (HazelcastInstanceProxy) instance.getObject();
         val stats = hazelcastInstance.getConfig().getMapConfigs().keySet();
         val statsList = new ArrayList<CacheStatistics>(stats.size());
+
         stats.forEach(key -> {
             val map = hazelcastInstance.getMap(key);
             val memoryStats = hazelcastInstance.getOriginal().getMemoryStats();
             LOGGER.debug("Starting to collect hazelcast statistics for map [{}] identified by key [{}]...", map, key);
-            statsList.add(new HazelcastStatistics(map, hazelcastInstance.getCluster().getMembers().size(), memoryStats));
+            statsList.add(new HazelcastStatistics(map, hazelcastInstance.getCluster().getMembers(), memoryStats));
         });
         return statsList.toArray(CacheStatistics[]::new);
     }
@@ -46,20 +48,14 @@ public class HazelcastHealthIndicator extends AbstractCacheHealthIndicator {
     /**
      * The type Hazelcast statistics.
      */
+    @RequiredArgsConstructor
     public static class HazelcastStatistics implements CacheStatistics {
 
         private static final int PERCENTAGE_VALUE = 100;
 
         private final IMap map;
-        private final long clusterSize;
-
+        private final Set<Member> clusterMembers;
         private final MemoryStats memoryStats;
-
-        protected HazelcastStatistics(final IMap map, final int clusterSize, final MemoryStats memoryStats) {
-            this.map = map;
-            this.clusterSize = clusterSize;
-            this.memoryStats = memoryStats;
-        }
 
         @Override
         public long getSize() {
@@ -92,10 +88,11 @@ public class HazelcastHealthIndicator extends AbstractCacheHealthIndicator {
         @Override
         public String toString(final StringBuilder builder) {
             val localMapStats = map.getLocalMapStats();
-            builder.append("Creation time: ")
+            builder
+                .append("Creation time: ")
                 .append(localMapStats.getCreationTime())
                 .append(", Cluster size: ")
-                .append(clusterSize)
+                .append(clusterMembers.size())
                 .append(", Owned entry count: ")
                 .append(localMapStats.getOwnedEntryCount())
                 .append(", Backup entry count: ")
@@ -123,6 +120,9 @@ public class HazelcastHealthIndicator extends AbstractCacheHealthIndicator {
             if (localMapStats.getNearCacheStats() != null) {
                 builder.append(", Misses: ").append(localMapStats.getNearCacheStats().getMisses());
             }
+            clusterMembers.forEach(member -> builder.append(", Member(uuid=%s,address=%s,lite=%s)".formatted(
+                member.getUuid(), member.getAddress().toString(), member.isLiteMember()))
+            );
             return builder.toString();
         }
     }
