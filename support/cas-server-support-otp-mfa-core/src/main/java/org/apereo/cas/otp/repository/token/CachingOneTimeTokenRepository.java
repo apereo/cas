@@ -33,19 +33,18 @@ public class CachingOneTimeTokenRepository extends BaseOneTimeTokenRepository<On
 
     @Override
     public OneTimeToken store(final OneTimeToken token) {
-        token.assignIdIfNecessary();
-        if (exists(token.getUserId(), token.getToken())) {
-            val tokens = storage.getIfPresent(token.getUserId());
-            Objects.requireNonNull(tokens).add(token);
-            LOGGER.debug("Storing previously used tokens [{}] for user [{}]", tokens, token.getUserId());
-            storage.put(token.getUserId(), tokens);
-        } else {
+        return lock.tryLock(() -> {
+            if (exists(token.getUserId(), token.getToken())) {
+                LOGGER.debug("Token [{}] for user [{}] already exists; rejecting as replay attempt", token.getToken(), token.getUserId());
+                return null;
+            }
+            token.assignIdIfNecessary();
             val tokens = new ArrayList<OneTimeToken>(1);
             tokens.add(token);
             LOGGER.debug("Storing new token [{}] for user [{}]", token, token.getUserId());
             storage.put(token.getUserId(), tokens);
-        }
-        return token;
+            return token;
+        });
     }
 
     @Override

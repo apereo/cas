@@ -24,9 +24,11 @@ public interface OneTimeTokenRepository<T extends OneTimeToken> {
 
     /**
      * Store token/code in the repository, marking it as invalid to be reused again.
+     * Implementations must perform the existence check and the write as a single
+     * atomic operation to prevent concurrent replay attacks.
      *
      * @param token the token
-     * @return the t
+     * @return the stored token, or {@code null} if the token already existed (replay attempt)
      */
     T store(T token);
 

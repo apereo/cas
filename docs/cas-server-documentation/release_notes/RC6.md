@@ -48,6 +48,11 @@ The following items are new improvements and enhancements presented in this rele
 CAS continues to produce and publish [OpenRewrite](https://docs.openrewrite.org/) recipes that allow the project to upgrade installations
 in place from one version to the next. [See this guide](../installation/OpenRewrite-Upgrade-Recipes.html) to learn more.
 
+### Spring Boot 4.1
+
+CAS is now built with Spring Boot `4.1.x` and the upgrade is finalized. This is a major platform upgrade that affects almost all aspects of the codebase
+including many of the third-party core libraries used by CAS as well as some CAS functionality.
+
 ### GraalVM Native Images
 
 A CAS server installation and deployment process can be tuned to build and run
@@ -135,7 +140,11 @@ to tighten and improve the security posture of registration request:
               
 - [OpenID Connect logout requests](../authentication/OIDC-Authentication-Logout.html) may now also be submitted via `POST`. 
 - Redis integration tests have switched to use Redis `8.8.x`.
+- MongoDb integration tests have switched to use MongoDb `8.x`.
 - The [Spring Expression Language](../configuration/Configuration-Spring-Expressions.html) parser is tightened to run in a sandboxed environment.
 - [Delegated authentication](../integration/Delegate-Authentication.html) can now handle JSON serialization of complex attribute definitions that may carry maps. 
 - Small enhancements to [CAS audits](../audits/Audits.html) to correctly identify the audited principal.
 - [Delegated authentication](../integration/Delegate-Authentication.html) logout requests can now redirect to the original application as instructed when working with external OpenID Connect providers. 
+- A series of performance improvements to [MongoDb](../ticketing/MongoDb-Ticket-Registry.html) and [DynamoDb](../ticketing/DynamoDb-Ticket-Registry.html) ticket registry implementations.
+- [Groovy attribute repositories](../integration/Attribute-Resolution-Groovy.html) are no longer required to return a `username` attribute.
+- A large number of dependencies and libraries have been updated to their latest versions. 
