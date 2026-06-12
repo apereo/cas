@@ -52,7 +52,6 @@ public class DynamoDbTicketRegistry extends AbstractTicketRegistry {
         val expressionValues = new HashMap<String, AttributeValue>();
         val expressionAttrNames = new HashMap<String, String>();
 
-        filterExpressions.add("prefix=:prefix");
         queryAttributes.forEach((key, queryValues) -> {
             val expressionParameter = isCipherExecutorEnabled()
                 ? digestIdentifier(key)
@@ -66,15 +65,24 @@ public class DynamoDbTicketRegistry extends AbstractTicketRegistry {
                 val attributeValue = digestIdentifier(queryValues.get(i).toString());
                 expressionValues.put(':' + expressionParameter + i, AttributeValue.builder().s(attributeValue).build());
             }
-            filterExpressions.add('(' + String.join(" OR ", criteriaValues) + ')');
-            expressionAttrNames.put(expressionAttrName, digestIdentifier(key));
+            if (!criteriaValues.isEmpty()) {
+                filterExpressions.add('(' + String.join(" OR ", criteriaValues) + ')');
+                expressionAttrNames.put(expressionAttrName, digestIdentifier(key));
+            }
         });
         val expression = String.join(" AND ", filterExpressions);
         val prefix = dbTableService.getTicketCatalog().findTicketDefinition(TicketGrantingTicket.class)
             .orElseThrow()
             .getPrefix();
-        expressionValues.put(":prefix", AttributeValue.builder().s(prefix).build());
+        expressionValues.put(":key", AttributeValue.builder().s(prefix).build());
         return dbTableService.getSessionsWithAttributes(expression, expressionAttrNames, expressionValues)
+            .map(this::decodeTicket)
+            .filter(Objects::nonNull);
+    }
+
+    @Override
+    public Stream<? extends Ticket> getTicketsFor(final Service service) {
+        return dbTableService.getTicketsFor(service)
             .map(this::decodeTicket)
             .filter(Objects::nonNull);
     }
@@ -169,14 +177,30 @@ public class DynamoDbTicketRegistry extends AbstractTicketRegistry {
 
     @Override
     public List<? extends Serializable> query(final TicketRegistryQueryCriteria criteria) {
+        if (StringUtils.isNotBlank(criteria.getId())) {
+            val ticket = dbTableService.get(criteria.getId(), digestIdentifier(criteria.getId()));
+            if (ticket == null) {
+                return List.of();
+            }
+            val decodedTicket = decodeTicket(ticket);
+            if (StringUtils.isNotBlank(criteria.getPrincipal()) && !isTicketPrincipalMatching(decodedTicket, criteria.getPrincipal())) {
+                return List.of();
+            }
+            return Optional.ofNullable(criteria.isDecode() ? decodedTicket : ticket)
+                .filter(Objects::nonNull)
+                .map(List::of)
+                .orElseGet(List::of);
+        }
         return dbTableService
-            .query(criteria.withId(digestIdentifier(criteria.getId())))
+            .query(criteria.withPrincipal(digestIdentifier(criteria.getPrincipal())))
             .map(ticket -> criteria.isDecode() ? decodeTicket(ticket) : ticket)
             .filter(Objects::nonNull)
-            .filter(ticket -> StringUtils.isBlank(criteria.getPrincipal())
-                || (ticket instanceof final AuthenticationAwareTicket aat
-                && Strings.CI.equals(criteria.getPrincipal(), aat.getAuthentication().getPrincipal().getId())))
             .collect(Collectors.toList());
+    }
+
+    private static boolean isTicketPrincipalMatching(final Ticket ticket, final String principal) {
+        return ticket instanceof final AuthenticationAwareTicket aat
+            && Strings.CI.equals(principal, aat.getAuthentication().getPrincipal().getId());
     }
 
     private DynamoDbTicketRegistryFacilitator.TicketPayload toTicketPayload(final Ticket ticket) throws Exception {

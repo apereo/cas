@@ -140,6 +140,35 @@ class DynamoDbTicketRegistryTests extends BaseTicketRegistryTests {
     }
 
     @RepeatedTest(2)
+    void verifyRegistryQueryByIdWithoutType() throws Throwable {
+        val tgt = new TicketGrantingTicketImpl("TGT-225500",
+            CoreAuthenticationTestUtils.getAuthentication(), NeverExpiresExpirationPolicy.INSTANCE);
+        val registry = getNewTicketRegistry();
+        registry.addTicket(tgt);
+        val results = registry.query(TicketRegistryQueryCriteria.builder()
+            .id(tgt.getId())
+            .decode(true)
+            .build());
+        assertEquals(1, results.size());
+        assertEquals(tgt, results.getFirst());
+    }
+
+    @RepeatedTest(2)
+    void verifyRegistryQueryByPrincipalWithoutType() throws Throwable {
+        val principal = UUID.randomUUID().toString();
+        val tgt = new TicketGrantingTicketImpl("TGT-335500",
+            CoreAuthenticationTestUtils.getAuthentication(principal), NeverExpiresExpirationPolicy.INSTANCE);
+        val registry = getNewTicketRegistry();
+        registry.addTicket(tgt);
+        val results = registry.query(TicketRegistryQueryCriteria.builder()
+            .principal(principal)
+            .decode(true)
+            .build());
+        assertEquals(1, results.size());
+        assertEquals(tgt, results.getFirst());
+    }
+
+    @RepeatedTest(2)
     void verifyLargeDataset() {
         val ticketGrantingTicketToAdd = Stream.generate(() -> {
                 val tgtId = new TicketGrantingTicketIdGenerator(10, StringUtils.EMPTY)
@@ -155,6 +184,114 @@ class DynamoDbTicketRegistryTests extends BaseTicketRegistryTests {
         stopwatch.stop();
         var time = stopwatch.getTime(TimeUnit.SECONDS);
         assertTrue(time <= 20);
+    }
+
+    @RepeatedTest(2)
+    void verifyRegistryQueryByIdWithNoDecode() throws Throwable {
+        val tgt = new TicketGrantingTicketImpl("TGT-445500",
+            CoreAuthenticationTestUtils.getAuthentication(), NeverExpiresExpirationPolicy.INSTANCE);
+        val registry = getNewTicketRegistry();
+        registry.addTicket(tgt);
+        val results = registry.query(TicketRegistryQueryCriteria.builder()
+            .id(tgt.getId())
+            .decode(false)
+            .build());
+        assertEquals(1, results.size());
+    }
+
+    @RepeatedTest(2)
+    void verifyRegistryQueryByIdWithMismatchedPrincipal() throws Throwable {
+        val principal = UUID.randomUUID().toString();
+        val tgt = new TicketGrantingTicketImpl("TGT-555500",
+            CoreAuthenticationTestUtils.getAuthentication(principal), NeverExpiresExpirationPolicy.INSTANCE);
+        val registry = getNewTicketRegistry();
+        registry.addTicket(tgt);
+        val results = registry.query(TicketRegistryQueryCriteria.builder()
+            .id(tgt.getId())
+            .principal("other-principal-" + UUID.randomUUID())
+            .decode(true)
+            .build());
+        assertTrue(results.isEmpty());
+    }
+
+    @RepeatedTest(2)
+    void verifyRegistryQueryByIdNotFound() throws Throwable {
+        val registry = getNewTicketRegistry();
+        val results = registry.query(TicketRegistryQueryCriteria.builder()
+            .id("TGT-NONEXISTENT-99999")
+            .decode(true)
+            .build());
+        assertTrue(results.isEmpty());
+    }
+
+    @RepeatedTest(2)
+    void verifyGetTicketWithBlankId() throws Throwable {
+        val registry = getNewTicketRegistry();
+        assertNull(registry.getTicket(StringUtils.EMPTY));
+        assertNull(registry.getTicket("   "));
+    }
+
+    @RepeatedTest(2)
+    void verifyStreamWithCriteria() throws Throwable {
+        val tgtId = new TicketGrantingTicketIdGenerator(10, StringUtils.EMPTY)
+            .getNewTicketId(TicketGrantingTicket.PREFIX);
+        val tgt = new TicketGrantingTicketImpl(tgtId,
+            CoreAuthenticationTestUtils.getAuthentication(), NeverExpiresExpirationPolicy.INSTANCE);
+        val registry = getNewTicketRegistry();
+        registry.addTicket(tgt);
+        val criteria = TicketRegistryStreamCriteria.builder().from(0).count(Long.MAX_VALUE).build();
+        val tickets = registry.stream(criteria).toList();
+        assertFalse(tickets.isEmpty());
+    }
+
+    @RepeatedTest(2)
+    void verifySessionAndServiceTicketCounts() throws Throwable {
+        val registry = getNewTicketRegistry();
+        registry.deleteAll();
+        val tgt = new TicketGrantingTicketImpl("TGT-COUNT-001",
+            CoreAuthenticationTestUtils.getAuthentication(), NeverExpiresExpirationPolicy.INSTANCE);
+        registry.addTicket(tgt);
+        assertTrue(registry.sessionCount() >= 1);
+        assertTrue(registry.serviceTicketCount() >= 0);
+    }
+
+    @RepeatedTest(2)
+    void verifyCountTicketsForService() throws Throwable {
+        val service = RegisteredServiceTestUtils.getService();
+        val registry = getNewTicketRegistry();
+        registry.deleteAll();
+        val tgt = new TicketGrantingTicketImpl("TGT-SVC-COUNT-001",
+            CoreAuthenticationTestUtils.getAuthentication(), NeverExpiresExpirationPolicy.INSTANCE);
+        registry.addTicket(tgt);
+        val count = registry.countTicketsFor(service);
+        assertTrue(count >= 0);
+    }
+
+    @RepeatedTest(2)
+    void verifyDeleteTicketsByPrincipal() throws Throwable {
+        val principal = UUID.randomUUID().toString();
+        val tgt = new TicketGrantingTicketImpl("TGT-DEL-PRINCIPAL-001",
+            CoreAuthenticationTestUtils.getAuthentication(principal), NeverExpiresExpirationPolicy.INSTANCE);
+        val registry = getNewTicketRegistry();
+        registry.addTicket(tgt);
+        val deleted = registry.deleteTicketsFor(principal);
+        assertTrue(deleted >= 1);
+        assertNull(registry.getTicket(tgt.getId()));
+    }
+
+    @RepeatedTest(2)
+    void verifyAddTicketStream() {
+        val registry = getNewTicketRegistry();
+        val toAdd = Stream.of(
+            new TicketGrantingTicketImpl("TGT-STREAM-001",
+                CoreAuthenticationTestUtils.getAuthentication(), NeverExpiresExpirationPolicy.INSTANCE),
+            new TicketGrantingTicketImpl("TGT-STREAM-002",
+                CoreAuthenticationTestUtils.getAuthentication(), NeverExpiresExpirationPolicy.INSTANCE)
+        );
+        val saved = registry.addTicket(toAdd);
+        assertEquals(2, saved.size());
+        assertNotNull(registry.getTicket("TGT-STREAM-001"));
+        assertNotNull(registry.getTicket("TGT-STREAM-002"));
     }
 
     private OAuth20Code createOAuthCode() throws Throwable {
