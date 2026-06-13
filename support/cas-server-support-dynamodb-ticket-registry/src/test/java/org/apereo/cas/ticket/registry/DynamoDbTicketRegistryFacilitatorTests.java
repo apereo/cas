@@ -109,7 +109,7 @@ class DynamoDbTicketRegistryFacilitatorTests {
 
         @Test
         void verifyGetSessionsForEmptyPrincipal() {
-            val sessions = dynamoDbTicketRegistryFacilitator.getSessionsFor("").toList();
+            val sessions = dynamoDbTicketRegistryFacilitator.getSessionsFor(StringUtils.EMPTY).toList();
             assertTrue(sessions.isEmpty());
         }
 
