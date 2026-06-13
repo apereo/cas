@@ -19,5 +19,6 @@ public class CasConsentRuntimeHints implements CasRuntimeHintsRegistrar {
     public void registerHints(final @NonNull RuntimeHints hints, final @Nullable ClassLoader classLoader) {
         registerSerializationHints(hints, ConsentDecision.class);
         registerReflectionHints(hints, ConsentRepositoryBuilder.class);
+        registerProxyHints(hints, ConsentRepositoryBuilder.class);
     }
 }

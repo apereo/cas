@@ -60,7 +60,8 @@ public class CasCoreUtilRuntimeHints implements CasRuntimeHintsRegistrar {
             Function.class,
             Consumer.class,
             Cleanable.class,
-            CorsConfigurationSource.class
+            CorsConfigurationSource.class,
+            PrivilegedAction.class
         ));
 
         registerSerializationHints(hints);

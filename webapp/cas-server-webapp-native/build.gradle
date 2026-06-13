@@ -166,7 +166,6 @@ plugins.withId("org.graalvm.buildtools.native") {
             list.add("-Xrunjdwp:transport=dt_socket,address=*:5005,server=y,suspend=n")
 
             jvmArgs = list
-//    systemProperties System.properties
 
             def aotSpringActiveProfiles = providers.systemProperty("aotSpringActiveProfiles").getOrElse("native")
             logger.info "AOT processing spring active profile: ${aotSpringActiveProfiles}"
@@ -197,7 +196,7 @@ plugins.withId("org.graalvm.buildtools.native") {
         binaries {
             main {
                 imageName = "cas"
-                quickBuild = true
+                quickBuild = CasBuildSettings.isCi(project)
                 debug = true
                 verbose = false
                 richOutput = true
@@ -206,13 +205,13 @@ plugins.withId("org.graalvm.buildtools.native") {
 
                 configurationFileDirectories.from(file('src/graal'))
 
+                buildArgs.add('-H:+UnlockExperimentalVMOptions')
                 buildArgs.add('-H:+ReportExceptionStackTraces')
                 buildArgs.add('-H:+InlineBeforeAnalysis')
                 buildArgs.add('-H:+TraceSecurityServices')
                 buildArgs.add('-H:+PrintAnalysisCallTree')
                 buildArgs.add('-H:+AddAllCharsets')
                 buildArgs.add('-H:+ReportUnsupportedElementsAtRuntime')
-                buildArgs.add('-H:+UnlockExperimentalVMOptions')
 
                 buildArgs.add('-J-Xmx14G')
                 buildArgs.add('-J-Xms4G')
@@ -227,12 +226,15 @@ plugins.withId("org.graalvm.buildtools.native") {
                 buildArgs.add('--enable-monitoring=heapdump,jfr')
 
                 buildArgs.add('-march=native')
-//            buildArgs.add('--pgo-instrument')
-//            def profileFile = rootProject.file("default.iprof")
-//            if (profileFile.exists()) {
-//                ansi.blue("Using data collected for profile-guided optimizations of AOT-compiled code")
-//                buildArgs.add("--pgo=${profileFile.path}")
-//            }
+                
+                buildArgs.add('-DVALIDATE_CONFIGURATION_ENABLED=false')
+//                def profileFile = layout.settingsDirectory.file("default.iprof").asFile
+//                if (profileFile.exists()) {
+//                    ansi.blue("Using data collected for profile-guided optimizations of AOT-compiled code")
+//                    buildArgs.add("--pgo=${profileFile.path}")
+//                } else {
+//                    buildArgs.add('--pgo-instrument')
+//                }
                 buildArgs.add('--initialize-at-build-time=java.beans')
                 buildArgs.add('--initialize-at-build-time=com.sun.beans')
                 buildArgs.add('--initialize-at-build-time=groovyjarjarantlr4.v4.runtime')

@@ -945,6 +945,7 @@ ${BUILD_SCRIPT:+ $BUILD_SCRIPT}${DAEMON:+ $DAEMON} \
               -Dcom.sun.net.ssl.checkRevocation=false \
               -Dlog.console.stacktraces=true \
               -DaotSpringActiveProfiles=none \
+              -DVALIDATE_CONFIGURATION_ENABLED=false \
               $systemProperties \
               --spring.main.lazy-initialization=false \
               --spring.devtools.restart.enabled=false \
