@@ -179,6 +179,14 @@ function fetchCasVersion() {
 function parseArguments() {
   while (("$#")); do
     case "$1" in
+    --scenarios)
+      shift 1
+      cmd="./gradlew -x check -x test -x javadoc --quiet --build-cache --configure-on-demand --parallel puppeteerScenarios"
+      json="$(eval "$cmd")"
+      echo "$json" | jq
+      echo "$json" | jq -r '"Total Scenarios: \(length)"'
+      exit 0
+      ;;
     --jfr)
       JFR_ARGS="-DCAS_APP_STARTUP=jfr -XX:StartFlightRecording:filename=startup-$(date +%Y%m%d-%H%M%S).jfr,duration=90s,settings=profile,disk=true,dumponexit=true"
       shift 1

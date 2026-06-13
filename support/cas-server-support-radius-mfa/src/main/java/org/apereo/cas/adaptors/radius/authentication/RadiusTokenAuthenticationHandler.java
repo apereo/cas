@@ -18,7 +18,6 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import net.jradius.dictionary.Attr_State;
 import net.jradius.packet.attribute.value.AttributeValue;
-import org.jspecify.annotations.NonNull;
 import org.springframework.beans.factory.ObjectProvider;
 
 /**
@@ -37,24 +36,20 @@ public class RadiusTokenAuthenticationHandler extends AbstractPreAndPostProcessi
 
     private final boolean failoverOnAuthenticationFailure;
 
-    private final ObjectProvider<@NonNull MultifactorAuthenticationProvider> multifactorAuthenticationProvider;
-
-
+    private final ObjectProvider<MultifactorAuthenticationProvider> multifactorAuthenticationProvider;
+    
     public RadiusTokenAuthenticationHandler(final String name,
-
                                             final PrincipalFactory principalFactory,
                                             final List<RadiusServer> servers,
                                             final boolean failoverOnException,
                                             final boolean failoverOnAuthenticationFailure,
                                             final Integer order,
-                                            final ObjectProvider<@NonNull MultifactorAuthenticationProvider> multifactorAuthenticationProvider) {
+                                            final ObjectProvider<MultifactorAuthenticationProvider> multifactorAuthenticationProvider) {
         super(name, principalFactory, order);
         this.servers = servers;
         this.failoverOnException = failoverOnException;
         this.failoverOnAuthenticationFailure = failoverOnAuthenticationFailure;
         this.multifactorAuthenticationProvider = multifactorAuthenticationProvider;
-
-        LOGGER.debug("Using [{}]", getClass().getSimpleName());
     }
 
     @Override
