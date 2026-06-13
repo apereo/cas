@@ -3,6 +3,7 @@ package org.apereo.cas.services;
 import module java.base;
 import org.apereo.cas.config.CasGoogleCloudStorageServiceRegistryAutoConfiguration;
 import org.apereo.cas.test.CasTestExtension;
+import org.apereo.cas.util.junit.EnabledIfListeningOnPort;
 import com.google.api.gax.core.CredentialsProvider;
 import com.google.auth.ApiKeyCredentials;
 import com.google.cloud.spring.autoconfigure.core.GcpContextAutoConfiguration;
@@ -20,7 +21,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.TestConfiguration;
-import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 
 /**
@@ -43,10 +43,8 @@ import org.springframework.context.annotation.Bean;
     "spring.cloud.gcp.storage.project-id=apereo-cas-gcp",
     "spring.cloud.gcp.storage.host=http://127.0.0.1:8100"
 })
+@EnabledIfListeningOnPort(port = 8100)
 class GoogleCloudStorageServiceRegistryTests extends AbstractServiceRegistryTests {
-
-    @Autowired
-    private ConfigurableApplicationContext applicationContext;
 
     @Autowired
     @Qualifier(ServiceRegistry.BEAN_NAME)
@@ -75,6 +73,5 @@ class GoogleCloudStorageServiceRegistryTests extends AbstractServiceRegistryTest
             storageOptionsBuilder.setHost(properties.getHost());
             return storageOptionsBuilder.build().getService();
         }
-
     }
 }

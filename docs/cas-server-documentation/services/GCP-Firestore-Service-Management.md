@@ -41,3 +41,8 @@ To enable additional logging, configure the log4j configuration file to add the 
 </Logger>
 ...
 ```
+
+## Auto Initialization
+
+Upon startup and configuration permitting, the registry is able to auto initialize itself from default JSON service definitions available to CAS. See [this guide](AutoInitialization-Service-Management.html) for more info.
+

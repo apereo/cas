@@ -2,6 +2,8 @@ package org.apereo.cas.services.resource;
 
 import module java.base;
 import org.apereo.cas.services.RegisteredService;
+import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 import org.apache.commons.lang3.Strings;
 
 /**
@@ -11,6 +13,7 @@ import org.apache.commons.lang3.Strings;
  * @author Travis Schmidt
  * @since 5.3.0
  */
+@Slf4j
 public class DefaultRegisteredServiceResourceNamingStrategy implements RegisteredServiceResourceNamingStrategy {
 
     /**
@@ -23,5 +26,12 @@ public class DefaultRegisteredServiceResourceNamingStrategy implements Registere
     @Override
     public String build(final RegisteredService service, final String extension) {
         return Strings.CI.remove(service.getName(), " ") + '-' + service.getId() + '.' + extension;
+    }
+
+    @Override
+    public long extractServiceId(final String value) {
+        val end = value.lastIndexOf('.');
+        val dash = value.lastIndexOf('-', end - 1);
+        return Long.parseLong(value.substring(dash + 1, end));
     }
 }

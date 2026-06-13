@@ -15,6 +15,7 @@ dependencies {
     api project(":api:cas-server-core-api-services")
 
     implementation libraries.googlecloudstorage
+    implementation libraries.googlecloudpubsub
     
     implementation project(":core:cas-server-core-services")
     implementation project(":core:cas-server-core-services-api")
