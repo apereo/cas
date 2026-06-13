@@ -16,6 +16,9 @@ import org.springframework.beans.factory.InitializingBean;
 @RequiredArgsConstructor
 @Slf4j
 public class CasGoogleCloudStorageServiceRegistryListener implements InitializingBean, DisposableBean {
+    /**
+     * Subscription name.
+     */
     public static final String SUBSCRIPTION_NAME = "cas-service-regisry-gcp-storage";
     private final Subscriber subscriber;
 
