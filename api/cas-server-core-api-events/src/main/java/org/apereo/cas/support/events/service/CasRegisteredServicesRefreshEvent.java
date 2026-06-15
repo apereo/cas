@@ -19,11 +19,6 @@ public class CasRegisteredServicesRefreshEvent extends BaseCasRegisteredServiceE
     @Serial
     private static final long serialVersionUID = 291168299766263298L;
 
-    /**
-     * Instantiates a new cas sso event.
-     *
-     * @param source the source
-     */
     public CasRegisteredServicesRefreshEvent(final Object source, final ClientInfo clientInfo) {
         super(source, clientInfo);
     }

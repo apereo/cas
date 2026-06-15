@@ -11,7 +11,6 @@ import com.google.pubsub.v1.PubsubMessage;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
 
 /**
@@ -23,7 +22,7 @@ import org.apache.commons.lang3.StringUtils;
 @Slf4j
 @RequiredArgsConstructor
 public class CasGoogleCloudServiceRegistryMessageReceiver implements MessageReceiver {
-    private final ServiceRegistry serviceRegistry;
+    private final CacheableServicesManager servicesManager;
     private final Storage storage;
     private final StringSerializer<RegisteredService> serializer;
     private final RegisteredServiceResourceNamingStrategy namingStrategy;
@@ -56,17 +55,17 @@ public class CasGoogleCloudServiceRegistryMessageReceiver implements MessageRece
         LOGGER.trace("Updating object: gs://{}/{}", bucket, objectName);
         //CHECKSTYLE:ON
         val registeredService = serializer.from(content);
-        serviceRegistry.save(registeredService);
+        servicesManager.cacheRegisteredService(registeredService);
     }
 
     protected void handleDeletedObject(final String bucket, final String objectName) {
         val id = namingStrategy.extractServiceId(objectName);
-        val registeredService = serviceRegistry.findServiceById(id);
+        val registeredService = servicesManager.findServiceBy(id);
         if (registeredService != null) {
             //CHECKSTYLE:OFF
-            LOGGER.debug("Deleting object: gs://{}/{}", bucket, objectName);
-            val result = serviceRegistry.delete(registeredService);
-            LOGGER.debug("Deleted object: gs://{}/{} => {}", bucket, objectName, BooleanUtils.toStringYesNo(result));
+            LOGGER.trace("Deleting object: gs://{}/{}", bucket, objectName);
+            servicesManager.removeRegisteredServiceFromCache(registeredService);
+            LOGGER.debug("Deleted object: gs://{}/{}", bucket, objectName);
             //CHECKSTYLE:ON
         }
     }

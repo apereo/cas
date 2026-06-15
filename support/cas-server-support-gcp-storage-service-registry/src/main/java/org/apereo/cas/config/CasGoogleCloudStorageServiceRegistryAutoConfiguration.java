@@ -3,6 +3,7 @@ package org.apereo.cas.config;
 import module java.base;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.features.CasFeatureModule;
+import org.apereo.cas.services.CacheableServicesManager;
 import org.apereo.cas.services.CasGoogleCloudServiceRegistryMessageReceiver;
 import org.apereo.cas.services.CasGoogleCloudStorageServiceRegistryListener;
 import org.apereo.cas.services.CasGoogleCloudStorageSubscriptionCustomizer;
@@ -10,6 +11,7 @@ import org.apereo.cas.services.GoogleCloudStorageServiceRegistry;
 import org.apereo.cas.services.ServiceRegistry;
 import org.apereo.cas.services.ServiceRegistryExecutionPlanConfigurer;
 import org.apereo.cas.services.ServiceRegistryListener;
+import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.services.resource.RegisteredServiceResourceNamingStrategy;
 import org.apereo.cas.services.util.RegisteredServiceJsonSerializer;
 import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
@@ -75,14 +77,15 @@ public class CasGoogleCloudStorageServiceRegistryAutoConfiguration {
             final RegisteredServiceResourceNamingStrategy namingStrategy,
             final ConfigurableApplicationContext applicationContext,
             @Qualifier("storage") final Storage storage,
-            @Qualifier("googleCloudStorageServiceRegistry")
-            final ServiceRegistry googleCloudStorageServiceRegistry,
+            @Qualifier(ServicesManager.BEAN_NAME)
+            final CacheableServicesManager servicesManager,
             @Qualifier("googleCloudStorageSubscriptionCustomizer")
             final CasGoogleCloudStorageSubscriptionCustomizer googleCloudStorageSubscriptionCustomizer) {
             val subscription = ProjectSubscriptionName.of(storage.getOptions().getProjectId(),
                 CasGoogleCloudStorageServiceRegistryListener.SUBSCRIPTION_NAME);
             val serializer = new RegisteredServiceJsonSerializer(applicationContext);
-            val receiver = new CasGoogleCloudServiceRegistryMessageReceiver(googleCloudStorageServiceRegistry, storage, serializer, namingStrategy);
+            val receiver = new CasGoogleCloudServiceRegistryMessageReceiver(
+                servicesManager, storage, serializer, namingStrategy);
             val subscriberBuilder = googleCloudStorageSubscriptionCustomizer.customize(Subscriber.newBuilder(subscription, receiver));
             val subscriber = subscriberBuilder.build();
             return new CasGoogleCloudStorageServiceRegistryListener(subscriber);
