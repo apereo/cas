@@ -215,6 +215,10 @@ class CasActuatorEndpoints {
         return this.endpoints().impersonation;
     }
 
+    static startup() {
+        return this.endpoints().startup;
+    }
+
     static all() {
         return Object.getOwnPropertyNames(CasActuatorEndpoints)
             .filter(name =>

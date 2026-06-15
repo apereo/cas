@@ -128,6 +128,9 @@ function processNavigationTabs() {
         hideElements($("#systemTabButton"));
         hideElements($(`#attribute-tab-${Tabs.SYSTEM.index}`));
     }
+    if (!CasActuatorEndpoints.startup()) {
+        hideElements($("#casstartuptab").parent());
+    }
     if (!CasActuatorEndpoints.metrics()) {
         hideElements($("#systemmetricstab").parent());
     }

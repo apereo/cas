@@ -17,6 +17,7 @@
             <li><a id="prometheusmetricstab" href="#prometheusmetrics-tab">Prometheus</a></li>
             <li><a id="casfeaturestab" href="#casfeaturestab-tab">Feature Catalog</a></li>
             <li><a id="caswebflowtab" href="#caswebflowtab-tab">Authentication Flows</a></li>
+            <li><a id="casstartuptab" href="#casstartup-tab">Application Startup</a></li>
           </ul>
 
             <div id="systeminfo-tab">
@@ -61,6 +62,42 @@
                     <div class="mdc-layout-grid__cell"><canvas id="statisticsChart"></canvas></div>
                     <div class="mdc-layout-grid__cell"><canvas id="systemHealthChart"></canvas></div>
                   </div>
+
+                    <div id="systemLiveMemoryContainer" class="live-memory-panel hide">
+                        <div class="live-memory-header">
+                            <div>
+                                <h3 class="live-memory-title">
+                                    <i class="mdi mdi-memory" aria-hidden="true"></i>
+                                    Live Memory
+                                </h3>
+                                <p class="live-memory-subtitle">Inspect live JVM heap, non-heap, and memory pool usage.</p>
+                            </div>
+                            <small id="systemLiveMemoryUpdated" class="live-memory-updated text-muted"></small>
+                        </div>
+
+                        <div id="systemLiveMemorySummary" class="live-memory-summary"></div>
+
+                        <div id="systemLiveMemoryPoolsSection" class="pl-2 pr-2 live-memory-card live-memory-pools hide">
+                            <div class="live-memory-card-title">
+                                <i class="mdi mdi-table" aria-hidden="true"></i>
+                                Memory Pools
+                            </div>
+                            <div class="table-responsive">
+                                <table id="systemLiveMemoryPoolsTable" class="mdc-data-table__table table table-striped noborder live-memory-table mb-0">
+                                    <thead>
+                                    <tr class="mdc-data-table__header-row">
+                                        <th class="mdc-data-table__header-cell" role="columnheader" scope="col">Pool</th>
+                                        <th class="mdc-data-table__header-cell" role="columnheader" scope="col">Used</th>
+                                        <th class="mdc-data-table__header-cell" role="columnheader" scope="col">Committed</th>
+                                        <th class="mdc-data-table__header-cell" role="columnheader" scope="col">Max</th>
+                                        <th class="mdc-data-table__header-cell" role="columnheader" scope="col">Usage</th>
+                                    </tr>
+                                    </thead>
+                                    <tbody class="mdc-data-table__content"></tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
 
@@ -182,6 +219,68 @@
                 <div id="webflowMarkdownContainer" class="hide">
                     <p>The above diagram is generated using the following markdown:</p>
                     <pre><code id="webflowMarkdown" class="border-rounded language-markdown"></code></pre>
+                </div>
+            </div>
+
+
+            <div id="casstartup-tab">
+                <div class="startup-toolbar d-flex justify-content-between align-items-start flex-wrap gap-3 mt-2 mb-3">
+                    <div>
+                        <h4 class="startup-title"><i class="mdi mdi-clock-outline me-1"></i>Startup Timeline</h4>
+                        <small id="startupTimelineSummary" class="text-muted"></small>
+                    </div>
+                    <div class="d-flex flex-wrap gap-2 align-items-center">
+                        <div class="startup-search-wrap">
+                            <i class="mdi mdi-magnify startup-search-icon"></i>
+                            <input type="text" id="startupStepFilter" placeholder="Filter by step name..." class="startup-filter-input" autocomplete="off"/>
+                        </div>
+                        <button id="startupExpandAll" class="mdc-button mdc-button--outlined">
+                            <span class="mdc-button__label">Expand all</span>
+                        </button>
+                        <button id="startupCollapseAll" class="mdc-button mdc-button--outlined">
+                            <span class="mdc-button__label">Collapse all</span>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="startup-filter-bar d-flex flex-wrap align-items-center gap-2 mb-3">
+                    <span class="startup-filter-label">Duration color:</span>
+                    <div id="startupDurationFilters" class="startup-duration-filters">
+                        <button class="startup-duration-filter active" data-filter="all">All</button>
+                        <button class="startup-duration-filter" data-filter="fastest">
+                            <span class="startup-dot fastest"></span>Fastest
+                            <span class="startup-filter-count" id="count-fastest">0</span>
+                        </button>
+                        <button class="startup-duration-filter" data-filter="fast">
+                            <span class="startup-dot fast"></span>Fast
+                            <span class="startup-filter-count" id="count-fast">0</span>
+                        </button>
+                        <button class="startup-duration-filter" data-filter="medium">
+                            <span class="startup-dot medium"></span>Medium
+                            <span class="startup-filter-count" id="count-medium">0</span>
+                        </button>
+                        <button class="startup-duration-filter" data-filter="slow">
+                            <span class="startup-dot slow"></span>Slow
+                            <span class="startup-filter-count" id="count-slow">0</span>
+                        </button>
+                        <button class="startup-duration-filter" data-filter="slowest">
+                            <span class="startup-dot slowest"></span>Slowest
+                            <span class="startup-filter-count" id="count-slowest">0</span>
+                        </button>
+                    </div>
+                    <div class="ms-auto d-flex align-items-center gap-2">
+                        <label class="startup-filter-label" for="startupSortSelect">Sort:</label>
+                        <select id="startupSortSelect" class="startup-sort-select">
+                            <option value="index">By Index (Default)</option>
+                            <option value="duration-desc">Duration ↓ Slowest First</option>
+                            <option value="duration-asc">Duration ↑ Fastest First</option>
+                            <option value="name">By Name</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div id="startupTimelineContainer" class="startup-timeline-container">
+                    <div id="startupTimelineList" class="startup-list"></div>
                 </div>
             </div>
         </div>
