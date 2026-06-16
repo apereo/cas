@@ -62,10 +62,7 @@ dependencies {
                 candidatePath != project.path
             }
 
-            if (projectsToAdd.isEmpty()) {
-                ansi.yellow("No CAS module(s) found for ${it}")
-            } else {
-                ansi.green("Including CAS module(s): ${projectsToAdd}")
+            if (!projectsToAdd.isEmpty()) {
                 projectsToAdd.each {
                     implementation project(path: it)
                 }

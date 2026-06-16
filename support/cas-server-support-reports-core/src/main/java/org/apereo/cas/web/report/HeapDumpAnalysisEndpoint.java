@@ -44,20 +44,18 @@ public class HeapDumpAnalysisEndpoint extends BaseCasRestActuatorEndpoint {
         MEDIA_TYPE_CAS_YAML
     })
     @Operation(summary = "Analyze the provided file")
-    public Callable<ResponseEntity<HeapDumpAnalysis>> analyze(
-        @RequestParam(defaultValue = "20") final int top,
+    public ResponseEntity<HeapDumpAnalysis> analyze(
+        @RequestParam(defaultValue = "100") final int top,
         @RequestPart("file") final MultipartFile file) throws Exception {
         val hprof = Files.createTempFile(UUID.randomUUID().toString(), ".hprof");
         try (val inputStream = file.getInputStream()) {
             Files.copy(inputStream, hprof, StandardCopyOption.REPLACE_EXISTING);
         }
-        return () -> {
-            try {
-                return ResponseEntity.ok(analyzeHeapDump(hprof, top));
-            } finally {
-                FileUtils.deleteQuietly(hprof.toFile());
-            }
-        };
+        try {
+            return ResponseEntity.ok(analyzeHeapDump(hprof, top));
+        } finally {
+            FileUtils.deleteQuietly(hprof.toFile());
+        }
     }
 
     private static HeapDumpAnalysis analyzeHeapDump(final Path hprof, final int top) throws Exception {
@@ -84,11 +82,20 @@ public class HeapDumpAnalysisEndpoint extends BaseCasRestActuatorEndpoint {
     }
 
     private static ClassHistogramEntry toEntry(final JavaClass clazz) {
+        val instanceCount = clazz.getInstancesCount();
+        val shallowSizeBytes = clazz.getAllInstancesSize();
+        val retainedSizeBytes = getRetainedSizeByClass(clazz);
+        val averageShallow = instanceCount == 0 ? 0 : shallowSizeBytes / instanceCount;
+        val averageRetained = instanceCount == 0 ? 0 : retainedSizeBytes / instanceCount;
+        val ratio = shallowSizeBytes == 0 ? 0.0D : (double) retainedSizeBytes / shallowSizeBytes;
         return new ClassHistogramEntry(
             clazz.getName(),
-            clazz.getInstancesCount(),
+            instanceCount,
             clazz.getAllInstancesSize(),
-            getRetainedSizeByClass(clazz)
+            retainedSizeBytes,
+            averageShallow,
+            averageRetained,
+            ratio
         );
     }
 
@@ -100,7 +107,10 @@ public class HeapDumpAnalysisEndpoint extends BaseCasRestActuatorEndpoint {
         String className,
         long instanceCount,
         long shallowSizeBytes,
-        long retainedSizeBytes) {
+        long retainedSizeBytes,
+        long averageShallowSizeBytes,
+        long averageRetainedSizeBytes,
+        double retainedToShallowRatio) {
     }
 
     public record HeapDumpAnalysis(

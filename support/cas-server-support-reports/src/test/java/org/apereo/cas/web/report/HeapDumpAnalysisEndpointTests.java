@@ -31,14 +31,10 @@ class HeapDumpAnalysisEndpointTests extends AbstractCasEndpointTests {
         try (val inputStream = Files.newInputStream(hprof)) {
             val file = new MockMultipartFile("file", "sample.hprof",
                 MediaType.APPLICATION_OCTET_STREAM_VALUE, inputStream);
-            val result = mockMvc.perform(multipart("/actuator/heapDumpAnalysis")
+            mockMvc.perform(multipart("/actuator/heapDumpAnalysis")
                     .file(file)
                     .queryParam("top", "3")
                     .accept(MediaType.APPLICATION_JSON))
-                .andExpect(request().asyncStarted())
-                .andReturn();
-            result.getAsyncResult(TimeUnit.MINUTES.toMillis(2));
-            mockMvc.perform(asyncDispatch(result))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.classCount").value(greaterThan(0)))
                 .andExpect(jsonPath("$.instanceCount").value(greaterThan(0)))

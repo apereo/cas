@@ -274,6 +274,237 @@ async function initializeSystemOperations() {
         });
     }
 
+    let heapDumpAnalysisEntries = [];
+
+    function getHeapDumpAnalysisEntries(response) {
+        const entries = response?.classesByRetainedSize
+            ?? response?.classesByShallowSize
+            ?? response?.classes
+            ?? response?.topClasses
+            ?? response?.histogram
+            ?? response?.entries
+            ?? response?.data
+            ?? [];
+        return Array.isArray(entries) ? entries : [];
+    }
+
+    function normalizeHeapDumpEntry(entry) {
+        const retainedSize = Number(entry.retainedSizeBytes ?? entry.retainedSize ?? entry.retainedBytes);
+        const shallowSize = Number(entry.shallowSizeBytes ?? entry.shallowSize ?? entry.bytes ?? entry.size);
+        const instances = Number(entry.instanceCount ?? entry.instances ?? entry.objects ?? entry.count ?? 0);
+        const averageShallowSize = Number(entry.averageShallowSizeBytes ?? entry.averageShallowSize ?? entry.avgShallowSize);
+        const averageRetainedSize = Number(entry.averageRetainedSizeBytes ?? entry.averageRetainedSize ?? entry.avgRetainedSize);
+        const retainedToShallowRatio = Number(entry.retainedToShallowRatio ?? entry.retainedShallowRatio ?? entry.retainedRatio);
+        return {
+            className: entry.className ?? entry.class ?? entry.name ?? "",
+            instances: Number.isFinite(instances) ? instances : 0,
+            retained: Number.isFinite(retainedSize) && retainedSize > 0
+                ? retainedSize
+                : (Number.isFinite(shallowSize) ? shallowSize : 0),
+            averageShallowSize: Number.isFinite(averageShallowSize) && averageShallowSize >= 0 ? averageShallowSize : null,
+            averageRetainedSize: Number.isFinite(averageRetainedSize) && averageRetainedSize >= 0 ? averageRetainedSize : null,
+            retainedToShallowRatio: Number.isFinite(retainedToShallowRatio) && retainedToShallowRatio >= 0 ? retainedToShallowRatio : null
+        };
+    }
+
+    function formatNumber(value) {
+        return Number(value || 0).toLocaleString();
+    }
+
+    function formatHeapDumpRatio(value) {
+        return Number.isFinite(value) ? `${value.toFixed(2)}x` : "N/A";
+    }
+
+    function getHeapDumpTotalObjects(response, entries) {
+        const total = Number(response?.totalObjects ?? response?.objects ?? response?.objectCount);
+        return Number.isFinite(total)
+            ? total
+            : entries.reduce((sum, entry) => sum + entry.instances, 0);
+    }
+
+    function getHeapDumpTotalBytes(response, entries) {
+        const total = Number(response?.totalRetainedSize ?? response?.totalBytes ?? response?.retainedSize ?? response?.bytes);
+        return Number.isFinite(total)
+            ? total
+            : entries.reduce((sum, entry) => sum + entry.retained, 0);
+    }
+
+    function renderHeapDumpRetainedCell(entry) {
+        const width = Math.max(0, Math.min(100, Number(entry.retainedWidth ?? 0)));
+        return `
+            <div class="heap-dump-retained-cell">
+                <span class="heap-dump-retained-bar">
+                    <span style="width:${width}%"></span>
+                </span>
+                <span>${formatMemoryBytes(entry.retained)}</span>
+            </div>`;
+    }
+
+    function renderHeapDumpClasses(entries) {
+        const filter = $("#heapDumpClassFilter").val()?.toLowerCase() ?? "";
+        const filtered = entries
+            .filter(entry => !filter || entry.className.toLowerCase().startsWith(filter))
+            .slice(0, 50);
+        const maxRetained = Math.max(...filtered.map(entry => entry.retained), 0);
+
+        heapDumpClassesTable.clear();
+        filtered.forEach((entry, index) => {
+            const width = maxRetained > 0 ? Math.max(2, (entry.retained / maxRetained) * 100) : 0;
+            heapDumpClassesTable.row.add({
+                rank: index + 1,
+                className: entry.className,
+                instances: entry.instances,
+                retained: entry.retained,
+                retainedWidth: width,
+                averageShallowSize: entry.averageShallowSize,
+                averageRetainedSize: entry.averageRetainedSize,
+                retainedToShallowRatio: entry.retainedToShallowRatio
+            });
+        });
+        heapDumpClassesTable.draw();
+        heapDumpClassesTable.columns.adjust();
+
+        if (filtered.length === 0 && entries.length > 0) {
+            $("#heapDumpAnalysisStatus").text("No classes match the current filter.");
+        }
+    }
+
+    async function fetchHeapDumpFile() {
+        const response = await fetch(CasActuatorEndpoints.heapDump(), {
+            credentials: "include"
+        });
+        if (!response.ok) {
+            throw {status: response.status, message: "Unable to capture heap dump."};
+        }
+        return response.blob();
+    }
+
+    async function analyzeHeapDumpFile(heapDump) {
+        const formData = new FormData();
+        formData.append("file", heapDump, "heapdump.hprof");
+        const endpoint = new URL(CasActuatorEndpoints.heapDumpAnalysis(), window.location.href);
+        const response = await fetch(endpoint.toString(), {
+            method: "POST",
+            credentials: "include",
+            headers: {
+                Accept: "application/json"
+            },
+            body: formData
+        });
+        if (!response.ok) {
+            throw {status: response.status, message: "Unable to analyze heap dump."};
+        }
+        return response.json();
+    }
+
+    function showHeapDumpAnalysisProgress(message, progress) {
+        Swal.fire({
+            title: "Heap Dump Analysis",
+            html: `
+                <div class="heap-dump-swal-progress">
+                    <div id="heapDumpAnalysisProgressMessage" class="heap-dump-swal-progress-message">${message}</div>
+                    <div class="heap-dump-swal-progress-track">
+                        <span id="heapDumpAnalysisProgressBar" style="width:${progress}%"></span>
+                    </div>
+                </div>`,
+            allowOutsideClick: false,
+            allowEscapeKey: false,
+            showConfirmButton: false,
+            didOpen: () => Swal.showLoading()
+        });
+    }
+
+    function updateHeapDumpAnalysisProgress(message, progress) {
+        const container = Swal.getHtmlContainer();
+        if (!container) {
+            return;
+        }
+        const messageElement = container.querySelector("#heapDumpAnalysisProgressMessage");
+        const progressElement = container.querySelector("#heapDumpAnalysisProgressBar");
+        if (messageElement) {
+            messageElement.textContent = message;
+        }
+        if (progressElement) {
+            progressElement.style.width = `${progress}%`;
+        }
+    }
+
+    function getHeapDumpAnalysisErrorMessage(error) {
+        if (error?.message) {
+            return error.message;
+        }
+        if (error?.status) {
+            return `HTTP error: ${error.status}`;
+        }
+        return "Unable to analyze heap dump.";
+    }
+
+    async function refreshHeapDumpAnalysis() {
+        if (!CasActuatorEndpoints.heapDump() || !CasActuatorEndpoints.heapDumpAnalysis()) {
+            hideElements($("#heapDumpAnalysisContainer"));
+            return;
+        }
+        heapDumpClassesTable.clear();
+        const refreshButton = $("#refreshHeapDumpAnalysisButton");
+        refreshButton.prop("disabled", true);
+        showHeapDumpAnalysisProgress("Capturing heap dump...", 20);
+
+        try {
+            const heapDump = await fetchHeapDumpFile();
+            updateHeapDumpAnalysisProgress("Uploading heap dump for analysis...", 55);
+            const response = await analyzeHeapDumpFile(heapDump);
+            updateHeapDumpAnalysisProgress("Rendering heap dump analysis...", 85);
+            heapDumpAnalysisEntries = getHeapDumpAnalysisEntries(response)
+                .map(normalizeHeapDumpEntry)
+                .filter(entry => entry.className && entry.retained > 0)
+                .sort((a, b) => b.retained - a.retained);
+
+            if (heapDumpAnalysisEntries.length === 0) {
+                $("#heapDumpAnalysisStatus").text("Heap dump analysis returned no class histogram data.");
+                renderHeapDumpClasses(heapDumpAnalysisEntries);
+                Swal.fire("No Results", "Heap dump analysis returned no class histogram data.", "info");
+                return;
+            }
+
+            const totalObjects = getHeapDumpTotalObjects(response, heapDumpAnalysisEntries);
+            const totalBytes = getHeapDumpTotalBytes(response, heapDumpAnalysisEntries);
+            $("#heapDumpClassesSummary").text(`${formatNumber(totalObjects)} objects · ${formatMemoryBytes(totalBytes)}`);
+            response.bigObjects === true
+                ? showElements($("#heapDumpBigObjectsBadge"))
+                : hideElements($("#heapDumpBigObjectsBadge"));
+            response.collectionBloat === true
+                ? showElements($("#heapDumpCollectionBloatBadge"))
+                : hideElements($("#heapDumpCollectionBloatBadge"));
+            $("#heapDumpClassFilter").off("input").on("input", () => renderHeapDumpClasses(heapDumpAnalysisEntries));
+            renderHeapDumpClasses(heapDumpAnalysisEntries);
+            $("#heapDumpAnalysisStatus").text(`Updated ${new Date().toLocaleTimeString()}`);
+            showElements($("#heapDumpAnalysisContainer"));
+            updateHeapDumpAnalysisProgress("Done.", 100);
+            Swal.close();
+        } catch (error) {
+            console.debug("Unable to fetch heap dump analysis data", error);
+            $("#heapDumpAnalysisStatus").text("Unable to analyze heap dump.");
+            Swal.fire("Error", getHeapDumpAnalysisErrorMessage(error), "error");
+        } finally {
+            refreshButton.prop("disabled", false);
+        }
+    }
+
+    async function configureHeapDumpAnalysis() {
+        if (!CasActuatorEndpoints.heapDump() || !CasActuatorEndpoints.heapDumpAnalysis()) {
+            hideElements($("#heapDumpAnalysisContainer"));
+            return;
+        }
+
+        showElements($("#heapDumpAnalysisContainer"));
+        $("#refreshHeapDumpAnalysisButton").off("click").on("click", refreshHeapDumpAnalysis);
+        window.refreshHeapDumpAnalysis = refreshHeapDumpAnalysis;
+
+        if (heapDumpAnalysisEntries.length === 0) {
+            heapDumpClassesTable.clear().draw();
+        }
+    }
+
     function renderLiveMemoryCard(title, icon, colorClass, values, caption) {
         if (!Number.isFinite(values.used) && !Number.isFinite(values.committed)) {
             return "";
@@ -482,6 +713,7 @@ async function initializeSystemOperations() {
             });
         }
         await configureLiveMemory();
+        await configureHeapDumpAnalysis();
         configureHttpRequestResponses().then(configureAuditEventsChart());
     }
 
@@ -518,6 +750,60 @@ async function initializeSystemOperations() {
         drawCallback: settings => {
             $("#systemLiveMemoryPoolsTable tr").addClass("mdc-data-table__row");
             $("#systemLiveMemoryPoolsTable td").addClass("mdc-data-table__cell");
+        }
+    });
+
+    const heapDumpClassesTable = $("#heapDumpClassesTable").DataTable({
+        pageLength: 10,
+        autoWidth: false,
+        order: [[0, "asc"]],
+        columns: [
+            {data: "rank", width: "3rem", className: "text-end text-muted"},
+            {
+                data: "className",
+                render: (data, type) => type === "display"
+                    ? `<code>${escapeHtml(data)}</code>`
+                    : data
+            },
+            {
+                data: "instances",
+                className: "text-end",
+                render: (data, type) => type === "display"
+                    ? formatNumber(data)
+                    : data
+            },
+            {
+                data: "retained",
+                width: "22rem",
+                render: (data, type, row) => type === "display"
+                    ? renderHeapDumpRetainedCell(row)
+                    : data
+            },
+            {
+                data: "averageShallowSize",
+                className: "text-end",
+                render: (data, type) => type === "display"
+                    ? formatMemoryBytes(data)
+                    : data
+            },
+            {
+                data: "averageRetainedSize",
+                className: "text-end",
+                render: (data, type) => type === "display"
+                    ? formatMemoryBytes(data)
+                    : data
+            },
+            {
+                data: "retainedToShallowRatio",
+                className: "text-end",
+                render: (data, type) => type === "display"
+                    ? formatHeapDumpRatio(data)
+                    : data
+            }
+        ],
+        drawCallback: settings => {
+            $("#heapDumpClassesTable tr").addClass("mdc-data-table__row");
+            $("#heapDumpClassesTable td").addClass("mdc-data-table__cell");
         }
     });
 

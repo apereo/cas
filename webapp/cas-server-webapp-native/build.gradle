@@ -109,7 +109,6 @@ dependencies {
             }
 
             if (!projectsToAdd.isEmpty()) {
-                ansi.green("Including CAS module(s): ${projectsToAdd} in native web application")
                 projectsToAdd.each {
                     implementation(project(path: it))
                 }

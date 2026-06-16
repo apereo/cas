@@ -115,6 +115,10 @@ class CasActuatorEndpoints {
         return this.endpoints().heapdump || this.endpoints().heapDump;
     }
 
+    static heapDumpAnalysis() {
+        return this.endpoints().heapdumpanalysis || this.endpoints().heapDumpAnalysis;
+    }
+
     static sessions() {
         return this.endpoints().sessions;
     }

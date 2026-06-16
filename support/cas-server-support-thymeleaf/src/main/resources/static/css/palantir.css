@@ -407,6 +407,150 @@ select + span[role="combobox"] {
     }
 }
 
+.heap-dump-panel {
+    margin-top: 1.5rem;
+    text-align: left;
+}
+
+.heap-dump-classes-card {
+    overflow: hidden;
+    border: 1px solid #d8dee5;
+    border-radius: 8px;
+    background: #fff;
+    box-shadow: 0 5px 18px rgba(31, 53, 73, .08);
+}
+
+.heap-dump-classes-header {
+    padding: 1rem 1.2rem .8rem;
+    border-bottom: 1px solid #d8dee5;
+}
+
+.heap-dump-classes-header h3 {
+    margin: 0 0 .65rem;
+    font-size: 1.25rem;
+    font-weight: 800;
+}
+
+.heap-dump-classes-toolbar {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: .65rem;
+}
+
+.heap-dump-classes-summary {
+    color: #65717d;
+}
+
+.heap-dump-filter-badge {
+    display: inline-flex;
+    align-items: center;
+    min-height: 2rem;
+    padding: .25rem .65rem;
+    border: 1px solid;
+    border-radius: 999px;
+    font-weight: 700;
+    line-height: 1;
+}
+
+.heap-dump-filter-badge.big-objects {
+    border-color: #f0d663;
+    color: #d7ad05;
+}
+
+.heap-dump-filter-badge.collection-bloat {
+    border-color: #24b9d7;
+    color: #24b9d7;
+}
+
+.heap-dump-class-filter {
+    min-width: 18rem;
+    max-width: 100%;
+    height: 2.35rem;
+    padding: .35rem .8rem;
+    border: 1px solid #d8dee5;
+    border-radius: 999px;
+    background: #fff;
+    color: #26323d;
+}
+
+.heap-dump-analysis-status {
+    display: inline-block;
+    margin-top: .55rem;
+}
+
+.heap-dump-swal-progress {
+    display: grid;
+    gap: .75rem;
+    margin-top: .5rem;
+    text-align: left;
+}
+
+.heap-dump-swal-progress-message {
+    color: #4f5d68;
+}
+
+.heap-dump-swal-progress-track {
+    height: .65rem;
+    overflow: hidden;
+    border-radius: 999px;
+    background: #e7ebef;
+}
+
+.heap-dump-swal-progress-track span {
+    display: block;
+    height: 100%;
+    border-radius: inherit;
+    background: #0d6efd;
+    transition: width .25s ease;
+}
+
+.heap-dump-classes-table-wrap {
+    overflow-x: auto;
+    padding: 1rem 1.2rem;
+}
+
+.heap-dump-classes-table {
+    min-width: 1080px;
+    width: 100%;
+    table-layout: fixed;
+}
+
+.heap-dump-classes-table code {
+    color: #111820;
+    font-size: 1rem;
+}
+
+.heap-dump-retained-cell {
+    display: grid;
+    grid-template-columns: minmax(7rem, 1fr) 4.5rem;
+    align-items: center;
+    gap: .65rem;
+}
+
+.heap-dump-retained-bar {
+    display: block;
+    height: 1rem;
+    overflow: hidden;
+    border-radius: 999px;
+    background: #e7ebef;
+}
+
+.heap-dump-retained-bar span {
+    display: block;
+    height: 100%;
+    border-radius: inherit;
+    background: #0d6efd;
+}
+
+@media (max-width: 900px) {
+    .heap-dump-class-filter {
+        width: 100%;
+        min-width: 0;
+    }
+
+}
+
 #registeredServiceDescriptionEditorContainer {
     width: 100%;
 }

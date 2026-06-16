@@ -201,6 +201,49 @@
                 <button id="downloadHeapDumpButton" class="mdc-button mdc-button--raised">
                     <span class="mdc-button__label"><i class="mdc-tab__icon mdi mdi-download-circle" aria-hidden="true"></i>Heap Dump</span>
                 </button>
+
+                <div id="heapDumpAnalysisContainer" class="heap-dump-panel hide">
+                    <div class="heap-dump-classes-card">
+                        <div class="heap-dump-classes-header">
+                            <h3>Heap Dump Analysis</h3>
+                            <div class="heap-dump-classes-toolbar">
+                                <span id="heapDumpClassesSummary" class="heap-dump-classes-summary"></span>
+                                <span id="heapDumpBigObjectsBadge" class="heap-dump-filter-badge big-objects hide">Big objects</span>
+                                <span id="heapDumpCollectionBloatBadge" class="heap-dump-filter-badge collection-bloat hide">Collection bloat</span>
+                                <input id="heapDumpClassFilter"
+                                       class="heap-dump-class-filter"
+                                       type="text"
+                                       placeholder="Filter by class prefix..."
+                                       autocomplete="off"/>
+                                <button id="refreshHeapDumpAnalysisButton"
+                                        type="button"
+                                        class="mdc-button mdc-button--raised">
+                                    <span class="mdc-button__label">
+                                        <i class="mdc-tab__icon mdi mdi-refresh" aria-hidden="true"></i>
+                                        Refresh
+                                    </span>
+                                </button>
+                            </div>
+                            <small id="heapDumpAnalysisStatus" class="heap-dump-analysis-status text-muted"></small>
+                        </div>
+                        <div class="heap-dump-classes-table-wrap">
+                            <table id="heapDumpClassesTable" class="mdc-data-table__table table table-striped noborder heap-dump-classes-table">
+                                <thead>
+                                <tr class="mdc-data-table__header-row">
+                                    <th class="mdc-data-table__header-cell" role="columnheader" scope="col">#</th>
+                                    <th class="mdc-data-table__header-cell" role="columnheader" scope="col">Class</th>
+                                    <th class="mdc-data-table__header-cell" role="columnheader" scope="col">Instances</th>
+                                    <th class="mdc-data-table__header-cell" role="columnheader" scope="col">Retained</th>
+                                    <th class="mdc-data-table__header-cell" role="columnheader" scope="col">Avg Shallow</th>
+                                    <th class="mdc-data-table__header-cell" role="columnheader" scope="col">Avg Retained</th>
+                                    <th class="mdc-data-table__header-cell" role="columnheader" scope="col">Retained / Shallow</th>
+                                </tr>
+                                </thead>
+                                <tbody class="mdc-data-table__content"></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
             </div>
 
             <div id="casfeaturestab-tab">
