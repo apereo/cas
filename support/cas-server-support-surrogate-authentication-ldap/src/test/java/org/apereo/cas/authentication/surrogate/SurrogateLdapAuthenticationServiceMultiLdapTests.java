@@ -1,0 +1,126 @@
+package org.apereo.cas.authentication.surrogate;
+
+import module java.base;
+import org.apereo.cas.adaptors.ldap.LdapIntegrationTestsOperations;
+import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
+import org.apereo.cas.config.CasSurrogateLdapAuthenticationAutoConfiguration;
+import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.services.DefaultRegisteredServiceAccessStrategy;
+import org.apereo.cas.services.RegisteredServiceTestUtils;
+import org.apereo.cas.test.CasTestExtension;
+import org.apereo.cas.util.RandomUtils;
+import org.apereo.cas.util.junit.EnabledIfListeningOnPort;
+import com.unboundid.ldap.sdk.LDAPConnection;
+import lombok.Cleanup;
+import lombok.Getter;
+import lombok.val;
+import org.apache.commons.io.IOUtils;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.core.io.ClassPathResource;
+import static org.junit.jupiter.api.Assertions.*;
+
+/**
+ * Verifies that {@link SurrogateLdapAuthenticationService} validates surrogate existence
+ * across all configured LDAP sources when canImpersonate is invoked, not only the LDAP
+ * source that matched the authorization (surrogate-search-filter) entry.
+ *
+ * @author Andrew Tillinghast
+ * @since 8.0.0
+ */
+@Tag("LdapRepository")
+@ExtendWith(CasTestExtension.class)
+@SpringBootTest(classes = {
+    CasSurrogateLdapAuthenticationAutoConfiguration.class,
+    BaseSurrogateAuthenticationServiceTests.SharedTestConfiguration.class
+}, properties = {
+    /* ldap[0]: the surrogate-search-filter will match for $USER -> banderson,
+       but surrogate-validation-filter is intentionally set to a non-matching value. */
+    "cas.authn.surrogate.ldap[0].ldap-url=ldap://localhost:10389",
+    "cas.authn.surrogate.ldap[0].base-dn=ou=surrogates,dc=example,dc=org",
+    "cas.authn.surrogate.ldap[0].bind-dn=cn=Directory Manager",
+    "cas.authn.surrogate.ldap[0].bind-credential=password",
+    "cas.authn.surrogate.ldap[0].surrogate-search-filter=employeeType={surrogate}",
+    "cas.authn.surrogate.ldap[0].surrogate-validation-filter=cn=doesnotexist",
+    "cas.authn.surrogate.ldap[0].search-filter=cn={user}",
+    "cas.authn.surrogate.ldap[0].member-attribute-name=mail",
+    "cas.authn.surrogate.ldap[0].member-attribute-value-regex=\\\\w+@example.org|\\\\*",
+
+    /* ldap[1]: the surrogate-search-filter never matches (no entry has objectClass=nobody),
+       but surrogate-validation-filter=cn={surrogate} will find banderson. */
+    "cas.authn.surrogate.ldap[1].ldap-url=ldap://localhost:10389",
+    "cas.authn.surrogate.ldap[1].base-dn=ou=surrogates,dc=example,dc=org",
+    "cas.authn.surrogate.ldap[1].bind-dn=cn=Directory Manager",
+    "cas.authn.surrogate.ldap[1].bind-credential=password",
+    "cas.authn.surrogate.ldap[1].surrogate-search-filter=objectClass=nobody",
+    "cas.authn.surrogate.ldap[1].surrogate-validation-filter=cn={surrogate}",
+    "cas.authn.surrogate.ldap[1].search-filter=cn={user}",
+    "cas.authn.surrogate.ldap[1].member-attribute-name=mail",
+    "cas.authn.surrogate.ldap[1].member-attribute-value-regex=\\\\w+@example.org|\\\\*"
+})
+@Getter
+@EnabledIfListeningOnPort(port = 10389)
+class SurrogateLdapAuthenticationServiceMultiLdapTests extends BaseSurrogateAuthenticationServiceTests {
+    private static final String USER = RandomUtils.randomAlphabetic(10);
+
+    private static final String ADMIN_USER = RandomUtils.randomAlphabetic(10);
+
+    private static final int LDAP_PORT = 10389;
+
+    @Autowired
+    private CasConfigurationProperties casProperties;
+
+    @Autowired
+    @Qualifier(SurrogateAuthenticationService.BEAN_NAME)
+    private SurrogateAuthenticationService service;
+
+    @BeforeAll
+    public static void bootstrap() throws Exception {
+        @Cleanup
+        val localhost = new LDAPConnection("localhost", LDAP_PORT,
+            "cn=Directory Manager", "password");
+        localhost.connect("localhost", LDAP_PORT);
+        localhost.bind("cn=Directory Manager", "password");
+        LdapIntegrationTestsOperations.populateEntries(
+            localhost,
+            new ClassPathResource("ldif/ldap-surrogates-ou.ldif").getInputStream(),
+            "dc=example,dc=org");
+
+        val ldif = IOUtils.toString(new ClassPathResource("ldif/ldap-surrogate.ldif").getInputStream(), StandardCharsets.UTF_8)
+            .replace("$user", USER).replace("$admin", ADMIN_USER);
+        LdapIntegrationTestsOperations.populateEntries(
+            localhost,
+            new ByteArrayInputStream(ldif.getBytes(StandardCharsets.UTF_8)),
+            "ou=surrogates,dc=example,dc=org");
+    }
+
+    /**
+     * The authorization match is in ldap[0] ($USER has employeeType=banderson), but
+     * ldap[0]'s surrogate-validation-filter (cn=doesnotexist) does not find banderson.
+     * ldap[1]'s surrogate-validation-filter (cn={surrogate}) does find banderson.
+     * canImpersonateInternal must search ALL ldap sources for surrogate validation.
+     */
+    @Test
+    void verifyImpersonationWithSurrogateValidatedByDifferentLdapSource() throws Throwable {
+        val svc = Optional.of(RegisteredServiceTestUtils.getService(UUID.randomUUID().toString()));
+        val registeredService = RegisteredServiceTestUtils.getRegisteredService(svc.get().getId());
+        registeredService.setAccessStrategy(new DefaultRegisteredServiceAccessStrategy());
+        servicesManager.save(registeredService);
+        assertTrue(getService().canImpersonate(BANDERSON, CoreAuthenticationTestUtils.getPrincipal(getTestUser()), svc));
+    }
+
+    @Override
+    public String getTestUser() {
+        return USER;
+    }
+
+    @Override
+    public String getAdminUser() {
+        return ADMIN_USER;
+    }
+}
