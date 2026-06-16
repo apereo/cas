@@ -33,6 +33,14 @@ public class HeapDumpAnalysisEndpoint extends BaseCasRestActuatorEndpoint {
         super(casProperties, applicationContext);
     }
 
+    /**
+     * Analyze response entity.
+     *
+     * @param top  the top
+     * @param file the file
+     * @return the response entity
+     * @throws Exception the exception
+     */
     @PostMapping(consumes = {
         MediaType.APPLICATION_OCTET_STREAM_VALUE,
         MediaType.MULTIPART_FORM_DATA_VALUE
