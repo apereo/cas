@@ -6,7 +6,6 @@ import org.apereo.cas.util.feature.CasRuntimeModule;
 import org.apereo.cas.util.feature.CasRuntimeModuleLoader;
 import org.apereo.cas.web.BaseCasActuatorEndpoint;
 import io.swagger.v3.oas.annotations.Operation;
-import org.jspecify.annotations.NonNull;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.boot.actuate.endpoint.Access;
 import org.springframework.boot.actuate.endpoint.annotation.Endpoint;
@@ -20,10 +19,10 @@ import org.springframework.boot.actuate.endpoint.annotation.ReadOperation;
  */
 @Endpoint(id = "casModules", defaultAccess = Access.NONE)
 public class CasRuntimeModulesEndpoint extends BaseCasActuatorEndpoint {
-    private final ObjectProvider<@NonNull CasRuntimeModuleLoader> loader;
+    private final ObjectProvider<CasRuntimeModuleLoader> loader;
 
     public CasRuntimeModulesEndpoint(final CasConfigurationProperties casProperties,
-                                     final ObjectProvider<@NonNull CasRuntimeModuleLoader> loader) {
+                                     final ObjectProvider<CasRuntimeModuleLoader> loader) {
         super(casProperties);
         this.loader = loader;
     }

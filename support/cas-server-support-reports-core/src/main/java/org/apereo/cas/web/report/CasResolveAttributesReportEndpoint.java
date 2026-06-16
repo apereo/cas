@@ -10,7 +10,6 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.enums.ParameterIn;
 import lombok.val;
-import org.jspecify.annotations.NonNull;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.boot.actuate.endpoint.Access;
 import org.springframework.boot.actuate.endpoint.annotation.Endpoint;
@@ -25,11 +24,11 @@ import org.springframework.boot.actuate.endpoint.annotation.Selector;
  */
 @Endpoint(id = "resolveAttributes", defaultAccess = Access.NONE)
 public class CasResolveAttributesReportEndpoint extends BaseCasActuatorEndpoint {
-    private final ObjectProvider<@NonNull PrincipalResolver> defaultPrincipalResolver;
+    private final ObjectProvider<PrincipalResolver> defaultPrincipalResolver;
 
     public CasResolveAttributesReportEndpoint(
         final CasConfigurationProperties casProperties,
-        final ObjectProvider<@NonNull PrincipalResolver> defaultPrincipalResolver) {
+        final ObjectProvider<PrincipalResolver> defaultPrincipalResolver) {
         super(casProperties);
         this.defaultPrincipalResolver = defaultPrincipalResolver;
     }

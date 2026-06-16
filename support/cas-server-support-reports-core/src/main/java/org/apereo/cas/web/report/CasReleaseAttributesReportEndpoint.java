@@ -24,7 +24,6 @@ import io.swagger.v3.oas.annotations.Parameter;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
-import org.jspecify.annotations.NonNull;
 import org.jspecify.annotations.Nullable;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.boot.actuate.endpoint.Access;
@@ -40,25 +39,25 @@ import org.springframework.context.ConfigurableApplicationContext;
  */
 @Endpoint(id = "releaseAttributes", defaultAccess = Access.NONE)
 public class CasReleaseAttributesReportEndpoint extends BaseCasActuatorEndpoint {
-    private final ObjectProvider<@NonNull ServicesManager> servicesManager;
+    private final ObjectProvider<ServicesManager> servicesManager;
 
-    private final ObjectProvider<@NonNull AuthenticationSystemSupport> authenticationSystemSupport;
+    private final ObjectProvider<AuthenticationSystemSupport> authenticationSystemSupport;
 
-    private final ObjectProvider<@NonNull ServiceFactory<WebApplicationService>> serviceFactory;
+    private final ObjectProvider<ServiceFactory<WebApplicationService>> serviceFactory;
 
-    private final ObjectProvider<@NonNull PrincipalFactory> principalFactory;
+    private final ObjectProvider<PrincipalFactory> principalFactory;
 
-    private final ObjectProvider<@NonNull PrincipalResolver> principalResolver;
+    private final ObjectProvider<PrincipalResolver> principalResolver;
 
     private final ConfigurableApplicationContext applicationContext;
 
     public CasReleaseAttributesReportEndpoint(final CasConfigurationProperties casProperties,
                                               final ConfigurableApplicationContext applicationContext,
-                                              final ObjectProvider<@NonNull ServicesManager> servicesManager,
-                                              final ObjectProvider<@NonNull AuthenticationSystemSupport> authenticationSystemSupport,
-                                              final ObjectProvider<@NonNull ServiceFactory<WebApplicationService>> serviceFactory,
-                                              final ObjectProvider<@NonNull PrincipalFactory> principalFactory,
-                                              final ObjectProvider<@NonNull PrincipalResolver> principalResolver) {
+                                              final ObjectProvider<ServicesManager> servicesManager,
+                                              final ObjectProvider<AuthenticationSystemSupport> authenticationSystemSupport,
+                                              final ObjectProvider<ServiceFactory<WebApplicationService>> serviceFactory,
+                                              final ObjectProvider<PrincipalFactory> principalFactory,
+                                              final ObjectProvider<PrincipalResolver> principalResolver) {
         super(casProperties);
         this.applicationContext = applicationContext;
         this.servicesManager = servicesManager;

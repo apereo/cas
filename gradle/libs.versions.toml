@@ -179,6 +179,7 @@ mongoSpringSession = "4.0.0"
 mssqlServer = "13.4.0.jre11"
 mustache = "1.16"
 mysql = "9.7.0"
+netbeansLibProfiler = "RELEASE300"
 netflixEventBus = "0.3.0"
 netty = "4.2.15.Final"
 nexmo = "5.6.0"
@@ -564,6 +565,7 @@ msal4j = { module = "com.microsoft.azure:msal4j", version.ref = "azuread" }
 mssql-jdbc = { module = "com.microsoft.sqlserver:mssql-jdbc", version.ref = "mssqlServer" }
 mysql-connectorj = { module = "com.mysql:mysql-connector-j", version.ref = "mysql" }
 netflix-eventbus = { module = "com.netflix.netflix-commons:netflix-eventbus", version.ref = "netflixEventBus" }
+netbeans-lib-profiler = { module = "org.netbeans.modules:org-netbeans-lib-profiler", version.ref = "netbeansLibProfiler" }
 netty-buffer = { module = "io.netty:netty-buffer", version.ref = "netty" }
 netty-codec = { module = "io.netty:netty-codec", version.ref = "netty" }
 netty-common = { module = "io.netty:netty-common", version.ref = "netty" }

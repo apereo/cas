@@ -76,6 +76,11 @@ ext.libraries = [
                     exclude(group: "ch.qos.logback", module: "logback-classic")
                 }
         ],
+        netbeanslibprofiler          : [
+                dependencies.create(libs.netbeans.lib.profiler.get()) {
+                    exclude(group: "org.slf4j", module: "slf4j-api")
+                }
+        ],
         permitio          : [
                 dependencies.create(libs.permit.sdk.java.get()) {
                     exclude(group: "org.slf4j", module: "slf4j-api")
