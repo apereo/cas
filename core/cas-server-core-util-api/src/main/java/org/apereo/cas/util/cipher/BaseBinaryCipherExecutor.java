@@ -2,6 +2,7 @@ package org.apereo.cas.util.cipher;
 
 import module java.base;
 import org.apereo.cas.util.EncodingUtils;
+import org.apereo.cas.util.RandomUtils;
 import org.apereo.cas.util.crypto.DecryptionException;
 import org.apereo.cas.util.crypto.PropertyBoundCipherExecutor;
 import org.apereo.cas.util.function.FunctionUtils;
@@ -38,9 +39,15 @@ public abstract class BaseBinaryCipherExecutor extends AbstractCipherExecutor<by
     implements PropertyBoundCipherExecutor<byte[], byte[]> {
     private static final int GCM_TAG_LENGTH = 128;
 
+    private static final int GCM_TAG_BYTE_LENGTH = GCM_TAG_LENGTH / Byte.SIZE;
+
+    private static final int GCM_IV_LENGTH = 12;
+
     private static final int MINIMUM_ENCRYPTION_KEY_LENGTH = 32;
 
     private static final String CIPHER_ALGORITHM = "AES/GCM/NoPadding";
+
+    private static final SecureRandom RANDOM = RandomUtils.getNativeInstance();
 
     /**
      * Name of the cipher/component whose keys are generated here.
@@ -83,9 +90,11 @@ public abstract class BaseBinaryCipherExecutor extends AbstractCipherExecutor<by
     @Override
     public byte[] encode(final byte[] value, final Object[] parameters) {
         return FunctionUtils.doUnchecked(() -> {
+            val iv = new byte[GCM_IV_LENGTH];
+            RANDOM.nextBytes(iv);
             val aesCipher = Cipher.getInstance(CIPHER_ALGORITHM);
-            aesCipher.init(Cipher.ENCRYPT_MODE, this.encryptionKey, this.parameterSpec);
-            val result = aesCipher.doFinal(value);
+            aesCipher.init(Cipher.ENCRYPT_MODE, this.encryptionKey, new GCMParameterSpec(GCM_TAG_LENGTH, iv));
+            val result = ArrayUtils.addAll(iv, aesCipher.doFinal(value));
             return signingEnabled ? sign(result, getSigningKey()) : result;
         });
     }
@@ -94,9 +103,14 @@ public abstract class BaseBinaryCipherExecutor extends AbstractCipherExecutor<by
     public byte[] decode(final byte[] value, final Object[] parameters) {
         try {
             val verifiedValue = signingEnabled ? verifySignature(value, getSigningKey()) : value;
-            val aesCipher = Cipher.getInstance(CIPHER_ALGORITHM);
-            aesCipher.init(Cipher.DECRYPT_MODE, this.encryptionKey, this.parameterSpec);
-            return aesCipher.doFinal(verifiedValue);
+            if (verifiedValue.length >= GCM_IV_LENGTH + GCM_TAG_BYTE_LENGTH) {
+                try {
+                    return decodeWithPrefixedInitializationVector(verifiedValue);
+                } catch (final Exception e) {
+                    LOGGER.trace("Unable to decrypt value using a prefixed initialization vector. CAS will attempt legacy decryption.", e);
+                }
+            }
+            return decodeWithLegacyParameterSpec(verifiedValue);
         } catch (final Exception e) {
             throw LOGGER.isTraceEnabled() ? new DecryptionException(e) : new DecryptionException();
         }
@@ -127,6 +141,20 @@ public abstract class BaseBinaryCipherExecutor extends AbstractCipherExecutor<by
             return new GCMParameterSpec(GCM_TAG_LENGTH, iv);
         }
         return new IvParameterSpec(iv);
+    }
+
+    private byte[] decodeWithPrefixedInitializationVector(final byte[] value) throws Exception {
+        val iv = Arrays.copyOfRange(value, 0, GCM_IV_LENGTH);
+        val encrypted = Arrays.copyOfRange(value, GCM_IV_LENGTH, value.length);
+        val aesCipher = Cipher.getInstance(CIPHER_ALGORITHM);
+        aesCipher.init(Cipher.DECRYPT_MODE, this.encryptionKey, new GCMParameterSpec(GCM_TAG_LENGTH, iv));
+        return aesCipher.doFinal(encrypted);
+    }
+
+    private byte[] decodeWithLegacyParameterSpec(final byte[] value) throws Exception {
+        val aesCipher = Cipher.getInstance(CIPHER_ALGORITHM);
+        aesCipher.init(Cipher.DECRYPT_MODE, this.encryptionKey, this.parameterSpec);
+        return aesCipher.doFinal(value);
     }
 
     private void ensureEncryptionKeyExists(final String encryptionSecretKey, final int encryptionKeySize) {

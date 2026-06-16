@@ -23,41 +23,41 @@ class BinaryCipherExecutorTests {
 
     @Test
     void checkEncodingDecoding() {
-        val cc = new TestBinaryCipherExecutor("MTIzNDU2Nzg5MDEyMzQ1Ng==",
+        val cipher = new TestBinaryCipherExecutor("MTIzNDU2Nzg5MDEyMzQ1Ng==",
             "szxK-5_eJjs-aUj-64MpUZ-GPPzGLhYPLGl0wrYjYNVAGva2P0lLe6UGKGM7k8dWxsOVGutZWgvmY3l5oVPO3w",
             512,
             16);
-        val bytes = cc.encode(TEST_VALUE.getBytes(StandardCharsets.UTF_8), ArrayUtils.EMPTY_OBJECT_ARRAY);
-        val decoded = cc.decode(bytes, ArrayUtils.EMPTY_OBJECT_ARRAY);
+        val bytes = cipher.encode(TEST_VALUE.getBytes(StandardCharsets.UTF_8), ArrayUtils.EMPTY_OBJECT_ARRAY);
+        val decoded = cipher.decode(bytes, ArrayUtils.EMPTY_OBJECT_ARRAY);
         assertEquals(TEST_VALUE, new String(decoded, StandardCharsets.UTF_8));
     }
 
     @Test
     void checkEncodingDecodingBadKeys() {
-        val cc = new TestBinaryCipherExecutor("0000", "1234", 512, 16) {
+        val cipher = new TestBinaryCipherExecutor("0000", "1234", 512, 16) {
         };
         assertThrowsWithRootCause(DecryptionException.class, JoseException.class,
-            () -> cc.decode(TEST_VALUE.getBytes(StandardCharsets.UTF_8)));
-        assertThrowsWithRootCause(UncheckedException.class, InvalidAlgorithmParameterException.class,
-            () -> cc.encode(TEST_VALUE.getBytes(StandardCharsets.UTF_8), ArrayUtils.EMPTY_OBJECT_ARRAY));
+            () -> cipher.decode(TEST_VALUE.getBytes(StandardCharsets.UTF_8)));
+        assertThrowsWithRootCause(UncheckedException.class, InvalidKeyException.class,
+            () -> cipher.encode(TEST_VALUE.getBytes(StandardCharsets.UTF_8), ArrayUtils.EMPTY_OBJECT_ARRAY));
     }
 
     @Test
     void checkDecoderWithRootCause() {
-        val cc = new TestBinaryCipherExecutor("0000", "1234", 512, 16) {
+        val cipher = new TestBinaryCipherExecutor("0000", "1234", 512, 16) {
         };
         assertThrowsWithRootCause(DecryptionException.class, JoseException.class,
-            () -> cc.decode(TEST_VALUE.getBytes(StandardCharsets.UTF_8)));
+            () -> cipher.decode(TEST_VALUE.getBytes(StandardCharsets.UTF_8)));
     }
 
     @Test
     void checkLegacyKeys() {
-        val cc = new TestBinaryCipherExecutor("1234567890123456",
+        val cipher = new TestBinaryCipherExecutor("1234567890123456",
             "szxK-5_eJjs-aUj-64MpUZ-GPPzGLhYPLGl0wrYjYNVAGva2P0lLe6UGKGM7k8dWxsOVGutZWgvmY3l5oVPO3w",
             512,
             16);
-        val bytes = cc.encode(TEST_VALUE.getBytes(StandardCharsets.UTF_8), ArrayUtils.EMPTY_OBJECT_ARRAY);
-        val decoded = cc.decode(bytes, ArrayUtils.EMPTY_OBJECT_ARRAY);
+        val bytes = cipher.encode(TEST_VALUE.getBytes(StandardCharsets.UTF_8), ArrayUtils.EMPTY_OBJECT_ARRAY);
+        val decoded = cipher.decode(bytes, ArrayUtils.EMPTY_OBJECT_ARRAY);
         assertEquals(TEST_VALUE, new String(decoded, StandardCharsets.UTF_8));
     }
 
