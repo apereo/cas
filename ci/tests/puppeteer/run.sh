@@ -612,7 +612,8 @@ function createCasKeystore() {
       printcyan "Keystore ${keystore} already exists and will not be created again"
     else
       dname="${dname:-CN=cas.example.org,OU=Example,OU=Org,C=US}"
-      subjectAltName="${subjectAltName:-dns:example.org,dns:localhost,dns:host.k3d.internal,dns:host.docker.internal,ip:127.0.0.1}"
+      localdomain="${PUPPETEER_LOCAL_DOMAIN:-example.org}"
+      subjectAltName="${subjectAltName:-dns:${localdomain},dns:localhost,dns:host.k3d.internal,dns:host.docker.internal,ip:127.0.0.1}"
       printgreen "Generating keystore ${keystore} for CAS with\nDN=${dname}, SAN=${subjectAltName} ..."
       [ -f "${public_cert}" ] && rm "${public_cert}"
       keytool -genkey -noprompt -alias cas -keyalg RSA -keypass changeit -storepass changeit \

@@ -1,6 +1,7 @@
 package org.apereo.cas.config;
 
 import module java.base;
+import module java.sql;
 import org.apereo.cas.audit.AuditActionResolvers;
 import org.apereo.cas.audit.AuditResourceResolvers;
 import org.apereo.cas.audit.AuditTrailRecordResolutionPlanConfigurer;
@@ -60,7 +61,6 @@ import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.inspektr.audit.spi.AuditActionResolver;
 import org.apereo.inspektr.audit.spi.AuditResourceResolver;
-import org.jspecify.annotations.NonNull;
 import org.pac4j.core.client.BaseClient;
 import org.pac4j.core.client.Client;
 import org.pac4j.core.context.session.SessionStore;
@@ -79,7 +79,6 @@ import org.springframework.context.annotation.ScopedProxyMode;
 import org.springframework.core.annotation.AnnotationAwareOrderComparator;
 import org.springframework.jdbc.core.JdbcOperations;
 import org.springframework.jdbc.core.JdbcTemplate;
-import module java.sql;
 
 /**
  * This is {@link DelegatedAuthenticationEventExecutionPlanConfiguration}.
@@ -155,7 +154,7 @@ class DelegatedAuthenticationEventExecutionPlanConfiguration {
             @Qualifier(TenantExtractor.BEAN_NAME)
             final TenantExtractor tenantExtractor,
             @Qualifier(GeoLocationService.BEAN_NAME)
-            final ObjectProvider<@NonNull GeoLocationService> geoLocationService,
+            final ObjectProvider<GeoLocationService> geoLocationService,
             @Qualifier("delegatedClientDistributedSessionCookieCipherExecutor")
             final CipherExecutor delegatedClientDistributedSessionCookieCipherExecutor,
             final CasConfigurationProperties casProperties) {
@@ -232,7 +231,7 @@ class DelegatedAuthenticationEventExecutionPlanConfiguration {
         @Bean
         @ConditionalOnMissingBean(name = DelegatedClientUserProfileProvisioner.BEAN_NAME)
         public DelegatedClientUserProfileProvisioner clientUserProfileProvisioner(
-            final ObjectProvider<@NonNull List<Supplier<DelegatedClientUserProfileProvisioner>>> provisioners) {
+            final ObjectProvider<List<Supplier<DelegatedClientUserProfileProvisioner>>> provisioners) {
             val results = provisioners.getIfAvailable(() -> CollectionUtils.wrapList(DelegatedClientUserProfileProvisioner::noOp))
                 .stream()
                 .filter(BeanSupplier::isNotProxy)
@@ -255,7 +254,7 @@ class DelegatedAuthenticationEventExecutionPlanConfiguration {
         @Bean
         @ConditionalOnMissingBean(name = "pac4jDelegatedClientFactoryCache")
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-        public Cache<@NonNull String, List<BaseClient>> pac4jDelegatedClientFactoryCache(
+        public Cache<String, List<BaseClient>> pac4jDelegatedClientFactoryCache(
             final CasConfigurationProperties casProperties) {
             val core = casProperties.getAuthn().getPac4j().getCore();
             return Caffeine.newBuilder()
@@ -270,9 +269,9 @@ class DelegatedAuthenticationEventExecutionPlanConfiguration {
         public DelegatedIdentityProviderFactory pac4jDelegatedClientFactory(
             final ConfigurableApplicationContext applicationContext,
             @Qualifier("pac4jDelegatedClientFactoryCache")
-            final Cache<@NonNull String, List<BaseClient>> clientsCache,
+            final Cache<String, List<BaseClient>> clientsCache,
             final CasConfigurationProperties casProperties,
-            final ObjectProvider<@NonNull List<DelegatedClientFactoryCustomizer>> customizerList,
+            final ObjectProvider<List<DelegatedClientFactoryCustomizer>> customizerList,
             @Qualifier(CasSSLContext.BEAN_NAME)
             final CasSSLContext casSslContext) {
 
@@ -307,9 +306,9 @@ class DelegatedAuthenticationEventExecutionPlanConfiguration {
             final JdbcOperations jdbcTemplate,
             final ConfigurableApplicationContext applicationContext,
             @Qualifier("pac4jDelegatedClientFactoryCache")
-            final Cache<@NonNull String, List<BaseClient>> clientsCache,
+            final Cache<String, List<BaseClient>> clientsCache,
             final CasConfigurationProperties casProperties,
-            final ObjectProvider<@NonNull List<DelegatedClientFactoryCustomizer>> customizerList,
+            final ObjectProvider<List<DelegatedClientFactoryCustomizer>> customizerList,
             @Qualifier(CasSSLContext.BEAN_NAME)
             final CasSSLContext casSslContext) {
 

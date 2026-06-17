@@ -551,6 +551,439 @@ select + span[role="combobox"] {
 
 }
 
+.http-exchanges-panel {
+    text-align: left;
+}
+
+.http-exchanges-header {
+    margin-bottom: 1rem;
+}
+
+.http-exchanges-title {
+    display: flex;
+    align-items: center;
+    gap: .45rem;
+    margin: 0;
+    font-size: 1.45rem;
+    font-weight: 800;
+}
+
+.http-exchanges-status {
+    color: #65717d;
+}
+
+.http-exchanges-unavailable {
+    display: flex;
+    align-items: center;
+    gap: .5rem;
+    padding: .9rem 1rem;
+    border: 1px solid #f0d663;
+    border-radius: 8px;
+    background: #fff9db;
+    color: #6b5b13;
+    font-weight: 700;
+}
+
+.http-exchanges-unavailable.hide {
+    display: none;
+}
+
+.http-exchanges-filters {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(12rem, 1fr));
+    gap: 1rem;
+    align-items: end;
+    margin-bottom: 1rem;
+}
+
+.http-exchanges-filters label {
+    display: grid;
+    gap: .45rem;
+    margin: 0;
+    font-weight: 700;
+}
+
+.http-exchanges-table-wrap {
+    overflow-x: hidden;
+    padding-right: 1rem;
+    padding-left: 1rem;
+    border: 1px solid #d8dee5;
+    border-radius: 8px;
+    background: #fff;
+    box-shadow: 0 5px 18px rgba(31, 53, 73, .08);
+}
+
+.http-exchanges-table {
+    width: 100%;
+    table-layout: fixed;
+    margin-bottom: 0 !important;
+}
+
+.http-exchanges-table th,
+.http-exchanges-table td {
+    overflow-wrap: anywhere;
+    white-space: normal;
+    word-break: break-word;
+}
+
+.http-exchanges-table th:first-child,
+.http-exchanges-table td:first-child {
+    text-align: left !important;
+    width: 8.5rem;
+}
+
+.http-exchange-method,
+.http-exchange-status {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 3.2rem;
+    min-height: 1.55rem;
+    padding: .12rem .55rem;
+    border-radius: 999px;
+    color: #fff;
+    font-size: .82rem;
+    font-weight: 800;
+    line-height: 1;
+}
+
+.http-exchange-method.method-get,
+.http-exchange-status.status-success {
+    background: #168a55;
+}
+
+.http-exchange-method.method-post {
+    background: #0d6efd;
+}
+
+.http-exchange-method.method-put,
+.http-exchange-method.method-patch {
+    background: #6f42c1;
+}
+
+.http-exchange-method.method-delete,
+.http-exchange-status.status-server-error {
+    background: #c62828;
+}
+
+.http-exchange-method.method-head,
+.http-exchange-method.method-options,
+.http-exchange-status.status-informational {
+    background: #607d8b;
+}
+
+.http-exchange-status.status-redirect {
+    background: #24b9d7;
+}
+
+.http-exchange-status.status-client-error {
+    background: #f2b705;
+    color: #111820;
+}
+
+.http-exchange-path {
+    color: #d63384;
+    font-size: .98rem;
+    vertical-align: middle;
+    white-space: normal;
+    word-break: break-word;
+}
+
+.http-exchange-details-button {
+    width: 2.6rem;
+    min-width: 2.6rem;
+    height: 2.25rem;
+    padding: 0;
+}
+
+.http-exchange-details-button.http-exchange-details-button-active {
+    background: #607d8b;
+}
+
+.http-exchange-details-button .mdc-button__label {
+    display: inline-flex;
+    align-items: center;
+    gap: .35rem;
+}
+
+.http-exchange-details-row > td {
+    padding: 0 !important;
+    background: #f8fbfd;
+}
+
+.http-exchange-details {
+    padding: 1rem 1.2rem 1.2rem;
+    border-top: 1px solid #d8dee5;
+    border-bottom: 1px solid #d8dee5;
+}
+
+.http-exchange-details h4 {
+    margin: .3rem 0 .75rem;
+    font-size: 1.05rem;
+    font-weight: 800;
+}
+
+.http-exchange-metadata {
+    display: grid;
+    grid-template-columns: minmax(10rem, 16rem) minmax(0, 1fr);
+    gap: .65rem 1rem;
+    margin-bottom: 1.2rem;
+}
+
+.http-exchange-metadata code,
+.http-exchange-header-row code {
+    color: #d63384;
+    white-space: normal;
+    overflow-wrap: anywhere;
+}
+
+.http-exchange-headers {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 1.5rem;
+}
+
+.http-exchange-header-row {
+    display: grid;
+    grid-template-columns: minmax(9rem, 18rem) minmax(0, 1fr);
+    gap: .75rem;
+    padding: .4rem 0;
+}
+
+.http-exchange-empty {
+    color: #65717d;
+}
+
+@media (max-width: 900px) {
+    .http-exchange-headers {
+        display: block;
+    }
+
+    .http-exchanges-filters {
+        grid-template-columns: 1fr;
+    }
+
+    .http-exchanges-table-wrap {
+        padding-right: .5rem;
+        padding-left: .5rem;
+    }
+
+    .http-exchange-metadata,
+    .http-exchange-header-row {
+        grid-template-columns: 1fr;
+    }
+}
+
+.spring-beans-panel {
+    text-align: left;
+}
+
+.spring-beans-header {
+    margin-bottom: 1rem;
+}
+
+.spring-beans-title {
+    display: flex;
+    align-items: center;
+    gap: .45rem;
+    margin: 0;
+    font-size: 1.45rem;
+    font-weight: 800;
+}
+
+.spring-beans-summary {
+    margin-top: .25rem;
+    color: #65717d;
+}
+
+.spring-beans-unavailable {
+    display: flex;
+    align-items: center;
+    gap: .5rem;
+    padding: .9rem 1rem;
+    border: 1px solid #f0d663;
+    border-radius: 8px;
+    background: #fff9db;
+    color: #6b5b13;
+    font-weight: 700;
+}
+
+.spring-beans-unavailable.hide {
+    display: none;
+}
+
+.spring-beans-filters {
+    margin-bottom: 1rem;
+}
+
+.spring-beans-filter-text,
+.spring-beans-text-field {
+    width: 100%;
+}
+
+.spring-beans-table-wrap {
+    overflow-x: hidden;
+    border: 1px solid #d8dee5;
+    border-radius: 8px;
+    background: #fff;
+    box-shadow: 0 5px 18px rgba(31, 53, 73, .08);
+}
+
+.spring-beans-table-wrap .dt-layout-table,
+.spring-beans-table-wrap .dt-layout-cell {
+    overflow-x: hidden;
+}
+
+.spring-beans-table {
+    width: 100%;
+    table-layout: fixed;
+    margin-bottom: 0 !important;
+}
+
+.spring-beans-table th,
+.spring-beans-table td {
+    overflow-wrap: anywhere;
+    white-space: normal;
+    word-break: break-word;
+    vertical-align: middle;
+}
+
+.spring-bean-name,
+.spring-bean-type {
+    color: #d63384;
+    font-size: .98rem;
+    white-space: normal;
+}
+
+.spring-bean-classification {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 1.45rem;
+    padding: .14rem .55rem;
+    border-radius: 6px;
+    background: #eef2f5;
+    color: #26323d;
+    font-size: .78rem;
+    font-weight: 800;
+    line-height: 1;
+}
+
+.spring-bean-classification.classification-cas {
+    background: #d7ebf9;
+    color: #153e50;
+}
+
+.spring-bean-classification.classification-framework {
+    background: #edf0f2;
+    color: #26323d;
+}
+
+.spring-bean-classification.classification-application {
+    background: #e8f5ee;
+    color: #168a55;
+}
+
+.spring-bean-dependencies {
+    color: #65717d;
+}
+
+.spring-conditions-panel {
+    text-align: left;
+}
+
+.spring-conditions-unavailable {
+    display: flex;
+    align-items: center;
+    gap: .5rem;
+    padding: .9rem 1rem;
+    border: 1px solid #f0d663;
+    border-radius: 8px;
+    background: #fff9db;
+    color: #6b5b13;
+    font-weight: 700;
+}
+
+.spring-conditions-unavailable.hide {
+    display: none;
+}
+
+.spring-conditions-result-tabs {
+    border: 0;
+    background: transparent;
+}
+
+.spring-conditions-result-tabs > ul {
+    margin-bottom: 1rem;
+}
+
+.spring-conditions-result-tabs .ui-tabs-panel {
+    padding: 0;
+}
+
+.spring-conditions-table-wrap {
+    overflow-x: hidden;
+    border: 1px solid #d8dee5;
+    border-radius: 8px;
+    background: #fff;
+    box-shadow: 0 5px 18px rgba(31, 53, 73, .08);
+}
+
+.spring-conditions-table-wrap .dt-layout-table,
+.spring-conditions-table-wrap .dt-layout-cell {
+    overflow-x: hidden;
+}
+
+.spring-conditions-table {
+    width: 100%;
+    table-layout: fixed;
+    margin-bottom: 0 !important;
+}
+
+.spring-conditions-table th,
+.spring-conditions-table td {
+    overflow-wrap: anywhere;
+    white-space: normal;
+    word-break: break-word;
+    vertical-align: middle;
+}
+
+.spring-condition-source {
+    display: inline-flex;
+    align-items: flex-start;
+    gap: .4rem;
+}
+
+.spring-condition-source i {
+    margin-top: .15rem;
+    font-size: 1.05rem;
+}
+
+.spring-condition-source-positive i {
+    color: #168a55;
+}
+
+.spring-condition-source-negative i {
+    color: #c62828;
+}
+
+.spring-condition-source code,
+.spring-condition-name {
+    color: #d63384;
+    font-size: .98rem;
+    white-space: normal;
+}
+
+.spring-condition-message {
+    color: #26323d;
+}
+
+@media (max-width: 900px) {
+    .spring-beans-table {
+        table-layout: auto;
+    }
+}
+
 #registeredServiceDescriptionEditorContainer {
     width: 100%;
 }
@@ -607,33 +1040,18 @@ select + span[role="combobox"] {
 }
 
 .startup-search-wrap {
-    position: relative;
     display: inline-flex;
     align-items: center;
 }
 
-.startup-search-icon {
-    position: absolute;
-    left: 10px;
-    color: #90a4ae;
-    font-size: 1.1rem;
-    pointer-events: none;
+.startup-search-field {
+    width: min(24rem, 100vw - 3rem);
 }
 
-.startup-filter-input {
-    padding: 7px 12px 7px 34px;
-    border: 1px solid #b0bec5;
-    border-radius: 20px;
-    font-size: 0.88rem;
-    min-width: 240px;
-    outline: none;
-    background: #f8fafb;
-    transition: border-color 0.2s;
-}
-
-.startup-filter-input:focus {
-    border-color: var(--mdc-theme-primary, #153E50);
-    background: #fff;
+.startup-toolbar-button .mdc-button__label {
+    display: inline-flex;
+    align-items: center;
+    gap: .35rem;
 }
 
 .startup-filter-bar {

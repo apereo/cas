@@ -622,6 +622,119 @@ async function populateConfigurationNameSelectOptions() {
     }
 }
 
+function escapeConfigHtml(str) {
+    return String(str ?? "").replace(/[&<>"']/g, s => ({
+        "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;"
+    }[s]));
+}
+
+function classifySpringBean(type) {
+    const beanType = String(type ?? "");
+    if (beanType.startsWith("org.springframework")
+        || beanType.startsWith("jakarta.")
+        || beanType.startsWith("javax.")
+        || beanType.startsWith("com.fasterxml.")
+        || beanType.startsWith("io.micrometer.")) {
+        return "FRAMEWORK";
+    }
+    if (beanType.startsWith("org.apereo.cas")) {
+        return "CAS";
+    }
+    return "APPLICATION";
+}
+
+function normalizeSpringBeans(response) {
+    const entries = [];
+    Object.entries(response.contexts ?? {}).forEach(([contextName, context]) => {
+        Object.entries(context.beans ?? {}).forEach(([name, bean]) => {
+            entries.push({
+                name,
+                context: contextName,
+                type: bean.type ?? "",
+                scope: bean.scope ?? "singleton",
+                classification: classifySpringBean(bean.type),
+                dependencies: bean.dependencies ?? []
+            });
+        });
+    });
+    return entries.sort((a, b) => a.name.localeCompare(b.name));
+}
+
+function setSpringBeansUnavailable(message) {
+    $("#springBeansUnavailable span").html(escapeConfigHtml(message));
+    showElements($("#springBeansUnavailable"));
+    hideElements($("#springBeansContent"));
+    hideElements($("#springBeansTabItem"));
+}
+
+function setSpringBeansAvailable() {
+    hideElements($("#springBeansUnavailable"));
+    showElements($("#springBeansContent"));
+    showElements($("#springBeansTabItem"));
+}
+
+function collectSpringConditionMatches(source, matches, matchType, contextName) {
+    const entries = [];
+    const addMatch = (match, outcome = matchType) => {
+        if (!match) {
+            return;
+        }
+        entries.push({
+            source,
+            context: contextName,
+            matchType: outcome,
+            condition: match.condition ?? "",
+            message: match.message ?? ""
+        });
+    };
+
+    if (Array.isArray(matches)) {
+        matches.forEach(match => addMatch(match));
+        return entries;
+    }
+
+    if (matches?.condition || matches?.message) {
+        addMatch(matches);
+        return entries;
+    }
+
+    (matches?.notMatched ?? []).forEach(match => addMatch(match, "negative"));
+    (matches?.matched ?? []).forEach(match => addMatch(match, "positive"));
+    return entries;
+}
+
+function normalizeSpringConditions(response) {
+    const entries = {
+        positive: [],
+        negative: []
+    };
+    Object.entries(response.contexts ?? {}).forEach(([contextName, context]) => {
+        Object.entries(context.positiveMatches ?? {}).forEach(([source, matches]) => {
+            entries.positive.push(...collectSpringConditionMatches(source, matches, "positive", contextName));
+        });
+        Object.entries(context.negativeMatches ?? {}).forEach(([source, matches]) => {
+            const collected = collectSpringConditionMatches(source, matches, "negative", contextName);
+            entries.negative.push(...collected.filter(entry => entry.matchType === "negative"));
+        });
+    });
+    entries.positive.sort((a, b) => a.source.localeCompare(b.source));
+    entries.negative.sort((a, b) => a.source.localeCompare(b.source));
+    return entries;
+}
+
+function setSpringConditionsUnavailable(message) {
+    $("#springConditionsUnavailable span").html(escapeConfigHtml(message));
+    showElements($("#springConditionsUnavailable"));
+    hideElements($("#springConditionsContent"));
+    hideElements($("#springConditionsTabItem"));
+}
+
+function setSpringConditionsAvailable() {
+    hideElements($("#springConditionsUnavailable"));
+    showElements($("#springConditionsContent"));
+    showElements($("#springConditionsTabItem"));
+}
+
 async function initializeConfigurationOperations() {
     const configurationTable = $("#configurationTable").DataTable({
         pageLength: 10,
@@ -826,6 +939,153 @@ async function initializeConfigurationOperations() {
             console.error("Error fetching data:", error);
             displayBanner(xhr);
         });
+    }
+
+    let springBeansEntries = [];
+    const springBeansTable = $("#springBeansTable").DataTable({
+        pageLength: 10,
+        autoWidth: false,
+        order: [[0, "asc"]],
+        columns: [
+            {
+                data: "name",
+                width: "22%",
+                render: (data, type) => type === "display"
+                    ? `<code class="spring-bean-name">${escapeConfigHtml(data)}</code>`
+                    : data
+            },
+            {
+                data: "type",
+                width: "34%",
+                render: (data, type) => type === "display"
+                    ? `<code class="spring-bean-type">${escapeConfigHtml(data)}</code>`
+                    : data
+            },
+            {
+                data: "scope",
+                width: "10%",
+                render: data => escapeConfigHtml(data)
+            },
+            {
+                data: "classification",
+                width: "12%",
+                render: (data, type) => type === "display"
+                    ? `<span class="spring-bean-classification classification-${escapeConfigHtml(String(data).toLowerCase())}">${escapeConfigHtml(data)}</span>`
+                    : data
+            },
+            {
+                data: "dependencies",
+                render: (data, type) => {
+                    if (type !== "display") {
+                        return Array.isArray(data) ? data.join(", ") : data;
+                    }
+                    const dependencies = Array.isArray(data) ? data : [];
+                    return dependencies.length > 0
+                        ? `<span class="spring-bean-dependencies">${dependencies.map(escapeConfigHtml).join(", ")}</span>`
+                        : `<span class="text-muted">&mdash;</span>`;
+                }
+            }
+        ],
+        drawCallback: settings => {
+            $("#springBeansTable tr").addClass("mdc-data-table__row");
+            $("#springBeansTable td").addClass("mdc-data-table__cell");
+        }
+    });
+
+    function renderSpringBeans() {
+        springBeansTable.clear();
+        springBeansEntries.forEach(entry => springBeansTable.row.add(entry));
+        springBeansTable.draw();
+        springBeansTable.columns.adjust();
+    }
+
+    $("#springBeansFilter").off("input").on("input", renderSpringBeans);
+    if (CasActuatorEndpoints.beans()) {
+        $.get(CasActuatorEndpoints.beans(), response => {
+            setSpringBeansAvailable();
+            springBeansEntries = normalizeSpringBeans(response);
+            renderSpringBeans();
+        }).fail((xhr, status, error) => {
+            console.error("Error fetching Spring beans:", error);
+            setSpringBeansUnavailable("The Spring Boot beans actuator endpoint is not available.");
+        });
+    } else {
+        setSpringBeansUnavailable("The Spring Boot beans actuator endpoint is not available.");
+    }
+
+    let springConditionsEntries = {positive: [], negative: []};
+    const createSpringConditionsTable = (selector, positive) => $(selector).DataTable({
+        pageLength: 10,
+        autoWidth: false,
+        order: [[0, "asc"]],
+        columns: [
+            {
+                data: "source",
+                width: "36%",
+                render: (data, type) => {
+                    if (type !== "display") {
+                        return data;
+                    }
+                    const icon = positive ? "mdi-check-circle-outline" : "mdi-close-circle-outline";
+                    const status = positive ? "positive" : "negative";
+                    return `
+                        <span class="spring-condition-source spring-condition-source-${status}">
+                            <i class="mdi ${icon}" aria-hidden="true"></i>
+                            <code>${escapeConfigHtml(data)}</code>
+                        </span>
+                    `.trim();
+                }
+            },
+            {
+                data: "condition",
+                width: "26%",
+                render: (data, type) => type === "display"
+                    ? `<code class="spring-condition-name">${escapeConfigHtml(data)}</code>`
+                    : data
+            },
+            {
+                data: "message",
+                render: (data, type) => type === "display"
+                    ? `<span class="spring-condition-message">${escapeConfigHtml(data || "No condition message provided.")}</span>`
+                    : data
+            }
+        ],
+        drawCallback: settings => {
+            $(`${selector} tr`).addClass("mdc-data-table__row");
+            $(`${selector} td`).addClass("mdc-data-table__cell");
+        }
+    });
+    const springConditionsPositiveTable = createSpringConditionsTable("#springConditionsPositiveTable", true);
+    const springConditionsNegativeTable = createSpringConditionsTable("#springConditionsNegativeTable", false);
+
+    function renderSpringConditions() {
+        springConditionsPositiveTable.clear();
+        springConditionsNegativeTable.clear();
+        springConditionsEntries.positive.forEach(entry => springConditionsPositiveTable.row.add(entry));
+        springConditionsEntries.negative.forEach(entry => springConditionsNegativeTable.row.add(entry));
+        springConditionsPositiveTable.draw();
+        springConditionsNegativeTable.draw();
+        springConditionsPositiveTable.columns.adjust();
+        springConditionsNegativeTable.columns.adjust();
+    }
+
+    $("#springConditionsResultTabs").tabs({
+        activate: () => {
+            springConditionsPositiveTable.columns.adjust();
+            springConditionsNegativeTable.columns.adjust();
+        }
+    });
+    if (CasActuatorEndpoints.conditions()) {
+        $.get(CasActuatorEndpoints.conditions(), response => {
+            setSpringConditionsAvailable();
+            springConditionsEntries = normalizeSpringConditions(response);
+            renderSpringConditions();
+        }).fail((xhr, status, error) => {
+            console.error("Error fetching Spring conditions:", error);
+            setSpringConditionsUnavailable("The Spring Boot conditions actuator endpoint is not available.");
+        });
+    } else {
+        setSpringConditionsUnavailable("The Spring Boot conditions actuator endpoint is not available.");
     }
 
     $("#encryptConfigButton").off().on("click", () => encryptOrDecryptConfig("encrypt"));

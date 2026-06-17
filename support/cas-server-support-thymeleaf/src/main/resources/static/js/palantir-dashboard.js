@@ -211,6 +211,12 @@ function processNavigationTabs() {
     if (!CasActuatorEndpoints.configurationMetadata()) {
         hideElements($("#casConfigSearch"));
     }
+    if (!CasActuatorEndpoints.beans()) {
+        hideElements($("#springBeansTabItem"));
+    }
+    if (!CasActuatorEndpoints.conditions()) {
+        hideElements($("#springConditionsTabItem"));
+    }
     if (!CasActuatorEndpoints.oidcJwks() || !CAS_FEATURES.includes("OpenIDConnect")) {
         $("#oidcprotocol").parent().remove();
         hideElements($("#oidcProtocolContainer"));

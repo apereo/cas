@@ -194,3 +194,22 @@ listed or affected in a security release announcement and is no longer part of a
 be to upgrade to a community-maintained CAS version. The project makes no effort to evaluate, verify, patch or test EOL versions of the software, has no interest, 
 standing or budget to do so and produces no claims to ascertain the severity or effects of a security defect in an EOL CAS version. While this rule can be 
 amended in *rare and extreme circumstances* depending on the security of the issue and community standing, the general policy allows that one may not speak ill of the dead.
+
+## Credit Assignments
+
+Once a security vulnerability is confirmed, the reporter will be asked to consent whether
+they prefer to be listed in the community public security advisories and annoumcements or 
+remain anonymous. If the reporter is interested to receive public credit for their discovery
+and effort, the following information at a minimum will need to be shared:
+
+1. Full real name
+2. Realm contact information
+3. Organization/Company, Affiliation
+4. Use case, scenario, reason/need for discovery, etc.
+
+The above profile details need to represent a real entity so the community can better
+understand the need, intent and purpose behind the reported issue. The likes 
+of *"Megatron, independent security researcher at gmail dot com"* will not be accepted.
+If you are not comfortable sharing details, it is then absolutely fine to remain
+anonymous, as this matter is completely optional.
+

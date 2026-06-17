@@ -244,6 +244,61 @@
                         </div>
                     </div>
                 </div>
+
+                <div id="httpExchangesContainer" class="http-exchanges-panel mt-3">
+                    <div class="http-exchanges-header">
+                        <h3 class="http-exchanges-title">
+                            <i class="mdi mdi-swap-horizontal" aria-hidden="true"></i>
+                            HTTP Exchanges
+                        </h3>
+                    </div>
+
+                    <div id="httpExchangesUnavailable" class="http-exchanges-unavailable hide">
+                        <i class="mdi mdi-alert-circle-outline" aria-hidden="true"></i>
+                        <span>The Spring Boot <code>httpexchanges</code> actuator endpoint is not available.</span>
+                    </div>
+
+                    <div id="httpExchangesContent">
+                        <div class="http-exchanges-filters">
+                            <label for="httpExchangesMethodFilter">
+                                Method
+                                <select id="httpExchangesMethodFilter" class="jqueryui-selectmenu">
+                                    <option value="">All methods</option>
+                                </select>
+                            </label>
+                            <label for="httpExchangesStatusFilter">
+                                Status
+                                <select id="httpExchangesStatusFilter" class="jqueryui-selectmenu">
+                                    <option value="">All statuses</option>
+                                    <option value="1">1xx Informational</option>
+                                    <option value="2">2xx Success</option>
+                                    <option value="3">3xx Redirection</option>
+                                    <option value="4">4xx Client Error</option>
+                                    <option value="5">5xx Server Error</option>
+                                </select>
+                            </label>
+                        </div>
+
+                        <div class="http-exchanges-table-wrap">
+                            <table id="httpExchangesTable"
+                                   class="mdc-data-table__table table table-striped noborder http-exchanges-table">
+                                <thead>
+                                <tr class="mdc-data-table__header-row">
+                                    <th class="mdc-data-table__header-cell" role="columnheader" scope="col">Time</th>
+                                    <th class="mdc-data-table__header-cell" role="columnheader" scope="col">Method</th>
+                                    <th class="mdc-data-table__header-cell" role="columnheader" scope="col">Path</th>
+                                    <th class="mdc-data-table__header-cell" role="columnheader" scope="col">Status</th>
+                                    <th class="mdc-data-table__header-cell" role="columnheader" scope="col">Duration</th>
+                                    <th class="mdc-data-table__header-cell" role="columnheader" scope="col"></th>
+                                </tr>
+                                </thead>
+                                <tbody class="mdc-data-table__content"></tbody>
+                            </table>
+                        </div>
+                        <small id="httpExchangesStatus" class="http-exchanges-status text-muted">
+                        </small>
+                    </div>
+                </div>
             </div>
 
             <div id="casfeaturestab-tab">
@@ -268,26 +323,47 @@
 
             <div id="casstartup-tab">
                 <div class="startup-toolbar d-flex justify-content-between align-items-start flex-wrap gap-3 mt-2 mb-3">
-                    <div>
-                        <h4 class="startup-title"><i class="mdi mdi-clock-outline me-1"></i>Startup Timeline</h4>
-                        <small id="startupTimelineSummary" class="text-muted"></small>
-                    </div>
                     <div class="d-flex flex-wrap gap-2 align-items-center">
-                        <div class="startup-search-wrap">
-                            <i class="mdi mdi-magnify startup-search-icon"></i>
-                            <input type="text" id="startupStepFilter" placeholder="Filter by step name..." class="startup-filter-input" autocomplete="off"/>
+                        <div class="startup-search-wrap mr-8">
+                            <label class="mdc-text-field mdc-text-field--outlined mdc-text-field--with-leading-icon startup-search-field"
+                                   for="startupStepFilter">
+                                <i class="mdi mdi-magnify mdc-text-field__icon mdc-text-field__icon--leading"
+                                   aria-hidden="true"></i>
+                                <input type="text"
+                                       id="startupStepFilter"
+                                       class="mdc-text-field__input startup-filter-input"
+                                       autocomplete="off"
+                                       aria-labelledby="startupStepFilterLabel"/>
+                                <span class="mdc-notched-outline">
+                                    <span class="mdc-notched-outline__leading"></span>
+                                    <span class="mdc-notched-outline__notch">
+                                        <span class="mdc-floating-label"
+                                              id="startupStepFilterLabel">Filter by step name...</span>
+                                    </span>
+                                    <span class="mdc-notched-outline__trailing"></span>
+                                </span>
+                            </label>
                         </div>
-                        <button id="startupExpandAll" class="mdc-button mdc-button--outlined">
-                            <span class="mdc-button__label">Expand all</span>
+                        <button type="button"
+                                id="startupExpandAll"
+                                class="mdc-button mdc-button--raised startup-toolbar-button">
+                            <span class="mdc-button__label">
+                                <i class="mdc-tab__icon mdi mdi-arrow-expand-vertical" aria-hidden="true"></i>
+                                Expand all
+                            </span>
                         </button>
-                        <button id="startupCollapseAll" class="mdc-button mdc-button--outlined">
-                            <span class="mdc-button__label">Collapse all</span>
+                        <button type="button"
+                                id="startupCollapseAll"
+                                class="mdc-button mdc-button--raised startup-toolbar-button">
+                            <span class="mdc-button__label">
+                                <i class="mdc-tab__icon mdi mdi-arrow-collapse-vertical" aria-hidden="true"></i>
+                                Collapse all
+                            </span>
                         </button>
                     </div>
                 </div>
 
                 <div class="startup-filter-bar d-flex flex-wrap align-items-center gap-2 mb-3">
-                    <span class="startup-filter-label">Duration color:</span>
                     <div id="startupDurationFilters" class="startup-duration-filters">
                         <button class="startup-duration-filter active" data-filter="all">All</button>
                         <button class="startup-duration-filter" data-filter="fastest">

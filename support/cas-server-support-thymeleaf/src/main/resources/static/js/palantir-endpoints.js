@@ -51,6 +51,14 @@ class CasActuatorEndpoints {
         return this.endpoints().configprops || this.endpoints().configProps;
     }
 
+    static beans() {
+        return this.endpoints().beans || this.endpoints().springBeans;
+    }
+
+    static conditions() {
+        return this.endpoints().conditions || this.endpoints().springConditions;
+    }
+
     static mfaDevices() {
         return this.endpoints().mfadevices || this.endpoints().mfaDevices;
     }

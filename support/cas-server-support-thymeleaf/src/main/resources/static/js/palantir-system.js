@@ -47,89 +47,33 @@ async function initializeSystemOperations() {
     }
 
     async function configureHttpRequestResponses() {
-        if (CasActuatorEndpoints.httpExchanges()) {
-            $.get(CasActuatorEndpoints.httpExchanges(), response => {
-                function urlIsAcceptable(url) {
-                    return !url.startsWith("/actuator")
-                        && !url.startsWith("/webjars")
-                        && !url.endsWith(".js")
-                        && !url.endsWith(".ico")
-                        && !url.endsWith(".png")
-                        && !url.endsWith(".jpg")
-                        && !url.endsWith(".jpeg")
-                        && !url.endsWith(".gif")
-                        && !url.endsWith(".svg")
-                        && !url.endsWith(".css");
-                }
-
-
-                let httpSuccesses = [];
-                let httpFailures = [];
-                let httpSuccessesPerUrl = [];
-                let httpFailuresPerUrl = [];
-
-                let totalHttpSuccessPerUrl = 0;
-                let totalHttpSuccess = 0;
-                let totalHttpFailurePerUrl = 0;
-                let totalHttpFailure = 0;
-
-                for (const exchange of response.exchanges) {
-                    let timestamp = formatDateYearMonthDayHourMinute(exchange.timestamp);
-                    let url = exchange.request.uri
-                        .replace(PalantirDashboardConfiguration.casServerPrefix(), "")
-                        .replaceAll(/\?.+/gi, "");
-
-                    if (urlIsAcceptable(url)) {
-                        if (exchange.response.status >= 100 && exchange.response.status <= 400) {
-                            totalHttpSuccess++;
-                            httpSuccesses.push({x: timestamp, y: totalHttpSuccess});
-                            totalHttpSuccessPerUrl++;
-                            httpSuccessesPerUrl.push({x: url, y: totalHttpSuccessPerUrl});
-                        } else {
-                            totalHttpFailure++;
-                            httpFailures.push({x: timestamp, y: totalHttpFailure});
-                            totalHttpFailurePerUrl++;
-                            httpFailuresPerUrl.push({x: url, y: totalHttpFailurePerUrl});
-                        }
-                    }
-                }
-                httpRequestResponsesChart.data.datasets[0].data = httpSuccesses;
-                httpRequestResponsesChart.data.datasets[0].label = "Success";
-                httpRequestResponsesChart.data.datasets[1].data = httpFailures;
-                httpRequestResponsesChart.data.datasets[1].label = "Failure";
-                httpRequestResponsesChart.update();
-
-                httpRequestsByUrlChart.data.datasets[0].data = httpSuccessesPerUrl;
-                httpRequestsByUrlChart.data.datasets[0].label = "Success";
-                httpRequestsByUrlChart.data.datasets[1].data = httpFailuresPerUrl;
-                httpRequestsByUrlChart.data.datasets[1].label = "Failure";
-                httpRequestsByUrlChart.update();
-            }).fail((xhr, status, error) => {
-                console.error("Error fetching data:", error);
-                displayBanner(xhr);
-            });
-
-            $("#downloadHeapDumpButton").off().on("click", () => {
-                $("#downloadHeapDumpButton").prop("disabled", true);
-                fetch(CasActuatorEndpoints.heapDump(), {
-                    credentials: 'include'
-                })
-                    .then(response =>
-                        response.blob().then(blob => {
-                            const link = document.createElement("a");
-                            link.href = window.URL.createObjectURL(blob);
-                            link.download = "heapdump";
-                            document.body.appendChild(link);
-                            link.click();
-                            document.body.removeChild(link);
-                            $("#downloadHeapDumpButton").prop("disabled", false);
-                        }))
-                    .catch(error => {
-                        console.error("Error fetching file:", error);
-                        $("#downloadHeapDumpButton").prop("disabled", false);
-                    });
-            });
+        configureHttpExchangeControls();
+        if (!CasActuatorEndpoints.httpExchanges()) {
+            setHttpExchangesUnavailable("The Spring Boot httpexchanges actuator endpoint is not available.");
+            return;
         }
+        await refreshHttpExchanges();
+
+        $("#downloadHeapDumpButton").off().on("click", () => {
+            $("#downloadHeapDumpButton").prop("disabled", true);
+            fetch(CasActuatorEndpoints.heapDump(), {
+                credentials: 'include'
+            })
+                .then(response =>
+                    response.blob().then(blob => {
+                        const link = document.createElement("a");
+                        link.href = window.URL.createObjectURL(blob);
+                        link.download = "heapdump";
+                        document.body.appendChild(link);
+                        link.click();
+                        document.body.removeChild(link);
+                        $("#downloadHeapDumpButton").prop("disabled", false);
+                    }))
+                .catch(error => {
+                    console.error("Error fetching file:", error);
+                    $("#downloadHeapDumpButton").prop("disabled", false);
+                });
+        });
     }
 
     async function configureHealthChart() {
@@ -262,6 +206,425 @@ async function initializeSystemOperations() {
         });
     }
 
+    function getHeaderValue(headers, name) {
+        if (!headers) {
+            return undefined;
+        }
+        const headerName = name.toLowerCase();
+        const matchingKey = Object.keys(headers).find(key => key.toLowerCase() === headerName);
+        const value = matchingKey ? headers[matchingKey] : undefined;
+        if (Array.isArray(value)) {
+            return value.length > 0 ? value[0] : undefined;
+        }
+        return value;
+    }
+
+    function formatHttpExchangeDuration(value) {
+        const millis = parseHttpExchangeDuration(value);
+        if (!Number.isFinite(millis)) {
+            return "N/A";
+        }
+        if (millis < 1000) {
+            return `${Math.round(millis)} ms`;
+        }
+        return `${(millis / 1000).toFixed(2)} s`;
+    }
+
+    function parseHttpExchangeDuration(value) {
+        if (typeof value === "number") {
+            return value;
+        }
+        if (typeof value !== "string" || value.length === 0) {
+            return null;
+        }
+        const match = value.match(/^PT(?:(\d+(?:\.\d+)?)H)?(?:(\d+(?:\.\d+)?)M)?(?:(\d+(?:\.\d+)?)S)?$/);
+        if (!match) {
+            return null;
+        }
+        const hours = Number(match[1] ?? 0);
+        const minutes = Number(match[2] ?? 0);
+        const seconds = Number(match[3] ?? 0);
+        return ((hours * 3600) + (minutes * 60) + seconds) * 1000;
+    }
+
+    function getHttpExchangePath(uri) {
+        if (!uri) {
+            return "";
+        }
+        try {
+            const url = new URL(uri, window.location.origin);
+            return `${url.pathname}${url.search}`;
+        } catch (e) {
+            return String(uri)
+                .replace(PalantirDashboardConfiguration.casServerPrefix(), "");
+        }
+    }
+
+    function getHttpExchangeActuatorBasePath() {
+        const endpoint = CasActuatorEndpoints.httpExchanges();
+        if (!endpoint) {
+            return "/actuator";
+        }
+        try {
+            const url = new URL(endpoint, window.location.origin);
+            return url.pathname.replace(/\/httpexchanges\/?$/i, "") || "/actuator";
+        } catch (e) {
+            return String(endpoint)
+                .replace(PalantirDashboardConfiguration.casServerPrefix(), "")
+                .replace(/\/httpexchanges\/?$/i, "") || "/actuator";
+        }
+    }
+
+    function getHttpExchangePathVariants(path) {
+        const paths = new Set([path]);
+        try {
+            const casServerPath = new URL(PalantirDashboardConfiguration.casServerPrefix()).pathname;
+            if (casServerPath && casServerPath !== "/" && path.startsWith(`${casServerPath}/`)) {
+                paths.add(path.substring(casServerPath.length));
+            }
+        } catch (e) {
+            /* ignore */
+        }
+        return paths;
+    }
+
+    function httpExchangeIsActuatorPath(path) {
+        const actuatorBasePath = getHttpExchangeActuatorBasePath();
+        return [...getHttpExchangePathVariants(path)].some(candidate =>
+            candidate === actuatorBasePath || candidate.startsWith(`${actuatorBasePath}/`));
+    }
+
+    function normalizeRemoteAddress(remoteAddress) {
+        if (!remoteAddress) {
+            return "";
+        }
+        const value = String(remoteAddress)
+            .trim()
+            .replace(/^::ffff:/i, "")
+            .toLowerCase();
+        if (value.startsWith("[")) {
+            const endIndex = value.indexOf("]");
+            return endIndex > 0 ? value.substring(1, endIndex) : value;
+        }
+        if (/^\d{1,3}(?:\.\d{1,3}){3}:\d+$/.test(value)) {
+            return value.replace(/:\d+$/, "");
+        }
+        if (/^[a-z0-9.-]+:\d+$/.test(value)) {
+            return value.replace(/:\d+$/, "");
+        }
+        return value;
+    }
+
+    function getApplicationHostNames() {
+        const hostNames = new Set(["localhost", "127.0.0.1", "::1", "0:0:0:0:0:0:0:1"]);
+        const casServerHost = $("#casServerHost").text();
+        if (casServerHost) {
+            hostNames.add(casServerHost.toLowerCase());
+        }
+        try {
+            hostNames.add(new URL(PalantirDashboardConfiguration.casServerPrefix()).hostname.toLowerCase());
+        } catch (e) {
+            /* ignore */
+        }
+        if (window.location.hostname) {
+            hostNames.add(window.location.hostname.toLowerCase());
+        }
+        return hostNames;
+    }
+
+    function httpExchangeOriginatedFromApplication(entry) {
+        const remoteAddress = normalizeRemoteAddress(entry.remoteAddress);
+        if (!remoteAddress) {
+            return false;
+        }
+        if (remoteAddress === "127.0.0.1" || remoteAddress === "::1" || remoteAddress === "0:0:0:0:0:0:0:1") {
+            return true;
+        }
+        return getApplicationHostNames().has(remoteAddress);
+    }
+
+    function httpExchangeOriginatedFromDashboard(entry) {
+        const referrer = getHeaderValue(entry.requestHeaders, "referer")
+            ?? getHeaderValue(entry.requestHeaders, "referrer");
+        if (!referrer) {
+            return false;
+        }
+        try {
+            const referrerUrl = new URL(referrer, window.location.origin);
+            return getApplicationHostNames().has(referrerUrl.hostname.toLowerCase())
+                && referrerUrl.pathname.endsWith("/dashboard");
+        } catch (e) {
+            return String(referrer).includes("/dashboard");
+        }
+    }
+
+    function httpExchangeShouldBeDisplayed(entry) {
+        return !httpExchangeIsActuatorPath(entry.path)
+            || (!httpExchangeOriginatedFromApplication(entry) && !httpExchangeOriginatedFromDashboard(entry));
+    }
+
+    function getHttpExchangeTraceId(exchange) {
+        const requestHeaders = exchange.request?.headers ?? {};
+        const responseHeaders = exchange.response?.headers ?? {};
+        const traceParent = getHeaderValue(requestHeaders, "traceparent")
+            ?? getHeaderValue(responseHeaders, "traceparent");
+        if (traceParent) {
+            const match = String(traceParent).match(/^[\da-f]{2}-([\da-f]{32})-/i);
+            if (match) {
+                return match[1];
+            }
+        }
+        return exchange.traceId
+            ?? getHeaderValue(requestHeaders, "x-b3-traceid")
+            ?? getHeaderValue(responseHeaders, "x-b3-traceid")
+            ?? getHeaderValue(requestHeaders, "x-trace-id")
+            ?? getHeaderValue(responseHeaders, "x-trace-id")
+            ?? "";
+    }
+
+    function normalizeHttpExchange(exchange, index) {
+        const timestamp = new Date(exchange.timestamp);
+        const requestHeaders = exchange.request?.headers ?? {};
+        const responseHeaders = exchange.response?.headers ?? {};
+        const status = Number(exchange.response?.status ?? 0);
+        const path = getHttpExchangePath(exchange.request?.uri);
+        const traceId = getHttpExchangeTraceId(exchange);
+        const duration = parseHttpExchangeDuration(exchange.timeTaken);
+
+        return {
+            id: `http-exchange-${index}`,
+            raw: exchange,
+            timestamp: Number.isNaN(timestamp.getTime()) ? null : timestamp,
+            timestampMs: Number.isNaN(timestamp.getTime()) ? 0 : timestamp.getTime(),
+            time: Number.isNaN(timestamp.getTime()) ? "N/A" : timestamp.toLocaleString(),
+            method: exchange.request?.method ?? "UNKNOWN",
+            uri: exchange.request?.uri ?? "",
+            path,
+            status,
+            duration,
+            durationLabel: formatHttpExchangeDuration(exchange.timeTaken),
+            traceId,
+            remoteAddress: exchange.request?.remoteAddress ?? "",
+            principal: exchange.principal?.name ?? "",
+            sessionId: exchange.session?.id ?? "",
+            requestHeaders,
+            responseHeaders
+        };
+    }
+
+    function httpExchangeUrlIsAcceptable(path) {
+        return !path.startsWith("/actuator")
+            && !path.startsWith("/webjars")
+            && !path.endsWith(".js")
+            && !path.endsWith(".ico")
+            && !path.endsWith(".png")
+            && !path.endsWith(".jpg")
+            && !path.endsWith(".jpeg")
+            && !path.endsWith(".gif")
+            && !path.endsWith(".svg")
+            && !path.endsWith(".css");
+    }
+
+    function updateHttpExchangeCharts(entries) {
+        let httpSuccesses = [];
+        let httpFailures = [];
+        let httpSuccessesPerUrl = [];
+        let httpFailuresPerUrl = [];
+
+        let totalHttpSuccessPerUrl = 0;
+        let totalHttpSuccess = 0;
+        let totalHttpFailurePerUrl = 0;
+        let totalHttpFailure = 0;
+
+        for (const entry of entries) {
+            const url = entry.path.replaceAll(/\?.+/gi, "");
+            if (httpExchangeUrlIsAcceptable(url)) {
+                if (entry.status >= 100 && entry.status <= 400) {
+                    totalHttpSuccess++;
+                    httpSuccesses.push({x: entry.timestamp ? formatDateYearMonthDayHourMinute(entry.timestamp) : entry.time, y: totalHttpSuccess});
+                    totalHttpSuccessPerUrl++;
+                    httpSuccessesPerUrl.push({x: url, y: totalHttpSuccessPerUrl});
+                } else {
+                    totalHttpFailure++;
+                    httpFailures.push({x: entry.timestamp ? formatDateYearMonthDayHourMinute(entry.timestamp) : entry.time, y: totalHttpFailure});
+                    totalHttpFailurePerUrl++;
+                    httpFailuresPerUrl.push({x: url, y: totalHttpFailurePerUrl});
+                }
+            }
+        }
+        httpRequestResponsesChart.data.datasets[0].data = httpSuccesses;
+        httpRequestResponsesChart.data.datasets[0].label = "Success";
+        httpRequestResponsesChart.data.datasets[1].data = httpFailures;
+        httpRequestResponsesChart.data.datasets[1].label = "Failure";
+        httpRequestResponsesChart.update();
+
+        httpRequestsByUrlChart.data.datasets[0].data = httpSuccessesPerUrl;
+        httpRequestsByUrlChart.data.datasets[0].label = "Success";
+        httpRequestsByUrlChart.data.datasets[1].data = httpFailuresPerUrl;
+        httpRequestsByUrlChart.data.datasets[1].label = "Failure";
+        httpRequestsByUrlChart.update();
+    }
+
+    function setHttpExchangesUnavailable(message) {
+        $("#httpExchangesUnavailable span").html(escapeHtml(message));
+        showElements($("#httpExchangesUnavailable"));
+        hideElements($("#httpExchangesContent"));
+        $("#httpExchangesMethodFilter, #httpExchangesStatusFilter").prop("disabled", true);
+        if ($("#httpExchangesMethodFilter").data("ui-selectmenu")) {
+            $("#httpExchangesMethodFilter, #httpExchangesStatusFilter").selectmenu("disable");
+        }
+    }
+
+    function setHttpExchangesAvailable() {
+        hideElements($("#httpExchangesUnavailable"));
+        showElements($("#httpExchangesContent"));
+        $("#httpExchangesMethodFilter, #httpExchangesStatusFilter").prop("disabled", false);
+        if ($("#httpExchangesMethodFilter").data("ui-selectmenu")) {
+            $("#httpExchangesMethodFilter, #httpExchangesStatusFilter").selectmenu("enable");
+        }
+    }
+
+    function configureHttpExchangeControls() {
+        if (httpExchangesControlsInitialized) {
+            return;
+        }
+        httpExchangesControlsInitialized = true;
+
+        $("#httpExchangesMethodFilter, #httpExchangesStatusFilter").selectmenu({
+            width: "100%",
+            change: function () {
+                $(this).selectmenu("close");
+                renderHttpExchanges();
+            }
+        });
+
+        $("#httpExchangesTable tbody")
+            .off("click", "button.http-exchange-details-button")
+            .on("click", "button.http-exchange-details-button", function () {
+                const tableRow = $(this).closest("tr");
+                const row = httpExchangesTable.row(tableRow);
+                if (row.child.isShown()) {
+                    row.child.hide();
+                    tableRow.removeClass("shown");
+                    $(this).removeClass("http-exchange-details-button-active");
+                    $(this).attr("aria-label", "View details");
+                    $(this).find(".mdi").removeClass("mdi-chevron-up").addClass("mdi-table-eye");
+                } else {
+                    row.child(renderHttpExchangeDetails(row.data())).show();
+                    tableRow.addClass("shown");
+                    tableRow.next("tr").addClass("http-exchange-details-row");
+                    $(this).addClass("http-exchange-details-button-active");
+                    $(this).attr("aria-label", "Hide details");
+                    $(this).find(".mdi").removeClass("mdi-table-eye").addClass("mdi-chevron-up");
+                }
+            });
+    }
+
+    function updateHttpExchangeMethodOptions(entries) {
+        const methods = [...new Set(entries.map(entry => entry.method).filter(method => method))].sort();
+        const currentValue = $("#httpExchangesMethodFilter").val();
+        $("#httpExchangesMethodFilter").empty().append($("<option>", {
+            value: "",
+            text: "All methods"
+        }));
+        methods.forEach(method => $("#httpExchangesMethodFilter").append($("<option>", {
+            value: method,
+            text: method
+        })));
+        if (currentValue && methods.includes(currentValue)) {
+            $("#httpExchangesMethodFilter").val(currentValue);
+        }
+        $("#httpExchangesMethodFilter").selectmenu("refresh");
+    }
+
+    function httpExchangeMatchesFilters(entry) {
+        const methodFilter = $("#httpExchangesMethodFilter").val();
+        const statusFilter = $("#httpExchangesStatusFilter").val();
+        return (!methodFilter || entry.method === methodFilter)
+            && (!statusFilter || String(entry.status).startsWith(statusFilter));
+    }
+
+    function renderHttpExchanges() {
+        const filtered = httpExchangeEntries.filter(httpExchangeMatchesFilters);
+        httpExchangesTable.clear();
+        filtered.forEach(entry => httpExchangesTable.row.add(entry));
+        httpExchangesTable.draw();
+        httpExchangesTable.columns.adjust();
+    }
+
+    async function refreshHttpExchanges() {
+        if ($("#httpExchangesTable tbody tr.shown").length > 0) {
+            return;
+        }
+        return new Promise(resolve => {
+            $.get(CasActuatorEndpoints.httpExchanges(), response => {
+                setHttpExchangesAvailable();
+                httpExchangeEntries = (response.exchanges ?? [])
+                    .map(normalizeHttpExchange)
+                    .filter(httpExchangeShouldBeDisplayed)
+                    .sort((a, b) => b.timestampMs - a.timestampMs);
+                updateHttpExchangeMethodOptions(httpExchangeEntries);
+                renderHttpExchanges();
+                updateHttpExchangeCharts(httpExchangeEntries);
+                resolve();
+            }).fail((xhr, status, error) => {
+                console.error("Error fetching HTTP exchanges data:", error);
+                if (xhr.status === 404 || xhr.status === 405) {
+                    setHttpExchangesUnavailable("The Spring Boot httpexchanges actuator endpoint is not available.");
+                } else {
+                    $("#httpExchangesStatus").text("Unable to load HTTP exchanges.");
+                    displayBanner(xhr);
+                }
+                resolve();
+            });
+        });
+    }
+
+    function renderHeaderEntries(headers) {
+        const entries = Object.entries(headers ?? {});
+        if (entries.length === 0) {
+            return `<div class="http-exchange-empty">No headers recorded.</div>`;
+        }
+        return entries.map(([name, value]) => {
+            const renderedValue = Array.isArray(value) ? value.join(", ") : value;
+            return `
+                <div class="http-exchange-header-row">
+                    <strong>${escapeHtml(name)}</strong>
+                    <code>${escapeHtml(renderedValue)}</code>
+                </div>`;
+        }).join("");
+    }
+
+    function renderHttpExchangeDetails(entry) {
+        const metadata = [
+            ["Remote address", entry.remoteAddress],
+            ["Principal", entry.principal],
+            ["Session", entry.sessionId],
+            ["Trace id", entry.traceId]
+        ].filter(item => item[1]);
+
+        return `
+            <div class="http-exchange-details">
+                <h4>Metadata</h4>
+                <div class="http-exchange-metadata">
+                    ${metadata.length === 0 ? `<div class="http-exchange-empty">No metadata recorded.</div>` : metadata.map(([name, value]) => `
+                        <strong>${escapeHtml(name)}</strong>
+                        <code>${escapeHtml(value)}</code>
+                    `).join("")}
+                </div>
+                <div class="http-exchange-headers">
+                    <section>
+                        <h4>Request headers</h4>
+                        ${renderHeaderEntries(entry.requestHeaders)}
+                    </section>
+                    <section>
+                        <h4>Response headers</h4>
+                        ${renderHeaderEntries(entry.responseHeaders)}
+                    </section>
+                </div>
+            </div>`;
+    }
+
     async function getMemoryPoolNames() {
         return new Promise(resolve => {
             $.get(memoryMetricUrl("jvm.memory.used"), response => {
@@ -275,6 +638,8 @@ async function initializeSystemOperations() {
     }
 
     let heapDumpAnalysisEntries = [];
+    let httpExchangeEntries = [];
+    let httpExchangesControlsInitialized = false;
 
     function getHeapDumpAnalysisEntries(response) {
         const entries = response?.classesByRetainedSize
@@ -807,6 +1172,79 @@ async function initializeSystemOperations() {
         }
     });
 
+    const httpExchangesTable = $("#httpExchangesTable").DataTable({
+        pageLength: 10,
+        autoWidth: false,
+        order: [[0, "desc"]],
+        columns: [
+            {
+                data: "timestampMs",
+                className: "text-start",
+                width: "10rem",
+                render: (data, type, row) => type === "display" ? escapeHtml(row.time) : data
+            },
+            {
+                data: "method",
+                width: "6.5rem",
+                render: (data, type) => type === "display"
+                    ? `<span class="http-exchange-method method-${escapeHtml(String(data).toLowerCase())}">${escapeHtml(data)}</span>`
+                    : data
+            },
+            {
+                data: "path",
+                width: "65rem",
+                render: (data, type) => type === "display"
+                    ? `<code class="http-exchange-path">${escapeHtml(data)}</code>`
+                    : data
+            },
+            {
+                data: "status",
+                width: "6rem",
+                render: (data, type) => {
+                    if (type !== "display") {
+                        return data;
+                    }
+                    const statusClass = data >= 500 ? "server-error"
+                        : data >= 400 ? "client-error"
+                            : data >= 300 ? "redirect"
+                                : data >= 200 ? "success"
+                                    : "informational";
+                    return `<span class="http-exchange-status status-${statusClass}">${escapeHtml(data)}</span>`;
+                }
+            },
+            {
+                data: "duration",
+                width: "7rem",
+                render: (data, type, row) => type === "display" ? escapeHtml(row.durationLabel) : data
+            },
+            {
+                data: null,
+                orderable: false,
+                searchable: false,
+                width: "4rem",
+                render: (data, type, row) => {
+                    if (type !== "display") {
+                        return "";
+                    }
+                    return `
+                        <button type="button"
+                                class="mdc-button mdc-button--raised http-exchange-details-button"
+                                data-http-exchange-id="${escapeHtml(row.id)}"
+                                aria-label="View details">
+                            <span class="mdc-button__ripple"></span>
+                            <span class="mdc-button__label">
+                                <i class="mdc-tab__icon mdi mdi-table-eye" aria-hidden="true"></i>
+                            </span>
+                        </button>`;
+                }
+            }
+        ],
+        drawCallback: settings => {
+            $("#httpExchangesTable tr").addClass("mdc-data-table__row");
+            $("#httpExchangesTable td").addClass("mdc-data-table__cell");
+        }
+    });
+
     let tabs = new mdc.tabBar.MDCTabBar(document.querySelector("#dashboardTabBar"));
 
     async function configureStartupTimeline() {
@@ -988,10 +1426,7 @@ async function initializeSystemOperations() {
                 $("#startupTimelineList").html('<p class="text-muted p-3">No startup steps available. Ensure <code>BufferingApplicationStartup</code> is configured.</p>');
                 return;
             }
-
-            const nestedCount = allEvents.filter(e => e.startupStep.parentId && e.startupStep.parentId !== 0).length;
-            $("#startupTimelineSummary").text(`${allEvents.length} steps · ${nestedCount} nested`);
-
+            
             const counts = countByDuration(allEvents);
             $("#count-fastest").text(counts.fastest);
             $("#count-fast").text(counts.fast);

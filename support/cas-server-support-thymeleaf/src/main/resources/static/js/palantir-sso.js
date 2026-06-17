@@ -9,7 +9,7 @@ function removeSpringSession(button, id) {
         .then((result) => {
             if (result.isConfirmed) {
                 $.ajax({
-                    url: `${CasActuatorEndpoints.sessions()}/${id}`,
+                    url: `${CasActuatorEndpoints.sessions()}/${encodeURIComponent(id)}`,
                     type: "DELETE",
                     contentType: "application/x-www-form-urlencoded",
                     success: (response, status, xhr) => {
@@ -24,6 +24,83 @@ function removeSpringSession(button, id) {
                 });
             }
         });
+}
+
+function escapeSsoHtml(str) {
+    return String(str ?? "").replace(/[&<>"']/g, s => ({
+        "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;"
+    }[s]));
+}
+
+function formatSpringSessionDuration(value) {
+    if (value === undefined || value === null || value === "") {
+        return "&mdash;";
+    }
+    if (typeof value === "string" && value.startsWith("PT")) {
+        const match = value.match(/PT(?:(\d+)H)?(?:(\d+)M)?(?:(\d+(?:\.\d+)?)S)?/);
+        if (match) {
+            const seconds = (Number(match[1] ?? 0) * 3600)
+                + (Number(match[2] ?? 0) * 60)
+                + Number(match[3] ?? 0);
+            return formatSpringSessionDuration(seconds);
+        }
+        return escapeSsoHtml(value);
+    }
+    const seconds = Number(value);
+    if (!Number.isFinite(seconds)) {
+        return escapeSsoHtml(value);
+    }
+    if (seconds < 60) {
+        return `${Math.round(seconds)}s`;
+    }
+    const minutes = Math.floor(seconds / 60);
+    const remainingSeconds = Math.round(seconds % 60);
+    if (minutes < 60) {
+        return remainingSeconds > 0 ? `${minutes}m ${remainingSeconds}s` : `${minutes}m`;
+    }
+    const hours = Math.floor(minutes / 60);
+    const remainingMinutes = minutes % 60;
+    return remainingMinutes > 0 ? `${hours}h ${remainingMinutes}m` : `${hours}h`;
+}
+
+function formatSpringSessionIdleTime(session) {
+    const lastAccessed = Date.parse(session.lastAccessedTime);
+    if (!Number.isFinite(lastAccessed)) {
+        return "&mdash;";
+    }
+    const seconds = Math.max(0, Math.floor((Date.now() - lastAccessed) / 1000));
+    return formatSpringSessionDuration(seconds);
+}
+
+function springSessionMaxInactiveInterval(session) {
+    return session.maxInactiveInterval
+        ?? session.maxInactiveIntervalInSeconds
+        ?? session.maxInactiveSeconds
+        ?? session.maxInactiveTime;
+}
+
+function springSessionAttributes(session) {
+    if (session.attributes && typeof session.attributes === "object") {
+        return Object.keys(session.attributes);
+    }
+    if (session.sessionAttributes && typeof session.sessionAttributes === "object") {
+        return Object.keys(session.sessionAttributes);
+    }
+    const names = session.attributeNames ?? [];
+    return Array.isArray(names) ? names : [];
+}
+
+function renderSpringSessionDetails(session, springSessionDetailsTable) {
+    springSessionDetailsTable.clear();
+    if (session) {
+        for (const attribute of springSessionAttributes(session)) {
+            springSessionDetailsTable.row.add({
+                0: `<code>${escapeSsoHtml(attribute)}</code>`
+            });
+        }
+    }
+    springSessionDetailsTable.draw();
+    $("#springSession-dialog-title").text(`Spring Session Details: ${session?.id ?? ""}`);
 }
 
 async function initializeSsoSessionOperations() {
@@ -49,10 +126,21 @@ async function initializeSsoSessionOperations() {
         pageLength: 10,
         autoWidth: false,
         drawCallback: settings => {
-            $("#ssoSessionsTable tr").addClass("mdc-data-table__row");
-            $("#ssoSessionsTable td").addClass("mdc-data-table__cell");
+            $("#springSessionsTable tr").addClass("mdc-data-table__row");
+            $("#springSessionsTable td").addClass("mdc-data-table__cell");
         }
     });
+
+    const springSessionDetailsTable = $("#springSessionDetailsTable").DataTable({
+        pageLength: 10,
+        autoWidth: false,
+        drawCallback: settings => {
+            $("#springSessionDetailsTable tr").addClass("mdc-data-table__row");
+            $("#springSessionDetailsTable td").addClass("mdc-data-table__cell");
+        }
+    });
+
+    const springSessionsById = new Map();
 
     const ssoSessionsTable = $("#ssoSessionsTable").DataTable({
         pageLength: 10,
@@ -93,29 +181,59 @@ async function initializeSsoSessionOperations() {
                 didOpen: () => Swal.showLoading()
             });
             springSessionsTable.clear();
+            springSessionsById.clear();
             $.ajax({
                 url: `${CasActuatorEndpoints.sessions()}?username=${username}`,
                 type: "GET",
                 contentType: "application/x-www-form-urlencoded",
                 success: (response, status, xhr) => {
                     for (const session of response.sessions) {
+                        springSessionsById.set(session.id, session);
+                        const attributes = springSessionAttributes(session);
                         springSessionsTable.row.add({
-                            0: `<code>${session.id}</code>`,
-                            1: `<code>${session.creationTime}</code>`,
-                            2: `<code>${session.lastAccessedTime}</code>`,
-                            3: `
+                            0: `<code>${escapeSsoHtml(session.id)}</code>`,
+                            1: `<code>${escapeSsoHtml(session.creationTime)}</code>`,
+                            2: `<code>${escapeSsoHtml(session.lastAccessedTime)}</code>`,
+                            3: `<code>${formatSpringSessionIdleTime(session)}</code>`,
+                            4: `<code>${formatSpringSessionDuration(springSessionMaxInactiveInterval(session))}</code>`,
+                            5: `<code>${attributes.length}</code>`,
+                            6: `
+                                <button type="button" name="viewSpringSession"
+                                    data-id='${escapeSsoHtml(session.id)}'
+                                    title="View Spring Session Details"
+                                    class="mdc-button mdc-button--raised min-width-32x">
+                                    <span class="mdc-button__label">
+                                        <i class="mdi mdi-eye min-width-32x" aria-hidden="true"></i>
+                                    </span>
+                                </button>
                                 <button type="button" name="removeSpringSession" 
-                                    href="#" 
-                                    onclick="removeSpringSession(this, '${session.id}');"
-                                    data-id='${session.id}'
+                                    data-id='${escapeSsoHtml(session.id)}'
                                     title="Remove Spring Session"
                                     class="mdc-button mdc-button--raised min-width-32x">
-                                    <i class="mdi mdi-delete min-width-32x" aria-hidden="true"></i>
+                                    <span class="mdc-button__label">
+                                        <i class="mdi mdi-delete min-width-32x" aria-hidden="true"></i>
+                                    </span>
                                 </button>
                             `
                         });
                     }
                     springSessionsTable.draw();
+                    $("button[name=viewSpringSession]").off().on("click", function () {
+                        const id = $(this).data("id");
+                        const session = springSessionsById.get(id);
+                        renderSpringSessionDetails(session, springSessionDetailsTable);
+                        let dialog = mdc.dialog.MDCDialog.attachTo(document.getElementById("springSession-dialog"));
+                        dialog["open"]();
+                        $.get(`${CasActuatorEndpoints.sessions()}/${encodeURIComponent(id)}`, response => {
+                            const detailedSession = response.session ?? response;
+                            detailedSession.id ??= id;
+                            springSessionsById.set(id, detailedSession);
+                            renderSpringSessionDetails(detailedSession, springSessionDetailsTable);
+                        }).fail(() => renderSpringSessionDetails(session, springSessionDetailsTable));
+                    });
+                    $("button[name=removeSpringSession]").off().on("click", function () {
+                        removeSpringSession(this, $(this).data("id"));
+                    });
                     Swal.close();
                 },
                 error: (xhr, status, error) => {

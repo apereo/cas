@@ -57,9 +57,14 @@ please consider starting discussion with the
 project to see if your patch can be accepted and maintained by project owners and maintainers. Unless your change is 
 extremely trivial and has been through proper review and is sponsored by a project maintainer, please do not spend 
 time modifying code and configuration in a proposed pull request.
-       
+    
+**DO NOT** submit pull requests to only upgrade dependencies and libraries. We have a semi-automated process in place
+that handles all of that and @apereocas-bot does bulk of the work. Please 
+see [security policy](https://apereo.github.io/cas/developer/Sec-Vuln-Response.html)
+on how dependency upgrades are handled for security-related issues.
+
 The pull request may be **AUTOMATICALLY CLOSED** by @apereocas-bot if it does not meet the above criteria. **DO NOT**
-argue with the bot. If you believe the closure is an error and the bot has made a mistake, please post your 
+argue with the bot please. If you believe the closure is an error and the bot has made a mistake, please post your 
 explanation here as a comment.
 
 For more information, please see [this page](https://apereo.github.io/cas/developer/Contributor-Guidelines.html).

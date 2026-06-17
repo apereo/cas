@@ -25,7 +25,7 @@ const cas = require("../../cas.js");
     let ticket = await cas.assertTicketParameter(page);
     let json = await cas.validateTicket(service1, ticket);
     let authenticationSuccess = json.serviceResponse.authenticationSuccess;
-    assert(authenticationSuccess.attributes["authnContextClass"] !== undefined);
+    assert(authenticationSuccess.attributes["authnContextClass"][0] === "mfa-duo");
 
     const service2 = "https://localhost:9859/anything/sample";
     await cas.gotoLogin(page, service2);
@@ -33,7 +33,7 @@ const cas = require("../../cas.js");
     ticket = await cas.assertTicketParameter(page);
     json = await cas.validateTicket(service2, ticket);
     authenticationSuccess = json.serviceResponse.authenticationSuccess;
-    assert(authenticationSuccess.attributes["authnContextClass"] !== undefined);
+    assert(authenticationSuccess.attributes["authnContextClass"][0] === "mfa-duo");
 
     await cas.gotoLogout(page);
     await cas.closeBrowser(browser);
