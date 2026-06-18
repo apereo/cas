@@ -1,11 +1,14 @@
 
 const cas = require("../../cas.js");
 const path = require("path");
+const assert = require("assert");
 
 (async () => {
     const browser = await cas.newBrowser(cas.browserOptions());
     const page = await cas.newPage(browser);
 
+    await cas.gotoLogout(page);
+    
     await cas.gotoLogin(page);
     await cas.sleep(1000);
 
@@ -17,7 +20,7 @@ const path = require("path");
 
     await cas.assertVisibility(page, "li #SAML2Client");
     await cas.click(page, "li #SAML2Client");
-    await cas.sleep(6000);
+    await cas.sleep(4000);
 
     await cas.loginWith(page, "user1", "password");
     await cas.sleep(2000);
@@ -36,6 +39,13 @@ const path = require("path");
     await cas.gotoLogin(page);
     await cas.assertCookie(page);
 
+    const service = "https://localhost:9859/anything/sample";
+    await cas.gotoLogin(page, service);
+    const ticket = await cas.assertTicketParameter(page);
+    const json = await cas.validateTicket(service, ticket);
+    const authenticationSuccess = json.serviceResponse.authenticationSuccess;
+    assert(authenticationSuccess.attributes["authnContext"][0] === "mfa-gauth");
+    
     await cas.removeDirectoryOrFile(path.join(__dirname, "/saml-md"));
     await cas.closeBrowser(browser);
 })();

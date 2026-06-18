@@ -93,6 +93,54 @@ Accounts that are successfully authenticated via delegated authentication may be
 to go through the impersonation flow. This behavior needs to be explicitly enabled in CAS configuration settings.
 
 Please [see this guide](../authentication/Surrogate-Authentication.html) for more information.
+ 
+## Multifactor Authentication
+
+CAS can recognize when multifactor authentication has been satisfied by an upstream delegated identity provider, such as Microsoft Entra ID. 
+The identity provider is expected to return a response to CAS that includes authentication method information and context as attributes  
+indicating that multiple authentication methods were used. CAS inspects the delegated authentication result during 
+the authentication post-processing phase and runs the following checks:
+
+- Checks for the presence of a specific attribute matching an expected value.
+- If a match is found, CAS treats the authentication event as having already satisfied MFA.
+- CAS evaluates multifactor authentication triggers to see which may result into a multifactor provider for the effective user.
+- List of matching multifactor providers are recorded into the CAS authentication as the effective authentication context.
+      
+The specific attributes that are examined to kickstart the process are the following:
+
+| Attribute                                                    | Value                                               |
+|--------------------------------------------------------------|-----------------------------------------------------|
+| `http://schemas.microsoft.com/claims/authnmethodsreferences` | `http://schemas.microsoft.com/claims/multipleauthn` |
+| `amr`                                                        | Any one of `mfa`, `hwk`, `swk`, `phr`, `phrh`       |
+
+<div class="alert alert-info">:information_source: <strong>Usage</strong><p>
+Remember that the above list of attributes and values are just a starting point, and the list will grow over time.</p></div>
+
+A sample authentication flow works as follows:
+
+1. The user attempts to access an application that is protected by CAS and configured to delegate authentication to SAML2 identity provider such as Microsoft Entra ID.
+2. CAS receives the request and redirects the user to SAML2 identity provider using the configured SAML2 integration.
+3. SAML2 identity provider authenticates the user and enforces MFA using its own machinery.
+4. After the user successfully completes MFA, SAML2 identity provider (i.e. Entra ID) sends a SAML response back to CAS.
+5. The SAML2 response includes the authentication methods reference attribute:
+
+```
+http://schemas.microsoft.com/claims/authnmethodsreferences
+```
+
+...with the value:
+
+```
+http://schemas.microsoft.com/claims/multipleauthn
+```
+
+6. CAS receives the delegated authentication result and verifies the presence of above attributes.
+7. CAS runs a selection strategy to determine a matching multifactor provider for the user.
+8. CAS records the `authnContextClass` into its own authentication transaction with the values of the resolver multifactor provider ids (i.e. `[mfa-duo]`)
+9. CAS creates the user’s SSO session and records that MFA has already been satisfied for this authentication event.
+10. The user later accesses another CAS-protected application that normally requires MFA, **directly handled in CAS**.
+11. CAS evaluates the existing SSO session, detects the recorded MFA context, and determines that the user has already satisfied the MFA requirement.
+12. CAS grants access to the second application without prompting the user for MFA again.
 
 ## Troubleshooting
 

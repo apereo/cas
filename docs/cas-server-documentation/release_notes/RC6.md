@@ -97,7 +97,15 @@ Note that the documentation for each configuration property is directly extracte
 the [CAS configuration catalog](../configuration/Configuration-Metadata-Repository.html)
 and may not be immediately available if the property is not fully documented, particularly if it's owned and managed by
 a third-party library.
-  
+               
+Palantir dashboard is now also able to present dedicated views for all beans in the application context,
+conditions that allowed those beans to be rejected or created, as well as a dedicated trace of application startup timeline
+and a live view of the JVM memory consumption and allocation.
+       
+![img_1.png](img_1.png)
+![img_2.png](img_2.png)
+![img_3.png](img_3.png)
+
 ### Redis Ticket Registry
 
 The [Redis Ticket Registry](../ticketing/Redis-Ticket-Registry.html) now presents several notable changes, particularly important when administrative logouts are exercised:
@@ -148,3 +156,5 @@ to tighten and improve the security posture of registration request:
 - A series of performance improvements to [MongoDb](../ticketing/MongoDb-Ticket-Registry.html) and [DynamoDb](../ticketing/DynamoDb-Ticket-Registry.html) ticket registry implementations.
 - [Groovy attribute repositories](../integration/Attribute-Resolution-Groovy.html) are no longer required to return a `username` attribute.
 - A large number of dependencies and libraries have been updated to their latest versions. 
+- Hardened crypto operations to protect against nonce reuse and replay attacks when managing webflow execution states.
+- [Delegated authentication](../integration/Delegate-Authentication.html) will capture and translate `authnContextClass` attribute if the response from the external identity provider carries an MFA context that can be mapped to a CAS multifactor authentication provider for the effective principal.

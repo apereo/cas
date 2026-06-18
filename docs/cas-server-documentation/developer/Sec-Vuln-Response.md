@@ -203,7 +203,7 @@ remain anonymous. If the reporter is interested to receive public credit for the
 and effort, the following information at a minimum will need to be shared:
 
 1. Full real name
-2. Realm contact information
+2. Real contact information
 3. Organization/Company, Affiliation
 4. Use case, scenario, reason/need for discovery, etc.
 

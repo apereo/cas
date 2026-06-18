@@ -9,7 +9,10 @@ import org.apereo.cas.audit.DelegatedAuthenticationAuditResourceResolver;
 import org.apereo.cas.authentication.AuthenticationEventExecutionPlanConfigurer;
 import org.apereo.cas.authentication.AuthenticationHandler;
 import org.apereo.cas.authentication.AuthenticationMetaDataPopulator;
+import org.apereo.cas.authentication.AuthenticationPostProcessor;
+import org.apereo.cas.authentication.AuthenticationSystemSupport;
 import org.apereo.cas.authentication.CasSSLContext;
+import org.apereo.cas.authentication.MultifactorAuthenticationTriggerSelectionStrategy;
 import org.apereo.cas.authentication.adaptive.geo.GeoLocationService;
 import org.apereo.cas.authentication.principal.DefaultDelegatedAuthenticationCredentialExtractor;
 import org.apereo.cas.authentication.principal.DelegatedAuthenticationCredentialExtractor;
@@ -39,6 +42,7 @@ import org.apereo.cas.support.pac4j.authentication.clients.DelegatedClientFactor
 import org.apereo.cas.support.pac4j.authentication.clients.JdbcDelegatedIdentityProviderFactory;
 import org.apereo.cas.support.pac4j.authentication.clients.RestfulDelegatedIdentityProviderFactory;
 import org.apereo.cas.support.pac4j.authentication.handler.support.DelegatedClientAuthenticationHandler;
+import org.apereo.cas.support.pac4j.authentication.handler.support.DelegatedClientAuthenticationPostProcessor;
 import org.apereo.cas.ticket.TicketFactory;
 import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.util.CollectionUtils;
@@ -195,6 +199,21 @@ class DelegatedAuthenticationEventExecutionPlanConfiguration {
     @Configuration(value = "DelegatedAuthenticationEventExecutionPlanHandlerConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
     static class DelegatedAuthenticationEventExecutionPlanHandlerConfiguration {
+        @ConditionalOnMissingBean(name = "clientAuthenticationPostProcessor")
+        @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+        public AuthenticationPostProcessor clientAuthenticationPostProcessor(
+            @Qualifier(AuthenticationSystemSupport.BEAN_NAME)
+            final ObjectProvider<AuthenticationSystemSupport> authenticationSystemSupport,
+            final CasConfigurationProperties casProperties,
+            @Qualifier(ServicesManager.BEAN_NAME)
+            final ServicesManager servicesManager,
+            @Qualifier(MultifactorAuthenticationTriggerSelectionStrategy.BEAN_NAME)
+            final MultifactorAuthenticationTriggerSelectionStrategy multifactorTriggerSelectionStrategy) {
+            return new DelegatedClientAuthenticationPostProcessor(servicesManager,
+                multifactorTriggerSelectionStrategy, authenticationSystemSupport, casProperties);
+        }
+        
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @Bean
         @ConditionalOnMissingBean(name = "clientAuthenticationHandler")
@@ -440,10 +459,13 @@ class DelegatedAuthenticationEventExecutionPlanConfiguration {
             @Qualifier("clientAuthenticationMetaDataPopulator")
             final AuthenticationMetaDataPopulator clientAuthenticationMetaDataPopulator,
             @Qualifier(PrincipalResolver.BEAN_NAME_PRINCIPAL_RESOLVER)
-            final PrincipalResolver defaultPrincipalResolver) {
+            final PrincipalResolver defaultPrincipalResolver,
+            @Qualifier("clientAuthenticationPostProcessor")
+            final AuthenticationPostProcessor clientAuthenticationPostProcessor) {
             return plan -> {
                 plan.registerAuthenticationHandlerWithPrincipalResolver(clientAuthenticationHandler, defaultPrincipalResolver);
                 plan.registerAuthenticationMetadataPopulator(clientAuthenticationMetaDataPopulator);
+                plan.registerAuthenticationPostProcessor(clientAuthenticationPostProcessor);
             };
         }
     }

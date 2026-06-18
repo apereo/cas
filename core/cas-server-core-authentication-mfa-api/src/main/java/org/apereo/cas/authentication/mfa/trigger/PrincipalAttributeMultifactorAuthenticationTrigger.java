@@ -103,11 +103,11 @@ public class PrincipalAttributeMultifactorAuthenticationTrigger implements Multi
         return resolveMultifactorProviderViaPredicate(context, registeredService, service, principal, providers);
     }
 
-    protected Set<Event> resolveMultifactorProviderViaPredicate(final Optional<RequestContext> context,
-                                                                final RegisteredService registeredService,
-                                                                final Service service,
-                                                                final Principal principal,
-                                                                final Collection<MultifactorAuthenticationProvider> providers) {
+    protected @Nullable Set<Event> resolveMultifactorProviderViaPredicate(final Optional<RequestContext> context,
+                                                                          final RegisteredService registeredService,
+                                                                          final Service service,
+                                                                          final Principal principal,
+                                                                          final Collection<MultifactorAuthenticationProvider> providers) {
         val attributeNames = commaDelimitedListToSet(casProperties.getAuthn().getMfa()
             .getTriggers().getPrincipal().getGlobalPrincipalAttributeNameTriggers());
         return multifactorAuthenticationProviderResolver.resolveEventViaPrincipalAttribute(

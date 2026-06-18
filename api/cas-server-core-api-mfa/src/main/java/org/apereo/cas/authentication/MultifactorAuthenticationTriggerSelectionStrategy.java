@@ -31,8 +31,8 @@ public interface MultifactorAuthenticationTriggerSelectionStrategy {
      * @return the provider id of the MFA provider required for authentication
      * @throws Throwable the throwable
      */
-    Optional<MultifactorAuthenticationProvider> resolve(HttpServletRequest request,
-                                                        HttpServletResponse response,
+    Optional<MultifactorAuthenticationProvider> resolve(@Nullable HttpServletRequest request,
+                                                        @Nullable HttpServletResponse response,
                                                         @Nullable RegisteredService registeredService,
                                                         Authentication authentication,
                                                         @Nullable Service service) throws Throwable;
