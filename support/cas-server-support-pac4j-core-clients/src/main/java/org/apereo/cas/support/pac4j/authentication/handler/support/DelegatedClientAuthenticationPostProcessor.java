@@ -33,7 +33,7 @@ import org.springframework.core.Ordered;
 @RequiredArgsConstructor
 @Getter
 public class DelegatedClientAuthenticationPostProcessor implements AuthenticationPostProcessor {
-    private static final List<AuthenticationMethodRef> REFRENCES = List.of(
+    private static final List<AuthenticationMethodRef> REFERENCES = List.of(
         new AuthenticationMethodRef("amr", List.of("mfa", "hwk", "swk", "phr", "phrh")),
         new AuthenticationMethodRef("http://schemas.microsoft.com/claims/authnmethodsreferences", List.of("http://schemas.microsoft.com/claims/multipleauthn")));
 
@@ -50,7 +50,7 @@ public class DelegatedClientAuthenticationPostProcessor implements Authenticatio
         LOGGER.debug("Delegated authentication principal [{}] has attributes: [{}]",
             builder.getPrincipal().getId(), attributes);
 
-        for (val reference : REFRENCES) {
+        for (val reference : REFERENCES) {
             val methodName = reference.attribute();
             val methodValues = reference.values();
             if (attributes.containsKey(methodName)) {
