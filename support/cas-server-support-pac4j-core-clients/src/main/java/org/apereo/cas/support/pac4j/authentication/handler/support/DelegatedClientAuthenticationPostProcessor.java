@@ -5,7 +5,6 @@ import org.apereo.cas.authentication.AuthenticationBuilder;
 import org.apereo.cas.authentication.AuthenticationPostProcessor;
 import org.apereo.cas.authentication.AuthenticationSystemSupport;
 import org.apereo.cas.authentication.AuthenticationTransaction;
-import org.apereo.cas.authentication.ChainingMultifactorAuthenticationProvider;
 import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.authentication.DefaultAuthenticationBuilder;
 import org.apereo.cas.authentication.MultifactorAuthenticationProvider;
@@ -87,14 +86,12 @@ public class DelegatedClientAuthenticationPostProcessor implements Authenticatio
         val registeredService = servicesManager.findServiceBy(transaction.getService());
         val resolvedProvider = multifactorTriggerSelectionStrategy.resolve(
             request, response, registeredService, authenticationResult.getAuthentication(), transaction.getService());
-        val providers = resolvedProvider
-            .map(provider -> provider instanceof final ChainingMultifactorAuthenticationProvider chain
-                ? chain.getMultifactorAuthenticationProviders()
-                : List.of(provider))
-            .orElseGet(List::of);
-        val providerIds = providers.stream().map(MultifactorAuthenticationProvider::getId).collect(Collectors.toList());
+        val providerIds = resolvedProvider
+            .map(MultifactorAuthenticationProvider::getId)
+            .stream()
+            .collect(Collectors.toList());
         LOGGER.debug("Resolved multifactor providers are [{}]", providerIds);
-        if (!providers.isEmpty()) {
+        if (!providerIds.isEmpty()) {
             builder.addAttribute(casProperties.getAuthn().getMfa().getCore().getAuthenticationContextAttribute(), providerIds);
             LOGGER.info("Collected authentication context attribute for multifactor providers: [{}]", providerIds);
         }
