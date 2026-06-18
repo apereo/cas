@@ -360,8 +360,8 @@ function openNewConfigurationPropertyDialog(config) {
                 if (config.name) {
                     if (!tomselect.options[config.name]) {
                         tomselect.addOption({
-                            value: config.name,
-                            text: config.name
+                            id: config.name,
+                            name: config.name
                         });
                     }
                     tomselect.setValue(config.name, true);
