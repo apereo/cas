@@ -50,7 +50,8 @@ in place from one version to the next. [See this guide](../installation/OpenRewr
 
 ### Spring Boot 4.1
 
-CAS is now built with Spring Boot `4.1.x` and the upgrade is finalized. This is a major platform upgrade that affects almost all aspects of the codebase
+CAS is now built with Spring Boot `4.1.x` and the upgrade is finalized. This is a major platform upgrade 
+that affects almost all aspects of the codebase
 including many of the third-party core libraries used by CAS as well as some CAS functionality.
 
 ### GraalVM Native Images
@@ -151,7 +152,7 @@ to tighten and improve the security posture of registration request:
 - MongoDb integration tests have switched to use MongoDb `8.x`.
 - The [Spring Expression Language](../configuration/Configuration-Spring-Expressions.html) parser is tightened to run in a sandboxed environment.
 - [Delegated authentication](../integration/Delegate-Authentication.html) can now handle JSON serialization of complex attribute definitions that may carry maps. 
-- Small enhancements to [CAS audits](../audits/Audits.html) to correctly identify the audited principal.
+- Small enhancements to [CAS audits](../audits/Audits.html) to correctly identify the audited principal, particular for [FIDO2 WebAuthn](../mfa/FIDO2-WebAuthn-Authentication.html) flows.
 - [Delegated authentication](../integration/Delegate-Authentication.html) logout requests can now redirect to the original application as instructed when working with external OpenID Connect providers. 
 - A series of performance improvements to [MongoDb](../ticketing/MongoDb-Ticket-Registry.html) and [DynamoDb](../ticketing/DynamoDb-Ticket-Registry.html) ticket registry implementations.
 - [Groovy attribute repositories](../integration/Attribute-Resolution-Groovy.html) are no longer required to return a `username` attribute.

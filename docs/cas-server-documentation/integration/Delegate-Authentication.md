@@ -119,7 +119,7 @@ Remember that the above list of attributes and values are just a starting point,
 A sample authentication flow works as follows:
 
 1. The user attempts to access an application that is protected by CAS and configured to delegate authentication to SAML2 identity provider such as Microsoft Entra ID.
-2. CAS receives the request and redirects the user to SAML2 identity provider using the configured SAML2 integration.
+2. CAS receives the request and redirects the user to a SAML2 identity provider using its configured SAML2 integration.
 3. SAML2 identity provider authenticates the user and enforces MFA using its own machinery.
 4. After the user successfully completes MFA, SAML2 identity provider (i.e. Entra ID) sends a SAML response back to CAS.
 5. The SAML2 response includes the authentication methods reference attribute:
@@ -136,9 +136,9 @@ http://schemas.microsoft.com/claims/multipleauthn
 
 6. CAS receives the delegated authentication result and verifies the presence of above attributes.
 7. CAS runs a selection strategy to determine a matching multifactor provider for the user.
-8. CAS records the `authnContextClass` into its own authentication transaction with the values of the resolver multifactor provider ids (i.e. `[mfa-duo]`)
+8. CAS records the `authnContextClass` into its own authentication transaction with the values of the resolved/matching multifactor provider ids (i.e. `[mfa-duo]`)
 9. CAS creates the user’s SSO session and records that MFA has already been satisfied for this authentication event.
-10. The user later accesses another CAS-protected application that normally requires MFA, **directly handled in CAS**.
+10. The user later accesses another CAS-protected application that normally requires MFA, this time **directly handled in CAS**.
 11. CAS evaluates the existing SSO session, detects the recorded MFA context, and determines that the user has already satisfied the MFA requirement.
 12. CAS grants access to the second application without prompting the user for MFA again.
 
