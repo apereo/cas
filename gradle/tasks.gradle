@@ -86,9 +86,24 @@ tasks.register('testJar', Jar) {
 }
 
 tasks.register('sourcesJar', Jar) {
-    dependsOn classes
-    archiveClassifier.set("sources")
-    from sourceSets.main.allSource
+    archiveClassifier.set('sources')
+
+    def privateRelease = (publishReleases || publishSnapshots)
+        && project.providers.systemProperty('privateRelease').map { value -> Boolean.valueOf(value) }.getOrElse(false)
+    
+    if (privateRelease) {
+        // println "Configuring sources for a private release"
+        def placeholderFile = layout.buildDirectory.file('generated/placeholder-sources/README.md')
+        from(placeholderFile)
+        doFirst {
+            def file = placeholderFile.get().asFile
+            file.parentFile.mkdirs()
+            file.text = 'This is a placeholder sources artifact for private releases.'
+        }
+    } else {
+        dependsOn classes
+        from sourceSets.main.allSource
+    }
 }
 
 tasks.register('resourcesJar', Jar) {

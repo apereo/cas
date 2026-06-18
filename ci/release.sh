@@ -6,6 +6,7 @@ YELLOW="\e[33m"
 ENDCOLOR="\e[0m"
 
 casVersion=(`cat ./gradle.properties | grep "version" | cut -d= -f2`)
+privateRelease="false"
 
 function printgreen() {
   printf "☘️  ${GREEN}$1${ENDCOLOR}\n"
@@ -50,11 +51,15 @@ function publish {
     printgreen "Publishing CAS releases. This might take a while..."
     ./gradlew assemble publishAggregationToCentralPortal \
       --parallel --no-daemon --no-configuration-cache -x test -x check \
-      -DskipAot=true -DpublishReleases=true --stacktrace \
+      -DskipAot=true -DpublishReleases=true --stacktrace -DprivateRelease=${privateRelease} \
       -DrepositoryUsername="$REPOSITORY_USER" -DrepositoryPassword="$REPOSITORY_PWD"
     if [ $? -ne 0 ]; then
         printred "Publishing Apereo CAS failed."
         exit 1
+    fi
+    if [[ "${privateRelease}" == "true" ]]; then
+        printgreen "This is a private release. Skipping Git tagging and GitHub Release creation."
+        exit 0
     fi
 
     if [[ "$CI" == "true" ]]; then
@@ -194,10 +199,23 @@ if [[ -z $REPOSITORY_USER || -z $REPOSITORY_PWD ]]; then
   exit 1
 fi
 
+while (("$#")); do
+  case "$1" in
+  --private)
+    privateRelease="true"
+    shift 1
+    ;;
+  esac
+done
+
 if [[ "${casVersion}" == *SNAPSHOT* ]]; then
   selection="2"
 else
   selection="1"
+fi
+
+if [[ "${privateRelease}" == "true" ]]; then
+    printgreen "This is a private release..."
 fi
 
 case "$selection" in
