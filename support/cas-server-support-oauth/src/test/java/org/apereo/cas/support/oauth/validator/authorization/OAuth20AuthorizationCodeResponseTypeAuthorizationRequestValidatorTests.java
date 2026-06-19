@@ -36,7 +36,8 @@ class OAuth20AuthorizationCodeResponseTypeAuthorizationRequestValidatorTests ext
 
     @Test
     void verifyUnsignedRequestParameter() throws Throwable {
-        addRegisteredService(Set.of(), "client", UUID.randomUUID().toString(), "https://.+");
+        val service = addRegisteredService(Set.of(), "client", UUID.randomUUID().toString(), "https://.+");
+        service.setScopes(Set.of("openid"));
         val validator = getValidator(servicesManager);
 
         val request = new MockHttpServletRequest();
@@ -113,6 +114,17 @@ class OAuth20AuthorizationCodeResponseTypeAuthorizationRequestValidatorTests ext
         assertTrue(validator.supports(context));
         assertFalse(validator.validate(context));
         assertTrue(context.getRequestAttribute(OAuth20Constants.ERROR).isPresent());
+
+        request.removeAttribute(OAuth20Constants.ERROR);
+        request.setParameter(OAuth20Constants.SCOPE, "unknown-scope");
+        service.setScopes(Set.of("supported-scope"));
+        assertFalse(validator.supports(context));
+        assertTrue(context.getRequestAttribute(OAuth20Constants.ERROR).isPresent());
+        assertEquals(OAuth20Constants.INVALID_SCOPE, context.getRequestAttribute(OAuth20Constants.ERROR).get().toString());
+
+        request.removeAttribute(OAuth20Constants.ERROR);
+        request.setParameter(OAuth20Constants.SCOPE, "supported-scope");
+        assertTrue(validator.supports(context));
 
         request.removeAttribute(OAuth20Constants.ERROR);
         request.setParameter(OAuth20Constants.REDIRECT_URI, "unknown-uri");

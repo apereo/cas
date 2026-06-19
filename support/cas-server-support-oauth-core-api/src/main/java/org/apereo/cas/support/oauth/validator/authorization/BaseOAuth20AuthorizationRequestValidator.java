@@ -1,6 +1,8 @@
 package org.apereo.cas.support.oauth.validator.authorization;
 
 import module java.base;
+import java.util.HashSet;
+import java.util.Set;
 import org.apereo.cas.audit.AuditableContext;
 import org.apereo.cas.audit.AuditableExecution;
 import org.apereo.cas.authentication.principal.ServiceFactory;
@@ -19,6 +21,7 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apereo.cas.util.CollectionUtils;
 import org.pac4j.core.context.WebContext;
 
 /**
@@ -65,7 +68,12 @@ public abstract class BaseOAuth20AuthorizationRequestValidator implements OAuth2
         }
 
         val responseType = getResponseTypeFromRequest(context);
-        return verifyResponseType(context, responseType);
+        if (!verifyResponseType(context, responseType)) {
+            return false;
+        }
+
+        val requestedScopes = getRequestedScopesFromRequest(context);
+        return verifyRequestedScopes(context, registeredService, requestedScopes, clientId);
     }
 
     protected String getResponseTypeFromRequest(final WebContext context) {
@@ -78,6 +86,11 @@ public abstract class BaseOAuth20AuthorizationRequestValidator implements OAuth2
 
     protected String getClientIdFromRequest(final WebContext context) {
         return requestParameterResolver.resolveRequestParameter(context, OAuth20Constants.CLIENT_ID).orElse(StringUtils.EMPTY);
+    }
+
+    protected Set<String> getRequestedScopesFromRequest(final WebContext context) {
+        val parameterValues = requestParameterResolver.resolveRequestParameter(context, OAuth20Constants.SCOPE);
+        return parameterValues.map(s -> CollectionUtils.wrapSet(s.split(" "))).orElseGet(HashSet::new);
     }
 
     protected OAuthRegisteredService verifyRegisteredServiceByClientId(final WebContext context, final String clientId) throws Throwable {
@@ -168,6 +181,23 @@ public abstract class BaseOAuth20AuthorizationRequestValidator implements OAuth2
             setErrorDetails(context, OAuth20Constants.UNSUPPORTED_RESPONSE_TYPE,
                 String.format("Unsupported response_type: [%s]", responseType), true);
 
+            return false;
+        }
+        return true;
+    }
+
+    private boolean verifyRequestedScopes(final WebContext context, final OAuthRegisteredService registeredService,
+                                          final Set<String> requestedScopes, final String clientId) {
+        Set<String> supportedScopes = registeredService.getScopes();
+        requestedScopes.removeAll(supportedScopes);
+
+        if (!requestedScopes.isEmpty()) {
+            LOGGER.warn("Client [{}] has requested scopes {}, which are not supported by the service.",
+                clientId, requestedScopes);
+            setErrorDetails(context, OAuth20Constants.INVALID_SCOPE,
+                String.format("Client [%s] has requested scopes %s, which are not supported by the service",
+                    clientId, requestedScopes),
+                true);
             return false;
         }
         return true;
