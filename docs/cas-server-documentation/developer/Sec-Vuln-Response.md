@@ -203,13 +203,13 @@ remain anonymous. If the reporter is interested to receive public credit for the
 and effort, the following information at a minimum will need to be shared:
 
 1. Full real name
-2. Real contact information
-3. Organization/Company, Affiliation
+2. Real, verifiable contact information
+3. Organization, Company, Affiliation
 4. Use case, scenario, reason/need for discovery, etc.
 
-The above profile details need to represent a real entity so the community can better
+The above profile details need to represent a real verifiable entity so the community can better
 understand the need, intent and purpose behind the reported issue. The likes 
-of *"Megatron, independent security researcher at gmail dot com"* will not be accepted.
+of *"Megatron, independent security researcher at gmail dot com working on security"* will not be accepted.
 If you are not comfortable sharing details, it is then absolutely fine to remain
 anonymous, as this matter is completely optional.
 
