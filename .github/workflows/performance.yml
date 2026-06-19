@@ -30,7 +30,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7
         with:
           persist-credentials: false
       - name: Set up JDK
@@ -58,7 +58,7 @@ jobs:
     name: locust - ${{ matrix.category }}
     steps:
       - name: Checkout
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7
         with:
           persist-credentials: false
       - name: Set up JDK
@@ -95,7 +95,7 @@ jobs:
     name: jmeter - ${{ matrix.category }} - ${{ matrix.protocols }}
     steps:
       - name: Checkout
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7
         with:
           persist-credentials: false
       - name: Set up JDK
@@ -137,7 +137,7 @@ jobs:
     name: artillery - ${{ matrix.category }} - ${{ matrix.protocols }}
     steps:
       - name: Checkout
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7
         with:
           persist-credentials: false
       - name: Set up JDK
