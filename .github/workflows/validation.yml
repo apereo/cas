@@ -47,7 +47,7 @@ jobs:
       jdks: ${{ steps.determine-jdk.outputs.jdks }}
     steps:
       - name: Checkout
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7
         with:
           persist-credentials: false
       - name: Determine JDKs
@@ -76,7 +76,7 @@ jobs:
     continue-on-error: false
     steps:
       - name: Checkout
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7
         with:
           persist-credentials: false
       - name: Set up JDK ${{ env.JDK_CURRENT }}
@@ -104,7 +104,7 @@ jobs:
     name: commandline shell - JDK ${{ matrix.jdk }}
     steps:
       - name: Checkout
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7
         with:
           persist-credentials: false
       - name: Set up JDK ${{ matrix.jdk }}
@@ -141,7 +141,7 @@ jobs:
     name: embedded - JDK ${{ matrix.jdk }} - ${{ matrix.category }}
     steps:
       - name: Checkout
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7
         with:
           persist-credentials: false
       - name: Set up JDK ${{ matrix.jdk }}
@@ -178,7 +178,7 @@ jobs:
     name: ${{ matrix.category }} with external tomcat - JDK ${{ matrix.jdk }}
     steps:
       - name: Checkout
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7
         with:
           persist-credentials: false
       - name: Set up JDK ${{ matrix.jdk }}
@@ -212,7 +212,7 @@ jobs:
     name: spring cloud config server - JDK ${{ matrix.jdk }}
     steps:
       - name: Checkout
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7
         with:
           persist-credentials: false
       - name: Set up JDK ${{ matrix.jdk }}

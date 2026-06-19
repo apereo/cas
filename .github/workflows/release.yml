@@ -40,7 +40,7 @@ jobs:
     outputs:
       is_snapshot: ${{ steps.check.outputs.is_snapshot }}
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v7
         with:
           persist-credentials: false
       - name: Determine version
@@ -62,7 +62,7 @@ jobs:
     if: needs.check.outputs.is_snapshot == 'false'
     steps:
       - name: Checkout
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7
         with:
           persist-credentials: true
       - name: Set up JDK
