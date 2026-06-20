@@ -5,7 +5,6 @@ import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.principal.ServiceFactory;
 import org.apereo.cas.authentication.principal.WebApplicationService;
 import org.apereo.cas.configuration.CasConfigurationProperties;
-import org.apereo.cas.services.RegisteredServiceAccessStrategyUtils;
 import org.apereo.cas.services.RegisteredServicePrincipalAccessStrategyEnforcer;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.ticket.InvalidTicketException;
@@ -56,9 +55,8 @@ public class GenericSuccessViewAction extends BaseCasWebflowAction {
     protected @Nullable Event doExecuteInternal(final RequestContext requestContext) {
         val redirectUrl = casProperties.getView().getDefaultRedirectUrl();
         if (StringUtils.isNotBlank(redirectUrl)) {
-            val service = this.serviceFactory.createService(redirectUrl);
-            val registeredService = this.servicesManager.findServiceBy(service);
-            RegisteredServiceAccessStrategyUtils.ensureServiceAccessIsAllowed(service, registeredService);
+            val service = serviceFactory.createService(redirectUrl);
+            LOGGER.debug("Redirecting to [{}]", service.getId());
             requestContext.getExternalContext().requestExternalRedirect(service.getId());
         } else {
             val tgt = WebUtils.getTicketGrantingTicketId(requestContext);

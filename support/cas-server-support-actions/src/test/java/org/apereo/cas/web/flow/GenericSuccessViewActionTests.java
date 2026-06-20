@@ -84,8 +84,6 @@ class GenericSuccessViewActionTests {
 
         @Test
         void verifyRedirect() throws Throwable {
-            val registeredService = RegisteredServiceTestUtils.getRegisteredService("https://github.com/apereo/cas");
-            getServicesManager().save(registeredService);
             val context = MockRequestContext.create(applicationContext);
             val result = genericSuccessViewAction.execute(context);
             assertEquals(CasWebflowConstants.TRANSITION_ID_SUCCESS, result.getId());
