@@ -35,6 +35,16 @@ requests from any application on this planet and beyond. None of these constitut
 
 If you find that aspects of the CAS documentation can be improved to clarify and explain a specific situation better, you are more than welcome to contribute.
 
+<div class="alert alert-info">:information_source: <strong>Security Vulnerability vs Normal Defect</strong><p>
+A key difference between a security vulnerability and an ordinary defect may be that a security vulnerability 
+should be reproducible and verifiable at the system boundary, ideally by treating CAS as a 
+black box. The analysis should show how an adversary can coerce the system into unintended behavior with 
+minimal assumptions about the internal implementation. Security scenarios that assume an adversarial position must 
+account for the complete request/response flow, not just the behavior of an isolated unit or component. Otherwise, 
+the issue may simply be a normal defect that can only be exercised in isolation and not through 
+the larger CAS authentication flows, and for which you are welcome (and will be asked) to contribute a fix.
+</p></div>
+
 ## Response Model
 
 - Security issues are privately reported to CAS [via the appropriate mailing list](/cas/Mailing-Lists.html).
@@ -81,7 +91,7 @@ report contains enough diagnostics data to expedite reviews and feedback:
 - Include error logs, debug logs, screenshots and other useful snippets of your configuration.
 - Include steps to explain how the issue might be reproduced.
 - Include an overlay project that can duplicate the issue in practice.
-- If possible, prepare and share unit/integration tests to recreate the issue.
+- If possible, prepare and share [unit/integration/puppeteer tests](../developer/Test-Process.html) to recreate the issue.
 
 <div class="alert alert-warning">:warning: <strong>Remember</strong><p>Make sure your reports present
 automated, isolated and reproducible tests that demonstrate the security issue. This is a <b>MUST</b>. Anecdotal descriptive
@@ -121,6 +131,23 @@ fixes that are applied to the CAS codebase, regardless of contribution type (i.e
 made privately. The details of the fix and application of the patch are kept privately, and are not exposed in the public
 commit log, until due time. Security fixes and contributions in the form of publicly-viewable pull requests are *automatically closed*
 with a cautious warning to the contributor to follow due process to get a patch fix applied and verified correctly.
+ 
+### Scope & Compatibility
+
+All security fixes and changes should be as surgical as possible and released patches should be a drop-in replacement for upgrades.
+For the most part, a drop-in replacement security release does not require you to change platform requirements and versions, 
+application registration records, user interface, CAS configuration, logging semantics, build pipeline, etc. For most deployments, 
+this should be closer to “upgrade and verify” than “cancel your weekend”, unless explicitly (and uncommonly) noted otherwise.
+
+The only serious exception to this effort would be in scenarios where you have 
+modified code and CAS server internal components and your changes directly overwrite 
+upstream's fixes. While we do our best to ensure fixes are non-intrusive with a low footprint 
+as much as possible, we cannot guarantee that your custom components that entirely 
+overwrite and overlay on top of CAS remain fully functional or compatible with CAS APIs 
+and implementations.
+              
+Also note that any CAS version that is still in development and considered a work-in-progress automatically 
+receives any and all fixes. All changes are expected to be carried forward and released in due time.
 
 ## CVEs
 
@@ -150,7 +177,7 @@ Security announcements, notifications and details are typically posted on the [A
 ## Grace Period
 
 Once the security release is published and the initial version of the security vulnerability becomes public, CAS will observe
-a **four-week grace period** to allow community members and deployers to transition and upgrade to the security release. During this period,
+a **two-week grace period** to allow community members and deployers to transition and upgrade to the security release. During this period,
 no additional details (i.e. steps to reproduce, severity and impact, etc) about the security issue are made public and fixes and
 commits to the codebase are kept privately. As a result, all release tags and other modifications to the CAS codebase related to the security fix
 are put on hold until the grace period is over. At the end of the grace period, details about the security vulnerability are made public and the
@@ -165,12 +192,12 @@ As an example, let's imagine that a recent CAS security release `6.6.1.X` is now
 
 | Version   | Release Date | Grace Period Ends | Binary Release Availability | Source Code Availability | GitHub Notifications |
 |-----------|:------------:|------------------:|-----------------------------|:------------------------:|---------------------:|
-| `6.6.1.X` |  July 10th   |       August 10th | July 10th                   |       August 10th        |          August 10th |
+| `6.6.1.X` |  July 10th   |         July 24th | July 10th                   |        July 24th         |            July 24th |
                          
 If you are building the CAS codebase from source rather than relying on published binary releases, you should of course note that the above policy
 has a direct effect on your build and release cycle and likely negative effects on your security posture. Given source-level changes only 
 show up in the repository once after the grace period has ended, this practically means that in the event of a security release you will 
-always be at least **four weeks** behind, which may or may not be ideal.
+always be at least **two weeks** behind, which may or may not be ideal.
 
 Furthermore, security releases (and all other types of CAS releases) always roll forward. That is to say, the CAS security release `6.6.1.X+1`
 contains any and all changes that were presented in `6.6.1.X`, `6.6.1.X-1`, `6.6.1.X-2` and everything else prior to that release. Security releases
@@ -212,4 +239,8 @@ understand the need, intent and purpose behind the reported issue. The likes
 of *"Megatron, independent security researcher at gmail dot com working on security"* will not be accepted.
 If you are not comfortable sharing details, it is then absolutely fine to remain
 anonymous, as this matter is completely optional.
+
+Regardless of whether a report is submitted *anonymously*, all reports will be 
+taken seriously if they include sufficient detail and comply with the acceptable 
+report format and guidelines described in this document.
 
