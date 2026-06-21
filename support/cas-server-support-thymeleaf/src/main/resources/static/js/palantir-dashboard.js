@@ -123,16 +123,22 @@ function processNavigationTabs() {
         hideElements($("#applicationsTabButton"));
         hideElements($(`#attribute-tab-${Tabs.APPLICATIONS.index}`));
     }
-    if (!CasActuatorEndpoints.metrics() || !CasActuatorEndpoints.httpExchanges() || !CasActuatorEndpoints.auditEvents()
+    if (!CasActuatorEndpoints.metrics() || !CasActuatorEndpoints.auditEvents()
         || !CasActuatorEndpoints.heapDump() || !CasActuatorEndpoints.health() || !CasActuatorEndpoints.statistics()) {
         hideElements($("#systemTabButton"));
         hideElements($(`#attribute-tab-${Tabs.SYSTEM.index}`));
+    }
+    if (!CasActuatorEndpoints.httpExchanges()) {
+        hideElements($("#httprequeststab").parent());
     }
     if (!CasActuatorEndpoints.startup()) {
         hideElements($("#casstartuptab").parent());
     }
     if (!CasActuatorEndpoints.metrics()) {
         hideElements($("#systemmetricstab").parent());
+    }
+    if (!CasActuatorEndpoints.mappings()) {
+        hideElements($("#httprequestsmappingstab").parent());
     }
     if (!CasActuatorEndpoints.prometheus()) {
         hideElements($("#prometheusmetricstab").parent());

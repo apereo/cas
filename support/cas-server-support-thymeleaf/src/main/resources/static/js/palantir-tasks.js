@@ -343,14 +343,14 @@ async function initializeScheduledTasksOperations() {
             type: groupName,
             task: taskName,
             target: target,
-            expression: task.expression,
-            trigger: task.trigger,
-            initialDelay: task.initialDelay,
-            interval: task.interval,
+            expression: task.expression ?? null,
+            trigger: task.trigger ?? null,
+            initialDelay: task.initialDelay ?? null,
+            interval: task.interval ?? null,
             lastStatus: lastExecution.status ?? "NONE",
-            lastExecution: lastExecution.time,
-            nextExecution: task.nextExecution?.time,
-            exception: lastExecution.exception
+            lastExecution: lastExecution.time ?? null,
+            nextExecution: task.nextExecution?.time ?? null,
+            exception: lastExecution.exception ?? null
         };
     }
 

@@ -49,7 +49,7 @@ async function initializeSystemOperations() {
     async function configureHttpRequestResponses() {
         configureHttpExchangeControls();
         if (!CasActuatorEndpoints.httpExchanges()) {
-            setHttpExchangesUnavailable("The Spring Boot httpexchanges actuator endpoint is not available.");
+            hideHttpExchangesTab();
             return;
         }
         await refreshHttpExchanges();
@@ -465,19 +465,14 @@ async function initializeSystemOperations() {
         httpRequestsByUrlChart.update();
     }
 
-    function setHttpExchangesUnavailable(message) {
-        $("#httpExchangesUnavailable span").html(escapeHtml(message));
-        showElements($("#httpExchangesUnavailable"));
+    function hideHttpExchangesTab() {
         hideElements($("#httpExchangesContent"));
-        $("#httpExchangesMethodFilter, #httpExchangesStatusFilter").prop("disabled", true);
-        if ($("#httpExchangesMethodFilter").data("ui-selectmenu")) {
-            $("#httpExchangesMethodFilter, #httpExchangesStatusFilter").selectmenu("disable");
-        }
+        hideElements($("#httprequeststab").parent());
     }
 
     function setHttpExchangesAvailable() {
-        hideElements($("#httpExchangesUnavailable"));
         showElements($("#httpExchangesContent"));
+        showElements($("#httprequeststab").parent());
         $("#httpExchangesMethodFilter, #httpExchangesStatusFilter").prop("disabled", false);
         if ($("#httpExchangesMethodFilter").data("ui-selectmenu")) {
             $("#httpExchangesMethodFilter, #httpExchangesStatusFilter").selectmenu("enable");
@@ -570,7 +565,7 @@ async function initializeSystemOperations() {
             }).fail((xhr, status, error) => {
                 console.error("Error fetching HTTP exchanges data:", error);
                 if (xhr.status === 404 || xhr.status === 405) {
-                    setHttpExchangesUnavailable("The Spring Boot httpexchanges actuator endpoint is not available.");
+                    hideHttpExchangesTab();
                 } else {
                     $("#httpExchangesStatus").text("Unable to load HTTP exchanges.");
                     displayBanner(xhr);
@@ -593,6 +588,17 @@ async function initializeSystemOperations() {
                     <code>${escapeHtml(renderedValue)}</code>
                 </div>`;
         }).join("");
+    }
+
+    function applyMdcDataTableControls(selector) {
+        const wrapper = $(selector).closest(".dataTables_wrapper, .dt-container");
+        wrapper.find(".dataTables_filter input, .dt-search input")
+            .addClass("mdc-text-field__input form-control palantir-datatable-search-input")
+            .attr("aria-label", "Search table");
+        wrapper.find(".dataTables_length select, .dt-length select")
+            .addClass("mdc-select__native-control form-select");
+        wrapper.find(".paginate_button, .dt-paging-button")
+            .addClass("mdc-button mdc-button--outlined");
     }
 
     function renderHttpExchangeDetails(entry) {
@@ -640,6 +646,165 @@ async function initializeSystemOperations() {
     let heapDumpAnalysisEntries = [];
     let httpExchangeEntries = [];
     let httpExchangesControlsInitialized = false;
+
+    function toArray(value) {
+        if (value === undefined || value === null || value === "" || typeof value === "function") {
+            return [];
+        }
+        return Array.isArray(value) ? value : [value];
+    }
+
+    function ownValue(source, name) {
+        return source && Object.prototype.hasOwnProperty.call(source, name) ? source[name] : undefined;
+    }
+
+    function getConditionValues(condition, ...names) {
+        if (!condition) {
+            return [];
+        }
+        for (const name of names) {
+            const value = ownValue(condition, name);
+            if (value !== undefined && value !== null) {
+                return toArray(value);
+            }
+        }
+        return [];
+    }
+
+    function parseHttpRequestMappingPredicate(predicate) {
+        const text = String(predicate ?? "");
+        const knownMethods = ["GET", "HEAD", "POST", "PUT", "PATCH", "DELETE", "OPTIONS", "TRACE"];
+        const methods = new Set();
+        const patterns = new Set();
+        const consumes = new Set();
+        const produces = new Set();
+
+        knownMethods.forEach(method => {
+            if (new RegExp(`(^|[^A-Z])${method}(?=\\s|\\[|,|\\})`).test(text)) {
+                methods.add(method);
+            }
+        });
+
+        const patternMatch = text.match(/\[([^\]]+)]/);
+        if (patternMatch) {
+            patternMatch[1].split(/\s*\|\|\s*/).forEach(pattern => {
+                const value = pattern.trim();
+                if (value && value !== "function values() { [native code] }") {
+                    patterns.add(value);
+                }
+            });
+        }
+
+        const consumesMatch = text.match(/consumes\s+\[([^\]]+)]/i);
+        if (consumesMatch) {
+            consumesMatch[1].split(/\s*,\s*/).filter(Boolean).forEach(value => consumes.add(value.trim()));
+        }
+
+        const producesMatch = text.match(/produces\s+\[([^\]]+)]/i);
+        if (producesMatch) {
+            producesMatch[1].split(/\s*,\s*/).filter(Boolean).forEach(value => produces.add(value.trim()));
+        }
+
+        return {
+            methods: [...methods],
+            patterns: [...patterns],
+            consumes: [...consumes],
+            produces: [...produces]
+        };
+    }
+
+    function normalizeHttpRequestMapping(contextId, sourceName, mapping, index) {
+        const details = mapping.details ?? {};
+        const conditions = details.requestMappingConditions ?? mapping.requestMappingConditions ?? {};
+        const predicate = mapping.predicate ?? details.predicate ?? "";
+        const parsedPredicate = parseHttpRequestMappingPredicate(predicate);
+        const requestMethods = getConditionValues(conditions.methods, "methods", "method", "values");
+        const conditionPatterns = [
+            ...getConditionValues(conditions.patterns, "patterns", "values"),
+            ...getConditionValues(conditions.pathPatterns, "patterns", "values")
+        ];
+        const methods = parsedPredicate.methods
+            .concat(toArray(mapping.methods ?? details.methods ?? requestMethods))
+            .filter(Boolean);
+        const patterns = parsedPredicate.patterns
+            .concat(toArray(mapping.patterns ?? details.patterns))
+            .concat(conditionPatterns)
+            .filter(Boolean);
+        const handler = mapping.handler ?? details.handlerMethod?.name ?? details.handlerMethod?.descriptor ?? "";
+        return {
+            id: `${contextId}-${sourceName}-${index}`,
+            source: sourceName,
+            methods: methods.length > 0 ? [...new Set(methods)] : ["ANY"],
+            patterns: [...new Set(patterns)],
+            handler,
+            consumes: parsedPredicate.consumes.concat(getConditionValues(conditions.consumes, "mediaTypes", "consumes")),
+            produces: parsedPredicate.produces.concat(getConditionValues(conditions.produces, "mediaTypes", "produces"))
+        };
+    }
+
+    function getHttpRequestMappingEntries(response) {
+        const rows = [];
+        Object.entries(response?.contexts ?? {}).forEach(([contextId, context]) => {
+            Object.entries(context.mappings ?? {}).forEach(([sourceName, source]) => {
+                if (Array.isArray(source)) {
+                    source.forEach((mapping, index) =>
+                        rows.push(normalizeHttpRequestMapping(contextId, sourceName, mapping, index)));
+                } else if (source && typeof source === "object") {
+                    Object.entries(source).forEach(([nestedSourceName, mappings]) => {
+                        if (Array.isArray(mappings)) {
+                            mappings.forEach((mapping, index) =>
+                                rows.push(normalizeHttpRequestMapping(contextId, nestedSourceName, mapping, index)));
+                        }
+                    });
+                }
+            });
+        });
+        return rows.filter(row => row.patterns.length > 0 && row.handler);
+    }
+
+    function renderHttpMappingMethods(methods) {
+        return toArray(methods).map(method => {
+            const value = String(method);
+            return `<span class="http-exchange-method method-${escapeHtml(value.toLowerCase())}">${escapeHtml(value)}</span>`;
+        }).join(" ");
+    }
+
+    function renderHttpMappingValues(values, cssClass = "") {
+        const entries = toArray(values);
+        if (entries.length === 0) {
+            return "-";
+        }
+        return entries.map(value => `<code class="${cssClass}" title="${escapeHtml(value)}">${escapeHtml(value)}</code>`).join(" ");
+    }
+
+    function renderHttpRequestMappings(entries) {
+        httpRequestMappingsTable.clear();
+        entries.forEach(entry => httpRequestMappingsTable.row.add(entry));
+        httpRequestMappingsTable.draw();
+        httpRequestMappingsTable.columns.adjust();
+        $("#httpRequestMappingsStatus").text(`${entries.length.toLocaleString()} mappings loaded.`);
+    }
+
+    async function refreshHttpRequestMappings() {
+        if (!CasActuatorEndpoints.mappings()) {
+            hideElements($("#httprequestsmappingstab").parent());
+            return;
+        }
+        return new Promise(resolve => {
+            $.get(CasActuatorEndpoints.mappings(), response => {
+                const entries = getHttpRequestMappingEntries(response);
+                renderHttpRequestMappings(entries);
+                resolve();
+            }).fail((xhr, status, error) => {
+                console.error("Error fetching HTTP request mappings:", error);
+                hideElements($("#httprequestsmappingstab").parent());
+                if (xhr.status !== 404 && xhr.status !== 405) {
+                    displayBanner(xhr);
+                }
+                resolve();
+            });
+        });
+    }
 
     function getHeapDumpAnalysisEntries(response) {
         const entries = response?.classesByRetainedSize
@@ -1079,6 +1244,7 @@ async function initializeSystemOperations() {
         }
         await configureLiveMemory();
         await configureHeapDumpAnalysis();
+        await refreshHttpRequestMappings();
         configureHttpRequestResponses().then(configureAuditEventsChart());
     }
 
@@ -1115,6 +1281,49 @@ async function initializeSystemOperations() {
         drawCallback: settings => {
             $("#systemLiveMemoryPoolsTable tr").addClass("mdc-data-table__row");
             $("#systemLiveMemoryPoolsTable td").addClass("mdc-data-table__cell");
+        }
+    });
+
+    const httpRequestMappingsTable = $("#httpRequestMappingsTable").DataTable({
+        pageLength: 25,
+        autoWidth: false,
+        order: [[1, "asc"]],
+        columns: [
+            {
+                data: "methods",
+                width: "9rem",
+                render: (data, type) => type === "display" ? renderHttpMappingMethods(data) : toArray(data).join(" ")
+            },
+            {
+                data: "patterns",
+                width: "24rem",
+                render: (data, type) => type === "display"
+                    ? renderHttpMappingValues(data, "http-request-mapping-pattern")
+                    : toArray(data).join(" ")
+            },
+            {
+                data: "handler",
+                width: "34rem",
+                render: (data, type) => type === "display"
+                    ? `<code class="http-request-mapping-handler" title="${escapeHtml(data)}">${escapeHtml(data)}</code>`
+                    : data
+            },
+            {
+                data: "consumes",
+                width: "12rem",
+                render: (data, type) => type === "display" ? renderHttpMappingValues(data) : toArray(data).join(" ")
+            },
+            {
+                data: "produces",
+                width: "12rem",
+                render: (data, type) => type === "display" ? renderHttpMappingValues(data) : toArray(data).join(" ")
+            }
+        ],
+        initComplete: () => applyMdcDataTableControls("#httpRequestMappingsTable"),
+        drawCallback: settings => {
+            $("#httpRequestMappingsTable tr").addClass("mdc-data-table__row");
+            $("#httpRequestMappingsTable td").addClass("mdc-data-table__cell");
+            applyMdcDataTableControls("#httpRequestMappingsTable");
         }
     });
 

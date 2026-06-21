@@ -21,9 +21,28 @@
             <li><a id="casstartuptab" href="#casstartup-tab">Application Startup</a></li>
           </ul>
 
-          <div id="httprequestmappings-tab">
-              Hello!
-          </div>
+	          <div id="httprequestmappings-tab">
+                  <div id="httpRequestMappingsContainer" class="http-request-mappings-panel">
+                      <div id="httpRequestMappingsContent">
+                          <div class="http-request-mappings-table-wrap">
+                              <table id="httpRequestMappingsTable"
+                                     class="mdc-data-table__table table table-striped noborder http-request-mappings-table">
+                                  <thead>
+                                  <tr class="mdc-data-table__header-row">
+                                      <th class="mdc-data-table__header-cell" role="columnheader" scope="col">Methods</th>
+                                      <th class="mdc-data-table__header-cell" role="columnheader" scope="col">Patterns</th>
+                                      <th class="mdc-data-table__header-cell" role="columnheader" scope="col">Handler</th>
+                                      <th class="mdc-data-table__header-cell" role="columnheader" scope="col">Consumes</th>
+                                      <th class="mdc-data-table__header-cell" role="columnheader" scope="col">Produces</th>
+                                  </tr>
+                                  </thead>
+                                  <tbody class="mdc-data-table__content"></tbody>
+                              </table>
+                          </div>
+                          <small id="httpRequestMappingsStatus" class="http-request-mappings-status text-muted"></small>
+                      </div>
+                  </div>
+	          </div>
             
             <div id="systeminfo-tab">
                 <div>
@@ -256,11 +275,6 @@
                             <i class="mdi mdi-swap-horizontal" aria-hidden="true"></i>
                             HTTP Exchanges
                         </h3>
-                    </div>
-
-                    <div id="httpExchangesUnavailable" class="http-exchanges-unavailable hide">
-                        <i class="mdi mdi-alert-circle-outline" aria-hidden="true"></i>
-                        <span>The Spring Boot <code>httpexchanges</code> actuator endpoint is not available.</span>
                     </div>
 
                     <div id="httpExchangesContent">

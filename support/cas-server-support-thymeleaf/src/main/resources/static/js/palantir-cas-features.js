@@ -3,7 +3,6 @@ const CAS_FEATURES = [];
 async function fetchCasFeatures() {
     return new Promise((resolve, reject) => {
         if (!CasActuatorEndpoints.casFeatures()) {
-            console.error("CAS Features endpoint is not available.");
             resolve(CAS_FEATURES);
         } else if (CAS_FEATURES.length === 0) {
             $.get(CasActuatorEndpoints.casFeatures(), response => {

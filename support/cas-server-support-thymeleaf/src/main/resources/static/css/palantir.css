@@ -781,6 +781,44 @@ select + span[role="combobox"] {
     text-align: left;
 }
 
+.http-request-mappings-panel {
+    text-align: left;
+}
+
+.http-request-mappings-status {
+    color: #65717d;
+}
+
+.http-request-mappings-table-wrap {
+    overflow-x: auto;
+    padding-right: 1rem;
+    padding-left: 1rem;
+    border: 1px solid #d8dee5;
+    border-radius: 8px;
+    background: #fff;
+    box-shadow: 0 5px 18px rgba(31, 53, 73, .08);
+}
+
+.http-request-mappings-table {
+    width: 100%;
+    table-layout: fixed;
+    margin-bottom: 0 !important;
+}
+
+.http-request-mappings-table th,
+.http-request-mappings-table td {
+    vertical-align: middle;
+}
+
+.http-request-mapping-pattern,
+.http-request-mapping-handler {
+    display: block;
+    max-width: 100%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
 .http-exchanges-header {
     margin-bottom: 1rem;
 }
@@ -796,22 +834,6 @@ select + span[role="combobox"] {
 
 .http-exchanges-status {
     color: #65717d;
-}
-
-.http-exchanges-unavailable {
-    display: flex;
-    align-items: center;
-    gap: .5rem;
-    padding: .9rem 1rem;
-    border: 1px solid #f0d663;
-    border-radius: 8px;
-    background: #fff9db;
-    color: #6b5b13;
-    font-weight: 700;
-}
-
-.http-exchanges-unavailable.hide {
-    display: none;
 }
 
 .http-exchanges-filters {
@@ -894,6 +916,7 @@ select + span[role="combobox"] {
 
 .http-exchange-method.method-head,
 .http-exchange-method.method-options,
+.http-exchange-method.method-any,
 .http-exchange-status.status-informational {
     background: #607d8b;
 }
@@ -1022,22 +1045,6 @@ select + span[role="combobox"] {
     color: #65717d;
 }
 
-.spring-beans-unavailable {
-    display: flex;
-    align-items: center;
-    gap: .5rem;
-    padding: .9rem 1rem;
-    border: 1px solid #f0d663;
-    border-radius: 8px;
-    background: #fff9db;
-    color: #6b5b13;
-    font-weight: 700;
-}
-
-.spring-beans-unavailable.hide {
-    display: none;
-}
-
 .spring-beans-filters {
     margin-bottom: 1rem;
 }
@@ -1116,22 +1123,6 @@ select + span[role="combobox"] {
 
 .spring-conditions-panel {
     text-align: left;
-}
-
-.spring-conditions-unavailable {
-    display: flex;
-    align-items: center;
-    gap: .5rem;
-    padding: .9rem 1rem;
-    border: 1px solid #f0d663;
-    border-radius: 8px;
-    background: #fff9db;
-    color: #6b5b13;
-    font-weight: 700;
-}
-
-.spring-conditions-unavailable.hide {
-    display: none;
 }
 
 .spring-conditions-result-tabs {

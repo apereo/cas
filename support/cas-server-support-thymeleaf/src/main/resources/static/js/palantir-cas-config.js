@@ -660,15 +660,12 @@ function normalizeSpringBeans(response) {
     return entries.sort((a, b) => a.name.localeCompare(b.name));
 }
 
-function setSpringBeansUnavailable(message) {
-    $("#springBeansUnavailable span").html(escapeConfigHtml(message));
-    showElements($("#springBeansUnavailable"));
+function hideSpringBeansTab() {
     hideElements($("#springBeansContent"));
     hideElements($("#springBeansTabItem"));
 }
 
 function setSpringBeansAvailable() {
-    hideElements($("#springBeansUnavailable"));
     showElements($("#springBeansContent"));
     showElements($("#springBeansTabItem"));
 }
@@ -722,15 +719,12 @@ function normalizeSpringConditions(response) {
     return entries;
 }
 
-function setSpringConditionsUnavailable(message) {
-    $("#springConditionsUnavailable span").html(escapeConfigHtml(message));
-    showElements($("#springConditionsUnavailable"));
+function hideSpringConditionsTab() {
     hideElements($("#springConditionsContent"));
     hideElements($("#springConditionsTabItem"));
 }
 
 function setSpringConditionsAvailable() {
-    hideElements($("#springConditionsUnavailable"));
     showElements($("#springConditionsContent"));
     showElements($("#springConditionsTabItem"));
 }
@@ -1007,10 +1001,10 @@ async function initializeConfigurationOperations() {
             renderSpringBeans();
         }).fail((xhr, status, error) => {
             console.error("Error fetching Spring beans:", error);
-            setSpringBeansUnavailable("The Spring Boot beans actuator endpoint is not available.");
+            hideSpringBeansTab();
         });
     } else {
-        setSpringBeansUnavailable("The Spring Boot beans actuator endpoint is not available.");
+        hideSpringBeansTab();
     }
 
     let springConditionsEntries = {positive: [], negative: []};
@@ -1082,10 +1076,10 @@ async function initializeConfigurationOperations() {
             renderSpringConditions();
         }).fail((xhr, status, error) => {
             console.error("Error fetching Spring conditions:", error);
-            setSpringConditionsUnavailable("The Spring Boot conditions actuator endpoint is not available.");
+            hideSpringConditionsTab();
         });
     } else {
-        setSpringConditionsUnavailable("The Spring Boot conditions actuator endpoint is not available.");
+        hideSpringConditionsTab();
     }
 
     $("#encryptConfigButton").off().on("click", () => encryptOrDecryptConfig("encrypt"));
