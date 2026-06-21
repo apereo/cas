@@ -23,6 +23,7 @@ async function initializeAllCharts() {
         type: "bar",
         options: {
             responsive: true,
+            maintainAspectRatio: false,
             fill: true,
             borderWidth: 2,
             plugins: {
@@ -234,6 +235,8 @@ async function initializeAllCharts() {
             }]
         },
         options: {
+            responsive: true,
+            maintainAspectRatio: false,
             scales: {
                 y: {
                     beginAtZero: true,
@@ -571,5 +574,3 @@ function generateColors(count) {
     }
     return colors;
 }
-
-

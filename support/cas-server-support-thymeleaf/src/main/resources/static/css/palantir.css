@@ -38,7 +38,7 @@
 }
 
 .ui-widget-overlay {
-    background: var(--cas-theme-primary);
+    background: var(--cas-theme-primary) !important;
     backdrop-filter: blur(6px);
 }
 
@@ -236,6 +236,232 @@ ul.ui-widget-header {
 
 select + span[role="combobox"] {
     margin-bottom: .5rem !important;
+}
+
+#scheduledTasksTable {
+    table-layout: fixed;
+}
+
+#scheduledTasksTable td,
+#scheduledTasksTable th {
+    vertical-align: middle;
+}
+
+.scheduled-task-type,
+.scheduled-task-status {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 1.65rem;
+    padding: .15rem .55rem;
+    border-radius: 999px;
+    font-size: .78rem;
+    font-weight: 800;
+    line-height: 1;
+    white-space: nowrap;
+}
+
+.scheduled-task-type {
+    background: #e0f2fe;
+    color: #075985;
+}
+
+.scheduled-task-status-success {
+    background: #1f9f6e;
+    color: #fff;
+}
+
+.scheduled-task-status-error {
+    background: #d93648;
+    color: #fff;
+}
+
+.scheduled-task-status-running {
+    background: #2563eb;
+    color: #fff;
+}
+
+.scheduled-task-status-none {
+    background: #e5e7eb;
+    color: #374151;
+}
+
+.scheduled-task-target,
+.scheduled-task-exception {
+    display: block;
+    max-width: 100%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+#threadDumpTable {
+    table-layout: fixed;
+}
+
+#threadDumpTable td,
+#threadDumpTable th {
+    vertical-align: middle;
+}
+
+.thread-dump-name-cell {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: .25rem;
+    min-width: 0;
+}
+
+.thread-dump-name-cell code {
+    display: block;
+    max-width: 100%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    color: #d84887;
+    font-weight: 700;
+    background: transparent;
+}
+
+.thread-dump-virtual-badge {
+    display: inline-flex;
+    align-items: center;
+    min-height: 1.4rem;
+    padding: .1rem .45rem;
+    border-radius: 999px;
+    background: #4fc3df;
+    color: #0b1f2a;
+    font-size: .74rem;
+    font-weight: 700;
+    line-height: 1;
+}
+
+.thread-state-badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 6.4rem;
+    min-height: 1.75rem;
+    padding: .15rem .6rem;
+    border-radius: 999px;
+    color: #fff;
+    font-size: .82rem;
+    font-weight: 800;
+    line-height: 1;
+}
+
+.thread-state-runnable {
+    background: #1f9f6e;
+}
+
+.thread-state-waiting {
+    background: #ffc400;
+    color: #111;
+}
+
+.thread-state-blocked,
+.thread-state-terminated {
+    background: #d93648;
+}
+
+.thread-state-other {
+    background: #64748b;
+}
+
+#threadDumpTable .mdi-check {
+    color: #3f9f82;
+    font-size: 1.15rem;
+}
+
+.thread-stack-action {
+    text-align: right;
+}
+
+.thread-stack-button {
+    min-width: 3.5rem !important;
+    height: 2.5rem;
+    padding: 0 .65rem;
+}
+
+.thread-stack-button .mdc-button__label {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+}
+
+.thread-stack-button .mdi {
+    font-size: 1.25rem;
+    line-height: 1;
+}
+
+.task-charts-grid {
+    width: 100%;
+    margin-top: 1rem;
+}
+
+.task-charts-row {
+    display: flex;
+    flex-wrap: nowrap;
+    gap: 1rem;
+    width: 100%;
+}
+
+.task-chart-cell {
+    flex: 0 0 calc(50% - .5rem);
+    max-width: calc(50% - .5rem);
+    min-width: 0;
+}
+
+.task-chart-container {
+    position: relative;
+    width: 100%;
+    height: clamp(280px, 22vw, 360px);
+}
+
+.task-chart-container canvas {
+    width: 100% !important;
+    height: 100% !important;
+}
+
+@media (max-width: 900px) {
+    .task-charts-row {
+        gap: .5rem;
+    }
+
+    .task-chart-cell {
+        flex-basis: calc(50% - .25rem);
+        max-width: calc(50% - .25rem);
+    }
+
+    .task-chart-container {
+        height: clamp(220px, 28vw, 300px);
+    }
+}
+
+.palantir-datatable-search-input {
+    min-height: 2.25rem;
+    border: 1px solid rgba(0, 0, 0, .38);
+    border-radius: 4px;
+    padding: .35rem .6rem;
+}
+
+.thread-dump-stack-summary {
+    display: flex;
+    flex-wrap: wrap;
+    gap: .5rem 1rem;
+    margin-bottom: .75rem;
+}
+
+.thread-dump-stack-trace {
+    max-height: 55vh;
+    overflow: auto;
+    padding: 1rem;
+    border: 1px solid rgba(0, 0, 0, .12);
+    border-radius: 6px;
+    background: #0f172a;
+    color: #e2e8f0;
+    white-space: pre;
 }
 
 .live-memory-panel {
