@@ -117,7 +117,7 @@ jobs:
         with:
           persist-credentials: false
       - name: Run Renovate
-        uses: renovatebot/github-action@v46.1.15
+        uses: renovatebot/github-action@v46.1.16
         with:
           token: ${{ secrets.RENOVATE_TOKEN }}
           configurationFile: .github/renovate.json
