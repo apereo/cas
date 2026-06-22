@@ -279,7 +279,7 @@ gradleErrorProne = "5.1.0"
 gradleNullAway = "3.1.0"
 gradleGraalVmNative = "1.1.2"
 gradleSonarqube = "7.3.1.8318"
-gradleNmcpPublishing = "1.5.0"
+gradleNmcpPublishing = "1.6.0"
 gradleJib = "3.5.3"
 
 [libraries]
