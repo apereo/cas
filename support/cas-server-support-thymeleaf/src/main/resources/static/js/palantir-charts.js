@@ -18,6 +18,90 @@ let prometheusEndpointUrl = null;
 let prometheusRefreshInterval = 10000;
 let prometheusRefreshTimer = null;
 
+function cloneChartValue(value) {
+    const seen = new WeakSet();
+    return JSON.parse(JSON.stringify(value, (key, entry) => {
+        if (typeof entry === "function") {
+            return undefined;
+        }
+        if (entry && typeof entry === "object") {
+            if (seen.has(entry)) {
+                return undefined;
+            }
+            seen.add(entry);
+        }
+        return entry;
+    }));
+}
+
+function showSystemStatusChartDialog(chart, title) {
+    if (!chart) {
+        return;
+    }
+    $("#systemStatusChartDialog").remove();
+
+    const dialogHtml = `
+        <div id="systemStatusChartDialog" class="system-status-chart-dialog" title="${title}">
+            <canvas id="systemStatusChartDialogCanvas"></canvas>
+        </div>`;
+    $("body").append(dialogHtml);
+
+    $("#systemStatusChartDialog").dialog({
+        modal: true,
+        width: Math.min($(window).width() * 0.9, 1400),
+        height: Math.min($(window).height() * 0.85, 820),
+        resizable: true,
+        close: function () {
+            if (window.systemStatusDialogChart) {
+                window.systemStatusDialogChart.destroy();
+                window.systemStatusDialogChart = null;
+            }
+            $(this).dialog("destroy").remove();
+        },
+        open: function () {
+            const canvas = document.getElementById("systemStatusChartDialogCanvas");
+            if (!canvas) {
+                return;
+            }
+            const options = cloneChartValue(chart.options ?? {});
+            options.responsive = true;
+            options.maintainAspectRatio = false;
+            options.plugins = options.plugins ?? {};
+            options.plugins.title = {
+                ...(options.plugins.title ?? {}),
+                display: true,
+                text: title,
+                font: {size: 18}
+            };
+            window.systemStatusDialogChart = new Chart(canvas.getContext("2d"), {
+                type: chart.config.type,
+                data: cloneChartValue(chart.data),
+                options
+            });
+        }
+    });
+}
+
+function makeSystemStatusChartClickable(canvasId, chartAccessor, title) {
+    const canvas = document.getElementById(canvasId);
+    const cell = canvas?.closest(".mdc-layout-grid__cell");
+    if (!cell) {
+        return;
+    }
+    cell.classList.add("system-status-chart-cell");
+    cell.setAttribute("role", "button");
+    cell.setAttribute("tabindex", "0");
+    cell.setAttribute("aria-label", `Open ${title} chart`);
+    const open = () => showSystemStatusChartDialog(chartAccessor(), title);
+    cell.addEventListener("click", open);
+    cell.addEventListener("keydown", event => {
+        if (event.key === "Enter" || event.key === " ") {
+            event.preventDefault();
+            open();
+        }
+    });
+}
+
 async function initializeAllCharts() {
     threadDumpChart = new Chart(document.getElementById("threadDumpChart").getContext("2d"), {
         type: "bar",
@@ -222,6 +306,10 @@ async function initializeAllCharts() {
             }
         }
     });
+
+    makeSystemStatusChartClickable("memoryChart", () => memoryChart, "Memory");
+    makeSystemStatusChartClickable("statisticsChart", () => statisticsChart, "Ticket Registry");
+    makeSystemStatusChartClickable("systemHealthChart", () => systemHealthChart, "System Health");
 
     jvmThreadsChart = new Chart(document.getElementById("jvmThreadsChart").getContext("2d"), {
         type: "bar",

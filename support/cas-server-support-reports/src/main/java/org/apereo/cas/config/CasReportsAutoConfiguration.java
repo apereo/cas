@@ -41,6 +41,7 @@ import org.apereo.cas.web.report.CasProtocolValidationEndpoint;
 import org.apereo.cas.web.report.CasReleaseAttributesReportEndpoint;
 import org.apereo.cas.web.report.CasResolveAttributesReportEndpoint;
 import org.apereo.cas.web.report.CasRuntimeModulesEndpoint;
+import org.apereo.cas.web.report.DependenciesEndpoint;
 import org.apereo.cas.web.report.HeapDumpAnalysisEndpoint;
 import org.apereo.cas.web.report.MultifactorAuthenticationDevicesEndpoint;
 import org.apereo.cas.web.report.RegisteredAuthenticationHandlersEndpoint;
@@ -210,6 +211,16 @@ public class CasReportsAutoConfiguration {
     @Configuration(value = "SystemInfoEndpointsConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
     static class SystemInfoEndpointsConfiguration {
+
+        @Bean
+        @ConditionalOnAvailableEndpoint
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+        public DependenciesEndpoint dependenciesEndpoint(
+            final ConfigurableApplicationContext applicationContext,
+            final CasConfigurationProperties casProperties) {
+            return new DependenciesEndpoint(applicationContext, casProperties);
+        }
+
         @Bean
         @ConditionalOnAvailableEndpoint
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)

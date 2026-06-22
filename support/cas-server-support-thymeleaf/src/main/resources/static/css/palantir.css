@@ -424,6 +424,27 @@ select + span[role="combobox"] {
     height: 100% !important;
 }
 
+.system-status-chart-cell {
+    cursor: zoom-in;
+    border-radius: 6px;
+    outline: none;
+}
+
+.system-status-chart-cell:focus-visible {
+    box-shadow: 0 0 0 3px rgba(30, 120, 208, .35);
+}
+
+.system-status-chart-dialog {
+    width: 100% !important;
+    height: 100% !important;
+    min-height: 0;
+}
+
+.system-status-chart-dialog canvas {
+    width: 100% !important;
+    height: 100% !important;
+}
+
 @media (max-width: 900px) {
     .task-charts-row {
         gap: .5rem;
@@ -689,17 +710,6 @@ select + span[role="combobox"] {
     color: #24b9d7;
 }
 
-.heap-dump-class-filter {
-    min-width: 18rem;
-    max-width: 100%;
-    height: 2.35rem;
-    padding: .35rem .8rem;
-    border: 1px solid #d8dee5;
-    border-radius: 999px;
-    background: #fff;
-    color: #26323d;
-}
-
 .heap-dump-analysis-status {
     display: inline-block;
     margin-top: .55rem;
@@ -736,6 +746,12 @@ select + span[role="combobox"] {
     padding: 1rem 1.2rem;
 }
 
+.heap-dump-actions {
+    display: flex;
+    justify-content: flex-start;
+    padding: 1rem 1.2rem 1.2rem;
+}
+
 .heap-dump-classes-table {
     min-width: 1080px;
     width: 100%;
@@ -767,14 +783,6 @@ select + span[role="combobox"] {
     height: 100%;
     border-radius: inherit;
     background: #0d6efd;
-}
-
-@media (max-width: 900px) {
-    .heap-dump-class-filter {
-        width: 100%;
-        min-width: 0;
-    }
-
 }
 
 .http-exchanges-panel {
@@ -840,15 +848,27 @@ select + span[role="combobox"] {
     display: grid;
     grid-template-columns: repeat(2, minmax(12rem, 1fr));
     gap: 1rem;
-    align-items: end;
+    align-items: center;
     margin-bottom: 1rem;
 }
 
 .http-exchanges-filters label {
     display: grid;
-    gap: .45rem;
+    grid-template-columns: max-content minmax(0, 1fr);
+    align-items: center;
+    gap: .5rem;
     margin: 0;
     font-weight: 700;
+}
+
+.http-exchanges-filter-label {
+    white-space: nowrap;
+}
+
+.http-exchanges-filters .ui-selectmenu-button,
+.http-exchanges-filters select {
+    width: 100% !important;
+    max-width: 100%;
 }
 
 .http-exchanges-table-wrap {
@@ -1010,6 +1030,10 @@ select + span[role="combobox"] {
 
     .http-exchanges-filters {
         grid-template-columns: 1fr;
+    }
+
+    .http-exchanges-filters label {
+        grid-template-columns: 5rem minmax(0, 1fr);
     }
 
     .http-exchanges-table-wrap {
@@ -1491,4 +1515,311 @@ select + span[role="combobox"] {
 .startup-children {
     border-left: 2px solid #e3edf5;
     margin-left: 24px;
+}
+
+.cas-dependencies-table-wrap,
+.cas-vulnerabilities-table-wrap {
+    box-sizing: border-box;
+    width: 100%;
+    margin: 0;
+    padding: .75rem;
+    max-width: 100%;
+    overflow-x: hidden;
+    border: 1px solid #d8dee5;
+    border-radius: 8px;
+    background: #fff;
+    box-shadow: 0 5px 18px rgba(31, 53, 73, .08);
+}
+
+.cas-dependencies-table-wrap .dataTables_wrapper,
+.cas-dependencies-table-wrap .dt-container,
+.cas-vulnerabilities-table-wrap .dataTables_wrapper,
+.cas-vulnerabilities-table-wrap .dt-container,
+.cas-dependencies-table-wrap .dataTables_scroll,
+.cas-vulnerabilities-table-wrap .dataTables_scroll,
+.cas-dependencies-table-wrap .dt-layout-table,
+.cas-vulnerabilities-table-wrap .dt-layout-table {
+    width: 100%;
+    max-width: 100%;
+    overflow-x: hidden;
+}
+
+.cas-dependencies-table-wrap .dataTables_filter,
+.cas-dependencies-table-wrap .dt-search,
+.cas-vulnerabilities-table-wrap .dataTables_filter,
+.cas-vulnerabilities-table-wrap .dt-search {
+    box-sizing: border-box;
+    width: 100%;
+    max-width: 100%;
+    padding-right: 1px;
+}
+
+.cas-dependencies-table-wrap .dataTables_filter label,
+.cas-vulnerabilities-table-wrap .dataTables_filter label {
+    display: block;
+    box-sizing: border-box;
+    width: min(100%, 32rem);
+    max-width: 100%;
+    margin-left: auto;
+}
+
+.cas-dependencies-table-wrap .dt-search label,
+.cas-vulnerabilities-table-wrap .dt-search label {
+    display: block;
+    box-sizing: border-box;
+    width: 100%;
+    max-width: 100%;
+}
+
+.cas-dependencies-table-wrap .dataTables_filter input,
+.cas-dependencies-table-wrap .dt-search input,
+.cas-vulnerabilities-table-wrap .dataTables_filter input,
+.cas-vulnerabilities-table-wrap .dt-search input {
+    display: block;
+    box-sizing: border-box;
+    width: 100% !important;
+    max-width: 100%;
+    margin: .15rem 0 0 !important;
+    border: 1px solid rgba(0, 0, 0, .38);
+}
+
+.cas-dependencies-table,
+.cas-vulnerabilities-table {
+    width: 100% !important;
+    max-width: 100%;
+    table-layout: fixed;
+}
+
+.cas-dependencies-table th,
+.cas-dependencies-table td,
+.cas-vulnerabilities-table th,
+.cas-vulnerabilities-table td {
+    overflow-wrap: anywhere;
+    word-break: break-word;
+    vertical-align: top;
+}
+
+.cas-dependencies-table code,
+.cas-vulnerabilities-table code {
+    display: inline;
+    max-width: 100%;
+    white-space: normal;
+    overflow-wrap: anywhere;
+    word-break: break-word;
+}
+
+.cas-dependency-version {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    box-sizing: border-box;
+    min-width: 0;
+    min-height: 1.55rem;
+    padding: .18rem .65rem;
+    border-radius: 999px;
+    background: var(--cas-theme-button-bg-lite, #1e78d0);
+    color: #fff;
+    font-size: .82rem;
+    font-weight: 800;
+    line-height: 1;
+    max-width: 100%;
+    white-space: normal;
+    overflow-wrap: anywhere;
+    text-align: center;
+}
+
+.cas-vulnerability-id {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    box-sizing: border-box;
+    min-width: 0;
+    min-height: 1.55rem;
+    padding: .18rem .65rem;
+    border: 1px solid rgba(162, 3, 35, .22);
+    border-radius: 6px;
+    background: var(--cas-theme-danger-bg, #f8d7da);
+    color: var(--mdc-theme-error, #a20323);
+    font-size: .82rem;
+    font-weight: 800;
+    line-height: 1;
+    max-width: 100%;
+    white-space: normal;
+    overflow-wrap: anywhere;
+    text-align: center;
+}
+
+.cas-vulnerability-severity {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    box-sizing: border-box;
+    min-width: 0;
+    min-height: 1.55rem;
+    padding: .18rem .55rem;
+    border-radius: 999px;
+    color: #fff;
+    font-size: .78rem;
+    font-weight: 800;
+    line-height: 1;
+    max-width: 100%;
+    white-space: normal;
+    overflow-wrap: anywhere;
+    text-align: center;
+}
+
+.cas-vulnerabilities-table th.cas-vulnerability-severity-column,
+.cas-vulnerabilities-table td.cas-vulnerability-severity-column,
+.cas-vulnerabilities-table .cas-vulnerability-severity-column.dt-type-numeric,
+.cas-vulnerabilities-table .cas-vulnerability-severity-column.dt-type-date {
+    text-align: left !important;
+}
+
+.cas-vulnerability-severity.severity-critical {
+    background: #7f1d1d;
+}
+
+.cas-vulnerability-severity.severity-high {
+    background: var(--mdc-theme-error, #a20323);
+}
+
+.cas-vulnerability-severity.severity-medium {
+    background: #b45309;
+}
+
+.cas-vulnerability-severity.severity-low {
+    background: var(--cas-theme-secondary, #018077);
+}
+
+.cas-vulnerability-severity.severity-none {
+    background: var(--cas-theme-success, #74C163);
+    color: #14351c;
+}
+
+.cas-vulnerability-severity.severity-unknown {
+    background: #65717d;
+}
+
+.cas-vulnerability-breakdown {
+    margin: 0 0 .85rem;
+    border: 1px solid #d8dee5;
+    border-radius: 8px;
+    background: #fff;
+    box-shadow: 0 5px 18px rgba(31, 53, 73, .08);
+}
+
+.cas-vulnerability-breakdown-title {
+    padding: .75rem 1rem;
+    border-bottom: 1px solid #d8dee5;
+    color: #26323d;
+    font-size: .95rem;
+    font-weight: 800;
+}
+
+.cas-vulnerability-breakdown-body {
+    display: grid;
+    gap: .65rem;
+    padding: 1rem;
+}
+
+.cas-vulnerability-breakdown-row {
+    display: grid;
+    grid-template-columns: 7rem minmax(0, 1fr) 2rem;
+    align-items: center;
+    gap: .75rem;
+}
+
+.cas-vulnerability-breakdown-label {
+    justify-self: start;
+    padding: .15rem .55rem;
+    border-radius: 999px;
+    font-size: .74rem;
+    font-weight: 900;
+    line-height: 1;
+    text-transform: uppercase;
+}
+
+.cas-vulnerability-breakdown-label.severity-critical {
+    background: #dc3545;
+    color: #fff;
+}
+
+.cas-vulnerability-breakdown-label.severity-high {
+    background: #ffc107;
+    color: #1f2933;
+}
+
+.cas-vulnerability-breakdown-label.severity-medium {
+    background: #35c2df;
+    color: #153e50;
+}
+
+.cas-vulnerability-breakdown-label.severity-low {
+    background: #65717d;
+    color: #fff;
+}
+
+.cas-vulnerability-breakdown-label.severity-unknown {
+    background: #fff;
+    color: #1f2933;
+}
+
+.cas-vulnerability-breakdown-track {
+    display: block;
+    height: .8rem;
+    overflow: hidden;
+    border-radius: 999px;
+    background: #e9ecef;
+}
+
+.cas-vulnerability-breakdown-bar {
+    display: block;
+    height: 100%;
+    border-radius: inherit;
+}
+
+.cas-vulnerability-breakdown-bar.severity-critical {
+    background: #dc3545;
+}
+
+.cas-vulnerability-breakdown-bar.severity-high {
+    background: #ffc107;
+}
+
+.cas-vulnerability-breakdown-bar.severity-medium {
+    background: #35c2df;
+}
+
+.cas-vulnerability-breakdown-bar.severity-low {
+    background: #65717d;
+}
+
+.cas-vulnerability-breakdown-bar.severity-unknown {
+    background: #dfe4ea;
+}
+
+.cas-vulnerability-breakdown-count {
+    color: #65717d;
+    font-size: .85rem;
+    font-weight: 800;
+    text-align: right;
+}
+
+.cas-vulnerabilities-summary {
+    display: flex;
+    flex-wrap: wrap;
+    gap: .5rem;
+    margin-bottom: .75rem;
+}
+
+.cas-vulnerability-summary-item {
+    display: inline-flex;
+    align-items: center;
+    gap: .35rem;
+    min-height: 1.75rem;
+    padding: .25rem .75rem;
+    border-radius: 6px;
+    background: #eef2f5;
+    color: #26323d;
+    font-size: .86rem;
 }

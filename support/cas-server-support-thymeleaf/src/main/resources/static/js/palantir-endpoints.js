@@ -235,6 +235,10 @@ class CasActuatorEndpoints {
         return this.endpoints().startup;
     }
 
+    static dependencies() {
+        return this.endpoints().dependencies;
+    }
+
     static all() {
         return Object.getOwnPropertyNames(CasActuatorEndpoints)
             .filter(name =>

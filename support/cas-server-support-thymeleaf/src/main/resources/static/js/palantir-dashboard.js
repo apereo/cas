@@ -134,6 +134,11 @@ function processNavigationTabs() {
     if (!CasActuatorEndpoints.startup()) {
         hideElements($("#casstartuptab").parent());
     }
+    if (!CasActuatorEndpoints.dependencies()) {
+        hideElements($("#system-info-tabs"));
+        hideElements($("#casdependenciestab").parent());
+        hideElements($("#casvulnerabilitiestab").parent());
+    }
     if (!CasActuatorEndpoints.metrics()) {
         hideElements($("#systemmetricstab").parent());
     }

@@ -648,6 +648,8 @@ ext.libraries = [
             exclude(group: "commons-beanutils", module: "commons-beanutils")
             exclude(group: "org.quartz-scheduler", module: "quartz")
             exclude(group: "log4j", module: "log4j")
+            exclude(group: "com.fasterxml.jackson.core", module: "jackson-annotations")
+            exclude(group: "com.fasterxml.jackson.core", module: "jackson-core")
         },
         cqengine                   : [
                 dependencies.create(libs.cqengine.get()) {

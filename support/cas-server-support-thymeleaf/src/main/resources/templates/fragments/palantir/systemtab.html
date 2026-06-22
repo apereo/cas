@@ -17,9 +17,9 @@
             <li><a id="systemmetricstab" href="#systemmetrics-tab">System Metrics</a></li>
             <li><a id="prometheusmetricstab" href="#prometheusmetrics-tab">Prometheus</a></li>
             <li><a id="casfeaturestab" href="#casfeaturestab-tab">Feature Catalog</a></li>
-            <li><a id="caswebflowtab" href="#caswebflowtab-tab">Authentication Flows</a></li>
-            <li><a id="casstartuptab" href="#casstartup-tab">Application Startup</a></li>
-          </ul>
+		            <li><a id="caswebflowtab" href="#caswebflowtab-tab">Authentication Flows</a></li>
+		            <li><a id="casstartuptab" href="#casstartup-tab">Application Startup</a></li>
+		          </ul>
 
 	          <div id="httprequestmappings-tab">
                   <div id="httpRequestMappingsContainer" class="http-request-mappings-panel">
@@ -29,11 +29,16 @@
                                      class="mdc-data-table__table table table-striped noborder http-request-mappings-table">
                                   <thead>
                                   <tr class="mdc-data-table__header-row">
-                                      <th class="mdc-data-table__header-cell" role="columnheader" scope="col">Methods</th>
-                                      <th class="mdc-data-table__header-cell" role="columnheader" scope="col">Patterns</th>
-                                      <th class="mdc-data-table__header-cell" role="columnheader" scope="col">Handler</th>
-                                      <th class="mdc-data-table__header-cell" role="columnheader" scope="col">Consumes</th>
-                                      <th class="mdc-data-table__header-cell" role="columnheader" scope="col">Produces</th>
+                                      <th class="mdc-data-table__header-cell" role="columnheader"
+                                          scope="col">Methods</th>
+                                      <th class="mdc-data-table__header-cell" role="columnheader"
+                                          scope="col">Patterns</th>
+                                      <th class="mdc-data-table__header-cell" role="columnheader"
+                                          scope="col">Handler</th>
+                                      <th class="mdc-data-table__header-cell" role="columnheader"
+                                          scope="col">Consumes</th>
+                                      <th class="mdc-data-table__header-cell" role="columnheader"
+                                          scope="col">Produces</th>
                                   </tr>
                                   </thead>
                                   <tbody class="mdc-data-table__content"></tbody>
@@ -59,14 +64,64 @@
                 </div>
                 
                 <div class="d-flex">
-                    <button type="button" name="shutdownServerButton" id="shutdownServerButton" class="mdc-button mdc-button--raised">
+                    <button type="button" name="shutdownServerButton" id="shutdownServerButton"
+                            class="mdc-button mdc-button--raised">
                         <span class="mdc-button__label"><i class="mdc-tab__icon mdi mdi-power" aria-hidden="true"></i>Shut Down</span>
                     </button>
-                    <button type="button" name="restartServerButton" id="restartServerButton" class="mdc-button mdc-button--raised">
-                        <span class="mdc-button__label"><i class="mdc-tab__icon mdi mdi-restart" aria-hidden="true"></i>Restart</span>
-                    </button>
-                </div>
-            </div>
+	                    <button type="button" name="restartServerButton" id="restartServerButton"
+	                            class="mdc-button mdc-button--raised">
+	                        <span class="mdc-button__label"><i class="mdc-tab__icon mdi mdi-restart" aria-hidden="true"></i>Restart</span>
+	                    </button>
+	                </div>
+
+	                <div class="jqueryui-tabs system-info-tabs mt-3" id="system-info-tabs">
+	                    <ul>
+	                        <li><a id="casdependenciestab" href="#casdependencies-tab">Dependencies</a></li>
+	                        <li><a id="casvulnerabilitiestab" href="#casvulnerabilities-tab">Vulnerabilities</a></li>
+	                    </ul>
+
+	                    <div id="casdependencies-tab">
+	                        <div class="cas-dependencies-table-wrap">
+	                            <table id="casDependenciesTable"
+	                                   class="mdc-data-table__table table table-striped noborder cas-dependencies-table">
+	                                <thead>
+	                                <tr class="mdc-data-table__header-row">
+	                                    <th class="mdc-data-table__header-cell" role="columnheader" scope="col">Group</th>
+	                                    <th class="mdc-data-table__header-cell" role="columnheader" scope="col">Artifact</th>
+	                                    <th class="mdc-data-table__header-cell" role="columnheader" scope="col">Version</th>
+	                                    <th class="mdc-data-table__header-cell" role="columnheader" scope="col">Source</th>
+	                                </tr>
+	                                </thead>
+	                                <tbody class="mdc-data-table__content"></tbody>
+	                            </table>
+	                        </div>
+	                    </div>
+
+	                    <div id="casvulnerabilities-tab">
+	                        <div id="casVulnerabilitiesSummary" class="cas-vulnerabilities-summary"></div>
+	                        <div id="casVulnerabilitiesSeverityBreakdown" class="cas-vulnerability-breakdown hide"></div>
+	                        <div class="cas-vulnerabilities-table-wrap">
+	                            <table id="casVulnerabilitiesTable"
+	                                   class="mdc-data-table__table table table-striped noborder cas-vulnerabilities-table">
+	                                <thead>
+	                                <tr class="mdc-data-table__header-row">
+	                                    <th class="mdc-data-table__header-cell" role="columnheader" scope="col">ID</th>
+	                                    <th class="mdc-data-table__header-cell cas-vulnerability-severity-column"
+	                                        role="columnheader" scope="col">Severity</th>
+	                                    <th class="mdc-data-table__header-cell" role="columnheader" scope="col">Group</th>
+	                                    <th class="mdc-data-table__header-cell" role="columnheader" scope="col">Artifact</th>
+	                                    <th class="mdc-data-table__header-cell" role="columnheader" scope="col">Version</th>
+	                                    <th class="mdc-data-table__header-cell" role="columnheader" scope="col">Source</th>
+	                                    <th class="mdc-data-table__header-cell" role="columnheader" scope="col">Modified</th>
+	                                </tr>
+	                                </thead>
+	                                <tbody class="mdc-data-table__content"></tbody>
+	                            </table>
+	                        </div>
+	                        <small id="casVulnerabilitiesStatus" class="cas-vulnerabilities-status text-muted"></small>
+	                    </div>
+	                </div>
+	            </div>
 
             <div id="systemstatus-tab">
                 <table id="systemTable" class="mdc-data-table__table table table-striped noborder">
@@ -96,25 +151,29 @@
                                 </h3>
                                 <p class="live-memory-subtitle">Inspect live JVM heap, non-heap, and memory pool usage.</p>
                             </div>
-                            <small id="systemLiveMemoryUpdated" class="live-memory-updated text-muted"></small>
-                        </div>
+	                        </div>
 
                         <div id="systemLiveMemorySummary" class="live-memory-summary"></div>
 
-                        <div id="systemLiveMemoryPoolsSection" class="pl-2 pr-2 live-memory-card live-memory-pools hide">
+                        <div id="systemLiveMemoryPoolsSection"
+                             class="pl-2 pr-2 live-memory-card live-memory-pools hide">
                             <div class="live-memory-card-title">
                                 <i class="mdi mdi-table" aria-hidden="true"></i>
                                 Memory Pools
                             </div>
                             <div class="table-responsive">
-                                <table id="systemLiveMemoryPoolsTable" class="mdc-data-table__table table table-striped noborder live-memory-table mb-0">
+                                <table id="systemLiveMemoryPoolsTable"
+                                       class="mdc-data-table__table table table-striped noborder live-memory-table mb-0">
                                     <thead>
                                     <tr class="mdc-data-table__header-row">
-                                        <th class="mdc-data-table__header-cell" role="columnheader" scope="col">Pool</th>
-                                        <th class="mdc-data-table__header-cell" role="columnheader" scope="col">Used</th>
+                                        <th class="mdc-data-table__header-cell" role="columnheader"
+                                            scope="col">Pool</th>
+                                        <th class="mdc-data-table__header-cell" role="columnheader"
+                                            scope="col">Used</th>
                                         <th class="mdc-data-table__header-cell" role="columnheader" scope="col">Committed</th>
                                         <th class="mdc-data-table__header-cell" role="columnheader" scope="col">Max</th>
-                                        <th class="mdc-data-table__header-cell" role="columnheader" scope="col">Usage</th>
+                                        <th class="mdc-data-table__header-cell" role="columnheader"
+                                            scope="col">Usage</th>
                                     </tr>
                                     </thead>
                                     <tbody class="mdc-data-table__content"></tbody>
@@ -191,7 +250,8 @@
                     </div>
                     <div class="elevation-surface mdc-elevation--z20">
                         <div class="text-center">
-                            <sub><i class="mdc-tab__icon mdi mdi-clock" aria-hidden="true"></i>Maximum Time</sub><strong>
+                            <sub><i class="mdc-tab__icon mdi mdi-clock"
+                                    aria-hidden="true"></i>Maximum Time</sub><strong>
                             <h1 class="pt-3 pr-2 pl-2"><code id="httpRequestsMaxTime">0</code></h1></strong>
                         </div>
                     </div>
@@ -223,7 +283,8 @@
                     </div>
                 </div>
                 <button id="downloadHeapDumpButton" class="mdc-button mdc-button--raised">
-                    <span class="mdc-button__label"><i class="mdc-tab__icon mdi mdi-download-circle" aria-hidden="true"></i>Heap Dump</span>
+                    <span class="mdc-button__label"><i class="mdc-tab__icon mdi mdi-download-circle"
+                                                       aria-hidden="true"></i>Heap Dump</span>
                 </button>
 
                 <div id="heapDumpAnalysisContainer" class="heap-dump-panel hide">
@@ -233,41 +294,44 @@
                             <div class="heap-dump-classes-toolbar">
                                 <span id="heapDumpClassesSummary" class="heap-dump-classes-summary"></span>
                                 <span id="heapDumpBigObjectsBadge" class="heap-dump-filter-badge big-objects hide">Big objects</span>
-                                <span id="heapDumpCollectionBloatBadge" class="heap-dump-filter-badge collection-bloat hide">Collection bloat</span>
-                                <input id="heapDumpClassFilter"
-                                       class="heap-dump-class-filter"
-                                       type="text"
-                                       placeholder="Filter by class prefix..."
-                                       autocomplete="off"/>
-                                <button id="refreshHeapDumpAnalysisButton"
-                                        type="button"
-                                        class="mdc-button mdc-button--raised">
-                                    <span class="mdc-button__label">
-                                        <i class="mdc-tab__icon mdi mdi-refresh" aria-hidden="true"></i>
-                                        Refresh
-                                    </span>
-                                </button>
-                            </div>
-                            <small id="heapDumpAnalysisStatus" class="heap-dump-analysis-status text-muted"></small>
-                        </div>
+                                <span id="heapDumpCollectionBloatBadge"
+                                      class="heap-dump-filter-badge collection-bloat hide">Collection bloat</span>
+	                            </div>
+	                            <small id="heapDumpAnalysisStatus" class="heap-dump-analysis-status text-muted"></small>
+	                        </div>
                         <div class="heap-dump-classes-table-wrap">
-                            <table id="heapDumpClassesTable" class="mdc-data-table__table table table-striped noborder heap-dump-classes-table">
+                            <table id="heapDumpClassesTable"
+                                   class="mdc-data-table__table table table-striped noborder heap-dump-classes-table">
                                 <thead>
                                 <tr class="mdc-data-table__header-row">
                                     <th class="mdc-data-table__header-cell" role="columnheader" scope="col">#</th>
                                     <th class="mdc-data-table__header-cell" role="columnheader" scope="col">Class</th>
-                                    <th class="mdc-data-table__header-cell" role="columnheader" scope="col">Instances</th>
-                                    <th class="mdc-data-table__header-cell" role="columnheader" scope="col">Retained</th>
-                                    <th class="mdc-data-table__header-cell" role="columnheader" scope="col">Avg Shallow</th>
-                                    <th class="mdc-data-table__header-cell" role="columnheader" scope="col">Avg Retained</th>
+                                    <th class="mdc-data-table__header-cell" role="columnheader"
+                                        scope="col">Instances</th>
+                                    <th class="mdc-data-table__header-cell" role="columnheader"
+                                        scope="col">Retained</th>
+                                    <th class="mdc-data-table__header-cell" role="columnheader"
+                                        scope="col">Avg Shallow</th>
+                                    <th class="mdc-data-table__header-cell" role="columnheader"
+                                        scope="col">Avg Retained</th>
                                     <th class="mdc-data-table__header-cell" role="columnheader" scope="col">Retained / Shallow</th>
                                 </tr>
                                 </thead>
-                                <tbody class="mdc-data-table__content"></tbody>
-                            </table>
-                        </div>
-                    </div>
-                </div>
+	                                <tbody class="mdc-data-table__content"></tbody>
+	                            </table>
+	                        </div>
+	                        <div class="heap-dump-actions">
+	                            <button id="refreshHeapDumpAnalysisButton"
+	                                    type="button"
+	                                    class="mdc-button mdc-button--raised">
+	                                <span class="mdc-button__label">
+	                                    <i class="mdc-tab__icon mdi mdi-refresh" aria-hidden="true"></i>
+	                                    Refresh
+	                                </span>
+	                            </button>
+	                        </div>
+	                    </div>
+	                </div>
 
                 <div id="httpExchangesContainer" class="http-exchanges-panel mt-3">
                     <div class="http-exchanges-header">
@@ -278,16 +342,16 @@
                     </div>
 
                     <div id="httpExchangesContent">
-                        <div class="http-exchanges-filters">
-                            <label for="httpExchangesMethodFilter">
-                                Method
-                                <select id="httpExchangesMethodFilter" class="jqueryui-selectmenu">
-                                    <option value="">All methods</option>
-                                </select>
-                            </label>
-                            <label for="httpExchangesStatusFilter">
-                                Status
-                                <select id="httpExchangesStatusFilter" class="jqueryui-selectmenu">
+	                        <div class="http-exchanges-filters">
+	                            <label for="httpExchangesMethodFilter">
+	                                <span class="http-exchanges-filter-label">Method:</span>
+	                                <select id="httpExchangesMethodFilter" class="jqueryui-selectmenu">
+	                                    <option value="">All methods</option>
+	                                </select>
+	                            </label>
+	                            <label for="httpExchangesStatusFilter">
+	                                <span class="http-exchanges-filter-label">Status:</span>
+	                                <select id="httpExchangesStatusFilter" class="jqueryui-selectmenu">
                                     <option value="">All statuses</option>
                                     <option value="1">1xx Informational</option>
                                     <option value="2">2xx Success</option>
@@ -307,7 +371,8 @@
                                     <th class="mdc-data-table__header-cell" role="columnheader" scope="col">Method</th>
                                     <th class="mdc-data-table__header-cell" role="columnheader" scope="col">Path</th>
                                     <th class="mdc-data-table__header-cell" role="columnheader" scope="col">Status</th>
-                                    <th class="mdc-data-table__header-cell" role="columnheader" scope="col">Duration</th>
+                                    <th class="mdc-data-table__header-cell" role="columnheader"
+                                        scope="col">Duration</th>
                                     <th class="mdc-data-table__header-cell" role="columnheader" scope="col"></th>
                                 </tr>
                                 </thead>
@@ -328,8 +393,10 @@
             </div>
 
             <div id="caswebflowtab-tab">
-                <label for="webflowFilter">Flow: </label><select id="webflowFilter" class="jqueryui-selectmenu"></select>
-                <label for="webflowStateFilter">State: </label><select id="webflowStateFilter" class="jqueryui-selectmenu"></select>
+                <label for="webflowFilter">Flow: </label><select id="webflowFilter"
+                                                                 class="jqueryui-selectmenu"></select>
+                <label for="webflowStateFilter">State: </label><select id="webflowStateFilter"
+                                                                       class="jqueryui-selectmenu"></select>
                 <br>
                 <div id="webflowContainer"></div>
                 
@@ -340,7 +407,7 @@
             </div>
 
 
-            <div id="casstartup-tab">
+	            <div id="casstartup-tab">
                 <div class="startup-toolbar d-flex justify-content-between align-items-start flex-wrap gap-3 mt-2 mb-3">
                     <div class="d-flex flex-wrap gap-2 align-items-center">
                         <div class="startup-search-wrap mr-8">
@@ -417,11 +484,12 @@
                     </div>
                 </div>
 
-                <div id="startupTimelineContainer" class="startup-timeline-container">
-                    <div id="startupTimelineList" class="startup-list"></div>
-                </div>
-            </div>
-        </div>
+	                <div id="startupTimelineContainer" class="startup-timeline-container">
+	                    <div id="startupTimelineList" class="startup-list"></div>
+	                </div>
+	            </div>
+
+	        </div>
     </div>
 </span>
 </body>

@@ -153,6 +153,354 @@ async function initializeSystemOperations() {
         }[s]));
     }
 
+    function normalizeDependency(dependency) {
+        const entry = dependency ?? {};
+        return {
+            groupId: entry.groupId ?? "",
+            artifactId: entry.artifactId ?? "",
+            version: entry.version ?? "",
+            source: entry.source ?? ""
+        };
+    }
+
+    function renderDependencyVersion(version) {
+        return `<span class="cas-dependency-version">${escapeHtml(version)}</span>`;
+    }
+
+    function renderVulnerabilityId(id) {
+        return `<span class="cas-vulnerability-id">${escapeHtml(id)}</span>`;
+    }
+
+    function roundUpCvssScore(value) {
+        return Math.ceil(value * 10) / 10;
+    }
+
+    function cvssSeverityLabel(score) {
+        if (!Number.isFinite(score)) {
+            return "Unknown";
+        }
+        if (score === 0) {
+            return "None";
+        }
+        if (score < 4) {
+            return "Low";
+        }
+        if (score < 7) {
+            return "Medium";
+        }
+        if (score < 9) {
+            return "High";
+        }
+        return "Critical";
+    }
+
+    function parseCvssVector(vector) {
+        return Object.fromEntries(String(vector ?? "")
+            .split("/")
+            .filter(part => part.includes(":"))
+            .map(part => {
+                const [key, value] = part.split(":");
+                return [key, value];
+            }));
+    }
+
+    function calculateCvssV3Score(vector) {
+        const metrics = parseCvssVector(vector);
+
+        const metricValues = {
+            AV: {N: 0.85, A: 0.62, L: 0.55, P: 0.2},
+            AC: {L: 0.77, H: 0.44},
+            UI: {N: 0.85, R: 0.62},
+            S: {U: "U", C: "C"},
+            C: {H: 0.56, L: 0.22, N: 0},
+            I: {H: 0.56, L: 0.22, N: 0},
+            A: {H: 0.56, L: 0.22, N: 0}
+        };
+        const scope = metricValues.S[metrics.S];
+        const privilegeRequired = {
+            U: {N: 0.85, L: 0.62, H: 0.27},
+            C: {N: 0.85, L: 0.68, H: 0.5}
+        }[scope]?.[metrics.PR];
+        const values = {
+            attackVector: metricValues.AV[metrics.AV],
+            attackComplexity: metricValues.AC[metrics.AC],
+            privilegeRequired,
+            userInteraction: metricValues.UI[metrics.UI],
+            confidentiality: metricValues.C[metrics.C],
+            integrity: metricValues.I[metrics.I],
+            availability: metricValues.A[metrics.A]
+        };
+        if (!scope || Object.values(values).some(value => !Number.isFinite(value))) {
+            return null;
+        }
+
+        const impactSubScore = 1 - ((1 - values.confidentiality) * (1 - values.integrity) * (1 - values.availability));
+        const impact = scope === "U"
+            ? 6.42 * impactSubScore
+            : 7.52 * (impactSubScore - 0.029) - 3.25 * Math.pow(impactSubScore - 0.02, 15);
+        const exploitability = 8.22 * values.attackVector * values.attackComplexity
+            * values.privilegeRequired * values.userInteraction;
+        if (impact <= 0) {
+            return 0;
+        }
+        const baseScore = scope === "U"
+            ? Math.min(impact + exploitability, 10)
+            : Math.min(1.08 * (impact + exploitability), 10);
+        return roundUpCvssScore(baseScore);
+    }
+
+    function calculateCvssV4Score(vector) {
+        const metrics = parseCvssVector(vector);
+        const metricValues = {
+            AV: {N: 0.85, A: 0.62, L: 0.55, P: 0.2},
+            AC: {L: 0.77, H: 0.44},
+            AT: {N: 1, P: 0.7},
+            PR: {N: 0.85, L: 0.62, H: 0.27},
+            UI: {N: 0.85, P: 0.62, A: 0.45},
+            VC: {H: 0.56, L: 0.22, N: 0},
+            VI: {H: 0.56, L: 0.22, N: 0},
+            VA: {H: 0.56, L: 0.22, N: 0},
+            SC: {H: 0.56, L: 0.22, N: 0},
+            SI: {S: 0.56, H: 0.56, L: 0.22, N: 0},
+            SA: {S: 0.56, H: 0.56, L: 0.22, N: 0}
+        };
+        const exploitabilityMetrics = {
+            attackVector: metricValues.AV[metrics.AV],
+            attackComplexity: metricValues.AC[metrics.AC],
+            attackRequirements: metricValues.AT[metrics.AT],
+            privilegeRequired: metricValues.PR[metrics.PR],
+            userInteraction: metricValues.UI[metrics.UI]
+        };
+        const impactMetrics = {
+            vulnerableConfidentiality: metricValues.VC[metrics.VC],
+            vulnerableIntegrity: metricValues.VI[metrics.VI],
+            vulnerableAvailability: metricValues.VA[metrics.VA],
+            subsequentConfidentiality: metricValues.SC[metrics.SC],
+            subsequentIntegrity: metricValues.SI[metrics.SI],
+            subsequentAvailability: metricValues.SA[metrics.SA]
+        };
+        if (Object.values(exploitabilityMetrics).some(value => !Number.isFinite(value))
+            || Object.values(impactMetrics).some(value => !Number.isFinite(value))) {
+            return null;
+        }
+
+        const vulnerableImpact = 1 - ((1 - impactMetrics.vulnerableConfidentiality)
+            * (1 - impactMetrics.vulnerableIntegrity)
+            * (1 - impactMetrics.vulnerableAvailability));
+        const subsequentImpact = 1 - ((1 - impactMetrics.subsequentConfidentiality)
+            * (1 - impactMetrics.subsequentIntegrity)
+            * (1 - impactMetrics.subsequentAvailability));
+        const impact = Math.max(vulnerableImpact, subsequentImpact);
+        if (impact <= 0) {
+            return 0;
+        }
+        const exploitability = 8.22 * exploitabilityMetrics.attackVector
+            * exploitabilityMetrics.attackComplexity
+            * exploitabilityMetrics.attackRequirements
+            * exploitabilityMetrics.privilegeRequired
+            * exploitabilityMetrics.userInteraction;
+        return roundUpCvssScore(Math.min((6.42 * impact) + exploitability, 10));
+    }
+
+    function calculateCvssScore(type, vector) {
+        if (String(type ?? "").toUpperCase() === "CVSS_V4" || String(vector ?? "").startsWith("CVSS:4.0/")) {
+            return calculateCvssV4Score(vector);
+        }
+        return calculateCvssV3Score(vector);
+    }
+
+    function normalizeVulnerabilitySeverity(severity) {
+        const entries = Array.isArray(severity) ? severity : [];
+        const entry = entries[0] ?? {};
+        const rawScore = entry.score ?? "";
+        const numericScore = Number(rawScore);
+        const score = Number.isFinite(numericScore)
+            ? numericScore
+            : calculateCvssScore(entry.type, rawScore);
+        const label = cvssSeverityLabel(score);
+        return {
+            type: entry.type ?? "",
+            score,
+            vector: rawScore,
+            label,
+            level: label.toLowerCase()
+        };
+    }
+
+    function renderVulnerabilitySeverity(severity) {
+        const label = severity?.label ?? "Unknown";
+        const score = Number.isFinite(severity?.score) ? severity.score.toFixed(1) : "";
+        const title = [severity?.type, severity?.vector].filter(Boolean).join(" ");
+        return `
+            <span class="cas-vulnerability-severity severity-${escapeHtml(severity?.level ?? "unknown")}"
+                  title="${escapeHtml(title)}">
+                ${escapeHtml(label)}${score ? ` ${escapeHtml(score)}` : ""}
+            </span>`;
+    }
+
+    function renderVulnerabilitySeverityBreakdown(vulnerabilities) {
+        const levels = ["critical", "high", "medium", "low", "unknown"];
+        const labels = {
+            critical: "Critical",
+            high: "High",
+            medium: "Medium",
+            low: "Low",
+            unknown: "Unknown"
+        };
+        const counts = Object.fromEntries(levels.map(level => [level, 0]));
+        vulnerabilities.forEach(vulnerability => {
+            const level = vulnerability.severity?.level;
+            counts[levels.includes(level) && level !== "none" ? level : "unknown"]++;
+        });
+        const maxCount = Math.max(...levels.map(level => counts[level]), 1);
+        const rows = levels.map(level => {
+            const count = counts[level];
+            const width = count > 0 ? Math.max(2, (count / maxCount) * 100) : 0;
+            return `
+                <div class="cas-vulnerability-breakdown-row">
+                    <span class="cas-vulnerability-breakdown-label severity-${level}">${labels[level]}</span>
+                    <span class="cas-vulnerability-breakdown-track">
+                        <span class="cas-vulnerability-breakdown-bar severity-${level}" style="width:${width}%"></span>
+                    </span>
+                    <span class="cas-vulnerability-breakdown-count">${count}</span>
+                </div>`;
+        }).join("");
+        $("#casVulnerabilitiesSeverityBreakdown").html(`
+            <div class="cas-vulnerability-breakdown-title">Severity breakdown</div>
+            <div class="cas-vulnerability-breakdown-body">${rows}</div>`);
+        showElements($("#casVulnerabilitiesSeverityBreakdown"));
+    }
+
+    function formatDependencyTimestamp(value) {
+        if (!value) {
+            return "";
+        }
+        const date = new Date(value);
+        return Number.isNaN(date.getTime()) ? String(value) : date.toLocaleString();
+    }
+
+    function dependenciesVulnerabilitiesEndpoint() {
+        const endpoint = CasActuatorEndpoints.dependencies();
+        return endpoint ? `${endpoint.replace(/\/$/, "")}/vulnerabilities` : undefined;
+    }
+
+    function setSystemJqueryTabAvailable(anchorSelector, panelSelector, available) {
+        const tabItem = $(anchorSelector).parent();
+        const panel = $(panelSelector);
+        const tabs = tabItem.closest(".jqueryui-tabs");
+        if (available) {
+            showElements(tabItem);
+            showElements(panel);
+            showElements(tabs);
+        } else {
+            const tabIndex = tabItem.index();
+            hideElements(tabItem);
+            hideElements(panel);
+            if (tabs.data("ui-tabs")) {
+                if (tabs.tabs("option", "active") === tabIndex) {
+                    tabs.tabs("option", "active", 0);
+                }
+                tabs.tabs("refresh");
+            }
+            if (tabs.find("> ul > li:not(.hide):not(.d-none)").length === 0) {
+                hideElements(tabs);
+            }
+        }
+    }
+
+    function hideDependenciesTab() {
+        setSystemJqueryTabAvailable("#casdependenciestab", "#casdependencies-tab", false);
+    }
+
+    function hideVulnerabilitiesTab() {
+        setSystemJqueryTabAvailable("#casvulnerabilitiestab", "#casvulnerabilities-tab", false);
+    }
+
+    async function refreshDependencies() {
+        if (dependenciesLoaded) {
+            return;
+        }
+        if (!CasActuatorEndpoints.dependencies()) {
+            hideDependenciesTab();
+            return;
+        }
+        return new Promise(resolve => {
+            $.get(CasActuatorEndpoints.dependencies(), response => {
+                setSystemJqueryTabAvailable("#casdependenciestab", "#casdependencies-tab", true);
+                const dependencies = Array.isArray(response) ? response : [];
+                casDependenciesTable.clear();
+                dependencies
+                    .map(normalizeDependency)
+                    .forEach(dependency => casDependenciesTable.row.add(dependency));
+                casDependenciesTable.draw();
+                casDependenciesTable.columns.adjust();
+                dependenciesLoaded = true;
+                resolve();
+            }).fail((xhr, status, error) => {
+                console.error("Error fetching dependency data:", error);
+                hideDependenciesTab();
+                resolve();
+            });
+        });
+    }
+
+    async function refreshVulnerabilities() {
+        if (vulnerabilitiesLoaded) {
+            return;
+        }
+        const endpoint = dependenciesVulnerabilitiesEndpoint();
+        if (!endpoint) {
+            hideVulnerabilitiesTab();
+            return;
+        }
+        Swal.fire({
+            title: "Checking vulnerabilities",
+            text: "Scanning dependencies and collecting vulnerability data...",
+            allowOutsideClick: false,
+            allowEscapeKey: false,
+            showConfirmButton: false,
+            didOpen: () => Swal.showLoading()
+        });
+        return new Promise(resolve => {
+            $.get(endpoint, response => {
+                setSystemJqueryTabAvailable("#casvulnerabilitiestab", "#casvulnerabilities-tab", true);
+                const vulnerabilities = Array.isArray(response.vulnerabilities) ? response.vulnerabilities : [];
+                casVulnerabilitiesTable.clear();
+                const vulnerabilityRows = [];
+                vulnerabilities.forEach(vulnerability => {
+                    const details = vulnerability.details ?? {};
+                    const row = {
+                        id: details.id ?? vulnerability.id ?? "",
+                        modified: details.modified ?? vulnerability.modified ?? "",
+                        severity: normalizeVulnerabilitySeverity(details.severity ?? vulnerability.severity),
+                        dependency: normalizeDependency(vulnerability.dependency)
+                    };
+                    vulnerabilityRows.push(row);
+                    casVulnerabilitiesTable.row.add(row);
+                });
+                casVulnerabilitiesTable.draw();
+                casVulnerabilitiesTable.columns.adjust();
+                renderVulnerabilitySeverityBreakdown(vulnerabilityRows);
+
+                $("#casVulnerabilitiesSummary").html(`
+                    <span class="cas-vulnerability-summary-item">
+                        <i class="mdi mdi-package-variant-closed" aria-hidden="true"></i>
+                        <strong>${escapeHtml(response.dependencyCount ?? 0)}</strong> dependencies
+                    </span>`);
+                const errors = Array.isArray(response.errors) ? response.errors : [];
+                $("#casVulnerabilitiesStatus").text(errors.length > 0 ? errors.join("; ") : "");
+                vulnerabilitiesLoaded = true;
+                Swal.close();
+                resolve();
+            }).fail((xhr, status, error) => {
+                console.error("Error fetching dependency vulnerability data:", error);
+                hideVulnerabilitiesTab();
+                Swal.close();
+                resolve();
+            });
+        });
+    }
+
     function formatMemoryBytes(value) {
         if (!Number.isFinite(value)) {
             return "N/A";
@@ -646,6 +994,8 @@ async function initializeSystemOperations() {
     let heapDumpAnalysisEntries = [];
     let httpExchangeEntries = [];
     let httpExchangesControlsInitialized = false;
+    let dependenciesLoaded = false;
+    let vulnerabilitiesLoaded = false;
 
     function toArray(value) {
         if (value === undefined || value === null || value === "" || typeof value === "function") {
@@ -871,10 +1221,7 @@ async function initializeSystemOperations() {
     }
 
     function renderHeapDumpClasses(entries) {
-        const filter = $("#heapDumpClassFilter").val()?.toLowerCase() ?? "";
-        const filtered = entries
-            .filter(entry => !filter || entry.className.toLowerCase().startsWith(filter))
-            .slice(0, 50);
+        const filtered = entries.slice(0, 50);
         const maxRetained = Math.max(...filtered.map(entry => entry.retained), 0);
 
         heapDumpClassesTable.clear();
@@ -893,10 +1240,6 @@ async function initializeSystemOperations() {
         });
         heapDumpClassesTable.draw();
         heapDumpClassesTable.columns.adjust();
-
-        if (filtered.length === 0 && entries.length > 0) {
-            $("#heapDumpAnalysisStatus").text("No classes match the current filter.");
-        }
     }
 
     async function fetchHeapDumpFile() {
@@ -1005,7 +1348,6 @@ async function initializeSystemOperations() {
             response.collectionBloat === true
                 ? showElements($("#heapDumpCollectionBloatBadge"))
                 : hideElements($("#heapDumpCollectionBloatBadge"));
-            $("#heapDumpClassFilter").off("input").on("input", () => renderHeapDumpClasses(heapDumpAnalysisEntries));
             renderHeapDumpClasses(heapDumpAnalysisEntries);
             $("#heapDumpAnalysisStatus").text(`Updated ${new Date().toLocaleTimeString()}`);
             showElements($("#heapDumpAnalysisContainer"));
@@ -1138,7 +1480,6 @@ async function initializeSystemOperations() {
         }
 
         $("#systemLiveMemorySummary").html(summaryCards.join(""));
-        $("#systemLiveMemoryUpdated").text(`Updated ${new Date().toLocaleTimeString()}`);
         showElements($("#systemLiveMemoryContainer"));
         if (pools.length > 0) {
             showElements($("#systemLiveMemoryPoolsSection"));
@@ -1454,6 +1795,95 @@ async function initializeSystemOperations() {
         }
     });
 
+    const casDependenciesTable = $("#casDependenciesTable").DataTable({
+        pageLength: 10,
+        autoWidth: false,
+        order: [[1, "asc"]],
+        columns: [
+            {
+                data: "groupId",
+                width: "28%",
+                render: (data, type) => type === "display" ? `<code>${escapeHtml(data)}</code>` : data
+            },
+            {
+                data: "artifactId",
+                width: "26%",
+                render: (data, type) => type === "display" ? `<code>${escapeHtml(data)}</code>` : data
+            },
+            {
+                data: "version",
+                width: "12%",
+                render: (data, type) => type === "display" ? renderDependencyVersion(data) : data
+            },
+            {
+                data: "source",
+                width: "34%",
+                render: (data, type) => type === "display" ? `<code>${escapeHtml(data)}</code>` : data
+            }
+        ],
+        initComplete: () => applyMdcDataTableControls("#casDependenciesTable"),
+        drawCallback: settings => {
+            $("#casDependenciesTable tr").addClass("mdc-data-table__row");
+            $("#casDependenciesTable td").addClass("mdc-data-table__cell");
+            applyMdcDataTableControls("#casDependenciesTable");
+        }
+    });
+
+    const casVulnerabilitiesTable = $("#casVulnerabilitiesTable").DataTable({
+        pageLength: 10,
+        autoWidth: false,
+        order: [[6, "desc"]],
+        columns: [
+            {
+                data: "id",
+                width: "14%",
+                render: (data, type) => type === "display" ? renderVulnerabilityId(data) : data
+            },
+            {
+                data: "severity",
+                width: "12%",
+                className: "text-start cas-vulnerability-severity-column",
+                render: (data, type) => {
+                    if (type === "display") {
+                        return renderVulnerabilitySeverity(data);
+                    }
+                    return Number.isFinite(data?.score) ? data.score : data?.label ?? "";
+                }
+            },
+            {
+                data: "dependency.groupId",
+                width: "15%",
+                render: (data, type) => type === "display" ? `<code>${escapeHtml(data)}</code>` : data
+            },
+            {
+                data: "dependency.artifactId",
+                width: "15%",
+                render: (data, type) => type === "display" ? `<code>${escapeHtml(data)}</code>` : data
+            },
+            {
+                data: "dependency.version",
+                width: "10%",
+                render: (data, type) => type === "display" ? renderDependencyVersion(data) : data
+            },
+            {
+                data: "dependency.source",
+                width: "22%",
+                render: (data, type) => type === "display" ? `<code>${escapeHtml(data)}</code>` : data
+            },
+            {
+                data: "modified",
+                width: "12%",
+                render: (data, type) => type === "display" ? escapeHtml(formatDependencyTimestamp(data)) : data
+            }
+        ],
+        initComplete: () => applyMdcDataTableControls("#casVulnerabilitiesTable"),
+        drawCallback: settings => {
+            $("#casVulnerabilitiesTable tr").addClass("mdc-data-table__row");
+            $("#casVulnerabilitiesTable td").addClass("mdc-data-table__cell");
+            applyMdcDataTableControls("#casVulnerabilitiesTable");
+        }
+    });
+
     let tabs = new mdc.tabBar.MDCTabBar(document.querySelector("#dashboardTabBar"));
 
     async function configureStartupTimeline() {
@@ -1684,6 +2114,15 @@ async function initializeSystemOperations() {
         }
     });
 
+    $("#system-info-tabs").on("tabsactivate", function (event, ui) {
+        if (ui.newPanel.attr("id") === "casdependencies-tab") {
+            refreshDependencies();
+        }
+        if (ui.newPanel.attr("id") === "casvulnerabilities-tab") {
+            refreshVulnerabilities();
+        }
+    });
+
     const storedTabs = localStorage.getItem("ActiveTabs");
     if (storedTabs) {
         try {
@@ -1692,7 +2131,20 @@ async function initializeSystemOperations() {
             if (activeTabs["system-tabs"] === startupTabIndex) {
                 await configureStartupTimeline();
             }
+            const systemInfoTabIndex = activeTabs["system-info-tabs"];
+            const dependenciesTabIndex = $("#system-info-tabs ul li a[href='#casdependencies-tab']").parent().index();
+            if (systemInfoTabIndex === dependenciesTabIndex) {
+                await refreshDependencies();
+            }
+            const vulnerabilitiesTabIndex = $("#system-info-tabs ul li a[href='#casvulnerabilities-tab']").parent().index();
+            if (systemInfoTabIndex === vulnerabilitiesTabIndex) {
+                await refreshVulnerabilities();
+            }
         } catch (e) { /* ignore */ }
+    }
+
+    if ($("#system-info-tabs").data("ui-tabs") && $("#system-info-tabs").tabs("option", "active") === 0) {
+        await refreshDependencies();
     }
 
     setInterval(() => {
