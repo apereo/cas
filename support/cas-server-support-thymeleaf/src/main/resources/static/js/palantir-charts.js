@@ -24,7 +24,7 @@ function cloneChartValue(value) {
         if (typeof entry === "function") {
             return undefined;
         }
-        if (entry && typeof entry === "object") {
+        if (entry && typeof entry === "object" && !Array.isArray(entry)) {
             if (seen.has(entry)) {
                 return undefined;
             }

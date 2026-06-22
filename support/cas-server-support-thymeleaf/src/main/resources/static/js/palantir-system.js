@@ -91,8 +91,8 @@ async function initializeSystemOperations() {
                 });
                 systemHealthChart.data.labels = payload.labels;
                 systemHealthChart.data.datasets[0].data = payload.data;
-                systemHealthChart.data.datasets[0].backgroundColor = payload.colors;
-                systemHealthChart.data.datasets[0].borderColor = payload.colors;
+                systemHealthChart.data.datasets[0].backgroundColor = [...payload.colors];
+                systemHealthChart.data.datasets[0].borderColor = [...payload.colors];
                 systemHealthChart.options.plugins.legend.labels.generateLabels = (chart => {
                     const originalLabels = Chart.defaults.plugins.legend.labels.generateLabels(chart);
                     originalLabels.forEach(label => {
@@ -700,15 +700,38 @@ async function initializeSystemOperations() {
         try {
             const referrerUrl = new URL(referrer, window.location.origin);
             return getApplicationHostNames().has(referrerUrl.hostname.toLowerCase())
-                && referrerUrl.pathname.endsWith("/dashboard");
+                && /\/dashboard\/?$/i.test(referrerUrl.pathname);
         } catch (e) {
             return String(referrer).includes("/dashboard");
         }
     }
 
+    function httpExchangeOriginatedFromPalantir(entry) {
+        return httpExchangeOriginatedFromApplication(entry) || httpExchangeOriginatedFromDashboard(entry);
+    }
+
+    function httpExchangeIsPalantirOrWebjarsPath(path) {
+        return [...getHttpExchangePathVariants(path)].some(candidate => {
+            const value = candidate.toLowerCase();
+            return value === "/webjars"
+                || value.startsWith("/webjars/")
+                || value.includes("palantir");
+        });
+    }
+
+    function httpExchangeIsPalantirGeneratedRequest(entry) {
+        return httpExchangeIsPalantirOrWebjarsPath(entry.path)
+            && httpExchangeOriginatedFromPalantir(entry);
+    }
+
     function httpExchangeShouldBeDisplayed(entry) {
-        return !httpExchangeIsActuatorPath(entry.path)
-            || (!httpExchangeOriginatedFromApplication(entry) && !httpExchangeOriginatedFromDashboard(entry));
+        return !httpExchangeIsPalantirGeneratedRequest(entry)
+            && (!httpExchangeIsActuatorPath(entry.path)
+            || (!httpExchangeOriginatedFromApplication(entry) && !httpExchangeOriginatedFromDashboard(entry)));
+    }
+
+    function stripHttpExchangeQuery(path) {
+        return String(path ?? "").replaceAll(/\?.+/gi, "");
     }
 
     function getHttpExchangeTraceId(exchange) {
@@ -760,17 +783,20 @@ async function initializeSystemOperations() {
         };
     }
 
-    function httpExchangeUrlIsAcceptable(path) {
-        return !path.startsWith("/actuator")
-            && !path.startsWith("/webjars")
-            && !path.endsWith(".js")
-            && !path.endsWith(".ico")
-            && !path.endsWith(".png")
-            && !path.endsWith(".jpg")
-            && !path.endsWith(".jpeg")
-            && !path.endsWith(".gif")
-            && !path.endsWith(".svg")
-            && !path.endsWith(".css");
+    function httpExchangeIsStaticAssetPath(path) {
+        const value = path.toLowerCase();
+        return [".js", ".ico", ".png", ".jpg", ".jpeg", ".gif", ".svg", ".css"]
+            .some(extension => value.endsWith(extension));
+    }
+
+    function httpExchangeUrlIsAcceptable(entry) {
+        const path = stripHttpExchangeQuery(entry.path);
+        const normalizedEntry = {...entry, path};
+        if (httpExchangeIsPalantirOrWebjarsPath(path)) {
+            return !httpExchangeIsPalantirGeneratedRequest(normalizedEntry);
+        }
+        return !httpExchangeIsActuatorPath(path)
+            && !httpExchangeIsStaticAssetPath(path);
     }
 
     function updateHttpExchangeCharts(entries) {
@@ -785,8 +811,8 @@ async function initializeSystemOperations() {
         let totalHttpFailure = 0;
 
         for (const entry of entries) {
-            const url = entry.path.replaceAll(/\?.+/gi, "");
-            if (httpExchangeUrlIsAcceptable(url)) {
+            const url = stripHttpExchangeQuery(entry.path);
+            if (httpExchangeUrlIsAcceptable(entry)) {
                 if (entry.status >= 100 && entry.status <= 400) {
                     totalHttpSuccess++;
                     httpSuccesses.push({x: entry.timestamp ? formatDateYearMonthDayHourMinute(entry.timestamp) : entry.time, y: totalHttpSuccess});
