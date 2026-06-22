@@ -97,7 +97,8 @@ public abstract class BaseOAuth20AuthorizationRequestValidator implements OAuth2
         if (accessResult.isExecutionFailure()) {
             LOGGER.warn("Registered service [{}] is not found or is not authorized for access.",
                 ObjectUtils.getIfNull(registeredService, clientId));
-            setErrorDetails(context, OAuth20Constants.INVALID_REQUEST, StringUtils.EMPTY, false);
+            setErrorDetails(context, OAuth20Constants.INVALID_REQUEST,
+                String.format("Service [%s] is not found or is not authorized for access", clientId), false);
             return null;
         }
         return registeredService;
@@ -149,7 +150,8 @@ public abstract class BaseOAuth20AuthorizationRequestValidator implements OAuth2
         if (!OAuth20Utils.checkCallbackValid(registeredService, redirectUri)) {
             LOGGER.warn("Redirect URI [{}] found in the request is not authorized for registered service [{}].",
                 redirectUri, registeredService.getServiceId());
-            setErrorDetails(context, OAuth20Constants.INVALID_REQUEST, StringUtils.EMPTY, false);
+            setErrorDetails(context, OAuth20Constants.INVALID_REQUEST,
+                String.format("Redirect URI [%s] found in the request, or is not authorized for this service", redirectUri), false);
             return false;
         }
         return true;
