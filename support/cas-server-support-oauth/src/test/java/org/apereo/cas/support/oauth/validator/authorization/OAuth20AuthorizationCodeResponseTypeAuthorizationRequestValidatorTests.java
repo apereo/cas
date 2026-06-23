@@ -71,24 +71,52 @@ class OAuth20AuthorizationCodeResponseTypeAuthorizationRequestValidatorTests ext
         request.removeAttribute(OAuth20Constants.ERROR);
         request.setParameter(OAuth20Constants.GRANT_TYPE, OAuth20GrantTypes.AUTHORIZATION_CODE.getType());
         assertFalse(validator.supports(context));
+        assertTrue(context.getRequestAttribute(OAuth20Constants.ERROR_DESCRIPTION).isPresent());
+        assertEquals("Missing required parameter: [" + OAuth20Constants.CLIENT_ID + "]",
+                     context.getRequestAttribute(OAuth20Constants.ERROR_DESCRIPTION).get());
+
+        request.removeAttribute(OAuth20Constants.ERROR);
+        request.setParameter(OAuth20Constants.CLIENT_ID, "invalid-client-id");
+        assertFalse(validator.supports(context));
+        assertEquals(OAuth20Constants.INVALID_REQUEST, context.getRequestAttribute(OAuth20Constants.ERROR).get().toString());
+        assertTrue(context.getRequestAttribute(OAuth20Constants.ERROR_DESCRIPTION).isPresent());
+        assertEquals("Service [invalid-client-id] is not found or is not authorized for access",
+                     context.getRequestAttribute(OAuth20Constants.ERROR_DESCRIPTION).get());
 
         request.removeAttribute(OAuth20Constants.ERROR);
         request.setParameter(OAuth20Constants.CLIENT_ID, service.getClientId());
         assertFalse(validator.supports(context));
         assertTrue(context.getRequestAttribute(OAuth20Constants.ERROR).isPresent());
         assertEquals(OAuth20Constants.INVALID_REQUEST, context.getRequestAttribute(OAuth20Constants.ERROR).get().toString());
+        assertTrue(context.getRequestAttribute(OAuth20Constants.ERROR_DESCRIPTION).isPresent());
+        assertEquals("Missing required parameter: [" + OAuth20Constants.REDIRECT_URI + "]",
+                     context.getRequestAttribute(OAuth20Constants.ERROR_DESCRIPTION).get());
+
+        request.removeAttribute(OAuth20Constants.ERROR);
+        request.setParameter(OAuth20Constants.REDIRECT_URI, "invalid.uri");
+        assertFalse(validator.supports(context));
+        assertEquals(OAuth20Constants.INVALID_REQUEST, context.getRequestAttribute(OAuth20Constants.ERROR).get().toString());
+        assertTrue(context.getRequestAttribute(OAuth20Constants.ERROR_DESCRIPTION).isPresent());
+        assertEquals("Redirect URI [invalid.uri] found in the request is not authorized for this service",
+                     context.getRequestAttribute(OAuth20Constants.ERROR_DESCRIPTION).get());
 
         request.removeAttribute(OAuth20Constants.ERROR);
         request.setParameter(OAuth20Constants.REDIRECT_URI, "https://oauth.example.org");
         assertFalse(validator.supports(context));
         assertTrue(context.getRequestAttribute(OAuth20Constants.ERROR).isPresent());
         assertEquals(OAuth20Constants.UNSUPPORTED_RESPONSE_TYPE, context.getRequestAttribute(OAuth20Constants.ERROR).get().toString());
+        assertTrue(context.getRequestAttribute(OAuth20Constants.ERROR_DESCRIPTION).isPresent());
+        assertEquals("Missing required parameter: [" + OAuth20Constants.RESPONSE_TYPE + "]",
+                     context.getRequestAttribute(OAuth20Constants.ERROR_DESCRIPTION).get());
 
         request.removeAttribute(OAuth20Constants.ERROR);
         request.setParameter(OAuth20Constants.RESPONSE_TYPE, "unknown");
         assertFalse(validator.supports(context));
         assertTrue(context.getRequestAttribute(OAuth20Constants.ERROR).isPresent());
         assertEquals(OAuth20Constants.UNSUPPORTED_RESPONSE_TYPE, context.getRequestAttribute(OAuth20Constants.ERROR).get().toString());
+        assertTrue(context.getRequestAttribute(OAuth20Constants.ERROR_DESCRIPTION).isPresent());
+        assertEquals("Unsupported response_type: [unknown]",
+                     context.getRequestAttribute(OAuth20Constants.ERROR_DESCRIPTION).get());
 
         request.removeAttribute(OAuth20Constants.ERROR);
         request.setParameter(OAuth20Constants.RESPONSE_TYPE, OAuth20ResponseTypes.CODE.getType());
