@@ -138,6 +138,17 @@
     font: var(--mdc-typography-font-family) !important;
     font-size: 11pt !important;
     box-shadow: 0 0 7px black;
+    box-sizing: border-box;
+    max-width: min(42rem, calc(100vw - 2rem));
+    overflow-wrap: anywhere;
+    white-space: normal;
+}
+
+.ui-tooltip .ui-tooltip-content {
+    max-width: 100%;
+    overflow-wrap: anywhere;
+    white-space: normal;
+    word-break: break-word;
 }
 
 .ui-tabs-active {

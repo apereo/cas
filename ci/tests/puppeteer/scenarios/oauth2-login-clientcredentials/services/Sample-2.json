@@ -1,11 +1,11 @@
 {
   "@class" : "org.apereo.cas.support.oauth.services.OAuthRegisteredService",
-  "clientId": "client",
+  "clientId": "client2",
   "clientSecret": "secret",
-  "serviceId" : "https://apereo.github.io.*",
+  "serviceId" : "^https://example.org.*",
   "bypassApprovalPrompt": true,
   "name" : "Sample",
-  "id" : 1,
+  "id" : 2,
   "attributeReleasePolicy": {
     "@class": "org.apereo.cas.services.ChainingAttributeReleasePolicy",
     "policies": [ "java.util.ArrayList",
