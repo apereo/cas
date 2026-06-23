@@ -1,0 +1,16 @@
+{
+  "@class" : "org.apereo.cas.services.OidcRegisteredService",
+  "clientId": "client",
+  "clientSecret": "secret",
+  "serviceId" : "^https://localhost:8081/cas/.*",
+  "name": "Sample1",
+  "id": 1,
+  "jwtAccessToken": "true",
+  "attributeReleasePolicy": {
+    "@class": "org.apereo.cas.services.ReturnStaticAttributeReleasePolicy",
+    "allowedAttributes": {
+      "@class": "java.util.LinkedHashMap",
+      "staticattribute": [ "java.util.ArrayList", [ "xxxx" ] ]
+    }
+  }
+}
