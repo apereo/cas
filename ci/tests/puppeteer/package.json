@@ -4,7 +4,7 @@
   "dependencies": {
     "@stomp/stompjs": "7.3.0",
     "archiver": "8.0.0",
-    "axios": "1.18.0",
+    "axios": "1.18.1",
     "basic-auth": "2.0.1",
     "colors": "1.4.0",
     "crypto-js": "4.2.0",
@@ -27,7 +27,7 @@
     "properties-reader": "3.0.1",
     "ps-node": "0.1.6",
     "puppeteer-har": "1.1.2",
-    "puppeteer": "25.1.0",
+    "puppeteer": "25.2.0",
     "puppeteer-loadtest": "2.2.1",
     "request": "2.88.2",
     "@napi-rs/canvas": "1.0.0",
