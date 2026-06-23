@@ -4,7 +4,7 @@
   "dependencies": {
     "@stomp/stompjs": "7.3.0",
     "archiver": "8.0.0",
-    "axios": "1.18.0",
+    "axios": "1.18.1",
     "basic-auth": "2.0.1",
     "colors": "1.4.0",
     "crypto-js": "4.2.0",
