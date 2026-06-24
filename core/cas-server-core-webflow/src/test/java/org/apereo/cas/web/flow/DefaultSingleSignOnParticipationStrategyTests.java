@@ -115,6 +115,24 @@ class DefaultSingleSignOnParticipationStrategyTests {
     }
 
     @Test
+    void verifyParticipationForRevocationAttribute() throws Throwable {
+        val mgr = mock(ServicesManager.class);
+        val context = MockRequestContext.create(applicationContext);
+        val authentication = CoreAuthenticationTestUtils.getAuthentication("casuser",
+            Map.of("timestamp", List.of(Instant.now(Clock.systemUTC()).minusSeconds(60).getEpochSecond())));
+        WebUtils.putAuthentication(authentication, context);
+        val tgt = new MockTicketGrantingTicket(authentication);
+        val ticketRegistrySupport = mock(TicketRegistrySupport.class);
+        when(ticketRegistrySupport.getTicket(anyString())).thenReturn(tgt);
+        
+        val sso = new SingleSignOnProperties().setRevocationAttributeName("timestamp");
+        val strategy = new DefaultSingleSignOnParticipationStrategy(mgr, sso,
+            ticketRegistrySupport, mock(AuthenticationServiceSelectionPlan.class));
+        val ssoRequest = getSingleSignOnParticipationRequest(context);
+        assertFalse(strategy.isParticipating(ssoRequest));
+    }
+
+    @Test
     void verifyParticipateForServiceTgtExpirationPolicyWithoutTgt() throws Throwable {
         val mgr = mock(ServicesManager.class);
         val registeredService = RegisteredServiceTestUtils.getRegisteredService();
