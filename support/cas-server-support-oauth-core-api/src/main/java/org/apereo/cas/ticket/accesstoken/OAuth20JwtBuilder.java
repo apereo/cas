@@ -63,21 +63,20 @@ public class OAuth20JwtBuilder extends JwtBuilder {
 
     @Override
     protected Map<String, List<Object>> collectClaims(final JwtRequest payload) throws Throwable {
-        val principal = resolveEffectivePrincipal(payload);
+        val currentClaims = super.collectClaims(payload);
         if (payload.getRegisteredService().isPresent()) {
             val registeredService = payload.getRegisteredService().get();
-            if (registeredService.getClass().equals(OAuthRegisteredService.class)) {
-                val context = RegisteredServiceAttributeReleasePolicyContext
-                    .builder()
-                    .principal(principal)
-                    .service(payload.getService().orElse(null))
-                    .registeredService(registeredService)
-                    .applicationContext(getApplicationContext())
-                    .build();
-                return registeredService.getAttributeReleasePolicy().getAttributes(context);
-            }
+            val principal = resolveEffectivePrincipal(payload);
+            val context = RegisteredServiceAttributeReleasePolicyContext
+                .builder()
+                .principal(principal)
+                .service(payload.getService().orElse(null))
+                .registeredService(registeredService)
+                .applicationContext(getApplicationContext())
+                .build();
+            currentClaims.putAll(registeredService.getAttributeReleasePolicy().getAttributes(context));
         }
-        return super.collectClaims(payload);
+        return currentClaims;
     }
 
     private @Nullable Principal resolveEffectivePrincipal(final JwtRequest payload) throws Throwable {
