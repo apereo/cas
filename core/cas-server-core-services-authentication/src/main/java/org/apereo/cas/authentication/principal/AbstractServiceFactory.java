@@ -41,7 +41,8 @@ public abstract class AbstractServiceFactory<T extends Service> implements Servi
         CasProtocolConstants.PARAMETER_SERVICE,
         CasProtocolConstants.PARAMETER_TARGET_SERVICE,
         CasProtocolConstants.PARAMETER_TICKET,
-        CasProtocolConstants.PARAMETER_FORMAT);
+        CasProtocolConstants.PARAMETER_FORMAT,
+        "execution");
 
     private final TenantExtractor tenantExtractor;
     private final UrlValidator urlValidator;
