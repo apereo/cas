@@ -6,6 +6,7 @@ import org.apereo.cas.tracing.LocalTraceDetail;
 import org.apereo.cas.tracing.LocalTraceStore;
 import org.apereo.cas.tracing.LocalTraceSummary;
 import org.apereo.cas.web.BaseCasActuatorEndpoint;
+import io.swagger.v3.oas.annotations.Operation;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.boot.actuate.endpoint.Access;
 import org.springframework.boot.actuate.endpoint.annotation.Endpoint;
@@ -34,6 +35,9 @@ public class HttpTracesEndpoint extends BaseCasActuatorEndpoint {
      * @return the list
      */
     @ReadOperation
+    @Operation(summary = "Get a list of local trace summaries",
+            description = "This endpoint returns a list of local trace summaries. "
+                + "Each summary provides basic information about a trace, such as its ID, timestamp, and duration.")
     public List<LocalTraceSummary> summaries() {
         return store.getObject().summaries();
     }
@@ -45,6 +49,9 @@ public class HttpTracesEndpoint extends BaseCasActuatorEndpoint {
      * @return local trace detail
      */
     @ReadOperation
+    @Operation(summary = "Get detailed information about a specific trace",
+            description = "This endpoint returns detailed information about a specific trace identified by its trace ID. "
+                + "The details include the trace's spans, events, and other relevant data.")
     public LocalTraceDetail details(@Selector final String traceId) {
         return store.getObject().find(traceId).orElseThrow();
     }

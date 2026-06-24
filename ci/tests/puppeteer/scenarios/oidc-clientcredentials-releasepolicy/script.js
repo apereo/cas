@@ -24,6 +24,7 @@ const cas = require("../../cas.js");
 
         assert(decoded.sub === "casuser");
         assert(decoded["staticattribute"] === "xxxx");
+        assert(decoded["gender"] === "Female");
     }, (error) => {
         throw `Operation failed: ${error}`;
     });

@@ -3,7 +3,7 @@
   "clientId": "client2",
   "clientSecret": "secret2",
   "serviceId" : "^https://localhost:8082/cas/.*",
-  "name": "Sample2",
+  "name": "Sample",
   "id": 2,
   "jwtAccessToken": "true",
   "attributeReleasePolicy" : {

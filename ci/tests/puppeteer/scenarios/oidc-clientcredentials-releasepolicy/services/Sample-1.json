@@ -3,14 +3,24 @@
   "clientId": "client",
   "clientSecret": "secret",
   "serviceId" : "^https://localhost:8081/cas/.*",
-  "name": "Sample1",
+  "name": "Sample",
   "id": 1,
   "jwtAccessToken": "true",
   "attributeReleasePolicy": {
-    "@class": "org.apereo.cas.services.ReturnStaticAttributeReleasePolicy",
-    "allowedAttributes": {
-      "@class": "java.util.LinkedHashMap",
-      "staticattribute": [ "java.util.ArrayList", [ "xxxx" ] ]
-    }
+    "@class": "org.apereo.cas.services.ChainingAttributeReleasePolicy",
+    "policies": [ "java.util.ArrayList",
+      [
+        {
+          "@class" : "org.apereo.cas.services.ReturnAllAttributeReleasePolicy"
+        },
+        {
+          "@class": "org.apereo.cas.services.ReturnStaticAttributeReleasePolicy",
+          "allowedAttributes": {
+            "@class": "java.util.LinkedHashMap",
+            "staticattribute": [ "java.util.ArrayList", [ "xxxx" ] ]
+          }
+        }
+      ]
+    ]
   }
 }
