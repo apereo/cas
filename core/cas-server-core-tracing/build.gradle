@@ -1,29 +1,14 @@
 apply plugin: "org.apereo.cas.project-conventions"
 
-description = "Reports CAS distributed traces to OpenTelemetry for request observability."
-ext {
-    publishMetadata = true
-    projectMetadata = [
-            category: "Tracing",
-            title: "Apereo CAS OpenTelemetry Tracing",
-            aliases: ["tracingotel"]
-    ]
-}
+description = "Provides core tracing functionality for request observability."
 dependencies {
     api project(":api:cas-server-core-api-web")
     api project(":api:cas-server-core-api-util")
 
     implementation project(":core:cas-server-core-authentication-api")
     implementation project(":core:cas-server-core-configuration-api")
-    implementation project(":core:cas-server-core-tracing")
     implementation project(":core:cas-server-core-util-api")
     implementation project(":core:cas-server-core-web-api")
-    
-    implementation project(":support:cas-server-support-metrics")
-
-    implementation libraries.metrics
-    implementation libraries.tracingotel
-    implementation libraries.opentelemetry
 
     testImplementation project(path: ":core:cas-server-core-authentication", configuration: "tests")
     testImplementation project(path: ":core:cas-server-core-authentication-api", configuration: "tests")

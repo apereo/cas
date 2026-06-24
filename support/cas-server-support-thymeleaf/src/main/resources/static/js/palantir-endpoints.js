@@ -87,6 +87,10 @@ class CasActuatorEndpoints {
         return this.endpoints().httpexchanges || this.endpoints().httpExchanges;
     }
 
+    static httpTraces() {
+        return this.endpoints().httptraces || this.endpoints().httpTraces;
+    }
+
     static mappings() {
         return this.endpoints().mappings;
     }

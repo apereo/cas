@@ -24,6 +24,7 @@ import org.apereo.cas.ticket.proxy.ProxyHandler;
 import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.ticket.registry.TicketRegistryCleaner;
 import org.apereo.cas.ticket.registry.TicketRegistrySupport;
+import org.apereo.cas.tracing.LocalTraceStore;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.crypto.CipherExecutor;
 import org.apereo.cas.util.feature.CasRuntimeModuleLoader;
@@ -43,6 +44,7 @@ import org.apereo.cas.web.report.CasResolveAttributesReportEndpoint;
 import org.apereo.cas.web.report.CasRuntimeModulesEndpoint;
 import org.apereo.cas.web.report.DependenciesEndpoint;
 import org.apereo.cas.web.report.HeapDumpAnalysisEndpoint;
+import org.apereo.cas.web.report.HttpTracesEndpoint;
 import org.apereo.cas.web.report.MultifactorAuthenticationDevicesEndpoint;
 import org.apereo.cas.web.report.RegisteredAuthenticationHandlersEndpoint;
 import org.apereo.cas.web.report.RegisteredAuthenticationPoliciesEndpoint;
@@ -67,6 +69,7 @@ import org.springframework.boot.actuate.web.exchanges.HttpExchangeRepository;
 import org.springframework.boot.actuate.web.exchanges.HttpExchangesEndpoint;
 import org.springframework.boot.actuate.web.exchanges.InMemoryHttpExchangeRepository;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
@@ -412,6 +415,21 @@ public class CasReportsAutoConfiguration {
             final ConfigurableApplicationContext applicationContext,
             final CasConfigurationProperties casProperties) {
             return new MultifactorAuthenticationDevicesEndpoint(casProperties, applicationContext);
+        }
+    }
+
+    @Configuration(value = "HttpTracesEndpointsConfiguration", proxyBeanMethods = false)
+    @EnableConfigurationProperties(CasConfigurationProperties.class)
+    @ConditionalOnClass(LocalTraceStore.class)
+    static class HttpTracesEndpointsConfiguration {
+        @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+        @ConditionalOnAvailableEndpoint
+        public HttpTracesEndpoint tracesEndpoint(
+            @Qualifier(LocalTraceStore.BEAN_NAME)
+            final ObjectProvider<LocalTraceStore> localTraceStore,
+            final CasConfigurationProperties casProperties) {
+            return new HttpTracesEndpoint(casProperties, localTraceStore);
         }
     }
 }

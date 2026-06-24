@@ -1034,6 +1034,290 @@ select + span[role="combobox"] {
     color: #65717d;
 }
 
+.http-traces-panel {
+    text-align: left;
+}
+
+.http-traces-info-panel {
+    display: flex;
+    align-items: flex-start;
+    gap: .65rem;
+    margin-bottom: 1rem;
+    padding: .85rem 1rem;
+    border: 1px solid #b8d7f4;
+    border-left: 4px solid #0d6efd;
+    border-radius: 8px;
+    background: #f3f8ff;
+    color: #244766;
+    font-weight: 600;
+}
+
+.http-traces-info-panel .mdi {
+    margin-top: .1rem;
+    color: #0d6efd;
+    font-size: 1.25rem;
+}
+
+.http-traces-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    margin-bottom: 1rem;
+}
+
+.http-traces-title {
+    display: flex;
+    align-items: center;
+    gap: .45rem;
+    margin: 0;
+    font-size: 1.45rem;
+    font-weight: 800;
+}
+
+.http-traces-refresh-button {
+    white-space: nowrap;
+}
+
+.http-traces-status {
+    display: inline-block;
+    margin-top: .5rem;
+    color: #65717d;
+}
+
+.http-traces-table-wrap {
+    overflow-x: auto;
+    padding-right: 1rem;
+    padding-left: 1rem;
+    border: 1px solid #d8dee5;
+    border-radius: 8px;
+    background: #fff;
+    box-shadow: 0 5px 18px rgba(31, 53, 73, .08);
+}
+
+.http-traces-table {
+    width: 100%;
+    table-layout: fixed;
+    margin-bottom: 0 !important;
+}
+
+.http-traces-table th,
+.http-traces-table td {
+    vertical-align: middle;
+    overflow-wrap: anywhere;
+    white-space: normal;
+    word-break: break-word;
+}
+
+.http-trace-id,
+.http-trace-url,
+.http-trace-route {
+    color: #d63384;
+}
+
+.http-trace-root-span {
+    font-weight: 800;
+}
+
+.http-trace-service {
+    display: inline-flex;
+    align-items: center;
+    margin: .12rem .18rem .12rem 0;
+    padding: .18rem .55rem;
+    border-radius: 999px;
+    background: #607d8b;
+    color: #fff;
+    font-size: .82rem;
+    font-weight: 800;
+    line-height: 1;
+}
+
+.http-trace-status,
+.http-trace-error {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 3.2rem;
+    min-height: 1.55rem;
+    padding: .12rem .55rem;
+    border-radius: 999px;
+    color: #fff;
+    font-size: .82rem;
+    font-weight: 800;
+    line-height: 1;
+    text-transform: capitalize;
+}
+
+.http-trace-status.status-success,
+.http-trace-error-no {
+    background: #168a55;
+}
+
+.http-trace-status.status-informational {
+    background: #607d8b;
+}
+
+.http-trace-status.status-redirect {
+    background: #24b9d7;
+}
+
+.http-trace-status.status-client-error {
+    background: #f2b705;
+    color: #111820;
+}
+
+.http-trace-status.status-server-error,
+.http-trace-error-yes {
+    background: #c62828;
+}
+
+.http-trace-row-error > td {
+    background: #fff5f5 !important;
+}
+
+.http-trace-details-button {
+    width: 2.6rem;
+    min-width: 2.6rem;
+    height: 2.25rem;
+    padding: 0;
+}
+
+.http-trace-details-button .mdc-button__label {
+    display: inline-flex;
+    align-items: center;
+}
+
+.http-trace-dialog {
+    display: grid;
+    gap: 1.25rem;
+}
+
+.http-trace-dialog-summary {
+    display: grid;
+    grid-template-columns: minmax(16rem, 2fr) repeat(3, minmax(8rem, 1fr));
+    gap: .85rem;
+}
+
+.http-trace-dialog-summary > div {
+    padding: .75rem .85rem;
+    border: 1px solid #d8dee5;
+    border-radius: 8px;
+    background: #f8fbfd;
+}
+
+.http-trace-dialog-label {
+    display: block;
+    margin-bottom: .35rem;
+    color: #65717d;
+    font-size: .78rem;
+    font-weight: 800;
+    text-transform: uppercase;
+}
+
+.http-trace-dialog-services {
+    display: flex;
+    flex-wrap: wrap;
+    gap: .25rem;
+}
+
+.http-trace-timeline {
+    display: grid;
+    gap: .8rem;
+    padding: 1rem;
+    border: 1px solid #d8dee5;
+    border-radius: 8px;
+    background: #f8fbfd;
+}
+
+.http-trace-span-row {
+    display: grid;
+    grid-template-columns: minmax(12rem, 18rem) minmax(14rem, 1fr) minmax(5rem, 7rem);
+    gap: 1rem;
+    align-items: center;
+}
+
+.http-trace-span-summary {
+    display: grid;
+    gap: .15rem;
+    min-width: 0;
+}
+
+.http-trace-span-service,
+.http-trace-span-kind,
+.http-trace-empty {
+    color: #65717d;
+}
+
+.http-trace-span-name {
+    font-weight: 800;
+    overflow-wrap: anywhere;
+    word-break: break-word;
+}
+
+.http-trace-span-track {
+    position: relative;
+    height: 1.15rem;
+    min-width: 0;
+    overflow: hidden;
+    border-radius: 999px;
+    background: #e7ebef;
+}
+
+.http-trace-span-bar {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    border-radius: 999px;
+    background: #0d6efd;
+}
+
+.http-trace-span-error .http-trace-span-bar {
+    background: #c62828;
+}
+
+.http-trace-span-duration {
+    color: #334155;
+    font-weight: 800;
+    text-align: right;
+}
+
+.http-trace-spans-table-wrap {
+    overflow-x: auto;
+    border: 1px solid #d8dee5;
+    border-radius: 8px;
+    background: #fff;
+}
+
+.http-trace-spans-table {
+    width: 100%;
+    margin-bottom: 0 !important;
+}
+
+.http-trace-spans-table th,
+.http-trace-spans-table td {
+    vertical-align: middle;
+    overflow-wrap: anywhere;
+    white-space: normal;
+    word-break: break-word;
+}
+
+.http-trace-attributes-row > td {
+    background: #f8fbfd;
+}
+
+.http-trace-attribute-row {
+    display: grid;
+    grid-template-columns: minmax(10rem, 18rem) minmax(0, 1fr);
+    gap: .75rem;
+    padding: .3rem 0;
+}
+
+.http-trace-attribute-row code {
+    color: #d63384;
+    white-space: normal;
+    overflow-wrap: anywhere;
+}
+
 @media (max-width: 900px) {
     .http-exchange-headers {
         display: block;
@@ -1055,6 +1339,26 @@ select + span[role="combobox"] {
     .http-exchange-metadata,
     .http-exchange-header-row {
         grid-template-columns: 1fr;
+    }
+
+    .http-traces-header {
+        align-items: flex-start;
+        flex-direction: column;
+    }
+
+    .http-traces-table-wrap {
+        padding-right: .5rem;
+        padding-left: .5rem;
+    }
+
+    .http-trace-dialog-summary,
+    .http-trace-span-row,
+    .http-trace-attribute-row {
+        grid-template-columns: 1fr;
+    }
+
+    .http-trace-span-duration {
+        text-align: left;
     }
 }
 

@@ -76,6 +76,11 @@ async function initializeSystemOperations() {
         });
     }
 
+    async function configureHttpTraces() {
+        configureHttpTraceControls();
+        await refreshHttpTraces();
+    }
+
     async function configureHealthChart() {
         function updateHealthChart(response) {
             if (response.components !== undefined) {
@@ -578,6 +583,23 @@ async function initializeSystemOperations() {
         return `${(millis / 1000).toFixed(2)} s`;
     }
 
+    function formatNanosDuration(value) {
+        const nanos = Number(value);
+        if (!Number.isFinite(nanos)) {
+            return "N/A";
+        }
+        if (nanos < 1_000) {
+            return `${Math.round(nanos)} ns`;
+        }
+        if (nanos < 1_000_000) {
+            return `${(nanos / 1_000).toFixed(1)} us`;
+        }
+        if (nanos < 1_000_000_000) {
+            return `${(nanos / 1_000_000).toFixed(1)} ms`;
+        }
+        return `${(nanos / 1_000_000_000).toFixed(2)} s`;
+    }
+
     function parseHttpExchangeDuration(value) {
         if (typeof value === "number") {
             return value;
@@ -1005,6 +1027,308 @@ async function initializeSystemOperations() {
             </div>`;
     }
 
+    function getHttpTraceStatus(summary) {
+        return summary.status
+            ?? summary.httpStatus
+            ?? summary.statusCode
+            ?? summary.responseStatus
+            ?? summary.httpResponseStatusCode
+            ?? null;
+    }
+
+    function httpTraceStatusClass(value, error) {
+        const status = Number(value);
+        if (error || status >= 500) {
+            return "server-error";
+        }
+        if (status >= 400) {
+            return "client-error";
+        }
+        if (status >= 300) {
+            return "redirect";
+        }
+        if (status >= 200) {
+            return "success";
+        }
+        if (status >= 100) {
+            return "informational";
+        }
+        return error ? "server-error" : "success";
+    }
+
+    function renderHttpTraceStatus(value, error) {
+        const status = Number(value);
+        const statusClass = httpTraceStatusClass(value, error);
+        const label = Number.isFinite(status) && status > 0 ? status : error ? "ERROR" : "OK";
+        return `<span class="http-trace-status status-${statusClass}">${escapeHtml(label)}</span>`;
+    }
+
+    function renderHttpTraceError(error) {
+        return error
+            ? `<span class="http-trace-error http-trace-error-yes">YES</span>`
+            : `<span class="http-trace-error http-trace-error-no">NO</span>`;
+    }
+
+    function renderHttpTraceServices(services) {
+        const values = toArray(services).filter(service => service);
+        if (values.length === 0) {
+            return `<span class="text-muted">N/A</span>`;
+        }
+        return values
+            .map(service => `<span class="http-trace-service">${escapeHtml(service)}</span>`)
+            .join("");
+    }
+
+    function normalizeHttpTraceSummary(summary, index) {
+        const startedAt = new Date(summary.startedAt);
+        const status = getHttpTraceStatus(summary);
+        const error = summary.error === true || Number(status) >= 400;
+        return {
+            id: `http-trace-${index}`,
+            raw: summary,
+            traceId: summary.traceId ?? "",
+            startedAt: Number.isNaN(startedAt.getTime()) ? null : startedAt,
+            startedAtMs: Number.isNaN(startedAt.getTime()) ? 0 : startedAt.getTime(),
+            startedAtLabel: Number.isNaN(startedAt.getTime()) ? "N/A" : startedAt.toLocaleString(),
+            rootSpan: summary.rootSpan ?? "",
+            method: summary.method ?? "",
+            url: summary.url ?? "",
+            route: summary.route ?? "",
+            services: toArray(summary.services),
+            spanCount: Number(summary.spanCount ?? 0),
+            durationNanos: Number(summary.durationNanos ?? 0),
+            status,
+            error
+        };
+    }
+
+    function setHttpTracesUnavailable() {
+        hideElements($("#httpTracesContent"));
+        hideElements($("#httptracestab").parent());
+        if ($("#system-tabs").data("ui-tabs")) {
+            $("#system-tabs").tabs("refresh");
+        }
+    }
+
+    function setHttpTracesAvailable() {
+        showElements($("#httpTracesContent"));
+        showElements($("#httptracestab").parent());
+        if ($("#system-tabs").data("ui-tabs")) {
+            $("#system-tabs").tabs("refresh");
+        }
+    }
+
+    function renderHttpTraces() {
+        httpTracesTable.clear();
+        httpTraceEntries.forEach(entry => httpTracesTable.row.add(entry));
+        httpTracesTable.draw();
+        httpTracesTable.columns.adjust();
+    }
+
+    async function refreshHttpTraces() {
+        if (!CasActuatorEndpoints.httpTraces()) {
+            setHttpTracesUnavailable();
+            return;
+        }
+        return new Promise(resolve => {
+            $.get(CasActuatorEndpoints.httpTraces(), response => {
+                setHttpTracesAvailable();
+                httpTraceEntries = (Array.isArray(response) ? response : response.traces ?? response.summaries ?? [])
+                    .map(normalizeHttpTraceSummary)
+                    .sort((a, b) => b.startedAtMs - a.startedAtMs);
+                renderHttpTraces();
+                resolve();
+            }).fail((xhr, status, error) => {
+                console.error("Error fetching HTTP traces data:", error);
+                if (xhr.status === 404 || xhr.status === 405) {
+                    setHttpTracesUnavailable();
+                } else {
+                    displayBanner(xhr);
+                }
+                resolve();
+            });
+        });
+    }
+
+    function httpTraceDetailsUrl(traceId) {
+        const endpoint = CasActuatorEndpoints.httpTraces();
+        return `${endpoint.replace(/\/$/, "")}/${encodeURIComponent(traceId)}`;
+    }
+
+    function normalizeHttpTraceSpan(span, traceStart) {
+        const startEpochNanos = Number(span.startEpochNanos ?? 0);
+        const durationNanos = Number(span.durationNanos ?? 0);
+        const attributes = span.attributes ?? {};
+        const status = span.status
+            ?? attributes["http.response.status_code"]
+            ?? attributes["http.status_code"]
+            ?? attributes["http.response.status"];
+        return {
+            ...span,
+            name: span.name ?? "",
+            serviceName: span.serviceName ?? "",
+            kind: span.kind ?? "",
+            parentSpanId: span.parentSpanId ?? "",
+            startEpochNanos,
+            relativeStartNanos: Math.max(0, startEpochNanos - traceStart),
+            durationNanos,
+            attributes,
+            status,
+            error: span.error === true || Number(status) >= 400
+        };
+    }
+
+    function renderHttpTraceAttributes(attributes) {
+        const entries = Object.entries(attributes ?? {});
+        if (entries.length === 0) {
+            return `<div class="http-trace-empty">No attributes recorded.</div>`;
+        }
+        return entries
+            .sort(([first], [second]) => first.localeCompare(second))
+            .map(([name, value]) => `
+                <div class="http-trace-attribute-row">
+                    <strong>${escapeHtml(name)}</strong>
+                    <code>${escapeHtml(value)}</code>
+                </div>`)
+            .join("");
+    }
+
+    function renderHttpTraceTimeline(spans, durationNanos) {
+        if (spans.length === 0) {
+            return `<div class="http-trace-empty">No spans recorded.</div>`;
+        }
+        const totalDuration = Math.max(Number(durationNanos), ...spans.map(span => span.relativeStartNanos + span.durationNanos), 1);
+        return spans.map((span, index) => {
+            const left = Math.min(100, Math.max(0, (span.relativeStartNanos / totalDuration) * 100));
+            const width = Math.max(.5, Math.min(100 - left, (span.durationNanos / totalDuration) * 100));
+            return `
+                <div class="http-trace-span-row ${span.error ? "http-trace-span-error" : ""}">
+                    <div class="http-trace-span-summary">
+                        <span class="http-trace-span-service">${escapeHtml(span.serviceName || "N/A")}</span>
+                        <span class="http-trace-span-name">${escapeHtml(span.name || `Span ${index + 1}`)}</span>
+                        <span class="http-trace-span-kind">${escapeHtml(span.kind || "INTERNAL")}</span>
+                    </div>
+                    <div class="http-trace-span-track" aria-label="${escapeHtml(span.name)} duration">
+                        <span class="http-trace-span-bar" style="left:${left}%;width:${width}%"></span>
+                    </div>
+                    <div class="http-trace-span-duration">${escapeHtml(formatNanosDuration(span.durationNanos))}</div>
+                </div>`;
+        }).join("");
+    }
+
+    function renderHttpTraceSpanTable(spans) {
+        if (spans.length === 0) {
+            return `<div class="http-trace-empty">No spans recorded.</div>`;
+        }
+        return `
+            <div class="http-trace-spans-table-wrap">
+                <table class="mdc-data-table__table table table-striped noborder http-trace-spans-table">
+                    <thead>
+                    <tr class="mdc-data-table__header-row">
+                        <th class="mdc-data-table__header-cell" role="columnheader" scope="col">Trace ID</th>
+                        <th class="mdc-data-table__header-cell" role="columnheader" scope="col">Span ID</th>
+                        <th class="mdc-data-table__header-cell" role="columnheader" scope="col">Parent</th>
+                        <th class="mdc-data-table__header-cell" role="columnheader" scope="col">Name</th>
+                        <th class="mdc-data-table__header-cell" role="columnheader" scope="col">Service</th>
+                        <th class="mdc-data-table__header-cell" role="columnheader" scope="col">Kind</th>
+                        <th class="mdc-data-table__header-cell" role="columnheader" scope="col">Start Epoch</th>
+                        <th class="mdc-data-table__header-cell" role="columnheader" scope="col">Start</th>
+                        <th class="mdc-data-table__header-cell" role="columnheader" scope="col">Duration</th>
+                        <th class="mdc-data-table__header-cell" role="columnheader" scope="col">Status</th>
+                        <th class="mdc-data-table__header-cell" role="columnheader" scope="col">Error</th>
+                    </tr>
+                    </thead>
+                    <tbody class="mdc-data-table__content">
+                    ${spans.map(span => `
+                        <tr class="mdc-data-table__row ${span.error ? "http-trace-row-error" : ""}">
+                            <td class="mdc-data-table__cell"><code>${escapeHtml(span.traceId ?? "")}</code></td>
+                            <td class="mdc-data-table__cell"><code>${escapeHtml(span.spanId ?? "")}</code></td>
+                            <td class="mdc-data-table__cell"><code>${escapeHtml(span.parentSpanId || "")}</code></td>
+                            <td class="mdc-data-table__cell">${escapeHtml(span.name)}</td>
+                            <td class="mdc-data-table__cell">${escapeHtml(span.serviceName)}</td>
+                            <td class="mdc-data-table__cell">${escapeHtml(span.kind)}</td>
+                            <td class="mdc-data-table__cell"><code>${escapeHtml(span.startEpochNanos)}</code></td>
+                            <td class="mdc-data-table__cell">${escapeHtml(formatNanosDuration(span.relativeStartNanos))}</td>
+                            <td class="mdc-data-table__cell">${escapeHtml(formatNanosDuration(span.durationNanos))}</td>
+                            <td class="mdc-data-table__cell">${renderHttpTraceStatus(span.status, span.error)}</td>
+                            <td class="mdc-data-table__cell">${renderHttpTraceError(span.error)}</td>
+                        </tr>
+                        <tr class="mdc-data-table__row http-trace-attributes-row">
+                            <td class="mdc-data-table__cell" colspan="11">
+                                ${renderHttpTraceAttributes(span.attributes)}
+                            </td>
+                        </tr>`).join("")}
+                    </tbody>
+                </table>
+            </div>`;
+    }
+
+    function renderHttpTraceDialogContent(detail) {
+        const rawSpans = detail.spans ?? [];
+        const traceStart = Math.min(...rawSpans.map(entry => Number(entry.startEpochNanos ?? 0)));
+        const spans = rawSpans
+            .map(span => normalizeHttpTraceSpan(span, Number.isFinite(traceStart) ? traceStart : 0))
+            .sort((a, b) => a.startEpochNanos - b.startEpochNanos);
+        const services = [...new Set(spans.map(span => span.serviceName).filter(service => service))];
+        const traceError = spans.some(span => span.error);
+        const durationNanos = Number(detail.durationNanos ?? 0);
+        return `
+            <div class="http-trace-dialog">
+                <div class="http-trace-dialog-summary">
+                    <div>
+                        <span class="http-trace-dialog-label">Trace ID</span>
+                        <code>${escapeHtml(detail.traceId ?? "")}</code>
+                    </div>
+                    <div>
+                        <span class="http-trace-dialog-label">Spans</span>
+                        <strong>${escapeHtml(spans.length)}</strong>
+                    </div>
+                    <div>
+                        <span class="http-trace-dialog-label">Duration</span>
+                        <strong>${escapeHtml(formatNanosDuration(durationNanos))}</strong>
+                    </div>
+                    <div>
+                        <span class="http-trace-dialog-label">Status</span>
+                        ${renderHttpTraceStatus(null, traceError)}
+                    </div>
+                </div>
+                <div class="http-trace-dialog-services">
+                    ${renderHttpTraceServices(services)}
+                </div>
+                <div class="http-trace-timeline">
+                    ${renderHttpTraceTimeline(spans, durationNanos)}
+                </div>
+                ${renderHttpTraceSpanTable(spans)}
+            </div>`;
+    }
+
+    async function openHttpTraceDialog(traceId) {
+        $("#httpTraceDialog-title").text(`HTTP Trace ${traceId}`);
+        $("#httpTraceDialog-content").html(`<div class="http-trace-empty">Loading trace details...</div>`);
+        const dialog = mdc.dialog.MDCDialog.attachTo(document.getElementById("httpTraceDialog"));
+        dialog.open();
+        $.get(httpTraceDetailsUrl(traceId), response => {
+            $("#httpTraceDialog-content").html(renderHttpTraceDialogContent(response));
+        }).fail((xhr, status, error) => {
+            console.error("Error fetching HTTP trace details:", error);
+            $("#httpTraceDialog-content").html(`<div class="http-trace-empty">Unable to load trace details.</div>`);
+            displayBanner(xhr);
+        });
+    }
+
+    function configureHttpTraceControls() {
+        if (httpTracesControlsInitialized) {
+            return;
+        }
+        httpTracesControlsInitialized = true;
+        $("#refreshHttpTracesButton").off("click").on("click", () => refreshHttpTraces());
+        $("#httpTracesTable tbody")
+            .off("click", "button.http-trace-details-button")
+            .on("click", "button.http-trace-details-button", function () {
+                openHttpTraceDialog($(this).data("traceId"));
+            });
+    }
+
     async function getMemoryPoolNames() {
         return new Promise(resolve => {
             $.get(memoryMetricUrl("jvm.memory.used"), response => {
@@ -1019,7 +1343,9 @@ async function initializeSystemOperations() {
 
     let heapDumpAnalysisEntries = [];
     let httpExchangeEntries = [];
+    let httpTraceEntries = [];
     let httpExchangesControlsInitialized = false;
+    let httpTracesControlsInitialized = false;
     let dependenciesLoaded = false;
     let vulnerabilitiesLoaded = false;
 
@@ -1612,6 +1938,7 @@ async function initializeSystemOperations() {
         await configureLiveMemory();
         await configureHeapDumpAnalysis();
         await refreshHttpRequestMappings();
+        await configureHttpTraces();
         configureHttpRequestResponses().then(configureAuditEventsChart());
     }
 
@@ -1820,6 +2147,109 @@ async function initializeSystemOperations() {
             $("#httpExchangesTable td").addClass("mdc-data-table__cell");
         }
     });
+
+    const httpTracesTable = $("#httpTracesTable").DataTable({
+        pageLength: 10,
+        autoWidth: false,
+        order: [[0, "desc"]],
+        columns: [
+            {
+                data: "startedAtMs",
+                width: "12rem",
+                render: (data, type, row) => type === "display" ? escapeHtml(row.startedAtLabel) : data
+            },
+            {
+                data: "traceId",
+                width: "18rem",
+                render: (data, type) => type === "display"
+                    ? `<code class="http-trace-id">${escapeHtml(data)}</code>`
+                    : data
+            },
+            {
+                data: "rootSpan",
+                width: "18rem",
+                render: (data, type) => type === "display"
+                    ? `<span class="http-trace-root-span">${escapeHtml(data || "N/A")}</span>`
+                    : data
+            },
+            {
+                data: "method",
+                width: "6.5rem",
+                render: (data, type) => type === "display"
+                    ? (data ? `<span class="http-exchange-method method-${escapeHtml(String(data).toLowerCase())}">${escapeHtml(data)}</span>` : "")
+                    : data
+            },
+            {
+                data: "url",
+                width: "24rem",
+                render: (data, type) => type === "display"
+                    ? `<code class="http-trace-url">${escapeHtml(data || "N/A")}</code>`
+                    : data
+            },
+            {
+                data: "services",
+                width: "18rem",
+                render: (data, type) => type === "display" ? renderHttpTraceServices(data) : toArray(data).join(" ")
+            },
+            {
+                data: "spanCount",
+                width: "5rem",
+                className: "text-end"
+            },
+            {
+                data: "durationNanos",
+                width: "8rem",
+                className: "text-end",
+                render: (data, type) => type === "display" ? escapeHtml(formatNanosDuration(data)) : data
+            },
+            {
+                data: "status",
+                width: "6.5rem",
+                render: (data, type, row) => type === "display" ? renderHttpTraceStatus(data, row.error) : data
+            },
+            {
+                data: "error",
+                width: "5rem",
+                render: (data, type) => type === "display" ? renderHttpTraceError(data) : data
+            },
+            {
+                data: null,
+                orderable: false,
+                searchable: false,
+                width: "4rem",
+                render: (data, type, row) => {
+                    if (type !== "display") {
+                        return "";
+                    }
+                    return `
+                        <button type="button"
+                                class="mdc-button mdc-button--raised http-trace-details-button"
+                                data-trace-id="${escapeHtml(row.traceId)}"
+                                aria-label="Open trace details">
+                            <span class="mdc-button__ripple"></span>
+                            <span class="mdc-button__label">
+                                <i class="mdc-tab__icon mdi mdi-open-in-new" aria-hidden="true"></i>
+                            </span>
+                        </button>`;
+                }
+            }
+        ],
+        createdRow: (row, data) => {
+            if (data.error) {
+                $(row).addClass("http-trace-row-error");
+            }
+        },
+        initComplete: () => applyMdcDataTableControls("#httpTracesTable"),
+        drawCallback: settings => {
+            $("#httpTracesTable tr").addClass("mdc-data-table__row");
+            $("#httpTracesTable td").addClass("mdc-data-table__cell");
+            applyMdcDataTableControls("#httpTracesTable");
+        }
+    });
+
+    if (!CasActuatorEndpoints.httpTraces()) {
+        setHttpTracesUnavailable();
+    }
 
     const casDependenciesTable = $("#casDependenciesTable").DataTable({
         pageLength: 10,
@@ -2138,6 +2568,9 @@ async function initializeSystemOperations() {
         if (ui.newPanel.attr("id") === "casstartup-tab") {
             configureStartupTimeline();
         }
+        if (ui.newPanel.attr("id") === "httptraces-tab") {
+            configureHttpTraces();
+        }
     });
 
     $("#system-info-tabs").on("tabsactivate", function (event, ui) {
@@ -2156,6 +2589,10 @@ async function initializeSystemOperations() {
             const startupTabIndex = $("#system-tabs ul li a[href='#casstartup-tab']").parent().index();
             if (activeTabs["system-tabs"] === startupTabIndex) {
                 await configureStartupTimeline();
+            }
+            const httpTracesTabIndex = $("#system-tabs ul li a[href='#httptraces-tab']").parent().index();
+            if (activeTabs["system-tabs"] === httpTracesTabIndex) {
+                await configureHttpTraces();
             }
             const systemInfoTabIndex = activeTabs["system-info-tabs"];
             const dependenciesTabIndex = $("#system-info-tabs ul li a[href='#casdependencies-tab']").parent().index();
