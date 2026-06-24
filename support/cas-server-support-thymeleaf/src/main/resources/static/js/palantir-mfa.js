@@ -1,8 +1,33 @@
+function mfaProviderPropertiesMutable() {
+    return PalantirDashboardConfiguration.mutablePropertySourcesAvailable() && CasActuatorEndpoints.casConfig();
+}
+
+function escapeMfaHtml(str) {
+    return String(str ?? "").replace(/[&<>"']/g, s => ({
+        "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;"
+    }[s]));
+}
+
+function switchToConfigurationDynamicSourcesTab() {
+    activateDashboardTab(Tabs.CONFIGURATION.index);
+    selectSidebarMenuTab(Tabs.CONFIGURATION.index);
+}
+
+function overrideMfaProviderPropertyValue(button) {
+    if (mfaProviderPropertiesMutable()) {
+        const propertyName = $(button).data("key");
+        const propertyValue = $(button).data("value");
+        switchToConfigurationDynamicSourcesTab();
+        overrideConfigPropertyValue(propertyName, propertyValue);
+    }
+}
+
 async function populateMultifactorProviderTables() {
     if (CasActuatorEndpoints.discoveryProfile()) {
         CasDiscoveryProfile.fetchIfNeeded()
             .done(async () => {
                 showElements($("#mfaProvidersTab").parent());
+                const mutableProperties = mfaProviderPropertiesMutable();
 
                 for (const [key, value] of Object.entries(CasDiscoveryProfile.multifactorAuthenticationProviders())) {
                     let icon = "mdi-two-factor-authentication";
@@ -13,7 +38,7 @@ async function populateMultifactorProviderTables() {
                     }
 
                     $("#mfaProvidersGridPanel").append(`
-                        <div class="min-height-90">
+                        <div class="min-height-90 mb-4">
                             <div class="mdc-card p-4 m-auto mmw-65 gradient-card">
                                 <h3>
                                     <i class="p-1 mdc-tab__icon mdi ${icon}" style="vertical-align:baseline;" aria-hidden="true"></i>
@@ -27,6 +52,7 @@ async function populateMultifactorProviderTables() {
                                     <tr class="mdc-data-table__header-row">
                                         <th class="mdc-data-table__header-cell" role="columnheader" scope="col">Property</th>
                                         <th class="mdc-data-table__header-cell" role="columnheader" scope="col">Description</th>
+                                        ${mutableProperties ? '<th class="mdc-data-table__header-cell" role="columnheader" scope="col"></th>' : ""}
                                     </tr>
                                     </thead>
                                     <tbody class="mdc-data-table__content">
@@ -72,13 +98,32 @@ async function populateMultifactorProviderTables() {
                             properties.forEach(([propKey, propValue]) => {
                                 if (propKey.startsWith(configPrefix)) {
                                     const table = $(`#mfaTable-${key}`).DataTable();
+                                    const row = $("<tr class=\"mdc-data-table__row\">")
+                                        .append(`<td class="mdc-data-table__cell"><code>${escapeMfaHtml(propKey)}</code></td>`)
+                                        .append(`<td class="mdc-data-table__cell"><code>${escapeMfaHtml(propValue.value)}</code></td>`);
 
-                                    table.row.add(
-                                        $("<tr class=\"mdc-data-table__row\">")
-                                            .append(`<td class="mdc-data-table__cell"><code>${propKey}</code></td>`)
-                                            .append(`<td class="mdc-data-table__cell"><code>${propValue.value}</code></td>`)
-                                    ).draw(false);
+                                    if (mutableProperties) {
+                                        row.append(`
+                                            <td class="mdc-data-table__cell">
+                                                <button type="button"
+                                                        name="overrideMfaProviderPropertyValueButton"
+                                                        data-key="${escapeMfaHtml(propKey)}"
+                                                        data-value="${escapeMfaHtml(propValue.value)}"
+                                                        title="Override Configuration Property Value"
+                                                        class="mdc-button mdc-button--raised min-width-32x">
+                                                    <span class="mdc-button__label">
+                                                        <i class="mdi mdi-arrow-left-circle min-width-32x" aria-hidden="true"></i>
+                                                    </span>
+                                                </button>
+                                            </td>
+                                        `);
+                                    }
+
+                                    table.row.add(row).draw(false);
                                 }
+                            });
+                            $("button[name=overrideMfaProviderPropertyValueButton]").off().on("click", function () {
+                                overrideMfaProviderPropertyValue(this);
                             });
                         });
 

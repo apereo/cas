@@ -2,6 +2,8 @@ package org.apereo.cas.ticket.accesstoken;
 
 import module java.base;
 import org.apereo.cas.authentication.credential.BasicIdentifiableCredential;
+import org.apereo.cas.authentication.principal.Principal;
+import org.apereo.cas.authentication.principal.PrincipalFactoryUtils;
 import org.apereo.cas.authentication.principal.PrincipalResolver;
 import org.apereo.cas.authentication.principal.ServiceFactory;
 import org.apereo.cas.configuration.CasConfigurationProperties;
@@ -17,6 +19,7 @@ import org.apereo.cas.util.crypto.CipherExecutor;
 import com.nimbusds.jwt.JWTClaimsSet;
 import lombok.val;
 import org.jose4j.jwt.JwtClaims;
+import org.jspecify.annotations.Nullable;
 import org.springframework.context.ConfigurableApplicationContext;
 
 /**
@@ -61,10 +64,11 @@ public class OAuth20JwtBuilder extends JwtBuilder {
     @Override
     protected Map<String, List<Object>> collectClaims(final JwtRequest payload) throws Throwable {
         val currentClaims = super.collectClaims(payload);
-        if (payload.isResolveSubject() && payload.getRegisteredService().isPresent()) {
-            val principal = getPrincipalResolver().resolve(new BasicIdentifiableCredential(payload.getSubject()));
+        if (payload.getRegisteredService().isPresent()) {
             val registeredService = payload.getRegisteredService().get();
-            val context = RegisteredServiceAttributeReleasePolicyContext.builder()
+            val principal = resolveEffectivePrincipal(payload);
+            val context = RegisteredServiceAttributeReleasePolicyContext
+                .builder()
                 .principal(principal)
                 .service(payload.getService().orElse(null))
                 .registeredService(registeredService)
@@ -73,5 +77,11 @@ public class OAuth20JwtBuilder extends JwtBuilder {
             currentClaims.putAll(registeredService.getAttributeReleasePolicy().getAttributes(context));
         }
         return currentClaims;
+    }
+
+    private @Nullable Principal resolveEffectivePrincipal(final JwtRequest payload) throws Throwable {
+        return payload.isResolveSubject()
+            ? getPrincipalResolver().resolve(new BasicIdentifiableCredential(payload.getSubject()))
+            : PrincipalFactoryUtils.newPrincipalFactory().createPrincipal(payload.getSubject(), super.collectClaims(payload));
     }
 }

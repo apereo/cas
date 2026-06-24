@@ -12,7 +12,6 @@ import org.apache.commons.lang3.StringUtils;
  * @author Travis Schmidt
  * @since 5.3.0
  */
-@FunctionalInterface
 public interface RegisteredServiceResourceNamingStrategy {
 
     /**
@@ -28,6 +27,14 @@ public interface RegisteredServiceResourceNamingStrategy {
      * @return - String representing a resource name.
      */
     String build(RegisteredService service, String extension);
+
+    /**
+     * Extract service numeric id from value.
+     *
+     * @param value the value
+     * @return the numeric id
+     */
+    long extractServiceId(String value);
 
     /**
      * Gets naming pattern.

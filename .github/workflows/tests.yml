@@ -61,7 +61,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Repository
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7
         with:
           persist-credentials: false
       - name: Set up JDK
@@ -84,7 +84,7 @@ jobs:
       categories: ${{ steps.get-categories.outputs.categories }}
     steps:
       - name: Checkout
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7
         with:
           persist-credentials: false
       - name: Set up JDK
@@ -113,7 +113,7 @@ jobs:
     name: ${{ matrix.category }}
     steps:
       - name: Checkout
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7
         with:
           persist-credentials: false
       - name: Set up JDK
@@ -205,7 +205,7 @@ jobs:
       coverage-files: ${{ steps.coverage-files.outputs.coverage-files }}
     steps:
       - name: Checkout Repository
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7
         with:
           persist-credentials: false
       - name: Set up JDK
