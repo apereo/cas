@@ -63,59 +63,415 @@ async function initializeCasEventsOperations() {
 
 async function initializeAuditEventsOperations() {
     if (CasActuatorEndpoints.auditLog()) {
+        function escapeHtml(str) {
+            return String(str).replace(/[&<>"']/g, s => ({
+                "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;"
+            }[s]));
+        }
+
+        function splitAuditResourceParts(value, separator) {
+            const parts = [];
+            let depth = 0;
+            let start = 0;
+            for (let i = 0; i < value.length; i++) {
+                const ch = value[i];
+                if (ch === "{" || ch === "[" || ch === "(") {
+                    depth++;
+                }
+                if (ch === "}" || ch === "]" || ch === ")") {
+                    depth = Math.max(0, depth - 1);
+                }
+                if (ch === separator && depth === 0) {
+                    parts.push(value.substring(start, i).trim());
+                    start = i + 1;
+                }
+            }
+            parts.push(value.substring(start).trim());
+            return parts.filter(part => part.length > 0);
+        }
+
+        function findAuditResourceAssignment(value) {
+            let depth = 0;
+            for (let i = 0; i < value.length; i++) {
+                const ch = value[i];
+                if (ch === "{" || ch === "[" || ch === "(") {
+                    depth++;
+                }
+                if (ch === "}" || ch === "]" || ch === ")") {
+                    depth = Math.max(0, depth - 1);
+                }
+                if (ch === "=" && depth === 0) {
+                    return i;
+                }
+            }
+            return -1;
+        }
+
+        function parseAuditResourceScalar(value) {
+            const trimmed = String(value ?? "").trim();
+            if (trimmed === "null") {
+                return null;
+            }
+            if (trimmed === "true") {
+                return true;
+            }
+            if (trimmed === "false") {
+                return false;
+            }
+            if (/^-?\d+(?:\.\d+)?$/.test(trimmed)) {
+                return Number(trimmed);
+            }
+            return trimmed;
+        }
+
+        function parseAuditResourceMap(value) {
+            const trimmed = String(value ?? "").trim();
+            if (!trimmed.startsWith("{") || !trimmed.endsWith("}") || !trimmed.includes("=")) {
+                return null;
+            }
+            const body = trimmed.substring(1, trimmed.length - 1).trim();
+            if (body.length === 0) {
+                return {};
+            }
+            return splitAuditResourceParts(body, ",").reduce((resource, part) => {
+                const index = findAuditResourceAssignment(part);
+                if (index <= 0) {
+                    return resource;
+                }
+                const key = part.substring(0, index).trim();
+                const rawValue = part.substring(index + 1).trim();
+                resource[key] = parseAuditResourceValue(rawValue);
+                return resource;
+            }, {});
+        }
+
+        function parseAuditResourceList(value) {
+            const trimmed = String(value ?? "").trim();
+            if (!trimmed.startsWith("[") || !trimmed.endsWith("]")) {
+                return null;
+            }
+            const body = trimmed.substring(1, trimmed.length - 1).trim();
+            if (body.length === 0) {
+                return [];
+            }
+            return splitAuditResourceParts(body, ",").map(parseAuditResourceValue);
+        }
+
+        function parseAuditResourceValue(value) {
+            const asMap = parseAuditResourceMap(value);
+            if (asMap !== null) {
+                return asMap;
+            }
+            const asList = parseAuditResourceList(value);
+            if (asList !== null) {
+                return asList;
+            }
+            return parseAuditResourceScalar(value);
+        }
+
+        function parseAuditResource(value) {
+            if (typeof value !== "string") {
+                return null;
+            }
+            const trimmed = value.trim();
+            if (trimmed.startsWith("{") || trimmed.startsWith("[")) {
+                try {
+                    return JSON.parse(trimmed);
+                } catch (e) {
+                    const parsed = parseAuditResourceValue(trimmed);
+                    return typeof parsed === "object" ? parsed : null;
+                }
+            }
+            return null;
+        }
+
+        function auditActionType(action) {
+            const value = String(action ?? "").toLowerCase();
+            if (/(fail|failure|failed|deny|denied|error|exception|unauthori[sz]ed|invalid)/i.test(value)) {
+                return "failure";
+            }
+            if (/(success|successful|succeed|succeeded|grant|granted|allow|allowed|valid)/i.test(value)) {
+                return "success";
+            }
+            return "unknown";
+        }
+
+        function renderAuditAction(action) {
+            const type = auditActionType(action);
+            return `<span class="audit-action-tag audit-action-${type}">${escapeHtml(action || "N/A")}</span>`;
+        }
+
+        function auditResourceType(value) {
+            if (Array.isArray(value)) {
+                return "array";
+            }
+            if (value === null) {
+                return "null";
+            }
+            return typeof value;
+        }
+
+        function renderAuditJsonScalar(value) {
+            const type = auditResourceType(value);
+            const label = value === null ? "null" : String(value);
+            return `<span class="audit-json-scalar audit-json-${type}">${escapeHtml(label)}</span>`;
+        }
+
+        function renderAuditJsonValue(value) {
+            const type = auditResourceType(value);
+            if (type !== "object" && type !== "array") {
+                return renderAuditJsonScalar(value);
+            }
+
+            const entries = type === "array"
+                ? value.map((item, index) => [`#${index}`, item])
+                : Object.entries(value);
+
+            if (entries.length === 0) {
+                return `<span class="audit-json-empty">${type === "array" ? "Empty array" : "Empty object"}</span>`;
+            }
+
+            return `
+                <div class="mdc-data-table audit-json-table-wrap">
+                    <div class="mdc-data-table__table-container">
+                        <table class="mdc-data-table__table audit-json-table">
+                            <thead>
+                                <tr class="mdc-data-table__header-row">
+                                    <th class="mdc-data-table__header-cell" scope="col">${type === "array" ? "Index" : "Property"}</th>
+                                    <th class="mdc-data-table__header-cell" scope="col">Value</th>
+                                </tr>
+                            </thead>
+                            <tbody class="mdc-data-table__content">
+                                ${entries.map(([key, item]) => `
+                                    <tr class="mdc-data-table__row">
+                                        <td class="mdc-data-table__cell audit-json-key">${escapeHtml(key)}</td>
+                                        <td class="mdc-data-table__cell audit-json-value">${renderAuditJsonValue(item)}</td>
+                                    </tr>`).join("")}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>`;
+        }
+
+        function renderAuditResourceSummary(data, row) {
+            if (row.resourceDetails) {
+                return `
+                    <span class="audit-resource-expand-hint">
+                        <i class="mdi mdi-code-json" aria-hidden="true"></i>
+                        Expand to view details
+                    </span>`;
+            }
+            return `<code class="audit-resource-value">${escapeHtml(data)}</code>`;
+        }
+
+        function normalizeAuditEvent(entry, index) {
+            const resource = entry?.auditableResource ?? entry?.resourceOperatedUpon ?? "";
+            const resourceDetails = parseAuditResource(resource);
+            const action = entry?.actionPerformed ?? "N/A";
+            return {
+                id: `audit-event-${index}`,
+                principal: entry?.principal ?? "N/A",
+                resource: resource || "N/A",
+                resourceDetails,
+                action,
+                actionType: auditActionType(action),
+                date: entry?.whenActionWasPerformed ?? "N/A",
+                clientIpAddress: entry?.clientInfo?.clientIpAddress ?? "N/A",
+                userAgent: entry?.clientInfo?.userAgent ?? "N/A"
+            };
+        }
+
+        function renderAuditResourceDetails(row) {
+            if (!row.resourceDetails) {
+                return "";
+            }
+            return `
+                <div class="audit-resource-details">
+                    <div class="audit-resource-details-toolbar">
+                        <div>
+                            <div class="audit-resource-details-title">
+                                <i class="mdi mdi-code-json" aria-hidden="true"></i>
+                                Resource Details
+                            </div>
+                            <div class="audit-resource-details-summary">
+                                ${auditResourceType(row.resourceDetails).toUpperCase()}
+                            </div>
+                        </div>
+                        <button type="button"
+                                class="mdc-button mdc-button--outlined audit-resource-copy-button"
+                                data-audit-event-id="${escapeHtml(row.id)}"
+                                aria-label="Copy audit resource JSON">
+                            <span class="mdc-button__ripple"></span>
+                            <span class="mdc-button__label">
+                                <i class="mdi mdi-content-copy" aria-hidden="true"></i>
+                                Copy JSON
+                            </span>
+                        </button>
+                    </div>
+                    <div class="audit-resource-json-view">
+                        ${renderAuditJsonValue(row.resourceDetails)}
+                    </div>
+                </div>`;
+        }
+
+        let auditEventDetailsById = new Map();
+
         const auditEventsTable = $("#auditEventsTable").DataTable({
             pageLength: 10,
             autoWidth: false,
+            columns: [
+                {
+                    data: "principal",
+                    width: "8rem",
+                    render: (data, type) => type === "display" ? `
+                        <span class="audit-principal-value">
+                            <i class="mdi mdi-account" aria-hidden="true"></i>
+                            <code>${escapeHtml(data)}</code>
+                        </span>` : data
+                },
+                {
+                    data: "resource",
+                    width: "22rem",
+                    render: (data, type, row) => type === "display" ? renderAuditResourceSummary(data, row) : data
+                },
+                {
+                    data: "action",
+                    width: "10rem",
+                    render: (data, type) => type === "display" ? renderAuditAction(data) : data
+                },
+                {
+                    data: "date",
+                    width: "13rem",
+                    render: (data, type) => type === "display" ? `<code>${escapeHtml(data)}</code>` : data
+                },
+                {
+                    data: "clientIpAddress",
+                    width: "8rem",
+                    render: (data, type) => type === "display" ? `<code>${escapeHtml(data)}</code>` : data
+                },
+                {
+                    data: "userAgent",
+                    width: "22rem",
+                    render: (data, type) => type === "display" ? `<span class="audit-user-agent">${escapeHtml(data)}</span>` : data
+                },
+                {
+                    data: null,
+                    orderable: false,
+                    searchable: false,
+                    className: "audit-resource-details-cell",
+                    width: "5rem",
+                    render: (data, type, row) => {
+                        if (type !== "display" || !row.resourceDetails) {
+                            return "";
+                        }
+                        return `
+                            <button type="button"
+                                    class="mdc-button mdc-button--raised audit-resource-details-button"
+                                    data-audit-event-id="${escapeHtml(row.id)}"
+                                    aria-label="View audit resource JSON">
+                                <span class="mdc-button__ripple"></span>
+                                <span class="mdc-button__label">
+                                    <i class="mdc-tab__icon mdi mdi-code-json" aria-hidden="true"></i>
+                                </span>
+                            </button>`;
+                    }
+                }
+            ],
             drawCallback: settings => {
                 $("#auditEventsTable tr").addClass("mdc-data-table__row");
                 $("#auditEventsTable td").addClass("mdc-data-table__cell");
             }
         });
 
-        function fetchAuditLog() {
-            return setInterval(() => {
-                if (currentActiveTab === Tabs.LOGGING.index) {
-                    const interval = $("#auditEventsIntervalFilter").val();
-                    const count = $("#auditEventsCountFilter").val();
+        function collapseAuditResourceDetails() {
+            $("#auditEventsTable tbody tr.shown").each(function () {
+                const row = auditEventsTable.row(this);
+                row.child.hide();
+                $(this).removeClass("shown");
+                $(this)
+                    .find("button.audit-resource-details-button")
+                    .removeClass("audit-resource-details-button-active")
+                    .attr("aria-label", "View audit resource JSON")
+                    .find(".mdi")
+                    .removeClass("mdi-chevron-up")
+                    .addClass("mdi-code-json");
+            });
+        }
 
-                    $.ajax({
-                        url: `${CasActuatorEndpoints.auditLog()}?interval=${interval}&count=${count}`,
-                        type: "GET",
-                        headers: {
-                            "Content-Type": "application/x-www-form-urlencoded"
-                        },
-                        success: (response, textStatus, xhr) => {
+        function updateAuditEventsTable() {
+            if (currentActiveTab !== Tabs.LOGGING.index) {
+                return;
+            }
+            if ($("#auditEventsTable tbody tr.shown").length > 0) {
+                return;
+            }
 
-                            auditEventsTable.clear();
-                            for (const entry of response) {
-                                auditEventsTable.row.add({
-                                    0: `<code>${entry?.principal ?? "N/A"}</code>`,
-                                    1: `<code>${entry?.auditableResource ?? "N/A"}</code>`,
-                                    2: `<code>${entry?.actionPerformed ?? "N/A"}</code>`,
-                                    3: `<code>${entry?.whenActionWasPerformed ?? "N/A"}</code>`,
-                                    4: `<code>${entry?.clientInfo?.clientIpAddress ?? "N/A"}</code>`,
-                                    5: `<span>${entry?.clientInfo?.userAgent ?? "N/A"}</span>`
-                                });
+            const interval = $("#auditEventsIntervalFilter").val();
+            const count = $("#auditEventsCountFilter").val();
+            const actionFilter = $("#auditEventsActionFilter").val();
+
+            $.ajax({
+                url: `${CasActuatorEndpoints.auditLog()}?interval=${interval}&count=${count}`,
+                type: "GET",
+                headers: {
+                    "Content-Type": "application/x-www-form-urlencoded"
+                },
+                success: (response, textStatus, xhr) => {
+                    auditEventsTable.clear();
+                    auditEventDetailsById = new Map();
+                    response
+                        .map(normalizeAuditEvent)
+                        .filter(entry => actionFilter === "all" || entry.actionType === actionFilter)
+                        .forEach(entry => {
+                            if (entry.resourceDetails) {
+                                auditEventDetailsById.set(entry.id, entry.resourceDetails);
                             }
-                            auditEventsTable.draw();
-                        },
-                        error: (xhr, textStatus, errorThrown) => console.error("Error fetching data:", errorThrown)
-                    });
-                }
-            }, $("#auditEventsRefreshFilter").val());
+                            auditEventsTable.row.add(entry);
+                        });
+                    auditEventsTable.draw();
+                },
+                error: (xhr, textStatus, errorThrown) => console.error("Error fetching data:", errorThrown)
+            });
         }
 
-        let refreshInterval = undefined;
-        if (CasActuatorEndpoints.auditLog()) {
-            refreshInterval = fetchAuditLog();
-        }
-        $("#auditEventsRefreshFilter").selectmenu({
-            change: (event, data) => {
-                if (refreshInterval) {
-                    clearInterval(refreshInterval);
-                    refreshInterval = fetchAuditLog();
+        $("#auditEventsTable tbody")
+            .off("click", "button.audit-resource-details-button")
+            .on("click", "button.audit-resource-details-button", function () {
+                const tableRow = $(this).closest("tr");
+                const row = auditEventsTable.row(tableRow);
+                if (row.child.isShown()) {
+                    row.child.hide();
+                    tableRow.removeClass("shown");
+                    $(this).removeClass("audit-resource-details-button-active");
+                    $(this).attr("aria-label", "View audit resource JSON");
+                    $(this).find(".mdi").removeClass("mdi-chevron-up").addClass("mdi-code-json");
+                } else {
+                    row.child(renderAuditResourceDetails(row.data())).show();
+                    tableRow.addClass("shown");
+                    tableRow.next("tr").addClass("audit-resource-details-row");
+                    $(this).addClass("audit-resource-details-button-active");
+                    $(this).attr("aria-label", "Hide audit resource JSON");
+                    $(this).find(".mdi").removeClass("mdi-code-json").addClass("mdi-chevron-up");
                 }
+            });
+
+        $("#auditEventsTable tbody")
+            .off("click", "button.audit-resource-copy-button")
+            .on("click", "button.audit-resource-copy-button", function () {
+                const resourceDetails = auditEventDetailsById.get($(this).data("audit-event-id"));
+                if (resourceDetails && navigator.clipboard) {
+                    navigator.clipboard.writeText(JSON.stringify(resourceDetails, null, 2));
+                }
+        });
+
+        $("#auditEventsIntervalFilter, #auditEventsCountFilter, #auditEventsActionFilter").selectmenu({
+            change: () => {
+                collapseAuditResourceDetails();
+                updateAuditEventsTable();
             }
         });
+
+        updateAuditEventsTable();
+        setInterval(updateAuditEventsTable, palantirSettings().refreshInterval);
     }
 }

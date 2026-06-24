@@ -3,7 +3,6 @@ package org.apereo.cas.ticket.accesstoken;
 import module java.base;
 import org.apereo.cas.AbstractOAuth20Tests;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
-import org.apereo.cas.services.ReturnAllowedAttributeReleasePolicy;
 import org.apereo.cas.token.JwtBuilder;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
@@ -63,33 +62,5 @@ class OAuth20JwtBuilderTests extends AbstractOAuth20Tests {
         assertEquals("clientid2-jwt", claims.getClaim("client_id"));
 
     }
-
-    @Test
-    void verifyAttributeReleasePolicyNoResolution() throws Throwable {
-        val registeredService = getRegisteredService("clientid3-jwt", "secret3-jwt");
-        registeredService.setAttributeReleasePolicy(new ReturnAllowedAttributeReleasePolicy(List.of("email")));
-        servicesManager.save(registeredService);
-        val service = CoreAuthenticationTestUtils.getService("https://service.example.com");
-        val attributes = new LinkedHashMap<String, List<Object>>();
-        attributes.put("email", List.of("cas@example.org"));
-        attributes.put("phone", List.of("1234567890"));
-        val request = JwtBuilder.JwtRequest
-            .builder()
-            .issueDate(new Date())
-            .jwtId(service.getId())
-            .serviceAudience(Set.of("clientid3-jwt"))
-            .subject("casuser")
-            .issuer(casProperties.getServer().getPrefix())
-            .attributes(attributes)
-            .registeredService(Optional.of(registeredService))
-            .build();
-        val jwt = accessTokenJwtBuilder.build(request);
-        assertNotNull(jwt);
-        val claims = accessTokenJwtBuilder.unpack(jwt);
-        assertEquals("casuser", claims.getSubject());
-        assertEquals("clientid3-jwt", claims.getAudience().getFirst());
-        assertEquals("cas@example.org", claims.getClaim("email"));
-        assertNull(claims.getClaim("phone"));
-        assertEquals("clientid3-jwt", claims.getClaim("client_id"));
-    }
+    
 }

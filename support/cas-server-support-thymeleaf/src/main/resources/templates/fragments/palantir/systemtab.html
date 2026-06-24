@@ -28,7 +28,7 @@
                       <i class="mdi mdi-information-outline" aria-hidden="true"></i>
                       <span>
                           This functionality shows HTTP traces captured by OpenTelemetry and exported into a local memory store.
-                          It is NOT meant to be an interface to show distributed HTTP traces, is only functional or relevant
+                          It is NOT meant to be an interface to show distributed HTTP traces and is only relevant
                           when CAS is running as a single node. The store has a fixed capacity and is positioned to only capture a number of
                           top-most operations and requests.
                       </span>
@@ -45,11 +45,9 @@
                                   <th class="mdc-data-table__header-cell" role="columnheader" scope="col">Root Span</th>
                                   <th class="mdc-data-table__header-cell" role="columnheader" scope="col">Method</th>
                                   <th class="mdc-data-table__header-cell" role="columnheader" scope="col">URL</th>
-                                  <th class="mdc-data-table__header-cell" role="columnheader" scope="col">Services</th>
                                   <th class="mdc-data-table__header-cell" role="columnheader" scope="col">Spans</th>
                                   <th class="mdc-data-table__header-cell" role="columnheader" scope="col">Duration</th>
                                   <th class="mdc-data-table__header-cell" role="columnheader" scope="col">Status</th>
-                                  <th class="mdc-data-table__header-cell" role="columnheader" scope="col">Error</th>
                                   <th class="mdc-data-table__header-cell" role="columnheader" scope="col"></th>
                               </tr>
                               </thead>
@@ -57,7 +55,10 @@
                           </table>
                       </div>
 
-                       <div class="mt-4">
+                       <div class="http-traces-actions mt-8">
+                           <div th:replace="~{fragments/switchbutton :: switchbutton (id='httpTracesErrorsOnly', label='#Show Only Errors', selected=false, cssClass='always-show http-traces-error-switch')}"/>
+                       </div>
+                      <div class="mt-2rem">
                            <button type="button"
                                        id="refreshHttpTracesButton"
                                        class="mdc-button mdc-button--raised http-traces-refresh-button"
@@ -68,7 +69,7 @@
                                   Refresh
                               </span>
                           </button>
-                       </div>
+                     </div>
                   </div>
               </div>
 
@@ -118,7 +119,6 @@
                                   <tbody class="mdc-data-table__content"></tbody>
                               </table>
                           </div>
-                          <small id="httpRequestMappingsStatus" class="http-request-mappings-status text-muted"></small>
                       </div>
                   </div>
               </div>

@@ -4,6 +4,7 @@ import module java.base;
 import org.apereo.cas.config.CasCoreTracingAutoConfiguration;
 import org.apereo.cas.tracing.LocalSpan;
 import org.apereo.cas.tracing.LocalTraceStore;
+import io.micrometer.common.util.StringUtils;
 import lombok.val;
 import org.jspecify.annotations.Nullable;
 import org.junit.jupiter.api.Tag;
@@ -146,14 +147,18 @@ class HttpTracesEndpointTests extends AbstractCasEndpointTests {
         val store = new LocalTraceStore();
         store.add(span("trace-" + UUID.randomUUID(), "span-1", null, spanName, "cas", "INTERNAL", 1, 1,
             Map.of("url.path", "/cas"), false));
-        assertEquals(expectedMethod, store.summaries().getFirst().method());
+        if (StringUtils.isBlank(expectedMethod)) {
+            assertTrue(store.summaries().isEmpty());
+        } else {
+            assertEquals(expectedMethod, store.summaries().getFirst().method());
+        }
     }
 
     @Test
     void verifyTraceEviction() {
         val store = new LocalTraceStore();
         for (var i = 0; i <= 1_000; i++) {
-            store.add(span("trace-" + i, "span-" + i, null, "trace " + i, "cas", "SERVER", i, 1,
+            store.add(span("trace-" + i, "span-" + i, null, i + " POST", "cas", "SERVER", i, 1,
                 Map.of(), false));
         }
 

@@ -102,10 +102,34 @@ a third-party library.
 Palantir dashboard is now also able to present dedicated views for all beans in the application context,
 conditions that allowed those beans to be rejected or created, as well as a dedicated trace of application startup timeline
 and a live view of the JVM memory consumption and allocation.
-       
-![img_1.png](img_1.png)
-![img_2.png](img_2.png)
-![img_3.png](img_3.png)
+
+<a href="img_1.png" data-lightbox="image-0">
+    <img src="img_1.png" alt="Palantir dashboard beans view" title="Palantir dashboard beans view" />
+</a>
+
+<a href="img_2.png" data-lightbox="image-1">
+    <img src="img_2.png" alt="Palantir dashboard conditions view" title="Palantir dashboard conditions view" />
+</a>
+
+<a href="img_3.png" data-lightbox="image-2">
+    <img src="img_3.png" alt="Palantir dashboard startup timeline" title="Palantir dashboard startup timeline" />
+</a>
+
+<a href="img_4.png" data-lightbox="image-3">
+    <img src="img_4.png" alt="Palantir dashboard JVM memory view" title="Palantir dashboard JVM memory view" />
+</a>
+
+<a href="img_5.png" data-lightbox="image-4">
+    <img src="img_5.png" alt="Palantir dashboard application context view" title="Palantir dashboard application context view" />
+</a>
+
+<a href="img_6.png" data-lightbox="image-5">
+    <img src="img_6.png" alt="Palantir dashboard configuration view" title="Palantir dashboard configuration view" />
+</a>
+
+<a href="img_7.png" data-lightbox="image-6">
+    <img src="img_7.png" alt="Palantir dashboard monitoring view" title="Palantir dashboard monitoring view" />
+</a>
 
 ### Redis Ticket Registry
 

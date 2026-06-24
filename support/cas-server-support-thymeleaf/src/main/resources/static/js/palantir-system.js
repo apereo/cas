@@ -1069,6 +1069,29 @@ async function initializeSystemOperations() {
             : `<span class="http-trace-error http-trace-error-no">NO</span>`;
     }
 
+    function renderHttpTraceMethod(method) {
+        return method
+            ? `<span class="http-exchange-method method-${escapeHtml(String(method).toLowerCase())}">${escapeHtml(method)}</span>`
+            : "";
+    }
+
+    function renderHttpTraceRootSpan(rootSpan) {
+        const value = String(rootSpan ?? "");
+        if (value.length === 0) {
+            return `<span class="http-trace-root-span">N/A</span>`;
+        }
+        const match = value.match(/^(http)\s+(get|post|put|patch|delete|options|head)\b(.*)$/i);
+        if (!match) {
+            return `<span class="http-trace-root-span">${escapeHtml(value)}</span>`;
+        }
+        return `
+            <span class="http-trace-root-span">
+                ${escapeHtml(match[1].toUpperCase())}
+                ${renderHttpTraceMethod(match[2].toUpperCase())}
+                ${escapeHtml(match[3] ?? "")}
+            </span>`;
+    }
+
     function renderHttpTraceServices(services) {
         const values = toArray(services).filter(service => service);
         if (values.length === 0) {
@@ -1119,8 +1142,11 @@ async function initializeSystemOperations() {
     }
 
     function renderHttpTraces() {
+        const entries = $("#httpTracesErrorsOnly").val() === "true"
+            ? httpTraceEntries.filter(entry => entry.error)
+            : httpTraceEntries;
         httpTracesTable.clear();
-        httpTraceEntries.forEach(entry => httpTracesTable.row.add(entry));
+        entries.forEach(entry => httpTracesTable.row.add(entry));
         httpTracesTable.draw();
         httpTracesTable.columns.adjust();
     }
@@ -1322,6 +1348,7 @@ async function initializeSystemOperations() {
         }
         httpTracesControlsInitialized = true;
         $("#refreshHttpTracesButton").off("click").on("click", () => refreshHttpTraces());
+        $("#httpTracesErrorsOnly").off("change").on("change", () => renderHttpTraces());
         $("#httpTracesTable tbody")
             .off("click", "button.http-trace-details-button")
             .on("click", "button.http-trace-details-button", function () {
@@ -1484,7 +1511,6 @@ async function initializeSystemOperations() {
         entries.forEach(entry => httpRequestMappingsTable.row.add(entry));
         httpRequestMappingsTable.draw();
         httpRequestMappingsTable.columns.adjust();
-        $("#httpRequestMappingsStatus").text(`${entries.length.toLocaleString()} mappings loaded.`);
     }
 
     async function refreshHttpRequestMappings() {
@@ -2169,14 +2195,14 @@ async function initializeSystemOperations() {
                 data: "rootSpan",
                 width: "18rem",
                 render: (data, type) => type === "display"
-                    ? `<span class="http-trace-root-span">${escapeHtml(data || "N/A")}</span>`
+                    ? renderHttpTraceRootSpan(data)
                     : data
             },
             {
                 data: "method",
                 width: "6.5rem",
                 render: (data, type) => type === "display"
-                    ? (data ? `<span class="http-exchange-method method-${escapeHtml(String(data).toLowerCase())}">${escapeHtml(data)}</span>` : "")
+                    ? renderHttpTraceMethod(data)
                     : data
             },
             {
@@ -2185,11 +2211,6 @@ async function initializeSystemOperations() {
                 render: (data, type) => type === "display"
                     ? `<code class="http-trace-url">${escapeHtml(data || "N/A")}</code>`
                     : data
-            },
-            {
-                data: "services",
-                width: "18rem",
-                render: (data, type) => type === "display" ? renderHttpTraceServices(data) : toArray(data).join(" ")
             },
             {
                 data: "spanCount",
@@ -2206,11 +2227,6 @@ async function initializeSystemOperations() {
                 data: "status",
                 width: "6.5rem",
                 render: (data, type, row) => type === "display" ? renderHttpTraceStatus(data, row.error) : data
-            },
-            {
-                data: "error",
-                width: "5rem",
-                render: (data, type) => type === "display" ? renderHttpTraceError(data) : data
             },
             {
                 data: null,

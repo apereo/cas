@@ -75,5 +75,44 @@ class BeanSupplierTests {
         assertNotNull(r4.getNewStringAsBytes(0));
         assertNull(r4.getNewString(0));
 
+        val r5 = BeanSupplier.of(Runnable.class).otherwiseProxy().get();
+        assertTrue(BeanSupplier.isProxy(r5));
+        assertDoesNotThrow(r5::run);
+    }
+
+    @Test
+    void verifyProxyCallbackOnlyRunsOnFallback() {
+        val counter = new AtomicInteger();
+        val noOp = BeanSupplier.of(CipherExecutor.class)
+            .alwaysMatch()
+            .supply(CipherExecutor::noOp)
+            .otherwiseProxy(_ -> counter.incrementAndGet())
+            .get();
+        assertSame(noOp.getClass(), CipherExecutor.noOp().getClass());
+        assertEquals(0, counter.get());
+
+        val proxy = BeanSupplier.of(CipherExecutor.class)
+            .neverMatch()
+            .supply(CipherExecutor::noOp)
+            .otherwiseProxy(_ -> counter.incrementAndGet())
+            .get();
+        assertTrue(BeanSupplier.isProxy(proxy));
+        assertEquals(1, counter.get());
+    }
+
+    @Test
+    void verifyProxyDetectionDoesNotCallToString() {
+        val counter = new AtomicInteger();
+        val proxy = java.lang.reflect.Proxy.newProxyInstance(getClass().getClassLoader(),
+            new Class[]{Runnable.class},
+            (_, method, _) -> {
+                if ("toString".equals(method.getName())) {
+                    counter.incrementAndGet();
+                    return BeanSupplier.PROXY_BEAN_TOSTRING_PREFIX + Runnable.class.getName();
+                }
+                return null;
+            });
+        assertFalse(BeanSupplier.isProxy(proxy));
+        assertEquals(0, counter.get());
     }
 }
