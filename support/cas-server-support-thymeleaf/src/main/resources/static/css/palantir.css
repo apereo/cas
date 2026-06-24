@@ -2210,16 +2210,14 @@ select + span[role="combobox"] {
     word-break: break-word;
 }
 
-.audit-principal-value,
-.audit-resource-expand-hint {
+.audit-principal-value {
     display: inline-flex;
     align-items: center;
     gap: .35rem;
     max-width: 100%;
 }
 
-.audit-principal-value .mdi,
-.audit-resource-expand-hint .mdi {
+.audit-principal-value .mdi {
     color: #176fa5;
     font-size: 1.1rem;
     line-height: 1;
@@ -2228,17 +2226,6 @@ select + span[role="combobox"] {
 .audit-principal-value code {
     overflow-wrap: anywhere;
     word-break: break-word;
-}
-
-.audit-resource-expand-hint {
-    min-height: 1.75rem;
-    padding: .2rem .55rem;
-    border: 1px solid #c9d7e2;
-    border-radius: 6px;
-    background: #eef6fb;
-    color: #245b78;
-    font-size: .86rem;
-    font-weight: 700;
 }
 
 .audit-resource-value,
@@ -2250,19 +2237,13 @@ select + span[role="combobox"] {
     word-break: break-word;
 }
 
-.audit-resource-details-cell {
-    min-width: 5rem;
-    width: 5rem;
-    overflow: visible !important;
-    text-align: center !important;
-    white-space: nowrap !important;
-}
-
 .audit-resource-details-button {
-    width: 3rem;
-    min-width: 3rem;
-    height: 2.25rem;
-    padding: 0;
+    width: auto;
+    min-width: 11rem;
+    max-width: 100%;
+    min-height: 2.25rem;
+    height: auto;
+    padding: 0 .75rem;
 }
 
 .audit-resource-details-button.audit-resource-details-button-active {
@@ -2272,6 +2253,14 @@ select + span[role="combobox"] {
 .audit-resource-details-button .mdc-button__label {
     display: inline-flex;
     align-items: center;
+    gap: .35rem;
+    line-height: 1.2;
+    white-space: normal;
+}
+
+.audit-resource-details-button .mdi {
+    font-size: 1.1rem;
+    line-height: 1;
 }
 
 .audit-resource-details-row > td {
@@ -2285,122 +2274,14 @@ select + span[role="combobox"] {
     border-bottom: 1px solid #d8dee5;
 }
 
-.audit-resource-details-toolbar {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 1rem;
-    margin-bottom: .9rem;
-}
-
-.audit-resource-details-title {
-    display: inline-flex;
-    align-items: center;
-    gap: .4rem;
-    color: #1f5f87;
-    font-size: 1rem;
-    font-weight: 800;
-}
-
-.audit-resource-details-title .mdi {
-    font-size: 1.25rem;
-}
-
-.audit-resource-details-summary {
-    margin-top: .15rem;
-    color: #687681;
-    font-size: .78rem;
-    font-weight: 700;
-    letter-spacing: .03rem;
-}
-
-.audit-resource-copy-button .mdc-button__label {
-    display: inline-flex;
-    align-items: center;
-    gap: .35rem;
-}
-
-.audit-resource-json-view {
+.audit-resource-details pre {
     max-height: 32rem;
+    margin: 0;
     overflow: auto;
-    border: 1px solid #d8e4ed;
-    border-radius: 6px;
-    background: #fff;
 }
 
-.audit-json-table-wrap {
-    width: 100%;
-    overflow: visible;
-}
-
-.audit-json-table {
-    width: 100%;
-    table-layout: fixed;
-}
-
-.audit-json-table .mdc-data-table__header-cell {
-    background: #eaf3f9;
-    color: #1f5f87;
-    font-size: .82rem;
-    font-weight: 800;
-}
-
-.audit-json-table .mdc-data-table__cell {
-    vertical-align: top;
-}
-
-.audit-json-key {
-    width: 13rem;
-    color: #4d5f6d;
-    font-family: var(--cas-font-family-monospace, monospace);
-    font-size: .86rem;
-    font-weight: 800;
+.audit-resource-details code {
+    white-space: pre-wrap;
     overflow-wrap: anywhere;
     word-break: break-word;
-}
-
-.audit-json-value {
-    overflow-wrap: anywhere;
-    word-break: break-word;
-}
-
-.audit-json-value .audit-json-table-wrap {
-    margin: .2rem 0;
-    border: 1px solid #edf2f6;
-    border-radius: 6px;
-}
-
-.audit-json-scalar,
-.audit-json-empty {
-    display: inline-flex;
-    align-items: center;
-    min-height: 1.55rem;
-    max-width: 100%;
-    padding: .12rem .5rem;
-    border-radius: 6px;
-    font-family: var(--cas-font-family-monospace, monospace);
-    font-size: .84rem;
-    overflow-wrap: anywhere;
-    word-break: break-word;
-}
-
-.audit-json-string {
-    background: #eef6fb;
-    color: #174f74;
-}
-
-.audit-json-number {
-    background: #f3f0fb;
-    color: #5c438f;
-}
-
-.audit-json-boolean {
-    background: #edf8f0;
-    color: #176b3f;
-}
-
-.audit-json-null,
-.audit-json-empty {
-    background: #f2f4f6;
-    color: #65727c;
 }
