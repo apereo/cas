@@ -44,7 +44,6 @@ public class DelegatedClientAuthenticationHandler extends BaseDelegatedClientAut
     private final ConfigurableApplicationContext applicationContext;
 
     public DelegatedClientAuthenticationHandler(final Pac4jDelegatedAuthenticationCoreProperties properties,
-
                                                 final PrincipalFactory principalFactory,
                                                 final DelegatedIdentityProviders identityProviders,
                                                 final DelegatedClientUserProfileProvisioner profileProvisioner,

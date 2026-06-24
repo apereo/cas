@@ -9,6 +9,7 @@ import org.apereo.cas.services.WebBasedRegisteredService;
 import org.apereo.cas.ticket.AuthenticationAwareTicket;
 import org.apereo.cas.ticket.TicketGrantingTicketAwareTicket;
 import org.apereo.cas.ticket.registry.TicketRegistrySupport;
+import io.micrometer.common.util.StringUtils;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
@@ -45,35 +46,62 @@ public class DefaultSingleSignOnParticipationStrategy extends BaseSingleSignOnPa
         }
 
         val registeredService = (WebBasedRegisteredService) getRegisteredService(ssoRequest);
-        if (registeredService == null) {
-            return properties.isSsoEnabled();
-        }
+        if (registeredService != null) {
+            val isAllowedForSso = registeredService.getAccessStrategy().isServiceAccessAllowedForSso(registeredService);
+            LOGGER.trace("Located [{}] in registry. Service access to participate in SSO is set to [{}]",
+                registeredService.getServiceId(), isAllowedForSso);
 
-        val isAllowedForSso = registeredService.getAccessStrategy().isServiceAccessAllowedForSso(registeredService);
-        LOGGER.trace("Located [{}] in registry. Service access to participate in SSO is set to [{}]",
-            registeredService.getServiceId(), isAllowedForSso);
+            if (!isAllowedForSso) {
+                LOGGER.debug("Service [{}] is not authorized to participate in SSO", registeredService.getServiceId());
+                return false;
+            }
 
-        if (!isAllowedForSso) {
-            LOGGER.debug("Service [{}] is not authorized to participate in SSO", registeredService.getServiceId());
-            return false;
-        }
+            val ssoPolicy = registeredService.getSingleSignOnParticipationPolicy();
+            if (ssoPolicy != null) {
+                val ticketState = getTicketState(ssoRequest);
+                if (ticketState.isPresent()) {
+                    return ssoPolicy.shouldParticipateInSso(registeredService, (AuthenticationAwareTicket) ticketState.get());
+                }
+            }
 
-        val ssoPolicy = registeredService.getSingleSignOnParticipationPolicy();
-        if (ssoPolicy != null) {
-            val ticketState = getTicketState(ssoRequest);
-            if (ticketState.isPresent()) {
-                return ssoPolicy.shouldParticipateInSso(registeredService, (AuthenticationAwareTicket) ticketState.get());
+            val tgtPolicy = registeredService.getTicketGrantingTicketExpirationPolicy();
+            if (tgtPolicy != null) {
+                val ticketState = getTicketState(ssoRequest);
+                return tgtPolicy.toExpirationPolicy()
+                    .filter(tgt -> ticketState.isPresent())
+                    .map(policy -> !policy.isExpired((TicketGrantingTicketAwareTicket) ticketState.get()))
+                    .orElse(Boolean.TRUE);
             }
         }
 
-        val tgtPolicy = registeredService.getTicketGrantingTicketExpirationPolicy();
-        if (tgtPolicy != null) {
-            val ticketState = getTicketState(ssoRequest);
-            return tgtPolicy.toExpirationPolicy()
-                .filter(tgt -> ticketState.isPresent())
-                .map(policy -> !policy.isExpired((TicketGrantingTicketAwareTicket) ticketState.get()))
-                .orElse(Boolean.TRUE);
+        if (StringUtils.isNotBlank(properties.getRevocationAttributeName())) {
+            val ticketState = getTicketState(ssoRequest)
+                .map(AuthenticationAwareTicket.class::cast)
+                .filter(auth -> Objects.nonNull(auth.getAuthentication()));
+            if (ticketState.isPresent()) {
+                val authentication = ticketState.get().getAuthentication();
+                LOGGER.debug("Checking authentication [{}] for revocation attribute [{}]",
+                    authentication, properties.getRevocationAttributeName());
+                val revocationValue = Stream.of(
+                        authentication.getPrincipal().getSingleValuedAttribute(properties.getRevocationAttributeName()),
+                        authentication.getSingleValuedAttribute(properties.getRevocationAttributeName())
+                    )
+                    .filter(Objects::nonNull)
+                    .map(Object::toString)
+                    .filter(StringUtils::isNotBlank)
+                    .findFirst();
+                if (revocationValue.isPresent()) {
+                    LOGGER.debug("Located revocation attribute value [{}] for authentication [{}]", revocationValue, authentication);
+                    val revokedBefore = Instant.ofEpochSecond(Long.parseLong(revocationValue.get()));
+                    val createdAt = authentication.getAuthenticationDate().toInstant();
+                    val result = createdAt.isBefore(revokedBefore);
+                    LOGGER.debug("Authentication created at [{}] and revoked before [{}]; SSO participation status: [{}]",
+                        createdAt, revokedBefore, result);
+                    return result;
+                }
+            }
         }
+
         return properties.isSsoEnabled();
     }
 

@@ -22,7 +22,6 @@ import org.apereo.cas.web.flow.TokenWebflowConfigurer;
 import org.apereo.cas.web.flow.actions.WebflowActionBeanSupplier;
 import org.apereo.cas.web.flow.resolver.CasDelegatingWebflowEventResolver;
 import org.apereo.cas.web.flow.resolver.CasWebflowEventResolver;
-import org.jspecify.annotations.NonNull;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.actuate.autoconfigure.endpoint.condition.ConditionalOnAvailableEndpoint;
@@ -114,17 +113,17 @@ public class CasTokenAuthenticationWebflowAutoConfiguration {
     @ConditionalOnAvailableEndpoint
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     public TokenAuthenticationEndpoint tokenAuthenticationEndpoint(
-        final ObjectProvider<@NonNull CasConfigurationProperties> casProperties,
+        final ObjectProvider<CasConfigurationProperties> casProperties,
         @Qualifier(PrincipalResolver.BEAN_NAME_PRINCIPAL_RESOLVER)
-        final ObjectProvider<@NonNull PrincipalResolver> defaultPrincipalResolver,
+        final ObjectProvider<PrincipalResolver> defaultPrincipalResolver,
         @Qualifier(ServicesManager.BEAN_NAME)
-        final ObjectProvider<@NonNull ServicesManager> servicesManager,
+        final ObjectProvider<ServicesManager> servicesManager,
         @Qualifier(AuditableExecution.AUDITABLE_EXECUTION_REGISTERED_SERVICE_ACCESS)
-        final ObjectProvider<@NonNull AuditableExecution> registeredServiceAccessStrategyEnforcer,
+        final ObjectProvider<AuditableExecution> registeredServiceAccessStrategyEnforcer,
         @Qualifier(WebApplicationService.BEAN_NAME_FACTORY)
-        final ObjectProvider<@NonNull ServiceFactory<WebApplicationService>> webApplicationServiceFactory,
+        final ObjectProvider<ServiceFactory<WebApplicationService>> webApplicationServiceFactory,
         @Qualifier(PrincipalFactory.BEAN_NAME)
-        final ObjectProvider<@NonNull PrincipalFactory> principalFactory) {
+        final ObjectProvider<PrincipalFactory> principalFactory) {
         return new TokenAuthenticationEndpoint(casProperties, defaultPrincipalResolver,
             servicesManager, registeredServiceAccessStrategyEnforcer,
             webApplicationServiceFactory, principalFactory);

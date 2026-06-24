@@ -931,8 +931,17 @@ span button.toolbar {
     margin-top: 4px !important;
 }
 
+.mt-8 {
+    margin-top: 8px !important;
+}
+
+
 .mt-10 {
-    margin-top: 4px !important;
+    margin-top: 10px !important;
+}
+
+.mt-2rem {
+    margin-top: 2rem !important;
 }
 
 .mt-4rem {

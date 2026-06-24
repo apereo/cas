@@ -48,6 +48,12 @@ The following items are new improvements and enhancements presented in this rele
 CAS continues to produce and publish [OpenRewrite](https://docs.openrewrite.org/) recipes that allow the project to upgrade installations
 in place from one version to the next. [See this guide](../installation/OpenRewrite-Upgrade-Recipes.html) to learn more.
 
+### Spring Boot 4.1
+
+CAS is now built with Spring Boot `4.1.x` and the upgrade is finalized. This is a major platform upgrade 
+that affects almost all aspects of the codebase
+including many of the third-party core libraries used by CAS as well as some CAS functionality.
+
 ### GraalVM Native Images
 
 A CAS server installation and deployment process can be tuned to build and run
@@ -92,7 +98,39 @@ Note that the documentation for each configuration property is directly extracte
 the [CAS configuration catalog](../configuration/Configuration-Metadata-Repository.html)
 and may not be immediately available if the property is not fully documented, particularly if it's owned and managed by
 a third-party library.
-  
+               
+Palantir dashboard is now also able to present dedicated views for all beans in the application context,
+conditions that allowed those beans to be rejected or created, as well as a dedicated trace of application startup timeline
+and a live view of the JVM memory consumption and allocation.
+
+<a href="img_1.png" data-lightbox="image-0">
+    <img src="img_1.png" alt="Palantir dashboard beans view" title="Palantir dashboard beans view" />
+</a>
+
+<a href="img_2.png" data-lightbox="image-1">
+    <img src="img_2.png" alt="Palantir dashboard conditions view" title="Palantir dashboard conditions view" />
+</a>
+
+<a href="img_3.png" data-lightbox="image-2">
+    <img src="img_3.png" alt="Palantir dashboard startup timeline" title="Palantir dashboard startup timeline" />
+</a>
+
+<a href="img_4.png" data-lightbox="image-3">
+    <img src="img_4.png" alt="Palantir dashboard JVM memory view" title="Palantir dashboard JVM memory view" />
+</a>
+
+<a href="img_5.png" data-lightbox="image-4">
+    <img src="img_5.png" alt="Palantir dashboard application context view" title="Palantir dashboard application context view" />
+</a>
+
+<a href="img_6.png" data-lightbox="image-5">
+    <img src="img_6.png" alt="Palantir dashboard configuration view" title="Palantir dashboard configuration view" />
+</a>
+
+<a href="img_7.png" data-lightbox="image-6">
+    <img src="img_7.png" alt="Palantir dashboard monitoring view" title="Palantir dashboard monitoring view" />
+</a>
+
 ### Redis Ticket Registry
 
 The [Redis Ticket Registry](../ticketing/Redis-Ticket-Registry.html) now presents several notable changes, particularly important when administrative logouts are exercised:
@@ -135,7 +173,13 @@ to tighten and improve the security posture of registration request:
               
 - [OpenID Connect logout requests](../authentication/OIDC-Authentication-Logout.html) may now also be submitted via `POST`. 
 - Redis integration tests have switched to use Redis `8.8.x`.
+- MongoDb integration tests have switched to use MongoDb `8.x`.
 - The [Spring Expression Language](../configuration/Configuration-Spring-Expressions.html) parser is tightened to run in a sandboxed environment.
 - [Delegated authentication](../integration/Delegate-Authentication.html) can now handle JSON serialization of complex attribute definitions that may carry maps. 
-- Small enhancements to [CAS audits](../audits/Audits.html) to correctly identify the audited principal.
+- Small enhancements to [CAS audits](../audits/Audits.html) to correctly identify the audited principal, particular for [FIDO2 WebAuthn](../mfa/FIDO2-WebAuthn-Authentication.html) flows.
 - [Delegated authentication](../integration/Delegate-Authentication.html) logout requests can now redirect to the original application as instructed when working with external OpenID Connect providers. 
+- A series of performance improvements to [MongoDb](../ticketing/MongoDb-Ticket-Registry.html) and [DynamoDb](../ticketing/DynamoDb-Ticket-Registry.html) ticket registry implementations.
+- [Groovy attribute repositories](../integration/Attribute-Resolution-Groovy.html) are no longer required to return a `username` attribute.
+- A large number of dependencies and libraries have been updated to their latest versions. 
+- Hardened crypto operations to protect against nonce reuse and replay attacks when managing webflow execution states.
+- [Delegated authentication](../integration/Delegate-Authentication.html) will capture and translate `authnContextClass` attribute if the response from the external identity provider carries an MFA context that can be mapped to a CAS multifactor authentication provider for the effective principal.

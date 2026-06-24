@@ -31,7 +31,6 @@ public class SimpleCacheStatistics implements CacheStatistics {
         this(size, capacity, evictions, "N/A");
     }
 
-
     @Override
     public long getPercentFree() {
         if (this.capacity == 0) {

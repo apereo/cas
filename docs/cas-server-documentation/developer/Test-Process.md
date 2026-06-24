@@ -161,7 +161,7 @@ pupcas <scenario-name>
 To see the list of available test scenarios:
 
 ```bash
-./gradlew --build-cache --configure-on-demand --no-daemon -q puppeteerScenarios
+./ci/tests/puppeteer/run.sh --scenarios
 ```
 
 Remote debugging may be available on port `5000`. To successfully run tests, 

@@ -140,7 +140,7 @@ public class OAuth20ClientIdClientSecretAuthenticator implements Authenticator {
     protected Principal buildAuthenticatedPrincipal(final Principal resolvedPrincipal, final OAuthRegisteredService registeredService,
                                                     final WebApplicationService service, final CallContext callContext) throws Throwable {
         val accessTokenFactory = (OAuth20AccessTokenFactory) ticketFactory.get(OAuth20AccessToken.class);
-        val scopes = requestParameterResolver.resolveRequestedScopes(callContext.webContext());
+        val scopes = resolveRequestedScopes(callContext);
         val responseType = requestParameterResolver.resolveResponseType(callContext.webContext());
         val grantType = requestParameterResolver.resolveGrantType(callContext.webContext());
 
@@ -161,6 +161,10 @@ public class OAuth20ClientIdClientSecretAuthenticator implements Authenticator {
         val finalPrincipal = profileScopeToAttributesFilter.filter(service, resolvedPrincipal, registeredService, accessToken);
         LOGGER.debug("Built final principal [{}]", finalPrincipal);
         return finalPrincipal;
+    }
+
+    protected Collection<String> resolveRequestedScopes(final CallContext callContext) {
+        return requestParameterResolver.resolveRequestedScopes(callContext.webContext());
     }
 
     protected void validateCredentials(final UsernamePasswordCredentials credentials,

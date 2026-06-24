@@ -48,6 +48,15 @@ public class SingleSignOnProperties implements Serializable {
     private boolean renewAuthnEnabled = true;
 
     /**
+     * Attribute name that represents a Unix epoch value in seconds.
+     * This timestamp signifies the demarcation point such that any authentication attempts that
+     * were created prior to that time are treated as revoked and SSO will be ignored.
+     * Calculations are based on the {@code UTC} timezone.
+     * The attribute is only read and never modified/updated by CAS. 
+     */
+    private String revocationAttributeName;
+
+    /**
      * SSO behavior and settings, defined globally, that affects application treatment.
      */
     @NestedConfigurationProperty

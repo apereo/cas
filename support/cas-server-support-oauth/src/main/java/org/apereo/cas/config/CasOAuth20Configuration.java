@@ -1677,7 +1677,8 @@ class CasOAuth20Configuration {
                     oauth20ClientSecretValidator,
                     authenticationAttributeReleasePolicy,
                     profileScopeToAttributesFilter,
-                    ticketFactory, applicationContext);
+                    ticketFactory,
+                    applicationContext);
             }
 
             @ConditionalOnMissingBean(name = "oauthAccessTokenAuthenticator")

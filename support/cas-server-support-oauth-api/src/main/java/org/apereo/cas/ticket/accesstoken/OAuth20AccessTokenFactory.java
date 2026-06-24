@@ -7,6 +7,7 @@ import org.apereo.cas.support.oauth.OAuth20GrantTypes;
 import org.apereo.cas.support.oauth.OAuth20ResponseTypes;
 import org.apereo.cas.ticket.Ticket;
 import org.apereo.cas.ticket.TicketFactory;
+import org.jspecify.annotations.Nullable;
 
 /**
  * Factory to create OAuth access tokens.
@@ -33,9 +34,9 @@ public interface OAuth20AccessTokenFactory extends TicketFactory {
      */
     OAuth20AccessToken create(Service service,
                               Authentication authentication,
-                              Ticket ticketGrantingTicket,
+                              @Nullable Ticket ticketGrantingTicket,
                               Collection<String> scopes,
-                              String token,
+                              @Nullable String token,
                               String clientId,
                               Map<String, Map<String, Object>> requestClaims,
                               OAuth20ResponseTypes responseType,
