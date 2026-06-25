@@ -27,8 +27,6 @@ const cas = require("../../cas.js");
     let accessToken = null;
     await cas.doPost(accessTokenUrl, "", {
         "Content-Type": "application/x-www-form-urlencoded",
-        // for basic auth in OAuth (RFC 6749 as opposed to RFC 7617, regular basic auth),
-        // client and secrets are URL encoded before being base 64 encoded
         "Authorization": `Basic ${btoa("client:my%2Bsecret")}`
     }, (res) => {
         cas.log(res.data);

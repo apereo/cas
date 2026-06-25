@@ -73,6 +73,7 @@ class GoogleAuthenticatorOneTimeTokenCredentialValidatorTests {
     void verifyStore() {
         val token = new GoogleAuthenticatorToken(632435, "casuser");
         assertDoesNotThrow(() -> validator.store(token));
+        assertThrows(IllegalArgumentException.class, () -> validator.store(token));
     }
 
     @Test

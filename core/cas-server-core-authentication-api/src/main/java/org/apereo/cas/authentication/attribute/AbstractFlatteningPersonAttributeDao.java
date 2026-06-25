@@ -3,6 +3,7 @@ package org.apereo.cas.authentication.attribute;
 import module java.base;
 import org.apereo.cas.authentication.principal.attribute.PersonAttributeDaoFilter;
 import org.apereo.cas.authentication.principal.attribute.PersonAttributes;
+import org.jspecify.annotations.Nullable;
 
 /**
  * This is {@link AbstractFlatteningPersonAttributeDao}.
@@ -13,9 +14,9 @@ import org.apereo.cas.authentication.principal.attribute.PersonAttributes;
 public abstract class AbstractFlatteningPersonAttributeDao extends BasePersonAttributeDao {
 
     @Override
-    public final Set<PersonAttributes> getPeople(final Map<String, Object> query,
-                                                 final PersonAttributeDaoFilter filter,
-                                                 final Set<PersonAttributes> resultPeople) {
+    public final @Nullable Set<PersonAttributes> getPeople(final Map<String, Object> query,
+                                                           final PersonAttributeDaoFilter filter,
+                                                           final Set<PersonAttributes> resultPeople) {
         var multivaluedSeed = toMultivaluedMap(query);
         return this.getPeopleWithMultivaluedAttributes(multivaluedSeed, filter, resultPeople);
     }

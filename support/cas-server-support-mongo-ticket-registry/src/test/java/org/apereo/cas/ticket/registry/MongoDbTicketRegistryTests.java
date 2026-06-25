@@ -9,6 +9,7 @@ import org.apereo.cas.ticket.Ticket;
 import org.apereo.cas.ticket.TicketCatalog;
 import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.apereo.cas.ticket.TicketGrantingTicketImpl;
+import org.apereo.cas.ticket.expiration.HardTimeoutExpirationPolicy;
 import org.apereo.cas.ticket.expiration.NeverExpiresExpirationPolicy;
 import org.apereo.cas.ticket.serialization.TicketSerializationManager;
 import org.apereo.cas.util.TicketGrantingTicketIdGenerator;
@@ -17,6 +18,7 @@ import org.apereo.cas.util.junit.EnabledIfListeningOnPort;
 import lombok.Getter;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
+import org.bson.Document;
 import org.jooq.lambda.Unchecked;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.RepeatedTest;
@@ -25,6 +27,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.ImportAutoConfiguration;
 import org.springframework.data.mongodb.core.MongoOperations;
+import org.springframework.data.mongodb.core.query.Criteria;
+import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.test.context.TestPropertySource;
 import static org.junit.jupiter.api.Assertions.*;
@@ -61,10 +65,43 @@ class MongoDbTicketRegistryTests extends BaseTicketRegistryTests {
     @Autowired
     @Qualifier("mongoDbTicketRegistryTemplate")
     private MongoOperations mongoDbTicketRegistryTemplate;
-    
+
     @BeforeEach
     void before() {
         newTicketRegistry.deleteAll();
+    }
+
+    @RepeatedTest(1)
+    void verifyIndexesAndTtlConfiguration() throws Throwable {
+        val ticketDefinition = ticketCatalog.findTicketDefinition(TicketGrantingTicket.class).orElseThrow();
+        val collectionName = ticketDefinition.getProperties().getStorageName();
+        val indexes = mongoDbTicketRegistryTemplate.getCollection(collectionName).listIndexes().into(new ArrayList<Document>());
+
+        val expirationIndex = getIndexByName(indexes, "IDX_EXPIRATION");
+        assertEquals(new Document(MongoDbTicketDocument.FIELD_NAME_EXPIRE_AT, 1), expirationIndex.get("key"));
+        assertEquals(0, ((Number) expirationIndex.get("expireAfterSeconds")).longValue());
+
+        val serviceIndex = getIndexByName(indexes, "IDX_SERVICE");
+        assertEquals(new Document(MongoDbTicketDocument.FIELD_NAME_SERVICE, 1), serviceIndex.get("key"));
+
+        val attributesIndex = getIndexByName(indexes, "IDX_ATTRIBUTES");
+        assertEquals(new Document(MongoDbTicketDocument.FIELD_NAME_ATTRIBUTES + ".$**", 1), attributesIndex.get("key"));
+
+        val timeout = 30;
+        val creationWindow = Instant.now();
+        val authentication = CoreAuthenticationTestUtils.getAuthentication(UUID.randomUUID().toString());
+        val ticketGrantingTicketId = new TicketGrantingTicketIdGenerator(10, StringUtils.EMPTY)
+            .getNewTicketId(TicketGrantingTicket.PREFIX);
+        getNewTicketRegistry().addTicket(new TicketGrantingTicketImpl(ticketGrantingTicketId,
+            authentication, new HardTimeoutExpirationPolicy(timeout)));
+
+        val query = new Query(Criteria.where(MongoDbTicketDocument.FIELD_NAME_ID).is(ticketGrantingTicketId));
+        val document = mongoDbTicketRegistryTemplate.findOne(query, MongoDbTicketDocument.class, collectionName);
+        assertNotNull(document);
+        assertNotNull(document.getExpireAt());
+        val expireAt = document.getExpireAt().toInstant();
+        assertFalse(expireAt.isBefore(creationWindow.plusSeconds(timeout - 1)));
+        assertTrue(expireAt.isBefore(creationWindow.plusSeconds(timeout + 10)));
     }
 
     @RepeatedTest(2)
@@ -181,5 +218,13 @@ class MongoDbTicketRegistryTests extends BaseTicketRegistryTests {
 
         tickets.forEach(Unchecked.consumer(ticket -> getNewTicketRegistry().deleteTicket(ticket)));
         assertEquals(0, getNewTicketRegistry().getSessionsFor(principalId).count());
+    }
+
+    private static Document getIndexByName(final Collection<Document> indexes, final String name) {
+        return indexes
+            .stream()
+            .filter(index -> name.equals(index.getString("name")))
+            .findFirst()
+            .orElseThrow();
     }
 }

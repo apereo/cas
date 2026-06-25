@@ -166,8 +166,9 @@ if [[ "${CI}" == "true" ]]; then
   printgreen "Configuring git settings..."
   git config --global http.postbuffer 524288000
   git config --global credential.helper "cache --timeout=86400"
-  git config --global pack.threads "8"
+  git config --global pack.threads "$(nproc 2>/dev/null || sysctl -n hw.ncpu)"
   git config --global init.defaultBranch master
+  git config --global protocol.version 2
 fi
 
 echo "-------------------------------------------------------"
@@ -222,7 +223,8 @@ if [[ $cloneRepository == "true" ]]; then
   printgreen "Cloning ${REPOSITORY_NAME}'s [gh-pages] branch..."
   [[ -d "$PWD/gh-pages" ]] && rm -Rf "$PWD/gh-pages"
   mkdir -p "$PWD/gh-pages"
-  git clone --single-branch --depth 1 --branch gh-pages --quiet "${REPOSITORY_ADDR}" $PWD/gh-pages
+  git clone --single-branch --depth 1 --branch gh-pages \
+    --filter=blob:none --no-tags --quiet "${REPOSITORY_ADDR}" "$PWD/gh-pages"
 
   printgreen "Removing previous documentation from $branchVersion..."
   rm -Rf "$PWD/gh-pages/$branchVersion" >/dev/null
@@ -230,7 +232,7 @@ if [[ $cloneRepository == "true" ]]; then
   rm -Rf "$PWD/gh-pages/_layouts/$branchVersion" >/dev/null
   rm -Rf "$PWD/gh-pages/_data/$branchVersion" >/dev/null
   rm -Rf "$PWD/gh-pages/_sass" >/dev/null
-  
+
   printgreen "Creating $branchVersion directory..."
   mkdir -p "$PWD/gh-pages/$branchVersion"
   mkdir -p "$PWD/gh-pages/_includes/$branchVersion"
@@ -239,7 +241,7 @@ if [[ $cloneRepository == "true" ]]; then
   mkdir -p "$PWD/gh-pages/stylesheets"
   mkdir -p "$PWD/gh-pages/_layouts"
   mkdir -p "$PWD/gh-pages/_data/$branchVersion"
-  
+
   printgreen "Copying new docs to $branchVersion..."
   mv "$PWD/docs-latest/Gemfile" "$PWD/gh-pages"
   mv "$PWD/docs-latest/Support.md" "$PWD/gh-pages"
@@ -261,9 +263,10 @@ if [[ $cloneRepository == "true" ]]; then
   rm -Rf "$PWD"/docs-latest/_sass
   rm -Rf "$PWD/gh-pages/_sass"
 
-  cp -Rf "$PWD"/docs-includes/* "$PWD/gh-pages/_includes/$branchVersion"
-  cp -Rf "$PWD"/docs-layouts/* "$PWD/gh-pages/_layouts"
-  cp -Rf "$PWD"/docs-includes-site/* "$PWD/gh-pages/_includes"
+  cp -Rf "$PWD"/docs-includes/* "$PWD/gh-pages/_includes/$branchVersion" &
+  cp -Rf "$PWD"/docs-layouts/* "$PWD/gh-pages/_layouts" &
+  cp -Rf "$PWD"/docs-includes-site/* "$PWD/gh-pages/_includes" &
+  wait
 
   rm -Rf "$PWD/gh-pages/_data/$branchVersion" >/dev/null
   rm -Rf "$PWD/docs-latest"
@@ -296,7 +299,7 @@ if [[ $generateData == "true" ]]; then
     printred "Unable to generate documentation data. Aborting..."
     exit 1
   fi
-  
+
   printgreen "Generated documentation data at $PWD/gh-pages/_data/$dataDir..."
 
   casVersion=(`cat "$PWD"/gradle.properties | grep "version" | cut -d= -f2`)
@@ -385,7 +388,7 @@ if [[ ${buildDocs} == "true" ]]; then
   if [[ ${serve} == "true" ]]; then
     bundle exec jekyll serve --profile --incremental --trace
   else
-    bundle exec jekyll build --profile --incremental --trace
+    bundle exec jekyll build --incremental --trace
   fi
   retVal=$?
 
@@ -395,7 +398,7 @@ if [[ ${buildDocs} == "true" ]]; then
     exit ${retVal}
   fi
   popd
-  
+
   if [[ "$CI" == "true" ]]; then
     echo "Moving jekyll build artifacts into $PWD/jekyll"
     mkdir -p "$PWD/jekyll"

@@ -16,7 +16,7 @@ function printred() {
 
 function runContainer() {
  printgreen "Building GCP $1 image..."
- docker build ci/tests/gcp/ --build-arg GCLOUD_COMPONENT="$1" -t cas/gcp-$1:latest
+ docker build ci/tests/gcp/ --build-arg GCLOUD_COMPONENT="$1" -t cas/gcp-$1:latest --quiet
  retVal=$?
  if [ $retVal == 0 ]; then
      printgreen "GCP $1 docker container is built successfully."
