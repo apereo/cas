@@ -123,13 +123,27 @@ function processNavigationTabs() {
         hideElements($("#applicationsTabButton"));
         hideElements($(`#attribute-tab-${Tabs.APPLICATIONS.index}`));
     }
-    if (!CasActuatorEndpoints.metrics() || !CasActuatorEndpoints.httpExchanges() || !CasActuatorEndpoints.auditEvents()
+    if (!CasActuatorEndpoints.metrics() || !CasActuatorEndpoints.auditEvents()
         || !CasActuatorEndpoints.heapDump() || !CasActuatorEndpoints.health() || !CasActuatorEndpoints.statistics()) {
         hideElements($("#systemTabButton"));
         hideElements($(`#attribute-tab-${Tabs.SYSTEM.index}`));
     }
+    if (!CasActuatorEndpoints.httpExchanges()) {
+        hideElements($("#httprequeststab").parent());
+    }
+    if (!CasActuatorEndpoints.startup()) {
+        hideElements($("#casstartuptab").parent());
+    }
+    if (!CasActuatorEndpoints.dependencies()) {
+        hideElements($("#system-info-tabs"));
+        hideElements($("#casdependenciestab").parent());
+        hideElements($("#casvulnerabilitiestab").parent());
+    }
     if (!CasActuatorEndpoints.metrics()) {
         hideElements($("#systemmetricstab").parent());
+    }
+    if (!CasActuatorEndpoints.mappings()) {
+        hideElements($("#httprequestsmappingstab").parent());
     }
     if (!CasActuatorEndpoints.prometheus()) {
         hideElements($("#prometheusmetricstab").parent());
@@ -207,6 +221,12 @@ function processNavigationTabs() {
     }
     if (!CasActuatorEndpoints.configurationMetadata()) {
         hideElements($("#casConfigSearch"));
+    }
+    if (!CasActuatorEndpoints.beans()) {
+        hideElements($("#springBeansTabItem"));
+    }
+    if (!CasActuatorEndpoints.conditions()) {
+        hideElements($("#springConditionsTabItem"));
     }
     if (!CasActuatorEndpoints.oidcJwks() || !CAS_FEATURES.includes("OpenIDConnect")) {
         $("#oidcprotocol").parent().remove();

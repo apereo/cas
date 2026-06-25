@@ -77,7 +77,7 @@ class RegisteredServiceAuthenticationHandlerResolverTests {
             .newTransaction(RegisteredServiceTestUtils.getService("serviceid2"),
                 RegisteredServiceTestUtils.getCredentialsWithSameUsernameAndPassword("casuser"));
         val handlers = resolver.resolve(this.authenticationHandlers, transaction);
-        assertEquals(handlers.size(), this.authenticationHandlers.size());
+        assertEquals(Objects.requireNonNull(handlers).size(), this.authenticationHandlers.size());
     }
 
     @Test

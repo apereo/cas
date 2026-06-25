@@ -21,6 +21,7 @@ import org.apereo.cas.util.function.FunctionUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.jspecify.annotations.Nullable;
 import org.springframework.context.ConfigurableApplicationContext;
 
 /**
@@ -42,11 +43,11 @@ public class OidcProfileScopeToAttributesFilter extends DefaultOAuth20ProfileSco
     private final ConfigurableApplicationContext applicationContext;
 
     @Override
-    public Principal filter(final Service service,
-                            final Principal givenPrincipal,
-                            final RegisteredService registeredService,
-                            final Set<String> scopes,
-                            final OAuth20AccessToken accessToken) throws Throwable {
+    public @Nullable Principal filter(final Service service,
+                                      final Principal givenPrincipal,
+                                      final RegisteredService registeredService,
+                                      final Set<String> scopes,
+                                      final OAuth20AccessToken accessToken) throws Throwable {
         val principal = super.filter(service, givenPrincipal, registeredService, scopes, accessToken);
         if (registeredService instanceof final OidcRegisteredService oidcService) {
             return filterClaimsForOidcService(service, givenPrincipal, accessToken, principal, scopes, oidcService);
@@ -54,20 +55,12 @@ public class OidcProfileScopeToAttributesFilter extends DefaultOAuth20ProfileSco
         return principal;
     }
 
-    protected Principal filterClaimsForOidcService(final Service service,
-                                                   final Principal givenPrincipal,
-                                                   final OAuth20AccessToken accessToken,
-                                                   final Principal filteredPrincipal,
-                                                   final Set<String> scopes,
-                                                   final OidcRegisteredService oidcService) throws Throwable {
-        if (!scopes.contains(OidcConstants.StandardScopes.OPENID.getScope())) {
-            LOGGER.warn("Access token scopes [{}] cannot identify an OpenID Connect request with [{}] scope(s). "
-                    + "This is a REQUIRED scope for OpenID Connect that MUST be present in the request. Given its absence, "
-                    + "CAS will not process any attribute claims and will return the authenticated principal as is.",
-                OidcConstants.StandardScopes.OPENID.getScope(), scopes.isEmpty() ? "empty" : scopes);
-            return principalFactory.createPrincipal(givenPrincipal.getId());
-        }
-
+    protected @Nullable Principal filterClaimsForOidcService(final Service service,
+                                                             final Principal givenPrincipal,
+                                                             final OAuth20AccessToken accessToken,
+                                                             final Principal filteredPrincipal,
+                                                             final Set<String> scopes,
+                                                             final OidcRegisteredService oidcService) throws Throwable {
         scopes.retainAll(casProperties.getAuthn().getOidc().getDiscovery().getScopes());
         LOGGER.debug("Collection of scopes filtered based on discovery settings are [{}]", scopes);
 
