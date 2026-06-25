@@ -140,7 +140,17 @@ public class WebAuthnMultifactorAuthenticationCoreProperties implements Serializ
      * to use the primary device to authenticate for security or other practical reasons.
      */
     private boolean qrCodeAuthenticationEnabled;
-    
+
+    /**
+     * Defines the authenticator attachment: CROSS_PLATFORM or PLATFORM.
+     */
+    private String authenticatorAttachment;
+
+    /**
+     * Defines the user verification requirement: DISCOURAGED, PREFERRED or REQUIRED.
+     */
+    private String userVerificationRequirement;
+
     public WebAuthnMultifactorAuthenticationCoreProperties() {
         trustSource.getTrustedDeviceMetadata().setLocation(new ClassPathResource("webauthn-metadata.json"));
     }

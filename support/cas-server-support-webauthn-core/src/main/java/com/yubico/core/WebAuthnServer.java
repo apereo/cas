@@ -1,5 +1,6 @@
 package com.yubico.core;
 import module java.base;
+import com.yubico.webauthn.data.*;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.databind.JsonSerializer;
@@ -25,12 +26,6 @@ import com.yubico.webauthn.StartAssertionOptions;
 import com.yubico.webauthn.StartRegistrationOptions;
 import com.yubico.webauthn.attestation.Attestation;
 import com.yubico.webauthn.attestation.AttestationMetadataSource;
-import com.yubico.webauthn.data.AuthenticatorData;
-import com.yubico.webauthn.data.AuthenticatorSelectionCriteria;
-import com.yubico.webauthn.data.AuthenticatorTransport;
-import com.yubico.webauthn.data.ByteArray;
-import com.yubico.webauthn.data.ResidentKeyRequirement;
-import com.yubico.webauthn.data.UserIdentity;
 import com.yubico.webauthn.exception.AssertionFailedException;
 import com.yubico.webauthn.exception.RegistrationFailedException;
 import lombok.AllArgsConstructor;
@@ -84,6 +79,12 @@ public class WebAuthnServer {
                     .build()
             );
 
+            val authenticatorAttachementProperty = casProperties.getAuthn().getMfa().getWebAuthn().getCore().getAuthenticatorAttachment();
+            val authenticatorAttachement = authenticatorAttachementProperty != null
+                    ? AuthenticatorAttachment.valueOf(authenticatorAttachementProperty) : null;
+            val userVerificationRequirementProperty = casProperties.getAuthn().getMfa().getWebAuthn().getCore().getUserVerificationRequirement();
+            val userVerificationRequirement = userVerificationRequirementProperty != null
+                    ? UserVerificationRequirement.valueOf(userVerificationRequirementProperty) : null;
             val registrationRequest = new RegistrationRequest(
                 username,
                 credentialNickname,
@@ -92,6 +93,8 @@ public class WebAuthnServer {
                     StartRegistrationOptions.builder()
                         .user(registrationUserId)
                         .authenticatorSelection(AuthenticatorSelectionCriteria.builder()
+                            .authenticatorAttachment(authenticatorAttachement)
+                            .userVerification(userVerificationRequirement)
                             .residentKey(residentKeyRequirement)
                             .build()
                         )
