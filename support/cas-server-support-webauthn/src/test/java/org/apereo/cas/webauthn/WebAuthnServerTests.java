@@ -28,7 +28,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @ExtendWith(CasTestExtension.class)
 class WebAuthnServerTests {
 
-    abstract class BaseWebAuthnServerStartRegistrationIntegrationTests {
+    abstract static class BaseWebAuthnServerStartRegistrationTests {
         @Autowired
         @Qualifier("webAuthnServer")
         private WebAuthnServer webAuthnServer;
@@ -44,12 +44,12 @@ class WebAuthnServerTests {
             val request = new MockHttpServletRequest();
             val username = UUID.randomUUID().toString();
             val registration = webAuthnServer.startRegistration(
-                    request,
-                    username,
-                    Optional.of("CAS User"),
-                    Optional.of("key"),
-                    requestedResidentKeyRequirement(),
-                    Optional.empty()
+                request,
+                username,
+                Optional.of("CAS User"),
+                Optional.of("key"),
+                requestedResidentKeyRequirement(),
+                Optional.empty()
             );
 
             assertTrue(registration.isRight());
@@ -63,8 +63,8 @@ class WebAuthnServerTests {
 
     @Nested
     @SpringBootTest(classes = BaseWebAuthnWebflowTests.SharedTestConfiguration.class,
-            properties = "cas.server.name=https://localhost:8443")
-    class WebAuthnServerStartRegistrationNullIntegrationTests extends BaseWebAuthnServerStartRegistrationIntegrationTests {
+        properties = "cas.server.name=https://localhost:8443")
+    class WebAuthnServerStartRegistrationNullTests extends BaseWebAuthnServerStartRegistrationTests {
         @Override
         protected AuthenticatorAttachment expectedAuthenticatorAttachment() {
             return null;
@@ -83,12 +83,12 @@ class WebAuthnServerTests {
 
     @Nested
     @SpringBootTest(classes = BaseWebAuthnWebflowTests.SharedTestConfiguration.class,
-            properties = {
-                    "cas.server.name=https://localhost:8443",
-                    "cas.authn.mfa.web-authn.core.authenticator-attachment=PLATFORM",
-                    "cas.authn.mfa.web-authn.core.user-verification-requirement=REQUIRED"
-            })
-    class WebAuthnServerStartRegistrationPlatformRequiredIntegrationTests extends BaseWebAuthnServerStartRegistrationIntegrationTests {
+        properties = {
+            "cas.server.name=https://localhost:8443",
+            "cas.authn.mfa.web-authn.core.authenticator-attachment=PLATFORM",
+            "cas.authn.mfa.web-authn.core.user-verification-requirement=REQUIRED"
+        })
+    class WebAuthnServerStartRegistrationPlatformRequiredTests extends BaseWebAuthnServerStartRegistrationTests {
         @Override
         protected AuthenticatorAttachment expectedAuthenticatorAttachment() {
             return AuthenticatorAttachment.PLATFORM;
@@ -107,12 +107,12 @@ class WebAuthnServerTests {
 
     @Nested
     @SpringBootTest(classes = BaseWebAuthnWebflowTests.SharedTestConfiguration.class,
-            properties = {
-                    "cas.server.name=https://localhost:8443",
-                    "cas.authn.mfa.web-authn.core.authenticator-attachment=CROSS_PLATFORM",
-                    "cas.authn.mfa.web-authn.core.user-verification-requirement=DISCOURAGED"
-            })
-    class WebAuthnServerStartRegistrationCrossPlatformDiscouragedIntegrationTests extends BaseWebAuthnServerStartRegistrationIntegrationTests {
+        properties = {
+            "cas.server.name=https://localhost:8443",
+            "cas.authn.mfa.web-authn.core.authenticator-attachment=CROSS_PLATFORM",
+            "cas.authn.mfa.web-authn.core.user-verification-requirement=DISCOURAGED"
+        })
+    class WebAuthnServerStartRegistrationCrossPlatformDiscouragedTests extends BaseWebAuthnServerStartRegistrationTests {
         @Override
         protected AuthenticatorAttachment expectedAuthenticatorAttachment() {
             return AuthenticatorAttachment.CROSS_PLATFORM;
@@ -131,12 +131,12 @@ class WebAuthnServerTests {
 
     @Nested
     @SpringBootTest(classes = BaseWebAuthnWebflowTests.SharedTestConfiguration.class,
-            properties = {
-                    "cas.server.name=https://localhost:8443",
-                    "cas.authn.mfa.web-authn.core.authenticator-attachment=PLATFORM",
-                    "cas.authn.mfa.web-authn.core.user-verification-requirement=PREFERRED"
-            })
-    class WebAuthnServerStartRegistrationPlatformPreferredIntegrationTests extends BaseWebAuthnServerStartRegistrationIntegrationTests {
+        properties = {
+            "cas.server.name=https://localhost:8443",
+            "cas.authn.mfa.web-authn.core.authenticator-attachment=PLATFORM",
+            "cas.authn.mfa.web-authn.core.user-verification-requirement=PREFERRED"
+        })
+    class WebAuthnServerStartRegistrationPlatformPreferredTests extends BaseWebAuthnServerStartRegistrationTests {
         @Override
         protected AuthenticatorAttachment expectedAuthenticatorAttachment() {
             return AuthenticatorAttachment.PLATFORM;

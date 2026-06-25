@@ -2,6 +2,7 @@ package com.yubico.core;
 
 import module java.base;
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.configuration.model.support.mfa.webauthn.WebAuthnMultifactorAuthenticationProperties;
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.databind.JsonSerializer;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -43,6 +44,7 @@ import lombok.Setter;
 import lombok.Value;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.apache.commons.lang3.StringUtils;
 import org.jooq.lambda.Unchecked;
 import org.jspecify.annotations.NonNull;
 import jakarta.servlet.http.HttpServletRequest;
@@ -75,7 +77,8 @@ public class WebAuthnServer {
         LOGGER.trace("Starting registration operation for username: [{}], credentialNickname: [{}]", username, credentialNickname);
         val registrations = userStorage.getRegistrationsByUsername(username);
         val existingUser = registrations.stream().findAny().map(CredentialRegistration::getUserIdentity);
-        val permissionGranted = casProperties.getAuthn().getMfa().getWebAuthn().getCore().isMultipleDeviceRegistrationEnabled()
+        val properties = casProperties.getAuthn().getMfa().getWebAuthn();
+        val permissionGranted = properties.getCore().isMultipleDeviceRegistrationEnabled()
             || existingUser.map(userIdentity -> sessionManager.isSessionForUser(request, userIdentity.getId(), sessionToken)).orElse(true);
 
         if (permissionGranted) {
@@ -87,12 +90,14 @@ public class WebAuthnServer {
                     .build()
             );
 
-            val authenticatorAttachementProperty = casProperties.getAuthn().getMfa().getWebAuthn().getCore().getAuthenticatorAttachment();
-            val authenticatorAttachement = authenticatorAttachementProperty != null
-                    ? AuthenticatorAttachment.valueOf(authenticatorAttachementProperty) : null;
-            val userVerificationRequirementProperty = casProperties.getAuthn().getMfa().getWebAuthn().getCore().getUserVerificationRequirement();
-            val userVerificationRequirement = userVerificationRequirementProperty != null
-                    ? UserVerificationRequirement.valueOf(userVerificationRequirementProperty) : null;
+            val authenticatorAttachementProperty = properties.getCore().getAuthenticatorAttachment();
+            val authenticatorAttachement = StringUtils.isNotBlank(authenticatorAttachementProperty)
+                ? AuthenticatorAttachment.valueOf(authenticatorAttachementProperty.toUpperCase(Locale.ROOT))
+                : null;
+            val userVerificationRequirementProperty = properties.getCore().getUserVerificationRequirement();
+            val userVerificationRequirement = StringUtils.isNotBlank(userVerificationRequirementProperty)
+                ? UserVerificationRequirement.valueOf(userVerificationRequirementProperty.toUpperCase(Locale.ROOT))
+                : null;
             val registrationRequest = new RegistrationRequest(
                 username,
                 credentialNickname,
