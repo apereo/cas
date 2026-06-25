@@ -14,7 +14,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.apereo.inspektr.audit.AuditActionContext;
 import org.apereo.inspektr.audit.AuditTrailManager;
 import org.apereo.inspektr.common.spi.AuditActionDateProvider;
-import org.jspecify.annotations.NonNull;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.boot.actuate.endpoint.Access;
 import org.springframework.boot.actuate.endpoint.annotation.Endpoint;
@@ -33,12 +32,12 @@ import org.springframework.web.bind.annotation.RequestParam;
 @Slf4j
 public class AuditLogEndpoint extends BaseCasRestActuatorEndpoint {
 
-    private final ObjectProvider<@NonNull AuditTrailExecutionPlan> auditTrailManager;
-    private final ObjectProvider<@NonNull AuditActionDateProvider> auditActionDateProvider;
+    private final ObjectProvider<AuditTrailExecutionPlan> auditTrailManager;
+    private final ObjectProvider<AuditActionDateProvider> auditActionDateProvider;
 
-    public AuditLogEndpoint(final ObjectProvider<@NonNull AuditTrailExecutionPlan> auditTrailManager,
+    public AuditLogEndpoint(final ObjectProvider<AuditTrailExecutionPlan> auditTrailManager,
                             final ConfigurableApplicationContext applicationContext,
-                            final ObjectProvider<@NonNull AuditActionDateProvider> auditActionDateProvider,
+                            final ObjectProvider<AuditActionDateProvider> auditActionDateProvider,
                             final CasConfigurationProperties casProperties) {
         super(casProperties, applicationContext);
         this.auditActionDateProvider = auditActionDateProvider;

@@ -27,6 +27,15 @@ $metadata['__DYNAMIC:1__'] = [
      */
     'auth' => 'example-userpass',
 
+    'authproc' => [
+        50 => [
+            'class' => 'core:AttributeAdd',
+            'http://schemas.microsoft.com/claims/authnmethodsreferences' => [
+                'http://schemas.microsoft.com/claims/multipleauthn',
+            ],
+        ],
+    ],
+
     'SingleSignOnServiceBinding' => [
         'urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST',
         'urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Redirect'

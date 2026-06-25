@@ -29,6 +29,11 @@ public interface CasWebflowConstants {
      */
     String BEAN_NAME_FLOW_BUILDER = "flowBuilder";
 
+    /**
+     * Default flow execution key parameter name, {@value}.
+     **/
+    String PARAMETER_FLOW_EXECUTION_KEY = "execution";
+    
     /*
      ****************************************
      * Errors.

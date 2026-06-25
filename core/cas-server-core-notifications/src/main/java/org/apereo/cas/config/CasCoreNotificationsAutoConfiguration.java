@@ -23,7 +23,6 @@ import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
-import org.jspecify.annotations.NonNull;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
@@ -74,9 +73,9 @@ public class CasCoreNotificationsAutoConfiguration {
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     public EmailSender emailSender(
         final ConfigurableApplicationContext applicationContext,
-        final ObjectProvider<@NonNull List<EmailSenderCustomizer>> customizers,
+        final ObjectProvider<List<EmailSenderCustomizer>> customizers,
         final MailProperties mailProperties,
-        final ObjectProvider<@NonNull SslBundles> sslBundles,
+        final ObjectProvider<SslBundles> sslBundles,
         @Qualifier(TenantExtractor.BEAN_NAME)
         final TenantExtractor tenantExtractor,
         @Qualifier("messageSource")
@@ -120,7 +119,7 @@ public class CasCoreNotificationsAutoConfiguration {
     @ConditionalOnMissingBean(name = NotificationSender.BEAN_NAME)
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     public NotificationSender notificationSender(
-        final ObjectProvider<@NonNull List<NotificationSenderExecutionPlanConfigurer>> configurerProviders) {
+        final ObjectProvider<List<NotificationSenderExecutionPlanConfigurer>> configurerProviders) {
         val configurers = Optional.ofNullable(configurerProviders.getIfAvailable()).orElseGet(ArrayList::new);
         val results = configurers
             .stream()

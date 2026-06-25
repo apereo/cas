@@ -89,7 +89,7 @@ public interface RegisteredServiceAccessStrategy extends Serializable, Ordered {
      *
      * @return authn policy
      */
-    default RegisteredServiceDelegatedAuthenticationPolicy getDelegatedAuthenticationPolicy() {
+    default @Nullable RegisteredServiceDelegatedAuthenticationPolicy getDelegatedAuthenticationPolicy() {
         return null;
     }
 
