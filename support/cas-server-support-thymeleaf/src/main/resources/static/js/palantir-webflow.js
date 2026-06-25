@@ -7,8 +7,8 @@ async function initializeCasSpringWebflowOperations() {
 
         Swal.fire({
             icon: "info",
-            title: `Fetching Webflow Definition`,
-            text: `Please wait while webflow definition for ${flowId} is processed...`,
+            title: `Fetching Webflow Definitions`,
+            text: `Please wait while webflow definitions for ${flowId} is processed...`,
             allowOutsideClick: false,
             showConfirmButton: false,
             didOpen: () => Swal.showLoading()

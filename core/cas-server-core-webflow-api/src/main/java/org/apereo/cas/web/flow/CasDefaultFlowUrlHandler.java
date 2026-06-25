@@ -26,13 +26,6 @@ import jakarta.servlet.http.HttpServletRequest;
 @Slf4j
 @RequiredArgsConstructor
 public class CasDefaultFlowUrlHandler extends DefaultFlowUrlHandler {
-
-    /**
-     * Default flow execution key parameter name, {@value}.
-     * Same as that used by {@link DefaultFlowUrlHandler}.
-     **/
-    public static final String DEFAULT_FLOW_EXECUTION_KEY_PARAMETER = "execution";
-
     private static final String DELIMITER = "&";
 
     private final List<CasWebflowIdExtractor> flowIdExtractors;
@@ -47,10 +40,10 @@ public class CasDefaultFlowUrlHandler extends DefaultFlowUrlHandler {
 
     @Override
     public String getFlowExecutionKey(final HttpServletRequest request) {
-        var executionKey = request.getParameter(DEFAULT_FLOW_EXECUTION_KEY_PARAMETER);
+        var executionKey = request.getParameter(CasWebflowConstants.PARAMETER_FLOW_EXECUTION_KEY);
         if (StringUtils.isBlank(executionKey) && HttpMethod.POST.matches(request.getMethod())) {
             val parameters = WebUtils.getHttpRequestParametersFromRequestBody(request);
-            executionKey = parameters.get(DEFAULT_FLOW_EXECUTION_KEY_PARAMETER);
+            executionKey = parameters.get(CasWebflowConstants.PARAMETER_FLOW_EXECUTION_KEY);
         }
         return executionKey;
     }
@@ -58,7 +51,7 @@ public class CasDefaultFlowUrlHandler extends DefaultFlowUrlHandler {
     @Override
     public String createFlowExecutionUrl(final String flowId, final String flowExecutionKey, final HttpServletRequest request) {
         val encoding = getEncodingScheme(request);
-        val executionKey = encodeSingleParameter(DEFAULT_FLOW_EXECUTION_KEY_PARAMETER, flowExecutionKey, encoding);
+        val executionKey = encodeSingleParameter(CasWebflowConstants.PARAMETER_FLOW_EXECUTION_KEY, flowExecutionKey, encoding);
         val url = request.getParameterMap().entrySet()
             .stream()
             .flatMap(entry -> encodeMultiParameter(entry.getKey(), entry.getValue(), encoding))

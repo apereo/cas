@@ -69,6 +69,7 @@ public class CasGoogleCloudLoggingAutoConfiguration {
 
     @Bean
     @ConditionalOnAvailableEndpoint
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     public GoogleCloudLogsEndpoint googleCloudLogsEndpoint(
         @Qualifier("googleCloudLoggingService") final Logging googleCloudLoggingService,
         final CasConfigurationProperties casProperties,

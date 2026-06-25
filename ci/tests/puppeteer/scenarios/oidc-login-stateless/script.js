@@ -111,6 +111,7 @@ async function verifyJwtAccessToken(page) {
 
     let accessToken = null;
     let refreshToken = null;
+    
     await cas.doPost(accessTokenUrl, "",
         {
             "Content-Type": "application/json"
@@ -123,15 +124,13 @@ async function verifyJwtAccessToken(page) {
         });
     assert(accessToken !== undefined);
     assert(refreshToken !== undefined);
-
+    
     await cas.doGet("https://localhost:8443/cas/oidc/jwks",
         (res) => {
             assert(res.status === 200);
             assert(res.data.keys[0]["kid"] !== undefined);
-            cas.log(`Using key identifier ${res.data.keys[0]["kid"]}`);
 
             cas.verifyJwtWithJwk(accessToken, res.data.keys[0], "RS512").then((verified) => {
-                // await cas.log(verified)
                 assert(verified.payload.sub === "casuser");
                 assert(verified.payload.aud === "client2");
                 assert(verified.payload.iss === "https://localhost:8443/cas/oidc");

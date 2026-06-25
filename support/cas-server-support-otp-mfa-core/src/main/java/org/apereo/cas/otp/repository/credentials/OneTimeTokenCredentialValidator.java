@@ -6,6 +6,7 @@ import org.apereo.cas.authentication.OneTimeToken;
 import org.apereo.cas.authentication.OneTimeTokenAccount;
 import org.apereo.cas.authentication.credential.OneTimeTokenCredential;
 import org.apereo.cas.otp.repository.token.OneTimeTokenRepository;
+import org.jspecify.annotations.Nullable;
 
 /**
  * This is {@link OneTimeTokenCredentialValidator}.
@@ -22,7 +23,7 @@ public interface OneTimeTokenCredentialValidator<C extends OneTimeTokenCredentia
      * @return the token
      * @throws Throwable the throwable
      */
-    T validate(Authentication authentication, C tokenCredential) throws Throwable;
+    @Nullable T validate(Authentication authentication, C tokenCredential) throws Throwable;
 
     /**
      * Store.

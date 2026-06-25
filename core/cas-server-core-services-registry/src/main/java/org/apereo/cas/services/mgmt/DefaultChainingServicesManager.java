@@ -5,6 +5,7 @@ import org.apereo.cas.audit.AuditActionResolvers;
 import org.apereo.cas.audit.AuditResourceResolvers;
 import org.apereo.cas.audit.AuditableActions;
 import org.apereo.cas.authentication.principal.Service;
+import org.apereo.cas.services.CacheableServicesManager;
 import org.apereo.cas.services.ChainingServicesManager;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.ServicesManager;
@@ -22,7 +23,7 @@ import org.springframework.core.annotation.AnnotationAwareOrderComparator;
  * @since 6.2.0
  */
 @Getter
-public class DefaultChainingServicesManager implements ChainingServicesManager {
+public class DefaultChainingServicesManager implements ChainingServicesManager, CacheableServicesManager {
 
     private final List<ServicesManager> serviceManagers = new ArrayList<>();
 
@@ -226,4 +227,68 @@ public class DefaultChainingServicesManager implements ChainingServicesManager {
         return serviceManagers.stream().filter(manager -> manager.supports(clazz)).findFirst();
     }
 
+    @Override
+    public Map<Long, RegisteredService> getCachedRegisteredServices() {
+        return cacheableManagers()
+            .map(CacheableServicesManager::getCachedRegisteredServices)
+            .reduce(new LinkedHashMap<>(), (acc, map) -> {
+                acc.putAll(map);
+                return acc;
+            });
+    }
+
+    @Override
+    public long getCachedRegisteredServicesSize() {
+        return cacheableManagers()
+            .mapToLong(CacheableServicesManager::getCachedRegisteredServicesSize)
+            .sum();
+    }
+
+    @Override
+    public void cleanRegisteredServicesCache() {
+        cacheableManagers().forEach(CacheableServicesManager::cleanRegisteredServicesCache);
+    }
+
+    @Override
+    public void cacheRegisteredService(final RegisteredService service) {
+        cacheableManagers()
+            .filter(manager -> manager.supports(service))
+            .findFirst()
+            .ifPresent(manager -> manager.cacheRegisteredService(service));
+    }
+
+    @Override
+    public Map<Long, RegisteredService> cacheRegisteredServices(final Map<Long, RegisteredService> services) {
+        val result = new LinkedHashMap<Long, RegisteredService>();
+        cacheableManagers().forEach(manager -> result.putAll(manager.cacheRegisteredServices(services)));
+        return result;
+    }
+
+    @Override
+    public void removeRegisteredServiceFromCache(final RegisteredService service) {
+        cacheableManagers()
+            .filter(manager -> manager.supports(service))
+            .findFirst()
+            .ifPresent(manager -> manager.removeRegisteredServiceFromCache(service));
+    }
+
+    @Override
+    public void removeRegisteredServicesFromCache() {
+        cacheableManagers().forEach(CacheableServicesManager::removeRegisteredServicesFromCache);
+    }
+
+    @Override
+    public @Nullable RegisteredService findCachedRegisteredService(final Long key, final Class<? extends RegisteredService> clazz) {
+        return cacheableManagers()
+            .map(manager -> manager.findCachedRegisteredService(key, clazz))
+            .filter(Objects::nonNull)
+            .findFirst()
+            .orElse(null);
+    }
+
+    private Stream<CacheableServicesManager> cacheableManagers() {
+        return serviceManagers.stream()
+            .filter(CacheableServicesManager.class::isInstance)
+            .map(CacheableServicesManager.class::cast);
+    }
 }
