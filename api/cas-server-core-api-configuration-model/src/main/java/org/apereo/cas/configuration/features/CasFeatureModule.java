@@ -66,6 +66,10 @@ public interface CasFeatureModule {
 
     enum FeatureCatalog {
         /**
+         * Tracing support.
+         */
+        Tracing,
+        /**
          * Multitenancy support.
          */
         Multitenancy,

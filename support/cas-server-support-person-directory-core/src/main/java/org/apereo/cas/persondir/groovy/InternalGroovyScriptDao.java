@@ -58,6 +58,9 @@ public class InternalGroovyScriptDao implements PersonAttributeScriptDao {
                     LOGGER.trace("Adding Groovy-based attribute [{}] with value(s) [{}]", key, values);
                     results.put(key.toString(), values);
                 });
+                if (!results.containsKey(usernameAttributeProvider.getUsernameAttribute())) {
+                    results.put(usernameAttributeProvider.getUsernameAttribute(), CollectionUtils.wrapArrayList(username));
+                }
             });
         }
         return results;

@@ -113,11 +113,6 @@ public abstract class BaseMongoDbProperties implements CasFeatureModule, Seriali
     private String databaseName = StringUtils.EMPTY;
 
     /**
-     * Whether the database socket connection should be tagged with keep-alive.
-     */
-    private boolean socketKeepAlive;
-
-    /**
      * Sets whether writes should be retried if they fail due to a network error.
      */
     private boolean retryWrites;

@@ -116,32 +116,34 @@
                             <option value="500">Last 500 Entries</option>
                         </select>
                     </label>
-                    <label for="auditEventsRefreshFilter" class="pl-2">
-                        Refresh:
-                        <select id="auditEventsRefreshFilter" class="jqueryui-selectmenu">
-                            <option value="1000">Every 1 Seconds</option>
-                            <option value="5000" selected>Every 5 Seconds</option>
-                            <option value="15000">Every 15 Seconds</option>
-                            <option value="30000">Every 30 Seconds</option>
-                            <option value="60000">Every 60 Seconds</option>
+                    <label for="auditEventsActionFilter" class="pl-2">
+                        Action:
+                        <select id="auditEventsActionFilter" class="jqueryui-selectmenu">
+                            <option value="all" selected>All Actions</option>
+                            <option value="success">Success</option>
+                            <option value="failure">Failure</option>
+                            <option value="unknown">Unknown</option>
                         </select>
                     </label>
                 </div>
                 
-                <table id="auditEventsTable" class="mdc-data-table__table table table-striped noborder">
-                    <thead>
-                    <tr class="mdc-data-table__header-row">
-                        <th class="mdc-data-table__header-cell" role="columnheader" scope="col">Principal</th>
-                        <th class="mdc-data-table__header-cell" role="columnheader" scope="col">Resource</th>
-                        <th class="mdc-data-table__header-cell" role="columnheader" scope="col">Action</th>
-                        <th class="mdc-data-table__header-cell" role="columnheader" scope="col">Date</th>
-                        <th class="mdc-data-table__header-cell" role="columnheader" scope="col">IP Address</th>
-                        <th class="mdc-data-table__header-cell" role="columnheader" scope="col">User Agent</th>
-                    </tr>
-                    </thead>
-                    <tbody class="mdc-data-table__content">
-                    </tbody>
-                </table>
+                <div class="audit-events-table-wrap">
+                    <table id="auditEventsTable"
+                           class="mdc-data-table__table table table-striped noborder audit-events-table">
+                        <thead>
+                        <tr class="mdc-data-table__header-row">
+                            <th class="mdc-data-table__header-cell" role="columnheader" scope="col">Principal</th>
+                            <th class="mdc-data-table__header-cell" role="columnheader" scope="col">Resource</th>
+                            <th class="mdc-data-table__header-cell" role="columnheader" scope="col">Action</th>
+                            <th class="mdc-data-table__header-cell" role="columnheader" scope="col">Date</th>
+                            <th class="mdc-data-table__header-cell" role="columnheader" scope="col">IP Address</th>
+                            <th class="mdc-data-table__header-cell" role="columnheader" scope="col">User Agent</th>
+                        </tr>
+                        </thead>
+                        <tbody class="mdc-data-table__content">
+                        </tbody>
+                    </table>
+                </div>
             </div>
             <div id="casEvents-tab">
               <p>The CAS application events retrieved from the event repository.</p>

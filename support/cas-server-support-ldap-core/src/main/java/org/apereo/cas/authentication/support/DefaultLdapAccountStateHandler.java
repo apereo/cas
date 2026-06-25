@@ -43,10 +43,6 @@ public class DefaultLdapAccountStateHandler implements AuthenticationAccountStat
     @Setter
     private Map<String, Class<? extends LoginException>> attributesToErrorMap = new LinkedCaseInsensitiveMap<>(DEFAULT_ERROR_COUNT);
 
-    /**
-     * Instantiates a new account state handler, that populates
-     * the error map with LDAP error codes and corresponding exceptions.
-     */
     public DefaultLdapAccountStateHandler() {
         this.errorMap = new HashMap<>(DEFAULT_ERROR_COUNT);
         this.errorMap.put(ActiveDirectoryAccountState.Error.ACCOUNT_DISABLED, new AccountDisabledException());

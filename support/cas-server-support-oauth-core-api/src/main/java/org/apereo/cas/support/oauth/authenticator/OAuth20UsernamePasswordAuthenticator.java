@@ -21,6 +21,7 @@ import org.apereo.cas.ticket.accesstoken.OAuth20AccessToken;
 import org.apereo.cas.ticket.accesstoken.OAuth20AccessTokenFactory;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.validation.AuthenticationAttributeReleasePolicy;
+import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -41,6 +42,7 @@ import org.springframework.context.ConfigurableApplicationContext;
  */
 @Slf4j
 @RequiredArgsConstructor
+@Getter
 public class OAuth20UsernamePasswordAuthenticator implements Authenticator {
     private final AuthenticationSystemSupport authenticationSystemSupport;
 
@@ -129,7 +131,7 @@ public class OAuth20UsernamePasswordAuthenticator implements Authenticator {
         LOGGER.debug("Created profile id [{}]", id);
 
         val accessTokenFactory = (OAuth20AccessTokenFactory) ticketFactory.get(OAuth20AccessToken.class);
-        val scopes = requestParameterResolver.resolveRequestedScopes(callContext.webContext());
+        val scopes = resolveRequestedScopes(callContext);
         val responseType = requestParameterResolver.resolveResponseType(callContext.webContext());
         val grantType = requestParameterResolver.resolveGrantType(callContext.webContext());
         val accessToken = accessTokenFactory.create(service, authentication, scopes,
@@ -137,5 +139,9 @@ public class OAuth20UsernamePasswordAuthenticator implements Authenticator {
         val finalPrincipal = profileScopeToAttributesFilter.filter(service, principal, registeredService, accessToken);
         LOGGER.debug("Built final principal [{}]", finalPrincipal);
         return finalPrincipal;
+    }
+
+    protected Collection<String> resolveRequestedScopes(final CallContext callContext) {
+        return requestParameterResolver.resolveRequestedScopes(callContext.webContext());
     }
 }

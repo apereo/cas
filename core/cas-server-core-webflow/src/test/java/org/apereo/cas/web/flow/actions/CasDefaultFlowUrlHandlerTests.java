@@ -2,7 +2,7 @@ package org.apereo.cas.web.flow.actions;
 
 import module java.base;
 import org.apereo.cas.web.flow.BaseWebflowConfigurerTests;
-import org.apereo.cas.web.flow.CasDefaultFlowUrlHandler;
+import org.apereo.cas.web.flow.CasWebflowConstants;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
@@ -32,7 +32,7 @@ class CasDefaultFlowUrlHandlerTests extends BaseWebflowConfigurerTests {
         request.setContent("execution=continue".getBytes(StandardCharsets.UTF_8));
         val executionKey = loginFlowUrlHandler.getFlowExecutionKey(request);
         assertEquals("continue", executionKey);
-        assertEquals("continue", request.getAttribute(CasDefaultFlowUrlHandler.DEFAULT_FLOW_EXECUTION_KEY_PARAMETER));
+        assertEquals("continue", request.getAttribute(CasWebflowConstants.PARAMETER_FLOW_EXECUTION_KEY));
     }
 
     @Test
@@ -42,7 +42,7 @@ class CasDefaultFlowUrlHandlerTests extends BaseWebflowConfigurerTests {
         request.setParameter("qux", "quux");
         val url = loginFlowUrlHandler.createFlowExecutionUrl("foo", "12345", request);
         assertEquals("/cas/app/foo?bar=baz&qux=quux&execution=12345", url);
-        request.addParameter(CasDefaultFlowUrlHandler.DEFAULT_FLOW_EXECUTION_KEY_PARAMETER, "12345");
+        request.addParameter(CasWebflowConstants.PARAMETER_FLOW_EXECUTION_KEY, "12345");
         assertNotNull(loginFlowUrlHandler.getFlowExecutionKey(request));
         assertNotNull(loginFlowUrlHandler.createFlowDefinitionUrl("cas", new LocalAttributeMap<>(), request));
     }

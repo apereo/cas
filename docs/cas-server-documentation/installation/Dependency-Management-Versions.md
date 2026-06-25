@@ -54,3 +54,10 @@ whose specifics and versions are not directly controlled by CAS. In such scenari
 responsible for pulling its own dependencies correctly into the build. What is listed above should mainly serve as a helpful guide
 and not a comprehensive reference.
 </p></div>
+
+
+## Actuator Endpoints
+
+The following endpoints are provided by CAS:
+
+{% include_cached actuators.html endpoints="dependencies" %}

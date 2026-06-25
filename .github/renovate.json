@@ -24,14 +24,18 @@
   "automerge": false,
   "regexManagers": [
     {
-      "fileMatch": ["run-.*\\.sh"],
+      "fileMatch": [
+        "run-.*\\.sh"
+      ],
       "matchStrings": [
         "export\\s+DOCKER_IMAGE\\s*=\\s*\"(?<depName>[^\"]+):(?<currentValue>[^\"]+)\""
       ],
       "datasourceTemplate": "docker"
     },
     {
-      "fileMatch": [".github/workflows/.*\\.yml$"],
+      "fileMatch": [
+        ".github/workflows/.*\\.yml$"
+      ],
       "matchStrings": [
         "NODE_CURRENT:\\s*'(?<currentValue>\\d+\\.\\d+\\.\\d+)'"
       ],
@@ -40,7 +44,9 @@
       "versioningTemplate": "node"
     },
     {
-      "fileMatch": [".github/workflows/.*\\.yml$"],
+      "fileMatch": [
+        ".github/workflows/.*\\.yml$"
+      ],
       "matchStrings": [
         "PYTHON_VERSION:\\s*'(?<currentValue>\\d+\\.\\d+\\.\\d+)'"
       ],
@@ -49,7 +55,9 @@
       "versioningTemplate": "pep440"
     },
     {
-      "fileMatch": [".github/workflows/.*\\.yml$"],
+      "fileMatch": [
+        ".github/workflows/.*\\.yml$"
+      ],
       "matchStrings": [
         "RUBY_VERSION:\\s*'(?<currentValue>\\d+\\.\\d+\\.\\d+)'"
       ],
@@ -58,7 +66,10 @@
       "versioningTemplate": "semver"
     }
   ],
-  "labels": ["Bot", "Renovate"],
+  "labels": [
+    "Bot",
+    "Renovate"
+  ],
   "schedule": [
     "after 5pm and before 9am every day"
   ],
@@ -76,27 +87,53 @@
   },
   "packageRules": [
     {
-      "matchPackageNames": ["com.google.guava:guava"],
+      "matchPackageNames": [
+        "com.google.guava:guava"
+      ],
       "excludeVersions": "/-android$/"
     },
     {
-      "matchPackageNames": ["software.amazon.awssdk:.*"],
-      "matchUpdateTypes": ["major", "minor"]
+      "matchPackageNames": [
+        "software.amazon.awssdk:.*"
+      ],
+      "matchUpdateTypes": [
+        "major",
+        "minor"
+      ]
     },
     {
-      "matchPackageNames": ["com.h2database:h2"],
+      "matchPackageNames": [
+        "com.h2database:h2"
+      ],
       "enabled": false
     },
     {
-      "matchManagers": ["dockerfile"],
-      "matchPaths": [".*oidc-login-strapi.*"],
-      "matchPackagePatterns": ["^node$"],
+      "matchManagers": [
+        "dockerfile"
+      ],
+      "matchPaths": [
+        ".*oidc-login-strapi.*"
+      ],
+      "matchPackagePatterns": [
+        "^node$"
+      ],
       "enabled": false
     },
     {
-      "matchPaths": [".*radius.*/build.gradle"],
-      "matchPackageNames": ["org.bouncycastle:bcprov-jdk15on"],
+      "matchPaths": [
+        ".*radius.*/build.gradle"
+      ],
+      "matchPackageNames": [
+        "org.bouncycastle:bcprov-jdk15on"
+      ],
       "enabled": false
+    },
+    {
+      "description": "Ignore git-hash-looking versions for permit-sdk-java",
+      "matchPackageNames": [
+        "io.permit:permit-sdk-java"
+      ],
+      "allowedVersions": "!/^[0-9a-f]{7,40}$/"
     }
   ]
 }
