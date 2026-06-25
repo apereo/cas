@@ -51,6 +51,14 @@ class CasActuatorEndpoints {
         return this.endpoints().configprops || this.endpoints().configProps;
     }
 
+    static beans() {
+        return this.endpoints().beans || this.endpoints().springBeans;
+    }
+
+    static conditions() {
+        return this.endpoints().conditions || this.endpoints().springConditions;
+    }
+
     static mfaDevices() {
         return this.endpoints().mfadevices || this.endpoints().mfaDevices;
     }
@@ -77,6 +85,14 @@ class CasActuatorEndpoints {
 
     static httpExchanges() {
         return this.endpoints().httpexchanges || this.endpoints().httpExchanges;
+    }
+
+    static httpTraces() {
+        return this.endpoints().httptraces || this.endpoints().httpTraces;
+    }
+
+    static mappings() {
+        return this.endpoints().mappings;
     }
 
     static serviceAccess() {
@@ -113,6 +129,10 @@ class CasActuatorEndpoints {
 
     static heapDump() {
         return this.endpoints().heapdump || this.endpoints().heapDump;
+    }
+
+    static heapDumpAnalysis() {
+        return this.endpoints().heapdumpanalysis || this.endpoints().heapDumpAnalysis;
     }
 
     static sessions() {
@@ -213,6 +233,14 @@ class CasActuatorEndpoints {
 
     static impersonation() {
         return this.endpoints().impersonation;
+    }
+
+    static startup() {
+        return this.endpoints().startup;
+    }
+
+    static dependencies() {
+        return this.endpoints().dependencies;
     }
 
     static all() {

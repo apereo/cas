@@ -40,6 +40,7 @@ class WebApplicationServiceFactoryTests {
         request.addParameter("p2", "v2");
         request.addParameter(CasProtocolConstants.PARAMETER_PASSWORD, "m$hf74621");
         request.addParameter(CasProtocolConstants.PARAMETER_SERVICE, "https://example.org?p3=v3&p4=v4");
+        request.addParameter("execution", "xxx");
         RequestContextHolder.setRequestAttributes(new ServletRequestAttributes(request, new MockHttpServletResponse()));
         val service = serviceFactory.createService(request);
         assertNotNull(service);

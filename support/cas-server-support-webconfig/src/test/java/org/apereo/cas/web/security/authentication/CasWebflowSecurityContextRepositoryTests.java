@@ -5,6 +5,7 @@ import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.test.CasTestExtension;
 import org.apereo.cas.util.MockRequestContext;
 import org.apereo.cas.web.flow.CasDefaultFlowUrlHandler;
+import org.apereo.cas.web.flow.CasWebflowConstants;
 import org.apereo.cas.web.flow.executor.CasFlowExecutor;
 import org.apereo.cas.web.security.BaseWebSecurityTests;
 import org.apereo.cas.web.support.WebUtils;
@@ -62,7 +63,7 @@ class CasWebflowSecurityContextRepositoryTests {
     @Test
     void verifyWebflowAuthenticated() throws Exception {
         val requestContext = MockRequestContext.create(applicationContext);
-        requestContext.setParameter(CasDefaultFlowUrlHandler.DEFAULT_FLOW_EXECUTION_KEY_PARAMETER, UUID.randomUUID().toString());
+        requestContext.setParameter(CasWebflowConstants.PARAMETER_FLOW_EXECUTION_KEY, UUID.randomUUID().toString());
         assertTrue(securityContextRepository.containsContext(requestContext.getHttpServletRequest()));
         val secContext = securityContextRepository.loadDeferredContext(requestContext.getHttpServletRequest()).get();
         val principal = (User) secContext.getAuthentication().getPrincipal();
