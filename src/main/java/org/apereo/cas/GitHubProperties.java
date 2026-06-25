@@ -45,9 +45,12 @@ public class GitHubProperties {
     @Valid
     private Repository stagingRepository = new Repository();
 
+    @Valid
+    private Repository initializrRepository = new Repository();
+
+    
     @NestedConfigurationProperty
     private PullRequestProperties prs = new PullRequestProperties();
-    
     
     private long maximumChangedFiles = 40;
 

@@ -22,7 +22,11 @@ casbot:
       url: https://github.com/mmoayyed/cas
       admins: mmoayyed,apereocas-bot
       committers: mmoayyed,apereocas-bot
-      
+    initializr-repository:
+      organization: apereo
+      name: cas-initializr
+      url: https://github.com/apereo/cas-initializr
+      admins: mmoayyed,apereocas-bot
 spring:
   security:
     user:

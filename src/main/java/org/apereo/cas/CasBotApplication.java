@@ -19,6 +19,7 @@ package org.apereo.cas;
 import org.apereo.cas.github.GitHubOperations;
 import org.apereo.cas.github.GitHubTemplate;
 import org.apereo.cas.github.RegexLinkParser;
+import org.apereo.cas.job.InitializrRepositoryJob;
 import org.apereo.cas.job.MainRepositoryJob;
 import org.apereo.cas.job.StagingRepositoryJob;
 import lombok.extern.slf4j.Slf4j;
@@ -77,6 +78,23 @@ public class CasBotApplication {
         }
     }
 
+    @Configuration(proxyBeanMethods = false)
+    static class CasInitializrConfiguration {
+        @Bean
+        public MonitoredRepository initializrRepository(
+                @Qualifier("gitHubRepositoryTemplate")
+                final GitHubOperations gitHub,
+                final GitHubProperties gitHubProperties) {
+            return new MonitoredRepository(gitHub,
+                    gitHubProperties.getInitializrRepository(), gitHubProperties);
+        }
+
+        @Bean
+        public InitializrRepositoryJob monitoredInitializrRepositoryJob(
+                @Qualifier("initializrRepository") final MonitoredRepository repository) {
+            return new InitializrRepositoryJob(repository);
+        }
+    }
 
     @Configuration(proxyBeanMethods = false)
     @ConditionalOnProperty(name = "casbot.github.staging-repository.credentials.token")

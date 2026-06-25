@@ -233,8 +233,7 @@ public class MonitoredRepository {
 
                     if (dependencyVersion.isQualifiedForPatchUpgrade()) {
                         log.info("Merging patch dependency upgrade {} from {} to {}", pr, startingVersion, endingVersion);
-                        labelPullRequestAs(pr, CasLabels.LABEL_SKIP_CI);
-                        return approveAndMergePullRequest(pr, false);
+                        return approveAndMergePullRequest(labelPullRequestAs(pr, CasLabels.LABEL_SKIP_CI), false);
                     }
 
                     var files = getPullRequestFiles(pr);
@@ -757,11 +756,11 @@ public class MonitoredRepository {
                             .filter(status -> status == Workflows.WorkflowRunStatus.IN_PROGRESS)
                             .ifPresent(status -> cancelWorkflowRun(run));
 
-                    log.info("Removing old workflow run {} @ {}", run, run.getUpdatedTime());
+                    log.debug("Removing old workflow run {} @ {}", run, run.getUpdatedTime());
                     gitHub.removeWorkflowRun(getOrganization(), getName(), run);
                 } else if (run.isRemovable()) {
                     if (run.getName().equalsIgnoreCase(WorkflowRuns.DEPENDENCY_SUBMISSION_MAVEN.getName())) {
-                        log.info("Removing Maven dependency submission workflow run {} @ {}", run, run.getUpdatedTime());
+                        log.debug("Removing Maven dependency submission workflow run {} @ {}", run, run.getUpdatedTime());
                         gitHub.removeWorkflowRun(getOrganization(), getName(), run);
                     } else if (run.getName().equalsIgnoreCase(WorkflowRuns.DEPENDENCY_SUBMISSION_GRADLE.getName())) {
                         log.debug("Removing Gradle dependency submission workflow run {} @ {}", run, run.getUpdatedTime());
@@ -769,19 +768,19 @@ public class MonitoredRepository {
                     } else if (run.isConcludedSuccessfully() || run.isSkipped()) {
                         val completedExp = run.getUpdatedTime().plusDays(gitHubProperties.getCompletedSuccessfulWorkflowRunInDays());
                         if (completedExp.isBefore(now)) {
-                            log.info("Removing completed successful workflow run {} @ {}", run, run.getUpdatedTime());
+                            log.debug("Removing completed successful workflow run {} @ {}", run, run.getUpdatedTime());
                             gitHub.removeWorkflowRun(getOrganization(), getName(), run);
                         }
                     } else {
                         val completedExp = run.getUpdatedTime().plusDays(gitHubProperties.getCompletedFailedWorkflowRunInDays());
                         if (completedExp.isBefore(now)) {
-                            log.info("Removing completed failed workflow run {} @ {}", run, run.getUpdatedTime());
+                            log.debug("Removing completed failed workflow run {} @ {}", run, run.getUpdatedTime());
                             gitHub.removeWorkflowRun(getOrganization(), getName(), run);
                         }
                     }
                 } else if (run.getName().equalsIgnoreCase(WorkflowRuns.RERUN_WORKFLOWS.getName())
                            && (run.isConcludedSuccessfully() || run.isSkipped())) {
-                    log.info("Removing rerun workflow {} @ {}", run, run.getUpdatedTime());
+                    log.debug("Removing rerun workflow {} @ {}", run, run.getUpdatedTime());
                     gitHub.removeWorkflowRun(getOrganization(), getName(), run);
                 }
             });
