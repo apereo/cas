@@ -22,12 +22,6 @@ public class CasRegisteredServiceLoadedEvent extends BaseCasRegisteredServiceEve
 
     private final RegisteredService registeredService;
 
-    /**
-     * Instantiates a new cas sso event.
-     *
-     * @param source            the source
-     * @param registeredService the registered service
-     */
     public CasRegisteredServiceLoadedEvent(final Object source, final RegisteredService registeredService, final ClientInfo clientInfo) {
         super(source, clientInfo);
         this.registeredService = registeredService;

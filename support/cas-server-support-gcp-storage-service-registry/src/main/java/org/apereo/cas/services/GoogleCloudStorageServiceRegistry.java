@@ -134,7 +134,7 @@ public class GoogleCloudStorageServiceRegistry extends AbstractServiceRegistry {
         return bucket;
     }
 
-    protected String determineBucketForRegisteredService(final RegisteredService registeredService) {
+    static String determineBucketForRegisteredService(final RegisteredService registeredService) {
         return BUCKET_PREFIX + Strings.CI.replace(registeredService.getFriendlyName(), " ", "-").toLowerCase(Locale.ENGLISH);
     }
 }

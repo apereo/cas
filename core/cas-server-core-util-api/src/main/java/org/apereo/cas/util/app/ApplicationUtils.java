@@ -40,7 +40,7 @@ public class ApplicationUtils {
      * @return the application startup
      */
     public static ApplicationStartup getApplicationStartup() {
-        val type = StringUtils.defaultIfBlank(System.getProperty("CAS_APP_STARTUP"), "default");
+        val type = StringUtils.defaultIfBlank(System.getProperty("CAS_APP_STARTUP"), "buffering");
         if (Strings.CI.equals("jfr", type)) {
             return new FlightRecorderApplicationStartup();
         }

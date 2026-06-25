@@ -15,6 +15,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
+import org.jspecify.annotations.Nullable;
 
 /**
  * This is {@link GoogleAuthenticatorOneTimeTokenCredentialValidator}.
@@ -39,8 +40,8 @@ public class GoogleAuthenticatorOneTimeTokenCredentialValidator implements
     }
 
     @Override
-    public GoogleAuthenticatorToken validate(final Authentication authentication,
-                                             final GoogleAuthenticatorTokenCredential tokenCredential) throws Throwable {
+    public @Nullable GoogleAuthenticatorToken validate(final Authentication authentication,
+                                                       final GoogleAuthenticatorTokenCredential tokenCredential) throws Throwable {
 
         if (!StringUtils.isNumeric(tokenCredential.getToken())) {
             throw new PreventedException("Invalid non-numeric OTP format specified.");
@@ -60,7 +61,7 @@ public class GoogleAuthenticatorOneTimeTokenCredentialValidator implements
             throw new PreventedException("Account identifier must be specified if multiple accounts are registered for " + uid);
         }
         LOGGER.trace("Attempting to locate OTP token [{}] in token repository for [{}]...", otp, uid);
-        if (this.tokenRepository.exists(uid, otp)) {
+        if (tokenRepository.exists(uid, otp)) {
             throw new AccountExpiredException(uid + " cannot reuse OTP " + otp + " as it may be expired/invalid");
         }
 
@@ -76,7 +77,10 @@ public class GoogleAuthenticatorOneTimeTokenCredentialValidator implements
     @CanIgnoreReturnValue
     public OneTimeTokenCredentialValidator<GoogleAuthenticatorTokenCredential, GoogleAuthenticatorToken> store(
         final GoogleAuthenticatorToken validatedToken) {
-        this.tokenRepository.store(validatedToken);
+        if (tokenRepository.store(validatedToken) == null) {
+            throw new IllegalArgumentException(validatedToken.getUserId() + " cannot reuse OTP "
+                + validatedToken.getToken() + " as it may be expired/invalid");
+        }
         return this;
     }
 

@@ -40,7 +40,7 @@ jobs:
       jdks: ${{ steps.determine-jdk.outputs.jdks }}
     steps:
       - name: Checkout
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7
         with:
           persist-credentials: false
       - name: Determine JDKs
@@ -69,7 +69,7 @@ jobs:
     name: "Build Pull Request"
     steps:
       - name: Checkout
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7
         with:
           persist-credentials: false
       - name: Set up JDK
@@ -97,7 +97,7 @@ jobs:
         jdk: ${{ fromJson(needs.initialize.outputs.jdks) }}
     steps:
       - name: Checkout
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7
         with:
           persist-credentials: false
       - name: Set up JDK ${{ matrix.jdk }}
@@ -126,7 +126,7 @@ jobs:
     name: "Build Native"
     steps:
       - name: Checkout
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7
         with:
           persist-credentials: false
       - uses: graalvm/setup-graalvm@v1
