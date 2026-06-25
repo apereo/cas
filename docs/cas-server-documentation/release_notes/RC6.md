@@ -2,6 +2,28 @@
 layout: default
 title: CAS - Release Notes
 category: Planning
+palantir_images:
+  - src: img_1.png
+    alt: Palantir dashboard beans view
+    title: Palantir dashboard beans view
+  - src: img_2.png
+    alt: Palantir dashboard conditions view
+    title: Palantir dashboard conditions view
+  - src: img_3.png
+    alt: Palantir dashboard startup timeline
+    title: Palantir dashboard startup timeline
+  - src: img_4.png
+    alt: Palantir dashboard JVM memory view
+    title: Palantir dashboard JVM memory view
+  - src: img_5.png
+    alt: Palantir dashboard application context view
+    title: Palantir dashboard application context view
+  - src: img_6.png
+    alt: Palantir dashboard configuration view
+    title: Palantir dashboard configuration view
+  - src: img_7.png
+    alt: Palantir dashboard monitoring view
+    title: Palantir dashboard monitoring view
 ---
 
 {% include variables.html %}
@@ -92,7 +114,7 @@ during compile time.
 available configuration properties when dynamic configuration sources are available and configuration metadata is enabled. 
 The drop-down that lists configuration properties also supports searching for fields based on `name` and `description`.
 
-![img.png](img.png)
+{% include imagegallery.html src="img.png" %}
 
 Note that the documentation for each configuration property is directly extracted from 
 the [CAS configuration catalog](../configuration/Configuration-Metadata-Repository.html)
@@ -103,33 +125,7 @@ Palantir dashboard is now also able to present dedicated views for all beans in 
 conditions that allowed those beans to be rejected or created, as well as a dedicated trace of application startup timeline
 and a live view of the JVM memory consumption and allocation.
 
-<a href="img_1.png" data-lightbox="image-0">
-    <img src="img_1.png" alt="Palantir dashboard beans view" title="Palantir dashboard beans view" />
-</a>
-
-<a href="img_2.png" data-lightbox="image-1">
-    <img src="img_2.png" alt="Palantir dashboard conditions view" title="Palantir dashboard conditions view" />
-</a>
-
-<a href="img_3.png" data-lightbox="image-2">
-    <img src="img_3.png" alt="Palantir dashboard startup timeline" title="Palantir dashboard startup timeline" />
-</a>
-
-<a href="img_4.png" data-lightbox="image-3">
-    <img src="img_4.png" alt="Palantir dashboard JVM memory view" title="Palantir dashboard JVM memory view" />
-</a>
-
-<a href="img_5.png" data-lightbox="image-4">
-    <img src="img_5.png" alt="Palantir dashboard application context view" title="Palantir dashboard application context view" />
-</a>
-
-<a href="img_6.png" data-lightbox="image-5">
-    <img src="img_6.png" alt="Palantir dashboard configuration view" title="Palantir dashboard configuration view" />
-</a>
-
-<a href="img_7.png" data-lightbox="image-6">
-    <img src="img_7.png" alt="Palantir dashboard monitoring view" title="Palantir dashboard monitoring view" />
-</a>
+{% include imagegallery.html gallery_id="palantir-dashboard" images=page.palantir_images %}
 
 Palantir's audit log table is also reworked to present structured resource details directly from the `Resource` column.
 Audit records that carry JSON-like resources now offer an inline expand action that reveals a syntax-highlighted JSON detail row,

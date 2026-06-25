@@ -861,3 +861,31 @@ ul.tab-content li.active:not(.property-name):not(.property-tab) {
 .popover {
     max-width: 100%;
 }
+
+.image-gallery {
+    display: flex;
+    flex-wrap: nowrap;
+    gap: 12px;
+    overflow-x: auto;
+    padding: 8px 0;
+}
+
+.image-gallery a {
+    flex: 0 0 auto;
+    display: block;
+}
+
+.image-gallery img {
+    width: 140px;
+    height: 90px;
+    object-fit: cover;
+    border-radius: 6px;
+    border: 1px solid #ddd;
+    cursor: pointer;
+    transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+.image-gallery img:hover {
+    transform: scale(1.04);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+}
