@@ -14,6 +14,7 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.apache.commons.lang3.math.NumberUtils;
 import org.springframework.core.Ordered;
 
 /**
@@ -90,14 +91,14 @@ public class DefaultSingleSignOnParticipationStrategy extends BaseSingleSignOnPa
                     .map(Object::toString)
                     .filter(StringUtils::isNotBlank)
                     .findFirst();
-                if (revocationValue.isPresent()) {
-                    LOGGER.debug("Located revocation attribute value [{}] for authentication [{}]", revocationValue, authentication);
+                LOGGER.debug("Located revocation attribute value [{}] for authentication [{}]", revocationValue, authentication);
+                if (revocationValue.isPresent() && NumberUtils.isParsable(revocationValue.get())) {
                     val revokedBefore = Instant.ofEpochSecond(Long.parseLong(revocationValue.get()));
                     val createdAt = authentication.getAuthenticationDate().toInstant();
-                    val result = createdAt.isBefore(revokedBefore);
-                    LOGGER.debug("Authentication created at [{}] and revoked before [{}]; SSO participation status: [{}]",
-                        createdAt, revokedBefore, result);
-                    return result;
+                    if (createdAt.isBefore(revokedBefore) || createdAt.equals(revokedBefore)) {
+                        LOGGER.debug("Authentication created at [{}] and revoked before [{}]", createdAt, revokedBefore);
+                        return false;
+                    }
                 }
             }
         }

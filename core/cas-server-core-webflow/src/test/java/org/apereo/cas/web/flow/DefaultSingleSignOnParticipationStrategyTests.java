@@ -118,18 +118,84 @@ class DefaultSingleSignOnParticipationStrategyTests {
     void verifyParticipationForRevocationAttribute() throws Throwable {
         val mgr = mock(ServicesManager.class);
         val context = MockRequestContext.create(applicationContext);
-        val authentication = CoreAuthenticationTestUtils.getAuthentication("casuser",
-            Map.of("timestamp", List.of(Instant.now(Clock.systemUTC()).minusSeconds(60).getEpochSecond())));
+        val revocationDate = Instant.parse("2026-06-25T12:00:00Z");
+        val authenticationDate = ZonedDateTime.ofInstant(revocationDate.plusSeconds(60), ZoneOffset.UTC);
+        val authentication = CoreAuthenticationTestUtils.getAuthentication(
+            CoreAuthenticationTestUtils.getPrincipal("casuser"),
+            Map.of("timestamp", List.of(revocationDate.getEpochSecond())),
+            authenticationDate);
         WebUtils.putAuthentication(authentication, context);
         val tgt = new MockTicketGrantingTicket(authentication);
         val ticketRegistrySupport = mock(TicketRegistrySupport.class);
         when(ticketRegistrySupport.getTicket(anyString())).thenReturn(tgt);
-        
+
+        val sso = new SingleSignOnProperties().setRevocationAttributeName("timestamp");
+        val strategy = new DefaultSingleSignOnParticipationStrategy(mgr, sso,
+            ticketRegistrySupport, mock(AuthenticationServiceSelectionPlan.class));
+        val ssoRequest = getSingleSignOnParticipationRequest(context);
+        assertTrue(strategy.isParticipating(ssoRequest));
+    }
+
+    @Test
+    void verifyDoesNotParticipateWhenAuthenticationPrecedesRevocationAttribute() throws Throwable {
+        val mgr = mock(ServicesManager.class);
+        val context = MockRequestContext.create(applicationContext);
+        val revocationDate = Instant.parse("2026-06-25T12:00:00Z");
+        val authenticationDate = ZonedDateTime.ofInstant(revocationDate.minusSeconds(60), ZoneOffset.UTC);
+        val authentication = CoreAuthenticationTestUtils.getAuthentication(
+            CoreAuthenticationTestUtils.getPrincipal("casuser"),
+            Map.of("timestamp", List.of(revocationDate.getEpochSecond())),
+            authenticationDate);
+        WebUtils.putAuthentication(authentication, context);
+        val tgt = new MockTicketGrantingTicket(authentication);
+        val ticketRegistrySupport = mock(TicketRegistrySupport.class);
+        when(ticketRegistrySupport.getTicket(anyString())).thenReturn(tgt);
+
         val sso = new SingleSignOnProperties().setRevocationAttributeName("timestamp");
         val strategy = new DefaultSingleSignOnParticipationStrategy(mgr, sso,
             ticketRegistrySupport, mock(AuthenticationServiceSelectionPlan.class));
         val ssoRequest = getSingleSignOnParticipationRequest(context);
         assertFalse(strategy.isParticipating(ssoRequest));
+    }
+
+    @Test
+    void verifyRevocationAttributeDoesNotBypassDisabledSso() throws Throwable {
+        val mgr = mock(ServicesManager.class);
+        val context = MockRequestContext.create(applicationContext);
+        val revocationDate = Instant.parse("2026-06-25T12:00:00Z");
+        val authenticationDate = ZonedDateTime.ofInstant(revocationDate.plusSeconds(60), ZoneOffset.UTC);
+        val authentication = CoreAuthenticationTestUtils.getAuthentication(
+            CoreAuthenticationTestUtils.getPrincipal("casuser"),
+            Map.of("timestamp", List.of(revocationDate.getEpochSecond())),
+            authenticationDate);
+        WebUtils.putAuthentication(authentication, context);
+        val tgt = new MockTicketGrantingTicket(authentication);
+        val ticketRegistrySupport = mock(TicketRegistrySupport.class);
+        when(ticketRegistrySupport.getTicket(anyString())).thenReturn(tgt);
+
+        val sso = new SingleSignOnProperties().setSsoEnabled(false).setRevocationAttributeName("timestamp");
+        val strategy = new DefaultSingleSignOnParticipationStrategy(mgr, sso,
+            ticketRegistrySupport, mock(AuthenticationServiceSelectionPlan.class));
+        val ssoRequest = getSingleSignOnParticipationRequest(context);
+        assertFalse(strategy.isParticipating(ssoRequest));
+    }
+
+    @Test
+    void verifyDoesNotParticipateForMalformedRevocationAttribute() throws Throwable {
+        val mgr = mock(ServicesManager.class);
+        val context = MockRequestContext.create(applicationContext);
+        val authentication = CoreAuthenticationTestUtils.getAuthentication("casuser",
+            Map.of("timestamp", List.of("bad-timestamp")));
+        WebUtils.putAuthentication(authentication, context);
+        val tgt = new MockTicketGrantingTicket(authentication);
+        val ticketRegistrySupport = mock(TicketRegistrySupport.class);
+        when(ticketRegistrySupport.getTicket(anyString())).thenReturn(tgt);
+
+        val sso = new SingleSignOnProperties().setRevocationAttributeName("timestamp");
+        val strategy = new DefaultSingleSignOnParticipationStrategy(mgr, sso,
+            ticketRegistrySupport, mock(AuthenticationServiceSelectionPlan.class));
+        val ssoRequest = getSingleSignOnParticipationRequest(context);
+        assertDoesNotThrow(() -> assertTrue(strategy.isParticipating(ssoRequest)));
     }
 
     @Test

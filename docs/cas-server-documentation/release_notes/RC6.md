@@ -131,6 +131,10 @@ and a live view of the JVM memory consumption and allocation.
     <img src="img_7.png" alt="Palantir dashboard monitoring view" title="Palantir dashboard monitoring view" />
 </a>
 
+Palantir's audit log table is also reworked to present structured resource details directly from the `Resource` column.
+Audit records that carry JSON-like resources now offer an inline expand action that reveals a syntax-highlighted JSON detail row,
+removing the older separate details column and nested table rendering for a cleaner and more readable audit view.
+
 ### Redis Ticket Registry
 
 The [Redis Ticket Registry](../ticketing/Redis-Ticket-Registry.html) now presents several notable changes, particularly important when administrative logouts are exercised:
@@ -144,6 +148,13 @@ There are also significant performance optimizations available to ensure entries
 - RedisSearch disabled/unavailable: often `45-70%` less memory per ticket record, because JSON documents stored are compressed and the registry stops writing `service` and `attributes` fields into entries.
 - RedisSearch enabled: likely `40-65%` less per ticket record, mostly from compressed JSON documents.
 - Crypto operations enabled: much smaller gain, often near `0-15%`, because CAS stores an encoded/encrypted ticket payload that is already high entropy. 
+
+### Single Sign-on Revocation
+
+[Single Sign-on](../authentication/Configuring-SSO.html) participation can now be controlled globally using the
+`cas.sso.revocation-attribute-name` setting. The attribute may be found in principal or authentication attributes, is expected
+to carry a Unix epoch timestamp in seconds, and is evaluated during SSO participation checks so CAS can ignore an existing
+SSO authentication when the timestamp indicates it should no longer participate.
 
 ### Google Authenticator via Redis
 
