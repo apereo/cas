@@ -23,4 +23,10 @@ CAS can be configured to load service definitions from connected sources and ser
 are loaded as background-running job, and the operation forces CAS to flush and invalidate cached version of service definitions
 and start anew.
 
+<div class="alert alert-info">:information_source: <strong>Utility</strong><p>
+The background scheduler reloads application definitions from a source regardless of the service registry type.
+It disregards the currently-loaded list of applications and fetches a new copy from the source,
+whatever that may be.
+</p></div>
+
 {% include_cached casproperties.html properties="cas.service-registry.schedule" %}

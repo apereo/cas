@@ -179,6 +179,14 @@ function fetchCasVersion() {
 function parseArguments() {
   while (("$#")); do
     case "$1" in
+    --scenarios)
+      shift 1
+      cmd="./gradlew -x check -x test -x javadoc --quiet --build-cache --configure-on-demand --parallel puppeteerScenarios"
+      json="$(eval "$cmd")"
+      echo "$json" | jq
+      echo "$json" | jq -r '"Total Scenarios: \(length)"'
+      exit 0
+      ;;
     --jfr)
       JFR_ARGS="-DCAS_APP_STARTUP=jfr -XX:StartFlightRecording:filename=startup-$(date +%Y%m%d-%H%M%S).jfr,duration=90s,settings=profile,disk=true,dumponexit=true"
       shift 1
@@ -604,7 +612,8 @@ function createCasKeystore() {
       printcyan "Keystore ${keystore} already exists and will not be created again"
     else
       dname="${dname:-CN=cas.example.org,OU=Example,OU=Org,C=US}"
-      subjectAltName="${subjectAltName:-dns:example.org,dns:localhost,dns:host.k3d.internal,dns:host.docker.internal,ip:127.0.0.1}"
+      localdomain="${PUPPETEER_LOCAL_DOMAIN:-example.org}"
+      subjectAltName="${subjectAltName:-dns:${localdomain},dns:localhost,dns:host.k3d.internal,dns:host.docker.internal,ip:127.0.0.1}"
       printgreen "Generating keystore ${keystore} for CAS with\nDN=${dname}, SAN=${subjectAltName} ..."
       [ -f "${public_cert}" ] && rm "${public_cert}"
       keytool -genkey -noprompt -alias cas -keyalg RSA -keypass changeit -storepass changeit \
@@ -937,6 +946,7 @@ ${BUILD_SCRIPT:+ $BUILD_SCRIPT}${DAEMON:+ $DAEMON} \
               -Dcom.sun.net.ssl.checkRevocation=false \
               -Dlog.console.stacktraces=true \
               -DaotSpringActiveProfiles=none \
+              -DVALIDATE_CONFIGURATION_ENABLED=false \
               $systemProperties \
               --spring.main.lazy-initialization=false \
               --spring.devtools.restart.enabled=false \

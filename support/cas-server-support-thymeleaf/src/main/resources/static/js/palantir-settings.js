@@ -34,11 +34,12 @@ async function initializePalantirActuatorsTable() {
 
     CasActuatorEndpoints.all().forEach(endpoint => {
         const endpointAvailable = endpoint.value !== undefined && endpoint.value !== null;
+        if (!endpointAvailable) {
+            return;
+        }
         palantirActuatorsTable.row.add({
-            0: endpointAvailable
-                ? "<i class='mdc-tab__icon mdi mdi-check-circle' aria-hidden='true'></i>"
-                : "<i class='mdc-tab__icon mdi mdi-close-octagon' aria-hidden='true'></i>",
-            1: `<code>${endpointAvailable ? endpoint.value : `Endpoint ${endpoint.name} is unavailable.`}</code>`
+            0: "<i class='mdc-tab__icon mdi mdi-check-circle' aria-hidden='true'></i>",
+            1: `<code>${endpoint.value}</code>`
         });
     });
     palantirActuatorsTable.draw();

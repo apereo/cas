@@ -1,0 +1,38 @@
+{
+  "dependencies": "reports,pac4j-webflow,pac4j-cas,duo,scripting",
+  "conditions": {
+    "docker": "true",
+    "env": "DUO_SECURITY_ADMIN_SKEY,DUO_SECURITY_ADMIN_IKEY,DUO_SECURITY_UNIVERSAL_PROMPT_SKEY,DUO_SECURITY_UNIVERSAL_PROMPT_IKEY,DUO_SECURITY_API_HOST"
+  },
+  "properties": [
+    "--cas.server.name=https://localhost:8443",
+    "--cas.server.prefix=https://localhost:8443/cas",
+    "--cas.http-client.host-name-verifier=none",
+
+    "--cas.authn.pac4j.cas[0].login-url=https://localhost:8444/cas/login",
+    "--cas.authn.pac4j.cas[0].protocol=CAS30",
+    "--cas.authn.pac4j.cas[0].client-name=CASServerOne",
+    "--cas.authn.pac4j.cas[0].display-name=CASServerOne",
+    
+    "--cas.monitor.endpoints.endpoint.defaults.access=ANONYMOUS",
+    "--management.endpoints.web.exposure.include=*",
+    "--management.endpoints.access.default=UNRESTRICTED",
+
+    "--cas.service-registry.core.init-from-json=true",
+    "--cas.service-registry.json.location=file:${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/services",
+
+    "--cas.authn.core.engine.groovy-post-processor.location=file:${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/GroovyPostProcessor.groovy",
+    
+    "--cas.authn.mfa.triggers.global.global-provider-id=mfa-duo",
+    
+    "--cas.authn.mfa.duo[0].account-status-enabled=false",
+    "--cas.authn.mfa.duo[0].duo-admin-secret-key=${#environmentVars['DUO_SECURITY_ADMIN_SKEY']}",
+    "--cas.authn.mfa.duo[0].duo-admin-integration-key=${#environmentVars['DUO_SECURITY_ADMIN_IKEY']}",
+    "--cas.authn.mfa.duo[0].duo-secret-key=${#environmentVars['DUO_SECURITY_UNIVERSAL_PROMPT_SKEY']}",
+    "--cas.authn.mfa.duo[0].duo-integration-key=${#environmentVars['DUO_SECURITY_UNIVERSAL_PROMPT_IKEY']}",
+    "--cas.authn.mfa.duo[0].duo-api-host=${#environmentVars['DUO_SECURITY_API_HOST']}",
+    "--cas.authn.mfa.duo[0].id=mfa-duo"
+  ],
+  "initScript": "${PWD}/ci/tests/cas/run-cas-server.sh,${PWD}/ci/tests/httpbin/run-httpbin-server.sh"
+}
+

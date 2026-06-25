@@ -56,7 +56,8 @@ class RadiusTokenAuthenticationHandlerTests {
 
         val context = MockRequestContext.create(applicationContext);
 
-        assertThrows(FailedLoginException.class, () -> authenticationHandler.authenticate(credential, mock(Service.class)));
+        assertThrows(FailedLoginException.class,
+            () -> authenticationHandler.authenticate(credential, mock(Service.class)));
 
         val principal = CoreAuthenticationTestUtils.getPrincipal("casuser", 
             Map.of(Attr_State.NAME, List.of(new StringValue("value"))));

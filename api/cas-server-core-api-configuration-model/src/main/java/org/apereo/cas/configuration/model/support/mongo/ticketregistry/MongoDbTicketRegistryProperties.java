@@ -51,6 +51,8 @@ public class MongoDbTicketRegistryProperties extends BaseMongoDbProperties {
      *     <li>{@code IDX_ID}: index created for ticket identifiers.</li>
      *     <li>{@code IDX_PRINCIPAL}: index created for principal attached to the ticket.</li>
      *     <li>{@code IDX_EXPIRATION}: index created for ticket expiration date.</li>
+     *     <li>{@code IDX_SERVICE}: index created for service attached to the ticket.</li>
+     *     <li>{@code IDX_ATTRIBUTES}: wildcard index created for ticket attributes.</li>
      *</ul>
      */
     private List<String> indexes = new ArrayList<>();

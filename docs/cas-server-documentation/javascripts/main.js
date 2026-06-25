@@ -339,6 +339,78 @@ function generateOverlay(artifactId, type) {
   $("#overlayform").submit();
 }
 
+function copyPropertyConfig(link) {
+  const $td = $(link).closest("td");
+
+  const propertyName = $.trim($td.find("li.property-name code").text());
+
+  const $descriptionP = $td.find("div.property-description p").first();
+
+  const descriptionHtml = $descriptionP.html() || "";
+  const description = descriptionHtml
+      .replace(/<br\s*\/?>/gi, "\n")
+      .replace(/<[^>]+>/g, "")
+      .trim();
+
+  let commentLines = description
+      .split(/\r?\n/)
+      .map(function (line) {
+        return $.trim(line);
+      })
+      .filter(Boolean);
+
+  const $followingUl = $descriptionP.next("ul");
+
+  if ($followingUl.length) {
+    $followingUl.find("li").each(function () {
+      const itemText = $.trim($(this).text());
+
+      if (itemText) {
+        itemText
+            .split(/\r?\n/)
+            .map(function (line) {
+              return $.trim(line);
+            })
+            .filter(Boolean)
+            .forEach(function (line, index) {
+              commentLines.push(`${index === 0 ? "- " : "  "}${line}`);
+            });
+      }
+    });
+  }
+
+  const comment = commentLines
+      .map(function (line) {
+        return `# ${line}`;
+      })
+      .join("\n");
+
+  const textToCopy = `${comment}\n${propertyName}`;
+
+  navigator.clipboard.writeText(textToCopy)
+      .then(function () {
+        const $status = $(link).siblings(".copy-status");
+
+        $status
+            .stop(true, true)
+            .text("Copied!")
+            .fadeIn(150)
+            .delay(1000)
+            .fadeOut(150);
+      })
+      .catch(function (err) {
+        console.error("Failed to copy:", err);
+
+        const $status = $(link).siblings(".copy-status");
+
+        $status
+            .stop(true, true)
+            .text("Copy failed")
+            .fadeIn(150)
+            .delay(1000)
+            .fadeOut(150);
+      });
+}
 
 function showOverlay(artifactId, type) {
   let id = artifactId.replace("cas-server-", "");

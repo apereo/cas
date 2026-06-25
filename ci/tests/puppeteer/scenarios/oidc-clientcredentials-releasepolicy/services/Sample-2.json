@@ -1,0 +1,12 @@
+{
+  "@class" : "org.apereo.cas.services.OidcRegisteredService",
+  "clientId": "client2",
+  "clientSecret": "secret2",
+  "serviceId" : "^https://localhost:8082/cas/.*",
+  "name": "Sample",
+  "id": 2,
+  "jwtAccessToken": "true",
+  "attributeReleasePolicy" : {
+    "@class" : "org.apereo.cas.services.ReturnAllAttributeReleasePolicy"
+  }
+}

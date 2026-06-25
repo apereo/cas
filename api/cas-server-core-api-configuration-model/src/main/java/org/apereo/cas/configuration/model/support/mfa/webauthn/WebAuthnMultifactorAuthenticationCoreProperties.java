@@ -140,7 +140,47 @@ public class WebAuthnMultifactorAuthenticationCoreProperties implements Serializ
      * to use the primary device to authenticate for security or other practical reasons.
      */
     private boolean qrCodeAuthenticationEnabled;
-    
+
+    /**
+     * Specifies the desired authenticator attachment modality during credential
+     * registration.
+     *
+     * <p>This is used by the WebAuthn client/browser to select which type of
+     * authenticator may be used to create the credential.</p>
+     *
+     * <ul>
+     *   <li>{@code PLATFORM}: an authenticator built into, or tightly bound to,
+     *       the user's device, such as Touch ID, Windows Hello, Android/iOS passkeys.</li>
+     *   <li>{@code CROSS_PLATFORM}: an external/roaming authenticator usable across
+     *       multiple devices, such as a USB, NFC, or BLE security key like a YubiKey.</li>
+     * </ul>
+     *
+     * <p>If unset, the client may use any available authenticator.</p>
+     */
+    private String authenticatorAttachment;
+
+    /**
+     * Specifies the relying party's requirement for user verification during
+     * credential registration and/or authentication.
+     *
+     * <p>User verification means the authenticator verifies the user locally,
+     * for example with a PIN, fingerprint, face recognition, or device unlock.
+     * This is stronger than simple user presence, such as touching a security key.</p>
+     *
+     * <ul>
+     *   <li>{@code REQUIRED}: user verification must be performed; the operation
+     *       should fail if it is unavailable or not completed.</li>
+     *   <li>{@code PREFERRED}: user verification should be performed if possible,
+     *       but the operation may still succeed without it.</li>
+     *   <li>{@code DISCOURAGED}: user verification is not requested, typically to
+     *       reduce friction or avoid prompting for PIN/biometric verification.</li>
+     * </ul>
+     *
+     * <p>The server should validate the resulting authenticator data flags according
+     * to the configured requirement.</p>
+     */
+    private String userVerificationRequirement;
+
     public WebAuthnMultifactorAuthenticationCoreProperties() {
         trustSource.getTrustedDeviceMetadata().setLocation(new ClassPathResource("webauthn-metadata.json"));
     }

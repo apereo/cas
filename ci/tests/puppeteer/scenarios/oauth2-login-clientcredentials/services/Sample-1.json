@@ -5,5 +5,22 @@
   "serviceId" : "https://apereo.github.io.*",
   "bypassApprovalPrompt": true,
   "name" : "Sample",
-  "id" : 1
+  "id" : 1,
+  "attributeReleasePolicy": {
+    "@class": "org.apereo.cas.services.ChainingAttributeReleasePolicy",
+    "policies": [ "java.util.ArrayList",
+      [
+        {
+          "@class" : "org.apereo.cas.services.ReturnAllAttributeReleasePolicy"
+        },
+        {
+          "@class": "org.apereo.cas.services.ReturnStaticAttributeReleasePolicy",
+          "allowedAttributes": {
+            "@class": "java.util.LinkedHashMap",
+            "fullName": [ "java.util.ArrayList", [ "JohnSmith" ] ]
+          }
+        }
+      ]
+    ]
+  }
 }

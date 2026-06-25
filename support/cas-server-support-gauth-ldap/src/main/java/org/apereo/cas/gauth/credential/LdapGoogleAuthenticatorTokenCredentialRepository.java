@@ -15,6 +15,7 @@ import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
+import org.jspecify.annotations.Nullable;
 import org.ldaptive.ConnectionFactory;
 import org.ldaptive.LdapEntry;
 import org.springframework.beans.factory.DisposableBean;
@@ -71,12 +72,12 @@ public class LdapGoogleAuthenticatorTokenCredentialRepository
     }
 
     @Override
-    public OneTimeTokenAccount get(final long id) {
+    public @Nullable OneTimeTokenAccount get(final long id) {
         return load().stream().filter(acct -> acct.getId() == id).findFirst().orElse(null);
     }
 
     @Override
-    public OneTimeTokenAccount get(final String username, final long id) {
+    public @Nullable OneTimeTokenAccount get(final String username, final long id) {
         return get(username).stream().filter(acct -> acct.getId() == id).findFirst().orElse(null);
     }
 
@@ -249,7 +250,7 @@ public class LdapGoogleAuthenticatorTokenCredentialRepository
         });
     }
 
-    private LdapEntry locateLdapEntryFor(final String principal) {
+    private @Nullable LdapEntry locateLdapEntryFor(final String principal) {
         return FunctionUtils.doUnchecked(() -> {
             val searchFilter = '(' + ldapProperties.getSearchFilter() + ')';
             val filter = LdapUtils.newLdaptiveSearchFilter(searchFilter, CollectionUtils.wrapList(principal));
@@ -266,7 +267,7 @@ public class LdapGoogleAuthenticatorTokenCredentialRepository
         });
     }
 
-    private LdapEntry searchLdapAccountsBy(final long id) {
+    private @Nullable LdapEntry searchLdapAccountsBy(final long id) {
         return FunctionUtils.doUnchecked(() -> {
             val searchFilterWithoutSpaces = String.format("(%s=*\"id\":%s*)", ldapProperties.getAccountAttributeName(), id);
             val searchFilterWithSpaces = String.format("(%s=*\"id\" : %s*)", ldapProperties.getAccountAttributeName(), id);

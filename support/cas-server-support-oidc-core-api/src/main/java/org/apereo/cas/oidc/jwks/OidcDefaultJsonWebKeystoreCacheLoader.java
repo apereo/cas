@@ -10,7 +10,6 @@ import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.jose4j.jwk.JsonWebKeySet;
 import org.jose4j.jwk.PublicJsonWebKey;
-import org.jspecify.annotations.NonNull;
 import org.jspecify.annotations.Nullable;
 import org.springframework.core.io.Resource;
 
@@ -23,7 +22,7 @@ import org.springframework.core.io.Resource;
  */
 @Slf4j
 public record OidcDefaultJsonWebKeystoreCacheLoader(OidcJsonWebKeystoreGeneratorService oidcJsonWebKeystoreGeneratorService)
-    implements CacheLoader<@NonNull OidcJsonWebKeyCacheKey, JsonWebKeySet> {
+    implements CacheLoader<OidcJsonWebKeyCacheKey, JsonWebKeySet> {
     /**
      * Gets json web key from jwks.
      *

@@ -7,23 +7,30 @@ import org.apereo.cas.util.function.FunctionUtils;
 import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
 import software.amazon.awssdk.services.dynamodb.DynamoDbClient;
 import software.amazon.awssdk.services.dynamodb.model.AttributeDefinition;
 import software.amazon.awssdk.services.dynamodb.model.AttributeValue;
 import software.amazon.awssdk.services.dynamodb.model.BillingMode;
 import software.amazon.awssdk.services.dynamodb.model.Condition;
+import software.amazon.awssdk.services.dynamodb.model.CreateGlobalSecondaryIndexAction;
 import software.amazon.awssdk.services.dynamodb.model.CreateTableRequest;
 import software.amazon.awssdk.services.dynamodb.model.DeleteTableRequest;
 import software.amazon.awssdk.services.dynamodb.model.DescribeTableRequest;
+import software.amazon.awssdk.services.dynamodb.model.GlobalSecondaryIndex;
+import software.amazon.awssdk.services.dynamodb.model.GlobalSecondaryIndexDescription;
+import software.amazon.awssdk.services.dynamodb.model.GlobalSecondaryIndexUpdate;
 import software.amazon.awssdk.services.dynamodb.model.KeySchemaElement;
 import software.amazon.awssdk.services.dynamodb.model.ProvisionedThroughput;
+import software.amazon.awssdk.services.dynamodb.model.QueryRequest;
 import software.amazon.awssdk.services.dynamodb.model.ResourceNotFoundException;
 import software.amazon.awssdk.services.dynamodb.model.ScanRequest;
 import software.amazon.awssdk.services.dynamodb.model.ScanResponse;
 import software.amazon.awssdk.services.dynamodb.model.TableDescription;
 import software.amazon.awssdk.services.dynamodb.model.TableStatus;
 import software.amazon.awssdk.services.dynamodb.model.TimeToLiveSpecification;
+import software.amazon.awssdk.services.dynamodb.model.UpdateTableRequest;
 import software.amazon.awssdk.services.dynamodb.model.UpdateTimeToLiveRequest;
 
 /**
@@ -122,15 +129,42 @@ public class DynamoDbTableUtils {
                                                final boolean deleteTable,
                                                final List<AttributeDefinition> attributeDefinitions,
                                                final List<KeySchemaElement> keySchemaElements) throws Exception {
+        return createTable(dynamoDbClient, dynamoDbProperties, tableName, deleteTable,
+            attributeDefinitions, keySchemaElements, List.of());
+    }
+
+    /**
+     * Create table.
+     *
+     * @param dynamoDbClient         the dynamo db client
+     * @param dynamoDbProperties     the dynamo db properties
+     * @param tableName              the table name
+     * @param deleteTable            the delete tables
+     * @param attributeDefinitions   the attribute definitions
+     * @param keySchemaElements      the key schema elements
+     * @param globalSecondaryIndexes the global secondary indexes
+     * @return the table description
+     * @throws Exception the exception
+     */
+    public static TableDescription createTable(final DynamoDbClient dynamoDbClient,
+                                               final AbstractDynamoDbProperties dynamoDbProperties,
+                                               final String tableName,
+                                               final boolean deleteTable,
+                                               final List<AttributeDefinition> attributeDefinitions,
+                                               final List<KeySchemaElement> keySchemaElements,
+                                               final List<GlobalSecondaryIndex> globalSecondaryIndexes) throws Exception {
 
         val provisionedThroughput = getProvisionedThroughput(dynamoDbProperties);
-        val request = CreateTableRequest.builder()
+        val requestBuilder = CreateTableRequest.builder()
             .attributeDefinitions(attributeDefinitions)
             .keySchema(keySchemaElements)
             .provisionedThroughput(provisionedThroughput)
             .tableName(tableName)
-            .billingMode(BillingMode.fromValue(dynamoDbProperties.getBillingMode().name()))
-            .build();
+            .billingMode(BillingMode.fromValue(dynamoDbProperties.getBillingMode().name()));
+        if (!globalSecondaryIndexes.isEmpty()) {
+            requestBuilder.globalSecondaryIndexes(globalSecondaryIndexes);
+        }
+        val request = requestBuilder.build();
 
         if (deleteTable) {
             val delete = DeleteTableRequest.builder().tableName(tableName).build();
@@ -143,9 +177,59 @@ public class DynamoDbTableUtils {
         waitUntilActive(dynamoDbClient, request.tableName());
         val describeTableRequest = DescribeTableRequest.builder().tableName(request.tableName()).build();
         LOGGER.debug("Sending request [{}] to obtain table description...", describeTableRequest);
-        val tableDescription = dynamoDbClient.describeTable(describeTableRequest).table();
+        var tableDescription = dynamoDbClient.describeTable(describeTableRequest).table();
+        tableDescription = ensureGlobalSecondaryIndexes(dynamoDbClient, request.tableName(),
+            attributeDefinitions, globalSecondaryIndexes, tableDescription);
         LOGGER.debug("Located newly created table with description: [{}]", tableDescription);
         return tableDescription;
+    }
+
+    private static TableDescription ensureGlobalSecondaryIndexes(final DynamoDbClient dynamoDbClient,
+                                                                 final String tableName,
+                                                                 final List<AttributeDefinition> attributeDefinitions,
+                                                                 final List<GlobalSecondaryIndex> expectedIndexes,
+                                                                 final TableDescription initialDescription) {
+        var tableDescription = initialDescription;
+        if (expectedIndexes.isEmpty()) {
+            return tableDescription;
+        }
+        val existingIndexes = Optional.ofNullable(tableDescription.globalSecondaryIndexes())
+            .orElseGet(List::of)
+            .stream()
+            .map(GlobalSecondaryIndexDescription::indexName)
+            .collect(Collectors.toSet());
+        for (val index : expectedIndexes) {
+            if (!existingIndexes.contains(index.indexName())) {
+                val createIndexBuilder = CreateGlobalSecondaryIndexAction.builder()
+                    .indexName(index.indexName())
+                    .keySchema(index.keySchema())
+                    .projection(index.projection());
+                Optional.ofNullable(index.provisionedThroughput()).ifPresent(createIndexBuilder::provisionedThroughput);
+                val createIndex = createIndexBuilder.build();
+                val request = UpdateTableRequest.builder()
+                    .tableName(tableName)
+                    .attributeDefinitions(attributeDefinitionsForIndex(attributeDefinitions, index))
+                    .globalSecondaryIndexUpdates(GlobalSecondaryIndexUpdate.builder().create(createIndex).build())
+                    .build();
+                LOGGER.info("Creating missing global secondary index [{}] on DynamoDb table [{}]", index.indexName(), tableName);
+                dynamoDbClient.updateTable(request);
+                waitUntilActive(dynamoDbClient, tableName);
+                tableDescription = dynamoDbClient.describeTable(DescribeTableRequest.builder().tableName(tableName).build()).table();
+            }
+        }
+        return tableDescription;
+    }
+
+    private static List<AttributeDefinition> attributeDefinitionsForIndex(final List<AttributeDefinition> attributeDefinitions,
+                                                                          final GlobalSecondaryIndex index) {
+        val indexAttributeNames = index.keySchema()
+            .stream()
+            .map(KeySchemaElement::attributeName)
+            .collect(Collectors.toSet());
+        return attributeDefinitions
+            .stream()
+            .filter(definition -> indexAttributeNames.contains(definition.attributeName()))
+            .toList();
     }
 
     private static ProvisionedThroughput getProvisionedThroughput(final AbstractDynamoDbProperties dynamoDbProperties) {
@@ -205,7 +289,7 @@ public class DynamoDbTableUtils {
                 .build();
             LOGGER.debug("Submitting request [{}] to get record with expression filters [{}]", scanRequest, filterExpression);
             return dynamoDbClient.scan(scanRequest);
-        }, e -> ScanResponse.builder().items(Map.of()).build()).get();
+        }, e -> ScanResponse.builder().items(List.of()).build()).get();
     }
 
     /**
@@ -247,7 +331,7 @@ public class DynamoDbTableUtils {
         } catch (final Exception e) {
             LoggingUtils.error(LOGGER, e);
         }
-        return ScanResponse.builder().items(Map.of()).build();
+        return ScanResponse.builder().items(List.of()).build();
     }
 
     /**
@@ -302,9 +386,52 @@ public class DynamoDbTableUtils {
                                                  final long count,
                                                  final List<? extends DynamoDbQueryBuilder> queries,
                                                  final Function<Map<String, AttributeValue>, T> itemMapper) {
-        val scanResponse = scan(dynamoDbClient, tableName, count, queries);
-        val items = scanResponse.items();
-        return items.stream().map(itemMapper);
+        return scanPaginator(dynamoDbClient, tableName, count, queries, itemMapper);
+    }
+
+    /**
+     * Query paginator and return stream.
+     *
+     * @param <T>                       the type parameter
+     * @param amazonDynamoDBClient      the amazon dynamo db client
+     * @param tableName                 the table name
+     * @param indexName                 the index name
+     * @param keyConditionExpression    the key condition expression
+     * @param filterExpression          the filter expression
+     * @param expressionAttributeNames  the expression attribute names
+     * @param expressionAttributeValues the expression attribute values
+     * @param limit                     the page size limit
+     * @param itemMapper                the item mapper
+     * @return the stream
+     */
+    public static <T> Stream<T> queryPaginator(final DynamoDbClient amazonDynamoDBClient,
+                                               final String tableName,
+                                               final String indexName,
+                                               final String keyConditionExpression,
+                                               final String filterExpression,
+                                               final Map<String, String> expressionAttributeNames,
+                                               final Map<String, AttributeValue> expressionAttributeValues,
+                                               final Long limit,
+                                               final Function<Map<String, AttributeValue>, T> itemMapper) {
+        val queryRequestBuilder = QueryRequest.builder()
+            .tableName(tableName)
+            .indexName(indexName)
+            .keyConditionExpression(keyConditionExpression)
+            .expressionAttributeNames(expressionAttributeNames)
+            .expressionAttributeValues(expressionAttributeValues);
+        if (StringUtils.isNotBlank(filterExpression)) {
+            queryRequestBuilder.filterExpression(filterExpression);
+        }
+        if (limit > 0) {
+            queryRequestBuilder.limit(limit.intValue());
+        }
+        val queryRequest = queryRequestBuilder.build();
+        LOGGER.debug("Querying table with query request [{}]", queryRequest);
+        return amazonDynamoDBClient.queryPaginator(queryRequest)
+            .stream()
+            .flatMap(results -> results.items().stream())
+            .map(itemMapper)
+            .filter(Objects::nonNull);
     }
 
     private static TableDescription waitForTableDescription(final DynamoDbClient dynamo,
@@ -343,7 +470,7 @@ public class DynamoDbTableUtils {
      */
     public static <T> Stream<T> scanPaginator(final DynamoDbClient amazonDynamoDBClient,
                                               final String tableName,
-                                              final List<DynamoDbQueryBuilder> keys,
+                                              final List<? extends DynamoDbQueryBuilder> keys,
                                               final Function<Map<String, AttributeValue>, T> itemMapper) {
         return scanPaginator(amazonDynamoDBClient, tableName, 0L, keys, itemMapper);
     }
@@ -362,15 +489,16 @@ public class DynamoDbTableUtils {
     public static <T> Stream<T> scanPaginator(final DynamoDbClient amazonDynamoDBClient,
                                               final String tableName,
                                               final Long limit,
-                                              final List<DynamoDbQueryBuilder> keys,
+                                              final List<? extends DynamoDbQueryBuilder> keys,
                                               final Function<Map<String, AttributeValue>, T> itemMapper) {
         val scanRequest = ScanRequest.builder()
             .tableName(tableName)
-            .limit(limit > 0 ? limit.intValue() : Integer.MAX_VALUE)
-            .scanFilter(DynamoDbTableUtils.buildRequestQueryFilter(keys))
-            .build();
+            .scanFilter(DynamoDbTableUtils.buildRequestQueryFilter(keys));
+        if (limit > 0) {
+            scanRequest.limit(limit.intValue());
+        }
         LOGGER.debug("Scanning table with scan request [{}]", scanRequest);
-        return amazonDynamoDBClient.scanPaginator(scanRequest)
+        return amazonDynamoDBClient.scanPaginator(scanRequest.build())
             .stream()
             .flatMap(results -> results.items().stream())
             .map(itemMapper)
