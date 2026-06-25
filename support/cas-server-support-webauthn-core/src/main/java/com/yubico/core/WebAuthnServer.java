@@ -1,6 +1,6 @@
 package com.yubico.core;
+
 import module java.base;
-import com.yubico.webauthn.data.*;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.databind.JsonSerializer;
@@ -26,6 +26,14 @@ import com.yubico.webauthn.StartAssertionOptions;
 import com.yubico.webauthn.StartRegistrationOptions;
 import com.yubico.webauthn.attestation.Attestation;
 import com.yubico.webauthn.attestation.AttestationMetadataSource;
+import com.yubico.webauthn.data.AuthenticatorAttachment;
+import com.yubico.webauthn.data.AuthenticatorData;
+import com.yubico.webauthn.data.AuthenticatorSelectionCriteria;
+import com.yubico.webauthn.data.AuthenticatorTransport;
+import com.yubico.webauthn.data.ByteArray;
+import com.yubico.webauthn.data.ResidentKeyRequirement;
+import com.yubico.webauthn.data.UserIdentity;
+import com.yubico.webauthn.data.UserVerificationRequirement;
 import com.yubico.webauthn.exception.AssertionFailedException;
 import com.yubico.webauthn.exception.RegistrationFailedException;
 import lombok.AllArgsConstructor;
