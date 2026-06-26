@@ -1,9 +1,20 @@
 package org.apereo.cas.pm.web.flow.actions;
 
 import module java.base;
+import org.apereo.cas.authentication.AuthenticationHandler;
+import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
+import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.authentication.bypass.PrincipalMultifactorAuthenticationProviderBypassEvaluator;
 import org.apereo.cas.authentication.mfa.TestMultifactorAuthenticationProvider;
+import org.apereo.cas.authentication.principal.Principal;
+import org.apereo.cas.authentication.principal.PrincipalResolver;
+import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.config.CasPersonDirectoryAutoConfiguration;
+import org.apereo.cas.multitenancy.TenantExtractor;
+import org.apereo.cas.notifications.CommunicationsManager;
+import org.apereo.cas.notifications.mail.EmailCommunicationResult;
+import org.apereo.cas.notifications.mail.EmailMessageRequest;
+import org.apereo.cas.notifications.sms.SmsRequest;
 import org.apereo.cas.pm.PasswordManagementService;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.test.CasTestExtension;
@@ -24,13 +35,16 @@ import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestMethodOrder;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Import;
+import org.springframework.context.annotation.Primary;
 import org.springframework.http.HttpHeaders;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.test.context.TestPropertySource;
+import org.springframework.webflow.execution.RequestContext;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
@@ -54,6 +68,79 @@ class SendPasswordResetInstructionsActionTests {
             when(service.findUsername(any())).thenReturn("casuser");
             when(service.findEmail(any())).thenReturn("casuser@example.org");
             return service;
+        }
+    }
+
+    @Nested
+    @Import(MultiEmailAddressPrincipalResolverTestConfiguration.class)
+    @TestPropertySource(properties = "cas.authn.pm.reset.mail.attribute-name=mail")
+    class MultiEmailAddressRecipientResolutionTests extends BasePasswordManagementActionTests {
+
+        @Autowired
+        private AtomicReference<EmailMessageRequest> emailMessageRequestCaptor;
+
+        @Test
+        void verifyEmailRecipientsResolvedFromPrincipalAttribute() throws Throwable {
+            val context = MockRequestContext.create(applicationContext);
+            context.setParameter("username", "casuser");
+            WebUtils.putServiceIntoFlowScope(context, RegisteredServiceTestUtils.getService());
+
+            assertEquals(CasWebflowConstants.TRANSITION_ID_SUCCESS, sendPasswordResetInstructionsAction.execute(context).getId());
+
+            val emailRequest = emailMessageRequestCaptor.get();
+            assertNotNull(emailRequest);
+            assertEquals("mail", emailRequest.getAttribute());
+            assertEquals(List.of("primary@example.org", "secondary@example.org"), emailRequest.getRecipients());
+            assertEquals(List.of("primary@example.org"), emailRequest.getTo());
+        }
+    }
+
+    @TestConfiguration(value = "MultiEmailAddressPrincipalResolverTestConfiguration", proxyBeanMethods = false)
+    static class MultiEmailAddressPrincipalResolverTestConfiguration {
+        @Bean(name = PrincipalResolver.BEAN_NAME_PRINCIPAL_RESOLVER)
+        @Primary
+        public PrincipalResolver defaultPrincipalResolver() {
+            return new PrincipalResolver() {
+                @Override
+                public Principal resolve(final Credential credential,
+                                         final Optional<Principal> principal,
+                                         final Optional<AuthenticationHandler> handler,
+                                         final Optional<Service> service) {
+                    return CoreAuthenticationTestUtils.getPrincipal(credential.getId(), Map.of(
+                        "mail", List.of("primary@example.org", "secondary@example.org"),
+                        "phone", List.of("1234567890")));
+                }
+
+                @Override
+                public boolean supports(final Credential credential) {
+                    return true;
+                }
+            };
+        }
+
+        @Bean
+        public AtomicReference<EmailMessageRequest> emailMessageRequestCaptor() {
+            return new AtomicReference<>();
+        }
+
+        @Bean
+        @Primary
+        public CommunicationsManager communicationsManager(final AtomicReference<EmailMessageRequest> emailMessageRequestCaptor) {
+            val tenantExtractor = mock(TenantExtractor.class);
+            when(tenantExtractor.extract(any(RequestContext.class))).thenReturn(Optional.empty());
+
+            val manager = mock(CommunicationsManager.class);
+            when(manager.validate()).thenReturn(true);
+            when(manager.isMailSenderDefined()).thenReturn(true);
+            when(manager.isSmsSenderDefined()).thenReturn(false);
+            when(manager.getTenantExtractor()).thenReturn(tenantExtractor);
+            when(manager.sms(any(SmsRequest.class))).thenReturn(false);
+            when(manager.email(any(EmailMessageRequest.class))).thenAnswer(invocation -> {
+                val request = invocation.getArgument(0, EmailMessageRequest.class);
+                emailMessageRequestCaptor.set(request);
+                return EmailCommunicationResult.builder().success(true).to(request.getRecipients()).body(request.getBody()).build();
+            });
+            return manager;
         }
     }
 
