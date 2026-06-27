@@ -59,7 +59,7 @@ class SendPasswordResetInstructionsActionTests {
 
     @Nested
     @TestPropertySource(properties = {
-        "cas.authn.attribute-repository.stub.attributes.mail=cas@example.org",
+        "cas.authn.attribute-repository.stub.attributes.mail=cas@example.org,cas2@example.org",
         "cas.authn.attribute-repository.stub.attributes.phone=1234567890",
 
         "cas.authn.pm.reset.mail.attribute-name=mail",
