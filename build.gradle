@@ -129,7 +129,7 @@ if (!providers.systemProperty("skipSonarqube").present && sonarqubeRequested) {
     }
 }
 
-if (CasBuildSettings.isJavadocRequested(gradle, project)) {
+if (CasBuildSettings.isJavadocRequested(gradle, project) || CasBuildSettings.isPublishReleases(project)) {
     def aggregateJavadocProjectPaths = CasBuildSettings.includedProjectPaths(project)
         .findAll { projectPath -> projectPath != project.path && CasBuildSettings.isJavadocEnabled(project, projectPath) }
 
