@@ -83,7 +83,7 @@ if (publishReleases || publishSnapshots) {
             username = "${repositoryUsername}"
             password = "${repositoryPassword}"
             publicationName = "Apereo CAS Release ${project.version}"
-            publishingType = "USER_MANAGED"
+            publishingType = "AUTOMATIC"
             validationTimeout.set(Duration.ZERO)
             publishingTimeout.set(Duration.ZERO)
             uploadSnapshotsParallelism.set(4)
