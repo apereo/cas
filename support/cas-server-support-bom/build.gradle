@@ -24,10 +24,8 @@ publishing {
                 def iter = asNode().iterator()
                 while (iter.hasNext()) {
                     def node = iter.next()
-                    if (node.name().getLocalPart().equals("dependencies")) {
-                        iter.remove()
-                    }
-                    if (node.name().getLocalPart().equals("properties")) {
+                    def nodeName = node.name().toString()
+                    if (nodeName == "dependencies" || nodeName == "properties") {
                         iter.remove()
                     }
                 }

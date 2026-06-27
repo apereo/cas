@@ -78,11 +78,12 @@ apply plugin: "org.apereo.cas.overrides-conventions"
 if (publishReleases || publishSnapshots) {
     apply plugin: "com.gradleup.nmcp.aggregation"
     nmcpAggregation {
+        publishAllChecksums.set(true)
         centralPortal {
             username = "${repositoryUsername}"
             password = "${repositoryPassword}"
             publicationName = "Apereo CAS Release ${project.version}"
-            publishingType = "AUTOMATIC"
+            publishingType = "USER_MANAGED"
             validationTimeout.set(Duration.ZERO)
             publishingTimeout.set(Duration.ZERO)
             uploadSnapshotsParallelism.set(4)
@@ -150,6 +151,7 @@ if (CasBuildSettings.isJavadocRequested(gradle, project) || CasBuildSettings.isP
         canBeConsumed = false
         canBeResolved = true
         visible = false
+        extendsFrom(configurations.compileOnly, configurations.annotationProcessor)
         attributes {
             attribute(Category.CATEGORY_ATTRIBUTE, objects.named(Category, Category.LIBRARY))
             attribute(Bundling.BUNDLING_ATTRIBUTE, objects.named(Bundling, Bundling.EXTERNAL))
@@ -170,15 +172,16 @@ if (CasBuildSettings.isJavadocRequested(gradle, project) || CasBuildSettings.isP
             }
         }
     }
-    def aggregateJavadocClasspathFiles = files(providers.provider { aggregateJavadocClasspath.files })
 
     tasks.named('javadoc', Javadoc) {
         dependsOn(aggregateJavadocSources)
-        source(aggregateJavadocSourceTrees)
-        classpath = aggregateJavadocClasspathFiles
+        source = files(aggregateJavadocSourceTrees).asFileTree.matching {
+            exclude '**/package-info.java'
+        }
+        classpath = aggregateJavadocClasspath
         destinationDir = new File(project.layout.buildDirectory.getAsFile().get(), 'javadoc')
         options.addBooleanOption('html5', true)
-        failOnError = providers.systemProperty('ignoreJavadocFailures').present
+        failOnError = CasBuildSettings.isPublishFlag(project) ? false : providers.systemProperty('ignoreJavadocFailures').present
     }
 
     tasks.register('aggregateJavadocsIntoJar', Jar) {

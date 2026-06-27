@@ -35,26 +35,26 @@ project.pluginManager.apply('org.apereo.cas.overrides-conventions')
 
 if (CasProjectConventions.shouldBePublished(project)) {
     logger.info "Project ${project.name} should be published"
-
+    
     publishing {
         publications {
             if (project.hasProperty('skipPublication') && project.skipPublication) {
                 logger.info "Skipping artifact publication for project ${project.name}"
-            } else if (project.name.contains('cas-server-support-bom')) {
-                logger.info "Project ${project.name} is published as a BOM"
             } else {
                 logger.info "Project ${project.name} should be published as a JAR"
-                mavenJava(MavenPublication) {
+
+                create('mavenJava', MavenPublication) {
                     logger.info "Project ${project.name} does not have a bootJar task, using default JAR"
+
                     from components.java
 
                     if (publishMinimalArtifacts) {
                         logger.info "Publishing minimal artifacts for project ${project.name}"
                     } else {
-                        artifact tasks['sourcesJar']
-                        artifact tasks['resourcesJar']
-                        artifact tasks['javadocJar']
-                        artifact tasks['testJar']
+                        artifact tasks.named('sourcesJar')
+                        artifact tasks.named('resourcesJar')
+                        artifact tasks.named('javadocJar')
+                        artifact tasks.named('testJar')
                     }
 
                     pom {
@@ -64,6 +64,7 @@ if (CasProjectConventions.shouldBePublished(project)) {
                         CasPomConfiguration.createPomRepositories(asNode())
                     }
                 }
+
             }
         }
     }
@@ -71,9 +72,11 @@ if (CasProjectConventions.shouldBePublished(project)) {
     plugins.withId('war') {
         if (!project.hasProperty('skipPublication') || !project.skipPublication) {
             logger.info "Project ${project.name} should be published as a WAR"
+
             publishing.publications.remove(publishing.publications.findByName('mavenJava'))
             publishing.publications.create('mavenWeb', MavenPublication) {
                 from components.web
+
                 pom {
                     CasPomConfiguration.createPom(it, project)
                 }
@@ -84,12 +87,21 @@ if (CasProjectConventions.shouldBePublished(project)) {
         }
     }
 
-    signing {
-        required = publishReleases && !skipArtifactSigning
-        if (System.getenv('PGP_PRIVATE_KEY') && System.getenv('PGP_PASSPHRASE')) {
-            useInMemoryPgpKeys(System.getenv('PGP_PRIVATE_KEY'), System.getenv('PGP_PASSPHRASE'))
+    plugins.withId('maven-publish') {
+        signing {
+            required = project.publishReleases && !project.skipArtifactSigning
+
+            if (System.getenv('PGP_PRIVATE_KEY') && System.getenv('PGP_PASSPHRASE')) {
+                useInMemoryPgpKeys(
+                        System.getenv('PGP_PRIVATE_KEY'),
+                        System.getenv('PGP_PASSPHRASE')
+                )
+            }
         }
-        sign publishing.publications
+
+        publishing.publications.withType(MavenPublication).configureEach { publication ->
+            signing.sign(publication)
+        }
     }
 }
 
@@ -149,12 +161,12 @@ tasks.withType(JavaCompile).configureEach { taskProvider ->
             options.errorprone.allErrorsAsWarnings = false
             options.errorprone.disableWarningsInGeneratedCode = true
             options.errorprone.errorproneArgs = [
-                '-Xep:JavaUtilDate:OFF',
-                '-Xep:RequireExplicitNullMarking:OFF',
-                '-Xep:BooleanLiteral:OFF',
-                '-Xep:StringConcatToTextBlock:OFF',
-                '-Xep:AddressSelection:OFF',
-                '-Xep:UnrecognisedJavadocTag:OFF'
+                    '-Xep:JavaUtilDate:OFF',
+                    '-Xep:RequireExplicitNullMarking:OFF',
+                    '-Xep:BooleanLiteral:OFF',
+                    '-Xep:StringConcatToTextBlock:OFF',
+                    '-Xep:AddressSelection:OFF',
+                    '-Xep:UnrecognisedJavadocTag:OFF'
             ]
             options.errorprone.excludedPaths = ".*/build/generated/.*"
 
@@ -205,17 +217,17 @@ tasks.named('jar') {
 
     manifest {
         attributes(
-            'Automatic-Module-Name': project.name.replace('-', '.'),
-            'Implementation-Title': projectName,
-            'Implementation-Vendor': projectGroup,
-            'Created-By': projectGroup
+                'Automatic-Module-Name': project.name.replace('-', '.'),
+                'Implementation-Title': projectName,
+                'Implementation-Vendor': projectGroup,
+                'Created-By': projectGroup
         )
         if (generateTimestamps) {
             attributes('Implementation-Date': java.time.ZonedDateTime.now(java.time.ZoneOffset.UTC))
         }
         attributes(
-            'Specification-Version': projectSpecVersion,
-            'Implementation-Version': projectVersion
+                'Specification-Version': projectSpecVersion,
+                'Implementation-Version': projectVersion
         )
     }
 }
@@ -224,8 +236,8 @@ if (!providers.systemProperty('skipCheckstyle').present && CasProjectConventions
     project.pluginManager.apply('checkstyle')
     checkstyle {
         configProperties = [
-            'checkstyle.suppressions.file' : new File(rootDir, 'style/checkstyle-suppressions.xml'),
-            'checkstyle.importcontrol.file': new File(rootDir, 'style/import-control.xml')
+                'checkstyle.suppressions.file' : new File(rootDir, 'style/checkstyle-suppressions.xml'),
+                'checkstyle.importcontrol.file': new File(rootDir, 'style/import-control.xml')
         ]
         configFile = new File(rootDir, 'style/checkstyle-rules.xml')
         ignoreFailures = false

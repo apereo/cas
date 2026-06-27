@@ -93,7 +93,8 @@ function publish {
         printred "Publishing Apereo CAS failed."
         exit 1
     fi
-
+    printgreen "Uploaded CAS release ${casVersion} successfully."
+    
     if [[ "${privateRelease}" == "true" ]]; then
         printgreen "This is a private release. Skipping Git tagging and GitHub Release creation."
         return 0
