@@ -78,7 +78,7 @@ apply plugin: "org.apereo.cas.overrides-conventions"
 if (publishReleases || publishSnapshots) {
     apply plugin: "com.gradleup.nmcp.aggregation"
     nmcpAggregation {
-        publishAllChecksums.set(true)
+        // publishAllChecksums.set(true)
         centralPortal {
             username = "${repositoryUsername}"
             password = "${repositoryPassword}"
