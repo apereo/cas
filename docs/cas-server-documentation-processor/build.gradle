@@ -40,7 +40,11 @@ dependencies {
         if (includedProjectPath != project.path) {
             def includedProjectName = CasBuildSettings.projectNameFromPath(includedProjectPath)
             if (CasProjectConventions.shouldBePublished(includedProjectName)) {
-                implementation(project(path: includedProjectPath))
+                if (includedProjectName == "cas-server-support-bom") {
+                    implementation(platform(project(path: includedProjectPath)))
+                } else {
+                    implementation(project(path: includedProjectPath))
+                }
             } else {
                 logger.debug("Skipping project for documentation processing: ${includedProjectName}")
                 compileOnly(project(path: includedProjectPath))

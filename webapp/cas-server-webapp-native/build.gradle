@@ -20,6 +20,15 @@ if (skipBootifulArtifact) {
     apply plugin: "org.springframework.boot"
 }
 
+plugins.withId("org.springframework.boot") {
+    tasks.named("jar") {
+        archiveClassifier.set("")
+    }
+    tasks.named("bootJar") {
+        archiveClassifier.set("boot")
+    }
+}
+
 ext {
     publishMetadata = true
     projectMetadata = [
