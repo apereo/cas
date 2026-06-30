@@ -21,7 +21,7 @@ import org.ldaptive.LdapEntry;
 import org.ldaptive.LdapException;
 import org.ldaptive.ModifyOperation;
 import org.ldaptive.ModifyRequest;
-import org.ldaptive.ResultCode;
+import org.ldaptive.Result;
 import org.ldaptive.ReturnAttributes;
 import org.ldaptive.SearchOperation;
 import org.ldaptive.SearchResponse;
@@ -52,8 +52,7 @@ public class LdapConnectionFactory implements Closeable {
         return FunctionUtils.doAndHandle(() -> {
             val operation = new AddOperation(connectionFactory);
             val response = operation.execute(new AddRequest(entry.getDn(), entry.getAttributes()));
-            LOGGER.debug("Result code [{}], message: [{}]", response.getResultCode(), response.getDiagnosticMessage());
-            return response.getResultCode() == ResultCode.SUCCESS;
+            return logAndReturnSuccessFlag("LDAP add operation", response);
         }, e -> false).get();
     }
 
@@ -69,8 +68,7 @@ public class LdapConnectionFactory implements Closeable {
             val delete = new DeleteOperation(connectionFactory);
             val request = new DeleteRequest(entry.getDn());
             val response = delete.execute(request);
-            LOGGER.debug("Result code [{}], message: [{}]", response.getResultCode(), response.getDiagnosticMessage());
-            return response.getResultCode() == ResultCode.SUCCESS;
+            return logAndReturnSuccessFlag("LDAP delete operation", response);
         }, e -> false).get();
     }
 
@@ -97,8 +95,7 @@ public class LdapConnectionFactory implements Closeable {
                 .toArray(AttributeModification[]::new);
             val request = new ModifyRequest(currentDn, mods);
             val response = operation.execute(request);
-            LOGGER.debug("Result code [{}], message: [{}]", response.getResultCode(), response.getDiagnosticMessage());
-            return response.getResultCode() == ResultCode.SUCCESS;
+            return logAndReturnSuccessFlag("LDAP modify operation", response);
         }, e -> false).get();
     }
 
@@ -153,14 +150,21 @@ public class LdapConnectionFactory implements Closeable {
         @Nullable
         final String[] binaryAttributes,
         final String[] returnAttributes) throws LdapException {
-        val request = LdapUtils.newLdaptiveSearchRequest(baseDn, filter, binaryAttributes, returnAttributes);
-        if (pageSize <= 0) {
-            val searchOperation = new SearchOperation(connectionFactory);
-            searchOperation.setSearchResultHandlers(new FollowSearchReferralHandler());
-            return searchOperation.execute(request);
+        try {
+            val request = LdapUtils.newLdaptiveSearchRequest(baseDn, filter, binaryAttributes, returnAttributes);
+            if (pageSize <= 0) {
+                val searchOperation = new SearchOperation(connectionFactory);
+                searchOperation.setSearchResultHandlers(new FollowSearchReferralHandler());
+                return searchOperation.execute(request);
+            }
+            val client = new PagedResultsClient(connectionFactory, pageSize);
+            return client.executeToCompletion(request);
+        } catch (final LdapException e) {
+            LOGGER.error("LDAP search operation failed for URL [{}], baseDn [{}], filter [{}]: [{}]",
+                connectionFactory.getConnectionConfig().getLdapUrl(), baseDn, filter, e.getMessage());
+            LOGGER.debug("LDAP search operation failure details", e);
+            throw e;
         }
-        val client = new PagedResultsClient(connectionFactory, pageSize);
-        return client.executeToCompletion(request);
     }
 
     /**
@@ -197,7 +201,7 @@ public class LdapConnectionFactory implements Closeable {
      * letting user change their own (e.g. expiring) password.
      */
     public boolean executePasswordModifyOperation(final String currentDn,
-                                                  final char[] oldPassword,
+                                                  final char @Nullable [] oldPassword,
                                                   final char[] newPassword,
                                                   final AbstractLdapProperties.LdapType type) {
         try {
@@ -223,22 +227,26 @@ public class LdapConnectionFactory implements Closeable {
                     operation.execute(new ModifyRequest(currentDn,
                         new AttributeModification(AttributeModification.Type.REPLACE, new UnicodePwdAttribute(new String(newPassword)))));
 
-                val success = response.getResultCode() == ResultCode.SUCCESS;
-                val logLevel = success ? LOGGER.atDebug() : LOGGER.atError();
-                logLevel.log("Result code [{}], message: [{}]", response.getResultCode(), response.getDiagnosticMessage());
-                return success;
+                return logAndReturnSuccessFlag("Active Directory password modification", response);
             }
 
             LOGGER.debug("Executing password modification op for generic LDAP");
             val operation = new ExtendedOperation(connectionFactory);
             val response = operation.execute(new PasswordModifyRequest(currentDn,
                 oldPasswordAvailable ? new String(oldPassword) : null, new String(newPassword)));
-            LOGGER.debug("Result code [{}], message: [{}]", response.getResultCode(), response.getDiagnosticMessage());
-            return response.getResultCode() == ResultCode.SUCCESS;
+            return logAndReturnSuccessFlag("Generic LDAP password modification", response);
         } catch (final Exception e) {
             LoggingUtils.error(LOGGER, e);
         }
         return false;
+    }
+
+    private boolean logAndReturnSuccessFlag(final String operation, final Result response) {
+        val success = response.isSuccess();
+        val logLevel = success ? LOGGER.atDebug() : LOGGER.atError();
+        logLevel.log("{} result code [{}], message: [{}]",
+            operation, response.getResultCode(), response.getDiagnosticMessage());
+        return success;
     }
 
     @Override
