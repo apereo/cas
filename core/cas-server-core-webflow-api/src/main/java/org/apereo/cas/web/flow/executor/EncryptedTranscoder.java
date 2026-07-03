@@ -34,6 +34,7 @@ public class EncryptedTranscoder implements Transcoder {
     private static final ObjectInputFilter DECODE_FILTER = ObjectInputFilter.Config.createFilter(
         "maxdepth=64;maxrefs=10000;maxbytes=10485760;maxarray=100000;"
             + "org.apereo.cas.**;"
+            + "org.apereo.inspektr.**;"
             + "org.springframework.webflow.**;"
             + "org.springframework.binding.**;"
             + "java.lang.*;"
