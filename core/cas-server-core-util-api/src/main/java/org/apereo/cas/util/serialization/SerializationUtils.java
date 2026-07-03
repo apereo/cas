@@ -23,6 +23,27 @@ import org.jooq.lambda.Unchecked;
 public class SerializationUtils {
 
     /**
+     * Restricts {@link #deserialize(InputStream, Class)} to the classes CAS and pac4j
+     * actually put on the wire here (tickets, pubsub commands, SAML/OIDC request contexts,
+     * browser-storage session attributes), rejecting everything else by default. This stops
+     * known deserialization gadget chains (e.g. commons-collections, AspectJ weaver) from
+     * being instantiated during {@code readObject()}, even when the {@link DecodableCipher}
+     * guarding this stream is a no-op or otherwise fails to reject tampered input (for example,
+     * {@code cas.webflow.crypto.enabled=false} or {@link org.apereo.cas.util.crypto.CipherExecutor#noOp()}).
+     */
+    private static final ObjectInputFilter DECODE_FILTER = ObjectInputFilter.Config.createFilter(
+        "maxdepth=64;maxrefs=10000;maxbytes=10485760;maxarray=100000;"
+            + "org.apereo.cas.**;"
+            + "org.pac4j.**;"
+            + "java.lang.*;"
+            + "java.util.*;"
+            + "java.util.concurrent.*;"
+            + "java.util.concurrent.atomic.*;"
+            + "java.time.*;"
+            + "java.math.*;"
+            + "!*");
+
+    /**
      * Serialize as base64 .
      *
      * @param object the object
@@ -94,6 +115,7 @@ public class SerializationUtils {
     public static <T> T deserialize(final InputStream inputStream, final Class<T> clazz) {
         return Unchecked.supplier(() -> {
             try (val in = new ObjectInputStream(inputStream)) {
+                in.setObjectInputFilter(DECODE_FILTER);
                 val obj = in.readObject();
 
                 if (!clazz.isAssignableFrom(obj.getClass())) {

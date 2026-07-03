@@ -24,6 +24,27 @@ import org.springframework.aop.support.AopUtils;
 @RequiredArgsConstructor
 public class EncryptedTranscoder implements Transcoder {
     /**
+     * Restricts {@link #decode(byte[])} to the classes CAS and Spring Webflow
+     * actually place into flow-execution/conversation state, rejecting everything
+     * else by default. This stops known deserialization gadget chains (e.g.
+     * commons-collections, AspectJ weaver) from being instantiated during
+     * {@code readObject()} even if the cipher key protecting this stream is ever
+     * misconfigured, leaked, or brute-forced.
+     */
+    private static final ObjectInputFilter DECODE_FILTER = ObjectInputFilter.Config.createFilter(
+        "maxdepth=64;maxrefs=10000;maxbytes=10485760;maxarray=100000;"
+            + "org.apereo.cas.**;"
+            + "org.springframework.webflow.**;"
+            + "org.springframework.binding.**;"
+            + "java.lang.*;"
+            + "java.util.*;"
+            + "java.util.concurrent.*;"
+            + "java.util.concurrent.atomic.*;"
+            + "java.time.*;"
+            + "java.math.*;"
+            + "!*");
+
+    /**
      * Handles encryption/decryption details.
      */
     private final CipherExecutor cipherExecutor;
@@ -64,6 +85,7 @@ public class EncryptedTranscoder implements Transcoder {
              val in = this.compression
                  ? new ObjectInputStream(new GZIPInputStream(inBuffer))
                  : new ObjectInputStream(inBuffer)) {
+            in.setObjectInputFilter(DECODE_FILTER);
             return in.readObject();
         } catch (final Exception e) {
             LoggingUtils.error(LOGGER, e);
