@@ -23,12 +23,17 @@ class EncryptedTranscoderTests extends BaseWebflowConfigurerTests {
     @ValueSource(booleans = {true, false})
     void verifyEncodeDecode(final boolean compression) throws Exception {
         val transcoder1 = new EncryptedTranscoder(webflowCipherExecutor, compression);
-        val encodable = new URI("https://maps.google.com/maps?f=q&source=s_q&hl=en&geocode=&"
+        // A plain String stands in for real flow-execution/conversation state here (which is
+        // always org.apereo.cas.**, Spring Webflow types, or plain JDK value types -- never a
+        // java.net.URL/URI). Deliberately not java.net.URL: it's the exact payload class used by
+        // the well-known "URLDNS" Java deserialization gadget, so it is intentionally excluded
+        // from EncryptedTranscoder's ObjectInputFilter allowlist.
+        val encodable = "https://maps.google.com/maps?f=q&source=s_q&hl=en&geocode=&"
             + "q=1600+Pennsylvania+Avenue+Northwest+Washington,+DC+20500&aq=&"
             + "sll=38.897678,-77.036517&sspn=0.00835,0.007939&vpsrc=6&t=w&"
             + "g=1600+Pennsylvania+Avenue+Northwest+Washington,+DC+20500&ie=UTF8&hq=&"
             + "hnear=1600+Pennsylvania+Ave+NW,+Washington,+District+of+Columbia,+20500&"
-            + "ll=38.898521,-77.036517&spn=0.00835,0.007939&z=17&iwloc=A").toURL();
+            + "ll=38.898521,-77.036517&spn=0.00835,0.007939&z=17&iwloc=A";
         val encoded = transcoder1.encode(encodable);
         assertEquals(encodable, transcoder1.decode(encoded));
     }
