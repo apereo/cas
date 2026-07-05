@@ -62,8 +62,12 @@ public class SyncopePasswordManagementService extends BasePasswordManagementServ
     }
 
     @Override
-    public String findEmail(final PasswordManagementQuery query) {
-        return getUserAttribute(query, "email").orElseGet(query::getEmail);
+    public Set<String> findEmails(final PasswordManagementQuery query) {
+        return getUserAttribute(query, "email")
+            .or(() -> Optional.ofNullable(query.getEmail()))
+            .filter(StringUtils::isNotBlank)
+            .map(Set::of)
+            .orElseGet(Set::of);
     }
 
     @Override

@@ -60,25 +60,26 @@ public class JdbcPasswordManagementService extends BasePasswordManagementService
     }
 
     @Override
-    public String findEmail(final PasswordManagementQuery query) {
+    public Set<String> findEmails(final PasswordManagementQuery query) {
         val queryFindEmail = casProperties.getAuthn().getPm().getJdbc().getSqlFindEmail();
         if (StringUtils.isBlank(queryFindEmail)) {
             LOGGER.debug("No SQL query is defined to retrieve email addresses");
-            return null;
+            return Set.of();
         }
 
         try {
-            return this.transactionTemplate.execute(action -> {
-                val email = this.jdbcTemplate.queryForObject(queryFindEmail, String.class, query.getUsername());
-                if (StringUtils.isNotBlank(email) && EmailValidator.getInstance().isValid(email)) {
-                    return email;
+            val email = this.transactionTemplate.execute(action -> {
+                val emailAddress = this.jdbcTemplate.queryForObject(queryFindEmail, String.class, query.getUsername());
+                if (StringUtils.isNotBlank(emailAddress) && EmailValidator.getInstance().isValid(emailAddress)) {
+                    return emailAddress;
                 }
                 LOGGER.debug("Username [{}] not found when searching for email", query.getUsername());
                 return null;
             });
+            return StringUtils.isNotBlank(email) ? Set.of(email) : Set.of();
         } catch (final EmptyResultDataAccessException e) {
             LOGGER.debug("Username [{}] not found when searching for email", query.getUsername());
-            return null;
+            return Set.of();
         }
     }
 

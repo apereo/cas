@@ -12,6 +12,7 @@ import org.apereo.cas.util.scripting.ExecutableCompiledScriptFactory;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.apache.commons.lang3.StringUtils;
 import org.jspecify.annotations.NonNull;
 import org.springframework.core.io.Resource;
 
@@ -42,8 +43,9 @@ public class GroovyResourcePasswordManagementService extends BasePasswordManagem
     }
 
     @Override
-    public String findEmail(final PasswordManagementQuery query) throws Throwable {
-        return watchableScript.execute("findEmail", String.class, query, LOGGER);
+    public Set<String> findEmails(final PasswordManagementQuery query) throws Throwable {
+        val email = watchableScript.execute("findEmails", String.class, query, LOGGER);
+        return StringUtils.isNotBlank(email) ? Set.of(email) : Set.of();
     }
 
     @Override

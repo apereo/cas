@@ -3,6 +3,7 @@ package org.apereo.cas.web.flow.actions;
 import module java.base;
 import org.apereo.cas.CasProtocolConstants;
 import org.apereo.cas.authentication.AuthenticationServiceSelectionPlan;
+import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.ticket.registry.TicketRegistrySupport;
 import org.apereo.cas.util.MockRequestContext;
@@ -33,7 +34,8 @@ class RenewAuthenticationRequestCheckActionTests extends BaseWebflowConfigurerTe
     void verifyProceed() throws Throwable {
         val context = MockRequestContext.create(applicationContext);
         val strategy = new DefaultSingleSignOnParticipationStrategy(servicesManager, casProperties.getSso(),
-            mock(TicketRegistrySupport.class), mock(AuthenticationServiceSelectionPlan.class));
+            mock(TicketRegistrySupport.class), CoreAuthenticationTestUtils.getAuthenticationSystemSupport(),
+            mock(AuthenticationServiceSelectionPlan.class));
         val action = new RenewAuthenticationRequestCheckAction(strategy);
         assertEquals(CasWebflowConstants.TRANSITION_ID_PROCEED, action.execute(context).getId());
     }
@@ -43,7 +45,8 @@ class RenewAuthenticationRequestCheckActionTests extends BaseWebflowConfigurerTe
         val context = MockRequestContext.create(applicationContext);
         context.setParameter(CasProtocolConstants.PARAMETER_RENEW, "true");
         val strategy = new DefaultSingleSignOnParticipationStrategy(servicesManager, casProperties.getSso(),
-            mock(TicketRegistrySupport.class), mock(AuthenticationServiceSelectionPlan.class));
+            mock(TicketRegistrySupport.class), CoreAuthenticationTestUtils.getAuthenticationSystemSupport(),
+            mock(AuthenticationServiceSelectionPlan.class));
         val action = new RenewAuthenticationRequestCheckAction(strategy);
         assertEquals(CasWebflowConstants.TRANSITION_ID_RENEW, action.execute(context).getId());
     }

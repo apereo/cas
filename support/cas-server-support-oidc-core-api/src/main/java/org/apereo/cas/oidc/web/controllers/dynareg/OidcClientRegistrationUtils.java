@@ -16,7 +16,6 @@ import org.apereo.cas.util.DateTimeUtils;
 import org.apereo.cas.util.ResourceUtils;
 import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.util.spring.SpringExpressionLanguageValueResolver;
-import org.apereo.cas.web.SimpleUrlValidatorFactoryBean;
 import lombok.experimental.UtilityClass;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
@@ -75,7 +74,7 @@ public class OidcClientRegistrationUtils {
                 .map(type -> type.getType().toLowerCase(Locale.ENGLISH))
                 .collect(Collectors.toList()));
 
-        val validator = new SimpleUrlValidatorFactoryBean(false).getObject();
+        val validator = configurationContext.getUrlValidator();
         val keystore = SpringExpressionLanguageValueResolver.getInstance().resolve(registeredService.getJwks());
         FunctionUtils.doUnchecked(param -> {
             if (Objects.requireNonNull(validator).isValid(keystore)) {

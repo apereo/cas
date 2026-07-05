@@ -13,7 +13,7 @@ def change(Object[] args) {
     return true
 }
 
-def findEmail(Object[] args) {
+def findEmails(Object[] args) {
     def username = (args[0] as PasswordManagementQuery).username
     def logger = args[1]
     if (username.equals("none")) {

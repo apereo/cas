@@ -24,10 +24,10 @@ class JdbcPasswordManagementServiceTests extends BaseJdbcPasswordManagementServi
 
     @Test
     void verifyUserEmailCanBeFound() throws Throwable {
-        val email = passwordChangeService.findEmail(PasswordManagementQuery.builder().username("casuser").build());
-        assertEquals("casuser@example.org", email);
-        assertNull(passwordChangeService.findEmail(PasswordManagementQuery.builder().username("unknown").build()));
-        assertNull(passwordChangeService.findEmail(PasswordManagementQuery.builder().username("baduser").build()));
+        val email = passwordChangeService.findEmails(PasswordManagementQuery.builder().username("casuser").build());
+        assertEquals(Set.of("casuser@example.org"), email);
+        assertTrue(passwordChangeService.findEmails(PasswordManagementQuery.builder().username("unknown").build()).isEmpty());
+        assertTrue(passwordChangeService.findEmails(PasswordManagementQuery.builder().username("baduser").build()).isEmpty());
     }
 
     @Test

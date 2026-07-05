@@ -336,6 +336,10 @@ public abstract class AbstractOidcTests {
     @Qualifier(CipherExecutor.BEAN_NAME_WEBFLOW_CIPHER_EXECUTOR)
     protected CipherExecutor webflowCipherExecutor;
 
+    @Autowired
+    @Qualifier("oauthRegisteredServiceCipherExecutor")
+    protected CipherExecutor oauthRegisteredServiceCipherExecutor;
+
     protected static OidcRegisteredService getOidcRegisteredService() {
         return getOidcRegisteredService(true, true);
     }

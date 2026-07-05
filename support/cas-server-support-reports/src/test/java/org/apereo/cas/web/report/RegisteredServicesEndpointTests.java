@@ -29,6 +29,9 @@ class RegisteredServicesEndpointTests extends AbstractCasEndpointTests {
         mockMvc.perform(delete("/actuator/registeredServices/cache")
             .contentType(MediaType.APPLICATION_JSON)
         ).andExpect(status().isOk());
+        mockMvc.perform(delete("/actuator/registeredServices")
+            .contentType(MediaType.APPLICATION_JSON)
+        ).andExpect(status().isOk());
 
         val service1 = RegisteredServiceTestUtils.getRegisteredService(UUID.randomUUID().toString());
         val service2 = RegisteredServiceTestUtils.getRegisteredService(UUID.randomUUID().toString());
@@ -150,7 +153,6 @@ class RegisteredServicesEndpointTests extends AbstractCasEndpointTests {
             )
             .andExpect(status().isOk());
     }
-
 
     @Test
     void verifyBulkImportAsZip() throws Throwable {
