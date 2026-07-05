@@ -15,7 +15,7 @@ async function fetchServices() {
             "Accept": "application/json"
         }, 200);
     await cas.log(body);
-    await cas.log("===================================");
+    await cas.separator();
     return body;
 }
 

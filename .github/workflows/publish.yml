@@ -146,17 +146,17 @@ jobs:
           ./gradlew generateProjectModulesMetadata  \
               --build-cache --quiet --configure-on-demand --no-daemon \
               --parallel -x test -x javadoc -x check
+      - name: Prepare DNS
+        run: |
+          echo "Current resolver config:"
+          cat /etc/resolv.conf || true
+          resolvectl status || true
+          echo "Setting explicit DNS resolvers..."
+          sudo resolvectl dns eth0 1.1.1.1 8.8.8.8 || true
+          sudo resolvectl flush-caches || true
       - name: Publish Modules Metadata
         if: ${{ env.CAS_MODULE_METADATA_MONGODB_URL != null }}
         run: |
-          casVersion=$(cat gradle.properties | grep version | awk -F"=" '{printf $2}')
-          echo "Checking CAS version ${casVersion}..."
-          versionNumbers=${casVersion%%-*}
-          versionNumbers=${versionNumbers//./}
-          echo "CAS simple version number is: $versionNumbers"
-          collectionName="casmodules$versionNumbers"
-          echo "CAS module collection is $collectionName"
-          echo "Uploading module records for ${casVersion} to $collectionName"
-          mongoimport --uri "$CAS_MODULE_METADATA_MONGODB_URL" \
-              --collection "$collectionName" --file build/modules.json \
-              --type json --jsonArray --drop 2>/dev/null
+          ./gradlew publishProjectModulesMetadata \
+              --build-cache --quiet --configure-on-demand --no-daemon \
+              --parallel -x test -x javadoc -x check

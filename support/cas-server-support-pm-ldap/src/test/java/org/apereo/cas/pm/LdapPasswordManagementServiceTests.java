@@ -74,10 +74,10 @@ class LdapPasswordManagementServiceTests extends BaseLdapPasswordManagementServi
 
     @Test
     void verifyFindEmail() throws Throwable {
-        val email = passwordChangeService.findEmail(PasswordManagementQuery.builder().username("caspm").build());
-        assertEquals("caspm@example.org", email);
-        assertNull(passwordChangeService.findEmail(PasswordManagementQuery.builder().username("unknown").build()));
-        assertNull(passwordChangeService.findEmail(PasswordManagementQuery.builder().username("invalid").build()));
+        val email = passwordChangeService.findEmails(PasswordManagementQuery.builder().username("caspm").build());
+        assertEquals(Set.of("caspm@example.org"), email);
+        assertTrue(passwordChangeService.findEmails(PasswordManagementQuery.builder().username("unknown").build()).isEmpty());
+        assertTrue(passwordChangeService.findEmails(PasswordManagementQuery.builder().username("invalid").build()).isEmpty());
     }
 
     @Test

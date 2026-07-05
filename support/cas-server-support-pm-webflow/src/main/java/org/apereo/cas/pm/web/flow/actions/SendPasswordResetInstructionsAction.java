@@ -171,6 +171,7 @@ public class SendPasswordResetInstructionsAction extends BaseCasWebflowAction {
         val principal = authenticationSystemSupport.getPrincipalResolver().resolve(new BasicIdentifiableCredential(query.getUsername()));
         val values = emailAttributes
             .stream()
+            .filter(_ -> Objects.nonNull(principal))
             .filter(attribute -> principal.getAttributes().containsKey(attribute))
             .map(attribute -> principal.getAttributes().get(attribute))
             .filter(Objects::nonNull)
@@ -178,8 +179,10 @@ public class SendPasswordResetInstructionsAction extends BaseCasWebflowAction {
             .map(Object::toString)
             .collect(Collectors.toList());
         if (values.isEmpty()) {
-            val email = passwordManagementService.findEmail(query);
-            FunctionUtils.doIfNotBlank(email, values::add);
+            passwordManagementService.findEmails(query)
+                .stream()
+                .filter(StringUtils::isNotBlank)
+                .forEach(values::add);
         }
         return values;
     }

@@ -67,7 +67,7 @@ class GroovyResourcePasswordManagementServiceTests {
 
     @Test
     void verifyFindEmail() throws Throwable {
-        assertNotNull(passwordChangeService.findEmail(PasswordManagementQuery.builder().username("casuser").build()));
+        assertFalse(passwordChangeService.findEmails(PasswordManagementQuery.builder().username("casuser").build()).isEmpty());
     }
 
     @Test

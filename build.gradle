@@ -1,5 +1,6 @@
 import org.apereo.cas.gradle.CasBuildSettings
 import org.apereo.cas.gradle.CasProjectConventions
+import org.apereo.cas.gradle.PublishProjectModulesMetadataTask
 import org.gradle.api.attributes.Bundling
 import org.gradle.api.attributes.Category
 import org.gradle.api.attributes.DocsType
@@ -134,6 +135,7 @@ if (!providers.systemProperty("skipSonarqube").present && sonarqubeRequested) {
 if (CasBuildSettings.isJavadocRequested(gradle, project) || CasBuildSettings.isPublishReleases(project)) {
     def aggregateJavadocProjectPaths = CasBuildSettings.includedProjectPaths(project)
         .findAll { projectPath -> projectPath != project.path && CasBuildSettings.isJavadocEnabled(project, projectPath) }
+        .findAll { projectPath -> projectPath != ':support:cas-server-support-bom' }
 
     def aggregateJavadocSources = configurations.create('aggregateJavadocSources') {
         canBeConsumed = false
@@ -328,7 +330,9 @@ tasks.register('verifyRequiredJavaVersion') {
     }
 }
 
-if (CasBuildSettings.isTaskRequested(project, 'generateProjectModulesMetadata')) {
+def projectModulesMetadataTaskRequested = CasBuildSettings.isTaskRequested(project, 'generateProjectModulesMetadata') ||
+    CasBuildSettings.isTaskRequested(project, 'publishProjectModulesMetadata')
+if (projectModulesMetadataTaskRequested) {
     def modulesOutputFile = layout.buildDirectory.file('modules.json')
     def projectVersion = version.toString().replaceAll('-SNAPSHOT', '')
     def projectGroup = group.toString()
@@ -357,7 +361,7 @@ if (CasBuildSettings.isTaskRequested(project, 'generateProjectModulesMetadata'))
         }
     def moduleMetadataJson = groovy.json.JsonOutput.toJson(moduleMetadataResults)
 
-    tasks.register('generateProjectModulesMetadata') {
+    def generateProjectModulesMetadata = tasks.register('generateProjectModulesMetadata') {
         outputs.file(modulesOutputFile)
         doLast {
             def output = modulesOutputFile.get().asFile
@@ -365,6 +369,13 @@ if (CasBuildSettings.isTaskRequested(project, 'generateProjectModulesMetadata'))
             output.write moduleMetadataJson
             println "Published project modules to ${output}"
         }
+    }
+
+    tasks.register('publishProjectModulesMetadata', PublishProjectModulesMetadataTask) {
+        dependsOn(generateProjectModulesMetadata)
+        modulesMetadataFile.set(modulesOutputFile)
+        casVersion.set(project.version.toString())
+        mongoImportExecutable.set(providers.systemProperty("casModuleMetadataMongoImportExecutable").orElse("mongoimport"))
     }
 }
 

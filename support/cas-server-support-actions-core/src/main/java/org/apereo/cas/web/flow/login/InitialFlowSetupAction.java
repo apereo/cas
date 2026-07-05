@@ -161,6 +161,10 @@ public class InitialFlowSetupAction extends BaseCasWebflowAction {
             WebUtils.putExistingSingleSignOnSessionPrincipal(context,
                 Optional.ofNullable(auth).map(Authentication::getPrincipal).orElseGet(NullPrincipal::getInstance));
             WebUtils.putTicketGrantingTicketInScopes(context, StringUtils.EMPTY);
+
+            if (renewalStrategy.isCreateCookieOnRenewedAuthentication(ssoRequest).isFalse()) {
+                clearTicketGrantingCookieFromContext(context);
+            }
         }
     }
 

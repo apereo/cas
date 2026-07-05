@@ -7,8 +7,8 @@ import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.core.LogEvent;
 import org.apache.logging.log4j.core.LoggerContext;
 import org.apache.logging.log4j.core.appender.AbstractAppender;
-import org.apache.logging.log4j.core.layout.PatternLayout;
 import org.apache.logging.log4j.core.config.Property;
+import org.apache.logging.log4j.core.layout.PatternLayout;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.ldaptive.ConnectionConfig;
@@ -20,9 +20,6 @@ import org.ldaptive.FilterTemplate;
 import org.ldaptive.LdapEntry;
 import org.ldaptive.LdapException;
 import org.ldaptive.ResultCode;
-
-import java.util.concurrent.CopyOnWriteArrayList;
-
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
@@ -105,10 +102,10 @@ class LdapConnectionFactoryTests {
     }
 
     @Getter
-    private static class InMemoryLogAppender extends AbstractAppender {
+    private static final class InMemoryLogAppender extends AbstractAppender {
         private final List<LogEvent> events = new CopyOnWriteArrayList<>();
 
-        protected InMemoryLogAppender(final String name) {
+        private InMemoryLogAppender(final String name) {
             super(name, null, PatternLayout.createDefaultLayout(), true, Property.EMPTY_ARRAY);
         }
 

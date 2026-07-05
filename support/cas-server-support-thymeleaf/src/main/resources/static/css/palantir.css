@@ -139,16 +139,18 @@
     font-size: 11pt !important;
     box-shadow: 0 0 7px black;
     box-sizing: border-box;
+    min-width: 5rem;
     max-width: min(42rem, calc(100vw - 2rem));
-    overflow-wrap: anywhere;
+    overflow-wrap: break-word;
     white-space: normal;
+    word-break: normal;
 }
 
 .ui-tooltip .ui-tooltip-content {
     max-width: 100%;
-    overflow-wrap: anywhere;
+    overflow-wrap: break-word;
     white-space: normal;
-    word-break: break-word;
+    word-break: normal;
 }
 
 .ui-tabs-active {

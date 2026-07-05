@@ -87,6 +87,8 @@ public class OAuthRegisteredService extends BaseWebBasedRegisteredService {
 
     private String tlsClientAuthSanEmail;
 
+    private long clientSecretExpiration;
+    
     @JsonIgnore
     @Override
     public String getFriendlyName() {

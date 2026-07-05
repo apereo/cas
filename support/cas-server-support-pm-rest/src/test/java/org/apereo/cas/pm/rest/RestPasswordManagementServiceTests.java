@@ -107,7 +107,7 @@ class RestPasswordManagementServiceTests {
         void verifyEmailFound() throws Throwable {
             val request = new PasswordChangeRequest("casuser", "current-psw".toCharArray(), "123456".toCharArray(), "123456".toCharArray());
             assertFalse(passwordChangeService.change(request));
-            assertNull(passwordChangeService.findEmail(PasswordManagementQuery.builder().username("casuser").build()));
+            assertTrue(passwordChangeService.findEmails(PasswordManagementQuery.builder().username("casuser").build()).isEmpty());
             assertNull(passwordChangeService.findUsername(PasswordManagementQuery.builder().username("casuser").build()));
             assertNull(passwordChangeService.findPhone(PasswordManagementQuery.builder().username("casuser").build()));
             assertTrue(passwordChangeService.getSecurityQuestions(PasswordManagementQuery.builder().username("casuser").build()).isEmpty());
@@ -153,15 +153,14 @@ class RestPasswordManagementServiceTests {
                 new ByteArrayResource(data.getBytes(StandardCharsets.UTF_8), "REST Output"),
                 MediaType.APPLICATION_JSON_VALUE)) {
                 webServer.start();
-                val email = this.passwordChangeService.findEmail(PasswordManagementQuery.builder().username("casuser").build());
+                val email = this.passwordChangeService.findEmails(PasswordManagementQuery.builder().username("casuser").build());
                 webServer.stop();
-                assertNotNull(email);
-                assertEquals(data, email);
+                assertEquals(Set.of(data), email);
             }
 
             try (val webServer = new MockWebServer(9091, HttpStatus.NO_CONTENT)) {
                 webServer.start();
-                assertNull(passwordChangeService.findEmail(PasswordManagementQuery.builder().username("casuser").build()));
+                assertTrue(passwordChangeService.findEmails(PasswordManagementQuery.builder().username("casuser").build()).isEmpty());
                 webServer.stop();
             }
         }

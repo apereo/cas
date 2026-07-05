@@ -2,6 +2,8 @@ package org.apereo.cas.web.flow;
 
 import module java.base;
 import org.apereo.cas.authentication.AuthenticationServiceSelectionPlan;
+import org.apereo.cas.authentication.AuthenticationSystemSupport;
+import org.apereo.cas.authentication.credential.BasicIdentifiableCredential;
 import org.apereo.cas.configuration.model.core.sso.SingleSignOnProperties;
 import org.apereo.cas.configuration.support.TriStateBoolean;
 import org.apereo.cas.services.ServicesManager;
@@ -27,6 +29,7 @@ import org.springframework.core.Ordered;
 @Getter
 @Setter
 public class DefaultSingleSignOnParticipationStrategy extends BaseSingleSignOnParticipationStrategy {
+    private final AuthenticationSystemSupport authenticationSystemSupport;
     private final SingleSignOnProperties properties;
 
     private int order = Ordered.LOWEST_PRECEDENCE;
@@ -34,13 +37,15 @@ public class DefaultSingleSignOnParticipationStrategy extends BaseSingleSignOnPa
     public DefaultSingleSignOnParticipationStrategy(final ServicesManager servicesManager,
                                                     final SingleSignOnProperties properties,
                                                     final TicketRegistrySupport ticketRegistrySupport,
+                                                    final AuthenticationSystemSupport authenticationSystemSupport,
                                                     final AuthenticationServiceSelectionPlan serviceSelectionStrategy) {
         super(servicesManager, ticketRegistrySupport, serviceSelectionStrategy);
         this.properties = properties;
+        this.authenticationSystemSupport = authenticationSystemSupport;
     }
 
     @Override
-    public boolean isParticipating(final SingleSignOnParticipationRequest ssoRequest) {
+    public boolean isParticipating(final SingleSignOnParticipationRequest ssoRequest) throws Throwable {
         if (properties.isRenewAuthnEnabled() && ssoRequest.isRequestingRenewAuthentication()) {
             LOGGER.debug("The authentication session is considered renewed.");
             return false;
@@ -83,8 +88,11 @@ public class DefaultSingleSignOnParticipationStrategy extends BaseSingleSignOnPa
                 val authentication = ticketState.get().getAuthentication();
                 LOGGER.debug("Checking authentication [{}] for revocation attribute [{}]",
                     authentication, properties.getRevocationAttributeName());
+
+                val effectivePrincipal = authenticationSystemSupport.getPrincipalResolver()
+                    .resolve(new BasicIdentifiableCredential(authentication.getPrincipal().getId()));
                 val revocationValue = Stream.of(
-                        authentication.getPrincipal().getSingleValuedAttribute(properties.getRevocationAttributeName()),
+                        effectivePrincipal.getSingleValuedAttribute(properties.getRevocationAttributeName()),
                         authentication.getSingleValuedAttribute(properties.getRevocationAttributeName())
                     )
                     .filter(Objects::nonNull)

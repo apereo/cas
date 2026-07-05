@@ -77,8 +77,8 @@ class JsonResourcePasswordManagementServiceTests {
 
     @Test
     void verifyUserEmailCanBeFound() throws Throwable {
-        val email = passwordChangeService.findEmail(PasswordManagementQuery.builder().username("casuser").build());
-        assertEquals("casuser@example.org", email);
+        val email = passwordChangeService.findEmails(PasswordManagementQuery.builder().username("casuser").build());
+        assertEquals(Set.of("casuser@example.org"), email);
     }
 
     @Test
@@ -95,8 +95,8 @@ class JsonResourcePasswordManagementServiceTests {
 
     @Test
     void verifyUserEmailCanNotBeFound() throws Throwable {
-        val email = passwordChangeService.findEmail(PasswordManagementQuery.builder().username("casusernotfound").build());
-        assertNull(email);
+        val email = passwordChangeService.findEmails(PasswordManagementQuery.builder().username("casusernotfound").build());
+        assertTrue(email.isEmpty());
     }
 
     @Test

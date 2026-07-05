@@ -28,7 +28,7 @@ async function tryServiceProviders(entityIds, page, timeout) {
         await cas.sleep(2000);
         await cas.assertVisibility(page, "#username");
         await cas.assertVisibility(page, "#password");
-        await cas.log("=====================================");
+        await cas.separator();
         count++;
     }
 }
