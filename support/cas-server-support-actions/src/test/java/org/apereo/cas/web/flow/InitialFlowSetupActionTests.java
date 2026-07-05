@@ -4,6 +4,7 @@ import module java.base;
 import org.apereo.cas.CasProtocolConstants;
 import org.apereo.cas.authentication.AuthenticationEventExecutionPlan;
 import org.apereo.cas.authentication.AuthenticationServiceSelectionPlan;
+import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.configuration.model.core.sso.SingleSignOnProperties;
 import org.apereo.cas.mock.MockTicketGrantingTicket;
@@ -125,7 +126,9 @@ class InitialFlowSetupActionTests {
             action = new InitialFlowSetupAction(List.of(argumentExtractor), servicesManager,
                 authenticationRequestServiceSelectionStrategies, tgtCookieGenerator,
                 warnCookieGenerator, casProperties, authenticationEventExecutionPlan,
-                new DefaultSingleSignOnParticipationStrategy(servicesManager, sso, mock(TicketRegistrySupport.class), mock(AuthenticationServiceSelectionPlan.class)),
+                new DefaultSingleSignOnParticipationStrategy(servicesManager, sso,
+                    mock(TicketRegistrySupport.class), CoreAuthenticationTestUtils.getAuthenticationSystemSupport(),
+                    mock(AuthenticationServiceSelectionPlan.class)),
                 mock(TicketRegistrySupport.class));
             action.afterPropertiesSet();
         }
@@ -165,6 +168,7 @@ class InitialFlowSetupActionTests {
     @TestPropertySource(properties = {
         "cas.authn.policy.source-selection-enabled=true",
         "cas.sso.sso-enabled=false",
+        "cas.sso.create-sso-cookie-on-renew-authn=false",
         "cas.tgc.crypto.enabled=false"
     })
     @Nested

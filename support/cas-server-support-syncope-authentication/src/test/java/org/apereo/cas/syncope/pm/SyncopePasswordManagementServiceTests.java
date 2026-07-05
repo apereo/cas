@@ -60,8 +60,8 @@ class SyncopePasswordManagementServiceTests {
 
     @Test
     void verifyFindEmail() throws Throwable {
-        val email = passwordChangeService.findEmail(PasswordManagementQuery.builder().username("mustChangePasswordUser").build());
-        assertEquals("mustChangePasswordUser@syncope.org", email);
+        val email = passwordChangeService.findEmails(PasswordManagementQuery.builder().username("mustChangePasswordUser").build());
+        assertEquals(Set.of("mustChangePasswordUser@syncope.org"), email);
     }
 
     @Test

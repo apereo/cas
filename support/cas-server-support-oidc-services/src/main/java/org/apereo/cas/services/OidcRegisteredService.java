@@ -8,6 +8,7 @@ import org.apereo.cas.support.oauth.services.OAuthRegisteredService;
 import com.fasterxml.jackson.annotation.JacksonInject;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.OptBoolean;
+import com.google.errorprone.annotations.CanIgnoreReturnValue;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -81,8 +82,6 @@ public class OidcRegisteredService extends OAuthRegisteredService {
 
     private String subjectType = OidcSubjectTypes.PUBLIC.getType();
 
-    private long clientSecretExpiration;
-
     private RegisteredServiceOidcIdTokenExpirationPolicy idTokenExpirationPolicy;
 
     @JacksonInject(value = "backchannelTokenDeliveryMode", optional = OptBoolean.TRUE)
@@ -121,12 +120,16 @@ public class OidcRegisteredService extends OAuthRegisteredService {
      * via the OIDC dynamic registration flow.
      * This operation will assign specific properties
      * to the service definition to carry the registration signal/data.
+     *
+     * @return the oidc registered service
      */
     @JsonIgnore
-    public void markAsDynamicallyRegistered() {
+    @CanIgnoreReturnValue
+    public OidcRegisteredService markAsDynamicallyRegistered() {
         getProperties().put(RegisteredServiceProperties.OIDC_DYNAMIC_CLIENT_REGISTRATION.getPropertyName(),
             new DefaultRegisteredServiceProperty(Boolean.TRUE.toString()));
         getProperties().put(RegisteredServiceProperties.OIDC_DYNAMIC_CLIENT_REGISTRATION_DATE.getPropertyName(),
             new DefaultRegisteredServiceProperty(LocalDateTime.now(ZoneOffset.UTC).toString()));
+        return this;
     }
 }

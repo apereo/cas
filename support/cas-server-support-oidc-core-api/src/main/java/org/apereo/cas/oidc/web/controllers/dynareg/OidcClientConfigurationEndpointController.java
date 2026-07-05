@@ -68,6 +68,9 @@ public class OidcClientConfigurationEndpointController extends BaseOidcControlle
 
         val service = OAuth20Utils.getRegisteredOAuthServiceByClientId(getConfigurationContext().getServicesManager(), clientId);
         if (service instanceof final OidcRegisteredService oidcRegisteredService) {
+            if (processClientSecretExpirationIfAny(oidcRegisteredService)) {
+                getConfigurationContext().getServicesManager().save(service);
+            }
             val regResponse = OidcClientRegistrationUtils.getClientRegistrationResponse(oidcRegisteredService, getConfigurationContext());
             return new ResponseEntity<>(regResponse, HttpStatus.OK);
         }
@@ -121,21 +124,29 @@ public class OidcClientConfigurationEndpointController extends BaseOidcControlle
                 service = getConfigurationContext().getClientRegistrationRequestTranslator()
                     .translate(registrationRequest, Optional.of(service));
             }
-            val clientSecretExp = Beans.newDuration(getConfigurationContext().getCasProperties()
-                .getAuthn().getOidc().getRegistration().getClientSecretExpiration()).toSeconds();
-            if (clientSecretExp > 0 && getConfigurationContext().getClientSecretValidator().isClientSecretExpired(service)) {
-                val currentTime = ZonedDateTime.now(ZoneOffset.UTC);
-                val expirationDate = currentTime.plusSeconds(clientSecretExp);
-                service.setClientSecretExpiration(expirationDate.toEpochSecond());
-
-                val clientSecret = getConfigurationContext().getClientSecretGenerator().getNewString();
-                service.setClientSecret(getConfigurationContext().getRegisteredServiceCipherExecutor().encode(clientSecret));
-                LOGGER.debug("Client secret shall expire at [{}] while now is [{}]", expirationDate, currentTime);
+            val secretUpdated = processClientSecretExpirationIfAny(service);
+            if (StringUtils.isNotBlank(jsonInput) || secretUpdated) {
+                getConfigurationContext().getServicesManager().save(service);
             }
-
             val clientResponse = OidcClientRegistrationUtils.getClientRegistrationResponse(service, getConfigurationContext());
             return new ResponseEntity<>(clientResponse, HttpStatus.OK);
         }
         return ResponseEntity.badRequest().build();
+    }
+
+    protected boolean processClientSecretExpirationIfAny(final OidcRegisteredService service) {
+        val clientSecretExp = Beans.newDuration(getConfigurationContext().getCasProperties()
+            .getAuthn().getOidc().getRegistration().getClientSecretExpiration()).toSeconds();
+        if (clientSecretExp > 0 && getConfigurationContext().getClientSecretValidator().isClientSecretExpired(service)) {
+            val currentTime = ZonedDateTime.now(ZoneOffset.UTC).truncatedTo(ChronoUnit.SECONDS);
+            val expirationDate = currentTime.plusSeconds(clientSecretExp);
+            service.setClientSecretExpiration(expirationDate.toEpochSecond());
+
+            val clientSecret = getConfigurationContext().getClientSecretGenerator().getNewString();
+            service.setClientSecret(getConfigurationContext().getRegisteredServiceCipherExecutor().encode(clientSecret));
+            LOGGER.debug("Client secret shall expire at [{}] while now is [{}]", expirationDate, currentTime);
+            return true;
+        }
+        return false;
     }
 }

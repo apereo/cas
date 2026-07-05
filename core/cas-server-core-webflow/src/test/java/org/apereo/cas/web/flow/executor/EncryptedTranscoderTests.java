@@ -51,4 +51,3 @@ class EncryptedTranscoderTests extends BaseWebflowConfigurerTests {
         assertThrows(IOException.class, () -> encoder.decode(null));
     }
 }
-

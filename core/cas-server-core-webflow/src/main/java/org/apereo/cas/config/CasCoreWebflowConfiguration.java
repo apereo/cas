@@ -447,11 +447,15 @@ class CasCoreWebflowConfiguration {
             final AuthenticationServiceSelectionPlan authenticationServiceSelectionPlan,
             @Qualifier(TicketRegistrySupport.BEAN_NAME)
             final TicketRegistrySupport ticketRegistrySupport,
+            @Qualifier(AuthenticationSystemSupport.BEAN_NAME)
+            final AuthenticationSystemSupport authenticationSystemSupport,
             @Qualifier(ServicesManager.BEAN_NAME)
             final ServicesManager servicesManager) {
-            return new DefaultSingleSignOnParticipationStrategy(servicesManager,
+            return new DefaultSingleSignOnParticipationStrategy(
+                servicesManager,
                 casProperties.getSso(),
                 ticketRegistrySupport,
+                authenticationSystemSupport,
                 authenticationServiceSelectionPlan);
         }
 

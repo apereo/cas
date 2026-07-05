@@ -852,6 +852,41 @@ exports.verifyJwt = async (token, secret, options) => {
     return decoded;
 };
 
+exports.createJwk = async (signingAlg = "RS256", encryptionAlg = "RSA-OAEP-256") => {
+    async function createKeyPair(alg, use) {
+        const { publicKey, privateKey } = await jose.generateKeyPair(alg, {
+            extractable: true
+        });
+
+        const publicJwk = await jose.exportJWK(publicKey);
+        publicJwk.use = use;
+        publicJwk.alg = alg;
+        publicJwk.kid = await jose.calculateJwkThumbprint(publicJwk);
+        const privateJwk = await jose.exportJWK(privateKey);
+        privateJwk.use = use;
+        privateJwk.alg = alg;
+        privateJwk.kid = publicJwk.kid;
+        return {
+            publicJwk,
+            privateJwk
+        };
+    }
+
+    const signingKeys = await createKeyPair(signingAlg, "sig");
+    const encryptionKeys = await createKeyPair(encryptionAlg, "enc");
+    const jwks = {
+        keys: [
+            signingKeys.publicJwk,
+            encryptionKeys.publicJwk
+        ]
+    };
+    return {
+        signing: signingKeys,
+        encryption: encryptionKeys,
+        jwks
+    };
+};
+
 exports.verifyJwtWithJwk = async (ticket, keyContent, alg = "RS256") => {
     await this.logg("Using key to verify JWT:");
     await this.log(keyContent);

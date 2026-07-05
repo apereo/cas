@@ -1,5 +1,5 @@
 {
-  "dependencies": "oidc",
+  "dependencies": "oidc,reports",
   "properties": [
     "--cas.server.name=https://localhost:8443",
     "--cas.server.prefix=${cas.server.name}/cas",
@@ -8,9 +8,12 @@
     "--cas.authn.oidc.jwks.file-system.jwks-file=file:${#systemProperties['java.io.tmpdir']}/keystore.jwks",
 
     "--cas.authn.oidc.registration.dynamic-client-registration-mode=OPEN",
-    "--cas.authn.oidc.registration.client-secret-expiration=PT5S",
+    "--cas.authn.oidc.registration.client-secret-expiration=PT3S",
     
-    "--cas.service-registry.core.init-from-json=false"
+    "--cas.service-registry.core.init-from-json=false",
+    "--cas.monitor.endpoints.endpoint.defaults.access=ANONYMOUS",
+    "--management.endpoints.web.exposure.include=*",
+    "--management.endpoints.access.default=UNRESTRICTED"
   ]
 }
 

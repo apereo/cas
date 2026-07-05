@@ -9,6 +9,7 @@ import org.apereo.cas.util.function.FunctionUtils;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
 import org.jooq.lambda.Unchecked;
+import org.jspecify.annotations.Nullable;
 
 /**
  * This is {@link ChainingPasswordManagementService}.
@@ -35,13 +36,17 @@ public class ChainingPasswordManagementService implements PasswordManagementServ
     }
 
     @Override
-    public String findEmail(final PasswordManagementQuery query) throws Throwable {
+    public Set<String> findEmails(final PasswordManagementQuery query) throws Throwable {
         return registeredServices
             .stream()
-            .map(service -> FunctionUtils.doAndHandle(() -> service.findEmail(query)))
-            .filter(StringUtils::isNotBlank)
+            .map(service -> FunctionUtils.doAndHandle(() -> service.findEmails(query)))
+            .filter(Objects::nonNull)
+            .map(emails -> emails.stream()
+                .filter(StringUtils::isNotBlank)
+                .collect(Collectors.toCollection(LinkedHashSet::new)))
+            .filter(emails -> !emails.isEmpty())
             .findFirst()
-            .orElse(null);
+            .orElseGet(LinkedHashSet::new);
     }
 
     @Override
@@ -65,7 +70,7 @@ public class ChainingPasswordManagementService implements PasswordManagementServ
     }
 
     @Override
-    public String createToken(final PasswordManagementQuery query) {
+    public @Nullable String createToken(final PasswordManagementQuery query) {
         return registeredServices
             .stream()
             .map(service -> FunctionUtils.doAndHandle(() -> service.createToken(query)))
@@ -75,7 +80,7 @@ public class ChainingPasswordManagementService implements PasswordManagementServ
     }
 
     @Override
-    public String parseToken(final String token) {
+    public @Nullable String parseToken(final String token) {
         return registeredServices
             .stream()
             .map(service -> FunctionUtils.doAndHandle(() -> service.parseToken(token)))
