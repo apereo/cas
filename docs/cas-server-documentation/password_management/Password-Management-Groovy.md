@@ -18,7 +18,7 @@ def change(Object[] args) {
     return true
 }
 
-def findEmail(Object[] args) {
+def findEmails(Object[] args) {
     def (passwordMgmtQuery,logger) = args
     return "cas@example.org"
 }

@@ -57,14 +57,14 @@ public interface PasswordManagementService {
     }
 
     /**
-     * Find email associated with username.
+     * Find emails associated with username.
      *
      * @param query the username
-     * @return the string
+     * @return the set of email addresses
      * @throws Throwable the throwable
      */
-    default @Nullable String findEmail(final PasswordManagementQuery query) throws Throwable {
-        return null;
+    default Set<String> findEmails(final PasswordManagementQuery query) throws Throwable {
+        return Set.of();
     }
 
     /**

@@ -1,0 +1,22 @@
+{
+  "dependencies": "core",
+  "properties": [
+    "--cas.server.prefix=${cas.server.name}/cas"
+  ],
+  "instances": 2,
+  "instance1": {
+    "dependencies": "rest",
+    "properties": [
+      "--cas.server.name=https://localhost:8443"
+    ]
+  },
+  "instance2": {
+    "dependencies": "reports",
+    "properties": [
+      "--cas.monitor.endpoints.endpoint.defaults.access=ANONYMOUS",
+      "--management.endpoints.web.exposure.include=*",
+      "--management.endpoints.access.default=UNRESTRICTED",
+      "--cas.server.name=https://localhost:8444"
+    ]
+  }
+}

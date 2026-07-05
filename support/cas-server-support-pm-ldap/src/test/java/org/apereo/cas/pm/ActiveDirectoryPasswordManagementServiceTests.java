@@ -70,8 +70,8 @@ class ActiveDirectoryPasswordManagementServiceTests extends BaseLdapPasswordMana
 
     @Test
     void verifyFindEmail() throws Throwable {
-        val email = passwordChangeService.findEmail(PasswordManagementQuery.builder().username("changepassword").build());
-        assertEquals("changepassword@example.org", email);
+        val email = passwordChangeService.findEmails(PasswordManagementQuery.builder().username("changepassword").build());
+        assertEquals(Set.of("changepassword@example.org"), email);
     }
 
     @Test

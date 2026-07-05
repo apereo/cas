@@ -88,3 +88,4 @@ cas/lib
 ci/tests/keycloak/data/server.*
 ci/docs/package-lock.json
 ci/tests/oidc/certs/
+cas-instance**/**

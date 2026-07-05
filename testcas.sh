@@ -5,6 +5,8 @@ GREEN="\e[32m"
 CYAN="\e[36m"
 ENDCOLOR="\e[0m"
 
+CHANGED_CATEGORIES=()
+
 #clear
 find ./ci/tests -type f -name "*.sh" -exec chmod +x {} \;
 
@@ -34,11 +36,33 @@ function isDockerOnWindows() {
   return 1
 }
 
-printHelp() {
-    printf "\nUsage: ${CYAN}./testcas.sh${ENDCOLOR} --category [category1,category2,...] [--help] [--test TestClass]\n\t[--ignore-failures] [--no-watch] [--no-wrapper] [--no-retry] [--debug] [--no-parallel]\n\t[--dry-run][--info] [--with-coverage] [--no-build-cache] \n"
-    printf "\nTo see what test categories are available, use:\n"
+function printHelp() {
+    printf "\n👷 Usage: ${CYAN}./testcas.sh${ENDCOLOR}\n\t--category [category1,category2,...]\n\t[--help]\n\t[--test TestClass]\n\t[--ignore-failures]\n\t[--no-watch]\n\t[--no-wrapper]\n\t[--no-retry]\n\t[--debug]\n\t[--no-parallel]\n\t[--dry-run][--info]\n\t[--with-coverage]\n\t[--no-build-cache] \n"
+    printf "\n👷 To see what test categories are available, use:\n"
     printf "\t${GREEN}./gradlew -q testCategories${ENDCOLOR}\n"
-    echo -e "\nPlease see the test script for details."
+    printf "\n👷 You can pass '${GREEN}changed${ENDCOLOR}' for thhe category to only run affected tests based on the current changeset.\n"
+    echo -e "👷 Please see the test script for details."
+}
+
+
+function collectChangedCategories() {
+  while IFS= read -r tag; do
+    CHANGED_CATEGORIES+=("$tag")
+  done < <(
+    {
+      git diff --name-only --diff-filter=ACMR HEAD --
+      git ls-files --others --exclude-standard
+    } |
+      sort -u |
+      while IFS= read -r file; do
+        [[ -f "$file" ]] || continue
+
+        grep -hoE '@Tag[[:space:]]*\([[:space:]]*"[^"]+"' "$file" || true
+      done |
+      sed -E 's/.*"([^"]+)".*/\1/' |
+      tr '[:upper:]' '[:lower:]' |
+      sort -u
+  )
 }
 
 task=""
@@ -136,10 +160,21 @@ while (( "$#" )); do
         ;;
     --category)
         category="$2"
+
+        if [[ "$category" == "changed" ]]; then
+          collectChangedCategories
+          category=""
+          for tag in "${CHANGED_CATEGORIES[@]}"; do
+             category+="${tag} "
+          done
+        fi
+        formatted=$(printf '%s\n' "$category" | awk '{ for (i = 1; i <= NF; i++) print "  - " $i }')
+        printf "👷 ${GREEN}Test categories for current changeset are:\n${formatted} ${ENDCOLOR}\n\n"
+        
         for item in $(echo "$category" | sed "s/,/ /g")
         do
             categoryItem=$(echo "${item}" | awk '{print tolower($0)}')
-            
+
             case "${categoryItem}" in
             test|simple|run|basic|unit|unittests)
                 task+="testSimple "
@@ -535,6 +570,7 @@ while (( "$#" )); do
                 ;;
             esac
         done
+
         shift 2
         ;;
     *)

@@ -77,10 +77,10 @@ public class RestPasswordManagementService extends BasePasswordManagementService
     }
 
     @Override
-    public @Nullable String findEmail(final PasswordManagementQuery query) {
+    public Set<String> findEmails(final PasswordManagementQuery query) {
         val rest = casProperties.getAuthn().getPm().getRest();
         if (StringUtils.isBlank(rest.getEndpointUrlEmail())) {
-            return null;
+            return Set.of();
         }
 
         val url = UriComponentsBuilder.fromUriString(rest.getEndpointUrlEmail())
@@ -88,10 +88,11 @@ public class RestPasswordManagementService extends BasePasswordManagementService
         val request = new RequestEntity<>(HttpMethod.GET, URI.create(url));
         val result = restTemplate.exchange(request, String.class);
 
-        if (result.getStatusCode().value() == HttpStatus.OK.value() && result.hasBody()) {
-            return result.getBody();
+        if (result.getStatusCode().value() == HttpStatus.OK.value() && result.hasBody()
+            && StringUtils.isNotBlank(result.getBody())) {
+            return Set.of(result.getBody());
         }
-        return null;
+        return Set.of();
     }
 
     @Override

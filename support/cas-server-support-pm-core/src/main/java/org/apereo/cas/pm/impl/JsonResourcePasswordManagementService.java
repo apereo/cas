@@ -65,9 +65,13 @@ public class JsonResourcePasswordManagementService extends BasePasswordManagemen
     }
 
     @Override
-    public String findEmail(final PasswordManagementQuery query) {
+    public Set<String> findEmails(final PasswordManagementQuery query) {
         val account = jsonBackedAccounts.getOrDefault(query.getUsername(), null);
-        return Optional.ofNullable(account).map(JsonBackedAccount::getEmail).orElse(null);
+        return Optional.ofNullable(account)
+            .map(JsonBackedAccount::getEmail)
+            .filter(StringUtils::isNotBlank)
+            .map(Set::of)
+            .orElseGet(Set::of);
     }
 
     @Override
