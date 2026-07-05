@@ -33,7 +33,7 @@ async function executeRequest(page, service, attribute, attributeValue) {
     assert(authenticationSuccess.attributes[attribute][0] === attributeValue);
     await cas.gotoLogout(page);
     await cas.sleep(1000);
-    await cas.log("============================");
+    await cas.separator();
     
     return authenticationSuccess;
 }

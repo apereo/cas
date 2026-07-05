@@ -732,11 +732,18 @@ async function initializeSystemOperations() {
         return httpExchangeOriginatedFromApplication(entry) || httpExchangeOriginatedFromDashboard(entry);
     }
 
-    function httpExchangeIsPalantirOrWebjarsPath(path) {
+    function httpExchangeIsWebjarsPath(path) {
         return [...getHttpExchangePathVariants(path)].some(candidate => {
             const value = candidate.toLowerCase();
             return value === "/webjars"
-                || value.startsWith("/webjars/")
+                || value.startsWith("/webjars/");
+        });
+    }
+
+    function httpExchangeIsPalantirOrWebjarsPath(path) {
+        return [...getHttpExchangePathVariants(path)].some(candidate => {
+            const value = candidate.toLowerCase();
+            return httpExchangeIsWebjarsPath(candidate)
                 || value.includes("palantir");
         });
     }
@@ -814,6 +821,9 @@ async function initializeSystemOperations() {
     function httpExchangeUrlIsAcceptable(entry) {
         const path = stripHttpExchangeQuery(entry.path);
         const normalizedEntry = {...entry, path};
+        if (httpExchangeIsWebjarsPath(path)) {
+            return false;
+        }
         if (httpExchangeIsPalantirOrWebjarsPath(path)) {
             return !httpExchangeIsPalantirGeneratedRequest(normalizedEntry);
         }

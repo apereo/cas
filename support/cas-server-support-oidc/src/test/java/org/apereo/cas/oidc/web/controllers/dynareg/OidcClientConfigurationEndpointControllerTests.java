@@ -166,4 +166,33 @@ class OidcClientConfigurationEndpointControllerTests {
 
     }
 
+    @Nested
+    @TestPropertySource(properties = {
+        "cas.authn.oidc.registration.dynamic-client-registration-enabled=true",
+        "cas.authn.oidc.registration.client-secret-expiration=PT3S"
+    })
+    class ClientSecretExpirationTests extends AbstractOidcTests {
+        @Test
+        void verifyOperation() throws Throwable {
+            val clientId = UUID.randomUUID().toString();
+            val service = getOidcRegisteredService(clientId);
+            service.setClientSecretExpiration(ZonedDateTime.now(Clock.systemUTC()).minusSeconds(3).toEpochSecond());
+            servicesManager.save(service.markAsDynamicallyRegistered());
+            val accessToken = getAccessToken(clientId, Set.of(OidcConstants.CLIENT_CONFIGURATION_SCOPE));
+            ticketRegistry.addTicket(accessToken);
+            val originalSecret = oauthRegisteredServiceCipherExecutor.decode(service.getClientSecret());
+            mockMvc
+                .perform(get("/cas/oidc/" + OidcConstants.CLIENT_CONFIGURATION_URL)
+                    .param(OAuth20Constants.CLIENT_ID, clientId)
+                    .header(HttpHeaders.AUTHORIZATION, "Bearer %s".formatted(accessToken.getId()))
+                    .accept(MediaType.APPLICATION_JSON)
+                    .with(withHttpRequestProcessor())
+                )
+                .andExpect(status().isOk());
+
+            val updatedService = servicesManager.findServiceBy(service.getId(), OidcRegisteredService.class);
+            val decodedSecret = oauthRegisteredServiceCipherExecutor.decode(updatedService.getClientSecret());
+            assertNotEquals(decodedSecret, originalSecret);
+        }
+    }
 }

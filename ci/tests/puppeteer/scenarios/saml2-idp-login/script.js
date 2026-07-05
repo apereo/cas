@@ -80,7 +80,7 @@ async function staleAuthenticationFlow(context) {
             break;
         }
         await context.close();
-        await cas.log("=======================================");
+        await cas.separator();
     }
 
     const samlMetrics = [

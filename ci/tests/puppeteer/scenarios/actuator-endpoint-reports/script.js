@@ -50,7 +50,7 @@ const cas = require("../../cas.js");
     const baseUrl = "https://localhost:8443/cas/actuator/";
     for (let i = 0; i < endpoints.length; i++) {
         const url = baseUrl + endpoints[i];
-        await cas.log("===================================");
+        await cas.separator();
         await cas.log(`Trying ${url}`);
 
         const method = url.includes("serviceAccess?") || url.includes("releaseAttributes?") ? "POST" : "GET";
@@ -60,7 +60,7 @@ const cas = require("../../cas.js");
             "User-Agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/51.0.2704.103 Safari/537.36"
         }, 200);
         await cas.log(body);
-        await cas.log("===================================");
+        await cas.separator();
     }
 
     const ticketMetrics = [

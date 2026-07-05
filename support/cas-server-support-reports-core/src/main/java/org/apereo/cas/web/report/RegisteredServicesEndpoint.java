@@ -167,6 +167,27 @@ public class RegisteredServicesEndpoint extends BaseCasRestActuatorEndpoint {
     }
 
     /**
+     * Delete all services.
+     *
+     * @return the response entity
+     */
+    @Operation(summary = "Delete all registered services")
+    @DeleteMapping(
+        consumes = {
+            MediaType.ALL_VALUE,
+            MediaType.APPLICATION_JSON_VALUE,
+            MediaType.APPLICATION_YAML_VALUE,
+            MEDIA_TYPE_SPRING_BOOT_V2_JSON,
+            MEDIA_TYPE_SPRING_BOOT_V3_JSON,
+            MEDIA_TYPE_CAS_YAML
+        })
+    public ResponseEntity<String> deleteAllServices() {
+        configurationContext.getObject().getServicesCache().invalidateAll();
+        servicesManager.getObject().deleteAll();
+        return ResponseEntity.ok().build();
+    }
+    
+    /**
      * Delete registered service.
      *
      * @param id the id
@@ -181,9 +202,7 @@ public class RegisteredServicesEndpoint extends BaseCasRestActuatorEndpoint {
             MEDIA_TYPE_SPRING_BOOT_V3_JSON,
             MEDIA_TYPE_CAS_YAML
         })
-    public ResponseEntity<String> deleteService(
-        @PathVariable
-        final String id) {
+    public ResponseEntity<String> deleteService(@PathVariable final String id) {
         if (NumberUtils.isDigits(id)) {
             val svc = servicesManager.getObject().findServiceBy(Long.parseLong(id));
             if (svc != null) {

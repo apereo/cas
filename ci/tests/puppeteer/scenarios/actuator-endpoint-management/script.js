@@ -56,13 +56,13 @@ const cas = require("../../cas.js");
     const baseUrl = "https://localhost:8449/controls/actuator/";
     for (let i = 0; i < endpoints.length; i++) {
         const url = baseUrl + endpoints[i];
-        await cas.log("===================================");
+        await cas.separator();
         await cas.log(`Trying ${url}`);
 
         const method = url.includes("serviceAccess?") || url.includes("releaseAttributes?") ? "POST" : "GET";
         const body = await cas.doRequest(url, method, headers, 200);
         await cas.log(body);
-        await cas.log("===================================");
+        await cas.separator();
     }
 
     const ticketMetrics = [

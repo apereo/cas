@@ -310,6 +310,9 @@ async function initializeAllCharts() {
     makeSystemStatusChartClickable("memoryChart", () => memoryChart, "Memory");
     makeSystemStatusChartClickable("statisticsChart", () => statisticsChart, "Ticket Registry");
     makeSystemStatusChartClickable("systemHealthChart", () => systemHealthChart, "System Health");
+    makeSystemStatusChartClickable("httpRequestResponsesChart", () => httpRequestResponsesChart, "HTTP Requests/Responses (Date)");
+    makeSystemStatusChartClickable("httpRequestsByUrlChart", () => httpRequestsByUrlChart, "HTTP Requests/Responses (URL)");
+    makeSystemStatusChartClickable("auditEventsChart", () => auditEventsChart, "Audit Events");
 
     jvmThreadsChart = new Chart(document.getElementById("jvmThreadsChart").getContext("2d"), {
         type: "bar",
