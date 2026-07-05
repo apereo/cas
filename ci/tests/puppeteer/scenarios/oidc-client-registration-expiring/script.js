@@ -2,6 +2,8 @@ const cas = require("../../cas.js");
 const assert = require("assert");
 
 (async () => {
+    await cas.doDelete("https://localhost:8443/cas/actuator/registeredServices", 200);
+    
     let service = {
         "redirect_uris": ["https://apereo.github.io"],
         "client_name": "Apereo Blog",
@@ -22,12 +24,12 @@ const assert = require("assert");
     assert(entity.client_secret !== undefined);
     await cas.log("Using registration entry to get a token...");
     await executeRequest(entity.client_id, entity.client_secret, false);
-    await cas.sleep(6000);
+    await cas.sleep(5000);
     await cas.log("Reusing a now-expired registration entry to get a token, which must fail...");
     await executeRequest(entity.client_id, entity.client_secret, true);
 
     await cas.log("Updating registration entity to renew client secret");
-    await cas.log("==================================");
+    await cas.separator();
     service = {
         "redirect_uris": ["https://apereo.github.io"],
         "client_name": "Apereo Blog Updated Now",

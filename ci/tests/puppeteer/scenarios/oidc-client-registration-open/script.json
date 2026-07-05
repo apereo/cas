@@ -1,6 +1,8 @@
 {
-  "dependencies": "oidc",
-
+  "dependencies": "oidc,reports",
+  "conditions": {
+    "docker": "true"
+  },
   "properties": [
     "--cas.server.name=https://localhost:8443",
     "--cas.server.prefix=${cas.server.name}/cas",
@@ -9,9 +11,14 @@
     "--cas.authn.oidc.jwks.file-system.jwks-file=file:${#systemProperties['java.io.tmpdir']}/keystore.jwks",
 
     "--cas.authn.oidc.registration.dynamic-client-registration-mode=OPEN",
-    "--cas.authn.oidc.registration.client-secret-expiration=P14D",
+    "--cas.authn.oidc.registration.client-secret-expiration=PT2S",
     
-    "--cas.service-registry.core.init-from-json=false"
-  ]
+    "--cas.service-registry.core.init-from-json=false",
+    
+    "--cas.monitor.endpoints.endpoint.defaults.access=ANONYMOUS",
+    "--management.endpoints.web.exposure.include=*",
+    "--management.endpoints.access.default=UNRESTRICTED"
+  ],
+  "initScript": "${PWD}/ci/tests/httpbin/run-httpbin-server.sh"
 }
 

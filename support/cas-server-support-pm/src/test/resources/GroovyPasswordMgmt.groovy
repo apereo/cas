@@ -7,7 +7,7 @@ def change(Object[] args) {
     return true
 }
 
-def findEmail(Object[] args) {
+def findEmails(Object[] args) {
     def username = args[0].getUsername()
     def logger = args[1]
     return "cas@example.org"

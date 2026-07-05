@@ -159,9 +159,9 @@ public class PasswordManagementEndpoint extends BaseCasRestActuatorEndpoint {
                                         final HttpServletRequest request) throws Throwable {
         val query = PasswordManagementQuery.builder().username(username).build();
 
-        val email = passwordManagementService.getObject().findEmail(query);
+        val emails = passwordManagementService.getObject().findEmails(query);
         val phone = passwordManagementService.getObject().findPhone(query);
-        if (StringUtils.isBlank(email) && StringUtils.isBlank(phone)) {
+        if (emails.isEmpty() && StringUtils.isBlank(phone)) {
             val message = "No recipient is provided with a valid email/phone for %s".formatted(username);
             LOGGER.warn(message);
             return ResponseEntity.unprocessableContent().body(message);
@@ -184,7 +184,10 @@ public class PasswordManagementEndpoint extends BaseCasRestActuatorEndpoint {
         val pm = casProperties.getAuthn().getPm();
         val duration = Beans.newDuration(pm.getReset().getExpiration());
         LOGGER.debug("Generated password reset URL [{}]; Link is only active for the next [{}] minute(s)", url, duration);
-        val sendEmail = sendPasswordResetEmailToAccount(principal, email, url, request);
+        val email = emails.stream().filter(StringUtils::isNotBlank).findFirst().orElse(null);
+        val sendEmail = StringUtils.isNotBlank(email)
+            ? sendPasswordResetEmailToAccount(principal, email, url, request)
+            : EmailCommunicationResult.builder().success(false).build();
         val sendSms = sendPasswordResetSmsToAccount(phone, url);
         return sendEmail.isSuccess() || sendSms
             ? ResponseEntity.ok().build()

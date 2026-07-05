@@ -59,7 +59,8 @@ tasks.register('sourcesJar', Jar) {
 
 tasks.register('aggregateJavadocSourcesJar', Jar) {
     archiveClassifier.set('aggregate-javadoc-sources')
-    from sourceSets.main.allJava
+    dependsOn tasks.named('delombok')
+    from layout.buildDirectory.dir('generated/sources/delombok')
 }
 
 configurations {

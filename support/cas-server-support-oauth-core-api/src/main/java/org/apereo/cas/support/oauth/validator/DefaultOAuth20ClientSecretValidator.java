@@ -2,6 +2,7 @@ package org.apereo.cas.support.oauth.validator;
 
 import module java.base;
 import org.apereo.cas.support.oauth.services.OAuthRegisteredService;
+import org.apereo.cas.util.DateTimeUtils;
 import org.apereo.cas.util.crypto.CipherExecutor;
 import org.apereo.cas.util.spring.SpringExpressionLanguageValueResolver;
 import lombok.Getter;
@@ -35,19 +36,31 @@ public class DefaultOAuth20ClientSecretValidator implements OAuth20ClientSecretV
         val definedSecret = cipherExecutor.decode(clientSecretAssigned, new Object[]{registeredService});
         if (!isClientSecretCorrect(definedSecret, clientSecret)) {
             LOGGER.error("Wrong client secret for service: [{}]. If you intend to use PKCE, note that it does not require a client secret and "
-                       + "requests generally must not specify a client secret to CAS.\nFurthermore, you must make sure "
-                       + "no client secret is assigned to this registered service in the CAS service registry.",
-                        registeredService.getServiceId());
+                    + "requests generally must not specify a client secret to CAS.\nFurthermore, you must make sure "
+                    + "no client secret is assigned to this registered service in the CAS service registry.",
+                registeredService.getServiceId());
             return false;
         }
-        return true;
+        return !isClientSecretExpired(registeredService);
     }
 
     @Override
     public boolean isClientSecretExpired(final OAuthRegisteredService registeredService) {
+        if (registeredService.getClientSecretExpiration() > 0) {
+            val expirationTime = DateTimeUtils.zonedDateTimeOf(
+                    Instant.ofEpochSecond(registeredService.getClientSecretExpiration()))
+                .truncatedTo(ChronoUnit.SECONDS);
+            val currentTime = ZonedDateTime.now(ZoneOffset.UTC).truncatedTo(ChronoUnit.SECONDS);
+            LOGGER.debug("Client secret is set to expire at [{}], while now is [{}]", expirationTime, currentTime);
+            if (currentTime.isAfter(expirationTime)) {
+                LOGGER.warn("Client secret for service [{}] has expired at [{}] and must be renewed",
+                    registeredService.getName(), expirationTime);
+                return true;
+            }
+        }
         return false;
     }
-    
+
     protected boolean isClientSecretUndefined(final OAuthRegisteredService registeredService) {
         return registeredService != null && StringUtils.isBlank(registeredService.getClientSecret());
     }

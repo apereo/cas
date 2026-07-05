@@ -48,15 +48,15 @@ public class LdapPasswordManagementService extends BasePasswordManagementService
     }
 
     @Override
-    public String findEmail(final PasswordManagementQuery query) {
+    public Set<String> findEmails(final PasswordManagementQuery query) {
         val email = findAttribute(query, casProperties.getAuthn().getPm().getReset().getMail().getAttributeName(),
             CollectionUtils.wrap(query.getUsername()));
         if (EmailValidator.getInstance().isValid(email)) {
             LOGGER.debug("Email address [{}] for [{}] appears valid", email, query.getUsername());
-            return email;
+            return Set.of(email);
         }
         LOGGER.warn("Email address [{}] for [{}] is not valid", email, query.getUsername());
-        return null;
+        return Set.of();
     }
 
     @Override

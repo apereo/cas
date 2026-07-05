@@ -75,7 +75,7 @@ async function exchangeCode(page, code, successHandler) {
 
     await cas.gotoLogout(page);
 
-    await cas.log("===================================================================");
+    await cas.separator();
     await cas.logg("Fetching code for MFA based on ACR mfa-gauth");
     let code = await fetchCode(page, "mfa-gauth", "login=prompt");
     await exchangeCode(page, code, (idToken) => {
@@ -85,7 +85,7 @@ async function exchangeCode(page, code, successHandler) {
     });
     await cas.gotoLogout(page);
 
-    await cas.log("===================================================================");
+    await cas.separator();
     await cas.logg("Fetching code for MFA based on ACR 1 mapped in configuration to mfa-gauth");
     code = await fetchCode(page, "https://refeds.org/profile/mfa", "login=prompt");
     await exchangeCode(page, code, (idToken) => {
@@ -95,7 +95,7 @@ async function exchangeCode(page, code, successHandler) {
     });
     await cas.gotoLogout(page);
 
-    await cas.log("===================================================================");
+    await cas.separator();
     await cas.logg("Fetching code for MFA based on ACR mfa-gauth for existing SSO");
     await cas.gotoLogin(page);
     await cas.loginWith(page);

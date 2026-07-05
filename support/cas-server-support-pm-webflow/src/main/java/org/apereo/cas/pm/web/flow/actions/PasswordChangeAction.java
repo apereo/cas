@@ -31,7 +31,6 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.inspektr.common.web.ClientInfoHolder;
-import org.jooq.lambda.Unchecked;
 import org.jspecify.annotations.Nullable;
 import org.springframework.web.servlet.support.RequestContextUtils;
 import org.springframework.webflow.core.collection.LocalAttributeMap;
@@ -93,9 +92,9 @@ public class PasswordChangeAction extends BaseCasWebflowAction {
                 LOGGER.info("Password successfully changed for [{}]", bean.getUsername());
 
                 val query = PasswordManagementQuery.builder().username(bean.getUsername()).build();
-                val email = locatePasswordResetRequestEmail(requestContext, query);
-                if (StringUtils.isNotBlank(email)) {
-                    val result = sendPasswordResetConfirmationEmailToAccount(bean.getUsername(), email, requestContext);
+                val emails = locatePasswordResetRequestEmail(requestContext, query);
+                if (!emails.isEmpty()) {
+                    val result = sendPasswordResetConfirmationEmailToAccount(bean.getUsername(), emails, requestContext);
                     LOGGER.debug("Password reset confirmation email sent to [{}] with result [{}]", result.getTo(), result.isSuccess());
                 }
                 applicationContext.publishEvent(new PasswordChangeSuccessEvent(this, clientInfo, bean));
@@ -128,7 +127,7 @@ public class PasswordChangeAction extends BaseCasWebflowAction {
         return eventFactory.event(this, CasWebflowConstants.TRANSITION_ID_ERROR, CasWebflowConstants.ATTRIBUTE_CURRENT_EVENT_VIEW, viewStateId);
     }
 
-    protected Principal resolvedPrincipal(final String username) throws Throwable {
+    protected @Nullable Principal resolvedPrincipal(final String username) throws Throwable {
         val resolvedPrincipal = principalResolver.resolve(new BasicIdentifiableCredential(username));
         return resolvedPrincipal instanceof NullPrincipal
             ? authenticationSystemSupport.getPrincipalFactory().createPrincipal(username)
@@ -136,7 +135,7 @@ public class PasswordChangeAction extends BaseCasWebflowAction {
     }
 
     protected EmailCommunicationResult sendPasswordResetConfirmationEmailToAccount(
-        final String username, final String to, final RequestContext requestContext) throws Throwable {
+        final String username, final List<String> emails, final RequestContext requestContext) throws Throwable {
         val reset = casProperties.getAuthn().getPm().getReset().getConfirmationMail();
         val person = resolvedPrincipal(username);
         val request = WebUtils.getHttpServletRequestFromExternalWebflowContext(requestContext);
@@ -149,26 +148,35 @@ public class PasswordChangeAction extends BaseCasWebflowAction {
             .locale(locale)
             .build()
             .get();
-        LOGGER.debug("Sending password reset confirmation email to [{}] for username [{}]", to, username);
+        LOGGER.debug("Sending password reset confirmation email to [{}] for username [{}]", emails, username);
         val emailRequest = EmailMessageRequest
             .builder()
             .emailProperties(reset)
             .principal(person)
-            .to(List.of(to))
+            .to(emails)
             .locale(locale.orElseGet(Locale::getDefault))
             .body(text)
             .build();
         return communicationsManager.email(emailRequest);
     }
 
-    protected String locatePasswordResetRequestEmail(final RequestContext requestContext, final PasswordManagementQuery query) throws Throwable {
+    protected List<String> locatePasswordResetRequestEmail(final RequestContext requestContext, final PasswordManagementQuery query) throws Throwable {
         val emailAttributes = casProperties.getAuthn().getPm().getReset().getMail().getAttributeName();
         val principal = authenticationSystemSupport.getPrincipalResolver().resolve(new BasicIdentifiableCredential(query.getUsername()));
-        return emailAttributes
+        val values = emailAttributes
             .stream()
-            .map(attribute -> principal.getSingleValuedAttribute(attribute, String.class))
-            .filter(StringUtils::isNotBlank)
-            .findFirst()
-            .orElseGet(Unchecked.supplier(() -> passwordManagementService.findEmail(query)));
+            .filter(_ -> Objects.nonNull(principal))
+            .filter(attribute -> principal.getAttributes().containsKey(attribute))
+            .map(attribute -> principal.getAttributes().get(attribute))
+            .flatMap(List::stream)
+            .map(Object::toString)
+            .collect(Collectors.toList());
+        if (values.isEmpty()) {
+            passwordManagementService.findEmails(query)
+                .stream()
+                .filter(StringUtils::isNotBlank)
+                .forEach(values::add);
+        }
+        return values;
     }
 }

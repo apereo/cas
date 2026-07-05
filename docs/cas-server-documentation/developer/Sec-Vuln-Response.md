@@ -85,7 +85,8 @@ on an as-is basis without any warranties, guarantees, or promises of any kind.
 
 When you are preparing to communicate a security issue to the appropriate channel privately, please make sure your
 report contains enough diagnostics data to expedite reviews and feedback:
-
+ 
+- Make sure your instructions, notes and descriptions are specified in **English**.
 - Indicate the *exact CAS version numbers* that exhibit the seemingly-faulty behavior.
 - Describe your deployment/development environment in sufficient relevant detail.
 - Include error logs, debug logs, screenshots and other useful snippets of your configuration.
