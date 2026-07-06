@@ -290,7 +290,7 @@ public class OidcCibaController extends BaseOidcController {
             .map(TenantDefinition::getId).orElse(StringUtils.EMPTY);
 
         return CibaRequestContext.builder()
-            .acrValues(requestParameterResolver.resolveRequestParameters(webContext, OidcConstants.ACR_VALUES))
+            .acrValues(requestParameterResolver.resolveRequestParameters(webContext, OAuth20Constants.ACR_VALUES))
             .bindingMessage(requestParameterResolver.resolveRequestParameter(webContext, OidcConstants.BINDING_MESSAGE).orElse(null))
             .clientNotificationToken(requestParameterResolver.resolveRequestParameter(webContext, OidcConstants.CLIENT_NOTIFICATION_TOKEN).orElse(null))
             .idTokenHint(requestParameterResolver.resolveRequestParameter(webContext, OidcConstants.ID_TOKEN_HINT).orElse(null))
