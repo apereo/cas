@@ -19,10 +19,6 @@ public interface OidcConstants {
      */
     String USER_CODE = "user_code";
     /**
-     * ACR values specified in CIBA requests.
-     */
-    String ACR_VALUES = "acr_values";
-    /**
      * Binding message specified in CIBA requests.
      */
     String BINDING_MESSAGE = "binding_message";
