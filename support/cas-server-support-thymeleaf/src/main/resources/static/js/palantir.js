@@ -1973,6 +1973,7 @@ function initializeServiceButtons() {
                         $.ajax({
                             url: `${actuatorEndpoints.registeredservices}/${serviceId}`,
                             type: "DELETE",
+                            contentType: "application/json",
                             success: response => {
 
                                 let nearestTr = $(this).closest("tr");
