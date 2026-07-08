@@ -249,6 +249,14 @@ public class SingleSignOnSessionsEndpoint extends BaseCasRestActuatorEndpoint {
          */
         AUTHENTICATED_PRINCIPAL("authenticated_principal"),
         /**
+         * Creation date sso session attribute keys.
+         */
+        CREATION_DATE("creation_date"),
+        /**
+         * Last used date sso session attribute keys.
+         */
+        LAST_USED_DATE("last_used_date"),
+        /**
          * Authentication date sso session attribute keys.
          */
         AUTHENTICATION_DATE("authentication_date"),
@@ -362,8 +370,12 @@ public class SingleSignOnSessionsEndpoint extends BaseCasRestActuatorEndpoint {
         sso.put(SsoSessionAttributeKeys.AUTHENTICATION_DATE_FORMATTED.getAttributeKey(),
             DATE_FORMAT.format(DateTimeUtils.dateOf(authentication.getAuthenticationDate())));
 
+        sso.put(SsoSessionAttributeKeys.CREATION_DATE.getAttributeKey(), tgt.getCreationTime());
+
         sso.put(SsoSessionAttributeKeys.CREATION_DATE_FORMATTED.getAttributeKey(),
             DATE_FORMAT.format(DateTimeUtils.dateOf(tgt.getCreationTime())));
+
+        sso.put(SsoSessionAttributeKeys.LAST_USED_DATE.getAttributeKey(), tgt.getLastTimeUsed());
 
         sso.put(SsoSessionAttributeKeys.LAST_USED_DATE_FORMATTED.getAttributeKey(),
             DATE_FORMAT.format(DateTimeUtils.dateOf(tgt.getLastTimeUsed())));

@@ -6,6 +6,7 @@ import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.mock.MockTicketGrantingTicket;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.ticket.registry.TicketRegistry;
+import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
 import lombok.val;
 import org.junit.jupiter.api.AfterEach;
@@ -63,6 +64,32 @@ class SingleSignOnSessionsEndpointTests extends AbstractCasEndpointTests {
                 .queryParam("type", SingleSignOnSessionsEndpoint.SsoSessionReportOptions.ALL.getType())
             )
             .andExpect(status().isOk());
+    }
+
+    @Test
+    void verifyGetSsoSessions() throws Exception {
+        val sessions = (List) MAPPER.readValue(mockMvc.perform(get("/actuator/ssoSessions")
+                    .contentType(MediaType.APPLICATION_FORM_URLENCODED)
+                    .accept(MediaType.APPLICATION_JSON)
+                    .queryParam("username", CoreAuthenticationTestUtils.CONST_USERNAME)
+                )
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.length()", greaterThan(0)))
+                .andExpect(jsonPath("$.activeSsoSessions").exists())
+                .andExpect(jsonPath("$.activeSsoSessions.length()", equalTo(1)))
+                .andReturn()
+                .getResponse()
+                .getContentAsString(), Map.class)
+            .get("activeSsoSessions");
+
+        val session = (Map) sessions.getFirst();
+        val tgt = session.get(SingleSignOnSessionsEndpoint.SsoSessionAttributeKeys.TICKET_GRANTING_TICKET_ID.getAttributeKey()).toString();
+        val ticket = ticketRegistry.getTicket(tgt, TicketGrantingTicket.class);
+        val authentication = ticket.getAuthentication();
+
+        assertEquals(authentication.getAuthenticationDate().toInstant(), Instant.parse(session.get(SingleSignOnSessionsEndpoint.SsoSessionAttributeKeys.AUTHENTICATION_DATE.getAttributeKey()).toString()));
+        assertEquals(ticket.getCreationTime().toInstant(), Instant.parse(session.get(SingleSignOnSessionsEndpoint.SsoSessionAttributeKeys.CREATION_DATE.getAttributeKey()).toString()));
+        assertEquals(ticket.getLastTimeUsed().toInstant(), Instant.parse(session.get(SingleSignOnSessionsEndpoint.SsoSessionAttributeKeys.LAST_USED_DATE.getAttributeKey()).toString()));
     }
 
     @Test
