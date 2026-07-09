@@ -22,9 +22,20 @@ public class ISOStandardDateFormat extends FastDateFormat {
     /**
      * Instantiates a new ISO standard date format
      * based on the format {@link #DATE_FORMAT}.
+     *
+     * @deprecated Use {@link #ISOStandardDateFormat(ZoneId, Locale)} or {@link #ISOStandardDateFormat(ZoneId)}.
      */
+    @Deprecated(since = "8.1.0")
     public ISOStandardDateFormat() {
-        super(DATE_FORMAT, TimeZone.getDefault(), Locale.getDefault());
+        this(ZoneId.systemDefault(), Locale.getDefault());
+    }
+
+    public ISOStandardDateFormat(final ZoneId timezone, final Locale locale) {
+        super(DATE_FORMAT, TimeZone.getTimeZone(timezone), locale);
+    }
+
+    public ISOStandardDateFormat(final ZoneId timezone) {
+        this(timezone, Locale.getDefault());
     }
 
     /**
