@@ -11,7 +11,7 @@
 ## Introduction
 
 Welcome to the home of the [Central Authentication Service project][apereocas], more commonly referred to as CAS. CAS is an
-enterprise multilingual identity provider and single sign-on solution for the web and attempts to 
+enterprise multilingual identity provider and single sign-on solution for the web and attempts to
 be a comprehensive platform for your authentication and authorization needs.
 
 CAS is an open and well-documented authentication protocol. The primary implementation of the protocol is an open-source Java server
@@ -93,7 +93,7 @@ The foundations of CAS are built upon: [Spring Boot][springboot] and
 Apereo CAS is 100% free open source software managed by [Apereo](https://www.apereo.org/), licensed under [Apache v2](LICENSE). Our
 community has access to all releases of the CAS software with absolutely no costs. We welcome contributions from our community of all
 types and sizes. The time and effort to develop and maintain this project is dedicated by a group
-of [volunteers and contributors][githubcontributors]. 
+of [volunteers and contributors][githubcontributors].
 If you (or your employer) benefit from this project, please consider becoming a [Friend of Apereo](https://www.apereo.org/friends) and contribute.
 
 Commercial support options may be [found here][cassupport].
