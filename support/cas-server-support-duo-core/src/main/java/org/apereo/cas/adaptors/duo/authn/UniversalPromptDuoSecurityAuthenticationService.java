@@ -75,6 +75,7 @@ public class UniversalPromptDuoSecurityAuthenticationService extends BaseDuoSecu
         collectDuoAttribute(attributes, "duoSub", CollectionUtils.wrap(result.getSub()));
         collectDuoAttribute(attributes, "duoPreferredUsername", CollectionUtils.wrap(result.getPreferred_username()));
         collectDuoAttribute(attributes, "duoAud", CollectionUtils.wrap(result.getAud()));
+        collectDuoAttribute(attributes, "duoAmr", CollectionUtils.wrap(result.getAmr()));
         return attributes;
     }
 
