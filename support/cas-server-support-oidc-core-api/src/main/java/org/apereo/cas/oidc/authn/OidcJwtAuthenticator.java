@@ -6,6 +6,7 @@ import org.apereo.cas.audit.AuditableExecution;
 import org.apereo.cas.authentication.principal.ServiceFactory;
 import org.apereo.cas.authentication.principal.WebApplicationService;
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.oidc.OidcConstants;
 import org.apereo.cas.oidc.discovery.OidcServerDiscoverySettings;
 import org.apereo.cas.oidc.issuer.OidcIssuerService;
 import org.apereo.cas.oidc.jwks.OidcJsonWebKeyStoreUtils;
@@ -146,7 +147,8 @@ public class OidcJwtAuthenticator implements Authenticator {
                     applicationContext, Optional.of(OidcJsonWebKeyUsage.SIGNING))
                 .ifPresent(set -> set.getJsonWebKeys().forEach(keys::addJsonWebKey));
 
-            val issuer = issuerService.determineIssuer(Optional.of(registeredService));
+            val audience = casProperties.getServer().getPrefix().concat('/'
+                + OidcConstants.BASE_OIDC_URL + '/' + OidcConstants.ACCESS_TOKEN_URL);
             for (var i = 0; credentials.getUserProfile() == null && i < keys.getJsonWebKeys().size(); i++) {
                 val jsonWebKey = keys.getJsonWebKeys().get(i);
                 val consumer = new JwtConsumerBuilder()
@@ -154,8 +156,8 @@ public class OidcJwtAuthenticator implements Authenticator {
                     .setRequireJwtId()
                     .setRequireExpirationTime()
                     .setRequireSubject()
-                    .setExpectedIssuer(true, issuer)
-                    .setExpectedAudience(true, registeredService.getClientId())
+                    .setExpectedIssuer(true, registeredService.getClientId())
+                    .setExpectedAudience(true, audience)
                     .build();
                 determineUserProfile(credentials, consumer);
             }
