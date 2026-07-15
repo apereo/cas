@@ -3,6 +3,7 @@ package org.apereo.cas.oidc.authn;
 import module java.base;
 import org.apereo.cas.mock.MockTicketGrantingTicket;
 import org.apereo.cas.oidc.AbstractOidcTests;
+import org.apereo.cas.oidc.OidcConstants;
 import org.apereo.cas.oidc.jwks.OidcJsonWebKeyCacheKey;
 import org.apereo.cas.oidc.jwks.OidcJsonWebKeyStoreUtils;
 import org.apereo.cas.oidc.jwks.OidcJsonWebKeyUsage;
@@ -73,9 +74,10 @@ class OidcJwtAuthenticatorRsaTests extends AbstractOidcTests {
         registeredService.setJwks("file://" + file.getAbsolutePath());
         servicesManager.save(registeredService);
 
-        val claims = getClaims(registeredService.getClientId(),
-            oidcIssuerService.determineIssuer(Optional.of(registeredService)),
-            registeredService.getClientId(), registeredService.getClientId());
+        val audience = casProperties.getServer().getPrefix().concat('/'
+                + OidcConstants.BASE_OIDC_URL + '/' + OidcConstants.ACCESS_TOKEN_URL);
+        val claims = getClaims(registeredService.getClientId(), registeredService.getClientId(),
+                registeredService.getClientId(), audience);
         val webKeys = oidcServiceJsonWebKeystoreCache.get(
             new OidcJsonWebKeyCacheKey(registeredService, OidcJsonWebKeyUsage.SIGNING)).orElseThrow();
         val key = (PublicJsonWebKey) webKeys.getJsonWebKeys().getFirst();
