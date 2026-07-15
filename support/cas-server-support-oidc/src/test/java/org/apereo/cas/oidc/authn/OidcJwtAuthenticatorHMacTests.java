@@ -53,9 +53,10 @@ class OidcJwtAuthenticatorHMacTests extends AbstractOidcTests {
         val registeredService = getOidcRegisteredService();
         servicesManager.save(registeredService);
 
-        val claims = getClaims(registeredService.getClientId(),
-            oidcIssuerService.determineIssuer(Optional.of(registeredService)),
-            registeredService.getClientId(), registeredService.getClientId());
+        val audience = casProperties.getServer().getPrefix().concat('/'
+                + OidcConstants.BASE_OIDC_URL + '/' + OidcConstants.ACCESS_TOKEN_URL);
+        val claims = getClaims(registeredService.getClientId(), registeredService.getClientId(),
+                registeredService.getClientId(), audience);
         val keyGen = KeyPairGenerator.getInstance("RSA");
         val pair = keyGen.generateKeyPair();
         val privateKey = pair.getPrivate();
@@ -81,9 +82,10 @@ class OidcJwtAuthenticatorHMacTests extends AbstractOidcTests {
         val context = new JEEContext(request, response);
 
         val registeredService = getOidcRegisteredService(UUID.randomUUID().toString());
-        val claims = getClaims(registeredService.getClientId(),
-            oidcIssuerService.determineIssuer(Optional.of(registeredService)),
-            registeredService.getClientId(), registeredService.getClientId());
+        val audience = casProperties.getServer().getPrefix().concat('/'
+                + OidcConstants.BASE_OIDC_URL + '/' + OidcConstants.ACCESS_TOKEN_URL);
+        val claims = getClaims(registeredService.getClientId(), registeredService.getClientId(),
+                registeredService.getClientId(), audience);
 
         val key = EncodingUtils.generateJsonWebKey(512);
         registeredService.setJwks(key);
