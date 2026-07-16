@@ -20,6 +20,7 @@ import org.apereo.cas.authentication.principal.WebApplicationService;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.features.CasFeatureModule;
 import org.apereo.cas.configuration.model.support.oauth.OAuthProperties;
+import org.apereo.cas.configuration.model.support.oidc.federation.OidcFederationRole;
 import org.apereo.cas.logout.LogoutExecutionPlanConfigurer;
 import org.apereo.cas.multitenancy.TenantExtractor;
 import org.apereo.cas.notifications.CommunicationsManager;
@@ -1146,9 +1147,11 @@ class CasOAuth20Configuration {
                 final ServicesManager servicesManager) {
                 val responseTypesSupported = casProperties.getAuthn().getOidc().getDiscovery().getResponseTypesSupported();
                 return BeanSupplier.of(OAuth20AuthorizationRequestValidator.class)
-                    .when(() -> responseTypesSupported.contains(OAuth20ResponseTypes.CODE.getType()))
+                    .when(() -> responseTypesSupported.contains(OAuth20ResponseTypes.CODE.getType())
+                        && casProperties.getAuthn().getOidc().getFederation().getRole() != OidcFederationRole.OPENID_PROVIDER)
                     .supply(() -> new OAuth20AuthorizationCodeResponseTypeAuthorizationRequestValidator(servicesManager,
-                        webApplicationServiceFactory, registeredServiceAccessStrategyEnforcer, oauthRequestParameterResolver))
+                        webApplicationServiceFactory, registeredServiceAccessStrategyEnforcer,
+                        oauthRequestParameterResolver))
                     .otherwiseProxy()
                     .get();
             }

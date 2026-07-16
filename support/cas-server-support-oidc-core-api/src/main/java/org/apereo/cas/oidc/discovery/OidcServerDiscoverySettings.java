@@ -167,6 +167,9 @@ public class OidcServerDiscoverySettings {
     @JsonProperty("backchannel_token_delivery_modes_supported")
     private Set<String> backchannelTokenDeliveryModesSupported;
 
+    @JsonProperty("client_registration_types_supported")
+    private Set<String> clientRegistrationTypesSupported = Set.of("automatic");
+
     @JsonProperty("backchannel_authentication_endpoint")
     public String getBackchannelAuthenticationEndpoint() {
         return Strings.CI.appendIfMissing(this.issuer, "/").concat(OidcConstants.CIBA_URL);

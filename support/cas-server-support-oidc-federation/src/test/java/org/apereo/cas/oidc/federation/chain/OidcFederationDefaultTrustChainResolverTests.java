@@ -5,6 +5,7 @@ import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.oidc.OidcConstants;
 import org.apereo.cas.oidc.federation.AbstractOidcTrustAnchorFederationTests;
 import org.apereo.cas.oidc.federation.signature.OidcFederationEntityStatementService;
+import com.nimbusds.jose.jwk.JWKSet;
 import com.nimbusds.oauth2.sdk.GrantType;
 import com.nimbusds.oauth2.sdk.ResponseType;
 import com.nimbusds.oauth2.sdk.Scope;
@@ -57,10 +58,39 @@ class OidcFederationDefaultTrustChainResolverTests {
     @Nested
     @Import(MockTrustTests.MockTrustTestConfiguration.class)
     class MockTrustTests extends BaseTests {
+        private static final String INLINE_JWKS_JSON = """
+            {
+              "keys":[
+                {
+                  "kty":"RSA",
+                  "e":"AQAB",
+                  "use":"sig",
+                  "kid":"defaultjwks0726",
+                  "n":"2moVQ...2aq7Q"
+                }
+              ]
+            }
+            """;
+
         @Test
-        void verifyNoTrust() throws Exception {
+        void verifyResolved() throws Exception {
             val registeredService = oidcFederationTrustChainResolver.resolveTrustChains("https://rp.example.com").orElseThrow();
             assertNotNull(registeredService);
+            assertNotNull(registeredService.getExpirationPolicy());
+            assertFalse(registeredService.getExpirationPolicy().isExpired());
+            assertTrue(registeredService.getExpirationPolicy().isDeleteWhenExpired());
+            assertTrue(registeredService.getProperties().containsKey(OidcFederationDefaultTrustChainResolver.TEMPORARY_OPENIDFEDERATION_SERVICE));
+            assertTrue(registeredService.getProperties()
+                .get(OidcFederationDefaultTrustChainResolver.TEMPORARY_OPENIDFEDERATION_SERVICE)
+                .getBooleanValue());
+            assertEquals("https://example2\\.com\\?parameter=false,https://example\\.com\\?parameter=true", registeredService.getServiceId());
+        }
+
+        @Test
+        void verifyInlineJwksIsMappedWhenJwksUriIsMissing() throws Exception {
+            val registeredService = oidcFederationTrustChainResolver.resolveTrustChains("https://rp.example.com").orElseThrow();
+            assertNotNull(registeredService);
+            assertEquals(JWKSet.parse(INLINE_JWKS_JSON).toString(), registeredService.getJwks());
         }
 
         @TestConfiguration(value = "MockTrustTestConfiguration", proxyBeanMethods = false)
@@ -86,15 +116,20 @@ class OidcFederationDefaultTrustChainResolverTests {
                 clientMetadata.setApplicationType(ApplicationType.WEB);
                 clientMetadata.setSubjectType(SubjectType.PUBLIC);
                 clientMetadata.setEmailContacts(List.of("cas@example.org"));
-                clientMetadata.setRedirectionURI(new URI("https://example.com"));
+                clientMetadata.setRedirectionURIs(Set.of(new URI("https://example.com?parameter=true"),
+                        new URI("https://example2.com?parameter=false")));
                 clientMetadata.setPostLogoutRedirectionURIs(Set.of(new URI("https://logout.example.com")));
                 clientMetadata.setGrantTypes(Set.of(GrantType.AUTHORIZATION_CODE));
                 clientMetadata.setResponseTypes(Set.of(ResponseType.CODE));
+                clientMetadata.setJWKSet(JWKSet.parse(INLINE_JWKS_JSON));
 
                 val rpMetadata = clientMetadata.toJSONObject(true);
 
+                metadata.put(EntityType.OPENID_RELYING_PARTY.getValue(), rpMetadata);
+
                 when(metadataPolicy.apply(any())).thenReturn(rpMetadata);
                 when(trustChain.resolveCombinedMetadataPolicy(any(EntityType.class))).thenReturn(metadataPolicy);
+                when(trustChain.resolveExpirationTime()).thenReturn(Date.from(ZonedDateTime.now(Clock.systemUTC()).plusDays(7).toInstant()));
 
                 val leafConfiguration = oidcFederationEntityStatementService.createAndSign(issuer, issuer,
                         metadata, null, authorityHints);
