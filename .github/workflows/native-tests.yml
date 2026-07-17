@@ -35,17 +35,10 @@ env:
   SCENARIO_REGEX: ${{ github.event.inputs.scenarioRegex || '.*' }}
 
 on:
-#  push:
-#    branches: [ master ]
-  workflow_dispatch:
-    inputs:
-      scenarioRegex:
-        description: 'Regex used to select native test scenarios'
-        required: false
-        default: '.*'
-        type: string
-  schedule:
-    - cron: '0 10 */2 * *'
+  workflow_dispatch:  
+  push:
+    branches-ignore:
+      - '**'
 
 concurrency:
   group: "workflow = ${{ github.workflow }}, ref = ${{ github.event.ref }}, pr = ${{ github.event.pull_request.id }}"

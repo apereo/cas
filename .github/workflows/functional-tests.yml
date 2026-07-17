@@ -46,14 +46,14 @@ on:
     - cron: '0 18 * * *'
   push:
     branches:
-      - master
+      - 8.0.x
       - '!**.**.**'
       - '!heroku-*'
       - 'pr-*'
   pull_request:
     types: [ labeled ]
     branches:
-      - master
+      - 8.0.x
       - 'pr-*'
       - '!**.**.**'
 

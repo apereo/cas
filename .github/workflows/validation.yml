@@ -19,7 +19,7 @@ on:
   workflow_dispatch:
   push:
     branches:
-      - master
+      - 8.0.x
       - '!**.**.**'
       - '!heroku-*'
   pull_request:

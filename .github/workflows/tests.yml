@@ -35,13 +35,13 @@ on:
     - cron: '0 10 * * *'  # This needs to match the condition below that disables PTS mode.
   push:
     branches:
-      - master
+      - 8.0.x
       - '!**.**.**'
       - '!heroku-*'
       - '!pr-*'
   pull_request:
     types: [ labeled ]
-    branches: [ master, pr-* ]
+    branches: [ 8.0.x, pr-* ]
 
 concurrency:
   group: "workflow = ${{ github.workflow }}, ref = ${{ github.event.ref }}, pr = ${{ github.event.pull_request.id }}"
