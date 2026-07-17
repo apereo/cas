@@ -56,7 +56,7 @@ ext {
     skipBootifulArtifact = providers.systemProperty("skipBootifulArtifact").present
     skipErrorProneCompiler = providers.systemProperty("skipErrorProneCompiler").present
     skipSpringBootDevTools = providers.systemProperty("skipSpringBootDevTools").present
-    publishingType = providers.systemProperty("publishingType").getOrElse("AUTOMATIC")
+    publicationType = providers.systemProperty("publishingType").getOrElse("AUTOMATIC")
 
     skipArtifactSigning = providers.systemProperty("skipArtifactSigning").present
     terminateCompilerOnWarning = providers.systemProperty("terminateCompilerOnWarning").getOrElse("true") == "true"
@@ -85,7 +85,7 @@ if (publishReleases || publishSnapshots) {
             username = "${repositoryUsername}"
             password = "${repositoryPassword}"
             publicationName = "Apereo CAS Release ${project.version}"
-            publishingType = "${publishingType}"
+            publishingType = "${publicationType}"
             validationTimeout.set(Duration.ZERO)
             publishingTimeout.set(Duration.ZERO)
             uploadSnapshotsParallelism.set(4)
