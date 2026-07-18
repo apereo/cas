@@ -25,7 +25,7 @@ category: Planning
         <tr>
           <td>RC{{ i }}</td>
           <td>
-            <a href="{{ rc_page.url | relative_url }}">See this guide</a>.
+            <a href="RC{{ i }}.html">See this guide</a>.
           </td>
         </tr>
       {% endif %}
