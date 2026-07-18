@@ -11,7 +11,7 @@ env:
   DEVELOCITY_ACCESS_KEY: ${{ secrets.GRADLE_ENTERPRISE_ACCESS_KEY }}
   JDK_CURRENT: 25
   JDK_DISTRIBUTION: "corretto"
-  DOCS_BRANCH: master
+  DOCS_BRANCH: 8.0.x
   RUBY_VERSION: '4.0.6'
 
 ##########################################################################
