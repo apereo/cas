@@ -1,6 +1,7 @@
 package org.apereo.cas.ticket.registry;
 
 import module java.base;
+import lombok.val;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.ticket.Ticket;
 import org.apereo.cas.ticket.TicketGrantingTicket;
@@ -29,7 +30,7 @@ public interface TicketRegistry {
      * Ticket transaction manager bean name.
      */
     String TICKET_TRANSACTION_MANAGER = "ticketTransactionManager";
-    
+
     /**
      * Add a ticket to the registry. Ticket storage is based on the ticket id.
      *
@@ -45,7 +46,12 @@ public interface TicketRegistry {
      * @param toSave the to save
      */
     default @Nullable List<? extends Ticket> addTicket(final Stream<? extends Ticket> toSave) {
-        return toSave.parallel().map(Unchecked.function(this::addTicket)).filter(Objects::nonNull).collect(Collectors.toList());
+        return toSave.parallel().<Ticket>mapMulti((ticket, consumer) -> {
+            val result = Unchecked.supplier(() -> this.addTicket(ticket)).get();
+            if (result != null) {
+                consumer.accept(result);
+            }
+        }).toList();
     }
 
     /**
@@ -189,8 +195,8 @@ public interface TicketRegistry {
      */
     default Stream<? extends Ticket> getSessionsFor(final String principalId) {
         return getTickets(ticket -> ticket instanceof final TicketGrantingTicket ticketGrantingTicket
-            && !ticket.isExpired()
-            && ticketGrantingTicket.getAuthentication().getPrincipal().getId().equals(principalId));
+                && !ticket.isExpired()
+                && ticketGrantingTicket.getAuthentication().getPrincipal().getId().equals(principalId));
     }
 
     /**
