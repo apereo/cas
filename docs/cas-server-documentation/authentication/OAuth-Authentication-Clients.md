@@ -5,7 +5,6 @@ category: Authentication
 ---
 {% include variables.html %}
 
-
 # Client Registration - OAuth Authentication
 
 Every OAuth relying party must be defined as a CAS service:
@@ -31,7 +30,7 @@ The following fields are supported:
 |------------------------------------------|---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | `serviceId`                              | The pattern that authorizes the redirect URI(s), or same as `clientId` in case `redirect_uri` is not required by the grant type (i.e `client_credentials`, etc). Note that the `redirect_uri` parameter that is ultimately matched against pattern must not have URL fragments, invalid schemes such as `javascript` or `data` or suspicious parameters such as `code`, `state`, etc. |
 | `clientId`                               | The client identifier for the application/service.                                                                                                                                                                                                                                                                                                                                    |
-| `clientSecret`                           | The client secret for the application/service. The client secret received from the service will be URL decoded before being compared to the secret in the CAS service definition.                                                                                                                                                                                                     |
+| `clientSecret`                           | The [client secret](./OAuth-ClientSecret-Management.html) for the application/service. The client secret received from the service will be URL decoded before being compared to the secret in the CAS service definition.                                                                                                                                                             |
 | `userProfileViewType`                    | Formatting options for the [user profiles](OAuth-Authentication-UserProfiles.html); Default is undefined. Options are `NESTED`, `FLAT`.                                                                                                                                                                                                                                               |
 | `scopes`                                 | Collection of authorized scopes for this service that act as a filter for the requested scopes in the authorization request.                                                                                                                                                                                                                                                          |
 | `supportedGrantTypes`                    | Collection of supported grant types for this service.                                                                                                                                                                                                                                                                                                                                 |
@@ -54,26 +53,6 @@ all service fields and try to configure them yet again based on their default. W
 a reference, this strategy would ultimately lead to poor upgrades increasing chances of breaking changes and a messy deployment at that.</p></div>
 
 Service definitions are typically managed by the [service management](../services/Service-Management.html) facility.
-
-## Encryptable Client Secrets
-
-Client secrets for OAuth relying parties may be defined as encrypted values prefixed with `{cas-cipher}`:
-
-```json
-{
-  "@class": "org.apereo.cas.support.oauth.services.OAuthRegisteredService",
-  "clientId": "clientid",
-  "clientSecret": "{cas-cipher}eyJhbGciOiJIUzUxMiIs...",
-  "serviceId" : "^(https|imaps)://<redirect-uri>.*",
-  "name": "Sample",
-  "id": 100
-}
-```
-
-Client secrets may be encrypted using CAS-provided cipher operations 
-either manually or via the [CAS Command-line shell](../installation/Configuring-Commandline-Shell.html).
-
-{% include_cached casproperties.html properties="cas.authn.oauth" %}
 
 ## Attribute Release
 

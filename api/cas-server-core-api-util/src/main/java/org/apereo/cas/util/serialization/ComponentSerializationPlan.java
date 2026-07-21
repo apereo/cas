@@ -1,6 +1,7 @@
 package org.apereo.cas.util.serialization;
 
 import module java.base;
+import lombok.val;
 
 /**
  * This is {@link ComponentSerializationPlan} that allows modules to register objects and classes
@@ -37,4 +38,15 @@ public interface ComponentSerializationPlan {
      * @return the registered classes
      */
     Collection<Class> getRegisteredClasses();
+
+    /**
+     * Register serializable class.
+     *
+     * @param classes the classes
+     */
+    default void registerSerializableClasses(final Class... classes) {
+        for (val clazz : classes) {
+            registerSerializableClass(clazz);
+        }
+    }
 }

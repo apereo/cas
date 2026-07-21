@@ -14,7 +14,7 @@ const {Buffer} = require("buffer");
 const ps = require("ps-node");
 const NodeStaticAuth = require("node-static-auth");
 const operativeSystemModule = require("os");
-const figlet = require("figlet");
+const CFonts = require("cfonts");
 const CryptoJS = require("crypto-js");
 const jose = require("jose");
 const pino = require("pino");
@@ -200,11 +200,15 @@ exports.click = async (page, button) =>
     }, button);
 
 exports.asciiart = (text) => {
-    const art = figlet.textSync(text, {
-        font: "Small",
-        horizontalLayout: "fitted"
+    CFonts.say(text, {
+        font: "chrome",
+        colors: ["blue", "blueBright", "yellowBright"],
+        background: "transparent",
+        align: "left",
+        letterSpacing: 0,
+        lineHeight: .5,
+        space: false
     });
-    console.log(colors.blue(art));
     console.log(`🔷 Puppeteer: ${colors.blue(require("puppeteer/package.json").version)}`);
 };
 

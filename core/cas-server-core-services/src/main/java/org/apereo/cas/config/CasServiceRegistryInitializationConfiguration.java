@@ -25,7 +25,6 @@ import lombok.val;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
 import org.jooq.lambda.Unchecked;
-import org.jspecify.annotations.NonNull;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
@@ -74,7 +73,7 @@ class CasServiceRegistryInitializationConfiguration {
         public ServiceRegistryInitializerEventListener serviceRegistryInitializerConfigurationEventListener(
             final ConfigurableApplicationContext applicationContext,
             @Qualifier("serviceRegistryInitializer")
-            final ObjectProvider<@NonNull ServiceRegistryInitializer> serviceRegistryInitializer) {
+            final ObjectProvider<ServiceRegistryInitializer> serviceRegistryInitializer) {
             return BeanSupplier.of(ServiceRegistryInitializerEventListener.class)
                 .when(CONDITION.given(applicationContext.getEnvironment()))
                 .supply(() -> new DefaultServiceRegistryInitializerEventListener(serviceRegistryInitializer))
@@ -141,7 +140,7 @@ class CasServiceRegistryInitializationConfiguration {
         public ServiceRegistry embeddedJsonServiceRegistry(
             final CasConfigurationProperties casProperties,
             final ConfigurableApplicationContext applicationContext,
-            final ObjectProvider<@NonNull List<ServiceRegistryListener>> serviceRegistryListeners) {
+            final ObjectProvider<List<ServiceRegistryListener>> serviceRegistryListeners) {
             return BeanSupplier.of(ServiceRegistry.class)
                 .when(CONDITION.given(applicationContext.getEnvironment()))
                 .supply(Unchecked.supplier(() -> {

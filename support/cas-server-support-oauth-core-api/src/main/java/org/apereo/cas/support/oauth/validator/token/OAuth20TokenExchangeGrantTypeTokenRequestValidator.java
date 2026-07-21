@@ -15,7 +15,6 @@ import com.nimbusds.jwt.proc.DefaultJWTClaimsVerifier;
 import com.nimbusds.jwt.proc.JWTClaimsSetVerifier;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-import org.jspecify.annotations.NonNull;
 import org.jspecify.annotations.Nullable;
 import org.pac4j.core.context.WebContext;
 import org.pac4j.core.profile.ProfileManager;
@@ -33,7 +32,7 @@ public class OAuth20TokenExchangeGrantTypeTokenRequestValidator<T extends OAuth2
     private static final Set<String> JWT_TOKEN_TYPE_REQUIRED_CLAIMS = Set.of("iss", "aud", "sub", "exp", "iat", "nbf");
     private final JWTClaimsSetVerifier jwtClaimsSetVerifier;
 
-    public OAuth20TokenExchangeGrantTypeTokenRequestValidator(final ObjectProvider<@NonNull T> configurationContext) {
+    public OAuth20TokenExchangeGrantTypeTokenRequestValidator(final ObjectProvider<T> configurationContext) {
         super(configurationContext);
         jwtClaimsSetVerifier = new DefaultJWTClaimsVerifier<>(null, JWT_TOKEN_TYPE_REQUIRED_CLAIMS);
     }

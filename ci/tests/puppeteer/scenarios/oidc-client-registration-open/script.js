@@ -60,8 +60,8 @@ const assert = require("assert");
                 "Authorization": `Bearer ${entity.registration_access_token}`
             });
 
-        await cas.sleep(3000);
-
+        await cas.sleep(4000);
+        await cas.log("Using expired client secret...");
         const params = "grant_type=client_credentials&scope=openid";
         const urlOidc = `https://localhost:8443/cas/oidc/token?${params}`;
         await cas.log(`Calling ${urlOidc}`);
@@ -75,6 +75,7 @@ const assert = require("assert");
             assert(error.status === 401);
         });
 
+        await cas.sleep(2000);
         await cas.log("Request client configuration again to renew client secret...");
         await cas.doGet(entity.registration_client_uri,
             (res) => {

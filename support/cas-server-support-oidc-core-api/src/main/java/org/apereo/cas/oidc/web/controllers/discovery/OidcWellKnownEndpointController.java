@@ -11,7 +11,6 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-import org.jspecify.annotations.NonNull;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -51,7 +50,7 @@ public class OidcWellKnownEndpointController extends BaseOidcController {
     }, produces = MediaType.APPLICATION_JSON_VALUE)
     @Operation(summary = "Handle OIDC discovery request",
         description = "Handles requests for well-known OIDC discovery configuration")
-    public ResponseEntity<@NonNull OidcServerDiscoverySettings> getWellKnownDiscoveryConfiguration(final HttpServletRequest request,
+    public ResponseEntity<OidcServerDiscoverySettings> getWellKnownDiscoveryConfiguration(final HttpServletRequest request,
                                                                                                    final HttpServletResponse response) {
         return getOidcServerDiscoveryResponse(request, response, List.of(OidcConstants.WELL_KNOWN_URL));
     }
@@ -69,7 +68,7 @@ public class OidcWellKnownEndpointController extends BaseOidcController {
         "/**/" + OidcConstants.WELL_KNOWN_OPENID_CONFIGURATION_URL}, produces = MediaType.APPLICATION_JSON_VALUE)
     @Operation(summary = "Handle OIDC discovery request",
         description = "Handles requests for well-known OIDC discovery configuration")
-    public ResponseEntity<@NonNull OidcServerDiscoverySettings> getWellKnownOpenIdDiscoveryConfiguration(final HttpServletRequest request,
+    public ResponseEntity<OidcServerDiscoverySettings> getWellKnownOpenIdDiscoveryConfiguration(final HttpServletRequest request,
                                                                                                          final HttpServletResponse response) {
         return getOidcServerDiscoveryResponse(request, response, List.of(OidcConstants.WELL_KNOWN_OPENID_CONFIGURATION_URL));
     }
@@ -85,7 +84,7 @@ public class OidcWellKnownEndpointController extends BaseOidcController {
     @GetMapping(value = '/' + OidcConstants.BASE_OIDC_URL + '/' + OidcConstants.WELL_KNOWN_URL + "/webfinger",
         produces = "application/jrd+json")
     @Operation(summary = "Handle webfinger discovery request")
-    public ResponseEntity<@NonNull Map> getWebFingerResponse(
+    public ResponseEntity<Map> getWebFingerResponse(
         @RequestParam("resource") final String resource,
         @RequestParam(value = "rel", required = false) final String rel) throws Throwable {
         return BeanSupplier.isNotProxy(webFingerDiscoveryService)
@@ -93,7 +92,7 @@ public class OidcWellKnownEndpointController extends BaseOidcController {
             : ResponseEntity.notFound().build();
     }
 
-    private ResponseEntity<@NonNull OidcServerDiscoverySettings> getOidcServerDiscoveryResponse(
+    private ResponseEntity<OidcServerDiscoverySettings> getOidcServerDiscoveryResponse(
         final HttpServletRequest request,
         final HttpServletResponse response,
         final List<String> endpoints) {

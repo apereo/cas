@@ -19,7 +19,6 @@ import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-import org.jspecify.annotations.NonNull;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.core.Ordered;
@@ -35,7 +34,7 @@ import org.springframework.core.Ordered;
 public class DefaultTicketCatalogConfigurer extends BaseTicketCatalogConfigurer {
     protected final CasConfigurationProperties casProperties;
     protected final ConfigurableApplicationContext applicationContext;
-    private final ObjectProvider<@NonNull CasTicketCatalogConfigurationValuesProvider> configurationValuesProvider;
+    private final ObjectProvider<CasTicketCatalogConfigurationValuesProvider> configurationValuesProvider;
     @Getter
     private final int order = Ordered.HIGHEST_PRECEDENCE;
     

@@ -28,6 +28,7 @@
     <link rel="stylesheet" type="text/css" th:href="@{#{webjars.notyf.css}}" />
     <link rel="stylesheet" type="text/css" th:href="@{#{webjars.dataTables.jqueryui.css}}" />
     <link rel="stylesheet" type="text/css" th:href="@{#{webjars.tomselect.css}}" />
+    <link rel="stylesheet" type="text/css" th:href="@{#{webjars.contextmenu.css}}" />
 
     <link rel="stylesheet" type="text/css" th:href="@{/css/palantir.css}" />
 
@@ -63,6 +64,7 @@
     <script type="text/javascript" th:src="@{/js/palantir-person-directory.js}"></script>
     <script type="text/javascript" th:src="@{/js/palantir-consent.js}"></script>
     <script type="text/javascript" th:src="@{/js/palantir-multitenancy.js}"></script>
+    <script type="text/javascript" th:src="@{/js/palantir-cluster.js}"></script>
     <script type="text/javascript" th:src="@{/js/palantir-throttles.js}"></script>
     <script type="text/javascript" th:src="@{/js/palantir-protocols.js}"></script>
     <script type="text/javascript" th:src="@{/js/palantir-logging.js}"></script>
@@ -92,25 +94,28 @@
     <div layout:fragment="content" id="dashboard" class="d-none">
         <script type="text/javascript" th:src="@{#{webjars.jqueryui.js}}"></script>
         <script type="text/javascript" th:src="@{#{webjars.trumbowyg.js}}"></script>
+        <script type="text/javascript" th:src="@{#{webjars.contextmenu.js}}"></script>
+        <script type="text/javascript" th:src="@{#{webjars.contextmenu.position.js}}"></script>
         
         <div th:replace="~{fragments/palantir/navigationsidebar :: main}"/>
         <div class="mdc-card p-2 m-1" style="min-height: 100vh;">
             <div th:replace="~{fragments/palantir/dashboardtabs :: main}"/>
             <div th:replace="~{fragments/palantir/servicestab :: main}"/>
-            <div th:replace="~{fragments/palantir/systemtab :: main}"/>
-            <div th:replace="~{fragments/palantir/ticketstab :: main}"/>
-            <div th:replace="~{fragments/palantir/taskstab :: main}"/>
-            <div th:replace="~{fragments/palantir/accessstrategytab :: main}"/>
-            <div th:replace="~{fragments/palantir/loggerstab :: main}"/>
-            <div th:replace="~{fragments/palantir/ssosessionstab :: main}"/>
-            <div th:replace="~{fragments/palantir/configurationtab :: main}"/>
-            <div th:replace="~{fragments/palantir/persondirectorytab :: main}"/>
-            <div th:replace="~{fragments/palantir/authenticationtab :: main}"/>
-            <div th:replace="~{fragments/palantir/consenttab :: main}"/>
-            <div th:replace="~{fragments/palantir/protocolstab :: main}"/>
-            <div th:replace="~{fragments/palantir/throttlestab :: main}"/>
-            <div th:replace="~{fragments/palantir/mfatab :: main}"/>
-            <div th:replace="~{fragments/palantir/multitenancytab :: main}"/>
+            <div th:if="${isRoleAdmin}" th:replace="~{fragments/palantir/systemtab :: main}"/>
+            <div th:if="${isRoleAdmin}" th:replace="~{fragments/palantir/ticketstab :: main}"/>
+            <div th:if="${isRoleAdmin}" th:replace="~{fragments/palantir/taskstab :: main}"/>
+            <div th:if="${isRoleAdmin}" th:replace="~{fragments/palantir/accessstrategytab :: main}"/>
+            <div th:if="${isRoleAdmin}" th:replace="~{fragments/palantir/loggerstab :: main}"/>
+            <div th:if="${isRoleAdmin}" th:replace="~{fragments/palantir/ssosessionstab :: main}"/>
+            <div th:if="${isRoleAdmin}" th:replace="~{fragments/palantir/configurationtab :: main}"/>
+            <div th:if="${isRoleAdmin}" th:replace="~{fragments/palantir/persondirectorytab :: main}"/>
+            <div th:if="${isRoleAdmin}" th:replace="~{fragments/palantir/authenticationtab :: main}"/>
+            <div th:if="${isRoleAdmin}" th:replace="~{fragments/palantir/consenttab :: main}"/>
+            <div th:if="${isRoleAdmin}" th:replace="~{fragments/palantir/protocolstab :: main}"/>
+            <div th:if="${isRoleAdmin}" th:replace="~{fragments/palantir/throttlestab :: main}"/>
+            <div th:if="${isRoleAdmin}" th:replace="~{fragments/palantir/mfatab :: main}"/>
+            <div th:if="${isRoleAdmin}" th:replace="~{fragments/palantir/multitenancytab :: main}"/>
+            <div th:if="${isRoleAdmin}" th:replace="~{fragments/palantir/clustertab :: main}"/>
         </div>
 
         <div th:replace="~{fragments/palantir/settingspanel :: main}"/>

@@ -52,7 +52,7 @@ public class CasConfigurationEndpoint extends BaseCasRestActuatorEndpoint {
         consumes = MediaType.TEXT_PLAIN_VALUE)
     @Operation(summary = "Encrypt configuration value",
         parameters = @Parameter(name = "value", required = true, description = "The value to encrypt"))
-    public ResponseEntity<@NonNull String> encrypt(@RequestBody final String value) {
+    public ResponseEntity<String> encrypt(@RequestBody final String value) {
         return ResponseEntity.ok(casConfigurationCipherExecutor.encode(value));
     }
 
@@ -67,7 +67,7 @@ public class CasConfigurationEndpoint extends BaseCasRestActuatorEndpoint {
         consumes = MediaType.TEXT_PLAIN_VALUE)
     @Operation(summary = "Decrypt configuration value",
         parameters = @Parameter(name = "value", required = true, description = "The value to decrypt"))
-    public ResponseEntity<@NonNull String> decrypt(@RequestBody final String value) {
+    public ResponseEntity<String> decrypt(@RequestBody final String value) {
         return ResponseEntity.ok(casConfigurationCipherExecutor.decode(value));
     }
 

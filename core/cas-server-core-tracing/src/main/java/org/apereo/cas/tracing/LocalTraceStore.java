@@ -52,6 +52,7 @@ public class LocalTraceStore {
     public List<LocalTraceSummary> summaries() {
         return traceOrder
             .stream()
+            .filter(StringUtils::isNotBlank)
             .map(this::summary)
             .filter(Objects::nonNull)
             .toList();

@@ -107,6 +107,7 @@ class OidcScopeFreeAttributeReleasePolicyTests extends AbstractOidcTests {
         service.setAttributeReleasePolicy(chain);
         val serializer = new RegisteredServiceJsonSerializer(applicationContext);
         val json = serializer.toString(service);
+
         assertNotNull(json);
         val read = serializer.from(json);
         assertEquals(read, service);

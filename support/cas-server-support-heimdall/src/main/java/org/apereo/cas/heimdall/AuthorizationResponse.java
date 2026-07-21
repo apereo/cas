@@ -1,6 +1,7 @@
 package org.apereo.cas.heimdall;
 
 import module java.base;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.Builder;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -31,6 +32,7 @@ public class AuthorizationResponse extends BaseHeimdallEntity {
     @Builder.Default
     private HttpStatusCode status = HttpStatusCode.valueOf(HttpStatus.UNAUTHORIZED.value());
 
+    @JsonInclude(JsonInclude.Include.NON_EMPTY)
     private String message;
 
     public boolean getDecision() {

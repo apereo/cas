@@ -6,6 +6,8 @@ import org.apereo.cas.oidc.AbstractOidcTests;
 import org.apereo.cas.services.OidcRegisteredService;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.support.oauth.OAuth20Constants;
+import org.apereo.cas.support.oauth.services.OAuthRegisteredServiceClientSecret;
+import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.RandomUtils;
 import lombok.val;
 import org.apache.commons.io.FileUtils;
@@ -90,7 +92,7 @@ class OidcServicesManagerTests {
                 registeredService.setName(UUID.randomUUID().toString());
                 registeredService.setServiceId("https://oidc.example.org/%s".formatted(i));
                 registeredService.setClientId("Sample-" + UUID.randomUUID());
-                registeredService.setClientSecret(UUID.randomUUID().toString());
+                registeredService.setClientSecrets(CollectionUtils.wrapList(OAuthRegisteredServiceClientSecret.withoutExpiration(UUID.randomUUID().toString())));
                 registeredService.setId(i);
                 registeredService.setEvaluationOrder(i);
                 return registeredService;

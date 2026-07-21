@@ -19,7 +19,6 @@ import com.github.benmanes.caffeine.cache.Cache;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.jooq.lambda.Unchecked;
-import org.jspecify.annotations.NonNull;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -93,7 +92,7 @@ class AmazonS3SamlIdPMetadataConfiguration {
         final ConfigurableApplicationContext applicationContext,
         final CasConfigurationProperties casProperties,
         @Qualifier("samlIdPMetadataCache")
-        final Cache<@NonNull String, SamlIdPMetadataDocument> samlIdPMetadataCache,
+        final Cache<String, SamlIdPMetadataDocument> samlIdPMetadataCache,
         @Qualifier("samlIdPMetadataGeneratorCipherExecutor")
         final CipherExecutor samlIdPMetadataGeneratorCipherExecutor,
         @Qualifier("amazonS3Client")

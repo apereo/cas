@@ -5,8 +5,36 @@
   "id" : 1,
   "evaluationOrder" : 1,
   "metadataLocation" : "http://localhost:9443/simplesaml/module.php/saml/sp/metadata.php/default-sp",
-  "attributeReleasePolicy" : {
-    "@class" : "org.apereo.cas.services.ReturnAllAttributeReleasePolicy"
+  "attributeReleasePolicy": {
+    "@class": "org.apereo.cas.services.ChainingAttributeReleasePolicy",
+    "policies": [
+      "java.util.ArrayList",
+      [
+        {
+          "@class": "org.apereo.cas.services.ReturnMappedAttributeReleasePolicy",
+          "allowedAttributes": {
+            "@class": "java.util.TreeMap",
+            "amr":
+              '''
+              groovy {
+                logger.info("Building AMR attribute")
+                def duoAmr = attributes["duoAmr"]
+                if (duoAmr?.contains("pop")) {
+                  return ["passkey"]
+                }
+                if (duoAmr?.contains("otp")) {
+                  return ["mfa"]
+                }
+                return ["pwd"]
+              }
+              '''
+          }
+        },
+        {
+          "@class" : "org.apereo.cas.services.ReturnAllAttributeReleasePolicy"
+        }
+      ]
+    ]
   },
   "requiredAuthenticationContextClass":
     '''

@@ -29,41 +29,37 @@ async function initializeMultitenancyOperations() {
         }
     });
 
+    initializeDataTableContextMenu({
+        table: tenantsTable,
+        selector: "#tenantsTable tbody tr",
+        items: {
+            view: {name: "View Tenant Definition", icon: contextMenuIcon("mdi-eye")},
+            edit: {name: "Edit Tenant", icon: contextMenuIcon("mdi-pencil")},
+            duplicate: {name: "Duplicate Tenant", icon: contextMenuIcon("mdi-content-copy")},
+            delete: {name: "Delete Tenant", icon: contextMenuIcon("mdi-delete")}
+        },
+        callback: (key, context) => {
+            const tenantId = context.rowData.tenantId;
+            if (key === "view") {
+                showTenantDefinition(tenantId);
+            } else if (key === "edit") {
+                editTenant(tenantId);
+            } else if (key === "duplicate") {
+                duplicateTenant(tenantId);
+            } else if (key === "delete") {
+                deleteTenant(tenantId, context.$row);
+            }
+        }
+    });
+
     function fetchTenants() {
         tenantsTable.clear();
         $.get(`${CasActuatorEndpoints.multitenancy()}/tenants`, response => {
             for (const tenant of Object.values(response)) {
-                let buttons = `
-                     <button type="button" name="viewTenantDefinition" href="#" 
-                            title="View Tenant Definition"
-                            data-tenant-id='${tenant.id}' onclick="showTenantDefinition('${tenant.id}')"
-                            class="mdc-button mdc-button--raised min-width-32x">
-                        <i class="mdi mdi-eye min-width-32x" aria-hidden="true"></i>
-                    </button>
-                    <button type="button" name="editTenantDefinition" href="#"
-                            title="Edit Tenant"
-                            data-tenant-id='${tenant.id}' onclick="editTenant('${tenant.id}')"
-                            class="mdc-button mdc-button--raised min-width-32x">
-                        <i class="mdi mdi-pencil min-width-32x" aria-hidden="true"></i>
-                    </button>
-                    <button type="button" name="duplicateTenantDefinition" href="#"
-                            title="Duplicate Tenant"
-                            data-tenant-id='${tenant.id}' onclick="duplicateTenant('${tenant.id}')"
-                            class="mdc-button mdc-button--raised min-width-32x">
-                        <i class="mdi mdi-content-copy min-width-32x" aria-hidden="true"></i>
-                    </button>
-                    <button type="button" name="deleteTenantDefinition" href="#"
-                            title="Delete Tenant"
-                            data-tenant-id='${tenant.id}' onclick="deleteTenant('${tenant.id}', this)"
-                            class="mdc-button mdc-button--raised min-width-32x">
-                        <i class="mdi mdi-delete min-width-32x" aria-hidden="true"></i>
-                    </button>
-                `;
-
                 tenantsTable.row.add({
                     0: `<code>${tenant.id}</code>`,
                     1: `<code>${tenant.description ?? ""}</code>`,
-                    2: buttons
+                    tenantId: tenant.id
                 });
             }
             tenantsTable.draw();

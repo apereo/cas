@@ -7,7 +7,9 @@ import org.apereo.cas.oidc.OidcConstants;
 import org.apereo.cas.oidc.dynareg.OidcClientRegistrationRequest;
 import org.apereo.cas.oidc.web.controllers.BaseOidcController;
 import org.apereo.cas.services.OidcRegisteredService;
+import org.apereo.cas.services.RegisteredServiceProperty;
 import org.apereo.cas.support.oauth.OAuth20Constants;
+import org.apereo.cas.support.oauth.services.OAuthRegisteredServiceClientSecret;
 import org.apereo.cas.support.oauth.util.OAuth20Utils;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -56,8 +58,7 @@ public class OidcClientConfigurationEndpointController extends BaseOidcControlle
     }, produces = MediaType.APPLICATION_JSON_VALUE)
     @Operation(summary = "Handle client configuration request", parameters = @Parameter(name = OAuth20Constants.CLIENT_ID, description = "Client ID", required = true))
     public ResponseEntity<?> handleRequestInternal(
-        @RequestParam(name = OAuth20Constants.CLIENT_ID)
-        final String clientId,
+        @RequestParam(name = OAuth20Constants.CLIENT_ID) final String clientId,
         final HttpServletRequest request, final HttpServletResponse response) {
 
         val webContext = new JEEContext(request, response);
@@ -103,10 +104,8 @@ public class OidcClientConfigurationEndpointController extends BaseOidcControlle
         )
     )
     public ResponseEntity<?> handleUpdates(
-        @RequestParam(name = OAuth20Constants.CLIENT_ID)
-        final String clientId,
-        @RequestBody(required = false)
-        final String jsonInput,
+        @RequestParam(name = OAuth20Constants.CLIENT_ID) final String clientId,
+        @RequestBody(required = false) final String jsonInput,
         final HttpServletRequest request, final HttpServletResponse response) throws Exception {
 
         val webContext = new JEEContext(request, response);
@@ -137,14 +136,26 @@ public class OidcClientConfigurationEndpointController extends BaseOidcControlle
     protected boolean processClientSecretExpirationIfAny(final OidcRegisteredService service) {
         val clientSecretExp = Beans.newDuration(getConfigurationContext().getCasProperties()
             .getAuthn().getOidc().getRegistration().getClientSecretExpiration()).toSeconds();
-        if (clientSecretExp > 0 && getConfigurationContext().getClientSecretValidator().isClientSecretExpired(service)) {
+        if (clientSecretExp > 0) {
             val currentTime = ZonedDateTime.now(ZoneOffset.UTC).truncatedTo(ChronoUnit.SECONDS);
             val expirationDate = currentTime.plusSeconds(clientSecretExp);
-            service.setClientSecretExpiration(expirationDate.toEpochSecond());
 
-            val clientSecret = getConfigurationContext().getClientSecretGenerator().getNewString();
-            service.setClientSecret(getConfigurationContext().getRegisteredServiceCipherExecutor().encode(clientSecret));
-            LOGGER.debug("Client secret shall expire at [{}] while now is [{}]", expirationDate, currentTime);
+            val secrets = service.getClientSecrets()
+                .stream()
+                .map(secret -> {
+                    val expired = getConfigurationContext().getClientSecretValidator().isClientSecretExpired(secret, service);
+                    val clientSecretGenerator = getConfigurationContext().getClientSecretGenerator();
+                    return expired
+                        ? new OAuthRegisteredServiceClientSecret(clientSecretGenerator.getNewString(), expirationDate.toEpochSecond())
+                        : secret;
+                })
+                .collect(Collectors.toList());
+            val dynamicRegistrationPropName = RegisteredServiceProperty.RegisteredServiceProperties.OIDC_DYNAMIC_CLIENT_REGISTRATION.getPropertyName();
+            if (secrets.isEmpty() && service.getProperties().containsKey(dynamicRegistrationPropName)) {
+                val clientSecretGenerator = getConfigurationContext().getClientSecretGenerator().getNewString();
+                secrets.add(new OAuthRegisteredServiceClientSecret(clientSecretGenerator, expirationDate.toEpochSecond()));
+            }
+            service.setClientSecrets(secrets);
             return true;
         }
         return false;

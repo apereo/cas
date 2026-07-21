@@ -7,8 +7,11 @@ import org.apereo.cas.redis.core.RedisModulesOperations;
 import org.apereo.cas.redis.core.RedisObjectFactory;
 import com.redis.lettucemod.RedisModulesClient;
 import com.redis.lettucemod.api.sync.RediSearchCommands;
+import com.redis.lettucemod.api.sync.RedisModulesCommands;
+import com.redis.lettucemod.cluster.RedisModulesClusterClient;
 import io.lettuce.core.RedisCommandExecutionException;
 import io.lettuce.core.RedisURI;
+import io.lettuce.core.cluster.ClusterClientOptions;
 import io.lettuce.core.search.SearchReply;
 import io.lettuce.core.search.arguments.CreateArgs;
 import io.lettuce.core.search.arguments.TextFieldArgs;
@@ -58,6 +61,11 @@ public class LettuceRedisModulesOperations implements RedisModulesOperations {
      */
     public static RediSearchCommands newRediSearchCommands(
         final BaseRedisProperties redis, final CasSSLContext casSslContext) throws Exception {
+
+        if (redis.getCluster() != null && !redis.getCluster().getNodes().isEmpty()) {
+            return newClusterRediSearchCommands(redis, casSslContext);
+        }
+
         var uriBuilder = RedisURI.builder()
             .withStartTls(redis.isStartTls())
             .withVerifyPeer(redis.isVerifyPeer())
@@ -86,15 +94,50 @@ public class LettuceRedisModulesOperations implements RedisModulesOperations {
         val clientOptions = RedisObjectFactory.newClientOptions(redis, casSslContext);
         redisModulesClient.setOptions(clientOptions);
         val connection = redisModulesClient.connect();
-        val result = connection.sync();
+        val commands = connection.sync();
+        verifyRedisModulesSupport(commands);
+        return commands;
+    }
+
+    private static void verifyRedisModulesSupport(final RedisModulesCommands<String, String> commands) {
         try {
-            result.ftInfo(UUID.randomUUID().toString());
+            commands.ftInfo(UUID.randomUUID().toString());
         } catch (final RedisCommandExecutionException e) {
+            LOGGER.trace(e.getMessage(), e);
             if (e.getMessage().contains("ERR unknown command")) {
-                LOGGER.trace(e.getMessage(), e);
                 throw new UnsupportedOperationException("Redis server does not support Redis Modules");
             }
         }
-        return result;
     }
+
+    private static RediSearchCommands newClusterRediSearchCommands(
+        final BaseRedisProperties redis, final CasSSLContext casSslContext) throws Exception {
+        val redisUris = redis.getCluster()
+            .getNodes()
+            .stream()
+            .map(node -> {
+                var builder = RedisURI.builder()
+                    .withStartTls(redis.isStartTls())
+                    .withVerifyPeer(redis.isVerifyPeer())
+                    .withSsl(redis.isUseSsl());
+                if (StringUtils.hasText(redis.getUsername()) && StringUtils.hasText(redis.getPassword())) {
+                    builder = builder.withAuthentication(redis.getUsername(), redis.getPassword());
+                } else if (StringUtils.hasText(redis.getPassword())) {
+                    builder = builder.withPassword(redis.getPassword().toCharArray());
+                }
+                return builder
+                    .withHost(node.getHost())
+                    .withPort(node.getPort())
+                    .build();
+            })
+            .toList();
+        val redisModulesClient = RedisModulesClusterClient.create(redisUris);
+        val clientOptions = (ClusterClientOptions) RedisObjectFactory.newClientOptions(redis, casSslContext);
+        redisModulesClient.setOptions(clientOptions);
+        val connection = redisModulesClient.connect();
+        val commands = connection.sync();
+        verifyRedisModulesSupport(commands);
+        return commands;
+    }
+
 }

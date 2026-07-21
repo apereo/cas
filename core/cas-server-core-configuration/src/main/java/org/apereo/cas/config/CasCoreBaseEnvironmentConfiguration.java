@@ -50,7 +50,7 @@ class CasCoreBaseEnvironmentConfiguration {
     static class CasCoreEnvironmentFactoryConfiguration {
         @ConfigurationPropertiesBinding
         @Bean
-        public Converter<@NonNull String, @NonNull List<Class<? extends Throwable>>> commaSeparatedStringToThrowablesCollection() {
+        public Converter<String, @NonNull List<Class<? extends Throwable>>> commaSeparatedStringToThrowablesCollection() {
             return new CommaSeparatedStringToThrowablesConverter();
         }
 

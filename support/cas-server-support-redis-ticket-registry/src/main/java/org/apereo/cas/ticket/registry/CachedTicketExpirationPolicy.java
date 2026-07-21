@@ -14,7 +14,7 @@ import org.jspecify.annotations.NonNull;
  * @since 7.0.0
  */
 @Slf4j
-public class CachedTicketExpirationPolicy implements Expiry<@NonNull String, @NonNull Ticket> {
+public class CachedTicketExpirationPolicy implements Expiry<String, @NonNull Ticket> {
 
     @Override
     public long expireAfterCreate(final String key, final Ticket ticket,

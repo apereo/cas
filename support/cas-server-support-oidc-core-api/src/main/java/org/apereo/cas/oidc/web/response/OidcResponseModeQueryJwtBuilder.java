@@ -6,7 +6,6 @@ import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.support.oauth.OAuth20ResponseModeTypes;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-import org.jspecify.annotations.NonNull;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.view.RedirectView;
@@ -20,7 +19,7 @@ import org.springframework.web.servlet.view.RedirectView;
 @Slf4j
 public class OidcResponseModeQueryJwtBuilder extends BaseOAuth20JwtResponseModeBuilder {
 
-    public OidcResponseModeQueryJwtBuilder(final ObjectProvider<@NonNull OidcConfigurationContext> configurationContext) {
+    public OidcResponseModeQueryJwtBuilder(final ObjectProvider<OidcConfigurationContext> configurationContext) {
         super(configurationContext);
     }
 

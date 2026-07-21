@@ -16,7 +16,6 @@ import org.apereo.cas.util.spring.beans.BeanSupplier;
 import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
 import lombok.val;
 import org.jooq.lambda.Unchecked;
-import org.jspecify.annotations.NonNull;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
@@ -76,7 +75,7 @@ public class CasRedisServiceRegistryAutoConfiguration {
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @ConditionalOnMissingBean(name = "redisServiceRegistry")
     public ServiceRegistry redisServiceRegistry(
-        final ObjectProvider<@NonNull List<ServiceRegistryListener>> serviceRegistryListeners,
+        final ObjectProvider<List<ServiceRegistryListener>> serviceRegistryListeners,
         @Qualifier("registeredServiceRedisTemplate")
         final CasRedisTemplate<String, RegisteredService> registeredServiceRedisTemplate,
         final ConfigurableApplicationContext applicationContext,

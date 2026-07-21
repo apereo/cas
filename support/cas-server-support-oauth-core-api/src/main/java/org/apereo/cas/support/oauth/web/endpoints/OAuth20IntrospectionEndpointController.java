@@ -48,7 +48,7 @@ public class OAuth20IntrospectionEndpointController<T extends OAuth20Configurati
         super(context);
     }
 
-    private static ResponseEntity<@NonNull OAuth20IntrospectionAccessTokenFailureResponse> buildUnauthorizedResponseEntity(
+    private static ResponseEntity<OAuth20IntrospectionAccessTokenFailureResponse> buildUnauthorizedResponseEntity(
         final String code, final boolean isAuthenticationFailure) {
         val response = new OAuth20IntrospectionAccessTokenFailureResponse();
         response.setError(code);
@@ -59,7 +59,7 @@ public class OAuth20IntrospectionEndpointController<T extends OAuth20Configurati
         return new ResponseEntity<>(response, headers, HttpStatus.UNAUTHORIZED);
     }
 
-    private static ResponseEntity<@NonNull OAuth20IntrospectionAccessTokenFailureResponse> buildBadRequestResponseEntity(final String code) {
+    private static ResponseEntity<OAuth20IntrospectionAccessTokenFailureResponse> buildBadRequestResponseEntity(final String code) {
         val response = new OAuth20IntrospectionAccessTokenFailureResponse();
         response.setError(code);
         return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);

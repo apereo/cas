@@ -17,7 +17,6 @@ import org.apereo.cas.web.support.WebUtils;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-import org.jspecify.annotations.NonNull;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.context.ConfigurableApplicationContext;
 
@@ -33,7 +32,7 @@ public class CasSimpleMultifactorAuthenticationHandler extends AbstractPreAndPos
     implements MultifactorAuthenticationHandler {
     private final CasSimpleMultifactorAuthenticationService multifactorAuthenticationService;
 
-    private final ObjectProvider<@NonNull MultifactorAuthenticationProvider> multifactorAuthenticationProvider;
+    private final ObjectProvider<MultifactorAuthenticationProvider> multifactorAuthenticationProvider;
 
     private final ConfigurableApplicationContext applicationContext;
 
@@ -43,7 +42,7 @@ public class CasSimpleMultifactorAuthenticationHandler extends AbstractPreAndPos
 
         final PrincipalFactory principalFactory,
         final CasSimpleMultifactorAuthenticationService mfaService,
-        final ObjectProvider<@NonNull MultifactorAuthenticationProvider> multifactorAuthenticationProvider) {
+        final ObjectProvider<MultifactorAuthenticationProvider> multifactorAuthenticationProvider) {
         super(properties.getName(), principalFactory, properties.getOrder());
         this.multifactorAuthenticationService = mfaService;
         this.multifactorAuthenticationProvider = multifactorAuthenticationProvider;

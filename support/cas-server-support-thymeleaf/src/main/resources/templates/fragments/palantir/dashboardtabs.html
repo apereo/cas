@@ -22,7 +22,7 @@
                         <span class="mdc-tab__ripple"></span>
                         <div class="mdc-tab__focus-ring"></div>
                     </button>
-                    <button class="mdc-tab" role="tab" aria-selected="true">
+                    <button th:if="${isRoleAdmin}" class="mdc-tab" role="tab" aria-selected="true">
                           <span class="mdc-tab__content">
                                 <span class="mdc-tab__text-label"><i class="mdc-tab__icon mdi mdi-laptop"
                                                                      aria-hidden="true"></i>System</span>
@@ -33,7 +33,7 @@
                         <span class="mdc-tab__ripple"></span>
                         <div class="mdc-tab__focus-ring"></div>
                     </button>
-                    <button class="mdc-tab" role="tab" aria-selected="true">
+                    <button th:if="${isRoleAdmin}" class="mdc-tab" role="tab" aria-selected="true">
                           <span class="mdc-tab__content">
                                 <span class="mdc-tab__text-label"><i class="mdc-tab__icon mdi mdi-database"
                                                                      aria-hidden="true"></i>Tickets</span>
@@ -44,7 +44,7 @@
                         <span class="mdc-tab__ripple"></span>
                         <div class="mdc-tab__focus-ring"></div>
                     </button>
-                    <button class="mdc-tab" role="tab" aria-selected="true">
+                    <button th:if="${isRoleAdmin}" class="mdc-tab" role="tab" aria-selected="true">
                           <span class="mdc-tab__content">
                                 <span class="mdc-tab__text-label"><i class="mdc-tab__icon mdi-tire " aria-hidden="true"></i>Tasks</span>
                           </span>
@@ -54,7 +54,7 @@
                         <span class="mdc-tab__ripple"></span>
                         <div class="mdc-tab__focus-ring"></div>
                     </button>
-                    <button class="mdc-tab" role="tab" aria-selected="true">
+                    <button th:if="${isRoleAdmin}" class="mdc-tab" role="tab" aria-selected="true">
                           <span class="mdc-tab__content">
                                 <span class="mdc-tab__text-label"><i class="mdc-tab__icon mdi mdi-shield-check"
                                                                      aria-hidden="true"></i>Access Strategy</span>
@@ -65,7 +65,7 @@
                         <span class="mdc-tab__ripple"></span>
                         <div class="mdc-tab__focus-ring"></div>
                     </button>
-                    <button class="mdc-tab" role="tab" aria-selected="true">
+                    <button th:if="${isRoleAdmin}" class="mdc-tab" role="tab" aria-selected="true">
                           <span class="mdc-tab__content">
                                 <span class="mdc-tab__text-label"><i class="mdc-tab__icon mdi mdi-text"
                                                                      aria-hidden="true"></i>Logging</span>
@@ -76,7 +76,7 @@
                         <span class="mdc-tab__ripple"></span>
                         <div class="mdc-tab__focus-ring"></div>
                     </button>
-                     <button class="mdc-tab" role="tab" aria-selected="true">
+                     <button th:if="${isRoleAdmin}" class="mdc-tab" role="tab" aria-selected="true">
                           <span class="mdc-tab__content">
                                 <span class="mdc-tab__text-label"><i class="mdc-tab__icon mdi mdi-account-multiple"
                                                                      aria-hidden="true"></i>SSO Sessions</span>
@@ -87,7 +87,7 @@
                         <span class="mdc-tab__ripple"></span>
                         <div class="mdc-tab__focus-ring"></div>
                     </button>
-                    <button class="mdc-tab" role="tab" aria-selected="true">
+                    <button th:if="${isRoleAdmin}" class="mdc-tab" role="tab" aria-selected="true">
                           <span class="mdc-tab__content">
                                 <span class="mdc-tab__text-label">
                                     <i class="mdc-tab__icon mdi mdi-wrench"
@@ -99,7 +99,7 @@
                         <span class="mdc-tab__ripple"></span>
                         <div class="mdc-tab__focus-ring"></div>
                     </button>
-                    <button class="mdc-tab" role="tab" aria-selected="true">
+                    <button th:if="${isRoleAdmin}" class="mdc-tab" role="tab" aria-selected="true">
                           <span class="mdc-tab__content">
                                 <span class="mdc-tab__text-label">
                                     <i class="mdc-tab__icon mdi mdi-card-account-details"
@@ -111,7 +111,7 @@
                         <span class="mdc-tab__ripple"></span>
                         <div class="mdc-tab__focus-ring"></div>
                     </button>
-                    <button class="mdc-tab" role="tab" aria-selected="true">
+                    <button th:if="${isRoleAdmin}" class="mdc-tab" role="tab" aria-selected="true">
                           <span class="mdc-tab__content">
                                 <span class="mdc-tab__text-label">
                                     <i class="mdc-tab__icon mdi mdi-account-check"
@@ -123,7 +123,7 @@
                         <span class="mdc-tab__ripple"></span>
                         <div class="mdc-tab__focus-ring"></div>
                     </button>
-                     <button class="mdc-tab" role="tab" aria-selected="true">
+                     <button th:if="${isRoleAdmin}" class="mdc-tab" role="tab" aria-selected="true">
                           <span class="mdc-tab__content">
                                 <span class="mdc-tab__text-label">
                                     <i class="mdc-tab__icon mdi mdi-checkerboard"
@@ -135,7 +135,7 @@
                         <span class="mdc-tab__ripple"></span>
                         <div class="mdc-tab__focus-ring"></div>
                     </button>
-                    <button class="mdc-tab" role="tab" aria-selected="true">
+                    <button th:if="${isRoleAdmin}" class="mdc-tab" role="tab" aria-selected="true">
                           <span class="mdc-tab__content">
                                 <span class="mdc-tab__text-label">
                                     <i class="mdc-tab__icon mdi mdi-protocol"
@@ -147,7 +147,7 @@
                         <span class="mdc-tab__ripple"></span>
                         <div class="mdc-tab__focus-ring"></div>
                     </button>
-                    <button class="mdc-tab" role="tab" aria-selected="true">
+                    <button th:if="${isRoleAdmin}" class="mdc-tab" role="tab" aria-selected="true">
                           <span class="mdc-tab__content">
                                 <span class="mdc-tab__text-label">
                                     <i class="mdc-tab__icon mdi mdi-account-lock"
@@ -159,7 +159,7 @@
                         <span class="mdc-tab__ripple"></span>
                         <div class="mdc-tab__focus-ring"></div>
                     </button>
-                    <button class="mdc-tab" role="tab" aria-selected="true">
+                    <button th:if="${isRoleAdmin}" class="mdc-tab" role="tab" aria-selected="true">
                           <span class="mdc-tab__content">
                                 <span class="mdc-tab__text-label">
                                     <i class="mdc-tab__icon mdi mdi-two-factor-authentication"
@@ -171,11 +171,23 @@
                         <span class="mdc-tab__ripple"></span>
                         <div class="mdc-tab__focus-ring"></div>
                     </button>
-                    <button class="mdc-tab" role="tab" aria-selected="true">
+                    <button th:if="${isRoleAdmin}" class="mdc-tab" role="tab" aria-selected="true">
                           <span class="mdc-tab__content">
                                 <span class="mdc-tab__text-label">
                                     <i class="mdc-tab__icon mdi mdi-home-circle"
                                        aria-hidden="true"></i>Multitenancy & Tenants</span>
+                          </span>
+                          <span class="mdc-tab-indicator">
+                                <span class="mdc-tab-indicator__content mdc-tab-indicator__content--underline"></span>
+                          </span>
+                        <span class="mdc-tab__ripple"></span>
+                        <div class="mdc-tab__focus-ring"></div>
+                    </button>
+                    <button th:if="${isRoleAdmin}" class="mdc-tab" role="tab" aria-selected="true">
+                          <span class="mdc-tab__content">
+                                <span class="mdc-tab__text-label">
+                                    <i class="mdc-tab__icon mdi mdi-server"
+                                       aria-hidden="true"></i>Cluster & High Availability</span>
                           </span>
                           <span class="mdc-tab-indicator">
                                 <span class="mdc-tab-indicator__content mdc-tab-indicator__content--underline"></span>

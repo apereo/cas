@@ -1,6 +1,7 @@
 package org.apereo.cas.oidc.claims;
 
 import module java.base;
+import org.apereo.cas.services.RegisteredService;
 import org.jose4j.jwt.JwtClaims;
 
 /**
@@ -19,9 +20,10 @@ public interface OidcIdTokenClaimCollector {
     /**
      * Conclude jwt claims.
      *
-     * @param claims the claims
+     * @param registeredService the registered service
+     * @param claims            the claims
      */
-    default void conclude(final JwtClaims claims) {
+    default void conclude(final RegisteredService registeredService, final JwtClaims claims) {
     }
 
     /**
@@ -30,7 +32,7 @@ public interface OidcIdTokenClaimCollector {
      * @return the oidc ID token claim collector
      */
     static OidcIdTokenClaimCollector defaultCollector() {
-        return (claims, name, values) -> {
+        return (registeredService, claims, name, values) -> {
             if (values.size() == 1) {
                 claims.setClaim(name, values.getFirst());
             } else if (values.size() > 1) {
@@ -46,7 +48,17 @@ public interface OidcIdTokenClaimCollector {
      * @return the oidc ID token claim collector
      */
     static OidcIdTokenClaimCollector listableCollector() {
-        return JwtClaims::setClaim;
+        return (registeredService, claims, name, values) -> claims.setClaim(name, values);
+    }
+
+    /**
+     * No op collector.
+     *
+     * @return the oidc ID token claim collector
+     */
+    static OidcIdTokenClaimCollector noOpCollector() {
+        return (registeredService, claims, name, values) -> {
+        };
     }
 
     /**
@@ -56,5 +68,5 @@ public interface OidcIdTokenClaimCollector {
      * @param name   the attribute
      * @param values the values
      */
-    void collect(JwtClaims claims, String name, List<Object> values);
+    void collect(RegisteredService registeredService, JwtClaims claims, String name, List<Object> values);
 }

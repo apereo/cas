@@ -180,7 +180,7 @@ public class CasQRAuthenticationAutoConfiguration {
         public QRAuthenticationDeviceRepositoryEndpoint qrAuthenticationDeviceRepositoryEndpoint(
             final CasConfigurationProperties casProperties,
             @Qualifier("qrAuthenticationDeviceRepository")
-            final ObjectProvider<@NonNull QRAuthenticationDeviceRepository> qrAuthenticationDeviceRepository) {
+            final ObjectProvider<QRAuthenticationDeviceRepository> qrAuthenticationDeviceRepository) {
             return new QRAuthenticationDeviceRepositoryEndpoint(casProperties, qrAuthenticationDeviceRepository);
         }
     }

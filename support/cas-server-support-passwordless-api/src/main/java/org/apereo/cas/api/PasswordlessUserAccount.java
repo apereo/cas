@@ -49,7 +49,7 @@ public class PasswordlessUserAccount implements Serializable {
 
     @Builder.Default
     @JsonProperty("attributes")
-    private Map<String, List<String>> attributes = new LinkedHashMap<>();
+    private Map<String, List<Object>> attributes = new LinkedHashMap<>();
 
     @JsonProperty("multifactorAuthenticationEligible")
     @Builder.Default

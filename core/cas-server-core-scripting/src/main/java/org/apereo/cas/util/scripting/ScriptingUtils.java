@@ -36,7 +36,7 @@ import org.springframework.core.io.Resource;
 @Slf4j
 @UtilityClass
 public class ScriptingUtils {
-    
+
     @SuppressWarnings("InlineFormatString")
     private static final String INLINE_PATTERN = "%s\\s*\\{\\s*(.+)\\s*\\}";
 
@@ -53,7 +53,7 @@ public class ScriptingUtils {
      * Pattern indicating groovy script is a file/resource.
      */
     private static final Pattern FILE_GROOVY_PATTERN = RegexUtils.createPattern(String.format(FILE_PATTERN, "groovy"));
-    
+
     /**
      * Is inline groovy script ?.
      *
@@ -103,7 +103,7 @@ public class ScriptingUtils {
      * @return the t
      */
     public static <T> @Nullable T executeGroovyShellScript(final Script script,
-                                                 final Class<T> clazz) {
+                                                           final Class<T> clazz) {
         return executeGroovyShellScript(script, new HashMap<>(), clazz);
     }
 
@@ -150,8 +150,8 @@ public class ScriptingUtils {
      * @throws Throwable the exception
      */
     public static <T> @Nullable T executeGroovyScript(final GroovyObject groovyObject,
-                                            final Object[] args, final Class<T> clazz,
-                                            final boolean failOnError) throws Throwable {
+                                                      final Object[] args, final Class<T> clazz,
+                                                      final boolean failOnError) throws Throwable {
         return executeGroovyScript(groovyObject, "run", args, clazz, failOnError);
     }
 
@@ -166,9 +166,9 @@ public class ScriptingUtils {
      * @return the type to return
      */
     public static <T> @Nullable T executeGroovyScript(final Resource groovyScript,
-                                            final String methodName,
-                                            final Class<T> clazz,
-                                            final Object... args) {
+                                                      final String methodName,
+                                                      final Class<T> clazz,
+                                                      final Object... args) {
         return executeGroovyScript(groovyScript, methodName, args, clazz, false);
     }
 
@@ -182,8 +182,8 @@ public class ScriptingUtils {
      * @return the t
      */
     public static <T> @Nullable T executeGroovyScript(final Resource groovyScript,
-                                            final String methodName,
-                                            final Class<T> clazz) {
+                                                      final String methodName,
+                                                      final Class<T> clazz) {
         return executeGroovyScript(groovyScript, methodName, ArrayUtils.EMPTY_OBJECT_ARRAY, clazz, false);
     }
 
@@ -199,10 +199,10 @@ public class ScriptingUtils {
      * @return the t
      */
     public static <T> @Nullable T executeGroovyScript(final Resource groovyScript,
-                                            final String methodName,
-                                            final Object[] args,
-                                            final Class<T> clazz,
-                                            final boolean failOnError) {
+                                                      final String methodName,
+                                                      final Object[] args,
+                                                      final Class<T> clazz,
+                                                      final boolean failOnError) {
         try {
             if (groovyScript == null || StringUtils.isBlank(methodName)) {
                 return null;
@@ -230,10 +230,10 @@ public class ScriptingUtils {
      * @throws Throwable the throwable
      */
     public static <T> @Nullable T executeGroovyScript(final GroovyObject groovyObject,
-                                            final String methodName,
-                                            final Object[] args,
-                                            final Class<T> clazz,
-                                            final boolean failOnError) throws Throwable {
+                                                      final String methodName,
+                                                      final Object[] args,
+                                                      final Class<T> clazz,
+                                                      final boolean failOnError) throws Throwable {
         try {
             LOGGER.trace("Executing groovy script's [{}] method, with parameters [{}]", methodName, args);
             val result = groovyObject.invokeMethod(methodName, args);
@@ -288,7 +288,7 @@ public class ScriptingUtils {
      * @return the groovy object
      */
     public static @Nullable GroovyObject parseGroovyScript(final Resource groovyScript,
-                                                 final boolean failOnError) {
+                                                           final boolean failOnError) {
         try (val loader = newGroovyClassLoader()) {
             val groovyClass = loadGroovyClass(groovyScript, loader);
             if (groovyClass != null) {
@@ -315,7 +315,7 @@ public class ScriptingUtils {
     }
 
     private @Nullable Class loadGroovyClass(final Resource groovyScript,
-                                  final GroovyClassLoader loader) throws IOException {
+                                            final GroovyClassLoader loader) throws IOException {
         if (ResourceUtils.isJarResource(groovyScript)) {
             try (val groovyReader = new BufferedReader(new InputStreamReader(groovyScript.getInputStream(), StandardCharsets.UTF_8))) {
                 return loader.parseClass(groovyReader, groovyScript.getFilename());
@@ -330,10 +330,10 @@ public class ScriptingUtils {
     }
 
     private static <T> @Nullable T getGroovyResult(final Resource groovyScript,
-                                         final String methodName,
-                                         final Object[] args,
-                                         final Class<T> clazz,
-                                         final boolean failOnError) throws Throwable {
+                                                   final String methodName,
+                                                   final Object[] args,
+                                                   final Class<T> clazz,
+                                                   final boolean failOnError) throws Throwable {
         try {
             val groovyObject = parseGroovyScript(groovyScript, failOnError);
             if (groovyObject == null) {
@@ -368,9 +368,9 @@ public class ScriptingUtils {
      * @return the object instance from groovy resource
      */
     public static <T> @Nullable T getObjectInstanceFromGroovyResource(final Resource resource,
-                                                            final Class[] constructorArgs,
-                                                            final Object[] args,
-                                                            final Class<T> expectedType) {
+                                                                      final Class[] constructorArgs,
+                                                                      final Object[] args,
+                                                                      final Class<T> expectedType) {
         try {
             if (resource == null) {
                 LOGGER.debug("No groovy script is defined");

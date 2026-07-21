@@ -5,6 +5,7 @@ import org.apereo.cas.config.CasCoreEnvironmentBootstrapAutoConfiguration;
 import org.apereo.cas.config.CasCoreMultitenancyAutoConfiguration;
 import org.apereo.cas.config.CasCoreWebAutoConfiguration;
 import org.apereo.cas.config.CasEurekaDiscoveryClientAutoConfiguration;
+import org.apereo.cas.config.CasReportsAutoConfiguration;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.test.CasTestExtension;
 import org.apereo.cas.util.spring.boot.SpringBootTestAutoConfigurations;
@@ -16,11 +17,17 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc;
 import org.springframework.cloud.commons.util.UtilAutoConfiguration;
 import org.springframework.cloud.netflix.eureka.EurekaClientAutoConfiguration;
 import org.springframework.cloud.netflix.eureka.EurekaClientConfigBean;
+import org.springframework.cloud.netflix.eureka.EurekaDiscoveryClientConfiguration;
 import org.springframework.cloud.netflix.eureka.config.DiscoveryClientOptionalArgsConfiguration;
+import org.springframework.http.MediaType;
+import org.springframework.test.web.servlet.MockMvc;
 import static org.junit.jupiter.api.Assertions.*;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 /**
  * This is {@link CasEurekaDiscoveryClientTests}.
@@ -35,26 +42,45 @@ class CasEurekaDiscoveryClientTests {
     @SpringBootTest(classes = {
         CasCoreWebAutoConfiguration.class,
         CasCoreMultitenancyAutoConfiguration.class,
+        CasReportsAutoConfiguration.class,
         CasCoreEnvironmentBootstrapAutoConfiguration.class,
         CasEurekaDiscoveryClientAutoConfiguration.class,
         UtilAutoConfiguration.class,
         DiscoveryClientOptionalArgsConfiguration.class,
+        EurekaDiscoveryClientConfiguration.class,
         EurekaClientAutoConfiguration.class
     }, properties = {
+        "debug=true",
+        
+        "management.endpoint.clusterTopology.access=UNRESTRICTED",
+        "management.endpoints.web.exposure.include=*",
+
+        "spring.cloud.discovery.enabled=true",
+        "eureka.client.enabled=true",
         "eureka.client.tls.enabled=true",
         "eureka.client.tls.keystore=classpath:truststore.jks",
         "eureka.client.tls.keystore-password=changeit"
     })
     @EnableConfigurationProperties(CasConfigurationProperties.class)
+    @AutoConfigureMockMvc
     @Nested
     class DefaultTlsTests {
+        @Autowired
+        @Qualifier("mockMvc")
+        private MockMvc mockMvc;
+        
         @Autowired
         @Qualifier("eurekaClientConfigBean")
         private EurekaClientConfigBean eurekaClientConfigBean;
 
         @Test
-        void verifyOperation() {
+        void verifyOperation() throws Exception {
             assertNotNull(eurekaClientConfigBean);
+
+            mockMvc.perform(get("/actuator/clusterTopology/discovery")
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk());
         }
     }
 

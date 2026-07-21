@@ -49,6 +49,7 @@ import lombok.Setter;
 import lombok.ToString;
 import lombok.experimental.SuperBuilder;
 import lombok.val;
+import org.jspecify.annotations.Nullable;
 import org.pac4j.core.config.Config;
 import org.pac4j.core.context.session.SessionStore;
 import org.pac4j.core.profile.ProfileManager;
@@ -174,7 +175,7 @@ public class OAuth20ConfigurationContext {
      * @param context the context
      * @return the ticket granting ticket
      */
-    public TicketGrantingTicket fetchTicketGrantingTicketFrom(final JEEContext context) {
+    public @Nullable TicketGrantingTicket fetchTicketGrantingTicketFrom(final JEEContext context) {
         val ticketGrantingTicket = CookieUtils.getTicketGrantingTicketFromRequest(
             getTicketGrantingTicketCookieGenerator(),
             getTicketRegistry(), context.getNativeRequest());

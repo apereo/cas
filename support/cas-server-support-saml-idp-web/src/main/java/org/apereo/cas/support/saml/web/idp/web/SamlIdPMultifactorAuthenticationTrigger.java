@@ -7,9 +7,11 @@ import org.apereo.cas.authentication.MultifactorAuthenticationTrigger;
 import org.apereo.cas.authentication.MultifactorAuthenticationUtils;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.services.RegisteredService;
+import org.apereo.cas.support.saml.SamlIdPConstants;
 import org.apereo.cas.support.saml.SamlIdPUtils;
 import org.apereo.cas.support.saml.idp.SamlIdPSessionManager;
 import org.apereo.cas.support.saml.services.SamlRegisteredService;
+import org.apereo.cas.support.saml.services.idp.metadata.MetadataEntityAttributeQuery;
 import org.apereo.cas.support.saml.services.idp.metadata.SamlRegisteredServiceMetadataAdaptor;
 import org.apereo.cas.support.saml.web.idp.profile.SamlProfileHandlerConfigurationContext;
 import org.apereo.cas.util.CollectionUtils;
@@ -18,9 +20,11 @@ import org.apereo.cas.util.http.HttpRequestUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
-import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
 import org.opensaml.messaging.context.MessageContext;
 import org.opensaml.saml.common.binding.SAMLBindingSupport;
+import org.opensaml.saml.saml2.core.Attribute;
+import org.opensaml.saml.saml2.core.AttributeValue;
 import org.opensaml.saml.saml2.core.AuthnRequest;
 import org.pac4j.jee.context.JEEContext;
 import org.springframework.beans.factory.ObjectProvider;
@@ -35,7 +39,7 @@ import jakarta.servlet.http.HttpServletResponse;
  */
 @RequiredArgsConstructor
 public class SamlIdPMultifactorAuthenticationTrigger implements MultifactorAuthenticationTrigger {
-    private final ObjectProvider<@NonNull SamlProfileHandlerConfigurationContext> contextProvider;
+    private final ObjectProvider<SamlProfileHandlerConfigurationContext> contextProvider;
 
     @Override
     public Optional<MultifactorAuthenticationProvider> isActivated(final Authentication authentication,
@@ -43,6 +47,56 @@ public class SamlIdPMultifactorAuthenticationTrigger implements MultifactorAuthe
                                                                    final HttpServletRequest request,
                                                                    final HttpServletResponse response,
                                                                    final Service service) {
+        val activation = isMulifactorAuthenticationActivatedForAuthnRequest(registeredService, request, response);
+        return activation.or(() -> isMulifactorAuthenticationActivatedForMetadata(registeredService, request, response));
+    }
+
+    protected Optional<MultifactorAuthenticationProvider> isMulifactorAuthenticationActivatedForMetadata(
+        final RegisteredService registeredService, final HttpServletRequest request, final HttpServletResponse response) {
+        val mappings = getAuthenticationContextMappings();
+        val context = contextProvider.getObject();
+        val webContext = new JEEContext(request, response);
+        val result = SamlIdPSessionManager.of(context.getOpenSamlConfigBean(), context.getSessionStore()).fetch(webContext, AuthnRequest.class);
+        return result
+            .filter(_ -> !mappings.isEmpty())
+            .filter(pair -> registeredService instanceof SamlRegisteredService && pair.getLeft() instanceof AuthnRequest)
+            .map(pair -> (AuthnRequest) pair.getLeft())
+            .flatMap(authnRequest -> SamlRegisteredServiceMetadataAdaptor.get(
+                context.getSamlRegisteredServiceCachingMetadataResolver(), (SamlRegisteredService) registeredService, authnRequest))
+            .flatMap(adaptor -> {
+                val query = List.of(MetadataEntityAttributeQuery.of(
+                    SamlIdPConstants.KnownEntityAttributes.SHIBBOLETH_DEFAULT_AUTHENTICATION_METHODS,
+                    Attribute.URI_REFERENCE, mappings.keySet()));
+                if (SamlIdPUtils.doesEntityDescriptorMatchEntityAttribute(adaptor.getEntityDescriptor(), query)) {
+                    val entityAttributes = SamlIdPUtils.collectEntityAttributes(adaptor.getEntityDescriptor(), query);
+                    if (!entityAttributes.isEmpty()) {
+                        return resolveMultifactorAuthenticationProvider(entityAttributes);
+                    }
+                }
+                return Optional.empty();
+            });
+    }
+
+    protected Optional<MultifactorAuthenticationProvider> resolveMultifactorAuthenticationProvider(
+        final List<Attribute> entityAttributes) {
+        val mappings = getAuthenticationContextMappings();
+        val context = contextProvider.getObject();
+        val entityAttribute = entityAttributes.getLast();
+        val mappedContextValues = entityAttribute
+            .getAttributeValues()
+            .stream()
+            .map(AttributeValue.class::cast)
+            .filter(val -> mappings.containsKey(val.getTextContent()))
+            .map(val -> mappings.get(val.getTextContent()))
+            .toList();
+        val providers = MultifactorAuthenticationUtils.getAvailableMultifactorAuthenticationProviders(
+            context.getOpenSamlConfigBean().getApplicationContext());
+        return MultifactorAuthenticationUtils.resolveProvider(providers, mappedContextValues);
+    }
+
+    private Optional<MultifactorAuthenticationProvider> isMulifactorAuthenticationActivatedForAuthnRequest(
+        final RegisteredService registeredService, final HttpServletRequest request,
+        final HttpServletResponse response) {
         val context = contextProvider.getObject();
         val webContext = new JEEContext(request, response);
         val result = SamlIdPSessionManager.of(context.getOpenSamlConfigBean(), context.getSessionStore()).fetch(webContext, AuthnRequest.class);
@@ -51,6 +105,7 @@ public class SamlIdPMultifactorAuthenticationTrigger implements MultifactorAuthe
             .filter(pair -> registeredService instanceof SamlRegisteredService && pair.getLeft() instanceof AuthnRequest)
             .filter(pair -> isAuthnRequestSigned((SamlRegisteredService) registeredService, request, (AuthnRequest) pair.getLeft(), pair.getRight(), context))
             .map(pair -> (AuthnRequest) pair.getLeft())
+            .filter(authnRequest -> Objects.nonNull(authnRequest.getRequestedAuthnContext()))
             .flatMap(authnRequest -> authnRequest.getRequestedAuthnContext().getAuthnContextClassRefs()
                 .stream()
                 .filter(Objects::nonNull)
@@ -68,23 +123,28 @@ public class SamlIdPMultifactorAuthenticationTrigger implements MultifactorAuthe
             });
     }
 
-    private static Boolean isAuthnRequestSigned(final SamlRegisteredService registeredService, final HttpServletRequest request,
-                                                final AuthnRequest authnRequest, final MessageContext messageContext,
-                                                final SamlProfileHandlerConfigurationContext context) {
+    private static @Nullable Boolean isAuthnRequestSigned(
+        final SamlRegisteredService registeredService,
+        final HttpServletRequest request,
+        final AuthnRequest authnRequest,
+        final MessageContext messageContext,
+        final SamlProfileHandlerConfigurationContext context) {
         val isSigned = authnRequest.isSigned() || SAMLBindingSupport.isMessageSigned(messageContext);
         if (isSigned) {
             val entityId = SamlIdPUtils.getIssuerFromSamlObject(authnRequest);
             val adaptor = SamlRegisteredServiceMetadataAdaptor.get(context.getSamlRegisteredServiceCachingMetadataResolver(), registeredService, entityId).orElseThrow();
-            return FunctionUtils.doAndHandle(() -> context.getSamlObjectSignatureValidator()
-                .verifySamlProfileRequest(authnRequest, adaptor, request, messageContext));
+            return FunctionUtils.doAndHandle(() -> context.getSamlObjectSignatureValidator().verifySamlProfileRequest(authnRequest, adaptor, request, messageContext));
         }
         return false;
     }
 
     @Override
-    public boolean supports(final HttpServletRequest request, final RegisteredService registeredService,
-                            final Authentication authentication, final Service service) {
-        if (!getAuthenticationContextMappings().isEmpty() && registeredService instanceof SamlRegisteredService) {
+    public boolean supports(final HttpServletRequest request,
+                            final RegisteredService registeredService,
+                            final Authentication authentication,
+                            final Service service) {
+        if (!getAuthenticationContextMappings().isEmpty()
+            && registeredService instanceof final SamlRegisteredService samlRegisteredService) {
             val response = HttpRequestUtils.getHttpServletResponseFromRequestAttributes();
 
             val context = contextProvider.getObject();
@@ -93,9 +153,17 @@ public class SamlIdPMultifactorAuthenticationTrigger implements MultifactorAuthe
                 context.getSessionStore()).fetch(webContext, AuthnRequest.class);
             if (result.isPresent()) {
                 val authnRequest = (AuthnRequest) result.get().getLeft();
-                return authnRequest.getRequestedAuthnContext() != null
-                    && authnRequest.getRequestedAuthnContext().getAuthnContextClassRefs() != null
+                var supported = authnRequest.getRequestedAuthnContext() != null
                     && !authnRequest.getRequestedAuthnContext().getAuthnContextClassRefs().isEmpty();
+                if (!supported) {
+                    val adaptor = SamlRegisteredServiceMetadataAdaptor.get(
+                        context.getSamlRegisteredServiceCachingMetadataResolver(), samlRegisteredService, authnRequest).orElseThrow();
+                    val query = List.of(
+                        MetadataEntityAttributeQuery.of(SamlIdPConstants.KnownEntityAttributes.SHIBBOLETH_DEFAULT_AUTHENTICATION_METHODS,
+                            Attribute.URI_REFERENCE, getAuthenticationContextMappings().keySet()));
+                    supported = SamlIdPUtils.doesEntityDescriptorMatchEntityAttribute(adaptor.getEntityDescriptor(), query);
+                }
+                return supported;
             }
         }
         return false;

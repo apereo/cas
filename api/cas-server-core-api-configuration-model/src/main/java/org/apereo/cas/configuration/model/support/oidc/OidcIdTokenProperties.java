@@ -1,11 +1,13 @@
 package org.apereo.cas.configuration.model.support.oidc;
 
 import module java.base;
+import org.apereo.cas.configuration.model.SpringResourceProperties;
 import org.apereo.cas.configuration.support.DurationCapable;
 import org.apereo.cas.configuration.support.RequiresModule;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
+import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
 /**
  * This is {@link OidcIdTokenProperties}.
@@ -59,4 +61,11 @@ public class OidcIdTokenProperties implements Serializable {
      * will force to generate ID tokens when the JWT bearer grant type is used.
      */
     private boolean generateForJwtBearerGrantType;
+
+    /**
+     * Reference to an external script file that allows
+     * one to collect id token in a scripted way.
+     */
+    @NestedConfigurationProperty
+    private SpringResourceProperties collectorScript = new SpringResourceProperties();
 }

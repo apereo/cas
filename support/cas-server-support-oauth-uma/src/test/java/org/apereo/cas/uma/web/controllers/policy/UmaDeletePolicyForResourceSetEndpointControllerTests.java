@@ -36,7 +36,7 @@ class UmaDeletePolicyForResourceSetEndpointControllerTests extends BaseUmaEndpoi
         val policyId = ((Number) ((Map) ((Collection) entity.get("policies")).iterator().next()).get("id")).longValue();
 
         result = performUmaRequest(HttpMethod.DELETE,
-            resourceId + "/" + OAuth20Constants.UMA_POLICY_URL + "/" + policyId,
+            resourceId + "/" + OAuth20Constants.UMA_POLICY_URL + '/' + policyId,
             results.getLeft(), results.getMiddle());
         model = getMappedResponseBody(result);
         assertTrue(model.containsKey("code"));

@@ -383,10 +383,8 @@ for i in {0..4}; do
       "operation": "ADD_REPLACE",
       "value": "suspended",
       "onSyncope": true,
-      "resources": [],
       "key": "'"${SYNCOPESUSPEND_KEY}"'",
-      "type": "SUSPEND",
-      "token": null
+      "type": "SUSPEND"
     }'
 done
 

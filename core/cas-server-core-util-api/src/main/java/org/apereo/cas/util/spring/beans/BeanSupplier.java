@@ -10,8 +10,6 @@ import org.jooq.lambda.Unchecked;
 import org.jooq.lambda.fi.util.function.CheckedSupplier;
 import org.jspecify.annotations.NonNull;
 import org.jspecify.annotations.Nullable;
-import java.lang.reflect.InvocationHandler;
-import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
 
 /**

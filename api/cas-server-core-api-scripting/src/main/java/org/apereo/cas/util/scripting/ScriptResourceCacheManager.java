@@ -95,10 +95,20 @@ public interface ScriptResourceCacheManager<K extends String, V extends Executab
     @Nullable ExecutableCompiledScript resolveScriptableResource(String scriptResource, String... keys);
 
     /**
+     * Cache scriptable resource.
+     *
+     * @param scriptResource the script resource
+     * @param computedKey    the computed key
+     * @return the executable compiled script
+     */
+    @Nullable ExecutableCompiledScript cacheScriptableResource(String scriptResource,
+                                                               String computedKey);
+    /**
      * Compute key.
      *
      * @param keys the keys
      * @return the string
      */
     String computeKey(String... keys);
+
 }

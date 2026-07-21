@@ -64,7 +64,6 @@ import org.apereo.cas.web.flow.SingleSignOnParticipationStrategy;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.jooq.lambda.Unchecked;
-import org.jspecify.annotations.NonNull;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.AutoConfigureOrder;
@@ -156,7 +155,7 @@ class CasCoreTicketsConfiguration {
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public AuthenticationPolicy uniqueAuthenticationPolicy(
             @Qualifier(SingleSignOnParticipationStrategy.BEAN_NAME)
-            final ObjectProvider<@NonNull SingleSignOnParticipationStrategy> singleSignOnParticipationStrategy,
+            final ObjectProvider<SingleSignOnParticipationStrategy> singleSignOnParticipationStrategy,
             @Qualifier(TicketRegistry.BEAN_NAME)
             final TicketRegistry ticketRegistry,
             final CasConfigurationProperties casProperties) {

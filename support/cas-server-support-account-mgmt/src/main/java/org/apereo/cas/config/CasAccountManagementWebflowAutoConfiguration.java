@@ -62,7 +62,6 @@ import org.apereo.cas.web.flow.actions.WebflowActionBeanSupplier;
 import lombok.val;
 import org.apereo.inspektr.audit.spi.AuditResourceResolver;
 import org.apereo.inspektr.audit.spi.support.DefaultAuditActionResolver;
-import org.jspecify.annotations.NonNull;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
@@ -207,7 +206,7 @@ public class CasAccountManagementWebflowAutoConfiguration {
         public AccountRegistrationProvisionerConfigurer scimAccountRegistrationProvisionerConfigurer(
             final ConfigurableApplicationContext applicationContext,
             @Qualifier(PrincipalProvisioner.BEAN_NAME)
-            final ObjectProvider<@NonNull PrincipalProvisioner> principalProvisioners) {
+            final ObjectProvider<PrincipalProvisioner> principalProvisioners) {
             return BeanSupplier.of(AccountRegistrationProvisionerConfigurer.class)
                 .when(BeanCondition.on("cas.account-registration.provisioning.scim.enabled").isTrue()
                     .given(applicationContext.getEnvironment()))

@@ -1,6 +1,7 @@
 package org.apereo.cas.util.scripting;
 
 import module java.base;
+import org.apereo.cas.util.DigestUtils;
 import org.apereo.cas.util.LoggingUtils;
 import org.apereo.cas.util.concurrent.CasReentrantLock;
 import groovy.lang.Binding;
@@ -87,6 +88,13 @@ public class GroovyShellScript implements ExecutableCompiledScript {
 
     @Override
     public Resource getResource() {
-        return new ByteArrayResource(script.getBytes(StandardCharsets.UTF_8));
+        return new ByteArrayResource(
+            script.getBytes(StandardCharsets.UTF_8),
+            DigestUtils.abbreviate(script));
+    }
+
+    @Override
+    public @Nullable Object compileScript() {
+        return ScriptingUtils.parseGroovyShellScript(script);
     }
 }

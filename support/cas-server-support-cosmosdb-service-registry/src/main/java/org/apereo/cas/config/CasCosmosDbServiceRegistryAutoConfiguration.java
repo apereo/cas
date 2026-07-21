@@ -11,7 +11,6 @@ import org.apereo.cas.services.ServiceRegistryExecutionPlanConfigurer;
 import org.apereo.cas.services.ServiceRegistryListener;
 import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
 import lombok.val;
-import org.jspecify.annotations.NonNull;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
@@ -50,7 +49,7 @@ public class CasCosmosDbServiceRegistryAutoConfiguration {
     public ServiceRegistry cosmosDbServiceRegistry(
         @Qualifier("cosmosDbObjectFactory")
         final CosmosDbObjectFactory cosmosDbObjectFactory,
-        final ObjectProvider<@NonNull List<ServiceRegistryListener>> serviceRegistryListeners,
+        final ObjectProvider<List<ServiceRegistryListener>> serviceRegistryListeners,
         final ConfigurableApplicationContext applicationContext,
         final CasConfigurationProperties casProperties) {
         val cosmosDb = casProperties.getServiceRegistry().getCosmosDb();

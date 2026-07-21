@@ -26,7 +26,7 @@ class OidcRevocationEndpointControllerTests extends AbstractOidcTests {
         mockMvc.perform(post('/' + OidcConstants.BASE_OIDC_URL + '/' + OidcConstants.REVOCATION_URL)
                 .secure(true)
                 .param(OAuth20Constants.CLIENT_ID, registeredService.getClientId())
-                .param(OAuth20Constants.CLIENT_SECRET, registeredService.getClientSecret())
+                .param(OAuth20Constants.CLIENT_SECRET, registeredService.getClientSecrets().getFirst().getValue())
             )
             .andExpect(status().isBadRequest())
             .andExpect(jsonPath("$.error").value(OAuth20Constants.INVALID_REQUEST));
@@ -44,7 +44,7 @@ class OidcRevocationEndpointControllerTests extends AbstractOidcTests {
         mockMvc.perform(post("/cas/" + OidcConstants.BASE_OIDC_URL + '/' + OidcConstants.REVOCATION_URL)
                 .secure(true)
                 .param(OAuth20Constants.CLIENT_ID, registeredService.getClientId())
-                .param(OAuth20Constants.CLIENT_SECRET, registeredService.getClientSecret())
+                .param(OAuth20Constants.CLIENT_SECRET, registeredService.getClientSecrets().getFirst().getValue())
                 .param(OAuth20Constants.TOKEN, token.getId())
                 .with(withHttpRequestProcessor())
             )

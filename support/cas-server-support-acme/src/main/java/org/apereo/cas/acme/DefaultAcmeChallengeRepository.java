@@ -5,7 +5,6 @@ import org.apereo.cas.util.concurrent.CasReentrantLock;
 import com.github.benmanes.caffeine.cache.Cache;
 import com.github.benmanes.caffeine.cache.Caffeine;
 import lombok.extern.slf4j.Slf4j;
-import org.jspecify.annotations.NonNull;
 
 /**
  * This is {@link DefaultAcmeChallengeRepository}.
@@ -20,7 +19,7 @@ import org.jspecify.annotations.NonNull;
 public class DefaultAcmeChallengeRepository implements AcmeChallengeRepository {
     private final CasReentrantLock lock = new CasReentrantLock();
 
-    private final Cache<@NonNull String, String> cache = Caffeine.newBuilder()
+    private final Cache<String, String> cache = Caffeine.newBuilder()
         .initialCapacity(100)
         .maximumSize(1000)
         .expireAfterAccess(2, TimeUnit.SECONDS)

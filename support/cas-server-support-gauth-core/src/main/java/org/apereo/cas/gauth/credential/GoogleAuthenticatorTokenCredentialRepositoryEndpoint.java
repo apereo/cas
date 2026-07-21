@@ -12,7 +12,6 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.io.IOUtils;
 import org.jooq.lambda.Unchecked;
-import org.jspecify.annotations.NonNull;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.boot.actuate.endpoint.Access;
 import org.springframework.boot.actuate.endpoint.annotation.Endpoint;
@@ -39,12 +38,12 @@ import jakarta.servlet.http.HttpServletRequest;
 @Endpoint(id = "gauthCredentialRepository", defaultAccess = Access.NONE)
 @Slf4j
 public class GoogleAuthenticatorTokenCredentialRepositoryEndpoint extends BaseCasRestActuatorEndpoint {
-    private final ObjectProvider<@NonNull OneTimeTokenCredentialRepository> repository;
+    private final ObjectProvider<OneTimeTokenCredentialRepository> repository;
 
     public GoogleAuthenticatorTokenCredentialRepositoryEndpoint(
         final CasConfigurationProperties casProperties,
         final ConfigurableApplicationContext applicationContext,
-        final ObjectProvider<@NonNull OneTimeTokenCredentialRepository> repository) {
+        final ObjectProvider<OneTimeTokenCredentialRepository> repository) {
         super(casProperties, applicationContext);
         this.repository = repository;
     }
@@ -120,7 +119,7 @@ public class GoogleAuthenticatorTokenCredentialRepositoryEndpoint extends BaseCa
     @GetMapping(path = "/export", produces = MediaType.APPLICATION_OCTET_STREAM_VALUE)
     @ResponseBody
     @Operation(summary = "Export accounts as a zip file")
-    public ResponseEntity<@NonNull Resource> exportAccounts() {
+    public ResponseEntity<Resource> exportAccounts() {
         val accounts = repository.getObject().load();
         val serializer = new GoogleAuthenticatorAccountSerializer(applicationContext);
         val resource = CompressionUtils.toZipFile(accounts.stream(),
