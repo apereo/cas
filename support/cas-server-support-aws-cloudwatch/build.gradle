@@ -16,6 +16,7 @@ dependencies {
     implementation libraries.metrics
 
     implementation project(":core:cas-server-core-web-api")
+    implementation project(":core:cas-server-core-web")
     implementation project(":core:cas-server-core-util-api")
     implementation project(":core:cas-server-core-logging-api")
     

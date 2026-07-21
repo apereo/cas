@@ -3,6 +3,8 @@ package org.apereo.cas.config;
 import module java.base;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.features.CasFeatureModule;
+import org.apereo.cas.ha.ClusterTopologyManager;
+import org.apereo.cas.hz.HazelcastClusterTopologyManager;
 import org.apereo.cas.hz.HazelcastConfigurationFactory;
 import org.apereo.cas.hz.HazelcastMapCustomizer;
 import org.apereo.cas.ticket.TicketCatalog;
@@ -54,6 +56,14 @@ import org.springframework.core.annotation.AnnotationAwareOrderComparator;
 @ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.TicketRegistry, module = "hazelcast")
 @AutoConfiguration
 public class CasHazelcastTicketRegistryAutoConfiguration {
+    
+    @ConditionalOnMissingBean(name = "hazelcastClusterTopologyManager")
+    @Bean
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+    public ClusterTopologyManager hazelcastClusterTopologyManager(
+        @Qualifier("casTicketRegistryHazelcastInstance") final HazelcastInstance casTicketRegistryHazelcastInstance) {
+        return new HazelcastClusterTopologyManager(casTicketRegistryHazelcastInstance);
+    }
 
     @ConditionalOnMissingBean(name = "hazelcastTicketCatalogConfigurationValuesProvider")
     @Bean

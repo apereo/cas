@@ -18,7 +18,6 @@ import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
 import com.github.benmanes.caffeine.cache.Cache;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-import org.jspecify.annotations.NonNull;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
@@ -81,7 +80,7 @@ class SamlIdPRestfulIdPMetadataConfiguration {
     public SamlIdPMetadataLocator samlIdPMetadataLocator(
         final ConfigurableApplicationContext applicationContext,
         @Qualifier("samlIdPMetadataCache")
-        final Cache<@NonNull String, SamlIdPMetadataDocument> samlIdPMetadataCache,
+        final Cache<String, SamlIdPMetadataDocument> samlIdPMetadataCache,
         final CasConfigurationProperties casProperties,
         @Qualifier("samlIdPMetadataGeneratorCipherExecutor")
         final CipherExecutor samlIdPMetadataGeneratorCipherExecutor) {

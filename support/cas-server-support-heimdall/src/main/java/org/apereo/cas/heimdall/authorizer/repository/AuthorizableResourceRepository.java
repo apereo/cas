@@ -3,6 +3,7 @@ package org.apereo.cas.heimdall.authorizer.repository;
 import module java.base;
 import org.apereo.cas.heimdall.AuthorizationRequest;
 import org.apereo.cas.heimdall.authorizer.resource.AuthorizableResource;
+import org.apereo.cas.heimdall.authorizer.resource.AuthorizableResources;
 import org.springframework.beans.factory.DisposableBean;
 
 /**
@@ -53,4 +54,12 @@ public interface AuthorizableResourceRepository extends DisposableBean {
      * @return the optional
      */
     Optional<AuthorizableResource> find(String namespace, long id);
+
+    /**
+     * Store authorizable resources.
+     *
+     * @param resource the resources
+     * @return the authorizable resource
+     */
+    AuthorizableResources store(AuthorizableResources resource);
 }

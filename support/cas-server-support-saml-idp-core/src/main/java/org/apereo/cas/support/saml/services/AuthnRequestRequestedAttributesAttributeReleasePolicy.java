@@ -43,7 +43,7 @@ public class AuthnRequestRequestedAttributesAttributeReleasePolicy extends BaseS
         final EntityDescriptor entityDescriptor,
         final RegisteredServiceAttributeReleasePolicyContext context) {
         val releaseAttributes = new HashMap<String, List<Object>>();
-        getSamlAuthnRequest(context).ifPresent(authnRequest -> {
+        SamlIdPSAttributeReleasePolicyUtils.getSamlAuthnRequest(context).ifPresent(authnRequest -> {
             if (authnRequest.getExtensions() != null) {
                 authnRequest.getExtensions().getUnknownXMLObjects()
                     .stream()
@@ -67,7 +67,7 @@ public class AuthnRequestRequestedAttributesAttributeReleasePolicy extends BaseS
     @Override
     protected List<String> determineRequestedAttributeDefinitions(final RegisteredServiceAttributeReleasePolicyContext context) {
         val definitions = new ArrayList<String>();
-        getSamlAuthnRequest(context).ifPresent(authnRequest -> {
+        SamlIdPSAttributeReleasePolicyUtils.getSamlAuthnRequest(context).ifPresent(authnRequest -> {
             if (authnRequest.getExtensions() != null) {
                 authnRequest.getExtensions().getUnknownXMLObjects()
                     .stream()

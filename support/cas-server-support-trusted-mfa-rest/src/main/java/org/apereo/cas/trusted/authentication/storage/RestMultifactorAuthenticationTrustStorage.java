@@ -9,7 +9,6 @@ import org.apereo.cas.util.http.HttpUtils;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.Strings;
-import org.jspecify.annotations.NonNull;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
@@ -79,7 +78,7 @@ public class RestMultifactorAuthenticationTrustStorage extends BaseMultifactorAu
         return new HashSet<>();
     }
 
-    private HttpEntity<@NonNull Object> getHttpEntity(final Object body) {
+    private HttpEntity<Object> getHttpEntity(final Object body) {
         val rest = getTrustedDevicesMultifactorProperties().getRest();
         val headers = HttpUtils.createBasicAuthHeaders(rest.getBasicAuthUsername(), rest.getBasicAuthPassword());
         headers.setContentType(MediaType.APPLICATION_JSON);

@@ -96,8 +96,8 @@ public class RestEndpointMultifactorAuthenticationTrigger implements Multifactor
      * @return the rest response, typically the mfa id.
      * @throws Exception the exception
      */
-    protected String callRestEndpointForMultifactor(final Principal principal,
-                                                    final Service resolvedService) throws Exception {
+    protected @Nullable String callRestEndpointForMultifactor(final Principal principal,
+                                                              final Service resolvedService) throws Exception {
         HttpResponse response = null;
         try {
             val rest = casProperties.getAuthn().getMfa().getTriggers().getRest();

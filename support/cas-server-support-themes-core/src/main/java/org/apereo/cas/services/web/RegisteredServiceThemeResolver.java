@@ -61,11 +61,11 @@ import jakarta.servlet.http.HttpServletRequest;
 @Slf4j
 @RequiredArgsConstructor
 public class RegisteredServiceThemeResolver extends AbstractThemeResolver {
-    protected final ObjectProvider<@NonNull ServicesManager> servicesManager;
+    protected final ObjectProvider<ServicesManager> servicesManager;
 
-    protected final ObjectProvider<@NonNull AuthenticationServiceSelectionPlan> authenticationRequestServiceSelectionStrategies;
+    protected final ObjectProvider<AuthenticationServiceSelectionPlan> authenticationRequestServiceSelectionStrategies;
 
-    protected final ObjectProvider<@NonNull CasConfigurationProperties> casProperties;
+    protected final ObjectProvider<CasConfigurationProperties> casProperties;
 
     @NonNull
     @Override

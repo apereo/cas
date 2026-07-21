@@ -5,6 +5,7 @@ const assert = require("assert");
 (async () => {
     const browser = await cas.newBrowser(cas.browserOptions());
     const page = await cas.newPage(browser);
+    await cas.gotoLogout(page);
     const response = await cas.goto(page, "http://localhost:8500/ui/dc1/services/cas/instances");
     await cas.sleep(2000);
     await cas.log(`${response.status()} ${response.statusText()}`);

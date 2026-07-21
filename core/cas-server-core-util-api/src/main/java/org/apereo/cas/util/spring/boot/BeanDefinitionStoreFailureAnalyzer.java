@@ -18,7 +18,7 @@ import org.springframework.boot.diagnostics.FailureAnalysis;
  * @since 6.4.0
  */
 @Slf4j
-public class BeanDefinitionStoreFailureAnalyzer extends AbstractFailureAnalyzer<@NonNull BeanDefinitionStoreException> {
+public class BeanDefinitionStoreFailureAnalyzer extends AbstractFailureAnalyzer<BeanDefinitionStoreException> {
 
     private static final String ANALYSIS = "Review the properties available for the configuration. Enable debug logging on "
                                            + BeanDefinitionStoreFailureAnalyzer.class.getName() + " to see exception stack trace";

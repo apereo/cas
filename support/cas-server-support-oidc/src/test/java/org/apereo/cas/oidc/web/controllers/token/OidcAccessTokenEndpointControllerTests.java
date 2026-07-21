@@ -83,9 +83,13 @@ class OidcAccessTokenEndpointControllerTests {
             registeredService.setEncryptIdToken(false);
             registeredService.setJwks(key);
             registeredService.setTokenEndpointAuthenticationMethod(OAuth20ClientAuthenticationMethods.PRIVATE_KEY_JWT.getType());
+
+            val audience = casProperties.getServer().getPrefix().concat('/'
+                + OidcConstants.BASE_OIDC_URL + '/' + OidcConstants.ACCESS_TOKEN_URL);
             val claims = getClaims(registeredService.getClientId(),
-                oidcIssuerService.determineIssuer(Optional.of(registeredService)),
-                registeredService.getClientId(), registeredService.getClientId());
+                registeredService.getClientId(),
+                registeredService.getClientId(),
+                audience);
             registeredService.setSupportedGrantTypes(Set.of(OAuth20GrantTypes.CLIENT_CREDENTIALS.getType()));
             servicesManager.save(registeredService);
 
@@ -114,7 +118,7 @@ class OidcAccessTokenEndpointControllerTests {
             mvc.perform(post("/cas/" + OidcConstants.BASE_OIDC_URL + '/' + OidcConstants.TOKEN_URL)
                     .secure(true)
                     .param(OAuth20Constants.CLIENT_ID, registeredService.getClientId())
-                    .param(OAuth20Constants.CLIENT_SECRET, registeredService.getClientSecret())
+                    .param(OAuth20Constants.CLIENT_SECRET, registeredService.getClientSecrets().getFirst().getValue())
                     .queryParam(OAuth20Constants.GRANT_TYPE, OAuth20GrantTypes.CLIENT_CREDENTIALS.name()))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.access_token").exists())
@@ -170,7 +174,7 @@ class OidcAccessTokenEndpointControllerTests {
             val result = mvc.perform(post("/cas/" + OidcConstants.BASE_OIDC_URL + '/' + OidcConstants.TOKEN_URL)
                     .secure(true)
                     .param(OAuth20Constants.CLIENT_ID, registeredService.getClientId())
-                    .param(OAuth20Constants.CLIENT_SECRET, registeredService.getClientSecret())
+                    .param(OAuth20Constants.CLIENT_SECRET, registeredService.getClientSecrets().getFirst().getValue())
                     .queryParam(OAuth20Constants.RESOURCE, resource)
                     .queryParam(OAuth20Constants.SUBJECT_TOKEN, accessToken.getId())
                     .queryParam(OAuth20Constants.ACTOR_TOKEN, idToken.token())
@@ -208,7 +212,7 @@ class OidcAccessTokenEndpointControllerTests {
             mvc.perform(post("/cas/" + OidcConstants.BASE_OIDC_URL + '/' + OidcConstants.TOKEN_URL)
                     .secure(true)
                     .param(OAuth20Constants.CLIENT_ID, registeredService.getClientId())
-                    .param(OAuth20Constants.CLIENT_SECRET, registeredService.getClientSecret())
+                    .param(OAuth20Constants.CLIENT_SECRET, registeredService.getClientSecrets().getFirst().getValue())
                     .queryParam(OAuth20Constants.RESOURCE, resource)
                     .queryParam(OAuth20Constants.SUBJECT_TOKEN, accessToken.getId())
                     .queryParam(OAuth20Constants.SCOPE, OidcConstants.StandardScopes.OPENID.getScope()
@@ -240,7 +244,7 @@ class OidcAccessTokenEndpointControllerTests {
             val result = mvc.perform(post("/cas/" + OidcConstants.BASE_OIDC_URL + '/' + OidcConstants.TOKEN_URL)
                     .secure(true)
                     .param(OAuth20Constants.CLIENT_ID, registeredService.getClientId())
-                    .param(OAuth20Constants.CLIENT_SECRET, registeredService.getClientSecret())
+                    .param(OAuth20Constants.CLIENT_SECRET, registeredService.getClientSecrets().getFirst().getValue())
                     .queryParam(OAuth20Constants.SCOPE, OidcConstants.StandardScopes.OPENID.getScope())
                     .queryParam(OAuth20Constants.CODE, code.getId())
                     .queryParam(OAuth20Constants.REDIRECT_URI, "https://oauth.example.org")
@@ -252,14 +256,14 @@ class OidcAccessTokenEndpointControllerTests {
                 .andReturn();
 
             val refreshToken = result.getModelAndView().getModel().get(OAuth20Constants.REFRESH_TOKEN).toString();
-            val auth = EncodingUtils.encodeBase64(registeredService.getClientId() + ':' + registeredService.getClientSecret());
+            val auth = EncodingUtils.encodeBase64(registeredService.getClientId() + ':' + registeredService.getClientSecrets().getFirst().getValue());
 
             for (var i = 0; i < 5; i++) {
                 mvc.perform(post("/cas/" + OidcConstants.BASE_OIDC_URL + '/' + OidcConstants.TOKEN_URL)
                         .secure(true)
                         .header(HttpHeaders.AUTHORIZATION, "Basic " + auth)
                         .param(OAuth20Constants.CLIENT_ID, registeredService.getClientId())
-                        .param(OAuth20Constants.CLIENT_SECRET, registeredService.getClientSecret())
+                        .param(OAuth20Constants.CLIENT_SECRET, registeredService.getClientSecrets().getFirst().getValue())
                         .queryParam(OAuth20Constants.SCOPE, OidcConstants.StandardScopes.OPENID.getScope())
                         .queryParam(OAuth20Constants.REFRESH_TOKEN, refreshToken)
                         .queryParam(OAuth20Constants.GRANT_TYPE, OAuth20GrantTypes.REFRESH_TOKEN.getType()))

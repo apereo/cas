@@ -8,7 +8,6 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import lombok.Getter;
 import lombok.experimental.SuperBuilder;
-import org.jspecify.annotations.NonNull;
 import org.jspecify.annotations.Nullable;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.boot.actuate.endpoint.Access;
@@ -26,11 +25,11 @@ import org.springframework.http.MediaType;
 @Endpoint(id = "authenticationPolicies", defaultAccess = Access.NONE)
 public class RegisteredAuthenticationPoliciesEndpoint extends BaseCasActuatorEndpoint {
 
-    private final ObjectProvider<@NonNull AuthenticationEventExecutionPlan> authenticationEventExecutionPlan;
+    private final ObjectProvider<AuthenticationEventExecutionPlan> authenticationEventExecutionPlan;
 
     public RegisteredAuthenticationPoliciesEndpoint(
         final CasConfigurationProperties casProperties,
-        final ObjectProvider<@NonNull AuthenticationEventExecutionPlan> authenticationEventExecutionPlan) {
+        final ObjectProvider<AuthenticationEventExecutionPlan> authenticationEventExecutionPlan) {
 
         super(casProperties);
         this.authenticationEventExecutionPlan = authenticationEventExecutionPlan;

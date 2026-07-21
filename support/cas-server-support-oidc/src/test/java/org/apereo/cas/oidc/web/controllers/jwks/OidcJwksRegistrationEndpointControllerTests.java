@@ -116,10 +116,15 @@ class OidcJwksRegistrationEndpointControllerTests extends AbstractOidcTests {
         val response = new MockHttpServletResponse();
         val context = new JEEContext(request, response);
 
+        val audience = casProperties.getServer().getPrefix().concat('/'
+            + OidcConstants.BASE_OIDC_URL + '/' + OidcConstants.ACCESS_TOKEN_URL);
         val authenticator = getAuthenticator();
-        val claims = getClaims(registeredService.getClientId(),
-            oidcIssuerService.determineIssuer(Optional.of(registeredService)),
-            registeredService.getClientId(), registeredService.getClientId());
+        val claims = getClaims(
+            registeredService.getClientId(),
+            registeredService.getClientId(),
+            registeredService.getClientId(),
+            audience
+        );
 
         val signingAlg = switch (algorithm) {
             case "EC" -> AlgorithmIdentifiers.ECDSA_USING_P256_CURVE_AND_SHA256;

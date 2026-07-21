@@ -36,7 +36,7 @@ public class GoogleCloudTicketRegistryMessageQueueConsumer implements Consumer<B
     @Override
     @SuppressWarnings("FutureReturnValueIgnored")
     public void accept(final BasicAcknowledgeablePubsubMessage message) {
-        FunctionUtils.doAndHandle(o -> {
+        FunctionUtils.doAndHandle(_ -> {
             val subName = message.getProjectSubscriptionName().getSubscription();
             LOGGER.debug("Message received from [{}] subscription: [{}]", subName,
                 message.getPubsubMessage().getData().toStringUtf8());

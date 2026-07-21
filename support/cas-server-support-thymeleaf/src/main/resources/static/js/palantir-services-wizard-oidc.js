@@ -35,36 +35,7 @@ async function createRegisteredServiceOidcFields() {
         </button>
     `);
 
-    createInputField({
-        labelTitle: "Client Secret",
-        name: "registeredServiceClientSecret",
-        paramName: "clientSecret",
-        required: false,
-        containerId: "editServiceWizardOAuthOidcContainer",
-        title: "Define the client secret for this OAuth/OpenID Connect relying party."
-    })
-    .attr("type", "password")
-    .after(`
-        <button class="mdc-button mdc-button--unelevated mdc-input-group-append mdc-icon-button mr-2" 
-                onclick="$('#registeredServiceClientSecret').val(generateRandom()).focus(); generateServiceDefinition();"
-                type="button">
-            <i class="mdi mdi-refresh" aria-hidden="true"></i>
-            <span class="sr-only">Generate</span>
-        </button>
-    `);
-
-
-    createInputField({
-        cssClasses: "advanced-option",
-        labelTitle: "Client Secret Expiration",
-        name: "registeredServiceClientSecretExpiration",
-        paramName: "clientSecretExpiration",
-        required: false,
-        dataType: "number",
-        containerId: "editServiceWizardOAuthOidcContainer",
-        serviceClass: "class-OidcRegisteredService",
-        title: "Time, measured in UTC epoch, at which the client secret will expire or 0 if it will not expire."
-    });
+    createRegisteredServiceClientSecretsField("editServiceWizardOAuthOidcContainer");
 
     const features = await fetchCasFeatures();
     if (features.includes("OpenIDConnect")) {
@@ -349,6 +320,254 @@ async function createRegisteredServiceOidcFields() {
         containerId: "editServiceWizardOAuthOidcContainer",
         title: "Define the backchannel client notification endpoint for this OpenID Connect relying party."
     });
+}
+
+function createRegisteredServiceClientSecretsField(containerId) {
+    const sectionId = "registeredServiceClientSecretsContainer";
+    const rowsId = "registeredServiceClientSecretsRows";
+    const addButtonId = "registeredServiceClientSecretsAddButton";
+    const hiddenId = "registeredServiceClientSecrets";
+
+    const html = `
+        <section id="${sectionId}" class="registered-service-client-secrets mb-2">
+            <h3 class="mt-2 mb-2">Client Secrets</h3>
+            <input type="hidden" id="${hiddenId}" value="clientSecrets" data-param-name="clientSecrets"/>
+            <div id="${rowsId}"></div>
+            <button type="button"
+                    id="${addButtonId}"
+                    title="Add Client Secret"
+                    class="mdc-button mdc-button--raised mdc-button--round add-row mt-2">
+                <span class="mdc-button__label">
+                    <i class="mdc-tab__icon mdi mdi-plus-thick" aria-hidden="true"></i>
+                </span>
+            </button>
+        </section>`;
+    $(`#${containerId}`).append($(html));
+
+    $(`#${hiddenId}`)
+        .data("renderer", () => buildRegisteredServiceClientSecretsDefinition())
+        .data("beforeGenerate", function ($input, serviceDefinition) {
+            const definition = serviceDefinition.clientSecrets;
+            if (definition && typeof definition === "object" && !Array.isArray(definition) && Object.keys(definition).length === 0) {
+                delete serviceDefinition.clientSecrets;
+                return;
+            }
+            if (definition && definition.legacyClientSecret) {
+                serviceDefinition.clientSecret = definition.legacyClientSecret;
+                delete serviceDefinition.clientSecrets;
+            }
+        });
+
+    $(`#${addButtonId}`).on("click", () => addRegisteredServiceClientSecretRow());
+    addRegisteredServiceClientSecretRow();
+}
+
+function createClientSecretTextField({id, label, type = "text", cssClasses = "", title = ""}) {
+    return `
+        <label for="${id}"
+               class="mdc-text-field mdc-text-field--outlined mdc-text-field--with-trailing-icon control-label mb-2 ${cssClasses}">
+            <span class="mdc-notched-outline">
+                <span class="mdc-notched-outline__leading"></span>
+                <span class="mdc-notched-outline__notch">
+                    <span class="mdc-floating-label">${label}</span>
+                </span>
+                <span class="mdc-notched-outline__trailing"></span>
+            </span>
+            <input class="mdc-text-field__input form-control ${cssClasses}"
+                   id="${id}"
+                   name="${id}"
+                   type="${type}"
+                   title="${title}"
+                   autocomplete="off"/>
+        </label>`;
+}
+
+function initializeRegisteredServiceClientSecretDatePicker($input) {
+    $input.datepicker({
+        dateFormat: "mm/dd/yy",
+        showAnim: "slideDown",
+        onSelect: function () {
+            generateServiceDefinition();
+            cas.attachFields("#registeredServiceClientSecretsContainer");
+        }
+    });
+}
+
+let registeredServiceClientSecretRowCounter = 0;
+
+function addRegisteredServiceClientSecretRow(secret = {}) {
+    const rowIndex = registeredServiceClientSecretRowCounter;
+    registeredServiceClientSecretRowCounter++;
+    const rowId = `registeredServiceClientSecretRow${rowIndex}`;
+    const secretId = `registeredServiceClientSecretValue${rowIndex}`;
+    const expirationDateId = `registeredServiceClientSecretExpirationDate${rowIndex}`;
+    const removeButtonId = `registeredServiceClientSecretRemove${rowIndex}`;
+    const generateButtonId = `registeredServiceClientSecretGenerate${rowIndex}`;
+
+    const row = $(`
+        <div class="registered-service-client-secret-row d-flex align-items-start justify-content-between pt-2" id="${rowId}">
+            ${createClientSecretTextField({
+                id: secretId,
+                label: "Client Secret",
+                type: "password",
+                cssClasses: "registered-service-client-secret-value",
+                title: "Define a client secret for this OAuth/OpenID Connect relying party."
+            })}
+            <button class="mdc-button mdc-button--unelevated mdc-input-group-append mdc-icon-button mr-2 registered-service-client-secret-action"
+                    id="${generateButtonId}"
+                    type="button"
+                    title="Generate Client Secret">
+                <i class="mdi mdi-refresh" aria-hidden="true"></i>
+                <span class="sr-only">Generate</span>
+            </button>
+            ${createClientSecretTextField({
+                id: expirationDateId,
+                label: "Expiration Date",
+                cssClasses: "jquery-datepicker registered-service-client-secret-expiration-date",
+                title: "Select the client secret expiration date. Leave empty for no expiration."
+            })}
+            <button type="button"
+                    id="${removeButtonId}"
+                    title="Remove Client Secret"
+                    class="mdc-button mdc-button--raised btn btn-link mdc-button--inline-row registered-service-client-secret-action">
+                <i class="mdi mdi-minus-thick" aria-hidden="true"></i>
+            </button>
+        </div>`);
+
+    decoratePalantirInputIcons(row[0]);
+    $("#registeredServiceClientSecretsRows").append(row);
+
+    const $secret = $(`#${secretId}`);
+    const $expirationDate = $(`#${expirationDateId}`);
+    $secret.val(secret.value || "");
+    $expirationDate.val(secret.expirationDate || "");
+
+    row.find("input").on("input change", () => generateServiceDefinition());
+    $(`#${generateButtonId}`).on("click", () => {
+        $secret.val(generateRandom()).focus();
+        generateServiceDefinition();
+        cas.attachFields("#registeredServiceClientSecretsContainer");
+    });
+    $(`#${removeButtonId}`).on("click", () => {
+        row.remove();
+        if ($(".registered-service-client-secret-row").length === 0) {
+            addRegisteredServiceClientSecretRow();
+        }
+        generateServiceDefinition();
+    });
+    initializeRegisteredServiceClientSecretDatePicker($expirationDate);
+    cas.attachFields("#registeredServiceClientSecretsContainer");
+    generateServiceDefinition();
+}
+
+function buildRegisteredServiceClientSecretsDefinition() {
+    const secrets = getRegisteredServiceClientSecretRows();
+    if (secrets.length === 0) {
+        return {};
+    }
+    if (secrets.length === 1 && !secrets[0].expiration) {
+        return {legacyClientSecret: secrets[0].value};
+    }
+    return ["java.util.ArrayList", secrets.map(secret => {
+        const record = {
+            "@class": "org.apereo.cas.support.oauth.services.OAuthRegisteredServiceClientSecret",
+            value: secret.value
+        };
+        if (secret.expiration) {
+            record.expiration = secret.expiration;
+        }
+        return record;
+    })];
+}
+
+function getRegisteredServiceClientSecretRows() {
+    return $(".registered-service-client-secret-row")
+        .map(function () {
+            const $row = $(this);
+            const value = $row.find("input.registered-service-client-secret-value").val()?.trim();
+            if (!value) {
+                return null;
+            }
+            const expirationDate = $row.find("input.registered-service-client-secret-expiration-date").val()?.trim();
+            return {
+                value,
+                expiration: expirationDate || ""
+            };
+        })
+        .get()
+        .filter(Boolean);
+}
+
+function resetRegisteredServiceClientSecrets() {
+    registeredServiceClientSecretRowCounter = 0;
+    $("#registeredServiceClientSecretsRows").empty();
+    $("#registeredServiceClientSecrets").val("clientSecrets");
+    addRegisteredServiceClientSecretRow();
+}
+
+function populateRegisteredServiceClientSecrets(serviceDefinition) {
+    const secrets = extractRegisteredServiceClientSecrets(serviceDefinition);
+    $("#registeredServiceClientSecretsRows").empty();
+    if (secrets.length === 0) {
+        addRegisteredServiceClientSecretRow();
+        return;
+    }
+    secrets.forEach(secret => addRegisteredServiceClientSecretRow(secret));
+}
+
+function extractRegisteredServiceClientSecrets(serviceDefinition) {
+    if (!serviceDefinition) {
+        return [];
+    }
+    let secrets = [];
+    if (Array.isArray(serviceDefinition.clientSecrets)) {
+        secrets = serviceDefinition.clientSecrets.length === 2
+            && typeof serviceDefinition.clientSecrets[0] === "string"
+            && Array.isArray(serviceDefinition.clientSecrets[1])
+            ? serviceDefinition.clientSecrets[1]
+            : serviceDefinition.clientSecrets;
+    } else if (serviceDefinition.clientSecret) {
+        secrets = [{
+            value: serviceDefinition.clientSecret,
+            expiration: serviceDefinition.clientSecretExpiration || ""
+        }];
+    }
+    return secrets
+        .filter(secret => secret && secret.value)
+        .map(secret => ({
+            value: secret.value,
+            ...parseRegisteredServiceClientSecretExpiration(secret.expiration)
+        }));
+}
+
+function parseRegisteredServiceClientSecretExpiration(expiration) {
+    if (!expiration) {
+        return {expirationDate: ""};
+    }
+    const value = String(expiration).trim();
+    if (/^\d+$/.test(value)) {
+        return formatRegisteredServiceClientSecretExpirationDate(new Date(Number(value) * 1000));
+    }
+    const isoDate = new Date(value.endsWith("Z") ? value : `${value}Z`);
+    if (!Number.isNaN(isoDate.getTime())) {
+        return formatRegisteredServiceClientSecretExpirationDate(isoDate);
+    }
+    const match = value.match(/^(\d{1,2}\/\d{1,2}\/\d{4})(?:\s+(\d{1,2}):(\d{2})(?:\s*([AP]M))?)?$/i);
+    if (match) {
+        return {
+            expirationDate: match[1]
+        };
+    }
+    return {expirationDate: ""};
+}
+
+function formatRegisteredServiceClientSecretExpirationDate(date) {
+    const month = String(date.getUTCMonth() + 1).padStart(2, "0");
+    const day = String(date.getUTCDate()).padStart(2, "0");
+    const year = date.getUTCFullYear();
+    return {
+        expirationDate: `${month}/${day}/${year}`
+    };
 }
 
 function createRegisteredServiceIdTokenExpirationPolicy() {

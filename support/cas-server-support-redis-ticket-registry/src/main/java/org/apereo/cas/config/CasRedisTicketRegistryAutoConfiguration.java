@@ -6,6 +6,7 @@ import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.features.CasFeatureModule;
 import org.apereo.cas.configuration.support.Beans;
 import org.apereo.cas.redis.core.CasRedisTemplate;
+import org.apereo.cas.redis.core.RedisClusterTopologyManager;
 import org.apereo.cas.redis.core.RedisModulesOperations;
 import org.apereo.cas.redis.core.RedisObjectFactory;
 import org.apereo.cas.redis.modules.LettuceRedisModulesOperations;
@@ -179,6 +180,14 @@ public class CasRedisTicketRegistryAutoConfiguration {
     @Configuration(value = "RedisTicketRegistryCoreConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
     static class RedisTicketRegistryCoreConfiguration {
+        @ConditionalOnMissingBean
+        @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+        public RedisClusterTopologyManager redisTicketClusterTopologyManager(
+            @Qualifier("redisTicketConnectionFactory")
+            final RedisConnectionFactory redisTicketConnectionFactory) {
+            return new RedisClusterTopologyManager(redisTicketConnectionFactory);
+        }
 
         @ConditionalOnMissingBean(name = "redisTicketConnectionFactory")
         @Bean
@@ -332,8 +341,7 @@ public class CasRedisTicketRegistryAutoConfiguration {
                 .get();
         }
     }
-
-
+    
     @Configuration(value = "RedisTicketRegistryModulesConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
     @ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.TicketRegistry, module = "redis-modules")
@@ -342,6 +350,7 @@ public class CasRedisTicketRegistryAutoConfiguration {
         @Bean
         @ConditionalOnMissingBean(name = RedisModulesOperations.BEAN_NAME)
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+        @ConditionalOnClass(LettuceRedisModulesOperations.class)
         public RedisModulesOperations redisModulesOperations(
             final CasConfigurationProperties casProperties,
             @Qualifier(CasSSLContext.BEAN_NAME)

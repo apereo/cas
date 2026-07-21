@@ -35,7 +35,6 @@ import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
 import org.apereo.cas.util.spring.boot.ConditionalOnMissingGraalVMNativeImage;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-import org.jspecify.annotations.NonNull;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.AutoConfigureOrder;
@@ -179,13 +178,13 @@ class CasCoreAuthenticationSupportConfiguration {
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public AuthenticationEventExecutionPlanConfigurer authenticationHandlerResolversExecutionPlanConfigurer(
             @Qualifier("byCredentialSourceAuthenticationHandlerResolver")
-            final ObjectProvider<@NonNull AuthenticationHandlerResolver> byCredentialSourceAuthenticationHandlerResolver,
+            final ObjectProvider<AuthenticationHandlerResolver> byCredentialSourceAuthenticationHandlerResolver,
             @Qualifier("registeredServiceAuthenticationHandlerResolver")
             final AuthenticationHandlerResolver registeredServiceAuthenticationHandlerResolver,
             @Qualifier("registeredServiceAuthenticationPolicyResolver")
             final AuthenticationPolicyResolver registeredServiceAuthenticationPolicyResolver,
             @Qualifier("groovyAuthenticationHandlerResolver")
-            final ObjectProvider<@NonNull AuthenticationHandlerResolver> groovyAuthenticationHandlerResolver) {
+            final ObjectProvider<AuthenticationHandlerResolver> groovyAuthenticationHandlerResolver) {
             return plan -> {
                 byCredentialSourceAuthenticationHandlerResolver.ifAvailable(plan::registerAuthenticationHandlerResolver);
                 plan.registerAuthenticationHandlerResolver(registeredServiceAuthenticationHandlerResolver);

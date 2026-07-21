@@ -18,7 +18,8 @@ dependencies {
     implementation project(":support:cas-server-support-mongo-core")
 
     api project(":api:cas-server-core-api-logout")
-
+    api project(":api:cas-server-core-api-ha")
+    
     implementation libraries.mongo
 
     testImplementation project(path: ":core:cas-server-core-tickets", configuration: "tests")

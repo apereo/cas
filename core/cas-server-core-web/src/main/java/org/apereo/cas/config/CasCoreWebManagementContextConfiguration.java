@@ -7,7 +7,6 @@ import org.apereo.cas.util.CollectionUtils;
 import lombok.val;
 import org.apereo.inspektr.common.web.ClientInfoExtractionOptions;
 import org.apereo.inspektr.common.web.ClientInfoThreadLocalFilter;
-import org.jspecify.annotations.NonNull;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.actuate.autoconfigure.web.ManagementContextConfiguration;
 import org.springframework.boot.actuate.autoconfigure.web.server.ConditionalOnManagementPort;
@@ -40,11 +39,11 @@ class CasCoreWebManagementContextConfiguration {
 
     @Bean
     @ConditionalOnMissingBean(name = "casClientInfoLoggingFilterManagementContext")
-    public FilterRegistrationBean<@NonNull ClientInfoThreadLocalFilter> casClientInfoLoggingFilterManagementContext(
+    public FilterRegistrationBean<ClientInfoThreadLocalFilter> casClientInfoLoggingFilterManagementContext(
         @Qualifier(TenantExtractor.BEAN_NAME)
         final TenantExtractor tenantExtractor,
         final CasConfigurationProperties casProperties) {
-        val bean = new FilterRegistrationBean<@NonNull ClientInfoThreadLocalFilter>();
+        val bean = new FilterRegistrationBean<ClientInfoThreadLocalFilter>();
         val audit = casProperties.getAudit().getEngine();
         val options = ClientInfoExtractionOptions.builder()
             .alternateLocalAddrHeaderName(audit.getAlternateClientAddrHeaderName())

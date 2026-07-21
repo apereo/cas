@@ -193,7 +193,7 @@ class OidcDynamicClientRegistrationEndpointControllerTests {
         @Test
         void verifyNoClientNameOperation() throws Throwable {
             try (val webServer = new MockWebServer(HttpStatus.OK)) {
-                webServer.responseBodyJson(List.of("https://client.example.org/callback", "https://client.example.org/callback2"));
+                webServer.responseBodyJson(List.of("https://client.example.org/callback5", "https://client.example.org/callback11"));
                 webServer.start();
 
                 val clientId = UUID.randomUUID().toString();
@@ -204,7 +204,7 @@ class OidcDynamicClientRegistrationEndpointControllerTests {
                         {
                             "application_type": "web",
                             "default_acr_values": ["mfa-duo", "mfa-gauth"],
-                            "redirect_uris": ["https://client.example.org/callback", "https://client.example.org/callback2"],
+                            "redirect_uris": ["https://client.example.org/callback5", "https://client.example.org/callback11"],
                             "client_name#ja-Japan-JP": "Japanese",
                             "logo_uri": "https://client.example.org/logo.png",
                             "policy_uri": "https://client.example.org/policy",

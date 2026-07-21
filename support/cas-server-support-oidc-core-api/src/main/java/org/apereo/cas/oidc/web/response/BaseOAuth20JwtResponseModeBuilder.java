@@ -11,7 +11,6 @@ import com.nimbusds.jwt.JWTClaimsSet;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-import org.jspecify.annotations.NonNull;
 import org.springframework.beans.factory.ObjectProvider;
 
 /**
@@ -23,7 +22,7 @@ import org.springframework.beans.factory.ObjectProvider;
 @RequiredArgsConstructor
 @Slf4j
 public abstract class BaseOAuth20JwtResponseModeBuilder implements OAuth20ResponseModeBuilder {
-    protected final ObjectProvider<@NonNull OidcConfigurationContext> configurationContext;
+    protected final ObjectProvider<OidcConfigurationContext> configurationContext;
 
     protected Date getExpirationDate() {
         val jwtExpiration = Beans.newDuration(configurationContext.getObject().getCasProperties()

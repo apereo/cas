@@ -14,7 +14,6 @@ import org.apache.commons.io.IOUtils;
 import org.apache.commons.text.StringEscapeUtils;
 import org.jose4j.jwk.JsonWebKey;
 import org.jose4j.jwk.JsonWebKeySet;
-import org.jspecify.annotations.NonNull;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -46,7 +45,7 @@ public class UmaRequestingPartyTokenJwksEndpointController extends BaseUmaEndpoi
     @Operation(
         summary = "Get JWKS used to sign RPTs",
         description = "Returns the JWKS used to sign RPTs")
-    public ResponseEntity<@NonNull String> getKeys(final HttpServletRequest request, final HttpServletResponse response) {
+    public ResponseEntity<String> getKeys(final HttpServletRequest request, final HttpServletResponse response) {
         try {
             val jwks = getUmaConfigurationContext().getCasProperties().getAuthn()
                 .getOauth().getUma().getRequestingPartyToken().getJwksFile().getLocation();

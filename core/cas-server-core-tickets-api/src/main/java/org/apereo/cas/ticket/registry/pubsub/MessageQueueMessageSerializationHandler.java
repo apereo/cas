@@ -17,7 +17,7 @@ import org.springframework.core.serializer.Serializer;
  * @since 7.0.0
  */
 @RequiredArgsConstructor
-public class MessageQueueMessageSerializationHandler implements Serializer<@NonNull Object>, Deserializer<@NonNull Object> {
+public class MessageQueueMessageSerializationHandler implements Serializer<Object>, Deserializer<Object> {
     private final CipherExecutor cipher;
 
     @Override

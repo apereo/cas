@@ -139,7 +139,8 @@ public class MultifactorAuthenticationUtils {
     public static Optional<MultifactorAuthenticationProvider> resolveProvider(
         final Map<String, MultifactorAuthenticationProvider> providers,
         final Collection<String> requestMfaMethod) {
-        return providers.values()
+        return providers
+            .values()
             .stream()
             .filter(provider -> requestMfaMethod.stream().filter(Objects::nonNull).anyMatch(provider::matches))
             .findFirst();

@@ -77,7 +77,7 @@ class OidcVerifiableCredentialOfferEndpointControllerTests extends AbstractOidcT
                 .secure(true)
                 .with(withHttpRequestProcessor())
                 .param(OAuth20Constants.CLIENT_ID, registeredService.getClientId())
-                .param(OAuth20Constants.CLIENT_SECRET, registeredService.getClientSecret())
+                .param(OAuth20Constants.CLIENT_SECRET, registeredService.getClientSecrets().getFirst().getValue())
                 .queryParam(OAuth20Constants.GRANT_TYPE, OAuth20GrantTypes.PRE_AUTHORIZED_CODE.getType())
                 .queryParam(OidcConstants.PRE_AUTHORIZED_CODE, preAuthorizedCode)
                 .queryParam(OidcConstants.TX_CODE, txCode)
@@ -111,7 +111,7 @@ class OidcVerifiableCredentialOfferEndpointControllerTests extends AbstractOidcT
                 .content(requestBody)
                 .with(withHttpRequestProcessor())
                 .param(OAuth20Constants.CLIENT_ID, registeredService.getClientId())
-                .param(OAuth20Constants.CLIENT_SECRET, registeredService.getClientSecret())
+                .param(OAuth20Constants.CLIENT_SECRET, registeredService.getClientSecrets().getFirst().getValue())
             )
             .andExpect(status().isOk())
             .andExpect(jsonPath("$.transactionId").exists())
@@ -131,7 +131,7 @@ class OidcVerifiableCredentialOfferEndpointControllerTests extends AbstractOidcT
                 .content(requestBody)
                 .with(withHttpRequestProcessor())
                 .param(OAuth20Constants.CLIENT_ID, registeredService.getClientId())
-                .param(OAuth20Constants.CLIENT_SECRET, registeredService.getClientSecret())
+                .param(OAuth20Constants.CLIENT_SECRET, registeredService.getClientSecrets().getFirst().getValue())
             )
             .andExpect(status().isUnauthorized())
             .andExpect(jsonPath("$.error").exists());
@@ -157,7 +157,7 @@ class OidcVerifiableCredentialOfferEndpointControllerTests extends AbstractOidcT
                 .contentType(MediaType.APPLICATION_JSON)
                 .with(withHttpRequestProcessor())
                 .param(OAuth20Constants.CLIENT_ID, registeredService.getClientId())
-                .param(OAuth20Constants.CLIENT_SECRET, registeredService.getClientSecret())
+                .param(OAuth20Constants.CLIENT_SECRET, registeredService.getClientSecrets().getFirst().getValue())
             )
             .andExpect(status().isBadRequest());
     }

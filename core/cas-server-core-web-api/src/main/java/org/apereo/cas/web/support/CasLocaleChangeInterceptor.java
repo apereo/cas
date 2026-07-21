@@ -24,11 +24,11 @@ import jakarta.servlet.http.HttpServletResponse;
  */
 @RequiredArgsConstructor
 public class CasLocaleChangeInterceptor extends LocaleChangeInterceptor {
-    protected final ObjectProvider<@NonNull CasConfigurationProperties> casProperties;
+    protected final ObjectProvider<CasConfigurationProperties> casProperties;
 
-    protected final ObjectProvider<@NonNull ArgumentExtractor> argumentExtractor;
+    protected final ObjectProvider<ArgumentExtractor> argumentExtractor;
 
-    protected final ObjectProvider<@NonNull ServicesManager> servicesManager;
+    protected final ObjectProvider<ServicesManager> servicesManager;
 
     @Setter
     private List<String> supportedFlows = new ArrayList<>();

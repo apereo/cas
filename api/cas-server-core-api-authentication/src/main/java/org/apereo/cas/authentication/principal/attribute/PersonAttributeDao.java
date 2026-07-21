@@ -149,8 +149,8 @@ public interface PersonAttributeDao extends Comparable<PersonAttributeDao>, Orde
      * @param filter the filter
      * @return the people with multivalued attributes
      */
-    default Set<PersonAttributes> getPeopleWithMultivaluedAttributes(final Map<String, List<Object>> query,
-                                                                     @Nullable final PersonAttributeDaoFilter filter) {
+    default @Nullable Set<PersonAttributes> getPeopleWithMultivaluedAttributes(final Map<String, List<Object>> query,
+                                                                               @Nullable final PersonAttributeDaoFilter filter) {
         return getPeopleWithMultivaluedAttributes(query, filter, Set.of());
     }
 
@@ -160,7 +160,7 @@ public interface PersonAttributeDao extends Comparable<PersonAttributeDao>, Orde
      * @param query the query
      * @return the people with multivalued attributes
      */
-    default Set<PersonAttributes> getPeopleWithMultivaluedAttributes(final Map<String, List<Object>> query) {
+    default @Nullable Set<PersonAttributes> getPeopleWithMultivaluedAttributes(final Map<String, List<Object>> query) {
         return getPeopleWithMultivaluedAttributes(query, PersonAttributeDaoFilter.alwaysChoose(), Set.of());
     }
 
@@ -171,8 +171,8 @@ public interface PersonAttributeDao extends Comparable<PersonAttributeDao>, Orde
      * @param resultPeople the result people
      * @return the people with multivalued attributes
      */
-    default Set<PersonAttributes> getPeopleWithMultivaluedAttributes(final Map<String, List<Object>> query,
-                                                                     final Set<PersonAttributes> resultPeople) {
+    default @Nullable Set<PersonAttributes> getPeopleWithMultivaluedAttributes(final Map<String, List<Object>> query,
+                                                                               final Set<PersonAttributes> resultPeople) {
         return getPeopleWithMultivaluedAttributes(query, PersonAttributeDaoFilter.alwaysChoose(), resultPeople);
     }
 
@@ -293,5 +293,14 @@ public interface PersonAttributeDao extends Comparable<PersonAttributeDao>, Orde
     default PersonAttributeDao markDisposable() {
         putTag(DisposableBean.class.getName(), Boolean.TRUE);
         return this;
+    }
+
+    /**
+     * To configuration map.
+     *
+     * @return the map
+     */
+    default Map<String, Object> toConfiguration() {
+        return Map.of();
     }
 }

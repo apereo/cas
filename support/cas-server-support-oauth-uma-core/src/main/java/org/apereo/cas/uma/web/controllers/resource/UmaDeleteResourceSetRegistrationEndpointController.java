@@ -58,10 +58,10 @@ public class UmaDeleteResourceSetRegistrationEndpointController extends BaseUmaE
             getUmaConfigurationContext().getUmaResourceSetRepository().remove(resourceSet);
             return new ResponseEntity(CollectionUtils.wrap("code", HttpStatus.NO_CONTENT, "resourceId", resourceSet.getId()), HttpStatus.OK);
         } catch (final InvalidResourceSetException e) {
-            return new ResponseEntity(buildResponseEntityErrorModel(e), HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>(buildResponseEntityErrorModel(e), HttpStatus.BAD_REQUEST);
         } catch (final Exception e) {
             LoggingUtils.error(LOGGER, e);
         }
-        return new ResponseEntity("Unable to complete the delete request.", HttpStatus.BAD_REQUEST);
+        return new ResponseEntity<>("Unable to complete the delete request.", HttpStatus.BAD_REQUEST);
     }
 }

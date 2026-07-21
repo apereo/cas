@@ -50,11 +50,12 @@ docker run --quiet  -d --rm --name keycloak \
   start-dev --import-realm --log-level=INFO
 docker logs -f keycloak &
 printgreen "Waiting for Keycloak docker container to prepare..."
-sleep 15
+sleep 20
 docker ps | grep "keycloak"
 retVal=$?
 if [ $retVal == 0 ]; then
     printgreen "Keycloak docker container is running."
+    curl -k http://localhost:8988/realms/cas/.well-known/openid-configuration | jq
 else
     printred "Keycloak docker container failed to start."
     exit $retVal

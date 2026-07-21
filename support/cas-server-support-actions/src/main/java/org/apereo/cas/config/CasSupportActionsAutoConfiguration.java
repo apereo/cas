@@ -65,7 +65,6 @@ import org.apereo.cas.web.flow.resolver.CasDelegatingWebflowEventResolver;
 import org.apereo.cas.web.flow.resolver.CasWebflowEventResolver;
 import org.apereo.cas.web.flow.resolver.impl.CasWebflowEventResolutionConfigurationContext;
 import org.apereo.cas.web.support.ArgumentExtractor;
-import org.jspecify.annotations.NonNull;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
@@ -456,7 +455,7 @@ public class CasSupportActionsAutoConfiguration {
             final CasConfigurationProperties casProperties,
             final ConfigurableApplicationContext applicationContext,
             @Qualifier(ScriptResourceCacheManager.BEAN_NAME)
-            final ObjectProvider<@NonNull ScriptResourceCacheManager> scriptResourceCacheManager,
+            final ObjectProvider<ScriptResourceCacheManager> scriptResourceCacheManager,
             @Qualifier(ServicesManager.BEAN_NAME)
             final ServicesManager servicesManager) {
             return WebflowActionBeanSupplier.builder()
@@ -680,7 +679,7 @@ public class CasSupportActionsAutoConfiguration {
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public Action populateSpringSecurityContextAction(
             @Qualifier("securityContextRepository")
-            final ObjectProvider<@NonNull SecurityContextRepository> securityContextRepository,
+            final ObjectProvider<SecurityContextRepository> securityContextRepository,
             final CasConfigurationProperties casProperties,
             final ConfigurableApplicationContext applicationContext) {
             return WebflowActionBeanSupplier.builder()
@@ -719,7 +718,7 @@ public class CasSupportActionsAutoConfiguration {
         @ConditionalOnMissingBean(name = CasWebflowConstants.ACTION_ID_PREPARE_ACCOUNT_PROFILE)
         public Action prepareAccountProfileViewAction(
             @Qualifier(GeoLocationService.BEAN_NAME)
-            final ObjectProvider<@NonNull GeoLocationService> geoLocationService,
+            final ObjectProvider<GeoLocationService> geoLocationService,
             final ConfigurableApplicationContext applicationContext,
             @Qualifier(AuditTrailExecutionPlan.BEAN_NAME)
             final AuditTrailExecutionPlan auditTrailExecutionPlan,

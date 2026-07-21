@@ -50,6 +50,19 @@ public interface OidcConstants {
      * Authentication method reference passed in the ID token.
      */
     String AMR = "amr";
+
+    /**
+     * JTI claim.
+     */
+    String JTI = "jti";
+    /**
+     * Issued at claim.
+     */
+    String IAT = "iat";
+    /**
+     * Not before claim.
+     */
+    String NBF = "nbf";
     /**
      * Audience claim.
      */
@@ -365,10 +378,10 @@ public interface OidcConstants {
         OFFLINE_ACCESS("offline_access");
 
         private final String scope;
-
-
+        
         public String getFriendlyName() {
             return WordUtils.capitalize(this.scope.replace('_', ' '));
         }
     }
+    
 }

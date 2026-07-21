@@ -6,16 +6,23 @@ import org.apereo.cas.mock.MockTicketGrantingTicket;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.support.oauth.authenticator.Authenticators;
+import org.apereo.cas.support.oauth.web.flow.BaseOAuth20WebflowTests;
+import org.apereo.cas.ticket.TicketGrantingTicket;
+import org.apereo.cas.ticket.device.OAuth20DeviceUserCode;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.web.cookie.CasCookieBuilder;
 import lombok.val;
+import org.apereo.inspektr.common.web.ClientInfo;
+import org.apereo.inspektr.common.web.ClientInfoHolder;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.pac4j.core.profile.CommonProfile;
+import org.pac4j.core.profile.ProfileManager;
 import org.pac4j.core.util.Pac4jConstants;
 import org.pac4j.jee.context.JEEContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.context.annotation.Import;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
@@ -31,6 +38,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.3.0
  */
 @Tag("OAuthWeb")
+@Import(BaseOAuth20WebflowTests.SharedTestConfiguration.class)
 class OAuth20DeviceUserCodeApprovalEndpointControllerTests extends AbstractOAuth20Tests {
     @Autowired
     @Qualifier(CasCookieBuilder.BEAN_NAME_TICKET_GRANTING_COOKIE_BUILDER)
@@ -59,24 +67,47 @@ class OAuth20DeviceUserCodeApprovalEndpointControllerTests extends AbstractOAuth
 
     @Test
     void verifyApproval() throws Throwable {
-        val devCode = defaultDeviceTokenFactory.createDeviceCode(RegisteredServiceTestUtils.getService());
-        val uc = defaultDeviceUserCodeFactory.createDeviceUserCode(devCode.getService());
-        ticketRegistry.addTicket(uc);
-        var result = performOAuthRequest(prepareDeviceApprovalRequest(HttpMethod.POST, uc.getId()));
+        val devCode = defaultDeviceTokenFactory.createDeviceCode(RegisteredServiceTestUtils.getService(), List.of("read", "write"));
+        var userCode = defaultDeviceUserCodeFactory.createDeviceUserCode(devCode.getService());
+        ticketRegistry.addTicket(userCode);
+        var result = performOAuthRequest(prepareDeviceApprovalRequest(HttpMethod.POST, userCode.getId()));
         assertEquals(HttpStatus.FOUND.value(), result.getResponse().getStatus());
         assertNotNull(result.getResponse().getRedirectedUrl());
         assertTrue(result.getResponse().getRedirectedUrl().contains(OAuth20Constants.CALLBACK_AUTHORIZE_URL));
         assertTrue(result.getResponse().getRedirectedUrl().contains(OAuth20DeviceUserCodeApprovalEndpointController.PARAMETER_USER_CODE));
-        assertFalse(uc.isUserCodeApproved());
+        assertFalse(userCode.isUserCodeApproved());
 
-        result = performOAuthRequest(prepareDeviceApprovalRequest(HttpMethod.POST, uc.getId()));
+        var request = prepareDeviceApprovalRequest(HttpMethod.POST, userCode.getId());
+        result = performOAuthRequest(request);
         assertEquals(HttpStatus.FOUND.value(), result.getResponse().getStatus());
         assertNotNull(result.getResponse().getRedirectedUrl());
         assertTrue(result.getResponse().getRedirectedUrl().contains(OAuth20DeviceUserCodeApprovalEndpointController.PARAMETER_USER_CODE));
+
+        val context = new JEEContext(request, new MockHttpServletResponse());
+        val profileManager = new ProfileManager(context, configurationContext.getSessionStore());
+
+        ClientInfoHolder.setClientInfo(ClientInfo.from(request));
+
+        val principal = RegisteredServiceTestUtils.getPrincipal();
+        val ticketGrantingTicket = new MockTicketGrantingTicket(principal);
+        ticketRegistry.addTicket(ticketGrantingTicket);
+        configurationContext.getTicketGrantingTicketCookieGenerator().addCookie(
+            request, result.getResponse(), ticketGrantingTicket.getId());
+        val profile = new CommonProfile();
+        profile.setId(UUID.randomUUID().toString());
+        profile.addAttribute(TicketGrantingTicket.class.getName(), ticketGrantingTicket);
+        profileManager.save(true, profile, false);
+
+        request.setCookies(result.getResponse().getCookies());
+
+        performOAuthRequest(request);
+        userCode = ticketRegistry.getTicket(userCode.getId(), OAuth20DeviceUserCode.class);
+        assertTrue(userCode.isUserCodeApproved());
+        assertNotNull(userCode.getAuthentication());
     }
 
     private MockHttpServletRequest prepareDeviceApprovalRequest(final HttpMethod method, final String userCode) throws Exception {
-        val request = new MockHttpServletRequest(method.name(), CONTEXT + OAuth20Constants.DEVICE_AUTHZ_URL);
+        val request = new MockHttpServletRequest(method.name(), AbstractOAuth20Tests.CONTEXT + OAuth20Constants.DEVICE_AUTHZ_URL);
         val session = new MockHttpSession();
         request.setSession(session);
         request.addHeader(HttpHeaders.USER_AGENT, "MSIE");

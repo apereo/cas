@@ -20,7 +20,8 @@ dependencies {
     implementation project(":support:cas-server-support-hazelcast")
 
     api project(":api:cas-server-core-api-util")
-
+    api project(":api:cas-server-core-api-ha")
+    
     implementation libraries.hazelcast
     
     testImplementation project(path: ":core:cas-server-core-authentication", configuration: "tests")

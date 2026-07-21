@@ -56,7 +56,7 @@ class AccountSingleSignOnSession implements Serializable {
                 .get(ClientInfoAuthenticationMetaDataPopulator.ATTRIBUTE_CLIENT_IP_ADDRESS))
             .map(Object::toString)
             .orElse(StringUtils.EMPTY);
-        val dateFormat = new ISOStandardDateFormat();
+        val dateFormat = new ISOStandardDateFormat(ZoneOffset.UTC);
         this.authenticationDate = dateFormat.format(DateTimeUtils.dateOf(ticket.getAuthentication().getAuthenticationDate()));
     }
 }

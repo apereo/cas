@@ -2,12 +2,14 @@ package org.apereo.cas.ticket.registry;
 
 import module java.base;
 import org.apereo.cas.config.CasKafkaTicketRegistryAutoConfiguration;
+import org.apereo.cas.ha.ClusterTopologyManager;
 import org.apereo.cas.ticket.registry.events.KafkaMessagePublishedEvent;
 import org.apereo.cas.ticket.registry.pubsub.queue.QueueableTicketRegistryMessageReceivedEvent;
 import org.apereo.cas.util.crypto.CipherExecutor;
 import org.apereo.cas.util.junit.EnabledIfListeningOnPort;
 import lombok.Getter;
 import lombok.val;
+import org.junit.jupiter.api.RepeatedTest;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.parallel.Execution;
 import org.junit.jupiter.api.parallel.ExecutionMode;
@@ -21,6 +23,7 @@ import org.springframework.context.annotation.Import;
 import org.springframework.context.event.EventListener;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.util.Assert;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * This is {@link KafkaTicketRegistryTests}.
@@ -52,11 +55,21 @@ class KafkaTicketRegistryTests extends BaseTicketRegistryTests {
     @Qualifier(CipherExecutor.BEAN_NAME_TICKET_REGISTRY_CIPHER_EXECUTOR)
     private CipherExecutor messageQueueCipherExecutor;
 
+    @Autowired
+    @Qualifier("kafkaTicketRegistryClusterTopologyManager")
+    private ClusterTopologyManager kafkaTicketRegistryClusterTopologyManager;
+
     @Override
     protected CipherExecutor setupCipherExecutor() {
         return this.messageQueueCipherExecutor;
     }
-
+    
+    @RepeatedTest(1)
+    void verifyOperation() throws Exception {
+        val results = kafkaTicketRegistryClusterTopologyManager.discoverMembers();
+        assertFalse(results.isEmpty());
+    }
+    
     @TestConfiguration(proxyBeanMethods = false)
     static class KafkaTicketRegistryTestConfiguration {
         private final CountDownLatch latch = new CountDownLatch(1);
