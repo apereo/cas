@@ -4187,14 +4187,19 @@ ext.libraries = [
                     exclude(group: "org.webjars", module: "jquery")
                     exclude(group: "org.webjars.npm", module: "mermaid-js__parser")
                     exclude(group: "org.webjars.npm", module: "uuid")
+                    exclude(group: "org.webjars.npm", module: "cytoscape-cose-bilkent")
+                    exclude(group: "org.webjars.npm", module: "d3-sankey")
+                    exclude(group: "org.webjars.npm", module: "d3-dsv")
                 },
-                dependencies.create("org.webjars.npm:cose-base:2.2.0") {
+                dependencies.create(libs.cytoscape.cose.bilkent.get()) {
+                    exclude(group: "org.webjars.npm", module: "cose-base")
                 },
-                dependencies.create("org.webjars.npm:d3-shape:3.2.0") {
+                dependencies.create(libs.d3.sankey.get()) {
+                    exclude(group: "org.webjars.npm", module: "d3-array")
+                    exclude(group: "org.webjars.npm", module: "d3-shape")
                 },
-                dependencies.create("org.webjars.npm:commander:8.3.0") {
-                },
-                dependencies.create("org.webjars.npm:d3-array:3.2.4") {
+                dependencies.create(libs.d3.dsv.get()) {
+                    exclude(group: "org.webjars.npm", module: "commander")
                 },
                 dependencies.create(libs.trumbowyg.get()) {
                     exclude(group: "org.webjars", module: "jquery")
