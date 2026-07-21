@@ -32,7 +32,6 @@ import org.apereo.cas.web.report.CasPersonDirectoryEndpoint;
 import com.github.benmanes.caffeine.cache.Caffeine;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-import org.jspecify.annotations.NonNull;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -68,9 +67,9 @@ class CasPersonDirectoryConfiguration {
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public CasPersonDirectoryEndpoint casPersonDirectoryEndpoint(
             @Qualifier("cachingAttributeRepository")
-            final ObjectProvider<@NonNull PersonAttributeDao> cachingAttributeRepository,
+            final ObjectProvider<PersonAttributeDao> cachingAttributeRepository,
             @Qualifier(PersonDirectoryAttributeRepositoryPlan.BEAN_NAME)
-            final ObjectProvider<@NonNull PersonDirectoryAttributeRepositoryPlan> attributeRepositoryPlan,
+            final ObjectProvider<PersonDirectoryAttributeRepositoryPlan> attributeRepositoryPlan,
             final ConfigurableApplicationContext applicationContext,
             final CasConfigurationProperties casProperties) {
             return new CasPersonDirectoryEndpoint(casProperties, applicationContext,
@@ -137,7 +136,7 @@ class CasPersonDirectoryConfiguration {
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public PersonDirectoryAttributeRepositoryPlan personDirectoryAttributeRepositoryPlan(
             final List<PersonDirectoryAttributeRepositoryPlanConfigurer> configurers,
-            final ObjectProvider<@NonNull List<PersonDirectoryAttributeRepositoryCustomizer>> customizers) {
+            final ObjectProvider<List<PersonDirectoryAttributeRepositoryCustomizer>> customizers) {
             val plan = new DefaultPersonDirectoryAttributeRepositoryPlan(
                 Optional.ofNullable(customizers.getIfAvailable()).orElseGet(ArrayList::new));
             configurers.forEach(cfg -> cfg.configureAttributeRepositoryPlan(plan));

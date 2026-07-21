@@ -4,6 +4,8 @@ import module java.base;
 import org.apereo.cas.authentication.CasSSLContext;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.features.CasFeatureModule;
+import org.apereo.cas.ha.ClusterTopologyManager;
+import org.apereo.cas.mongo.MongoDbClusterTopologyManager;
 import org.apereo.cas.mongo.MongoDbConnectionFactory;
 import org.apereo.cas.ticket.TicketCatalog;
 import org.apereo.cas.ticket.registry.MongoDbTicketRegistry;
@@ -68,5 +70,14 @@ class MongoDbTicketRegistryConfiguration {
         val factory = new MongoDbConnectionFactory(casSslContext.getSslContext());
         val mongo = casProperties.getTicket().getRegistry().getMongo();
         return factory.buildMongoTemplate(mongo).asMongoTemplate();
+    }
+
+    @Bean
+    @ConditionalOnMissingBean(name = "mongoDbTicketClusterTopologyManager")
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+    public ClusterTopologyManager mongoDbTicketClusterTopologyManager(
+        @Qualifier("mongoDbTicketRegistryTemplate")
+        final MongoOperations mongoDbTicketRegistryTemplate) {
+        return new MongoDbClusterTopologyManager(mongoDbTicketRegistryTemplate);
     }
 }

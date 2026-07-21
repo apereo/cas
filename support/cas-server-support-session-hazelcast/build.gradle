@@ -13,6 +13,8 @@ dependencies {
     implementation project(":core:cas-server-core-configuration-api")
     implementation project(":core:cas-server-core-util-api")
 
+    api project(":api:cas-server-core-api-ha")
+    
     implementation libraries.springsession
     implementation libraries.springsessionhazelcast
     implementation libraries.hazelcast

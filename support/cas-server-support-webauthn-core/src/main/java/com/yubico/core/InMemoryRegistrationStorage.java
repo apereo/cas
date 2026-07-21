@@ -10,13 +10,12 @@ import com.github.benmanes.caffeine.cache.Caffeine;
 import com.yubico.data.CredentialRegistration;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
-import org.jspecify.annotations.NonNull;
 
 @Slf4j
 @Getter
 public class InMemoryRegistrationStorage extends BaseWebAuthnCredentialRepository {
 
-    private final Cache<@NonNull String, Set<CredentialRegistration>> storage = Caffeine.newBuilder()
+    private final Cache<String, Set<CredentialRegistration>> storage = Caffeine.newBuilder()
         .maximumSize(5000)
         .expireAfterAccess(1, TimeUnit.DAYS)
         .build();

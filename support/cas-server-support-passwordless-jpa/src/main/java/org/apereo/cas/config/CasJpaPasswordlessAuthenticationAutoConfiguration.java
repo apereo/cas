@@ -18,7 +18,6 @@ import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
 import org.apereo.cas.util.thread.Cleanable;
 import lombok.RequiredArgsConstructor;
 import lombok.val;
-import org.jspecify.annotations.NonNull;
 import org.springframework.beans.factory.FactoryBean;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
@@ -54,7 +53,7 @@ public class CasJpaPasswordlessAuthenticationAutoConfiguration {
 
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-        public FactoryBean<@NonNull EntityManagerFactory> passwordlessEntityManagerFactory(
+        public FactoryBean<EntityManagerFactory> passwordlessEntityManagerFactory(
             final CasConfigurationProperties casProperties,
             @Qualifier("jpaPasswordlessVendorAdapter") final JpaVendorAdapter jpaPasswordlessVendorAdapter,
             @Qualifier("passwordlessDataSource") final DataSource passwordlessDataSource,

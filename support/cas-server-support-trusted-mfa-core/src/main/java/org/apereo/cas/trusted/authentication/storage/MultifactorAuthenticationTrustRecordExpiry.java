@@ -15,7 +15,7 @@ import org.jspecify.annotations.NonNull;
  * @since 7.0.0
  */
 @Slf4j
-public class MultifactorAuthenticationTrustRecordExpiry implements Expiry<@NonNull String, @NonNull MultifactorAuthenticationTrustRecord> {
+public class MultifactorAuthenticationTrustRecordExpiry implements Expiry<String, @NonNull MultifactorAuthenticationTrustRecord> {
 
     @Override
     public long expireAfterCreate(

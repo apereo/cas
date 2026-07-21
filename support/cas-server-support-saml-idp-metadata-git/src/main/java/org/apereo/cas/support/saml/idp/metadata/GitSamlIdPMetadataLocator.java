@@ -11,7 +11,6 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.jspecify.annotations.NonNull;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.core.io.Resource;
@@ -27,7 +26,7 @@ public class GitSamlIdPMetadataLocator extends FileSystemSamlIdPMetadataLocator 
     private final GitRepository gitRepository;
 
     public GitSamlIdPMetadataLocator(final GitRepository gitRepository,
-                                     final Cache<@NonNull String, SamlIdPMetadataDocument> metadataCache,
+                                     final Cache<String, SamlIdPMetadataDocument> metadataCache,
                                      final CipherExecutor cipherExecutor,
                                      final ConfigurableApplicationContext applicationContext) {
         super(cipherExecutor, gitRepository.getRepositoryDirectory(), metadataCache, applicationContext);

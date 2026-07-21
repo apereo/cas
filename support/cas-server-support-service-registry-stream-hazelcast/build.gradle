@@ -12,6 +12,8 @@ ext {
 dependencies {
     implementation libraries.hazelcast
 
+    api project(":api:cas-server-core-api-ha")
+    
     implementation project(":core:cas-server-core-services")
     implementation project(":core:cas-server-core-services-registry")
     implementation project(":core:cas-server-core-services-api")

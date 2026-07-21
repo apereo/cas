@@ -14,7 +14,6 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.io.IOUtils;
 import org.jooq.lambda.Unchecked;
-import org.jspecify.annotations.NonNull;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.boot.actuate.endpoint.Access;
 import org.springframework.boot.actuate.endpoint.annotation.Endpoint;
@@ -47,12 +46,12 @@ public class MultifactorAuthenticationTrustedDevicesReportEndpoint extends BaseC
     private static final ObjectMapper MAPPER = JacksonObjectMapperFactory.builder()
         .defaultTypingEnabled(false).build().toObjectMapper();
 
-    private final ObjectProvider<@NonNull MultifactorAuthenticationTrustStorage> mfaTrustEngine;
+    private final ObjectProvider<MultifactorAuthenticationTrustStorage> mfaTrustEngine;
 
     public MultifactorAuthenticationTrustedDevicesReportEndpoint(
         final CasConfigurationProperties casProperties,
         final ConfigurableApplicationContext applicationContext,
-        final ObjectProvider<@NonNull MultifactorAuthenticationTrustStorage> mfaTrustEngine) {
+        final ObjectProvider<MultifactorAuthenticationTrustStorage> mfaTrustEngine) {
         super(casProperties, applicationContext);
         this.mfaTrustEngine = mfaTrustEngine;
     }
@@ -151,7 +150,7 @@ public class MultifactorAuthenticationTrustedDevicesReportEndpoint extends BaseC
     @ResponseBody
     @Operation(summary = "Export all device records as a zip file for a given username",
         parameters = @Parameter(name = "username", required = true, in = ParameterIn.PATH, description = "The username to look up"))
-    public ResponseEntity<@NonNull Resource> exportUserDevices(@PathVariable final String username) {
+    public ResponseEntity<Resource> exportUserDevices(@PathVariable final String username) {
         val accounts = mfaTrustEngine.getObject().get(username);
         val resource = CompressionUtils.toZipFile(accounts.stream(),
             Unchecked.function(entry -> {
@@ -175,7 +174,7 @@ public class MultifactorAuthenticationTrustedDevicesReportEndpoint extends BaseC
     @GetMapping(path = "/export", produces = MediaType.APPLICATION_OCTET_STREAM_VALUE)
     @ResponseBody
     @Operation(summary = "Export all device records as a zip file")
-    public ResponseEntity<@NonNull Resource> export() {
+    public ResponseEntity<Resource> export() {
         val accounts = mfaTrustEngine.getObject().getAll();
         val resource = CompressionUtils.toZipFile(accounts.stream(),
             Unchecked.function(entry -> {

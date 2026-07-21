@@ -5,6 +5,8 @@ import org.apereo.cas.AbstractOAuth20Tests;
 import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.support.oauth.OAuth20ResponseTypes;
 import org.apereo.cas.support.oauth.services.OAuthRegisteredService;
+import org.apereo.cas.support.oauth.services.OAuthRegisteredServiceClientSecret;
+import org.apereo.cas.util.CollectionUtils;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
@@ -32,7 +34,7 @@ class OAuth20IdTokenResponseTypeAuthorizationRequestValidatorTests extends Abstr
         val service = new OAuthRegisteredService();
         service.setName("OAuth");
         service.setClientId("client");
-        service.setClientSecret("secret");
+        service.setClientSecrets(CollectionUtils.wrapList(OAuthRegisteredServiceClientSecret.withoutExpiration("secret")));
         service.setServiceId("https://callback.example.org");
         servicesManager.save(service);
 

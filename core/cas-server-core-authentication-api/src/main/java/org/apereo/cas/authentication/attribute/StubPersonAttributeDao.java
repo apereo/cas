@@ -73,4 +73,11 @@ public class StubPersonAttributeDao extends BasePersonAttributeDao {
     public Map<String, List<Object>> getBackingMap() {
         return new HashMap(this.backingPerson.getAttributes());
     }
+
+    @Override
+    public Map<String, Object> toConfiguration() {
+        val config = super.toConfiguration();
+        config.put("attributes", backingPerson.getAttributes());
+        return config;
+    }
 }

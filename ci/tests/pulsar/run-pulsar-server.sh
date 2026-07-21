@@ -13,7 +13,7 @@ function printgreen() {
   printf "☘️  ${GREEN}$1${ENDCOLOR}\n"
 }
 
-echo "Running Pulsar docker container..."
+printgreen "Running Pulsar docker container..."
 export DOCKER_IMAGE="apachepulsar/pulsar:4.2.3"
 docker stop pulsar-server || true
 

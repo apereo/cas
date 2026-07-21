@@ -92,7 +92,7 @@ class DefaultCasSimpleMultifactorAuthenticationServiceGenerationTests {
 
         @Override
         public CasSimpleMultifactorAuthenticationTicket create(final Service service, final Map<String, Serializable> properties) {
-            return new CasSimpleMultifactorAuthenticationTicketImpl(CasSimpleMultifactorAuthenticationTicket.PREFIX + "-" + sequence++,
+            return new CasSimpleMultifactorAuthenticationTicketImpl(CasSimpleMultifactorAuthenticationTicket.PREFIX + '-' + sequence++,
                 NeverExpiresExpirationPolicy.INSTANCE, service, properties);
         }
 

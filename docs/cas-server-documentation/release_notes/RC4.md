@@ -6,7 +6,7 @@ category: Planning
 
 {% include variables.html %}
 
-# 8.0.0-RC4 Release Notes
+# 8.1.0-RC4 Release Notes
 
 We strongly recommend that you take advantage of the release candidates as they come out. Waiting for a `GA` release is only going to set
 you up for unpleasant surprises. A `GA` is [a tag and nothing more](https://apereo.github.io/2017/03/08/the-myth-of-ga-rel/). Note
@@ -58,87 +58,9 @@ to build and verify Graal VM native images and we plan to extend the coverage to
 ### Testing Strategy
 
 The collection of end-to-end [browser tests based on Puppeteer](../../developer/Test-Process.html) continue to grow to cover more use cases
-and scenarios. At the moment, total number of jobs stands at approximately `545` distinct scenarios. The overall
+and scenarios. At the moment, total number of jobs stands at approximately `556` distinct scenarios. The overall
 test coverage of the CAS codebase is approximately `94%`.
 
-### Spring Boot 4.1
-
-CAS is now built with Spring Boot `4.1.x`. This is a major platform upgrade that affects almost all aspects of the codebase
-including many of the third-party core libraries used by CAS as well as some CAS functionality.
-
-### Gradle 9.5
-
-CAS is now built with Gradle `9.5.x` and the build process has been updated to use the latest Gradle
-features and capabilities.
-
-### Maven Central Publications
- 
-Javadoc artifacts packaged as `{cas-server-module}-javadoc.jar` are no longer
-published to Maven Central, in order to reduce the final upload size and speed up the process. 
-If you require Javadoc artifacts, you may need to build them locally from the source code. Skipping
-such artifacts reduces the final upload size by approximately `1.6GB`. 
-
-<div class="alert alert-warning">:warning: <strong>Pay Attention</strong><p>
-This is unlikely to affect you, but if you have a development/deployment environment that builds
-or relies on Javadoc artifacts or wants to link to them via an external dashboard, 
-you may need to take action to produce Javadocs on your own.</p></div>
-
-### JSpecify & NullAway
-
-CAS codebase is now annotated with [JSpecify](https://jspecify.dev/) annotations to indicate nullness contracts on method parameters,
-return types and fields. We will gradually extend the coverage of such annotations across the entire codebase in future releases
-and will integrate the Gradle build tool with tools such as [NullAway](https://github.com/uber/NullAway) to prevent nullness contract violations
-during compile time.
-  
-### OpenID Connect & Verifiable Credentials
-
-An [initial implementation](../authentication/OIDC-Authentication-Verifiable-Credentials.html) 
-of OpenID Connect Verifiable Credentials (OIDC4VCI) is now available in CAS.
-
-### OpenID Connect Federation
-
-The OpenID Federation server support is now in 
-its [own dedicated module](../authentication/OIDC-Authentication-Federation.html). Functionality here
-will eventually be expanded to allow CAS to participate in OpenID connect federations.
-
-Furthermore, when it comes to OpenID Connect client support and delegation, there are now small improvements 
-in place to OpenID Federation protocol and its support for authentication delegation for OIDC clients.
-See [this guide](../integration/Delegate-Authentication-Generic-OpenID-Connect.html) for more details.
-
-### Account Registration
-
-[Account registration flow](../registration/Account-Registration-Overview.html) will automatically 
-establish a single sign-on session once the process and flow
-is complete. It may also redirect back to the original application if the registration process 
-was initiated from a protected resource.
- 
-### Delegated Authentication & Impersonation
-
-Delegated authentication flows now support impersonation of the authenticated user, allowing
-the user to go through the impersonation account selection process after having successfully
-authenticated with the external identity provider. This behavior, off by default, needs to be
-enabled in CAS configuration settings.
-
-See [this guide](../integration/Delegate-Authentication.html) for more details.
- 
-### reCAPTCHA per Application
-
-Previously, [reCAPTCHA support](../integration/Configuring-Google-reCAPTCHA.html) was only available at the 
-global level and could only be turned off for specific applications. Starting with this release, reCAPTCHA 
-can also now be enabled and configured on a per-application basis without requiring the server to enable the feature globally, 
-allowing for more granular control over when and where reCAPTCHA challenges are presented to users.
-
-### Palantir Admin Dashboard
-
-[Palantir](../installation/Admin-Dashboard.html) is given the ability to create, edit or 
-delete [attribute definitions](../integration/Attribute-Definitions.html). Furthermore, there is now 
-limited support for password management operations such as [reset requests](../password_management/Password-Management-Reset.html) 
-and [password history management](../password_management/Password-Management-History.html) with additional REST-based endpoints
-to support such operations for the dashboard user interface. 
 
 ## Other Stuff
               
-- Claims assigned to OpenID Connect custom scopes can now be overridden per client application.
-- Minor Gradle build improvements to better handle cacheability of build artifacts.
-- Internal refactoring of [attribute definitions](../integration/Attribute-Definitions.html), allowing participating stores to honor attribute definition expiration policies.
-- Minor enhancements to [FIDO2 WebAuthn](../mfa/FIDO2-WebAuthn-Authentication.html) support to better parse FIDO metadata when additional fields are present in the metadata response.

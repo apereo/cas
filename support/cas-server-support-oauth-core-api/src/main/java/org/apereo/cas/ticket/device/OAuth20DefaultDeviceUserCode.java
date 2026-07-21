@@ -1,6 +1,7 @@
 package org.apereo.cas.ticket.device;
 
 import module java.base;
+import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.ticket.AbstractTicket;
 import org.apereo.cas.ticket.ExpirationPolicy;
@@ -24,7 +25,9 @@ public class OAuth20DefaultDeviceUserCode extends AbstractTicket implements OAut
     private boolean userCodeApproved;
 
     private final Service service;
-    
+
+    private Authentication authentication;
+
     public OAuth20DefaultDeviceUserCode(final String id, final Service service, final ExpirationPolicy expirationPolicy) {
         super(id, expirationPolicy);
         this.service = service;

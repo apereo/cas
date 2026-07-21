@@ -20,8 +20,9 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
-import org.springframework.mock.web.MockHttpServletRequest;
 import static org.junit.jupiter.api.Assertions.*;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 /**
  * This is {@link SamlValidateEndpointTests}.
@@ -46,10 +47,6 @@ import static org.junit.jupiter.api.Assertions.*;
 @ExtendWith(CasTestExtension.class)
 class SamlValidateEndpointTests extends AbstractCasEndpointTests {
     @Autowired
-    @Qualifier("samlValidateEndpoint")
-    private SamlValidateEndpoint samlValidateEndpoint;
-
-    @Autowired
     @Qualifier("samlProtocolEndpointConfigurer")
     private CasWebSecurityConfigurer<Void> samlProtocolEndpointConfigurer;
 
@@ -61,20 +58,23 @@ class SamlValidateEndpointTests extends AbstractCasEndpointTests {
     @Test
     void verifyOperation() throws Throwable {
         val service = CoreAuthenticationTestUtils.getService();
-        assertNotNull(samlValidateEndpoint);
-        val request = new MockHttpServletRequest();
-        request.addHeader(HttpHeaders.CONTENT_TYPE, MediaType.TEXT_XML_VALUE);
-        val results = samlValidateEndpoint.handle(request, "sample", "sample", service.getId());
-        assertNotNull(results);
+        mockMvc.perform(post("/actuator/samlValidate")
+                .header(HttpHeaders.CONTENT_TYPE, MediaType.TEXT_XML_VALUE)
+                .contentType(MediaType.TEXT_XML)
+                .param("username", "sample")
+                .param("password", "sample")
+                .param("service", service.getId()))
+            .andExpect(status().isOk());
     }
 
     @Test
     void verifyWithoutPassword() throws Throwable {
         val service = CoreAuthenticationTestUtils.getService();
-        assertNotNull(samlValidateEndpoint);
-        val request = new MockHttpServletRequest();
-        request.addHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE);
-        val results = samlValidateEndpoint.handle(request, "sample", null, service.getId());
-        assertNotNull(results);
+        mockMvc.perform(post("/actuator/samlValidate")
+                .header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
+                .contentType(MediaType.APPLICATION_JSON)
+                .param("username", "sample")
+                .param("service", service.getId()))
+            .andExpect(status().isOk());
     }
 }

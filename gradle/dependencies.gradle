@@ -4163,6 +4163,9 @@ ext.libraries = [
                 }
         ],
         webjarspalantir : [
+                dependencies.create(libs.jquery.contextmenu.get()) {
+                    exclude(group: "org.webjars", module: "jquery")
+                },
                 dependencies.create(libs.chart.js.core.get()) {
                     exclude(group: "org.webjars", module: "popper.js")
                     exclude(group: "org.webjars", module: "jquery")

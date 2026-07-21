@@ -8,7 +8,6 @@ import org.apereo.cas.web.flow.CasWebflowConstants;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.jooq.lambda.Unchecked;
-import org.jspecify.annotations.NonNull;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
@@ -23,7 +22,7 @@ import org.springframework.web.servlet.ModelAndView;
 @Slf4j
 public class OidcResponseModeFormPostJwtBuilder extends BaseOAuth20JwtResponseModeBuilder {
 
-    public OidcResponseModeFormPostJwtBuilder(final ObjectProvider<@NonNull OidcConfigurationContext> configurationContext) {
+    public OidcResponseModeFormPostJwtBuilder(final ObjectProvider<OidcConfigurationContext> configurationContext) {
         super(configurationContext);
     }
 

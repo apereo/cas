@@ -146,11 +146,116 @@ async function initializeSsoSessionOperations() {
         pageLength: 10,
         autoWidth: false,
         columnDefs: [
-            {visible: false, target: 7}
+            {visible: false, targets: 6}
         ],
         drawCallback: settings => {
             $("#ssoSessionsTable tr").addClass("mdc-data-table__row");
             $("#ssoSessionsTable td").addClass("mdc-data-table__cell");
+        }
+    });
+
+    function viewSpringSession(id) {
+        const session = springSessionsById.get(id);
+        renderSpringSessionDetails(session, springSessionDetailsTable);
+        let dialog = mdc.dialog.MDCDialog.attachTo(document.getElementById("springSession-dialog"));
+        dialog["open"]();
+        $.get(`${CasActuatorEndpoints.sessions()}/${encodeURIComponent(id)}`, response => {
+            const detailedSession = response.session ?? response;
+            detailedSession.id ??= id;
+            springSessionsById.set(id, detailedSession);
+            renderSpringSessionDetails(detailedSession, springSessionDetailsTable);
+        }).fail(() => renderSpringSessionDetails(session, springSessionDetailsTable));
+    }
+
+    initializeDataTableContextMenu({
+        table: springSessionsTable,
+        selector: "#springSessionsTable tbody tr",
+        items: {
+            view: {name: "View Spring Session Details", icon: contextMenuIcon("mdi-eye")},
+            remove: {name: "Remove Spring Session", icon: contextMenuIcon("mdi-delete")}
+        },
+        callback: (key, context) => {
+            const id = context.rowData.sessionId;
+            if (key === "view") {
+                viewSpringSession(id);
+            } else if (key === "remove") {
+                removeSpringSession(context.$row, id);
+            }
+        }
+    });
+
+    function viewSsoSession(rowData) {
+        ssoSessionApplicationsTable.clear();
+        ssoSessionDetailsTable.clear();
+        for (const [key, value] of Object.entries(rowData.services)) {
+            ssoSessionApplicationsTable.row.add({
+                0: `<code>${key}</code>`,
+                1: `<code>${value.id}</code>`
+            });
+        }
+
+        for (const [key, value] of Object.entries(rowData.attributes.principal)) {
+            ssoSessionDetailsTable.row.add({
+                0: `<code>Principal</code>`,
+                1: `<code>${key}</code>`,
+                2: `<code>${value}</code>`
+            });
+        }
+        for (const [key, value] of Object.entries(rowData.attributes.authentication)) {
+            ssoSessionDetailsTable.row.add({
+                0: `<code>Authentication</code>`,
+                1: `<code>${key}</code>`,
+                2: `<code>${value}</code>`
+            });
+        }
+        ssoSessionDetailsTable.draw();
+        ssoSessionApplicationsTable.draw();
+
+        let dialog = mdc.dialog.MDCDialog.attachTo(document.getElementById("ssoSession-dialog"));
+        dialog["open"]();
+    }
+
+    function removeSsoSession(context) {
+        const ticket = context.rowData.ticketGrantingTicket;
+        Swal.fire({
+            title: "Are you sure you want to delete this session?",
+            text: "Once deleted, you may not be able to recover this session.",
+            icon: "question",
+            showConfirmButton: true,
+            showDenyButton: true
+        })
+            .then((result) => {
+                if (result.isConfirmed) {
+                    $.ajax({
+                        url: `${CasActuatorEndpoints.ssoSessions()}/${ticket}`,
+                        type: "DELETE",
+                        contentType: "application/x-www-form-urlencoded",
+                        success: (response, status, xhr) => context.row.remove().draw(),
+                        error: (xhr, status, error) => {
+                            console.error("Error fetching data:", error);
+                            displayBanner(xhr);
+                        }
+                    });
+                }
+            });
+    }
+
+    initializeDataTableContextMenu({
+        table: ssoSessionsTable,
+        selector: "#ssoSessionsTable tbody tr",
+        items: {
+            view: {name: "View SSO Session Details", icon: contextMenuIcon("mdi-account-eye")},
+            copy: {name: "Copy Ticket Granting Ticket", icon: contextMenuIcon("mdi-content-copy")},
+            remove: {name: "Remove SSO Session", icon: contextMenuIcon("mdi-delete")}
+        },
+        callback: (key, context) => {
+            if (key === "view") {
+                viewSsoSession(context.rowData);
+            } else if (key === "copy") {
+                copyToClipboard(context.rowData.ticketGrantingTicket);
+            } else if (key === "remove") {
+                removeSsoSession(context);
+            }
         }
     });
 
@@ -197,43 +302,10 @@ async function initializeSsoSessionOperations() {
                             3: `<code>${formatSpringSessionIdleTime(session)}</code>`,
                             4: `<code>${formatSpringSessionDuration(springSessionMaxInactiveInterval(session))}</code>`,
                             5: `<code>${attributes.length}</code>`,
-                            6: `
-                                <button type="button" name="viewSpringSession"
-                                    data-id='${escapeSsoHtml(session.id)}'
-                                    title="View Spring Session Details"
-                                    class="mdc-button mdc-button--raised min-width-32x">
-                                    <span class="mdc-button__label">
-                                        <i class="mdi mdi-eye min-width-32x" aria-hidden="true"></i>
-                                    </span>
-                                </button>
-                                <button type="button" name="removeSpringSession" 
-                                    data-id='${escapeSsoHtml(session.id)}'
-                                    title="Remove Spring Session"
-                                    class="mdc-button mdc-button--raised min-width-32x">
-                                    <span class="mdc-button__label">
-                                        <i class="mdi mdi-delete min-width-32x" aria-hidden="true"></i>
-                                    </span>
-                                </button>
-                            `
+                            sessionId: session.id
                         });
                     }
                     springSessionsTable.draw();
-                    $("button[name=viewSpringSession]").off().on("click", function () {
-                        const id = $(this).data("id");
-                        const session = springSessionsById.get(id);
-                        renderSpringSessionDetails(session, springSessionDetailsTable);
-                        let dialog = mdc.dialog.MDCDialog.attachTo(document.getElementById("springSession-dialog"));
-                        dialog["open"]();
-                        $.get(`${CasActuatorEndpoints.sessions()}/${encodeURIComponent(id)}`, response => {
-                            const detailedSession = response.session ?? response;
-                            detailedSession.id ??= id;
-                            springSessionsById.set(id, detailedSession);
-                            renderSpringSessionDetails(detailedSession, springSessionDetailsTable);
-                        }).fail(() => renderSpringSessionDetails(session, springSessionDetailsTable));
-                    });
-                    $("button[name=removeSpringSession]").off().on("click", function () {
-                        removeSpringSession(this, $(this).data("id"));
-                    });
                     Swal.close();
                 },
                 error: (xhr, status, error) => {
@@ -244,7 +316,7 @@ async function initializeSsoSessionOperations() {
             });
         }
     });
-    
+
     $("#removeSsoSessionButton").off().on("click", () => {
         if (CasActuatorEndpoints.ssoSessions()) {
             const form = document.getElementById("fmSsoSessions");
@@ -313,29 +385,6 @@ async function initializeSsoSessionOperations() {
                             services[key] = {id: value.id};
                         }
 
-                        let serviceButtons = `
-                            <button type="button" name="removeSsoSession" href="#" 
-                                data-ticketgrantingticket='${session.ticket_granting_ticket}'
-                                title="Remove SSO Session"
-                                class="mdc-button mdc-button--raised min-width-32x">
-                                <i class="mdi mdi-delete min-width-32x" aria-hidden="true"></i>
-                            </button>
-                            <button type="button" name="viewSsoSession" href="#" 
-                                data-ticketgrantingticket='${session.ticket_granting_ticket}'
-                                title="View SSO Session Details"
-                                class="mdc-button mdc-button--raised min-width-32x">
-                                <i class="mdi mdi-account-eye min-width-32x" aria-hidden="true"></i>
-                                <span id="sessionAttributes" class="d-none">${JSON.stringify(attributes)}</span>
-                                <span id="sessionServices" class="d-none">${JSON.stringify(services)}</span>
-                            </button>
-                            <button type="button" name="copySsoSessionTicketGrantingTicket" href="#" 
-                                data-ticketgrantingticket='${session.ticket_granting_ticket}'
-                                title="Copy Ticket Granting Ticket to Clipboard"
-                                class="mdc-button mdc-button--raised min-width-32x">
-                                <i class="mdi mdi-content-copy min-width-32x" aria-hidden="true"></i>
-                            </button>
-                    `;
-
                         ssoSessionsTable.row.add({
                             0: `<code>${session["authentication_date"]}</code>`,
                             1: `<code>${session["ticket_granting_ticket"]}</code>`,
@@ -343,79 +392,15 @@ async function initializeSsoSessionOperations() {
                             3: `<code>${session["authentication_attributes"]?.userAgent?.[0]}</code>`,
                             4: `<code>${session["number_of_uses"]}</code>`,
                             5: `<code>${session["remember_me"]}</code>`,
-                            6: `${serviceButtons}`,
-                            7: `${JSON.stringify(attributes)}`
+                            6: `${JSON.stringify(attributes)}`,
+                            ticketGrantingTicket: session.ticket_granting_ticket,
+                            attributes: attributes,
+                            services: services
                         });
                     }
                     ssoSessionsTable.draw();
 
                     Swal.close();
-
-                    $("button[name=viewSsoSession]").off().on("click", function () {
-                        ssoSessionApplicationsTable.clear();
-                        const sessionServices = JSON.parse($(this).children("#sessionServices").text());
-                        for (const [key, value] of Object.entries(sessionServices)) {
-                            ssoSessionApplicationsTable.row.add({
-                                0: `<code>${key}</code>`,
-                                1: `<code>${value.id}</code>`
-                            });
-                        }
-
-                        const attributes = JSON.parse($(this).children("#sessionAttributes").text());
-                        for (const [key, value] of Object.entries(attributes.principal)) {
-                            ssoSessionDetailsTable.row.add({
-                                0: `<code>Principal</code>`,
-                                1: `<code>${key}</code>`,
-                                2: `<code>${value}</code>`
-                            });
-                        }
-                        for (const [key, value] of Object.entries(attributes.authentication)) {
-                            ssoSessionDetailsTable.row.add({
-                                0: `<code>Authentication</code>`,
-                                1: `<code>${key}</code>`,
-                                2: `<code>${value}</code>`
-                            });
-                        }
-                        ssoSessionDetailsTable.draw();
-                        ssoSessionApplicationsTable.draw();
-
-                        let dialog = mdc.dialog.MDCDialog.attachTo(document.getElementById("ssoSession-dialog"));
-                        dialog["open"]();
-                    });
-
-                    $("button[name=removeSsoSession]").off().on("click", function () {
-                        const ticket = $(this).data("ticketgrantingticket");
-
-                        Swal.fire({
-                            title: "Are you sure you want to delete this session?",
-                            text: "Once deleted, you may not be able to recover this session.",
-                            icon: "question",
-                            showConfirmButton: true,
-                            showDenyButton: true
-                        })
-                            .then((result) => {
-                                if (result.isConfirmed) {
-                                    $.ajax({
-                                        url: `${CasActuatorEndpoints.ssoSessions()}/${ticket}`,
-                                        type: "DELETE",
-                                        contentType: "application/x-www-form-urlencoded",
-                                        success: (response, status, xhr) => {
-                                            let nearestTr = $(this).closest("tr");
-                                            ssoSessionsTable.row(nearestTr).remove().draw();
-                                        },
-                                        error: (xhr, status, error) => {
-                                            console.error("Error fetching data:", error);
-                                            displayBanner(xhr);
-                                        }
-                                    });
-                                }
-                            });
-                    });
-
-                    $("button[name=copySsoSessionTicketGrantingTicket]").off().on("click", function () {
-                        const ticket = $(this).data("ticketgrantingticket");
-                        copyToClipboard(ticket);
-                    });
 
                 },
                 error: (xhr, status, error) => {

@@ -31,6 +31,7 @@ import org.apereo.cas.services.ReturnAllowedAttributeReleasePolicy;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.oauth.OAuth20ClientAuthenticationMethods;
 import org.apereo.cas.support.oauth.services.OAuthRegisteredService;
+import org.apereo.cas.support.oauth.services.OAuthRegisteredServiceClientSecret;
 import org.apereo.cas.support.oauth.validator.OAuth20ClientSecretValidator;
 import org.apereo.cas.support.oauth.web.OAuth20RequestParameterResolver;
 import org.apereo.cas.support.oauth.web.endpoints.OAuth20ConfigurationContext;
@@ -41,6 +42,7 @@ import org.apereo.cas.ticket.expiration.NeverExpiresExpirationPolicy;
 import org.apereo.cas.ticket.refreshtoken.OAuth20RefreshToken;
 import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.token.JwtBuilder;
+import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.RandomUtils;
 import org.apereo.cas.util.spring.boot.SpringBootTestAutoConfigurations;
 import org.apereo.cas.validation.AuthenticationAttributeReleasePolicy;
@@ -142,7 +144,7 @@ public abstract class BaseOAuth20AuthenticatorTests {
         service.setName("OAuth");
         service.setId(RandomUtils.nextLong());
         service.setServiceId("https://www.example.org");
-        service.setClientSecret("secret");
+        service.setClientSecrets(CollectionUtils.wrapList(OAuthRegisteredServiceClientSecret.withoutExpiration("secret")));
         service.setClientId("client");
 
         serviceWithoutSecret = new OAuthRegisteredService();
@@ -162,7 +164,7 @@ public abstract class BaseOAuth20AuthenticatorTests {
         serviceJwtAccessToken.setServiceId("https://oauth.jwt.service");
         serviceJwtAccessToken.setClientId("clientid");
         serviceJwtAccessToken.setId(RandomUtils.nextLong());
-        serviceJwtAccessToken.setClientSecret("clientsecret");
+        serviceJwtAccessToken.setClientSecrets(CollectionUtils.wrapList(OAuthRegisteredServiceClientSecret.withoutExpiration("clientsecret")));
         serviceJwtAccessToken.setAttributeReleasePolicy(new ReturnAllAttributeReleasePolicy());
         serviceJwtAccessToken.setJwtAccessToken(true);
 
@@ -170,7 +172,7 @@ public abstract class BaseOAuth20AuthenticatorTests {
         serviceWithAttributesMapping.setName("OAuth5");
         serviceWithAttributesMapping.setId(RandomUtils.nextLong());
         serviceWithAttributesMapping.setServiceId("https://www.example5.org");
-        serviceWithAttributesMapping.setClientSecret("secret");
+        serviceWithAttributesMapping.setClientSecrets(CollectionUtils.wrapList(OAuthRegisteredServiceClientSecret.withoutExpiration("secret")));
         serviceWithAttributesMapping.setClientId("serviceWithAttributesMapping");
 
         val provider = new DefaultRegisteredServiceUsernameProvider();

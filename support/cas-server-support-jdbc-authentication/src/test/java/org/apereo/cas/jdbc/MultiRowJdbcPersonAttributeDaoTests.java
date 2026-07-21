@@ -107,6 +107,7 @@ class MultiRowJdbcPersonAttributeDaoTests {
         assertEquals(List.of("blue"), attribs.get("dressShirtColor"));
         assertNull(attribs.get("shirt_color"));
         assertEquals(List.of("Andrew"), attribs.get("firstName"));
+        assertNotNull(impl.toConfiguration());
     }
 
     @Test

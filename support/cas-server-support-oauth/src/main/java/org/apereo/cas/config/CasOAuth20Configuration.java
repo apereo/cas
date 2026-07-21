@@ -1012,9 +1012,11 @@ class CasOAuth20Configuration {
             @ConditionalOnMissingBean(name = OAuth20ClientSecretValidator.BEAN_NAME)
             @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
             public OAuth20ClientSecretValidator oauth20ClientSecretValidator(
+                @Qualifier(OAuth20ConfigurationContext.BEAN_NAME)
+                final ObjectProvider<OAuth20ConfigurationContext> context,
                 @Qualifier("oauthRegisteredServiceCipherExecutor")
                 final CipherExecutor oauthRegisteredServiceCipherExecutor) {
-                return new DefaultOAuth20ClientSecretValidator(oauthRegisteredServiceCipherExecutor);
+                return new DefaultOAuth20ClientSecretValidator(context, oauthRegisteredServiceCipherExecutor);
             }
 
             @Bean

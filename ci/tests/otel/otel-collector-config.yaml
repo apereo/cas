@@ -12,7 +12,9 @@ extensions:
     
 exporters:
   debug:
-    verbosity: detailed
+    verbosity: basic
+    sampling_initial: 2
+    sampling_thereafter: 500
 
 service:
   extensions: [zpages]

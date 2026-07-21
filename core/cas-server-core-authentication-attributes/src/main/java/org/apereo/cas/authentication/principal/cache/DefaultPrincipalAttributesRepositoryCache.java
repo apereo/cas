@@ -12,7 +12,6 @@ import com.github.benmanes.caffeine.cache.Caffeine;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
-import org.jspecify.annotations.NonNull;
 
 /**
  * This is {@link DefaultPrincipalAttributesRepositoryCache}.
@@ -28,7 +27,7 @@ public class DefaultPrincipalAttributesRepositoryCache implements PrincipalAttri
 
     private final CasReentrantLock lock = new CasReentrantLock();
 
-    private final Map<String, Cache<@NonNull String, Map<String, List<Object>>>> registeredServicesCache = new HashMap<>();
+    private final Map<String, Cache<String, Map<String, List<Object>>>> registeredServicesCache = new HashMap<>();
 
     private static String buildRegisteredServiceCacheKey(final RegisteredService registeredService) {
         val key = registeredService.getId() + "@" + registeredService.getName();
@@ -37,7 +36,7 @@ public class DefaultPrincipalAttributesRepositoryCache implements PrincipalAttri
         return cacheKey;
     }
 
-    private static Cache<@NonNull String, Map<String, List<Object>>> initializeCache(
+    private static Cache<String, Map<String, List<Object>>> initializeCache(
         final RegisteredServicePrincipalAttributesRepository repository) {
         val cachedRepository = (CachingPrincipalAttributesRepository) repository;
         val unit = TimeUnit.valueOf(StringUtils.defaultIfBlank(cachedRepository.getTimeUnit(), DEFAULT_CACHE_EXPIRATION_UNIT));
@@ -81,7 +80,7 @@ public class DefaultPrincipalAttributesRepositoryCache implements PrincipalAttri
         });
     }
 
-    private Cache<@NonNull String, Map<String, List<Object>>> getRegisteredServiceCacheInstance(
+    private Cache<String, Map<String, List<Object>>> getRegisteredServiceCacheInstance(
         final RegisteredService registeredService, final RegisteredServicePrincipalAttributesRepository repository) {
 
         val key = buildRegisteredServiceCacheKey(registeredService);

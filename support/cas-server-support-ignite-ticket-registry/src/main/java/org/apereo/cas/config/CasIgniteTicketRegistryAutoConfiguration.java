@@ -3,9 +3,11 @@ package org.apereo.cas.config;
 import module java.base;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.features.CasFeatureModule;
+import org.apereo.cas.ha.ClusterTopologyManager;
 import org.apereo.cas.ticket.TicketCatalog;
 import org.apereo.cas.ticket.TicketDefinition;
 import org.apereo.cas.ticket.catalog.CasTicketCatalogConfigurationValuesProvider;
+import org.apereo.cas.ticket.registry.IgniteClusterTopologyManager;
 import org.apereo.cas.ticket.registry.IgniteTicketRegistry;
 import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.ticket.serialization.TicketSerializationManager;
@@ -40,16 +42,9 @@ import org.springframework.context.annotation.ScopedProxyMode;
 public class CasIgniteTicketRegistryAutoConfiguration {
 
     @Bean
-    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-    public TicketRegistry ticketRegistry(
-        @Qualifier(TicketCatalog.BEAN_NAME)
-        final TicketCatalog ticketCatalog,
-        @Qualifier(TicketSerializationManager.BEAN_NAME)
-        final TicketSerializationManager ticketSerializationManager,
-        final ConfigurableApplicationContext applicationContext,
-        final CasConfigurationProperties casProperties) throws Exception {
+    @ConditionalOnMissingBean(name = "igniteServerInstance")
+    public IgniteServer igniteServerInstance(final CasConfigurationProperties casProperties) throws Exception {
         val igniteProperties = casProperties.getTicket().getRegistry().getIgnite();
-        val cipher = CoreTicketUtils.newTicketRegistryCipherExecutor(igniteProperties.getCrypto(), "ignite");
         val configContent = String.format(
             """
                     ignite {
@@ -80,8 +75,25 @@ public class CasIgniteTicketRegistryAutoConfiguration {
                 igniteServer.initCluster(initParams);
             });
         }
-        val ignite = igniteServer.api();
+        return igniteServer;
+    }
+    
+    @Bean
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+    public TicketRegistry ticketRegistry(
+        @Qualifier(TicketCatalog.BEAN_NAME)
+        final TicketCatalog ticketCatalog,
+        @Qualifier(TicketSerializationManager.BEAN_NAME)
+        final TicketSerializationManager ticketSerializationManager,
+        final ConfigurableApplicationContext applicationContext,
+        final CasConfigurationProperties casProperties,
+        @Qualifier("igniteServerInstance")
+        final IgniteServer igniteServerInstance) {
 
+        val igniteProperties = casProperties.getTicket().getRegistry().getIgnite();
+        val cipher = CoreTicketUtils.newTicketRegistryCipherExecutor(igniteProperties.getCrypto(), "ignite");
+
+        val ignite = igniteServerInstance.api();
         val definitions = ticketCatalog.findAll();
         definitions.forEach(definition -> {
             val fields = new ArrayList<String>();
@@ -104,7 +116,7 @@ public class CasIgniteTicketRegistryAutoConfiguration {
         });
 
         return new IgniteTicketRegistry(cipher, ticketSerializationManager,
-            ticketCatalog, applicationContext, ignite, igniteServer, igniteProperties);
+            ticketCatalog, applicationContext, ignite, igniteServerInstance, igniteProperties);
     }
 
     private static void createIndexForField(final String field, final TicketDefinition definition, final Ignite ignite, final String tableName) {
@@ -119,5 +131,14 @@ public class CasIgniteTicketRegistryAutoConfiguration {
     public CasTicketCatalogConfigurationValuesProvider igniteTicketCatalogConfigurationValuesProvider() {
         return new CasTicketCatalogConfigurationValuesProvider() {
         };
+    }
+
+    @ConditionalOnMissingBean(name = "igniteClusterTopologyManager")
+    @Bean
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+    public ClusterTopologyManager igniteClusterTopologyManager(
+        @Qualifier("igniteServerInstance")
+        final IgniteServer igniteServerInstance) {
+        return new IgniteClusterTopologyManager(igniteServerInstance);
     }
 }

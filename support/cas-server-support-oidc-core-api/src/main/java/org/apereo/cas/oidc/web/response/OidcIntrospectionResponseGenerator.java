@@ -14,7 +14,6 @@ import org.apereo.cas.util.function.FunctionUtils;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.val;
-import org.jspecify.annotations.NonNull;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.core.Ordered;
 
@@ -27,7 +26,7 @@ import org.springframework.core.Ordered;
 @RequiredArgsConstructor
 @Getter
 public class OidcIntrospectionResponseGenerator extends OAuth20DefaultIntrospectionResponseGenerator {
-    protected final ObjectProvider<@NonNull OidcConfigurationContext> oidcConfigurationContext;
+    protected final ObjectProvider<OidcConfigurationContext> oidcConfigurationContext;
 
     @Override
     protected OAuth20IntrospectionAccessTokenResponse collectIntrospectionDetails(final OAuth20IntrospectionAccessTokenResponse response,

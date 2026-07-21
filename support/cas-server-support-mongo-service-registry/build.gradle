@@ -11,6 +11,7 @@ ext {
 }
 dependencies {
     api project(":api:cas-server-core-api-services")
+    api project(":api:cas-server-core-api-ha")
     
     implementation project(":core:cas-server-core-services")
     implementation project(":core:cas-server-core-services-registry")

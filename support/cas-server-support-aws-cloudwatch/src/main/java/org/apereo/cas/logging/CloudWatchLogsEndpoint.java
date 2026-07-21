@@ -12,7 +12,6 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.Strings;
-import org.jspecify.annotations.NonNull;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.boot.actuate.endpoint.Access;
 import org.springframework.boot.actuate.endpoint.annotation.Endpoint;
@@ -34,11 +33,11 @@ import software.amazon.awssdk.services.cloudwatchlogs.model.GetLogEventsRequest;
 public class CloudWatchLogsEndpoint extends BaseCasRestActuatorEndpoint {
     private static final Pattern LOG_LEVEL_PATTERN = RegexUtils.createPattern("(\\[*(FATAL|CRITICAL|NOTICE|WARNING|ERROR|DEBUG|INFO|WARN|TRACE)\\]*)\\s", Pattern.CASE_INSENSITIVE);
 
-    private final ObjectProvider<@NonNull CloudWatchLogsClient> awsLogsClient;
+    private final ObjectProvider<CloudWatchLogsClient> awsLogsClient;
 
     public CloudWatchLogsEndpoint(final CasConfigurationProperties casProperties,
                                   final ConfigurableApplicationContext applicationContext,
-                                  final ObjectProvider<@NonNull CloudWatchLogsClient> awsLogsClient) {
+                                  final ObjectProvider<CloudWatchLogsClient> awsLogsClient) {
         super(casProperties, applicationContext);
         this.awsLogsClient = awsLogsClient;
     }

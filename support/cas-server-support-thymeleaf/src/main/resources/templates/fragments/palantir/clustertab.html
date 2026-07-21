@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no"/>
+</head>
+<body>
+<span th:fragment="main">
+    <div class="attribute-tab w-100 d-none" id="attribute-tab-15">
+        <div class="jqueryui-tabs" id="cluster-tabs">
+            <ul>
+                <li><a id="clusterTopologyTab" href="#cluster-topology-tab">Cluster Topology</a></li>
+                <li><a id="clusterDiscoveryTab" href="#cluster-discovery-tab">Cluster Discovery</a></li>
+            </ul>
+            <div id="cluster-topology-tab">
+                <p class="small text-muted mb-3">
+                    Cluster topology lists members reported by the configured cluster topology managers.
+                    Cards are grouped by owner and summarize each member's health, address, response time, and attributes.
+                </p>
+                <div id="clusterTopologySummary" class="cluster-topology-summary d-none" aria-label="Cluster topology summary">
+                    <span class="cluster-summary-chip cluster-summary-total">
+                        <i class="mdi mdi-server" aria-hidden="true"></i>
+                        <strong id="clusterTopologyMemberCount">0</strong> members
+                    </span>
+                    <span class="cluster-summary-chip cluster-summary-healthy">
+                        <i class="mdi mdi-check-circle" aria-hidden="true"></i>
+                        <strong id="clusterTopologyHealthyCount">0</strong> healthy
+                    </span>
+                    <span class="cluster-summary-chip cluster-summary-unhealthy">
+                        <i class="mdi mdi-alert-circle" aria-hidden="true"></i>
+                        <strong id="clusterTopologyUnhealthyCount">0</strong> unhealthy
+                    </span>
+                    <span class="cluster-summary-chip cluster-summary-owners">
+                        <i class="mdi mdi-domain" aria-hidden="true"></i>
+                        <strong id="clusterTopologyOwnerCount">0</strong> owners
+                    </span>
+                </div>
+
+                <div id="clusterTopologyStatus" class="cluster-topology-message d-none" role="status" aria-live="polite"></div>
+                <div id="clusterTopologyOwners" class="cluster-topology-owners" aria-live="polite"></div>
+            </div>
+            <div id="cluster-discovery-tab">
+                <p class="small text-muted mb-3">
+                    Cluster discovery lists service instances registered with the configured discovery client.
+                    Cards are grouped by service owner and summarize each instance's endpoint and registration metadata.
+                </p>
+                <div id="clusterDiscoverySummary" class="cluster-topology-summary d-none" aria-label="Cluster discovery summary">
+                    <span class="cluster-summary-chip cluster-summary-total">
+                        <i class="mdi mdi-server" aria-hidden="true"></i>
+                        <strong id="clusterDiscoveryMemberCount">0</strong> members
+                    </span>
+                    <span class="cluster-summary-chip cluster-summary-healthy">
+                        <i class="mdi mdi-check-circle" aria-hidden="true"></i>
+                        <strong id="clusterDiscoveryHealthyCount">0</strong> healthy
+                    </span>
+                    <span class="cluster-summary-chip cluster-summary-unhealthy">
+                        <i class="mdi mdi-alert-circle" aria-hidden="true"></i>
+                        <strong id="clusterDiscoveryUnhealthyCount">0</strong> unhealthy
+                    </span>
+                    <span class="cluster-summary-chip cluster-summary-owners">
+                        <i class="mdi mdi-domain" aria-hidden="true"></i>
+                        <strong id="clusterDiscoveryOwnerCount">0</strong> owners
+                    </span>
+                </div>
+
+                <div id="clusterDiscoveryStatus" class="cluster-topology-message d-none" role="status" aria-live="polite"></div>
+                <div id="clusterDiscoveryOwners" class="cluster-topology-owners" aria-live="polite"></div>
+            </div>
+        </div>
+    </div>
+</span>
+</body>
+</html>

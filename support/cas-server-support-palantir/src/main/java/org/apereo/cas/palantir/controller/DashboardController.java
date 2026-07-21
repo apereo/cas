@@ -96,6 +96,7 @@ public class DashboardController extends AbstractController {
         mav.addObject("httpRequestMethod", request.getMethod());
         mav.addObject("httpRequestHeaders", HttpRequestUtils.getRequestHeaders(request));
         mav.addObject("clientInfo", ClientInfoHolder.getClientInfo());
+        mav.addObject("isRoleAdmin", isRoleAdmin(authentication));
 
         val basePath = webEndpointProperties.getBasePath();
         val endpoints = endpointLinksResolver.resolveLinks(basePath);
@@ -117,6 +118,13 @@ public class DashboardController extends AbstractController {
         mav.addObject("serviceProperties", Arrays.stream(RegisteredServiceProperty.RegisteredServiceProperties.values())
             .map(RegisteredServiceProperty.RegisteredServiceProperties::name).toList());
         return mav;
+    }
+
+    private static boolean isRoleAdmin(final Authentication authentication) {
+        return authentication
+            .getAuthorities()
+            .stream()
+            .anyMatch(grantedAuthority -> Objects.equals(grantedAuthority.getAuthority(), "ROLE_ADMIN"));
     }
 
     private static Map<String, String> loadSupportedServiceDefinitions() {

@@ -101,7 +101,7 @@ var casProfile = client.validateServiceTicket(serviceUrl, casCredentials, webCon
 var attributes = casProfile.getAttributes();
 var mapEntries = attributes.entrySet();
 for (var entry : mapEntries) {
-    System.out.println(entry.getKey() + ":" + entry.getValue());
+    IO.println(entry.getKey() + ":" + entry.getValue());
 }
 client.destroyTicketGrantingTicket(profile, webContext);
 ```

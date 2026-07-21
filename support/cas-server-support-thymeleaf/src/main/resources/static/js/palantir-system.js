@@ -2,9 +2,8 @@ async function initializeSystemOperations() {
     function configureAuditEventsChart() {
         if (CasActuatorEndpoints.auditEvents()) {
             $.get(CasActuatorEndpoints.auditEvents(), response => {
-                let auditData = [];
                 const results = response.events.reduce((accumulator, event) => {
-                    let timestamp = formatDateYearMonthDay(event.timestamp);
+                    const timestamp = formatDateYearMonthDay(event.timestamp);
                     const type = event.type;
 
                     if (!accumulator[timestamp]) {
@@ -18,29 +17,19 @@ async function initializeSystemOperations() {
                     return accumulator;
                 }, {});
 
-                for (const [key, value] of Object.entries(results)) {
-                    let auditEntry = Object.assign({timestamp: key}, value);
-                    auditData.push(auditEntry);
-                }
+                const auditData = Object.entries(results)
+                    .sort(([firstTimestamp], [secondTimestamp]) => firstTimestamp.localeCompare(secondTimestamp))
+                    .map(([timestamp, eventCounts]) => ({timestamp, ...eventCounts}));
+                const eventTypes = [...new Set(auditData.flatMap(entry => Object.keys(entry)))]
+                    .filter(type => type !== "timestamp" && type !== "AUTHORIZATION_FAILURE")
+                    .sort();
 
                 auditEventsChart.data.labels = auditData.map(d => d.timestamp);
-                let datasets = [];
-                for (const entry of auditData) {
-                    for (const type of Object.keys(auditData[0])) {
-                        if (type !== "timestamp" && type !== "AUTHORIZATION_FAILURE") {
-                            datasets.push({
-                                borderWidth: 2,
-                                data: auditData,
-                                parsing: {
-                                    xAxisKey: "timestamp",
-                                    yAxisKey: type
-                                },
-                                label: type
-                            });
-                        }
-                    }
-                }
-                auditEventsChart.data.datasets = datasets;
+                auditEventsChart.data.datasets = eventTypes.map(type => ({
+                    borderWidth: 2,
+                    data: auditData.map(entry => entry[type] ?? 0),
+                    label: type
+                }));
                 auditEventsChart.update();
             });
         }
@@ -486,12 +475,6 @@ async function initializeSystemOperations() {
                 casVulnerabilitiesTable.draw();
                 casVulnerabilitiesTable.columns.adjust();
                 renderVulnerabilitySeverityBreakdown(vulnerabilityRows);
-
-                $("#casVulnerabilitiesSummary").html(`
-                    <span class="cas-vulnerability-summary-item">
-                        <i class="mdi mdi-package-variant-closed" aria-hidden="true"></i>
-                        <strong>${escapeHtml(response.dependencyCount ?? 0)}</strong> dependencies
-                    </span>`);
                 const errors = Array.isArray(response.errors) ? response.errors : [];
                 $("#casVulnerabilitiesStatus").text(errors.length > 0 ? errors.join("; ") : "");
                 vulnerabilitiesLoaded = true;
@@ -891,35 +874,14 @@ async function initializeSystemOperations() {
         }
         httpExchangesControlsInitialized = true;
 
-        $("#httpExchangesMethodFilter, #httpExchangesStatusFilter").selectmenu({
-            width: "100%",
-            change: function () {
-                $(this).selectmenu("close");
-                renderHttpExchanges();
-            }
-        });
-
-        $("#httpExchangesTable tbody")
-            .off("click", "button.http-exchange-details-button")
-            .on("click", "button.http-exchange-details-button", function () {
-                const tableRow = $(this).closest("tr");
-                const row = httpExchangesTable.row(tableRow);
-                if (row.child.isShown()) {
-                    row.child.hide();
-                    tableRow.removeClass("shown");
-                    $(this).removeClass("http-exchange-details-button-active");
-                    $(this).attr("aria-label", "View details");
-                    $(this).find(".mdi").removeClass("mdi-chevron-up").addClass("mdi-table-eye");
-                } else {
-                    row.child(renderHttpExchangeDetails(row.data())).show();
-                    tableRow.addClass("shown");
-                    tableRow.next("tr").addClass("http-exchange-details-row");
-                    $(this).addClass("http-exchange-details-button-active");
-                    $(this).attr("aria-label", "Hide details");
-                    $(this).find(".mdi").removeClass("mdi-table-eye").addClass("mdi-chevron-up");
+            $("#httpExchangesMethodFilter, #httpExchangesStatusFilter").selectmenu({
+                width: "100%",
+                change: function () {
+                    $(this).selectmenu("close");
+                    renderHttpExchanges();
                 }
             });
-    }
+        }
 
     function updateHttpExchangeMethodOptions(entries) {
         const methods = [...new Set(entries.map(entry => entry.method).filter(method => method))].sort();
@@ -1358,13 +1320,8 @@ async function initializeSystemOperations() {
         }
         httpTracesControlsInitialized = true;
         $("#refreshHttpTracesButton").off("click").on("click", () => refreshHttpTraces());
-        $("#httpTracesErrorsOnly").off("change").on("change", () => renderHttpTraces());
-        $("#httpTracesTable tbody")
-            .off("click", "button.http-trace-details-button")
-            .on("click", "button.http-trace-details-button", function () {
-                openHttpTraceDialog($(this).data("traceId"));
-            });
-    }
+            $("#httpTracesErrorsOnly").off("change").on("change", () => renderHttpTraces());
+        }
 
     async function getMemoryPoolNames() {
         return new Promise(resolve => {
@@ -2155,32 +2112,31 @@ async function initializeSystemOperations() {
                 data: "duration",
                 width: "7rem",
                 render: (data, type, row) => type === "display" ? escapeHtml(row.durationLabel) : data
-            },
-            {
-                data: null,
-                orderable: false,
-                searchable: false,
-                width: "4rem",
-                render: (data, type, row) => {
-                    if (type !== "display") {
-                        return "";
-                    }
-                    return `
-                        <button type="button"
-                                class="mdc-button mdc-button--raised http-exchange-details-button"
-                                data-http-exchange-id="${escapeHtml(row.id)}"
-                                aria-label="View details">
-                            <span class="mdc-button__ripple"></span>
-                            <span class="mdc-button__label">
-                                <i class="mdc-tab__icon mdi mdi-table-eye" aria-hidden="true"></i>
-                            </span>
-                        </button>`;
-                }
             }
         ],
         drawCallback: settings => {
             $("#httpExchangesTable tr").addClass("mdc-data-table__row");
             $("#httpExchangesTable td").addClass("mdc-data-table__cell");
+        }
+    });
+
+    initializeDataTableContextMenu({
+        table: httpExchangesTable,
+        selector: "#httpExchangesTable tbody tr",
+        items: {
+            details: {name: "Toggle Details", icon: contextMenuIcon("mdi-table-eye")}
+        },
+        callback: (key, context) => {
+            if (key === "details") {
+                if (context.row.child.isShown()) {
+                    context.row.child.hide();
+                    context.$row.removeClass("shown");
+                } else {
+                    context.row.child(renderHttpExchangeDetails(context.row.data())).show();
+                    context.$row.addClass("shown");
+                    context.$row.next("tr").addClass("http-exchange-details-row");
+                }
+            }
         }
     });
 
@@ -2237,27 +2193,6 @@ async function initializeSystemOperations() {
                 data: "status",
                 width: "6.5rem",
                 render: (data, type, row) => type === "display" ? renderHttpTraceStatus(data, row.error) : data
-            },
-            {
-                data: null,
-                orderable: false,
-                searchable: false,
-                width: "4rem",
-                render: (data, type, row) => {
-                    if (type !== "display") {
-                        return "";
-                    }
-                    return `
-                        <button type="button"
-                                class="mdc-button mdc-button--raised http-trace-details-button"
-                                data-trace-id="${escapeHtml(row.traceId)}"
-                                aria-label="Open trace details">
-                            <span class="mdc-button__ripple"></span>
-                            <span class="mdc-button__label">
-                                <i class="mdc-tab__icon mdi mdi-open-in-new" aria-hidden="true"></i>
-                            </span>
-                        </button>`;
-                }
             }
         ],
         createdRow: (row, data) => {
@@ -2270,6 +2205,19 @@ async function initializeSystemOperations() {
             $("#httpTracesTable tr").addClass("mdc-data-table__row");
             $("#httpTracesTable td").addClass("mdc-data-table__cell");
             applyMdcDataTableControls("#httpTracesTable");
+        }
+    });
+
+    initializeDataTableContextMenu({
+        table: httpTracesTable,
+        selector: "#httpTracesTable tbody tr",
+        items: {
+            details: {name: "Open Trace Details", icon: contextMenuIcon("mdi-open-in-new")}
+        },
+        callback: (key, context) => {
+            if (key === "details") {
+                openHttpTraceDialog(context.rowData.traceId);
+            }
         }
     });
 
@@ -2547,7 +2495,7 @@ async function initializeSystemOperations() {
                 $("#startupTimelineList").html('<p class="text-muted p-3">No startup steps available. Ensure <code>BufferingApplicationStartup</code> is configured.</p>');
                 return;
             }
-            
+
             const counts = countByDuration(allEvents);
             $("#count-fastest").text(counts.fastest);
             $("#count-fast").text(counts.fast);

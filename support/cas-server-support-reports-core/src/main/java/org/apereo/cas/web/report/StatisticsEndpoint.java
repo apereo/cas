@@ -8,7 +8,6 @@ import io.swagger.v3.oas.annotations.Operation;
 import lombok.val;
 import org.apache.commons.io.FileUtils;
 import org.jooq.lambda.Unchecked;
-import org.jspecify.annotations.NonNull;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.boot.actuate.endpoint.Access;
 import org.springframework.boot.actuate.endpoint.annotation.Endpoint;
@@ -24,9 +23,9 @@ import org.springframework.boot.actuate.endpoint.annotation.ReadOperation;
 public class StatisticsEndpoint extends BaseCasActuatorEndpoint {
     private final ZonedDateTime upTimeStartDate = ZonedDateTime.now(ZoneOffset.UTC);
 
-    private final ObjectProvider<@NonNull TicketRegistry> ticketRegistry;
+    private final ObjectProvider<TicketRegistry> ticketRegistry;
 
-    public StatisticsEndpoint(final ObjectProvider<@NonNull TicketRegistry> ticketRegistry,
+    public StatisticsEndpoint(final ObjectProvider<TicketRegistry> ticketRegistry,
                               final CasConfigurationProperties casProperties) {
         super(casProperties);
         this.ticketRegistry = ticketRegistry;

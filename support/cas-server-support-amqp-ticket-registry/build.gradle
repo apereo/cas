@@ -10,6 +10,7 @@ ext {
 }
 dependencies {
     api project(":api:cas-server-core-api-util")
+    api project(":api:cas-server-core-api-ha")
     
     implementation libraries.springrabbitmq
     

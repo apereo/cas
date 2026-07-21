@@ -7,7 +7,6 @@ import org.apereo.cas.authentication.device.MultifactorAuthenticationDeviceManag
 import org.apereo.cas.authentication.device.MultifactorAuthenticationRegisteredDevice;
 import org.apereo.cas.authentication.principal.Principal;
 import lombok.RequiredArgsConstructor;
-import org.jspecify.annotations.NonNull;
 import org.springframework.beans.factory.ObjectProvider;
 
 /**
@@ -19,7 +18,7 @@ import org.springframework.beans.factory.ObjectProvider;
 @RequiredArgsConstructor
 public class OneTimeTokenCredentialDeviceManager implements MultifactorAuthenticationDeviceManager {
     private final OneTimeTokenCredentialRepository repository;
-    private final ObjectProvider<@NonNull MultifactorAuthenticationProvider> multifactorAuthenticationProvider;
+    private final ObjectProvider<MultifactorAuthenticationProvider> multifactorAuthenticationProvider;
 
     @Override
     public List<String> getSource() {

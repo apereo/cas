@@ -58,7 +58,7 @@ public class CasServicesStreamingKafkaAutoConfiguration {
     @Bean
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @ConditionalOnMissingBean(name = "registeredServiceKafkaListenerContainerFactory")
-    public ConcurrentKafkaListenerContainerFactory<@NonNull String, @NonNull DistributedCacheObject> registeredServiceKafkaListenerContainerFactory(
+    public ConcurrentKafkaListenerContainerFactory<String, @NonNull DistributedCacheObject> registeredServiceKafkaListenerContainerFactory(
         @Qualifier("casRegisteredServiceStreamPublisherIdentifier")
         final PublisherIdentifier casRegisteredServiceStreamPublisherIdentifier,
         final ConfigurableApplicationContext applicationContext,
@@ -102,7 +102,7 @@ public class CasServicesStreamingKafkaAutoConfiguration {
 
     @Bean
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-    public KafkaOperations<@NonNull String, @NonNull DistributedCacheObject<RegisteredService>> registeredServiceDistributedKafkaTemplate(
+    public KafkaOperations<String, @NonNull DistributedCacheObject<RegisteredService>> registeredServiceDistributedKafkaTemplate(
         final ConfigurableApplicationContext applicationContext,
         final CasConfigurationProperties casProperties) {
         return BeanSupplier.of(KafkaOperations.class)
@@ -125,7 +125,7 @@ public class CasServicesStreamingKafkaAutoConfiguration {
         @Qualifier("registeredServiceDistributedCacheKafkaTopic")
         final NewTopic registeredServiceDistributedCacheKafkaTopic,
         @Qualifier("registeredServiceDistributedKafkaTemplate")
-        final KafkaOperations<@NonNull String, @NonNull DistributedCacheObject<RegisteredService>> registeredServiceDistributedKafkaTemplate) {
+        final KafkaOperations<String, DistributedCacheObject<RegisteredService>> registeredServiceDistributedKafkaTemplate) {
         return BeanSupplier.of(DistributedCacheManager.class)
             .when(CONDITION.given(applicationContext.getEnvironment()))
             .supply(Unchecked.supplier(() -> {
