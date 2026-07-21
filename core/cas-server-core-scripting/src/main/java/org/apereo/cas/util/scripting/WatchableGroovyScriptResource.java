@@ -120,6 +120,11 @@ public class WatchableGroovyScriptResource implements ExecutableCompiledScript {
         }
     }
 
+    @Override
+    public @Nullable Object compileScript() {
+        return ScriptingUtils.parseGroovyScript(this.resource, false);
+    }
+
     private void compileScriptResource(final Resource script) {
         this.compiledScript = ScriptingUtils.parseGroovyScript(script, failOnError);
     }

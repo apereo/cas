@@ -4,6 +4,8 @@ description = "Adds shared Apache Kafka support used by CAS Kafka-backed feature
 dependencies {
     implementation libraries.springkafka
 
+    api project(":api:cas-server-core-api-ha")
+    
     implementation project(":core:cas-server-core-services-api")
     implementation project(":core:cas-server-core-authentication-api")
     implementation project(":core:cas-server-core-configuration-api")

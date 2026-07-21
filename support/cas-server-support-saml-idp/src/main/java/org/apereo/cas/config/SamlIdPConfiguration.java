@@ -67,7 +67,6 @@ import org.apereo.inspektr.audit.spi.AuditActionResolver;
 import org.apereo.inspektr.audit.spi.AuditResourceResolver;
 import org.apereo.inspektr.audit.spi.support.DefaultAuditActionResolver;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
-import org.jspecify.annotations.NonNull;
 import org.opensaml.saml.common.SAMLObject;
 import org.opensaml.saml.common.binding.artifact.SAMLArtifactMap;
 import org.opensaml.saml.metadata.resolver.MetadataResolver;
@@ -273,7 +272,7 @@ class SamlIdPConfiguration {
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public SamlProfileObjectBuilder<AuthnContext> defaultAuthnContextClassRefBuilder(
             @Qualifier(ScriptResourceCacheManager.BEAN_NAME)
-            final ObjectProvider<@NonNull ScriptResourceCacheManager> scriptResourceCacheManager,
+            final ObjectProvider<ScriptResourceCacheManager> scriptResourceCacheManager,
             @Qualifier(OpenSamlConfigBean.DEFAULT_BEAN_NAME)
             final OpenSamlConfigBean openSamlConfigBean,
             @Qualifier("casSamlIdPMetadataResolver")

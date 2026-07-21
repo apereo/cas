@@ -5,8 +5,8 @@ const cas = require("../../cas.js");
     const privateKey = "enTHR15K28p0N6f404HaC9Vp1cfIBgQiHhmbgBiO7UHEnSiNJudxtDhPQNFjFQtOVSjEYu0pr5yxEeBAiO6IlA";
     const jwt = await cas.createJwt({
         "jti": "THJZGsQDP26OuwQn",
-        "iss": "https://localhost:8443/cas/oidc",
-        "aud": "client",
+        "iss": "client",
+        "aud": "https://localhost:8443/cas/oidc/token",
         "exp": 185542587100,
         "iat": 1653737633,
         "nbf": 1653737573,

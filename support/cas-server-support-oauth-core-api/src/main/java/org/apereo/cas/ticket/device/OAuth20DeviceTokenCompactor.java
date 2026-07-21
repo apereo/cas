@@ -11,7 +11,6 @@ import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
-import org.jspecify.annotations.NonNull;
 import org.springframework.beans.factory.ObjectProvider;
 
 /**
@@ -22,7 +21,7 @@ import org.springframework.beans.factory.ObjectProvider;
  */
 @RequiredArgsConstructor
 public class OAuth20DeviceTokenCompactor implements TicketCompactor<OAuth20DeviceToken> {
-    private final ObjectProvider<@NonNull TicketFactory> ticketFactory;
+    private final ObjectProvider<TicketFactory> ticketFactory;
     private final ServiceFactory serviceFactory;
 
     @Getter
@@ -47,7 +46,7 @@ public class OAuth20DeviceTokenCompactor implements TicketCompactor<OAuth20Devic
         val service = serviceFactory.createService(structure.ticketElements().get(CompactTicketIndexes.SERVICE.getIndex()));
         val userCode = structure.ticketElements().get(3);
         val codeFactory = (OAuth20DeviceTokenFactory) ticketFactory.getObject().get(getTicketType());
-        val code = codeFactory.createDeviceCode(service);
+        val code = codeFactory.createDeviceCode(service, new ArrayList<>());
         code.setUserCode(StringUtils.trimToNull(userCode));
         code.setExpirationPolicy(new FixedInstantExpirationPolicy(structure.expirationTime()));
         code.setCreationTime(DateTimeUtils.zonedDateTimeOf(structure.creationTime()));

@@ -153,8 +153,17 @@ public interface SamlIdPConstants {
         /**
          * If present, will enable encryption operations for SAML2 assertions.
          */
-        SHIBBOLETH_ENCRYPT_ASSERTIONS("http://shibboleth.net/ns/profiles/encryptAssertions");
-
+        SHIBBOLETH_ENCRYPT_ASSERTIONS("http://shibboleth.net/ns/profiles/encryptAssertions"),
+        /**
+         * Handling SPs that require MFA.
+         */
+        SHIBBOLETH_DEFAULT_AUTHENTICATION_METHODS("http://shibboleth.net/ns/profiles/defaultAuthenticationMethods"),
+        /**
+         * If in use, all SAML 2 transcoders will check for this entity attribute whose values contain a
+         * space-delimited pair or tuple of the form “id name format”.
+         */
+        SHIBBOLETH_SAML2_NAMING("http://shibboleth.net/ns/attributes/naming/saml2");
+        
         private final String name;
     }
 }

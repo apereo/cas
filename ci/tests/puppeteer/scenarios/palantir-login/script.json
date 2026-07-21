@@ -14,6 +14,7 @@
 
     "--spring.security.user.name=casadmin",
     "--spring.security.user.password=password",
+    "--spring.security.user.roles=ADMIN",
 
     "--cas.http-web-request.header.content-security-policy=",
 

@@ -37,7 +37,7 @@ public class ServicesManagerConfigurationContext {
     private final Set<String> environments = new HashSet<>();
 
     @NonNull
-    private final Cache<@NonNull Long, RegisteredService> servicesCache;
+    private final Cache<Long, RegisteredService> servicesCache;
 
     @Builder.Default
     private final List<ServicesManagerRegisteredServiceLocator> registeredServiceLocators = new ArrayList<>();

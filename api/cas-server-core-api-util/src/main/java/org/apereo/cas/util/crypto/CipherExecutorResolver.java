@@ -1,6 +1,7 @@
 package org.apereo.cas.util.crypto;
 
 import module java.base;
+import org.jspecify.annotations.Nullable;
 import jakarta.servlet.http.HttpServletRequest;
 
 /**
@@ -25,7 +26,7 @@ public interface CipherExecutorResolver {
      * @param tenant the tenant
      * @return the cipher executor
      */
-    CipherExecutor resolve(String tenant);
+    CipherExecutor resolve(@Nullable String tenant);
 
     /**
      * Static cipher executor cipher.

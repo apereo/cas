@@ -84,7 +84,7 @@ class CasWebAppConfiguration {
         @Bean
         public WebMvcConfigurer casWebAppWebMvcConfigurer(
             @Qualifier("localeChangeInterceptor")
-            final ObjectProvider<@NonNull HandlerInterceptor> localeChangeInterceptor) {
+            final ObjectProvider<HandlerInterceptor> localeChangeInterceptor) {
             return new WebMvcConfigurer() {
                 @Override
                 public void addInterceptors(@NonNull final InterceptorRegistry registry) {

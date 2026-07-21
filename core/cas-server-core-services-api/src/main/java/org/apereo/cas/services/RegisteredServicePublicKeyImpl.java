@@ -18,6 +18,7 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.jooq.lambda.Unchecked;
+import org.jspecify.annotations.Nullable;
 
 /**
  * Represents a public key for a CAS registered service.
@@ -45,7 +46,7 @@ public class RegisteredServicePublicKeyImpl implements RegisteredServicePublicKe
     private String algorithm;
 
     @Override
-    public PublicKey createInstance() {
+    public @Nullable PublicKey createInstance() {
         return Unchecked.supplier(() -> {
             if (StringUtils.isNotBlank(this.location)) {
                 LOGGER.trace("Attempting to read public key from [{}]", this.location);
@@ -59,7 +60,7 @@ public class RegisteredServicePublicKeyImpl implements RegisteredServicePublicKe
 
 
     @Override
-    public Cipher toCipher() {
+    public @Nullable Cipher toCipher() {
         return Unchecked.supplier(() -> {
             if (StringUtils.isNotBlank(location)) {
                 LOGGER.trace("Attempting to initialize the cipher for public key [{}]", location);

@@ -25,7 +25,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.apereo.inspektr.audit.annotation.Audit;
 import org.apereo.inspektr.common.web.ClientInfoHolder;
 import org.jooq.lambda.Unchecked;
-import org.jspecify.annotations.NonNull;
 import org.jspecify.annotations.Nullable;
 import org.springframework.beans.factory.DisposableBean;
 import org.springframework.beans.factory.ObjectProvider;
@@ -47,7 +46,7 @@ public class DefaultAuthenticationManager implements AuthenticationManager {
 
     private final AuthenticationEventExecutionPlan authenticationEventExecutionPlan;
 
-    private final ObjectProvider<@NonNull AuthenticationSystemSupport> authenticationSystemSupport;
+    private final ObjectProvider<AuthenticationSystemSupport> authenticationSystemSupport;
 
     private final boolean principalResolutionFailureFatal;
 
@@ -286,8 +285,8 @@ public class DefaultAuthenticationManager implements AuthenticationManager {
         val authentication = builder.build();
         val executionResult = evaluateAuthenticationPolicies(authentication, transaction, authenticationHandlers);
         if (!executionResult.isSuccess()) {
-            publishEvent(new CasAuthenticationPolicyFailureEvent(this, builder.getFailures(), transaction, authentication, clientInfo));
             executionResult.getFailures().forEach(e -> handleAuthenticationException(e, e.getClass().getSimpleName(), builder));
+            publishEvent(new CasAuthenticationPolicyFailureEvent(this, builder.getFailures(), transaction, authentication, clientInfo));
             throw createAuthenticationException(builder);
         }
     }

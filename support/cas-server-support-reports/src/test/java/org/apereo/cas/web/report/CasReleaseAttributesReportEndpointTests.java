@@ -40,7 +40,7 @@ class CasReleaseAttributesReportEndpointTests extends AbstractCasEndpointTests {
         if (password != null) {
             bodyBuilder.append("\"password\":\"").append(password).append("\",");
         }
-        bodyBuilder.append("\"service\":\"").append(registeredService.getServiceId()).append("\"");
+        bodyBuilder.append("\"service\":\"").append(registeredService.getServiceId()).append('"');
         bodyBuilder.append('}');
 
         mockMvc.perform(post("/actuator/releaseAttributes")

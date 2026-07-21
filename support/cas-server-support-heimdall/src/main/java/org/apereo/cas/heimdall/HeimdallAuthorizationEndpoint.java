@@ -4,13 +4,15 @@ import module java.base;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.heimdall.authorizer.repository.AuthorizableResourceRepository;
 import org.apereo.cas.heimdall.authorizer.resource.AuthorizableResource;
+import org.apereo.cas.heimdall.authorizer.resource.AuthorizableResources;
 import org.apereo.cas.web.BaseCasRestActuatorEndpoint;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.enums.ParameterIn;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-import org.jspecify.annotations.NonNull;
 import org.springframework.boot.actuate.endpoint.Access;
 import org.springframework.boot.actuate.endpoint.annotation.Endpoint;
 import org.springframework.context.ConfigurableApplicationContext;
@@ -45,10 +47,10 @@ public class HeimdallAuthorizationEndpoint extends BaseCasRestActuatorEndpoint {
      * @param request the request
      * @return the response entity
      */
-    @PostMapping(path = "/resource", produces = MediaType.APPLICATION_JSON_VALUE)
+    @GetMapping(path = "/resource", produces = MediaType.APPLICATION_JSON_VALUE)
     @Operation(summary = "Fetch authorizable resource matching the given authorization request in the body",
         parameters = @Parameter(name = "request", required = true, description = "Authorization request in the body"))
-    public ResponseEntity<@NonNull AuthorizableResource> fetchResource(@RequestBody final AuthorizationRequest request) {
+    public ResponseEntity<AuthorizableResource> fetchResource(@RequestBody final AuthorizationRequest request) {
         return ResponseEntity.of(authorizableResourceRepository.find(request));
     }
 
@@ -59,7 +61,7 @@ public class HeimdallAuthorizationEndpoint extends BaseCasRestActuatorEndpoint {
      */
     @GetMapping(path = "/resources", produces = MediaType.APPLICATION_JSON_VALUE)
     @Operation(summary = "Fetch all authorizable resources")
-    public ResponseEntity<@NonNull Map<String, List<AuthorizableResource>>> fetchResources() {
+    public ResponseEntity<Map<String, List<AuthorizableResource>>> fetchResources() {
         val resources = authorizableResourceRepository.findAll();
         return ResponseEntity.ok(resources);
     }
@@ -73,7 +75,7 @@ public class HeimdallAuthorizationEndpoint extends BaseCasRestActuatorEndpoint {
     @GetMapping(path = "/resources/{namespace}", produces = MediaType.APPLICATION_JSON_VALUE)
     @Operation(summary = "Fetch all authorizable resources for namespace",
         parameters = @Parameter(name = "namespace", in = ParameterIn.PATH, required = true, description = "Namespace to fetch resources for"))
-    public ResponseEntity<@NonNull List<AuthorizableResource>> fetchResourcesForNamespace(
+    public ResponseEntity<List<AuthorizableResource>> fetchResourcesForNamespace(
         @PathVariable final String namespace) {
         val resources = authorizableResourceRepository.find(namespace);
         return ResponseEntity.ok(resources);
@@ -92,10 +94,32 @@ public class HeimdallAuthorizationEndpoint extends BaseCasRestActuatorEndpoint {
             @Parameter(name = "namespace", in = ParameterIn.PATH, required = true, description = "Namespace to fetch resources for"),
             @Parameter(name = "id", in = ParameterIn.PATH, required = true, description = "Resource id to fetch")
         })
-    public ResponseEntity<@NonNull AuthorizableResource> fetchResourcesForNamespaceById(
+    public ResponseEntity<AuthorizableResource> fetchResourcesForNamespaceById(
         @PathVariable final String namespace, @PathVariable final long id) {
         val resource = authorizableResourceRepository.find(namespace, id);
         return ResponseEntity.of(resource);
     }
 
+    /**
+     * Create resource.
+     *
+     * @param resources the resources
+     */
+    @PostMapping(path = "/resources",
+        consumes = MediaType.APPLICATION_JSON_VALUE,
+        produces = MediaType.APPLICATION_JSON_VALUE)
+    @Operation(
+        summary = "Store authorizable resource",
+        requestBody = @io.swagger.v3.oas.annotations.parameters.RequestBody(
+            required = true,
+            description = "The authorizable resources to store",
+            content = @Content(
+                mediaType = MediaType.APPLICATION_JSON_VALUE,
+                schema = @Schema(implementation = AuthorizableResources.class)
+            )
+        )
+    )
+    public ResponseEntity createResource(@RequestBody final AuthorizableResources resources) {
+        return ResponseEntity.ok(authorizableResourceRepository.store(resources));
+    }
 }

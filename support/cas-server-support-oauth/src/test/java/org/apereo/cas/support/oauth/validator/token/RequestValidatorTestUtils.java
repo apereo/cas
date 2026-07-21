@@ -3,6 +3,8 @@ package org.apereo.cas.support.oauth.validator.token;
 import module java.base;
 import org.apereo.cas.support.oauth.OAuth20GrantTypes;
 import org.apereo.cas.support.oauth.services.OAuthRegisteredService;
+import org.apereo.cas.support.oauth.services.OAuthRegisteredServiceClientSecret;
+import org.apereo.cas.util.CollectionUtils;
 import lombok.experimental.UtilityClass;
 import lombok.val;
 
@@ -25,7 +27,7 @@ public class RequestValidatorTestUtils {
         val registeredService = new OAuthRegisteredService();
         registeredService.setName(name);
         registeredService.setClientId(clientId);
-        registeredService.setClientSecret(clientSecret);
+        registeredService.setClientSecrets(CollectionUtils.wrapList(OAuthRegisteredServiceClientSecret.withoutExpiration(clientSecret)));
         registeredService.setServiceId(serviceId);
         registeredService.setSupportedGrantTypes(grantTypes.stream()
             .map(OAuth20GrantTypes::getType)

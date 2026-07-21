@@ -172,7 +172,7 @@ class OAuth20DefaultTokenGeneratorTests {
 
         @Test
         void verifySlowDown() throws Throwable {
-            val token = defaultDeviceTokenFactory.createDeviceCode(RegisteredServiceTestUtils.getService("https://device.oauth.org"));
+            val token = defaultDeviceTokenFactory.createDeviceCode(RegisteredServiceTestUtils.getService("https://device.oauth.org"), List.of());
             ticketRegistry.addTicket(token);
             val userCode = defaultDeviceUserCodeFactory.createDeviceUserCode(token.getService());
             token.setUserCode(userCode.getId());
@@ -189,7 +189,7 @@ class OAuth20DefaultTokenGeneratorTests {
         @Test
         void verifyUnapproved() throws Throwable {
             val token = defaultDeviceTokenFactory.createDeviceCode(
-                RegisteredServiceTestUtils.getService("https://device.oauth.org"));
+                RegisteredServiceTestUtils.getService("https://device.oauth.org"), List.of());
             ticketRegistry.addTicket(token);
             val userCode = defaultDeviceUserCodeFactory.createDeviceUserCode(token.getService());
             token.setUserCode(userCode.getId());
@@ -208,7 +208,7 @@ class OAuth20DefaultTokenGeneratorTests {
         @Test
         void verifyExpiredUserCode() throws Throwable {
             val token = defaultDeviceTokenFactory.createDeviceCode(
-                RegisteredServiceTestUtils.getService("https://device.oauth.org"));
+                RegisteredServiceTestUtils.getService("https://device.oauth.org"), List.of());
             ticketRegistry.addTicket(token);
             val userCode = defaultDeviceUserCodeFactory.createDeviceUserCode(token.getService());
             token.setUserCode(userCode.getId());
@@ -228,7 +228,7 @@ class OAuth20DefaultTokenGeneratorTests {
         @Test
         void verifyDeviceCodeExpired() throws Throwable {
             val token = defaultDeviceTokenFactory.createDeviceCode(
-                RegisteredServiceTestUtils.getService("https://device.oauth.org"));
+                RegisteredServiceTestUtils.getService("https://device.oauth.org"), List.of());
             ticketRegistry.addTicket(token);
             val userCode = defaultDeviceUserCodeFactory.createDeviceUserCode(token.getService());
             token.setUserCode(userCode.getId());

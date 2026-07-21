@@ -3,8 +3,10 @@ package org.apereo.cas.config;
 import module java.base;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.features.CasFeatureModule;
+import org.apereo.cas.ha.ClusterTopologyManager;
 import org.apereo.cas.ticket.TicketCatalog;
 import org.apereo.cas.ticket.catalog.CasTicketCatalogConfigurationValuesProvider;
+import org.apereo.cas.ticket.registry.PulsarClusterTopologyManager;
 import org.apereo.cas.ticket.registry.publisher.PulsarTicketRegistryPublisher;
 import org.apereo.cas.ticket.registry.pubsub.commands.BaseMessageQueueCommand;
 import org.apereo.cas.ticket.registry.pubsub.queue.QueueableTicketRegistryMessagePublisher;
@@ -113,5 +115,14 @@ public class CasPulsarTicketRegistryAutoConfiguration {
         val factory = new DefaultMessageHandlerMethodFactory();
         factory.setConversionService(applicationContext.getEnvironment().getConversionService());
         return factory;
+    }
+
+    @Bean
+    @ConditionalOnMissingBean(name = "ticketRegistryPulsarClusterTopologyManager")
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+    public ClusterTopologyManager ticketRegistryPulsarClusterTopologyManager(
+        @Qualifier("pulsarAdministration")
+        final PulsarAdministration pulsarAdministration) {
+        return new PulsarClusterTopologyManager(pulsarAdministration);
     }
 }

@@ -64,6 +64,13 @@ public class JsonAuthorizableResourceRepository implements AuthorizableResourceR
     }
 
     @Override
+    public AuthorizableResources store(final AuthorizableResources resource) {
+        val created = createAuthorizableResources(resource);
+        resources.put(created.getNamespace(), created.getResources());
+        return created;
+    }
+
+    @Override
     public Map<String, List<AuthorizableResource>> findAll() {
         return Map.copyOf(resources);
     }
@@ -87,6 +94,17 @@ public class JsonAuthorizableResourceRepository implements AuthorizableResourceR
                 val loadedResource = MAPPER.readValue(json, AuthorizableResources.class);
                 resources.put(loadedResource.getNamespace(), loadedResource.getResources());
             }
+        });
+    }
+
+    private AuthorizableResources createAuthorizableResources(final AuthorizableResources resources) {
+        return FunctionUtils.doUnchecked(() -> {
+            val json = MAPPER.writeValueAsString(resources);
+            val jsonFile = new File(directory, resources.getNamespace() + ".json");
+            try (val reader = new FileWriter(jsonFile, StandardCharsets.UTF_8)) {
+                reader.write(json);
+            }
+            return resources;
         });
     }
 }

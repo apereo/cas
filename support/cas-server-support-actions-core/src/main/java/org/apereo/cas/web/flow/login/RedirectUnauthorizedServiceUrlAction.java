@@ -12,7 +12,6 @@ import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-import org.jspecify.annotations.NonNull;
 import org.jspecify.annotations.Nullable;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.webflow.execution.Event;
@@ -30,7 +29,7 @@ import org.springframework.webflow.execution.RequestContext;
 public class RedirectUnauthorizedServiceUrlAction extends BaseCasWebflowAction {
     private final ServicesManager servicesManager;
 
-    private final ObjectProvider<@NonNull ScriptResourceCacheManager> scriptResourceCacheManager;
+    private final ObjectProvider<ScriptResourceCacheManager> scriptResourceCacheManager;
     
     @Override
     protected @Nullable Event doExecuteInternal(final RequestContext requestContext) {

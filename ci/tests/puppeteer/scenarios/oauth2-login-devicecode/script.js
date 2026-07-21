@@ -2,7 +2,8 @@ const assert = require("assert");
 const cas = require("../../cas.js");
 
 (async () => {
-    const url = "https://localhost:8443/cas/oauth2.0/accessToken?response_type=device_code&client_id=client";
+    const scopes = `${encodeURIComponent("read write create")}`;
+    const url = `https://localhost:8443/cas/oauth2.0/accessToken?response_type=device_code&client_id=client&scope=${scopes}`;
     await cas.doPost(url, "", {
         "Content-Type": "application/json"
     }, (res) => {
@@ -44,6 +45,7 @@ async function verifyDeviceCode(data) {
 
     const browser = await cas.newBrowser(cas.browserOptions());
     const page = await cas.newPage(browser);
+    await cas.gotoLogout(page);
     await page.goto(data.verification_uri);
     await cas.sleep(1000);
     await cas.logPage(page);
@@ -54,15 +56,34 @@ async function verifyDeviceCode(data) {
     await cas.sleep(2000);
     await cas.closeBrowser(browser);
     
-    await cas.doPost(url, "", {
+    const payload = await cas.doPost(url, "", {
         "Content-Type": "application/json"
     }, (res) => {
         assert(res.data.access_token !== undefined);
         assert(res.data.token_type !== undefined);
         assert(res.data.expires_in !== undefined);
-        assert(res.data.scope === undefined);
+        assert(res.data.scope !== undefined);
         assert(res.data.refresh_token !== undefined);
+        return res.data;
     }, (error) => {
         throw `Operation failed ${error}`;
     });
+
+    await cas.log(`Introspecting access token ${payload.access_token}`);
+    const value = "client:secret";
+    const buff = Buffer.alloc(value.length, value);
+    const authzHeader = `Basic ${buff.toString("base64")}`;
+    await cas.log(`Authorization header: ${authzHeader}`);
+    await cas.doGet(`https://localhost:8443/cas/oauth2.0/introspect?token=${payload.access_token}`,
+        (res) => {
+            assert(res.data.active === true);
+            assert(res.data.sub === "casuser");
+            assert(res.data.uniqueSecurityName === "casuser");
+        },
+        (error) => {
+            throw `Introspection operation failed: ${error}`;
+        }, {
+            "Authorization": authzHeader,
+            "Content-Type": "application/json"
+        });
 }

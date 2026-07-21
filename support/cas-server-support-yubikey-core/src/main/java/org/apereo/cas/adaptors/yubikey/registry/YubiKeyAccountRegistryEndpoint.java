@@ -13,7 +13,6 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.io.IOUtils;
 import org.jooq.lambda.Unchecked;
-import org.jspecify.annotations.NonNull;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.boot.actuate.endpoint.Access;
 import org.springframework.boot.actuate.endpoint.annotation.Endpoint;
@@ -41,11 +40,11 @@ import jakarta.servlet.http.HttpServletRequest;
 @Endpoint(id = "yubikeyAccountRepository", defaultAccess = Access.NONE)
 @Slf4j
 public class YubiKeyAccountRegistryEndpoint extends BaseCasRestActuatorEndpoint {
-    private final ObjectProvider<@NonNull YubiKeyAccountRegistry> registry;
+    private final ObjectProvider<YubiKeyAccountRegistry> registry;
 
     public YubiKeyAccountRegistryEndpoint(final CasConfigurationProperties casProperties,
                                           final ConfigurableApplicationContext applicationContext,
-                                          final ObjectProvider<@NonNull YubiKeyAccountRegistry> registry) {
+                                          final ObjectProvider<YubiKeyAccountRegistry> registry) {
         super(casProperties, applicationContext);
         this.registry = registry;
     }
@@ -104,7 +103,7 @@ public class YubiKeyAccountRegistryEndpoint extends BaseCasRestActuatorEndpoint 
     @GetMapping(path = "/export", produces = MediaType.APPLICATION_OCTET_STREAM_VALUE)
     @ResponseBody
     @Operation(summary = "Export all Yubikey accounts as a zip file")
-    public ResponseEntity<@NonNull Resource> export() {
+    public ResponseEntity<Resource> export() {
         val accounts = registry.getObject().getAccounts();
         val resource = CompressionUtils.toZipFile(accounts.stream(),
             Unchecked.function(entry -> {

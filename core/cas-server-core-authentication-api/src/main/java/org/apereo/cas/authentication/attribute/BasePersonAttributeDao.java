@@ -3,6 +3,7 @@ package org.apereo.cas.authentication.attribute;
 import module java.base;
 import org.apereo.cas.authentication.principal.attribute.PersonAttributeDao;
 import org.apereo.cas.authentication.principal.attribute.PersonAttributes;
+import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.RegexUtils;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -49,7 +50,7 @@ public abstract class BasePersonAttributeDao implements PersonAttributeDao {
     public void setId(final String... id) {
         this.id = id;
     }
-    
+
     protected @Nullable PersonAttributes getSinglePerson(final @Nullable Set<PersonAttributes> people) {
         try {
             return DataAccessUtils.singleResult(people);
@@ -183,5 +184,13 @@ public abstract class BasePersonAttributeDao implements PersonAttributeDao {
 
         return RegexUtils.createPattern(queryBuilder.toString());
     }
-    
+
+    @Override
+    public Map<String, Object> toConfiguration() {
+        return CollectionUtils.wrap(
+            "order", this.order,
+            "enabled", this.enabled,
+            "id", this.id,
+            "tags", this.tags);
+    }
 }

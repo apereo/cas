@@ -15,7 +15,6 @@ import lombok.val;
 import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
-import org.jspecify.annotations.NonNull;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.boot.actuate.autoconfigure.endpoint.web.WebEndpointProperties;
 import org.springframework.http.HttpStatus;
@@ -33,13 +32,13 @@ import jakarta.servlet.http.HttpServletResponse;
 @RequiredArgsConstructor
 @Slf4j
 public class RegisteredServiceResponseHeadersEnforcementFilter extends ResponseHeadersEnforcementFilter {
-    private final ObjectProvider<@NonNull ServicesManager> servicesManagerProvider;
+    private final ObjectProvider<ServicesManager> servicesManagerProvider;
 
-    private final ObjectProvider<@NonNull ArgumentExtractor> argumentExtractor;
+    private final ObjectProvider<ArgumentExtractor> argumentExtractor;
 
-    private final ObjectProvider<@NonNull AuthenticationServiceSelectionPlan> authenticationRequestServiceSelectionStrategies;
+    private final ObjectProvider<AuthenticationServiceSelectionPlan> authenticationRequestServiceSelectionStrategies;
 
-    private final ObjectProvider<@NonNull AuditableExecution> registeredServiceAccessStrategyEnforcer;
+    private final ObjectProvider<AuditableExecution> registeredServiceAccessStrategyEnforcer;
 
     private final WebEndpointProperties webEndpointProperties;
 

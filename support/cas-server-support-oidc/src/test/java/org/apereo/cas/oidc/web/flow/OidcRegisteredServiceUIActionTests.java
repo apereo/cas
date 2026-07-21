@@ -36,7 +36,7 @@ class OidcRegisteredServiceUIActionTests extends AbstractOidcTests {
         servicesManager.save(service);
         WebUtils.putServiceIntoFlowScope(context, RegisteredServiceTestUtils.getService(
             "https://www.example.org?client_id=%s&client_secret=%s&redirect_uri=https://oauth.example.org"
-                .formatted(service.getClientId(), service.getClientSecret())));
+                .formatted(service.getClientId(), service.getClientSecrets().getFirst().getValue())));
         val event = oidcRegisteredServiceUIAction.execute(context);
         assertEquals(CasWebflowConstants.TRANSITION_ID_SUCCESS, event.getId());
         val mdui = WebUtils.getServiceUserInterfaceMetadata(context, DefaultRegisteredServiceUserInterfaceInfo.class);

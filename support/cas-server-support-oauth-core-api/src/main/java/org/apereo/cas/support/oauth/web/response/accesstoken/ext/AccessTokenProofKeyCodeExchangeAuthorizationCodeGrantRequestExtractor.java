@@ -5,7 +5,6 @@ import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.support.oauth.web.endpoints.OAuth20ConfigurationContext;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
-import org.jspecify.annotations.NonNull;
 import org.pac4j.core.context.WebContext;
 import org.springframework.beans.factory.ObjectProvider;
 
@@ -17,7 +16,7 @@ import org.springframework.beans.factory.ObjectProvider;
  */
 public class AccessTokenProofKeyCodeExchangeAuthorizationCodeGrantRequestExtractor
     extends AccessTokenAuthorizationCodeGrantRequestExtractor {
-    public AccessTokenProofKeyCodeExchangeAuthorizationCodeGrantRequestExtractor(final ObjectProvider<@NonNull OAuth20ConfigurationContext> oAuthConfigurationContext) {
+    public AccessTokenProofKeyCodeExchangeAuthorizationCodeGrantRequestExtractor(final ObjectProvider<OAuth20ConfigurationContext> oAuthConfigurationContext) {
         super(oAuthConfigurationContext);
     }
 

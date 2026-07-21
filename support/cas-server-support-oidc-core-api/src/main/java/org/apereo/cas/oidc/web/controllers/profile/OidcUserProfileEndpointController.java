@@ -24,7 +24,6 @@ import io.swagger.v3.oas.annotations.enums.ParameterIn;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.val;
 import org.jooq.lambda.Unchecked;
-import org.jspecify.annotations.NonNull;
 import org.pac4j.jee.context.JEEContext;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -72,7 +71,7 @@ public class OidcUserProfileEndpointController extends OAuth20UserProfileEndpoin
     @Operation(summary = "Handle user profile request",
         parameters = @Parameter(name = "access_token", in = ParameterIn.QUERY, required = true, description = "Access token"))
     @Override
-    public ResponseEntity<@NonNull String> handlePostRequest(final HttpServletRequest request,
+    public ResponseEntity<String> handlePostRequest(final HttpServletRequest request,
                                                              final HttpServletResponse response) throws Exception {
         return handleGetRequest(request, response);
     }

@@ -71,6 +71,9 @@ public class DefaultAttributeDefinition implements AttributeDefinition {
     @Builder.Default
     private Map<String, String> patterns = new LinkedHashMap<>();
 
+    @Builder.Default
+    private List<String> dependsOn = new ArrayList<>();
+
     private String flattened;
 
     private boolean singleValue;

@@ -202,19 +202,6 @@ async function initializeAuditEventsOperations() {
         }
 
         function renderAuditResourceSummary(data, row) {
-            if (row.resourceDetails) {
-                return `
-                    <button type="button"
-                            class="mdc-button mdc-button--raised audit-resource-details-button"
-                            data-audit-event-id="${escapeHtml(row.id)}"
-                            aria-label="View audit resource JSON">
-                        <span class="mdc-button__ripple"></span>
-                        <span class="mdc-button__label">
-                            <i class="mdi mdi-code-json" aria-hidden="true"></i>
-                            <span class="audit-resource-details-button-text">Expand to view details</span>
-                        </span>
-                    </button>`;
-            }
             return `<code class="audit-resource-value">${escapeHtml(data)}</code>`;
         }
 
@@ -295,18 +282,33 @@ async function initializeAuditEventsOperations() {
                 const row = auditEventsTable.row(this);
                 row.child.hide();
                 $(this).removeClass("shown");
-                $(this)
-                    .find("button.audit-resource-details-button")
-                    .removeClass("audit-resource-details-button-active")
-                    .attr("aria-label", "View audit resource JSON")
-                    .find(".mdi")
-                    .removeClass("mdi-chevron-up")
-                    .addClass("mdi-code-json");
-                $(this)
-                    .find(".audit-resource-details-button-text")
-                    .text("Expand to view details");
             });
         }
+
+        initializeDataTableContextMenu({
+            table: auditEventsTable,
+            selector: "#auditEventsTable tbody tr",
+            items: {
+                resourceDetails: {
+                    name: "Toggle Resource Details",
+                    icon: contextMenuIcon("mdi-code-json"),
+                    visible: context => !!context.rowData.resourceDetails
+                }
+            },
+            callback: (key, context) => {
+                if (key === "resourceDetails") {
+                    if (context.row.child.isShown()) {
+                        context.row.child.hide();
+                        context.$row.removeClass("shown");
+                    } else {
+                        context.row.child(renderAuditResourceDetails(context.row.data())).show();
+                        context.$row.addClass("shown");
+                        context.$row.next("tr").addClass("audit-resource-details-row");
+                        highlightElements();
+                    }
+                }
+            }
+        });
 
         function updateAuditEventsTable() {
             if (currentActiveTab !== Tabs.LOGGING.index) {
@@ -338,31 +340,7 @@ async function initializeAuditEventsOperations() {
             });
         }
 
-        $("#auditEventsTable tbody")
-            .off("click", "button.audit-resource-details-button")
-            .on("click", "button.audit-resource-details-button", function () {
-                const tableRow = $(this).closest("tr");
-                const row = auditEventsTable.row(tableRow);
-                if (row.child.isShown()) {
-                    row.child.hide();
-                    tableRow.removeClass("shown");
-                    $(this).removeClass("audit-resource-details-button-active");
-                    $(this).attr("aria-label", "View audit resource JSON");
-                    $(this).find(".mdi").removeClass("mdi-chevron-up").addClass("mdi-code-json");
-                    $(this).find(".audit-resource-details-button-text").text("Expand to view details");
-                } else {
-                    row.child(renderAuditResourceDetails(row.data())).show();
-                    tableRow.addClass("shown");
-                    tableRow.next("tr").addClass("audit-resource-details-row");
-                    $(this).addClass("audit-resource-details-button-active");
-                    $(this).attr("aria-label", "Hide audit resource JSON");
-                    $(this).find(".mdi").removeClass("mdi-code-json").addClass("mdi-chevron-up");
-                    $(this).find(".audit-resource-details-button-text").text("Hide details");
-                    highlightElements();
-                }
-            });
-
-        $("#auditEventsIntervalFilter, #auditEventsCountFilter, #auditEventsActionFilter").selectmenu({
+            $("#auditEventsIntervalFilter, #auditEventsCountFilter, #auditEventsActionFilter").selectmenu({
             change: () => {
                 collapseAuditResourceDetails();
                 updateAuditEventsTable();

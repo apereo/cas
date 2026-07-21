@@ -21,7 +21,7 @@ public class Converters {
      * The Zoned date time to string converter
      * turns a {@link ZonedDateTime} into a formatted string.
      */
-    public static class ZonedDateTimeToStringConverter implements Converter<@NonNull ZonedDateTime, @NonNull String> {
+    public static class ZonedDateTimeToStringConverter implements Converter<ZonedDateTime, @NonNull String> {
 
         @Override
         public String convert(final ZonedDateTime zonedDateTime) {
@@ -32,7 +32,7 @@ public class Converters {
     /**
      * Converts a String to a resource instance.
      */
-    public static class StringToResourceConverter implements Converter<@NonNull String, @NonNull Resource> {
+    public static class StringToResourceConverter implements Converter<String, @NonNull Resource> {
 
         @Override
         public Resource convert(final String resource) {

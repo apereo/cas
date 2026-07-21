@@ -125,6 +125,16 @@ public class DateTimeUtils {
     }
 
     /**
+     * Local date of value.
+     *
+     * @param time the time
+     * @return the local date
+     */
+    public static LocalDate localDateOf(final String time) {
+        return LocalDate.parse(time, DateTimeFormatter.ofPattern("MM/dd/yyyy", Locale.ENGLISH));
+    }
+
+    /**
      * Parse the given value as a zoned datetime.
      *
      * @param value the value

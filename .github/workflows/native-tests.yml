@@ -135,7 +135,7 @@ jobs:
           cache: 'gradle'
           set-java-home: 'true'
       - name: Set up Nodejs
-        uses: actions/setup-node@v6
+        uses: actions/setup-node@v7
         if: ${{ env.NATIVE_BUILD_ENABLED == 'true' }}
         with:
           node-version: ${{ env.NODE_VERSION_REQUIRED }}
@@ -193,7 +193,7 @@ jobs:
           cache: 'gradle'
           set-java-home: 'true'
       - name: Set up Nodejs
-        uses: actions/setup-node@v6
+        uses: actions/setup-node@v7
         if: ${{ env.NATIVE_BUILD_ENABLED == 'true' }}
         with:
           node-version: ${{ env.NODE_VERSION_REQUIRED }}
@@ -252,7 +252,7 @@ jobs:
           cache: 'gradle'
           set-java-home: 'true'
       - name: Set up Nodejs
-        uses: actions/setup-node@v6
+        uses: actions/setup-node@v7
         if: ${{ env.NATIVE_BUILD_ENABLED == 'true' }}
         with:
           node-version: ${{ env.NODE_VERSION_REQUIRED }}

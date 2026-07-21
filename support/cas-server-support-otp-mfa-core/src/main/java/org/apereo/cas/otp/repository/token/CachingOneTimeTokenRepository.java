@@ -7,7 +7,6 @@ import com.github.benmanes.caffeine.cache.Cache;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-import org.jspecify.annotations.NonNull;
 
 /**
  * This is {@link CachingOneTimeTokenRepository}.
@@ -20,7 +19,7 @@ import org.jspecify.annotations.NonNull;
 public class CachingOneTimeTokenRepository extends BaseOneTimeTokenRepository<OneTimeToken> {
     private final CasReentrantLock lock = new CasReentrantLock();
 
-    private final Cache<@NonNull String, Collection<OneTimeToken>> storage;
+    private final Cache<String, Collection<OneTimeToken>> storage;
 
     @Override
     public void cleanInternal() {

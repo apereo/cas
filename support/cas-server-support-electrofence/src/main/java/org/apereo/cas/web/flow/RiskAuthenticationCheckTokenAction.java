@@ -22,7 +22,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apereo.inspektr.common.web.ClientInfoHolder;
-import org.jspecify.annotations.NonNull;
 import org.jspecify.annotations.Nullable;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.webflow.execution.Event;
@@ -52,7 +51,7 @@ public class RiskAuthenticationCheckTokenAction extends BaseCasWebflowAction {
 
     protected final CipherExecutor riskVerificationCipherExecutor;
 
-    protected final ObjectProvider<@NonNull GeoLocationService> geoLocationService;
+    protected final ObjectProvider<GeoLocationService> geoLocationService;
 
     protected final CasConfigurationProperties casProperties;
 

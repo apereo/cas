@@ -12,7 +12,6 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.Strings;
-import org.jspecify.annotations.NonNull;
 import org.jspecify.annotations.Nullable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -51,7 +50,7 @@ public class OidcDefaultWebFingerDiscoveryService implements OidcWebFingerDiscov
     private final OidcWebFingerProperties properties;
 
     @Override
-    public ResponseEntity<@NonNull Map> handleRequest(final String resource, final String rel) throws Throwable {
+    public ResponseEntity<Map> handleRequest(final String resource, final String rel) throws Throwable {
         if (StringUtils.isNotBlank(rel) && !OidcConstants.WEBFINGER_REL.equalsIgnoreCase(rel)) {
             LOGGER.warn("Handling discovery request for a non-standard OIDC relation [{}]", rel);
         }

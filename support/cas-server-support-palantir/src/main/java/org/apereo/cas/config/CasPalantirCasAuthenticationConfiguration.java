@@ -20,6 +20,7 @@ import org.apereo.cas.validation.TicketValidator;
 import org.apereo.cas.web.CasWebSecurityConfigurer;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.apache.commons.lang3.Strings;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -123,14 +124,22 @@ class CasPalantirCasAuthenticationConfiguration {
             val casAuthentication = casProperties.getPalantir().getCasAuthentication();
             val requiredAttributeName = casAuthentication.getRequiredAttributeName();
             val requiredAttributeValue = RegexUtils.createPattern(casAuthentication.getRequiredAttributeValue());
-            
+
             val requiredAttributeValues = CollectionUtils.toCollection(attributes.get(requiredAttributeName));
             if (requiredAttributeValues.stream().noneMatch(value -> RegexUtils.find(requiredAttributeValue, value.toString()))) {
                 LOGGER.warn("Required attribute [{}] with value [{}] is not found in the CAS assertion for user [{}]",
                     requiredAttributeName, requiredAttributeValue.pattern(), username);
                 throw new InsufficientAuthenticationException("Unable to grant access to %s".formatted(username));
             }
-            return new User(username, "N/A", List.of(new SimpleGrantedAuthority("ROLE_USER")));
+
+            val authorities = CollectionUtils.toCollection(attributes.get("role"))
+                .stream()
+                .map(role -> Strings.CI.startsWith(role.toString(), "ROLE_") ? role.toString() : "ROLE_" + role)
+                .map(String::toUpperCase)
+                .map(SimpleGrantedAuthority::new)
+                .collect(Collectors.toList());
+            authorities.add(new SimpleGrantedAuthority("ROLE_USER"));
+            return new User(username, "N/A", authorities);
         };
     }
 

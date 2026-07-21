@@ -1,5 +1,5 @@
 {
-  "dependencies": "configuration-cloud-zookeeper",
+  "dependencies": "configuration-cloud-zookeeper,reports",
   "conditions": {
     "docker": "true"
   },
@@ -15,7 +15,11 @@
 
     "--spring.cloud.discovery.enabled=true" ,
     "--spring.cloud.service-registry.enabled=true",
-    "--spring.cloud.zookeeper.discovery.enabled=true"
+    "--spring.cloud.zookeeper.discovery.enabled=true",
+
+    "--cas.monitor.endpoints.endpoint.defaults.access=ANONYMOUS",
+    "--management.endpoints.web.exposure.include=*",
+    "--management.endpoints.access.default=UNRESTRICTED"
   ],
   "initScript": "${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/init.sh"
 }

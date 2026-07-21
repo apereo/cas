@@ -7,6 +7,7 @@ import org.apereo.cas.api.PasswordlessUserAccountCustomizer;
 import org.apereo.cas.api.PasswordlessUserAccountStore;
 import org.apereo.cas.authentication.AuthenticationEventExecutionPlanConfigurer;
 import org.apereo.cas.authentication.AuthenticationHandler;
+import org.apereo.cas.authentication.PasswordlessAuthenticationEndpoint;
 import org.apereo.cas.authentication.PasswordlessTokenAuthenticationHandler;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.authentication.principal.PrincipalFactoryUtils;
@@ -28,13 +29,17 @@ import org.apereo.cas.util.cipher.CipherExecutorUtils;
 import org.apereo.cas.util.crypto.CipherExecutor;
 import org.apereo.cas.util.nativex.CasRuntimeHintsRegistrar;
 import org.apereo.cas.util.scripting.ExecutableCompiledScriptFactory;
+import org.apereo.cas.util.scripting.ScriptResourceCacheManager;
 import org.apereo.cas.util.spring.beans.BeanCondition;
 import org.apereo.cas.util.spring.beans.BeanSupplier;
 import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
+import org.apereo.cas.util.spring.boot.ConditionalOnMissingGraalVMNativeImage;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.validator.routines.EmailValidator;
+import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.actuate.autoconfigure.endpoint.condition.ConditionalOnAvailableEndpoint;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -109,15 +114,18 @@ public class CasPasswordlessAuthenticationAutoConfiguration {
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @ConditionalOnMissingBean(name = "groovyPasswordlessUserAccountCustomizer")
+        @ConditionalOnMissingGraalVMNativeImage
         public PasswordlessUserAccountCustomizer groovyPasswordlessUserAccountCustomizer(
             final ConfigurableApplicationContext applicationContext,
-            final CasConfigurationProperties casProperties) {
+            final CasConfigurationProperties casProperties,
+            @Qualifier(ScriptResourceCacheManager.BEAN_NAME)
+            final ObjectProvider<ScriptResourceCacheManager> scriptResourceCacheManager) {
             val resource = casProperties.getAuthn().getPasswordless().getCore()
                 .getPasswordlessAccountCustomizerScript().getLocation();
             val scriptFactory = ExecutableCompiledScriptFactory.findExecutableCompiledScriptFactory();
             if (resource != null && CasRuntimeHintsRegistrar.notInNativeImage() && scriptFactory.isPresent()) {
-                return new GroovyPasswordlessUserAccountCustomizer(casProperties, applicationContext,
-                    scriptFactory.get().fromResource(resource));
+                return new GroovyPasswordlessUserAccountCustomizer(casProperties,
+                    applicationContext, scriptResourceCacheManager.getObject());
             }
             return PasswordlessUserAccountCustomizer.noOp();
         }
@@ -236,6 +244,21 @@ public class CasPasswordlessAuthenticationAutoConfiguration {
                 .supply(() -> plan -> plan.registerAuthenticationHandlerWithPrincipalResolver(passwordlessTokenAuthenticationHandler, defaultPrincipalResolver))
                 .otherwiseProxy()
                 .get();
+        }
+
+
+        @Bean
+        @ConditionalOnAvailableEndpoint
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+        public PasswordlessAuthenticationEndpoint passwordlessAuthenticationEndpoint(
+            final CasConfigurationProperties casProperties,
+            final ConfigurableApplicationContext applicationContext,
+            @Qualifier(PrincipalResolver.BEAN_NAME_PRINCIPAL_RESOLVER)
+            final ObjectProvider<PrincipalResolver> defaultPrincipalResolver,
+            @Qualifier(PasswordlessUserAccountStore.BEAN_NAME)
+            final ObjectProvider<PasswordlessUserAccountStore> passwordlessUserAccountStore) {
+            return new PasswordlessAuthenticationEndpoint(casProperties, applicationContext,
+                passwordlessUserAccountStore, defaultPrincipalResolver);
         }
     }
 }

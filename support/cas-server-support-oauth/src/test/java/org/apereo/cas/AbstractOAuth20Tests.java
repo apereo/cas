@@ -47,6 +47,7 @@ import org.apereo.cas.support.oauth.OAuth20GrantTypes;
 import org.apereo.cas.support.oauth.OAuth20ResponseTypes;
 import org.apereo.cas.support.oauth.OAuth20TokenExchangeTypes;
 import org.apereo.cas.support.oauth.services.OAuthRegisteredService;
+import org.apereo.cas.support.oauth.services.OAuthRegisteredServiceClientSecret;
 import org.apereo.cas.support.oauth.validator.OAuth20ClientSecretValidator;
 import org.apereo.cas.support.oauth.web.CasOAuth20AuthenticationEventExecutionPlanTestConfiguration;
 import org.apereo.cas.support.oauth.web.OAuth20RequestParameterResolver;
@@ -142,10 +143,10 @@ import static org.junit.jupiter.api.Assertions.*;
         "cas.audit.slf4j.use-single-line=true",
 
         "cas.authn.pac4j.core.session-replication.replicate-sessions=true",
-        
+
         "cas.authn.attribute-repository.stub.attributes.uid=cas",
         "cas.authn.attribute-repository.stub.attributes.givenName=apereo-cas",
-        
+
         "cas.authn.oauth.session-replication.replicate-sessions=true",
         "cas.authn.oauth.session-replication.cookie.auto-configure-cookie-path=true",
         "cas.authn.oauth.session-replication.cookie.crypto.enabled=true",
@@ -162,7 +163,7 @@ public abstract class AbstractOAuth20Tests {
 
     public static final ObjectMapper MAPPER = JacksonObjectMapperFactory.builder()
         .defaultTypingEnabled(false).singleArrayElementUnwrapped(true).build().toObjectMapper();
-    
+
     public static final String CONTEXT = OAuth20Constants.BASE_OAUTH20_URL + '/';
 
     public static final String CLIENT_SECRET = "secret";
@@ -368,7 +369,7 @@ public abstract class AbstractOAuth20Tests {
         if (!requestUri.startsWith("/cas")) {
             requestUri = "/cas" + requestUri;
         }
-        val requestMethod = Objects.requireNonNullElse(request.getMethod(), HttpMethod.GET.name());
+        val requestMethod = Objects.requireNonNullElseGet(request.getMethod(), HttpMethod.GET::name);
         val contentType = Objects.requireNonNullElse(request.getContentType(), MediaType.APPLICATION_FORM_URLENCODED_VALUE);
         val builder = MockMvcRequestBuilders.request(HttpMethod.valueOf(requestMethod), requestUri)
             .with(withCasContext())
@@ -499,7 +500,7 @@ public abstract class AbstractOAuth20Tests {
         service.setName("RegisteredService-" + RandomUtils.randomAlphabetic(6));
         service.setServiceId(serviceId);
         service.setClientId(clientId);
-        service.setClientSecret(secret);
+        service.setClientSecrets(List.of(OAuthRegisteredServiceClientSecret.withoutExpiration(secret)));
         service.setAttributeReleasePolicy(new ReturnAllAttributeReleasePolicy());
         val types = grantTypes.stream().map(OAuth20GrantTypes::getType).collect(Collectors.toSet());
         service.setSupportedGrantTypes(types);
@@ -594,7 +595,7 @@ public abstract class AbstractOAuth20Tests {
         val mockRequest = new MockHttpServletRequest(HttpMethod.GET.name(), CONTEXT + OAuth20Constants.ACCESS_TOKEN_URL);
         mockRequest.setParameter(OAuth20Constants.REDIRECT_URI, REDIRECT_URI);
         mockRequest.setParameter(OAuth20Constants.GRANT_TYPE, OAuth20GrantTypes.AUTHORIZATION_CODE.name().toLowerCase(Locale.ENGLISH));
-        val auth = service.getClientId() + ':' + service.getClientSecret();
+        val auth = service.getClientId() + ':' + service.getClientSecrets().getFirst().getValue();
         val value = EncodingUtils.encodeBase64(auth.getBytes(StandardCharsets.UTF_8));
         val header = HttpConstants.BASIC_HEADER_PREFIX + value;
         mockRequest.addHeader(HttpConstants.AUTHORIZATION_HEADER, header);
@@ -724,7 +725,7 @@ public abstract class AbstractOAuth20Tests {
         val mockRequest = new MockHttpServletRequest(HttpMethod.GET.name(), CONTEXT + OAuth20Constants.ACCESS_TOKEN_URL);
         mockRequest.setParameter(OAuth20Constants.GRANT_TYPE, OAuth20GrantTypes.REFRESH_TOKEN.name().toLowerCase(Locale.ENGLISH));
         mockRequest.setParameter(OAuth20Constants.CLIENT_ID, service.getClientId());
-        mockRequest.setParameter(OAuth20Constants.CLIENT_SECRET, service.getClientSecret());
+        mockRequest.setParameter(OAuth20Constants.CLIENT_SECRET, service.getClientSecrets().getFirst().getValue());
         mockRequest.setParameter(OAuth20Constants.REFRESH_TOKEN, refreshToken.getId());
         val result = performOAuthRequest(mockRequest);
         val mockResponse = result.getResponse();

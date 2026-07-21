@@ -35,10 +35,10 @@ public class PasswordManagementQuery implements Serializable {
     private final String phoneNumber;
 
     @Builder.Default
-    private final LinkedMultiValueMap<@NonNull String, @NonNull String> securityQuestions = new LinkedMultiValueMap<>();
+    private final LinkedMultiValueMap<String, @NonNull String> securityQuestions = new LinkedMultiValueMap<>();
 
     @Builder.Default
-    private final LinkedMultiValueMap<@NonNull String, @NonNull Object> record = new LinkedMultiValueMap<>();
+    private final LinkedMultiValueMap<String, @NonNull Object> record = new LinkedMultiValueMap<>();
 
     /**
      * Find attribute.

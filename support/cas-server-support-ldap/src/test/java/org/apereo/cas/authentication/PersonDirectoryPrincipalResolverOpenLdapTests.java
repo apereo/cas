@@ -99,6 +99,7 @@ class PersonDirectoryPrincipalResolverOpenLdapTests {
         assertTrue(principal.getAttributes().containsKey("homePostalAddress;lang-fr"));
         assertTrue(principal.getAttributes().containsKey("cn"));
         assertTrue(principal.getAttributes().containsKey("surname"));
+        assertNotNull(attributeRepository.toConfiguration());
     }
 
     protected String getLdif(final String user) {

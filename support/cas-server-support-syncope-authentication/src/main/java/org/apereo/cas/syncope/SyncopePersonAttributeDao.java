@@ -37,9 +37,9 @@ public class SyncopePersonAttributeDao extends BasePersonAttributeDao {
     }
 
     @Override
-    public Set<PersonAttributes> getPeople(final Map<String, Object> map,
-                                           @Nullable final PersonAttributeDaoFilter filter,
-                                           @Nullable final Set<PersonAttributes> resolvedPeople) {
+    public @Nullable Set<PersonAttributes> getPeople(final Map<String, Object> map,
+                                                     @Nullable final PersonAttributeDaoFilter filter,
+                                                     @Nullable final Set<PersonAttributes> resolvedPeople) {
         return getPeopleWithMultivaluedAttributes(PersonAttributeDao.stuffAttributesIntoList(map), filter);
     }
 
@@ -65,5 +65,10 @@ public class SyncopePersonAttributeDao extends BasePersonAttributeDao {
         return SyncopeUtils.syncopeUserGroupsSearch(properties, username);
     }
 
-    
+    @Override
+    public Map<String, Object> toConfiguration() {
+        val config = super.toConfiguration();
+        config.put("properties", properties);
+        return config;
+    }
 }

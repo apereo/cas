@@ -146,7 +146,7 @@ class OAuth20AccessTokenEndpointControllerTests {
 
             mvc.perform(post("/cas" + CONTEXT + OAuth20Constants.INTROSPECTION_URL)
                     .param(OAuth20Constants.TOKEN, accessToken.toString())
-                    .headers(HttpUtils.createBasicAuthHeaders(service.getClientId(), service.getClientSecret()))
+                    .headers(HttpUtils.createBasicAuthHeaders(service.getClientId(), service.getClientSecrets().getFirst().getValue()))
                 )
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.cnf.x5t#S256").exists())
@@ -161,7 +161,7 @@ class OAuth20AccessTokenEndpointControllerTests {
             service.setTokenEndpointAuthenticationMethod(OAuth20ClientAuthenticationMethods.CLIENT_SECRET_BASIC.getType());
             servicesManager.save(service);
             mvc.perform(post("/cas" + CONTEXT + OAuth20Constants.ACCESS_TOKEN_URL)
-                    .headers(HttpUtils.createBasicAuthHeaders(service.getClientId(), service.getClientSecret()))
+                    .headers(HttpUtils.createBasicAuthHeaders(service.getClientId(), service.getClientSecrets().getFirst().getValue()))
                     .queryParam(OAuth20Constants.CLIENT_ID, service.getClientId())
                     .queryParam(OAuth20Constants.GRANT_TYPE, OAuth20GrantTypes.CLIENT_CREDENTIALS.name()))
                 .andExpect(status().isOk())
@@ -177,7 +177,7 @@ class OAuth20AccessTokenEndpointControllerTests {
             servicesManager.save(service);
             mvc.perform(post("/cas" + CONTEXT + OAuth20Constants.ACCESS_TOKEN_URL)
                     .param(OAuth20Constants.CLIENT_ID, service.getClientId())
-                    .param(OAuth20Constants.CLIENT_SECRET, service.getClientSecret())
+                    .param(OAuth20Constants.CLIENT_SECRET, service.getClientSecrets().getFirst().getValue())
                     .queryParam(OAuth20Constants.CLIENT_ID, service.getClientId())
                     .queryParam(OAuth20Constants.GRANT_TYPE, OAuth20GrantTypes.CLIENT_CREDENTIALS.name()))
                 .andExpect(status().isOk())
@@ -193,7 +193,7 @@ class OAuth20AccessTokenEndpointControllerTests {
             servicesManager.save(service);
             mvc.perform(post("/cas" + CONTEXT + OAuth20Constants.ACCESS_TOKEN_URL)
                     .param(OAuth20Constants.CLIENT_ID, service.getClientId())
-                    .param(OAuth20Constants.CLIENT_SECRET, service.getClientSecret())
+                    .param(OAuth20Constants.CLIENT_SECRET, service.getClientSecrets().getFirst().getValue())
                     .queryParam(OAuth20Constants.CLIENT_ID, service.getClientId())
                     .queryParam(OAuth20Constants.GRANT_TYPE, OAuth20GrantTypes.CLIENT_CREDENTIALS.name()))
                 .andExpect(status().isUnauthorized())
@@ -212,7 +212,7 @@ class OAuth20AccessTokenEndpointControllerTests {
             val resource = "https://api.example.org/%s".formatted(UUID.randomUUID().toString());
             mvc.perform(post("/cas" + CONTEXT + OAuth20Constants.ACCESS_TOKEN_URL)
                     .param(OAuth20Constants.CLIENT_ID, service.getClientId())
-                    .param(OAuth20Constants.CLIENT_SECRET, service.getClientSecret())
+                    .param(OAuth20Constants.CLIENT_SECRET, service.getClientSecrets().getFirst().getValue())
                     .queryParam(OAuth20Constants.RESOURCE, resource)
                     .queryParam(OAuth20Constants.SUBJECT_TOKEN, subjectToken.getId())
                     .queryParam(OAuth20Constants.SUBJECT_TOKEN_TYPE, OAuth20TokenExchangeTypes.ACCESS_TOKEN.getType())
@@ -236,7 +236,7 @@ class OAuth20AccessTokenEndpointControllerTests {
             val resource = "https://api.example.org/%s".formatted(UUID.randomUUID().toString());
             mvc.perform(post("/cas" + CONTEXT + OAuth20Constants.ACCESS_TOKEN_URL)
                     .param(OAuth20Constants.CLIENT_ID, service.getClientId())
-                    .param(OAuth20Constants.CLIENT_SECRET, service.getClientSecret())
+                    .param(OAuth20Constants.CLIENT_SECRET, service.getClientSecrets().getFirst().getValue())
                     .queryParam(OAuth20Constants.RESOURCE, resource)
                     .queryParam(OAuth20Constants.SUBJECT_TOKEN, subjectToken.getId())
                     .queryParam(OAuth20Constants.SUBJECT_TOKEN_TYPE, OAuth20TokenExchangeTypes.ACCESS_TOKEN.getType())
@@ -685,6 +685,7 @@ class OAuth20AccessTokenEndpointControllerTests {
             val deviceUserCode = ticketRegistry.getTicket(defaultDeviceUserCodeFactory.normalizeUserCode(userCode), OAuth20DeviceUserCode.class);
             assertNotNull(deviceUserCode);
             deviceUserCode.setUserCodeApproved(true);
+            deviceUserCode.setAuthentication(tgt.getAuthentication());
             ticketRegistry.updateTicket(deviceUserCode);
 
             mockRequest.setParameter(OAuth20Constants.CLIENT_ID, service.getClientId());
@@ -802,7 +803,7 @@ class OAuth20AccessTokenEndpointControllerTests {
             val service = addRegisteredService(Set.of(OAuth20GrantTypes.AUTHORIZATION_CODE), UUID.randomUUID().toString(), randomServiceUrl());
             val mockRequest = new MockHttpServletRequest(HttpMethod.POST.name(), CONTEXT + OAuth20Constants.ACCESS_TOKEN_URL);
             mockRequest.setParameter(OAuth20Constants.CLIENT_ID, service.getClientId());
-            mockRequest.setParameter(OAuth20Constants.CLIENT_SECRET, service.getClientSecret());
+            mockRequest.setParameter(OAuth20Constants.CLIENT_SECRET, service.getClientSecrets().getFirst().getValue());
             mockRequest.setParameter(OAuth20Constants.GRANT_TYPE, OAuth20GrantTypes.AUTHORIZATION_CODE.name().toLowerCase(Locale.ENGLISH));
             mockRequest.setParameter(USERNAME, GOOD_USERNAME);
             mockRequest.setParameter(PASSWORD, GOOD_PASSWORD);
@@ -878,7 +879,7 @@ class OAuth20AccessTokenEndpointControllerTests {
             val mockRequest = new MockHttpServletRequest(HttpMethod.GET.name(), CONTEXT + OAuth20Constants.ACCESS_TOKEN_URL);
             mockRequest.setParameter(OAuth20Constants.GRANT_TYPE, OAuth20GrantTypes.REFRESH_TOKEN.name().toLowerCase(Locale.ENGLISH));
             mockRequest.setParameter(OAuth20Constants.CLIENT_ID, registeredService.getClientId());
-            mockRequest.setParameter(OAuth20Constants.CLIENT_SECRET, registeredService.getClientSecret());
+            mockRequest.setParameter(OAuth20Constants.CLIENT_SECRET, registeredService.getClientSecrets().getFirst().getValue());
             mockRequest.setParameter(OAuth20Constants.REFRESH_TOKEN, refreshToken.getId());
             val result = performOAuthRequest(mockRequest);
             val mockResponse = result.getResponse();
@@ -930,7 +931,7 @@ class OAuth20AccessTokenEndpointControllerTests {
             val mockRequest = new MockHttpServletRequest(HttpMethod.GET.name(), CONTEXT + OAuth20Constants.ACCESS_TOKEN_URL);
             mockRequest.setParameter(OAuth20Constants.GRANT_TYPE, OAuth20GrantTypes.REFRESH_TOKEN.name().toLowerCase(Locale.ENGLISH));
             mockRequest.setParameter(OAuth20Constants.CLIENT_ID, service.getClientId());
-            mockRequest.setParameter(OAuth20Constants.CLIENT_SECRET, service.getClientSecret());
+            mockRequest.setParameter(OAuth20Constants.CLIENT_SECRET, service.getClientSecrets().getFirst().getValue());
             val result = performOAuthRequest(mockRequest);
             val mockResponse = result.getResponse();
             val mv = getModelAndView(result);
@@ -948,7 +949,7 @@ class OAuth20AccessTokenEndpointControllerTests {
             val mockRequest = new MockHttpServletRequest(HttpMethod.GET.name(), CONTEXT + OAuth20Constants.ACCESS_TOKEN_URL);
             mockRequest.setParameter(OAuth20Constants.GRANT_TYPE, OAuth20GrantTypes.REFRESH_TOKEN.name().toLowerCase(Locale.ENGLISH));
             mockRequest.setParameter(OAuth20Constants.CLIENT_ID, service.getClientId());
-            mockRequest.setParameter(OAuth20Constants.CLIENT_SECRET, service.getClientSecret());
+            mockRequest.setParameter(OAuth20Constants.CLIENT_SECRET, service.getClientSecrets().getFirst().getValue());
             mockRequest.setParameter(OAuth20Constants.REFRESH_TOKEN, refreshToken.getId());
             val result = performOAuthRequest(mockRequest);
             val mockResponse = result.getResponse();
@@ -1020,7 +1021,7 @@ class OAuth20AccessTokenEndpointControllerTests {
             val mockRequest = new MockHttpServletRequest(HttpMethod.GET.name(), CONTEXT + OAuth20Constants.ACCESS_TOKEN_URL);
             mockRequest.setParameter(OAuth20Constants.GRANT_TYPE, OAuth20GrantTypes.REFRESH_TOKEN.name().toLowerCase(Locale.ENGLISH));
             mockRequest.setParameter(OAuth20Constants.CLIENT_ID, service.getClientId());
-            mockRequest.setParameter(OAuth20Constants.CLIENT_SECRET, service.getClientSecret());
+            mockRequest.setParameter(OAuth20Constants.CLIENT_SECRET, service.getClientSecrets().getFirst().getValue());
             mockRequest.setParameter(OAuth20Constants.REFRESH_TOKEN, refreshToken.getId());
             mockRequest.setParameter(OAuth20Constants.SCOPE, "email");
 
@@ -1073,7 +1074,7 @@ class OAuth20AccessTokenEndpointControllerTests {
             val mockRequest = new MockHttpServletRequest(HttpMethod.POST.name(), CONTEXT + OAuth20Constants.ACCESS_TOKEN_URL);
             mockRequest.setParameter(OAuth20Constants.CLIENT_ID, registeredService.getClientId());
             if (withClientSecret) {
-                mockRequest.setParameter(OAuth20Constants.CLIENT_SECRET, registeredService.getClientSecret());
+                mockRequest.setParameter(OAuth20Constants.CLIENT_SECRET, registeredService.getClientSecrets().getFirst().getValue());
             }
             mockRequest.setParameter(OAuth20Constants.GRANT_TYPE, OAuth20GrantTypes.PASSWORD.name().toLowerCase(Locale.ENGLISH));
             mockRequest.setParameter(USERNAME, GOOD_USERNAME);

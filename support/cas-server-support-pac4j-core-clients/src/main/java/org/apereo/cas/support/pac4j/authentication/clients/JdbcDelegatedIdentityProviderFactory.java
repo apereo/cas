@@ -12,7 +12,6 @@ import lombok.ToString;
 import lombok.experimental.Accessors;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-import org.jspecify.annotations.NonNull;
 import org.pac4j.core.client.BaseClient;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
@@ -40,7 +39,7 @@ public class JdbcDelegatedIdentityProviderFactory extends BaseDelegatedIdentityP
         final CasConfigurationProperties casProperties,
         final Collection<DelegatedClientFactoryCustomizer> customizers,
         final CasSSLContext casSSLContext,
-        final Cache<@NonNull String, List<BaseClient>> clientsCache,
+        final Cache<String, List<BaseClient>> clientsCache,
         final ConfigurableApplicationContext applicationContext) {
         super(casProperties, customizers, casSSLContext, clientsCache, applicationContext);
         this.jdbcTemplate = jdbcTemplate;

@@ -244,6 +244,13 @@ if (!providers.systemProperty('skipCheckstyle').present && CasProjectConventions
         showViolations = true
         toolVersion = "${libs.versions.checkstyle.get()}"
     }
+    tasks.withType(Checkstyle).configureEach {
+        minHeapSize = "256m"
+        maxHeapSize = "2g"
+        classpath = files()
+        exclude("**/generated/**")
+        enabled = !name.toLowerCase(Locale.ROOT).contains("aot")
+    }
 }
 
 dependencies {

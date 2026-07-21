@@ -1,10 +1,12 @@
 package org.apereo.cas.jdbc;
 
 import module java.base;
+import module java.sql;
 import org.apereo.cas.authentication.attribute.AbstractQueryPersonAttributeDao;
 import org.apereo.cas.authentication.attribute.CaseCanonicalizationMode;
 import org.apereo.cas.authentication.principal.attribute.PersonAttributeDao;
 import org.apereo.cas.authentication.principal.attribute.PersonAttributes;
+import org.apereo.cas.configuration.support.JpaBeans;
 import org.apereo.cas.util.RegexUtils;
 import lombok.Getter;
 import lombok.Setter;
@@ -13,7 +15,6 @@ import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
-import module java.sql;
 
 /**
  * Provides common logic for executing a JDBC based query including building the WHERE clause SQL string.
@@ -96,5 +97,15 @@ public abstract class AbstractJdbcPersonAttributeDao<R> extends AbstractQueryPer
         val results = simpleJdbcTemplate.query(queryTemplate, rowMapper);
         LOGGER.debug("Executed [{}] and got results [{}]", queryTemplate, results);
         return parseAttributeMapFromResults(results, queryUserName);
+    }
+
+    @Override
+    public Map<String, Object> toConfiguration() {
+        val config = super.toConfiguration();
+        config.put("queryType", queryType);
+        config.put("caseInsensitiveDataAttributes", caseInsensitiveDataAttributes);
+        config.put("queryTemplate", queryTemplate);
+        config.putAll(JpaBeans.getDataSourceConfig(simpleJdbcTemplate.getDataSource()));
+        return config;
     }
 }

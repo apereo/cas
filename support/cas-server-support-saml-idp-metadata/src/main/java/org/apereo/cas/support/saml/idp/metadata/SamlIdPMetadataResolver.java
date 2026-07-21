@@ -38,7 +38,7 @@ public class SamlIdPMetadataResolver extends BaseElementMetadataResolver {
 
     private final CasConfigurationProperties casProperties;
 
-    private final Cache<@NonNull String, Iterable<EntityDescriptor>> metadataCache;
+    private final Cache<String, Iterable<EntityDescriptor>> metadataCache;
 
     public SamlIdPMetadataResolver(final SamlIdPMetadataLocator locator,
                                    final SamlIdPMetadataGenerator generator,
