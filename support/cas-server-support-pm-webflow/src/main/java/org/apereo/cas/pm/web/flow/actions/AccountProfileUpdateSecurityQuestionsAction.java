@@ -51,7 +51,7 @@ public class AccountProfileUpdateSecurityQuestionsAction extends BaseCasWebflowA
                 .distinct().toList();
             FunctionUtils.throwIf(questions.size() != answers.size(),
                 () -> new IllegalArgumentException("Security questions do not match the given answers"));
-            val securityQuestions = new LinkedMultiValueMap<@NonNull String, @NonNull String>();
+            val securityQuestions = new LinkedMultiValueMap<String, @NonNull String>();
             for (var i = 0; i < questions.size(); i++) {
                 val question = questions.get(i).trim();
                 val answer = answers.get(i).trim();

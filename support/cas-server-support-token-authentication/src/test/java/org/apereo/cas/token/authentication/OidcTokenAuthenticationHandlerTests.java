@@ -12,6 +12,7 @@ import org.apereo.cas.services.OidcRegisteredService;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.support.oauth.OAuth20GrantTypes;
 import org.apereo.cas.support.oauth.OAuth20ResponseTypes;
+import org.apereo.cas.support.oauth.services.OAuthRegisteredServiceClientSecret;
 import org.apereo.cas.support.oauth.web.endpoints.OAuth20ConfigurationContext;
 import org.apereo.cas.support.oauth.web.response.accesstoken.response.OAuth20JwtAccessTokenEncoder;
 import org.apereo.cas.ticket.idtoken.IdTokenGenerationContext;
@@ -83,7 +84,7 @@ class OidcTokenAuthenticationHandlerTests extends BaseTokenAuthenticationTests {
         val registeredService = new OidcRegisteredService();
         registeredService.setClientId(accessToken.getClientId());
         registeredService.setName("oidc-%s".formatted(UUID.randomUUID().toString()));
-        registeredService.setClientSecret("secret");
+        registeredService.setClientSecrets(CollectionUtils.wrapList(OAuthRegisteredServiceClientSecret.withoutExpiration("secret")));
         registeredService.setJwtAccessToken(true);
         registeredService.setServiceId(serviceId);
         registeredService.setScopes(CollectionUtils.wrapSet(
@@ -123,7 +124,7 @@ class OidcTokenAuthenticationHandlerTests extends BaseTokenAuthenticationTests {
         val registeredService = new OidcRegisteredService();
         registeredService.setClientId(accessToken.getClientId());
         registeredService.setName("oidc-%s".formatted(UUID.randomUUID().toString()));
-        registeredService.setClientSecret("secret");
+        registeredService.setClientSecrets(CollectionUtils.wrapList(OAuthRegisteredServiceClientSecret.withoutExpiration("secret")));
         registeredService.setJwtAccessToken(true);
         registeredService.setServiceId(serviceId);
         registeredService.setScopes(CollectionUtils.wrapSet(

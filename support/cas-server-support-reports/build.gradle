@@ -13,6 +13,7 @@ ext {
 dependencies {
     api project(":api:cas-server-core-api-cookie")
     api project(":api:cas-server-core-api-logout")
+    api project(":api:cas-server-core-api-ha")
     
     implementation project(":support:cas-server-support-reports-core")
     implementation project(":support:cas-server-support-validation-core")

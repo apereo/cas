@@ -11,6 +11,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 import lombok.experimental.Accessors;
+import lombok.val;
 
 /**
  * Return all attributes for the service, regardless of service settings.
@@ -41,5 +42,20 @@ public class ReturnAllAttributeReleasePolicy extends AbstractRegisteredServiceAt
             excludedAttributes.forEach(resolvedAttributes::remove);
         }
         return resolvedAttributes;
+    }
+
+    @Override
+    protected List<String> determineRequestedAttributeDefinitions(
+        final RegisteredServiceAttributeReleasePolicyContext context) {
+        return List.of("*");
+    }
+
+    @Override
+    protected Set<String> finalizedRequestedAttributeDefinitions(final Set<String> requestedDefinitions, final RegisteredServiceAttributeReleasePolicyContext context) {
+        val result = new HashSet<>(requestedDefinitions);
+        if (excludedAttributes != null) {
+            result.removeAll(excludedAttributes);
+        }
+        return result;
     }
 }

@@ -9,7 +9,6 @@ import org.apereo.cas.util.serialization.DefaultComponentSerializationPlan;
 import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-import org.jspecify.annotations.NonNull;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
@@ -32,7 +31,7 @@ class CasCoreUtilSerializationConfiguration {
     @Bean
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     public ComponentSerializationPlan componentSerializationPlan(
-        final ObjectProvider<@NonNull List<ComponentSerializationPlanConfigurer>> configurers) {
+        final ObjectProvider<List<ComponentSerializationPlanConfigurer>> configurers) {
         val plan = new DefaultComponentSerializationPlan();
         plan.registerSerializableClass(TriStateBoolean.class);
 

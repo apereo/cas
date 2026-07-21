@@ -23,7 +23,7 @@ import org.springframework.core.io.Resource;
 @Slf4j
 @Getter
 @Setter
-public class PrivateKeyFactoryBean extends AbstractFactoryBean<@NonNull PrivateKey> {
+public class PrivateKeyFactoryBean extends AbstractFactoryBean<PrivateKey> {
 
     static {
         Security.addProvider(new BouncyCastleProvider());

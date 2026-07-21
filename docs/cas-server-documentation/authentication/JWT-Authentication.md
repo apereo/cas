@@ -32,8 +32,8 @@ Here is an example of how to generate a JWT via [Pac4j](https://github.com/pac4j
 var signingSecret = RandomUtils.randomAlphanumeric(256);
 var encryptionSecret = RandomUtils.randomAlphanumeric(48);
 
-System.out.println("signingSecret " + signingSecret);
-System.out.println("encryptionSecret " + encryptionSecret);
+IO.println("signingSecret " + signingSecret);
+IO.println("encryptionSecret " + encryptionSecret);
 
 var g = new JwtGenerator<>();
 g.setSignatureConfiguration(new SecretSignatureConfiguration(signingSecret, JWSAlgorithm.HS256));
@@ -43,7 +43,7 @@ g.setEncryptionConfiguration(new SecretEncryptionConfiguration(encryptionSecret,
 var profile = new CommonProfile();
 profile.setId("casuser");
 var token = g.generate(profile);
-System.out.println("token: " + token);
+IO.println("token: " + token);
 ```
 
 Once the token is generated, you may pass it to the `/login` endpoint of CAS as such:

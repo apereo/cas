@@ -43,7 +43,7 @@ class UmaUpdatePolicyForResourceSetEndpointControllerTests extends BaseUmaEndpoi
         body = createUmaPolicyRegistrationRequest(getCurrentProfile(results.getLeft(), results.getMiddle()),
             CollectionUtils.wrapHashSet("read")).toJson();
         result = performUmaRequest(HttpMethod.PUT,
-            resourceId + "/" + OAuth20Constants.UMA_POLICY_URL + "/" + policyId,
+            resourceId + "/" + OAuth20Constants.UMA_POLICY_URL + '/' + policyId,
             body, results.getLeft(), results.getMiddle());
         model = getMappedResponseBody(result);
         assertNotNull(model);

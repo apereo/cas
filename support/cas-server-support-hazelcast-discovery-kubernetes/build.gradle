@@ -10,6 +10,8 @@ ext {
 }
 dependencies {
     implementation libraries.hazelcast
+
+    api project(":api:cas-server-core-api-ha")
     
     implementation project(":support:cas-server-support-hazelcast-core")
     implementation project(":core:cas-server-core-util-api")

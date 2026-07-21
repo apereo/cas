@@ -60,9 +60,100 @@ async function initializePersonDirectoryOperations() {
     const attributeRepositoriesTable = $("#attributeRepositoriesTable").DataTable({
         pageLength: 10,
         autoWidth: false,
+        columns: [
+            {
+                data: "id",
+                render: (data, type) => type === "display"
+                    ? `<code>${escapePersonDirectoryHtml(data)}</code>`
+                    : data
+            }
+        ],
         drawCallback: () => {
             $("#attributeRepositoriesTable tr").addClass("mdc-data-table__row");
             $("#attributeRepositoriesTable td").addClass("mdc-data-table__cell");
+        }
+    });
+
+    const attributeRepositoryConfigTable = $("#attributeRepositoryConfigTable").DataTable({
+        pageLength: 10,
+        autoWidth: false,
+        columns: [
+            {
+                data: "property",
+                render: (data, type) => type === "display"
+                    ? `<code>${escapePersonDirectoryHtml(data)}</code>`
+                    : data
+            },
+            {
+                data: "value",
+                className: "dt-left wrap",
+                render: (data, type) => type === "display"
+                    ? `<code>${escapePersonDirectoryHtml(formatAttributeRepositoryConfigValue(data))}</code>`
+                    : formatAttributeRepositoryConfigValue(data)
+            }
+        ],
+        drawCallback: () => {
+            $("#attributeRepositoryConfigTable tr").addClass("mdc-data-table__row");
+            $("#attributeRepositoryConfigTable td").addClass("mdc-data-table__cell");
+        }
+    });
+
+    $("#attributeRepositoryConfigDialog").dialog({
+        autoOpen: false,
+        modal: true,
+        width: Math.min($(window).width() * 0.75, 1200),
+        height: Math.min($(window).height() * 0.75, 800),
+        position: {
+            my: "center top",
+            at: "center top+100",
+            of: window
+        },
+        open: () => attributeRepositoryConfigTable.columns.adjust(),
+        buttons: {
+            Close: function () {
+                $(this).dialog("close");
+            }
+        }
+    });
+
+    function normalizeAttributeRepositoryEntry(entry) {
+        const ids = entry?.left ?? entry?.key ?? entry?.ids ?? entry?.id ?? [];
+        return {
+            id: Array.isArray(ids) ? ids.join(", ") : `${ids ?? "N/A"}`,
+            config: entry?.right ?? entry?.value ?? entry?.config ?? entry?.configuration ?? {}
+        };
+    }
+
+    function showAttributeRepositoryConfig(entry) {
+        attributeRepositoryConfigTable.clear();
+        const flattened = flattenAttributeRepositoryConfig(entry.config ?? {});
+        for (const [property, value] of Object.entries(flattened)) {
+            attributeRepositoryConfigTable.row.add({
+                property: property,
+                value: value
+            });
+        }
+        if (Object.keys(flattened).length === 0) {
+            attributeRepositoryConfigTable.row.add({
+                property: "configuration",
+                value: "N/A"
+            });
+        }
+        attributeRepositoryConfigTable.draw();
+        $("#attributeRepositoryConfigDialog").dialog("option", "title", `Attribute Repository Configuration: ${entry.id}`);
+        $("#attributeRepositoryConfigDialog").dialog("open");
+    }
+
+    initializeDataTableContextMenu({
+        table: attributeRepositoriesTable,
+        selector: "#attributeRepositoriesTable tbody tr",
+        items: {
+            view: {name: "View Configuration", icon: contextMenuIcon("mdi-eye")}
+        },
+        callback: (key, context) => {
+            if (key === "view") {
+                showAttributeRepositoryConfig(context.rowData);
+            }
         }
     });
 
@@ -143,26 +234,12 @@ async function initializePersonDirectoryOperations() {
                     5: `<code>${definition.singleValue ? checked : unchecked}</code>`,
                     6: `<code>${definition.attribute ?? "N/A"}</code>`,
                     7: `<code>${definition.patternFormat ?? "N/A"}</code>`,
-                    8: `<code>${definition.canonicalizationMode ?? "N/A"}</code>`,
-                    9: `<code>${definition.flattened ? checked : unchecked}</code>`,
-                    10: `<code>${definition?.friendlyName ?? "N/A"}</code>`,
-                    11: `<code>${definition?.urn ?? "N/A"}</code>`,
-                    12: `<button type="button" name="viewAttrDefn" href="#" data-key="${definition.key}"
-                                title="View Attribute Definition"
-                                class="mdc-button mdc-button--raised btn btn-link min-width-32x">
-                            <i class="mdi mdi-eye min-width-32x" aria-hidden="true"></i>
-                         </button>
-                         <button type="button" name="editAttrDefn" href="#" data-key="${definition.key}"
-                                title="Edit Attribute Definition"
-                                class="mdc-button mdc-button--raised btn btn-link min-width-32x">
-                            <i class="mdi mdi-pencil min-width-32x" aria-hidden="true"></i>
-                         </button>
-                         <button type="button" name="deleteAttrDefn" href="#" data-key="${definition.key}"
-                                title="Delete Attribute Definition"
-                                class="mdc-button mdc-button--raised btn btn-link min-width-32x">
-                            <i class="mdi mdi-delete min-width-32x" aria-hidden="true"></i>
-                         </button>`
-                });
+                        8: `<code>${definition.canonicalizationMode ?? "N/A"}</code>`,
+                        9: `<code>${definition.flattened ? checked : unchecked}</code>`,
+                        10: `<code>${definition?.friendlyName ?? "N/A"}</code>`,
+                        11: `<code>${definition?.urn ?? "N/A"}</code>`,
+                        key: definition.key
+                    });
                 attributeDefinitions++;
             }
             if (attributeDefinitions > 0) {
@@ -187,11 +264,7 @@ async function initializePersonDirectoryOperations() {
     if (CasActuatorEndpoints.personDirectory()) {
         $.get(`${CasActuatorEndpoints.personDirectory()}/repositories`, response => {
             for (const definition of response) {
-                attributeRepositoriesTable.row.add({
-                    0: `<code>${definition.id ?? "N/A"}</code>`,
-                    1: `<code>${definition.order ?? "0"}</code>`,
-                    2: `<code>${JSON.stringify(definition.tags)}</code>`
-                });
+                attributeRepositoriesTable.row.add(normalizeAttributeRepositoryEntry(definition));
                 attributeRepositories++;
             }
             attributeRepositoriesTable.draw();
@@ -201,6 +274,49 @@ async function initializePersonDirectoryOperations() {
             displayBanner(xhr);
         });
     }
+}
+
+function escapePersonDirectoryHtml(str) {
+    return String(str ?? "").replace(/[&<>"']/g, s => ({
+        "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;"
+    }[s]));
+}
+
+function formatAttributeRepositoryConfigValue(value) {
+    if (value === null || value === undefined || value === "") {
+        return "N/A";
+    }
+    if (Array.isArray(value)) {
+        return value.map(formatAttributeRepositoryConfigValue).join(", ");
+    }
+    if (typeof value === "object") {
+        return JSON.stringify(value);
+    }
+    return value;
+}
+
+function flattenAttributeRepositoryConfig(data) {
+    const result = {};
+
+    function recurse(cur, prop) {
+        if (Array.isArray(cur)) {
+            result[prop] = cur.map(formatAttributeRepositoryConfigValue).join(", ");
+        } else if (Object(cur) !== cur) {
+            result[prop] = cur;
+        } else {
+            let isEmpty = true;
+            for (const p in cur) {
+                isEmpty = false;
+                recurse(cur[p], prop ? `${prop}.${p}` : p);
+            }
+            if (isEmpty && prop) {
+                result[prop] = {};
+            }
+        }
+    }
+
+    recurse(data, "");
+    return result;
 }
 
 function attrDefTypeIcon(definition) {
@@ -234,26 +350,12 @@ function reloadAttributeDefinitionsTable() {
                 5: `<code>${definition.singleValue ? checked : unchecked}</code>`,
                 6: `<code>${definition.attribute ?? "N/A"}</code>`,
                 7: `<code>${definition.patternFormat ?? "N/A"}</code>`,
-                8: `<code>${definition.canonicalizationMode ?? "N/A"}</code>`,
-                9: `<code>${definition.flattened ? checked : unchecked}</code>`,
-                10: `<code>${definition?.friendlyName ?? "N/A"}</code>`,
-                11: `<code>${definition?.urn ?? "N/A"}</code>`,
-                12: `<button type="button" name="viewAttrDefn" href="#" data-key="${definition.key}"
-                            title="View Attribute Definition"
-                            class="mdc-button mdc-button--raised btn btn-link min-width-32x">
-                        <i class="mdi mdi-eye min-width-32x" aria-hidden="true"></i>
-                     </button>
-                     <button type="button" name="editAttrDefn" href="#" data-key="${definition.key}"
-                            title="Edit Attribute Definition"
-                            class="mdc-button mdc-button--raised btn btn-link min-width-32x">
-                        <i class="mdi mdi-pencil min-width-32x" aria-hidden="true"></i>
-                     </button>
-                     <button type="button" name="deleteAttrDefn" href="#" data-key="${definition.key}"
-                            title="Delete Attribute Definition"
-                            class="mdc-button mdc-button--raised btn btn-link min-width-32x">
-                        <i class="mdi mdi-delete min-width-32x" aria-hidden="true"></i>
-                     </button>`
-            });
+                    8: `<code>${definition.canonicalizationMode ?? "N/A"}</code>`,
+                    9: `<code>${definition.flattened ? checked : unchecked}</code>`,
+                    10: `<code>${definition?.friendlyName ?? "N/A"}</code>`,
+                    11: `<code>${definition?.urn ?? "N/A"}</code>`,
+                    key: definition.key
+                });
         }
         table.draw();
         if (response.length > 0) {
@@ -365,58 +467,60 @@ function importAttributeDefinitions(fileInput) {
 }
 
 function bindAttrDefDeleteButtons() {
-    $("button[name=deleteAttrDefn]").off().on("click", function () {
-        const key = $(this).attr("data-key");
-        if (CasActuatorEndpoints.attributeDefinitions()) {
-            Swal.fire({
-                title: "Are you sure you want to delete this entry?",
-                text: "Once deleted, you may not be able to recover this entry.",
-                icon: "question",
-                showConfirmButton: true,
-                showDenyButton: true
-            })
-                .then((result) => {
-                    if (result.isConfirmed) {
-                        $.ajax({
-                            url: CasActuatorEndpoints.attributeDefinitions(),
-                            type: "DELETE",
-                            contentType: "application/json",
-                            data: JSON.stringify([key]),
-                            success: () => {
-                                reloadAttributeDefinitionsTable();
-                            },
-                            error: (xhr, status, error) => {
-                                console.error("Error deleting resource:", error);
-                                displayBanner(xhr);
-                            }
-                        });
-                    }
+    const table = $("#attributeDefinitionsTable").DataTable();
+    initializeDataTableContextMenu({
+        table: table,
+        selector: "#attributeDefinitionsTable tbody tr",
+        items: {
+            view: {name: "View Attribute Definition", icon: contextMenuIcon("mdi-eye")},
+            edit: {name: "Edit Attribute Definition", icon: contextMenuIcon("mdi-pencil")},
+            delete: {name: "Delete Attribute Definition", icon: contextMenuIcon("mdi-delete")}
+        },
+        callback: (key, context) => {
+            const definitionKey = context.rowData.key;
+            if (key === "delete" && CasActuatorEndpoints.attributeDefinitions()) {
+                Swal.fire({
+                    title: "Are you sure you want to delete this entry?",
+                    text: "Once deleted, you may not be able to recover this entry.",
+                    icon: "question",
+                    showConfirmButton: true,
+                    showDenyButton: true
+                })
+                    .then((result) => {
+                        if (result.isConfirmed) {
+                            $.ajax({
+                                url: CasActuatorEndpoints.attributeDefinitions(),
+                                type: "DELETE",
+                                contentType: "application/json",
+                                data: JSON.stringify([definitionKey]),
+                                success: () => {
+                                    reloadAttributeDefinitionsTable();
+                                },
+                                error: (xhr, status, error) => {
+                                    console.error("Error deleting resource:", error);
+                                    displayBanner(xhr);
+                                }
+                            });
+                        }
+                    });
+            } else if (key === "view" && CasActuatorEndpoints.attributeDefinitions()) {
+                $.get(`${CasActuatorEndpoints.attributeDefinitions()}/${definitionKey}`, response => {
+                    const editor = initializeAceEditor("viewAttrDefEditor", "json");
+                    editor.setReadOnly(true);
+                    editor.setValue(JSON.stringify(response, null, 2), -1);
+                    editor.gotoLine(1);
+                    const beautify = ace.require("ace/ext/beautify");
+                    beautify.beautify(editor.session);
+                    const dialog = window.mdc.dialog.MDCDialog.attachTo(document.getElementById("viewAttrDefDialog"));
+                    dialog["open"]();
+                }).fail((xhr, status, error) => {
+                    console.error("Error fetching data:", error);
+                    displayBanner(xhr);
                 });
+            } else if (key === "edit") {
+                editAttributeDefinition(definitionKey);
+            }
         }
-    });
-
-    $("button[name=viewAttrDefn]").off().on("click", function () {
-        const key = $(this).attr("data-key");
-        if (CasActuatorEndpoints.attributeDefinitions()) {
-            $.get(`${CasActuatorEndpoints.attributeDefinitions()}/${key}`, response => {
-                const editor = initializeAceEditor("viewAttrDefEditor", "json");
-                editor.setReadOnly(true);
-                editor.setValue(JSON.stringify(response, null, 2), -1);
-                editor.gotoLine(1);
-                const beautify = ace.require("ace/ext/beautify");
-                beautify.beautify(editor.session);
-                const dialog = window.mdc.dialog.MDCDialog.attachTo(document.getElementById("viewAttrDefDialog"));
-                dialog["open"]();
-            }).fail((xhr, status, error) => {
-                console.error("Error fetching data:", error);
-                displayBanner(xhr);
-            });
-        }
-    });
-
-    $("button[name=editAttrDefn]").off().on("click", function () {
-        const key = $(this).attr("data-key");
-        editAttributeDefinition(key);
     });
 }
 
@@ -639,7 +743,7 @@ function openAttributeDefinitionDialog(existingDefinition) {
     });
 
     if (PalantirDashboardConfiguration.scriptFactoryAvailable()) {
-        createInputField({
+        const scriptInput = createInputField({
             labelTitle: "Script",
             name: "attributeDefinitionScript",
             required: false,
@@ -647,6 +751,10 @@ function openAttributeDefinitionDialog(existingDefinition) {
             title: "The script to run for the attribute value.",
             cssClasses: "always-show",
             paramName: "script"
+        });
+        attachPalantirGroovyEditorButton({
+            target: scriptInput,
+            title: "Attribute Definition Groovy Script",
         });
     }
 
@@ -747,6 +855,7 @@ function openAttributeDefinitionDialog(existingDefinition) {
         valueField: "attrDefPatternValue",
         valueLabel: "Value / Script",
         cssClasses: "always-show",
+        groovyEditorTitle: "Attribute Definition Pattern Groovy Script",
         onChangeCallback: generateAttrDefPayload
     }).addClass("mb-3");
 

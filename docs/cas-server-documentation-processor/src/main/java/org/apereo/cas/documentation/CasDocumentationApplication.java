@@ -46,6 +46,7 @@ import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -818,6 +819,16 @@ public class CasDocumentationApplication {
                         paramData.put("required", requestHeaderAnn.required());
                         paramData.put("defaultValue", requestHeaderAnn.defaultValue());
                         paramData.put("header", true);
+                        parameters.add(paramData);
+                    }
+                    var requestBodyAnn = parameter.getAnnotation(RequestBody.class);
+                    if (requestBodyAnn != null) {
+                        var paramData = new LinkedHashMap<String, Object>();
+                        var name = parameter.getType().getName();
+                        paramData.put("name", name);
+                        paramData.put("description", "Request body");
+                        paramData.put("required", requestBodyAnn.required());
+                        paramData.put("body", true);
                         parameters.add(paramData);
                     }
                 }

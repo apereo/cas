@@ -13,7 +13,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.jooq.lambda.Unchecked;
-import org.jspecify.annotations.NonNull;
 import org.pac4j.core.client.Client;
 import org.pac4j.core.client.IndirectClient;
 import org.pac4j.core.context.WebContext;
@@ -31,7 +30,7 @@ import org.springframework.webflow.execution.RequestContext;
 @Slf4j
 @RequiredArgsConstructor
 public class DefaultDelegatedClientIdentityProviderConfigurationProducer implements DelegatedClientIdentityProviderConfigurationProducer {
-    private final ObjectProvider<@NonNull DelegatedClientAuthenticationConfigurationContext> configurationContext;
+    private final ObjectProvider<DelegatedClientAuthenticationConfigurationContext> configurationContext;
 
     @Override
     public Set<DelegatedClientIdentityProviderConfiguration> produce(final RequestContext context) throws Throwable {

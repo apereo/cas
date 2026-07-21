@@ -1,6 +1,7 @@
 package org.apereo.cas.persondir;
 
 import module java.base;
+import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
@@ -54,5 +55,14 @@ public class JsonPersonAttributeDao extends MappablePersonAttributeDao implement
     @Override
     public void destroy() throws Exception {
         close();
+    }
+
+    @Override
+    public Map<String, Object> toConfiguration() {
+        return FunctionUtils.doUnchecked(() -> {
+            val config = super.toConfiguration();
+            config.put("file", personAttributesConfigFile.getURI().toString());
+            return config;
+        });
     }
 }

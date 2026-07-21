@@ -30,7 +30,6 @@ import org.apereo.cas.util.spring.beans.BeanCondition;
 import org.apereo.cas.util.spring.beans.BeanSupplier;
 import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
 import lombok.val;
-import org.jspecify.annotations.NonNull;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -63,7 +62,7 @@ class CasSimpleMultifactorAuthenticationEventExecutionPlanConfiguration {
         @Qualifier(TicketFactory.BEAN_NAME)
         final TicketFactory ticketFactory,
         @Qualifier(CasSimpleMultifactorAuthenticationAccountService.BEAN_NAME)
-        final ObjectProvider<@NonNull CasSimpleMultifactorAuthenticationAccountService> accountService,
+        final ObjectProvider<CasSimpleMultifactorAuthenticationAccountService> accountService,
         @Qualifier(TicketRegistry.BEAN_NAME)
         final TicketRegistry ticketRegistry) {
         val simple = casProperties.getAuthn().getMfa().getSimple();
@@ -81,7 +80,7 @@ class CasSimpleMultifactorAuthenticationEventExecutionPlanConfiguration {
     public AuthenticationHandler casSimpleMultifactorAuthenticationHandler(
         final ConfigurableApplicationContext applicationContext,
         @Qualifier("casSimpleMultifactorAuthenticationProvider")
-        final ObjectProvider<@NonNull MultifactorAuthenticationProvider> multifactorAuthenticationProvider,
+        final ObjectProvider<MultifactorAuthenticationProvider> multifactorAuthenticationProvider,
         @Qualifier("casSimpleMultifactorPrincipalFactory")
         final PrincipalFactory casSimpleMultifactorPrincipalFactory,
         @Qualifier(ServicesManager.BEAN_NAME)
@@ -138,7 +137,7 @@ class CasSimpleMultifactorAuthenticationEventExecutionPlanConfiguration {
         final ServicesManager servicesManager,
         final CasConfigurationProperties casProperties,
         @Qualifier("casSimpleMultifactorAuthenticationProvider")
-        final ObjectProvider<@NonNull MultifactorAuthenticationProvider> multifactorAuthenticationProvider) {
+        final ObjectProvider<MultifactorAuthenticationProvider> multifactorAuthenticationProvider) {
         val authenticationContextAttribute = casProperties.getAuthn().getMfa().getCore().getAuthenticationContextAttribute();
         return new MultifactorAuthenticationProviderMetadataPopulator(authenticationContextAttribute,
             multifactorAuthenticationProvider, servicesManager);

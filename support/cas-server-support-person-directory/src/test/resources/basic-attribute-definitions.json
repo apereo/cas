@@ -30,5 +30,20 @@
     "key": "allgroups",
     "attribute" : "memberships",
     "flattened": "/"
+  },
+  "parentAttribute" : {
+    "@class" : "org.apereo.cas.authentication.attribute.DefaultAttributeDefinition",
+    "key": "parentAttribute",
+    "dependsOn": [ "java.util.List", ["allgroups", "memberships"]],
+    "script":
+      '''
+        groovy {
+          logger.info("Current attributes are {}", attributes)
+          def allgroups = attributes['allgroups'] ?: []
+          def memberships = attributes['memberships'] ?: []
+          def parentAttribute = allgroups + memberships
+          return parentAttribute
+        }
+      '''
   }
 }

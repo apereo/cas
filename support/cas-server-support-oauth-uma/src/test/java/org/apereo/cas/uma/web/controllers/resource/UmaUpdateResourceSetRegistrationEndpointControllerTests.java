@@ -33,7 +33,7 @@ class UmaUpdateResourceSetRegistrationEndpointControllerTests extends BaseUmaEnd
         body = createUmaResourceRegistrationRequest(resourceId).toJson();
 
         result = performUmaRequest(HttpMethod.PUT,
-            OAuth20Constants.UMA_RESOURCE_SET_REGISTRATION_URL + "/" + resourceId,
+            OAuth20Constants.UMA_RESOURCE_SET_REGISTRATION_URL + '/' + resourceId,
             body, results.getLeft(), results.getMiddle());
         model = getMappedResponseBody(result);
         assertTrue(model.containsKey("entity"));
@@ -65,7 +65,7 @@ class UmaUpdateResourceSetRegistrationEndpointControllerTests extends BaseUmaEnd
         val results = authenticateUmaRequestWithProtectionScope();
         var body = createUmaResourceRegistrationRequest(id).toJson();
         val result = performUmaRequest(HttpMethod.PUT,
-            OAuth20Constants.UMA_RESOURCE_SET_REGISTRATION_URL + "/" + id,
+            OAuth20Constants.UMA_RESOURCE_SET_REGISTRATION_URL + '/' + id,
             body, results.getLeft(), results.getMiddle());
         assertEquals(HttpStatus.BAD_REQUEST.value(), result.getResponse().getStatus());
     }

@@ -70,3 +70,9 @@ if ((attributes.get('entitlement') as List).contains('admin')) {
     return attributes['identifier'] as List
 }
 ```
+
+## Actuator Endpoints
+
+The following endpoints are provided by CAS:
+
+{% include_cached actuators.html endpoints="groovyCache" %}

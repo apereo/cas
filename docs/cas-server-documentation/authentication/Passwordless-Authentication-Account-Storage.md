@@ -74,3 +74,9 @@ carries a user whose `requestPassword` is set to `true`, the passwordless flow
 be disabled and skipped in favor of the more usual CAS authentication flow,
 challenging the user for a password. Support for this behavior may depend
 on each individual account store implementation.
+
+## Actuator Endpoints
+
+The following endpoints are provided by CAS:
+
+{% include_cached actuators.html endpoints="health" healthIndicators="passwordless" %}

@@ -22,6 +22,7 @@ import org.apache.hc.client5.http.impl.auth.BasicCredentialsProvider;
 import org.apache.hc.client5.http.impl.classic.HttpClientBuilder;
 import org.apache.hc.core5.http.HttpHost;
 import org.apache.hc.core5.net.URIBuilder;
+import org.jspecify.annotations.Nullable;
 import org.springframework.http.HttpMethod;
 import tools.jackson.databind.ObjectMapper;
 
@@ -50,7 +51,7 @@ public class RestfulPersonAttributeDao extends BasePersonAttributeDao {
     private Map<String, String> headers = new LinkedHashMap<>();
 
     @Override
-    public PersonAttributes getPerson(final String uid, final Set<PersonAttributes> resultPeople, final PersonAttributeDaoFilter filter) {
+    public @Nullable PersonAttributes getPerson(final String uid, final Set<PersonAttributes> resultPeople, final PersonAttributeDaoFilter filter) {
         try {
             if (!this.isEnabled()) {
                 return null;
@@ -99,5 +100,18 @@ public class RestfulPersonAttributeDao extends BasePersonAttributeDao {
             people.add(person);
         }
         return people;
+    }
+
+    @Override
+    public Map<String, Object> toConfiguration() {
+        val config = super.toConfiguration();
+        config.put("url", url);
+        config.put("basicAuthUsername", basicAuthUsername);
+        config.put("basicAuthPassword", basicAuthPassword);
+        config.put("method", method);
+        config.put("principalId", principalId);
+        config.put("parameters", parameters);
+        config.put("headers", headers);
+        return config;
     }
 }

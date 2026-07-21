@@ -13,7 +13,6 @@ import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
-import org.jspecify.annotations.NonNull;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
@@ -42,7 +41,7 @@ public class CasRestServiceRegistryAutoConfiguration {
     @ConditionalOnMissingBean(name = "restfulServiceRegistry")
     public ServiceRegistry restfulServiceRegistry(
         final CasConfigurationProperties casProperties,
-        final ObjectProvider<@NonNull List<ServiceRegistryListener>> serviceRegistryListeners,
+        final ObjectProvider<List<ServiceRegistryListener>> serviceRegistryListeners,
         final ConfigurableApplicationContext applicationContext) {
         return BeanSupplier.of(ServiceRegistry.class)
             .when(CONDITION.given(applicationContext))

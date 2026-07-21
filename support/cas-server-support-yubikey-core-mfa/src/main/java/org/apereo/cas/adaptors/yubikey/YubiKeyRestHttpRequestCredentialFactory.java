@@ -7,7 +7,6 @@ import org.apereo.cas.util.CollectionUtils;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
-import org.jspecify.annotations.NonNull;
 import org.springframework.util.MultiValueMap;
 import jakarta.servlet.http.HttpServletRequest;
 
@@ -25,7 +24,7 @@ public class YubiKeyRestHttpRequestCredentialFactory implements RestHttpRequestC
     public static final String PARAMETER_NAME_YUBIKEY_OTP = "yubikeyotp";
 
     @Override
-    public List<Credential> fromRequest(final HttpServletRequest request, final MultiValueMap<@NonNull String, String> requestBody) {
+    public List<Credential> fromRequest(final HttpServletRequest request, final MultiValueMap<String, String> requestBody) {
         if (requestBody == null || requestBody.isEmpty()) {
             LOGGER.debug("Skipping [{}] because the requestBody is null or empty", getClass().getSimpleName());
             return new ArrayList<>();

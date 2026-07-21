@@ -1,0 +1,48 @@
+{
+  "@class": "org.apereo.cas.services.OidcRegisteredService",
+  "clientId": "client1",
+  "clientSecret": "secret1",
+  "serviceId": "^https://localhost:9859/anything/sample1",
+  "name": "Sample",
+  "id": 1,
+  "scopes" : [ "java.util.HashSet", [ "openid" ] ],
+  "supportedGrantTypes": [ "java.util.HashSet", [ "authorization_code" ] ],
+  "supportedResponseTypes": [ "java.util.HashSet", [ "code" ] ],
+  "bypassApprovalPrompt": true,
+  "attributeReleasePolicy": {
+    "@class": "org.apereo.cas.services.ChainingAttributeReleasePolicy",
+    "policies": [ "java.util.ArrayList",
+      [
+        {
+          "@class": "org.apereo.cas.oidc.claims.OidcEmailScopeAttributeReleasePolicy",
+          "order": 0
+        },
+        {
+          "@class": "org.apereo.cas.oidc.claims.OidcProfileScopeAttributeReleasePolicy",
+          "order": 1
+        },
+        {
+          "@class": "org.apereo.cas.services.ReturnMappedAttributeReleasePolicy",
+          "order": 2,
+          "allowedAttributes": {
+            "@class": "java.util.TreeMap",
+            "amr":
+              '''
+              groovy {
+                logger.info("Building AMR attribute")
+                def duoAmr = attributes["duoAmr"]
+                if (duoAmr?.contains("pop")) {
+                  return ["passkey"]
+                }
+                if (duoAmr?.contains("otp")) {
+                  return ["mfa"]
+                }
+                return ["pwd"]
+              }
+              '''
+          }
+        },
+      ]
+    ]
+  }
+}

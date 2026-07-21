@@ -174,7 +174,7 @@ class OidcAccessTokenResponseGeneratorTests extends AbstractOidcTests {
 
     @Test
     void verifyAccessTokenResponseForDeviceCode() throws Throwable {
-        val devCode = deviceTokenFactory.createDeviceCode(RegisteredServiceTestUtils.getService());
+        val devCode = deviceTokenFactory.createDeviceCode(RegisteredServiceTestUtils.getService(), List.of());
 
         val token = OAuth20TokenGeneratedResult.builder()
             .registeredService(getOidcRegisteredService())

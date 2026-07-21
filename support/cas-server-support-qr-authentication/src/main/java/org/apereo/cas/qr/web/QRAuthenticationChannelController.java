@@ -11,7 +11,6 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-import org.jspecify.annotations.NonNull;
 import org.springframework.messaging.Message;
 import org.springframework.messaging.core.MessageSendingOperations;
 import org.springframework.messaging.handler.annotation.MessageMapping;
@@ -34,7 +33,7 @@ public class QRAuthenticationChannelController {
     private static final ObjectMapper MAPPER = JacksonObjectMapperFactory.builder()
         .defaultTypingEnabled(false).build().toObjectMapper();
 
-    private final MessageSendingOperations<@NonNull String> messageTemplate;
+    private final MessageSendingOperations<String> messageTemplate;
 
     private final QRAuthenticationTokenValidatorService tokenValidatorService;
 
@@ -45,7 +44,7 @@ public class QRAuthenticationChannelController {
      * @return true/false
      */
     @MessageMapping("/accept")
-    public boolean verify(final Message<@NonNull String> message) {
+    public boolean verify(final Message<String> message) {
         val payload = message.getPayload();
         LOGGER.trace("Received payload [{}]", payload);
         val nativeHeaders = Objects.requireNonNull(message.getHeaders().get("nativeHeaders", LinkedMultiValueMap.class));

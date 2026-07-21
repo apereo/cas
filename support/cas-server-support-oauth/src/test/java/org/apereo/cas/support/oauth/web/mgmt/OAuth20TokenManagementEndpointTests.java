@@ -4,12 +4,14 @@ import module java.base;
 import org.apereo.cas.AbstractOAuth20Tests;
 import org.apereo.cas.support.oauth.OAuth20Constants;
 import lombok.val;
+import org.hamcrest.Matchers;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.http.MediaType;
 import org.springframework.test.context.TestPropertySource;
-import static org.junit.jupiter.api.Assertions.*;
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 /**
  * This is {@link OAuth20TokenManagementEndpointTests}.
@@ -23,22 +25,28 @@ import static org.junit.jupiter.api.Assertions.*;
 })
 @Tag("OAuthWeb")
 class OAuth20TokenManagementEndpointTests extends AbstractOAuth20Tests {
-    @Autowired
-    @Qualifier("oauth20TokenManagementEndpoint")
-    private OAuth20TokenManagementEndpoint tokenManagementEndpoint;
-
     @Test
     void verifyOperationWithJwt() throws Throwable {
         val registeredService = getRegisteredService("example1", "secret", new LinkedHashSet<>());
         registeredService.setJwtAccessToken(true);
         servicesManager.save(registeredService);
-
+        
         val mv = generateAccessTokenResponseAndGetModelAndView(registeredService);
         val at = mv.getModel().get(OAuth20Constants.ACCESS_TOKEN).toString();
-        val token = tokenManagementEndpoint.getToken(at);
-        assertNotNull(token);
-        assertFalse(tokenManagementEndpoint.getTokens().isEmpty());
-        tokenManagementEndpoint.deleteToken(token.getId());
+        mockMvc.perform(get("/actuator/oauthTokens/{token}", at)
+                .accept(MediaType.APPLICATION_JSON))
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$.id").exists());
+
+        mockMvc.perform(get("/actuator/oauthTokens")
+                .accept(MediaType.APPLICATION_JSON))
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$.length()", Matchers.greaterThan(0)));
+
+        mockMvc.perform(delete("/actuator/oauthTokens/{token}", at)
+                .with(csrf())
+                .accept(MediaType.APPLICATION_JSON))
+            .andExpect(status().is2xxSuccessful());
     }
 
     @Test
@@ -48,12 +56,16 @@ class OAuth20TokenManagementEndpointTests extends AbstractOAuth20Tests {
 
         val mv = generateAccessTokenResponseAndGetModelAndView(registeredService);
         val at = mv.getModel().get(OAuth20Constants.ACCESS_TOKEN).toString();
-        val token = tokenManagementEndpoint.getToken(at);
-        assertNotNull(token);
+        mockMvc.perform(get("/actuator/oauthTokens/{token}", at)
+                .accept(MediaType.APPLICATION_JSON))
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$.id").exists());
     }
 
     @Test
-    void verifyBadOperation() {
-        assertNull(tokenManagementEndpoint.getToken("unknown"));
+    void verifyBadOperation() throws Throwable {
+        mockMvc.perform(get("/actuator/oauthTokens/{token}", "unknown")
+                .accept(MediaType.APPLICATION_JSON))
+            .andExpect(status().isNotFound());
     }
 }

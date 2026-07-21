@@ -34,10 +34,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @Tag("MFAProvider")
 class GoogleAuthenticatorTokenCredentialRepositoryEndpointTests extends AbstractCasEndpointTests {
     @Autowired
-    @Qualifier("googleAuthenticatorTokenCredentialRepositoryEndpoint")
-    private GoogleAuthenticatorTokenCredentialRepositoryEndpoint endpoint;
-
-    @Autowired
     @Qualifier(BaseGoogleAuthenticatorTokenCredentialRepository.BEAN_NAME)
     private OneTimeTokenCredentialRepository registry;
 

@@ -23,7 +23,6 @@ import org.apereo.cas.web.support.ThrottledSubmissionHandlerInterceptor;
 import org.apereo.cas.web.support.ThrottledSubmissionsStore;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-import org.jspecify.annotations.NonNull;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.actuate.autoconfigure.endpoint.condition.ConditionalOnAvailableEndpoint;
@@ -177,9 +176,9 @@ public class CasThrottlingAutoConfiguration {
         public ThrottledSubmissionHandlerEndpoint throttledSubmissionHandlerEndpoint(
             final ConfigurableApplicationContext applicationContext,
             @Qualifier(AuthenticationThrottlingExecutionPlan.BEAN_NAME)
-            final ObjectProvider<@NonNull AuthenticationThrottlingExecutionPlan> plan,
+            final ObjectProvider<AuthenticationThrottlingExecutionPlan> plan,
             @Qualifier(ThrottledSubmissionsStore.BEAN_NAME)
-            final ObjectProvider<@NonNull ThrottledSubmissionsStore> throttledSubmissionStore,
+            final ObjectProvider<ThrottledSubmissionsStore> throttledSubmissionStore,
             final CasConfigurationProperties casProperties) {
             return new ThrottledSubmissionHandlerEndpoint(
                 casProperties, applicationContext, plan, throttledSubmissionStore);

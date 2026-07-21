@@ -13,6 +13,8 @@ dependencies {
     implementation libraries.hazelcastzookeeper
     implementation libraries.zookeeper
 
+    api project(":api:cas-server-core-api-ha")
+    
     implementation project(":support:cas-server-support-hazelcast-core")
     implementation project(":core:cas-server-core-util-api")
     implementation project(":core:cas-server-core-configuration-api")

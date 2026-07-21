@@ -2,7 +2,9 @@ package org.apereo.cas.oidc.web;
 
 import module java.base;
 import org.apereo.cas.oidc.AbstractOidcTests;
+import org.apereo.cas.support.oauth.services.OAuthRegisteredServiceClientSecret;
 import org.apereo.cas.support.oauth.validator.OAuth20ClientSecretValidator;
+import org.apereo.cas.util.CollectionUtils;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
@@ -26,8 +28,10 @@ class OidcClientSecretValidatorTests extends AbstractOidcTests {
     void verifyNotExpired() {
         val secret = UUID.randomUUID().toString();
         val service = getOidcRegisteredService();
-        service.setClientSecret(secret);
-        service.setClientSecretExpiration(ZonedDateTime.now(ZoneOffset.UTC).plusMinutes(1).toEpochSecond());
+        service.setClientSecrets(CollectionUtils.wrapList(
+            new OAuthRegisteredServiceClientSecret(secret,
+                ZonedDateTime.now(ZoneOffset.UTC).plusMinutes(1).toEpochSecond())
+        ));
         val results = oauth20ClientSecretValidator.validate(service, secret);
         assertTrue(results);
     }
@@ -36,8 +40,10 @@ class OidcClientSecretValidatorTests extends AbstractOidcTests {
     void verifyExpired() {
         val secret = UUID.randomUUID().toString();
         val service = getOidcRegisteredService();
-        service.setClientSecret(secret);
-        service.setClientSecretExpiration(ZonedDateTime.now(ZoneOffset.UTC).minusHours(1).toEpochSecond());
+        service.setClientSecrets(CollectionUtils.wrapList(
+            new OAuthRegisteredServiceClientSecret(secret,
+                ZonedDateTime.now(ZoneOffset.UTC).minusHours(1).toEpochSecond())
+        ));
         val results = oauth20ClientSecretValidator.validate(service, secret);
         assertFalse(results);
     }

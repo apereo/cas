@@ -58,7 +58,7 @@ public class LdapPasswordlessUserAccountStore implements PasswordlessUserAccount
                 if (StringUtils.isNotBlank(ldapProperties.getRequiredAttribute())
                     && StringUtils.isNotBlank(ldapProperties.getRequiredAttributeValue())) {
                     val attributeValues = passwordlessUserAccount.getAttributes().getOrDefault(ldapProperties.getRequiredAttribute(), List.of());
-                    if (attributeValues.stream().noneMatch(value -> RegexUtils.find(ldapProperties.getRequiredAttributeValue(), value))) {
+                    if (attributeValues.stream().noneMatch(value -> RegexUtils.find(ldapProperties.getRequiredAttributeValue(), value.toString()))) {
                         LOGGER.warn("Passwordless account [{}] does not have the required attribute [{}] with value pattern [{}]",
                             passwordlessUserAccount, ldapProperties.getRequiredAttribute(), ldapProperties.getRequiredAttributeValue());
                         return Optional.empty();
@@ -106,7 +106,7 @@ public class LdapPasswordlessUserAccountStore implements PasswordlessUserAccount
             .stream()
             .collect(Collectors.toMap(LdapAttribute::getName,
                 attr -> new ArrayList<>(attr.getStringValues()), (__, b) -> b,
-                () -> new LinkedHashMap<String, List<String>>(entry.getAttributes().size())));
+                () -> new LinkedHashMap<String, List<Object>>(entry.getAttributes().size())));
         
         return acctBuilder.attributes(attributes).build();
     }

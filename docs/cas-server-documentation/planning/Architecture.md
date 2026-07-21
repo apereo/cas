@@ -95,7 +95,7 @@ start of the SSO session, though there are other cases when it can be invoked (e
 
 CAS uses the many aspects of the Spring Framework; most notably,
 [Spring MVC](http://docs.spring.io/spring/docs/current/spring-framework-reference/html/mvc.html) and
-[Spring Webflow](https://github.com/apereo/spring-webflow). Spring provides a complete and extensible framework for
+[Spring Webflow](https://github.com/spring-projects/spring-webflow). Spring provides a complete and extensible framework for
 the core CAS codebase as well as for deployers; it's straightforward to customize or extend CAS behavior by hooking
 CAS and Spring API extension points. General knowledge of Spring is beneficial to understanding the interplay among
 some framework components, but it's not strictly required. 

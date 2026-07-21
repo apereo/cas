@@ -28,7 +28,6 @@ import org.apereo.cas.validation.AuthenticationAttributeReleasePolicy;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.jooq.lambda.Unchecked;
-import org.jspecify.annotations.NonNull;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.AutoConfigureOrder;
@@ -111,7 +110,7 @@ class CasCoreAuthenticationConfiguration {
             final CasConfigurationProperties casProperties,
             final ConfigurableApplicationContext applicationContext,
             @Qualifier(AuthenticationSystemSupport.BEAN_NAME)
-            final ObjectProvider<@NonNull AuthenticationSystemSupport> authenticationSystemSupport,
+            final ObjectProvider<AuthenticationSystemSupport> authenticationSystemSupport,
             @Qualifier(AuthenticationEventExecutionPlan.DEFAULT_BEAN_NAME)
             final AuthenticationEventExecutionPlan authenticationEventExecutionPlan) {
             val isFatal = casProperties.getPersonDirectory().getPrincipalResolutionFailureFatal() == TriStateBoolean.TRUE;

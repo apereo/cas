@@ -3,6 +3,14 @@
     overflow: auto;
 }
 
+.mfa-provider-table td.wrap {
+    overflow-wrap: anywhere;
+    white-space: normal;
+    word-break: break-word;
+    overflow: visible;
+    text-overflow: clip;
+}
+
 .ts-dropdown, .jqueryui-multiselectmenu {
     background-color: #d7ebf9 !important;
     z-index: 10000 !important;
@@ -44,6 +52,48 @@
 
 .missing-required-field {
     background-color: rgb(255 221 221);
+}
+
+.mdc-text-field--outlined > .palantir-input-icon {
+    align-items: center;
+    display: inline-flex;
+    height: 24px;
+    justify-content: center;
+    left: 16px;
+    line-height: 1;
+    margin: 0 !important;
+    pointer-events: none;
+    position: absolute !important;
+    right: auto;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 24px;
+    z-index: 3;
+}
+
+.mdc-text-field--outlined > .palantir-input-icon::before {
+    display: block;
+    line-height: 1;
+}
+
+.mdc-text-field--outlined > .palantir-input-icon + .mdc-text-field__input {
+    box-sizing: border-box;
+    min-width: 0;
+    padding-left: 48px !important;
+    position: relative;
+    z-index: 2;
+}
+
+[dir="rtl"] .mdc-text-field--outlined > .palantir-input-icon,
+.mdc-text-field--outlined[dir="rtl"] > .palantir-input-icon {
+    left: auto;
+    right: 16px;
+}
+
+[dir="rtl"] .mdc-text-field--outlined > .palantir-input-icon + .mdc-text-field__input,
+.mdc-text-field--outlined[dir="rtl"] > .palantir-input-icon + .mdc-text-field__input {
+    padding-left: 0 !important;
+    padding-right: 48px !important;
 }
 
 .dt-column-title {
@@ -115,6 +165,22 @@
     background: linear-gradient(#fff, #f0f0f0);
     border: 1px solid #bdbdbd;
     box-shadow: 0 2px 0 #b0b0b0, 0 3px 6px rgba(0,0,0,.12);
+}
+
+.context-menu-item:not(.context-menu-separator) {
+    padding: .5em 2em;
+}
+
+.context-menu-item .context-menu-separator {
+    padding: .1em 2em;
+}
+
+table.dataTable tbody tr.context-menu-active > * {
+    background-color: var(--cas-theme-primary-bg, rgba(21, 62, 80, 0.2)) !important;
+}
+
+table.dataTable tbody tr.context-menu-active > *:first-child {
+    box-shadow: inset 4px 0 0 var(--cas-theme-primary, #153e50);
 }
 
 .ui-tooltip, .arrow:after {
@@ -478,6 +544,353 @@ select + span[role="combobox"] {
     border: 1px solid rgba(0, 0, 0, .38);
     border-radius: 4px;
     padding: .35rem .6rem;
+}
+
+.registered-service-client-secrets {
+    width: 100%;
+}
+
+.passwordless-account-panel {
+    width: 99%;
+    margin: 1rem auto 0;
+}
+
+
+.passwordless-account-search {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    align-items: stretch;
+    gap: .75rem;
+}
+
+.passwordless-account-search-field {
+    min-width: 0;
+}
+
+.passwordless-account-search-button {
+    min-height: 3.5rem;
+    padding-right: 1.25rem;
+    padding-left: 1.25rem;
+}
+
+.passwordless-account-message {
+    display: flex;
+    align-items: center;
+    gap: .6rem;
+}
+
+.passwordless-account-message > .mdi {
+    flex: 0 0 auto;
+    font-size: 1.4rem;
+}
+
+.passwordless-account-swal-progress {
+    display: grid;
+    gap: .85rem;
+    margin-top: .5rem;
+    text-align: left;
+}
+
+.passwordless-account-swal-progress-message {
+    color: #4f5d68;
+    overflow-wrap: anywhere;
+}
+
+.passwordless-account-swal-progress-track {
+    height: .7rem;
+    overflow: hidden;
+    border-radius: 999px;
+    background: #e7ebef;
+}
+
+.passwordless-account-swal-progress-track span {
+    display: block;
+    width: 35%;
+    height: 100%;
+    border-radius: inherit;
+    background: var(--cas-theme-primary, #153e50);
+    animation: passwordless-account-progress 1.1s ease-in-out infinite;
+}
+
+@keyframes passwordless-account-progress {
+    from {
+        transform: translateX(-110%);
+    }
+
+    to {
+        transform: translateX(300%);
+    }
+}
+
+.passwordless-account-card {
+    overflow: hidden;
+    border: var(--cas-theme-border-light, 1px solid rgba(0, 0, 0, .2));
+    border-radius: .75rem;
+    background: var(--mdc-theme-surface, #fff);
+    color: var(--mdc-theme-text-primary-on-background, #263238);
+    box-shadow: 0 10px 28px rgba(31, 53, 73, .14);
+}
+
+.passwordless-account-card-header {
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr) auto;
+    align-items: center;
+    gap: 1rem;
+    padding: 1.35rem 1.5rem;
+    background: linear-gradient(135deg, var(--cas-theme-primary, #153e50), #2675a8);
+    color: #fff;
+}
+
+.passwordless-account-avatar {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 4rem;
+    height: 4rem;
+    border: 2px solid rgba(255, 255, 255, .68);
+    border-radius: 50%;
+    background: rgba(255, 255, 255, .16);
+}
+
+.passwordless-account-avatar .mdi {
+    font-size: 2.25rem;
+    line-height: 1;
+}
+
+.passwordless-account-identity {
+    min-width: 0;
+}
+
+.passwordless-account-identity h3,
+.passwordless-account-username {
+    overflow-wrap: anywhere;
+}
+
+.passwordless-account-eyebrow {
+    display: block;
+    margin-bottom: .15rem;
+    font-size: .75rem;
+    font-weight: 700;
+    letter-spacing: .1em;
+    opacity: .8;
+    text-transform: uppercase;
+}
+
+.passwordless-account-username {
+    display: inline-flex;
+    align-items: center;
+    gap: .35rem;
+    opacity: .9;
+}
+
+.passwordless-account-contact-status {
+    display: inline-flex;
+    align-items: center;
+    gap: .35rem;
+    padding: .45rem .75rem;
+    border: 1px solid rgba(255, 255, 255, .55);
+    border-radius: 999px;
+    background: rgba(255, 255, 255, .16);
+    font-size: .8rem;
+    font-weight: 700;
+    white-space: nowrap;
+}
+
+.passwordless-account-contact-status.passwordless-account-contact-missing {
+    border-color: #ffe08a;
+    background: rgba(255, 193, 7, .2);
+}
+
+.passwordless-account-card-body {
+    padding: 1.5rem;
+}
+
+.passwordless-account-detail-grid,
+.passwordless-account-capability-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 15rem), 1fr));
+    gap: .85rem;
+}
+
+.passwordless-account-detail,
+.passwordless-account-capability {
+    min-width: 0;
+    border: 1px solid rgba(21, 62, 80, .16);
+    border-radius: .6rem;
+    background: var(--cas-theme-primary-bg, rgba(21, 62, 80, .07));
+}
+
+.passwordless-account-detail {
+    display: flex;
+    align-items: center;
+    gap: .75rem;
+    padding: .9rem 1rem;
+}
+
+.passwordless-account-detail > .mdi {
+    flex: 0 0 auto;
+    color: var(--cas-theme-primary, #153e50);
+    font-size: 1.65rem;
+}
+
+.passwordless-account-detail-label,
+.passwordless-account-detail-value {
+    display: block;
+}
+
+.passwordless-account-detail-label {
+    margin-bottom: .15rem;
+    color: var(--cas-theme-primary, #153e50);
+    font-size: .75rem;
+    font-weight: 700;
+    letter-spacing: .04em;
+    text-transform: uppercase;
+}
+
+.passwordless-account-detail-value {
+    overflow-wrap: anywhere;
+    font-weight: 600;
+}
+
+.passwordless-account-section {
+    margin-top: 1.35rem;
+}
+
+.passwordless-account-section-title {
+    display: flex;
+    align-items: center;
+    gap: .45rem;
+    margin-top: 1.35rem;
+    margin-bottom: .7rem;
+    color: var(--cas-theme-primary, #153e50);
+}
+
+.passwordless-account-section-title .mdi {
+    font-size: 1.35rem;
+}
+
+.passwordless-account-capability {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: .75rem;
+    padding: .8rem .9rem;
+    font-weight: 600;
+}
+
+.passwordless-account-state {
+    display: inline-flex;
+    align-items: center;
+    gap: .3rem;
+    flex: 0 0 auto;
+    padding: .3rem .6rem;
+    border: 1px solid #aab4ba;
+    border-radius: 999px;
+    background: #eef1f3;
+    color: #455a64;
+    font-size: .75rem;
+    font-weight: 700;
+    white-space: nowrap;
+}
+
+.passwordless-account-state-enabled {
+    border-color: var(--cas-theme-success, #74c163);
+    background: rgba(116, 193, 99, .2);
+    color: #235b2d;
+}
+
+.passwordless-account-state-unknown {
+    border-color: var(--cas-theme-warning, #e6a210);
+    background: var(--cas-theme-warning-bg, #fff3cd);
+    color: var(--cas-theme-warning, #664d03);
+}
+
+.passwordless-account-chip-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: .5rem;
+}
+
+.passwordless-account-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: .35rem;
+    padding: .4rem .7rem;
+    border: 1px solid var(--cas-theme-primary, #153e50);
+    border-radius: 999px;
+    background: var(--cas-theme-primary-bg, rgba(21, 62, 80, .1));
+    color: var(--cas-theme-primary, #153e50);
+    font-weight: 600;
+}
+
+.passwordless-account-empty-value {
+    color: #607d8b;
+    font-style: italic;
+}
+
+.passwordless-account-attributes-table-container {
+    width: 100%;
+    overflow-x: auto;
+}
+
+#passwordlessAccountAttributesTable td {
+    vertical-align: top;
+    overflow-wrap: anywhere;
+    word-break: break-word;
+}
+
+@media (max-width: 700px) {
+    .passwordless-account-search {
+        grid-template-columns: 1fr;
+    }
+
+    .passwordless-account-card-header {
+        grid-template-columns: auto minmax(0, 1fr);
+    }
+
+    .passwordless-account-contact-status {
+        grid-column: 1 / -1;
+        justify-self: start;
+    }
+}
+
+.palantir-service-editor-layout {
+    display: flex;
+    direction: ltr;
+    flex-flow: row nowrap;
+    gap: .5rem;
+    min-width: 0;
+}
+
+.palantir-service-template-sidebar {
+    order: 0;
+    flex: 0 0 25%;
+    min-width: 0;
+    overflow-y: auto;
+}
+
+.palantir-service-definition-editor {
+    order: 1;
+    flex: 1 1 auto;
+    width: auto;
+    min-width: 0;
+}
+
+.registered-service-client-secret-row {
+    gap: .5rem;
+    flex-wrap: wrap;
+}
+
+.registered-service-client-secret-row .mdc-text-field {
+    min-width: 12rem;
+    flex: 1 1 12rem;
+}
+
+.registered-service-client-secret-row .registered-service-client-secret-action {
+    flex: 0 0 auto;
+    height: 3.5rem;
+    min-height: 3.5rem;
+    min-width: 4.25rem;
 }
 
 .thread-dump-stack-summary {
@@ -949,6 +1362,8 @@ select + span[role="combobox"] {
 
 .http-exchange-method.method-head,
 .http-exchange-method.method-options,
+.http-exchange-method.method-trace,
+.http-exchange-method.method-connect,
 .http-exchange-method.method-any,
 .http-exchange-status.status-informational {
     background: #607d8b;
@@ -2140,24 +2555,6 @@ select + span[role="combobox"] {
     text-align: right;
 }
 
-.cas-vulnerabilities-summary {
-    display: flex;
-    flex-wrap: wrap;
-    gap: .5rem;
-    margin-bottom: .75rem;
-}
-
-.cas-vulnerability-summary-item {
-    display: inline-flex;
-    align-items: center;
-    gap: .35rem;
-    min-height: 1.75rem;
-    padding: .25rem .75rem;
-    border-radius: 6px;
-    background: #eef2f5;
-    color: #26323d;
-    font-size: .86rem;
-}
 
 .audit-action-tag {
     display: inline-flex;
@@ -2286,4 +2683,636 @@ select + span[role="combobox"] {
     white-space: pre-wrap;
     overflow-wrap: anywhere;
     word-break: break-word;
+}
+
+.heimdall-resource-dialog-layout {
+    display: flex;
+    gap: 1rem;
+    min-height: 0;
+    height: 100%;
+    overflow: hidden;
+}
+
+.heimdall-authorization-simulation {
+    border: var(--cas-theme-border-light, 1px solid rgba(0, 0, 0, .2));
+    background: var(--mdc-theme-surface, #fff);
+    color: var(--mdc-theme-text-primary-on-background, #333);
+}
+
+.heimdall-authorization-simulation-header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 1rem;
+}
+
+.heimdall-authorization-simulation-title {
+    display: flex;
+    align-items: center;
+    gap: .5rem;
+    line-height: 1.2;
+}
+
+.heimdall-authorization-simulation-title .mdc-tab__icon {
+    display: inline-flex;
+    align-items: center;
+    flex: 0 0 auto;
+    margin: 0;
+    color: var(--cas-theme-primary, #153e50);
+    line-height: 1;
+}
+
+.heimdall-authorization-mode-buttons {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: .5rem;
+}
+
+.heimdall-authorization-section-title {
+    margin-top: 1.5rem;
+    margin-bottom: .75rem;
+}
+
+.heimdall-authorization-fields {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 16rem), 1fr));
+    gap: 1rem;
+}
+
+.heimdall-authorization-map-host [data-mapped-input-row="true"] {
+    flex-wrap: wrap;
+}
+
+.heimdall-authorization-editor-container {
+    height: 22rem;
+    border: 1px solid var(--cas-theme-primary, #153e50);
+    border-radius: .25rem;
+    overflow: hidden;
+}
+
+.heimdall-resource-controls {
+    flex: 0 0 31rem;
+    max-width: 31rem;
+    padding-top: .75rem;
+    padding-right: .75rem;
+    overflow-x: hidden;
+    overflow-y: auto;
+    scrollbar-gutter: stable;
+}
+
+.heimdall-resource-controls-expanded {
+    flex-basis: 100%;
+    max-width: 100%;
+}
+
+.heimdall-resource-editor-container {
+    flex: 1 1 auto;
+    min-width: 30rem;
+    border: 1px solid var(--cas-theme-primary, #153e50);
+    border-radius: .25rem;
+    overflow: hidden;
+}
+
+.heimdall-policy-card {
+    border: 1px solid #c7d5e1;
+    border-radius: .5rem;
+    background: var(--mdc-theme-surface, #fff);
+    box-shadow: 0 1px 3px rgb(0 0 0 / 8%);
+}
+
+.heimdall-policy-card-header {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    align-items: start;
+    gap: .75rem;
+}
+
+.heimdall-policy-type-label,
+.heimdall-select-field {
+    display: block;
+    min-width: 0;
+    color: var(--mdc-theme-text-primary-on-background, #333);
+    font-size: .875rem;
+    font-weight: 500;
+}
+
+.heimdall-policy-type-label > span,
+.heimdall-select-field > span {
+    display: block;
+    margin-bottom: .25rem;
+}
+
+.heimdall-policy-card .ui-selectmenu-button.ui-button {
+    display: flex;
+    align-items: center;
+    width: 100% !important;
+    min-height: 2.75rem;
+    margin: 0;
+    font-family: var(--mdc-typography-font-family);
+    font-size: 1rem;
+}
+
+.heimdall-policy-card .ui-selectmenu-button .ui-selectmenu-text {
+    flex: 1 1 auto;
+    margin-right: .5rem;
+}
+
+.heimdall-policy-actions {
+    display: flex;
+    align-items: center;
+    gap: .25rem;
+    margin-top: 1.35rem;
+}
+
+.heimdall-policy-action.mdc-button {
+    width: 2.35rem;
+    min-width: 2.35rem;
+    height: 2.75rem;
+    padding: 0;
+}
+
+.heimdall-policy-action .mdi {
+    font-size: 1.25rem;
+}
+
+.heimdall-policy-drag-handle {
+    cursor: grab;
+    touch-action: none;
+}
+
+.heimdall-policy-drag-handle:active,
+.heimdall-policy-card-dragging .heimdall-policy-drag-handle {
+    cursor: grabbing;
+}
+
+.heimdall-policy-card-collapsed .heimdall-policy-card-header {
+    margin-bottom: 0 !important;
+}
+
+.heimdall-policy-card-dragging {
+    z-index: 10001;
+    box-shadow: 0 8px 24px rgb(0 0 0 / 22%);
+}
+
+.heimdall-policy-sort-placeholder {
+    visibility: visible !important;
+    min-height: 4.5rem;
+    margin-bottom: 1rem;
+    border: 2px dashed var(--cas-theme-primary, #153e50);
+    border-radius: .5rem;
+    background: rgb(21 62 80 / 6%);
+}
+
+.heimdall-dialog-footer-toggles {
+    display: flex;
+    align-items: center;
+    margin-right: auto;
+}
+
+.heimdall-policy-enforcement {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.35rem;
+    line-height: 1;
+}
+
+.heimdall-policy-enforcement-enforced {
+    color: #168a55;
+}
+
+.heimdall-policy-enforcement-not-enforced {
+    color: #607d8b;
+}
+
+.palantir-code-input-group {
+    width: 100%;
+}
+
+.palantir-code-field-container {
+    display: block;
+}
+
+.palantir-code-input-group .mdc-input-group-field {
+    min-width: 0;
+}
+
+.palantir-code-editor-button {
+    min-width: 5.25rem;
+    gap: .35rem;
+    margin-left: 2px;
+}
+
+.palantir-code-editor-button .mdc-button__label {
+    display: inline-flex;
+    align-items: center;
+    gap: .35rem;
+}
+
+.ui-dialog-content.palantir-code-editor-dialog {
+    display: flex !important;
+    flex-direction: column;
+    gap: .5rem;
+    overflow: hidden !important;
+}
+
+.palantir-code-editor {
+    flex: 1 1 auto;
+    width: 100%;
+    min-height: 22rem;
+    margin: 0;
+}
+
+.palantir-code-editor-status {
+    flex: 0 0 auto;
+    padding: .65rem .85rem;
+    border-radius: .3rem;
+    font-weight: 600;
+}
+
+.palantir-code-editor-status-info {
+    color: #084298;
+    background: #cfe2ff;
+    border: 1px solid #9ec5fe;
+}
+
+.palantir-code-editor-status-success {
+    color: #0f5132;
+    background: #d1e7dd;
+    border: 1px solid #a3cfbb;
+}
+
+.palantir-code-editor-status-error {
+    color: #842029;
+    background: #f8d7da;
+    border: 1px solid #f1aeb5;
+}
+
+#registeredServiceHeimdallResourcePropertyKeyMapContainer .heimdallResourcePropertyKey-map-row,
+.heimdall-authorization-map-host [data-mapped-input-row="true"],
+.heimdall-policy-map-host [data-mapped-input-row="true"] {
+    align-items: center;
+    gap: .5rem;
+}
+
+#registeredServiceHeimdallResourcePropertyKeyMapContainer .mdc-text-field,
+.heimdall-authorization-map-host [data-mapped-input-row="true"] .mdc-text-field,
+.heimdall-policy-map-host [data-mapped-input-row="true"] .mdc-text-field {
+    flex: 1 1 0;
+    min-width: 0;
+    margin-bottom: 0 !important;
+}
+
+.heimdall-authorization-map-host [data-mapped-input-row="true"] .mdc-text-field {
+    min-width: min(100%, 12rem);
+}
+
+#registeredServiceHeimdallResourcePropertyKeyMapContainer .mdc-button--inline-row,
+.heimdall-authorization-map-host .mdc-button--inline-row,
+.heimdall-policy-map-host .mdc-button--inline-row {
+    flex: 0 0 auto;
+    min-width: 2.5rem;
+}
+
+.heimdall-policy-fields > .mdc-text-field {
+    display: flex;
+    width: 100%;
+}
+
+.cluster-topology-summary {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: .65rem;
+    margin-bottom: 1rem;
+}
+
+.cluster-summary-chip,
+.cluster-member-health,
+.cluster-owner-count {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: .3rem;
+    min-height: 1.75rem;
+    padding: .2rem .65rem;
+    border-radius: 999px;
+    font-size: .82rem;
+    font-weight: 800;
+    line-height: 1;
+    white-space: nowrap;
+}
+
+.cluster-summary-total,
+.cluster-summary-owners {
+    color: var(--cas-theme-primary, #153e50);
+    background: rgba(79, 143, 217, .17);
+}
+
+.cluster-summary-healthy,
+.cluster-member-health-healthy {
+    color: #0f5132;
+    background: #d1e7dd;
+}
+
+.cluster-summary-unhealthy,
+.cluster-member-health-unhealthy {
+    color: var(--cas-theme-danger, #58151c);
+    background: var(--cas-theme-danger-bg, #f8d7da);
+}
+
+.cluster-topology-message {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: .5rem;
+    min-height: 6rem;
+    padding: 1rem;
+    border: 1px dashed rgba(21, 62, 80, .3);
+    border-radius: 10px;
+    color: #536471;
+    background: rgba(21, 62, 80, .035);
+    font-weight: 700;
+}
+
+.cluster-topology-message .mdi {
+    font-size: 1.4rem;
+}
+
+.cluster-members-loading-dialog .mdc-linear-progress {
+    margin: 1.25rem 0 .5rem;
+}
+
+.cluster-topology-owners {
+    display: grid;
+    gap: 1rem;
+}
+
+.cluster-owner-group {
+    overflow: hidden;
+    border: 1px solid #d8dee5;
+    border-radius: 10px;
+    background: #fff;
+    box-shadow: 0 5px 18px rgba(31, 53, 73, .08);
+}
+
+.cluster-owner-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    padding: .8rem 1rem;
+    border-bottom: 1px solid #d8dee5;
+    background: rgba(21, 62, 80, .06);
+}
+
+.cluster-owner-title {
+    display: flex;
+    align-items: center;
+    gap: .45rem;
+    min-width: 0;
+    margin: 0;
+    color: var(--cas-theme-primary, #153e50);
+    font-size: 1.05rem;
+    font-weight: 800;
+}
+
+.cluster-owner-title span {
+    overflow-wrap: anywhere;
+}
+
+.cluster-owner-count {
+    flex: 0 0 auto;
+    color: #fff;
+    background: var(--cas-theme-primary, #153e50);
+}
+
+.cluster-member-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 20rem), 1fr));
+    gap: 1rem;
+    padding: 1rem;
+}
+
+.cluster-member-card {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+    overflow: hidden;
+    border: 1px solid transparent;
+    border-left-width: 6px;
+    border-radius: 9px;
+    box-shadow: 0 5px 15px rgba(31, 53, 73, .1);
+    transition: transform .2s ease, box-shadow .2s ease;
+}
+
+.cluster-member-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 9px 22px rgba(31, 53, 73, .16);
+}
+
+.cluster-member-card-healthy {
+    border-color: #3f9f82;
+    background: linear-gradient(145deg, #fff 55%, rgba(116, 193, 99, .14));
+}
+
+.cluster-member-card-unhealthy {
+    border-color: var(--mdc-theme-error, #a20323);
+    background: linear-gradient(145deg, #fff 50%, var(--cas-theme-danger-bg, #f8d7da));
+}
+
+.cluster-member-card-header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: .75rem;
+    padding: 1rem 1rem .65rem;
+}
+
+.cluster-member-identity {
+    display: flex;
+    align-items: flex-start;
+    gap: .45rem;
+    min-width: 0;
+}
+
+.cluster-member-identity > .mdi {
+    flex: 0 0 auto;
+    color: var(--cas-theme-primary, #153e50);
+    font-size: 1.4rem;
+}
+
+.cluster-member-card-unhealthy .cluster-member-identity > .mdi {
+    color: var(--mdc-theme-error, #a20323);
+}
+
+.cluster-member-id {
+    color: #d63384;
+    font-size: .95rem;
+    font-weight: 800;
+    overflow-wrap: anywhere;
+}
+
+.cluster-member-description {
+    margin: 0;
+    padding: 0 1rem .7rem;
+    color: #536471;
+    overflow-wrap: anywhere;
+}
+
+.cluster-member-metadata {
+    display: grid;
+    gap: .35rem;
+    padding: 0 1rem .75rem;
+}
+
+.cluster-member-metadata-row {
+    display: grid;
+    grid-template-columns: 1.1rem minmax(4.5rem, auto) 1fr;
+    align-items: start;
+    gap: .35rem;
+    min-width: 0;
+}
+
+.cluster-member-metadata-row > .mdi {
+    color: var(--cas-theme-primary, #153e50);
+}
+
+.cluster-member-metadata-label {
+    color: #536471;
+    font-size: .84rem;
+    font-weight: 700;
+}
+
+.cluster-member-metadata-value {
+    min-width: 0;
+    color: #26323d;
+    font-size: .84rem;
+    overflow-wrap: anywhere;
+}
+
+.cluster-member-attributes {
+    margin: 0 1rem .75rem;
+    padding: .65rem .75rem;
+    border-radius: 7px;
+    background: rgba(21, 62, 80, .06);
+}
+
+.cluster-member-attributes-title {
+    display: flex;
+    align-items: center;
+    gap: .35rem;
+    margin-bottom: .35rem;
+    color: var(--cas-theme-primary, #153e50);
+    font-size: .82rem;
+    font-weight: 800;
+}
+
+.cluster-member-attributes dl {
+    display: grid;
+    grid-template-columns: minmax(4rem, auto) 1fr;
+    gap: .15rem .5rem;
+    margin: 0;
+    font-size: .78rem;
+}
+
+.cluster-member-attributes dt {
+    color: #536471;
+    font-weight: 800;
+}
+
+.cluster-member-attributes dd {
+    min-width: 0;
+    margin: 0;
+    color: #26323d;
+    overflow-wrap: anywhere;
+}
+
+.cluster-member-more-attributes {
+    display: inline-block;
+    margin-top: .35rem;
+    color: var(--cas-theme-primary, #153e50);
+    font-size: .75rem;
+    font-weight: 800;
+}
+
+.cluster-member-card-actions {
+    justify-content: flex-end;
+    margin-top: auto;
+    padding: 0 1rem 1rem;
+}
+
+.cluster-member-details-table {
+    width: 100% !important;
+    table-layout: fixed;
+}
+
+.cluster-member-details-table th,
+.cluster-member-details-table td {
+    text-align: left !important;
+    vertical-align: top;
+    white-space: normal;
+    overflow-wrap: anywhere;
+}
+
+.cluster-member-detail-label {
+    color: var(--cas-theme-primary, #153e50);
+    font-weight: 800;
+}
+
+.cluster-member-detail-value {
+    color: #26323d;
+}
+
+.cluster-member-dialog-healthy .ui-dialog-titlebar {
+    border-left: 6px solid #3f9f82;
+}
+
+.cluster-member-dialog-unhealthy .ui-dialog-titlebar {
+    border-left: 6px solid var(--mdc-theme-error, #a20323);
+}
+
+@media (max-width: 900px) {
+    .heimdall-authorization-simulation-header {
+        flex-direction: column;
+    }
+
+    .heimdall-resource-dialog-layout {
+        display: block;
+        overflow-y: auto;
+    }
+
+    .heimdall-resource-controls {
+        height: auto;
+        overflow: visible;
+    }
+
+    .heimdall-resource-controls,
+    .heimdall-resource-editor-container {
+        width: 100%;
+        max-width: 100%;
+        min-width: 0;
+    }
+
+    .heimdall-resource-editor-container {
+        height: 28rem !important;
+        margin-top: 1rem;
+    }
+
+    .heimdall-policy-card-header {
+        grid-template-columns: 1fr;
+        align-items: stretch;
+    }
+
+    .heimdall-policy-actions {
+        justify-content: flex-end;
+        margin-top: 0;
+    }
+
+    .cluster-owner-header {
+        align-items: flex-start;
+        flex-direction: column;
+    }
 }

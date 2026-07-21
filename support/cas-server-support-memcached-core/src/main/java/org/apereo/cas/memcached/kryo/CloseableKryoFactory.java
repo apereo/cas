@@ -34,7 +34,6 @@ import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.joda.time.DateTime;
-import org.jspecify.annotations.NonNull;
 import org.objenesis.strategy.StdInstantiatorStrategy;
 import org.springframework.beans.factory.FactoryBean;
 
@@ -47,7 +46,7 @@ import org.springframework.beans.factory.FactoryBean;
 @Slf4j
 @Setter
 @RequiredArgsConstructor
-public class CloseableKryoFactory implements FactoryBean<@NonNull CloseableKryo> {
+public class CloseableKryoFactory implements FactoryBean<CloseableKryo> {
 
     private final CasKryoPool kryoPool;
 

@@ -166,4 +166,21 @@ public class LdapPersonAttributeDao extends AbstractQueryPersonAttributeDao<Filt
             connectionFactory.close();
         }
     }
+
+    @Override
+    public Map<String, Object> toConfiguration() {
+        val config = super.toConfiguration();
+        config.put("baseDN", baseDN);
+        config.put("searchFilter", searchFilter);
+        config.put("binaryAttributes", binaryAttributes);
+        val connectionConfig = Objects.requireNonNull(getConnectionFactory()).getConnectionConfig();
+        config.put("url", connectionConfig.getLdapUrl());
+        config.put("returningAttributes", searchControls.getReturningAttributes());
+        config.put("startTLS", connectionConfig.getUseStartTLS());
+        config.put("connectTimeout", connectionConfig.getConnectTimeout());
+        config.put("searchScope", searchControls.getSearchScope());
+        config.put("countLimit", searchControls.getCountLimit());
+        config.put("timeLimit", searchControls.getTimeLimit());
+        return config;
+    }
 }

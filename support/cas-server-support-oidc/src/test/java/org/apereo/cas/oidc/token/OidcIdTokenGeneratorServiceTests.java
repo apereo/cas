@@ -260,8 +260,7 @@ class OidcIdTokenGeneratorServiceTests {
 
             val registeredService = getOidcRegisteredService(UUID.randomUUID().toString(), randomServiceUrl());
             registeredService.setScopes(CollectionUtils.wrapSet(EMAIL.getScope(), PROFILE.getScope(), PHONE.getScope()));
-
-
+            
             val idTokenContext = IdTokenGenerationContext.builder()
                 .accessToken(accessToken)
                 .userProfile(profile)

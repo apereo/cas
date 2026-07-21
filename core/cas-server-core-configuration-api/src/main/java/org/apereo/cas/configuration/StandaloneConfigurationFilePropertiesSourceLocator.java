@@ -6,7 +6,6 @@ import org.apereo.cas.util.crypto.CipherExecutor;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-import org.jspecify.annotations.NonNull;
 import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
 import org.springframework.core.env.CompositePropertySource;
@@ -41,7 +40,7 @@ public class StandaloneConfigurationFilePropertiesSourceLocator implements CasCo
         return Optional.empty();
     }
 
-    private PropertySource<@NonNull Map<String, Object>> loadSettingsFromStandaloneConfigFile(
+    private PropertySource<Map<String, Object>> loadSettingsFromStandaloneConfigFile(
         final Environment environment, final File configFile) {
         val configurationLoaders = CasConfigurationPropertiesSourceLocator.getConfigurationPropertiesLoaders();
         val resource = new FileSystemResource(configFile);

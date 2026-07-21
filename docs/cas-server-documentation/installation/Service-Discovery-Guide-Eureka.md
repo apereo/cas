@@ -24,12 +24,12 @@ Support is added by including the following dependency in the WAR overlay:
 
 {% include_cached casproperties.html thirdParty="eureka.client,spring.cloud.config.discovery" %}
 
-### Authentication
+## Authentication
 
 Support for HTTP basic authentication will be automatically added if one of Eureka server URLs
 in the configuration has credentials embedded in it (curl style, like `http://user:password@localhost:8761/eureka`).
 
-### Troubleshooting
+## Troubleshooting
 
 To enable additional logging, configure the log4j configuration file to add the following levels:
 
@@ -43,3 +43,9 @@ To enable additional logging, configure the log4j configuration file to add the 
     <AppenderRef ref="casFile"/>
 </Logger>
 ```
+
+## Actuator Endpoints
+
+The following endpoints are provided by CAS:
+
+{% include_cached actuators.html endpoints="clusterTopology" %}

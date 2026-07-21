@@ -60,7 +60,6 @@ import com.github.benmanes.caffeine.cache.Caffeine;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.velocity.app.VelocityEngine;
-import org.jspecify.annotations.NonNull;
 import org.opensaml.saml.metadata.resolver.MetadataResolver;
 import org.opensaml.saml.saml2.core.Response;
 import org.springframework.beans.factory.ObjectProvider;
@@ -144,13 +143,13 @@ class SamlIdPMetadataConfiguration {
         public SamlRegisteredServiceCachedMetadataEndpoint samlRegisteredServiceCachedMetadataEndpoint(
             final CasConfigurationProperties casProperties,
             @Qualifier(SamlRegisteredServiceCachingMetadataResolver.BEAN_NAME)
-            final ObjectProvider<@NonNull SamlRegisteredServiceCachingMetadataResolver> defaultSamlRegisteredServiceCachingMetadataResolver,
+            final ObjectProvider<SamlRegisteredServiceCachingMetadataResolver> defaultSamlRegisteredServiceCachingMetadataResolver,
             @Qualifier(ServicesManager.BEAN_NAME)
-            final ObjectProvider<@NonNull ServicesManager> servicesManager,
+            final ObjectProvider<ServicesManager> servicesManager,
             @Qualifier(OpenSamlConfigBean.DEFAULT_BEAN_NAME)
-            final ObjectProvider<@NonNull OpenSamlConfigBean> openSamlConfigBean,
+            final ObjectProvider<OpenSamlConfigBean> openSamlConfigBean,
             @Qualifier(AuditableExecution.AUDITABLE_EXECUTION_REGISTERED_SERVICE_ACCESS)
-            final ObjectProvider<@NonNull AuditableExecution> registeredServiceAccessStrategyEnforcer) {
+            final ObjectProvider<AuditableExecution> registeredServiceAccessStrategyEnforcer) {
             return new SamlRegisteredServiceCachedMetadataEndpoint(casProperties,
                 defaultSamlRegisteredServiceCachingMetadataResolver, servicesManager,
                 registeredServiceAccessStrategyEnforcer, openSamlConfigBean);
@@ -281,7 +280,7 @@ class SamlIdPMetadataConfiguration {
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public SamlRegisteredServiceMetadataResolutionPlan samlRegisteredServiceMetadataResolvers(
-            final ObjectProvider<@NonNull List<SamlRegisteredServiceMetadataResolutionPlanConfigurer>> configurersList) {
+            final ObjectProvider<List<SamlRegisteredServiceMetadataResolutionPlanConfigurer>> configurersList) {
             val plan = new DefaultSamlRegisteredServiceMetadataResolutionPlan();
             val configurers = Optional.ofNullable(configurersList.getIfAvailable()).orElseGet(ArrayList::new);
             configurers.forEach(cfg -> {
@@ -361,7 +360,7 @@ class SamlIdPMetadataConfiguration {
             final CipherExecutor samlIdPMetadataGeneratorCipherExecutor,
             final CasConfigurationProperties casProperties,
             @Qualifier("samlIdPMetadataCache")
-            final Cache<@NonNull String, SamlIdPMetadataDocument> samlIdPMetadataCache) throws Exception {
+            final Cache<String, SamlIdPMetadataDocument> samlIdPMetadataCache) throws Exception {
             val idp = casProperties.getAuthn().getSamlIdp();
             val location = SpringExpressionLanguageValueResolver.getInstance()
                 .resolve(idp.getMetadata().getFileSystem().getLocation());
@@ -378,7 +377,7 @@ class SamlIdPMetadataConfiguration {
         @ConditionalOnMissingBean(name = "samlIdPMetadataCache")
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-        public Cache<@NonNull String, SamlIdPMetadataDocument> samlIdPMetadataCache(
+        public Cache<String, SamlIdPMetadataDocument> samlIdPMetadataCache(
             final CasConfigurationProperties casProperties) {
             val idp = casProperties.getAuthn().getSamlIdp();
             return Caffeine.newBuilder().initialCapacity(10)
@@ -388,7 +387,7 @@ class SamlIdPMetadataConfiguration {
         @ConditionalOnMissingBean(name = "chainingMetadataResolverCacheLoader")
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-        public CacheLoader<@NonNull SamlRegisteredServiceCacheKey, CachedMetadataResolverResult> chainingMetadataResolverCacheLoader(
+        public CacheLoader<SamlRegisteredServiceCacheKey, CachedMetadataResolverResult> chainingMetadataResolverCacheLoader(
             @Qualifier("samlRegisteredServiceMetadataResolvers")
             final SamlRegisteredServiceMetadataResolutionPlan samlRegisteredServiceMetadataResolvers,
             @Qualifier(HttpClient.BEAN_NAME_HTTPCLIENT)
@@ -410,7 +409,7 @@ class SamlIdPMetadataConfiguration {
         public SamlRegisteredServiceCachingMetadataResolver defaultSamlRegisteredServiceCachingMetadataResolver(
             final CasConfigurationProperties casProperties,
             @Qualifier("chainingMetadataResolverCacheLoader")
-            final CacheLoader<@NonNull SamlRegisteredServiceCacheKey, CachedMetadataResolverResult> chainingMetadataResolverCacheLoader,
+            final CacheLoader<SamlRegisteredServiceCacheKey, CachedMetadataResolverResult> chainingMetadataResolverCacheLoader,
             @Qualifier(OpenSamlConfigBean.DEFAULT_BEAN_NAME)
             final OpenSamlConfigBean openSamlConfigBean) {
             return new SamlRegisteredServiceDefaultCachingMetadataResolver(

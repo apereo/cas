@@ -3,6 +3,7 @@ package org.apereo.cas.nativex;
 import module java.base;
 import org.apereo.cas.support.oauth.services.OAuth20RegisteredServiceCipherExecutor;
 import org.apereo.cas.support.oauth.services.OAuthRegisteredService;
+import org.apereo.cas.support.oauth.services.OAuthRegisteredServiceClientSecret;
 import org.apereo.cas.support.oauth.web.OAuth20DistributedSessionCookieCipherExecutor;
 import org.apereo.cas.support.oauth.web.response.accesstoken.response.OAuth20JwtAccessTokenCipherExecutor;
 import org.apereo.cas.support.oauth.web.response.accesstoken.response.OAuth20RegisteredServiceJwtAccessTokenCipherExecutor;
@@ -28,6 +29,7 @@ public class CasOAuth20RuntimeHints implements CasRuntimeHintsRegistrar {
     public void registerHints(final @NonNull RuntimeHints hints, final @Nullable ClassLoader classLoader) {
         registerSerializationHints(hints,
             OAuthRegisteredService.class,
+            OAuthRegisteredServiceClientSecret.class,
             BaseOAuth20Token.class,
             OAuth20DefaultAccessToken.class,
             OAuth20DefaultCode.class,
@@ -37,6 +39,7 @@ public class CasOAuth20RuntimeHints implements CasRuntimeHintsRegistrar {
 
         registerReflectionHints(hints, List.of(
             OAuthRegisteredService.class,
+            OAuthRegisteredServiceClientSecret.class,
             OAuth20RegisteredServiceCipherExecutor.class,
             OAuth20JwtAccessTokenCipherExecutor.class,
             OAuth20RegisteredServiceJwtAccessTokenCipherExecutor.class,

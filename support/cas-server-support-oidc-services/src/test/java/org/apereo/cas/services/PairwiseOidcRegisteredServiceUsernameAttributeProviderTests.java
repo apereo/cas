@@ -2,6 +2,7 @@ package org.apereo.cas.services;
 
 import module java.base;
 import org.apereo.cas.authentication.principal.ShibbolethCompatiblePersistentIdGenerator;
+import org.apereo.cas.support.oauth.services.OAuthRegisteredServiceClientSecret;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.junit.jupiter.api.Tag;
@@ -43,7 +44,7 @@ class PairwiseOidcRegisteredServiceUsernameAttributeProviderTests {
         registeredService.setName("verifyUndefinedOrPublicSubjectType");
         registeredService.setServiceId("testId");
         registeredService.setClientId("clientid");
-        registeredService.setClientSecret("something");
+        registeredService.setClientSecrets(List.of(OAuthRegisteredServiceClientSecret.withoutExpiration("something")));
 
         registeredService.setSubjectType(StringUtils.EMPTY);
 
@@ -77,7 +78,7 @@ class PairwiseOidcRegisteredServiceUsernameAttributeProviderTests {
         registeredService.setName("verifySubjectType");
         registeredService.setSectorIdentifierUri("https://sso.example.org/oidc");
         registeredService.setClientId("clientid");
-        registeredService.setClientSecret("something");
+        registeredService.setClientSecrets(List.of(OAuthRegisteredServiceClientSecret.withoutExpiration("something")));
         registeredService.setSubjectType(OidcSubjectTypes.PAIRWISE.getType());
 
         val usernameContext = RegisteredServiceUsernameProviderContext.builder()

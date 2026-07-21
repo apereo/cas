@@ -13,6 +13,7 @@ import org.apereo.cas.services.OidcSubjectTypes;
 import org.apereo.cas.services.PairwiseOidcRegisteredServiceUsernameAttributeProvider;
 import org.apereo.cas.support.oauth.OAuth20GrantTypes;
 import org.apereo.cas.support.oauth.OAuth20ResponseTypes;
+import org.apereo.cas.support.oauth.services.OAuthRegisteredServiceClientSecret;
 import org.apereo.cas.support.oauth.util.OAuth20Utils;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.RandomUtils;
@@ -109,9 +110,10 @@ public class OidcDefaultClientRegistrationRequestTranslator implements OidcClien
         if (StringUtils.isBlank(registeredService.getClientId())) {
             registeredService.setClientId(context.getClientIdGenerator().getNewString());
         }
-        if (StringUtils.isBlank(registeredService.getClientSecret())) {
+        if (registeredService.getClientSecrets() == null || registeredService.getClientSecrets().isEmpty()) {
             val clientSecret = context.getClientSecretGenerator().getNewString();
-            registeredService.setClientSecret(context.getRegisteredServiceCipherExecutor().encode(clientSecret));
+            val encodedSecret = context.getRegisteredServiceCipherExecutor().encode(clientSecret);
+            registeredService.setClientSecrets(CollectionUtils.wrapList(OAuthRegisteredServiceClientSecret.withoutExpiration(encodedSecret)));
         }
         registeredService.setEvaluationOrder(0);
         val urls = org.springframework.util.StringUtils.collectionToCommaDelimitedString(
@@ -229,11 +231,20 @@ public class OidcDefaultClientRegistrationRequestTranslator implements OidcClien
                                                       final OidcRegisteredService registeredService) {
         val clientSecretExp = Beans.newDuration(context.getCasProperties()
             .getAuthn().getOidc().getRegistration().getClientSecretExpiration()).toSeconds();
-        if (clientSecretExp > 0 && registeredService.getClientSecretExpiration() <= 0) {
+        if (clientSecretExp > 0) {
             val currentTime = ZonedDateTime.now(ZoneOffset.UTC);
             val expirationDate = currentTime.plusSeconds(clientSecretExp);
             LOGGER.debug("Client secret shall expire at [{}] while now is [{}]", expirationDate, currentTime);
-            registeredService.setClientSecretExpiration(expirationDate.toEpochSecond());
+            val secrets = registeredService.getClientSecrets()
+                .stream()
+                .map(secret -> {
+                    if (secret.isWithoutExpiration() || secret.hasClientSecretExpired(registeredService)) {
+                        return secret.expireAt(expirationDate);
+                    }
+                    return secret;
+                })
+                .collect(Collectors.toList());
+            registeredService.setClientSecrets(secrets);
         }
     }
 
@@ -306,7 +317,7 @@ public class OidcDefaultClientRegistrationRequestTranslator implements OidcClien
             Assert.isTrue(Strings.CI.startsWith(registeredService.getBackchannelClientNotificationEndpoint(), "https://"),
                 "Backchannel client notification endpoint MUST be an HTTPS url");
         }
-        
+
     }
 
 }

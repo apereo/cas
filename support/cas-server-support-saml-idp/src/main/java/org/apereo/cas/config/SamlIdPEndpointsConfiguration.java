@@ -82,7 +82,6 @@ import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.Strings;
 import org.apache.velocity.app.VelocityEngine;
-import org.jspecify.annotations.NonNull;
 import org.opensaml.saml.metadata.resolver.MetadataResolver;
 import org.opensaml.saml.saml2.binding.decoding.impl.HTTPPostDecoder;
 import org.opensaml.saml.saml2.binding.decoding.impl.HTTPPostSimpleSignDecoder;
@@ -505,7 +504,7 @@ class SamlIdPEndpointsConfiguration {
             @Qualifier(TenantExtractor.BEAN_NAME)
             final TenantExtractor tenantExtractor,
             @Qualifier(GeoLocationService.BEAN_NAME)
-            final ObjectProvider<@NonNull GeoLocationService> geoLocationService,
+            final ObjectProvider<GeoLocationService> geoLocationService,
             @Qualifier("samlIdPDistributedSessionCookieCipherExecutor")
             final CipherExecutor samlIdPDistributedSessionCookieCipherExecutor,
             final CasConfigurationProperties casProperties) {

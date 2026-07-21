@@ -13,7 +13,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.jose4j.jwt.JwtClaims;
-import org.jspecify.annotations.NonNull;
 import org.springframework.beans.factory.ObjectProvider;
 
 /**
@@ -26,7 +25,7 @@ import org.springframework.beans.factory.ObjectProvider;
 @RequiredArgsConstructor
 public class OidcSingleLogoutMessageCreator implements SingleLogoutMessageCreator {
 
-    protected final ObjectProvider<@NonNull OidcConfigurationContext> configurationProvider;
+    protected final ObjectProvider<OidcConfigurationContext> configurationProvider;
 
     @Override
     public SingleLogoutMessage create(final SingleLogoutRequestContext request) throws Throwable {

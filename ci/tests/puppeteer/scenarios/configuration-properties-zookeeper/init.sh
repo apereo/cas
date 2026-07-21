@@ -1,9 +1,16 @@
 set -e
 
+GREEN="\e[32m"
+ENDCOLOR="\e[0m"
+
+function printgreen() {
+  printf "🍀 ${GREEN}$1${ENDCOLOR}\n"
+}
+
 chmod +x "${PWD}/ci/tests/httpbin/run-httpbin-server.sh"
 ${PWD}/ci/tests/httpbin/run-httpbin-server.sh
 
-echo Starting Apache ZooKeeper Server
+printgreen "Starting Apache ZooKeeper Server"
 ${PWD}/ci/tests/zookeeper/run-zookeeper-server.sh
 
 docker exec zookeeper zkCli.sh -server localhost:2181 create /config  &> /dev/null
@@ -19,4 +26,4 @@ docker exec zookeeper zkCli.sh -server localhost:2181 create /config/cas/cas/aut
 docker exec zookeeper zkCli.sh -server localhost:2181 create /config/cas/cas/authn/accept/users &> /dev/null
 docker exec zookeeper zkCli.sh -server localhost:2181 set /config/cas/cas/authn/accept/users "zookeeper::p@SSword" &> /dev/null
 
-echo -e "\n\nReady!"
+printgreen "Ready!"

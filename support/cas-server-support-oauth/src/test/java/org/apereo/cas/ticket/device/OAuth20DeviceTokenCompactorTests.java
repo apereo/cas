@@ -31,7 +31,7 @@ class OAuth20DeviceTokenCompactorTests extends AbstractOAuth20Tests {
     void verifyOperation(final Service service, final String clientId) throws Throwable {
         val registeredService = getRegisteredService(service.getId(), clientId, "secret-at");
         servicesManager.save(registeredService);
-        val deviceCode = defaultDeviceTokenFactory.createDeviceCode(service);
+        val deviceCode = defaultDeviceTokenFactory.createDeviceCode(service, List.of());
         deviceCode.setUserCode(UUID.randomUUID().toString());
         assertSame(OAuth20DeviceToken.class, oauth20DeviceTokenTicketCompactor.getTicketType());
         val compacted = oauth20DeviceTokenTicketCompactor.compact(deviceCode);

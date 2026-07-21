@@ -30,6 +30,7 @@ class StubPersonAttributeDaoTests {
         this.backingMap = map;
         this.testInstance = new StubPersonAttributeDao();
         this.testInstance.setBackingMap(map);
+        assertNotNull(testInstance.toConfiguration());
 
     }
 
