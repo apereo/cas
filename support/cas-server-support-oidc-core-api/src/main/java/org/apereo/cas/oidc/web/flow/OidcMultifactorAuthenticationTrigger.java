@@ -26,7 +26,6 @@ import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.hc.core5.net.URIBuilder;
 import org.jooq.lambda.Unchecked;
-import org.jspecify.annotations.NonNull;
 import org.pac4j.jee.context.JEEContext;
 import org.springframework.beans.factory.FactoryBean;
 import org.springframework.context.ApplicationContext;
@@ -54,7 +53,7 @@ public class OidcMultifactorAuthenticationTrigger implements MultifactorAuthenti
 
     private final OAuth20RequestParameterResolver oauthRequestParameterResolver;
 
-    private final FactoryBean<@NonNull OidcServerDiscoverySettings> discoverySettingsFactory;
+    private final FactoryBean<OidcServerDiscoverySettings> discoverySettingsFactory;
 
     private int order = Ordered.LOWEST_PRECEDENCE;
 
@@ -81,7 +80,7 @@ public class OidcMultifactorAuthenticationTrigger implements MultifactorAuthenti
             LOGGER.error("No multifactor authentication providers are available in the application context to handle [{}]", values);
             throw new AuthenticationException(new MultifactorAuthenticationProviderAbsentException());
         }
-
+        
         val authnContexts = casProperties.getAuthn().getOidc().getCore().getAuthenticationContextReferenceMappings();
         val mappings = CollectionUtils.convertDirectedListToMap(authnContexts);
         val mappedAcrValues = values

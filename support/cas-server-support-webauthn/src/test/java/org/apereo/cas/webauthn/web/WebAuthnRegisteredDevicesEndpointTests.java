@@ -21,9 +21,14 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.http.HttpStatus;
-import org.springframework.mock.web.MockHttpServletRequest;
+import org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
+import org.springframework.test.web.servlet.MockMvc;
+import static org.hamcrest.Matchers.startsWith;
 import static org.junit.jupiter.api.Assertions.*;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 /**
  * This is {@link WebAuthnRegisteredDevicesEndpointTests}.
@@ -31,21 +36,21 @@ import static org.junit.jupiter.api.Assertions.*;
  * @author Misagh Moayyed
  * @since 6.3.0
  */
-@SpringBootTest(classes = BaseWebAuthnWebflowTests.SharedTestConfiguration.class,
-    properties = {
-        "management.endpoints.web.exposure.include=*",
-        "management.endpoint.webAuthnDevices.access=UNRESTRICTED"
-    })
+@SpringBootTest(classes = BaseWebAuthnWebflowTests.SharedTestConfiguration.class, properties = {
+    "management.endpoints.web.exposure.include=*",
+    "management.endpoint.webAuthnDevices.access=UNRESTRICTED"
+}, webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
+@AutoConfigureMockMvc
 @Tag("ActuatorEndpoint")
 @ExtendWith(CasTestExtension.class)
 class WebAuthnRegisteredDevicesEndpointTests {
     @Autowired
-    @Qualifier("webAuthnMultifactorAuthenticationProvider")
-    private MultifactorAuthenticationProvider webAuthnMultifactorAuthenticationProvider;
+    @Qualifier("mockMvc")
+    private MockMvc mockMvc;
 
     @Autowired
-    @Qualifier("webAuthnRegisteredDevicesEndpoint")
-    private WebAuthnRegisteredDevicesEndpoint webAuthnRegisteredDevicesEndpoint;
+    @Qualifier("webAuthnMultifactorAuthenticationProvider")
+    private MultifactorAuthenticationProvider webAuthnMultifactorAuthenticationProvider;
 
     @Autowired
     @Qualifier(WebAuthnCredentialRepository.BEAN_NAME)
@@ -75,24 +80,46 @@ class WebAuthnRegisteredDevicesEndpointTests {
         val id2 = UUID.randomUUID().toString();
         register(RegisteredServiceTestUtils.getAuthentication(id2));
 
-        assertFalse(webAuthnRegisteredDevicesEndpoint.fetch(id1).isEmpty());
-        assertFalse(webAuthnRegisteredDevicesEndpoint.fetch(id2).isEmpty());
+        mockMvc.perform(get("/actuator/webAuthnDevices/%s".formatted(id1))
+                .accept(MediaType.APPLICATION_JSON))
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$").isNotEmpty());
+        mockMvc.perform(get("/actuator/webAuthnDevices/%s".formatted(id2))
+                .accept(MediaType.APPLICATION_JSON))
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$").isNotEmpty());
         
         var principal = RegisteredServiceTestUtils.getPrincipal(id1);
         val devices = webAuthnMultifactorAuthenticationProvider.getDeviceManager().findRegisteredDevices(principal);
         assertEquals(1, devices.size());
         
-        webAuthnRegisteredDevicesEndpoint.delete(id1, id1);
-        assertTrue(webAuthnRegisteredDevicesEndpoint.fetch(id1).isEmpty());
+        mockMvc.perform(delete("/actuator/webAuthnDevices/%s/%s".formatted(id1, id1))
+                .accept(MediaType.APPLICATION_JSON))
+            .andExpect(status().isOk());
+        mockMvc.perform(get("/actuator/webAuthnDevices/%s".formatted(id1))
+                .accept(MediaType.APPLICATION_JSON))
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$").isEmpty());
 
-        webAuthnRegisteredDevicesEndpoint.delete(id2);
-        assertTrue(webAuthnRegisteredDevicesEndpoint.fetch(id1).isEmpty());
-        assertTrue(webAuthnRegisteredDevicesEndpoint.fetch(id2).isEmpty());
+        mockMvc.perform(delete("/actuator/webAuthnDevices/%s".formatted(id2))
+                .accept(MediaType.APPLICATION_JSON))
+            .andExpect(status().isOk());
+        mockMvc.perform(get("/actuator/webAuthnDevices/%s".formatted(id1))
+                .accept(MediaType.APPLICATION_JSON))
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$").isEmpty());
+        mockMvc.perform(get("/actuator/webAuthnDevices/%s".formatted(id2))
+                .accept(MediaType.APPLICATION_JSON))
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$").isEmpty());
 
         val id3 = UUID.randomUUID().toString();
         val record = getCredentialRegistration(RegisteredServiceTestUtils.getAuthentication(id3));
-        assertTrue(webAuthnRegisteredDevicesEndpoint.write(id3,
-            EncodingUtils.encodeBase64(WebAuthnUtils.getObjectMapper().writeValueAsString(record))));
+        mockMvc.perform(post("/actuator/webAuthnDevices/%s".formatted(id3))
+                .param("record", EncodingUtils.encodeBase64(WebAuthnUtils.getObjectMapper().writeValueAsString(record)))
+                .accept(MediaType.APPLICATION_JSON))
+            .andExpect(status().isOk())
+            .andExpect(content().string("true"));
 
         val id4 = UUID.randomUUID().toString();
         principal = RegisteredServiceTestUtils.getPrincipal(id4);
@@ -106,14 +133,17 @@ class WebAuthnRegisteredDevicesEndpointTests {
     void verifyImportExport() throws Throwable {
         val id1 = UUID.randomUUID().toString();
         register(RegisteredServiceTestUtils.getAuthentication(id1));
-        val export = webAuthnRegisteredDevicesEndpoint.export();
-        assertEquals(HttpStatus.OK, export.getStatusCode());
+        mockMvc.perform(get("/actuator/webAuthnDevices/export")
+                .accept(MediaType.APPLICATION_OCTET_STREAM))
+            .andExpect(status().isOk())
+            .andExpect(header().string(HttpHeaders.CONTENT_DISPOSITION, startsWith("attachment")));
 
-        val request = new MockHttpServletRequest();
         val toSave = getCredentialRegistration(RegisteredServiceTestUtils.getAuthentication(UUID.randomUUID().toString()));
         val content = WebAuthnUtils.getObjectMapper().writeValueAsString(toSave);
-        request.setContent(content.getBytes(StandardCharsets.UTF_8));
-        assertEquals(HttpStatus.CREATED, webAuthnRegisteredDevicesEndpoint.importAccount(request).getStatusCode());
+        mockMvc.perform(post("/actuator/webAuthnDevices/import")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(content))
+            .andExpect(status().isCreated());
     }
 
     private CredentialRegistration register(final Authentication authn) throws Exception {

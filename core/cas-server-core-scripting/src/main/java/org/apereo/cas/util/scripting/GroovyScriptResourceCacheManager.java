@@ -82,35 +82,39 @@ public class GroovyScriptResourceCacheManager implements ScriptResourceCacheMana
         val keysToCompute = keys.length == 0 ? new String[]{scriptResource} : keys;
         val cacheKey = computeKey(keysToCompute);
         LOGGER.trace("Constructed cache key [{}] for keys [{}] mapped as groovy script", cacheKey, keys);
-
-        val scriptFactory = ExecutableCompiledScriptFactory.getExecutableCompiledScriptFactory();
-
-        var script = (ExecutableCompiledScript) null;
         if (containsKey(cacheKey)) {
-            script = get(cacheKey);
+            val script = get(cacheKey);
             LOGGER.trace("Located cached groovy script [{}] for key [{}]", script, cacheKey);
-        } else {
-            try {
-                if (ScriptingUtils.isExternalGroovyScript(scriptResource)) {
-                    val scriptPath = SpringExpressionLanguageValueResolver.getInstance().resolve(scriptResource);
-                    val resource = ResourceUtils.getResourceFrom(scriptPath);
-                    script = scriptFactory.fromResource(resource);
-                } else {
-                    var resourceToUse = scriptResource;
-                    if (ScriptingUtils.isInlineGroovyScript(resourceToUse)) {
-                        val matcher = ScriptingUtils.getMatcherForInlineGroovyScript(resourceToUse);
-                        if (matcher.find()) {
-                            resourceToUse = matcher.group(1);
-                        }
+            return script;
+        }
+        return cacheScriptableResource(scriptResource, cacheKey);
+    }
+
+    @Override
+    public @Nullable ExecutableCompiledScript cacheScriptableResource(final String scriptResource,
+                                                                      final String computedKey) {
+        var script = (ExecutableCompiledScript) null;
+        val scriptFactory = ExecutableCompiledScriptFactory.getExecutableCompiledScriptFactory();
+        try {
+            if (ScriptingUtils.isExternalGroovyScript(scriptResource)) {
+                val scriptPath = SpringExpressionLanguageValueResolver.getInstance().resolve(scriptResource);
+                val resource = ResourceUtils.getResourceFrom(scriptPath);
+                script = scriptFactory.fromResource(resource);
+            } else {
+                var resourceToUse = scriptResource;
+                if (ScriptingUtils.isInlineGroovyScript(resourceToUse)) {
+                    val matcher = ScriptingUtils.getMatcherForInlineGroovyScript(resourceToUse);
+                    if (matcher.find()) {
+                        resourceToUse = matcher.group(1);
                     }
-                    script = scriptFactory.fromScript(resourceToUse);
                 }
-                LOGGER.trace("Groovy script [{}] for key [{}] is not cached", scriptResource, cacheKey);
-                put(cacheKey, script);
-                LOGGER.trace("Cached groovy script [{}] for key [{}]", script, cacheKey);
-            } catch (final Exception e) {
-                LoggingUtils.error(LOGGER, e);
+                script = scriptFactory.fromScript(resourceToUse);
             }
+            LOGGER.trace("Groovy script [{}] for key [{}] is not cached", scriptResource, computedKey);
+            put(computedKey, script);
+            LOGGER.trace("Cached groovy script [{}] for key [{}]", script, computedKey);
+        } catch (final Exception e) {
+            LoggingUtils.error(LOGGER, e);
         }
         return script;
     }

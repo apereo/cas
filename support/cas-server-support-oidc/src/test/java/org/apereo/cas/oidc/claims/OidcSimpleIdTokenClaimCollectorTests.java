@@ -30,45 +30,51 @@ class OidcSimpleIdTokenClaimCollectorTests extends AbstractOidcTests {
 
     @Test
     void verifyEmptyValue() {
+        val registeredService = getOidcRegisteredService();
         val claims = new JwtClaims();
-        oidcIdTokenClaimCollector.collect(claims, "unknown", List.of());
+        oidcIdTokenClaimCollector.collect(registeredService, claims, "unknown", List.of());
         assertEquals(0, claims.getClaimNames().size());
     }
 
     @Test
     void verifyUnknownDefinition() throws Throwable {
+        val registeredService = getOidcRegisteredService();
         val claims = new JwtClaims();
-        oidcIdTokenClaimCollector.collect(claims, "unknown", List.of("value1", "value2"));
+        oidcIdTokenClaimCollector.collect(registeredService, claims, "unknown", List.of("value1", "value2"));
         assertEquals(2, claims.getStringListClaimValue("unknown").size());
     }
 
     @Test
     void verifyUnknownDefinitionAsSingle() throws Throwable {
+        val registeredService = getOidcRegisteredService();
         val claims = new JwtClaims();
-        oidcIdTokenClaimCollector.collect(claims, "unknown", List.of("value1"));
+        oidcIdTokenClaimCollector.collect(registeredService, claims, "unknown", List.of("value1"));
         assertEquals("value1", claims.getStringClaimValue("unknown"));
     }
 
     @Test
     void verifyMultiValueAsList() throws Throwable {
+        val registeredService = getOidcRegisteredService();
         val claims = new JwtClaims();
-        oidcIdTokenClaimCollector.collect(claims, "mail", List.of("cas1@example.org", "cas2@example.org"));
+        oidcIdTokenClaimCollector.collect(registeredService, claims, "mail", List.of("cas1@example.org", "cas2@example.org"));
         assertEquals(2, claims.getStringListClaimValue("mail").size());
     }
 
     @Test
     void verifyJsonValue() throws Throwable {
+        val registeredService = getOidcRegisteredService();
         val claims = new JwtClaims();
         val map = Map.of("key1", "value1", "key2", List.of("v2", "v3"));
         val json = JsonUtils.render(map);
-        oidcIdTokenClaimCollector.collect(claims, "container", List.of(json));
+        oidcIdTokenClaimCollector.collect(registeredService, claims, "container", List.of(json));
         assertEquals(map, claims.getClaimValue("container", Map.class));
     }
 
     @Test
     void verifyStructuredClaim() {
+        val registeredService = getOidcRegisteredService();
         val claims = new JwtClaims();
-        oidcIdTokenClaimCollector.collect(claims, "organization", List.of("example.org", "apereo.org"));
+        oidcIdTokenClaimCollector.collect(registeredService, claims, "organization", List.of("example.org", "apereo.org"));
         assertNull(claims.getClaimValue("organization"));
         val value = claims.getClaimValueAsString("org");
         assertEquals("{apereo={cas={entity=[example.org, apereo.org]}}}", value);
@@ -76,8 +82,9 @@ class OidcSimpleIdTokenClaimCollectorTests extends AbstractOidcTests {
 
     @Test
     void verifyStructuredClaimByDefnName() {
+        val registeredService = getOidcRegisteredService();
         val claims = new JwtClaims();
-        oidcIdTokenClaimCollector.collect(claims, "org.apereo.cas.entity", List.of("example.org", "apereo.org"));
+        oidcIdTokenClaimCollector.collect(registeredService, claims, "org.apereo.cas.entity", List.of("example.org", "apereo.org"));
         assertNull(claims.getClaimValue("organization"));
         val value = claims.getClaimValueAsString("org");
         assertEquals("{apereo={cas={entity=[example.org, apereo.org]}}}", value);
@@ -85,25 +92,28 @@ class OidcSimpleIdTokenClaimCollectorTests extends AbstractOidcTests {
     
     @Test
     void verifySingleValueAsList() throws Throwable {
+        val registeredService = getOidcRegisteredService();
         val claims = new JwtClaims();
-        oidcIdTokenClaimCollector.collect(claims, "mail", List.of("cas@example.org"));
+        oidcIdTokenClaimCollector.collect(registeredService, claims, "mail", List.of("cas@example.org"));
         assertEquals(1, claims.getStringListClaimValue("mail").size());
     }
 
     @Test
     void verifySingleValueAsSingleValue() throws Throwable {
+        val registeredService = getOidcRegisteredService();
         val claims = new JwtClaims();
-        oidcIdTokenClaimCollector.collect(claims, "cn", List.of("casuser"));
+        oidcIdTokenClaimCollector.collect(registeredService, claims, "cn", List.of("casuser"));
         assertEquals("casuser", claims.getStringClaimValue("cn"));
     }
 
     @Test
     void verifyAssurance() throws Throwable {
+        val registeredService = getOidcRegisteredService();
         val originalClaims = new JwtClaims();
-        oidcIdTokenClaimCollector.collect(originalClaims, "assurance", List.of("value1", "value2"));
-        oidcIdTokenClaimCollector.collect(originalClaims, "homeCountry", List.of("USA", "UK"));
-        oidcIdTokenClaimCollector.collect(originalClaims, "mail", List.of("cas@apereo.org"));
-        oidcIdTokenClaimCollector.conclude(originalClaims);
+        oidcIdTokenClaimCollector.collect(registeredService, originalClaims, "assurance", List.of("value1", "value2"));
+        oidcIdTokenClaimCollector.collect(registeredService, originalClaims, "homeCountry", List.of("USA", "UK"));
+        oidcIdTokenClaimCollector.collect(registeredService, originalClaims, "mail", List.of("cas@apereo.org"));
+        oidcIdTokenClaimCollector.conclude(registeredService, originalClaims);
         
         assertFalse(originalClaims.hasClaim("assurance"));
         assertFalse(originalClaims.hasClaim("home-country"));

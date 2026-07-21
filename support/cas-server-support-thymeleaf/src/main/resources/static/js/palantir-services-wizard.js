@@ -262,7 +262,8 @@ function createRegisteredServiceAttributeReleasePolicy() {
         keyLabel: "Attribute Name",
         valueField: "registeredServiceAttrReleasePolicyRestAttrValue",
         valueLabel: "Source Attributes",
-        containerField: "attributeReleasePolicy.allowedAttributes"
+        containerField: "attributeReleasePolicy.allowedAttributes",
+        groovyEditorTitle: "REST Attribute Release Mapping Groovy Script"
     });
 
     createMappedInputField({
@@ -273,18 +274,32 @@ function createRegisteredServiceAttributeReleasePolicy() {
         keyLabel: "Attribute",
         valueField: "registeredServiceAttrReleasePolicyPatternMatchingAttrValue",
         valueLabel: "Value Pattern",
+        additionalFields: [
+            {
+                name: "transform",
+                field: "registeredServiceAttrReleasePolicyPatternMatchingAttrTransform",
+                label: "Transform",
+                cssClasses: "ml-2",
+                groovyEditorTitle: "Pattern-Matching Attribute Transform Groovy Script"
+            }
+        ],
         containerField: "attributeReleasePolicy.allowedAttributes",
-        valueFieldRenderer: function ($inputKey, $inputValue) {
-            return {
+        valueFieldRenderer: function ($inputKey, $inputValue, additionalInputs) {
+            const rule = {
                 "@class": "org.apereo.cas.services.PatternMatchingAttributeReleasePolicy$Rule",
                 "pattern": $inputValue.val().trim()
             };
+            const transform = additionalInputs.transform?.val()?.trim();
+            if (transform && transform.length > 0) {
+                rule.transform = transform;
+            }
+            return rule;
         }
     });
 
 
     if (PalantirDashboardConfiguration.scriptFactoryAvailable()) {
-        createInputField({
+        const scriptInput = createInputField({
             cssClasses: "hide GroovyScriptAttributeReleasePolicy",
             labelTitle: "Groovy Script",
             name: "registeredServiceAttrReleaseGroovyScript",
@@ -292,6 +307,10 @@ function createRegisteredServiceAttributeReleasePolicy() {
             required: false,
             containerId: "editServiceWizardMenuItemAttributeReleasePolicy",
             title: "Define the Groovy script location, inline or external, to determine attribute release."
+        });
+        attachPalantirGroovyEditorButton({
+            target: scriptInput,
+            title: "Attribute Release Policy Groovy Script"
         });
     }
 
@@ -305,7 +324,8 @@ function createRegisteredServiceAttributeReleasePolicy() {
         valueLabel: "CAS Attribute",
         containerField: "attributeReleasePolicy.allowedAttributes",
         multipleValues: true,
-        unwrapSingleElement: true
+        unwrapSingleElement: true,
+        groovyEditorTitle: "Mapped Attribute Release Groovy Script"
     });
 
     createMappedInputField({
@@ -459,7 +479,7 @@ function createRegisteredServiceAttributeReleasePolicy() {
         title: "Define the entity IDs patterns to match for this policy"
     });
 
-    createInputField({
+    const groovySamlScriptInput = createInputField({
         cssClasses: "hide GroovySamlRegisteredServiceAttributeReleasePolicy",
         labelTitle: "Groovy Script",
         name: "registeredServiceAttrReleasePolicyGroovySamlScript",
@@ -468,6 +488,12 @@ function createRegisteredServiceAttributeReleasePolicy() {
         containerId: "editServiceWizardMenuItemAttributeReleasePolicy",
         title: "Define the Groovy script location to determine attribute release."
     });
+    if (PalantirDashboardConfiguration.scriptFactoryAvailable()) {
+        attachPalantirGroovyEditorButton({
+            target: groovySamlScriptInput,
+            title: "SAML Attribute Release Policy Groovy Script"
+        });
+    }
 
 
     createInputField({
@@ -656,7 +682,7 @@ function createRegisteredServiceAttributeReleasePolicyActivationCriteria() {
     });
 
     if (PalantirDashboardConfiguration.scriptFactoryAvailable()) {
-        createInputField({
+        const scriptInput = createInputField({
             paramType: "org.apereo.cas.services.GroovyRegisteredServiceAttributeReleaseActivationCriteria",
             cssClasses: "hide GroovyRegisteredServiceAttributeReleaseActivationCriteria",
             labelTitle: "Groovy Script",
@@ -665,6 +691,10 @@ function createRegisteredServiceAttributeReleasePolicyActivationCriteria() {
             required: false,
             containerId: "editServiceWizardMenuItemAttributeReleasePolicyActivationCriteria",
             title: "Specifies the Groovy script location, inline or external, to determine attribute release activation criteria."
+        });
+        attachPalantirGroovyEditorButton({
+            target: scriptInput,
+            title: "Attribute Release Activation Criteria Groovy Script"
         });
     }
 }
@@ -886,7 +916,7 @@ function createRegisteredServiceAttributeReleaseValueFilters() {
     });
 
     if (PalantirDashboardConfiguration.scriptFactoryAvailable()) {
-        createInputField({
+        const scriptInput = createInputField({
             cssClasses: "hide RegisteredServiceScriptedAttributeFilter",
             labelTitle: "Groovy Script",
             name: "registeredServiceAttrReleasePolicyAttributeValueFilterScript",
@@ -894,6 +924,10 @@ function createRegisteredServiceAttributeReleaseValueFilters() {
             required: false,
             containerId: "editServiceWizardMenuItemAttributeReleaseValueFilters",
             title: "Specifies the Groovy script location, inline or external, to filter attribute values."
+        });
+        attachPalantirGroovyEditorButton({
+            target: scriptInput,
+            title: "Attribute Value Filter Groovy Script"
         });
     }
 
@@ -1072,7 +1106,7 @@ function createRegisteredServiceMultifactorPolicy() {
     `);
 
     if (PalantirDashboardConfiguration.scriptFactoryAvailable()) {
-        createInputField({
+        const scriptInput = createInputField({
             paramType: "org.apereo.cas.services.DefaultRegisteredServiceMultifactorPolicy",
             cssClasses: "advanced-option",
             labelTitle: "Groovy Script",
@@ -1081,6 +1115,10 @@ function createRegisteredServiceMultifactorPolicy() {
             required: false,
             containerId: "editServiceWizardMenuItemMfaPolicy",
             title: "Specifies the Groovy script location, inline or external, to determine multifactor authentication."
+        });
+        attachPalantirGroovyEditorButton({
+            target: scriptInput,
+            title: "Multifactor Policy Groovy Script"
         });
     }
 }
@@ -1321,7 +1359,7 @@ function createRegisteredServiceAccessStrategy() {
     });
 
     if (PalantirDashboardConfiguration.scriptFactoryAvailable()) {
-        createInputField({
+        const scriptInput = createInputField({
             cssClasses: "hide GroovyRegisteredServiceAccessStrategy",
             labelTitle: "Groovy Script",
             name: "registeredServiceAccessStrategyGroovyScript",
@@ -1329,6 +1367,10 @@ function createRegisteredServiceAccessStrategy() {
             required: false,
             containerId: "editServiceWizardMenuItemAccessStrategy",
             title: "Specifies the Groovy script location, inline or external, to determine access strategy."
+        });
+        attachPalantirGroovyEditorButton({
+            target: scriptInput,
+            title: "Access Strategy Groovy Script"
         });
     }
 
@@ -1696,7 +1738,7 @@ function createRegisteredServiceAuthenticationPolicy() {
     });
 
     if (PalantirDashboardConfiguration.scriptFactoryAvailable()) {
-        createInputField({
+        const scriptInput = createInputField({
             cssClasses: "hide GroovyRegisteredServiceAuthenticationPolicyCriteria",
             labelTitle: "Groovy Script",
             name: "registeredServiceAuthenticationPolicyGroovyScript",
@@ -1704,6 +1746,10 @@ function createRegisteredServiceAuthenticationPolicy() {
             required: false,
             containerId: "editServiceWizardMenuItemAuthenticationPolicy",
             title: "Groovy Script"
+        });
+        attachPalantirGroovyEditorButton({
+            target: scriptInput,
+            title: "Authentication Policy Criteria Groovy Script"
         });
     }
 
@@ -1920,7 +1966,7 @@ function createRegisteredServiceSsoParticipationPolicy() {
     });
 
     if (PalantirDashboardConfiguration.scriptFactoryAvailable()) {
-        createInputField({
+        const scriptInput = createInputField({
             cssClasses: "hide GroovyRegisteredServiceSingleSignOnParticipationPolicy",
             labelTitle: "Groovy Script",
             name: "registeredServiceSSOParticipationGroovyValue",
@@ -1928,6 +1974,10 @@ function createRegisteredServiceSsoParticipationPolicy() {
             required: false,
             containerId: "editServiceWizardMenuItemSSOParticipationPolicy",
             title: "Specifies the Groovy script location, inline or external, to be used to generate the username."
+        });
+        attachPalantirGroovyEditorButton({
+            target: scriptInput,
+            title: "Single Sign-On Participation Policy Groovy Script"
         });
     }
 
@@ -2076,7 +2126,7 @@ function createRegisteredServiceUsernameAttributeProvider() {
         });
 
     if (PalantirDashboardConfiguration.scriptFactoryAvailable()) {
-        createInputField({
+        const scriptInput = createInputField({
             cssClasses: "hide GroovyRegisteredServiceUsernameProvider",
             labelTitle: "Groovy Script",
             name: "registeredServiceUsernameAttributeGroovyValue",
@@ -2085,6 +2135,10 @@ function createRegisteredServiceUsernameAttributeProvider() {
             containerId: "editServiceWizardMenuItemUsernameAttribute",
             title: "Specifies the Groovy script location, inline or external, to be used to generate the username."
 
+        });
+        attachPalantirGroovyEditorButton({
+            target: scriptInput,
+            title: "Username Attribute Provider Groovy Script"
         });
     }
 
@@ -2362,6 +2416,9 @@ function generateServiceDefinition() {
     }
 
     setTimeout(function () {
+        if (!document.getElementById("wizardServiceEditor")) {
+            return;
+        }
         const editor = initializeAceEditor("wizardServiceEditor");
         let serviceDefinition = {
             "@class": $("#serviceClassType").text().trim()
@@ -2403,13 +2460,24 @@ function generateServiceDefinition() {
                     }
 
                     // Check if this container has any non-empty values before processing
+                    const $keyInputs = $mapContainer.find("input[data-mapped-field-role='key']");
                     const $allInputs = $mapContainer.find("input");
                     let hasNonEmptyValue = false;
-                    for (let i = 0; i < $allInputs.length; i += 2) {
-                        const key = $($allInputs[i]).val();
-                        if (key && key.trim().length > 0) {
-                            hasNonEmptyValue = true;
-                            break;
+                    if ($keyInputs.length > 0) {
+                        for (let i = 0; i < $keyInputs.length; i++) {
+                            const key = $($keyInputs[i]).val();
+                            if (key && key.trim().length > 0) {
+                                hasNonEmptyValue = true;
+                                break;
+                            }
+                        }
+                    } else {
+                        for (let i = 0; i < $allInputs.length; i += 2) {
+                            const key = $($allInputs[i]).val();
+                            if (key && key.trim().length > 0) {
+                                hasNonEmptyValue = true;
+                                break;
+                            }
                         }
                     }
                     if (!hasNonEmptyValue) {
@@ -2439,7 +2507,10 @@ function generateServiceDefinition() {
                 if (value && Array.isArray(value)) {
                     value = value.filter(v => v != null && v !== "").join(",");
                 }
-                if (paramName && paramName.trim().length > 0 && value && value.trim().length > 0) {
+                if (paramName === "clientSecrets" && $input.attr("id") === "registeredServiceClientSecrets") {
+                    value = "clientSecrets";
+                }
+                if (paramName && paramName.trim().length > 0 && value && String(value).trim().length > 0) {
                     if (skipWhenFalse && (value === "false" || value === false)) {
                         console.debug(`Skipping parameter ${paramName} because its value is false`);
                     } else if (skipWhenTrue && (value === "true" || value === true)) {
@@ -2541,25 +2612,39 @@ function generateMappedFieldValue(sectionId, config) {
         multipleValues = false,
         valueFieldRenderer,
         multipleValuesType = "java.util.ArrayList",
-        unwrapSingleElement = false
+        unwrapSingleElement = false,
+        groovyEditorTitle = ""
     } = config;
 
     const definition = {};
 
-    const inputs = $(`#${sectionId}`).find("input");
-    for (let i = 0; i < inputs.length; i += 2) {
-        const key = $(inputs[i]).val();
-        const value = $(inputs[i + 1]).val();
+    const rows = $(`#${sectionId}`).find("[data-mapped-input-row='true']");
+    rows.each(function () {
+        const $row = $(this);
+        const $keyInput = $row.find("input[data-mapped-field-role='key']").first();
+        const $valueInput = $row.find("input[data-mapped-field-role='value']").first();
+        const key = $keyInput.val();
+        const value = $valueInput.val();
 
         // Skip empty keys
         if (!key || key.trim().length === 0) {
-            continue;
+            return;
         }
 
         if (valueFieldRenderer !== undefined && typeof valueFieldRenderer === "function") {
-            definition[key] = valueFieldRenderer($(inputs[i]), $(inputs[i + 1]));
+            const additionalInputs = {};
+            $row.find("input[data-mapped-field-role]")
+                .not("[data-mapped-field-role='key']")
+                .not("[data-mapped-field-role='value']")
+                .each(function () {
+                    const fieldName = $(this).data("mapped-field-role");
+                    additionalInputs[fieldName] = $(this);
+                });
+            definition[key] = valueFieldRenderer($keyInput, $valueInput, additionalInputs, $row);
         } else if (value && value.trim().length > 0) {
-            if (multipleValues) {
+            if (groovyEditorTitle && /^groovy\s*\{[\s\S]*\}\s*$/.test(value.trim())) {
+                definition[key] = value.trim();
+            } else if (multipleValues) {
                 const valueArray = value.split(",").filter(s => s.trim().length > 0);
                 if (unwrapSingleElement && valueArray.length === 1) {
                     definition[key] = value.trim();
@@ -2570,7 +2655,7 @@ function generateMappedFieldValue(sectionId, config) {
                 definition[key] = value;
             }
         }
-    }
+    });
     return {"@class": "java.util.TreeMap", ...definition};
 }
 
@@ -2592,7 +2677,9 @@ function createMappedInputField(config) {
         valueFieldRenderer,
         unwrapSingleElement = false,
         onChangeCallback,
-        autoComplete = []
+        groovyEditorTitle = "",
+        autoComplete = [],
+        additionalFields = []
     } = config;
 
     const changeCallback = onChangeCallback || generateServiceDefinition;
@@ -2605,8 +2692,32 @@ function createMappedInputField(config) {
 
     const inputFieldKeyId = `registeredService${capitalize(keyField)}`;
     const inputFieldValueId = `registeredService${capitalize(valueField)}`;
+    const additionalFieldElements = additionalFields.map(field => {
+        const inputFieldId = `registeredService${capitalize(field.field)}`;
+        return `
+                <label for="${inputFieldId}"
+                       class="mdc-text-field mdc-text-field--outlined mdc-text-field--with-trailing-icon control-label ${cssClasses} ${field.cssClasses ?? ""}">
+                    <span class="mdc-notched-outline">
+                        <span class="mdc-notched-outline__leading"></span>
+                        <span class="mdc-notched-outline__notch">
+                            <span class="mdc-floating-label">${field.label ?? ""}</span>
+                        </span>
+                        <span class="mdc-notched-outline__trailing"></span>
+                    </span>
+                    <input class="mdc-text-field__input form-control"
+                           id="${inputFieldId}"
+                           name="${inputFieldId}"
+                           size="25"
+                           type="${field.type ?? "text"}"
+                           data-param-name="${containerField}"
+                           data-param-type="${containerType}"
+                           data-mapped-field-role="${field.name}"
+                           ${required ? "required" : ""}/>
+                </label>
+        `;
+    }).join("");
     const rowElements = `
-            <div class="d-flex justify-content-between pt-2 ${keyField}-map-row ${cssClasses}" id="${mapRowId}">
+            <div class="d-flex justify-content-between pt-2 ${keyField}-map-row ${cssClasses}" id="${mapRowId}" data-mapped-input-row="true">
                 <label for="${inputFieldKeyId}"
                        class="mdc-text-field mdc-text-field--outlined mdc-text-field--with-trailing-icon control-label ${cssClasses}">
                     <span class="mdc-notched-outline pr-2">
@@ -2622,6 +2733,7 @@ function createMappedInputField(config) {
                            type="text"
                            data-param-name="${containerField}"
                            data-param-type="${containerType}"
+                           data-mapped-field-role="key"
                            ${required ? "required" : ""}/>
                 </label>
 
@@ -2641,8 +2753,11 @@ function createMappedInputField(config) {
                            type="${valueFieldType}"
                            data-param-name="${containerField}"
                            data-param-type="${containerType}"
+                           data-mapped-field-role="value"
                            ${required ? "required" : ""}/>
                 </label>
+
+                ${additionalFieldElements}
 
                 <button type="button"
                         id="${removeButtonId}"
@@ -2682,7 +2797,9 @@ function createMappedInputField(config) {
         </div>
         `;
 
-    $(`#${containerId}`).append($(`${html}`));
+    const section = $(`${html}`);
+    decoratePalantirInputIcons(section[0]);
+    $(`#${containerId}`).append(section);
 
     function configureRemoveMapRowEventHandler() {
         $(`button[name=${removeButtonId}]`).off().on("click", function () {
@@ -2703,11 +2820,31 @@ function createMappedInputField(config) {
         });
     }
 
+    function configureGroovyEditors(scope) {
+        const editorFields = [];
+        if (groovyEditorTitle) {
+            editorFields.push({role: "value", title: groovyEditorTitle});
+        }
+        additionalFields.filter(field => field.groovyEditorTitle).forEach(field => {
+            editorFields.push({role: field.name, title: field.groovyEditorTitle});
+        });
+        editorFields.forEach(editorField => {
+            $(scope).find(`input[data-mapped-field-role='${editorField.role}']`).each(function () {
+                attachPalantirGroovyEditorButton({
+                    target: this,
+                    title: editorField.title
+                });
+            });
+        });
+    }
+
     $(`button[name=${addButtonId}]`).off().on("click", () => {
         let elementsToAdd = $(rowElements).removeClass("hide");
         elementsToAdd.find("*").removeClass("hide");
 
+        decoratePalantirInputIcons(elementsToAdd[0]);
         $(`#${sectionContainerId}ToAppend`).append(elementsToAdd);
+        configureGroovyEditors(elementsToAdd);
         configureRemoveMapRowEventHandler();
         cas.attachFields();
         configureInputEventHandler();
@@ -2726,6 +2863,7 @@ function createMappedInputField(config) {
     configureRemoveMapRowEventHandler();
     configureInputEventHandler();
     configureInputRenderer();
+    configureGroovyEditors($(`#${sectionContainerId}`));
 
     if (autoComplete && autoComplete.length > 0) {
        $(`#${inputFieldKeyId}`).autocomplete({
@@ -3027,6 +3165,7 @@ function createInputField(config) {
         input.data(key, value);
     });
     label.append(outline, input);
+    decoratePalantirInputIcons(label[0]);
 
     const container = $("<span>", {
         id: `${name}FieldContainer`,
@@ -3303,45 +3442,51 @@ function populateWizardFromServiceDefinition(serviceDefinition) {
 
         const $addButton = $container.find("button[name$='AddButton']");
 
+        function mapFieldValueToString(value, role) {
+            if (typeof value === "object" && value !== null && !Array.isArray(value)) {
+                if (role && role !== "value") {
+                    return value[role] !== undefined ? arrayToString(value[role]) : "";
+                }
+                if (value["@class"]) {
+                    if (value.pattern) {
+                        return value.pattern;
+                    }
+                    if (value.values) {
+                        return arrayToString(value.values);
+                    }
+                    return JSON.stringify(value);
+                }
+                return arrayToString(value);
+            }
+            return arrayToString(value);
+        }
+
         entries.forEach(([key, value], index) => {
             if (index > 0 && $addButton.length) {
                 $addButton.click();
             }
 
             setTimeout(() => {
-                const $allInputs = $container.find(`input[data-param-name="${containerFieldName}"]`);
-                const keyIndex = index * 2;
-                const valueIndex = keyIndex + 1;
+                const $row = $container.find("[data-mapped-input-row='true']").eq(index);
+                if ($row.length === 0) {
+                    return;
+                }
 
-                if ($allInputs.length > keyIndex) {
-                    const $keyInput = $($allInputs[keyIndex]);
+                const $keyInput = $row.find(`input[data-param-name="${containerFieldName}"][data-mapped-field-role='key']`).first();
+                if ($keyInput.length > 0) {
                     $keyInput.val(key).trigger("input");
                     floatMdcTextFieldLabel($keyInput);
                 }
-                if ($allInputs.length > valueIndex) {
-                    let valueStr = value;
-                    if (typeof value === "object" && value !== null) {
-                        if (value["@class"]) {
-                            if (value.pattern) {
-                                valueStr = value.pattern;
-                            } else if (value.values) {
-                                valueStr = arrayToString(value.values);
-                            } else {
-                                valueStr = JSON.stringify(value);
-                            }
-                        } else if (Array.isArray(value)) {
-                            // Handle Java collection wrapper like ["java.util.ArrayList", [...]]
-                            valueStr = arrayToString(value);
-                        } else {
-                            valueStr = arrayToString(value);
-                        }
-                    } else {
-                        valueStr = arrayToString(value);
-                    }
-                    const $valueInput = $($allInputs[valueIndex]);
-                    $valueInput.val(valueStr).trigger("input");
-                    floatMdcTextFieldLabel($valueInput);
-                }
+
+                $row.find(`input[data-param-name="${containerFieldName}"][data-mapped-field-role]`)
+                    .not("[data-mapped-field-role='key']")
+                    .each(function () {
+                        const $input = $(this);
+                        const role = $input.data("mapped-field-role");
+                        const valueStr = mapFieldValueToString(value, role);
+                        $input.val(valueStr).trigger("input");
+                        floatMdcTextFieldLabel($input);
+                    });
             }, index * 20);
         });
     }
@@ -3352,6 +3497,9 @@ function populateWizardFromServiceDefinition(serviceDefinition) {
         const paramName = $input.data("param-name");
 
         if (!paramName) {
+            return;
+        }
+        if (paramName === "clientSecrets" && $input.attr("id") === "registeredServiceClientSecrets") {
             return;
         }
 
@@ -3497,6 +3645,9 @@ function populateWizardFromServiceDefinition(serviceDefinition) {
     if (serviceClass) {
         // OAuth/OIDC specific fields
         if (serviceClass.includes("OAuthRegisteredService") || serviceClass.includes("OidcRegisteredService")) {
+            if (typeof populateRegisteredServiceClientSecrets === "function") {
+                populateRegisteredServiceClientSecrets(serviceDefinition);
+            }
             if (serviceDefinition.supportedGrantTypes) {
                 const $grantTypes = $("select#registeredServiceSupportedGrantTypes");
                 setMultiSelectValue($grantTypes, arrayToString(serviceDefinition.supportedGrantTypes));
@@ -3626,6 +3777,9 @@ function openRegisteredServiceWizardDialog(existingService = null) {
             });
 
         $("#editServiceWizardForm input").val("");
+        if (typeof resetRegisteredServiceClientSecrets === "function") {
+            resetRegisteredServiceClientSecrets();
+        }
         $("#editServiceWizardForm option").filter(function () {
             const clazz = $(this).data("serviceClass");
             return clazz !== undefined && clazz !== null;

@@ -95,9 +95,9 @@ public class AdaptiveMultifactorAuthenticationTrigger implements MultifactorAuth
         val agent = HttpRequestUtils.getHttpServletRequestUserAgent(httpServletRequest);
 
         val entries = multifactorMap.entrySet();
-        for (final Map.Entry entry : entries) {
-            val mfaMethod = entry.getKey().toString();
-            val pattern = entry.getValue().toString();
+        for (val entry : entries) {
+            val mfaMethod = entry.getKey();
+            val pattern = entry.getValue();
 
             val providerFound = MultifactorAuthenticationUtils.resolveProvider(providerMap, mfaMethod);
 

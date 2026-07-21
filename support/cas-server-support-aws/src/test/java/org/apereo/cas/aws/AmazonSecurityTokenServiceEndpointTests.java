@@ -8,21 +8,17 @@ import org.apereo.cas.config.CasCoreRestAutoConfiguration;
 import org.apereo.cas.util.junit.EnabledIfListeningOnPort;
 import org.apereo.cas.util.spring.ApplicationContextProvider;
 import org.apereo.cas.web.report.AbstractCasEndpointTests;
-import lombok.val;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.ImportAutoConfiguration;
 import org.springframework.context.annotation.Import;
-import org.springframework.http.HttpStatus;
-import org.springframework.mock.web.MockHttpServletRequest;
-import org.springframework.mock.web.MockHttpServletResponse;
+import org.springframework.http.MediaType;
 import org.springframework.test.context.TestPropertySource;
-import org.springframework.util.LinkedMultiValueMap;
-import static org.junit.jupiter.api.Assertions.*;
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 /**
  * This is {@link AmazonSecurityTokenServiceEndpointTests}.
@@ -57,10 +53,6 @@ class AmazonSecurityTokenServiceEndpointTests {
         "cas.authn.attribute-repository.stub.attributes.groupMembership=some-value"
     })
     class WithMissingAuthorizationAttributeValues extends BaseAmazonSecurityTokenServiceEndpointTests {
-        @Autowired
-        @Qualifier("awsSecurityTokenServiceEndpoint")
-        private AmazonSecurityTokenServiceEndpoint awsSecurityTokenServiceEndpoint;
-
         @BeforeEach
         void beforeEach() {
             ApplicationContextProvider.holdApplicationContext(applicationContext);
@@ -69,13 +61,12 @@ class AmazonSecurityTokenServiceEndpointTests {
 
         @Test
         void verifyAuthzFails() throws Throwable {
-            val request = new MockHttpServletRequest();
-            val body = new LinkedMultiValueMap<String, String>();
-            body.put("username", List.of("casuser"));
-            body.put("password", List.of("resusac"));
-            val status = awsSecurityTokenServiceEndpoint.fetchCredentials(null,
-                null, null, null, body, request, new MockHttpServletResponse());
-            assertEquals(HttpStatus.UNAUTHORIZED, status.getStatusCode());
+            mockMvc.perform(post("/actuator/awsSts")
+                    .with(csrf())
+                    .contentType(MediaType.APPLICATION_FORM_URLENCODED)
+                    .param("username", "casuser")
+                    .param("password", "resusac"))
+                .andExpect(status().isUnauthorized());
         }
     }
 
@@ -83,10 +74,6 @@ class AmazonSecurityTokenServiceEndpointTests {
     @Tag("AmazonWebServices")
     @TestPropertySource(properties = "cas.amazon-sts.principal-attribute-name=unknown")
     class WithMissingAuthorizationAttributes extends BaseAmazonSecurityTokenServiceEndpointTests {
-        @Autowired
-        @Qualifier("awsSecurityTokenServiceEndpoint")
-        private AmazonSecurityTokenServiceEndpoint awsSecurityTokenServiceEndpoint;
-
         @BeforeEach
         void beforeEach() {
             ApplicationContextProvider.holdApplicationContext(applicationContext);
@@ -95,13 +82,12 @@ class AmazonSecurityTokenServiceEndpointTests {
 
         @Test
         void verifyAuthzFails() throws Throwable {
-            val request = new MockHttpServletRequest();
-            val body = new LinkedMultiValueMap<String, String>();
-            body.put("username", List.of("casuser"));
-            body.put("password", List.of("resusac"));
-            val status = awsSecurityTokenServiceEndpoint.fetchCredentials(null, null,
-                null, null, body, request, new MockHttpServletResponse());
-            assertEquals(HttpStatus.UNAUTHORIZED, status.getStatusCode());
+            mockMvc.perform(post("/actuator/awsSts")
+                    .with(csrf())
+                    .contentType(MediaType.APPLICATION_FORM_URLENCODED)
+                    .param("username", "casuser")
+                    .param("password", "resusac"))
+                .andExpect(status().isUnauthorized());
         }
     }
 
@@ -112,10 +98,6 @@ class AmazonSecurityTokenServiceEndpointTests {
         "cas.amazon-sts.principal-attribute-value="
     })
     class WithoutAuthorizationAttributes extends BaseAmazonSecurityTokenServiceEndpointTests {
-        @Autowired
-        @Qualifier("awsSecurityTokenServiceEndpoint")
-        private AmazonSecurityTokenServiceEndpoint awsSecurityTokenServiceEndpoint;
-
         @BeforeEach
         void beforeEach() {
             ApplicationContextProvider.holdApplicationContext(applicationContext);
@@ -124,50 +106,40 @@ class AmazonSecurityTokenServiceEndpointTests {
 
         @Test
         void verifyOperation() throws Throwable {
-            val request = new MockHttpServletRequest();
-
-            val body = new LinkedMultiValueMap<String, String>();
-            body.put("username", List.of("casuser"));
-            body.put("password", List.of("resusac"));
-
-            val credentials = awsSecurityTokenServiceEndpoint.fetchCredentials(null, null,
-                null, null, body, request, new MockHttpServletResponse());
-            assertEquals(HttpStatus.OK, credentials.getStatusCode());
+            mockMvc.perform(post("/actuator/awsSts")
+                    .with(csrf())
+                    .contentType(MediaType.APPLICATION_FORM_URLENCODED)
+                    .param("username", "casuser")
+                    .param("password", "resusac"))
+                .andExpect(status().isOk());
         }
 
         @Test
         void verifyContextValidationFails() throws Throwable {
-            val request = new MockHttpServletRequest();
-
-            val body = new LinkedMultiValueMap<String, String>();
-            body.put("username", List.of("test1234"));
-            body.put("password", List.of("4321tset"));
-
-            val status = awsSecurityTokenServiceEndpoint.fetchCredentials(null,
-                null, null, null, body, request, new MockHttpServletResponse());
-            assertEquals(HttpStatus.UNAUTHORIZED, status.getStatusCode());
+            mockMvc.perform(post("/actuator/awsSts")
+                    .with(csrf())
+                    .contentType(MediaType.APPLICATION_FORM_URLENCODED)
+                    .param("username", "test1234")
+                    .param("password", "4321tset"))
+                .andExpect(status().isUnauthorized());
         }
 
         @Test
         void verifyNoCredentials() throws Throwable {
-            val request = new MockHttpServletRequest();
-            val body = new LinkedMultiValueMap<String, String>();
-            val status = awsSecurityTokenServiceEndpoint.fetchCredentials(null,
-                null, null, null, body, request, new MockHttpServletResponse());
-            assertEquals(HttpStatus.UNAUTHORIZED, status.getStatusCode());
+            mockMvc.perform(post("/actuator/awsSts")
+                    .with(csrf())
+                    .contentType(MediaType.APPLICATION_FORM_URLENCODED))
+                .andExpect(status().isUnauthorized());
         }
 
         @Test
         void verifyFailsAuthN() throws Throwable {
-            val request = new MockHttpServletRequest();
-
-            val body = new LinkedMultiValueMap<String, String>();
-            body.put("username", List.of("casuser"));
-            body.put("password", List.of("bad-password"));
-
-            val status = awsSecurityTokenServiceEndpoint.fetchCredentials(null,
-                null, null, null, body, request, new MockHttpServletResponse());
-            assertEquals(HttpStatus.UNAUTHORIZED, status.getStatusCode());
+            mockMvc.perform(post("/actuator/awsSts")
+                    .with(csrf())
+                    .contentType(MediaType.APPLICATION_FORM_URLENCODED)
+                    .param("username", "casuser")
+                    .param("password", "bad-password"))
+                .andExpect(status().isUnauthorized());
         }
     }
 
@@ -180,10 +152,6 @@ class AmazonSecurityTokenServiceEndpointTests {
         "cas.authn.attribute-repository.stub.attributes.awsroles=arn:aws:iam::223873472255:role/adminuser-iam-role"
     })
     class WithRoleRequest extends BaseAmazonSecurityTokenServiceEndpointTests {
-        @Autowired
-        @Qualifier("awsSecurityTokenServiceEndpoint")
-        private AmazonSecurityTokenServiceEndpoint awsSecurityTokenServiceEndpoint;
-
         @BeforeEach
         void beforeEach() {
             ApplicationContextProvider.holdApplicationContext(applicationContext);
@@ -192,13 +160,12 @@ class AmazonSecurityTokenServiceEndpointTests {
 
         @Test
         void verifyOperation() throws Throwable {
-            val request = new MockHttpServletRequest();
-            val body = new LinkedMultiValueMap<String, String>();
-            body.put("username", List.of("casuser"));
-            body.put("password", List.of("resusac"));
-            val credentials = awsSecurityTokenServiceEndpoint.fetchCredentials(null,
-                null, null, null, body, request, new MockHttpServletResponse());
-            assertEquals(HttpStatus.OK, credentials.getStatusCode());
+            mockMvc.perform(post("/actuator/awsSts")
+                    .with(csrf())
+                    .contentType(MediaType.APPLICATION_FORM_URLENCODED)
+                    .param("username", "casuser")
+                    .param("password", "resusac"))
+                .andExpect(status().isOk());
         }
     }
 
@@ -211,10 +178,6 @@ class AmazonSecurityTokenServiceEndpointTests {
         "cas.authn.attribute-repository.stub.attributes.awsroles=arn:aws:iam::223873472255:role/adminuser-iam-role,arn:aws:iam::123873472251:role/superuser-iam-role"
     })
     class WithMultipleRolesRequest extends BaseAmazonSecurityTokenServiceEndpointTests {
-        @Autowired
-        @Qualifier("awsSecurityTokenServiceEndpoint")
-        private AmazonSecurityTokenServiceEndpoint awsSecurityTokenServiceEndpoint;
-
         @BeforeEach
         void beforeEach() {
             ApplicationContextProvider.holdApplicationContext(applicationContext);
@@ -223,24 +186,23 @@ class AmazonSecurityTokenServiceEndpointTests {
 
         @Test
         void verifyOperation() throws Throwable {
-            val request = new MockHttpServletRequest();
-            val body = new LinkedMultiValueMap<String, String>();
-            body.put("username", List.of("casuser"));
-            body.put("password", List.of("resusac"));
-            val credentials = awsSecurityTokenServiceEndpoint.fetchCredentials(null,
-                null, null, null, body, request, new MockHttpServletResponse());
-            assertEquals(HttpStatus.UNAUTHORIZED, credentials.getStatusCode());
+            mockMvc.perform(post("/actuator/awsSts")
+                    .with(csrf())
+                    .contentType(MediaType.APPLICATION_FORM_URLENCODED)
+                    .param("username", "casuser")
+                    .param("password", "resusac"))
+                .andExpect(status().isUnauthorized());
         }
 
         @Test
         void verifySpecificUnknownRoleOperation() throws Throwable {
-            val request = new MockHttpServletRequest();
-            val body = new LinkedMultiValueMap<String, String>();
-            body.put("username", List.of("casuser"));
-            body.put("password", List.of("resusac"));
-            val credentials = awsSecurityTokenServiceEndpoint.fetchCredentials(null,
-                null, null, "this-is-unknown-role", body, request, new MockHttpServletResponse());
-            assertEquals(HttpStatus.UNAUTHORIZED, credentials.getStatusCode());
+            mockMvc.perform(post("/actuator/awsSts")
+                    .with(csrf())
+                    .contentType(MediaType.APPLICATION_FORM_URLENCODED)
+                    .param("username", "casuser")
+                    .param("password", "resusac")
+                    .param("roleArn", "this-is-unknown-role"))
+                .andExpect(status().isUnauthorized());
         }
     }
 

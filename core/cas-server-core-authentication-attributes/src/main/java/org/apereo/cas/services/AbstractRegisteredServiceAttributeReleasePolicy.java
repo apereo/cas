@@ -1,6 +1,7 @@
 package org.apereo.cas.services;
 
 import module java.base;
+import org.apereo.cas.authentication.attribute.AttributeDefinition;
 import org.apereo.cas.authentication.attribute.AttributeDefinitionStore;
 import org.apereo.cas.authentication.attribute.CaseCanonicalizationMode;
 import org.apereo.cas.authentication.principal.DefaultPrincipalAttributesRepository;
@@ -19,7 +20,9 @@ import lombok.Setter;
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.jspecify.annotations.Nullable;
 import jakarta.persistence.PostLoad;
 
 /**
@@ -68,12 +71,8 @@ public abstract class AbstractRegisteredServiceAttributeReleasePolicy implements
      */
     @PostLoad
     public void postLoad() {
-        if (principalAttributesRepository == null) {
-            this.principalAttributesRepository = new DefaultPrincipalAttributesRepository();
-        }
-        if (consentPolicy == null) {
-            this.consentPolicy = new DefaultRegisteredServiceConsentPolicy();
-        }
+        principalAttributesRepository = ObjectUtils.defaultIfNull(principalAttributesRepository, new DefaultPrincipalAttributesRepository());
+        consentPolicy = ObjectUtils.defaultIfNull(consentPolicy, new DefaultRegisteredServiceConsentPolicy());
         canonicalizationMode = StringUtils.defaultIfBlank(canonicalizationMode, "NONE");
     }
 
@@ -118,6 +117,7 @@ public abstract class AbstractRegisteredServiceAttributeReleasePolicy implements
             LOGGER.trace("Adding policy attributes to the released set of attributes");
             attributesToRelease.putAll(policyAttributes);
             insertPrincipalIdAsAttributeIfNeeded(context, attributesToRelease);
+            attributesToRelease.putAll(invokeAttributeReleasePolicyPostProcessors(context, availableAttributes));
             if (getAttributeFilter() != null) {
                 LOGGER.debug("Invoking attribute filter [{}] on the final set of attributes", getAttributeFilter());
                 return getAttributeFilter().filter(attributesToRelease);
@@ -129,8 +129,22 @@ public abstract class AbstractRegisteredServiceAttributeReleasePolicy implements
         return attributesToRelease;
     }
 
+    protected Map<String, List<Object>> invokeAttributeReleasePolicyPostProcessors(
+        final RegisteredServiceAttributeReleasePolicyContext context,
+        final Map<String, List<Object>> availableAttributes) {
+        val attributesToRelease = new TreeMap<String, List<Object>>(String.CASE_INSENSITIVE_ORDER);
+        context.getApplicationContext().getBeansOfType(RegisteredServiceAttributeReleasePolicyPostProcessor.class)
+            .values()
+            .forEach(postProcessor -> {
+                LOGGER.debug("Invoking attribute release policy post-processor [{}] for principal [{}]",
+                    postProcessor.getName(), context.getPrincipal().getId());
+                postProcessor.process(context, attributesToRelease, availableAttributes);
+            });
+        return attributesToRelease;
+    }
+
     @Override
-    public Map<String, List<Object>> getConsentableAttributes(final RegisteredServiceAttributeReleasePolicyContext context) throws Throwable {
+    public @Nullable Map<String, List<Object>> getConsentableAttributes(final RegisteredServiceAttributeReleasePolicyContext context) throws Throwable {
         val attributes = getAttributes(context);
         LOGGER.debug("Initial set of consentable attributes are [{}]", attributes);
 
@@ -198,15 +212,28 @@ public abstract class AbstractRegisteredServiceAttributeReleasePolicy implements
                 return availableAttributes;
             }
             val requestedDefinitions = new LinkedHashSet<>(determineRequestedAttributeDefinitions(context));
+            if (requestedDefinitions.size() == 1 && "*".equals(requestedDefinitions.getFirst())) {
+                requestedDefinitions.clear();
+                requestedDefinitions.addAll(
+                    definitionStore.getAttributeDefinitions()
+                        .stream()
+                        .map(AttributeDefinition::getKey)
+                        .toList());
+            }
             requestedDefinitions.addAll(principalAttributes.keySet());
-
+            val finalRequestedDefinitions = finalizedRequestedAttributeDefinitions(requestedDefinitions, context);
             LOGGER.debug("Finding requested attribute definitions [{}] based on available attributes [{}]",
                 requestedDefinitions, availableAttributes);
-            return definitionStore.resolveAttributeValues(requestedDefinitions, availableAttributes,
+            return definitionStore.resolveAttributeValues(finalRequestedDefinitions, availableAttributes,
                 context.getPrincipal(), context.getRegisteredService(), context.getService());
         }
         LOGGER.trace("No attribute definition store is available in application context");
         return principalAttributes;
+    }
+
+    protected Set<String> finalizedRequestedAttributeDefinitions(final Set<String> requestedDefinitions,
+                                                                 final RegisteredServiceAttributeReleasePolicyContext context) {
+        return requestedDefinitions;
     }
 
     protected Map<String, List<Object>> resolveAttributesFromPrincipalAttributeRepository(final RegisteredServiceAttributeReleasePolicyContext context) {

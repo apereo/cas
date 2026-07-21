@@ -52,7 +52,7 @@ public class CasKafkaEventsAutoConfiguration {
     @Bean
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @ConditionalOnMissingBean(name = "kafkaEventRepositoryTemplate")
-    public KafkaOperations<@NonNull String, @NonNull CasEvent> kafkaEventRepositoryTemplate(
+    public KafkaOperations<String, @NonNull CasEvent> kafkaEventRepositoryTemplate(
         final ConfigurableApplicationContext applicationContext,
         final CasConfigurationProperties casProperties) {
         val kafka = casProperties.getEvents().getKafka();
@@ -92,7 +92,7 @@ public class CasKafkaEventsAutoConfiguration {
         @Qualifier("kafkaEventRepositoryFilter")
         final CasEventRepositoryFilter kafkaEventRepositoryFilter,
         @Qualifier("kafkaEventRepositoryTemplate")
-        final KafkaOperations<@NonNull String, @NonNull CasEvent> kafkaEventRepositoryTemplate,
+        final KafkaOperations<String, @NonNull CasEvent> kafkaEventRepositoryTemplate,
         final CasConfigurationProperties casProperties) {
         return new KafkaCasEventRepository(kafkaEventRepositoryFilter,
             kafkaEventRepositoryTemplate, casProperties);

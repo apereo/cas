@@ -5,7 +5,6 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.val;
 import net.shibboleth.shared.collection.LazyList;
-import org.jspecify.annotations.NonNull;
 import org.opensaml.security.credential.UsageType;
 import org.opensaml.security.crypto.KeySupport;
 import org.opensaml.security.x509.BasicX509Credential;
@@ -23,7 +22,7 @@ import java.security.cert.X509Certificate;
  */
 @Getter
 @Setter
-public class BasicX509CredentialFactoryBean implements FactoryBean<@NonNull BasicX509Credential> {
+public class BasicX509CredentialFactoryBean implements FactoryBean<BasicX509Credential> {
     /**
      * The specification of where the entity Resource is to be found.
      */

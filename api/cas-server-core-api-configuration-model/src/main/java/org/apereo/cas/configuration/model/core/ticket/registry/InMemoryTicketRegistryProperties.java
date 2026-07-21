@@ -16,7 +16,6 @@ import org.springframework.boot.context.properties.NestedConfigurationProperty;
 @RequiresModule(name = "cas-server-core-tickets", automated = true)
 @Getter
 @Setter
-
 public class InMemoryTicketRegistryProperties implements Serializable {
 
     @Serial
@@ -46,6 +45,12 @@ public class InMemoryTicketRegistryProperties implements Serializable {
     @NestedConfigurationProperty
     private EncryptionRandomizedSigningJwtCryptographyProperties crypto = new EncryptionRandomizedSigningJwtCryptographyProperties();
 
+    /**
+     * Free-form key-value pairs to configure the specific registry
+     * with custom settings.
+     */
+    private Map<String, String> properties = new HashMap<>();
+    
     public InMemoryTicketRegistryProperties() {
         crypto.setEnabled(false);
     }

@@ -52,20 +52,20 @@ import org.springframework.web.bind.annotation.RequestParam;
 @Slf4j
 @Endpoint(id = "samlIdPRegisteredServiceMetadataCache", defaultAccess = Access.NONE)
 public class SamlRegisteredServiceCachedMetadataEndpoint extends BaseCasRestActuatorEndpoint {
-    private final ObjectProvider<@NonNull SamlRegisteredServiceCachingMetadataResolver> cachingMetadataResolver;
+    private final ObjectProvider<SamlRegisteredServiceCachingMetadataResolver> cachingMetadataResolver;
 
-    private final ObjectProvider<@NonNull ServicesManager> servicesManager;
+    private final ObjectProvider<ServicesManager> servicesManager;
 
-    private final ObjectProvider<@NonNull AuditableExecution> registeredServiceAccessStrategyEnforcer;
+    private final ObjectProvider<AuditableExecution> registeredServiceAccessStrategyEnforcer;
 
-    private final ObjectProvider<@NonNull OpenSamlConfigBean> openSamlConfigBean;
+    private final ObjectProvider<OpenSamlConfigBean> openSamlConfigBean;
 
     public SamlRegisteredServiceCachedMetadataEndpoint(
         final CasConfigurationProperties casProperties,
-        final ObjectProvider<@NonNull SamlRegisteredServiceCachingMetadataResolver> cachingMetadataResolver,
-        final ObjectProvider<@NonNull ServicesManager> servicesManager,
-        final ObjectProvider<@NonNull AuditableExecution> registeredServiceAccessStrategyEnforcer,
-        final ObjectProvider<@NonNull OpenSamlConfigBean> openSamlConfigBean) {
+        final ObjectProvider<SamlRegisteredServiceCachingMetadataResolver> cachingMetadataResolver,
+        final ObjectProvider<ServicesManager> servicesManager,
+        final ObjectProvider<AuditableExecution> registeredServiceAccessStrategyEnforcer,
+        final ObjectProvider<OpenSamlConfigBean> openSamlConfigBean) {
         super(casProperties, openSamlConfigBean.getObject().getApplicationContext());
         this.cachingMetadataResolver = cachingMetadataResolver;
         this.servicesManager = servicesManager;

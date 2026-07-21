@@ -77,6 +77,7 @@ The following settings can be specified by an attribute definition:
 | `singleValue`          | (Optional) Default is `false`. Determines if the attribute should be produced as a single-value claim if it has only a single value.                                                               |
 | `hashingStrategy`      | (Optional) Attempts to *hash* the attribute value based on `hex`, `base64`, `sha1`, `sha256` or `sha512` hashing function.                                                                         |
 | `expiration`           | (Optional) A duration value (i.e. `PT5S`) indicating when the attribute definition should expire and be removed from the cache.                                                                    |
+| `dependsOn`            | (Optional) A list of attribute definitions that need to be resolved and made available before this attribute definition can be built.                                                              |
 
 The following operations in the order given should take place, if an attribute definition is to produce values:
 
@@ -122,7 +123,6 @@ as usual with the following definition:
 ```
 
 {% endtab %}
-
 
 {% tab attrdefinitions <i class="fa fa-mask px-1"></i> Encrypted %}
 
@@ -296,6 +296,39 @@ the attribute definition may be instructed to flatten all values using the given
 
 For example, if the resolved set of attributes are `memberships=[m1, m2, m3, m4, m9]`,
 the final values of `memberships` would be `m1/m2/m3/m4`.
+
+{% endtab %}
+
+{% tab attrdefinitions Dependencies %}
+
+An attribute definition can optionally require and depend on other attribute definitions to be resolved
+and built before it can itself be made available. The attributes required and depended-on by
+this definition are built first and made available to the effective context for additional processing.
+
+```json 
+{
+    "@class": "java.util.TreeMap",
+    "myAttribute" : {
+        "@class" : "org.apereo.cas.authentication.attribute.DefaultAttributeDefinition",
+        "key": "myAttribute",
+        "dependsOn": [ "java.util.List", ["allgroups", "memberships"]],
+        "script":
+            '''
+              groovy {
+                  logger.info("Current attributes are {}", attributes)
+                  def allgroups = attributes['allgroups'] ?: []
+                  def memberships = attributes['memberships'] ?: []
+                  return allgroups + memberships
+              }
+            '''
+    }
+}
+```  
+     
+In this example, the attribute definition `memberships` is built and may produce `[m1, m2, m3, m4]`.  Then, 
+attribute definition `allgroups` is built and may produce `[a, b, c]`. Once the dependencies are available,
+`myAttribute` can be built which would combine the results of `memberships` and `allgroups` into a final list with
+the values `[m1, m2, m3, m4, a, b, c]`. 
 
 {% endtab %}
 

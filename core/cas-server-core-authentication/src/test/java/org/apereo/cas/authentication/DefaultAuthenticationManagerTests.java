@@ -22,12 +22,14 @@ import org.apereo.cas.config.CasCoreWebAutoConfiguration;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.multitenancy.TenantExtractor;
 import org.apereo.cas.services.ServicesManager;
+import org.apereo.cas.support.events.authentication.CasAuthenticationPolicyFailureEvent;
 import org.apereo.cas.test.CasTestExtension;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.MockRequestContext;
 import org.apereo.cas.util.spring.ApplicationContextProvider;
 import org.apereo.cas.util.spring.DirectObjectProvider;
 import org.apereo.cas.util.spring.boot.SpringBootTestAutoConfigurations;
+import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.junit.jupiter.api.BeforeEach;
@@ -39,6 +41,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.TestConfiguration;
+import org.springframework.context.ApplicationListener;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.support.StaticApplicationContext;
@@ -366,6 +369,40 @@ class DefaultAuthenticationManagerTests {
     }
 
     @Test
+    void verifyAuthenticatePolicyFailsGenericAndPublishesEvent() throws Throwable {
+        val map = new LinkedHashMap<AuthenticationHandler, PrincipalResolver>();
+        map.put(newMockHandler(true), null);
+
+        val authenticationExecutionPlan = getAuthenticationExecutionPlan(map);
+        val policy = mock(AuthenticationPolicy.class);
+        val failure = new FailedLoginException();
+        when(policy.isSatisfiedBy(any(Authentication.class), any(), any(ConfigurableApplicationContext.class)))
+            .thenThrow(new GeneralSecurityException(failure));
+        authenticationExecutionPlan.registerAuthenticationPolicy(policy);
+
+        val staticApplicationContext = new StaticApplicationContext();
+        staticApplicationContext.refresh();
+
+        val manager = getAuthenticationManager(authenticationExecutionPlan, staticApplicationContext);
+        val listener = new ApplicationListener<CasAuthenticationPolicyFailureEvent>() {
+            @Getter
+            private boolean failureFound;
+
+            @Override
+            public void onApplicationEvent(final CasAuthenticationPolicyFailureEvent event) {
+                failureFound = event.getAuthentication().getFailures()
+                    .values()
+                    .stream()
+                    .anyMatch(t -> t.equals(failure));
+            }
+        };
+        staticApplicationContext.addApplicationListener(listener);
+
+        assertThrows(AuthenticationException.class, () -> manager.authenticate(transaction));
+        assertTrue(listener.isFailureFound(), "Failure events captured");
+    }
+
+    @Test
     void verifyAuthenticatePolicyFails() throws Throwable {
         val map = new LinkedHashMap<AuthenticationHandler, PrincipalResolver>();
         map.put(newMockHandler(true), null);
@@ -443,14 +480,27 @@ class DefaultAuthenticationManagerTests {
         return getAuthenticationManager(new ReplacingAttributeAdder(), authenticationExecutionPlan);
     }
 
+    private static AuthenticationManager getAuthenticationManager(
+        final AuthenticationEventExecutionPlan authenticationExecutionPlan,
+        final ConfigurableApplicationContext applicationContext) {
+        return getAuthenticationManager(new ReplacingAttributeAdder(), authenticationExecutionPlan, applicationContext);
+    }
+
     private AuthenticationManager getAuthenticationManager(
         final AttributeMerger attributeMerger,
         final AuthenticationEventExecutionPlan authenticationExecutionPlan) {
+        return getAuthenticationManager(attributeMerger, authenticationExecutionPlan, applicationContext);
+    }
+
+    private static AuthenticationManager getAuthenticationManager(
+        final AttributeMerger attributeMerger,
+        final AuthenticationEventExecutionPlan authenticationExecutionPlan,
+        final ConfigurableApplicationContext applicationContext) {
         return new DefaultAuthenticationManager(authenticationExecutionPlan,
             new DirectObjectProvider<>(CoreAuthenticationTestUtils.getAuthenticationSystemSupport(attributeMerger)),
             false, applicationContext);
     }
-    
+
 
     @TestConfiguration(value = "AuthenticationPlanTestConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)

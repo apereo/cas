@@ -147,8 +147,12 @@ public class OidcJwtAuthenticator implements Authenticator {
                     applicationContext, Optional.of(OidcJsonWebKeyUsage.SIGNING))
                 .ifPresent(set -> set.getJsonWebKeys().forEach(keys::addJsonWebKey));
 
-            val audience = casProperties.getServer().getPrefix().concat('/'
-                + OidcConstants.BASE_OIDC_URL + '/' + OidcConstants.ACCESS_TOKEN_URL);
+            val baseUrl = casProperties.getServer().getPrefix().concat('/' + OidcConstants.BASE_OIDC_URL + '/');
+            val audience = new String[]{
+                baseUrl + OidcConstants.ACCESS_TOKEN_URL,
+                baseUrl + OAuth20Constants.ACCESS_TOKEN_URL,
+                baseUrl + OAuth20Constants.TOKEN_URL
+            };
             for (var i = 0; credentials.getUserProfile() == null && i < keys.getJsonWebKeys().size(); i++) {
                 val jsonWebKey = keys.getJsonWebKeys().get(i);
                 val consumer = new JwtConsumerBuilder()

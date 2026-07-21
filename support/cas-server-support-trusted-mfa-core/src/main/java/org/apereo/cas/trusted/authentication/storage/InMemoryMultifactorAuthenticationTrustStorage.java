@@ -10,7 +10,6 @@ import com.github.benmanes.caffeine.cache.LoadingCache;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-import org.jspecify.annotations.NonNull;
 
 /**
  * This is {@link InMemoryMultifactorAuthenticationTrustStorage}.
@@ -21,11 +20,11 @@ import org.jspecify.annotations.NonNull;
 @Slf4j
 @Getter
 public class InMemoryMultifactorAuthenticationTrustStorage extends BaseMultifactorAuthenticationTrustStorage {
-    private final LoadingCache<@NonNull String, MultifactorAuthenticationTrustRecord> storage;
+    private final LoadingCache<String, MultifactorAuthenticationTrustRecord> storage;
 
     public InMemoryMultifactorAuthenticationTrustStorage(final TrustedDevicesMultifactorProperties properties,
                                                          final CipherExecutor<Serializable, String> cipherExecutor,
-                                                         final LoadingCache<@NonNull String, MultifactorAuthenticationTrustRecord> storage,
+                                                         final LoadingCache<String, MultifactorAuthenticationTrustRecord> storage,
                                                          final MultifactorAuthenticationTrustRecordKeyGenerator keyGenerationStrategy) {
         super(properties, cipherExecutor, keyGenerationStrategy);
         this.storage = storage;

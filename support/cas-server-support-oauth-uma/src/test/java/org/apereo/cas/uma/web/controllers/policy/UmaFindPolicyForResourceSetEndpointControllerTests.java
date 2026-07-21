@@ -41,7 +41,7 @@ class UmaFindPolicyForResourceSetEndpointControllerTests extends BaseUmaEndpoint
         val policyId = ((Number) policy.get("id")).longValue();
 
         result = performUmaRequest(HttpMethod.GET,
-            resourceId + "/" + OAuth20Constants.UMA_POLICY_URL + "/" + policyId,
+            resourceId + "/" + OAuth20Constants.UMA_POLICY_URL + '/' + policyId,
             results.getLeft(), results.getMiddle());
         model = getMappedResponseBody(result);
         assertNotNull(model);

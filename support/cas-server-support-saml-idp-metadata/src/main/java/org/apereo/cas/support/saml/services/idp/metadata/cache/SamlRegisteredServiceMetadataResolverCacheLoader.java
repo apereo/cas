@@ -14,7 +14,6 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import net.shibboleth.shared.component.AbstractIdentifiableInitializableComponent;
 import org.jooq.lambda.Unchecked;
-import org.jspecify.annotations.NonNull;
 import org.opensaml.saml.metadata.resolver.ChainingMetadataResolver;
 import org.opensaml.saml.metadata.resolver.MetadataResolver;
 
@@ -29,7 +28,7 @@ import org.opensaml.saml.metadata.resolver.MetadataResolver;
  */
 @Slf4j
 @RequiredArgsConstructor
-public class SamlRegisteredServiceMetadataResolverCacheLoader implements CacheLoader<@NonNull SamlRegisteredServiceCacheKey, CachedMetadataResolverResult> {
+public class SamlRegisteredServiceMetadataResolverCacheLoader implements CacheLoader<SamlRegisteredServiceCacheKey, CachedMetadataResolverResult> {
 
     protected final OpenSamlConfigBean configBean;
 

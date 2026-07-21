@@ -5,6 +5,7 @@ import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.oidc.OidcConstants;
 import org.apereo.cas.oidc.scopes.DefaultOidcAttributeReleasePolicyFactory;
 import org.apereo.cas.oidc.services.OidcServiceRegistryListener;
+import org.apereo.cas.support.oauth.services.OAuthRegisteredServiceClientSecret;
 import org.apereo.cas.util.CollectionUtils;
 import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.Tag;
@@ -33,7 +34,7 @@ class JpaServiceRegistryOidcTests extends JpaServiceRegistryTests {
         svc.setServiceId("testId");
         svc.setJwks("file:/tmp/thekeystorehere.jwks");
         svc.setClientId("client");
-        svc.setClientSecret("secret");
+        svc.setClientSecrets(CollectionUtils.wrapList(OAuthRegisteredServiceClientSecret.withoutExpiration("secret")));
         svc.setScopes(CollectionUtils.wrapSet(
             OidcConstants.StandardScopes.PROFILE.getScope(),
             OidcConstants.StandardScopes.ADDRESS.getScope(),

@@ -40,6 +40,62 @@ async function initializeCasProtocolOperations() {
     $("button[name=casProtocolV3Button]").off().on("click", () => buildCasProtocolPayload("p3/serviceValidate", "xml"));
 }
 
+function protocolConfigurationPropertiesMutable() {
+    return PalantirDashboardConfiguration.mutablePropertySourcesAvailable() && CasActuatorEndpoints.casConfig();
+}
+
+function escapeProtocolHtml(str) {
+    return String(str ?? "").replace(/[&<>"']/g, s => ({
+        "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;"
+    }[s]));
+}
+
+function switchToConfigurationDynamicSourcesTabFromProtocol() {
+    activateDashboardTab(Tabs.CONFIGURATION.index);
+    selectSidebarMenuTab(Tabs.CONFIGURATION.index);
+}
+
+function showProtocolConfigurationPropertyHelp(propertyName) {
+    if (CasActuatorEndpoints.configurationMetadata()) {
+        switchToConfigurationDynamicSourcesTabFromProtocol();
+        searchForConfigPropertyButton(propertyName);
+    }
+}
+
+function overrideProtocolConfigurationPropertyValue(propertyName, propertyValue) {
+    if (protocolConfigurationPropertiesMutable()) {
+        switchToConfigurationDynamicSourcesTabFromProtocol();
+        overrideConfigPropertyValue(propertyName, propertyValue);
+    }
+}
+
+function initializeProtocolConfigurationPropertiesContextMenu(table, selector) {
+    initializeDataTableContextMenu({
+        table: table,
+        selector: selector,
+        items: {
+            help: {
+                name: "Configuration Property Help",
+                icon: contextMenuIcon("mdi-help"),
+                visible: () => CasActuatorEndpoints.configurationMetadata()
+            },
+            override: {
+                name: "Override Configuration Property Value",
+                icon: contextMenuIcon("mdi-arrow-left-circle"),
+                visible: () => protocolConfigurationPropertiesMutable()
+            }
+        },
+        callback: (key, context) => {
+            const {propertyName, propertyValue} = context.rowData;
+            if (key === "help") {
+                showProtocolConfigurationPropertyHelp(propertyName);
+            } else if (key === "override") {
+                overrideProtocolConfigurationPropertyValue(propertyName, propertyValue);
+            }
+        }
+    });
+}
+
 async function initializeSAML1ProtocolOperations() {
     $("button[name=saml1ProtocolButton]").off().on("click", () => {
         const form = document.getElementById("fmSaml1Protocol");
@@ -101,7 +157,113 @@ function showOidcJwks() {
     });
 }
 
+function buildOidcClientSecretRotationEndpoint() {
+    const clientId = $("#oidcClientSecretRotationClientId").val()?.trim();
+    const expireIn = $("#oidcClientSecretRotationExpireIn").val()?.trim();
+    const expiredOnly = $("#oidcClientSecretRotationExpiredOnly").val() === "true";
+    const encodedClientId = encodeURIComponent(clientId);
+    let endpoint = CasActuatorEndpoints.oauthClientSecrets();
+    if (/\{clientId\}|%7BclientId%7D/i.test(endpoint)) {
+        endpoint = endpoint.replace(/\{clientId\}|%7BclientId%7D/ig, encodedClientId);
+    } else {
+        endpoint = `${endpoint}/${encodedClientId}`;
+    }
+    const query = new URLSearchParams();
+    query.append("expiredOnly", expiredOnly);
+    if (expireIn) {
+        query.append("expireIn", expireIn);
+    }
+    const queryString = query.toString();
+    return `${endpoint}${queryString ? `?${queryString}` : ""}`;
+}
+
+function renderOidcClientSecretRotationResult(response) {
+    const editor = initializeAceEditor("oidcClientSecretRotationEditor", "json");
+    editor.setReadOnly(true);
+    editor.setValue(JSON.stringify(response, null, 2));
+    editor.gotoLine(1);
+    showElements("#oidcClientSecretRotationEditorContainer");
+}
+
+function refreshOidcInnerTabs() {
+    const $tabs = $("#oidc-inner-tabs");
+    if ($tabs.hasClass("ui-tabs")) {
+        $tabs.tabs("refresh");
+    }
+}
+
+function hideOidcProtocolOnlyTabs() {
+    [
+        "oidctokenexchange",
+        "oidckeyrotation",
+        "oidcclientjwks",
+        "oidcdiscovery",
+        "oidcconfigprops"
+    ].forEach(tabId => {
+        hideElements($(`#${tabId}`).parent());
+        hideElements($(`#${tabId}-tab`));
+    });
+    refreshOidcInnerTabs();
+}
+
+function initializeOidcClientSecretRotationOperations() {
+    if (CasActuatorEndpoints.oauthClientSecrets()) {
+        showElements($("#oidcclientsecretrotation-li"));
+        showElements($("#oidcclientsecretrotation-tab"));
+        refreshOidcInnerTabs();
+
+        $("button[name=oidcClientSecretRotationButton]").off().on("click", () => {
+            hideBanner();
+            const form = document.getElementById("fmOidcClientSecretRotation");
+            if (!form.reportValidity()) {
+                return false;
+            }
+
+            Swal.fire({
+                title: "Are you sure you want to rotate client secrets?",
+                text: "Once rotated, the change will take effect immediately.",
+                icon: "question",
+                showConfirmButton: true,
+                showDenyButton: true
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    $("#oidcClientSecretRotationButton").prop("disabled", true);
+                    $.ajax({
+                        url: buildOidcClientSecretRotationEndpoint(),
+                        type: "POST",
+                        headers: {
+                            "Content-Type": "application/json"
+                        },
+                        success: (response) => {
+                            renderOidcClientSecretRotationResult(response);
+                            Swal.fire({
+                                title: "Done!",
+                                text: "Client secrets have been rotated successfully.",
+                                icon: "success",
+                                showConfirmButton: false,
+                                timer: 1500
+                            });
+                            $("#oidcClientSecretRotationButton").prop("disabled", false);
+                        },
+                        error: (xhr, textStatus, errorThrown) => {
+                            console.error("Error rotating client secrets:", errorThrown);
+                            displayBanner(xhr);
+                            hideElements("#oidcClientSecretRotationEditorContainer");
+                            $("#oidcClientSecretRotationButton").prop("disabled", false);
+                        }
+                    });
+                }
+            });
+        });
+    } else {
+        hideElements($("#oidcclientsecretrotation-li"));
+        hideElements($("#oidcclientsecretrotation-tab"));
+        refreshOidcInnerTabs();
+    }
+}
+
 async function initializeOidcProtocolOperations() {
+    initializeOidcClientSecretRotationOperations();
     if (CAS_FEATURES.includes("OpenIDConnect")) {
         $.get(`${PalantirDashboardConfiguration.casServerPrefix()}/oidc/.well-known/openid-configuration`, response => {
             highlightElements();
@@ -266,19 +428,33 @@ async function initializeOidcProtocolOperations() {
 
         if (CasActuatorEndpoints.env()) {
             const oidcConfigurationPropsTable = $("#oidcConfigurationPropsTable").DataTable({
-                lengthChange: false
+                lengthChange: false,
+                columnDefs: [
+                    {
+                        targets: 1,
+                        className: "dt-left"
+                    }
+                ],
+                drawCallback: () => {
+                    $("#oidcConfigurationPropsTable tr").addClass("mdc-data-table__row");
+                    $("#oidcConfigurationPropsTable td").addClass("mdc-data-table__cell");
+                }
             });
             oidcConfigurationPropsTable.clear();
+            initializeProtocolConfigurationPropertiesContextMenu(
+                oidcConfigurationPropsTable,
+                "#oidcConfigurationPropsTable tbody tr");
 
             $.get(`${CasActuatorEndpoints.env()}?pattern=cas.authn.oidc`, response => {
                 response.propertySources.forEach(source => {
                     let properties = source.properties && Object.entries(source.properties || {});
                     properties.forEach(([propKey, propValue]) => {
-                        oidcConfigurationPropsTable.row.add(
-                            $("<tr class=\"mdc-data-table__row\">")
-                                .append(`<td class="mdc-data-table__cell"><code>${propKey}</code></td>`)
-                                .append(`<td class="mdc-data-table__cell"><code>${propValue.value}</code></td>`)
-                        ).draw(false);
+                        oidcConfigurationPropsTable.row.add({
+                            0: `<code>${escapeProtocolHtml(propKey)}</code>`,
+                            1: `<code>${escapeProtocolHtml(propValue.value)}</code>`,
+                            propertyName: propKey,
+                            propertyValue: propValue.value
+                        }).draw(false);
                     });
                 });
                 updateNavigationSidebar();
@@ -300,58 +476,62 @@ async function initializeOidcProtocolOperations() {
                 }
             });
 
+            function deleteOidcClientJwksEntry(context) {
+                const jkt = context.rowData.jkt;
+                Swal.fire({
+                    title: "Are you sure you want to delete this client JWKS entry?",
+                    text: "Once deleted, the change will take effect immediately.",
+                    icon: "question",
+                    showConfirmButton: true,
+                    showDenyButton: true
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        $.ajax({
+                            url: `${CasActuatorEndpoints.oidcJwks()}/clients/${jkt}`,
+                            type: "DELETE",
+                            success: (response, textStatus, jqXHR) => {
+                                Swal.fire({
+                                    title: "Done!",
+                                    text: "Client JWKS entry has been deleted successfully.",
+                                    showConfirmButton: false,
+                                    icon: "success",
+                                    timer: 1500
+                                });
+                                context.row.remove().draw();
+                            },
+                            error: (jqXHR, textStatus, errorThrown) => {
+                                console.error("Error deleting client JWKS entry:", errorThrown);
+                                displayBanner(jqXHR);
+                            }
+                        });
+                    }
+                });
+            }
+
+            initializeDataTableContextMenu({
+                table: oidcClientJwksTable,
+                selector: "#oidcClientJwksTable tbody tr",
+                items: {
+                    delete: {name: "Delete", icon: contextMenuIcon("mdi-delete")}
+                },
+                callback: (key, context) => {
+                    if (key === "delete") {
+                        deleteOidcClientJwksEntry(context);
+                    }
+                }
+            });
+
             $.get(`${CasActuatorEndpoints.oidcJwks()}/clients`, response => {
                 oidcClientJwksTable.clear();
                 for (const entry of response) {
-                    const deleteButton = `
-                        <button type="button" name="deleteOidcClientJwksEntry" href="#"
-                            data-jkt="${entry.jkt}"
-                            title="Delete"
-                            class="mdc-button mdc-button--raised btn btn-link min-width-32x">
-                            <i class="mdi mdi-delete min-width-32x" aria-hidden="true"></i>
-                        </button>
-                    `;
                     oidcClientJwksTable.row.add({
                         0: `<code>${entry.jkt}</code>`,
                         1: `<code>${entry.createdAt}</code>`,
                         2: `<code>${entry.jwk}</code>`,
-                        3: deleteButton
+                        jkt: entry.jkt
                     });
                 }
                 oidcClientJwksTable.draw();
-
-                $("button[name=deleteOidcClientJwksEntry]").off().on("click", function () {
-                    const jkt = $(this).data("jkt");
-                    const row = $(this).closest("tr");
-                    Swal.fire({
-                        title: "Are you sure you want to delete this client JWKS entry?",
-                        text: "Once deleted, the change will take effect immediately.",
-                        icon: "question",
-                        showConfirmButton: true,
-                        showDenyButton: true
-                    }).then((result) => {
-                        if (result.isConfirmed) {
-                            $.ajax({
-                                url: `${CasActuatorEndpoints.oidcJwks()}/clients/${jkt}`,
-                                type: "DELETE",
-                                success: (response, textStatus, jqXHR) => {
-                                    Swal.fire({
-                                        title: "Done!",
-                                        text: "Client JWKS entry has been deleted successfully.",
-                                        showConfirmButton: false,
-                                        icon: "success",
-                                        timer: 1500
-                                    });
-                                    oidcClientJwksTable.row(row).remove().draw();
-                                },
-                                error: (jqXHR, textStatus, errorThrown) => {
-                                    console.error("Error deleting client JWKS entry:", errorThrown);
-                                    displayBanner(jqXHR);
-                                }
-                            });
-                        }
-                    });
-                });
             }).fail((xhr, status, error) => {
                 console.error("Error fetching data:", error);
                 displayBanner(xhr);
@@ -359,6 +539,8 @@ async function initializeOidcProtocolOperations() {
         } else {
             hideElements($("#oidcclientjwks-li"));
         }
+    } else {
+        hideOidcProtocolOnlyTabs();
     }
 }
 
@@ -530,128 +712,121 @@ async function initializeSAML2ProtocolOperations() {
                 }
             }
 
+            function viewSaml2MetadataManagerEntry(entryId, managerName) {
+                $.get(`${CasActuatorEndpoints.samlIdpRegisteredServiceMetadata()}/managers/${managerName}/${entryId}`, entry => {
+                    saml2MetadataManagerEntryEditor.setValue(entry.value);
+                    saml2MetadataManagerEntryEditor.gotoLine(1);
+                    const dialog = window.mdc.dialog.MDCDialog.attachTo(document.getElementById("saml2MetadataManagerEntryDialog"));
+                    dialog["open"]();
+                }).fail((xhr, status, error) => {
+                    console.error("Error fetching data:", error);
+                    displayBanner(xhr);
+                });
+            }
+
+            function copySaml2MetadataEntityId(entityIdValue) {
+                copyToClipboard(entityIdValue).then(() => {
+                    Swal.fire({
+                        title: "Copied",
+                        html: `Entity ID <code>${entityIdValue}</code> has been copied to the clipboard.`,
+                        showConfirmButton: false,
+                        icon: "success",
+                        timer: 2000
+                    });
+                }).catch(err => {
+                    console.error("Failed to copy entity ID to clipboard:", err);
+                    displayBanner({responseJSON: {message: "Failed to copy entity ID to clipboard."}});
+                });
+            }
+
+            function registerSaml2MetadataManagerEntry(entryName, entityIdValue) {
+                const saml2ServiceClass = Object.keys(PalantirDashboardConfiguration.supportedServiceTypes()).find(cls => cls.includes("SamlRegisteredService"));
+                if (saml2ServiceClass) {
+                    const partialService = {
+                        "@class": saml2ServiceClass,
+                        "name": entryName,
+                        "serviceId": entityIdValue,
+                        "metadataLocation": "mongodb://"
+                    };
+                    activateDashboardTab(Tabs.APPLICATIONS.index);
+                    selectSidebarMenuTab(Tabs.APPLICATIONS.index);
+                    setTimeout(() => openRegisteredServiceWizardDialog(partialService), 150);
+                } else {
+                    displayBanner("CAS is unable to register this entry as a SAML2 Service Provider");
+                }
+            }
+
+            function deleteSaml2MetadataManagerEntry(entryId, managerName) {
+                Swal.fire({
+                    title: "Are you sure you want to delete this metadata entry?",
+                    text: "Once deleted, the change will take effect immediately.",
+                    icon: "question",
+                    showConfirmButton: true,
+                    showDenyButton: true
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        $.ajax({
+                            url: `${CasActuatorEndpoints.samlIdpRegisteredServiceMetadata()}/managers/${managerName}/${entryId}`,
+                            type: "DELETE",
+                            contentType: "application/x-www-form-urlencoded",
+                            success: (response, textStatus, jqXHR) => {
+                                Swal.fire({
+                                    title: "Done!",
+                                    text: "Metadata entry has been deleted successfully.",
+                                    showConfirmButton: false,
+                                    icon: "success",
+                                    timer: 2000
+                                });
+                                fetchMetadataManagerEntries(managerName);
+                            },
+                            error: (jqXHR, textStatus, errorThrown) => {
+                                console.error("Error deleting metadata entry:", errorThrown);
+                                displayBanner(jqXHR);
+                            }
+                        });
+                    }
+                });
+            }
+
+            initializeDataTableContextMenu({
+                table: saml2MetadataManagerEntriesTable,
+                selector: "#saml2MetadataManagerEntriesTable tbody tr",
+                items: {
+                    view: {name: "View Metadata", icon: contextMenuIcon("mdi-eye")},
+                    copyEntityId: {name: "Copy Entity ID", icon: contextMenuIcon("mdi-content-copy")},
+                    register: {name: "Register as SAML2 Service Provider", icon: contextMenuIcon("mdi-plus-circle")},
+                    delete: {name: "Delete Metadata", icon: contextMenuIcon("mdi-delete")}
+                },
+                callback: (key, context) => {
+                    const {entryId, managerName, entityId, entryName} = context.rowData;
+                    if (key === "view") {
+                        viewSaml2MetadataManagerEntry(entryId, managerName);
+                    } else if (key === "copyEntityId") {
+                        copySaml2MetadataEntityId(entityId);
+                    } else if (key === "register") {
+                        registerSaml2MetadataManagerEntry(entryName, entityId);
+                    } else if (key === "delete") {
+                        deleteSaml2MetadataManagerEntry(entryId, managerName);
+                    }
+                }
+            });
+
             function fetchMetadataManagerEntries(managerName) {
                 saml2MetadataManagerEntriesTable.clear().draw();
                 $.get(`${CasActuatorEndpoints.samlIdpRegisteredServiceMetadata()}/managers/${managerName}`, response => {
                     for (const entry of response) {
                         const entityId = parseEntityIdFromMetadata(entry.value);
-                        const buttons = `
-                            <button type="button" name="viewSaml2MetadataManagerEntry" href="#"
-                                data-entry-id="${entry.id}" data-manager-name="${managerName}"
-                                title="View Metadata"
-                                class="mdc-button mdc-button--raised btn btn-link min-width-32x">
-                                <i class="mdi mdi-eye min-width-32x" aria-hidden="true"></i>
-                            </button>
-                            <button type="button" name="copySaml2MetadataEntityId" href="#"
-                                data-entity-id="${entityId}"
-                                title="Copy Entity ID to Clipboard"
-                                class="mdc-button mdc-button--raised btn btn-link min-width-32x">
-                                <i class="mdi mdi-content-copy min-width-32x" aria-hidden="true"></i>
-                            </button>
-                            <button type="button" name="registerSaml2MetadataManagerEntry" href="#"
-                                data-entry-name="${entry.name}" data-entity-id="${entityId}"
-                                title="Register as SAML2 Service Provider"
-                                class="mdc-button mdc-button--raised btn btn-link min-width-32x">
-                                <i class="mdi mdi-plus-circle min-width-32x" aria-hidden="true"></i>
-                            </button>
-                            <button type="button" name="deleteSaml2MetadataManagerEntry" href="#"
-                                data-entry-id="${entry.id}" data-manager-name="${managerName}"
-                                title="Delete Metadata"
-                                class="mdc-button mdc-button--raised btn btn-link min-width-32x">
-                                <i class="mdi mdi-delete min-width-32x" aria-hidden="true"></i>
-                            </button>
-                        `;
                         saml2MetadataManagerEntriesTable.row.add({
                             0: `<code>${entry.id}</code>`,
                             1: `<code>${entry.name}</code>`,
                             2: `<code>${entityId}</code>`,
-                            3: buttons
+                            entryId: entry.id,
+                            managerName: managerName,
+                            entityId: entityId,
+                            entryName: entry.name
                         });
                     }
                     saml2MetadataManagerEntriesTable.draw();
-
-                    $("button[name=viewSaml2MetadataManagerEntry]").off().on("click", function () {
-                        const entryId = $(this).data("entry-id");
-                        const mgrName = $(this).data("manager-name");
-                        $.get(`${CasActuatorEndpoints.samlIdpRegisteredServiceMetadata()}/managers/${mgrName}/${entryId}`, entry => {
-                            saml2MetadataManagerEntryEditor.setValue(entry.value);
-                            saml2MetadataManagerEntryEditor.gotoLine(1);
-                            const dialog = window.mdc.dialog.MDCDialog.attachTo(document.getElementById("saml2MetadataManagerEntryDialog"));
-                            dialog["open"]();
-                        }).fail((xhr, status, error) => {
-                            console.error("Error fetching data:", error);
-                            displayBanner(xhr);
-                        });
-                    });
-
-                    $("button[name=copySaml2MetadataEntityId]").off().on("click", function () {
-                        const entityIdValue = $(this).data("entity-id");
-                        copyToClipboard(entityIdValue).then(() => {
-                            Swal.fire({
-                                title: "Copied",
-                                html: `Entity ID <code>${entityIdValue}</code> has been copied to the clipboard.`,
-                                showConfirmButton: false,
-                                icon: "success",
-                                timer: 2000
-                            });
-                        }).catch(err => {
-                            console.error("Failed to copy entity ID to clipboard:", err);
-                            displayBanner({responseJSON: {message: "Failed to copy entity ID to clipboard."}});
-                        });
-                    });
-
-                    $("button[name=registerSaml2MetadataManagerEntry]").off().on("click", function () {
-                        const saml2ServiceClass = Object.keys(PalantirDashboardConfiguration.supportedServiceTypes()).find(cls => cls.includes("SamlRegisteredService"));
-                        if (saml2ServiceClass) {
-                            const entryName = $(this).data("entry-name");
-                            const entityIdValue = $(this).data("entity-id");
-                            const partialService = {
-                                "@class": saml2ServiceClass,
-                                "name": entryName,
-                                "serviceId": entityIdValue,
-                                "metadataLocation": "mongodb://"
-                            };
-                            activateDashboardTab(Tabs.APPLICATIONS.index);
-                            selectSidebarMenuTab(Tabs.APPLICATIONS.index);
-                            setTimeout(() => openRegisteredServiceWizardDialog(partialService), 150);
-                        } else {
-                            displayBanner("CAS is unable to register this entry as a SAML2 Service Provider");
-                        }
-                    });
-
-                    $("button[name=deleteSaml2MetadataManagerEntry]").off().on("click", function () {
-                        const entryId = $(this).data("entry-id");
-                        const mgrName = $(this).data("manager-name");
-                        Swal.fire({
-                            title: "Are you sure you want to delete this metadata entry?",
-                            text: "Once deleted, the change will take effect immediately.",
-                            icon: "question",
-                            showConfirmButton: true,
-                            showDenyButton: true
-                        }).then((result) => {
-                            if (result.isConfirmed) {
-                                $.ajax({
-                                    url: `${CasActuatorEndpoints.samlIdpRegisteredServiceMetadata()}/managers/${mgrName}/${entryId}`,
-                                    type: "DELETE",
-                                    contentType: "application/x-www-form-urlencoded",
-                                    success: (response, textStatus, jqXHR) => {
-                                        Swal.fire({
-                                            title: "Done!",
-                                            text: "Metadata entry has been deleted successfully.",
-                                            showConfirmButton: false,
-                                            icon: "success",
-                                            timer: 2000
-                                        });
-                                        fetchMetadataManagerEntries(mgrName);
-                                    },
-                                    error: (jqXHR, textStatus, errorThrown) => {
-                                        console.error("Error deleting metadata entry:", errorThrown);
-                                        displayBanner(jqXHR);
-                                    }
-                                });
-                            }
-                        });
-                    });
                 }).fail((xhr, status, error) => {
                     console.error("Error fetching data:", error);
                     displayBanner(xhr);
@@ -814,19 +989,27 @@ async function initializeSAML2ProtocolOperations() {
                         targets: 1,
                         className: "dt-left"
                     }
-                ]
+                ],
+                drawCallback: () => {
+                    $("#saml2ConfigurationPropsTable tr").addClass("mdc-data-table__row");
+                    $("#saml2ConfigurationPropsTable td").addClass("mdc-data-table__cell");
+                }
             });
             saml2ConfigurationPropsTable.clear();
+            initializeProtocolConfigurationPropertiesContextMenu(
+                saml2ConfigurationPropsTable,
+                "#saml2ConfigurationPropsTable tbody tr");
 
             $.get(`${CasActuatorEndpoints.env()}?pattern=cas.authn.saml-idp`, response => {
                 response.propertySources.forEach(source => {
                     let properties = source.properties && Object.entries(source.properties || {});
                     properties.forEach(([propKey, propValue]) => {
-                        saml2ConfigurationPropsTable.row.add(
-                            $("<tr class=\"mdc-data-table__row\">")
-                                .append(`<td class="mdc-data-table__cell"><code>${propKey}</code></td>`)
-                                .append(`<td class="mdc-data-table__cell"><code>${propValue.value}</code></td>`)
-                        ).draw(false);
+                        saml2ConfigurationPropsTable.row.add({
+                            0: `<code>${escapeProtocolHtml(propKey)}</code>`,
+                            1: `<code>${escapeProtocolHtml(propValue.value)}</code>`,
+                            propertyName: propKey,
+                            propertyValue: propValue.value
+                        }).draw(false);
                     });
                 });
                 updateNavigationSidebar();

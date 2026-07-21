@@ -56,7 +56,7 @@ class CasOAuth20ThrottleConfiguration {
         @ConditionalOnMissingBean(name = "oauthThrottleWebMvcConfigurer")
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public WebMvcConfigurer oauthThrottleWebMvcConfigurer(
-            @Qualifier(AuthenticationThrottlingExecutionPlan.BEAN_NAME) final ObjectProvider<@NonNull AuthenticationThrottlingExecutionPlan> authenticationThrottlingExecutionPlan) {
+            @Qualifier(AuthenticationThrottlingExecutionPlan.BEAN_NAME) final ObjectProvider<AuthenticationThrottlingExecutionPlan> authenticationThrottlingExecutionPlan) {
             return new WebMvcConfigurer() {
                 @Override
                 public void addInterceptors(
@@ -80,13 +80,13 @@ class CasOAuth20ThrottleConfiguration {
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public HandlerInterceptor oauthHandlerInterceptorAdapter(
-            @Qualifier(OAuth20RequestParameterResolver.BEAN_NAME) final ObjectProvider<@NonNull OAuth20RequestParameterResolver> oauthRequestParameterResolver,
-            @Qualifier("requiresAuthenticationAuthorizeInterceptor") final ObjectProvider<@NonNull HandlerInterceptor> requiresAuthenticationAuthorizeInterceptor,
-            @Qualifier("requiresAuthenticationAccessTokenInterceptor") final ObjectProvider<@NonNull HandlerInterceptor> requiresAuthenticationAccessTokenInterceptor,
-            final ObjectProvider<@NonNull List<OAuth20AuthorizationRequestValidator>> oauthAuthorizationRequestValidators,
-            final ObjectProvider<@NonNull List<AccessTokenGrantRequestExtractor>> accessTokenGrantRequestExtractors,
-            @Qualifier("oauthDistributedSessionStore") final ObjectProvider<@NonNull SessionStore> oauthDistributedSessionStore,
-            @Qualifier(ServicesManager.BEAN_NAME) final ObjectProvider<@NonNull ServicesManager> servicesManager) {
+            @Qualifier(OAuth20RequestParameterResolver.BEAN_NAME) final ObjectProvider<OAuth20RequestParameterResolver> oauthRequestParameterResolver,
+            @Qualifier("requiresAuthenticationAuthorizeInterceptor") final ObjectProvider<HandlerInterceptor> requiresAuthenticationAuthorizeInterceptor,
+            @Qualifier("requiresAuthenticationAccessTokenInterceptor") final ObjectProvider<HandlerInterceptor> requiresAuthenticationAccessTokenInterceptor,
+            final ObjectProvider<List<OAuth20AuthorizationRequestValidator>> oauthAuthorizationRequestValidators,
+            final ObjectProvider<List<AccessTokenGrantRequestExtractor>> accessTokenGrantRequestExtractors,
+            @Qualifier("oauthDistributedSessionStore") final ObjectProvider<SessionStore> oauthDistributedSessionStore,
+            @Qualifier(ServicesManager.BEAN_NAME) final ObjectProvider<ServicesManager> servicesManager) {
             return new OAuth20HandlerInterceptorAdapter(
                 requiresAuthenticationAccessTokenInterceptor,
                 requiresAuthenticationAuthorizeInterceptor,
@@ -101,7 +101,7 @@ class CasOAuth20ThrottleConfiguration {
         @ConditionalOnMissingBean(name = "oauthWebMvcConfigurer")
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public WebMvcConfigurer oauthWebMvcConfigurer(
-            @Qualifier("oauthHandlerInterceptorAdapter") final ObjectProvider<@NonNull HandlerInterceptor> oauthHandlerInterceptorAdapter) {
+            @Qualifier("oauthHandlerInterceptorAdapter") final ObjectProvider<HandlerInterceptor> oauthHandlerInterceptorAdapter) {
             return new WebMvcConfigurer() {
                 @Override
                 public void addInterceptors(

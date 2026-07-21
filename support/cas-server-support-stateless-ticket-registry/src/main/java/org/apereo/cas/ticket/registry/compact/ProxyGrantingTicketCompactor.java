@@ -26,7 +26,6 @@ import com.google.common.base.Splitter;
 import lombok.RequiredArgsConstructor;
 import lombok.val;
 import org.apache.commons.lang3.BooleanUtils;
-import org.jspecify.annotations.NonNull;
 import org.springframework.beans.factory.ObjectProvider;
 
 /**
@@ -37,7 +36,7 @@ import org.springframework.beans.factory.ObjectProvider;
  */
 @RequiredArgsConstructor
 public class ProxyGrantingTicketCompactor implements TicketCompactor<ProxyGrantingTicket> {
-    private final ObjectProvider<@NonNull TicketFactory> ticketFactory;
+    private final ObjectProvider<TicketFactory> ticketFactory;
     private final ServiceFactory serviceFactory;
     private final PrincipalFactory principalFactory;
 

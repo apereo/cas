@@ -47,7 +47,7 @@ public class CasGoogleCloudLoggingAutoConfiguration {
     @ConditionalOnMissingBean(name = "googleCloudLoggingWebMvcConfigurer")
     public WebMvcConfigurer googleCloudLoggingWebMvcConfigurer(
         @Qualifier("googleCloudLoggingInterceptor")
-        final ObjectProvider<@NonNull HandlerInterceptor> googleCloudLoggingInterceptor) {
+        final ObjectProvider<HandlerInterceptor> googleCloudLoggingInterceptor) {
         return new WebMvcConfigurer() {
             @Override
             public void addInterceptors(
@@ -63,7 +63,7 @@ public class CasGoogleCloudLoggingAutoConfiguration {
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     public CasWebflowExecutionPlanConfigurer googleCloudWebflowExecutionPlanConfigurer(
         @Qualifier("googleCloudLoggingInterceptor")
-        final ObjectProvider<@NonNull HandlerInterceptor> googleCloudLoggingInterceptor) {
+        final ObjectProvider<HandlerInterceptor> googleCloudLoggingInterceptor) {
         return plan -> plan.registerWebflowInterceptor(new RefreshableHandlerInterceptor(googleCloudLoggingInterceptor));
     }
 

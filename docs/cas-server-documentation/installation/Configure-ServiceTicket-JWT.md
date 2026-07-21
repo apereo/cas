@@ -164,5 +164,5 @@ var jsonWebKey = JsonWebKey.Factory
 
 jwe.setCompactSerialization(decodedPayload);
 jwe.setKey(new AesKey(jsonWebKey.getKey().getEncoded()));
-System.out.println(jwe.getPlaintextString());
+IO.println(jwe.getPlaintextString());
 ```

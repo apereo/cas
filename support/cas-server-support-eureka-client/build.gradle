@@ -2,6 +2,8 @@ apply plugin: "org.apereo.cas.project-conventions"
 
 description = "Registers CAS with Eureka so other services can discover it in Spring Cloud environments."
 dependencies {
+    api project(":api:cas-server-core-api-ha")
+    
     implementation libraries.eurekaclient
     implementation libraries.springcloudeureka
 
@@ -23,6 +25,7 @@ dependencies {
     testImplementation project(":core:cas-server-core-configuration")
     
     testImplementation project(":support:cas-server-support-person-directory")
+    testImplementation project(":support:cas-server-support-reports")
 
     testImplementation project(path: ":core:cas-server-core-authentication", configuration: "tests")
     testImplementation project(path: ":core:cas-server-core-authentication-api", configuration: "tests")

@@ -13,6 +13,7 @@ ext {
 dependencies {
     implementation libraries.springkafka
 
+    api project(":api:cas-server-core-api-ha")
     api project(":api:cas-server-core-api")
     api project(":api:cas-server-core-api-util")
     api project(":api:cas-server-core-api-ticket")

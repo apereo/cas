@@ -5,6 +5,6 @@
   "id" : 1,
   "attributeReleasePolicy": {
     "@class": "org.apereo.cas.services.ReturnAllowedAttributeReleasePolicy",
-    "allowedAttributes" : [ "java.util.ArrayList", [ "uid", "memberOf" ] ]
+    "allowedAttributes" : [ "java.util.ArrayList", [ "uid", "memberOf", "role" ] ]
   }
 }

@@ -14,8 +14,8 @@ const jwkToPem = require("jwk-to-pem");
     
     const jwt = await cas.createJwt({
         "jti": "THJZGsQDP26OuwQn",
-        "iss": "https://localhost:8443/cas/oidc",
-        "aud": "client",
+        "iss": "client",
+        "aud": "https://localhost:8443/cas/oidc/token",
         "exp": 185542587100,
         "iat": 1653737633,
         "nbf": 1653737573,

@@ -86,6 +86,7 @@ class SingleRowJdbcPersonAttributeDaoTests {
         assertEquals(List.of("blue"), attribs.getAttributes().get("dressShirtColor"));
         assertNull(attribs.getAttributes().get("shirt_color"));
         assertEquals(List.of("Andrew"), attribs.getAttributes().get("firstName"));
+        assertNotNull(impl.toConfiguration());
     }
 
     @Test

@@ -15,7 +15,6 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.jooq.lambda.Unchecked;
-import org.jspecify.annotations.NonNull;
 import org.jspecify.annotations.Nullable;
 import org.springframework.context.ApplicationContext;
 import org.springframework.core.io.ByteArrayResource;
@@ -37,7 +36,7 @@ public abstract class AbstractSamlIdPMetadataLocator implements SamlIdPMetadataL
 
     protected final CipherExecutor<String, String> metadataCipherExecutor;
 
-    private final Cache<@NonNull String, SamlIdPMetadataDocument> metadataCache;
+    private final Cache<String, SamlIdPMetadataDocument> metadataCache;
 
     private final ApplicationContext applicationContext;
     

@@ -82,24 +82,6 @@ async function initializeScheduledTasksOperations() {
         return `${Math.round(milliseconds)} ms`;
     }
 
-    function renderThreadStackButton(thread) {
-        const stackSize = threadStackTrace(thread).length;
-        if (stackSize === 0) {
-            return "";
-        }
-        const stackKey = escapeHtml(toThreadStackKey(thread));
-        return `<button type="button"
-                        class="mdc-button mdc-button--raised btn btn-link min-width-32x thread-stack-button"
-                        data-thread-stack-key="${stackKey}"
-                        title="View stack trace for ${escapeHtml(thread.threadName ?? "thread")}"
-                        aria-label="View stack trace for ${escapeHtml(thread.threadName ?? "thread")}">
-                    <span class="mdc-button__ripple"></span>
-                    <span class="mdc-button__label">
-                        <i class="mdi mdi-cog-outline min-width-32x" aria-hidden="true"></i>
-                    </span>
-                </button>`;
-    }
-
     function formatStackFrame(frame) {
         if (typeof frame === "string") {
             return frame;
@@ -179,14 +161,6 @@ async function initializeScheduledTasksOperations() {
                     }
                     return formatThreadCpuTime(row);
                 }
-            },
-            {
-                data: null,
-                orderable: false,
-                searchable: false,
-                width: "18%",
-                className: "thread-stack-action",
-                render: (data, type, row) => type === "display" ? renderThreadStackButton(row) : threadStackTrace(row).length
             }
         ],
         initComplete: () => applyMdcDataTableControls("#threadDumpTable"),
@@ -197,8 +171,21 @@ async function initializeScheduledTasksOperations() {
         }
     });
 
-    $("#threadDumpTable").on("click", "button.thread-stack-button", function () {
-        showThreadStack($(this).data("thread-stack-key").toString());
+    initializeDataTableContextMenu({
+        table: threadDumpTable,
+        selector: "#threadDumpTable tbody tr",
+        items: {
+            stack: {
+                name: "View Stack Trace",
+                icon: contextMenuIcon("mdi-cog-outline"),
+                visible: context => threadStackTrace(context.rowData).length > 0
+            }
+        },
+        callback: (key, context) => {
+            if (key === "stack") {
+                showThreadStack(toThreadStackKey(context.rowData));
+            }
+        }
     });
 
 

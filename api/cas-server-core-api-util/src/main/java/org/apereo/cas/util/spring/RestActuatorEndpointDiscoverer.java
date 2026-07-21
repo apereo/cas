@@ -25,11 +25,11 @@ import org.springframework.core.annotation.MergedAnnotations;
  * @author Misagh Moayyed
  * @since 7.1.0
  */
-public class RestActuatorEndpointDiscoverer extends EndpointDiscoverer<@NonNull RestActuatorControllerEndpoint, @NonNull Operation> {
+public class RestActuatorEndpointDiscoverer extends EndpointDiscoverer<RestActuatorControllerEndpoint, @NonNull Operation> {
     private final List<PathMapper> endpointPathMappers;
 
     public RestActuatorEndpointDiscoverer(final ApplicationContext applicationContext, final List<PathMapper> endpointPathMappers,
-                                          final Collection<EndpointFilter<@NonNull RestActuatorControllerEndpoint>> filters) {
+                                          final Collection<EndpointFilter<RestActuatorControllerEndpoint>> filters) {
         super(applicationContext, ParameterValueMapper.NONE, List.of(), filters, List.of());
         this.endpointPathMappers = List.copyOf(endpointPathMappers);
     }
@@ -66,7 +66,7 @@ public class RestActuatorEndpointDiscoverer extends EndpointDiscoverer<@NonNull 
     }
 
     @Getter
-    private static class DiscoveredRestActuatorEndpoint extends AbstractDiscoveredEndpoint<@NonNull Operation> implements RestActuatorControllerEndpoint {
+    private static class DiscoveredRestActuatorEndpoint extends AbstractDiscoveredEndpoint<Operation> implements RestActuatorControllerEndpoint {
         private final String rootPath;
 
         DiscoveredRestActuatorEndpoint(final EndpointDiscoverer<?, ?> discoverer, final Object endpointBean,

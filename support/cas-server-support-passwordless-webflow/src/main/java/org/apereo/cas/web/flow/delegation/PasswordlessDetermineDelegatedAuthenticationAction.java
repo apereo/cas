@@ -6,7 +6,7 @@ import org.apereo.cas.authentication.AuthenticationSystemSupport;
 import org.apereo.cas.authentication.MultifactorAuthenticationTriggerSelectionStrategy;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.configuration.CasConfigurationProperties;
-import org.apereo.cas.util.scripting.ExecutableCompiledScript;
+import org.apereo.cas.util.scripting.ScriptResourceCacheManager;
 import org.apereo.cas.web.DelegatedClientIdentityProviderConfiguration;
 import org.apereo.cas.web.flow.BasePasswordlessCasWebflowAction;
 import org.apereo.cas.web.flow.CasWebflowConstants;
@@ -16,9 +16,11 @@ import org.apereo.cas.web.flow.PasswordlessWebflowUtils;
 import org.apereo.cas.web.support.WebUtils;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.jooq.lambda.Unchecked;
 import org.jspecify.annotations.Nullable;
 import org.pac4j.core.util.Pac4jConstants;
 import org.springframework.beans.factory.DisposableBean;
+import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 
@@ -31,8 +33,7 @@ import org.springframework.webflow.execution.RequestContext;
 @Slf4j
 public class PasswordlessDetermineDelegatedAuthenticationAction extends BasePasswordlessCasWebflowAction implements DisposableBean {
     private final DelegatedClientIdentityProviderConfigurationProducer providerConfigurationProducer;
-
-    private final ExecutableCompiledScript watchableScript;
+    private final ObjectProvider<ScriptResourceCacheManager> scriptResourceCacheManager;
 
     public PasswordlessDetermineDelegatedAuthenticationAction(
         final CasConfigurationProperties casProperties,
@@ -40,15 +41,10 @@ public class PasswordlessDetermineDelegatedAuthenticationAction extends BasePass
         final PrincipalFactory passwordlessPrincipalFactory,
         final AuthenticationSystemSupport authenticationSystemSupport,
         final DelegatedClientIdentityProviderConfigurationProducer providerConfigurationProducer,
-        final ExecutableCompiledScript watchableScript) {
+        final ObjectProvider<ScriptResourceCacheManager> scriptResourceCacheManager) {
         super(casProperties, multifactorTriggerSelectionStrategy, passwordlessPrincipalFactory, authenticationSystemSupport);
         this.providerConfigurationProducer = providerConfigurationProducer;
-        this.watchableScript = watchableScript;
-    }
-
-    @Override
-    public void destroy() {
-        this.watchableScript.close();
+        this.scriptResourceCacheManager = scriptResourceCacheManager;
     }
 
     @Override
@@ -81,7 +77,7 @@ public class PasswordlessDetermineDelegatedAuthenticationAction extends BasePass
             request.setAttribute(Pac4jConstants.DEFAULT_CLIENT_NAME_PARAMETER, clientConfig.getName());
             return eventFactory.event(this, CasWebflowConstants.TRANSITION_ID_PROMPT);
         }
-        LOGGER.trace("Delegated identity provider could not be determined for [{}] based on [{}]", user, clients);
+        LOGGER.debug("Delegated identity provider could not be determined for [{}] based on [{}]", user, clients);
         return success();
     }
 
@@ -103,9 +99,23 @@ public class PasswordlessDetermineDelegatedAuthenticationAction extends BasePass
     protected Optional<DelegatedClientIdentityProviderConfiguration> determineDelegatedIdentityProviderConfiguration(
         final RequestContext requestContext, final PasswordlessUserAccount user,
         final Set<? extends DelegatedClientIdentityProviderConfiguration> clients) throws Throwable {
-        val request = WebUtils.getHttpServletRequestFromExternalWebflowContext(requestContext);
-        val args = new Object[]{user, clients, request, LOGGER};
-        return Optional.ofNullable(watchableScript.execute(args, DelegatedClientIdentityProviderConfiguration.class));
+        val selectorScriptResource = casProperties.getAuthn().getPasswordless().getCore()
+            .getDelegatedAuthenticationSelectorScript().getLocation();
+        return scriptResourceCacheManager
+            .stream()
+            .filter(_ -> Objects.nonNull(selectorScriptResource))
+            .map(Unchecked.function(manager -> {
+                val watchableScript = manager.resolveScriptableResource(selectorScriptResource.getURI().toASCIIString());
+                val request = WebUtils.getHttpServletRequestFromExternalWebflowContext(requestContext);
+                val args = new Object[]{user, clients, request, LOGGER};
+                return watchableScript.execute(args, DelegatedClientIdentityProviderConfiguration.class);
+            }))
+            .filter(Objects::nonNull)
+            .findFirst();
     }
 
+    @Override
+    public void destroy() {
+        scriptResourceCacheManager.ifAvailable(ScriptResourceCacheManager::close);
+    }
 }

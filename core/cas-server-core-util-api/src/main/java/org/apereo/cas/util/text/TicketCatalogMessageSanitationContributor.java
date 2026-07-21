@@ -4,7 +4,6 @@ import module java.base;
 import org.apereo.cas.ticket.TicketCatalog;
 import org.apereo.cas.ticket.TicketDefinition;
 import lombok.RequiredArgsConstructor;
-import org.jspecify.annotations.NonNull;
 import org.springframework.beans.factory.ObjectProvider;
 
 /**
@@ -15,7 +14,7 @@ import org.springframework.beans.factory.ObjectProvider;
  */
 @RequiredArgsConstructor
 public class TicketCatalogMessageSanitationContributor implements MessageSanitationContributor {
-    private final ObjectProvider<@NonNull TicketCatalog> ticketCatalog;
+    private final ObjectProvider<TicketCatalog> ticketCatalog;
 
     @Override
     public List<String> getTicketIdentifierPrefixes() {

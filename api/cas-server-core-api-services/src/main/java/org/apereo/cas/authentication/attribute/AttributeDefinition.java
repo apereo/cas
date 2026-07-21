@@ -130,6 +130,13 @@ public interface AttributeDefinition extends Serializable, Comparable<AttributeD
     String getFlattened();
 
     /**
+     * Indicate list of attribute definitions that are required to be resolved
+     * before this definition can proceed.
+     * @return list of attribute definitions by key that are required.
+     */
+    List<String> getDependsOn();
+
+    /**
      * Resolve attribute values as list.
      *
      * @param context the context

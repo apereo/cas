@@ -38,7 +38,7 @@ class DefaultCentralAuthenticationServiceLockingTests {
                 RegisteredServiceTestUtils.getService());
             val ticketGrantingTicket = getCentralAuthenticationService().createTicketGrantingTicket(ctx);
             val serviceTicketIds = new CopyOnWriteArrayList<>();
-            Runnable runnable = () -> FunctionUtils.doUnchecked(u -> {
+            Runnable runnable = () -> FunctionUtils.doUnchecked(_ -> {
                 for (var i = 0; i < TICKETS_PER_REQUEST; i++) {
                     val serviceName = "testDefault" + '-' + Thread.currentThread().getName() + '-' + i;
                     val mockService = RegisteredServiceTestUtils.getService(serviceName);
@@ -81,7 +81,7 @@ class DefaultCentralAuthenticationServiceLockingTests {
                 RegisteredServiceTestUtils.getService());
             val ticketGrantingTicket = getCentralAuthenticationService().createTicketGrantingTicket(ctx);
             val serviceTicketIds = new CopyOnWriteArrayList<>();
-            Runnable runnable = () -> FunctionUtils.doUnchecked(u -> {
+            Runnable runnable = () -> FunctionUtils.doUnchecked(_ -> {
                 for (var i = 0; i < TICKETS_PER_REQUEST; i++) {
                     val serviceName = "testDefault" + '-' + Thread.currentThread().getName() + '-' + i;
                     val mockService = RegisteredServiceTestUtils.getService(serviceName);

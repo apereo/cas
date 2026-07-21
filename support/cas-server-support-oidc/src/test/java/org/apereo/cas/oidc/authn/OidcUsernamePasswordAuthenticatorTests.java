@@ -45,7 +45,7 @@ class OidcUsernamePasswordAuthenticatorTests extends AbstractOidcTests {
         val credentials = new UsernamePasswordCredentials("oidctest", "oidctest");
         val request = new MockHttpServletRequest();
         request.addParameter(OAuth20Constants.CLIENT_ID, registeredService.getClientId());
-        request.addParameter(OAuth20Constants.CLIENT_SECRET, registeredService.getClientSecret());
+        request.addParameter(OAuth20Constants.CLIENT_SECRET, registeredService.getClientSecrets().getFirst().getValue());
         val ctx = new JEEContext(request, new MockHttpServletResponse());
         authenticator.validate(new CallContext(ctx, new JEESessionStore()), credentials);
         assertNotNull(credentials.getUserProfile());
@@ -60,7 +60,7 @@ class OidcUsernamePasswordAuthenticatorTests extends AbstractOidcTests {
         val credentials = new UsernamePasswordCredentials("oidctest", "oidctest");
         val request = new MockHttpServletRequest();
         request.addParameter(OAuth20Constants.CLIENT_ID, registeredService.getClientId());
-        request.addParameter(OAuth20Constants.CLIENT_SECRET, registeredService.getClientSecret());
+        request.addParameter(OAuth20Constants.CLIENT_SECRET, registeredService.getClientSecrets().getFirst().getValue());
         request.addParameter(OAuth20Constants.SCOPE, "openid profile email");
         val ctx = new JEEContext(request, new MockHttpServletResponse());
         authenticator.validate(new CallContext(ctx, new JEESessionStore()), credentials);
@@ -78,7 +78,7 @@ class OidcUsernamePasswordAuthenticatorTests extends AbstractOidcTests {
         val credentials = new UsernamePasswordCredentials("oidctest", "oidctest");
         val request = new MockHttpServletRequest();
         request.addParameter(OAuth20Constants.CLIENT_ID, registeredService.getClientId());
-        request.addParameter(OAuth20Constants.CLIENT_SECRET, registeredService.getClientSecret());
+        request.addParameter(OAuth20Constants.CLIENT_SECRET, registeredService.getClientSecrets().getFirst().getValue());
         request.addParameter(OAuth20Constants.SCOPE, OidcConstants.StandardScopes.OPENID.getScope());
         val ctx = new JEEContext(request, new MockHttpServletResponse());
         authenticator.validate(new CallContext(ctx, new JEESessionStore()), credentials);

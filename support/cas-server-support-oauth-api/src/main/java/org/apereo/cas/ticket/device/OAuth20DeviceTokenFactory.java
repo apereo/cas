@@ -16,8 +16,9 @@ public interface OAuth20DeviceTokenFactory extends TicketFactory {
      * Create an device token.
      *
      * @param service the service
+     * @param scopes  the scopes
      * @return the device token
      * @throws Throwable the throwable
      */
-    OAuth20DeviceToken createDeviceCode(Service service) throws Throwable;
+    OAuth20DeviceToken createDeviceCode(Service service, Collection<String> scopes) throws Throwable;
 }

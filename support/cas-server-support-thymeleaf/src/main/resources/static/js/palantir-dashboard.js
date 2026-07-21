@@ -22,6 +22,7 @@ class Tabs {
     static THROTTLES = new PalantirDashboardTab("Throttles Tab", 12, "r");
     static MFA = new PalantirDashboardTab("MFA Tab", 13, "m");
     static MULTITENANCY = new PalantirDashboardTab("Multitenancy Tab", 14, "u");
+    static CLUSTER = new PalantirDashboardTab("Cluster & High Availability Tab", 15, "v");
     static SETTINGS = new PalantirDashboardTab("Settings Dialog", 100, ",");
     static LOGOUT = new PalantirDashboardTab("Logout", 200, "x");
 
@@ -93,6 +94,9 @@ function activateDashboardTab(idx) {
                 tabs.activateTab(tabIndex);
                 currentActiveTab = tabIndex;
                 updateNavigationSidebar();
+                if (currentActiveTab === Tabs.CLUSTER.index && typeof refreshActiveClusterTab === "function") {
+                    refreshActiveClusterTab();
+                }
                 break;
         }
     } catch (e) {
@@ -228,12 +232,14 @@ function processNavigationTabs() {
     if (!CasActuatorEndpoints.conditions()) {
         hideElements($("#springConditionsTabItem"));
     }
-    if (!CasActuatorEndpoints.oidcJwks() || !CAS_FEATURES.includes("OpenIDConnect")) {
+    const oidcProtocolAvailable = CasActuatorEndpoints.oidcJwks() && CAS_FEATURES.includes("OpenIDConnect");
+    if (!oidcProtocolAvailable && !CasActuatorEndpoints.oauthClientSecrets()) {
         $("#oidcprotocol").parent().remove();
         hideElements($("#oidcProtocolContainer"));
     }
     if (!CasActuatorEndpoints.samlValidate() && !CasActuatorEndpoints.casValidate()
-        && !CasActuatorEndpoints.samlPostProfileResponse() && !CasActuatorEndpoints.oidcJwks()) {
+        && !CasActuatorEndpoints.samlPostProfileResponse() && !CasActuatorEndpoints.oidcJwks()
+        && !CasActuatorEndpoints.oauthClientSecrets()) {
         hideElements($("#protocolsTabButton"));
         hideElements($(`#attribute-tab-${Tabs.PROTOCOLS.index}`));
     }
@@ -252,6 +258,10 @@ function processNavigationTabs() {
     if (!CasActuatorEndpoints.multitenancy() || !CAS_FEATURES.includes("Multitenancy")) {
         hideElements($("#tenantsTabButton"));
     }
+    if (!CasActuatorEndpoints.clusterTopology()) {
+        hideElements($("#clusterTabButton"));
+        hideElements($(`#attribute-tab-${Tabs.CLUSTER.index}`));
+    }
     if (!CasActuatorEndpoints.restart()) {
         hideElements($("#restartServerButton"));
     }
@@ -260,6 +270,9 @@ function processNavigationTabs() {
     }
     if (!PalantirDashboardConfiguration.mutablePropertySourcesAvailable()) {
         hideElements($("#mutableConfigSources"));
+    }
+    if (!PalantirDashboardConfiguration.scriptFactoryAvailable() || !CasActuatorEndpoints.groovyCache()) {
+        hideElements($("#groovyScriptingTabItem"));
     }
     return $("nav.sidebar-navigation ul li:visible").length;
 }

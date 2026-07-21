@@ -130,6 +130,7 @@ class SyncopePersonAttributeDaoTests {
                 val people = first.getPeople(Map.of("username", List.of("casuser")),
                     PersonAttributeDaoFilter.alwaysChoose());
                 assertFalse(people.iterator().next().getAttributes().isEmpty());
+                assertNotNull(first.toConfiguration());
             }
         }
 

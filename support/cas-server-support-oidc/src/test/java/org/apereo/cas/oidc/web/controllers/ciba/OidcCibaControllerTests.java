@@ -62,7 +62,7 @@ class OidcCibaControllerTests extends AbstractOidcTests {
                 .secure(true)
                 .with(withHttpRequestProcessor())
                 .header(HttpHeaders.AUTHORIZATION, "Basic " + EncodingUtils.encodeBase64("%s:%s".formatted(registeredService.getClientId(),
-                    registeredService.getClientSecret()).getBytes(StandardCharsets.UTF_8)))
+                    registeredService.getClientSecrets().getFirst().getValue()).getBytes(StandardCharsets.UTF_8)))
                 .queryParam(OAuth20Constants.GRANT_TYPE, OAuth20GrantTypes.CIBA.name()))
             .andExpect(status().isBadRequest());
     }
@@ -76,7 +76,7 @@ class OidcCibaControllerTests extends AbstractOidcTests {
                 .secure(true)
                 .with(withHttpRequestProcessor())
                 .header(HttpHeaders.AUTHORIZATION, "Basic " + EncodingUtils.encodeBase64("%s:%s".formatted(registeredService.getClientId(),
-                    registeredService.getClientSecret()).getBytes(StandardCharsets.UTF_8)))
+                    registeredService.getClientSecrets().getFirst().getValue()).getBytes(StandardCharsets.UTF_8)))
                 .queryParam(OAuth20Constants.SCOPE, OidcConstants.StandardScopes.OPENID.getScope())
                 .queryParam(OAuth20Constants.GRANT_TYPE, OAuth20GrantTypes.CIBA.name())
                 .queryParam(OidcConstants.LOGIN_HINT_TOKEN, UUID.randomUUID().toString())
@@ -94,7 +94,7 @@ class OidcCibaControllerTests extends AbstractOidcTests {
                 .secure(true)
                 .with(withHttpRequestProcessor())
                 .header(HttpHeaders.AUTHORIZATION, "Basic " + EncodingUtils.encodeBase64("%s:%s".formatted(registeredService.getClientId(),
-                    registeredService.getClientSecret()).getBytes(StandardCharsets.UTF_8)))
+                    registeredService.getClientSecrets().getFirst().getValue()).getBytes(StandardCharsets.UTF_8)))
                 .queryParam(OAuth20Constants.SCOPE, OidcConstants.StandardScopes.OPENID.getScope())
                 .queryParam(OAuth20Constants.GRANT_TYPE, OAuth20GrantTypes.CIBA.name())
                 .queryParam(OidcConstants.USER_CODE, UUID.randomUUID().toString())
@@ -108,7 +108,7 @@ class OidcCibaControllerTests extends AbstractOidcTests {
                 .secure(true)
                 .with(withHttpRequestProcessor())
                 .header(HttpHeaders.AUTHORIZATION, "Basic " + EncodingUtils.encodeBase64("%s:%s".formatted(registeredService.getClientId(),
-                    registeredService.getClientSecret()).getBytes(StandardCharsets.UTF_8)))
+                    registeredService.getClientSecrets().getFirst().getValue()).getBytes(StandardCharsets.UTF_8)))
                 .queryParam(OAuth20Constants.SCOPE, OidcConstants.StandardScopes.OPENID.getScope())
                 .queryParam(OAuth20Constants.GRANT_TYPE, OAuth20GrantTypes.CIBA.name())
                 .queryParam(OidcConstants.LOGIN_HINT, UUID.randomUUID().toString())
@@ -126,7 +126,7 @@ class OidcCibaControllerTests extends AbstractOidcTests {
                 .secure(true)
                 .with(withHttpRequestProcessor())
                 .header(HttpHeaders.AUTHORIZATION, "Basic " + EncodingUtils.encodeBase64("%s:%s".formatted(registeredService.getClientId(),
-                    registeredService.getClientSecret()).getBytes(StandardCharsets.UTF_8)))
+                    registeredService.getClientSecrets().getFirst().getValue()).getBytes(StandardCharsets.UTF_8)))
                 .queryParam(OAuth20Constants.SCOPE, OidcConstants.StandardScopes.OPENID.getScope())
                 .queryParam(OAuth20Constants.GRANT_TYPE, OAuth20GrantTypes.CIBA.name())
                 .queryParam(OidcConstants.LOGIN_HINT, UUID.randomUUID().toString())
@@ -146,7 +146,7 @@ class OidcCibaControllerTests extends AbstractOidcTests {
                 .secure(true)
                 .with(withHttpRequestProcessor())
                 .header(HttpHeaders.AUTHORIZATION, "Basic " + EncodingUtils.encodeBase64("%s:%s".formatted(registeredService.getClientId(),
-                    registeredService.getClientSecret()).getBytes(StandardCharsets.UTF_8)))
+                    registeredService.getClientSecrets().getFirst().getValue()).getBytes(StandardCharsets.UTF_8)))
                 .queryParam(OAuth20Constants.SCOPE, OidcConstants.StandardScopes.OPENID.getScope())
                 .queryParam(OAuth20Constants.GRANT_TYPE, OAuth20GrantTypes.CIBA.name())
                 .queryParam(OidcConstants.CLIENT_NOTIFICATION_TOKEN, UUID.randomUUID().toString())
@@ -181,7 +181,7 @@ class OidcCibaControllerTests extends AbstractOidcTests {
                 .secure(true)
                 .with(withHttpRequestProcessor())
                 .header(HttpHeaders.AUTHORIZATION, "Basic " + EncodingUtils.encodeBase64("%s:%s".formatted(registeredService.getClientId(),
-                    registeredService.getClientSecret()).getBytes(StandardCharsets.UTF_8)))
+                    registeredService.getClientSecrets().getFirst().getValue()).getBytes(StandardCharsets.UTF_8)))
                 .queryParam(OAuth20Constants.SCOPE, OidcConstants.StandardScopes.OPENID.getScope())
                 .queryParam(OAuth20Constants.GRANT_TYPE, OAuth20GrantTypes.CIBA.name())
                 .queryParam(OidcConstants.CLIENT_NOTIFICATION_TOKEN, UUID.randomUUID().toString())
@@ -205,7 +205,7 @@ class OidcCibaControllerTests extends AbstractOidcTests {
                     .secure(true)
                     .with(withHttpRequestProcessor())
                     .header(HttpHeaders.AUTHORIZATION, "Basic " + EncodingUtils.encodeBase64("%s:%s".formatted(registeredService.getClientId(),
-                        registeredService.getClientSecret()).getBytes(StandardCharsets.UTF_8)))
+                        registeredService.getClientSecrets().getFirst().getValue()).getBytes(StandardCharsets.UTF_8)))
                     .queryParam(OAuth20Constants.SCOPE, OidcConstants.StandardScopes.OPENID.getScope())
                     .queryParam(OAuth20Constants.GRANT_TYPE, OAuth20GrantTypes.CIBA.name())
                     .queryParam(OidcConstants.CLIENT_NOTIFICATION_TOKEN, UUID.randomUUID().toString())
