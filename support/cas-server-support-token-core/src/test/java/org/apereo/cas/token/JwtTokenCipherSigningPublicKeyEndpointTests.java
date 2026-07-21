@@ -13,10 +13,11 @@ import org.bouncycastle.util.io.pem.PemReader;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.http.MediaType;
 import static org.junit.jupiter.api.Assertions.*;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 /**
  * This is {@link JwtTokenCipherSigningPublicKeyEndpointTests}.
@@ -35,14 +36,13 @@ import static org.junit.jupiter.api.Assertions.*;
 @Tag("ActuatorEndpoint")
 @ExtendWith(CasTestExtension.class)
 class JwtTokenCipherSigningPublicKeyEndpointTests extends AbstractCasEndpointTests {
-    @Autowired
-    @Qualifier("jwtTokenCipherSigningPublicKeyEndpoint")
-    private JwtTokenCipherSigningPublicKeyEndpoint endpoint;
-
     @Test
     void verifyOperationWithoutService() throws Throwable {
-        val publicKey = endpoint.fetchPublicKey(StringUtils.EMPTY);
-        assertEquals(StringUtils.EMPTY, publicKey);
+        mockMvc.perform(get("/actuator/jwtTicketSigningPublicKey")
+                .param("service", StringUtils.EMPTY)
+                .accept(MediaType.TEXT_PLAIN))
+            .andExpect(status().isOk())
+            .andExpect(content().string(StringUtils.EMPTY));
     }
 
     @Test
@@ -55,7 +55,13 @@ class JwtTokenCipherSigningPublicKeyEndpointTests extends AbstractCasEndpointTes
         registeredService.getProperties().put(
             RegisteredServiceProperty.RegisteredServiceProperties.TOKEN_AS_SERVICE_TICKET_SIGNING_KEY.getPropertyName(), signingKey);
         servicesManager.save(registeredService);
-        val publicKey = endpoint.fetchPublicKey(service.getId());
+        val publicKey = mockMvc.perform(get("/actuator/jwtTicketSigningPublicKey")
+                .param("service", service.getId())
+                .accept(MediaType.TEXT_PLAIN))
+            .andExpect(status().isOk())
+            .andReturn()
+            .getResponse()
+            .getContentAsString();
         assertNotNull(publicKey);
         try (val r = new PemReader(new StringReader(publicKey))) {
             assertNotNull(r.readPemObject());

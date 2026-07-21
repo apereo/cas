@@ -43,13 +43,15 @@ function effectiveConfigPropertyValue(name) {
         });
 }
 
-function deleteConfigPropertyValue(button, name) {
+function configPropertySourceName(propertySource) {
+    return propertySource.replace("bootstrapProperties-", "");
+}
+
+function deleteConfigPropertyValueFromRow(currentRow, propertySource, name) {
     if (PalantirDashboardConfiguration.mutablePropertySourcesAvailable() && CasActuatorEndpoints.casConfig()) {
-        const mutableConfigurationTable = $("#mutableConfigurationTable").DataTable();
-        const currentRow = mutableConfigurationTable.row($(button).closest("tr"));
-        const propertySource = $(button).data("source").replace("bootstrapProperties-", "");
+        const source = configPropertySourceName(propertySource);
         Swal.fire({
-            title: `Are you sure you want to delete this entry from ${propertySource}?`,
+            title: `Are you sure you want to delete this entry from ${source}?`,
             text: "Once removed, you may not be able to revert this.",
             icon: "question",
             showConfirmButton: true,
@@ -64,7 +66,7 @@ function deleteConfigPropertyValue(button, name) {
                         data: JSON.stringify(
                             {
                                 name: name,
-                                propertySource: propertySource
+                                propertySource: source
                             }
                         )
                     })
@@ -83,19 +85,31 @@ function deleteConfigPropertyValue(button, name) {
     }
 }
 
+function deleteConfigPropertyValue(button, name) {
+    if (PalantirDashboardConfiguration.mutablePropertySourcesAvailable() && CasActuatorEndpoints.casConfig()) {
+        const mutableConfigurationTable = $("#mutableConfigurationTable").DataTable();
+        const currentRow = mutableConfigurationTable.row($(button).closest("tr"));
+        deleteConfigPropertyValueFromRow(currentRow, $(button).data("source"), name);
+    }
+}
+
+function updateConfigPropertyValueFromRow(currentRow, propertySource, name, value) {
+    if (PalantirDashboardConfiguration.mutablePropertySourcesAvailable() && CasActuatorEndpoints.casConfig()) {
+        openNewConfigurationPropertyDialog({
+            name: name,
+            value: value,
+            propertySource: configPropertySourceName(propertySource),
+            updateEntry: true
+        });
+    }
+}
+
 function updateConfigPropertyValue(button, name) {
     if (PalantirDashboardConfiguration.mutablePropertySourcesAvailable() && CasActuatorEndpoints.casConfig()) {
         const mutableConfigurationTable = $("#mutableConfigurationTable").DataTable();
         const currentRow = mutableConfigurationTable.row($(button).closest("tr"));
-        const propertySource = $(button).data("source").replace("bootstrapProperties-", "");
         const rowData = currentRow.data();
-
-        openNewConfigurationPropertyDialog({
-            name: name,
-            value: $(rowData[2]).text(),
-            propertySource: propertySource,
-            updateEntry: true
-        });
+        updateConfigPropertyValueFromRow(currentRow, $(button).data("source"), name, $(rowData[2]).text());
     }
 }
 
@@ -105,7 +119,7 @@ function deleteAllConfigurationProperties(button) {
 
         Swal.fire({
             title: `Delete Configuration Properties`,
-            text: `Are you sure you want to delete all configuration properties from ${propertySource}? 
+            text: `Are you sure you want to delete all configuration properties from ${propertySource}?
                 Once deleted, you may not be able to recover the configuration properties.`,
             icon: "question",
             showConfirmButton: true,
@@ -368,7 +382,7 @@ function openNewConfigurationPropertyDialog(config) {
                 } else {
                     tomselect.setValue("", true);
                 }
-                
+
                 $("#newConfigPropertyValue").val(config.value ?? "");
 
                 if (config.propertySource) {
@@ -405,12 +419,12 @@ function refreshCasServerConfiguration(title) {
             width: "35%",
             confirmButtonText: "Refresh",
             html: `Do you want to refresh the CAS runtime context to apply the changes?
-            <p class="text-justify"/>CAS will rebind components to external configuration properties <strong>internally without a restart</strong>, 
+            <p class="text-justify"/>CAS will rebind components to external configuration properties <strong>internally without a restart</strong>,
             allowing components to be refreshed to reflect the changes. In-flight requests and operations keep running normally
             using the existing/old CAS components until they are fully refreshed in the runtime application context.
             <p class="text-justify"/>
             <strong>Note: Not every component is refreshable.</strong> Configuration properties that control
-            fundamental aspects of CAS operation <strong>(specially those that are not owned or controlled by CAS)</strong> 
+            fundamental aspects of CAS operation <strong>(specially those that are not owned or controlled by CAS)</strong>
             may not be dynamically reloaded. In such cases, a full restart of the CAS server
             may be required for the changes to take effect.
             `
@@ -478,97 +492,23 @@ function reloadConfigurationTable(response) {
         for (const [key, value] of Object.entries(properties)) {
             if (!key.endsWith(".origin")) {
                 const propertyName = key.replace(".value", "");
-                let buttons = `
-                    <button type="button" name="effectiveConfigPropertyValueButton" href="#"
-                            title="View Effective Value" 
-                            data-key='${propertyName}'
-                            onclick="effectiveConfigPropertyValue('${propertyName}')"
-                            class="mdc-button mdc-button--raised min-width-32x">
-                        <i class="mdi mdi-eye min-width-32x" aria-hidden="true"></i>
-                    </button>
-                `;
-
-                if (CasActuatorEndpoints.configurationMetadata()) {
-                    buttons += `
-                            <button type="button" 
-                                    name="searchForConfigPropertyButton" href="#" 
-                                    title="Configuration Property Help"
-                                    data-key='${propertyName}'
-                                    data-value="'${value}'"
-                                    onclick="searchForConfigPropertyButton('${propertyName}')"
-                                    class="mdc-button mdc-button--raised min-width-32x">
-                                <i class="mdi mdi-help min-width-32x" aria-hidden="true"></i>
-                            </button>
-                    `;
-                }
-
-                if (PalantirDashboardConfiguration.mutablePropertySourcesAvailable() && CasActuatorEndpoints.casConfig()) {
-                    buttons += `
-                            <button type="button" 
-                            name="overrideConfigPropertyValueButton" href="#" 
-                                    title="Override Configuration Property Value"
-                                    data-key='${propertyName}'
-                                    data-value="'${value}'"
-                                    onclick="overrideConfigPropertyValue('${propertyName}', '${value}')"
-                                    class="mdc-button mdc-button--raised min-width-32x">
-                                <i class="mdi mdi-arrow-left-circle min-width-32x" aria-hidden="true"></i>
-                            </button>
-                    `;
-                }
                 configurationTable.row.add({
                     0: `${camelcaseToTitleCase(source.name)}`,
                     1: `<code>${propertyName}</code>`,
                     2: `<code>${value}</code>`,
-                    3: buttons
+                    propertyName: propertyName,
+                    propertyValue: value,
+                    propertySource: source.name
                 });
 
-
                 if (PalantirDashboardConfiguration.mutablePropertySources().some(entry => source.name.endsWith(entry))) {
-                    const propertyName = key.replace(".value", "");
-                    let buttons = `
-                            <button type="button" name="effectiveConfigPropertyValueButton" href="#" 
-                                    data-key='${propertyName}'
-                                    title="View Effective Value"
-                                    onclick="effectiveConfigPropertyValue('${propertyName}')"
-                                    class="mdc-button mdc-button--raised min-width-32x">
-                                <i class="mdi mdi-eye min-width-32x" aria-hidden="true"></i>
-                            </button>
-                            <button type="button" name="updateConfigPropertyValueButton" href="#" 
-                                    data-key='${propertyName}'
-                                    title="Update Configuration Property Value"
-                                    data-source='${source.name}'
-                                    onclick="updateConfigPropertyValue(this, '${propertyName}')"
-                                    class="mdc-button mdc-button--raised min-width-32x">
-                                <i class="mdi mdi-content-save-edit min-width-32x" aria-hidden="true"></i>
-                            </button>
-                            <button type="button" name="deleteConfigPropertyValueButton" href="#" 
-                                    data-key='${propertyName}'
-                                    title="Delete Configuration Property Value"
-                                    data-source='${source.name}'
-                                    onclick="deleteConfigPropertyValue(this, '${propertyName}')"
-                                    class="mdc-button mdc-button--raised min-width-32x">
-                                <i class="mdi mdi-delete min-width-32x" aria-hidden="true"></i>
-                            </button>
-                        `;
-
-                    if (CasActuatorEndpoints.configurationMetadata()) {
-                        buttons += `
-                            <button type="button" 
-                                    name="searchForConfigPropertyButton" href="#" 
-                                    data-key='${propertyName}'
-                                    title="Configuration Property Help"
-                                    data-value="'${value}'"
-                                    onclick="searchForConfigPropertyButton('${propertyName}')"
-                                    class="mdc-button mdc-button--raised min-width-32x">
-                                <i class="mdi mdi-help min-width-32x" aria-hidden="true"></i>
-                            </button>
-                        `;
-                    }
                     mutableConfigurationTable.row.add({
                         0: `${camelcaseToTitleCase(source.name)}`,
                         1: `<code>${propertyName}</code>`,
                         2: `<code>${value}</code>`,
-                        3: buttons
+                        propertyName: propertyName,
+                        propertyValue: value,
+                        propertySource: source.name
                     });
                 }
             }
@@ -586,7 +526,7 @@ async function loadConfigurationMetadata() {
     if (!response.ok) {
         throw new Error(`Failed to load configuration metadata: ${response.status}`);
     }
-    
+
     CAS_CONFIG_METADATA = Object.values(await response.json());
 }
 
@@ -729,6 +669,240 @@ function setSpringConditionsAvailable() {
     showElements($("#springConditionsTabItem"));
 }
 
+function initializeGroovyScriptCacheManagerOperations() {
+    if (!PalantirDashboardConfiguration.scriptFactoryAvailable() || !CasActuatorEndpoints.groovyCache()) {
+        hideElements($("#groovyScriptingTabItem"));
+        hideElements($("#groovy-scripting-tab"));
+        return;
+    }
+
+    const endpoint = CasActuatorEndpoints.groovyCache();
+    const groovyScriptCacheResourceEditor = initializeAceEditor("groovyScriptCacheResourceEditor", "groovy");
+    groovyScriptCacheResourceEditor.setReadOnly(true);
+
+    function keyUrl(key) {
+        return `${endpoint}/keys/${encodeURIComponent(key)}`;
+    }
+
+    function resourceUrl(key) {
+        return `${endpoint}/resources/${encodeURIComponent(key)}`;
+    }
+
+    function normalizeGroovyScriptCacheEntry(entry) {
+        if (typeof entry === "string") {
+            return {
+                key: entry,
+                resourceName: ""
+            };
+        }
+        if (Array.isArray(entry)) {
+            return {
+                key: entry[0] ?? "",
+                resourceName: entry[1] ?? ""
+            };
+        }
+        return {
+            key: entry?.left ?? entry?.key ?? "",
+            resourceName: entry?.right ?? entry?.value ?? entry?.resourceName ?? ""
+        };
+    }
+
+    function groovyScriptCacheEntryKey(entry) {
+        return typeof entry === "object" ? entry.key : entry;
+    }
+
+    function groovyScriptCacheEntryResourceName(entry) {
+        return typeof entry === "object" ? entry.resourceName : "";
+    }
+
+    function findGroovyScriptCacheEntry(key, resourceName) {
+        const rows = groovyScriptCacheTable.rows().data().toArray();
+        return rows.find(row => row.key === key)
+            ?? (resourceName ? rows.find(row => row.resourceName === resourceName) : undefined)
+            ?? {
+                key: key,
+                resourceName: resourceName
+            };
+    }
+
+    $("#groovyScriptCacheResourceDialog").dialog({
+        autoOpen: false,
+        modal: true,
+        width: Math.min($(window).width() * 0.85, 1400),
+        height: Math.min($(window).height() * 0.8, 850),
+        position: {
+            my: "center top",
+            at: "center top+100",
+            of: window
+        },
+        open: () => {
+            groovyScriptCacheResourceEditor.resize();
+            groovyScriptCacheResourceEditor.gotoLine(1);
+        },
+        buttons: {
+            Close: function () {
+                $(this).dialog("close");
+            }
+        }
+    });
+
+    const groovyScriptCacheTable = $("#groovyScriptCacheTable").DataTable({
+        pageLength: 10,
+        autoWidth: false,
+        order: [[0, "asc"]],
+        columns: [
+            {
+                data: "key",
+                render: (data, type) => type === "display"
+                    ? `<code>${escapeConfigHtml(data)}</code>`
+                    : data
+            },
+            {
+                data: "resourceName",
+                render: (data, type) => type === "display"
+                    ? `<code>${escapeConfigHtml(data || "N/A")}</code>`
+                    : data
+            }
+        ],
+        drawCallback: () => {
+            $("#groovyScriptCacheTable tr").addClass("mdc-data-table__row");
+            $("#groovyScriptCacheTable td").addClass("mdc-data-table__cell");
+        }
+    });
+
+    function fetchGroovyScriptResource(entry) {
+        const key = groovyScriptCacheEntryKey(entry);
+        const resourceName = groovyScriptCacheEntryResourceName(entry);
+        const title = resourceName
+            ? `${escapeConfigHtml(resourceName)} (${escapeConfigHtml(key)})`
+            : escapeConfigHtml(key);
+        $("#groovyScriptCacheResourceDialog").dialog("option", "title", `Groovy Script Resource: ${title}`);
+        $.ajax({
+            url: resourceUrl(key),
+            method: "GET",
+            dataType: "text"
+        })
+            .done(response => {
+                groovyScriptCacheResourceEditor.setValue(response ?? "", -1);
+                groovyScriptCacheResourceEditor.gotoLine(1);
+                $("#groovyScriptCacheResourceDialog").dialog("open");
+            })
+            .fail((xhr, status, error) => {
+                console.error("Error fetching groovy script resource:", error);
+                displayBanner(xhr);
+            });
+    }
+
+    function deleteGroovyScriptCacheKey(row, key) {
+        Swal.fire({
+            title: "Are you sure you want to delete this cache entry?",
+            text: "Once removed, the script resource will need to be resolved again before it is cached.",
+            icon: "question",
+            showConfirmButton: true,
+            showDenyButton: true
+        })
+            .then((result) => {
+                if (result.isConfirmed) {
+                    $.ajax({
+                        url: keyUrl(key),
+                        method: "DELETE"
+                    })
+                        .done(() => {
+                            row.remove().draw(false);
+                            notyf.success(`Groovy script cache key ${key} was removed.`);
+                        })
+                        .fail((xhr, status, error) => {
+                            console.error("Error deleting groovy script cache key:", error);
+                            displayBanner(xhr);
+                        });
+                }
+            });
+    }
+
+    function recomputeGroovyScriptCacheKey(entry, showResource) {
+        const key = groovyScriptCacheEntryKey(entry);
+        const resourceName = groovyScriptCacheEntryResourceName(entry);
+        return $.ajax({
+            url: keyUrl(key),
+            method: "POST"
+        })
+            .done(() => {
+                if (showResource) {
+                    fetchGroovyScriptCacheKeys()
+                        .done(() => fetchGroovyScriptResource(findGroovyScriptCacheEntry(key, resourceName)));
+                }
+            })
+            .fail((xhr, status, error) => {
+                console.error("Error recomputing groovy script cache key:", error);
+                displayBanner(xhr);
+            });
+    }
+
+    function fetchGroovyScriptCacheKeys() {
+        return $.get(`${endpoint}/keys`, response => {
+            groovyScriptCacheTable.clear();
+            for (const entry of response ?? []) {
+                const row = normalizeGroovyScriptCacheEntry(entry);
+                if (row.key) {
+                    groovyScriptCacheTable.row.add(row);
+                }
+            }
+            groovyScriptCacheTable.draw();
+        }).fail((xhr, status, error) => {
+            console.error("Error fetching groovy script cache keys:", error);
+            displayBanner(xhr);
+        });
+    }
+
+    initializeDataTableContextMenu({
+        table: groovyScriptCacheTable,
+        selector: "#groovyScriptCacheTable tbody tr",
+        items: {
+            view: {name: "View Resource", icon: contextMenuIcon("mdi-eye")},
+            recompute: {name: "Recompute Resource", icon: contextMenuIcon("mdi-refresh")},
+            delete: {name: "Delete Key", icon: contextMenuIcon("mdi-delete")}
+        },
+        callback: (key, context) => {
+            if (key === "view") {
+                fetchGroovyScriptResource(context.rowData);
+            } else if (key === "recompute") {
+                recomputeGroovyScriptCacheKey(context.rowData, true);
+            } else if (key === "delete") {
+                deleteGroovyScriptCacheKey(context.row, context.rowData.key);
+            }
+        }
+    });
+
+    $("#recomputeGroovyScriptCacheButton").off().on("click", () => {
+        const keys = groovyScriptCacheTable.rows().data().toArray().map(row => row.key);
+        if (keys.length === 0) {
+            Swal.fire("No Cache Entries", "There are no Groovy script cache keys to recompute.", "info");
+            return;
+        }
+        Swal.fire({
+            icon: "info",
+            title: "Recomputing Groovy Script Cache",
+            text: "Please wait while all Groovy script cache entries are recomputed.",
+            allowOutsideClick: false,
+            showConfirmButton: false,
+            didOpen: () => Swal.showLoading()
+        });
+        Promise.all(keys.map(cacheKey => recomputeGroovyScriptCacheKey(cacheKey, false)))
+            .then(() => {
+                Swal.fire("Success", `Recomputed ${keys.length} Groovy script cache entr${keys.length === 1 ? "y" : "ies"}.`, "success");
+                fetchGroovyScriptCacheKeys();
+            })
+            .catch(xhr => {
+                Swal.close();
+                displayBanner(xhr);
+            });
+    });
+
+    $("#refreshGroovyScriptCacheButton").off().on("click", () => fetchGroovyScriptCacheKeys());
+
+    fetchGroovyScriptCacheKeys();
+}
+
 async function initializeConfigurationOperations() {
     const configurationTable = $("#configurationTable").DataTable({
         pageLength: 10,
@@ -750,7 +924,7 @@ async function initializeConfigurationOperations() {
                     if (last !== group) {
                         $(rows).eq(i).before(
                             `<tr style='font-weight: bold; background-color:var(--cas-theme-primary); color:var(--mdc-text-button-label-text-color);'>
-                                <td colspan="3">${group}</td>
+                                <td colspan="2">${group}</td>
                             </tr>`.trim());
                         last = group;
                     }
@@ -758,9 +932,38 @@ async function initializeConfigurationOperations() {
         }
     });
 
+    const configurationTableMenuItems = {
+        effective: {name: "View Effective Value", icon: contextMenuIcon("mdi-eye")},
+        help: {
+            name: "Configuration Property Help",
+            icon: contextMenuIcon("mdi-help"),
+            visible: () => CasActuatorEndpoints.configurationMetadata()
+        },
+        override: {
+            name: "Override Configuration Property Value",
+            icon: contextMenuIcon("mdi-arrow-left-circle"),
+            visible: () => PalantirDashboardConfiguration.mutablePropertySourcesAvailable() && CasActuatorEndpoints.casConfig()
+        }
+    };
+    initializeDataTableContextMenu({
+        table: configurationTable,
+        selector: "#configurationTable tbody tr",
+        items: configurationTableMenuItems,
+        callback: (key, context) => {
+            const {propertyName, propertyValue} = context.rowData;
+            if (key === "effective") {
+                effectiveConfigPropertyValue(propertyName);
+            } else if (key === "help") {
+                searchForConfigPropertyButton(propertyName);
+            } else if (key === "override") {
+                overrideConfigPropertyValue(propertyName, propertyValue);
+            }
+        }
+    });
+
     const toolbar = document.createElement("div");
     let toolbarEntries = `
-            <button type="button" id="reloadConfigurationTableButton" 
+            <button type="button" id="reloadConfigurationTableButton"
                     title="Reload Configuration Table"
                     onclick="$.get(CasActuatorEndpoints.env(), res => { reloadConfigurationTable(res); }).fail((xhr) => { displayBanner(xhr); });"
                     class="mdc-button mdc-button--raised">
@@ -780,7 +983,7 @@ async function initializeConfigurationOperations() {
             </button>
             <button type="button" id="refreshConfigurationButton"
                     title="Refresh CAS Server Configuration"
-                    onclick="refreshCasServerConfiguration('Context Refresh');" 
+                    onclick="refreshCasServerConfiguration('Context Refresh');"
                     class="mdc-button mdc-button--raised">
                 <span class="mdc-button__label"><i class="mdc-tab__icon mdi mdi-refresh" aria-hidden="true"></i>Refresh CAS</span>
             </button>
@@ -811,11 +1014,38 @@ async function initializeConfigurationOperations() {
                     if (last !== group) {
                         $(rows).eq(i).before(
                             `<tr style='font-weight: bold; background-color:var(--cas-theme-primary); color:var(--mdc-text-button-label-text-color);'>
-                                <td colspan="3">${group}</td>
+                                <td colspan="2">${group}</td>
                             </tr>`.trim());
                         last = group;
                     }
                 });
+        }
+    });
+
+    initializeDataTableContextMenu({
+        table: mutableConfigurationTable,
+        selector: "#mutableConfigurationTable tbody tr",
+        items: {
+            effective: {name: "View Effective Value", icon: contextMenuIcon("mdi-eye")},
+            update: {name: "Update Configuration Property Value", icon: contextMenuIcon("mdi-content-save-edit")},
+            delete: {name: "Delete Configuration Property Value", icon: contextMenuIcon("mdi-delete")},
+            help: {
+                name: "Configuration Property Help",
+                icon: contextMenuIcon("mdi-help"),
+                visible: () => CasActuatorEndpoints.configurationMetadata()
+            }
+        },
+        callback: (key, context) => {
+            const {propertyName, propertyValue, propertySource} = context.rowData;
+            if (key === "effective") {
+                effectiveConfigPropertyValue(propertyName);
+            } else if (key === "update") {
+                updateConfigPropertyValueFromRow(context.row, propertySource, propertyName, propertyValue);
+            } else if (key === "delete") {
+                deleteConfigPropertyValueFromRow(context.row, propertySource, propertyName);
+            } else if (key === "help") {
+                searchForConfigPropertyButton(propertyName);
+            }
         }
     });
 
@@ -869,7 +1099,7 @@ async function initializeConfigurationOperations() {
             displayBanner(xhr);
         });
     }
-    
+
     const configPropsTable = $("#configPropsTable").DataTable({
         pageLength: 10,
         autoWidth: false,
@@ -1081,6 +1311,8 @@ async function initializeConfigurationOperations() {
     } else {
         hideSpringConditionsTab();
     }
+
+    initializeGroovyScriptCacheManagerOperations();
 
     $("#encryptConfigButton").off().on("click", () => encryptOrDecryptConfig("encrypt"));
     $("#decryptConfigButton").off().on("click", () => encryptOrDecryptConfig("decrypt"));

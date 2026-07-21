@@ -53,7 +53,7 @@ import jakarta.validation.Valid;
 @Getter
 @Endpoint(id = "ssoSessions", defaultAccess = Access.NONE)
 public class SingleSignOnSessionsEndpoint extends BaseCasRestActuatorEndpoint {
-    private static final ISOStandardDateFormat DATE_FORMAT = new ISOStandardDateFormat();
+    private static final ISOStandardDateFormat DATE_FORMAT = new ISOStandardDateFormat(ZoneOffset.UTC);
 
     private static final String STATUS = "status";
 

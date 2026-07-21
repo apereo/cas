@@ -44,7 +44,7 @@ public class OAuth20ResponseModeFragmentBuilder implements OAuth20ResponseModeBu
             .map(entry -> entry.getKey() + '=' + entry.getValue())
             .collect(Collectors.joining("&"));
 
-        val queryParams = new LinkedMultiValueMap<@NonNull String, @NonNull String>(currentParams.size());
+        val queryParams = new LinkedMultiValueMap<String, @NonNull String>(currentParams.size());
         currentParams.forEach(param -> queryParams.put(param.getName(), List.of(param.getValue())));
         
         val resultUrl = UriComponentsBuilder.fromUriString(redirectUrl)

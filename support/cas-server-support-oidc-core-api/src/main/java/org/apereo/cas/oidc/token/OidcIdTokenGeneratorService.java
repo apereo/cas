@@ -33,7 +33,6 @@ import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.DigestUtils;
 import org.apereo.cas.util.EncodingUtils;
 import org.apereo.cas.util.function.FunctionUtils;
-import com.google.common.collect.ImmutableSet;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.ArrayUtils;
@@ -41,7 +40,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.apereo.inspektr.audit.annotation.Audit;
 import org.jose4j.jwt.JwtClaims;
 import org.jose4j.jwt.NumericDate;
-import org.jspecify.annotations.NonNull;
 import org.jspecify.annotations.Nullable;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.util.Assert;
@@ -54,8 +52,22 @@ import org.springframework.util.Assert;
  */
 @Slf4j
 public class OidcIdTokenGeneratorService extends BaseIdTokenGeneratorService<OidcConfigurationContext> {
-
-    public OidcIdTokenGeneratorService(final ObjectProvider<@NonNull OidcConfigurationContext> configurationContext) {
+    
+    protected static final Set<String> STANDARD_ID_TOKEN_CLAIMS = Set.of(
+        OAuth20Constants.CLAIM_SUB,
+        OAuth20Constants.CLAIM_EXP,
+        OidcConstants.JTI,
+        OidcConstants.IAT,
+        OidcConstants.NBF,
+        OidcConstants.TXN,
+        OidcConstants.AUD,
+        OidcConstants.CLAIM_SESSION_ID,
+        OidcConstants.ISS,
+        OidcConstants.ACR,
+        OidcConstants.AMR
+    );
+    
+    public OidcIdTokenGeneratorService(final ObjectProvider<OidcConfigurationContext> configurationContext) {
         super(configurationContext);
     }
 
@@ -73,8 +85,7 @@ public class OidcIdTokenGeneratorService extends BaseIdTokenGeneratorService<Oid
         Assert.isAssignable(OidcRegisteredService.class, context.getRegisteredService().getClass(),
             "Registered service instance is not registered as an OpenID Connect application");
         if (!context.getAccessToken().getScopes().contains(OidcConstants.StandardScopes.OPENID.getScope())) {
-            LOGGER.warn("Authentication request does not include the [{}] scope. "
-                    + "Including this scope is a MUST for OpenID Connect and CAS will not produce an ID token without this scope.",
+            LOGGER.warn("Authentication request does not include the [{}] scope. CAS will not produce an ID token without this scope.",
                 OidcConstants.StandardScopes.OPENID.getScope());
             return null;
         }
@@ -83,7 +94,7 @@ public class OidcIdTokenGeneratorService extends BaseIdTokenGeneratorService<Oid
             LOGGER.debug("ID token generation for grant type [{}] is disabled. Skipping ID token generation.", OAuth20GrantTypes.JWT_BEARER);
             return null;
         }
-        
+
         val claims = buildJwtClaims(context);
         var deviceSecret = StringUtils.EMPTY;
         if (context.getGrantType() == OAuth20GrantTypes.AUTHORIZATION_CODE
@@ -264,8 +275,8 @@ public class OidcIdTokenGeneratorService extends BaseIdTokenGeneratorService<Oid
         }
     }
 
-    private Principal buildPrincipalForAttributeFilter(final OAuth20AccessToken accessToken,
-                                                       final RegisteredService registeredService) throws Throwable {
+    private @Nullable Principal buildPrincipalForAttributeFilter(final OAuth20AccessToken accessToken,
+                                                                 final RegisteredService registeredService) throws Throwable {
         val authentication = accessToken.getAuthentication();
         val attributes = new HashMap<>(authentication.getPrincipal().getAttributes());
         val authnAttributes = getConfigurationContext().getAuthenticationAttributeReleasePolicy()
@@ -299,7 +310,7 @@ public class OidcIdTokenGeneratorService extends BaseIdTokenGeneratorService<Oid
                 registeredService, principal, claims, principal.getId());
         }
         getConfigurationContext().getIdTokenClaimCollectors()
-            .forEach(collector -> collector.conclude(claims));
+            .forEach(collector -> collector.conclude(registeredService, claims));
     }
 
     private boolean isClaimSupportedForRelease(final String claimName, final RegisteredService registeredService) {
@@ -307,11 +318,18 @@ public class OidcIdTokenGeneratorService extends BaseIdTokenGeneratorService<Oid
         val mappedClaim = mapper.toMappedClaimName(claimName, registeredService);
         val oidc = getConfigurationContext().getCasProperties().getAuthn().getOidc();
         val claims = oidc.getDiscovery().getClaims();
-        LOGGER.trace("Checking if any of [{}] are specified in the list of discovery claims [{}]", ImmutableSet.of(claimName, mappedClaim), claims);
+        LOGGER.trace("Checking if any of [{}] are specified in the list of discovery claims [{}]",
+            List.of(claimName, mappedClaim), claims);
         return claims.contains(claimName)
             || claims.contains(mappedClaim)
             || isClaimDefinitionSupportedForRelease(mappedClaim)
-            || isClaimReleasedAllowedByScopeFreePolicy(claimName, registeredService);
+            || isClaimReleasedAllowedByScopeFreePolicy(claimName, registeredService)
+            || isClaimInternalForProtocol(claimName, registeredService);
+    }
+
+    protected boolean isClaimInternalForProtocol(final String claimName, final RegisteredService registeredService) {
+        return StringUtils.isNotBlank(claimName)
+            && STANDARD_ID_TOKEN_CLAIMS.contains(claimName.toLowerCase(Locale.ROOT));
     }
 
     protected boolean isClaimReleasedAllowedByScopeFreePolicy(final String claimName, final RegisteredService registeredService) {
@@ -352,7 +370,7 @@ public class OidcIdTokenGeneratorService extends BaseIdTokenGeneratorService<Oid
         val mapper = getConfigurationContext().getAttributeToScopeClaimMapper();
         val collectionValues = mapper.mapClaim(claimName, registeredService, principal, defaultValue);
         val collectors = getConfigurationContext().getIdTokenClaimCollectors();
-        collectors.forEach(collector -> collector.collect(claims, claimName, collectionValues));
+        collectors.forEach(collector -> collector.collect(registeredService, claims, claimName, collectionValues));
     }
 
     protected String getJwtId(final OAuth20AccessToken ticket) {
@@ -387,7 +405,11 @@ public class OidcIdTokenGeneratorService extends BaseIdTokenGeneratorService<Oid
     protected Set<Object> buildAuthenticationMethods(final Authentication authentication) {
         val allAttributes = new HashMap<>(authentication.getAttributes());
         allAttributes.putAll(authentication.getPrincipal().getAttributes());
-        return Stream.of(AuthenticationHandler.SUCCESSFUL_AUTHENTICATION_HANDLERS, AuthenticationManager.AUTHENTICATION_METHOD_ATTRIBUTE)
+        return Stream.of(
+                AuthenticationHandler.SUCCESSFUL_AUTHENTICATION_HANDLERS,
+                AuthenticationManager.AUTHENTICATION_METHOD_ATTRIBUTE,
+                OidcConstants.AMR
+            )
             .filter(allAttributes::containsKey)
             .map(name -> CollectionUtils.toCollection(allAttributes.get(name)))
             .findFirst()

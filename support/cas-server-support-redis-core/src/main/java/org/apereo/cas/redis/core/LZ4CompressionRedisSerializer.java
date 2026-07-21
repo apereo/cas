@@ -15,8 +15,8 @@ import org.springframework.data.redis.serializer.SerializationException;
  * @since 7.3.0
  */
 @RequiredArgsConstructor
-public class LZ4CompressionRedisSerializer<T> implements RedisSerializer<@NonNull T> {
-    private final RedisSerializer<@NonNull T> delegate;
+public class LZ4CompressionRedisSerializer<T> implements RedisSerializer<T> {
+    private final RedisSerializer<T> delegate;
     private final LZ4CompressionHandler compressionHandler;
 
     @Override

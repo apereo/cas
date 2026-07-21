@@ -25,7 +25,6 @@ import io.swagger.v3.oas.annotations.enums.ParameterIn;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
-import org.jspecify.annotations.NonNull;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.boot.actuate.endpoint.Access;
 import org.springframework.boot.actuate.endpoint.annotation.Endpoint;
@@ -45,24 +44,24 @@ import jakarta.servlet.http.HttpServletRequest;
 @Endpoint(id = "serviceAccess", defaultAccess = Access.NONE)
 @Slf4j
 public class RegisteredServiceAccessEndpoint extends BaseCasRestActuatorEndpoint {
-    private final ObjectProvider<@NonNull ServicesManager> servicesManager;
-    private final ObjectProvider<@NonNull AuthenticationServiceSelectionPlan> authenticationServiceSelectionPlan;
-    private final ObjectProvider<@NonNull ArgumentExtractor> argumentExtractor;
-    private final ObjectProvider<@NonNull AuditableExecution> registeredServiceAccessStrategyEnforcer;
-    private final ObjectProvider<@NonNull AuthenticationSystemSupport> authenticationSystemSupport;
-    private final ObjectProvider<@NonNull PrincipalResolver> principalResolver;
-    private final ObjectProvider<@NonNull PrincipalFactory> principalFactory;
+    private final ObjectProvider<ServicesManager> servicesManager;
+    private final ObjectProvider<AuthenticationServiceSelectionPlan> authenticationServiceSelectionPlan;
+    private final ObjectProvider<ArgumentExtractor> argumentExtractor;
+    private final ObjectProvider<AuditableExecution> registeredServiceAccessStrategyEnforcer;
+    private final ObjectProvider<AuthenticationSystemSupport> authenticationSystemSupport;
+    private final ObjectProvider<PrincipalResolver> principalResolver;
+    private final ObjectProvider<PrincipalFactory> principalFactory;
 
     public RegisteredServiceAccessEndpoint(
         final CasConfigurationProperties casProperties,
         final ConfigurableApplicationContext applicationContext,
-        final ObjectProvider<@NonNull ServicesManager> servicesManager,
-        final ObjectProvider<@NonNull AuthenticationServiceSelectionPlan> authenticationServiceSelectionPlan,
-        final ObjectProvider<@NonNull ArgumentExtractor> argumentExtractor,
-        final ObjectProvider<@NonNull AuditableExecution> registeredServiceAccessStrategyEnforcer,
-        final ObjectProvider<@NonNull AuthenticationSystemSupport> authenticationSystemSupport,
-        final ObjectProvider<@NonNull PrincipalResolver> principalResolver,
-        final ObjectProvider<@NonNull PrincipalFactory> principalFactory) {
+        final ObjectProvider<ServicesManager> servicesManager,
+        final ObjectProvider<AuthenticationServiceSelectionPlan> authenticationServiceSelectionPlan,
+        final ObjectProvider<ArgumentExtractor> argumentExtractor,
+        final ObjectProvider<AuditableExecution> registeredServiceAccessStrategyEnforcer,
+        final ObjectProvider<AuthenticationSystemSupport> authenticationSystemSupport,
+        final ObjectProvider<PrincipalResolver> principalResolver,
+        final ObjectProvider<PrincipalFactory> principalFactory) {
         super(casProperties, applicationContext);
         this.authenticationServiceSelectionPlan = authenticationServiceSelectionPlan;
         this.servicesManager = servicesManager;

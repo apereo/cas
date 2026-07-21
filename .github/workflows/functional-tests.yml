@@ -47,6 +47,7 @@ on:
   push:
     branches:
       - master
+      - next
       - '!**.**.**'
       - '!heroku-*'
       - 'pr-*'

@@ -72,7 +72,7 @@ class UmaFindResourceSetRegistrationEndpointControllerTests extends BaseUmaEndpo
         manager.removeProfiles();
 
         result = performUmaRequest(HttpMethod.GET,
-            OAuth20Constants.UMA_RESOURCE_SET_REGISTRATION_URL + "/" + resourceId,
+            OAuth20Constants.UMA_RESOURCE_SET_REGISTRATION_URL + '/' + resourceId,
             results.getLeft(), results.getMiddle());
         assertEquals(HttpStatus.OK.value(), result.getResponse().getStatus());
     }

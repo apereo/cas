@@ -30,8 +30,14 @@ Operating a single server traditionally would delay such a restart until a less 
 vulnerability. However, more recently with the growing acceptance of virtual machine technology and its inherent 
 redundancy and fault tolerance, single node CAS has been able to achieve similar qualities.
 
+## Actuator Endpoints
+
+The following endpoints are provided by CAS:
+
+{% include_cached actuators.html endpoints="clusterTopology" %}
 
 ## Recommended Architecture
+
 The following diagram highlights the vital aspects of a highly available CAS deployment.
 
 ![Recommended HA Architecture](../images/recommended_ha_architecture.png "Recommended HA Architecture")

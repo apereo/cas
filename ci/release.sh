@@ -228,12 +228,25 @@ EOF
     echo "Updating CAS with the next development version: ${nextVersion}"
     git reset --hard
     sedi "s/^version=.*/version=${nextVersion}/" ./gradle.properties
-    git add ./gradle.properties
-    git commit -m "Bumping version to ${nextVersion} after release of ${casVersion} [skip ci]"
-    git push origin "${currentBranch}" --force
-    if [ $? -ne 0 ]; then
-        printred "Pushing the next development version ${nextVersion} failed."
-        exit 1
+    if git diff --quiet -- ./gradle.properties; then
+      printgreen "No changes detected. The next development version ${nextVersion} is already set."
+    else
+      git add ./gradle.properties
+      git commit -m "Bumping version to ${nextVersion} after release of ${casVersion} [skip ci]"
+      versionBranch="release/bump-${currentBranch//\//-}-to-${nextVersion}"
+      git switch -c "${versionBranch}"
+      if ! git push origin "${versionBranch}"; then
+          printred "Pushing the next development version ${nextVersion} failed."
+          exit 1
+      fi
+      if ! gh pr create \
+          --base "${currentBranch}" \
+          --head "${versionBranch}" \
+          --title "Release: Bump version to ${nextVersion}" \
+          --body "Bumps the development version to ${nextVersion} after release of ${casVersion}."; then
+          printred "Creating the version bump pull request failed."
+          exit 1
+      fi
     fi
     
     printgreen "You should now publish the release for CAS v${casVersion} on GitHub!"

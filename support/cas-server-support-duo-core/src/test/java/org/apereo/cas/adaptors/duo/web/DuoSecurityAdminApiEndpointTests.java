@@ -31,15 +31,20 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.TestConfiguration;
+import org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Import;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.test.web.servlet.MockMvc;
 import tools.jackson.databind.ObjectMapper;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 /**
  * This is {@link DuoSecurityAdminApiEndpointTests}.
@@ -49,16 +54,18 @@ import static org.mockito.Mockito.*;
  */
 @SpringBootTestAutoConfigurations
 @Import(DuoSecurityAdminApiEndpointTests.DuoSecurityMultifactorTestConfiguration.class)
-@SpringBootTest(classes =
-    CasCoreWebAutoConfiguration.class,
+@SpringBootTest(classes = CasCoreWebAutoConfiguration.class,
     properties = {
         "cas.authn.mfa.duo[0].duo-admin-secret-key=SIOXVQQD3UMZ8XXMNZQ8",
         "cas.authn.mfa.duo[0].duo-admin-integration-key=SIOXVQQD3UMZ8XXMNZQ8",
         "cas.authn.mfa.duo[0].duo-secret-key=cGKL1OndjtknbmVOWaFmisaghiNFEKXHxgXCJEBr",
         "cas.authn.mfa.duo[0].duo-integration-key=DIZXVRQD3OMZ6XXMNFQ9",
         "cas.authn.mfa.duo[0].duo-api-host=localhost:8443",
-        "cas.http-client.host-name-verifier=none"
-    })
+        "cas.http-client.host-name-verifier=none",
+        "management.endpoint.duoAdmin.access=UNRESTRICTED",
+        "management.endpoints.web.exposure.include=*"
+    }, webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
+@AutoConfigureMockMvc
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Tag("DuoSecurity")
 @ExtendWith(CasTestExtension.class)
@@ -66,6 +73,10 @@ import static org.mockito.Mockito.*;
 class DuoSecurityAdminApiEndpointTests {
     private static final ObjectMapper MAPPER = JacksonObjectMapperFactory.builder()
         .defaultTypingEnabled(false).build().toObjectMapper();
+
+    @Autowired
+    @Qualifier("mockMvc")
+    private MockMvc mockMvc;
 
     @Autowired
     private ConfigurableApplicationContext applicationContext;
@@ -77,11 +88,9 @@ class DuoSecurityAdminApiEndpointTests {
     static class DuoSecurityMultifactorTestConfiguration {
         @Bean
         public DuoSecurityMultifactorAuthenticationProvider duoProvider(
-            @Qualifier(TenantExtractor.BEAN_NAME)
-            final TenantExtractor tenantExtractor,
+            @Qualifier(TenantExtractor.BEAN_NAME) final TenantExtractor tenantExtractor,
             final CasConfigurationProperties casProperties,
-            @Qualifier("noRedirectHttpClient")
-            final HttpClient httpClient) {
+            @Qualifier("noRedirectHttpClient") final HttpClient httpClient) {
             val duoService = new UniversalPromptDuoSecurityAuthenticationService(
                 casProperties.getAuthn().getMfa().getDuo().getFirst(), httpClient,
                 mock(DuoSecurityClient.class), List.of(), Caffeine.newBuilder().build(), tenantExtractor);
@@ -92,59 +101,76 @@ class DuoSecurityAdminApiEndpointTests {
             when(bean.getDeviceManager()).thenReturn(new DuoSecurityMultifactorAuthenticationDeviceManager(bean));
             return bean;
         }
+
+        @Bean
+        public DuoSecurityAdminApiEndpoint duoAdminApiEndpoint(final CasConfigurationProperties casProperties,
+                                                               final ConfigurableApplicationContext applicationContext) {
+            return new DuoSecurityAdminApiEndpoint(casProperties, applicationContext);
+        }
     }
 
     @Test
-    void verifyOperation() {
-        val endpoint = new DuoSecurityAdminApiEndpoint(casProperties, this.applicationContext);
+    void verifyOperation() throws Throwable {
         try (val webServer = new MockWebServer(8443,
             new ByteArrayResource("{\"stat\": \"OK\" }".getBytes(StandardCharsets.UTF_8), "Output"), HttpStatus.OK)) {
             webServer.start();
-            val result = endpoint.getUser("casuser", DuoSecurityMultifactorAuthenticationProperties.DEFAULT_IDENTIFIER);
-            assertTrue(result.isEmpty());
+            mockMvc.perform(get("/actuator/duoAdmin/casuser")
+                    .param("providerId", DuoSecurityMultifactorAuthenticationProperties.DEFAULT_IDENTIFIER)
+                    .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$").isEmpty());
         }
 
         try (val webServer = new MockWebServer(8443)) {
             webServer.responseBodySupplier(() -> new ClassPathResource("duoAdminApiResponse-user.json"));
             webServer.start();
-            val result = endpoint.getUser("casuser", DuoSecurityMultifactorAuthenticationProperties.DEFAULT_IDENTIFIER);
-            assertFalse(result.isEmpty());
-            val user = result.get(DuoSecurityMultifactorAuthenticationProperties.DEFAULT_IDENTIFIER);
-            assertNotNull(user.getUserId());
-            assertNotNull(user.getFirstName());
-            assertNotNull(user.getLastName());
-            assertNotNull(user.getEmail());
-            assertNotNull(user.getRealName());
-            assertNotNull(user.getLastLogin());
-            assertNotNull(user.getCreated());
-            assertFalse(user.getDevices().isEmpty());
-            assertTrue(user.getBypassCodes().isEmpty());
+            mockMvc.perform(get("/actuator/duoAdmin/casuser")
+                    .param("providerId", DuoSecurityMultifactorAuthenticationProperties.DEFAULT_IDENTIFIER)
+                    .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$['%s'].userId".formatted(DuoSecurityMultifactorAuthenticationProperties.DEFAULT_IDENTIFIER)).isNotEmpty())
+                .andExpect(jsonPath("$['%s'].firstName".formatted(DuoSecurityMultifactorAuthenticationProperties.DEFAULT_IDENTIFIER)).isNotEmpty())
+                .andExpect(jsonPath("$['%s'].lastName".formatted(DuoSecurityMultifactorAuthenticationProperties.DEFAULT_IDENTIFIER)).isNotEmpty())
+                .andExpect(jsonPath("$['%s'].email".formatted(DuoSecurityMultifactorAuthenticationProperties.DEFAULT_IDENTIFIER)).isNotEmpty())
+                .andExpect(jsonPath("$['%s'].realName".formatted(DuoSecurityMultifactorAuthenticationProperties.DEFAULT_IDENTIFIER)).isNotEmpty())
+                .andExpect(jsonPath("$['%s'].lastLogin".formatted(DuoSecurityMultifactorAuthenticationProperties.DEFAULT_IDENTIFIER)).isNotEmpty())
+                .andExpect(jsonPath("$['%s'].created".formatted(DuoSecurityMultifactorAuthenticationProperties.DEFAULT_IDENTIFIER)).isNotEmpty())
+                .andExpect(jsonPath("$['%s'].devices".formatted(DuoSecurityMultifactorAuthenticationProperties.DEFAULT_IDENTIFIER)).isNotEmpty())
+                .andExpect(jsonPath("$['%s'].bypassCodes".formatted(DuoSecurityMultifactorAuthenticationProperties.DEFAULT_IDENTIFIER)).isEmpty());
         }
     }
 
     @Test
-    void verifyCreateBypassCodes() {
-        val endpoint = new DuoSecurityAdminApiEndpoint(casProperties, this.applicationContext);
+    void verifyCreateBypassCodes() throws Throwable {
         val data = Map.of("stat", "OK", "response", CollectionUtils.wrapList("123456"));
         val entity = MAPPER.writeValueAsString(data);
         try (val webServer = new MockWebServer(8443,
             new ByteArrayResource(entity.getBytes(StandardCharsets.UTF_8), "Output"), HttpStatus.OK)) {
             webServer.start();
-            val result = endpoint.createBypassCodes(null, DuoSecurityMultifactorAuthenticationProperties.DEFAULT_IDENTIFIER, "mghfytgdq");
-            assertFalse(result.isEmpty());
+            mockMvc.perform(post("/actuator/duoAdmin/bypassCodes")
+                    .param("providerId", DuoSecurityMultifactorAuthenticationProperties.DEFAULT_IDENTIFIER)
+                    .param("userId", "mghfytgdq")
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .content("{}")
+                    .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$").isNotEmpty());
         }
     }
 
     @Test
-    void verifyUserUpdates() {
-        val endpoint = new DuoSecurityAdminApiEndpoint(casProperties, this.applicationContext);
+    void verifyUserUpdates() throws Throwable {
         try (val webServer = new MockWebServer(8443)) {
             webServer.responseBodySupplier(() -> new ClassPathResource("duoAdminApiResponse-user.json"));
             webServer.start();
-            val responseEntity = endpoint.updateUser("casuser", DuoSecurityMultifactorAuthenticationProperties.DEFAULT_IDENTIFIER,
-                new DuoSecurityUserAccount().setStatus(DuoSecurityUserAccountStatus.AUTH));
-            assertTrue(responseEntity.hasBody());
-            assertTrue(responseEntity.getStatusCode().is2xxSuccessful());
+            val account = new DuoSecurityUserAccount().setStatus(DuoSecurityUserAccountStatus.AUTH);
+            mockMvc.perform(put("/actuator/duoAdmin/casuser")
+                    .param("providerId", DuoSecurityMultifactorAuthenticationProperties.DEFAULT_IDENTIFIER)
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .content(MAPPER.writeValueAsString(account))
+                    .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$").isNotEmpty());
         }
     }
 
@@ -157,12 +183,12 @@ class DuoSecurityAdminApiEndpointTests {
             val provider = MultifactorAuthenticationUtils.getMultifactorAuthenticationProviderById(id, applicationContext)
                 .map(DuoSecurityMultifactorAuthenticationProvider.class::cast)
                 .orElseThrow();
-            
+
             val principal = RegisteredServiceTestUtils.getPrincipal("casuser");
             val devices = provider.getDeviceManager().findRegisteredDevices(principal);
             assertEquals(1, devices.size());
             assertTrue(provider.getDeviceManager().hasRegisteredDevices(principal));
-            
+
             provider.getDeviceManager().removeRegisteredDevice(principal, devices.getFirst().getId());
         }
     }

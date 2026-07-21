@@ -3,7 +3,7 @@ function removeIdentityProvider(idp, type) {
         Swal.fire({
             title: `Are you sure you want to delete ${idp}?`,
             text: `
-                Removing this identity provider is only possible if it's owned and managed by a dynamic configuration source. 
+                Removing this identity provider is only possible if it's owned and managed by a dynamic configuration source.
                 Once removed, you may not be able to revert this.
             `,
             icon: "question",
@@ -121,20 +121,16 @@ function configureSaml2ClientMetadataButtons() {
         const beautify = ace.require("ace/ext/beautify");
         beautify.beautify(saml2Editor.session);
 
-        const dialog = window.mdc.dialog.MDCDialog.attachTo(document.getElementById("delegatedClientsSaml2Dialog"));
-        dialog["open"]();
+    const dialog = window.mdc.dialog.MDCDialog.attachTo(document.getElementById("delegatedClientsSaml2Dialog"));
+    dialog["open"]();
     }
 
-    $("button[name=saml2ClientSpMetadata]").off().on("click", function () {
-        $(this).prop("disabled", true);
-        const url = `${PalantirDashboardConfiguration.casServerPrefix()}/sp/${$(this).attr("clientName")}/metadata`;
-        $.get(url, payload => showSamlMetadata(payload))
-            .always(() => $(this).prop("disabled", false));
+    function showSaml2ClientSpMetadata(clientName) {
+        const url = `${PalantirDashboardConfiguration.casServerPrefix()}/sp/${clientName}/metadata`;
+        $.get(url, payload => showSamlMetadata(payload));
+    }
 
-    });
-    $("button[name=saml2ClientIdpMetadata]").off().on("click", function () {
-        $(this).prop("disabled", true);
-        const clientName = `${$(this).attr("clientName")}`;
+    function showSaml2ClientIdpMetadata(clientName) {
         const url = `${PalantirDashboardConfiguration.casServerPrefix()}/sp/${clientName}/idp/metadata`;
 
         Swal.fire({
@@ -150,8 +146,45 @@ function configureSaml2ClientMetadataButtons() {
             await showSamlMetadata(payload);
             await updateNavigationSidebar();
             Swal.close();
-        })
-            .always(() => $(this).prop("disabled", false));
+        });
+    }
+
+    initializeContextMenu({
+        selector: "#delegatedClientsTable tbody tr.delegated-client-group-row",
+        build: $trigger => ({
+            clientName: $trigger.data("client-name"),
+            type: $trigger.data("type")
+        }),
+        items: {
+            remove: {
+                name: "Remove Identity Provider",
+                icon: contextMenuIcon("mdi-delete"),
+                visible: context => PalantirDashboardConfiguration.mutablePropertySourcesAvailable()
+                    && CasActuatorEndpoints.casConfig()
+                    && context.clientName
+                    && context.type
+            },
+            spMetadata: {
+                name: "Service Provider Metadata",
+                icon: contextMenuIcon("mdi-text-box"),
+                visible: context => context.type === "saml2"
+            },
+            idpMetadata: {
+                name: "Identity Provider Metadata",
+                icon: contextMenuIcon("mdi-file-xml-box"),
+                visible: context => context.type === "saml2"
+            }
+        },
+        callback: (key, options) => {
+            const {clientName, type} = options.context;
+            if (key === "remove") {
+                removeIdentityProvider(clientName, type);
+            } else if (key === "spMetadata") {
+                showSaml2ClientSpMetadata(clientName);
+            } else if (key === "idpMetadata") {
+                showSaml2ClientIdpMetadata(clientName);
+            }
+        }
     });
 }
 
@@ -587,5 +620,3 @@ function newExternalIdentityProvider() {
         dialogContainer.dialog("open");
     }
 }
-
-

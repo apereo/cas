@@ -43,6 +43,15 @@ async function initializeHotKeyOperations() {
                 event.preventDefault();
                 $("#newTenantButton:visible").click();
             }
+            if (currentActiveTab === Tabs.ACCESS_STRATEGY.index
+                && $("#heimdall-tab").is(":visible")
+                && $("#newHeimdallResourceDialog").length === 0) {
+                const newResourceButton = $("#newHeimdallResourceButton:visible");
+                if (newResourceButton.length > 0) {
+                    event.preventDefault();
+                    newResourceButton.click();
+                }
+            }
             if (currentActiveTab === Tabs.APPLICATIONS.index) {
                 event.preventDefault();
                 openRegisteredServiceWizardDialog();

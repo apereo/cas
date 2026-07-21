@@ -127,15 +127,15 @@ class FunctionUtilsTests {
     @Test
     void verifyDoAndHandle() {
         assertThrows(IllegalArgumentException.class,
-            () -> FunctionUtils.doAndHandle((CheckedFunction<Object, Boolean>) o -> {
+            () -> FunctionUtils.doAndHandle((CheckedFunction<Object, Boolean>) _ -> {
                 throw new IllegalArgumentException();
-            }, o -> {
+            }, _ -> {
                 throw new IllegalArgumentException();
             }).apply(Void.class));
 
-        assertFalse(FunctionUtils.doAndHandle((CheckedFunction<Object, Boolean>) o -> {
+        assertFalse(FunctionUtils.doAndHandle((CheckedFunction<Object, Boolean>) _ -> {
             throw new IllegalArgumentException();
-        }, o -> false).apply(Void.class));
+        }, _ -> false).apply(Void.class));
     }
 
     @Test
@@ -143,7 +143,7 @@ class FunctionUtilsTests {
         var supplier = FunctionUtils.doAndHandle(
             () -> {
                 throw new IllegalArgumentException();
-            }, o -> {
+            }, _ -> {
                 throw new IllegalArgumentException();
             });
         assertThrows(IllegalArgumentException.class, supplier::get);
@@ -156,13 +156,13 @@ class FunctionUtilsTests {
 
     @Test
     void verifyDoWithoutThrows() {
-        val supplier = FunctionUtils.doWithoutThrows(o -> {
+        val supplier = FunctionUtils.doWithoutThrows(_ -> {
             throw new IllegalArgumentException();
         });
         assertFalse(supplier);
 
         assertThrows(IllegalArgumentException.class,
-            () -> FunctionUtils.doAndThrowUnchecked(() -> CompressionUtils.compress((byte[]) null), o -> {
+            () -> FunctionUtils.doAndThrowUnchecked(() -> CompressionUtils.compress((byte[]) null), _ -> {
                 throw new IllegalArgumentException();
             }));
     }

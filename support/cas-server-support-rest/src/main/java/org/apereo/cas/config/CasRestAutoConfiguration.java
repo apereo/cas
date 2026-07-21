@@ -131,7 +131,7 @@ public class CasRestAutoConfiguration {
         @ConditionalOnMissingBean(name = "casRestThrottlingWebMvcConfigurer")
         public WebMvcConfigurer casRestThrottlingWebMvcConfigurer(
             @Qualifier(AuthenticationThrottlingExecutionPlan.BEAN_NAME)
-            final ObjectProvider<@NonNull AuthenticationThrottlingExecutionPlan> authenticationThrottlingExecutionPlan) {
+            final ObjectProvider<AuthenticationThrottlingExecutionPlan> authenticationThrottlingExecutionPlan) {
             return new WebMvcConfigurer() {
                 @Override
                 public void addInterceptors(@NonNull final InterceptorRegistry registry) {

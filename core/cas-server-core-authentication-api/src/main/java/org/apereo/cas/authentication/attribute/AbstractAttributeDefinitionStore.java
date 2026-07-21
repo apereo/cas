@@ -1,6 +1,7 @@
 package org.apereo.cas.authentication.attribute;
 
 import module java.base;
+import org.apereo.cas.authentication.CoreAuthenticationUtils;
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.configuration.model.core.cache.SimpleCacheProperties;
@@ -24,6 +25,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.Strings;
 import org.apache.commons.lang3.tuple.Pair;
 import org.hjson.JsonValue;
+import org.jooq.lambda.Unchecked;
 import org.jspecify.annotations.Nullable;
 import org.springframework.beans.factory.DisposableBean;
 import org.springframework.core.io.Resource;
@@ -190,8 +192,13 @@ public abstract class AbstractAttributeDefinitionStore implements AttributeDefin
         final String key,
         final AttributeDefinitionResolutionContext context) {
         val result = locateAttributeDefinition(key);
+        val dependencyValues = result
+            .map(definition -> resolveDependencies(definition, context))
+            .orElseGet(LinkedHashMap::new);
         return result.flatMap(definition -> FunctionUtils.doUnchecked(() -> {
-            val currentValues = definition.resolveAttributeValues(context.withScope(this.scope));
+            val resultingAttributes = CoreAuthenticationUtils.mergeAttributes(context.getAttributes(), dependencyValues);
+            val effectiveContext = context.withScope(this.scope).withAttributes(resultingAttributes);
+            val currentValues = definition.resolveAttributeValues(effectiveContext);
             return Optional.of(Pair.of(definition, currentValues));
         }));
     }
@@ -300,6 +307,41 @@ public abstract class AbstractAttributeDefinitionStore implements AttributeDefin
             }, Map::<String, AttributeDefinition>of).get();
     }
 
+
+    private Map<String, List<Object>> resolveDependencies(
+        final AttributeDefinition definition,
+        final AttributeDefinitionResolutionContext context) {
+        val resolved = new LinkedHashMap<String, List<Object>>();
+        resolveDependencies(definition, context, resolved, new LinkedHashSet<>());
+        return resolved;
+    }
+
+    private void resolveDependencies(
+        final AttributeDefinition definition,
+        final AttributeDefinitionResolutionContext context,
+        final Map<String, List<Object>> resolved,
+        final Set<String> visiting) {
+
+        val dependsOn = definition.getDependsOn();
+        if (dependsOn == null || dependsOn.isEmpty()) {
+            return;
+        }
+
+        for (val dependencyKey : dependsOn) {
+            try {
+                val dependency = locateAttributeDefinition(dependencyKey)
+                    .orElseThrow(() -> new IllegalArgumentException("Attribute definition dependency cannot be found: " + dependencyKey));
+                resolveDependencies(dependency, context, resolved, visiting);
+                resolved.computeIfAbsent(dependencyKey, Unchecked.function(_ -> {
+                    val values = dependency.resolveAttributeValues(context.withScope(this.scope));
+                    return values == null ? List.of() : List.copyOf(values);
+                }));
+            } finally {
+                visiting.remove(dependencyKey);
+            }
+        }
+    }
+
     private static final class AttributeDefinitionExpiry implements Expiry<String, AttributeDefinition> {
         @Override
         public long expireAfterCreate(final String key, final AttributeDefinition value, final long currentTime) {
@@ -316,4 +358,6 @@ public abstract class AbstractAttributeDefinitionStore implements AttributeDefin
             return currentDuration;
         }
     }
+
+
 }

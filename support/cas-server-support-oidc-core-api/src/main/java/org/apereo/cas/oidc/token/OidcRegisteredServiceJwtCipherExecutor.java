@@ -5,7 +5,6 @@ import org.apereo.cas.oidc.issuer.OidcIssuerService;
 import org.apereo.cas.oidc.jwks.OidcJsonWebKeyCacheKey;
 import com.github.benmanes.caffeine.cache.LoadingCache;
 import org.jose4j.jwk.JsonWebKeySet;
-import org.jspecify.annotations.NonNull;
 
 /**
  * This is {@link OidcRegisteredServiceJwtCipherExecutor}.
@@ -20,14 +19,14 @@ public interface OidcRegisteredServiceJwtCipherExecutor {
      *
      * @return the default json web keystore cache
      */
-    LoadingCache<@NonNull OidcJsonWebKeyCacheKey, JsonWebKeySet> getDefaultJsonWebKeystoreCache();
+    LoadingCache<OidcJsonWebKeyCacheKey, JsonWebKeySet> getDefaultJsonWebKeystoreCache();
 
     /**
      * Gets registered service json web keystore cache.
      *
      * @return the registered service json web keystore cache
      */
-    LoadingCache<@NonNull OidcJsonWebKeyCacheKey, Optional<JsonWebKeySet>> getRegisteredServiceJsonWebKeystoreCache();
+    LoadingCache<OidcJsonWebKeyCacheKey, Optional<JsonWebKeySet>> getRegisteredServiceJsonWebKeystoreCache();
 
     /**
      * Gets oidc issuer service.

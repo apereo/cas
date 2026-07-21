@@ -7,7 +7,6 @@ import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.oidc.issuer.OidcIssuerService;
 import lombok.RequiredArgsConstructor;
 import lombok.val;
-import org.jspecify.annotations.NonNull;
 import org.springframework.beans.factory.FactoryBean;
 import org.springframework.context.ConfigurableApplicationContext;
 
@@ -18,7 +17,7 @@ import org.springframework.context.ConfigurableApplicationContext;
  * @since 5.1.0
  */
 @RequiredArgsConstructor
-public class OidcServerDiscoverySettingsFactory implements FactoryBean<@NonNull OidcServerDiscoverySettings> {
+public class OidcServerDiscoverySettingsFactory implements FactoryBean<OidcServerDiscoverySettings> {
     protected final CasConfigurationProperties casProperties;
 
     protected final OidcIssuerService issuerService;

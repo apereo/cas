@@ -167,10 +167,10 @@ while (( "$#" )); do
           for tag in "${CHANGED_CATEGORIES[@]}"; do
              category+="${tag} "
           done
+          formatted=$(printf '%s\n' "$category" | awk '{ for (i = 1; i <= NF; i++) print "  - " $i }')
+          printf "👷 ${GREEN}Test categories for current changeset are:\n${formatted} ${ENDCOLOR}\n\n"
         fi
-        formatted=$(printf '%s\n' "$category" | awk '{ for (i = 1; i <= NF; i++) print "  - " $i }')
-        printf "👷 ${GREEN}Test categories for current changeset are:\n${formatted} ${ENDCOLOR}\n\n"
-        
+
         for item in $(echo "$category" | sed "s/,/ /g")
         do
             categoryItem=$(echo "${item}" | awk '{print tolower($0)}')
@@ -501,10 +501,12 @@ while (( "$#" )); do
                 ;;
             mongodbmfa)
                 isDockerOnLinux && ./ci/tests/mongodb/run-mongodb-server.sh || exit 1
+                isDockerOnLinux && ./ci/tests/mongodb/run-mongodb-server-clustered.sh || exit 1
                 task+="testMongoDbMFA "
                 ;;
             mongo|mongodb)
                 isDockerOnLinux && ./ci/tests/mongodb/run-mongodb-server.sh || exit 1
+                isDockerOnLinux && ./ci/tests/mongodb/run-mongodb-server-clustered.sh || exit 1
                 task+="testMongoDb "
                 ;;
             mysql)
@@ -557,10 +559,12 @@ while (( "$#" )); do
                 ;;
             redis)
                 isDockerOnLinux && ./ci/tests/redis/run-redis-server.sh || exit 1
+                isDockerOnLinux && ./ci/tests/redis/run-redis-server.sh --clustered || exit 1
                 task+="testRedis "
                 ;;
             activemq|amq|jms|rabbitmq|artemis|amqp)
                 isDockerOnLinux && ./ci/tests/rabbitmq/run-rabbitmq-server.sh || exit 1
+                isDockerOnLinux && ./ci/tests/rabbitmq/run-rabbitmq-server-clustered.sh || exit 1
                 task+="testAMQP "
                 ;;
             *)

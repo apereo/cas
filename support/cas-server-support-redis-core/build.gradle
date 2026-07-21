@@ -3,6 +3,8 @@ apply plugin: "org.apereo.cas.project-conventions"
 description = "Adds shared Redis support used by CAS Redis-backed features."
 dependencies {
     implementation libraries.redis
+
+    api project(":api:cas-server-core-api-ha")
     
     implementation project(":core:cas-server-core-util-api")
     implementation project(":core:cas-server-core-configuration-api")

@@ -12,7 +12,6 @@ import org.apereo.cas.util.crypto.CipherExecutor;
 import com.github.benmanes.caffeine.cache.Cache;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-import org.jspecify.annotations.NonNull;
 import org.springframework.context.ConfigurableApplicationContext;
 import software.amazon.awssdk.services.dynamodb.DynamoDbClient;
 import software.amazon.awssdk.services.dynamodb.model.AttributeValue;
@@ -31,7 +30,7 @@ public class DynamoDbSamlIdPMetadataLocator extends AbstractSamlIdPMetadataLocat
     private final CasConfigurationProperties casProperties;
 
     public DynamoDbSamlIdPMetadataLocator(final CipherExecutor<String, String> metadataCipherExecutor,
-                                          final Cache<@NonNull String, SamlIdPMetadataDocument> metadataCache,
+                                          final Cache<String, SamlIdPMetadataDocument> metadataCache,
                                           final DynamoDbClient dynamoDbClient,
                                           final ConfigurableApplicationContext applicationContext,
                                           final CasConfigurationProperties casProperties) {

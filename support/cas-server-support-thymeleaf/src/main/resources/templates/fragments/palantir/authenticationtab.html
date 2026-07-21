@@ -16,6 +16,7 @@
                 <li class="d-none"><a id="delegatedclients" href="#delegatedclients-tab">External Identity Providers</a></li>
                 <li class="d-none"><a id="passwordmanagement" href="#passwordmanagement-tab">Password Management</a></li>
                 <li class="d-none"><a id="surrogacy" href="#surrogacy-tab">Impersonation</a></li>
+                <li class="d-none"><a id="passwordless" href="#passwordlessauthn-tab">Passwordless Authentication</a></li>
               </ul>
 
 
@@ -206,6 +207,142 @@
                         <select id="surrogateAccountsDropdown" class="jqueryui-selectmenu"></select>
                     </label>
                 </div>
+            </div>
+
+            <div id="passwordlessauthn-tab">
+                <section class="passwordless-account-panel">
+                    <p>
+                        Locate a passwordless account and review its contact channels, authentication options,
+                        delegated clients, and resolved attributes.
+                    </p>
+
+                    <form id="fmPasswordlessAccount" class="passwordless-account-search mt-3">
+                        <label for="passwordlessUsername"
+                               class="mdc-text-field mdc-text-field--outlined mdc-text-field--with-leading-icon passwordless-account-search-field">
+                            <i class="mdi mdi-account-search mdc-text-field__icon mdc-text-field__icon--leading"
+                               aria-hidden="true"></i>
+                            <input class="mdc-text-field__input form-control" type="text"
+                                   name="passwordlessUsername" id="passwordlessUsername"
+                                   autocomplete="off" aria-labelledby="passwordlessUsernameLabel" required/>
+                            <span class="mdc-notched-outline">
+                                <span class="mdc-notched-outline__leading"></span>
+                                <span class="mdc-notched-outline__notch">
+                                    <span class="mdc-floating-label" id="passwordlessUsernameLabel">Username</span>
+                                </span>
+                                <span class="mdc-notched-outline__trailing"></span>
+                            </span>
+                        </label>
+                        <button type="submit" id="fetchPasswordlessAccountButton"
+                                class="mdc-button mdc-button--raised passwordless-account-search-button">
+                            <span class="mdc-button__label">
+                                <i class="mdc-tab__icon mdi mdi-magnify" aria-hidden="true"></i>
+                                Look Up Account
+                            </span>
+                        </button>
+                    </form>
+
+                    <div id="passwordlessAccountLookupMessage"
+                         class="banner passwordless-account-message d-none mt-3"
+                         role="status" aria-live="polite">
+                        <i class="mdi" aria-hidden="true"></i>
+                        <span class="passwordless-account-message-text"></span>
+                    </div>
+
+                    <section id="passwordlessAccountResult"
+                             class="mdc-card passwordless-account-card d-none mt-4"
+                             aria-live="polite" aria-label="Passwordless account details">
+                        <header class="passwordless-account-card-header">
+                            <span class="passwordless-account-avatar" aria-hidden="true">
+                                <i class="mdi mdi-account-key"></i>
+                            </span>
+                            <div class="passwordless-account-identity">
+                                <span class="passwordless-account-eyebrow">Passwordless account</span>
+                                <h3 id="passwordlessAccountName" class="mt-0 mb-1"></h3>
+                                <span class="passwordless-account-username">
+                                    <i class="mdi mdi-account-outline" aria-hidden="true"></i>
+                                    <span id="passwordlessAccountUsername"></span>
+                                </span>
+                            </div>
+                            <span id="passwordlessAccountContactStatus" class="passwordless-account-contact-status"></span>
+                        </header>
+
+                        <div class="passwordless-account-card-body">
+                            <div class="passwordless-account-detail-grid" aria-label="Account contact details">
+                                <article class="passwordless-account-detail">
+                                    <i class="mdi mdi-email-outline" aria-hidden="true"></i>
+                                    <div>
+                                        <span class="passwordless-account-detail-label">Email address</span>
+                                        <span id="passwordlessAccountEmail" class="passwordless-account-detail-value"></span>
+                                    </div>
+                                </article>
+                                <article class="passwordless-account-detail">
+                                    <i class="mdi mdi-phone-outline" aria-hidden="true"></i>
+                                    <div>
+                                        <span class="passwordless-account-detail-label">Phone number</span>
+                                        <span id="passwordlessAccountPhone" class="passwordless-account-detail-value"></span>
+                                    </div>
+                                </article>
+                                <article class="passwordless-account-detail">
+                                    <i class="mdi mdi-database-outline" aria-hidden="true"></i>
+                                    <div>
+                                        <span class="passwordless-account-detail-label">Account source</span>
+                                        <span id="passwordlessAccountSource" class="passwordless-account-detail-value"></span>
+                                    </div>
+                                </article>
+                            </div>
+
+                            <h4 class="passwordless-account-section-title">
+                                <i class="mdi mdi-shield-key-outline" aria-hidden="true"></i>
+                                Authentication Capabilities
+                            </h4>
+                            <div class="passwordless-account-capability-grid">
+                                <article class="passwordless-account-capability">
+                                    <span>Multifactor authentication</span>
+                                    <span id="passwordlessAccountMfaEligibility" class="passwordless-account-state"></span>
+                                </article>
+                                <article class="passwordless-account-capability">
+                                    <span>Delegated authentication</span>
+                                    <span id="passwordlessAccountDelegatedEligibility" class="passwordless-account-state"></span>
+                                </article>
+                                <article class="passwordless-account-capability">
+                                    <span>Password fallback</span>
+                                    <span id="passwordlessAccountRequestPassword" class="passwordless-account-state"></span>
+                                </article>
+                                <article class="passwordless-account-capability">
+                                    <span>Authentication selection menu</span>
+                                    <span id="passwordlessAccountSelectionMenu" class="passwordless-account-state"></span>
+                                </article>
+                            </div>
+
+                            <section class="passwordless-account-section">
+                                <h4 class="passwordless-account-section-title">
+                                    <i class="mdi mdi-account-switch-outline" aria-hidden="true"></i>
+                                    Allowed Delegated Clients
+                                </h4>
+                                <div id="passwordlessAccountDelegatedClients" class="passwordless-account-chip-list"></div>
+                            </section>
+
+                            <section class="passwordless-account-section">
+                                <h4 class="passwordless-account-section-title">
+                                    <i class="mdi mdi-card-account-details-outline" aria-hidden="true"></i>
+                                    Resolved Attributes
+                                </h4>
+                                <div class="mdc-data-table table-responsive passwordless-account-attributes-table-container">
+                                    <table id="passwordlessAccountAttributesTable"
+                                           class="mdc-data-table__table table table-striped noborder">
+                                        <thead>
+                                        <tr class="mdc-data-table__header-row">
+                                            <th class="mdc-data-table__header-cell" role="columnheader" scope="col">Attribute</th>
+                                            <th class="mdc-data-table__header-cell" role="columnheader" scope="col">Value(s)</th>
+                                        </tr>
+                                        </thead>
+                                        <tbody class="mdc-data-table__content"></tbody>
+                                    </table>
+                                </div>
+                            </section>
+                        </div>
+                    </section>
+                </section>
             </div>
         </div>
     </div>

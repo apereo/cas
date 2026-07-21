@@ -1,7 +1,19 @@
 <EntitiesDescriptor Name="urn:mace:shibboleth:testshib:two"
                     xmlns="urn:oasis:names:tc:SAML:2.0:metadata" xmlns:ds="http://www.w3.org/2000/09/xmldsig#"
-                    xmlns:mdalg="urn:oasis:names:tc:SAML:metadata:algsupport" xmlns:mdui="urn:oasis:names:tc:SAML:metadata:ui">
+                    xmlns:mdalg="urn:oasis:names:tc:SAML:metadata:algsupport"
+                    xmlns:mdattr="urn:oasis:names:tc:SAML:metadata:attribute"
+                    xmlns:saml="urn:oasis:names:tc:SAML:2.0:assertion"
+                    xmlns:mdui="urn:oasis:names:tc:SAML:metadata:ui">
 
+    <Extensions>
+        <mdattr:EntityAttributes>
+            <saml:Attribute Name="http://shibboleth.net/ns/profiles/defaultAuthenticationMethods"
+                            NameFormat="urn:oasis:names:tc:SAML:2.0:attrname-format:uri">
+                <saml:AttributeValue>http://schemas.microsoft.com/claims/multipleauthn</saml:AttributeValue>
+            </saml:Attribute>
+        </mdattr:EntityAttributes>
+    </Extensions>
+    
     <EntityDescriptor entityID="https://mockypost.io"
                       xmlns:md="urn:oasis:names:tc:SAML:2.0:metadata"
                       xmlns:ds="http://www.w3.org/2000/09/xmldsig#"
@@ -206,6 +218,19 @@
                 <saml:Attribute Name="http://macedir.org/entity-category" NameFormat="urn:oasis:names:tc:SAML:2.0:attrname-format:uri">
                     <saml:AttributeValue>https://refeds.org/category/anonymous</saml:AttributeValue>
                 </saml:Attribute>
+                <saml:Attribute Name="http://shibboleth.net/ns/profiles/defaultAuthenticationMethods"
+                                NameFormat="urn:oasis:names:tc:SAML:2.0:attrname-format:uri">
+                    <saml:AttributeValue>https://refeds.org/profile/mfa</saml:AttributeValue>
+                </saml:Attribute>
+
+                <saml:Attribute xmlns:saml="urn:oasis:names:tc:SAML:2.0:assertion"
+                                Name="http://shibboleth.net/ns/attributes/naming/saml2"
+                                NameFormat="urn:oasis:names:tc:SAML:2.0:attrname-format:uri">
+                    <saml:AttributeValue>mail email</saml:AttributeValue>
+                    <saml:AttributeValue>givenName first_name</saml:AttributeValue>
+                    <saml:AttributeValue>sn last_name</saml:AttributeValue>
+                </saml:Attribute>
+
             </mdattr:EntityAttributes>
 
             <mdalg:DigestMethod Algorithm="http://www.w3.org/2001/04/xmlenc#sha512"/>
@@ -381,8 +406,7 @@
         </ContactPerson>
 
     </EntityDescriptor>
-
-
+    
     <EntityDescriptor entityID="https://cassp.example.org"
                       xmlns:md="urn:oasis:names:tc:SAML:2.0:metadata"
                       xmlns:ds="http://www.w3.org/2000/09/xmldsig#"
@@ -521,7 +545,6 @@
 
     </EntityDescriptor>
 
-
     <EntityDescriptor entityID="urn:soap:slo:example"
                       xmlns:md="urn:oasis:names:tc:SAML:2.0:metadata"
                       xmlns:ds="http://www.w3.org/2000/09/xmldsig#"
@@ -610,7 +633,6 @@
 
 
     </EntityDescriptor>
-
 
     <EntityDescriptor entityID="no:slo:service"
                       xmlns:md="urn:oasis:names:tc:SAML:2.0:metadata"

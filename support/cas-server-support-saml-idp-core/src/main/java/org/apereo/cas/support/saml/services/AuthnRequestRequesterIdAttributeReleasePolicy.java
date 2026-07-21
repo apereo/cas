@@ -42,7 +42,7 @@ public class AuthnRequestRequesterIdAttributeReleasePolicy extends BaseSamlRegis
         final RegisteredServiceAttributeReleasePolicyContext context) {
 
         val releaseAttributes = new HashMap<String, List<Object>>();
-        getSamlAuthnRequest(context)
+        SamlIdPSAttributeReleasePolicyUtils.getSamlAuthnRequest(context)
             .filter(authnRequest -> authnRequest.getScoping() != null)
             .filter(authnRequest -> !authnRequest.getScoping().getRequesterIDs().isEmpty())
             .ifPresent(authnRequest -> {

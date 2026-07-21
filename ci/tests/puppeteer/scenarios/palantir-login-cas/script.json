@@ -17,7 +17,8 @@
 
     "--cas.authn.attribute-repository.stub.attributes.uid=casuser",
     "--cas.authn.attribute-repository.stub.attributes.memberOf=admin,staff,superuser",
-    
+    "--cas.authn.attribute-repository.stub.attributes.role=admin,palantir",
+
     "--cas.palantir.cas-authentication.required-attribute-name=memberOf",
     "--cas.palantir.cas-authentication.required-attribute-value=^s.+$"
   ]

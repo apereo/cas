@@ -109,7 +109,7 @@ public abstract class BaseSamlProfileSamlResponseBuilder<T extends XMLObject> ex
     protected boolean encryptAssertionFor(final SamlProfileBuilderContext context) {
         return context.getRegisteredService().isEncryptAssertions()
             || SamlIdPUtils.doesEntityDescriptorMatchEntityAttribute(context.getAdaptor().getEntityDescriptor(),
-            List.of(MetadataEntityAttributeQuery.of(SamlIdPConstants.KnownEntityAttributes.SHIBBOLETH_ENCRYPT_ASSERTIONS.getName(),
+            List.of(MetadataEntityAttributeQuery.of(SamlIdPConstants.KnownEntityAttributes.SHIBBOLETH_ENCRYPT_ASSERTIONS,
                 Attribute.URI_REFERENCE, List.of(Boolean.TRUE.toString()))));
     }
 }

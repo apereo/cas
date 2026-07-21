@@ -36,7 +36,7 @@ public class DefaultSingleLogoutMessageCreator implements SingleLogoutMessageCre
                                           + "IssueInstant=\"%s\"><saml:NameID xmlns:saml=\"urn:oasis:names:tc:SAML:2.0:assertion\">%s"
                                           + "</saml:NameID><samlp:SessionIndex>%s</samlp:SessionIndex></samlp:LogoutRequest>",
             GENERATOR.getNewTicketId("LR"),
-            new ISOStandardDateFormat().getCurrentDateAndTime(),
+            new ISOStandardDateFormat(ZoneOffset.UTC).getCurrentDateAndTime(),
             Objects.requireNonNull(authentication).getPrincipal().getId(),
             request.getTicketId());
 

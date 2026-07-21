@@ -51,7 +51,6 @@ import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
 import com.github.benmanes.caffeine.cache.LoadingCache;
 import org.jose4j.jwk.JsonWebKeySet;
-import org.jspecify.annotations.NonNull;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -81,7 +80,7 @@ class OidcResponseConfiguration {
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public OAuth20AccessTokenResponseGenerator oidcAccessTokenResponseGenerator(
             @Qualifier(OidcConfigurationContext.BEAN_NAME)
-            final ObjectProvider<@NonNull OidcConfigurationContext> oidcConfigurationContext) {
+            final ObjectProvider<OidcConfigurationContext> oidcConfigurationContext) {
             return new OidcAccessTokenResponseGenerator(oidcConfigurationContext);
         }
 

@@ -3,7 +3,9 @@ package org.apereo.cas.oidc.claims;
 import module java.base;
 import org.apereo.cas.authentication.attribute.AttributeDefinitionStore;
 import org.apereo.cas.authentication.attribute.DefaultAttributeDefinition;
+import org.apereo.cas.oidc.OidcConstants;
 import org.apereo.cas.oidc.assurance.AssuranceVerifiedClaimsProducer;
+import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.JsonUtils;
 import com.google.common.base.Splitter;
@@ -29,7 +31,7 @@ public class OidcSimpleIdTokenClaimCollector implements OidcIdTokenClaimCollecto
     protected final AssuranceVerifiedClaimsProducer assuranceVerifiedClaimsProducer;
 
     @Override
-    public void conclude(final JwtClaims claims) {
+    public void conclude(final RegisteredService registeredService, final JwtClaims claims) {
         val claimNames = Set.copyOf(claims.getClaimNames());
         claimNames.forEach(claimName ->
             attributeDefinitionStore.locateAttributeDefinition(claimName, OidcAttributeDefinition.class)
@@ -41,12 +43,12 @@ public class OidcSimpleIdTokenClaimCollector implements OidcIdTokenClaimCollecto
     }
 
     @Override
-    public void collect(final JwtClaims jwtClaims, final String name, final List<Object> values) {
+    public void collect(final RegisteredService registeredService, final JwtClaims jwtClaims, final String name, final List<Object> values) {
         if (!values.isEmpty()) {
             val attributeDefinition = attributeDefinitionStore.locateAttributeDefinition(name, OidcAttributeDefinition.class)
                 .or(() -> attributeDefinitionStore.locateAttributeDefinitionByName(name, OidcAttributeDefinition.class));
             val finalValue = attributeDefinition.map(definition -> definition.toAttributeValue(values))
-                .orElseGet(() -> values.size() == 1 ? values.getFirst() : values);
+                .orElseGet(() -> (values.size() == 1 && !name.equalsIgnoreCase(OidcConstants.AMR)) ? values.getFirst() : values);
 
             attributeDefinition
                 .stream()

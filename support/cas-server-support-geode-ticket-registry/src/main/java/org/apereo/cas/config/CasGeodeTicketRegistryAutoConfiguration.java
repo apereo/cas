@@ -3,10 +3,11 @@ package org.apereo.cas.config;
 import module java.base;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.features.CasFeatureModule;
-import org.apereo.cas.configuration.model.support.geode.GeodeProperties;
+import org.apereo.cas.ha.ClusterTopologyManager;
 import org.apereo.cas.ticket.TicketCatalog;
 import org.apereo.cas.ticket.catalog.CasTicketCatalogConfigurationValuesProvider;
 import org.apereo.cas.ticket.registry.GeodeCache;
+import org.apereo.cas.ticket.registry.GeodeClusterTopologyManager;
 import org.apereo.cas.ticket.registry.GeodeTicketDocument;
 import org.apereo.cas.ticket.registry.GeodeTicketRegistry;
 import org.apereo.cas.ticket.registry.TicketRegistry;
@@ -48,6 +49,8 @@ public class CasGeodeTicketRegistryAutoConfiguration {
     @Bean
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     public TicketRegistry ticketRegistry(
+        @Qualifier("geodeTicketCaches")
+        final Map<String, GeodeCache> geodeTicketCaches,
         @Qualifier(TicketCatalog.BEAN_NAME)
         final TicketCatalog ticketCatalog,
         @Qualifier(TicketSerializationManager.BEAN_NAME)
@@ -56,9 +59,8 @@ public class CasGeodeTicketRegistryAutoConfiguration {
         final CasConfigurationProperties casProperties) {
         val geodeProperties = casProperties.getTicket().getRegistry().getGeode();
         val cipher = CoreTicketUtils.newTicketRegistryCipherExecutor(geodeProperties.getCrypto(), "geode");
-        val geodeCaches = buildTicketCaches(geodeProperties, ticketCatalog);
         return new GeodeTicketRegistry(cipher, ticketSerializationManager,
-            ticketCatalog, applicationContext, geodeCaches, geodeProperties);
+            ticketCatalog, applicationContext, geodeTicketCaches, geodeProperties);
     }
 
     @ConditionalOnMissingBean(name = "geodeTicketCatalogConfigurationValuesProvider")
@@ -69,18 +71,42 @@ public class CasGeodeTicketRegistryAutoConfiguration {
         };
     }
 
-    private static Map<String, GeodeCache> buildTicketCaches(final GeodeProperties properties,
-                                                             final TicketCatalog ticketCatalog) {
-        val cacheFactory = new CacheFactory()
+    @Bean
+    @ConditionalOnMissingBean(name = "geodeCacheFactory")
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+    public CacheFactory geodeCacheFactory(final CasConfigurationProperties casProperties) {
+        val properties = casProperties.getTicket().getRegistry().getGeode();
+        val factory = new CacheFactory()
             .set("name", "CasGeodeCache")
             .set("mcast-port", String.valueOf(properties.getMulticastPort()))
             .set("log-level", LOGGER.isDebugEnabled() ? "DEBUG" : "WARN")
             .setPdxReadSerialized(true)
             .setPdxSerializer(new ReflectionBasedAutoSerializer(GeodeTicketDocument.class.getName()));
-        
-        if (StringUtils.isNotBlank(properties.getLocators()) && !Strings.CI.equals("none", properties.getLocators())) {
-            cacheFactory.set("locators", properties.getLocators());
+        if (StringUtils.isNotBlank(properties.getLocators())
+            && !Strings.CI.equals("none", properties.getLocators())) {
+            factory.set("locators", properties.getLocators());
         }
+        return factory;
+    }
+
+    @Bean
+    @ConditionalOnMissingBean(name = "geodeClusterTopologyManager")
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+    public ClusterTopologyManager geodeClusterTopologyManager(
+        @Qualifier("geodeTicketCaches")
+        final Map<String, GeodeCache> geodeTicketCaches) {
+        val caches = geodeTicketCaches.values().stream().map(GeodeCache::cache).toList();
+        return new GeodeClusterTopologyManager(caches);
+    }
+    
+    @Bean
+    @ConditionalOnMissingBean(name = "geodeTicketCaches")
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+    public Map<String, GeodeCache> geodeTicketCaches(
+        @Qualifier("geodeCacheFactory") final CacheFactory cacheFactory,
+        final CasConfigurationProperties casProperties,
+        @Qualifier(TicketCatalog.BEAN_NAME) final TicketCatalog ticketCatalog) {
+
         val cache = cacheFactory.create();
         val definitions = ticketCatalog.findAll();
         return definitions
@@ -92,7 +118,7 @@ public class CasGeodeTicketRegistryAutoConfiguration {
                 regionFactory.setStatisticsEnabled(true);
                 regionFactory.setEntryTimeToLive(timeToLive);
                 val region = regionFactory.create(storageName + "Region");
-                
+
                 val queryService = cache.getQueryService();
                 val indexSource = "/%s t".formatted(region.getName());
                 List.of("id", "kind", "principal", "prefix", "attributes").forEach(Unchecked.consumer(field ->

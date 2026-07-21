@@ -15,6 +15,7 @@ dependencies {
     implementation libraries.lz4
 
     api project(":api:cas-server-core-api-util")
+    api project(":api:cas-server-core-api-ha")
     
     implementation project(":core:cas-server-core-logging")
     implementation project(":core:cas-server-core-tickets-api")

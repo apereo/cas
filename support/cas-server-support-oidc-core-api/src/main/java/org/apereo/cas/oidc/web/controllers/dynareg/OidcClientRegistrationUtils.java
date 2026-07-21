@@ -11,6 +11,7 @@ import org.apereo.cas.services.RegisteredServiceProperty.RegisteredServiceProper
 import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.support.oauth.OAuth20GrantTypes;
 import org.apereo.cas.support.oauth.OAuth20ResponseTypes;
+import org.apereo.cas.support.oauth.services.OAuthRegisteredServiceClientSecret;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.DateTimeUtils;
 import org.apereo.cas.util.ResourceUtils;
@@ -45,10 +46,17 @@ public class OidcClientRegistrationUtils {
         clientResponse.setApplicationType(registeredService.getApplicationType());
         clientResponse.setClientId(registeredService.getClientId());
 
-        val decodedSecret = configurationContext.getRegisteredServiceCipherExecutor()
-            .decode(registeredService.getClientSecret());
-        clientResponse.setClientSecret(decodedSecret);
+        val decodedSecret = registeredService
+            .getClientSecrets()
+            .stream()
+            .map(secret -> {
+                val decoded = configurationContext.getRegisteredServiceCipherExecutor().decode(secret.getValue());
+                return new OAuthRegisteredServiceClientSecret(Objects.requireNonNull(decoded), secret.getExpiration());
+            })
+            .findFirst()
+            .orElseThrow(() -> new IllegalArgumentException("No client secret is defined for service " + registeredService.getName()));
 
+        clientResponse.setClientSecret(decodedSecret.getValue());
         clientResponse.setSubjectType(registeredService.getSubjectType());
         clientResponse.setTokenEndpointAuthMethod(registeredService.getTokenEndpointAuthenticationMethod());
         clientResponse.setClientName(registeredService.getName());
@@ -96,7 +104,9 @@ public class OidcClientRegistrationUtils {
             val clientConfigUri = getClientConfigurationUri(registeredService, serverPrefix);
             clientResponse.setRegistrationClientUri(clientConfigUri);
         });
-        clientResponse.setClientSecretExpiresAt(registeredService.getClientSecretExpiration());
+        if (!decodedSecret.isWithoutExpiration()) {
+            clientResponse.setClientSecretExpiresAt(decodedSecret.toEffectiveExpiration().toEpochSecond());
+        }
         val dynamicRegistrationPropName = RegisteredServiceProperty.RegisteredServiceProperties.OIDC_DYNAMIC_CLIENT_REGISTRATION.getPropertyName();
         if (registeredService.getProperties().containsKey(dynamicRegistrationPropName)) {
             val dt = registeredService.getProperties()

@@ -19,9 +19,9 @@ import jakarta.servlet.http.HttpServletResponse;
  * @since 6.4.0
  */
 public class OidcLocaleChangeInterceptor extends CasLocaleChangeInterceptor {
-    public OidcLocaleChangeInterceptor(final ObjectProvider<@NonNull CasConfigurationProperties> casProperties,
-                                       final ObjectProvider<@NonNull ArgumentExtractor> argumentExtractor,
-                                       final ObjectProvider<@NonNull ServicesManager> servicesManager) {
+    public OidcLocaleChangeInterceptor(final ObjectProvider<CasConfigurationProperties> casProperties,
+                                       final ObjectProvider<ArgumentExtractor> argumentExtractor,
+                                       final ObjectProvider<ServicesManager> servicesManager) {
         super(casProperties, argumentExtractor, servicesManager);
     }
 

@@ -20,7 +20,7 @@ category: High Availability
 
 CAS provides a Consul-enabled service discovery server that is based on [Spring Cloud Consul](https://cloud.spring.io/spring-cloud-consul/) and bootstrapped via [Spring Cloud](http://cloud.spring.io/spring-cloud-static/spring-cloud.html).
 
-### Installation
+## Installation
 
 - To run the Consul discovery server, please [see this guide](https://www.consul.io/) for installation instructions. A simple Consul installation may be run as `consul agent -dev -ui`
 - Look for a suitable and relevant ready-made Docker image via `docker search consul`.
@@ -39,7 +39,7 @@ Support is added by including the following dependency in the WAR overlay:
 
 {% include_cached casproperties.html thirdParty="spring.cloud.consul,spring.cloud.config.discovery" %}
 
-### Troubleshooting
+## Troubleshooting
 
 To enable additional logging, configure the log4j configuration file to add the following levels:
 
@@ -49,3 +49,9 @@ To enable additional logging, configure the log4j configuration file to add the 
   <AppenderRef ref="casFile"/>
 </Logger>
 ```
+
+## Actuator Endpoints
+
+The following endpoints are provided by CAS:
+
+{% include_cached actuators.html endpoints="clusterTopology" %}

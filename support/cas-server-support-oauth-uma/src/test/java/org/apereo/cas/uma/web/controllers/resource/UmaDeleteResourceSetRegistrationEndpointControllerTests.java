@@ -29,7 +29,7 @@ class UmaDeleteResourceSetRegistrationEndpointControllerTests extends BaseUmaEnd
         val resourceId = ((Number) model.get("resourceId")).longValue();
 
         result = performUmaRequest(HttpMethod.DELETE,
-            OAuth20Constants.UMA_RESOURCE_SET_REGISTRATION_URL + "/" + resourceId,
+            OAuth20Constants.UMA_RESOURCE_SET_REGISTRATION_URL + '/' + resourceId,
             results.getLeft(), results.getMiddle());
         model = getMappedResponseBody(result);
         assertTrue(model.containsKey("code"));
@@ -39,7 +39,7 @@ class UmaDeleteResourceSetRegistrationEndpointControllerTests extends BaseUmaEnd
     @Test
     void verifyEmpty() throws Throwable {
         val results = authenticateUmaRequestWithProtectionScope();
-        var result = performUmaRequest(HttpMethod.DELETE,
+        val result = performUmaRequest(HttpMethod.DELETE,
             OAuth20Constants.UMA_RESOURCE_SET_REGISTRATION_URL + "/-1",
             results.getLeft(), results.getMiddle());
         assertEquals(HttpStatus.BAD_REQUEST.value(), result.getResponse().getStatus());
@@ -48,20 +48,18 @@ class UmaDeleteResourceSetRegistrationEndpointControllerTests extends BaseUmaEnd
     @Test
     void verifyBadClientId() throws Throwable {
         val results = authenticateUmaRequestWithProtectionScope();
-        var body = createUmaResourceRegistrationRequest().toJson();
+        val body = createUmaResourceRegistrationRequest().toJson();
         var result = performUmaRequest(HttpMethod.POST, OAuth20Constants.UMA_RESOURCE_SET_REGISTRATION_URL,
             body, results.getLeft(), results.getMiddle());
-        var model = getMappedResponseBody(result);
+        val model = getMappedResponseBody(result);
         val resourceId = ((Number) model.get("resourceId")).longValue();
 
         val resourceSet = umaResourceSetRepository.getById(resourceId).orElseThrow();
         resourceSet.setOwner("testuser");
         umaResourceSetRepository.save(resourceSet);
-
-        val exception = assertThrows(RuntimeException.class,
-            () -> performUmaRequest(HttpMethod.DELETE,
-                OAuth20Constants.UMA_RESOURCE_SET_REGISTRATION_URL + "/" + resourceId,
-                results.getLeft(), results.getMiddle()));
-        assertTrue(exception.getMessage().contains("ClassCastException"));
+        result = performUmaRequest(HttpMethod.DELETE,
+            OAuth20Constants.UMA_RESOURCE_SET_REGISTRATION_URL + '/' + resourceId,
+            results.getLeft(), results.getMiddle());
+        assertEquals(HttpStatus.BAD_REQUEST.value(), result.getResponse().getStatus());
     }
 }

@@ -15,7 +15,6 @@ import lombok.val;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.jspecify.annotations.NonNull;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.core.io.Resource;
 
@@ -32,13 +31,13 @@ public class FileSystemSamlIdPMetadataLocator extends AbstractSamlIdPMetadataLoc
     private final File metadataLocation;
 
     public FileSystemSamlIdPMetadataLocator(final CipherExecutor cipherExecutor,
-                                            final Resource resource, final Cache<@NonNull String, SamlIdPMetadataDocument> metadataCache,
+                                            final Resource resource, final Cache<String, SamlIdPMetadataDocument> metadataCache,
                                             final ConfigurableApplicationContext applicationContext) throws Exception {
         this(cipherExecutor, resource.getFile(), metadataCache, applicationContext);
     }
 
     public FileSystemSamlIdPMetadataLocator(final CipherExecutor cipherExecutor, final File resource,
-                                            final Cache<@NonNull String, SamlIdPMetadataDocument> metadataCache,
+                                            final Cache<String, SamlIdPMetadataDocument> metadataCache,
                                             final ConfigurableApplicationContext applicationContext) {
         super(cipherExecutor, metadataCache, applicationContext);
         this.metadataLocation = resource;

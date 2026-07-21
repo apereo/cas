@@ -5,6 +5,7 @@ import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.features.CasFeatureModule;
 import org.apereo.cas.support.saml.services.EduPersonTargetedIdAttributeReleasePolicy;
 import org.apereo.cas.support.saml.services.GroovySamlRegisteredServiceAttributeReleasePolicy;
+import org.apereo.cas.support.saml.services.MappedEntityAttributesAttributeReleasePolicy;
 import org.apereo.cas.support.saml.services.MetadataEntityAttributesAttributeReleasePolicy;
 import org.apereo.cas.support.saml.services.MetadataRequestedAttributesAttributeReleasePolicy;
 import org.apereo.cas.support.saml.services.PatternMatchingEntityIdAttributeReleasePolicy;
@@ -43,6 +44,7 @@ class SamlIdPComponentSerializationConfiguration {
             plan.registerSerializableClass(MetadataEntityAttributesAttributeReleasePolicy.class);
             plan.registerSerializableClass(MetadataRequestedAttributesAttributeReleasePolicy.class);
             plan.registerSerializableClass(PatternMatchingEntityIdAttributeReleasePolicy.class);
+            plan.registerSerializableClass(MappedEntityAttributesAttributeReleasePolicy.class);
         };
     }
 }

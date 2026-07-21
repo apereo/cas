@@ -57,7 +57,7 @@ public class JsonAttributeDefinitionStore extends AbstractAttributeDefinitionSto
      * Watch store.
      */
     private void watchStore() {
-        FunctionUtils.doUnchecked(u -> {
+        FunctionUtils.doUnchecked(_ -> {
             if (resource != null && ResourceUtils.isFile(resource)) {
                 storeWatcherService = new FileWatcherService(resource.getFile(),
                     file -> importStore(new FileSystemResource(file)));

@@ -22,12 +22,12 @@ import org.springframework.kafka.core.KafkaOperations;
 public class RegisteredServiceKafkaDistributedCacheManager extends
     MappableDistributedCacheManager<RegisteredService, DistributedCacheObject<RegisteredService>> {
 
-    private final KafkaOperations<@NonNull String, @NonNull DistributedCacheObject<RegisteredService>> kafkaTemplate;
+    private final KafkaOperations<String, @NonNull DistributedCacheObject<RegisteredService>> kafkaTemplate;
 
     private final String topic;
 
     public RegisteredServiceKafkaDistributedCacheManager(
-        final KafkaOperations<@NonNull String, @NonNull DistributedCacheObject<RegisteredService>> kafkaTemplate, final String topic) {
+        final KafkaOperations<String, @NonNull DistributedCacheObject<RegisteredService>> kafkaTemplate, final String topic) {
         super(new ConcurrentHashMap<>());
         this.kafkaTemplate = kafkaTemplate;
         this.topic = topic;

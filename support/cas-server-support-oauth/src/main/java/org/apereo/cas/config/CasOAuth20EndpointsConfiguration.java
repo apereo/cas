@@ -4,6 +4,7 @@ import module java.base;
 import org.apereo.cas.audit.AuditableExecution;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.features.CasFeatureModule;
+import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.support.oauth.web.endpoints.OAuth20AccessTokenEndpointController;
 import org.apereo.cas.support.oauth.web.endpoints.OAuth20AuthorizeEndpointController;
@@ -13,13 +14,13 @@ import org.apereo.cas.support.oauth.web.endpoints.OAuth20DeviceUserCodeApprovalE
 import org.apereo.cas.support.oauth.web.endpoints.OAuth20IntrospectionEndpointController;
 import org.apereo.cas.support.oauth.web.endpoints.OAuth20RevocationEndpointController;
 import org.apereo.cas.support.oauth.web.endpoints.OAuth20UserProfileEndpointController;
+import org.apereo.cas.support.oauth.web.mgmt.OAuth20ClientSecretsEndpoint;
 import org.apereo.cas.support.oauth.web.mgmt.OAuth20TokenManagementEndpoint;
 import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.token.JwtBuilder;
 import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
 import org.apereo.cas.web.CasWebSecurityConfigurer;
 import org.apache.commons.lang3.Strings;
-import org.jspecify.annotations.NonNull;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.actuate.autoconfigure.endpoint.condition.ConditionalOnAvailableEndpoint;
@@ -114,11 +115,21 @@ class CasOAuth20EndpointsConfiguration {
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public OAuth20TokenManagementEndpoint oauth20TokenManagementEndpoint(
             @Qualifier(TicketRegistry.BEAN_NAME)
-            final ObjectProvider<@NonNull TicketRegistry> ticketRegistry,
+            final ObjectProvider<TicketRegistry> ticketRegistry,
             @Qualifier(JwtBuilder.ACCESS_TOKEN_JWT_BUILDER_BEAN_NAME)
-            final ObjectProvider<@NonNull JwtBuilder> accessTokenJwtBuilder,
+            final ObjectProvider<JwtBuilder> accessTokenJwtBuilder,
             final CasConfigurationProperties casProperties) {
             return new OAuth20TokenManagementEndpoint(casProperties, ticketRegistry, accessTokenJwtBuilder);
+        }
+        
+        @Bean
+        @ConditionalOnAvailableEndpoint
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+        public OAuth20ClientSecretsEndpoint oAuth20ClientSecretsEndpoint(
+            @Qualifier(ServicesManager.BEAN_NAME)
+            final ObjectProvider<ServicesManager> servicesManager,
+            final CasConfigurationProperties casProperties) {
+            return new OAuth20ClientSecretsEndpoint(servicesManager, casProperties);
         }
     }
 

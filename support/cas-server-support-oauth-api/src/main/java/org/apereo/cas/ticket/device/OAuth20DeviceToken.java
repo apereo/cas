@@ -38,4 +38,11 @@ public interface OAuth20DeviceToken extends Ticket {
      * @param userCode the user code
      */
     void setUserCode(String userCode);
+
+    /**
+     * Get requested scopes requested at the time of issuing this code.
+     *
+     * @return requested scopes.
+     */
+    Set<String> getScopes();
 }

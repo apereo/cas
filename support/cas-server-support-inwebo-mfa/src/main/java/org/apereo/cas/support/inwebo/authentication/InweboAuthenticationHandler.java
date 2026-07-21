@@ -14,7 +14,6 @@ import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
-import org.jspecify.annotations.NonNull;
 import org.springframework.beans.factory.ObjectProvider;
 
 /**
@@ -29,13 +28,13 @@ public class InweboAuthenticationHandler extends AbstractPreAndPostProcessingAut
 
     private final InweboService service;
 
-    private final ObjectProvider<@NonNull MultifactorAuthenticationProvider> multifactorAuthenticationProvider;
+    private final ObjectProvider<MultifactorAuthenticationProvider> multifactorAuthenticationProvider;
 
     public InweboAuthenticationHandler(
         final PrincipalFactory principalFactory,
         final InweboMultifactorAuthenticationProperties inweboProperties,
         final InweboService service,
-        final ObjectProvider<@NonNull MultifactorAuthenticationProvider> multifactorAuthenticationProvider) {
+        final ObjectProvider<MultifactorAuthenticationProvider> multifactorAuthenticationProvider) {
         super(inweboProperties.getName(), principalFactory, inweboProperties.getOrder());
         this.service = service;
         this.multifactorAuthenticationProvider = multifactorAuthenticationProvider;

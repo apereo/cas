@@ -103,12 +103,12 @@ class CasCoreUtilConfiguration {
         }
 
         @Bean
-        public static Converter<@NonNull ZonedDateTime, @NonNull String> zonedDateTimeToStringConverter() {
+        public static Converter<ZonedDateTime, @NonNull String> zonedDateTimeToStringConverter() {
             return new Converters.ZonedDateTimeToStringConverter();
         }
 
         @Bean
-        public static Converter<@NonNull String, @NonNull Resource> stringToResourceConverter() {
+        public static Converter<String, @NonNull Resource> stringToResourceConverter() {
             return new Converters.StringToResourceConverter();
         }
 
@@ -154,7 +154,7 @@ class CasCoreUtilConfiguration {
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @ConditionalOnMissingBean(name = "ticketCatalogMessageSanitationContributor")
         public MessageSanitationContributor defaultMessageSanitationContributor(
-            @Qualifier(TicketCatalog.BEAN_NAME) final ObjectProvider<@NonNull TicketCatalog> ticketCatalog) {
+            @Qualifier(TicketCatalog.BEAN_NAME) final ObjectProvider<TicketCatalog> ticketCatalog) {
             return new TicketCatalogMessageSanitationContributor(ticketCatalog);
         }
 
