@@ -7,10 +7,9 @@ fi
 export TMPDIR="${tmp}"
 SCENARIO_DIR="${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}"
 TEMP_DIR="${SCENARIO_DIR}/temp"
-REPO_URL="https://github.com/pac4j/simple-spring-boot-pac4j-demos.git"
-REPO_DIR="${TMPDIR}/simple-spring-boot-pac4j-demos"
-PID_FILE="${TEMP_DIR}/pac4j-demo.pid"
+CONTAINER_NAME="pac4j-oidc-federation-rp"
 LOG_FILE="${TEMP_DIR}/pac4j-demo.log"
+PAC4J_DEMO_IMAGE="${PAC4J_DEMO_IMAGE:-leleuj/simple-spring-boot-pac4j-demos:cicas803}"
 CAS_CERT_FILE="${CAS_CERT:-${PWD}/ci/tests/puppeteer/overlay/server.crt}"
 TRUSTSTORE_FILE="${TEMP_DIR}/pac4j-demo-truststore.p12"
 TRUSTSTORE_PASSWORD="changeit"
@@ -25,11 +24,6 @@ finish() {
 }
 is_port_listened() {
   lsof -tiTCP:8080 -sTCP:LISTEN >/dev/null 2>&1
-}
-
-is_pid_listening_on_8080() {
-  local target_pid="$1"
-  lsof -tiTCP:8080 -sTCP:LISTEN 2>/dev/null | grep -Fxq "${target_pid}"
 }
 
 prepare_truststore() {
@@ -52,26 +46,14 @@ prepare_truststore() {
   fi
 }
 
-echo "Preparing pac4j demo from ${REPO_URL} (branch: cicas)"
-if [[ -d "${REPO_DIR}/.git" ]]; then
-  git -C "${REPO_DIR}" fetch origin cicas
-  git -C "${REPO_DIR}" checkout cicas
-  git -C "${REPO_DIR}" reset --hard origin/cicas
-else
-  rm -Rf "${REPO_DIR}"
-  git clone --single-branch --branch cicas "${REPO_URL}" "${REPO_DIR}"
-fi
-
-if [[ -f "${PID_FILE}" ]]; then
-  old_pid=$(cat "${PID_FILE}")
-  if [[ -n "${old_pid}" ]] && kill -0 "${old_pid}" >/dev/null 2>&1; then
-    if curl --output /dev/null --silent --fail http://localhost:8080; then
-      echo "pac4j demo already running on port 8080 (pid: ${old_pid})"
-      echo "RP pre-check done. CAS OP/TA startup is handled by Puppeteer scenario instances."
-      finish 0
-    fi
+if docker inspect -f '{{.State.Running}}' "${CONTAINER_NAME}" 2>/dev/null | grep -q true; then
+  if curl --output /dev/null --silent --fail http://localhost:8080; then
+    echo "pac4j demo already running in container ${CONTAINER_NAME} on port 8080"
+    echo "RP pre-check done. CAS OP/TA startup is handled by Puppeteer scenario instances."
+    finish 0
   fi
-  rm -f "${PID_FILE}"
+  echo "Removing unresponsive pac4j demo container ${CONTAINER_NAME}"
+  docker rm -f "${CONTAINER_NAME}" >/dev/null 2>&1 || true
 fi
 
 if is_port_listened; then
@@ -86,18 +68,38 @@ if is_port_listened; then
   finish 1
 fi
 prepare_truststore
-JVM_TRUSTSTORE_ARGS="-Djavax.net.ssl.trustStore=${TRUSTSTORE_FILE} -Djavax.net.ssl.trustStorePassword=${TRUSTSTORE_PASSWORD} -Djavax.net.ssl.trustStoreType=PKCS12"
 
-echo "Starting pac4j demo on port 8080"
-if [[ -x "${REPO_DIR}/mvnw" ]]; then
-  nohup "${REPO_DIR}/mvnw" -q -DskipTests -f "${REPO_DIR}/pom.xml" spring-boot:run -Dspring-boot.run.arguments="--server.port=8080" -Dspring-boot.run.jvmArguments="${JVM_TRUSTSTORE_ARGS}" >"${LOG_FILE}" 2>&1 &
-else
-  echo "Unable to start pac4j demo: Maven Wrapper (./mvnw) is required in ${REPO_DIR}"
+if ! docker info >/dev/null 2>&1; then
+  echo "Docker engine is not running; the pac4j RP demo requires Docker."
   finish 1
 fi
-pid=$!
-echo "${pid}" >"${PID_FILE}"
-echo "pac4j demo bootstrap started (pid: ${pid}); waiting for port 8080..."
+
+if ! docker image inspect "${PAC4J_DEMO_IMAGE}" >/dev/null 2>&1; then
+  echo "Docker image ${PAC4J_DEMO_IMAGE} not found locally; pulling..."
+  if ! docker pull "${PAC4J_DEMO_IMAGE}"; then
+    echo "Unable to pull Docker image ${PAC4J_DEMO_IMAGE}."
+    echo "Build it locally with: docker build -t ${PAC4J_DEMO_IMAGE} <simple-spring-boot-pac4j-demos repo>"
+    finish 1
+  fi
+fi
+
+echo "Starting pac4j demo container ${CONTAINER_NAME} from image ${PAC4J_DEMO_IMAGE} on port 8080 (host networking)"
+docker run --quiet -d --rm \
+  --name "${CONTAINER_NAME}" \
+  --network=host \
+  -v "${TRUSTSTORE_FILE}":/etc/cas/cas-truststore.p12:ro \
+  -e JAVA_OPTS="-Djavax.net.ssl.trustStore=/etc/cas/cas-truststore.p12 -Djavax.net.ssl.trustStorePassword=${TRUSTSTORE_PASSWORD} -Djavax.net.ssl.trustStoreType=PKCS12" \
+  "${PAC4J_DEMO_IMAGE}" \
+  --server.port=8080 \
+  --app.base-url=http://localhost:8080
+if [[ $? -ne 0 ]]; then
+  echo "Failed to start pac4j demo container ${CONTAINER_NAME}"
+  finish 1
+fi
+
+: > "${LOG_FILE}"
+docker logs -f "${CONTAINER_NAME}" >>"${LOG_FILE}" 2>&1 &
+echo "pac4j demo container started; waiting for port 8080..."
 
 counter=0
 max_attempts=300
@@ -107,8 +109,8 @@ until curl --output /dev/null --silent --fail http://localhost:8080; do
     elapsed=$((counter * 2))
     echo "Still waiting for pac4j demo (${elapsed}s elapsed)..."
   fi
-  if ! kill -0 "${pid}" >/dev/null 2>&1; then
-    echo "pac4j demo process ${pid} terminated before opening port 8080"
+  if ! docker inspect -f '{{.State.Running}}' "${CONTAINER_NAME}" 2>/dev/null | grep -q true; then
+    echo "pac4j demo container ${CONTAINER_NAME} terminated before opening port 8080"
     tail -n 200 "${LOG_FILE}" || true
     finish 1
   fi
