@@ -90,31 +90,40 @@
             </div>
 
             <div id="ticketCatalogOps-tab">
-                <table id="ticketCatalogTable" class="mdc-data-table__table table table-striped noborder">
-                    <thead>
-                    <tr class="mdc-data-table__header-row">
-                        <th class="mdc-data-table__header-cell" role="columnheader" scope="col">Type</th>
-                        <th class="mdc-data-table__header-cell" role="columnheader" scope="col">Field</th>
-                        <th class="mdc-data-table__header-cell" role="columnheader" scope="col">Value</th>
-                    </tr>
-                    </thead>
-                    <tbody class="mdc-data-table__content">
-                    </tbody>
-                </table>
+                <p class="small text-muted mb-3">
+                    Ticket catalog definitions describe the ticket types available to the configured registry.
+                </p>
+                <div id="ticketCatalogSummary" class="ticket-cards-summary d-none"
+                     aria-label="Ticket catalog summary">
+                    <span class="ticket-summary-chip ticket-summary-catalog">
+                        <i class="mdi mdi-ticket-confirmation" aria-hidden="true"></i>
+                        <strong id="ticketCatalogCount">0</strong> ticket definitions
+                    </span>
+                </div>
+                <div id="ticketCatalogStatus" class="ticket-cards-message" role="status" aria-live="polite">
+                    <i class="mdi mdi-loading mdi-spin" aria-hidden="true"></i>
+                    Loading ticket catalog...
+                </div>
+                <div id="ticketCatalogCards" class="ticket-card-grid" aria-live="polite"></div>
              </div>
 
             <div id="ticketExpirationPolicyOps-tab">
-                <table id="ticketExpirationPoliciesTable" class="mdc-data-table__table table table-striped noborder">
-                    <thead>
-                    <tr class="mdc-data-table__header-row">
-                        <th class="mdc-data-table__header-cell" role="columnheader" scope="col">Type</th>
-                        <th class="mdc-data-table__header-cell" role="columnheader" scope="col">Field</th>
-                        <th class="mdc-data-table__header-cell" role="columnheader" scope="col">Value</th>
-                    </tr>
-                    </thead>
-                    <tbody class="mdc-data-table__content">
-                    </tbody>
-                </table>
+                <p class="small text-muted mb-3">
+                    Ticket expiration policies summarize the lifetime and usage rules applied to each ticket type.
+                </p>
+                <div id="ticketExpirationPoliciesSummary" class="ticket-cards-summary d-none"
+                     aria-label="Ticket expiration policy summary">
+                    <span class="ticket-summary-chip ticket-summary-expiration">
+                        <i class="mdi mdi-timer-sand" aria-hidden="true"></i>
+                        <strong id="ticketExpirationPoliciesCount">0</strong> expiration policies
+                    </span>
+                </div>
+                <div id="ticketExpirationPoliciesStatus" class="ticket-cards-message"
+                     role="status" aria-live="polite">
+                    <i class="mdi mdi-loading mdi-spin" aria-hidden="true"></i>
+                    Loading ticket expiration policies...
+                </div>
+                <div id="ticketExpirationPoliciesCards" class="ticket-card-grid" aria-live="polite"></div>
              </div>
 
         </div>

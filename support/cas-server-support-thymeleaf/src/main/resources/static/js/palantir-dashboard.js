@@ -94,6 +94,7 @@ function activateDashboardTab(idx) {
                 tabs.activateTab(tabIndex);
                 currentActiveTab = tabIndex;
                 updateNavigationSidebar();
+                notifyPalantirPollingContextChanged();
                 if (currentActiveTab === Tabs.CLUSTER.index && typeof refreshActiveClusterTab === "function") {
                     refreshActiveClusterTab();
                 }
@@ -289,6 +290,7 @@ async function restoreActiveTabs() {
         }
         tabs.tabs("refresh");
     }
+    notifyPalantirPollingContextChanged();
 }
 
 async function updateNavigationSidebar() {
