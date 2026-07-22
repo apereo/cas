@@ -143,7 +143,7 @@ class OidcWellKnownFederationEndpointControllerTests {
             assertNotNull(metadata.get("federation_entity"));
             val openIdProvider = (Map) metadata.get("openid_provider");
             assertNotNull(openIdProvider);
-            assertEquals("[automatic]", openIdProvider.get("client_registration_types_supported").toString());
+            assertEquals("automatic", ((List<String>) openIdProvider.get("client_registration_types_supported")).getFirst());
         }
     }
 

@@ -11,9 +11,11 @@ import org.apereo.cas.support.oauth.services.OAuthRegisteredService;
 import org.apereo.cas.support.oauth.validator.authorization.OAuth20AuthorizationCodeResponseTypeAuthorizationRequestValidator;
 import org.apereo.cas.support.oauth.web.OAuth20RequestParameterResolver;
 import org.apereo.cas.util.DateTimeUtils;
+import org.apereo.cas.util.LoggingUtils;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
+
 import java.time.Duration;
 import java.time.ZonedDateTime;
 import java.util.Locale;
@@ -88,15 +90,13 @@ public class OpenIdFederationAuthorizationCodeResponseTypeAuthorizationRequestVa
 
     private Optional<OAuthRegisteredService> resolveAndSaveFederatedService(final String clientId) {
         try {
-            val resolvedService = oidcFederationTrustChainResolver.resolveTrustChains(clientId).orElse(null);
+            val resolvedService = oidcFederationTrustChainResolver.resolveTrustChains(clientId);
             LOGGER.debug("Resolved service: [{}]", resolvedService);
-            if (resolvedService != null) {
-                return Optional.of((OAuthRegisteredService) getServicesManager().save(resolvedService));
-            }
+            return resolvedService.map(service -> (OAuthRegisteredService) getServicesManager().save(service));
         } catch (final Exception e) {
-            LOGGER.warn("Unable to resolve federated service [{}]", clientId, e);
+            LoggingUtils.warn(LOGGER, "Unable to resolve federated service [" + clientId + "]", e);
+            return Optional.empty();
         }
-        return Optional.empty();
     }
 
     private static boolean shouldRefreshTemporaryFederationService(final OAuthRegisteredService registeredService) {

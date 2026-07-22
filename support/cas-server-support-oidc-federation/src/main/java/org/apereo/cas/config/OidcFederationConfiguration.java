@@ -5,7 +5,6 @@ import org.apereo.cas.audit.AuditableExecution;
 import org.apereo.cas.authentication.principal.ServiceFactory;
 import org.apereo.cas.authentication.principal.WebApplicationService;
 import org.apereo.cas.configuration.CasConfigurationProperties;
-import org.apereo.cas.configuration.model.support.oidc.federation.OidcFederationRole;
 import org.apereo.cas.multitenancy.TenantExtractor;
 import org.apereo.cas.oidc.discovery.OidcServerDiscoverySettings;
 import org.apereo.cas.oidc.federation.chain.OidcFederationDefaultTrustChainResolver;
@@ -173,7 +172,7 @@ class OidcFederationConfiguration {
         return BeanSupplier.of(OAuth20AuthorizationRequestValidator.class)
             .when(() -> responseTypesSupported.contains(OAuth20ResponseTypes.CODE.getType())
                 && oauthRequestParameterResolver.getIfAvailable() != null
-                && casProperties.getAuthn().getOidc().getFederation().getRole() == OidcFederationRole.OPENID_PROVIDER)
+                && casProperties.getAuthn().getOidc().getFederation().getRole().isOpenIdProvider())
             .supply(() -> new OpenIdFederationAuthorizationCodeResponseTypeAuthorizationRequestValidator(servicesManager,
                 webApplicationServiceFactory, registeredServiceAccessStrategyEnforcer, oauthRequestParameterResolver.getObject(),
                 oidcFederationTrustChainResolver))
