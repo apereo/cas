@@ -9,7 +9,6 @@ import org.apereo.cas.web.cookie.CasCookieBuilder;
 import lombok.RequiredArgsConstructor;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
-import org.jspecify.annotations.NonNull;
 import org.slf4j.MDC;
 import org.springframework.beans.factory.ObjectProvider;
 import jakarta.servlet.Filter;
@@ -29,9 +28,9 @@ import jakarta.servlet.http.HttpServletResponse;
 @RequiredArgsConstructor
 public class ThreadContextMDCServletFilter implements Filter {
 
-    private final ObjectProvider<@NonNull TicketRegistrySupport> ticketRegistrySupport;
+    private final ObjectProvider<TicketRegistrySupport> ticketRegistrySupport;
 
-    private final ObjectProvider<@NonNull CasCookieBuilder> ticketGrantingTicketCookieGenerator;
+    private final ObjectProvider<CasCookieBuilder> ticketGrantingTicketCookieGenerator;
 
     private final CasConfigurationProperties casProperties;
 

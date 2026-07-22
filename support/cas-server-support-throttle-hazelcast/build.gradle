@@ -10,7 +10,8 @@ ext {
 }
 dependencies {
     api project(":api:cas-server-core-api-throttle")
-
+    api project(":api:cas-server-core-api-ha")
+    
     implementation libraries.hazelcast
     
     implementation project(":support:cas-server-support-hazelcast")

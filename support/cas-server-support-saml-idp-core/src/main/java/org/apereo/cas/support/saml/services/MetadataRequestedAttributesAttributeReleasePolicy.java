@@ -46,8 +46,8 @@ public class MetadataRequestedAttributesAttributeReleasePolicy extends BaseSamlR
 
     @Override
     protected List<String> determineRequestedAttributeDefinitions(final RegisteredServiceAttributeReleasePolicyContext context) {
-        val entityId = getEntityIdFromRequest(context);
-        val facade = determineServiceProviderMetadataFacade(context, entityId);
+        val entityId = SamlIdPSAttributeReleasePolicyUtils.getEntityIdFromRequest(context);
+        val facade = SamlIdPSAttributeReleasePolicyUtils.determineServiceProviderMetadataFacade(context, entityId);
         return facade
             .map(SamlRegisteredServiceMetadataAdaptor::getSsoDescriptor)
             .map(sso -> sso.getAttributeConsumingServices()

@@ -17,7 +17,6 @@ import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
-import org.jspecify.annotations.NonNull;
 import org.springframework.beans.factory.ObjectProvider;
 
 /**
@@ -39,7 +38,7 @@ public class YubiKeyAuthenticationHandler extends AbstractPreAndPostProcessingAu
 
     private final YubicoClient client;
 
-    private final ObjectProvider<@NonNull MultifactorAuthenticationProvider> multifactorAuthenticationProvider;
+    private final ObjectProvider<MultifactorAuthenticationProvider> multifactorAuthenticationProvider;
 
     public YubiKeyAuthenticationHandler(final String name,
 
@@ -47,7 +46,7 @@ public class YubiKeyAuthenticationHandler extends AbstractPreAndPostProcessingAu
                                         final YubicoClient client,
                                         final YubiKeyAccountRegistry registry,
                                         final Integer order,
-                                        final ObjectProvider<@NonNull MultifactorAuthenticationProvider> multifactorAuthenticationProvider) {
+                                        final ObjectProvider<MultifactorAuthenticationProvider> multifactorAuthenticationProvider) {
         super(name, principalFactory, order);
         this.registry = registry;
         this.client = client;
@@ -55,7 +54,7 @@ public class YubiKeyAuthenticationHandler extends AbstractPreAndPostProcessingAu
     }
 
     public YubiKeyAuthenticationHandler(final YubicoClient client,
-                                        final ObjectProvider<@NonNull MultifactorAuthenticationProvider> multifactorAuthenticationProvider) {
+                                        final ObjectProvider<MultifactorAuthenticationProvider> multifactorAuthenticationProvider) {
         this(StringUtils.EMPTY, null,
             client, new OpenYubiKeyAccountRegistry(new AcceptAllYubiKeyAccountValidator()), null,
             multifactorAuthenticationProvider);

@@ -21,7 +21,7 @@ import org.opensaml.saml.saml2.metadata.SPSSODescriptor;
  * @since 5.2.0
  */
 @Slf4j
-public record SamlRegisteredServiceMetadataExpirationPolicy(Duration defaultExpiration) implements Expiry<@NonNull SamlRegisteredServiceCacheKey, @NonNull CachedMetadataResolverResult> {
+public record SamlRegisteredServiceMetadataExpirationPolicy(Duration defaultExpiration) implements Expiry<SamlRegisteredServiceCacheKey, @NonNull CachedMetadataResolverResult> {
     @Override
     public long expireAfterCreate(
         final @NonNull SamlRegisteredServiceCacheKey cacheKey,

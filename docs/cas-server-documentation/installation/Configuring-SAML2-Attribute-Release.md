@@ -410,4 +410,41 @@ A specific attribute release policy that will compare the defined group as a reg
 
 {% endtab %}
 
+{% tab saml2attrrel Mapped Metadata Entity Attributes %}
+
+This attribute release policy detects the presence of entity attribute `http://shibboleth.net/ns/attributes/naming/saml2`
+and then releases attributes based on mapping rules specified:
+
+```json
+{
+  "@class": "org.apereo.cas.support.saml.services.SamlRegisteredService",
+  "serviceId": "entity-ids-allowed-via-regex",
+  "name": "SAML",
+  "id": 10,
+  "metadataLocation": "path/to/metadata.xml",
+  "attributeReleasePolicy": {
+    "@class": "org.apereo.cas.support.saml.services.MappedEntityAttributesAttributeReleasePolicy"
+  }
+}
+```
+ 
+An example entity attribute specified in the metadata might be:
+
+```xml
+<mdattr:EntityAttributes xmlns:mdattr="urn:oasis:names:tc:SAML:metadata:attribute">
+    <saml:Attribute xmlns:saml="urn:oasis:names:tc:SAML:2.0:assertion"
+                    Name="http://shibboleth.net/ns/attributes/naming/saml2"
+                    NameFormat="urn:oasis:names:tc:SAML:2.0:attrname-format:uri">
+        <saml:AttributeValue>mail email</saml:AttributeValue>
+        <saml:AttributeValue>givenName first_name</saml:AttributeValue>
+        <saml:AttributeValue>sn last_name</saml:AttributeValue>
+    </saml:Attribute>
+</mdattr:EntityAttributes>
+```
+   
+Based on the above example, attributes `mail`, `givenName` and `sn` will be released as 
+`email`, `first_name` and `last_name`.
+
+{% endtab %}
+
 {% endtabs %}

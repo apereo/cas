@@ -22,7 +22,7 @@ import org.springframework.core.io.Resource;
 @ToString(callSuper = true)
 @Getter
 @RequiredArgsConstructor
-public class PublicKeyFactoryBean extends AbstractFactoryBean<@NonNull PublicKey> {
+public class PublicKeyFactoryBean extends AbstractFactoryBean<PublicKey> {
     private final Resource resource;
 
     private final String algorithm;

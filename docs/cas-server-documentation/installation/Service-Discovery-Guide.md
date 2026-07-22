@@ -23,7 +23,7 @@ CAS supported options that can be used for locating nodes for the purpose of loa
         <a href="Service-Discovery-Guide-Consul.html" class="btn btn-primary">More...</a>
       </div>
     </div>
-    <div class="card">
+    <div class="card mt-2 pt-2">
       <div class="card-body">
         <h4 class="card-title">:scroll: Eureka Server Discovery Service</h4>
         <p class="card-text pb-2">
@@ -35,3 +35,10 @@ CAS supported options that can be used for locating nodes for the purpose of loa
     </div>
   </div>
 </div>
+
+
+## Actuator Endpoints
+
+The following endpoints are provided by CAS:
+
+{% include_cached actuators.html endpoints="clusterTopology" %}

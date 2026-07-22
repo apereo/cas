@@ -38,6 +38,7 @@ public abstract class AbstractQueryPersonAttributeDao<QB> extends AbstractDefaul
     @Getter
     @Setter
     private CaseCanonicalizationMode usernameCaseCanonicalizationMode = CaseCanonicalizationMode.NONE;
+    
     private Set<String> possibleUserAttributeNames;
     @Getter
     @Setter
@@ -312,5 +313,21 @@ public abstract class AbstractQueryPersonAttributeDao<QB> extends AbstractDefaul
     @Override
     public Set<String> getPossibleUserAttributeNames(@Nullable final PersonAttributeDaoFilter filter) {
         return Set.copyOf(this.possibleUserAttributeNames);
+    }
+
+    @Override
+    public Map<String, Object> toConfiguration() {
+        val config = super.toConfiguration();
+        config.put("queryAttributeMapping", queryAttributeMapping);
+        config.put("resultAttributeMapping", resultAttributeMapping);
+        config.put("caseInsensitiveResultAttributes", caseInsensitiveResultAttributes);
+        config.put("caseInsensitiveQueryAttributes", caseInsensitiveQueryAttributes);
+        config.put("defaultCaseCanonicalizationMode", defaultCaseCanonicalizationMode);
+        config.put("usernameCaseCanonicalizationMode", usernameCaseCanonicalizationMode);
+        config.put("requireAllQueryAttributes", requireAllQueryAttributes);
+        config.put("useAllQueryAttributes", useAllQueryAttributes);
+        config.put("unmappedUsernameAttribute", unmappedUsernameAttribute);
+        config.put("possibleUserAttributeNames", possibleUserAttributeNames);
+        return config;
     }
 }

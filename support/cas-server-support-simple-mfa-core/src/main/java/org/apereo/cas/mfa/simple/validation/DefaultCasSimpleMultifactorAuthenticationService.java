@@ -30,7 +30,7 @@ public class DefaultCasSimpleMultifactorAuthenticationService extends BaseCasSim
 
     protected final TicketFactory ticketFactory;
     protected final BucketConsumer bucketConsumer;
-    protected final ObjectProvider<@NonNull CasSimpleMultifactorAuthenticationAccountService> accountServiceProvider;
+    protected final ObjectProvider<CasSimpleMultifactorAuthenticationAccountService> accountServiceProvider;
 
     public DefaultCasSimpleMultifactorAuthenticationService(
         @NonNull
@@ -38,7 +38,7 @@ public class DefaultCasSimpleMultifactorAuthenticationService extends BaseCasSim
         @NonNull
         final TicketFactory ticketFactory,
         @NonNull
-        final ObjectProvider<@NonNull CasSimpleMultifactorAuthenticationAccountService> accountServiceProvider,
+        final ObjectProvider<CasSimpleMultifactorAuthenticationAccountService> accountServiceProvider,
         @NonNull
         final BucketConsumer bucketConsumer) {
         super(ticketRegistry);

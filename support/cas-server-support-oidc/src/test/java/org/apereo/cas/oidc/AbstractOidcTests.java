@@ -54,6 +54,7 @@ import org.apereo.cas.support.oauth.OAuth20ResponseTypes;
 import org.apereo.cas.support.oauth.profile.OAuth20ProfileScopeToAttributesFilter;
 import org.apereo.cas.support.oauth.profile.OAuth20UserProfileDataCreator;
 import org.apereo.cas.support.oauth.services.OAuthRegisteredService;
+import org.apereo.cas.support.oauth.services.OAuthRegisteredServiceClientSecret;
 import org.apereo.cas.support.oauth.web.OAuth20RequestParameterResolver;
 import org.apereo.cas.support.oauth.web.response.OAuth20CasClientRedirectActionBuilder;
 import org.apereo.cas.support.oauth.web.response.accesstoken.OAuth20TokenGenerator;
@@ -364,7 +365,7 @@ public abstract class AbstractOidcTests {
         svc.setClientId(clientId);
         svc.setName("oauth-%s".formatted(UUID.randomUUID().toString()));
         svc.setDescription("description");
-        svc.setClientSecret("secret");
+        svc.setClientSecrets(CollectionUtils.wrapList(OAuthRegisteredServiceClientSecret.withoutExpiration("secret")));
         svc.setServiceId(redirectUri);
         svc.setSignIdToken(sign);
         svc.setEncryptIdToken(encrypt);
@@ -388,7 +389,7 @@ public abstract class AbstractOidcTests {
         svc.setClientId(clientId);
         svc.setName("oauth");
         svc.setDescription("description");
-        svc.setClientSecret("secret");
+        svc.setClientSecrets(CollectionUtils.wrapList(OAuthRegisteredServiceClientSecret.withoutExpiration("secret")));
         svc.setServiceId(redirectUri);
         svc.setInformationUrl("info");
         svc.setPrivacyUrl("privacy");
@@ -439,7 +440,7 @@ public abstract class AbstractOidcTests {
     }
 
     protected JwtClaims getClaims(final String subject, final String issuer,
-                                  final String clientId, final String audience) {
+                                  final String clientId, final String... audience) {
         val claims = new JwtClaims();
         claims.setJwtId(RandomUtils.randomAlphanumeric(16));
         claims.setIssuer(issuer);

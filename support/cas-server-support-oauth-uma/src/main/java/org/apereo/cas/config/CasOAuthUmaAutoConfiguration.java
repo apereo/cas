@@ -104,7 +104,7 @@ public class CasOAuthUmaAutoConfiguration {
         @ConditionalOnMissingBean(name = "umaRequestingPartyTokenGenerator")
         public IdTokenGeneratorService umaRequestingPartyTokenGenerator(
             @Qualifier(UmaConfigurationContext.BEAN_NAME)
-            final ObjectProvider<@NonNull UmaConfigurationContext> context) {
+            final ObjectProvider<UmaConfigurationContext> context) {
             return new UmaIdTokenGeneratorService(context);
         }
     }
@@ -263,7 +263,7 @@ public class CasOAuthUmaAutoConfiguration {
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @ConditionalOnMissingBean(name = "umaServerDiscoverySettingsFactory")
-        public FactoryBean<@NonNull UmaServerDiscoverySettings> umaServerDiscoverySettingsFactory(
+        public FactoryBean<UmaServerDiscoverySettings> umaServerDiscoverySettingsFactory(
             final CasConfigurationProperties casProperties) {
             return new UmaServerDiscoverySettingsFactory(casProperties);
         }
@@ -277,9 +277,9 @@ public class CasOAuthUmaAutoConfiguration {
         @ConditionalOnMissingBean(name = "umaWebMvcConfigurer")
         public WebMvcConfigurer umaWebMvcConfigurer(
             @Qualifier("umaAuthorizationApiTokenSecurityInterceptor")
-            final ObjectProvider<@NonNull SecurityLogicInterceptor> umaAuthorizationApiTokenSecurityInterceptor,
+            final ObjectProvider<SecurityLogicInterceptor> umaAuthorizationApiTokenSecurityInterceptor,
             @Qualifier("umaRequestingPartyTokenSecurityInterceptor")
-            final ObjectProvider<@NonNull SecurityLogicInterceptor> umaRequestingPartyTokenSecurityInterceptor) {
+            final ObjectProvider<SecurityLogicInterceptor> umaRequestingPartyTokenSecurityInterceptor) {
             return new WebMvcConfigurer() {
                 @Override
                 public void addInterceptors(

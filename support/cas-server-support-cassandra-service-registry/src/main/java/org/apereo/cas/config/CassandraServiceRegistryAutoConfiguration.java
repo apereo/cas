@@ -12,7 +12,6 @@ import org.apereo.cas.services.ServiceRegistryListener;
 import org.apereo.cas.services.cassandra.CassandraServiceRegistry;
 import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
 import lombok.val;
-import org.jspecify.annotations.NonNull;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
@@ -39,7 +38,7 @@ public class CassandraServiceRegistryAutoConfiguration {
     @ConditionalOnMissingBean(name = "cassandraServiceRegistry")
     public ServiceRegistry cassandraServiceRegistry(final CasConfigurationProperties casProperties,
                                                     final ConfigurableApplicationContext applicationContext,
-                                                    final ObjectProvider<@NonNull List<ServiceRegistryListener>> serviceRegistryListeners,
+                                                    final ObjectProvider<List<ServiceRegistryListener>> serviceRegistryListeners,
                                                     @Qualifier("cassandraServiceRegistrySessionFactory")
                                                     final CassandraSessionFactory cassandraServiceRegistrySessionFactory) {
         val cassandra = casProperties.getServiceRegistry().getCassandra();

@@ -631,9 +631,6 @@ public class RedisTicketRegistry extends AbstractTicketRegistry implements Clean
         val timeout = RedisKeyGenerator.getTicketExpirationInSeconds(ticket);
         val ticketDocument = buildTicketAsDocument(ticket);
 
-        val valueOps = casRedisTemplates.getTicketsRedisTemplate().boundValueOps(redisKeyPattern);
-        valueOps.set(ticketDocument, Expiration.from(timeout, TimeUnit.SECONDS));
-
         val keyspace = redisKeyGenerator.getKeyspace();
         val redisDataItem = new RedisData();
         redisKeyValueAdapter.getConverter().write(ticketDocument, redisDataItem);

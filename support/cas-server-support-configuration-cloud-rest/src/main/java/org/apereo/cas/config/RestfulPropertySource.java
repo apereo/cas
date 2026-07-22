@@ -181,7 +181,7 @@ public class RestfulPropertySource extends EnumerablePropertySource<Environment>
                 try (val content = container.getEntity().getContent()) {
                     val results = IOUtils.toString(content, StandardCharsets.UTF_8);
                     if (StringUtils.isNotBlank(results)) {
-                        return MAPPER.readValue(results, new TypeReference<Set<String>>() {
+                        return MAPPER.readValue(results, new TypeReference<>() {
                         });
                     }
                 }

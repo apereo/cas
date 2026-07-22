@@ -72,7 +72,7 @@ class OAuth20AuthorizationCodeResponseTypeAuthorizationRequestValidatorTests ext
         request.setParameter(OAuth20Constants.GRANT_TYPE, OAuth20GrantTypes.AUTHORIZATION_CODE.getType());
         assertFalse(validator.supports(context));
         assertTrue(context.getRequestAttribute(OAuth20Constants.ERROR_DESCRIPTION).isPresent());
-        assertEquals("Missing required parameter: [" + OAuth20Constants.CLIENT_ID + "]",
+        assertEquals("Missing required parameter: [" + OAuth20Constants.CLIENT_ID + ']',
                      context.getRequestAttribute(OAuth20Constants.ERROR_DESCRIPTION).get());
 
         request.removeAttribute(OAuth20Constants.ERROR);
@@ -89,7 +89,7 @@ class OAuth20AuthorizationCodeResponseTypeAuthorizationRequestValidatorTests ext
         assertTrue(context.getRequestAttribute(OAuth20Constants.ERROR).isPresent());
         assertEquals(OAuth20Constants.INVALID_REQUEST, context.getRequestAttribute(OAuth20Constants.ERROR).get().toString());
         assertTrue(context.getRequestAttribute(OAuth20Constants.ERROR_DESCRIPTION).isPresent());
-        assertEquals("Missing required parameter: [" + OAuth20Constants.REDIRECT_URI + "]",
+        assertEquals("Missing required parameter: [" + OAuth20Constants.REDIRECT_URI + ']',
                      context.getRequestAttribute(OAuth20Constants.ERROR_DESCRIPTION).get());
 
         request.removeAttribute(OAuth20Constants.ERROR);
@@ -106,7 +106,7 @@ class OAuth20AuthorizationCodeResponseTypeAuthorizationRequestValidatorTests ext
         assertTrue(context.getRequestAttribute(OAuth20Constants.ERROR).isPresent());
         assertEquals(OAuth20Constants.UNSUPPORTED_RESPONSE_TYPE, context.getRequestAttribute(OAuth20Constants.ERROR).get().toString());
         assertTrue(context.getRequestAttribute(OAuth20Constants.ERROR_DESCRIPTION).isPresent());
-        assertEquals("Missing required parameter: [" + OAuth20Constants.RESPONSE_TYPE + "]",
+        assertEquals("Missing required parameter: [" + OAuth20Constants.RESPONSE_TYPE + ']',
                      context.getRequestAttribute(OAuth20Constants.ERROR_DESCRIPTION).get());
 
         request.removeAttribute(OAuth20Constants.ERROR);

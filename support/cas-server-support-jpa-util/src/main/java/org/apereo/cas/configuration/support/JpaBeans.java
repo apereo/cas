@@ -7,6 +7,7 @@ import org.apereo.cas.jpa.JpaConfigurationContext;
 import org.apereo.cas.util.LoggingUtils;
 import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.util.spring.SpringExpressionLanguageValueResolver;
+import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
 import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
@@ -27,6 +28,40 @@ import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
 @Slf4j
 @UtilityClass
 public class JpaBeans {
+
+    /**
+     * Gets data source config.
+     *
+     * @param ds the ds
+     * @return the data source config
+     */
+    public Map<String, String> getDataSourceConfig(final DataSource ds) {
+        if (ds instanceof final SimpleDriverDataSource sds) {
+            return Map.of(
+                "url", Objects.requireNonNull(sds.getUrl()),
+                "username", Objects.requireNonNull(sds.getUsername()),
+                "driverClass", Objects.requireNonNull(sds.getDriver()).getClass().getName()
+            );
+        }
+        if (ds instanceof CloseableDataSource cds
+            && cds.getTargetDataSource() instanceof final HikariConfig cfg) {
+            val map = new LinkedHashMap<String, String>();
+            map.put("url", cfg.getJdbcUrl());
+            map.put("username", cfg.getUsername());
+            map.put("driverClass", cfg.getDriverClassName());
+            map.put("poolName", cfg.getPoolName());
+            map.put("minimumIdle", String.valueOf(cfg.getMinimumIdle()));
+            map.put("maximumPoolSize", String.valueOf(cfg.getMaximumPoolSize()));
+            map.put("maxLifetime", String.valueOf(cfg.getMaxLifetime()));
+            map.put("connectionTimeout", String.valueOf(cfg.getConnectionTimeout()));
+            map.put("idleTimeout", String.valueOf(cfg.getIdleTimeout()));
+            map.put("leakDetectionThreshold", String.valueOf(cfg.getLeakDetectionThreshold()));
+            map.put("validationTimeout", String.valueOf(cfg.getValidationTimeout()));
+            map.put("initializationFailTimeout", String.valueOf(cfg.getInitializationFailTimeout()));
+            return map;
+        }
+        return Map.of();
+    }
 
     /**
      * New simple data source.
@@ -114,7 +149,7 @@ public class JpaBeans {
         val dataSourceProperties = new Properties();
         dataSourceProperties.putAll(jpaProperties.getProperties());
         bean.setDataSourceProperties(dataSourceProperties);
-        
+
         return new DefaultCloseableDataSource(bean);
     }
 

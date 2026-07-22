@@ -9,11 +9,11 @@ import org.apereo.cas.web.report.AbstractCasEndpointTests;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Import;
+import org.springframework.http.MediaType;
 import org.springframework.test.context.TestPropertySource;
-import static org.junit.jupiter.api.Assertions.*;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 /**
  * This is {@link CasSimpleMultifactorAuthenticationEndpointTests}.
@@ -28,21 +28,24 @@ import static org.junit.jupiter.api.Assertions.*;
     BaseCasSimpleMultifactorAuthenticationTests.SharedTestConfiguration.class
 })
 class CasSimpleMultifactorAuthenticationEndpointTests extends AbstractCasEndpointTests {
-    @Autowired
-    @Qualifier("mfaSimpleMultifactorEndpoint")
-    private CasSimpleMultifactorAuthenticationEndpoint endpoint;
-
     @Test
-    void verifyGenerateToken() {
+    void verifyGenerateToken() throws Throwable {
         val authorization = EncodingUtils.encodeBase64("casuser:casuser");
-        val results = endpoint.generateToken(RegisteredServiceTestUtils.CONST_TEST_URL, authorization);
-        assertTrue(results.getStatusCode().is2xxSuccessful());
+        mockMvc.perform(get("/actuator/mfaSimple")
+                .param("service", RegisteredServiceTestUtils.CONST_TEST_URL)
+                .header("Credential", authorization)
+                .accept(MediaType.APPLICATION_JSON))
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$.id").exists());
     }
 
     @Test
-    void verifyAuthFails() {
+    void verifyAuthFails() throws Throwable {
         val authorization = EncodingUtils.encodeBase64("casuser:unknown");
-        val results = endpoint.generateToken(RegisteredServiceTestUtils.CONST_TEST_URL, authorization);
-        assertTrue(results.getStatusCode().isError());
+        mockMvc.perform(get("/actuator/mfaSimple")
+                .param("service", RegisteredServiceTestUtils.CONST_TEST_URL)
+                .header("Credential", authorization)
+                .accept(MediaType.APPLICATION_JSON))
+            .andExpect(status().isBadRequest());
     }
 }

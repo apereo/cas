@@ -22,12 +22,14 @@ import org.opensaml.saml.common.binding.SAMLBindingSupport;
 import org.opensaml.saml.common.messaging.context.SAMLEndpointContext;
 import org.opensaml.saml.common.messaging.context.SAMLPeerEntityContext;
 import org.opensaml.saml.common.profile.logic.EntityAttributesPredicate;
+import org.opensaml.saml.ext.saml2mdattr.EntityAttributes;
 import org.opensaml.saml.metadata.criteria.entity.impl.EvaluableEntityRoleEntityDescriptorCriterion;
 import org.opensaml.saml.metadata.resolver.ChainingMetadataResolver;
 import org.opensaml.saml.metadata.resolver.MetadataResolver;
 import org.opensaml.saml.metadata.resolver.RoleDescriptorResolver;
 import org.opensaml.saml.metadata.resolver.impl.PredicateRoleDescriptorResolver;
 import org.opensaml.saml.saml2.core.Assertion;
+import org.opensaml.saml.saml2.core.Attribute;
 import org.opensaml.saml.saml2.core.AuthnRequest;
 import org.opensaml.saml.saml2.core.LogoutRequest;
 import org.opensaml.saml.saml2.core.NameIDPolicy;
@@ -35,6 +37,7 @@ import org.opensaml.saml.saml2.core.RequestAbstractType;
 import org.opensaml.saml.saml2.core.StatusResponseType;
 import org.opensaml.saml.saml2.metadata.AssertionConsumerService;
 import org.opensaml.saml.saml2.metadata.Endpoint;
+import org.opensaml.saml.saml2.metadata.EntitiesDescriptor;
 import org.opensaml.saml.saml2.metadata.EntityDescriptor;
 import org.opensaml.saml.saml2.metadata.IDPSSODescriptor;
 import org.opensaml.saml.saml2.metadata.impl.AssertionConsumerServiceBuilder;
@@ -127,7 +130,7 @@ public class SamlIdPUtils {
     private static AssertionConsumerService determineEndpointForRequest(final RequestAbstractType authnRequest,
                                                                         final SamlRegisteredServiceMetadataAdaptor adaptor,
                                                                         final String binding,
-                                                                        final AssertionConsumerService acsFromRequest,
+                                                                        @Nullable final AssertionConsumerService acsFromRequest,
                                                                         final AssertionConsumerService acsFromMetadata,
                                                                         final MessageContext authenticationContext) {
         LOGGER.trace("ACS from authentication request is [{}], ACS from metadata is [{}] with binding [{}]",
@@ -161,7 +164,9 @@ public class SamlIdPUtils {
         return acsFromMetadata;
     }
 
-    private static AssertionConsumerService buildAssertionConsumerService(final String binding, final String acsUrl, final Integer acsIndex) {
+    private static AssertionConsumerService buildAssertionConsumerService(final String binding,
+                                                                          final String acsUrl,
+                                                                          @Nullable final Integer acsIndex) {
         val acs = new AssertionConsumerServiceBuilder().buildObject();
         acs.setBinding(binding);
         acs.setLocation(acsUrl);
@@ -268,9 +273,9 @@ public class SamlIdPUtils {
         return Optional.empty();
     }
 
-    private static AssertionConsumerService getAssertionConsumerServiceFromRequest(final RequestAbstractType request,
-                                                                                   final String binding,
-                                                                                   final SamlRegisteredServiceMetadataAdaptor adapter) {
+    private static @Nullable AssertionConsumerService getAssertionConsumerServiceFromRequest(final RequestAbstractType request,
+                                                                                             final String binding,
+                                                                                             final SamlRegisteredServiceMetadataAdaptor adapter) {
         if (request instanceof final AuthnRequest authnRequest) {
             var acsUrl = authnRequest.getAssertionConsumerServiceURL();
             val acsIndex = authnRequest.getAssertionConsumerServiceIndex();
@@ -362,6 +367,41 @@ public class SamlIdPUtils {
     }
 
 
+    /**
+     * Collect entity attributes list.
+     *
+     * @param entityDescriptor the entity descriptor
+     * @param query            the query
+     * @return the list
+     */
+    public static List<Attribute> collectEntityAttributes(final EntityDescriptor entityDescriptor,
+                                                          final List<MetadataEntityAttributeQuery> query) {
+        val entityAttributes = new ArrayList<Attribute>();
+        var group = (EntitiesDescriptor) entityDescriptor.getParent();
+        while (group != null) {
+            val exts = group.getExtensions();
+            if (exts != null) {
+                val children = exts.getUnknownXMLObjects(EntityAttributes.DEFAULT_ELEMENT_NAME);
+                if (!children.isEmpty() && children.getFirst() instanceof EntityAttributes attributes) {
+                    entityAttributes.addAll(attributes.getAttributes());
+                }
+            }
+            group = (EntitiesDescriptor) group.getParent();
+        }
+
+        val exts = entityDescriptor.getExtensions();
+        if (exts != null) {
+            val children = exts.getUnknownXMLObjects(EntityAttributes.DEFAULT_ELEMENT_NAME);
+            if (!children.isEmpty() && children.getFirst() instanceof EntityAttributes attributes) {
+                entityAttributes.addAll(attributes.getAttributes());
+            }
+        }
+
+        entityAttributes.removeIf(attr -> query.stream()
+            .noneMatch(q -> q.getName().equalsIgnoreCase(attr.getName())
+                && (StringUtils.isBlank(q.getFormat()) || q.getFormat().equalsIgnoreCase(attr.getNameFormat()))));
+        return entityAttributes;
+    }
 }
 
 

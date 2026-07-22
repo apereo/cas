@@ -28,6 +28,7 @@ services:
       SERVICE_DISCOVERY_ADDRESS: http://syncope:8080/syncope/rest/
       ANONYMOUS_USER: syncope
       ANONYMOUS_KEY: syncope
+      SECURITY_AUTHENTICATIONERROR_EXPOSEDETAILS: "true"
   syncope-console:
     depends_on:
       - syncope

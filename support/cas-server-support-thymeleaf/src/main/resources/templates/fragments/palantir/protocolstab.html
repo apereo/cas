@@ -336,7 +336,6 @@
                                         <th class="mdc-data-table__header-cell" role="columnheader" scope="col">ID</th>
                                         <th class="mdc-data-table__header-cell" role="columnheader" scope="col">Name</th>
                                         <th class="mdc-data-table__header-cell" role="columnheader" scope="col">Entity ID</th>
-                                        <th class="mdc-data-table__header-cell" role="columnheader" scope="col"></th>
                                     </tr>
                                     </thead>
                                     <tbody class="mdc-data-table__content">
@@ -487,10 +486,75 @@
                         <ul>
                             <li><a id="oidctokenexchange" href="#oidctokenexchange-tab">Token Exchange</a></li>
                             <li><a id="oidckeyrotation" href="#oidckeyrotation-tab">Key Rotation</a></li>
+                            <li class="d-none" id="oidcclientsecretrotation-li"><a id="oidcclientsecretrotation" href="#oidcclientsecretrotation-tab">Client Secret Rotation</a></li>
                             <li class="d-none" id="oidcclientjwks-li"><a id="oidcclientjwks" href="#oidcclientjwks-tab">Relying Party JWKS Management</a></li>
                             <li><a id="oidcdiscovery" href="#oidcdiscovery-tab">Discovery Profile</a></li>
                             <li><a id="oidcconfigprops" href="#oidcconfigprops-tab">Configuration</a></li>
                         </ul>
+
+                        <div id="oidcclientsecretrotation-tab">
+                            <p>You can rotate client secrets for OAuth and OpenID Connect relying party applications.</p>
+
+                            <form id="fmOidcClientSecretRotation" class="d-block">
+                                <section class="oidc-field form-group my-3 mdc-input-group d-flex">
+                                    <div class="mdc-input-group-field mdc-input-group-field-append w-100">
+                                        <label for="oidcClientSecretRotationClientId"
+                                               class="mdc-text-field mdc-text-field--outlined control-label mdc-text-field--with-trailing-icon mb-2">
+                                            <span class="mdc-notched-outline">
+                                                <span class="mdc-notched-outline__leading"></span>
+                                                <span class="mdc-notched-outline__notch">
+                                                    <span class="mdc-floating-label">Client ID</span>
+                                                </span>
+                                                <span class="mdc-notched-outline__trailing"></span>
+                                            </span>
+                                            <input class="mdc-text-field__input form-control" type="text"
+                                                   name="oidcClientSecretRotationClientId" tabindex="0"
+                                                   id="oidcClientSecretRotationClientId" size="50"
+                                                   autocomplete="off" required/>
+                                        </label>
+                                        <label for="oidcClientSecretRotationExpireIn"
+                                               class="mdc-text-field mdc-text-field--outlined control-label mdc-text-field--with-trailing-icon mb-2">
+                                            <span class="mdc-notched-outline">
+                                                <span class="mdc-notched-outline__leading"></span>
+                                                <span class="mdc-notched-outline__notch">
+                                                    <span class="mdc-floating-label">Expiration Duration</span>
+                                                </span>
+                                                <span class="mdc-notched-outline__trailing"></span>
+                                            </span>
+                                            <input class="mdc-text-field__input form-control" type="text"
+                                                   name="oidcClientSecretRotationExpireIn" tabindex="0"
+                                                   id="oidcClientSecretRotationExpireIn" size="50"
+                                                   list="oidcClientSecretRotationDurations"
+                                                   title="Duration value accepted by CAS, such as P90D, P30D, PT12H or PT30M. Leave blank to use the endpoint default."
+                                                   autocomplete="off"/>
+                                        </label>
+                                        <datalist id="oidcClientSecretRotationDurations">
+                                            <option value="P90D">90 Days</option>
+                                            <option value="P30D">30 Days</option>
+                                            <option value="P7D">7 Days</option>
+                                            <option value="PT24H">24 Hours</option>
+                                            <option value="PT12H">12 Hours</option>
+                                            <option value="PT1H">1 Hour</option>
+                                        </datalist>
+                                        <div th:replace="~{fragments/switchbutton :: switchbutton (id='oidcClientSecretRotationExpiredOnly',
+                                             title='When enabled, only expired client secrets will be rotated',
+                                             label='#Expired Secrets Only', cssClass='always-show pt-2 pb-2')}"/>
+                                    </div>
+                                </section>
+                                <div class="d-flex">
+                                    <button type="button" name="oidcClientSecretRotationButton"
+                                            id="oidcClientSecretRotationButton"
+                                            class="mdc-button mdc-button--raised">
+                                        <span class="mdc-button__label">
+                                            <i class="mdc-tab__icon mdi mdi-refresh" aria-hidden="true"></i>Rotate</span>
+                                    </button>
+                                </div>
+                            </form>
+
+                            <section class="my-3 d-flex h-450px d-none" id="oidcClientSecretRotationEditorContainer">
+                                <pre class="ace-editor ace-relative w-100 h-100" id="oidcClientSecretRotationEditor"></pre>
+                            </section>
+                        </div>
 
                         <div id="oidctokenexchange-tab">
                             <p>You can simulate OpenID connect responses to relying party applications and clients.</p>
@@ -601,7 +665,6 @@
                                         <th class="mdc-data-table__header-cell" role="columnheader" scope="col">JKT</th>
                                         <th class="mdc-data-table__header-cell" role="columnheader" scope="col">Created At</th>
                                         <th class="mdc-data-table__header-cell" role="columnheader" scope="col">JWK</th>
-                                        <th class="mdc-data-table__header-cell" role="columnheader" scope="col"></th>
                                     </tr>
                                     </thead>
                                     <tbody class="mdc-data-table__content">

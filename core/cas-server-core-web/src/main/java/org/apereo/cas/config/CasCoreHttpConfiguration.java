@@ -19,7 +19,6 @@ import org.apache.hc.client5.http.ssl.SSLConnectionSocketFactory;
 import org.apache.hc.core5.http.Header;
 import org.apache.hc.core5.http.HttpHost;
 import org.apache.hc.core5.http.message.BasicHeader;
-import org.jspecify.annotations.NonNull;
 import org.springframework.beans.factory.FactoryBean;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -132,7 +131,7 @@ class CasCoreHttpConfiguration {
         @ConditionalOnMissingBean(name = HttpClient.BEAN_NAME_HTTPCLIENT)
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-        public FactoryBean<@NonNull SimpleHttpClient> httpClient(
+        public FactoryBean<SimpleHttpClient> httpClient(
             @Qualifier(CasSSLContext.BEAN_NAME) final CasSSLContext casSslContext,
             @Qualifier("trustStoreSslSocketFactory") final LayeredConnectionSocketFactory trustStoreSslSocketFactory,
             final CasConfigurationProperties casProperties) {

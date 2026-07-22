@@ -22,26 +22,64 @@ async function initializeConsentOperations() {
             }
         });
         consentTable.clear();
+
+        function viewConsentAttributes(attributes) {
+            consentAttributesTable.clear();
+            for (const [key, value] of Object.entries(attributes)) {
+                consentAttributesTable.row.add({
+                    0: `<code>${key}</code>`,
+                    1: `<code>${value}</code>`
+                });
+            }
+            consentAttributesTable.draw();
+
+            let dialog = mdc.dialog.MDCDialog.attachTo(document.getElementById("consentAttributes-dialog"));
+            dialog["open"]();
+        }
+
+        function deleteConsent(context) {
+            const {id, principal} = context.rowData.decision;
+            Swal.fire({
+                title: `Are you sure you want to delete this entry for ${principal}?`,
+                text: "Once deleted, you may not be able to recover this entry.",
+                icon: "question",
+                showConfirmButton: true,
+                showDenyButton: true
+            })
+                .then((result) => {
+                    if (result.isConfirmed) {
+                        $.ajax({
+                            url: `${CasActuatorEndpoints.attributeConsent()}/${principal}/${id}`,
+                            type: "DELETE",
+                            contentType: "application/x-www-form-urlencoded",
+                            success: (response, status, xhr) => context.row.remove().draw(),
+                            error: (xhr, status, error) => {
+                                console.error("Error fetching data:", error);
+                                displayBanner(xhr);
+                            }
+                        });
+                    }
+                });
+        }
+
+        initializeDataTableContextMenu({
+            table: consentTable,
+            selector: "#consentTable tbody tr",
+            items: {
+                view: {name: "View Attributes", icon: contextMenuIcon("mdi-eye")},
+                delete: {name: "Delete Consent", icon: contextMenuIcon("mdi-delete")}
+            },
+            callback: (key, context) => {
+                if (key === "view") {
+                    viewConsentAttributes(context.rowData.attributes);
+                } else if (key === "delete") {
+                    deleteConsent(context);
+                }
+            }
+        });
+
         $.get(CasActuatorEndpoints.attributeConsent(), response => {
             for (const source of response) {
-
-                let consentButtons = `
-                 <button type="button" name="viewConsentAttributes" href="#" 
-                        title="View Attributes"
-                        consentId='${source.decision.id}'
-                        class="mdc-button mdc-button--raised btn btn-link min-width-32x">
-                    <i class="mdi mdi-pencil min-width-32x" aria-hidden="true"></i>
-                    <span class="d-none">${JSON.stringify(source.attributes)}</span>
-                </button>
-                <button type="button" name="deleteConsent" href="#"
-                        title="Delete Consent"
-                        principal='${source.decision.principal}'
-                        consentId='${source.decision.id}'
-                        class="mdc-button mdc-button--raised btn btn-link min-width-32x">
-                    <i class="mdi mdi-delete min-width-32x" aria-hidden="true"></i>
-                </button>
-                `;
-
                 consentTable.row.add({
                     0: `<code>${source.decision.id}</code>`,
                     1: `<code>${source.decision.principal}</code>`,
@@ -50,53 +88,11 @@ async function initializeConsentOperations() {
                     4: `<code>${source.decision.createdDate}</code>`,
                     5: `<code>${source.decision.options}</code>`,
                     6: `<code>${source.decision.reminder} ${source.decision.reminderTimeUnit}</code>`,
-                    7: `${consentButtons}`
+                    decision: source.decision,
+                    attributes: source.attributes
                 });
             }
             consentTable.draw();
-
-            $("button[name=viewConsentAttributes]").off().on("click", function () {
-                const attributes = JSON.parse($(this).children("span").first().text());
-                for (const [key, value] of Object.entries(attributes)) {
-                    consentAttributesTable.row.add({
-                        0: `<code>${key}</code>`,
-                        1: `<code>${value}</code>`
-                    });
-                }
-                consentAttributesTable.draw();
-
-                let dialog = mdc.dialog.MDCDialog.attachTo(document.getElementById("consentAttributes-dialog"));
-                dialog["open"]();
-            });
-
-            $("button[name=deleteConsent]").off().on("click", function () {
-                const id = $(this).attr("consentId");
-                const principal = $(this).attr("principal");
-                Swal.fire({
-                    title: `Are you sure you want to delete this entry for ${principal}?`,
-                    text: "Once deleted, you may not be able to recover this entry.",
-                    icon: "question",
-                    showConfirmButton: true,
-                    showDenyButton: true
-                })
-                    .then((result) => {
-                        if (result.isConfirmed) {
-                            $.ajax({
-                                url: `${CasActuatorEndpoints.attributeConsent()}/${principal}/${id}`,
-                                type: "DELETE",
-                                contentType: "application/x-www-form-urlencoded",
-                                success: (response, status, xhr) => {
-                                    let nearestTr = $(this).closest("tr");
-                                    consentTable.row(nearestTr).remove().draw();
-                                },
-                                error: (xhr, status, error) => {
-                                    console.error("Error fetching data:", error);
-                                    displayBanner(xhr);
-                                }
-                            });
-                        }
-                    });
-            });
 
         }).fail((xhr, status, error) => {
             console.error("Error fetching data:", error);

@@ -19,11 +19,11 @@ import org.springframework.kafka.core.KafkaOperations;
  */
 @Slf4j
 public class KafkaCasEventRepository extends AbstractCasEventRepository {
-    private final KafkaOperations<@NonNull String, @NonNull CasEvent> kafkaEventRepositoryTemplate;
+    private final KafkaOperations<String, @NonNull CasEvent> kafkaEventRepositoryTemplate;
     private final CasConfigurationProperties casProperties;
 
     public KafkaCasEventRepository(final CasEventRepositoryFilter eventRepositoryFilter,
-                                   final KafkaOperations<@NonNull String, @NonNull CasEvent> kafkaEventRepositoryTemplate,
+                                   final KafkaOperations<String, @NonNull CasEvent> kafkaEventRepositoryTemplate,
                                    final CasConfigurationProperties casProperties) {
         super(eventRepositoryFilter);
         this.kafkaEventRepositoryTemplate = kafkaEventRepositoryTemplate;

@@ -14,63 +14,67 @@
                 <i class="mdi mdi-apps" aria-hidden="true"></i>
                 <span class="tooltip">Applications</span>
             </li>
-            <li id="systemTabButton" data-tab-index="1" role="button" tabindex="0" aria-label="System">
+            <li th:if="${isRoleAdmin}" id="systemTabButton" data-tab-index="1" role="button" tabindex="0" aria-label="System">
                 <i class="mdi mdi-laptop" aria-hidden="true"></i>
                 <span class="tooltip">System</span>
             </li>
-            <li id="ticketsTabButton" data-tab-index="2" role="button" tabindex="0" aria-label="Tickets">
+            <li th:if="${isRoleAdmin}" id="ticketsTabButton" data-tab-index="2" role="button" tabindex="0" aria-label="Tickets">
                 <i class="mdi mdi-database" aria-hidden="true"></i>
                 <span class="tooltip">Tickets</span>
             </li>
-            <li id="tasksTabButton" data-tab-index="3" role="button" tabindex="0" aria-label="Tasks">
+            <li th:if="${isRoleAdmin}" id="tasksTabButton" data-tab-index="3" role="button" tabindex="0" aria-label="Tasks">
                 <i class="mdi mdi-tire" aria-hidden="true"></i>
                 <span class="tooltip">Tasks</span>
             </li>
-            <li id="accessStrategyTabButton" data-tab-index="4" role="button" tabindex="0" aria-label="Access Strategy">
+            <li th:if="${isRoleAdmin}" id="accessStrategyTabButton" data-tab-index="4" role="button" tabindex="0" aria-label="Access Strategy">
                 <i class="mdi mdi-shield-check" aria-hidden="true"></i>
                 <span class="tooltip">Access Strategy</span>
             </li>
-            <li id="loggingTabButton" data-tab-index="5" role="button" tabindex="0" aria-label="Logs and Audits">
+            <li th:if="${isRoleAdmin}" id="loggingTabButton" data-tab-index="5" role="button" tabindex="0" aria-label="Logs and Audits">
                 <i class="mdi mdi-text" aria-hidden="true"></i>
                 <span class="tooltip">Logs & Audits</span>
             </li>
-            <li id="ssoSessionsTabButton" data-tab-index="6" role="button" tabindex="0" aria-label="SSO Sessions">
+            <li th:if="${isRoleAdmin}" id="ssoSessionsTabButton" data-tab-index="6" role="button" tabindex="0" aria-label="SSO Sessions">
                 <i class="mdi mdi-account-multiple" aria-hidden="true"></i>
                 <span class="tooltip">SSO Sessions</span>
             </li>
-            <li id="configurationTabButton" data-tab-index="7" role="button" tabindex="0" aria-label="CAS Configuration">
+            <li th:if="${isRoleAdmin}" id="configurationTabButton" data-tab-index="7" role="button" tabindex="0" aria-label="CAS Configuration">
                 <i class="mdi mdi-wrench" aria-hidden="true"></i>
                 <span class="tooltip">CAS Configuration</span>
             </li>
-            <li id="personDirectoryTabButton" data-tab-index="8" role="button" tabindex="0" aria-label="Attribute Resolution">
+            <li th:if="${isRoleAdmin}" id="personDirectoryTabButton" data-tab-index="8" role="button" tabindex="0" aria-label="Attribute Resolution">
                 <i class="mdi mdi-card-account-details" aria-hidden="true"></i>
                 <span class="tooltip">Attribute Resolution</span>
             </li>
-            <li id="authenticationTabButton" data-tab-index="9" role="button" tabindex="0" aria-label="Authentication">
+            <li th:if="${isRoleAdmin}" id="authenticationTabButton" data-tab-index="9" role="button" tabindex="0" aria-label="Authentication">
                 <i class="mdi mdi-account-check" aria-hidden="true"></i>
                 <span class="tooltip">Authentication</span>
             </li>
-            <li id="consentTabButton" data-tab-index="10" role="button" tabindex="0" aria-label="Attribute Consent">
+            <li th:if="${isRoleAdmin}" id="consentTabButton" data-tab-index="10" role="button" tabindex="0" aria-label="Attribute Consent">
                 <i class="mdi mdi-checkerboard" aria-hidden="true"></i>
                 <span class="tooltip">Attribute Consent</span>
             </li>
-            <li id="protocolsTabButton" data-tab-index="11" role="button" tabindex="0" aria-label="Authentication Protocols">
+            <li th:if="${isRoleAdmin}" id="protocolsTabButton" data-tab-index="11" role="button" tabindex="0" aria-label="Authentication Protocols">
                 <i class="mdi mdi-protocol" aria-hidden="true"></i>
                 <span class="tooltip">Authentication Protocols</span>
             </li>
-            <li id="throttlesTabButton" data-tab-index="12" role="button" tabindex="0" aria-label="Throttled Authentication">
+            <li th:if="${isRoleAdmin}" id="throttlesTabButton" data-tab-index="12" role="button" tabindex="0" aria-label="Throttled Authentication">
                 <i class="mdi mdi-account-lock" aria-hidden="true"></i>
                 <span class="tooltip">Throttled Authentication</span>
             </li>
-            <li id="mfaTabButton" data-tab-index="13" role="button" tabindex="0" aria-label="Multifactor Authentication">
+            <li th:if="${isRoleAdmin}" id="mfaTabButton" data-tab-index="13" role="button" tabindex="0" aria-label="Multifactor Authentication">
                 <i class="mdi mdi-two-factor-authentication" aria-hidden="true"></i>
                 <span class="tooltip">Multifactor Authentication</span>
             </li>
-            <li id="tenantsTabButton" data-tab-index="14" role="button" tabindex="0" aria-label="Multitenancy">
+            <li th:if="${isRoleAdmin}" id="tenantsTabButton" data-tab-index="14" role="button" tabindex="0" aria-label="Multitenancy">
                 <i class="mdi mdi-home-circle" aria-hidden="true"></i>
                 <span class="tooltip">Multitenancy</span>
             </li>
-            <li id="palantirSettingsTabButton" class="bottom" data-tab-index="100" role="button" tabindex="0"
+            <li th:if="${isRoleAdmin}" id="clusterTabButton" data-tab-index="15" role="button" tabindex="0" aria-label="Cluster & High Availability">
+                <i class="mdi mdi-server" aria-hidden="true"></i>
+                <span class="tooltip">Cluster & High Availability</span>
+            </li>
+            <li th:if="${isRoleAdmin}" id="palantirSettingsTabButton" class="bottom" data-tab-index="100" role="button" tabindex="0"
                 aria-label="Palantir Settings">
                 <i class="mdi mdi-cog-outline" aria-hidden="true"></i>
                 <span class="tooltip">Palantir Settings</span>

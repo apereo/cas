@@ -30,6 +30,7 @@ import org.apereo.cas.oidc.authn.OidcJwtAuthenticator;
 import org.apereo.cas.oidc.authn.OidcX509Authenticator;
 import org.apereo.cas.oidc.claims.OidcAttributeToScopeClaimMapper;
 import org.apereo.cas.oidc.claims.OidcDefaultAttributeToScopeClaimMapper;
+import org.apereo.cas.oidc.claims.OidcGroovyIdTokenClaimCollector;
 import org.apereo.cas.oidc.claims.OidcIdTokenClaimCollector;
 import org.apereo.cas.oidc.claims.OidcSimpleIdTokenClaimCollector;
 import org.apereo.cas.oidc.discovery.OidcServerDiscoverySettings;
@@ -127,11 +128,14 @@ import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.util.gen.DefaultRandomStringGenerator;
 import org.apereo.cas.util.http.HttpClient;
 import org.apereo.cas.util.nativex.CasRuntimeHintsRegistrar;
+import org.apereo.cas.util.scripting.ExecutableCompiledScriptFactory;
+import org.apereo.cas.util.scripting.ScriptResourceCacheManager;
 import org.apereo.cas.util.serialization.JacksonObjectMapperCustomizer;
 import org.apereo.cas.util.serialization.StringSerializer;
 import org.apereo.cas.util.spring.beans.BeanCondition;
 import org.apereo.cas.util.spring.beans.BeanSupplier;
 import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
+import org.apereo.cas.util.spring.boot.ConditionalOnMissingGraalVMNativeImage;
 import org.apereo.cas.validation.AuthenticationAttributeReleasePolicy;
 import org.apereo.cas.web.SecurityLogicInterceptor;
 import org.apereo.cas.web.UrlValidator;
@@ -939,6 +943,25 @@ class OidcConfiguration {
             final AttributeDefinitionStore attributeDefinitionStore) {
             return new OidcSimpleIdTokenClaimCollector(attributeDefinitionStore, assuranceVerifiedClaimsProducer);
         }
+
+
+        @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+        @ConditionalOnMissingBean(name = "oidcIdTokenClaimScriptableCollector")
+        @ConditionalOnMissingGraalVMNativeImage
+        public OidcIdTokenClaimCollector oidcIdTokenClaimScriptableCollector(
+            final ConfigurableApplicationContext applicationContext,
+            @Qualifier(ScriptResourceCacheManager.BEAN_NAME)
+            final ObjectProvider<ScriptResourceCacheManager> scriptResourceCacheManager,
+            final CasConfigurationProperties casProperties) {
+            val resource = casProperties.getAuthn().getOidc().getIdToken().getCollectorScript().getLocation();
+            val scriptFactory = ExecutableCompiledScriptFactory.findExecutableCompiledScriptFactory();
+            if (resource != null && CasRuntimeHintsRegistrar.notInNativeImage() && scriptFactory.isPresent()) {
+                return new OidcGroovyIdTokenClaimCollector(scriptResourceCacheManager.getObject(), applicationContext, casProperties);
+            }
+            return OidcIdTokenClaimCollector.noOpCollector();
+        }
+
 
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)

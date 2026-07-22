@@ -10,7 +10,6 @@ import lombok.val;
 import org.eclipse.persistence.config.BatchWriting;
 import org.eclipse.persistence.config.PersistenceUnitProperties;
 import org.eclipse.persistence.logging.SessionLog;
-import org.jspecify.annotations.NonNull;
 import org.springframework.beans.factory.FactoryBean;
 import org.springframework.orm.jpa.JpaVendorAdapter;
 import org.springframework.orm.jpa.vendor.EclipseLinkJpaVendorAdapter;
@@ -35,7 +34,7 @@ public class CasEclipseLinkJpaBeanFactory implements JpaBeanFactory {
     }
 
     @Override
-    public FactoryBean<@NonNull EntityManagerFactory> newEntityManagerFactoryBean(final JpaConfigurationContext config,
+    public FactoryBean<EntityManagerFactory> newEntityManagerFactoryBean(final JpaConfigurationContext config,
                                                                                   final AbstractJpaProperties jpaProperties) {
         val bean = JpaBeans.newEntityManagerFactoryBean(config);
 

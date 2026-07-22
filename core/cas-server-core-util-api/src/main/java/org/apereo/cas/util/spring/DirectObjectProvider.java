@@ -12,7 +12,7 @@ import org.springframework.beans.factory.ObjectProvider;
  * @author Misagh Moayyed
  * @since 6.5.0
  */
-public record DirectObjectProvider<T>(T object) implements ObjectProvider<@NonNull T> {
+public record DirectObjectProvider<T>(T object) implements ObjectProvider<T> {
 
     @Override
     public T getObject() throws BeansException {

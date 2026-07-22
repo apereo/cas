@@ -4,6 +4,8 @@ import module java.base;
 import org.apereo.cas.services.DefaultRegisteredServiceAccessStrategy;
 import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.support.oauth.services.OAuthRegisteredService;
+import org.apereo.cas.support.oauth.services.OAuthRegisteredServiceClientSecret;
+import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.RandomUtils;
 import org.apereo.cas.util.http.HttpUtils;
 import lombok.val;
@@ -80,7 +82,7 @@ class OAuth20UsernamePasswordAuthenticatorTests extends BaseOAuth20Authenticator
         disabledService.setName("OAuth");
         disabledService.setId(RandomUtils.nextLong());
         disabledService.setServiceId("https://www.example.org");
-        disabledService.setClientSecret(UUID.randomUUID().toString());
+        disabledService.setClientSecrets(CollectionUtils.wrapList(OAuthRegisteredServiceClientSecret.withoutExpiration(UUID.randomUUID().toString())));
         disabledService.setClientId(UUID.randomUUID().toString());
         disabledService.setAccessStrategy(new DefaultRegisteredServiceAccessStrategy(false, false));
         servicesManager.save(disabledService);

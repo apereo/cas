@@ -38,17 +38,17 @@ public class SamlIdPConsentableAttributeBuilder implements ConsentableAttributeB
             attribute.setFriendlyName(samlAttr.getFriendlyName());
         }
         val attributeValues = ObjectUtils.getIfNull(attribute.getValues(), new ArrayList<>());
-        attributeValues.replaceAll(o -> {
-            if (o instanceof final XSString value) {
+        attributeValues.replaceAll(attrValue -> {
+            if (attrValue instanceof final XSString value) {
                 return value.getValue();
             }
-            if (o instanceof final XSURI value) {
+            if (attrValue instanceof final XSURI value) {
                 return value.getURI();
             }
-            if (o instanceof Serializable) {
-                return o;
+            if (attrValue instanceof Serializable) {
+                return attrValue;
             }
-            return o.toString();
+            return attrValue.toString();
         });
         return attribute;
     }

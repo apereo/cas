@@ -10,7 +10,6 @@ import org.apereo.cas.support.inwebo.service.soap.generated.LoginQuery;
 import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
 import org.apereo.cas.util.ssl.SSLUtils;
 import lombok.val;
-import org.jspecify.annotations.NonNull;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -40,7 +39,7 @@ class InweboServiceConfiguration {
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     public InweboConsoleAdmin inweboConsoleAdmin(
         @Qualifier(CasSSLContext.BEAN_NAME)
-        final ObjectProvider<@NonNull CasSSLContext> casSslContext,
+        final ObjectProvider<CasSSLContext> casSslContext,
         final CasConfigurationProperties casProperties) throws Exception {
         val inwebo = casProperties.getAuthn().getMfa().getInwebo();
 

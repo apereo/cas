@@ -1,12 +1,7 @@
 import org.apereo.cas.gradle.CasBuildSettings
 import org.apereo.cas.gradle.CasProjectConventions
 import org.apereo.cas.gradle.PublishProjectModulesMetadataTask
-import org.gradle.api.attributes.Bundling
-import org.gradle.api.attributes.Category
-import org.gradle.api.attributes.DocsType
-import org.gradle.api.attributes.LibraryElements
-import org.gradle.api.attributes.Usage
-
+import org.gradle.api.attributes.*
 import java.util.concurrent.ConcurrentHashMap
 
 description = "Apereo Central Authentication Service $version"
@@ -56,7 +51,7 @@ ext {
     skipBootifulArtifact = providers.systemProperty("skipBootifulArtifact").present
     skipErrorProneCompiler = providers.systemProperty("skipErrorProneCompiler").present
     skipSpringBootDevTools = providers.systemProperty("skipSpringBootDevTools").present
-    publishingType = providers.systemProperty("publishingType").getOrElse("AUTOMATIC")
+    publicationType = providers.systemProperty("publishingType").getOrElse("AUTOMATIC")
 
     skipArtifactSigning = providers.systemProperty("skipArtifactSigning").present
     terminateCompilerOnWarning = providers.systemProperty("terminateCompilerOnWarning").getOrElse("true") == "true"
@@ -85,7 +80,7 @@ if (publishReleases || publishSnapshots) {
             username = "${repositoryUsername}"
             password = "${repositoryPassword}"
             publicationName = "Apereo CAS Release ${project.version}"
-            publishingType = "${publishingType}"
+            publicationType = "${publicationType}"
             validationTimeout.set(Duration.ZERO)
             publishingTimeout.set(Duration.ZERO)
             uploadSnapshotsParallelism.set(4)

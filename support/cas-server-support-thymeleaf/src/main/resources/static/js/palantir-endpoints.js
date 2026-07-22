@@ -151,6 +151,22 @@ class CasActuatorEndpoints {
         return this.endpoints().oidcjwks || this.endpoints().oidcJwks;
     }
 
+    static groovyCache() {
+        return this.endpoints().groovycache || this.endpoints().groovyCache;
+    }
+    
+    static oauthClientSecrets() {
+        const endpoints = this.endpoints();
+        return endpoints.oauthClientSecrets
+            || endpoints.oauthclientSecrets
+            || endpoints.oauthclientsecrets
+            || endpoints["oauthClientSecrets-clientId"]
+            || endpoints["oauthclientSecrets-clientId"]
+            || endpoints["oauthclientsecrets-clientid"]
+            || Object.entries(endpoints)
+                .find(entry => entry[0].includes("oauthClientSecrets") || `${entry[1]}`.includes("/oauthClientSecrets/"))?.[1];
+    }
+
     static heimdall() {
         return this.endpoints().heimdall;
     }
@@ -169,6 +185,10 @@ class CasActuatorEndpoints {
 
     static multitenancy() {
         return this.endpoints().multitenancy;
+    }
+
+    static clusterTopology() {
+        return this.endpoints().clustertopology || this.endpoints().clusterTopology;
     }
 
     static samlPostProfileResponse() {
@@ -233,6 +253,10 @@ class CasActuatorEndpoints {
 
     static impersonation() {
         return this.endpoints().impersonation;
+    }
+
+    static passwordless() {
+        return this.endpoints().passwordless;
     }
 
     static startup() {

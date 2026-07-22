@@ -2,6 +2,7 @@ package org.apereo.cas.support.oauth.web.endpoints;
 
 import module java.base;
 import org.apereo.cas.support.oauth.OAuth20Constants;
+import org.apereo.cas.support.oauth.util.OAuth20Utils;
 import org.apereo.cas.ticket.device.OAuth20DeviceUserCode;
 import org.apereo.cas.ticket.device.OAuth20DeviceUserCodeFactory;
 import org.apereo.cas.util.LoggingUtils;
@@ -10,6 +11,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
+import org.pac4j.jee.context.JEEContext;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -65,13 +67,20 @@ public class OAuth20DeviceUserCodeApprovalEndpointController extends BaseOAuth20
             return codeNotfound;
         }
         try {
+            val webContext = new JEEContext(request, response);
             val factory = (OAuth20DeviceUserCodeFactory) getConfigurationContext().getTicketFactory().get(OAuth20DeviceUserCode.class);
             val codeId = factory.normalizeUserCode(userCode);
             val deviceUserCode = getConfigurationContext().getTicketRegistry().getTicket(codeId, OAuth20DeviceUserCode.class);
             if (deviceUserCode.isUserCodeApproved()) {
                 return getModelAndViewForFailure("codeapproved");
             }
+
+            val userProfile = OAuth20Utils.getAuthenticatedUserProfile(webContext, configurationContext.getSessionStore());
+            LOGGER.debug("Approved device user code: [{}] for [{}]", deviceUserCode.getId(), userProfile.getUsername());
+            val ticketGrantingTicket = configurationContext.fetchTicketGrantingTicketFrom(webContext);
+            deviceUserCode.setAuthentication(ticketGrantingTicket.getAuthentication());
             deviceUserCode.setUserCodeApproved(true);
+
             val updatedDeviceUserCode = getConfigurationContext().getTicketRegistry().updateTicket(deviceUserCode);
             return new ModelAndView(OAuth20Constants.DEVICE_CODE_APPROVED_VIEW,
                 Map.of("code", updatedDeviceUserCode.getId()), HttpStatus.OK);

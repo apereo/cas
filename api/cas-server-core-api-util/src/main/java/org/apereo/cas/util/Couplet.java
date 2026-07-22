@@ -2,6 +2,7 @@ package org.apereo.cas.util;
 
 import module java.base;
 import org.apache.commons.lang3.tuple.Pair;
+import org.jspecify.annotations.Nullable;
 
 /**
  * This is {@link Couplet}.
@@ -9,7 +10,7 @@ import org.apache.commons.lang3.tuple.Pair;
  * @author Misagh Moayyed
  * @since 8.0.0
  */
-public record Couplet<L, R>(L key, R value) implements Serializable {
+public record Couplet<L, R>(@Nullable L key, @Nullable R value) implements Serializable {
 
     /**
      * To pair object.
@@ -25,7 +26,7 @@ public record Couplet<L, R>(L key, R value) implements Serializable {
      *
      * @return the left
      */
-    public L getLeft() {
+    public @Nullable L getLeft() {
         return key;
     }
 
@@ -34,7 +35,7 @@ public record Couplet<L, R>(L key, R value) implements Serializable {
      *
      * @return the right
      */
-    public R getRight() {
+    public @Nullable R getRight() {
         return value;
     }
     

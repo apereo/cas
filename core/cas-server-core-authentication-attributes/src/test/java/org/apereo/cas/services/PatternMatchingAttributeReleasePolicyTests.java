@@ -2,6 +2,7 @@ package org.apereo.cas.services;
 
 import module java.base;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
+import org.apereo.cas.config.CasCoreScriptingAutoConfiguration;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.test.CasTestExtension;
 import org.apereo.cas.util.RandomUtils;
@@ -13,7 +14,6 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.context.ConfigurableApplicationContext;
 import tools.jackson.databind.ObjectMapper;
 import static org.junit.jupiter.api.Assertions.*;
@@ -25,7 +25,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.6.0
  */
 @Tag("AttributeRelease")
-@SpringBootTest(classes = RefreshAutoConfiguration.class)
+@SpringBootTest(classes = CasCoreScriptingAutoConfiguration.class)
 @ExtendWith(CasTestExtension.class)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 class PatternMatchingAttributeReleasePolicyTests {
@@ -96,6 +96,36 @@ class PatternMatchingAttributeReleasePolicyTests {
 
         val values = attributes.get("memberOf");
         assertTrue(values.contains("CN=g1,OU=example,DC=org/org"));
+    }
+
+    @Test
+    void verifyGroovyTransformationRule() throws Throwable {
+        val policy = new PatternMatchingAttributeReleasePolicy();
+        policy.getAllowedAttributes().put("memberOf",
+            new PatternMatchingAttributeReleasePolicy.Rule()
+                .setPattern(".*CN=(\\w+),OU=example.*")
+                .setTransform("""
+                    groovy {
+                        logger.info("Matched value is [{}] for [{}]", matched, context.principal.id)
+                        def value = matchedGroup1 == 'g1' ? 'group1' : 'group2'
+                        return [mem: [value]]
+                    }
+                """)
+        );
+
+        val releasePolicyContext = RegisteredServiceAttributeReleasePolicyContext.builder()
+            .registeredService(CoreAuthenticationTestUtils.getRegisteredService())
+            .service(CoreAuthenticationTestUtils.getService())
+            .applicationContext(applicationContext)
+            .principal(CoreAuthenticationTestUtils.getPrincipal(
+                Map.of("memberOf", List.of("CN=g1,OU=example,DC=org", "CN=g2,OU=example,DC=org"),
+                    "another", List.of("CN=g3", "CN=g4"))))
+            .build();
+        val attributes = policy.getAttributes(releasePolicyContext);
+        assertEquals(1, attributes.size());
+        assertTrue(attributes.containsKey("mem"));
+        assertTrue(attributes.get("mem").contains("group1"));
+        assertTrue(attributes.get("mem").contains("group2"));
     }
 
 }

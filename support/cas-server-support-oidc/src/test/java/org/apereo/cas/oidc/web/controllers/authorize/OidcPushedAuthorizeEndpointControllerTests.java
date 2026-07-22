@@ -31,7 +31,7 @@ class OidcPushedAuthorizeEndpointControllerTests extends AbstractOidcTests {
         mockMvc.perform(get("/cas/oidc/" + OidcConstants.PUSHED_AUTHORIZE_URL)
                 .param(OAuth20Constants.CLIENT_ID, id)
                 .param(OAuth20Constants.REDIRECT_URI, "https://oauth.example.org/")
-                .param(OAuth20Constants.CLIENT_SECRET, service.getClientSecret())
+                .param(OAuth20Constants.CLIENT_SECRET, service.getClientSecrets().getFirst().getValue())
                 .param(OAuth20Constants.RESPONSE_TYPE, OAuth20ResponseTypes.CODE.name().toLowerCase(Locale.ENGLISH))
                 .with(withHttpRequestProcessor())
             )
@@ -54,7 +54,7 @@ class OidcPushedAuthorizeEndpointControllerTests extends AbstractOidcTests {
 
         mockMvc.perform(post("/cas/oidc/" + OidcConstants.PUSHED_AUTHORIZE_URL)
                 .param(OAuth20Constants.CLIENT_ID, id)
-                .param(OAuth20Constants.CLIENT_SECRET, service.getClientSecret())
+                .param(OAuth20Constants.CLIENT_SECRET, service.getClientSecrets().getFirst().getValue())
                 .param(OAuth20Constants.REDIRECT_URI, "https://oauth.example.org/")
                 .param(OAuth20Constants.RESPONSE_TYPE, OAuth20ResponseTypes.CODE.name().toLowerCase(Locale.ENGLISH))
                 .with(withHttpRequestProcessor()))
@@ -72,7 +72,7 @@ class OidcPushedAuthorizeEndpointControllerTests extends AbstractOidcTests {
 
         mockMvc.perform(post("/cas/oidc/" + OidcConstants.PUSHED_AUTHORIZE_URL)
                 .param(OAuth20Constants.CLIENT_ID, id)
-                .param(OAuth20Constants.CLIENT_SECRET, service.getClientSecret())
+                .param(OAuth20Constants.CLIENT_SECRET, service.getClientSecrets().getFirst().getValue())
                 .param(OAuth20Constants.REDIRECT_URI, "https://invalid.example.org/")
                 .param(OAuth20Constants.RESPONSE_TYPE, OAuth20ResponseTypes.CODE.name().toLowerCase(Locale.ENGLISH))
                 .with(withHttpRequestProcessor()))
@@ -88,7 +88,7 @@ class OidcPushedAuthorizeEndpointControllerTests extends AbstractOidcTests {
 
         mockMvc.perform(post("/cas/oidc/" + OidcConstants.PUSHED_AUTHORIZE_URL)
                 .param(OAuth20Constants.CLIENT_ID, id)
-                .param(OAuth20Constants.CLIENT_SECRET, service.getClientSecret())
+                .param(OAuth20Constants.CLIENT_SECRET, service.getClientSecrets().getFirst().getValue())
                 .param(OAuth20Constants.REDIRECT_URI, "https://oauth.example.org/")
                 .param(OAuth20Constants.RESPONSE_TYPE, OAuth20ResponseTypes.CODE.name().toLowerCase(Locale.ENGLISH))
                 .with(withHttpRequestProcessor())

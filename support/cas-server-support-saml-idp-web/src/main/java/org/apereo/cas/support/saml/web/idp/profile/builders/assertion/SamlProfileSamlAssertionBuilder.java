@@ -120,7 +120,7 @@ public class SamlProfileSamlAssertionBuilder extends AbstractSaml20ObjectBuilder
                              || context.getRegisteredService().getSignAssertions().isTrue();
         if (!signAssertions) {
             signAssertions = SamlIdPUtils.doesEntityDescriptorMatchEntityAttribute(context.getAdaptor().getEntityDescriptor(),
-                List.of(MetadataEntityAttributeQuery.of(SamlIdPConstants.KnownEntityAttributes.SHIBBOLETH_SIGN_ASSERTIONS.getName(),
+                List.of(MetadataEntityAttributeQuery.of(SamlIdPConstants.KnownEntityAttributes.SHIBBOLETH_SIGN_ASSERTIONS,
                     Attribute.URI_REFERENCE, List.of(Boolean.TRUE.toString()))));
         }
         

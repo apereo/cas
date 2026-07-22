@@ -44,5 +44,6 @@ class JsonPersonAttributeDaoTests {
         val queryMap = new HashMap<String, List<Object>>();
         queryMap.put("username", List.of(PersonAttributeDao.WILDCARD));
         assertEquals(3, repository.getPeopleWithMultivaluedAttributes(queryMap).size());
+        assertNotNull(repository.toConfiguration());
     }
 }

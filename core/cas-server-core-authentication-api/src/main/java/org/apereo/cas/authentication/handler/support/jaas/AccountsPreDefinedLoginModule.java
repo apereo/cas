@@ -47,7 +47,7 @@ public class AccountsPreDefinedLoginModule implements LoginModule {
         val nameCallback = new NameCallback("username");
         val passwordCallback = new PasswordCallback("password", false);
 
-        FunctionUtils.doAndHandle(o -> {
+        FunctionUtils.doAndHandle(_ -> {
             callbackHandler.handle(new Callback[]{nameCallback, passwordCallback});
         }, throwable -> {
             throw new FailedLoginException(throwable.getMessage());

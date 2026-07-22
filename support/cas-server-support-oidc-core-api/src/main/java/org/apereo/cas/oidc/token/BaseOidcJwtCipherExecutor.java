@@ -17,7 +17,6 @@ import org.jose4j.jwe.KeyManagementAlgorithmIdentifiers;
 import org.jose4j.jwk.JsonWebKey;
 import org.jose4j.jwk.JsonWebKeySet;
 import org.jose4j.jwk.PublicJsonWebKey;
-import org.jspecify.annotations.NonNull;
 
 /**
  * This is {@link BaseOidcJwtCipherExecutor}.
@@ -33,7 +32,7 @@ public abstract class BaseOidcJwtCipherExecutor extends BaseStringCipherExecutor
     /**
      * The default keystore for OIDC tokens.
      */
-    protected final LoadingCache<@NonNull OidcJsonWebKeyCacheKey, JsonWebKeySet> defaultJsonWebKeystoreCache;
+    protected final LoadingCache<OidcJsonWebKeyCacheKey, JsonWebKeySet> defaultJsonWebKeystoreCache;
 
     /**
      * OIDC issuer.

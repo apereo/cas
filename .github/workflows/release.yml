@@ -82,6 +82,7 @@ jobs:
         env:
           RELEASE_VERSION: ${{ inputs.releaseVersion }}
           NEXT_VERSION_INPUT: ${{ inputs.nextVersion }}
+          GH_TOKEN: ${{ github.token }}
         run: |
           set -euo pipefail
           echo "Release version: $RELEASE_VERSION"
