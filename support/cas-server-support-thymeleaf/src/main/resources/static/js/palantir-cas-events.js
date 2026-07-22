@@ -9,55 +9,45 @@ async function initializeCasEventsOperations() {
             }
         });
 
-        function fetchCasEvents() {
-            return setInterval(() => {
-                if (currentActiveTab === Tabs.LOGGING.index) {
-                    $.ajax({
-                        url: `${CasActuatorEndpoints.events()}`,
-                        type: "GET",
-                        headers: {
-                            "Content-Type": "application/x-www-form-urlencoded"
-                        },
-                        success: (response, textStatus, xhr) => {
-                            casEventsTable.clear();
-                            const jsonEvents = JSON.parse(response);
-                            if (jsonEvents.length > 0) {
-                                for (const entry of jsonEvents) {
-                                    const geoLocation = `${entry?.properties?.geoLatitude ?? ""} ${entry?.properties?.geoLongitude ?? ""} ${entry?.properties?.geoAccuracy ?? ""}`.trim();
-                                    casEventsTable.row.add({
-                                        0: `<code>${entry?.creationTime ?? "N/A"}</code>`,
-                                        1: `<code>${getLastWord(entry?.type) ?? "N/A"}</code>`,
-                                        2: `<code>${entry?.properties?.eventId ?? "N/A"}</code>`,
-                                        3: `<code>${entry?.principalId ?? "N/A"}</code>`,
-                                        4: `<code>${entry?.properties?.clientip ?? "N/A"}</code>`,
-                                        5: `<code>${entry?.properties?.serverip ?? "N/A"}</code>`,
-                                        6: `<code>${entry?.properties?.agent ?? "N/A"}</code>`,
-                                        7: `<code>${entry?.properties?.tenant ?? "N/A"}</code>`,
-                                        8: `<code>${entry?.properties?.deviceFingerprint ?? "N/A"}</code>`,
-                                        9: `<code>${geoLocation.length === 0 ? "N/A" : geoLocation}</code>`
-                                    });
-                                }
-                            }
-                            casEventsTable.draw();
-                        },
-                        error: (xhr, textStatus, errorThrown) => console.error("Error fetching data:", errorThrown)
-                    });
-                }
-            }, $("#casEventsRefreshFilter").val());
+        function updateCasEventsTable() {
+            if (!isPalantirPollingContextActive(Tabs.LOGGING, "#casEvents-tab")) {
+                return;
+            }
+            $.ajax({
+                url: `${CasActuatorEndpoints.events()}`,
+                type: "GET",
+                headers: {
+                    "Content-Type": "application/x-www-form-urlencoded"
+                },
+                success: (response, textStatus, xhr) => {
+                    casEventsTable.clear();
+                    const jsonEvents = typeof response === "string" ? JSON.parse(response) : response;
+                    if (jsonEvents.length > 0) {
+                        for (const entry of jsonEvents) {
+                            const geoLocation = `${entry?.properties?.geoLatitude ?? ""} ${entry?.properties?.geoLongitude ?? ""} ${entry?.properties?.geoAccuracy ?? ""}`.trim();
+                            casEventsTable.row.add({
+                                0: `<code>${entry?.creationTime ?? "N/A"}</code>`,
+                                1: `<code>${getLastWord(entry?.type) ?? "N/A"}</code>`,
+                                2: `<code>${entry?.properties?.eventId ?? "N/A"}</code>`,
+                                3: `<code>${entry?.principalId ?? "N/A"}</code>`,
+                                4: `<code>${entry?.properties?.clientip ?? "N/A"}</code>`,
+                                5: `<code>${entry?.properties?.serverip ?? "N/A"}</code>`,
+                                6: `<code>${entry?.properties?.agent ?? "N/A"}</code>`,
+                                7: `<code>${entry?.properties?.tenant ?? "N/A"}</code>`,
+                                8: `<code>${entry?.properties?.deviceFingerprint ?? "N/A"}</code>`,
+                                9: `<code>${geoLocation.length === 0 ? "N/A" : geoLocation}</code>`
+                            });
+                        }
+                    }
+                    casEventsTable.draw();
+                },
+                error: (xhr, textStatus, errorThrown) => console.error("Error fetching data:", errorThrown)
+            });
         }
 
-        let refreshInterval = undefined;
-        if (CasActuatorEndpoints.events()) {
-            refreshInterval = fetchCasEvents();
-        }
-        $("#casEventsRefreshFilter").selectmenu({
-            change: (event, data) => {
-                if (refreshInterval) {
-                    clearInterval(refreshInterval);
-                    refreshInterval = fetchCasEvents();
-                }
-            }
-        });
+        setInterval(updateCasEventsTable, palantirSettings().refreshInterval);
+        window.addEventListener(palantirPollingContextEvent, updateCasEventsTable);
+        updateCasEventsTable();
     }
 }
 
@@ -185,6 +175,25 @@ async function initializeAuditEventsOperations() {
             return null;
         }
 
+        function parseJsonAuditResource(value) {
+            if (value && typeof value === "object") {
+                return value;
+            }
+            if (typeof value !== "string") {
+                return null;
+            }
+            const trimmed = value.trim();
+            if (!trimmed.startsWith("{") && !trimmed.startsWith("[")) {
+                return null;
+            }
+            try {
+                const parsed = JSON.parse(trimmed);
+                return parsed && typeof parsed === "object" ? parsed : null;
+            } catch (e) {
+                return null;
+            }
+        }
+
         function auditActionType(action) {
             const value = String(action ?? "").toLowerCase();
             if (/(fail|failure|failed|deny|denied|error|exception|unauthori[sz]ed|invalid)/i.test(value)) {
@@ -202,17 +211,25 @@ async function initializeAuditEventsOperations() {
         }
 
         function renderAuditResourceSummary(data, row) {
+            if (row.resourceDetails && typeof row.resourceDetails === "object") {
+                return `
+                    <div class="audit-resource-json-summary">
+                        ${renderAuditJsonValue(row.resourceDetails)}
+                    </div>`;
+            }
             return `<code class="audit-resource-value">${escapeHtml(data)}</code>`;
         }
 
         function normalizeAuditEvent(entry, index) {
             const resource = entry?.auditableResource ?? entry?.resourceOperatedUpon ?? "";
-            const resourceDetails = parseAuditResource(resource);
+            const jsonResource = parseJsonAuditResource(resource);
+            const resourceText = typeof resource === "string" ? resource : JSON.stringify(resource);
+            const resourceDetails = jsonResource ?? parseAuditResource(resourceText);
             const action = entry?.actionPerformed ?? "N/A";
             return {
                 id: `audit-event-${index}`,
                 principal: entry?.principal ?? "N/A",
-                resource: resource || "N/A",
+                resource: resourceText || "N/A",
                 resourceDetails,
                 action,
                 actionType: auditActionType(action),
@@ -222,14 +239,24 @@ async function initializeAuditEventsOperations() {
             };
         }
 
-        function renderAuditResourceDetails(row) {
-            if (!row.resourceDetails) {
-                return "";
+        function renderAuditJsonValue(value) {
+            if (value && typeof value === "object") {
+                const isArray = Array.isArray(value);
+                const entries = isArray
+                    ? value.map((entry, index) => [index, entry])
+                    : Object.entries(value);
+                if (entries.length === 0) {
+                    return `<code class="audit-resource-json-value audit-resource-json-value-empty">${isArray ? "[]" : "{}"}</code>`;
+                }
+                return `<dl class="audit-resource-fields">${entries.map(([key, entry]) => `
+                    <div class="audit-resource-field">
+                        <dt class="audit-resource-json-key">${escapeHtml(isArray ? `[${key}]` : key)}</dt>
+                        <dd class="audit-resource-field-value">${renderAuditJsonValue(entry)}</dd>
+                    </div>`).join("")}</dl>`;
             }
-            return `
-                <div class="audit-resource-details">
-                    <pre><code class="border-rounded language-json text-wrap">${escapeHtml(JSON.stringify(row.resourceDetails, null, 2))}</code></pre>
-                </div>`;
+            const displayValue = value === null ? "null" : String(value);
+            const valueType = value === null ? "null" : typeof value;
+            return `<code class="audit-resource-json-value audit-resource-json-value-${valueType}">${escapeHtml(displayValue)}</code>`;
         }
 
         const auditEventsTable = $("#auditEventsTable").DataTable({
@@ -252,17 +279,17 @@ async function initializeAuditEventsOperations() {
                 },
                 {
                     data: "action",
-                    width: "10rem",
+                    width: "15rem",
                     render: (data, type) => type === "display" ? renderAuditAction(data) : data
                 },
                 {
                     data: "date",
-                    width: "13rem",
+                    width: "10rem",
                     render: (data, type) => type === "display" ? `<code>${escapeHtml(data)}</code>` : data
                 },
                 {
                     data: "clientIpAddress",
-                    width: "8rem",
+                    width: "6.5rem",
                     render: (data, type) => type === "display" ? `<code>${escapeHtml(data)}</code>` : data
                 },
                 {
@@ -277,44 +304,11 @@ async function initializeAuditEventsOperations() {
             }
         });
 
-        function collapseAuditResourceDetails() {
-            $("#auditEventsTable tbody tr.shown").each(function () {
-                const row = auditEventsTable.row(this);
-                row.child.hide();
-                $(this).removeClass("shown");
-            });
-        }
-
-        initializeDataTableContextMenu({
-            table: auditEventsTable,
-            selector: "#auditEventsTable tbody tr",
-            items: {
-                resourceDetails: {
-                    name: "Toggle Resource Details",
-                    icon: contextMenuIcon("mdi-code-json"),
-                    visible: context => !!context.rowData.resourceDetails
-                }
-            },
-            callback: (key, context) => {
-                if (key === "resourceDetails") {
-                    if (context.row.child.isShown()) {
-                        context.row.child.hide();
-                        context.$row.removeClass("shown");
-                    } else {
-                        context.row.child(renderAuditResourceDetails(context.row.data())).show();
-                        context.$row.addClass("shown");
-                        context.$row.next("tr").addClass("audit-resource-details-row");
-                        highlightElements();
-                    }
-                }
-            }
-        });
+        let auditEventsRequestInFlight = false;
 
         function updateAuditEventsTable() {
-            if (currentActiveTab !== Tabs.LOGGING.index) {
-                return;
-            }
-            if ($("#auditEventsTable tbody tr.shown").length > 0) {
+            if (auditEventsRequestInFlight
+                || !isPalantirPollingContextActive(Tabs.LOGGING, "#auditevents-tab")) {
                 return;
             }
 
@@ -322,6 +316,7 @@ async function initializeAuditEventsOperations() {
             const count = $("#auditEventsCountFilter").val();
             const actionFilter = $("#auditEventsActionFilter").val();
 
+            auditEventsRequestInFlight = true;
             $.ajax({
                 url: `${CasActuatorEndpoints.auditLog()}?interval=${interval}&count=${count}`,
                 type: "GET",
@@ -329,25 +324,35 @@ async function initializeAuditEventsOperations() {
                     "Content-Type": "application/x-www-form-urlencoded"
                 },
                 success: (response, textStatus, xhr) => {
+                    let auditEvents;
+                    try {
+                        const parsedResponse = typeof response === "string" ? JSON.parse(response) : response;
+                        auditEvents = Array.isArray(parsedResponse) ? parsedResponse : [];
+                    } catch (e) {
+                        console.error("Unable to parse audit events:", e);
+                        return;
+                    }
                     auditEventsTable.clear();
-                    response
+                    auditEvents
                         .map(normalizeAuditEvent)
                         .filter(entry => actionFilter === "all" || entry.actionType === actionFilter)
                         .forEach(entry => auditEventsTable.row.add(entry));
                     auditEventsTable.draw();
                 },
-                error: (xhr, textStatus, errorThrown) => console.error("Error fetching data:", errorThrown)
+                error: (xhr, textStatus, errorThrown) => console.error("Error fetching data:", errorThrown),
+                complete: () => {
+                    auditEventsRequestInFlight = false;
+                }
             });
         }
 
-            $("#auditEventsIntervalFilter, #auditEventsCountFilter, #auditEventsActionFilter").selectmenu({
-            change: () => {
-                collapseAuditResourceDetails();
-                updateAuditEventsTable();
-            }
+        $("#auditEventsIntervalFilter, #auditEventsCountFilter, #auditEventsActionFilter").selectmenu({
+            change: updateAuditEventsTable
         });
 
+        const auditEventsRefreshInterval = palantirSettings().refreshInterval;
+        setInterval(updateAuditEventsTable, auditEventsRefreshInterval);
+        window.addEventListener(palantirPollingContextEvent, updateAuditEventsTable);
         updateAuditEventsTable();
-        setInterval(updateAuditEventsTable, palantirSettings().refreshInterval);
     }
 }

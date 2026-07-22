@@ -13,6 +13,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
+import org.jspecify.annotations.Nullable;
 import org.springframework.webflow.execution.RequestContext;
 
 /**
@@ -37,7 +38,7 @@ public abstract class BaseAcceptableUsagePolicyRepository implements AcceptableU
      */
     protected final AcceptableUsagePolicyProperties aupProperties;
 
-    private static String getPolicyText(final RequestContext requestContext) {
+    private static @Nullable String getPolicyText(final RequestContext requestContext) {
         val registeredService = (WebBasedRegisteredService) WebUtils.getRegisteredService(requestContext);
         if (registeredService != null && registeredService.getAcceptableUsagePolicy() != null
             && StringUtils.isNotBlank(registeredService.getAcceptableUsagePolicy().getText())) {
