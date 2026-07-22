@@ -13,7 +13,7 @@
     "dpop": "2.1.1",
     "express": "5.2.1",
     "http-cas-client": "0.4.3",
-    "jose": "6.2.3",
+    "jose": "6.2.4",
     "jsonpath-plus": "10.4.0",
     "jsonwebtoken": "9.0.3",
     "jsqr": "1.4.0",
@@ -34,7 +34,7 @@
     "sockjs-client": "1.6.1",
     "speakeasy": "2.0.0",
     "unzipper": "0.12.5",
-    "wait-on": "9.0.10",
+    "wait-on": "9.1.0",
     "xml2js": "0.6.2",
     "yaml": "2.9.0"
   },
