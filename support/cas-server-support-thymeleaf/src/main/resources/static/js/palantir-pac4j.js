@@ -605,8 +605,9 @@ function newExternalIdentityProvider() {
                 $("#newExternalIdentityProviderDialog .jqueryui-selectmenu").selectmenu({
                     width: "330px",
                     change: function (event, ui) {
-                        const type = ui.item.value;
-                        handleExternalIdentityProviderTypeChange(type);
+                        if (this.id === "externalIdPTypeSelect") {
+                            handleExternalIdentityProviderTypeChange(ui.item.value);
+                        }
                     }
                 });
                 const currentType = $("#externalIdPTypeSelect").val();
