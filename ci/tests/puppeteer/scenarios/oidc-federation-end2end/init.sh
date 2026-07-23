@@ -22,10 +22,6 @@ finish() {
   fi
   exit "${rc}"
 }
-is_port_listened() {
-  lsof -tiTCP:8080 -sTCP:LISTEN >/dev/null 2>&1
-}
-
 prepare_truststore() {
   if [[ ! -f "${CAS_CERT_FILE}" ]]; then
     echo "Unable to find CAS certificate at ${CAS_CERT_FILE}"
@@ -56,17 +52,6 @@ if docker inspect -f '{{.State.Running}}' "${CONTAINER_NAME}" 2>/dev/null | grep
   docker rm -f "${CONTAINER_NAME}" >/dev/null 2>&1 || true
 fi
 
-if is_port_listened; then
-  if curl --output /dev/null --silent --fail http://localhost:8080; then
-    echo "A service is already responding on http://localhost:8080; reusing it for RP checks."
-    echo "RP pre-check done. CAS OP/TA startup is handled by Puppeteer scenario instances."
-    finish 0
-  fi
-  listener_pids=$(lsof -tiTCP:8080 -sTCP:LISTEN 2>/dev/null | tr '\n' ' ' | sed 's/[[:space:]]*$//')
-  echo "Port 8080 is already in use by process(es): ${listener_pids}"
-  echo "Please stop the process on 8080 (e.g. nginx) and rerun the scenario."
-  finish 1
-fi
 prepare_truststore
 
 if ! docker info >/dev/null 2>&1; then
