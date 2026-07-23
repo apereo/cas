@@ -4,23 +4,23 @@ import module java.base;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.test.CasTestExtension;
 import lombok.val;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.mock.web.MockHttpSession;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.security.web.context.HttpSessionSecurityContextRepository;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.setup.MockMvcBuilders;
-import org.springframework.web.context.WebApplicationContext;
 import static org.junit.jupiter.api.Assertions.*;
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.authentication;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
@@ -40,18 +40,18 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @ExtendWith(CasTestExtension.class)
 class DashboardControllerTests {
     @Autowired
-    private WebApplicationContext webApplicationContext;
-
+    @Qualifier("mockMvc")
     private MockMvc mvc;
-
-    @BeforeEach
-    void setup() {
-        mvc = MockMvcBuilders.webAppContextSetup(webApplicationContext).build();
-    }
-
+    
     @Test
     void verifyOperation() throws Throwable {
-        val model = mvc.perform(get("/palantir/dashboard"))
+        val authentication = new UsernamePasswordAuthenticationToken(
+            "casuser",
+            "password",
+            List.of(new SimpleGrantedAuthority("ROLE_ADMIN"))
+        );
+        val model = mvc.perform(get("/palantir/dashboard")
+                .with(authentication(authentication)))
             .andExpect(status().isOk())
             .andReturn()
             .getModelAndView()
@@ -62,23 +62,30 @@ class DashboardControllerTests {
         assertTrue(model.containsKey("httpRequestSecure"));
         assertTrue(model.containsKey("actuatorEndpoints"));
         assertTrue(model.containsKey("serviceDefinitions"));
-        
-        mvc.perform(get("/palantir/")).andExpect(status().isOk());
-        mvc.perform(get("/palantir")).andExpect(status().isOk());
+
+        mvc.perform(get("/palantir/").with(authentication(authentication))).andExpect(status().isOk());
+        mvc.perform(get("/palantir").with(authentication(authentication))).andExpect(status().isOk());
 
     }
 
     @Test
-    @WithMockUser(username = "casuser", roles = "USER")
     void verifySession() throws Throwable {
+        val authentication = new UsernamePasswordAuthenticationToken(
+            "casuser",
+            "password",
+            List.of(new SimpleGrantedAuthority("ROLE_ADMIN"))
+        );
         val session = new MockHttpSession();
         session.setAttribute(
             HttpSessionSecurityContextRepository.SPRING_SECURITY_CONTEXT_KEY,
             SecurityContextHolder.createEmptyContext()
         );
 
-        mvc.perform(get("/palantir/dashboard/session").session(session)).andExpect(status().isOk());
+        mvc.perform(get("/palantir/dashboard/session")
+            .with(authentication(authentication))
+            .session(session)).andExpect(status().isOk());
         SecurityContextHolder.clearContext();
-        mvc.perform(get("/palantir/dashboard/session")).andExpect(status().isUnauthorized());
+        mvc.perform(get("/palantir/dashboard/session"))
+            .andExpect(status().is3xxRedirection());
     }
 }

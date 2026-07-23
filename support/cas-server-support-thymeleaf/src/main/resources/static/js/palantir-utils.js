@@ -478,6 +478,56 @@ function initializePalantirInputIcons() {
     observer.observe(document.body, {childList: true, subtree: true});
 }
 
+const palantirPollingContextEvent = "palantir:polling-context-changed";
+let palantirPollingContextInitialized = false;
+let palantirPollingContextNotificationScheduled = false;
+
+function isPalantirPollingContextActive(dashboardTab, panelSelector) {
+    const tabIndex = typeof dashboardTab === "number" ? dashboardTab : dashboardTab.index;
+    if (currentActiveTab !== tabIndex || document.visibilityState !== "visible"
+        || (typeof document.hasFocus === "function" && !document.hasFocus())) {
+        return false;
+    }
+
+    const navigationItem = $(`nav.sidebar-navigation ul li[data-tab-index='${tabIndex}']`);
+    if (navigationItem.length === 0 || !navigationItem.is(":visible")
+        || navigationItem.is("[disabled], [aria-disabled='true']") || navigationItem.hasClass("ui-state-disabled")) {
+        return false;
+    }
+
+    const panel = $(panelSelector);
+    if (panel.length === 0 || !panel.is(":visible")
+        || panel.is("[disabled], [aria-disabled='true']") || panel.hasClass("ui-state-disabled")) {
+        return false;
+    }
+
+    const panelId = panel.attr("id");
+    const innerTab = panelId ? $(`.jqueryui-tabs > ul a[href='#${panelId}']`).first().parent() : $();
+    return innerTab.length === 0 || (innerTab.is(":visible")
+        && !innerTab.is("[disabled], [aria-disabled='true']") && !innerTab.hasClass("ui-state-disabled"));
+}
+
+function notifyPalantirPollingContextChanged() {
+    if (palantirPollingContextNotificationScheduled) {
+        return;
+    }
+    palantirPollingContextNotificationScheduled = true;
+    queueMicrotask(() => {
+        palantirPollingContextNotificationScheduled = false;
+        window.dispatchEvent(new CustomEvent(palantirPollingContextEvent));
+    });
+}
+
+function initializePalantirPollingContext() {
+    if (palantirPollingContextInitialized) {
+        return;
+    }
+    palantirPollingContextInitialized = true;
+    window.addEventListener("focus", notifyPalantirPollingContextChanged);
+    window.addEventListener("blur", notifyPalantirPollingContextChanged);
+    document.addEventListener("visibilitychange", notifyPalantirPollingContextChanged);
+}
+
 
 function initializeTabs() {
     $(".jqueryui-tabs").tabs({
@@ -490,6 +540,7 @@ function initializeTabs() {
                 activeTabs[tabId] = active;
                 localStorage.setItem("ActiveTabs", JSON.stringify(activeTabs));
             }
+            notifyPalantirPollingContextChanged();
         }
     }).off().on("click", () => updateNavigationSidebar());
 }

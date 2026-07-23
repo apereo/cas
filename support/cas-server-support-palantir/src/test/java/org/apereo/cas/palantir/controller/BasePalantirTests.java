@@ -17,6 +17,7 @@ import org.apereo.cas.config.CasPalantirAutoConfiguration;
 import org.apereo.cas.config.CasPersonDirectoryAutoConfiguration;
 import org.apereo.cas.config.CasThemesAutoConfiguration;
 import org.apereo.cas.config.CasThymeleafAutoConfiguration;
+import org.apereo.cas.config.CasWebAppAutoConfiguration;
 import org.apereo.cas.util.spring.boot.SpringBootTestAutoConfigurations;
 import org.springframework.boot.SpringBootConfiguration;
 import org.springframework.boot.autoconfigure.ImportAutoConfiguration;
@@ -41,6 +42,7 @@ abstract class BasePalantirTests {
         CasThemesAutoConfiguration.class,
         CasThymeleafAutoConfiguration.class,
         CasCoreWebflowAutoConfiguration.class,
+        CasWebAppAutoConfiguration.class,
         CasCoreCookieAutoConfiguration.class,
         CasCoreMultifactorAuthenticationAutoConfiguration.class,
         CasCoreMultifactorAuthenticationWebflowAutoConfiguration.class,

@@ -76,6 +76,9 @@ async function initializeLoggingOperations() {
     }
 
     function updateLoggersTable() {
+        if (!isPalantirPollingContextActive(Tabs.LOGGING, "#logconfiguration-tab")) {
+            return;
+        }
         fetchLoggerData(response => {
             function addLoggerToTable(logger) {
                 const background = determineLoggerColor(logger.level);
@@ -128,17 +131,8 @@ async function initializeLoggingOperations() {
         });
     }
 
-    let tabs = new mdc.tabBar.MDCTabBar(document.querySelector("#dashboardTabBar"));
-    tabs.listen("MDCTabBar:activated", ev => {
-        let index = ev.detail.index;
-        if (index === Tabs.LOGGING.index) {
-            updateLoggersTable();
-        }
-    });
-
-    if (currentActiveTab === Tabs.LOGGING.index) {
-        updateLoggersTable();
-    }
+    window.addEventListener(palantirPollingContextEvent, updateLoggersTable);
+    updateLoggersTable();
 
     const logEndpoints = [CasActuatorEndpoints.cloudWatchLogs(), CasActuatorEndpoints.gcpLogs(), CasActuatorEndpoints.loggingConfig(), CasActuatorEndpoints.logFile()];
     const hasLogEndpoint = logEndpoints.some(element => element !== undefined);
@@ -156,7 +150,7 @@ async function initializeLoggingOperations() {
         }
 
         async function fetchLogsFrom(endpoint) {
-            if (endpoint) {
+            if (endpoint && isPalantirPollingContextActive(Tabs.LOGGING, "#logdatastream-tab")) {
                 const logDataStream = $("#logDataStream");
                 const level = $("#logLevelFilter").val();
                 const count = $("#logCountFilter").val();
@@ -181,55 +175,43 @@ async function initializeLoggingOperations() {
             }
         }
 
-        function startStreamingLogFile() {
-            return setInterval(() => {
-                if (currentActiveTab === Tabs.LOGGING.index) {
-                    const logFileStream = $("#logFileStream");
-
-                    $.ajax({
-                        url: CasActuatorEndpoints.logFile(),
-                        type: "GET",
-                        success: response => {
-                            logFileStream.empty();
-                            logFileStream.text(response);
-                            if (scrollSwitch.selected) {
-                                logFileStream.scrollTop(logFileStream.prop("scrollHeight"));
-                            }
-                        },
-                        error: (xhr, status, error) => console.error("Streaming logs failed:", error)
-                    });
-                }
-            }, $("#logRefreshFilter").val());
-        }
-
-        function startStreamingLogData() {
-            return setInterval(() => {
-                if (currentActiveTab === Tabs.LOGGING.index) {
-                    fetchLogsFrom(CasActuatorEndpoints.cloudWatchLogs());
-                    fetchLogsFrom(CasActuatorEndpoints.gcpLogs());
-                    fetchLogsFrom(CasActuatorEndpoints.loggingConfig());
-                }
-            }, $("#logRefreshFilter").val());
-        }
-
-        let refreshStreamInterval = startStreamingLogData();
-
-        let refreshLogFileInterval = undefined;
-        if (CasActuatorEndpoints.logFile()) {
-            refreshLogFileInterval = startStreamingLogFile();
-        }
-
-        $("#logRefreshFilter").selectmenu({
-            change: (event, data) => {
-                clearInterval(refreshStreamInterval);
-                refreshStreamInterval = startStreamingLogData();
-
-                if (refreshLogFileInterval) {
-                    clearInterval(refreshLogFileInterval);
-                    refreshLogFileInterval = startStreamingLogFile();
-                }
+        function refreshLogFile() {
+            if (!CasActuatorEndpoints.logFile()
+                || !isPalantirPollingContextActive(Tabs.LOGGING, "#logdatastream-tab")) {
+                return;
             }
-        });
+            const logFileStream = $("#logFileStream");
+            $.ajax({
+                url: CasActuatorEndpoints.logFile(),
+                type: "GET",
+                success: response => {
+                    logFileStream.empty();
+                    logFileStream.text(response);
+                    if (scrollSwitch.selected) {
+                        logFileStream.scrollTop(logFileStream.prop("scrollHeight"));
+                    }
+                },
+                error: (xhr, status, error) => console.error("Streaming logs failed:", error)
+            });
+        }
+
+        function refreshLogData() {
+            if (!isPalantirPollingContextActive(Tabs.LOGGING, "#logdatastream-tab")) {
+                return;
+            }
+            fetchLogsFrom(CasActuatorEndpoints.cloudWatchLogs());
+            fetchLogsFrom(CasActuatorEndpoints.gcpLogs());
+            fetchLogsFrom(CasActuatorEndpoints.loggingConfig());
+        }
+
+        function refreshActiveLogStreams() {
+            refreshLogData();
+            refreshLogFile();
+        }
+
+        setInterval(refreshActiveLogStreams, palantirSettings().refreshInterval);
+        window.addEventListener(palantirPollingContextEvent, refreshActiveLogStreams);
+        refreshActiveLogStreams();
 
         $("#downloadLogsButton").off().on("click", () => {
             try {
