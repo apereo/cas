@@ -100,4 +100,15 @@ public class RestfulAuthenticationPolicy extends BaseAuthenticationPolicy {
             HttpUtils.close(response);
         }
     }
+
+    @Override
+    public Map<String, Object> toConfiguration() {
+        val config = super.toConfiguration();
+        config.put("url", properties.getUrl());
+        config.put("basicAuthUsername", properties.getBasicAuthUsername());
+        config.put("basicAuthPassword", properties.getBasicAuthPassword());
+        config.put("maximumRetryAttempts", properties.getMaximumRetryAttempts());
+        config.put("headers", properties.getHeaders());
+        return config;
+    }
 }

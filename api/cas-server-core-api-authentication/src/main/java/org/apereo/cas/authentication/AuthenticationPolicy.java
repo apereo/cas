@@ -110,4 +110,13 @@ public interface AuthenticationPolicy extends Ordered, Serializable, NamedObject
     default boolean shouldResumeOnFailure(final Throwable failure) {
         return failure != null;
     }
+
+    /**
+     * To configuration map.
+     *
+     * @return the map
+     */
+    default Map<String, Object> toConfiguration() {
+        return Map.of();
+    }
 }

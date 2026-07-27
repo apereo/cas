@@ -2603,7 +2603,9 @@ select + span[role="combobox"] {
 .audit-events-table th:first-child,
 .audit-events-table td:first-child,
 .audit-events-table th:nth-child(5),
-.audit-events-table td:nth-child(5) {
+.audit-events-table td:nth-child(5),
+.audit-events-table th:nth-child(6),
+.audit-events-table td:nth-child(6) {
     white-space: normal;
     overflow-wrap: anywhere;
     word-break: break-word;
@@ -2717,6 +2719,58 @@ select + span[role="combobox"] {
 .audit-resource-json-value-empty {
     color: #6b7780;
     font-style: italic;
+}
+
+.audit-actions-chart-card {
+    margin: 1.25rem 1rem 0;
+    padding: 1rem;
+    border: 1px solid #4f8fd9;
+    border-left-width: 6px;
+    border-radius: 9px;
+    background: linear-gradient(145deg, #fff 58%, rgba(79, 143, 217, .1));
+    box-shadow: 0 5px 15px rgba(31, 53, 73, .1);
+}
+
+.audit-actions-chart-header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: .75rem;
+    margin-bottom: .75rem;
+}
+
+.audit-actions-chart-header h3 {
+    display: flex;
+    align-items: center;
+    gap: .4rem;
+    margin: 0;
+    color: var(--cas-theme-primary, #153e50);
+    font-size: 1.05rem;
+    font-weight: 800;
+}
+
+.audit-actions-chart-header h3 .mdi {
+    color: #4f8fd9;
+    font-size: 1.35rem;
+}
+
+.audit-actions-chart-header p {
+    margin: .25rem 0 0;
+    color: #536471;
+    font-size: .82rem;
+}
+
+.audit-actions-chart-container {
+    position: relative;
+    width: 100%;
+    height: clamp(260px, 30vw, 420px);
+    min-height: 260px;
+}
+
+.audit-actions-chart-container canvas {
+    width: 100% !important;
+    height: 100% !important;
 }
 
 .heimdall-resource-dialog-layout {
@@ -3012,6 +3066,48 @@ select + span[role="combobox"] {
 .heimdall-policy-fields > .mdc-text-field {
     display: flex;
     width: 100%;
+}
+
+.authentication-policy-details-dialog-shell .ui-dialog-titlebar {
+    border-left: 6px solid #4f8fd9;
+}
+
+.authentication-policy-details-table {
+    width: 100% !important;
+    table-layout: fixed;
+}
+
+.authentication-policy-details-table th,
+.authentication-policy-details-table td {
+    text-align: left !important;
+    vertical-align: top;
+    white-space: normal;
+    overflow-wrap: anywhere;
+    word-break: break-word;
+}
+
+.authentication-policy-property-name {
+    color: var(--cas-theme-primary, #153e50);
+    font-weight: 800;
+}
+
+.authentication-policy-property-value code {
+    display: block;
+    white-space: pre-wrap;
+}
+
+.authentication-policy-card .ticket-card-fields {
+    margin-bottom: .75rem;
+}
+
+.authentication-policy-card-actions {
+    display: flex;
+    justify-content: flex-end;
+    margin: auto 1rem 1rem;
+}
+
+.authentication-policy-details-button {
+    min-width: 8.5rem;
 }
 
 .ticket-cards-summary {
