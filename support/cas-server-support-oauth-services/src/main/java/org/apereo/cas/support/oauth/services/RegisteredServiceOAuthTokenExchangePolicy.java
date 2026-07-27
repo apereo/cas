@@ -15,7 +15,7 @@ import com.fasterxml.jackson.annotation.JsonTypeInfo;
 public interface RegisteredServiceOAuthTokenExchangePolicy extends Serializable {
 
     /**
-     * Is token exchange allowed?
+     * Determines whether token exchange is allowed.
      *
      * @param registeredService the registered service
      * @param resources         the resources

@@ -39,7 +39,7 @@ public interface SamlRegisteredServiceMetadataResolver extends NamedObject {
     }
 
     /**
-     * Supports this service?
+     * Determines whether this resolver supports the service.
      *
      * @param service the service
      * @return true/false
@@ -47,7 +47,7 @@ public interface SamlRegisteredServiceMetadataResolver extends NamedObject {
     boolean supports(@Nullable SamlRegisteredService service);
 
     /**
-     * Is the resolver available and able to resolve metadata?
+     * Determines whether the resolver is available and able to resolve metadata.
      * This method may contact the metadata source checking for
      * the source availability.
      *

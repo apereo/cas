@@ -46,7 +46,7 @@ public class JsonServiceRegistryProperties extends SpringResourceProperties {
     }
 
     /**
-     * Is using default location and has it changed?
+     * Determines whether the default location is used.
      *
      * @return true/false
      */

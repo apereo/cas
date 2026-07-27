@@ -25,7 +25,7 @@ public interface DelegatedClientIdentityProviderAuthorizer {
     String BEAN_NAME = "delegatedClientIdentityProviderAuthorizer";
 
     /**
-     * Is delegated client authorized for service?
+     * Determines whether the delegated client is authorized for the service.
      *
      * @param client  the client
      * @param service the service
@@ -39,7 +39,7 @@ public interface DelegatedClientIdentityProviderAuthorizer {
     }
 
     /**
-     * Is delegated client authorized for service?
+     * Determines whether the delegated client is authorized for the service.
      *
      * @param client  the client
      * @param service the service
@@ -53,7 +53,7 @@ public interface DelegatedClientIdentityProviderAuthorizer {
     }
 
     /**
-     * Is delegated client authorized for authentication?
+     * Determines whether the delegated client is authorized for authentication.
      *
      * @param authentication the authentication
      * @param service        the service

@@ -58,7 +58,7 @@ public class HazelcastWANReplicationTargetClusterProperties implements Serializa
     private String publisherClassName = "com.hazelcast.enterprise.wan.replication.WanBatchReplication";
 
     /**
-     * Accepted values are:
+     * Accepted queue-full behavior values are listed below.
      * <ul>
      * <li>{@code THROW_EXCEPTION}: Instruct WAN replication implementation to throw an exception and doesn't allow further processing.</li>
      * <li>{@code DISCARD_AFTER_MUTATION}: Instruct WAN replication implementation to drop new events when WAN event queues are full.</li>
@@ -69,7 +69,7 @@ public class HazelcastWANReplicationTargetClusterProperties implements Serializa
     private String queueFullBehavior = "THROW_EXCEPTION";
 
     /**
-     * Accepted values are:
+     * Accepted acknowledgement-type values are listed below.
      * <ul>
      *     <li>{@code ACK_ON_RECEIPT}: ACK after WAN operation is received by the target cluster (without waiting the result of actual operation invocation).</li>
      *     <li>{@code ACK_ON_OPERATION_COMPLETE}: Wait till the operation is complete on target cluster.</li>

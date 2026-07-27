@@ -25,7 +25,7 @@ import org.springframework.core.Ordered;
 public interface RegisteredServiceSingleSignOnParticipationPolicy extends Serializable, Ordered {
 
     /**
-     * Should registered service participate in sso?
+     * Determines whether the registered service should participate in single sign-on.
      *
      * @param registeredService the registered service
      * @param ticketState       the ticket state

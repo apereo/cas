@@ -35,7 +35,7 @@ public interface QueueableTicketRegistryMessagePublisher {
     }
 
     /**
-     * Is publishing enabled?
+     * Determines whether publishing is enabled.
      *
      * @return true/false
      */

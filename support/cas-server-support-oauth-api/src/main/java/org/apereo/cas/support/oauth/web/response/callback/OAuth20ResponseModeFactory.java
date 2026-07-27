@@ -18,7 +18,7 @@ public interface OAuth20ResponseModeFactory {
     String BEAN_NAME = "oauthResponseModeFactory";
 
     /**
-     * Is response mode type form post?
+     * Determines whether the response mode type is form post.
      *
      * @param registeredService the registered service
      * @param responseType      the response type
@@ -32,7 +32,7 @@ public interface OAuth20ResponseModeFactory {
     }
 
     /**
-     * Is response mode type form post?
+     * Determines whether the response mode type is form post.
      *
      * @param registeredService the registered service
      * @param responseType      the response type
@@ -47,7 +47,7 @@ public interface OAuth20ResponseModeFactory {
     }
 
     /**
-     * Is response mode type fragment?
+     * Determines whether the response mode type is fragment.
      *
      * @param registeredService the registered service
      * @param responseType      the response type
@@ -61,7 +61,7 @@ public interface OAuth20ResponseModeFactory {
     }
 
     /**
-     * Is response mode type fragment jwt?
+     * Determines whether the response mode type is fragment JWT.
      *
      * @param registeredService the registered service
      * @param responseType      the response type
@@ -75,7 +75,7 @@ public interface OAuth20ResponseModeFactory {
     }
 
     /**
-     * Is response mode type query jwt?
+     * Determines whether the response mode type is query JWT.
      *
      * @param registeredService the registered service
      * @param responseType      the response type

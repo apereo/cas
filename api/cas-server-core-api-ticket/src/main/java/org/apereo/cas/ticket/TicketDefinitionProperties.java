@@ -21,7 +21,7 @@ import module java.base;
 public interface TicketDefinitionProperties extends Serializable {
 
     /**
-     * Is exclude from cascade ?
+     * Determines whether the ticket is excluded from cascading operations.
      *
      * @return true/false
      */

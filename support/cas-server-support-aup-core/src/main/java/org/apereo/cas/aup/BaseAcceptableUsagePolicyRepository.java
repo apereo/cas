@@ -116,7 +116,7 @@ public abstract class BaseAcceptableUsagePolicyRepository implements AcceptableU
     }
 
     /**
-     * Is usage policy accepted by user?
+     * Determines whether the user has accepted the usage policy.
      * Looks into the attributes collected by the principal to find the correct attribute, specified in settings..
      * If the attribute contains {@code true}, then the policy is determined as accepted.
      *

@@ -29,7 +29,7 @@ public interface OAuth20RequestParameterResolver {
     Logger LOGGER = LoggerFactory.getLogger(OAuth20RequestParameterResolver.class);
 
     /**
-     * Is authorized grant type for service?
+     * Determines whether the grant type is authorized for the service.
      *
      * @param grantType         the grant type
      * @param registeredService the registered service
@@ -41,7 +41,7 @@ public interface OAuth20RequestParameterResolver {
     }
 
     /**
-     * Is authorized grant type for service?
+     * Determines whether the grant type is authorized for the service.
      *
      * @param grantType         the grant type
      * @param registeredService the registered service
