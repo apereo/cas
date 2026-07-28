@@ -16,7 +16,7 @@ import jakarta.servlet.http.HttpServletResponse;
 @FunctionalInterface
 public interface SamlIdPProfileSingleLogoutRequestProcessor {
     /**
-     * Supports this slo request?
+     * Determines whether this processor supports the single logout request.
      *
      * @param request        the request
      * @param response       the response

@@ -24,11 +24,13 @@ class RegisteredAuthenticationPoliciesEndpointTests extends AbstractCasEndpointT
         mockMvc.perform(get("/actuator/authenticationPolicies")
             .contentType(MediaType.APPLICATION_JSON)
             .accept(MediaType.APPLICATION_JSON)
-        ).andExpect(status().isOk());
+        ).andExpect(status().isOk())
+            .andExpect(jsonPath("$[0].properties").exists());
         mockMvc.perform(get("/actuator/authenticationPolicies/"
             + AtLeastOneCredentialValidatedAuthenticationPolicy.class.getSimpleName())
             .contentType(MediaType.APPLICATION_JSON)
             .accept(MediaType.APPLICATION_JSON)
-        ).andExpect(status().isOk());
+        ).andExpect(status().isOk())
+            .andExpect(jsonPath("$.properties").exists());
     }
 }

@@ -97,7 +97,7 @@ public class OAuth20InvalidAuthorizationResponseBuilder {
     }
 
     /**
-     * Supports request?
+     * Determines whether this builder supports the request.
      *
      * @param context the context
      * @return true/false

@@ -27,7 +27,7 @@ public interface MultifactorAuthenticationPrincipalResolver extends Ordered {
     }
 
     /**
-     * Supports resolution?
+     * Determines whether principal resolution is supported.
      *
      * @param principal the principal
      * @return true/false

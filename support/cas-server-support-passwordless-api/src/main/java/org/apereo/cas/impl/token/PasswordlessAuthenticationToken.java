@@ -51,7 +51,7 @@ public class PasswordlessAuthenticationToken implements Serializable {
     private Map<String, String> properties = new HashMap<>();
     
     /**
-     * Is expired?
+     * Determines whether the token is expired.
      *
      * @return true/false
      */

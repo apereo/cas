@@ -32,7 +32,7 @@ The following SAML SP integrations, as samples, are provided by CAS:
 <a href="https://zoom.us">
 <img alt="Service provider logo" src="https://user-images.githubusercontent.com/1205228/233796726-3035dbe1-2717-40b0-aab5-a2c41f57cde6.png" height="30" width="110"></a> 
 
-<a href="https://www.dropbox.com/guide/admin/security/configure-single-sign-on">
+<a href="https://www.dropbox.com">
 <img alt="Service provider logo" src="https://user-images.githubusercontent.com/1205228/233796752-9e53b09e-2d10-4ef9-aef5-db42681932d5.png" height="48" width="140"></a> 
 
 <a href="https://samanage.com">

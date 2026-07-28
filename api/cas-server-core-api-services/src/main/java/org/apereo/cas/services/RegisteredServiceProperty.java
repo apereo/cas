@@ -53,7 +53,7 @@ public interface RegisteredServiceProperty extends Serializable {
     }
 
     /**
-     * Contains elements?
+     * Determines whether the property contains elements.
      *
      * @param value the value
      * @return true/false
@@ -616,7 +616,7 @@ public interface RegisteredServiceProperty extends Serializable {
         private final String description;
 
         /**
-         * Does property belong to the requested group?
+         * Determines whether the property belongs to the requested group.
          *
          * @param group the group
          * @return true/false

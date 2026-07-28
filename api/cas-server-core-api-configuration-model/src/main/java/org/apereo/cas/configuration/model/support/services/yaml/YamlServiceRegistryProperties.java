@@ -41,7 +41,7 @@ public class YamlServiceRegistryProperties extends SpringResourceProperties {
     }
 
     /**
-     * Is using default location?
+     * Determines whether the default location is used.
      *
      * @return true/false
      */

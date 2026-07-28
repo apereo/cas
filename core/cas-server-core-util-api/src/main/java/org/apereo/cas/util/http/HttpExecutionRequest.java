@@ -57,7 +57,7 @@ public class HttpExecutionRequest {
     private final Map<String, String> headers = new LinkedHashMap<>();
 
     /**
-     * Is basic authentication?
+     * Determines whether this request uses basic authentication.
      *
      * @return true/false
      */
@@ -66,7 +66,7 @@ public class HttpExecutionRequest {
     }
 
     /**
-     * Is bearer authentication?
+     * Determines whether this request uses bearer authentication.
      *
      * @return true/false
      */

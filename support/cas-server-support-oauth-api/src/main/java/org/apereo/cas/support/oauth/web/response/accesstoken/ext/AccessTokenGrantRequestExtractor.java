@@ -23,7 +23,7 @@ public interface AccessTokenGrantRequestExtractor {
     AccessTokenRequestContext extract(WebContext webContext) throws Throwable;
 
     /**
-     * Supports grant type?
+     * Determines whether this extractor supports the grant type.
      *
      * @param context the context
      * @return true /false

@@ -22,7 +22,7 @@ public interface OAuth20RequestValidator extends Ordered {
     boolean validate(WebContext context) throws Throwable;
 
     /**
-     * Supports request?
+     * Determines whether this validator supports the request.
      *
      * @param context the context
      * @return true /false

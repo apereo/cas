@@ -30,7 +30,7 @@ public class CachedMetadataResolverResult implements Serializable {
     private final MetadataResolver metadataResolver;
 
     /**
-     * Is metadata resolver available?
+     * Determines whether the metadata resolver is available.
      *
      * @return true/false
      */

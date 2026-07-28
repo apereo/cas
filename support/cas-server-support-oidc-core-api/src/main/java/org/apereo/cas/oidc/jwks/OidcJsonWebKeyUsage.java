@@ -42,7 +42,7 @@ public enum OidcJsonWebKeyUsage {
     }
 
     /**
-     * Is usage the same as this instance?
+     * Determines whether the usage matches this instance.
      *
      * @param use the use
      * @return true/false
@@ -52,7 +52,7 @@ public enum OidcJsonWebKeyUsage {
     }
 
     /**
-     * Is key usage the same as this instance?
+     * Determines whether the key usage matches this instance.
      *
      * @param key the key
      * @return true/false

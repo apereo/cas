@@ -1,4 +1,6 @@
 /**
+ * Multifactor authentication bypass API classes.
+ *
  * @since 8.0.0
  */
 @NullMarked

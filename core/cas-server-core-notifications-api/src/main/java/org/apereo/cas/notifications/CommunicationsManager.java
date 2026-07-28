@@ -21,21 +21,21 @@ public interface CommunicationsManager {
     String BEAN_NAME = "communicationsManager";
 
     /**
-     * Is mail sender defined?
+     * Determines whether a mail sender is defined.
      *
      * @return true/false
      */
     boolean isMailSenderDefined();
 
     /**
-     * Is sms sender defined?
+     * Determines whether an SMS sender is defined.
      *
      * @return true/false
      */
     boolean isSmsSenderDefined();
 
     /**
-     * Is notification sender defined?
+     * Determines whether a notification sender is defined.
      *
      * @return true/false
      */

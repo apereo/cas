@@ -56,7 +56,7 @@ public class ThrottledSubmission implements Serializable {
     }
 
     /**
-     * Is the entry still locked and in its expiration window?
+     * Determines whether the entry is still locked and in its expiration window.
      *
      * @return true/false
      */

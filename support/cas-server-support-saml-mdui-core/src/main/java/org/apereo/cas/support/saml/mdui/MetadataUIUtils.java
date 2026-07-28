@@ -43,7 +43,7 @@ public class MetadataUIUtils {
     }
 
     /**
-     * Is metadata found for entity id ?
+     * Determines whether metadata is found for the entity ID.
      *
      * @param metadataAdapter the metadata adapter
      * @param entityId        the entity id

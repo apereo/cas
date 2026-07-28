@@ -259,7 +259,127 @@ async function initializeAuditEventsOperations() {
             return `<code class="audit-resource-json-value audit-resource-json-value-${valueType}">${escapeHtml(displayValue)}</code>`;
         }
 
-        const auditEventsTable = $("#auditEventsTable").DataTable({
+        let auditEventsTable;
+        let auditActionsChart;
+
+        function auditActionChartColors(action) {
+            const type = auditActionType(action);
+            if (type === "success") {
+                return {
+                    background: "rgba(22, 138, 85, .72)",
+                    border: "#168a55"
+                };
+            }
+            if (type === "failure") {
+                return {
+                    background: "rgba(198, 40, 40, .72)",
+                    border: "#c62828"
+                };
+            }
+            return {
+                background: "rgba(79, 143, 217, .72)",
+                border: "#4f8fd9"
+            };
+        }
+
+        function initializeAuditActionsChart() {
+            if (auditActionsChart) {
+                return auditActionsChart;
+            }
+            const canvas = document.getElementById("auditActionsChart");
+            if (!canvas || !$("#auditevents-tab").is(":visible")) {
+                return null;
+            }
+            auditActionsChart = new Chart(canvas.getContext("2d"), {
+                type: "bar",
+                data: {
+                    labels: [],
+                    datasets: [{
+                        label: "Audit Events",
+                        data: [],
+                        borderWidth: 2,
+                        borderRadius: 5,
+                        borderSkipped: false,
+                        maxBarThickness: 54
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    animation: {
+                        duration: 250
+                    },
+                    plugins: {
+                        legend: {
+                            display: false
+                        },
+                        tooltip: {
+                            callbacks: {
+                                label: context => `${context.raw} ${context.raw === 1 ? "event" : "events"}`
+                            }
+                        }
+                    },
+                    scales: {
+                        x: {
+                            grid: {
+                                display: false
+                            },
+                            ticks: {
+                                maxRotation: 35,
+                                minRotation: 0
+                            }
+                        },
+                        y: {
+                            beginAtZero: true,
+                            title: {
+                                display: true,
+                                text: "Event count"
+                            },
+                            ticks: {
+                                precision: 0,
+                                stepSize: 1
+                            }
+                        }
+                    }
+                }
+            });
+            return auditActionsChart;
+        }
+
+        function updateAuditActionsChart() {
+            if (!auditEventsTable) {
+                return;
+            }
+            const chart = initializeAuditActionsChart();
+            if (!chart) {
+                return;
+            }
+
+            const actionCounts = new Map();
+            auditEventsTable.rows({search: "applied"}).data().each(entry => {
+                const action = String(entry?.action ?? "N/A");
+                actionCounts.set(action, (actionCounts.get(action) ?? 0) + 1);
+            });
+            const groupedActions = [...actionCounts.entries()]
+                .sort(([firstAction, firstCount], [secondAction, secondCount]) =>
+                    secondCount - firstCount || firstAction.localeCompare(secondAction));
+            const colors = groupedActions.map(([action]) => auditActionChartColors(action));
+            const eventCount = groupedActions.reduce((total, [, count]) => total + count, 0);
+            const actionCount = groupedActions.length;
+
+            chart.data.labels = groupedActions.map(([action]) => action);
+            chart.data.datasets[0].data = groupedActions.map(([, count]) => count);
+            chart.data.datasets[0].backgroundColor = colors.map(color => color.background);
+            chart.data.datasets[0].borderColor = colors.map(color => color.border);
+            chart.update();
+
+            $("#auditActionsChartCount").text(
+                `${eventCount} ${eventCount === 1 ? "event" : "events"} across `
+                + `${actionCount} ${actionCount === 1 ? "action" : "actions"}`
+            );
+        }
+
+        auditEventsTable = $("#auditEventsTable").DataTable({
             pageLength: 10,
             autoWidth: false,
             columns: [
@@ -274,7 +394,7 @@ async function initializeAuditEventsOperations() {
                 },
                 {
                     data: "resource",
-                    width: "22rem",
+                    width: "30rem",
                     render: (data, type, row) => type === "display" ? renderAuditResourceSummary(data, row) : data
                 },
                 {
@@ -294,17 +414,20 @@ async function initializeAuditEventsOperations() {
                 },
                 {
                     data: "userAgent",
-                    width: "22rem",
+                    width: "14rem",
                     render: (data, type) => type === "display" ? `<span class="audit-user-agent">${escapeHtml(data)}</span>` : data
                 }
             ],
             drawCallback: settings => {
                 $("#auditEventsTable tr").addClass("mdc-data-table__row");
                 $("#auditEventsTable td").addClass("mdc-data-table__cell");
+                updateAuditActionsChart();
             }
         });
+        updateAuditActionsChart();
 
         let auditEventsRequestInFlight = false;
+        const auditEventsRefreshButton = $("#refreshAuditEventsButton");
 
         function updateAuditEventsTable() {
             if (auditEventsRequestInFlight
@@ -317,6 +440,7 @@ async function initializeAuditEventsOperations() {
             const actionFilter = $("#auditEventsActionFilter").val();
 
             auditEventsRequestInFlight = true;
+            auditEventsRefreshButton.prop("disabled", true);
             $.ajax({
                 url: `${CasActuatorEndpoints.auditLog()}?interval=${interval}&count=${count}`,
                 type: "GET",
@@ -342,6 +466,7 @@ async function initializeAuditEventsOperations() {
                 error: (xhr, textStatus, errorThrown) => console.error("Error fetching data:", errorThrown),
                 complete: () => {
                     auditEventsRequestInFlight = false;
+                    auditEventsRefreshButton.prop("disabled", false);
                 }
             });
         }
@@ -349,6 +474,7 @@ async function initializeAuditEventsOperations() {
         $("#auditEventsIntervalFilter, #auditEventsCountFilter, #auditEventsActionFilter").selectmenu({
             change: updateAuditEventsTable
         });
+        auditEventsRefreshButton.off("click").on("click", updateAuditEventsTable);
 
         const auditEventsRefreshInterval = palantirSettings().refreshInterval;
         setInterval(updateAuditEventsTable, auditEventsRefreshInterval);

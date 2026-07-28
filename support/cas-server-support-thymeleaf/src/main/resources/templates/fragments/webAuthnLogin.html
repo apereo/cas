@@ -26,14 +26,14 @@
         <link rel="stylesheet" type="text/css" th:href="@{#{webjars.animate.css}}" />
         <link rel="stylesheet" type="text/css" th:href="@{#{webjars.highlight.css}}"/>
         
-        <script type="text/javascript" th:inline="javascript">
+        <script type="text/javascript">
             /*<![CDATA[*/
             const appId = /*[[${webauthnApplicationId}]]*/;
             const contextPath = (/*[[@{/}]]*/ '/').slice(0,-1);
             /*]]>*/
         </script>
 
-        <script type="text/javascript" th:inline="javascript">
+        <script type="text/javascript">
             const authFailTitle = [[#{ screen.authentication.webauthn.authn.fail.title }]];
             const authFailDesc = [[#{ screen.authentication.webauthn.authn.fail.desc }]];
         </script>
@@ -131,7 +131,7 @@
                         </pre>
                     </div>
 
-                    <script type="text/javascript" th:inline="javascript">
+                    <script type="text/javascript">
                         const endpointUrl = /*[[${QRCodeUri + '/' + QRCodeTicket.id + '/status'}]]*/;
                         const interval = 3000;
                         function verifyAuthenticationStatus() {
@@ -232,7 +232,7 @@
             <input type="hidden" name="execution" th:value="${flowExecutionKey}"/>
         </form>
 
-        <script type="text/javascript" th:inline="javascript">
+        <script type="text/javascript">
             const csrfToken = getCookie('XSRF-TOKEN');
 
             /*<![CDATA[*/

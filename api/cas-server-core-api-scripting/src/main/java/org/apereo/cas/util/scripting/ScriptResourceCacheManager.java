@@ -28,7 +28,7 @@ public interface ScriptResourceCacheManager<K extends String, V extends Executab
     @Nullable V get(K key);
 
     /**
-     * Contains key ?
+     * Determines whether the cache contains the key.
      *
      * @param key the key
      * @return true/false
@@ -79,7 +79,7 @@ public interface ScriptResourceCacheManager<K extends String, V extends Executab
     }
 
     /**
-     * Is cache empty?
+     * Determines whether the cache is empty.
      *
      * @return true/false
      */
