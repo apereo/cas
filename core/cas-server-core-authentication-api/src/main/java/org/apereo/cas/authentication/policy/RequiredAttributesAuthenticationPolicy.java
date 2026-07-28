@@ -60,4 +60,11 @@ public class RequiredAttributesAuthenticationPolicy extends BaseAuthenticationPo
         });
         return AuthenticationPolicyExecutionResult.success(result);
     }
+
+    @Override
+    public Map<String, Object> toConfiguration() {
+        val config = super.toConfiguration();
+        config.put("requiredAttributes", requiredAttributes);
+        return config;
+    }
 }

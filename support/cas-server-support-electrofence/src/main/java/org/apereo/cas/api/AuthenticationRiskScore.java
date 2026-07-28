@@ -44,7 +44,7 @@ public class AuthenticationRiskScore {
     }
 
     /**
-     * Is risk greater than the given threshold?
+     * Determines whether the risk is greater than the given threshold.
      *
      * @param threshold the threshold
      * @return true/false

@@ -12,7 +12,7 @@
     <script type="text/javascript" th:src="@{#{webjars.whatwg-fetch.js}}"></script>
     <script type="text/javascript" th:src="@{#{webjars.base64.js}}"></script>
 
-    <script type="text/javascript" th:inline="javascript">
+    <script type="text/javascript">
         /*<![CDATA[*/
         const appId = /*[[${webauthnApplicationId}]]*/;
         const contextPath = (/*[[@{/}]]*/ '/').slice(0,-1);
@@ -127,7 +127,7 @@
             <input type="hidden" id="execution" name="execution" th:value="${flowExecutionKey}"/>
         </form>
 
-        <script type="text/javascript" th:inline="javascript">
+        <script type="text/javascript">
             const csrfToken = $('#registerCsrfToken').val();
 
             document.getElementById("credentialNickname").value = randomWord();

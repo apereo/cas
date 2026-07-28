@@ -24,7 +24,7 @@ public interface CasWebflowLoginContextProvider extends Ordered, NamedObject {
     }
 
     /**
-     * Is login form username input disabled?
+     * Determines whether the login form username input is disabled.
      *
      * @param requestContext the request context
      * @return true/false
@@ -34,7 +34,7 @@ public interface CasWebflowLoginContextProvider extends Ordered, NamedObject {
     }
 
     /**
-     * Is login form username input visible?
+     * Determines whether the login form username input is visible.
      *
      * @param requestContext the request context
      * @return true/false

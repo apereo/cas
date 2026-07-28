@@ -157,7 +157,7 @@ public class X509CredentialsAuthenticationHandler extends AbstractPreAndPostProc
     }
 
     /**
-     * Does principal name match pattern?
+     * Determines whether the principal name matches the pattern.
      *
      * @param principal the principal
      * @param pattern   the pattern

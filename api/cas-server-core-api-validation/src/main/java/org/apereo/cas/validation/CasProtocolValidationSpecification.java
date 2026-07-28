@@ -15,7 +15,7 @@ import jakarta.servlet.http.HttpServletRequest;
 public interface CasProtocolValidationSpecification extends Ordered {
 
     /**
-     * Is satisfied?
+     * Determines whether the validation specification is satisfied.
      *
      * @param assertion The assertion we want to confirm is satisfied by this spec.
      * @param request   the request

@@ -88,4 +88,12 @@ public abstract class BaseAuthenticationHandlerAuthenticationPolicy extends Base
      * @return the policy execution result
      */
     abstract AuthenticationPolicyExecutionResult isSatisfiedByInternal(Authentication authn);
+
+    @Override
+    public Map<String, Object> toConfiguration() {
+        val config = super.toConfiguration();
+        config.put("handlerNames", handlerNames);
+        config.put("tryAll", tryAll);
+        return config;
+    }
 }

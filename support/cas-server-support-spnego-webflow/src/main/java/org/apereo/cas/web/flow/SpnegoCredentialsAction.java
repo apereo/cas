@@ -34,7 +34,7 @@ import jakarta.servlet.http.HttpServletResponse;
 public class SpnegoCredentialsAction extends AbstractNonInteractiveCredentialsAction {
 
     /**
-     * Behavior in case of SPNEGO authentication failure :
+     * Defines behavior in case of SPNEGO authentication failure.
      * <ul><li>True : if SPNEGO is the last authentication method with no fallback.</li>
      * <li>False : if an interactive view (eg: login page) should be send to user as SPNEGO failure fallback</li>
      * </ul>

@@ -58,7 +58,7 @@ public interface OAuth20Token extends TicketGrantingTicketAwareTicket {
     }
 
     /**
-     * Is this an oauth code?
+     * Determines whether this token is an OAuth code.
      *
      * @return true/false
      */

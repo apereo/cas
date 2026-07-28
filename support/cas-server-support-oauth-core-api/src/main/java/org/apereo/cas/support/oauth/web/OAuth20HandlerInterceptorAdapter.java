@@ -71,7 +71,7 @@ public class OAuth20HandlerInterceptorAdapter implements AsyncHandlerInterceptor
     }
 
     /**
-     * Is the client requesting is a OAuth "public" client?
+     * Determines whether the requesting client is an OAuth public client.
      * An OAuth "public" client is one that does not define a secret like a mobile application.
      *
      * @param request  the request

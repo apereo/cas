@@ -69,7 +69,7 @@ public interface AuthenticationHandlerResolver extends Ordered {
     }
 
     /**
-     * Supports this transaction?
+     * Determines whether this resolver supports the transaction.
      *
      * @param handlers    the handlers
      * @param transaction the transaction

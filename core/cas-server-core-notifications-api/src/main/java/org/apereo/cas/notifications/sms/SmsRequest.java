@@ -35,7 +35,7 @@ public class SmsRequest {
     private final String tenant;
     
     /**
-     * Has attribute value for the principal?
+     * Determines whether the principal has an attribute value.
      *
      * @return true/false
      */

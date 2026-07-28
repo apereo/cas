@@ -248,6 +248,8 @@ class CasCoreTicketsConfiguration {
         }
 
         /**
+         * Builds the protocol ticket cipher executor.
+         *
          * @deprecated since 7.1.0.
          */
         @Deprecated(since = "7.1.0")

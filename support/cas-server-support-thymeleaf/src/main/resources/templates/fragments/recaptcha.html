@@ -17,7 +17,7 @@
                 <script src="https://www.google.com/recaptcha/api.js"></script>
                 <script type="text/javascript"
                         th:if="${recaptchaInvisible != null AND recaptchaInvisible}"
-                        th:inline="javascript">
+                >
                     function onRecaptchaV2Submit(token) {
                         document.getElementById('fm1').submit();
                     }
@@ -33,7 +33,7 @@
                 <script th:src="${'//www.google.com/recaptcha/api.js?render=' + recaptchaSiteKey}"></script>
                 <input type="hidden" id="g-recaptcha-token" name="g-recaptcha-token"/>
 
-                <script type="text/javascript" th:inline="javascript">
+                <script type="text/javascript">
                     grecaptcha.ready(() =>
                         grecaptcha.execute(/*[[${recaptchaSiteKey}]]*/, {action: "login"})
                             .then(token => $("#g-recaptcha-token").val(token)));

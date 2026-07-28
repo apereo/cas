@@ -89,7 +89,7 @@ public class X509Properties implements CasFeatureModule, Serializable {
     private PrincipalTypes principalType = PrincipalTypes.SUBJECT_DN;
 
     /**
-     * Revocation certificate checking can be carried out in one of the following ways:
+     * Revocation certificate checking can be carried out in one of the following ways.
      * <ul>
      * <li>{@code NONE}: No revocation is performed.</li>
      * <li>{@code CRL}: The CRL URI(s) mentioned in the certificate cRLDistributionPoints extension field.

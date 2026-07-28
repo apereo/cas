@@ -51,7 +51,7 @@ public class CookieRetrievingCookieGenerator implements Serializable, CasCookieB
     private final CookieValueManager casCookieValueManager;
     
     /**
-     * Is remember me authentication ?
+     * Determines whether remember-me authentication is active.
      *
      * @param requestContext the request context
      * @return true/false

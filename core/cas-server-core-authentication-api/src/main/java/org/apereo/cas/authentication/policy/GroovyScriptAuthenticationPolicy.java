@@ -62,7 +62,6 @@ public class GroovyScriptAuthenticationPolicy extends BaseAuthenticationPolicy {
             LOGGER.warn("Authentication attempt is null and cannot satisfy policy");
             return AuthenticationPolicyExecutionResult.failure();
         }
-
         
         initializeWatchableScriptIfNeeded();
 
@@ -102,4 +101,10 @@ public class GroovyScriptAuthenticationPolicy extends BaseAuthenticationPolicy {
         }
     }
 
+    @Override
+    public Map<String, Object> toConfiguration() {
+        val config = super.toConfiguration();
+        config.put("script", script);
+        return config;
+    }
 }

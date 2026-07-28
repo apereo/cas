@@ -63,7 +63,7 @@ public class OAuthRegisteredServiceClientSecret implements Serializable {
     }
     
     /**
-     * Is secret without expiration?
+     * Determines whether the secret has no expiration.
      *
      * @return true/false
      */
@@ -73,7 +73,7 @@ public class OAuthRegisteredServiceClientSecret implements Serializable {
     }
 
     /**
-     * Is client secret expired?
+     * Determines whether the client secret is expired.
      *
      * @param registeredService the registered service
      * @return true/false

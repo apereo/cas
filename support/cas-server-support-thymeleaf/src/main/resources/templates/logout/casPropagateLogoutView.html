@@ -7,7 +7,7 @@
 
     <title th:text="#{screen.logout.header}">Propagate Logout View</title>
     <link href="../../static/css/cas.css" rel="stylesheet" th:remove="tag" />
-    <script th:inline="javascript">
+    <script>
         /*<![CDATA[*/
         function redirectToApp() {
             window.location = [[${logoutRedirectUrl}]];
@@ -39,7 +39,7 @@
             <ul style="list-style-type: none;">
                 <li th:each="entry,iterStat : ${logoutUrls}">
 
-                    <script type="text/javascript" th:inline="javascript"
+                    <script type="text/javascript"
                             th:if="${#strings.equalsIgnoreCase(logoutPropagationType, 'AJAX')}">
                         /*<![CDATA[*/
                         $.ajax({

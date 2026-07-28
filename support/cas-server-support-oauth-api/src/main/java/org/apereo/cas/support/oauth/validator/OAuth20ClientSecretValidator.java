@@ -34,7 +34,7 @@ public interface OAuth20ClientSecretValidator {
     boolean validate(OAuthRegisteredService registeredService, String clientSecret);
 
     /**
-     * Is client secret expired?
+     * Determines whether the client secret is expired.
      *
      * @param secret            the secret
      * @param registeredService the registered service

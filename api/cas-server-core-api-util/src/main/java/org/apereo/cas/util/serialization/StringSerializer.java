@@ -123,7 +123,7 @@ public interface StringSerializer<T> extends Serializable {
     }
 
     /**
-     * Supports the input stream for serialization?
+     * Determines whether this serializer supports the file.
      *
      * @param file the file
      * @return true /false
@@ -133,7 +133,7 @@ public interface StringSerializer<T> extends Serializable {
     }
 
     /**
-     * Supports the input stream for serialization?
+     * Determines whether this serializer supports the content.
      *
      * @param content the content
      * @return true /false

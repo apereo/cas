@@ -334,7 +334,7 @@ public class SamlUtils {
     }
 
     /**
-     * Is dynamic metadata query configured ?
+     * Determines whether a dynamic metadata query is configured.
      *
      * @param metadataLocation - the location of the metadata to resolve
      * @return true/false
