@@ -2,7 +2,7 @@
   "type": "commonjs",
   "name": "functional-tests",
   "dependencies": {
-    "@napi-rs/canvas": "1.0.2",
+    "@napi-rs/canvas": "1.0.3",
     "@stomp/stompjs": "7.3.0",
     "archiver": "8.0.0",
     "axios": "1.18.1",
