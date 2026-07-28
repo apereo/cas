@@ -8,7 +8,7 @@
     <title th:text="#{cas.login.pagetitle}">CAS Interrupt View</title>
     <link href="../../static/css/cas.css" rel="stylesheet" th:remove="tag"/>
 
-    <script th:inline="javascript" th:if="${interrupt.autoRedirect}">
+    <script th:if="${interrupt.autoRedirect}">
         /*<![CDATA[*/
 
         let autoRedirect = /*[[${interrupt.autoRedirect}]]*/;
@@ -53,7 +53,7 @@
                            th:id="${linkid}">
                             <span class="mdc-button__label">link.key</span>
                         </a>
-                        <script th:inline="javascript">
+                        <script>
                             /*<![CDATA[*/
                             $(document).on("click", /*[[${'#' + linkid}]]*/, () => {
                                 let link = /*[[${link.value}]]*/;

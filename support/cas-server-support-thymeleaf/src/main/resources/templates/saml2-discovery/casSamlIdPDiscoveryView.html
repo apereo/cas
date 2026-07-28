@@ -19,7 +19,7 @@
         <h2 th:utext="#{screen.saml.idp.discovery}">SAML Identity Provider Discovery</h2>
         <div id="errorDiv" class="banner banner-danger alert alert-danger" role="alert" style="display:none;"></div>
         <div id="idpSelect"></div>
-        <script type="text/javascript" th:inline="javascript">
+        <script type="text/javascript">
             /*<![CDATA[*/
             function IdPSelectUIParametersForCAS(obj) {
                 obj.myEntityID = /*[[${entityIds}]]*/;

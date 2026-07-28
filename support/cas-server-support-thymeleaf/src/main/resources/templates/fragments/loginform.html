@@ -87,7 +87,7 @@
                             </div>
                         </div>
 
-                        <script type="text/javascript" th:inline="javascript">
+                        <script type="text/javascript">
                             /*<![CDATA[*/
                             let username = /*[[${#cas.getLoginFormUsername(#vars)}]]*/;
                             let disabled = /*[[${#cas.isLoginFormUsernameInputDisabled(#vars)}]]*/;
@@ -302,7 +302,7 @@
             <div id="x509Login" th:if="${x509ClientAuthLoginEndpointUrl}">
                 <span th:if="${loginFormViewable and loginFormEnabled}">
                     <hr class="my-4"/>
-                    <script th:inline="javascript">
+                    <script>
                         /*<![CDATA[*/
                         function x509login() {
                             let url =  /*[[${x509ClientAuthLoginEndpointUrl}]]*/;
@@ -337,7 +337,7 @@
                 </span>
             </div>
 
-            <script type="text/javascript" th:inline="javascript">
+            <script type="text/javascript">
                 /*<![CDATA[*/
                 var i = /*[[@{#{screen.welcome.button.loginwip}}]]*/
                 var j = /*[[@{#{screen.welcome.button.login}}]]*/
