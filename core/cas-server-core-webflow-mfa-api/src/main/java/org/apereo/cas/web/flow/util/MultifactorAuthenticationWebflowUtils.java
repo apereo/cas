@@ -42,7 +42,7 @@ public class MultifactorAuthenticationWebflowUtils {
     }
 
     /**
-     * Is multifactor device registration enabled?
+     * Determines whether multifactor device registration is enabled.
      *
      * @param requestContext the request context
      * @return true/false
@@ -135,7 +135,7 @@ public class MultifactorAuthenticationWebflowUtils {
     }
 
     /**
-     * Is multifactor authentication optional?
+     * Determines whether multifactor authentication is optional.
      *
      * @param requestContext the request context
      * @return true/false
@@ -156,7 +156,7 @@ public class MultifactorAuthenticationWebflowUtils {
     }
 
     /**
-     * Is google authenticator multiple device registration enabled?
+     * Determines whether Google Authenticator multiple-device registration is enabled.
      *
      * @param requestContext the request context
      * @return true /false

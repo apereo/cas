@@ -102,12 +102,21 @@ public interface AuthenticationPolicy extends Ordered, Serializable, NamedObject
     }
 
     /**
-     * Should authentication chain resume on failure?
+     * Determines whether the authentication chain should resume on failure.
      *
      * @param failure the failure
      * @return resume, or block
      */
     default boolean shouldResumeOnFailure(final Throwable failure) {
         return failure != null;
+    }
+
+    /**
+     * To configuration map.
+     *
+     * @return the map
+     */
+    default Map<String, Object> toConfiguration() {
+        return Map.of();
     }
 }

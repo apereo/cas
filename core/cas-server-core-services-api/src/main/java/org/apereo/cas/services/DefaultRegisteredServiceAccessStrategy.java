@@ -17,8 +17,8 @@ import org.apache.commons.lang3.ObjectUtils;
 import jakarta.persistence.PostLoad;
 
 /**
- * This is {@link DefaultRegisteredServiceAccessStrategy}
- * that allows the following rules:
+ * This is {@link DefaultRegisteredServiceAccessStrategy}.
+ * It allows the following rules:
  * <ul>
  * <li>A service may be disallowed to use CAS for authentication</li>
  * <li>A service may be disallowed to take part in CAS single sign-on such that
@@ -49,12 +49,12 @@ public class DefaultRegisteredServiceAccessStrategy extends BaseRegisteredServic
     protected int order;
 
     /**
-     * Is the service allowed at all?
+     * Indicates whether the service is allowed.
      */
     protected boolean enabled = true;
 
     /**
-     * Is the service allowed to use SSO?
+     * Indicates whether the service is allowed to use single sign-on.
      */
     protected boolean ssoEnabled = true;
 

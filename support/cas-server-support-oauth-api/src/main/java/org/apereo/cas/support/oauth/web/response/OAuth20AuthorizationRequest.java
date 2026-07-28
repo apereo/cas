@@ -31,7 +31,7 @@ public class OAuth20AuthorizationRequest implements Serializable {
     private final AccessTokenRequestContext accessTokenRequest;
 
     /**
-     * Is single sign on session required for this request?
+     * Determines whether this request requires a single sign-on session.
      * This generally forces the presence of a ticket-granting ticket
      * to be found before this builder can operate further.
      * Some builders may be able to work without a session initially,

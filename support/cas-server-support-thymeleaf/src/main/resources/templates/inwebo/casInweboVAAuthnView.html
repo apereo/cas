@@ -25,7 +25,7 @@
         <div id="vaStartActivation" data-action="activation" data-container="vaContainer"
              data-lang="en" th:data-alias="${siteAlias}" data-width="auto"></div>
         <span id="vaError" />
-        <script th:inline="javascript">
+        <script>
             window.onload = () =>
                 iwstart("vaStartAuthentication", (iw, data) => {
                     if (data.action === "authentication" && data.code === "ok") {

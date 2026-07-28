@@ -12,7 +12,7 @@ import org.springframework.webflow.execution.RequestContext;
  */
 public interface DelegatedClientAuthenticationCredentialResolver {
     /**
-     * Supports this client credential?
+     * Determines whether this resolver supports the client credential.
      *
      * @param credentials the credentials
      * @return true/false

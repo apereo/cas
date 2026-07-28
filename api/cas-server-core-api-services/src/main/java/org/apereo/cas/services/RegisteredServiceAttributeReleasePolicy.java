@@ -26,7 +26,7 @@ public interface RegisteredServiceAttributeReleasePolicy extends Serializable, O
     }
 
     /**
-     * Is authorized to release credential password?
+     * Determines whether credential password release is authorized.
      *
      * @return true /false
      */
@@ -35,7 +35,7 @@ public interface RegisteredServiceAttributeReleasePolicy extends Serializable, O
     }
 
     /**
-     * Is authorized to release proxy granting ticket?
+     * Determines whether proxy-granting ticket release is authorized.
      *
      * @return true /false
      */

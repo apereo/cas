@@ -34,7 +34,7 @@ public interface OneTimeTokenCredentialValidator<C extends OneTimeTokenCredentia
     OneTimeTokenCredentialValidator store(T validatedToken);
 
     /**
-     * Is token authorized for account?
+     * Determines whether the token is authorized for the account.
      *
      * @param token   the token
      * @param account the account

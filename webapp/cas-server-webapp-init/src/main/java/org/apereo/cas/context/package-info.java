@@ -1,4 +1,6 @@
 /**
+ * Provides classes and interfaces for the {@code org.apereo.cas.context} package.
+ *
  * @since 8.0.0
  */
 @NullMarked

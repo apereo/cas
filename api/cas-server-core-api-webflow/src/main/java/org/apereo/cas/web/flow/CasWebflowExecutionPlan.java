@@ -68,7 +68,7 @@ public interface CasWebflowExecutionPlan {
     CasWebflowExecutionPlan execute();
 
     /**
-     * Is plan initialized and ready?
+     * Determines whether the plan is initialized and ready.
      *
      * @return true/false
      */

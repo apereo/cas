@@ -9,7 +9,7 @@
 </head>
 <body>
 <span th:fragment="mfadevices">
-        <script type="text/javascript" th:inline="javascript">
+        <script type="text/javascript">
             ((material, bootstrap) =>
                 document.addEventListener("DOMContentLoaded", () => {
                     $("#mfaDevicesTable").DataTable();
@@ -205,7 +205,7 @@
                         <input type="hidden" name="execution" th:value="${flowExecutionKey}"/>
                     </form>
 
-                    <script type="text/javascript" th:inline="javascript">
+                    <script type="text/javascript">
                         function initializeMenus() {
                             cas.openMenu();
                         }

@@ -1,4 +1,6 @@
 /**
+ * Configuration support utilities.
+ *
  * @since 8.0.0
  */
 @NullMarked

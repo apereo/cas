@@ -71,4 +71,11 @@ public class AtLeastOneCredentialValidatedAuthenticationPolicy extends BaseAuthe
             authn.getSuccesses().keySet());
         return AuthenticationPolicyExecutionResult.failure();
     }
+
+    @Override
+    public Map<String, Object> toConfiguration() {
+        val config = super.toConfiguration();
+        config.put("tryAll", tryAll);
+        return config;
+    }
 }

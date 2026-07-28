@@ -60,7 +60,7 @@ public interface Authentication extends Serializable {
     void addAttribute(String name, Object value);
 
     /**
-     * Contains attribute?
+     * Determines whether the authentication contains the named attribute.
      *
      * @param name the name
      * @return true
