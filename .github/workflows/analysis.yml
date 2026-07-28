@@ -90,7 +90,6 @@ jobs:
     name: CodeQL Analysis
     runs-on: ubuntu-latest
     needs: [ initialize ]
-    continue-on-error: true
     permissions:
       actions: read
       contents: read
