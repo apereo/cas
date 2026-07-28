@@ -98,7 +98,7 @@ public class SamlIdPMetadataDocument implements Serializable {
     }
 
     /**
-     * Is this document valid and has any of the fields?
+     * Determines whether this document is valid and contains any fields.
      *
      * @return true /false
      */

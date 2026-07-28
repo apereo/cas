@@ -16,7 +16,7 @@ import org.springframework.webflow.execution.RequestContext;
 /**
  * Performs two important error handling functions on an
  * {@link org.apereo.cas.authentication.AuthenticationException} raised from the authentication
- * layer:
+ * layer.
  * <ol>
  * <li>Maps handler errors onto message bundle strings for display to user.</li>
  * <li>Determines the next webflow state by comparing handler errors.

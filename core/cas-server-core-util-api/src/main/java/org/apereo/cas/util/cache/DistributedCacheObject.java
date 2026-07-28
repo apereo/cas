@@ -65,7 +65,7 @@ public class DistributedCacheObject<V extends Serializable> implements Serializa
     }
 
     /**
-     * Contains property?
+     * Determines whether this object contains the property.
      *
      * @param name the name
      * @return true/false

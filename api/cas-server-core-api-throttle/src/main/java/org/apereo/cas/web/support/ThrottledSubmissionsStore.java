@@ -37,7 +37,7 @@ public interface ThrottledSubmissionsStore<T extends ThrottledSubmission> {
     void put(T submission);
 
     /**
-     * Contains this key?
+     * Determines whether the store contains the key.
      *
      * @param key the key
      * @return true/false
@@ -60,7 +60,7 @@ public interface ThrottledSubmissionsStore<T extends ThrottledSubmission> {
     Stream<T> entries();
 
     /**
-     * Exceeds threshold?
+     * Determines whether the submission exceeds the threshold.
      *
      * @param key           the key
      * @param thresholdRate the threshold rate

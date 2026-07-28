@@ -46,7 +46,7 @@ public class CasConfigurationModifiedEvent extends AbstractCasEvent {
     }
 
     /**
-     * Is eligible for context refresh ?
+     * Determines whether the event is eligible for a context refresh.
      *
      * @return true/false
      */

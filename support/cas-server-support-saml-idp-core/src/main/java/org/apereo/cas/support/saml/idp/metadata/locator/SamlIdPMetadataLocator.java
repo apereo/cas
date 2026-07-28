@@ -68,7 +68,7 @@ public interface SamlIdPMetadataLocator {
     }
 
     /**
-     * Metadata exists?
+     * Determines whether metadata exists.
      *
      * @param registeredService the registered service
      * @return true/false
@@ -84,7 +84,7 @@ public interface SamlIdPMetadataLocator {
     SamlIdPMetadataDocument fetch(Optional<SamlRegisteredService> registeredService);
 
     /**
-     * Should generate metadata for service?
+     * Determines whether metadata should be generated for the service.
      *
      * @param registeredService the registered service
      * @return true/false

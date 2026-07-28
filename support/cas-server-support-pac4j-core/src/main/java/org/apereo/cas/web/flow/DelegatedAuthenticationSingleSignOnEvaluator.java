@@ -68,7 +68,7 @@ public record DelegatedAuthenticationSingleSignOnEvaluator(DelegatedClientAuthen
 
 
     /**
-     * Is there a current SSO session?
+     * Determines whether there is a current single sign-on session.
      *
      * @param requestContext the request context
      * @return whether there is a current SSO session

@@ -189,7 +189,7 @@ public class SamlRegisteredServiceMetadataAdaptor {
     }
 
     /**
-     * Is supported protocol?
+     * Determines whether the protocol is supported.
      *
      * @param protocol the protocol
      * @return true/false
@@ -338,7 +338,7 @@ public class SamlRegisteredServiceMetadataAdaptor {
     }
 
     /**
-     * Contains assertion consumer services ?
+     * Determines whether assertion consumer services are present.
      *
      * @return true/false
      */

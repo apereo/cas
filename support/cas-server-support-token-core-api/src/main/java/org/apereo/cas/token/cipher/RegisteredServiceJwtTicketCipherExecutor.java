@@ -122,7 +122,7 @@ public class RegisteredServiceJwtTicketCipherExecutor extends JwtTicketCipherExe
     }
 
     /**
-     * Is signing enabled for registered service ?
+     * Determines whether signing is enabled for the registered service.
      *
      * @param registeredService the registered service
      * @return true/false
@@ -136,7 +136,7 @@ public class RegisteredServiceJwtTicketCipherExecutor extends JwtTicketCipherExe
     }
 
     /**
-     * Is encryption enabled for registered service ?
+     * Determines whether encryption is enabled for the registered service.
      *
      * @param registeredService the registered service
      * @return true/false

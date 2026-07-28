@@ -76,4 +76,11 @@ public class UniquePrincipalAuthenticationPolicy extends BaseAuthenticationPolic
         }
         return AuthenticationPolicyExecutionResult.success();
     }
+
+    @Override
+    public Map<String, Object> toConfiguration() {
+        val config = super.toConfiguration();
+        config.put("maximumAllowedSessions", properties.getMaximumAllowedSessions());
+        return config;
+    }
 }

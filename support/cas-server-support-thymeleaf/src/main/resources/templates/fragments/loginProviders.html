@@ -75,7 +75,7 @@
                                 <input type="hidden" name="execution" th:value="${flowExecutionKey}" />
                             </form>
 
-                            <script th:inline="javascript">
+                            <script>
                                 /*<![CDATA[*/
                                 providers.push({
                                     name: /*[[${entry.name}]]*/ ,
@@ -119,7 +119,7 @@
                     <div id="identityProviderDiscoveryPanel"
                          class="d-flex justify-content-center mt-4"
                          th:if="${identityProviderDiscoveryEnabled}">
-                        <script type="text/javascript" th:inline="javascript">
+                        <script type="text/javascript">
                             /*<![CDATA[*/
                             let url = /*[[@{/idp/discovery}]]*/ ;
 
@@ -171,7 +171,7 @@
                             <li class="p-1 login-provider-item" th:each="entry: ${wsfedUrls}">
                                 <a class="mdc-button mdc-button--raised w-100 drop-button"
                                    th:href="@{${entry.redirectUrl}}"
-                                   th:inline="text" onload=""
+                                   onload=""
                                    th:attr="autoRedirectType=${#strings.toLowerCase(entry.autoRedirectType)}"
                                    th:title="${entry.name}">
 
@@ -184,7 +184,7 @@
                 </div>
             </div>
 
-            <script type="text/javascript" th:inline="javascript">
+            <script type="text/javascript">
                 /*<![CDATA[*/
                 
                 const identityProviderOptions = $('#identityProviderOptions');

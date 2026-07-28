@@ -40,7 +40,7 @@ public interface ConsentDecisionBuilder extends Serializable {
                           Map<String, List<Object>> attributes);
 
     /**
-     * Is consent decision valid for attributes?
+     * Determines whether the consent decision is valid for the attributes.
      *
      * @param decision   the decision
      * @param attributes the attributes

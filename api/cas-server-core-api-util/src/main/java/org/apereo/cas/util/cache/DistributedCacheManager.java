@@ -51,7 +51,7 @@ public interface DistributedCacheManager<K extends Serializable, V extends Seria
 
 
     /**
-     * Contains key in the cache?
+     * Determines whether the cache contains the key.
      *
      * @param key the key
      * @return true /false

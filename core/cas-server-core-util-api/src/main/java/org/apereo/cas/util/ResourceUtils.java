@@ -94,7 +94,7 @@ public class ResourceUtils {
     }
 
     /**
-     * Does resource exist?
+     * Determines whether the resource exists.
      *
      * @param resource       the resource
      * @param resourceLoader the resource loader
@@ -113,7 +113,7 @@ public class ResourceUtils {
     }
 
     /**
-     * Does resource exist?
+     * Determines whether the resource exists.
      * <p>
      * On Windows, reading one byte from a directory does not return length greater than zero so an explicit directory
      * check is needed.
@@ -143,7 +143,7 @@ public class ResourceUtils {
     }
 
     /**
-     * Does resource exist?
+     * Determines whether the resource exists.
      *
      * @param location the resource
      * @return true/false
@@ -307,7 +307,7 @@ public class ResourceUtils {
     }
 
     /**
-     * Is the resource a file?
+     * Determines whether the resource is a file.
      *
      * @param resource the resource
      * @return true/false
