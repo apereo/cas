@@ -28,8 +28,7 @@ public interface ServicesManagerRegisteredServiceLocator extends Ordered, NamedO
     RegisteredService locate(Collection<? extends RegisteredService> candidates, Service service);
 
     /**
-     * Can this locator find/locate the given registered service
-     * based on the provided service request?
+     * Determines whether this locator can find the registered service from the provided request.
      *
      * @param registeredService the registered service
      * @param service           the service

@@ -96,7 +96,7 @@ public interface BeanContainer<T> extends DisposableBean {
     T first();
 
     /**
-     * Is container empty?
+     * Determines whether the container is empty.
      *
      * @return true/false
      */

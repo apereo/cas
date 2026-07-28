@@ -14,7 +14,7 @@ import jakarta.servlet.http.HttpServletRequest;
 public interface ServiceTicketValidationAuthorizer {
 
     /**
-     * Is authorized?
+     * Determines whether service ticket validation is authorized.
      *
      * @param request   the request
      * @param service   the service

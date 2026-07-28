@@ -1,8 +1,9 @@
 /**
+ * Service event classes.
+ *
  * @since 8.0.0
  */
 @NullMarked
 package org.apereo.cas.support.events.service;
 
 import org.jspecify.annotations.NullMarked;
-

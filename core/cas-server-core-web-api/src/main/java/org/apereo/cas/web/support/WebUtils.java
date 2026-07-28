@@ -523,7 +523,7 @@ public class WebUtils {
     }
 
     /**
-     * Is authenticating at a public workstation?
+     * Determines whether authentication is occurring at a public workstation.
      *
      * @param ctx the ctx
      * @return true if the cookie value is present

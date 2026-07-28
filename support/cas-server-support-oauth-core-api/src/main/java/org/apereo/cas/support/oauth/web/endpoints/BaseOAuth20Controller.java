@@ -72,7 +72,7 @@ public abstract class BaseOAuth20Controller<T extends OAuth20ConfigurationContex
     }
 
     /**
-     * Is the OAuth token a Refresh Token?
+     * Determines whether the OAuth token is a refresh token.
      *
      * @param token the token
      * @return whether the token type is a RefreshToken
@@ -82,7 +82,7 @@ public abstract class BaseOAuth20Controller<T extends OAuth20ConfigurationContex
     }
 
     /**
-     * Is the OAuth token an Access Token?
+     * Determines whether the OAuth token is an access token.
      *
      * @param token the token
      * @return whether the token type is a RefreshToken

@@ -71,8 +71,8 @@ public abstract class AbstractRegisteredServiceAttributeReleasePolicy implements
      */
     @PostLoad
     public void postLoad() {
-        principalAttributesRepository = ObjectUtils.defaultIfNull(principalAttributesRepository, new DefaultPrincipalAttributesRepository());
-        consentPolicy = ObjectUtils.defaultIfNull(consentPolicy, new DefaultRegisteredServiceConsentPolicy());
+        principalAttributesRepository = ObjectUtils.getIfNull(principalAttributesRepository, new DefaultPrincipalAttributesRepository());
+        consentPolicy = ObjectUtils.getIfNull(consentPolicy, new DefaultRegisteredServiceConsentPolicy());
         canonicalizationMode = StringUtils.defaultIfBlank(canonicalizationMode, "NONE");
     }
 

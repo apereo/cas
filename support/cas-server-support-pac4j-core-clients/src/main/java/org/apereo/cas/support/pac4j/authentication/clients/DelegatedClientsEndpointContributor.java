@@ -11,7 +11,7 @@ import org.pac4j.core.client.BaseClient;
  */
 public interface DelegatedClientsEndpointContributor {
     /**
-     * Supports this client?
+     * Determines whether this contributor supports the client.
      *
      * @param client the client
      * @return true/false

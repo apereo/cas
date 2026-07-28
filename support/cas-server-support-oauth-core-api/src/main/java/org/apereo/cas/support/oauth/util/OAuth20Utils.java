@@ -238,7 +238,7 @@ public class OAuth20Utils {
     }
 
     /**
-     * Is response mode type expected?
+     * Determines whether the response mode type matches the expected type.
      *
      * @param type         the type
      * @param expectedType the expected type
@@ -340,7 +340,7 @@ public class OAuth20Utils {
     }
 
     /**
-     * Is the registered service need authentication?
+     * Determines whether the registered service requires authentication.
      *
      * @param registeredService the registered service
      * @return whether the service need authentication

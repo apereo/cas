@@ -98,7 +98,7 @@ public class CoreAuthenticationUtils {
     }
 
     /**
-     * Is remember me authentication?
+     * Determines whether remember-me authentication is active.
      * looks at the authentication object to find {@link RememberMeCredential#AUTHENTICATION_ATTRIBUTE_REMEMBER_ME}
      * and expects the assertion to also note a new login session.
      *

@@ -133,7 +133,7 @@ public class OidcRequestSupport {
     }
 
     /**
-     * Is cas authentication old for max age authorization request?
+     * Determines whether CAS authentication exceeds the authorization request's maximum age.
      *
      * @param context        the context
      * @param authentication the authentication
@@ -145,7 +145,7 @@ public class OidcRequestSupport {
     }
 
     /**
-     * Is cas authentication old for max age authorization request?
+     * Determines whether CAS authentication exceeds the authorization request's maximum age.
      *
      * @param context the context
      * @param profile the profile
@@ -165,7 +165,7 @@ public class OidcRequestSupport {
     }
 
     /**
-     * Is cas authentication available and old for max age authorization request?
+     * Determines whether CAS authentication is available and exceeds the authorization request's maximum age.
      *
      * @param context the context
      * @return true/false
@@ -177,7 +177,7 @@ public class OidcRequestSupport {
     }
 
     /**
-     * Is cas authentication available?
+     * Determines whether CAS authentication is available.
      *
      * @param context the context
      * @return the optional authn

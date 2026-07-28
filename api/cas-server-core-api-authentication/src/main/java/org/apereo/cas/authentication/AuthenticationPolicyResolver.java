@@ -25,7 +25,7 @@ public interface AuthenticationPolicyResolver extends Ordered {
     }
 
     /**
-     * Supports this transaction?
+     * Determines whether this resolver supports the transaction.
      *
      * @param transaction the transaction
      * @return true/false

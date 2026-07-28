@@ -60,7 +60,7 @@ public interface BeanCondition {
     BeanCondition withDefaultValue(String value);
 
     /**
-     * Is the property value set to this value?
+     * Determines whether the property is set to the specified value.
      *
      * @param value the value
      * @return the bean condition
@@ -93,7 +93,7 @@ public interface BeanCondition {
     }
 
     /**
-     * Is value defined as a valid URL?
+     * Determines whether the value is a valid URL.
      *
      * @return the bean condition
      */

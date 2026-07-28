@@ -61,7 +61,7 @@ public class TextMagicProperties implements CasFeatureModule, Serializable {
     private String userAgent;
 
     /**
-     * Should SSL connections be verified?
+     * Whether SSL connections should be verified.
      */
     private boolean verifyingSsl = true;
 
