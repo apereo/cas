@@ -59,7 +59,7 @@ public class OAuth20RefreshTokenExpirationPolicy extends AbstractCasExpirationPo
     }
     
     /**
-     * Is refresh token expired ?
+     * Determines whether the refresh token is expired.
      *
      * @param ticketState the ticket state
      * @return true/false

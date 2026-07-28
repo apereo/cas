@@ -1,4 +1,6 @@
 /**
+ * Core CAS API classes.
+ *
  * @since 8.0.0
  */
 @NullMarked

@@ -49,7 +49,7 @@ public interface InterruptTrackingEngine {
     Optional<InterruptResponse> forCurrentRequest(RequestContext requestContext);
 
     /**
-     * Is authentication flow interrupted?
+     * Determines whether the authentication flow is interrupted.
      * An authentication attempt can only contain {@link #AUTHENTICATION_ATTRIBUTE_FINALIZED_INTERRUPT}
      * if the attribute was added to the authentication object prior to creating the SSO session.
      * If interrupt checking is set to execute after SSO sessions, then this attribute cannot be collected.

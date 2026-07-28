@@ -32,7 +32,7 @@ public interface RegisteredServiceAccessStrategyActivationCriteria extends Seria
     }
 
     /**
-     * Should activate policy based on this request?
+     * Determines whether the request should activate the policy.
      *
      * @param request the request
      * @return true /false

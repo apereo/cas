@@ -3,7 +3,7 @@
 # while sleep 9m; do echo -e '\n=====[ Gradle build is still running ]====='; done &
 
 echo "Running MySQL docker container..."
-export DOCKER_IMAGE="mysql:9.7"
+export DOCKER_IMAGE="mysql:26.7"
 docker stop mysql-server || true
 docker run --quiet  --rm -p 3306:3306 --name mysql-server --rm \
   -e MYSQL_DATABASE=cas \

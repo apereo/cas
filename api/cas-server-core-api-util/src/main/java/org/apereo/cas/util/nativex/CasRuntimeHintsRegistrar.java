@@ -371,7 +371,7 @@ public interface CasRuntimeHintsRegistrar extends RuntimeHintsRegistrar {
     }
 
     /**
-     * Is type present?
+     * Determines whether the type is present.
      *
      * @param classLoader the class loader
      * @param typeName    the type name
@@ -382,7 +382,7 @@ public interface CasRuntimeHintsRegistrar extends RuntimeHintsRegistrar {
     }
 
     /**
-     * Is groovy present?
+     * Determines whether Groovy is present.
      *
      * @param classLoader the class loader
      * @return true/false

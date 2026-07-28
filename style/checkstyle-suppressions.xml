@@ -24,7 +24,7 @@
 
     <suppress checks="JavadocVariable" files="(.*Tests*|Mock.*|Test.*)\.java"/>
     <suppress checks="IllegalCatch" files="(.*Aspect)\.java"/>
-    <suppress checks="JavadocStyleCheck" files="(.*Tests*|Mock.*|Test.*)\.java"/>
+    <suppress checks="SummaryJavadoc" files=".*(Test|Tests|Mock).*\.java"/>
     <suppress checks="Indentation" files="(.*Tests*|Mock.*|Test.*)\.java"/>
     <suppress checks="JavadocMethod" files="(.*Configuration|.*Tests*|Mock.*|Test.*)\.java"/>
     <suppress checks="JavadocType" files="(.*Tests*|Mock.*|Test.*|.*Properties)\.java"/>

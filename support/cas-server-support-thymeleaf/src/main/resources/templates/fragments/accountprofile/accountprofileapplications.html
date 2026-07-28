@@ -48,7 +48,7 @@
                     <td class="mdc-data-table__cell">
                         <a th:id="${'service' + service.id}" th:title="${service.name}" th:utext="${service.name}"/>
 
-                        <script th:inline="javascript">
+                        <script>
                             /*<![CDATA[*/
                             serviceId = /*[[${service.serviceId}]]*/;
                             if (isValidURL(serviceId)) {

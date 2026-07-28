@@ -61,7 +61,7 @@ public interface SingleLogoutServiceLogoutUrlBuilder extends Ordered, NamedObjec
     }
 
     /**
-     * Is service authorized?
+     * Determines whether the service is authorized.
      *
      * @param service  the service
      * @param request  the request

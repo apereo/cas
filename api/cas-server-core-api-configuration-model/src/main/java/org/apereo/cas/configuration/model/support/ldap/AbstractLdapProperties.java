@@ -254,7 +254,7 @@ public abstract class AbstractLdapProperties implements Serializable, CasFeature
     private String saslSecurityStrength;
 
     /**
-     * SASL mutual auth is enabled?
+     * Whether SASL mutual authentication is enabled.
      */
     private Boolean saslMutualAuth;
 

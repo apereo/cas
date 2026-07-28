@@ -864,8 +864,8 @@ ul.tab-content li.active:not(.property-name):not(.property-tab) {
 
 .image-gallery {
     display: flex;
-    flex-wrap: nowrap;
-    gap: 12px;
+    flex-wrap: wrap;
+    gap: 6px;
     overflow-x: auto;
     padding: 8px 0;
 }

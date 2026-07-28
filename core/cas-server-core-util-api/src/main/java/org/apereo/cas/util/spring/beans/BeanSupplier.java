@@ -37,7 +37,7 @@ public interface BeanSupplier<T> extends Supplier<T> {
     }
 
     /**
-     * Is proxy class?
+     * Determines whether the result is a proxy class.
      *
      * @param result the result
      * @return true/false
@@ -49,7 +49,7 @@ public interface BeanSupplier<T> extends Supplier<T> {
     }
 
     /**
-     * Is not proxy class?
+     * Determines whether the result is not a proxy class.
      *
      * @param result the result
      * @return true/false

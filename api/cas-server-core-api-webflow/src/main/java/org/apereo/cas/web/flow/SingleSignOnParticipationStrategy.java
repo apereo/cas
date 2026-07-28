@@ -50,7 +50,7 @@ public interface SingleSignOnParticipationStrategy extends Ordered, NamedObject 
     boolean isParticipating(SingleSignOnParticipationRequest ssoRequest) throws Throwable;
 
     /**
-     * Does strategy support this request or not?
+     * Determines whether the strategy supports the request.
      *
      * @param ssoRequest the context
      * @return true/false
@@ -65,7 +65,7 @@ public interface SingleSignOnParticipationStrategy extends Ordered, NamedObject 
     }
 
     /**
-     * Is creating single sign on session cookie on renewed authentication?
+     * Determines whether renewed authentication should create a single sign-on session cookie.
      *
      * @param context the context
      * @return true/false

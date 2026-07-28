@@ -37,7 +37,7 @@ public class DelegationWebflowUtils {
     }
 
     /**
-     * Has delegated client authentication candidate profile?
+     * Determines whether a delegated client authentication candidate profile exists.
      *
      * @param context the context
      * @return true /false

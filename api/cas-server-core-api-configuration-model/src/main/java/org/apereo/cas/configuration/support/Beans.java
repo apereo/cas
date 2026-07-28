@@ -65,7 +65,7 @@ public class Beans {
     }
 
     /**
-     * Is infinitely durable?
+     * Determines whether the value represents an infinite duration.
      *
      * @param value the value
      * @return true/false
@@ -75,7 +75,7 @@ public class Beans {
     }
 
     /**
-     * Is never durable?
+     * Determines whether the value represents a duration that never expires.
      *
      * @param value the value
      * @return true/false
