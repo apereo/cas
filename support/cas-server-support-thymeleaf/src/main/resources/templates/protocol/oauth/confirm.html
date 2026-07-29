@@ -48,7 +48,7 @@
             </div>
         </div>
         
-        <script>
+        <script th:inline="javascript">
             const approvalKey = /*[[${approvalKey}]]*/ "";
             const recordKey = /*[[${recordKey}]]*/ "";
             handleScopeApproval(approvalKey, recordKey, "cas-oauth-consent-scope");

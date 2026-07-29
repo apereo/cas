@@ -17,7 +17,7 @@
         <p class="intro" th:utext="#{cas.screen.acct.intro.completed}"/>
 
         <span th:if="${service}" th:remove="tag">
-            <script>
+            <script th:inline="javascript">
                 /*<![CDATA[*/
                 const fullRequestUrl = /*[[${fullRequestUrl}]]*/;
                 console.info("Redirecting to", fullRequestUrl);

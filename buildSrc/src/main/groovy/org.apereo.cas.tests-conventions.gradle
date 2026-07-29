@@ -35,12 +35,14 @@ TestCategories.values().each { testCategory ->
                     includeTags testCategory.name()
                 }
 
-                def ptsEnabled = shouldWeTest && testCategory.ptsEnabled && Boolean.valueOf(System.getProperty('PTS_ENABLED') ?: 'true') && !publishReleases
-                develocity.predictiveTestSelection {
-                    enabled = ptsEnabled
-                    mergeCodeCoverage = true
+                if (develocityEnabled) {
+                    def ptsEnabled = shouldWeTest && testCategory.ptsEnabled && Boolean.valueOf(System.getProperty('PTS_ENABLED') ?: 'true') && !publishReleases
+                    develocity.predictiveTestSelection {
+                        enabled = ptsEnabled
+                        mergeCodeCoverage = true
+                    }
+                    logger.info "Predictive test selection for ${project.name} with task ${taskName} is ${ptsEnabled ? 'enabled' : 'disabled'}."
                 }
-                logger.info "Predictive test selection for ${project.name} with task ${taskName} is ${ptsEnabled ? 'enabled' : 'disabled'}."
 
                 systemProperty('junit.platform.discovery.issue.severity.critical', 'info')
                 systemProperty('junit.platform.execution.memory.cleanup.enabled', true)
@@ -172,7 +174,7 @@ tasks.withType(Test).configureEach {
     }
 
     def skipRetry = providers.systemProperty('skipTestRetry').present
-    if (!skipRetry) {
+    if (!skipRetry && develocityEnabled) {
         develocity.testRetry {
             maxRetries = 3
             maxFailures = 5

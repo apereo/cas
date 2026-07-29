@@ -30,7 +30,7 @@
             <input type="hidden" id="browserStorage" name="browserStorage"/>
         </form>
         
-        <script>
+        <script th:inline="javascript">
             document.addEventListener('DOMContentLoaded', () => {
                 /*<![CDATA[*/
                 const browserStorage = /*[[${browserStorage}]]*/ ;
