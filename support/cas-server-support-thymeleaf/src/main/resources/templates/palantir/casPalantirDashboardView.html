@@ -32,7 +32,7 @@
 
     <link rel="stylesheet" type="text/css" th:href="@{/css/palantir.css}" />
 
-    <script>
+    <script th:inline="javascript">
         /*<![CDATA[*/
         window.palantirDashboardConfiguration = (() => {
             const mutablePropertySources = /*[[${mutablePropertySources}]]*/;

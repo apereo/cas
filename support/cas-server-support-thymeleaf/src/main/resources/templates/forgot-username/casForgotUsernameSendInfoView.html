@@ -69,7 +69,7 @@
             </div>
         </div>
 
-        <script type="text/javascript">
+        <script type="text/javascript" th:inline="javascript">
             var i = [[#{ screen.welcome.button.loginwip }]];
             $('#fm1').submit(function () {
                 $(':submit').attr('disabled', true);

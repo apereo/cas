@@ -14,7 +14,7 @@
 <main>
     <th:div th:fragment="switchbutton (id,label)">
 
-        <script>
+        <script th:inline="javascript">
             window.switchButtonChangeHandler = function (el) {
                 const attributes = $(el).data('attrs');
                 if (attributes) {
@@ -80,7 +80,7 @@
             <label class="form-check-label" th:for="${id}" th:id="${id + 'ButtonLabel'}" th:utext="#{${label}}">Switch Me</label>
         </div>
 
-        <script>
+        <script th:inline="javascript">
             /*<![CDATA[*/
             
             document.addEventListener('DOMContentLoaded', () => {

@@ -25,7 +25,7 @@
         <div id="otpError" class="banner banner-danger alert alert-danger banner-dismissible" style="display:none;">
             <p th:utext="#{cas.inwebo.browser.failure}">OTP generation error</p>
         </div>
-        <script>
+        <script th:inline="javascript">
             /*<![CDATA[*/
             const casLogin = /*[[${login}]]*/ '';
             const siteAlias = /*[[${siteAlias}]]*/ '';
