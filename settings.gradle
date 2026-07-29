@@ -1,10 +1,23 @@
 /*
     The Develocity gradle plugin MUST be applied here.
  */
+pluginManagement {
+    plugins {
+        id "com.gradle.develocity" version "4.5.0"
+        id "com.gradle.common-custom-user-data-gradle-plugin" version "2.7.0"
+    }
+}
+
 plugins {
-    id "com.gradle.develocity" version "4.5.0"
-    id "com.gradle.common-custom-user-data-gradle-plugin" version "2.7.0"
+    id "com.gradle.develocity" apply false
+    id "com.gradle.common-custom-user-data-gradle-plugin" apply false
     id "org.gradle.toolchains.foojay-resolver-convention" version "1.0.0"
+}
+
+def applyDevelocityPlugin = System.getenv("CODEQL_RUNNER") == null
+if (applyDevelocityPlugin) {
+    apply plugin: "com.gradle.develocity"
+    apply plugin: "com.gradle.common-custom-user-data-gradle-plugin"
 }
 
 ext.isCiServer = System.getenv().containsKey("CI")
