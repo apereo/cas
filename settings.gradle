@@ -24,6 +24,9 @@ ext.isCiServer = System.getenv().containsKey("CI")
 ext.githubPackageRegistryUser = System.getenv("GH_PACKAGE_REGISTRY_USER")
 ext.githubPackageRegistryPassword = System.getenv("GH_PACKAGE_REGISTRY_TOKEN")
 
+gradle.beforeProject {
+    it.ext.develocityEnabled = applyDevelocityPlugin
+}
 
 buildCache {
     local { enabled = true }
