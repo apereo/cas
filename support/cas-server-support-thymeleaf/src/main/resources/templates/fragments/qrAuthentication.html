@@ -70,7 +70,7 @@
             <input type="hidden" name="_eventId" value="validate"/>
         </form>
 
-        <script>
+        <script th:inline="javascript">
             /*<![CDATA[*/
             let endpoint = /*[[@{/qr-websocket}]]*/  ;
             let topic = /*[[${qrChannel}]]*/  ;

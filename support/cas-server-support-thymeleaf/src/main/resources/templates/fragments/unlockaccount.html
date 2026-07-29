@@ -83,7 +83,7 @@
             </div>
         </section>
 
-        <script>
+        <script th:inline="javascript">
             $("body").on("contextmenu", e => false);
             $('.captcha').text(/*[[${captchaValue}]]*/);
         </script>
