@@ -5,7 +5,7 @@
     "@napi-rs/canvas": "1.0.3",
     "@stomp/stompjs": "7.3.0",
     "archiver": "8.0.0",
-    "axios": "1.18.1",
+    "axios": "1.19.0",
     "basic-auth": "2.0.1",
     "cfonts": "^3.3.1",
     "colors": "1.4.0",
