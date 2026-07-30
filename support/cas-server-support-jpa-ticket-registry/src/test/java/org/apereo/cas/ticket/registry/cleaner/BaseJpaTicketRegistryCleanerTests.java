@@ -156,7 +156,7 @@ public abstract class BaseJpaTicketRegistryCleanerTests {
         val code = createOAuthCode();
         val at = accessTokenFactory.create(RegisteredServiceTestUtils.getService(),
             RegisteredServiceTestUtils.getAuthentication(), tgt,
-            Set.of("scope1"), code.getId(), "client1", Collections.emptyMap(),
+            Set.of("scope1"), code, "client1", Collections.emptyMap(),
             OAuth20ResponseTypes.CODE, OAuth20GrantTypes.AUTHORIZATION_CODE);
 
         ticketRegistry.addTicket(at);

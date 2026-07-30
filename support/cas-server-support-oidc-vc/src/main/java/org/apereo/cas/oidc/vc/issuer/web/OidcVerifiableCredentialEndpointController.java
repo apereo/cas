@@ -89,7 +89,7 @@ public class OidcVerifiableCredentialEndpointController extends BaseOAuth20Contr
 
     protected boolean validateAccessToken(@Nullable final OAuth20AccessToken accessToken) {
         return accessToken != null && !accessToken.isExpired()
-            && accessToken.getGrantType() == OAuth20GrantTypes.PRE_AUTHORIZED_CODE;
+            && (accessToken.getGrantType() == OAuth20GrantTypes.PRE_AUTHORIZED_CODE || accessToken.hasAuthorizationDetails());
     }
 
     /**

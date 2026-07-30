@@ -107,7 +107,11 @@ public class AccessTokenRequestContext implements Serializable {
     private String dpop;
 
     private final String cibaRequestId;
-    
+
+    private final String authorizationDetails;
+
+    private final String issuerState;
+
     @JsonIgnore
     public boolean isCodeToken() {
         return token instanceof OAuth20Code;

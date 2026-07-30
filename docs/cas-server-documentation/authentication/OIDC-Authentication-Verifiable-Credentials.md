@@ -179,6 +179,31 @@ In practical terms, the flow is:
 
 The token endpoint issues the nonce. The credential endpoint enforces it while validating the proof.
 
+## Authorization Code Flow
+
+The Authorization Code Flow allows a wallet to obtain authorization to receive one or more verifiable credentials 
+through a standard OAuth 2.0/OpenID Connect authorization process. Unlike the Pre-Authorized Code Flow, where a 
+trusted backend initiates the issuance transaction, the Authorization Code Flow is wallet-driven. 
+The wallet begins by sending an authorization request to the Credential Issuer’s authorization endpoint, 
+requesting one or more credential configurations using the `authorization_details` parameter. The request may 
+also include the `openid` scope if the wallet wishes to authenticate the end-user and receive an ID Token 
+as part of the token response.
+
+After authenticating the user and obtaining any required consent, the Credential Issuer issues 
+a standard OAuth 2.0 authorization code. During this process, the issuer persists the requested 
+and approved credential configuration identifiers together with any issuer-specific context, such as 
+`issuer_state`, alongside the authorization code. This authorization context is later recovered during the 
+token exchange and determines which credentials the resulting access token is permitted to obtain. The 
+authorization code flow should follow normal OAuth 2.0 and OpenID Connect security practices, including 
+client authentication where applicable and Proof Key for Code Exchange (PKCE) for public wallet clients.
+
+The wallet exchanges the authorization code at the token endpoint to obtain an access token that is 
+specifically authorized for credential issuance. If the original authorization request included the 
+openid scope and all OpenID Connect requirements are satisfied, the token response may also include an 
+ID Token in addition to the access token. For credential issuance, the token response includes a 
+credential nonce (`c_nonce`) and its expiration time. The nonce is subsequently incorporated into the 
+wallet’s proof-of-possession JWT and protects the credential issuance process against replay attacks.
+
 ## Pre-Authorized Code Flow
 
 In pre-authorized code flows, CAS or a trusted backend prepares the issuance transaction

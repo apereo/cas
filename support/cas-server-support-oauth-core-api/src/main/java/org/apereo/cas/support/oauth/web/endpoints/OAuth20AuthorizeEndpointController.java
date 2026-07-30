@@ -25,6 +25,7 @@ import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.inspektr.common.web.ClientInfoHolder;
 import org.jooq.lambda.Unchecked;
+import org.jspecify.annotations.Nullable;
 import org.pac4j.core.profile.ProfileManager;
 import org.pac4j.core.profile.UserProfile;
 import org.pac4j.jee.context.JEEContext;
@@ -69,8 +70,8 @@ public class OAuth20AuthorizeEndpointController<T extends OAuth20ConfigurationCo
      */
     @GetMapping(path = OAuth20Constants.BASE_OAUTH20_URL + '/' + OAuth20Constants.AUTHORIZE_URL)
     @Operation(summary = "Handle OAuth authorization request")
-    public ModelAndView handleRequest(final HttpServletRequest request,
-                                      final HttpServletResponse response) throws Throwable {
+    public @Nullable ModelAndView handleRequest(final HttpServletRequest request,
+                                                final HttpServletResponse response) throws Throwable {
         val requestParameterResolver = getConfigurationContext().getRequestParameterResolver();
 
         val webContext = new JEEContext(request, response);
@@ -98,7 +99,6 @@ public class OAuth20AuthorizeEndpointController<T extends OAuth20ConfigurationCo
         val registeredService = getRegisteredServiceByClientId(clientId);
         val clientService = getConfigurationContext().getWebApplicationServiceServiceFactory().createService(clientId);
         RegisteredServiceAccessStrategyUtils.ensureServiceAccessIsAllowed(clientService, registeredService);
-
         if (LoggingUtils.isProtocolMessageLoggerEnabled()) {
             val redirectUri = requestParameterResolver.resolveRequestParameter(context, OAuth20Constants.REDIRECT_URI).orElse(StringUtils.EMPTY);
             val responseType = requestParameterResolver.resolveRequestParameter(context, OAuth20Constants.RESPONSE_TYPE).orElse(StringUtils.EMPTY);
@@ -136,9 +136,9 @@ public class OAuth20AuthorizeEndpointController<T extends OAuth20ConfigurationCo
         return handleRequest(request, response);
     }
 
-    protected ModelAndView redirectToCallbackRedirectUrl(final ProfileManager manager,
-                                                         final OAuthRegisteredService registeredService,
-                                                         final JEEContext context) throws Throwable {
+    protected @Nullable ModelAndView redirectToCallbackRedirectUrl(final ProfileManager manager,
+                                                                   final OAuthRegisteredService registeredService,
+                                                                   final JEEContext context) throws Throwable {
         val profile = verifyAndReturnAuthenticatedProfile(manager, context);
         val service = getConfigurationContext().getAuthenticationBuilder()
             .buildService(registeredService, context, false);
@@ -288,8 +288,11 @@ public class OAuth20AuthorizeEndpointController<T extends OAuth20ConfigurationCo
             .userProfile(userProfile)
             .claims(claims)
             .responseMode(requestParameterResolver.resolveResponseModeType(context))
+            .authorizationDetails(authzRequest.getAuthorizationDetails())
+            .issuerState(authzRequest.getIssuerState())
             .build();
-        context.getRequestParameters().keySet()
+        context.getRequestParameters()
+            .keySet()
             .forEach(key -> context.getRequestParameter(key).ifPresent(value -> holder.getParameters().put(key, value)));
         LOGGER.debug("Building authorization response for grant type [{}] with scopes [{}] for client id [{}]",
             grantType, scopes, authzRequest.getClientId());
