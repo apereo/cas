@@ -75,7 +75,7 @@ public class OidcClientRegistrationProperties implements Serializable {
         PROTECTED;
 
         /**
-         * Is protected?
+         * Determines whether registration is protected.
          *
          * @return true/false
          */

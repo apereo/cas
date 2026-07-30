@@ -102,7 +102,7 @@ public class MultifactorAuthenticationTrustRecord implements Comparable<Multifac
     }
 
     /**
-     * Is record expired?
+     * Determines whether the record is expired.
      *
      * @return true/false
      */

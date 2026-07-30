@@ -61,7 +61,7 @@ public interface OAuth20TokenSigningAndEncryptionService {
     PublicJsonWebKey getJsonWebKeySigningKey(Optional<OAuthRegisteredService> registeredService) throws Throwable;
 
     /**
-     * Should sign token for service?
+     * Determines whether the token should be signed for the service.
      *
      * @param registeredService the svc
      * @return true/false
@@ -71,7 +71,7 @@ public interface OAuth20TokenSigningAndEncryptionService {
     }
 
     /**
-     * Should encrypt token for service?
+     * Determines whether the token should be encrypted for the service.
      *
      * @param registeredService the svc
      * @return true/false

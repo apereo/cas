@@ -42,7 +42,7 @@ public abstract class BasePasswordlessCasWebflowAction extends BaseCasWebflowAct
     protected final AuthenticationSystemSupport authenticationSystemSupport;
 
     /**
-     * Should activate multifactor authentication for user?
+     * Determines whether multifactor authentication should be activated for the user.
      *
      * @param requestContext the request context
      * @param user           the user
@@ -64,7 +64,7 @@ public abstract class BasePasswordlessCasWebflowAction extends BaseCasWebflowAct
     }
     
     /**
-     * Should delegate authentication for user?
+     * Determines whether authentication should be delegated for the user.
      *
      * @param requestContext the request context
      * @param user           the user

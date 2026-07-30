@@ -196,7 +196,7 @@ public class CasConfigurationMetadataCatalog {
      */
     public record CasPropertiesContainer(Set<CasReferenceProperty> properties) {
         /**
-         * Does this container have properties?
+         * Determines whether this container has properties.
          *
          * @return true/false
          */

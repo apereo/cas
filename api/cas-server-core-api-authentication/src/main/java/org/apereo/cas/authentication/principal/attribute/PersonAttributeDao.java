@@ -225,7 +225,7 @@ public interface PersonAttributeDao extends Comparable<PersonAttributeDao>, Orde
     }
 
     /**
-     * Is this dao enabled?
+     * Determines whether this DAO is enabled.
      *
      * @return true/false
      */

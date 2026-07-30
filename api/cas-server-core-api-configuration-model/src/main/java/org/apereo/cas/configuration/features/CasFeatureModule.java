@@ -25,7 +25,7 @@ public interface CasFeatureModule {
     }
 
     /**
-     * Is defined?
+     * Determines whether this feature module is defined.
      *
      * @return true/false
      */
@@ -386,7 +386,7 @@ public interface CasFeatureModule {
         }
 
         /**
-         * Is registered?
+         * Determines whether the module is registered.
          *
          * @param module the module
          * @return true/false
@@ -396,7 +396,7 @@ public interface CasFeatureModule {
         }
 
         /**
-         * Is registered?
+         * Determines whether this feature is registered.
          *
          * @return true/false
          */

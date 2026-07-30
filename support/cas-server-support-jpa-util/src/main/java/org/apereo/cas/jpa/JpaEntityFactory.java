@@ -59,7 +59,7 @@ public interface JpaEntityFactory<T> {
     }
 
     /**
-     * Is maria db ?
+     * Determines whether the database is MariaDB.
      *
      * @return true/false
      */

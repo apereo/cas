@@ -58,7 +58,7 @@ public interface RegisteredServiceIndexService {
     Stream<RegisteredService> findServiceBy(RegisteredServiceQuery... queries);
 
     /**
-     * Is indexing enabled?
+     * Determines whether indexing is enabled.
      *
      * @return true/false
      */

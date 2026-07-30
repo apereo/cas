@@ -44,10 +44,7 @@ public class DefaultTicketDefinitionProperties implements TicketDefinitionProper
     private String storagePassword;
 
     /**
-     * If a ticket definition is going to be removed
-     * as part of a cascade operation, should this definition
-     * be excluded from removals allowing the ticket
-     * to hang around without its parent?
+     * Indicates whether this ticket definition should remain when its parent is removed during a cascade operation.
      */
     private boolean excludeFromCascade;
 }

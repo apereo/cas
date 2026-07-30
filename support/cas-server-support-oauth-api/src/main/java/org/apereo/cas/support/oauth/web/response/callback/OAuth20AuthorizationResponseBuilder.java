@@ -48,7 +48,7 @@ public interface OAuth20AuthorizationResponseBuilder extends Ordered {
     ModelAndView build(AccessTokenRequestContext holder) throws Throwable;
 
     /**
-     * Supports request?
+     * Determines whether this builder supports the request.
      *
      * @param context the context
      * @return true/false

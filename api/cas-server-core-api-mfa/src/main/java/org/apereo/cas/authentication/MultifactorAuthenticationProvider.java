@@ -65,7 +65,7 @@ public interface MultifactorAuthenticationProvider extends Serializable, Ordered
     String getFriendlyName();
 
     /**
-     * Does provider match/support this identifier?
+     * Determines whether the provider supports the identifier.
      * The identifier passed may be formed as a regular expression.
      *
      * @param identifier the identifier

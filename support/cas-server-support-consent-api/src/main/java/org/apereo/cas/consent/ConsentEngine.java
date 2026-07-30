@@ -74,7 +74,7 @@ public interface ConsentEngine extends Serializable {
     Map<String, List<Object>> resolveConsentableAttributesFrom(ConsentDecision decision);
 
     /**
-     * Is consent required?
+     * Determines whether consent is required.
      *
      * @param service           the service
      * @param registeredService the registered service

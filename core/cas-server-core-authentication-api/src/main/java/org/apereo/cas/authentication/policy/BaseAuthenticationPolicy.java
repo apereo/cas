@@ -2,6 +2,7 @@ package org.apereo.cas.authentication.policy;
 
 import module java.base;
 import org.apereo.cas.authentication.AuthenticationPolicy;
+import org.apereo.cas.util.CollectionUtils;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -27,4 +28,9 @@ public abstract class BaseAuthenticationPolicy implements AuthenticationPolicy {
     private int order = Ordered.LOWEST_PRECEDENCE;
 
     private String name = getClass().getSimpleName();
+
+    @Override
+    public Map<String, Object> toConfiguration() {
+        return CollectionUtils.wrap("name", name, "order", order);
+    }
 }
