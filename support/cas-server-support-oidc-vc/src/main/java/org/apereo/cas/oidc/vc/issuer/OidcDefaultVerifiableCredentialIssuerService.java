@@ -1,6 +1,5 @@
 package org.apereo.cas.oidc.vc.issuer;
 
-import module java.base;
 import org.apereo.cas.authentication.credential.BasicIdentifiableCredential;
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.configuration.model.support.oidc.OidcVerifiableCredentialConfigurationProperties;
@@ -8,13 +7,23 @@ import org.apereo.cas.oidc.OidcConfigurationContext;
 import org.apereo.cas.oidc.vc.issuer.metadata.CredentialConfigurationFormats;
 import org.apereo.cas.oidc.vc.issuer.proof.OidcVerifiableCredentialProofValidator;
 import org.apereo.cas.support.oauth.util.OAuth20Utils;
-import org.apereo.cas.util.CollectionUtils;
+import com.authlete.sd.Disclosure;
+import com.authlete.sd.SDJWT;
+import com.authlete.sd.SDObjectBuilder;
+import io.micrometer.common.util.StringUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.val;
-import org.apache.commons.lang3.BooleanUtils;
-import org.apache.commons.lang3.math.NumberUtils;
 import org.jose4j.jwt.JwtClaims;
 import org.jspecify.annotations.NonNull;
+import java.time.Clock;
+import java.time.Instant;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.UUID;
 
 /**
  * This is {@link OidcDefaultVerifiableCredentialIssuerService}.
@@ -37,9 +46,10 @@ public class OidcDefaultVerifiableCredentialIssuerService implements OidcVerifia
 
         val vcClaims = produceClaims(Objects.requireNonNull(principal), context);
         val issuer = configurationContext.getCasProperties().getAuthn().getOidc().getCore().getIssuer();
-        val configurationId = context.credentialRequest().getCredentialConfigurationId();
+        val configurationId = resolveRequestedConfigurationId(context);
         val properties = configurationContext.getCasProperties().getAuthn().getOidc().getVc();
         val configuration = properties.getIssuer().getCredentialConfigurations().get(configurationId);
+        Objects.requireNonNull(configuration, () -> "Unable to locate credential configuration " + configurationId);
 
         val chosenFormat = determineCredentialFormat(configuration);
 
@@ -51,7 +61,8 @@ public class OidcDefaultVerifiableCredentialIssuerService implements OidcVerifia
                 payload.put("credential_configuration_id", configurationId);
                 payload.put("claims", vcClaims);
                 payload.put("cnf", proof.holderJwk().toJSONObject());
-                yield signAndProduceCredentialResponse(context, payload);
+                payload.put("iss", issuer);
+                yield signAndProduceCredentialResponse(context, payload, configuration);
             }
             case JWT_VC_JSON -> {
                 val credentialSubject = new LinkedHashMap<String, Object>();
@@ -71,9 +82,9 @@ public class OidcDefaultVerifiableCredentialIssuerService implements OidcVerifia
                 payload.put("jti", UUID.randomUUID().toString());
                 payload.put("vc", vc);
                 payload.put("cnf", proof.holderJwk().toJSONObject());
-                yield signAndProduceCredentialResponse(context, payload);
+                yield signAndProduceCredentialResponse(context, payload, configuration);
             }
-            
+
         };
     }
 
@@ -86,13 +97,10 @@ public class OidcDefaultVerifiableCredentialIssuerService implements OidcVerifia
                 .formatted(configuration.getFormat(), configuration.getScope())));
     }
 
-    private @NonNull OidcVerifiableCredentialResponse signAndProduceCredentialResponse(
+    protected @NonNull OidcVerifiableCredentialResponse signAndProduceCredentialResponse(
         final OidcVerifiableCredentialValidationContext context,
-        final Map<String, Object> payload) throws Throwable {
-
-        val configurationId = context.credentialRequest().getCredentialConfigurationId();
-        val properties = configurationContext.getCasProperties().getAuthn().getOidc().getVc();
-        val configuration = properties.getIssuer().getCredentialConfigurations().get(configurationId);
+        final Map<String, Object> payload,
+        final OidcVerifiableCredentialConfigurationProperties configuration) throws Throwable {
 
         val signedCredential = signVerifiableCredential(payload, context, configuration);
         val response = new OidcVerifiableCredentialResponse();
@@ -109,22 +117,45 @@ public class OidcDefaultVerifiableCredentialIssuerService implements OidcVerifia
         jwtClaims.setIssuedAtToNow();
         jwtClaims.setExpirationTimeMinutesInTheFuture(5);
 
-        val claims = (Map<String, ?>) switch (determineCredentialFormat(configuration)) {
+        val format = determineCredentialFormat(configuration);
+        val claims = (Map<String, Object>) switch (format) {
             case VC_SD_JWT -> payload.get("claims");
             case JWT_VC_JSON -> payload.get("vc");
         };
-        claims.forEach(jwtClaims::setClaim);
+
+        val disclosures = new ArrayList<Disclosure>();
+        if (format == CredentialConfigurationFormats.VC_SD_JWT) {
+            val sdBuilder = new SDObjectBuilder();
+            claims.forEach((claimName, claimValue) -> {
+                val claimDefn = configuration.getClaims().get(claimName);
+                if (claimDefn.isDisclosable()) {
+                    val disclosure = new Disclosure(claimName, claimValue);
+                    disclosures.add(disclosure);
+                    sdBuilder.putSDClaim(disclosure);
+                } else {
+                    sdBuilder.putClaim(claimName, claimValue);
+                }
+            });
+            sdBuilder.build().forEach(jwtClaims::setClaim);
+        } else {
+            claims.forEach(jwtClaims::setClaim);
+        }
+
         val registeredService = OAuth20Utils.getRegisteredOAuthServiceByClientId(
             configurationContext.getServicesManager(),
             context.accessToken().getClientId());
-        return configurationContext.getIdTokenSigningAndEncryptionService()
+        val signedClaims = configurationContext.getIdTokenSigningAndEncryptionService()
             .encode(Objects.requireNonNull(registeredService), jwtClaims);
+        return format == CredentialConfigurationFormats.VC_SD_JWT
+            ? new SDJWT(signedClaims, disclosures).toString()
+            : signedClaims;
     }
-
+    
     protected Map<String, Object> produceClaims(final Principal principal, final OidcVerifiableCredentialValidationContext context) {
         val properties = configurationContext.getCasProperties().getAuthn().getOidc().getVc();
-        val configurationId = context.credentialRequest().getCredentialConfigurationId();
+        val configurationId = resolveRequestedConfigurationId(context);
         val configuration = properties.getIssuer().getCredentialConfigurations().get(configurationId);
+        Objects.requireNonNull(configuration, () -> "Unable to locate credential configuration " + configurationId);
         val claims = new LinkedHashMap<String, Object>();
 
         configuration.getClaims().forEach((claimName, claimProps) -> {
@@ -134,22 +165,17 @@ public class OidcDefaultVerifiableCredentialIssuerService implements OidcVerifia
                 throw new IllegalArgumentException("Missing required principal attribute for claim %s".formatted(claimName));
             }
             if (rawValue != null) {
-                val mappedValue = convertToClaimValue(rawValue, claimProps.getValueType(), claimName);
-                if (mappedValue != null) {
-                    claims.put(claimName, mappedValue);
-                }
+                val claimValue = rawValue.size() == 1 ? rawValue.getFirst() : rawValue;
+                claims.put(claimName, claimValue);
             }
         });
         return claims;
     }
 
-    protected Object convertToClaimValue(final Object rawValue, final String valueType, final String claimName) {
-        val firstValue = CollectionUtils.firstElement(rawValue).orElseThrow().toString();
-        return switch (valueType) {
-            case "boolean" -> BooleanUtils.toBoolean(firstValue);
-            case "number" -> NumberUtils.createNumber(firstValue).doubleValue();
-            case "array" -> CollectionUtils.toCollection(rawValue);
-            default -> firstValue;
-        };
+    protected String resolveRequestedConfigurationId(final OidcVerifiableCredentialValidationContext context) {
+        val principal = context.accessToken().getAuthentication().getPrincipal();
+        return StringUtils.isBlank(context.credentialRequest().getCredentialConfigurationId())
+            ? principal.getAttributes().get("credentialConfigurationIds").getFirst().toString()
+            : context.credentialRequest().getCredentialConfigurationId();
     }
 }

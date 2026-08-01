@@ -77,7 +77,7 @@ public class OidcVerifiableCredentialEndpointController extends BaseOAuth20Contr
         val decodedAccessTokenId = getAccessTokenFromRequest(httpRequest).getValue();
         val decodedToken = getConfigurationContext().getTicketRegistry().getTicket(decodedAccessTokenId, OAuth20AccessToken.class);
         if (!validateAccessToken(decodedToken)) {
-            LOGGER.warn("CAS cannot accept the request given the access token is invalid or expired.");
+            LOGGER.warn("The access token is invalid, expired, has an invalid grant type or no authorization details.");
             return ResponseEntity.badRequest()
                 .body(OAuth20Utils.getErrorResponseBody(OAuth20Constants.ERROR, "Invalid access token"));
         }

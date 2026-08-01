@@ -13,6 +13,7 @@ import org.apereo.cas.oidc.vc.issuer.proof.OidcVerifiableCredentialProofValidato
 import org.apereo.cas.oidc.vc.issuer.web.OidcVerifiableCredentialEndpointController;
 import org.apereo.cas.oidc.vc.issuer.web.OidcVerifiableCredentialIssuerMetadataController;
 import org.apereo.cas.oidc.vc.issuer.web.OidcVerifiableCredentialNonceEndpointController;
+import org.apereo.cas.oidc.vc.issuer.web.OidcVerifiableCredentialTypeMetadataController;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -51,6 +52,17 @@ class OidcVerifiableCredentialsIssuerConfiguration {
     }
 
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+    @ConditionalOnMissingBean(name = "oidcCredentialTypeMetadataController")
+    @Bean
+    public OidcVerifiableCredentialTypeMetadataController oidcCredentialTypeMetadataController(
+        @Qualifier(OidcConfigurationContext.BEAN_NAME)
+        final OidcConfigurationContext oidcConfigurationContext,
+        @Qualifier("oidcCredentialIssuerMetadataService")
+        final OidcCredentialIssuerMetadataService metadataService) {
+        return new OidcVerifiableCredentialTypeMetadataController(oidcConfigurationContext, metadataService);
+    }
+    
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @ConditionalOnMissingBean(name = "oidcVerifiableCredentialProofValidator")
     @Bean
     public OidcVerifiableCredentialProofValidator oidcVerifiableCredentialProofValidator(
@@ -78,6 +90,7 @@ class OidcVerifiableCredentialsIssuerConfiguration {
     public OidcVerifiableCredentialEndpointController oidcCredentialEndpointController(
         @Qualifier(OidcConfigurationContext.BEAN_NAME)
         final OidcConfigurationContext oidcConfigurationContext,
+        @Qualifier("oidcVerifiableCredentialIssuerService")
         final OidcVerifiableCredentialIssuerService oidcVerifiableCredentialIssuerService) {
         return new OidcVerifiableCredentialEndpointController(
             oidcConfigurationContext, oidcVerifiableCredentialIssuerService);

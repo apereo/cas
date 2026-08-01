@@ -27,22 +27,22 @@
     "--cas.authn.oidc.vc.issuer.credential-configurations.myorg.scope=SystemCredential",
 
     "--cas.authn.oidc.vc.issuer.credential-configurations.myorg.claims.roles.mandatory=true",
-    "--cas.authn.oidc.vc.issuer.credential-configurations.myorg.claims.roles.value-type=array",
+
     
     "--cas.authn.oidc.vc.issuer.credential-configurations.myorg.claims.score.mandatory=true",
-    "--cas.authn.oidc.vc.issuer.credential-configurations.myorg.claims.score.value-type=number",
+
     
     "--cas.authn.oidc.vc.issuer.credential-configurations.myorg.claims.given_name.mandatory=true",
-    "--cas.authn.oidc.vc.issuer.credential-configurations.myorg.claims.given_name.value-type=string",
+
     
     "--cas.authn.oidc.vc.issuer.credential-configurations.myorg.claims.family_name.mandatory=true",
-    "--cas.authn.oidc.vc.issuer.credential-configurations.myorg.claims.family_name.value-type=string",
+
 
     "--cas.authn.oidc.vc.issuer.credential-configurations.myorg.claims.email.mandatory=false",
-    "--cas.authn.oidc.vc.issuer.credential-configurations.myorg.claims.email.value-type=string",
+
 
     "--cas.authn.oidc.vc.issuer.credential-configurations.myorg.claims.student_id.mandatory=true",
-    "--cas.authn.oidc.vc.issuer.credential-configurations.myorg.claims.student_id.value-type=string"
+
   ],
   "initScript": "${PWD}/ci/tests/httpbin/run-httpbin-server.sh"
 }

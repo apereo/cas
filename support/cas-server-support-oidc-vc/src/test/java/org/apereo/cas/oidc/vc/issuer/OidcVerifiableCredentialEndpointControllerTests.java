@@ -67,35 +67,23 @@ class OidcVerifiableCredentialEndpointControllerTests {
         "cas.authn.oidc.vc.issuer.credential-configurations.myorg.format=vc+sd-jwt",
         "cas.authn.oidc.vc.issuer.credential-configurations.myorg.scope=UniversityIDCredential",
         "cas.authn.oidc.vc.issuer.credential-configurations.myorg.claims.given_name.mandatory=true",
-        "cas.authn.oidc.vc.issuer.credential-configurations.myorg.claims.given_name.value-type=string",
         "cas.authn.oidc.vc.issuer.credential-configurations.myorg.claims.family_name.mandatory=true",
-        "cas.authn.oidc.vc.issuer.credential-configurations.myorg.claims.family_name.value-type=string",
         "cas.authn.oidc.vc.issuer.credential-configurations.myorg.claims.email.mandatory=false",
-        "cas.authn.oidc.vc.issuer.credential-configurations.myorg.claims.email.value-type=string",
         "cas.authn.oidc.vc.issuer.credential-configurations.myorg.claims.student_id.mandatory=true",
-        "cas.authn.oidc.vc.issuer.credential-configurations.myorg.claims.student_id.value-type=string",
         "cas.authn.oidc.vc.issuer.credential-configurations.myorg.claims.active.mandatory=false",
-        "cas.authn.oidc.vc.issuer.credential-configurations.myorg.claims.active.value-type=boolean",
         "cas.authn.oidc.vc.issuer.credential-configurations.myorg.claims.score.mandatory=false",
-        "cas.authn.oidc.vc.issuer.credential-configurations.myorg.claims.score.value-type=number",
         "cas.authn.oidc.vc.issuer.credential-configurations.myorg.claims.roles.mandatory=false",
-        "cas.authn.oidc.vc.issuer.credential-configurations.myorg.claims.roles.value-type=array",
 
         "cas.authn.oidc.vc.issuer.credential-configurations.strict.format=vc+sd-jwt",
         "cas.authn.oidc.vc.issuer.credential-configurations.strict.scope=StrictCredential",
         "cas.authn.oidc.vc.issuer.credential-configurations.strict.claims.national_id.mandatory=true",
-        "cas.authn.oidc.vc.issuer.credential-configurations.strict.claims.national_id.value-type=string",
         "cas.authn.oidc.vc.issuer.credential-configurations.strict.claims.tax_number.mandatory=true",
-        "cas.authn.oidc.vc.issuer.credential-configurations.strict.claims.tax_number.value-type=string",
 
         "cas.authn.oidc.vc.issuer.credential-configurations.employee.format=jwt_vc_json",
         "cas.authn.oidc.vc.issuer.credential-configurations.employee.scope=EmployeeCredential",
         "cas.authn.oidc.vc.issuer.credential-configurations.employee.claims.given_name.mandatory=true",
-        "cas.authn.oidc.vc.issuer.credential-configurations.employee.claims.given_name.value-type=string",
         "cas.authn.oidc.vc.issuer.credential-configurations.employee.claims.family_name.mandatory=true",
-        "cas.authn.oidc.vc.issuer.credential-configurations.employee.claims.family_name.value-type=string",
-        "cas.authn.oidc.vc.issuer.credential-configurations.employee.claims.email.mandatory=false",
-        "cas.authn.oidc.vc.issuer.credential-configurations.employee.claims.email.value-type=string"
+        "cas.authn.oidc.vc.issuer.credential-configurations.employee.claims.email.mandatory=false"
     })
     abstract static class BaseTests extends AbstractOidcTests {
         protected static final ObjectMapper MAPPER = JacksonObjectMapperFactory.builder()
@@ -188,7 +176,7 @@ class OidcVerifiableCredentialEndpointControllerTests {
                     "active", List.of("true"),
                     "score", List.of("95.5"),
                     "roles", List.of("admin", "user"))
-                );
+            );
             val accessToken = getAccessToken(principal, clientId);
             when(accessToken.getGrantType()).thenReturn(OAuth20GrantTypes.PRE_AUTHORIZED_CODE);
             ticketRegistry.addTicket(Objects.requireNonNull(accessToken.getTicketGrantingTicket()));
@@ -364,7 +352,7 @@ class OidcVerifiableCredentialEndpointControllerTests {
             assertNotNull(response);
         }
     }
-    
+
     @Nested
     class CredentialIssuanceFailureTests extends BaseTests {
         @Test
@@ -1096,7 +1084,7 @@ class OidcVerifiableCredentialEndpointControllerTests {
         void verifyMetadataCredentialEndpoint() {
             val metadata = oidcCredentialIssuerMetadataService.build();
             val expectedEndpoint = casProperties.getAuthn().getOidc().getCore().getIssuer()
-                + '/' + OidcConstants.BASE_OIDC_URL + '/' + OidcConstants.VC_CREDENTIAL_URL;
+                + '/' + OidcConstants.VC_CREDENTIAL_URL;
             assertEquals(expectedEndpoint, metadata.getCredentialEndpoint());
         }
 
@@ -1115,43 +1103,8 @@ class OidcVerifiableCredentialEndpointControllerTests {
         void verifyMetadataClaimsConfiguration() {
             val metadata = oidcCredentialIssuerMetadataService.build();
             val cfg = metadata.getCredentialConfigurationsSupported().get("myorg");
-            assertNotNull(cfg.getClaims());
-            assertEquals(7, cfg.getClaims().size());
-
-            val givenNameClaim = cfg.getClaims().get("given_name");
-            assertNotNull(givenNameClaim);
-            assertTrue(givenNameClaim.getMandatory());
-            assertEquals("string", givenNameClaim.getValueType());
-
-            val familyNameClaim = cfg.getClaims().get("family_name");
-            assertNotNull(familyNameClaim);
-            assertTrue(familyNameClaim.getMandatory());
-            assertEquals("string", familyNameClaim.getValueType());
-
-            val emailClaim = cfg.getClaims().get("email");
-            assertNotNull(emailClaim);
-            assertFalse(emailClaim.getMandatory());
-            assertEquals("string", emailClaim.getValueType());
-
-            val studentIdClaim = cfg.getClaims().get("student_id");
-            assertNotNull(studentIdClaim);
-            assertTrue(studentIdClaim.getMandatory());
-            assertEquals("string", studentIdClaim.getValueType());
-
-            val activeClaim = cfg.getClaims().get("active");
-            assertNotNull(activeClaim);
-            assertFalse(activeClaim.getMandatory());
-            assertEquals("boolean", activeClaim.getValueType());
-
-            val scoreClaim = cfg.getClaims().get("score");
-            assertNotNull(scoreClaim);
-            assertFalse(scoreClaim.getMandatory());
-            assertEquals("number", scoreClaim.getValueType());
-
-            val rolesClaim = cfg.getClaims().get("roles");
-            assertNotNull(rolesClaim);
-            assertFalse(rolesClaim.getMandatory());
-            assertEquals("array", rolesClaim.getValueType());
+            assertNotNull(cfg.getCredentialMetadata().getClaims());
+            assertEquals(7, cfg.getCredentialMetadata().getClaims().size());
         }
 
         @Test

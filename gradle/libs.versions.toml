@@ -14,6 +14,7 @@ apacheVelocityEngine = "2.4.1"
 apiGuardian = "1.1.2"
 arrow = "19.0.0"
 aspectj = "1.9.25.1"
+authlete = "1.9"
 awaitility = "4.3.0"
 awsmemcached = "1.2.4"
 azureIdentity = "1.18.4"
@@ -310,6 +311,7 @@ arrow-memory-netty = { module = "org.apache.arrow:arrow-memory-netty", version.r
 arrow-memory-unsafe = { module = "org.apache.arrow:arrow-memory-unsafe", version.ref = "arrow" }
 aspectjrt = { module = "org.aspectj:aspectjrt", version.ref = "aspectj" }
 aspectjweaver = { module = "org.aspectj:aspectjweaver", version.ref = "aspectj" }
+authlete-sd-jwt = { module = "com.authlete:sd-jwt", version.ref = "authlete" }
 awaitility = { module = "org.awaitility:awaitility", version.ref = "awaitility" }
 aws-core = { module = "software.amazon.awssdk:aws-core", version.ref = "amazonSdk" }
 azure-cosmos = { module = "com.azure:azure-cosmos", version.ref = "cosmosdb" }

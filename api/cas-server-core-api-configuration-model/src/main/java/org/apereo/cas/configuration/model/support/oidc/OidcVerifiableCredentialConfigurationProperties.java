@@ -27,7 +27,7 @@ public class OidcVerifiableCredentialConfigurationProperties implements Serializ
      * This value is published in issuer metadata and is used by wallets
      * to determine how the credential request and response should be processed.
      */
-    private String format;
+    private String format = "vc+sd-jwt";
 
     /**
      * OAuth scope associated with this credential configuration.
@@ -70,4 +70,41 @@ public class OidcVerifiableCredentialConfigurationProperties implements Serializ
      * into the final credential payload.
      */
     private Map<String, OidcVerifiableCredentialClaimProperties> claims = new LinkedHashMap<>();
+
+    /**
+     * Control display settings of this credential configuration used in metadata generation.
+     */
+    private List<CredentialConfigurationDisplay> display =
+        new ArrayList<>(List.of(new CredentialConfigurationDisplay()));
+
+    @Getter
+    @Setter
+    public static class CredentialConfigurationDisplay implements Serializable {
+        @Serial
+        private static final long serialVersionUID = 2912814689105176317L;
+        /**
+         * Locale that controls this configuration's display.
+         */
+        private String locale = "en-US";
+        /**
+         * Display name for this configuration.
+         */
+        private String name = "My Verifiable Credential";
+        /**
+         * Logo url.
+         */
+        private String logo = "https://apereo.github.io/cas/images/cas_logo.png";
+        /**
+         * Description for this configuration.
+         */
+        private String description = "My verifiable credential that belongs to my organization";
+        /**
+         * Background color for this configuration.
+         */
+        private String backgroundColor;
+        /**
+         * Text color for this configuration.
+         */
+        private String textColor;
+    }
 }

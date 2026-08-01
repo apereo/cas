@@ -3,9 +3,11 @@ package org.apereo.cas.oidc.vc.issuer.metadata;
 import module java.base;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import lombok.experimental.SuperBuilder;
 
 /**
  * This is {@link OidcCredentialIssuerMetadata}.
@@ -13,7 +15,7 @@ import lombok.Setter;
  * @author Misagh Moayyed
  * @since 8.0.0
  */
-@JsonInclude(JsonInclude.Include.NON_NULL)
+@JsonInclude(JsonInclude.Include.NON_EMPTY)
 @Getter
 @Setter
 @NoArgsConstructor
@@ -36,7 +38,7 @@ public class OidcCredentialIssuerMetadata implements Serializable {
     @JsonProperty("credential_configurations_supported")
     private Map<String, CredentialConfiguration> credentialConfigurationsSupported;
 
-    @JsonInclude(JsonInclude.Include.NON_NULL)
+    @JsonInclude(JsonInclude.Include.NON_EMPTY)
     @Getter
     @Setter
     public static class CredentialConfiguration implements Serializable {
@@ -49,6 +51,9 @@ public class OidcCredentialIssuerMetadata implements Serializable {
         @JsonProperty("scope")
         private String scope;
 
+        @JsonProperty("vct")
+        private String vct;
+
         @JsonProperty("cryptographic_binding_methods_supported")
         private List<String> cryptographicBindingMethodsSupported = Stream.of("jwk").toList();
 
@@ -58,11 +63,25 @@ public class OidcCredentialIssuerMetadata implements Serializable {
         @JsonProperty("proof_types_supported")
         private Map<String, ProofTypeSupported> proofTypesSupported = new LinkedHashMap<>();
 
-        @JsonProperty("claims")
-        private Map<String, ClaimMetadata> claims = new LinkedHashMap<>();
+        @JsonProperty("credential_metadata")
+        private CredentialMetadata credentialMetadata = new CredentialMetadata();
     }
 
-    @JsonInclude(JsonInclude.Include.NON_NULL)
+    @JsonInclude(JsonInclude.Include.NON_EMPTY)
+    @Getter
+    @Setter
+    public static class CredentialMetadata implements Serializable {
+        @Serial
+        private static final long serialVersionUID = 7269398914160552045L;
+
+        @JsonProperty("display")
+        private List<CredentialConfigurationDisplay> display;
+
+        @JsonProperty("claims")
+        private List<ClaimMetadata> claims;
+    }
+
+    @JsonInclude(JsonInclude.Include.NON_EMPTY)
     @Getter
     @Setter
     public static class ProofTypeSupported implements Serializable {
@@ -73,18 +92,33 @@ public class OidcCredentialIssuerMetadata implements Serializable {
         private List<String> proofSigningAlgValuesSupported = Stream.of("ES256", "RS256").toList();
     }
 
-    @JsonInclude(JsonInclude.Include.NON_NULL)
+    @JsonInclude(JsonInclude.Include.NON_EMPTY)
     @Getter
     @Setter
     public static class ClaimMetadata implements Serializable {
         @Serial
         private static final long serialVersionUID = 216197021376111794L;
 
-        @JsonProperty("mandatory")
-        private Boolean mandatory;
+        @JsonProperty("path")
+        private List<String> path;
 
-        @JsonProperty("value_type")
-        private String valueType;
+        @JsonProperty("display")
+        private List<ClaimDisplay> display;
+        
+        @JsonInclude(JsonInclude.Include.NON_EMPTY)
+        @Getter
+        @Setter
+        @SuperBuilder
+        public static class ClaimDisplay implements Serializable {
+            @Serial
+            private static final long serialVersionUID = 216197021376111795L;
+
+            private String name;
+            
+            @Builder.Default
+            private String locale = "en-US";
+        }
     }
+
 
 }
