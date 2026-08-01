@@ -23,7 +23,7 @@
     "--cas.service-registry.core.init-from-json=true",
     "--cas.service-registry.json.location=file:${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/services",
     
-    "--cas.authn.oidc.vc.issuer.credential-configurations.myorg.format=vc+sd-jwt",
+    "--cas.authn.oidc.vc.issuer.credential-configurations.myorg.format=dc+sd-jwt",
     "--cas.authn.oidc.vc.issuer.credential-configurations.myorg.scope=SystemCredential",
 
     "--cas.authn.oidc.vc.issuer.credential-configurations.myorg.claims.roles.mandatory=true",
@@ -31,7 +31,7 @@
     "--cas.authn.oidc.vc.issuer.credential-configurations.myorg.claims.given_name.mandatory=true",
     "--cas.authn.oidc.vc.issuer.credential-configurations.myorg.claims.family_name.mandatory=true",
     "--cas.authn.oidc.vc.issuer.credential-configurations.myorg.claims.email.mandatory=false",
-    "--cas.authn.oidc.vc.issuer.credential-configurations.myorg.claims.student_id.mandatory=true",
+    "--cas.authn.oidc.vc.issuer.credential-configurations.myorg.claims.student_id.mandatory=true"
   ],
   "initScript": "${PWD}/ci/tests/httpbin/run-httpbin-server.sh"
 }

@@ -5,6 +5,7 @@ import org.apereo.cas.config.CasOidcVerifiableCredentialsAutoConfiguration;
 import org.apereo.cas.oidc.AbstractOidcTests;
 import org.apereo.cas.oidc.OidcConstants;
 import org.apereo.cas.support.oauth.OAuth20Constants;
+import org.apache.commons.lang3.StringUtils;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.autoconfigure.ImportAutoConfiguration;
@@ -22,7 +23,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @Tag("OIDCWeb")
 @ImportAutoConfiguration(CasOidcVerifiableCredentialsAutoConfiguration.class)
 @TestPropertySource(properties = {
-    "cas.authn.oidc.vc.issuer.credential-configurations.UniversityDegreeCredential.format=vc+sd-jwt",
+    "cas.authn.oidc.vc.issuer.credential-configurations.UniversityDegreeCredential.format=dc+sd-jwt",
     "cas.authn.oidc.vc.issuer.credential-configurations.UniversityDegreeCredential.scope=UniversityDegree",
     "cas.authn.oidc.vc.issuer.credential-configurations.UniversityDegreeCredential.display[0].name=University Degree Credential",
     "cas.authn.oidc.vc.issuer.credential-configurations.UniversityDegreeCredential.display[0].locale=en-US",
@@ -72,7 +73,7 @@ class OidcVerifiableCredentialTypeMetadataControllerTests extends AbstractOidcTe
                 .accept(MediaType.APPLICATION_JSON)
                 .with(withHttpRequestProcessor()))
             .andExpect(status().isNotFound())
-            .andExpect(content().string(""));
+            .andExpect(content().string(StringUtils.EMPTY));
     }
 
     @Test

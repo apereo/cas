@@ -25,6 +25,12 @@ The following capabilities are in place:
 - Pre-authorized code flows may be used to obtain issuance-scoped access tokens.
 - Access tokens issued for verifiable credential flows may carry authorization context for one or more credential configurations.
 - Proofs may be validated to ensure possession of holder key material and to prevent replay.
+ 
+Supported formats are:
+
+- `dc+sd-jwt`
+- `jwt_vc_json`
+- `jwt_vc_json-ld`
 
 ## Overview
 
@@ -80,6 +86,10 @@ The endpoint body is expected as:
   }
 }
 ```
+ 
+### Batch Credential Endpoint
+
+Not supported yet. 
 
 ### Nonce Endpoint
 
@@ -187,22 +197,8 @@ trusted backend initiates the issuance transaction, the Authorization Code Flow 
 The wallet begins by sending an authorization request to the Credential Issuer’s authorization endpoint, 
 requesting one or more credential configurations using the `authorization_details` parameter. The request may 
 also include the `openid` scope if the wallet wishes to authenticate the end-user and receive an ID Token 
-as part of the token response.
-
-After authenticating the user and obtaining any required consent, the Credential Issuer issues 
-a standard OAuth 2.0 authorization code. During this process, the issuer persists the requested 
-and approved credential configuration identifiers together with any issuer-specific context, such as 
-`issuer_state`, alongside the authorization code. This authorization context is later recovered during the 
-token exchange and determines which credentials the resulting access token is permitted to obtain. The 
-authorization code flow should follow normal OAuth 2.0 and OpenID Connect security practices, including 
-client authentication where applicable and Proof Key for Code Exchange (PKCE) for public wallet clients.
-
-The wallet exchanges the authorization code at the token endpoint to obtain an access token that is 
-specifically authorized for credential issuance. If the original authorization request included the 
-openid scope and all OpenID Connect requirements are satisfied, the token response may also include an 
-ID Token in addition to the access token. For credential issuance, the token response includes a 
-credential nonce (`c_nonce`) and its expiration time. The nonce is subsequently incorporated into the 
-wallet’s proof-of-possession JWT and protects the credential issuance process against replay attacks.
+as part of the token response. The wallet exchanges the authorization code at the token endpoint to obtain 
+an access token that is specifically authorized for credential issuance. 
 
 ## Pre-Authorized Code Flow
 

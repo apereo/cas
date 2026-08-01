@@ -181,10 +181,11 @@ A dedicated actuator endpoint, `passwordless`, is available to allows one to que
 and retrieve the associated [passwordless account](../authentication/Passwordless-Authentication-Account-Storage.html) information. 
 This capability is also supported and available for the [Palantir Admin Dashboard](../installation/Admin-Dashboard.html).
  
-### Verifiable Credentials w/ Authorization Code Flow
+### OpenID Connect Verifiable Credentials
 
 [OpenID Connect with Verifiable Credentials](../authentication/OIDC-Authentication-Verifiable-Credentials.html) now 
-supports the authorization code flow.
+supports the authorization code flow. There are also significant changes in place to support more formats
+with additional bug fixes and enhancements, and an improved test suite to verify credential issuance.
 
 ## Other Stuff
   

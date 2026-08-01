@@ -27,7 +27,7 @@ public class OidcVerifiableCredentialConfigurationProperties implements Serializ
      * This value is published in issuer metadata and is used by wallets
      * to determine how the credential request and response should be processed.
      */
-    private String format = "vc+sd-jwt";
+    private String format = "dc+sd-jwt";
 
     /**
      * OAuth scope associated with this credential configuration.

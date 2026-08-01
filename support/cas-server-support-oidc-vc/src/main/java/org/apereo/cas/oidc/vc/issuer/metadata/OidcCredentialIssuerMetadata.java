@@ -35,6 +35,9 @@ public class OidcCredentialIssuerMetadata implements Serializable {
     @JsonProperty("nonce_endpoint")
     private String nonceEndpoint;
 
+    @JsonProperty("batch_credential_endpoint")
+    private String batchCredentialEndpoint;
+
     @JsonProperty("credential_configurations_supported")
     private Map<String, CredentialConfiguration> credentialConfigurationsSupported;
 
@@ -46,7 +49,7 @@ public class OidcCredentialIssuerMetadata implements Serializable {
         private static final long serialVersionUID = 7169398914160552045L;
 
         @JsonProperty("format")
-        private String format = CredentialConfigurationFormats.VC_SD_JWT.getFormat();
+        private String format = CredentialConfigurationFormats.DC_SD_JWT.getFormat();
 
         @JsonProperty("scope")
         private String scope;

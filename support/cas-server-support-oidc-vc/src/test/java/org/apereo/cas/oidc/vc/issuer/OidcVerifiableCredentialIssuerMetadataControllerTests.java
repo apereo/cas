@@ -21,7 +21,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @Tag("OIDCWeb")
 @ImportAutoConfiguration(CasOidcVerifiableCredentialsAutoConfiguration.class)
 @TestPropertySource(properties = {
-    "cas.authn.oidc.vc.issuer.credential-configurations.myorg.format=vc+sd-jwt",
+    "cas.authn.oidc.vc.issuer.credential-configurations.myorg.format=dc+sd-jwt",
     "cas.authn.oidc.vc.issuer.credential-configurations.myorg.scope=UniversityIDCredential",
     "cas.authn.oidc.vc.issuer.credential-configurations.myorg.claims.given_name.mandatory=true",
     "cas.authn.oidc.vc.issuer.credential-configurations.myorg.claims.family_name.mandatory=true",
@@ -49,7 +49,7 @@ class OidcVerifiableCredentialIssuerMetadataControllerTests extends AbstractOidc
         mockMvc.perform(get(METADATA_ENDPOINT_URL)
                 .with(withHttpRequestProcessor()))
             .andExpect(status().isOk())
-            .andExpect(jsonPath("$.credential_configurations_supported.myorg.format").value(CredentialConfigurationFormats.VC_SD_JWT.getFormat()))
+            .andExpect(jsonPath("$.credential_configurations_supported.myorg.format").value(CredentialConfigurationFormats.DC_SD_JWT.getFormat()))
             .andExpect(jsonPath("$.credential_configurations_supported.myorg.scope").value("UniversityIDCredential"))
             .andExpect(jsonPath("$.credential_configurations_supported.myorg.proof_types_supported.jwt").exists());
     }

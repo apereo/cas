@@ -89,6 +89,7 @@ public class AccessTokenPreAuthorizedCodeGrantRequestExtractor<T extends OAuth20
             .grantType(getGrantType())
             .registeredService(registeredService)
             .service(service)
+            .userProfile(userProfile)
             .authentication(authentication)
             .build();
     }

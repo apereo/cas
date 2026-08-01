@@ -36,6 +36,7 @@ public class OidcCredentialIssuerMetadataService {
         metadata.setCredentialIssuer(issuer);
         metadata.setAuthorizationServers(List.of(issuer));
         metadata.setCredentialEndpoint(issuer + '/' + OidcConstants.VC_CREDENTIAL_URL);
+        metadata.setBatchCredentialEndpoint(issuer + '/' + OidcConstants.VC_BATCH_CREDENTIAL_URL);
         metadata.setNonceEndpoint(issuer + '/' + OidcConstants.VC_NONCE_URL);
 
         val supported = new LinkedHashMap<String, OidcCredentialIssuerMetadata.CredentialConfiguration>();

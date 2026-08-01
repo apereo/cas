@@ -14,19 +14,19 @@ import lombok.RequiredArgsConstructor;
 @Getter
 public enum CredentialConfigurationFormats {
     /**
-     * (Selective Disclosure JSON Web Token Verifiable Credential) is a
-     * privacy-preserving digital credential format based on IETF standards.
-     * It allows holders to selectively disclose specific claims—such as revealing
-     * only their age rather than their full date of birth—from a signed, trusted
-     * credential. It leverages existing JWT infrastructure, offering high
-     * compatibility with current identity systems.
+     * A Data Integrity Claims (DC) credential encoded as an SD-JWT, supporting
+     * selective disclosure of claims while preserving cryptographic integrity.
      */
-    VC_SD_JWT("vc+sd-jwt"),
+    DC_SD_JWT("dc+sd-jwt"),
     /**
      * It is a JSON-based string that represents the credential as a base64url-encoded JWT.
      */
-    JWT_VC_JSON("jwt_vc_json");
+    JWT_VC_JSON("jwt_vc_json"),
+    /**
+     * This format includes a {@code @context} URLs that maps data properties to universal schemas.
+     * Every field has a strict, globally defined semantic meaning.
+     */
+    JWT_VC_JSON_LD("jwt_vc_json-ld");
 
     private final String format;
-
 }
