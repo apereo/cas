@@ -8,6 +8,7 @@ import org.apereo.cas.oidc.vc.issuer.metadata.CredentialConfigurationFormats;
 import org.apereo.cas.oidc.vc.issuer.metadata.OidcCredentialIssuerMetadataService;
 import org.apereo.cas.oidc.vc.issuer.nonce.OidcVerifiableCredentialNonceService;
 import org.apereo.cas.oidc.vc.issuer.proof.OidcVerifiableCredentialProofValidator;
+import org.apereo.cas.oidc.vc.issuer.web.OidcVerifiableCredentialEndpointController.OidcVcBatchCredentialRequest;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.support.oauth.OAuth20GrantTypes;
@@ -97,6 +98,9 @@ class OidcVerifiableCredentialEndpointControllerTests {
 
         protected static final String CREDENTIAL_ENDPOINT_URL =
             "/cas/" + OidcConstants.BASE_OIDC_URL + '/' + OidcConstants.VC_CREDENTIAL_URL;
+
+        protected static final String BATCH_CREDENTIAL_ENDPOINT_URL =
+            "/cas/" + OidcConstants.BASE_OIDC_URL + '/' + OidcConstants.VC_BATCH_CREDENTIAL_URL;
 
         protected static final String CREDENTIAL_ISSUER = "https://sso.example.org/cas/oidc";
 
@@ -381,6 +385,68 @@ class OidcVerifiableCredentialEndpointControllerTests {
                 .getResponse()
                 .getContentAsString();
             assertNotNull(response);
+        }
+    }
+
+    @Nested
+    class BatchCredentialIssuanceTests extends BaseTests {
+        @Test
+        void verifyBatchCredentialIssuance() throws Throwable {
+            val clientId = UUID.randomUUID().toString();
+            val registeredService = getOidcRegisteredService(clientId);
+            servicesManager.save(registeredService);
+
+            val accessToken = createOAuth20AccessToken(clientId);
+            val holderKey = generateRsaHolderKey();
+            val firstProofJwt = buildProofJwt(holderKey, CREDENTIAL_ISSUER, new Date());
+            val secondProofJwt = buildProofJwt(holderKey, CREDENTIAL_ISSUER, new Date());
+            val firstNonce = SignedJWT.parse(firstProofJwt).getJWTClaimsSet().getStringClaim("nonce");
+            val secondNonce = SignedJWT.parse(secondProofJwt).getJWTClaimsSet().getStringClaim("nonce");
+            assertNotNull(firstNonce);
+            assertNotNull(secondNonce);
+            assertTrue(oidcVerifiableCredentialNonceService.exists(firstNonce));
+            assertTrue(oidcVerifiableCredentialNonceService.exists(secondNonce));
+
+            val firstRequest = new OidcVerifiableCredentialRequest();
+            firstRequest.setCredentialConfigurationId("myorg");
+            firstRequest.setProof(buildProof(firstProofJwt));
+
+            val secondRequest = new OidcVerifiableCredentialRequest();
+            secondRequest.setCredentialConfigurationId("employee");
+            secondRequest.setProof(buildProof(secondProofJwt));
+            val batchRequest = new OidcVcBatchCredentialRequest(List.of(firstRequest, secondRequest));
+
+            mockMvc.perform(post(BATCH_CREDENTIAL_ENDPOINT_URL)
+                    .with(withHttpRequestProcessor())
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken.getId())
+                    .content(MAPPER.writeValueAsString(batchRequest)))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.credential_responses.length()").value(2))
+                .andExpect(jsonPath("$.credential_responses[0].format")
+                    .value(CredentialConfigurationFormats.DC_SD_JWT.getFormat()))
+                .andExpect(jsonPath("$.credential_responses[0].credential").isNotEmpty())
+                .andExpect(jsonPath("$.credential_responses[1].format")
+                    .value(CredentialConfigurationFormats.JWT_VC_JSON.getFormat()))
+                .andExpect(jsonPath("$.credential_responses[1].credential").isNotEmpty());
+
+            assertFalse(oidcVerifiableCredentialNonceService.exists(firstNonce));
+            assertFalse(oidcVerifiableCredentialNonceService.exists(secondNonce));
+        }
+
+        @Test
+        void verifyBatchCredentialIssuanceWithInvalidAccessToken() throws Throwable {
+            val request = new OidcVerifiableCredentialRequest();
+            request.setCredentialConfigurationId("myorg");
+            val batchRequest = new OidcVcBatchCredentialRequest(List.of(request));
+
+            mockMvc.perform(post(BATCH_CREDENTIAL_ENDPOINT_URL)
+                    .with(withHttpRequestProcessor())
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .header(HttpHeaders.AUTHORIZATION, "Bearer AT-invalid-token-id")
+                    .content(MAPPER.writeValueAsString(batchRequest)))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.error").value(OAuth20Constants.INVALID_REQUEST));
         }
     }
 

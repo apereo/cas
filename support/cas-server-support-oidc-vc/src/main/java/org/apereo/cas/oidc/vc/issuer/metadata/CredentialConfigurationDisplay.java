@@ -5,8 +5,10 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.experimental.SuperBuilder;
+import lombok.extern.jackson.Jacksonized;
 
 /**
  * This is {@link CredentialConfigurationDisplay}.
@@ -17,11 +19,15 @@ import lombok.experimental.SuperBuilder;
 @JsonInclude(JsonInclude.Include.NON_EMPTY)
 @Getter
 @Setter
+@NoArgsConstructor
+@SuperBuilder
+@Jacksonized
 public class CredentialConfigurationDisplay implements Serializable {
     @Serial
     private static final long serialVersionUID = 216197021376111794L;
 
     private String name;
+    @Builder.Default
     private String locale = "en-US";
     private String description;
     private CredentialConfigurationDisplayLogo logo;
@@ -31,7 +37,9 @@ public class CredentialConfigurationDisplay implements Serializable {
     @JsonInclude(JsonInclude.Include.NON_EMPTY)
     @Getter
     @Setter
+    @NoArgsConstructor
     @SuperBuilder
+    @Jacksonized
     public static class CredentialConfigurationDisplayLogo implements Serializable {
         @Serial
         private static final long serialVersionUID = 216197021376111795L;

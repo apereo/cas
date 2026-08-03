@@ -1,7 +1,9 @@
 const cas = require("../../cas.js");
 const assert = require("assert");
 
-async function createVerifiableCredentialTransaction(...credentialConfigurationIds) {
+async function createVerifiableCredentialTransaction(credentialConfigurationIds) {
+    await cas.log(`Creating verifiable credential transaction for ${credentialConfigurationIds}`);
+    
     const body = JSON.stringify({
         "principal": "casuser",
         "credentialConfigurationIds": credentialConfigurationIds
@@ -38,7 +40,7 @@ async function useCredentialOffer(page, wallet, offerRequest) {
     return response;
 }
 
-async function startVerifiableCredentialFlowForConfiguration(configurationId) {
+async function startVerifiableCredentialFlowForConfiguration(...configurationId) {
     await cas.logg(`Starting verifiable credential flow for ${configurationId}`);
 
     const browser = await cas.newBrowser(cas.browserOptions());
@@ -62,34 +64,35 @@ async function startVerifiableCredentialFlowForConfiguration(configurationId) {
     await cas.log(`Wallet exchange response ${exchange}`);
 
     const result = JSON.parse(exchange);
-    let credential = result[0];
-    assert.equal(credential.pending, false);
+    assert(result.length > 0);
 
-    switch (configurationId) {
-    case "myorg":
-        assert.equal(credential.format, "dc+sd-jwt");
-        break;
-    case "employee":
-        assert.equal(credential.format, "jwt_vc_json-ld");
-        break;
+    for (const credential of result) {
+        assert.equal(credential.pending, false);
+        switch (configurationId) {
+        case "myorg":
+            assert.equal(credential.format, "dc+sd-jwt");
+            break;
+        case "employee":
+            assert.equal(credential.format, "jwt_vc_json-ld");
+            break;
+        }
+        assert.equal(credential.parsedDocument.sub, "casuser");
+        assert.ok(credential.document);
+        assert.match(credential.document, /^[^.]+\.[^.]+\.[^.]+$/);
+        assert.deepEqual(credential.parsedDocument.roles, ["admin", "user"]);
+        assert.equal(credential.parsedDocument.student_id, "S12345");
+        assert.equal(credential.parsedDocument.family_name, "User");
+        assert.equal(credential.parsedDocument.given_name, "CAS");
+        assert.equal(credential.parsedDocument.email, "casuser@example.org");
+
+        const [headerPart, payloadPart] = credential.document.split(".");
+        const header = JSON.parse(Buffer.from(headerPart, "base64url").toString("utf8"));
+        const payload = JSON.parse(Buffer.from(payloadPart, "base64url").toString("utf8"));
+        assert.equal(header.alg, "RS256");
+        assert.equal(header.client_id, "wallet-client");
+        assert.equal(payload.sub, "casuser");
     }
-
-    assert.equal(credential.parsedDocument.sub, "casuser");
-    assert.ok(credential.document);
-    assert.match(credential.document, /^[^.]+\.[^.]+\.[^.]+$/);
-    assert.deepEqual(credential.parsedDocument.roles, ["admin", "user"]);
-    assert.equal(credential.parsedDocument.student_id, "S12345");
-    assert.equal(credential.parsedDocument.family_name, "User");
-    assert.equal(credential.parsedDocument.given_name, "CAS");
-    assert.equal(credential.parsedDocument.email, "casuser@example.org");
-
-    const [headerPart, payloadPart] = credential.document.split(".");
-    const header = JSON.parse(Buffer.from(headerPart, "base64url").toString("utf8"));
-    const payload = JSON.parse(Buffer.from(payloadPart, "base64url").toString("utf8"));
-    assert.equal(header.alg, "RS256");
-    assert.equal(header.client_id, "wallet-client");
-    assert.equal(payload.sub, "casuser");
-
+    
     await cas.goto(page, `http://localhost:7104/wallet/${wallet.walletId}`);
     await cas.sleep();
     const href = await cas.attributeValue(page, "main ul li a", "href");
@@ -108,7 +111,7 @@ async function startVerifiableCredentialFlowForConfiguration(configurationId) {
         200
     );
 
-    credential = JSON.parse(response);
+    const credential = JSON.parse(response);
     await cas.log(credential);
 
     await context.close();
@@ -182,4 +185,6 @@ async function deleteAllCredentialsInWallet(wallet) {
     await startVerifiableCredentialFlowForConfiguration("myorg");
     await cas.separator();
     await startVerifiableCredentialFlowForConfiguration("employee");
+    await cas.separator();
+    await startVerifiableCredentialFlowForConfiguration("myorg", "employee");
 })();

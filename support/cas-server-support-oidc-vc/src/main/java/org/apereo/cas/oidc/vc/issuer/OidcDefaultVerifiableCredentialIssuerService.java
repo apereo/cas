@@ -40,7 +40,7 @@ public class OidcDefaultVerifiableCredentialIssuerService implements OidcVerifia
     private final OidcVerifiableCredentialProofValidator credentialProofValidator;
 
     @Override
-    public OidcVerifiableCredentialResponse issue(final OidcVerifiableCredentialValidationContext context) throws Throwable {
+    public OidcVerifiableCredentialIssuerResponse issue(final OidcVerifiableCredentialValidationContext context) throws Throwable {
         val proof = credentialProofValidator.validate(context.credentialRequest());
 
         val authentication = Objects.requireNonNull(context.accessToken().getAuthentication());
@@ -65,7 +65,7 @@ public class OidcDefaultVerifiableCredentialIssuerService implements OidcVerifia
                 payload.put("claims", vcClaims);
                 payload.put("cnf", proof.holderJwk().toJSONObject());
                 payload.put("iss", issuer);
-                yield signAndProduceCredentialResponse(context, payload, configuration);
+                yield signAndProduceCredentialResponse(context, payload, configuration, proof);
             }
             case JWT_VC_JSON -> {
                 val credentialSubject = new LinkedHashMap<String, Object>();
@@ -85,7 +85,7 @@ public class OidcDefaultVerifiableCredentialIssuerService implements OidcVerifia
                 payload.put("nbf", now.getEpochSecond());
                 payload.put("jti", UUID.randomUUID().toString());
                 payload.put("cnf", proof.holderJwk().toJSONObject());
-                yield signAndProduceCredentialResponse(context, payload, configuration);
+                yield signAndProduceCredentialResponse(context, payload, configuration, proof);
             }
             case JWT_VC_JSON_LD -> {
                 val now = Instant.now(Clock.systemUTC());
@@ -109,7 +109,7 @@ public class OidcDefaultVerifiableCredentialIssuerService implements OidcVerifia
                 payload.put("iat", now.getEpochSecond());
                 payload.put("nbf", now.getEpochSecond());
                 payload.put("jti", id.toString());
-                yield signAndProduceCredentialResponse(context, payload, configuration);
+                yield signAndProduceCredentialResponse(context, payload, configuration, proof);
             }
         };
     }
@@ -123,16 +123,18 @@ public class OidcDefaultVerifiableCredentialIssuerService implements OidcVerifia
                 .formatted(configuration.getFormat(), configuration.getScope())));
     }
 
-    protected @NonNull OidcVerifiableCredentialResponse signAndProduceCredentialResponse(
+    protected OidcVerifiableCredentialIssuerResponse signAndProduceCredentialResponse(
         final OidcVerifiableCredentialValidationContext context,
         final Map<String, Object> payload,
-        final OidcVerifiableCredentialConfigurationProperties configuration) throws Throwable {
+        final OidcVerifiableCredentialConfigurationProperties configuration,
+        final OidcVerifiableCredentialProofValidator.VerifiableCredentialProofResult proof) throws Throwable {
 
         val signedCredential = signVerifiableCredential(payload, context, configuration);
-        val response = new OidcVerifiableCredentialResponse();
-        response.setFormat(configuration.getFormat());
-        response.setCredential(signedCredential);
-        return response;
+        return new OidcVerifiableCredentialIssuerResponse(
+            configuration.getFormat(),
+            signedCredential,
+            proof.nonce()
+        );
     }
 
     protected String signVerifiableCredential(final Map<String, Object> payload,

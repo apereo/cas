@@ -195,3 +195,4 @@ with additional bug fixes and enhancements, and an improved test suite to verify
 - A large number of dependencies and libraries have been updated to their latest versions.
 - Custom ID token claims can also be constructed using [Apache Groovy](../authentication/OIDC-Authentication-Claims-Custom.html).
 - [RediSearch](../ticketing/Redis-Ticket-Registry-RediSearch.html) functionality now supports Redis clustering.
+- The maximum lifetime of a transient session ticket (i.e. `TST`) is by default reduced from `15` minutes to `5` minutes.

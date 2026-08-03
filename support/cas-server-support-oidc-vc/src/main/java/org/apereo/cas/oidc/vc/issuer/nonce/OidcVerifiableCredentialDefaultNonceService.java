@@ -5,6 +5,7 @@ import org.apereo.cas.oidc.OidcConfigurationContext;
 import org.apereo.cas.ticket.TransientSessionTicket;
 import org.apereo.cas.ticket.TransientSessionTicketFactory;
 import org.apereo.cas.util.function.FunctionUtils;
+import io.micrometer.common.util.StringUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -27,14 +28,16 @@ public class OidcVerifiableCredentialDefaultNonceService implements OidcVerifiab
                 .get(TransientSessionTicket.class);
             val ticket = transientFactory.create(Map.of());
             configurationContext.getTicketRegistry().addTicket(ticket);
-            val expiresAt = ticket.getExpirationPolicy().toMaximumExpirationTime(ticket).toInstant();
-            return new VerifiableCredentialNonce(ticket.getId(), expiresAt);
+            val expiresIn = ticket.getExpirationPolicy().getTimeToLive();
+            return new VerifiableCredentialNonce(ticket.getId(), expiresIn);
         });
     }
 
     @Override
     public void remove(final String nonce) {
-        FunctionUtils.doUnchecked(_ -> configurationContext.getTicketRegistry().deleteTicket(nonce));
+        if (StringUtils.isNotBlank(nonce)) {
+            FunctionUtils.doUnchecked(_ -> configurationContext.getTicketRegistry().deleteTicket(nonce));
+        }
     }
 
     @Override

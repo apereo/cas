@@ -118,7 +118,7 @@ class OidcVerifiableCredentialAuthorizationCodeAuthorizationResponseBuilderTests
             .andExpect(status().isOk())
             .andExpect(jsonPath("$." + OAuth20Constants.ACCESS_TOKEN).exists())
             .andExpect(jsonPath("$." + OidcConstants.C_NONCE).exists())
-            .andExpect(jsonPath("$." + OidcConstants.C_NONCE_EXPIRES_AT).exists())
+            .andExpect(jsonPath("$." + OidcConstants.C_NONCE_EXPIRES_IN).exists())
             .andExpect(jsonPath("$." + OAuth20Constants.AUTHORIZATION_DETAILS).exists());
     }
 }

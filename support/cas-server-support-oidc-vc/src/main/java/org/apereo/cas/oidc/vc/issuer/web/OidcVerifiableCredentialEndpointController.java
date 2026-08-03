@@ -5,13 +5,17 @@ import org.apereo.cas.oidc.OidcConfigurationContext;
 import org.apereo.cas.oidc.OidcConstants;
 import org.apereo.cas.oidc.vc.issuer.OidcVerifiableCredentialIssuerService;
 import org.apereo.cas.oidc.vc.issuer.OidcVerifiableCredentialRequest;
+import org.apereo.cas.oidc.vc.issuer.OidcVerifiableCredentialResponse;
 import org.apereo.cas.oidc.vc.issuer.OidcVerifiableCredentialValidationContext;
+import org.apereo.cas.oidc.vc.issuer.nonce.OidcVerifiableCredentialNonceService;
 import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.support.oauth.OAuth20GrantTypes;
 import org.apereo.cas.support.oauth.util.OAuth20Utils;
 import org.apereo.cas.support.oauth.web.endpoints.BaseOAuth20Controller;
 import org.apereo.cas.ticket.accesstoken.OAuth20AccessToken;
+import org.apereo.cas.util.Couplet;
 import org.apereo.cas.util.LoggingUtils;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.extern.slf4j.Slf4j;
@@ -27,6 +31,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.server.ResponseStatusException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotEmpty;
 
 /**
  * This is {@link OidcVerifiableCredentialEndpointController}.
@@ -38,13 +44,59 @@ import jakarta.servlet.http.HttpServletResponse;
 @Slf4j
 public class OidcVerifiableCredentialEndpointController extends BaseOAuth20Controller<OidcConfigurationContext> {
 
-    private final OidcVerifiableCredentialIssuerService credentialIssuerService;
+    protected final OidcVerifiableCredentialIssuerService credentialIssuerService;
+    protected final OidcVerifiableCredentialNonceService oidcVerifiableCredentialNonceService;
 
     public OidcVerifiableCredentialEndpointController(
         final OidcConfigurationContext configurationContext,
-        final OidcVerifiableCredentialIssuerService credentialIssuerService) {
+        final OidcVerifiableCredentialIssuerService credentialIssuerService,
+        final OidcVerifiableCredentialNonceService oidcVerifiableCredentialNonceService) {
         super(configurationContext);
         this.credentialIssuerService = credentialIssuerService;
+        this.oidcVerifiableCredentialNonceService = oidcVerifiableCredentialNonceService;
+    }
+
+    /**
+     * Handle batch response entity.
+     *
+     * @param batchRequest the batch request
+     * @param httpRequest  the http request
+     * @param httpResponse the http response
+     * @return the response entity
+     * @throws Throwable the throwable
+     */
+    @PostMapping(value = {
+        '/' + OidcConstants.BASE_OIDC_URL + '/' + OidcConstants.VC_BATCH_CREDENTIAL_URL,
+        "/**/" + OidcConstants.VC_BATCH_CREDENTIAL_URL
+    }, consumes = MediaType.APPLICATION_JSON_VALUE)
+    @Operation(summary = "Handle OIDC batch credential request",
+        description = "Handles requests for OIDC batch credential issuance")
+    public ResponseEntity handleBatch(
+        @RequestBody final OidcVcBatchCredentialRequest batchRequest,
+        final HttpServletRequest httpRequest,
+        final HttpServletResponse httpResponse) throws Throwable {
+
+        val verified = verifyRequest(httpRequest, httpResponse);
+        if (verified.getRight() != null) {
+            return verified.getRight();
+        }
+        val decodedToken = verified.getLeft();
+
+        val responses = new ArrayList<>();
+        val nonces = new HashSet<String>();
+
+        for (val credentialRequest : batchRequest.credentialRequests()) {
+            val issuanceContext = new OidcVerifiableCredentialValidationContext(
+                Objects.requireNonNull(decodedToken), credentialRequest, httpRequest);
+            val response = credentialIssuerService.issue(issuanceContext);
+            responses.add(OidcVerifiableCredentialResponse.builder()
+                .format(response.format())
+                .credential(response.credential())
+                .build());
+            nonces.add(response.nonce());
+        }
+        nonces.forEach(oidcVerifiableCredentialNonceService::remove);
+        return ResponseEntity.ok(Map.of("credential_responses", responses));
     }
 
     /**
@@ -67,24 +119,42 @@ public class OidcVerifiableCredentialEndpointController extends BaseOAuth20Contr
         final HttpServletRequest httpRequest,
         final HttpServletResponse httpResponse) throws Throwable {
 
+        val verified = verifyRequest(httpRequest, httpResponse);
+        if (verified.getRight() != null) {
+            return verified.getRight();
+        }
+        val decodedToken = verified.getLeft();
+        val issuanceContext = new OidcVerifiableCredentialValidationContext(
+            Objects.requireNonNull(decodedToken), request, httpRequest);
+        val issuerResponse = credentialIssuerService.issue(issuanceContext);
+        oidcVerifiableCredentialNonceService.remove(issuerResponse.nonce());
+        return ResponseEntity
+            .ok()
+            .body(OidcVerifiableCredentialResponse.builder()
+                .format(issuerResponse.format())
+                .credential(issuerResponse.credential())
+                .build()
+            );
+    }
+
+    protected Couplet<@Nullable OAuth20AccessToken, @Nullable ResponseEntity> verifyRequest(
+        final HttpServletRequest httpRequest,
+        final HttpServletResponse httpResponse) {
         val webContext = new JEEContext(httpRequest, httpResponse);
         if (!getConfigurationContext().getIssuerService().validateIssuer(webContext, List.of(OidcConstants.VC_CREDENTIAL_URL))) {
             LOGGER.warn("CAS cannot accept the request given the issuer is invalid.");
             val body = OAuth20Utils.getErrorResponseBody(OAuth20Constants.INVALID_REQUEST, "Invalid issuer");
-            return ResponseEntity.badRequest().body(body);
+            return Couplet.right(ResponseEntity.badRequest().body(body));
         }
 
         val decodedAccessTokenId = getAccessTokenFromRequest(httpRequest).getValue();
         val decodedToken = getConfigurationContext().getTicketRegistry().getTicket(decodedAccessTokenId, OAuth20AccessToken.class);
         if (!validateAccessToken(decodedToken)) {
             LOGGER.warn("The access token is invalid, expired, has an invalid grant type or no authorization details.");
-            return ResponseEntity.badRequest()
-                .body(OAuth20Utils.getErrorResponseBody(OAuth20Constants.ERROR, "Invalid access token"));
+            return Couplet.right(ResponseEntity.badRequest()
+                .body(OAuth20Utils.getErrorResponseBody(OAuth20Constants.ERROR, "Invalid access token")));
         }
-        val issuanceContext = new OidcVerifiableCredentialValidationContext(
-            Objects.requireNonNull(decodedToken), request, httpRequest);
-        val response = credentialIssuerService.issue(issuanceContext);
-        return ResponseEntity.ok().body(response);
+        return Couplet.left(decodedToken);
     }
 
     protected boolean validateAccessToken(@Nullable final OAuth20AccessToken accessToken) {
@@ -100,11 +170,21 @@ public class OidcVerifiableCredentialEndpointController extends BaseOAuth20Contr
      */
     @ExceptionHandler(Exception.class)
     @SuppressWarnings("UnusedMethod")
-    private static ResponseEntity<String> handleErrors(final Exception ex) {
+    private static ResponseEntity handleErrors(final Exception ex) {
         LoggingUtils.error(LOGGER, ex);
         if (ex instanceof final ResponseStatusException rse) {
-            return ResponseEntity.status(rse.getStatusCode()).body(rse.getReason());
+            return ResponseEntity
+                .status(rse.getStatusCode())
+                .body(OAuth20Utils.getErrorResponseBody(OAuth20Constants.INVALID_REQUEST, rse.getReason()));
         }
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ex.getMessage());
+        return ResponseEntity
+            .status(HttpStatus.BAD_REQUEST)
+            .body(OAuth20Utils.getErrorResponseBody(OAuth20Constants.INVALID_REQUEST, ex.getMessage()));
+    }
+
+    public record OidcVcBatchCredentialRequest(
+        @JsonProperty("credential_requests")
+        @NotEmpty
+        List<@Valid OidcVerifiableCredentialRequest> credentialRequests) {
     }
 }

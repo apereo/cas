@@ -1,6 +1,6 @@
 services:
   postgres:
-    image: postgres:18.0-alpine
+    image: postgres:18.4-alpine
     container_name: waltid-postgres
     restart: unless-stopped
     environment:

@@ -89,7 +89,30 @@ The endpoint body is expected as:
  
 ### Batch Credential Endpoint
 
-Not supported yet. 
+Issues a list of verifiable credentials to the wallet once the access token, proof, and requested
+credential configurations have been validated.
+
+```bash
+POST /oidc/oidcVcBatchCredential
+```
+
+This endpoint expects a bearer access token.
+
+...with the following body:
+
+```json
+{
+  "credential_requests": [
+    {
+      "credential_configuration_id": "UniversityDegreeCredential",
+      "proof": {
+        "proof_type": "jwt",
+        "jwt": "eyJ0eXAiOiJvcGVuaWQ0dmNpL..."
+      }
+    }
+  ]
+}
+```
 
 ### Nonce Endpoint
 
@@ -103,7 +126,7 @@ POST /oidc/oidcVcNonce
 This endpoint typically returns:
 
 - `c_nonce`
-- `c_nonce_expires_at`
+- `c_nonce_expires_in`
 
 ### Credential Offer Endpoint
 

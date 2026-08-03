@@ -54,7 +54,7 @@ async function createPublicKey() {
             "Content-Type": "application/json"
         }, (res) => {
             assert(res.data.c_nonce !== undefined);
-            assert(res.data.c_nonce_expires_at !== undefined);
+            assert(res.data.c_nonce_expires_in !== undefined);
             return res.data.c_nonce;
         }, (error) => {
             throw `Operation failed: ${error}`;
