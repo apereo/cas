@@ -147,7 +147,7 @@ public class OAuth20ClientIdClientSecretAuthenticator implements Authenticator {
         val oauthCode = requestParameterResolver.resolveRequestParameter(callContext.webContext(), OAuth20Constants.CODE)
             .stream()
             .filter(StringUtils::isNotBlank)
-            .map(code -> ticketRegistry.getTicket(code, OAuth20Token.class))
+            .map(code -> FunctionUtils.doAndHandle(() -> ticketRegistry.getTicket(code, OAuth20Token.class)))
             .filter(Objects::nonNull)
             .findFirst()
             .orElse(null);

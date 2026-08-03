@@ -84,7 +84,6 @@ async function createPublicKey() {
             assert(res.data.credential_issuer === "https://localhost:8443/cas/oidc");
             assert(res.data.credential_configuration_ids[0] === "myorg");
             assert(res.data.grants["urn:ietf:params:oauth:grant-type:pre-authorized_code"]["pre-authorized_code"] !== undefined);
-            assert(res.data.grants["urn:ietf:params:oauth:grant-type:pre-authorized_code"]["tx_code_required"] === true);
             assert(res.data.grants["urn:ietf:params:oauth:grant-type:pre-authorized_code"]["tx_code"] !== undefined);
             assert(res.data.grants["urn:ietf:params:oauth:grant-type:pre-authorized_code"]["issuer_state"] !== undefined);
             return {

@@ -15,6 +15,7 @@ import org.apereo.cas.support.oauth.web.endpoints.BaseOAuth20Controller;
 import org.apereo.cas.ticket.accesstoken.OAuth20AccessToken;
 import org.apereo.cas.util.Couplet;
 import org.apereo.cas.util.LoggingUtils;
+import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -29,6 +30,8 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.server.ResponseStatusException;
+import tools.jackson.databind.JsonNode;
+import tools.jackson.databind.ObjectMapper;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
@@ -43,7 +46,9 @@ import jakarta.validation.constraints.NotEmpty;
 @Tag(name = "OpenID Connect")
 @Slf4j
 public class OidcVerifiableCredentialEndpointController extends BaseOAuth20Controller<OidcConfigurationContext> {
-
+    private static final ObjectMapper MAPPER = JacksonObjectMapperFactory.builder()
+        .defaultTypingEnabled(false).build().toObjectMapper();
+    
     protected final OidcVerifiableCredentialIssuerService credentialIssuerService;
     protected final OidcVerifiableCredentialNonceService oidcVerifiableCredentialNonceService;
 
@@ -102,7 +107,6 @@ public class OidcVerifiableCredentialEndpointController extends BaseOAuth20Contr
     /**
      * Handle response entity.
      *
-     * @param request      the request
      * @param httpRequest  the http request
      * @param httpResponse the http response
      * @return the response entity
@@ -115,15 +119,21 @@ public class OidcVerifiableCredentialEndpointController extends BaseOAuth20Contr
     @Operation(summary = "Handle OIDC credential request",
         description = "Handles requests for OIDC credential issuance")
     public ResponseEntity handle(
-        @RequestBody final OidcVerifiableCredentialRequest request,
+        @RequestBody final JsonNode body,
         final HttpServletRequest httpRequest,
         final HttpServletResponse httpResponse) throws Throwable {
+
+        if (body.has("credential_requests")) {
+            val batch = MAPPER.treeToValue(body, OidcVcBatchCredentialRequest.class);
+            return handleBatch(batch, httpRequest, httpResponse);
+        }
 
         val verified = verifyRequest(httpRequest, httpResponse);
         if (verified.getRight() != null) {
             return verified.getRight();
         }
         val decodedToken = verified.getLeft();
+        val request = MAPPER.treeToValue(body, OidcVerifiableCredentialRequest.class);
         val issuanceContext = new OidcVerifiableCredentialValidationContext(
             Objects.requireNonNull(decodedToken), request, httpRequest);
         val issuerResponse = credentialIssuerService.issue(issuanceContext);

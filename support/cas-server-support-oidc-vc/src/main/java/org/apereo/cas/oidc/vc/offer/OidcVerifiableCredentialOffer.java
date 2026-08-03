@@ -64,16 +64,9 @@ public class OidcVerifiableCredentialOffer implements Serializable {
             private String preAuthorizedCode;
 
             /**
-             * Whether a transaction code is required in the token request.
-             */
-            @JsonProperty("tx_code_required")
-            @JsonIgnore
-            private boolean txCodeRequired = true;
-
-            /**
              * Optional transaction code associated with the issuance transaction.
              * The transaction code is a code that the wallet must present during
-             * the pre-authorized code token exchange if tx_code_required is true.
+             * the pre-authorized code token exchange.
              */
             @JsonProperty("tx_code")
             private TransactionCode transactionCode;
