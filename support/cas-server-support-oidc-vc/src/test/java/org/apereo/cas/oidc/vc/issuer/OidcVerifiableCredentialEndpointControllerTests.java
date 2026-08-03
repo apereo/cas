@@ -33,6 +33,8 @@ import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.parallel.Execution;
 import org.junit.jupiter.api.parallel.ExecutionMode;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.ImportAutoConfiguration;
@@ -390,8 +392,9 @@ class OidcVerifiableCredentialEndpointControllerTests {
 
     @Nested
     class BatchCredentialIssuanceTests extends BaseTests {
-        @Test
-        void verifyBatchCredentialIssuance() throws Throwable {
+        @ParameterizedTest
+        @ValueSource(strings = {BATCH_CREDENTIAL_ENDPOINT_URL, CREDENTIAL_ENDPOINT_URL})
+        void verifyBatchCredentialIssuance(final String endpointUrl) throws Throwable {
             val clientId = UUID.randomUUID().toString();
             val registeredService = getOidcRegisteredService(clientId);
             servicesManager.save(registeredService);
@@ -416,7 +419,7 @@ class OidcVerifiableCredentialEndpointControllerTests {
             secondRequest.setProof(buildProof(secondProofJwt));
             val batchRequest = new OidcVcBatchCredentialRequest(List.of(firstRequest, secondRequest));
 
-            mockMvc.perform(post(BATCH_CREDENTIAL_ENDPOINT_URL)
+            mockMvc.perform(post(endpointUrl)
                     .with(withHttpRequestProcessor())
                     .contentType(MediaType.APPLICATION_JSON)
                     .header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken.getId())
