@@ -27,7 +27,7 @@
     "--cas.service-registry.core.init-from-json=true",
     "--cas.service-registry.json.location=file:${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/services",
 
-    "--cas.authn.oidc.vc.issuer.credential-configurations.myorg.format=dc+sd-jwt",
+    "--cas.authn.oidc.vc.issuer.credential-configurations.myorg.format=DC_SD_JWT",
     "--cas.authn.oidc.vc.issuer.credential-configurations.myorg.scope=SystemCredential",
     "--cas.authn.oidc.vc.issuer.credential-configurations.myorg.claims.roles.mandatory=true",
     "--cas.authn.oidc.vc.issuer.credential-configurations.myorg.claims.roles.disclosable=false",
@@ -46,7 +46,7 @@
     "--cas.authn.oidc.vc.issuer.credential-configurations.myorg.claims.student_id.mandatory=true",
     "--cas.authn.oidc.vc.issuer.credential-configurations.myorg.claims.student_id.disclosable=false",
 
-    "--cas.authn.oidc.vc.issuer.credential-configurations.employee.format=jwt_vc_json-ld",
+    "--cas.authn.oidc.vc.issuer.credential-configurations.employee.format=JWT_VC_JSON_LD",
     "--cas.authn.oidc.vc.issuer.credential-configurations.employee.scope=EmployeeCredential",
     "--cas.authn.oidc.vc.issuer.credential-configurations.employee.claims.roles.mandatory=true",
     "--cas.authn.oidc.vc.issuer.credential-configurations.employee.claims.given_name.mandatory=true",

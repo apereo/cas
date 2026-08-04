@@ -3,7 +3,9 @@ package org.apereo.cas.configuration.model.support.oidc;
 import module java.base;
 import org.apereo.cas.configuration.support.RequiresModule;
 import lombok.Getter;
+import lombok.RequiredArgsConstructor;
 import lombok.Setter;
+import lombok.ToString;
 import lombok.experimental.Accessors;
 
 /**
@@ -27,7 +29,7 @@ public class OidcVerifiableCredentialConfigurationProperties implements Serializ
      * This value is published in issuer metadata and is used by wallets
      * to determine how the credential request and response should be processed.
      */
-    private String format = "dc+sd-jwt";
+    private CredentialConfigurationFormats format = CredentialConfigurationFormats.DC_SD_JWT;
 
     /**
      * OAuth scope associated with this credential configuration.
@@ -107,4 +109,27 @@ public class OidcVerifiableCredentialConfigurationProperties implements Serializ
          */
         private String textColor;
     }
+
+    @RequiredArgsConstructor
+    @Getter
+    @ToString(includeFieldNames = false, of = "value")
+    public enum CredentialConfigurationFormats {
+        /**
+         * A Data Integrity Claims (DC) credential encoded as an SD-JWT, supporting
+         * selective disclosure of claims while preserving cryptographic integrity.
+         */
+        DC_SD_JWT("dc+sd-jwt"),
+        /**
+         * It is a JSON-based string that represents the credential as a base64url-encoded JWT.
+         */
+        JWT_VC_JSON("jwt_vc_json"),
+        /**
+         * This format includes a {@code @context} URLs that maps data properties to universal schemas.
+         * Every field has a strict, globally defined semantic meaning.
+         */
+        JWT_VC_JSON_LD("jwt_vc_json-ld");
+
+        private final String value;
+    }
+
 }

@@ -48,7 +48,7 @@ import jakarta.validation.constraints.NotEmpty;
 public class OidcVerifiableCredentialEndpointController extends BaseOAuth20Controller<OidcConfigurationContext> {
     private static final ObjectMapper MAPPER = JacksonObjectMapperFactory.builder()
         .defaultTypingEnabled(false).build().toObjectMapper();
-    
+
     protected final OidcVerifiableCredentialIssuerService credentialIssuerService;
     protected final OidcVerifiableCredentialNonceService oidcVerifiableCredentialNonceService;
 
@@ -93,12 +93,15 @@ public class OidcVerifiableCredentialEndpointController extends BaseOAuth20Contr
         for (val credentialRequest : batchRequest.credentialRequests()) {
             val issuanceContext = new OidcVerifiableCredentialValidationContext(
                 Objects.requireNonNull(decodedToken), credentialRequest, httpRequest);
-            val response = credentialIssuerService.issue(issuanceContext);
-            responses.add(OidcVerifiableCredentialResponse.builder()
-                .format(response.format())
-                .credential(response.credential())
-                .build());
-            nonces.add(response.nonce());
+            val issuedCredentials = credentialIssuerService.issue(issuanceContext);
+            for (val issuedCredential : issuedCredentials) {
+                nonces.add(issuedCredential.nonce());
+                responses.add(OidcVerifiableCredentialResponse
+                    .builder()
+                    .format(issuedCredential.format().getValue())
+                    .credential(issuedCredential.credential())
+                    .build());
+            }
         }
         nonces.forEach(oidcVerifiableCredentialNonceService::remove);
         return ResponseEntity.ok(Map.of("credential_responses", responses));
@@ -136,15 +139,22 @@ public class OidcVerifiableCredentialEndpointController extends BaseOAuth20Contr
         val request = MAPPER.treeToValue(body, OidcVerifiableCredentialRequest.class);
         val issuanceContext = new OidcVerifiableCredentialValidationContext(
             Objects.requireNonNull(decodedToken), request, httpRequest);
-        val issuerResponse = credentialIssuerService.issue(issuanceContext);
-        oidcVerifiableCredentialNonceService.remove(issuerResponse.nonce());
-        return ResponseEntity
-            .ok()
-            .body(OidcVerifiableCredentialResponse.builder()
-                .format(issuerResponse.format())
-                .credential(issuerResponse.credential())
-                .build()
-            );
+        val issuerResponses = credentialIssuerService.issue(issuanceContext);
+
+        val responses = new ArrayList<OidcVerifiableCredentialResponse>();
+        val nonces = new HashSet<String>();
+        for (val issuedCredential : issuerResponses) {
+            nonces.add(issuedCredential.nonce());
+            responses.add(OidcVerifiableCredentialResponse
+                .builder()
+                .format(issuedCredential.format().getValue())
+                .credential(issuedCredential.credential())
+                .build());
+        }
+        nonces.forEach(oidcVerifiableCredentialNonceService::remove);
+        return responses.size() == 1
+            ? ResponseEntity.ok(responses.getFirst())
+            : ResponseEntity.ok(Map.of("credential_responses", responses));
     }
 
     protected Couplet<@Nullable OAuth20AccessToken, @Nullable ResponseEntity> verifyRequest(

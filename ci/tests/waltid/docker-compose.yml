@@ -1,6 +1,6 @@
 services:
   postgres:
-    image: postgres:18.4-alpine
+    image: postgres:18.4
     container_name: waltid-postgres
     restart: unless-stopped
     environment:
@@ -12,8 +12,6 @@ services:
       interval: 5s
       timeout: 3s
       retries: 20
-    volumes:
-      - postgres-data:/var/lib/postgresql/data
 
   wallet-api:
     image: waltid/wallet-api:0.23.0
@@ -45,7 +43,6 @@ services:
       SERVICE_HOST: localhost
     volumes:
       - ./wallet-api/config:/waltid-wallet-api/config:ro
-      - wallet-data:/waltid-wallet-api/data
     extra_hosts:
       - "host.docker.internal:host-gateway"
       - "localhost:host-gateway"
@@ -95,7 +92,3 @@ services:
       - "7104:7104"
     volumes:
       - ./Caddyfile:/etc/caddy/Caddyfile:ro
-
-volumes:
-  postgres-data:
-  wallet-data:

@@ -68,7 +68,11 @@ async function createPublicKey() {
     assert(result.credential !== undefined);
     assert(result.format === "dc+sd-jwt");
 
-    const decoded = await cas.decodeJwt(result.credential);
+    const parts = result.credential.split("~");
+    const issuerJwt = parts[0];
+    const decoded = await cas.decodeJwt(issuerJwt);
+    assert(decoded !== undefined && decoded !== null);
+
     assert(decoded.sub === "casuser");
     assert(decoded.email === "casuser@example.org");
     assert(decoded.given_name === "CAS");
@@ -77,7 +81,7 @@ async function createPublicKey() {
     assert(decoded.roles.length === 2);
     assert(decoded.roles.includes("user"));
     assert(decoded.roles.includes("admin"));
-    assert(decoded.student_id === "S12345");
+    assert(decoded.student_id === undefined);
 })();
 
 async function getPayload(page, redirectUri, clientId) {

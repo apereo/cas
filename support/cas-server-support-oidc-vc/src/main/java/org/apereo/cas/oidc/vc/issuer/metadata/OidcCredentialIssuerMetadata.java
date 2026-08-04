@@ -1,6 +1,7 @@
 package org.apereo.cas.oidc.vc.issuer.metadata;
 
 import module java.base;
+import org.apereo.cas.configuration.model.support.oidc.OidcVerifiableCredentialConfigurationProperties.CredentialConfigurationFormats;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Builder;
@@ -50,7 +51,7 @@ public class OidcCredentialIssuerMetadata implements Serializable {
         private static final long serialVersionUID = 7169398914160552045L;
 
         @JsonProperty("format")
-        private String format = CredentialConfigurationFormats.DC_SD_JWT.getFormat();
+        private String format = CredentialConfigurationFormats.DC_SD_JWT.getValue();
 
         @JsonProperty("scope")
         private String scope;

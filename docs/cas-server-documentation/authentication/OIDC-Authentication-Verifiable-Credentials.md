@@ -176,7 +176,7 @@ POST /oidc/token
 
 When used for verifiable credential issuance, this endpoint may:
 
-- Accept the pre-authorized_code grant.
+- Accept the `pre-authorized_code` grant.
 - Require a `tx_code`.
 - Return a `c_nonce`.
 - Produce an access token that is scoped to credential issuance.

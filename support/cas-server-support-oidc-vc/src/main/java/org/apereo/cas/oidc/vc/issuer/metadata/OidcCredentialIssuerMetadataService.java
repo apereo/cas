@@ -43,7 +43,7 @@ public class OidcCredentialIssuerMetadataService {
         val credentialConfigurations = properties.getVc().getIssuer().getCredentialConfigurations();
         credentialConfigurations.forEach((key, value) -> {
             val cfg = new OidcCredentialIssuerMetadata.CredentialConfiguration();
-            cfg.setFormat(value.getFormat());
+            cfg.setFormat(value.getFormat().getValue());
             cfg.setScope(value.getScope());
             cfg.setVct(issuer + '/' + OidcConstants.VC_CREDENTIAL_TYPE_URL + '/' + key);
             cfg.setCryptographicBindingMethodsSupported(value.getCryptographicBindingMethodsSupported());

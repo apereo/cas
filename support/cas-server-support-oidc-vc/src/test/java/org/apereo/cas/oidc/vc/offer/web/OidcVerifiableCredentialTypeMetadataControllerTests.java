@@ -23,7 +23,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @Tag("OIDCWeb")
 @ImportAutoConfiguration(CasOidcVerifiableCredentialsAutoConfiguration.class)
 @TestPropertySource(properties = {
-    "cas.authn.oidc.vc.issuer.credential-configurations.UniversityDegreeCredential.format=dc+sd-jwt",
+    "cas.authn.oidc.vc.issuer.credential-configurations.UniversityDegreeCredential.format=DC_SD_JWT",
     "cas.authn.oidc.vc.issuer.credential-configurations.UniversityDegreeCredential.scope=UniversityDegree",
     "cas.authn.oidc.vc.issuer.credential-configurations.UniversityDegreeCredential.display[0].name=University Degree Credential",
     "cas.authn.oidc.vc.issuer.credential-configurations.UniversityDegreeCredential.display[0].locale=en-US",
