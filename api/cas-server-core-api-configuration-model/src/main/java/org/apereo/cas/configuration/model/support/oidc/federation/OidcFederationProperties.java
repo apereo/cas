@@ -28,7 +28,7 @@ public class OidcFederationProperties implements Serializable {
      * The role of this server.
      */
     @RequiredProperty
-    private OidcFederationRole role;
+    private OidcFederationRole role = OidcFederationRole.OPENID_PROVIDER;
 
     /**
      * Organization name to include in the federation metadata.
