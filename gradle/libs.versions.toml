@@ -41,7 +41,6 @@ commonsCompress = "1.28.0"
 commonsIo = "2.22.0"
 commonsJexl = "3.7.0"
 commonsLang = "3.20.0"
-commonsLang2 = "2.6"
 commonsPool = "2.13.1"
 commonsText = "1.15.0"
 commonsValidator = "1.11.0"
@@ -346,7 +345,6 @@ commons-collections4 = { module = "org.apache.commons:commons-collections4", ver
 commons-compress = { module = "org.apache.commons:commons-compress", version.ref = "commonsCompress" }
 commons-io = { module = "commons-io:commons-io", version.ref = "commonsIo" }
 commons-jexl3 = { module = "org.apache.commons:commons-jexl3", version.ref = "commonsJexl" }
-commons-lang = { module = "commons-lang:commons-lang", version.ref = "commonsLang2" }
 commons-lang3 = { module = "org.apache.commons:commons-lang3", version.ref = "commonsLang" }
 commons-pool2 = { module = "org.apache.commons:commons-pool2", version.ref = "commonsPool" }
 commons-text = { module = "org.apache.commons:commons-text", version.ref = "commonsText" }
