@@ -91,6 +91,9 @@ public class DefaultOAuth20RequestParameterResolver implements OAuth20RequestPar
     public <T> T resolveJwtRequestParameter(final String jwtRequest, final RegisteredService registeredService,
                                             final String name, final Class<T> clazz) throws Exception {
         val jwt = jwtBuilder.unpack(Optional.ofNullable(registeredService), jwtRequest);
+        if (jwt == null) {
+            return null;
+        }
         if (clazz.isArray()) {
             return clazz.cast(jwt.getStringArrayClaim(name));
         }

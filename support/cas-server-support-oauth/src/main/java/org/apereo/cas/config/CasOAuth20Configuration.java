@@ -1148,9 +1148,11 @@ class CasOAuth20Configuration {
                 final ServicesManager servicesManager) {
                 val responseTypesSupported = casProperties.getAuthn().getOidc().getDiscovery().getResponseTypesSupported();
                 return BeanSupplier.of(OAuth20AuthorizationRequestValidator.class)
-                    .when(() -> responseTypesSupported.contains(OAuth20ResponseTypes.CODE.getType()))
+                    .when(() -> responseTypesSupported.contains(OAuth20ResponseTypes.CODE.getType())
+                        && !casProperties.getAuthn().getOidc().getFederation().getRole().isOpenIdProvider())
                     .supply(() -> new OAuth20AuthorizationCodeResponseTypeAuthorizationRequestValidator(servicesManager,
-                        webApplicationServiceFactory, registeredServiceAccessStrategyEnforcer, oauthRequestParameterResolver))
+                        webApplicationServiceFactory, registeredServiceAccessStrategyEnforcer,
+                        oauthRequestParameterResolver))
                     .otherwiseProxy()
                     .get();
             }

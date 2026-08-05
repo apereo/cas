@@ -28,4 +28,13 @@ public enum OidcFederationRole {
     public boolean isTrustAnchorOrIntermediate() {
         return this == TRUST_ANCHOR || this == INTERMEDIATE;
     }
+
+    /**
+     * Returns if the role is OpenID.
+     *
+     * @return whether the role is OpenID.
+     */
+    public boolean isOpenIdProvider() {
+        return this == OPENID_PROVIDER;
+    }
 }
