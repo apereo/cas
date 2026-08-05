@@ -2,12 +2,15 @@ package org.apereo.cas.oidc.federation.chain;
 
 import module java.base;
 import org.apereo.cas.services.DefaultRegisteredServiceContact;
+import org.apereo.cas.services.DefaultRegisteredServiceExpirationPolicy;
+import org.apereo.cas.services.DefaultRegisteredServiceProperty;
 import org.apereo.cas.services.OidcRegisteredService;
 import org.apereo.cas.services.RegisteredServiceContact;
 import org.apereo.cas.util.function.FunctionUtils;
 import com.nimbusds.oauth2.sdk.GrantType;
 import com.nimbusds.oauth2.sdk.ResponseType;
 import com.nimbusds.openid.connect.sdk.federation.entities.EntityID;
+import com.nimbusds.openid.connect.sdk.federation.entities.EntityStatementClaimsSet;
 import com.nimbusds.openid.connect.sdk.federation.entities.EntityType;
 import com.nimbusds.openid.connect.sdk.federation.trust.TrustChainResolver;
 import com.nimbusds.openid.connect.sdk.rp.OIDCClientMetadata;
@@ -27,6 +30,12 @@ import org.jooq.lambda.Unchecked;
 @RequiredArgsConstructor
 @Slf4j
 public class OidcFederationDefaultTrustChainResolver implements OidcFederationTrustChainResolver {
+
+    /**
+     * Tag to indicate that a service has been temporarily registered in case of an automatic registration.
+     */
+    public static final String TEMPORARY_OPENIDFEDERATION_SERVICE = "TEMPORARY_OPENIDFEDERATION_SERVICE";
+
     private final List<TrustChainResolver> trustChainResolvers;
 
     @Override
@@ -34,10 +43,10 @@ public class OidcFederationDefaultTrustChainResolver implements OidcFederationTr
         if (Strings.CI.startsWith(id, "http")) {
             val entityId = new EntityID(id);
             for (val trustChainResolver : trustChainResolvers) {
-                val rpMetadataResult = fetchRelyingPartyMetadata(trustChainResolver, entityId);
-                if (rpMetadataResult.isPresent()) {
-                    val rpMetadata = rpMetadataResult.get();
-                    val oidcRegisteredService = extractRegisteredService(entityId, rpMetadata);
+                val trustMetadataResult = fetchRelyingPartyMetadata(trustChainResolver, entityId);
+                if (trustMetadataResult.isPresent()) {
+                    val trustMetadata = trustMetadataResult.get();
+                    val oidcRegisteredService = extractRegisteredService(entityId, trustMetadata.metadata(), trustMetadata.expirationTime());
                     return Optional.ofNullable(oidcRegisteredService);
                 }
             }
@@ -45,7 +54,8 @@ public class OidcFederationDefaultTrustChainResolver implements OidcFederationTr
         return Optional.empty();
     }
 
-    protected OidcRegisteredService extractRegisteredService(final EntityID entityId, final OIDCClientMetadata rpMetadata) {
+    protected OidcRegisteredService extractRegisteredService(final EntityID entityId, final OIDCClientMetadata rpMetadata,
+                                                             final Date expirationTime) {
         val registeredService = new OidcRegisteredService();
         registeredService.assignIdIfNecessary();
 
@@ -61,7 +71,10 @@ public class OidcFederationDefaultTrustChainResolver implements OidcFederationTr
 
         registeredService.setScopes(new HashSet<>(rpMetadata.getScope().toStringList()));
         registeredService.setApplicationType(rpMetadata.getApplicationType().toString());
-        registeredService.setSubjectType(rpMetadata.getSubjectType().toString());
+        val subjectType = rpMetadata.getSubjectType();
+        if (subjectType != null) {
+            registeredService.setSubjectType(subjectType.toString());
+        }
 
         FunctionUtils.doIfNotNull(rpMetadata.getSectorIDURI(), value -> registeredService.setSectorIdentifierUri(value.toASCIIString()));
 
@@ -82,7 +95,10 @@ public class OidcFederationDefaultTrustChainResolver implements OidcFederationTr
         }
 
         if (rpMetadata.getRedirectionURIStrings() != null) {
-            val redirectUris = String.join("|", rpMetadata.getRedirectionURIStrings());
+            val redirectUris = rpMetadata.getRedirectionURIStrings()
+                    .stream()
+                    .map(uri -> uri.replace(".", "\\.").replace("?", "\\?"))
+                    .collect(Collectors.joining(","));
             registeredService.setServiceId(redirectUris);
         }
 
@@ -91,7 +107,7 @@ public class OidcFederationDefaultTrustChainResolver implements OidcFederationTr
         FunctionUtils.doIfNotNull(rpMetadata.getTermsOfServiceURI(), value -> registeredService.setInformationUrl(value.toURL().toExternalForm()));
 
         if (rpMetadata.getGrantTypes() != null) {
-            val grantTypes = rpMetadata.getGrantTypes().stream().map(GrantType::getShortName).collect(Collectors.toSet());
+            val grantTypes = rpMetadata.getGrantTypes().stream().map(GrantType::toString).collect(Collectors.toSet());
             registeredService.setSupportedGrantTypes(grantTypes);
         }
 
@@ -110,13 +126,21 @@ public class OidcFederationDefaultTrustChainResolver implements OidcFederationTr
 
         FunctionUtils.doIfNotNull(rpMetadata.getJWKSetURI(),
             value -> registeredService.setJwks(value.toURL().toExternalForm()));
+        if (rpMetadata.getJWKSetURI() == null && rpMetadata.getJWKSet() != null && !rpMetadata.getJWKSet().getKeys().isEmpty()) {
+            val jwks = rpMetadata.getJWKSet();
+            registeredService.setJwks(jwks.toString());
+        }
         FunctionUtils.doIfNotNull(rpMetadata.getTokenEndpointAuthMethod(),
             method -> registeredService.setTokenEndpointAuthenticationMethod(method.getValue()));
+
+        registeredService.setExpirationPolicy(new DefaultRegisteredServiceExpirationPolicy(true, expirationTime.toInstant().atZone(ZoneOffset.UTC)));
+
+        registeredService.getProperties().put(TEMPORARY_OPENIDFEDERATION_SERVICE, new DefaultRegisteredServiceProperty(Boolean.TRUE.toString()));
 
         return registeredService;
     }
 
-    protected Optional<OIDCClientMetadata> fetchRelyingPartyMetadata(final TrustChainResolver trustChainResolver,
+    protected Optional<TrustChainMetadata> fetchRelyingPartyMetadata(final TrustChainResolver trustChainResolver,
                                                                      final EntityID entityId) {
         return FunctionUtils.doAndHandle(() -> {
             val resolvedChains = trustChainResolver.resolveTrustChains(entityId);
@@ -124,9 +148,13 @@ public class OidcFederationDefaultTrustChainResolver implements OidcFederationTr
             val metadataPolicy = chain.resolveCombinedMetadataPolicy(EntityType.OPENID_RELYING_PARTY);
 
             val claims = chain.getLeafConfiguration().getSignedStatement().getJWTClaimsSet();
-            val rawRp = (JSONObject) claims.getClaim(EntityType.OPENID_RELYING_PARTY.getValue());
+            val metadata = (Map) claims.getClaim(EntityStatementClaimsSet.METADATA_CLAIM_NAME);
+            val rawRp = new JSONObject((Map) metadata.get(EntityType.OPENID_RELYING_PARTY.getValue()));
             val clientMetadataJson = metadataPolicy.apply(rawRp);
-            return Optional.of(OIDCClientMetadata.parse(clientMetadataJson));
-        }, e -> Optional.<OIDCClientMetadata>empty()).get();
+            return Optional.of(new TrustChainMetadata(OIDCClientMetadata.parse(clientMetadataJson), chain.resolveExpirationTime()));
+        }, e -> Optional.<TrustChainMetadata>empty()).get();
+    }
+
+    protected record TrustChainMetadata(OIDCClientMetadata metadata, Date expirationTime) {
     }
 }
