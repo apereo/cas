@@ -1,0 +1,42 @@
+{
+  "entityId": "http://localhost:8080",
+  "description": "RP pac4j",
+  "metadata": {
+    "openid_relying_party": {
+      "redirect_uris": [
+        "http://localhost:8080/callback"
+      ],
+      "application_type": "web",
+      "response_types": [
+        "code"
+      ],
+      "grant_types": [
+        "authorization_code"
+      ],
+      "scope": "openid profile email",
+      "token_endpoint_auth_method": "private_key_jwt",
+      "token_endpoint_auth_signing_alg": "RS256",
+      "request_object_signing_alg": "RS256",
+      "jwks": {
+        "keys": [
+          {
+            "kty": "RSA",
+            "e": "AQAB",
+            "use": "sig",
+            "kid": "keyid",
+            "n": "2moVQWw9fDRr891E9GWiCory0wA0QokXV9AQFPsqV9rQ_5kULyUcXyfyDyF5ixDGwFGBG8muxvx_T8991H4CVdJw3UyiAWso5qUyANqihXiwiUcxJ8MJZjhXDbvXo6sk2NHpsBON2jot-QQDg-2FIOFAaYW0D3vyu4nkortqSFvh09lxSbsfQzT5nMLyWUULafhdcC3KGqR3kUKyN0LUCHtSDmmAb7KGlx3_U8Ho80BiOrJ6oIu34WxyY9S572Iqen_rdysunMh5X1aGLtprN7UIBbiNFPg6-vkBu7rYW6T4U6sFoj1x2NmeROp2HM0KvhhI8_qO1_6t_Wk2_2aq7Q"
+          }
+        ]
+      }
+    }
+  },
+  "federationKeys": [
+    {
+      "kty": "RSA",
+      "use": "sig",
+      "kid": "myrpfede",
+      "n": "pGY0z00yQKVpo6YRmw7z1tIWzLGjAuLca89VqExMCNEqj6vA10gtDgwPx_ijyIpcHEPl4iJRnYE-wDCBZFh4EhPrGu03C9RC-5C4ren0g8z6EQ6josqCdiM5tris9Nm-6b8rm5SzTW3z0U1AkaSomozPshFS1B2UZ9_7LdSkyeXP5JhjwTMjYRkII7T1U19IVdqSxuke1zUwg6YAekoD1kOV99VXyB24xz_nc46ieEZQbtV9prBWjb5M_zRLTf1dsm7XrG16guMKEeluUI8bZOmqaBr2yPabUoxI_eCznpHSH-JvhqQ-DgcXYA__ZZWlGxLycFdolV0IU5vU7g5nnw",
+      "e": "AQAB"
+    }
+  ]
+}

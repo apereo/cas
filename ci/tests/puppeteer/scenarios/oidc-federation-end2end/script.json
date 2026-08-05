@@ -1,0 +1,36 @@
+{
+  "dependencies": "oidc-federation",
+  "instances": 2,
+  "conditions": {
+    "docker": true
+  },
+  "jvmArgs": "-Djavax.net.ssl.trustStore=${PWD}/ci/tests/puppeteer/scenarios/oidc-federation-end2end/temp/pac4j-demo-truststore.p12 -Djavax.net.ssl.trustStorePassword=changeit -Djavax.net.ssl.trustStoreType=PKCS12",
+  "instance1": {
+    "properties": [
+      "--cas.server.name=https://localhost:8443",
+      "--cas.server.prefix=https://localhost:8443/cas",
+      "--server.tomcat.basedir=${TMPDIR}/cas-${SCENARIO}-ta",
+      "--cas.authn.oidc.core.issuer=https://localhost:8443/cas/oidc",
+      "--cas.authn.oidc.federation.role=TRUST_ANCHOR",
+      "--cas.authn.oidc.federation.organization=ApereoTA",
+      "--cas.authn.oidc.jwks.file-system.jwks-file=file:${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/metadata/ta-oidc.jwks",
+      "--cas.authn.oidc.federation.jwks-file=file:${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/metadata/ta-federation.jwks",
+      "--cas.authn.oidc.federation.subordinate-directory=${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/subordinates"
+    ]
+  },
+  "instance2": {
+    "dependencies": "oidc",
+    "properties": [
+      "--cas.server.name=https://localhost:8444",
+      "--cas.server.prefix=https://localhost:8444/cas",
+      "--server.tomcat.basedir=${TMPDIR}/cas-${SCENARIO}-op",
+      "--cas.authn.oidc.core.issuer=https://localhost:8444/cas/oidc",
+      "--cas.authn.oidc.federation.role=OPENID_PROVIDER",
+      "--cas.authn.oidc.federation.organization=ApereoOP",
+      "--cas.authn.oidc.jwks.file-system.jwks-file=file:${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/metadata/op-oidc.jwks",
+      "--cas.authn.oidc.federation.jwks-file=file:${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/metadata/op-federation.jwks",
+      "--cas.authn.oidc.federation.authority-hints[0]=https://localhost:8443/cas/oidc"
+    ]
+  },
+  "initScript": "${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/init.sh"
+}

@@ -593,8 +593,6 @@ ext.libraries = [
                 },
                 dependencies.create(libs.commons.lang3.get()) {
                 },
-                dependencies.create(libs.commons.lang.get()) {
-                },
                 dependencies.create(libs.jool.get()) {
                 },
                 dependencies.create(libs.commons.collections.get()) {
