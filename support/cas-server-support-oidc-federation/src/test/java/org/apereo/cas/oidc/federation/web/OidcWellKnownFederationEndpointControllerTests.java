@@ -141,7 +141,9 @@ class OidcWellKnownFederationEndpointControllerTests {
             assertNotNull(claims.getClaim("jwks"));
             val metadata = (Map) claims.getClaim("metadata");
             assertNotNull(metadata.get("federation_entity"));
-            assertNotNull(metadata.get("openid_provider"));
+            val openIdProvider = (Map) metadata.get("openid_provider");
+            assertNotNull(openIdProvider);
+            assertEquals("automatic", ((List<String>) openIdProvider.get("client_registration_types_supported")).getFirst());
         }
     }
 
