@@ -20,7 +20,7 @@ public class OidcDefaultVerifiableCredentialIssuerService implements OidcVerifia
     @Override
     public List<OidcVerifiableCredentialIssuerResponse> issue(final OidcVerifiableCredentialValidationContext context) throws Throwable {
         val proof = credentialProofValidator.validate(context.credentialRequest());
-        val configuration = context.resolveCredentialId();
+        val configuration = context.resolveConfigurationId();
         val encoder = credentialEncoderFactory.findByConfiguration(configuration);
         val signedCredential = encoder.encode(context, proof);
         return List.of(new OidcVerifiableCredentialIssuerResponse(

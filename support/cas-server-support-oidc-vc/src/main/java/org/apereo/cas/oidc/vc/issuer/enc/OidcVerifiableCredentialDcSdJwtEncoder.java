@@ -19,7 +19,7 @@ import lombok.val;
  * @since 8.1.0
  */
 @Getter
-public class OidcVerifiableCredentialDcSdJwtEncoder extends OidcVerifiableCredentialBaseEncoder {
+public class OidcVerifiableCredentialDcSdJwtEncoder extends BaseOidcVerifiableCredentialEncoder {
     private final OidcVerifiableCredentialConfigurationProperties.CredentialConfigurationFormats format =
         OidcVerifiableCredentialConfigurationProperties.CredentialConfigurationFormats.DC_SD_JWT;
 
@@ -35,11 +35,11 @@ public class OidcVerifiableCredentialDcSdJwtEncoder extends OidcVerifiableCreden
             new BasicIdentifiableCredential(authentication.getPrincipal().getId()));
 
         val verifiableClaims = produceClaims(Objects.requireNonNull(principal), context);
-        val configurationId = context.resolveCredentialId();
+        val configurationId = context.resolveConfigurationId();
         val configuration = resolveConfiguration(configurationId);
 
         val disclosures = new ArrayList<Disclosure>();
-        val signedClaims = sign(principal.getId(), context, jwtClaims -> {
+        val signedClaims = sign(principal.getId(), context, proof, jwtClaims -> {
             val sdBuilder = new SDObjectBuilder();
             verifiableClaims.forEach((claimName, claimValue) -> {
                 val claimDefn = configuration.getClaims().get(claimName);
@@ -55,7 +55,6 @@ public class OidcVerifiableCredentialDcSdJwtEncoder extends OidcVerifiableCreden
             jwtClaims.setStringClaim("sub", principal.getId());
             jwtClaims.setStringClaim("client_id", context.accessToken().getClientId());
             jwtClaims.setStringClaim("credential_configuration_id", configurationId);
-            jwtClaims.setClaim("cnf", proof.holderJwk().toJSONObject());
         });
         return new SDJWT(signedClaims, disclosures).toString();
     }

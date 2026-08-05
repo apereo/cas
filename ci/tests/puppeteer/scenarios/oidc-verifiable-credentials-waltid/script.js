@@ -3,7 +3,7 @@ const assert = require("assert");
 
 async function createVerifiableCredentialTransaction(credentialConfigurationIds) {
     await cas.log(`Creating verifiable credential transaction for ${credentialConfigurationIds}`);
-    
+
     const body = JSON.stringify({
         "principal": "casuser",
         "credentialConfigurationIds": credentialConfigurationIds
@@ -26,7 +26,6 @@ async function createVerifiableCredentialTransaction(credentialConfigurationIds)
 async function useCredentialOffer(page, wallet, offerRequest) {
     const url = `http://localhost:7001/wallet-api/wallet/${wallet.walletId}/exchange/useOfferRequest?did=${wallet.did}&requireUserInput=false`;
     const authCookie = `${wallet.cookie.name}=${wallet.cookie.value}`;
-    console.log(authCookie);
     const response = await cas.doRequest(url, "POST",
         {
             "Content-Length": offerRequest.length,
@@ -92,7 +91,7 @@ async function startVerifiableCredentialFlowForConfiguration(...configurationId)
         assert.equal(header.client_id, "wallet-client");
         assert.equal(payload.sub, "casuser");
     }
-    
+
     await cas.goto(page, `http://localhost:7104/wallet/${wallet.walletId}`);
     await cas.sleep();
     const href = await cas.attributeValue(page, "main ul li a", "href");
@@ -116,6 +115,8 @@ async function startVerifiableCredentialFlowForConfiguration(...configurationId)
 
     await context.close();
     await cas.closeBrowser(browser);
+
+    return credential;
 }
 
 async function loginToWallet(page) {
@@ -181,10 +182,116 @@ async function deleteAllCredentialsInWallet(wallet) {
     }
 }
 
+async function startVerifiableCredentialPresentationFlow(credential) {
+    await cas.logg(`Starting verifiable credential presentation flow for credential ${credential.id}`);
+    
+    const browser = await cas.newBrowser(cas.browserOptions());
+    const context = await browser.createBrowserContext();
+    const page = await cas.newPage(context);
+    await cas.gotoLogout(page);
+    const wallet = await loginToWallet(page);
+
+    const credentialRequest = {
+        "credentials": [
+            {
+                "id": "myorg",
+                "format": "dc+sd-jwt",
+                "vct_values": [
+                    "http://host.docker.internal:8080/cas/oidc/oidcVcCredentialType/myorg"
+                ],
+                "claims": [
+                    {
+                        "path": ["given_name"],
+                        "required": true
+                    },
+                    {
+                        "path": ["family_name"],
+                        "required": true
+                    },
+                    {
+                        "path": ["email"],
+                        "required": true
+                    },
+                    {
+                        "path": ["roles"],
+                        "required": true
+                    }
+                ]
+            }
+        ]
+    };
+
+    const body = JSON.stringify(credentialRequest);
+    const presentation = JSON.parse(
+        await cas.doRequest("https://localhost:8443/cas/oidc/oidcVcPresentationRequest", "POST",
+            {
+                "Authorization": `Basic ${btoa("wallet-client:wallet-secret")}`,
+                "Content-Length": body.length,
+                "Content-Type": "application/json"
+            },
+            200,
+            body)
+    );
+
+    await cas.log(presentation);
+    assert(presentation.authorization_request.startsWith("openid4vp://authorize?client_id=redirect_uri:"));
+    assert(presentation.request_id !== undefined);
+    assert(presentation.request_uri !== undefined);
+    assert(presentation.expires_in > 0);
+
+    const url = `http://localhost:7001/wallet-api/wallet/${wallet.walletId}/exchange/resolvePresentationRequest`;
+    const authCookie = `${wallet.cookie.name}=${wallet.cookie.value}`;
+    const response = await cas.doRequest(url, "POST",
+        {
+            "Content-Length": presentation.authorization_request.length,
+            "Content-Type": "text/plain",
+            "Cookie": authCookie,
+            "Authorization": `Bearer ${wallet.cookie.value}`
+        },
+        200,
+        presentation.authorization_request);
+    await cas.log(response);
+
+    await cas.logb(`Sending presentation request to wallet ${wallet.walletId}`);
+    await cas.sleep();
+
+    const presentationRequest = {
+        "did": wallet.did,
+        "presentationRequest": response,
+        "selectedCredentials": [
+            credential.id
+        ],
+        "disclosures": {
+            [credential.id]: [
+                "given_name",
+                "family_name",
+                "email",
+                "roles"
+            ]
+        }
+    };
+    const resolvedRequest = await cas.doRequest(
+        `http://localhost:7001/wallet-api/wallet/${wallet.walletId}/exchange/usePresentationRequest`,
+        "POST",
+        {
+            "Authorization": `Bearer ${wallet.cookie.value}`,
+            "Accept": "application/json",
+            "Content-Type": "application/json"
+        },
+        200,
+        JSON.stringify(presentationRequest)
+    );
+
+    await context.close();
+    await cas.closeBrowser(browser);
+}
+
 (async () => {
-    await startVerifiableCredentialFlowForConfiguration("myorg");
+    const credential = await startVerifiableCredentialFlowForConfiguration("myorg");
     await cas.separator();
+    await startVerifiableCredentialPresentationFlow(credential);
     await startVerifiableCredentialFlowForConfiguration("employee");
     await cas.separator();
     await startVerifiableCredentialFlowForConfiguration("myorg", "employee");
+    await cas.separator();
 })();

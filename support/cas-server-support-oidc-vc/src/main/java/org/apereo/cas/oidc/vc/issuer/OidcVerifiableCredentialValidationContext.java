@@ -18,11 +18,11 @@ public record OidcVerifiableCredentialValidationContext(
     HttpServletRequest httpRequest) {
 
     /**
-     * Resolve credential id.
+     * Resolve configuration id.
      *
      * @return the string
      */
-    public String resolveCredentialId() {
+    public String resolveConfigurationId() {
         val principal = accessToken.getAuthentication().getPrincipal();
         return StringUtils.isBlank(credentialRequest.getCredentialConfigurationId())
             ? principal.getAttributes().get("credentialConfigurationIds").getFirst().toString()

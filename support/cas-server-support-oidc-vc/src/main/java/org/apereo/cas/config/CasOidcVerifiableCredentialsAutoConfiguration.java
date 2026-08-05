@@ -20,7 +20,8 @@ import org.springframework.context.annotation.Import;
 @Import({
     OidcVerifiableCredentialsIssuerConfiguration.class,
     OidcVerifiableCredentialsOfferConfiguration.class,
-    OidcVerifiableCredentialsAuthorizationCodeConfiguration.class
+    OidcVerifiableCredentialsAuthorizationCodeConfiguration.class,
+    OidcVerifiableCredentialsPresentationConfiguration.class
 })
 public class CasOidcVerifiableCredentialsAutoConfiguration {
 }

@@ -21,6 +21,7 @@ import org.pac4j.core.credentials.Credentials;
 import org.pac4j.core.credentials.UsernamePasswordCredentials;
 import org.pac4j.core.credentials.authenticator.Authenticator;
 import org.pac4j.core.profile.CommonProfile;
+import org.springframework.beans.factory.ObjectProvider;
 
 /**
  * This is {@link OidcVerifiableCredentialsPreAuthorizationCodeAuthenticator}.
@@ -31,7 +32,7 @@ import org.pac4j.core.profile.CommonProfile;
 @RequiredArgsConstructor
 @Slf4j
 public class OidcVerifiableCredentialsPreAuthorizationCodeAuthenticator implements Authenticator {
-    private final OidcVerifiableCredentialTransactionService transactionService;
+    private final ObjectProvider<OidcVerifiableCredentialTransactionService> transactionService;
     private final PrincipalResolver principalResolver;
     private final OAuth20RequestParameterResolver requestParameterResolver;
 
@@ -45,7 +46,7 @@ public class OidcVerifiableCredentialsPreAuthorizationCodeAuthenticator implemen
                 val providedTxCode = requestParameterResolver.resolveRequestParameter(ctx.webContext(), OidcConstants.TX_CODE)
                     .orElse(StringUtils.EMPTY);
 
-                val preAuthorizationCode = (TransientSessionTicket) transactionService.fetchPreAuthorizationCode(providedPreAuthzCode);
+                val preAuthorizationCode = (TransientSessionTicket) transactionService.getObject().fetchPreAuthorizationCode(providedPreAuthzCode);
                 val principalId = Objects.requireNonNull(preAuthorizationCode).getPropertyAsString("principalId");
                 val credentialConfigurationIds = Objects.requireNonNull(preAuthorizationCode).getProperty("credentialConfigurationIds", List.class);
                 val clientId = Objects.requireNonNull(preAuthorizationCode).getPropertyAsString(OAuth20Constants.CLIENT_ID);

@@ -16,7 +16,7 @@ import lombok.val;
  * @since 8.1.0
  */
 @Getter
-public class OidcVerifiableCredentialJwtVcJsonLdEncoder extends OidcVerifiableCredentialBaseEncoder {
+public class OidcVerifiableCredentialJwtVcJsonLdEncoder extends BaseOidcVerifiableCredentialEncoder {
     private final OidcVerifiableCredentialConfigurationProperties.CredentialConfigurationFormats format =
         OidcVerifiableCredentialConfigurationProperties.CredentialConfigurationFormats.JWT_VC_JSON_LD;
 
@@ -31,15 +31,14 @@ public class OidcVerifiableCredentialJwtVcJsonLdEncoder extends OidcVerifiableCr
         val principal = configurationContext.getPrincipalResolver().resolve(
             new BasicIdentifiableCredential(authentication.getPrincipal().getId()));
         val verifiableClaims = produceClaims(Objects.requireNonNull(principal), context);
-        val configurationId = context.resolveCredentialId();
+        val configurationId = context.resolveConfigurationId();
         val configuration = resolveConfiguration(configurationId);
         val issuer = configurationContext.getCasProperties().getAuthn().getOidc().getCore().getIssuer();
 
-        return sign(principal.getId(), context, jwtClaims -> {
+        return sign(principal.getId(), context, proof, jwtClaims -> {
             jwtClaims.setStringClaim("sub", principal.getId());
             jwtClaims.setStringClaim("client_id", context.accessToken().getClientId());
             jwtClaims.setStringClaim("credential_configuration_id", configurationId);
-            jwtClaims.setClaim("cnf", proof.holderJwk().toJSONObject());
             
             val now = Instant.now(Clock.systemUTC());
             val credentialSubject = new LinkedHashMap<String, Object>();

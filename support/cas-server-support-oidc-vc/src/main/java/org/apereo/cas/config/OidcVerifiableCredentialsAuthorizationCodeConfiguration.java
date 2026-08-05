@@ -16,6 +16,7 @@ import org.apereo.cas.support.oauth.web.response.callback.OAuth20AuthorizationRe
 import lombok.val;
 import org.pac4j.core.credentials.authenticator.Authenticator;
 import org.pac4j.http.client.direct.DirectFormClient;
+import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -70,7 +71,7 @@ class OidcVerifiableCredentialsAuthorizationCodeConfiguration {
         @Qualifier(PrincipalResolver.BEAN_NAME_PRINCIPAL_RESOLVER)
         final PrincipalResolver principalResolver,
         @Qualifier(OidcVerifiableCredentialTransactionService.BEAN_NAME)
-        final OidcVerifiableCredentialTransactionService oidcVerifiableCredentialTransactionService) {
+        final ObjectProvider<OidcVerifiableCredentialTransactionService> oidcVerifiableCredentialTransactionService) {
         return new OidcVerifiableCredentialsPreAuthorizationCodeAuthenticator(
             oidcVerifiableCredentialTransactionService, principalResolver, oauthRequestParameterResolver);
     }

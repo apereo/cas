@@ -13,6 +13,11 @@ import org.apereo.cas.oidc.vc.issuer.proof.OidcVerifiableCredentialProofValidato
  */
 public interface OidcVerifiableCredentialEncoder {
 
+    /**
+     * Gets format.
+     *
+     * @return the format
+     */
     OidcVerifiableCredentialConfigurationProperties.CredentialConfigurationFormats getFormat();
 
     /**
