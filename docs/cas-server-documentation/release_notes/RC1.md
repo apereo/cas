@@ -186,6 +186,11 @@ This capability is also supported and available for the [Palantir Admin Dashboar
 [OpenID Connect with Verifiable Credentials](../authentication/OIDC-Authentication-Verifiable-Credentials.html) now 
 supports the authorization code flow. There are also significant changes in place to support more formats
 with additional bug fixes and enhancements, and an improved test suite to verify credential issuance.
+There is also initial support for OpenID Connect with Verifiable Presentations (OpenID4VP).
+    
+### OpenID Connect Federation
+
+Work on [OpenID Connect Federation](../authentication/OIDC-Authentication-Federation.html) is now roughly finalized.
 
 ## Other Stuff
   

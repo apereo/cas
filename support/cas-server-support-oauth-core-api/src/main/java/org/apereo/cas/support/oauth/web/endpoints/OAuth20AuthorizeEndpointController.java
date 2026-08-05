@@ -173,13 +173,14 @@ public class OAuth20AuthorizeEndpointController<T extends OAuth20ConfigurationCo
     private UserProfile verifyAndReturnAuthenticatedProfile(final ProfileManager manager, final JEEContext context) {
         val casProperties = getConfigurationContext().getCasProperties();
         return manager.getProfile()
-            .orElseThrow(() -> new IllegalArgumentException("""
+            .orElseThrow(() -> new IllegalArgumentException(
+                """
                 CAS is unable to locate authentication profile for this request: %s. The authentication request is expected
                 to have been verified with an authentication attempt, and yet there is no record of an authentication event.
                 This issue is typically the result of CAS misconfiguration. Please examine your CAS setup and review your
-                OIDC configuration. Your OIDC issuer is defined as %s, and your CAS server name is %s.
+                OpenID Connect configuration. Your OpenID Connect issuer is defined as %s, and your CAS server name is %s.
                 """
-                .stripIndent()
+                .strip()
                 .formatted(
                     context.getFullRequestURL(),
                     casProperties.getAuthn().getOidc().getCore().getIssuer(),
