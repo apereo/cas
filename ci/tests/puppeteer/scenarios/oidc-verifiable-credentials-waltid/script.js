@@ -281,7 +281,8 @@ async function startVerifiableCredentialPresentationFlow(credential) {
         200,
         JSON.stringify(presentationRequest)
     );
-
+    assert(resolvedRequest !== undefined && resolvedRequest !== null);
+    
     await context.close();
     await cas.closeBrowser(browser);
 }
