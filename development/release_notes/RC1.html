@@ -1,0 +1,506 @@
+<!DOCTYPE html>
+<html lang="en" data-bs-theme="dark">
+<head>
+    <!-- Required meta tags always come first -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="description" content="CAS - Enterprise Single Sign-On for the Web"/>
+    <meta name="keywords" content="authentication, login, cas, central authentication service, web, java, protocol, thymeleaf,
+                   open source, boot, spring, authorization, google, facebook, twitter, higher-ed, enterprise,
+                   access management, single sign-on, sso, RBAC, ABAC, attributes, SAML, OpenID, openid connect,
+                   JWT, ADFS"/>
+    <meta name="robots" content="index,follow"/>
+
+    
+    
+
+    
+
+
+
+
+
+
+
+    
+
+    <script>
+        ((i, s, o, g, r, a, m) => {
+            i['GoogleAnalyticsObject'] = r;
+            i[r] = i[r] || function () {
+                (i[r].q = i[r].q || []).push(arguments)
+            }, i[r].l = 1 * new Date();
+            a = s.createElement(o),
+                m = s.getElementsByTagName(o)[0];
+            a.async = 1;
+            a.src = g;
+            m.parentNode.insertBefore(a, m)
+        })(window, document, 'script', 'https://www.google-analytics.com/analytics.js', 'ga');
+
+        ga('create', 'UA-83384532-2', 'auto');
+        ga('send', 'pageview');
+
+    </script>
+
+    <script>
+        function systemTheme() {
+            return window.matchMedia && window.matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark';
+        }
+
+        function resolveTheme(preference) {
+            return preference === 'dark' || preference === 'light' ? preference : systemTheme();
+        }
+
+        function changeTheme(theme) {
+            if (theme !== 'dark' && theme !== 'light') {
+                return;
+            }
+
+            if (document.documentElement.getAttribute('data-bs-theme') !== theme) {
+                document.documentElement.setAttribute('data-bs-theme', theme);
+            }
+        }
+
+        (() => {
+            let preference = localStorage.getItem('cas-docs-theme');
+            if (preference !== 'dark' && preference !== 'light') {
+                preference = 'system';
+                localStorage.setItem('cas-docs-theme', preference);
+            }
+
+            changeTheme(resolveTheme(preference));
+
+            if (window.matchMedia) {
+                window.matchMedia('(prefers-color-scheme: light)').addEventListener('change', () => {
+                    if (localStorage.getItem('cas-docs-theme') !== 'system') {
+                        return;
+                    }
+                    const theme = systemTheme();
+                    console.log(`System theme changed to: ${theme}`);
+                    changeTheme(theme);
+                });
+            }
+        })();
+    </script>
+
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v6.5.2/css/all.css"/>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@docsearch/css@3"/>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/lightbox2/2.11.5/css/lightbox.min.css" />
+    
+    
+    <link rel="stylesheet" type="text/css" media="screen" href='/cas/stylesheets/stylesheet.css'>
+    <link rel="stylesheet" type="text/css" media="print" href='/cas/stylesheets/print.css'>
+
+    <link href='https://fonts.googleapis.com/css?family=Lato:400,300,700' rel='stylesheet'>
+    <link href='https://fonts.googleapis.com/css?family=Merriweather:900,900italic,300,300italic&subset=latin-ext,latin' rel='stylesheet'>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto+Slab:wght@100;200;300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://cdn.datatables.net/1.11.5/css/jquery.dataTables.min.css" rel="stylesheet">
+
+    <title>CAS - Release Notes</title>
+
+</head>
+
+<body>
+    <!-- HEADER -->
+    <header class="hidden-sm-down">
+        <div class="container">
+            <div class="row">
+                <div class="col-xs-4 col-md-2">
+                    <a href="../../index.html">
+                        <img class="undecorated" src="/cas/images/cas_logo.png"/>
+                    </a>
+                </div>
+                <div class="col-xs-8 col-md-6">
+                    <h1>Enterprise Identity for All Earthlings and Beyond<p><sub>Identity, Single Sign-On and Access Management</sub></p></h1>
+                </div>
+                <div class="hidden-sm-down col-md-4">
+                    <a id="forkme_banner" href="https://github.com/apereo/cas">View on GitHub</a>
+                </div>
+
+            </div>
+        </div>
+    </header>
+
+    <!-- NAVBAR -->
+
+    <nav class="navbar navbar-expand-md navbar-dark bg-primary bg-dark">
+        
+        <button onclick="navigateSidebar()" id="sidebarNavButton">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        
+        
+        <div class="container">
+<!--            <button id="navigationNavButton" class="navbar-toggler collapsed" type="button" data-bs-toggle="collapse"-->
+<!--                    data-bs-target="#navbarsExample04" aria-controls="navbarsExample04" aria-expanded="false"-->
+<!--                    aria-label="Toggle navigation">-->
+<!--                <span class="navbar-toggler-icon"></span>-->
+<!--            </button>-->
+
+            <div class="navbar-collapse collapse" id="navbarsExample04">
+                <ul class="navbar-nav mr-auto">
+                    <li class="nav-item active"><a href="../../index.html" class="zoom nav-link">Home</a></li>
+                    <li class="nav-item"><a href="https://github.com/apereo/cas/releases" class="zoom nav-link">Releases</a></li>
+                    <li class="nav-item"><a href="../../Support.html" class="zoom nav-link">Support</a></li>
+                    <li class="nav-item"><a href="../../Mailing-Lists.html" class="zoom nav-link">Mailing Lists</a></li>
+                    <li class="nav-item dropdown">
+                        <a class="zoom nav-link dropdown-toggle mr-md-2" href="javascript:void(0)" role="button" id="cas-versions" data-bs-toggle="dropdown"
+                           aria-haspopup="true" aria-expanded="false">Versions</a>
+                        <div class="dropdown-menu dropdown-menu-right" aria-labelledby="cas-versions">
+                            
+                            
+                            <a class="dropdown-item" href="/cas/development/">Development</a>
+                            
+                            
+                            
+                            <a class="dropdown-item" href="/cas/8.0.x/">v8.0.x</a>
+                            
+                            
+                            
+                            <a class="dropdown-item" href="/cas/7.3.x/">v7.3.x</a>
+                            
+                            
+
+                        </div>
+                    </li>
+                    <li class="nav-item"><a href="https://apereo.github.io" target="_blank" rel="noopener" class="zoom nav-link">Blog</a></li>
+                </ul>
+
+            </div>
+
+        </div>
+    </nav>
+
+
+    <div class="container-fluid">
+        <div class="row flex-xl-nowrap">
+
+            
+                <div class="col-12 col-md-3 col-xl-2 docs-sidebar pb-5" id="sidebar"></div>
+
+                <div class="d-none d-xl-block col-xl-2 docs-toc">
+    <div id="pageContents">
+        <ul class="section-nav"></ul>
+    </div>
+</div>
+
+            
+
+            <main class="col-12 col-md-9 col-xl-8 py-md-3 pl-md-5 cas-docs-content" role="main">
+                
+                
+                <div id="dev-doc-info" class="alert alert-danger" role="alert">
+                    <h3>WORKERS AHEAD!</h3>
+                    <p>You are viewing the <strong>development</strong> documentation for the Apereo CAS server. <strong>The
+                        functionality presented here <a href="https://github.com/apereo/cas/milestones">is not officially released yet</a></strong>.
+                        This is a work in progress and will be continually updated as development moves forward.
+                        <strong>You are most encouraged to test the changes presented.</strong>
+                    </p>
+                </div>
+                
+
+                <section>
+                    
+                    <nav id="docsNavBar">
+                        <span id="toolbarIcons"></span>
+                    </nav>
+                    
+
+                    <div id="cas-docs-container">
+                        
+<h1 id="810-rc1-release-notes">8.1.0-RC1 Release Notes</h1>
+
+<p>We strongly recommend that you take advantage of the release candidates as they come out. Waiting for a <code class="language-plaintext highlighter-rouge">GA</code> release is only going to set
+you up for unpleasant surprises. A <code class="language-plaintext highlighter-rouge">GA</code> is <a href="https://apereo.github.io/2017/03/08/the-myth-of-ga-rel/">a tag and nothing more</a>. Note
+that CAS releases are <em>strictly</em> time-based releases; they are not scheduled or based on specific benchmarks,
+statistics or completion of features. To gain confidence in a particular
+release, it is strongly recommended that you start early by experimenting with release candidates and/or follow-up snapshots.</p>
+
+<h2 id="apereo-membership">Apereo Membership</h2>
+
+<p>If you benefit from Apereo CAS as free and open-source software, we invite you
+to <a href="https://www.apereo.org/content/apereo-membership">join the Apereo Foundation</a>
+and financially support the project at a capacity that best suits your deployment. Note that all development activity is performed
+<em>almost exclusively</em> on a voluntary basis with no expectations, commitments or strings attached. Having the financial means to better
+sustain engineering activities will allow the developer community to allocate <em>dedicated and committed</em> time for long-term support,
+maintenance and release planning, especially when it comes to addressing critical and security issues in a timely manner.</p>
+
+<h2 id="get-involved">Get Involved</h2>
+
+<ul>
+  <li>Start your CAS deployment today. Try out features and <a href="/cas/Mailing-Lists.html">share feedback</a>.</li>
+  <li>Better yet, <a href="/cas/developer/Contributor-Guidelines.html">contribute patches</a>.</li>
+  <li>Suggest and apply documentation improvements.</li>
+</ul>
+
+<h2 id="resources">Resources</h2>
+
+<ul>
+  <li><a href="https://github.com/apereo/cas/milestones">Release Schedule</a></li>
+  <li><a href="/cas/developer/Release-Policy.html">Release Policy</a></li>
+</ul>
+
+<h2 id="system-requirements">System Requirements</h2>
+
+<p>The JDK baseline requirement for this CAS release is and <strong>MUST</strong> be JDK <code class="language-plaintext highlighter-rouge">25</code>. All compatible distributions
+such as Amazon Corretto, Zulu, Eclipse Temurin, etc should work and are implicitly supported.</p>
+
+<h2 id="new--noteworthy">New &amp; Noteworthy</h2>
+
+<p>The following items are new improvements and enhancements presented in this release.</p>
+
+<h3 id="openrewrite-recipes">OpenRewrite Recipes</h3>
+
+<p>CAS continues to produce and publish <a href="https://docs.openrewrite.org/">OpenRewrite</a> recipes that allow the project to upgrade installations
+in place from one version to the next. <a href="../installation/OpenRewrite-Upgrade-Recipes.html">See this guide</a> to learn more.</p>
+
+<h3 id="graal-vm-native-images">Graal VM Native Images</h3>
+
+<p>A CAS server installation and deployment process can be tuned to build and run
+as a <a href="../installation/GraalVM-NativeImage-Installation.html">Graal VM native image</a>. We continue to polish native runtime hints.
+The collection of end-to-end <a href="../../developer/Test-Process.html">browser tests based on Puppeteer</a> have selectively switched
+to build and verify Graal VM native images and we plan to extend the coverage to all such scenarios in the coming releases.</p>
+
+<h3 id="testing-strategy">Testing Strategy</h3>
+
+<p>The collection of end-to-end <a href="../../developer/Test-Process.html">browser tests based on Puppeteer</a> continue to grow to cover more use cases
+and scenarios. At the moment, total number of jobs stands at approximately <code class="language-plaintext highlighter-rouge">556</code> distinct scenarios. The overall
+test coverage of the CAS codebase is approximately <code class="language-plaintext highlighter-rouge">94%</code>.</p>
+
+<h3 id="gradle-97">Gradle 9.7</h3>
+
+<p>CAS is now built with Gradle 9.7 and the build process has been updated to use the 
+latest Gradle features and capabilities.</p>
+
+<h3 id="spring-boot-42">Spring Boot 4.2</h3>
+
+<p>CAS is now built with Spring Boot <code class="language-plaintext highlighter-rouge">4.2.x</code>. This is a minor platform upgrade that 
+affects almost all aspects of the codebase including many of the third-party 
+core libraries used by CAS as well as some CAS functionality.</p>
+
+<h3 id="jspecify--nullaway">JSpecify &amp; NullAway</h3>
+
+<p>CAS codebase is now annotated with <a href="https://jspecify.dev/">JSpecify</a> annotations to indicate nullness contracts on method parameters,
+return types and fields. We will gradually extend the coverage of such annotations across the entire codebase in future releases
+and will integrate the Gradle build tool with tools such as <a href="https://github.com/uber/NullAway">NullAway</a> to prevent nullness contract violations
+during compile time.</p>
+
+<h3 id="oauth--openid-connect-client-secrets">OAuth &amp; OpenID Connect Client Secrets</h3>
+
+<p>OAuth and OIDC client applications may now define <a href="../authentication/OAuth-ClientSecret-Management.html">multiple client secrets</a>, 
+allowing deployments to support secret expiration and smoother secret rotation. Existing 
+single-secret configurations remain compatible, while new configurations can 
+include additional secrets with expiration metadata so clients can transition 
+to new secrets without immediate disruption. Client secret rotation may be carried out using
+a dedicated <code class="language-plaintext highlighter-rouge">oauthClientSecrets</code> actuator endpoint.</p>
+
+<h3 id="attribute-definition-dependencies">Attribute Definition Dependencies</h3>
+
+<p>Attribute definitions may now <a href="../integration/Attribute-Definitions.html">declare dependencies</a> on other attribute definitions. 
+When an attribute is resolved, its declared dependencies are resolved first and their results are made available 
+during resolution, allowing definitions to build on values produced by other definitions in a predictable, reusable way.</p>
+
+<h3 id="palantir-admin-dashboard">Palantir Admin Dashboard</h3>
+
+<p>Inlined table buttons in <a href="../installation/Admin-Dashboard.html">Palantir Admin Dashboard</a> are 
+replaced with proper context menus triggered by right clicks. The configuration tab is also extended 
+to display cached scripted resources with the ability to either remove or recompute the cache entry.</p>
+
+<p>Furthermore, <a href="../authorization/Heimdall-Authorization-Overview.html">Heimdall authorization policies</a>
+can now be created, edited and removed from the <a href="../installation/Admin-Dashboard.html">Palantir Admin Dashboard</a>.
+There is also dedicated simulation support to experiment with authorization requests.</p>
+
+<p>Configuration for almost all attribute repositories can also be viewed in better detail. Fields that do support
+<a href="../integration/Apache-Groovy-Scripting.html">inline Groovy scripts</a> are also allowed to better receive their 
+value from a dedicated editor.</p>
+
+<div class="image-gallery">
+    
+    
+    
+    
+    
+
+    <a href="img_1.png" data-lightbox="palantir-dashboard" data-title="Palantir scripting view">
+        <img src="img_1.png" alt="Palantir scripting view" title="Palantir scripting view" />
+    </a>
+    
+    
+    
+    
+
+    <a href="img_2.png" data-lightbox="palantir-dashboard" data-title="Palantir applications view">
+        <img src="img_2.png" alt="Palantir applications view" title="Palantir applications view" />
+    </a>
+    
+    
+    
+    
+
+    <a href="img_3.png" data-lightbox="palantir-dashboard" data-title="Palantir Heimdall authorization view">
+        <img src="img_3.png" alt="Palantir Heimdall authorization view" title="Palantir Heimdall authorization view" />
+    </a>
+    
+    
+    
+    
+
+    <a href="img_4.png" data-lightbox="palantir-dashboard" data-title="Palantir Heimdall authorization view">
+        <img src="img_4.png" alt="Palantir Heimdall authorization view" title="Palantir Heimdall authorization view" />
+    </a>
+    
+    
+    
+    
+
+    <a href="img_5.png" data-lightbox="palantir-dashboard" data-title="Palantir attribute repositories view">
+        <img src="img_5.png" alt="Palantir attribute repositories view" title="Palantir attribute repositories view" />
+    </a>
+    
+    
+    
+    
+
+    <a href="img.png" data-lightbox="palantir-dashboard" data-title="Palantir Groovy script view">
+        <img src="img.png" alt="Palantir Groovy script view" title="Palantir Groovy script view" />
+    </a>
+    
+    
+    
+    
+
+    <a href="img_6.png" data-lightbox="palantir-dashboard" data-title="Palantir attribute repositories view">
+        <img src="img_6.png" alt="Palantir attribute repositories view" title="Palantir attribute repositories view" />
+    </a>
+    
+    
+    
+    
+
+    <a href="img_7.png" data-lightbox="palantir-dashboard" data-title="Palantir Groovy script view">
+        <img src="img_7.png" alt="Palantir Groovy script view" title="Palantir Groovy script view" />
+    </a>
+    
+    
+    
+    
+
+    <a href="img_8.png" data-lightbox="palantir-dashboard" data-title="Palantir authorization simulation view">
+        <img src="img_8.png" alt="Palantir authorization simulation view" title="Palantir authorization simulation view" />
+    </a>
+    
+    
+    
+    
+
+    <a href="img_9.png" data-lightbox="palantir-dashboard" data-title="Palantir cluster topology view">
+        <img src="img_9.png" alt="Palantir cluster topology view" title="Palantir cluster topology view" />
+    </a>
+    
+    
+    
+    
+
+    <a href="img_10.png" data-lightbox="palantir-dashboard" data-title="Palantir cluster topology view">
+        <img src="img_10.png" alt="Palantir cluster topology view" title="Palantir cluster topology view" />
+    </a>
+    
+    
+    
+    
+
+    <a href="img_11.png" data-lightbox="palantir-dashboard" data-title="Palantir passwordless authentication view">
+        <img src="img_11.png" alt="Palantir passwordless authentication view" title="Palantir passwordless authentication view" />
+    </a>
+    
+    
+</div>
+
+<h3 id="palantir-user-vs-admin-roles">Palantir User vs. Admin Roles</h3>
+
+<p>The <a href="../installation/Admin-Dashboard.html">Palantir Admin Dashboard</a> now supports basic user roles and permissions. 
+By default, all authenticated users are assigned a <code class="language-plaintext highlighter-rouge">ROLE_USER</code> role/authority. To access critical functionality as an admin, 
+you will need to resolve and release a <code class="language-plaintext highlighter-rouge">role</code> attribute to Palantir with a value of <code class="language-plaintext highlighter-rouge">ADMIN</code> or <code class="language-plaintext highlighter-rouge">ROLE_ADMIN</code> if you are
+accessing Palantir via external CAS authentication, or your configuration needs to assign the authenticated user role
+via <code class="language-plaintext highlighter-rouge">spring.security.user.roles=ADMIN</code>.</p>
+
+<p>At this moment, all Palantir functionality is disabled and hidden for non-admin users, except 
+for the ability to manage the list of registered applications.</p>
+
+<h3 id="cluster-topology">Cluster Topology</h3>
+
+<p>A new <code class="language-plaintext highlighter-rouge">clusterTopology</code> actuator endpoint is available to report on the current cluster topology 
+and the status of each node in the cluster, particularly relevant when CAS is running in high-availability mode.
+Cluster topology support is available for the following features:</p>
+
+<ul>
+  <li><a href="../ticketing/MongoDb-Ticket-Registry.html">MongoDb Ticket Registry</a></li>
+  <li><a href="../ticketing/Redis-Ticket-Registry.html">Redis Ticket Registry</a></li>
+  <li><a href="../ticketing/Hazelcast-Ticket-Registry.html">Hazelcast Ticket Registry</a></li>
+  <li><a href="../ticketing/Ignite-Ticket-Registry.html">Apache Ignite Ticket Registry</a></li>
+  <li><a href="../ticketing/Kafka-Ticket-Registry.html">Apache Kafka Ticket Registry</a></li>
+  <li><a href="../ticketing/Pulsar-Ticket-Registry.html">Apache Pulsar Ticket Registry</a></li>
+  <li><a href="../ticketing/Geode-Ticket-Registry.html">Apache Geode Ticket Registry</a></li>
+  <li><a href="../ticketing/Messaging-AMQP-Ticket-Registry.html">AMQP Ticket Registry</a></li>
+</ul>
+
+<p>This capability is also supported and available for the <a href="../installation/Admin-Dashboard.html">Palantir Admin Dashboard</a>.</p>
+
+<h3 id="passwordless-authentication">Passwordless Authentication</h3>
+
+<p>A dedicated actuator endpoint, <code class="language-plaintext highlighter-rouge">passwordless</code>, is available to allows one to query a username
+and retrieve the associated <a href="../authentication/Passwordless-Authentication-Account-Storage.html">passwordless account</a> information. 
+This capability is also supported and available for the <a href="../installation/Admin-Dashboard.html">Palantir Admin Dashboard</a>.</p>
+
+<h2 id="other-stuff">Other Stuff</h2>
+
+<ul>
+  <li>Multifactor authentication may also be activated using <a href="../mfa/Configuring-Multifactor-Authentication-Triggers-EntityId.html">SAML2 metadata entity attributes</a>.</li>
+  <li>Releasing attributes via <a href="../integration/Attribute-Release-Policy-PatternMatching.html">pattern matching</a> accepts Groovy transformation rules.</li>
+  <li>A number of date-formatting operations have switched their base timezone from system default to <code class="language-plaintext highlighter-rouge">UTC</code>.</li>
+  <li>A large number of dependencies and libraries have been updated to their latest versions.</li>
+  <li>Custom ID token claims can also be constructed using <a href="../authentication/OIDC-Authentication-Claims-Custom.html">Apache Groovy</a>.</li>
+  <li><a href="../ticketing/Redis-Ticket-Registry-RediSearch.html">RediSearch</a> functionality now supports Redis clustering.</li>
+</ul>
+
+                    </div>
+                </section>
+            </main>
+        </div>
+    </div>
+
+
+    <footer>
+        <div class="container">
+            CAS is supported by the <a href="https://www.apereo.org/">Apereo Foundation</a>.
+        </div>
+    </footer>
+    
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.min.js"></script>
+
+    <script src="https://cdn.jsdelivr.net/npm/tether@2.0.0/dist/js/tether.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.11/clipboard.min.js"></script>
+
+    <script src='/cas/javascripts/URI.js'></script>
+    <script src='/cas/javascripts/main.js'></script>
+
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@docsearch/js@3"></script>
+    <script type="text/javascript" src="https://cdn.datatables.net/1.11.5/js/jquery.dataTables.min.js"></script>
+    <script type="text/javascript" src="https://code.jquery.com/ui/1.13.1/jquery-ui.js"></script>
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/lightbox2/2.11.5/js/lightbox.min.js"></script>
+
+    <script>
+        let pageSection = 'Planning';
+        let siteUrl = '';
+        let basePath = '/cas';
+
+        
+    </script>
+</body>
+
+</html>
