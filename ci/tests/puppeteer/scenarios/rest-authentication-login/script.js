@@ -1,7 +1,7 @@
 
 const cas = require("../../cas.js");
 const express = require("express");
-const { parse } = require('basic-auth');
+const { parse } = require("basic-auth");
 
 (async () => {
     const authenticate = (req, res, next) => {
