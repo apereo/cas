@@ -47,7 +47,7 @@ services:
       - "host.docker.internal:host-gateway"
       - "localhost:host-gateway"
   dev-wallet:
-    image: waltid/waltid-dev-wallet:0.23.0
+    image: waltid/waltid-dev-wallet:0.23.1
     container_name: waltid-dev-wallet
     restart: unless-stopped
     depends_on:
