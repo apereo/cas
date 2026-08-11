@@ -14,7 +14,7 @@ services:
       retries: 20
 
   wallet-api:
-    image: waltid/wallet-api:0.23.0
+    image: waltid/wallet-api:0.23.1
     container_name: waltid-wallet-api
     restart: unless-stopped
     depends_on:
