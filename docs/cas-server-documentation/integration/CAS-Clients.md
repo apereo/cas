@@ -24,6 +24,9 @@ supporting a number of software platforms and products have been developed.
 ## Other Clients
 
 Other unofficial or incubating CAS clients may be [found here](https://wiki.jasig.org/display/CASC).
+
+* [Apache APISIX CAS Authentication Plugin](https://apisix.apache.org/docs/apisix/plugins/cas-auth/)
+
 Given the above projects are unofficial and not under direct maintenance of CAS,
 their availability and accuracy may vary.
 
