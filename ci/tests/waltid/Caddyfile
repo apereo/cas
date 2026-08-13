@@ -1,0 +1,13 @@
+{
+    auto_https off
+    admin off
+}
+
+:7001 {
+    reverse_proxy http://wallet-api:7001
+}
+
+:7104 {
+    reverse_proxy /wallet-api/* http://wallet-api:7001
+    reverse_proxy http://dev-wallet:7104
+}

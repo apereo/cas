@@ -1,0 +1,59 @@
+{
+  "dependencies": "oidc-vc",
+  "conditions": {
+    "docker": "true"
+  },
+  "properties": [
+    "--logging.level.org.springframework.web=warn",
+
+    "--cas.server.tomcat.http[0].enabled=true",
+    "--cas.server.tomcat.http[0].port=8080",
+
+    "--cas.server.name=http://host.docker.internal:8080",
+    "--cas.server.prefix=${cas.server.name}/cas",
+
+    "--cas.authn.attribute-repository.stub.attributes.given_name=CAS",
+    "--cas.authn.attribute-repository.stub.attributes.family_name=User",
+    "--cas.authn.attribute-repository.stub.attributes.email=casuser@example.org",
+    "--cas.authn.attribute-repository.stub.attributes.student_id=S12345",
+    "--cas.authn.attribute-repository.stub.attributes.active=true",
+    "--cas.authn.attribute-repository.stub.attributes.score=95.5",
+    "--cas.authn.attribute-repository.stub.attributes.roles=admin,user",
+
+    "--cas.authn.oidc.core.accepted-issuers-pattern=.*",
+    "--cas.authn.oidc.core.issuer=http://host.docker.internal:8080/cas/oidc",
+    "--cas.authn.oidc.jwks.file-system.jwks-file=file:${#systemProperties['java.io.tmpdir']}/keystore.jwks",
+
+    "--cas.service-registry.core.init-from-json=true",
+    "--cas.service-registry.json.location=file:${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/services",
+
+    "--cas.authn.oidc.vc.issuer.credential-configurations.myorg.format=DC_SD_JWT",
+    "--cas.authn.oidc.vc.issuer.credential-configurations.myorg.scope=SystemCredential",
+    "--cas.authn.oidc.vc.issuer.credential-configurations.myorg.claims.roles.mandatory=true",
+    "--cas.authn.oidc.vc.issuer.credential-configurations.myorg.claims.roles.disclosable=false",
+    "--cas.authn.oidc.vc.issuer.credential-configurations.myorg.claims.score.mandatory=true",
+    "--cas.authn.oidc.vc.issuer.credential-configurations.myorg.claims.score.disclosable=true",
+    "--cas.authn.oidc.vc.issuer.credential-configurations.myorg.claims.given_name.mandatory=true",
+    "--cas.authn.oidc.vc.issuer.credential-configurations.myorg.claims.given_name.disclosable=false",
+    "--cas.authn.oidc.vc.issuer.credential-configurations.myorg.claims.given_name.display[0].name=MyGivenName",
+    "--cas.authn.oidc.vc.issuer.credential-configurations.myorg.claims.given_name.display[0].locale=en-US",
+    "--cas.authn.oidc.vc.issuer.credential-configurations.myorg.claims.given_name.display[1].name=Vorname",
+    "--cas.authn.oidc.vc.issuer.credential-configurations.myorg.claims.given_name.display[1].locale=de-DE",
+    "--cas.authn.oidc.vc.issuer.credential-configurations.myorg.claims.family_name.mandatory=true",
+    "--cas.authn.oidc.vc.issuer.credential-configurations.myorg.claims.family_name.disclosable=false",
+    "--cas.authn.oidc.vc.issuer.credential-configurations.myorg.claims.email.mandatory=false",
+    "--cas.authn.oidc.vc.issuer.credential-configurations.myorg.claims.email.disclosable=false",
+    "--cas.authn.oidc.vc.issuer.credential-configurations.myorg.claims.student_id.mandatory=true",
+    "--cas.authn.oidc.vc.issuer.credential-configurations.myorg.claims.student_id.disclosable=false",
+
+    "--cas.authn.oidc.vc.issuer.credential-configurations.employee.format=JWT_VC_JSON_LD",
+    "--cas.authn.oidc.vc.issuer.credential-configurations.employee.scope=EmployeeCredential",
+    "--cas.authn.oidc.vc.issuer.credential-configurations.employee.claims.roles.mandatory=true",
+    "--cas.authn.oidc.vc.issuer.credential-configurations.employee.claims.given_name.mandatory=true",
+    "--cas.authn.oidc.vc.issuer.credential-configurations.employee.claims.family_name.mandatory=true",
+    "--cas.authn.oidc.vc.issuer.credential-configurations.employee.claims.student_id.mandatory=true",
+    "--cas.authn.oidc.vc.issuer.credential-configurations.employee.claims.email.mandatory=true"
+  ],
+  "initScript": "${PWD}/ci/tests/httpbin/run-httpbin-server.sh,${PWD}/ci/tests/waltid/run-waltid-server.sh"
+}
+

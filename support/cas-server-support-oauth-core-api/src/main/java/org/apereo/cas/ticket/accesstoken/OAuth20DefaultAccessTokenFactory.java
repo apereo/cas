@@ -13,6 +13,7 @@ import org.apereo.cas.ticket.ExpirationPolicy;
 import org.apereo.cas.ticket.ExpirationPolicyBuilder;
 import org.apereo.cas.ticket.Ticket;
 import org.apereo.cas.ticket.UniqueTicketIdGenerator;
+import org.apereo.cas.ticket.code.OAuth20Code;
 import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.ticket.tracking.TicketTrackingPolicy;
 import org.apereo.cas.token.JwtBuilder;
@@ -59,7 +60,7 @@ public class OAuth20DefaultAccessTokenFactory implements OAuth20AccessTokenFacto
                                      final Authentication authentication,
                                      final Ticket ticketGrantingTicket,
                                      final Collection<String> scopes,
-                                     final String exchangedToken,
+                                     final Ticket token,
                                      final String clientId,
                                      final Map<String, Map<String, Object>> requestClaims,
                                      final OAuth20ResponseTypes responseType,
@@ -76,9 +77,20 @@ public class OAuth20DefaultAccessTokenFactory implements OAuth20AccessTokenFacto
         }
         val expirationPolicyToUse = determineExpirationPolicyForService(registeredService);
         val accessTokenId = generateAccessTokenId(service, authentication);
+        val exchangedToken = Optional.ofNullable(token).map(Ticket::getId).orElse(null);
+
+        val authorizationDetails = Optional.ofNullable(token)
+            .filter(OAuth20Code.class::isInstance)
+            .map(OAuth20Code.class::cast)
+            .filter(code -> Objects.nonNull(code.getAuthorizationDetails()))
+            .filter(code -> !code.getAuthorizationDetails().isEmpty())
+            .map(OAuth20Code::getAuthorizationDetails)
+            .orElseGet(ArrayList::new);
+
         val accessToken = new OAuth20DefaultAccessToken(accessTokenId, service, authentication,
             expirationPolicyToUse, ticketGrantingTicket, exchangedToken, scopes,
-            clientId, requestClaims, responseType, grantType);
+            clientId, requestClaims, responseType, grantType, authorizationDetails);
+        
         FunctionUtils.doIfNotNull(service, _ -> accessToken.setTenantId(service.getTenant()));
         descendantTicketsTrackingPolicy.trackTicket(ticketGrantingTicket, accessToken);
         return accessToken;

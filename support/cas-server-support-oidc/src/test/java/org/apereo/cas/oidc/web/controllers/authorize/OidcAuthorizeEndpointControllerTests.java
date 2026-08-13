@@ -12,6 +12,7 @@ import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.apereo.cas.util.CollectionUtils;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
+import org.jspecify.annotations.Nullable;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
@@ -25,7 +26,6 @@ import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.mock.web.MockHttpSession;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.web.servlet.MvcResult;
-import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.web.servlet.view.RedirectView;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
@@ -117,8 +117,7 @@ class OidcAuthorizeEndpointControllerTests {
 
         private MvcResult performRequest(final MockHttpServletRequest request,
                                          final MockHttpServletResponse response) throws Exception {
-            val builder = MockMvcRequestBuilders
-                .request(HttpMethod.valueOf(request.getMethod()), request.getRequestURI())
+            val builder = request(HttpMethod.valueOf(request.getMethod()), request.getRequestURI())
                 .with(mockRequest -> {
                     mockRequest.setScheme(request.getScheme());
                     mockRequest.setServerName(request.getServerName());
@@ -184,7 +183,7 @@ class OidcAuthorizeEndpointControllerTests {
             }
         }
 
-        private static String getRedirectUrl(final MvcResult result) {
+        private static @Nullable String getRedirectUrl(final MvcResult result) {
             val redirectedUrl = result.getResponse().getRedirectedUrl();
             if (StringUtils.isNotBlank(redirectedUrl)) {
                 return redirectedUrl;
@@ -201,7 +200,7 @@ class OidcAuthorizeEndpointControllerTests {
             return null;
         }
 
-        private static boolean isInternalCasRedirect(final String redirectUrl) {
+        private static boolean isInternalCasRedirect(final @Nullable String redirectUrl) {
             return StringUtils.isNotBlank(redirectUrl)
                 && redirectUrl.startsWith("https://sso.example.org/cas/");
         }

@@ -25,6 +25,12 @@ The following capabilities are in place:
 - Pre-authorized code flows may be used to obtain issuance-scoped access tokens.
 - Access tokens issued for verifiable credential flows may carry authorization context for one or more credential configurations.
 - Proofs may be validated to ensure possession of holder key material and to prevent replay.
+ 
+Supported formats are:
+
+- `dc+sd-jwt`
+- `jwt_vc_json`
+- `jwt_vc_json-ld`
 
 ## Overview
 
@@ -80,6 +86,33 @@ The endpoint body is expected as:
   }
 }
 ```
+ 
+### Batch Credential Endpoint
+
+Issues a list of verifiable credentials to the wallet once the access token, proof, and requested
+credential configurations have been validated.
+
+```bash
+POST /oidc/oidcVcBatchCredential
+```
+
+This endpoint expects a bearer access token.
+
+...with the following body:
+
+```json
+{
+  "credential_requests": [
+    {
+      "credential_configuration_id": "UniversityDegreeCredential",
+      "proof": {
+        "proof_type": "jwt",
+        "jwt": "eyJ0eXAiOiJvcGVuaWQ0dmNpL..."
+      }
+    }
+  ]
+}
+```
 
 ### Nonce Endpoint
 
@@ -93,7 +126,7 @@ POST /oidc/oidcVcNonce
 This endpoint typically returns:
 
 - `c_nonce`
-- `c_nonce_expires_at`
+- `c_nonce_expires_in`
 
 ### Credential Offer Endpoint
 
@@ -143,7 +176,7 @@ POST /oidc/token
 
 When used for verifiable credential issuance, this endpoint may:
 
-- Accept the pre-authorized_code grant.
+- Accept the `pre-authorized_code` grant.
 - Require a `tx_code`.
 - Return a `c_nonce`.
 - Produce an access token that is scoped to credential issuance.
@@ -178,6 +211,17 @@ In practical terms, the flow is:
 - CAS consumes it so the same proof cannot be replayed.
 
 The token endpoint issues the nonce. The credential endpoint enforces it while validating the proof.
+
+## Authorization Code Flow
+
+The Authorization Code Flow allows a wallet to obtain authorization to receive one or more verifiable credentials 
+through a standard OAuth 2.0/OpenID Connect authorization process. Unlike the Pre-Authorized Code Flow, where a 
+trusted backend initiates the issuance transaction, the Authorization Code Flow is wallet-driven. 
+The wallet begins by sending an authorization request to the Credential Issuer’s authorization endpoint, 
+requesting one or more credential configurations using the `authorization_details` parameter. The request may 
+also include the `openid` scope if the wallet wishes to authenticate the end-user and receive an ID Token 
+as part of the token response. The wallet exchanges the authorization code at the token endpoint to obtain 
+an access token that is specifically authorized for credential issuance. 
 
 ## Pre-Authorized Code Flow
 

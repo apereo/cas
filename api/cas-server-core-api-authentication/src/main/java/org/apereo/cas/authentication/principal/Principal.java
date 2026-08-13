@@ -5,6 +5,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import com.google.errorprone.annotations.CanIgnoreReturnValue;
 import lombok.val;
+import org.jspecify.annotations.Nullable;
 
 /**
  * Generic concept of an authenticated thing. Examples include a person or a
@@ -48,7 +49,7 @@ public interface Principal extends Serializable {
      * @return the attribute
      */
     @JsonIgnore
-    default <T> T getSingleValuedAttribute(final String name, final Class<T> expectedType) {
+    default <T> @Nullable T getSingleValuedAttribute(final String name, final Class<T> expectedType) {
         if (containsAttribute(name)) {
             val values = getAttributes().get(name);
             return values

@@ -1,12 +1,11 @@
 
 const cas = require("../../cas.js");
 const express = require("express");
-
-const auth = require("basic-auth");
+const { parse } = require("basic-auth");
 
 (async () => {
     const authenticate = (req, res, next) => {
-        const credentials = auth(req);
+        const credentials = parse(req.headers.authorization);
         if (!credentials || credentials.name !== "restapi" || credentials.pass !== "YdCP05HvuhOH^*Z") {
             res.set("WWW-Authenticate", "Basic realm=\"Authentication Required\"");
             res.status(401).send("Authentication Required");
