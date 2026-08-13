@@ -4,7 +4,10 @@ import module java.base;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
+import lombok.experimental.SuperBuilder;
+import lombok.extern.jackson.Jacksonized;
 
 /**
  * This is {@link OidcVerifiableCredentialResponse}.
@@ -15,6 +18,9 @@ import lombok.Setter;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @Getter
 @Setter
+@SuperBuilder
+@NoArgsConstructor
+@Jacksonized
 public class OidcVerifiableCredentialResponse implements Serializable {
     @Serial
     private static final long serialVersionUID = -8698053273429306216L;
@@ -24,10 +30,4 @@ public class OidcVerifiableCredentialResponse implements Serializable {
 
     @JsonProperty("credential")
     private String credential;
-
-    @JsonProperty("c_nonce")
-    private String cNonce;
-
-    @JsonProperty("c_nonce_expires_at")
-    private Long cNonceExpiresAt;
 }

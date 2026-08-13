@@ -12,7 +12,9 @@ import org.apereo.cas.ticket.Ticket;
 import org.apereo.cas.ticket.accesstoken.OAuth20AccessToken;
 import org.apereo.cas.ticket.refreshtoken.OAuth20RefreshToken;
 import lombok.RequiredArgsConstructor;
+import lombok.val;
 import org.apache.commons.lang3.StringUtils;
+import org.jspecify.annotations.Nullable;
 import org.pac4j.core.context.WebContext;
 import org.springframework.web.servlet.ModelAndView;
 
@@ -48,14 +50,23 @@ public abstract class BaseOAuth20AuthorizationResponseBuilder<T extends OAuth20C
     public Optional<OAuth20AuthorizationRequest.OAuth20AuthorizationRequestBuilder> toAuthorizationRequest(
         final WebContext context, final Authentication authentication,
         final Service service, final OAuthRegisteredService registeredService) {
-        return Optional.of(OAuth20AuthorizationRequest.builder()
-            .clientId(configurationContext.getRequestParameterResolver()
-                .resolveRequestParameter(context, OAuth20Constants.CLIENT_ID).map(String::valueOf).orElse(StringUtils.EMPTY))
+        return Optional.of(OAuth20AuthorizationRequest
+            .builder()
             .url(context.getRequestURL())
-            .responseType(configurationContext.getRequestParameterResolver()
-                .resolveRequestParameter(context, OAuth20Constants.RESPONSE_TYPE).map(String::valueOf).orElse(StringUtils.EMPTY))
-            .grantType(configurationContext.getRequestParameterResolver()
-                .resolveRequestParameter(context, OAuth20Constants.GRANT_TYPE).map(String::valueOf).orElse(StringUtils.EMPTY)));
+            .registeredService(registeredService)
+            .codeChallenge(resolveRequestParameter(context, OAuth20Constants.CODE_CHALLENGE))
+            .issuerState(resolveRequestParameter(context, OAuth20Constants.ISSUER_STATE))
+            .authorizationDetails(resolveRequestParameter(context, OAuth20Constants.AUTHORIZATION_DETAILS))
+            .clientId(resolveRequestParameter(context, OAuth20Constants.CLIENT_ID))
+            .responseType(resolveRequestParameter(context, OAuth20Constants.RESPONSE_TYPE))
+            .grantType(resolveRequestParameter(context, OAuth20Constants.GRANT_TYPE)));
+    }
+
+    private String resolveRequestParameter(final WebContext context, final String parameterName) {
+        val requestParameterResolver = configurationContext.getRequestParameterResolver();
+        return requestParameterResolver.resolveRequestParameter(context, parameterName)
+            .map(String::valueOf)
+            .orElse(StringUtils.EMPTY);
     }
 
     protected OAuth20AccessToken resolveAccessToken(final Ticket givenAccessToken) {
@@ -66,7 +77,7 @@ public abstract class BaseOAuth20AuthorizationResponseBuilder<T extends OAuth20C
         return resolveToken(givenRefreshToken, OAuth20RefreshToken.class);
     }
 
-    protected <U extends Ticket> U resolveToken(final Ticket token, final Class<U> clazz) {
+    protected <U extends Ticket> @Nullable U resolveToken(final Ticket token, final Class<U> clazz) {
         return token.isStateless()
             ? configurationContext.getTicketRegistry().getTicket(token.getId(), clazz)
             : clazz.cast(token);

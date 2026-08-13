@@ -55,6 +55,7 @@ dependencies {
     implementation libraries.pac4jcas
     implementation libraries.springsecurityconfig
     implementation libraries.springsecurityweb
+    implementation libraries.authlete
 
     api libraries.jose4j
     api libraries.nimbus

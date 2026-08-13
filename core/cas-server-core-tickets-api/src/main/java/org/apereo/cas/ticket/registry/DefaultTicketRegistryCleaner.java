@@ -76,7 +76,9 @@ public class DefaultTicketRegistryCleaner implements TicketRegistryCleaner {
                 .map(ticket -> executor.submit(() -> cleanTicket(ticket)))
                 .mapToInt(Unchecked.toIntFunction(Future::get))
                 .sum();
-            LOGGER.info("[{}] expired tickets removed.", ticketsDeleted);
+            if (ticketsDeleted > 0) {
+                LOGGER.info("[{}] expired tickets removed.", ticketsDeleted);
+            }
             return ticketsDeleted;
         }
     }
