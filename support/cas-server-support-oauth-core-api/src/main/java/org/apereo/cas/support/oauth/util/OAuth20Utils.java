@@ -106,7 +106,7 @@ public class OAuth20Utils {
      * @param clazz           the clazz
      * @return the registered o auth service by client id
      */
-    public static <T extends OAuthRegisteredService> T getRegisteredOAuthServiceByClientId(
+    public static <T extends OAuthRegisteredService> @Nullable T getRegisteredOAuthServiceByClientId(
         final ServicesManager servicesManager, final String clientId, final Class<T> clazz) {
         return FunctionUtils.doIfNotBlank(clientId,
             () -> {

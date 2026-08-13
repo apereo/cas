@@ -69,6 +69,7 @@ public class OAuth20DefaultTokenGenerator implements OAuth20TokenGenerator {
             .refreshToken(accessAndRefreshTokens.refreshToken())
             .grantType(tokenRequestContext.getGrantType())
             .responseType(tokenRequestContext.getResponseType())
+            .token(tokenRequestContext.getToken())
             .build();
     }
 
@@ -208,11 +209,12 @@ public class OAuth20DefaultTokenGenerator implements OAuth20TokenGenerator {
         val ticketGrantingTicket = tokenRequestContext.getTicketGrantingTicket() == null || tokenRequestContext.getTicketGrantingTicket().isExpired()
             ? null : tokenRequestContext.getTicketGrantingTicket();
         LOGGER.debug("Creating access token for client id [{}] and authentication [{}]", clientId, authentication);
-        return accessTokenFactory.create(tokenRequestContext.getService(),
+        return accessTokenFactory.create(
+            tokenRequestContext.getService(),
             authentication,
             ticketGrantingTicket,
             tokenRequestContext.getScopes(),
-            Optional.ofNullable(tokenRequestContext.getToken()).map(Ticket::getId).orElse(null),
+            tokenRequestContext.getToken(),
             clientId,
             tokenRequestContext.getClaims(),
             tokenRequestContext.getResponseType(),
@@ -246,7 +248,7 @@ public class OAuth20DefaultTokenGenerator implements OAuth20TokenGenerator {
             exchangedAuthentication.build(),
             ticketGrantingTicket,
             scopes,
-            accessToken.getId(),
+            accessToken,
             accessToken.getClientId(),
             accessToken.getClaims(),
             accessToken.getResponseType(),

@@ -33,11 +33,6 @@ configurations.configureEach {
         if (!dependencyUpdates) {
             eachDependency { DependencyResolveDetails details ->
                 def requested = details.requested
-                if (requested.group == 'org.bouncycastle') {
-                    if (requested.name != 'bcprov-ext-jdk18on') {
-                        details.useVersion(libs.bcprov.jdk18on.get().version)
-                    }
-                }
                 if (requested.group == 'gnu-getopt') {
                     details.useTarget group: 'gnu.getopt', name: 'java-getopt', version: requested.version
                 }

@@ -36,7 +36,7 @@ public interface OAuth20AccessTokenFactory extends TicketFactory {
                               Authentication authentication,
                               @Nullable Ticket ticketGrantingTicket,
                               Collection<String> scopes,
-                              @Nullable String token,
+                              @Nullable Ticket token,
                               String clientId,
                               Map<String, Map<String, Object>> requestClaims,
                               OAuth20ResponseTypes responseType,

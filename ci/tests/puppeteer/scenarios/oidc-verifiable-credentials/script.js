@@ -54,7 +54,7 @@ async function createPublicKey() {
             "Content-Type": "application/json"
         }, (res) => {
             assert(res.data.c_nonce !== undefined);
-            assert(res.data.c_nonce_expires_at !== undefined);
+            assert(res.data.c_nonce_expires_in !== undefined);
             return res.data.c_nonce;
         }, (error) => {
             throw `Operation failed: ${error}`;
@@ -84,7 +84,6 @@ async function createPublicKey() {
             assert(res.data.credential_issuer === "https://localhost:8443/cas/oidc");
             assert(res.data.credential_configuration_ids[0] === "myorg");
             assert(res.data.grants["urn:ietf:params:oauth:grant-type:pre-authorized_code"]["pre-authorized_code"] !== undefined);
-            assert(res.data.grants["urn:ietf:params:oauth:grant-type:pre-authorized_code"]["tx_code_required"] === true);
             assert(res.data.grants["urn:ietf:params:oauth:grant-type:pre-authorized_code"]["tx_code"] !== undefined);
             assert(res.data.grants["urn:ietf:params:oauth:grant-type:pre-authorized_code"]["issuer_state"] !== undefined);
             return {
@@ -98,7 +97,7 @@ async function createPublicKey() {
     await cas.log("Now fetching access token for pre-authorized code...");
     
     let params = "grant_type=urn:ietf:params:oauth:grant-type:pre-authorized_code&&scope=openid";
-    params += `&pre-authorized_code=${offer.preAuthorizedCode}&tx_code=${offer.txCode}`;
+    params += `&pre-authorized_code=${offer.preAuthorizedCode}&tx_code=${payload.transactionId}`;
     let url = `https://localhost:8443/cas/oidc/token?${params}`;
     await cas.log(`Calling ${url}`);
 
@@ -108,7 +107,7 @@ async function createPublicKey() {
     }, (res) => {
         assert(res.data.access_token !== undefined);
         assert(res.data.c_nonce !== undefined);
-        assert(res.data.c_nonce_expires_at !== undefined);
+        assert(res.data.c_nonce_expires_in !== undefined);
         return res.data.access_token;
     }, (error) => {
         throw `Operation failed: ${error}`;
@@ -132,10 +131,13 @@ async function createPublicKey() {
     }, 200, credentialRequest));
     await cas.log(result);
     assert(result.credential !== undefined);
-    assert(result.format === "vc+sd-jwt");
+    assert(result.format === "dc+sd-jwt");
 
-    const decoded = await cas.decodeJwt(result.credential);
-    assert(decoded.sub === "client");
+    const parts = result.credential.split("~");
+    const issuerJwt = parts[0];
+    const decoded = await cas.decodeJwt(issuerJwt);
+    assert(decoded !== undefined && decoded !== null);
+    assert(decoded.sub === "casuser");
     assert(decoded.email === "casuser@example.org");
     assert(decoded.given_name === "CAS");
     assert(decoded.family_name === "User");
@@ -143,5 +145,5 @@ async function createPublicKey() {
     assert(decoded.roles.length === 2);
     assert(decoded.roles.includes("user"));
     assert(decoded.roles.includes("admin"));
-    assert(decoded.student_id === "S12345");
+    assert(decoded.student_id === undefined);
 })();
