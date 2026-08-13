@@ -198,6 +198,22 @@ public interface OidcConstants {
      */
     String VC_CREDENTIAL_URL = "oidcVcCredential";
     /**
+     * OIDC VC presentation request path segment.
+     */
+    String VC_PRESENTATION_REQUEST_URL = "oidcVcPresentationRequest";
+    /**
+     * OIDC VC presentation response path segment.
+     */
+    String VC_PRESENTATION_RESPONSE_URL = "oidcVcPresentationResponse";
+    /**
+     * Oidc VC batch credential url path segment.
+     */
+    String VC_BATCH_CREDENTIAL_URL = "oidcVcBatchCredential";
+    /**
+     * Oidc VC credential type url path segment.
+     */
+    String VC_CREDENTIAL_TYPE_URL = "oidcVcCredentialType";
+    /**
      * Oidc VC credential offer url path segment.
      */
     String VC_CREDENTIAL_OFFER_URL = "oidcVcCredentialOffer";
@@ -328,7 +344,7 @@ public interface OidcConstants {
     /**
      * Verifiable credentials nonce expiration.
      */
-    String C_NONCE_EXPIRES_AT = "c_nonce_expires_at";
+    String C_NONCE_EXPIRES_IN = "c_nonce_expires_in";
     /**
      * Unsupported parameter error.
      */

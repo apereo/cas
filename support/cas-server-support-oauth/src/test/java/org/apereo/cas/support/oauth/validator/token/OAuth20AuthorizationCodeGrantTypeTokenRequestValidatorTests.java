@@ -72,9 +72,9 @@ class OAuth20AuthorizationCodeGrantTypeTokenRequestValidatorTests {
             val principal = PrincipalFactoryUtils.newPrincipalFactory().createPrincipal("casuser");
             val registeredService = addRegisteredService(RegisteredServiceTestUtils.CONST_TEST_URL3, UUID.randomUUID().toString());
             val code = addCode(principal, registeredService);
-            val at1 = addAccessToken(principal, registeredService, code.getId());
+            val at1 = addAccessToken(principal, registeredService, code);
             assertNotNull(at1);
-            val at2 = addAccessToken(principal, registeredService, code.getId());
+            val at2 = addAccessToken(principal, registeredService, code);
             assertNotNull(at2);
             code.markTicketExpired();
 

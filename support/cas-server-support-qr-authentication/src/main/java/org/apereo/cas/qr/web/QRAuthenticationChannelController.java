@@ -89,6 +89,6 @@ public class QRAuthenticationChannelController {
 
     private void convertAndSend(final String endpoint, final Map<String, ?> data) {
         LOGGER.trace("Sending [{}] to endpoint [{}]", data, endpoint);
-        messageTemplate.convertAndSend(endpoint, (Object) data);
+        messageTemplate.convertAndSend(endpoint, data);
     }
 }

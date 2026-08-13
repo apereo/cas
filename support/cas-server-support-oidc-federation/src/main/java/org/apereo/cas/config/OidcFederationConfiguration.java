@@ -5,6 +5,7 @@ import org.apereo.cas.audit.AuditableExecution;
 import org.apereo.cas.authentication.principal.ServiceFactory;
 import org.apereo.cas.authentication.principal.WebApplicationService;
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.configuration.model.support.oidc.federation.OidcFederationRole;
 import org.apereo.cas.multitenancy.TenantExtractor;
 import org.apereo.cas.oidc.discovery.OidcServerDiscoverySettings;
 import org.apereo.cas.oidc.federation.chain.OidcFederationDefaultTrustChainResolver;
@@ -58,7 +59,8 @@ class OidcFederationConfiguration {
     @Bean
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @ConditionalOnMissingBean(name = "oidcFederationSubordinateRepository")
-    public OidcFederationSubordinateRepository oidcFederationSubordinateRepository(final CasConfigurationProperties casProperties) {
+    public OidcFederationSubordinateRepository oidcFederationSubordinateRepository(
+        final CasConfigurationProperties casProperties) {
         return new OidcFederationSubordinateRepository(casProperties.getAuthn().getOidc());
     }
 
@@ -188,11 +190,15 @@ class OidcFederationConfiguration {
         final OidcIssuerService oidcIssuerService,
         final CasConfigurationProperties casProperties) {
         
+        val role = casProperties.getAuthn().getOidc().getFederation().getRole();
+        Objects.requireNonNull(role, () -> "Federation role is not defined in CAS configuration. "
+            + "You MUST configure the federation role via cas.authn.oidc.federation.role=... where the value "
+            + "may be one of " + Arrays.toString(OidcFederationRole.values()));
+
         val baseEndpoint = getOidcBaseEndpoint(oidcIssuerService, casProperties);
         val endpoints = new ArrayList<String>();
         endpoints.add(baseEndpoint + '/' + WELL_KNOWN_OPENID_FEDERATION_URL);
 
-        val role = casProperties.getAuthn().getOidc().getFederation().getRole();
         if (role.isTrustAnchorOrIntermediate()) {
             endpoints.add(baseEndpoint + FETCH_FEDERATION_URL);
             endpoints.add(baseEndpoint + LIST_FEDERATION_URL);

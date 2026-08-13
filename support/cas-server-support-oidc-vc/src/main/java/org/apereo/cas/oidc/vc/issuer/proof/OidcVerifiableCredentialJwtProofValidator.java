@@ -15,6 +15,7 @@ import com.nimbusds.jose.jwk.RSAKey;
 import com.nimbusds.jwt.SignedJWT;
 import lombok.RequiredArgsConstructor;
 import lombok.val;
+import org.jspecify.annotations.Nullable;
 
 /**
  * This is {@link OidcVerifiableCredentialJwtProofValidator}.
@@ -40,24 +41,25 @@ public class OidcVerifiableCredentialJwtProofValidator implements OidcVerifiable
         verifyAlgorithm(signedJwt, holderJwk);
         verifyAudience(signedJwt);
         verifyFreshness(signedJwt);
-        verifyNonce(signedJwt);
+        val nonce = verifyNonce(signedJwt);
 
         val claims = signedJwt.getJWTClaimsSet();
         return new VerifiableCredentialProofResult(
             "jwt",
             claims.getJWTID(),
             claims.getSubject(),
-            holderJwk
+            holderJwk,
+            nonce
         );
     }
 
-    protected void verifyNonce(final SignedJWT signedJwt) throws Exception {
+    protected @Nullable String verifyNonce(final SignedJWT signedJwt) throws Exception {
         val claims = signedJwt.getJWTClaimsSet();
         val nonce = claims.getStringClaim("nonce");
         if (nonce == null || !oidcVerifiableCredentialNonceService.exists(nonce)) {
             throw new IllegalArgumentException("Proof nonce %s is invalid or missing".formatted(nonce));
         }
-        oidcVerifiableCredentialNonceService.remove(nonce);
+        return nonce;
     }
 
     protected void verifySignature(final SignedJWT signedJwt, final JWK holderJwk) throws Exception {

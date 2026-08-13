@@ -122,6 +122,18 @@ public interface OAuth20Constants {
      * The approval prompt.
      */
     String BYPASS_APPROVAL_PROMPT = "bypass_approval_prompt";
+
+    /**
+     * The authorization details parameter.
+     */
+    String AUTHORIZATION_DETAILS = "authorization_details";
+
+    /**
+     * The issuer_state is an opaque string value created by the Credential Issuer. It acts as a session identifier
+     * to bind the incoming authorization request back to a specific backend context or user session established during an earlier step.
+     */
+    String ISSUER_STATE = "issuer_state";
+
     /**
      * Parameter to indicate the approval key
      * when checking for scope consent.

@@ -1,0 +1,9 @@
+{
+  "@class" : "org.apereo.cas.services.OidcRegisteredService",
+  "clientId": "client",
+  "serviceId" : "^https://localhost:9859/anything/sample1",
+  "name": "Sample",
+  "id": 1,
+  "bypassApprovalPrompt": true,
+  "scopes" : [ "java.util.HashSet", ["openid"]]
+}
