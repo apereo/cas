@@ -108,7 +108,7 @@ public class OidcVerifiableCredentialOfferEndpointController extends BaseOAuth20
         }
         val clientId = profile.getAttribute(OAuth20Constants.CLIENT_ID).toString();
         val offer = credentialOfferService.create(clientId, request.principal(), request.credentialConfigurationIds());
-        val txCode = offer.getGrants().getPreAuthorizedCodeGrant().getTxCode();
+        val txCode = offer.getGrants().getPreAuthorizedCodeGrant().getTransactionCode().getValue();
         val offerUri = getConfigurationContext().getCasProperties().getServer().getPrefix()
             + '/' + OidcConstants.BASE_OIDC_URL + '/' + OidcConstants.VC_CREDENTIAL_OFFER_URL
             + '/' + txCode;

@@ -9,7 +9,6 @@ import org.apereo.cas.support.oauth.util.OAuth20Utils;
 import org.apereo.cas.ticket.Ticket;
 import org.apereo.cas.ticket.TransientSessionTicket;
 import org.apereo.cas.ticket.TransientSessionTicketFactory;
-import org.apereo.cas.util.RandomUtils;
 import org.apereo.cas.util.function.FunctionUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -25,8 +24,6 @@ import org.jspecify.annotations.Nullable;
 @RequiredArgsConstructor
 @Slf4j
 public class OidcVerifiableCredentialDefaultTransactionService implements OidcVerifiableCredentialTransactionService {
-    private static final int PRE_AUTHORIZED_CODE_LENGTH = 12;
-    
     private final OidcConfigurationContext configurationContext;
 
     @Override
@@ -35,22 +32,39 @@ public class OidcVerifiableCredentialDefaultTransactionService implements OidcVe
             clientId, OidcRegisteredService.class);
         RegisteredServiceAccessStrategyUtils.ensureServiceAccessIsAllowed(registeredService);
         val transientFactory = (TransientSessionTicketFactory) configurationContext.getTicketFactory().get(TransientSessionTicket.class);
+
+        val codeProperties = new LinkedHashMap<>();
+        codeProperties.put("principalId", principalId);
+        codeProperties.put(OAuth20Constants.CLIENT_ID, clientId);
+        codeProperties.put("credentialConfigurationIds", credentialConfigurationIds);
+        
         val properties = new LinkedHashMap<>();
         properties.put("issuerState", UUID.randomUUID().toString());
         properties.put("principalId", principalId);
         properties.put(OAuth20Constants.CLIENT_ID, clientId);
         properties.put("credentialConfigurationIds", credentialConfigurationIds);
-        properties.put("preAuthorizedCode", RandomUtils.randomNumeric(PRE_AUTHORIZED_CODE_LENGTH));
         
         return FunctionUtils.doUnchecked(() -> {
-            val ticket = transientFactory.create(properties);
-            return configurationContext.getTicketRegistry().addTicket(ticket);
+            val preAuthorizationCode = transientFactory.create(codeProperties);
+            val transaction = transientFactory.create(properties);
+
+            transaction.putProperty("preAuthorizedCode", preAuthorizationCode.getId());
+            preAuthorizationCode.putProperty("transactionId", transaction.getId());
+
+            configurationContext.getTicketRegistry().addTicket(preAuthorizationCode);
+            return configurationContext.getTicketRegistry().addTicket(transaction);
         });
     }
 
     @Override
     public @Nullable Ticket fetch(final String transactionId) {
         val ticket = (TransientSessionTicket) configurationContext.getTicketRegistry().getTicket(transactionId);
+        return ticket != null && !ticket.isExpired() ? ticket : null;
+    }
+
+    @Override
+    public @Nullable Ticket fetchPreAuthorizationCode(final String preAuthorizationCode) {
+        val ticket = (TransientSessionTicket) configurationContext.getTicketRegistry().getTicket(preAuthorizationCode);
         return ticket != null && !ticket.isExpired() ? ticket : null;
     }
 }

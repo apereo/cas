@@ -110,7 +110,7 @@ class DynamoDbTicketRegistryTests extends BaseTicketRegistryTests {
             servicesManager, TicketTrackingPolicy.noOp())
             .create(RegisteredServiceTestUtils.getService(),
                 RegisteredServiceTestUtils.getAuthentication(), new MockTicketGrantingTicket("casuser"),
-                CollectionUtils.wrapSet("1", "2"), code.getId(), "clientId1234567", new HashMap<>(),
+                CollectionUtils.wrapSet("1", "2"), code, "clientId1234567", new HashMap<>(),
                 OAuth20ResponseTypes.CODE, OAuth20GrantTypes.AUTHORIZATION_CODE);
         newTicketRegistry.addTicket(token);
         assertSame(1, newTicketRegistry.deleteTicket(token.getId()), "Wrong ticket count");

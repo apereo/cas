@@ -8,6 +8,7 @@ import org.apereo.cas.support.oauth.OAuth20ResponseTypes;
 import org.apereo.cas.ticket.BaseOAuth20Token;
 import org.apereo.cas.ticket.ExpirationPolicy;
 import org.apereo.cas.ticket.Ticket;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonSetter;
 import com.fasterxml.jackson.annotation.Nulls;
 import lombok.Getter;
@@ -33,6 +34,10 @@ public class OAuth20DefaultAccessToken extends BaseOAuth20Token implements OAuth
     @Getter
     private String token;
 
+    @Getter
+    @JsonInclude(JsonInclude.Include.NON_EMPTY)
+    private List<? extends Serializable> authorizationDetails;
+    
     public OAuth20DefaultAccessToken(final String id,
                                      final Service service,
                                      final Authentication authentication,
@@ -47,12 +52,14 @@ public class OAuth20DefaultAccessToken extends BaseOAuth20Token implements OAuth
                                      @JsonSetter(nulls = Nulls.AS_EMPTY)
                                      final Map<String, Map<String, Object>> requestClaims,
                                      final OAuth20ResponseTypes responseType,
-                                     final OAuth20GrantTypes grantType) {
+                                     final OAuth20GrantTypes grantType,
+                                     final List<? extends Serializable> authorizationDetails) {
         super(id, service, authentication, expirationPolicy,
             ticketGrantingTicket, scopes,
             codeChallenge, codeChallengeMethod,
             clientId, requestClaims, responseType, grantType);
         this.token = token;
+        this.authorizationDetails = authorizationDetails;
     }
 
     public OAuth20DefaultAccessToken(final String id,
@@ -67,10 +74,12 @@ public class OAuth20DefaultAccessToken extends BaseOAuth20Token implements OAuth
                                      @JsonSetter(nulls = Nulls.AS_EMPTY)
                                      final Map<String, Map<String, Object>> requestClaims,
                                      final OAuth20ResponseTypes responseType,
-                                     final OAuth20GrantTypes grantType) {
+                                     final OAuth20GrantTypes grantType,
+                                     final List<? extends Serializable> authorizationDetails) {
         this(id, service, authentication, expirationPolicy,
             ticketGrantingTicket, token, scopes, null,
-            null, clientId, requestClaims, responseType, grantType);
+            null, clientId, requestClaims, responseType,
+            grantType, authorizationDetails);
     }
 
     @Override
