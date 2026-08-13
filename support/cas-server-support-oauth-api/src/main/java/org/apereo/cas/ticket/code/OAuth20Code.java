@@ -33,4 +33,32 @@ public interface OAuth20Code extends OAuth20Token, ServiceAwareTicket {
      * @return code challenge method (i.e. plain, S256, etc)
      */
     String getCodeChallengeMethod();
+
+    /**
+     * Sets authorization details.
+     *
+     * @param details the details
+     */
+    void setAuthorizationDetails(List<? extends Serializable> details);
+
+    /**
+     * Sets issuer state.
+     *
+     * @param issuerState the issuer state
+     */
+    void setIssuerState(String issuerState);
+
+    /**
+     * Gets authorization details.
+     *
+     * @return the authorization details
+     */
+    List<? extends Serializable> getAuthorizationDetails();
+
+    /**
+     * Gets issuer state.
+     *
+     * @return the issuer state
+     */
+    String getIssuerState();
 }

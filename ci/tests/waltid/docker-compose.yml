@@ -1,0 +1,94 @@
+services:
+  postgres:
+    image: postgres:18.4
+    container_name: waltid-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: waltid
+      POSTGRES_USER: waltid
+      POSTGRES_PASSWORD: waltid
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -q -U waltid -d waltid"]
+      interval: 5s
+      timeout: 3s
+      retries: 20
+
+  wallet-api:
+    image: waltid/wallet-api:0.23.1
+    container_name: waltid-wallet-api
+    restart: unless-stopped
+    depends_on:
+      postgres:
+        condition: service_healthy
+    healthcheck:
+      test:
+        [
+          "CMD-SHELL",
+          "wget -qO- http://localhost:7001/livez >/dev/null 2>&1 || exit 1"
+        ]
+      interval: 5s
+      timeout: 3s
+      retries: 30
+    environment:
+      WALLET_BACKEND_PORT: "7001"
+
+      DATABASE_ENGINE: postgres
+      POSTGRES_DB_HOST: postgres
+      POSTGRES_DB_PORT: "5432"
+      DB_NAME: waltid
+      DB_USERNAME: waltid
+      DB_PASSWORD: waltid
+
+      SQLITE_DB_DATA: data/data.db
+      SERVICE_HOST: localhost
+    volumes:
+      - ./wallet-api/config:/waltid-wallet-api/config:ro
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+      - "localhost:host-gateway"
+  dev-wallet:
+    image: waltid/waltid-dev-wallet:0.23.1
+    container_name: waltid-dev-wallet
+    restart: unless-stopped
+    depends_on:
+      - wallet-api
+    environment:
+      PORT: "7104"
+      NUXT_PUBLIC_ISSUER_CALLBACK_URL: "http://localhost:7104"
+      NUXT_PUBLIC_DEMO_WALLET_URL: "http://localhost:7101"
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+      - "localhost:host-gateway"
+  wallet-init:
+    image: curlimages/curl:8.21.0
+    container_name: waltid-wallet-init
+    depends_on:
+      wallet-api:
+        condition: service_healthy
+    environment:
+      WALLET_API_URL: http://wallet-api:7001
+      WALLET_NAME: ApereoCAS
+      WALLET_EMAIL: casuser@apereo.org
+      WALLET_PASSWORD: Mellon
+    volumes:
+      - ./init-wallet.sh:/init-wallet.sh:ro
+    entrypoint: ["/bin/sh", "/init-wallet.sh"]
+    restart: "no"
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+      - "localhost:host-gateway"
+  caddy:
+    image: caddy:2.11.4-alpine
+    container_name: waltid-caddy
+    restart: unless-stopped
+    depends_on:
+      - wallet-api
+      - dev-wallet
+    environment:
+      WALLET_BACKEND_PORT: "7001"
+      DEV_WALLET_FRONTEND_PORT: "7104"
+    ports:
+      - "7001:7001"
+      - "7104:7104"
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile:ro

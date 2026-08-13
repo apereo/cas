@@ -31,5 +31,5 @@ public class TransientSessionTicketProperties implements Serializable {
      * Number of seconds after which this ticket becomes invalid.
      */
     @DurationCapable
-    private String timeToKillInSeconds = "PT15M";
+    private String timeToKillInSeconds = "PT5M";
 }

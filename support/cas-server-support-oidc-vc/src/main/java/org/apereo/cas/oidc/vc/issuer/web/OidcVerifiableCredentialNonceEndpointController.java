@@ -64,7 +64,7 @@ public class OidcVerifiableCredentialNonceEndpointController extends BaseOAuth20
         val nonce = credentialNonceService.create();
         return ResponseEntity
             .ok()
-            .body(Map.of(OidcConstants.C_NONCE, nonce.value(), OidcConstants.C_NONCE_EXPIRES_AT, nonce.expiresAt()));
+            .body(Map.of(OidcConstants.C_NONCE, nonce.value(), OidcConstants.C_NONCE_EXPIRES_IN, nonce.expiresIn()));
     }
 
     /**

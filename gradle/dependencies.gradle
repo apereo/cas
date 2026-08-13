@@ -2508,6 +2508,13 @@ ext.libraries = [
                     exclude(group: "org.projectlombok", module: "lombok")
                 }
         ],
+        authlete                     : [
+                dependencies.create(libs.authlete.sd.jwt.get()) {
+                    exclude(group: "com.google.code.gson", module: "gson")
+                },
+                dependencies.create(libs.gson.get()) {
+                }
+        ],
         nimbus                     : [
                 dependencies.create(libs.nimbus.jose.jwt.get()) {
                     exclude(group: "net.minidev", module: "json-smart")

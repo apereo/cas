@@ -1,6 +1,7 @@
 package org.apereo.cas.support.oauth.web.response;
 
 import module java.base;
+import org.apereo.cas.support.oauth.services.OAuthRegisteredService;
 import org.apereo.cas.support.oauth.web.response.accesstoken.ext.AccessTokenRequestContext;
 import lombok.Builder;
 import lombok.Getter;
@@ -29,6 +30,14 @@ public class OAuth20AuthorizationRequest implements Serializable {
     private final String clientId;
 
     private final AccessTokenRequestContext accessTokenRequest;
+
+    private final String authorizationDetails;
+
+    private final String issuerState;
+
+    private final OAuthRegisteredService registeredService;
+
+    private final String codeChallenge;
 
     /**
      * Determines whether this request requires a single sign-on session.

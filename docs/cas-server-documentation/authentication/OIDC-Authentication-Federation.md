@@ -5,7 +5,7 @@ category: Protocols
 ---
 {% include variables.html %}
 
-# OpenID Connect Authentication
+# OpenID Connect Federation Protocol
 
 The CAS server supports the [OpenID Federation protocol](https://openid.net/specs/openid-federation-1_0.html).
 
