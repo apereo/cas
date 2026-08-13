@@ -14,12 +14,10 @@ import org.apereo.cas.ticket.Ticket;
 import org.apereo.cas.ticket.code.OAuth20Code;
 import org.apereo.cas.ticket.code.OAuth20CodeFactory;
 import org.apereo.cas.util.CollectionUtils;
-import org.apereo.cas.util.function.FunctionUtils;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.Strings;
 import org.apereo.inspektr.audit.annotation.Audit;
-import org.jooq.lambda.fi.util.function.CheckedFunction;
 import org.springframework.web.servlet.ModelAndView;
 
 /**
@@ -41,6 +39,18 @@ public class OAuth20AuthorizationCodeAuthorizationResponseBuilder extends BaseOA
         resourceResolverName = AuditResourceResolvers.OAUTH2_AUTHORIZATION_RESPONSE_RESOURCE_RESOLVER)
     @Override
     public ModelAndView build(final AccessTokenRequestContext tokenRequestContext) throws Throwable {
+        val code = createOAuthCode(tokenRequestContext);
+        val addedCode = configurationContext.getTicketRegistry().addTicket(code);
+        Objects.requireNonNull(addedCode, () -> "Could not add OAuth code %s to the registry.".formatted(code.getId()));
+
+        val ticketGrantingTicket = tokenRequestContext.getTicketGrantingTicket();
+        if (ticketGrantingTicket != null) {
+            configurationContext.getTicketRegistry().updateTicket(ticketGrantingTicket);
+        }
+        return buildCallbackViewViaRedirectUri(tokenRequestContext, addedCode);
+    }
+
+    protected OAuth20Code createOAuthCode(final AccessTokenRequestContext tokenRequestContext) throws Throwable {
         val authentication = tokenRequestContext.getAuthentication();
         val factory = (OAuth20CodeFactory) configurationContext.getTicketFactory().get(OAuth20Code.class);
         val code = factory.create(tokenRequestContext.getService(), authentication,
@@ -49,17 +59,7 @@ public class OAuth20AuthorizationCodeAuthorizationResponseBuilder extends BaseOA
             tokenRequestContext.getClientId(), tokenRequestContext.getClaims(),
             tokenRequestContext.getResponseType(), tokenRequestContext.getGrantType());
         LOGGER.debug("Generated OAuth code: [{}]", code);
-        val addedCode = configurationContext.getTicketRegistry().addTicket(code);
-        Objects.requireNonNull(addedCode, () -> "Could not add OAuth code %s to the registry.".formatted(code.getId()));
-        
-        val ticketGrantingTicket = tokenRequestContext.getTicketGrantingTicket();
-        Optional.ofNullable(ticketGrantingTicket).ifPresent(tgt -> FunctionUtils.doAndHandle(ticket -> {
-            configurationContext.getTicketRegistry().updateTicket(ticket);
-        }, (CheckedFunction<Throwable, Ticket>) throwable -> {
-            LOGGER.error("Unable to update ticket-granting-ticket [{}]", ticketGrantingTicket, throwable);
-            return null;
-        }).accept(tgt));
-        return buildCallbackViewViaRedirectUri(tokenRequestContext, addedCode);
+        return code;
     }
 
     @Override

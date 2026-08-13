@@ -3,6 +3,7 @@ package org.apereo.cas.oidc.vc.issuer.proof;
 import module java.base;
 import org.apereo.cas.oidc.vc.issuer.OidcVerifiableCredentialRequest;
 import com.nimbusds.jose.jwk.JWK;
+import org.jspecify.annotations.Nullable;
 
 /**
  * This is {@link OidcVerifiableCredentialProofValidator}.
@@ -25,6 +26,7 @@ public interface OidcVerifiableCredentialProofValidator {
         String proofType,
         String jwtId,
         String subject,
-        JWK holderJwk) {
+        JWK holderJwk,
+        @Nullable String nonce) {
     }
 }

@@ -47,4 +47,20 @@ public interface OAuth20AccessToken extends OAuth20Token, ServiceAwareTicket {
      * @return access token expiration in seconds
      */
     long getExpiresIn();
+
+    /**
+     * Gets authorization details.
+     *
+     * @return the authorization details
+     */
+    List<? extends Serializable> getAuthorizationDetails();
+
+    /**
+     * Has authorization details.
+     *
+     * @return true/false
+     */
+    default boolean hasAuthorizationDetails() {
+        return getAuthorizationDetails() != null && !getAuthorizationDetails().isEmpty();
+    }
 }

@@ -63,7 +63,7 @@ public abstract class BaseOAuth20Controller<T extends OAuth20ConfigurationContex
     }
 
     protected boolean isRequestAuthenticated(final ProfileManager manager, final WebContext context,
-                                             final OAuthRegisteredService registeredService) {
+                                             @Nullable final OAuthRegisteredService registeredService) {
         return manager.getProfile().isPresent();
     }
 

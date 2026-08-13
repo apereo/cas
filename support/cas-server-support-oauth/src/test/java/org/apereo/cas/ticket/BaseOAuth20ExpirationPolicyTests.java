@@ -87,7 +87,7 @@ public abstract class BaseOAuth20ExpirationPolicyTests {
         val code = createOAuthCode();
         val testService = CoreAuthenticationTestUtils.getService("https://service.example.com");
         return defaultAccessTokenFactory.create(testService, tgt.getAuthentication(),
-            tgt, new ArrayList<>(), code.getId(), code.getClientId(), new HashMap<>(),
+            tgt, new ArrayList<>(), code, code.getClientId(), new HashMap<>(),
             OAuth20ResponseTypes.CODE, OAuth20GrantTypes.AUTHORIZATION_CODE);
     }
 
