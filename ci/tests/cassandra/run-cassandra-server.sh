@@ -1,6 +1,6 @@
 #!/bin/bash
 
-export DOCKER_IMAGE="cassandra:5.0"
+export DOCKER_IMAGE="cassandra:6.0"
 
 # while sleep 9m; do echo -e '\n=====[ Gradle build is still running ]====='; done &
 echo "Generating security keys and certificates..."

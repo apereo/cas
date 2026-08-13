@@ -66,7 +66,7 @@ public class OidcWellKnownFederationEndpointController extends AbstractOidcFeder
         val settings = serverDiscoverySettings.getIfAvailable();
         var issuer = oidcProperties.getCore().getIssuer();
         val metadata = new JSONObject();
-        val authorityHints = (List<EntityID>) oidcProperties.getFederation().getAuthorityHints().stream().map(EntityID::new).toList();
+        val authorityHints = oidcProperties.getFederation().getAuthorityHints().stream().map(EntityID::new).toList();
         if (settings != null) {
             if (role != OidcFederationRole.OPENID_PROVIDER) {
                 throw new IllegalArgumentException("Federation role [" + role + "] is not supported for OpenID Provider");

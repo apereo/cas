@@ -28,6 +28,12 @@ public class OidcVerifiableCredentialsProperties implements Serializable {
     private OidcVerifiableCredentialsIssuerProperties issuer = new OidcVerifiableCredentialsIssuerProperties();
 
     /**
+     * Control metadata generation for verifiable credentials.
+     */
+    @NestedConfigurationProperty
+    private OidcVerifiableCredentialsMetadataProperties metadata = new OidcVerifiableCredentialsMetadataProperties();
+
+    /**
      * OIDC verifiable credentials offer settings.
      */
     @NestedConfigurationProperty

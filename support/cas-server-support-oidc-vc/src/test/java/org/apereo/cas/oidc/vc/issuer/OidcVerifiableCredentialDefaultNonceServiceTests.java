@@ -31,13 +31,13 @@ class OidcVerifiableCredentialDefaultNonceServiceTests extends AbstractOidcTests
         val nonce = oidcVerifiableCredentialNonceService.create();
         assertNotNull(nonce);
         assertNotNull(nonce.value());
-        assertNotNull(nonce.expiresAt());
+        assertNotNull(nonce.expiresIn());
     }
 
     @Test
     void verifyNonceExpiresInFuture() {
         val nonce = oidcVerifiableCredentialNonceService.create();
-        assertTrue(nonce.expiresAt().isAfter(Instant.now(Clock.systemUTC())));
+        assertEquals(300L, nonce.expiresIn());
     }
 
     @Test

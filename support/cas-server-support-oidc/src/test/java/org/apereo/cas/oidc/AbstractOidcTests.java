@@ -97,6 +97,7 @@ import org.jose4j.jwt.NumericDate;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.pac4j.core.context.session.SessionStore;
+import org.pac4j.core.profile.factory.ProfileManagerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.SpringBootConfiguration;
@@ -147,6 +148,10 @@ public abstract class AbstractOidcTests {
     @Qualifier("mockMvc")
     protected MockMvc mockMvc;
 
+    @Autowired
+    @Qualifier("oauthSecProfileManagerFactory")
+    protected ProfileManagerFactory oauthSecProfileManagerFactory;
+    
     @Autowired
     @Qualifier("oauthTokenGenerator")
     protected OAuth20TokenGenerator oauthTokenGenerator;

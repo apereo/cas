@@ -8,9 +8,12 @@ import org.apereo.cas.support.oauth.OAuth20ResponseTypes;
 import org.apereo.cas.ticket.BaseOAuth20Token;
 import org.apereo.cas.ticket.ExpirationPolicy;
 import org.apereo.cas.ticket.Ticket;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonSetter;
 import com.fasterxml.jackson.annotation.Nulls;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 import org.jspecify.annotations.NonNull;
 
 /**
@@ -20,9 +23,17 @@ import org.jspecify.annotations.NonNull;
  * @since 5.0.0
  */
 @NoArgsConstructor
+@Getter
+@Setter
 public class OAuth20DefaultCode extends BaseOAuth20Token implements OAuth20Code {
     @Serial
     private static final long serialVersionUID = -8203878835348247880L;
+
+    @JsonInclude(JsonInclude.Include.NON_EMPTY)
+    private List<? extends Serializable> authorizationDetails;
+
+    @JsonInclude(JsonInclude.Include.NON_EMPTY)
+    private String issuerState;
 
     public OAuth20DefaultCode(final String id,
                               final @NonNull Service service,

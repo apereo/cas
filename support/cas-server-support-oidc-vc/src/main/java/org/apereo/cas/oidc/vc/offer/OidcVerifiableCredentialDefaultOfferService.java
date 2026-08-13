@@ -26,7 +26,6 @@ public class OidcVerifiableCredentialDefaultOfferService implements OidcVerifiab
         return buildCredentialOffer(Objects.requireNonNull(transaction));
     }
 
-
     @Override
     public OidcVerifiableCredentialOffer fetch(final String transactionId) {
         val transaction = (TransientSessionTicket) transactionService.fetch(transactionId);
@@ -39,8 +38,15 @@ public class OidcVerifiableCredentialDefaultOfferService implements OidcVerifiab
     private @NonNull OidcVerifiableCredentialOffer buildCredentialOffer(final TransientSessionTicket transaction) {
         val credentialConfigurationIds = transaction.getProperty("credentialConfigurationIds", List.class);
         val issuer = configurationContext.getCasProperties().getAuthn().getOidc().getCore().getIssuer();
+
         val grant = new OidcVerifiableCredentialOffer.Grants.PreAuthorizedCodeGrant();
-        grant.setTxCode(Objects.requireNonNull(transaction).getId());
+        grant.setTransactionCode(
+            OidcVerifiableCredentialOffer.Grants.TransactionCode
+                .builder()
+                .value(Objects.requireNonNull(transaction).getId())
+                .length(Objects.requireNonNull(transaction).getId().length())
+                .build()
+        );
         grant.setPreAuthorizedCode(transaction.getPropertyAsString("preAuthorizedCode"));
         grant.setIssuerState(transaction.getPropertyAsString("issuerState"));
 

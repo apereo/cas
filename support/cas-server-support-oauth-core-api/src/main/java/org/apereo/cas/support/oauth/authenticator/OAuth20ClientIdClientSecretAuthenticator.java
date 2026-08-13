@@ -144,19 +144,21 @@ public class OAuth20ClientIdClientSecretAuthenticator implements Authenticator {
         val responseType = requestParameterResolver.resolveResponseType(callContext.webContext());
         val grantType = requestParameterResolver.resolveGrantType(callContext.webContext());
 
-        requestParameterResolver.resolveRequestParameter(callContext.webContext(), OAuth20Constants.CODE).ifPresent(code -> {
-            FunctionUtils.doAndHandle(_ -> {
-                val oauthCode = ticketRegistry.getTicket(code, OAuth20Token.class);
-                if (oauthCode != null && !oauthCode.isExpired()) {
-                    LOGGER.debug("Found OAuth code [{}] in the ticket registry", code);
-                    scopes.addAll(oauthCode.getScopes());
-                }
-            });
-        });
+        val oauthCode = requestParameterResolver.resolveRequestParameter(callContext.webContext(), OAuth20Constants.CODE)
+            .stream()
+            .filter(StringUtils::isNotBlank)
+            .map(code -> FunctionUtils.doAndHandle(() -> ticketRegistry.getTicket(code, OAuth20Token.class)))
+            .filter(Objects::nonNull)
+            .findFirst()
+            .orElse(null);
 
+        if (oauthCode != null && !oauthCode.isExpired()) {
+            LOGGER.debug("Found OAuth code [{}] in the ticket registry", oauthCode.getId());
+            scopes.addAll(oauthCode.getScopes());
+        }
         val authentication = DefaultAuthenticationBuilder.newInstance(resolvedPrincipal).build();
-        val accessToken = accessTokenFactory.create(service, authentication, scopes,
-            registeredService.getClientId(), responseType, grantType);
+        val accessToken = accessTokenFactory.create(service, authentication, null, scopes,
+            oauthCode, registeredService.getClientId(), new HashMap<>(), responseType, grantType);
         LOGGER.debug("Created access token [{}] for service [{}] based on scopes [{}]", accessToken.getId(), service.getId(), scopes);
         val finalPrincipal = profileScopeToAttributesFilter.filter(service, resolvedPrincipal, registeredService, accessToken);
         LOGGER.debug("Built final principal [{}]", finalPrincipal);

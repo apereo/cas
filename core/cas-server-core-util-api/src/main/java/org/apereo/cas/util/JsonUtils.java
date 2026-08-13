@@ -120,4 +120,19 @@ public class JsonUtils {
     public <T> T parse(final String json, final Class<T> clazz) {
         return FunctionUtils.doUnchecked(() -> MAPPER.readValue(json, clazz));
     }
+
+    /**
+     * Parse as list.
+     *
+     * @param <T>  the type parameter
+     * @param json the json
+     * @param type the type
+     * @return the list
+     */
+    public <T> List<T> parseAsList(final String json, final Class<T> type) {
+        return FunctionUtils.doUnchecked(() -> {
+            val collectionType = MAPPER.getTypeFactory().constructCollectionType(List.class, type);
+            return MAPPER.readValue(json, collectionType);
+        });
+    }
 }

@@ -4,6 +4,7 @@ import module java.base;
 import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.support.oauth.services.OAuthRegisteredService;
 import org.apereo.cas.token.JwtBuilder;
+import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.EncodingUtils;
 import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.util.jwt.JsonWebTokenSigner;
@@ -70,6 +71,14 @@ public abstract class BaseTokenSigningAndEncryptionService implements OAuth20Tok
                                final JwtClaims claims,
                                final PublicJsonWebKey jsonWebKey) {
         LOGGER.debug("Service [{}] is set to sign id tokens", registeredService.getServiceId());
+        val mediaType = claims.hasClaim("typ") ? claims.getClaimValueAsString("typ") : getSigningMediaType();
+        claims.unsetClaim("typ");
+
+        val headers = CollectionUtils.<String, Object>wrap(OAuth20Constants.CLIENT_ID, registeredService.getClientId());
+        if (claims.hasClaim("cty")) {
+            headers.put("cty", claims.getClaimValueAsString("cty"));
+            claims.unsetClaim("cty");
+        }
         return JsonWebTokenSigner.builder()
             .key(Optional.ofNullable(jsonWebKey)
                 .map(PublicJsonWebKey::getPrivateKey)
@@ -79,8 +88,8 @@ public abstract class BaseTokenSigningAndEncryptionService implements OAuth20Tok
                 .orElseGet(() -> UUID.randomUUID().toString()))
             .algorithm(getJsonWebKeySigningAlgorithm(registeredService, jsonWebKey))
             .allowedAlgorithms(new LinkedHashSet<>(getAllowedSigningAlgorithms(registeredService)))
-            .mediaType(getSigningMediaType())
-            .headers(Map.of(OAuth20Constants.CLIENT_ID, registeredService.getClientId()))
+            .mediaType(mediaType)
+            .headers(headers)
             .build()
             .sign(claims);
     }
