@@ -99,7 +99,7 @@ If you (or your employer) benefit from this project, please consider becoming a 
 Commercial support options may be [found here][cassupport].
 
 [cascodecov]: https://codecov.io/gh/apereo/cas
-[devlocity]: https://develocity.apereo.org
+[devlocity]: https://community.develocity.cloud/scans?search.rootProjectNames=cas-server
 [maintenance]: https://apereo.github.io/cas/developer/Maintenance-Policy.html
 [releaseschedule]: https://github.com/apereo/cas/milestones
 [wiki]: https://apereo.github.io/cas

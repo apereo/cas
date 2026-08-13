@@ -24,6 +24,7 @@ buildCache {
 
 develocity {
     server = "${develocityApereoServerUrl}"
+    projectId = "apereo"
     buildScan {
         publishing.onlyIf { it.authenticated }
         uploadInBackground = !isCiServer
