@@ -36,7 +36,7 @@ class OidcVerifiableCredentialNonceEndpointControllerTests {
                     .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$." + OidcConstants.C_NONCE).exists())
-                .andExpect(jsonPath("$." + OidcConstants.C_NONCE_EXPIRES_AT).exists());
+                .andExpect(jsonPath("$." + OidcConstants.C_NONCE_EXPIRES_IN).exists());
         }
     }
 

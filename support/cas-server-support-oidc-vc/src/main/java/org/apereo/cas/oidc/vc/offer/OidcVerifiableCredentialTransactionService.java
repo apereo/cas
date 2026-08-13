@@ -33,4 +33,13 @@ public interface OidcVerifiableCredentialTransactionService {
      * @return the transient session ticket
      */
     @Nullable Ticket fetch(String transactionId);
+
+    /**
+     * Fetch pre authorization code ticket.
+     *
+     * @param preAuthorizationCode the pre authorization code
+     * @return the ticket
+     */
+    @Nullable Ticket fetchPreAuthorizationCode(String preAuthorizationCode);
+
 }

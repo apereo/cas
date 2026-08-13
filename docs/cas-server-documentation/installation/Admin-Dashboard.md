@@ -26,10 +26,6 @@ Support is enabled by adding the following module into the overlay:
 
 {% include_cached casmodule.html group="org.apereo.cas" module="cas-server-support-palantir" %}
 
-<div class="alert alert-warning">:warning: <strong>Usage Warning!</strong><p>
-This capability is relatively new. We encourage you to start to experiment and test your CAS deployment 
-with this feature and contribute fixes.</p></div>
-
 Accessing the Palantir dashboard will by default require a form-based user authentication. The credentials
 used to access this feature are those presented by Spring Security configuration:
 
