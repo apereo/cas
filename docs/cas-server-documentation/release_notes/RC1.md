@@ -180,6 +180,17 @@ This capability is also supported and available for the [Palantir Admin Dashboar
 A dedicated actuator endpoint, `passwordless`, is available to allows one to query a username
 and retrieve the associated [passwordless account](../authentication/Passwordless-Authentication-Account-Storage.html) information. 
 This capability is also supported and available for the [Palantir Admin Dashboard](../installation/Admin-Dashboard.html).
+ 
+### OpenID Connect Verifiable Credentials
+
+[OpenID Connect with Verifiable Credentials](../authentication/OIDC-Authentication-Verifiable-Credentials.html) now 
+supports the authorization code flow. There are also significant changes in place to support more formats
+with additional bug fixes and enhancements, and an improved test suite to verify credential issuance.
+There is also initial support for OpenID Connect with Verifiable Presentations (OpenID4VP).
+    
+### OpenID Connect Federation
+
+Work on [OpenID Connect Federation](../authentication/OIDC-Authentication-Federation.html) is now roughly finalized.
 
 ## Other Stuff
   
@@ -189,3 +200,4 @@ This capability is also supported and available for the [Palantir Admin Dashboar
 - A large number of dependencies and libraries have been updated to their latest versions.
 - Custom ID token claims can also be constructed using [Apache Groovy](../authentication/OIDC-Authentication-Claims-Custom.html).
 - [RediSearch](../ticketing/Redis-Ticket-Registry-RediSearch.html) functionality now supports Redis clustering.
+- The maximum lifetime of a transient session ticket (i.e. `TST`) is by default reduced from `15` minutes to `5` minutes.

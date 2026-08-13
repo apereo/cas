@@ -95,7 +95,7 @@ public class PasswordlessAuthenticationEndpoint extends BaseCasRestActuatorEndpo
                 return (principal instanceof NullPrincipal)
                     ? account
                     : account.withAttributes(CoreAuthenticationUtils.mergeAttributes(
-                        (Map) account.getAttributes(), Objects.requireNonNull(principal).getAttributes()));
+                    account.getAttributes(), Objects.requireNonNull(principal).getAttributes()));
             }))
             .map(ResponseEntity::ok)
             .orElseGet(() -> ResponseEntity.notFound().build());

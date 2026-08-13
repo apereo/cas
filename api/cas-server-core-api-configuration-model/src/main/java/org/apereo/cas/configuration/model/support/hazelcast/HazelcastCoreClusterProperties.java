@@ -154,6 +154,7 @@ public class HazelcastCoreClusterProperties implements Serializable {
     private int maxSize = 85;
 
     /**
+     * Control the max size policy.
      * <ul>
      * <li>{@code FREE_HEAP_PERCENTAGE}: Policy based on minimum free JVM heap memory percentage per JVM.</li>
      * <li>{@code FREE_HEAP_SIZE}: Policy based on minimum free JVM heap memory in megabytes per JVM.</li>

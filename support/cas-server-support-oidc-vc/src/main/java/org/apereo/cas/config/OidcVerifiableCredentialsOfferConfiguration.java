@@ -36,7 +36,7 @@ import org.springframework.context.annotation.ScopedProxyMode;
 class OidcVerifiableCredentialsOfferConfiguration {
 
     @Bean
-    @RefreshScope
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @ConditionalOnMissingBean(name = OidcVerifiableCredentialTransactionService.BEAN_NAME)
     public OidcVerifiableCredentialTransactionService oidcVerifiableCredentialTransactionService(
         @Qualifier(OidcConfigurationContext.BEAN_NAME)
@@ -45,7 +45,7 @@ class OidcVerifiableCredentialsOfferConfiguration {
     }
 
     @Bean
-    @RefreshScope
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @ConditionalOnMissingBean(name = OidcVerifiableCredentialOfferService.BEAN_NAME)
     public OidcVerifiableCredentialOfferService oidcVerifiableCredentialCredentialOfferService(
         @Qualifier(OidcVerifiableCredentialTransactionService.BEAN_NAME)

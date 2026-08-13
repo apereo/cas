@@ -1,6 +1,7 @@
 package org.apereo.cas.oidc.vc.issuer;
 
 import module java.base;
+import org.apereo.cas.oidc.vc.issuer.metadata.OidcCredentialIssuerMetadata;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Getter;
@@ -24,6 +25,9 @@ public class OidcVerifiableCredentialRequest implements Serializable {
     @NotBlank
     private String credentialConfigurationId;
 
+    @JsonProperty("vct")
+    private String vct;
+    
     /**
      * Optional for later use.
      */
@@ -35,6 +39,9 @@ public class OidcVerifiableCredentialRequest implements Serializable {
      */
     @JsonProperty("proof")
     private Proof proof;
+
+    @JsonProperty("credential_metadata")
+    private OidcCredentialIssuerMetadata.CredentialMetadata credentialMetadata;
 
     @Getter
     @Setter

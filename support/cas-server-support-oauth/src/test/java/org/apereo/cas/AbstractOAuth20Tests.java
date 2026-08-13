@@ -64,6 +64,7 @@ import org.apereo.cas.support.oauth.web.response.callback.OAuth20AuthorizationRe
 import org.apereo.cas.test.CasTestExtension;
 import org.apereo.cas.ticket.ExpirationPolicy;
 import org.apereo.cas.ticket.ExpirationPolicyBuilder;
+import org.apereo.cas.ticket.Ticket;
 import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.apereo.cas.ticket.accesstoken.OAuth20AccessToken;
 import org.apereo.cas.ticket.accesstoken.OAuth20AccessTokenFactory;
@@ -697,12 +698,12 @@ public abstract class AbstractOAuth20Tests {
     protected OAuth20AccessToken addAccessToken(final Principal principal,
                                                 final OAuthRegisteredService registeredService) throws Throwable {
         val code = addCode(principal, registeredService);
-        return addAccessToken(principal, registeredService, code.getId());
+        return addAccessToken(principal, registeredService, code);
     }
 
     protected OAuth20AccessToken addAccessToken(final Principal principal,
                                                 final OAuthRegisteredService registeredService,
-                                                final String codeId) throws Throwable {
+                                                final Ticket codeId) throws Throwable {
         val authentication = getAuthentication(principal);
         val service = serviceFactory.createService(registeredService.getServiceId());
         val accessToken = defaultAccessTokenFactory.create(service, authentication,

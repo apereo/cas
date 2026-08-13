@@ -44,4 +44,11 @@ class JsonUtilsTests {
         val content = response.getContentAsString();
         assertNotNull(MAPPER.readValue(content, Map.class));
     }
+
+    @Test
+    void verifyParsing() throws Throwable {
+        val list = JsonUtils.parseAsList("[{\"key\":\"value\"}]", Map.class);
+        assertEquals(1, list.size());
+        assertEquals("value", list.getFirst().get("key"));
+    }
 }
