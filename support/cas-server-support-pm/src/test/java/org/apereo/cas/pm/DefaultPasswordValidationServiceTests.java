@@ -93,7 +93,11 @@ class DefaultPasswordValidationServiceTests {
 
     @Test
     void verifyCaseSensitivity() throws Throwable {
-        val request = new PasswordChangeRequest("casuser", "current-psw".toCharArray(), "th!sIsT3st".toCharArray(), "th!sIsT3st".toCharArray());
+        var request = new PasswordChangeRequest("casuser", "current-psw".toCharArray(),
+            "th!sIsT3st".toCharArray(), "th!sIsT3st".toCharArray());
+        assertFalse(passwordValidationService.isValid(request));
+        request = new PasswordChangeRequest("casuser", "current-psw".toCharArray(),
+            "th!sIsT3st # password".toCharArray(), "th!sIsT3st # password".toCharArray());
         assertFalse(passwordValidationService.isValid(request));
     }
 }

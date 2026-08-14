@@ -25,6 +25,12 @@ public class RegexUtils {
      */
     public static final Pattern MATCH_NOTHING_PATTERN = Pattern.compile("a^");
 
+    /**
+     * Flag to indicate that the regex should be case sensitive.
+     * By default, regex matching is case insensitive.
+     */
+    public static final int FLAG_CASE_SENSITIVE = 0;
+
     private static final Cache<String, Pattern> PATTERN_CACHE = Caffeine.newBuilder()
         .expireAfterAccess(15, TimeUnit.MINUTES)
         .maximumSize(10_000)

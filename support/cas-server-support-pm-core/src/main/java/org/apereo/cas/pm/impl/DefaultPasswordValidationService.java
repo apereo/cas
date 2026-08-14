@@ -9,7 +9,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.springframework.util.StringUtils;
-import java.util.regex.Pattern;
 
 /**
  * This is {@link DefaultPasswordValidationService}.
@@ -55,7 +54,7 @@ public class DefaultPasswordValidationService implements PasswordValidationServi
     public boolean isAcceptedByPasswordPolicy(final String password) {
         val policyPattern = casProperties.getAuthn().getPm().getCore().getPasswordPolicyPattern();
         LOGGER.debug("Checking provided password against pattern required for password policy: [{}]", policyPattern);
-        return RegexUtils.find(policyPattern, password, Pattern.COMMENTS);
+        return RegexUtils.find(policyPattern, password, RegexUtils.FLAG_CASE_SENSITIVE);
     }
 
     protected boolean validatePassword(final PasswordChangeRequest bean) {
