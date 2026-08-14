@@ -23,6 +23,7 @@ import org.apereo.cas.rest.factory.DefaultTicketGrantingTicketResourceEntityResp
 import org.apereo.cas.rest.factory.UsernamePasswordRestHttpRequestCredentialFactory;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.services.ServicesManager;
+import org.apereo.cas.services.UnauthorizedSsoServiceException;
 import org.apereo.cas.support.rest.resources.TicketGrantingTicketResource;
 import org.apereo.cas.ticket.Ticket;
 import org.apereo.cas.ticket.TicketGrantingTicket;
@@ -255,6 +256,17 @@ class TicketGrantingTicketResourceTests {
                 .param(PASSWORD, TEST_VALUE))
             .andExpect(status().is5xxServerError())
             .andExpect(content().string(OTHER_EXCEPTION));
+    }
+
+    @Test
+    void creationOfTGTWithUnauthorizedServiceException() throws Throwable {
+        configureCasMockTGTCreationToThrow(new UnauthorizedSsoServiceException());
+
+        this.mockMvc.perform(post(TICKETS_RESOURCE_URL)
+                .param(USERNAME, TEST_VALUE)
+                .param(PASSWORD, TEST_VALUE))
+            .andExpect(status().isForbidden())
+            .andExpect(content().string(UnauthorizedSsoServiceException.CODE));
     }
 
     @Test
