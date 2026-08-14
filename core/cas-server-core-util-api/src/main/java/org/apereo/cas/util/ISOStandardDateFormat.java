@@ -1,6 +1,7 @@
 package org.apereo.cas.util;
 
 import module java.base;
+import com.google.errorprone.annotations.InlineMe;
 import org.apache.commons.lang3.time.FastDateFormat;
 
 /**
@@ -26,6 +27,7 @@ public class ISOStandardDateFormat extends FastDateFormat {
      * @deprecated Use {@link #ISOStandardDateFormat(ZoneId, Locale)} or {@link #ISOStandardDateFormat(ZoneId)}.
      */
     @Deprecated(since = "8.1.0")
+    @InlineMe(replacement = "this(ZoneId.systemDefault(), Locale.getDefault())", imports = {"java.time.ZoneId", "java.util.Locale"})
     public ISOStandardDateFormat() {
         this(ZoneId.systemDefault(), Locale.getDefault());
     }
