@@ -118,6 +118,11 @@ jobs:
         with:
           java-version: ${{ matrix.jdks.version }}
           distribution: ${{ matrix.jdks.distribution }}
+      - name: Set up Current JDK ${{ env.JDK_CURRENT }}
+        uses: actions/setup-java@v5
+        with:
+          java-version: ${{ env.JDK_CURRENT }}
+          distribution: ${{ env.JDK_DISTRIBUTION }}
       - name: Setup Gradle
         uses: gradle/actions/setup-gradle@v6
       - name: Initialize

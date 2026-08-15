@@ -202,7 +202,8 @@ There is also initial support for OpenID Connect with Verifiable Presentations (
     
 ### OpenID Connect Federation
 
-Work on [OpenID Connect Federation](../authentication/OIDC-Authentication-Federation.html) is now roughly finalized.
+Work on [OpenID Connect Federation](../authentication/OIDC-Authentication-Federation.html) is now roughly finalized. A number of test scenarios and minor edge cases
+are still being worked on and should be resolved in the next few releases.
 
 ## Other Stuff
   
@@ -215,3 +216,6 @@ Work on [OpenID Connect Federation](../authentication/OIDC-Authentication-Federa
 - The maximum lifetime of a transient session ticket (i.e. `TST`) is by default reduced from `15` minutes to `5` minutes.
 - Groovy integration tests have now switched to use Groovy `5.1.x`.
 - Redis integration tests have now switched to use Groovy `8.10.x`.
+- Attributes requested for [Consent](../integration/Attribute-Release-Consent.html) may now be localized using language bundles and a prefixed language key that is `screen.consent.attributes.attribute.[attribute-name]`.
+- When removing cookies, particularly during logout, the existing cookie value is no longer echoed back for remove operations.
+- [CAS REST APIs](../protocol/REST-Protocol.html) now return a `403` status code instead of a `500` type of error when unauthorized application requests are identified.

@@ -61,9 +61,7 @@ java {
     toolchain {
         def targetVersion = project.targetCompatibility.toString()
         languageVersion = JavaLanguageVersion.of(targetVersion.replace("-ea", ""))
-        if (targetVersion.contains("-ea")) {
-            vendor = JvmVendorSpec.AZUL
-        } else if (!ci) {
+        if (!ci) {
             vendor = JvmVendorSpec.JETBRAINS
         }
     }
