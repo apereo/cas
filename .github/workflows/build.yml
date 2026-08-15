@@ -45,12 +45,16 @@ jobs:
           persist-credentials: false
       - name: Determine JDKs
         id: determine-jdk
+        shell: bash
         run: |
-            if [ "$JDK_CURRENT" == "$JDK_LATEST" ]; then
-              echo "jdks=[\"$JDK_CURRENT\"]" >> "$GITHUB_OUTPUT"
-            else
-              echo "jdks=[\"$JDK_CURRENT\", \"$JDK_LATEST\"]" >> "$GITHUB_OUTPUT"
-            fi
+          if [ "$JDK_CURRENT" == "$JDK_LATEST" ]; then
+            echo 'jdks=[{"version":"'"$JDK_CURRENT"'","distribution":"$JDK_DISTRIBUTION"}]' >> "$GITHUB_OUTPUT"
+          else
+            echo 'jdks=[
+              {"version":"'"$JDK_CURRENT"'","distribution":"$JDK_DISTRIBUTION"},
+              {"version":"'"$JDK_LATEST"'","distribution":"zulu"}
+            ]' | jq -c . | sed 's/^/jdks=/' >> "$GITHUB_OUTPUT"
+          fi
       - name: Set up JDK
         uses: actions/setup-java@v5
         with:
@@ -94,27 +98,27 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        jdk: ${{ fromJson(needs.initialize.outputs.jdks) }}
+        jdks: ${{ fromJson(needs.initialize.outputs.jdks) }}
     steps:
       - name: Checkout
         uses: actions/checkout@v7
         with:
           persist-credentials: false
-      - name: Set up JDK ${{ matrix.jdk }}
+      - name: Set up JDK ${{ matrix.jdks.version }}
         uses: actions/setup-java@v5
         with:
-          java-version: ${{ matrix.jdk }}
-          distribution: ${{ env.JDK_DISTRIBUTION }}
+          java-version: ${{ matrix.jdks.version }}
+          distribution: ${{ matrix.jdks.distribution }}
       - name: Setup Gradle
         uses: gradle/actions/setup-gradle@v6
       - name: Initialize
         run: find ./ci -type f -name "*.sh" -exec chmod +x "{}" \; && ./ci/init-build.sh
         shell: bash
-      - name: Build with JDK ${{ matrix.jdk }}
-        run: ./gradlew build --quiet -PsourceCompatibility=${{ matrix.jdk }} -PtargetCompatibility=${{ matrix.jdk }} ${{ env.GRADLE_BUILD_OPTIONS }}
+      - name: Build with JDK ${{ matrix.jdks.version }}
+        run: ./gradlew build --quiet -PsourceCompatibility=${{ matrix.jdks.version }} -PtargetCompatibility=${{ matrix.jdks.version }} ${{ env.GRADLE_BUILD_OPTIONS }}
       - uses: actions/upload-artifact@v7
         with:
-          name: binary-artifacts-${{ matrix.jdk }}
+          name: binary-artifacts-${{ matrix.jdks.version }}
           path: ./**/build/libs/*.*
 
   ##########################################################################

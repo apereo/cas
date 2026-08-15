@@ -39,6 +39,12 @@ palantir_images:
   - src: img_11.png
     alt: Palantir passwordless authentication view
     title: Palantir passwordless authentication view
+  - src: img_12.png
+    alt: Palantir attribute repositories view
+    title: Palantir attribute repositories view
+  - src: img_13.png
+    alt: Palantir attribute repositories view
+    title: Palantir attribute repositories view
 ---
 
 {% include variables.html %}
@@ -116,6 +122,11 @@ return types and fields. We will gradually extend the coverage of such annotatio
 and will integrate the Gradle build tool with tools such as [NullAway](https://github.com/uber/NullAway) to prevent nullness contract violations
 during compile time.
 
+### Java 27
+  
+CAS is now able to build and run on Java `27`. This is only a preparatory step and note to ensure that CAS is compatible 
+with the latest Java versions and distributions. The JDK baseline requirement for this CAS release, as noted, is and **MUST** be JDK `25`.
+
 ### OAuth & OpenID Connect Client Secrets
 
 OAuth and OIDC client applications may now define [multiple client secrets](../authentication/OAuth-ClientSecret-Management.html), 
@@ -141,9 +152,10 @@ Furthermore, [Heimdall authorization policies](../authorization/Heimdall-Authori
 can now be created, edited and removed from the [Palantir Admin Dashboard](../installation/Admin-Dashboard.html).
 There is also dedicated simulation support to experiment with authorization requests.
 
-Configuration for almost all attribute repositories can also be viewed in better detail. Fields that do support
-[inline Groovy scripts](../integration/Apache-Groovy-Scripting.html) are also allowed to better receive their 
-value from a dedicated editor.
+Configuration for almost all attribute repositories can also be viewed in better detail. The dashboard
+is also able to register new attribute repositories for LDAP, JDBC and Stub repositories.
+                         
+Finally, fields that do support [inline Groovy scripts](../integration/Apache-Groovy-Scripting.html) are also allowed to better receive their value from a dedicated editor.
 
 {% include imagegallery.html gallery_id="palantir-dashboard" images=page.palantir_images %}
 
@@ -201,3 +213,5 @@ Work on [OpenID Connect Federation](../authentication/OIDC-Authentication-Federa
 - Custom ID token claims can also be constructed using [Apache Groovy](../authentication/OIDC-Authentication-Claims-Custom.html).
 - [RediSearch](../ticketing/Redis-Ticket-Registry-RediSearch.html) functionality now supports Redis clustering.
 - The maximum lifetime of a transient session ticket (i.e. `TST`) is by default reduced from `15` minutes to `5` minutes.
+- Groovy integration tests have now switched to use Groovy `5.1.x`.
+- Redis integration tests have now switched to use Groovy `8.10.x`.
