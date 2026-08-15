@@ -47,13 +47,22 @@ jobs:
         id: determine-jdk
         shell: bash
         run: |
-          if [ "$JDK_CURRENT" == "$JDK_LATEST" ]; then
-            echo 'jdks=[{"version":"'"$JDK_CURRENT"'","distribution":"$JDK_DISTRIBUTION"}]' >> "$GITHUB_OUTPUT"
+          if [ "$JDK_CURRENT" = "$JDK_LATEST" ]; then
+            jq -nc \
+              --arg version "$JDK_CURRENT" \
+              --arg distribution "$JDK_DISTRIBUTION" \
+              '[{version: $version, distribution: $distribution}]' \
+              | sed 's/^/jdks=/' >> "$GITHUB_OUTPUT"
           else
-            echo 'jdks=[
-              {"version":"'"$JDK_CURRENT"'","distribution":"$JDK_DISTRIBUTION"},
-              {"version":"'"$JDK_LATEST"'","distribution":"zulu"}
-            ]' | jq -c . | sed 's/^/jdks=/' >> "$GITHUB_OUTPUT"
+            jq -nc \
+              --arg current "$JDK_CURRENT" \
+              --arg latest "$JDK_LATEST" \
+              --arg distribution "$JDK_DISTRIBUTION" \
+              '[
+                {version: $current, distribution: $distribution},
+                {version: $latest, distribution: "zulu"}
+              ]' \
+              | sed 's/^/jdks=/' >> "$GITHUB_OUTPUT"
           fi
       - name: Set up JDK
         uses: actions/setup-java@v5
