@@ -116,6 +116,25 @@ class CookieRetrievingCookieGeneratorTests {
     }
 
     @Test
+    void verifyRemoveAllDoesNotEchoCookieValue() {
+        val request = new MockHttpServletRequest();
+        val cookieValueManager = new NoOpCookieValueManager(tenantExtractor);
+
+        val gen = CookieUtils.buildCookieRetrievingGenerator(cookieValueManager, getCookieGenerationContext("/cas"));
+        val cookie = gen.addCookie(request, new MockHttpServletResponse(), "tgc-value-".repeat(200));
+        val cookieValue = cookie.getValue();
+        request.setCookies(cookie);
+
+        val response = new MockHttpServletResponse();
+        gen.removeAll(request, response);
+
+        val headers = response.getHeaders("Set-Cookie");
+        assertEquals(3, headers.size());
+        assertTrue(headers.stream().noneMatch(header -> header.contains(cookieValue)));
+        assertTrue(Arrays.stream(response.getCookies()).allMatch(removed -> StringUtils.isEmpty(removed.getValue())));
+    }
+
+    @Test
     void verifyExistingCookieInResponse() {
         val context = getCookieGenerationContext();
         val request = new MockHttpServletRequest();
