@@ -58,6 +58,9 @@ class CasConfigurationEndpointTests extends AbstractCasEndpointTests {
     @Qualifier("simplePropertySource")
     private PropertySource simplePropertySource;
 
+    @Autowired
+    private ConfigurableEnvironment environment;
+
     @Test
     void verifyEncryptionDecryption() throws Throwable {
         val value = UUID.randomUUID().toString();
@@ -133,6 +136,102 @@ class CasConfigurationEndpointTests extends AbstractCasEndpointTests {
                 ))
                 .contentType(MediaType.APPLICATION_JSON_VALUE))
             .andExpect(status().isOk());
+    }
+
+    @Test
+    void verifyIndexedPropertyGroupUpdate() throws Throwable {
+        val source = new SimplePropertySource();
+        environment.getPropertySources().addFirst(source);
+        try {
+            val firstRepository = List.of(
+                Map.of(
+                    "name", "cas.authn.attribute-repository.ldap[].ldap-url",
+                    "value", "ldap://localhost:10389",
+                    "propertySource", source.getName()
+                ),
+                Map.of(
+                    "name", "cas.authn.attribute-repository.ldap[].base-dn",
+                    "value", "ou=people,dc=example,dc=org",
+                    "propertySource", source.getName()
+                ),
+                Map.of(
+                    "name", "cas.authn.attribute-repository.ldap[].attributes.uid",
+                    "value", "uid",
+                    "propertySource", source.getName()
+                )
+            );
+            mockMvc.perform(post("/actuator/casConfig/update")
+                    .content(JsonUtils.render(firstRepository))
+                    .contentType(MediaType.APPLICATION_JSON_VALUE))
+                .andExpect(status().isOk());
+
+            assertEquals("ldap://localhost:10389",
+                source.getProperty("cas.authn.attribute-repository.ldap[0].ldap-url"));
+            assertEquals("ou=people,dc=example,dc=org",
+                source.getProperty("cas.authn.attribute-repository.ldap[0].base-dn"));
+            assertEquals("uid", source.getProperty("cas.authn.attribute-repository.ldap[0].attributes.uid"));
+            assertNull(source.getProperty("cas.authn.attribute-repository.ldap[].ldap-url"));
+
+            val secondRepository = List.of(
+                Map.of(
+                    "name", "cas.authn.attribute-repository.ldap[].ldap-url",
+                    "value", "ldap://localhost:20389",
+                    "propertySource", source.getName()
+                ),
+                Map.of(
+                    "name", "cas.authn.attribute-repository.ldap[].base-dn",
+                    "value", "ou=staff,dc=example,dc=org",
+                    "propertySource", source.getName()
+                )
+            );
+            mockMvc.perform(post("/actuator/casConfig/update")
+                    .content(JsonUtils.render(secondRepository))
+                    .contentType(MediaType.APPLICATION_JSON_VALUE))
+                .andExpect(status().isOk());
+
+            assertEquals("ldap://localhost:20389",
+                source.getProperty("cas.authn.attribute-repository.ldap[1].ldap-url"));
+            assertEquals("ou=staff,dc=example,dc=org",
+                source.getProperty("cas.authn.attribute-repository.ldap[1].base-dn"));
+
+            val jdbcRepository = List.of(
+                Map.of(
+                    "name", "cas.authn.attribute-repository.jdbc[].single-row",
+                    "value", "false",
+                    "propertySource", source.getName()
+                ),
+                Map.of(
+                    "name", "cas.authn.attribute-repository.jdbc[].url",
+                    "value", "jdbc:mysql://localhost:3306/cas",
+                    "propertySource", source.getName()
+                ),
+                Map.of(
+                    "name", "cas.authn.attribute-repository.jdbc[].attributes.firstname",
+                    "value", "first-name",
+                    "propertySource", source.getName()
+                ),
+                Map.of(
+                    "name", "cas.authn.attribute-repository.jdbc[].column-mappings.attrname",
+                    "value", "attrvalue",
+                    "propertySource", source.getName()
+                )
+            );
+            mockMvc.perform(post("/actuator/casConfig/update")
+                    .content(JsonUtils.render(jdbcRepository))
+                    .contentType(MediaType.APPLICATION_JSON_VALUE))
+                .andExpect(status().isOk());
+
+            assertEquals("false", source.getProperty("cas.authn.attribute-repository.jdbc[0].single-row"));
+            assertEquals("jdbc:mysql://localhost:3306/cas",
+                source.getProperty("cas.authn.attribute-repository.jdbc[0].url"));
+            assertEquals("first-name",
+                source.getProperty("cas.authn.attribute-repository.jdbc[0].attributes.firstname"));
+            assertEquals("attrvalue",
+                source.getProperty("cas.authn.attribute-repository.jdbc[0].column-mappings.attrname"));
+            assertNull(source.getProperty("cas.authn.attribute-repository.jdbc[].single-row"));
+        } finally {
+            environment.getPropertySources().remove(source.getName());
+        }
     }
 
     @TestConfiguration(proxyBeanMethods = false)
