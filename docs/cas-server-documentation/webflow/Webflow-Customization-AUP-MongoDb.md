@@ -15,3 +15,8 @@ Support is enabled by including the following dependency in the WAR overlay:
 {% include_cached casmodule.html group="org.apereo.cas" module="cas-server-support-aup-mongo" %}
 
 {% include_cached casproperties.html properties="cas.acceptable-usage-policy.mongo" %}
+
+# Multitenancy
+
+Configuration settings for MongoDb can be specified in a multitenant environment.
+Please [review this guide](../multitenancy/Multitenancy-Overview.html) for more information.

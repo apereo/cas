@@ -8,6 +8,7 @@ import org.apereo.cas.util.scripting.ExecutableCompiledScript;
 import org.apereo.cas.web.support.WebUtils;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.jspecify.annotations.Nullable;
 import org.springframework.context.ApplicationContext;
 import org.springframework.webflow.execution.RequestContext;
 
@@ -22,21 +23,20 @@ public class GroovyAcceptableUsagePolicyRepository extends BaseAcceptableUsagePo
     @Serial
     private static final long serialVersionUID = 2773808902502739L;
 
-    private final transient ExecutableCompiledScript watchableScript;
+    private final ExecutableCompiledScript watchableScript;
 
-    private final transient ApplicationContext applicationContext;
+    private final ApplicationContext applicationContext;
 
-    public GroovyAcceptableUsagePolicyRepository(final TicketRegistrySupport ticketRegistrySupport,
-                                                 final AcceptableUsagePolicyProperties aupProperties,
+    public GroovyAcceptableUsagePolicyRepository(final AcceptableUsagePolicyProperties aupProperties,
                                                  final ExecutableCompiledScript watchableScript,
                                                  final ApplicationContext applicationContext) {
-        super(ticketRegistrySupport, aupProperties);
+        super(aupProperties);
         this.watchableScript = watchableScript;
         this.applicationContext = applicationContext;
     }
 
     @Override
-    public AcceptableUsagePolicyStatus verify(final RequestContext requestContext) throws Throwable {
+    public @Nullable AcceptableUsagePolicyStatus verify(final RequestContext requestContext) throws Throwable {
         val principal = WebUtils.getAuthentication(requestContext).getPrincipal();
         return watchableScript.execute("verify", AcceptableUsagePolicyStatus.class,
             requestContext, applicationContext, principal, LOGGER);
@@ -58,7 +58,7 @@ public class GroovyAcceptableUsagePolicyRepository extends BaseAcceptableUsagePo
     @Override
     public boolean submit(final RequestContext requestContext) throws Throwable {
         val principal = WebUtils.getAuthentication(requestContext).getPrincipal();
-        return watchableScript.execute("submit", Boolean.class, requestContext,
-            applicationContext, principal, LOGGER);
+        return Boolean.TRUE.equals(watchableScript.execute("submit", Boolean.class, requestContext,
+            applicationContext, principal, LOGGER));
     }
 }

@@ -24,9 +24,8 @@ public class DefaultAcceptableUsagePolicyRepository extends BaseAcceptableUsageP
 
     private final Map<String, Boolean> policyMap = new ConcurrentHashMap<>();
 
-    public DefaultAcceptableUsagePolicyRepository(final TicketRegistrySupport ticketRegistrySupport,
-                                                  final AcceptableUsagePolicyProperties aupProperties) {
-        super(ticketRegistrySupport, aupProperties);
+    public DefaultAcceptableUsagePolicyRepository(final AcceptableUsagePolicyProperties aupProperties) {
+        super(aupProperties);
     }
 
     @Override

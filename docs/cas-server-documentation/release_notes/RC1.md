@@ -122,11 +122,6 @@ return types and fields. We will gradually extend the coverage of such annotatio
 and will integrate the Gradle build tool with tools such as [NullAway](https://github.com/uber/NullAway) to prevent nullness contract violations
 during compile time.
 
-### Java 27
-  
-CAS is now able to build and run on Java `27`. This is only a preparatory step and note to ensure that CAS is compatible 
-with the latest Java versions and distributions. The JDK baseline requirement for this CAS release, as noted, is and **MUST** be JDK `25`.
-
 ### OAuth & OpenID Connect Client Secrets
 
 OAuth and OIDC client applications may now define [multiple client secrets](../authentication/OAuth-ClientSecret-Management.html), 
@@ -204,6 +199,12 @@ There is also initial support for OpenID Connect with Verifiable Presentations (
 
 Work on [OpenID Connect Federation](../authentication/OIDC-Authentication-Federation.html) is now roughly finalized. A number of test scenarios and minor edge cases
 are still being worked on and should be resolved in the next few releases.
+
+### Acceptable Usage Policy & Multitenancy
+
+[Acceptable Usage Policy (AUP) support](../webflow/Webflow-Customization-AUP.html) has been extended to 
+support multitenancy. A number of storage mechanisms are now available to support multitenancy, specifically 
+[MongoDb](../webflow/Webflow-Customization-AUP-MongoDb.html) and more will be added in the future.
 
 ## Other Stuff
   

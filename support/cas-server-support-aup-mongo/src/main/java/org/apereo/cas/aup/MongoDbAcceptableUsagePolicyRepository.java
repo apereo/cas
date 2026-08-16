@@ -30,10 +30,9 @@ public class MongoDbAcceptableUsagePolicyRepository extends BaseAcceptableUsageP
 
     private final MongoOperations mongoTemplate;
 
-    public MongoDbAcceptableUsagePolicyRepository(final TicketRegistrySupport ticketRegistrySupport,
-                                                  final AcceptableUsagePolicyProperties aupProperties,
+    public MongoDbAcceptableUsagePolicyRepository(final AcceptableUsagePolicyProperties aupProperties,
                                                   final MongoOperations mongoTemplate) {
-        super(ticketRegistrySupport, aupProperties);
+        super(aupProperties);
         this.mongoTemplate = mongoTemplate;
     }
 

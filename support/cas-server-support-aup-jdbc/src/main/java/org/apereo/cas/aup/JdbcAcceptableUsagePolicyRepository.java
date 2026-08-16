@@ -37,11 +37,10 @@ public class JdbcAcceptableUsagePolicyRepository extends BaseAcceptableUsagePoli
 
     private final TransactionOperations transactionTemplate;
 
-    public JdbcAcceptableUsagePolicyRepository(final TicketRegistrySupport ticketRegistrySupport,
-                                               final AcceptableUsagePolicyProperties aupProperties,
+    public JdbcAcceptableUsagePolicyRepository(final AcceptableUsagePolicyProperties aupProperties,
                                                final DataSource dataSource,
                                                final TransactionOperations transactionTemplate) {
-        super(ticketRegistrySupport, aupProperties);
+        super(aupProperties);
         this.jdbcTemplate = new JdbcTemplate(dataSource);
         this.transactionTemplate = transactionTemplate;
     }

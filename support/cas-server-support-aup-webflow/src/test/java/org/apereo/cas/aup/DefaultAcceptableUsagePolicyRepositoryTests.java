@@ -110,10 +110,7 @@ class DefaultAcceptableUsagePolicyRepositoryTests {
         }
 
         private static AcceptableUsagePolicyRepository getRepositoryInstance(final AcceptableUsagePolicyProperties properties) {
-            val support = mock(TicketRegistrySupport.class);
-            when(support.getAuthenticatedPrincipalFrom(anyString()))
-                .thenReturn(CoreAuthenticationTestUtils.getPrincipal(CollectionUtils.wrap("carLicense", "false")));
-            return new DefaultAcceptableUsagePolicyRepository(support, properties);
+            return new DefaultAcceptableUsagePolicyRepository(properties);
         }
     }
 

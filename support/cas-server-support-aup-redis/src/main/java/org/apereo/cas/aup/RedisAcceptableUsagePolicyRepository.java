@@ -33,10 +33,9 @@ public class RedisAcceptableUsagePolicyRepository extends BaseAcceptableUsagePol
 
     private final CasRedisTemplate redisTemplate;
 
-    public RedisAcceptableUsagePolicyRepository(final TicketRegistrySupport ticketRegistrySupport,
-                                                final AcceptableUsagePolicyProperties aupProperties,
+    public RedisAcceptableUsagePolicyRepository(final AcceptableUsagePolicyProperties aupProperties,
                                                 final CasRedisTemplate redisTemplate) {
-        super(ticketRegistrySupport, aupProperties);
+        super(aupProperties);
         this.redisTemplate = redisTemplate;
     }
 

@@ -42,10 +42,9 @@ public class RestAcceptableUsagePolicyRepository extends BaseAcceptableUsagePoli
 
     private final HttpClient httpClient;
 
-    public RestAcceptableUsagePolicyRepository(final TicketRegistrySupport ticketRegistrySupport,
-                                               final HttpClient httpClient,
+    public RestAcceptableUsagePolicyRepository(final HttpClient httpClient,
                                                final AcceptableUsagePolicyProperties aupProperties) {
-        super(ticketRegistrySupport, aupProperties);
+        super(aupProperties);
         this.httpClient = httpClient;
     }
 

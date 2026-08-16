@@ -98,7 +98,7 @@ public class CasAcceptableUsagePolicyJdbcAutoConfiguration {
         final TicketRegistrySupport ticketRegistrySupport) {
         return BeanSupplier.of(AcceptableUsagePolicyRepository.class)
             .when(AcceptableUsagePolicyRepository.CONDITION_AUP_ENABLED.given(applicationContext.getEnvironment()))
-            .supply(() -> new JdbcAcceptableUsagePolicyRepository(ticketRegistrySupport,
+            .supply(() -> new JdbcAcceptableUsagePolicyRepository(
                 casProperties.getAcceptableUsagePolicy(),
                 acceptableUsagePolicyDataSource,
                 jdbcAcceptableUsagePolicyTransactionTemplate))

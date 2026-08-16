@@ -35,10 +35,9 @@ public class LdapAcceptableUsagePolicyRepository extends BaseAcceptableUsagePoli
 
     private final Map<String, ConnectionFactory> connectionFactoryList;
 
-    public LdapAcceptableUsagePolicyRepository(final TicketRegistrySupport ticketRegistrySupport,
-                                               final AcceptableUsagePolicyProperties aupProperties,
+    public LdapAcceptableUsagePolicyRepository(final AcceptableUsagePolicyProperties aupProperties,
                                                final Map<String, ConnectionFactory> connectionFactoryList) {
-        super(ticketRegistrySupport, aupProperties);
+        super(aupProperties);
         this.connectionFactoryList = connectionFactoryList;
     }
 
