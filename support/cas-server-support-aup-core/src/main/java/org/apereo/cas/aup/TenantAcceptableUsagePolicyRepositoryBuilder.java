@@ -30,6 +30,13 @@ public interface TenantAcceptableUsagePolicyRepositoryBuilder {
         return null;
     }
 
+    /**
+     * Build internal acceptable usage policy repository.
+     *
+     * @param tenantDefinition the tenant definition
+     * @param bindingContext   the binding context
+     * @return the acceptable usage policy repository
+     */
     @Nullable AcceptableUsagePolicyRepository buildInternal(TenantDefinition tenantDefinition,
                                                             ConfigurationPropertiesBindingContext<CasConfigurationProperties> bindingContext);
 }
