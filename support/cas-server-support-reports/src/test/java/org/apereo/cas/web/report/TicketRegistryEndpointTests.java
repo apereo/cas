@@ -7,7 +7,6 @@ import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.apereo.cas.ticket.TicketGrantingTicketImpl;
 import org.apereo.cas.ticket.expiration.NeverExpiresExpirationPolicy;
 import org.apereo.cas.ticket.registry.TicketRegistry;
-import org.apereo.cas.ticket.registry.TicketRegistryQueryCriteria;
 import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
@@ -39,11 +38,9 @@ class TicketRegistryEndpointTests extends AbstractCasEndpointTests {
 
     @Test
     void verifyOperationById() throws Throwable {
-        val content = TicketRegistryQueryCriteria.builder()
-            .type(TicketGrantingTicket.PREFIX).build();
         mockMvc.perform(get("/actuator/ticketRegistry/query")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(MAPPER.writeValueAsString(content)))
+                .param("type", TicketGrantingTicket.PREFIX)
+                .contentType(MediaType.APPLICATION_JSON))
             .andExpect(status().isOk())
             .andExpect(jsonPath("$").isArray())
             .andExpect(jsonPath("$").isEmpty());
