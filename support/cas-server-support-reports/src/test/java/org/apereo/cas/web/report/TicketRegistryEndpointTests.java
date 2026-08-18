@@ -14,6 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.TestPropertySource;
+import static org.hamcrest.Matchers.*;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
@@ -33,7 +34,9 @@ class TicketRegistryEndpointTests extends AbstractCasEndpointTests {
 
     @Test
     void verifyOperationById() throws Throwable {
+        val unknownTicketId = TicketGrantingTicket.PREFIX + '-' + UUID.randomUUID();
         mockMvc.perform(get("/actuator/ticketRegistry/query")
+                .param("id", unknownTicketId)
                 .param("type", TicketGrantingTicket.PREFIX)
                 .contentType(MediaType.APPLICATION_JSON))
             .andExpect(status().isOk())
@@ -51,7 +54,8 @@ class TicketRegistryEndpointTests extends AbstractCasEndpointTests {
             )
             .andExpect(status().isOk())
             .andExpect(jsonPath("$").isArray())
-            .andExpect(jsonPath("$").isNotEmpty());
+            .andExpect(jsonPath("$", hasSize(1)))
+            .andExpect(jsonPath("$[0].id").value(ticket.getId()));
     }
 
     @Test
