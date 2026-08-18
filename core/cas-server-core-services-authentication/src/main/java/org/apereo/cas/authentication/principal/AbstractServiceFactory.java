@@ -2,6 +2,7 @@ package org.apereo.cas.authentication.principal;
 
 import module java.base;
 import org.apereo.cas.CasProtocolConstants;
+import org.apereo.cas.CentralAuthenticationService;
 import org.apereo.cas.multitenancy.TenantDefinition;
 import org.apereo.cas.multitenancy.TenantExtractor;
 import org.apereo.cas.util.CollectionUtils;
@@ -16,6 +17,7 @@ import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.Strings;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apache.commons.text.StringEscapeUtils;
 import org.apache.hc.core5.net.URIBuilder;
@@ -107,6 +109,7 @@ public abstract class AbstractServiceFactory<T extends Service> implements Servi
             .entrySet()
             .stream()
             .filter(entry -> !IGNORED_ATTRIBUTES_PARAMS.contains(entry.getKey()))
+            .filter(entry -> !Strings.CI.startsWith(entry.getKey(), CentralAuthenticationService.NAMESPACE))
             .map(entry -> Pair.of(entry.getKey(), CollectionUtils.toCollection(entry.getValue(), ArrayList.class)))
             .collect(Collectors.toMap(Pair::getKey, Pair::getValue));
         attributes.putAll(extractQueryParameters(service));
