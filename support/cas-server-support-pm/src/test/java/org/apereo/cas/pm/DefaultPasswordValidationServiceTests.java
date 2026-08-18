@@ -101,11 +101,12 @@ class DefaultPasswordValidationServiceTests {
         assertFalse(passwordValidationService.isValid(request));
     }
 
-	@Test
-	void verifyNoCommentSpecialHandling() throws Throwable {
-		val request = new PasswordChangeRequest("casuser", "current-psw".toCharArray(), "Th !sIsT3st".toCharArray(), "Th !sIsT3st".toCharArray());
-		assertTrue(passwordValidationService.isValid(request));
-	}
+    @Test
+    void verifyNoCommentSpecialHandling() throws Throwable {
+        val request = new PasswordChangeRequest("casuser", "current-psw".toCharArray(),
+            "Th !sIsT3st".toCharArray(), "Th !sIsT3st".toCharArray());
+        assertTrue(passwordValidationService.isValid(request));
+    }
 }
 
 
