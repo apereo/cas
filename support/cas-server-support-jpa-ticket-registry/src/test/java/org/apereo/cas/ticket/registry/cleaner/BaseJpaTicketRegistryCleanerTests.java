@@ -208,9 +208,10 @@ public abstract class BaseJpaTicketRegistryCleanerTests {
 
     @RetryingTest(2)
     void verifyConcurrentCleaner() throws Throwable {
-        val registryTask = new TimerTask() {
-            @Override
-            public void run() {
+        val executor = Executors.newScheduledThreadPool(2);
+        val tasks = new ArrayList<ScheduledFuture<?>>();
+        try {
+            tasks.add(executor.scheduleAtFixedRate(() -> {
                 for (var i = 0; i < 5; i++) {
                     FunctionUtils.doUnchecked(_ -> {
                         val tgt = new TicketGrantingTicketImpl(TicketGrantingTicket.PREFIX + '-' + RandomUtils.randomAlphabetic(16),
@@ -225,25 +226,15 @@ public abstract class BaseJpaTicketRegistryCleanerTests {
                         ticketRegistry.updateTicket(tgt);
                     });
                 }
-            }
-        };
-        val registryTimer = new Timer("TicketRegistry");
-        registryTimer.scheduleAtFixedRate(registryTask, 5, 5);
-
-
-        val cleanerTask = new TimerTask() {
-            @Override
-            public void run() {
-                ticketRegistryCleaner.clean();
-            }
-        };
-        val cleanerTimer = new Timer("TicketRegistryCleanerTimer");
-        cleanerTimer.scheduleAtFixedRate(cleanerTask, 10, 5);
-
-        Thread.sleep(1000 * 15);
-        cleanerTimer.cancel();
-        registryTimer.cancel();
-        ticketRegistry.deleteAll();
+            }, 5, 5, TimeUnit.MILLISECONDS));
+            tasks.add(executor.scheduleAtFixedRate(ticketRegistryCleaner::clean, 10, 5, TimeUnit.MILLISECONDS));
+            Thread.sleep(Duration.ofSeconds(15));
+        } finally {
+            tasks.forEach(task -> task.cancel(false));
+            executor.shutdown();
+            assertTrue(executor.awaitTermination(30, TimeUnit.SECONDS));
+            ticketRegistry.deleteAll();
+        }
     }
 
     private OAuth20Code createOAuthCode() throws Throwable {
