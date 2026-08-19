@@ -220,3 +220,4 @@ support multitenancy. A number of storage mechanisms are now available to suppor
 - Attributes requested for [Consent](../integration/Attribute-Release-Consent.html) may now be localized using language bundles and a prefixed language key that is `screen.consent.attributes.attribute.[attribute-name]`.
 - When removing cookies, particularly during logout, the existing cookie value is no longer echoed back for remove operations.
 - [CAS REST APIs](../protocol/REST-Protocol.html) now return a `403` status code instead of a `500` type of error when unauthorized application requests are identified.
+- [LettuceMod](../ticketing/Redis-Ticket-Registry-RediSearch.html) is removed from CAS and its functionality is directly provided by Lettuce itself.

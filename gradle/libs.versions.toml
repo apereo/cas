@@ -160,7 +160,6 @@ kafka = "4.3.1"
 kryo = "5.6.2"
 kryoSerializers = "0.45"
 ldaptive = "2.5.1"
-lettuceMod = "4.5.0"
 log4j = "2.26.1"
 logback = "1.6.3"
 logbackAccess = "2.0.15"
@@ -519,7 +518,6 @@ kryo-sdk = { module = "com.esotericsoftware:kryo", version.ref = "kryo" }
 kryo-serializers = { module = "de.javakaffee:kryo-serializers", version.ref = "kryoSerializers" }
 ldaptive = { module = "org.ldaptive:ldaptive", version.ref = "ldaptive" }
 lettuce-core = { module = "io.lettuce:lettuce-core", version.ref = "redisLettuce" }
-lettucemod = { module = "com.redis:lettucemod", version.ref = "lettuceMod" }
 log4j-api = { module = "org.apache.logging.log4j:log4j-api", version.ref = "log4j" }
 log4j-core = { module = "org.apache.logging.log4j:log4j-core", version.ref = "log4j" }
 log4j-jakarta-web = { module = "org.apache.logging.log4j:log4j-jakarta-web", version.ref = "log4j" }
