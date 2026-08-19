@@ -46,7 +46,8 @@ options = {
     %r{^#.+},
     %r{localhost},
     %r{/cas/development/$},
-    %r{\Ahttps?://(?:[^/]+\.)?refeds\.org(?:/.*)?\z}
+    %r{\Ahttps?://(?:[^/]+\.)?refeds\.org(?:/.*)?\z},
+    %r{\Ahttps?://apereo\.slack\.com(?:/.*)?\z}
   ],
   :verbose => true
 }
