@@ -71,8 +71,7 @@ public class ShibbolethIdPEntityIdAuthenticationServiceSelectionStrategy extends
 
     @Override
     public boolean supports(final Service service) {
-        val casPattern = "^".concat(idpServerPrefix).concat(".*");
-        val matches = service != null && service.getId().matches(casPattern);
+        val matches = service != null && service.getId().startsWith(idpServerPrefix);
         LOGGER.trace("Does service id [{}] match against [{}]: [{}]",
             service, idpServerPrefix, BooleanUtils.toStringYesNo(matches));
         val supported = matches && getEntityIdAsParameter(service).isPresent();
