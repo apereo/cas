@@ -107,7 +107,7 @@ class OidcClientConfigurationEndpointControllerTests {
                     .accept(MediaType.APPLICATION_JSON)
                     .with(withHttpRequestProcessor())
                 )
-                .andExpect(status().isBadRequest());
+                .andExpect(status().isUnauthorized());
         }
 
         @Test
@@ -139,6 +139,36 @@ class OidcClientConfigurationEndpointControllerTests {
                     .with(withHttpRequestProcessor())
                 )
                 .andExpect(status().isOk());
+        }
+
+        @Test
+        void verifyRejectsCrossClientReadAndWrite() throws Throwable {
+            val tokenClientId = UUID.randomUUID().toString();
+            val requestedClientId = UUID.randomUUID().toString();
+            val service = getOidcRegisteredService(requestedClientId);
+            servicesManager.save(service);
+
+            val accessToken = getAccessToken(tokenClientId, Set.of(OidcConstants.CLIENT_CONFIGURATION_SCOPE));
+            ticketRegistry.addTicket(accessToken);
+            val authorization = "Bearer %s".formatted(accessToken.getId());
+            mockMvc
+                .perform(get("/cas/oidc/" + OidcConstants.CLIENT_CONFIGURATION_URL)
+                    .param(OAuth20Constants.CLIENT_ID, requestedClientId)
+                    .header(HttpHeaders.AUTHORIZATION, authorization)
+                    .accept(MediaType.APPLICATION_JSON)
+                    .with(withHttpRequestProcessor()))
+                .andExpect(status().isUnauthorized());
+
+            mockMvc
+                .perform(patch("/cas/oidc/" + OidcConstants.CLIENT_CONFIGURATION_URL)
+                    .param(OAuth20Constants.CLIENT_ID, requestedClientId)
+                    .header(HttpHeaders.AUTHORIZATION, authorization)
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .content("""
+                        {"redirect_uris":["https://attacker.example.org/callback"]}
+                        """)
+                    .with(withHttpRequestProcessor()))
+                .andExpect(status().isUnauthorized());
         }
 
         @Test

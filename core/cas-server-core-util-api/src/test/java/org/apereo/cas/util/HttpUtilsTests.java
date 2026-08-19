@@ -55,6 +55,43 @@ class HttpUtilsTests {
     }
 
     @Test
+    void verifyExecWithPinnedAddress() throws Exception {
+        try (val webServer = new MockWebServer(HttpStatus.OK)) {
+            webServer.start();
+            val exec = HttpExecutionRequest.builder()
+                .method(HttpMethod.GET)
+                .url("http://sector.example.org:%s".formatted(webServer.getPort()))
+                .resolvedAddresses(Map.of("sector.example.org", new InetAddress[]{InetAddress.getLoopbackAddress()}))
+                .build()
+                .withoutRetry();
+            val response = HttpUtils.execute(exec);
+            assertEquals(HttpStatus.OK.value(), response.getCode());
+            assertEquals(1, webServer.getRequestCount());
+        }
+    }
+
+    @Test
+    void verifyExecWithoutRedirects() {
+        try (val targetServer = new MockWebServer(HttpStatus.OK);
+             val redirectServer = new MockWebServer(HttpStatus.FOUND)) {
+            targetServer.start();
+            redirectServer.headers(Map.of("Location", "http://localhost:%s".formatted(targetServer.getPort())));
+            redirectServer.start();
+
+            val exec = HttpExecutionRequest.builder()
+                .method(HttpMethod.GET)
+                .url("http://localhost:%s".formatted(redirectServer.getPort()))
+                .redirectsEnabled(false)
+                .build()
+                .withoutRetry();
+            val response = HttpUtils.execute(exec);
+            assertEquals(HttpStatus.FOUND.value(), response.getCode());
+            assertEquals(1, redirectServer.getRequestCount());
+            assertEquals(0, targetServer.getRequestCount());
+        }
+    }
+
+    @Test
     void verifyExec() {
         val exec = HttpExecutionRequest.builder()
             .basicAuthPassword("password")

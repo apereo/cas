@@ -56,6 +56,12 @@ public class HttpExecutionRequest {
     @Builder.Default
     private final Map<String, String> headers = new LinkedHashMap<>();
 
+    @Builder.Default
+    private final Map<String, InetAddress[]> resolvedAddresses = new LinkedHashMap<>();
+
+    @Builder.Default
+    private final boolean redirectsEnabled = true;
+
     /**
      * Determines whether this request uses basic authentication.
      *
