@@ -10,8 +10,7 @@ A good template to follow when opening pull requests should follow the below *gu
 
 ### Problem
 
-This is where you describe the problem in sufficient detail. Please make sure your pull request has a clear and descriptive title to make it easier for 
-others to find and evaluate the change. This is where you begin to explain the use case at hand, and circumstances that led you to it.
+This is where you describe the problem in sufficient detail. Please make sure your pull request has a clear and descriptive title to make it easier for others to find and evaluate the change. This is where you begin to explain the use case at hand, and circumstances that led you to it.
 
 Be brief but precise:
 
@@ -24,8 +23,7 @@ Then,
 - Explain the current outcome; what do you see happening today?
 - How exactly should one go about reproducing the current outcome? Do you have a series of test cases that demonstrate some faulty behavior? Do you have a sample, a test application to exhibit the issue at hand?
 
-Be sure to describe the environment you have today. What are the key components at play here? What precise version of the software do you run? Where did you 
-download it? How old is it and have you considered upgrading? How did you install it? What changes have been applied to the software or its surrounding ecosystem, etc?
+Be sure to describe the environment you have today. What are the key components at play here? What precise version of the software do you run? Where did you download it? How old is it and have you considered upgrading? How did you install it? What changes have been applied to the software or its surrounding ecosystem, etc?
  
 ### Logs
 
