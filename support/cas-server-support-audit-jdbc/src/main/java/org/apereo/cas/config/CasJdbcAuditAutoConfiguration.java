@@ -17,6 +17,7 @@ import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.util.spring.beans.BeanCondition;
 import org.apereo.cas.util.spring.beans.BeanSupplier;
 import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
+import org.apereo.cas.util.spring.boot.ConditionalOnMatchingHostname;
 import org.apereo.cas.util.thread.Cleanable;
 import lombok.RequiredArgsConstructor;
 import lombok.val;
@@ -225,6 +226,7 @@ public class CasJdbcAuditAutoConfiguration {
     static class CasSupportJdbcAuditScheduleConfiguration {
 
         @ConditionalOnMissingBean(name = "inspektrAuditTrailCleaner")
+        @ConditionalOnMatchingHostname(name = "cas.audit.jdbc.schedule.enabled-on-host")
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @Lazy(false)
