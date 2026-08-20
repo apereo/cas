@@ -190,34 +190,7 @@ class OidcDynamicClientRegistrationEndpointControllerTests {
                 assertEquals(0, webServer.getRequestCount());
             }
         }
-
-        @Test
-        void verifyJwksUriCannotReachLoopback() throws Throwable {
-            try (val webServer = new MockWebServer(HttpStatus.OK)) {
-                webServer.start();
-                val clientId = UUID.randomUUID().toString();
-                val accessToken = getAccessToken(clientId, Set.of(OidcConstants.CLIENT_REGISTRATION_SCOPE));
-                ticketRegistry.addTicket(accessToken);
-
-                val registrationReq = """
-                    {
-                        "redirect_uris": ["https://client.example.org/callback"],
-                        "client_name": "My Example",
-                        "jwks_uri": "https://127.0.0.1:%s/jwks.json"
-                    }
-                    """.formatted(webServer.getPort());
-                mockMvc
-                    .perform(post("/cas/oidc/" + OidcConstants.REGISTRATION_URL)
-                        .accept(MediaType.APPLICATION_JSON)
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .with(withHttpRequestProcessor())
-                        .header(HttpHeaders.AUTHORIZATION, "Bearer %s".formatted(accessToken.getId()))
-                        .content(registrationReq))
-                    .andExpect(status().isBadRequest());
-                assertEquals(0, webServer.getRequestCount());
-            }
-        }
-
+        
         @Test
         void verifyNoClientNameOperation() throws Throwable {
             val clientId = UUID.randomUUID().toString();

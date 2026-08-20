@@ -14,8 +14,8 @@ import org.junit.jupiter.api.RepeatedTest;
 import org.junit.jupiter.api.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.boot.amqp.autoconfigure.RabbitAutoConfiguration;
 import org.springframework.boot.autoconfigure.ImportAutoConfiguration;
+import org.springframework.boot.amqp.rabbitmq.autoconfigure.AmqpRabbitAutoConfiguration;
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Import;
@@ -30,7 +30,7 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 @Import(AMQPDefaultTicketRegistryTests.AMQPTicketRegistryTestConfiguration.class)
 @ImportAutoConfiguration({
-    RabbitAutoConfiguration.class,
+    AmqpRabbitAutoConfiguration.class,
     CasAMQPTicketRegistryAutoConfiguration.class
 })
 @TestPropertySource(properties = {

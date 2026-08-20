@@ -20,7 +20,7 @@ import org.apereo.cas.util.spring.boot.SpringBootTestAutoConfigurations;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.boot.amqp.autoconfigure.RabbitAutoConfiguration;
+import org.springframework.boot.amqp.rabbitmq.autoconfigure.AmqpRabbitAutoConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.ConfigurableApplicationContext;
 
@@ -32,7 +32,7 @@ import org.springframework.context.ConfigurableApplicationContext;
  */
 @SpringBootTestAutoConfigurations
 @SpringBootTest(classes = {
-    RabbitAutoConfiguration.class,
+    AmqpRabbitAutoConfiguration.class,
     CasAMQPTicketRegistryAutoConfiguration.class,
     CasCoreTicketsAutoConfiguration.class,
     CasCoreLogoutAutoConfiguration.class,

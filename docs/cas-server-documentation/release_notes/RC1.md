@@ -111,9 +111,12 @@ latest Gradle features and capabilities.
  
 ### Spring Boot 4.2
 
-CAS is now built with Spring Boot `4.2.x`. This is a minor platform upgrade that 
-affects almost all aspects of the codebase including many of the third-party 
-core libraries used by CAS as well as some CAS functionality.
+CAS is now built on top of Spring Boot `4.2.x`. This is an in-progress ongoing minor platform upgrade that 
+affects almost all aspects of the codebase including many of the third-party core libraries used by CAS 
+as well as some CAS functionality.
+
+Please refer to the [Spring Boot Wiki](https://github.com/spring-projects/spring-boot/wiki/Spring-Boot-4.2-Release-Notes) 
+for more information on the changes and updates in this release.
 
 ### JSpecify & NullAway
 

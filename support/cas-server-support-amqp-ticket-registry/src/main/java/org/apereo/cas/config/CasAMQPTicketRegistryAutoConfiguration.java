@@ -26,7 +26,7 @@ import org.springframework.amqp.rabbit.listener.adapter.MessageListenerAdapter;
 import org.springframework.amqp.support.converter.MessageConverter;
 import org.springframework.amqp.support.converter.SerializerMessageConverter;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.boot.amqp.autoconfigure.RabbitProperties;
+import org.springframework.boot.amqp.rabbitmq.autoconfigure.AmqpRabbitProperties;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -117,7 +117,7 @@ public class CasAMQPTicketRegistryAutoConfiguration {
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @ConditionalOnMissingBean(name = "amqpTicketRegistryClusterTopologyManager")
     public ClusterTopologyManager amqpTicketRegistryClusterTopologyManager(
-        final RabbitProperties rabbitProperties,
+        final AmqpRabbitProperties rabbitProperties,
         final CasConfigurationProperties casProperties) {
         return new AMQPClusterTopologyManager(casProperties, rabbitProperties);
     }
