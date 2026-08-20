@@ -43,7 +43,6 @@ class DefaultRequestedAuthenticationContextValidatorTests {
     private static ConfigurableApplicationContext buildApplicationContext() {
         val applicationContext = new StaticApplicationContext();
         applicationContext.refresh();
-        ApplicationContextProvider.holdApplicationContext(applicationContext);
         ApplicationContextProvider.registerBeanIntoApplicationContext(applicationContext,
             MultifactorAuthenticationPrincipalResolver.identical(), UUID.randomUUID().toString());
         return applicationContext;
