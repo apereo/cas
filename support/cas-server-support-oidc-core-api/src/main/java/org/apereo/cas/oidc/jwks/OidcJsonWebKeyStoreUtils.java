@@ -2,7 +2,6 @@ package org.apereo.cas.oidc.jwks;
 
 import module java.base;
 import org.apereo.cas.oidc.token.OidcRegisteredServiceJwtCipherExecutor;
-import org.apereo.cas.oidc.util.OidcOutboundHttpRequestUtils;
 import org.apereo.cas.services.OidcRegisteredService;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.util.JsonUtils;
@@ -144,7 +143,7 @@ public class OidcJsonWebKeyStoreUtils {
         LOGGER.debug("Loading JSON web key from [{}]", resource);
         try (val is = resource.getInputStream()) {
             val json = IOUtils.toString(is, StandardCharsets.UTF_8);
-            LOGGER.debug("Retrieved JSON web key from [{}]", resource);
+            LOGGER.debug("Retrieved JSON web key from [{}] as [{}]", resource, json);
             return buildJsonWebKeySet(json, keyId, usage);
         }
     }
@@ -166,10 +165,6 @@ public class OidcJsonWebKeyStoreUtils {
                                                                final ResourceLoader resourceLoader) {
         val serviceJwks = SpringExpressionLanguageValueResolver.getInstance().resolve(service.getJwks());
         if (StringUtils.isNotBlank(serviceJwks)) {
-            if (OidcOutboundHttpRequestUtils.isHttpUrl(serviceJwks)) {
-                val json = FunctionUtils.doUnchecked(() -> OidcOutboundHttpRequestUtils.fetch(serviceJwks));
-                return new InputStreamResource(new ByteArrayInputStream(json.getBytes(StandardCharsets.UTF_8)), "JWKS");
-            }
             if (ResourceUtils.doesResourceExist(serviceJwks)) {
                 return resourceLoader.getResource(serviceJwks);
             }

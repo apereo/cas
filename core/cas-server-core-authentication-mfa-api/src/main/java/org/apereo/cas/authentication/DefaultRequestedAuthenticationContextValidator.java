@@ -2,6 +2,7 @@ package org.apereo.cas.authentication;
 
 import module java.base;
 import org.apereo.cas.authentication.principal.Service;
+import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.support.mfa.BaseMultifactorAuthenticationProviderProperties;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.ServicesManager;
@@ -30,6 +31,8 @@ public class DefaultRequestedAuthenticationContextValidator implements Requested
 
     private final MultifactorAuthenticationContextValidator authenticationContextValidator;
 
+    private final CasConfigurationProperties casProperties;
+
     protected static AuthenticationContextValidationResult toSuccessfulResult() {
         return AuthenticationContextValidationResult.builder().success(true).build();
     }
@@ -40,7 +43,7 @@ public class DefaultRequestedAuthenticationContextValidator implements Requested
         final Authentication authentication,
         final Service service,
         final HttpServletRequest request) {
-        
+
         if (provider.isAvailable(registeredService)) {
             val bypassEvaluator = provider.getBypassEvaluator();
             if (bypassEvaluator != null) {
@@ -85,7 +88,7 @@ public class DefaultRequestedAuthenticationContextValidator implements Requested
         @Nullable final RegisteredService registeredService,
         final Authentication authentication,
         final Service service) throws Throwable {
-        
+
         if (registeredService != null && registeredService.getMultifactorAuthenticationPolicy().isBypassEnabled()) {
             LOGGER.debug("Multifactor authentication execution is ignored for [{}]", registeredService.getName());
             return toSuccessfulResult();
@@ -115,6 +118,7 @@ public class DefaultRequestedAuthenticationContextValidator implements Requested
             return toSuccessfulResult();
         }
 
+
         LOGGER.debug("Multifactor providers eligible for validation are [{}]", providers);
         return providers
             .stream()
@@ -123,11 +127,20 @@ public class DefaultRequestedAuthenticationContextValidator implements Requested
                 Optional.ofNullable(registeredService)))
             .filter(MultifactorAuthenticationContextValidationResult::isSuccess)
             .findAny()
-            .map(result -> AuthenticationContextValidationResult.builder()
+            .map(result -> AuthenticationContextValidationResult
+                .builder()
                 .success(result.isSuccess())
                 .contextId(result.getProvider().map(MultifactorAuthenticationProvider::getId))
                 .build())
             .map(AuthenticationContextValidationResult.class::cast)
-            .orElseGet(DefaultRequestedAuthenticationContextValidator::toFailureResult);
+            .orElseGet(() -> {
+                if (providerResult.get() instanceof ChainingMultifactorAuthenticationProvider
+                    && casProperties.getAuthn().getMfa().getCore().getProviderSelection().isProviderSelectionOptional()) {
+                    LOGGER.debug("Multifactor authentication provider selection is optional, and no provider could be validated. "
+                        + "The request will proceed without enforcing multifactor authentication.");
+                    return toSuccessfulResult();
+                }
+                return toFailureResult();
+            });
     }
 }

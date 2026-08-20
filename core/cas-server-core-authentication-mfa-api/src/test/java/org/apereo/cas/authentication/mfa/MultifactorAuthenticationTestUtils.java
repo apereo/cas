@@ -18,6 +18,7 @@ import org.apereo.cas.services.RegisteredServiceAccessStrategy;
 import org.apereo.cas.services.RegisteredServiceMultifactorPolicy;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.util.CollectionUtils;
+import org.apereo.cas.util.spring.ApplicationContextProvider;
 import org.apereo.cas.validation.RequestedAuthenticationContextValidator;
 import lombok.experimental.UtilityClass;
 import lombok.val;
@@ -105,8 +106,10 @@ public class MultifactorAuthenticationTestUtils {
 
         val multifactorContextValidator = new DefaultMultifactorAuthenticationContextValidator(
             "authn_method", "trusted_authn", applicationContext);
+
+        val casProperties = ApplicationContextProvider.getCasConfigurationProperties().orElseThrow();
         return new DefaultRequestedAuthenticationContextValidator(servicesManager,
-            multifactorTrigger, multifactorContextValidator);
+            multifactorTrigger, multifactorContextValidator, casProperties);
     }
 
     public static MultifactorAuthenticationProviderBypassProperties getAuthenticationBypassProperties() {

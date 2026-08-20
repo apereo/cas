@@ -5,7 +5,6 @@ import org.apereo.cas.configuration.support.Beans;
 import org.apereo.cas.oidc.OidcConfigurationContext;
 import org.apereo.cas.oidc.dynareg.OidcClientRegistrationRequest;
 import org.apereo.cas.oidc.profile.OidcUserProfileSigningAndEncryptionService;
-import org.apereo.cas.oidc.util.OidcOutboundHttpRequestUtils;
 import org.apereo.cas.services.DefaultRegisteredServiceContact;
 import org.apereo.cas.services.DefaultRegisteredServiceMultifactorPolicy;
 import org.apereo.cas.services.OidcBackchannelTokenDeliveryModes;
@@ -19,14 +18,21 @@ import org.apereo.cas.support.oauth.util.OAuth20Utils;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.RandomUtils;
 import org.apereo.cas.util.function.FunctionUtils;
+import org.apereo.cas.util.http.HttpExecutionRequest;
+import org.apereo.cas.util.http.HttpUtils;
 import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.Strings;
+import org.apache.hc.core5.http.HttpEntityContainer;
+import org.apache.hc.core5.http.HttpResponse;
+import org.apache.hc.core5.http.HttpStatus;
 import org.hjson.JsonValue;
 import org.springframework.beans.factory.ObjectProvider;
+import org.springframework.http.HttpMethod;
 import org.springframework.util.Assert;
 import tools.jackson.databind.ObjectMapper;
 
@@ -84,8 +90,9 @@ public class OidcDefaultClientRegistrationRequestTranslator implements OidcClien
         }
 
         if (StringUtils.isNotBlank(registrationRequest.getJwksUri())) {
-            OidcOutboundHttpRequestUtils.validate(registrationRequest.getJwksUri());
-            registeredService.setJwks(registrationRequest.getJwksUri());
+            if (context.getUrlValidator().isValid(registrationRequest.getJwksUri())) {
+                registeredService.setJwks(registrationRequest.getJwksUri());
+            }
         } else {
             val jwks = registrationRequest.getJwks();
             if (jwks != null && !jwks.getJsonWebKeys().isEmpty()) {
@@ -260,12 +267,26 @@ public class OidcDefaultClientRegistrationRequestTranslator implements OidcClien
                           final OidcRegisteredService registeredService) throws Exception {
         val context = configurationContext.getObject();
         if (StringUtils.isNotBlank(registeredService.getSectorIdentifierUri())) {
-            val sectorIdentifierUri = registeredService.getSectorIdentifierUri();
-            val result = OidcOutboundHttpRequestUtils.fetch(sectorIdentifierUri);
-            val expectedType = MAPPER.getTypeFactory().constructParametricType(List.class, String.class);
-            val urls = MAPPER.readValue(JsonValue.readHjson(result).toString(), expectedType);
-            if (!urls.equals(registrationRequest.getRedirectUris())) {
-                throw new IllegalArgumentException("Invalid sector identifier uri");
+            HttpResponse sectorResponse = null;
+            try {
+                val exec = HttpExecutionRequest
+                    .builder()
+                    .method(HttpMethod.GET)
+                    .url(registeredService.getSectorIdentifierUri())
+                    .build();
+                sectorResponse = HttpUtils.execute(exec);
+                if (sectorResponse != null && sectorResponse.getCode() == HttpStatus.SC_OK) {
+                    try (val content = ((HttpEntityContainer) sectorResponse).getEntity().getContent()) {
+                        val result = IOUtils.toString(content, StandardCharsets.UTF_8);
+                        val expectedType = MAPPER.getTypeFactory().constructParametricType(List.class, String.class);
+                        val urls = MAPPER.readValue(JsonValue.readHjson(result).toString(), expectedType);
+                        if (!urls.equals(registrationRequest.getRedirectUris())) {
+                            throw new IllegalArgumentException("Invalid sector identifier uri");
+                        }
+                    }
+                }
+            } finally {
+                HttpUtils.close(sectorResponse);
             }
         }
 
