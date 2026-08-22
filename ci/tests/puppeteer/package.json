@@ -13,7 +13,7 @@
     "dpop": "2.1.1",
     "express": "5.2.1",
     "http-cas-client": "0.4.3",
-    "jose": "6.2.9",
+    "jose": "6.2.10",
     "jsonpath-plus": "10.4.0",
     "jsonwebtoken": "9.0.3",
     "jsqr": "1.4.0",
@@ -40,7 +40,7 @@
   },
   "devDependencies": {
     "@eslint/js": "10.0.1",
-    "eslint": "10.8.1",
+    "eslint": "10.9.0",
     "globals": "17.11.0"
   }
 }
