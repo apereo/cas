@@ -48,7 +48,7 @@ public class OidcFetchFederationEndpointController extends AbstractOidcFederatio
      * @param response the response
      * @return the specific entity statement
      */
-    @GetMapping('/' + OidcConstants.BASE_OIDC_URL + '/' + OidcConstants.FETCH_FEDERATION_URL)
+    @GetMapping('/' + OidcConstants.BASE_OIDC_URL + OidcConstants.FETCH_FEDERATION_URL)
     @Operation(summary = "Handle OIDC fetch federation request",
         description = "Handles requests for the fetch federation endpoint",
         parameters = {

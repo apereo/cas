@@ -27,7 +27,7 @@ public class AMQPClusterTopologyManager implements ClusterTopologyManager {
     private static final ObjectMapper MAPPER = JacksonObjectMapperFactory.builder()
         .defaultTypingEnabled(false).build().toObjectMapper();
 
-    private static final String SPRING_RABBITMQ_MANAGEMENT_URL = "spring.rabbitmq.management-url";
+    private static final String SPRING_RABBITMQ_MANAGEMENT_URL = "spring.amqp.rabbitmq.management-url";
     private final CasConfigurationProperties casProperties;
     private final AmqpRabbitProperties rabbitProperties;
 

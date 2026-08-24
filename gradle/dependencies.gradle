@@ -1210,21 +1210,20 @@ ext.libraries = [
                 }
         ],
         springrabbitmq                 : [
-                dependencies.create(libs.spring.boot.starter.rabbitmq.get()) {
+                dependencies.create(libs.spring.boot.starter.amqp.rabbitmq.get()) {
                     exclude(group: "org.slf4j", module: "slf4j-api")
                     exclude(group: "org.springframework", module: "spring-context")
                     exclude(group: "org.springframework", module: "spring-core")
                     exclude(group: "org.springframework", module: "spring-aop")
                     exclude(group: "org.springframework.boot", module: "spring-boot-starter")
                 },
-                dependencies.create(libs.spring.boot.rabbitmq.get()) {
+                dependencies.create(libs.spring.boot.amqp.rabbitmq.get()) {
                     exclude(group: "org.slf4j", module: "slf4j-api")
                     exclude(group: "org.springframework", module: "spring-context")
                     exclude(group: "org.springframework", module: "spring-core")
                     exclude(group: "org.springframework", module: "spring-aop")
                     exclude(group: "org.springframework.boot", module: "spring-boot-starter")
-                },
-                dependencies.create(libs.spring.rabbit.get())
+                }
         ],
         thymeleaf                  : [
                 dependencies.create(libs.thymeleaf.spring6.get()) {

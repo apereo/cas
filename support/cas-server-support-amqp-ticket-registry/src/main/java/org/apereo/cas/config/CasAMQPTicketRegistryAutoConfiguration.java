@@ -6,23 +6,25 @@ import org.apereo.cas.configuration.features.CasFeatureModule;
 import org.apereo.cas.ha.ClusterTopologyManager;
 import org.apereo.cas.ticket.registry.AMQPClusterTopologyManager;
 import org.apereo.cas.ticket.registry.pubsub.MessageQueueMessageSerializationHandler;
+import org.apereo.cas.ticket.registry.pubsub.commands.BaseMessageQueueCommand;
 import org.apereo.cas.ticket.registry.pubsub.queue.QueueableTicketRegistryMessagePublisher;
 import org.apereo.cas.ticket.registry.pubsub.queue.QueueableTicketRegistryMessageReceiver;
 import org.apereo.cas.ticket.registry.queue.AMQPTicketRegistryQueuePublisher;
 import org.apereo.cas.util.PublisherIdentifier;
 import org.apereo.cas.util.crypto.CipherExecutor;
+import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.springframework.amqp.core.BindingBuilder;
 import org.springframework.amqp.core.Declarables;
+import org.springframework.amqp.core.MessageListener;
 import org.springframework.amqp.core.MessageListenerContainer;
 import org.springframework.amqp.core.Queue;
 import org.springframework.amqp.core.TopicExchange;
-import org.springframework.amqp.rabbit.connection.ConnectionFactory;
-import org.springframework.amqp.rabbit.core.RabbitTemplate;
-import org.springframework.amqp.rabbit.listener.SimpleMessageListenerContainer;
-import org.springframework.amqp.rabbit.listener.adapter.MessageListenerAdapter;
+import org.springframework.amqp.rabbitmq.client.AmqpConnectionFactory;
+import org.springframework.amqp.rabbitmq.client.RabbitAmqpTemplate;
+import org.springframework.amqp.rabbitmq.client.listener.RabbitAmqpListenerContainer;
 import org.springframework.amqp.support.converter.MessageConverter;
 import org.springframework.amqp.support.converter.SerializerMessageConverter;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -66,10 +68,10 @@ public class CasAMQPTicketRegistryAutoConfiguration {
         final PublisherIdentifier messageQueueTicketRegistryIdentifier,
         @Qualifier("messageQueueTicketRegistryConverter")
         final MessageConverter messageQueueTicketRegistryConverter,
-        final RabbitTemplate rabbitTemplate) {
-        rabbitTemplate.setMessageConverter(messageQueueTicketRegistryConverter);
+        final RabbitAmqpTemplate rabbitAmqpTemplate) {
+        rabbitAmqpTemplate.setMessageConverter(messageQueueTicketRegistryConverter);
         LOGGER.debug("Configuring AMQP ticket registry with identifier [{}]", messageQueueTicketRegistryIdentifier);
-        return new AMQPTicketRegistryQueuePublisher(rabbitTemplate);
+        return new AMQPTicketRegistryQueuePublisher(rabbitAmqpTemplate);
     }
 
     @Bean
@@ -88,29 +90,29 @@ public class CasAMQPTicketRegistryAutoConfiguration {
     public MessageListenerContainer amqpTicketRegistryMessageListenerContainer(
         @Qualifier(PublisherIdentifier.DEFAULT_BEAN_NAME)
         final PublisherIdentifier messageQueueTicketRegistryIdentifier,
-        @Qualifier("rabbitConnectionFactory")
-        final ConnectionFactory connectionFactory,
-        @Qualifier("amqpTicketRegistryListenerAdapter")
-        final MessageListenerAdapter listenerAdapter) {
-        val container = new SimpleMessageListenerContainer();
-        container.setConnectionFactory(connectionFactory);
+        final AmqpConnectionFactory connectionFactory,
+        @Qualifier("amqpTicketRegistryMessageListener")
+        final MessageListener messageListener) {
+        val container = new RabbitAmqpListenerContainer(connectionFactory);
         container.setQueueNames(messageQueueTicketRegistryIdentifier.getId());
-        container.setMessageListener(listenerAdapter);
+        container.setupMessageListener(messageListener);
         return container;
     }
 
     @Bean
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-    @ConditionalOnMissingBean(name = "amqpTicketRegistryListenerAdapter")
+    @ConditionalOnMissingBean(name = "amqpTicketRegistryMessageListener")
     @Lazy(false)
-    public MessageListenerAdapter amqpTicketRegistryListenerAdapter(
+    public MessageListener amqpTicketRegistryMessageListener(
         @Qualifier("messageQueueTicketRegistryReceiver")
         final QueueableTicketRegistryMessageReceiver messageQueueTicketRegistryReceiver,
         @Qualifier("messageQueueTicketRegistryConverter")
         final MessageConverter messageQueueTicketRegistryConverter) {
-        val adapter = new MessageListenerAdapter(messageQueueTicketRegistryReceiver, "receive");
-        adapter.setMessageConverter(messageQueueTicketRegistryConverter);
-        return adapter;
+        return message -> {
+            val command = (BaseMessageQueueCommand) Objects.requireNonNull(
+                messageQueueTicketRegistryConverter.fromMessage(message));
+            FunctionUtils.doUnchecked(_ -> messageQueueTicketRegistryReceiver.receive(command));
+        };
     }
 
     @Bean

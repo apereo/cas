@@ -116,7 +116,7 @@ affects almost all aspects of the codebase including many of the third-party cor
 as well as some CAS functionality.
 
 Please refer to the [Spring Boot Wiki](https://github.com/spring-projects/spring-boot/wiki/Spring-Boot-4.2-Release-Notes) 
-for more information on the changes and updates in this release.
+for more information on the changes and updates in this release. The biggest change to CAS would be support for AMQP 1.0.
 
 ### JSpecify & NullAway
 
