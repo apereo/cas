@@ -55,7 +55,7 @@ public class WebAuthnMultifactorAttestationTrustSourceFidoProperties implements 
      * This is the current FIDO Metadata Service BLOB download URL.
      */
     @RequiredProperty
-    private String metadataBlobUrl = "https://mds.fidoalliance.org/";
+    private String metadataBlobUrl = "https://mds3.fidoalliance.org/";
 
     /**
      * Certificate required for PKI to verify the downloaded blob.
@@ -64,14 +64,14 @@ public class WebAuthnMultifactorAttestationTrustSourceFidoProperties implements 
      * The certificate will be downloaded if it does not exist in the cache, or if the cached certificate is not currently valid.
      */
     @RequiredProperty
-    private String trustRootUrl = "https://secure.globalsign.com/cacert/root-r3.crt";
+    private String trustRootUrl = "https://secure.globalsign.com/cacert/rootr46.crt";
 
     /**
      * Certificate SHA-256 hash required for PKI to verify the downloaded certificate.
      * Separate hash values with a comma.
      */
     @RequiredProperty
-    private String trustRootHash = "cbb522d7b7f127ad6a0113865bdf1cd4102e7d0759af635a7cf4720dc963c53b";
+    private String trustRootHash = "4fa3126d8d3a11d1c4855a4f807cbad6cf919d3a5a88b03bea2c6372d93c40c9";
 
     /**
      * Cache the trust root certificate in the file cache file.
