@@ -26,7 +26,7 @@ public class ProxyValidateController extends AbstractServiceValidateController {
         super(serviceValidateConfigurationContext);
     }
 
-    @GetMapping(path = { CasProtocolConstants.ENDPOINT_PROXY_VALIDATE, "/tenants/{tenant}/" + CasProtocolConstants.ENDPOINT_PROXY_VALIDATE })
+    @GetMapping(path = { CasProtocolConstants.ENDPOINT_PROXY_VALIDATE, "/tenants/{tenant}" + CasProtocolConstants.ENDPOINT_PROXY_VALIDATE })
     @Override
     @Operation(summary = "Validate a service ticket",
         parameters = {
