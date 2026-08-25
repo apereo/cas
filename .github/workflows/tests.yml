@@ -166,7 +166,7 @@ jobs:
           coverageReport="$PWD/build/reports/jacoco/jacocoRootReport/jacocoRootReport.xml"
           echo "Uploading coverage report to SonarCloud from $coverageReport"
           ./gradlew sonar --build-cache --configure-on-demand \
-            --no-daemon -DskipAot=true -q --parallel \
+            --no-daemon -DskipAot=true -q --parallel --no-isolated-projects \
             -x javadoc -x test -DskipNestedConfigMetadataGen=true \
             -PsonarOrganization="${{ github.repository_owner }}" \
             -Dsonar.coverage.jacoco.xmlReportPaths="$coverageReport"
