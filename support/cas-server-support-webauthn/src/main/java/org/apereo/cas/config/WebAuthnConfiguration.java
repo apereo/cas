@@ -110,7 +110,6 @@ class WebAuthnConfiguration {
         @Bean
         @ConditionalOnMissingBean(name = "webAuthnMetadataService")
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-        @Lazy(false)
         public AttestationTrustSource webAuthnMetadataService(
             final ConfigurableApplicationContext applicationContext,
             final CasConfigurationProperties casProperties) {

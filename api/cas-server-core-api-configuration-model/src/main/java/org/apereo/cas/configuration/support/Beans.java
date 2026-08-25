@@ -10,11 +10,11 @@ import com.github.benmanes.caffeine.cache.Expiry;
 import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.jooq.lambda.Unchecked;
 import org.springframework.beans.factory.FactoryBean;
 import org.springframework.scheduling.concurrent.ThreadPoolExecutorFactoryBean;
-import org.springframework.util.StringUtils;
 
 
 /**
@@ -71,7 +71,7 @@ public class Beans {
      * @return true/false
      */
     public static boolean isInfinitelyDurable(final String value) {
-        return "-1".equalsIgnoreCase(value) || !StringUtils.hasText(value) || "INFINITE".equalsIgnoreCase(value);
+        return "-1".equalsIgnoreCase(value) || StringUtils.isBlank(value) || "INFINITE".equalsIgnoreCase(value);
     }
 
     /**
@@ -81,7 +81,7 @@ public class Beans {
      * @return true/false
      */
     public static boolean isNeverDurable(final String value) {
-        return "0".equalsIgnoreCase(value) || "NEVER".equalsIgnoreCase(value) || !StringUtils.hasText(value);
+        return "0".equalsIgnoreCase(value) || "NEVER".equalsIgnoreCase(value) || StringUtils.isBlank(value);
     }
 
     /**
@@ -118,11 +118,26 @@ public class Beans {
      * @return the caffeine
      */
     public static Caffeine newCacheBuilder(final SimpleCacheProperties cache) {
+        return newCacheBuilder(cache.getInitialCapacity(), cache.getCacheSize(),
+            cache instanceof final ExpiringSimpleCacheProperties simpleCache
+                ? simpleCache.getDuration()
+                : StringUtils.EMPTY);
+    }
+
+    /**
+     * New cache builder caffeine.
+     *
+     * @param capacity the capacity
+     * @param size     the size
+     * @param duration the duration
+     * @return the caffeine
+     */
+    public static Caffeine newCacheBuilder(final int capacity, final long size, final String duration) {
         val builder = Caffeine.newBuilder()
-            .initialCapacity(cache.getInitialCapacity())
-            .maximumSize(cache.getCacheSize());
-        if (cache instanceof final ExpiringSimpleCacheProperties expiring) {
-            builder.expireAfterWrite(newDuration(expiring.getDuration()));
+            .initialCapacity(capacity)
+            .maximumSize(size);
+        if (StringUtils.isNotBlank(duration)) {
+            builder.expireAfterWrite(newDuration(duration));
         }
         builder.removalListener((key, value, cause) -> {
             LOGGER.trace("Removing cached value [{}] linked to cache key [{}]; removal cause is [{}]", value, key, cause);

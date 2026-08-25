@@ -11,7 +11,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.val;
 import org.apache.commons.io.IOUtils;
 import org.apache.hc.core5.http.HttpEntityContainer;
-import org.springframework.boot.amqp.autoconfigure.RabbitProperties;
+import org.springframework.boot.amqp.rabbitmq.autoconfigure.AmqpRabbitProperties;
 import org.springframework.http.HttpMethod;
 import tools.jackson.core.type.TypeReference;
 import tools.jackson.databind.ObjectMapper;
@@ -27,9 +27,9 @@ public class AMQPClusterTopologyManager implements ClusterTopologyManager {
     private static final ObjectMapper MAPPER = JacksonObjectMapperFactory.builder()
         .defaultTypingEnabled(false).build().toObjectMapper();
 
-    private static final String SPRING_RABBITMQ_MANAGEMENT_URL = "spring.rabbitmq.management-url";
+    private static final String SPRING_RABBITMQ_MANAGEMENT_URL = "spring.amqp.rabbitmq.management-url";
     private final CasConfigurationProperties casProperties;
-    private final RabbitProperties rabbitProperties;
+    private final AmqpRabbitProperties rabbitProperties;
 
     @Override
     public List<? extends ClusterMember> discoverMembers() throws Exception {

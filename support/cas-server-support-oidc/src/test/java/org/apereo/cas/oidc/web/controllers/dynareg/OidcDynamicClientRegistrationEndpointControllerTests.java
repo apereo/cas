@@ -18,6 +18,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.TestPropertySource;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
@@ -146,7 +147,7 @@ class OidcDynamicClientRegistrationEndpointControllerTests {
         }
 
         @Test
-        void verifyOperation() throws Throwable {
+        void verifySectorIdentifierUriCannotReachLoopback() throws Throwable {
             try (val webServer = new MockWebServer(HttpStatus.OK)) {
                 webServer.responseBodyJson(List.of("https://client.example.org/callback", "https://client.example.org/callback2"));
                 webServer.start();
@@ -166,9 +167,8 @@ class OidcDynamicClientRegistrationEndpointControllerTests {
                         "policy_uri": "https://client.example.org/policy",
                         "tos_uri": "https://client.example.org/tos",
                         "subject_type": "pairwise",
-                        "sector_identifier_uri": "http://localhost:%s",
+                        "sector_identifier_uri": "https://127.0.0.1:%s",
                         "token_endpoint_auth_method": "client_secret_basic",
-                        "jwks_uri": "https://client.example.org/my_public_keys.jwks",
                         "id_token_signed_response_alg": "RS256",
                         "id_token_encrypted_response_alg": "RSA1_5",
                         "id_token_encrypted_response_enc": "A128CBC-HS256",
@@ -186,51 +186,46 @@ class OidcDynamicClientRegistrationEndpointControllerTests {
                         .header(HttpHeaders.AUTHORIZATION, "Bearer %s".formatted(accessToken.getId()))
                         .content(registrationReq)
                     )
-                    .andExpect(status().isCreated());
+                    .andExpect(status().isBadRequest());
+                assertEquals(0, webServer.getRequestCount());
             }
         }
-
+        
         @Test
         void verifyNoClientNameOperation() throws Throwable {
-            try (val webServer = new MockWebServer(HttpStatus.OK)) {
-                webServer.responseBodyJson(List.of("https://client.example.org/callback5", "https://client.example.org/callback11"));
-                webServer.start();
+            val clientId = UUID.randomUUID().toString();
+            val accessToken = getAccessToken(clientId, Set.of(OidcConstants.CLIENT_REGISTRATION_SCOPE));
+            ticketRegistry.addTicket(accessToken);
 
-                val clientId = UUID.randomUUID().toString();
-                val accessToken = getAccessToken(clientId, Set.of(OidcConstants.CLIENT_REGISTRATION_SCOPE));
-                ticketRegistry.addTicket(accessToken);
+            val registrationReq = """
+                    {
+                        "application_type": "web",
+                        "default_acr_values": ["mfa-duo", "mfa-gauth"],
+                        "redirect_uris": ["https://client.example.org/callback5", "https://client.example.org/callback11"],
+                        "client_name#ja-Japan-JP": "Japanese",
+                        "logo_uri": "https://client.example.org/logo.png",
+                        "policy_uri": "https://client.example.org/policy",
+                        "tos_uri": "https://client.example.org/tos",
+                        "subject_type": "pairwise",
+                        "token_endpoint_auth_method": "client_secret_basic",
+                        "jwks": {"keys": []},
+                        "id_token_signed_response_alg": "RS256",
+                        "id_token_encrypted_response_alg": "RSA1_5",
+                        "id_token_encrypted_response_enc": "A128CBC-HS256",
+                        "userinfo_encrypted_response_alg": "RSA1_5",
+                        "contacts": ["ve7jtb@example.org", "mary@example.org"]
+                    }
+                """;
 
-                val registrationReq = """
-                        {
-                            "application_type": "web",
-                            "default_acr_values": ["mfa-duo", "mfa-gauth"],
-                            "redirect_uris": ["https://client.example.org/callback5", "https://client.example.org/callback11"],
-                            "client_name#ja-Japan-JP": "Japanese",
-                            "logo_uri": "https://client.example.org/logo.png",
-                            "policy_uri": "https://client.example.org/policy",
-                            "tos_uri": "https://client.example.org/tos",
-                            "subject_type": "pairwise",
-                            "sector_identifier_uri": "http://localhost:%s",
-                            "token_endpoint_auth_method": "client_secret_basic",
-                            "jwks": {"keys": []},
-                            "id_token_signed_response_alg": "RS256",
-                            "id_token_encrypted_response_alg": "RSA1_5",
-                            "id_token_encrypted_response_enc": "A128CBC-HS256",
-                            "userinfo_encrypted_response_alg": "RSA1_5",
-                            "contacts": ["ve7jtb@example.org", "mary@example.org"]
-                        }
-                    """.formatted(webServer.getPort());
-
-                mockMvc
-                    .perform(post("/cas/oidc/" + OidcConstants.REGISTRATION_URL)
-                        .accept(MediaType.APPLICATION_JSON)
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .with(withHttpRequestProcessor())
-                        .header(HttpHeaders.AUTHORIZATION, "Bearer %s".formatted(accessToken.getId()))
-                        .content(registrationReq)
-                    )
-                    .andExpect(status().isCreated());
-            }
+            mockMvc
+                .perform(post("/cas/oidc/" + OidcConstants.REGISTRATION_URL)
+                    .accept(MediaType.APPLICATION_JSON)
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .with(withHttpRequestProcessor())
+                    .header(HttpHeaders.AUTHORIZATION, "Bearer %s".formatted(accessToken.getId()))
+                    .content(registrationReq)
+                )
+                .andExpect(status().isCreated());
         }
 
         @Test

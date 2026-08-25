@@ -28,7 +28,7 @@ public class UmaWellKnownEndpointController extends AbstractController {
      *
      * @return the well known discovery configuration
      */
-    @GetMapping(value = '/' + OAuth20Constants.BASE_OAUTH20_URL + "/.well-known/uma-configuration", produces = MediaType.APPLICATION_JSON_VALUE)
+    @GetMapping(value = OAuth20Constants.BASE_OAUTH20_URL + "/.well-known/uma-configuration", produces = MediaType.APPLICATION_JSON_VALUE)
     @Operation(
         summary = "Get UMA discovery configuration",
         description = "Returns the UMA discovery configuration")

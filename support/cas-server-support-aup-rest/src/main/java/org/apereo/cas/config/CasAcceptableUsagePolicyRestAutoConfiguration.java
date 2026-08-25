@@ -42,7 +42,7 @@ public class CasAcceptableUsagePolicyRestAutoConfiguration {
             .when(AcceptableUsagePolicyRepository.CONDITION_AUP_ENABLED.given(applicationContext.getEnvironment()))
             .supply(() -> {
                 val aup = casProperties.getAcceptableUsagePolicy();
-                return new RestAcceptableUsagePolicyRepository(ticketRegistrySupport, httpClient, aup);
+                return new RestAcceptableUsagePolicyRepository(httpClient, aup);
             })
             .otherwise(AcceptableUsagePolicyRepository::noOp)
             .get();

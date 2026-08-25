@@ -19,6 +19,7 @@ import org.apache.hc.client5.http.classic.methods.HttpPost;
 import org.apache.hc.client5.http.classic.methods.HttpUriRequest;
 import org.apache.hc.client5.http.config.ConnectionConfig;
 import org.apache.hc.client5.http.config.RequestConfig;
+import org.apache.hc.client5.http.impl.InMemoryDnsResolver;
 import org.apache.hc.client5.http.impl.classic.CloseableHttpClient;
 import org.apache.hc.client5.http.impl.classic.CloseableHttpResponse;
 import org.apache.hc.client5.http.impl.classic.HttpClientBuilder;
@@ -237,6 +238,7 @@ public class HttpUtils {
         val requestConfig = RequestConfig.custom();
         requestConfig.setConnectTimeout(CONNECT_TIMEOUT_IN_MILLISECONDS);
         requestConfig.setConnectionRequestTimeout(CONNECTION_REQUEST_TIMEOUT_IN_MILLISECONDS);
+        requestConfig.setRedirectsEnabled(execution.isRedirectsEnabled());
 
         val builder = HttpClientBuilder
             .create()
@@ -251,7 +253,7 @@ public class HttpUtils {
             .map(HttpClientFactory::getSslSocketFactory)
             .orElseGet(() -> getSslConnectionSocketFactory(execution));
 
-        val connectionManager = PoolingHttpClientConnectionManagerBuilder.create()
+        val connectionManagerBuilder = PoolingHttpClientConnectionManagerBuilder.create()
             .setSSLSocketFactory(socketFactory)
             .setDefaultSocketConfig(SocketConfig.custom()
                 .setSoTimeout(SOCKET_TIMEOUT_IN_MILLISECONDS)
@@ -262,8 +264,13 @@ public class HttpUtils {
                 .setTimeToLive(CONNECT_TTL_TIMEOUT_IN_MILLISECONDS)
                 .setSocketTimeout(SOCKET_TIMEOUT_IN_MILLISECONDS)
                 .setConnectTimeout(CONNECT_TIMEOUT_IN_MILLISECONDS)
-                .build())
-            .build();
+                .build());
+        if (!execution.getResolvedAddresses().isEmpty()) {
+            val dnsResolver = new InMemoryDnsResolver();
+            execution.getResolvedAddresses().forEach(dnsResolver::add);
+            connectionManagerBuilder.setDnsResolver(dnsResolver);
+        }
+        val connectionManager = connectionManagerBuilder.build();
         builder.setConnectionManager(connectionManager);
         return builder;
     }

@@ -445,6 +445,7 @@ function refreshCasServerConfiguration(title) {
                     $.post(endpoint)
                         .done(() => {
                             reloadAuthenticationHandlersTable();
+                            reloadAttributeRepositoriesTable();
                             loadExternalIdentityProvidersTable().then(r => {
                                 Swal.close();
                                 Swal.fire({

@@ -121,7 +121,7 @@ class JdbcAcceptableUsagePolicyRepositoryAdvancedTests extends BaseJdbcAcceptabl
 
     private void raiseException(final Map<String, List<Object>> profileAttributes) throws Exception {
         val aupProperties = casProperties.getAcceptableUsagePolicy();
-        val jdbcAupRepository = new JdbcAcceptableUsagePolicyRepository(ticketRegistrySupport,
+        val jdbcAupRepository = new JdbcAcceptableUsagePolicyRepository(
             aupProperties,
             acceptableUsagePolicyDataSource,
             jdbcAcceptableUsagePolicyTransactionTemplate);

@@ -353,7 +353,7 @@ function print_connection_information() {
     printf "\nUsername: %s\n" "${RABBITMQ_USERNAME}"
     printf "Password: %s\n" "${RABBITMQ_PASSWORD}"
 
-    printf "\nSpring Boot configuration:\n\n"
+    printf "\nSpring Boot RabbitMQ AMQP 0.9.1 configuration:\n\n"
     printf "spring.rabbitmq.addresses=localhost:%s,localhost:%s,localhost:%s\n" \
         "${RABBITMQ_AMQP_PORT_1}" \
         "${RABBITMQ_AMQP_PORT_2}" \
@@ -362,6 +362,13 @@ function print_connection_information() {
     printf "spring.rabbitmq.username=%s\n" "${RABBITMQ_USERNAME}"
     printf "spring.rabbitmq.password=%s\n" "${RABBITMQ_PASSWORD}"
     printf "spring.rabbitmq.virtual-host=%s\n" "${RABBITMQ_VHOST}"
+
+    printf "\nSpring Boot RabbitMQ AMQP 1.0 configuration (node 1):\n\n"
+    printf "spring.amqp.rabbitmq.host=localhost\n"
+    printf "spring.amqp.rabbitmq.port=%s\n" "${RABBITMQ_AMQP_PORT_1}"
+    printf "spring.amqp.rabbitmq.username=%s\n" "${RABBITMQ_USERNAME}"
+    printf "spring.amqp.rabbitmq.password=%s\n" "${RABBITMQ_PASSWORD}"
+    printf "spring.amqp.rabbitmq.virtual-host=%s\n" "${RABBITMQ_VHOST}"
 
     printf "\nStop the cluster with:\n\n"
     printf "docker rm -f %s %s %s\n" \

@@ -6,6 +6,7 @@ const assert = require("assert");
     const service = "https://localhost:9859/anything/cas";
     const browser = await cas.newBrowser(cas.browserOptions());
     const page = await cas.newPage(browser);
+    await cas.gotoLogout(page);
     await cas.gotoLogin(page, service);
     await cas.loginWith(page);
     await cas.sleep(2000);

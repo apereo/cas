@@ -25,7 +25,7 @@ public class V3ProxyValidateController extends V3ServiceValidateController {
         super(ctx);
     }
 
-    @GetMapping(path = {CasProtocolConstants.ENDPOINT_PROXY_VALIDATE_V3, "/tenants/{tenant}/" + CasProtocolConstants.ENDPOINT_PROXY_VALIDATE_V3})
+    @GetMapping(path = {CasProtocolConstants.ENDPOINT_PROXY_VALIDATE_V3, "/tenants/{tenant}" + CasProtocolConstants.ENDPOINT_PROXY_VALIDATE_V3})
     @Override
     @Operation(summary = "Validate a service ticket",
         parameters = {

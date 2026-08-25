@@ -37,7 +37,11 @@ public class OidcClientConfigurationAccessTokenAuthenticator extends OAuth20Acce
             val profile = super.buildUserProfile(tokenCredentials, callContext, accessToken);
             LOGGER.trace("Examining access token [{}] for required scope [{}]", accessToken, OidcConstants.CLIENT_CONFIGURATION_SCOPE);
             val clientId = profile.getAttribute(OAuth20Constants.CLIENT_ID, String.class);
-            if (accessToken.getClientId().equals(clientId)
+            val requestedClientId = callContext.webContext()
+                .getRequestParameter(OAuth20Constants.CLIENT_ID)
+                .orElse(null);
+            if (Objects.equals(accessToken.getClientId(), clientId)
+                && Objects.equals(accessToken.getClientId(), requestedClientId)
                 && accessToken.getScopes().contains(OidcConstants.CLIENT_CONFIGURATION_SCOPE)) {
                 return profile;
             }

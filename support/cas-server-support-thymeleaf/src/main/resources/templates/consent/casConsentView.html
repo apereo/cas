@@ -82,9 +82,9 @@
                             <tbody class="mdc-data-table__content">
                                 <tr th:each="attribute : ${attributes}" class="mdc-data-table__row">
                                     <td class="mdc-data-table__cell">
-                                        <code th:id="${attribute.name}">
-                                            <span th:if="${attribute.friendlyName}" th:utext="${attribute.friendlyName}"/>
-                                            <span th:unless="${attribute.friendlyName}" th:utext="${attribute.name}"/>
+                                        <code th:id="${attribute.name}"
+                                              th:with="label=${attribute.friendlyName ?: attribute.name},key=${'screen.consent.attributes.attribute.' + label},translated=${#messages.msgOrNull(key)}">
+                                            <span th:text="${!#strings.isEmpty(translated) && translated != key ? translated : label}"></span>
                                         </code>
                                     </td>
                                     <td class="mdc-data-table__cell">

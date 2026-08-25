@@ -1,6 +1,6 @@
 services:
   redis-1:
-    image: redis:8.10.0
+    image: redis:8.10.1
     container_name: redis-1
     hostname: redis-1
     command:
@@ -32,7 +32,7 @@ services:
       - redis-cluster
 
   redis-2:
-    image: redis:8.10.0
+    image: redis:8.10.1
     container_name: redis-2
     hostname: redis-2
     command:
@@ -64,7 +64,7 @@ services:
       - redis-cluster
 
   redis-3:
-    image: redis:8.10.0
+    image: redis:8.10.1
     container_name: redis-3
     hostname: redis-3
     command:
@@ -96,7 +96,7 @@ services:
       - redis-cluster
 
   redis-4:
-    image: redis:8.10.0
+    image: redis:8.10.1
     container_name: redis-4
     hostname: redis-4
     command:
@@ -128,7 +128,7 @@ services:
       - redis-cluster
 
   redis-5:
-    image: redis:8.10.0
+    image: redis:8.10.1
     container_name: redis-5
     hostname: redis-5
     command:
@@ -160,7 +160,7 @@ services:
       - redis-cluster
 
   redis-6:
-    image: redis:8.10.0
+    image: redis:8.10.1
     container_name: redis-6
     hostname: redis-6
     command:

@@ -3,7 +3,7 @@ name: Build
 env:
   JAVA_OPTS: "-Xms512m -Xmx6048m -Xss128m -XX:ReservedCodeCacheSize=512m -server"
   GRADLE_OPTS: "-Xms512m -Xmx6048m -Xss128m -XX:ReservedCodeCacheSize=512m -server"
-  GRADLE_BUILD_OPTIONS: "--no-daemon -x check -x test -x javadoc --configure-on-demand --max-workers=8 "
+  GRADLE_BUILD_OPTIONS: "--stacktrace --no-daemon -x check -x test -x javadoc --configure-on-demand --max-workers=8 "
   TERM: xterm-256color
   GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
   GH_PACKAGE_REGISTRY_USER: ${{ secrets.GH_PACKAGE_REGISTRY_USER }}
@@ -45,14 +45,27 @@ jobs:
           persist-credentials: false
       - name: Determine JDKs
         id: determine-jdk
+        shell: bash
         run: |
-            if [ "$JDK_CURRENT" == "$JDK_LATEST" ]; then
-              echo "jdks=[\"$JDK_CURRENT\"]" >> "$GITHUB_OUTPUT"
-            else
-              echo "jdks=[\"$JDK_CURRENT\", \"$JDK_LATEST\"]" >> "$GITHUB_OUTPUT"
-            fi
+          if [ "$JDK_CURRENT" = "$JDK_LATEST" ]; then
+            jq -nc \
+              --arg version "$JDK_CURRENT" \
+              --arg distribution "$JDK_DISTRIBUTION" \
+              '[{version: $version, distribution: $distribution}]' \
+              | sed 's/^/jdks=/' >> "$GITHUB_OUTPUT"
+          else
+            jq -nc \
+              --arg current "$JDK_CURRENT" \
+              --arg latest "$JDK_LATEST" \
+              --arg distribution "$JDK_DISTRIBUTION" \
+              '[
+                {version: $current, distribution: $distribution},
+                {version: $latest, distribution: "zulu"}
+              ]' \
+              | sed 's/^/jdks=/' >> "$GITHUB_OUTPUT"
+          fi
       - name: Set up JDK
-        uses: actions/setup-java@v5
+        uses: actions/setup-java@v6
         with:
           java-version: ${{ env.JDK_CURRENT }}
           distribution: ${{ env.JDK_DISTRIBUTION }}
@@ -73,7 +86,7 @@ jobs:
         with:
           persist-credentials: false
       - name: Set up JDK
-        uses: actions/setup-java@v5
+        uses: actions/setup-java@v6
         with:
           java-version: ${{ env.JDK_CURRENT }}
           distribution: ${{ env.JDK_DISTRIBUTION }}
@@ -94,27 +107,32 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        jdk: ${{ fromJson(needs.initialize.outputs.jdks) }}
+        jdks: ${{ fromJson(needs.initialize.outputs.jdks) }}
     steps:
       - name: Checkout
         uses: actions/checkout@v7
         with:
           persist-credentials: false
-      - name: Set up JDK ${{ matrix.jdk }}
-        uses: actions/setup-java@v5
+      - name: Set up JDK ${{ matrix.jdks.version }}
+        uses: actions/setup-java@v6
         with:
-          java-version: ${{ matrix.jdk }}
+          java-version: ${{ matrix.jdks.version }}
+          distribution: ${{ matrix.jdks.distribution }}
+      - name: Set up Current JDK ${{ env.JDK_CURRENT }}
+        uses: actions/setup-java@v6
+        with:
+          java-version: ${{ env.JDK_CURRENT }}
           distribution: ${{ env.JDK_DISTRIBUTION }}
       - name: Setup Gradle
         uses: gradle/actions/setup-gradle@v6
       - name: Initialize
         run: find ./ci -type f -name "*.sh" -exec chmod +x "{}" \; && ./ci/init-build.sh
         shell: bash
-      - name: Build with JDK ${{ matrix.jdk }}
-        run: ./gradlew build --quiet -PsourceCompatibility=${{ matrix.jdk }} -PtargetCompatibility=${{ matrix.jdk }} ${{ env.GRADLE_BUILD_OPTIONS }}
+      - name: Build with JDK ${{ matrix.jdks.version }}
+        run: ./gradlew build --quiet -PsourceCompatibility=${{ matrix.jdks.version }} -PtargetCompatibility=${{ matrix.jdks.version }} ${{ env.GRADLE_BUILD_OPTIONS }}
       - uses: actions/upload-artifact@v7
         with:
-          name: binary-artifacts-${{ matrix.jdk }}
+          name: binary-artifacts-${{ matrix.jdks.version }}
           path: ./**/build/libs/*.*
 
   ##########################################################################

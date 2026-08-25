@@ -16,14 +16,6 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 
-import java.time.Duration;
-import java.time.ZonedDateTime;
-import java.util.Locale;
-import java.util.Map;
-import java.util.Optional;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.locks.ReentrantLock;
-
 /**
  * This is {@link OpenIdFederationAuthorizationCodeResponseTypeAuthorizationRequestValidator}.
  *

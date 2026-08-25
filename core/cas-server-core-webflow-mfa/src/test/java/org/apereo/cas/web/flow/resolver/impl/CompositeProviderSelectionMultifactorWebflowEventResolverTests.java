@@ -132,6 +132,26 @@ class CompositeProviderSelectionMultifactorWebflowEventResolverTests {
         }
 
         @Test
+        void verifyCompositeWithInvalidCookie() throws Throwable {
+            val context = MockRequestContext.create(applicationContext);
+            multifactorAuthenticationProviderSelectionCookieGenerator.addCookie(
+                context.getHttpServletRequest(), context.getHttpServletResponse(), "mfa-invalid");
+            context.setRequestCookiesFromResponse();
+
+            val provider = new DefaultChainingMultifactorAuthenticationProvider(applicationContext,
+                new DefaultMultifactorAuthenticationFailureModeEvaluator(casProperties));
+            val mfa = new TestMultifactorAuthenticationProvider();
+            provider.addMultifactorAuthenticationProvider(mfa);
+
+            val event = new EventFactorySupport().event(this,
+                ChainingMultifactorAuthenticationProvider.DEFAULT_IDENTIFIER,
+                new LocalAttributeMap<>(MultifactorAuthenticationProvider.class.getName(), provider));
+            val resolvedEvents = CollectionUtils.wrapHashSet(event);
+            val result = assertCompositeProvider(context, resolvedEvents, RegisteredServiceTestUtils.getAuthentication());
+            assertEquals(ChainingMultifactorAuthenticationProvider.DEFAULT_IDENTIFIER, result.iterator().next().getId());
+        }
+
+        @Test
         void verifyComposite() throws Throwable {
             val provider = new DefaultChainingMultifactorAuthenticationProvider(applicationContext,
                 new DefaultMultifactorAuthenticationFailureModeEvaluator(casProperties));
