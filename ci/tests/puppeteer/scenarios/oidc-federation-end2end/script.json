@@ -33,5 +33,6 @@
       "--cas.authn.oidc.federation.authority-hints[0]=https://localhost:8443/cas/oidc"
     ]
   },
-  "initScript": "${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/init.sh"
+  "initScript": "${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/init.sh",
+  "exitScript": "${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/exit.sh"
 }
