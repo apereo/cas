@@ -83,7 +83,9 @@ tasks.withType(Test).configureEach {
     forkEvery = 500
 
     def defaultParallelForks = Math.max(1, (Runtime.runtime.availableProcessors() / 2).intValue())
-    maxParallelForks = ci ? Math.min(2, defaultParallelForks) : defaultParallelForks
+    maxParallelForks = project.ext.has('testMaxParallelForks')
+        ? project.ext.testMaxParallelForks as int
+        : ci ? Math.min(2, defaultParallelForks) : defaultParallelForks
 
     failFast = true
 
@@ -272,4 +274,3 @@ def loadTagsFromCache(final Set sourceTestDirectories) {
     ])
     tags
 }
-

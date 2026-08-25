@@ -84,12 +84,14 @@ public class LoggingConfigurationEndpoint extends BaseCasRestActuatorEndpoint {
             loggerMap.put("additive", config.isAdditive());
             loggerMap.put("level", config.getLevel().name());
             val appenders = new HashSet<>();
-            config.getAppenders().keySet().stream().map(key -> config.getAppenders().get(key)).forEach(appender -> {
+            config.getAppenders().values().stream().filter(Objects::nonNull).forEach(appender -> {
                 val builder = new ToStringBuilder(this, ToStringStyle.JSON_STYLE);
                 builder.append("name", appender.getName());
                 builder.append("state", appender.getState());
-                builder.append("layoutFormat", appender.getLayout().getContentFormat());
-                builder.append("layoutContentType", appender.getLayout().getContentType());
+                if (appender.getLayout() != null) {
+                    builder.append("layoutFormat", appender.getLayout().getContentFormat());
+                    builder.append("layoutContentType", appender.getLayout().getContentType());
+                }
                 if (appender instanceof final FileAppender app) {
                     builder.append(FILE_PARAM, app.getFileName());
                     builder.append(FILE_PATTERN_PARAM, "(none)");

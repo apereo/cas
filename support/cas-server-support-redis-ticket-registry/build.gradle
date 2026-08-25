@@ -4,12 +4,14 @@ description = "Stores CAS tickets in Redis for shared single sign-on state acros
 ext {
 
     publishMetadata = true
+    testMaxParallelForks = 1
     projectMetadata = [
             category: "Ticket Registries",
             title: "Redis Ticket Registry",
             aliases: ["redis-ticket-registry", "redis-tickets"]
     ]
 }
+
 dependencies {
     implementation libraries.redis
     implementation libraries.lz4

@@ -32,6 +32,8 @@ import static org.junit.jupiter.api.Assertions.*;
 @SpringBootTest(classes = BaseAutoConfigurationTests.SharedTestConfiguration.class)
 class RegisteredServiceAuthenticationHandlerResolverTests {
 
+    private static final String SERVICE_ID_PREFIX = "handler-serviceid";
+
     @Autowired
     @Qualifier(ServicesManager.BEAN_NAME)
     protected ServicesManager servicesManager;
@@ -40,15 +42,15 @@ class RegisteredServiceAuthenticationHandlerResolverTests {
 
     @BeforeEach
     void initialize() {
-        val svc = RegisteredServiceTestUtils.getRegisteredService("serviceid1");
+        val svc = RegisteredServiceTestUtils.getRegisteredService(SERVICE_ID_PREFIX + '1');
         svc.getAuthenticationPolicy().getRequiredAuthenticationHandlers().addAll(CollectionUtils.wrapHashSet("handler1", "handler2"));
         servicesManager.save(svc);
 
-        val svc2 = RegisteredServiceTestUtils.getRegisteredService("serviceid2");
+        val svc2 = RegisteredServiceTestUtils.getRegisteredService(SERVICE_ID_PREFIX + '2');
         svc2.getAuthenticationPolicy().getRequiredAuthenticationHandlers().addAll(new HashSet<>());
         servicesManager.save(svc2);
 
-        val svc3 = RegisteredServiceTestUtils.getRegisteredService("serviceid3");
+        val svc3 = RegisteredServiceTestUtils.getRegisteredService(SERVICE_ID_PREFIX + '3');
         svc3.getAuthenticationPolicy().getExcludedAuthenticationHandlers().addAll(Set.of("handler3", "handler1"));
         servicesManager.save(svc3);
         
@@ -63,7 +65,8 @@ class RegisteredServiceAuthenticationHandlerResolverTests {
     void checkAuthenticationHandlerResolutionDefault() throws Throwable {
         val resolver = new RegisteredServiceAuthenticationHandlerResolver(servicesManager,
             new DefaultAuthenticationServiceSelectionPlan(new DefaultAuthenticationServiceSelectionStrategy()));
-        val transaction = CoreAuthenticationTestUtils.getAuthenticationTransactionFactory().newTransaction(RegisteredServiceTestUtils.getService("serviceid1"),
+        val transaction = CoreAuthenticationTestUtils.getAuthenticationTransactionFactory().newTransaction(
+            RegisteredServiceTestUtils.getService(SERVICE_ID_PREFIX + '1'),
             RegisteredServiceTestUtils.getCredentialsWithSameUsernameAndPassword("casuser"));
 
         val handlers = resolver.resolve(this.authenticationHandlers, transaction);
@@ -74,7 +77,7 @@ class RegisteredServiceAuthenticationHandlerResolverTests {
     void checkAuthenticationHandlerResolution() throws Throwable {
         val resolver = new DefaultAuthenticationHandlerResolver();
         val transaction = CoreAuthenticationTestUtils.getAuthenticationTransactionFactory()
-            .newTransaction(RegisteredServiceTestUtils.getService("serviceid2"),
+            .newTransaction(RegisteredServiceTestUtils.getService(SERVICE_ID_PREFIX + '2'),
                 RegisteredServiceTestUtils.getCredentialsWithSameUsernameAndPassword("casuser"));
         val handlers = resolver.resolve(this.authenticationHandlers, transaction);
         assertEquals(Objects.requireNonNull(handlers).size(), this.authenticationHandlers.size());
@@ -85,7 +88,7 @@ class RegisteredServiceAuthenticationHandlerResolverTests {
         val resolver = new RegisteredServiceAuthenticationHandlerResolver(servicesManager,
             new DefaultAuthenticationServiceSelectionPlan(new DefaultAuthenticationServiceSelectionStrategy()));
         val transaction = CoreAuthenticationTestUtils.getAuthenticationTransactionFactory()
-            .newTransaction(RegisteredServiceTestUtils.getService("serviceid3"),
+            .newTransaction(RegisteredServiceTestUtils.getService(SERVICE_ID_PREFIX + '3'),
                 RegisteredServiceTestUtils.getCredentialsWithSameUsernameAndPassword("casuser"));
         val handlers = resolver.resolve(this.authenticationHandlers, transaction);
         assertEquals(1, handlers.size());
