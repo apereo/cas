@@ -38,7 +38,7 @@ import org.springframework.data.redis.connection.RedisConnectionFactory;
 class SamlIdPRedisRegisteredServiceMetadataConfiguration {
     private static final BeanCondition CONDITION = BeanCondition.on("cas.authn.saml-idp.metadata.redis.enabled").isTrue().evenIfMissing();
 
-    @Bean(defaultCandidate = false)
+    @Bean
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     public SamlRegisteredServiceMetadataResolver redisSamlRegisteredServiceMetadataResolver(
         final ConfigurableApplicationContext applicationContext,
@@ -58,7 +58,7 @@ class SamlIdPRedisRegisteredServiceMetadataConfiguration {
             .get();
     }
 
-    @Bean
+    @Bean(defaultCandidate = false)
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @ConditionalOnMissingBean(name = "redisSamlRegisteredServiceMetadataConnectionFactory")
     public RedisConnectionFactory redisSamlRegisteredServiceMetadataConnectionFactory(

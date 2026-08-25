@@ -35,7 +35,7 @@ import org.springframework.data.redis.connection.RedisConnectionFactory;
 public class CasConsentRedisAutoConfiguration {
     private static final BeanCondition CONDITION = BeanCondition.on("cas.consent.redis.enabled").isTrue().evenIfMissing();
 
-    @Bean(defaultCandidate = false)
+    @Bean
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @ConditionalOnMissingBean(name = "redisConsentRepositoryBuilder")
     public ConsentRepositoryBuilder redisConsentRepositoryBuilder(
@@ -50,7 +50,7 @@ public class CasConsentRedisAutoConfiguration {
             .get();
     }
 
-    @Bean
+    @Bean(defaultCandidate = false)
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @ConditionalOnMissingBean(name = "redisConsentConnectionFactory")
     public RedisConnectionFactory redisConsentConnectionFactory(
