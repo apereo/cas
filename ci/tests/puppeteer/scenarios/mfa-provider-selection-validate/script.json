@@ -7,6 +7,7 @@
     
     "--cas.authn.accept.name=Accept",
 
+    "--cas.authn.mfa.yubikey.rank=100",
     "--cas.authn.mfa.yubikey.client-id=18420",
     "--cas.authn.mfa.yubikey.secret-key=iBIehjui22aK8x82oe6qzGeb0As=",
 
@@ -15,6 +16,7 @@
 
     "--cas.authn.mfa.core.provider-selection.provider-selection-enabled=true",
 
+    "--cas.authn.mfa.gauth.rank=10",
     "--cas.authn.mfa.gauth.name=GoogleAuth",
     "--cas.authn.mfa.gauth.crypto.enabled=false",
     "--cas.authn.mfa.gauth.json.location=file:${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/accounts.json",

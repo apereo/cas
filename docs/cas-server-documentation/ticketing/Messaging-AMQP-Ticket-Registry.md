@@ -18,9 +18,8 @@ instructs others to keep their copy accurate by broadcasting messages and data a
 Each message and ticket registry instance running inside a CAS node in the cluster is tagged with a unique 
 identifier in order to avoid endless looping behavior and recursive needless inbound operations.
     
-The broadcast and the message queue is backed by the Advanced Message Queuing Protocol (AMQP) protocol. This is a platform-neutral, 
-wire-level protocol for message-oriented middleware. The implementation of this protocol is backed by [RabbitMQ](https://www.rabbitmq.com/). 
-This is a lightweight, reliable, scalable, and portable message broker based on the AMQP protocol. CAS uses RabbitMQ to communicate through the AMQP protocol.
+The broadcast and the message queue are backed by AMQP 1.0, a platform-neutral wire protocol for message-oriented middleware.
+CAS uses the RabbitMQ-specific AMQP 1.0 client and [RabbitMQ](https://www.rabbitmq.com/) as the message broker.
 
 Support is enabled by including the following dependency in the overlay:
 
@@ -28,7 +27,7 @@ Support is enabled by including the following dependency in the overlay:
 
 ## CAS Configuration
 
-{% include_cached casproperties.html properties="cas.ticket.registry.in-memory" thirdPartyStartsWith="spring.rabbitmq" %}
+{% include_cached casproperties.html properties="cas.ticket.registry.in-memory" thirdPartyStartsWith="spring.amqp.rabbitmq." %}
 
 ## Actuator Endpoints
 

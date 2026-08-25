@@ -35,7 +35,7 @@ public class SamlValidateController extends AbstractServiceValidateController {
      * @return the model and view
      * @throws Exception the exception
      */
-    @PostMapping(path = {SamlProtocolConstants.ENDPOINT_SAML_VALIDATE, "/tenants/{tenant}/" + SamlProtocolConstants.ENDPOINT_SAML_VALIDATE})
+    @PostMapping(path = {SamlProtocolConstants.ENDPOINT_SAML_VALIDATE, "/tenants/{tenant}" + SamlProtocolConstants.ENDPOINT_SAML_VALIDATE})
     @Override
     @Operation(summary = "Validate a service ticket",
         parameters = {

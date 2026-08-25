@@ -36,7 +36,7 @@ public class LegacyValidateController extends AbstractServiceValidateController 
      * @return the model and view
      * @throws Exception the exception
      */
-    @GetMapping(path = { CasProtocolConstants.ENDPOINT_VALIDATE, "/tenants/{tenant}/" + CasProtocolConstants.ENDPOINT_VALIDATE })
+    @GetMapping(path = { CasProtocolConstants.ENDPOINT_VALIDATE, "/tenants/{tenant}" + CasProtocolConstants.ENDPOINT_VALIDATE })
     @Operation(summary = "Validate a service ticket",
         parameters = {
             @Parameter(name = "tenant", description = "The tenant definition", in = ParameterIn.PATH),

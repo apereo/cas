@@ -29,7 +29,7 @@ public class ServiceValidateController extends AbstractServiceValidateController
         super(serviceValidateConfigurationContext);
     }
 
-    @GetMapping(path = { CasProtocolConstants.ENDPOINT_SERVICE_VALIDATE, "/tenants/{tenant}/" + CasProtocolConstants.ENDPOINT_SERVICE_VALIDATE })
+    @GetMapping(path = { CasProtocolConstants.ENDPOINT_SERVICE_VALIDATE, "/tenants/{tenant}" + CasProtocolConstants.ENDPOINT_SERVICE_VALIDATE })
     @Override
     @Operation(summary = "Validate a service ticket",
         parameters = {

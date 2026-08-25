@@ -8,10 +8,9 @@ import org.apereo.cas.audit.AuditableContext;
 import org.apereo.cas.audit.AuditableExecution;
 import org.apereo.cas.aup.AcceptableUsagePolicyRepository;
 import org.apereo.cas.aup.AcceptableUsagePolicyStatus;
+import org.apereo.cas.multitenancy.TenantExtractor;
 import org.apereo.cas.services.WebBasedRegisteredService;
-import org.apereo.cas.web.flow.actions.BaseCasWebflowAction;
 import org.apereo.cas.web.support.WebUtils;
-import lombok.RequiredArgsConstructor;
 import lombok.val;
 import org.apache.commons.lang3.ObjectUtils;
 import org.apereo.inspektr.audit.annotation.Audit;
@@ -25,46 +24,38 @@ import org.springframework.webflow.execution.RequestContext;
  * @author Misagh Moayyed
  * @since 4.1
  */
-@RequiredArgsConstructor
-public class AcceptableUsagePolicyVerifyAction extends BaseCasWebflowAction {
-    private final AcceptableUsagePolicyRepository repository;
+public class AcceptableUsagePolicyVerifyAction extends BaseAcceptableUsagePolicyAction {
 
-    private final AuditableExecution registeredServiceAccessStrategyEnforcer;
-
+    public AcceptableUsagePolicyVerifyAction(final AcceptableUsagePolicyRepository repository,
+                                             final AuditableExecution registeredServiceAccessStrategyEnforcer,
+                                             final TenantExtractor tenantExtractor) {
+        super(repository, registeredServiceAccessStrategyEnforcer, tenantExtractor);
+    }
+    
     @Audit(action = AuditableActions.AUP_VERIFY,
         actionResolverName = AuditActionResolvers.AUP_VERIFY_ACTION_RESOLVER,
         resourceResolverName = AuditResourceResolvers.AUP_VERIFY_RESOURCE_RESOLVER)
     @Override
     protected @Nullable Event doExecuteInternal(final RequestContext requestContext) throws Throwable {
-        return verify(requestContext);
-    }
-
-    /**
-     * Verify whether the policy is accepted.
-     *
-     * @param context the context
-     * @return {@link CasWebflowConstants#TRANSITION_ID_AUP_ACCEPTED} if policy is
-     * accepted. {@link CasWebflowConstants#TRANSITION_ID_AUP_MUST_ACCEPT} otherwise.
-     */
-    private Event verify(final RequestContext context) throws Throwable {
-        val authentication = WebUtils.getAuthentication(context);
-        val res = ObjectUtils.getIfNull(repository.verify(context),
+        val repository = toAcceptableUsagePolicyRepository(requestContext);
+        val authentication = WebUtils.getAuthentication(requestContext);
+        val res = ObjectUtils.getIfNull(repository.verify(requestContext),
             AcceptableUsagePolicyStatus.skipped(authentication.getPrincipal()));
 
-        WebUtils.putPrincipal(context, res.getPrincipal());
-        WebUtils.putAcceptableUsagePolicyStatusIntoFlowScope(context, res);
+        WebUtils.putPrincipal(requestContext, res.getPrincipal());
+        WebUtils.putAcceptableUsagePolicyStatusIntoFlowScope(requestContext, res);
 
         val eventFactorySupport = eventFactory;
-        val registeredService = (WebBasedRegisteredService) WebUtils.getRegisteredService(context);
+        val registeredService = (WebBasedRegisteredService) WebUtils.getRegisteredService(requestContext);
 
         if (registeredService != null) {
-            val service = WebUtils.getService(context);
+            val service = WebUtils.getService(requestContext);
             val audit = AuditableContext.builder()
                 .service(service)
                 .authentication(authentication)
                 .registeredService(registeredService)
                 .build();
-            val accessResult = registeredServiceAccessStrategyEnforcer.execute(audit);
+            val accessResult = getRegisteredServiceAccessStrategyEnforcer().execute(audit);
             accessResult.throwExceptionIfNeeded();
 
             val aupEnabled = registeredService.getAcceptableUsagePolicy() != null
@@ -80,4 +71,5 @@ public class AcceptableUsagePolicyVerifyAction extends BaseCasWebflowAction {
             case UNDEFINED -> eventFactorySupport.event(this, CasWebflowConstants.TRANSITION_ID_SKIP);
         };
     }
+
 }

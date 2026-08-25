@@ -1,5 +1,5 @@
 {
-  "dependencies": "reports,palantir,oidc,saml-idp,audit-jdbc,pac4j-cas,trusted-mfa,heimdall,duo",
+  "dependencies": "reports,configuration-metadata-repository,palantir,oidc,saml-idp,audit-jdbc,pac4j-cas,pac4j-oidc,gauth,simple-mfa,javers,session-ticket-registry,webauthn,consent-webflow,passwordless-webflow,trusted-mfa,heimdall,duo,scripting,discovery-profile",
   "conditions": {
     "docker": "true",
     "env": "DUO_SECURITY_ADMIN_SKEY,DUO_SECURITY_ADMIN_IKEY,DUO_SECURITY_UNIVERSAL_PROMPT_SKEY,DUO_SECURITY_UNIVERSAL_PROMPT_IKEY,DUO_SECURITY_API_HOST"
@@ -30,6 +30,8 @@
 
     "--cas.authn.mfa.duo[0].duo-admin-secret-key=${#environmentVars['DUO_SECURITY_ADMIN_SKEY']}",
     "--cas.authn.mfa.duo[0].duo-admin-integration-key=${#environmentVars['DUO_SECURITY_ADMIN_IKEY']}",
+
+    "--cas.javers.mongo.client-uri=mongodb://root:secret@localhost:27017/cas?authSource=admin",
 
     "--cas.authn.mfa.duo[0].duo-secret-key=${#environmentVars['DUO_SECURITY_UNIVERSAL_PROMPT_SKEY']}",
     "--cas.authn.mfa.duo[0].duo-integration-key=${#environmentVars['DUO_SECURITY_UNIVERSAL_PROMPT_IKEY']}",

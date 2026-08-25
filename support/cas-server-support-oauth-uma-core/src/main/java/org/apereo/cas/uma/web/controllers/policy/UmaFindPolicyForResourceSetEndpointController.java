@@ -74,7 +74,7 @@ public class UmaFindPolicyForResourceSetEndpointController extends BaseUmaEndpoi
      * @param response   the response
      * @return the policy for resource set
      */
-    @GetMapping('/' + OAuth20Constants.BASE_OAUTH20_URL + "/{resourceId}/" + OAuth20Constants.UMA_POLICY_URL + "/{policyId}")
+    @GetMapping(OAuth20Constants.BASE_OAUTH20_URL + "/{resourceId}/" + OAuth20Constants.UMA_POLICY_URL + "/{policyId}")
     @Operation(
         summary = "Get policy for resource set",
         description = "Gets a policy for the specified resource set",

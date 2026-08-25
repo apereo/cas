@@ -50,7 +50,16 @@ public class CompositeProviderSelectionMultifactorWebflowEventResolver extends S
         val chainingProvider = (ChainingMultifactorAuthenticationProvider)
             event.getAttributes().get(MultifactorAuthenticationProvider.class.getName());
 
-        val selectedMfaProvider = cookieBuilder.retrieveCookieValue(request);
+        val requestedMfaProvider = cookieBuilder.retrieveCookieValue(request);
+        val selectedMfaProvider = Optional.ofNullable(requestedMfaProvider)
+            .filter(StringUtils::isNotBlank)
+            .filter(selection -> chainingProvider.getMultifactorAuthenticationProviders()
+                .stream()
+                .anyMatch(provider -> provider.matches(selection)))
+            .orElse(null);
+        if (StringUtils.isNotBlank(requestedMfaProvider) && StringUtils.isBlank(selectedMfaProvider)) {
+            LOGGER.warn("Ignoring invalid multifactor authentication provider selection [{}]", requestedMfaProvider);
+        }
         val selectedProviders = chainingProvider.getMultifactorAuthenticationProviders()
             .stream()
             .filter(provider -> StringUtils.isBlank(selectedMfaProvider) || provider.matches(selectedMfaProvider))
