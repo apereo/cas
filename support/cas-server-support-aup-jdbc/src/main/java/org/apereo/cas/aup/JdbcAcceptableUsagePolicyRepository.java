@@ -5,7 +5,6 @@ import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.configuration.model.support.aup.AcceptableUsagePolicyProperties;
 import org.apereo.cas.configuration.model.support.aup.JdbcAcceptableUsagePolicyProperties;
 import org.apereo.cas.configuration.support.TriStateBoolean;
-import org.apereo.cas.ticket.registry.TicketRegistrySupport;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.LoggingUtils;
 import org.apereo.cas.web.support.WebUtils;
@@ -37,11 +36,10 @@ public class JdbcAcceptableUsagePolicyRepository extends BaseAcceptableUsagePoli
 
     private final TransactionOperations transactionTemplate;
 
-    public JdbcAcceptableUsagePolicyRepository(final TicketRegistrySupport ticketRegistrySupport,
-                                               final AcceptableUsagePolicyProperties aupProperties,
+    public JdbcAcceptableUsagePolicyRepository(final AcceptableUsagePolicyProperties aupProperties,
                                                final DataSource dataSource,
                                                final TransactionOperations transactionTemplate) {
-        super(ticketRegistrySupport, aupProperties);
+        super(aupProperties);
         this.jdbcTemplate = new JdbcTemplate(dataSource);
         this.transactionTemplate = transactionTemplate;
     }

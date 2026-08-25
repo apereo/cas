@@ -1,13 +1,19 @@
 package org.apereo.cas.web.saml2;
 
 import module java.base;
+import org.apereo.cas.authentication.principal.ServiceFactory;
+import org.apereo.cas.logout.LogoutConfirmationResolver;
 import org.apereo.cas.pac4j.client.DelegatedIdentityProviders;
 import org.apereo.cas.support.pac4j.authentication.DelegatedAuthenticationClientLogoutRequest;
+import org.apereo.cas.support.saml.OpenSamlConfigBean;
 import org.apereo.cas.support.saml.SamlProtocolConstants;
 import org.apereo.cas.test.CasTestExtension;
+import org.apereo.cas.ticket.TicketFactory;
+import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.util.MockRequestContext;
 import org.apereo.cas.web.flow.CasWebflowConstants;
 import org.apereo.cas.web.flow.DelegationWebflowUtils;
+import org.apereo.cas.web.flow.actions.logout.DelegatedSaml2ClientFinishLogoutAction;
 import org.apereo.cas.web.support.WebUtils;
 import lombok.val;
 import org.junit.jupiter.api.MethodOrderer;
@@ -116,19 +122,23 @@ class DelegatedAuthenticationClientFinishLogoutActionTests {
         val context = MockRequestContext.create(applicationContext).withUserAgent().setClientInfo();
         context.setParameter(SamlProtocolConstants.PARAMETER_SAML_RELAY_STATE, "SAML2Client");
 
-        val webContext = new JEEContext(context.getHttpServletRequest(), context.getHttpServletResponse());
-        val samlClient = (SAML2Client) identityProviders.findClient("SAML2Client", webContext).orElseThrow();
-        samlClient.init();
-
+        val samlClient = mock(SAML2Client.class);
+        when(samlClient.getName()).thenReturn("SAML2Client");
         val handler = mock(LogoutProcessor.class);
         when(handler.processLogout(any(), any())).thenReturn(new FoundAction("https://google.com"));
-        samlClient.setLogoutProcessor(handler);
+        when(samlClient.getLogoutProcessor()).thenReturn(handler);
 
         val credentialExtractor = mock(CredentialsExtractor.class);
         when(credentialExtractor.extract(any())).thenReturn(Optional.of(mock(SAML2Credentials.class)));
-        samlClient.setCredentialsExtractor(credentialExtractor);
+        when(samlClient.getCredentialsExtractor()).thenReturn(credentialExtractor);
 
-        val result = delegatedAuthenticationClientFinishLogoutAction.execute(context);
+        val logoutConfirmationResolver = mock(LogoutConfirmationResolver.class);
+        when(logoutConfirmationResolver.isLogoutRequestConfirmed(any())).thenReturn(true);
+        val action = new DelegatedSaml2ClientFinishLogoutAction((_, _) -> List.of(samlClient),
+            new JEESessionStore(), mock(OpenSamlConfigBean.class), mock(TicketRegistry.class),
+            mock(TicketFactory.class), mock(ServiceFactory.class), logoutConfirmationResolver);
+
+        val result = action.execute(context);
         assertNull(result);
         assertEquals(HttpStatus.FOUND.value(), context.getHttpServletResponse().getStatus());
         assertEquals("https://google.com", context.getHttpServletResponse().getHeader("Location"));

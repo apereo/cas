@@ -9,6 +9,8 @@ import lombok.val;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
@@ -25,6 +27,20 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 @Tag("OIDCWeb")
 class OidcHandlerInterceptorAdapterTests {
+
+    @Nested
+    @TestPropertySource(properties = "cas.authn.oidc.registration.dynamic-client-registration-enabled=false")
+    class DisabledRegistrationTests extends AbstractOidcTests {
+        @ParameterizedTest
+        @ValueSource(strings = {"%72egister", "%63lientConfig"})
+        void verifyEncodedRegistrationEndpointsRemainDisabled(final String endpoint) throws Throwable {
+            val request = new MockHttpServletRequest();
+            request.setRequestURI("/cas/oidc/" + endpoint);
+            val response = new MockHttpServletResponse();
+            assertFalse(oauthInterceptor.preHandle(request, response, new Object()));
+            assertEquals(HttpStatus.NOT_IMPLEMENTED.value(), response.getStatus());
+        }
+    }
 
     @Nested
     @TestPropertySource(properties = "cas.authn.oidc.discovery.require-pushed-authorization-requests=true")
@@ -50,6 +66,26 @@ class OidcHandlerInterceptorAdapterTests {
     @Nested
     @TestPropertySource(properties = "cas.authn.oidc.registration.dynamic-client-registration-mode=PROTECTED")
     class DefaultTests extends AbstractOidcTests {
+        @ParameterizedTest
+        @ValueSource(strings = {
+            "%6FidcAuthorize", "%6FidcAccessToken", "%6FidcToken", "%6FidcCiba",
+            "%6FidcVcCredentialOfferTransactions", "%6FidcPushAuthorize", "%72egister", "%63lientConfig"
+        })
+        void verifyEncodedEndpointPathsRequireAuthentication(final String endpoint) throws Throwable {
+            val clientId = UUID.randomUUID().toString();
+            servicesManager.save(getOidcRegisteredService(clientId));
+
+            val request = new MockHttpServletRequest();
+            request.setRequestURI("/cas/oidc/" + endpoint);
+            request.setMethod(HttpMethod.POST.name());
+            request.setParameter(OAuth20Constants.CLIENT_ID, clientId);
+            request.setParameter(OAuth20Constants.REDIRECT_URI, "https://oauth.example.org");
+            request.setParameter(OAuth20Constants.RESPONSE_TYPE, OAuth20ResponseTypes.CODE.getType());
+            request.addHeader(HttpHeaders.USER_AGENT, "MSIE");
+            val response = new MockHttpServletResponse();
+            assertFalse(oauthInterceptor.preHandle(request, response, new Object()));
+        }
+
         @Test
         void verifyNothing() throws Throwable {
             val request = new MockHttpServletRequest();

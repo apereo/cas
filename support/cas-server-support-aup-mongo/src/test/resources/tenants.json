@@ -1,0 +1,25 @@
+[
+  "java.util.ArrayList",
+  [
+    {
+      "@class": "org.apereo.cas.multitenancy.TenantDefinition",
+      "id": "shire",
+      "properties": {
+        "@class": "java.util.LinkedHashMap",
+        "cas.acceptable-usage-policy.mongo.host": "localhost",
+        "cas.acceptable-usage-policy.mongo.port": "27017",
+        "cas.acceptable-usage-policy.mongo.drop-collection": "true",
+        "cas.acceptable-usage-policy.mongo.collection": "acceptable-usage-policy",
+        "cas.acceptable-usage-policy.mongo.user-id": "root",
+        "cas.acceptable-usage-policy.mongo.password": "secret",
+        "cas.acceptable-usage-policy.mongo.database-name": "acceptableUsagePolicy",
+        "cas.acceptable-usage-policy.mongo.authentication-database-name": "admin",
+        "cas.acceptable-usage-policy.core.aup-attribute-name": "accepted"
+      }
+    },
+    {
+      "@class": "org.apereo.cas.multitenancy.TenantDefinition",
+      "id": "london"
+    }
+  ]
+]

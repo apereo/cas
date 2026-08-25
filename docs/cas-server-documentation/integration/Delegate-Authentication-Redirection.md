@@ -9,7 +9,7 @@ category: Authentication
 # Delegated Authentication - Auto Redirection/Selection
 
 By default, the list of available identity providers are displayed in a selection menu and the user is allowed to 
-choose the provider. In certain scenarios, the browser may be instructed to auto-redirect to a pre-selected identity provider.
+choose the provider. In certain scenarios, the browser may be instructed to auto-redirect to a preselected identity provider.
   
 ## Explicit Auto-Redirection
 
@@ -23,7 +23,7 @@ https://sso.example.org/cas/clientredirect?client_name=Twitter
 The example assumes that CAS is configured (by default) to recognize identity provider names as query parameters
 under the `client_name` parameter.
 
-## Pre-selected Identity Provider
+## Preselected Identity Provider
 
 An identity provider can be instructed via CAS configuration to always perform an auto-redirect, regardless of the application
 type and/or authentication requests. The selected identity provider is considered by CAS to be the *primary* strategy for handling

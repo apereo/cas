@@ -14,6 +14,7 @@ import org.apereo.cas.config.CasCoreCookieAutoConfiguration;
 import org.apereo.cas.config.CasCoreLogoutAutoConfiguration;
 import org.apereo.cas.config.CasCoreMultifactorAuthenticationAutoConfiguration;
 import org.apereo.cas.config.CasCoreMultifactorAuthenticationWebflowAutoConfiguration;
+import org.apereo.cas.config.CasCoreMultitenancyAutoConfiguration;
 import org.apereo.cas.config.CasCoreNotificationsAutoConfiguration;
 import org.apereo.cas.config.CasCoreScriptingAutoConfiguration;
 import org.apereo.cas.config.CasCoreServicesAutoConfiguration;
@@ -117,6 +118,7 @@ public abstract class BaseAcceptableUsagePolicyRepositoryTests {
     @SpringBootConfiguration(proxyBeanMethods = false)
     @SpringBootTestAutoConfigurations
     @ImportAutoConfiguration({
+        CasCoreMultitenancyAutoConfiguration.class,
         CasCoreTicketsAutoConfiguration.class,
         CasCoreWebAutoConfiguration.class,
         CasCoreCookieAutoConfiguration.class,

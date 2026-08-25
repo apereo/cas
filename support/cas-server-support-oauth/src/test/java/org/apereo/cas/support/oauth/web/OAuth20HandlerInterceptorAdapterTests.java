@@ -8,6 +8,8 @@ import org.apereo.cas.support.oauth.OAuth20ResponseTypes;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 import org.pac4j.jee.context.JEEContext;
 import org.springframework.http.HttpHeaders;
 import org.springframework.mock.web.MockHttpServletRequest;
@@ -23,6 +25,23 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 @Tag("OAuthWeb")
 class OAuth20HandlerInterceptorAdapterTests extends AbstractOAuth20Tests {
+
+    @ParameterizedTest
+    @ValueSource(strings = {"%61uthorize", "%61ccessToken", "%74oken", "%72evoke", "%64evice"})
+    void verifyEncodedEndpointPathsRequireAuthentication(final String endpoint) throws Throwable {
+        val clientId = UUID.randomUUID().toString();
+        val service = getRegisteredService("https://oauth.example.org", clientId, CLIENT_SECRET);
+        servicesManager.save(service);
+
+        val request = new MockHttpServletRequest();
+        request.setRequestURI("/oauth2/" + endpoint);
+        request.setParameter(OAuth20Constants.CLIENT_ID, clientId);
+        request.setParameter(OAuth20Constants.REDIRECT_URI, "https://oauth.example.org");
+        request.setParameter(OAuth20Constants.RESPONSE_TYPE, OAuth20ResponseTypes.CODE.getType());
+        request.addHeader(HttpHeaders.USER_AGENT, "MSIE");
+        val response = new MockHttpServletResponse();
+        assertFalse(oauthHandlerInterceptorAdapter.preHandle(request, response, new Object()));
+    }
 
     @Test
     void verifyAuthorizationAuth() throws Throwable {

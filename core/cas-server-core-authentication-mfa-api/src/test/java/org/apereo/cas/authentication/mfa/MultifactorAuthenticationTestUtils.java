@@ -11,6 +11,7 @@ import org.apereo.cas.authentication.MultifactorAuthenticationTriggerSelectionSt
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.authentication.principal.WebApplicationService;
+import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.support.mfa.BaseMultifactorAuthenticationProviderProperties;
 import org.apereo.cas.configuration.model.support.mfa.MultifactorAuthenticationProviderBypassProperties;
 import org.apereo.cas.services.RegisteredService;
@@ -105,8 +106,9 @@ public class MultifactorAuthenticationTestUtils {
 
         val multifactorContextValidator = new DefaultMultifactorAuthenticationContextValidator(
             "authn_method", "trusted_authn", applicationContext);
+
         return new DefaultRequestedAuthenticationContextValidator(servicesManager,
-            multifactorTrigger, multifactorContextValidator);
+            multifactorTrigger, multifactorContextValidator, new CasConfigurationProperties());
     }
 
     public static MultifactorAuthenticationProviderBypassProperties getAuthenticationBypassProperties() {

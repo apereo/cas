@@ -86,7 +86,7 @@ public class CasAcceptableUsagePolicyRedisAutoConfiguration {
         return BeanSupplier.of(AcceptableUsagePolicyRepository.class)
             .when(AcceptableUsagePolicyRepository.CONDITION_AUP_ENABLED.given(applicationContext.getEnvironment()))
             .and(CONDITION_AUP_REDIS_ENABLED.given(applicationContext.getEnvironment()))
-            .supply(() -> new RedisAcceptableUsagePolicyRepository(ticketRegistrySupport,
+            .supply(() -> new RedisAcceptableUsagePolicyRepository(
                 casProperties.getAcceptableUsagePolicy(), redisAcceptableUsagePolicyTemplate))
             .otherwise(AcceptableUsagePolicyRepository::noOp)
             .get();

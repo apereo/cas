@@ -4,8 +4,10 @@ const cas = require("../../cas.js");
 
 (async () => {
     const browser = await cas.newBrowser(cas.browserOptions());
+    const context = await browser.createBrowserContext();
     const scratch = await cas.fetchGoogleAuthenticatorScratchCode();
-    const page = await cas.newPage(browser);
+    const page = await cas.newPage(context);
+    await cas.gotoLogout(page);
     const service = "https://google.com";
     await cas.gotoLogin(page, service);
     await cas.sleep(1000);
@@ -16,13 +18,13 @@ const cas = require("../../cas.js");
     await cas.assertVisibility(page, "#mfa-gauth");
 
     await cas.submitForm(page, "#mfa-gauth > form[name=fm-mfa-gauth]");
-    await cas.sleep(1000);
+    await cas.sleep(2000);
 
     await cas.log(`Using scratch code ${scratch} to login...`);
     await cas.type(page,"#token", scratch);
     await cas.pressEnter(page);
     await cas.waitForNavigation(page);
-    await cas.sleep(1000);
+    await cas.sleep(2000);
 
     const ticket = await cas.assertTicketParameter(page);
 
@@ -40,5 +42,6 @@ const cas = require("../../cas.js");
     assert(body.includes("<cas:successfulAuthenticationHandlers>Accept</cas:successfulAuthenticationHandlers>"));
     assert(body.includes("<cas:successfulAuthenticationHandlers>GoogleAuth</cas:successfulAuthenticationHandlers>"));
 
+    await context.close();
     await cas.closeBrowser(browser);
 })();

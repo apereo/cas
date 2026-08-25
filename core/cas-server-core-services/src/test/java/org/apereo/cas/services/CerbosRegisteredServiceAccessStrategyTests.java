@@ -93,6 +93,33 @@ class CerbosRegisteredServiceAccessStrategyTests {
             webServer.start();
             strategy.setApiUrl("http://localhost:%s".formatted(webServer.getPort()));
             assertTrue(strategy.authorizeRequest(request));
+
+            val deniedResponses = List.of(
+                """
+                    {"requestId":"%s","results":[]}
+                    """.formatted(requestId),
+                """
+                    {"requestId":"%s","results":[{"actions":{}}]}
+                    """.formatted(requestId),
+                """
+                    {"requestId":"%s","results":[{"actions":{"read":"EFFECT_NO_MATCH","view":"EFFECT_ALLOW","comment":"EFFECT_ALLOW"}}]}
+                    """.formatted(requestId),
+                """
+                    {"requestId":"%s","results":[{"actions":{"read":"EFFECT_UNSPECIFIED","view":"EFFECT_ALLOW","comment":"EFFECT_ALLOW"}}]}
+                    """.formatted(requestId),
+                """
+                    {"requestId":"%s","results":[{"actions":{"read":"EFFECT_ALLOW","view":"EFFECT_ALLOW","comment":"EFFECT_ALLOW"},
+                    "validationErrors":{"read":"EFFECT_DENY"}}]}
+                    """.formatted(requestId));
+            deniedResponses.forEach(response -> {
+                webServer.responseBody(response);
+                assertFalse(strategy.authorizeRequest(request));
+            });
+
+            strategy.setActions(List.of());
+            val requestCount = webServer.getRequestCount();
+            assertFalse(strategy.authorizeRequest(request));
+            assertEquals(requestCount, webServer.getRequestCount());
         }
     }
 

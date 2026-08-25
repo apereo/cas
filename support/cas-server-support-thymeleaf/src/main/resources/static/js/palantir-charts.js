@@ -125,7 +125,7 @@ async function initializeAllCharts() {
     threadDumpChart.update();
 
     servicesChart = new Chart(document.getElementById("servicesChart").getContext("2d"), {
-        type: "pie",
+        type: "bar",
         data: {
             labels: [
                 "CAS",
@@ -144,11 +144,24 @@ async function initializeAllCharts() {
                     "limegreen",
                     "slategrey"
                 ],
-                hoverOffset: 4
+                borderWidth: 1
             }]
         },
         options: {
             responsive: true,
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    ticks: {
+                        precision: 0
+                    }
+                },
+                x: {
+                    grid: {
+                        display: false
+                    }
+                }
+            },
             plugins: {
                 legend: {
                     position: "top"

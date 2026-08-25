@@ -1,9 +1,16 @@
 package org.apereo.cas.aup;
 
 import module java.base;
+import org.apereo.cas.services.WebBasedRegisteredService;
+import org.apereo.cas.util.CollectionUtils;
+import org.apereo.cas.util.spring.ApplicationContextProvider;
 import org.apereo.cas.util.spring.beans.BeanCondition;
 import org.apereo.cas.web.support.WebUtils;
 import lombok.val;
+import org.apache.commons.lang3.StringUtils;
+import org.jspecify.annotations.Nullable;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.webflow.execution.RequestContext;
 
 /**
@@ -13,6 +20,11 @@ import org.springframework.webflow.execution.RequestContext;
  * @since 4.2
  */
 public interface AcceptableUsagePolicyRepository extends Serializable {
+    /**
+     * Logger instance.
+     */
+    Logger LOGGER = LoggerFactory.getLogger(AcceptableUsagePolicyRepository.class);
+
     /**
      * Condition to activate AUP.
      */
@@ -75,5 +87,58 @@ public interface AcceptableUsagePolicyRepository extends Serializable {
      * @param requestContext the request context
      * @return the optional
      */
-    Optional<AcceptableUsagePolicyTerms> fetchPolicy(RequestContext requestContext);
+    default Optional<AcceptableUsagePolicyTerms> fetchPolicy(final RequestContext requestContext) {
+        val principal = WebUtils.getAuthentication(requestContext).getPrincipal();
+
+        val attributes = principal.getAttributes();
+        LOGGER.debug("Principal attributes found for [{}] are [{}]", principal.getId(), attributes);
+
+        val code = StringUtils.defaultString(getPolicyMessageBundleCode(requestContext));
+        val request = WebUtils.getHttpServletRequestFromExternalWebflowContext(requestContext);
+        val applicationContext = requestContext.getActiveFlow().getApplicationContext();
+
+        val message = applicationContext.getMessage(code, null, StringUtils.EMPTY, request.getLocale());
+        val terms = AcceptableUsagePolicyTerms.builder()
+            .code(StringUtils.isNotBlank(message) ? code : null)
+            .defaultText(getPolicyText(requestContext))
+            .build();
+        return terms.isDefined() ? Optional.of(terms) : Optional.empty();
+    }
+
+
+    private static @Nullable String getPolicyText(final RequestContext requestContext) {
+        val registeredService = (WebBasedRegisteredService) WebUtils.getRegisteredService(requestContext);
+        if (registeredService != null && registeredService.getAcceptableUsagePolicy() != null
+            && StringUtils.isNotBlank(registeredService.getAcceptableUsagePolicy().getText())) {
+            return registeredService.getAcceptableUsagePolicy().getText();
+        }
+        return null;
+    }
+
+    private @Nullable String getPolicyMessageBundleCode(final RequestContext requestContext) {
+        val registeredService = (WebBasedRegisteredService) WebUtils.getRegisteredService(requestContext);
+        if (registeredService != null && registeredService.getAcceptableUsagePolicy() != null
+            && StringUtils.isNotBlank(registeredService.getAcceptableUsagePolicy().getMessageCode())) {
+            return registeredService.getAcceptableUsagePolicy().getMessageCode();
+        }
+
+        val aupProperties = ApplicationContextProvider.getCasConfigurationProperties()
+            .orElseThrow()
+            .getAcceptableUsagePolicy()
+            .getCore();
+        if (StringUtils.isBlank(aupProperties.getAupPolicyTermsAttributeName())) {
+            return null;
+        }
+
+        val principal = WebUtils.getAuthentication(requestContext).getPrincipal();
+        val attributes = principal.getAttributes();
+
+        if (!attributes.containsKey(aupProperties.getAupPolicyTermsAttributeName())) {
+            LOGGER.trace("No attribute for policy terms is defined");
+            return null;
+        }
+
+        val value = CollectionUtils.firstElement(attributes.get(aupProperties.getAupPolicyTermsAttributeName()));
+        return value.map(v -> String.format("%s.%s", AcceptableUsagePolicyTerms.CODE, value.get())).orElse(null);
+    }
 }

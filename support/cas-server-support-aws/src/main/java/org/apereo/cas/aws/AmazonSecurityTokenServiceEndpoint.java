@@ -142,17 +142,20 @@ public class AmazonSecurityTokenServiceEndpoint extends BaseCasRestActuatorEndpo
             val attributeValues = principal.getAttributes().get(amz.getPrincipalAttributeName());
             LOGGER.debug("Found roles [{}]", attributeValues);
 
+            if (attributeValues == null || attributeValues.isEmpty()) {
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("No roles are available for the authenticated principal");
+            }
             if (attributeValues.size() > 1) {
                 if (StringUtils.isBlank(roleArn)) {
                     return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
                         .body("Found multiple roles and none is specified. Current roles: " + attributeValues);
                 }
-                if (attributeValues.stream().noneMatch(value -> RegexUtils.find(roleArn, value.toString()))) {
-                    return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
-                        .body("Specified role is not allowed. Current roles:" + attributeValues);
-                }
             }
             val role = StringUtils.defaultIfBlank(roleArn, attributeValues.getFirst().toString());
+            if (attributeValues.stream().map(Object::toString).noneMatch(role::equals)) {
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                    .body("Specified role is not allowed. Current roles:" + attributeValues);
+            }
             LOGGER.debug("Using role [{}]", role);
 
             val roleRequest = AssumeRoleRequest.builder()
