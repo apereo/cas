@@ -39,6 +39,12 @@ palantir_images:
   - src: img_11.png
     alt: Palantir passwordless authentication view
     title: Palantir passwordless authentication view
+  - src: img_12.png
+    alt: Palantir attribute repositories view
+    title: Palantir attribute repositories view
+  - src: img_13.png
+    alt: Palantir attribute repositories view
+    title: Palantir attribute repositories view
 ---
 
 {% include variables.html %}
@@ -105,9 +111,12 @@ latest Gradle features and capabilities.
  
 ### Spring Boot 4.2
 
-CAS is now built with Spring Boot `4.2.x`. This is a minor platform upgrade that 
-affects almost all aspects of the codebase including many of the third-party 
-core libraries used by CAS as well as some CAS functionality.
+CAS is now built on top of Spring Boot `4.2.x`. This is an in-progress ongoing minor platform upgrade that 
+affects almost all aspects of the codebase including many of the third-party core libraries used by CAS 
+as well as some CAS functionality.
+
+Please refer to the [Spring Boot Wiki](https://github.com/spring-projects/spring-boot/wiki/Spring-Boot-4.2-Release-Notes) 
+for more information on the changes and updates in this release. The biggest change to CAS would be support for AMQP 1.0.
 
 ### JSpecify & NullAway
 
@@ -141,9 +150,10 @@ Furthermore, [Heimdall authorization policies](../authorization/Heimdall-Authori
 can now be created, edited and removed from the [Palantir Admin Dashboard](../installation/Admin-Dashboard.html).
 There is also dedicated simulation support to experiment with authorization requests.
 
-Configuration for almost all attribute repositories can also be viewed in better detail. Fields that do support
-[inline Groovy scripts](../integration/Apache-Groovy-Scripting.html) are also allowed to better receive their 
-value from a dedicated editor.
+Configuration for almost all attribute repositories can also be viewed in better detail. The dashboard
+is also able to register new attribute repositories for LDAP, JDBC and Stub repositories.
+                         
+Finally, fields that do support [inline Groovy scripts](../integration/Apache-Groovy-Scripting.html) are also allowed to better receive their value from a dedicated editor.
 
 {% include imagegallery.html gallery_id="palantir-dashboard" images=page.palantir_images %}
 
@@ -190,7 +200,14 @@ There is also initial support for OpenID Connect with Verifiable Presentations (
     
 ### OpenID Connect Federation
 
-Work on [OpenID Connect Federation](../authentication/OIDC-Authentication-Federation.html) is now roughly finalized.
+Work on [OpenID Connect Federation](../authentication/OIDC-Authentication-Federation.html) is now roughly finalized. A number of test scenarios and minor edge cases
+are still being worked on and should be resolved in the next few releases.
+
+### Acceptable Usage Policy & Multitenancy
+
+[Acceptable Usage Policy (AUP) support](../webflow/Webflow-Customization-AUP.html) has been extended to 
+support multitenancy. A number of storage mechanisms are now available to support multitenancy, specifically 
+[MongoDb](../webflow/Webflow-Customization-AUP-MongoDb.html) and more will be added in the future.
 
 ## Other Stuff
   
@@ -201,3 +218,9 @@ Work on [OpenID Connect Federation](../authentication/OIDC-Authentication-Federa
 - Custom ID token claims can also be constructed using [Apache Groovy](../authentication/OIDC-Authentication-Claims-Custom.html).
 - [RediSearch](../ticketing/Redis-Ticket-Registry-RediSearch.html) functionality now supports Redis clustering.
 - The maximum lifetime of a transient session ticket (i.e. `TST`) is by default reduced from `15` minutes to `5` minutes.
+- Groovy integration tests have now switched to use Groovy `5.1.x`.
+- Redis integration tests have now switched to use Groovy `8.10.x`.
+- Attributes requested for [Consent](../integration/Attribute-Release-Consent.html) may now be localized using language bundles and a prefixed language key that is `screen.consent.attributes.attribute.[attribute-name]`.
+- When removing cookies, particularly during logout, the existing cookie value is no longer echoed back for remove operations.
+- [CAS REST APIs](../protocol/REST-Protocol.html) now return a `403` status code instead of a `500` type of error when unauthorized application requests are identified.
+- [LettuceMod](../ticketing/Redis-Ticket-Registry-RediSearch.html) is removed from CAS and its functionality is directly provided by Lettuce itself.

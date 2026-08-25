@@ -11,7 +11,7 @@ ext {
     ]
 }
 dependencies {
-    api libraries.lettucemod
+    api libs.lettuce.core
     implementation libraries.redis
 
     api project(":api:cas-server-core-api-util")

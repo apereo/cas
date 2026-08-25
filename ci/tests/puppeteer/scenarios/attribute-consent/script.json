@@ -20,5 +20,6 @@
     "--cas.monitor.endpoints.endpoint.defaults.access=ANONYMOUS",
     "--management.endpoints.web.exposure.include=attributeConsent",
     "--management.endpoints.access.default=UNRESTRICTED"
-  ]
+  ],
+  "buildScript": "${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/include.gradle"
 }

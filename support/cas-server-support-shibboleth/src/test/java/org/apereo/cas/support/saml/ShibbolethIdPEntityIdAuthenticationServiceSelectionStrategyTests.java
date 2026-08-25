@@ -72,6 +72,13 @@ class ShibbolethIdPEntityIdAuthenticationServiceSelectionStrategyTests {
     }
 
     @Test
+    void verifyConfiguredCallbackPrefixIsMatchedLiterally() {
+        val svc = RegisteredServiceTestUtils.getService(
+            "https://sso-shibboleth-org/idp/Authn/External?entityId=https://service.example.com");
+        assertFalse(shibbolethIdPEntityIdAuthenticationServiceSelectionStrategy.supports(svc));
+    }
+
+    @Test
     void verifyServiceNotFound() throws Throwable {
         val svc = RegisteredServiceTestUtils.getService("https://www.example.org?param1=value1");
         val result = shibbolethIdPEntityIdAuthenticationServiceSelectionStrategy.resolveServiceFrom(svc);

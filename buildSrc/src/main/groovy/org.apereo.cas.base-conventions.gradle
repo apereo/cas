@@ -59,7 +59,8 @@ if (generateGitProperties) {
 
 java {
     toolchain {
-        languageVersion = JavaLanguageVersion.of(Integer.parseInt(project.targetCompatibility.toString()))
+        def targetVersion = project.targetCompatibility.toString()
+        languageVersion = JavaLanguageVersion.of(targetVersion.replace("-ea", ""))
         if (!ci) {
             vendor = JvmVendorSpec.JETBRAINS
         }

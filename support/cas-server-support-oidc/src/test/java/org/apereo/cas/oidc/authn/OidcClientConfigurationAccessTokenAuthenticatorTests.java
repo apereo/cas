@@ -3,6 +3,7 @@ package org.apereo.cas.oidc.authn;
 import module java.base;
 import org.apereo.cas.oidc.AbstractOidcTests;
 import org.apereo.cas.oidc.OidcConstants;
+import org.apereo.cas.support.oauth.OAuth20Constants;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
@@ -27,8 +28,10 @@ class OidcClientConfigurationAccessTokenAuthenticatorTests extends AbstractOidcT
     @Test
     void verifyOperation() throws Throwable {
         val request = new MockHttpServletRequest();
+        request.setParameter(OAuth20Constants.CLIENT_ID, "client");
         val ctx = new JEEContext(request, new MockHttpServletResponse());
         val at = getAccessToken();
+        when(at.getClientId()).thenReturn("client");
         when(at.getScopes()).thenReturn(Set.of(OidcConstants.CLIENT_CONFIGURATION_SCOPE));
         ticketRegistry.addTicket(at);
         val credentials = new TokenCredentials(at.getId());
@@ -37,6 +40,20 @@ class OidcClientConfigurationAccessTokenAuthenticatorTests extends AbstractOidcT
         val userProfile = credentials.getUserProfile();
         assertNotNull(userProfile);
         assertEquals("casuser", userProfile.getId());
+    }
+
+    @Test
+    void verifyRejectsTokenIssuedToDifferentClient() throws Throwable {
+        val request = new MockHttpServletRequest();
+        request.setParameter(OAuth20Constants.CLIENT_ID, "requested-client");
+        val ctx = new JEEContext(request, new MockHttpServletResponse());
+        val at = getAccessToken();
+        when(at.getClientId()).thenReturn("token-client");
+        when(at.getScopes()).thenReturn(Set.of(OidcConstants.CLIENT_CONFIGURATION_SCOPE));
+        ticketRegistry.addTicket(at);
+        val credentials = new TokenCredentials(at.getId());
+        getAuthenticator().validate(new CallContext(ctx, new JEESessionStore()), credentials);
+        assertNull(credentials.getUserProfile());
     }
 
     private OidcClientConfigurationAccessTokenAuthenticator getAuthenticator() {

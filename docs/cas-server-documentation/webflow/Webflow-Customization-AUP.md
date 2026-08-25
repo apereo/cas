@@ -79,6 +79,12 @@ ask for policy acceptance. Upon accepting the policy, the result will be stored 
 | REST          | [See this guide](Webflow-Customization-AUP-REST.html).      |
 | Custom        | [See this guide](Webflow-Customization-AUP-Custom.html).    |
 
+### Multitenancy
+
+Configuration settings for a number of storage mechanisms can be specified in a multitenant environment.
+Please [review this guide](../multitenancy/Multitenancy-Overview.html) for more information and then
+cross check with the specific storage mechanism guides listed above.
+
 ## Policy Terms
 
 Storage options outlined above are also available to fetch the acceptable usage policy

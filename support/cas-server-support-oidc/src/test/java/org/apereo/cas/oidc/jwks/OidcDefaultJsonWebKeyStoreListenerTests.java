@@ -1,14 +1,14 @@
 package org.apereo.cas.oidc.jwks;
 
 import module java.base;
-import org.apereo.cas.oidc.AbstractOidcTests;
 import org.apereo.cas.oidc.jwks.generator.OidcJsonWebKeystoreModifiedEvent;
+import com.github.benmanes.caffeine.cache.Caffeine;
 import lombok.val;
+import org.jose4j.jwk.JsonWebKeySet;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.ConfigurableApplicationContext;
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.*;
 
 /**
  * This is {@link OidcDefaultJsonWebKeyStoreListenerTests}.
@@ -17,20 +17,15 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.5.0
  */
 @Tag("OIDC")
-class OidcDefaultJsonWebKeyStoreListenerTests extends AbstractOidcTests {
-    @Autowired
-    private ConfigurableApplicationContext realApplicationContext;
-
+class OidcDefaultJsonWebKeyStoreListenerTests {
     @Test
-    void verifyOperation() throws Throwable {
-        val cacheKey = new OidcJsonWebKeyCacheKey(casProperties.getAuthn().getOidc().getCore().getIssuer(), OidcJsonWebKeyUsage.SIGNING);
-        val keys = oidcDefaultJsonWebKeystoreCache.get(cacheKey);
-        assertNotNull(keys);
-        assertNotNull(oidcJsonWebKeyStoreListener);
-        realApplicationContext.publishEvent(new OidcJsonWebKeystoreModifiedEvent(this,
-            Files.createTempFile("prefix", "postfix").toFile(), null));
-        Thread.sleep(2000);
-        val newKeys = oidcDefaultJsonWebKeystoreCache.getIfPresent(cacheKey);
-        assertNull(newKeys);
+    void verifyOperation() {
+        val cache = Caffeine.newBuilder().<OidcJsonWebKeyCacheKey, JsonWebKeySet>build(_ -> mock(JsonWebKeySet.class));
+        val cacheKey = new OidcJsonWebKeyCacheKey(UUID.randomUUID().toString(), OidcJsonWebKeyUsage.SIGNING);
+        assertNotNull(cache.get(cacheKey));
+
+        val listener = new OidcDefaultJsonWebKeyStoreListener(cache);
+        listener.handleOidcJsonWebKeystoreModifiedEvent(mock(OidcJsonWebKeystoreModifiedEvent.class));
+        assertNull(cache.getIfPresent(cacheKey));
     }
 }

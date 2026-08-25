@@ -167,6 +167,17 @@ class AmazonSecurityTokenServiceEndpointTests {
                     .param("password", "resusac"))
                 .andExpect(status().isOk());
         }
+
+        @Test
+        void verifySingleRoleCannotBeOverridden() throws Throwable {
+            mockMvc.perform(post("/actuator/awsSts")
+                    .with(csrf())
+                    .contentType(MediaType.APPLICATION_FORM_URLENCODED)
+                    .param("username", "casuser")
+                    .param("password", "resusac")
+                    .param("roleArn", "arn:aws:iam::223873472255:role/administrator-role"))
+                .andExpect(status().isUnauthorized());
+        }
     }
 
     @Nested
@@ -202,6 +213,17 @@ class AmazonSecurityTokenServiceEndpointTests {
                     .param("username", "casuser")
                     .param("password", "resusac")
                     .param("roleArn", "this-is-unknown-role"))
+                .andExpect(status().isUnauthorized());
+        }
+
+        @Test
+        void verifyRoleArnIsNotTreatedAsRegex() throws Throwable {
+            mockMvc.perform(post("/actuator/awsSts")
+                    .with(csrf())
+                    .contentType(MediaType.APPLICATION_FORM_URLENCODED)
+                    .param("username", "casuser")
+                    .param("password", "resusac")
+                    .param("roleArn", "arn:aws:iam::.*"))
                 .andExpect(status().isUnauthorized());
         }
     }

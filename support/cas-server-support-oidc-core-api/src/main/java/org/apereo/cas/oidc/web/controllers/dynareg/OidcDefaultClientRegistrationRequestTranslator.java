@@ -269,7 +269,8 @@ public class OidcDefaultClientRegistrationRequestTranslator implements OidcClien
         if (StringUtils.isNotBlank(registeredService.getSectorIdentifierUri())) {
             HttpResponse sectorResponse = null;
             try {
-                val exec = HttpExecutionRequest.builder()
+                val exec = HttpExecutionRequest
+                    .builder()
                     .method(HttpMethod.GET)
                     .url(registeredService.getSectorIdentifierUri())
                     .build();

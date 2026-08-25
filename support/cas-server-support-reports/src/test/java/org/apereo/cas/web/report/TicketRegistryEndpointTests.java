@@ -7,8 +7,6 @@ import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.apereo.cas.ticket.TicketGrantingTicketImpl;
 import org.apereo.cas.ticket.expiration.NeverExpiresExpirationPolicy;
 import org.apereo.cas.ticket.registry.TicketRegistry;
-import org.apereo.cas.ticket.registry.TicketRegistryQueryCriteria;
-import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
@@ -16,7 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.TestPropertySource;
-import tools.jackson.databind.ObjectMapper;
+import static org.hamcrest.Matchers.*;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
@@ -30,20 +28,17 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @TestPropertySource(properties = "management.endpoint.ticketRegistry.access=UNRESTRICTED")
 @Tag("ActuatorEndpoint")
 class TicketRegistryEndpointTests extends AbstractCasEndpointTests {
-    private static final ObjectMapper MAPPER = JacksonObjectMapperFactory.builder()
-        .defaultTypingEnabled(false).build().toObjectMapper();
-    
     @Autowired
     @Qualifier(TicketRegistry.BEAN_NAME)
     private TicketRegistry ticketRegistry;
 
     @Test
     void verifyOperationById() throws Throwable {
-        val content = TicketRegistryQueryCriteria.builder()
-            .type(TicketGrantingTicket.PREFIX).build();
+        val unknownTicketId = TicketGrantingTicket.PREFIX + '-' + UUID.randomUUID();
         mockMvc.perform(get("/actuator/ticketRegistry/query")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(MAPPER.writeValueAsString(content)))
+                .param("id", unknownTicketId)
+                .param("type", TicketGrantingTicket.PREFIX)
+                .contentType(MediaType.APPLICATION_JSON))
             .andExpect(status().isOk())
             .andExpect(jsonPath("$").isArray())
             .andExpect(jsonPath("$").isEmpty());
@@ -59,7 +54,8 @@ class TicketRegistryEndpointTests extends AbstractCasEndpointTests {
             )
             .andExpect(status().isOk())
             .andExpect(jsonPath("$").isArray())
-            .andExpect(jsonPath("$").isNotEmpty());
+            .andExpect(jsonPath("$", hasSize(1)))
+            .andExpect(jsonPath("$[0].id").value(ticket.getId()));
     }
 
     @Test

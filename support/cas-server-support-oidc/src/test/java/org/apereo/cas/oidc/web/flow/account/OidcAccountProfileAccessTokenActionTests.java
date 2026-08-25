@@ -3,6 +3,7 @@ package org.apereo.cas.oidc.web.flow.account;
 import module java.base;
 import org.apereo.cas.mock.MockTicketGrantingTicket;
 import org.apereo.cas.oidc.AbstractOidcTests;
+import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.util.MockRequestContext;
 import org.apereo.cas.web.flow.CasWebflowConstants;
 import org.apereo.cas.web.support.WebUtils;
@@ -29,7 +30,8 @@ class OidcAccountProfileAccessTokenActionTests extends AbstractOidcTests {
 
     @Test
     void verifyOperation() throws Throwable {
-        val accessToken = getAccessToken(UUID.randomUUID().toString());
+        val principal = RegisteredServiceTestUtils.getPrincipal(UUID.randomUUID().toString());
+        val accessToken = getAccessToken(principal);
         ticketRegistry.addTicket(accessToken);
         val tgt = new MockTicketGrantingTicket(accessToken.getAuthentication());
         val context = MockRequestContext.create(applicationContext);
