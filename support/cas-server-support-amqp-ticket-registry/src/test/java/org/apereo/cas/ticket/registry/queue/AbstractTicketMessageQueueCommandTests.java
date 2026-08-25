@@ -20,7 +20,7 @@ import org.apereo.cas.util.spring.boot.SpringBootTestAutoConfigurations;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.boot.amqp.autoconfigure.RabbitAutoConfiguration;
+import org.springframework.boot.amqp.rabbitmq.autoconfigure.AmqpRabbitAutoConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.ConfigurableApplicationContext;
 
@@ -32,7 +32,7 @@ import org.springframework.context.ConfigurableApplicationContext;
  */
 @SpringBootTestAutoConfigurations
 @SpringBootTest(classes = {
-    RabbitAutoConfiguration.class,
+    AmqpRabbitAutoConfiguration.class,
     CasAMQPTicketRegistryAutoConfiguration.class,
     CasCoreTicketsAutoConfiguration.class,
     CasCoreLogoutAutoConfiguration.class,
@@ -46,10 +46,10 @@ import org.springframework.context.ConfigurableApplicationContext;
     CasCoreWebAutoConfiguration.class
 },
     properties = {
-        "spring.rabbitmq.host=localhost",
-        "spring.rabbitmq.port=5672",
-        "spring.rabbitmq.username=rabbituser",
-        "spring.rabbitmq.password=bugsbunny",
+        "spring.amqp.rabbitmq.host=localhost",
+        "spring.amqp.rabbitmq.port=5672",
+        "spring.amqp.rabbitmq.username=rabbituser",
+        "spring.amqp.rabbitmq.password=bugsbunny",
         "cas.ticket.registry.in-memory.crypto.signing.key=HbuPoSycjr0Pyv2u8WSwKcM6Ow0lviUdT7b9VzwxkcANqbDyKOb6KHPus_fCDCXElPhzXpeP-T0bryadZNiwOQ",
         "cas.ticket.registry.in-memory.crypto.encryption.key=BXRiSBWJcRksTizjdaCoLw"
     })

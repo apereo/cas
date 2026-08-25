@@ -22,6 +22,7 @@ import org.pac4j.jee.context.JEEContext;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.web.servlet.AsyncHandlerInterceptor;
 import org.springframework.web.servlet.HandlerInterceptor;
+import org.springframework.web.util.UriUtils;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
@@ -160,9 +161,10 @@ public class OAuth20HandlerInterceptorAdapter implements AsyncHandlerInterceptor
      * @return true /false
      */
     protected boolean doesUriMatchPattern(final String requestPath, final List<String> patternUrls) {
+        val decodedRequestPath = UriUtils.decode(requestPath, StandardCharsets.UTF_8);
         return patternUrls.stream().anyMatch(patternUrl -> {
             val pattern = RegexUtils.createPattern('/' + patternUrl + "(/)*$");
-            return pattern.matcher(requestPath).find();
+            return pattern.matcher(decodedRequestPath).find();
         });
     }
 

@@ -1,23 +1,14 @@
 package org.apereo.cas.services;
 
 import module java.base;
-import org.apereo.cas.config.CasServicesStreamingAutoConfiguration;
-import org.apereo.cas.config.CasServicesStreamingKafkaAutoConfiguration;
-import org.apereo.cas.test.CasTestExtension;
 import org.apereo.cas.util.PublisherIdentifier;
-import org.apereo.cas.util.cache.DistributedCacheManager;
 import org.apereo.cas.util.cache.DistributedCacheObject;
-import org.apereo.cas.util.junit.EnabledIfListeningOnPort;
-import org.apereo.cas.util.spring.boot.SpringBootTestAutoConfigurations;
 import lombok.val;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.kafka.core.KafkaOperations;
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.*;
 
 /**
  * This is {@link RegisteredServiceKafkaDistributedCacheManagerTests}.
@@ -26,45 +17,27 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.3.0
  */
 @Tag("Kafka")
-@ExtendWith(CasTestExtension.class)
-@SpringBootTestAutoConfigurations
-@SpringBootTest(classes = {
-    CasServicesStreamingKafkaAutoConfiguration.class,
-    CasServicesStreamingAutoConfiguration.class
-}, properties = {
-    "cas.service-registry.stream.kafka.bootstrap-address=localhost:9092",
-    "cas.service-registry.stream.core.enabled=true"
-})
-@EnabledIfListeningOnPort(port = 9092)
 class RegisteredServiceKafkaDistributedCacheManagerTests {
-
-    @Autowired
-    @Qualifier("registeredServiceDistributedCacheManager")
-    private DistributedCacheManager<RegisteredService, DistributedCacheObject<RegisteredService>, PublisherIdentifier>
-        registeredServiceDistributedCacheManager;
-
     @Test
     void verifyOperation() {
-        val service = RegisteredServiceTestUtils.getRegisteredService();
-        assertFalse(registeredServiceDistributedCacheManager.contains(service));
-        assertTrue(registeredServiceDistributedCacheManager.getAll().isEmpty());
-        assertTrue(registeredServiceDistributedCacheManager.findAll(Objects::nonNull).isEmpty());
+        val kafkaTemplate = mock(KafkaOperations.class);
+        doReturn(CompletableFuture.completedFuture(null))
+            .when(kafkaTemplate).send(anyString(), anyString(), any());
+        try (val manager = new RegisteredServiceKafkaDistributedCacheManager(kafkaTemplate, "registered-services")) {
+            val service = RegisteredServiceTestUtils.getRegisteredService();
+            assertFalse(manager.contains(service));
+            assertTrue(manager.getAll().isEmpty());
+            assertTrue(manager.findAll(Objects::nonNull).isEmpty());
 
-        val item = new DistributedCacheObject<RegisteredService>(Map.of(),
-            System.currentTimeMillis(),
-            service, new PublisherIdentifier());
-        assertNotNull(registeredServiceDistributedCacheManager.set(service, item, true));
-        assertNotNull(registeredServiceDistributedCacheManager.set(service, item, false));
+            val item = new DistributedCacheObject<RegisteredService>(Map.of(),
+                System.currentTimeMillis(),
+                service, new PublisherIdentifier());
+            assertNotNull(manager.set(service, item, true));
+            assertNotNull(manager.set(service, item, false));
 
-        assertNotNull(registeredServiceDistributedCacheManager.update(service, item, true));
-        assertNotNull(registeredServiceDistributedCacheManager.update(service, item, false));
+            assertNotNull(manager.update(service, item, true));
+            assertNotNull(manager.update(service, item, false));
+            verify(kafkaTemplate, times(4)).send(eq("registered-services"), anyString(), same(item));
+        }
     }
-
-
-    @BeforeEach
-    void tearDown() {
-        registeredServiceDistributedCacheManager.clear();
-    }
-
-
 }

@@ -82,6 +82,9 @@ public class CerbosRegisteredServiceAccessStrategy extends BaseRegisteredService
 
     @Override
     public boolean authorizeRequest(final RegisteredServiceAccessStrategyRequest request) {
+        if (actions.isEmpty()) {
+            return false;
+        }
         HttpResponse response = null;
         try {
             val attributes = new HashMap<>(request.getAttributes());
@@ -136,10 +139,11 @@ public class CerbosRegisteredServiceAccessStrategy extends BaseRegisteredService
                 val payload = MAPPER.readValue(results, CerboseResponse.class);
                 if (HttpStatus.resolve(response.getCode()).is2xxSuccessful()
                     && Strings.CI.equals(cerbosRequest.getRequestId(), payload.getRequestId())) {
-                    return payload.getResults().isEmpty() || payload.getResults().stream().allMatch(result -> actions.stream().allMatch(action -> {
-                        val actionResult = result.getActions().get(action);
-                        return actionResult != Actions.EFFECT_DENY;
-                    }));
+                    return payload.getResults() != null && !payload.getResults().isEmpty()
+                        && payload.getResults().stream().allMatch(result ->
+                            (result.getValidationErrors() == null || result.getValidationErrors().isEmpty())
+                                && result.getActions() != null
+                                && actions.stream().allMatch(action -> result.getActions().get(action) == Actions.EFFECT_ALLOW));
                 }
             }
         } catch (final Exception e) {

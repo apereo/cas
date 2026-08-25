@@ -11,6 +11,7 @@ import org.apereo.cas.aup.DefaultAcceptableUsagePolicyRepository;
 import org.apereo.cas.aup.GroovyAcceptableUsagePolicyRepository;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.features.CasFeatureModule;
+import org.apereo.cas.multitenancy.TenantExtractor;
 import org.apereo.cas.ticket.registry.TicketRegistrySupport;
 import org.apereo.cas.util.nativex.CasRuntimeHintsRegistrar;
 import org.apereo.cas.util.scripting.ExecutableCompiledScriptFactory;
@@ -92,11 +93,11 @@ public class CasAcceptableUsagePolicyWebflowAutoConfiguration {
                     val groovy = casProperties.getAcceptableUsagePolicy().getGroovy();
                     if (groovy.getLocation() != null && CasRuntimeHintsRegistrar.notInNativeImage()) {
                         val scriptFactory = ExecutableCompiledScriptFactory.getExecutableCompiledScriptFactory();
-                        return new GroovyAcceptableUsagePolicyRepository(ticketRegistrySupport,
+                        return new GroovyAcceptableUsagePolicyRepository(
                             casProperties.getAcceptableUsagePolicy(),
                             scriptFactory.fromResource(groovy.getLocation()), applicationContext);
                     }
-                    return new DefaultAcceptableUsagePolicyRepository(ticketRegistrySupport, casProperties.getAcceptableUsagePolicy());
+                    return new DefaultAcceptableUsagePolicyRepository(casProperties.getAcceptableUsagePolicy());
                 })
                 .otherwise(AcceptableUsagePolicyRepository::noOp)
                 .get();
@@ -123,6 +124,10 @@ public class CasAcceptableUsagePolicyWebflowAutoConfiguration {
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @ConditionalOnMissingBean(name = CasWebflowConstants.ACTION_ID_AUP_SUBMIT)
         public Action acceptableUsagePolicySubmitAction(
+            @Qualifier(TenantExtractor.BEAN_NAME)
+            final TenantExtractor tenantExtractor,
+            @Qualifier(AuditableExecution.AUDITABLE_EXECUTION_REGISTERED_SERVICE_ACCESS)
+            final AuditableExecution registeredServiceAccessStrategyEnforcer,
             final CasConfigurationProperties casProperties,
             final ConfigurableApplicationContext applicationContext,
             @Qualifier(AcceptableUsagePolicyRepository.BEAN_NAME)
@@ -132,7 +137,8 @@ public class CasAcceptableUsagePolicyWebflowAutoConfiguration {
                 .withProperties(casProperties)
                 .withAction(() -> BeanSupplier.of(Action.class)
                     .when(AcceptableUsagePolicyRepository.CONDITION_AUP_ENABLED.given(applicationContext.getEnvironment()))
-                    .supply(() -> new AcceptableUsagePolicySubmitAction(acceptableUsagePolicyRepository))
+                    .supply(() -> new AcceptableUsagePolicySubmitAction(
+                        acceptableUsagePolicyRepository, registeredServiceAccessStrategyEnforcer, tenantExtractor))
                     .otherwise(() -> ConsumerExecutionAction.NONE)
                     .get())
                 .withId(CasWebflowConstants.ACTION_ID_AUP_SUBMIT)
@@ -144,6 +150,8 @@ public class CasAcceptableUsagePolicyWebflowAutoConfiguration {
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @ConditionalOnMissingBean(name = CasWebflowConstants.ACTION_ID_AUP_VERIFY)
         public Action acceptableUsagePolicyVerifyAction(
+            @Qualifier(TenantExtractor.BEAN_NAME)
+            final TenantExtractor tenantExtractor,
             final CasConfigurationProperties casProperties,
             final ConfigurableApplicationContext applicationContext,
             @Qualifier(AcceptableUsagePolicyRepository.BEAN_NAME)
@@ -155,7 +163,8 @@ public class CasAcceptableUsagePolicyWebflowAutoConfiguration {
                 .withProperties(casProperties)
                 .withAction(() -> BeanSupplier.of(Action.class)
                     .when(AcceptableUsagePolicyRepository.CONDITION_AUP_ENABLED.given(applicationContext.getEnvironment()))
-                    .supply(() -> new AcceptableUsagePolicyVerifyAction(acceptableUsagePolicyRepository, registeredServiceAccessStrategyEnforcer))
+                    .supply(() -> new AcceptableUsagePolicyVerifyAction(acceptableUsagePolicyRepository,
+                        registeredServiceAccessStrategyEnforcer, tenantExtractor))
                     .otherwise(() -> ConsumerExecutionAction.NONE)
                     .get())
                 .withId(CasWebflowConstants.ACTION_ID_AUP_VERIFY)
@@ -189,6 +198,8 @@ public class CasAcceptableUsagePolicyWebflowAutoConfiguration {
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @ConditionalOnMissingBean(name = CasWebflowConstants.ACTION_ID_AUP_VERIFY_SERVICE)
         public Action acceptableUsagePolicyVerifyServiceAction(
+            @Qualifier(TenantExtractor.BEAN_NAME)
+            final TenantExtractor tenantExtractor,
             final CasConfigurationProperties casProperties,
             final ConfigurableApplicationContext applicationContext,
             @Qualifier(AcceptableUsagePolicyRepository.BEAN_NAME)
@@ -200,7 +211,7 @@ public class CasAcceptableUsagePolicyWebflowAutoConfiguration {
                 .withProperties(casProperties)
                 .withAction(() -> BeanSupplier.of(Action.class)
                     .when(AcceptableUsagePolicyRepository.CONDITION_AUP_ENABLED.given(applicationContext.getEnvironment()))
-                    .supply(() -> new AcceptableUsagePolicyVerifyServiceAction(acceptableUsagePolicyRepository, registeredServiceAccessStrategyEnforcer))
+                    .supply(() -> new AcceptableUsagePolicyVerifyServiceAction(acceptableUsagePolicyRepository, registeredServiceAccessStrategyEnforcer, tenantExtractor))
                     .otherwise(() -> ConsumerExecutionAction.NONE)
                     .get())
                 .withId(CasWebflowConstants.ACTION_ID_AUP_VERIFY_SERVICE)

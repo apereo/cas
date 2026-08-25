@@ -26,7 +26,7 @@ public class V3ServiceValidateController extends AbstractServiceValidateControll
         super(ctx);
     }
 
-    @GetMapping(path = { CasProtocolConstants.ENDPOINT_SERVICE_VALIDATE_V3, "/tenants/{tenant}/" + CasProtocolConstants.ENDPOINT_SERVICE_VALIDATE_V3 })
+    @GetMapping(path = { CasProtocolConstants.ENDPOINT_SERVICE_VALIDATE_V3, "/tenants/{tenant}" + CasProtocolConstants.ENDPOINT_SERVICE_VALIDATE_V3 })
     @Operation(summary = "Validate a service ticket",
         parameters = {
             @Parameter(name = "tenant", description = "The tenant definition", in = ParameterIn.PATH),

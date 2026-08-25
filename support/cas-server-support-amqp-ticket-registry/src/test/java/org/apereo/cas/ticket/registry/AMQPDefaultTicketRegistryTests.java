@@ -12,9 +12,13 @@ import lombok.Getter;
 import lombok.val;
 import org.junit.jupiter.api.RepeatedTest;
 import org.junit.jupiter.api.Tag;
+import org.springframework.amqp.core.MessageListenerContainer;
+import org.springframework.amqp.rabbitmq.client.AmqpConnectionFactory;
+import org.springframework.amqp.rabbitmq.client.RabbitAmqpTemplate;
+import org.springframework.amqp.rabbitmq.client.listener.RabbitAmqpListenerContainer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.boot.amqp.autoconfigure.RabbitAutoConfiguration;
+import org.springframework.boot.amqp.rabbitmq.autoconfigure.AmqpRabbitAutoConfiguration;
 import org.springframework.boot.autoconfigure.ImportAutoConfiguration;
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.context.annotation.Bean;
@@ -30,19 +34,19 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 @Import(AMQPDefaultTicketRegistryTests.AMQPTicketRegistryTestConfiguration.class)
 @ImportAutoConfiguration({
-    RabbitAutoConfiguration.class,
+    AmqpRabbitAutoConfiguration.class,
     CasAMQPTicketRegistryAutoConfiguration.class
 })
 @TestPropertySource(properties = {
     "cas.ticket.registry.in-memory.crypto.signing.key=HbuPoSycjr0Pyv2u8WSwKcM6Ow0lviUdT7b9VzwxkcANqbDyKOb6KHPus_fCDCXElPhzXpeP-T0bryadZNiwOQ",
     "cas.ticket.registry.in-memory.crypto.encryption.key=BXRiSBWJcRksTizjdaCoLw",
 
-    "cas.ticket.registry.in-memory.properties.spring.rabbitmq.management-url=http://localhost:25672",
+    "cas.ticket.registry.in-memory.properties.spring.amqp.rabbitmq.management-url=http://localhost:25672",
 
-    "spring.rabbitmq.host=localhost",
-    "spring.rabbitmq.port=5672",
-    "spring.rabbitmq.username=rabbituser",
-    "spring.rabbitmq.password=bugsbunny"
+    "spring.amqp.rabbitmq.host=localhost",
+    "spring.amqp.rabbitmq.port=5672",
+    "spring.amqp.rabbitmq.username=rabbituser",
+    "spring.amqp.rabbitmq.password=bugsbunny"
 })
 @EnabledIfListeningOnPort(port = 5672)
 @Tag("AMQP")
@@ -62,6 +66,25 @@ class AMQPDefaultTicketRegistryTests extends BaseTicketRegistryTests {
     @Autowired
     @Qualifier("amqpTicketRegistryClusterTopologyManager")
     private ClusterTopologyManager amqpTicketRegistryClusterTopologyManager;
+
+    @Autowired
+    @Qualifier("amqpRabbitConnectionFactory")
+    private AmqpConnectionFactory amqpRabbitConnectionFactory;
+
+    @Autowired
+    @Qualifier("rabbitAmqpTemplate")
+    private RabbitAmqpTemplate rabbitAmqpTemplate;
+
+    @Autowired
+    @Qualifier("amqpTicketRegistryMessageListenerContainer")
+    private MessageListenerContainer amqpTicketRegistryMessageListenerContainer;
+
+    @RepeatedTest(1)
+    void verifyAmqpInfrastructure() {
+        assertNotNull(amqpRabbitConnectionFactory);
+        assertNotNull(rabbitAmqpTemplate);
+        assertInstanceOf(RabbitAmqpListenerContainer.class, amqpTicketRegistryMessageListenerContainer);
+    }
 
     @RepeatedTest(1)
     void verifyOperation() throws Exception {

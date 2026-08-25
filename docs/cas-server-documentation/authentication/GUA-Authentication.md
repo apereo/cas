@@ -14,7 +14,7 @@ selected by the user at the time the account is created. It is an "account secre
 to the username that should not be easily reproduced by a phishing campaign attempting to impersonate a legitimate website.
 
 In practice, CAS prompts the user for only their username and responds with a page 
-displaying what should be the user's pre-selected image along with a password field 
+displaying what should be the user's preselected image along with a password field 
 to complete their authentication. The user in turn is to be trained to refuse 
 submitting the rest of their login credentials to a site posing to be legitimate if CAS fails to present the correct image.
 

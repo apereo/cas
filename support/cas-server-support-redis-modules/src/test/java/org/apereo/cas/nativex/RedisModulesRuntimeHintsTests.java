@@ -1,7 +1,7 @@
 package org.apereo.cas.nativex;
 
 import module java.base;
-import com.redis.lettucemod.api.sync.RedisModulesCommands;
+import io.lettuce.core.api.sync.RediSearchCommands;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
@@ -21,6 +21,6 @@ class RedisModulesRuntimeHintsTests {
     void verifyHints() {
         val hints = new RuntimeHints();
         new RedisModulesRuntimeHints().registerHints(hints, getClass().getClassLoader());
-        assertTrue(RuntimeHintsPredicates.reflection().onType(RedisModulesCommands.class).test(hints));
+        assertTrue(RuntimeHintsPredicates.reflection().onType(RediSearchCommands.class).test(hints));
     }
 }

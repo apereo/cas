@@ -5,15 +5,15 @@ import org.apereo.cas.authentication.CasSSLContext;
 import org.apereo.cas.configuration.model.support.redis.BaseRedisProperties;
 import org.apereo.cas.redis.core.RedisModulesOperations;
 import org.apereo.cas.redis.core.RedisObjectFactory;
-import com.redis.lettucemod.RedisModulesClient;
-import com.redis.lettucemod.api.sync.RediSearchCommands;
-import com.redis.lettucemod.api.sync.RedisModulesCommands;
-import com.redis.lettucemod.cluster.RedisModulesClusterClient;
+import io.lettuce.core.RedisClient;
 import io.lettuce.core.RedisCommandExecutionException;
 import io.lettuce.core.RedisURI;
+import io.lettuce.core.api.sync.RediSearchCommands;
 import io.lettuce.core.cluster.ClusterClientOptions;
+import io.lettuce.core.cluster.RedisClusterClient;
 import io.lettuce.core.search.SearchReply;
 import io.lettuce.core.search.arguments.CreateArgs;
+import io.lettuce.core.search.arguments.FieldArgs;
 import io.lettuce.core.search.arguments.TextFieldArgs;
 import lombok.RequiredArgsConstructor;
 import lombok.val;
@@ -27,26 +27,28 @@ import org.springframework.util.StringUtils;
  */
 @RequiredArgsConstructor
 public class LettuceRedisModulesOperations implements RedisModulesOperations {
-    private final RediSearchCommands rediSearchCommands;
+    private final RediSearchCommands<String, String> rediSearchCommands;
 
     @Override
     public void createIndexes(final String indexName, final String prefix,
                               final List<String> fields) {
 
-        val options = CreateArgs.builder()
+        val options = CreateArgs.<String, String>builder()
             .withPrefix(prefix)
             .maxTextFields()
             .build();
-        val createIndex = rediSearchCommands.ftList().parallelStream().noneMatch(idx -> indexName.equalsIgnoreCase(idx.toString()));
+        val createIndex = rediSearchCommands.ftList().parallelStream().noneMatch(indexName::equalsIgnoreCase);
         if (createIndex) {
-            val indexFields = fields.stream().map(field -> TextFieldArgs.builder().name(field).build()).toList();
+            val indexFields = fields.stream()
+                .<FieldArgs<String>>map(field -> TextFieldArgs.<String>builder().name(field).build())
+                .toList();
             rediSearchCommands.ftCreate(indexName, options, indexFields);
         }
     }
 
     @Override
     public Stream<Map<String, String>> search(final String searchIndexName, final String query) {
-        val results = (List<SearchReply.SearchResult>) rediSearchCommands.ftSearch(searchIndexName, query).getResults();
+        val results = rediSearchCommands.ftSearch(searchIndexName, query).getResults();
         return results.parallelStream().map(SearchReply.SearchResult::getFields);
 
     }
@@ -59,7 +61,7 @@ public class LettuceRedisModulesOperations implements RedisModulesOperations {
      * @return the optional
      * @throws Exception the exception
      */
-    public static RediSearchCommands newRediSearchCommands(
+    public static RediSearchCommands<String, String> newRediSearchCommands(
         final BaseRedisProperties redis, final CasSSLContext casSslContext) throws Exception {
 
         if (redis.getCluster() != null && !redis.getCluster().getNodes().isEmpty()) {
@@ -90,27 +92,27 @@ public class LettuceRedisModulesOperations implements RedisModulesOperations {
             uriBuilder = uriBuilder.withHost(redis.getHost()).withPort(redis.getPort());
         }
 
-        val redisModulesClient = RedisModulesClient.create(uriBuilder.build());
+        val redisClient = RedisClient.create(uriBuilder.build());
         val clientOptions = RedisObjectFactory.newClientOptions(redis, casSslContext);
-        redisModulesClient.setOptions(clientOptions);
-        val connection = redisModulesClient.connect();
+        redisClient.setOptions(clientOptions);
+        val connection = redisClient.connect();
         val commands = connection.sync();
-        verifyRedisModulesSupport(commands);
+        verifyRedisSearchSupport(commands);
         return commands;
     }
 
-    private static void verifyRedisModulesSupport(final RedisModulesCommands<String, String> commands) {
+    private static void verifyRedisSearchSupport(final RediSearchCommands<String, String> commands) {
         try {
-            commands.ftInfo(UUID.randomUUID().toString());
+            commands.ftList();
         } catch (final RedisCommandExecutionException e) {
             LOGGER.trace(e.getMessage(), e);
             if (e.getMessage().contains("ERR unknown command")) {
-                throw new UnsupportedOperationException("Redis server does not support Redis Modules");
+                throw new UnsupportedOperationException("Redis server does not support Redis Search");
             }
         }
     }
 
-    private static RediSearchCommands newClusterRediSearchCommands(
+    private static RediSearchCommands<String, String> newClusterRediSearchCommands(
         final BaseRedisProperties redis, final CasSSLContext casSslContext) throws Exception {
         val redisUris = redis.getCluster()
             .getNodes()
@@ -131,12 +133,12 @@ public class LettuceRedisModulesOperations implements RedisModulesOperations {
                     .build();
             })
             .toList();
-        val redisModulesClient = RedisModulesClusterClient.create(redisUris);
+        val redisClusterClient = RedisClusterClient.create(redisUris);
         val clientOptions = (ClusterClientOptions) RedisObjectFactory.newClientOptions(redis, casSslContext);
-        redisModulesClient.setOptions(clientOptions);
-        val connection = redisModulesClient.connect();
+        redisClusterClient.setOptions(clientOptions);
+        val connection = redisClusterClient.connect();
         val commands = connection.sync();
-        verifyRedisModulesSupport(commands);
+        verifyRedisSearchSupport(commands);
         return commands;
     }
 

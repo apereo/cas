@@ -44,7 +44,7 @@ public class OidcListFederationEndpointController extends AbstractOidcFederation
      * @param response the response
      * @return the list of subordinates
      */
-    @GetMapping('/' + OidcConstants.BASE_OIDC_URL + '/' + OidcConstants.LIST_FEDERATION_URL)
+    @GetMapping('/' + OidcConstants.BASE_OIDC_URL + OidcConstants.LIST_FEDERATION_URL)
     @Operation(summary = "Handle OIDC list federation request",
         description = "Handles requests for the list federation endpoint")
     public ResponseEntity listSubordinates(final HttpServletRequest request, final HttpServletResponse response) throws Exception {
