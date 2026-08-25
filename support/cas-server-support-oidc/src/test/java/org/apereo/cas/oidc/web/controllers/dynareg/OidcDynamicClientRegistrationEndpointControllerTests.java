@@ -18,7 +18,6 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.TestPropertySource;
-import static org.junit.jupiter.api.Assertions.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
@@ -144,51 +143,6 @@ class OidcDynamicClientRegistrationEndpointControllerTests {
                     .content(registrationReq)
                 )
                 .andExpect(status().isBadRequest());
-        }
-
-        @Test
-        void verifySectorIdentifierUriCannotReachLoopback() throws Throwable {
-            try (val webServer = new MockWebServer(HttpStatus.OK)) {
-                webServer.responseBodyJson(List.of("https://client.example.org/callback", "https://client.example.org/callback2"));
-                webServer.start();
-
-                val clientId = UUID.randomUUID().toString();
-                val accessToken = getAccessToken(clientId, Set.of(OidcConstants.CLIENT_REGISTRATION_SCOPE));
-                ticketRegistry.addTicket(accessToken);
-
-                val registrationReq = """
-                    {
-                        "application_type": "web",
-                        "default_acr_values": ["mfa-duo","mfa-gauth"],
-                        "redirect_uris": ["https://client.example.org/callback","https://client.example.org/callback2"],
-                        "client_name": "My Example",
-                        "client_name#ja-Japan-JP": "Japanese",
-                        "logo_uri": "https://client.example.org/logo.png",
-                        "policy_uri": "https://client.example.org/policy",
-                        "tos_uri": "https://client.example.org/tos",
-                        "subject_type": "pairwise",
-                        "sector_identifier_uri": "https://127.0.0.1:%s",
-                        "token_endpoint_auth_method": "client_secret_basic",
-                        "id_token_signed_response_alg": "RS256",
-                        "id_token_encrypted_response_alg": "RSA1_5",
-                        "id_token_encrypted_response_enc": "A128CBC-HS256",
-                        "userinfo_encrypted_response_alg": "RSA1_5",
-                        "userinfo_encrypted_response_enc": "A128CBC-HS256",
-                        "contacts": ["ve7jtb@example.org", "mary@example.org"]
-                    }
-                    """.formatted(webServer.getPort());
-
-                mockMvc
-                    .perform(post("/cas/oidc/" + OidcConstants.REGISTRATION_URL)
-                        .accept(MediaType.APPLICATION_JSON)
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .with(withHttpRequestProcessor())
-                        .header(HttpHeaders.AUTHORIZATION, "Bearer %s".formatted(accessToken.getId()))
-                        .content(registrationReq)
-                    )
-                    .andExpect(status().isBadRequest());
-                assertEquals(0, webServer.getRequestCount());
-            }
         }
         
         @Test

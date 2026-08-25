@@ -19,6 +19,8 @@ import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.MethodSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.ImportAutoConfiguration;
@@ -68,5 +70,28 @@ class OidcWebflowConfigurerTests extends BaseWebflowConfigurerTests {
         request.setRequestURI("/cas/oidc/" + OidcConstants.AUTHORIZE_URL);
         val response = new MockHttpServletResponse();
         assertTrue(oidcThrottledRequestFilter.supports(request, response));
+    }
+
+    @ParameterizedTest
+    @MethodSource("getThrottledEndpoints")
+    void verifyEncodedEndpointPathsAreThrottled(final String endpoint) {
+        val encodedEndpoint = "%%%02x%s".formatted((int) endpoint.charAt(0), endpoint.substring(1));
+        val request = new MockHttpServletRequest();
+        request.setServerPort(8080);
+        request.setRequestURI("/cas/oidc/" + encodedEndpoint);
+        val response = new MockHttpServletResponse();
+        assertTrue(oidcThrottledRequestFilter.supports(request, response));
+    }
+
+    static Stream<String> getThrottledEndpoints() {
+        return Stream.of(
+            OidcConstants.AUTHORIZE_URL,
+            OidcConstants.ACCESS_TOKEN_URL,
+            OidcConstants.TOKEN_URL,
+            OidcConstants.PROFILE_URL,
+            OidcConstants.JWKS_URL,
+            OidcConstants.CLIENT_CONFIGURATION_URL,
+            OidcConstants.REVOCATION_URL,
+            OidcConstants.INTROSPECTION_URL);
     }
 }
