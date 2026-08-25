@@ -1,7 +1,7 @@
 {
   "dependencies": "oidc-federation",
   "instances": 2,
-  "enabled": false,
+  "enabled": true,
   "conditions": {
     "docker": true
   },
