@@ -7,6 +7,7 @@ import org.apereo.cas.support.oauth.util.OAuth20Utils;
 import org.apereo.cas.support.oauth.validator.authorization.OAuth20AuthorizationRequestValidator;
 import org.apereo.cas.support.oauth.web.response.accesstoken.ext.AccessTokenGrantRequestExtractor;
 import org.apereo.cas.util.CollectionUtils;
+import org.apereo.cas.util.RegexUtils;
 import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.util.spring.beans.BeanSupplier;
 
@@ -20,9 +21,10 @@ import org.pac4j.jee.context.JEEContext;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.web.servlet.AsyncHandlerInterceptor;
 import org.springframework.web.servlet.HandlerInterceptor;
-
+import org.springframework.web.util.UriUtils;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.Optional;
 import java.util.regex.Pattern;
@@ -161,9 +163,10 @@ public class OAuth20HandlerInterceptorAdapter implements AsyncHandlerInterceptor
      * @return true /false
      */
     protected boolean doesUriMatchPattern(final String requestPath, final List<String> patternUrls) {
+        val decodedRequestPath = UriUtils.decode(requestPath, StandardCharsets.UTF_8);
         return patternUrls.stream().anyMatch(patternUrl -> {
-            val pattern = Pattern.compile('/' + patternUrl + "(/)*$");
-            return pattern.matcher(requestPath).find();
+            val pattern = RegexUtils.createPattern('/' + patternUrl + "(/)*$");
+            return pattern.matcher(decodedRequestPath).find();
         });
     }
 

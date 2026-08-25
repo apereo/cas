@@ -91,6 +91,10 @@ public abstract class AbstractServiceFactory<T extends Service> implements Servi
         return null;
     }
 
+    protected static boolean isInternalAttributeName(final String name) {
+        return Strings.CI.startsWith(name, CentralAuthenticationService.NAMESPACE);
+    }
+
     protected Map<String, List> extractQueryParameters(final Service service) {
         val attributes = new LinkedHashMap<String, List>();
         if (service instanceof final WebApplicationService webApplicationService) {
@@ -98,10 +102,13 @@ public abstract class AbstractServiceFactory<T extends Service> implements Servi
             try {
                 if (urlValidator.isValid(originalUrl)) {
                     val queryParams = FunctionUtils.doUnchecked(() -> new URIBuilder(originalUrl).getQueryParams());
-                    queryParams.forEach(pair -> {
-                        val values = CollectionUtils.wrapArrayList(StringEscapeUtils.escapeHtml4(pair.getValue()));
-                        attributes.put(pair.getName(), values);
-                    });
+                    queryParams
+                        .stream()
+                        .filter(pair -> !isInternalAttributeName(pair.getName()))
+                        .forEach(pair -> {
+                            val values = CollectionUtils.wrapArrayList(StringEscapeUtils.escapeHtml4(pair.getValue()));
+                            attributes.put(pair.getName(), values);
+                        });
                 }
             } catch (final Exception e) {
                 LOGGER.error("Unable to extract query parameters from [{}]: [{}]", originalUrl, e.getMessage());
@@ -115,7 +122,7 @@ public abstract class AbstractServiceFactory<T extends Service> implements Servi
             .entrySet()
             .stream()
             .filter(entry -> !IGNORED_ATTRIBUTES_PARAMS.contains(entry.getKey()))
-            .filter(entry -> !Strings.CI.startsWith(entry.getKey(), CentralAuthenticationService.NAMESPACE))
+            .filter(entry -> !isInternalAttributeName(entry.getKey()))
             .map(entry -> Pair.of(entry.getKey(), CollectionUtils.toCollection(entry.getValue(), ArrayList.class)))
             .collect(Collectors.toMap(Pair::getKey, Pair::getValue));
         attributes.putAll(extractQueryParameters(service));
