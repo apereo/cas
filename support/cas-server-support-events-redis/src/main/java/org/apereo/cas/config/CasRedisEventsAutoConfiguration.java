@@ -38,7 +38,7 @@ public class CasRedisEventsAutoConfiguration {
         return new PersistenceExceptionTranslationPostProcessor();
     }
 
-    @Bean
+    @Bean(defaultCandidate = false)
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @ConditionalOnMissingBean(name = "redisEventConnectionFactory")
     public RedisConnectionFactory redisEventConnectionFactory(

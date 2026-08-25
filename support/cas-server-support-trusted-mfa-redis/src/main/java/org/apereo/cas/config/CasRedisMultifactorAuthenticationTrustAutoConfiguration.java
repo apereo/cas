@@ -38,7 +38,7 @@ import org.springframework.data.redis.connection.RedisConnectionFactory;
 public class CasRedisMultifactorAuthenticationTrustAutoConfiguration {
     private static final BeanCondition CONDITION = BeanCondition.on("cas.authn.mfa.trusted.redis.enabled").isTrue().evenIfMissing();
 
-    @Bean
+    @Bean(defaultCandidate = false)
     @ConditionalOnMissingBean(name = "redisMfaTrustedConnectionFactory")
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     public RedisConnectionFactory redisMfaTrustedConnectionFactory(

@@ -39,7 +39,7 @@ import org.springframework.data.redis.connection.RedisConnectionFactory;
 public class CasRedisServiceRegistryAutoConfiguration {
     private static final BeanCondition CONDITION = BeanCondition.on("cas.service-registry.redis.enabled").isTrue().evenIfMissing();
 
-    @Bean
+    @Bean(defaultCandidate = false)
     @ConditionalOnMissingBean(name = "redisServiceConnectionFactory")
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     public RedisConnectionFactory redisServiceConnectionFactory(

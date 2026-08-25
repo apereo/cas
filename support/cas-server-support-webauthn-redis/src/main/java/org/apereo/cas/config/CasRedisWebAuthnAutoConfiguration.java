@@ -51,7 +51,7 @@ public class CasRedisWebAuthnAutoConfiguration {
             .get();
     }
 
-    @Bean
+    @Bean(defaultCandidate = false)
     @ConditionalOnMissingBean(name = "webAuthnRedisConnectionFactory")
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     public RedisConnectionFactory webAuthnRedisConnectionFactory(

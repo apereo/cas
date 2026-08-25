@@ -54,7 +54,7 @@ public class CasSupportRedisAuditAutoConfiguration {
             .get();
     }
 
-    @Bean
+    @Bean(defaultCandidate = false)
     @ConditionalOnMissingBean(name = "redisAuditConnectionFactory")
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     public RedisConnectionFactory redisAuditConnectionFactory(

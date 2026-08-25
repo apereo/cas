@@ -51,7 +51,7 @@ public class CasRedisYubiKeyAutoConfiguration {
             .get();
     }
 
-    @Bean
+    @Bean(defaultCandidate = false)
     @ConditionalOnMissingBean(name = "redisYubiKeyConnectionFactory")
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     public RedisConnectionFactory redisYubiKeyConnectionFactory(

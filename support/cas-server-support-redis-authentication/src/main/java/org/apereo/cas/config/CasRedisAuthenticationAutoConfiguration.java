@@ -59,7 +59,7 @@ public class CasRedisAuthenticationAutoConfiguration {
             .get();
     }
 
-    @Bean
+    @Bean(defaultCandidate = false)
     @ConditionalOnMissingBean(name = "redisAuthenticationConnectionFactory")
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     public RedisConnectionFactory redisAuthenticationConnectionFactory(

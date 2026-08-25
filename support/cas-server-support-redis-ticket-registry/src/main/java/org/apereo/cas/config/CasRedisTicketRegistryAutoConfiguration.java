@@ -190,7 +190,7 @@ public class CasRedisTicketRegistryAutoConfiguration {
         }
 
         @ConditionalOnMissingBean(name = "redisTicketConnectionFactory")
-        @Bean
+        @Bean(defaultCandidate = false)
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public RedisConnectionFactory redisTicketConnectionFactory(
             final ConfigurableApplicationContext applicationContext,

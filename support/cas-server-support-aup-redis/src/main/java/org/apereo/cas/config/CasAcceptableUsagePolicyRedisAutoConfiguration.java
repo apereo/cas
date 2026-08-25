@@ -55,7 +55,7 @@ public class CasAcceptableUsagePolicyRedisAutoConfiguration {
             .get();
     }
 
-    @Bean
+    @Bean(defaultCandidate = false)
     @ConditionalOnMissingBean(name = "redisAcceptableUsagePolicyConnectionFactory")
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     public RedisConnectionFactory redisAcceptableUsagePolicyConnectionFactory(

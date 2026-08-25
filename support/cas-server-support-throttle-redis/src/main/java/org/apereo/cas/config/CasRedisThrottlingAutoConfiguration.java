@@ -36,7 +36,7 @@ import org.springframework.data.redis.connection.RedisConnectionFactory;
 public class CasRedisThrottlingAutoConfiguration {
     private static final BeanCondition CONDITION = BeanCondition.on("cas.audit.redis.enabled").isTrue().evenIfMissing();
 
-    @Bean
+    @Bean(defaultCandidate = false)
     @ConditionalOnMissingBean(name = "redisThrottleConnectionFactory")
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     public RedisConnectionFactory redisThrottleConnectionFactory(

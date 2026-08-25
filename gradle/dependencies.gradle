@@ -3727,6 +3727,7 @@ ext.libraries = [
                     exclude(group: "org.springframework", module: "spring-webmvc")
                     exclude(group: "org.springframework", module: "spring-context")
                 },
+                dependencies.create(libs.spring.boot.data.redis.get()),
                 dependencies.create(libs.spring.boot.session.redis.get()) {
                     exclude(group: "org.springframework", module: "spring-web")
                     exclude(group: "org.springframework", module: "spring-core")

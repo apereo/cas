@@ -51,7 +51,7 @@ public class CasGoogleAuthenticatorRedisAutoConfiguration {
         return new PersistenceExceptionTranslationPostProcessor();
     }
 
-    @Bean
+    @Bean(defaultCandidate = false)
     @ConditionalOnMissingBean(name = "redisGoogleAuthenticatorConnectionFactory")
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     public RedisConnectionFactory redisGoogleAuthenticatorConnectionFactory(

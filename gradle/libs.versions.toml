@@ -644,6 +644,7 @@ spring-aop = { module = "org.springframework:spring-aop", version.ref = "spring"
 spring-beans = { module = "org.springframework:spring-beans", version.ref = "spring" }
 spring-binding = { module = "org.springframework.webflow:spring-binding", version.ref = "springWebflow" }
 spring-boot-core = { module = "org.springframework.boot:spring-boot", version.ref = "springBoot" }
+spring-boot-data-redis = { module = "org.springframework.boot:spring-boot-data-redis", version.ref = "springBoot" }
 spring-boot-actuator = { module = "org.springframework.boot:spring-boot-actuator", version.ref = "springBoot" }
 spring-boot-amqp-rabbitmq = { module = "org.springframework.boot:spring-boot-amqp-rabbitmq", version.ref = "springBoot" }
 spring-boot-health = { module = "org.springframework.boot:spring-boot-health", version.ref = "springBoot" }
