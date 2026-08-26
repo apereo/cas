@@ -25,6 +25,7 @@ docker run --quiet --rm -d \
   -p 27017:27017 \
   -e MONGO_INITDB_ROOT_USERNAME=root \
   -e MONGO_INITDB_ROOT_PASSWORD=secret \
+  -e GLIBC_TUNABLES=glibc.pthread.rseq=1 \
   --name="mongodb-server" \
   -v "$PWD"/ci/tests/mongodb/mongo-init.sh:/docker-entrypoint-initdb.d/mongo-init.sh:ro \
   ${DOCKER_IMAGE}
