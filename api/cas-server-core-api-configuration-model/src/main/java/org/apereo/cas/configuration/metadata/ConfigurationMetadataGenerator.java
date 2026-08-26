@@ -126,9 +126,12 @@ public class ConfigurationMetadataGenerator {
 
         removeNestedConfigurationPropertyGroups(properties, groups);
 
-        jsonMap.put("properties", properties.parallelStream().sorted(Comparator.comparing(ConfigurationMetadataProperty::getName)).collect(Collectors.toCollection(LinkedHashSet::new)));
-        jsonMap.put("groups", groups.parallelStream().sorted(Comparator.comparing(ConfigurationMetadataProperty::getName)).collect(Collectors.toCollection(LinkedHashSet::new)));
-        jsonMap.put("hints", hints.parallelStream().sorted(Comparator.comparing(ConfigurationMetadataHint::getName)).collect(Collectors.toCollection(LinkedHashSet::new)));
+        jsonMap.put("properties", properties.stream().collect(Collectors.toMap(
+            ConfigurationMetadataProperty::getName, Function.identity(), (first, second) -> second, TreeMap::new)).values());
+        jsonMap.put("groups", groups.stream().collect(Collectors.toMap(
+            ConfigurationMetadataProperty::getName, Function.identity(), (first, second) -> second, TreeMap::new)).values());
+        jsonMap.put("hints", hints.stream().collect(Collectors.toMap(
+            ConfigurationMetadataHint::getName, Function.identity(), (first, second) -> second, TreeMap::new)).values());
         MAPPER.writerWithDefaultPrettyPrinter().writeValue(outputSpringConfigurationMetadata, jsonMap);
     }
 
@@ -156,11 +159,7 @@ public class ConfigurationMetadataGenerator {
                         val hint = new ConfigurationMetadataHint();
                         hint.setName(entry.getName());
 
-                        val annotation = Arrays.stream(clazz.getAnnotations())
-                            .filter(a -> a.annotationType().equals(RequiresModule.class))
-                            .findFirst()
-                            .map(RequiresModule.class::cast)
-                            .orElseThrow(() -> new RuntimeException(clazz.getCanonicalName() + " is missing @RequiresModule"));
+                        val annotation = findRequiresModule(clazz);
 
                         val valueHint = new ValueHint();
 
@@ -218,6 +217,18 @@ public class ConfigurationMetadataGenerator {
         return hints;
     }
 
+    private static RequiresModule findRequiresModule(final Class<?> clazz) {
+        var currentClass = clazz;
+        while (currentClass != null) {
+            val annotation = currentClass.getAnnotation(RequiresModule.class);
+            if (annotation != null) {
+                return annotation;
+            }
+            currentClass = currentClass.getEnclosingClass();
+        }
+        throw new RuntimeException(clazz.getCanonicalName() + " is missing @RequiresModule");
+    }
+
     protected static void processDeprecatedProperties(final List<ConfigurationMetadataProperty> properties) {
         properties.stream()
             .filter(p -> p.getDeprecation() != null)
@@ -261,10 +272,16 @@ public class ConfigurationMetadataGenerator {
 
     protected void processMappableProperties(final List<ConfigurationMetadataProperty> properties,
                                              final List<ConfigurationMetadataProperty> groups) {
-        val collectedProps = new HashSet<ConfigurationMetadataProperty>();
-        val collectedGroups = new HashSet<ConfigurationMetadataProperty>();
+        val pendingProperties = new ArrayDeque<>(properties);
+        val propertyNames = properties.stream()
+            .map(ConfigurationMetadataProperty::getName)
+            .collect(Collectors.toSet());
+        val groupNames = groups.stream()
+            .map(ConfigurationMetadataProperty::getName)
+            .collect(Collectors.toSet());
 
-        properties.forEach(property -> {
+        while (!pendingProperties.isEmpty()) {
+            val property = pendingProperties.removeFirst();
             try {
                 val matcher = MAP_TYPE_STRING_KEY_OBJECT_PATTERN.matcher(property.getType());
                 if (matcher.matches()) {
@@ -275,10 +292,25 @@ public class ConfigurationMetadataGenerator {
 
                     if (typeFile.exists()) {
                         val parser = new ConfigurationMetadataUnitParser(projectDirectory.getCanonicalPath());
-                        property.setName(property.getName().concat(".[key]"));
+                        if (!property.getName().endsWith(".[key]")) {
+                            propertyNames.remove(property.getName());
+                            property.setName(property.getName().concat(".[key]"));
+                            propertyNames.add(property.getName());
+                        }
                         property.setId(property.getName());
+                        val collectedProps = new HashSet<ConfigurationMetadataProperty>();
+                        val collectedGroups = new HashSet<ConfigurationMetadataProperty>();
                         parser.parseCompilationUnit(collectedProps, collectedGroups, property, typePath,
                             valueType, false);
+                        collectedProps.stream()
+                            .filter(prop -> propertyNames.add(prop.getName()))
+                            .forEach(prop -> {
+                                properties.add(prop);
+                                pendingProperties.addLast(prop);
+                            });
+                        collectedGroups.stream()
+                            .filter(group -> groupNames.add(group.getName()))
+                            .forEach(groups::add);
                     } else {
                         throw new RuntimeException(typePath + " does not exist");
                     }
@@ -286,9 +318,7 @@ public class ConfigurationMetadataGenerator {
             } catch (final Exception e) {
                 throw new RuntimeException(e);
             }
-        });
-        properties.addAll(collectedProps);
-        groups.addAll(collectedGroups);
+        }
     }
 
     protected void processNestedEnumProperties(final List<ConfigurationMetadataProperty> properties,
@@ -425,39 +455,53 @@ public class ConfigurationMetadataGenerator {
         }
     }
 
-    protected void processNestedTypes(final List<ConfigurationMetadataProperty> properties, final List<ConfigurationMetadataProperty> groups) {
-        val collectedProps = new HashSet<ConfigurationMetadataProperty>();
-        val collectedGroups = new HashSet<ConfigurationMetadataProperty>();
+    protected void processNestedTypes(final List<ConfigurationMetadataProperty> properties,
+                                      final List<ConfigurationMetadataProperty> groups) throws Exception {
+        val pendingProperties = new ArrayDeque<>(properties);
+        val propertyNames = properties.stream()
+            .map(ConfigurationMetadataProperty::getName)
+            .collect(Collectors.toSet());
+        val groupNames = groups.stream()
+            .map(ConfigurationMetadataProperty::getName)
+            .collect(Collectors.toSet());
         LOGGER.trace("Processing nested configuration types...");
-        properties
-            .forEach(Unchecked.consumer(p -> {
-                var indexBrackets = false;
-                var typeName = StringUtils.EMPTY;
+        while (!pendingProperties.isEmpty()) {
+            val property = pendingProperties.removeFirst();
+            var indexBrackets = false;
+            var typeName = StringUtils.EMPTY;
 
-                if (NESTED_TYPE_PATTERN1.matcher(p.getType()).matches()) {
-                    val matcher = NESTED_TYPE_PATTERN1.matcher(p.getType());
-                    indexBrackets = matcher.matches();
-                    typeName = matcher.group(1);
-                } else if (NESTED_TYPE_PATTERN2.matcher(p.getType()).matches()) {
-                    val matcher = NESTED_TYPE_PATTERN2.matcher(p.getType());
-                    indexBrackets = matcher.matches();
-                    typeName = matcher.group(2);
-                    val result = ConfigurationMetadataClassSourceLocator.findClassBySimpleNameInPackage(typeName, "org.apereo.cas");
-                    if (result.isPresent()) {
-                        typeName = result.get().getName();
-                    }
-
+            if (NESTED_TYPE_PATTERN1.matcher(property.getType()).matches()) {
+                val matcher = NESTED_TYPE_PATTERN1.matcher(property.getType());
+                indexBrackets = matcher.matches();
+                typeName = matcher.group(1);
+            } else if (NESTED_TYPE_PATTERN2.matcher(property.getType()).matches()) {
+                val matcher = NESTED_TYPE_PATTERN2.matcher(property.getType());
+                indexBrackets = matcher.matches();
+                typeName = matcher.group(2);
+                val result = ConfigurationMetadataClassSourceLocator.findClassBySimpleNameInPackage(typeName, "org.apereo.cas");
+                if (result.isPresent()) {
+                    typeName = result.get().getName();
                 }
+            }
 
-                if (!typeName.isEmpty()) {
-                    val typePath = ConfigurationMetadataClassSourceLocator.buildTypeSourcePath(projectDirectory.getCanonicalPath(), typeName);
-                    LOGGER.debug("Matched Type [{}], Property [{}], Type: [{}], Path [{}]", typeName, p.getName(), p.getType(), typePath);
-                    val parser = new ConfigurationMetadataUnitParser(projectDirectory.getCanonicalPath());
-                    parser.parseCompilationUnit(collectedProps, collectedGroups, p, typePath, typeName, indexBrackets);
-                }
-            }));
-
-        properties.addAll(collectedProps);
-        groups.addAll(collectedGroups);
+            if (!typeName.isEmpty()) {
+                val typePath = ConfigurationMetadataClassSourceLocator.buildTypeSourcePath(projectDirectory.getCanonicalPath(), typeName);
+                LOGGER.debug("Matched Type [{}], Property [{}], Type: [{}], Path [{}]",
+                    typeName, property.getName(), property.getType(), typePath);
+                val collectedProps = new HashSet<ConfigurationMetadataProperty>();
+                val collectedGroups = new HashSet<ConfigurationMetadataProperty>();
+                val parser = new ConfigurationMetadataUnitParser(projectDirectory.getCanonicalPath());
+                parser.parseCompilationUnit(collectedProps, collectedGroups, property, typePath, typeName, indexBrackets);
+                collectedProps.stream()
+                    .filter(prop -> propertyNames.add(prop.getName()))
+                    .forEach(prop -> {
+                        properties.add(prop);
+                        pendingProperties.addLast(prop);
+                    });
+                collectedGroups.stream()
+                    .filter(group -> groupNames.add(group.getName()))
+                    .forEach(groups::add);
+            }
+        }
     }
 }

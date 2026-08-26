@@ -10,13 +10,11 @@ import org.gradle.api.tasks.PathSensitive
 import org.gradle.api.tasks.PathSensitivity
 import org.gradle.api.tasks.TaskAction
 import org.gradle.process.ExecOperations
-import org.gradle.work.DisableCachingByDefault
 
 import java.nio.charset.StandardCharsets
 
 import javax.inject.Inject
 
-@DisableCachingByDefault(because = "Uploads module metadata to MongoDB as an external side effect.")
 abstract class PublishProjectModulesMetadataTask extends DefaultTask {
     @InputFile
     @PathSensitive(PathSensitivity.RELATIVE)
@@ -34,6 +32,15 @@ abstract class PublishProjectModulesMetadataTask extends DefaultTask {
     @Input
     abstract Property<String> getMongoUriSystemProperty()
 
+    @Input
+    abstract Property<String> getCollectionNamePrefix()
+
+    @Input
+    abstract Property<String> getMetadataDescription()
+
+    @Input
+    abstract Property<Boolean> getJsonArray()
+
     @Inject
     abstract ExecOperations getExecOperations()
 
@@ -43,27 +50,41 @@ abstract class PublishProjectModulesMetadataTask extends DefaultTask {
         mongoImportExecutable.convention("mongoimport")
         mongoUriEnvironmentVariable.convention("CAS_MODULE_METADATA_MONGODB_URL")
         mongoUriSystemProperty.convention("casModuleMetadataMongoDbUrl")
+        collectionNamePrefix.convention("casmodules")
+        metadataDescription.convention("CAS module metadata")
+        jsonArray.convention(true)
     }
 
     @TaskAction
     void publishMetadata() {
         def metadataFile = modulesMetadataFile.get().asFile
         if (!metadataFile.exists()) {
-            throw new GradleException("CAS module metadata file does not exist: ${metadataFile}")
+            throw new GradleException("${metadataDescription.get()} file does not exist: ${metadataFile}")
         }
 
         def mongoUri = findMongoUri()
         def version = casVersion.get()
         def versionNumbers = version.tokenize("-").first().replace(".", "")
         if (!versionNumbers) {
-            throw new GradleException("Unable to determine CAS module metadata collection from version ${version}")
+            throw new GradleException("Unable to determine ${metadataDescription.get()} collection from version ${version}")
         }
-        def collectionName = "casmodules${versionNumbers}"
+        def collectionName = "${collectionNamePrefix.get()}${versionNumbers}"
 
         logger.quiet("Checking CAS version ${version}...")
         logger.quiet("CAS simple version number is: ${versionNumbers}")
-        logger.quiet("CAS module collection is ${collectionName}")
-        logger.quiet("Uploading module records for ${version} to ${collectionName}")
+        logger.quiet("CAS metadata collection is ${collectionName}")
+        logger.quiet("Uploading ${metadataDescription.get()} for ${version} to ${collectionName}")
+
+        def importArguments = [
+            "--uri", mongoUri,
+            "--collection", collectionName,
+            "--file", metadataFile.absolutePath,
+            "--type", "json"
+        ]
+        if (jsonArray.get()) {
+            importArguments.add("--jsonArray")
+        }
+        importArguments.add("--drop")
 
         def output = new ByteArrayOutputStream()
         def error = new ByteArrayOutputStream()
@@ -71,12 +92,7 @@ abstract class PublishProjectModulesMetadataTask extends DefaultTask {
         try {
             result = execOperations.exec {
                 executable = mongoImportExecutable.get()
-                args "--uri", mongoUri,
-                    "--collection", collectionName,
-                    "--file", metadataFile.absolutePath,
-                    "--type", "json",
-                    "--jsonArray",
-                    "--drop"
+                args importArguments
                 standardOutput = output
                 errorOutput = error
                 ignoreExitValue = true
@@ -84,7 +100,7 @@ abstract class PublishProjectModulesMetadataTask extends DefaultTask {
         } catch (final Exception e) {
             logProcessOutput("mongoimport stdout", output.toString(StandardCharsets.UTF_8.name()).trim(), true)
             logProcessOutput("mongoimport stderr", error.toString(StandardCharsets.UTF_8.name()).trim(), true)
-            throw new GradleException("Failed to execute ${mongoImportExecutable.get()} for CAS module metadata collection ${collectionName}", e)
+            throw new GradleException("Failed to execute ${mongoImportExecutable.get()} for ${metadataDescription.get()} collection ${collectionName}", e)
         }
 
         def standardOutput = output.toString(StandardCharsets.UTF_8.name()).trim()
@@ -93,12 +109,12 @@ abstract class PublishProjectModulesMetadataTask extends DefaultTask {
             logger.error("mongoimport failed with exit code ${result.exitValue}")
             logProcessOutput("mongoimport stdout", standardOutput, true)
             logProcessOutput("mongoimport stderr", errorOutput, true)
-            throw new GradleException("Failed to upload CAS module metadata to MongoDB collection ${collectionName}")
+            throw new GradleException("Failed to upload ${metadataDescription.get()} to MongoDB collection ${collectionName}")
         }
 
         logProcessOutput("mongoimport stdout", standardOutput)
         logProcessOutput("mongoimport stderr", errorOutput)
-        logger.quiet("Uploaded CAS module metadata to MongoDB collection ${collectionName}")
+        logger.quiet("Uploaded ${metadataDescription.get()} to MongoDB collection ${collectionName}")
     }
 
     private String findMongoUri() {

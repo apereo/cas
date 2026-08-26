@@ -1,5 +1,7 @@
 apply plugin: "org.apereo.cas.project-conventions"
 
+import org.apereo.cas.gradle.PublishProjectModulesMetadataTask
+
 import java.nio.file.Files
 import java.nio.file.StandardCopyOption
 
@@ -90,6 +92,17 @@ if (!skipConfigurationMetadata) {
         outputs.doNotCacheIf("Caching disabled for copying, as well as build correctness.") { true }
     }
 
+    tasks.register('publishConfigurationMetadata', PublishProjectModulesMetadataTask) {
+        description = "Publish generated CAS configuration metadata to MongoDB."
+        mustRunAfter tasks.named("copyConfigurationMetadata")
+        modulesMetadataFile.set(inputFile)
+        casVersion.set(project.version.toString())
+        collectionNamePrefix.set("casconfig")
+        metadataDescription.set("CAS configuration metadata")
+        jsonArray.set(false)
+        mongoImportExecutable.set(providers.systemProperty("casModuleMetadataMongoImportExecutable").orElse("mongoimport"))
+    }
+
     tasks.named('compileJava') {
         inputs.files(tasks.named('processResources'))
                 .withPropertyName('configurationMetadataResources')
@@ -98,7 +111,7 @@ if (!skipConfigurationMetadata) {
     }
 
     jar {
-        dependsOn tasks.named("copyConfigurationMetadata")
+        dependsOn tasks.named("copyConfigurationMetadata"), tasks.named("publishConfigurationMetadata")
         duplicatesStrategy = DuplicatesStrategy.INCLUDE
     }
 }

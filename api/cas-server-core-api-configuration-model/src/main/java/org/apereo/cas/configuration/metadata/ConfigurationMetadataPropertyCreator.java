@@ -139,6 +139,9 @@ public class ConfigurationMetadataPropertyCreator {
                     val classInstance = parentClassInstance.getConstructor().newInstance();
                     val propertyField = parentClassInstance.getDeclaredField(variable.getNameAsString());
                     propertyField.trySetAccessible();
+                    if (elementTypeStr.startsWith("Map<") || elementTypeStr.startsWith("List<") || elementTypeStr.startsWith("Set<")) {
+                        prop.setType(propertyField.getGenericType().getTypeName());
+                    }
                     val resultingValue = propertyField.get(classInstance);
                     val valueType = resultingValue.getClass();
                     if (valueType.isArray()) {

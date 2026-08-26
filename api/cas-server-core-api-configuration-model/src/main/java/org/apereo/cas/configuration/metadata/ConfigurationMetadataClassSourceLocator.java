@@ -40,7 +40,8 @@ public class ConfigurationMetadataClassSourceLocator {
      * @return the string
      */
     public static String buildTypeSourcePath(final String sourcePath, final String type) {
-        val newName = type.replace(".", File.separator);
+        val sourceType = type.contains("$") ? type.substring(0, type.indexOf('$')) : type;
+        val newName = sourceType.replace(".", File.separator);
         return sourcePath + "/src/main/java/" + newName + ".java";
     }
 
