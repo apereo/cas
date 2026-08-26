@@ -82,7 +82,6 @@ if (!skipConfigurationMetadata) {
 
     tasks.register('copyConfigurationMetadata') {
         dependsOn tasks.named("generateConfigurationMetadata")
-        outputs.file(inputFile)
         doLast {
             Files.copy(
                     outputFile.get().asFile.toPath(),

@@ -51,7 +51,6 @@ deployments. Components for the following caching technologies are provided:
 ### Stateless Ticket Registries
 
 Stateless ticket registries require no backend storage with a few caveats and limitations. 
-Components for the following caching technologies are provided:
 
 * [Stateless](Stateless-Ticket-Registry.html)
 
