@@ -10,6 +10,7 @@ import org.pac4j.core.client.IndirectClient;
 import org.pac4j.core.context.WebContext;
 import org.springframework.context.ApplicationContext;
 import org.springframework.core.Ordered;
+import org.springframework.webflow.execution.RequestContext;
 
 /**
  * This is {@link GroovyDelegatedClientAuthenticationRequestCustomizer}.
@@ -25,22 +26,22 @@ public class GroovyDelegatedClientAuthenticationRequestCustomizer implements Del
     private final ApplicationContext applicationContext;
 
     @Override
-    public void customize(final IndirectClient client, final WebContext webContext) throws Throwable {
+    public void customize(final IndirectClient client, final WebContext webContext, final RequestContext requestContext) throws Throwable {
         val args = new Object[]{client, webContext, applicationContext, LOGGER};
         watchableScript.execute(args, Void.class);
     }
 
     @Override
-    public boolean supports(final IndirectClient client, final WebContext webContext) throws Throwable {
+    public boolean supports(final IndirectClient client, final WebContext webContext, final RequestContext requestContext) throws Throwable {
         val args = new Object[]{client, webContext, applicationContext, LOGGER};
-        return watchableScript.execute("supports", Boolean.class, args);
+        return Boolean.TRUE.equals(watchableScript.execute("supports", Boolean.class, args));
     }
 
     @Override
     public boolean isAuthorized(final WebContext webContext, final IndirectClient client,
-                                final WebApplicationService currentService) throws Throwable {
+                                final WebApplicationService currentService, final RequestContext requestContext) throws Throwable {
         val args = new Object[]{client, webContext, currentService, applicationContext, LOGGER};
-        return watchableScript.execute("isAuthorized", Boolean.class, args);
+        return Boolean.TRUE.equals(watchableScript.execute("isAuthorized", Boolean.class, args));
     }
 
     @Override

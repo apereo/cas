@@ -24,6 +24,7 @@ import org.pac4j.core.redirect.RedirectionActionBuilder;
 import org.pac4j.saml.client.SAML2Client;
 import org.pac4j.saml.context.SAML2ConfigurationContext;
 import org.springframework.util.StringUtils;
+import org.springframework.webflow.execution.RequestContext;
 
 /**
  * This is {@link SamlIdPDelegatedClientAuthenticationRequestCustomizer}.
@@ -43,7 +44,7 @@ public class SamlIdPDelegatedClientAuthenticationRequestCustomizer implements De
     private final CasConfigurationProperties casProperties;
 
     @Override
-    public void customize(final IndirectClient client, final WebContext webContext) {
+    public void customize(final IndirectClient client, final WebContext webContext, final RequestContext requestContext) {
         val result = SamlIdPSessionManager.of(openSamlConfigBean, sessionStore)
             .fetch(webContext, AuthnRequest.class)
             .map(Pair::getLeft)
@@ -63,7 +64,7 @@ public class SamlIdPDelegatedClientAuthenticationRequestCustomizer implements De
 
     @Override
     public boolean isAuthorized(final WebContext webContext, final IndirectClient client,
-                                final WebApplicationService currentService) {
+                                final WebApplicationService currentService, final RequestContext requestContext) {
         val result = SamlIdPSessionManager.of(openSamlConfigBean, sessionStore)
             .fetch(webContext, AuthnRequest.class);
         if (result.isEmpty()) {
@@ -77,7 +78,7 @@ public class SamlIdPDelegatedClientAuthenticationRequestCustomizer implements De
         val idpEntries = idpList != null && idpList.getIDPEntrys() != null ? idpList.getIDPEntrys() : List.<IDPEntry>of();
         val providerList = idpEntries.stream().map(IDPEntry::getProviderID).collect(Collectors.toSet());
         LOGGER.debug("Scoped identity providers are [{}] to examine against client [{}]", providerList, client.getName());
-        if (supports(client, webContext)) {
+        if (supports(client, webContext, requestContext)) {
             val saml2Client = (SAML2Client) client;
             val authorized = providerList.isEmpty() || providerList.contains(getIdentityProviderEntityId(saml2Client));
             if (!authorized) {
@@ -90,7 +91,7 @@ public class SamlIdPDelegatedClientAuthenticationRequestCustomizer implements De
     }
 
     @Override
-    public boolean supports(final IndirectClient client, final WebContext webContext) {
+    public boolean supports(final IndirectClient client, final WebContext webContext, final RequestContext requestContext) {
         return client instanceof SAML2Client;
     }
 

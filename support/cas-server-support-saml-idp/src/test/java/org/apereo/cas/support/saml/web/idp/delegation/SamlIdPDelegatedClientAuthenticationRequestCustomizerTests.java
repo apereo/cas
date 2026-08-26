@@ -10,6 +10,7 @@ import org.apereo.cas.support.saml.BaseSamlIdPConfigurationTests;
 import org.apereo.cas.support.saml.SamlIdPConstants;
 import org.apereo.cas.support.saml.SamlIdPTestUtils;
 import org.apereo.cas.support.saml.idp.SamlIdPSessionManager;
+import org.apereo.cas.util.MockRequestContext;
 import org.apereo.cas.util.RandomUtils;
 import lombok.val;
 import org.apache.commons.io.FileUtils;
@@ -66,7 +67,8 @@ class SamlIdPDelegatedClientAuthenticationRequestCustomizerTests extends BaseSam
 
         setAuthnRequestFor(webContext, saml2Client.getIdentityProviderResolvedEntityId());
 
-        assertTrue(customizer.isAuthorized(webContext, saml2Client, webApplicationService));
+        val requestContext = MockRequestContext.create(applicationContext);
+        assertTrue(customizer.isAuthorized(webContext, saml2Client, webApplicationService, requestContext));
     }
 
     @Test
@@ -87,7 +89,8 @@ class SamlIdPDelegatedClientAuthenticationRequestCustomizerTests extends BaseSam
         servicesManager.save(registeredService);
 
         setAuthnRequestFor(webContext, saml2Client.getIdentityProviderResolvedEntityId());
-        assertTrue(customizer.isAuthorized(webContext, saml2Client, webApplicationService));
+        val requestContext = MockRequestContext.create(applicationContext);
+        assertTrue(customizer.isAuthorized(webContext, saml2Client, webApplicationService, requestContext));
     }
 
     @Test
@@ -97,23 +100,24 @@ class SamlIdPDelegatedClientAuthenticationRequestCustomizerTests extends BaseSam
         val request = new MockHttpServletRequest();
         val response = new MockHttpServletResponse();
         val webContext = new JEEContext(request, response);
+        val requestContext = MockRequestContext.create(applicationContext);
         val webApplicationService = CoreAuthenticationTestUtils.getWebApplicationService(UUID.randomUUID().toString());
 
-        assertDoesNotThrow(() -> customizer.customize(saml2Client, webContext));
+        assertDoesNotThrow(() -> customizer.customize(saml2Client, webContext, requestContext));
         
-        assertTrue(customizer.isAuthorized(webContext, saml2Client, webApplicationService));
+        assertTrue(customizer.isAuthorized(webContext, saml2Client, webApplicationService, requestContext));
 
         setAuthnRequestFor(webContext);
-        assertTrue(customizer.isAuthorized(webContext, saml2Client, webApplicationService));
+        assertTrue(customizer.isAuthorized(webContext, saml2Client, webApplicationService, requestContext));
 
         setAuthnRequestFor(webContext, UUID.randomUUID().toString());
-        assertFalse(customizer.isAuthorized(webContext, saml2Client, webApplicationService));
+        assertFalse(customizer.isAuthorized(webContext, saml2Client, webApplicationService, requestContext));
 
         
         setAuthnRequestFor(webContext, saml2Client.getIdentityProviderResolvedEntityId());
-        assertTrue(customizer.isAuthorized(webContext, saml2Client, webApplicationService));
-        assertDoesNotThrow(() -> customizer.customize(saml2Client, webContext));
-        assertTrue(customizer.isAuthorized(webContext, new FormClient(), webApplicationService));
+        assertTrue(customizer.isAuthorized(webContext, saml2Client, webApplicationService, requestContext));    
+        assertDoesNotThrow(() -> customizer.customize(saml2Client, webContext, requestContext));
+        assertTrue(customizer.isAuthorized(webContext, new FormClient(), webApplicationService, requestContext));
     }
 
     private void storeRequest(final AuthnRequest authnRequest, final JEEContext webContext) throws Exception {

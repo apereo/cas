@@ -94,8 +94,8 @@ public class DelegatedClientAuthenticationRedirectAction extends BaseCasWebflowA
                 .stream()
                 .filter(BeanSupplier::isNotProxy)
                 .sorted(AnnotationAwareOrderComparator.INSTANCE)
-                .filter(Unchecked.predicate(contributor -> contributor.supports(client, webContext)))
-                .forEach(Unchecked.consumer(contributor -> contributor.customize(client, webContext))))
+                .filter(Unchecked.predicate(contributor -> contributor.supports(client, webContext, requestContext)))
+                .forEach(Unchecked.consumer(contributor -> contributor.customize(client, webContext, requestContext))))
             .map(client -> {
                 val callContext = new CallContext(webContext, configContext.getSessionStore());
                 return client.getRedirectionActionBuilder().getRedirectionAction(callContext);

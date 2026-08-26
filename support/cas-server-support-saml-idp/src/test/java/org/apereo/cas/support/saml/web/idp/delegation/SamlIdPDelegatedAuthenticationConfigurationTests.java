@@ -6,6 +6,7 @@ import org.apereo.cas.support.saml.BaseSamlIdPConfigurationTests;
 import org.apereo.cas.support.saml.SamlIdPConstants;
 import org.apereo.cas.support.saml.SamlIdPTestUtils;
 import org.apereo.cas.support.saml.idp.SamlIdPSessionManager;
+import org.apereo.cas.util.MockRequestContext;
 import lombok.val;
 import org.apache.commons.lang3.tuple.Pair;
 import org.junit.jupiter.api.Tag;
@@ -70,9 +71,10 @@ class SamlIdPDelegatedAuthenticationConfigurationTests extends BaseSamlIdPConfig
         val context = Pair.of(authnRequest, messageContext);
         SamlIdPSessionManager.of(openSamlConfigBean, samlIdPDistributedSessionStore).store(webContext, context);
 
+        val requestContext = MockRequestContext.create(applicationContext);
         val saml2Client = mock(SAML2Client.class);
-        assertTrue(customizer.supports(saml2Client, webContext));
-        customizer.customize(saml2Client, webContext);
+        assertTrue(customizer.supports(saml2Client, webContext, requestContext));
+        customizer.customize(saml2Client, webContext, requestContext);
         assertTrue(webContext.getRequestAttribute(RedirectionActionBuilder.ATTRIBUTE_FORCE_AUTHN).isPresent());
         assertTrue(webContext.getRequestAttribute(RedirectionActionBuilder.ATTRIBUTE_PASSIVE).isPresent());
         assertTrue(webContext.getRequestAttribute(SAML2ConfigurationContext.REQUEST_ATTR_AUTHN_CONTEXT_CLASS_REFS).isPresent());

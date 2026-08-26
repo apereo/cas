@@ -5,6 +5,7 @@ import org.apereo.cas.authentication.principal.WebApplicationService;
 import org.pac4j.core.client.IndirectClient;
 import org.pac4j.core.context.WebContext;
 import org.springframework.core.Ordered;
+import org.springframework.webflow.execution.RequestContext;
 
 /**
  * This is {@link DelegatedClientAuthenticationRequestCustomizer}.
@@ -17,21 +18,23 @@ public interface DelegatedClientAuthenticationRequestCustomizer extends Ordered 
     /**
      * Customize.
      *
-     * @param client     the client
-     * @param webContext the web context
+     * @param client         the client
+     * @param webContext     the web context
+     * @param requestContext the request context
      * @throws Throwable the throwable
      */
-    void customize(IndirectClient client, WebContext webContext) throws Throwable;
+    void customize(IndirectClient client, WebContext webContext, RequestContext requestContext) throws Throwable;
 
     /**
      * Supports.
      *
-     * @param client     the client
-     * @param webContext the web context
+     * @param client         the client
+     * @param webContext     the web context
+     * @param requestContext the request context
      * @return true /false
      * @throws Throwable the throwable
      */
-    boolean supports(IndirectClient client, WebContext webContext) throws Throwable;
+    boolean supports(IndirectClient client, WebContext webContext, RequestContext requestContext) throws Throwable;
 
     @Override
     default int getOrder() {
@@ -44,8 +47,14 @@ public interface DelegatedClientAuthenticationRequestCustomizer extends Ordered 
      * @param webContext     the web context
      * @param client         the client
      * @param currentService the current service
+     * @param requestContext the request context
      * @return true /false
      * @throws Throwable the throwable
      */
-    boolean isAuthorized(WebContext webContext, IndirectClient client, WebApplicationService currentService) throws Throwable;
+    default boolean isAuthorized(final WebContext webContext,
+                                 final IndirectClient client,
+                                 final WebApplicationService currentService,
+                                 final RequestContext requestContext) throws Throwable {
+        return true;
+    }
 }

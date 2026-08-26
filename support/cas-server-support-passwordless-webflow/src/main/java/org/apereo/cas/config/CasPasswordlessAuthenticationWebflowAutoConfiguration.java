@@ -50,12 +50,14 @@ import org.apereo.cas.web.flow.VerifyPasswordlessAccountAuthenticationAction;
 import org.apereo.cas.web.flow.actions.ConsumerExecutionAction;
 import org.apereo.cas.web.flow.actions.StaticEventExecutionAction;
 import org.apereo.cas.web.flow.actions.WebflowActionBeanSupplier;
+import org.apereo.cas.web.flow.delegation.PasswordlessDelegatedClientAuthenticationRequestCustomizer;
 import org.apereo.cas.web.flow.delegation.PasswordlessDelegatedClientAuthenticationWebflowStateContributor;
 import org.apereo.cas.web.flow.delegation.PasswordlessDelegatedClientIdentityProviderAuthorizer;
 import org.apereo.cas.web.flow.delegation.PasswordlessDetermineDelegatedAuthenticationAction;
 import org.apereo.cas.web.flow.resolver.CasDelegatingWebflowEventResolver;
 import org.apereo.cas.web.flow.resolver.CasWebflowEventResolver;
 import lombok.val;
+import org.pac4j.oidc.client.OidcClient;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
@@ -358,9 +360,16 @@ public class CasPasswordlessAuthenticationWebflowAutoConfiguration {
     static class PasswordlessDelegatedAuthenticationConfiguration {
 
         @Bean
+        @ConditionalOnMissingBean(name = "passwordlessDelegatedClientAuthenticationRequestCustomizer")
+        @ConditionalOnClass(OidcClient.class)
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+        public PasswordlessDelegatedClientAuthenticationRequestCustomizer passwordlessDelegatedClientAuthenticationRequestCustomizer() {
+            return new PasswordlessDelegatedClientAuthenticationRequestCustomizer();
+        }
+        
+        @Bean
         @ConditionalOnMissingBean(name = "passwordlessDelegatedClientAuthenticationWebflowStateContributor")
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-        @ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.DelegatedAuthentication)
         public DelegatedClientAuthenticationWebflowStateContributor passwordlessDelegatedClientAuthenticationWebflowStateContributor() {
             return new PasswordlessDelegatedClientAuthenticationWebflowStateContributor();
         }

@@ -66,11 +66,11 @@ class GroovyDelegatedClientAuthenticationRequestCustomizerTests {
         val client = new CasClient(new CasConfiguration("https://example.org/cas/login"));
         client.setCallbackUrl("https://example.org/cas/callback");
         client.init();
-        groovyDelegatedClientAuthenticationRequestCustomizer.customize(client, context);
+        groovyDelegatedClientAuthenticationRequestCustomizer.customize(client, context, requestContext);
         assertTrue(context.getRequestAttribute("customAttribute").isPresent());
-        assertTrue(groovyDelegatedClientAuthenticationRequestCustomizer.supports(client, context));
+        assertTrue(groovyDelegatedClientAuthenticationRequestCustomizer.supports(client, context, requestContext));
         assertTrue(groovyDelegatedClientAuthenticationRequestCustomizer.isAuthorized(context,
-            client, RegisteredServiceTestUtils.getService()));
+            client, RegisteredServiceTestUtils.getService(), requestContext));
         assertEquals(HIGHEST_PRECEDENCE, groovyDelegatedClientAuthenticationRequestCustomizer.getOrder());
     }
 }
