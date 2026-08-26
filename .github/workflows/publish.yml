@@ -160,9 +160,3 @@ jobs:
           ./gradlew publishProjectModulesMetadata \
               --build-cache --quiet --configure-on-demand --no-daemon \
               --parallel -x test -x javadoc -x check
-      - name: Publish Configuration Metadata
-        if: ${{ env.CAS_MODULE_METADATA_MONGODB_URL != null }}
-        run: |
-          ./gradlew build publishConfigurationMetadata \
-              --build-cache --quiet --configure-on-demand --no-daemon \
-              --parallel -x test -x javadoc -x check

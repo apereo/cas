@@ -15,6 +15,57 @@ function printyellow() {
   printf "⚠️  ${YELLOW}$1${ENDCOLOR}\n"
 }
 
+function publishConfigurationMetadata() {
+  local metadataFile="$1"
+  local casVersion="$2"
+
+  if [[ -z "${CAS_MODULE_METADATA_MONGODB_URL:-}" ]]; then
+    printyellow "MongoDB settings are not defined; skipping configuration metadata publication."
+    return 0
+  fi
+  if [[ "${GITHUB_EVENT_NAME:-}" == "pull_request" ]]; then
+    printyellow "Skipping configuration metadata publication for a pull request."
+    return 0
+  fi
+  if [[ "$thirdParty" != "true" ]]; then
+    printyellow "Third-party configuration metadata is disabled; skipping incomplete MongoDB publication."
+    return 0
+  fi
+  if [[ ! -s "$metadataFile" ]]; then
+    printred "Combined configuration metadata file does not exist or is empty: $metadataFile"
+    return 1
+  fi
+
+  local versionNumbers="${casVersion%%-*}"
+  versionNumbers="${versionNumbers//./}"
+  if [[ -z "$versionNumbers" ]]; then
+    printred "Unable to determine configuration metadata collection from CAS version $casVersion"
+    return 1
+  fi
+
+  local collectionName="casconfig${versionNumbers}"
+  local mongoImportExecutable="${CAS_MODULE_METADATA_MONGOIMPORT_EXECUTABLE:-mongoimport}"
+  if ! command -v "$mongoImportExecutable" >/dev/null 2>&1; then
+    printred "MongoDB import executable is not available: $mongoImportExecutable"
+    return 1
+  fi
+
+  printgreen "Uploading combined configuration metadata for CAS $casVersion to $collectionName..."
+  "$mongoImportExecutable" \
+    --uri "$CAS_MODULE_METADATA_MONGODB_URL" \
+    --collection "$collectionName" \
+    --file "$metadataFile" \
+    --type json \
+    --jsonArray \
+    --drop
+  local result=$?
+  if [[ $result -ne 0 ]]; then
+    printred "Failed to upload combined configuration metadata to MongoDB collection $collectionName"
+    return $result
+  fi
+  printgreen "Uploaded combined configuration metadata to MongoDB collection $collectionName"
+}
+
 function validateProjectDocumentation() {
   ruby $PWD/ci/docs/proof.rb
 
@@ -305,15 +356,43 @@ if [[ $generateData == "true" ]]; then
   casVersion=(`cat "$PWD"/gradle.properties | grep "version" | cut -d= -f2`)
   printgreen "CAS version is $casVersion"
   configurationCatalog="$PWD/api/cas-server-core-api-configuration-model/build/libs/cas-server-core-api-configuration-model-${casVersion}.jar"
+  springConfigurationMetadata="$PWD/gh-pages/spring-configuration-metadata.json"
+  thirdPartyConfigurationMetadata="$PWD/gh-pages/_data/$dataDir/third-party/config.yml"
+  combinedConfigurationMetadata="$PWD/gh-pages/combined-configuration-properties.json"
   printgreen "Configuration catalog is at $configurationCatalog"
-  rm -rf "$PWD/gh-pages/spring-configuration-metadata.json" >/dev/null 2>&1
-  unzip -p $configurationCatalog META-INF/spring-configuration-metadata.json > $PWD/gh-pages/spring-configuration-metadata.json
+  rm -f "$springConfigurationMetadata" "$combinedConfigurationMetadata" >/dev/null 2>&1
+  unzip -p "$configurationCatalog" META-INF/spring-configuration-metadata.json > "$springConfigurationMetadata"
+  if [[ ! -s "$springConfigurationMetadata" ]]; then
+    printred "CAS configuration metadata file does not exist or is empty: $springConfigurationMetadata"
+    exit 1
+  fi
+  if [[ "$thirdParty" == "true" && ! -s "$thirdPartyConfigurationMetadata" ]]; then
+    printred "Third-party configuration metadata file does not exist or is empty: $thirdPartyConfigurationMetadata"
+    exit 1
+  fi
   rm -rf "$PWD/gh-pages/assets/data/$branchVersion"/index.json >/dev/null 2>&1
   npm --prefix $PWD/ci/docs install
   printgreen "Creating configuration metadata index..."
   mkdir -p "$PWD/gh-pages/assets/data/$branchVersion"
-  node $PWD/ci/docs/index.js $PWD/gh-pages/spring-configuration-metadata.json $PWD/gh-pages/_data/$branchVersion/third-party/config.yml "$PWD/gh-pages/assets/data/$branchVersion"/index.json
-  rm -rf "$PWD/gh-pages/spring-configuration-metadata.json" >/dev/null 2>&1
+  indexArguments=(
+    "$springConfigurationMetadata"
+    "$thirdPartyConfigurationMetadata"
+    "$PWD/gh-pages/assets/data/$branchVersion/index.json"
+  )
+  if [[ "$thirdParty" == "true" ]]; then
+    indexArguments+=("$combinedConfigurationMetadata")
+  fi
+  node "$PWD/ci/docs/index.js" "${indexArguments[@]}"
+  if [[ $? -ne 0 ]]; then
+    printred "Unable to create configuration metadata index. Aborting..."
+    exit 1
+  fi
+  publishConfigurationMetadata "$combinedConfigurationMetadata" "$casVersion"
+  if [[ $? -ne 0 ]]; then
+    rm -f "$combinedConfigurationMetadata" >/dev/null 2>&1
+    exit 1
+  fi
+  rm -f "$springConfigurationMetadata" "$combinedConfigurationMetadata" >/dev/null 2>&1
   if [[ ! -e "$PWD/gh-pages/assets/data/$branchVersion"/index.json ]]; then
     printred "$PWD/gh-pages/assets/data/$branchVersion/index.json does not exist."
   fi

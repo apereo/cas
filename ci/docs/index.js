@@ -7,11 +7,16 @@ const yaml = require('js-yaml');
 const jsonPath = process.argv[2];
 const yamlPath = process.argv[3];
 const outputPath = process.argv[4];
+const combinedOutputPath = process.argv[5];
 console.log(`JSON path: ${jsonPath}`);
 console.log(`YAML path: ${yamlPath}`);
 console.log(`Output path: ${outputPath}`);
+if (combinedOutputPath) {
+    console.log(`Combined metadata output path: ${combinedOutputPath}`);
+}
 
 let yamlProps = [];
+let inputParsingFailed = false;
 try {
     if (fs.existsSync(yamlPath)) {
         const rawYaml = fs.readFileSync(yamlPath, 'utf8');
@@ -20,23 +25,28 @@ try {
         console.log(`Found ${yamlProps.length} YAML properties`);
     } else {
         console.log(`YAML path does not exist: ${yamlPath}`);
+        inputParsingFailed = true;
     }
 } catch(e) {
     console.log(`Error parsing YAML file: ${e}`);
+    inputParsingFailed = true;
 }
 
-let jsonProps = []
+let jsonMetadata = {};
+let jsonProps = [];
 try {
     if (fs.existsSync(jsonPath)) {
         const raw = fs.readFileSync(jsonPath, 'utf8');
-        const data = JSON.parse(raw);
-        jsonProps = data.properties;
+        jsonMetadata = JSON.parse(raw);
+        jsonProps = Array.isArray(jsonMetadata.properties) ? jsonMetadata.properties : [];
         console.log(`Found ${jsonProps.length} JSON properties`);
     } else {
         console.log(`JSON path does not exist: ${jsonPath}`);
+        inputParsingFailed = true;
     }
 } catch(e) {
     console.log(`Error parsing JSON file: ${e}`);
+    inputParsingFailed = true;
 }
 
 if (jsonProps.length === 0 && yamlProps.length === 0) {
@@ -68,3 +78,12 @@ const out = {
 
 fs.writeFileSync(outputPath, JSON.stringify(out));
 console.log(`Search index is written to ${outputPath}`);
+
+if (combinedOutputPath) {
+    if (inputParsingFailed) {
+        console.error(`Combined configuration metadata cannot be created because an input could not be read`);
+        process.exit(1);
+    }
+    fs.writeFileSync(combinedOutputPath, JSON.stringify(allProps));
+    console.log(`Combined configuration metadata is written to ${combinedOutputPath}`);
+}
