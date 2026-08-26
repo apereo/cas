@@ -31,18 +31,25 @@ function publishConfigurationMetadata() {
     printyellow "Third-party configuration metadata is disabled; skipping incomplete MongoDB publication."
     return 0
   fi
+
+  local releaseVersion="${casVersion%%-*}"
+  if [[ ! "$releaseVersion" =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
+    printred "Unable to determine configuration metadata collection from CAS version $casVersion"
+    return 1
+  fi
+  local patchVersion="${releaseVersion##*.}"
+  if [[ "$patchVersion" != "0" ]]; then
+    printyellow "CAS $casVersion is a patch or security release; skipping configuration metadata publication."
+    return 0
+  fi
+
   if [[ ! -s "$metadataFile" ]]; then
     printred "Combined configuration metadata file does not exist or is empty: $metadataFile"
     return 1
   fi
 
-  local versionNumbers="${casVersion%%-*}"
+  local versionNumbers="$releaseVersion"
   versionNumbers="${versionNumbers//./}"
-  if [[ -z "$versionNumbers" ]]; then
-    printred "Unable to determine configuration metadata collection from CAS version $casVersion"
-    return 1
-  fi
-
   local collectionName="casconfig${versionNumbers}"
   local mongoImportExecutable="${CAS_MODULE_METADATA_MONGOIMPORT_EXECUTABLE:-mongoimport}"
   if ! command -v "$mongoImportExecutable" >/dev/null 2>&1; then
