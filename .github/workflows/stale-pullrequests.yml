@@ -19,4 +19,6 @@ jobs:
           exempt-draft-pr: true
           exempt-pr-labels: 'Pending: Work in Progress,WIP'
       - name: Print outputs
-        run: echo ${{ join(steps.stale.outputs.*, ',') }}
+        env:
+          STALE_OUTPUTS: ${{ toJSON(steps.stale.outputs) }}
+        run: printf '%s\n' "$STALE_OUTPUTS"

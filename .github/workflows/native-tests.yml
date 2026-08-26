@@ -97,12 +97,12 @@ jobs:
       - id: print-scenarios
         run: ./gradlew --build-cache --configure-on-demand --no-daemon -q puppeteerScenarios | jq
       - id: get-scenarios255
-        run: echo "scenarios255=$(./gradlew --build-cache --configure-on-demand --no-daemon -q puppeteerScenarios -PpuppeteerScenariosFrom=0 -PpuppeteerScenariosTo=255)" >> $GITHUB_OUTPUT
+        run: echo "scenarios255=$(./gradlew --build-cache --configure-on-demand --no-daemon -q puppeteerScenarios -PpuppeteerScenariosFrom=0 -PpuppeteerScenariosTo=255)" >> "$GITHUB_OUTPUT"
       - id: get-scenarios511
-        run: echo "scenarios511=$(./gradlew --build-cache --configure-on-demand --no-daemon -q puppeteerScenarios -PpuppeteerScenariosFrom=255 -PpuppeteerScenariosTo=511)" >> $GITHUB_OUTPUT
+        run: echo "scenarios511=$(./gradlew --build-cache --configure-on-demand --no-daemon -q puppeteerScenarios -PpuppeteerScenariosFrom=255 -PpuppeteerScenariosTo=511)" >> "$GITHUB_OUTPUT"
       - id: get-scenarios766
         name: Get Scenarios 511-766
-        run: echo "scenarios766=$(./gradlew --build-cache --configure-on-demand --no-daemon -q puppeteerScenarios -PpuppeteerScenariosFrom=511 -PpuppeteerScenariosTo=766)" >> $GITHUB_OUTPUT
+        run: echo "scenarios766=$(./gradlew --build-cache --configure-on-demand --no-daemon -q puppeteerScenarios -PpuppeteerScenariosFrom=511 -PpuppeteerScenariosTo=766)" >> "$GITHUB_OUTPUT"
 
   ##########################################################################
   puppeteer-tests-255:

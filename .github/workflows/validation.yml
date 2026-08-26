@@ -124,7 +124,7 @@ jobs:
           echo "Checking for stack traces in output that would indicate an error"
           cat cas-shell.ignore
           count=$(grep -c -e ".*\(Exception\|Throwable\|caused\\sby\).*" cas-shell.ignore || true);
-          test $count -eq 0
+          test "$count" -eq 0
 
 ##########################################################################
 

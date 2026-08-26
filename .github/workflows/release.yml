@@ -45,15 +45,15 @@ jobs:
           persist-credentials: false
       - name: Determine version
         id: check
+        env:
+          RELEASE_VERSION: ${{ inputs.releaseVersion }}
         run: |
-          RELEASE_VERSION="${{ inputs.releaseVersion }}"
           echo "Detected release version: $RELEASE_VERSION"
           if [[ "$RELEASE_VERSION" == *-SNAPSHOT ]]; then
             echo "is_snapshot=true"
           else
             echo "is_snapshot=false"
-          fi \
-          >> $GITHUB_OUTPUT
+          fi >> "$GITHUB_OUTPUT"
   release-to-central:
     runs-on: ubuntu-latest
     needs: [ check ]

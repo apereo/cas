@@ -100,7 +100,7 @@ jobs:
       - id: print-categories
         run: ./gradlew --build-cache --configure-on-demand --no-daemon -q testCategories
       - id: get-categories
-        run: echo "categories=$(./gradlew --build-cache --configure-on-demand --no-daemon -q testCategories)" >> $GITHUB_OUTPUT
+        run: echo "categories=$(./gradlew --build-cache --configure-on-demand --no-daemon -q testCategories)" >> "$GITHUB_OUTPUT"
   ##########################################################################
   
   tests:
@@ -138,7 +138,7 @@ jobs:
           shell: bash
           command: |
             chmod +x ./testcas.sh
-            if [[ "${{ github.event_name }}" == "schedule" ]] && [[ "${{ github.event.schedule == '0 10 * * *'}}" ]]; then
+            if [[ "${{ github.event_name }}" == "schedule" ]] && [[ "${{ github.event.schedule }}" == "0 10 * * *" ]]; then
               echo "Running tests without PTS mode"
               ./testcas.sh --no-watch --category ${{ matrix.category }} --events FAILED --no-pts --with-coverage
             else 
@@ -157,7 +157,7 @@ jobs:
           if [ -z "$xml_files" ]; then
             echo "No coverage XML files found"
           else
-            echo ${xml_files}
+            printf '%s\n' "$xml_files"
           fi
       - name: Upload to SonarCloud
         if: env.SONARCLOUD_TOKEN != null && (github.event_name == 'push' || github.event_name == 'workflow_dispatch' || github.event_name == 'schedule')
@@ -220,12 +220,10 @@ jobs:
       - name: Collect Coverage Files
         id: coverage-files
         run: |
-          find $PWD -type f -name 'jacocoRootReport.xml'
-          export files=''
-          for file in $(find $PWD -type f -name 'jacocoRootReport.xml'); do export files="$file,${files}"; done
-          export files="${files%?}"
-          echo $files
-          echo "COVERAGE_REPORTS=${files}" >> $GITHUB_ENV
+          mapfile -t files < <(find "$PWD" -type f -name 'jacocoRootReport.xml')
+          printf '%s\n' "${files[@]}"
+          coverage_reports=$(IFS=,; printf '%s' "${files[*]}")
+          echo "COVERAGE_REPORTS=$coverage_reports" >> "$GITHUB_ENV"
       - name: Upload Coverage to Codacy
         continue-on-error: true
         env:
