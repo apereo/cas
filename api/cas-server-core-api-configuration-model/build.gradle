@@ -82,6 +82,7 @@ if (!skipConfigurationMetadata) {
 
     tasks.register('copyConfigurationMetadata') {
         dependsOn tasks.named("generateConfigurationMetadata")
+        outputs.file(inputFile)
         doLast {
             Files.copy(
                     outputFile.get().asFile.toPath(),
@@ -95,6 +96,11 @@ if (!skipConfigurationMetadata) {
     tasks.register('publishConfigurationMetadata', PublishProjectModulesMetadataTask) {
         description = "Publish generated CAS configuration metadata to MongoDB."
         mustRunAfter tasks.named("copyConfigurationMetadata")
+        def mongoDbSystemProperty = providers.systemProperty("casModuleMetadataMongoDbUrl")
+        def mongoDbEnvironmentVariable = providers.environmentVariable("CAS_MODULE_METADATA_MONGODB_URL")
+        onlyIf("MongoDB URI is configured") {
+            !mongoDbSystemProperty.getOrElse("").isBlank() || !mongoDbEnvironmentVariable.getOrElse("").isBlank()
+        }
         modulesMetadataFile.set(inputFile)
         casVersion.set(project.version.toString())
         collectionNamePrefix.set("casconfig")
