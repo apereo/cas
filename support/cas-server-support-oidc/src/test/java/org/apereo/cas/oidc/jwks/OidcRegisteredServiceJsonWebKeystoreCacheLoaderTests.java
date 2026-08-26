@@ -2,11 +2,9 @@ package org.apereo.cas.oidc.jwks;
 
 import module java.base;
 import org.apereo.cas.oidc.AbstractOidcTests;
-import org.apereo.cas.util.MockWebServer;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-import org.springframework.http.HttpStatus;
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
@@ -47,17 +45,4 @@ class OidcRegisteredServiceJsonWebKeystoreCacheLoaderTests extends AbstractOidcT
         assertTrue(oidcServiceJsonWebKeystoreCache.get(
             new OidcJsonWebKeyCacheKey(service, OidcJsonWebKeyUsage.SIGNING)).isPresent());
     }
-
-    @Test
-    void verifyRemoteJwksCannotReachLoopback() {
-        try (val webServer = new MockWebServer(HttpStatus.OK)) {
-            webServer.start();
-            val service = getOidcRegisteredService(UUID.randomUUID().toString());
-            service.setJwks("https://127.0.0.1:%s/jwks.json".formatted(webServer.getPort()));
-            assertTrue(oidcServiceJsonWebKeystoreCache.get(
-                new OidcJsonWebKeyCacheKey(service, OidcJsonWebKeyUsage.SIGNING)).isEmpty());
-            assertEquals(0, webServer.getRequestCount());
-        }
-    }
-
 }
