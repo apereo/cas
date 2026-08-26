@@ -4,5 +4,5 @@
   "requestPassword": true,
   "delegatedAuthenticationEligible": true,
   "email": "cas@example.org",
-  "allowedDelegatedClients": [ "CasClient2", "CasClient1" ]
+  "allowedDelegatedClients" : [ "java.util.ArrayList", [ "CasClient2", "CasClient1" ] ]
 }

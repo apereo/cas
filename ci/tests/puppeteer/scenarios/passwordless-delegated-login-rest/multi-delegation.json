@@ -5,5 +5,5 @@
   "requestPassword": false,
   "delegatedAuthenticationEligible": true,
   "multifactorAuthenticationEligible": false,
-  "allowedDelegatedClients": [ "CasClient2", "CasClient3" ]
+  "allowedDelegatedClients" : [ "java.util.ArrayList", [ "CasClient2", "CasClient3" ] ]
 }

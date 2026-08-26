@@ -2,6 +2,7 @@ package org.apereo.cas.pac4j.client;
 
 import module java.base;
 import org.apereo.cas.authentication.principal.Service;
+import org.jspecify.annotations.Nullable;
 import org.pac4j.core.client.Client;
 import org.pac4j.core.context.WebContext;
 
@@ -26,7 +27,7 @@ public interface DelegatedIdentityProviders {
      * @param webContext the web context
      * @return the list
      */
-    List<? extends Client> findAllClients(Service service, WebContext webContext);
+    List<? extends Client> findAllClients(@Nullable Service service, WebContext webContext);
 
     /**
      * Find all clients list.
