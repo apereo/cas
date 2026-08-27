@@ -49,8 +49,8 @@ Commercial support for CAS is provided by the following entities:
       </td>
     
       <td>
-        <a href="https://www.casinthecloud.com/">
-          <img id="casInTheCloudImage" valign="middle" src="https://user-images.githubusercontent.com/1205228/47741421-7f5c7580-dc8f-11e8-95cc-d16f41ab52c0.png">
+        <a href="https://www.casinthecloud.com/index-en.html">
+          <img id="casInTheCloudImage" valign="middle" src="https://www.casinthecloud.com/img/logo/new_cas_in_the_cloud_logo.png">
         </a>
       </td>
     
