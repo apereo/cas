@@ -2,6 +2,7 @@ package org.apereo.cas.web.flow.delegation;
 
 import module java.base;
 import org.apereo.cas.api.PasswordlessUserAccount;
+import org.apereo.cas.pac4j.client.DelegatedClientAuthenticationRequestCustomizer;
 import org.apereo.cas.util.MockRequestContext;
 import org.apereo.cas.web.flow.BasePasswordlessAuthenticationActionTests;
 import org.apereo.cas.web.flow.BaseWebflowConfigurerTests;
@@ -29,7 +30,7 @@ import static org.junit.jupiter.api.Assertions.*;
 class PasswordlessDelegatedClientAuthenticationRequestCustomizerTests extends BasePasswordlessAuthenticationActionTests {
     @Autowired
     @Qualifier("passwordlessDelegatedClientAuthenticationRequestCustomizer")
-    private PasswordlessDelegatedClientAuthenticationRequestCustomizer passwordlessDelegatedClientAuthenticationRequestCustomizer;
+    private DelegatedClientAuthenticationRequestCustomizer passwordlessDelegatedClientAuthenticationRequestCustomizer;
 
     @Test
     void verifySupports() throws Throwable {
