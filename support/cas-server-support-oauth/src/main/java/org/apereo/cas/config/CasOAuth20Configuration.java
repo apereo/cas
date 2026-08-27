@@ -48,7 +48,9 @@ import org.apereo.cas.support.oauth.services.OAuth20RegisteredServiceCipherExecu
 import org.apereo.cas.support.oauth.util.OAuth20Utils;
 import org.apereo.cas.support.oauth.validator.CASOAuth20TicketValidator;
 import org.apereo.cas.support.oauth.validator.DefaultOAuth20ClientSecretValidator;
+import org.apereo.cas.support.oauth.validator.DefaultOAuth20ProofOfPossessionValidator;
 import org.apereo.cas.support.oauth.validator.OAuth20ClientSecretValidator;
+import org.apereo.cas.support.oauth.validator.OAuth20ProofOfPossessionValidator;
 import org.apereo.cas.support.oauth.validator.authorization.OAuth20AuthorizationCodeResponseTypeAuthorizationRequestValidator;
 import org.apereo.cas.support.oauth.validator.authorization.OAuth20AuthorizationRequestValidator;
 import org.apereo.cas.support.oauth.validator.authorization.OAuth20IdTokenAndTokenResponseTypeAuthorizationRequestValidator;
@@ -357,7 +359,9 @@ class CasOAuth20Configuration {
             @Qualifier(UrlValidator.BEAN_NAME)
             final UrlValidator urlValidator,
             @Qualifier("messageSource")
-            final MessageSource messageSource) {
+            final MessageSource messageSource,
+            @Qualifier("oauthProofOfPossessionValidator")
+            final OAuth20ProofOfPossessionValidator oauthProofOfPossessionValidator){
             return OAuth20ConfigurationContext.builder()
                 .urlValidator(urlValidator)
                 .argumentExtractor(argumentExtractor)
@@ -401,6 +405,7 @@ class CasOAuth20Configuration {
                 .communicationsManager(communicationManager)
                 .webflowCipherExecutor(webflowCipherExecutor)
                 .tenantExtractor(tenantExtractor)
+                .proofOfPossessionValidator(oauthProofOfPossessionValidator)
                 .build();
         }
     }
@@ -465,6 +470,21 @@ class CasOAuth20Configuration {
     @Configuration(value = "CasOAuth20ClientConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
     static class CasOAuth20ClientConfiguration {
+
+        @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+        @ConditionalOnMissingBean(name = "oauthProofOfPossessionValidator")
+        public OAuth20ProofOfPossessionValidator oauthProofOfPossessionValidator(
+            @Qualifier("oauthDistributedSessionStore")
+            final SessionStore oauthDistributedSessionStore,
+            @Qualifier(ServicesManager.BEAN_NAME)
+            final ServicesManager servicesManager,
+            final CasConfigurationProperties casProperties,
+            @Qualifier(AuditableExecution.AUDITABLE_EXECUTION_REGISTERED_SERVICE_ACCESS)
+            final AuditableExecution registeredServiceAccessStrategyEnforcer) {
+            return new DefaultOAuth20ProofOfPossessionValidator(oauthDistributedSessionStore, servicesManager,
+                registeredServiceAccessStrategyEnforcer, casProperties);
+        }
 
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)

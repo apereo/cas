@@ -40,6 +40,7 @@ public abstract class BaseOAuth20TokenRequestValidator<T extends OAuth20Configur
 
     private int order = Ordered.LOWEST_PRECEDENCE;
 
+    
     private static boolean isGrantTypeSupported(final String type, final OAuth20GrantTypes... expectedTypes) {
         LOGGER.debug("Grant type received: [{}]", type);
         for (val expectedType : expectedTypes) {
@@ -52,28 +53,30 @@ public abstract class BaseOAuth20TokenRequestValidator<T extends OAuth20Configur
     }
 
     @Override
-    public boolean validate(final WebContext context) throws Throwable {
-        val grantType = configurationContext.getObject().getRequestParameterResolver()
-            .resolveRequestParameter(context, OAuth20Constants.GRANT_TYPE).orElse(StringUtils.EMPTY);
+    public boolean validate(final WebContext webContext) throws Throwable {
+        var configurationContextObject = configurationContext.getObject();
+        val grantType = configurationContextObject.getRequestParameterResolver()
+            .resolveRequestParameter(webContext, OAuth20Constants.GRANT_TYPE).orElse(StringUtils.EMPTY);
         if (!isGrantTypeSupported(grantType, OAuth20GrantTypes.values())) {
             LOGGER.warn("Grant type is not supported: [{}]", grantType);
             return false;
         }
 
-        val manager = new ProfileManager(context, getConfigurationContext().getObject().getSessionStore());
-        val profile = extractUserProfile(context, manager);
+        val manager = new ProfileManager(webContext, getConfigurationContext().getObject().getSessionStore());
+        val profile = extractUserProfile(webContext, manager);
         if (profile.isEmpty()) {
             LOGGER.warn("Could not locate authenticated profile for this request. Request is not authenticated");
             return false;
         }
-        if (!validateClientSecretInRequestIfAny(context)) {
+        if (!validateClientSecretInRequestIfAny(webContext)) {
             LOGGER.warn("Cannot accept [{}] as a query parameter in the request", OAuth20Constants.CLIENT_SECRET);
             return false;
         }
         val userProfile = profile.get();
-        return validateInternal(context, grantType, manager, userProfile);
+        configurationContextObject.getProofOfPossessionValidator().validate(webContext);
+        return validateInternal(webContext, grantType, manager, userProfile);
     }
-
+    
     protected Optional<UserProfile> extractUserProfile(final WebContext context, final ProfileManager manager) {
         return manager.getProfile();
     }
@@ -113,4 +116,6 @@ public abstract class BaseOAuth20TokenRequestValidator<T extends OAuth20Configur
         val httpMethod = HttpMethod.valueOf(webContext.getRequestMethod().toUpperCase(Locale.ROOT));
         return httpMethod.equals(HttpMethod.POST) || !requestParameterResolver.isParameterOnQueryString(webContext, OAuth20Constants.CLIENT_SECRET);
     }
+
+
 }

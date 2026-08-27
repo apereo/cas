@@ -14,6 +14,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
+import org.pac4j.jee.context.JEEContext;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -54,7 +55,7 @@ public class OAuth20UserProfileEndpointController<T extends OAuth20Configuration
     @Operation(summary = "Handle user profile request",
         parameters = @Parameter(name = "access_token", in = ParameterIn.QUERY, required = true, description = "Access token"))
     public ResponseEntity<String> handlePostRequest(final HttpServletRequest request,
-                                                             final HttpServletResponse response) throws Exception {
+                                                    final HttpServletResponse response) throws Exception {
         return handleGetRequest(request, response);
     }
 
@@ -98,6 +99,7 @@ public class OAuth20UserProfileEndpointController<T extends OAuth20Configuration
 
         try {
             validateAccessToken(accessTokenResult.getKey(), accessTokenTicket, request, response);
+            validateProofOfPossession(request, response, accessTokenTicket);
             updateAccessTokenUsage(accessTokenTicket);
             val map = getConfigurationContext().getUserProfileDataCreator().createFrom(accessTokenTicket);
             return getConfigurationContext().getUserProfileViewRenderer().render(map, accessTokenTicket, response);
@@ -105,6 +107,12 @@ public class OAuth20UserProfileEndpointController<T extends OAuth20Configuration
             LoggingUtils.error(LOGGER, e);
             return buildUnauthorizedResponseEntity(OAuth20Constants.INVALID_REQUEST);
         }
+    }
+
+    protected void validateProofOfPossession(final HttpServletRequest request, final HttpServletResponse response,
+                                             final OAuth20AccessToken accessTokenTicket) throws Throwable {
+        val webContext = new JEEContext(request, response);
+        configurationContext.getProofOfPossessionValidator().validate(webContext, accessTokenTicket);
     }
 
     protected void validateAccessToken(final String accessTokenId, final OAuth20AccessToken accessToken,

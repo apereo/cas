@@ -10,6 +10,7 @@ import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.EnableAspectJAutoProxy;
@@ -29,6 +30,7 @@ import org.springframework.context.annotation.EnableMBeanExport;
 public class CasJmxAutoConfiguration {
 
     @Bean
+    @ConditionalOnMissingBean(name = "servicesManagerManagedResource")
     public ServicesManagerManagedResource servicesManagerManagedResource(
         @Qualifier(ServicesManager.BEAN_NAME)
         final ServicesManager servicesManager) {
@@ -36,6 +38,7 @@ public class CasJmxAutoConfiguration {
     }
 
     @Bean
+    @ConditionalOnMissingBean(name = "ticketRegistryManagedResource")
     public TicketRegistryManagedResource ticketRegistryManagedResource(
         @Qualifier(TicketRegistry.BEAN_NAME)
         final TicketRegistry ticketRegistry) {

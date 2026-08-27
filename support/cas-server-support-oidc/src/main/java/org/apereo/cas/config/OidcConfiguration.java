@@ -25,7 +25,6 @@ import org.apereo.cas.oidc.authn.OidcAccessTokenAuthenticator;
 import org.apereo.cas.oidc.authn.OidcCasCallbackUrlResolver;
 import org.apereo.cas.oidc.authn.OidcClientConfigurationAccessTokenAuthenticator;
 import org.apereo.cas.oidc.authn.OidcClientIdClientSecretAuthenticator;
-import org.apereo.cas.oidc.authn.OidcDPoPAuthenticator;
 import org.apereo.cas.oidc.authn.OidcJwtAuthenticator;
 import org.apereo.cas.oidc.authn.OidcX509Authenticator;
 import org.apereo.cas.oidc.claims.OidcAttributeToScopeClaimMapper;
@@ -95,6 +94,7 @@ import org.apereo.cas.support.oauth.authenticator.OAuth20CasAuthenticationBuilde
 import org.apereo.cas.support.oauth.profile.OAuth20ProfileScopeToAttributesFilter;
 import org.apereo.cas.support.oauth.profile.OAuth20UserProfileDataCreator;
 import org.apereo.cas.support.oauth.validator.OAuth20ClientSecretValidator;
+import org.apereo.cas.support.oauth.validator.OAuth20ProofOfPossessionValidator;
 import org.apereo.cas.support.oauth.validator.authorization.OAuth20AuthorizationRequestValidator;
 import org.apereo.cas.support.oauth.validator.token.OAuth20TokenRequestValidator;
 import org.apereo.cas.support.oauth.web.OAuth20RequestParameterResolver;
@@ -613,27 +613,6 @@ class OidcConfiguration {
 
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-        @ConditionalOnMissingBean(name = "oidcDPoPClientProvider")
-        public OAuth20AuthenticationClientProvider oidcDPoPClientProvider(
-            final CasConfigurationProperties casProperties,
-            @Qualifier(ServicesManager.BEAN_NAME)
-            final ServicesManager servicesManager,
-            @Qualifier(AuditableExecution.AUDITABLE_EXECUTION_REGISTERED_SERVICE_ACCESS)
-            final AuditableExecution registeredServiceAccessStrategyEnforcer,
-            @Qualifier(OidcServerDiscoverySettings.BEAN_NAME_FACTORY)
-            final OidcServerDiscoverySettings oidcServerDiscoverySettings) {
-            return () -> {
-                val client = new HeaderClient(OAuth20Constants.DPOP,
-                    new OidcDPoPAuthenticator(oidcServerDiscoverySettings, servicesManager,
-                        registeredServiceAccessStrategyEnforcer, casProperties));
-                client.setName(Authenticators.CAS_OAUTH_CLIENT_DPOP_AUTHN);
-                client.init();
-                return client;
-            };
-        }
-
-        @Bean
-        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @ConditionalOnMissingBean(name = "oidcJwtClientProvider")
         public OAuth20AuthenticationClientProvider oidcJwtClientProvider(
             @Qualifier(OidcIssuerService.BEAN_NAME)
@@ -839,7 +818,9 @@ class OidcConfiguration {
             @Qualifier(CipherExecutor.BEAN_NAME_WEBFLOW_CIPHER_EXECUTOR)
             final CipherExecutor webflowCipherExecutor,
             @Qualifier(TenantExtractor.BEAN_NAME)
-            final TenantExtractor tenantExtractor) {
+            final TenantExtractor tenantExtractor,
+            @Qualifier("oauthProofOfPossessionValidator")
+            final OAuth20ProofOfPossessionValidator oauthProofOfPossessionValidator) {
 
             val sortedIdClaimCollectors = new ArrayList<>(oidcIdTokenClaimCollectors);
             AnnotationAwareOrderComparator.sortIfNecessary(sortedIdClaimCollectors);
@@ -904,6 +885,7 @@ class OidcConfiguration {
                 .communicationsManager(communicationManager)
                 .webflowCipherExecutor(webflowCipherExecutor)
                 .tenantExtractor(tenantExtractor)
+                .proofOfPossessionValidator(oauthProofOfPossessionValidator)
                 .build();
         }
     }

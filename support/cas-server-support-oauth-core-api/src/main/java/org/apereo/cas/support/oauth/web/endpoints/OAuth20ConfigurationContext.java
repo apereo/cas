@@ -17,6 +17,7 @@ import org.apereo.cas.support.oauth.authenticator.OAuth20CasAuthenticationBuilde
 import org.apereo.cas.support.oauth.profile.OAuth20ProfileScopeToAttributesFilter;
 import org.apereo.cas.support.oauth.profile.OAuth20UserProfileDataCreator;
 import org.apereo.cas.support.oauth.validator.OAuth20ClientSecretValidator;
+import org.apereo.cas.support.oauth.validator.OAuth20ProofOfPossessionValidator;
 import org.apereo.cas.support.oauth.validator.authorization.OAuth20AuthorizationRequestValidator;
 import org.apereo.cas.support.oauth.validator.token.OAuth20TokenRequestValidator;
 import org.apereo.cas.support.oauth.web.OAuth20RequestParameterResolver;
@@ -168,7 +169,9 @@ public class OAuth20ConfigurationContext {
     private final MessageSource messageSource;
 
     private final UrlValidator urlValidator;
-    
+
+    private final OAuth20ProofOfPossessionValidator proofOfPossessionValidator;
+
     /**
      * Gets ticket granting ticket.
      *

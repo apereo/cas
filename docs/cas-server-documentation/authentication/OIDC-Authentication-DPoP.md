@@ -33,4 +33,17 @@ SHA-256 hash of the access token value. The `htm` (HTTP method) and `htu` (HTTP 
 Note that there is no special configuration required in CAS to enable support for DPoP tokens; however you should note that at this time,
 support for DPoP only covers access tokens. Support for refresh tokens may be worked out in future versions.
 
+## Single-Use Checking
 
+DPoP proofs are designed to be used exactly once. Each proof JWT carries a unique `jti` (JWT ID) claim 
+alongside its `iat` timestamp, and any endpoint validating the proof such as the token or profile endpoints 
+are expected to track previously-seen `jti` values and reject a 
+proof whose `jti` has already been presented.
+
+In CAS, this single-use check is functional out of the box for single-node deployments, 
+where the record of consumed `jti` values naturally lives in one process and is consistently 
+visible to every request handled by that node. In clustered deployments requests are 
+typically load-balanced across multiple CAS nodes, so a `jti` tracked only in one node's 
+local state won't be visible to its siblings which means a proof rejected by node `A` could still be 
+replayed successfully against node `B` that has no record of having seen it. This is not quite
+supported yet but may be worked out and provided in future releases of CAS.
