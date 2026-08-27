@@ -11,6 +11,7 @@ import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.junitpioneer.jupiter.SetSystemProperty;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -51,8 +52,8 @@ class CasConfigurationPropertiesValidatorTests {
     private TestCustomProperties customProperties;
 
     @Test
+    @SetSystemProperty(key = CasConfigurationPropertiesValidator.SYSTEM_PROPERTY_CONFIG_VALIDATION_ENABLED, value = "true")
     void verifyOperation() {
-        System.setProperty(CasConfigurationPropertiesValidator.SYSTEM_PROPERTY_CONFIG_VALIDATION_ENABLED, "true");
         val validator = new CasConfigurationPropertiesValidator(applicationContext);
         validator.setConfigurationPropertyClasses(List.of(CasConfigurationProperties.class, TestCustomProperties.class));
         val results = validator.validate();
@@ -62,8 +63,8 @@ class CasConfigurationPropertiesValidatorTests {
     }
 
     @Test
+    @SetSystemProperty(key = CasConfigurationPropertiesValidator.SYSTEM_PROPERTY_CONFIG_VALIDATION_ENABLED, value = "false")
     void verifyValidationDisabled() {
-        System.setProperty(CasConfigurationPropertiesValidator.SYSTEM_PROPERTY_CONFIG_VALIDATION_ENABLED, "false");
         val validator = new CasConfigurationPropertiesValidator(applicationContext);
         assertTrue(validator.validate().isEmpty());
     }
