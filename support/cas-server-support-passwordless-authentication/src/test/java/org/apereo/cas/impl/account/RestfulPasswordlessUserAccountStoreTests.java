@@ -29,7 +29,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @Tag("RestfulApi")
 class RestfulPasswordlessUserAccountStoreTests extends BasePasswordlessUserAccountStoreTests {
     private static final ObjectMapper MAPPER = JacksonObjectMapperFactory.builder()
-        .defaultTypingEnabled(false).build().toObjectMapper();
+        .defaultTypingEnabled(true).build().toObjectMapper();
 
     @Autowired
     @Qualifier(PasswordlessUserAccountStore.BEAN_NAME)

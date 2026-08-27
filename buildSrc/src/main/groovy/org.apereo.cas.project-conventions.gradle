@@ -151,7 +151,7 @@ tasks.withType(JavaCompile).configureEach { taskProvider ->
         options.forkOptions.jvmArgs << '--sun-misc-unsafe-memory-access=allow'
         options.incremental = true
 
-        def casCompilerArgs = ['-parameters', '-Xlint:-removal,-unchecked']
+        def casCompilerArgs = ['-parameters', '-Xlint:-removal,-unchecked', '-XDsuppressNotes']
         if (terminateCompilerOnWarning) {
             casCompilerArgs.add('-Werror')
         }
