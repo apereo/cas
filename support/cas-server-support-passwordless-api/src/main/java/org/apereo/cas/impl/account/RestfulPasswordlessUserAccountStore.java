@@ -32,7 +32,7 @@ import tools.jackson.databind.ObjectMapper;
 @RequiredArgsConstructor
 public class RestfulPasswordlessUserAccountStore implements PasswordlessUserAccountStore {
     private static final ObjectMapper MAPPER = JacksonObjectMapperFactory.builder()
-        .defaultTypingEnabled(false).build().toObjectMapper();
+        .defaultTypingEnabled(true).build().toObjectMapper();
 
     protected final PasswordlessAuthenticationRestAccountsProperties restProperties;
 
