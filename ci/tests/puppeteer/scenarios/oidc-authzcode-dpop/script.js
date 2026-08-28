@@ -8,7 +8,8 @@ const jose = require("jose");
     const page = await cas.newPage(browser);
 
     const redirectUrl = "https://localhost:9859/anything/cas";
-    const url = `https://localhost:8443/cas/oidc/authorize?response_type=code&client_id=client&scope=${encodeURIComponent("openid profile")}&redirect_uri=${redirectUrl}`;
+    const scopes = `${encodeURIComponent("openid profile")}`;
+    const url = `https://localhost:8443/cas/oidc/authorize?response_type=code&client_id=client&scope=${scopes}&redirect_uri=${redirectUrl}`;
 
     await cas.goto(page, url);
     await cas.sleep(1000);
@@ -26,7 +27,7 @@ const jose = require("jose");
         "htm": "POST",
         "htu": "https://localhost:8443/cas/oidc/token",
         "iat": dt.getTime() / 1000,
-        "jti": "vqv2EAaJECl67LmE"
+        "jti": await cas.randomWord(16, false)
     };
     await cas.log("DPoP proof payload is");
     await cas.log(payload);
@@ -51,7 +52,7 @@ const jose = require("jose");
     const code = await cas.assertParameter(page, "code");
     await cas.log(`Current code is ${code}`);
     const accessTokenUrl = "https://localhost:8443/cas/oidc/token";
-    const params = `grant_type=authorization_code&client_id=client&redirect_uri=${redirectUrl}&code=${code}`;
+    const params = `grant_type=authorization_code&client_id=client&client_secret=secret&redirect_uri=${redirectUrl}&code=${code}`;
 
     let accessToken = null;
     await cas.doPost(accessTokenUrl, params, {
@@ -80,7 +81,7 @@ const jose = require("jose");
         "htm": "POST",
         "htu": "https://localhost:8443/cas/oidc/profile",
         "iat": dt.getTime() / 1000,
-        "jti": "vqv2EAaJECl67LmE",
+        "jti": await cas.randomWord(16, false),
         "ath": base64Token
     };
 

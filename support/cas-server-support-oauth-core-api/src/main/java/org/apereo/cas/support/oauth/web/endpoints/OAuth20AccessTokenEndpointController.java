@@ -16,6 +16,7 @@ import org.apereo.cas.ticket.OAuth20Token;
 import org.apereo.cas.ticket.OAuth20UnauthorizedScopeRequestException;
 import org.apereo.cas.util.LoggingUtils;
 import org.apereo.cas.util.spring.beans.BeanSupplier;
+import com.nimbusds.oauth2.sdk.dpop.verifiers.InvalidDPoPProofException;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.extern.slf4j.Slf4j;
@@ -98,6 +99,9 @@ public class OAuth20AccessTokenEndpointController<T extends OAuth20Configuration
                 LOGGER.warn("Access token validation failed for request [{}]", context.getFullRequestURL());
                 return OAuth20Utils.writeError(response, OAuth20Constants.INVALID_GRANT);
             }
+        } catch (final InvalidDPoPProofException e) {
+            LoggingUtils.error(LOGGER, e);
+            return OAuth20Utils.writeError(response, OAuth20Constants.INVALID_DPOP_PROOF);
         } catch (final Throwable e) {
             LoggingUtils.error(LOGGER, e);
             return OAuth20Utils.writeError(response, OAuth20Constants.INVALID_REQUEST);
