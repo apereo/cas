@@ -42,9 +42,13 @@ class CasPersonDirectoryStubConfiguration {
         public BeanContainer<PersonAttributeDao> stubAttributeRepositories(final CasConfigurationProperties casProperties) {
             val list = new ArrayList<PersonAttributeDao>();
             val stub = casProperties.getAuthn().getAttributeRepository().getStub();
-            val attrs = stub.getAttributes();
-            if (!attrs.isEmpty()) {
+            if (!stub.getAttributes().isEmpty()) {
                 val dao = PersonAttributeUtils.newStubAttributeRepository(casProperties.getAuthn().getAttributeRepository().getStub());
+                list.add(dao);
+            }
+            val mapped = casProperties.getAuthn().getAttributeRepository().getMapped();
+            if (!mapped.getPeople().isEmpty()) {
+                val dao = PersonAttributeUtils.newMappedAttributeRepository(mapped);
                 list.add(dao);
             }
             return BeanContainer.of(list);

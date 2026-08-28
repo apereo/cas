@@ -77,6 +77,6 @@ public class DefaultOAuth20ClientSecretValidator implements OAuth20ClientSecretV
     }
 
     protected boolean isClientSecretCorrect(@Nullable final String definedSecret, final String clientSecret) {
-        return Strings.CI.equals(definedSecret, clientSecret);
+        return Strings.CS.equals(definedSecret, clientSecret);
     }
 }

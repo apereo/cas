@@ -61,6 +61,45 @@ The collection of end-to-end [browser tests based on Puppeteer](../../developer/
 and scenarios. At the moment, total number of jobs stands at approximately `556` distinct scenarios. The overall
 test coverage of the CAS codebase is approximately `94%`.
 
+### Java 27
+
+CAS may be built and run using Java `27` and the build process has been updated to use 
+the latest Java `27` features and capabilities. Please note that this is only a preparatory step for future 
+releases and the baseline requirement will remain to be Java `25`.
+
+### Gradle 9.8
+
+CAS is now built with Gradle `9.8` and the build process has been updated to use the
+latest Gradle features and capabilities.
+
+### Spring Boot 4.2
+
+CAS is now built on top of Spring Boot `4.2.x`. This is an in-progress ongoing minor platform upgrade that
+affects almost all aspects of the codebase including many of the third-party core libraries used by CAS
+as well as some CAS functionality.
+
+Please refer to the [Spring Boot Wiki](https://github.com/spring-projects/spring-boot/wiki/Spring-Boot-4.2-Release-Notes)
+for more information on the changes and updates in this release. The biggest change to CAS would be support for AMQP 1.0.
+
+### JSpecify & NullAway
+
+CAS codebase is now annotated with [JSpecify](https://jspecify.dev/) annotations to indicate nullness contracts on method parameters,
+return types and fields. We will gradually extend the coverage of such annotations across the entire codebase in future releases
+and will integrate the Gradle build tool with tools such as [NullAway](https://github.com/uber/NullAway) to prevent nullness contract violations
+during compile time.
+    
+### OpenID Connect with DPOP
+
+Single-use checking for DPOP proofs is now enforced using the CAS ticket registry. Furthermore, DPOP requests
+are no longer treated as a form of client authentication and now sit on top of existing client authentication
+approaches such as `clientId/clientSecret` for confidenial clients or PKCE. 
+
+### OpenID Connect Verifiable Credentials
+
+[OpenID Connect with Verifiable Credentials](../authentication/OIDC-Authentication-Verifiable-Credentials.html) now
+may require specific principal attributes before a credential offer transaction can be created for a principal. 
 
 ## Other Stuff
-              
+    
+- OAuth and OpenID Connecty client secrets are now compared and enforced using a case sensitive strategy.          
+- A large number of dependencies and libraries have been updated to their latest versions.

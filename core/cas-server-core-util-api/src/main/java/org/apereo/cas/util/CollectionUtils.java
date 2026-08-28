@@ -679,6 +679,22 @@ public class CollectionUtils {
     }
 
     /**
+     * Convert directed list to multi value map.
+     *
+     * @param inputList the input list
+     * @return the map
+     */
+    public static Map<String, List<Object>> convertDirectedListToMultiValueMap(final Collection<String> inputList) {
+        val mappings = new TreeMap<String, List<Object>>();
+        inputList.forEach(value -> {
+            val bits = Splitter.on("->").splitToList(value);
+            val key = bits.getFirst();
+            mappings.put(key, List.copyOf(bits));
+        });
+        return mappings;
+    }
+
+    /**
      * Wrap collection.
      *
      * @param <T>    the type parameter

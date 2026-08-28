@@ -448,4 +448,42 @@ class RequestParameterPolicyEnforcementFilterTests {
         request.addParameters(requestParameterMap);
         assertThrows(RuntimeException.class, () -> filter.doFilter(request, response, chain));
     }
+
+    @Test
+    void verifyBlocksRequestByPatternUsingForwardedHeaders() throws Throwable {
+        val filter = new RequestParameterPolicyEnforcementFilter();
+        val filterConfig = new MockFilterConfig();
+        filterConfig.addInitParameter(RequestParameterPolicyEnforcementFilter.PATTERN_TO_BLOCK,
+            "https://www\\.example\\.org/cas/login");
+        filter.init(filterConfig);
+
+        val request = new MockHttpServletRequest("GET", "/cas/login");
+        request.setScheme("http");
+        request.setServerName("internal.example.org");
+        request.setServerPort(8080);
+        request.addHeader("Forwarded", "for=192.0.2.60;proto=https;host=www.example.org");
+
+        assertThrows(RuntimeException.class,
+            () -> filter.doFilter(request, new MockHttpServletResponse(), new MockFilterChain()));
+    }
+
+    @Test
+    void verifyBlocksRequestByPatternUsingXForwardedHeaders() throws Throwable {
+        val filter = new RequestParameterPolicyEnforcementFilter();
+        val filterConfig = new MockFilterConfig();
+        filterConfig.addInitParameter(RequestParameterPolicyEnforcementFilter.PATTERN_TO_BLOCK,
+            "https://www\\.example\\.org/cas/login");
+        filter.init(filterConfig);
+
+        val request = new MockHttpServletRequest("GET", "/cas/login");
+        request.setScheme("http");
+        request.setServerName("internal.example.org");
+        request.setServerPort(8080);
+        request.addHeader("X-Forwarded-Proto", "https");
+        request.addHeader("X-Forwarded-Host", "www.example.org");
+        request.addHeader("X-Forwarded-Port", "443");
+
+        assertThrows(RuntimeException.class,
+            () -> filter.doFilter(request, new MockHttpServletResponse(), new MockFilterChain()));
+    }
 }

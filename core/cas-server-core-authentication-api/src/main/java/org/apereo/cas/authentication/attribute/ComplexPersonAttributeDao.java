@@ -21,6 +21,7 @@ import org.jspecify.annotations.Nullable;
 public class ComplexPersonAttributeDao extends AbstractQueryPersonAttributeDao<String> {
     @Getter
     private Map<String, Map<String, List<Object>>> backingMap = Map.of();
+    
     private Set<String> possibleUserAttributeNames = Set.of();
 
     @Getter

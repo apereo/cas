@@ -96,6 +96,12 @@ public class PrincipalAttributesProperties implements Serializable {
     private StubPrincipalAttributesProperties stub = new StubPrincipalAttributesProperties();
 
     /**
+     * Use a mapped attribute definition as the underlying attribute repository source.
+     */
+    @NestedConfigurationProperty
+    private MappedPrincipalAttributesProperties mapped = new MappedPrincipalAttributesProperties();
+
+    /**
      * Use Grouper to fetch principal attributes.
      * You will also need to ensure {@code grouper.client.properties}
      * is available on the classpath (i.e. {@code src/main/resources})

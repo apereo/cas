@@ -386,8 +386,14 @@ public class RequestParameterPolicyEnforcementFilter extends AbstractSecurityFil
 
     private void blockRequestIfNecessary(final HttpServletRequest httpServletRequest) {
         if (patternToBlock != null && StringUtils.isNotBlank(httpServletRequest.getRequestURI())) {
-            val servetRequest = new ServletServerHttpRequest(httpServletRequest);
-            val uri = ForwardedHeaderUtils.adaptFromForwardedHeaders(servetRequest.getURI(), servetRequest.getHeaders())
+            val servletRequest = new ServletServerHttpRequest(httpServletRequest);
+            val headers = servletRequest.getHeaders();
+            val forwardedInfo = StringUtils.isNotBlank(headers.getFirst("Forwarded"))
+                ? ForwardedHeaderUtils.parseStandardHeader(servletRequest.getURI(), headers,
+                    servletRequest.getRemoteAddress(), servletRequest.getLocalAddress())
+                : ForwardedHeaderUtils.parseXForwardedHeaders(servletRequest.getURI(), headers,
+                    servletRequest.getRemoteAddress(), servletRequest.getLocalAddress());
+            val uri = forwardedInfo.uriComponentsBuilder()
                 .build()
                 .toUriString();
             if (!this.patternToBlock.equals(RegexUtils.MATCH_NOTHING_PATTERN)
