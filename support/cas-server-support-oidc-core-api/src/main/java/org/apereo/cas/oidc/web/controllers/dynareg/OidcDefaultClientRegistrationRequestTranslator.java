@@ -14,7 +14,6 @@ import org.apereo.cas.services.PairwiseOidcRegisteredServiceUsernameAttributePro
 import org.apereo.cas.support.oauth.OAuth20GrantTypes;
 import org.apereo.cas.support.oauth.OAuth20ResponseTypes;
 import org.apereo.cas.support.oauth.services.OAuthRegisteredServiceClientSecret;
-import org.apereo.cas.support.oauth.util.OAuth20Utils;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.RandomUtils;
 import org.apereo.cas.util.function.FunctionUtils;
@@ -66,14 +65,7 @@ public class OidcDefaultClientRegistrationRequestTranslator implements OidcClien
             throw new IllegalArgumentException("Redirect URI cannot contain a fragment");
         }
 
-        val servicesManager = context.getServicesManager();
-        val registeredService = givenService.orElseGet(() -> registrationRequest.getRedirectUris()
-            .stream()
-            .map(uri -> (OidcRegisteredService) OAuth20Utils.getRegisteredOAuthServiceByRedirectUri(servicesManager, uri))
-            .filter(Objects::nonNull)
-            .findFirst()
-            .orElseGet(OidcRegisteredService::new));
-
+        val registeredService = givenService.orElseGet(OidcRegisteredService::new);
         if (StringUtils.isNotBlank(registrationRequest.getClientName())) {
             registeredService.setName(registrationRequest.getClientName());
         } else if (StringUtils.isBlank(registeredService.getName())) {

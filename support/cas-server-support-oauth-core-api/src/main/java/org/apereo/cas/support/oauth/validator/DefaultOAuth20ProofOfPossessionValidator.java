@@ -8,17 +8,22 @@ import org.apereo.cas.configuration.support.Beans;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.support.oauth.util.OAuth20Utils;
+import org.apereo.cas.ticket.InvalidTicketException;
 import org.apereo.cas.ticket.OAuth20Token;
+import org.apereo.cas.ticket.TicketFactory;
+import org.apereo.cas.ticket.TransientSessionTicket;
+import org.apereo.cas.ticket.TransientSessionTicketFactory;
 import org.apereo.cas.ticket.accesstoken.OAuth20AccessToken;
+import org.apereo.cas.ticket.registry.TicketRegistry;
+import org.apereo.cas.util.DigestUtils;
+import org.apereo.cas.util.function.FunctionUtils;
 import com.nimbusds.jose.JWSAlgorithm;
 import com.nimbusds.jwt.SignedJWT;
 import com.nimbusds.oauth2.sdk.dpop.JWKThumbprintConfirmation;
 import com.nimbusds.oauth2.sdk.dpop.verifiers.DPoPIssuer;
-import com.nimbusds.oauth2.sdk.dpop.verifiers.DPoPProofUse;
 import com.nimbusds.oauth2.sdk.dpop.verifiers.DPoPTokenRequestVerifier;
-import com.nimbusds.oauth2.sdk.dpop.verifiers.InMemoryDPoPSingleUseChecker;
 import com.nimbusds.oauth2.sdk.id.ClientID;
-import com.nimbusds.oauth2.sdk.util.singleuse.SingleUseChecker;
+import com.nimbusds.oauth2.sdk.util.singleuse.AlreadyUsedException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -36,11 +41,11 @@ import org.pac4j.core.profile.ProfileManager;
 @RequiredArgsConstructor
 @Slf4j
 public class DefaultOAuth20ProofOfPossessionValidator implements OAuth20ProofOfPossessionValidator {
-    private final SingleUseChecker<DPoPProofUse> proofOfPossessionSingleUseChecker
-        = new InMemoryDPoPSingleUseChecker(60, 60);
 
     private final SessionStore sessionStore;
     private final ServicesManager servicesManager;
+    private final TicketRegistry ticketRegistry;
+    private final TicketFactory ticketFactory;
     private final AuditableExecution registeredServiceAccessStrategyEnforcer;
     private final CasConfigurationProperties casProperties;
 
@@ -72,7 +77,19 @@ public class DefaultOAuth20ProofOfPossessionValidator implements OAuth20ProofOfP
             .collect(Collectors.toSet());
         val seconds = Beans.newDuration(casProperties.getAuthn().getOidc().getCore().getSkew()).toSeconds();
         val endpointURI = new URI(webContext.getRequestURL());
-        val verifier = new DPoPTokenRequestVerifier(algorithms, endpointURI, seconds, seconds, this.proofOfPossessionSingleUseChecker);
+        val verifier = new DPoPTokenRequestVerifier(algorithms, endpointURI, seconds, seconds,
+            dPoPProofUse -> {
+                val key = dPoPProofUse.getIssuer() + ":" + DigestUtils.sha256(dPoPProofUse.getJWTID().getValue());
+                val ticketId = TransientSessionTicketFactory.normalizeTicketId(key);
+                try {
+                    ticketRegistry.getTicket(ticketId, TransientSessionTicket.class);
+                    throw new AlreadyUsedException("DPoP proof has already been used: " + dPoPProofUse.getJWTID().getValue());
+                } catch (final InvalidTicketException e) {
+                    val factory = (TransientSessionTicketFactory) ticketFactory.get(TransientSessionTicket.class);
+                    val ticket = factory.create(ticketId, Map.of(OAuth20Constants.DPOP, dPopProof, OAuth20Constants.CLIENT_ID, clientId));
+                    FunctionUtils.doUnchecked(_ -> ticketRegistry.addTicket(ticket));
+                }
+            });
         val signedProof = getSignedProofOfPosessionJwt(dPopProof);
         val dPopIssuer = new DPoPIssuer(new ClientID(clientId));
         return verifier.verify(dPopIssuer, signedProof, Set.of());

@@ -477,13 +477,17 @@ class CasOAuth20Configuration {
         public OAuth20ProofOfPossessionValidator oauthProofOfPossessionValidator(
             @Qualifier("oauthDistributedSessionStore")
             final SessionStore oauthDistributedSessionStore,
+            @Qualifier(TicketFactory.BEAN_NAME)
+            final TicketFactory ticketFactory,
+            @Qualifier(TicketRegistry.BEAN_NAME)
+            final TicketRegistry ticketRegistry,
             @Qualifier(ServicesManager.BEAN_NAME)
             final ServicesManager servicesManager,
             final CasConfigurationProperties casProperties,
             @Qualifier(AuditableExecution.AUDITABLE_EXECUTION_REGISTERED_SERVICE_ACCESS)
             final AuditableExecution registeredServiceAccessStrategyEnforcer) {
             return new DefaultOAuth20ProofOfPossessionValidator(oauthDistributedSessionStore, servicesManager,
-                registeredServiceAccessStrategyEnforcer, casProperties);
+                ticketRegistry, ticketFactory, registeredServiceAccessStrategyEnforcer, casProperties);
         }
 
         @Bean
