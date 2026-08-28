@@ -59,6 +59,8 @@ jobs:
     needs: [ check ]
     permissions:
       contents: write
+      issues: write
+      pull-requests: write
     if: needs.check.outputs.is_snapshot == 'false'
     steps:
       - name: Checkout
