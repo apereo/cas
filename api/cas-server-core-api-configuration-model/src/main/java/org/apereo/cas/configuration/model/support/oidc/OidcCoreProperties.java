@@ -93,4 +93,18 @@ public class OidcCoreProperties implements Serializable {
      * Once successful, {@code acr} and {@code amr} values are passed back to the relying party as part of the ID token.
      */
     private List<String> authenticationContextReferenceMappings = new ArrayList<>();
+
+    /**
+     * Whether the {@code jwk} header should be left out of tokens signed by CAS.
+     * <p>
+     * By default, a signed token carries the public half of its signing key in a {@code jwk}
+     * header, in addition to the {@code kid} that identifies the key in the published keystore.
+     * A relying party is expected to resolve verification keys from the issuer's {@code jwks_uri},
+     * so this header is not required for validation; client libraries that treat a token carrying
+     * its own verification key as untrustworthy will reject such a token outright rather than
+     * ignore the header, and libraries that cap the size of a JOSE header may reject it for being
+     * too large. Turn this on to omit the header for such relying parties. The {@code kid} header
+     * is unaffected either way.
+     */
+    private boolean disableJwkHeader;
 }

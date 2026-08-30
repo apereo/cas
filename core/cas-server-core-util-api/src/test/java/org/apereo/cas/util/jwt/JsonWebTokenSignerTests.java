@@ -5,7 +5,9 @@ import org.apereo.cas.util.EncodingUtils;
 import lombok.val;
 import org.jooq.lambda.UncheckedException;
 import org.jose4j.jws.AlgorithmIdentifiers;
+import org.jose4j.json.JsonUtil;
 import org.jose4j.jwt.JwtClaims;
+import org.jose4j.jwx.JsonWebStructure;
 import org.jose4j.keys.AesKey;
 import org.jose4j.lang.InvalidAlgorithmException;
 import org.junit.jupiter.api.Tag;
@@ -38,6 +40,48 @@ class JsonWebTokenSignerTests {
             .build()
             .sign(claims);
         assertNotNull(result);
+    }
+
+    @Test
+    void verifyJwkHeaderIncludedByDefault() throws Throwable {
+        val headers = headersOf(signWithGeneratedRsaKey(JsonWebTokenSigner.builder()));
+        assertTrue(headers.containsKey("jwk"));
+        assertTrue(headers.containsKey("kid"));
+    }
+
+    @Test
+    void verifyJwkHeaderCanBeExcluded() throws Throwable {
+        val headers = headersOf(signWithGeneratedRsaKey(
+            JsonWebTokenSigner.builder().includeJwkHeader(false)));
+        assertFalse(headers.containsKey("jwk"),
+            "Relying parties that reject a token carrying its own verification key must be able "
+            + "to be served one without it. Headers were: " + headers.keySet());
+        assertTrue(headers.containsKey("kid"),
+            "The key identifier must survive, so the token remains verifiable against the "
+            + "keys published by the issuer");
+    }
+
+    private static Map<String, Object> headersOf(final String token) throws Exception {
+        return JsonUtil.parseJson(JsonWebStructure.fromCompactSerialization(token)
+            .getHeaders().getFullHeaderAsJsonString());
+    }
+
+    private static String signWithGeneratedRsaKey(final JsonWebTokenSigner.JsonWebTokenSignerBuilder builder) throws Exception {
+        val claims = new JwtClaims();
+        claims.setSubject("casuser");
+        claims.setIssuedAtToNow();
+        claims.setExpirationTimeMinutesInTheFuture(1);
+
+        val generator = KeyPairGenerator.getInstance("RSA");
+        generator.initialize(2048);
+        val keyPair = generator.generateKeyPair();
+
+        return builder
+            .key(keyPair.getPrivate())
+            .keyId("cas")
+            .algorithm(AlgorithmIdentifiers.RSA_USING_SHA256)
+            .build()
+            .sign(claims);
     }
 
     @Test

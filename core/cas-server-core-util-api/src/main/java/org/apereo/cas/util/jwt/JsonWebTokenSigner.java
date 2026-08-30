@@ -48,6 +48,14 @@ public class JsonWebTokenSigner {
     private final Set<String> allowedAlgorithms = new LinkedHashSet<>();
 
     /**
+     * Include the public half of the signing key as a {@code jwk} header in the produced token.
+     * Enabled by default to preserve existing behavior; callers that serve relying parties which
+     * refuse a token carrying its own verification key are able to turn it off.
+     */
+    @Builder.Default
+    private final boolean includeJwkHeader = true;
+
+    /**
      * Sign byte array.
      *
      * @param value the value
@@ -91,17 +99,19 @@ public class JsonWebTokenSigner {
             jws.setKey(key);
             FunctionUtils.doIfNotNull(this.keyId, jws::setKeyIdHeaderValue);
         }
-        EncodingUtils.extractPublicKeyFrom(jws.getKey()).ifPresent(publicKey -> {
-            if (publicKey instanceof final RSAPublicKey rsa) {
-                jws.setJwkHeader(new RsaJsonWebKey(rsa));
-            }
-            if (publicKey instanceof final ECPublicKey ec) {
-                jws.setJwkHeader(new EllipticCurveJsonWebKey(ec));
-            }
-            if (publicKey instanceof final EdECPublicKey edec) {
-                jws.setJwkHeader(new OctetKeyPairJsonWebKey(edec));
-            }
-        });
+        if (includeJwkHeader) {
+            EncodingUtils.extractPublicKeyFrom(jws.getKey()).ifPresent(publicKey -> {
+                if (publicKey instanceof final RSAPublicKey rsa) {
+                    jws.setJwkHeader(new RsaJsonWebKey(rsa));
+                }
+                if (publicKey instanceof final ECPublicKey ec) {
+                    jws.setJwkHeader(new EllipticCurveJsonWebKey(ec));
+                }
+                if (publicKey instanceof final EdECPublicKey edec) {
+                    jws.setJwkHeader(new OctetKeyPairJsonWebKey(edec));
+                }
+            });
+        }
         headers.forEach((header, value) -> jws.setHeader(header, value.toString()));
         LOGGER.trace("Signing ID token with key id header value [{}] and algorithm header value [{}]",
             jws.getKeyIdHeaderValue(), jws.getAlgorithmHeaderValue());

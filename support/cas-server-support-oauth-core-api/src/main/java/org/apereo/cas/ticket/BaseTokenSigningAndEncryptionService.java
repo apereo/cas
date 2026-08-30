@@ -90,8 +90,18 @@ public abstract class BaseTokenSigningAndEncryptionService implements OAuth20Tok
             .allowedAlgorithms(new LinkedHashSet<>(getAllowedSigningAlgorithms(registeredService)))
             .mediaType(mediaType)
             .headers(headers)
+            .includeJwkHeader(isJwkHeaderIncluded())
             .build()
             .sign(claims);
+    }
+
+    /**
+     * Whether the produced token should carry the signing key in a {@code jwk} header.
+     *
+     * @return true if the header should be included
+     */
+    protected boolean isJwkHeaderIncluded() {
+        return true;
     }
 
     protected String getSigningMediaType() {
