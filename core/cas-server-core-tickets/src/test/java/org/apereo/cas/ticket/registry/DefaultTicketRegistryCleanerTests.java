@@ -71,6 +71,18 @@ class DefaultTicketRegistryCleanerTests {
     }
 
     @Test
+    void verifyStreamClosedOnClean() {
+        val applicationContext = mock(ConfigurableApplicationContext.class);
+        val ticketRegistry = mock(TicketRegistry.class);
+        val closed = new AtomicBoolean(false);
+        val stream = Stream.<Ticket>empty().onClose(() -> closed.set(true));
+        when(ticketRegistry.stream()).thenReturn(stream);
+        val cleaner = new DefaultTicketRegistryCleaner(LockRepository.noOp(), applicationContext, ticketRegistry);
+        cleaner.clean();
+        assertTrue(closed.get());
+    }
+
+    @Test
     void verifyNoCleaner() {
         val applicationContext = mock(ConfigurableApplicationContext.class);
         val ticketRegistry = newTicketRegistry();
