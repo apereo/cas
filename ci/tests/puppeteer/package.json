@@ -13,7 +13,7 @@
     "dpop": "2.1.2",
     "express": "5.2.1",
     "http-cas-client": "0.4.3",
-    "jose": "6.2.10",
+    "jose": "6.2.11",
     "jsonpath-plus": "10.4.0",
     "jsonwebtoken": "9.0.3",
     "jsqr": "1.4.0",
