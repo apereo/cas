@@ -60,7 +60,7 @@ services:
       - "host.docker.internal:host-gateway"
       - "localhost:host-gateway"
   wallet-init:
-    image: curlimages/curl:8.21.0
+    image: curlimages/curl:8.22.0
     container_name: waltid-wallet-init
     depends_on:
       wallet-api:
