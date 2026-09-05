@@ -45,6 +45,11 @@ public abstract class BaseOidcJsonWebKeyTokenSigningAndEncryptionService extends
     protected final CasConfigurationProperties casProperties;
 
     @Override
+    protected boolean isJwkHeaderIncluded() {
+        return !casProperties.getAuthn().getOidc().getCore().isDisableJwkHeader();
+    }
+
+    @Override
     public String encode(final OAuthRegisteredService registeredService, final JwtClaims claims) {
         return FunctionUtils.doUnchecked(() -> {
             LOGGER.trace("Attempting to produce token generated for service [{}] with claims [{}]", registeredService, claims.toJson());
