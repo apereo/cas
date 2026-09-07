@@ -26,6 +26,14 @@ class CasConfigurationMetadataRepositoryTests {
     }
 
     @Test
+    void verifyRepositoryIsBuiltOnceOnFirstAccess() {
+        val repository = new CasConfigurationMetadataRepository();
+        val first = repository.getRepository();
+        assertNotNull(first);
+        assertSame(first, repository.getRepository());
+    }
+
+    @Test
     void verifyQueryOperation() throws Throwable {
         var properties = CasConfigurationMetadataCatalog.query(ConfigurationMetadataCatalogQuery
             .builder()

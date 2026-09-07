@@ -8,6 +8,7 @@ import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.junitpioneer.jupiter.SetSystemProperty;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -36,9 +37,12 @@ class CasApplicationContextInitializerTests {
     private ConfigurableApplicationContext applicationContext;
 
     @Test
+    @SetSystemProperty(key = CasApplicationContextInitializer.SYSTEM_PROPERTY_CONFIG_VALIDATION_STATUS, value = "false")
     void verifyOperation() {
         assertNotNull(applicationContext);
-        val validateConfig = System.getProperty(CasApplicationContextInitializer.SYSTEM_PROPERTY_CONFIG_VALIDATION_STATUS);
-        assertEquals(Boolean.TRUE.toString(), validateConfig);
+        val initializer = new CasApplicationContextInitializer();
+        assertDoesNotThrow(() -> initializer.initialize(applicationContext));
+        assertNull(System.getProperty(CasApplicationContextInitializer.SYSTEM_PROPERTY_CONFIG_VALIDATION_STATUS),
+            "Context initialization must not publish a validation status; validation runs once when the application is ready");
     }
 }

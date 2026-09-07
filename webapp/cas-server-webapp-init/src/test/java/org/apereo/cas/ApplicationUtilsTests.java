@@ -8,7 +8,12 @@ import lombok.val;
 import org.jspecify.annotations.NonNull;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.junitpioneer.jupiter.ClearSystemProperty;
+import org.junitpioneer.jupiter.SetSystemProperty;
+import org.springframework.boot.context.metrics.buffering.BufferingApplicationStartup;
 import org.springframework.core.env.Environment;
+import org.springframework.core.metrics.ApplicationStartup;
+import org.springframework.core.metrics.jfr.FlightRecorderApplicationStartup;
 import org.springframework.mock.env.MockEnvironment;
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -36,12 +41,27 @@ class ApplicationUtilsTests {
     }
 
     @Test
-    void verifyStartup() {
-        assertNotNull(ApplicationUtils.getApplicationStartup());
-        System.setProperty("CAS_APP_STARTUP", "buffering");
-        assertNotNull(ApplicationUtils.getApplicationStartup());
-        System.setProperty("CAS_APP_STARTUP", "jfr");
-        assertNotNull(ApplicationUtils.getApplicationStartup());
+    @ClearSystemProperty(key = ApplicationUtils.SYSTEM_PROPERTY_APP_STARTUP)
+    void verifyStartupIsNotInstrumentedByDefault() {
+        assertSame(ApplicationStartup.DEFAULT, ApplicationUtils.getApplicationStartup());
+    }
+
+    @Test
+    @SetSystemProperty(key = ApplicationUtils.SYSTEM_PROPERTY_APP_STARTUP, value = "unknown-strategy")
+    void verifyUnknownStartupFallsBackToDefault() {
+        assertSame(ApplicationStartup.DEFAULT, ApplicationUtils.getApplicationStartup());
+    }
+
+    @Test
+    @SetSystemProperty(key = ApplicationUtils.SYSTEM_PROPERTY_APP_STARTUP, value = "buffering")
+    void verifyBufferingStartupIsOptIn() {
+        assertInstanceOf(BufferingApplicationStartup.class, ApplicationUtils.getApplicationStartup());
+    }
+
+    @Test
+    @SetSystemProperty(key = ApplicationUtils.SYSTEM_PROPERTY_APP_STARTUP, value = "jfr")
+    void verifyFlightRecorderStartupIsOptIn() {
+        assertInstanceOf(FlightRecorderApplicationStartup.class, ApplicationUtils.getApplicationStartup());
     }
 
     @Test
