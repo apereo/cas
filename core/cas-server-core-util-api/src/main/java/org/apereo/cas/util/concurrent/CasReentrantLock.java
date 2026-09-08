@@ -30,6 +30,34 @@ public class CasReentrantLock {
     private final ReentrantLock lock = new ReentrantLock();
 
     /**
+     * Acquire the lock without a timeout, execute the supplier and release the lock.
+     *
+     * @param supplier the supplier
+     * @param <T> the result type
+     * @return the supplied result
+     */
+    public <T> T execute(final Supplier<T> supplier) {
+        lock.lock();
+        try {
+            return supplier.get();
+        } finally {
+            lock.unlock();
+        }
+    }
+
+    /**
+     * Acquire the lock without a timeout, execute the action and release the lock.
+     *
+     * @param action the action
+     */
+    public void execute(final Runnable action) {
+        execute(() -> {
+            action.run();
+            return null;
+        });
+    }
+
+    /**
      * Acquires the lock if it is not held by another thread within the given
      * waiting time and the current thread has not been
      * {@linkplain Thread#interrupt interrupted}.

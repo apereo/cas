@@ -22,7 +22,7 @@ public class ApplicationUtils {
      */
     public static final String SYSTEM_PROPERTY_APP_STARTUP = "CAS_APP_STARTUP";
 
-    private static final int APPLICATION_EVENTS_CAPACITY = 5_000;
+    private static final int APPLICATION_EVENTS_CAPACITY = 10_000;
 
     /**
      * Gets application initialization components.

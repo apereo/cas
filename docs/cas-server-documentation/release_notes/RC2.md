@@ -150,4 +150,6 @@ security have been strengthened across several flows.
 
 ## Other Stuff
     
+- Authentication history, theme caching and CloudWatch shutdown now use concurrent collections and explicit coordination in place of Java monitor locking.
+- Several optimizations are in place to assist with faster startup time, allowing for more components to be lazily initialized.
 - A large number of dependencies and libraries have been updated to their latest versions.

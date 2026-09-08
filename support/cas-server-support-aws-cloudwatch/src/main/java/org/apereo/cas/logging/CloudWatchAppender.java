@@ -48,7 +48,7 @@ public class CloudWatchAppender extends AbstractAppender {
 
     private final BlockingQueue<InputLogEvent> queue = new LinkedBlockingQueue<>(AWS_LOG_STREAM_MAX_QUEUE_DEPTH);
 
-    private final Object monitor = new Object();
+    private final CountDownLatch shutdownSignal = new CountDownLatch(1);
 
     private volatile boolean shutdown;
 
@@ -227,8 +227,10 @@ public class CloudWatchAppender extends AbstractAppender {
                     }
                     if (!shutdown && queue.size() < AWS_DRAIN_LIMIT) {
                         try {
-                            synchronized (monitor) {
-                                monitor.wait(flushPeriodMillis);
+                            if (flushPeriodMillis == 0) {
+                                shutdownSignal.await();
+                            } else {
+                                shutdownSignal.await(flushPeriodMillis, TimeUnit.MILLISECONDS);
                             }
                         } catch (final InterruptedException e) {
                             org.apereo.cas.util.LoggingUtils.error(LOGGER, e);
@@ -250,10 +252,8 @@ public class CloudWatchAppender extends AbstractAppender {
     public void stop() {
         super.stop();
         shutdown = true;
+        shutdownSignal.countDown();
         if (deliveryThread != null) {
-            synchronized (monitor) {
-                monitor.notifyAll();
-            }
             try {
                 deliveryThread.join(SHUTDOWN_TIMEOUT_MILLIS);
             } catch (final InterruptedException e) {

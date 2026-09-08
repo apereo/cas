@@ -5,12 +5,16 @@ import lombok.val;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.core.config.Configurator;
 import org.apache.logging.log4j.core.config.builder.api.ConfigurationBuilderFactory;
+import org.apache.logging.log4j.core.impl.Log4jLogEvent;
+import org.apache.logging.log4j.message.SimpleMessage;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
+import org.junit.jupiter.params.provider.ValueSource;
 import org.mockito.ArgumentMatchers;
+import org.springframework.test.util.ReflectionTestUtils;
 import software.amazon.awssdk.services.cloudwatchlogs.CloudWatchLogsClient;
 import software.amazon.awssdk.services.cloudwatchlogs.model.CreateLogGroupRequest;
 import software.amazon.awssdk.services.cloudwatchlogs.model.CreateLogStreamRequest;
@@ -20,6 +24,9 @@ import software.amazon.awssdk.services.cloudwatchlogs.model.DescribeLogStreamsRe
 import software.amazon.awssdk.services.cloudwatchlogs.model.DescribeLogStreamsResponse;
 import software.amazon.awssdk.services.cloudwatchlogs.model.LogGroup;
 import software.amazon.awssdk.services.cloudwatchlogs.model.LogStream;
+import software.amazon.awssdk.services.cloudwatchlogs.model.PutLogEventsRequest;
+import software.amazon.awssdk.services.cloudwatchlogs.model.PutLogEventsResponse;
+import static org.awaitility.Awaitility.*;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
@@ -30,6 +37,32 @@ import static org.mockito.Mockito.*;
  */
 @Tag("AmazonWebServices")
 class CloudWatchAppenderSpecTests {
+    @ParameterizedTest
+    @ValueSource(strings = {"0", "30"})
+    void verifyShutdownWakesDeliveryAndDrainsQueue(final String flushPeriod) {
+        val logs = mock(CloudWatchLogsClient.class);
+        when(logs.describeLogStreams(any(DescribeLogStreamsRequest.class))).thenReturn(createDescribeLogStreamsResult());
+        when(logs.putLogEvents(any(PutLogEventsRequest.class)))
+            .thenReturn(PutLogEventsResponse.builder().nextSequenceToken("next").build());
+        val appender = new CloudWatchAppender("shutdown-test", "test", "test", flushPeriod, null,
+            false, false, false, logs);
+        appender.initialize();
+        appender.start();
+        try {
+            val deliveryThread = (Thread) Objects.requireNonNull(ReflectionTestUtils.getField(appender, "deliveryThread"));
+            await().atMost(Duration.ofSeconds(5)).until(() ->
+                deliveryThread.getState() == Thread.State.WAITING || deliveryThread.getState() == Thread.State.TIMED_WAITING);
+            appender.append(Log4jLogEvent.newBuilder().setMessage(new SimpleMessage("pending log event")).build());
+
+            assertTimeout(Duration.ofSeconds(5), appender::stop);
+            assertFalse(deliveryThread.isAlive());
+            verify(logs).putLogEvents(argThat((PutLogEventsRequest request) -> request.logEvents().size() == 1
+                && request.logEvents().getFirst().message().contains("pending log event")));
+        } finally {
+            appender.stop();
+        }
+    }
+
     private static DescribeLogStreamsResponse createDescribeLogStreamsResult() {
         val logStream = LogStream.builder().logStreamName("test").uploadSequenceToken("test").build();
         return DescribeLogStreamsResponse.builder().logStreams(logStream).build();

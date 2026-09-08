@@ -2,6 +2,7 @@ package org.apereo.cas.authentication;
 
 import module java.base;
 import org.apereo.cas.authentication.principal.DefaultPrincipalElectionStrategy;
+import org.apereo.cas.authentication.principal.merger.AttributeMerger;
 import org.apereo.cas.configuration.model.core.authentication.PrincipalAttributesCoreProperties;
 import org.apereo.cas.util.CollectionUtils;
 import lombok.val;
@@ -17,6 +18,40 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 @Tag("Authentication")
 class DefaultAuthenticationResultBuilderTests {
+    @Test
+    void verifyAuthenticationSnapshotDuringBuild() throws Throwable {
+        val principal = CoreAuthenticationTestUtils.getPrincipal("casuser");
+        val first = CoreAuthenticationTestUtils.getAuthentication(principal, CollectionUtils.wrap("first", "value"));
+        val second = CoreAuthenticationTestUtils.getAuthentication(principal, CollectionUtils.wrap("second", "value"));
+        val later = CoreAuthenticationTestUtils.getAuthentication(CoreAuthenticationTestUtils.getPrincipal("later"),
+            CollectionUtils.wrap("later", "value"));
+        val builder = new DefaultAuthenticationResultBuilder(new DefaultPrincipalElectionStrategy()) {
+            @Override
+            protected void mergeAuthenticationAttributes(final Map<String, List<Object>> authenticationAttributes,
+                                                         final AttributeMerger merger, final Authentication authentication) {
+                super.mergeAuthenticationAttributes(authenticationAttributes, merger, authentication);
+                collect(later);
+            }
+        };
+        builder.collect(List.of(first, second, first));
+        assertEquals(List.of(first, second), new ArrayList<>(builder.getAuthentications()));
+        assertSame(first, builder.getInitialAuthentication().orElseThrow());
+
+        val result = builder.build();
+        assertNotNull(result);
+        val authentication = result.getAuthentication();
+        assertEquals("casuser", authentication.getPrincipal().getId());
+        assertTrue(authentication.getAttributes().containsKey("first"));
+        assertTrue(authentication.getAttributes().containsKey("second"));
+        assertFalse(authentication.getAttributes().containsKey("later"));
+        assertEquals(List.of(first, second, later), new ArrayList<>(builder.getAuthentications()));
+
+        val nextResult = builder.build();
+        assertNotNull(nextResult);
+        assertEquals("later", nextResult.getAuthentication().getPrincipal().getId());
+        assertTrue(nextResult.getAuthentication().getAttributes().containsKey("later"));
+    }
+
     @Test
     void verifyAuthenticationResultBuildsPrincipals() throws Throwable {
         val electionStrategy = new DefaultPrincipalElectionStrategy();
