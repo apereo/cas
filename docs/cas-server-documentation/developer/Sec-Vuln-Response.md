@@ -226,7 +226,7 @@ amended in *rare and extreme circumstances* depending on the security of the iss
 ## Credit Assignments
 
 Once a security vulnerability is confirmed, the reporter will be asked to consent whether
-they prefer to be listed in the community public security advisories and annoumcements or 
+they prefer to be listed in the community public security advisories and announcements or
 remain anonymous. If the reporter is interested to receive public credit for their discovery
 and effort, the following information at a minimum will need to be shared:
 
