@@ -59,6 +59,57 @@ class Cas10ResponseViewTests {
     }
 
     @Test
+    void verifySuccessViewRejectsLineBreaksInPrincipalId() throws Throwable {
+        val principal = CoreAuthenticationTestUtils.getPrincipal("casuser\nyes\nadministrator", Map.<String, List<Object>>of());
+        val testService = CoreAuthenticationTestUtils.getWebApplicationService("TestService");
+        val forgedModel = new HashMap<String, Object>();
+        forgedModel.put("assertion", DefaultAssertionBuilder.builder()
+            .primaryAuthentication(CoreAuthenticationTestUtils.getAuthentication(principal))
+            .authentications(List.of(CoreAuthenticationTestUtils.getAuthentication(principal)))
+            .registeredService(CoreAuthenticationTestUtils.getRegisteredService(testService.getId()))
+            .service(testService)
+            .newLogin(true)
+            .build()
+            .assemble());
+
+        val response = new MockHttpServletResponse();
+        val view = new Cas10ResponseView(true, new NoOpProtocolAttributeEncoder(),
+            mock(ServicesManager.class), mock(AuthenticationAttributeReleasePolicy.class),
+            new DefaultAuthenticationServiceSelectionPlan(),
+            NoOpProtocolAttributesRenderer.INSTANCE, mock(AttributeDefinitionStore.class));
+        view.render(forgedModel, new MockHttpServletRequest(), response);
+        assertEquals("yes\ncasuseryesadministrator\n", response.getContentAsString());
+    }
+
+    @Test
+    void verifySuccessViewRejectsLineBreaksInAttributeValues() throws Throwable {
+        val principal = CoreAuthenticationTestUtils.getPrincipal("casuser",
+            Map.of("memberOf", List.<Object>of("staff\nadministrator=true")));
+        val testService = CoreAuthenticationTestUtils.getWebApplicationService("TestService");
+        val forgedModel = new HashMap<String, Object>();
+        forgedModel.put("assertion", DefaultAssertionBuilder.builder()
+            .primaryAuthentication(CoreAuthenticationTestUtils.getAuthentication(principal))
+            .authentications(List.of(CoreAuthenticationTestUtils.getAuthentication(principal)))
+            .registeredService(CoreAuthenticationTestUtils.getRegisteredService(testService.getId()))
+            .service(testService)
+            .newLogin(true)
+            .build()
+            .assemble());
+
+        val response = new MockHttpServletResponse();
+        val view = new Cas10ResponseView(true, new NoOpProtocolAttributeEncoder(),
+            mock(ServicesManager.class), mock(AuthenticationAttributeReleasePolicy.class),
+            new DefaultAuthenticationServiceSelectionPlan(),
+            new AttributeValuesPerLineProtocolAttributesRenderer(), mock(AttributeDefinitionStore.class));
+        view.render(forgedModel, new MockHttpServletRequest(), response);
+
+        val output = response.getContentAsString();
+        assertTrue(output.startsWith("yes\ncasuser\n"));
+        assertTrue(output.lines().noneMatch(line -> "administrator=true".equals(line)));
+        assertTrue(output.lines().anyMatch(line -> line.contains("staffadministrator=true")));
+    }
+
+    @Test
     void verifyFailureView() throws Throwable {
         val response = new MockHttpServletResponse();
         val view = new Cas10ResponseView(false, new NoOpProtocolAttributeEncoder(),

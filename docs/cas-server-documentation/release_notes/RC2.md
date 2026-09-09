@@ -142,6 +142,17 @@ security have been strengthened across several flows.
 - SAML2 SOAP attribute queries and artifact resolutions now require independently validated signatures, message freshness, destinations, and replay protection; artifact tickets are relying-party bound and consumed atomically.
 - SAML2 single logout now validates request freshness and replay, fully authenticates and correlates logout responses, and generates actuator logout requests with the correct IdP issuer and service-provider destination.
 
+### CAS Protocol
+
+- The CAS `1.0` [validation response](../ux/User-Interface-Views-CASv1.html) is line-delimited and carries no escaping mechanism.
+  Principal identifiers and rendered attribute lines are now stripped of line breaks, so a value that contains a newline
+  can no longer forge additional lines in the response.
+
+### Views and Themes
+
+- The [REST-based view resolver](../ux/User-Interface-Views-External.html) no longer forwards credential-bearing request
+  headers, such as `Cookie`, `Authorization` and `Proxy-Authorization`, to the external template endpoint.
+
 ### LDAP Integrations
 
 - [Surrogate authentication](../authentication/Surrogate-Authentication-Storage-LDAP.html), [delegated authentication profile selection](../integration/Delegate-Authentication-ProfileSelection.html), [acceptable usage policy](../webflow/Webflow-Customization-AUP-LDAP.html) and [password management](../password_management/Password-Management.html) now build their LDAP connection pools once and reuse them across requests.

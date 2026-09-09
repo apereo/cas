@@ -11,6 +11,7 @@ import org.apereo.cas.util.LoggingUtils;
 import org.apereo.cas.validation.AuthenticationAttributeReleasePolicy;
 import org.apereo.cas.validation.CasProtocolAttributesRenderer;
 import lombok.val;
+import org.apache.commons.lang3.StringUtils;
 import org.jspecify.annotations.NonNull;
 import org.springframework.http.MediaType;
 import jakarta.servlet.http.HttpServletRequest;
@@ -25,6 +26,11 @@ import jakarta.servlet.http.HttpServletResponse;
  * @since 3.0.0
  */
 public class Cas10ResponseView extends AbstractCasView {
+    /**
+     * The CAS 1.0 validation response is line-delimited and offers no escaping mechanism,
+     * so any line break carried by a rendered value would forge additional response lines.
+     */
+    private static final Pattern LINE_BREAKS = Pattern.compile("\\R");
 
     public Cas10ResponseView(final boolean successResponse,
                              final ProtocolAttributeEncoder protocolAttributeEncoder,
@@ -49,11 +55,11 @@ public class Cas10ResponseView extends AbstractCasView {
             if (this.successResponse) {
                 prepareViewModelWithAuthenticationPrincipal(model);
                 prepareCasResponseAttributesForViewModel(model);
-                writer.write("yes\n" + getPrimaryAuthenticationFrom(model).getPrincipal().getId() + '\n');
+                writer.write("yes\n" + sanitizeResponseLine(getPrimaryAuthenticationFrom(model).getPrincipal().getId()) + '\n');
                 if (model.containsKey(CasProtocolConstants.VALIDATION_CAS_MODEL_ATTRIBUTE_NAME_FORMATTED_ATTRIBUTES)) {
                     val attributes = (Collection) model.get(CasProtocolConstants.VALIDATION_CAS_MODEL_ATTRIBUTE_NAME_FORMATTED_ATTRIBUTES);
                     attributes.forEach(attr -> {
-                        writer.write(attr.toString());
+                        writer.write(sanitizeResponseLine(attr.toString()));
                         writer.write('\n');
                     });
                 }
@@ -65,5 +71,15 @@ public class Cas10ResponseView extends AbstractCasView {
             response.setContentType(MediaType.TEXT_PLAIN_VALUE);
             response.getWriter().write(message);
         }
+    }
+
+    /**
+     * Remove line breaks so a rendered value cannot introduce extra lines into the response.
+     *
+     * @param value the value
+     * @return the sanitized value
+     */
+    protected static String sanitizeResponseLine(final String value) {
+        return LINE_BREAKS.matcher(value).replaceAll(StringUtils.EMPTY);
     }
 }
