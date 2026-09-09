@@ -53,7 +53,7 @@ public class ResourceBundleThemeSource implements HierarchicalThemeSource, BeanC
     public void setParentThemeSource(@Nullable final ThemeSource parent) {
         themeCacheLock.execute(() -> {
             this.parentThemeSource = parent;
-            for (val theme : this.themeCache.values()) {
+            for (val theme : themeCache.values()) {
                 initParent(theme);
             }
         });
@@ -85,16 +85,16 @@ public class ResourceBundleThemeSource implements HierarchicalThemeSource, BeanC
     @Override
     @Nullable
     public Theme getTheme(final String themeName) {
-        val theme = this.themeCache.get(themeName);
+        val theme = themeCache.get(themeName);
         if (theme == null) {
             return themeCacheLock.execute(() -> {
-                var cachedTheme = this.themeCache.get(themeName);
+                var cachedTheme = themeCache.get(themeName);
                 if (cachedTheme == null) {
                     val basename = this.basenamePrefix + themeName;
                     val messageSource = createMessageSource(basename);
                     cachedTheme = new SimpleTheme(themeName, messageSource);
                     initParent(cachedTheme);
-                    this.themeCache.put(themeName, cachedTheme);
+                    themeCache.put(themeName, cachedTheme);
                     LOGGER.debug("Theme created: name [{}], basename [{}]", themeName, basename);
                 }
                 return cachedTheme;
@@ -106,9 +106,9 @@ public class ResourceBundleThemeSource implements HierarchicalThemeSource, BeanC
     /**
      * Create a MessageSource for the given basename,
      * to be used as MessageSource for the corresponding theme.
-     * <p>Default implementation creates a ResourceBundleMessageSource.
+     * <p>Default implementation creates a {@link ResourceBundleMessageSource}.
      * for the given basename. A subclass could create a specifically
-     * configured ReloadableResourceBundleMessageSource, for example.
+     * configured {@link org.springframework.context.support.ReloadableResourceBundleMessageSource}, for example.
      * @param basename the basename to create a MessageSource for
      * @return the MessageSource
      * @see ResourceBundleMessageSource
