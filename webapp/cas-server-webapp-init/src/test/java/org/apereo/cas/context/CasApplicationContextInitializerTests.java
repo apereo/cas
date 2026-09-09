@@ -8,6 +8,8 @@ import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.jupiter.api.parallel.ResourceLock;
+import org.junit.jupiter.api.parallel.Resources;
 import org.junitpioneer.jupiter.SetSystemProperty;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -32,6 +34,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @ContextConfiguration(initializers = CasApplicationContextInitializer.class)
 @Tag("ApacheTomcat")
 @ExtendWith(CasTestExtension.class)
+@ResourceLock(Resources.SYSTEM_PROPERTIES)
 class CasApplicationContextInitializerTests {
     @Autowired
     private ConfigurableApplicationContext applicationContext;

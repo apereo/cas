@@ -163,6 +163,12 @@ security have been strengthened across several flows.
   theme rather than selecting a theme that does not exist.
 - A service theme is now resolved once per request rather than once per template lookup, so service resolution, access
   strategy evaluation and theme file lookups no longer repeat for every fragment rendered on a page.
+- Thymeleaf template caching now takes effect. The chaining template resolver previously declared every resolution
+  non-cacheable regardless of `spring.thymeleaf.cache`, so each page and each fragment was re-resolved and re-parsed on
+  every request. Resolutions are now cached per the configured setting, except for those produced by a theme-aware
+  resolver: those map one template name to different files depending on the request's theme, and Thymeleaf's cache key
+  does not carry the theme, so they remain non-cacheable. Deployments with no themed template overrides cache every
+  template; deployments with themed overrides cache everything except the overridden templates.
 
 ### LDAP Integrations
 
@@ -172,6 +178,7 @@ security have been strengthened across several flows.
 
 ## Other Stuff
     
+- CloudWatch logging now avoids recursive logging initialization when reporting appender startup or delivery failures.
 - Authentication history, theme caching and CloudWatch shutdown now use concurrent collections and explicit coordination in place of Java monitor locking.
 - Several optimizations are in place to assist with faster startup time, allowing for more components to be lazily initialized.
 - A large number of dependencies and libraries have been updated to their latest versions.

@@ -26,10 +26,6 @@ import jakarta.servlet.http.HttpServletResponse;
  * @since 3.0.0
  */
 public class Cas10ResponseView extends AbstractCasView {
-    /**
-     * The CAS 1.0 validation response is line-delimited and offers no escaping mechanism,
-     * so any line break carried by a rendered value would forge additional response lines.
-     */
     private static final Pattern LINE_BREAKS = Pattern.compile("\\R");
 
     public Cas10ResponseView(final boolean successResponse,
@@ -73,12 +69,6 @@ public class Cas10ResponseView extends AbstractCasView {
         }
     }
 
-    /**
-     * Remove line breaks so a rendered value cannot introduce extra lines into the response.
-     *
-     * @param value the value
-     * @return the sanitized value
-     */
     protected static String sanitizeResponseLine(final String value) {
         return LINE_BREAKS.matcher(value).replaceAll(StringUtils.EMPTY);
     }

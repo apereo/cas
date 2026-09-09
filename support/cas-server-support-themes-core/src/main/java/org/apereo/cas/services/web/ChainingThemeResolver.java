@@ -28,10 +28,6 @@ public class ChainingThemeResolver extends AbstractThemeResolver {
 
     private final Set<ThemeResolver> chain = new LinkedHashSet<>();
 
-    /**
-     * Theme names already matched to a theme definition. Only successful lookups are recorded,
-     * so this is bounded by the themes the deployment actually ships.
-     */
     private final Set<String> definedThemeNames = ConcurrentHashMap.newKeySet();
 
     private final ObjectProvider<CasConfigurationProperties> casProperties;
@@ -69,14 +65,6 @@ public class ChainingThemeResolver extends AbstractThemeResolver {
         return getDefaultThemeName();
     }
 
-    /**
-     * Does the given name identify a theme this deployment defines? Every theme, however it is
-     * chosen, is required to carry a {@code [theme].properties} file, either at the root of a
-     * configured template prefix or at the root of the classpath.
-     *
-     * @param themeName the theme name
-     * @return true/false
-     */
     protected boolean isThemeDefined(final String themeName) {
         if (definedThemeNames.contains(themeName)) {
             return true;
