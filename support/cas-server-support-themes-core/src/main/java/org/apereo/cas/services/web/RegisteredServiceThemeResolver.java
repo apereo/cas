@@ -70,6 +70,12 @@ public class RegisteredServiceThemeResolver extends AbstractThemeResolver {
     @NonNull
     @Override
     public String resolveThemeName(final HttpServletRequest request) {
+        val rememberedTheme = request.getAttribute(casProperties.getObject().getTheme().getParamName());
+        if (rememberedTheme instanceof final String themeName && StringUtils.isNotBlank(themeName)) {
+            LOGGER.trace("Theme [{}] was already resolved for this request", themeName);
+            return themeName;
+        }
+
         val context = RequestContextHolder.getRequestContext();
         val serviceContext = WebUtils.getService(context);
         val service = FunctionUtils.doUnchecked(() -> authenticationRequestServiceSelectionStrategies.getObject().resolveService(serviceContext));

@@ -152,6 +152,17 @@ security have been strengthened across several flows.
 
 - The [REST-based view resolver](../ux/User-Interface-Views-External.html) no longer forwards credential-bearing request
   headers, such as `Cookie`, `Authorization` and `Proxy-Authorization`, to the external template endpoint.
+- Every resolved theme name is now matched against a real
+  [theme definition](../ux/User-Interface-Customization-Themes-Static.html) before it is honored, no matter how the
+  name was chosen. A name without a matching `[theme].properties` file, either at the root of a configured template
+  prefix or at the root of the classpath, is ignored and the next resolver in the chain applies. This closes a gap
+  where names taken from a request header, cookie or session value were used without any check, and it makes the
+  [Groovy](../ux/User-Interface-Customization-Themes-Groovy.html) and
+  [REST](../ux/User-Interface-Customization-Themes-REST.html) theme sources hold to the same contract as every other
+  theme: a script or endpoint that returns a name with no theme definition behind it now falls back to the default
+  theme rather than selecting a theme that does not exist.
+- A service theme is now resolved once per request rather than once per template lookup, so service resolution, access
+  strategy evaluation and theme file lookups no longer repeat for every fragment rendered on a page.
 
 ### LDAP Integrations
 
