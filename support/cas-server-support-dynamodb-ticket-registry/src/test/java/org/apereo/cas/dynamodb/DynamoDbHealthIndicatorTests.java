@@ -29,10 +29,7 @@ class DynamoDbHealthIndicatorTests extends BaseDynamoDbTicketRegistryFacilitator
     void verifyHealthOperation() {
         val health = dynamoDbHealthIndicator.health();
         val section = health.getDetails();
-        assertTrue(section.containsKey("proxyTicketsTable"));
-        assertTrue(section.containsKey("proxyGrantingTicketsTable"));
-        assertTrue(section.containsKey("serviceTicketsTable"));
-        assertTrue(section.containsKey("ticketGrantingTicketsTable"));
-        assertTrue(section.containsKey("transientSessionTicketsTable"));
+        dynamoDbTicketRegistryFacilitator.getTicketCatalog().findAll().forEach(ticketDefinition ->
+            assertTrue(section.containsKey(ticketDefinition.getProperties().getStorageName())));
     }
 }

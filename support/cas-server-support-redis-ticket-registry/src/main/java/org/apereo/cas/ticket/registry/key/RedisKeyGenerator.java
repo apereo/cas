@@ -5,7 +5,7 @@ import org.apereo.cas.ticket.Ticket;
 import org.apereo.cas.ticket.TicketCatalog;
 import com.google.common.base.Splitter;
 import lombok.Getter;
-import lombok.experimental.SuperBuilder;
+import lombok.SuperBuilder;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.util.Assert;

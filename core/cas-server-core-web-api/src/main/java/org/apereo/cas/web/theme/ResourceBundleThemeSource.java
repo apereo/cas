@@ -1,6 +1,7 @@
 package org.apereo.cas.web.theme;
 
 import module java.base;
+import org.apereo.cas.util.concurrent.CasReentrantLock;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
@@ -46,15 +47,16 @@ public class ResourceBundleThemeSource implements HierarchicalThemeSource, BeanC
     /** Map from theme name to Theme instance. */
     private final Map<String, Theme> themeCache = new ConcurrentHashMap<>();
 
+    private final CasReentrantLock themeCacheLock = new CasReentrantLock();
 
     @Override
     public void setParentThemeSource(@Nullable final ThemeSource parent) {
-        this.parentThemeSource = parent;
-        synchronized (this.themeCache) {
-            for (val theme : this.themeCache.values()) {
+        themeCacheLock.execute(() -> {
+            this.parentThemeSource = parent;
+            for (val theme : themeCache.values()) {
                 initParent(theme);
             }
-        }
+        });
     }
     
     /**
@@ -71,8 +73,6 @@ public class ResourceBundleThemeSource implements HierarchicalThemeSource, BeanC
         this.basenamePrefix = basenamePrefix != null ? basenamePrefix : StringUtils.EMPTY;
     }
     
-
-
     /**
      * This implementation returns a SimpleTheme instance, holding a
      * ResourceBundle-based MessageSource whose basename corresponds to
@@ -85,19 +85,20 @@ public class ResourceBundleThemeSource implements HierarchicalThemeSource, BeanC
     @Override
     @Nullable
     public Theme getTheme(final String themeName) {
-        var theme = this.themeCache.get(themeName);
+        val theme = themeCache.get(themeName);
         if (theme == null) {
-            synchronized (this.themeCache) {
-                theme = this.themeCache.get(themeName);
-                if (theme == null) {
+            return themeCacheLock.execute(() -> {
+                var cachedTheme = themeCache.get(themeName);
+                if (cachedTheme == null) {
                     val basename = this.basenamePrefix + themeName;
                     val messageSource = createMessageSource(basename);
-                    theme = new SimpleTheme(themeName, messageSource);
-                    initParent(theme);
-                    this.themeCache.put(themeName, theme);
+                    cachedTheme = new SimpleTheme(themeName, messageSource);
+                    initParent(cachedTheme);
+                    themeCache.put(themeName, cachedTheme);
                     LOGGER.debug("Theme created: name [{}], basename [{}]", themeName, basename);
                 }
-            }
+                return cachedTheme;
+            });
         }
         return theme;
     }
@@ -105,9 +106,9 @@ public class ResourceBundleThemeSource implements HierarchicalThemeSource, BeanC
     /**
      * Create a MessageSource for the given basename,
      * to be used as MessageSource for the corresponding theme.
-     * <p>Default implementation creates a ResourceBundleMessageSource.
+     * <p>Default implementation creates a {@link ResourceBundleMessageSource}.
      * for the given basename. A subclass could create a specifically
-     * configured ReloadableResourceBundleMessageSource, for example.
+     * configured {@link org.springframework.context.support.ReloadableResourceBundleMessageSource}, for example.
      * @param basename the basename to create a MessageSource for
      * @return the MessageSource
      * @see ResourceBundleMessageSource

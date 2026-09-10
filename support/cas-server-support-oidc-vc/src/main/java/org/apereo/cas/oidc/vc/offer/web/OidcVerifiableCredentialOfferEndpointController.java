@@ -10,6 +10,7 @@ import org.apereo.cas.support.oauth.util.OAuth20Utils;
 import org.apereo.cas.support.oauth.web.endpoints.BaseOAuth20Controller;
 import org.apereo.cas.util.LoggingUtils;
 import org.apereo.cas.util.RegexUtils;
+import org.apereo.cas.util.function.FunctionUtils;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.enums.ParameterIn;
@@ -126,16 +127,17 @@ public class OidcVerifiableCredentialOfferEndpointController extends BaseOAuth20
 
         Objects.requireNonNull(person, "Unable to resolve principal for credential offer transaction");
         val offer = credentialOfferService.create(clientId, person.getId(), request.credentialConfigurationIds());
-        val txCode = offer.getGrants().getPreAuthorizedCodeGrant().getTransactionCode().getValue();
+        val transactionId = offer.getTransactionId();
         val offerUri = getConfigurationContext().getCasProperties().getServer().getPrefix()
             + '/' + OidcConstants.BASE_OIDC_URL + '/' + OidcConstants.VC_CREDENTIAL_OFFER_URL
-            + '/' + txCode;
-        return ResponseEntity.ok(
-            Map.of(
-                "transactionId", txCode,
-                "credentialOfferUri", offerUri
-            )
-        );
+            + '/' + transactionId;
+
+        val body = new LinkedHashMap<String, Object>();
+        body.put("transactionId", transactionId);
+        body.put("credentialOfferUri", offerUri);
+        val transactionCode = offer.getGrants().getPreAuthorizedCodeGrant().getTransactionCode();
+        FunctionUtils.doIfNotNull(transactionCode, _ -> body.put("txCode", transactionCode.getValue()));
+        return ResponseEntity.ok(body);
     }
 
     public record OidcVerifiableCredentialTransactionRequest(

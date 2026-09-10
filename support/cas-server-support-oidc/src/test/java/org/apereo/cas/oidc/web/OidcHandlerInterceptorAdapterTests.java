@@ -69,7 +69,8 @@ class OidcHandlerInterceptorAdapterTests {
         @ParameterizedTest
         @ValueSource(strings = {
             "%6FidcAuthorize", "%6FidcAccessToken", "%6FidcToken", "%6FidcCiba",
-            "%6FidcVcCredentialOfferTransactions", "%6FidcPushAuthorize", "%72egister", "%63lientConfig"
+            "%6FidcVcCredentialOfferTransactions", "%6FidcVcPresentationRequest",
+            "%6FidcPushAuthorize", "%72egister", "%63lientConfig"
         })
         void verifyEncodedEndpointPathsRequireAuthentication(final String endpoint) throws Throwable {
             val clientId = UUID.randomUUID().toString();
@@ -84,6 +85,29 @@ class OidcHandlerInterceptorAdapterTests {
             request.addHeader(HttpHeaders.USER_AGENT, "MSIE");
             val response = new MockHttpServletResponse();
             assertFalse(oauthInterceptor.preHandle(request, response, new Object()));
+        }
+
+        @ParameterizedTest
+        @ValueSource(strings = {
+            OidcConstants.VC_PRESENTATION_REQUEST_URL, OidcConstants.VC_CREDENTIAL_OFFER_URL
+        })
+        void verifyWalletFacingLookupsRemainPubliclyAccessible(final String endpoint) throws Throwable {
+            val request = new MockHttpServletRequest();
+            request.setRequestURI("/cas/oidc/" + endpoint + '/' + UUID.randomUUID());
+            request.setMethod(HttpMethod.GET.name());
+            request.addHeader(HttpHeaders.USER_AGENT, "MSIE");
+            val response = new MockHttpServletResponse();
+            assertTrue(oauthInterceptor.preHandle(request, response, new Object()));
+        }
+
+        @Test
+        void verifyNonceEndpointRemainsPubliclyAccessible() throws Throwable {
+            val request = new MockHttpServletRequest();
+            request.setRequestURI("/cas/oidc/" + OidcConstants.VC_NONCE_URL);
+            request.setMethod(HttpMethod.POST.name());
+            request.addHeader(HttpHeaders.USER_AGENT, "MSIE");
+            val response = new MockHttpServletResponse();
+            assertTrue(oauthInterceptor.preHandle(request, response, new Object()));
         }
 
         @Test

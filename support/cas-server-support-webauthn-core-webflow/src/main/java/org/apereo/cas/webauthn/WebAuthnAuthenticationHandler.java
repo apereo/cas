@@ -9,6 +9,7 @@ import org.apereo.cas.authentication.handler.support.AbstractPreAndPostProcessin
 import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.monitor.Monitorable;
+import org.apereo.cas.util.http.HttpRequestUtils;
 import org.apereo.cas.web.support.WebUtils;
 import com.yubico.core.RegistrationStorage;
 import com.yubico.core.SessionManager;
@@ -63,6 +64,15 @@ public class WebAuthnAuthenticationHandler extends AbstractPreAndPostProcessingA
         val credentials = webAuthnCredentialRepository.getCredentialIdsForUsername(principal.getId());
         if (credentials.isEmpty()) {
             throw new AccountNotFoundException("Unable to locate registration record for " + uid);
+        }
+        val request = Objects.requireNonNull(HttpRequestUtils.getHttpServletRequestFromRequestAttributes(),
+            "Unable to locate the current HTTP request");
+        val userHandle = sessionManager.consumeSession(request, WebAuthnCredential.from(webAuthnCredential))
+            .orElseThrow(() -> new FailedLoginException("WebAuthn session token is invalid or expired"));
+        val username = webAuthnCredentialRepository.getUsernameForUserHandle(userHandle)
+            .orElseThrow(() -> new AccountNotFoundException("Unable to locate account for WebAuthn session token"));
+        if (!uid.equalsIgnoreCase(username)) {
+            throw new FailedLoginException("WebAuthn session token does not belong to the authenticated principal");
         }
         return createHandlerResult(webAuthnCredential, this.principalFactory.createPrincipal(uid));
     }

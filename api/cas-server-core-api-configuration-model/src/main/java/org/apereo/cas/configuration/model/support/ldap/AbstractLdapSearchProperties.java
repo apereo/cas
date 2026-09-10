@@ -6,6 +6,7 @@ import org.apereo.cas.configuration.support.RequiresModule;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
+import org.apache.commons.codec.digest.DigestUtils;
 
 /**
  * This is {@link AbstractLdapSearchProperties}.
@@ -60,4 +61,17 @@ public abstract class AbstractLdapSearchProperties extends AbstractLdapPropertie
      * Search handlers.
      */
     private List<LdapSearchEntryHandlersProperties> searchEntryHandlers = new ArrayList<>();
+
+    /**
+     * Build a stable lookup key that identifies the directory and subtree a connection
+     * factory talks to, so that a collection of factories can be addressed by their
+     * settings rather than by the identity of the configuration object that produced
+     * them. Settings that point at the same URL and base DN/filter produce the same key and
+     * are expected to share a single factory; a difference in either yields its own.
+     *
+     * @return the hashed lookup key
+     */
+    public String toStableIdentifier() {
+        return DigestUtils.sha256Hex(getLdapUrl() + '|' + baseDn + '|' + searchFilter);
+    }
 }

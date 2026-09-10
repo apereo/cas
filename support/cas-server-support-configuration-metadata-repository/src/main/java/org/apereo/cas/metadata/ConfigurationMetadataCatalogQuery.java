@@ -3,7 +3,7 @@ package org.apereo.cas.metadata;
 import module java.base;
 import lombok.Builder;
 import lombok.Getter;
-import lombok.experimental.SuperBuilder;
+import lombok.SuperBuilder;
 import org.springframework.boot.configurationmetadata.ConfigurationMetadataProperty;
 
 /**

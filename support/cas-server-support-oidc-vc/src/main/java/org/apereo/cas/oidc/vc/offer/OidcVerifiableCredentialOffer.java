@@ -7,8 +7,8 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
+import lombok.SuperBuilder;
 import lombok.ToString;
-import lombok.experimental.SuperBuilder;
 
 /**
  * This is {@link OidcVerifiableCredentialOffer}.
@@ -22,6 +22,13 @@ import lombok.experimental.SuperBuilder;
 public class OidcVerifiableCredentialOffer implements Serializable {
     @Serial
     private static final long serialVersionUID = -700734371623770443L;
+
+    /**
+     * Identifier of the issuance transaction backing this offer. It addresses the
+     * offer document itself and is never a substitute for the transaction code.
+     */
+    @JsonIgnore
+    private String transactionId;
 
     /**
      * The credential issuer identifier.

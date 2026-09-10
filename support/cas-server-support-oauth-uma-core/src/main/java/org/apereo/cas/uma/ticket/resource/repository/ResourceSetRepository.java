@@ -27,6 +27,19 @@ public interface ResourceSetRepository {
     Optional<ResourceSet> getById(long id);
 
     /**
+     * Gets a resource set by its identifier, client, and owner.
+     *
+     * @param id       the identifier
+     * @param clientId the client identifier
+     * @param owner    the owner
+     * @return the resource set
+     */
+    default Optional<ResourceSet> getById(final long id, final String clientId, final String owner) {
+        return getById(id).filter(resourceSet ->
+            Objects.equals(resourceSet.getClientId(), clientId) && Objects.equals(resourceSet.getOwner(), owner));
+    }
+
+    /**
      * Gets by owner.
      *
      * @param owner the owner

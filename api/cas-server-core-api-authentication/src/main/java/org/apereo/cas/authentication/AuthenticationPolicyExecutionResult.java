@@ -3,8 +3,8 @@ package org.apereo.cas.authentication;
 import module java.base;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import lombok.Getter;
+import lombok.SuperBuilder;
 import lombok.ToString;
-import lombok.experimental.SuperBuilder;
 
 /**
  * This is {@link AuthenticationPolicyExecutionResult}.

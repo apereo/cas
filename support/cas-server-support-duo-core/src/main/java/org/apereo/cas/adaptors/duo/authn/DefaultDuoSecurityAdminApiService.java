@@ -13,7 +13,6 @@ import org.apereo.cas.util.http.HttpClient;
 import org.apereo.cas.util.spring.SpringExpressionLanguageValueResolver;
 import com.duosecurity.client.Http;
 import lombok.EqualsAndHashCode;
-import lombok.RequiredArgsConstructor;
 import lombok.val;
 import okhttp3.OkHttpClient;
 import org.apache.commons.lang3.StringUtils;
@@ -32,13 +31,29 @@ import org.springframework.util.ReflectionUtils;
  * @since 6.4.0
  */
 @EqualsAndHashCode
-@RequiredArgsConstructor
 public class DefaultDuoSecurityAdminApiService implements DuoSecurityAdminApiService {
     private static final long TIMEOUT_SECONDS = 60;
 
     private final HttpClient httpClient;
 
     private final DuoSecurityMultifactorAuthenticationProperties duoProperties;
+
+    @EqualsAndHashCode.Exclude
+    private final OkHttpClient duoHttpClient;
+
+    public DefaultDuoSecurityAdminApiService(final HttpClient httpClient,
+                                             final DuoSecurityMultifactorAuthenticationProperties duoProperties) {
+        this.httpClient = httpClient;
+        this.duoProperties = duoProperties;
+        val factory = httpClient.httpClientFactory();
+        this.duoHttpClient = new OkHttpClient.Builder()
+            .connectTimeout(TIMEOUT_SECONDS, TimeUnit.SECONDS)
+            .writeTimeout(TIMEOUT_SECONDS, TimeUnit.SECONDS)
+            .readTimeout(TIMEOUT_SECONDS, TimeUnit.SECONDS)
+            .sslSocketFactory(factory.getSslContext().getSocketFactory(), (X509TrustManager) factory.getTrustManagers()[0])
+            .hostnameVerifier(factory.getHostnameVerifier())
+            .build();
+    }
 
     private static String getAdminEndpointUri(final String uri) {
         return "/admin/v1/" + uri;
@@ -136,25 +151,17 @@ public class DefaultDuoSecurityAdminApiService implements DuoSecurityAdminApiSer
         val resultingHost = host.getHost() + (host.getPort() > 0 ? ":" + host.getPort() : StringUtils.EMPTY);
         ReflectionUtils.setField(hostField, request, resultingHost);
 
-        val factory = httpClient.httpClientFactory();
-        val okHttpClient = new OkHttpClient.Builder()
-            .connectTimeout(TIMEOUT_SECONDS, TimeUnit.SECONDS)
-            .writeTimeout(TIMEOUT_SECONDS, TimeUnit.SECONDS)
-            .readTimeout(TIMEOUT_SECONDS, TimeUnit.SECONDS)
-            .sslSocketFactory(factory.getSslContext().getSocketFactory(), (X509TrustManager) factory.getTrustManagers()[0])
-            .hostnameVerifier(factory.getHostnameVerifier())
-            .build();
-
         request.addParam("offset", "0");
         request.addParam("limit", params.getOrDefault("limit", "1"));
         params.forEach(request::addParam);
         val ikey = resolver.resolve(duoProperties.getDuoAdminIntegrationKey());
         val skey = resolver.resolve(duoProperties.getDuoAdminSecretKey());
         request.signRequest(ikey, skey);
-        Optional.ofNullable(factory.getProxy()).ifPresent(proxy -> request.setProxy(proxy.getHostName(), proxy.getPort()));
         val httpClientField = ReflectionUtils.findField(request.getClass(), HttpClient.BEAN_NAME_HTTPCLIENT);
         ReflectionUtils.makeAccessible(Objects.requireNonNull(httpClientField));
-        ReflectionUtils.setField(httpClientField, request, okHttpClient);
+        ReflectionUtils.setField(httpClientField, request, duoHttpClient);
+        Optional.ofNullable(httpClient.httpClientFactory().getProxy())
+            .ifPresent(proxy -> request.setProxy(proxy.getHostName(), proxy.getPort()));
 
         prepareHttpRequest(request);
 

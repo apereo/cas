@@ -363,8 +363,9 @@ public class CasPasswordlessAuthenticationWebflowAutoConfiguration {
         @ConditionalOnMissingBean(name = "passwordlessDelegatedClientAuthenticationRequestCustomizer")
         @ConditionalOnClass(OidcClient.class)
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-        public PasswordlessDelegatedClientAuthenticationRequestCustomizer passwordlessDelegatedClientAuthenticationRequestCustomizer() {
-            return new PasswordlessDelegatedClientAuthenticationRequestCustomizer();
+        public PasswordlessDelegatedClientAuthenticationRequestCustomizer passwordlessDelegatedClientAuthenticationRequestCustomizer(
+            final CasConfigurationProperties casProperties) {
+            return new PasswordlessDelegatedClientAuthenticationRequestCustomizer(casProperties);
         }
         
         @Bean

@@ -4,24 +4,23 @@ import module java.base;
 import org.apereo.cas.config.CasOidcVerifiableCredentialsAutoConfiguration;
 import org.apereo.cas.oidc.AbstractOidcTests;
 import org.apereo.cas.oidc.OidcConstants;
-import org.apereo.cas.oidc.vc.offer.OidcVerifiableCredentialTransactionService;
 import org.apereo.cas.services.OidcRegisteredService;
 import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.support.oauth.OAuth20GrantTypes;
 import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
 import com.jayway.jsonpath.JsonPath;
 import lombok.val;
+import org.jspecify.annotations.Nullable;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.parallel.Execution;
 import org.junit.jupiter.api.parallel.ExecutionMode;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.ImportAutoConfiguration;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.web.servlet.ResultActions;
+import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
 import tools.jackson.databind.ObjectMapper;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
@@ -48,10 +47,6 @@ class OidcVerifiableCredentialOfferEndpointControllerTests {
         protected static final String OFFER_URL = "/cas/" + OidcConstants.BASE_OIDC_URL + '/' + OidcConstants.VC_CREDENTIAL_OFFER_URL;
 
         protected static final String TRANSACTIONS_URL = "/cas/" + OidcConstants.BASE_OIDC_URL + '/' + OidcConstants.VC_CREDENTIAL_OFFER_TRANSACTIONS_URL;
-
-        @Autowired
-        @Qualifier(OidcVerifiableCredentialTransactionService.BEAN_NAME)
-        protected OidcVerifiableCredentialTransactionService oidcVerifiableCredentialTransactionService;
     }
 
     @Nested
@@ -61,8 +56,12 @@ class OidcVerifiableCredentialOfferEndpointControllerTests {
             val registeredService = getOidcRegisteredService(UUID.randomUUID().toString());
             servicesManager.save(registeredService);
 
-            val ticket = oidcVerifiableCredentialTransactionService.issue(registeredService.getClientId(), "casuser", List.of("UniversityDegreeCredential"));
-            val responseBody = mockMvc.perform(get(OFFER_URL + '/' + ticket.getId())
+            val transaction = createOfferTransaction(registeredService);
+            val transactionId = JsonPath.read(transaction, "$.transactionId").toString();
+            val txCode = JsonPath.read(transaction, "$.txCode").toString();
+            assertNotEquals(transactionId, txCode);
+
+            val responseBody = mockMvc.perform(get(OFFER_URL + '/' + transactionId)
                     .contentType(MediaType.APPLICATION_JSON)
                     .with(withHttpRequestProcessor()))
                 .andExpect(status().isOk())
@@ -78,27 +77,54 @@ class OidcVerifiableCredentialOfferEndpointControllerTests {
                 .getResponse()
                 .getContentAsString();
 
-            val txCode = JsonPath.read(responseBody, "$.grants.['urn:ietf:params:oauth:grant-type:pre-authorized_code'].tx_code").toString();
-            assertNotNull(txCode);
-            val preAuthorizedCode = JsonPath.read(responseBody, "$.grants.['urn:ietf:params:oauth:grant-type:pre-authorized_code'].pre-authorized_code").toString();
+            assertFalse(responseBody.contains(txCode), "The credential offer must never disclose the transaction code");
+
+            val preAuthorizedCode = JsonPath.read(responseBody,
+                "$.grants.['urn:ietf:params:oauth:grant-type:pre-authorized_code'].pre-authorized_code").toString();
             assertNotNull(preAuthorizedCode);
 
-            mockMvc
-                .perform(post("/cas/" + OidcConstants.BASE_OIDC_URL + '/' + OidcConstants.TOKEN_URL)
-                    .secure(true)
-                    .with(withHttpRequestProcessor())
-                    .param(OAuth20Constants.CLIENT_ID, registeredService.getClientId())
-                    .param(OAuth20Constants.CLIENT_SECRET, registeredService.getClientSecrets().getFirst().getValue())
-                    .queryParam(OAuth20Constants.GRANT_TYPE, OAuth20GrantTypes.PRE_AUTHORIZED_CODE.getType())
-                    .queryParam(OidcConstants.PRE_AUTHORIZED_CODE, preAuthorizedCode)
-                    .queryParam(OidcConstants.TX_CODE, txCode)
-                )
+            mockMvc.perform(tokenExchange(registeredService, preAuthorizedCode, transactionId))
+                .andExpect(status().is4xxClientError());
+
+            mockMvc.perform(tokenExchange(registeredService, preAuthorizedCode, null))
+                .andExpect(status().is4xxClientError());
+
+            mockMvc.perform(tokenExchange(registeredService, preAuthorizedCode, txCode))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$." + OAuth20Constants.ACCESS_TOKEN).exists())
                 .andExpect(jsonPath("$." + OAuth20Constants.TOKEN_TYPE).exists())
                 .andExpect(jsonPath("$." + OAuth20Constants.EXPIRES_IN).exists())
                 .andExpect(jsonPath("$." + OidcConstants.C_NONCE).exists())
                 .andExpect(jsonPath("$." + OidcConstants.C_NONCE_EXPIRES_IN).exists());
+        }
+
+        private String createOfferTransaction(final OidcRegisteredService registeredService) throws Exception {
+            val requestBody = MAPPER.writeValueAsString(
+                Map.of("principal", "casuser",
+                    "credentialConfigurationIds", List.of("UniversityDegreeCredential")));
+            return mockMvc.perform(post(TRANSACTIONS_URL)
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .content(requestBody)
+                    .with(withHttpRequestProcessor())
+                    .param(OAuth20Constants.CLIENT_ID, registeredService.getClientId())
+                    .param(OAuth20Constants.CLIENT_SECRET, registeredService.getClientSecrets().getFirst().getValue()))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.transactionId").exists())
+                .andExpect(jsonPath("$.txCode").exists())
+                .andReturn().getResponse().getContentAsString();
+        }
+
+        private static MockHttpServletRequestBuilder tokenExchange(final OidcRegisteredService registeredService,
+                                                                   final String preAuthorizedCode,
+                                                                   @Nullable final String txCode) {
+            val builder = post("/cas/" + OidcConstants.BASE_OIDC_URL + '/' + OidcConstants.TOKEN_URL)
+                .secure(true)
+                .with(withHttpRequestProcessor())
+                .param(OAuth20Constants.CLIENT_ID, registeredService.getClientId())
+                .param(OAuth20Constants.CLIENT_SECRET, registeredService.getClientSecrets().getFirst().getValue())
+                .queryParam(OAuth20Constants.GRANT_TYPE, OAuth20GrantTypes.PRE_AUTHORIZED_CODE.getType())
+                .queryParam(OidcConstants.PRE_AUTHORIZED_CODE, preAuthorizedCode);
+            return txCode == null ? builder : builder.queryParam(OidcConstants.TX_CODE, txCode);
         }
 
         @Test
@@ -126,6 +152,7 @@ class OidcVerifiableCredentialOfferEndpointControllerTests {
                 )
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.transactionId").exists())
+                .andExpect(jsonPath("$.txCode").exists())
                 .andExpect(jsonPath("$.credentialOfferUri").exists());
         }
 
@@ -171,6 +198,50 @@ class OidcVerifiableCredentialOfferEndpointControllerTests {
                     .param(OAuth20Constants.CLIENT_SECRET, registeredService.getClientSecrets().getFirst().getValue())
                 )
                 .andExpect(status().isBadRequest());
+        }
+    }
+
+    @Nested
+    @TestPropertySource(properties = "cas.authn.oidc.vc.offer.transaction-code-enabled=false")
+    class TransactionCodeDisabledTests extends BaseTests {
+        @Test
+        void verifyOfferWithoutTransactionCodeCanBeRedeemed() throws Exception {
+            val registeredService = getOidcRegisteredService(UUID.randomUUID().toString());
+            servicesManager.save(registeredService);
+
+            val requestBody = MAPPER.writeValueAsString(
+                Map.of("principal", "casuser",
+                    "credentialConfigurationIds", List.of("UniversityDegreeCredential")));
+            val transaction = mockMvc.perform(post(TRANSACTIONS_URL)
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .content(requestBody)
+                    .with(withHttpRequestProcessor())
+                    .param(OAuth20Constants.CLIENT_ID, registeredService.getClientId())
+                    .param(OAuth20Constants.CLIENT_SECRET, registeredService.getClientSecrets().getFirst().getValue()))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.transactionId").exists())
+                .andExpect(jsonPath("$.txCode").doesNotExist())
+                .andReturn().getResponse().getContentAsString();
+            val transactionId = JsonPath.read(transaction, "$.transactionId").toString();
+
+            val responseBody = mockMvc.perform(get(OFFER_URL + '/' + transactionId)
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .with(withHttpRequestProcessor()))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.grants.['urn:ietf:params:oauth:grant-type:pre-authorized_code'].tx_code").doesNotExist())
+                .andReturn().getResponse().getContentAsString();
+            val preAuthorizedCode = JsonPath.read(responseBody,
+                "$.grants.['urn:ietf:params:oauth:grant-type:pre-authorized_code'].pre-authorized_code").toString();
+
+            mockMvc.perform(post("/cas/" + OidcConstants.BASE_OIDC_URL + '/' + OidcConstants.TOKEN_URL)
+                    .secure(true)
+                    .with(withHttpRequestProcessor())
+                    .param(OAuth20Constants.CLIENT_ID, registeredService.getClientId())
+                    .param(OAuth20Constants.CLIENT_SECRET, registeredService.getClientSecrets().getFirst().getValue())
+                    .queryParam(OAuth20Constants.GRANT_TYPE, OAuth20GrantTypes.PRE_AUTHORIZED_CODE.getType())
+                    .queryParam(OidcConstants.PRE_AUTHORIZED_CODE, preAuthorizedCode))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$." + OAuth20Constants.ACCESS_TOKEN).exists());
         }
     }
 

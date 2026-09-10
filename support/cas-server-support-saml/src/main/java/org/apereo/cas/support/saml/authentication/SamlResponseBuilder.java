@@ -46,15 +46,15 @@ public class SamlResponseBuilder {
     /**
      * Create response.
      *
-     * @param serviceId the service id
+     * @param recipient the URI of the intended recipient of this response
      * @param service   the service
      * @return the response
      */
-    public Response createResponse(final String serviceId, final WebApplicationService service) {
+    public Response createResponse(final String recipient, final WebApplicationService service) {
         val skew = Beans.newDuration(skewAllowance).toSeconds();
         return samlObjectBuilder.newResponse(
             Saml20HexRandomIdGenerator.INSTANCE.getNewString(),
-            ZonedDateTime.now(ZoneOffset.UTC).minusSeconds(skew), serviceId, service);
+            ZonedDateTime.now(ZoneOffset.UTC).minusSeconds(skew), recipient, service);
     }
 
     /**

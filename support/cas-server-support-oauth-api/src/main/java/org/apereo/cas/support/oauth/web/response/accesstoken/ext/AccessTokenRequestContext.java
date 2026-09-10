@@ -16,9 +16,9 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
+import lombok.SuperBuilder;
 import lombok.ToString;
 import lombok.With;
-import lombok.experimental.SuperBuilder;
 import lombok.extern.jackson.Jacksonized;
 import net.minidev.json.annotate.JsonIgnore;
 import org.pac4j.core.profile.UserProfile;
@@ -111,6 +111,8 @@ public class AccessTokenRequestContext implements Serializable {
     private final String authorizationDetails;
 
     private final String issuerState;
+
+    private final String preAuthorizationCode;
 
     @JsonIgnore
     public boolean isCodeToken() {

@@ -111,6 +111,26 @@ public interface CentralAuthenticationService {
     Ticket createProxyGrantingTicket(String serviceTicketId, AuthenticationResult authenticationResult) throws Throwable;
 
     /**
+     * Delegate a {@link TicketGrantingTicket} to a Service for proxying authentication to other
+     * Services, off a service ticket that has already been resolved and validated.
+     * <p>
+     * Validating a service ticket consumes it: a single-use ticket is expired and removed from the
+     * ticket registry by the time validation returns, so it can no longer be located by its
+     * identifier. Callers that must validate before issuing a proxy-granting ticket hold on to the
+     * ticket and pass it here instead. Proxy authorization for the service that owns the ticket is
+     * still enforced.
+     *
+     * @param serviceTicket        The service ticket that will delegate to a {@link TicketGrantingTicket}.
+     * @param authenticationResult The current authentication context before this ticket can be granted.
+     * @return Non -null ticket-granting ticket identifier that can grant {@link ServiceTicket} that proxy authentication.
+     * @throws Throwable the throwable
+     */
+    default Ticket createProxyGrantingTicket(final ServiceTicket serviceTicket,
+                                             final AuthenticationResult authenticationResult) throws Throwable {
+        return createProxyGrantingTicket(serviceTicket.getId(), authenticationResult);
+    }
+
+    /**
      * Gets ticket factory.
      *
      * @return the ticket factory

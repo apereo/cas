@@ -97,13 +97,12 @@ public class OidcIntrospectionEndpointController extends OAuth20IntrospectionEnd
     
     @Override
     protected ResponseEntity buildIntrospectionEntityResponse(final WebContext context,
-                                                              final OAuth20IntrospectionAccessTokenResponse introspect) {
-        val responseEntity = super.buildIntrospectionEntityResponse(context, introspect);
+                                                               final OAuth20IntrospectionAccessTokenResponse introspect,
+                                                               final OAuthRegisteredService registeredService) {
+        val responseEntity = super.buildIntrospectionEntityResponse(context, introspect, registeredService);
         return context.getRequestHeader(HttpHeaders.ACCEPT)
             .filter(headerValue -> Strings.CI.equalsAny(headerValue, OAuth20Constants.INTROSPECTION_JWT_HEADER_CONTENT_TYPE))
             .map(headerValue -> {
-                val registeredService = OAuth20Utils.getRegisteredOAuthServiceByClientId(
-                    getConfigurationContext().getServicesManager(), introspect.getClientId());
                 val signingAndEncryptionService = getConfigurationContext().getIntrospectionSigningAndEncryptionService();
                 return FunctionUtils.doAndHandle(() -> {
                     if (signingAndEncryptionService.shouldSignToken(registeredService) || signingAndEncryptionService.shouldEncryptToken(registeredService)) {

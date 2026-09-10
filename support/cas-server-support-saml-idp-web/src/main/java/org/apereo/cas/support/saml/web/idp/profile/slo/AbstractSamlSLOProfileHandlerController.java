@@ -5,6 +5,7 @@ import module java.xml;
 import org.apereo.cas.CasProtocolConstants;
 import org.apereo.cas.audit.AuditableContext;
 import org.apereo.cas.logout.slo.SingleLogoutUrl;
+import org.apereo.cas.services.UnauthorizedServiceException;
 import org.apereo.cas.support.saml.SamlIdPUtils;
 import org.apereo.cas.support.saml.SamlProtocolConstants;
 import org.apereo.cas.support.saml.SamlUtils;
@@ -13,6 +14,9 @@ import org.apereo.cas.support.saml.services.SamlRegisteredService;
 import org.apereo.cas.support.saml.services.idp.metadata.SamlRegisteredServiceMetadataAdaptor;
 import org.apereo.cas.support.saml.web.idp.profile.AbstractSamlIdPProfileHandlerController;
 import org.apereo.cas.support.saml.web.idp.profile.SamlProfileHandlerConfigurationContext;
+import org.apereo.cas.ticket.InvalidTicketException;
+import org.apereo.cas.ticket.TransientSessionTicket;
+import org.apereo.cas.ticket.TransientSessionTicketFactory;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.EncodingUtils;
 import org.apereo.cas.util.spring.beans.BeanSupplier;
@@ -20,6 +24,7 @@ import org.apereo.cas.web.support.WebUtils;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
 import org.jooq.lambda.Unchecked;
 import org.opensaml.messaging.context.MessageContext;
@@ -27,11 +32,11 @@ import org.opensaml.messaging.decoder.servlet.BaseHttpServletRequestXMLMessageDe
 import org.opensaml.saml.common.SAMLException;
 import org.opensaml.saml.common.SAMLObjectBuilder;
 import org.opensaml.saml.common.SignableSAMLObject;
-import org.opensaml.saml.common.binding.SAMLBindingSupport;
 import org.opensaml.saml.ext.saml2mdreqinit.RequestInitiator;
 import org.opensaml.saml.saml2.core.Extensions;
 import org.opensaml.saml.saml2.core.LogoutRequest;
 import org.opensaml.saml.saml2.core.LogoutResponse;
+import org.opensaml.saml.saml2.core.StatusCode;
 import org.springframework.core.annotation.AnnotationAwareOrderComparator;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -50,9 +55,36 @@ public abstract class AbstractSamlSLOProfileHandlerController extends AbstractSa
         super(context);
     }
 
-    private void handleLogoutResponse(final Pair<? extends SignableSAMLObject, MessageContext> pair) {
+    private void handleLogoutResponse(final HttpServletRequest request,
+                                      final Pair<? extends SignableSAMLObject, MessageContext> pair) throws Throwable {
         val logoutResponse = (LogoutResponse) pair.getKey();
-        LOGGER.debug("Received logout response from [{}]", SamlIdPUtils.getIssuerFromSamlObject(logoutResponse.getIssuer()));
+        val issuer = SamlIdPUtils.getIssuerFromSamlObject(logoutResponse);
+        val registeredService = verifySamlRegisteredService(issuer, request);
+        val facade = SamlRegisteredServiceMetadataAdaptor.get(
+            configurationContext.getSamlRegisteredServiceCachingMetadataResolver(), registeredService, issuer)
+            .orElseThrow(() -> UnauthorizedServiceException.denied("Cannot find metadata linked to %s".formatted(issuer)));
+        verifySamlProfileResponse(pair.getValue(), request, logoutResponse, facade, registeredService);
+
+        val status = logoutResponse.getStatus();
+        if (status == null || status.getStatusCode() == null
+            || !StatusCode.SUCCESS.equals(status.getStatusCode().getValue())) {
+            throw new SAMLException("SAML logout response did not contain a successful status");
+        }
+
+        val inResponseTo = logoutResponse.getInResponseTo();
+        if (StringUtils.isBlank(inResponseTo)) {
+            throw new SAMLException("SAML logout response is not correlated to a logout request");
+        }
+        val ticketId = TransientSessionTicketFactory.normalizeTicketId(inResponseTo);
+        val ticket = configurationContext.getTicketRegistry().getTicket(ticketId, TransientSessionTicket.class);
+        val relyingParty = ticket != null
+            ? ticket.getProperty(SamlIdPProfileSingleLogoutMessageCreator.PROPERTY_NAME_RELYING_PARTY, String.class)
+            : null;
+        if (ticket == null || ticket.isExpired() || !Objects.equals(issuer, relyingParty)
+            || configurationContext.getTicketRegistry().deleteTicket(ticketId) == 0) {
+            throw new InvalidTicketException(ticketId);
+        }
+        LOGGER.debug("Received correlated logout response from [{}]", issuer);
         getConfigurationContext().getOpenSamlConfigBean().logObject(logoutResponse);
     }
 
@@ -78,15 +110,10 @@ public abstract class AbstractSamlSLOProfileHandlerController extends AbstractSa
         accessResult.throwExceptionIfNeeded();
         LOGGER.trace("SAML registered service tied to [{}] is [{}]", entityId, registeredService);
 
-        ensureLogoutRequestIsSignedIfNecessary(registeredService, messageContext);
-
         val facade = SamlRegisteredServiceMetadataAdaptor.get(
             configurationContext.getSamlRegisteredServiceCachingMetadataResolver(), registeredService, entityId).orElseThrow();
-        if (SAMLBindingSupport.isMessageSigned(messageContext)) {
-            LOGGER.trace("Verifying signature on the SAML logout request for [{}]", entityId);
-            configurationContext.getSamlObjectSignatureValidator()
-                .verifySamlProfileRequest(logoutRequest, facade, request, messageContext);
-        }
+        verifySamlProfileRequest(messageContext, request, logoutRequest, facade, registeredService,
+            isLogoutRequestSignatureRequired(registeredService));
         configurationContext.getOpenSamlConfigBean().logObject(logoutRequest);
 
         val logoutUrls = SingleLogoutUrl.from(registeredService);
@@ -121,20 +148,12 @@ public abstract class AbstractSamlSLOProfileHandlerController extends AbstractSa
         requestDispatcher.forward(request, response);
     }
 
-    protected void ensureLogoutRequestIsSignedIfNecessary(final SamlRegisteredService registeredService,
-                                                          final MessageContext messageContext) throws SAMLException {
-        var ensureSignature = false;
+    protected boolean isLogoutRequestSignatureRequired(final SamlRegisteredService registeredService) {
         if (registeredService.getSignLogoutRequest().isUndefined()) {
             val logout = configurationContext.getCasProperties().getAuthn().getSamlIdp().getLogout();
-            ensureSignature = logout.isForceSignedLogoutRequests();
-        } else {
-            ensureSignature = registeredService.getSignLogoutRequest().isTrue();
+            return logout.isForceSignedLogoutRequests();
         }
-
-        if (ensureSignature && !SAMLBindingSupport.isMessageSigned(messageContext)) {
-            throw new SAMLException("Logout request is not signed but should be for service %s"
-                .formatted(registeredService.getServiceId()));
-        }
+        return registeredService.getSignLogoutRequest().isTrue();
     }
 
     protected <T> T buildSamlObject(final QName qname, final Class<T> clazz) {
@@ -158,7 +177,7 @@ public abstract class AbstractSamlSLOProfileHandlerController extends AbstractSa
         if (result.isPresent()) {
             val pair = result.get();
             if (pair.getKey() instanceof LogoutResponse) {
-                handleLogoutResponse(pair);
+                handleLogoutResponse(request, pair);
             } else if (pair.getKey() instanceof LogoutRequest) {
                 handleLogoutRequest(response, request, pair, logoutRequestBinding);
             }

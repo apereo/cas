@@ -23,6 +23,7 @@ import org.apereo.cas.ticket.ServiceTicket;
 import org.apereo.cas.ticket.Ticket;
 import org.apereo.cas.ticket.UnsatisfiedAuthenticationContextTicketValidationException;
 import org.apereo.cas.util.LoggingUtils;
+import org.apereo.cas.validation.AbstractCasProtocolValidationSpecification;
 import org.apereo.cas.validation.Assertion;
 import org.apereo.cas.validation.CasProtocolValidationSpecification;
 import org.apereo.cas.validation.UnauthorizedServiceTicketValidationException;
@@ -34,7 +35,6 @@ import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.text.StringEscapeUtils;
 import org.apereo.inspektr.common.web.ClientInfoHolder;
-import org.springframework.web.bind.ServletRequestDataBinder;
 import org.springframework.web.servlet.ModelAndView;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -72,14 +72,13 @@ public abstract class AbstractServiceValidateController extends AbstractDelegate
         }
     }
 
-    protected Ticket handleProxyGrantingTicketDelivery(final String serviceTicketId, final Credential credential) throws Throwable {
-        val serviceTicket = serviceValidateConfigurationContext.getTicketRegistry().getTicket(serviceTicketId, ServiceTicket.class);
+    protected Ticket handleProxyGrantingTicketDelivery(final ServiceTicket serviceTicket, final Credential credential) throws Throwable {
         val authenticationResult = serviceValidateConfigurationContext.getAuthenticationSystemSupport()
             .finalizeAuthenticationTransaction(serviceTicket.getService(), credential);
         val proxyGrantingTicket = serviceValidateConfigurationContext.getCentralAuthenticationService()
-            .createProxyGrantingTicket(serviceTicketId, authenticationResult);
+            .createProxyGrantingTicket(serviceTicket, authenticationResult);
         LOGGER.debug("Generated proxy-granting ticket [{}] off of service ticket [{}] and credential [{}]",
-            proxyGrantingTicket.getId(), serviceTicketId, credential);
+            proxyGrantingTicket.getId(), serviceTicket.getId(), credential);
         return proxyGrantingTicket;
     }
 
@@ -111,7 +110,9 @@ public abstract class AbstractServiceValidateController extends AbstractDelegate
             return generateErrorView(CasProtocolConstants.ERROR_CODE_UNAUTHORIZED_SERVICE, null, request, service);
         } catch (final Throwable e) {
             LoggingUtils.warn(LOGGER, e);
-            return generateErrorView(CasProtocolConstants.ERROR_CODE_INVALID_REQUEST, StringUtils.EMPTY, request, service);
+            val description = getTicketValidationErrorDescription(
+                CasProtocolConstants.ERROR_CODE_INTERNAL_ERROR, new Object[]{serviceTicketId}, request);
+            return generateErrorView(CasProtocolConstants.ERROR_CODE_INTERNAL_ERROR, description, request, service);
         }
     }
 
@@ -149,23 +150,47 @@ public abstract class AbstractServiceValidateController extends AbstractDelegate
         return null;
     }
 
-    protected void initBinder(final HttpServletRequest request, final ServletRequestDataBinder binder) {
-        if (serviceValidateConfigurationContext.getCasProperties().getSso().isRenewAuthnEnabled()) {
-            binder.setRequiredFields(CasProtocolConstants.PARAMETER_RENEW);
-        }
+    protected void prepareForTicketValidation(final HttpServletRequest request, final WebApplicationService service, final String serviceTicketId) {
     }
 
-    protected void prepareForTicketValidation(final HttpServletRequest request, final WebApplicationService service, final String serviceTicketId) {
+    protected String getValidationSpecificationErrorCode(final HttpServletRequest request, final Assertion assertion) {
+        return AbstractCasProtocolValidationSpecification.isRenewRequested(request) && !assertion.isFromNewLogin()
+            ? CasProtocolConstants.ERROR_CODE_INVALID_TICKET
+            : CasProtocolConstants.ERROR_CODE_INVALID_TICKET_SPEC;
     }
 
     protected ModelAndView handleTicketValidation(final HttpServletRequest request,
                                                   final HttpServletResponse response,
                                                   final WebApplicationService service, final String serviceTicketId) throws Throwable {
-        var proxyGrantingTicket = (Ticket) null;
         val serviceCredential = getServiceCredentialsFromRequest(service, request);
-        if (serviceCredential != null) {
+        /*
+         * Hold on to the service ticket before it is validated. Validation consumes the ticket, so a
+         * single-use ticket can no longer be resolved by its identifier once validation returns, yet
+         * it is what a proxy-granting ticket must be issued from. Nothing is contacted and no ticket
+         * is issued here; the proxy callback and the proxy-granting ticket both wait until the ticket,
+         * the validation specification and the authentication context have all been accepted.
+         */
+        val proxyGrantingTicketIssuer = serviceCredential != null
+            ? serviceValidateConfigurationContext.getTicketRegistry().getTicket(serviceTicketId, ServiceTicket.class)
+            : null;
+
+        val assertion = validateServiceTicket(service, serviceTicketId);
+        if (!validateAssertion(request, serviceTicketId, assertion, service)) {
+            val code = getValidationSpecificationErrorCode(request, assertion);
+            val description = getTicketValidationErrorDescription(code, new Object[]{serviceTicketId}, request);
+            return generateErrorView(code, description, request, service);
+        }
+
+        val ctxResult = serviceValidateConfigurationContext.getRequestedContextValidator()
+            .validateAuthenticationContext(assertion, request, response);
+        if (!ctxResult.isSuccess()) {
+            throw new UnsatisfiedAuthenticationContextTicketValidationException(assertion.getService());
+        }
+
+        var proxyGrantingTicket = (Ticket) null;
+        if (serviceCredential != null && proxyGrantingTicketIssuer != null) {
             try {
-                proxyGrantingTicket = handleProxyGrantingTicketDelivery(serviceTicketId, serviceCredential);
+                proxyGrantingTicket = handleProxyGrantingTicketDelivery(proxyGrantingTicketIssuer, serviceCredential);
             } catch (final AuthenticationException e) {
                 LOGGER.warn("Failed to authenticate service credential [{}]", serviceCredential);
                 val description = getTicketValidationErrorDescription(CasProtocolConstants.ERROR_CODE_INVALID_PROXY_CALLBACK,
@@ -182,17 +207,6 @@ public abstract class AbstractServiceValidateController extends AbstractDelegate
                 val description = getTicketValidationErrorDescription(e.getCode(), new Object[]{serviceCredential.getId()}, request);
                 return generateErrorView(e.getCode(), description, request, service);
             }
-        }
-        val assertion = validateServiceTicket(service, serviceTicketId);
-        if (!validateAssertion(request, serviceTicketId, assertion, service)) {
-            val description = getTicketValidationErrorDescription(CasProtocolConstants.ERROR_CODE_INVALID_TICKET, new Object[]{serviceTicketId}, request);
-            return generateErrorView(CasProtocolConstants.ERROR_CODE_INVALID_TICKET, description, request, service);
-        }
-
-        val ctxResult = serviceValidateConfigurationContext.getRequestedContextValidator()
-            .validateAuthenticationContext(assertion, request, response);
-        if (!ctxResult.isSuccess()) {
-            throw new UnsatisfiedAuthenticationContextTicketValidationException(assertion.getService());
         }
 
         var proxyIou = StringUtils.EMPTY;
@@ -248,10 +262,6 @@ public abstract class AbstractServiceValidateController extends AbstractDelegate
     private boolean validateAssertion(final HttpServletRequest request, final String serviceTicketId,
                                       final Assertion assertion, final Service service) {
         for (val spec : serviceValidateConfigurationContext.getValidationSpecifications()) {
-            spec.reset();
-            val binder = new ServletRequestDataBinder(spec, "validationSpecification");
-            initBinder(request, binder);
-            binder.bind(request);
             if (!spec.isSatisfiedBy(assertion, request)) {
                 LOGGER.warn("Service ticket [{}] does not satisfy validation specification.", serviceTicketId);
                 return false;

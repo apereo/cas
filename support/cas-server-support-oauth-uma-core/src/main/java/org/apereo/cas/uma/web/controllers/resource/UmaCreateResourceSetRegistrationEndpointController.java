@@ -60,6 +60,7 @@ public class UmaCreateResourceSetRegistrationEndpointController extends BaseUmaE
             }
 
             val resourceSet = umaRequest.asResourceSet(profileResult);
+            resourceSet.setId(0);
             resourceSet.validate(profileResult);
 
             val saved = getUmaConfigurationContext().getUmaResourceSetRepository().save(resourceSet);
@@ -67,7 +68,7 @@ public class UmaCreateResourceSetRegistrationEndpointController extends BaseUmaE
 
             val model = CollectionUtils.wrap("entity", saved,
                 "code", HttpStatus.CREATED,
-                "resourceId", saved.getId(),
+                "resourceId", String.valueOf(saved.getId()),
                 "location", location);
             return new ResponseEntity<>(model, HttpStatus.OK);
         } catch (final Exception e) {

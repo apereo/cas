@@ -46,7 +46,10 @@ public class MongoDbSamlRegisteredServiceMetadataResolver extends BaseSamlRegist
     @Override
     public Collection<? extends MetadataResolver> resolve(final SamlRegisteredService service, final CriteriaSet criteriaSet) {
         LOGGER.debug("Fetching metadata documents from collection [{}]", this.collectionName);
-        val documents = mongoTemplate.findAll(SamlMetadataDocument.class, this.collectionName);
+        val documents = getEntityIdFromCriteriaSet(criteriaSet)
+            .map(entityId -> mongoTemplate.find(Query.query(Criteria.where("entityId").is(entityId)),
+                SamlMetadataDocument.class, this.collectionName))
+            .orElseGet(() -> mongoTemplate.findAll(SamlMetadataDocument.class, this.collectionName));
         return documents
             .stream()
             .map(doc -> buildMetadataResolverFrom(service, doc))
@@ -67,7 +70,7 @@ public class MongoDbSamlRegisteredServiceMetadataResolver extends BaseSamlRegist
 
     @Override
     public SamlMetadataDocument store(final SamlMetadataDocument document) {
-        return mongoTemplate.save(document.assignIdIfNecessary(), this.collectionName);
+        return mongoTemplate.save(prepareMetadataDocument(document), this.collectionName);
     }
 
     @Override

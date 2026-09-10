@@ -20,6 +20,8 @@
     "--cas.authn.attribute-repository.stub.attributes.score=95.5",
     "--cas.authn.attribute-repository.stub.attributes.roles=admin,user",
 
+    "--cas.authn.oidc.vc.offer.transaction-code-enabled=false",
+
     "--cas.authn.oidc.core.accepted-issuers-pattern=.*",
     "--cas.authn.oidc.core.issuer=http://host.docker.internal:8080/cas/oidc",
     "--cas.authn.oidc.jwks.file-system.jwks-file=file:${#systemProperties['java.io.tmpdir']}/keystore.jwks",

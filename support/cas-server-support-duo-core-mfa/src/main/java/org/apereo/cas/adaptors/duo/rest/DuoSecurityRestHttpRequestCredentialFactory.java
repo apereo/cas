@@ -71,7 +71,10 @@ public class DuoSecurityRestHttpRequestCredentialFactory implements RestHttpRequ
                                                final Authentication authentication,
                                                final MultifactorAuthenticationProvider provider) {
         val principal = authentication.getPrincipal();
-        val credential = new DuoSecurityDirectCredential(principal, provider.getId());
+        val passcode = requestBody != null ? requestBody.getFirst(PARAMETER_NAME_PASSCODE) : null;
+        val credential = StringUtils.isNotBlank(passcode)
+            ? new DuoSecurityPasscodeCredential(principal.getId(), Objects.requireNonNull(passcode), provider.getId())
+            : new DuoSecurityDirectCredential(principal, provider.getId());
         val credentialMetadata = new BasicCredentialMetadata(credential);
         credentialMetadata.setTenant(tenantExtractor.extract(request).map(TenantDefinition::getId).orElse(null));
         return List.of(prepareCredential(request, credential));

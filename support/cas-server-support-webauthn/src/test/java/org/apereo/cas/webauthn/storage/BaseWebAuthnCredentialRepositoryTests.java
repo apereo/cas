@@ -78,6 +78,7 @@ public abstract class BaseWebAuthnCredentialRepositoryTests {
         assertFalse(webAuthnCredentialRepository.getUserHandleForUsername(id.toUpperCase(Locale.ENGLISH)).isEmpty());
         assertFalse(webAuthnCredentialRepository.getUsernameForUserHandle(ba).isEmpty());
         assertFalse(webAuthnCredentialRepository.lookup(ba, ba).isEmpty());
+        assertTrue(webAuthnCredentialRepository.lookup(ba, ByteArray.fromBase64Url(RandomUtils.randomAlphabetic(8))).isEmpty());
         assertFalse(webAuthnCredentialRepository.lookupAll(ba).isEmpty());
         assertTrue(webAuthnCredentialRepository.stream().findAny().isPresent());
 

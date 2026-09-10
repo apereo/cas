@@ -444,6 +444,7 @@ class CasOAuth20Configuration {
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public OAuth20TokenGenerator oauthTokenGenerator(
+            final ConfigurableApplicationContext applicationContext,
             @Qualifier(PrincipalResolver.BEAN_NAME_PRINCIPAL_RESOLVER)
             final PrincipalResolver principalResolver,
             @Qualifier(OAuth20ProfileScopeToAttributesFilter.BEAN_NAME)
@@ -454,7 +455,7 @@ class CasOAuth20Configuration {
             final TicketRegistry ticketRegistry,
             final CasConfigurationProperties casProperties) {
             return new OAuth20DefaultTokenGenerator(ticketFactory, ticketRegistry,
-                principalResolver, profileScopeToAttributesFilter, casProperties);
+                principalResolver, profileScopeToAttributesFilter, applicationContext, casProperties);
         }
 
         @ConditionalOnMissingBean(name = "accessTokenResponseGenerator")

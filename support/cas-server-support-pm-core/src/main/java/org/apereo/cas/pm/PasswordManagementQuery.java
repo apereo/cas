@@ -6,9 +6,9 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
+import lombok.SuperBuilder;
 import lombok.ToString;
 import lombok.With;
-import lombok.experimental.SuperBuilder;
 import org.jspecify.annotations.NonNull;
 import org.springframework.util.LinkedMultiValueMap;
 

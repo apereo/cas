@@ -123,7 +123,7 @@ class UserAuthenticationResourceTests {
         val builder = createAuthenticationResultBuilder();
         builder.collect(CoreAuthenticationTestUtils.getAuthentication());
         val result = builder.build();
-        when(authenticationSupport.finalizeAuthenticationTransaction(any(), anyCollection())).thenReturn(result);
+        when(authenticationSupport.finalizeAllAuthenticationTransactions(any(), any())).thenReturn(result);
         when(authenticationSupport.handleInitialAuthenticationTransaction(any(), any())).thenReturn(builder);
         when(requestedContextValidator.validateAuthenticationContext(any(), any(), any(), any(), any()))
             .thenReturn(AuthenticationContextValidationResult.builder().success(false).build());
@@ -158,7 +158,7 @@ class UserAuthenticationResourceTests {
         mockMvc.perform(post(TICKETS_RESOURCE_URL)
                 .param("username", "casuser")
                 .param("password", "Mellon"))
-            .andExpect(status().isInternalServerError());
+            .andExpect(status().isUnauthorized());
     }
 
     @Test

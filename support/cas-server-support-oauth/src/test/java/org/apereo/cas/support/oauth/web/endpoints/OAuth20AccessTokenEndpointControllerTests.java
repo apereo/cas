@@ -50,6 +50,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import java.security.cert.X509Certificate;
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.request;
@@ -205,6 +206,7 @@ class OAuth20AccessTokenEndpointControllerTests {
         void verifyAccessTokenToAccessTokenExchange() throws Throwable {
             val service = getRegisteredService(UUID.randomUUID().toString(), OAuth20GrantTypes.TOKEN_EXCHANGE);
             val subjectToken = getAccessToken(service.getServiceId(), service.getClientId());
+            when(subjectToken.getScopes()).thenReturn(Set.of("create", "update"));
             service.setScopes(Set.of("create", "update"));
             servicesManager.save(service);
             ticketRegistry.addTicket(subjectToken);
@@ -229,6 +231,7 @@ class OAuth20AccessTokenEndpointControllerTests {
         void verifyAccessTokenToJWTExchange() throws Throwable {
             val service = getRegisteredService(UUID.randomUUID().toString(), OAuth20GrantTypes.TOKEN_EXCHANGE);
             val subjectToken = getAccessToken(service.getServiceId(), service.getClientId());
+            when(subjectToken.getScopes()).thenReturn(Set.of("create", "update"));
             service.setScopes(Set.of("create", "update"));
             servicesManager.save(service);
             ticketRegistry.addTicket(subjectToken);

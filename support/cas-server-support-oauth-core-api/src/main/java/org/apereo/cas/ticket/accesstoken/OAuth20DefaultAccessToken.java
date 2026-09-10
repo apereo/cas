@@ -14,6 +14,7 @@ import com.fasterxml.jackson.annotation.Nulls;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.jspecify.annotations.Nullable;
 
 /**
  * An OAuth access token implementation.
@@ -27,6 +28,11 @@ public class OAuth20DefaultAccessToken extends BaseOAuth20Token implements OAuth
     @Serial
     private static final long serialVersionUID = 2339545346159721563L;
 
+    @Setter
+    @Getter
+    @JsonInclude(JsonInclude.Include.NON_EMPTY)
+    private List<String> credentialConfigurationIds;
+    
     @Setter
     @Getter
     private String idToken;
@@ -46,8 +52,8 @@ public class OAuth20DefaultAccessToken extends BaseOAuth20Token implements OAuth
                                      final String token,
                                      @JsonSetter(nulls = Nulls.AS_EMPTY)
                                      final Collection<String> scopes,
-                                     final String codeChallenge,
-                                     final String codeChallengeMethod,
+                                     @Nullable final String codeChallenge,
+                                     @Nullable final String codeChallengeMethod,
                                      final String clientId,
                                      @JsonSetter(nulls = Nulls.AS_EMPTY)
                                      final Map<String, Map<String, Object>> requestClaims,

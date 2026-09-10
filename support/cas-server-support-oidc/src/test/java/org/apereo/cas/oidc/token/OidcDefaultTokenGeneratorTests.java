@@ -3,6 +3,7 @@ package org.apereo.cas.oidc.token;
 import module java.base;
 import org.apereo.cas.oidc.AbstractOidcTests;
 import org.apereo.cas.oidc.OidcConstants;
+import org.apereo.cas.oidc.ticket.OidcCibaRequest;
 import org.apereo.cas.services.OidcBackchannelTokenDeliveryModes;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.support.oauth.OAuth20Constants;
@@ -10,6 +11,7 @@ import org.apereo.cas.support.oauth.OAuth20GrantTypes;
 import org.apereo.cas.support.oauth.OAuth20ResponseTypes;
 import org.apereo.cas.support.oauth.authenticator.Authenticators;
 import org.apereo.cas.support.oauth.web.response.accesstoken.ext.AccessTokenRequestContext;
+import org.apereo.cas.ticket.InvalidTicketException;
 import org.apereo.cas.ticket.accesstoken.OAuth20AccessToken;
 import org.apereo.cas.ticket.idtoken.IdTokenGenerationContext;
 import org.apereo.cas.ticket.refreshtoken.OAuth20RefreshToken;
@@ -71,5 +73,33 @@ class OidcDefaultTokenGeneratorTests extends AbstractOidcTests {
         assertEquals(cibaRequest.getEncodedId(), oidcIdToken.claims().getStringClaimValue(OidcConstants.CLAIM_AUTH_REQ_ID));
         assertTrue(oidcIdToken.claims().hasClaim(OidcConstants.CLAIM_AT_HASH));
         assertTrue(oidcIdToken.claims().hasClaim(OidcConstants.CLAIM_RT_HASH));
+    }
+
+    @Test
+    void verifyCibaPollRequestIsConsumed() throws Throwable {
+        val registeredService = getOidcRegisteredService(UUID.randomUUID().toString());
+        registeredService.setBackchannelTokenDeliveryMode(OidcBackchannelTokenDeliveryModes.POLL.getMode());
+        registeredService.setSupportedGrantTypes(Set.of(OAuth20GrantTypes.CIBA.getType()));
+        registeredService.setBackchannelClientNotificationEndpoint("https://localhost:1234");
+        servicesManager.save(registeredService);
+
+        val cibaRequest = newCibaRequest(registeredService,
+            RegisteredServiceTestUtils.getPrincipal(UUID.randomUUID().toString()));
+        ticketRegistry.updateTicket(cibaRequest.markTicketReady());
+        val accessTokenContext = AccessTokenRequestContext.builder()
+            .grantType(OAuth20GrantTypes.CIBA)
+            .responseType(OAuth20ResponseTypes.NONE)
+            .registeredService(registeredService)
+            .generateRefreshToken(true)
+            .cibaRequestId(cibaRequest.getEncodedId())
+            .authentication(cibaRequest.getAuthentication())
+            .service(RegisteredServiceTestUtils.getService())
+            .scopes(Set.of(OidcConstants.StandardScopes.OPENID.getScope()))
+            .build();
+
+        val result = oauthTokenGenerator.generate(accessTokenContext);
+        assertNotNull(result);
+        assertThrows(InvalidTicketException.class,
+            () -> ticketRegistry.getTicket(cibaRequest.getId(), OidcCibaRequest.class));
     }
 }

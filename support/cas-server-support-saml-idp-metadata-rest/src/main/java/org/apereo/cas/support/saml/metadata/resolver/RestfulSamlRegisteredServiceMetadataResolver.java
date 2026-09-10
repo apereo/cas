@@ -56,19 +56,7 @@ public class RestfulSamlRegisteredServiceMetadataResolver extends BaseSamlRegist
     public Collection<? extends MetadataResolver> resolve(final SamlRegisteredService service, final CriteriaSet criteriaSet) {
         HttpResponse response = null;
         try {
-            val rest = samlIdPProperties.getMetadata().getRest();
-            val headers = CollectionUtils.<String, String>wrap(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_XML_VALUE);
-            headers.putAll(rest.getHeaders());
-
-            val exec = HttpExecutionRequest.builder()
-                .basicAuthPassword(rest.getBasicAuthPassword())
-                .basicAuthUsername(rest.getBasicAuthUsername())
-                .method(HttpMethod.valueOf(rest.getMethod().toUpperCase(Locale.ENGLISH).trim()))
-                .url(rest.getUrl())
-                .parameters(CollectionUtils.wrap("entityId", service.getServiceId()))
-                .maximumRetryAttempts(rest.getMaximumRetryAttempts())
-                .headers(headers)
-                .build();
+            val exec = buildMetadataResolveRequest(service, criteriaSet);
             response = HttpUtils.execute(exec);
             if (response != null && HttpStatus.resolve(response.getCode()).is2xxSuccessful()) {
                 try (val content = ((HttpEntityContainer) response).getEntity().getContent()) {
@@ -84,6 +72,23 @@ public class RestfulSamlRegisteredServiceMetadataResolver extends BaseSamlRegist
             HttpUtils.close(response);
         }
         return new ArrayList<>();
+    }
+
+    protected HttpExecutionRequest buildMetadataResolveRequest(final SamlRegisteredService service,
+                                                               final CriteriaSet criteriaSet) {
+        val rest = samlIdPProperties.getMetadata().getRest();
+        val headers = CollectionUtils.<String, String>wrap(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_XML_VALUE);
+        headers.putAll(rest.getHeaders());
+        val entityId = getEntityIdFromCriteriaSet(criteriaSet).orElseGet(service::getServiceId);
+        return HttpExecutionRequest.builder()
+            .basicAuthPassword(rest.getBasicAuthPassword())
+            .basicAuthUsername(rest.getBasicAuthUsername())
+            .method(HttpMethod.valueOf(rest.getMethod().toUpperCase(Locale.ENGLISH).trim()))
+            .url(rest.getUrl())
+            .parameters(CollectionUtils.wrap("entityId", entityId))
+            .maximumRetryAttempts(rest.getMaximumRetryAttempts())
+            .headers(headers)
+            .build();
     }
 
     @Override

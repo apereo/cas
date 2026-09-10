@@ -42,6 +42,8 @@ class SamlIdPSessionManagerTests extends BaseSamlIdPConfigurationTests {
 
             request.setParameter(SamlIdPConstants.AUTHN_REQUEST_ID, authnRequest.getID());
             assertDoesNotThrow(() -> sessionManager.fetch(webContext, AuthnRequest.class).orElseThrow());
+            assertDoesNotThrow(() -> sessionManager.fetchAndRemove(webContext, AuthnRequest.class).orElseThrow());
+            assertTrue(sessionManager.fetch(webContext, AuthnRequest.class).isEmpty());
         }
     }
 

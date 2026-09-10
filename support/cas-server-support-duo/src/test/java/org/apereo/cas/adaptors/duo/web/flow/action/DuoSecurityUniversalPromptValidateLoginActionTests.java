@@ -164,11 +164,14 @@ class DuoSecurityUniversalPromptValidateLoginActionTests {
 
             val code = UUID.randomUUID().toString();
             context.setParameter(DuoSecurityUniversalPromptValidateLoginAction.REQUEST_PARAMETER_CODE, code);
+            context.setParameter(BrowserStorage.PARAMETER_BROWSER_STORAGE, payload);
+            context.setParameter(DuoSecurityUniversalPromptValidateLoginAction.REQUEST_PARAMETER_STATE, "invalid-state");
+            var result = duoUniversalPromptValidateLoginAction.execute(context);
+            assertEquals(CasWebflowConstants.TRANSITION_ID_ERROR, result.getId());
+
             context.setParameter(DuoSecurityUniversalPromptValidateLoginAction.REQUEST_PARAMETER_STATE,
                 attributes.get(DuoSecurityAuthenticationService.class.getSimpleName()).toString());
-            context.setParameter(BrowserStorage.PARAMETER_BROWSER_STORAGE, payload);
-
-            val result = duoUniversalPromptValidateLoginAction.execute(context);
+            result = duoUniversalPromptValidateLoginAction.execute(context);
             assertNotNull(result);
             assertEquals("targetDestination", result.getId());
             assertNotNull(WebUtils.getAuthentication(context));

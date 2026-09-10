@@ -62,6 +62,7 @@ public class OAuth20AccessTokenResponseEncoder {
             .requestedTokenType(tokenRequestContext.getRequestedTokenType())
             .tokenExchangeAudience(tokenRequestContext.getTokenExchangeAudience())
             .tokenExchangeResource(tokenRequestContext.getTokenExchangeResource())
+            .preAuthorizationCode(tokenRequestContext.getPreAuthorizationCode())
             .build();
         val generatedTokenResult = getConfigurationContext().getAccessTokenResponseGenerator().generate(tokenResult);
         val context = new LinkedHashMap<>(generatedTokenResult.getModel());

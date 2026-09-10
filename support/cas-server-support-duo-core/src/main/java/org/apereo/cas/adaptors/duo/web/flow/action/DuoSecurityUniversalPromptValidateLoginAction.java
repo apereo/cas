@@ -1,6 +1,7 @@
 package org.apereo.cas.adaptors.duo.web.flow.action;
 
 import module java.base;
+import org.apereo.cas.adaptors.duo.authn.DuoSecurityAuthenticationService;
 import org.apereo.cas.adaptors.duo.authn.DuoSecurityUniversalPromptCredential;
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.AuthenticationResultBuilder;
@@ -86,10 +87,10 @@ public class DuoSecurityUniversalPromptValidateLoginAction extends DuoSecurityAu
             }
             return resultingEvent;
         }
-        return processStateFromBrowserStorage(requestContext);
+        return processStateFromBrowserStorage(requestContext, duoState);
     }
 
-    private @Nullable Event processStateFromBrowserStorage(final RequestContext requestContext) {
+    private @Nullable Event processStateFromBrowserStorage(final RequestContext requestContext, final String duoState) {
         val browserStorage = WebUtils.getBrowserStoragePayload(requestContext);
         if (browserStorage.isEmpty()) {
             WebUtils.putTargetTransition(requestContext, CasWebflowConstants.TRANSITION_ID_SWITCH);
@@ -98,15 +99,21 @@ public class DuoSecurityUniversalPromptValidateLoginAction extends DuoSecurityAu
             return eventFactory.event(this, CasWebflowConstants.TRANSITION_ID_RESTORE);
         }
 
-        BrowserWebStorageSessionStore browserSessionStore = null;
         val webContext = toWebContext(requestContext);
         try {
-            browserSessionStore = sessionStore
+            val browserSessionStore = sessionStore
                 .buildFromTrackableSession(webContext, browserStorage.get())
                 .map(BrowserWebStorageSessionStore.class::cast)
                 .orElseThrow(() -> new IllegalArgumentException("Unable to determine Duo authentication context from session store"));
 
-            browserSessionStore.getSessionAttributes(webContext).forEach((key, value) -> {
+            val sessionAttributes = browserSessionStore.getSessionAttributes(webContext);
+            val expectedState = sessionAttributes.get(DuoSecurityAuthenticationService.class.getSimpleName());
+            if (!isValidState(expectedState, duoState)) {
+                LOGGER.warn("Duo Security callback state does not match the browser session");
+                return eventFactory.event(this, CasWebflowConstants.TRANSITION_ID_ERROR);
+            }
+
+            sessionAttributes.forEach((key, value) -> {
                 if (key.equalsIgnoreCase(FlowScope.class.getSimpleName())) {
                     populateRequestContextScope(value, requestContext.getFlowScope());
                 } else if (key.equalsIgnoreCase(FlashScope.class.getSimpleName())) {
@@ -122,16 +129,21 @@ public class DuoSecurityUniversalPromptValidateLoginAction extends DuoSecurityAu
             populateContextWithCredential(requestContext, browserSessionStore);
             populateContextWithAuthentication(requestContext, browserSessionStore);
             populateContextWithService(requestContext, browserSessionStore);
-            return super.doExecuteInternal(requestContext);
-        } catch (final Throwable e) {
-            LoggingUtils.warn(LOGGER, e);
-        } finally {
-            if (browserSessionStore != null) {
-                val credential = (Credential) browserSessionStore.getSessionAttributes(webContext).get(Credential.class.getSimpleName());
+            try {
+                return super.doExecuteInternal(requestContext);
+            } finally {
+                val credential = (Credential) sessionAttributes.get(Credential.class.getSimpleName());
                 WebUtils.putCredential(requestContext, credential);
             }
+        } catch (final Throwable e) {
+            LoggingUtils.warn(LOGGER, e);
         }
         return eventFactory.event(this, CasWebflowConstants.TRANSITION_ID_ERROR);
+    }
+
+    private static boolean isValidState(@Nullable final Object expectedState, final String duoState) {
+        return expectedState instanceof final String state
+               && MessageDigest.isEqual(state.getBytes(StandardCharsets.UTF_8), duoState.getBytes(StandardCharsets.UTF_8));
     }
 
     private static JEEContext toWebContext(final RequestContext requestContext) {

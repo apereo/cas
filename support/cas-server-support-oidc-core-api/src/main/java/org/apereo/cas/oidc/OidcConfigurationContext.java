@@ -14,7 +14,7 @@ import org.apereo.cas.ticket.OAuth20TokenSigningAndEncryptionService;
 import org.apereo.cas.ticket.idtoken.IdTokenGeneratorService;
 import org.apereo.cas.token.JwtBuilder;
 import lombok.Getter;
-import lombok.experimental.SuperBuilder;
+import lombok.SuperBuilder;
 
 /**
  * This is {@link OidcConfigurationContext}.

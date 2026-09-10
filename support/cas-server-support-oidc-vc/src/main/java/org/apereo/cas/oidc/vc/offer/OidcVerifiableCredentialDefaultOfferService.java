@@ -3,6 +3,7 @@ package org.apereo.cas.oidc.vc.offer;
 import module java.base;
 import org.apereo.cas.oidc.OidcConfigurationContext;
 import org.apereo.cas.ticket.TransientSessionTicket;
+import org.apereo.cas.util.function.FunctionUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -39,14 +40,17 @@ public class OidcVerifiableCredentialDefaultOfferService implements OidcVerifiab
         val credentialConfigurationIds = transaction.getProperty("credentialConfigurationIds", List.class);
         val issuer = configurationContext.getCasProperties().getAuthn().getOidc().getCore().getIssuer();
 
+        val transactionCode = Objects.requireNonNull(transaction)
+            .getPropertyAsString(OidcVerifiableCredentialTransactionService.PROPERTY_TRANSACTION_CODE);
+
         val grant = new OidcVerifiableCredentialOffer.Grants.PreAuthorizedCodeGrant();
-        grant.setTransactionCode(
+        FunctionUtils.doIfNotBlank(transactionCode, _ -> grant.setTransactionCode(
             OidcVerifiableCredentialOffer.Grants.TransactionCode
                 .builder()
-                .value(Objects.requireNonNull(transaction).getId())
-                .length(Objects.requireNonNull(transaction).getId().length())
+                .value(transactionCode)
+                .length(transactionCode.length())
                 .build()
-        );
+        ));
         grant.setPreAuthorizedCode(transaction.getPropertyAsString("preAuthorizedCode"));
         grant.setIssuerState(transaction.getPropertyAsString("issuerState"));
 
@@ -54,6 +58,7 @@ public class OidcVerifiableCredentialDefaultOfferService implements OidcVerifiab
         grants.setPreAuthorizedCodeGrant(grant);
 
         val offer = new OidcVerifiableCredentialOffer();
+        offer.setTransactionId(transaction.getId());
         offer.setCredentialIssuer(issuer);
         offer.setCredentialConfigurationIds(credentialConfigurationIds);
         offer.setGrants(grants);

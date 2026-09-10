@@ -19,8 +19,10 @@ import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import net.shibboleth.shared.resolver.CriteriaSet;
 import org.apache.commons.lang3.StringUtils;
 import org.jspecify.annotations.Nullable;
+import org.opensaml.core.criterion.EntityIdCriterion;
 import org.opensaml.saml.metadata.resolver.filter.MetadataFilter;
 import org.opensaml.saml.metadata.resolver.filter.MetadataFilterChain;
 import org.opensaml.saml.metadata.resolver.filter.impl.EntityRoleFilter;
@@ -29,6 +31,7 @@ import org.opensaml.saml.metadata.resolver.filter.impl.RequiredValidUntilFilter;
 import org.opensaml.saml.metadata.resolver.filter.impl.SignatureValidationFilter;
 import org.opensaml.saml.metadata.resolver.impl.AbstractMetadataResolver;
 import org.opensaml.saml.saml2.core.Attribute;
+import org.opensaml.saml.saml2.metadata.EntityDescriptor;
 import org.opensaml.saml.saml2.metadata.IDPSSODescriptor;
 import org.opensaml.saml.saml2.metadata.SPSSODescriptor;
 import org.springframework.core.io.Resource;
@@ -52,6 +55,58 @@ public abstract class BaseSamlRegisteredServiceMetadataResolver implements SamlR
      * The config bean.
      */
     protected final OpenSamlConfigBean configBean;
+
+    /**
+     * Extract the requested entity identifier from metadata resolution criteria.
+     *
+     * @param criteriaSet the criteria set
+     * @return the entity identifier
+     */
+    protected static Optional<String> getEntityIdFromCriteriaSet(@Nullable final CriteriaSet criteriaSet) {
+        return Optional.ofNullable(criteriaSet)
+            .map(set -> set.get(EntityIdCriterion.class))
+            .map(EntityIdCriterion::getEntityId)
+            .filter(StringUtils::isNotBlank);
+    }
+
+    /**
+     * Determine whether the metadata document matches the requested entity identifier.
+     *
+     * @param document    the metadata document
+     * @param criteriaSet the criteria set
+     * @return whether the document matches
+     */
+    protected boolean matchesEntityIdCriteria(final SamlMetadataDocument document,
+                                              @Nullable final CriteriaSet criteriaSet) {
+        return getEntityIdFromCriteriaSet(criteriaSet)
+            .map(entityId -> entityId.equals(prepareMetadataDocument(document, false).getEntityId()))
+            .orElse(true);
+    }
+
+    /**
+     * Prepare a metadata document for storage.
+     *
+     * @param document the metadata document
+     * @return the metadata document
+     */
+    protected SamlMetadataDocument prepareMetadataDocument(final SamlMetadataDocument document) {
+        return prepareMetadataDocument(document, true);
+    }
+
+    protected SamlMetadataDocument prepareMetadataDocument(final SamlMetadataDocument document,
+                                                            final boolean assignId) {
+        if (assignId) {
+            document.assignIdIfNecessary();
+        }
+        if (StringUtils.isBlank(document.getEntityId())) {
+            val entityDescriptor = SamlUtils.transformSamlObject(configBean,
+                document.getDecodedValue(), EntityDescriptor.class);
+            if (entityDescriptor != null) {
+                document.setEntityId(entityDescriptor.getEntityID());
+            }
+        }
+        return document;
+    }
 
     private static void buildEntityRoleFilterIfNeeded(final SamlRegisteredService service, final List<MetadataFilter> metadataFilterList) throws Exception {
         if (StringUtils.isNotBlank(service.getMetadataCriteriaRoles())) {

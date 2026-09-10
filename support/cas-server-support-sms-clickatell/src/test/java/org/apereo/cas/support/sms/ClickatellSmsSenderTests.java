@@ -17,6 +17,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.core.io.ByteArrayResource;
+import org.springframework.http.HttpStatus;
 import static java.nio.charset.StandardCharsets.UTF_8;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.springframework.http.HttpStatus.OK;
@@ -42,6 +43,15 @@ class ClickatellSmsSenderTests {
 
     @Autowired
     private CasConfigurationProperties casProperties;
+
+    @Test
+    void verifyHttpError() {
+        try (val webServer = new MockWebServer(HttpStatus.UNAUTHORIZED)) {
+            webServer.start();
+            val sender = new ClickatellSmsSender("DEMO_TOKEN", "http://localhost:" + webServer.getPort());
+            assertFalse(sender.send("123-456-7890", "123-456-7890", "TEST"));
+        }
+    }
 
     @Test
     void verifySmsSender() throws Throwable {

@@ -49,6 +49,8 @@ class PostgresJpaResourceSetRepositoryTests extends BaseUmaEndpointControllerTes
         resourceSet = umaResourceSetRepository.save(resourceSet);
         assertFalse(umaResourceSetRepository.getAll().isEmpty());
         assertTrue(umaResourceSetRepository.getById(resourceSet.getId()).isPresent());
+        assertTrue(umaResourceSetRepository.getById(resourceSet.getId(), "clientid", "cas").isPresent());
+        assertFalse(umaResourceSetRepository.getById(resourceSet.getId(), "other-client", "cas").isPresent());
 
         val perms = new ResourceSetPolicyPermission();
         perms.setSubject("casuser");

@@ -5,11 +5,8 @@ import org.apereo.cas.configuration.model.support.mfa.duo.DuoSecurityMultifactor
 import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.util.spring.SpringExpressionLanguageValueResolver;
 import com.duosecurity.Client;
-import com.duosecurity.client.Util;
 import lombok.Getter;
 import lombok.val;
-import okhttp3.CertificatePinner;
-import org.springframework.util.ReflectionUtils;
 
 /**
  * This is {@link DuoSecurityClient}.
@@ -70,23 +67,4 @@ public class DuoSecurityClient {
             return clientBuilder.build();
         });
     }
-
-    /**
-     * Create certificate pinner.
-     *
-     * @param host   the host
-     * @param target the target
-     * @return the certificate pinner
-     */
-    public CertificatePinner createCertificatePinner(final String host, final Object target) {
-        val newCerts = fetchCaCerts(target);
-        return Util.createPinner(host, newCerts);
-    }
-
-    private static String[] fetchCaCerts(final Object target) {
-        val field = ReflectionUtils.findField(Client.Builder.class, "DEFAULT_CA_CERTS");
-        Objects.requireNonNull(field, "Unable to extract default CA certs for Duo Security").trySetAccessible();
-        return (String[]) ReflectionUtils.getField(field, target);
-    }
-
 }

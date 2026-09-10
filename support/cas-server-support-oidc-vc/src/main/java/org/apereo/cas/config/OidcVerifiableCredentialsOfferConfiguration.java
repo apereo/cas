@@ -95,8 +95,11 @@ class OidcVerifiableCredentialsOfferConfiguration {
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @ConditionalOnMissingBean(name = "oidcVerifiableCredentialAccessTokenResponseCustomizer")
     public OAuth20AccessTokenResponseCustomizer oidcVerifiableCredentialAccessTokenResponseCustomizer(
+        @Qualifier(OidcVerifiableCredentialTransactionService.BEAN_NAME)
+        final OidcVerifiableCredentialTransactionService oidcVerifiableCredentialTransactionService,
         @Qualifier(OidcVerifiableCredentialNonceService.BEAN_NAME)
         final OidcVerifiableCredentialNonceService oidcVerifiableCredentialNonceService) {
-        return new OidcVerifiableCredentialAccessTokenResponseCustomizer(oidcVerifiableCredentialNonceService);
+        return new OidcVerifiableCredentialAccessTokenResponseCustomizer(
+            oidcVerifiableCredentialNonceService, oidcVerifiableCredentialTransactionService);
     }
 }
