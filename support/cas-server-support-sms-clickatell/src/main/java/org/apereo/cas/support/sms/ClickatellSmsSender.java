@@ -9,11 +9,11 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
+import org.springframework.http.client.SimpleClientHttpRequestFactory;
 import org.springframework.http.converter.json.JacksonJsonHttpMessageConverter;
-import org.springframework.web.client.RestTemplate;
+import org.springframework.web.client.RestClient;
 import tools.jackson.databind.ObjectMapper;
 
 /**
@@ -32,7 +32,10 @@ public class ClickatellSmsSender implements SmsSender {
 
     private final String serverUrl;
 
-    private final RestTemplate restTemplate = new RestTemplate(CollectionUtils.wrapList(new JacksonJsonHttpMessageConverter()));
+    private final RestClient restClient = RestClient.builder()
+        .requestFactory(new SimpleClientHttpRequestFactory())
+        .configureMessageConverters(converters -> converters.withJsonConverter(new JacksonJsonHttpMessageConverter()))
+        .build();
 
     @Override
     public boolean send(final String from, final String to, final String message) {
@@ -50,8 +53,9 @@ public class ClickatellSmsSender implements SmsSender {
             val stringify = new StringWriter();
             MAPPER.writeValue(stringify, map);
 
-            val request = new HttpEntity<>(stringify.toString(), headers);
-            val response = restTemplate.postForEntity(new URI(this.serverUrl), request, Map.class);
+            val response = restClient.post().uri(new URI(this.serverUrl))
+                .headers(httpHeaders -> httpHeaders.addAll(headers))
+                .body(stringify.toString()).retrieve().toEntity(Map.class);
             if (response.hasBody()) {
                 val body = response.getBody();
                 LOGGER.debug("Received response [{}]", body);
@@ -83,5 +87,4 @@ public class ClickatellSmsSender implements SmsSender {
         return false;
     }
 }
-
 
