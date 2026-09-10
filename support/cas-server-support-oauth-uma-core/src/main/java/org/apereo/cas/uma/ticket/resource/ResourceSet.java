@@ -1,17 +1,21 @@
 package org.apereo.cas.uma.ticket.resource;
 
 import module java.base;
+import org.apereo.cas.support.oauth.util.OAuth20Utils;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import io.hypersistence.utils.hibernate.type.json.JsonType;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.hibernate.annotations.Type;
 import org.pac4j.core.profile.UserProfile;
 import org.springframework.data.annotation.Id;
 import org.springframework.http.HttpStatus;
+import tools.jackson.databind.annotation.JsonSerialize;
+import tools.jackson.databind.ser.std.ToStringSerializer;
 import jakarta.persistence.Column;
 import jakarta.persistence.MappedSuperclass;
 import jakarta.persistence.Transient;
@@ -33,6 +37,7 @@ public class ResourceSet implements Serializable {
 
     @Id
     @Transient
+    @JsonSerialize(using = ToStringSerializer.class)
     private long id;
 
     @Column
@@ -69,7 +74,7 @@ public class ResourceSet implements Serializable {
     @JsonIgnore
     public void validate(final UserProfile profile) {
         if (StringUtils.isBlank(getClientId())) {
-            throw new InvalidResourceSetException(HttpStatus.BAD_REQUEST.value(), "Authentication request does contain a client id");
+            throw new InvalidResourceSetException(HttpStatus.BAD_REQUEST.value(), "Authentication request does not contain a client id");
         }
 
         if (getScopes().isEmpty()) {
@@ -78,6 +83,11 @@ public class ResourceSet implements Serializable {
 
         if (!getOwner().equals(profile.getId())) {
             throw new InvalidResourceSetException(HttpStatus.FORBIDDEN.value(), "Resource-set owner does not match the authenticated profile");
+        }
+
+        val authenticatedClientId = OAuth20Utils.getClientIdFromAuthenticatedProfile(profile);
+        if (!Objects.equals(getClientId(), authenticatedClientId)) {
+            throw new InvalidResourceSetException(HttpStatus.FORBIDDEN.value(), "Resource-set client does not match the authenticated client");
         }
     }
 }

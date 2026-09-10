@@ -5,11 +5,15 @@ import org.apereo.cas.support.saml.BaseJpaSamlMetadataTests;
 import org.apereo.cas.support.saml.services.SamlRegisteredService;
 import org.apereo.cas.support.saml.services.idp.metadata.SamlMetadataDocument;
 import lombok.val;
+import net.shibboleth.shared.resolver.CriteriaSet;
 import org.apache.commons.io.IOUtils;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.parallel.Execution;
+import org.junit.jupiter.api.parallel.ExecutionMode;
 import org.junitpioneer.jupiter.RetryingTest;
+import org.opensaml.core.criterion.EntityIdCriterion;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.transaction.annotation.Transactional;
 import static org.junit.jupiter.api.Assertions.*;
@@ -22,6 +26,7 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 @Tag("JDBC")
 @Transactional(transactionManager = "transactionManagerSamlMetadata")
+@Execution(ExecutionMode.SAME_THREAD)
 class JpaSamlRegisteredServiceMetadataResolverTests extends BaseJpaSamlMetadataTests {
 
     @BeforeEach
@@ -52,6 +57,23 @@ class JpaSamlRegisteredServiceMetadataResolverTests extends BaseJpaSamlMetadataT
 
         service.setMetadataLocation("whatever");
         assertFalse(resolver.supports(service));
+    }
+
+    @Test
+    void verifyEntityIdCriterionSelectsMetadataDocument() throws Throwable {
+        val entityId = "https://carmenwiki.osu.edu/shibboleth";
+        val metadata = IOUtils.toString(new ClassPathResource("samlsp-metadata.xml").getInputStream(), StandardCharsets.UTF_8);
+        val metadataManager = resolver.getMetadataManager().orElseThrow();
+        metadataManager.store(SamlMetadataDocument.builder().name("SP").value(metadata).build());
+        metadataManager.store(SamlMetadataDocument.builder().name("Other")
+            .value(metadata.replace(entityId, "https://other.example.org")).build());
+
+        val service = new SamlRegisteredService();
+        service.setName("SAML Service");
+        service.setServiceId("^https://.+$");
+        service.setMetadataLocation("jdbc://");
+        val resolvers = resolver.resolve(service, new CriteriaSet(new EntityIdCriterion(entityId)));
+        assertEquals(1, resolvers.size());
     }
 
     @Test

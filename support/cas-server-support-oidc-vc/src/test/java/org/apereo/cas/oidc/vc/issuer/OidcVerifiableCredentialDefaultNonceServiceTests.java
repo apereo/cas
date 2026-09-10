@@ -52,6 +52,20 @@ class OidcVerifiableCredentialDefaultNonceServiceTests extends AbstractOidcTests
     }
 
     @Test
+    void verifyNonceIsConsumedExactlyOnce() {
+        val nonce = oidcVerifiableCredentialNonceService.create();
+        assertTrue(oidcVerifiableCredentialNonceService.consume(nonce.value()));
+        assertFalse(oidcVerifiableCredentialNonceService.consume(nonce.value()));
+        assertFalse(oidcVerifiableCredentialNonceService.exists(nonce.value()));
+    }
+
+    @Test
+    void verifyConsumingAnUnknownNonceFails() {
+        assertFalse(oidcVerifiableCredentialNonceService.consume("TST-unknown-nonce-value"));
+        assertFalse(oidcVerifiableCredentialNonceService.consume(null));
+    }
+
+    @Test
     void verifyNonceRemoval() {
         val nonce = oidcVerifiableCredentialNonceService.create();
         assertTrue(oidcVerifiableCredentialNonceService.exists(nonce.value()));

@@ -5,6 +5,8 @@ import org.apereo.cas.util.junit.EnabledIfListeningOnPort;
 import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.TestMethodOrder;
+import org.junit.jupiter.api.parallel.ResourceAccessMode;
+import org.junit.jupiter.api.parallel.ResourceLock;
 import org.springframework.test.context.TestPropertySource;
 
 /**
@@ -20,5 +22,6 @@ import org.springframework.test.context.TestPropertySource;
 @EnabledIfListeningOnPort(port = 6379)
 @Tag("Redis")
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
+@ResourceLock(value = "redisServiceRegistry", mode = ResourceAccessMode.READ_WRITE)
 class RedisServerServiceRegistryTests extends BaseRedisSentinelServiceRegistryTests {
 }

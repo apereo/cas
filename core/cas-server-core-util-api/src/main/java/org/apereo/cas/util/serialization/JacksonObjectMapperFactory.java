@@ -8,9 +8,10 @@ import org.apereo.cas.util.spring.beans.BeanSupplier;
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
+import com.google.common.base.Suppliers;
 import lombok.Builder;
 import lombok.Getter;
-import lombok.experimental.SuperBuilder;
+import lombok.SuperBuilder;
 import lombok.val;
 import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -59,6 +60,21 @@ import tools.jackson.dataformat.yaml.YAMLMapper;
 @SuperBuilder
 @Getter
 public class JacksonObjectMapperFactory {
+    /**
+     * Providers discovered through the JDK service loader are fixed for the lifetime of the JVM,
+     * yet CAS builds object mappers from hundreds of call sites, many of them static fields that are
+     * initialized while the application context is still starting up. Re-scanning the classpath for
+     * every mapper is pure overhead, so the discovery results are resolved once and reused.
+     */
+    private static final Supplier<List<JacksonObjectMapperCustomizer>> SERVICE_LOADED_CUSTOMIZERS =
+        Suppliers.memoize(() -> ServiceLoader.load(JacksonObjectMapperCustomizer.class)
+            .stream()
+            .map(ServiceLoader.Provider::get)
+            .filter(Objects::nonNull)
+            .toList());
+
+    private static final Supplier<List<JacksonModule>> DISCOVERED_MODULES = Suppliers.memoize(MapperBuilder::findModules);
+
     private final boolean defaultTypingEnabled;
 
     private final boolean failOnUnknownProperties;
@@ -160,9 +176,8 @@ public class JacksonObjectMapperFactory {
     }
 
     private List<JacksonObjectMapperCustomizer> getObjectMapperCustomizers() {
-        val customizers = ServiceLoader.load(JacksonObjectMapperCustomizer.class)
+        val customizers = SERVICE_LOADED_CUSTOMIZERS.get()
             .stream()
-            .map(ServiceLoader.Provider::get)
             .filter(BeanSupplier::isNotProxy)
             .collect(Collectors.toList());
 
@@ -207,7 +222,7 @@ public class JacksonObjectMapperFactory {
             .changeDefaultVisibility(handler -> handler.withSetterVisibility(JsonAutoDetect.Visibility.PROTECTED_AND_PUBLIC)
                 .withGetterVisibility(JsonAutoDetect.Visibility.PROTECTED_AND_PUBLIC)
                 .withIsGetterVisibility(JsonAutoDetect.Visibility.PROTECTED_AND_PUBLIC))
-            .findAndAddModules()
+            .addModules(DISCOVERED_MODULES.get())
             .addModules(this.modules)
             .addModule(new JacksonComponentModule())
             .addModule(new JacksonMixinModule())

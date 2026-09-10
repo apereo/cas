@@ -3,6 +3,7 @@ package org.apereo.cas.oidc.vc.token;
 import module java.base;
 import org.apereo.cas.oidc.OidcConstants;
 import org.apereo.cas.oidc.vc.issuer.nonce.OidcVerifiableCredentialNonceService;
+import org.apereo.cas.oidc.vc.offer.OidcVerifiableCredentialTransactionService;
 import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.support.oauth.OAuth20GrantTypes;
 import org.apereo.cas.support.oauth.web.response.accesstoken.response.OAuth20AccessTokenResponseCustomizer;
@@ -19,7 +20,8 @@ import lombok.val;
  */
 @RequiredArgsConstructor
 public class OidcVerifiableCredentialAccessTokenResponseCustomizer implements OAuth20AccessTokenResponseCustomizer {
-    private final OidcVerifiableCredentialNonceService oidcVerifiableCredentialNonceService;
+    protected final OidcVerifiableCredentialNonceService oidcVerifiableCredentialNonceService;
+    protected final OidcVerifiableCredentialTransactionService credentialTransactionService;
 
     @Override
     public Map<String, Object> customize(final OAuth20AccessTokenResponseResult result,
@@ -40,7 +42,6 @@ public class OidcVerifiableCredentialAccessTokenResponseCustomizer implements OA
             model.put(OidcConstants.C_NONCE, nonce.value());
             model.put(OidcConstants.C_NONCE_EXPIRES_IN, nonce.expiresIn());
         }
-
         return model;
     }
 }

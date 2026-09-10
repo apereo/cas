@@ -45,6 +45,13 @@ class OidcVerifiableCredentialDefaultTransactionServiceTests extends AbstractOid
         val preAuthorizationTicket = (TransientSessionTicket) oidcVerifiableCredentialTransactionService.fetchPreAuthorizationCode(preAuthorizedCode);
         assertNotNull(preAuthorizationTicket);
         assertEquals(ticket.getId(), preAuthorizationTicket.getProperty("transactionId", String.class));
+
+        val transactionCode = sessionTicket.getPropertyAsString(
+            OidcVerifiableCredentialTransactionService.PROPERTY_TRANSACTION_CODE);
+        assertNotNull(transactionCode);
+        assertNotEquals(ticket.getId(), transactionCode);
+        assertEquals(transactionCode, preAuthorizationTicket.getPropertyAsString(
+            OidcVerifiableCredentialTransactionService.PROPERTY_TRANSACTION_CODE));
     }
 
     @Test

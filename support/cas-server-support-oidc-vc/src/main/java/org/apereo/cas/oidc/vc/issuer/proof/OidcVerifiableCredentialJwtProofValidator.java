@@ -25,6 +25,12 @@ import org.jspecify.annotations.Nullable;
  */
 @RequiredArgsConstructor
 public class OidcVerifiableCredentialJwtProofValidator implements OidcVerifiableCredentialProofValidator {
+    /**
+     * Media type every OID4VCI JWT proof must declare, so that a token minted
+     * for a different protocol can never be replayed as a proof of possession.
+     */
+    private static final String PROOF_JWT_TYPE = "openid4vci-proof+jwt";
+
     private static final int SECONDS_IN_FUTURE = 30;
     private static final int MINUTES_IN_PAST = 5;
 
@@ -32,16 +38,18 @@ public class OidcVerifiableCredentialJwtProofValidator implements OidcVerifiable
     private final OidcVerifiableCredentialNonceService oidcVerifiableCredentialNonceService;
 
     @Override
-    public VerifiableCredentialProofResult validate(final OidcVerifiableCredentialRequest request) throws Exception {
+    public VerifiableCredentialProofResult validate(final OidcVerifiableCredentialRequest request,
+                                                    final Set<String> consumedNonces) throws Exception {
         val proof = request.getProof();
         val signedJwt = SignedJWT.parse(proof.getJwt());
         val holderJwk = signedJwt.getHeader().getJWK();
 
+        verifyType(signedJwt);
         verifySignature(signedJwt, holderJwk);
         verifyAlgorithm(signedJwt, holderJwk);
         verifyAudience(signedJwt);
         verifyFreshness(signedJwt);
-        val nonce = verifyNonce(signedJwt);
+        val nonce = verifyNonce(signedJwt, consumedNonces);
 
         val claims = signedJwt.getJWTClaimsSet();
         return new VerifiableCredentialProofResult(
@@ -53,12 +61,26 @@ public class OidcVerifiableCredentialJwtProofValidator implements OidcVerifiable
         );
     }
 
-    protected @Nullable String verifyNonce(final SignedJWT signedJwt) throws Exception {
+    protected void verifyType(final SignedJWT signedJwt) {
+        val type = signedJwt.getHeader().getType();
+        if (type == null || !PROOF_JWT_TYPE.equals(type.toString())) {
+            throw new IllegalArgumentException("Proof JWT type must be " + PROOF_JWT_TYPE);
+        }
+    }
+
+    protected @Nullable String verifyNonce(final SignedJWT signedJwt, final Set<String> consumedNonces) throws Exception {
         val claims = signedJwt.getJWTClaimsSet();
         val nonce = claims.getStringClaim("nonce");
-        if (nonce == null || !oidcVerifiableCredentialNonceService.exists(nonce)) {
-            throw new IllegalArgumentException("Proof nonce %s is invalid or missing".formatted(nonce));
+        if (nonce == null) {
+            throw new IllegalArgumentException("Proof nonce is missing");
         }
+        if (consumedNonces.contains(nonce)) {
+            return nonce;
+        }
+        if (!oidcVerifiableCredentialNonceService.consume(nonce)) {
+            throw new IllegalArgumentException("Proof nonce %s is invalid, expired or already used".formatted(nonce));
+        }
+        consumedNonces.add(nonce);
         return nonce;
     }
 

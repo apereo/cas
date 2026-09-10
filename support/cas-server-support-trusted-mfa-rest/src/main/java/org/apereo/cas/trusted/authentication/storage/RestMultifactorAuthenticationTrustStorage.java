@@ -9,11 +9,11 @@ import org.apereo.cas.util.http.HttpUtils;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.Strings;
-import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
-import org.springframework.web.client.RestTemplate;
+import org.springframework.web.client.RestClient;
 
 /**
  * This is {@link RestMultifactorAuthenticationTrustStorage}.
@@ -22,14 +22,14 @@ import org.springframework.web.client.RestTemplate;
  * @since 5.0.0
  */
 public class RestMultifactorAuthenticationTrustStorage extends BaseMultifactorAuthenticationTrustStorage {
-    private final RestTemplate restTemplate;
+    private final RestClient restClient;
 
     public RestMultifactorAuthenticationTrustStorage(final TrustedDevicesMultifactorProperties properties,
                                                      final CipherExecutor<Serializable, String> cipherExecutor,
                                                      final MultifactorAuthenticationTrustRecordKeyGenerator keyGenerationStrategy,
-                                                     final RestTemplate restTemplate) {
+                                                     final RestClient restClient) {
         super(properties, cipherExecutor, keyGenerationStrategy);
-        this.restTemplate = restTemplate;
+        this.restClient = restClient;
     }
 
     @Override
@@ -59,18 +59,20 @@ public class RestMultifactorAuthenticationTrustStorage extends BaseMultifactorAu
 
     @Override
     public void remove(final ZonedDateTime expirationDate) {
-        val entity = getHttpEntity(expirationDate);
-        restTemplate.exchange(getEndpointUrl(null), HttpMethod.DELETE, entity, Object.class);
+        restClient.method(HttpMethod.DELETE).uri(getEndpointUrl(null))
+            .headers(headers -> headers.addAll(getHttpHeaders())).body(expirationDate)
+            .retrieve().toEntity(Object.class);
     }
 
     @Override
     public void remove(final String key) {
-        restTemplate.delete(getEndpointUrl(key));
+        restClient.delete().uri(getEndpointUrl(key)).retrieve().toBodilessEntity();
     }
 
     private Set<MultifactorAuthenticationTrustRecord> getResults(final String url) {
-        val entity = getHttpEntity(null);
-        val responseEntity = restTemplate.exchange(url, HttpMethod.GET, entity, MultifactorAuthenticationTrustRecord[].class);
+        val responseEntity = restClient.get().uri(url)
+            .headers(headers -> headers.addAll(getHttpHeaders()))
+            .retrieve().toEntity(MultifactorAuthenticationTrustRecord[].class);
         if (responseEntity.getStatusCode() == HttpStatus.OK) {
             val results = responseEntity.getBody();
             return Stream.of(Objects.requireNonNull(results)).collect(Collectors.toSet());
@@ -78,11 +80,11 @@ public class RestMultifactorAuthenticationTrustStorage extends BaseMultifactorAu
         return new HashSet<>();
     }
 
-    private HttpEntity<Object> getHttpEntity(final Object body) {
+    private HttpHeaders getHttpHeaders() {
         val rest = getTrustedDevicesMultifactorProperties().getRest();
         val headers = HttpUtils.createBasicAuthHeaders(rest.getBasicAuthUsername(), rest.getBasicAuthPassword());
         headers.setContentType(MediaType.APPLICATION_JSON);
-        return new HttpEntity<>(body, headers);
+        return headers;
     }
 
     private String getEndpointUrl(final String path) {
@@ -92,8 +94,9 @@ public class RestMultifactorAuthenticationTrustStorage extends BaseMultifactorAu
 
     @Override
     protected MultifactorAuthenticationTrustRecord saveInternal(final MultifactorAuthenticationTrustRecord record) {
-        val entity = getHttpEntity(record);
-        val response = restTemplate.exchange(getEndpointUrl(null), HttpMethod.POST, entity, Object.class);
+        val response = restClient.post().uri(getEndpointUrl(null))
+            .headers(headers -> headers.addAll(getHttpHeaders())).body(record)
+            .retrieve().toEntity(Object.class);
         return response.getStatusCode() == HttpStatus.OK ? record : null;
     }
 }

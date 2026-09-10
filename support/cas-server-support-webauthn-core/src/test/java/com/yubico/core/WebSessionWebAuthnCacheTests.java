@@ -59,4 +59,17 @@ class WebSessionWebAuthnCacheTests {
         val newValue = cache.getIfPresent(request, KEY);
         assertNull(newValue);
     }
+
+    @Test
+    void verifyConsumeSession() {
+        val sessionManager = new DefaultSessionManager(
+            new WebSessionWebAuthnCache<>("sessionsToUsers", ByteArray.class),
+            new WebSessionWebAuthnCache<>("usersToSessions", ByteArray.class));
+        val sessionId = sessionManager.createSession(request, VALUE);
+
+        assertEquals(VALUE, sessionManager.consumeSession(request, sessionId).orElseThrow());
+        assertTrue(sessionManager.consumeSession(request, sessionId).isEmpty());
+        assertTrue(sessionManager.getSession(request, sessionId).isEmpty());
+        assertNotEquals(sessionId, sessionManager.createSession(request, VALUE));
+    }
 }

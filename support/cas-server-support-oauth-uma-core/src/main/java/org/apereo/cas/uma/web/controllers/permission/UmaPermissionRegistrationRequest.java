@@ -6,6 +6,8 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
 import tools.jackson.databind.ObjectMapper;
+import tools.jackson.databind.annotation.JsonSerialize;
+import tools.jackson.databind.ser.std.ToStringSerializer;
 
 /**
  * This is {@link UmaPermissionRegistrationRequest}.
@@ -22,6 +24,7 @@ public class UmaPermissionRegistrationRequest implements Serializable {
     private static final long serialVersionUID = 3614209506339611242L;
 
     @JsonProperty("resource_id")
+    @JsonSerialize(using = ToStringSerializer.class)
     private long resourceId;
 
     @JsonProperty("resource_scopes")

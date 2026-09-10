@@ -297,3 +297,33 @@ For multi-step tasks, state a brief plan:
 ```
 
 Strong success criteria let you loop independently. Weak criteria ("make it work") require constant clarification.
+
+---
+
+## OIDC Verifiable Credentials Notes
+
+- The OID4VCI Nonce Endpoint is public by specification; never place it behind client authentication.
+- Secrets that gate a flow must be independent of values the caller already possesses, and single-use state must be consumed atomically.
+- Check protocol behavior against the current published specification, not from memory.
+
+
+## LDAP Subsystem Notes
+
+- LDAP settings are shared: `AbstractLdapProperties` / `AbstractLdapSearchProperties` back every LDAP-capable
+  feature, so a defect in `LdapUtils` or `LdapConnectionFactory` is a defect in every LDAP module at once.
+  Review those two classes first, and treat any change there as touching authentication.
+- `pageSize` defaults to `0` (paging off) and result-code checks are entry-presence checks. Reviewing an LDAP
+  search means asking what happens when the directory returns a partial or non-success result, not only when
+  it returns the expected entry.
+- Build `ConnectionFactory` instances once, as beans, and inject them. Constructing one inside a per-request
+  method creates and tears down a connection pool on every call.
+- Write operations return a boolean and swallow exceptions. A caller that persists state must inspect that
+  result; silently returning success on a failed write is a correctness bug, not a logging gap.
+- Configuration that a code path writes must be the same configuration another code path reads. Asymmetry
+  between the value written and the value compared makes a feature look enabled while never taking effect.
+- Filter placeholders are bound only when present in the template. An unbound parameter is dropped silently,
+  which can widen a security-relevant filter; check that every value a filter is meant to constrain is used.
+- Any authorization branch that grants access because a required-role list is empty is fail-open. Verify the
+  effective default of the property the list comes from, not just the CAS-side default.
+- Password-bearing LDAP operations must be checked against RFC 3062 confidentiality requirements. A log
+  warning is not enforcement, and the transport check itself should be read carefully for inverted logic.

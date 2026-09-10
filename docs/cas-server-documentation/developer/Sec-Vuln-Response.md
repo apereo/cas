@@ -245,3 +245,22 @@ Regardless of whether a report is submitted *anonymously*, all reports will be
 taken seriously if they include sufficient detail and comply with the acceptable 
 report format and guidelines described in this document.
 
+### AI-Assisted Analysis
+
+The security vulnerability reporting policy includes specific guidelines regarding AI-assisted discoveries. Individuals 
+who leverage artificial intelligence models or tools to identify, analyze, or report potential vulnerabilities 
+within the project are required to provide full disclosures on the tools and methodologies used during their investigation.
+
+To receive public credit for an AI-assisted report, researchers must submit 
+standard vulnerability details discussed above alongside documentation 
+of their AI usage. This includes, in addition to previous details, specifying **the exact AI model and version used, 
+the prompts and approaches employed, the AI effort level, and the specific methods 
+and rationale that led to the discovery**. Fully demonstrating and **showing your work** allows 
+project maintainers to verify the finding accurately and ensures consistency in how 
+security credit is recorded across the project.
+
+Upon review and verification, credit for the finding will be formally assigned to the 
+designated **AI Model**, with the researcher credited and tagged as the human reporter who directed 
+and (in all likelihood only) drove the robot. Researchers who prefer not to share these underlying details 
+and methodology are welcome to refrain from doing so, in which case the report will be handled 
+confidentially and credited anonymously.

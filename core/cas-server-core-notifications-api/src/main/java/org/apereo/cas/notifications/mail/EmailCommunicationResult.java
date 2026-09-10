@@ -4,8 +4,8 @@ import module java.base;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
+import lombok.SuperBuilder;
 import lombok.With;
-import lombok.experimental.SuperBuilder;
 import org.jspecify.annotations.Nullable;
 
 /**

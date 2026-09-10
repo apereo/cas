@@ -23,7 +23,6 @@ import org.springframework.boot.webmvc.actuate.endpoint.web.WebMvcEndpointHandle
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Lazy;
 import org.springframework.core.env.Environment;
 import org.springframework.util.StringUtils;
 
@@ -37,7 +36,6 @@ import org.springframework.util.StringUtils;
  * @since 7.2.0
  */
 @Configuration(value = "CasCoreActuatorsConfiguration", proxyBeanMethods = false)
-@Lazy(false)
 @SuppressWarnings("AutoConfigurationRequired")
 class CasCoreActuatorsConfiguration {
 

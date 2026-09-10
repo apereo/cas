@@ -3,13 +3,20 @@ package org.apereo.cas.support.saml.web.idp.profile.sso;
 import module java.base;
 import org.apereo.cas.support.saml.BaseSamlIdPConfigurationTests;
 import org.apereo.cas.support.saml.SamlIdPTestUtils;
+import org.apereo.cas.support.saml.SamlUtils;
 import org.apereo.cas.support.saml.services.SamlRegisteredService;
+import org.apereo.cas.ticket.TransientSessionTicket;
+import org.apereo.cas.ticket.TransientSessionTicketFactory;
+import org.apereo.cas.util.EncodingUtils;
+import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.opensaml.saml.saml2.core.LogoutRequest;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.TestPropertySource;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
@@ -49,11 +56,21 @@ class SSOSamlIdPPostProfileHandlerEndpointTests extends BaseSamlIdPConfiguration
 
     @Test
     void verifyPostLogoutOperation() throws Throwable {
-        mockMvc.perform(post("/actuator/samlPostProfileResponse/logout/post")
+        val result = mockMvc.perform(post("/actuator/samlPostProfileResponse/logout/post")
                 .with(csrf())
                 .param("entityId", samlRegisteredService.getServiceId())
                 .accept(MediaType.TEXT_HTML))
-            .andExpect(status().isOk());
+            .andExpect(status().isOk())
+            .andReturn();
+        val encodedRequest = result.getResponse().getHeader("LogoutRequest");
+        assertNotNull(encodedRequest);
+        val logoutRequest = SamlUtils.transformSamlObject(openSamlConfigBean,
+            EncodingUtils.decodeBase64ToString(encodedRequest), LogoutRequest.class);
+        assertNotNull(logoutRequest);
+        assertEquals(casProperties.getAuthn().getSamlIdp().getCore().getEntityId(), logoutRequest.getIssuer().getValue());
+        assertEquals("https://httpbin.org/post", logoutRequest.getDestination());
+        val ticketId = TransientSessionTicketFactory.normalizeTicketId(logoutRequest.getID());
+        assertNotNull(ticketRegistry.getTicket(ticketId, TransientSessionTicket.class));
     }
 
     @Test

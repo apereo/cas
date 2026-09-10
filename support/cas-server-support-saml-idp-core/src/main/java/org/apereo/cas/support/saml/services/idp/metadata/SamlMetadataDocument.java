@@ -10,13 +10,14 @@ import com.google.errorprone.annotations.CanIgnoreReturnValue;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import lombok.experimental.SuperBuilder;
+import lombok.SuperBuilder;
 import org.springframework.data.annotation.Id;
 import tools.jackson.databind.ObjectMapper;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
+import jakarta.persistence.Index;
 import jakarta.persistence.Lob;
 import jakarta.persistence.Table;
 
@@ -27,7 +28,8 @@ import jakarta.persistence.Table;
  * @since 5.2.0
  */
 @Entity
-@Table(name = "SamlMetadataDocument")
+@Table(name = "SamlMetadataDocument",
+    indexes = @Index(name = "idx_saml_metadata_entity_id", columnList = "entityId"))
 @Getter
 @Setter
 @NoArgsConstructor
@@ -49,6 +51,10 @@ public class SamlMetadataDocument implements Serializable {
     @JsonProperty("name")
     @Column(nullable = false)
     private String name;
+
+    @JsonProperty("entityId")
+    @Column(name = "entityId", length = 512)
+    private String entityId;
 
     @JsonProperty("value")
     @Lob

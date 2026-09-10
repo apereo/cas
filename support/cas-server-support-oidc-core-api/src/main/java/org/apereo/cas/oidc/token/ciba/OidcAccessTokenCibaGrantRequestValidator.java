@@ -7,6 +7,7 @@ import org.apereo.cas.oidc.ticket.OidcCibaRequest;
 import org.apereo.cas.oidc.ticket.OidcCibaRequestFactory;
 import org.apereo.cas.services.OidcBackchannelTokenDeliveryModes;
 import org.apereo.cas.services.OidcRegisteredService;
+import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.support.oauth.OAuth20GrantTypes;
 import org.apereo.cas.support.oauth.util.OAuth20Utils;
 import org.apereo.cas.support.oauth.validator.token.BaseOAuth20TokenRequestValidator;
@@ -43,7 +44,9 @@ public class OidcAccessTokenCibaGrantRequestValidator extends BaseOAuth20TokenRe
         val cibaFactory = (OidcCibaRequestFactory) configurationContext.getTicketFactory().get(OidcCibaRequest.class);
         val decodedId = cibaFactory.decodeId(authRequestId);
         val ticket = configurationContext.getTicketRegistry().getTicket(decodedId, OidcCibaRequest.class);
-        val result = ticket != null && !ticket.isExpired() && ticket.isReady();
+        val authenticatedClientId = userProfile.getAttribute(OAuth20Constants.CLIENT_ID);
+        val result = ticket != null && !ticket.isExpired() && ticket.isReady()
+            && authenticatedClientId != null && Objects.equals(ticket.getClientId(), authenticatedClientId.toString());
         LOGGER.debug("CIBA authentication request is [{}]", BooleanUtils.toString(result, "valid", "invalid"));
 
         if (result) {

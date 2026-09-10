@@ -27,7 +27,7 @@ class UmaFindPolicyForResourceSetEndpointControllerTests extends BaseUmaEndpoint
 
         var model = getMappedResponseBody(result);
         assertNotNull(model);
-        val resourceId = ((Number) model.get("resourceId")).longValue();
+        val resourceId = parseIdentifier(model.get("resourceId"));
 
         body = createUmaPolicyRegistrationRequest(getCurrentProfile(results.getLeft(), results.getMiddle())).toJson();
         performUmaRequest(HttpMethod.POST, resourceId + "/" + OAuth20Constants.UMA_POLICY_URL,
@@ -38,7 +38,7 @@ class UmaFindPolicyForResourceSetEndpointControllerTests extends BaseUmaEndpoint
         model = getMappedResponseBody(result);
         assertNotNull(model);
         val policy = (Map) ((Collection) model.get("entity")).iterator().next();
-        val policyId = ((Number) policy.get("id")).longValue();
+        val policyId = parseIdentifier(policy.get("id"));
 
         result = performUmaRequest(HttpMethod.GET,
             resourceId + "/" + OAuth20Constants.UMA_POLICY_URL + '/' + policyId,
@@ -58,7 +58,7 @@ class UmaFindPolicyForResourceSetEndpointControllerTests extends BaseUmaEndpoint
 
         var model = getMappedResponseBody(result);
         assertNotNull(model);
-        val resourceId = ((Number) model.get("resourceId")).longValue();
+        val resourceId = parseIdentifier(model.get("resourceId"));
 
         body = createUmaPolicyRegistrationRequest(getCurrentProfile(results.getLeft(), results.getMiddle())).toJson();
         performUmaRequest(HttpMethod.POST, resourceId + "/" + OAuth20Constants.UMA_POLICY_URL,

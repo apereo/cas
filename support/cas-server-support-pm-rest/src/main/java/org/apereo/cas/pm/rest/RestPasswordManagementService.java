@@ -11,13 +11,10 @@ import org.apereo.cas.util.crypto.CipherExecutor;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.jspecify.annotations.Nullable;
-import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
-import org.springframework.http.RequestEntity;
-import org.springframework.web.client.RestTemplate;
+import org.springframework.web.client.RestClient;
 import org.springframework.web.util.UriComponentsBuilder;
 
 /**
@@ -28,14 +25,14 @@ import org.springframework.web.util.UriComponentsBuilder;
  */
 public class RestPasswordManagementService extends BasePasswordManagementService {
 
-    private final RestTemplate restTemplate;
+    private final RestClient restClient;
 
     public RestPasswordManagementService(final CipherExecutor<Serializable, String> cipherExecutor,
                                          final CasConfigurationProperties casProperties,
-                                         final RestTemplate restTemplate,
+                                         final RestClient restClient,
                                          final PasswordHistoryService passwordHistoryService) {
         super(casProperties, cipherExecutor, passwordHistoryService);
-        this.restTemplate = restTemplate;
+        this.restClient = restClient;
     }
 
     @Override
@@ -51,10 +48,8 @@ public class RestPasswordManagementService extends BasePasswordManagementService
         if (bean.getCurrentPassword() != null) {
             body.put(rest.getFieldNamePasswordOld(), bean.toCurrentPassword());
         }
-        val headers = new HttpHeaders();
-        headers.setContentType(MediaType.APPLICATION_JSON);
-        val entity = new HttpEntity<>(body, headers);
-        val result = restTemplate.exchange(rest.getEndpointUrlChange(), HttpMethod.POST, entity, Boolean.class);
+        val result = restClient.post().uri(rest.getEndpointUrlChange())
+            .contentType(MediaType.APPLICATION_JSON).body(body).retrieve().toEntity(Boolean.class);
         return result.getStatusCode().value() == HttpStatus.OK.value() && result.hasBody()
             && Objects.requireNonNull(result.getBody());
     }
@@ -67,8 +62,7 @@ public class RestPasswordManagementService extends BasePasswordManagementService
         }
         val url = UriComponentsBuilder.fromUriString(rest.getEndpointUrlUser())
             .queryParam("email", query.getUsername()).build().toUriString();
-        val request = new RequestEntity<>(HttpMethod.GET, URI.create(url));
-        val result = restTemplate.exchange(request, String.class);
+        val result = restClient.get().uri(URI.create(url)).retrieve().toEntity(String.class);
 
         if (result.getStatusCode().value() == HttpStatus.OK.value() && result.hasBody()) {
             return result.getBody();
@@ -85,8 +79,7 @@ public class RestPasswordManagementService extends BasePasswordManagementService
 
         val url = UriComponentsBuilder.fromUriString(rest.getEndpointUrlEmail())
             .queryParam("username", query.getUsername()).build().toUriString();
-        val request = new RequestEntity<>(HttpMethod.GET, URI.create(url));
-        val result = restTemplate.exchange(request, String.class);
+        val result = restClient.get().uri(URI.create(url)).retrieve().toEntity(String.class);
 
         if (result.getStatusCode().value() == HttpStatus.OK.value() && result.hasBody()
             && StringUtils.isNotBlank(result.getBody())) {
@@ -103,8 +96,7 @@ public class RestPasswordManagementService extends BasePasswordManagementService
         }
         val url = UriComponentsBuilder.fromUriString(rest.getEndpointUrlPhone())
             .queryParam("username", query.getUsername()).build().toUriString();
-        val request = new RequestEntity<>(HttpMethod.GET, URI.create(url));
-        val result = restTemplate.exchange(request, String.class);
+        val result = restClient.get().uri(URI.create(url)).retrieve().toEntity(String.class);
 
         if (result.getStatusCode().value() == HttpStatus.OK.value() && result.hasBody()) {
             return result.getBody();
@@ -121,8 +113,7 @@ public class RestPasswordManagementService extends BasePasswordManagementService
 
         val url = UriComponentsBuilder.fromUriString(rest.getEndpointUrlSecurityQuestions())
             .queryParam("username", query.getUsername()).build().toUriString();
-        val request = new RequestEntity<>(HttpMethod.GET, URI.create(url));
-        val result = restTemplate.exchange(request, Map.class);
+        val result = restClient.get().uri(URI.create(url)).retrieve().toEntity(Map.class);
 
         if (result.getStatusCode().value() == HttpStatus.OK.value() && result.hasBody()) {
             return Objects.requireNonNull(result.getBody());
@@ -136,8 +127,9 @@ public class RestPasswordManagementService extends BasePasswordManagementService
         if (StringUtils.isNotBlank(rest.getEndpointUrlSecurityQuestions())) {
             val url = UriComponentsBuilder.fromUriString(rest.getEndpointUrlSecurityQuestions())
                 .queryParam("username", query.getUsername()).build().toUriString();
-            val entity = new HttpEntity<>(new HttpHeaders(query.getSecurityQuestions()));
-            restTemplate.exchange(url, HttpMethod.POST, entity, Boolean.class);
+            restClient.post().uri(url)
+                .headers(headers -> headers.addAll(new HttpHeaders(query.getSecurityQuestions())))
+                .retrieve().toEntity(Boolean.class);
         }
     }
 
@@ -148,8 +140,7 @@ public class RestPasswordManagementService extends BasePasswordManagementService
         if (StringUtils.isNotBlank(rest.getEndpointUrlAccountUnlock())) {
             val url = UriComponentsBuilder.fromUriString(rest.getEndpointUrlAccountUnlock())
                 .queryParam("username", credential.getId()).build().toUriString();
-            val request = new RequestEntity<>(HttpMethod.POST, URI.create(url));
-            result = restTemplate.exchange(request, Boolean.class).getStatusCode().is2xxSuccessful();
+            result = restClient.post().uri(URI.create(url)).retrieve().toEntity(Boolean.class).getStatusCode().is2xxSuccessful();
         }
         return result;
     }

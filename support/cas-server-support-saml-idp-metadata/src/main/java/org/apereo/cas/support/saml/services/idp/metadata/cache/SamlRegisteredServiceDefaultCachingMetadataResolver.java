@@ -16,7 +16,7 @@ import com.github.benmanes.caffeine.cache.stats.CacheStats;
 import com.google.common.collect.Iterables;
 import lombok.Builder;
 import lombok.Getter;
-import lombok.experimental.SuperBuilder;
+import lombok.SuperBuilder;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import net.shibboleth.shared.resolver.CriteriaSet;
@@ -140,26 +140,8 @@ public class SamlRegisteredServiceDefaultCachingMetadataResolver implements Saml
         final SamlRegisteredService service,
         final CriteriaSet criteriaSet,
         final SamlRegisteredServiceCacheKey cacheKey) {
-
-        val cachedEntry = cache
-            .asMap()
-            .values()
-            .stream()
-            .filter(Objects::nonNull)
-            .map(Unchecked.function(res -> {
-                val entity = res.getMetadataResolver().resolveSingle(criteriaSet);
-                return Optional.ofNullable(entity)
-                    .map(e -> MetadataResolverCacheQueryResult.builder().result(res).entityDescriptor(Optional.of(e)).build());
-            }))
-            .filter(Optional::isPresent)
-            .flatMap(Optional::stream)
-            .filter(MetadataResolverCacheQueryResult::isValid)
-            .findFirst();
-
-        if (cachedEntry.isPresent() && cachedEntry.get().isValid()) {
-            return cachedEntry.get();
-        }
-        LOGGER.debug("Loading metadata resolver from the cache using [{}]", cacheKey.getCacheKey());
+        LOGGER.debug("Loading metadata resolver from the cache using [{}] for criteria [{}]",
+            cacheKey.getCacheKey(), criteriaSet);
         val cacheResult = Objects.requireNonNull(cache.get(cacheKey));
         LOGGER.debug("Loaded and cached SAML metadata [{}] from [{}]",
             cacheResult.getMetadataResolver().getId(), service.getMetadataLocation());

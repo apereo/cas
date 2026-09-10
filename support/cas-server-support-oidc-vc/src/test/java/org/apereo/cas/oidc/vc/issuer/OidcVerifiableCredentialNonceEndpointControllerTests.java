@@ -30,7 +30,7 @@ class OidcVerifiableCredentialNonceEndpointControllerTests {
     @ImportAutoConfiguration(CasOidcVerifiableCredentialsAutoConfiguration.class)
     class NonceEndpointTests extends AbstractOidcTests {
         @Test
-        void verifyNonceEndpointReturnsOk() throws Throwable {
+        void verifyNonceEndpointIsPubliclyAccessible() throws Throwable {
             mockMvc.perform(post(NONCE_ENDPOINT_URL)
                     .with(withHttpRequestProcessor())
                     .contentType(MediaType.APPLICATION_JSON))

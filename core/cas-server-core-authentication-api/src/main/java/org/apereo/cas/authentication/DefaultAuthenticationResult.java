@@ -5,8 +5,8 @@ import org.apereo.cas.authentication.principal.Service;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
+import lombok.SuperBuilder;
 import lombok.ToString;
-import lombok.experimental.SuperBuilder;
 import org.jspecify.annotations.Nullable;
 
 /**

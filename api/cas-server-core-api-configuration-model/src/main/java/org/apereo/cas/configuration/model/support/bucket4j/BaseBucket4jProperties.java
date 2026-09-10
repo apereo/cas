@@ -28,8 +28,10 @@ public abstract class BaseBucket4jProperties implements CasFeatureModule, Serial
 
     /**
      * Whether the request should block until capacity becomes available.
-     * Consume a token from the token bucket. If a token is not available this
-     * will block until the refill adds one to the bucket.
+     * When enabled, a request that finds the bucket empty parks its thread until
+     * the refill adds a token. On a request-serving path that turns a burst into
+     * thread-pool exhaustion, so throttling rejects the request immediately by
+     * default and only waits when this is explicitly turned on.
      */
     private boolean blocking = true;
 

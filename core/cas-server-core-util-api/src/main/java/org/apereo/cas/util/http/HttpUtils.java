@@ -5,7 +5,6 @@ import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.EncodingUtils;
 import org.apereo.cas.util.LoggingUtils;
 import org.apereo.cas.util.function.FunctionUtils;
-import org.apereo.cas.util.spring.SpringExpressionLanguageValueResolver;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.UtilityClass;
@@ -35,6 +34,7 @@ import org.apache.hc.core5.http.HttpStatus;
 import org.apache.hc.core5.http.io.SocketConfig;
 import org.apache.hc.core5.http.io.entity.StringEntity;
 import org.apache.hc.core5.http.message.BasicClassicHttpResponse;
+import org.apache.hc.core5.http.message.BasicHeader;
 import org.apache.hc.core5.http.message.BasicHttpResponse;
 import org.apache.hc.core5.net.URIBuilder;
 import org.apache.hc.core5.pool.PoolConcurrencyPolicy;
@@ -74,12 +74,9 @@ public class HttpUtils {
         val uri = buildHttpUri(execution.getUrl().trim(), execution.getParameters());
         val request = getHttpRequestByMethod(execution.getMethod().name().toLowerCase(Locale.ENGLISH).trim(), execution.getEntity(), uri);
         try {
-            val expressionResolver = SpringExpressionLanguageValueResolver.getInstance();
-            execution.getHeaders().forEach((key, value) -> {
-                val headerValue = expressionResolver.resolve(value);
-                val headerKey = expressionResolver.resolve(key);
-                request.addHeader(headerKey, headerValue);
-            });
+            request.setHeaders(execution.getHeaders().entrySet().stream()
+                .map(entry -> new BasicHeader(entry.getKey(), entry.getValue()))
+                .toArray(BasicHeader[]::new));
             prepareHttpRequest(request, execution);
             val client = getHttpClient(execution);
             return FunctionUtils.doAndRetry((Retryable<HttpResponse>) () -> {

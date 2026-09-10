@@ -57,6 +57,8 @@ public abstract class BaseDuoSecurityAuthenticationService implements DuoSecurit
     private final List<MultifactorAuthenticationPrincipalResolver> multifactorAuthenticationPrincipalResolver;
 
     private final Cache<String, DuoSecurityUserAccount> userAccountCache;
+
+    private final AtomicReference<OkHttpClient> duoHttpClient = new AtomicReference<>();
     
     @Override
     public DuoSecurityAuthenticationResult authenticate(final Credential credential) throws Exception {
@@ -171,6 +173,20 @@ public abstract class BaseDuoSecurityAuthenticationService implements DuoSecurit
         val resultingHost = host.getHost() + (host.getPort() > 0 ? ":" + host.getPort() : StringUtils.EMPTY);
         ReflectionUtils.setField(hostField, request, resultingHost);
 
+        val clientInstance = getDuoHttpClient(host);
+        val httpClientField = ReflectionUtils.findField(Http.class, "httpClient");
+        ReflectionUtils.makeAccessible(Objects.requireNonNull(httpClientField));
+
+        ReflectionUtils.setField(httpClientField, request, clientInstance);
+        return request;
+    }
+
+    @SuppressWarnings("NullAway")
+    private OkHttpClient getDuoHttpClient(final URI host) {
+        val currentClient = duoHttpClient.get();
+        if (currentClient != null) {
+            return currentClient;
+        }
         val factory = httpClient.httpClientFactory();
         val clientInstanceBuilder = new OkHttpClient.Builder()
             .connectTimeout(DEFAULT_HTTP_TIMEOUT_SECONDS, TimeUnit.SECONDS)
@@ -181,16 +197,10 @@ public abstract class BaseDuoSecurityAuthenticationService implements DuoSecurit
             clientInstanceBuilder
                 .certificatePinner(CertificatePinner.DEFAULT)
                 .sslSocketFactory(factory.getSslContext().getSocketFactory(), (X509TrustManager) factory.getTrustManagers()[0]);
-        } else {
-            val pinner = getDuoClient().createCertificatePinner(host.getHost(), request);
-            clientInstanceBuilder.certificatePinner(pinner);
         }
-        val httpClientField = ReflectionUtils.findField(Http.class, "httpClient");
-        ReflectionUtils.makeAccessible(Objects.requireNonNull(httpClientField));
-
         val clientInstance = clientInstanceBuilder.build();
-        ReflectionUtils.setField(httpClientField, request, clientInstance);
-        return request;
+        val existingClient = duoHttpClient.compareAndExchange(null, clientInstance);
+        return existingClient != null ? existingClient : clientInstance;
     }
     
     protected void configureHttpRequest(final Http request) {

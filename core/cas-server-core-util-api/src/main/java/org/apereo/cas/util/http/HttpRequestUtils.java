@@ -36,6 +36,7 @@ import jakarta.servlet.http.HttpServletResponse;
 @UtilityClass
 @Slf4j
 public class HttpRequestUtils {
+    
     /**
      * HTTP client response handler that simply returns the classic HTTP response.
      * This is useful for cases where you want to handle the response without any additional processing.
@@ -136,6 +137,13 @@ public class HttpRequestUtils {
      */
     @SuppressWarnings("JdkObsolete")
     public static Map<String, String> getRequestHeaders(final HttpServletRequest request) {
+        val unsafeRequestHeaders = Set.of(
+            HttpHeaders.COOKIE.toLowerCase(Locale.ENGLISH),
+            HttpHeaders.SET_COOKIE.toLowerCase(Locale.ENGLISH),
+            HttpHeaders.AUTHORIZATION.toLowerCase(Locale.ENGLISH),
+            HttpHeaders.PROXY_AUTHORIZATION.toLowerCase(Locale.ENGLISH)
+        );
+
         val headers = new LinkedHashMap<String, Object>();
         if (request != null) {
             val headerNames = request.getHeaderNames();
@@ -143,7 +151,9 @@ public class HttpRequestUtils {
                 while (headerNames.hasMoreElements()) {
                     val headerName = headerNames.nextElement();
                     val headerValue = StringUtils.stripToEmpty(request.getHeader(headerName));
-                    headers.put(headerName, headerValue);
+                    if (!unsafeRequestHeaders.contains(headerName.toLowerCase(Locale.ENGLISH))) {
+                        headers.put(headerName, headerValue);
+                    }
                 }
             }
         }

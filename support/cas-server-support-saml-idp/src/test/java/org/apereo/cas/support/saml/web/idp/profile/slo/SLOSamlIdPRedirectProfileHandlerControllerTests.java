@@ -4,7 +4,8 @@ import module java.base;
 import org.apereo.cas.support.saml.BaseSamlIdPConfigurationTests;
 import org.apereo.cas.support.saml.SamlIdPConstants;
 import org.apereo.cas.support.saml.services.SamlRegisteredService;
-import org.apereo.cas.support.saml.services.idp.metadata.SamlRegisteredServiceMetadataAdaptor;
+import org.apereo.cas.ticket.TransientSessionTicketFactory;
+import org.apereo.cas.util.junit.Assertions;
 import org.apereo.cas.web.support.WebUtils;
 import lombok.val;
 import net.shibboleth.shared.net.URLBuilder;
@@ -16,12 +17,14 @@ import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestMethodOrder;
-import org.opensaml.messaging.context.MessageContext;
+import org.opensaml.saml.common.SAMLException;
 import org.opensaml.saml.common.SAMLObjectBuilder;
 import org.opensaml.saml.common.xml.SAMLConstants;
 import org.opensaml.saml.saml2.core.Issuer;
 import org.opensaml.saml.saml2.core.LogoutRequest;
 import org.opensaml.saml.saml2.core.LogoutResponse;
+import org.opensaml.saml.saml2.core.Status;
+import org.opensaml.saml.saml2.core.StatusCode;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.test.context.TestPropertySource;
@@ -73,15 +76,18 @@ class SLOSamlIdPRedirectProfileHandlerControllerTests extends BaseSamlIdPConfigu
         val service = getSamlRegisteredServiceFor(false, false, false, "https://cassp.example.org");
 
         servicesManager.save(service);
-        var builder = (SAMLObjectBuilder) Objects.requireNonNull(openSamlConfigBean.getBuilderFactory().getBuilder(LogoutResponse.DEFAULT_ELEMENT_NAME));
-        var logoutResponse = (LogoutResponse) Objects.requireNonNull(builder.buildObject());
+        var logoutResponse = buildLogoutResponse(service);
 
-        builder = (SAMLObjectBuilder) Objects.requireNonNull(openSamlConfigBean.getBuilderFactory().getBuilder(Issuer.DEFAULT_ELEMENT_NAME));
-        val issuer = (Issuer) Objects.requireNonNull(builder.buildObject());
-        issuer.setValue(service.getServiceId());
-        logoutResponse.setIssuer(issuer);
-        logoutResponse.setID(UUID.randomUUID().toString());
-        logoutResponse.setInResponseTo("https://cas.example.org");
+        val pendingRequest = (LogoutRequest) Objects.requireNonNull(openSamlConfigBean.getBuilderFactory()
+            .getBuilder(LogoutRequest.DEFAULT_ELEMENT_NAME)).buildObject(LogoutRequest.DEFAULT_ELEMENT_NAME);
+        pendingRequest.setID(logoutResponse.getInResponseTo());
+        SamlIdPProfileSingleLogoutMessageCreator.storeLogoutRequest(ticketFactory, ticketRegistry,
+            webApplicationServiceFactory.createService(service.getServiceId()), pendingRequest, service.getServiceId());
+
+        val request = new MockHttpServletRequest();
+        val response = new MockHttpServletResponse();
+        logoutResponse = signSamlObject(request, response, logoutResponse, service,
+            SAMLConstants.SAML2_REDIRECT_BINDING_URI, logoutResponse.getDestination());
 
         val encoder = new SamlIdPHttpRedirectDeflateEncoder("https://cas.example.org/logout", logoutResponse);
         encoder.setRelayState("CasRelayState");
@@ -90,9 +96,33 @@ class SLOSamlIdPRedirectProfileHandlerControllerTests extends BaseSamlIdPConfigu
         assertTrue(encoder.getRedirectUrl().contains("CasRelayState"));
         val result = performSloRedirect(encoder.getRedirectUrl());
         assertEquals(HttpStatus.SC_OK, result.getResponse().getStatus());
+        assertNull(ticketRegistry.getTicket(TransientSessionTicketFactory.normalizeTicketId(logoutResponse.getInResponseTo())));
+    }
+
+    @Test
+    @Order(4)
+    void verifyUnsignedLogoutResponseRejected() throws Throwable {
+        val service = getSamlRegisteredServiceFor(false, false, false, "https://cassp.example.org");
+        servicesManager.save(service);
+        val logoutResponse = buildLogoutResponse(service);
+        val encoder = new SamlIdPHttpRedirectDeflateEncoder("https://cas.example.org/logout", logoutResponse);
+        encoder.doEncode();
+        Assertions.assertThrowsWithRootCause(Exception.class, SAMLException.class,
+            () -> performSloRedirect(encoder.getRedirectUrl()));
+    }
+
+    @Test
+    @Order(5)
+    void verifyLogoutRequestReplayRejected() throws Throwable {
+        val service = getSamlRegisteredServiceFor(false, false, false, "https://cassp.example.org");
+        executeTest(service, true);
     }
 
     private MvcResult executeTest(final SamlRegisteredService service) throws Throwable {
+        return executeTest(service, false);
+    }
+
+    private MvcResult executeTest(final SamlRegisteredService service, final boolean replay) throws Throwable {
         val request = new MockHttpServletRequest();
         request.setMethod("GET");
         val response = new MockHttpServletResponse();
@@ -106,15 +136,20 @@ class SLOSamlIdPRedirectProfileHandlerControllerTests extends BaseSamlIdPConfigu
         val issuer = (Issuer) Objects.requireNonNull(builder.buildObject());
         issuer.setValue(service.getServiceId());
         logoutRequest.setIssuer(issuer);
-
-        val adaptor = SamlRegisteredServiceMetadataAdaptor
-            .get(samlRegisteredServiceCachingMetadataResolver, service, service.getServiceId()).orElseThrow();
-        logoutRequest = samlIdPObjectSigner.encode(logoutRequest, service,
-            adaptor, response, request, SAMLConstants.SAML2_REDIRECT_BINDING_URI, logoutRequest, new MessageContext());
+        logoutRequest.setID('_' + UUID.randomUUID().toString());
+        logoutRequest.setIssueInstant(Instant.now(Clock.systemUTC()));
+        logoutRequest.setDestination("http://localhost" + SamlIdPConstants.ENDPOINT_SAML2_SLO_PROFILE_REDIRECT);
+        logoutRequest = signSamlObject(request, response, logoutRequest, service,
+            SAMLConstants.SAML2_REDIRECT_BINDING_URI, logoutRequest.getDestination());
 
         val encoder = new SamlIdPHttpRedirectDeflateEncoder("https://cas.example.org/logout", logoutRequest);
         encoder.doEncode();
-        return performSloRedirect(encoder.getRedirectUrl());
+        val result = performSloRedirect(encoder.getRedirectUrl());
+        if (replay) {
+            Assertions.assertThrowsWithRootCause(Exception.class, SAMLException.class,
+                () -> performSloRedirect(encoder.getRedirectUrl()));
+        }
+        return result;
     }
 
     private MvcResult performSloRedirect(final String redirectUrl) throws Exception {
@@ -128,5 +163,32 @@ class SLOSamlIdPRedirectProfileHandlerControllerTests extends BaseSamlIdPConfigu
             return request;
         });
         return mockMvc.perform(builder).andReturn();
+    }
+
+    private LogoutResponse buildLogoutResponse(final SamlRegisteredService service) {
+        var builder = (SAMLObjectBuilder) Objects.requireNonNull(openSamlConfigBean.getBuilderFactory()
+            .getBuilder(LogoutResponse.DEFAULT_ELEMENT_NAME));
+        val logoutResponse = (LogoutResponse) Objects.requireNonNull(builder.buildObject());
+
+        builder = (SAMLObjectBuilder) Objects.requireNonNull(openSamlConfigBean.getBuilderFactory()
+            .getBuilder(Issuer.DEFAULT_ELEMENT_NAME));
+        val issuer = (Issuer) Objects.requireNonNull(builder.buildObject());
+        issuer.setValue(service.getServiceId());
+        logoutResponse.setIssuer(issuer);
+        logoutResponse.setID('_' + UUID.randomUUID().toString());
+        logoutResponse.setInResponseTo('_' + UUID.randomUUID().toString());
+        logoutResponse.setIssueInstant(Instant.now(Clock.systemUTC()));
+        logoutResponse.setDestination("http://localhost" + SamlIdPConstants.ENDPOINT_SAML2_SLO_PROFILE_REDIRECT);
+
+        builder = (SAMLObjectBuilder) Objects.requireNonNull(openSamlConfigBean.getBuilderFactory()
+            .getBuilder(Status.DEFAULT_ELEMENT_NAME));
+        val status = (Status) Objects.requireNonNull(builder.buildObject());
+        builder = (SAMLObjectBuilder) Objects.requireNonNull(openSamlConfigBean.getBuilderFactory()
+            .getBuilder(StatusCode.DEFAULT_ELEMENT_NAME));
+        val statusCode = (StatusCode) Objects.requireNonNull(builder.buildObject());
+        statusCode.setValue(StatusCode.SUCCESS);
+        status.setStatusCode(statusCode);
+        logoutResponse.setStatus(status);
+        return logoutResponse;
     }
 }

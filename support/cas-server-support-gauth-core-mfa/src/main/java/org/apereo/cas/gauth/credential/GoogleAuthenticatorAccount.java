@@ -4,7 +4,7 @@ import module java.base;
 import org.apereo.cas.authentication.OneTimeTokenAccount;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import lombok.NoArgsConstructor;
-import lombok.experimental.SuperBuilder;
+import lombok.SuperBuilder;
 
 /**
  * This is {@link GoogleAuthenticatorAccount}.

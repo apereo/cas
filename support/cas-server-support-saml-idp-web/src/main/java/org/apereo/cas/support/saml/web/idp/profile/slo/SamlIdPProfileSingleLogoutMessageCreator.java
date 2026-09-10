@@ -1,6 +1,7 @@
 package org.apereo.cas.support.saml.web.idp.profile.slo;
 
 import module java.base;
+import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.configuration.support.Beans;
 import org.apereo.cas.logout.slo.SingleLogoutMessage;
 import org.apereo.cas.logout.slo.SingleLogoutMessageCreator;
@@ -12,6 +13,10 @@ import org.apereo.cas.support.saml.services.idp.metadata.SamlRegisteredServiceMe
 import org.apereo.cas.support.saml.util.AbstractSaml20ObjectBuilder;
 import org.apereo.cas.support.saml.web.idp.profile.SamlProfileHandlerConfigurationContext;
 import org.apereo.cas.support.saml.web.idp.profile.builders.nameid.SamlAttributeBasedNameIdGenerator;
+import org.apereo.cas.ticket.TicketFactory;
+import org.apereo.cas.ticket.TransientSessionTicket;
+import org.apereo.cas.ticket.TransientSessionTicketFactory;
+import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.LoggingUtils;
 import org.apereo.cas.util.RandomUtils;
@@ -40,6 +45,12 @@ import org.opensaml.soap.soap11.Envelope;
  */
 @Slf4j
 public class SamlIdPProfileSingleLogoutMessageCreator extends AbstractSaml20ObjectBuilder implements SingleLogoutMessageCreator {
+
+    /**
+     * Property name for relying party of the logout request.
+     */
+    public static final String PROPERTY_NAME_RELYING_PARTY =
+        SamlIdPProfileSingleLogoutMessageCreator.class.getName() + ".relyingParty";
 
     private final SamlProfileHandlerConfigurationContext samlProfileHandlerConfigurationContext;
 
@@ -87,6 +98,8 @@ public class SamlIdPProfileSingleLogoutMessageCreator extends AbstractSaml20Obje
                 samlLogoutRequest, samlService, adaptor,
                 httpResponse, httpRequest, binding, samlLogoutRequest, new MessageContext()));
         }
+        storeLogoutRequest(samlProfileHandlerConfigurationContext.getTicketFactory(),
+            samlProfileHandlerConfigurationContext.getTicketRegistry(), request.getService(), samlLogoutRequest, adaptor.getEntityId());
         if (SAMLConstants.SAML2_SOAP11_BINDING_URI.equalsIgnoreCase(binding)) {
             val envelope = envelopeBuilder.buildObject();
             val body = bodyBuilder.buildObject();
@@ -98,6 +111,27 @@ public class SamlIdPProfileSingleLogoutMessageCreator extends AbstractSaml20Obje
 
         SamlUtils.logSamlObject(openSamlConfigBean, samlLogoutRequest);
         return buildSingleLogoutMessage(samlLogoutRequest, samlLogoutRequest);
+    }
+
+    /**
+     * Store logout request.
+     *
+     * @param ticketFactory  the ticket factory
+     * @param ticketRegistry the ticket registry
+     * @param service        the service
+     * @param logoutRequest  the logout request
+     * @param relyingParty   the relying party
+     * @throws Exception the exception
+     */
+    public static void storeLogoutRequest(final TicketFactory ticketFactory,
+                                          final TicketRegistry ticketRegistry,
+                                          final Service service,
+                                          final LogoutRequest logoutRequest,
+                                          final String relyingParty) throws Exception {
+        val factory = (TransientSessionTicketFactory) ticketFactory.get(TransientSessionTicket.class);
+        val ticket = factory.create(logoutRequest.getID(), service,
+            Map.of(PROPERTY_NAME_RELYING_PARTY, relyingParty));
+        ticketRegistry.addTicket(ticket);
     }
 
     private NameID buildNameId(final SingleLogoutRequestContext request, final SamlRegisteredServiceMetadataAdaptor adaptor) throws Throwable {

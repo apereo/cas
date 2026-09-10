@@ -46,7 +46,8 @@ class OidcAccessTokenTokenExchangeGrantRequestExtractorTests extends AbstractOid
         val context = new JEEContext(request, response);
 
         val userProfile = new CommonProfile();
-        userProfile.setId("casuser");
+        userProfile.setId(registeredService.getClientId());
+        userProfile.addAttribute(OAuth20Constants.CLIENT_ID, registeredService.getClientId());
         userProfile.addAttributes((Map) RegisteredServiceTestUtils.getTestAttributes());
         val profileManager = new ProfileManager(context, oauthDistributedSessionStore);
         profileManager.save(true, userProfile, false);
@@ -92,7 +93,8 @@ class OidcAccessTokenTokenExchangeGrantRequestExtractorTests extends AbstractOid
         val context = new JEEContext(request, response);
 
         val userProfile = new CommonProfile();
-        userProfile.setId("casuser");
+        userProfile.setId(registeredService.getClientId());
+        userProfile.addAttribute(OAuth20Constants.CLIENT_ID, registeredService.getClientId());
         userProfile.addAttributes((Map) RegisteredServiceTestUtils.getTestAttributes());
         val profileManager = new ProfileManager(context, oauthDistributedSessionStore);
         profileManager.save(true, userProfile, false);

@@ -7,6 +7,7 @@ import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.support.oauth.OAuth20GrantTypes;
 import org.apereo.cas.support.oauth.OAuth20ResponseTypes;
 import org.apereo.cas.support.oauth.OAuth20TokenExchangeTypes;
+import org.apereo.cas.ticket.OAuth20UnauthorizedScopeRequestException;
 import org.apereo.cas.token.JwtBuilder;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
@@ -19,6 +20,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.*;
 
 /**
  * This is {@link AccessTokenTokenExchangeGrantRequestExtractorTests}.
@@ -50,6 +52,7 @@ class AccessTokenTokenExchangeGrantRequestExtractorTests extends AbstractOAuth20
         val jwtString = accessTokenJwtBuilder.build(payload);
 
         val subjectToken = getAccessToken(registeredService.getServiceId(), registeredService.getClientId());
+        when(subjectToken.getScopes()).thenReturn(Set.of("read"));
         ticketRegistry.addTicket(subjectToken);
 
         request.addParameter(OAuth20Constants.SUBJECT_TOKEN, subjectToken.getId());
@@ -65,7 +68,8 @@ class AccessTokenTokenExchangeGrantRequestExtractorTests extends AbstractOAuth20
         val context = new JEEContext(request, response);
 
         val userProfile = new CommonProfile();
-        userProfile.setId("casuser");
+        userProfile.setId(registeredService.getClientId());
+        userProfile.addAttribute(OAuth20Constants.CLIENT_ID, registeredService.getClientId());
         userProfile.addAttributes((Map) RegisteredServiceTestUtils.getTestAttributes());
         new ProfileManager(context, oauthDistributedSessionStore).save(true, userProfile, false);
 
@@ -79,6 +83,7 @@ class AccessTokenTokenExchangeGrantRequestExtractorTests extends AbstractOAuth20
         val request = new MockHttpServletRequest();
 
         val subjectToken = getAccessToken(service.getServiceId(), service.getClientId());
+        when(subjectToken.getScopes()).thenReturn(Set.of("read"));
         ticketRegistry.addTicket(subjectToken);
 
         val actorToken = getAccessToken(randomServiceUrl(), UUID.randomUUID().toString());
@@ -95,6 +100,10 @@ class AccessTokenTokenExchangeGrantRequestExtractorTests extends AbstractOAuth20
 
         val response = new MockHttpServletResponse();
         val context = new JEEContext(request, response);
+        val userProfile = new CommonProfile();
+        userProfile.setId(service.getClientId());
+        userProfile.addAttribute(OAuth20Constants.CLIENT_ID, service.getClientId());
+        new ProfileManager(context, oauthDistributedSessionStore).save(true, userProfile, false);
         assertEquals(OAuth20ResponseTypes.NONE, extractor.getResponseType());
         assertTrue(extractor.supports(context));
         val tokenContext = extractor.extract(context);
@@ -105,5 +114,30 @@ class AccessTokenTokenExchangeGrantRequestExtractorTests extends AbstractOAuth20
         assertEquals(OAuth20TokenExchangeTypes.ACCESS_TOKEN, tokenContext.getSubjectTokenType());
         assertEquals(OAuth20TokenExchangeTypes.ACCESS_TOKEN, tokenContext.getRequestedTokenType());
         assertNotNull(tokenContext.getActorToken());
+    }
+
+    @Test
+    void verifyRequestedScopesCannotExceedSubjectToken() throws Throwable {
+        val service = addRegisteredService(Set.of(OAuth20GrantTypes.TOKEN_EXCHANGE));
+        service.setScopes(Set.of("read", "write"));
+        servicesManager.save(service);
+
+        val subjectToken = getAccessToken(service.getServiceId(), service.getClientId());
+        when(subjectToken.getScopes()).thenReturn(Set.of("read"));
+        ticketRegistry.addTicket(subjectToken);
+
+        val request = new MockHttpServletRequest();
+        request.addParameter(OAuth20Constants.SUBJECT_TOKEN, subjectToken.getId());
+        request.addParameter(OAuth20Constants.SUBJECT_TOKEN_TYPE, OAuth20TokenExchangeTypes.ACCESS_TOKEN.getType());
+        request.addParameter(OAuth20Constants.GRANT_TYPE, OAuth20GrantTypes.TOKEN_EXCHANGE.getType());
+        request.addParameter(OAuth20Constants.SCOPE, "write");
+        val context = new JEEContext(request, new MockHttpServletResponse());
+
+        val userProfile = new CommonProfile();
+        userProfile.setId(service.getClientId());
+        userProfile.addAttribute(OAuth20Constants.CLIENT_ID, service.getClientId());
+        new ProfileManager(context, oauthDistributedSessionStore).save(true, userProfile, false);
+
+        assertThrows(OAuth20UnauthorizedScopeRequestException.class, () -> extractor.extract(context));
     }
 }

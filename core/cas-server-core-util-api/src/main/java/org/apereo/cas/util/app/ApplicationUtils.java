@@ -4,7 +4,6 @@ import module java.base;
 import lombok.experimental.UtilityClass;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.Strings;
 import org.springframework.boot.context.metrics.buffering.BufferingApplicationStartup;
 import org.springframework.core.annotation.AnnotationAwareOrderComparator;
 import org.springframework.core.metrics.ApplicationStartup;
@@ -18,7 +17,12 @@ import org.springframework.core.metrics.jfr.FlightRecorderApplicationStartup;
  */
 @UtilityClass
 public class ApplicationUtils {
-    private static final int APPLICATION_EVENTS_CAPACITY = 5_000;
+    /**
+     * System property that selects the startup instrumentation strategy.
+     */
+    public static final String SYSTEM_PROPERTY_APP_STARTUP = "CAS_APP_STARTUP";
+
+    private static final int APPLICATION_EVENTS_CAPACITY = 10_000;
 
     /**
      * Gets application initialization components.
@@ -36,18 +40,21 @@ public class ApplicationUtils {
 
     /**
      * Gets application startup.
+     * Startup instrumentation is opt-in: recording every bean instantiation, configuration
+     * class parse and condition evaluation costs time and memory on every deployment, while
+     * the data it produces is only reachable through the {@code startup} actuator endpoint.
+     * Deployments that want to profile the startup sequence must ask for it explicitly via
+     * the {@link #SYSTEM_PROPERTY_APP_STARTUP} system property.
      *
      * @return the application startup
      */
     public static ApplicationStartup getApplicationStartup() {
-        val type = StringUtils.defaultIfBlank(System.getProperty("CAS_APP_STARTUP"), "buffering");
-        if (Strings.CI.equals("jfr", type)) {
-            return new FlightRecorderApplicationStartup();
-        }
-        if (Strings.CI.equals("buffering", type)) {
-            return new BufferingApplicationStartup(APPLICATION_EVENTS_CAPACITY);
-        }
-        return ApplicationStartup.DEFAULT;
+        val type = StringUtils.defaultIfBlank(System.getProperty(SYSTEM_PROPERTY_APP_STARTUP), "default");
+        return switch (type.toLowerCase(Locale.ENGLISH)) {
+            case "jfr" -> new FlightRecorderApplicationStartup();
+            case "buffering" -> new BufferingApplicationStartup(APPLICATION_EVENTS_CAPACITY);
+            default -> ApplicationStartup.DEFAULT;
+        };
     }
 
 }

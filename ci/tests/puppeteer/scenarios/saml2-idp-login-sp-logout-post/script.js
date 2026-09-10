@@ -1,4 +1,5 @@
 const cas = require("../../cas.js");
+const assert = require("assert");
 const path = require("path");
 const fs = require("fs");
 const os = require("os");
@@ -31,13 +32,13 @@ async function getActuatorEndpoint(entityId) {
         await fs.writeFileSync(sloFile, sloPage);
         await cas.log(`Logout page is written to ${sloFile}`);
 
-        await cas.goto(page, `file://${sloFile}`);
+        const response = await cas.goto(page, `file://${sloFile}`);
         await cas.sleep(4000);
         await cas.logPage(page);
-        await cas.assertVisibility(page, "#logoutPostButton");
-        await cas.submitForm(page, "#logoutPostButton");
-        await cas.sleep(2000);
-        await cas.assertPageUrl(page, "http://localhost:9443/simplesaml/module.php/saml/sp/saml2-logout.php/default-sp");
+        assert(response.status() === 200);
+        assert(page.url().startsWith("https://localhost:8443/cas/idp/profile/SAML2/Redirect/SLO?"));
+        assert(page.url().includes("Signature="));
+        assert((await cas.innerText(page, "body")).trim() === "");
         await cas.removeDirectoryOrFile(path.join(__dirname, "/saml-md"));
     } finally {
         await cas.closeBrowser(browser);

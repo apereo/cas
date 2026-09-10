@@ -81,7 +81,9 @@ class AccessTokenCibaGrantRequestExtractorTests extends AbstractOidcTests {
 
         if (mode.equalsIgnoreCase(OidcBackchannelTokenDeliveryModes.POLL.name()) || mode.equalsIgnoreCase(OidcBackchannelTokenDeliveryModes.PING.name())) {
             ticketRegistry.updateTicket(cibaRequest.markTicketReady());
-            assertNotNull(oidcCibaAccessTokenGrantRequestExtractor.extract(context));
+            val result = oidcCibaAccessTokenGrantRequestExtractor.extract(context);
+            assertNotNull(result);
+            assertEquals(cibaRequest.getEncodedId(), result.getCibaRequestId());
         }
     }
 }

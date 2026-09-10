@@ -38,10 +38,10 @@ const cas = require("../../cas.js");
 
     const policyUrl = `https://localhost:8443/cas/oauth2.0/${resource.resourceId}/policy`;
     let policyObject = {
-        id: 1234,
+        id: "1234",
         permissions: [
             {
-                id: 1,
+                id: "1",
                 subject: "casuser",
                 scopes: ["read"],
                 claims: {
@@ -50,7 +50,7 @@ const cas = require("../../cas.js");
                 }
             },
             {
-                id: 2,
+                id: "2",
                 subject: "casuser",
                 scopes: ["create"],
                 claims: {
@@ -91,10 +91,10 @@ const cas = require("../../cas.js");
     await cas.log(result);
 
     policyObject = {
-        id: 1234,
+        id: "1234",
         permissions: [
             {
-                id: 1,
+                id: "1",
                 subject: "casuser",
                 scopes: ["read"],
                 claims: {

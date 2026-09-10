@@ -2,6 +2,7 @@ package org.apereo.cas.mfa.simple.web.flow;
 
 import module java.base;
 import org.apereo.cas.mfa.simple.ticket.CasSimpleMultifactorAuthenticationTicket;
+import org.apereo.cas.mfa.simple.validation.CasSimpleMultifactorAuthenticationService;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.util.junit.EnabledIfListeningOnPort;
 import org.apereo.cas.web.flow.CasWebflowConstants;
@@ -9,6 +10,8 @@ import lombok.val;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.test.context.TestPropertySource;
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -32,6 +35,10 @@ class CasSimpleMultifactorUpdateEmailActionTests {
         "cas.authn.mfa.simple.mail.accepted-email-pattern=.+@example.org"
     })
     class DefaultTests extends BaseCasSimpleMultifactorSendTokenActionTests {
+        @Autowired
+        @Qualifier(CasSimpleMultifactorAuthenticationService.BEAN_NAME)
+        private CasSimpleMultifactorAuthenticationService multifactorAuthenticationService;
+
         @Test
         void verifyUpdate() throws Throwable {
             val requestContext = buildRequestContextFor(RegisteredServiceTestUtils.getPrincipal("casuser"));
@@ -42,6 +49,32 @@ class CasSimpleMultifactorUpdateEmailActionTests {
             requestContext.setParameter("token", token.getId());
             event = mfaSimpleMultifactorUpdateEmailAction.execute(requestContext);
             assertEquals(CasWebflowConstants.TRANSITION_ID_RESUME, event.getId());
+        }
+
+        @Test
+        void verifyTokenIssuedForAnotherPrincipalIsRejected() throws Throwable {
+            val requestContext = buildRequestContextFor(RegisteredServiceTestUtils.getPrincipal("casuser"));
+            requestContext.setParameter("email", "cas@example.org");
+            val event = mfaSimpleMultifactorVerifyEmailAction.execute(requestContext);
+            assertEquals(CasWebflowConstants.TRANSITION_ID_SUCCESS, event.getId());
+            val token = (CasSimpleMultifactorAuthenticationTicket) event.getAttributes().get("result");
+
+            val otherContext = buildRequestContextFor(RegisteredServiceTestUtils.getPrincipal("unknown-user"));
+            otherContext.setParameter("token", token.getId());
+            val result = mfaSimpleMultifactorUpdateEmailAction.execute(otherContext);
+            assertEquals(CasWebflowConstants.TRANSITION_ID_ERROR, result.getId());
+            assertNull(ticketRegistry.getTicket(token.getId()));
+        }
+
+        @Test
+        void verifyTokenWithoutEmailAddressIsRejected() throws Throwable {
+            val principal = RegisteredServiceTestUtils.getPrincipal("casuser");
+            val requestContext = buildRequestContextFor(principal);
+            val token = multifactorAuthenticationService.generate(principal, RegisteredServiceTestUtils.getService());
+            multifactorAuthenticationService.store(token);
+            requestContext.setParameter("token", token.getId());
+            val result = mfaSimpleMultifactorUpdateEmailAction.execute(requestContext);
+            assertEquals(CasWebflowConstants.TRANSITION_ID_ERROR, result.getId());
         }
 
         @Test

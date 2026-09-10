@@ -2,7 +2,7 @@ package org.apereo.cas.git;
 
 import module java.base;
 import lombok.Getter;
-import lombok.experimental.SuperBuilder;
+import lombok.SuperBuilder;
 import org.eclipse.jgit.lib.ObjectId;
 import org.eclipse.jgit.transport.CredentialsProvider;
 import org.eclipse.jgit.treewalk.TreeWalk;

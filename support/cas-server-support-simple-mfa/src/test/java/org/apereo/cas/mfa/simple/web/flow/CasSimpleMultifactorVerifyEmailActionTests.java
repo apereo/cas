@@ -1,6 +1,7 @@
 package org.apereo.cas.mfa.simple.web.flow;
 
 import module java.base;
+import org.apereo.cas.mfa.simple.ticket.CasSimpleMultifactorAuthenticationTicket;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.util.junit.EnabledIfListeningOnPort;
 import org.apereo.cas.web.flow.CasWebflowConstants;
@@ -63,6 +64,26 @@ class CasSimpleMultifactorVerifyEmailActionTests {
             assertEquals(CasWebflowConstants.TRANSITION_ID_SUCCESS, event.getId());
             val token = event.getAttributes().get("result");
             assertNotNull(token);
+        }
+
+        @Test
+        void verifyEachRegistrationAttemptIssuesFreshToken() throws Throwable {
+            val requestContext = buildRequestContextFor(RegisteredServiceTestUtils.getPrincipal("casuser"));
+            requestContext.setParameter("email", "cas@example.org");
+            var event = mfaSimpleMultifactorVerifyEmailAction.execute(requestContext);
+            assertEquals(CasWebflowConstants.TRANSITION_ID_SUCCESS, event.getId());
+            val firstToken = (CasSimpleMultifactorAuthenticationTicket) event.getAttributes().get("result");
+
+            requestContext.setParameter("email", "cas-alt@example.org");
+            event = mfaSimpleMultifactorVerifyEmailAction.execute(requestContext);
+            assertEquals(CasWebflowConstants.TRANSITION_ID_SUCCESS, event.getId());
+            val secondToken = (CasSimpleMultifactorAuthenticationTicket) event.getAttributes().get("result");
+
+            assertNotEquals(firstToken.getId(), secondToken.getId());
+            assertEquals("cas@example.org",
+                firstToken.getProperty(CasSimpleMultifactorVerifyEmailAction.TOKEN_PROPERTY_EMAIL_TO_REGISTER, String.class));
+            assertEquals("cas-alt@example.org",
+                secondToken.getProperty(CasSimpleMultifactorVerifyEmailAction.TOKEN_PROPERTY_EMAIL_TO_REGISTER, String.class));
         }
     }
     
