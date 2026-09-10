@@ -135,7 +135,7 @@ class UmaAuthorizationRequestEndpointControllerTests extends BaseUmaEndpointCont
 
         var model = getMappedResponseBody(result);
         assertNotNull(model);
-        val resourceId = ((Number) model.get("resourceId")).longValue();
+        val resourceId = parseIdentifier(model.get("resourceId"));
 
         val profile = getCurrentProfile(results.getLeft(), results.getMiddle());
         body = createUmaPolicyRegistrationRequest(profile, scopes).toJson();

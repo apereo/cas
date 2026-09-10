@@ -58,7 +58,6 @@ import org.thymeleaf.spring6.view.AbstractThymeleafView;
 import org.thymeleaf.spring6.view.ThymeleafViewResolver;
 import org.thymeleaf.templatemode.TemplateMode;
 import org.thymeleaf.templateresolver.AbstractConfigurableTemplateResolver;
-import org.thymeleaf.templateresolver.AbstractTemplateResolver;
 import org.thymeleaf.templateresolver.ClassLoaderTemplateResolver;
 import org.thymeleaf.templateresolver.FileTemplateResolver;
 import org.thymeleaf.templateresolver.ITemplateResolver;
@@ -106,8 +105,9 @@ public class CasThymeleafAutoConfiguration {
     }
 
     private static void configureTemplateViewResolver(final AbstractConfigurableTemplateResolver resolver,
-                                                      final ThymeleafProperties thymeleafProperties) {
-        resolver.setCacheable(thymeleafProperties.isCache());
+                                                      final ThymeleafProperties thymeleafProperties,
+                                                      final boolean cacheable) {
+        resolver.setCacheable(cacheable && thymeleafProperties.isCache());
         resolver.setCharacterEncoding(thymeleafProperties.getEncoding().name());
         resolver.setCheckExistence(thymeleafProperties.isCheckTemplateLocation());
         resolver.setForceTemplateMode(true);
@@ -119,7 +119,7 @@ public class CasThymeleafAutoConfiguration {
     @Bean
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @ConditionalOnMissingBean(name = "chainingTemplateViewResolver")
-    public AbstractTemplateResolver chainingTemplateViewResolver(
+    public ITemplateResolver chainingTemplateViewResolver(
         @Qualifier("themeClassLoaderTemplateResolver") final ITemplateResolver themeClassLoaderTemplateResolver,
         @Qualifier("classLoaderTemplateResolver") final ITemplateResolver classLoaderTemplateResolver,
         final ThymeleafProperties thymeleafProperties,
@@ -141,7 +141,7 @@ public class CasThymeleafAutoConfiguration {
         val rest = casProperties.getView().getRest();
         if (StringUtils.isNotBlank(rest.getUrl())) {
             val url = new RestfulUrlTemplateResolver(casProperties, themeResolver);
-            configureTemplateViewResolver(url, thymeleafProperties);
+            configureTemplateViewResolver(url, thymeleafProperties, false);
             chain.addResolver(url);
         }
 
@@ -155,12 +155,12 @@ public class CasThymeleafAutoConfiguration {
                 val theme = prefix.startsWith(ResourceUtils.CLASSPATH_URL_PREFIX)
                     ? new ThemeClassLoaderTemplateResolver(themeResolver)
                     : new ThemeFileTemplateResolver(casProperties, themeResolver);
-                configureTemplateViewResolver(theme, thymeleafProperties);
+                configureTemplateViewResolver(theme, thymeleafProperties, false);
                 theme.setPrefix(Strings.CI.removeStart(viewPath, ResourceUtils.CLASSPATH_URL_PREFIX) + "themes/%s/");
                 chain.addResolver(theme);
 
                 val template = prefix.startsWith(ResourceUtils.CLASSPATH_URL_PREFIX) ? new ClassLoaderTemplateResolver() : new FileTemplateResolver();
-                configureTemplateViewResolver(template, thymeleafProperties);
+                configureTemplateViewResolver(template, thymeleafProperties, true);
                 template.setPrefix(Strings.CI.removeStart(viewPath, ResourceUtils.CLASSPATH_URL_PREFIX));
                 chain.addResolver(template);
             } catch (final Exception e) {
@@ -181,7 +181,7 @@ public class CasThymeleafAutoConfiguration {
     public ITemplateResolver themeClassLoaderTemplateResolver(final ThymeleafProperties thymeleafProperties,
                                                               @Qualifier("themeResolver") final ThemeResolver themeResolver) {
         val themeCp = new ThemeClassLoaderTemplateResolver(themeResolver);
-        configureTemplateViewResolver(themeCp, thymeleafProperties);
+        configureTemplateViewResolver(themeCp, thymeleafProperties, false);
         themeCp.setPrefix("templates/%s/");
         return themeCp;
     }
@@ -191,7 +191,7 @@ public class CasThymeleafAutoConfiguration {
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     public ITemplateResolver classLoaderTemplateResolver(final ThymeleafProperties thymeleafProperties) {
         val cpResolver = new ClassLoaderTemplateResolver();
-        configureTemplateViewResolver(cpResolver, thymeleafProperties);
+        configureTemplateViewResolver(cpResolver, thymeleafProperties, true);
         cpResolver.setPrefix("thymeleaf/templates/");
         return cpResolver;
     }

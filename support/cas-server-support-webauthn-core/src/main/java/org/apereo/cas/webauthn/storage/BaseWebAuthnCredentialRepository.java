@@ -4,6 +4,7 @@ import module java.base;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.util.DateTimeUtils;
 import org.apereo.cas.util.LoggingUtils;
+import org.apereo.cas.util.concurrent.CasReentrantLock;
 import org.apereo.cas.util.crypto.CipherExecutor;
 import com.yubico.data.CredentialRegistration;
 import com.yubico.webauthn.AssertionResult;
@@ -27,15 +28,36 @@ import lombok.val;
 @RequiredArgsConstructor(access = AccessLevel.PROTECTED)
 public abstract class BaseWebAuthnCredentialRepository implements WebAuthnCredentialRepository {
 
+    private static final Duration CREDENTIAL_INDEX_EXPIRATION = Duration.ofMinutes(1);
+
     private final CasConfigurationProperties properties;
 
     private final CipherExecutor<String, String> cipherExecutor;
+
+    @Getter(AccessLevel.NONE)
+    private final CasReentrantLock credentialIndexLock = new CasReentrantLock();
+
+    @Getter(AccessLevel.NONE)
+    private final AtomicLong credentialIndexVersion = new AtomicLong();
+
+    @Getter(AccessLevel.NONE)
+    private volatile long indexedVersion = -1;
+
+    @Getter(AccessLevel.NONE)
+    private volatile Instant credentialIndexExpiresAt = Instant.MIN;
+
+    @Getter(AccessLevel.NONE)
+    private volatile Map<ByteArray, Set<String>> usernamesByCredentialId = Map.of();
+
+    @Getter(AccessLevel.NONE)
+    private volatile Map<ByteArray, Set<String>> usernamesByUserHandle = Map.of();
 
     @Override
     public boolean addRegistrationByUsername(final String username, final CredentialRegistration credentialRegistration) {
         val registrations = getRegistrationsByUsername(username);
         registrations.add(credentialRegistration);
         update(username, new HashSet<>(registrations));
+        invalidateCredentialIndex();
         return true;
     }
 
@@ -47,7 +69,9 @@ public abstract class BaseWebAuthnCredentialRepository implements WebAuthnCreden
 
     @Override
     public Collection<CredentialRegistration> getRegistrationsByUserHandle(final ByteArray handle) {
-        return stream()
+        ensureCredentialIndex();
+        return usernamesByUserHandle.getOrDefault(handle, Set.of()).stream()
+            .flatMap(username -> getRegistrationsByUsername(username).stream())
             .filter(registration -> handle.equals(registration.getUserIdentity().getId()))
             .collect(Collectors.toList());
     }
@@ -57,6 +81,9 @@ public abstract class BaseWebAuthnCredentialRepository implements WebAuthnCreden
         val registrations = getRegistrationsByUsername(username);
         val result = registrations.remove(credentialRegistration);
         update(username, new HashSet<>(registrations));
+        if (result) {
+            invalidateCredentialIndex();
+        }
         return result;
     }
 
@@ -65,12 +92,16 @@ public abstract class BaseWebAuthnCredentialRepository implements WebAuthnCreden
         val registrations = new HashSet<>(getRegistrationsByUsername(username));
         val removed = registrations.removeIf(registration -> registration.getCredential().getCredentialId().equals(credentialId));
         update(username, registrations);
+        if (removed) {
+            invalidateCredentialIndex();
+        }
         return removed;
     }
 
     @Override
     public boolean removeAllRegistrations(final String username) {
         update(username, new HashSet<>());
+        invalidateCredentialIndex();
         return true;
     }
 
@@ -113,14 +144,17 @@ public abstract class BaseWebAuthnCredentialRepository implements WebAuthnCreden
 
     @Override
     public Optional<RegisteredCredential> lookup(final ByteArray credentialId, final ByteArray userHandle) {
-        val registration = stream()
+        ensureCredentialIndex();
+        val registration = usernamesByCredentialId.getOrDefault(credentialId, Set.of()).stream()
+            .flatMap(username -> getRegistrationsByUsername(username).stream())
             .filter(Objects::nonNull)
             .filter(credReg -> credentialId.equals(credReg.getCredential().getCredentialId()))
+            .filter(credReg -> userHandle.equals(credReg.getCredential().getUserHandle()))
             .findAny();
 
         return registration.flatMap(reg -> Optional.of(RegisteredCredential.builder()
             .credentialId(reg.getCredential().getCredentialId())
-            .userHandle(reg.getUserIdentity().getId())
+            .userHandle(reg.getCredential().getUserHandle())
             .publicKeyCose(reg.getCredential().getPublicKeyCose())
             .signatureCount(reg.getCredential().getSignatureCount())
             .build()));
@@ -128,12 +162,14 @@ public abstract class BaseWebAuthnCredentialRepository implements WebAuthnCreden
 
     @Override
     public Set<RegisteredCredential> lookupAll(final ByteArray credentialId) {
-        return stream()
+        ensureCredentialIndex();
+        return usernamesByCredentialId.getOrDefault(credentialId, Set.of()).stream()
+            .flatMap(username -> getRegistrationsByUsername(username).stream())
             .filter(Objects::nonNull)
             .filter(reg -> reg.getCredential().getCredentialId().equals(credentialId))
             .map(reg -> RegisteredCredential.builder()
                 .credentialId(reg.getCredential().getCredentialId())
-                .userHandle(reg.getUserIdentity().getId())
+                .userHandle(reg.getCredential().getUserHandle())
                 .publicKeyCose(reg.getCredential().getPublicKeyCose())
                 .signatureCount(reg.getCredential().getSignatureCount())
                 .build())
@@ -168,4 +204,52 @@ public abstract class BaseWebAuthnCredentialRepository implements WebAuthnCreden
      * @param records  the records
      */
     protected abstract void update(String username, Collection<CredentialRegistration> records);
+
+    /**
+     * Invalidate the local credential identifier index.
+     */
+    protected void invalidateCredentialIndex() {
+        credentialIndexVersion.incrementAndGet();
+        credentialIndexExpiresAt = Instant.MIN;
+    }
+
+    private void ensureCredentialIndex() {
+        val currentVersion = credentialIndexVersion.get();
+        val now = Instant.now();
+        if (indexedVersion == currentVersion && credentialIndexExpiresAt.isAfter(now)) {
+            return;
+        }
+        credentialIndexLock.tryLock(_ -> {
+            val refreshVersion = credentialIndexVersion.get();
+            val refreshTime = Instant.now();
+            if (indexedVersion == refreshVersion && credentialIndexExpiresAt.isAfter(refreshTime)) {
+                return;
+            }
+            val credentialIndex = new HashMap<ByteArray, Set<String>>();
+            val userHandleIndex = new HashMap<ByteArray, Set<String>>();
+            try (val registrations = stream()) {
+                registrations
+                    .filter(Objects::nonNull)
+                    .filter(registration -> registration.getCredential() != null && registration.getUserIdentity() != null)
+                    .filter(registration -> registration.getUsername() != null)
+                    .forEach(registration -> {
+                        credentialIndex.computeIfAbsent(registration.getCredential().getCredentialId(), _ -> new HashSet<>())
+                            .add(registration.getUsername());
+                        userHandleIndex.computeIfAbsent(registration.getUserIdentity().getId(), _ -> new HashSet<>())
+                            .add(registration.getUsername());
+                    });
+            }
+            if (credentialIndexVersion.get() == refreshVersion) {
+                usernamesByCredentialId = immutableIndex(credentialIndex);
+                usernamesByUserHandle = immutableIndex(userHandleIndex);
+                indexedVersion = refreshVersion;
+                credentialIndexExpiresAt = refreshTime.plus(CREDENTIAL_INDEX_EXPIRATION);
+            }
+        });
+    }
+
+    private static Map<ByteArray, Set<String>> immutableIndex(final Map<ByteArray, Set<String>> index) {
+        index.replaceAll((_, usernames) -> Set.copyOf(usernames));
+        return Map.copyOf(index);
+    }
 }

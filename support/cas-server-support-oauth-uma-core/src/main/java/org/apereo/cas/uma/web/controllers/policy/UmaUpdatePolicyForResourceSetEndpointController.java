@@ -62,7 +62,7 @@ public class UmaUpdatePolicyForResourceSetEndpointController extends BaseUmaEndp
         final HttpServletResponse response) {
         try {
             val profileResult = getAuthenticatedProfile(request, response, OAuth20Constants.UMA_PROTECTION_SCOPE);
-            val resourceSetResult = getUmaConfigurationContext().getUmaResourceSetRepository().getById(resourceId);
+            val resourceSetResult = getResourceSet(resourceId, profileResult);
             if (resourceSetResult.isEmpty()) {
                 val model = buildResponseEntityErrorModel(HttpStatus.NOT_FOUND, "Requested resource-set cannot be found");
                 return new ResponseEntity<>(model, HttpStatus.BAD_REQUEST);

@@ -38,6 +38,8 @@ import software.amazon.awssdk.services.s3.model.PutObjectRequest;
 @Slf4j
 public class AmazonS3SamlRegisteredServiceMetadataResolver extends BaseSamlRegisteredServiceMetadataResolver
     implements SamlRegisteredServiceMetadataManager {
+    private static final String ENTITY_ID_METADATA_KEY = "entityid";
+
     private final S3Client s3Client;
 
     private final String bucketName;
@@ -77,28 +79,10 @@ public class AmazonS3SamlRegisteredServiceMetadataResolver extends BaseSamlRegis
         LOGGER.debug("Located [{}] S3 object(s) from bucket [{}]", objects.size(), bucketName);
 
         return objects.stream()
-            .map(obj -> {
-                val objectKey = obj.key();
-                LOGGER.debug("Fetching object [{}] from bucket [{}]", objectKey, bucketName);
-
-                try (val is = s3Client.getObject(GetObjectRequest.builder().key(objectKey).bucket(bucketName).build())) {
-                    val document = new SamlMetadataDocument();
-                    document.setId(System.nanoTime());
-                    document.setName(objectKey);
-                    val objectMetadata = is.response().metadata();
-                    if (objectMetadata != null) {
-                        document.setSignature(objectMetadata.get("signature"));
-                        if (StringUtils.isNotBlank(document.getSignature())) {
-                            LOGGER.debug("Found metadata signature as part of object metadata for [{}] from bucket [{}]", objectKey, bucketName);
-                        }
-                    }
-                    document.setValue(IOUtils.toString(is, StandardCharsets.UTF_8));
-                    return buildMetadataResolverFrom(service, document);
-                } catch (final Exception e) {
-                    LoggingUtils.error(LOGGER, e);
-                }
-                return null;
-            })
+            .map(obj -> getDocumentFromBucket(obj.key()))
+            .filter(Objects::nonNull)
+            .filter(document -> matchesEntityIdCriteria(document, criteriaSet))
+            .map(document -> buildMetadataResolverFrom(service, document))
             .filter(Objects::nonNull)
             .collect(Collectors.toList());
     }
@@ -117,17 +101,20 @@ public class AmazonS3SamlRegisteredServiceMetadataResolver extends BaseSamlRegis
     @Override
     public SamlMetadataDocument store(final SamlMetadataDocument document) {
         val metadata = new LinkedHashMap<String, String>();
-        document.assignIdIfNecessary();
-        metadata.put("id", String.valueOf(document.getId()));
-        if (StringUtils.isNotBlank(document.getSignature())) {
-            metadata.put("signature", document.getSignature());
+        val metadataDocument = prepareMetadataDocument(document);
+        metadata.put("id", String.valueOf(metadataDocument.getId()));
+        if (StringUtils.isNotBlank(metadataDocument.getEntityId())) {
+            metadata.put(ENTITY_ID_METADATA_KEY, metadataDocument.getEntityId());
+        }
+        if (StringUtils.isNotBlank(metadataDocument.getSignature())) {
+            metadata.put("signature", metadataDocument.getSignature());
         }
         val request = PutObjectRequest.builder().bucket(bucketName)
-            .key(document.getName())
+            .key(metadataDocument.getName())
             .metadata(metadata)
             .build();
-        s3Client.putObject(request, RequestBody.fromString(document.getValue()));
-        return document;
+        s3Client.putObject(request, RequestBody.fromString(metadataDocument.getValue()));
+        return metadataDocument;
     }
 
     @Override
@@ -199,6 +186,7 @@ public class AmazonS3SamlRegisteredServiceMetadataResolver extends BaseSamlRegis
             val objectMetadata = is.response().metadata();
             if (objectMetadata != null) {
                 document.setSignature(objectMetadata.get("signature"));
+                document.setEntityId(objectMetadata.get(ENTITY_ID_METADATA_KEY));
                 val idValue = objectMetadata.get("id");
                 if (StringUtils.isNotBlank(idValue)) {
                     document.setId(Long.parseLong(idValue));

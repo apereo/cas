@@ -209,6 +209,11 @@ public abstract class BaseUmaEndpointControllerTests extends AbstractOAuth20Test
     protected Map getMappedResponseBody(final MvcResult result) {
         return getModelAndView(result).getModel();
     }
+
+    protected static long parseIdentifier(final Object identifier) {
+        assertInstanceOf(String.class, identifier);
+        return Long.parseLong(identifier.toString());
+    }
     
     private Triple<HttpServletRequest, HttpServletResponse, String> authenticateUmaRequestWithScope(
         final String scope, final SecurityLogicInterceptor interceptor) throws Throwable {

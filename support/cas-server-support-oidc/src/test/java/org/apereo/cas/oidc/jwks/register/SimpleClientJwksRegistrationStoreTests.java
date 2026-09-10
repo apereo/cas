@@ -40,4 +40,13 @@ class SimpleClientJwksRegistrationStoreTests extends AbstractOidcTests {
         assertFalse(removedEntry.isPresent());
 
     }
+
+    @Test
+    void verifyEntriesAreBounded() {
+        val store = new SimpleClientJwksRegistrationStore();
+        IntStream.rangeClosed(0, 1_000)
+            .forEach(i -> store.save("client-" + i, "jkt-" + i, "jwk-" + i));
+        assertEquals(1_000, store.load().size());
+        assertTrue(store.findBy("client-0", "jkt-0").isEmpty());
+    }
 }

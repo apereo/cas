@@ -25,6 +25,8 @@ import static org.junit.jupiter.api.Assertions.*;
 @ExtendWith(CasTestExtension.class)
 @SpringBootTest(classes = BaseSamlConfigurationTests.SharedTestConfiguration.class)
 class Saml10ObjectBuilderTests {
+    private static final String RECIPIENT = "https://app.example.org/cas-callback";
+
     @Autowired
     @Qualifier(OpenSamlConfigBean.DEFAULT_BEAN_NAME)
     private OpenSamlConfigBean openSamlConfigBean;
@@ -42,5 +44,40 @@ class Saml10ObjectBuilderTests {
             samlService);
         assertNotNull(response);
 
+    }
+
+    @Test
+    void verifyResponseNamesItsRecipientAndEchoesTheRequestId() {
+        val saml10ObjectBuilder = new Saml10ObjectBuilder(this.openSamlConfigBean);
+        val requestId = '_' + UUID.randomUUID().toString();
+        val samlService = new SamlService();
+        samlService.setRequestId(requestId);
+
+        val response = saml10ObjectBuilder.newResponse(UUID.randomUUID().toString(),
+            ZonedDateTime.now(Clock.systemUTC()), RECIPIENT, samlService);
+
+        assertEquals(RECIPIENT, response.getRecipient());
+        assertEquals(requestId, response.getInResponseTo(),
+            "InResponseTo must reference the request being answered, never the recipient");
+    }
+
+    @Test
+    void verifyInResponseToIsOmittedWhenTheRequestCarriedNoIdentifier() {
+        val saml10ObjectBuilder = new Saml10ObjectBuilder(this.openSamlConfigBean);
+        val response = saml10ObjectBuilder.newResponse(UUID.randomUUID().toString(),
+            ZonedDateTime.now(Clock.systemUTC()), RECIPIENT, new SamlService());
+
+        assertEquals(RECIPIENT, response.getRecipient());
+        assertNull(response.getInResponseTo());
+    }
+
+    @Test
+    void verifyRecipientIsOmittedWhenUndefined() {
+        val saml10ObjectBuilder = new Saml10ObjectBuilder(this.openSamlConfigBean);
+        val response = saml10ObjectBuilder.newResponse(UUID.randomUUID().toString(),
+            ZonedDateTime.now(Clock.systemUTC()), null, new SamlService());
+
+        assertNull(response.getRecipient());
+        assertNull(response.getInResponseTo());
     }
 }

@@ -16,7 +16,7 @@ public class DefaultResourceSetRepository extends BaseResourceSetRepository {
     @Override
     public ResourceSet saveInternal(final ResourceSet set) {
         if (set.getId() <= 0) {
-            set.setId(System.currentTimeMillis());
+            set.setId(generateResourceSetIdentifier());
         }
         repository.put(set.getId(), set);
         return super.saveInternal(set);

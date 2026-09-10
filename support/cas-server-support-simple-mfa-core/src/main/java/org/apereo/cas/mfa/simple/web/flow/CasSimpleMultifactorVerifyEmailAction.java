@@ -19,7 +19,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.validator.routines.EmailValidator;
-import org.jooq.lambda.Unchecked;
 import org.jspecify.annotations.Nullable;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
@@ -70,7 +69,7 @@ public class CasSimpleMultifactorVerifyEmailAction extends AbstractMultifactorAu
                 val authentication = WebUtils.getAuthentication(requestContext);
                 val principal = resolvePrincipal(authentication.getPrincipal(), requestContext);
                 LOGGER.debug("Received email address [{}] for [{}]", emailAddress, principal.getId());
-                val token = getOrCreateToken(requestContext, principal);
+                val token = createToken(requestContext, principal);
                 token.putProperty(TOKEN_PROPERTY_EMAIL_TO_REGISTER, emailAddress);
                 val cmd = CasSimpleMultifactorSendEmail.of(communicationsManager, properties, tenantExtractor);
                 val emailSent = cmd.send(principal, token, List.of(emailAddress), requestContext).isAnyEmailSent();
@@ -93,15 +92,21 @@ public class CasSimpleMultifactorVerifyEmailAction extends AbstractMultifactorAu
             && RegexUtils.matches(properties.getMail().getAcceptedEmailPattern(), emailAddress);
     }
 
-    protected CasSimpleMultifactorAuthenticationTicket getOrCreateToken(final RequestContext requestContext, final Principal principal) {
-        val currentToken = MultifactorAuthenticationWebflowUtils.getSimpleMultifactorAuthenticationToken(requestContext, CasSimpleMultifactorAuthenticationTicket.class);
-        return Optional.ofNullable(currentToken)
-            .filter(token -> !token.isExpired())
-            .orElseGet(Unchecked.supplier(() -> {
-                MultifactorAuthenticationWebflowUtils.removeSimpleMultifactorAuthenticationToken(requestContext);
-                val service = WebUtils.getService(requestContext);
-                return multifactorAuthenticationService.generate(principal, service);
-            }));
+    /**
+     * Always mint a fresh token for the address being registered. Reusing the token
+     * already issued for this flow would mail a live multifactor token to an address
+     * that the account holder has not verified yet.
+     *
+     * @param requestContext the request context
+     * @param principal      the principal
+     * @return the token
+     * @throws Throwable the throwable
+     */
+    protected CasSimpleMultifactorAuthenticationTicket createToken(final RequestContext requestContext,
+                                                                   final Principal principal) throws Throwable {
+        MultifactorAuthenticationWebflowUtils.removeSimpleMultifactorAuthenticationToken(requestContext);
+        val service = WebUtils.getService(requestContext);
+        return multifactorAuthenticationService.generate(principal, service);
     }
 
     protected void storeToken(final RequestContext requestContext, final CasSimpleMultifactorAuthenticationTicket token) throws Throwable {

@@ -8,8 +8,8 @@ import org.apereo.cas.support.saml.idp.metadata.writer.SamlIdPCertificateAndKeyW
 import org.apereo.cas.util.crypto.CipherExecutor;
 import lombok.Getter;
 import lombok.Setter;
+import lombok.SuperBuilder;
 import lombok.ToString;
-import lombok.experimental.SuperBuilder;
 import org.apache.velocity.app.VelocityEngine;
 import org.springframework.context.ConfigurableApplicationContext;
 

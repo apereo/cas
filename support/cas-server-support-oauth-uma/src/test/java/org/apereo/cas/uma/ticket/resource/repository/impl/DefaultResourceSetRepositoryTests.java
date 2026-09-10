@@ -22,8 +22,11 @@ class DefaultResourceSetRepositoryTests {
     void verifyOwner() {
         val repo = new DefaultResourceSetRepository();
         val set = buildTestResource();
-        repo.save(set);
+        val saved = repo.save(set);
         assertFalse(repo.getByOwner("cas").isEmpty());
+        assertTrue(repo.getById(saved.getId(), "clientid", "cas").isPresent());
+        assertFalse(repo.getById(saved.getId(), "other-client", "cas").isPresent());
+        assertFalse(repo.getById(saved.getId(), "clientid", "other-owner").isPresent());
         assertEquals(1, repo.count());
     }
 

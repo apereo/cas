@@ -5,6 +5,7 @@ import org.apereo.cas.oidc.vc.issuer.proof.OidcVerifiableCredentialProofValidato
 import lombok.RequiredArgsConstructor;
 import lombok.val;
 import java.util.List;
+import java.util.Set;
 
 /**
  * This is {@link OidcDefaultVerifiableCredentialIssuerService}.
@@ -18,8 +19,9 @@ public class OidcDefaultVerifiableCredentialIssuerService implements OidcVerifia
     protected final OidcVerifiableCredentialEncoderFactory credentialEncoderFactory;
 
     @Override
-    public List<OidcVerifiableCredentialIssuerResponse> issue(final OidcVerifiableCredentialValidationContext context) throws Throwable {
-        val proof = credentialProofValidator.validate(context.credentialRequest());
+    public List<OidcVerifiableCredentialIssuerResponse> issue(final OidcVerifiableCredentialValidationContext context,
+                                                              final Set<String> consumedNonces) throws Throwable {
+        val proof = credentialProofValidator.validate(context.credentialRequest(), consumedNonces);
         val configuration = context.resolveConfigurationId();
         val encoder = credentialEncoderFactory.findByConfiguration(configuration);
         val signedCredential = encoder.encode(context, proof);

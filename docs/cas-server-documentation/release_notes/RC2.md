@@ -65,7 +65,7 @@ test coverage of the CAS codebase is approximately `94%`.
 
 CAS may be built and run using Java `27` and the build process has been updated to use 
 the latest Java `27` features and capabilities. Please note that this is only a preparatory step for future 
-releases and the baseline requirement will remain to be Java `25`.
+releases and the baseline requirement will remain as it was.
 
 ### Gradle 9.8
 
@@ -81,25 +81,134 @@ as well as some CAS functionality.
 Please refer to the [Spring Boot Wiki](https://github.com/spring-projects/spring-boot/wiki/Spring-Boot-4.2-Release-Notes)
 for more information on the changes and updates in this release. The biggest change to CAS would be support for AMQP 1.0.
 
+REST password management, trusted-device storage, Clickatell SMS and Spring Boot Admin registration now use Spring's
+`RestClient` in place of deprecated `RestTemplate` APIs. Custom password-management HTTP client beans must now be named
+`passwordChangeServiceRestClient` and provide a `RestClient`.
+
 ### JSpecify & NullAway
 
 CAS codebase is now annotated with [JSpecify](https://jspecify.dev/) annotations to indicate nullness contracts on method parameters,
 return types and fields. We will gradually extend the coverage of such annotations across the entire codebase in future releases
 and will integrate the Gradle build tool with tools such as [NullAway](https://github.com/uber/NullAway) to prevent nullness contract violations
 during compile time.
-    
-### OpenID Connect with DPOP
-
-Single-use checking for DPOP proofs is now enforced using the CAS ticket registry. Furthermore, DPOP requests
-are no longer treated as a form of client authentication and now sit on top of existing client authentication
-approaches such as `clientId/clientSecret` for confidenial clients or PKCE. 
 
 ### OpenID Connect Verifiable Credentials
+                   
+Several improvements are now available for [OpenID Connect with Verifiable Credentials](../authentication/OIDC-Authentication-Verifiable-Credentials.html):
 
-[OpenID Connect with Verifiable Credentials](../authentication/OIDC-Authentication-Verifiable-Credentials.html) now
-may require specific principal attributes before a credential offer transaction can be created for a principal. 
+- CAS may require specific principal attributes to determine eligibility before a credential offer transaction can be created for a principal.
+- Pre-authorization codes are now also properly updated and removed from the ticket registry after a credential offer transaction is completed once the ticket is expired. 
+- Access tokens used for credential issuance are now bound to the credential configuration id when the token is minted; this is then enforced when the token is used to request credentials.
+- Transaction-code requirements are enforced during token exchange.
+- Credential batch issuance is limited and capped at a predefined limit.
+
+### OAuth and OpenID Connect 
+
+[OAuth](../protocol/OAuth-Protocol.html) and [OpenID Connect](../authentication/OIDC-Authentication.html)
+security have been strengthened across several flows.
+
+- Client assertions now require matching subject, issuer, and client identifiers.
+- JWT IDs are tracked through the shared ticket registry to prevent replay across clustered deployments.
+- Device and CIBA polling are bound to the authenticated client and completed poll-mode requests are consumed.
+- Dynamic client key registrations are memory-bounded.
+- Token exchanges are now authorized against the authenticated requesting client, and exchanged tokens cannot gain scopes beyond those granted to the subject token and allowed for the requesting client.
+- Client secrets are now compared and enforced using a case sensitive strategy.
+- Token introspection reports tokens from other clients as inactive, while revocation only affects the requesting client's tokens and no longer reveals whether other tokens exist.
+- Single-use checking for DPOP proofs is now enforced using the CAS ticket registry. Furthermore, DPOP requests are no longer treated as a form of client authentication and now sit on top of existing client authentication approaches such as client ID and client secret for confidential clients or PKCE.
+- [User-Managed Access](../protocol/OAuth-UMA-Protocol.html) resources and policies are now bound to both the authenticated client and resource owner. New resource registrations also receive non-sequential, server-assigned identifiers.
+
+### WebAuthn Multifactor Authentication
+
+[FIDO2 WebAuthn](../mfa/FIDO2-WebAuthn-Authentication.html) multifactor authentication receives the following improvements:
+
+- Authentication and QR session proofs are now principal-bound and single-use, and configured user verification is enforced for assertions.
+- Credential and user-handle resolution now avoids repeated repository-wide scans.
+
+### Duo Multifactor Authentication
+
+[Duo Security](../mfa/DuoSecurity-Authentication.html) multifactor authentication receives the following improvements:
+
+- REST passcodes now require completed primary authentication, and Universal Prompt callbacks validate browser-session state before restoring the flow.
+- Duo Auth and Admin API clients now reuse outbound connection pools across requests.
+
+### SAML2 Identity Provider 
+
+[SAML2 identity provider](../authentication/Configuring-SAML2-Authentication.html) support receives the following improvements:
+
+- Presented SAML2 authentication request signatures are now validated independently of the metadata signing requirement. Only a successfully validated signature may authorize an assertion consumer service URL that is not registered in service provider metadata.
+- IdP-initiated SSO now also requires a caller-provided `shire` to match a POST assertion consumer service registered in metadata.
+- Inbound encrypted SAML2 identifiers now use CAS's matching IdP encryption certificate and private key for decryption.
+- Signature algorithm inclusion and exclusion policies are now enforced consistently across all inbound SAML bindings.
+- The `Address` field of the SAML2 `SubjectConfirmationData` is now populated with the requester's IP address when possible.
+- SAML2 metadata cache entries are now isolated by registered service and resolved without scanning unrelated cached resolvers.
+- SAML2 authentication request session entries are updated per session and consumed after callback correlation, avoiding controller-wide serialization and retained replicated-session state.
+- Storage-backed SAML2 metadata resolution now uses the requested entity ID to limit document lookups and resolver rebuilds.
+- SAML2 SOAP attribute queries and artifact resolutions now require independently validated signatures, message freshness, destinations, and replay protection; artifact tickets are relying-party bound and consumed atomically.
+- SAML2 single logout now validates request freshness and replay, fully authenticates and correlates logout responses, and generates actuator logout requests with the correct IdP issuer and service-provider destination.
+
+### CAS Protocol
+
+- The CAS `1.0` [validation response](../ux/User-Interface-Views-CASv1.html) is line-delimited and carries no escaping mechanism.
+  Principal identifiers and rendered attribute lines are now stripped of line breaks, so a value that contains a newline
+  can no longer forge additional lines in the response.
+- A proxy-granting ticket is now issued only after the service ticket, the validation specification and the
+  authentication context have all been accepted. The `pgtUrl` callback used to be contacted and the proxy-granting
+  ticket minted before any of those checks ran, so presenting a leaked service ticket could drive an outbound request
+  and leave an unused proxy-granting ticket behind even though validation went on to fail.
+- Validation responses now use the protocol's own error codes for two cases that previously reported something else.
+  A ticket that fails the validation specification without a `renew` request — a proxy ticket presented to
+  `/serviceValidate`, for instance — is reported as `INVALID_TICKET_SPEC` rather than `INVALID_TICKET`, and an
+  unexpected failure during validation is reported as `INTERNAL_ERROR` rather than `INVALID_REQUEST`, which stays
+  reserved for a request that is missing required parameters. A ticket that did not come from an initial login while
+  `renew` was requested continues to be reported as `INVALID_TICKET`, as the protocol specifies.
+- Attribute names are now sanitized into valid XML names before they are rendered as elements in the CAS `2.0`/`3.0`
+  validation response, and proxy URLs in `<cas:proxy>` are XML-escaped. Previously an attribute name was only stripped
+  of spaces and a proxy URL was written out verbatim, so either could carry markup or quoting characters into the
+  response. Note that a name containing characters that are not legal in an XML name — a colon, for instance — now
+  renders with those characters replaced by an underscore; such a name previously produced a response that was not
+  well-formed XML.
+- The SAML `1.1` [validation response](../protocol/SAML-v1-Protocol.html) now sets `Recipient` to the service URL the
+  response is intended for, and reserves `InResponseTo` for the `RequestID` of the request being answered, omitting it
+  when the caller did not send one. `InResponseTo` previously carried the hostname of the `TARGET` service unless a
+  `RequestID` happened to be present, and `Recipient` was never set at all, so a relying party had no way to bind the
+  response to its own request or endpoint.
+- The `renew` parameter presented to the [CAS protocol](../protocol/CAS-Protocol.html) validation endpoints is now
+  evaluated per request. Validation specifications are shared components and the requested value used to be assigned
+  onto them for the duration of a request, which allowed a concurrent validation request to reset it. A service ticket
+  that was not issued from a new login can no longer satisfy a `renew=true` validation because of another request that
+  happened to be in flight at the same time.
+
+### Views and Themes
+
+- The [REST-based view resolver](../ux/User-Interface-Views-External.html) no longer forwards credential-bearing request
+  headers, such as `Cookie`, `Authorization` and `Proxy-Authorization`, to the external template endpoint.
+- Every resolved theme name is now matched against a real
+  [theme definition](../ux/User-Interface-Customization-Themes-Static.html) before it is honored, no matter how the
+  name was chosen. A name without a matching `[theme].properties` file, either at the root of a configured template
+  prefix or at the root of the classpath, is ignored and the next resolver in the chain applies. This closes a gap
+  where names taken from a request header, cookie or session value were used without any check, and it makes the
+  [Groovy](../ux/User-Interface-Customization-Themes-Groovy.html) and
+  [REST](../ux/User-Interface-Customization-Themes-REST.html) theme sources hold to the same contract as every other
+  theme: a script or endpoint that returns a name with no theme definition behind it now falls back to the default
+  theme rather than selecting a theme that does not exist.
+- A service theme is now resolved once per request rather than once per template lookup, so service resolution, access
+  strategy evaluation and theme file lookups no longer repeat for every fragment rendered on a page.
+- Thymeleaf template caching now takes effect. The chaining template resolver previously declared every resolution
+  non-cacheable regardless of `spring.thymeleaf.cache`, so each page and each fragment was re-resolved and re-parsed on
+  every request. Resolutions are now cached per the configured setting, except for those produced by a theme-aware
+  resolver: those map one template name to different files depending on the request's theme, and Thymeleaf's cache key
+  does not carry the theme, so they remain non-cacheable. Deployments with no themed template overrides cache every
+  template; deployments with themed overrides cache everything except the overridden templates.
+
+### LDAP Integrations
+
+- [Surrogate authentication](../authentication/Surrogate-Authentication-Storage-LDAP.html), [delegated authentication profile selection](../integration/Delegate-Authentication-ProfileSelection.html), [acceptable usage policy](../webflow/Webflow-Customization-AUP-LDAP.html) and [password management](../password_management/Password-Management.html) now build their LDAP connection pools once and reuse them across requests.
+- LDAP connection pools are now addressed by the directory and base DN they serve, so multiple configuration blocks that point at the same server no longer collapse onto a single set of connection settings.
+- Surrogate search filters that do not reference the impersonated account are now rejected, as such a filter is unable to restrict the accounts a user may impersonate.
 
 ## Other Stuff
     
-- OAuth and OpenID Connecty client secrets are now compared and enforced using a case sensitive strategy.          
+- CloudWatch logging now avoids recursive logging initialization when reporting appender startup or delivery failures.
+- Authentication history, theme caching and CloudWatch shutdown now use concurrent collections and explicit coordination in place of Java monitor locking.
+- Several optimizations are in place to assist with faster startup time, allowing for more components to be lazily initialized.
 - A large number of dependencies and libraries have been updated to their latest versions.

@@ -6,7 +6,6 @@ import org.apereo.cas.support.saml.BaseSamlIdPConfigurationTests;
 import org.apereo.cas.support.saml.SamlIdPConstants;
 import org.apereo.cas.support.saml.SamlProtocolConstants;
 import org.apereo.cas.support.saml.SamlUtils;
-import org.apereo.cas.support.saml.services.idp.metadata.SamlRegisteredServiceMetadataAdaptor;
 import org.apereo.cas.util.EncodingUtils;
 import org.apereo.cas.util.junit.Assertions;
 import org.apereo.cas.web.support.WebUtils;
@@ -15,7 +14,6 @@ import org.apache.hc.core5.http.HttpStatus;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-import org.opensaml.messaging.context.MessageContext;
 import org.opensaml.saml.common.SAMLException;
 import org.opensaml.saml.common.SAMLObjectBuilder;
 import org.opensaml.saml.common.xml.SAMLConstants;
@@ -64,11 +62,9 @@ class SLOSamlIdPPostProfileHandlerControllerTests {
             val issuer = (Issuer) Objects.requireNonNull(builder).buildObject();
             issuer.setValue(service.getServiceId());
             logoutRequest.setIssuer(issuer);
-
-            val adaptor = SamlRegisteredServiceMetadataAdaptor
-                .get(samlRegisteredServiceCachingMetadataResolver, service, service.getServiceId()).orElseThrow();
-            logoutRequest = samlIdPObjectSigner.encode(logoutRequest, service,
-                adaptor, response, request, SAMLConstants.SAML2_POST_BINDING_URI, logoutRequest, new MessageContext());
+            prepareLogoutRequest(logoutRequest);
+            logoutRequest = signSamlObject(request, response, logoutRequest, service,
+                SAMLConstants.SAML2_POST_BINDING_URI, logoutRequest.getDestination());
 
             val xml = SamlUtils.transformSamlObject(openSamlConfigBean, logoutRequest).toString();
             val result = performSloPostRequest(EncodingUtils.encodeBase64(xml));
@@ -88,13 +84,14 @@ class SLOSamlIdPPostProfileHandlerControllerTests {
             val issuer = (Issuer) Objects.requireNonNull(builder).buildObject();
             issuer.setValue(service.getServiceId());
             logoutRequest.setIssuer(issuer);
+            prepareLogoutRequest(logoutRequest);
 
             val xml = SamlUtils.transformSamlObject(openSamlConfigBean, logoutRequest).toString();
             Assertions.assertThrowsWithRootCause(Exception.class, SAMLException.class,
                 () -> performSloPostRequest(EncodingUtils.encodeBase64(xml)));
         }
     }
-    
+
     @Nested
     @TestPropertySource(properties = "cas.authn.saml-idp.logout.force-signed-logout-requests=false")
     class AllowedMissingSignatureTests extends BaseTests {
@@ -112,11 +109,39 @@ class SLOSamlIdPPostProfileHandlerControllerTests {
             val issuer = (Issuer) Objects.requireNonNull(builder).buildObject();
             issuer.setValue(service.getServiceId());
             logoutRequest.setIssuer(issuer);
+            prepareLogoutRequest(logoutRequest);
 
             val xml = SamlUtils.transformSamlObject(openSamlConfigBean, logoutRequest).toString();
             val result = performSloPostRequest(EncodingUtils.encodeBase64(xml));
             assertEquals(HttpStatus.SC_OK, result.getResponse().getStatus());
             assertNotNull(WebUtils.getSingleLogoutRequest(result.getRequest()));
         }
+
+        @Test
+        void verifyExpiredRequestRejected() {
+            val service = getSamlRegisteredServiceFor(false, false, false, "https://cassp.example.org");
+            service.setSignLogoutRequest(TriStateBoolean.FALSE);
+            servicesManager.save(service);
+            var builder = (SAMLObjectBuilder) openSamlConfigBean.getBuilderFactory()
+                .getBuilder(LogoutRequest.DEFAULT_ELEMENT_NAME);
+            val logoutRequest = (LogoutRequest) Objects.requireNonNull(builder).buildObject();
+            builder = (SAMLObjectBuilder) openSamlConfigBean.getBuilderFactory()
+                .getBuilder(Issuer.DEFAULT_ELEMENT_NAME);
+            val issuer = (Issuer) Objects.requireNonNull(builder).buildObject();
+            issuer.setValue(service.getServiceId());
+            logoutRequest.setIssuer(issuer);
+            prepareLogoutRequest(logoutRequest);
+            logoutRequest.setIssueInstant(Instant.now(Clock.systemUTC()).minus(Duration.ofMinutes(10)));
+
+            val xml = SamlUtils.transformSamlObject(openSamlConfigBean, logoutRequest).toString();
+            Assertions.assertThrowsWithRootCause(Exception.class, SAMLException.class,
+                () -> performSloPostRequest(EncodingUtils.encodeBase64(xml)));
+        }
+    }
+
+    private static void prepareLogoutRequest(final LogoutRequest logoutRequest) {
+        logoutRequest.setID('_' + UUID.randomUUID().toString());
+        logoutRequest.setIssueInstant(Instant.now(Clock.systemUTC()));
+        logoutRequest.setDestination("http://localhost" + SamlIdPConstants.ENDPOINT_SAML2_SLO_PROFILE_POST);
     }
 }

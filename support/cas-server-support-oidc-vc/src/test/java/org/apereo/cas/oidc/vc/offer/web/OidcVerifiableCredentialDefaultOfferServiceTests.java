@@ -5,6 +5,7 @@ import org.apereo.cas.config.CasOidcVerifiableCredentialsAutoConfiguration;
 import org.apereo.cas.oidc.AbstractOidcTests;
 import org.apereo.cas.oidc.vc.offer.OidcVerifiableCredentialOfferService;
 import org.apereo.cas.oidc.vc.offer.OidcVerifiableCredentialTransactionService;
+import org.apereo.cas.ticket.TransientSessionTicket;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
@@ -67,7 +68,12 @@ class OidcVerifiableCredentialDefaultOfferServiceTests extends AbstractOidcTests
         assertEquals(List.of("VerifiableCredential"), offer.getCredentialConfigurationIds());
         val grant = offer.getGrants().getPreAuthorizedCodeGrant();
         assertNotNull(grant);
-        assertEquals(ticket.getId(), grant.getTransactionCode().getValue());
+        val transactionCode = ((TransientSessionTicket) ticket).getPropertyAsString(
+            OidcVerifiableCredentialTransactionService.PROPERTY_TRANSACTION_CODE);
+        assertNotEquals(ticket.getId(), transactionCode);
+        assertEquals(transactionCode, grant.getTransactionCode().getValue());
+        assertEquals(transactionCode.length(), grant.getTransactionCode().getLength());
+        assertEquals(ticket.getId(), offer.getTransactionId());
         assertNotNull(grant.getPreAuthorizedCode());
         assertNotNull(grant.getIssuerState());
     }

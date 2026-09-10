@@ -37,7 +37,8 @@ class SamlRegisteredServiceCacheKeyTests {
         assertNotNull(results.getId());
         assertNotNull(results.getRegisteredService());
         assertNotNull(results.getCriteriaSet());
-        assertEquals(results.getCacheKey(), service.getMetadataLocation());
+        assertEquals(service.getId() + SamlRegisteredServiceCacheKey.KEY_SEPARATOR + service.getMetadataLocation(),
+            results.getCacheKey());
     }
 
     @Test
@@ -56,7 +57,8 @@ class SamlRegisteredServiceCacheKeyTests {
         val result1 = new SamlRegisteredServiceCacheKey(service, criteriaSet);
         assertNotNull(result1.getId());
         assertNotNull(result1.toString());
-        assertEquals(entityIdCriterion.getEntityId(), result1.getCacheKey());
+        assertEquals(service.getId() + SamlRegisteredServiceCacheKey.KEY_SEPARATOR + entityIdCriterion.getEntityId(),
+            result1.getCacheKey());
 
         val result2 = new SamlRegisteredServiceCacheKey(service, criteriaSet);
         assertEquals(result1, result2);
@@ -75,6 +77,23 @@ class SamlRegisteredServiceCacheKeyTests {
 
         val results = new SamlRegisteredServiceCacheKey(service, criteriaSet);
         assertNotNull(results.getId());
-        assertEquals(service.getServiceId(), results.getCacheKey());
+        assertEquals(service.getId() + SamlRegisteredServiceCacheKey.KEY_SEPARATOR + service.getServiceId(),
+            results.getCacheKey());
+    }
+
+    @Test
+    void verifyCacheKeyIsScopedToRegisteredService() {
+        val criteriaSet = new CriteriaSet(new EntityIdCriterion("https://shared.example.org"));
+        val firstService = new SamlRegisteredService();
+        firstService.setId(1000);
+        firstService.setMetadataLocation("classpath:sample-sp.xml");
+
+        val secondService = new SamlRegisteredService();
+        secondService.setId(2000);
+        secondService.setMetadataLocation(firstService.getMetadataLocation());
+
+        val firstKey = new SamlRegisteredServiceCacheKey(firstService, criteriaSet);
+        val secondKey = new SamlRegisteredServiceCacheKey(secondService, criteriaSet);
+        assertNotEquals(firstKey, secondKey);
     }
 }

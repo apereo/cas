@@ -167,10 +167,9 @@ public class DefaultCasConfigurationPropertiesSourceLocator implements CasConfig
         val resources = scanForConfigurationResources(environment, config, profiles);
         val composite = new CompositePropertySource("applicationProfilesCompositeProperties");
         LOGGER.info("Configuration files found at [{}] are [{}] under profile(s) [{}]", config, resources, profiles);
+        val configurationLoaders = CasConfigurationPropertiesSourceLocator.getConfigurationPropertiesLoaders();
         resources.forEach(Unchecked.consumer(resource -> {
             LOGGER.debug("Loading configuration file [{}]", resource);
-
-            val configurationLoaders = CasConfigurationPropertiesSourceLocator.getConfigurationPropertiesLoaders();
             val foundLoader = configurationLoaders
                 .stream()
                 .filter(loader -> loader.supports(resource))

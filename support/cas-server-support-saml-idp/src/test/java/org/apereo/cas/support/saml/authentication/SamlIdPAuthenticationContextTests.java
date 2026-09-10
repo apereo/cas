@@ -25,7 +25,9 @@ class SamlIdPAuthenticationContextTests {
         messageContext.ensureSubcontext(SAMLBindingContext.class).setHasBindingSignature(true);
 
         messageContext.ensureSubcontext(SAMLProtocolContext.class).setProtocol(UUID.randomUUID().toString());
-        messageContext.ensureSubcontext(SAMLPeerEntityContext.class).setEntityId(UUID.randomUUID().toString());
+        val peerEntityContext = messageContext.ensureSubcontext(SAMLPeerEntityContext.class);
+        peerEntityContext.setEntityId(UUID.randomUUID().toString());
+        peerEntityContext.setAuthenticated(true);
 
         val ctx = SamlIdPAuthenticationContext.from(messageContext);
         val encoded = ctx.encode();
@@ -34,5 +36,6 @@ class SamlIdPAuthenticationContextTests {
         val result = SamlIdPAuthenticationContext.decode(encoded).toMessageContext(new Object());
         assertNotNull(result);
         assertNotNull(result.getMessage());
+        assertTrue(result.ensureSubcontext(SAMLPeerEntityContext.class).isAuthenticated());
     }
 }

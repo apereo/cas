@@ -22,7 +22,7 @@ import org.springframework.webflow.engine.EndState;
 import org.springframework.webflow.engine.Flow;
 import org.springframework.webflow.execution.FlowExecutionException;
 import org.thymeleaf.IEngineConfiguration;
-import org.thymeleaf.templateresolver.AbstractTemplateResolver;
+import org.thymeleaf.templateresolver.ITemplateResolver;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
@@ -44,7 +44,7 @@ import static org.mockito.Mockito.*;
 class CasThymeleafConfigurationTests {
     @Autowired
     @Qualifier("chainingTemplateViewResolver")
-    private AbstractTemplateResolver chainingTemplateViewResolver;
+    private ITemplateResolver chainingTemplateViewResolver;
 
     @Autowired
     private ConfigurableApplicationContext applicationContext;

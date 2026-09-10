@@ -12,7 +12,7 @@ import org.apereo.cas.support.oauth.OAuth20TokenExchangeTypes;
 import org.apereo.cas.support.oauth.web.response.accesstoken.OAuth20TokenGeneratedResult;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Getter;
-import lombok.experimental.SuperBuilder;
+import lombok.SuperBuilder;
 import lombok.extern.jackson.Jacksonized;
 import lombok.val;
 import org.pac4j.core.profile.UserProfile;
@@ -59,6 +59,8 @@ public class OAuth20AccessTokenResponseResult implements Serializable, Auditable
 
     private final String cibaRequestId;
 
+    private final String preAuthorizationCode;
+    
     @Override
     @JsonIgnore
     public String getAuditablePrincipal() {

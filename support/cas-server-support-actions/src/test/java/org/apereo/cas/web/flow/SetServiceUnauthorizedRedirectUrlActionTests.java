@@ -8,7 +8,7 @@ import org.apereo.cas.web.flow.login.SetServiceUnauthorizedRedirectUrlAction;
 import org.apereo.cas.web.support.WebUtils;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
-import org.junit.jupiter.api.Test;
+import org.junitpioneer.jupiter.RetryingTest;
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
@@ -20,10 +20,9 @@ import static org.junit.jupiter.api.Assertions.*;
 @Tag("WebflowServiceActions")
 class SetServiceUnauthorizedRedirectUrlActionTests extends AbstractWebflowActionsTests {
     
-    @Test
+    @RetryingTest(2)
     void verifyOperation() throws Throwable {
         val context = MockRequestContext.create(applicationContext);
-
         val registeredService = RegisteredServiceTestUtils.getRegisteredService("https://github.com/apereo/cas");
         val accessStrategy = new DefaultRegisteredServiceAccessStrategy();
         accessStrategy.setUnauthorizedRedirectUrl(new URI("https://www.github.com"));

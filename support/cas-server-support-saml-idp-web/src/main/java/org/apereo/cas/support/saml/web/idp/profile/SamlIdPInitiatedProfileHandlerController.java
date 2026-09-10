@@ -149,7 +149,13 @@ public class SamlIdPInitiatedProfileHandlerController extends AbstractSamlIdPPro
                                   final SamlRegisteredServiceMetadataAdaptor facade)
         throws MessageDecodingException {
         var shire = request.getParameter(SamlIdPConstants.SHIRE);
-        if (StringUtils.isBlank(shire)) {
+        if (StringUtils.isNotBlank(shire)) {
+            val locations = facade.getAssertionConsumerServiceLocations(SAMLConstants.SAML2_POST_BINDING_URI);
+            if (!locations.contains(shire)) {
+                LOGGER.warn("Assertion consumer service URL [{}] is not registered in metadata for [{}]", shire, providerId);
+                throw new MessageDecodingException("Assertion consumer service URL is not registered in service provider metadata");
+            }
+        } else {
             LOGGER.info("Resolving service provider assertion consumer service URL for [{}] and binding [{}]",
                 providerId, SAMLConstants.SAML2_POST_BINDING_URI);
             val acs = facade.getAssertionConsumerService(SAMLConstants.SAML2_POST_BINDING_URI);

@@ -58,6 +58,22 @@ class SamlIdPInitiatedProfileHandlerControllerTests extends BaseSamlIdPConfigura
     }
 
     @Test
+    void verifyRegisteredShire() throws Throwable {
+        val result = performIdPInitiatedSsoRequest(
+            SamlIdPConstants.PROVIDER_ID, samlRegisteredService.getServiceId(),
+            SamlIdPConstants.SHIRE, "https://sp.testshib.org/Shibboleth.sso/SAML2/POST");
+        assertEquals(HttpStatus.FOUND.value(), result.getResponse().getStatus());
+    }
+
+    @Test
+    void verifyUnregisteredShire() {
+        Assertions.assertThrowsWithRootCause(Exception.class, MessageDecodingException.class,
+            () -> performIdPInitiatedSsoRequest(
+                SamlIdPConstants.PROVIDER_ID, samlRegisteredService.getServiceId(),
+                SamlIdPConstants.SHIRE, "https://unregistered.example.org/acs"));
+    }
+
+    @Test
     void verifyBadServiceWithNoMetadata() throws Throwable {
         val service = new SamlRegisteredService();
         service.setServiceId(UUID.randomUUID().toString());

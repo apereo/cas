@@ -28,7 +28,7 @@ class UmaUpdateResourceSetRegistrationEndpointControllerTests extends BaseUmaEnd
             body, results.getLeft(), results.getMiddle());
         assertEquals(HttpStatus.OK.value(), result.getResponse().getStatus());
         var model = getMappedResponseBody(result);
-        val resourceId = ((Number) model.get("resourceId")).longValue();
+        val resourceId = parseIdentifier(model.get("resourceId"));
 
         body = createUmaResourceRegistrationRequest(resourceId).toJson();
 
@@ -49,7 +49,7 @@ class UmaUpdateResourceSetRegistrationEndpointControllerTests extends BaseUmaEnd
         var result = performUmaRequest(HttpMethod.POST, OAuth20Constants.UMA_RESOURCE_SET_REGISTRATION_URL,
             body, results.getLeft(), results.getMiddle());
         var model = getMappedResponseBody(result);
-        val resourceId = ((Number) model.get("resourceId")).longValue();
+        val resourceId = parseIdentifier(model.get("resourceId"));
 
         body = createUmaResourceRegistrationRequest(resourceId).toJson();
 

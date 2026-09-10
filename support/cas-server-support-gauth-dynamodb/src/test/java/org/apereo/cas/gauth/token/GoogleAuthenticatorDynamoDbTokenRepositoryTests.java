@@ -27,6 +27,8 @@ import org.apache.commons.lang3.time.StopWatch;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.jupiter.api.parallel.Execution;
+import org.junit.jupiter.api.parallel.ExecutionMode;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.EnableAspectJAutoProxy;
 import org.springframework.scheduling.annotation.EnableScheduling;
@@ -65,13 +67,16 @@ import static org.junit.jupiter.api.Assertions.*;
         "cas.authn.mfa.gauth.dynamo-db.endpoint=http://localhost:8000",
         "cas.authn.mfa.gauth.dynamo-db.drop-tables-on-startup=true",
         "cas.authn.mfa.gauth.dynamo-db.local-instance=true",
-        "cas.authn.mfa.gauth.dynamo-db.region=us-east-1"
+        "cas.authn.mfa.gauth.dynamo-db.region=us-east-1",
+        "cas.authn.mfa.gauth.dynamo-db.table-name=TokenRepositoryCredentialTests",
+        "cas.authn.mfa.gauth.dynamo-db.token-table-name=TokenRepositoryTests"
     })
 @EnableTransactionManagement(proxyTargetClass = false)
 @EnableAspectJAutoProxy(proxyTargetClass = false)
 @EnableScheduling
 @Getter
 @EnabledIfListeningOnPort(port = 8000)
+@Execution(ExecutionMode.SAME_THREAD)
 class GoogleAuthenticatorDynamoDbTokenRepositoryTests extends BaseOneTimeTokenRepositoryTests {
     static {
         System.setProperty(SdkSystemSetting.AWS_ACCESS_KEY_ID.property(), "AKIAIPPIGGUNIO74C63Z");

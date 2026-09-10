@@ -181,15 +181,30 @@ class OAuth20DefaultTokenGeneratorTests {
                 .responseType(OAuth20ResponseTypes.DEVICE_CODE)
                 .deviceCode(token.getId())
                 .authentication(RegisteredServiceTestUtils.getAuthentication())
-                .registeredService(getRegisteredService(UUID.randomUUID().toString(), "secret"))
+                .registeredService(getRegisteredService(token.getService().getId(), "secret"))
                 .build();
             assertThrows(ThrottledOAuth20DeviceUserCodeApprovalException.class, () -> oauthTokenGenerator.generate(tokenRequestContext));
         }
 
         @Test
-        void verifyUnapproved() throws Throwable {
+        void verifyDeviceCodeBelongsToPollingClient() throws Throwable {
             val token = defaultDeviceTokenFactory.createDeviceCode(
-                RegisteredServiceTestUtils.getService("https://device.oauth.org"), List.of());
+                RegisteredServiceTestUtils.getService("https://device.oauth.org"), List.of(), "device-client");
+            ticketRegistry.addTicket(token);
+            val tokenRequestContext = AccessTokenRequestContext.builder()
+                .responseType(OAuth20ResponseTypes.DEVICE_CODE)
+                .deviceCode(token.getId())
+                .authentication(RegisteredServiceTestUtils.getAuthentication())
+                .registeredService(getRegisteredService("other-client", "secret"))
+                .build();
+            assertThrows(InvalidOAuth20DeviceTokenException.class, () -> oauthTokenGenerator.generate(tokenRequestContext));
+        }
+
+        @Test
+        void verifyUnapproved() throws Throwable {
+            val clientId = "device-client";
+            val token = defaultDeviceTokenFactory.createDeviceCode(
+                RegisteredServiceTestUtils.getService("https://device.oauth.org"), List.of(), clientId);
             ticketRegistry.addTicket(token);
             val userCode = defaultDeviceUserCodeFactory.createDeviceUserCode(token.getService());
             token.setUserCode(userCode.getId());
@@ -200,7 +215,7 @@ class OAuth20DefaultTokenGeneratorTests {
                 .responseType(OAuth20ResponseTypes.DEVICE_CODE)
                 .deviceCode(token.getId())
                 .authentication(RegisteredServiceTestUtils.getAuthentication())
-                .registeredService(getRegisteredService(UUID.randomUUID().toString(), "secret"))
+                .registeredService(getRegisteredService(clientId, "secret"))
                 .build();
             assertThrows(UnapprovedOAuth20DeviceUserCodeException.class, () -> oauthTokenGenerator.generate(tokenRequestContext));
         }
@@ -219,7 +234,7 @@ class OAuth20DefaultTokenGeneratorTests {
                 .responseType(OAuth20ResponseTypes.DEVICE_CODE)
                 .deviceCode(token.getId())
                 .authentication(RegisteredServiceTestUtils.getAuthentication())
-                .registeredService(getRegisteredService(UUID.randomUUID().toString(), "secret"))
+                .registeredService(getRegisteredService(token.getService().getId(), "secret"))
                 .build();
             userCode.markTicketExpired();
             assertThrows(InvalidOAuth20DeviceTokenException.class, () -> oauthTokenGenerator.generate(holder));
@@ -238,7 +253,7 @@ class OAuth20DefaultTokenGeneratorTests {
                 .responseType(OAuth20ResponseTypes.DEVICE_CODE)
                 .deviceCode(token.getId())
                 .authentication(RegisteredServiceTestUtils.getAuthentication())
-                .registeredService(getRegisteredService(UUID.randomUUID().toString(), "secret"))
+                .registeredService(getRegisteredService(token.getService().getId(), "secret"))
                 .build();
             token.markTicketExpired();
             assertThrows(InvalidOAuth20DeviceTokenException.class, () -> oauthTokenGenerator.generate(holder));

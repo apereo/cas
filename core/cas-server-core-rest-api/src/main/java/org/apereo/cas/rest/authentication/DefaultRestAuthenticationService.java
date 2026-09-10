@@ -6,6 +6,7 @@ import org.apereo.cas.authentication.AuthenticationPolicy;
 import org.apereo.cas.authentication.AuthenticationResult;
 import org.apereo.cas.authentication.AuthenticationSystemSupport;
 import org.apereo.cas.authentication.Credential;
+import org.apereo.cas.authentication.MultifactorAuthenticationCredential;
 import org.apereo.cas.authentication.MultifactorAuthenticationTriggerSelectionStrategy;
 import org.apereo.cas.authentication.principal.ServiceFactory;
 import org.apereo.cas.authentication.principal.WebApplicationService;
@@ -56,10 +57,17 @@ public class DefaultRestAuthenticationService implements RestAuthenticationServi
         if (credentials == null || credentials.isEmpty()) {
             throw new BadRestRequestException("No credentials can be extracted to authenticate the REST request");
         }
+        val primaryCredentials = credentials
+            .stream()
+            .filter(credential -> !(credential instanceof MultifactorAuthenticationCredential))
+            .toList();
+        if (primaryCredentials.isEmpty()) {
+            throw new BadRestRequestException("No primary credentials can be extracted to authenticate the REST request");
+        }
         val service = serviceFactory.createService(request);
         val registeredService = servicesManager.findServiceBy(service);
         val authResult = Optional.ofNullable(
-            authenticationSystemSupport.handleInitialAuthenticationTransaction(service, credentials.toArray(Credential[]::new)));
+            authenticationSystemSupport.handleInitialAuthenticationTransaction(service, primaryCredentials.toArray(Credential[]::new)));
 
         return authResult
             .map(result -> result.getInitialAuthentication()
@@ -75,7 +83,9 @@ public class DefaultRestAuthenticationService implements RestAuthenticationServi
                         if (authnCredentials == null || authnCredentials.isEmpty()) {
                             throw new AuthenticationException("Unable to extract credentials for multifactor authentication");
                         }
-                        return authenticationSystemSupport.finalizeAuthenticationTransaction(service, authnCredentials);
+                        val builder = authenticationSystemSupport.handleAuthenticationTransaction(service, result,
+                            authnCredentials.toArray(Credential[]::new));
+                        return authenticationSystemSupport.finalizeAllAuthenticationTransactions(builder, service);
                     }))
                     .orElseGet(Unchecked.supplier(() -> authenticationSystemSupport.finalizeAllAuthenticationTransactions(result, service)))))
                 .orElseGet(Unchecked.supplier(() -> authenticationSystemSupport.finalizeAllAuthenticationTransactions(result, service))));

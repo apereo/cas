@@ -22,7 +22,17 @@ const fs = require("fs");
         await cas.goto(page, "http://localhost:9443/simplesaml/module.php/core/authenticate.php?as=default-sp");
         await cas.sleep(6000);
 
-        const SAMLRequest = "PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iVVRGLTgiPz4KPHNhbWwycDpMb2dvdXRSZXF1ZXN0IERlc3RpbmF0aW9uPSJodHRwczovL2xvY2FsaG9zdDo4NDQzL2Nhcy9pZHAvcHJvZmlsZS9TQU1MMi9QT1NUL1NMTyIgSUQ9IkJURmsiIElzc3VlSW5zdGFudD0iMjAyMy0xMC0wNFQxMTozNDo1MC41MDdaIiBWZXJzaW9uPSIyLjAiIHhtbG5zOnNhbWwycD0idXJuOm9hc2lzOm5hbWVzOnRjOlNBTUw6Mi4wOnByb3RvY29sIj48c2FtbDI6SXNzdWVyIHhtbG5zOnNhbWwyPSJ1cm46b2FzaXM6bmFtZXM6dGM6U0FNTDoyLjA6YXNzZXJ0aW9uIj5odHRwOi8vbG9jYWxob3N0Ojk0NDMvc2ltcGxlc2FtbC9tb2R1bGUucGhwL3NhbWwvc3AvbWV0YWRhdGEucGhwL2RlZmF1bHQtc3A8L3NhbWwyOklzc3Vlcj48c2FtbDI6TmFtZUlEIHhtbG5zOnNhbWwyPSJ1cm46b2FzaXM6bmFtZXM6dGM6U0FNTDoyLjA6YXNzZXJ0aW9uIj43NjBiYWM3NS0yY2MwLTQ3YTQtODNiZS05YmY0OTZhYzYwZjU8L3NhbWwyOk5hbWVJRD48L3NhbWwycDpMb2dvdXRSZXF1ZXN0Pg==";
+        const requestId = `_${await cas.uuid()}`;
+        const nameId = await cas.uuid();
+        const issueInstant = new Date().toISOString();
+        const requestXml = `<?xml version="1.0" encoding="UTF-8"?>
+<saml2p:LogoutRequest Destination="https://localhost:8443/cas/idp/profile/SAML2/POST/SLO"
+    ID="${requestId}" IssueInstant="${issueInstant}" Version="2.0"
+    xmlns:saml2p="urn:oasis:names:tc:SAML:2.0:protocol">
+    <saml2:Issuer xmlns:saml2="urn:oasis:names:tc:SAML:2.0:assertion">http://localhost:9443/simplesaml/module.php/saml/sp/metadata.php/default-sp</saml2:Issuer>
+    <saml2:NameID xmlns:saml2="urn:oasis:names:tc:SAML:2.0:assertion">${nameId}</saml2:NameID>
+</saml2p:LogoutRequest>`;
+        const SAMLRequest = Buffer.from(requestXml, "utf8").toString("base64");
         const sloPage = `
         <html>
         <body onLoad="document.forms[0].submit()">

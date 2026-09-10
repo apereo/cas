@@ -91,14 +91,15 @@ class CasServiceRegistryInitializationConfiguration {
         public ServiceRegistryInitializer serviceRegistryInitializer(
             final ConfigurableApplicationContext applicationContext,
             @Qualifier("embeddedJsonServiceRegistry")
-            final ServiceRegistry embeddedJsonServiceRegistry,
+            final ObjectProvider<ServiceRegistry> embeddedJsonServiceRegistry,
             @Qualifier(ServicesManager.BEAN_NAME)
-            final ServicesManager servicesManager,
+            final ObjectProvider<ServicesManager> servicesManager,
             @Qualifier(ServiceRegistry.BEAN_NAME)
-            final ChainingServiceRegistry serviceRegistry) {
+            final ObjectProvider<ChainingServiceRegistry> serviceRegistry) {
             return BeanSupplier.of(ServiceRegistryInitializer.class)
                 .when(CONDITION.given(applicationContext.getEnvironment()))
-                .supply(() -> new DefaultServiceRegistryInitializer(embeddedJsonServiceRegistry, serviceRegistry, servicesManager))
+                .supply(() -> new DefaultServiceRegistryInitializer(embeddedJsonServiceRegistry.getObject(),
+                    serviceRegistry.getObject(), servicesManager.getObject()))
                 .otherwiseProxy()
                 .get();
         }

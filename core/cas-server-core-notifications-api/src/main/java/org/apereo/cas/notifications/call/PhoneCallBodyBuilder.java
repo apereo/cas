@@ -4,7 +4,7 @@ import module java.base;
 import org.apereo.cas.configuration.model.support.phone.PhoneProperties;
 import org.apereo.cas.util.ResourceUtils;
 import lombok.Builder;
-import lombok.experimental.SuperBuilder;
+import lombok.SuperBuilder;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.io.IOUtils;

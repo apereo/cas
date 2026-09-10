@@ -19,6 +19,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.support.GenericApplicationContext;
 import org.springframework.core.io.ClassPathResource;
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -67,6 +68,17 @@ class CasConfigurationPropertiesValidatorTests {
     void verifyValidationDisabled() {
         val validator = new CasConfigurationPropertiesValidator(applicationContext);
         assertTrue(validator.validate().isEmpty());
+    }
+
+    @Test
+    void verifyEmptyReportSkipsMetadataRepository() {
+        try (val context = new GenericApplicationContext()) {
+            context.refresh();
+            val validator = new CasConfigurationPropertiesValidator(context);
+            assertFalse(context.containsBean(CasConfigurationMetadataRepository.BEAN_NAME));
+            assertDoesNotThrow(() -> validator.printReport(List.of()));
+            assertDoesNotThrow(() -> validator.printReport(null));
+        }
     }
 
     @TestConfiguration(value = "CasConfigurationPropertiesTestConfiguration", proxyBeanMethods = false)

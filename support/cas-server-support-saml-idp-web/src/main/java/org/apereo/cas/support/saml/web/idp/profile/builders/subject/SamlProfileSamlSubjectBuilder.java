@@ -9,11 +9,12 @@ import org.apereo.cas.support.saml.util.AbstractSaml20ObjectBuilder;
 import org.apereo.cas.support.saml.web.idp.profile.builders.SamlProfileBuilderContext;
 import org.apereo.cas.support.saml.web.idp.profile.builders.SamlProfileObjectBuilder;
 import org.apereo.cas.support.saml.web.idp.profile.builders.enc.SamlIdPObjectEncrypter;
-import org.apereo.cas.util.InetAddressUtils;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
+import org.apereo.inspektr.common.web.ClientInfoHolder;
+import org.jspecify.annotations.Nullable;
 import org.opensaml.saml.common.SAMLObject;
 import org.opensaml.saml.saml2.core.EncryptedID;
 import org.opensaml.saml.saml2.core.NameID;
@@ -81,14 +82,14 @@ public class SamlProfileSamlSubjectBuilder extends AbstractSaml20ObjectBuilder i
             notOnOrAfter,
             getInResponseTo(context.getSamlRequest(), entityId, registeredService.isSkipGeneratingSubjectConfirmationInResponseTo()),
             registeredService.isSkipGeneratingSubjectConfirmationNotBefore() ? null : ZonedDateTime.now(ZoneOffset.UTC),
-            registeredService.isSkipGeneratingSubjectConfirmationAddress() ? null : InetAddressUtils.getByName(location));
+            registeredService.isSkipGeneratingSubjectConfirmationAddress() ? null : ClientInfoHolder.getClientInfo().getClientIpAddress());
         
         val subject = newSubject(finalSubjectNameId, finalSubjectConfigNameId, subjectConfirmation);
         LOGGER.debug("Created SAML subject [{}]", subject);
         return subject;
     }
 
-    private SAMLObject getNameIdForService(final SamlProfileBuilderContext context) throws Exception {
+    private @Nullable SAMLObject getNameIdForService(final SamlProfileBuilderContext context) throws Exception {
         if (context.getRegisteredService().isSkipGeneratingAssertionNameId()) {
             LOGGER.warn("Assertion will skip assigning/generating a nameId based on service [{}]", context.getRegisteredService());
             return null;

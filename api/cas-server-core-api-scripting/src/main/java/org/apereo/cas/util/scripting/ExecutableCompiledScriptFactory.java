@@ -94,10 +94,7 @@ public interface ExecutableCompiledScriptFactory {
      * @return the optional
      */
     static Optional<ExecutableCompiledScriptFactory> findExecutableCompiledScriptFactory() {
-        return ServiceLoader.load(ExecutableCompiledScriptFactory.class)
-            .stream()
-            .map(ServiceLoader.Provider::get)
-            .findFirst();
+        return CompiledScriptFactoryHolder.FACTORY;
     }
 
     /**
@@ -164,4 +161,14 @@ public interface ExecutableCompiledScriptFactory {
      * @return the class loader
      */
     URLClassLoader newClassLoader();
+
+    final class CompiledScriptFactoryHolder {
+        static final Optional<ExecutableCompiledScriptFactory> FACTORY =
+            ServiceLoader.load(ExecutableCompiledScriptFactory.class,
+                    CompiledScriptFactoryHolder.class.getClassLoader())
+                .stream()
+                .map(ServiceLoader.Provider::get)
+                .findFirst();
+    }
+
 }
