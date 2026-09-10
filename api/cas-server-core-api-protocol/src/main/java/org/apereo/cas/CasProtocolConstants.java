@@ -144,6 +144,16 @@ public interface CasProtocolConstants {
     String ERROR_CODE_INVALID_TICKET = "INVALID_TICKET";
 
     /**
+     * Constant representing a failure to meet the requirements of the validation specification.
+     */
+    String ERROR_CODE_INVALID_TICKET_SPEC = "INVALID_TICKET_SPEC";
+
+    /**
+     * Constant representing an internal error that occurred during ticket validation.
+     */
+    String ERROR_CODE_INTERNAL_ERROR = "INTERNAL_ERROR";
+
+    /**
      * Constant representing an invalid pgt request.
      */
     String ERROR_CODE_INVALID_REQUEST_PROXY = "INVALID_REQUEST_PROXY";

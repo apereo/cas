@@ -23,6 +23,7 @@ import org.apereo.cas.ticket.ServiceTicket;
 import org.apereo.cas.ticket.Ticket;
 import org.apereo.cas.ticket.UnsatisfiedAuthenticationContextTicketValidationException;
 import org.apereo.cas.util.LoggingUtils;
+import org.apereo.cas.validation.AbstractCasProtocolValidationSpecification;
 import org.apereo.cas.validation.Assertion;
 import org.apereo.cas.validation.CasProtocolValidationSpecification;
 import org.apereo.cas.validation.UnauthorizedServiceTicketValidationException;
@@ -109,7 +110,9 @@ public abstract class AbstractServiceValidateController extends AbstractDelegate
             return generateErrorView(CasProtocolConstants.ERROR_CODE_UNAUTHORIZED_SERVICE, null, request, service);
         } catch (final Throwable e) {
             LoggingUtils.warn(LOGGER, e);
-            return generateErrorView(CasProtocolConstants.ERROR_CODE_INVALID_REQUEST, StringUtils.EMPTY, request, service);
+            val description = getTicketValidationErrorDescription(
+                CasProtocolConstants.ERROR_CODE_INTERNAL_ERROR, new Object[]{serviceTicketId}, request);
+            return generateErrorView(CasProtocolConstants.ERROR_CODE_INTERNAL_ERROR, description, request, service);
         }
     }
 
@@ -150,6 +153,12 @@ public abstract class AbstractServiceValidateController extends AbstractDelegate
     protected void prepareForTicketValidation(final HttpServletRequest request, final WebApplicationService service, final String serviceTicketId) {
     }
 
+    protected String getValidationSpecificationErrorCode(final HttpServletRequest request, final Assertion assertion) {
+        return AbstractCasProtocolValidationSpecification.isRenewRequested(request) && !assertion.isFromNewLogin()
+            ? CasProtocolConstants.ERROR_CODE_INVALID_TICKET
+            : CasProtocolConstants.ERROR_CODE_INVALID_TICKET_SPEC;
+    }
+
     protected ModelAndView handleTicketValidation(final HttpServletRequest request,
                                                   final HttpServletResponse response,
                                                   final WebApplicationService service, final String serviceTicketId) throws Throwable {
@@ -167,8 +176,9 @@ public abstract class AbstractServiceValidateController extends AbstractDelegate
 
         val assertion = validateServiceTicket(service, serviceTicketId);
         if (!validateAssertion(request, serviceTicketId, assertion, service)) {
-            val description = getTicketValidationErrorDescription(CasProtocolConstants.ERROR_CODE_INVALID_TICKET, new Object[]{serviceTicketId}, request);
-            return generateErrorView(CasProtocolConstants.ERROR_CODE_INVALID_TICKET, description, request, service);
+            val code = getValidationSpecificationErrorCode(request, assertion);
+            val description = getTicketValidationErrorDescription(code, new Object[]{serviceTicketId}, request);
+            return generateErrorView(code, description, request, service);
         }
 
         val ctxResult = serviceValidateConfigurationContext.getRequestedContextValidator()

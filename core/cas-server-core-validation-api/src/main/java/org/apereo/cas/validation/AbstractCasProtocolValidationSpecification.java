@@ -88,7 +88,7 @@ public abstract class AbstractCasProtocolValidationSpecification implements CasP
      * @param request the request
      * @return true if the request carries a {@code renew} parameter that asks for renewal
      */
-    protected static boolean isRenewRequested(final HttpServletRequest request) {
+    public static boolean isRenewRequested(final HttpServletRequest request) {
         return BooleanUtils.toBoolean(request.getParameter(CasProtocolConstants.PARAMETER_RENEW));
     }
 

@@ -182,6 +182,47 @@ class ProxyValidateControllerTests {
         }
     }
 
+    @Test
+    void verifyProxyTicketOnServiceValidateReportsInvalidTicketSpec() throws Throwable {
+        try (val webServer = new MockWebServer(HttpStatus.OK)) {
+            webServer.start();
+            val service = RegisteredServiceTestUtils.getService("http://localhost:%s".formatted(webServer.getPort()));
+            val registeredService = RegisteredServiceTestUtils.getRegisteredService(service.getId(), Map.of());
+            registeredService.setProxyPolicy(new RegexMatchingRegisteredServiceProxyPolicy().setUseServiceId(true));
+            servicesManager.save(registeredService);
+
+            val ctx = CoreAuthenticationTestUtils.getAuthenticationResult(getAuthenticationSystemSupport(), service);
+            val tId = getCentralAuthenticationService().createTicketGrantingTicket(ctx);
+            val sId = getCentralAuthenticationService().grantServiceTicket(tId.getId(), service, ctx);
+
+            var result = mockMvc.perform(get(CasProtocolConstants.ENDPOINT_PROXY_VALIDATE)
+                    .param(CasProtocolConstants.PARAMETER_SERVICE, service.getId())
+                    .param(CasProtocolConstants.PARAMETER_TICKET, sId.getId())
+                    .param(CasProtocolConstants.PARAMETER_PROXY_CALLBACK_URL, service.getId()))
+                .andExpect(status().isOk())
+                .andReturn();
+            val pgt = Objects.requireNonNull(result.getModelAndView())
+                .getModelMap().get(CasViewConstants.MODEL_ATTRIBUTE_NAME_PROXY_GRANTING_TICKET).toString();
+
+            result = mockMvc.perform(get(CasProtocolConstants.ENDPOINT_PROXY)
+                    .param(CasProtocolConstants.PARAMETER_TARGET_SERVICE, service.getId())
+                    .param(CasProtocolConstants.PARAMETER_PROXY_GRANTING_TICKET, pgt))
+                .andExpect(status().isOk())
+                .andReturn();
+            val proxyTicket = Objects.requireNonNull(result.getModelAndView())
+                .getModelMap().get(CasProtocolConstants.PARAMETER_TICKET).toString();
+
+            result = mockMvc.perform(get(CasProtocolConstants.ENDPOINT_SERVICE_VALIDATE)
+                    .param(CasProtocolConstants.PARAMETER_SERVICE, service.getId())
+                    .param(CasProtocolConstants.PARAMETER_TICKET, proxyTicket))
+                .andExpect(status().isOk())
+                .andReturn();
+            val body = result.getResponse().getContentAsString();
+            assertFalse(body.contains(SUCCESS));
+            assertTrue(body.contains("code=\"%s\"".formatted(CasProtocolConstants.ERROR_CODE_INVALID_TICKET_SPEC)), body);
+        }
+    }
+
     private long countProxyGrantingTickets() {
         return ticketRegistry.getTickets(ProxyGrantingTicket.class::isInstance).count();
     }

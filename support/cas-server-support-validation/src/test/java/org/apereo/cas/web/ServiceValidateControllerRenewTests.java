@@ -162,7 +162,9 @@ class ServiceValidateControllerRenewTests {
     class PerRequestEvaluation {
         @Test
         void verifyRenewRejectsTicketFromExistingSingleSignOnSession() throws Throwable {
-            assertTrue(validate(newSingleSignOnServiceTicket(), true).contains(FAILURE));
+            val body = validate(newSingleSignOnServiceTicket(), true);
+            assertTrue(body.contains(FAILURE));
+            assertTrue(body.contains("code=\"%s\"".formatted(CasProtocolConstants.ERROR_CODE_INVALID_TICKET)), body);
         }
 
         @Test

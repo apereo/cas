@@ -81,6 +81,10 @@ as well as some CAS functionality.
 Please refer to the [Spring Boot Wiki](https://github.com/spring-projects/spring-boot/wiki/Spring-Boot-4.2-Release-Notes)
 for more information on the changes and updates in this release. The biggest change to CAS would be support for AMQP 1.0.
 
+REST password management, trusted-device storage, Clickatell SMS and Spring Boot Admin registration now use Spring's
+`RestClient` in place of deprecated `RestTemplate` APIs. Custom password-management HTTP client beans must now be named
+`passwordChangeServiceRestClient` and provide a `RestClient`.
+
 ### JSpecify & NullAway
 
 CAS codebase is now annotated with [JSpecify](https://jspecify.dev/) annotations to indicate nullness contracts on method parameters,
@@ -151,6 +155,23 @@ security have been strengthened across several flows.
   authentication context have all been accepted. The `pgtUrl` callback used to be contacted and the proxy-granting
   ticket minted before any of those checks ran, so presenting a leaked service ticket could drive an outbound request
   and leave an unused proxy-granting ticket behind even though validation went on to fail.
+- Validation responses now use the protocol's own error codes for two cases that previously reported something else.
+  A ticket that fails the validation specification without a `renew` request — a proxy ticket presented to
+  `/serviceValidate`, for instance — is reported as `INVALID_TICKET_SPEC` rather than `INVALID_TICKET`, and an
+  unexpected failure during validation is reported as `INTERNAL_ERROR` rather than `INVALID_REQUEST`, which stays
+  reserved for a request that is missing required parameters. A ticket that did not come from an initial login while
+  `renew` was requested continues to be reported as `INVALID_TICKET`, as the protocol specifies.
+- Attribute names are now sanitized into valid XML names before they are rendered as elements in the CAS `2.0`/`3.0`
+  validation response, and proxy URLs in `<cas:proxy>` are XML-escaped. Previously an attribute name was only stripped
+  of spaces and a proxy URL was written out verbatim, so either could carry markup or quoting characters into the
+  response. Note that a name containing characters that are not legal in an XML name — a colon, for instance — now
+  renders with those characters replaced by an underscore; such a name previously produced a response that was not
+  well-formed XML.
+- The SAML `1.1` [validation response](../protocol/SAML-v1-Protocol.html) now sets `Recipient` to the service URL the
+  response is intended for, and reserves `InResponseTo` for the `RequestID` of the request being answered, omitting it
+  when the caller did not send one. `InResponseTo` previously carried the hostname of the `TARGET` service unless a
+  `RequestID` happened to be present, and `Recipient` was never set at all, so a relying party had no way to bind the
+  response to its own request or endpoint.
 - The `renew` parameter presented to the [CAS protocol](../protocol/CAS-Protocol.html) validation endpoints is now
   evaluated per request. Validation specifications are shared components and the requested value used to be assigned
   onto them for the duration of a request, which allowed a concurrent validation request to reset it. A service ticket
