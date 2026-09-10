@@ -10,6 +10,7 @@ import org.apereo.cas.configuration.support.RequiresModule;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
+import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
@@ -128,8 +129,8 @@ public class Pac4jDelegatedAuthenticationCoreProperties implements Serializable 
     
     public Pac4jDelegatedAuthenticationCoreProperties() {
         if (StringUtils.isBlank(getSessionReplication().getCookie().getName())) {
-            getSessionReplication().getCookie()
-                .setName("%s%s".formatted(CookieSessionReplicationProperties.DEFAULT_COOKIE_NAME, "AuthnDelegation"));
+            val cookieName = "%s%s".formatted(CookieSessionReplicationProperties.DEFAULT_COOKIE_NAME, "AuthnDelegation");
+            getSessionReplication().getCookie().setName(cookieName);
         }
     }
 }

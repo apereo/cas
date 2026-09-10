@@ -47,16 +47,17 @@ public class UmaDeleteResourceSetRegistrationEndpointController extends BaseUmaE
     public ResponseEntity deleteResourceSet(@PathVariable final long id, final HttpServletRequest request,
                                             final HttpServletResponse response) {
         try {
-            val resourceSetResult = getUmaConfigurationContext().getUmaResourceSetRepository().getById(id);
+            val profileResult = getAuthenticatedProfile(request, response, OAuth20Constants.UMA_PROTECTION_SCOPE);
+            val resourceSetResult = getResourceSet(id, profileResult);
             if (resourceSetResult.isEmpty()) {
                 val model = buildResponseEntityErrorModel(HttpStatus.NOT_FOUND, "Requested resource-set cannot be found");
                 return new ResponseEntity<>(model, HttpStatus.BAD_REQUEST);
             }
-            val profileResult = getAuthenticatedProfile(request, response, OAuth20Constants.UMA_PROTECTION_SCOPE);
             val resourceSet = resourceSetResult.get();
             resourceSet.validate(profileResult);
             getUmaConfigurationContext().getUmaResourceSetRepository().remove(resourceSet);
-            return new ResponseEntity(CollectionUtils.wrap("code", HttpStatus.NO_CONTENT, "resourceId", resourceSet.getId()), HttpStatus.OK);
+            return new ResponseEntity(CollectionUtils.wrap("code", HttpStatus.NO_CONTENT,
+                "resourceId", String.valueOf(resourceSet.getId())), HttpStatus.OK);
         } catch (final InvalidResourceSetException e) {
             return new ResponseEntity<>(buildResponseEntityErrorModel(e), HttpStatus.BAD_REQUEST);
         } catch (final Exception e) {

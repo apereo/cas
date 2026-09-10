@@ -14,9 +14,23 @@ public interface OidcVerifiableCredentialIssuerService {
     /**
      * Issue verifiable credential response.
      *
+     * @param context        the context
+     * @param consumedNonces nonces already consumed while handling the current credential request
+     * @return the verifiable credential response
+     * @throws Throwable the throwable
+     */
+    List<OidcVerifiableCredentialIssuerResponse> issue(OidcVerifiableCredentialValidationContext context,
+                                                       Set<String> consumedNonces) throws Throwable;
+
+    /**
+     * Issue verifiable credential response.
+     *
      * @param context the context
      * @return the verifiable credential response
      * @throws Throwable the throwable
      */
-    List<OidcVerifiableCredentialIssuerResponse> issue(OidcVerifiableCredentialValidationContext context) throws Throwable;
+    default List<OidcVerifiableCredentialIssuerResponse> issue(
+        final OidcVerifiableCredentialValidationContext context) throws Throwable {
+        return issue(context, new HashSet<>());
+    }
 }

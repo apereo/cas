@@ -25,9 +25,9 @@ public class DefaultAuthenticationResultBuilder implements AuthenticationResultB
     @Serial
     private static final long serialVersionUID = 6180465589526463843L;
 
-    private final Set<Authentication> authentications = Collections.synchronizedSet(new LinkedHashSet<>());
+    private final Set<Authentication> authentications = new CopyOnWriteArraySet<>();
 
-    private final List<Credential> providedCredentials = new ArrayList<>();
+    private final List<Credential> providedCredentials = new CopyOnWriteArrayList<>();
 
     private final PrincipalElectionStrategy principalElectionStrategy;
 
@@ -48,9 +48,7 @@ public class DefaultAuthenticationResultBuilder implements AuthenticationResultB
             LOGGER.warn("Authentication chain is empty as no authentications have been collected");
         }
 
-        synchronized (this.authentications) {
-            return this.authentications.stream().findFirst();
-        }
+        return this.authentications.stream().findFirst();
     }
 
     @Override
@@ -132,12 +130,9 @@ public class DefaultAuthenticationResultBuilder implements AuthenticationResultB
         });
     }
 
-    private boolean isEmpty() {
-        return this.authentications.isEmpty();
-    }
-
     private @Nullable Authentication buildAuthentication(final PrincipalElectionStrategy principalElectionStrategy) throws Throwable {
-        if (isEmpty()) {
+        val authenticationSnapshot = new LinkedHashSet<>(this.authentications);
+        if (authenticationSnapshot.isEmpty()) {
             LOGGER.warn("No authentication event has been recorded; CAS cannot finalize the authentication result");
             return null;
         }
@@ -145,13 +140,11 @@ public class DefaultAuthenticationResultBuilder implements AuthenticationResultB
         val principalAttributes = new HashMap<String, List<Object>>();
         val authenticationBuilder = DefaultAuthenticationBuilder.newInstance();
 
-        buildAuthenticationHistory(this.authentications, authenticationAttributes,
+        buildAuthenticationHistory(authenticationSnapshot, authenticationAttributes,
             principalAttributes, authenticationBuilder, principalElectionStrategy);
 
-        synchronized (this.authentications) {
-            val primaryPrincipal = getPrimaryPrincipal(principalElectionStrategy, this.authentications, principalAttributes);
-            authenticationBuilder.setPrincipal(primaryPrincipal);
-        }
+        val primaryPrincipal = getPrimaryPrincipal(principalElectionStrategy, authenticationSnapshot, principalAttributes);
+        authenticationBuilder.setPrincipal(primaryPrincipal);
         LOGGER.debug("Determined primary authentication principal to be [{}]", authenticationBuilder.getPrincipal());
 
         authenticationBuilder.setAttributes(authenticationAttributes);

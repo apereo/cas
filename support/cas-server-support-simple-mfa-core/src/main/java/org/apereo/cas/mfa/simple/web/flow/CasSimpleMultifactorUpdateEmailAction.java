@@ -60,11 +60,14 @@ public class CasSimpleMultifactorUpdateEmailAction extends AbstractMultifactorAu
         try {
             val token = requestContext.getRequestParameters().getRequired("token");
             val tokenCredential = new CasSimpleMultifactorTokenCredential(token);
+            val authentication = WebUtils.getAuthentication(requestContext);
+            val resolvedPrincipal = resolvePrincipal(authentication.getPrincipal(), requestContext);
             val ticket = multifactorAuthenticationService.getMultifactorAuthenticationTicket(tokenCredential);
-            val credentialPrincipal = multifactorAuthenticationService.getPrincipalFromTicket(ticket);
-            val resolvedPrincipal = resolvePrincipal(credentialPrincipal, requestContext);
             val emailAddress = ticket.getProperty(CasSimpleMultifactorVerifyEmailAction.TOKEN_PROPERTY_EMAIL_TO_REGISTER, String.class);
             val principal = multifactorAuthenticationService.validate(resolvedPrincipal, tokenCredential);
+            if (emailAddress == null || emailAddress.isBlank()) {
+                throw new IllegalArgumentException("Token does not carry an email address to register");
+            }
             LOGGER.debug("Updating email address [{}] for [{}]", emailAddress, principal.getId());
             multifactorAuthenticationService.update(principal,
                 Map.of(CasSimpleMultifactorVerifyEmailAction.TOKEN_PROPERTY_EMAIL_TO_REGISTER, emailAddress));

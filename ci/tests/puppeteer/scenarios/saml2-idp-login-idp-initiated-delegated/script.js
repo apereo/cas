@@ -24,7 +24,8 @@ async function startFlow(context, clientName) {
     assert(parsedResult["saml2p:Response"]["$"]["InResponseTo"] === undefined);
     const subjectConfirmation = parsedResult["saml2p:Response"]["saml2:Assertion"][0]["saml2:Subject"][0]["saml2:SubjectConfirmation"][0];
     assert(subjectConfirmation["saml2:SubjectConfirmationData"][0]["$"]["InResponseTo"] === undefined);
-    assert(subjectConfirmation["saml2:SubjectConfirmationData"][0]["$"]["Address"] === "127.0.0.1");
+    const presenterAddress = subjectConfirmation["saml2:SubjectConfirmationData"][0]["$"]["Address"];
+    assert(["127.0.0.1", "::1", "0:0:0:0:0:0:0:1"].includes(presenterAddress));
 
     await cas.gotoLogin(page, "https://localhost:9859/anything/cas");
     await cas.sleep(6000);
@@ -43,4 +44,3 @@ async function startFlow(context, clientName) {
     await cas.removeDirectoryOrFile(path.join(__dirname, "/saml-md"));
     await cas.closeBrowser(browser);
 })();
-

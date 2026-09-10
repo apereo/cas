@@ -26,8 +26,9 @@ public interface OidcVerifiableCredentialNonceService {
      * Consume nonce.
      *
      * @param nonce the nonce
+     * @return the count of removed nonces
      */
-    void remove(@Nullable String nonce);
+    int remove(@Nullable String nonce);
 
     /**
      * Exists nonce?.
@@ -36,6 +37,14 @@ public interface OidcVerifiableCredentialNonceService {
      * @return true/false
      */
     boolean exists(String nonce);
+
+    /**
+     * Atomically consume a nonce so that it can never be presented twice.
+     *
+     * @param nonce the nonce
+     * @return true when this caller is the one that removed a valid nonce
+     */
+    boolean consume(@Nullable String nonce);
 
     record VerifiableCredentialNonce(String value, Long expiresIn) {
     }

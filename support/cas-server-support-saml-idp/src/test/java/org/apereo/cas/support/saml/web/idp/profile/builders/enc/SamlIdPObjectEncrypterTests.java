@@ -3,7 +3,9 @@ package org.apereo.cas.support.saml.web.idp.profile.builders.enc;
 import module java.base;
 import org.apereo.cas.support.saml.BaseSamlIdPConfigurationTests;
 import org.apereo.cas.support.saml.SamlException;
+import org.apereo.cas.support.saml.services.SamlRegisteredService;
 import org.apereo.cas.support.saml.services.idp.metadata.SamlRegisteredServiceMetadataAdaptor;
+import org.apereo.cas.support.saml.util.credential.BasicX509CredentialFactoryBean;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.crypto.DecryptionException;
 import lombok.val;
@@ -13,6 +15,10 @@ import org.opensaml.saml.saml2.core.Assertion;
 import org.opensaml.saml.saml2.core.NameID;
 import org.opensaml.saml.saml2.core.NameIDType;
 import org.opensaml.saml.saml2.core.impl.NameIDBuilder;
+import org.opensaml.security.credential.Credential;
+import org.opensaml.security.credential.UsageType;
+import org.opensaml.security.crypto.KeySupport;
+import org.opensaml.xmlsec.impl.BasicEncryptionConfiguration;
 import org.springframework.test.context.TestPropertySource;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
@@ -88,6 +94,54 @@ class SamlIdPObjectEncrypterTests extends BaseSamlIdPConfigurationTests {
 
         assertThrows(DecryptionException.class,
             () -> samlIdPObjectEncrypter.decode(encNameId, registeredService, adaptor));
+    }
+
+    @Test
+    void verifyDecodeEncryptedNameIdAddressedToIdP() throws Throwable {
+        val registeredService = getSamlRegisteredServiceForTestShib(true, false, true);
+        val adaptor = SamlRegisteredServiceMetadataAdaptor
+            .get(samlRegisteredServiceCachingMetadataResolver, registeredService,
+                registeredService.getServiceId()).orElseThrow();
+
+        val credentialFactory = new BasicX509CredentialFactoryBean();
+        credentialFactory.setCertificateResources(CollectionUtils.wrap(
+            samlIdPMetadataLocator.resolveEncryptionCertificate(Optional.of(registeredService))));
+        credentialFactory.setUsageType(UsageType.ENCRYPTION.name());
+        val idpEncryptionCredential = Objects.requireNonNull(credentialFactory.getObject());
+
+        val decryptionConfiguration = samlIdPObjectEncrypter.configureDecryptionSecurityConfiguration(registeredService);
+        val decryptionCredential = samlIdPObjectEncrypter.configureKeyDecryptionCredential(
+            adaptor.getEntityId(), adaptor, registeredService, decryptionConfiguration);
+        assertEquals(idpEncryptionCredential.getPublicKey(), decryptionCredential.getPublicKey());
+        assertTrue(KeySupport.matchKeyPair(decryptionCredential.getPublicKey(), decryptionCredential.getPrivateKey()));
+
+        val inboundMessageEncrypter = new SamlIdPObjectEncrypter(
+            casProperties.getAuthn().getSamlIdp(), samlIdPMetadataLocator) {
+            @Override
+            protected Credential configureKeyEncryptionCredential(final String peerEntityId,
+                                                                  final SamlRegisteredServiceMetadataAdaptor metadataAdaptor,
+                                                                  final SamlRegisteredService service,
+                                                                  final BasicEncryptionConfiguration encryptionConfiguration) {
+                encryptionConfiguration.setKeyTransportEncryptionCredentials(
+                    CollectionUtils.wrapList(idpEncryptionCredential));
+                return idpEncryptionCredential;
+            }
+        };
+
+        val builder = new NameIDBuilder();
+        val nameId = builder.buildObject();
+        val expectedValue = UUID.randomUUID().toString();
+        nameId.setValue(expectedValue);
+        nameId.setFormat(NameIDType.ENCRYPTED);
+        val inboundMessageAdaptor = mock(SamlRegisteredServiceMetadataAdaptor.class);
+        when(inboundMessageAdaptor.getEntityId())
+            .thenReturn(casProperties.getAuthn().getSamlIdp().getCore().getEntityId());
+        val encryptedNameId = inboundMessageEncrypter.encode(nameId, registeredService, inboundMessageAdaptor);
+        assertNotNull(encryptedNameId);
+
+        val decodedNameId = samlIdPObjectEncrypter.decode(encryptedNameId, registeredService, adaptor);
+        assertEquals(expectedValue, decodedNameId.getValue());
+        assertEquals(NameIDType.ENCRYPTED, decodedNameId.getFormat());
     }
 
     @Test

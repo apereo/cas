@@ -23,7 +23,6 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
-import org.springframework.boot.restclient.RestTemplateBuilder;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Conditional;
@@ -31,13 +30,13 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.ScopedProxyMode;
 import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
 import org.springframework.http.client.reactive.ReactorClientHttpConnector;
+import org.springframework.http.client.support.BasicAuthenticationInterceptor;
 import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.web.authentication.SavedRequestAwareAuthenticationSuccessHandler;
 import org.springframework.security.web.servlet.util.matcher.PathPatternRequestMatcher;
 import org.springframework.web.client.RestClient;
 import org.springframework.web.reactive.function.client.WebClient;
-import tools.jackson.databind.ObjectMapper;
 
 /**
  * This is {@link CasSpringBootAdminAutoConfiguration}.
@@ -57,24 +56,14 @@ public class CasSpringBootAdminAutoConfiguration {
     static class SpringBootAdminClientConfiguration {
         @Bean
         public RegistrationClient registrationClient(
-            final ObjectMapper objectMapper,
             @Qualifier(HttpClient.BEAN_NAME_HTTPCLIENT) final HttpClient httpClient,
             final ClientProperties client) {
-
-
-            var builder = new RestTemplateBuilder()
-                .connectTimeout(client.getConnectTimeout())
-                .readTimeout(client.getReadTimeout())
-                .customizers(template -> {
-                    val requestFactory = new HttpComponentsClientHttpRequestFactory(httpClient.wrappedHttpClient());
-                    template.setRequestFactory(requestFactory);
-                });
+            val builder = RestClient.builder()
+                .requestFactory(new HttpComponentsClientHttpRequestFactory(httpClient.wrappedHttpClient()));
             if (client.getUsername() != null && client.getPassword() != null) {
-                builder = builder.basicAuthentication(client.getUsername(), client.getPassword());
+                builder.requestInterceptor(new BasicAuthenticationInterceptor(client.getUsername(), client.getPassword()));
             }
-
-            val restTemplate = builder.build();
-            return new RestClientRegistrationClient(RestClient.builder(restTemplate).build());
+            return new RestClientRegistrationClient(builder.build());
         }
     }
 

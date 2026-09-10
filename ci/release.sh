@@ -8,6 +8,7 @@ ENDCOLOR="\e[0m"
 casVersion=(`cat ./gradle.properties | grep "version" | cut -d= -f2`)
 nextVersion="${casVersion}"
 privateRelease="false"
+splitRelease="false"
 publishingType="AUTOMATIC"
 
 while (("$#")); do
@@ -26,6 +27,10 @@ while (("$#")); do
     ;;
   --private)
     privateRelease="true"
+    shift 1
+    ;;
+  --split)
+    splitRelease="true"
     shift 1
     ;;
   esac
@@ -90,7 +95,14 @@ function publish {
         
     printgreen "Assembling and publishing CAS release ${casVersion}. This might take a while..."
     printgreen "Publishing type is ${publishingType}"
-    ./gradlew assemble publishAggregationToCentralPortal \
+
+    if [[ "${splitRelease}" == "true" ]]; then
+      printgreen "The release is split into multiple artifacts."
+      task="nmcpZipAggregation"
+    else
+      task="publishAggregationToCentralPortal"
+    fi
+    ./gradlew assemble $task \
       -Pversion="${casVersion}" -PnextVersion="${nextVersion}" \
       --parallel --no-daemon  -x test -x check -DprivateRelease=${privateRelease} \
       -DpublishingType="${publishingType}" -DskipAot=true -DpublishReleases=true --stacktrace --quiet \
@@ -99,8 +111,46 @@ function publish {
         printred "Publishing Apereo CAS failed."
         exit 1
     fi
-    printgreen "Uploaded CAS release ${casVersion} successfully."
     
+    if [[ "${splitRelease}" == "true" ]]; then
+      OUTPUT_DIR="build/nmcp/zip"
+      SOURCE_FILE="build/nmcp/zip/aggregation.zip"
+      printgreen "Unzipping the release artifact ${SOURCE_FILE} to ${OUTPUT_DIR}..."
+      unzip -q ${SOURCE_FILE} -d ${OUTPUT_DIR}
+
+      printgreen "Splitting the release into individual artifacts..."
+      zip -rq "$OUTPUT_DIR/cas-webapp-tomcat.zip" ${OUTPUT_DIR}/org/apereo/cas/cas-server-webapp-tomcat
+      zip -rq "$OUTPUT_DIR/cas-webapp-undertow.zip" ${OUTPUT_DIR}/org/apereo/cas/cas-server-webapp-undertow
+      zip -rq "$OUTPUT_DIR/cas-webapp-jetty.zip" ${OUTPUT_DIR}/org/apereo/cas/cas-server-webapp-jetty
+      zip -rq "$OUTPUT_DIR/cas-webapp.zip" ${OUTPUT_DIR}/org/apereo/cas/cas-server-webapp
+      zip -rq "$OUTPUT_DIR/cas-webapp-config-server.zip" ${OUTPUT_DIR}/org/apereo/cas/cas-server-webapp-config-server
+      zip -rq "$OUTPUT_DIR/cas-rest-of-release.zip" ${OUTPUT_DIR}/org/ \
+        -x "org/apereo/cas/cas-server-webapp-tomcat/*" \
+        -x "org/apereo/cas/cas-server-webapp-undertow/*" \
+        -x "org/apereo/cas/cas-server-webapp-jetty/*" \
+        -x "org/apereo/cas/cas-server-webapp-config-server/*" \
+        -x "org/apereo/cas/cas-server-webapp/*"
+      rm -rf ${SOURCE_FILE} ${OUTPUT_DIR}/org/
+      ls -lh "$OUTPUT_DIR"/cas-*.zip
+
+      TOKEN=$(echo -n "${REPOSITORY_USER}:${REPOSITORY_PWD}" | base64 | tr -d '\n')
+      ZIP_FILES=("$OUTPUT_DIR"/cas-*.zip)
+      for ZIP in "${ZIP_FILES[@]}"; do
+        printgreen "Uploading ${ZIP} to Sonatype's Maven Central..."
+        curl --request POST \
+           --url "https://central.sonatype.com/api/v1/publisher/upload?publishingType=${publishingType}&name=Apereo-CAS-${casVersion}-${ZIP}" \
+           --header "Authorization: Bearer ${TOKEN}" \
+           --form "bundle=@${ZIP}" \
+           --write-out "\nHTTP Status: %{http_code}\n"
+        if [ $? -ne 0 ]; then
+          printred "Publishing Apereo CAS ${casVersion} / ${ZIP} failed."
+          exit 1
+        fi
+        gum spin --spinner dot --title "Waiting for task to complete..." -- sleep 2
+      done
+    fi
+    printgreen "Uploaded CAS release ${casVersion} successfully."
+
     if [[ "${privateRelease}" == "true" ]]; then
         printgreen "This is a private release. Skipping Git tagging and GitHub Release creation."
         return 0

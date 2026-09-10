@@ -12,8 +12,10 @@ import org.apereo.cas.test.CasTestExtension;
 import org.apereo.cas.util.MockWebServer;
 import org.apereo.cas.util.http.HttpClient;
 import org.apereo.cas.util.spring.boot.SpringBootTestAutoConfigurations;
+import com.duosecurity.client.Http;
 import com.github.benmanes.caffeine.cache.Caffeine;
 import lombok.val;
+import okhttp3.OkHttpClient;
 import org.apache.commons.lang3.Strings;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
@@ -25,6 +27,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.context.annotation.Bean;
 import org.springframework.core.io.ClassPathResource;
+import org.springframework.util.ReflectionUtils;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
@@ -72,6 +75,29 @@ class DefaultDuoSecurityAdminApiServiceTests {
             val userAccount = duoSecurityAdminApiService.modifyDuoSecurityUserAccount(new DuoSecurityUserAccount("casuser"));
             assertFalse(userAccount.isEmpty());
             assertNotNull(userAccount.get().getPhone());
+            val service = (MockDuoSecurityAdminApiService) duoSecurityAdminApiService;
+            assertEquals(3, service.getDuoHttpClients().size());
+            assertSame(service.getDuoHttpClients().getFirst(), service.getDuoHttpClients().getLast());
+        }
+    }
+
+    private static final class MockDuoSecurityAdminApiService extends DefaultDuoSecurityAdminApiService {
+        private final List<OkHttpClient> duoHttpClients = new ArrayList<>();
+
+        MockDuoSecurityAdminApiService(final HttpClient httpClient,
+                                       final DuoSecurityMultifactorAuthenticationProperties duoProperties) {
+            super(httpClient, duoProperties);
+        }
+
+        @Override
+        protected void prepareHttpRequest(final Http request) {
+            val field = ReflectionUtils.findField(Http.class, HttpClient.BEAN_NAME_HTTPCLIENT);
+            ReflectionUtils.makeAccessible(Objects.requireNonNull(field));
+            duoHttpClients.add((OkHttpClient) ReflectionUtils.getField(field, request));
+        }
+
+        List<OkHttpClient> getDuoHttpClients() {
+            return duoHttpClients;
         }
     }
     
@@ -86,7 +112,7 @@ class DefaultDuoSecurityAdminApiServiceTests {
             final CasConfigurationProperties casProperties) {
 
             val duoProps = casProperties.getAuthn().getMfa().getDuo().getFirst();
-            val service = new DefaultDuoSecurityAdminApiService(httpClient, duoProps);
+            val service = new MockDuoSecurityAdminApiService(httpClient, duoProps);
             val duoService = new UniversalPromptDuoSecurityAuthenticationService(duoProps, httpClient,
                 mock(DuoSecurityClient.class), List.of(), Caffeine.newBuilder().build(), tenantExtractor);
             val bean = mock(DuoSecurityMultifactorAuthenticationProvider.class);

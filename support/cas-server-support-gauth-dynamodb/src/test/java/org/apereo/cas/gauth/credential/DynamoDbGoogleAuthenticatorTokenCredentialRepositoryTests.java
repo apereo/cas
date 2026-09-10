@@ -9,6 +9,8 @@ import lombok.Getter;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.jupiter.api.parallel.Execution;
+import org.junit.jupiter.api.parallel.ExecutionMode;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -31,7 +33,9 @@ import software.amazon.awssdk.core.SdkSystemSetting;
         "cas.authn.mfa.gauth.dynamo-db.endpoint=http://localhost:8000",
         "cas.authn.mfa.gauth.dynamo-db.drop-tables-on-startup=true",
         "cas.authn.mfa.gauth.dynamo-db.local-instance=true",
-        "cas.authn.mfa.gauth.dynamo-db.region=us-east-1"
+        "cas.authn.mfa.gauth.dynamo-db.region=us-east-1",
+        "cas.authn.mfa.gauth.dynamo-db.table-name=CredentialRepositoryTests",
+        "cas.authn.mfa.gauth.dynamo-db.token-table-name=CredentialRepositoryTokenTests"
     })
 @EnableTransactionManagement(proxyTargetClass = false)
 @EnableAspectJAutoProxy(proxyTargetClass = false)
@@ -40,6 +44,7 @@ import software.amazon.awssdk.core.SdkSystemSetting;
 @EnabledIfListeningOnPort(port = 8000)
 @Tag("DynamoDb")
 @ExtendWith(CasTestExtension.class)
+@Execution(ExecutionMode.SAME_THREAD)
 class DynamoDbGoogleAuthenticatorTokenCredentialRepositoryTests extends BaseOneTimeTokenCredentialRepositoryTests {
     static {
         System.setProperty(SdkSystemSetting.AWS_ACCESS_KEY_ID.property(), "AKIAIPPIGGUNIO74C63Z");

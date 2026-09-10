@@ -3,6 +3,8 @@ package org.apereo.cas.support.saml.authentication;
 import module java.base;
 import org.apereo.cas.util.EncodingUtils;
 import org.apereo.cas.util.serialization.SerializationUtils;
+import lombok.AccessLevel;
+import lombok.Getter;
 import lombok.val;
 import org.opensaml.messaging.context.BaseContext;
 import org.opensaml.messaging.context.MessageContext;
@@ -22,6 +24,7 @@ public class SamlIdPAuthenticationContext implements Serializable {
 
     private final Map<String, SamlIdPAuthenticationContext> contexts = new LinkedHashMap<>();
 
+    @Getter(AccessLevel.PROTECTED)
     private final Map<String, Serializable> properties = new LinkedHashMap<>();
 
     /**
@@ -81,18 +84,19 @@ public class SamlIdPAuthenticationContext implements Serializable {
         if (contexts.containsKey(SAMLBindingContext.class.getName())) {
             val binding = contexts.get(SAMLBindingContext.class.getName());
             val subcontext = messageContext.ensureSubcontext(SAMLBindingContext.class);
-            subcontext.setHasBindingSignature((boolean) binding.properties.get("hasBindingSignature"));
-            subcontext.setRelayState((String) binding.properties.get("relayState"));
+            subcontext.setHasBindingSignature((boolean) binding.getProperties().get("hasBindingSignature"));
+            subcontext.setRelayState((String) binding.getProperties().get("relayState"));
         }
         if (contexts.containsKey(SAMLProtocolContext.class.getName())) {
             val binding = contexts.get(SAMLProtocolContext.class.getName());
             val subcontext = messageContext.ensureSubcontext(SAMLProtocolContext.class);
-            subcontext.setProtocol((String) binding.properties.get("protocol"));
+            subcontext.setProtocol((String) binding.getProperties().get("protocol"));
         }
         if (contexts.containsKey(SAMLPeerEntityContext.class.getName())) {
             val binding = contexts.get(SAMLPeerEntityContext.class.getName());
             val subcontext = messageContext.ensureSubcontext(SAMLPeerEntityContext.class);
-            subcontext.setEntityId((String) binding.properties.get("entityId"));
+            subcontext.setEntityId((String) binding.getProperties().get("entityId"));
+            subcontext.setAuthenticated(Boolean.TRUE.equals(binding.getProperties().get("authenticated")));
         }
         return messageContext;
     }

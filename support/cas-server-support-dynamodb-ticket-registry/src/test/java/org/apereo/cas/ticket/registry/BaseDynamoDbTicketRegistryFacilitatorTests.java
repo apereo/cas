@@ -46,7 +46,12 @@ import software.amazon.awssdk.core.SdkSystemSetting;
         "cas.ticket.registry.dynamo-db.endpoint=http://localhost:8000",
         "cas.ticket.registry.dynamo-db.drop-tables-on-startup=true",
         "cas.ticket.registry.dynamo-db.local-instance=true",
-        "cas.ticket.registry.dynamo-db.region=us-east-1"
+        "cas.ticket.registry.dynamo-db.region=us-east-1",
+        "cas.ticket.registry.dynamo-db.service-tickets-table-name=facilitatorServiceTickets",
+        "cas.ticket.registry.dynamo-db.proxy-tickets-table-name=facilitatorProxyTickets",
+        "cas.ticket.registry.dynamo-db.ticket-granting-tickets-table-name=facilitatorTicketGrantingTickets",
+        "cas.ticket.registry.dynamo-db.proxy-granting-tickets-table-name=facilitatorProxyGrantingTickets",
+        "cas.ticket.registry.dynamo-db.transient-session-tickets-table-name=facilitatorTransientSessionTickets"
     })
 @ExtendWith(CasTestExtension.class)
 public abstract class BaseDynamoDbTicketRegistryFacilitatorTests {

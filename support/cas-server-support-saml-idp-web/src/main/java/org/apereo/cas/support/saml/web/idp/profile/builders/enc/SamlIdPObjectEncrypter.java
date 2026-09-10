@@ -9,10 +9,10 @@ import org.apereo.cas.support.saml.idp.metadata.locator.SamlIdPMetadataLocator;
 import org.apereo.cas.support.saml.idp.metadata.locator.SamlIdPSamlRegisteredServiceCriterion;
 import org.apereo.cas.support.saml.services.SamlRegisteredService;
 import org.apereo.cas.support.saml.services.idp.metadata.SamlRegisteredServiceMetadataAdaptor;
+import org.apereo.cas.support.saml.util.credential.BasicX509CredentialFactoryBean;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.EncodingUtils;
 import org.apereo.cas.util.crypto.DecryptionException;
-import org.apereo.cas.util.crypto.PrivateKeyFactoryBean;
 import org.apereo.cas.util.function.FunctionUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -32,7 +32,6 @@ import org.opensaml.saml.saml2.encryption.Decrypter;
 import org.opensaml.saml.saml2.encryption.EncryptedElementTypeEncryptedKeyResolver;
 import org.opensaml.saml.saml2.encryption.Encrypter;
 import org.opensaml.saml.saml2.metadata.SPSSODescriptor;
-import org.opensaml.security.credential.BasicCredential;
 import org.opensaml.security.credential.Credential;
 import org.opensaml.security.credential.UsageType;
 import org.opensaml.security.criteria.UsageCriterion;
@@ -444,42 +443,15 @@ public class SamlIdPObjectEncrypter {
                                                           final SamlRegisteredServiceMetadataAdaptor adaptor,
                                                           final SamlRegisteredService service,
                                                           final BasicDecryptionConfiguration decryptionConfiguration) throws Throwable {
-
-        val mdCredentialResolver = new SamlIdPMetadataCredentialResolver();
-        val providers = new ArrayList<KeyInfoProvider>(5);
-        providers.add(new RSAKeyValueProvider());
-        providers.add(new DSAKeyValueProvider());
-        providers.add(new InlineX509DataProvider());
-        providers.add(new DEREncodedKeyValueProvider());
-        providers.add(new KeyInfoReferenceProvider());
-
-        val keyInfoResolver = new BasicProviderKeyInfoCredentialResolver(providers);
-        mdCredentialResolver.setKeyInfoCredentialResolver(keyInfoResolver);
-
-        val roleDescriptorResolver = SamlIdPUtils.getRoleDescriptorResolver(adaptor,
-            samlIdPProperties.getMetadata().getCore().isRequireValidMetadata());
-
-        mdCredentialResolver.setRoleDescriptorResolver(roleDescriptorResolver);
-        mdCredentialResolver.initialize();
-
-        val criteriaSet = new CriteriaSet();
-        criteriaSet.add(new DecryptionConfigurationCriterion(decryptionConfiguration));
-        criteriaSet.add(new EntityIdCriterion(peerEntityId));
-        criteriaSet.add(new EntityRoleCriterion(SPSSODescriptor.DEFAULT_ELEMENT_NAME));
-        criteriaSet.add(new UsageCriterion(UsageType.ENCRYPTION));
-        criteriaSet.add(new SamlIdPSamlRegisteredServiceCriterion(service));
-
-        LOGGER.debug("Attempting to resolve the decryption key for entity id [{}]", peerEntityId);
-        val credential = Objects.requireNonNull(mdCredentialResolver.resolveSingle(criteriaSet));
-
-        val encryptionKey = samlIdPMetadataLocator.resolveEncryptionKey(Optional.ofNullable(service));
-        val bean = new PrivateKeyFactoryBean();
-        bean.setSingleton(false);
-        bean.setLocation(encryptionKey);
-        val privateKey = Objects.requireNonNull(bean.getObject());
-
-        val basicCredential = new BasicCredential(Objects.requireNonNull(credential.getPublicKey()), privateKey);
-        decryptionConfiguration.setKEKKeyInfoCredentialResolver(new StaticKeyInfoCredentialResolver(basicCredential));
+        LOGGER.debug("Attempting to resolve the IdP decryption credential for inbound message from [{}]", peerEntityId);
+        val registeredService = Optional.of(service);
+        val encryptionCertificate = samlIdPMetadataLocator.resolveEncryptionCertificate(registeredService);
+        val credentialFactory = new BasicX509CredentialFactoryBean();
+        credentialFactory.setCertificateResources(CollectionUtils.wrap(encryptionCertificate));
+        credentialFactory.setPrivateKeyResource(samlIdPMetadataLocator.resolveEncryptionKey(registeredService));
+        credentialFactory.setUsageType(UsageType.ENCRYPTION.name());
+        val credential = Objects.requireNonNull(credentialFactory.getObject());
+        decryptionConfiguration.setKEKKeyInfoCredentialResolver(new StaticKeyInfoCredentialResolver(credential));
 
         val list = new ArrayList<EncryptedKeyResolver>(3);
         list.add(new InlineEncryptedKeyResolver());

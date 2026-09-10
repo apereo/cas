@@ -5,7 +5,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
-import lombok.experimental.SuperBuilder;
+import lombok.SuperBuilder;
 import org.opensaml.saml.metadata.resolver.MetadataResolver;
 import jakarta.validation.constraints.NotNull;
 

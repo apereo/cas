@@ -3,7 +3,7 @@ const cas = require("../../cas.js");
 
 async function exchangeToken(token, fromType, toType) {
     const grantType = "urn:ietf:params:oauth:grant-type:token-exchange";
-    let params = `grant_type=${encodeURIComponent(grantType)}&scope=${encodeURIComponent("unknown example update")}`;
+    let params = `grant_type=${encodeURIComponent(grantType)}&scope=${encodeURIComponent("read")}`;
     params += `&subject_token=${encodeURIComponent(token)}`;
     params += `&resource=${encodeURIComponent("https://localhost:9859/anything/backend")}`;
     const fromTokenType = encodeURIComponent(`urn:ietf:params:oauth:token-type:${fromType}`);
@@ -21,7 +21,7 @@ async function exchangeToken(token, fromType, toType) {
         assert(res.data.token_type === "Bearer");
         assert(res.data.expires_in !== undefined);
         assert(res.data.issued_token_type === requestedTokenType);
-        assert(res.data.scope === "update");
+        assert(res.data.scope === "read");
 
         if (toType === "jwt") {
             const jwt = res.data.access_token;

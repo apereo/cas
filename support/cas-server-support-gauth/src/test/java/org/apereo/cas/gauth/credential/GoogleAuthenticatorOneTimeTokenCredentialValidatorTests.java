@@ -97,14 +97,16 @@ class GoogleAuthenticatorOneTimeTokenCredentialValidatorTests {
 
     @Test
     void verifyTokenReuse() {
+        val userId = UUID.randomUUID().toString();
         val acct = getOneTimeTokenAccount();
+        acct.setUsername(userId);
         googleAuthenticatorAccountRegistry.save(acct);
 
-        val otp1 = new OneTimeToken(556644, "casuser");
-        oneTimeTokenAuthenticatorTokenRepository.store(otp1);
+        val otp1 = new OneTimeToken(556644, userId);
+        assertNotNull(oneTimeTokenAuthenticatorTokenRepository.store(otp1));
         assertThrows(AccountExpiredException.class,
-            () -> validator.validate(CoreAuthenticationTestUtils.getAuthentication("casuser"),
-                new GoogleAuthenticatorTokenCredential("556644", 123456L)));
+            () -> validator.validate(CoreAuthenticationTestUtils.getAuthentication(userId),
+                new GoogleAuthenticatorTokenCredential("556644", acct.getId())));
     }
 
     @Test

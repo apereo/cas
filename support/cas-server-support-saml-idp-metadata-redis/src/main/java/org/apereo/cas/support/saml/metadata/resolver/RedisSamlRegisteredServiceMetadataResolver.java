@@ -11,6 +11,7 @@ import org.apereo.cas.support.saml.services.SamlRegisteredService;
 import org.apereo.cas.support.saml.services.idp.metadata.SamlMetadataDocument;
 import org.apereo.cas.support.saml.services.idp.metadata.cache.resolver.BaseSamlRegisteredServiceMetadataResolver;
 import org.apereo.cas.support.saml.services.idp.metadata.cache.resolver.SamlRegisteredServiceMetadataManager;
+import org.apereo.cas.util.DigestUtils;
 import lombok.val;
 import net.shibboleth.shared.resolver.CriteriaSet;
 import org.apache.commons.lang3.StringUtils;
@@ -44,12 +45,24 @@ public class RedisSamlRegisteredServiceMetadataResolver extends BaseSamlRegister
         return CAS_PREFIX + '*';
     }
 
+    private static String getPatternRedisKey(final String entityId) {
+        return CAS_PREFIX + DigestUtils.sha512(entityId) + ":*";
+    }
+
+    private static String getRedisKey(final SamlMetadataDocument document) {
+        val entityId = StringUtils.defaultString(document.getEntityId());
+        return CAS_PREFIX + DigestUtils.sha512(entityId) + ':' + document.getName() + ':' + document.getId();
+    }
+
     @Audit(action = AuditableActions.SAML2_METADATA_RESOLUTION,
         actionResolverName = AuditActionResolvers.SAML2_METADATA_RESOLUTION_ACTION_RESOLVER,
         resourceResolverName = AuditResourceResolvers.SAML2_METADATA_RESOLUTION_RESOURCE_RESOLVER)
     @Override
     public Collection<? extends MetadataResolver> resolve(final SamlRegisteredService service, final CriteriaSet criteriaSet) {
-        try (val results = redisTemplate.scan(getPatternRedisKey())) {
+        val pattern = getEntityIdFromCriteriaSet(criteriaSet)
+            .map(RedisSamlRegisteredServiceMetadataResolver::getPatternRedisKey)
+            .orElseGet(RedisSamlRegisteredServiceMetadataResolver::getPatternRedisKey);
+        try (val results = redisTemplate.scan(pattern)) {
             return results
                 .map(redisKey -> redisTemplate.boundValueOps(redisKey).get())
                 .filter(Objects::nonNull)
@@ -72,9 +85,9 @@ public class RedisSamlRegisteredServiceMetadataResolver extends BaseSamlRegister
     
     @Override
     public SamlMetadataDocument store(final SamlMetadataDocument document) {
-        val redisKey = CAS_PREFIX + document.getName() + ':' + document.getId();
-        redisTemplate.boundValueOps(redisKey).set(document);
-        return document;
+        val metadataDocument = prepareMetadataDocument(document);
+        redisTemplate.boundValueOps(getRedisKey(metadataDocument)).set(metadataDocument);
+        return metadataDocument;
     }
 
     @Override
@@ -98,9 +111,13 @@ public class RedisSamlRegisteredServiceMetadataResolver extends BaseSamlRegister
 
     @Override
     public void removeByName(final String name) {
-        val pattern = CAS_PREFIX + name + ":*";
-        try (val results = redisTemplate.scan(pattern)) {
-            results.forEach(redisTemplate::delete);
+        try (val results = redisTemplate.scan(getPatternRedisKey())) {
+            results
+                .filter(redisKey -> {
+                    val document = redisTemplate.boundValueOps(redisKey).get();
+                    return document != null && name.equalsIgnoreCase(document.getName());
+                })
+                .forEach(redisTemplate::delete);
         }
     }
 
@@ -113,11 +130,11 @@ public class RedisSamlRegisteredServiceMetadataResolver extends BaseSamlRegister
 
     @Override
     public Optional<SamlMetadataDocument> findByName(final String name) {
-        val pattern = CAS_PREFIX + name + ":*";
-        try (val results = redisTemplate.scan(pattern)) {
+        try (val results = redisTemplate.scan(getPatternRedisKey())) {
             return results
                 .map(redisKey -> redisTemplate.boundValueOps(redisKey).get())
                 .filter(Objects::nonNull)
+                .filter(document -> name.equalsIgnoreCase(document.getName()))
                 .findFirst();
         }
     }

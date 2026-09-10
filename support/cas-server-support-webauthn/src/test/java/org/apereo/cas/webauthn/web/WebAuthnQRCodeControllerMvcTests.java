@@ -8,11 +8,11 @@ import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.test.CasTestExtension;
 import org.apereo.cas.ticket.TransientSessionTicket;
 import org.apereo.cas.util.MockRequestContext;
-import org.apereo.cas.util.RandomUtils;
 import org.apereo.cas.web.flow.CasWebflowConstants;
 import org.apereo.cas.web.flow.util.MultifactorAuthenticationWebflowUtils;
 import org.apereo.cas.web.security.BaseWebSecurityTests;
 import org.apereo.cas.web.support.WebUtils;
+import org.apereo.cas.webauthn.WebAuthnUtils;
 import org.apereo.cas.webauthn.storage.WebAuthnCredentialRepository;
 import org.apereo.cas.webauthn.web.flow.BaseWebAuthnWebflowTests;
 import com.yubico.core.SessionManager;
@@ -111,30 +111,66 @@ class WebAuthnQRCodeControllerMvcTests {
         val context = MockRequestContext.create(webApplicationContext);
         val authn = RegisteredServiceTestUtils.getAuthentication(UUID.randomUUID().toString());
         val request = context.getHttpServletRequest();
-        val session = new MockHttpSession();
-        request.setSession(session);
+        val mobileSession = new MockHttpSession();
+        val mainSession = new MockHttpSession();
+        request.setSession(mobileSession);
         val ticket = getQRCodeTicket(context, authn);
         val csrfToken = createCsrfToken(context);
-        val sessionId = webAuthnSessionManager.createSession(request, ByteArray.fromBase64Url(authn.getPrincipal().getId()));
+        val userHandle = webAuthnCredentialRepository.getUserHandleForUsername(authn.getPrincipal().getId()).orElseThrow();
+        val sessionId = webAuthnSessionManager.createSession(request, userHandle);
         val mv = mvc.perform(post(BASE_ENDPOINT)
                 .cookie(context.getHttpServletResponse().getCookie("XSRF-TOKEN"))
                 .queryParam("token", sessionId.getBase64Url())
                 .queryParam("ticket", ticket.getId())
                 .queryParam("principal", authn.getPrincipal().getId())
                 .header("X-CSRF-TOKEN", csrfToken.getToken())
-                .session(session)
+                .session(mobileSession)
             )
             .andExpect(status().isOk())
             .andReturn()
             .getModelAndView();
         assertTrue((Boolean) mv.getModel().get("success"));
         assertNotNull(mv.getModel().get("principal"));
-     
+        assertTrue(webAuthnSessionManager.getSession(request, sessionId).isEmpty());
 
-        mvc.perform(get(BASE_ENDPOINT + "/{ticket}/status", ticket.getId()).session(session))
-            .andExpect(status().isOk());
-        mvc.perform(get(BASE_ENDPOINT + "/{ticket}/status", UUID.randomUUID().toString()).session(session))
+        val statusResponse = mvc.perform(get(BASE_ENDPOINT + "/{ticket}/status", ticket.getId()).session(mainSession))
+            .andExpect(status().isOk())
+            .andReturn()
+            .getResponse();
+        val returnedSessionToken = WebAuthnUtils.getObjectMapper().readTree(statusResponse.getContentAsString())
+            .get("sessionToken").asText();
+        assertNotEquals(sessionId.getBase64Url(), returnedSessionToken);
+        val mainRequest = new MockHttpServletRequest();
+        mainRequest.setSession(mainSession);
+        assertTrue(webAuthnSessionManager.getSession(mainRequest, ByteArray.fromBase64Url(returnedSessionToken)).isPresent());
+        mvc.perform(get(BASE_ENDPOINT + "/{ticket}/status", UUID.randomUUID().toString()).session(mainSession))
             .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    void verifyQRCodeRejectsSessionForDifferentPrincipal() throws Exception {
+        val context = MockRequestContext.create(webApplicationContext);
+        val authn = RegisteredServiceTestUtils.getAuthentication(UUID.randomUUID().toString());
+        val request = context.getHttpServletRequest();
+        val mobileSession = new MockHttpSession();
+        request.setSession(mobileSession);
+        val ticket = getQRCodeTicket(context, authn);
+        val csrfToken = createCsrfToken(context);
+
+        val otherAuthentication = RegisteredServiceTestUtils.getAuthentication(UUID.randomUUID().toString());
+        val otherUserHandle = registerCredential(otherAuthentication);
+        val sessionId = webAuthnSessionManager.createSession(request, otherUserHandle);
+        val mv = mvc.perform(post(BASE_ENDPOINT)
+                .cookie(context.getHttpServletResponse().getCookie("XSRF-TOKEN"))
+                .queryParam("token", sessionId.getBase64Url())
+                .queryParam("ticket", ticket.getId())
+                .queryParam("principal", authn.getPrincipal().getId())
+                .header("X-CSRF-TOKEN", csrfToken.getToken())
+                .session(mobileSession))
+            .andExpect(status().isOk())
+            .andReturn()
+            .getModelAndView();
+        assertFalse((Boolean) mv.getModel().get("success"));
     }
 
     @Test
@@ -217,21 +253,27 @@ class WebAuthnQRCodeControllerMvcTests {
     private TransientSessionTicket getQRCodeTicket(final MockRequestContext context, final Authentication authentication) throws Exception {
         WebUtils.putAuthentication(authentication, context);
         MultifactorAuthenticationWebflowUtils.putMultifactorAuthenticationProvider(context, webAuthnMultifactorAuthenticationProvider);
+        registerCredential(authentication);
+        webAuthnStartAuthenticationAction.execute(context);
+        return context.getFlowScope().get("QRCodeTicket", TransientSessionTicket.class);
+    }
+
+    private ByteArray registerCredential(final Authentication authentication) {
+        val userHandle = SessionManager.generateRandom(32);
         webAuthnCredentialRepository.addRegistrationByUsername(authentication.getPrincipal().getId(),
             CredentialRegistration.builder()
                 .userIdentity(UserIdentity.builder()
                     .name(authentication.getPrincipal().getId())
                     .displayName("CAS")
-                    .id(ByteArray.fromBase64Url(authentication.getPrincipal().getId()))
+                    .id(userHandle)
                     .build())
                 .registrationTime(Instant.now(Clock.systemUTC()))
                 .credential(RegisteredCredential.builder()
-                    .credentialId(ByteArray.fromBase64Url(authentication.getPrincipal().getId()))
-                    .userHandle(ByteArray.fromBase64Url(RandomUtils.randomAlphabetic(8)))
-                    .publicKeyCose(ByteArray.fromBase64Url(RandomUtils.randomAlphabetic(8)))
+                    .credentialId(SessionManager.generateRandom(32))
+                    .userHandle(userHandle)
+                    .publicKeyCose(SessionManager.generateRandom(8))
                     .build())
                 .build());
-        webAuthnStartAuthenticationAction.execute(context);
-        return context.getFlowScope().get("QRCodeTicket", TransientSessionTicket.class);
+        return userHandle;
     }
 }

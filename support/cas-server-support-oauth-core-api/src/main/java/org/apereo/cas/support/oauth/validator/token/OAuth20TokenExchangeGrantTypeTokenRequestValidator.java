@@ -49,15 +49,30 @@ public class OAuth20TokenExchangeGrantTypeTokenRequestValidator<T extends OAuth2
         val requestedTokenType = requestParameterResolver.resolveRequestParameter(webContext, OAuth20Constants.REQUESTED_TOKEN_TYPE)
             .orElseGet(OAuth20TokenExchangeTypes.ACCESS_TOKEN::getType);
 
-        val registeredService = extractRegisteredService(subjectTokenType, subjectToken);
+        val subjectRegisteredService = Objects.requireNonNull(extractRegisteredService(subjectTokenType, subjectToken));
 
-        val audit = AuditableContext.builder().registeredService(registeredService).build();
+        val audit = AuditableContext.builder().registeredService(subjectRegisteredService).build();
         val accessResult = configurationContext.getRegisteredServiceAccessStrategyEnforcer().execute(audit);
         accessResult.throwExceptionIfNeeded();
 
-        if (!isGrantTypeSupportedBy(Objects.requireNonNull(registeredService), getGrantType().getType(), true)) {
+        val authenticatedClientId = Objects.requireNonNullElse(
+            OAuth20Utils.getClientIdFromAuthenticatedProfile(uProfile), uProfile.getId());
+        val requestingClientId = requestParameterResolver.resolveRequestParameter(webContext, OAuth20Constants.CLIENT_ID)
+            .orElse(authenticatedClientId);
+        if (!Objects.equals(authenticatedClientId, requestingClientId)) {
+            LOGGER.warn("Authenticated client [{}] cannot request a token exchange for client [{}]",
+                authenticatedClientId, requestingClientId);
+            return false;
+        }
+
+        val registeredService = OAuth20Utils.getRegisteredOAuthServiceByClientId(
+            configurationContext.getServicesManager(), authenticatedClientId);
+        val requesterAudit = AuditableContext.builder().registeredService(registeredService).build();
+        configurationContext.getRegisteredServiceAccessStrategyEnforcer().execute(requesterAudit).throwExceptionIfNeeded();
+
+        if (!isGrantTypeSupportedBy(registeredService, getGrantType().getType(), true)) {
             LOGGER.warn("Requested grant type [{}] is not authorized by service definition [{}]",
-                grantType, Objects.requireNonNull(registeredService).getServiceId());
+                grantType, registeredService.getServiceId());
             return false;
         }
 

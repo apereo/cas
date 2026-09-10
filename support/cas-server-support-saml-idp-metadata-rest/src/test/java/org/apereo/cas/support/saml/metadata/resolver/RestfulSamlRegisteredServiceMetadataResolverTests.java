@@ -8,12 +8,15 @@ import org.apereo.cas.util.MockWebServer;
 import org.apereo.cas.util.RandomUtils;
 import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
 import lombok.val;
+import net.shibboleth.shared.resolver.CriteriaSet;
 import org.apache.commons.io.IOUtils;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.opensaml.core.criterion.EntityIdCriterion;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.http.HttpStatus;
+import org.springframework.test.util.AopTestUtils;
 import tools.jackson.databind.ObjectMapper;
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -27,6 +30,17 @@ import static org.junit.jupiter.api.Assertions.*;
 class RestfulSamlRegisteredServiceMetadataResolverTests extends BaseRestfulSamlMetadataTests {
     private static final ObjectMapper MAPPER = JacksonObjectMapperFactory.builder()
         .defaultTypingEnabled(false).build().toObjectMapper();
+
+    @Test
+    void verifyMetadataRequestUsesEntityIdCriterion() {
+        val entityId = "https://sp.example.org";
+        val service = new SamlRegisteredService();
+        service.setServiceId("^https://sp\\.example\\.org.*$");
+        val metadataResolver = (RestfulSamlRegisteredServiceMetadataResolver) AopTestUtils.getTargetObject(resolver);
+        val request = metadataResolver.buildMetadataResolveRequest(service,
+            new CriteriaSet(new EntityIdCriterion(entityId)));
+        assertEquals(entityId, request.getParameters().get("entityId"));
+    }
 
     @Test
     void verifyRestEndpointProducesMetadata() throws Throwable {

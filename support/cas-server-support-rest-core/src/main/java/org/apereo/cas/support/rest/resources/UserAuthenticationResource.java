@@ -69,8 +69,8 @@ public class UserAuthenticationResource {
                                                       final HttpServletResponse response) throws Throwable {
         try {
             val authenticationResult = authenticationService.authenticate(requestBody, request, response);
-            val result = authenticationResult.orElseThrow(FailedLoginException::new);
-            return this.userAuthenticationResourceEntityResponseFactory.build(result, request);
+            val result = authenticationResult.orElseThrow(AuthenticationException::new);
+            return userAuthenticationResourceEntityResponseFactory.build(result, request);
         } catch (final AuthenticationException e) {
             return RestResourceUtils.createResponseEntityForAuthnFailure(e, request, applicationContext);
         } catch (final BadRestRequestException e) {

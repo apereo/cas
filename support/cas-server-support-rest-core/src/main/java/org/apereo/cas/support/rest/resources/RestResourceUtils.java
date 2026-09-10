@@ -42,7 +42,8 @@ public class RestResourceUtils {
                                                                              final HttpServletRequest request,
                                                                              final ApplicationContext applicationContext) {
         try {
-            val authnExceptions = e.getHandlerErrors().values()
+            val authnExceptions = e.getHandlerErrors()
+                .values()
                 .stream()
                 .map(ex -> mapExceptionToMessage(e, request, applicationContext, ex))
                 .collect(Collectors.toList());

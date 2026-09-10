@@ -5,8 +5,8 @@ import org.apereo.cas.authentication.OneTimeTokenAccount;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
+import lombok.SuperBuilder;
 import lombok.With;
-import lombok.experimental.SuperBuilder;
 import lombok.val;
 
 /**

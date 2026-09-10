@@ -66,6 +66,11 @@ public abstract class BaseUmaEndpointController extends AbstractController {
         return (OAuth20AccessToken) (token.isStateless() ? umaConfigurationContext.getTicketRegistry().getTicket(token.getId()) : token);
     }
 
+    protected Optional<ResourceSet> getResourceSet(final long id, final UserProfile profile) {
+        val clientId = Objects.requireNonNull(OAuth20Utils.getClientIdFromAuthenticatedProfile(profile));
+        return umaConfigurationContext.getUmaResourceSetRepository().getById(id, clientId, profile.getId());
+    }
+
     protected String getResourceSetUriLocation(final ResourceSet saved) {
         return getUmaConfigurationContext().getCasProperties()
                    .getAuthn().getOauth().getUma().getCore().getIssuer()

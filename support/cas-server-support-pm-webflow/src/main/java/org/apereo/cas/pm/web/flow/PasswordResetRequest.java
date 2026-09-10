@@ -3,7 +3,7 @@ package org.apereo.cas.pm.web.flow;
 import module java.base;
 import org.apereo.cas.ticket.Ticket;
 import lombok.Getter;
-import lombok.experimental.SuperBuilder;
+import lombok.SuperBuilder;
 
 /**
  * This is {@link PasswordResetRequest}.

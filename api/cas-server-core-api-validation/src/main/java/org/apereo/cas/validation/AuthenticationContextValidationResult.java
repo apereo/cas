@@ -3,8 +3,8 @@ package org.apereo.cas.validation;
 import module java.base;
 import lombok.Builder;
 import lombok.Getter;
+import lombok.SuperBuilder;
 import lombok.ToString;
-import lombok.experimental.SuperBuilder;
 
 /**
  * This is {@link AuthenticationContextValidationResult}.

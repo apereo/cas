@@ -64,10 +64,16 @@ public class Saml10ObjectBuilder extends AbstractSamlObjectBuilder {
 
     /**
      * Create a new SAML response object.
+     * <p>
+     * {@code Recipient} carries the URI of the party the response is intended for, and
+     * {@code InResponseTo} carries the identifier of the request being answered. The two are
+     * distinct: {@code InResponseTo} is an {@code NCName} reference to the {@code RequestID} of the
+     * corresponding request and is left out entirely when the caller did not send one, rather than
+     * being filled in with the recipient.
      *
      * @param id           the id
      * @param issueInstant the issue instant
-     * @param recipient    the recipient
+     * @param recipient    the URI of the intended recipient of this response
      * @param service      the service
      * @return the response
      */
@@ -78,7 +84,9 @@ public class Saml10ObjectBuilder extends AbstractSamlObjectBuilder {
         samlResponse.setID(id);
         samlResponse.setIssueInstant(issueInstant.toInstant());
         samlResponse.setVersion(SAMLVersion.VERSION_11);
-        samlResponse.setInResponseTo(recipient);
+        if (StringUtils.isNotBlank(recipient)) {
+            samlResponse.setRecipient(recipient);
+        }
         setInResponseToForSamlResponseIfNeeded(service, samlResponse);
         return samlResponse;
     }

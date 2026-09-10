@@ -2,8 +2,6 @@ package org.apereo.cas.logging;
 
 import module java.base;
 import org.apereo.cas.aws.ChainingAWSCredentialsProvider;
-import org.apereo.cas.util.function.FunctionUtils;
-import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -23,7 +21,9 @@ import software.amazon.awssdk.services.cloudwatchlogs.model.CreateLogGroupReques
 import software.amazon.awssdk.services.cloudwatchlogs.model.CreateLogStreamRequest;
 import software.amazon.awssdk.services.cloudwatchlogs.model.DataAlreadyAcceptedException;
 import software.amazon.awssdk.services.cloudwatchlogs.model.DescribeLogGroupsRequest;
+import software.amazon.awssdk.services.cloudwatchlogs.model.DescribeLogGroupsResponse;
 import software.amazon.awssdk.services.cloudwatchlogs.model.DescribeLogStreamsRequest;
+import software.amazon.awssdk.services.cloudwatchlogs.model.DescribeLogStreamsResponse;
 import software.amazon.awssdk.services.cloudwatchlogs.model.InputLogEvent;
 import software.amazon.awssdk.services.cloudwatchlogs.model.InvalidSequenceTokenException;
 import software.amazon.awssdk.services.cloudwatchlogs.model.PutLogEventsRequest;
@@ -35,7 +35,6 @@ import software.amazon.awssdk.services.cloudwatchlogs.model.PutLogEventsRequest;
  * @since 5.1.0
  */
 @Plugin(name = "CloudWatchAppender", category = "Core", elementType = "appender", printObject = true)
-@Slf4j
 @SuppressWarnings({"java:S2055", "NullAway.Init"})
 public class CloudWatchAppender extends AbstractAppender {
     private static final int AWS_DRAIN_LIMIT = 256;
@@ -48,7 +47,7 @@ public class CloudWatchAppender extends AbstractAppender {
 
     private final BlockingQueue<InputLogEvent> queue = new LinkedBlockingQueue<>(AWS_LOG_STREAM_MAX_QUEUE_DEPTH);
 
-    private final Object monitor = new Object();
+    private final CountDownLatch shutdownSignal = new CountDownLatch(1);
 
     private volatile boolean shutdown;
 
@@ -101,7 +100,7 @@ public class CloudWatchAppender extends AbstractAppender {
 
             this.awsLogsClient = builder.build();
         } catch (final Exception e) {
-            org.apereo.cas.util.LoggingUtils.error(LOGGER, e);
+            LOGGER.error("Unable to connect to AWS CloudWatch", e);
         }
     }
 
@@ -223,15 +222,17 @@ public class CloudWatchAppender extends AbstractAppender {
                     try {
                         flush();
                     } catch (final Exception e) {
-                        org.apereo.cas.util.LoggingUtils.error(LOGGER, e);
+                        LOGGER.error("Unable to deliver CloudWatch log events", e);
                     }
                     if (!shutdown && queue.size() < AWS_DRAIN_LIMIT) {
                         try {
-                            synchronized (monitor) {
-                                monitor.wait(flushPeriodMillis);
+                            if (flushPeriodMillis == 0) {
+                                shutdownSignal.await();
+                            } else {
+                                shutdownSignal.await(flushPeriodMillis, TimeUnit.MILLISECONDS);
                             }
                         } catch (final InterruptedException e) {
-                            org.apereo.cas.util.LoggingUtils.error(LOGGER, e);
+                            LOGGER.error("Interrupted while waiting to deliver CloudWatch log events", e);
                             Thread.currentThread().interrupt();
                         }
                     }
@@ -250,15 +251,13 @@ public class CloudWatchAppender extends AbstractAppender {
     public void stop() {
         super.stop();
         shutdown = true;
+        shutdownSignal.countDown();
         if (deliveryThread != null) {
-            synchronized (monitor) {
-                monitor.notifyAll();
-            }
             try {
                 deliveryThread.join(SHUTDOWN_TIMEOUT_MILLIS);
             } catch (final InterruptedException e) {
                 deliveryThread.interrupt();
-                org.apereo.cas.util.LoggingUtils.error(LOGGER, e);
+                LOGGER.error("Interrupted while stopping CloudWatch log delivery", e);
             }
         }
         if (!queue.isEmpty()) {
@@ -300,7 +299,7 @@ public class CloudWatchAppender extends AbstractAppender {
             } catch (final InvalidSequenceTokenException iste) {
                 sequenceTokenCache = iste.expectedSequenceToken();
             } catch (final Exception e) {
-                org.apereo.cas.util.LoggingUtils.error(LOGGER, e);
+                LOGGER.error("Unable to publish CloudWatch log events", e);
             }
             logEvents.clear();
         } while (drained >= AWS_DRAIN_LIMIT);
@@ -309,12 +308,13 @@ public class CloudWatchAppender extends AbstractAppender {
     private String createLogGroupAndLogStreamIfNeeded() {
         if (this.createLogGroupIfNeeded) {
             LOGGER.debug("Attempting to locate the log group [{}]", logGroupName);
-            val describeLogGroupsResult = FunctionUtils.doAndHandle(
-                () -> awsLogsClient.describeLogGroups(DescribeLogGroupsRequest.builder().logGroupNamePrefix(logGroupName).build()),
-                throwable -> {
-                    LOGGER.error(throwable.getMessage(), throwable);
-                    return null;
-                }).get();
+            DescribeLogGroupsResponse describeLogGroupsResult = null;
+            try {
+                describeLogGroupsResult = awsLogsClient.describeLogGroups(
+                    DescribeLogGroupsRequest.builder().logGroupNamePrefix(logGroupName).build());
+            } catch (final Throwable throwable) {
+                LOGGER.error("Unable to locate CloudWatch log group [{}]", logGroupName, throwable);
+            }
 
             var createLogGroup = true;
             if (describeLogGroupsResult != null && describeLogGroupsResult.hasLogGroups()) {
@@ -335,12 +335,12 @@ public class CloudWatchAppender extends AbstractAppender {
         var createLogStream = true;
         LOGGER.debug("Attempting to locate the log stream [{}] for group [{}]", logStreamName, logGroupName);
         val describeLogStreamsRequest = DescribeLogStreamsRequest.builder().logGroupName(logGroupName).logStreamNamePrefix(logStreamName).build();
-        val describeLogStreamsResult = FunctionUtils.doAndHandle(
-            () -> awsLogsClient.describeLogStreams(describeLogStreamsRequest),
-            throwable -> {
-                LOGGER.error(throwable.getMessage(), throwable);
-                return null;
-            }).get();
+        DescribeLogStreamsResponse describeLogStreamsResult = null;
+        try {
+            describeLogStreamsResult = awsLogsClient.describeLogStreams(describeLogStreamsRequest);
+        } catch (final Throwable throwable) {
+            LOGGER.error("Unable to locate CloudWatch log stream [{}] for group [{}]", logStreamName, logGroupName, throwable);
+        }
         if (describeLogStreamsResult != null && describeLogStreamsResult.hasLogStreams()) {
             for (val ls : describeLogStreamsResult.logStreams()) {
                 if (logStreamName.equals(ls.logStreamName())) {

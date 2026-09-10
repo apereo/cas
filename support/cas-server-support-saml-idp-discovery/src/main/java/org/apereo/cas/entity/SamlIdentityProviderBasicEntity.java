@@ -4,7 +4,7 @@ import module java.base;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import lombok.experimental.SuperBuilder;
+import lombok.SuperBuilder;
 
 /**
  * This is {@link SamlIdentityProviderBasicEntity}.

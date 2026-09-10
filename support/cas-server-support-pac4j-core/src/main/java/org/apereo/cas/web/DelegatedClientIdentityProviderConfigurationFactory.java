@@ -7,7 +7,7 @@ import org.apereo.cas.authentication.principal.WebApplicationService;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.support.delegation.DelegationAutoRedirectTypes;
 import org.apereo.cas.util.RegexUtils;
-import lombok.experimental.SuperBuilder;
+import lombok.SuperBuilder;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;

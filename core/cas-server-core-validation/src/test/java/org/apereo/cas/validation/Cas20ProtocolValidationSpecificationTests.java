@@ -2,7 +2,10 @@ package org.apereo.cas.validation;
 
 import module java.base;
 import org.apereo.cas.BaseCasCoreTests;
+import org.apereo.cas.CasProtocolConstants;
 import org.apereo.cas.CoreValidationTestUtils;
+import lombok.val;
+import org.apache.commons.lang3.StringUtils;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -39,5 +42,25 @@ class Cas20ProtocolValidationSpecificationTests extends BaseCasCoreTests {
     @Test
     void verifySatisfiesSpecOfFalse2() {
         assertTrue(validationSpecification.isSatisfiedBy(CoreValidationTestUtils.getAssertion(false), new MockHttpServletRequest()));
+    }
+
+    @Test
+    void verifyRenewIsHonoredFromRequestWithoutRetainingState() {
+        val renewRequest = new MockHttpServletRequest();
+        renewRequest.addParameter(CasProtocolConstants.PARAMETER_RENEW, "true");
+        assertFalse(validationSpecification.isSatisfiedBy(CoreValidationTestUtils.getAssertion(false), renewRequest));
+        assertTrue(validationSpecification.isSatisfiedBy(CoreValidationTestUtils.getAssertion(true), renewRequest));
+
+        assertTrue(validationSpecification.isSatisfiedBy(CoreValidationTestUtils.getAssertion(false), new MockHttpServletRequest()));
+    }
+
+    @Test
+    void verifyRenewIsNotRequestedForNonTrueRequestValues() {
+        Stream.of("false", "0", StringUtils.EMPTY, "bogus").forEach(value -> {
+            val request = new MockHttpServletRequest();
+            request.addParameter(CasProtocolConstants.PARAMETER_RENEW, value);
+            assertTrue(validationSpecification.isSatisfiedBy(CoreValidationTestUtils.getAssertion(false), request),
+                "Value [%s] must not be understood as a request for renewed authentication".formatted(value));
+        });
     }
 }

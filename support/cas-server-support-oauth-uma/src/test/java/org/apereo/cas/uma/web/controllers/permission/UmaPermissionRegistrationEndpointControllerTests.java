@@ -55,7 +55,7 @@ class UmaPermissionRegistrationEndpointControllerTests extends BaseUmaEndpointCo
             body, results.getLeft(), results.getMiddle());
 
         var model = getMappedResponseBody(result);
-        val resourceId = ((Number) model.get("resourceId")).longValue();
+        val resourceId = parseIdentifier(model.get("resourceId"));
 
         val profile = getCurrentProfile(results.getLeft(), results.getMiddle());
         body = createUmaPolicyRegistrationRequest(profile).toJson();

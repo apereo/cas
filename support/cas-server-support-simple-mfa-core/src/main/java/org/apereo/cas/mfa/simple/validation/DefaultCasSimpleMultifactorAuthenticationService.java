@@ -69,7 +69,7 @@ public class DefaultCasSimpleMultifactorAuthenticationService extends BaseCasSim
         FunctionUtils.doUnchecked(us -> {
             if (trackingToken != null) {
                 LOGGER.debug("Updating existing token [{}] to registry", token.getId());
-                ticketRegistry.updateTicket(trackingToken);
+                ticketRegistry.updateTicket(token);
             } else {
                 LOGGER.debug("Adding token [{}] to registry", token.getId());
                 ticketRegistry.addTicket(token);

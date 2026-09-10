@@ -495,6 +495,7 @@ function start_container() {
         --env "MONGO_PORT_1=${MONGO_PORT_1}"
         --env "MONGO_PORT_2=${MONGO_PORT_2}"
         --env "MONGO_PORT_3=${MONGO_PORT_3}"
+        --env "GLIBC_TUNABLES=glibc.pthread.rseq=1"
         --volume "${MONGO_KEYFILE}:/run/mongodb-source/mongodb-keyfile:ro"
         --volume "${MONGO_CONTAINER_SCRIPT}:/usr/local/bin/start-mongodb-replica-set:ro"
     )

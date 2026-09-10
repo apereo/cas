@@ -129,13 +129,6 @@ class GoogleAuthenticatorTokenCredentialRepositoryEndpointTests extends Abstract
     @Test
     void verifyUsernameAndDeviceId() throws Throwable {
         val acct = registry.create(UUID.randomUUID().toString());
-        GoogleAuthenticatorAccount.builder()
-            .username(acct.getUsername())
-            .secretKey(acct.getSecretKey())
-            .validationCode(acct.getValidationCode())
-            .scratchCodes(acct.getScratchCodes())
-            .name(UUID.randomUUID().toString())
-            .build();
         mockMvc.perform(get("/actuator/gauthCredentialRepository/%s/%s".formatted(acct.getUsername(), acct.getId()))
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
                 .accept(MediaType.APPLICATION_JSON)

@@ -2,15 +2,22 @@ package org.apereo.cas.logging;
 
 import module java.base;
 import lombok.val;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.core.config.Configurator;
-import org.apache.logging.log4j.core.config.builder.api.ConfigurationBuilderFactory;
+import org.apache.logging.log4j.Level;
+import org.apache.logging.log4j.core.config.plugins.util.PluginManager;
+import org.apache.logging.log4j.core.impl.Log4jLogEvent;
+import org.apache.logging.log4j.message.SimpleMessage;
+import org.apache.logging.log4j.status.StatusListener;
+import org.apache.logging.log4j.status.StatusLogger;
+import org.jspecify.annotations.Nullable;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.function.Executable;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
+import org.junit.jupiter.params.provider.ValueSource;
 import org.mockito.ArgumentMatchers;
+import org.springframework.test.util.ReflectionTestUtils;
 import software.amazon.awssdk.services.cloudwatchlogs.CloudWatchLogsClient;
 import software.amazon.awssdk.services.cloudwatchlogs.model.CreateLogGroupRequest;
 import software.amazon.awssdk.services.cloudwatchlogs.model.CreateLogStreamRequest;
@@ -20,6 +27,9 @@ import software.amazon.awssdk.services.cloudwatchlogs.model.DescribeLogStreamsRe
 import software.amazon.awssdk.services.cloudwatchlogs.model.DescribeLogStreamsResponse;
 import software.amazon.awssdk.services.cloudwatchlogs.model.LogGroup;
 import software.amazon.awssdk.services.cloudwatchlogs.model.LogStream;
+import software.amazon.awssdk.services.cloudwatchlogs.model.PutLogEventsRequest;
+import software.amazon.awssdk.services.cloudwatchlogs.model.PutLogEventsResponse;
+import static org.awaitility.Awaitility.*;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
@@ -30,6 +40,57 @@ import static org.mockito.Mockito.*;
  */
 @Tag("AmazonWebServices")
 class CloudWatchAppenderSpecTests {
+    @ParameterizedTest
+    @ValueSource(strings = {"0", "30"})
+    void verifyShutdownWakesDeliveryAndDrainsQueue(final String flushPeriod) {
+        val logs = mock(CloudWatchLogsClient.class);
+        when(logs.describeLogStreams(any(DescribeLogStreamsRequest.class))).thenReturn(createDescribeLogStreamsResult());
+        when(logs.putLogEvents(any(PutLogEventsRequest.class)))
+            .thenReturn(PutLogEventsResponse.builder().nextSequenceToken("next").build());
+        val appender = new CloudWatchAppender("shutdown-test", "test", "test", flushPeriod, null,
+            false, false, false, logs);
+        appender.initialize();
+        appender.start();
+        try {
+            val deliveryThread = (Thread) Objects.requireNonNull(ReflectionTestUtils.getField(appender, "deliveryThread"));
+            await().atMost(Duration.ofSeconds(5)).until(() ->
+                deliveryThread.getState() == Thread.State.WAITING || deliveryThread.getState() == Thread.State.TIMED_WAITING);
+            appender.append(Log4jLogEvent.newBuilder().setMessage(new SimpleMessage("pending log event")).build());
+
+            assertTimeout(Duration.ofSeconds(5), (Executable) appender::stop);
+            assertFalse(deliveryThread.isAlive());
+            verify(logs).putLogEvents(argThat((PutLogEventsRequest request) -> request.logEvents().size() == 1
+                && request.logEvents().getFirst().message().contains("pending log event")));
+        } finally {
+            appender.stop();
+        }
+    }
+
+    @Test
+    void verifyLookupFailuresUseStatusLogger() {
+        val logs = mock(CloudWatchLogsClient.class);
+        val groupFailure = new IllegalStateException("Log group lookup failed");
+        val streamFailure = new IllegalStateException("Log stream lookup failed");
+        when(logs.describeLogGroups(any(DescribeLogGroupsRequest.class))).thenThrow(groupFailure);
+        when(logs.describeLogStreams(any(DescribeLogStreamsRequest.class))).thenThrow(streamFailure);
+
+        val listener = mock(StatusListener.class);
+        when(listener.getStatusLevel()).thenReturn(Level.ERROR);
+        val statusLogger = StatusLogger.getLogger();
+        statusLogger.registerListener(listener);
+        try {
+            val appender = new CloudWatchAppender("lookup-failure-test", "test", "test", "30", null,
+                true, true, true, logs);
+            assertDoesNotThrow(appender::initialize);
+            verify(logs).createLogGroup(any(CreateLogGroupRequest.class));
+            verify(logs).createLogStream(any(CreateLogStreamRequest.class));
+            verify(listener).log(argThat(status -> Objects.equals(status.getThrowable(), groupFailure)));
+            verify(listener).log(argThat(status -> Objects.equals(status.getThrowable(), streamFailure)));
+        } finally {
+            statusLogger.removeListener(listener);
+        }
+    }
+
     private static DescribeLogStreamsResponse createDescribeLogStreamsResult() {
         val logStream = LogStream.builder().logStreamName("test").uploadSequenceToken("test").build();
         return DescribeLogStreamsResponse.builder().logStreams(logStream).build();
@@ -97,11 +158,11 @@ class CloudWatchAppenderSpecTests {
     @Test
     @DisplayName("make sure that log4j plugin file is generated")
     public void fileGenerated() {
-        val builder = ConfigurationBuilderFactory.newConfigurationBuilder();
-        builder.add(builder.newAppender("cloudwatch", "CloudWatchAppender"));
-        var configuration = builder.build();
-        Configurator.initialize(configuration);
-        assertNotNull(configuration.getAppender("cloudwatch"));
+        val pluginManager = new PluginManager("Core");
+        pluginManager.collectPlugins();
+        val plugin = pluginManager.getPluginType("cloudwatchappender");
+        assertNotNull(plugin);
+        assertEquals(CloudWatchAppender.class, plugin.getPluginClass());
     }
 
     @ParameterizedTest(name = "case {index}")
@@ -116,21 +177,12 @@ class CloudWatchAppenderSpecTests {
             when(mock.describeLogGroups(ArgumentMatchers.any(DescribeLogGroupsRequest.class))).thenReturn(createDescribeLogGroupsResult());
         }
 
-        var appender = new CloudWatchAppender("test", "test", "test", "30", null,
+        val appender = new CloudWatchAppender("test", "test", "test", "30", null,
             tC.createIfNeeded, tC.createLogGroupIfNeeded, tC.createLogStreamIfNeeded, mock);
         if (tC.throwsException) {
             assertThrows(RuntimeException.class, appender::initialize);
         } else {
             appender.initialize();
-
-            val builder = ConfigurationBuilderFactory.newConfigurationBuilder();
-            val configuration = builder.build();
-            configuration.addAppender(appender);
-            Configurator.initialize(configuration);
-
-            val logger = LogManager.getLogger("test");
-            logger.info("here is a message");
-
             createLogGroup(mock, Objects.requireNonNullElseGet(tC.resultCreateLogGroupIfNeeded,
                 () -> Objects.requireNonNullElse(tC.createIfNeeded, true)));
             createLogStream(mock, Objects.requireNonNullElseGet(tC.resultCreateLogStreamIfNeeded,
@@ -139,29 +191,29 @@ class CloudWatchAppenderSpecTests {
 
     }
 
-    private static class TestCase {
-        private final Boolean createIfNeeded;
+    static class TestCase {
+        private final @Nullable Boolean createIfNeeded;
 
-        private final Boolean createLogGroupIfNeeded;
+        private final @Nullable Boolean createLogGroupIfNeeded;
 
-        private final Boolean createLogStreamIfNeeded;
+        private final @Nullable Boolean createLogStreamIfNeeded;
 
-        private final Boolean resultCreateLogGroupIfNeeded;
+        private final @Nullable Boolean resultCreateLogGroupIfNeeded;
 
-        private final Boolean resultCreateLogStreamIfNeeded;
+        private final @Nullable Boolean resultCreateLogStreamIfNeeded;
 
-        private final Boolean logGroupExists;
+        private final @Nullable Boolean logGroupExists;
 
-        private final Boolean logStreamExists;
+        private final @Nullable Boolean logStreamExists;
 
-        private final Boolean throwsException;
+        private final @Nullable Boolean throwsException;
 
         TestCase(
-            final Boolean createIfNeeded,
-            final Boolean createLogGroupIfNeeded,
-            final Boolean createLogStreamIfNeeded,
-            final Boolean resultCreateLogGroupIfNeeded,
-            final Boolean resultCreateLogStreamIfNeeded) {
+            @Nullable final Boolean createIfNeeded,
+            @Nullable final Boolean createLogGroupIfNeeded,
+            @Nullable final Boolean createLogStreamIfNeeded,
+            @Nullable final Boolean resultCreateLogGroupIfNeeded,
+            @Nullable final Boolean resultCreateLogStreamIfNeeded) {
             this(
                 createIfNeeded,
                 createLogGroupIfNeeded,
@@ -174,12 +226,12 @@ class CloudWatchAppenderSpecTests {
         }
 
         TestCase(
-            final Boolean createIfNeeded,
-            final Boolean createLogGroupIfNeeded,
-            final Boolean createLogStreamIfNeeded,
-            final Boolean resultCreateLogGroupIfNeeded,
-            final Boolean resultCreateLogStreamIfNeeded,
-            final Boolean throwsException) {
+            final @Nullable Boolean createIfNeeded,
+            final @Nullable Boolean createLogGroupIfNeeded,
+            final @Nullable Boolean createLogStreamIfNeeded,
+            final @Nullable Boolean resultCreateLogGroupIfNeeded,
+            final @Nullable Boolean resultCreateLogStreamIfNeeded,
+            final @Nullable Boolean throwsException) {
             this(
                 createIfNeeded,
                 createLogGroupIfNeeded,
@@ -192,14 +244,14 @@ class CloudWatchAppenderSpecTests {
         }
 
         TestCase(
-            final Boolean createIfNeeded,
-            final Boolean createLogGroupIfNeeded,
-            final Boolean createLogStreamIfNeeded,
-            final Boolean resultCreateLogGroupIfNeeded,
-            final Boolean resultCreateLogStreamIfNeeded,
-            final Boolean throwsException,
-            final Boolean logGroupExists,
-            final Boolean logStreamExists) {
+            final @Nullable Boolean createIfNeeded,
+            final @Nullable Boolean createLogGroupIfNeeded,
+            final @Nullable Boolean createLogStreamIfNeeded,
+            final @Nullable Boolean resultCreateLogGroupIfNeeded,
+            final @Nullable Boolean resultCreateLogStreamIfNeeded,
+            final @Nullable Boolean throwsException,
+            final @Nullable Boolean logGroupExists,
+            final @Nullable Boolean logStreamExists) {
             this.createIfNeeded = createIfNeeded;
             this.createLogGroupIfNeeded = createLogGroupIfNeeded;
             this.createLogStreamIfNeeded = createLogStreamIfNeeded;

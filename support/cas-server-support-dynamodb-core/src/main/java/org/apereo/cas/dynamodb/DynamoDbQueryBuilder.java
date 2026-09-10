@@ -2,8 +2,8 @@ package org.apereo.cas.dynamodb;
 
 import module java.base;
 import lombok.Getter;
+import lombok.SuperBuilder;
 import lombok.ToString;
-import lombok.experimental.SuperBuilder;
 import software.amazon.awssdk.services.dynamodb.model.AttributeValue;
 import software.amazon.awssdk.services.dynamodb.model.ComparisonOperator;
 

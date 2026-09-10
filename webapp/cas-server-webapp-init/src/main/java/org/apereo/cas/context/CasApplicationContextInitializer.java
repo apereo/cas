@@ -1,8 +1,7 @@
 package org.apereo.cas.context;
 
 import module java.base;
-import org.apereo.cas.configuration.api.CasConfigurationPropertiesSourceLocator;
-import org.apereo.cas.metadata.CasConfigurationPropertiesValidator;
+import org.apereo.cas.web.CasWebApplicationReady;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.springframework.context.ApplicationContextInitializer;
@@ -19,17 +18,13 @@ public class CasApplicationContextInitializer implements ApplicationContextIniti
     /**
      * System property to indicate whether configuration status has passed validation.
      */
-    public static final String SYSTEM_PROPERTY_CONFIG_VALIDATION_STATUS = "CONFIG_VALIDATION_STATUS";
+    public static final String SYSTEM_PROPERTY_CONFIG_VALIDATION_STATUS = CasWebApplicationReady.SYSTEM_PROPERTY_CONFIG_VALIDATION_STATUS;
 
     @Override
     public void initialize(final ConfigurableApplicationContext applicationContext) {
         val activeProfiles = List.of(applicationContext.getEnvironment().getActiveProfiles());
-        if (!activeProfiles.contains(CasConfigurationPropertiesSourceLocator.PROFILE_NATIVE)) {
-            LOGGER.debug("Initializing application context [{}] for active profiles [{}]",
-                applicationContext.getDisplayName(), activeProfiles);
-            val validator = new CasConfigurationPropertiesValidator(applicationContext);
-            val results = validator.validate();
-            System.setProperty(SYSTEM_PROPERTY_CONFIG_VALIDATION_STATUS, Boolean.toString(results.isEmpty()));
-        }
+        LOGGER.debug("Initializing application context [{}] for active profiles [{}]",
+            applicationContext.getDisplayName(), activeProfiles);
+        System.clearProperty(SYSTEM_PROPERTY_CONFIG_VALIDATION_STATUS);
     }
 }

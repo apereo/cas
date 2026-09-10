@@ -383,7 +383,7 @@ public class MockWebServer implements Closeable {
         }
 
         @Override
-        public synchronized void run() {
+        public void run() {
             while (this.running) {
                 try (val socket = serverSocket.accept()) {
                     val givenHeaders = new HashMap<String, String>();

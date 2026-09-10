@@ -8,13 +8,16 @@ import org.apereo.cas.trusted.authentication.api.MultifactorAuthenticationTrustS
 import org.apereo.cas.trusted.authentication.storage.RestMultifactorAuthenticationTrustStorage;
 import org.apereo.cas.util.crypto.CipherExecutor;
 import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
+import lombok.val;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ScopedProxyMode;
-import org.springframework.web.client.RestTemplate;
+import org.springframework.http.client.SimpleClientHttpRequestFactory;
+import org.springframework.web.client.RestClient;
+import org.springframework.web.util.DefaultUriBuilderFactory;
 
 /**
  * This is {@link CasRestMultifactorAuthenticationTrustAutoConfiguration}.
@@ -35,8 +38,14 @@ public class CasRestMultifactorAuthenticationTrustAutoConfiguration {
         final MultifactorAuthenticationTrustRecordKeyGenerator keyGenerationStrategy,
         @Qualifier("mfaTrustCipherExecutor")
         final CipherExecutor mfaTrustCipherExecutor) {
+        val uriBuilderFactory = new DefaultUriBuilderFactory();
+        uriBuilderFactory.setEncodingMode(DefaultUriBuilderFactory.EncodingMode.URI_COMPONENT);
+        val restClient = RestClient.builder()
+            .requestFactory(new SimpleClientHttpRequestFactory())
+            .uriBuilderFactory(uriBuilderFactory)
+            .build();
         return new RestMultifactorAuthenticationTrustStorage(casProperties.getAuthn()
             .getMfa()
-            .getTrusted(), mfaTrustCipherExecutor, keyGenerationStrategy, new RestTemplate());
+            .getTrusted(), mfaTrustCipherExecutor, keyGenerationStrategy, restClient);
     }
 }
