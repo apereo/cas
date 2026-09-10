@@ -36,6 +36,9 @@ public class JpaResourceSetRepository extends BaseResourceSetRepository {
         if (!validateResourceSetScopes(set)) {
             throw new IllegalArgumentException("Cannot save a resource set with inconsistent scopes.");
         }
+        if (set.getId() <= 0) {
+            set.setId(generateResourceSetIdentifier());
+        }
         val jpaResource = new JpaResourceSet();
         FunctionUtils.doUnchecked(_ -> BeanUtils.copyProperties(jpaResource, set));
         return entityManager.merge(jpaResource);
@@ -53,6 +56,22 @@ public class JpaResourceSetRepository extends BaseResourceSetRepository {
             val query = String.format("SELECT r FROM %s r WHERE r.id = :id", ENTITY_NAME);
             val resourceSet = entityManager.createQuery(query, JpaResourceSet.class)
                 .setParameter("id", id)
+                .getSingleResult();
+            return Optional.of(resourceSet);
+        } catch (final NoResultException e) {
+            LOGGER.debug(e.getMessage());
+        }
+        return Optional.empty();
+    }
+
+    @Override
+    public Optional<ResourceSet> getById(final long id, final String clientId, final String owner) {
+        try {
+            val query = String.format("SELECT r FROM %s r WHERE r.id = :id AND r.clientId = :clientId AND r.owner = :owner", ENTITY_NAME);
+            val resourceSet = entityManager.createQuery(query, JpaResourceSet.class)
+                .setParameter("id", id)
+                .setParameter("clientId", clientId)
+                .setParameter("owner", owner)
                 .getSingleResult();
             return Optional.of(resourceSet);
         } catch (final NoResultException e) {

@@ -17,6 +17,7 @@ $config = [
       'privatekey' => 'saml.pem',
       'certificate' => 'saml.crt',
       'idp' => getenv('IDP_ENTITYID'),
+      'sign.logout' => (getenv('SIGN_LOGOUT_MESSAGES') === 'true'),
       'IsPassive' => (getenv('SP_PASSIVE_AUTHN') === 'true'),
       'discoURL' => null,
       'SingleLogoutServiceBinding' => [

@@ -40,6 +40,15 @@ class WebAuthnServerTests {
         protected abstract ResidentKeyRequirement requestedResidentKeyRequirement();
 
         @Test
+        void verifyAuthenticationOperation() {
+            val authentication = webAuthnServer.startAuthentication(new MockHttpServletRequest(), Optional.empty());
+
+            assertTrue(authentication.isRight());
+            val options = authentication.right().orElseThrow().getPublicKeyCredentialRequestOptions();
+            assertEquals(expectedUserVerificationRequirement(), options.getUserVerification().orElse(null));
+        }
+
+        @Test
         void verifyOperation() {
             val request = new MockHttpServletRequest();
             val username = UUID.randomUUID().toString();

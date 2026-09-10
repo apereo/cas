@@ -84,7 +84,9 @@ public class OidcHandlerInterceptorAdapter extends OAuth20HandlerInterceptorAdap
             return false;
         }
 
-        if (isVerifiableCredentialTransactionRequest(request.getRequestURI()) || isPushedAuthorizationRequest(request.getRequestURI())) {
+        if (isVerifiableCredentialTransactionRequest(request.getRequestURI())
+            || isVerifiableCredentialPresentationRequest(request.getRequestURI())
+            || isPushedAuthorizationRequest(request.getRequestURI())) {
             LOGGER.trace("OIDC request is protected at [{}]", request.getRequestURI());
             return requiresAuthenticationAccessTokenInterceptor.getObject().preHandle(request, response, handler);
         }
@@ -150,6 +152,18 @@ public class OidcHandlerInterceptorAdapter extends OAuth20HandlerInterceptorAdap
 
     protected boolean isVerifiableCredentialTransactionRequest(final String requestPath) {
         return doesUriMatchPattern(requestPath, CollectionUtils.wrapList(OidcConstants.VC_CREDENTIAL_OFFER_TRANSACTIONS_URL));
+    }
+
+    /**
+     * Is this a request to create a verifiable credential presentation request?
+     * Only the creation endpoint is matched; wallet lookups that carry a request
+     * identifier in the path remain publicly accessible.
+     *
+     * @param requestPath the request path
+     * @return true/false
+     */
+    protected boolean isVerifiableCredentialPresentationRequest(final String requestPath) {
+        return doesUriMatchPattern(requestPath, CollectionUtils.wrapList(OidcConstants.VC_PRESENTATION_REQUEST_URL));
     }
 
     @Override

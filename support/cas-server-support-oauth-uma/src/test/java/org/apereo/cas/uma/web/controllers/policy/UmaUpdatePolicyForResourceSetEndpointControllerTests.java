@@ -30,7 +30,7 @@ class UmaUpdatePolicyForResourceSetEndpointControllerTests extends BaseUmaEndpoi
             body, results.getLeft(), results.getMiddle());
         var model = getMappedResponseBody(result);
         assertNotNull(model);
-        val resourceId = ((Number) model.get("resourceId")).longValue();
+        val resourceId = parseIdentifier(model.get("resourceId"));
 
         body = createUmaPolicyRegistrationRequest(getCurrentProfile(results.getLeft(), results.getMiddle())).toJson();
         result = performUmaRequest(HttpMethod.POST, resourceId + "/" + OAuth20Constants.UMA_POLICY_URL,
@@ -38,7 +38,7 @@ class UmaUpdatePolicyForResourceSetEndpointControllerTests extends BaseUmaEndpoi
         model = getMappedResponseBody(result);
         assertNotNull(model);
         val entity = (Map) model.get("entity");
-        val policyId = ((Number) ((Map) ((Collection) entity.get("policies")).iterator().next()).get("id")).longValue();
+        val policyId = parseIdentifier(((Map) ((Collection) entity.get("policies")).iterator().next()).get("id"));
 
         body = createUmaPolicyRegistrationRequest(getCurrentProfile(results.getLeft(), results.getMiddle()),
             CollectionUtils.wrapHashSet("read")).toJson();
@@ -60,16 +60,15 @@ class UmaUpdatePolicyForResourceSetEndpointControllerTests extends BaseUmaEndpoi
 
     @Test
     void verifyMissingChannel() throws Throwable {
-        var results = authenticateUmaRequestWithProtectionScope();
+        val results = authenticateUmaRequestWithProtectionScope();
         var body = createUmaResourceRegistrationRequest().toJson();
         var result = performUmaRequest(HttpMethod.POST, OAuth20Constants.UMA_RESOURCE_SET_REGISTRATION_URL,
             body, results.getLeft(), results.getMiddle());
-        var model = getMappedResponseBody(result);
+        val model = getMappedResponseBody(result);
         assertNotNull(model);
-        val resourceId = ((Number) model.get("resourceId")).longValue();
+        val resourceId = parseIdentifier(model.get("resourceId"));
 
         body = createUmaPolicyRegistrationRequest(getCurrentProfile(results.getLeft(), results.getMiddle())).toJson();
-        results = authenticateUmaRequestWithProtectionScope();
         result = performUmaRequest(HttpMethod.PUT,
             resourceId + "/" + OAuth20Constants.UMA_POLICY_URL + "/2",
             body, results.getLeft(), results.getMiddle());

@@ -52,6 +52,7 @@ public class GitSamlRegisteredServiceMetadataResolver extends BaseSamlRegistered
                                                           final CriteriaSet criteriaSet) {
         return load()
             .stream()
+            .filter(document -> matchesEntityIdCriteria(document, criteriaSet))
             .map(doc -> buildMetadataResolverFrom(service, doc))
             .filter(Objects::nonNull)
             .collect(Collectors.toList());

@@ -9,7 +9,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
-import lombok.experimental.SuperBuilder;
+import lombok.SuperBuilder;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.data.annotation.Id;
 import tools.jackson.databind.ObjectMapper;

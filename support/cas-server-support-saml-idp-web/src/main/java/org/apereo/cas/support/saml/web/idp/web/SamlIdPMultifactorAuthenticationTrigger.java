@@ -20,9 +20,9 @@ import org.apereo.cas.util.http.HttpRequestUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
-import org.jspecify.annotations.Nullable;
 import org.opensaml.messaging.context.MessageContext;
 import org.opensaml.saml.common.binding.SAMLBindingSupport;
+import org.opensaml.saml.common.messaging.context.SAMLPeerEntityContext;
 import org.opensaml.saml.saml2.core.Attribute;
 import org.opensaml.saml.saml2.core.AttributeValue;
 import org.opensaml.saml.saml2.core.AuthnRequest;
@@ -123,7 +123,7 @@ public class SamlIdPMultifactorAuthenticationTrigger implements MultifactorAuthe
             });
     }
 
-    private static @Nullable Boolean isAuthnRequestSigned(
+    private static boolean isAuthnRequestSigned(
         final SamlRegisteredService registeredService,
         final HttpServletRequest request,
         final AuthnRequest authnRequest,
@@ -131,9 +131,14 @@ public class SamlIdPMultifactorAuthenticationTrigger implements MultifactorAuthe
         final SamlProfileHandlerConfigurationContext context) {
         val isSigned = authnRequest.isSigned() || SAMLBindingSupport.isMessageSigned(messageContext);
         if (isSigned) {
+            val peer = messageContext.getSubcontext(SAMLPeerEntityContext.class);
+            if (peer != null && peer.isAuthenticated()) {
+                return true;
+            }
             val entityId = SamlIdPUtils.getIssuerFromSamlObject(authnRequest);
             val adaptor = SamlRegisteredServiceMetadataAdaptor.get(context.getSamlRegisteredServiceCachingMetadataResolver(), registeredService, entityId).orElseThrow();
-            return FunctionUtils.doAndHandle(() -> context.getSamlObjectSignatureValidator().verifySamlProfileRequest(authnRequest, adaptor, request, messageContext));
+            return Boolean.TRUE.equals(FunctionUtils.doAndHandle(() ->
+                context.getSamlObjectSignatureValidator().verifySamlProfileRequest(authnRequest, adaptor, request, messageContext)));
         }
         return false;
     }

@@ -4,8 +4,8 @@ import module java.base;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
+import lombok.SuperBuilder;
 import lombok.ToString;
-import lombok.experimental.SuperBuilder;
 
 /**
  * This is {@link CasReferenceProperty}.

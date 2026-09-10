@@ -98,7 +98,7 @@ public class CasThemesAutoConfiguration {
         val header = new RequestHeaderThemeResolver(casProperties.getObject().getTheme().getParamName());
         header.setDefaultThemeName(defaultThemeName);
 
-        val chainingThemeResolver = new ChainingThemeResolver();
+        val chainingThemeResolver = new ChainingThemeResolver(casProperties);
         chainingThemeResolver
             .addResolver(cookieThemeResolver)
             .addResolver(sessionThemeResolver)

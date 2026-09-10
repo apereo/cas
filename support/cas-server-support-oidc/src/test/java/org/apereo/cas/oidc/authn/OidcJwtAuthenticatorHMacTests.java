@@ -98,6 +98,35 @@ class OidcJwtAuthenticatorHMacTests extends AbstractOidcTests {
             new String(jwt, StandardCharsets.UTF_8), registeredService.getClientId());
         auth.validate(new CallContext(context, new JEESessionStore()), credentials);
         assertNotNull(credentials.getUserProfile());
+
+        val replayRequest = new MockHttpServletRequest();
+        val replayCredentials = getCredentials(replayRequest, OAuth20Constants.CLIENT_ASSERTION_TYPE_JWT_BEARER,
+            new String(jwt, StandardCharsets.UTF_8), registeredService.getClientId());
+        val replayContext = new JEEContext(replayRequest, new MockHttpServletResponse());
+        auth.validate(new CallContext(replayContext, new JEESessionStore()), replayCredentials);
+        assertNull(replayCredentials.getUserProfile());
+    }
+
+    @Test
+    void verifySubjectMustMatchClientId() throws Throwable {
+        val auth = getAuthenticator();
+        val request = new MockHttpServletRequest();
+        val context = new JEEContext(request, new MockHttpServletResponse());
+        val registeredService = getOidcRegisteredService(UUID.randomUUID().toString());
+        val audience = casProperties.getServer().getPrefix().concat('/'
+            + OidcConstants.BASE_OIDC_URL + '/' + OidcConstants.ACCESS_TOKEN_URL);
+        val claims = getClaims("other-client", registeredService.getClientId(),
+            registeredService.getClientId(), audience);
+
+        val key = EncodingUtils.generateJsonWebKey(512);
+        registeredService.setJwks(key);
+        servicesManager.save(registeredService);
+        val jwt = EncodingUtils.signJwsHMACSha512(new AesKey(key.getBytes(StandardCharsets.UTF_8)),
+            claims.toJson().getBytes(StandardCharsets.UTF_8), Map.of());
+        val credentials = getCredentials(request, OAuth20Constants.CLIENT_ASSERTION_TYPE_JWT_BEARER,
+            new String(jwt, StandardCharsets.UTF_8), registeredService.getClientId());
+        auth.validate(new CallContext(context, new JEESessionStore()), credentials);
+        assertNull(credentials.getUserProfile());
     }
 
     @Test

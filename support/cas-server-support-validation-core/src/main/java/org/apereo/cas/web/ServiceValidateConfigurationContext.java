@@ -17,9 +17,9 @@ import org.apereo.cas.web.support.ArgumentExtractor;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
+import lombok.SuperBuilder;
 import lombok.ToString;
 import lombok.With;
-import lombok.experimental.SuperBuilder;
 import org.jspecify.annotations.NonNull;
 import org.springframework.context.ConfigurableApplicationContext;
 

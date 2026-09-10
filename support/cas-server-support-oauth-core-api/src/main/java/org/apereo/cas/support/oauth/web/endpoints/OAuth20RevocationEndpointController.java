@@ -14,7 +14,6 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.Strings;
 import org.jooq.lambda.Unchecked;
 import org.pac4j.core.context.CallContext;
 import org.pac4j.core.context.WebContext;
@@ -99,29 +98,30 @@ public class OAuth20RevocationEndpointController<T extends OAuth20ConfigurationC
             return state == null || state.isExpired() ? null : state;
         });
         if (registryToken == null) {
-            LOGGER.error("Provided token [{}] has not been found in the ticket registry", token);
-            val mv = new ModelAndView(new JacksonJsonView());
-            mv.setStatus(HttpStatus.NOT_FOUND);
-            return mv;
+            LOGGER.debug("Provided token [{}] has not been found in the ticket registry", token);
+            return buildSuccessfulRevocationResponse();
         }
         
         if (isRefreshToken(registryToken) || isAccessToken(registryToken)) {
-            if (!Strings.CI.equals(clientId, registryToken.getClientId())) {
+            if (!Objects.equals(clientId, registryToken.getClientId())) {
                 LOGGER.warn("Provided token [{}] has not been issued for the service [{}]", token, clientId);
-                return OAuth20Utils.writeError(response, OAuth20Constants.INVALID_REQUEST);
+                return buildSuccessfulRevocationResponse();
             }
             if (isRefreshToken(registryToken)) {
                 revokeToken((OAuth20RefreshToken) registryToken);
             } else {
                 revokeToken(registryToken.getId());
             }
-            val mv = new ModelAndView(new JacksonJsonView());
-            mv.setStatus(HttpStatus.OK);
-            return mv;
+            return buildSuccessfulRevocationResponse();
         }
         LOGGER.error("Provided token [{}] is either not a refresh token or an access token", token);
-        return OAuth20Utils.writeError(response, OAuth20Constants.INVALID_REQUEST);
+        return buildSuccessfulRevocationResponse();
+    }
 
+    private static ModelAndView buildSuccessfulRevocationResponse() {
+        val modelAndView = new ModelAndView(new JacksonJsonView());
+        modelAndView.setStatus(HttpStatus.OK);
+        return modelAndView;
     }
 
     private boolean verifyRevocationRequest(final WebContext context) throws Throwable {

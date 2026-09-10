@@ -33,6 +33,7 @@ async function createPublicKey() {
         "aud": "https://localhost:8443/cas/oidc"
     }, privateKey, "RS256", {
         header: {
+            typ: "openid4vci-proof+jwt",
             jwk: publicJwk
         }
     });
@@ -74,6 +75,9 @@ async function createPublicKey() {
     );
     assert(payload.transactionId !== undefined);
     assert(payload.credentialOfferUri !== undefined);
+    assert(payload.txCode !== undefined);
+    assert(payload.txCode !== payload.transactionId,
+        "The transaction code must never be the transaction identifier");
 
     await cas.log(`Fetched credential offer URI ${payload.credentialOfferUri}`);
     await cas.log("Now fetching credential offer...");
@@ -84,10 +88,13 @@ async function createPublicKey() {
             assert(res.data.credential_issuer === "https://localhost:8443/cas/oidc");
             assert(res.data.credential_configuration_ids[0] === "myorg");
             assert(res.data.grants["urn:ietf:params:oauth:grant-type:pre-authorized_code"]["pre-authorized_code"] !== undefined);
-            assert(res.data.grants["urn:ietf:params:oauth:grant-type:pre-authorized_code"]["tx_code"] !== undefined);
+            const txCode = res.data.grants["urn:ietf:params:oauth:grant-type:pre-authorized_code"]["tx_code"];
+            assert(txCode !== undefined);
+            assert(txCode.value === undefined, "The credential offer must never disclose the transaction code");
+            assert(txCode.length === payload.txCode.length);
+            assert(txCode.input_mode !== undefined);
             assert(res.data.grants["urn:ietf:params:oauth:grant-type:pre-authorized_code"]["issuer_state"] !== undefined);
             return {
-                txCode: res.data.grants["urn:ietf:params:oauth:grant-type:pre-authorized_code"]["tx_code"],
                 preAuthorizedCode: res.data.grants["urn:ietf:params:oauth:grant-type:pre-authorized_code"]["pre-authorized_code"]
             };
         }, (error) => {
@@ -96,9 +103,26 @@ async function createPublicKey() {
 
     await cas.log("Now fetching access token for pre-authorized code...");
     
-    let params = "grant_type=urn:ietf:params:oauth:grant-type:pre-authorized_code&&scope=openid";
-    params += `&pre-authorized_code=${offer.preAuthorizedCode}&tx_code=${payload.transactionId}`;
-    let url = `https://localhost:8443/cas/oidc/token?${params}`;
+    const baseParams = "grant_type=urn:ietf:params:oauth:grant-type:pre-authorized_code&&scope=openid"
+        + `&pre-authorized_code=${offer.preAuthorizedCode}`;
+
+    await cas.log("Verifying the transaction identifier is rejected as a transaction code...");
+    const rejected = await cas.doRequest(
+        `https://localhost:8443/cas/oidc/token?${baseParams}&tx_code=${payload.transactionId}`, "POST", {
+            "Content-Type": "application/json",
+            "Authorization": `Basic ${btoa("client:secret")}`
+        }, 0, "");
+    assert(!rejected.includes("access_token"),
+        "The transaction identifier must not be accepted as the transaction code");
+
+    await cas.log("Verifying a missing transaction code is rejected...");
+    const missing = await cas.doRequest(`https://localhost:8443/cas/oidc/token?${baseParams}`, "POST", {
+        "Content-Type": "application/json",
+        "Authorization": `Basic ${btoa("client:secret")}`
+    }, 0, "");
+    assert(!missing.includes("access_token"), "A missing transaction code must not be accepted");
+
+    let url = `https://localhost:8443/cas/oidc/token?${baseParams}&tx_code=${payload.txCode}`;
     await cas.log(`Calling ${url}`);
 
     const accessToken = await cas.doPost(url, "", {

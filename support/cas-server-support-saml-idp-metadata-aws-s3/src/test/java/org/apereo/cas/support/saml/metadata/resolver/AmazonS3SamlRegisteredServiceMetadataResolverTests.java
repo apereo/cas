@@ -10,6 +10,7 @@ import org.apereo.cas.test.CasTestExtension;
 import org.apereo.cas.util.RandomUtils;
 import org.apereo.cas.util.junit.EnabledIfListeningOnPort;
 import lombok.val;
+import net.shibboleth.shared.resolver.CriteriaSet;
 import org.apache.commons.io.IOUtils;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
@@ -17,6 +18,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.api.parallel.Execution;
 import org.junit.jupiter.api.parallel.ExecutionMode;
+import org.opensaml.core.criterion.EntityIdCriterion;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -84,6 +86,23 @@ class AmazonS3SamlRegisteredServiceMetadataResolverTests {
         val metadataManager = resolver.getMetadataManager().orElseThrow();
         metadataManager.store(doc);
         assertFalse(resolver.resolve(service).isEmpty());
+    }
+
+    @Test
+    void verifyEntityIdCriterionSelectsMetadataDocument() throws Throwable {
+        val entityId = "https://carmenwiki.osu.edu/shibboleth";
+        val metadataManager = resolver.getMetadataManager().orElseThrow();
+        metadataManager.store(buildDocument());
+        val otherDocument = buildDocument();
+        otherDocument.setValue(otherDocument.getValue().replace(entityId, "https://other.example.org"));
+        metadataManager.store(otherDocument);
+
+        val service = new SamlRegisteredService();
+        service.setName("SAML Service");
+        service.setServiceId("^https://.+$");
+        service.setMetadataLocation("awss3://");
+        val resolvers = resolver.resolve(service, new CriteriaSet(new EntityIdCriterion(entityId)));
+        assertEquals(1, resolvers.size());
     }
 
     @Test

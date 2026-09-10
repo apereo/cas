@@ -11,9 +11,9 @@ import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import lombok.SuperBuilder;
 import lombok.ToString;
 import lombok.With;
-import lombok.experimental.SuperBuilder;
 import lombok.val;
 import org.springframework.data.annotation.Id;
 

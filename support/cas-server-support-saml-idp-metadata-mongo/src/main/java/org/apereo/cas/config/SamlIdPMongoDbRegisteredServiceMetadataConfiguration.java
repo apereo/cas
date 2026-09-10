@@ -18,8 +18,10 @@ import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.ScopedProxyMode;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.mongodb.core.MongoOperations;
 import org.springframework.data.mongodb.core.MongoTemplate;
+import org.springframework.data.mongodb.core.index.Index;
 
 /**
  * This is {@link SamlIdPMongoDbIdPMetadataConfiguration}.
@@ -56,6 +58,9 @@ class SamlIdPMongoDbRegisteredServiceMetadataConfiguration {
         val factory = new MongoDbConnectionFactory(casSslContext.getSslContext());
         val mongoTemplate = factory.buildMongoTemplate(mongo);
         MongoDbConnectionFactory.createCollection(mongoTemplate, mongo.getCollection(), mongo.isDropCollection());
+        val collection = mongoTemplate.getCollection(mongo.getCollection());
+        val entityIdIndex = new Index().on("entityId", Sort.Direction.ASC);
+        MongoDbConnectionFactory.createOrUpdateIndexes(mongoTemplate, collection, List.of(entityIdIndex));
         return mongoTemplate.asMongoTemplate();
     }
 

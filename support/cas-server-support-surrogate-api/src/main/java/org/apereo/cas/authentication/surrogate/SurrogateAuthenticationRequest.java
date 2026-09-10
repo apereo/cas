@@ -7,8 +7,8 @@ import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
+import lombok.SuperBuilder;
 import lombok.ToString;
-import lombok.experimental.SuperBuilder;
 import org.apache.commons.lang3.StringUtils;
 
 /**

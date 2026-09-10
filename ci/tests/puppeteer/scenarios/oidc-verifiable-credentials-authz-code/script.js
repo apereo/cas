@@ -33,6 +33,7 @@ async function createPublicKey() {
         "aud": "https://localhost:8443/cas/oidc"
     }, privateKey, "RS256", {
         header: {
+            typ: "openid4vci-proof+jwt",
             jwk: publicJwk
         }
     });

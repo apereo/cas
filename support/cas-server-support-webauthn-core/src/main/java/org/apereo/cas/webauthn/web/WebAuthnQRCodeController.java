@@ -46,11 +46,12 @@ import jakarta.servlet.http.HttpServletResponse;
 @Tag(name = "WebAuthN")
 @RequestMapping(BaseWebAuthnController.BASE_ENDPOINT_WEBAUTHN)
 public class WebAuthnQRCodeController extends BaseWebAuthnController {
-
     /**
      * Base endpoint.
      */
     public static final String ENDPOINT_QR_VERIFY = "/qrverify";
+
+    private static final String PROPERTY_AUTHENTICATED_USERNAME = WebAuthnQRCodeController.class.getName() + ".authenticatedUsername";
 
     protected final CasConfigurationProperties casProperties;
     protected final TicketRegistry ticketRegistry;
@@ -113,15 +114,19 @@ public class WebAuthnQRCodeController extends BaseWebAuthnController {
             verifyQRCodeAuthenticationIsEnabled();
             val transientTicket = ticketRegistry.getTicket(ticketId, TransientSessionTicket.class);
             Assert.isTrue(transientTicket != null && !transientTicket.isExpired(), "Ticket not found or has expired");
-            val webAuthnCredential = transientTicket.getProperty(WebAuthnCredential.class.getName(), WebAuthnCredential.class);
-            if (webAuthnCredential == null) {
+            val authenticatedUsername = transientTicket.getProperty(PROPERTY_AUTHENTICATED_USERNAME, String.class);
+            if (authenticatedUsername == null) {
                 return ResponseEntity.unprocessableContent().body(
                     Map.of("ticketId", ticketId, "message", "WebAuthn credential not found in the ticket"));
             }
-            Assert.notNull(webAuthnCredential, "WebAuthn credential not found in the ticket");
-            val principal = transientTicket.getProperty(Principal.class.getName(), Principal.class);
+            val principal = Objects.requireNonNull(transientTicket.getProperty(Principal.class.getName(), Principal.class));
+            Assert.isTrue(principal.getId().equalsIgnoreCase(authenticatedUsername),
+                "WebAuthn credential does not belong to the ticket principal");
+            val userHandle = webAuthnCredentialRepository.getUserHandleForUsername(authenticatedUsername)
+                .orElseThrow(() -> new IllegalStateException("Unable to locate user handle for the ticket principal"));
+            val sessionToken = sessionManager.createSession(request, userHandle);
             ticketRegistry.deleteTicket(ticketId);
-            return ResponseEntity.ok(Map.of("principal", principal, "sessionToken", webAuthnCredential.getToken()));
+            return ResponseEntity.ok(Map.of("principal", principal, "sessionToken", sessionToken.getBase64Url()));
         } catch (final Exception e) {
             LoggingUtils.error(LOGGER, e);
             return ResponseEntity.badRequest().body(
@@ -155,14 +160,17 @@ public class WebAuthnQRCodeController extends BaseWebAuthnController {
             verifyQRCodeAuthenticationIsEnabled();
             val transientTicket = ticketRegistry.getTicket(ticketId, TransientSessionTicket.class);
             Assert.isTrue(transientTicket != null && !transientTicket.isExpired(), "Ticket is not found or has expired");
-            Assert.isTrue(webAuthnCredentialRepository.userExists(principalId), "Principal not found");
             val principal = Objects.requireNonNull(transientTicket.getProperty(Principal.class.getName(), Principal.class));
+            Assert.isTrue(principal.getId().equalsIgnoreCase(principalId), "Principal does not match the ticket");
+            Assert.isTrue(webAuthnCredentialRepository.userExists(principal.getId()), "Principal not found");
             val credential = new WebAuthnCredential(sessionToken);
-            val session = sessionManager.getSession(request, WebAuthnCredential.from(credential));
+            val session = sessionManager.consumeSession(request, WebAuthnCredential.from(credential));
             FunctionUtils.throwIf(session.isEmpty(), () -> new IllegalStateException("Session not found for the given credential"));
             val result = webAuthnCredentialRepository.getUsernameForUserHandle(session.get());
             FunctionUtils.throwIf(result.isEmpty(), () -> new IllegalStateException("Unable to locate user based on the given user handle"));
-            transientTicket.putProperty(WebAuthnCredential.class.getName(), credential);
+            FunctionUtils.throwIf(!principal.getId().equalsIgnoreCase(result.orElseThrow()),
+                () -> new IllegalStateException("WebAuthn session does not belong to the ticket principal"));
+            transientTicket.putProperty(PROPERTY_AUTHENTICATED_USERNAME, result.orElseThrow());
             ticketRegistry.updateTicket(transientTicket);
             return new ModelAndView(CasWebflowConstants.VIEW_ID_WEBAUTHN_QRCODE_VERIFY_DONE,
                 Map.of("principal", principal, "success", true));

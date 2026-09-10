@@ -38,11 +38,18 @@ class DuoSecurityRestHttpRequestCredentialFactoryTests {
         body.put(DuoSecurityRestHttpRequestCredentialFactory.PARAMETER_NAME_PROVIDER, List.of("custom-duo"));
         var credentials = factory.fromRequest(request, body);
         assertFalse(credentials.isEmpty());
-        var credential = (DuoSecurityPasscodeCredential) credentials.getFirst();
-        assertEquals("custom-duo", credential.getProviderId());
+        val requestCredential = (DuoSecurityPasscodeCredential) credentials.getFirst();
+        assertEquals("custom-duo", requestCredential.getProviderId());
 
-        credentials = factory.fromAuthentication(request, body, CoreAuthenticationTestUtils.getAuthentication(),
-            new TestMultifactorAuthenticationProvider());
+        val authentication = CoreAuthenticationTestUtils.getAuthentication();
+        credentials = factory.fromAuthentication(request, body, authentication, new TestMultifactorAuthenticationProvider());
+        val passcodeCredential = (DuoSecurityPasscodeCredential) credentials.getFirst();
+        assertEquals(authentication.getPrincipal().getId(), passcodeCredential.getId());
+        assertEquals(TestMultifactorAuthenticationProvider.ID, passcodeCredential.getProviderId());
+        assertEquals("123456", passcodeCredential.getPassword());
+
+        body.remove(DuoSecurityRestHttpRequestCredentialFactory.PARAMETER_NAME_PASSCODE);
+        credentials = factory.fromAuthentication(request, body, authentication, new TestMultifactorAuthenticationProvider());
         val directCredential = (DuoSecurityDirectCredential) credentials.getFirst();
         assertEquals(TestMultifactorAuthenticationProvider.ID, directCredential.getProviderId());
         assertNotNull(directCredential.getPrincipal());

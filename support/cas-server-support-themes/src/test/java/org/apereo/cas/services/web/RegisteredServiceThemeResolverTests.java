@@ -114,6 +114,23 @@ class RegisteredServiceThemeResolverTests {
         }
 
         @Test
+        void verifyThemeIsResolvedOncePerRequest() throws Throwable {
+            val context = MockRequestContext.create(applicationContext);
+            val registeredService = RegisteredServiceTestUtils.getRegisteredService(UUID.randomUUID().toString());
+            registeredService.setTheme("custom-theme");
+            servicesManager.save(registeredService);
+            val service = RegisteredServiceTestUtils.getService(registeredService.getServiceId());
+            WebUtils.putServiceIntoFlowScope(context, service);
+            val request = context.getHttpServletRequest();
+
+            assertEquals("custom-theme", themeResolver.resolveThemeName(request));
+            assertEquals("custom-theme", request.getAttribute("theme"));
+
+            servicesManager.deleteAll();
+            assertEquals("custom-theme", themeResolver.resolveThemeName(request));
+        }
+
+        @Test
         void verifyCustomTheme() throws Throwable {
             val context = MockRequestContext.create(applicationContext);
             val registeredService = RegisteredServiceTestUtils.getRegisteredService(UUID.randomUUID().toString());

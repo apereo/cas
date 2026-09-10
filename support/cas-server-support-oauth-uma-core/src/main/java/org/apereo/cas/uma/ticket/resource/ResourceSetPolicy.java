@@ -11,6 +11,8 @@ import lombok.Setter;
 import lombok.experimental.Accessors;
 import org.hibernate.annotations.Type;
 import tools.jackson.databind.ObjectMapper;
+import tools.jackson.databind.annotation.JsonSerialize;
+import tools.jackson.databind.ser.std.ToStringSerializer;
 import jakarta.persistence.Column;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
@@ -36,6 +38,7 @@ public class ResourceSetPolicy implements Serializable {
 
     @org.springframework.data.annotation.Id
     @Id
+    @JsonSerialize(using = ToStringSerializer.class)
     private long id;
 
     @Column(columnDefinition = "json")

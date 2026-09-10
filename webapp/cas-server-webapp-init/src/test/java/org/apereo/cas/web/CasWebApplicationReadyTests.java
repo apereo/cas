@@ -11,8 +11,12 @@ import org.apache.commons.lang3.ArrayUtils;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.jupiter.api.parallel.ResourceLock;
+import org.junit.jupiter.api.parallel.Resources;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.context.TestConfiguration;
+import org.springframework.scheduling.annotation.AsyncConfigurer;
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
@@ -24,7 +28,8 @@ import static org.junit.jupiter.api.Assertions.*;
 @SpringBootTestAutoConfigurations
 @SpringBootTest(classes = {
     CasCoreConfigurationMetadataAutoConfiguration.class,
-    CasWebApplicationAutoConfiguration.class
+    CasWebApplicationAutoConfiguration.class,
+    CasWebApplicationReadyTests.ReadyTestConfiguration.class
 }, properties = {
     "server.port=8588",
     "server.ssl.enabled=false",
@@ -34,6 +39,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Tag("ApacheTomcat")
 @ExtendWith(CasTestExtension.class)
+@ResourceLock(Resources.SYSTEM_PROPERTIES)
 class CasWebApplicationReadyTests {
     @Test
     void verifyOperation() {
@@ -45,5 +51,12 @@ class CasWebApplicationReadyTests {
         val sources = CasWebApplication.getApplicationSources(ArrayUtils.EMPTY_STRING_ARRAY);
         assertEquals(1, sources.size());
     }
-}
 
+    @TestConfiguration(proxyBeanMethods = false)
+    static class ReadyTestConfiguration implements AsyncConfigurer {
+        @Override
+        public Executor getAsyncExecutor() {
+            return Runnable::run;
+        }
+    }
+}

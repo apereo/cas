@@ -26,6 +26,15 @@ public interface OAuth20DeviceToken extends Ticket {
     Service getService();
 
     /**
+     * Gets the client identifier that requested this device token.
+     *
+     * @return the client identifier
+     */
+    default String getClientId() {
+        return getService().getId();
+    }
+
+    /**
      * Gets user code.
      *
      * @return the user code

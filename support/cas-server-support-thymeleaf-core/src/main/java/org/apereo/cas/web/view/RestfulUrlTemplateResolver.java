@@ -28,7 +28,6 @@ import org.thymeleaf.templateresource.StringTemplateResource;
  */
 @Slf4j
 public class RestfulUrlTemplateResolver extends ThemeFileTemplateResolver {
-
     public RestfulUrlTemplateResolver(final CasConfigurationProperties casProperties,
                                       final ThemeResolver themeResolver) {
         super(casProperties, themeResolver);

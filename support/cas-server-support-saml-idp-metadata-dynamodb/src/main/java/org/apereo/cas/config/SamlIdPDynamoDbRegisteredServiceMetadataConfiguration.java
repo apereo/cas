@@ -3,6 +3,7 @@ package org.apereo.cas.config;
 import module java.base;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.features.CasFeatureModule;
+import org.apereo.cas.configuration.model.support.dynamodb.AbstractDynamoDbProperties;
 import org.apereo.cas.dynamodb.AmazonDynamoDbClientFactory;
 import org.apereo.cas.dynamodb.DynamoDbTableUtils;
 import org.apereo.cas.support.saml.OpenSamlConfigBean;
@@ -21,8 +22,12 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.ScopedProxyMode;
 import software.amazon.awssdk.services.dynamodb.DynamoDbClient;
 import software.amazon.awssdk.services.dynamodb.model.AttributeDefinition;
+import software.amazon.awssdk.services.dynamodb.model.GlobalSecondaryIndex;
 import software.amazon.awssdk.services.dynamodb.model.KeySchemaElement;
 import software.amazon.awssdk.services.dynamodb.model.KeyType;
+import software.amazon.awssdk.services.dynamodb.model.Projection;
+import software.amazon.awssdk.services.dynamodb.model.ProjectionType;
+import software.amazon.awssdk.services.dynamodb.model.ProvisionedThroughput;
 import software.amazon.awssdk.services.dynamodb.model.ScalarAttributeType;
 
 /**
@@ -59,17 +64,35 @@ class SamlIdPDynamoDbRegisteredServiceMetadataConfiguration {
         val factory = new AmazonDynamoDbClientFactory();
         val client = factory.createAmazonDynamoDb(dynamoDbProperties);
         if (!dynamoDbProperties.isPreventTableCreationOnStartup()) {
-            val attributes = List.of(AttributeDefinition.builder()
-                .attributeName(SamlRegisteredServiceMetadataColumns.NAME.getColumnName())
-                .attributeType(ScalarAttributeType.S)
-                .build());
+            val attributes = List.of(
+                AttributeDefinition.builder()
+                    .attributeName(SamlRegisteredServiceMetadataColumns.NAME.getColumnName())
+                    .attributeType(ScalarAttributeType.S)
+                    .build(),
+                AttributeDefinition.builder()
+                    .attributeName(SamlRegisteredServiceMetadataColumns.ENTITY_ID.getColumnName())
+                    .attributeType(ScalarAttributeType.S)
+                    .build());
             val schema = List.of(KeySchemaElement.builder()
                 .attributeName(SamlRegisteredServiceMetadataColumns.NAME.getColumnName())
                 .keyType(KeyType.HASH)
                 .build());
+            val entityIdIndexBuilder = GlobalSecondaryIndex.builder()
+                .indexName(DynamoDbSamlRegisteredServiceMetadataResolver.ENTITY_ID_INDEX_NAME)
+                .keySchema(List.of(KeySchemaElement.builder()
+                    .attributeName(SamlRegisteredServiceMetadataColumns.ENTITY_ID.getColumnName())
+                    .keyType(KeyType.HASH)
+                    .build()))
+                .projection(Projection.builder().projectionType(ProjectionType.ALL).build());
+            if (dynamoDbProperties.getBillingMode() == AbstractDynamoDbProperties.BillingMode.PROVISIONED) {
+                entityIdIndexBuilder.provisionedThroughput(ProvisionedThroughput.builder()
+                    .readCapacityUnits(dynamoDbProperties.getReadCapacity())
+                    .writeCapacityUnits(dynamoDbProperties.getWriteCapacity())
+                    .build());
+            }
             DynamoDbTableUtils.createTable(client, dynamoDbProperties,
                 dynamoDbProperties.getTableName(), dynamoDbProperties.isDropTablesOnStartup(),
-                attributes, schema);
+                attributes, schema, List.of(entityIdIndexBuilder.build()));
         }
         return client;
     }

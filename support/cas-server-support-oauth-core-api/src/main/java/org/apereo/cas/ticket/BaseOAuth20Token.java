@@ -12,6 +12,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.apache.commons.lang3.ObjectUtils;
 import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
 
 /**
  * An OAuth code implementation.
@@ -45,8 +46,10 @@ public abstract class BaseOAuth20Token extends AbstractTicket implements OAuth20
      */
     private Authentication authentication;
 
+    @Nullable
     private String codeChallenge;
 
+    @Nullable
     private String codeChallengeMethod;
 
     private String clientId;
@@ -62,8 +65,8 @@ public abstract class BaseOAuth20Token extends AbstractTicket implements OAuth20
                             final Ticket ticketGrantingTicket,
                             @JsonSetter(nulls = Nulls.AS_EMPTY)
                             final Collection<String> scopes,
-                            final String codeChallenge,
-                            final String codeChallengeMethod,
+                            final @Nullable String codeChallenge,
+                            final @Nullable String codeChallengeMethod,
                             final String clientId,
                             @JsonSetter(nulls = Nulls.AS_EMPTY)
                             final Map<String, Map<String, Object>> requestClaims,

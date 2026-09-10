@@ -135,7 +135,7 @@ Issue a `POST` request to `/oauth2.0/permission` with the payload body as:
 ```json
 {
     "claims": {"givenName":"CAS"},
-    "resource_id": 100,
+    "resource_id": "100",
     "resource_scopes": ["read"]
 }
 ```

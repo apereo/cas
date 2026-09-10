@@ -22,6 +22,8 @@ public interface SessionManager {
     ByteArray createSession(HttpServletRequest request, @NonNull final ByteArray userHandle);
 
     Optional<ByteArray> getSession(HttpServletRequest request, @NonNull final ByteArray sessionId);
+
+    Optional<ByteArray> consumeSession(HttpServletRequest request, @NonNull final ByteArray sessionId);
     
     default boolean isSessionForUser(
         final HttpServletRequest request,
@@ -38,4 +40,3 @@ public interface SessionManager {
         return token.map(givenToken -> isSessionForUser(request, claimedUserHandle, givenToken)).orElse(false);
     }
 }
-

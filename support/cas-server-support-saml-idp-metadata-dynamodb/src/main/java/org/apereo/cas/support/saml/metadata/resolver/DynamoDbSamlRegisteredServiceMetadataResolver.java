@@ -33,6 +33,11 @@ import software.amazon.awssdk.services.dynamodb.model.PutItemRequest;
 @Slf4j
 public class DynamoDbSamlRegisteredServiceMetadataResolver extends BaseSamlRegisteredServiceMetadataResolver
     implements SamlRegisteredServiceMetadataManager {
+    /**
+     * Entity identifier index name.
+     */
+    public static final String ENTITY_ID_INDEX_NAME = "entityIdIndex";
+
     private final DynamoDbClient dynamoDbClient;
 
     public DynamoDbSamlRegisteredServiceMetadataResolver(final SamlIdPProperties samlIdPProperties,
@@ -47,12 +52,16 @@ public class DynamoDbSamlRegisteredServiceMetadataResolver extends BaseSamlRegis
         resourceResolverName = AuditResourceResolvers.SAML2_METADATA_RESOLUTION_RESOURCE_RESOLVER)
     @Override
     public Collection<? extends MetadataResolver> resolve(final SamlRegisteredService service, final CriteriaSet criteriaSet) {
-        val query = List.of(
-            DynamoDbQueryBuilder.builder()
-                .key(SamlRegisteredServiceMetadataColumns.NAME.getColumnName())
-                .operator(ComparisonOperator.NOT_NULL)
-                .build());
-        val documents = getRecordsByKeys(query);
+        val documents = getEntityIdFromCriteriaSet(criteriaSet)
+            .map(this::getRecordsByEntityId)
+            .orElseGet(() -> {
+                val query = List.of(
+                    DynamoDbQueryBuilder.builder()
+                        .key(SamlRegisteredServiceMetadataColumns.NAME.getColumnName())
+                        .operator(ComparisonOperator.NOT_NULL)
+                        .build());
+                return getRecordsByKeys(query);
+            });
         return documents
             .map(doc -> buildMetadataResolverFrom(service, doc))
             .filter(Objects::nonNull)
@@ -65,6 +74,16 @@ public class DynamoDbSamlRegisteredServiceMetadataResolver extends BaseSamlRegis
             dynamoDbProperties.getTableName(),
             queries,
             DynamoDbSamlRegisteredServiceMetadataResolver::extractAttributeValuesFrom);
+    }
+
+    private Stream<SamlMetadataDocument> getRecordsByEntityId(final String entityId) {
+        val dynamoDbProperties = samlIdPProperties.getMetadata().getDynamoDb();
+        return DynamoDbTableUtils.queryPaginator(dynamoDbClient,
+            dynamoDbProperties.getTableName(), ENTITY_ID_INDEX_NAME,
+            "#entityId = :entityId", StringUtils.EMPTY,
+            Map.of("#entityId", SamlRegisteredServiceMetadataColumns.ENTITY_ID.getColumnName()),
+            Map.of(":entityId", AttributeValue.builder().s(entityId).build()),
+            0L, DynamoDbSamlRegisteredServiceMetadataResolver::extractAttributeValuesFrom);
     }
 
     @Override
@@ -84,12 +103,13 @@ public class DynamoDbSamlRegisteredServiceMetadataResolver extends BaseSamlRegis
     @Override
     public SamlMetadataDocument store(final SamlMetadataDocument document) {
         val dynamoDb = samlIdPProperties.getMetadata().getDynamoDb();
-        val values = buildTableAttributeValuesMap(document.assignIdIfNecessary());
+        val metadataDocument = prepareMetadataDocument(document);
+        val values = buildTableAttributeValuesMap(metadataDocument);
         val putItemRequest = PutItemRequest.builder().tableName(dynamoDb.getTableName()).item(values).build();
-        LOGGER.debug("Submitting put request [{}] for record [{}]", putItemRequest, document);
+        LOGGER.debug("Submitting put request [{}] for record [{}]", putItemRequest, metadataDocument);
         val putItemResult = dynamoDbClient.putItem(putItemRequest);
         LOGGER.debug("Record added with result [{}]", putItemResult);
-        return document;
+        return metadataDocument;
     }
 
     @Override
@@ -167,6 +187,10 @@ public class DynamoDbSamlRegisteredServiceMetadataResolver extends BaseSamlRegis
         values.put(SamlRegisteredServiceMetadataColumns.ID.getColumnName(),
             AttributeValue.builder().n(String.valueOf(record.getId())).build());
         values.put(SamlRegisteredServiceMetadataColumns.NAME.getColumnName(), AttributeValue.builder().s(record.getName()).build());
+        if (StringUtils.isNotBlank(record.getEntityId())) {
+            values.put(SamlRegisteredServiceMetadataColumns.ENTITY_ID.getColumnName(),
+                AttributeValue.builder().s(record.getEntityId()).build());
+        }
         values.put(SamlRegisteredServiceMetadataColumns.VALUE.getColumnName(), AttributeValue.builder().s(record.getValue()).build());
         if (StringUtils.isNotBlank(record.getSignature())) {
             values.put(SamlRegisteredServiceMetadataColumns.SIGNATURE.getColumnName(), AttributeValue.builder().s(record.getSignature()).build());
@@ -183,6 +207,10 @@ public class DynamoDbSamlRegisteredServiceMetadataResolver extends BaseSamlRegis
         val signature = item.get(SamlRegisteredServiceMetadataColumns.SIGNATURE.getColumnName());
         if (signature != null) {
             builder.signature(signature.s());
+        }
+        val entityId = item.get(SamlRegisteredServiceMetadataColumns.ENTITY_ID.getColumnName());
+        if (entityId != null) {
+            builder.entityId(entityId.s());
         }
         return builder.build();
     }

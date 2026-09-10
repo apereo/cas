@@ -18,6 +18,7 @@ settings and is automatically generated. The outline of the table is as follows:
 |-------------|-----------------------------------------------------------------------|
 | `id`        | The identifier of the record.                                         |
 | `name`      | Indexed field which describes and names the metadata briefly.         |
+| `entityId`  | Indexed entity identifier extracted from the metadata document.       |
 | `value`     | The XML document representing the metadata for the service provider.  |
 | `signature` | The contents of the signing certificate to validate metadata, if any. |
 

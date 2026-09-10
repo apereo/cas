@@ -9,6 +9,7 @@ import org.apereo.cas.services.WebBasedRegisteredService;
 import lombok.RequiredArgsConstructor;
 import lombok.val;
 import org.jooq.lambda.Unchecked;
+import org.springframework.beans.factory.DisposableBean;
 
 /**
  * This is {@link ChainingSurrogateAuthenticationService}.
@@ -17,9 +18,18 @@ import org.jooq.lambda.Unchecked;
  * @since 7.1.0
  */
 @RequiredArgsConstructor
-public class ChainingSurrogateAuthenticationService implements SurrogateAuthenticationService {
+public class ChainingSurrogateAuthenticationService implements SurrogateAuthenticationService, DisposableBean {
     private final List<SurrogateAuthenticationService> surrogateServices;
     private final ServicesManager servicesManager;
+
+    @Override
+    public void destroy() throws Exception {
+        for (val service : surrogateServices) {
+            if (service instanceof final DisposableBean disposable) {
+                disposable.destroy();
+            }
+        }
+    }
 
     @Override
     public boolean canImpersonate(final String surrogate, final Principal principal, final Optional<? extends Service> givenService) {

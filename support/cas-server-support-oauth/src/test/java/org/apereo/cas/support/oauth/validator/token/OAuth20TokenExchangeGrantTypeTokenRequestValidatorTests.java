@@ -7,6 +7,7 @@ import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.support.oauth.OAuth20GrantTypes;
 import org.apereo.cas.support.oauth.OAuth20TokenExchangeTypes;
 import org.apereo.cas.support.oauth.authenticator.Authenticators;
+import org.apereo.cas.support.oauth.services.DefaultRegisteredServiceOAuthTokenExchangePolicy;
 import org.apereo.cas.support.oauth.services.OAuthRegisteredService;
 import org.apereo.cas.ticket.Ticket;
 import org.apereo.cas.token.JwtBuilder;
@@ -50,9 +51,14 @@ class OAuth20TokenExchangeGrantTypeTokenRequestValidatorTests extends AbstractOA
         request.addHeader(HttpHeaders.USER_AGENT, "Firefox");
         val response = new MockHttpServletResponse();
         context = new JEEContext(request, response);
+        authenticateClient("casuser");
+    }
+
+    private void authenticateClient(final String clientId) {
         val profile = new CommonProfile();
         profile.setClientName(Authenticators.CAS_OAUTH_CLIENT_BASIC_AUTHN);
-        profile.setId("casuser");
+        profile.setId(clientId);
+        profile.addAttribute(OAuth20Constants.CLIENT_ID, clientId);
         new ProfileManager(context, oauthDistributedSessionStore).save(true, profile, false);
     }
 
@@ -89,9 +95,37 @@ class OAuth20TokenExchangeGrantTypeTokenRequestValidatorTests extends AbstractOA
         request.addParameter(OAuth20Constants.AUDIENCE, UUID.randomUUID().toString());
         request.addParameter(OAuth20Constants.SUBJECT_TOKEN_TYPE, type.getType());
         request.addParameter(OAuth20Constants.GRANT_TYPE, OAuth20GrantTypes.TOKEN_EXCHANGE.getType());
+        request.addParameter(OAuth20Constants.CLIENT_ID, registeredService.getClientId());
 
         servicesManager.save(registeredService);
+        authenticateClient(registeredService.getClientId());
         assertEquals(expectation, validator.validate(context));
+    }
+
+    @Test
+    void verifyPolicyIsSelectedFromAuthenticatedRequester() throws Throwable {
+        val subjectService = addRegisteredService(Set.of(OAuth20GrantTypes.TOKEN_EXCHANGE),
+            UUID.randomUUID().toString(), UUID.randomUUID().toString());
+        val requestingService = addRegisteredService(Set.of(OAuth20GrantTypes.TOKEN_EXCHANGE),
+            UUID.randomUUID().toString(), UUID.randomUUID().toString());
+        subjectService.setTokenExchangePolicy(new DefaultRegisteredServiceOAuthTokenExchangePolicy()
+            .setAllowedTokenTypes(Set.of(OAuth20TokenExchangeTypes.JWT.getType())));
+        requestingService.setTokenExchangePolicy(new DefaultRegisteredServiceOAuthTokenExchangePolicy()
+            .setAllowedTokenTypes(Set.of(OAuth20TokenExchangeTypes.ACCESS_TOKEN.getType())));
+        servicesManager.save(subjectService);
+        servicesManager.save(requestingService);
+        val subjectToken = getAccessToken(subjectService.getServiceId(), subjectService.getClientId());
+        ticketRegistry.addTicket(subjectToken);
+
+        authenticateClient(requestingService.getClientId());
+        request.addParameter(OAuth20Constants.CLIENT_ID, requestingService.getClientId());
+        request.addParameter(OAuth20Constants.SUBJECT_TOKEN, subjectToken.getId());
+        request.addParameter(OAuth20Constants.SUBJECT_TOKEN_TYPE, OAuth20TokenExchangeTypes.ACCESS_TOKEN.getType());
+        request.addParameter(OAuth20Constants.GRANT_TYPE, OAuth20GrantTypes.TOKEN_EXCHANGE.getType());
+        assertTrue(validator.validate(context));
+
+        request.setParameter(OAuth20Constants.CLIENT_ID, subjectService.getClientId());
+        assertFalse(validator.validate(context));
     }
 
     static Stream<Arguments> contextProvider() throws Exception {

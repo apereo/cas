@@ -8,6 +8,7 @@ import lombok.val;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
@@ -51,6 +52,38 @@ class RestfulUrlTemplateResolverTests {
         val request = new MockHttpServletRequest();
         request.setRequestURI("https://cas.example.org/cas/login?key1=value1");
         RequestContextHolder.setRequestAttributes(new ServletRequestAttributes(request, new MockHttpServletResponse()));
+    }
+
+    @Test
+    void verifyCredentialHeadersAreNotForwarded() {
+        val request = new MockHttpServletRequest();
+        request.setRequestURI("https://cas.example.org/cas/login");
+        request.addHeader(HttpHeaders.COOKIE, "TGC=TGT-1-abcdef");
+        request.addHeader(HttpHeaders.AUTHORIZATION, "Basic Y2FzdXNlcjpNZWxsb24=");
+        request.addHeader(HttpHeaders.PROXY_AUTHORIZATION, "Basic Y2FzdXNlcjpNZWxsb24=");
+        request.addHeader("X-Custom-Header", "custom-value");
+        RequestContextHolder.setRequestAttributes(new ServletRequestAttributes(request, new MockHttpServletResponse()));
+
+        val received = new ConcurrentHashMap<String, String>();
+        try (val webServer = new MockWebServer("template")) {
+            webServer.headersConsumer(received::putAll);
+            webServer.start();
+            val props = new CasConfigurationProperties();
+            props.getView().getRest().setUrl("http://localhost:%s".formatted(webServer.getPort()));
+            val resolver = new RestfulUrlTemplateResolver(props, new FixedThemeResolver());
+            assertNotNull(resolver.resolveTemplate(mock(IEngineConfiguration.class), "cas",
+                "template", new LinkedHashMap<>()));
+        }
+
+        val forwarded = received.keySet()
+            .stream()
+            .map(name -> name.toLowerCase(Locale.ENGLISH))
+            .collect(Collectors.toSet());
+        assertFalse(forwarded.contains(HttpHeaders.COOKIE.toLowerCase(Locale.ENGLISH)));
+        assertFalse(forwarded.contains(HttpHeaders.AUTHORIZATION.toLowerCase(Locale.ENGLISH)));
+        assertFalse(forwarded.contains(HttpHeaders.PROXY_AUTHORIZATION.toLowerCase(Locale.ENGLISH)));
+        assertTrue(forwarded.contains("x-custom-header"));
+        assertTrue(forwarded.contains("template"));
     }
 
     @Test

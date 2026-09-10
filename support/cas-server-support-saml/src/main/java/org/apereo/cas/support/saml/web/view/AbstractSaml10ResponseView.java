@@ -9,7 +9,6 @@ import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.services.web.view.AbstractCasView;
 import org.apereo.cas.support.saml.authentication.SamlResponseBuilder;
 import org.apereo.cas.util.LoggingUtils;
-import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.validation.AuthenticationAttributeReleasePolicy;
 import org.apereo.cas.validation.CasProtocolAttributesRenderer;
 import org.apereo.cas.web.support.ArgumentExtractor;
@@ -62,11 +61,11 @@ public abstract class AbstractSaml10ResponseView extends AbstractCasView {
         try {
             response.setCharacterEncoding(StandardCharsets.UTF_8.name());
             val service = this.samlArgumentExtractor.extractService(request);
-            val serviceId = getServiceIdFromRequest(service);
-            LOGGER.debug("Using [{}] as the recipient of the SAML response for [{}]", serviceId, service);
-            val samlResponse = samlResponseBuilder.createResponse(serviceId, service);
+            val recipient = getResponseRecipient(service);
+            LOGGER.debug("Using [{}] as the recipient of the SAML response for [{}]", recipient, service);
+            val samlResponse = samlResponseBuilder.createResponse(recipient, service);
             prepareResponse(samlResponse, model);
-            finalizeSamlResponse(request, response, serviceId, samlResponse);
+            finalizeSamlResponse(request, response, recipient, samlResponse);
         } catch (final Exception e) {
             LoggingUtils.error(LOGGER, "Error generating SAML response for service", e);
             throw e;
@@ -78,14 +77,14 @@ public abstract class AbstractSaml10ResponseView extends AbstractCasView {
      *
      * @param request      the request
      * @param response     the response
-     * @param serviceId    the service id
+     * @param recipient    the URI of the intended recipient of this response
      * @param samlResponse the saml response
      * @throws Exception the exception
      */
     protected void finalizeSamlResponse(final HttpServletRequest request, final HttpServletResponse response,
-                                        final String serviceId, final Response samlResponse) throws Exception {
+                                        final @Nullable String recipient, final Response samlResponse) throws Exception {
         if (request != null && response != null) {
-            LOGGER.debug("Starting to encode SAML response for service [{}]", serviceId);
+            LOGGER.debug("Starting to encode SAML response for recipient [{}]", recipient);
             samlResponseBuilder.encodeSamlResponse(samlResponse, request, response);
         }
     }
@@ -99,10 +98,15 @@ public abstract class AbstractSaml10ResponseView extends AbstractCasView {
      */
     protected abstract void prepareResponse(Response response, Map<String, Object> model);
 
-    private static @Nullable String getServiceIdFromRequest(final Service service) {
-        if (service == null || StringUtils.isBlank(service.getId())) {
-            return "UNKNOWN";
-        }
-        return FunctionUtils.doAndHandle(() -> new URI(service.getId()).getHost());
+    /**
+     * The recipient of a SAML1 response is the URI of the party the response is intended for, so it
+     * is the service URL itself. It is left undefined when the request did not identify a service,
+     * rather than being filled in with a placeholder.
+     *
+     * @param service the service the response is being produced for
+     * @return the recipient URI, or null when there is no service to name
+     */
+    private static @Nullable String getResponseRecipient(final @Nullable Service service) {
+        return service != null && StringUtils.isNotBlank(service.getId()) ? service.getId() : null;
     }
 }

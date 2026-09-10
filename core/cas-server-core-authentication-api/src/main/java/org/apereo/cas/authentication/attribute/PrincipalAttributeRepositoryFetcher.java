@@ -7,7 +7,7 @@ import org.apereo.cas.authentication.principal.attribute.PersonAttributeDao;
 import com.google.errorprone.annotations.CanIgnoreReturnValue;
 import lombok.Builder;
 import lombok.Getter;
-import lombok.experimental.SuperBuilder;
+import lombok.SuperBuilder;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.jspecify.annotations.Nullable;

@@ -14,8 +14,6 @@ import org.apereo.cas.util.function.FunctionUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.Strings;
 import org.pac4j.core.context.CallContext;
 import org.pac4j.core.credentials.Credentials;
 import org.pac4j.core.credentials.UsernamePasswordCredentials;
@@ -43,18 +41,18 @@ public class OidcVerifiableCredentialsPreAuthorizationCodeAuthenticator implemen
             val grantType = up.getPassword();
             if (OAuth20Utils.isGrantType(grantType, OAuth20GrantTypes.PRE_AUTHORIZED_CODE)) {
                 val providedPreAuthzCode = up.getUsername();
-                val providedTxCode = requestParameterResolver.resolveRequestParameter(ctx.webContext(), OidcConstants.TX_CODE)
-                    .orElse(StringUtils.EMPTY);
-
                 val preAuthorizationCode = (TransientSessionTicket) transactionService.getObject().fetchPreAuthorizationCode(providedPreAuthzCode);
-                val principalId = Objects.requireNonNull(preAuthorizationCode).getPropertyAsString("principalId");
-                val credentialConfigurationIds = Objects.requireNonNull(preAuthorizationCode).getProperty("credentialConfigurationIds", List.class);
-                val clientId = Objects.requireNonNull(preAuthorizationCode).getPropertyAsString(OAuth20Constants.CLIENT_ID);
+                if (preAuthorizationCode == null || preAuthorizationCode.isExpired()) {
+                    LOGGER.warn("Pre-authorization code [{}] is not found or has expired", providedPreAuthzCode);
+                    return Optional.empty();
+                }
 
-                val transactionCode = preAuthorizationCode.getPropertyAsString("transactionId");
-                val validTransaction = StringUtils.isBlank(providedTxCode) || Strings.CI.equals(transactionCode, providedTxCode);
+                val providedTxCode = requestParameterResolver.resolveRequestParameter(ctx.webContext(), OidcConstants.TX_CODE).orElse(null);
+                val principalId = preAuthorizationCode.getPropertyAsString("principalId");
+                val credentialConfigurationIds = preAuthorizationCode.getProperty("credentialConfigurationIds", List.class);
+                val clientId = preAuthorizationCode.getPropertyAsString(OAuth20Constants.CLIENT_ID);
 
-                if (validTransaction) {
+                if (transactionService.getObject().isTransactionCodeValid(preAuthorizationCode, providedTxCode)) {
                     val principal = principalResolver.resolve(new BasicIdentifiableCredential(principalId));
                     val profile = new CommonProfile();
                     profile.setId(principal.getId());

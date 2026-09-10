@@ -32,5 +32,13 @@ public class OidcVerifiableCredentialsOfferProperties implements Serializable {
      */
     @RegularExpressionCapable
     private String requiredPrincipalAttributeValue;
-    
+
+    /**
+     * Whether a transaction code should be attached to credential offers that use
+     * the pre-authorized code flow. The code is a secret handed to the issuing party
+     * out of band and must be presented back at the token endpoint. Disable this only
+     * for wallets that cannot collect the code from the end user, keeping in mind that
+     * the pre-authorized code then becomes the only secret protecting the offer.
+     */
+    private boolean transactionCodeEnabled = true;
 }

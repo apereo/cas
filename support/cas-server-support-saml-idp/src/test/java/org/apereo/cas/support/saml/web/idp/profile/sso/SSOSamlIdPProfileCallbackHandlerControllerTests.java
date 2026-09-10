@@ -131,7 +131,7 @@ class SSOSamlIdPProfileCallbackHandlerControllerTests {
         }
 
         @Test
-        void verifyValidationByPost() throws Throwable {
+        void verifyValidationByPostConsumesAuthenticationRequest() throws Throwable {
             val request = new MockHttpServletRequest();
             val response = new MockHttpServletResponse();
 
@@ -146,6 +146,13 @@ class SSOSamlIdPProfileCallbackHandlerControllerTests {
             val st1 = getServiceTicket();
             val result = performCallbackGet(request, response, st1.getId());
             assertEquals(HttpStatus.OK.value(), result.getResponse().getStatus());
+
+            val replay = performCallbackGet(request, response, st1.getId());
+            assertEquals(HttpStatus.BAD_REQUEST.value(), replay.getResponse().getStatus());
+            assertNotNull(replay.getModelAndView());
+            val error = replay.getModelAndView().getModel()
+                .get(CasWebflowConstants.ATTRIBUTE_ERROR_ROOT_CAUSE_EXCEPTION);
+            assertInstanceOf(MissingSamlAuthnRequestException.class, error);
         }
 
         @Test
