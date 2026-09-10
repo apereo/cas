@@ -32,18 +32,23 @@ class CloudWatchAppenderTests {
 
     @Test
     void verifyOperation() throws Throwable {
-        val config = new ClassPathResource("log4j2-test.xml");
-        val context = LoggerContext.getContext(CloudWatchAppenderTests.class.getClassLoader(), false, config.getURI());
-        val logger = context.getLogger(CloudWatchAppender.class.getName());
-        val appender = (CloudWatchAppender) logger.getAppenders().get("CloudWatchAppender");
-        assertNotNull(appender);
+        val config = new ClassPathResource("log4j2-cloudwatch.xml");
+        try (val context = new LoggerContext(UUID.randomUUID().toString())) {
+            context.setConfigLocation(config.getURI());
+            val logger = context.getLogger(CloudWatchAppender.class.getName());
+            val appender = (CloudWatchAppender) logger.getAppenders().get("CloudWatchAppender");
+            assertNotNull(appender);
 
-        assertDoesNotThrow(() -> {
-            val event = mock(LogEvent.class);
-            when(event.getMessage()).thenReturn(new SimpleMessage());
-            appender.append(event);
-            IntStream.range(1, 20).forEach(idx -> logger.info("Testing CloudWatchAppender [{}]...", idx));
-        });
-        appender.stop();
+            try {
+                assertDoesNotThrow(() -> {
+                    val event = mock(LogEvent.class);
+                    when(event.getMessage()).thenReturn(new SimpleMessage());
+                    appender.append(event);
+                    IntStream.range(1, 20).forEach(idx -> logger.info("Testing CloudWatchAppender [{}]...", idx));
+                });
+            } finally {
+                appender.stop();
+            }
+        }
     }
 }

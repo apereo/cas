@@ -7,10 +7,10 @@ import lombok.val;
 import net.shibboleth.shared.resolver.CriteriaSet;
 import org.opensaml.core.criterion.EntityIdCriterion;
 import org.opensaml.messaging.context.MessageContext;
+import org.opensaml.saml.common.SignableSAMLObject;
 import org.opensaml.saml.criterion.EntityRoleCriterion;
 import org.opensaml.saml.metadata.resolver.MetadataResolver;
 import org.opensaml.saml.metadata.resolver.RoleDescriptorResolver;
-import org.opensaml.saml.saml2.core.RequestAbstractType;
 import org.opensaml.saml.saml2.metadata.IDPSSODescriptor;
 
 /**
@@ -35,14 +35,14 @@ public class SamlIdPObjectSignatureValidator extends SamlObjectSignatureValidato
 
     @Override
     protected RoleDescriptorResolver getRoleDescriptorResolver(final MetadataResolver resolver, final MessageContext context,
-                                                               final RequestAbstractType profileRequest) throws Exception {
+                                                               final SignableSAMLObject profileRequest) throws Exception {
 
         val idp = casProperties.getAuthn().getSamlIdp();
         return SamlIdPUtils.getRoleDescriptorResolver(casSamlIdPMetadataResolver, idp.getMetadata().getCore().isRequireValidMetadata());
     }
 
     @Override
-    protected void buildEntityCriteriaForSigningCredential(final RequestAbstractType profileRequest, final CriteriaSet criteriaSet) {
+    protected void buildEntityCriteriaForSigningCredential(final SignableSAMLObject profileRequest, final CriteriaSet criteriaSet) {
         criteriaSet.add(new EntityIdCriterion(casSamlIdPMetadataResolver.getId()));
         criteriaSet.add(new EntityRoleCriterion(IDPSSODescriptor.DEFAULT_ELEMENT_NAME));
     }

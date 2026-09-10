@@ -2,6 +2,7 @@ package org.apereo.cas.uma.ticket.resource.repository;
 
 import module java.base;
 import org.apereo.cas.uma.ticket.resource.ResourceSet;
+import org.apereo.cas.util.RandomUtils;
 
 /**
  * This is {@link BaseResourceSetRepository}.
@@ -10,6 +11,15 @@ import org.apereo.cas.uma.ticket.resource.ResourceSet;
  * @since 6.0.0
  */
 public abstract class BaseResourceSetRepository implements ResourceSetRepository {
+    /**
+     * Generate a non-sequential resource set identifier.
+     *
+     * @return the identifier
+     */
+    protected static long generateResourceSetIdentifier() {
+        return RandomUtils.nextLong(1, Long.MAX_VALUE);
+    }
+
     @Override
     public Collection<ResourceSet> getByOwner(final String owner) {
         return getAll().stream()

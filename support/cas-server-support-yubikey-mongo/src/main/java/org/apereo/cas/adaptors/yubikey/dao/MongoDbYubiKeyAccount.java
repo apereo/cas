@@ -3,8 +3,8 @@ package org.apereo.cas.adaptors.yubikey.dao;
 import module java.base;
 import org.apereo.cas.adaptors.yubikey.YubiKeyAccount;
 import lombok.NoArgsConstructor;
+import lombok.SuperBuilder;
 import lombok.experimental.Accessors;
-import lombok.experimental.SuperBuilder;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 /**

@@ -6,8 +6,8 @@ import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.function.FunctionUtils;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
+import lombok.SuperBuilder;
 import lombok.With;
-import lombok.experimental.SuperBuilder;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 

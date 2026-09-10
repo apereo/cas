@@ -44,6 +44,8 @@ import org.apereo.cas.support.saml.web.idp.metadata.SamlRegisteredServiceMetadat
 import org.apereo.cas.support.saml.web.idp.profile.builders.SamlProfileObjectBuilder;
 import org.apereo.cas.support.saml.web.idp.profile.sso.SSOSamlIdPPostProfileHandlerEndpoint;
 import org.apereo.cas.support.saml.web.idp.web.SamlIdPErrorController;
+import org.apereo.cas.ticket.TicketFactory;
+import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.LoggingUtils;
 import org.apereo.cas.util.ResourceUtils;
@@ -160,8 +162,6 @@ class SamlIdPMetadataConfiguration {
         @ConditionalOnAvailableEndpoint
         public SSOSamlIdPPostProfileHandlerEndpoint ssoSamlPostProfileHandlerEndpoint(
             final ConfigurableApplicationContext applicationContext,
-            @Qualifier("casSamlIdPMetadataResolver")
-            final MetadataResolver casSamlIdPMetadataResolver,
             final CasConfigurationProperties casProperties,
             @Qualifier(SamlRegisteredServiceCachingMetadataResolver.BEAN_NAME)
             final SamlRegisteredServiceCachingMetadataResolver defaultSamlRegisteredServiceCachingMetadataResolver,
@@ -176,7 +176,11 @@ class SamlIdPMetadataConfiguration {
             @Qualifier("samlProfileSamlResponseBuilder")
             final SamlProfileObjectBuilder<Response> samlProfileSamlResponseBuilder,
             @Qualifier("samlIdPServiceFactory")
-            final ServiceFactory samlIdPServiceFactory) {
+            final ServiceFactory samlIdPServiceFactory,
+            @Qualifier(TicketFactory.BEAN_NAME)
+            final TicketFactory ticketFactory,
+            @Qualifier(TicketRegistry.BEAN_NAME)
+            final TicketRegistry ticketRegistry) {
             return new SSOSamlIdPPostProfileHandlerEndpoint(casProperties,
                 applicationContext, servicesManager,
                 authenticationSystemSupport, samlIdPServiceFactory,
@@ -184,7 +188,7 @@ class SamlIdPMetadataConfiguration {
                 samlProfileSamlResponseBuilder,
                 defaultSamlRegisteredServiceCachingMetadataResolver,
                 new NonInflatingSaml20ObjectBuilder(openSamlConfigBean),
-                defaultPrincipalResolver, casSamlIdPMetadataResolver);
+                defaultPrincipalResolver, ticketFactory, ticketRegistry);
         }
 
     }

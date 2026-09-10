@@ -55,7 +55,7 @@ class OAuth20IntrospectionEndpointControllerTests extends AbstractOAuth20Tests {
     }
 
     @Test
-    void verifyOperationFromOtherClient() throws Throwable {
+    void verifyOperationFromOtherClientIsInactive() throws Throwable {
         val registeredService2 = getRegisteredService(REDIRECT_URI, CLIENT_ID2, CLIENT_SECRET);
         servicesManager.save(registeredService2);
         val registeredService = addRegisteredService();
@@ -63,8 +63,9 @@ class OAuth20IntrospectionEndpointControllerTests extends AbstractOAuth20Tests {
         val auth2 = CLIENT_ID2 + ':' + CLIENT_SECRET;
         val body = (OAuth20IntrospectionAccessTokenResponse) internalVerifyOperation(auth2, registeredService);
         assertNotNull(body);
-        assertEquals(registeredService.getClientId(), body.getClientId());
-        assertEquals(SERVICE_URL, body.getAud());
+        assertFalse(body.isActive());
+        assertNull(body.getClientId());
+        assertNull(body.getAud());
     }
 
     @Test

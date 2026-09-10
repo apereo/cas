@@ -70,12 +70,12 @@ class OAuth20RevocationEndpointControllerTests extends AbstractOAuth20Tests {
                 .param(OAuth20Constants.CLIENT_ID, registeredService.getClientId())
                 .param(OAuth20Constants.CLIENT_SECRET, CLIENT_SECRET)
                 .param(OAuth20Constants.TOKEN, "AT-1234"))
-            .andExpect(status().isNotFound());
+            .andExpect(status().isOk());
 
         mockMvc.perform(post(REVOCATION_ENDPOINT)
                 .param(OAuth20Constants.CLIENT_ID, PUBLIC_CLIENT_ID)
                 .param(OAuth20Constants.TOKEN, "AT-1234"))
-            .andExpect(status().isNotFound());
+            .andExpect(status().isOk());
     }
 
     @Test
@@ -90,8 +90,7 @@ class OAuth20RevocationEndpointControllerTests extends AbstractOAuth20Tests {
                 .param(OAuth20Constants.CLIENT_ID, service.getClientId())
                 .param(OAuth20Constants.CLIENT_SECRET, CLIENT_SECRET)
                 .param(OAuth20Constants.TOKEN, code.getId()))
-            .andExpect(status().isBadRequest())
-            .andExpect(jsonPath("$.error").value(OAuth20Constants.INVALID_REQUEST));
+            .andExpect(status().isOk());
     }
 
     @Test
@@ -126,8 +125,8 @@ class OAuth20RevocationEndpointControllerTests extends AbstractOAuth20Tests {
         mockMvc.perform(post(REVOCATION_ENDPOINT)
                 .param(OAuth20Constants.CLIENT_ID, PUBLIC_CLIENT_ID)
                 .param(OAuth20Constants.TOKEN, accessToken3.getId()))
-            .andExpect(status().isBadRequest())
-            .andExpect(jsonPath("$.error").value(OAuth20Constants.INVALID_REQUEST));
+            .andExpect(status().isOk());
+        assertNotNull(ticketRegistry.getTicket(accessToken3.getId()));
     }
 
     @Test
@@ -167,7 +166,7 @@ class OAuth20RevocationEndpointControllerTests extends AbstractOAuth20Tests {
         mockMvc.perform(post(REVOCATION_ENDPOINT)
                 .param(OAuth20Constants.CLIENT_ID, PUBLIC_CLIENT_ID)
                 .param(OAuth20Constants.TOKEN, refreshToken3.getId()))
-            .andExpect(status().isBadRequest())
-            .andExpect(jsonPath("$.error").value(OAuth20Constants.INVALID_REQUEST));
+            .andExpect(status().isOk());
+        assertNotNull(ticketRegistry.getTicket(refreshToken3.getId()));
     }
 }

@@ -3,7 +3,7 @@ package org.apereo.cas.metadata;
 import module java.base;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.util.function.FunctionUtils;
-import lombok.Getter;
+import com.google.common.base.Suppliers;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.jooq.lambda.Unchecked;
@@ -19,7 +19,6 @@ import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
  * @author Dmitriy Kopylenko
  * @since 5.2.0
  */
-@Getter
 public class CasConfigurationMetadataRepository {
     /**
      * Bean name for the CAS configuration metadata repository.
@@ -28,20 +27,39 @@ public class CasConfigurationMetadataRepository {
 
     private static final String CONFIGURATION_METADATA_RESOURCE_PATTERN = "classpath*:META-INF/spring-configuration-metadata.json";
 
-    private final ConfigurationMetadataRepository repository;
+    private final Supplier<ConfigurationMetadataRepository> repository;
 
     public CasConfigurationMetadataRepository() {
-        this(collectConfigurationMetadata());
+        this(CasConfigurationMetadataRepository::collectConfigurationMetadata);
     }
 
     public CasConfigurationMetadataRepository(final List<byte[]> sources) {
+        this(() -> sources);
+    }
+
+    private CasConfigurationMetadataRepository(final Supplier<List<byte[]>> sources) {
+        this.repository = Suppliers.memoize(() -> buildRepository(sources.get()));
+    }
+
+    /**
+     * Gets the underlying configuration metadata repository.
+     * Collecting and parsing every {@code spring-configuration-metadata.json} on the classpath is
+     * expensive, so the index is built on first access rather than when this instance is created.
+     *
+     * @return the repository
+     */
+    public ConfigurationMetadataRepository getRepository() {
+        return repository.get();
+    }
+
+    private static ConfigurationMetadataRepository buildRepository(final List<byte[]> sources) {
         val builder = CasConfigurationMetadataRepositoryJsonBuilder.create();
         sources.forEach(Unchecked.consumer(buffer -> {
             try (val stream = new ByteArrayInputStream(buffer)) {
                 builder.withJsonResource(stream, StandardCharsets.UTF_8);
             }
         }));
-        repository = builder.build();
+        return builder.build();
     }
 
     /**
@@ -74,7 +92,7 @@ public class CasConfigurationMetadataRepository {
      * @return the properties by class type
      */
     public Set<ConfigurationMetadataProperty> getPropertiesWithType(final Class clazz) {
-        return repository.getAllProperties().values()
+        return getRepository().getAllProperties().values()
             .stream()
             .filter(prop -> StringUtils.isNotBlank(prop.getType()))
             .filter(prop -> prop.getType().contains(clazz.getName()))

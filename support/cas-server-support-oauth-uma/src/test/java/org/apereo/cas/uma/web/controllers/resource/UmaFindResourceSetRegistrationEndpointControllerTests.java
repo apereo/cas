@@ -60,7 +60,7 @@ class UmaFindResourceSetRegistrationEndpointControllerTests extends BaseUmaEndpo
         var result = performUmaRequest(HttpMethod.POST, OAuth20Constants.UMA_RESOURCE_SET_REGISTRATION_URL,
             body, results.getLeft(), results.getMiddle());
         var model = getMappedResponseBody(result);
-        val resourceId = ((Number) model.get("resourceId")).longValue();
+        val resourceId = parseIdentifier(model.get("resourceId"));
 
         result = performUmaRequest(HttpMethod.GET,
             OAuth20Constants.UMA_RESOURCE_SET_REGISTRATION_URL + "/-1",

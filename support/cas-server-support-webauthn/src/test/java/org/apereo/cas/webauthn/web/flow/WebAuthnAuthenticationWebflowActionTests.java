@@ -16,9 +16,11 @@ import com.yubico.core.SessionManager;
 import com.yubico.data.CredentialRegistration;
 import com.yubico.webauthn.RegisteredCredential;
 import com.yubico.webauthn.data.ByteArray;
+import com.yubico.webauthn.data.UserIdentity;
 import lombok.val;
 import org.apereo.inspektr.common.web.ClientInfo;
 import org.apereo.inspektr.common.web.ClientInfoHolder;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -27,6 +29,8 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.mock.web.MockHttpSession;
+import org.springframework.web.context.request.RequestContextHolder;
+import org.springframework.web.context.request.ServletRequestAttributes;
 import org.springframework.webflow.execution.Action;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
@@ -56,6 +60,12 @@ class WebAuthnAuthenticationWebflowActionTests {
     @Autowired
     private ConfigurableApplicationContext applicationContext;
 
+    @AfterEach
+    void cleanup() {
+        RequestContextHolder.resetRequestAttributes();
+        ClientInfoHolder.clear();
+    }
+
     @Test
     void verifyFailsNoAuthn() throws Throwable {
         val context = MockRequestContext.create(applicationContext);
@@ -68,7 +78,7 @@ class WebAuthnAuthenticationWebflowActionTests {
     void verifyFailsNoReg() throws Throwable {
         val context = MockRequestContext.create(applicationContext);
 
-        val authn = RegisteredServiceTestUtils.getAuthentication("casuser");
+        val authn = RegisteredServiceTestUtils.getAuthentication(UUID.randomUUID().toString());
         WebUtils.putAuthentication(authn, context);
         WebUtils.putCredential(context, new WebAuthnCredential(EncodingUtils.encodeBase64(RandomUtils.randomAlphabetic(8))));
         val result = webAuthnAuthenticationWebflowAction.execute(context);
@@ -82,30 +92,44 @@ class WebAuthnAuthenticationWebflowActionTests {
         val request = context.getHttpServletRequest();
         request.setSession(new MockHttpSession());
 
-        val authn = RegisteredServiceTestUtils.getAuthentication("casuser");
+        val authn = RegisteredServiceTestUtils.getAuthentication(UUID.randomUUID().toString());
+        val userHandle = SessionManager.generateRandom(32);
         WebUtils.putAuthentication(authn, context);
-        WebUtils.putCredential(context, new WebAuthnCredential(EncodingUtils.encodeBase64(RandomUtils.randomAlphabetic(8))));
         webAuthnCredentialRepository.addRegistrationByUsername(authn.getPrincipal().getId(),
             CredentialRegistration.builder()
+                .userIdentity(UserIdentity.builder()
+                    .name(authn.getPrincipal().getId())
+                    .displayName(authn.getPrincipal().getId())
+                    .id(userHandle)
+                    .build())
                 .credential(RegisteredCredential.builder()
-                    .credentialId(ByteArray.fromBase64Url(authn.getPrincipal().getId()))
-                    .userHandle(ByteArray.fromBase64Url(RandomUtils.randomAlphabetic(8)))
+                    .credentialId(SessionManager.generateRandom(32))
+                    .userHandle(userHandle)
                     .publicKeyCose(ByteArray.fromBase64Url(RandomUtils.randomAlphabetic(8)))
                     .build())
                 .build());
-        var result = webAuthnAuthenticationWebflowAction.execute(context);
-        assertEquals(CasWebflowConstants.TRANSITION_ID_ERROR, result.getId());
-
-        val token = EncodingUtils.encodeBase64(RandomUtils.randomAlphabetic(8));
-        val sessionId = webAuthnSessionManager.createSession(request, ByteArray.fromBase64(token));
 
         val builder = mock(AuthenticationResultBuilder.class);
         when(builder.getInitialAuthentication()).thenReturn(Optional.of(authn));
         when(builder.collect(any(Authentication.class))).thenReturn(builder);
         WebUtils.putAuthenticationResultBuilder(builder, context);
 
-        WebUtils.putCredential(context, new WebAuthnCredential(sessionId.getBase64Url()));
-        result = webAuthnAuthenticationWebflowAction.execute(context);
-        assertEquals(CasWebflowConstants.TRANSITION_ID_SUCCESS, result.getId());
+        RequestContextHolder.setRequestAttributes(new ServletRequestAttributes(request, context.getHttpServletResponse()));
+        try {
+            WebUtils.putCredential(context, new WebAuthnCredential(SessionManager.generateRandom(32).getBase64Url()));
+            var result = webAuthnAuthenticationWebflowAction.execute(context);
+            assertEquals(CasWebflowConstants.TRANSITION_ID_ERROR, result.getId());
+
+            val sessionId = webAuthnSessionManager.createSession(request, userHandle);
+            WebUtils.putCredential(context, new WebAuthnCredential(sessionId.getBase64Url()));
+            result = webAuthnAuthenticationWebflowAction.execute(context);
+            assertEquals(CasWebflowConstants.TRANSITION_ID_SUCCESS, result.getId());
+
+            result = webAuthnAuthenticationWebflowAction.execute(context);
+            assertEquals(CasWebflowConstants.TRANSITION_ID_ERROR, result.getId());
+        } finally {
+            RequestContextHolder.resetRequestAttributes();
+            ClientInfoHolder.clear();
+        }
     }
 }

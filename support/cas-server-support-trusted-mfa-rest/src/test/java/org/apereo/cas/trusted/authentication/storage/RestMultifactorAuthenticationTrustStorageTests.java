@@ -17,11 +17,14 @@ import org.apereo.cas.config.CasCoreWebflowAutoConfiguration;
 import org.apereo.cas.config.CasMultifactorAuthnTrustAutoConfiguration;
 import org.apereo.cas.config.CasRestMultifactorAuthenticationTrustAutoConfiguration;
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.configuration.model.support.mfa.trusteddevice.TrustedDevicesMultifactorProperties;
 import org.apereo.cas.test.CasTestExtension;
 import org.apereo.cas.trusted.authentication.api.MultifactorAuthenticationTrustRecord;
+import org.apereo.cas.trusted.authentication.api.MultifactorAuthenticationTrustRecordKeyGenerator;
 import org.apereo.cas.trusted.authentication.api.MultifactorAuthenticationTrustStorage;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.MockWebServer;
+import org.apereo.cas.util.crypto.CipherExecutor;
 import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
 import org.apereo.cas.util.spring.boot.SpringBootTestAutoConfigurations;
 import lombok.val;
@@ -32,9 +35,18 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import org.springframework.test.web.client.MockRestServiceServer;
+import org.springframework.web.client.RestClient;
+import org.springframework.web.client.RestClientResponseException;
 import tools.jackson.databind.ObjectMapper;
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.*;
+import static org.springframework.test.web.client.match.MockRestRequestMatchers.*;
+import static org.springframework.test.web.client.response.MockRestResponseCreators.*;
 
 /**
  * This is {@link RestMultifactorAuthenticationTrustStorageTests}.
@@ -83,6 +95,34 @@ class RestMultifactorAuthenticationTrustStorageTests {
     
     @Autowired
     private CasConfigurationProperties casProperties;
+
+    @Test
+    void verifyRemovalByDateAndHttpErrors() {
+        val builder = RestClient.builder();
+        val server = MockRestServiceServer.bindTo(builder).build();
+        val properties = new TrustedDevicesMultifactorProperties();
+        properties.getRest().setUrl("https://localhost/trusted");
+        properties.getRest().setBasicAuthUsername("username");
+        properties.getRest().setBasicAuthPassword("password");
+        val storage = new RestMultifactorAuthenticationTrustStorage(properties, CipherExecutor.noOpOfSerializableToString(),
+            mock(MultifactorAuthenticationTrustRecordKeyGenerator.class), builder.build());
+        val expiration = ZonedDateTime.of(2026, 1, 1, 0, 0, 0, 0, ZoneOffset.UTC);
+        server.expect(requestTo("https://localhost/trusted/"))
+            .andExpect(method(HttpMethod.DELETE))
+            .andExpect(header(HttpHeaders.AUTHORIZATION, "Basic "
+                + HttpHeaders.encodeBasicAuth("username", "password", StandardCharsets.UTF_8)))
+            .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+            .andExpect(content().string(MAPPER.writeValueAsString(expiration)))
+            .andRespond(withSuccess());
+        server.expect(requestTo("https://localhost/trusted/"))
+            .andExpect(method(HttpMethod.GET))
+            .andRespond(withStatus(HttpStatus.UNAUTHORIZED));
+
+        storage.remove(expiration);
+        val exception = assertThrows(RestClientResponseException.class, storage::getAll);
+        assertEquals(HttpStatus.UNAUTHORIZED, exception.getStatusCode());
+        server.verify();
+    }
 
     @Test
     void verifyRemovalByKey() {

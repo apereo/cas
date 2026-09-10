@@ -21,4 +21,11 @@ class InlinedCas30ProtocolAttributesRendererTests {
         val results = (Map) CoreAuthenticationTestUtils.getAttributeRepository().getBackingMap();
         assertFalse(r.render(results).isEmpty());
     }
+
+    @Test
+    void verifyAttributeNameCannotBreakOutOfTheNameAttribute() {
+        val renderer = new InlinedCas30ProtocolAttributesRenderer();
+        val line = renderer.render(Map.<String, Object>of("given\" value=\"pwned\" x=\"", "casuser")).iterator().next();
+        assertEquals("<cas:attribute name=\"given__value__pwned__x__\" value=\"casuser\"></cas:attribute>", line);
+    }
 }

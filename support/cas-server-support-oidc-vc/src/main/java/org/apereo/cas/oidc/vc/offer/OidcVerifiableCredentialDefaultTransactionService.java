@@ -9,10 +9,12 @@ import org.apereo.cas.support.oauth.util.OAuth20Utils;
 import org.apereo.cas.ticket.Ticket;
 import org.apereo.cas.ticket.TransientSessionTicket;
 import org.apereo.cas.ticket.TransientSessionTicketFactory;
+import org.apereo.cas.util.RandomUtils;
 import org.apereo.cas.util.function.FunctionUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.apache.commons.lang3.StringUtils;
 import org.jspecify.annotations.Nullable;
 
 /**
@@ -24,6 +26,8 @@ import org.jspecify.annotations.Nullable;
 @RequiredArgsConstructor
 @Slf4j
 public class OidcVerifiableCredentialDefaultTransactionService implements OidcVerifiableCredentialTransactionService {
+    private static final int TRANSACTION_CODE_LENGTH = 12;
+
     private final OidcConfigurationContext configurationContext;
 
     @Override
@@ -33,17 +37,25 @@ public class OidcVerifiableCredentialDefaultTransactionService implements OidcVe
         RegisteredServiceAccessStrategyUtils.ensureServiceAccessIsAllowed(registeredService);
         val transientFactory = (TransientSessionTicketFactory) configurationContext.getTicketFactory().get(TransientSessionTicket.class);
 
+        val transactionCodeEnabled = configurationContext.getCasProperties()
+            .getAuthn().getOidc().getVc().getOffer().isTransactionCodeEnabled();
+        val transactionCode = transactionCodeEnabled
+            ? RandomUtils.randomAlphanumeric(TRANSACTION_CODE_LENGTH)
+            : null;
+
         val codeProperties = new LinkedHashMap<>();
         codeProperties.put("principalId", principalId);
         codeProperties.put(OAuth20Constants.CLIENT_ID, clientId);
         codeProperties.put("credentialConfigurationIds", credentialConfigurationIds);
-        
+        FunctionUtils.doIfNotNull(transactionCode, _ -> codeProperties.put(PROPERTY_TRANSACTION_CODE, transactionCode));
+
         val properties = new LinkedHashMap<>();
         properties.put("issuerState", UUID.randomUUID().toString());
         properties.put("principalId", principalId);
         properties.put(OAuth20Constants.CLIENT_ID, clientId);
         properties.put("credentialConfigurationIds", credentialConfigurationIds);
-        
+        FunctionUtils.doIfNotNull(transactionCode, _ -> properties.put(PROPERTY_TRANSACTION_CODE, transactionCode));
+
         return FunctionUtils.doUnchecked(() -> {
             val preAuthorizationCode = transientFactory.create(codeProperties);
             val transaction = transientFactory.create(properties);
@@ -66,5 +78,23 @@ public class OidcVerifiableCredentialDefaultTransactionService implements OidcVe
     public @Nullable Ticket fetchPreAuthorizationCode(final String preAuthorizationCode) {
         val ticket = (TransientSessionTicket) configurationContext.getTicketRegistry().getTicket(preAuthorizationCode);
         return ticket != null && !ticket.isExpired() ? ticket : null;
+    }
+
+    @Override
+    public void updatePreAuthorizationCode(final Ticket preAuthorizationCode) {
+        FunctionUtils.doAndHandle(_ -> {
+            if (preAuthorizationCode != null) {
+                val updatedCode = (TransientSessionTicket) preAuthorizationCode.update();
+                if (updatedCode.isExpired()) {
+                    configurationContext.getTicketRegistry().deleteTicket(updatedCode.getId());
+                    val transactionId = updatedCode.getPropertyAsString("transactionId");
+                    if (StringUtils.isNotBlank(transactionId)) {
+                        configurationContext.getTicketRegistry().deleteTicket(transactionId);
+                    }
+                } else {
+                    configurationContext.getTicketRegistry().updateTicket(updatedCode);
+                }
+            }
+        });
     }
 }

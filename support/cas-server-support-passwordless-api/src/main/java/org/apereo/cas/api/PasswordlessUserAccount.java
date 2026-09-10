@@ -9,10 +9,10 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import lombok.SuperBuilder;
 import lombok.ToString;
 import lombok.With;
 import lombok.experimental.Accessors;
-import lombok.experimental.SuperBuilder;
 import org.apache.commons.lang3.StringUtils;
 import tools.jackson.databind.annotation.JsonDeserialize;
 

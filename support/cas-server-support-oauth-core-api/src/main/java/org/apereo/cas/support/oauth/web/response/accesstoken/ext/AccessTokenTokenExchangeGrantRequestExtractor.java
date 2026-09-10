@@ -53,7 +53,13 @@ public class AccessTokenTokenExchangeGrantRequestExtractor<T extends OAuth20Conf
         val configurationContext = getConfigurationContext().getObject();
 
         val requestParameterResolver = configurationContext.getRequestParameterResolver();
-        val scopes = requestParameterResolver.resolveRequestScopes(webContext);
+        val requestedScopes = requestParameterResolver.resolveRequestScopes(webContext);
+        val userProfile = extractUserProfile(webContext)
+            .orElseThrow(() -> new IllegalArgumentException("Authenticated client profile cannot be determined"));
+        val requestingClientId = Objects.requireNonNull(StringUtils.defaultIfBlank(
+            OAuth20Utils.getClientIdFromAuthenticatedProfile(userProfile), userProfile.getId()));
+        val requestingRegisteredService = OAuth20Utils.getRegisteredOAuthServiceByClientId(
+            configurationContext.getServicesManager(), requestingClientId);
 
         val requestedTokenType = requestParameterResolver.resolveRequestParameter(webContext, OAuth20Constants.REQUESTED_TOKEN_TYPE)
             .orElseGet(OAuth20TokenExchangeTypes.ACCESS_TOKEN::getType);
@@ -64,10 +70,15 @@ public class AccessTokenTokenExchangeGrantRequestExtractor<T extends OAuth20Conf
         val audience = requestParameterResolver.resolveRequestParameter(webContext, OAuth20Constants.AUDIENCE).orElse(null);
 
         val extractedRequest = extractSubjectTokenExchangeRequest(webContext);
+        val scopes = extractedRequest.token() instanceof final OAuth20Token token
+            ? extractRequestedScopesByToken(requestedScopes, token, webContext)
+            : requestedScopes;
+        val requesterBoundRequest = new TokenExchangeRequest(extractedRequest.token(), extractedRequest.service(),
+            requestingRegisteredService, extractedRequest.authentication());
         val resourceService = resource
             .map(res -> {
                 val service = configurationContext.getWebApplicationServiceServiceFactory().createService(res);
-                service.getAttributes().put(OAuth20Constants.CLIENT_ID, List.of(extractedRequest.registeredService().getClientId()));
+                service.getAttributes().put(OAuth20Constants.CLIENT_ID, List.of(requestingClientId));
                 return service;
             })
             .orElse(null);
@@ -82,9 +93,9 @@ public class AccessTokenTokenExchangeGrantRequestExtractor<T extends OAuth20Conf
             .tokenExchangeResource(resourceService)
             .tokenExchangeAudience(audience)
             .service(extractedRequest.service())
-            .registeredService(extractedRequest.registeredService())
+            .registeredService(requestingRegisteredService)
             .authentication(extractedRequest.authentication())
-            .actorToken(getActorTokenAuthentication(webContext, extractedRequest))
+            .actorToken(getActorTokenAuthentication(webContext, requesterBoundRequest))
             .build();
     }
 

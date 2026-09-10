@@ -48,10 +48,11 @@ public class CasLdapPasswordManagementAutoConfiguration {
         return () -> BeanSupplier.of(PasswordManagementService.class)
             .when(CONDITION.given(applicationContext.getEnvironment()))
             .supply(() -> {
-                val connectionFactoryMap = new ConcurrentHashMap<String, ConnectionFactory>();
+                val connectionFactoryMap = new LinkedHashMap<String, ConnectionFactory>();
                 val passwordManagerProperties = casProperties.getAuthn().getPm();
                 passwordManagerProperties.getLdap()
-                    .forEach(ldap -> connectionFactoryMap.put(ldap.getLdapUrl(), LdapUtils.newLdaptiveConnectionFactory(ldap)));
+                    .forEach(ldap -> connectionFactoryMap.computeIfAbsent(
+                        ldap.toStableIdentifier(), _ -> LdapUtils.newLdaptiveConnectionFactory(ldap)));
                 return new LdapPasswordManagementService(
                     passwordManagementCipherExecutor,
                     casProperties, passwordHistoryService,

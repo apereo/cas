@@ -4,8 +4,8 @@ import module java.base;
 import org.apereo.cas.authentication.principal.Principal;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.SuperBuilder;
 import lombok.With;
-import lombok.experimental.SuperBuilder;
 
 /**
  * This is {@link CibaRequestContext}.

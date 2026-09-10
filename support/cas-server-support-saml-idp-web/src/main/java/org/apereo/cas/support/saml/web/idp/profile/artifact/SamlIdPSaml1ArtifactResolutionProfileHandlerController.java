@@ -57,13 +57,17 @@ public class SamlIdPSaml1ArtifactResolutionProfileHandlerController extends Abst
                 throw UnauthorizedServiceException.denied("Cannot find metadata linked to %s".formatted(issuer));
             }
             val facade = adaptor.get();
-            verifyAuthenticationContextSignature(ctx, request, artifactMsg, facade, registeredService);
+            verifySamlProfileRequest(ctx, request, artifactMsg, facade, registeredService, true);
             val artifactId = artifactMsg.getArtifact().getValue();
 
             val factory = (SamlArtifactTicketFactory) getConfigurationContext().getTicketFactory().get(SamlArtifactTicket.class);
             val ticketId = factory.createTicketIdFor(artifactId);
             val ticket = getConfigurationContext().getTicketRegistry().getTicket(ticketId, SamlArtifactTicket.class);
-            if (ticket == null) {
+            if (ticket == null || ticket.isExpired()
+                || !Objects.equals(issuer, ticket.getRelyingPartyId())) {
+                throw new InvalidTicketException(ticketId);
+            }
+            if (getConfigurationContext().getTicketRegistry().deleteTicket(ticketId) == 0) {
                 throw new InvalidTicketException(ticketId);
             }
             val issuerService = getConfigurationContext().getWebApplicationServiceFactory().createService(issuer);

@@ -38,9 +38,16 @@ public class OidcVerifiableCredentialsPreAuthorizationCodeGrantRequestValidator 
     protected boolean validateInternal(final WebContext context, final String grantType, final ProfileManager manager,
                                        final UserProfile userProfile) throws Throwable {
         val requestParameterResolver = getConfigurationContext().getObject().getRequestParameterResolver();
-        val preAuthCode = requestParameterResolver.resolveRequestParameter(context, OidcConstants.PRE_AUTHORIZED_CODE).orElseThrow();
-        val ticket = (TransientSessionTicket) transactionService.fetchPreAuthorizationCode(preAuthCode);
-        return ticket != null && !ticket.isExpired();
+        val preAuthCode = requestParameterResolver.resolveRequestParameter(context, OidcConstants.PRE_AUTHORIZED_CODE);
+        if (preAuthCode.isEmpty()) {
+            return false;
+        }
+        val ticket = (TransientSessionTicket) transactionService.fetchPreAuthorizationCode(preAuthCode.get());
+        if (ticket == null || ticket.isExpired()) {
+            return false;
+        }
+        val transactionCode = requestParameterResolver.resolveRequestParameter(context, OidcConstants.TX_CODE).orElse(null);
+        return transactionService.isTransactionCodeValid(ticket, transactionCode);
     }
 
     @Override

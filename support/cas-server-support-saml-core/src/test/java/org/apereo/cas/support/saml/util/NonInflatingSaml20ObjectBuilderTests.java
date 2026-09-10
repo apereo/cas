@@ -138,7 +138,7 @@ class NonInflatingSaml20ObjectBuilderTests {
 
         val confirmation = builder.newSubjectConfirmation("https://www.apereo.org/app/sp",
             ZonedDateTime.now(ZoneOffset.UTC), "2ab8d364-7d6a-4e3e-ab17-c48b87c487e2",
-            ZonedDateTime.now(ZoneOffset.UTC), InetAddressUtils.getByName("https://www.apereo.org/app/sp"));
+            ZonedDateTime.now(ZoneOffset.UTC), InetAddressUtils.getByName("https://www.apereo.org/app/sp").getHostAddress());
         val sub = builder.newSubject(id, subjectId, confirmation);
         assertNotNull(sub);
     }

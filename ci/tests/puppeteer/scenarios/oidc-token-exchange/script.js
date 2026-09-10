@@ -3,7 +3,7 @@ const cas = require("../../cas.js");
 
 async function exchangeToken(token, fromType, toType) {
     const grantType = "urn:ietf:params:oauth:grant-type:token-exchange";
-    let params = `grant_type=${encodeURIComponent(grantType)}&scope=${encodeURIComponent("openid profile address phone")}`;
+    let params = `grant_type=${encodeURIComponent(grantType)}&scope=${encodeURIComponent("openid profile")}`;
     params += `&subject_token=${encodeURIComponent(token)}`;
     params += `&resource=${encodeURIComponent("https://localhost:9859/anything/backend")}`;
     const fromTokenType = encodeURIComponent(`urn:ietf:params:oauth:token-type:${fromType}`);
@@ -74,7 +74,7 @@ async function exchangeToken(token, fromType, toType) {
 }
 
 async function verifyTokenExchangeTypes() {
-    const params = "grant_type=client_credentials&scope=openid";
+    const params = `grant_type=client_credentials&scope=${encodeURIComponent("openid profile address phone")}`;
     const url = `https://localhost:8443/cas/oauth2.0/token?${params}`;
     await cas.log(`Calling ${url}`);
 

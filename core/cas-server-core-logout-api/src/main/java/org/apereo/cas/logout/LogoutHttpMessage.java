@@ -4,7 +4,7 @@ import module java.base;
 import org.apereo.cas.web.HttpMessage;
 import lombok.Getter;
 import lombok.Setter;
-import lombok.experimental.SuperBuilder;
+import lombok.SuperBuilder;
 import org.jspecify.annotations.Nullable;
 import org.springframework.http.MediaType;
 

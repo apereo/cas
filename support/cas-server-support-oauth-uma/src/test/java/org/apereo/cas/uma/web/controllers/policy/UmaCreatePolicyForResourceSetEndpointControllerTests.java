@@ -27,7 +27,7 @@ class UmaCreatePolicyForResourceSetEndpointControllerTests extends BaseUmaEndpoi
 
         var model = getMappedResponseBody(result);
         assertNotNull(model);
-        val resourceId = ((Number) model.get("resourceId")).longValue();
+        val resourceId = parseIdentifier(model.get("resourceId"));
 
         body = createUmaPolicyRegistrationRequest(getCurrentProfile(results.getLeft(), results.getMiddle())).toJson();
 

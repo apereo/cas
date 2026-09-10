@@ -45,10 +45,21 @@ class OidcVerifiableCredentialPresentationRequestEndpointControllerTests extends
         "/cas/" + OidcConstants.BASE_OIDC_URL + '/' + OidcConstants.VC_PRESENTATION_REQUEST_URL;
 
     @Test
+    void verifyPresentationRequestCreationRejectsUnauthenticatedClients() throws Throwable {
+        mockMvc.perform(post(PRESENTATION_REQUEST_ENDPOINT_URL)
+                .with(withHttpRequestProcessor())
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(MAPPER.writeValueAsString(buildPresentationRequest())))
+            .andExpect(status().is4xxClientError());
+    }
+
+    @Test
     void verifyCreatePresentationRequest() throws Throwable {
         val request = buildPresentationRequest();
         val responseBody = mockMvc.perform(post(PRESENTATION_REQUEST_ENDPOINT_URL)
                 .with(withHttpRequestProcessor())
+                .param(OAuth20Constants.CLIENT_ID, getOidcRegisteredService().getClientId())
+                .param(OAuth20Constants.CLIENT_SECRET, getOidcRegisteredService().getClientSecrets().getFirst().getValue())
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(MAPPER.writeValueAsString(request)))
             .andExpect(status().isOk())
@@ -131,6 +142,8 @@ class OidcVerifiableCredentialPresentationRequestEndpointControllerTests extends
     void verifyEmptyPresentationRequestIsRejected() throws Exception {
         mockMvc.perform(post(PRESENTATION_REQUEST_ENDPOINT_URL)
                 .with(withHttpRequestProcessor())
+                .param(OAuth20Constants.CLIENT_ID, getOidcRegisteredService().getClientId())
+                .param(OAuth20Constants.CLIENT_SECRET, getOidcRegisteredService().getClientSecrets().getFirst().getValue())
                 .contentType(MediaType.APPLICATION_JSON)
                 .content("{\"credentials\":[]}"))
             .andExpect(status().isBadRequest());

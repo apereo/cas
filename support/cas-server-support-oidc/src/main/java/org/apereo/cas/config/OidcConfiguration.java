@@ -459,6 +459,7 @@ class OidcConfiguration {
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public OAuth20TokenGenerator oauthTokenGenerator(
+            final ConfigurableApplicationContext applicationContext,
             @Qualifier(PrincipalResolver.BEAN_NAME_PRINCIPAL_RESOLVER)
             final PrincipalResolver principalResolver,
             @Qualifier(OAuth20ProfileScopeToAttributesFilter.BEAN_NAME)
@@ -469,7 +470,7 @@ class OidcConfiguration {
             final TicketRegistry ticketRegistry,
             final CasConfigurationProperties casProperties) {
             return new OidcDefaultTokenGenerator(ticketFactory, ticketRegistry,
-                principalResolver, profileScopeToAttributesFilter, casProperties);
+                principalResolver, profileScopeToAttributesFilter, applicationContext, casProperties);
         }
 
         @Bean
@@ -621,6 +622,8 @@ class OidcConfiguration {
             final ServiceFactory<WebApplicationService> webApplicationServiceFactory,
             @Qualifier(TicketRegistry.BEAN_NAME)
             final TicketRegistry ticketRegistry,
+            @Qualifier(TicketFactory.BEAN_NAME)
+            final TicketFactory ticketFactory,
             @Qualifier(ServicesManager.BEAN_NAME)
             final ServicesManager servicesManager,
             final ConfigurableApplicationContext applicationContext,
@@ -634,7 +637,7 @@ class OidcConfiguration {
             return () -> {
                 val authenticator = new OidcJwtAuthenticator(oidcIssuerService,
                     servicesManager, registeredServiceAccessStrategyEnforcer,
-                    ticketRegistry, webApplicationServiceFactory,
+                    ticketRegistry, ticketFactory, webApplicationServiceFactory,
                     casProperties, applicationContext,
                     oidcServerDiscoverySettings, clientJwksRegistrationStore);
                 val privateKeyJwtClient = new DirectFormClient(authenticator);

@@ -7,8 +7,8 @@ import org.apereo.cas.support.oauth.OAuth20ResponseTypes;
 import org.apereo.cas.ticket.Ticket;
 import lombok.Builder;
 import lombok.Getter;
+import lombok.SuperBuilder;
 import lombok.ToString;
-import lombok.experimental.SuperBuilder;
 
 /**
  * This is {@link OAuth20TokenGeneratedResult}.

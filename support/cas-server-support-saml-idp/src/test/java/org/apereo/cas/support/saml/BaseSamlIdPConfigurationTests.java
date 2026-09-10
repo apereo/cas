@@ -48,6 +48,7 @@ import org.apereo.cas.support.saml.web.idp.profile.builders.enc.SamlIdPObjectEnc
 import org.apereo.cas.support.saml.web.idp.profile.builders.enc.SamlIdPObjectSigner;
 import org.apereo.cas.support.saml.web.idp.profile.builders.enc.validate.SamlObjectSignatureValidator;
 import org.apereo.cas.test.CasTestExtension;
+import org.apereo.cas.ticket.TicketFactory;
 import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.util.RandomUtils;
 import org.apereo.cas.util.spring.boot.SpringBootTestAutoConfigurations;
@@ -63,6 +64,7 @@ import org.apache.velocity.app.VelocityEngine;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.opensaml.core.criterion.EntityIdCriterion;
 import org.opensaml.messaging.context.MessageContext;
+import org.opensaml.saml.common.SAMLObject;
 import org.opensaml.saml.common.binding.artifact.SAMLArtifactMap;
 import org.opensaml.saml.common.messaging.context.SAMLMetadataContext;
 import org.opensaml.saml.common.messaging.context.SAMLPeerEntityContext;
@@ -230,6 +232,10 @@ public abstract class BaseSamlIdPConfigurationTests {
     protected TicketRegistry ticketRegistry;
 
     @Autowired
+    @Qualifier(TicketFactory.BEAN_NAME)
+    protected TicketFactory ticketFactory;
+
+    @Autowired
     @Qualifier("samlArtifactMap")
     protected SAMLArtifactMap samlArtifactMap;
 
@@ -322,6 +328,22 @@ public abstract class BaseSamlIdPConfigurationTests {
             adaptor, response, request, SAMLConstants.SAML2_POST_BINDING_URI, authnRequest, new MessageContext());
     }
 
+    protected <T extends SAMLObject> T signSamlObject(final HttpServletRequest request,
+                                                      final HttpServletResponse response,
+                                                      final T samlObject,
+                                                      final SamlRegisteredService samlRegisteredService,
+                                                      final String binding,
+                                                      final String destination) throws Exception {
+        val adaptor = SamlRegisteredServiceMetadataAdaptor.get(samlRegisteredServiceCachingMetadataResolver,
+            samlRegisteredService, samlRegisteredService.getServiceId()).orElseThrow();
+        val authnRequest = getAuthnRequestFor(samlRegisteredService);
+        authnRequest.setAssertionConsumerServiceURL(destination);
+        authnRequest.setProtocolBinding(binding);
+        val messageContext = new MessageContext();
+        messageContext.ensureSubcontext(SAMLPeerEntityContext.class).setAuthenticated(true);
+        return samlIdPObjectSigner.encode(samlObject, samlRegisteredService,
+            adaptor, response, request, binding, authnRequest, messageContext);
+    }
 
     protected SAML2MessageContext buildSamlMessageContext() throws Exception {
         val idpMetadata = new File("src/test/resources/metadata/idp-metadata.xml").getCanonicalPath();

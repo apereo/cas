@@ -11,6 +11,8 @@ import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.support.saml.BaseSamlIdPConfigurationTests;
 import org.apereo.cas.support.saml.SamlIdPTestUtils;
 import org.apereo.cas.support.saml.web.idp.profile.slo.SamlIdPSingleLogoutServiceLogoutUrlBuilder;
+import org.apereo.cas.ticket.TransientSessionTicket;
+import org.apereo.cas.ticket.TransientSessionTicketFactory;
 import org.apereo.cas.util.CollectionUtils;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
@@ -61,6 +63,9 @@ class SamlIdPProfileSingleLogoutMessageCreatorTests extends BaseSamlIdPConfigura
 
         val result = samlLogoutBuilder.create(logoutRequest);
         assertNotNull(result);
+        val requestId = ((LogoutRequest) result.getMessage()).getID();
+        assertNotNull(ticketRegistry.getTicket(
+            TransientSessionTicketFactory.normalizeTicketId(requestId), TransientSessionTicket.class));
     }
 
     @Test

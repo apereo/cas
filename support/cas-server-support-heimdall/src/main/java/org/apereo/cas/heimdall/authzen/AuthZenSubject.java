@@ -6,9 +6,9 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
+import lombok.SuperBuilder;
 import lombok.ToString;
 import lombok.With;
-import lombok.experimental.SuperBuilder;
 import org.springframework.validation.annotation.Validated;
 
 /**

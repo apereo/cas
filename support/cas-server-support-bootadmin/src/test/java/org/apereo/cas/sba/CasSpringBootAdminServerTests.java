@@ -5,9 +5,11 @@ import org.apereo.cas.config.CasCoreWebAutoConfiguration;
 import org.apereo.cas.config.CasSpringBootAdminAutoConfiguration;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.test.CasTestExtension;
+import org.apereo.cas.util.MockWebServer;
 import org.apereo.cas.util.spring.boot.SpringBootTestAutoConfigurations;
 import org.apereo.cas.web.CasWebSecurityConfigurer;
 import de.codecentric.boot.admin.client.config.SpringBootAdminClientAutoConfiguration;
+import de.codecentric.boot.admin.client.registration.Application;
 import de.codecentric.boot.admin.client.registration.RegistrationClient;
 import de.codecentric.boot.admin.server.config.AdminServerAutoConfiguration;
 import de.codecentric.boot.admin.server.domain.values.Registration;
@@ -62,6 +64,21 @@ class CasSpringBootAdminServerTests {
     @Autowired
     @Qualifier("instanceIdGenerator")
     private InstanceIdGenerator instanceIdGenerator;
+
+    @Test
+    void verifyRegistration() {
+        val application = Application.create("CAS")
+            .healthUrl("https://localhost:8443/cas/actuator/health")
+            .managementUrl("https://localhost:8443/cas/actuator")
+            .serviceUrl("https://localhost:8443/cas")
+            .build();
+        try (val webServer = new MockWebServer("{\"id\":\"cas-instance\"}")) {
+            webServer.start();
+            val adminUrl = "http://localhost:" + webServer.getPort();
+            assertEquals("cas-instance", registrationClient.register(adminUrl, application));
+            assertDoesNotThrow(() -> registrationClient.deregister(adminUrl, "cas-instance"));
+        }
+    }
 
     @Test
     void verifyOperation() throws Throwable {

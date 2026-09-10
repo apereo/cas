@@ -65,5 +65,10 @@ class OidcAccessTokenCibaGrantRequestValidatorTests extends AbstractOidcTests {
         assertFalse(oidcAccessTokenCibaGrantRequestValidator.validate(context));
         ticketRegistry.updateTicket(cibaRequest.markTicketReady());
         assertEquals(mode != OidcBackchannelTokenDeliveryModes.PUSH, oidcAccessTokenCibaGrantRequestValidator.validate(context));
+
+        profile.setId("other-client");
+        profile.addAttribute(OAuth20Constants.CLIENT_ID, "other-client");
+        profileManager.save(true, profile, false);
+        assertFalse(oidcAccessTokenCibaGrantRequestValidator.validate(context));
     }
 }

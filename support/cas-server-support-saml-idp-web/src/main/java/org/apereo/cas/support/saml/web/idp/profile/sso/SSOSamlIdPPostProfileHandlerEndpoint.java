@@ -21,13 +21,16 @@ import org.apereo.cas.support.saml.services.SamlRegisteredService;
 import org.apereo.cas.support.saml.services.idp.metadata.SamlRegisteredServiceMetadataAdaptor;
 import org.apereo.cas.support.saml.services.idp.metadata.cache.SamlRegisteredServiceCachingMetadataResolver;
 import org.apereo.cas.support.saml.util.AbstractSaml20ObjectBuilder;
+import org.apereo.cas.support.saml.util.Saml20HexRandomIdGenerator;
 import org.apereo.cas.support.saml.web.idp.profile.builders.AuthenticatedAssertionContext;
 import org.apereo.cas.support.saml.web.idp.profile.builders.SamlProfileBuilderContext;
 import org.apereo.cas.support.saml.web.idp.profile.builders.SamlProfileObjectBuilder;
+import org.apereo.cas.support.saml.web.idp.profile.slo.SamlIdPProfileSingleLogoutMessageCreator;
+import org.apereo.cas.ticket.TicketFactory;
+import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.EncodingUtils;
 import org.apereo.cas.util.LoggingUtils;
-import org.apereo.cas.util.RandomUtils;
 import org.apereo.cas.web.BaseCasRestActuatorEndpoint;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -39,11 +42,9 @@ import lombok.Setter;
 import lombok.With;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-import net.shibboleth.shared.resolver.CriteriaSet;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.text.StringEscapeUtils;
 import org.jooq.lambda.Unchecked;
-import org.opensaml.core.criterion.EntityIdCriterion;
 import org.opensaml.messaging.context.MessageContext;
 import org.opensaml.messaging.context.ScratchContext;
 import org.opensaml.saml.common.SAMLObject;
@@ -51,17 +52,11 @@ import org.opensaml.saml.common.binding.SAMLBindingSupport;
 import org.opensaml.saml.common.messaging.context.SAMLEndpointContext;
 import org.opensaml.saml.common.messaging.context.SAMLPeerEntityContext;
 import org.opensaml.saml.common.xml.SAMLConstants;
-import org.opensaml.saml.criterion.BindingCriterion;
-import org.opensaml.saml.criterion.EntityRoleCriterion;
-import org.opensaml.saml.metadata.resolver.MetadataResolver;
 import org.opensaml.saml.saml2.binding.encoding.impl.HTTPPostEncoder;
 import org.opensaml.saml.saml2.core.Issuer;
 import org.opensaml.saml.saml2.core.LogoutRequest;
 import org.opensaml.saml.saml2.core.NameID;
 import org.opensaml.saml.saml2.core.impl.AuthnRequestBuilder;
-import org.opensaml.saml.saml2.metadata.SPSSODescriptor;
-import org.opensaml.saml.saml2.metadata.SingleLogoutService;
-import org.opensaml.saml.saml2.metadata.SingleSignOnService;
 import org.springframework.beans.BeanUtils;
 import org.springframework.boot.actuate.endpoint.Access;
 import org.springframework.boot.actuate.endpoint.annotation.Endpoint;
@@ -102,7 +97,9 @@ public class SSOSamlIdPPostProfileHandlerEndpoint extends BaseCasRestActuatorEnd
 
     private final PrincipalResolver principalResolver;
 
-    private final MetadataResolver samlIdPMetadataResolver;
+    private final TicketFactory ticketFactory;
+
+    private final TicketRegistry ticketRegistry;
 
     public SSOSamlIdPPostProfileHandlerEndpoint(final CasConfigurationProperties casProperties,
                                                 final ConfigurableApplicationContext applicationContext,
@@ -114,7 +111,8 @@ public class SSOSamlIdPPostProfileHandlerEndpoint extends BaseCasRestActuatorEnd
                                                 final SamlRegisteredServiceCachingMetadataResolver cachingMetadataResolver,
                                                 final AbstractSaml20ObjectBuilder saml20ObjectBuilder,
                                                 final PrincipalResolver principalResolver,
-                                                final MetadataResolver samlIdPMetadataResolver) {
+                                                final TicketFactory ticketFactory,
+                                                final TicketRegistry ticketRegistry) {
         super(casProperties, applicationContext);
         this.servicesManager = servicesManager;
         this.authenticationSystemSupport = authenticationSystemSupport;
@@ -124,7 +122,8 @@ public class SSOSamlIdPPostProfileHandlerEndpoint extends BaseCasRestActuatorEnd
         this.defaultSamlRegisteredServiceCachingMetadataResolver = cachingMetadataResolver;
         this.saml20ObjectBuilder = saml20ObjectBuilder;
         this.principalResolver = principalResolver;
-        this.samlIdPMetadataResolver = samlIdPMetadataResolver;
+        this.ticketFactory = ticketFactory;
+        this.ticketRegistry = ticketRegistry;
     }
 
     /**
@@ -152,7 +151,7 @@ public class SSOSamlIdPPostProfileHandlerEndpoint extends BaseCasRestActuatorEnd
 
 
     /**
-     * Produce logout request post.
+     * Produce logout request.
      *
      * @param entityId the entity id
      * @param response the response
@@ -170,23 +169,14 @@ public class SSOSamlIdPPostProfileHandlerEndpoint extends BaseCasRestActuatorEnd
         RegisteredServiceAccessStrategyUtils.ensureServiceAccessIsAllowed(selectedService, registeredService);
 
         val logoutRequest = saml20ObjectBuilder.newSamlObject(LogoutRequest.class);
-        logoutRequest.setID(RandomUtils.randomAlphabetic(4));
+        logoutRequest.setID(Saml20HexRandomIdGenerator.INSTANCE.getNewString());
         val issuer = saml20ObjectBuilder.newSamlObject(Issuer.class);
-        issuer.setValue(entityId);
+        issuer.setValue(casProperties.getAuthn().getSamlIdp().getCore().getEntityId());
 
-        val criteriaSet = new CriteriaSet();
-        criteriaSet.add(new EntityIdCriterion(casProperties.getAuthn().getSamlIdp().getCore().getEntityId()));
-        criteriaSet.add(new EntityRoleCriterion(SPSSODescriptor.DEFAULT_ELEMENT_NAME));
-        criteriaSet.add(new BindingCriterion(List.of(SAMLConstants.SAML2_POST_BINDING_URI)));
-
-        val result = samlIdPMetadataResolver.resolveSingle(criteriaSet);
-        val sloEndpointDestination = result.getIDPSSODescriptor(SAMLConstants.SAML20P_NS)
-            .getEndpoints(SingleLogoutService.DEFAULT_ELEMENT_NAME)
-            .stream()
-            .filter(endpoint -> SAMLConstants.SAML2_POST_BINDING_URI.equals(endpoint.getBinding()))
-            .findFirst()
-            .orElseThrow()
-            .getLocation();
+        val adaptor = SamlRegisteredServiceMetadataAdaptor.get(
+            defaultSamlRegisteredServiceCachingMetadataResolver, registeredService, entityId).orElseThrow();
+        val sloEndpoint = Objects.requireNonNull(adaptor.getSingleLogoutService(SAMLConstants.SAML2_POST_BINDING_URI));
+        val sloEndpointDestination = sloEndpoint.getLocation();
 
         val nameId = saml20ObjectBuilder.newSamlObject(NameID.class);
         nameId.setValue(UUID.randomUUID().toString());
@@ -195,6 +185,8 @@ public class SSOSamlIdPPostProfileHandlerEndpoint extends BaseCasRestActuatorEnd
         logoutRequest.setIssuer(issuer);
         logoutRequest.setDestination(sloEndpointDestination);
         logoutRequest.setIssueInstant(Instant.now(Clock.systemUTC()).minusSeconds(10));
+        SamlIdPProfileSingleLogoutMessageCreator.storeLogoutRequest(
+            ticketFactory, ticketRegistry, selectedService, logoutRequest, adaptor.getEntityId());
 
         val encoder = new HTTPPostEncoder();
         encoder.setVelocityEngine(saml20ObjectBuilder.getOpenSamlConfigBean().getVelocityEngine());
@@ -204,14 +196,12 @@ public class SSOSamlIdPPostProfileHandlerEndpoint extends BaseCasRestActuatorEnd
         val peerEntityContext = messageContext.ensureSubcontext(SAMLPeerEntityContext.class);
         val endpointContext = peerEntityContext.ensureSubcontext(SAMLEndpointContext.class);
 
-        val endpoint = saml20ObjectBuilder.newSamlObject(SingleSignOnService.class);
-        endpoint.setLocation(sloEndpointDestination);
-        endpointContext.setEndpoint(endpoint);
+        endpointContext.setEndpoint(sloEndpoint);
 
         val encodedRequest = EncodingUtils.encodeBase64(SamlUtils.transformSamlObject(
             saml20ObjectBuilder.getOpenSamlConfigBean(), logoutRequest, true).toString());
         response.setHeader("LogoutRequest", encodedRequest);
-        
+
         messageContext.setMessage(logoutRequest);
         encoder.setMessageContext(messageContext);
         encoder.initialize();

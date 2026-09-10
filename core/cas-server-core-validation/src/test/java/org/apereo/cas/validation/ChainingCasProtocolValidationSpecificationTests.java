@@ -1,6 +1,7 @@
 package org.apereo.cas.validation;
 
 import module java.base;
+import org.apereo.cas.CasProtocolConstants;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.authentication.credential.UsernamePasswordCredential;
 import org.apereo.cas.authentication.handler.support.SimpleTestUsernamePasswordAuthenticationHandler;
@@ -47,6 +48,36 @@ class ChainingCasProtocolValidationSpecificationTests {
         val servicesManager = mock(ServicesManager.class);
         val chain = new ChainingCasProtocolValidationSpecification(false);
         chain.addSpecifications(new DefaultCasProtocolValidationSpecification(servicesManager, input -> true));
+        chain.reset();
+        assertTrue(chain.isSatisfiedBy(getAssertion(), new MockHttpServletRequest()));
+    }
+
+    @Test
+    void verifyRenewIsResolvedPerRequestAndLeavesNoState() {
+        val servicesManager = mock(ServicesManager.class);
+        val chain = new ChainingCasProtocolValidationSpecification(false);
+        val specification = new DefaultCasProtocolValidationSpecification(servicesManager, input -> true);
+        chain.addSpecifications(specification);
+
+        val renewRequest = new MockHttpServletRequest();
+        renewRequest.addParameter(CasProtocolConstants.PARAMETER_RENEW, "true");
+        assertFalse(chain.isSatisfiedBy(getAssertion(), renewRequest));
+
+        assertFalse(specification.isRenew(), "Evaluating the chain must not leave renew state behind on a chained specification");
+        assertTrue(chain.isSatisfiedBy(getAssertion(), new MockHttpServletRequest()));
+    }
+
+    @Test
+    void verifyRenewSetProgrammaticallyIsForwardedToChainedSpecifications() {
+        val servicesManager = mock(ServicesManager.class);
+        val chain = new ChainingCasProtocolValidationSpecification(false);
+        val specification = new DefaultCasProtocolValidationSpecification(servicesManager, input -> true);
+        chain.addSpecifications(specification);
+
+        chain.setRenew(true);
+        assertTrue(specification.isRenew());
+        assertFalse(chain.isSatisfiedBy(getAssertion(), new MockHttpServletRequest()));
+
         chain.reset();
         assertTrue(chain.isSatisfiedBy(getAssertion(), new MockHttpServletRequest()));
     }

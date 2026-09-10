@@ -7,8 +7,8 @@ import org.apereo.cas.services.RegisteredService;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
+import lombok.SuperBuilder;
 import lombok.With;
-import lombok.experimental.SuperBuilder;
 
 /**
  * This is {@link AttributeDefinitionResolutionContext}.

@@ -32,7 +32,7 @@ public class SamlProfileArtifactResponseBuilder extends SamlProfileSamlSoap11Res
         val artifactResponse = new ArtifactResponseBuilder().buildObject();
         artifactResponse.setIssueInstant(ZonedDateTime.now(ZoneOffset.UTC).toInstant());
         artifactResponse.setIssuer(newIssuer(ticket.getIssuer()));
-        artifactResponse.setInResponseTo(ticket.getRelyingPartyId());
+        artifactResponse.setInResponseTo(context.getSamlRequest().getID());
         artifactResponse.setID(ticket.getId());
         artifactResponse.setStatus(newStatus(StatusCode.SUCCESS, "Success"));
 

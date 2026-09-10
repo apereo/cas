@@ -2,8 +2,8 @@ package org.apereo.cas.support.pac4j.authentication;
 
 import module java.base;
 import lombok.Getter;
+import lombok.SuperBuilder;
 import lombok.ToString;
-import lombok.experimental.SuperBuilder;
 
 /**
  * This is {@link DelegatedAuthenticationClientLogoutRequest}.

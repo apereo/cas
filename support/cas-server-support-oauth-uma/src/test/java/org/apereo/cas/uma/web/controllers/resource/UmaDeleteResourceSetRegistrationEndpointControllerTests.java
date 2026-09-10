@@ -2,6 +2,7 @@ package org.apereo.cas.uma.web.controllers.resource;
 
 import module java.base;
 import org.apereo.cas.support.oauth.OAuth20Constants;
+import org.apereo.cas.support.oauth.util.OAuth20Utils;
 import org.apereo.cas.uma.web.controllers.BaseUmaEndpointControllerTests;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
@@ -26,7 +27,7 @@ class UmaDeleteResourceSetRegistrationEndpointControllerTests extends BaseUmaEnd
         var result = performUmaRequest(HttpMethod.POST, OAuth20Constants.UMA_RESOURCE_SET_REGISTRATION_URL,
             body, results.getLeft(), results.getMiddle());
         var model = getMappedResponseBody(result);
-        val resourceId = ((Number) model.get("resourceId")).longValue();
+        val resourceId = parseIdentifier(model.get("resourceId"));
 
         result = performUmaRequest(HttpMethod.DELETE,
             OAuth20Constants.UMA_RESOURCE_SET_REGISTRATION_URL + '/' + resourceId,
@@ -46,20 +47,25 @@ class UmaDeleteResourceSetRegistrationEndpointControllerTests extends BaseUmaEnd
     }
 
     @Test
-    void verifyBadClientId() throws Throwable {
-        val results = authenticateUmaRequestWithProtectionScope();
+    void verifyResourceCannotBeDeletedByDifferentClientWithSameOwner() throws Throwable {
+        val resourceOwner = authenticateUmaRequestWithProtectionScope();
         val body = createUmaResourceRegistrationRequest().toJson();
         var result = performUmaRequest(HttpMethod.POST, OAuth20Constants.UMA_RESOURCE_SET_REGISTRATION_URL,
-            body, results.getLeft(), results.getMiddle());
+            body, resourceOwner.getLeft(), resourceOwner.getMiddle());
         val model = getMappedResponseBody(result);
-        val resourceId = ((Number) model.get("resourceId")).longValue();
+        val resourceId = parseIdentifier(model.get("resourceId"));
 
-        val resourceSet = umaResourceSetRepository.getById(resourceId).orElseThrow();
-        resourceSet.setOwner("testuser");
-        umaResourceSetRepository.save(resourceSet);
+        val otherClient = authenticateUmaRequestWithProtectionScope();
+        val ownerProfile = getCurrentProfile(resourceOwner.getLeft(), resourceOwner.getMiddle());
+        val otherClientProfile = getCurrentProfile(otherClient.getLeft(), otherClient.getMiddle());
+        assertEquals(ownerProfile.getId(), otherClientProfile.getId());
+        assertNotEquals(OAuth20Utils.getClientIdFromAuthenticatedProfile(ownerProfile),
+            OAuth20Utils.getClientIdFromAuthenticatedProfile(otherClientProfile));
+
         result = performUmaRequest(HttpMethod.DELETE,
             OAuth20Constants.UMA_RESOURCE_SET_REGISTRATION_URL + '/' + resourceId,
-            results.getLeft(), results.getMiddle());
+            otherClient.getLeft(), otherClient.getMiddle());
         assertEquals(HttpStatus.BAD_REQUEST.value(), result.getResponse().getStatus());
+        assertTrue(umaResourceSetRepository.getById(resourceId).isPresent());
     }
 }

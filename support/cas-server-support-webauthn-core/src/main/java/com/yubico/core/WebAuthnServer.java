@@ -193,9 +193,16 @@ public class WebAuthnServer {
         if (username.isPresent() && !userStorage.userExists(username.get())) {
             return Either.left(List.of("The username %s is not registered.".formatted(username.get())));
         }
+        val userVerificationRequirementProperty = casProperties.getAuthn().getMfa().getWebAuthn().getCore().getUserVerificationRequirement();
+        val userVerificationRequirement = StringUtils.isNotBlank(userVerificationRequirementProperty)
+            ? UserVerificationRequirement.valueOf(userVerificationRequirementProperty.toUpperCase(Locale.ROOT))
+            : null;
         val assertionRequest = new AssertionRequestWrapper(
             SessionManager.generateRandom(IDENTIFIER_LENGTH),
-            relyingParty.startAssertion(StartAssertionOptions.builder().username(username).build())
+            relyingParty.startAssertion(StartAssertionOptions.builder()
+                .username(username)
+                .userVerification(userVerificationRequirement)
+                .build())
         );
         assertRequestStorage.put(request, assertionRequest.getRequestId(), assertionRequest);
         return Either.right(assertionRequest);
