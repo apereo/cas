@@ -279,15 +279,16 @@ public abstract class AbstractSaml20ObjectBuilder extends AbstractSamlObjectBuil
      * @return the subject confirmation
      */
     public SubjectConfirmation newSubjectConfirmation(final String recipient, final ZonedDateTime notOnOrAfter,
-                                                      final String inResponseTo, final ZonedDateTime notBefore,
-                                                      final InetAddress address) {
+                                                      final String inResponseTo,
+                                                      @Nullable final ZonedDateTime notBefore,
+                                                      @Nullable final String address) {
         LOGGER.debug("Building subject confirmation for recipient [{}], in response to [{}]", recipient, inResponseTo);
         val confirmation = newSamlObject(SubjectConfirmation.class);
         confirmation.setMethod(SubjectConfirmation.METHOD_BEARER);
         val data = newSamlObject(SubjectConfirmationData.class);
         FunctionUtils.doIfNotBlank(recipient, data::setRecipient);
         FunctionUtils.doIfNotBlank(inResponseTo, data::setInResponseTo);
-        FunctionUtils.doIfNotNull(address, _ -> data.setAddress(address.getHostAddress()));
+        FunctionUtils.doIfNotNull(address, _ -> data.setAddress(address));
         FunctionUtils.doIfNotNull(notOnOrAfter, _ -> data.setNotOnOrAfter(notOnOrAfter.toInstant()));
         FunctionUtils.doIfNotNull(notBefore, _ -> data.setNotBefore(notBefore.toInstant()));
         confirmation.setSubjectConfirmationData(data);
@@ -302,8 +303,8 @@ public abstract class AbstractSaml20ObjectBuilder extends AbstractSamlObjectBuil
      * @param subjectConfirmation the subject confirmation
      * @return the subject
      */
-    public Subject newSubject(final SAMLObject nameId,
-                              final SAMLObject subjectConfNameId,
+    public Subject newSubject(@Nullable final SAMLObject nameId,
+                              @Nullable final SAMLObject subjectConfNameId,
                               final SubjectConfirmation subjectConfirmation) {
 
         LOGGER.debug("Building subject for NameID [{}]", nameId);
@@ -338,7 +339,7 @@ public abstract class AbstractSaml20ObjectBuilder extends AbstractSamlObjectBuil
      * @param encodedRequestXmlString the encoded request xml string
      * @return the request
      */
-    public String decodeSamlAuthnRequest(final String encodedRequestXmlString) {
+    public @Nullable String decodeSamlAuthnRequest(final String encodedRequestXmlString) {
         if (StringUtils.isEmpty(encodedRequestXmlString)) {
             return null;
         }

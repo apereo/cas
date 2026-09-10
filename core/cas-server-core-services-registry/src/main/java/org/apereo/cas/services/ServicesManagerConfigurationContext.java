@@ -8,7 +8,7 @@ import org.apereo.cas.multitenancy.TenantExtractor;
 import com.github.benmanes.caffeine.cache.Cache;
 import lombok.Builder;
 import lombok.Getter;
-import lombok.experimental.SuperBuilder;
+import lombok.SuperBuilder;
 import org.jspecify.annotations.NonNull;
 import org.springframework.context.ConfigurableApplicationContext;
 

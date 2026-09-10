@@ -15,6 +15,7 @@ import org.apereo.cas.util.RegexUtils;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.DisposableBean;
 import org.springframework.context.ConfigurableApplicationContext;
 
 /**
@@ -24,13 +25,33 @@ import org.springframework.context.ConfigurableApplicationContext;
  * @since 5.1.0
  */
 @Slf4j
-public class SurrogateLdapAuthenticationService extends BaseSurrogateAuthenticationService {
+public class SurrogateLdapAuthenticationService extends BaseSurrogateAuthenticationService implements DisposableBean {
+    /**
+     * Name of the filter parameter that carries the impersonated account.
+     */
+    private static final String SURROGATE_FILTER_PARAMETER = "surrogate";
+
+    /**
+     * Positional index of {@link #SURROGATE_FILTER_PARAMETER} in the surrogate search filter.
+     */
+    private static final int SURROGATE_FILTER_PARAMETER_INDEX = 1;
+
+    private final Map<String, LdapConnectionFactory> connectionFactories;
 
     public SurrogateLdapAuthenticationService(final CasConfigurationProperties casProperties,
                                               final ServicesManager servicesManager,
                                               final RegisteredServicePrincipalAccessStrategyEnforcer principalAccessStrategyEnforcer,
                                               final ConfigurableApplicationContext applicationContext) {
         super(servicesManager, casProperties, principalAccessStrategyEnforcer, applicationContext);
+        this.connectionFactories = new LinkedHashMap<>();
+        casProperties.getAuthn().getSurrogate().getLdap()
+            .forEach(ldap -> connectionFactories.computeIfAbsent(ldap.toStableIdentifier(),
+                _ -> new LdapConnectionFactory(LdapUtils.newLdaptiveConnectionFactory(ldap))));
+    }
+
+    @Override
+    public void destroy() {
+        connectionFactories.values().forEach(LdapConnectionFactory::close);
     }
 
     @Override
@@ -40,15 +61,21 @@ public class SurrogateLdapAuthenticationService extends BaseSurrogateAuthenticat
 
     @Override
     public boolean canImpersonateInternal(final String surrogate, final Principal principal, final Optional<? extends Service> service) {
-        val ldapProperties = casProperties.getAuthn().getSurrogate().getLdap();
-        for (val ldap : ldapProperties) {
-            try (val connectionFactory = new LdapConnectionFactory(LdapUtils.newLdaptiveConnectionFactory(ldap))) {
+        for (val ldap : casProperties.getAuthn().getSurrogate().getLdap()) {
+            try {
                 val id = principal.getId();
+                if (!LdapUtils.containsSearchFilterParameter(ldap.getSurrogateSearchFilter(),
+                    SURROGATE_FILTER_PARAMETER, SURROGATE_FILTER_PARAMETER_INDEX)) {
+                    LOGGER.error("Surrogate search filter [{}] defined for [{}] does not refer to the [{}] parameter. "
+                                 + "The filter cannot restrict the accounts [{}] is allowed to impersonate and is ignored.",
+                        ldap.getSurrogateSearchFilter(), ldap.getLdapUrl(), SURROGATE_FILTER_PARAMETER, id);
+                    continue;
+                }
                 val searchFilter = LdapUtils.newLdaptiveSearchFilter(ldap.getSurrogateSearchFilter(),
-                    CollectionUtils.wrapList(LdapUtils.LDAP_SEARCH_FILTER_DEFAULT_PARAM_NAME, "surrogate"),
+                    CollectionUtils.wrapList(LdapUtils.LDAP_SEARCH_FILTER_DEFAULT_PARAM_NAME, SURROGATE_FILTER_PARAMETER),
                     CollectionUtils.wrapList(id, surrogate));
                 LOGGER.debug("Using LDAP search filter [{}] to authorize principal [{}] to impersonate [{}]", searchFilter, id, surrogate);
-                val response = connectionFactory.executeSearchOperation(ldap.getBaseDn(), searchFilter, ldap.getPageSize());
+                val response = connectionFactoryFor(ldap).executeSearchOperation(ldap.getBaseDn(), searchFilter, ldap.getPageSize());
                 LOGGER.debug("LDAP search response: [{}]", response);
                 if (LdapUtils.containsResultEntry(response) && doesSurrogateAccountExistInLdap(surrogate)) {
                     return true;
@@ -62,13 +89,12 @@ public class SurrogateLdapAuthenticationService extends BaseSurrogateAuthenticat
 
     @Override
     public Collection<String> getImpersonationAccounts(final String username, final Optional<? extends Service> service) {
-        val ldapProperties = casProperties.getAuthn().getSurrogate().getLdap();
-        for (val ldap : ldapProperties) {
-            try (val connectionFactory = new LdapConnectionFactory(LdapUtils.newLdaptiveConnectionFactory(ldap))) {
+        for (val ldap : casProperties.getAuthn().getSurrogate().getLdap()) {
+            try {
                 val filter = LdapUtils.newLdaptiveSearchFilter(ldap.getSearchFilter(), CollectionUtils.wrap(username));
                 LOGGER.debug("Using search filter to find eligible accounts: [{}]", filter);
 
-                val response = connectionFactory.executeSearchOperation(ldap.getBaseDn(), filter, ldap.getPageSize());
+                val response = connectionFactoryFor(ldap).executeSearchOperation(ldap.getBaseDn(), filter, ldap.getPageSize());
                 LOGGER.debug("LDAP response: [{}]", response);
 
                 if (!LdapUtils.containsResultEntry(response)) {
@@ -116,7 +142,7 @@ public class SurrogateLdapAuthenticationService extends BaseSurrogateAuthenticat
             return true;
         }
         val validationFilter = LdapUtils.newLdaptiveSearchFilter(ldap.getSurrogateValidationFilter(),
-            "surrogate", List.of(surrogate));
+            SURROGATE_FILTER_PARAMETER, List.of(surrogate));
         LOGGER.debug("Using surrogate validation filter [{}] to verify surrogate account [{}]", validationFilter, surrogate);
         val response = connectionFactory.executeSearchOperation(ldap.getBaseDn(), validationFilter, ldap.getPageSize());
         LOGGER.debug("LDAP validation response: [{}]", response);
@@ -124,10 +150,9 @@ public class SurrogateLdapAuthenticationService extends BaseSurrogateAuthenticat
     }
 
     protected boolean doesSurrogateAccountExistInLdap(final String surrogate) {
-        val ldapProperties = casProperties.getAuthn().getSurrogate().getLdap();
-        for (val ldap : ldapProperties) {
-            try (val connectionFactory = new LdapConnectionFactory(LdapUtils.newLdaptiveConnectionFactory(ldap))) {
-                if (doesSurrogateAccountExistInLdap(surrogate, connectionFactory, ldap)) {
+        for (val ldap : casProperties.getAuthn().getSurrogate().getLdap()) {
+            try {
+                if (doesSurrogateAccountExistInLdap(surrogate, connectionFactoryFor(ldap), ldap)) {
                     return true;
                 }
             } catch (final Throwable e) {
@@ -135,5 +160,9 @@ public class SurrogateLdapAuthenticationService extends BaseSurrogateAuthenticat
             }
         }
         return false;
+    }
+
+    private LdapConnectionFactory connectionFactoryFor(final SurrogateLdapAuthenticationProperties ldap) {
+        return Objects.requireNonNull(connectionFactories.get(ldap.toStableIdentifier()));
     }
 }

@@ -5,10 +5,8 @@ import lombok.Getter;
 import org.jspecify.annotations.Nullable;
 import org.springframework.core.annotation.AnnotationAwareOrderComparator;
 import org.thymeleaf.IEngineConfiguration;
-import org.thymeleaf.templateresolver.AbstractConfigurableTemplateResolver;
 import org.thymeleaf.templateresolver.ITemplateResolver;
 import org.thymeleaf.templateresolver.TemplateResolution;
-import org.thymeleaf.templateresource.ITemplateResource;
 
 /**
  * This is {@link ChainingTemplateViewResolver}.
@@ -17,15 +15,12 @@ import org.thymeleaf.templateresource.ITemplateResource;
  * @since 5.3.0
  */
 @Getter
-public class ChainingTemplateViewResolver extends AbstractConfigurableTemplateResolver {
+public class ChainingTemplateViewResolver implements ITemplateResolver {
     private final List<ITemplateResolver> resolvers = new ArrayList<>();
 
-    public ChainingTemplateViewResolver() {
-        setOrder(0);
-        setCacheable(false);
-        setCheckExistence(true);
-        setName(getClass().getSimpleName());
-    }
+    private final String name = getClass().getSimpleName();
+
+    private final Integer order = 0;
 
     /**
      * Add resolver.
@@ -44,18 +39,15 @@ public class ChainingTemplateViewResolver extends AbstractConfigurableTemplateRe
     }
 
     @Override
-    protected @Nullable ITemplateResource computeTemplateResource(final IEngineConfiguration configuration,
-                                                                  final String ownerTemplate,
-                                                                  final String template,
-                                                                  final String resourceName,
-                                                                  final String characterEncoding,
-                                                                  final Map<String, Object> templateResolutionAttributes) {
+    public @Nullable TemplateResolution resolveTemplate(final IEngineConfiguration configuration,
+                                                        final String ownerTemplate,
+                                                        final String template,
+                                                        final Map<String, Object> templateResolutionAttributes) {
         return this.resolvers
             .stream()
-            .map(r -> r.resolveTemplate(configuration, ownerTemplate, template, templateResolutionAttributes))
-            .filter(resource -> resource != null && resource.isTemplateResourceExistenceVerified())
+            .map(resolver -> resolver.resolveTemplate(configuration, ownerTemplate, template, templateResolutionAttributes))
+            .filter(resolution -> resolution != null && resolution.isTemplateResourceExistenceVerified())
             .findFirst()
-            .map(TemplateResolution::getTemplateResource)
             .orElse(null);
     }
 }

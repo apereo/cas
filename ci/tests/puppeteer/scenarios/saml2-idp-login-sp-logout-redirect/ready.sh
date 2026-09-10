@@ -1,5 +1,6 @@
 #!/bin/bash
 echo "Running SAML server..."
+export SIGN_LOGOUT_MESSAGES=true
 
 metadataDirectory="${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/saml-md"
 

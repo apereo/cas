@@ -21,6 +21,11 @@ public class OidcVerifiableCredentialsIssuerProperties implements Serializable {
     private static final long serialVersionUID = -2120371070424785548L;
 
     /**
+     * Maximum number of credential requests accepted in a single batch.
+     */
+    private int batchSize = 10;
+
+    /**
      * Supported credential configurations keyed by identifier.
      */
     private Map<String, OidcVerifiableCredentialConfigurationProperties> credentialConfigurations = new LinkedHashMap<>();

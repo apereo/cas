@@ -15,6 +15,7 @@ import org.junit.jupiter.api.Test;
 import org.opensaml.core.criterion.EntityIdCriterion;
 import org.opensaml.messaging.context.MessageContext;
 import org.opensaml.saml.common.messaging.context.SAMLBindingContext;
+import org.opensaml.saml.common.messaging.context.SAMLPeerEntityContext;
 import org.opensaml.saml.common.xml.SAMLConstants;
 import org.opensaml.saml.criterion.BindingCriterion;
 import org.opensaml.saml.criterion.EntityRoleCriterion;
@@ -122,7 +123,7 @@ class SamlIdPUtilsTests extends BaseSamlIdPConfigurationTests {
     }
 
     @Test
-    void verifySignedRequestWithAssertionConsumerServiceUrlNotMatchingMetadataAcsUrl() {
+    void verifyUnvalidatedSignedRequestWithAssertionConsumerServiceUrlNotMatchingMetadataAcsUrl() {
         val service = getSamlRegisteredServiceForTestShib();
         servicesManager.save(service);
         val authnRequest = mock(AuthnRequest.class);
@@ -135,9 +136,8 @@ class SamlIdPUtilsTests extends BaseSamlIdPConfigurationTests {
         when(authnRequest.getAssertionConsumerServiceURL()).thenReturn(acsUrl);
 
         val adapter = SamlRegisteredServiceMetadataAdaptor.get(samlRegisteredServiceCachingMetadataResolver, service, service.getServiceId());
-        val acs = SamlIdPUtils.determineEndpointForRequest(Pair.of(authnRequest, new MessageContext()), adapter.orElseThrow(), SAMLConstants.SAML2_POST_BINDING_URI);
-        assertNotNull(acs);
-        assertEquals(acsUrl, acs.getLocation());
+        assertThrows(SamlException.class, () -> SamlIdPUtils.determineEndpointForRequest(
+            Pair.of(authnRequest, new MessageContext()), adapter.orElseThrow(), SAMLConstants.SAML2_POST_BINDING_URI));
     }
 
     @Test
@@ -201,7 +201,7 @@ class SamlIdPUtilsTests extends BaseSamlIdPConfigurationTests {
     }
 
     @Test
-    void verifySignedRequestWithEmbeddedSignature() {
+    void verifyValidatedSignedRequestWithEmbeddedSignature() {
         val service = getSamlRegisteredServiceForTestShib();
         servicesManager.save(service);
         val authnRequest = mock(AuthnRequest.class);
@@ -217,6 +217,7 @@ class SamlIdPUtilsTests extends BaseSamlIdPConfigurationTests {
         val binding = context.ensureSubcontext(SAMLBindingContext.class);
         binding.setHasBindingSignature(true);
         binding.setRelayState(UUID.randomUUID().toString());
+        context.ensureSubcontext(SAMLPeerEntityContext.class).setAuthenticated(true);
 
         val adapter = SamlRegisteredServiceMetadataAdaptor.get(samlRegisteredServiceCachingMetadataResolver, service, service.getServiceId());
         val acs = SamlIdPUtils.determineEndpointForRequest(Pair.of(authnRequest, context), adapter.orElseThrow(), SAMLConstants.SAML2_POST_BINDING_URI);

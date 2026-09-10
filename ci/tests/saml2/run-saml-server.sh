@@ -70,6 +70,7 @@ docker run --quiet  -d --rm --name=simplesamlphp-idp -p 9443:8080 \
   -e IDP_SIGNING_CERTIFICATE="${IDP_SIGNING_CERTIFICATE}" \
   -e IDP_ENTITYID="${IDP_ENTITYID}" \
   -e SP_PASSIVE_AUTHN="${SP_PASSIVE_AUTHN}" \
+  -e SIGN_LOGOUT_MESSAGES="${SIGN_LOGOUT_MESSAGES}" \
   -e DISABLE_REDIRECT_BINDING="${DISABLE_REDIRECT_BINDING}" \
   -v $TMPDIR/saml.crt:/var/www/simplesamlphp/cert/saml.crt \
   -v $TMPDIR/saml.pem:/var/www/simplesamlphp/cert/saml.pem \

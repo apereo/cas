@@ -10,6 +10,8 @@ import lombok.Data;
 import lombok.val;
 import org.pac4j.core.profile.UserProfile;
 import tools.jackson.databind.ObjectMapper;
+import tools.jackson.databind.annotation.JsonSerialize;
+import tools.jackson.databind.ser.std.ToStringSerializer;
 
 /**
  * This is {@link UmaResourceRegistrationRequest}.
@@ -25,6 +27,7 @@ public class UmaResourceRegistrationRequest implements Serializable {
     @Serial
     private static final long serialVersionUID = 3614209506339611242L;
     @JsonProperty("id")
+    @JsonSerialize(using = ToStringSerializer.class)
     private long id;
 
     @JsonProperty

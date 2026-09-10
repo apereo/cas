@@ -7,7 +7,6 @@ import org.apereo.cas.audit.AuditableActions;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
-import lombok.Setter;
 import org.apereo.inspektr.audit.annotation.Audit;
 import jakarta.servlet.http.HttpServletRequest;
 
@@ -18,15 +17,12 @@ import jakarta.servlet.http.HttpServletRequest;
  * @since 6.1.0
  */
 @Getter
-@Setter
 @NoArgsConstructor(force = true)
 @RequiredArgsConstructor
 public class ChainingCasProtocolValidationSpecification implements CasProtocolValidationSpecification {
     private final List<CasProtocolValidationSpecification> specifications = new ArrayList<>();
 
     private final boolean canBeSatisfiedByAnySpecification;
-
-    private boolean renew;
 
     @Audit(
         action = AuditableActions.PROTOCOL_SPECIFICATION_VALIDATE,
@@ -37,18 +33,27 @@ public class ChainingCasProtocolValidationSpecification implements CasProtocolVa
         if (this.canBeSatisfiedByAnySpecification) {
             return this.specifications
                 .stream()
-                .peek(spec -> spec.setRenew(this.renew))
                 .anyMatch(spec -> spec.isSatisfiedBy(assertion, request));
         }
         return this.specifications.stream()
-            .peek(spec -> spec.setRenew(this.renew))
             .allMatch(spec -> spec.isSatisfiedBy(assertion, request));
     }
 
     @Override
     public void reset() {
         this.specifications.forEach(CasProtocolValidationSpecification::reset);
-        renew = false;
+    }
+
+    /**
+     * {@inheritDoc}
+     * <p>
+     * Forwarded to the chained specifications. This chain is typically a shared singleton, so it
+     * must not hold per-request state; the {@code renew} value carried by a protocol request is
+     * resolved from the request itself when the specification is evaluated.
+     */
+    @Override
+    public void setRenew(final boolean value) {
+        this.specifications.forEach(spec -> spec.setRenew(value));
     }
 
     /**

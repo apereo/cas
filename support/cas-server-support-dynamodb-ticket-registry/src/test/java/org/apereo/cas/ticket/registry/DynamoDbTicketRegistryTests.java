@@ -32,6 +32,8 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.time.StopWatch;
 import org.junit.jupiter.api.RepeatedTest;
 import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.parallel.Execution;
+import org.junit.jupiter.api.parallel.ExecutionMode;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.ImportAutoConfiguration;
@@ -56,6 +58,11 @@ import static org.junit.jupiter.api.Assertions.*;
         "cas.ticket.registry.dynamo-db.drop-tables-on-startup=true",
         "cas.ticket.registry.dynamo-db.local-instance=true",
         "cas.ticket.registry.dynamo-db.region=us-east-1",
+        "cas.ticket.registry.dynamo-db.service-tickets-table-name=registryServiceTickets",
+        "cas.ticket.registry.dynamo-db.proxy-tickets-table-name=registryProxyTickets",
+        "cas.ticket.registry.dynamo-db.ticket-granting-tickets-table-name=registryTicketGrantingTickets",
+        "cas.ticket.registry.dynamo-db.proxy-granting-tickets-table-name=registryProxyGrantingTickets",
+        "cas.ticket.registry.dynamo-db.transient-session-tickets-table-name=registryTransientSessionTickets",
         "cas.authn.oauth.access-token.storage-name=test-oauthAccessTokensCache",
         "cas.authn.oauth.refresh-token.storage-name=test-oauthRefreshTokensCache",
         "cas.authn.oauth.code.storage-name=test-oauthCodesCache",
@@ -64,6 +71,7 @@ import static org.junit.jupiter.api.Assertions.*;
     })
 @EnabledIfListeningOnPort(port = 8000)
 @Getter
+@Execution(ExecutionMode.SAME_THREAD)
 class DynamoDbTicketRegistryTests extends BaseTicketRegistryTests {
     private static final int COUNT = 250;
 

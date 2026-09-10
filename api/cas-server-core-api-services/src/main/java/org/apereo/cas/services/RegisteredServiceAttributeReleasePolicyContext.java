@@ -5,7 +5,7 @@ import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.authentication.principal.Service;
 import lombok.Builder;
 import lombok.Getter;
-import lombok.experimental.SuperBuilder;
+import lombok.SuperBuilder;
 import org.springframework.context.ApplicationContext;
 import jakarta.validation.constraints.NotNull;
 

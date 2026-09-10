@@ -5,7 +5,7 @@ import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.util.DigestUtils;
 import org.apereo.cas.util.EncodingUtils;
 import lombok.Getter;
-import lombok.experimental.SuperBuilder;
+import lombok.SuperBuilder;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.codec.digest.MessageDigestAlgorithms;

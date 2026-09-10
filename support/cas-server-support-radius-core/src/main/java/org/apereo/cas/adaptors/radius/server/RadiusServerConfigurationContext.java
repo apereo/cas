@@ -6,8 +6,8 @@ import org.apereo.cas.adaptors.radius.RadiusProtocol;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
+import lombok.SuperBuilder;
 import lombok.ToString;
-import lombok.experimental.SuperBuilder;
 
 /**
  * This is {@link RadiusServerConfigurationContext}.

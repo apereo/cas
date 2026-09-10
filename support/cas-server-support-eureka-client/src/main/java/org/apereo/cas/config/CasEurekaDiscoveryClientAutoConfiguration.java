@@ -34,13 +34,13 @@ public class CasEurekaDiscoveryClientAutoConfiguration {
     public AbstractDiscoveryClientOptionalArgs restClientDiscoveryClientOptionalArgs(
         final ConfigurableApplicationContext applicationContext,
         final TlsProperties tlsProperties,
-        final TimeoutProperties restTemplateTimeoutProperties,
+        final TimeoutProperties restClientTimeoutProperties,
         @Qualifier(CasSSLContext.BEAN_NAME)
         final CasSSLContext casSslContext,
         final ObjectProvider<RestClient.Builder> restClientBuilderProvider) throws Exception {
         val customizers = new HashSet<>(applicationContext.getBeansOfType(
             EurekaClientHttpRequestFactorySupplier.RequestConfigCustomizer.class).values());
-        val factorySupplier = new DefaultEurekaClientHttpRequestFactorySupplier(restTemplateTimeoutProperties, customizers);
+        val factorySupplier = new DefaultEurekaClientHttpRequestFactorySupplier(restClientTimeoutProperties, customizers);
         val result = new RestClientDiscoveryClientOptionalArgs(factorySupplier,
             () -> restClientBuilderProvider.getIfAvailable(RestClient::builder));
 

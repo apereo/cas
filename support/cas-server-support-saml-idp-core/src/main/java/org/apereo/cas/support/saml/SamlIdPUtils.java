@@ -18,7 +18,6 @@ import org.jooq.lambda.Unchecked;
 import org.jspecify.annotations.Nullable;
 import org.opensaml.messaging.context.MessageContext;
 import org.opensaml.saml.common.SAMLObject;
-import org.opensaml.saml.common.binding.SAMLBindingSupport;
 import org.opensaml.saml.common.messaging.context.SAMLEndpointContext;
 import org.opensaml.saml.common.messaging.context.SAMLPeerEntityContext;
 import org.opensaml.saml.common.profile.logic.EntityAttributesPredicate;
@@ -137,7 +136,8 @@ public class SamlIdPUtils {
             acsFromRequest, acsFromMetadata, binding);
 
         if (acsFromRequest != null) {
-            if (!authnRequest.isSigned() && !SAMLBindingSupport.isMessageSigned(authenticationContext)) {
+            val peerEntityContext = authenticationContext.getSubcontext(SAMLPeerEntityContext.class);
+            if (peerEntityContext == null || !peerEntityContext.isAuthenticated()) {
                 val locations = StringUtils.isNotBlank(binding)
                     ? adaptor.getAssertionConsumerServiceLocations(binding)
                     : adaptor.getAssertionConsumerServiceLocations();
@@ -403,5 +403,4 @@ public class SamlIdPUtils {
         return entityAttributes;
     }
 }
-
 

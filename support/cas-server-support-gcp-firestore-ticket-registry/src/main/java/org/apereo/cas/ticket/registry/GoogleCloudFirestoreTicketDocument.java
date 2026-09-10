@@ -10,7 +10,7 @@ import com.google.cloud.spring.data.firestore.Document;
 import com.google.cloud.spring.data.firestore.mapping.UpdateTime;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.experimental.SuperBuilder;
+import lombok.SuperBuilder;
 
 /**
  * This is {@link GoogleCloudFirestoreTicketDocument}.

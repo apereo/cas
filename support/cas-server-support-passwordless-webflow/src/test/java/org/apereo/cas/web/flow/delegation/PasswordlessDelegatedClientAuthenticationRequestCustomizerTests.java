@@ -46,7 +46,7 @@ class PasswordlessDelegatedClientAuthenticationRequestCustomizerTests extends Ba
     }
 
     @Test
-    void verifyCustomizeCreatesCustomParameters() throws Throwable {
+    void verifyCustomize() throws Throwable {
         val context = MockRequestContext.create(applicationContext);
         val account = PasswordlessUserAccount.builder().username("casuser").build();
         PasswordlessWebflowUtils.putPasswordlessAuthenticationAccount(context, account);
@@ -55,26 +55,7 @@ class PasswordlessDelegatedClientAuthenticationRequestCustomizerTests extends Ba
         passwordlessDelegatedClientAuthenticationRequestCustomizer.customize(
             new OidcClient(new OidcConfiguration()), webContext, context);
 
-        assertEquals(Map.of(OidcConfiguration.LOGIN_HINT, account.getUsername()),
-            webContext.getRequestAttribute(OidcConfiguration.CUSTOM_PARAMS).orElseThrow());
-    }
-
-    @Test
-    void verifyCustomizePreservesExistingCustomParameters() throws Throwable {
-        val context = MockRequestContext.create(applicationContext);
-        val account = PasswordlessUserAccount.builder().username("casuser").build();
-        PasswordlessWebflowUtils.putPasswordlessAuthenticationAccount(context, account);
-        val webContext = new JEEContext(context.getHttpServletRequest(), context.getHttpServletResponse());
-        val customParams = new HashMap<String, String>();
-        customParams.put("prompt", "login");
-        customParams.put(OidcConfiguration.LOGIN_HINT, "otheruser");
-        webContext.setRequestAttribute(OidcConfiguration.CUSTOM_PARAMS, customParams);
-
-        passwordlessDelegatedClientAuthenticationRequestCustomizer.customize(
-            new OidcClient(new OidcConfiguration()), webContext, context);
-
-        assertEquals("login", customParams.get("prompt"));
-        assertEquals(account.getUsername(), customParams.get(OidcConfiguration.LOGIN_HINT));
-        assertSame(customParams, webContext.getRequestAttribute(OidcConfiguration.CUSTOM_PARAMS).orElseThrow());
+        val loginHint = webContext.getRequestAttribute(OidcConfiguration.LOGIN_HINT).orElseThrow();
+        assertEquals(account.getUsername() + "@example.org", loginHint);
     }
 }

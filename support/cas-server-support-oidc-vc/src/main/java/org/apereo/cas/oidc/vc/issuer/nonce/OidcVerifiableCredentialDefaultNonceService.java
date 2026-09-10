@@ -34,10 +34,25 @@ public class OidcVerifiableCredentialDefaultNonceService implements OidcVerifiab
     }
 
     @Override
-    public void remove(final String nonce) {
-        if (StringUtils.isNotBlank(nonce)) {
-            FunctionUtils.doUnchecked(_ -> configurationContext.getTicketRegistry().deleteTicket(nonce));
-        }
+    public int remove(final String nonce) {
+        return StringUtils.isNotBlank(nonce)
+            ? Objects.requireNonNull(FunctionUtils.doAndHandle(() -> configurationContext.getTicketRegistry().deleteTicket(nonce)))
+            : 0;
+    }
+
+    @Override
+    public boolean consume(final String nonce) {
+        return FunctionUtils.doUnchecked(() -> {
+            if (StringUtils.isBlank(nonce)) {
+                return false;
+            }
+            val ticket = configurationContext.getTicketRegistry().getTicket(nonce);
+            if (ticket == null || ticket.isExpired()) {
+                LOGGER.debug("Nonce [{}] is unknown or has expired", nonce);
+                return false;
+            }
+            return remove(nonce) > 0;
+        });
     }
 
     @Override

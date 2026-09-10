@@ -16,9 +16,11 @@ import org.apereo.cas.util.http.HttpClient;
 import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
 import org.apereo.cas.util.spring.boot.SpringBootTestAutoConfigurations;
 import com.duosecurity.Client;
+import com.duosecurity.client.Http;
 import com.github.benmanes.caffeine.cache.Cache;
 import com.github.benmanes.caffeine.cache.Caffeine;
 import lombok.val;
+import okhttp3.OkHttpClient;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -27,6 +29,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.web.WebProperties;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.util.ReflectionUtils;
 import tools.jackson.databind.ObjectMapper;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
@@ -153,6 +156,9 @@ class DuoSecurityAuthenticationServiceTests {
             val results = service.authenticate(token);
             assertTrue(results.isSuccess());
             assertEquals(results.getUsername(), token.getId());
+            assertTrue(service.authenticate(token).isSuccess());
+            assertEquals(2, service.getDuoHttpClients().size());
+            assertSame(service.getDuoHttpClients().getFirst(), service.getDuoHttpClients().getLast());
         }
     }
 
@@ -195,6 +201,7 @@ class DuoSecurityAuthenticationServiceTests {
     }
 
     private static class MockDuoSecurityAuthenticationService extends BaseDuoSecurityAuthenticationService {
+        private final List<OkHttpClient> duoHttpClients = new ArrayList<>();
 
         MockDuoSecurityAuthenticationService(final DuoSecurityMultifactorAuthenticationProperties properties,
                                              final HttpClient httpClient,
@@ -217,6 +224,18 @@ class DuoSecurityAuthenticationServiceTests {
             when(client.getDuoSecretKey()).thenReturn(properties.getDuoSecretKey());
             when(client.getInstance()).thenReturn(mock(Client.class));
             return client;
+        }
+
+        @Override
+        protected void configureHttpRequest(final Http request) {
+            super.configureHttpRequest(request);
+            val field = ReflectionUtils.findField(Http.class, HttpClient.BEAN_NAME_HTTPCLIENT);
+            ReflectionUtils.makeAccessible(Objects.requireNonNull(field));
+            duoHttpClients.add((OkHttpClient) ReflectionUtils.getField(field, request));
+        }
+
+        List<OkHttpClient> getDuoHttpClients() {
+            return duoHttpClients;
         }
 
         @Override

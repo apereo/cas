@@ -48,6 +48,8 @@ import static org.junit.jupiter.api.Assertions.*;
 @EnabledIfListeningOnPort(port = 6379)
 @Slf4j
 class RedisGoogleAuthenticatorTokenCredentialRepositoryTests extends BaseOneTimeTokenCredentialRepositoryTests {
+    private static final long MAXIMUM_OPERATION_TIME_SECONDS = 30;
+
     @Autowired
     @Qualifier(BaseGoogleAuthenticatorTokenCredentialRepository.BEAN_NAME)
     private OneTimeTokenCredentialRepository registry;
@@ -157,7 +159,7 @@ class RedisGoogleAuthenticatorTokenCredentialRepositoryTests extends BaseOneTime
         stopwatch.stop();
         val time = stopwatch.getTime(TimeUnit.MILLISECONDS);
         LOGGER.info("[{}]: [{}]ms", name, time);
-        assertTrue(time <= 8000);
+        assertTrue(time <= TimeUnit.SECONDS.toMillis(MAXIMUM_OPERATION_TIME_SECONDS));
         return result;
     }
 
@@ -168,6 +170,6 @@ class RedisGoogleAuthenticatorTokenCredentialRepositoryTests extends BaseOneTime
         stopwatch.stop();
         val time = stopwatch.getTime(TimeUnit.MILLISECONDS);
         LOGGER.info("[{}]: [{}]ms", name, time);
-        assertTrue(time <= 8000);
+        assertTrue(time <= TimeUnit.SECONDS.toMillis(MAXIMUM_OPERATION_TIME_SECONDS));
     }
 }

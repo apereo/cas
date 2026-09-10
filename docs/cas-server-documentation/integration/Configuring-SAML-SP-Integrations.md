@@ -77,7 +77,7 @@ The following SAML SP integrations, as samples, are provided by CAS:
 <a href="http://server.arcgis.com/en/portal/latest/administer/linux/configuring-a-saml-compliant-identity-provider-with-your-portal.htm">
 <img alt="Service provider logo" src="https://user-images.githubusercontent.com/1205228/233797015-9bc9a9e1-d3e7-4d70-8d1c-2ea59479bada.png" height="48" width="130"></a>
 
-<a href="https://helpx.adobe.com/enterprise/kb/configure_shibboleth_idp_for_use_with_Adobe_SSO.html">
+<a href="javascript:void(0)">
 <img alt="Service provider logo" src="https://user-images.githubusercontent.com/1205228/233797023-8d3dd298-d35e-474f-9692-e3a268e83957.png" height="48" width="90"></a>
 
 <a href="javascript:void(0)">

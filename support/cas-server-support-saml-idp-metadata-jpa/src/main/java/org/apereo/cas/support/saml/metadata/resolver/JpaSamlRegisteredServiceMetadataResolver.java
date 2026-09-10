@@ -51,7 +51,12 @@ public class JpaSamlRegisteredServiceMetadataResolver extends BaseSamlRegistered
         resourceResolverName = AuditResourceResolvers.SAML2_METADATA_RESOLUTION_RESOURCE_RESOLVER)
     @Override
     public Collection<? extends MetadataResolver> resolve(final SamlRegisteredService service, final CriteriaSet criteriaSet) {
-        val documents = this.entityManager.createQuery(SELECT_QUERY, SamlMetadataDocument.class).getResultList();
+        val documents = getEntityIdFromCriteriaSet(criteriaSet)
+            .map(entityId -> this.entityManager
+                .createQuery(SELECT_QUERY + "WHERE r.entityId = :entityId", SamlMetadataDocument.class)
+                .setParameter("entityId", entityId)
+                .getResultList())
+            .orElseGet(() -> this.entityManager.createQuery(SELECT_QUERY, SamlMetadataDocument.class).getResultList());
         return documents
             .stream()
             .map(doc -> buildMetadataResolverFrom(service, doc))
@@ -82,7 +87,7 @@ public class JpaSamlRegisteredServiceMetadataResolver extends BaseSamlRegistered
 
     @Override
     public SamlMetadataDocument store(final SamlMetadataDocument document) {
-        return this.entityManager.merge(document);
+        return this.entityManager.merge(prepareMetadataDocument(document, false));
     }
 
     @Override

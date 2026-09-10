@@ -80,7 +80,8 @@ public class LdapAcceptableUsagePolicyRepository extends BaseAcceptableUsagePoli
             LdapUtils.LDAP_SEARCH_FILTER_DEFAULT_PARAM_NAME,
             CollectionUtils.wrap(id));
         LOGGER.debug("Constructed LDAP filter [{}]", filter);
-        val connectionFactory = new LdapConnectionFactory(connectionFactoryList.get(ldap.getLdapUrl()));
+        val connectionFactory = new LdapConnectionFactory(
+            connectionFactoryList.get(ldap.toStableIdentifier()));
         val response = connectionFactory.executeSearchOperation(ldap.getBaseDn(), filter, ldap.getPageSize());
         if (LdapUtils.containsResultEntry(response)) {
             LOGGER.debug("LDAP query located an entry for [{}] and responded with [{}]", id, response);
@@ -114,8 +115,6 @@ public class LdapAcceptableUsagePolicyRepository extends BaseAcceptableUsagePoli
 
     @Override
     public void destroy() {
-        connectionFactoryList.forEach((ldap, connectionFactory) ->
-            connectionFactory.close()
-        );
+        connectionFactoryList.values().forEach(ConnectionFactory::close);
     }
 }

@@ -30,6 +30,9 @@ SAML service definitions must then be designed as follows to allow CAS to fetch 
 }
 ```
 
+CAS records the service provider entity identifier in the `entityId` attribute and queries it through
+the `entityIdIndex` global secondary index. Deployments that manage the table outside CAS must define both.
+
 <div class="alert alert-info">:information_source: <strong>Metadata Location</strong><p>
 The metadata location in the registration record above needs to be specified as <code>dynamodb://</code> to signal to CAS that 
 SAML metadata for registered service provider must be fetched from Amazon DynamoDb defined in CAS configuration. 

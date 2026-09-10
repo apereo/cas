@@ -6,6 +6,7 @@ import org.apereo.cas.support.events.logout.CasRequestSingleLogoutEvent;
 import org.apereo.cas.support.events.ticket.CasTicketGrantingTicketDestroyedEvent;
 import org.apereo.cas.test.CasTestExtension;
 import org.apereo.cas.ticket.DefaultTicketCatalog;
+import org.apereo.cas.ticket.Ticket;
 import org.apereo.cas.ticket.expiration.HardTimeoutExpirationPolicy;
 import org.apereo.cas.ticket.serialization.TicketSerializationManager;
 import org.apereo.cas.util.lock.LockRepository;
@@ -76,7 +77,7 @@ class DefaultTicketRegistryCleanerTests {
         val ticketRegistry = mock(TicketRegistry.class);
         val closed = new AtomicBoolean(false);
         val stream = Stream.<Ticket>empty().onClose(() -> closed.set(true));
-        when(ticketRegistry.stream()).thenReturn(stream);
+        doReturn(stream).when(ticketRegistry).stream();
         val cleaner = new DefaultTicketRegistryCleaner(LockRepository.noOp(), applicationContext, ticketRegistry);
         cleaner.clean();
         assertTrue(closed.get());

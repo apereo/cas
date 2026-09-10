@@ -24,6 +24,8 @@ public class OAuth20DefaultDeviceToken extends AbstractTicket implements OAuth20
 
     private final Service service;
 
+    private final String clientId;
+
     @Setter
     private String userCode;
 
@@ -33,9 +35,11 @@ public class OAuth20DefaultDeviceToken extends AbstractTicket implements OAuth20
     public OAuth20DefaultDeviceToken(final String id, final Service service,
                                      final ExpirationPolicy expirationPolicy,
                                      @JsonSetter(nulls = Nulls.AS_EMPTY)
-                                     final Collection<String> scopes) {
+                                     final Collection<String> scopes,
+                                     final String clientId) {
         super(id, expirationPolicy);
         this.service = service;
+        this.clientId = clientId;
         this.scopes.addAll(scopes);
     }
 

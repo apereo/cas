@@ -61,8 +61,42 @@ class OidcVerifiableCredentialsPreAuthorizationCodeGrantRequestValidatorTests ex
     @Test
     void verifyValidPreAuthorizationCode() throws Throwable {
         val preAuthorizationCode = issuePreAuthorizationCode();
-        val context = createContext(preAuthorizationCode);
+        val ticket = (TransientSessionTicket) transactionService.fetchPreAuthorizationCode(preAuthorizationCode);
+        val context = createContext(preAuthorizationCode,
+            ticket.getPropertyAsString(OidcVerifiableCredentialTransactionService.PROPERTY_TRANSACTION_CODE));
         assertTrue(oidcVerifiableCredentialsPreAuthorizationCodeGrantRequestValidator.validate(context));
+    }
+
+    @Test
+    void verifyMissingTransactionCodeIsRejected() throws Throwable {
+        val preAuthorizationCode = issuePreAuthorizationCode();
+        val context = createContext(preAuthorizationCode);
+        assertFalse(oidcVerifiableCredentialsPreAuthorizationCodeGrantRequestValidator.validate(context));
+    }
+
+    @Test
+    void verifyTransactionIdIsNotAcceptedAsTransactionCode() throws Throwable {
+        val registeredService = getOidcRegisteredService();
+        val transaction = (TransientSessionTicket) transactionService.issue(
+            registeredService.getClientId(), "casuser", List.of("UniversityDegreeCredential"));
+        assertNotNull(transaction);
+        val preAuthorizationCode = transaction.getProperty("preAuthorizedCode", String.class);
+        assertNotNull(preAuthorizationCode);
+
+        val transactionCode = transaction.getPropertyAsString(
+            OidcVerifiableCredentialTransactionService.PROPERTY_TRANSACTION_CODE);
+        assertNotNull(transactionCode);
+        assertNotEquals(transaction.getId(), transactionCode);
+
+        val context = createContext(preAuthorizationCode, transaction.getId());
+        assertFalse(oidcVerifiableCredentialsPreAuthorizationCodeGrantRequestValidator.validate(context));
+    }
+
+    @Test
+    void verifyInvalidTransactionCode() throws Throwable {
+        val preAuthorizationCode = issuePreAuthorizationCode();
+        val context = createContext(preAuthorizationCode, "invalid-transaction-code");
+        assertFalse(oidcVerifiableCredentialsPreAuthorizationCodeGrantRequestValidator.validate(context));
     }
 
     @Test
@@ -87,10 +121,9 @@ class OidcVerifiableCredentialsPreAuthorizationCodeGrantRequestValidatorTests ex
     }
 
     @Test
-    void verifyMissingPreAuthorizationCode() {
+    void verifyMissingPreAuthorizationCode() throws Throwable {
         val context = createContext(null);
-        assertThrows(NoSuchElementException.class,
-            () -> oidcVerifiableCredentialsPreAuthorizationCodeGrantRequestValidator.validate(context));
+        assertFalse(oidcVerifiableCredentialsPreAuthorizationCodeGrantRequestValidator.validate(context));
     }
 
     private String issuePreAuthorizationCode() {
@@ -104,10 +137,18 @@ class OidcVerifiableCredentialsPreAuthorizationCodeGrantRequestValidatorTests ex
     }
 
     private JEEContext createContext(@Nullable final String preAuthorizationCode) {
+        return createContext(preAuthorizationCode, null);
+    }
+
+    private JEEContext createContext(@Nullable final String preAuthorizationCode,
+                                     @Nullable final String transactionCode) {
         val request = new MockHttpServletRequest();
         request.addParameter(OAuth20Constants.GRANT_TYPE, OAuth20GrantTypes.PRE_AUTHORIZED_CODE.getType());
         if (preAuthorizationCode != null) {
             request.addParameter(OidcConstants.PRE_AUTHORIZED_CODE, preAuthorizationCode);
+        }
+        if (transactionCode != null) {
+            request.addParameter(OidcConstants.TX_CODE, transactionCode);
         }
         val context = new JEEContext(request, new MockHttpServletResponse());
 

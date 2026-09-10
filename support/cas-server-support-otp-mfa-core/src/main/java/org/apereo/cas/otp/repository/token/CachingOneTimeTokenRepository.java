@@ -39,6 +39,10 @@ public class CachingOneTimeTokenRepository extends BaseOneTimeTokenRepository<On
             }
             token.assignIdIfNecessary();
             val tokens = new ArrayList<OneTimeToken>(1);
+            val existingTokens = storage.getIfPresent(token.getUserId());
+            if (existingTokens != null) {
+                tokens.addAll(existingTokens);
+            }
             tokens.add(token);
             LOGGER.debug("Storing new token [{}] for user [{}]", token, token.getUserId());
             storage.put(token.getUserId(), tokens);

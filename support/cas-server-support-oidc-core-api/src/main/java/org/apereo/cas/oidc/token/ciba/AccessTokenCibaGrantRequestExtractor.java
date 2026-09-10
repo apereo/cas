@@ -53,6 +53,9 @@ public class AccessTokenCibaGrantRequestExtractor extends BaseAccessTokenGrantRe
         val cibaFactory = (OidcCibaRequestFactory) configurationContext.getTicketFactory().get(OidcCibaRequest.class);
         val decodedId = cibaFactory.decodeId(authRequestId);
         val cibaRequest = configurationContext.getTicketRegistry().getTicket(decodedId, OidcCibaRequest.class);
+        if (cibaRequest == null || !Objects.equals(cibaRequest.getClientId(), clientId)) {
+            throw new InvalidCibaRequestException("CIBA request does not belong to the authenticated client");
+        }
 
         val audit = AuditableContext.builder()
             .service(service)
@@ -84,6 +87,7 @@ public class AccessTokenCibaGrantRequestExtractor extends BaseAccessTokenGrantRe
             .scopes(cibaRequest.getScopes())
             .userProfile(profile)
             .clientId(registeredService.getClientId())
+            .cibaRequestId(authRequestId)
             .generateRefreshToken(registeredService.isGenerateRefreshToken())
             .build();
 

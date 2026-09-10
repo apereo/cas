@@ -22,6 +22,10 @@ public enum SamlRegisteredServiceMetadataColumns {
      */
     NAME("name"),
     /**
+     * Entity identifier column.
+     */
+    ENTITY_ID("entityId"),
+    /**
      * Value column.
      */
     VALUE("value"),

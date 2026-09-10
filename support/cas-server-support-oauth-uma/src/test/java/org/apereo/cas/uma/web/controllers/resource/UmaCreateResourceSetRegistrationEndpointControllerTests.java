@@ -48,7 +48,9 @@ class UmaCreateResourceSetRegistrationEndpointControllerTests extends BaseUmaEnd
         assertTrue(model.containsKey("entity"));
         assertTrue(model.containsKey("resourceId"));
 
-        val resourceId = ((Number) model.get("resourceId")).longValue();
+        val resourceId = parseIdentifier(model.get("resourceId"));
+        val entity = (Map) model.get("entity");
+        assertEquals(String.valueOf(resourceId), entity.get("id"));
         result = performUmaRequest(HttpMethod.GET,
             OAuth20Constants.UMA_RESOURCE_SET_REGISTRATION_URL + '/' + resourceId,
             results.getLeft(), results.getMiddle());
@@ -65,5 +67,17 @@ class UmaCreateResourceSetRegistrationEndpointControllerTests extends BaseUmaEnd
         assertTrue(model.containsKey("code"));
         assertTrue(model.containsKey("ticket"));
 
+    }
+
+    @Test
+    void verifyResourceIdentifierIsAssignedByServer() throws Throwable {
+        val requestedId = 12345L;
+        val results = authenticateUmaRequestWithProtectionScope();
+        val body = createUmaResourceRegistrationRequest(requestedId).toJson();
+        val result = performUmaRequest(HttpMethod.POST, OAuth20Constants.UMA_RESOURCE_SET_REGISTRATION_URL,
+            body, results.getLeft(), results.getMiddle());
+        assertEquals(HttpStatus.OK.value(), result.getResponse().getStatus());
+        val model = getMappedResponseBody(result);
+        assertNotEquals(requestedId, parseIdentifier(model.get("resourceId")));
     }
 }

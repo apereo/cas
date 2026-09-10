@@ -130,10 +130,16 @@ public class CasConfigurationPropertiesValidator {
 
     /**
      * Print report for binding results and failures.
+     * Resolving the configuration metadata repository collects and parses every
+     * {@code spring-configuration-metadata.json} on the classpath, so it is only requested when
+     * there is actually something to report on.
      *
      * @param results the results
      */
-    public void printReport(final List<CasConfigurationPropertyBindingResult> results) {
+    public void printReport(final @Nullable List<CasConfigurationPropertyBindingResult> results) {
+        if (results == null || results.isEmpty()) {
+            return;
+        }
         val metadataRepository = applicationContext.getBean(CasConfigurationMetadataRepository.BEAN_NAME, CasConfigurationMetadataRepository.class);
         var messages = results
             .stream()

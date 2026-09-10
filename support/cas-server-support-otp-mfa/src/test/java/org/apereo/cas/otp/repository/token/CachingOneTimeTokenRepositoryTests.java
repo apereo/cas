@@ -41,12 +41,15 @@ class CachingOneTimeTokenRepositoryTests extends BaseOneTimeTokenRepositoryTests
     @Order(1)
     void verifyTokenSave() {
         val casuser = UUID.randomUUID().toString();
-        val token = new OneTimeToken(RandomUtils.nextInt(), casuser);
+        val token = new OneTimeToken(123456, casuser);
         repository.store(token);
         assertNull(repository.store(token));
-        assertEquals(1, repository.count(casuser));
+        val anotherToken = new OneTimeToken(654321, casuser);
+        assertNotNull(repository.store(anotherToken));
+        assertEquals(2, repository.count(casuser));
         repository.clean();
         assertTrue(repository.exists(casuser, token.getToken()));
+        assertTrue(repository.exists(casuser, anotherToken.getToken()));
         repository.remove(casuser);
         repository.remove(token.getToken());
         repository.remove(casuser, token.getToken());

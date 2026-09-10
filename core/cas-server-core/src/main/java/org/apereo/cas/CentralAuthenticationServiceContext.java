@@ -14,7 +14,7 @@ import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.util.crypto.CipherExecutor;
 import org.apereo.cas.util.lock.LockRepository;
 import lombok.Getter;
-import lombok.experimental.SuperBuilder;
+import lombok.SuperBuilder;
 import org.springframework.context.ConfigurableApplicationContext;
 
 /**

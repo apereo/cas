@@ -15,13 +15,14 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
-import org.springframework.boot.restclient.RestTemplateBuilder;
+import org.springframework.boot.http.client.ClientHttpRequestFactoryBuilder;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ScopedProxyMode;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
-import org.springframework.web.client.RestTemplate;
+import org.springframework.web.client.RestClient;
+import org.springframework.web.util.DefaultUriBuilderFactory;
 
 /**
  * This is {@link CasRestPasswordManagementAutoConfiguration}.
@@ -39,37 +40,41 @@ public class CasRestPasswordManagementAutoConfiguration {
     @Bean
     @ConditionalOnMissingBean(name = "restPasswordChangeService")
     public PasswordManagementExecutionPlan restPasswordChangeService(
-        @Qualifier("passwordChangeServiceRestTemplate")
-        final RestTemplate passwordChangeServiceRestTemplate,
+        @Qualifier("passwordChangeServiceRestClient")
+        final RestClient passwordChangeServiceRestClient,
         final CasConfigurationProperties casProperties,
         @Qualifier("passwordManagementCipherExecutor")
         final CipherExecutor passwordManagementCipherExecutor,
         @Qualifier(PasswordHistoryService.BEAN_NAME)
         final PasswordHistoryService passwordHistoryService) {
         return () -> new RestPasswordManagementService(passwordManagementCipherExecutor,
-            casProperties, passwordChangeServiceRestTemplate, passwordHistoryService);
+            casProperties, passwordChangeServiceRestClient, passwordHistoryService);
     }
 
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @Bean
-    @ConditionalOnMissingBean(name = "passwordChangeServiceRestTemplate")
-    public RestTemplate passwordChangeServiceRestTemplate(final CasConfigurationProperties casProperties) {
+    @ConditionalOnMissingBean(name = "passwordChangeServiceRestClient")
+    public RestClient passwordChangeServiceRestClient(final CasConfigurationProperties casProperties) {
         val pmRest = casProperties.getAuthn().getPm().getRest();
 
         val username = pmRest.getEndpointUsername();
         val password = pmRest.getEndpointPassword();
 
-        var builder = new RestTemplateBuilder();
-        if (StringUtils.isNotBlank(username) && StringUtils.isNotBlank(password)) {
-            LOGGER.debug("Configuring basic authentication for password management via REST for [{}]", username);
-            builder = builder.basicAuthentication(username, password, StandardCharsets.UTF_8);
-        }
-        builder = builder.defaultHeader(HttpHeaders.ACCEPT, MediaType.APPLICATION_JSON_VALUE)
+        val uriBuilderFactory = new DefaultUriBuilderFactory();
+        uriBuilderFactory.setEncodingMode(DefaultUriBuilderFactory.EncodingMode.URI_COMPONENT);
+        val builder = RestClient.builder()
+            .requestFactory(ClientHttpRequestFactoryBuilder.detect().build())
+            .uriBuilderFactory(uriBuilderFactory);
+        builder.defaultHeader(HttpHeaders.ACCEPT, MediaType.APPLICATION_JSON_VALUE)
             .defaultHeader(HttpHeaders.ACCEPT_CHARSET, StandardCharsets.UTF_8.name());
         for (val entry : pmRest.getHeaders().entrySet()) {
             LOGGER.debug("Configuring header [{}] with value [{}]", entry.getKey(), entry.getValue());
-            builder = builder.defaultHeader(entry.getKey(),
+            builder.defaultHeader(entry.getKey(),
                 org.springframework.util.StringUtils.commaDelimitedListToStringArray(entry.getValue()));
+        }
+        if (StringUtils.isNotBlank(username) && StringUtils.isNotBlank(password)) {
+            LOGGER.debug("Configuring basic authentication for password management via REST for [{}]", username);
+            builder.defaultHeaders(headers -> headers.setBasicAuth(username, password, StandardCharsets.UTF_8));
         }
 
         return builder.build();

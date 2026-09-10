@@ -70,7 +70,7 @@ public class SamlIdPSaml2AttributeQueryProfileHandlerController extends Abstract
             val registeredService = verifySamlRegisteredService(issuer, request);
             val adaptor = getSamlMetadataFacadeFor(registeredService, query);
             val facade = adaptor.orElseThrow(() -> UnauthorizedServiceException.denied("Cannot find metadata linked to %s".formatted(issuer)));
-            verifyAuthenticationContextSignature(ctx, request, query, facade, registeredService);
+            verifySamlProfileRequest(ctx, request, query, facade, registeredService, true);
 
             val nameIdValue = determineNameIdForQuery(query, registeredService, facade);
             val factory = (SamlAttributeQueryTicketFactory) getConfigurationContext().getTicketFactory()
@@ -78,9 +78,9 @@ public class SamlIdPSaml2AttributeQueryProfileHandlerController extends Abstract
             val id = factory.createTicketIdFor(nameIdValue, facade.getEntityId());
             LOGGER.debug("Created ticket id for attribute query [{}]", id);
             val ticket = getConfigurationContext().getTicketRegistry().getTicket(id, SamlAttributeQueryTicket.class);
-            if (ticket == null || ticket.isExpired()) {
+            if (ticket == null || ticket.isExpired() || !Objects.equals(issuer, ticket.getRelyingParty())) {
                 LOGGER.warn("Attribute query ticket [{}] has either expired, or it is linked to "
-                            + "a single sign-on session that is no longer valid and has now expired", id);
+                            + "a different relying party or single sign-on session", id);
                 throw new InvalidTicketException(id);
             }
             val authentication = ticket.getAuthentication();

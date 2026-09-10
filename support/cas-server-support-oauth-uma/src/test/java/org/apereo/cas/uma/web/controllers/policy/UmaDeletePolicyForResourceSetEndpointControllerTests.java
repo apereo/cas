@@ -25,7 +25,7 @@ class UmaDeletePolicyForResourceSetEndpointControllerTests extends BaseUmaEndpoi
         var result = performUmaRequest(HttpMethod.POST, OAuth20Constants.UMA_RESOURCE_SET_REGISTRATION_URL,
             body, results.getLeft(), results.getMiddle());
         var model = getMappedResponseBody(result);
-        val resourceId = ((Number) model.get("resourceId")).longValue();
+        val resourceId = parseIdentifier(model.get("resourceId"));
 
         body = createUmaPolicyRegistrationRequest(getCurrentProfile(results.getLeft(), results.getMiddle())).toJson();
 
@@ -33,7 +33,7 @@ class UmaDeletePolicyForResourceSetEndpointControllerTests extends BaseUmaEndpoi
             body, results.getLeft(), results.getMiddle());
         model = getMappedResponseBody(result);
         val entity = (Map) model.get("entity");
-        val policyId = ((Number) ((Map) ((Collection) entity.get("policies")).iterator().next()).get("id")).longValue();
+        val policyId = parseIdentifier(((Map) ((Collection) entity.get("policies")).iterator().next()).get("id"));
 
         result = performUmaRequest(HttpMethod.DELETE,
             resourceId + "/" + OAuth20Constants.UMA_POLICY_URL + '/' + policyId,

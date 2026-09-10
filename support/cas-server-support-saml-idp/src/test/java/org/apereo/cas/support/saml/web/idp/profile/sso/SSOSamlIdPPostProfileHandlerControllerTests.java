@@ -5,6 +5,7 @@ import org.apereo.cas.authentication.PrincipalException;
 import org.apereo.cas.mock.MockTicketGrantingTicket;
 import org.apereo.cas.services.DefaultRegisteredServiceAccessStrategy;
 import org.apereo.cas.support.saml.BaseSamlIdPConfigurationTests;
+import org.apereo.cas.support.saml.SamlException;
 import org.apereo.cas.support.saml.SamlIdPConstants;
 import org.apereo.cas.support.saml.SamlProtocolConstants;
 import org.apereo.cas.support.saml.SamlUtils;
@@ -76,6 +77,26 @@ class SSOSamlIdPPostProfileHandlerControllerTests extends BaseSamlIdPConfigurati
         val xml = SamlUtils.transformSamlObject(openSamlConfigBean, authnRequest).toString();
         val result = performPostProfileRequest(request, response, EncodingUtils.encodeBase64(xml));
         assertEquals(HttpStatus.FOUND.value(), result.getResponse().getStatus());
+    }
+
+    @Test
+    @Order(2)
+    void verifyPostRequestWithInvalidOptionalSignature() throws Throwable {
+        val request = new MockHttpServletRequest();
+        val response = new MockHttpServletResponse();
+        val adaptor = SamlRegisteredServiceMetadataAdaptor.get(samlRegisteredServiceCachingMetadataResolver,
+            samlRegisteredService, samlRegisteredService.getServiceId()).orElseThrow();
+        assertFalse(adaptor.isAuthnRequestsSigned());
+        val authnRequest = signAuthnRequest(request, response, getAuthnRequest());
+        authnRequest.setAssertionConsumerServiceURL("https://unregistered.example.org/acs");
+        val xml = SamlUtils.transformSamlObject(openSamlConfigBean, authnRequest).toString();
+
+        val result = performPostProfileRequest(request, response, EncodingUtils.encodeBase64(xml));
+        assertEquals(HttpStatus.BAD_REQUEST.value(), result.getResponse().getStatus());
+        assertNotNull(result.getModelAndView());
+        assertEquals(CasWebflowConstants.VIEW_ID_SERVICE_ERROR, result.getModelAndView().getViewName());
+        assertInstanceOf(SamlException.class,
+            result.getModelAndView().getModel().get(CasWebflowConstants.ATTRIBUTE_ERROR_ROOT_CAUSE_EXCEPTION));
     }
 
     @Test

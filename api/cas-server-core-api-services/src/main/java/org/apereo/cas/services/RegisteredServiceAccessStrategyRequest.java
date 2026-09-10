@@ -7,8 +7,8 @@ import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
+import lombok.SuperBuilder;
 import lombok.With;
-import lombok.experimental.SuperBuilder;
 import org.springframework.context.ApplicationContext;
 
 /**

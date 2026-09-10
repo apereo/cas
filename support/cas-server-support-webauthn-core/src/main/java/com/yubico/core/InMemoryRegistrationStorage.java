@@ -10,6 +10,7 @@ import com.github.benmanes.caffeine.cache.Caffeine;
 import com.yubico.data.CredentialRegistration;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 
 @Slf4j
 @Getter
@@ -27,7 +28,11 @@ public class InMemoryRegistrationStorage extends BaseWebAuthnCredentialRepositor
 
     @Override
     public boolean addRegistrationByUsername(final String username, final CredentialRegistration reg) {
-        return FunctionUtils.doUnchecked(() -> storage.get(username.toLowerCase(Locale.ENGLISH), _ -> new HashSet<>()).add(reg));
+        val result = FunctionUtils.doUnchecked(() -> storage.get(username.toLowerCase(Locale.ENGLISH), _ -> new HashSet<>()).add(reg));
+        if (result) {
+            invalidateCredentialIndex();
+        }
+        return result;
     }
 
     @Override
@@ -37,12 +42,18 @@ public class InMemoryRegistrationStorage extends BaseWebAuthnCredentialRepositor
 
     @Override
     public boolean removeRegistrationByUsername(final String username, final CredentialRegistration credentialRegistration) {
-        return FunctionUtils.doUnchecked(() -> storage.get(username.toLowerCase(Locale.ENGLISH), _ -> new HashSet<>()).remove(credentialRegistration));
+        val result = FunctionUtils.doUnchecked(() ->
+            storage.get(username.toLowerCase(Locale.ENGLISH), _ -> new HashSet<>()).remove(credentialRegistration));
+        if (result) {
+            invalidateCredentialIndex();
+        }
+        return result;
     }
 
     @Override
     public boolean removeAllRegistrations(final String username) {
         storage.invalidate(username.toLowerCase(Locale.ENGLISH));
+        invalidateCredentialIndex();
         return true;
     }
 

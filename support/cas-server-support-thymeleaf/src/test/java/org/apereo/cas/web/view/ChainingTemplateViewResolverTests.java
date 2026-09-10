@@ -17,15 +17,45 @@ import static org.mockito.Mockito.*;
  */
 @Tag("Web")
 class ChainingTemplateViewResolverTests {
+
+    private static ChainingTemplateViewResolver chainOver(final boolean delegateCacheable) {
+        val chain = new ChainingTemplateViewResolver();
+        val delegate = new StringTemplateResolver();
+        delegate.setCheckExistence(true);
+        delegate.setCacheable(delegateCacheable);
+        chain.addResolver(delegate);
+        chain.initialize();
+        return chain;
+    }
+
     @Test
     void verifyAction() {
-        val r = new ChainingTemplateViewResolver();
-        val resolver = new StringTemplateResolver();
-        resolver.setCheckExistence(true);
-        r.addResolver(resolver);
-        r.initialize();
-        val res = r.resolveTemplate(mock(IEngineConfiguration.class), "cas",
+        val res = chainOver(true).resolveTemplate(mock(IEngineConfiguration.class), "cas",
             "template", new LinkedHashMap<>());
         assertNotNull(res);
+    }
+
+    @Test
+    void verifyCacheableDelegateResolutionStaysCacheable() {
+        val res = chainOver(true).resolveTemplate(mock(IEngineConfiguration.class), "cas",
+            "template", new LinkedHashMap<>());
+        assertNotNull(res);
+        assertTrue(res.getValidity().isCacheable());
+    }
+
+    @Test
+    void verifyNonCacheableDelegateResolutionStaysNonCacheable() {
+        val res = chainOver(false).resolveTemplate(mock(IEngineConfiguration.class), "cas",
+            "template", new LinkedHashMap<>());
+        assertNotNull(res);
+        assertFalse(res.getValidity().isCacheable());
+    }
+
+    @Test
+    void verifyNoDelegateResolvesToNothing() {
+        val chain = new ChainingTemplateViewResolver();
+        chain.initialize();
+        assertNull(chain.resolveTemplate(mock(IEngineConfiguration.class), "cas",
+            "template", new LinkedHashMap<>()));
     }
 }
