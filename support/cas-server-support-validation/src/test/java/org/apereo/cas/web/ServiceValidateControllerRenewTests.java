@@ -118,13 +118,30 @@ class ServiceValidateControllerRenewTests {
     }
 
     /**
-     * Issue a service ticket off an existing single sign-on session, so the ticket is not
-     * issued from a new login and must never satisfy a {@code renew=true} validation.
+     * Establish a single sign-on session and consume its first service ticket. A ticket is marked
+     * as issued from a new login when credentials were provided <i>or</i> when it is the first
+     * ticket handed out by the ticket-granting ticket, so the first one has to be burned before
+     * this session can produce tickets that a {@code renew=true} validation must reject.
+     *
+     * @return the identifier of the ticket-granting ticket backing the session
      */
-    private String newSingleSignOnServiceTicket() throws Throwable {
+    private String newSingleSignOnSession() throws Throwable {
         val ctx = CoreAuthenticationTestUtils.getAuthenticationResult(getAuthenticationSystemSupport(), SERVICE);
         val ticketGrantingTicket = getCentralAuthenticationService().createTicketGrantingTicket(ctx);
-        return getCentralAuthenticationService().grantServiceTicket(ticketGrantingTicket.getId(), SERVICE, null).getId();
+        getCentralAuthenticationService().grantServiceTicket(ticketGrantingTicket.getId(), SERVICE, ctx);
+        return ticketGrantingTicket.getId();
+    }
+
+    /**
+     * Issue a service ticket off an existing single sign-on session, so the ticket is not issued
+     * from a new login and must never satisfy a {@code renew=true} validation.
+     * <p>
+     * Every ticket gets its own session on purpose. The default session tracking policy only keeps
+     * the most recent ticket per service, and it deletes the previous one from the registry, so a
+     * single session cannot hand out several usable tickets for the same service.
+     */
+    private String newSingleSignOnServiceTicket() throws Throwable {
+        return getCentralAuthenticationService().grantServiceTicket(newSingleSignOnSession(), SERVICE, null).getId();
     }
 
     private String validate(final String ticket, final boolean renew) throws Exception {

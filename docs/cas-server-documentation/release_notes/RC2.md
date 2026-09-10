@@ -147,6 +147,10 @@ security have been strengthened across several flows.
 - The CAS `1.0` [validation response](../ux/User-Interface-Views-CASv1.html) is line-delimited and carries no escaping mechanism.
   Principal identifiers and rendered attribute lines are now stripped of line breaks, so a value that contains a newline
   can no longer forge additional lines in the response.
+- A proxy-granting ticket is now issued only after the service ticket, the validation specification and the
+  authentication context have all been accepted. The `pgtUrl` callback used to be contacted and the proxy-granting
+  ticket minted before any of those checks ran, so presenting a leaked service ticket could drive an outbound request
+  and leave an unused proxy-granting ticket behind even though validation went on to fail.
 - The `renew` parameter presented to the [CAS protocol](../protocol/CAS-Protocol.html) validation endpoints is now
   evaluated per request. Validation specifications are shared components and the requested value used to be assigned
   onto them for the duration of a request, which allowed a concurrent validation request to reset it. A service ticket

@@ -302,12 +302,21 @@ public class DefaultCentralAuthenticationService extends AbstractCentralAuthenti
     @Override
     public Ticket createProxyGrantingTicket(final String serviceTicketId,
                                             final AuthenticationResult authenticationResult) throws Throwable {
-
         val serviceTicket = configurationContext.getTicketRegistry().getTicket(serviceTicketId, ServiceTicket.class);
         if (serviceTicket == null || serviceTicket.isExpired()) {
             LOGGER.debug("ServiceTicket [{}] has expired or cannot be found in the ticket registry", serviceTicketId);
             throw new InvalidTicketException(serviceTicketId);
         }
+        return createProxyGrantingTicket(serviceTicket, authenticationResult);
+    }
+
+    @Audit(
+        action = AuditableActions.PROXY_GRANTING_TICKET,
+        actionResolverName = AuditActionResolvers.CREATE_PROXY_GRANTING_TICKET_RESOLVER,
+        resourceResolverName = AuditResourceResolvers.CREATE_PROXY_GRANTING_TICKET_RESOURCE_RESOLVER)
+    @Override
+    public Ticket createProxyGrantingTicket(final ServiceTicket serviceTicket,
+                                            final AuthenticationResult authenticationResult) throws Throwable {
         val registeredService = (CasModelRegisteredService) configurationContext.getServicesManager()
             .findServiceBy(serviceTicket.getService());
 
@@ -330,7 +339,7 @@ public class DefaultCentralAuthenticationService extends AbstractCentralAuthenti
                     val factory = (ProxyGrantingTicketFactory) configurationContext.getTicketFactory().get(ProxyGrantingTicket.class);
                     val proxyGrantingTicket = factory.create(serviceTicket, authentication);
                     val addedTicket = Objects.requireNonNull(configurationContext.getTicketRegistry().addTicket(proxyGrantingTicket));
-                    LOGGER.debug("Generated proxy granting ticket [{}] based off of [{}]", proxyGrantingTicket, serviceTicketId);
+                    LOGGER.debug("Generated proxy granting ticket [{}] based off of [{}]", proxyGrantingTicket, serviceTicket.getId());
                     if (!serviceTicket.isStateless()) {
                         configurationContext.getTicketRegistry()
                             .updateTicket(Objects.requireNonNull(serviceTicket.getTicketGrantingTicket()));

@@ -84,8 +84,8 @@ class CloudWatchAppenderSpecTests {
             assertDoesNotThrow(appender::initialize);
             verify(logs).createLogGroup(any(CreateLogGroupRequest.class));
             verify(logs).createLogStream(any(CreateLogStreamRequest.class));
-            verify(listener).log(argThat(status -> status.getThrowable() == groupFailure));
-            verify(listener).log(argThat(status -> status.getThrowable() == streamFailure));
+            verify(listener).log(argThat(status -> Objects.equals(status.getThrowable(), groupFailure)));
+            verify(listener).log(argThat(status -> Objects.equals(status.getThrowable(), streamFailure)));
         } finally {
             statusLogger.removeListener(listener);
         }

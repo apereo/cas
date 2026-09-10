@@ -15,6 +15,8 @@ import org.apereo.cas.services.RegexMatchingRegisteredServiceProxyPolicy;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.test.CasTestExtension;
+import org.apereo.cas.ticket.proxy.ProxyGrantingTicket;
+import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.util.MockWebServer;
 import lombok.Getter;
 import lombok.val;
@@ -67,6 +69,10 @@ class ProxyValidateControllerTests {
     @Autowired
     @Qualifier(CentralAuthenticationService.BEAN_NAME)
     private CentralAuthenticationService centralAuthenticationService;
+
+    @Autowired
+    @Qualifier(TicketRegistry.BEAN_NAME)
+    private TicketRegistry ticketRegistry;
 
     @Autowired
     @Qualifier("mockMvc")
@@ -140,5 +146,43 @@ class ProxyValidateControllerTests {
             assertTrue(result.getResponse().getContentAsString().contains("<cas:proxy>%s</cas:proxy>".formatted(service.getId())));
         }
 
+    }
+
+    /**
+     * A proxy-granting ticket must only be issued once the service ticket, the validation
+     * specification and the authentication context have all been accepted. Here the ticket itself is
+     * good but it was not issued from a new login, so a {@code renew=true} validation rejects it and
+     * the supplied {@code pgtUrl} must never earn a proxy-granting ticket.
+     */
+    @Test
+    void verifyNoProxyGrantingTicketWhenValidationFails() throws Throwable {
+        try (val webServer = new MockWebServer(HttpStatus.OK)) {
+            webServer.start();
+            val service = RegisteredServiceTestUtils.getService("http://localhost:%s".formatted(webServer.getPort()));
+            val registeredService = RegisteredServiceTestUtils.getRegisteredService(service.getId(), Map.of());
+            registeredService.setProxyPolicy(new RegexMatchingRegisteredServiceProxyPolicy().setUseServiceId(true));
+            servicesManager.save(registeredService);
+
+            val ctx = CoreAuthenticationTestUtils.getAuthenticationResult(getAuthenticationSystemSupport(), service);
+            val tId = getCentralAuthenticationService().createTicketGrantingTicket(ctx);
+            getCentralAuthenticationService().grantServiceTicket(tId.getId(), service, ctx);
+            val sId = getCentralAuthenticationService().grantServiceTicket(tId.getId(), service, null);
+
+            val proxyGrantingTicketsBefore = countProxyGrantingTickets();
+            val result = mockMvc.perform(get(CasProtocolConstants.ENDPOINT_PROXY_VALIDATE)
+                    .param(CasProtocolConstants.PARAMETER_SERVICE, service.getId())
+                    .param(CasProtocolConstants.PARAMETER_TICKET, sId.getId())
+                    .param(CasProtocolConstants.PARAMETER_RENEW, "true")
+                    .param(CasProtocolConstants.PARAMETER_PROXY_CALLBACK_URL, service.getId()))
+                .andExpect(status().isOk())
+                .andReturn();
+            assertTrue(result.getResponse().getContentAsString().contains("authenticationFailure"));
+            assertEquals(proxyGrantingTicketsBefore, countProxyGrantingTickets(),
+                "A failed validation must not issue a proxy-granting ticket");
+        }
+    }
+
+    private long countProxyGrantingTickets() {
+        return ticketRegistry.getTickets(ProxyGrantingTicket.class::isInstance).count();
     }
 }
