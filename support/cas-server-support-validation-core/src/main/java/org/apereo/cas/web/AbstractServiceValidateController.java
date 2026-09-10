@@ -34,7 +34,6 @@ import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.text.StringEscapeUtils;
 import org.apereo.inspektr.common.web.ClientInfoHolder;
-import org.springframework.web.bind.ServletRequestDataBinder;
 import org.springframework.web.servlet.ModelAndView;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -149,12 +148,6 @@ public abstract class AbstractServiceValidateController extends AbstractDelegate
         return null;
     }
 
-    protected void initBinder(final HttpServletRequest request, final ServletRequestDataBinder binder) {
-        if (serviceValidateConfigurationContext.getCasProperties().getSso().isRenewAuthnEnabled()) {
-            binder.setRequiredFields(CasProtocolConstants.PARAMETER_RENEW);
-        }
-    }
-
     protected void prepareForTicketValidation(final HttpServletRequest request, final WebApplicationService service, final String serviceTicketId) {
     }
 
@@ -248,10 +241,6 @@ public abstract class AbstractServiceValidateController extends AbstractDelegate
     private boolean validateAssertion(final HttpServletRequest request, final String serviceTicketId,
                                       final Assertion assertion, final Service service) {
         for (val spec : serviceValidateConfigurationContext.getValidationSpecifications()) {
-            spec.reset();
-            val binder = new ServletRequestDataBinder(spec, "validationSpecification");
-            initBinder(request, binder);
-            binder.bind(request);
             if (!spec.isSatisfiedBy(assertion, request)) {
                 LOGGER.warn("Service ticket [{}] does not satisfy validation specification.", serviceTicketId);
                 return false;

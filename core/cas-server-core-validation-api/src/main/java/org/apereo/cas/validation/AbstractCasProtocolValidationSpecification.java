@@ -9,6 +9,7 @@ import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 import org.apache.commons.lang3.BooleanUtils;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Scope;
@@ -48,21 +49,25 @@ public abstract class AbstractCasProtocolValidationSpecification implements CasP
     private final ServicesManager servicesManager;
 
     /**
-     * Denotes whether we should always authenticate or not.
+     * Denotes whether we should always authenticate or not. This is only meaningful for callers
+     * that drive a specification programmatically; the {@code renew} value carried by a protocol
+     * request is resolved per request by {@link #isRenewRequested(HttpServletRequest)} and is
+     * never stored here, because a specification is very often a shared singleton bean.
      */
     private boolean renew;
 
     @Override
     public boolean isSatisfiedBy(final Assertion assertion, final HttpServletRequest request) {
+        val renewRequired = this.renew || isRenewRequested(request);
         LOGGER.trace("Is validation specification set to enforce [{}] protocol behavior? [{}]. Is assertion issued from a new login? [{}]",
-            CasProtocolConstants.PARAMETER_RENEW, BooleanUtils.toStringYesNo(this.renew),
+            CasProtocolConstants.PARAMETER_RENEW, BooleanUtils.toStringYesNo(renewRequired),
             BooleanUtils.toStringYesNo(assertion.isFromNewLogin()));
         var satisfied = isSatisfiedByInternal(assertion);
         if (!satisfied) {
             LOGGER.warn("[{}] is not internally satisfied by the produced assertion", getClass().getSimpleName());
             return false;
         }
-        satisfied = !this.renew || assertion.isFromNewLogin();
+        satisfied = !renewRequired || assertion.isFromNewLogin();
         if (!satisfied) {
             LOGGER.warn("[{}] is to enforce the [{}] CAS protocol behavior, yet the assertion is not issued from a new login", getClass().getSimpleName(),
                 CasProtocolConstants.PARAMETER_RENEW);
@@ -75,6 +80,16 @@ public abstract class AbstractCasProtocolValidationSpecification implements CasP
     @Override
     public void reset() {
         renew = false;
+    }
+
+    /**
+     * Determine whether the given request asks for renewed authentication.
+     *
+     * @param request the request
+     * @return true if the request carries a {@code renew} parameter that asks for renewal
+     */
+    protected static boolean isRenewRequested(final HttpServletRequest request) {
+        return BooleanUtils.toBoolean(request.getParameter(CasProtocolConstants.PARAMETER_RENEW));
     }
 
     /**

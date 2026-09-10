@@ -147,6 +147,11 @@ security have been strengthened across several flows.
 - The CAS `1.0` [validation response](../ux/User-Interface-Views-CASv1.html) is line-delimited and carries no escaping mechanism.
   Principal identifiers and rendered attribute lines are now stripped of line breaks, so a value that contains a newline
   can no longer forge additional lines in the response.
+- The `renew` parameter presented to the [CAS protocol](../protocol/CAS-Protocol.html) validation endpoints is now
+  evaluated per request. Validation specifications are shared components and the requested value used to be assigned
+  onto them for the duration of a request, which allowed a concurrent validation request to reset it. A service ticket
+  that was not issued from a new login can no longer satisfy a `renew=true` validation because of another request that
+  happened to be in flight at the same time.
 
 ### Views and Themes
 
