@@ -239,6 +239,8 @@ Palantir offers a **Restore Version** action in the revision table's context men
 - Inline scripts used by [allowed attributes](../integration/Attribute-Release-Policy-InlineGroovy.html), pattern-matching attribute transformations and service access strategy required attributes are compiled once and served from the script cache. Previously each of these compiled a fresh script for every attribute on every request.
 - The [surrogate access strategy](../authentication/Surrogate-Authentication.html) and [Groovy SAML2 metadata resolution](../installation/Configuring-SAML2-DynamicMetadata-Groovy.html) no longer compile their script, and register a new file watcher, on every request.
 - The multifactor authentication [principal attribute predicate](../mfa/Configuring-Multifactor-Authentication-Triggers-PrincipalAttribute-PerApplication.html) compiles its Groovy class once and recompiles it only after the file changes, instead of on every authentication attempt.
+- A Groovy script that fails to compile, or that throws while running, now reports that failure to the CAS component which asked for it rather than reporting no result at all. Components designed to carry on without a script result, such as mapped attribute release and the Groovy username provider, keep their existing behavior.
+- A Groovy access strategy activation criteria that produces no result now fails the request with an explanation. Previously it raised an unexplained error, and treating the missing result as an inactive criteria would have granted access without evaluating the service's required attributes.
 
 ## Other Stuff
     
