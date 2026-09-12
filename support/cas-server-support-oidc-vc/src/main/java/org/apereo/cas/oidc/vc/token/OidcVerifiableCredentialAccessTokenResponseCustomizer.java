@@ -1,15 +1,11 @@
 package org.apereo.cas.oidc.vc.token;
 
 import module java.base;
-import org.apereo.cas.oidc.OidcConstants;
-import org.apereo.cas.oidc.vc.issuer.nonce.OidcVerifiableCredentialNonceService;
-import org.apereo.cas.oidc.vc.offer.OidcVerifiableCredentialTransactionService;
 import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.support.oauth.OAuth20GrantTypes;
 import org.apereo.cas.support.oauth.web.response.accesstoken.response.OAuth20AccessTokenResponseCustomizer;
 import org.apereo.cas.support.oauth.web.response.accesstoken.response.OAuth20AccessTokenResponseResult;
 import org.apereo.cas.ticket.accesstoken.OAuth20AccessToken;
-import lombok.RequiredArgsConstructor;
 import lombok.val;
 
 /**
@@ -18,29 +14,22 @@ import lombok.val;
  * @author Misagh Moayyed
  * @since 8.0.0
  */
-@RequiredArgsConstructor
 public class OidcVerifiableCredentialAccessTokenResponseCustomizer implements OAuth20AccessTokenResponseCustomizer {
-    protected final OidcVerifiableCredentialNonceService oidcVerifiableCredentialNonceService;
-    protected final OidcVerifiableCredentialTransactionService credentialTransactionService;
-
+    /**
+     * OpenID4VCI 1.0 moved the proof challenge to the nonce endpoint, so no {@code c_nonce} is
+     * returned here. Authorization details are echoed back because they carry the credential
+     * identifiers the wallet must then present at the credential endpoint.
+     */
     @Override
     public Map<String, Object> customize(final OAuth20AccessTokenResponseResult result,
                                          final Map<String, Object> model) {
-        var generateNonce = result.getGrantType() == OAuth20GrantTypes.PRE_AUTHORIZED_CODE;
-
-        if (!generateNonce && result.getGeneratedToken().getAccessToken().isPresent()) {
+        if (result.getGrantType() != OAuth20GrantTypes.PRE_AUTHORIZED_CODE
+            && result.getGeneratedToken().getAccessToken().isPresent()) {
             val accessToken = result.getGeneratedToken().getAccessToken()
                 .stream().map(OAuth20AccessToken.class::cast).findFirst().orElseThrow();
             if (accessToken.hasAuthorizationDetails()) {
-                generateNonce = true;
                 model.put(OAuth20Constants.AUTHORIZATION_DETAILS, accessToken.getAuthorizationDetails());
             }
-        }
-
-        if (generateNonce) {
-            val nonce = oidcVerifiableCredentialNonceService.create();
-            model.put(OidcConstants.C_NONCE, nonce.value());
-            model.put(OidcConstants.C_NONCE_EXPIRES_IN, nonce.expiresIn());
         }
         return model;
     }

@@ -10,6 +10,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.SuperBuilder;
 import lombok.ToString;
+import lombok.val;
 
 /**
  * This is {@link OidcVerifiableCredentialAuthorizationDetails}.
@@ -39,6 +40,13 @@ public class OidcVerifiableCredentialAuthorizationDetails implements Serializabl
     private String credentialConfigurationId;
 
     /**
+     * Identifiers the wallet must then present as {@code credential_identifier} at the credential
+     * endpoint. CAS issues the credential configuration id itself as the identifier.
+     */
+    @JsonProperty("credential_identifiers")
+    private List<String> credentialIdentifiers;
+
+    /**
      * Construct list of authz details.
      *
      * @param authorizationDetails     the authorization details
@@ -47,10 +55,12 @@ public class OidcVerifiableCredentialAuthorizationDetails implements Serializabl
      */
     public static List<OidcVerifiableCredentialAuthorizationDetails> from(
         final String authorizationDetails, final Set<String> credentialConfigurations) {
-        return JsonUtils.parseAsList(authorizationDetails, OidcVerifiableCredentialAuthorizationDetails.class)
+        val authorized = JsonUtils.parseAsList(authorizationDetails, OidcVerifiableCredentialAuthorizationDetails.class)
             .stream()
             .filter(details -> details.getType().equals(OidcVerifiableCredentialAuthorizationDetails.TYPE))
             .filter(details -> credentialConfigurations.contains(details.getCredentialConfigurationId()))
             .collect(Collectors.toList());
+        authorized.forEach(details -> details.setCredentialIdentifiers(List.of(details.getCredentialConfigurationId())));
+        return authorized;
     }
 }

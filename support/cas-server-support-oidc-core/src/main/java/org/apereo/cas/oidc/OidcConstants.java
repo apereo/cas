@@ -206,10 +206,6 @@ public interface OidcConstants {
      */
     String VC_PRESENTATION_RESPONSE_URL = "oidcVcPresentationResponse";
     /**
-     * Oidc VC batch credential url path segment.
-     */
-    String VC_BATCH_CREDENTIAL_URL = "oidcVcBatchCredential";
-    /**
      * Oidc VC credential type url path segment.
      */
     String VC_CREDENTIAL_TYPE_URL = "oidcVcCredentialType";

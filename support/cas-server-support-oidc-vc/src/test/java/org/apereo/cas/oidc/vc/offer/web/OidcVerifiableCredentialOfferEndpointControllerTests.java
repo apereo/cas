@@ -94,8 +94,8 @@ class OidcVerifiableCredentialOfferEndpointControllerTests {
                 .andExpect(jsonPath("$." + OAuth20Constants.ACCESS_TOKEN).exists())
                 .andExpect(jsonPath("$." + OAuth20Constants.TOKEN_TYPE).exists())
                 .andExpect(jsonPath("$." + OAuth20Constants.EXPIRES_IN).exists())
-                .andExpect(jsonPath("$." + OidcConstants.C_NONCE).exists())
-                .andExpect(jsonPath("$." + OidcConstants.C_NONCE_EXPIRES_IN).exists());
+                .andExpect(jsonPath("$." + OidcConstants.C_NONCE).doesNotExist())
+                .andExpect(jsonPath("$." + OidcConstants.C_NONCE_EXPIRES_IN).doesNotExist());
         }
 
         private String createOfferTransaction(final OidcRegisteredService registeredService) throws Exception {

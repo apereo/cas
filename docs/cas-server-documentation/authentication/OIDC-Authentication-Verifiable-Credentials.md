@@ -60,6 +60,48 @@ This endpoint generally advertises:
 - Supported credential configurations.
 - Supported formats and signing algorithms.
 - 
+#### Metadata Location
+
+OpenID4VCI locates the credential issuer metadata by inserting `/.well-known/openid-credential-issuer`
+into the issuer identifier *between the host and the path*, rather than by appending it the way
+OpenID Connect Discovery does; [RFC 8414](https://www.rfc-editor.org/rfc/rfc8414) locates the
+authorization server metadata the same way. A wallet issued against
+`https://sso.example.org/cas/oidc` therefore asks for:
+
+```bash
+GET https://sso.example.org/.well-known/openid-credential-issuer/cas/oidc
+GET https://sso.example.org/.well-known/oauth-authorization-server/cas/oidc
+```
+
+CAS is normally deployed under the `/cas` context path, so neither request reaches the
+application at all and the servlet container answers with its own `404`. Route them onto the
+paths CAS serves, either in the proxy that fronts CAS or with the embedded Tomcat rewrite valve.
+The valve must be registered on the engine, which runs before a context is selected.
+
+The rewrite rule would be similar to:
+
+```
+RewriteRule ^/\.well-known/(openid-credential-issuer|oauth-authorization-server|openid-configuration)(/.+)$ $2/.well-known/$1 [L]
+```
+
+Naming the documents explicitly, rather than matching every well-known path, leaves unrelated
+ones such as `/.well-known/acme-challenge/<token>` untouched.
+
+A wallet that cannot resolve this metadata may not begin issuance at all.
+
+#### Token Endpoint Authentication
+
+The pre-authorized code grant carries no client credentials. CAS authenticates the exchange from
+the `pre-authorized_code` and `grant_type` request parameters themselves, and the client bound to
+the credential offer is recorded on the pre-authorization code when the offer is created.
+
+A wallet decides how to authenticate from the authorization server metadata, so the token endpoint
+has to advertise that it accepts requests with no client authentication. CAS includes `none` in
+authentication methods supported for the token endpoint by default for this reason. If the
+list is narrowed, keep `none` in it; without it a wallet picks one of the credentialed methods it
+sees instead -- typically `private_key_jwt` -- and the exchange is rejected, because the wallet has
+no client registration to authenticate with.
+
 ### Credential Endpoint
 
 Issues a verifiable credential to the wallet once the access token, proof, and requested
@@ -71,45 +113,35 @@ POST /oidc/oidcVcCredential
 
 This endpoint expects:
 
-- A bearer access token.
-- A requested `credential_configuration_id`.
-- A proof object with a `nonce` as a claim.
-     
+- An access token, presented as `Authorization: Bearer ...` or, when the token response named the
+  token type `DPoP`, as `Authorization: DPoP ...` per [RFC 9449](https://www.rfc-editor.org/rfc/rfc9449).
+- The requested credential, named either by `credential_configuration_id` or, when the token
+  response returned `credential_identifiers` in its authorization details, by
+  `credential_identifier`. The two are mutually exclusive.
+- A `proofs` object holding one or more proof JWTs, each carrying a `nonce` claim.
+
 The endpoint body is expected as:
 
 ```json
 {
-  credential_configuration_id: "myorg",
-  proof: {
-    proof_type: "jwt",
-    jwt: proof
+  "credential_configuration_id": "myorg",
+  "proofs": {
+    "jwt": ["eyJ0eXAiOiJvcGVuaWQ0dmNpL..."]
   }
 }
 ```
- 
-### Batch Credential Endpoint
 
-Issues a list of verifiable credentials to the wallet once the access token, proof, and requested
-credential configurations have been validated.
+There is no separate batch credential endpoint. A batch is a single credential request carrying
+several proofs, and the response holds one credential per proof, all of the same credential
+configuration. How many proofs are accepted is advertised as `batch_credential_issuance` in the
+issuer metadata and controlled by `cas.authn.oidc.vc.issuer.batch-size`.
 
-```bash
-POST /oidc/oidcVcBatchCredential
-```
-
-This endpoint expects a bearer access token.
-
-...with the following body:
+The response is:
 
 ```json
 {
-  "credential_requests": [
-    {
-      "credential_configuration_id": "UniversityDegreeCredential",
-      "proof": {
-        "proof_type": "jwt",
-        "jwt": "eyJ0eXAiOiJvcGVuaWQ0dmNpL..."
-      }
-    }
+  "credentials": [
+    {"credential": "eyJhbGciOiJSUzI1NiIs..."}
   ]
 }
 ```
@@ -123,10 +155,7 @@ credential request.
 POST /oidc/oidcVcNonce
 ```
 
-This endpoint typically returns:
-
-- `c_nonce`
-- `c_nonce_expires_in`
+This endpoint returns `c_nonce`. The challenge is never returned from the token endpoint.
 
 ### Credential Offer Endpoint
 

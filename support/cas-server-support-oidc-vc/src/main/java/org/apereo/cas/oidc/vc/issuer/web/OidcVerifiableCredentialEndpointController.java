@@ -15,8 +15,6 @@ import org.apereo.cas.support.oauth.web.endpoints.BaseOAuth20Controller;
 import org.apereo.cas.ticket.accesstoken.OAuth20AccessToken;
 import org.apereo.cas.util.Couplet;
 import org.apereo.cas.util.LoggingUtils;
-import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
-import com.fasterxml.jackson.annotation.JsonProperty;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.extern.slf4j.Slf4j;
@@ -31,15 +29,15 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.server.ResponseStatusException;
-import tools.jackson.databind.JsonNode;
-import tools.jackson.databind.ObjectMapper;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import jakarta.validation.Valid;
-import jakarta.validation.constraints.NotEmpty;
 
 /**
  * This is {@link OidcVerifiableCredentialEndpointController}.
+ * <p>
+ * OpenID4VCI 1.0 has a single credential endpoint. A request carrying several proofs is a batch
+ * request, and the response carries one credential per proof; the separate batch credential
+ * endpoint of earlier drafts no longer exists.
  *
  * @author Misagh Moayyed
  * @since 8.0.0
@@ -47,9 +45,6 @@ import jakarta.validation.constraints.NotEmpty;
 @Tag(name = "OpenID Connect")
 @Slf4j
 public class OidcVerifiableCredentialEndpointController extends BaseOAuth20Controller<OidcConfigurationContext> {
-    private static final ObjectMapper MAPPER = JacksonObjectMapperFactory.builder()
-        .defaultTypingEnabled(false).build().toObjectMapper();
-
     protected final OidcVerifiableCredentialIssuerService credentialIssuerService;
 
     public OidcVerifiableCredentialEndpointController(
@@ -60,64 +55,9 @@ public class OidcVerifiableCredentialEndpointController extends BaseOAuth20Contr
     }
 
     /**
-     * Handle batch response entity.
-     *
-     * @param batchRequest the batch request
-     * @param httpRequest  the http request
-     * @param httpResponse the http response
-     * @return the response entity
-     * @throws Throwable the throwable
-     */
-    @PostMapping(value = {
-        '/' + OidcConstants.BASE_OIDC_URL + '/' + OidcConstants.VC_BATCH_CREDENTIAL_URL,
-        "/**/" + OidcConstants.VC_BATCH_CREDENTIAL_URL
-    }, consumes = MediaType.APPLICATION_JSON_VALUE)
-    @Operation(summary = "Handle OIDC batch credential request",
-        description = "Handles requests for OIDC batch credential issuance")
-    public ResponseEntity handleBatch(
-        @RequestBody final OidcVcBatchCredentialRequest batchRequest,
-        final HttpServletRequest httpRequest,
-        final HttpServletResponse httpResponse) throws Throwable {
-
-        val credentialRequests = batchRequest == null ? null : batchRequest.credentialRequests();
-        val maximumBatchSize = getConfigurationContext().getCasProperties()
-            .getAuthn().getOidc().getVc().getIssuer().getBatchSize();
-        if (credentialRequests == null || credentialRequests.isEmpty()
-            || credentialRequests.size() > Math.max(1, maximumBatchSize)) {
-            return ResponseEntity.badRequest()
-                .body(OAuth20Utils.getErrorResponseBody(OAuth20Constants.INVALID_REQUEST,
-                    "Credential batch size is invalid"));
-        }
-
-        val verified = verifyRequest(httpRequest, httpResponse);
-        if (verified.getRight() != null) {
-            return verified.getRight();
-        }
-        val decodedToken = verified.getLeft();
-
-        val responses = new ArrayList<>();
-        val consumedNonces = new HashSet<String>();
-
-        for (val credentialRequest : credentialRequests) {
-            val issuanceContext = new OidcVerifiableCredentialValidationContext(
-                Objects.requireNonNull(decodedToken), credentialRequest, httpRequest);
-            if (validateAccessTokenForCredentialIssuance(decodedToken, issuanceContext)) {
-                val issuedCredentials = credentialIssuerService.issue(issuanceContext, consumedNonces);
-                for (val issuedCredential : issuedCredentials) {
-                    responses.add(OidcVerifiableCredentialResponse
-                        .builder()
-                        .format(issuedCredential.format().getValue())
-                        .credential(issuedCredential.credential())
-                        .build());
-                }
-            }
-        }
-        return ResponseEntity.ok(Map.of("credential_responses", responses));
-    }
-
-    /**
      * Handle response entity.
      *
+     * @param request      the credential request
      * @param httpRequest  the http request
      * @param httpResponse the http response
      * @return the response entity
@@ -130,42 +70,79 @@ public class OidcVerifiableCredentialEndpointController extends BaseOAuth20Contr
     @Operation(summary = "Handle OIDC credential request",
         description = "Handles requests for OIDC credential issuance")
     public ResponseEntity handle(
-        @RequestBody final JsonNode body,
+        @RequestBody final OidcVerifiableCredentialRequest request,
         final HttpServletRequest httpRequest,
         final HttpServletResponse httpResponse) throws Throwable {
-
-        if (body.has("credential_requests")) {
-            val batch = MAPPER.treeToValue(body, OidcVcBatchCredentialRequest.class);
-            return handleBatch(batch, httpRequest, httpResponse);
-        }
 
         val verified = verifyRequest(httpRequest, httpResponse);
         if (verified.getRight() != null) {
             return verified.getRight();
         }
-        val decodedToken = verified.getLeft();
-        val request = MAPPER.treeToValue(body, OidcVerifiableCredentialRequest.class);
-        val issuanceContext = new OidcVerifiableCredentialValidationContext(
-            Objects.requireNonNull(decodedToken), request, httpRequest);
+        val decodedToken = Objects.requireNonNull(verified.getLeft());
+
+        val identifierError = validateCredentialIdentifiers(request, decodedToken);
+        if (identifierError != null) {
+            return identifierError;
+        }
+
+        val issuanceContext = new OidcVerifiableCredentialValidationContext(decodedToken, request, httpRequest);
+        val batchError = validateBatchSize(issuanceContext);
+        if (batchError != null) {
+            return batchError;
+        }
+
         if (!validateAccessTokenForCredentialIssuance(decodedToken, issuanceContext)) {
             return ResponseEntity.badRequest()
                 .body(OAuth20Utils.getErrorResponseBody(OAuth20Constants.ERROR,
                     "Access token cannot be accepted for credential issuance"));
         }
 
-        val issuerResponses = credentialIssuerService.issue(issuanceContext, new HashSet<>());
-
-        val responses = new ArrayList<OidcVerifiableCredentialResponse>();
-        for (val issuedCredential : issuerResponses) {
-            responses.add(OidcVerifiableCredentialResponse
+        val issuedCredentials = credentialIssuerService.issue(issuanceContext, new HashSet<>());
+        val credentials = issuedCredentials
+            .stream()
+            .<OidcVerifiableCredentialResponse.IssuedCredential>map(issued -> OidcVerifiableCredentialResponse.IssuedCredential
                 .builder()
-                .format(issuedCredential.format().getValue())
-                .credential(issuedCredential.credential())
-                .build());
+                .credential(issued.credential())
+                .build())
+            .toList();
+        val response = OidcVerifiableCredentialResponse.builder().credentials(credentials).build();
+        return ResponseEntity.ok(response);
+    }
+
+    /**
+     * A credential identifier is only meaningful when the token response advertised one, and the
+     * two request parameters are mutually exclusive.
+     *
+     * @param request     the credential request
+     * @param accessToken the access token
+     * @return an error response, or null when the request is acceptable
+     */
+    protected @Nullable ResponseEntity validateCredentialIdentifiers(final OidcVerifiableCredentialRequest request,
+                                                                     final OAuth20AccessToken accessToken) {
+        val hasIdentifier = StringUtils.isNotBlank(request.getCredentialIdentifier());
+        val hasConfigurationId = StringUtils.isNotBlank(request.getCredentialConfigurationId());
+        if (hasIdentifier && hasConfigurationId) {
+            return ResponseEntity.badRequest()
+                .body(OAuth20Utils.getErrorResponseBody(OAuth20Constants.INVALID_REQUEST,
+                    "Only one of credential_identifier or credential_configuration_id may be specified"));
         }
-        return responses.size() == 1
-            ? ResponseEntity.ok(responses.getFirst())
-            : ResponseEntity.ok(Map.of("credential_responses", responses));
+        if (hasIdentifier && !accessToken.hasAuthorizationDetails()) {
+            return ResponseEntity.badRequest()
+                .body(OAuth20Utils.getErrorResponseBody(OAuth20Constants.INVALID_REQUEST,
+                    "A credential identifier cannot be used with an access token that carries no authorization details"));
+        }
+        return null;
+    }
+
+    protected @Nullable ResponseEntity validateBatchSize(final OidcVerifiableCredentialValidationContext context) {
+        val maximumBatchSize = Math.max(1, getConfigurationContext().getCasProperties()
+            .getAuthn().getOidc().getVc().getIssuer().getBatchSize());
+        if (context.resolveProofs().size() > maximumBatchSize) {
+            return ResponseEntity.badRequest()
+                .body(OAuth20Utils.getErrorResponseBody(OAuth20Constants.INVALID_REQUEST,
+                    "Credential batch size is invalid"));
+        }
+        return null;
     }
 
     protected boolean validateAccessTokenForCredentialIssuance(final OAuth20AccessToken accessToken,
@@ -253,11 +230,5 @@ public class OidcVerifiableCredentialEndpointController extends BaseOAuth20Contr
         return ResponseEntity
             .status(HttpStatus.BAD_REQUEST)
             .body(OAuth20Utils.getErrorResponseBody(OAuth20Constants.INVALID_REQUEST, ex.getMessage()));
-    }
-
-    public record OidcVcBatchCredentialRequest(
-        @JsonProperty("credential_requests")
-        @NotEmpty
-        List<@Valid OidcVerifiableCredentialRequest> credentialRequests) {
     }
 }

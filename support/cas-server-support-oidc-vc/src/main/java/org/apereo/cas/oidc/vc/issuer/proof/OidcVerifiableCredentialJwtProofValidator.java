@@ -2,7 +2,6 @@ package org.apereo.cas.oidc.vc.issuer.proof;
 
 import module java.base;
 import org.apereo.cas.configuration.CasConfigurationProperties;
-import org.apereo.cas.oidc.vc.issuer.OidcVerifiableCredentialRequest;
 import org.apereo.cas.oidc.vc.issuer.nonce.OidcVerifiableCredentialNonceService;
 import com.nimbusds.jose.Algorithm;
 import com.nimbusds.jose.JWSAlgorithm;
@@ -38,10 +37,9 @@ public class OidcVerifiableCredentialJwtProofValidator implements OidcVerifiable
     private final OidcVerifiableCredentialNonceService oidcVerifiableCredentialNonceService;
 
     @Override
-    public VerifiableCredentialProofResult validate(final OidcVerifiableCredentialRequest request,
+    public VerifiableCredentialProofResult validate(final String proofJwt,
                                                     final Set<String> consumedNonces) throws Exception {
-        val proof = request.getProof();
-        val signedJwt = SignedJWT.parse(proof.getJwt());
+        val signedJwt = SignedJWT.parse(proofJwt);
         val holderJwk = signedJwt.getHeader().getJWK();
 
         verifyType(signedJwt);

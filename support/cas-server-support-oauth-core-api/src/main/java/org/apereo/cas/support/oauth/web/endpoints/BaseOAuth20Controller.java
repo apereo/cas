@@ -107,13 +107,32 @@ public abstract class BaseOAuth20Controller<T extends OAuth20ConfigurationContex
             request.getParameter(OAuth20Constants.ACCESS_TOKEN),
             request.getParameter(OAuth20Constants.TOKEN));
         if (StringUtils.isBlank(accessToken)) {
-            val authHeader = request.getHeader(HttpConstants.AUTHORIZATION_HEADER);
-            if (StringUtils.isNotBlank(authHeader) && authHeader.toLowerCase(Locale.ENGLISH)
-                .startsWith(OAuth20Constants.TOKEN_TYPE_BEARER.toLowerCase(Locale.ENGLISH) + ' ')) {
-                accessToken = authHeader.substring(OAuth20Constants.TOKEN_TYPE_BEARER.length() + 1);
-            }
+            accessToken = extractAccessTokenFromAuthorizationHeader(request).orElse(accessToken);
         }
         LOGGER.debug("[{}]: [{}]", OAuth20Constants.ACCESS_TOKEN, accessToken);
         return Pair.of(accessToken, extractAccessTokenFrom(accessToken));
+    }
+
+    /**
+     * Access tokens reach a protected resource under an authentication scheme, and the scheme that
+     * applies depends on how the token was bound. Plain tokens use {@code Bearer} per RFC 6750,
+     * while sender-constrained tokens use {@code DPoP}: RFC 9449, section 7.1 states that "a
+     * DPoP-bound access token is sent using the Authorization request header field ... with an
+     * authentication scheme of DPoP". CAS answers the token request with {@code token_type: DPoP}
+     * whenever a proof accompanied it, so every protected resource here has to accept that scheme
+     * back; recognizing {@code Bearer} alone would reject the very tokens CAS just minted.
+     *
+     * @param request the request
+     * @return the access token carried by the authorization header, if any
+     */
+    protected Optional<String> extractAccessTokenFromAuthorizationHeader(final HttpServletRequest request) {
+        val authHeader = request.getHeader(HttpConstants.AUTHORIZATION_HEADER);
+        if (StringUtils.isBlank(authHeader)) {
+            return Optional.empty();
+        }
+        return Stream.of(OAuth20Constants.TOKEN_TYPE_BEARER, OAuth20Constants.TOKEN_TYPE_DPOP)
+            .filter(scheme -> StringUtils.startsWithIgnoreCase(authHeader, scheme + ' '))
+            .findFirst()
+            .map(scheme -> StringUtils.trimToNull(authHeader.substring(scheme.length() + 1)));
     }
 }

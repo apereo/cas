@@ -12,6 +12,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.pac4j.jee.context.JEEContext;
+import org.springframework.http.CacheControl;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -64,7 +65,8 @@ public class OidcVerifiableCredentialNonceEndpointController extends BaseOAuth20
         val nonce = credentialNonceService.create();
         return ResponseEntity
             .ok()
-            .body(Map.of(OidcConstants.C_NONCE, nonce.value(), OidcConstants.C_NONCE_EXPIRES_IN, nonce.expiresIn()));
+            .cacheControl(CacheControl.noStore())
+            .body(Map.of(OidcConstants.C_NONCE, nonce.value()));
     }
 
     /**
