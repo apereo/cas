@@ -3,6 +3,7 @@ package org.apereo.cas.oidc.vc.issuer.enc;
 import module java.base;
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.configuration.model.support.oidc.OidcVerifiableCredentialConfigurationProperties;
+import org.apereo.cas.configuration.support.Beans;
 import org.apereo.cas.oidc.OidcConfigurationContext;
 import org.apereo.cas.oidc.OidcConstants;
 import org.apereo.cas.oidc.vc.issuer.OidcVerifiableCredentialValidationContext;
@@ -13,6 +14,7 @@ import lombok.val;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.jooq.lambda.fi.util.function.CheckedConsumer;
 import org.jose4j.jwt.JwtClaims;
+import org.jose4j.jwt.NumericDate;
 
 /**
  * This is {@link BaseOidcVerifiableCredentialEncoder}.
@@ -22,9 +24,17 @@ import org.jose4j.jwt.JwtClaims;
  */
 @RequiredArgsConstructor
 public abstract class BaseOidcVerifiableCredentialEncoder implements OidcVerifiableCredentialEncoder {
-    protected static final int CLAIM_VALIDITY_IN_MINUTES = 5;
-
     protected final OidcConfigurationContext configurationContext;
+
+    /**
+     * Length of time an issued credential remains valid, per credential configuration.
+     *
+     * @param configurationId the credential configuration id
+     * @return the credential validity
+     */
+    protected Duration resolveCredentialValidity(final String configurationId) {
+        return Beans.newDuration(resolveConfiguration(configurationId).getCredentialValidity());
+    }
 
     protected Map<String, Object> produceClaims(final Principal principal, final OidcVerifiableCredentialValidationContext context) {
         val properties = configurationContext.getCasProperties().getAuthn().getOidc().getVc();
@@ -60,18 +70,21 @@ public abstract class BaseOidcVerifiableCredentialEncoder implements OidcVerifia
         final String sub, final OidcVerifiableCredentialValidationContext context,
         final OidcVerifiableCredentialProofValidator.VerifiableCredentialProofResult proof,
         final CheckedConsumer<JwtClaims> claimsConsumer) throws Throwable {
+        val oidc = configurationContext.getCasProperties().getAuthn().getOidc();
+        val configurationId = context.resolveConfigurationId();
+
+        val issuedAt = NumericDate.now();
         val jwtClaims = new JwtClaims();
         jwtClaims.setSubject(sub);
-        jwtClaims.setIssuedAtToNow();
-        jwtClaims.setExpirationTimeMinutesInTheFuture(CLAIM_VALIDITY_IN_MINUTES);
-        jwtClaims.setNotBeforeMinutesInThePast(CLAIM_VALIDITY_IN_MINUTES);
+        jwtClaims.setIssuedAt(issuedAt);
+        jwtClaims.setExpirationTime(NumericDate.fromSeconds(
+            issuedAt.getValue() + resolveCredentialValidity(configurationId).toSeconds()));
+        jwtClaims.setNotBeforeMinutesInThePast(Beans.newDuration(oidc.getCore().getSkew()).toMinutes());
         jwtClaims.setStringClaim("typ", getFormat().getValue());
         jwtClaims.setJwtId(UUID.randomUUID().toString());
 
-        val issuer = configurationContext.getCasProperties().getAuthn().getOidc().getCore().getIssuer();
+        val issuer = oidc.getCore().getIssuer();
         jwtClaims.setIssuer(issuer);
-
-        val configurationId = context.resolveConfigurationId();
         jwtClaims.setClaim("vct", issuer + '/' + OidcConstants.VC_CREDENTIAL_TYPE_URL + '/' + configurationId);
         jwtClaims.setClaim("cnf", Map.of("jwk", proof.holderJwk().toJSONObject()));
         

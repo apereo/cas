@@ -83,6 +83,11 @@ Guidance for AI coding agents working in the Apereo CAS source tree.
 - A credential offer's `tx_code` is optional in the protocol but mandatory once the offer declares one. Keep it independent of any value the caller already holds, and leave a way to disable it for wallets that collect no user input, otherwise the walt.id puppeteer scenario cannot redeem an offer.
 - Verify a JWT proof's `typ` header as well as its signature. A proof or key-binding JWT that is only checked for signature, audience and freshness can be satisfied by a token minted for a different protocol.
 - When reviewing these flows, confirm the normative text against the current published OID4VCI, OID4VP and SD-JWT VC specifications rather than from memory; the drafts changed substantially before 1.0.
+- The implementation currently tracks OID4VCI draft 13 on the wire while its metadata already uses 1.0 shapes. Say which draft a claim comes from before calling something compliant or non-compliant, and check the credential response, the batch endpoint, `proof` vs `proofs` and `credential_identifier` together -- they moved as one change.
+- The walt.id puppeteer wallet accepts both the draft-13 and the 1.0 response shape and accepts a JSON request object where OID4VP requires a JWT. A green `oidc-verifiable-credentials-waltid` run is not evidence of wallet interop; read the spec for that.
+- Review this subsystem at its boundaries, not per class. The interesting defects live where the VC code borrows general CAS machinery: `IdTokenSigningAndEncryptionService` decides how a credential is signed or encrypted, `TransientSessionTicket` and the global `cas.ticket.tst` policy decide how long every offer, code, nonce and presentation request lives, and `BaseOAuth20Controller.getAccessTokenFromRequest` decides where a bearer token may come from.
+- Ask who is authorized for what. Credential configuration ids are validated against the global properties map only, never against the registered service, on both the offer and the authorization-details path.
+- CAS is both issuer and verifier here, and the verifier only trusts CAS-issued credentials. Any work framed as "support wallet X" is really about external issuer trust, revocation status and response encryption, not about the existing verification code.
 
 ## Environment limits
 
@@ -227,15 +232,23 @@ Guidance for AI coding agents working in the Apereo CAS source tree.
   changes there are changes to authentication, attribute release, MFA, AUP, OIDC, SAML and themes at once.
 - `ScriptResourceCacheManager` is a singleton whose `close()` clears the entire cache — it must never be
   used in a try-with-resources block.
-- Script execution is guarded by a five-second `tryLock` that returns `null` on timeout instead of
-  throwing. Review every script-backed decision for what `null` means, and prefer fail-closed defaults at
-  security boundaries; today MFA triggers and AUP treat it as "skip".
+- Script execution is serialized per script instance on a blocking lock. Review every script-backed
+  decision for what a `null` result means and prefer fail-closed defaults at security boundaries — MFA
+  triggers and AUP read `null` as "skip". Never guard script execution with a timed `tryLock`; a timeout
+  that returns `null` is indistinguishable from a script that declined.
 - Do not compile scripts on a request path (`fromScript`/`fromResource` per call). Go through
-  `resolveScriptableResource`, or hold the compiled script in a field, and remember `fromResource` also
-  starts a file-watcher thread.
+  `resolveScriptableResource`, or hold the compiled script in a transient field, and remember `fromResource`
+  also starts a file-watcher thread that nothing closes. The cache manager comes from
+  `ApplicationContextProvider` and is absent outside Spring, so always fall back to the factory instead of
+  throwing, or you will break components and tests that are constructed directly.
 - Inline (`groovy { ... }`) and external (`file:`/`classpath:`) scripts behave differently: only external
-  scripts honour `failOnError` and support reload; inline scripts swallow `GroovyRuntimeException` and
-  share a static binding ThreadLocal. Test both forms.
+  scripts honour `failOnError` and support reload, and only inline scripts support bindings (the
+  `setBinding` interface default is a no-op). Inline scripts swallow `GroovyRuntimeException`. Test both
+  forms, and cover bindings with concurrent and pooled-thread tests — `GroovyShellScriptTests.BindingTests`
+  is the pattern.
+- Treat compiling a Groovy script as running it: AST transformations execute inside the compiler. Script
+  text that comes from anywhere other than deployment configuration must be parsed
+  (`ScriptingUtils.validateGroovyScript`), never compiled.
 - Puppeteer coverage lives in the 18 `ci/tests/puppeteer/scenarios/*groovy*` scenarios
   (`service-access-strategy-groovy`, `surrogate-login-groovy`, `mfa-provider-selection-trigger-groovy`,
   `interrupt-afterauthn-groovy`, `webflow-groovy-action`, …). None of them exercise concurrency, script

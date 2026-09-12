@@ -239,6 +239,15 @@ The general flow is:
 - The wallet calls the credential endpoint with the access token and proof.
 - CAS validates the request and issues the credential.
 
+## Credential Validity
+
+Each credential configuration controls how long the credentials it issues remain valid via
+`credential-validity`, which defaults to thirty days. The value sets the `exp` claim of the
+issued credential, and the `validUntil` property for formats that carry one. A wallet stores a
+credential long after the issuance exchange has finished, so this period describes the useful
+life of the credential itself and is unrelated to the lifetime of the offer, the pre-authorized
+code, the nonce or the access token used to obtain it.
+
 ## Credential Signing
 
 After claims are collected and validated, CAS signs the credential using issuer key material.

@@ -104,6 +104,7 @@ Several improvements are now available for [OpenID Connect with Verifiable Crede
 - Access tokens used for credential issuance are now bound to the credential configuration id when the token is minted; this is then enforced when the token is used to request credentials.
 - Transaction-code requirements are enforced during token exchange.
 - Credential batch issuance is limited and capped at a predefined limit.
+- Issued credentials now honor a configurable lifetime per credential configuration, `cas.authn.oidc.vc.issuer.credential-configurations[].credential-validity`, which defaults to thirty days. Previously every credential expired five minutes after issuance, which left it unusable by the time a wallet had stored it.
 
 ### OAuth and OpenID Connect 
 

@@ -305,6 +305,47 @@ Strong success criteria let you loop independently. Weak criteria ("make it work
 - The OID4VCI Nonce Endpoint is public by specification; never place it behind client authentication.
 - Secrets that gate a flow must be independent of values the caller already possesses, and single-use state must be consumed atomically.
 - Check protocol behavior against the current published specification, not from memory.
+- Surface: `support/cas-server-support-oidc-vc` only. Issuance is offer -> `OidcVerifiableCredentialOfferEndpointController`
+  -> pre-authorized code -> `AccessTokenPreAuthorizedCodeGrantRequestExtractor` -> `OidcVerifiableCredentialEndpointController`
+  -> `OidcDefaultVerifiableCredentialIssuerService` -> an `OidcVerifiableCredentialEncoder`. Presentation is
+  `org.apereo.cas.vc.presentation` (note the different package root), two controllers and no service layer.
+- The wire format currently implemented is OID4VCI draft 13, not 1.0: `{format, credential}` responses,
+  a separate `batch_credential_endpoint`, singular `proof`, no `credential_identifier`. 1.0 uses
+  `{"credentials":[{"credential":...}]}`, folds batching into the credential endpoint via `proofs`, advertises
+  `batch_credential_issuance`, and drops `format` everywhere. Do not assume a change here is cosmetic; the
+  walt.id puppeteer wallet is lenient enough to pass with either shape, so it will not catch a regression.
+- OID4VP 1.0 serves a `request_uri` payload as a JWT (`application/oauth-authz-req+jwt`).
+  `OidcVerifiableCredentialPresentationRequestEndpointController.fetchRequest` returns raw JSON instead. The
+  `redirect_uri` client identifier prefix forbids signing, so the JWT is unsigned -- that is still a JWT.
+- Credentials are signed through `IdTokenSigningAndEncryptionService`, which means a registered service's
+  `signIdToken`, `encryptIdToken` and `idTokenSigningAlg` silently decide how credentials are signed. An
+  `encryptIdToken` client gets a JWE that is not an SD-JWT, and the effective algorithm may not be one of the
+  advertised `credential_signing_alg_values_supported`. Treat credential signing as its own concern.
+  Note that `AbstractOidcTests.getOidcRegisteredService(clientId)` enables ID token encryption, so any test that
+  needs to parse an issued credential must use the four-argument overload with `encrypt` set to false.
+- Credential validity comes from `credential-validity` on each credential configuration (default `P30D`) and is
+  applied in `BaseOidcVerifiableCredentialEncoder.sign`, which derives `exp` from the `iat` it sets so the two are
+  exactly the configured duration apart; the JSON-LD encoder reads `validFrom`/`validUntil` back off those claims
+  rather than taking its own timestamp. Keep that relationship if you touch either. Separately, every piece of VC
+  *exchange* state -- offer transaction, pre-authorized code, nonce, presentation request -- is a
+  `TransientSessionTicket` sharing the global `cas.ticket.tst` five-minute TTL and single use, with no VC-specific
+  expiration policy. Credential lifetime and exchange lifetime are different concerns; do not conflate them.
+- Which credential configurations a client may obtain is checked only against the global
+  `cas.authn.oidc.vc.issuer.credential-configurations` map, never against the registered service. Any authorization
+  change here should start from `OidcVerifiableCredentialAuthorizationDetails.from` and the offer controller.
+- `OidcVerifiableCredentialAuthorizationCodeAuthorizationResponseBuilder.supports` engages only for a public client
+  with PKCE. For every other client `authorization_details` is dropped without an error and the failure only shows
+  up later at the credential endpoint.
+- As a verifier, CAS trusts only credentials it issued: `iss` must equal the local issuer, `vct` must map to a local
+  credential configuration, and the signing key comes from a locally registered service. There is no external issuer
+  trust list, `x5c`, DID or federation path, and a `status` claim is rejected rather than checked.
+- The presentation response endpoint tells the wallet `{"status":"verified"}` and deletes the transaction. Nothing
+  returns the outcome or the disclosed claims to the relying party that created the request.
+- The credential endpoint is a protected resource: it should answer 401 with `WWW-Authenticate` for a bad token and
+  use `invalid_proof` / `invalid_nonce`. It currently answers 400 with `invalid_request`, and
+  `getAccessTokenFromRequest` accepts the token from a query parameter.
+- Performance: each encoder re-runs `principalResolver.resolve` per credential, so a batch multiplies
+  person-directory lookups, and every nonce is a ticket-registry write.
 
 
 ## LDAP Subsystem Notes
@@ -481,24 +522,67 @@ Strong success criteria let you loop independently. Weak criteria ("make it work
 - `ScriptResourceCacheManager` is `AutoCloseable` and its `close()` invalidates the WHOLE shared cache.
   Never put `getScriptResourceCacheManager()` in a try-with-resources; it is a singleton bean, not a
   per-call resource.
-- Every `execute(...)` is wrapped in `CasReentrantLock.tryLock()`, which waits 5 seconds and then returns
-  `null` silently. Cached scripts are shared singletons, so concurrent requests serialize on one lock and
-  a slow script (HTTP/LDAP are star-imported into the compiler config, so scripts doing I/O is expected)
-  turns into null results, not errors. When reading any script-backed component, ask what a `null` result
-  means: for MFA triggers and AUP it currently means "skip", i.e. fail-open.
-- `GroovyShellScript` keeps its binding in a `static` ThreadLocal that is cleared only on the path where
-  the lock was acquired. Treat per-thread script state as a cross-request leak risk.
-- `setFailOnError` has a no-op default in the interface and `GroovyShellScript` does not override it, so
-  `failOnError=true` is honoured only by `WatchableGroovyScriptResource`. Do not rely on it for inline
-  scripts; check for `null` instead of expecting a throw, and never unbox a script result directly.
+- Every `execute(...)` serializes on the script's own `CasReentrantLock`, now via the blocking
+  `executeAndThrow`/`execute`. Cached scripts are shared singletons, so concurrent requests still run one at
+  a time and a slow script (HTTP/LDAP are star-imported into the compiler config, so scripts doing I/O is
+  expected) is a throughput bottleneck — but it no longer yields a silent `null`. Do not reintroduce
+  `tryLock` here: its 5-second timeout returned `null` with no error, and callers such as MFA triggers and
+  AUP read `null` as "skip", i.e. fail-open. A script that blocks forever now blocks its callers, which is
+  the intended failure mode for a security decision; nested execution of two different scripts in opposite
+  orders could deadlock, so avoid cross-script invocation.
+- Never hand `groovy.lang.Binding` an immutable map. `Binding(Map)` keeps the map you give it, and
+  `ScriptingUtils.executeGroovyShellScript` writes a `logger` variable into it on every run, so a
+  `Map.of()` makes the next execution throw `UnsupportedOperationException` — which that method swallows,
+  turning the call into a silent `null`. Use the no-arg `new Binding()`, which builds its map lazily.
+- `GroovyShellScript` holds its binding in a static ThreadLocal whose value is an owner-scoped
+  `ScriptBinding(instanceId, variables)`; `execute` reads and removes it before taking the lock and uses it
+  only when the owner matches, so a binding belongs to one thread, one script and one execution. The
+  ThreadLocal stays static because ErrorProne's `ThreadLocalUsage` rejects a per-instance one, and the
+  owner id rather than the script reference keeps `ReferenceEquality` quiet and avoids retaining the script.
+  `setBinding` must be followed by `execute` on the same thread. `WatchableGroovyScriptResource` does not
+  support bindings at all (the interface default is a no-op); external scripts receive arguments
+  positionally.
+- `failOnError` is honored by both implementations, but their defaults differ deliberately:
+  `WatchableGroovyScriptResource` defaults to `true`, `GroovyShellScript` to `false`. Inline scripts have
+  always swallowed failures and features depend on it — `ReturnMappedAttributeReleasePolicy` releases the
+  attributes whose scripts worked, `GroovyRegisteredServiceUsernameProvider` falls back to the principal id,
+  and both have tests asserting exactly that. So an inline script still yields `null` unless the caller
+  passes `true` or calls `setFailOnError(true)`. Never unbox a script result directly, and decide
+  per call site whether `null` should be a decision or a failure.
 - Resolve scripts through `ScriptResourceCacheManager.resolveScriptableResource(...)`. Calling
   `fromScript(...)` or `fromResource(...)` on a request path recompiles the script (new `GroovyClassLoader`
   and class per call) and, for `fromResource`, starts a `FileWatcherService` thread that nothing closes.
+  The cache manager is a Spring bean reached through `ApplicationContextProvider`, and plenty of components
+  are constructed outside Spring (tests included), so resolve it as
+  `.map(cacheManager -> cacheManager.resolveScriptableResource(...)).orElseGet(() -> factory.fromScript(...))`
+  rather than `orElseThrow`. Hoist the resolution out of any loop over attributes or values.
+- A script held by a serializable service definition (an access strategy, a username provider) belongs in a
+  `@JsonIgnore @Transient transient ExecutableCompiledScript` field built lazily — see
+  `GroovyRegisteredServiceAccessStrategy` and `GroovySurrogateRegisteredServiceAccessStrategy`. Lombok's
+  `@EqualsAndHashCode` skips transient fields, so the definition's identity is unaffected.
+- `ScriptingUtils.getObjectInstanceFromGroovyResource` (the `newObjectInstance(Resource, ...)` path used for
+  Groovy classes with constructor arguments) caches the compiled class per resource URI and recompiles only
+  when the file's last-modified time changes. It has no file watcher, so that timestamp is the reload
+  signal.
 - Cache keys are `sha256` of the joined key parts. Include everything the compiled script depends on;
   omitting a discriminator shares one compiled script across callers that should not share it.
-- `groovyCache` actuator: `Access.NONE` by default. `resources/validate` compiles caller-supplied Groovy,
-  and Groovy runs AST transformations at compile time, so it is code execution, not validation.
-  `resources/{key}` returns script file contents.
+- Never compile caller-supplied Groovy. Groovy executes AST transformations inside the compiler —
+  `groovy.transform.ASTTest` runs a caller-supplied closure at compile time and `groovy.lang.Grab` fetches
+  jars — so compiling text is executing it, even though nothing calls `run()`, which is why it reads as
+  safe. `ScriptingUtils.validateGroovyScript` drives a bare `SourceUnit` (`parse`, `completePhase`,
+  `convert`, then check the error collector) and is what the `groovyCache` `resources/validate` operation
+  uses; keep it that way, and do not "improve" it into a full compile to catch unresolved classes. Two traps
+  in that sequence: with the Parrot parser `SourceUnit.parse` only builds the AST builder, so errors do not
+  surface until `convert`, and `convert` needs `completePhase` before it or it throws a `GroovyBugError`
+  about the phase. The safety comes from there being no `CompilationUnit`: global transformations are
+  registered as a compilation unit's phase operations, and local ones require semantic analysis, which is
+  past where this stops. A `CompilationUnit` stopped at `Phases.CONVERSION` would NOT be safe — Grape's
+  `GrabAnnotationTransformation` is global and runs at exactly that phase. `resources/{key}` on that endpoint returns script file
+  contents, so treat the whole endpoint as administrative. It is `Access.NONE` by default.
+- CAS REST actuator endpoints (`BaseCasRestActuatorEndpoint` / `@RestActuatorEndpoint`) use Spring MVC
+  mappings rather than `@ReadOperation`/`@WriteOperation`, so Spring Boot's `Access.READ_ONLY` cannot
+  distinguish a `GET` from a `POST` or `DELETE` on them. Granting read-only access to such an endpoint grants
+  its write operations too; do not rely on the access level to gate a mutating mapping.
 - Groovy scripts are configuration, not user input: every script body traced in this tree comes from a
   registered service definition or a `cas.*` property. Keep it that way — never let a request-derived value
   reach `isScript`/`fromScript`.

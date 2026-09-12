@@ -170,4 +170,7 @@ async function createPublicKey() {
     assert(decoded.roles.includes("user"));
     assert(decoded.roles.includes("admin"));
     assert(decoded.student_id === undefined);
+
+    await cas.log(`Credential issued at ${decoded.iat} and expires at ${decoded.exp}`);
+    assert(decoded.exp - decoded.iat === 30 * 24 * 60 * 60);
 })();

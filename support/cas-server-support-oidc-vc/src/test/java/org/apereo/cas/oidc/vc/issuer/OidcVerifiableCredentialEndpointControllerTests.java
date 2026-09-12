@@ -85,6 +85,7 @@ class OidcVerifiableCredentialEndpointControllerTests {
 
         "cas.authn.oidc.vc.issuer.credential-configurations.employee.format=JWT_VC_JSON",
         "cas.authn.oidc.vc.issuer.credential-configurations.employee.scope=EmployeeCredential",
+        "cas.authn.oidc.vc.issuer.credential-configurations.employee.credential-validity=P7D",
         "cas.authn.oidc.vc.issuer.credential-configurations.employee.claims.given_name.mandatory=true",
         "cas.authn.oidc.vc.issuer.credential-configurations.employee.claims.family_name.mandatory=true",
         "cas.authn.oidc.vc.issuer.credential-configurations.employee.claims.email.mandatory=false",
@@ -219,6 +220,64 @@ class OidcVerifiableCredentialEndpointControllerTests {
             ticketRegistry.addTicket(Objects.requireNonNull(accessToken.getTicketGrantingTicket()));
             ticketRegistry.addTicket(accessToken);
             return accessToken;
+        }
+    }
+
+    @Nested
+    class CredentialValidityTests extends BaseTests {
+
+        @Test
+        void verifyIssuedCredentialOutlivesTheIssuanceExchange() throws Throwable {
+            val claims = issueCredentialClaims("myorg");
+            assertCredentialValidity(claims, Duration.ofDays(30));
+        }
+
+        @Test
+        void verifyIssuedCredentialHonorsConfiguredValidity() throws Throwable {
+            val claims = issueCredentialClaims("employee");
+            assertCredentialValidity(claims, Duration.ofDays(7));
+        }
+
+        @Test
+        void verifyJsonLdValidUntilTracksExpiration() throws Throwable {
+            val claims = issueCredentialClaims("jsonld");
+            assertCredentialValidity(claims, Duration.ofDays(30));
+            val validUntil = Instant.parse(claims.getStringClaim("validUntil"));
+            assertEquals(claims.getExpirationTime().toInstant().getEpochSecond(), validUntil.getEpochSecond());
+        }
+
+        private static void assertCredentialValidity(final JWTClaimsSet claims, final Duration expected) {
+            val issuedAt = claims.getIssueTime().toInstant();
+            val expiration = claims.getExpirationTime().toInstant();
+            val validity = Duration.between(issuedAt, expiration);
+            assertTrue(validity.minus(expected).abs().compareTo(Duration.ofSeconds(30)) <= 0,
+                () -> "Credential validity was %s but %s was configured".formatted(validity, expected));
+            assertTrue(expiration.isAfter(Instant.now(Clock.systemUTC()).plus(Duration.ofHours(1))),
+                "Credential must remain usable long after the issuance exchange");
+        }
+
+        private JWTClaimsSet issueCredentialClaims(final String configurationId) throws Throwable {
+            val clientId = UUID.randomUUID().toString();
+            val registeredService = getOidcRegisteredService(clientId, "https://oauth\\.example\\.org.*", true, false);
+            servicesManager.save(registeredService);
+
+            val accessToken = createOAuth20AccessToken(clientId);
+            val request = new OidcVerifiableCredentialRequest();
+            request.setCredentialConfigurationId(configurationId);
+            request.setProof(buildProof(buildValidRsaProofJwt()));
+
+            val response = mockMvc.perform(post(CREDENTIAL_ENDPOINT_URL)
+                    .with(withHttpRequestProcessor())
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken.getId())
+                    .content(MAPPER.writeValueAsString(request)))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.credential").exists())
+                .andReturn()
+                .getResponse()
+                .getContentAsString();
+            val credential = MAPPER.readValue(response, Map.class).get("credential").toString();
+            return SignedJWT.parse(StringUtils.substringBefore(credential, "~")).getJWTClaimsSet();
         }
     }
 
