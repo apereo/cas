@@ -89,6 +89,40 @@ class ScriptingUtilsTests {
     }
 
     @Test
+    void verifyObjectClassIsCompiledOnceAndRefreshedOnChange() throws Throwable {
+        val file = Files.createTempFile("predicate", ".groovy").toFile();
+        FileUtils.writeStringToFile(file, """
+            class SamplePredicate implements java.util.function.Predicate {
+                boolean test(final Object input) { return true }
+            }
+            """.stripIndent(), StandardCharsets.UTF_8);
+        val resource = new FileSystemResource(file);
+
+        val first = ScriptingUtils.getObjectInstanceFromGroovyResource(resource,
+            ArrayUtils.EMPTY_CLASS_ARRAY, ArrayUtils.EMPTY_OBJECT_ARRAY, Predicate.class);
+        val second = ScriptingUtils.getObjectInstanceFromGroovyResource(resource,
+            ArrayUtils.EMPTY_CLASS_ARRAY, ArrayUtils.EMPTY_OBJECT_ARRAY, Predicate.class);
+        assertNotNull(first);
+        assertNotNull(second);
+        assertNotSame(first, second);
+        assertSame(first.getClass(), second.getClass(), "The groovy class must be compiled once and reused");
+        assertTrue(first.test("anything"));
+
+        FileUtils.writeStringToFile(file, """
+            class SamplePredicate implements java.util.function.Predicate {
+                boolean test(final Object input) { return false }
+            }
+            """.stripIndent(), StandardCharsets.UTF_8);
+        Files.setLastModifiedTime(file.toPath(), FileTime.from(Instant.now().plusSeconds(5)));
+
+        val reloaded = ScriptingUtils.getObjectInstanceFromGroovyResource(resource,
+            ArrayUtils.EMPTY_CLASS_ARRAY, ArrayUtils.EMPTY_OBJECT_ARRAY, Predicate.class);
+        assertNotNull(reloaded);
+        assertNotSame(first.getClass(), reloaded.getClass(), "A modified groovy class must be recompiled");
+        assertFalse(reloaded.test("anything"));
+    }
+
+    @Test
     void verifyGroovyResourceFileNotFound() {
         val resource = new FileSystemResource(new File("missing.groovy"));
 

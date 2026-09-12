@@ -7,6 +7,7 @@ import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.test.CasTestExtension;
 import org.apereo.cas.util.RandomUtils;
 import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
+import org.apereo.cas.util.spring.ApplicationContextProvider;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
@@ -128,4 +129,29 @@ class PatternMatchingAttributeReleasePolicyTests {
         assertTrue(attributes.get("mem").contains("group2"));
     }
 
+    @Test
+    void verifyGroovyTransformationRuleIsCompiledOnce() throws Throwable {
+        ApplicationContextProvider.holdApplicationContext(applicationContext);
+        val cacheManager = ApplicationContextProvider.getScriptResourceCacheManager().orElseThrow();
+        cacheManager.clear();
+
+        val policy = new PatternMatchingAttributeReleasePolicy();
+        policy.getAllowedAttributes().put("memberOf",
+            new PatternMatchingAttributeReleasePolicy.Rule()
+                .setPattern(".*CN=(\\w+),OU=example.*")
+                .setTransform("groovy { return [mem: [matchedGroup1]] }"));
+
+        val releasePolicyContext = RegisteredServiceAttributeReleasePolicyContext.builder()
+            .registeredService(CoreAuthenticationTestUtils.getRegisteredService())
+            .service(CoreAuthenticationTestUtils.getService())
+            .applicationContext(applicationContext)
+            .principal(CoreAuthenticationTestUtils.getPrincipal(
+                Map.of("memberOf", List.of("CN=g1,OU=example,DC=org", "CN=g2,OU=example,DC=org"))))
+            .build();
+
+        assertTrue(policy.getAttributes(releasePolicyContext).get("mem").contains("g1"));
+        assertTrue(policy.getAttributes(releasePolicyContext).get("mem").contains("g2"));
+        assertEquals(1, cacheManager.getKeys().size(),
+            "The transformation script must be compiled once and served from the script cache");
+    }
 }

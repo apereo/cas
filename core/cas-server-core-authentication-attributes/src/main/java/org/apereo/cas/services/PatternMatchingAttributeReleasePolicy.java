@@ -6,6 +6,7 @@ import org.apereo.cas.util.RegexUtils;
 import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.util.nativex.CasRuntimeHintsRegistrar;
 import org.apereo.cas.util.scripting.ExecutableCompiledScriptFactory;
+import org.apereo.cas.util.spring.ApplicationContextProvider;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -84,6 +85,12 @@ public class PatternMatchingAttributeReleasePolicy extends AbstractRegisteredSer
         val valuePattern = RegexUtils.createPattern(rule.getPattern());
         val attributeValues = attributes.get(entry.getKey());
 
+        val inlineScript = rule.getTransform().trim().stripIndent();
+        val inlineGroovy = scriptFactory.getInlineScript(inlineScript).orElseThrow();
+        val executableScript = ApplicationContextProvider.getScriptResourceCacheManager()
+            .map(cacheManager -> cacheManager.resolveScriptableResource(inlineGroovy, inlineGroovy))
+            .orElseGet(() -> scriptFactory.fromScript(inlineGroovy));
+
         return attributeValues
             .stream()
             .map(value -> {
@@ -101,15 +108,11 @@ public class PatternMatchingAttributeReleasePolicy extends AbstractRegisteredSer
                     val group = matcher.group(i);
                     args.put("matchedGroup" + i, group);
                 }
-                val inlineScript = rule.getTransform().trim().stripIndent();
-                val inlineGroovy = scriptFactory.getInlineScript(inlineScript).orElseThrow();
-                try (val executableScript = scriptFactory.fromScript(inlineGroovy)) {
-                    executableScript.setBinding(args);
-                    return FunctionUtils.doUnchecked(() -> {
-                        val result = executableScript.execute(args.values().toArray(), Map.class);
-                        return result != null ? (Map<String, List<Object>>) result : Map.<String, List<Object>>of();
-                    });
-                }
+                executableScript.setBinding(args);
+                return FunctionUtils.doUnchecked(() -> {
+                    val result = executableScript.execute(args.values().toArray(), Map.class);
+                    return result != null ? (Map<String, List<Object>>) result : Map.<String, List<Object>>of();
+                });
             })
             .filter(Objects::nonNull)
             .flatMap(map -> map.entrySet().stream())

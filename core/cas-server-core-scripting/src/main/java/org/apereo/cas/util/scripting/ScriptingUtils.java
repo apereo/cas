@@ -20,6 +20,7 @@ import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.codehaus.groovy.control.CompilerConfiguration;
+import org.codehaus.groovy.control.SourceUnit;
 import org.codehaus.groovy.control.customizers.ASTTransformationCustomizer;
 import org.codehaus.groovy.control.customizers.ImportCustomizer;
 import org.codehaus.groovy.runtime.InvokerInvocationException;
@@ -53,6 +54,8 @@ public class ScriptingUtils {
      * Pattern indicating groovy script is a file/resource.
      */
     private static final Pattern FILE_GROOVY_PATTERN = RegexUtils.createPattern(String.format(FILE_PATTERN, "groovy"));
+
+    private static final Map<String, CompiledGroovyClass> OBJECT_CLASSES = new ConcurrentHashMap<>();
 
     /**
      * Is inline groovy script ?.
@@ -261,7 +264,7 @@ public class ScriptingUtils {
      * @param script the script
      * @return the script
      */
-    public static Script parseGroovyShellScript(final Map inputVariables, final String script) {
+    public static Script parseGroovyShellScript(@Nullable final Map inputVariables, final String script) {
         val variables = inputVariables != null ? new HashMap<>(inputVariables) : new HashMap<>();
         variables.putIfAbsent("logger", LOGGER);
         val binding = new Binding(variables);
@@ -303,6 +306,33 @@ public class ScriptingUtils {
             LoggingUtils.error(LOGGER, e);
         }
         return null;
+    }
+
+    /**
+     * Validate the syntax of the given groovy script.
+     * <p>
+     * Compiling a script is not a safe way to validate it. Groovy applies AST transformations
+     * inside the compiler, and a transformation that the script itself declares, such as
+     * {@code ASTTest} or {@code Grab}, runs arbitrary code while the compiler is still on the
+     * stack and before anything is ever executed by the caller.
+     * <p>
+     * The source unit is driven directly rather than through a {@code CompilationUnit}, which is what
+     * makes this safe: transformations are applied by a compilation unit's phase operations and there
+     * is no compilation unit here. Local transformations additionally require a phase no earlier than
+     * semantic analysis, which is past where this stops. Note that the parser plugin does its work in
+     * {@code convert} rather than in {@code parse}, so both are needed before errors can be reported;
+     * nothing is resolved, so an unknown class is not an error at this point.
+     *
+     * @param script the script to validate
+     */
+    public static void validateGroovyScript(final String script) {
+        val sourceUnit = SourceUnit.create("casGroovyScriptValidation", script);
+        sourceUnit.parse();
+        sourceUnit.completePhase();
+        sourceUnit.convert();
+        if (sourceUnit.getErrorCollector().hasErrors()) {
+            throw new IllegalArgumentException("Groovy script has errors: " + sourceUnit.getErrorCollector().getErrors());
+        }
     }
 
     /**
@@ -376,24 +406,51 @@ public class ScriptingUtils {
                 LOGGER.debug("No groovy script is defined");
                 return null;
             }
-            try (val inputStream = resource.getInputStream();
-                 val classLoader = ScriptingUtils.newGroovyClassLoader()) {
-                val script = IOUtils.toString(inputStream, StandardCharsets.UTF_8);
-                val clazz = classLoader.parseClass(script);
-                LOGGER.trace("Preparing constructor arguments [{}] for resource [{}]", args, resource);
-                val ctor = clazz.getDeclaredConstructor(constructorArgs);
-                val result = ctor.newInstance(args);
-                if (!expectedType.isAssignableFrom(result.getClass())) {
-                    throw new ClassCastException("Result [" + result
-                        + " is of type " + result.getClass()
-                        + " when we were expecting " + expectedType);
-                }
-                return (T) result;
+            val clazz = loadObjectClass(resource);
+            LOGGER.trace("Preparing constructor arguments [{}] for resource [{}]", args, resource);
+            val ctor = clazz.getDeclaredConstructor(constructorArgs);
+            val result = ctor.newInstance(args);
+            if (!expectedType.isAssignableFrom(result.getClass())) {
+                throw new ClassCastException("Result [" + result
+                    + " is of type " + result.getClass()
+                    + " when we were expecting " + expectedType);
             }
+            return (T) result;
         } catch (final Exception e) {
             LoggingUtils.error(LOGGER, e);
         }
         return null;
+    }
+
+    /**
+     * Compiles the groovy class behind the given resource, reusing the previously compiled
+     * class as long as the resource has not been modified since. Compiling a class on every
+     * call is expensive and this method sits on request paths.
+     */
+    private static Class<?> loadObjectClass(final Resource resource) throws Exception {
+        val cacheKey = resource.getURI().toASCIIString();
+        var lastModified = -1L;
+        try {
+            lastModified = resource.lastModified();
+        } catch (final Exception e) {
+            LOGGER.trace("Unable to determine the last modified date of [{}]", cacheKey);
+        }
+        val cached = OBJECT_CLASSES.get(cacheKey);
+        if (cached != null && cached.lastModified() == lastModified) {
+            LOGGER.trace("Reusing compiled groovy class for [{}]", cacheKey);
+            return cached.clazz();
+        }
+        try (val inputStream = resource.getInputStream();
+             val classLoader = newGroovyClassLoader()) {
+            val script = IOUtils.toString(inputStream, StandardCharsets.UTF_8);
+            LOGGER.debug("Compiling groovy class from [{}]", cacheKey);
+            val clazz = classLoader.parseClass(script);
+            OBJECT_CLASSES.put(cacheKey, new CompiledGroovyClass(lastModified, clazz));
+            return clazz;
+        }
+    }
+
+    private record CompiledGroovyClass(long lastModified, Class<?> clazz) {
     }
 
     private static CompilerConfiguration createCompilerConfiguration() {

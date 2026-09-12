@@ -230,6 +230,16 @@ Palantir offers a **Restore Version** action in the revision table's context men
 - [JSON interrupt notifications](../webflow/Webflow-Customization-Interrupt-JSON.html) now load their policies once and reload file changes atomically, so concurrent logins can no longer skip an interrupt while the file is being re-read.
 - [REST interrupt notifications](../webflow/Webflow-Customization-Interrupt-REST.html) now read the response payload only for successful status codes; error responses no longer interrupt every login with a generic message.
 
+### Groovy Scripting
+
+- [Groovy scripts](../integration/Apache-Groovy-Scripting.html) no longer abandon an execution when the script is already busy on another thread. Previously a script that stayed busy for more than five seconds caused queued executions to return no result at all, which could silently skip a multifactor authentication trigger or an acceptable usage policy check. Executions now wait for their turn.
+- Bindings assigned to an inline `groovy { ... }` script are now scoped to the assigning thread and to a single execution, so variables belonging to one request can no longer be observed by the next execution of that script or by an unrelated script.
+- An inline `groovy { ... }` script that is executed without variables, such as a scripted multifactor authentication trigger, now keeps working past its first execution. The script's variables were previously reset to an immutable map once it had run, so every later execution failed internally and produced no result.
+- OpenID Connect claim mappings defined as scripts no longer discard the shared Groovy script cache after every claim. Compiled scripts, and the reloading of scripts as their files change, are now retained across token requests.
+- Inline scripts used by [allowed attributes](../integration/Attribute-Release-Policy-InlineGroovy.html), pattern-matching attribute transformations and service access strategy required attributes are compiled once and served from the script cache. Previously each of these compiled a fresh script for every attribute on every request.
+- The [surrogate access strategy](../authentication/Surrogate-Authentication.html) and [Groovy SAML2 metadata resolution](../installation/Configuring-SAML2-DynamicMetadata-Groovy.html) no longer compile their script, and register a new file watcher, on every request.
+- The multifactor authentication [principal attribute predicate](../mfa/Configuring-Multifactor-Authentication-Triggers-PrincipalAttribute-PerApplication.html) compiles its Groovy class once and recompiles it only after the file changes, instead of on every authentication attempt.
+
 ## Other Stuff
     
 - CloudWatch logging now avoids recursive logging initialization when reporting appender startup or delivery failures.
