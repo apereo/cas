@@ -100,28 +100,32 @@ public class ScriptingUtils {
     /**
      * Execute groovy shell script t.
      *
-     * @param <T>    the type parameter
-     * @param script the script
-     * @param clazz  the clazz
+     * @param <T>         the type parameter
+     * @param script      the script
+     * @param clazz       the clazz
+     * @param failOnError whether a failure should be reported rather than swallowed
      * @return the t
      */
     public static <T> @Nullable T executeGroovyShellScript(final Script script,
-                                                           final Class<T> clazz) {
-        return executeGroovyShellScript(script, new HashMap<>(), clazz);
+                                                           final Class<T> clazz,
+                                                           final boolean failOnError) {
+        return executeGroovyShellScript(script, new HashMap<>(), clazz, failOnError);
     }
 
     /**
      * Execute groovy shell script t.
      *
-     * @param <T>       the type parameter
-     * @param script    the script
-     * @param variables the variables
-     * @param clazz     the clazz
+     * @param <T>         the type parameter
+     * @param script      the script
+     * @param variables   the variables
+     * @param clazz       the clazz
+     * @param failOnError whether a failure should be reported rather than swallowed
      * @return the t
      */
     public static <T> @Nullable T executeGroovyShellScript(final Script script,
                                                            final Map<String, Object> variables,
-                                                           final Class<T> clazz) {
+                                                           final Class<T> clazz,
+                                                           final boolean failOnError) {
         try {
             val binding = script.getBinding();
             if (!binding.hasVariable("logger")) {
@@ -136,6 +140,11 @@ public class ScriptingUtils {
             val result = script.run();
             return getGroovyScriptExecutionResultOrThrow(clazz, result);
         } catch (final Exception e) {
+            if (failOnError) {
+                throw e instanceof final RuntimeException runtimeException
+                    ? runtimeException
+                    : new RuntimeException(e);
+            }
             LoggingUtils.error(LOGGER, e);
         }
         return null;

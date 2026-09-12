@@ -9,7 +9,9 @@ import groovy.lang.GroovyRuntimeException;
 import groovy.lang.Script;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
+import lombok.Setter;
 import lombok.ToString;
+import lombok.experimental.Accessors;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.jspecify.annotations.Nullable;
@@ -26,6 +28,7 @@ import org.springframework.core.io.Resource;
 @Slf4j
 @RequiredArgsConstructor
 @ToString(of = "script")
+@Accessors(chain = true)
 public class GroovyShellScript implements ExecutableCompiledScript {
     private static final ThreadLocal<@Nullable ScriptBinding> BINDING_THREAD_LOCAL = new ThreadLocal<>();
 
@@ -39,14 +42,24 @@ public class GroovyShellScript implements ExecutableCompiledScript {
     @Nullable
     private Script compiledScript;
 
+    /**
+     * Unlike {@link WatchableGroovyScriptResource}, this defaults to {@code false} because that is the
+     * behavior inline scripts have always had: a broken inline script yields no value and the caller
+     * carries on. Several features rely on that, such as a mapped attribute release policy that releases
+     * the attributes whose scripts did work. Callers that need a failure reported pass {@code true} to
+     * {@link #execute(Object[], Class, boolean)} or call {@link #setFailOnError(boolean)}.
+     */
+    @Setter
+    private boolean failOnError;
+
     @Override
     public <T> @Nullable T execute(final Object[] args, final Class<T> clazz) throws Throwable {
-        return execute(args, clazz, true);
+        return execute(args, clazz, failOnError);
     }
 
     @Override
     public void execute(final Object[] args) throws Throwable {
-        execute(args, Void.class, true);
+        execute(args, Void.class, failOnError);
     }
 
     @Override
@@ -64,10 +77,13 @@ public class GroovyShellScript implements ExecutableCompiledScript {
                     currentScript.setBinding(new Binding(binding));
                 }
                 LOGGER.trace("Current binding [{}]", currentScript.getBinding());
-                val result = ScriptingUtils.executeGroovyShellScript(currentScript, clazz);
+                val result = ScriptingUtils.executeGroovyShellScript(currentScript, clazz, failOnError);
                 LOGGER.debug("Groovy script [{}] returns result [{}]", this, result);
                 return result;
             } catch (final GroovyRuntimeException e) {
+                if (failOnError) {
+                    throw e;
+                }
                 LoggingUtils.error(LOGGER, e);
                 return null;
             } finally {

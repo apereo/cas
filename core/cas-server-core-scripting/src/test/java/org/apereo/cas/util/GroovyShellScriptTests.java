@@ -3,6 +3,7 @@ package org.apereo.cas.util;
 import module java.base;
 import org.apereo.cas.util.scripting.ExecutableCompiledScript;
 import org.apereo.cas.util.scripting.ExecutableCompiledScriptFactory;
+import groovy.lang.GroovyRuntimeException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -223,6 +224,28 @@ class GroovyShellScriptTests {
                     shell.execute(ArrayUtils.EMPTY_OBJECT_ARRAY);
                     shell.execute("run", Void.class, ArrayUtils.EMPTY_OBJECT_ARRAY);
                 });
+                assertNull(shell.execute(ArrayUtils.EMPTY_OBJECT_ARRAY, String.class, false));
+            }
+        }
+
+        @Test
+        void verifyBadScriptIsReportedWhenAskedTo() {
+            val scriptFactory = ExecutableCompiledScriptFactory.getExecutableCompiledScriptFactory();
+            try (val shell = scriptFactory.fromScript("###$$@@@!!!***&&&")) {
+                assertThrows(GroovyRuntimeException.class,
+                    () -> shell.execute(ArrayUtils.EMPTY_OBJECT_ARRAY, String.class, true),
+                    "A caller that asks to fail on error must not be handed a null result");
+            }
+        }
+
+        @Test
+        void verifyFailOnErrorIsHonoredWhenAssigned() {
+            val scriptFactory = ExecutableCompiledScriptFactory.getExecutableCompiledScriptFactory();
+            try (val shell = scriptFactory.fromScript("throw new IllegalArgumentException('failed')")) {
+                assertNull(shell.execute(ArrayUtils.EMPTY_OBJECT_ARRAY, String.class, false));
+                shell.setFailOnError(true);
+                assertThrows(IllegalArgumentException.class, () -> shell.execute(ArrayUtils.EMPTY_OBJECT_ARRAY),
+                    "A failure raised by the script body must reach a caller that assigned failOnError");
             }
         }
     }

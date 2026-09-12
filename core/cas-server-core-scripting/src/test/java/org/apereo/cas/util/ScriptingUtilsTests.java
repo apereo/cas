@@ -34,7 +34,7 @@ class ScriptingUtilsTests {
         val principal = mock(Principal.class);
         when(principal.getId()).thenReturn("casuser");
         when(authn.getPrincipal()).thenReturn(principal);
-        val result = ScriptingUtils.executeGroovyShellScript(script, Map.of("authentication", authn), String.class);
+        val result = ScriptingUtils.executeGroovyShellScript(script, Map.of("authentication", authn), String.class, true);
         assertTrue(Objects.requireNonNull(result).startsWith("casuser"));
     }
 
@@ -46,13 +46,13 @@ class ScriptingUtilsTests {
     @Test
     void verifyGroovyScriptShellExecution() {
         val script = ScriptingUtils.parseGroovyShellScript("return name");
-        val result = ScriptingUtils.executeGroovyShellScript(script, CollectionUtils.wrap("name", "casuser"), String.class);
+        val result = ScriptingUtils.executeGroovyShellScript(script, CollectionUtils.wrap("name", "casuser"), String.class, true);
         assertEquals("casuser", result);
     }
 
     @Test
     void verifyGroovyExecutionFails() {
-        var result = ScriptingUtils.executeGroovyShellScript(mock(Script.class), CollectionUtils.wrap("name", "casuser"), String.class);
+        var result = ScriptingUtils.executeGroovyShellScript(mock(Script.class), CollectionUtils.wrap("name", "casuser"), String.class, false);
         assertNull(result);
 
         result = ScriptingUtils.executeGroovyScript(mock(Resource.class), "someMethod", String.class);

@@ -64,7 +64,10 @@ public interface ExecutableCompiledScript extends AutoCloseable {
     }
 
     /**
-     * Sets fail on error.
+     * Sets fail on error. When set, a failure to compile or run the script is reported to the
+     * caller rather than swallowed and reported as a {@code null} result. Implementations are
+     * expected to honor this; the default here is a no-op only so that an implementation which
+     * cannot fail in a recoverable way need not implement it.
      *
      * @param failOnError the fail on error
      * @return the fail on error
