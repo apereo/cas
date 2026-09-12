@@ -469,3 +469,36 @@ Strong success criteria let you loop independently. Weak criteria ("make it work
   outside the login flow -> no interrupt evaluated.
 - Puppeteer `interrupt-gateway-login` covers CAS gateway, OIDC `prompt=none` and SAML2 `IsPassive` without an SSO
   session, then with a pending interrupt (AFTER_SSO; SAML2 is answered from the SSO session), then after acknowledgement.
+
+## Groovy / Scripting Notes
+
+- Surface: `api/cas-server-core-api-scripting` (`ExecutableCompiledScript`, `ExecutableCompiledScriptFactory`,
+  `ScriptResourceCacheManager`) and `core/cas-server-core-scripting` (`GroovyShellScript` for inline
+  `groovy { ... }`, `WatchableGroovyScriptResource` for `file:`/`classpath:` `.groovy`, `ScriptingUtils`,
+  `GroovyScriptResourceCacheManager`, `GroovyScriptCacheManagerEndpoint`). ~50 modules consume it, so a
+  defect in those five classes is a defect in attribute release, AUP, MFA, OIDC, SAML, themes, interrupts
+  and webflow at once. Review them first.
+- `ScriptResourceCacheManager` is `AutoCloseable` and its `close()` invalidates the WHOLE shared cache.
+  Never put `getScriptResourceCacheManager()` in a try-with-resources; it is a singleton bean, not a
+  per-call resource.
+- Every `execute(...)` is wrapped in `CasReentrantLock.tryLock()`, which waits 5 seconds and then returns
+  `null` silently. Cached scripts are shared singletons, so concurrent requests serialize on one lock and
+  a slow script (HTTP/LDAP are star-imported into the compiler config, so scripts doing I/O is expected)
+  turns into null results, not errors. When reading any script-backed component, ask what a `null` result
+  means: for MFA triggers and AUP it currently means "skip", i.e. fail-open.
+- `GroovyShellScript` keeps its binding in a `static` ThreadLocal that is cleared only on the path where
+  the lock was acquired. Treat per-thread script state as a cross-request leak risk.
+- `setFailOnError` has a no-op default in the interface and `GroovyShellScript` does not override it, so
+  `failOnError=true` is honoured only by `WatchableGroovyScriptResource`. Do not rely on it for inline
+  scripts; check for `null` instead of expecting a throw, and never unbox a script result directly.
+- Resolve scripts through `ScriptResourceCacheManager.resolveScriptableResource(...)`. Calling
+  `fromScript(...)` or `fromResource(...)` on a request path recompiles the script (new `GroovyClassLoader`
+  and class per call) and, for `fromResource`, starts a `FileWatcherService` thread that nothing closes.
+- Cache keys are `sha256` of the joined key parts. Include everything the compiled script depends on;
+  omitting a discriminator shares one compiled script across callers that should not share it.
+- `groovyCache` actuator: `Access.NONE` by default. `resources/validate` compiles caller-supplied Groovy,
+  and Groovy runs AST transformations at compile time, so it is code execution, not validation.
+  `resources/{key}` returns script file contents.
+- Groovy scripts are configuration, not user input: every script body traced in this tree comes from a
+  registered service definition or a `cas.*` property. Keep it that way — never let a request-derived value
+  reach `isScript`/`fromScript`.

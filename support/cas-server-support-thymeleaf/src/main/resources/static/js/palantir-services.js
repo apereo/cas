@@ -94,12 +94,20 @@ async function initializeServicesOperations() {
 
 let serviceEditorInstance = null;
 let editServiceDialogInstance = null;
+let entityHistoryDialogInstance = null;
 
 function getEditServiceDialogInstance() {
     if (!editServiceDialogInstance) {
         editServiceDialogInstance = window.mdc.dialog.MDCDialog.attachTo(document.getElementById("editServiceDialog"));
     }
     return editServiceDialogInstance;
+}
+
+function getEntityHistoryDialogInstance() {
+    if (!entityHistoryDialogInstance) {
+        entityHistoryDialogInstance = window.mdc.dialog.MDCDialog.attachTo(document.getElementById("viewEntityHistoryDialog"));
+    }
+    return entityHistoryDialogInstance;
 }
 
 async function initializeServiceButtons() {
@@ -119,7 +127,9 @@ async function initializeServiceButtons() {
                 entityHistoryTable.row.add({
                     0: `<code>${item.id}</code>`,
                     1: `<code>${item.date}</code>`,
-                    2: `${JSON.stringify(item.entity, null, 4)}`
+                    2: `${JSON.stringify(item.entity, null, 4)}`,
+                    serviceId: serviceId,
+                    revisionId: item.id
                 });
             }
 
@@ -132,8 +142,7 @@ async function initializeServiceButtons() {
             });
 
             if (response.length > 0) {
-                const dialog = window.mdc.dialog.MDCDialog.attachTo(document.getElementById("viewEntityHistoryDialog"));
-                dialog["open"]();
+                getEntityHistoryDialogInstance()["open"]();
             } else {
                 Swal.fire("No History!", "There are no changes recorded for this application definition.", "info");
             }
@@ -143,6 +152,42 @@ async function initializeServiceButtons() {
             displayBanner(xhr);
         });
     }
+
+    initializeDataTableContextMenu({
+        table: $("#entityHistoryTable").DataTable(),
+        selector: "#entityHistoryTable tbody tr",
+        items: {
+            restore: {name: "Restore Version", icon: contextMenuIcon("mdi-history")}
+        },
+        callback: (key, context) => {
+            if (key === "restore") {
+                const {serviceId, revisionId} = context.rowData;
+                Swal.fire({
+                    title: "Restore this version?",
+                    text: `Version ${revisionId} will replace the current definition of service ${serviceId}.`,
+                    icon: "question",
+                    showCancelButton: true,
+                    confirmButtonText: "Restore",
+                    showLoaderOnConfirm: true,
+                    allowOutsideClick: () => !Swal.isLoading(),
+                    preConfirm: () => $.ajax({
+                        url: `${CasActuatorEndpoints.entityHistory()}/registeredServices/${encodeURIComponent(serviceId)}/restore/${encodeURIComponent(revisionId)}`,
+                        type: "POST",
+                        headers: {"Accept": "application/json"}
+                    }).catch(xhr => {
+                        console.error("Error restoring service:", xhr);
+                        Swal.showValidationMessage("Unable to restore this version. Please try again or check your access to service history.");
+                    })
+                }).then(result => {
+                    if (result.isConfirmed) {
+                        getEntityHistoryDialogInstance()["close"]();
+                        fetchServices(() => updateNavigationSidebar());
+                        Swal.fire("Service Restored", `Version ${revisionId} is now the current definition of service ${serviceId}.`, "success");
+                    }
+                });
+            }
+        }
+    });
 
     function viewEntityChangelog(serviceId) {
         $.get(`${CasActuatorEndpoints.entityHistory()}/registeredServices/${serviceId}/changelog`, response => {

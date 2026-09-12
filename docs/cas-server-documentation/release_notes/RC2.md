@@ -2,6 +2,10 @@
 layout: default
 title: CAS - Release Notes
 category: Planning
+palantir_images:
+  - src: img_14.png
+    alt: Palantir history version restore view
+    title: Palantir history version restore view
 ---
 
 {% include variables.html %}
@@ -211,10 +215,13 @@ security have been strengthened across several flows.
 counts with filtered listings, expired-ticket cleanup, authentication and MFA diagnostics, and principal attribute
 cache invalidation. Service listings also release backend resources correctly.
 
-### Service Change History
+### Palantir
 
 The [service history endpoint](../services/Configuring-Service-Version-History.html) can now restore a selected
 registered-service revision to the service registry and live service cache, while retaining its history.
+Palantir offers a **Restore Version** action in the revision table's context menu under **View Change History**.
+
+{% include imagegallery.html gallery_id="palantir-dashboard" images=page.palantir_images %}
 
 ### Interrupt Notifications
 

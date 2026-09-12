@@ -220,3 +220,23 @@ Guidance for AI coding agents working in the Apereo CAS source tree.
 - Inquirer errors currently fail open; any fix must state the intended behavior for blocking policies.
 - Reloadable inquirer state (files, watchers) must be published atomically; a failed reload keeps the last good contents rather than failing open.
 - Payloads map onto `InterruptResponse`, whose no-arg constructor means "interrupt". Parse external responses only after the status check, and test error bodies against random-port `MockWebServer` instances.
+
+## Groovy and scripting
+
+- Start at `core/cas-server-core-scripting`; roughly fifty modules delegate to the same five classes, so
+  changes there are changes to authentication, attribute release, MFA, AUP, OIDC, SAML and themes at once.
+- `ScriptResourceCacheManager` is a singleton whose `close()` clears the entire cache — it must never be
+  used in a try-with-resources block.
+- Script execution is guarded by a five-second `tryLock` that returns `null` on timeout instead of
+  throwing. Review every script-backed decision for what `null` means, and prefer fail-closed defaults at
+  security boundaries; today MFA triggers and AUP treat it as "skip".
+- Do not compile scripts on a request path (`fromScript`/`fromResource` per call). Go through
+  `resolveScriptableResource`, or hold the compiled script in a field, and remember `fromResource` also
+  starts a file-watcher thread.
+- Inline (`groovy { ... }`) and external (`file:`/`classpath:`) scripts behave differently: only external
+  scripts honour `failOnError` and support reload; inline scripts swallow `GroovyRuntimeException` and
+  share a static binding ThreadLocal. Test both forms.
+- Puppeteer coverage lives in the 18 `ci/tests/puppeteer/scenarios/*groovy*` scenarios
+  (`service-access-strategy-groovy`, `surrogate-login-groovy`, `mfa-provider-selection-trigger-groovy`,
+  `interrupt-afterauthn-groovy`, `webflow-groovy-action`, …). None of them exercise concurrency, script
+  errors, or cache expiry, so a change in this area needs new coverage rather than a rerun.
