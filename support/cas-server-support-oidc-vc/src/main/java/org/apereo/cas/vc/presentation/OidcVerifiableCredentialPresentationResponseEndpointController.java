@@ -192,7 +192,8 @@ public class OidcVerifiableCredentialPresentationResponseEndpointController exte
 
         val disclosedClaims = decodeDisclosures(encodedClaims, sdJwt.getDisclosures(), sdJwt.getHashAlgorithm());
         validateRequestedClaims(disclosedClaims, credentialQuery.getClaims());
-        val expectedAudience = "redirect_uri:" + configuredIssuer + '/' + OidcConstants.VC_PRESENTATION_RESPONSE_URL;
+        val expectedAudience = OidcVerifiableCredentialPresentationRequestEndpointController
+            .resolveClientIdentifier(configurationContext.getCasProperties());
         validateKeyBindingJwt(sdJwt, holderJwk, nonce, expectedAudience, transientSessionTicket);
     }
 

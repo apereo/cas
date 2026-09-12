@@ -79,7 +79,9 @@ public abstract class BaseOidcVerifiableCredentialEncoder implements OidcVerifia
         jwtClaims.setIssuedAt(issuedAt);
         jwtClaims.setExpirationTime(NumericDate.fromSeconds(
             issuedAt.getValue() + resolveCredentialValidity(configurationId).toSeconds()));
-        jwtClaims.setNotBeforeMinutesInThePast(Beans.newDuration(oidc.getCore().getSkew()).toMinutes());
+
+        val nb = Long.valueOf(Beans.newDuration(oidc.getCore().getSkew()).toMinutes()).floatValue();
+        jwtClaims.setNotBeforeMinutesInThePast(nb);
         jwtClaims.setStringClaim("typ", getFormat().getValue());
         jwtClaims.setJwtId(UUID.randomUUID().toString());
 

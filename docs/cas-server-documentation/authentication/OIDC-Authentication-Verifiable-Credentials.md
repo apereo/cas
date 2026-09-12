@@ -239,6 +239,13 @@ The general flow is:
 - The wallet calls the credential endpoint with the access token and proof.
 - CAS validates the request and issues the credential.
 
+## Verifiable Presentations
+
+CAS can also act as a verifier and ask a wallet to present a credential. A relying party creates a
+presentation request, and CAS returns a deep link the wallet can open, usually rendered as a QR code.
+
+{% include_cached casproperties.html properties="cas.authn.oidc.vc.presentation" %}
+
 ## Credential Validity
 
 Each credential configuration controls how long the credentials it issues remain valid via

@@ -104,6 +104,7 @@ Several improvements are now available for [OpenID Connect with Verifiable Crede
 - Access tokens used for credential issuance are now bound to the credential configuration id when the token is minted; this is then enforced when the token is used to request credentials.
 - Transaction-code requirements are enforced during token exchange.
 - Credential batch issuance is limited and capped at a predefined limit.
+- Verifiable presentation requests are now delivered the way OpenID4VP requires. A request made under the `redirect_uri` client identifier prefix cannot be signed, and a request URI must serve a signed request object, so CAS now carries the whole authorization request by value in the wallet deep link and no longer offers a request URI in that mode. Setting `cas.authn.oidc.vc.presentation.client-identifier-prefix` to `X509_SAN_DNS` signs the request object and serves it by reference as `application/oauth-authz-req+jwt`. Previously CAS advertised a request URI that returned a plain JSON document.
 - Issued credentials now honor a configurable lifetime per credential configuration, `cas.authn.oidc.vc.issuer.credential-configurations[].credential-validity`, which defaults to thirty days. Previously every credential expired five minutes after issuance, which left it unusable by the time a wallet had stored it.
 
 ### OAuth and OpenID Connect 

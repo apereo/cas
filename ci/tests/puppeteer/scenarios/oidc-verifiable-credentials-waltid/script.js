@@ -234,10 +234,29 @@ async function startVerifiableCredentialPresentationFlow(credential) {
     );
 
     await cas.log(presentation);
-    assert(presentation.authorization_request.startsWith("openid4vp://authorize?client_id=redirect_uri:"));
     assert(presentation.request_id !== undefined);
-    assert(presentation.request_uri !== undefined);
     assert(presentation.expires_in > 0);
+
+    /**
+     * OpenID4VP 1.0 does not allow a request made under the redirect_uri client identifier
+     * prefix to be signed, and a request URI must serve a signed request object. CAS therefore
+     * passes the whole authorization request by value and offers no request URI.
+     */
+    assert(presentation.request_uri === undefined);
+    assert(presentation.authorization_request.startsWith("openid4vp://authorize?"));
+    const authorizationRequest = new URL(presentation.authorization_request).searchParams;
+    const responseUri = authorizationRequest.get("response_uri");
+    assert(responseUri.endsWith("/oidcVcPresentationResponse"));
+    assert(authorizationRequest.get("client_id") === `redirect_uri:${responseUri}`);
+    assert(authorizationRequest.get("response_type") === "vp_token");
+    assert(authorizationRequest.get("response_mode") === "direct_post");
+    assert(authorizationRequest.get("nonce") !== null);
+    assert(authorizationRequest.get("state") === presentation.request_id);
+    const dcqlQuery = JSON.parse(authorizationRequest.get("dcql_query"));
+    assert(dcqlQuery.credentials.length === 1);
+    assert(dcqlQuery.credentials[0].format === "dc+sd-jwt");
+    const clientMetadata = JSON.parse(authorizationRequest.get("client_metadata"));
+    assert(clientMetadata.vp_formats_supported["dc+sd-jwt"] !== undefined);
 
     const url = `http://localhost:7001/wallet-api/wallet/${wallet.walletId}/exchange/resolvePresentationRequest`;
     const authCookie = `${wallet.cookie.name}=${wallet.cookie.value}`;
