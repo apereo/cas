@@ -113,8 +113,9 @@ POST /oidc/oidcVcCredential
 
 This endpoint expects:
 
-- An access token, presented as `Authorization: Bearer ...` or, when the token response named the
-  token type `DPoP`, as `Authorization: DPoP ...` per [RFC 9449](https://www.rfc-editor.org/rfc/rfc9449).
+- An access token, presented in the `Authorization` header as `Bearer ...` or, when the token response
+  named the token type `DPoP`, as `DPoP ...` per [RFC 9449](https://www.rfc-editor.org/rfc/rfc9449).
+  An `access_token` or `token` request parameter is accepted as well, as it is elsewhere in CAS.
   A `DPoP`-bound token must be accompanied by a `DPoP` proof header bound to that token; a request
   without one, or with a proof that does not verify, is answered with `401` and
   `WWW-Authenticate: DPoP error="invalid_dpop_proof"`. A proof may not be reused.
@@ -277,6 +278,38 @@ CAS can also act as a verifier and ask a wallet to present a credential. A relyi
 presentation request, and CAS returns a deep link the wallet can open, usually rendered as a QR code.
 
 {% include_cached casproperties.html properties="cas.authn.oidc.vc.presentation" %}
+
+## Authorized Credential Types
+
+The credential configurations above describe what the issuer is able to mint. They say nothing about
+which relying party may ask for what, so by default every registered client may obtain every credential
+the deployment defines. A service narrows that down with a verifiable credentials policy:
+
+```json
+{
+  "@class": "org.apereo.cas.services.OidcRegisteredService",
+  "clientId": "client",
+  "clientSecret": "secret",
+  "serviceId": "^https://app.example.org/.*",
+  "name": "Example",
+  "id": 1,
+  "verifiableCredentialsPolicy": {
+    "@class": "org.apereo.cas.oidc.vc.services.DefaultRegisteredServiceOidcVerifiableCredentialsPolicy",
+    "allowedCredentialTypes": [ "java.util.HashSet", [ "myorg" ] ]
+  }
+}
+```
+
+The entries in `allowedCredentialTypes` are credential configuration ids. A service that defines no
+policy, or whose policy lists no credential types, may obtain every credential configuration the issuer
+publishes; only a policy that actually names types restricts the service to those types. A policy can
+never widen a service beyond what the issuer publishes, so naming a credential configuration that does
+not exist grants nothing.
+
+The policy is enforced wherever a credential type is claimed: when a credential offer transaction is
+created, when authorization details are turned into an authorization code, and again at the credential
+endpoint when the token is spent. That last check reads the policy afresh, so tightening a service takes
+effect against access tokens that are already outstanding.
 
 ## Credential Validity
 

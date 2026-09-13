@@ -8,6 +8,9 @@ import org.apereo.cas.oidc.vc.issuer.OidcVerifiableCredentialIssuerService;
 import org.apereo.cas.oidc.vc.issuer.OidcVerifiableCredentialRequest;
 import org.apereo.cas.oidc.vc.issuer.OidcVerifiableCredentialResponse;
 import org.apereo.cas.oidc.vc.issuer.OidcVerifiableCredentialValidationContext;
+import org.apereo.cas.oidc.vc.issuer.proof.OidcVerifiableCredentialProofException;
+import org.apereo.cas.oidc.vc.services.OidcVerifiableCredentialPolicyUtils;
+import org.apereo.cas.services.OidcRegisteredService;
 import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.support.oauth.OAuth20GrantTypes;
 import org.apereo.cas.support.oauth.util.OAuth20Utils;
@@ -15,6 +18,7 @@ import org.apereo.cas.support.oauth.web.endpoints.BaseOAuth20Controller;
 import org.apereo.cas.ticket.accesstoken.OAuth20AccessToken;
 import org.apereo.cas.util.Couplet;
 import org.apereo.cas.util.LoggingUtils;
+import org.apereo.cas.util.function.FunctionUtils;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.extern.slf4j.Slf4j;
@@ -93,10 +97,9 @@ public class OidcVerifiableCredentialEndpointController extends BaseOAuth20Contr
             return batchError;
         }
 
-        if (!validateAccessTokenForCredentialIssuance(decodedToken, issuanceContext)) {
-            return ResponseEntity.badRequest()
-                .body(OAuth20Utils.getErrorResponseBody(OAuth20Constants.ERROR,
-                    "Access token cannot be accepted for credential issuance"));
+        val issuanceError = validateCredentialIssuance(decodedToken, issuanceContext);
+        if (issuanceError != null) {
+            return issuanceError;
         }
 
         val issuedCredentials = credentialIssuerService.issue(issuanceContext, new HashSet<>());
@@ -124,14 +127,12 @@ public class OidcVerifiableCredentialEndpointController extends BaseOAuth20Contr
         val hasIdentifier = StringUtils.isNotBlank(request.getCredentialIdentifier());
         val hasConfigurationId = StringUtils.isNotBlank(request.getCredentialConfigurationId());
         if (hasIdentifier && hasConfigurationId) {
-            return ResponseEntity.badRequest()
-                .body(OAuth20Utils.getErrorResponseBody(OAuth20Constants.INVALID_REQUEST,
-                    "Only one of credential_identifier or credential_configuration_id may be specified"));
+            return badRequest(OidcConstants.VC_ERROR_INVALID_CREDENTIAL_REQUEST,
+                "Only one of credential_identifier or credential_configuration_id may be specified");
         }
         if (hasIdentifier && !accessToken.hasAuthorizationDetails()) {
-            return ResponseEntity.badRequest()
-                .body(OAuth20Utils.getErrorResponseBody(OAuth20Constants.INVALID_REQUEST,
-                    "A credential identifier cannot be used with an access token that carries no authorization details"));
+            return badRequest(OidcConstants.VC_ERROR_INVALID_CREDENTIAL_REQUEST,
+                "A credential identifier cannot be used with an access token that carries no authorization details");
         }
         return null;
     }
@@ -140,21 +141,57 @@ public class OidcVerifiableCredentialEndpointController extends BaseOAuth20Contr
         val maximumBatchSize = Math.max(1, getConfigurationContext().getCasProperties()
             .getAuthn().getOidc().getVc().getIssuer().getBatchSize());
         if (context.resolveProofs().size() > maximumBatchSize) {
-            return ResponseEntity.badRequest()
-                .body(OAuth20Utils.getErrorResponseBody(OAuth20Constants.INVALID_REQUEST,
-                    "Credential batch size is invalid"));
+            return badRequest(OidcConstants.VC_ERROR_INVALID_CREDENTIAL_REQUEST, "Credential batch size is invalid");
         }
         return null;
     }
 
-    protected boolean validateAccessTokenForCredentialIssuance(final OAuth20AccessToken accessToken,
-                                                               final OidcVerifiableCredentialValidationContext issuanceContext) {
-        val authorizedConfigurationIds = resolveAuthorizedCredentialConfigurationIds(accessToken);
-        if (authorizedConfigurationIds.isEmpty()) {
-            LOGGER.warn("Access token does not authorize any credential configuration");
-            return false;
+    /**
+     * Decide whether this token may obtain this credential, and say why not in the vocabulary
+     * OpenID4VCI defines for the credential endpoint: a credential the issuer does not publish is
+     * {@code unsupported_credential_type}, while one it publishes but will not hand to this caller is
+     * {@code credential_request_denied}. A wallet can act on the difference; a single opaque error
+     * tells it only to stop.
+     *
+     * @param accessToken      the access token
+     * @param issuanceContext  the issuance context
+     * @return an error response, or null when issuance may proceed
+     */
+    protected @Nullable ResponseEntity validateCredentialIssuance(final OAuth20AccessToken accessToken,
+                                                                   final OidcVerifiableCredentialValidationContext issuanceContext) {
+        val requestedConfigurationId = issuanceContext.resolveConfigurationId();
+        val publishedConfigurationIds = getConfigurationContext().getCasProperties()
+            .getAuthn().getOidc().getVc().getIssuer().getCredentialConfigurations().keySet();
+        if (!publishedConfigurationIds.contains(requestedConfigurationId)) {
+            LOGGER.warn("Credential configuration [{}] is not published by this issuer", requestedConfigurationId);
+            return badRequest(OidcConstants.VC_ERROR_UNSUPPORTED_CREDENTIAL_TYPE,
+                "Credential configuration %s is not supported".formatted(requestedConfigurationId));
         }
-        return authorizedConfigurationIds.contains(issuanceContext.resolveConfigurationId());
+
+        val authorizedConfigurationIds = resolveAuthorizedCredentialConfigurationIds(accessToken);
+        if (!authorizedConfigurationIds.contains(requestedConfigurationId)) {
+            LOGGER.warn("Access token authorizes [{}] and does not cover [{}]",
+                authorizedConfigurationIds, requestedConfigurationId);
+            return badRequest(OidcConstants.VC_ERROR_CREDENTIAL_REQUEST_DENIED,
+                "Access token does not authorize credential configuration %s".formatted(requestedConfigurationId));
+        }
+
+        /*
+         * What the token authorizes was decided when the token was minted. The service policy is read
+         * again here rather than trusted from then, so that tightening a relying party's verifiable
+         * credentials policy takes effect against tokens that are already outstanding.
+         */
+        val registeredService = OAuth20Utils.getRegisteredOAuthServiceByClientId(
+            getConfigurationContext().getServicesManager(), accessToken.getClientId(), OidcRegisteredService.class);
+        val allowedConfigurationIds = OidcVerifiableCredentialPolicyUtils.resolveAllowedCredentialConfigurationIds(
+            registeredService, publishedConfigurationIds);
+        if (!allowedConfigurationIds.contains(requestedConfigurationId)) {
+            LOGGER.warn("Client [{}] is not allowed to obtain credential configuration [{}]; allowed: [{}]",
+                accessToken.getClientId(), requestedConfigurationId, allowedConfigurationIds);
+            return badRequest(OidcConstants.VC_ERROR_CREDENTIAL_REQUEST_DENIED,
+                "Credential configuration %s is not permitted for this client".formatted(requestedConfigurationId));
+        }
+        return null;
     }
 
     /**
@@ -195,20 +232,80 @@ public class OidcVerifiableCredentialEndpointController extends BaseOAuth20Contr
         val webContext = new JEEContext(httpRequest, httpResponse);
         if (!getConfigurationContext().getIssuerService().validateIssuer(webContext, List.of(OidcConstants.VC_CREDENTIAL_URL))) {
             LOGGER.warn("CAS cannot accept the request given the issuer is invalid.");
-            val body = OAuth20Utils.getErrorResponseBody(OAuth20Constants.INVALID_REQUEST, "Invalid issuer");
-            return Couplet.right(ResponseEntity.badRequest().body(body));
+            return Couplet.right(badRequest(OidcConstants.VC_ERROR_INVALID_CREDENTIAL_REQUEST, "Invalid issuer"));
         }
 
         val presentedAccessToken = getAccessTokenFromRequest(httpRequest);
-        val decodedToken = getConfigurationContext().getTicketRegistry()
-            .getTicket(presentedAccessToken.getValue(), OAuth20AccessToken.class);
-        if (!validateAccessToken(decodedToken)) {
-            LOGGER.warn("The access token is invalid, expired, has an invalid grant type or no authorization details.");
-            return Couplet.right(ResponseEntity.badRequest()
-                .body(OAuth20Utils.getErrorResponseBody(OAuth20Constants.ERROR, "Invalid access token")));
+        if (StringUtils.isBlank(presentedAccessToken.getKey())) {
+            LOGGER.warn("The credential request carries no access token in its authorization header.");
+            return Couplet.right(unauthorized(httpRequest, null, null));
+        }
+        val decodedToken = FunctionUtils.doAndHandle(() -> getConfigurationContext().getTicketRegistry()
+            .getTicket(presentedAccessToken.getValue(), OAuth20AccessToken.class));
+        if (decodedToken == null || decodedToken.isExpired()) {
+            LOGGER.warn("The access token presented to the credential endpoint is unknown or expired.");
+            return Couplet.right(unauthorized(httpRequest, OAuth20Constants.INVALID_TOKEN,
+                "The access token is invalid, revoked or expired"));
         }
         val proofError = verifyProofOfPossession(webContext, presentedAccessToken.getKey(), decodedToken);
-        return proofError != null ? Couplet.right(proofError) : Couplet.left(decodedToken);
+        if (proofError != null) {
+            return Couplet.right(proofError);
+        }
+        if (!validateAccessToken(decodedToken)) {
+            LOGGER.warn("The access token has an invalid grant type or carries no authorization details.");
+            return Couplet.right(badRequest(OidcConstants.VC_ERROR_CREDENTIAL_REQUEST_DENIED,
+                "Access token does not authorize credential issuance"));
+        }
+        return Couplet.left(decodedToken);
+    }
+
+    /**
+     * The credential endpoint is an OAuth protected resource, so a token that cannot be accepted is a
+     * 401 carrying a {@code WWW-Authenticate} challenge, not a 400. RFC 9110, section 15.5.2 makes the
+     * challenge mandatory on a 401, and RFC 6750, section 3 says to name the error only when the
+     * request actually presented credentials -- a client that sent none is told which scheme to use
+     * and nothing more. The challenge answers in whichever scheme the client used, so a DPoP-bound
+     * token is not told to retry as a bearer token.
+     *
+     * @param request     the request
+     * @param error       the error code, or null when the request carried no token at all
+     * @param description the error description
+     * @return the response entity
+     */
+    protected ResponseEntity unauthorized(final HttpServletRequest request,
+                                          final @Nullable String error,
+                                          final @Nullable String description) {
+        val challenge = new StringBuilder(resolveAuthorizationScheme(request));
+        if (StringUtils.isNotBlank(error)) {
+            challenge.append(" error=\"").append(error).append('"');
+            if (StringUtils.isNotBlank(description)) {
+                challenge.append(", error_description=\"").append(toChallengeValue(description)).append('"');
+            }
+        }
+        val response = ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+            .header(HttpHeaders.WWW_AUTHENTICATE, challenge.toString());
+        return StringUtils.isBlank(error)
+            ? response.build()
+            : response.body(OAuth20Utils.getErrorResponseBody(error, description));
+    }
+
+    /**
+     * Challenge parameters are quoted strings, so anything that would end the quoted string early --
+     * a quote, a backslash or a control character -- is removed rather than escaped.
+     *
+     * @param value the value
+     * @return the sanitized value
+     */
+    protected static String toChallengeValue(final String value) {
+        return value
+            .chars()
+            .filter(character -> character >= ' ' && character != '"' && character != '\\' && !Character.isISOControl(character))
+            .collect(StringBuilder::new, StringBuilder::appendCodePoint, StringBuilder::append)
+            .toString();
+    }
+
+    protected static ResponseEntity badRequest(final String error, final String description) {
+        return ResponseEntity.badRequest().body(OAuth20Utils.getErrorResponseBody(error, description));
     }
 
     /**
@@ -232,10 +329,11 @@ public class OidcVerifiableCredentialEndpointController extends BaseOAuth20Contr
             return null;
         } catch (final Throwable e) {
             LoggingUtils.warn(LOGGER, e);
+            val description = StringUtils.defaultIfBlank(e.getMessage(), "DPoP proof validation failed");
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
-                .header(HttpHeaders.WWW_AUTHENTICATE,
-                    "%s error=\"%s\"".formatted(OAuth20Constants.TOKEN_TYPE_DPOP, OAuth20Constants.INVALID_DPOP_PROOF))
-                .body(OAuth20Utils.getErrorResponseBody(OAuth20Constants.INVALID_DPOP_PROOF, e.getMessage()));
+                .header(HttpHeaders.WWW_AUTHENTICATE, "%s error=\"%s\", error_description=\"%s\"".formatted(
+                    OAuth20Constants.TOKEN_TYPE_DPOP, OAuth20Constants.INVALID_DPOP_PROOF, toChallengeValue(description)))
+                .body(OAuth20Utils.getErrorResponseBody(OAuth20Constants.INVALID_DPOP_PROOF, description));
         }
     }
 
@@ -254,13 +352,31 @@ public class OidcVerifiableCredentialEndpointController extends BaseOAuth20Contr
     @SuppressWarnings("UnusedMethod")
     private static ResponseEntity handleErrors(final Exception ex) {
         LoggingUtils.error(LOGGER, ex);
+        /*
+         * A failure raised while validating a proof knows which of the two OpenID4VCI proof errors it
+         * is, and the distinction matters to the wallet: invalid_nonce is recoverable by fetching a
+         * fresh nonce, invalid_proof is not.
+         */
+        val proofException = findProofException(ex);
+        if (proofException != null) {
+            return badRequest(proofException.getError(), proofException.getMessage());
+        }
         if (ex instanceof final ResponseStatusException rse) {
             return ResponseEntity
                 .status(rse.getStatusCode())
-                .body(OAuth20Utils.getErrorResponseBody(OAuth20Constants.INVALID_REQUEST, rse.getReason()));
+                .body(OAuth20Utils.getErrorResponseBody(OidcConstants.VC_ERROR_INVALID_CREDENTIAL_REQUEST, rse.getReason()));
         }
-        return ResponseEntity
-            .status(HttpStatus.BAD_REQUEST)
-            .body(OAuth20Utils.getErrorResponseBody(OAuth20Constants.INVALID_REQUEST, ex.getMessage()));
+        return badRequest(OidcConstants.VC_ERROR_INVALID_CREDENTIAL_REQUEST, ex.getMessage());
+    }
+
+    private static @Nullable OidcVerifiableCredentialProofException findProofException(final Throwable throwable) {
+        var cause = throwable;
+        while (cause != null) {
+            if (cause instanceof final OidcVerifiableCredentialProofException proofException) {
+                return proofException;
+            }
+            cause = Objects.equals(cause.getCause(), cause) ? null : cause.getCause();
+        }
+        return null;
     }
 }

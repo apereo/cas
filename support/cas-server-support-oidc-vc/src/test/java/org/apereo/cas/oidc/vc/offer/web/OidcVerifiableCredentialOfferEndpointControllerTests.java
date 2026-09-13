@@ -4,6 +4,7 @@ import module java.base;
 import org.apereo.cas.config.CasOidcVerifiableCredentialsAutoConfiguration;
 import org.apereo.cas.oidc.AbstractOidcTests;
 import org.apereo.cas.oidc.OidcConstants;
+import org.apereo.cas.oidc.vc.services.DefaultRegisteredServiceOidcVerifiableCredentialsPolicy;
 import org.apereo.cas.services.OidcRegisteredService;
 import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.support.oauth.OAuth20GrantTypes;
@@ -198,6 +199,81 @@ class OidcVerifiableCredentialOfferEndpointControllerTests {
                     .param(OAuth20Constants.CLIENT_SECRET, registeredService.getClientSecrets().getFirst().getValue())
                 )
                 .andExpect(status().isBadRequest());
+        }
+    }
+
+    @Nested
+    @TestPropertySource(properties = {
+        "cas.authn.oidc.vc.issuer.credential-configurations.EmployeeCredential.format=DC_SD_JWT",
+        "cas.authn.oidc.vc.issuer.credential-configurations.EmployeeCredential.scope=Employee"
+    })
+    class CredentialsPolicyTests extends BaseTests {
+        @Test
+        void verifyPolicyNarrowsServiceToItsOwnCredentialTypes() throws Exception {
+            val registeredService = getOidcRegisteredService(UUID.randomUUID().toString());
+            registeredService.setVerifiableCredentialsPolicy(
+                new DefaultRegisteredServiceOidcVerifiableCredentialsPolicy(Set.of("UniversityDegreeCredential")));
+            servicesManager.save(registeredService);
+
+            performOfferTransaction(registeredService, "UniversityDegreeCredential")
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.transactionId").exists());
+
+            performOfferTransaction(registeredService, "EmployeeCredential")
+                .andExpect(status().isUnauthorized())
+                .andExpect(jsonPath("$.error").exists());
+
+            performOfferTransaction(registeredService, "UniversityDegreeCredential", "EmployeeCredential")
+                .andExpect(status().isUnauthorized())
+                .andExpect(jsonPath("$.error").exists());
+        }
+
+        @Test
+        void verifyPolicyWithoutCredentialTypesAllowsEverything() throws Exception {
+            val registeredService = getOidcRegisteredService(UUID.randomUUID().toString());
+            registeredService.setVerifiableCredentialsPolicy(
+                new DefaultRegisteredServiceOidcVerifiableCredentialsPolicy());
+            servicesManager.save(registeredService);
+
+            performOfferTransaction(registeredService, "UniversityDegreeCredential", "EmployeeCredential")
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.transactionId").exists());
+        }
+
+        @Test
+        void verifyUndefinedPolicyAllowsEverything() throws Exception {
+            val registeredService = getOidcRegisteredService(UUID.randomUUID().toString());
+            assertNull(registeredService.getVerifiableCredentialsPolicy());
+            servicesManager.save(registeredService);
+
+            performOfferTransaction(registeredService, "UniversityDegreeCredential", "EmployeeCredential")
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.transactionId").exists());
+        }
+
+        @Test
+        void verifyPolicyCannotWidenBeyondWhatTheIssuerPublishes() throws Exception {
+            val registeredService = getOidcRegisteredService(UUID.randomUUID().toString());
+            registeredService.setVerifiableCredentialsPolicy(
+                new DefaultRegisteredServiceOidcVerifiableCredentialsPolicy(Set.of("NonExistentCredential")));
+            servicesManager.save(registeredService);
+
+            performOfferTransaction(registeredService, "NonExistentCredential")
+                .andExpect(status().isUnauthorized())
+                .andExpect(jsonPath("$.error").exists());
+        }
+
+        private ResultActions performOfferTransaction(final OidcRegisteredService registeredService,
+                                                      final String... credentialConfigurationIds) throws Exception {
+            val requestBody = MAPPER.writeValueAsString(
+                Map.of("principal", "casuser",
+                    "credentialConfigurationIds", List.of(credentialConfigurationIds)));
+            return mockMvc.perform(post(TRANSACTIONS_URL)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(requestBody)
+                .with(withHttpRequestProcessor())
+                .param(OAuth20Constants.CLIENT_ID, registeredService.getClientId())
+                .param(OAuth20Constants.CLIENT_SECRET, registeredService.getClientSecrets().getFirst().getValue()));
         }
     }
 

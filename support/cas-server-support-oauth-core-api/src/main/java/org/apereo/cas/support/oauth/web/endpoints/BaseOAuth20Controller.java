@@ -135,4 +135,20 @@ public abstract class BaseOAuth20Controller<T extends OAuth20ConfigurationContex
             .findFirst()
             .map(scheme -> StringUtils.trimToNull(authHeader.substring(scheme.length() + 1)));
     }
+
+    /**
+     * The authentication scheme the client used to present its access token, which is the scheme a
+     * {@code WWW-Authenticate} challenge has to answer in. Defaults to {@code Bearer} when the
+     * request carries no recognizable scheme, since that is what a client with no token should be
+     * told to use.
+     *
+     * @param request the request
+     * @return the authentication scheme
+     */
+    protected String resolveAuthorizationScheme(final HttpServletRequest request) {
+        val authHeader = request.getHeader(HttpConstants.AUTHORIZATION_HEADER);
+        return StringUtils.startsWithIgnoreCase(authHeader, OAuth20Constants.TOKEN_TYPE_DPOP + ' ')
+            ? OAuth20Constants.TOKEN_TYPE_DPOP
+            : OAuth20Constants.TOKEN_TYPE_BEARER;
+    }
 }

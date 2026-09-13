@@ -1,6 +1,8 @@
 package org.apereo.cas.oidc.vc.authz;
 
 import module java.base;
+import org.apereo.cas.oidc.vc.services.OidcVerifiableCredentialPolicyUtils;
+import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.support.oauth.web.endpoints.OAuth20ConfigurationContext;
 import org.apereo.cas.support.oauth.web.response.OAuth20AuthorizationRequest;
 import org.apereo.cas.support.oauth.web.response.accesstoken.ext.AccessTokenRequestContext;
@@ -32,7 +34,8 @@ public class OidcVerifiableCredentialAuthorizationCodeAuthorizationResponseBuild
 
     @Override
     protected OAuth20Code createOAuthCode(final AccessTokenRequestContext tokenRequestContext) throws Throwable {
-        val authzDetails = extractAuthorizationDetails(tokenRequestContext.getAuthorizationDetails());
+        val authzDetails = extractAuthorizationDetails(tokenRequestContext.getRegisteredService(),
+            tokenRequestContext.getAuthorizationDetails());
         val code = super.createOAuthCode(tokenRequestContext);
         code.setAuthorizationDetails(authzDetails);
         code.setIssuerState(StringUtils.stripToNull(tokenRequestContext.getIssuerState()));
@@ -49,18 +52,28 @@ public class OidcVerifiableCredentialAuthorizationCodeAuthorizationResponseBuild
                 .map(AccessTokenRequestContext::getCodeChallenge)
                 .orElseGet(context::getCodeChallenge);
             if (StringUtils.isBlank(registeredService.getClientSecret()) && StringUtils.isNotBlank(codeChallenge)) {
-                val authzDetails = extractAuthorizationDetails(context.getAuthorizationDetails());
+                val authzDetails = extractAuthorizationDetails(registeredService, context.getAuthorizationDetails());
                 return !authzDetails.isEmpty();
             }
         }
         return false;
     }
 
+    /**
+     * Authorization details are a request, not a grant. What survives here is the intersection of what
+     * the wallet asked for, what the issuer publishes, and what this relying party's verifiable
+     * credentials policy permits; a credential configuration the service may not obtain is dropped
+     * rather than carried onto the code, so it can never reach the credential endpoint.
+     *
+     * @param registeredService    the registered service
+     * @param authorizationDetails the requested authorization details
+     * @return the authorized details, which may be empty
+     */
     protected List<OidcVerifiableCredentialAuthorizationDetails> extractAuthorizationDetails(
-        final String authorizationDetails) {
+        final RegisteredService registeredService, final String authorizationDetails) {
         val properties = configurationContext.getCasProperties().getAuthn().getOidc().getVc();
-        return OidcVerifiableCredentialAuthorizationDetails.from(authorizationDetails,
-            properties.getIssuer().getCredentialConfigurations().keySet());
-
+        val allowed = OidcVerifiableCredentialPolicyUtils.resolveAllowedCredentialConfigurationIds(
+            registeredService, properties.getIssuer().getCredentialConfigurations().keySet());
+        return OidcVerifiableCredentialAuthorizationDetails.from(authorizationDetails, allowed);
     }
 }

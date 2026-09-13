@@ -14,6 +14,7 @@ import com.nimbusds.jose.jwk.RSAKey;
 import com.nimbusds.jwt.SignedJWT;
 import lombok.RequiredArgsConstructor;
 import lombok.val;
+import org.apache.commons.lang3.StringUtils;
 import org.jspecify.annotations.Nullable;
 
 /**
@@ -36,33 +37,46 @@ public class OidcVerifiableCredentialJwtProofValidator implements OidcVerifiable
     private final CasConfigurationProperties casProperties;
     private final OidcVerifiableCredentialNonceService oidcVerifiableCredentialNonceService;
 
+    /**
+     * Every way this can fail is either {@code invalid_nonce} or {@code invalid_proof} as far as
+     * OpenID4VCI is concerned, so a malformed JWT, a JOSE failure or anything else unexpected is
+     * turned into {@code invalid_proof} here rather than escaping as a generic exception the
+     * credential endpoint would have to report as a plain bad request.
+     */
     @Override
     public VerifiableCredentialProofResult validate(final String proofJwt,
                                                     final Set<String> consumedNonces) throws Exception {
-        val signedJwt = SignedJWT.parse(proofJwt);
-        val holderJwk = signedJwt.getHeader().getJWK();
+        try {
+            val signedJwt = SignedJWT.parse(proofJwt);
+            val holderJwk = signedJwt.getHeader().getJWK();
 
-        verifyType(signedJwt);
-        verifySignature(signedJwt, holderJwk);
-        verifyAlgorithm(signedJwt, holderJwk);
-        verifyAudience(signedJwt);
-        verifyFreshness(signedJwt);
-        val nonce = verifyNonce(signedJwt, consumedNonces);
+            verifyType(signedJwt);
+            verifySignature(signedJwt, holderJwk);
+            verifyAlgorithm(signedJwt, holderJwk);
+            verifyAudience(signedJwt);
+            verifyFreshness(signedJwt);
+            val nonce = verifyNonce(signedJwt, consumedNonces);
 
-        val claims = signedJwt.getJWTClaimsSet();
-        return new VerifiableCredentialProofResult(
-            "jwt",
-            claims.getJWTID(),
-            claims.getSubject(),
-            holderJwk,
-            nonce
-        );
+            val claims = signedJwt.getJWTClaimsSet();
+            return new VerifiableCredentialProofResult(
+                "jwt",
+                claims.getJWTID(),
+                claims.getSubject(),
+                holderJwk,
+                nonce
+            );
+        } catch (final OidcVerifiableCredentialProofException e) {
+            throw e;
+        } catch (final Exception e) {
+            throw OidcVerifiableCredentialProofException.invalidProof(
+                StringUtils.defaultIfBlank(e.getMessage(), "Proof of possession could not be validated"));
+        }
     }
 
     protected void verifyType(final SignedJWT signedJwt) {
         val type = signedJwt.getHeader().getType();
         if (type == null || !PROOF_JWT_TYPE.equals(type.toString())) {
-            throw new IllegalArgumentException("Proof JWT type must be " + PROOF_JWT_TYPE);
+            throw OidcVerifiableCredentialProofException.invalidProof("Proof JWT type must be " + PROOF_JWT_TYPE);
         }
     }
 
@@ -70,13 +84,13 @@ public class OidcVerifiableCredentialJwtProofValidator implements OidcVerifiable
         val claims = signedJwt.getJWTClaimsSet();
         val nonce = claims.getStringClaim("nonce");
         if (nonce == null) {
-            throw new IllegalArgumentException("Proof nonce is missing");
+            throw OidcVerifiableCredentialProofException.invalidNonce("Proof nonce is missing");
         }
         if (consumedNonces.contains(nonce)) {
             return nonce;
         }
         if (!oidcVerifiableCredentialNonceService.consume(nonce)) {
-            throw new IllegalArgumentException("Proof nonce %s is invalid, expired or already used".formatted(nonce));
+            throw OidcVerifiableCredentialProofException.invalidNonce("Proof nonce %s is invalid, expired or already used".formatted(nonce));
         }
         consumedNonces.add(nonce);
         return nonce;
@@ -90,7 +104,7 @@ public class OidcVerifiableCredentialJwtProofValidator implements OidcVerifiable
             verifier = new ECDSAVerifier(ecKey);
         }
         if (verifier == null || !signedJwt.verify(verifier)) {
-            throw new IllegalArgumentException("Proof JWT signature validation failed");
+            throw OidcVerifiableCredentialProofException.invalidProof("Proof JWT signature validation failed");
         }
     }
 
@@ -98,20 +112,20 @@ public class OidcVerifiableCredentialJwtProofValidator implements OidcVerifiable
         val audiences = signedJwt.getJWTClaimsSet().getAudience();
         val credentialIssuer = casProperties.getAuthn().getOidc().getCore().getIssuer();
         if (audiences == null || !audiences.contains(credentialIssuer)) {
-            throw new IllegalArgumentException("Proof audience does not match credential issuer");
+            throw OidcVerifiableCredentialProofException.invalidProof("Proof audience does not match credential issuer");
         }
     }
 
     protected void verifyAlgorithm(final SignedJWT signedJwt, final JWK holderJwk) {
         val alg = signedJwt.getHeader().getAlgorithm();
         if (alg == null || Algorithm.NONE.equals(alg)) {
-            throw new IllegalArgumentException("Proof JWT algorithm is invalid");
+            throw OidcVerifiableCredentialProofException.invalidProof("Proof JWT algorithm is invalid");
         }
         if (holderJwk instanceof RSAKey && !JWSAlgorithm.Family.RSA.contains(alg)) {
-            throw new IllegalArgumentException("Proof JWT algorithm does not match RSA holder key");
+            throw OidcVerifiableCredentialProofException.invalidProof("Proof JWT algorithm does not match RSA holder key");
         }
         if (holderJwk instanceof ECKey && !JWSAlgorithm.Family.EC.contains(alg)) {
-            throw new IllegalArgumentException("Proof JWT algorithm does not match EC holder key");
+            throw OidcVerifiableCredentialProofException.invalidProof("Proof JWT algorithm does not match EC holder key");
         }
     }
 
@@ -119,15 +133,15 @@ public class OidcVerifiableCredentialJwtProofValidator implements OidcVerifiable
         val claims = signedJwt.getJWTClaimsSet();
         val issuedAt = claims.getIssueTime();
         if (issuedAt == null) {
-            throw new IllegalArgumentException("Proof JWT is missing iat");
+            throw OidcVerifiableCredentialProofException.invalidProof("Proof JWT is missing iat");
         }
         val now = Instant.now(Clock.systemUTC());
         val iat = issuedAt.toInstant();
         if (iat.isAfter(now.plusSeconds(SECONDS_IN_FUTURE))) {
-            throw new IllegalArgumentException("Proof iat is in the future");
+            throw OidcVerifiableCredentialProofException.invalidProof("Proof iat is in the future");
         }
         if (iat.isBefore(now.minus(Duration.ofMinutes(MINUTES_IN_PAST)))) {
-            throw new IllegalArgumentException("Proof JWT is too old");
+            throw OidcVerifiableCredentialProofException.invalidProof("Proof JWT is too old");
         }
     }
 }

@@ -251,6 +251,14 @@ public interface OAuth20Constants {
     String INVALID_DPOP_PROOF = "invalid_dpop_proof";
 
     /**
+     * The invalid token, per RFC 6750, section 3.1: the access token provided to a protected
+     * resource is expired, revoked, malformed, or invalid for other reasons. Unlike the errors
+     * above, which belong to the token endpoint, this one is answered with a 401 and a
+     * {@code WWW-Authenticate} challenge.
+     */
+    String INVALID_TOKEN = "invalid_token";
+
+    /**
      * The invalid scope.
      */
     String INVALID_SCOPE = "invalid_scope";

@@ -1,6 +1,7 @@
 package org.apereo.cas.oidc.vc.issuer;
 
 import module java.base;
+import org.apereo.cas.oidc.vc.issuer.proof.OidcVerifiableCredentialProofException;
 import org.apereo.cas.ticket.accesstoken.OAuth20AccessToken;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
@@ -34,7 +35,12 @@ public record OidcVerifiableCredentialValidationContext(
             return credentialRequest.getCredentialConfigurationId();
         }
         val principal = accessToken.getAuthentication().getPrincipal();
-        return principal.getAttributes().get("credentialConfigurationIds").getFirst().toString();
+        val recorded = principal.getAttributes().get("credentialConfigurationIds");
+        if (recorded == null || recorded.isEmpty()) {
+            throw new IllegalArgumentException(
+                "Credential request names no credential configuration and the access token records none");
+        }
+        return recorded.getFirst().toString();
     }
 
     /**
@@ -46,7 +52,7 @@ public record OidcVerifiableCredentialValidationContext(
         val proofs = credentialRequest.getProofs();
         val jwts = proofs != null && proofs.getJwt() != null ? proofs.getJwt() : List.<String>of();
         if (jwts.isEmpty() || jwts.stream().anyMatch(StringUtils::isBlank)) {
-            throw new IllegalArgumentException("Credential request carries no proof of possession");
+            throw OidcVerifiableCredentialProofException.invalidProof("Credential request carries no proof of possession");
         }
         return jwts;
     }
