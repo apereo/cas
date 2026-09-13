@@ -21,7 +21,9 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.jspecify.annotations.Nullable;
+import org.pac4j.core.context.WebContext;
 import org.pac4j.jee.context.JEEContext;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -197,14 +199,44 @@ public class OidcVerifiableCredentialEndpointController extends BaseOAuth20Contr
             return Couplet.right(ResponseEntity.badRequest().body(body));
         }
 
-        val decodedAccessTokenId = getAccessTokenFromRequest(httpRequest).getValue();
-        val decodedToken = getConfigurationContext().getTicketRegistry().getTicket(decodedAccessTokenId, OAuth20AccessToken.class);
+        val presentedAccessToken = getAccessTokenFromRequest(httpRequest);
+        val decodedToken = getConfigurationContext().getTicketRegistry()
+            .getTicket(presentedAccessToken.getValue(), OAuth20AccessToken.class);
         if (!validateAccessToken(decodedToken)) {
             LOGGER.warn("The access token is invalid, expired, has an invalid grant type or no authorization details.");
             return Couplet.right(ResponseEntity.badRequest()
                 .body(OAuth20Utils.getErrorResponseBody(OAuth20Constants.ERROR, "Invalid access token")));
         }
-        return Couplet.left(decodedToken);
+        val proofError = verifyProofOfPossession(webContext, presentedAccessToken.getKey(), decodedToken);
+        return proofError != null ? Couplet.right(proofError) : Couplet.left(decodedToken);
+    }
+
+    /**
+     * A credential request may carry a sender-constrained access token: OpenID4VCI 1.0, section 7.2
+     * speaks of the Wallet using a nonce "in the DPoP proof when presenting an access token at the
+     * Credential Endpoint". Accepting such a token on presentation alone would leave the constraint
+     * doing nothing, so the proof is verified here against the confirmation recorded at issuance.
+     * A token with no confirmation is an ordinary bearer token and passes straight through.
+     *
+     * @param webContext           the web context
+     * @param presentedAccessToken the access token exactly as the wallet presented it
+     * @param accessToken          the access token ticket
+     * @return an error response when the proof is missing or does not verify, otherwise null
+     */
+    protected @Nullable ResponseEntity verifyProofOfPossession(final WebContext webContext,
+                                                               final String presentedAccessToken,
+                                                               final OAuth20AccessToken accessToken) {
+        try {
+            getConfigurationContext().getProofOfPossessionValidator()
+                .validateProtectedResourceRequest(webContext, presentedAccessToken, accessToken);
+            return null;
+        } catch (final Throwable e) {
+            LoggingUtils.warn(LOGGER, e);
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                .header(HttpHeaders.WWW_AUTHENTICATE,
+                    "%s error=\"%s\"".formatted(OAuth20Constants.TOKEN_TYPE_DPOP, OAuth20Constants.INVALID_DPOP_PROOF))
+                .body(OAuth20Utils.getErrorResponseBody(OAuth20Constants.INVALID_DPOP_PROOF, e.getMessage()));
+        }
     }
 
     protected boolean validateAccessToken(@Nullable final OAuth20AccessToken accessToken) {

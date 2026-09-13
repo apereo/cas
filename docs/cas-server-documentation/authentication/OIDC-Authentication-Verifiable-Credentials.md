@@ -115,6 +115,9 @@ This endpoint expects:
 
 - An access token, presented as `Authorization: Bearer ...` or, when the token response named the
   token type `DPoP`, as `Authorization: DPoP ...` per [RFC 9449](https://www.rfc-editor.org/rfc/rfc9449).
+  A `DPoP`-bound token must be accompanied by a `DPoP` proof header bound to that token; a request
+  without one, or with a proof that does not verify, is answered with `401` and
+  `WWW-Authenticate: DPoP error="invalid_dpop_proof"`. A proof may not be reused.
 - The requested credential, named either by `credential_configuration_id` or, when the token
   response returned `credential_identifiers` in its authorization details, by
   `credential_identifier`. The two are mutually exclusive.

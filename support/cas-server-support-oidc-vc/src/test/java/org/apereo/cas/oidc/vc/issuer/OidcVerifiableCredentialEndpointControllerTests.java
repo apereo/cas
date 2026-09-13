@@ -26,6 +26,9 @@ import com.nimbusds.jose.jwk.gen.ECKeyGenerator;
 import com.nimbusds.jose.jwk.gen.RSAKeyGenerator;
 import com.nimbusds.jwt.JWTClaimsSet;
 import com.nimbusds.jwt.SignedJWT;
+import com.nimbusds.oauth2.sdk.dpop.DefaultDPoPProofFactory;
+import com.nimbusds.oauth2.sdk.dpop.JWKThumbprintConfirmation;
+import com.nimbusds.oauth2.sdk.token.DPoPAccessToken;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.junit.jupiter.api.Nested;
@@ -37,6 +40,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.ImportAutoConfiguration;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.TestPropertySource;
 import tools.jackson.databind.ObjectMapper;
@@ -496,6 +500,151 @@ class OidcVerifiableCredentialEndpointControllerTests {
                     .content(MAPPER.writeValueAsString(request)))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.credentials[0].credential").exists());
+        }
+    }
+
+    @Nested
+    class ProofOfPossessionTests extends BaseTests {
+        private static final URI CREDENTIAL_ENDPOINT_URI =
+            URI.create("https://sso.example.org" + CREDENTIAL_ENDPOINT_URL);
+
+        @Test
+        void verifySenderConstrainedTokenIsRejectedWithoutProof() throws Throwable {
+            val holderKey = new ECKeyGenerator(Curve.P_256).keyID(UUID.randomUUID().toString()).generate();
+            val accessToken = createSenderConstrainedAccessToken(holderKey);
+
+            mockMvc.perform(post(CREDENTIAL_ENDPOINT_URL)
+                    .with(withHttpRequestProcessor())
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .header(HttpHeaders.AUTHORIZATION, OAuth20Constants.TOKEN_TYPE_DPOP + ' ' + accessToken.getId())
+                    .content(MAPPER.writeValueAsString(buildCredentialRequest())))
+                .andExpect(status().isUnauthorized())
+                .andExpect(jsonPath("$.error").value(OAuth20Constants.INVALID_DPOP_PROOF));
+        }
+
+        @Test
+        void verifySenderConstrainedTokenIsRejectedWhenProofIsBoundToAnotherToken() throws Throwable {
+            val holderKey = new ECKeyGenerator(Curve.P_256).keyID(UUID.randomUUID().toString()).generate();
+            val accessToken = createSenderConstrainedAccessToken(holderKey);
+
+            val proofFactory = new DefaultDPoPProofFactory(holderKey, JWSAlgorithm.ES256);
+            val proof = proofFactory.createDPoPJWT(HttpMethod.POST.name(), CREDENTIAL_ENDPOINT_URI,
+                new DPoPAccessToken("AT-" + UUID.randomUUID()));
+
+            mockMvc.perform(post(CREDENTIAL_ENDPOINT_URL)
+                    .with(withHttpRequestProcessor())
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .header(HttpHeaders.AUTHORIZATION, OAuth20Constants.TOKEN_TYPE_DPOP + ' ' + accessToken.getId())
+                    .header(OAuth20Constants.DPOP, proof.serialize())
+                    .content(MAPPER.writeValueAsString(buildCredentialRequest())))
+                .andExpect(status().isUnauthorized())
+                .andExpect(jsonPath("$.error").value(OAuth20Constants.INVALID_DPOP_PROOF));
+        }
+
+        @Test
+        void verifySenderConstrainedTokenIsRejectedWhenProofIsSignedByAnotherKey() throws Throwable {
+            val holderKey = new ECKeyGenerator(Curve.P_256).keyID(UUID.randomUUID().toString()).generate();
+            val accessToken = createSenderConstrainedAccessToken(holderKey);
+
+            val otherKey = new ECKeyGenerator(Curve.P_256).keyID(UUID.randomUUID().toString()).generate();
+            val proofFactory = new DefaultDPoPProofFactory(otherKey, JWSAlgorithm.ES256);
+            val proof = proofFactory.createDPoPJWT(HttpMethod.POST.name(), CREDENTIAL_ENDPOINT_URI,
+                new DPoPAccessToken(accessToken.getId()));
+
+            mockMvc.perform(post(CREDENTIAL_ENDPOINT_URL)
+                    .with(withHttpRequestProcessor())
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .header(HttpHeaders.AUTHORIZATION, OAuth20Constants.TOKEN_TYPE_DPOP + ' ' + accessToken.getId())
+                    .header(OAuth20Constants.DPOP, proof.serialize())
+                    .content(MAPPER.writeValueAsString(buildCredentialRequest())))
+                .andExpect(status().isUnauthorized())
+                .andExpect(jsonPath("$.error").value(OAuth20Constants.INVALID_DPOP_PROOF));
+        }
+
+        @Test
+        void verifySenderConstrainedTokenWithValidProof() throws Throwable {
+            val holderKey = new ECKeyGenerator(Curve.P_256).keyID(UUID.randomUUID().toString()).generate();
+            val accessToken = createSenderConstrainedAccessToken(holderKey);
+
+            val proofFactory = new DefaultDPoPProofFactory(holderKey, JWSAlgorithm.ES256);
+            val proof = proofFactory.createDPoPJWT(HttpMethod.POST.name(), CREDENTIAL_ENDPOINT_URI,
+                new DPoPAccessToken(accessToken.getId()));
+
+            mockMvc.perform(post(CREDENTIAL_ENDPOINT_URL)
+                    .with(withHttpRequestProcessor())
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .header(HttpHeaders.AUTHORIZATION, OAuth20Constants.TOKEN_TYPE_DPOP + ' ' + accessToken.getId())
+                    .header(OAuth20Constants.DPOP, proof.serialize())
+                    .content(MAPPER.writeValueAsString(buildCredentialRequest())))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.credentials[0].credential").exists());
+        }
+
+        @Test
+        void verifyProofCannotBeReplayed() throws Throwable {
+            val holderKey = new ECKeyGenerator(Curve.P_256).keyID(UUID.randomUUID().toString()).generate();
+            val accessToken = createSenderConstrainedAccessToken(holderKey);
+
+            val proofFactory = new DefaultDPoPProofFactory(holderKey, JWSAlgorithm.ES256);
+            val proof = proofFactory.createDPoPJWT(HttpMethod.POST.name(), CREDENTIAL_ENDPOINT_URI,
+                new DPoPAccessToken(accessToken.getId()));
+
+            mockMvc.perform(post(CREDENTIAL_ENDPOINT_URL)
+                    .with(withHttpRequestProcessor())
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .header(HttpHeaders.AUTHORIZATION, OAuth20Constants.TOKEN_TYPE_DPOP + ' ' + accessToken.getId())
+                    .header(OAuth20Constants.DPOP, proof.serialize())
+                    .content(MAPPER.writeValueAsString(buildCredentialRequest())))
+                .andExpect(status().isOk());
+
+            mockMvc.perform(post(CREDENTIAL_ENDPOINT_URL)
+                    .with(withHttpRequestProcessor())
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .header(HttpHeaders.AUTHORIZATION, OAuth20Constants.TOKEN_TYPE_DPOP + ' ' + accessToken.getId())
+                    .header(OAuth20Constants.DPOP, proof.serialize())
+                    .content(MAPPER.writeValueAsString(buildCredentialRequest())))
+                .andExpect(status().isUnauthorized())
+                .andExpect(jsonPath("$.error").value(OAuth20Constants.INVALID_DPOP_PROOF));
+        }
+
+        @Test
+        void verifyBearerTokenNeedsNoProof() throws Throwable {
+            val clientId = UUID.randomUUID().toString();
+            servicesManager.save(getOidcRegisteredService(clientId));
+            val accessToken = createOAuth20AccessToken(clientId);
+
+            mockMvc.perform(post(CREDENTIAL_ENDPOINT_URL)
+                    .with(withHttpRequestProcessor())
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken.getId())
+                    .content(MAPPER.writeValueAsString(buildCredentialRequest())))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.credentials[0].credential").exists());
+        }
+
+        private OidcVerifiableCredentialRequest buildCredentialRequest() throws Exception {
+            val request = new OidcVerifiableCredentialRequest();
+            request.setCredentialConfigurationId("myorg");
+            request.setProofs(buildProofs(buildValidRsaProofJwt()));
+            return request;
+        }
+
+        /**
+         * An access token is sender-constrained when the authorization server recorded a thumbprint
+         * confirmation on it at issuance; that attribute, and nothing else, is what obliges the wallet
+         * to prove possession of the holder key at the credential endpoint.
+         */
+        private OAuth20AccessToken createSenderConstrainedAccessToken(final ECKey holderKey) throws Throwable {
+            val clientId = UUID.randomUUID().toString();
+            servicesManager.save(getOidcRegisteredService(clientId));
+
+            val accessToken = createOAuth20AccessToken(clientId);
+            val confirmation = JWKThumbprintConfirmation.of(holderKey.toPublicJWK());
+            val authentication = RegisteredServiceTestUtils.getAuthentication(
+                accessToken.getAuthentication().getPrincipal(),
+                Map.of(OAuth20Constants.DPOP_CONFIRMATION, List.of(confirmation.getValue().toString())));
+            when(accessToken.getAuthentication()).thenReturn(authentication);
+            return accessToken;
         }
     }
 
