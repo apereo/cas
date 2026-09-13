@@ -9,6 +9,7 @@ import org.apereo.cas.oidc.vc.issuer.metadata.OidcCredentialIssuerMetadataServic
 import org.apereo.cas.oidc.vc.issuer.nonce.OidcVerifiableCredentialNonceService;
 import org.apereo.cas.oidc.vc.issuer.proof.OidcVerifiableCredentialProofValidator;
 import org.apereo.cas.oidc.vc.services.DefaultRegisteredServiceOidcVerifiableCredentialsPolicy;
+import org.apereo.cas.services.OidcRegisteredService;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.support.oauth.OAuth20GrantTypes;
@@ -503,6 +504,106 @@ class OidcVerifiableCredentialEndpointControllerTests {
                     .content(MAPPER.writeValueAsString(request)))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.credentials[0].credential").exists());
+        }
+    }
+
+    @Nested
+    @TestPropertySource(properties =
+        "cas.authn.oidc.vc.issuer.credential-configurations.myorg.credential-signing-alg-values-supported=RS256,PS256")
+    class CredentialSigningTests extends BaseTests {
+
+        @Test
+        void verifyCredentialIsSignedEvenWhenTheClientDisablesIdTokenSigning() throws Throwable {
+            val credential = issueCredentialJwt(service -> service.setSignIdToken(false));
+            assertEquals(JWSAlgorithm.RS256, credential.getHeader().getAlgorithm());
+            assertTrue(credential.getSignature().decode().length > 0);
+        }
+
+        @Test
+        void verifyCredentialIsNotEncryptedWhenTheClientEncryptsIdTokens() throws Throwable {
+            val credential = issueCredentialJwt(service -> service.setEncryptIdToken(true));
+            assertEquals(CredentialConfigurationFormats.DC_SD_JWT.getValue(),
+                credential.getHeader().getType().toString());
+        }
+
+        @Test
+        void verifyAlgorithmComesFromTheCredentialConfigurationAndNotTheClient() throws Throwable {
+            val credential = issueCredentialJwt(service -> service.setIdTokenSigningAlg(JWSAlgorithm.PS512.getName()));
+            assertEquals(JWSAlgorithm.RS256, credential.getHeader().getAlgorithm());
+        }
+
+        @Test
+        void verifyServicePolicyNarrowsTheSigningAlgorithm() throws Throwable {
+            val credential = issueCredentialJwt(service -> service.setVerifiableCredentialsPolicy(
+                new DefaultRegisteredServiceOidcVerifiableCredentialsPolicy()
+                    .setCredentialSigningAlgValuesSupported(Set.of(JWSAlgorithm.PS256.getName()))));
+            assertEquals(JWSAlgorithm.PS256, credential.getHeader().getAlgorithm());
+        }
+
+        @Test
+        void verifyServicePolicyWithoutAlgorithmsLeavesTheConfigurationAlone() throws Throwable {
+            val credential = issueCredentialJwt(service -> service.setVerifiableCredentialsPolicy(
+                new DefaultRegisteredServiceOidcVerifiableCredentialsPolicy()));
+            assertEquals(JWSAlgorithm.RS256, credential.getHeader().getAlgorithm());
+        }
+
+        @Test
+        void verifyServicePolicyCannotWidenBeyondTheConfiguration() throws Throwable {
+            val clientId = UUID.randomUUID().toString();
+            val registeredService = getOidcRegisteredService(clientId);
+            registeredService.setVerifiableCredentialsPolicy(
+                new DefaultRegisteredServiceOidcVerifiableCredentialsPolicy()
+                    .setCredentialSigningAlgValuesSupported(Set.of(JWSAlgorithm.HS256.getName())));
+            servicesManager.save(registeredService);
+
+            val accessToken = createOAuth20AccessToken(clientId);
+            val request = new OidcVerifiableCredentialRequest();
+            request.setCredentialConfigurationId("myorg");
+            request.setProofs(buildProofs(buildValidRsaProofJwt()));
+
+            mockMvc.perform(post(CREDENTIAL_ENDPOINT_URL)
+                    .with(withHttpRequestProcessor())
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken.getId())
+                    .content(MAPPER.writeValueAsString(request)))
+                .andExpect(status().isBadRequest());
+        }
+
+        @Test
+        void verifyOneServicePolicyDoesNotNarrowAnother() throws Throwable {
+            val restricted = issueCredentialJwt(service -> service.setVerifiableCredentialsPolicy(
+                new DefaultRegisteredServiceOidcVerifiableCredentialsPolicy()
+                    .setCredentialSigningAlgValuesSupported(Set.of(JWSAlgorithm.PS256.getName()))));
+            assertEquals(JWSAlgorithm.PS256, restricted.getHeader().getAlgorithm());
+
+            val unrestricted = issueCredentialJwt(service -> {
+            });
+            assertEquals(JWSAlgorithm.RS256, unrestricted.getHeader().getAlgorithm());
+        }
+
+        private SignedJWT issueCredentialJwt(final Consumer<OidcRegisteredService> customizer) throws Throwable {
+            val clientId = UUID.randomUUID().toString();
+            val registeredService = getOidcRegisteredService(clientId);
+            customizer.accept(registeredService);
+            servicesManager.save(registeredService);
+
+            val accessToken = createOAuth20AccessToken(clientId);
+            val request = new OidcVerifiableCredentialRequest();
+            request.setCredentialConfigurationId("myorg");
+            request.setProofs(buildProofs(buildValidRsaProofJwt()));
+
+            val response = mockMvc.perform(post(CREDENTIAL_ENDPOINT_URL)
+                    .with(withHttpRequestProcessor())
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken.getId())
+                    .content(MAPPER.writeValueAsString(request)))
+                .andExpect(status().isOk())
+                .andReturn()
+                .getResponse()
+                .getContentAsString();
+            val credentials = assertInstanceOf(List.class, MAPPER.readValue(response, Map.class).get("credentials"));
+            val credential = assertInstanceOf(Map.class, credentials.getFirst()).get("credential").toString();
+            return SignedJWT.parse(StringUtils.substringBefore(credential, "~"));
         }
     }
 

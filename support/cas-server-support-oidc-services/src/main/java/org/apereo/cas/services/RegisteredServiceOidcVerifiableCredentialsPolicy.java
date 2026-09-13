@@ -9,7 +9,6 @@ import com.fasterxml.jackson.annotation.JsonTypeInfo;
  * @author Misagh Moayyed
  * @since 8.1.0
  */
-@FunctionalInterface
 @JsonTypeInfo(use = JsonTypeInfo.Id.CLASS)
 public interface RegisteredServiceOidcVerifiableCredentialsPolicy extends Serializable {
     /**
@@ -18,6 +17,13 @@ public interface RegisteredServiceOidcVerifiableCredentialsPolicy extends Serial
      * @return the allowed credential types
      */
     Set<String> getAllowedCredentialTypes();
+
+    /**
+     * Gets credential signing alg values supported.
+     *
+     * @return the credential signing alg values supported
+     */
+    Set<String> getCredentialSigningAlgValuesSupported();
 
     /**
      * Is the given credential type allowed for this service.

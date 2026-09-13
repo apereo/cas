@@ -99,7 +99,7 @@ A wallet decides how to authenticate from the authorization server metadata, so 
 has to advertise that it accepts requests with no client authentication. CAS includes `none` in
 authentication methods supported for the token endpoint by default for this reason. If the
 list is narrowed, keep `none` in it; without it a wallet picks one of the credentialed methods it
-sees instead -- typically `private_key_jwt` -- and the exchange is rejected, because the wallet has
+sees instead and the exchange is rejected, because the wallet has
 no client registration to authenticate with.
 
 ### Credential Endpoint
@@ -347,8 +347,33 @@ code, the nonce or the access token used to obtain it.
 
 ## Credential Signing
 
-After claims are collected and validated, CAS signs the credential using issuer key material.
+After claims are collected and validated, CAS signs the credential with its own issuer key, selected the
+same way as for other OpenID Connect artifacts and honoring the service's `jwksKeyId` when one is set.
 
-For JWT-based credential formats, this generally reuses the same signing infrastructure
-used for ID tokens and other JWT artifacts, while still producing a payload that is
-specific to the verifiable credential format being issued.
+A credential is not an ID token, and the relying party's ID token settings do not apply to it. The
+algorithm is the first entry of the credential configuration's `credential-signing-alg-values-supported`
+that the issuer's signing key can perform, so the order of that list is a preference the deployment
+expresses, and that list is also the permitted set, so no other algorithm can be used. This is what keeps
+issuance consistent with the issuer metadata and with what a verifier, CAS included, accepts.
+
+A service may narrow the algorithms used for its own credentials through its verifiable credentials
+policy:
+
+```json
+{
+  "@class": "org.apereo.cas.services.OidcRegisteredService",
+  "clientId": "client",
+  "serviceId": "^https://app.example.org/.*",
+  "name": "Example",
+  "id": 1,
+  "verifiableCredentialsPolicy": {
+    "@class": "org.apereo.cas.oidc.vc.services.DefaultRegisteredServiceOidcVerifiableCredentialsPolicy",
+    "credentialSigningAlgValuesSupported": [ "java.util.HashSet", [ "ES256" ] ]
+  }
+}
+```
+
+As with `allowedCredentialTypes`, this can only narrow: the result is the intersection with what the
+credential configuration advertises, so naming an algorithm the configuration does not offer leaves the
+service with nothing and the request is refused. A policy that names no algorithms leaves the service
+with everything the configuration advertises.

@@ -32,4 +32,10 @@ public class DefaultRegisteredServiceOidcVerifiableCredentialsPolicy implements 
     private static final long serialVersionUID = 1246436756392637728L;
 
     private Set<String> allowedCredentialTypes = new HashSet<>();
+
+    private Set<String> credentialSigningAlgValuesSupported = new HashSet<>();
+
+    public DefaultRegisteredServiceOidcVerifiableCredentialsPolicy(final Set<String> allowedCredentialTypes) {
+        this(allowedCredentialTypes, new HashSet<>());
+    }
 }
