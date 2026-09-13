@@ -272,12 +272,37 @@ The general flow is:
 - The wallet calls the credential endpoint with the access token and proof.
 - CAS validates the request and issues the credential.
 
+The pre-authorized code is single use, as OpenID4VCI requires. It is redeemed and deleted before the
+access token is minted, so of several concurrent exchanges of the same code exactly one succeeds and the
+rest are refused; the issuance transaction is removed along with it.
+
 ## Verifiable Presentations
 
 CAS can also act as a verifier and ask a wallet to present a credential. A relying party creates a
 presentation request, and CAS returns a deep link the wallet can open, usually rendered as a QR code.
 
 {% include_cached casproperties.html properties="cas.authn.oidc.vc.presentation" %}
+
+The relying party that created the request collects the outcome from:
+
+```bash
+GET /oidc/oidcVcPresentationResult?requestId=...
+```
+
+This endpoint requires the same client authentication as the request creation endpoint. It answers
+`{"status": "pending"}` while the wallet has not responded, and once it has, `{"status": "verified"}`
+together with the claims that were disclosed, keyed by credential query id. The outcome is delivered
+once and then removed, so a second poll reports `404`, as does a request that expired unanswered.
+
+CAS as a verifier trusts only itself. A presented credential is accepted when its `iss` is this
+deployment's own issuer, its `vct` resolves to one of the credential configurations above, and its
+signature verifies against this deployment's own signing key; `iat` and `exp` are both required, and a
+credential carrying a `status` claim is refused rather than accepted unchecked, since CAS evaluates no
+status list. There is no external issuer trust list, no `x5c` chain validation, no DID resolution, no
+OpenID Federation and no Token Status List, so credentials issued elsewhere are rejected.
+
+This is a trust policy rather than a protocol limitation: OpenID4VP leaves issuer trust to the verifier,
+noting that "Verifiers must verify that the issuer of a received presentation is trusted on their own".
 
 ## Authorized Credential Types
 

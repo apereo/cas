@@ -55,7 +55,7 @@ public class OidcVerifiableCredentialPolicyUtils {
         val allowed = issuerConfigurationIds
             .stream()
             .filter(policy::isCredentialTypeAllowed)
-            .collect(Collectors.toUnmodifiableSet());
+            .collect(Collectors.toSet());
         LOGGER.debug("Service [{}] is allowed credential configurations [{}] out of [{}]",
             oidcRegisteredService.getName(), allowed, issuerConfigurationIds);
         return allowed;

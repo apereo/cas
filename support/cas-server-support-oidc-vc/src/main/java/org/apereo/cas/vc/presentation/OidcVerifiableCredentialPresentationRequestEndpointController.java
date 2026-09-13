@@ -17,6 +17,7 @@ import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.Builder;
 import lombok.Getter;
@@ -41,6 +42,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RequestBody;
 import tools.jackson.databind.ObjectMapper;
 import jakarta.servlet.http.HttpServletRequest;
@@ -160,6 +162,47 @@ public class OidcVerifiableCredentialPresentationRequestEndpointController exten
             .contentType(REQUEST_OBJECT_MEDIA_TYPE)
             .cacheControl(CacheControl.noStore())
             .body(requestObject);
+    }
+
+    /**
+     * Collect the outcome of a presentation request.
+     * <p>
+     * The wallet posts its presentation to the response endpoint and is told there whether it verified.
+     * The relying party that created the request is not party to that exchange, so this is where it
+     * learns the outcome and the claims that were disclosed to it. A request that has not been answered
+     * yet reports {@code pending}; one that was answered and collected, or that expired, is gone.
+     *
+     * @param requestId    the request id returned when the presentation request was created
+     * @param httpRequest  the http request
+     * @param httpResponse the http response
+     * @return the response entity
+     */
+    @GetMapping(value = {
+        '/' + OidcConstants.BASE_OIDC_URL + '/' + OidcConstants.VC_PRESENTATION_RESULT_URL,
+        "/**/" + OidcConstants.VC_PRESENTATION_RESULT_URL
+    }, produces = MediaType.APPLICATION_JSON_VALUE)
+    @Operation(summary = "Collect the outcome of an OIDC verifiable credential presentation request",
+        parameters = @Parameter(name = "requestId", description = "The presentation request id"))
+    public ResponseEntity<Map<String, Object>> fetchResult(
+        @RequestParam("requestId") final String requestId,
+        final HttpServletRequest httpRequest,
+        final HttpServletResponse httpResponse) {
+
+        val resultId = OidcVerifiableCredentialPresentationResponseEndpointController.resolvePresentationResultId(requestId);
+        val result = FunctionUtils.doAndHandle(
+            () -> configurationContext.getTicketRegistry().getTicket(resultId, TransientSessionTicket.class));
+        if (result != null && !result.isExpired()) {
+            val body = Map.<String, Object>of(
+                "status", Objects.requireNonNull(result.getPropertyAsString("status")),
+                "claims", Objects.requireNonNullElseGet(result.getProperty("claims", Map.class), Map::of));
+            FunctionUtils.doAndHandle(_ -> configurationContext.getTicketRegistry().deleteTicket(result));
+            return ResponseEntity.ok().cacheControl(CacheControl.noStore()).body(body);
+        }
+        val pending = FunctionUtils.doAndHandle(
+            () -> configurationContext.getTicketRegistry().getTicket(requestId, TransientSessionTicket.class));
+        return pending != null && !pending.isExpired()
+            ? ResponseEntity.ok().cacheControl(CacheControl.noStore()).body(Map.of("status", "pending"))
+            : ResponseEntity.notFound().build();
     }
 
     /**

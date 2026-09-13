@@ -206,6 +206,10 @@ public interface OidcConstants {
      */
     String VC_PRESENTATION_RESPONSE_URL = "oidcVcPresentationResponse";
     /**
+     * OIDC VC presentation result path segment, polled by the relying party that created the request.
+     */
+    String VC_PRESENTATION_RESULT_URL = "oidcVcPresentationResult";
+    /**
      * Oidc VC credential type url path segment.
      */
     String VC_CREDENTIAL_TYPE_URL = "oidcVcCredentialType";

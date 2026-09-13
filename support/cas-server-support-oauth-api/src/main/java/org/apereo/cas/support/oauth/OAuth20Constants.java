@@ -264,6 +264,11 @@ public interface OAuth20Constants {
     String INVALID_SCOPE = "invalid_scope";
 
     /**
+     * The invalid authorization details, per RFC 9396, section 5.
+     */
+    String INVALID_AUTHORIZATION_DETAILS = "invalid_authorization_details";
+
+    /**
      * Access denied error.
      */
     String ACCESS_DENIED = "access_denied";

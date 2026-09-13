@@ -97,6 +97,9 @@ class OidcVerifiableCredentialOfferEndpointControllerTests {
                 .andExpect(jsonPath("$." + OAuth20Constants.EXPIRES_IN).exists())
                 .andExpect(jsonPath("$." + OidcConstants.C_NONCE).doesNotExist())
                 .andExpect(jsonPath("$." + OidcConstants.C_NONCE_EXPIRES_IN).doesNotExist());
+
+            mockMvc.perform(tokenExchange(registeredService, preAuthorizedCode, txCode))
+                .andExpect(status().is4xxClientError());
         }
 
         private String createOfferTransaction(final OidcRegisteredService registeredService) throws Exception {

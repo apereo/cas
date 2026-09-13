@@ -176,6 +176,16 @@ async function startVerifiableCredentialPresentationFlow(wallet) {
     assert(result.transmission_success === true, "The wallet failed to deliver the presentation");
     assert(result.verifier_response.status === "verified",
         `CAS did not verify the presentation: ${JSON.stringify(result.verifier_response)}`);
+
+    const outcome = JSON.parse(
+        await cas.doRequest(
+            `https://localhost:8443/cas/oidc/oidcVcPresentationResult?requestId=${presentation.request_id}`, "GET",
+            {"Authorization": `Basic ${btoa("wallet-client:wallet-secret")}`}, 200)
+    );
+    await cas.log(outcome);
+    assert(outcome.status === "verified");
+    assert(outcome.claims.myorg.given_name === "CAS");
+    assert(outcome.claims.myorg.family_name === "User");
 }
 
 (async () => {
