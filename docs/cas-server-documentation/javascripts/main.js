@@ -5,27 +5,30 @@ function isDocumentationSiteViewedLocally() {
 }
 
 function generateNavigationBarAndCrumbs() {
-  let crumbs = "<ol class='breadcrumb'>";
-
-  const uri = new URI(document.location);
-  const segments = uri.segment();
-
-  for (let i = 1; i < segments.length; i++) {
-    let clz = ((i + 1) >= segments.length) ? "breadcrumb-item active" : "breadcrumb-item ";
-    clz += "capitalize";
-
-    let page = null;
-
-    if ((i + 1) >= segments.length) {
-      page = document.title.replace("CAS -", "").trim();
-    } else {
-      page = segments[i].replace(".html", "").replace(/-/g, " ").replace(/_/g, " ").replace(/index/g, "");
-    }
-    crumbs += `<li class='${clz}'><a href='#'>${page}</a></li>`;
+  const navigation = document.getElementById('docsNavBar');
+  if (!navigation) {
+    return;
   }
-            
-  crumbs += "<li><div id='searchField' class></div></li></ol>";
-  $("#docsNavBar").prepend(crumbs);
+  const crumbs = document.createElement('ol');
+  crumbs.className = 'breadcrumb';
+  const segments = location.pathname.split('/').filter(Boolean);
+  const start = isDocumentationSiteViewedLocally() ? 0 : 1;
+  segments.slice(start).forEach((segment, index, items) => {
+    const item = document.createElement('li');
+    const current = index === items.length - 1;
+    const link = document.createElement(current ? 'span' : 'a');
+    link.textContent = current ? document.title.split(' · ')[0].replace('CAS -', '').trim()
+      : segment.replace(/[-_]/g, ' ');
+    if (current) {
+      link.setAttribute('aria-current', 'page');
+    } else {
+      link.href = '/' + segments.slice(0, start + index + 1).join('/') + '/';
+      link.className = 'capitalize';
+    }
+    item.append(link);
+    crumbs.append(item);
+  });
+  navigation.append(crumbs);
 }
 
 function getActiveDocumentationVersionInView(returnBlankIfNoVersion) {
@@ -51,6 +54,9 @@ function getActiveDocumentationVersionInView(returnBlankIfNoVersion) {
 
 
 function loadSidebarForActiveVersion() {
+  if (!document.getElementById('sidebar')) {
+    return;
+  }
   let prefix = isDocumentationSiteViewedLocally() ? "/" : "/cas/";
   $.get(`${prefix + getActiveDocumentationVersionInView()}/sidebar.html`, data => {
     const menu = $(data);
@@ -92,7 +98,7 @@ function loadSidebarForActiveVersion() {
         sidebarTopNav($(this));
       });
 
-      $('#sidebar').append(menu);
+      $('#sidebar-navigation').append(menu);
 
       generateSidebarLinksForActiveVersion();
 
@@ -111,19 +117,16 @@ function loadSidebarForActiveVersion() {
         }
         if (id !== undefined) {
           parent.collapse('show');
+          parent.prev('a').removeClass('collapsed').attr('aria-expanded', 'true');
         }
         count++;
         parent = parent.parent();
       }
-      element.css("font-weight", "bold").addClass("text-info");
-      element.prepend("<i class='fa fa-angle-double-right'></i>&nbsp;");
+      element.attr("aria-current", "page");
 
-      if (uri.fragment() == null || uri.fragment() === "") {
-        setTimeout(() => {
-          let top = $(element).offset().top;
-          let offset = top <= 200 ? 30 : 150;
-          $("#sidebar").animate({scrollTop: offset }, 1000);
-        }, 100);
+      if (element.length && window.matchMedia('(min-width: 761px)').matches) {
+        const sidebar = document.getElementById('sidebar');
+        sidebar.scrollTop = Math.max(0, element[0].offsetTop - sidebar.clientHeight / 3);
       }
     }
   });
@@ -134,14 +137,22 @@ function sidebarTopNav(el) {
     el.attr({
       'data-bs-toggle': "collapse",
       'aria-expanded': "false",
-      title: $(this)[0].innerText,
+      'aria-controls': el.attr('href').substring(1),
+      role: 'button',
+      title: el.text(),
       class: 'collapsed'
     })
-    .append('<i class="expand"></i></a>');
+    .append('<i class="expand" aria-hidden="true"></i>');
+    el.on('keydown', event => {
+      if (event.key === ' ') {
+        event.preventDefault();
+        el[0].click();
+      }
+    });
   }
 
   if (pageSection && el.text() === pageSection) {
-    el.removeClass('collapsed')
+    el.removeClass('collapsed').attr('aria-expanded', 'true');
   }
 
 }
@@ -180,22 +191,19 @@ function generateSidebarLinksForActiveVersion() {
 }
 
 function navigateSidebar() {
-  $("#sidebar").toggle("fade slow", () => {
-    if ($("#sidebar").is(":visible")) {
-      $(".cas-docs-content").removeClass("col-xl-10").addClass("col-xl-8")
-    } else {
-      $(".cas-docs-content").removeClass("col-xl-8").addClass("col-xl-10")
-    }
-  });
+  const hidden = document.body.classList.toggle('docs-sidebar-hidden');
+  document.getElementById('sidebarNavButton')?.setAttribute('aria-expanded', String(!hidden));
 }
 
 function toggleDarkMode() {
-    const theme = $("html").attr("data-bs-theme");
-    console.log(`Current theme: ${theme}`);
-    const newTheme = theme === "dark" ? "light" : "dark";
-    $("html").attr('data-bs-theme', newTheme);
+  const newTheme = document.documentElement.dataset.bsTheme === 'dark' ? 'light' : 'dark';
+  changeTheme(newTheme);
+  try {
     localStorage.setItem('cas-docs-theme', newTheme);
-    console.log(`New theme: ${newTheme}`);
+  } catch (error) {
+    // The theme still works when browser storage is unavailable.
+  }
+  document.getElementById('docs-status').textContent = `${newTheme === 'dark' ? 'Dark' : 'Light'} theme enabled`;
 }
 
 function generateToolbarIcons() {
@@ -216,17 +224,16 @@ function generateToolbarIcons() {
     editablePage = "index.md";
   }
 
-  $('#toolbarIcons').append("<a href='javascript:toggleDarkMode()'><i class='fa fa-moon' title='See this page running on localhost'></i></a>");
 
   let href = location.href.replace("https://apereo.github.io/cas", "http://localhost:4000");
-  $('#toolbarIcons').append(`<a href='${href}'><i class='fab fa-codepen' title='See this page running on localhost'></i></a>`);
+  $('#toolbarIcons').append(`<a href='${href}'><i class='fab fa-codepen' aria-hidden='true'></i><span class='visually-hidden'>See this page running on localhost</span></a>`);
 
   if (activeVersion !== CONST_CURRENT_VER && activeVersion !== "") {
     let prefix = isDocumentationSiteViewedLocally() ? "/" : "/cas/";
     let linkToDev = prefix + page.replace(activeVersion, CONST_CURRENT_VER).replace("//", "/");
     linkToDev = linkToDev.replace("html/", "html");
 
-    $('#toolbarIcons').append(`<a href='${linkToDev}'><i class='fa fa-code' title='See the latest version of this page'></i></a>`);
+    $('#toolbarIcons').append(`<a href='${linkToDev}'><i class='fa fa-code' aria-hidden='true'></i><span class='visually-hidden'>See the latest version of this page</span></a>`);
   }
 
   let baseLink = casRepositoryUrl;
@@ -250,66 +257,64 @@ function generateToolbarIcons() {
 
   editLink += editablePage;
 
-  $('#toolbarIcons').append(`<a target='_blank' href='${editLink}'><i class='fa fa-pencil-alt' title='Edit with GitHub'></i></a>`);
+  $('#toolbarIcons').append(`<a target='_blank' rel='noopener' href='${editLink}'><i class='fa fa-pencil-alt' aria-hidden='true'></i><span class='visually-hidden'>Edit with GitHub</span></a>`);
 
   historyLink += editablePage;
 
 
-  $('#toolbarIcons').append(`<a target='_blank' href='${historyLink}'><i class='fa fa-history' title='View commit history on GitHub'></i></a>`);
+  $('#toolbarIcons').append(`<a target='_blank' rel='noopener' href='${historyLink}'><i class='fa fa-history' aria-hidden='true'></i><span class='visually-hidden'>View commit history on GitHub</span></a>`);
 
   deleteLink += editablePage;
 
-  $('#toolbarIcons').append(`<a target='_blank' href='${deleteLink}'><i class='fa fa-times' title='Delete with GitHub'></i></a>`);
+  $('#toolbarIcons').append(`<a target='_blank' rel='noopener' href='${deleteLink}'><i class='fa fa-times' aria-hidden='true'></i><span class='visually-hidden'>Delete with GitHub</span></a>`);
 }
 
 function generatePageTOC() {
-  const page_contents = $("#pageContents ul");
-  const arr = [];
-
-  const headings = $("#cas-docs-container").find("h1, h2,h3");
-  let subMenu = false;
-
-  headings.each(function (idx) {
-    if ($(this).is('h1,h2')) {
-      // If it is a H2 and the submenu flag is NOT set, then arr.push('<li>h2 text')
-      if (!subMenu) {
-        arr.push(tocItem(this.id, this.textContent));
-      }
-
-      // If it is a H2 and the submenu flag is set, then arr.push('</ul><li>h2 text')
-      if (subMenu) {
-        subMenu = false;
-        arr.push('</ul></li>');
-        arr.push(tocItem(this.id, this.textContent));
-      }
-    }
-
-    if ($(this).is('h3')) {
-      // If it is a H3 and the submenu flag is NOT set, then set the submenu flag then arr.push('<ul><li>h3 text</li>')
-      if (subMenu) {
-        arr.push(tocItem(this.id, this.textContent));
-      } else {
-        subMenu = true;
-        arr.push('<ul class="nav flex-column">');
-        arr.push(tocItem(this.id, this.textContent));
-      }
-    }
-  });
-
-  // After the loop, close the last <li> tag
-  if (subMenu) {
-    arr.push('</ul></li>');
-  } else {
-    arr.push('</li>');
+  const contents = document.querySelector('#pageContents ul');
+  if (!contents) {
+    return;
   }
-
-  // toc.append(arr.join(''));
-  page_contents.append(arr.join(''));
+  const headings = Array.from(document.querySelectorAll('#cas-docs-container h1[id], #cas-docs-container h2[id], #cas-docs-container h3[id]'));
+  headings.forEach(heading => {
+    const item = document.createElement('li');
+    item.className = `toc-entry toc-${heading.tagName.toLowerCase()}`;
+    const link = document.createElement('a');
+    link.href = '#' + heading.id;
+    link.textContent = heading.textContent;
+    item.append(link);
+    contents.append(item);
+  });
+  if (!headings.length) {
+    contents.closest('.docs-toc').hidden = true;
+    return;
+  }
+  let scheduled = false;
+  const updateCurrentSection = () => {
+    const header = document.querySelector('.site-header').offsetHeight + 40;
+    const visibleHeadings = headings.filter(heading => heading.getClientRects().length > 0);
+    const active = visibleHeadings.filter(heading => heading.getBoundingClientRect().top <= header).at(-1) || visibleHeadings[0];
+    contents.querySelectorAll('a').forEach(link => {
+      link.parentElement.hidden = !visibleHeadings.some(heading => link.hash === '#' + heading.id);
+      if (active && link.hash === '#' + active.id) {
+        link.setAttribute('aria-current', 'location');
+      } else {
+        link.removeAttribute('aria-current');
+      }
+    });
+    scheduled = false;
+  };
+  const scheduleUpdate = () => {
+    if (!scheduled) {
+      scheduled = true;
+      requestAnimationFrame(updateCurrentSection);
+    }
+  };
+  window.addEventListener('scroll', scheduleUpdate, {passive: true});
+  document.getElementById('cas-docs-container').addEventListener('click', scheduleUpdate);
+  document.getElementById('cas-docs-container').addEventListener('shown.bs.tab', scheduleUpdate);
+  updateCurrentSection();
 }
 
-function tocItem(id, text) {
-  return `<li class="toc-entry toc-h2"><a href="#${id}">${text}</a>`;
-}
 function responsiveImages() {
   $('img').each(function () {
     $(this).addClass('img-fluid');
@@ -317,8 +322,11 @@ function responsiveImages() {
 }
 
 function responsiveTables() {
-  $('table').each(function () {
-    $(this).addClass('table table-responsive');
+  $('#cas-docs-container table').not('.rouge-table, .highlight table').each(function () {
+    $(this).addClass('table');
+    if (!this.closest('.table-scroll') && !this.classList.contains('cas-datatable')) {
+      $(this).wrap('<div class="table-scroll" role="region" aria-label="Scrollable table" tabindex="0"></div>');
+    }
   });
 }
 
@@ -419,6 +427,7 @@ function showOverlay(artifactId, type) {
   let iframe = $('<iframe>', {
     src: `https://getcas.apereo.org/ui?dependencies=webapp-tomcat,${id}`,
     id:  'overlayframe',
+    title: 'CAS Initializr',
     frameborder: 0,
     scrolling: 'no'
   }).css({
@@ -462,17 +471,51 @@ function initializePage() {
     let filters = [`version: ${activeVersion}`];
     console.log(`Documentation search is filtering by ${filters}`);
 
-    docsearch({
-      apiKey: 'a95d9cc5493147925fb5d4fdb5afb414',
-      appId: 'IW4GLK9JZ0',
-      indexName: 'apereoapereo',
-      container: '#searchField',
-      searchParameters: { 'facetFilters': filters },
-      debug: true
-    });
+    if (typeof docsearch === 'function') {
+      // The search overlay contains interactive controls and is a dialog, not a button.
+      const searchDialogObserver = new MutationObserver(records => {
+        records.forEach(record => record.addedNodes.forEach(node => {
+          if (node instanceof HTMLElement && node.classList.contains('DocSearch-Container')) {
+            node.setAttribute('role', 'dialog');
+            node.setAttribute('aria-modal', 'true');
+            node.setAttribute('aria-label', 'Search documentation');
+            node.setAttribute('tabindex', '-1');
+            node.removeAttribute('aria-expanded');
+            node.removeAttribute('aria-haspopup');
+            node.removeAttribute('aria-labelledby');
+          }
+        }));
+      });
+      searchDialogObserver.observe(document.body, {childList: true});
+      docsearch({
+        apiKey: 'a95d9cc5493147925fb5d4fdb5afb414',
+        appId: 'IW4GLK9JZ0',
+        indexName: 'apereoapereo',
+        container: '#searchField',
+        searchParameters: { 'facetFilters': filters },
+        debug: true
+      });
+    }
 }
 
 $(() => {
+  const mobileNavigation = window.matchMedia('(max-width: 760px)');
+  const updateNavigation = () => {
+    document.body.classList.toggle('docs-sidebar-hidden', mobileNavigation.matches);
+    document.getElementById('sidebarNavButton')?.setAttribute('aria-expanded', String(!mobileNavigation.matches));
+  };
+  updateNavigation();
+  mobileNavigation.addEventListener('change', updateNavigation);
+  document.addEventListener('keydown', event => {
+    if (event.key === 'Escape' && mobileNavigation.matches && !document.body.classList.contains('docs-sidebar-hidden')) {
+      navigateSidebar();
+      document.getElementById('sidebarNavButton')?.focus();
+    }
+  });
+  const header = document.querySelector('.site-header');
+  new ResizeObserver(() => {
+    document.documentElement.style.setProperty('--docs-header-height', `${header.offsetHeight}px`);
+  }).observe(header);
   loadSidebarForActiveVersion();
   generatePageTOC();
   generateToolbarIcons();
@@ -488,9 +531,9 @@ $(() => $("h2, h3, h4, h5, h6").each((i, el) => {
   let $el, icon, id;
   $el = $(el);
   id = $el.attr('id');
-  icon = '<i class="fa fa-link"></i>';
+  icon = '<i class="fa fa-link" aria-hidden="true"></i>';
   if (id) {
-    return $el.prepend($("<a />").addClass("header-link").attr("href", `#${id}`).html(icon));
+    return $el.prepend($("<a />").addClass("header-link").attr("href", `#${id}`).attr("aria-label", `Link to ${$el.text()}`).html(icon));
   }
 }));
 
@@ -502,9 +545,11 @@ codes.forEach((code) => {
   code.setAttribute("id", `code${countID}`);
   
   const btn = document.createElement('button');
-  btn.innerHTML = "<i class=\"fa fa-copy\" style=\"color: cornflowerblue;\"></i>";
+  btn.innerHTML = '<i class="fa fa-copy" aria-hidden="true"></i>';
   btn.className = "btn-copy-code";
   
+  btn.setAttribute("type", "button");
+  btn.setAttribute("aria-label", "Copy code");
   btn.setAttribute("title", "Copy Code");
   btn.setAttribute("data-clipboard-action", "copy");
   btn.setAttribute("data-clipboard-target", `#code${countID}`);
@@ -517,7 +562,14 @@ codes.forEach((code) => {
   code.before(div);
   countID++;
 }); 
-new ClipboardJS('.btn-copy-code');
+const codeClipboard = new ClipboardJS('.btn-copy-code');
+codeClipboard.on('success', event => {
+  document.getElementById('docs-status').textContent = 'Code copied to clipboard';
+  event.clearSelection();
+});
+codeClipboard.on('error', () => {
+  document.getElementById('docs-status').textContent = 'Unable to copy. Select the code and copy it manually.';
+});
 
 $(document).ready(() => {
   let pageLength = $(".cas-datatable").data("page-length");
@@ -653,6 +705,11 @@ window.addEventListener('load', () => {
             tabContentElement.children[position].classList.add('active');
             // elements[position].classList.add('active');
             liTab.classList.add('active');
+            ulTab.querySelectorAll(':scope > li > a').forEach(tab => {
+              const selected = tab === link;
+              tab.setAttribute('aria-selected', String(selected));
+              tab.tabIndex = selected ? 0 : -1;
+            });
             
             let tabs = $(`#${tabContentId} ul.nav.nav-tabs li a`).not("[href^='#notes']");
             for (let i = 0; i < tabs.length; i++) {
@@ -667,3 +724,104 @@ window.addEventListener('load', () => {
 /***********************
  * Tabs
  **********************/
+
+window.addEventListener('load', () => {
+  document.querySelectorAll('ul.tab[data-tab]').forEach((tabList, group) => {
+    const panels = document.getElementById(tabList.dataset.tab);
+    if (!panels) {
+      return;
+    }
+    panels.setAttribute('role', 'presentation');
+    const links = Array.from(tabList.querySelectorAll(':scope > li > a'));
+    tabList.setAttribute('role', 'tablist');
+    tabList.setAttribute('aria-label', 'Configuration examples');
+    links.forEach((link, index) => {
+      const panel = panels.children[index];
+      if (!panel) {
+        return;
+      }
+      link.id ||= `docs-tab-${group}-${index}`;
+      panel.id ||= `docs-panel-${group}-${index}`;
+      link.parentElement.setAttribute('role', 'presentation');
+      link.setAttribute('role', 'tab');
+      link.setAttribute('aria-controls', panel.id);
+      const selected = link.parentElement.classList.contains('active');
+      link.setAttribute('aria-selected', String(selected));
+      link.tabIndex = selected ? 0 : -1;
+      panel.setAttribute('role', 'tabpanel');
+      panel.setAttribute('aria-labelledby', link.id);
+      panel.tabIndex = 0;
+      link.addEventListener('keydown', event => {
+        let nextIndex;
+        if (event.key === 'ArrowRight') nextIndex = (index + 1) % links.length;
+        if (event.key === 'ArrowLeft') nextIndex = (index + links.length - 1) % links.length;
+        if (event.key === 'Home') nextIndex = 0;
+        if (event.key === 'End') nextIndex = links.length - 1;
+        if (nextIndex !== undefined) {
+          event.preventDefault();
+          links[nextIndex].focus();
+          links[nextIndex].click();
+        } else if (event.key === ' ') {
+          event.preventDefault();
+          link.click();
+        }
+      });
+    });
+  });
+});
+
+window.addEventListener('load', () => {
+  document.querySelectorAll('.nav-tabs > li, .nav-pills > li').forEach(item => {
+    if (item.parentElement.getAttribute('role') === 'tablist') {
+      item.setAttribute('role', 'presentation');
+    }
+  });
+});
+
+// Reveal only decorative homepage cards; technical content remains immediately visible.
+$(() => {
+  if (!document.body.classList.contains('docs-home')
+      || window.matchMedia('(prefers-reduced-motion: reduce)').matches
+      || !('IntersectionObserver' in window)) {
+    return;
+  }
+  const observer = new IntersectionObserver(entries => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        entry.target.classList.add('is-revealed');
+        observer.unobserve(entry.target);
+      }
+    });
+  }, {threshold: 0.08});
+  document.querySelectorAll('.home-paths a, .docs-home .card').forEach((card, index) => {
+    card.style.setProperty('--reveal-delay', `${index % 3 * 70}ms`);
+    card.classList.add('reveal-ready');
+    observer.observe(card);
+  });
+});
+
+// A thin progress rule under the masthead tracks how far a long guide has been read.
+$(() => {
+  const indicator = document.getElementById('readingProgress');
+  const article = document.getElementById('cas-docs-container');
+  if (!indicator || !article) {
+    return;
+  }
+  let scheduled = false;
+  const update = () => {
+    const start = article.offsetTop;
+    const span = article.offsetHeight - window.innerHeight + start;
+    const read = span > 0 ? (window.scrollY - start) / (span - start || 1) : 0;
+    indicator.style.transform = `scaleX(${Math.min(1, Math.max(0, read))})`;
+    scheduled = false;
+  };
+  const schedule = () => {
+    if (!scheduled) {
+      scheduled = true;
+      requestAnimationFrame(update);
+    }
+  };
+  window.addEventListener('scroll', schedule, {passive: true});
+  window.addEventListener('resize', schedule, {passive: true});
+  update();
+});
