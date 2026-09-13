@@ -84,6 +84,8 @@ public class OidcRegisteredService extends OAuthRegisteredService {
 
     private RegisteredServiceOidcIdTokenExpirationPolicy idTokenExpirationPolicy;
 
+    private RegisteredServiceOidcVerifiableCredentialsPolicy verifiableCredentialsPolicy;
+    
     @JacksonInject(value = "backchannelTokenDeliveryMode", optional = OptBoolean.TRUE)
     private String backchannelTokenDeliveryMode = OidcBackchannelTokenDeliveryModes.POLL.getMode();
     
