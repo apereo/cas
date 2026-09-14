@@ -581,3 +581,32 @@ function createRegisteredServiceIdTokenExpirationPolicy() {
         title: "Control how long the ticket should be kept alive"
     });
 }
+
+function createRegisteredServiceOidcVerifiableCredentialsPolicy() {
+    const paramType = "org.apereo.cas.oidc.vc.services.DefaultRegisteredServiceOidcVerifiableCredentialsPolicy";
+    const containerId = "editServiceWizardMenuItemOidcVerifiableCredentialsPolicy";
+
+    createInputField({
+        paramType: paramType,
+        labelTitle: "Allowed Credential Types (separated by comma)",
+        name: "registeredServiceOidcAllowedCredentialTypes",
+        paramName: "verifiableCredentialsPolicy.allowedCredentialTypes",
+        required: false,
+        containerId: containerId,
+        title: "Define the credential configuration identifiers this relying party may obtain, separated by comma. Leave empty to allow all credential types published by the issuer."
+    }).data("renderer", function (value, $input) {
+        return ["java.util.HashSet", $input.val().split(",").map(entry => entry.trim()).filter(entry => entry.length > 0)];
+    });
+
+    createInputField({
+        paramType: paramType,
+        labelTitle: "Credential Signing Algorithms (separated by comma)",
+        name: "registeredServiceOidcCredentialSigningAlgorithms",
+        paramName: "verifiableCredentialsPolicy.credentialSigningAlgValuesSupported",
+        required: false,
+        containerId: containerId,
+        title: "Define the permitted credential signing algorithms (e.g., ES256,RS256), separated by comma. This list can only narrow the algorithms published by the credential configuration. Leave empty to use its defaults."
+    }).data("renderer", function (value, $input) {
+        return ["java.util.HashSet", $input.val().split(",").map(entry => entry.trim()).filter(entry => entry.length > 0)];
+    });
+}

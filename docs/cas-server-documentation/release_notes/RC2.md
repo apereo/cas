@@ -232,6 +232,8 @@ cache invalidation. Service listings also release backend resources correctly.
 
 ### Palantir
 
+The OpenID Connect service wizard now includes an advanced verifiable credentials policy section for allowed credential types and signing algorithms.
+
 The [service history endpoint](../services/Configuring-Service-Version-History.html) can now restore a selected
 registered-service revision to the service registry and live service cache, while retaining its history.
 Palantir offers a **Restore Version** action in the revision table's context menu under **View Change History**.

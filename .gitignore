@@ -91,3 +91,4 @@ ci/docs/package-lock.json
 ci/tests/oidc/certs/
 cas-instance**/**
 .aider*
+PLANS.md
