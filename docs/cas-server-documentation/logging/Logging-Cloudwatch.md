@@ -55,4 +55,4 @@ The following endpoints are provided by CAS:
 
 {% include_cached actuators.html endpoints="cloudWatchLogs" %}
 
-{% include_cached casproperties.html properties="cas.logging.cloud-watch" %}
+{% include_cached casproperties.html properties="cas.logging.cloudwatch" %}
