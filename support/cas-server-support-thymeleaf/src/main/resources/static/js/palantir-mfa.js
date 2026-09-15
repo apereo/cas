@@ -8,15 +8,25 @@ function escapeMfaHtml(str) {
     }[s]));
 }
 
-function switchToConfigurationDynamicSourcesTab() {
+/**
+ * Move to the configuration tab's dynamic sources panel.
+ *
+ * The configuration tab is initialized on first activation, so this waits for that to finish before
+ * selecting the inner panel: its handlers are not bound until then, and restoring the operator's
+ * stored inner selection would otherwise run afterwards and undo this one.
+ *
+ * @returns {Promise<void>} resolved once the panel is selected
+ */
+async function switchToConfigurationDynamicSourcesTab() {
     activateDashboardTab(Tabs.CONFIGURATION.index);
     selectSidebarMenuTab(Tabs.CONFIGURATION.index);
+    await initializeDashboardTab(Tabs.CONFIGURATION);
     $("#configuration-tabs").tabs("option", "active", $("#mutableConfigSources").index());
 }
 
-function overrideMfaProviderConfigurationPropertyValue(propertyName, propertyValue) {
+async function overrideMfaProviderConfigurationPropertyValue(propertyName, propertyValue) {
     if (mfaProviderPropertiesMutable()) {
-        switchToConfigurationDynamicSourcesTab();
+        await switchToConfigurationDynamicSourcesTab();
         overrideConfigPropertyValue(propertyName, propertyValue);
     }
 }
@@ -25,9 +35,9 @@ function overrideMfaProviderPropertyValue(button) {
     overrideMfaProviderConfigurationPropertyValue($(button).data("key"), $(button).data("value"));
 }
 
-function showMfaProviderConfigurationPropertyHelp(propertyName) {
+async function showMfaProviderConfigurationPropertyHelp(propertyName) {
     if (CasActuatorEndpoints.configurationMetadata()) {
-        switchToConfigurationDynamicSourcesTab();
+        await switchToConfigurationDynamicSourcesTab();
         searchForConfigPropertyButton(propertyName);
     }
 }
@@ -135,17 +145,18 @@ async function populateMultifactorProviderTables() {
                                 }
                                 properties = properties.filter(([propKey, propValue]) => propKey.startsWith(prefix));
                             }
+                            const table = $(`#mfaTable-${key}`).DataTable();
                             properties.forEach(([propKey, propValue]) => {
                                 if (propKey.startsWith(configPrefix)) {
-                                    const table = $(`#mfaTable-${key}`).DataTable();
                                     table.row.add({
                                         0: `<code>${escapeMfaHtml(propKey)}</code>`,
                                         1: `<code>${escapeMfaHtml(propValue.value)}</code>`,
                                         propertyName: propKey,
                                         propertyValue: propValue.value
-                                    }).draw(false);
+                                    });
                                 }
                             });
+                            table.draw(false);
                         });
 
                         updateNavigationSidebar();

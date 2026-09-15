@@ -8,6 +8,7 @@ async function initializeServicesOperations() {
     ];
 
     const applicationsTable = $("#applicationsTable").DataTable({
+        deferRender: true,
         pageLength: 25,
         autoWidth: false,
         columnDefs: columnDefinitions,
@@ -96,9 +97,61 @@ let serviceEditorInstance = null;
 let editServiceDialogInstance = null;
 let entityHistoryDialogInstance = null;
 
+/**
+ * Sizes the plain editor dialog to the window, leaving a small margin.
+ *
+ * Matches the wizard beside it: the editor is a working surface rather than a message, so it takes
+ * the whole window, and Ace is told to re-measure afterwards since it cannot detect a container
+ * resize on its own.
+ */
+function sizeServiceEditorDialog() {
+    const element = $("#editServiceDialog");
+    if (!element.hasClass("ui-dialog-content") || !element.dialog("isOpen")) {
+        return;
+    }
+    const margin = 24;
+    element.dialog("option", {
+        width: Math.max(320, $(window).width() - margin * 2),
+        height: Math.max(320, $(window).height() - margin * 2)
+    });
+    element.dialog("option", "position", {my: "center", at: "center", of: window});
+    serviceEditorInstance?.resize(true);
+}
+
+/**
+ * The plain service-definition editor, as a jQuery UI dialog.
+ *
+ * A jQuery UI dialog like the wizard and every other dialog in Palantir: the widget supplies the
+ * focus trap, Escape handling, a title bar and role=dialog, which the hand-written MDC markup did
+ * not. The returned handle exposes open and close so the shared save handler can drive this dialog
+ * and the wizard's through the same two calls.
+ *
+ * @returns {{open: function, close: function}} a handle onto the dialog
+ */
 function getEditServiceDialogInstance() {
     if (!editServiceDialogInstance) {
-        editServiceDialogInstance = window.mdc.dialog.MDCDialog.attachTo(document.getElementById("editServiceDialog"));
+        const element = $("#editServiceDialog");
+        if (!element.hasClass("ui-dialog-content")) {
+            element.removeClass("hide").dialog({
+                autoOpen: false,
+                modal: true,
+                closeOnEscape: true,
+                draggable: false,
+                resizable: false,
+                dialogClass: "registered-service-wizard-dialog",
+                close: () => $(window).off("resize.serviceEditor")
+            });
+        }
+        editServiceDialogInstance = {
+            open: () => {
+                element.dialog("open");
+                sizeServiceEditorDialog();
+                $(window)
+                    .off("resize.serviceEditor")
+                    .on("resize.serviceEditor", sizeServiceEditorDialog);
+            },
+            close: () => element.dialog("close")
+        };
     }
     return editServiceDialogInstance;
 }
@@ -111,8 +164,8 @@ function getEntityHistoryDialogInstance() {
 }
 
 async function initializeServiceButtons() {
-    serviceEditorInstance = initializeAceEditor("serviceEditor");
     getEditServiceDialogInstance();
+    serviceEditorInstance = initializeAceEditor("serviceEditor");
 
     function viewEntityHistory(serviceId) {
         const entityHistoryTable = $("#entityHistoryTable").DataTable();
@@ -457,8 +510,10 @@ async function fetchServices(callback) {
             applicationsTable.search("").draw();
             saml2MetadataProvidersTable.search("").draw();
 
-            servicesChart.data.datasets[0].data = serviceCountByType;
-            servicesChart.update();
+            if (servicesChart) {
+                servicesChart.data.datasets[0].data = serviceCountByType;
+                servicesChart.update();
+            }
 
             if (callback !== undefined) {
                 callback(applicationsTable);
@@ -471,23 +526,30 @@ async function fetchServices(callback) {
 }
 
 async function initializeFooterButtons() {
+    $("button[name=cancelServiceWizard]").off().on("click", () => {
+        const element = $("#editServiceWizardDialog");
+        if (element.hasClass("ui-dialog-content")) {
+            element.dialog("close");
+        }
+    });
+
+    $("button[name=cancelService]").off().on("click", () => {
+        const element = $("#editServiceDialog");
+        if (element.hasClass("ui-dialog-content")) {
+            element.dialog("close");
+        }
+    });
+
     $("button[name=copyServiceDefinitionWizard]").off().on("click", () => {
         const editor = initializeAceEditor("wizardServiceEditor");
         copyToClipboard(editor.getValue());
     });
 
     $("button[name=validateServiceWizard]").off().on("click", () => {
-        const $accordion = $("#editServiceWizardMenu");
         let valid = true;
-        const originalIndex = $("#editServiceWizardMenu").accordion("option", "active");
-        $("#editServiceWizardMenu .ui-accordion-header:visible").each(function () {
-            const $header = $(this);
-            const index = $accordion
-                .find(".ui-accordion-header")
-                .index($header);
-            $accordion.accordion("option", "active", index);
-
-            $("#editServiceWizardForm .ui-accordion-content:visible input:visible").each(function () {
+        const originalKey = RegisteredServiceSections.currentKey();
+        RegisteredServiceSections.eachAvailableSection(section => {
+            $(section.panel).find("input:visible").each(function () {
                 const input = $(this);
                 valid = input.get(0).checkValidity();
                 if (!valid) {
@@ -495,15 +557,13 @@ async function initializeFooterButtons() {
                     return false;
                 }
             });
-            if (!valid) {
-                return false;
-            }
+            return valid;
         });
         if (valid) {
-            const currentIndex = $("#editServiceWizardMenu").accordion("option", "active");
-            if (originalIndex !== currentIndex) {
-                $("#editServiceWizardMenu").accordion("option", "active", originalIndex);
+            if (RegisteredServiceSections.currentKey() !== originalKey) {
+                RegisteredServiceSections.activate(originalKey);
             }
+            RegisteredServiceSections.render();
             if (CasActuatorEndpoints.registeredServices()) {
                 const editor = initializeAceEditor("wizardServiceEditor");
                 $.ajax({

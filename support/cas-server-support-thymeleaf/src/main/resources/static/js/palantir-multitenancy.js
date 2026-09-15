@@ -73,7 +73,7 @@ async function initializeMultitenancyOperations() {
     fetchTenants();
     reloadTenantsTable = fetchTenants;
     setInterval(() => {
-        if (currentActiveTab === Tabs.MULTITENANCY.index) {
+        if (currentActiveTab === Tabs.MULTITENANCY.index && document.visibilityState === "visible") {
             fetchTenants();
         }
     }, palantirSettings().refreshInterval);

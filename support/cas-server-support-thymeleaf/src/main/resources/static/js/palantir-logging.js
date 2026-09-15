@@ -6,6 +6,7 @@ async function initializeLoggingOperations() {
         </button>
     `;
     const loggersTable = $("#loggersTable").DataTable({
+        deferRender: true,
         layout: {
             topStart: toolbar
         },

@@ -104,15 +104,21 @@
                     </div>
                 </div>
                 <div class="w-50 mx-auto">
-                  <canvas id="servicesChart"></canvas>
+                  <canvas id="servicesChart" role="img" aria-label="Registered services by type"></canvas>
                 </div>
 
-                <div class="mdc-dialog modal" id="editServiceWizardDialog" role="alertdialog"
-                     aria-modal="true" aria-label="Edit service with wizard"
-                     aria-describedby="edit-service-wizard-dialog-content">
-                    <div class="mdc-dialog__container w-100 modal-dialog" style="max-height: 85%">
-                        <div class="mdc-dialog__surface mw-100 w-75 modal-content min-height-90">
-                            <div class="mdc-dialog__content modal-body" id="edit-service-wizard-dialog-content">
+                <!--/*
+                    A jQuery UI dialog, like every other dialog in Palantir. The widget
+                    supplies role=dialog, aria-modal, the focus trap, a real title bar and
+                    Escape-to-close, so the hand-written role="alertdialog" and aria-*
+                    attributes that used to sit here are gone with the MDC markup: an
+                    alertdialog is for an alert, not for a form this size.
+
+                    palantir-services-wizard.js sizes it to the window and keeps it sized
+                    as the window changes.
+                */-->
+                <div id="editServiceWizardDialog" class="hide" title="Application definition">
+                            <div class="registered-service-wizard" id="edit-service-wizard-dialog-content">
                                 
                                 <span class="hide">
                                     <p>The following application type is chosen:</p>
@@ -128,36 +134,61 @@
 
                                 <form id="editServiceWizardForm">
                                     <div id="editServiceWizardContainer" class="d-flex">
-                                        <div id="editServiceWizardMenu" class="jqueryui-accordion mr-2 mmw-45">
-                                              <h3>General</h3>
+                                        <div id="editServiceWizardMenu" class="registered-service-sections mr-2 mmw-45">
+                                            <!--/*
+                                                The sections below are navigated by a rail rather than an accordion.
+                                                palantir-services-sections.js reads every direct-child h3 of the
+                                                panels container, groups it by data-section-group, and shows one
+                                                section at a time.
+
+                                                A new section is a new h3 plus its panel div, with a
+                                                data-section-group naming one of the groups in GROUP_ORDER.
+                                                Nothing else is needed; an unknown or missing group falls into Other.
+
+                                                The panels are not re-indented, only wrapped, so this stays a
+                                                readable diff against the accordion version.
+                                            */-->
+                                            <nav id="editServiceWizardSectionNav"
+                                                 class="registered-service-sections__nav"
+                                                 aria-label="Service definition sections"></nav>
+                                            <div id="editServiceWizardSectionPanels"
+                                                 class="registered-service-sections__panels">
+                                              <h3 data-section-group="Basics">General</h3>
                                               <div id="editServiceWizardMenuItemGeneral">
                                                   <p>This section defines basic properties and settings that can be assigned to an application.</p>
 
                                                   <div id="editServiceWizardGeneralContainer"
                                                        class="mdc-input-group-field mdc-input-group-field-append w-100">
                                                     <script type="text/javascript">
-                                                        createRegisteredServiceFields();
+                                                        palantirWizardField(() => {
+                                                            createRegisteredServiceFields();
+                                                        });
                                                     </script>
 
-                                                    <div class="class-CasRegisteredService">
-                                                        <script type="text/javascript">
-                                                            createCasRegisteredServiceFields();
-                                                        </script>
-                                                    </div>
                                                   </div>
                                               </div>
 
-                                             <h3 class="class-OAuthRegisteredService class-OidcRegisteredService">OAuth / OpenID Connect Relying Party</h3>
+                                             <h3 data-section-group="Protocol" class="class-CasRegisteredService advanced-option">CAS Protocol Settings</h3>
+                                             <div class="class-CasRegisteredService" id="editServiceWizardCasContainer">
+                                                 <script type="text/javascript">
+                                                     palantirWizardField(() => {
+                                                         createCasRegisteredServiceFields();
+                                                     });
+                                                 </script>
+                                             </div>
+
+                                             <h3 data-section-group="Protocol" class="class-OAuthRegisteredService class-OidcRegisteredService">OAuth / OpenID Connect Relying Party</h3>
                                              <div class="class-OAuthRegisteredService class-OidcRegisteredService"
                                                   id="editServiceWizardMenuItemOAuthOidc">
                                                  <p>This section defines properties and settings applicable to OAuth or OpenID Connect relying parties. </p>
                                                  <div id="editServiceWizardOAuthOidcContainer"
                                                       class="mdc-input-group-field mdc-input-group-field-append w-100">
                                                      <script type="text/javascript">
-                                                          createRegisteredServiceOidcFields().then(() => {
-                                                            createRegisteredServiceResponseMode();
-                                                            createRegisteredServiceUserProfileViewType();
-                                                          });
+                                                         palantirWizardField(() =>
+                                                             createRegisteredServiceOidcFields().then(() => {
+                                                                 createRegisteredServiceResponseMode();
+                                                                 createRegisteredServiceUserProfileViewType();
+                                                             }));
                                                      </script>
                                                      
                                                  </div>
@@ -176,14 +207,16 @@
                                                  </div>
                                              </div>
 
-                                            <h3 class="class-SamlRegisteredService">SAML2 Service Provider</h3>
+                                            <h3 data-section-group="Protocol" class="class-SamlRegisteredService">SAML2 Service Provider</h3>
                                             <div class="class-SamlRegisteredService"
                                                  id="editServiceWizardMenuItemSaml">
                                                  <p>This section defines properties and settings applicable to SAML2 service providers. </p>
                                                  <div id="editServiceWizardSamlContainer"
                                                       class="mdc-input-group-field mdc-input-group-field-append w-100">
                                                      <script type="text/javascript">
-                                                          createRegisteredServiceSaml2Fields();
+                                                         palantirWizardField(() => {
+                                                             createRegisteredServiceSaml2Fields();
+                                                         });
                                                      </script>
 
                                                      <div th:replace="~{fragments/switchbutton :: switchbutton (id='logoutResponseEnabled', label='#Send Logout Response', cssClass='pt-2 advanced-option', selected=true, dataAttrs='param-skip-true=true')}"/>
@@ -218,7 +251,9 @@
                                                               id="editServiceWizardSamlAttributeNameFormatsContainer">
                                                          <h3>Attribute Name Formats</h3>
                                                          <script type="text/javascript">
-                                                             createRegisteredServiceAttributeNameFormat();
+                                                             palantirWizardField(() => {
+                                                                 createRegisteredServiceAttributeNameFormat();
+                                                             });
                                                          </script>
                                                      </section>
 
@@ -226,7 +261,9 @@
                                                               id="editServiceWizardSamlAttributeFriendlyNamesContainer">
                                                          <h3>Attribute Friendly Names</h3>
                                                          <script type="text/javascript">
-                                                            createRegisteredServiceAttributeFriendlyNames();
+                                                             palantirWizardField(() => {
+                                                                 createRegisteredServiceAttributeFriendlyNames();
+                                                             });
                                                          </script>
                                                      </section>
 
@@ -234,7 +271,9 @@
                                                               id="editServiceWizardSamlAttributeValueTypesContainer">
                                                          <h3>Attribute Value Types</h3>
                                                          <script type="text/javascript">
-                                                             createRegisteredServiceAttributeValueTypes();
+                                                             palantirWizardField(() => {
+                                                                 createRegisteredServiceAttributeValueTypes();
+                                                             });
                                                          </script>
                                                      </section>
 
@@ -242,30 +281,36 @@
                                                               id="editServiceWizardSamlMetadataCriteriaEntityAttributesContainer">
                                                          <h3>Metadata Criteria Entity Attributes</h3>
                                                          <script type="text/javascript">
-                                                            createRegisteredServiceMetadataCriteriaEntityAttribute();
+                                                             palantirWizardField(() => {
+                                                                 createRegisteredServiceMetadataCriteriaEntityAttribute();
+                                                             });
                                                          </script>
                                                      </section>
 
                                                  </div>
                                             </div>
 
-                                            <h3 class="class-WSFederationRegisteredService">WS-Federation Relying Party</h3>
+                                            <h3 data-section-group="Protocol" class="class-WSFederationRegisteredService">WS-Federation Relying Party</h3>
                                             <div class="class-WSFederationRegisteredService"
                                                  id="editServiceWizardMenuItemWsFederationRelyingParty">
                                                 <p>This section defines properties and settings applicable to WS-Federation relying parties.</p>
                                                  <div id="editServiceWizardWSFederationContainer"
                                                       class="mdc-input-group-field mdc-input-group-field-append w-100">
                                                      <script type="text/javascript">
-                                                           createRegisteredServiceWsfedOptions();
+                                                         palantirWizardField(() => {
+                                                             createRegisteredServiceWsfedOptions();
+                                                         });
                                                      </script>
                                                  </div>
                                             </div>
 
-                                              <h3 class="advanced-option">Application Expiration Policy</h3>
+                                              <h3 data-section-group="Tickets & Tokens" class="advanced-option">Application Expiration Policy</h3>
                                               <div id="editServiceWizardMenuItemExpirationPolicy">
 
                                                     <script type="text/javascript">
-                                                        createRegisteredServiceExpirationPolicy();
+                                                        palantirWizardField(() => {
+                                                            createRegisteredServiceExpirationPolicy();
+                                                        });
                                                     </script>
 
                                                   <div th:replace="~{fragments/switchbutton :: switchbutton (id='deleteWhenExpired',
@@ -286,41 +331,51 @@
 
                                               </div>
 
-                                              <h3 class="advanced-option">Ticket-Granting Ticket Expiration Policy</h3>
+                                              <h3 data-section-group="Tickets & Tokens" class="advanced-option">Ticket-Granting Ticket Expiration Policy</h3>
                                               <div id="editServiceWizardMenuItemTGTExpirationPolicy">
                                                   <script type="text/javascript">
-                                                     createRegisteredServiceTicketGrantingTicketPolicy();
+                                                      palantirWizardField(() => {
+                                                          createRegisteredServiceTicketGrantingTicketPolicy();
+                                                      });
                                                   </script>
                                               </div>
 
-                                             <h3 class="class-CasRegisteredService advanced-option">Service Ticket Expiration Policy</h3>
+                                             <h3 data-section-group="Tickets & Tokens" class="class-CasRegisteredService advanced-option">Service Ticket Expiration Policy</h3>
                                              <div class="class-CasRegisteredService"
                                                   id="editServiceWizardMenuItemSTExpirationPolicy">
                                                    <script type="text/javascript">
-                                                        createRegisteredServiceServiceTicketPolicy();
-                                                    </script>
+                                                       palantirWizardField(() => {
+                                                           createRegisteredServiceServiceTicketPolicy();
+                                                       });
+                                                   </script>
                                              </div>
-                                             <h3 class="class-CasRegisteredService advanced-option">Proxy-granting Ticket Expiration Policy</h3>
+                                             <h3 data-section-group="Tickets & Tokens" class="class-CasRegisteredService advanced-option">Proxy-granting Ticket Expiration Policy</h3>
                                              <div class="class-CasRegisteredService"
                                                   id="editServiceWizardMenuItemPGTExpirationPolicy">
                                                  <script type="text/javascript">
-                                                        createRegisteredServiceProxyGrantingTicketPolicy();
-                                                </script>
+                                                     palantirWizardField(() => {
+                                                         createRegisteredServiceProxyGrantingTicketPolicy();
+                                                     });
+                                                 </script>
                                              </div>
-                                             <h3 class="class-CasRegisteredService advanced-option">Proxy Ticket Expiration Policy</h3>
+                                             <h3 data-section-group="Tickets & Tokens" class="class-CasRegisteredService advanced-option">Proxy Ticket Expiration Policy</h3>
                                              <div class="class-CasRegisteredService"
                                                   id="editServiceWizardMenuItemPTExpirationPolicy">
                                                 <script type="text/javascript">
-                                                    createRegisteredServiceProxyTicketPolicy();
+                                                    palantirWizardField(() => {
+                                                        createRegisteredServiceProxyTicketPolicy();
+                                                    });
                                                 </script>
                                              </div>
 
-                                             <h3 class="class-CasRegisteredService advanced-option">Proxy Policy</h3>
+                                             <h3 data-section-group="Tickets & Tokens" class="class-CasRegisteredService advanced-option">Proxy Policy</h3>
                                              <div class="class-CasRegisteredService"
                                                   id="editServiceWizardMenuItemProxyAuthenticationPolicy">
 
                                                  <script type="text/javascript">
-                                                     createRegisteredServiceProxyPolicy();
+                                                     palantirWizardField(() => {
+                                                         createRegisteredServiceProxyPolicy();
+                                                     });
                                                  </script>
 
                                                   <div th:replace="~{fragments/switchbutton :: switchbutton (id='proxyAuthenticationUseServiceId',
@@ -333,76 +388,92 @@
                                                         dataAttrs='param-skip-false=true,param-name=proxyPolicy.exactMatch')}"/>
                                              </div>
 
-                                             <h3 class="class-OAuthRegisteredService class-OidcRegisteredService advanced-option">OAuth / OpenID Connect TLS Client Settings</h3>
+                                             <h3 data-section-group="Protocol" class="class-OAuthRegisteredService class-OidcRegisteredService advanced-option">OAuth / OpenID Connect TLS Client Settings</h3>
                                              <div class="class-OAuthRegisteredService class-OidcRegisteredService"
                                                   id="editServiceWizardMenuItemOAuthOidcTlsClientSettings">
                                                  <script type="text/javascript">
-                                                        createOidcRegisteredServiceTlsClientSettings();
+                                                     palantirWizardField(() => {
+                                                         createOidcRegisteredServiceTlsClientSettings();
+                                                     });
                                                  </script>
                                              </div>
 
-                                             <h3 class="class-OAuthRegisteredService class-OidcRegisteredService advanced-option">OAuth / OpenID Connect Code Expiration Policy</h3>
+                                             <h3 data-section-group="Tickets & Tokens" class="class-OAuthRegisteredService class-OidcRegisteredService advanced-option">OAuth / OpenID Connect Code Expiration Policy</h3>
                                              <div class="class-OAuthRegisteredService class-OidcRegisteredService"
                                                   id="editServiceWizardMenuItemOAuthOidcCodeExpirationPolicy">
                                                  <script type="text/javascript">
-                                                        createRegisteredServiceCodeExpirationPolicy();
+                                                     palantirWizardField(() => {
+                                                         createRegisteredServiceCodeExpirationPolicy();
+                                                     });
                                                  </script>
                                              </div>
 
-                                            <h3 class="class-OAuthRegisteredService class-OidcRegisteredService advanced-option">OAuth / OpenID Connect Access Token Expiration Policy</h3>
+                                            <h3 data-section-group="Tickets & Tokens" class="class-OAuthRegisteredService class-OidcRegisteredService advanced-option">OAuth / OpenID Connect Access Token Expiration Policy</h3>
                                              <div class="class-OAuthRegisteredService class-OidcRegisteredService"
                                                   id="editServiceWizardMenuItemOAuthOidcATExpirationPolicy">
 
                                                  <script type="text/javascript">
-                                                     createRegisteredServiceOidcAccessTokenExpirationPolicy();
+                                                     palantirWizardField(() => {
+                                                         createRegisteredServiceOidcAccessTokenExpirationPolicy();
+                                                     });
                                                  </script>
                                                  
                                              </div>
 
-                                            <h3 class="class-OAuthRegisteredService class-OidcRegisteredService advanced-option">OAuth / OpenID Connect Refresh Token Expiration Policy</h3>
+                                            <h3 data-section-group="Tickets & Tokens" class="class-OAuthRegisteredService class-OidcRegisteredService advanced-option">OAuth / OpenID Connect Refresh Token Expiration Policy</h3>
                                              <div class="class-OAuthRegisteredService class-OidcRegisteredService"
                                                   id="editServiceWizardMenuItemOAuthOidcRTExpirationPolicy">
 
                                                  <script type="text/javascript">
-                                                    createRegisteredServiceOidcRefreshTokenExpirationPolicy();
+                                                     palantirWizardField(() => {
+                                                         createRegisteredServiceOidcRefreshTokenExpirationPolicy();
+                                                     });
                                                  </script>
                                                  
                                              </div>
 
-                                             <h3 class="class-OAuthRegisteredService class-OidcRegisteredService advanced-option">OAuth / OpenID Connect Device Token Expiration Policy</h3>
+                                             <h3 data-section-group="Tickets & Tokens" class="class-OAuthRegisteredService class-OidcRegisteredService advanced-option">OAuth / OpenID Connect Device Token Expiration Policy</h3>
                                              <div class="class-OAuthRegisteredService class-OidcRegisteredService"
                                                   id="editServiceWizardMenuItemOAuthOidcDTExpirationPolicy">
                                                    <script type="text/javascript">
-                                                         createRegisteredServiceDeviceTokenExpirationPolicy();
-                                                 </script>
+                                                       palantirWizardField(() => {
+                                                           createRegisteredServiceDeviceTokenExpirationPolicy();
+                                                       });
+                                                   </script>
                                              </div>
 
-                                             <h3 class="class-OidcRegisteredService advanced-option">OpenID Connect ID Token Expiration Policy</h3>
+                                             <h3 data-section-group="Tickets & Tokens" class="class-OidcRegisteredService advanced-option">OpenID Connect ID Token Expiration Policy</h3>
                                              <div class="class-OidcRegisteredService"
                                                   id="editServiceWizardMenuItemOAuthOidcITExpirationPolicy">
                                                 <script type="text/javascript">
-                                                    createRegisteredServiceIdTokenExpirationPolicy();
+                                                    palantirWizardField(() => {
+                                                        createRegisteredServiceIdTokenExpirationPolicy();
+                                                    });
                                                 </script>
                                              </div>
 
-                                             <h3 class="class-OidcRegisteredService advanced-option">OpenID Connect Verifiable Credentials Policy</h3>
+                                             <h3 data-section-group="Tickets & Tokens" class="class-OidcRegisteredService advanced-option">OpenID Connect Verifiable Credentials Policy</h3>
                                              <div class="class-OidcRegisteredService"
                                                   id="editServiceWizardMenuItemOidcVerifiableCredentialsPolicy">
                                                  <script type="text/javascript">
-                                                     createRegisteredServiceOidcVerifiableCredentialsPolicy();
+                                                     palantirWizardField(() => {
+                                                         createRegisteredServiceOidcVerifiableCredentialsPolicy();
+                                                     });
                                                  </script>
                                              </div>
 
-                                            <h3 class="class-OAuthRegisteredService class-OidcRegisteredService advanced-option">OAuth / OpenID Connect Token Exchange Policy</h3>
+                                            <h3 data-section-group="Tickets & Tokens" class="class-OAuthRegisteredService class-OidcRegisteredService advanced-option">OAuth / OpenID Connect Token Exchange Policy</h3>
                                              <div class="class-OAuthRegisteredService class-OidcRegisteredService"
                                                   id="editServiceWizardMenuItemOAuthOidcTokenExchangePolicy">
 
                                                  <script type="text/javascript">
-                                                     createRegisteredServiceOidcTokenExchangePolicy();
-                                                </script>
+                                                     palantirWizardField(() => {
+                                                         createRegisteredServiceOidcTokenExchangePolicy();
+                                                     });
+                                                 </script>
                                              </div>
 
-                                              <h3>Username Attribute Provider</h3>
+                                              <h3 data-section-group="Attributes">Username Attribute Provider</h3>
                                               <div id="editServiceWizardMenuItemUsernameAttribute">
                                                   <p>Registered CAS applications are given the ability to allow for configuration of a username attribute provider,
                                                       which controls what should be the designated user identifier that is returned to the application. The user
@@ -410,7 +481,9 @@
                                                       and it optionally may be based off of an existing attribute that
                                                       is available and resolved for the principal already.</p>
                                                    <script type="text/javascript">
-                                                       createRegisteredServiceUsernameAttributeProvider();
+                                                       palantirWizardField(() => {
+                                                           createRegisteredServiceUsernameAttributeProvider();
+                                                       });
                                                    </script>
 
                                                    <div th:replace="~{fragments/switchbutton :: switchbutton (id='encryptUsername',
@@ -419,17 +492,21 @@
                                                         dataAttrs='param-skip-false=true,param-name=usernameAttributeProvider.encryptUsername')}"/>
                                               </div>
 
-                                              <h3>Attribute Release Policy</h3>
+                                              <h3 data-section-group="Attributes">Attribute Release Policy</h3>
                                               <div id="editServiceWizardMenuItemAttributeReleasePolicy">
                                                     <p>The attribute release policy decides how attributes are selected and provided to a given application in the final CAS response. Additionally,
                                                       each policy has the ability to apply an optional filter to weed out their attributes based on their values.</p>
                                                     <script type="text/javascript">
-                                                         createRegisteredServiceAttributeReleasePolicy();
+                                                        palantirWizardField(() => {
+                                                            createRegisteredServiceAttributeReleasePolicy();
+                                                        });
                                                     </script>
 
                                                   <div id="editServiceWizardMenuItemAttributeReleasePolicyActivationCriteria">
                                                     <script type="text/javascript">
-                                                        createRegisteredServiceAttributeReleasePolicyActivationCriteria();
+                                                        palantirWizardField(() => {
+                                                            createRegisteredServiceAttributeReleasePolicyActivationCriteria();
+                                                        });
                                                     </script>
                                                       
                                                     <div th:replace="~{fragments/switchbutton :: switchbutton (id='registeredServiceAttrReleasePolicyAttributeActivationCriteriaReverseMatch',
@@ -440,7 +517,9 @@
 
                                                    <div id="editServiceWizardMenuItemAttributeReleasePrincipalAttributesRepository">
                                                        <script type="text/javascript">
-                                                            createRegisteredServiceAttributeReleasePrincipalAttributesRepository();
+                                                           palantirWizardField(() => {
+                                                               createRegisteredServiceAttributeReleasePrincipalAttributesRepository();
+                                                           });
                                                        </script>
 
                                                        <div th:replace="~{fragments/switchbutton :: switchbutton (id='registeredServiceAttrReleasePolicyPrincipalAttributeRepositoryIgnoreResolvedAttributes',
@@ -451,7 +530,9 @@
 
                                                   <div id="editServiceWizardMenuItemAttributeReleaseValueFilters">
                                                       <script type="text/javascript">
-                                                          createRegisteredServiceAttributeReleaseValueFilters();
+                                                          palantirWizardField(() => {
+                                                              createRegisteredServiceAttributeReleaseValueFilters();
+                                                          });
                                                       </script>
 
                                                       <div th:replace="~{fragments/switchbutton :: switchbutton (id='registeredServiceAttrReleasePolicyAttributeValueFilterExcludeUnmapped',
@@ -472,9 +553,11 @@
 
                                                   <div id="editServiceWizardMenuItemAttributeReleaseValueConsentPolicy">
                                                       <script type="text/javascript">
-                                                          if (CAS_FEATURES.includes("Consent")) {
-                                                              createRegisteredServiceAttributeReleaseConsentPolicy();
-                                                          }
+                                                          palantirWizardField(() => {
+                                                              if (CAS_FEATURES.includes("Consent")) {
+                                                                  createRegisteredServiceAttributeReleaseConsentPolicy();
+                                                              }
+                                                          });
                                                       </script>
                                                   </div>
                                                   <div th:replace="~{fragments/switchbutton :: switchbutton (id='attributeReleaseAuthorizedToReleaseCredentialPassword',
@@ -496,10 +579,12 @@
 
                                               </div>
 
-                                              <h3 id="registeredServiceMfaPolicy">Multifactor Authentication Policy</h3>
+                                              <h3 data-section-group="Access & Authentication" id="registeredServiceMfaPolicy">Multifactor Authentication Policy</h3>
                                               <div id="editServiceWizardMenuItemMfaPolicy">
                                                 <script type="text/javascript">
-                                                    createRegisteredServiceMultifactorPolicy();
+                                                    palantirWizardField(() => {
+                                                        createRegisteredServiceMultifactorPolicy();
+                                                    });
                                                 </script>
 
                                                   <div th:replace="~{fragments/switchbutton :: switchbutton (id='bypassEnabled',
@@ -523,10 +608,12 @@
                                                         dataAttrs='param-skip-false=true,param-name=multifactorPolicy.bypassIfMissingPrincipalAttribute,param-type=org.apereo.cas.services.DefaultRegisteredServiceMultifactorPolicy')}"/>
                                               </div>
 
-                                              <h3 class="advanced-option">Matching Strategy</h3>
+                                              <h3 data-section-group="Access & Authentication" class="advanced-option">Matching Strategy</h3>
                                               <div id="editServiceWizardMenuItemMatchingStrategy">
                                                     <script type="text/javascript">
-                                                        createRegisteredServiceMatchingStrategy();
+                                                        palantirWizardField(() => {
+                                                            createRegisteredServiceMatchingStrategy();
+                                                        });
                                                     </script>
 
                                                 <div th:replace="~{fragments/switchbutton :: switchbutton (id='matchingStrategyCaseInsensitive',
@@ -536,14 +623,16 @@
                                               </div>
 
 
-                                              <h3>Access Strategy</h3>
+                                              <h3 data-section-group="Access & Authentication">Access Strategy</h3>
                                               <div id="editServiceWizardMenuItemAccessStrategy">
                                                   <div>The access strategy of a registered service provides fine-grained control over the service
                                                       authorization rules. It describes whether the service is allowed to use the CAS server,
                                                       allowed to participate in single sign-on authentication, etc. Additionally, it may be configured
                                                       to require a certain set of principal attributes that must exist before access can be granted to the service. </div>
                                                    <script type="text/javascript">
-                                                        createRegisteredServiceAccessStrategy();
+                                                       palantirWizardField(() => {
+                                                           createRegisteredServiceAccessStrategy();
+                                                       });
                                                    </script>
 
                                                   <div th:replace="~{fragments/switchbutton :: switchbutton (id='accessStrategyEnabled',
@@ -567,10 +656,12 @@
                                                         dataAttrs='param-skip-false=true,param-name=accessStrategy.caseInsensitive')}"/>
                                               </div>
 
-                                              <h3 class="advanced-option">Authentication Policy</h3>
+                                              <h3 data-section-group="Access & Authentication" class="advanced-option">Authentication Policy</h3>
                                               <div id="editServiceWizardMenuItemAuthenticationPolicy">
                                                  <script type="text/javascript">
-                                                      createRegisteredServiceAuthenticationPolicy();
+                                                     palantirWizardField(() => {
+                                                         createRegisteredServiceAuthenticationPolicy();
+                                                     });
                                                  </script>
 
                                                   <div th:replace="~{fragments/switchbutton :: switchbutton (id='requiredAuthenticationHandlersTryAll',
@@ -580,14 +671,16 @@
 
                                               </div>
 
-                                              <h3 class="advanced-option">Properties</h3>
+                                              <h3 data-section-group="Basics" class="advanced-option">Properties</h3>
                                               <div id="editServiceWizardMenuItemProperties">
                                                 <script type="text/javascript">
-                                                     createRegisteredServiceProperties();
-                                                 </script>
+                                                    palantirWizardField(() => {
+                                                        createRegisteredServiceProperties();
+                                                    });
+                                                </script>
                                               </div>
 
-                                              <h3 class="advanced-option">Contacts</h3>
+                                              <h3 data-section-group="Basics" class="advanced-option">Contacts</h3>
                                               <div id="editServiceWizardMenuItemContacts">
                                                   <p>You may assign contact information to this application. These are individual and/or entities that
                                                       can be classified as owners of the application that may be notified in
@@ -604,17 +697,23 @@
 
                                                         <div id="registeredServiceContact1-tab">
                                                             <script type="text/javascript">
-                                                                createRegisteredServiceContacts(1);
+                                                                palantirWizardField(() => {
+                                                                    createRegisteredServiceContacts(1);
+                                                                });
                                                             </script>
                                                         </div>
                                                         <div id="registeredServiceContact2-tab">
                                                             <script type="text/javascript">
-                                                                createRegisteredServiceContacts(2);
+                                                                palantirWizardField(() => {
+                                                                    createRegisteredServiceContacts(2);
+                                                                });
                                                             </script>
                                                         </div>
                                                         <div id="registeredServiceContact3-tab">
                                                             <script type="text/javascript">
-                                                                createRegisteredServiceContacts(3);
+                                                                palantirWizardField(() => {
+                                                                    createRegisteredServiceContacts(3);
+                                                                });
                                                             </script>
                                                         </div>
                                                       
@@ -622,16 +721,20 @@
 
                                               </div>
 
-                                            <h3 class="advanced-option">Public Key</h3>
+                                            <h3 data-section-group="Security" class="advanced-option">Public Key</h3>
                                             <div id="editServiceWizardMenuItemPublicKey">
                                                 <script type="text/javascript">
-                                                    createRegisteredServicePublicKey();
+                                                    palantirWizardField(() => {
+                                                        createRegisteredServicePublicKey();
+                                                    });
                                                 </script>
                                             </div>
-                                            <h3 id="registeredServiceAcceptableUsagePolicy" class="advanced-option">Acceptable Usage Policy</h3>
+                                            <h3 data-section-group="Access & Authentication" id="registeredServiceAcceptableUsagePolicy" class="advanced-option">Acceptable Usage Policy</h3>
                                               <div id="editServiceWizardMenuItemAUP">
                                                     <script type="text/javascript">
-                                                        createRegisteredServiceAcceptableUsagePolicy();
+                                                        palantirWizardField(() => {
+                                                            createRegisteredServiceAcceptableUsagePolicy();
+                                                        });
                                                     </script>
                                                     <div th:replace="~{fragments/switchbutton :: switchbutton (id='enabled',
                                                         title='When enabled, the acceptable usage policy is enforced for this service',
@@ -639,18 +742,22 @@
                                                         dataAttrs='param-skip-false=true,param-name=acceptableUsagePolicy.enabled,param-type=org.apereo.cas.services.DefaultRegisteredServiceAcceptableUsagePolicy')}"/>
                                               </div>
 
-                                              <h3 class="advanced-option">Single Sign-on Participation Policy</h3>
+                                              <h3 data-section-group="Sessions & Flow" class="advanced-option">Single Sign-on Participation Policy</h3>
                                               <div id="editServiceWizardMenuItemSSOParticipationPolicy">
                                                     <script type="text/javascript">
-                                                       createRegisteredServiceSsoParticipationPolicy();
+                                                        palantirWizardField(() => {
+                                                            createRegisteredServiceSsoParticipationPolicy();
+                                                        });
                                                     </script>
                                               </div>
                                             
-                                             <h3 id="registeredServiceWebflowInterruptPolicy" class="advanced-option">Webflow Interrupt Policy</h3>
+                                             <h3 data-section-group="Sessions & Flow" id="registeredServiceWebflowInterruptPolicy" class="advanced-option">Webflow Interrupt Policy</h3>
                                               <div id="editServiceWizardMenuItemWebflowInterruptPolicy">
 
                                                     <script type="text/javascript">
-                                                        createRegisteredServiceWebflowInterruptPolicy();
+                                                        palantirWizardField(() => {
+                                                            createRegisteredServiceWebflowInterruptPolicy();
+                                                        });
                                                     </script>
                                                   
                                                     <div th:replace="~{fragments/switchbutton :: switchbutton (id='aupEnabled',
@@ -660,7 +767,7 @@
 
                                               </div>
 
-                                            <h3 id="registeredServicePasswordlessPolicy" class="advanced-option">Passwordless Policy</h3>
+                                            <h3 data-section-group="Access & Authentication" id="registeredServicePasswordlessPolicy" class="advanced-option">Passwordless Policy</h3>
                                               <div id="editServiceWizardMenuItemPasswordlessPolicy">
                                                      <div th:replace="~{fragments/switchbutton :: switchbutton (id='passwordlessEnabled',
                                                         title='When enabled, passwordless authentication is enforced for this service',
@@ -668,7 +775,7 @@
                                                         dataAttrs='param-skip-false=true,param-name=passwordlessPolicy.enabled,param-type=org.apereo.cas.services.DefaultRegisteredServicePasswordlessPolicy')}"/>
 
                                               </div>
-                                            <h3 id="registeredServiceSurrogatePolicy" class="advanced-option">Surrogate (Impersonation) Policy</h3>
+                                            <h3 data-section-group="Access & Authentication" id="registeredServiceSurrogatePolicy" class="advanced-option">Surrogate (Impersonation) Policy</h3>
                                               <div id="editServiceWizardMenuItemSurrogatePolicy">
                                                       <div th:replace="~{fragments/switchbutton :: switchbutton (id='surrogateEnabled',
                                                         title='When enabled, surrogate authentication is enforced for this service',
@@ -676,7 +783,8 @@
                                                         dataAttrs='param-skip-false=true,param-name=surrogatePolicy.enabled,param-type=org.apereo.cas.services.DefaultRegisteredServiceSurrogatePolicy')}"/>
                                               </div>
                                         </div>
-                                        <div id="wizardJsonEditorContainer" class="h-750px">
+                                        </div>
+                                        <div id="wizardJsonEditorContainer" class="registered-service-wizard__json">
                                             <pre class="ace-editor ace-relative w-100 h-100 mb-0 mt-0"
                                                  id="wizardServiceEditor"></pre>
 
@@ -690,7 +798,7 @@
                                 </form>
                             </div>
 
-                            <footer class="mdc-dialog__actions modal-footer pr-4">
+                            <footer class="registered-service-wizard__actions">
                                 <button id="copyServiceDefinitionWizard" name="copyServiceDefinitionWizard"
                                         type="button"
                                         class="mdc-button mdc-button--raised btn mdc-button--lg">
@@ -707,38 +815,47 @@
                                     <span class="mdc-button__label"><i class="mdc-tab__icon mdi mdi-content-save"
                                                                        aria-hidden="true"></i>Save</span>
                                 </button>
-                            </footer>
-                        </div>
-                    </div>
-                    <div class="mdc-dialog__scrim"></div>
-                </div>
-                
-                <div class="mdc-dialog modal" id="editServiceDialog" role="alertdialog"
-                     aria-modal="true" aria-label="Edit service definition"
-                     aria-describedby="edit-service-dialog-content">
-                    <div class="mdc-dialog__container w-100 modal-dialog">
-                        <div class="mdc-dialog__surface mw-100 w-75 modal-content min-height-60">
-                            <div class="mdc-dialog__content modal-body" id="edit-service-dialog-content">
-
-                                <section class="palantir-service-editor-layout h-750px" id="serviceEditorContainer">
-                                    <div id="serviceTemplatesContainer"
-                                         class="palantir-service-template-sidebar py-3 jqueryui-accordion">
-                                    </div>
-                                    <pre class="ace-editor ace-relative palantir-service-definition-editor h-100"
-                                         id="serviceEditor"></pre>
-                                </section>
-                            </div>
-
-                            <footer class="mdc-dialog__actions modal-footer pr-4">
-                                <button id="saveService" name="saveService" type="button"
+                                <button id="cancelServiceWizard" name="cancelServiceWizard" type="button"
                                         class="mdc-button mdc-button--raised btn mdc-button--lg">
-                                    <span class="mdc-button__label"><i class="mdc-tab__icon mdi mdi-content-save"
-                                                                       aria-hidden="true"></i>Save</span>
+                                    <span class="mdc-button__label"><i class="mdc-tab__icon mdi mdi-close"
+                                                                       aria-hidden="true"></i>Cancel</span>
                                 </button>
                             </footer>
-                        </div>
+                </div>
+                
+                <!--/*
+                    A jQuery UI dialog, like the wizard beside it and every other dialog in
+                    Palantir. The widget supplies role=dialog, aria-modal, the focus trap, a real
+                    title bar and Escape-to-close, which the hand-written MDC markup did not, so
+                    the role="alertdialog" and aria-* attributes that used to sit here are gone:
+                    an alertdialog is for an alert, not for an editor this size.
+
+                    palantir-services.js sizes it to the window and keeps it sized as the window
+                    changes, the same way it does for the wizard.
+                */-->
+                <div id="editServiceDialog" class="hide" title="Application definition">
+                    <div id="edit-service-dialog-content">
+                        <section class="palantir-service-editor-layout h-750px" id="serviceEditorContainer">
+                            <div id="serviceTemplatesContainer"
+                                 class="palantir-service-template-sidebar py-3 jqueryui-accordion">
+                            </div>
+                            <pre class="ace-editor ace-relative palantir-service-definition-editor h-100"
+                                 id="serviceEditor"></pre>
+                        </section>
                     </div>
-                    <div class="mdc-dialog__scrim"></div>
+
+                    <footer class="registered-service-wizard__actions">
+                        <button id="saveService" name="saveService" type="button"
+                                class="mdc-button mdc-button--raised btn mdc-button--lg">
+                            <span class="mdc-button__label"><i class="mdc-tab__icon mdi mdi-content-save"
+                                                               aria-hidden="true"></i>Save</span>
+                        </button>
+                        <button id="cancelService" name="cancelService" type="button"
+                                class="mdc-button mdc-button--raised btn mdc-button--lg">
+                            <span class="mdc-button__label"><i class="mdc-tab__icon mdi mdi-close"
+                                                               aria-hidden="true"></i>Cancel</span>
+                        </button>
+                    </footer>
                 </div>
 
                 <div class="mdc-dialog modal" id="viewEntityHistoryDialog" role="alertdialog"

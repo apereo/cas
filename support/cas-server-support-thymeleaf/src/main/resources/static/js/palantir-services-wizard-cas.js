@@ -184,7 +184,7 @@ function createRegisteredServiceTicketGrantingTicketPolicy() {
 function createCasRegisteredServiceFields() {
     createSelectField({
         cssClasses: "advanced-option",
-        containerId: "editServiceWizardGeneralContainer",
+        containerId: "editServiceWizardCasContainer",
         labelTitle: "Response Type:",
         paramName: "responseType",
         options: [
@@ -199,7 +199,7 @@ function createCasRegisteredServiceFields() {
 
     createSelectField({
         cssClasses: "advanced-option",
-        containerId: "editServiceWizardGeneralContainer",
+        containerId: "editServiceWizardCasContainer",
         labelTitle: "Logout Type:",
         paramName: "logoutType",
         options: [
@@ -218,7 +218,7 @@ function createCasRegisteredServiceFields() {
         name: "registeredServiceRedirectUrl",
         paramName: "redirectUrl",
         required: false,
-        containerId: "editServiceWizardGeneralContainer",
+        containerId: "editServiceWizardCasContainer",
         title: "Define the URL to which users are redirected after successful authentication for this application."
     });
     createInputField({
@@ -227,7 +227,7 @@ function createCasRegisteredServiceFields() {
         name: "registeredServiceSupportedProtocols",
         paramName: "supportedProtocols",
         required: false,
-        containerId: "editServiceWizardGeneralContainer",
+        containerId: "editServiceWizardCasContainer",
         title: "Define the supported protocol(s) for this application, separated by comma (e.g., <code>CAS10,CAS20,CAS30,SAML1</code>)."
     })
         .data("renderer", function (value) {
