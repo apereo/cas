@@ -1,0 +1,480 @@
+<!DOCTYPE html>
+<html lang="en" data-bs-theme="dark">
+<head>
+    <!-- Required meta tags always come first -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="description" content="CAS - Enterprise Single Sign-On for the Web"/>
+    <meta name="keywords" content="authentication, login, cas, central authentication service, web, java, protocol, thymeleaf,
+                   open source, boot, spring, authorization, google, facebook, twitter, higher-ed, enterprise,
+                   access management, single sign-on, sso, RBAC, ABAC, attributes, SAML, OpenID, openid connect,
+                   JWT, ADFS"/>
+    <meta name="robots" content="index,follow"/>
+
+    
+    
+
+    
+
+
+
+
+
+
+
+    
+
+    <script>
+        ((i, s, o, g, r, a, m) => {
+            i['GoogleAnalyticsObject'] = r;
+            i[r] = i[r] || function () {
+                (i[r].q = i[r].q || []).push(arguments)
+            }, i[r].l = 1 * new Date();
+            a = s.createElement(o),
+                m = s.getElementsByTagName(o)[0];
+            a.async = 1;
+            a.src = g;
+            m.parentNode.insertBefore(a, m)
+        })(window, document, 'script', 'https://www.google-analytics.com/analytics.js', 'ga');
+
+        ga('create', 'UA-83384532-2', 'auto');
+        ga('send', 'pageview');
+
+    </script>
+
+    <script>
+        function systemTheme() {
+            return window.matchMedia && window.matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark';
+        }
+
+        function resolveTheme(preference) {
+            return preference === 'dark' || preference === 'light' ? preference : systemTheme();
+        }
+
+        function changeTheme(theme) {
+            if (theme !== 'dark' && theme !== 'light') {
+                return;
+            }
+
+            if (document.documentElement.getAttribute('data-bs-theme') !== theme) {
+                document.documentElement.setAttribute('data-bs-theme', theme);
+            }
+        }
+
+        (() => {
+            let preference = localStorage.getItem('cas-docs-theme');
+            if (preference !== 'dark' && preference !== 'light') {
+                preference = 'system';
+                localStorage.setItem('cas-docs-theme', preference);
+            }
+
+            changeTheme(resolveTheme(preference));
+
+            if (window.matchMedia) {
+                window.matchMedia('(prefers-color-scheme: light)').addEventListener('change', () => {
+                    if (localStorage.getItem('cas-docs-theme') !== 'system') {
+                        return;
+                    }
+                    const theme = systemTheme();
+                    console.log(`System theme changed to: ${theme}`);
+                    changeTheme(theme);
+                });
+            }
+        })();
+    </script>
+
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v6.5.2/css/all.css"/>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@docsearch/css@3"/>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/lightbox2/2.11.5/css/lightbox.min.css" />
+    
+    
+    <link rel="stylesheet" type="text/css" media="screen" href='/cas/stylesheets/stylesheet.css'>
+    <link rel="stylesheet" type="text/css" media="print" href='/cas/stylesheets/print.css'>
+
+    <link href='https://fonts.googleapis.com/css?family=Lato:400,300,700' rel='stylesheet'>
+    <link href='https://fonts.googleapis.com/css?family=Merriweather:900,900italic,300,300italic&subset=latin-ext,latin' rel='stylesheet'>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto+Slab:wght@100;200;300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://cdn.datatables.net/1.11.5/css/jquery.dataTables.min.css" rel="stylesheet">
+
+    <title>CAS - Release Notes</title>
+
+</head>
+
+<body>
+    <!-- HEADER -->
+    <header class="hidden-sm-down">
+        <div class="container">
+            <div class="row">
+                <div class="col-xs-4 col-md-2">
+                    <a href="../../index.html">
+                        <img class="undecorated" src="/cas/images/cas_logo.png"/>
+                    </a>
+                </div>
+                <div class="col-xs-8 col-md-6">
+                    <h1>Enterprise Identity for All Earthlings and Beyond<p><sub>Identity, Single Sign-On and Access Management</sub></p></h1>
+                </div>
+                <div class="hidden-sm-down col-md-4">
+                    <a id="forkme_banner" href="https://github.com/apereo/cas">View on GitHub</a>
+                </div>
+
+            </div>
+        </div>
+    </header>
+
+    <!-- NAVBAR -->
+
+    <nav class="navbar navbar-expand-md navbar-dark bg-primary bg-dark">
+        
+        <button onclick="navigateSidebar()" id="sidebarNavButton">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        
+        
+        <div class="container">
+<!--            <button id="navigationNavButton" class="navbar-toggler collapsed" type="button" data-bs-toggle="collapse"-->
+<!--                    data-bs-target="#navbarsExample04" aria-controls="navbarsExample04" aria-expanded="false"-->
+<!--                    aria-label="Toggle navigation">-->
+<!--                <span class="navbar-toggler-icon"></span>-->
+<!--            </button>-->
+
+            <div class="navbar-collapse collapse" id="navbarsExample04">
+                <ul class="navbar-nav mr-auto">
+                    <li class="nav-item active"><a href="../../index.html" class="zoom nav-link">Home</a></li>
+                    <li class="nav-item"><a href="https://github.com/apereo/cas/releases" class="zoom nav-link">Releases</a></li>
+                    <li class="nav-item"><a href="../../Support.html" class="zoom nav-link">Support</a></li>
+                    <li class="nav-item"><a href="../../Mailing-Lists.html" class="zoom nav-link">Mailing Lists</a></li>
+                    <li class="nav-item dropdown">
+                        <a class="zoom nav-link dropdown-toggle mr-md-2" href="javascript:void(0)" role="button" id="cas-versions" data-bs-toggle="dropdown"
+                           aria-haspopup="true" aria-expanded="false">Versions</a>
+                        <div class="dropdown-menu dropdown-menu-right" aria-labelledby="cas-versions">
+                            
+                            
+                            <a class="dropdown-item" href="/cas/development/">Development</a>
+                            
+                            
+                            
+                            <a class="dropdown-item" href="/cas/8.0.x/">v8.0.x</a>
+                            
+                            
+                            
+                            <a class="dropdown-item" href="/cas/7.3.x/">v7.3.x</a>
+                            
+                            
+
+                        </div>
+                    </li>
+                    <li class="nav-item"><a href="https://apereo.github.io" target="_blank" rel="noopener" class="zoom nav-link">Blog</a></li>
+                </ul>
+
+            </div>
+
+        </div>
+    </nav>
+
+
+    <div class="container-fluid">
+        <div class="row flex-xl-nowrap">
+
+            
+                <div class="col-12 col-md-3 col-xl-2 docs-sidebar pb-5" id="sidebar"></div>
+
+                <div class="d-none d-xl-block col-xl-2 docs-toc">
+    <div id="pageContents">
+        <ul class="section-nav"></ul>
+    </div>
+</div>
+
+            
+
+            <main class="col-12 col-md-9 col-xl-8 py-md-3 pl-md-5 cas-docs-content" role="main">
+                
+                
+                <div id="dev-doc-info" class="alert alert-danger" role="alert">
+                    <h3>WORKERS AHEAD!</h3>
+                    <p>You are viewing the <strong>development</strong> documentation for the Apereo CAS server. <strong>The
+                        functionality presented here <a href="https://github.com/apereo/cas/milestones">is not officially released yet</a></strong>.
+                        This is a work in progress and will be continually updated as development moves forward.
+                        <strong>You are most encouraged to test the changes presented.</strong>
+                    </p>
+                </div>
+                
+
+                <section>
+                    
+                    <nav id="docsNavBar">
+                        <span id="toolbarIcons"></span>
+                    </nav>
+                    
+
+                    <div id="cas-docs-container">
+                        
+<h1 id="810-rc2-release-notes">8.1.0-RC2 Release Notes</h1>
+
+<p>We strongly recommend that you take advantage of the release candidates as they come out. Waiting for a <code class="language-plaintext highlighter-rouge">GA</code> release is only going to set
+you up for unpleasant surprises. A <code class="language-plaintext highlighter-rouge">GA</code> is <a href="https://apereo.github.io/2017/03/08/the-myth-of-ga-rel/">a tag and nothing more</a>. Note
+that CAS releases are <em>strictly</em> time-based releases; they are not scheduled or based on specific benchmarks,
+statistics or completion of features. To gain confidence in a particular
+release, it is strongly recommended that you start early by experimenting with release candidates and/or follow-up snapshots.</p>
+
+<h2 id="apereo-membership">Apereo Membership</h2>
+
+<p>If you benefit from Apereo CAS as free and open-source software, we invite you
+to <a href="https://www.apereo.org/content/apereo-membership">join the Apereo Foundation</a>
+and financially support the project at a capacity that best suits your deployment. Note that all development activity is performed
+<em>almost exclusively</em> on a voluntary basis with no expectations, commitments or strings attached. Having the financial means to better
+sustain engineering activities will allow the developer community to allocate <em>dedicated and committed</em> time for long-term support,
+maintenance and release planning, especially when it comes to addressing critical and security issues in a timely manner.</p>
+
+<h2 id="get-involved">Get Involved</h2>
+
+<ul>
+  <li>Start your CAS deployment today. Try out features and <a href="/cas/Mailing-Lists.html">share feedback</a>.</li>
+  <li>Better yet, <a href="/cas/developer/Contributor-Guidelines.html">contribute patches</a>.</li>
+  <li>Suggest and apply documentation improvements.</li>
+</ul>
+
+<h2 id="resources">Resources</h2>
+
+<ul>
+  <li><a href="https://github.com/apereo/cas/milestones">Release Schedule</a></li>
+  <li><a href="/cas/developer/Release-Policy.html">Release Policy</a></li>
+</ul>
+
+<h2 id="system-requirements">System Requirements</h2>
+
+<p>The JDK baseline requirement for this CAS release is and <strong>MUST</strong> be JDK <code class="language-plaintext highlighter-rouge">25</code>. All compatible distributions
+such as Amazon Corretto, Zulu, Eclipse Temurin, etc should work and are implicitly supported.</p>
+
+<h2 id="new--noteworthy">New &amp; Noteworthy</h2>
+
+<p>The following items are new improvements and enhancements presented in this release.</p>
+
+<h3 id="openrewrite-recipes">OpenRewrite Recipes</h3>
+
+<p>CAS continues to produce and publish <a href="https://docs.openrewrite.org/">OpenRewrite</a> recipes that allow the project to upgrade installations
+in place from one version to the next. <a href="../installation/OpenRewrite-Upgrade-Recipes.html">See this guide</a> to learn more.</p>
+
+<h3 id="graal-vm-native-images">Graal VM Native Images</h3>
+
+<p>A CAS server installation and deployment process can be tuned to build and run
+as a <a href="../installation/GraalVM-NativeImage-Installation.html">Graal VM native image</a>. We continue to polish native runtime hints.
+The collection of end-to-end <a href="../../developer/Test-Process.html">browser tests based on Puppeteer</a> have selectively switched
+to build and verify Graal VM native images and we plan to extend the coverage to all such scenarios in the coming releases.</p>
+
+<h3 id="testing-strategy">Testing Strategy</h3>
+
+<p>The collection of end-to-end <a href="../../developer/Test-Process.html">browser tests based on Puppeteer</a> continue to grow to cover more use cases
+and scenarios. At the moment, total number of jobs stands at approximately <code class="language-plaintext highlighter-rouge">556</code> distinct scenarios. The overall
+test coverage of the CAS codebase is approximately <code class="language-plaintext highlighter-rouge">94%</code>.</p>
+
+<h3 id="java-27">Java 27</h3>
+
+<p>CAS may be built and run using Java <code class="language-plaintext highlighter-rouge">27</code> and the build process has been updated to use 
+the latest Java <code class="language-plaintext highlighter-rouge">27</code> features and capabilities. Please note that this is only a preparatory step for future 
+releases and the baseline requirement will remain as it was.</p>
+
+<h3 id="gradle-98">Gradle 9.8</h3>
+
+<p>CAS is now built with Gradle <code class="language-plaintext highlighter-rouge">9.8</code> and the build process has been updated to use the
+latest Gradle features and capabilities.</p>
+
+<h3 id="spring-boot-42">Spring Boot 4.2</h3>
+
+<p>CAS is now built on top of Spring Boot <code class="language-plaintext highlighter-rouge">4.2.x</code>. This is an in-progress ongoing minor platform upgrade that
+affects almost all aspects of the codebase including many of the third-party core libraries used by CAS
+as well as some CAS functionality.</p>
+
+<p>Please refer to the <a href="https://github.com/spring-projects/spring-boot/wiki/Spring-Boot-4.2-Release-Notes">Spring Boot Wiki</a>
+for more information on the changes and updates in this release. The biggest change to CAS would be support for AMQP 1.0.</p>
+
+<p>REST password management, trusted-device storage, Clickatell SMS and Spring Boot Admin registration now use Spring’s
+<code class="language-plaintext highlighter-rouge">RestClient</code> in place of deprecated <code class="language-plaintext highlighter-rouge">RestTemplate</code> APIs. Custom password-management HTTP client beans must now be named
+<code class="language-plaintext highlighter-rouge">passwordChangeServiceRestClient</code> and provide a <code class="language-plaintext highlighter-rouge">RestClient</code>.</p>
+
+<h3 id="jspecify--nullaway">JSpecify &amp; NullAway</h3>
+
+<p>CAS codebase is now annotated with <a href="https://jspecify.dev/">JSpecify</a> annotations to indicate nullness contracts on method parameters,
+return types and fields. We will gradually extend the coverage of such annotations across the entire codebase in future releases
+and will integrate the Gradle build tool with tools such as <a href="https://github.com/uber/NullAway">NullAway</a> to prevent nullness contract violations
+during compile time.</p>
+
+<h3 id="openid-connect-verifiable-credentials">OpenID Connect Verifiable Credentials</h3>
+
+<p>Several improvements are now available for <a href="../authentication/OIDC-Authentication-Verifiable-Credentials.html">OpenID Connect with Verifiable Credentials</a>:</p>
+
+<ul>
+  <li>CAS may require specific principal attributes to determine eligibility before a credential offer transaction can be created for a principal.</li>
+  <li>Pre-authorization codes are now also properly updated and removed from the ticket registry after a credential offer transaction is completed once the ticket is expired.</li>
+  <li>Access tokens used for credential issuance are now bound to the credential configuration id when the token is minted; this is then enforced when the token is used to request credentials.</li>
+  <li>Transaction-code requirements are enforced during token exchange.</li>
+  <li>Credential batch issuance is limited and capped at a predefined limit.</li>
+</ul>
+
+<h3 id="oauth-and-openid-connect">OAuth and OpenID Connect</h3>
+
+<p><a href="../protocol/OAuth-Protocol.html">OAuth</a> and <a href="../authentication/OIDC-Authentication.html">OpenID Connect</a>
+security have been strengthened across several flows.</p>
+
+<ul>
+  <li>Client assertions now require matching subject, issuer, and client identifiers.</li>
+  <li>JWT IDs are tracked through the shared ticket registry to prevent replay across clustered deployments.</li>
+  <li>Device and CIBA polling are bound to the authenticated client and completed poll-mode requests are consumed.</li>
+  <li>Dynamic client key registrations are memory-bounded.</li>
+  <li>Token exchanges are now authorized against the authenticated requesting client, and exchanged tokens cannot gain scopes beyond those granted to the subject token and allowed for the requesting client.</li>
+  <li>Client secrets are now compared and enforced using a case sensitive strategy.</li>
+  <li>Token introspection reports tokens from other clients as inactive, while revocation only affects the requesting client’s tokens and no longer reveals whether other tokens exist.</li>
+  <li>Single-use checking for DPOP proofs is now enforced using the CAS ticket registry. Furthermore, DPOP requests are no longer treated as a form of client authentication and now sit on top of existing client authentication approaches such as client ID and client secret for confidential clients or PKCE.</li>
+  <li><a href="../protocol/OAuth-UMA-Protocol.html">User-Managed Access</a> resources and policies are now bound to both the authenticated client and resource owner. New resource registrations also receive non-sequential, server-assigned identifiers.</li>
+</ul>
+
+<h3 id="webauthn-multifactor-authentication">WebAuthn Multifactor Authentication</h3>
+
+<p><a href="../mfa/FIDO2-WebAuthn-Authentication.html">FIDO2 WebAuthn</a> multifactor authentication receives the following improvements:</p>
+
+<ul>
+  <li>Authentication and QR session proofs are now principal-bound and single-use, and configured user verification is enforced for assertions.</li>
+  <li>Credential and user-handle resolution now avoids repeated repository-wide scans.</li>
+</ul>
+
+<h3 id="duo-multifactor-authentication">Duo Multifactor Authentication</h3>
+
+<p><a href="../mfa/DuoSecurity-Authentication.html">Duo Security</a> multifactor authentication receives the following improvements:</p>
+
+<ul>
+  <li>REST passcodes now require completed primary authentication, and Universal Prompt callbacks validate browser-session state before restoring the flow.</li>
+  <li>Duo Auth and Admin API clients now reuse outbound connection pools across requests.</li>
+</ul>
+
+<h3 id="saml2-identity-provider">SAML2 Identity Provider</h3>
+
+<p><a href="../authentication/Configuring-SAML2-Authentication.html">SAML2 identity provider</a> support receives the following improvements:</p>
+
+<ul>
+  <li>Presented SAML2 authentication request signatures are now validated independently of the metadata signing requirement. Only a successfully validated signature may authorize an assertion consumer service URL that is not registered in service provider metadata.</li>
+  <li>IdP-initiated SSO now also requires a caller-provided <code class="language-plaintext highlighter-rouge">shire</code> to match a POST assertion consumer service registered in metadata.</li>
+  <li>Inbound encrypted SAML2 identifiers now use CAS’s matching IdP encryption certificate and private key for decryption.</li>
+  <li>Signature algorithm inclusion and exclusion policies are now enforced consistently across all inbound SAML bindings.</li>
+  <li>The <code class="language-plaintext highlighter-rouge">Address</code> field of the SAML2 <code class="language-plaintext highlighter-rouge">SubjectConfirmationData</code> is now populated with the requester’s IP address when possible.</li>
+  <li>SAML2 metadata cache entries are now isolated by registered service and resolved without scanning unrelated cached resolvers.</li>
+  <li>SAML2 authentication request session entries are updated per session and consumed after callback correlation, avoiding controller-wide serialization and retained replicated-session state.</li>
+  <li>Storage-backed SAML2 metadata resolution now uses the requested entity ID to limit document lookups and resolver rebuilds.</li>
+  <li>SAML2 SOAP attribute queries and artifact resolutions now require independently validated signatures, message freshness, destinations, and replay protection; artifact tickets are relying-party bound and consumed atomically.</li>
+  <li>SAML2 single logout now validates request freshness and replay, fully authenticates and correlates logout responses, and generates actuator logout requests with the correct IdP issuer and service-provider destination.</li>
+</ul>
+
+<h3 id="cas-protocol">CAS Protocol</h3>
+
+<ul>
+  <li>The CAS <code class="language-plaintext highlighter-rouge">1.0</code> <a href="../ux/User-Interface-Views-CASv1.html">validation response</a> is line-delimited and carries no escaping mechanism.
+Principal identifiers and rendered attribute lines are now stripped of line breaks, so a value that contains a newline
+can no longer forge additional lines in the response.</li>
+  <li>A proxy-granting ticket is now issued only after the service ticket, the validation specification and the
+authentication context have all been accepted. The <code class="language-plaintext highlighter-rouge">pgtUrl</code> callback used to be contacted and the proxy-granting
+ticket minted before any of those checks ran, so presenting a leaked service ticket could drive an outbound request
+and leave an unused proxy-granting ticket behind even though validation went on to fail.</li>
+  <li>Validation responses now use the protocol’s own error codes for two cases that previously reported something else.
+A ticket that fails the validation specification without a <code class="language-plaintext highlighter-rouge">renew</code> request — a proxy ticket presented to
+<code class="language-plaintext highlighter-rouge">/serviceValidate</code>, for instance — is reported as <code class="language-plaintext highlighter-rouge">INVALID_TICKET_SPEC</code> rather than <code class="language-plaintext highlighter-rouge">INVALID_TICKET</code>, and an
+unexpected failure during validation is reported as <code class="language-plaintext highlighter-rouge">INTERNAL_ERROR</code> rather than <code class="language-plaintext highlighter-rouge">INVALID_REQUEST</code>, which stays
+reserved for a request that is missing required parameters. A ticket that did not come from an initial login while
+<code class="language-plaintext highlighter-rouge">renew</code> was requested continues to be reported as <code class="language-plaintext highlighter-rouge">INVALID_TICKET</code>, as the protocol specifies.</li>
+  <li>Attribute names are now sanitized into valid XML names before they are rendered as elements in the CAS <code class="language-plaintext highlighter-rouge">2.0</code>/<code class="language-plaintext highlighter-rouge">3.0</code>
+validation response, and proxy URLs in <code class="language-plaintext highlighter-rouge">&lt;cas:proxy&gt;</code> are XML-escaped. Previously an attribute name was only stripped
+of spaces and a proxy URL was written out verbatim, so either could carry markup or quoting characters into the
+response. Note that a name containing characters that are not legal in an XML name — a colon, for instance — now
+renders with those characters replaced by an underscore; such a name previously produced a response that was not
+well-formed XML.</li>
+  <li>The SAML <code class="language-plaintext highlighter-rouge">1.1</code> <a href="../protocol/SAML-v1-Protocol.html">validation response</a> now sets <code class="language-plaintext highlighter-rouge">Recipient</code> to the service URL the
+response is intended for, and reserves <code class="language-plaintext highlighter-rouge">InResponseTo</code> for the <code class="language-plaintext highlighter-rouge">RequestID</code> of the request being answered, omitting it
+when the caller did not send one. <code class="language-plaintext highlighter-rouge">InResponseTo</code> previously carried the hostname of the <code class="language-plaintext highlighter-rouge">TARGET</code> service unless a
+<code class="language-plaintext highlighter-rouge">RequestID</code> happened to be present, and <code class="language-plaintext highlighter-rouge">Recipient</code> was never set at all, so a relying party had no way to bind the
+response to its own request or endpoint.</li>
+  <li>The <code class="language-plaintext highlighter-rouge">renew</code> parameter presented to the <a href="../protocol/CAS-Protocol.html">CAS protocol</a> validation endpoints is now
+evaluated per request. Validation specifications are shared components and the requested value used to be assigned
+onto them for the duration of a request, which allowed a concurrent validation request to reset it. A service ticket
+that was not issued from a new login can no longer satisfy a <code class="language-plaintext highlighter-rouge">renew=true</code> validation because of another request that
+happened to be in flight at the same time.</li>
+</ul>
+
+<h3 id="views-and-themes">Views and Themes</h3>
+
+<ul>
+  <li>The <a href="../ux/User-Interface-Views-External.html">REST-based view resolver</a> no longer forwards credential-bearing request
+headers, such as <code class="language-plaintext highlighter-rouge">Cookie</code>, <code class="language-plaintext highlighter-rouge">Authorization</code> and <code class="language-plaintext highlighter-rouge">Proxy-Authorization</code>, to the external template endpoint.</li>
+  <li>Every resolved theme name is now matched against a real
+<a href="../ux/User-Interface-Customization-Themes-Static.html">theme definition</a> before it is honored, no matter how the
+name was chosen. A name without a matching <code class="language-plaintext highlighter-rouge">[theme].properties</code> file, either at the root of a configured template
+prefix or at the root of the classpath, is ignored and the next resolver in the chain applies. This closes a gap
+where names taken from a request header, cookie or session value were used without any check, and it makes the
+<a href="../ux/User-Interface-Customization-Themes-Groovy.html">Groovy</a> and
+<a href="../ux/User-Interface-Customization-Themes-REST.html">REST</a> theme sources hold to the same contract as every other
+theme: a script or endpoint that returns a name with no theme definition behind it now falls back to the default
+theme rather than selecting a theme that does not exist.</li>
+  <li>A service theme is now resolved once per request rather than once per template lookup, so service resolution, access
+strategy evaluation and theme file lookups no longer repeat for every fragment rendered on a page.</li>
+  <li>Thymeleaf template caching now takes effect. The chaining template resolver previously declared every resolution
+non-cacheable regardless of <code class="language-plaintext highlighter-rouge">spring.thymeleaf.cache</code>, so each page and each fragment was re-resolved and re-parsed on
+every request. Resolutions are now cached per the configured setting, except for those produced by a theme-aware
+resolver: those map one template name to different files depending on the request’s theme, and Thymeleaf’s cache key
+does not carry the theme, so they remain non-cacheable. Deployments with no themed template overrides cache every
+template; deployments with themed overrides cache everything except the overridden templates.</li>
+</ul>
+
+<h3 id="ldap-integrations">LDAP Integrations</h3>
+
+<ul>
+  <li><a href="../authentication/Surrogate-Authentication-Storage-LDAP.html">Surrogate authentication</a>, <a href="../integration/Delegate-Authentication-ProfileSelection.html">delegated authentication profile selection</a>, <a href="../webflow/Webflow-Customization-AUP-LDAP.html">acceptable usage policy</a> and <a href="../password_management/Password-Management.html">password management</a> now build their LDAP connection pools once and reuse them across requests.</li>
+  <li>LDAP connection pools are now addressed by the directory and base DN they serve, so multiple configuration blocks that point at the same server no longer collapse onto a single set of connection settings.</li>
+  <li>Surrogate search filters that do not reference the impersonated account are now rejected, as such a filter is unable to restrict the accounts a user may impersonate.</li>
+</ul>
+
+<h2 id="other-stuff">Other Stuff</h2>
+
+<ul>
+  <li>CloudWatch logging now avoids recursive logging initialization when reporting appender startup or delivery failures.</li>
+  <li>Authentication history, theme caching and CloudWatch shutdown now use concurrent collections and explicit coordination in place of Java monitor locking.</li>
+  <li>Several optimizations are in place to assist with faster startup time, allowing for more components to be lazily initialized.</li>
+  <li>A large number of dependencies and libraries have been updated to their latest versions.</li>
+</ul>
+
+                    </div>
+                </section>
+            </main>
+        </div>
+    </div>
+
+
+    <footer>
+        <div class="container">
+            CAS is supported by the <a href="https://www.apereo.org/">Apereo Foundation</a>.
+        </div>
+    </footer>
+    
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.min.js"></script>
+
+    <script src="https://cdn.jsdelivr.net/npm/tether@2.0.0/dist/js/tether.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.11/clipboard.min.js"></script>
+
+    <script src='/cas/javascripts/URI.js'></script>
+    <script src='/cas/javascripts/main.js'></script>
+
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@docsearch/js@3"></script>
+    <script type="text/javascript" src="https://cdn.datatables.net/1.11.5/js/jquery.dataTables.min.js"></script>
+    <script type="text/javascript" src="https://code.jquery.com/ui/1.13.1/jquery-ui.js"></script>
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/lightbox2/2.11.5/js/lightbox.min.js"></script>
+
+    <script>
+        let pageSection = 'Planning';
+        let siteUrl = '';
+        let basePath = '/cas';
+
+        
+    </script>
+</body>
+
+</html>
