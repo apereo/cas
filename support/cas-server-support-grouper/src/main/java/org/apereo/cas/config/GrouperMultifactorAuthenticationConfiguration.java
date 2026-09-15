@@ -17,6 +17,7 @@ import org.apereo.cas.web.flow.resolver.impl.CasWebflowEventResolutionConfigurat
 import org.apereo.cas.web.flow.resolver.impl.mfa.DefaultMultifactorAuthenticationProviderWebflowEventResolver;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -77,18 +78,18 @@ class GrouperMultifactorAuthenticationConfiguration {
     public CasWebflowEventResolver grouperMultifactorAuthenticationWebflowEventResolver(
         final ConfigurableApplicationContext applicationContext,
         @Qualifier(CasDelegatingWebflowEventResolver.BEAN_NAME_INITIAL_AUTHENTICATION_EVENT_RESOLVER)
-        final CasDelegatingWebflowEventResolver initialAuthenticationAttemptWebflowEventResolver,
+        final ObjectProvider<CasDelegatingWebflowEventResolver> initialAuthenticationAttemptWebflowEventResolver,
         @Qualifier("grouperMultifactorAuthenticationTrigger")
-        final MultifactorAuthenticationTrigger grouperMultifactorAuthenticationTrigger,
+        final ObjectProvider<MultifactorAuthenticationTrigger> grouperMultifactorAuthenticationTrigger,
         @Qualifier(CasWebflowEventResolutionConfigurationContext.BEAN_NAME)
-        final CasWebflowEventResolutionConfigurationContext casWebflowConfigurationContext) {
+        final ObjectProvider<CasWebflowEventResolutionConfigurationContext> casWebflowConfigurationContext) {
         return BeanSupplier.of(CasWebflowEventResolver.class)
             .when(CONDITION.given(applicationContext.getEnvironment()))
             .supply(() -> {
                 val r = new DefaultMultifactorAuthenticationProviderWebflowEventResolver(
-                    casWebflowConfigurationContext, grouperMultifactorAuthenticationTrigger);
+                    casWebflowConfigurationContext.getObject(), grouperMultifactorAuthenticationTrigger.getObject());
                 LOGGER.debug("Activating MFA event resolver based on Grouper groups...");
-                initialAuthenticationAttemptWebflowEventResolver.addDelegate(r);
+                initialAuthenticationAttemptWebflowEventResolver.getObject().addDelegate(r);
                 return r;
             })
             .otherwiseProxy()

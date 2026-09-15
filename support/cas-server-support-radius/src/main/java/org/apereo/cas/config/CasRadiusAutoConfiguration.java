@@ -35,6 +35,7 @@ import org.apereo.cas.web.flow.resolver.impl.CasWebflowEventResolutionConfigurat
 import org.apereo.cas.web.flow.resolver.impl.mfa.DefaultMultifactorAuthenticationProviderWebflowEventResolver;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -225,18 +226,18 @@ public class CasRadiusAutoConfiguration {
     public CasWebflowEventResolver radiusAccessChallengedAuthenticationWebflowEventResolver(
         final ConfigurableApplicationContext applicationContext,
         @Qualifier(CasDelegatingWebflowEventResolver.BEAN_NAME_INITIAL_AUTHENTICATION_EVENT_RESOLVER)
-        final CasDelegatingWebflowEventResolver initialAuthenticationAttemptWebflowEventResolver,
+        final ObjectProvider<CasDelegatingWebflowEventResolver> initialAuthenticationAttemptWebflowEventResolver,
         @Qualifier("radiusAccessChallengedMultifactorAuthenticationTrigger")
-        final MultifactorAuthenticationTrigger radiusAccessChallengedMultifactorAuthenticationTrigger,
+        final ObjectProvider<MultifactorAuthenticationTrigger> radiusAccessChallengedMultifactorAuthenticationTrigger,
         @Qualifier(CasWebflowEventResolutionConfigurationContext.BEAN_NAME)
-        final CasWebflowEventResolutionConfigurationContext casWebflowConfigurationContext) {
+        final ObjectProvider<CasWebflowEventResolutionConfigurationContext> casWebflowConfigurationContext) {
         return BeanSupplier.of(CasWebflowEventResolver.class)
             .when(CONDITION.given(applicationContext.getEnvironment()))
             .supply(() -> {
-                val resolver = new DefaultMultifactorAuthenticationProviderWebflowEventResolver(casWebflowConfigurationContext,
-                    radiusAccessChallengedMultifactorAuthenticationTrigger);
+                val resolver = new DefaultMultifactorAuthenticationProviderWebflowEventResolver(casWebflowConfigurationContext.getObject(),
+                    radiusAccessChallengedMultifactorAuthenticationTrigger.getObject());
                 LOGGER.debug("Activating MFA event resolver based on RADIUS...");
-                initialAuthenticationAttemptWebflowEventResolver.addDelegate(resolver);
+                initialAuthenticationAttemptWebflowEventResolver.getObject().addDelegate(resolver);
                 return resolver;
             })
             .otherwiseProxy()

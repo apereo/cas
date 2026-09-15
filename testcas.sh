@@ -168,7 +168,12 @@ while (( "$#" )); do
              category+="${tag} "
           done
           formatted=$(printf '%s\n' "$category" | awk '{ for (i = 1; i <= NF; i++) print "  - " $i }')
-          printf "👷 ${GREEN}Test categories for current changeset are:\n${formatted} ${ENDCOLOR}\n\n"
+          if [[ -z "$category" ]]; then
+            printf "👷 ${RED}No test categories were detected for the current changeset. Have you modified tests?${ENDCOLOR}\n\n"
+            exit 0
+          else
+            printf "👷 ${GREEN}Test categories for current changeset are:\n${formatted} ${ENDCOLOR}\n\n"
+          fi
         fi
 
         for item in $(echo "$category" | sed "s/,/ /g")

@@ -51,7 +51,6 @@ import org.apereo.cas.services.resource.DefaultRegisteredServiceResourceNamingSt
 import org.apereo.cas.services.resource.RegisteredServiceResourceNamingStrategy;
 import org.apereo.cas.services.util.RegisteredServiceJsonSerializer;
 import org.apereo.cas.util.scripting.ExecutableCompiledScriptFactory;
-import org.apereo.cas.util.spring.CasApplicationReadyListener;
 import org.apereo.cas.util.spring.beans.BeanCondition;
 import org.apereo.cas.util.spring.beans.BeanSupplier;
 import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
@@ -386,14 +385,6 @@ class CasCoreServicesConfiguration {
         public Cache<Long, RegisteredService> servicesManagerCache(final CasConfigurationProperties casProperties) {
             return Beans.newCacheBuilder(casProperties.getServiceRegistry().getCache()).build();
         }
-
-        @Bean
-        @Lazy(false)
-        public CasApplicationReadyListener servicesManagerApplicationReady(
-            @Qualifier(ServicesManager.BEAN_NAME) final ChainingServicesManager servicesManager,
-            final CasConfigurationProperties casProperties) {
-            return event -> servicesManager.load();
-        }
     }
 
     @Configuration(value = "CasCoreServicesSchedulingConfiguration", proxyBeanMethods = false)
@@ -407,20 +398,20 @@ class CasCoreServicesConfiguration {
         public Runnable servicesManagerScheduledLoader(
             final ConfigurableApplicationContext applicationContext,
             @Qualifier("serviceRegistryExecutionPlan")
-            final ServiceRegistryExecutionPlan serviceRegistryExecutionPlan,
+            final ObjectProvider<ServiceRegistryExecutionPlan> serviceRegistryExecutionPlan,
             final CasConfigurationProperties casProperties,
             @Qualifier(ServicesManager.BEAN_NAME)
-            final ServicesManager servicesManager) {
+            final ObjectProvider<ServicesManager> servicesManager) {
 
             return BeanSupplier.of(Runnable.class)
                 .when(BeanCondition.on("cas.service-registry.schedule.enabled").isTrue().evenIfMissing()
                     .given(applicationContext.getEnvironment()))
                 .supply(() -> {
                     val filter = (Predicate) Predicates.not(Predicates.instanceOf(ImmutableServiceRegistry.class));
-                    if (!serviceRegistryExecutionPlan.find(filter).isEmpty()) {
+                    if (!serviceRegistryExecutionPlan.getObject().find(filter).isEmpty()) {
                         LOGGER.trace("Background task to load services is enabled to run every [{}]",
                             casProperties.getServiceRegistry().getSchedule().getRepeatInterval());
-                        return new ServicesManagerScheduledLoader(servicesManager);
+                        return new ServicesManagerScheduledLoader(servicesManager.getObject());
                     }
                     LOGGER.trace("Background task to load services is disabled");
                     return ServicesManagerScheduledLoader.noOp();
