@@ -14,7 +14,6 @@ import org.apereo.cas.configuration.support.Beans;
 import org.apereo.cas.multitenancy.TenantExtractor;
 import org.apereo.cas.notifications.CommunicationsManager;
 import org.apereo.cas.services.ChainingServiceRegistry;
-import org.apereo.cas.services.ChainingServicesManager;
 import org.apereo.cas.services.DefaultChainingServiceRegistry;
 import org.apereo.cas.services.DefaultRegisteredServicePrincipalAccessStrategyEnforcer;
 import org.apereo.cas.services.DefaultRegisteredServicesEventListener;
@@ -372,7 +371,7 @@ class CasCoreServicesConfiguration {
         @ConditionalOnMissingBean(name = ServicesManager.BEAN_NAME)
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-        public ChainingServicesManager servicesManager(final List<ServicesManagerExecutionPlanConfigurer> configurers) {
+        public DefaultChainingServicesManager servicesManager(final List<ServicesManagerExecutionPlanConfigurer> configurers) {
             val chain = new DefaultChainingServicesManager();
             AnnotationAwareOrderComparator.sortIfNecessary(configurers);
             configurers.forEach(cfg -> chain.registerServiceManager(cfg.configureServicesManager()));

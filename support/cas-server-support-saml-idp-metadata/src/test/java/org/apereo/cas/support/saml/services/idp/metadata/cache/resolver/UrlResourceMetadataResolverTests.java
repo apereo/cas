@@ -65,6 +65,24 @@ class UrlResourceMetadataResolverTests {
         }
 
         @Test
+        void verifyResolverFallsBackToBackupWhenSourceIsUnreachable() throws Throwable {
+            val service = new SamlRegisteredService();
+            service.setName(RandomUtils.randomAlphabetic(12));
+            service.setId(RandomUtils.nextInt());
+
+            val resolver = getMetadataResolver();
+            try (val webServer = new MockWebServer(new ClassPathResource("sample-metadata.xml"))) {
+                webServer.start();
+                service.setMetadataLocation("http://localhost:%s".formatted(webServer.getPort()));
+                assertFalse(resolver.resolve(service).isEmpty());
+            }
+            val backupFile = resolver.getMetadataBackupFile(new UrlResource(service.getMetadataLocation()), service);
+            assertTrue(backupFile.exists(), "Metadata backup file must survive a forced refresh");
+            assertFalse(resolver.resolve(service).isEmpty(),
+                "Metadata backup file must carry the service while the metadata source is unreachable");
+        }
+
+        @Test
         void verifyResolverResolves() throws Throwable {
             val resolver = getMetadataResolver();
             try (val webServer = new MockWebServer(new ClassPathResource("sample-metadata.xml"))) {

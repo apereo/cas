@@ -163,6 +163,8 @@ security have been strengthened across several flows.
 - Storage-backed SAML2 metadata resolution now uses the requested entity ID to limit document lookups and resolver rebuilds.
 - SAML2 SOAP attribute queries and artifact resolutions now require independently validated signatures, message freshness, destinations, and replay protection; artifact tickets are relying-party bound and consumed atomically.
 - [SAML2 single logout](../installation/Configuring-SAML2-Logout.html) now validates request freshness and replay, fully authenticates and correlates logout responses, and generates actuator logout requests with the correct IdP issuer and service-provider destination.
+- Identity provider metadata is now resolved atomically, so concurrent requests can no longer observe a metadata document, or the signing and encryption credentials that belong to it, that was installed on behalf of a different registered service.
+- A service provider metadata backup file is no longer deleted ahead of a download attempt, and is used as a fallback when the remote metadata source or MDQ server cannot be reached, so a momentary outage there no longer takes the service offline.
 
 ### CAS Protocol
 
@@ -229,7 +231,6 @@ security have been strengthened across several flows.
 - A [configuration refresh](../configuration/Configuration-Management-Reload.html) no longer drops MongoDB collections. `drop-collection` and `drop-indexes` describe what happens at startup, but a refresh of the [MongoDB ticket registry](../ticketing/MongoDb-Ticket-Registry.html) or [service registry](../services/MongoDb-Service-Management.html) re-ran them and destroyed live tickets or registered services. Collection and index creation still runs on refresh, as it is repeatable.
 - The MongoDB ticket registry no longer reports a storage failure as a missing ticket. Adding, updating or fetching a ticket now surfaces the underlying failure instead of logging it and carrying on, so a database outage, an oversized document or a ticket definition missing from the catalog can no longer look like a successful login followed by an invalid ticket.
 - Result limits are now applied by MongoDB rather than after the fact, so paging through tickets and querying the ticket registry no longer fetch and deserialize whole collections only to discard them. Cursors opened across several collections are now closed even when the caller stops reading early, and collections shared by more than one ticket definition are read and counted once.
-- MongoDB clients are now closed when a connection is rebuilt on a configuration refresh, and when the application shuts down. Each refresh previously leaked a client along with its connection pool and monitoring threads.
 - An `IDX_PRINCIPAL` index is now created on every ticket collection. Queries by principal, such as removing all tickets issued to a user, run against all collections while only the ticket-granting ticket collection carried the index.
 - Querying single sign-on sessions by an attribute whose name contains a dot now matches. Such names are escaped when the document is written, and the query did not apply the same escaping.
 

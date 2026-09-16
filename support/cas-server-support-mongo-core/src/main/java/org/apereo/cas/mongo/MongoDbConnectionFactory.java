@@ -180,19 +180,12 @@ public class MongoDbConnectionFactory {
         });
     }
 
-    /**
-     * Build the database factory. When the client was created here, the returned factory owns it
-     * and closes it on disposal; when the client was supplied by a caller, that caller remains
-     * responsible for it and the factory closes nothing.
-     */
-    private static MongoDatabaseFactory mongoDbFactory(final MongoClient mongo, final BaseMongoDbProperties props,
-                                                       final boolean managedClient) {
-        val databaseName = StringUtils.isNotBlank(props.getDatabaseName())
-            ? props.getDatabaseName()
-            : Objects.requireNonNull(new ConnectionString(props.getClientUri()).getDatabase());
-        return managedClient
-            ? new CasMongoDatabaseFactory(mongo, databaseName)
-            : new SimpleMongoClientDatabaseFactory(mongo, databaseName);
+    private static MongoDatabaseFactory mongoDbFactory(final MongoClient mongo, final BaseMongoDbProperties props) {
+        if (StringUtils.isNotBlank(props.getDatabaseName())) {
+            return new SimpleMongoClientDatabaseFactory(mongo, props.getDatabaseName());
+        }
+        val connectionString = new ConnectionString(props.getClientUri());
+        return new SimpleMongoClientDatabaseFactory(mongo, Objects.requireNonNull(connectionString.getDatabase()));
     }
 
     private static FieldNamingStrategy fieldNamingStrategy() {
@@ -294,7 +287,7 @@ public class MongoDbConnectionFactory {
      * @return the mongo template
      */
     public CasMongoOperations buildMongoTemplate(final BaseMongoDbProperties mongo) {
-        val mongoDbFactory = mongoDbFactory(buildMongoDbClient(mongo), mongo, true);
+        val mongoDbFactory = mongoDbFactory(buildMongoDbClient(mongo), mongo);
         return new DefaultCasMongoTemplate(mongoDbFactory, mappingMongoConverter(mongoDbFactory));
     }
 
@@ -306,7 +299,7 @@ public class MongoDbConnectionFactory {
      * @return the cas mongo operations
      */
     public CasMongoOperations buildMongoTemplate(final MongoClient mongoClient, final BaseMongoDbProperties mongo) {
-        val mongoDbFactory = mongoDbFactory(mongoClient, mongo, false);
+        val mongoDbFactory = mongoDbFactory(mongoClient, mongo);
         return new DefaultCasMongoTemplate(mongoDbFactory, mappingMongoConverter(mongoDbFactory));
     }
 

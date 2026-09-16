@@ -21,6 +21,7 @@ Guidance for AI coding agents working in the Apereo CAS source tree.
 - Related test scenarios are often grouped with `@Nested`; example: `support/cas-server-support-token-core/.../JwtBuilderTests.java`.
 - Unalias Linux/macOS commands before you run them, specially `tree`, `find`, `grep`, `cat`, etc.
 - From a sandbox that cannot delete files, run read-only git commands with `GIT_OPTIONAL_LOCKS=0` (for example `GIT_OPTIONAL_LOCKS=0 git status`); otherwise git can leave a stale `.git/index.lock` that blocks the user's git.
+- Consider using StringUtils.EMPTY instead of "" for empty strings, and StringUtils.isNotBlank() instead of != null && !isEmpty() for string checks.
 
 ## Workflows that matter here
 
@@ -117,6 +118,28 @@ Guidance for AI coding agents working in the Apereo CAS source tree.
 - The symptom to recognize: a test asserting on a service it saved itself gets the value that belongs to the "service was missing" code path. `OpenIdFederationAuthorizationCodeResponseTypeAuthorizationRequestValidatorTests` failed exactly that way, reporting `expected: <old-service> but was: <new-service>`, because another method's clear removed the saved service and the validator then resolved a fresh one.
 - Isolate by identifier, not by emptying the registry: give each test a UUID-bearing client id and assert only on that id. `@Execution(ExecutionMode.SAME_THREAD)` fixes the within-class case but not another class sharing the context, so prefer removing the global mutation.
 - Write registry predicates as `expected.equals(service.getClientId())` rather than the reverse: once the registry is no longer cleared, entries from other tests flow through the same stream.
+- The mirror image of that symptom is a test asserting a *negative* that only holds while the registry
+  happens to contain no match for its service id. `servicesManager.findServiceBy(<random id>)` returning
+  null is a property of the shared registry, not of the test's own fixture, and it stops holding the
+  moment a sibling saves a catch-all definition. `SamlIdPServicesManagerRegisteredServiceLocatorTests`
+  saves several (`.+`, `callbackUrl + ".*"`) into the registry shared by every `@Tag("SAML2")` class and
+  calls `servicesManager.deleteAll()` in its `@BeforeEach`, so it is both halves of this hazard at once.
+  `SamlIdPDelegatedClientAuthenticationRequestCustomizerTests.verifyAuthorization` failed on it,
+  reporting `expected: <false> but was: <true>` only in a full run.
+- Two facts make that failure mode sharper than it looks. `SamlRegisteredService.getEvaluationPriority()`
+  returns `0` while `RegisteredService`'s default is `Ordered.LOWEST_PRECEDENCE`, and priority is the
+  *first* key in `BaseRegisteredService`'s comparator, so one leftover catch-all `SamlRegisteredService`
+  outranks every non-SAML definition for every lookup in that context no matter what evaluation order
+  the other test sets. And `BaseRegisteredServiceAccessStrategy` initialises a non-null
+  `DefaultRegisteredServiceDelegatedAuthenticationPolicy` whose `permitUndefined` defaults to `true`
+  with empty `allowedProviders`, so `isProviderAllowed` answers true for *any* service that resolves.
+  Together: "some service matched" is the same as "delegated authentication is permitted", and no
+  evaluation order a test can set will win the race.
+- So a negative assertion that depends on a registry lookup cannot be made deterministic by registering
+  a better-ranked service of its own. Isolate the lookup instead -- construct the component under test
+  with a stubbed `ServicesManager` for exactly the assertions that reach it, and leave the wired bean
+  for the assertions that do not. That is what the customizer test now does, and it gained the
+  policy-permits branch as a second assertion in the process.
 
 ## Puppeteer scenario init scripts
 
@@ -410,13 +433,34 @@ Guidance for AI coding agents working in the Apereo CAS source tree.
 - `SamlIdPMetadataResolver` is a singleton that calls `setMetadataRootElement` — which swaps
   `AbstractBatchMetadataResolver`'s backing store — on every cache miss, then reads it back.
   Anything reached through `SamlIdPMetadataCredentialResolver` inherits that shared state, so
-  per-service IdP metadata is where concurrency defects in this area live.
+  per-service IdP metadata is where concurrency defects in this area live. That swap-then-read
+  pair is now held under a `CasReentrantLock` on the miss path only, with the cache re-checked
+  inside the lock; `setMetadataRootElement` is `protected` and its javadoc carries the calling
+  contract. Anything new that installs a backing store on that singleton has to take the same
+  lock, and results handed out of the resolver must be materialized (`List.copyOf`) rather than
+  left as a lazy view over a store a later resolution replaces. There is no puppeteer scenario
+  for per-service IdP metadata — no scenario sets `idpMetadataLocation` — so this path is
+  covered by `SamlIdPMetadataResolverTests` alone.
 - CAS does not use OpenSAML's `HTTPMetadataResolver` / `FileBackedHTTPMetadataResolver`.
-  `UrlResourceMetadataResolver` reimplements fetch-and-back-up by hand, which is why the
-  usual guarantees are absent: no background refresh timer, no min/max refresh delay, no
-  working conditional GET, and the backup is deleted before the download rather than kept as
-  a fallback (`cas.authn.saml-idp.metadata.http.force-metadata-refresh` defaults to `true`).
-  Do not assume OpenSAML semantics when reading this code.
+  `UrlResourceMetadataResolver` reimplements fetch-and-back-up by hand, which is why the usual
+  guarantees are absent: no background refresh timer and no min/max refresh delay. Do not assume
+  OpenSAML semantics when reading this code. The backup file is now treated the way that class
+  would treat it: `force-metadata-refresh` (default `true`) means "do not serve the backup
+  without checking the remote first", never "delete the backup", a successful download
+  overwrites it in place, and `resolveMetadataLocation` falls back onto it when the download
+  cannot be completed. The two readers of the backup want different answers about root validity
+  — reusing it instead of contacting the remote requires `Boolean.TRUE.equals(isRootValid())`,
+  falling back onto it only requires `!Boolean.FALSE.equals(...)`, because a document with no
+  `validUntil` reports its validity as unknown. Keeping the backup also makes MDQ's
+  `If-None-Match` path reachable for the first time.
+- The MDQ subclass has its own failure vocabulary and it interacts with that fallback.
+  `fetchMetadata` returns `null` rather than throwing when the server is unreachable *and* a
+  backup exists, so `getMetadataResolverFromResponse` must tolerate a null response; it still
+  throws `UnauthorizedServiceException` when there is nothing to fall back onto, and
+  `resolveMetadataLocation` rethrows that rather than swallowing it, which is what
+  `MetadataQueryProtocolMetadataResolverTests.verifyResolverFails` asserts. Read the status
+  with `HttpStatus.resolve`, never `valueOf`, or a non-standard code throws instead of
+  reaching the fallback.
 - The metadata backup file is named `sha(metadataLocation)` while the Caffeine key is
   `serviceId|metadataLocation`. Two services pointing at one URL are two cache entries over
   one file, with no lock around write, read or delete. Check that pairing before proposing
@@ -560,32 +604,31 @@ Guidance for AI coding agents working in the Apereo CAS source tree.
   has run is the shape to avoid. Do not mark those initializers `@Lazy(false)` either -- the
   `@DependsOn` edge already orders them, and eager marking would move Mongo I/O onto the startup
   path of an application that otherwise initializes lazily.
-- Making the template a `DisposableBean` that disposes its factory is NOT sufficient on its own, and
-  this is the trap to remember. `SimpleMongoClientDatabaseFactory(MongoClient, String)` records the
-  client as externally managed and `MongoDatabaseFactorySupport.destroy()` is
-  `if (mongoInstanceCreated) { closeClient(); }` -- so disposing that factory closes nothing, and
-  CAS always builds its own client because a connection string cannot express the
-  `MongoClientSettings` it needs. The constructor that sets the flag is package-private, so a
-  subclass is the only way: `CasMongoDatabaseFactory` holds the client and closes it on `destroy()`.
-  Check the upstream source before concluding the template alone is enough.
-- Ownership sits on the factory rather than the template because callers differ in what they keep:
-  most keep the template (`DefaultCasMongoTemplate` disposes its factory), while
-  `CasJaversAutoConfiguration` keeps only the factory and discards the template.
-  `buildMongoTemplate(props)` builds the client and wraps it in the owning factory;
-  `buildMongoTemplate(client, props)` keeps the plain factory, because there the caller still owns
-  the client (pac4j-saml shares it with `SAML2MongoMetadataGenerator`).
-- A connection-owning bean must not be rebuilt underneath whatever captured a connection from it, and
-  Spring disposes whatever a refresh-scoped bean returns. The javers starter's `javers()` bean is a
-  plain singleton that does `MongoDatabase db = initJaversMongoDatabase()` once and hands that
-  instance to `createMongoRepository(db)`, so the connection must live as long as the context, while
-  `javersMongoDatabaseFactory` is `@RefreshScope`. Those two cannot both hold, which is why that bean
-  builds its client and passes it to the non-owning `buildMongoTemplate(client, props)` overload: it
-  keeps the refresh scope and keeps leaking rather than closing a connection still in use. Before
-  changing this, read what the consumer captured -- do not reason from the annotation alone.
+- Do NOT close a Mongo client from a bean's disposal here, and treat the leaked clients as a known
+  cost rather than a bug to patch locally. CAS declares ~2400 beans
+  `@RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)`, and `ScopedProxyMode.DEFAULT` means NO scoped
+  proxy: consumers hold the instance itself, not a proxy that re-resolves. `RefreshScope.refreshAll()`
+  therefore disposes objects that live consumers are still using. Making `DefaultCasMongoTemplate` a
+  `DisposableBean` that closed its client broke `/actuator/health` in the
+  `mongodb-ticket-service-registry` scenario: `BeanContainer.destroy()` disposed the templates inside
+  `mongoHealthIndicatorTemplate`, while Spring Boot's health registry -- not refresh-scoped, so
+  outside the refresh cascade -- still held the `CompositeHealthIndicator` built over them, and the
+  next check failed with `ClientSessionException: state should be: open`. The login path survived only
+  because its whole chain is refresh-scoped and was rebuilt together, which is what makes this failure
+  mode easy to miss.
+- Carry two rules from that. A resource held behind a refresh-scoped bean cannot be released by
+  disposal alone -- the owner's lifetime has to match its consumers', which is a scoped-proxy
+  decision, not a `destroy()` one. And never reason about refresh behaviour from the annotation
+  alone: `ScopedProxyMode.DEFAULT` is the opposite of what the name suggests.
+- For the record, Spring Data will not release these clients either:
+  `SimpleMongoClientDatabaseFactory(MongoClient, String)` records the client as externally managed and
+  `MongoDatabaseFactorySupport.destroy()` is `if (mongoInstanceCreated) { closeClient(); }`. CAS always
+  hands in its own client, because a connection string cannot express the `MongoClientSettings` it
+  needs. So the clients really are never closed -- that is the cost of the model above, not an
+  oversight at the template.
 - `BeanContainer` extends `DisposableBean`, and `ListBeanContainer.destroy()` disposes every
-  `DisposableBean` entry and closes every `Closeable` one. Templates held in a container
-  (`mongoHealthIndicatorTemplate`) are therefore disposed with the container; a container-of-resources
-  bean is not automatically a leak. Read the container type before claiming one.
+  `DisposableBean` entry and closes every `Closeable` one. That is exactly how the health templates
+  came to be closed: a container of resources is not a leak, it is a disposal amplifier.
 - `mongoDbTicketRegistryTemplate` is `@Primary`. Any module injecting `MongoTemplate` by type gets
   the ticket-registry database; check the qualifier before assuming a module talks to its own.
   (Still open.)
