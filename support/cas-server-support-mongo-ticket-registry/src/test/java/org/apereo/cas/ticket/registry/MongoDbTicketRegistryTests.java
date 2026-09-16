@@ -154,29 +154,45 @@ class MongoDbTicketRegistryTests extends BaseTicketRegistryTests {
     }
     
     @RepeatedTest(1)
-    void verifyBadTicketInCatalog() throws Throwable {
+    void verifyBadTicketInCatalog() {
         val ticket = new MockTicketGrantingTicket("casuser");
         val catalog = mock(TicketCatalog.class);
         val ticketDefinition = new DefaultTicketDefinition(ticket.getClass(), TicketGrantingTicket.class, ticket.getPrefix(), 0);
-        when(catalog.find(any(Ticket.class))).thenReturn(null);
         val mgr = mock(TicketSerializationManager.class);
         when(mgr.serializeTicket(any())).thenReturn("{}");
         val registry = new MongoDbTicketRegistry(CipherExecutor.noOp(), mgr, catalog, applicationContext, mongoDbTicketRegistryTemplate);
-        registry.addTicket(ticket);
-        assertNull(registry.updateTicket(ticket));
+
+        when(catalog.find(any(Ticket.class))).thenReturn(null);
+        assertThrows(IllegalArgumentException.class, () -> registry.addTicket(ticket));
+        assertThrows(IllegalArgumentException.class, () -> registry.updateTicket(ticket));
 
         when(catalog.find(any(Ticket.class))).thenReturn(ticketDefinition);
         ticketDefinition.getProperties().setStorageName(null);
-        registry.addTicket(ticket);
-        assertNull(registry.updateTicket(ticket));
+        assertThrows(IllegalArgumentException.class, () -> registry.addTicket(ticket));
+        assertThrows(IllegalArgumentException.class, () -> registry.updateTicket(ticket));
 
         when(catalog.find(any(Ticket.class))).thenThrow(new RuntimeException());
-        ticketDefinition.getProperties().setStorageName(null);
-        registry.addTicket(ticket);
-        assertNull(registry.updateTicket(ticket));
+        assertThrows(RuntimeException.class, () -> registry.addTicket(ticket));
+        assertThrows(RuntimeException.class, () -> registry.updateTicket(ticket));
 
         when(catalog.find(anyString())).thenThrow(new RuntimeException());
-        assertNull(registry.getTicket(ticket.getId()));
+        assertThrows(RuntimeException.class, () -> registry.getTicket(ticket.getId()));
+    }
+
+    @RepeatedTest(1)
+    void verifySessionsWithDottedAttributeKeys() throws Throwable {
+        val attributeKey = "custom.attribute.name";
+        val attributeValue = UUID.randomUUID().toString();
+        val principal = CoreAuthenticationTestUtils.getPrincipal(UUID.randomUUID().toString(),
+            Map.of(attributeKey, List.<Object>of(attributeValue)));
+        val ticketGrantingTicketId = new TicketGrantingTicketIdGenerator(10, StringUtils.EMPTY)
+            .getNewTicketId(TicketGrantingTicket.PREFIX);
+        getNewTicketRegistry().addTicket(new TicketGrantingTicketImpl(ticketGrantingTicketId,
+            CoreAuthenticationTestUtils.getAuthentication(principal), NeverExpiresExpirationPolicy.INSTANCE));
+
+        try (val results = getNewTicketRegistry().getSessionsWithAttributes(Map.of(attributeKey, List.<Object>of(attributeValue)))) {
+            assertEquals(1, results.count());
+        }
     }
 
     @RepeatedTest(2)

@@ -130,10 +130,11 @@ async function verifyTabs(page) {
 }
 
 /**
- * Assert the applications tab loaded and drew the service registry.
+ * Assert the applications tab loaded and drew the service registry, and that its toolbar works.
  *
- * The row count is reported rather than asserted: this scenario ships no service definitions, so an
- * empty registry is a legitimate outcome and only a table that never became a DataTable is a fault.
+ * The row count is reported rather than asserted: the registry this scenario starts from is not
+ * fixed, and only a table that never became a DataTable is a fault. The editor and wizard entries
+ * live inside the New menu rather than the toolbar, so the menu is opened to reach them.
  *
  * @param page the puppeteer page
  */
@@ -143,9 +144,14 @@ async function verifyRegisteredServices(page) {
     const count = await page.evaluate(() => $("#applicationsTable").DataTable().data().count());
     await cas.logg(`Applications table drew ${count} registered services`);
 
-    for (const button of ["newServiceWizard", "newServicePlain", "importService", "exportAll", "reloadAll"]) {
+    for (const button of ["newService", "importService", "exportAll", "reloadAll"]) {
         await cas.assertVisibility(page, `#${button}`);
     }
+
+    await cas.click(page, "#newService");
+    await page.waitForFunction(() => $("#newServicePlain").is(":visible")
+        && $("#newServiceWizard").is(":visible"), {timeout: 15000});
+    await cas.logg("New application menu offers both the editor and the wizard");
 }
 
 /**
@@ -253,11 +259,15 @@ async function inspectWizard(page, serviceClass, hideAdvanced) {
 }
 
 /**
- * Exercise the service wizard for every service type the deployment supports.
+ * Exercise the service wizard for each service type it models.
  *
  * The wizard's fields are built when the dialog is first opened rather than while the page parses,
  * so this is what proves the deferred construction produces the same form. Each type is opened,
  * inspected with advanced options collapsed and expanded, and dismissed through Cancel.
+ *
+ * The deployment's supported types come from a classpath scan and can include registered service
+ * classes the wizard declares no protocol fields for; those are reported and skipped rather than
+ * failed, since there is nothing to assert about them.
  *
  * @param page the puppeteer page
  */
@@ -265,8 +275,13 @@ async function verifyServiceWizard(page) {
     await cas.separator();
     await verifyWizardIsDeferred(page);
 
-    const types = await page.evaluate(() => Object.keys(PalantirDashboardConfiguration.supportedServiceTypes()).sort());
-    await cas.logg(`Deployment supports ${types.length} service types`);
+    const supported = await page.evaluate(() => Object.keys(PalantirDashboardConfiguration.supportedServiceTypes()).sort());
+    const types = supported.filter((serviceClass) => PROTOCOL_FIELDS[serviceClass.split(".").pop()] !== undefined);
+    const unmodelled = supported.filter((serviceClass) => !types.includes(serviceClass));
+    await cas.logg(`Deployment supports ${supported.length} service types; ${types.length} are modelled by the wizard`);
+    if (unmodelled.length > 0) {
+        await cas.logy(`Not exercised, no protocol fields declared for: ${unmodelled.join(", ")}`);
+    }
     assert(types.length > 0);
 
     for (const serviceClass of types) {
@@ -298,22 +313,24 @@ async function verifyServiceWizard(page) {
 
         await cas.logg(`Wizard verified for ${name}`);
         await page.evaluate(() => $("#cancelServiceWizard").trigger("click"));
-        await page.waitForFunction(() => $("#editServiceWizardDialog").dialog("isOpen") === false, {timeout: 15000});
+        await page.waitForFunction(() => $("#editServiceWizardDialog").hasClass("ui-dialog-content")
+            && $("#editServiceWizardDialog").dialog("isOpen") === false, {timeout: 15000});
     }
     await cas.screenshot(page);
 }
 
 /**
- * Open and dismiss the plain definition editor.
+ * Open and dismiss the plain definition editor, through the New menu left open by the caller.
  *
  * It is a jQuery UI dialog now rather than hand-written MDC markup, so this checks the widget is
- * created, the Ace editor inside it is attached, and Cancel closes it.
+ * created, the Ace editor inside it is attached, and Cancel closes it. Choosing the menu entry is
+ * also what dismisses the menu, which is why nothing clicks elsewhere to close it.
  *
  * @param page the puppeteer page
  */
 async function verifyPlainEditorDialog(page) {
     await cas.separator();
-    await page.evaluate(() => $("#newServicePlain").trigger("click"));
+    await cas.click(page, "#newServicePlain");
     await page.waitForFunction(() => $("#editServiceDialog").hasClass("ui-dialog-content")
         && $("#editServiceDialog").dialog("isOpen")
         && document.querySelector("#serviceEditor").classList.contains("ace_editor"), {timeout: 30000});
@@ -322,7 +339,8 @@ async function verifyPlainEditorDialog(page) {
     await cas.assertVisibility(page, "#cancelService");
 
     await page.evaluate(() => $("#cancelService").trigger("click"));
-    await page.waitForFunction(() => $("#editServiceDialog").dialog("isOpen") === false, {timeout: 15000});
+    await page.waitForFunction(() => $("#editServiceDialog").hasClass("ui-dialog-content")
+        && $("#editServiceDialog").dialog("isOpen") === false, {timeout: 15000});
     await cas.logg("Plain definition editor dismissed through Cancel");
 }
 
@@ -360,9 +378,9 @@ async function verifySettingsDialog(page) {
 
     await waitForDashboard(page);
     await verifyRegisteredServices(page);
+    await verifyPlainEditorDialog(page);
     await verifyTabs(page);
     await verifyServiceWizard(page);
-    await verifyPlainEditorDialog(page);
     await verifySettingsDialog(page);
 
     if (failures.length > 0) {

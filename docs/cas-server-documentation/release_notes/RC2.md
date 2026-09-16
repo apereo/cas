@@ -224,6 +224,15 @@ security have been strengthened across several flows.
 - LDAP connection pools are now addressed by the directory and base DN they serve, so multiple configuration blocks that point at the same server no longer collapse onto a single set of connection settings.
 - Surrogate search filters that do not reference the impersonated account are now rejected, as such a filter is unable to restrict the accounts a user may impersonate.
 
+### MongoDB Integrations
+
+- A [configuration refresh](../configuration/Configuration-Management-Reload.html) no longer drops MongoDB collections. `drop-collection` and `drop-indexes` describe what happens at startup, but a refresh of the [MongoDB ticket registry](../ticketing/MongoDb-Ticket-Registry.html) or [service registry](../services/MongoDb-Service-Management.html) re-ran them and destroyed live tickets or registered services. Collection and index creation still runs on refresh, as it is repeatable.
+- The MongoDB ticket registry no longer reports a storage failure as a missing ticket. Adding, updating or fetching a ticket now surfaces the underlying failure instead of logging it and carrying on, so a database outage, an oversized document or a ticket definition missing from the catalog can no longer look like a successful login followed by an invalid ticket.
+- Result limits are now applied by MongoDB rather than after the fact, so paging through tickets and querying the ticket registry no longer fetch and deserialize whole collections only to discard them. Cursors opened across several collections are now closed even when the caller stops reading early, and collections shared by more than one ticket definition are read and counted once.
+- MongoDB clients are now closed when a connection is rebuilt on a configuration refresh, and when the application shuts down. Each refresh previously leaked a client along with its connection pool and monitoring threads.
+- An `IDX_PRINCIPAL` index is now created on every ticket collection. Queries by principal, such as removing all tickets issued to a user, run against all collections while only the ticket-granting ticket collection carried the index.
+- Querying single sign-on sessions by an attribute whose name contains a dot now matches. Such names are escaped when the document is written, and the query did not apply the same escaping.
+
 ### JMX Management
 
 [JMX management](../integration/JMX-Integration.html) now includes service reload and lookup, ticket and session
@@ -261,7 +270,7 @@ registered-service revision to the service registry and live service cache, whil
 
 ## Other Stuff
     
-- CAS actuator endpoints that are built on Spring MVC request mappings now honor `management.endpoint.<id>.access`. A `READ_ONLY` declaration registers only the endpoint's read mappings, so its `POST`, `PUT`, `PATCH` and `DELETE` mappings are no longer reachable, and a `NONE` declaration registers no mappings at all.
+- CAS [actuator endpoints](../monitoring/Monitoring-Statistics.html#actuator-endpoints) that are built on Spring MVC request mappings now honor `management.endpoint.<id>.access`. A `READ_ONLY` declaration registers only the endpoint's read mappings, so its `POST`, `PUT`, `PATCH` and `DELETE` mappings are no longer reachable, and a `NONE` declaration registers no mappings at all.
 - [CloudWatch logging](../logging/Logging-Cloudwatch.html) now avoids recursive logging initialization when reporting appender startup or delivery failures.
 - Authentication history, theme caching and CloudWatch shutdown now use concurrent collections and explicit coordination in place of Java monitor locking.
 - Several optimizations are in place to assist with faster startup time, allowing for more components to be lazily initialized.

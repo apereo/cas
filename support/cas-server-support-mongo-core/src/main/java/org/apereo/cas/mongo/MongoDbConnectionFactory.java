@@ -54,6 +54,14 @@ import org.springframework.util.ClassUtils;
  */
 @Slf4j
 public class MongoDbConnectionFactory {
+    /**
+     * Replacement used for dots found in map keys when documents are written.
+     * MongoDB reserves the dot as a path separator, so {@link MappingMongoConverter}
+     * escapes it on write. Any query that addresses a map field by path must apply
+     * the same replacement, or it will address a nested document that does not exist.
+     */
+    public static final String MAP_KEY_DOT_REPLACEMENT = "_#_";
+
     private static final Set<String> MONGO_INDEX_KEYS = Set.of("v", "key", "name", "ns");
 
     private static final int DEFAULT_PORT = 27017;
@@ -172,12 +180,19 @@ public class MongoDbConnectionFactory {
         });
     }
 
-    private static MongoDatabaseFactory mongoDbFactory(final MongoClient mongo, final BaseMongoDbProperties props) {
-        if (StringUtils.isNotBlank(props.getDatabaseName())) {
-            return new SimpleMongoClientDatabaseFactory(mongo, props.getDatabaseName());
-        }
-        val connectionString = new ConnectionString(props.getClientUri());
-        return new SimpleMongoClientDatabaseFactory(mongo, Objects.requireNonNull(connectionString.getDatabase()));
+    /**
+     * Build the database factory. When the client was created here, the returned factory owns it
+     * and closes it on disposal; when the client was supplied by a caller, that caller remains
+     * responsible for it and the factory closes nothing.
+     */
+    private static MongoDatabaseFactory mongoDbFactory(final MongoClient mongo, final BaseMongoDbProperties props,
+                                                       final boolean managedClient) {
+        val databaseName = StringUtils.isNotBlank(props.getDatabaseName())
+            ? props.getDatabaseName()
+            : Objects.requireNonNull(new ConnectionString(props.getClientUri()).getDatabase());
+        return managedClient
+            ? new CasMongoDatabaseFactory(mongo, databaseName)
+            : new SimpleMongoClientDatabaseFactory(mongo, databaseName);
     }
 
     private static FieldNamingStrategy fieldNamingStrategy() {
@@ -279,7 +294,7 @@ public class MongoDbConnectionFactory {
      * @return the mongo template
      */
     public CasMongoOperations buildMongoTemplate(final BaseMongoDbProperties mongo) {
-        val mongoDbFactory = mongoDbFactory(buildMongoDbClient(mongo), mongo);
+        val mongoDbFactory = mongoDbFactory(buildMongoDbClient(mongo), mongo, true);
         return new DefaultCasMongoTemplate(mongoDbFactory, mappingMongoConverter(mongoDbFactory));
     }
 
@@ -291,7 +306,7 @@ public class MongoDbConnectionFactory {
      * @return the cas mongo operations
      */
     public CasMongoOperations buildMongoTemplate(final MongoClient mongoClient, final BaseMongoDbProperties mongo) {
-        val mongoDbFactory = mongoDbFactory(mongoClient, mongo);
+        val mongoDbFactory = mongoDbFactory(mongoClient, mongo, false);
         return new DefaultCasMongoTemplate(mongoDbFactory, mappingMongoConverter(mongoDbFactory));
     }
 
@@ -311,7 +326,7 @@ public class MongoDbConnectionFactory {
         val dbRefResolver = new DefaultDbRefResolver(mongoDbFactory);
         val converter = new MappingMongoConverter(dbRefResolver, mongoMappingContext());
         converter.setCustomConversions(customConversions);
-        converter.setMapKeyDotReplacement("_#_");
+        converter.setMapKeyDotReplacement(MAP_KEY_DOT_REPLACEMENT);
         converter.afterPropertiesSet();
         return converter;
     }

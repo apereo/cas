@@ -50,8 +50,9 @@ public class CasJaversAutoConfiguration {
         @RefreshScope
         public MongoDatabaseFactory javersMongoDatabaseFactory(
             final CasConfigurationProperties casProperties) {
+            val mongo = casProperties.getJavers().getMongo();
             val factory = new MongoDbConnectionFactory();
-            val operations = factory.buildMongoTemplate(casProperties.getJavers().getMongo());
+            val operations = factory.buildMongoTemplate(factory.buildMongoDbClient(mongo), mongo);
             return operations.getMongoDatabaseFactory();
         }
     }

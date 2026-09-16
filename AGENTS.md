@@ -528,7 +528,7 @@ Guidance for AI coding agents working in the Apereo CAS source tree.
   No scenario exercises LDAP, Redis, Mongo, DynamoDB or REST consent, and none stores two
   decisions for the same user, which is exactly the shape every storage defect above needs.
 
-## MongoDB backends (service registry and ticket registry) review discipline
+## MongoDB backends (service registry and ticket registry)
 
 - Three modules carry everything: `cas-server-support-mongo-core` (`MongoDbConnectionFactory`,
   `BaseConverters`, `DefaultCasMongoTemplate`, `MongoDbClusterTopologyManager`),
@@ -541,46 +541,85 @@ Guidance for AI coding agents working in the Apereo CAS source tree.
   `ZonedDateTimeCodecProvider`, no pool/socket/server settings, no read or write concern, no
   `retryWrites`. A connection string cannot express a custom trust store, so a deployment using
   `client-uri` silently falls back to the JVM default trust material. Check which branch a setting
-  lives in before describing it as configurable.
+  lives in before describing it as configurable. (Still open.)
 - Read the defaults from the operator's point of view before judging a flow: `ssl-enabled=false`,
   ticket-registry `crypto.enabled=false`, `write-concern=ACKNOWLEDGED`, `read-concern=AVAILABLE`,
   `retry-writes=false`. With the cipher off, `AbstractTicketRegistry.collectAndDigestTicketAttributes`
   returns attributes undigested, so the Mongo document carries the principal, the service and every
-  authentication attribute in clear beside the ticket JSON.
+  authentication attribute in clear beside the ticket JSON. (Still open.)
 - Durability is part of the security argument here. `deleteTicket` is a compare-and-swap only as far
   as the write concern makes the delete durable; `w:1` plus a replica-set failover can roll back the
   removal of a one-time-use ticket, code or nonce. Evaluate single-use state against the write
-  concern, not just against the code path.
-- The `MongoClient` built by the factory is never closed, and both templates are `@RefreshScope`.
-  Anything a template bean method does at construction — `createCollection(..., dropCollection)` in
-  the service registry, `createTicketCollections()` in `MongoDbTicketRegistryConfiguration` — runs
-  again on every `/actuator/refresh`, with the same `drop-collection` flag. Treat bean-construction
-  side effects in a refreshable bean as runtime operations, not startup operations.
+  concern, not just against the code path. (Still open.)
+- Bean-construction side effects in a refresh-scoped bean are runtime operations, not startup
+  operations: the bean method runs again on every `/actuator/refresh`. Destructive setup
+  (`drop-collection`, `drop-indexes`) therefore lives in a plain-singleton `InitializingBean` that
+  the refresh-scoped registry declares with `@DependsOn`, so singleton scope is what limits it to
+  one execution per context. Express "startup only" through bean scope, not through a flag the
+  configuration class retains; a configuration class holding mutable state to remember whether it
+  has run is the shape to avoid. Do not mark those initializers `@Lazy(false)` either -- the
+  `@DependsOn` edge already orders them, and eager marking would move Mongo I/O onto the startup
+  path of an application that otherwise initializes lazily.
+- Making the template a `DisposableBean` that disposes its factory is NOT sufficient on its own, and
+  this is the trap to remember. `SimpleMongoClientDatabaseFactory(MongoClient, String)` records the
+  client as externally managed and `MongoDatabaseFactorySupport.destroy()` is
+  `if (mongoInstanceCreated) { closeClient(); }` -- so disposing that factory closes nothing, and
+  CAS always builds its own client because a connection string cannot express the
+  `MongoClientSettings` it needs. The constructor that sets the flag is package-private, so a
+  subclass is the only way: `CasMongoDatabaseFactory` holds the client and closes it on `destroy()`.
+  Check the upstream source before concluding the template alone is enough.
+- Ownership sits on the factory rather than the template because callers differ in what they keep:
+  most keep the template (`DefaultCasMongoTemplate` disposes its factory), while
+  `CasJaversAutoConfiguration` keeps only the factory and discards the template.
+  `buildMongoTemplate(props)` builds the client and wraps it in the owning factory;
+  `buildMongoTemplate(client, props)` keeps the plain factory, because there the caller still owns
+  the client (pac4j-saml shares it with `SAML2MongoMetadataGenerator`).
+- A connection-owning bean must not be rebuilt underneath whatever captured a connection from it, and
+  Spring disposes whatever a refresh-scoped bean returns. The javers starter's `javers()` bean is a
+  plain singleton that does `MongoDatabase db = initJaversMongoDatabase()` once and hands that
+  instance to `createMongoRepository(db)`, so the connection must live as long as the context, while
+  `javersMongoDatabaseFactory` is `@RefreshScope`. Those two cannot both hold, which is why that bean
+  builds its client and passes it to the non-owning `buildMongoTemplate(client, props)` overload: it
+  keeps the refresh scope and keeps leaking rather than closing a connection still in use. Before
+  changing this, read what the consumer captured -- do not reason from the annotation alone.
+- `BeanContainer` extends `DisposableBean`, and `ListBeanContainer.destroy()` disposes every
+  `DisposableBean` entry and closes every `Closeable` one. Templates held in a container
+  (`mongoHealthIndicatorTemplate`) are therefore disposed with the container; a container-of-resources
+  bean is not automatically a leak. Read the container type before claiming one.
 - `mongoDbTicketRegistryTemplate` is `@Primary`. Any module injecting `MongoTemplate` by type gets
   the ticket-registry database; check the qualifier before assuming a module talks to its own.
-- Registry methods swallow `Throwable` and return a benign value (`addSingleTicket` returns the
-  ticket, `getTicket` returns null, `updateTicket` returns null). A driver failure is therefore
-  indistinguishable from "not found", and a failed insert looks like a successful login. When
-  reviewing a storage backend, read the catch blocks before the happy path.
-- Paging is applied in the JVM, not in the query: `stream(criteria)` and `query(criteria)` use
-  `Stream.skip`/`limit` over `mongoTemplate.stream(...)`, so every document in every collection is
-  fetched and deserialized first, and a short-circuited `flatMap` can leave cursors open. Compare a
-  registry's `TicketRegistryStreamCriteria`/`TicketRegistryQueryCriteria` handling against the query
-  it actually sends.
-- Index coverage is per ticket definition. `IDX_PRINCIPAL` is created only when
-  `getApiClass().equals(TicketGrantingTicket.class)`, while `deleteTicketsFor` and the principal
-  criteria run against every collection, so OAuth/OIDC/SAML token collections are scanned.
+  (Still open.)
+- The ticket registry propagates storage failures rather than returning a benign value:
+  `addSingleTicket` and `updateTicket` declare `throws Exception`, and a ticket definition missing
+  from the catalog throws. Only a genuine miss returns null. Do not reintroduce a `catch (Throwable)`
+  that logs and continues — that is what made a failed insert look like a successful login. When
+  reviewing any storage backend, read the catch blocks before the happy path.
+- Multi-collection reads go through `MongoDbTicketRegistry.streamTicketDocuments`, which records
+  every cursor it opens and closes them from the returned stream's `onClose`; a consumer that
+  short-circuits never lets `flatMap` close the inner stream it was reading. Callers must close the
+  stream. Per-collection queries are bounded by `limitQuery` to `from + count`, because no single
+  collection can contribute more than that to the result, while the global skip/limit stays in the
+  JVM since it spans collections — do not push `skip` down, it does not mean the same thing there.
+- Collection names are resolved once per call and `distinct()`-ed, so definitions sharing a storage
+  name are read and counted once.
 - Writer and reader must agree on key mapping. `MappingMongoConverter` is configured with
-  `setMapKeyDotReplacement("_#_")`, but `getSessionsWithAttributes` builds `attributes.<key>` paths
-  directly, so any attribute name containing a dot is stored under one name and queried under
-  another. Check the converter's configuration whenever a query addresses a map field by path.
+  `MongoDbConnectionFactory.MAP_KEY_DOT_REPLACEMENT`, and `digestAttributeKey` applies the same
+  replacement when a query addresses `attributes.<key>`. Check the converter's configuration
+  whenever new code addresses a map field by path.
+- `IDX_PRINCIPAL` is created on every ticket collection, not only on the ticket-granting ticket
+  collection, because `deleteTicketsFor` and the principal criteria run against all of them.
 - `casTicketRegistryLockRepository` exists for Redis and JPA and does not exist for Mongo, so
-  `LockRepository` is JVM-local on a Mongo cluster. Every read-modify-write invariant (`updateTicket`
-  is an unconditional `updateFirst` with no version check) is last-writer-wins across nodes.
-- Puppeteer coverage is `mongodb-ticket-service-registry` only, and it asserts the health indicator,
-  one registered service and the ticket-registry cleaner. There is no login flow, no crypto-enabled
-  variant, no TLS and no concurrency, so a change in this area needs a new scenario rather than a
-  rerun. `http-session-mongodb`, `authn-events-mongodb`, `configuration-properties-mongodb`,
-  `simple-mfa-trusted-device-mongodb`, `saml2-idp-login-sp-metadata-mongodb` and
-  `delegated-login-saml2-mongodb-metadata` exercise the shared connection factory and are the ones to
-  re-run for any `cas-server-support-mongo-core` change.
+  `LockRepository` is JVM-local on a Mongo cluster. `updateTicket` is an unconditional `updateFirst`
+  with no version check, so every read-modify-write invariant is last-writer-wins across nodes.
+  (Still open.)
+- Puppeteer coverage is `mongodb-ticket-service-registry` only. It refreshes the context first, then
+  clears sessions, logs in once and asserts exactly one ticket-granting ticket, the health indicator
+  and the ticket-registry cleaner — so it exercises the refresh path but asserts nothing about what
+  survives a refresh. There is no crypto-enabled variant, no TLS and no concurrency, so a change in
+  this area needs a new scenario rather than a rerun. `http-session-mongodb`, `authn-events-mongodb`,
+  `configuration-properties-mongodb`, `simple-mfa-trusted-device-mongodb`,
+  `saml2-idp-login-sp-metadata-mongodb` and `delegated-login-saml2-mongodb-metadata` exercise the
+  shared connection factory and are the ones to re-run for any `cas-server-support-mongo-core` change.
+- `MongoDbTicketRegistryTests` clears the whole registry in `@BeforeEach` while JUnit runs its
+  methods concurrently, so any new test there must assert on identifiers it created itself (a UUID
+  principal or attribute value) rather than on registry-wide counts.
