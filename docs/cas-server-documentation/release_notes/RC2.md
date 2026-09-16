@@ -261,6 +261,7 @@ registered-service revision to the service registry and live service cache, whil
 
 ## Other Stuff
     
+- CAS actuator endpoints that are built on Spring MVC request mappings now honor `management.endpoint.<id>.access`. A `READ_ONLY` declaration registers only the endpoint's read mappings, so its `POST`, `PUT`, `PATCH` and `DELETE` mappings are no longer reachable, and a `NONE` declaration registers no mappings at all.
 - [CloudWatch logging](../logging/Logging-Cloudwatch.html) now avoids recursive logging initialization when reporting appender startup or delivery failures.
 - Authentication history, theme caching and CloudWatch shutdown now use concurrent collections and explicit coordination in place of Java monitor locking.
 - Several optimizations are in place to assist with faster startup time, allowing for more components to be lazily initialized.

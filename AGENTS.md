@@ -301,3 +301,286 @@ Guidance for AI coding agents working in the Apereo CAS source tree.
   (`service-access-strategy-groovy`, `surrogate-login-groovy`, `mfa-provider-selection-trigger-groovy`,
   `interrupt-afterauthn-groovy`, `webflow-groovy-action`, …). None of them exercise concurrency, script
   errors, or cache expiry, so a change in this area needs new coverage rather than a rerun.
+
+## Actuator endpoints review discipline
+
+- There are ~63 endpoints. Inventory them with
+  `grep -rl --include=*.java -E "@(RestControllerEndpoint|ControllerEndpoint|Endpoint|WebEndpoint)\(id"`;
+  `support/cas-server-support-reports-core` owns about a third, the rest are scattered across
+  feature modules. Review them as one attack surface, not one module at a time.
+- The whole security boundary is a single `SecurityFilterChain` built by
+  `CasWebSecurityConfigurerAdapter.configureHttpSecurity`. Rules are added in order --
+  ignored patterns (permitAll) -> each `CasWebSecurityConfigurer.configure` -> per-endpoint
+  `cas.monitor.endpoints.endpoint.*` -> `configureEndpointAccessToDenyUndefined` -> static
+  resources -> form login -- and Spring Security takes the first match, so anything a
+  `getIgnoredEndpoints` contributes wins over every endpoint rule that follows.
+- `prepareProtocolEndpoint` emits `/<ep>**` as well as `/<ep>/**`. The first form is a
+  within-segment wildcard, so an ignored endpoint also permits sibling paths sharing its
+  prefix. Check that before adding an entry.
+- That chain disables CSRF, security headers and logout globally, and it is the same chain
+  that serves the actuator. Any browser-reachable session credential (`cas.monitor.endpoints.form-login-enabled`)
+  therefore leaves mutating actuator operations unprotected against cross-site requests.
+- `ActuatorEndpointProperties.access` defaults to `DENY` and the `endpoint` map always
+  carries a synthetic `defaults` key. The adapter iterates the map and calls
+  `EndpointRequest.to("defaults")`, which resolves to no path and silently registers nothing;
+  the real default comes from `configureEndpointAccessToDenyUndefined`. Do not read the loop
+  as the place defaults are enforced.
+- `configureEndpointAccessToDenyUndefined` reads `management.endpoint.<rootPath>.access` with
+  a raw `Environment.getProperty` call and maps `UNRESTRICTED`/`READ_ONLY` to `permitAll`.
+  Relaxed spellings of that key are not seen (fail-closed), but the canonical spelling turns a
+  Boot-level exposure decision into anonymous Spring Security access.
+- `IP_ADDRESS` access is evaluated by `IpAddressAuthorizationManager`, which reads
+  `cas.audit.engine.alternate-client-addr-header-name` (default `X-Forwarded-For`) straight off the
+  request. This is intentional and is NOT a CAS defect: the fronting proxy, load balancer and
+  external boot configuration are expected to set that header as a trusted header, or to blank it
+  out and let Tomcat's own valves resolve the client address. Configuring that correctly is left to
+  the deployer, so do not report header spoofing here as a finding.
+- `BaseCasRestActuatorEndpoint` endpoints are NOT Spring Boot operations. They are discovered by
+  CAS's own `RestActuatorEndpointDiscoverer`, mapped by `RestActuatorEndpointHandlerMapping`, and
+  their handlers are Spring MVC mappings rather than `@ReadOperation`/`@WriteOperation` methods.
+  Boot applies an access level by filtering operations, and these endpoints declare none, so
+  `management.endpoint.<id>.access=READ_ONLY` does not stop their `@PostMapping`, `@PutMapping`,
+  `@PatchMapping` or `@DeleteMapping` handlers the way it stops a Boot write operation. That is
+  the gap `RestActuatorEndpointHandlerMapping.isMappingPermittedByAccessLevel` closes: it resolves
+  the endpoint's access through the `EndpointAccessResolver` bean and applies the same rules Boot
+  applies to operations, registering nothing under `NONE` and only `GET`/`HEAD`/`OPTIONS` mappings
+  under `READ_ONLY`. Note that `configureEndpointAccessToDenyUndefined` maps `READ_ONLY` to
+  `permitAll`, which is why the write methods used to get through, and maps `NONE` to `denyAll`, so
+  a `NONE` endpoint is usually refused by security before the missing mapping matters.
+  `ActuatorEndpointAccessControlTests` covers all of it, with `releaseAttributes` beside
+  `registeredServices` as the Boot operation endpoint that has always behaved this way.
+- Before changing what an access level does to these endpoints, measure the blast radius rather
+  than reasoning from the annotation: every REST actuator endpoint declares
+  `defaultAccess = Access.NONE` and the web application ships `management.endpoints.access.default=NONE`,
+  which suggests widespread breakage, but in fact all 44 test classes and all 69 puppeteer scenarios
+  that call one already declare `management.endpoint.<id>.access` or `management.endpoints.access.default`
+  explicitly. Walk the test tree and `ci/tests/puppeteer/scenarios/*/script.json` and count.
+- Do not confuse that with exposure. A REST actuator endpoint left out of
+  `management.endpoints.web.exposure.include` answers `403`, not `200`: no rule is registered for
+  it in `configureEndpointAccessToDenyUndefined`, and Spring Security denies a request no matcher
+  claims. Verify the status a given combination of exposure and access actually produces before
+  describing any of it as reachable.
+- When `management.server.port` differs, `CasCoreWebManagementContextConfiguration` registers the
+  handler mappings in the child management context but no `SecurityFilterChain`. Verify what
+  actually secures that port before assuming the main chain applies.
+- Several endpoints are authentication primitives, not diagnostics: `casValidate`,
+  `samlValidate`, `samlPostProfileResponse` and `tokenAuth` mint CAS assertions, signed SAML
+  responses and JWTs for an arbitrary username, and the `password` parameter is optional (absent
+  entirely for `tokenAuth`) -- with no password they fall through to `PrincipalResolver` and
+  succeed. Anything that widens actuator access widens impersonation.
+- These endpoints return configuration values and service definitions unmasked, unlike Boot's own
+  `/env` and `/configprops`. `casConfig` `/retrieve` returns raw property values and
+  `registeredServices` serializes `OAuthRegisteredService.clientSecrets` (the `value` field carries
+  no `@JsonIgnore`). Masking was proposed and rejected, so do not re-propose it without agreeing
+  the approach with the maintainer first. `casConfig` `/encrypt` and `/decrypt` are a deliberate
+  operator tool that Palantir exposes in its UI, not an oracle to close.
+- Before proposing masking on any actuator response, work out how the admin UI consumes it: grep
+  `support/cas-server-support-thymeleaf/src/main/resources/static/js/palantir-*.js`. Palantir's
+  service editor does a full `GET /registeredServices/{id}` -> edit -> `PUT` round-trip
+  (`palantir-services.js`), so masking any path it reads would write the mask back into the
+  registry, and `/export` has the same requirement; redacting there needs the save path to preserve
+  existing secrets first. `casConfig` `/retrieve` does not have that problem, because
+  `palantir-pac4j.js` reads only `name` and `propertySource` from it.
+- User-supplied strings are compiled into regular expressions on the request path:
+  `configurationMetadata/{term}` (then matched over every known property in a `parallelStream`)
+  and `casConfig` `/retrieve`. Treat these as ReDoS/CPU-exhaustion boundaries; actuator endpoints
+  are not covered by CAS's authentication throttling.
+- No actuator endpoint carries `@Audit`. Session destruction, service deletion, key rotation,
+  configuration mutation and token minting all happen without an Inspektr record. Check for this
+  before claiming an administrative action is traceable.
+- Puppeteer coverage: `actuator-endpoint-cors`, `actuator-endpoint-login-jdbc`,
+  `actuator-endpoint-management`, `actuator-endpoint-metrics`, `actuator-endpoint-reports`,
+  `actuator-endpoint-roles`, `actuator-form-login`, `actuator-form-login-ldap`,
+  `actuator-form-login-ldap-roles`, `actuator-form-login-ldap-userauthz`,
+  `configuration-refresh-endpoint`, `sso-sessions-endpoint`, `tomcat-forwarded-headers`
+  (the only `IP_ADDRESS` scenario). Every one of them asserts that an *authorized* caller gets
+  200; none asserts 401/403 for an unauthenticated one, and 158 scenarios run with
+  `management.endpoints.web.exposure.include=*`. A change to endpoint security therefore needs a
+  new negative scenario rather than a rerun.
+
+## SAML2 metadata review discipline
+
+- There are two independent metadata subsystems and they share almost nothing. *SP metadata*
+  runs `SamlRegisteredService` -> `SamlRegisteredServiceDefaultCachingMetadataResolver` ->
+  `SamlRegisteredServiceMetadataResolverCacheLoader` -> the resolvers under
+  `.../cache/resolver/**` -> OpenSAML filters. *IdP metadata* runs
+  `SamlIdPMetadataGenerator` -> `SamlIdPMetadataLocator` (one per storage backend) ->
+  `SamlIdPMetadataResolver` -> `SamlIdPMetadataCredentialResolver`. A third, `saml-mdui-core`,
+  is a separate adapter stack that does not reuse either. Review each as a path.
+- `SamlIdPMetadataResolver` is a singleton that calls `setMetadataRootElement` — which swaps
+  `AbstractBatchMetadataResolver`'s backing store — on every cache miss, then reads it back.
+  Anything reached through `SamlIdPMetadataCredentialResolver` inherits that shared state, so
+  per-service IdP metadata is where concurrency defects in this area live.
+- CAS does not use OpenSAML's `HTTPMetadataResolver` / `FileBackedHTTPMetadataResolver`.
+  `UrlResourceMetadataResolver` reimplements fetch-and-back-up by hand, which is why the
+  usual guarantees are absent: no background refresh timer, no min/max refresh delay, no
+  working conditional GET, and the backup is deleted before the download rather than kept as
+  a fallback (`cas.authn.saml-idp.metadata.http.force-metadata-refresh` defaults to `true`).
+  Do not assume OpenSAML semantics when reading this code.
+- The metadata backup file is named `sha(metadataLocation)` while the Caffeine key is
+  `serviceId|metadataLocation`. Two services pointing at one URL are two cache entries over
+  one file, with no lock around write, read or delete. Check that pairing before proposing
+  anything that touches the backup directory.
+- Trust here is opt-in and fails open. A service without `metadataSignatureLocation` gets no
+  `SignatureValidationFilter` at all, and `SamlUtils.buildSignatureValidationFilter` returns
+  `null` — not an exception — when the configured resource cannot be read, after which the
+  caller logs a warning and loads the metadata anyway. Read `addSignatureValidationFilterIfNeeded`
+  before claiming signature validation is enforced.
+- `buildRequiredValidUntilFilterIfNeeded` only runs when `metadataMaxValidity > 0`, and
+  `SamlRegisteredServiceMetadataExpirationPolicy` reads `cacheDuration` but never `validUntil`.
+  Expiry and validity are two different mechanisms in this code; do not conflate them. The
+  policy can also return a negative duration when a service expiration date is in the past.
+- IdP metadata backends are not interchangeable. JPA and MongoDB resolve the *global*
+  document with an unfiltered "first row" query (`SELECT r FROM SamlIdPMetadataDocument r`,
+  `findOne(new Query())`), so a per-service document can answer as the global one; Redis scans
+  by `appliesTo`. `appliesTo` is `SamlIdPUtils.getSamlIdPMetadataOwner` = `name + '-' + id`,
+  which also becomes a directory name on the file-system locator and a key elsewhere —
+  unsanitized, and it changes when a service is renamed.
+- The file-system generator writes the IdP signing and encryption private keys in the clear
+  with default permissions; the other backends run the key through `metadataCipherExecutor`.
+  Do not describe key-at-rest handling as uniform across backends.
+- `/idp/metadata` is public and calls `generate(...)` on every request, including with a
+  caller-supplied `service` parameter. Generation is guarded only by an `exists()` check, with
+  no lock across threads or nodes, and it mints two RSA keypairs (`key-size` defaults to 4096).
+- The parser pool in `CasCoreSamlAutoConfiguration` is properly hardened (doctype disallowed,
+  external entities off, secure processing on), so XXE is not the gap. Response size is:
+  metadata bodies are read with `IOUtils.toString` with no bound.
+- `HttpUtils.execute` builds a new `CloseableHttpClient` with its own pooling connection
+  manager per call and only the response is ever closed. Every metadata fetch pays that, and
+  the MDQ resolver additionally omits `.httpClient(...)`, so it does not use the deployment's
+  configured TLS trust and hostname verifier.
+- Check MDQ against the SAML profile for the Metadata Query Protocol, not from memory: a
+  compliant client MUST send `Accept: application/samlmetadata+xml`. CAS puts
+  `cas.authn.saml-idp.metadata.mdq.supported-content-type` on `Content-Type` of a GET and then
+  sends `Accept: */*`. Signature verification is RECOMMENDED for servers there, not a client
+  MUST, so do not report the optional filter as a spec violation — report it as fail-open.
+- Two request-path amplifiers to watch: `SamlRegisteredServiceMetadataHealthIndicator` calls
+  `isAvailable(...)` for every SAML service, which pings each metadata URL on every health
+  poll; and `DynamicMetadataResolverAdapter.getEntityDescriptorForEntityId` rebuilds its whole
+  resolver aggregate and refetches over MDQ on every call, driven by an unauthenticated
+  `entityId` request parameter that `MetadataUIUtils` asks for twice per login render.
+- Puppeteer coverage: `saml2-idp-metadata-caching`, `saml2-idp-login-idp-initiated-mdq`,
+  `saml2-idp-login-sp-metadata-{directory,groovy,jdbc,json,mongodb}`,
+  `saml2-idp-login-sp-override-metadata`, `saml2-idp-login-metadata-aws-s3`, `saml-mdui`,
+  `delegated-login-saml2-mongodb-metadata`. All are single-threaded happy paths against a
+  reachable metadata source, so nothing here covers concurrency, a metadata host that is down,
+  signature-validation failure, or MDQ content negotiation. Changes in those areas need new
+  scenarios rather than a rerun.
+
+## Attribute consent review discipline
+
+- Start at `ConsentDecision`, not at a repository. `id` is a primitive `long` with
+  `@GeneratedValue`, so only JPA ever assigns it; `DefaultConsentDecisionBuilder.build`
+  leaves it at `0` for every other store. That single field is the key in four backends:
+  LDAP's `mergeDecision` guards on `id < 0` and then `removeDecision(0)` wipes the user's
+  other decisions, Redis keys on `ConsentDecision:<principal>:<id>`, Mongo maps it to
+  `_id`, and DynamoDB uses it as the table HASH key. Before trusting any consent storage
+  behavior, ask what `id` actually holds on the production path.
+- `BaseConsentRepositoryTests` calls `decision.setId(1/100/200)` before every store, so the
+  shared suite never exercises the id the engine really produces, and no test stores two
+  decisions for one user. Treat "the repository tests pass" as no evidence here.
+- Consent is a gate in the login webflow, not a filter at attribute release.
+  `ConsentWebflowConfigurer` prepends `CheckConsentRequiredAction` to the login flow's
+  `generateServiceTicket` state; the only other consumer is
+  `SamlIdPConsentSingleSignOnParticipationStrategy`. Nothing in
+  `RegisteredServiceAttributeReleasePolicy` reads a stored decision, so the consented set
+  never constrains what is released, and any path that issues without the login flow --
+  REST protocol tickets, proxy tickets, OIDC refresh/userinfo, the OpenID4VCI
+  pre-authorized code grant -- releases attributes with no consent check at all.
+- Follow `ConsentQueryResult`. It carries the decision and the service, and
+  `DefaultConsentActivationStrategy` throws all of that away by returning `.isRequired()`.
+  Each discarded result costs another full `getConsentableAttributes` evaluation (person
+  directory included) and another repository read; a consented login does three of each.
+- `DefaultConsentEngine.executeRepositoryOperation` calls `toConsentRepository(tenant)` on
+  every operation, and `TenantJdbcConsentRepositoryBuilder` builds a DataSource plus a
+  Hibernate `EntityManagerFactory` inside it, then destroys them. Check the multitenant
+  path before judging consent performance; the single-tenant path is not representative.
+- Repository lookups must be checked for operator and pattern correctness, not just for
+  the right column names. `DynamoDbConsentFacilitator` matches SERVICE and ID with
+  `ComparisonOperator.GE` (correct for the date ranges other CAS DynamoDB facilitators
+  use it for, wrong for an equality lookup) over a `scanPaginator`, and
+  `RedisConsentRepository` interpolates the raw principal id into a SCAN glob so a
+  principal containing `*` or `?` reaches other users' decisions.
+- Deletes deserve the same reading as reads. `JpaConsentRepository.deleteConsentDecisions`
+  uses `getSingleResult()` and so silently deletes nothing for any user with more than one
+  decision, and `ChainingConsentRepository` stores to every repository but deletes with
+  `anyMatch`, which stops at the first success. Revocation failing quietly is worse than
+  consent failing loudly.
+- A decision that will not decipher is fatal, not recoverable:
+  `getConsentableAttributesFrom` turns any failure into `IllegalArgumentException`, which
+  propagates out of `isConsentRequiredFor` and out of the login flow. Key rotation, or a
+  node without the shared `cas.consent.core.crypto` keys, locks the user out instead of
+  re-prompting.
+- `ConfirmConsentAction` parses `option`, `reminder` and `reminderTimeUnit` straight off
+  the request with `Integer.parseInt` / `Long.parseLong` / `ChronoUnit.valueOf` and
+  persists them unvalidated. `ChronoUnit.FOREVER` and `ERAS` parse fine and then throw
+  from `createdDate.plus(...)` on every later login.
+- `cas.consent.core.active` defaults to `true`, so adding the module turns consent on for
+  every service that releases attributes. Weigh findings about the consent path as if it
+  is always on.
+- Wallet/OID4VCI integration is the real gap, not a defect in the consent modules:
+  `BaseOidcVerifiableCredentialEncoder` reads `principal.getAttributes()` directly against
+  the issuer's configured claim list, so a credential handed to a wallet carries no
+  consent record, no per-claim choice, and no revocation. Selective disclosure exists in
+  the SD-JWT encoder but the holder never chooses what is disclosed at issuance time.
+- Puppeteer coverage: `attribute-consent` (in-memory repository, one user, one service),
+  `multitenancy-consent-jdbc`, `saml2-idp-login-consent`, `saml2-idp-login-consent-with-sso`.
+  No scenario exercises LDAP, Redis, Mongo, DynamoDB or REST consent, and none stores two
+  decisions for the same user, which is exactly the shape every storage defect above needs.
+
+## MongoDB backends (service registry and ticket registry) review discipline
+
+- Three modules carry everything: `cas-server-support-mongo-core` (`MongoDbConnectionFactory`,
+  `BaseConverters`, `DefaultCasMongoTemplate`, `MongoDbClusterTopologyManager`),
+  `cas-server-support-mongo-service-registry`, and `cas-server-support-mongo-ticket-registry`
+  (registry, `MongoDbTicketDocument`, `MongoDbTicketRegistryFacilitator`, catalog provider).
+  Findings in the core factory apply to all ~19 `*-mongo` support modules at once; findings in a
+  registry usually do not generalize.
+- `MongoDbConnectionFactory.buildMongoDbClient` has two branches and they are not equivalent. The
+  `client-uri` branch applies the connection string and nothing else: no `CasSSLContext`, no
+  `ZonedDateTimeCodecProvider`, no pool/socket/server settings, no read or write concern, no
+  `retryWrites`. A connection string cannot express a custom trust store, so a deployment using
+  `client-uri` silently falls back to the JVM default trust material. Check which branch a setting
+  lives in before describing it as configurable.
+- Read the defaults from the operator's point of view before judging a flow: `ssl-enabled=false`,
+  ticket-registry `crypto.enabled=false`, `write-concern=ACKNOWLEDGED`, `read-concern=AVAILABLE`,
+  `retry-writes=false`. With the cipher off, `AbstractTicketRegistry.collectAndDigestTicketAttributes`
+  returns attributes undigested, so the Mongo document carries the principal, the service and every
+  authentication attribute in clear beside the ticket JSON.
+- Durability is part of the security argument here. `deleteTicket` is a compare-and-swap only as far
+  as the write concern makes the delete durable; `w:1` plus a replica-set failover can roll back the
+  removal of a one-time-use ticket, code or nonce. Evaluate single-use state against the write
+  concern, not just against the code path.
+- The `MongoClient` built by the factory is never closed, and both templates are `@RefreshScope`.
+  Anything a template bean method does at construction — `createCollection(..., dropCollection)` in
+  the service registry, `createTicketCollections()` in `MongoDbTicketRegistryConfiguration` — runs
+  again on every `/actuator/refresh`, with the same `drop-collection` flag. Treat bean-construction
+  side effects in a refreshable bean as runtime operations, not startup operations.
+- `mongoDbTicketRegistryTemplate` is `@Primary`. Any module injecting `MongoTemplate` by type gets
+  the ticket-registry database; check the qualifier before assuming a module talks to its own.
+- Registry methods swallow `Throwable` and return a benign value (`addSingleTicket` returns the
+  ticket, `getTicket` returns null, `updateTicket` returns null). A driver failure is therefore
+  indistinguishable from "not found", and a failed insert looks like a successful login. When
+  reviewing a storage backend, read the catch blocks before the happy path.
+- Paging is applied in the JVM, not in the query: `stream(criteria)` and `query(criteria)` use
+  `Stream.skip`/`limit` over `mongoTemplate.stream(...)`, so every document in every collection is
+  fetched and deserialized first, and a short-circuited `flatMap` can leave cursors open. Compare a
+  registry's `TicketRegistryStreamCriteria`/`TicketRegistryQueryCriteria` handling against the query
+  it actually sends.
+- Index coverage is per ticket definition. `IDX_PRINCIPAL` is created only when
+  `getApiClass().equals(TicketGrantingTicket.class)`, while `deleteTicketsFor` and the principal
+  criteria run against every collection, so OAuth/OIDC/SAML token collections are scanned.
+- Writer and reader must agree on key mapping. `MappingMongoConverter` is configured with
+  `setMapKeyDotReplacement("_#_")`, but `getSessionsWithAttributes` builds `attributes.<key>` paths
+  directly, so any attribute name containing a dot is stored under one name and queried under
+  another. Check the converter's configuration whenever a query addresses a map field by path.
+- `casTicketRegistryLockRepository` exists for Redis and JPA and does not exist for Mongo, so
+  `LockRepository` is JVM-local on a Mongo cluster. Every read-modify-write invariant (`updateTicket`
+  is an unconditional `updateFirst` with no version check) is last-writer-wins across nodes.
+- Puppeteer coverage is `mongodb-ticket-service-registry` only, and it asserts the health indicator,
+  one registered service and the ticket-registry cleaner. There is no login flow, no crypto-enabled
+  variant, no TLS and no concurrency, so a change in this area needs a new scenario rather than a
+  rerun. `http-session-mongodb`, `authn-events-mongodb`, `configuration-properties-mongodb`,
+  `simple-mfa-trusted-device-mongodb`, `saml2-idp-login-sp-metadata-mongodb` and
+  `delegated-login-saml2-mongodb-metadata` exercise the shared connection factory and are the ones to
+  re-run for any `cas-server-support-mongo-core` change.
