@@ -163,8 +163,14 @@ security have been strengthened across several flows.
 - Storage-backed SAML2 metadata resolution now uses the requested entity ID to limit document lookups and resolver rebuilds.
 - SAML2 SOAP attribute queries and artifact resolutions now require independently validated signatures, message freshness, destinations, and replay protection; artifact tickets are relying-party bound and consumed atomically.
 - [SAML2 single logout](../installation/Configuring-SAML2-Logout.html) now validates request freshness and replay, fully authenticates and correlates logout responses, and generates actuator logout requests with the correct IdP issuer and service-provider destination.
-- Identity provider metadata is now resolved atomically, so concurrent requests can no longer observe a metadata document, or the signing and encryption credentials that belong to it, that was installed on behalf of a different registered service.
-- A service provider metadata backup file is no longer deleted ahead of a download attempt, and is used as a fallback when the remote metadata source or MDQ server cannot be reached, so a momentary outage there no longer takes the service offline.
+- [Identity provider metadata](../installation/Configuring-SAML2-DynamicMetadata.html#per-service) is now resolved atomically, so concurrent requests can no longer observe a metadata document, or the signing and encryption credentials that belong to it, that was installed on behalf of a different registered service.
+- A [service provider metadata backup file](../installation/SAML2-ServiceProvider-Metadata.html#default) is no longer deleted ahead of a download attempt, and is used as a fallback when the remote metadata source or MDQ server cannot be reached, so a momentary outage there no longer takes the service offline.
+- A service that defines a metadata signature location now fails to load its metadata when that certificate cannot be read, rather than loading the metadata unverified.
+- Downloaded service provider metadata is written to its backup file in a single step, so services that share one metadata location can no longer read a partially written document.
+- The JDBC and MongoDB identity provider metadata stores now scope the global document lookup to the global owner, so a service's own document and keys can no longer answer in its place.
+- Metadata query requests now ask for `application/samlmetadata+xml` via the `Accept` header, as the SAML profile for the Metadata Query Protocol requires, and are issued through the CAS HTTP client so they use the deployment's TLS trust store and hostname verifier.
+- The SAML2 metadata health indicator answers from the local metadata backup copy where one exists, instead of reaching out to every service's metadata host on every health check.
+- SAML2 metadata user interface information is resolved once per login attempt rather than twice, and dynamically-resolved entities are cached, so rendering the login page no longer issues a metadata query per request.
 
 ### CAS Protocol
 

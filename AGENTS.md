@@ -462,47 +462,100 @@ Guidance for AI coding agents working in the Apereo CAS source tree.
   with `HttpStatus.resolve`, never `valueOf`, or a non-standard code throws instead of
   reaching the fallback.
 - The metadata backup file is named `sha(metadataLocation)` while the Caffeine key is
-  `serviceId|metadataLocation`. Two services pointing at one URL are two cache entries over
-  one file, with no lock around write, read or delete. Check that pairing before proposing
-  anything that touches the backup directory.
-- Trust here is opt-in and fails open. A service without `metadataSignatureLocation` gets no
-  `SignatureValidationFilter` at all, and `SamlUtils.buildSignatureValidationFilter` returns
-  `null` — not an exception — when the configured resource cannot be read, after which the
-  caller logs a warning and loads the metadata anyway. Read `addSignatureValidationFilterIfNeeded`
-  before claiming signature validation is enforced.
+  `serviceId|metadataLocation`. Two services pointing at one URL are two cache entries over one
+  file, and nothing upstream serializes them. The sharing is deliberate — a federation aggregate
+  should not be downloaded once per service — so the fix was to make the write atomic:
+  `writeMetadataToBackupFile` writes a sibling temporary file and moves it into place, falling back
+  to `REPLACE_EXISTING` where `ATOMIC_MOVE` is unsupported, rather than giving each service its own
+  copy or holding a lock across a download. Anything new that writes into the backup directory goes
+  through that method, and remember the `.tmp` siblings when writing directory assertions.
+- Trust here is opt-in, and it used to fail open as well. A service without
+  `metadataSignatureLocation` still gets no `SignatureValidationFilter` at all — that is the
+  operator's choice, not a defect. What changed is the other half:
+  `SamlUtils.buildSignatureValidationFilter` still returns `null` rather than throwing when the
+  configured resource cannot be read, but `addSignatureValidationFilterIfNeeded` now treats that
+  null as fatal and throws. It is only reached once something has established that the metadata is
+  meant to be verified — the service defines a signature location, or the stored document carries a
+  signature — so a null there means the verification that was asked for cannot be performed. Every
+  resolver catches the failure and yields no metadata, which is the intended outcome; do not
+  "fix" that by restoring the warning.
 - `buildRequiredValidUntilFilterIfNeeded` only runs when `metadataMaxValidity > 0`, and
   `SamlRegisteredServiceMetadataExpirationPolicy` reads `cacheDuration` but never `validUntil`.
   Expiry and validity are two different mechanisms in this code; do not conflate them. The
   policy can also return a negative duration when a service expiration date is in the past.
-- IdP metadata backends are not interchangeable. JPA and MongoDB resolve the *global*
-  document with an unfiltered "first row" query (`SELECT r FROM SamlIdPMetadataDocument r`,
-  `findOne(new Query())`), so a per-service document can answer as the global one; Redis scans
-  by `appliesTo`. `appliesTo` is `SamlIdPUtils.getSamlIdPMetadataOwner` = `name + '-' + id`,
-  which also becomes a directory name on the file-system locator and a key elsewhere —
-  unsanitized, and it changes when a service is renamed.
+- IdP metadata backends are not interchangeable, and what to check in each is whether the *global*
+  lookup is scoped. JPA and MongoDB used an unfiltered "first row" query
+  (`SELECT r FROM SamlIdPMetadataDocument r`, `findOne(new Query())`) and so could answer with a
+  per-service document and its keys; both now query `appliesTo` for the global owner like any other.
+  The rest were already scoped: Redis scans by `appliesTo`, DynamoDB queries it, GCP uses it as the
+  blob id, S3 as the bucket, Git as the directory. REST sends `appliesTo` only for a service and
+  leaves the global case to the remote server, which is that endpoint's contract rather than a CAS
+  defect. `appliesTo` is `SamlIdPUtils.getSamlIdPMetadataOwner` = `name + '-' + id`, which also
+  becomes a directory name on the file-system locator and a key elsewhere — unsanitized, and it
+  changes when a service is renamed.
+- Per-service IdP metadata is not something CAS generates. `SamlIdPMetadataLocator
+  .shouldGenerateMetadataFor` is `registeredService.isEmpty()` and no backend overrides it, so the
+  generator only ever mints the global document — at context startup, from each backend generator's
+  `afterPropertiesSet`. A per-service document exists only where an operator provisioned one: a
+  directory named by `idpMetadataLocation` for the file-system locator, or rows and documents
+  inserted directly for JDBC and MongoDB.
+- The guard in front of generation reinforces that. `AbstractSamlIdPMetadataLocator.exists` calls
+  `fetch`, and every per-service `fetchInternal` falls back to the global document when the service
+  has none, so `exists(service)` is true as soon as the *global* document exists. Both
+  `BaseSamlIdPMetadataGenerator.generate` and `SamlIdPMetadataResolver.resolveMetadata` check
+  `exists` before `shouldGenerateMetadataFor`, which means `generate(Optional.of(service))` is a
+  no-op in a normally-started deployment and returns the global document. That fallback is the
+  intended behaviour — a service without its own metadata uses the IdP's — not a defect.
+- Two consequences worth carrying. Scoping the global lookup matters only for deployments that
+  provision per-service rows, so do not describe it as reachable out of the box. And a test cannot
+  create a per-service JDBC or MongoDB document through the generator: it has to insert one the way
+  an operator would, through the entity manager or `mongoTemplate`, and on JDBC through the
+  dialect-specific `JpaSamlIdPMetadataDocumentFactory`. `JpaSamlIdPMetadataGeneratorTests
+  .verifyService` looks like it covers this and does not — its `assertNotNull`s are satisfied by the
+  global fallback.
 - The file-system generator writes the IdP signing and encryption private keys in the clear
   with default permissions; the other backends run the key through `metadataCipherExecutor`.
   Do not describe key-at-rest handling as uniform across backends.
 - `/idp/metadata` is public and calls `generate(...)` on every request, including with a
-  caller-supplied `service` parameter. Generation is guarded only by an `exists()` check, with
-  no lock across threads or nodes, and it mints two RSA keypairs (`key-size` defaults to 4096).
+  caller-supplied `service` parameter. Read that together with the two bullets above before
+  calling it a resource-exhaustion vector, which is the mistake made once in this repo: generation
+  is guarded by an `exists()` check that the global document already satisfies, so in a started
+  deployment the endpoint mints nothing and simply returns the global metadata. What is genuinely
+  unguarded is the first generation, before any document exists — no lock across threads or nodes,
+  and two RSA keypairs at a default `key-size` of 4096.
 - The parser pool in `CasCoreSamlAutoConfiguration` is properly hardened (doctype disallowed,
   external entities off, secure processing on), so XXE is not the gap. Response size is:
   metadata bodies are read with `IOUtils.toString` with no bound.
-- `HttpUtils.execute` builds a new `CloseableHttpClient` with its own pooling connection
-  manager per call and only the response is ever closed. Every metadata fetch pays that, and
-  the MDQ resolver additionally omits `.httpClient(...)`, so it does not use the deployment's
-  configured TLS trust and hostname verifier.
-- Check MDQ against the SAML profile for the Metadata Query Protocol, not from memory: a
-  compliant client MUST send `Accept: application/samlmetadata+xml`. CAS puts
-  `cas.authn.saml-idp.metadata.mdq.supported-content-type` on `Content-Type` of a GET and then
-  sends `Accept: */*`. Signature verification is RECOMMENDED for servers there, not a client
-  MUST, so do not report the optional filter as a spec violation — report it as fail-open.
-- Two request-path amplifiers to watch: `SamlRegisteredServiceMetadataHealthIndicator` calls
-  `isAvailable(...)` for every SAML service, which pings each metadata URL on every health
-  poll; and `DynamicMetadataResolverAdapter.getEntityDescriptorForEntityId` rebuilds its whole
-  resolver aggregate and refetches over MDQ on every call, driven by an unauthenticated
-  `entityId` request parameter that `MetadataUIUtils` asks for twice per login render.
+- `HttpUtils.execute` builds a new `CloseableHttpClient` with its own pooling connection manager
+  per call and only the response is ever closed, so every metadata fetch leaks a pool. This is core
+  machinery used across the whole server rather than a SAML concern, and it is still open; do not
+  fold a change to it into a SAML metadata diff.
+- Check MDQ against the SAML profile for the Metadata Query Protocol, not from memory: a compliant
+  client MUST send `Accept: application/samlmetadata+xml`. CAS used to put
+  `cas.authn.saml-idp.metadata.mdq.supported-content-type` on `Content-Type` of a GET and then send
+  `Accept: */*`, so negotiation never happened; that property is now the `Accept` value and its
+  default is the media type the profile requires. Signature verification is RECOMMENDED for servers
+  there, not a client MUST, so do not report the optional filter as a spec violation — report it as
+  fail-open.
+- The MDQ resolver also used to drop `.httpClient(...)` from its request, so it fell back to a
+  default SSL context instead of the deployment's trust store and hostname verifier while the plain
+  URL resolver used them. `httpClient` is `protected` on `UrlResourceMetadataResolver` for that
+  reason; any new request built in this family passes it.
+- The two request-path amplifiers here are fixed, and the shape of each fix is worth keeping.
+  `SamlRegisteredServiceMetadataHealthIndicator` still asks `isAvailable(...)` of every SAML
+  service on every poll, but the URL resolver now answers from the metadata backup file when one
+  exists and only probes the network for a service with no local copy — the question is whether CAS
+  can serve the service, and a local copy answers it. `DynamicMetadataResolverAdapter` caches
+  resolved entity descriptors *and* misses (bounded, expiring on
+  `cas.saml-metadata-ui.schedule.repeat-interval`), because the entity id driving the fetch arrives
+  on an unauthenticated login request; caching the misses is what bounds what a caller can provoke.
+  Its rebuild replaces a resolver every request shares, so build-then-read is under a
+  `CasReentrantLock`, the same remedy as `SamlIdPMetadataResolver`.
+- `MetadataUIUtils` no longer has `isMetadataFoundForEntityId` or the overload of
+  `locateMetadataUserInterfaceForEntityId` that takes an adapter. Both resolved the entity
+  descriptor themselves, and the login action called one after the other, so every render resolved
+  twice. The action resolves once and passes the descriptor down; do not reintroduce a helper that
+  resolves internally.
 - Puppeteer coverage: `saml2-idp-metadata-caching`, `saml2-idp-login-idp-initiated-mdq`,
   `saml2-idp-login-sp-metadata-{directory,groovy,jdbc,json,mongodb}`,
   `saml2-idp-login-sp-override-metadata`, `saml2-idp-login-metadata-aws-s3`, `saml-mdui`,

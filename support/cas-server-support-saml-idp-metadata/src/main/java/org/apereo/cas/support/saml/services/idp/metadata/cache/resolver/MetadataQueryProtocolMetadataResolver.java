@@ -71,15 +71,8 @@ public class MetadataQueryProtocolMetadataResolver extends UrlResourceMetadataRe
         }
         val entity = ((HttpEntityContainer) response).getEntity();
         val result = IOUtils.toString(entity.getContent(), StandardCharsets.UTF_8);
-        val path = backupFile.toPath();
-        LOGGER.trace("Writing metadata to file at [{}]", path);
-        try (val output = Files.newBufferedWriter(path, StandardCharsets.UTF_8)) {
-            IOUtils.write(result, output);
-            output.flush();
-            StreamSupport.stream(path.getFileSystem().getFileStores().spliterator(), false)
-                .filter(store -> store.supportsFileAttributeView(UserDefinedFileAttributeView.class))
-                .forEach(store -> setFileAttribute(response, backupFile));
-        }
+        writeMetadataToBackupFile(result, backupFile);
+        setFileAttribute(response, backupFile);
         EntityUtils.consume(entity);
         return new InMemoryResourceMetadataResolver(backupFile, configBean);
     }
@@ -97,8 +90,7 @@ public class MetadataQueryProtocolMetadataResolver extends UrlResourceMetadataRe
                                                    final String metadataLocation, final CriteriaSet criteriaSet, final File backupFile) {
         val metadata = samlIdPProperties.getMetadata().getMdq();
         val headers = new LinkedHashMap<String, String>();
-        headers.put(HttpHeaders.CONTENT_TYPE, metadata.getSupportedContentType());
-        headers.put(HttpHeaders.ACCEPT, "*/*");
+        headers.put(HttpHeaders.ACCEPT, metadata.getSupportedContentType());
         val path = backupFile.toPath();
         FunctionUtils.doAndHandle(p -> {
             if (Files.exists(path)) {
@@ -114,6 +106,8 @@ public class MetadataQueryProtocolMetadataResolver extends UrlResourceMetadataRe
             .url(metadataLocation)
             .headers(headers)
             .proxyUrl(service.getMetadataProxyLocation())
+            .httpClient(httpClient)
+            .maximumRetryAttempts(samlIdPProperties.getMetadata().getCore().getMaximumRetryAttempts())
             .build();
         val response = HttpUtils.execute(exec);
         val status = response != null ? HttpStatus.resolve(response.getCode()) : null;

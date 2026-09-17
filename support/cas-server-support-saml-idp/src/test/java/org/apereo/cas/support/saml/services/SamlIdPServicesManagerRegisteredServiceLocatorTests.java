@@ -18,6 +18,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.core.Ordered;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
+import org.springframework.test.context.TestPropertySource;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 import static org.junit.jupiter.api.Assertions.*;
@@ -32,6 +33,8 @@ import static org.mockito.Mockito.*;
  */
 @Tag("SAML2")
 @SuppressWarnings("InlineFormatString")
+@TestPropertySource(properties =
+    "cas.authn.saml-idp.metadata.file-system.location=${#systemProperties['java.io.tmpdir']}/idp-metadata-locator")
 class SamlIdPServicesManagerRegisteredServiceLocatorTests extends BaseSamlIdPConfigurationTests {
     private static final String SAML_AUTHN_REQUEST1 = "<?xml version=\"1.0\" encoding=\"UTF-8\"?><saml2p:AuthnRequest "
                                                       + "xmlns:saml2p=\"urn:oasis:names:tc:SAML:2.0:protocol\" AssertionConsumerServiceURL=\"http://localhost:8081/callback"

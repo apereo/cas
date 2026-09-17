@@ -13,7 +13,6 @@ import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.core.io.ClassPathResource;
-import org.springframework.core.io.UrlResource;
 import org.springframework.test.context.TestPropertySource;
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -65,6 +64,34 @@ class UrlResourceMetadataResolverTests {
         }
 
         @Test
+        void verifyServicesSharingOneLocationShareOneBackupFile() throws Throwable {
+            val resolver = getMetadataResolver();
+            try (val webServer = new MockWebServer(new ClassPathResource("sample-metadata.xml"))) {
+                webServer.start();
+                val location = "http://localhost:%s".formatted(webServer.getPort());
+
+                val serviceOne = new SamlRegisteredService();
+                serviceOne.setName(RandomUtils.randomAlphabetic(12));
+                serviceOne.setId(RandomUtils.nextInt());
+                serviceOne.setMetadataLocation(location);
+
+                val serviceTwo = new SamlRegisteredService();
+                serviceTwo.setName(RandomUtils.randomAlphabetic(12));
+                serviceTwo.setId(RandomUtils.nextInt());
+                serviceTwo.setMetadataLocation(location);
+
+                assertFalse(resolver.resolve(serviceOne).isEmpty());
+                assertFalse(resolver.resolve(serviceTwo).isEmpty());
+
+                val backupFile = resolver.getMetadataBackupFile(serviceOne);
+                assertEquals(backupFile, resolver.getMetadataBackupFile(serviceTwo));
+                assertTrue(backupFile.exists());
+                assertTrue(FileUtils.listFiles(backupFile.getParentFile(), new String[]{"tmp"}, false).isEmpty(),
+                    "Metadata backup directory must not retain temporary files");
+            }
+        }
+
+        @Test
         void verifyResolverFallsBackToBackupWhenSourceIsUnreachable() throws Throwable {
             val service = new SamlRegisteredService();
             service.setName(RandomUtils.randomAlphabetic(12));
@@ -76,7 +103,7 @@ class UrlResourceMetadataResolverTests {
                 service.setMetadataLocation("http://localhost:%s".formatted(webServer.getPort()));
                 assertFalse(resolver.resolve(service).isEmpty());
             }
-            val backupFile = resolver.getMetadataBackupFile(new UrlResource(service.getMetadataLocation()), service);
+            val backupFile = resolver.getMetadataBackupFile(service);
             assertTrue(backupFile.exists(), "Metadata backup file must survive a forced refresh");
             assertFalse(resolver.resolve(service).isEmpty(),
                 "Metadata backup file must carry the service while the metadata source is unreachable");
@@ -145,7 +172,7 @@ class UrlResourceMetadataResolverTests {
                 assertFalse(results.isEmpty());
             }
 
-            val backupFile = resolver.getMetadataBackupFile(new UrlResource(service.getMetadataLocation()), service);
+            val backupFile = resolver.getMetadataBackupFile(service);
             FileUtils.writeByteArrayToFile(backupFile, UUID.randomUUID().toString().getBytes(StandardCharsets.UTF_8));
             try (val webServer = new MockWebServer(new ClassPathResource("sample-metadata.xml"))) {
                 webServer.start();

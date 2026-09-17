@@ -5,6 +5,7 @@ import module java.xml;
 import org.apereo.cas.configuration.model.support.saml.idp.SamlIdPProperties;
 import org.apereo.cas.support.saml.InMemoryResourceMetadataResolver;
 import org.apereo.cas.support.saml.OpenSamlConfigBean;
+import org.apereo.cas.support.saml.SamlException;
 import org.apereo.cas.support.saml.SamlIdPUtils;
 import org.apereo.cas.support.saml.SamlUtils;
 import org.apereo.cas.support.saml.services.SamlRegisteredService;
@@ -169,19 +170,35 @@ public abstract class BaseSamlRegisteredServiceMetadataResolver implements SamlR
         }
     }
 
+    /**
+     * Adds the signature validation filter to the chain.
+     * <p>
+     * This is only ever reached once something has already established that the metadata is meant to
+     * be verified, either because the service defines a signature location or because the stored
+     * document carries a signature. A null filter therefore means the verification that was asked for
+     * cannot be performed -- the certificate or public key could not be read -- and that is a failure,
+     * not a condition to log and carry on from. Loading the metadata anyway would hand the service
+     * exactly the trust it configured CAS not to extend.
+     *
+     * @param service                  the registered service
+     * @param signatureValidationFilter the filter, or null when it could not be built
+     * @param metadataFilterList       the filter chain being assembled
+     * @throws Exception the exception
+     */
     private static void addSignatureValidationFilterIfNeeded(final SamlRegisteredService service,
                                                              @Nullable final SignatureValidationFilter signatureValidationFilter,
                                                              final List<MetadataFilter> metadataFilterList) throws Exception {
-        if (signatureValidationFilter != null) {
-            if (!signatureValidationFilter.isInitialized()) {
-                signatureValidationFilter.setRequireSignedRoot(service.isRequireSignedRoot());
-                signatureValidationFilter.initialize();
-            }
-            metadataFilterList.add(signatureValidationFilter);
-            LOGGER.debug("Added metadata SignatureValidationFilter for [{}]", service.getServiceId());
-        } else {
-            LOGGER.warn("Skipped metadata SignatureValidationFilter since signature cannot be located for [{}]", service.getServiceId());
+        if (signatureValidationFilter == null) {
+            throw new SamlException(("Metadata signature validation is required for service [%s], but the signature "
+                + "cannot be located or read. Metadata will not be loaded, since it cannot be verified.")
+                .formatted(service.getName()));
         }
+        if (!signatureValidationFilter.isInitialized()) {
+            signatureValidationFilter.setRequireSignedRoot(service.isRequireSignedRoot());
+            signatureValidationFilter.initialize();
+        }
+        metadataFilterList.add(signatureValidationFilter);
+        LOGGER.debug("Added metadata SignatureValidationFilter for [{}]", service.getServiceId());
     }
 
     protected static void buildEntityDescriptorCertificatesExpirationFilterIfNeeded(

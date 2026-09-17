@@ -43,34 +43,6 @@ public class MetadataUIUtils {
     }
 
     /**
-     * Determines whether metadata is found for the entity ID.
-     *
-     * @param metadataAdapter the metadata adapter
-     * @param entityId        the entity id
-     * @return true/false
-     */
-    public static boolean isMetadataFoundForEntityId(final MetadataResolverAdapter metadataAdapter, final String entityId) {
-        return metadataAdapter.getEntityDescriptorForEntityId(entityId) != null;
-    }
-
-    /**
-     * Locate MDUI for entity id simple metadata ui info.
-     *
-     * @param metadataAdapter   the metadata adapter
-     * @param entityId          the entity id
-     * @param registeredService the registered service
-     * @param requestContext    the request context
-     * @return the simple metadata ui info
-     */
-    public static SamlMetadataUIInfo locateMetadataUserInterfaceForEntityId(
-        final MetadataResolverAdapter metadataAdapter,
-        final String entityId, final WebBasedRegisteredService registeredService,
-        final HttpServletRequest requestContext) {
-        val entityDescriptor = metadataAdapter.getEntityDescriptorForEntityId(entityId);
-        return locateMetadataUserInterfaceForEntityId(entityDescriptor, entityId, registeredService, requestContext);
-    }
-
-    /**
      * Locate mdui for entity id simple metadata ui info.
      *
      * @param entityDescriptor  the entity descriptor

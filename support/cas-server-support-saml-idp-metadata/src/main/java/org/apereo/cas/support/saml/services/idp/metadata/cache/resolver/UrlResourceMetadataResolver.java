@@ -36,8 +36,6 @@ import org.apereo.inspektr.audit.annotation.Audit;
 import org.jspecify.annotations.Nullable;
 import org.opensaml.saml.metadata.resolver.MetadataResolver;
 import org.opensaml.saml.metadata.resolver.impl.AbstractMetadataResolver;
-import org.springframework.core.io.AbstractResource;
-import org.springframework.core.io.UrlResource;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 
@@ -53,7 +51,10 @@ public class UrlResourceMetadataResolver extends BaseSamlRegisteredServiceMetada
 
     private static final String DIRNAME_METADATA_BACKUPS = "metadata-backups";
 
-    private final HttpClient httpClient;
+    /**
+     * The CAS HTTP client, carrying the deployment's TLS trust store and hostname verifier.
+     */
+    protected final HttpClient httpClient;
 
     private final File metadataBackupDirectory;
 
@@ -126,8 +127,7 @@ public class UrlResourceMetadataResolver extends BaseSamlRegisteredServiceMetada
         final String metadataLocation) throws Exception {
 
         LOGGER.info("Loading SAML metadata from [{}]", metadataLocation);
-        val metadataResource = new UrlResource(metadataLocation);
-        val backupFile = getMetadataBackupFile(metadataResource, service);
+        val backupFile = getMetadataBackupFile(service);
         val canonicalPath = backupFile.getCanonicalPath();
         LOGGER.debug("Metadata backup file for [{}] will be at [{}]", service.getName(), canonicalPath);
         FileUtils.forceMkdirParent(backupFile);
@@ -230,15 +230,19 @@ public class UrlResourceMetadataResolver extends BaseSamlRegisteredServiceMetada
     @Override
     public boolean isAvailable(final SamlRegisteredService service) {
         if (supports(service)) {
-            val locations = org.springframework.util.StringUtils.commaDelimitedListToSet(
-                SpringExpressionLanguageValueResolver.getInstance().resolve(service.getMetadataLocation()));
-            return locations
-                .stream()
-                .map(metadataLocation -> StringUtils.substringBefore(metadataLocation, "/entities/{0}"))
-                .anyMatch(metadataLocation -> {
-                    val status = HttpRequestUtils.pingUrl(metadataLocation);
-                    return !status.isError();
-                });
+            return FunctionUtils.doAndHandle(() -> {
+                val backupFile = getMetadataBackupFile(service);
+                if (backupFile.exists() && backupFile.canRead()) {
+                    LOGGER.trace("Metadata for service [{}] is available locally at [{}]", service.getName(), backupFile);
+                    return Boolean.TRUE;
+                }
+                val locations = org.springframework.util.StringUtils.commaDelimitedListToSet(
+                    SpringExpressionLanguageValueResolver.getInstance().resolve(service.getMetadataLocation()));
+                return locations
+                    .stream()
+                    .map(metadataLocation -> StringUtils.substringBefore(metadataLocation, "/entities/{0}"))
+                    .anyMatch(metadataLocation -> !HttpRequestUtils.pingUrl(metadataLocation).isError());
+            }, throwable -> Boolean.FALSE).get();
         }
         return false;
     }
@@ -251,14 +255,41 @@ public class UrlResourceMetadataResolver extends BaseSamlRegisteredServiceMetada
                                                                        final File backupFile) throws Exception {
         val entity = ((HttpEntityContainer) response).getEntity();
         val result = IOUtils.toString(entity.getContent(), StandardCharsets.UTF_8);
-        val path = backupFile.toPath();
-        LOGGER.trace("Writing metadata to file at [{}]", path);
-        try (val output = Files.newBufferedWriter(path, StandardCharsets.UTF_8)) {
-            IOUtils.write(result, output);
-            output.flush();
-        }
+        writeMetadataToBackupFile(result, backupFile);
         EntityUtils.consume(entity);
         return getMetadataResolverFromFile(backupFile);
+    }
+
+    /**
+     * Replaces the contents of the metadata backup file in a single step.
+     * <p>
+     * The backup file caches a metadata location, not a service, so it is named after the location
+     * alone and every service pointing at that location shares it. That sharing is deliberate -- one
+     * federation aggregate should not be downloaded and stored once per service -- but it means one
+     * resolution can be reading the file while another is replacing it, and those two are separate
+     * entries in the metadata cache, so nothing upstream serializes them. Writing through a temporary
+     * file in the same directory and moving it into place keeps a reader on either the whole previous
+     * document or the whole new one, never on a half-written one.
+     *
+     * @param metadata   the metadata document to store
+     * @param backupFile the metadata backup file
+     * @throws Exception the exception
+     */
+    protected void writeMetadataToBackupFile(final String metadata, final File backupFile) throws Exception {
+        val target = backupFile.toPath();
+        LOGGER.trace("Writing metadata to file at [{}]", target);
+        val temporaryFile = Files.createTempFile(target.getParent(), backupFile.getName(), ".tmp");
+        try {
+            Files.writeString(temporaryFile, metadata, StandardCharsets.UTF_8);
+            try {
+                Files.move(temporaryFile, target, StandardCopyOption.ATOMIC_MOVE);
+            } catch (final AtomicMoveNotSupportedException e) {
+                LOGGER.debug(e.getMessage(), e);
+                Files.move(temporaryFile, target, StandardCopyOption.REPLACE_EXISTING);
+            }
+        } finally {
+            Files.deleteIfExists(temporaryFile);
+        }
     }
 
     private InMemoryResourceMetadataResolver getMetadataResolverFromFile(final File backupFile) throws Exception {
@@ -287,11 +318,18 @@ public class UrlResourceMetadataResolver extends BaseSamlRegisteredServiceMetada
             SpringExpressionLanguageValueResolver.getInstance().resolve(service.getMetadataLocation()));
     }
 
-    protected File getMetadataBackupFile(final AbstractResource metadataResource,
-                                         final SamlRegisteredService service) throws IOException {
-
+    /**
+     * Locates the metadata backup file for a service. The file is identified by the service's
+     * metadata location, or by its entity id for a metadata query, and by nothing else, so no
+     * resource needs to be resolved to find it.
+     *
+     * @param service the registered service
+     * @return the backup file, which may not exist yet
+     * @throws IOException the exception
+     */
+    protected File getMetadataBackupFile(final SamlRegisteredService service) throws IOException {
         LOGGER.debug("Metadata backup directory is at [{}]", this.metadataBackupDirectory.getCanonicalPath());
-        val metadataFileName = getBackupMetadataFilenamePrefix(metadataResource, service).concat(FILENAME_EXTENSION_XML);
+        val metadataFileName = getBackupMetadataFilenamePrefix(service).concat(FILENAME_EXTENSION_XML);
         val backupFile = new File(metadataBackupDirectory, metadataFileName);
         if (backupFile.exists()) {
             LOGGER.info("Metadata file designated for service [{}] already exists at path [{}].", service.getName(), backupFile.getCanonicalPath());
@@ -301,7 +339,7 @@ public class UrlResourceMetadataResolver extends BaseSamlRegisteredServiceMetada
         return backupFile;
     }
 
-    protected String getBackupMetadataFilenamePrefix(final AbstractResource metadataResource, final SamlRegisteredService service) {
+    protected String getBackupMetadataFilenamePrefix(final SamlRegisteredService service) {
         val metadataLocation = SpringExpressionLanguageValueResolver.getInstance().resolve(service.getMetadataLocation());
         val fileName = SamlUtils.isDynamicMetadataQueryConfigured(metadataLocation)
             ? service.getServiceId()
