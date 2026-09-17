@@ -21,6 +21,60 @@ import static org.mockito.Mockito.*;
  */
 @Tag("Utility")
 class HttpUtilsTests {
+    /**
+     * These two tests assert that an unreachable endpoint produces an error response, so they need
+     * ports that nothing is listening on. They cannot be any port in 4000-9999: that is the range
+     * {@code MockWebServer} draws from, this category runs its tests in parallel, and a sibling
+     * test's mock server landing on the chosen port turns "connection refused" into a real reply
+     * and the assertion inverts. Ports 8080 and 8081, which these tests used to hardcode, are also
+     * the two most likely things to be running on a developer's own machine.
+     */
+    private static final int UNREACHABLE_PROXY_PORT = 61080;
+
+    private static final int UNREACHABLE_TARGET_PORT = 61081;
+
+
+    @Test
+    void verifyClientReuseAcrossRequests() throws Throwable {
+        try (val webServer = new MockWebServer(HttpStatus.OK)) {
+            webServer.start();
+            val url = "http://localhost:%s".formatted(webServer.getPort());
+
+            for (var i = 0; i < 25; i++) {
+                val exec = HttpExecutionRequest.builder()
+                    .method(HttpMethod.GET)
+                    .url(url)
+                    .build();
+                val response = HttpUtils.execute(exec);
+                assertNotNull(response);
+                assertEquals(HttpStatus.OK.value(), response.getCode());
+                HttpUtils.close(response);
+            }
+
+            val failures = new ConcurrentLinkedQueue<String>();
+            val futures = new ArrayList<Future<?>>();
+            try (val executor = Executors.newVirtualThreadPerTaskExecutor()) {
+                for (var i = 0; i < 20; i++) {
+                    futures.add(executor.submit(() -> {
+                        val exec = HttpExecutionRequest.builder()
+                            .method(HttpMethod.GET)
+                            .url(url)
+                            .build();
+                        val response = HttpUtils.execute(exec);
+                        if (response == null || response.getCode() != HttpStatus.OK.value()) {
+                            failures.add("Unexpected response " + response);
+                        }
+                        HttpUtils.close(response);
+                        return null;
+                    }));
+                }
+                for (val future : futures) {
+                    future.get();
+                }
+            }
+            assertTrue(failures.isEmpty(), () -> String.join("; ", failures));
+        }
+    }
 
     @Test
     void verifyRetryOnErrors() {
@@ -98,8 +152,8 @@ class HttpUtilsTests {
             .basicAuthUsername("user")
             .method(HttpMethod.GET)
             .entity("entity")
-            .url("http://localhost:8081")
-            .proxyUrl("http://localhost:8080")
+            .url("http://localhost:%s".formatted(UNREACHABLE_TARGET_PORT))
+            .proxyUrl("http://localhost:%s".formatted(UNREACHABLE_PROXY_PORT))
             .build()
             .withoutRetry();
         val result = HttpUtils.execute(exec);
@@ -113,8 +167,8 @@ class HttpUtilsTests {
             .bearerToken(UUID.randomUUID().toString())
             .method(HttpMethod.GET)
             .entity("entity")
-            .url("http://localhost:8081")
-            .proxyUrl("http://localhost:8080")
+            .url("http://localhost:%s".formatted(UNREACHABLE_TARGET_PORT))
+            .proxyUrl("http://localhost:%s".formatted(UNREACHABLE_PROXY_PORT))
             .build()
             .withoutRetry();
 

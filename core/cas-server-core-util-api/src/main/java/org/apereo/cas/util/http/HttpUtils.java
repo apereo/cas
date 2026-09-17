@@ -54,10 +54,35 @@ import org.springframework.http.MediaType;
 @Slf4j
 @UtilityClass
 public class HttpUtils {
+    /**
+     * A shared client is keyed by the few inputs that decide how it is built, and in a deployment
+     * those take one or two distinct values. The bound exists only so that an unexpected source of
+     * fresh identities cannot grow the registry without limit; past it, callers fall back to a
+     * client of their own that is closed when the call completes.
+     */
+    private static final int MAXIMUM_SHARED_CLIENTS = 16;
+
+    /**
+     * Pool limits for a shared client. A per-call client had a pool to itself and so no effective
+     * ceiling; a shared pool does, and the library's defaults of 25 total and 5 per route would
+     * turn into one.
+     */
+    private static final int MAXIMUM_TOTAL_CONNECTIONS = 200;
+
+    private static final int MAXIMUM_CONNECTIONS_PER_ROUTE = 50;
+
+    private static final Object DEFAULT_CLIENT_IDENTITY = new Object();
+
+    private static final Map<SharedClientKey, CloseableHttpClient> SHARED_CLIENTS = new ConcurrentHashMap<>();
+
     private static final Timeout CONNECT_TIMEOUT_IN_MILLISECONDS = getTimeout("connectionTimeout");
     private static final Timeout SOCKET_TIMEOUT_IN_MILLISECONDS = getTimeout("socketTimeout");
     private static final Timeout CONNECT_TTL_TIMEOUT_IN_MILLISECONDS = getTimeout("connectionTimeToLive");
     private static final Timeout CONNECTION_REQUEST_TIMEOUT_IN_MILLISECONDS = getTimeout("connectionRequest");
+
+    static {
+        Runtime.getRuntime().addShutdownHook(new Thread(HttpUtils::closeSharedClients, "cas-http-shared-clients"));
+    }
 
     private static Timeout getTimeout(final String setting) {
         val timeoutValue = StringUtils.defaultIfBlank(System.getProperty(HttpUtils.class.getName() + '.' + setting), "5000");
@@ -73,12 +98,15 @@ public class HttpUtils {
     public HttpResponse execute(final HttpExecutionRequest execution) {
         val uri = buildHttpUri(execution.getUrl().trim(), execution.getParameters());
         val request = getHttpRequestByMethod(execution.getMethod().name().toLowerCase(Locale.ENGLISH).trim(), execution.getEntity(), uri);
+        CloseableHttpClient bespokeClient = null;
         try {
             request.setHeaders(execution.getHeaders().entrySet().stream()
                 .map(entry -> new BasicHeader(entry.getKey(), entry.getValue()))
                 .toArray(BasicHeader[]::new));
             prepareHttpRequest(request, execution);
-            val client = getHttpClient(execution);
+            val resolvedClient = resolveHttpClient(execution);
+            bespokeClient = resolvedClient.shared() ? null : resolvedClient.httpClient();
+            val client = resolvedClient.httpClient();
             return FunctionUtils.doAndRetry((Retryable<HttpResponse>) () -> {
                 LOGGER.trace("Sending HTTP request to [{}]", request.getUri());
                 val res = client.execute(request, HttpRequestUtils.HTTP_CLIENT_RESPONSE_HANDLER);
@@ -103,8 +131,84 @@ public class HttpUtils {
                 }
                 return response;
             }
+        } finally {
+            closeQuietly(bespokeClient);
         }
         return new BasicHttpResponse(HttpStatus.SC_SERVICE_UNAVAILABLE);
+    }
+
+    /**
+     * Resolves the client to run a request with, reusing one wherever the request does not need a
+     * client of its own.
+     * <p>
+     * A client is expensive: it owns a pooling connection manager, and every connection that pool
+     * opens pays a TCP and, over TLS, a handshake. Building one per call threw all of that away
+     * after a single request and left the pool — and the idle socket in it — for nobody to close,
+     * since nothing would ever lease from it again. Clients are therefore cached by exactly what
+     * decides how they are built: the TLS material, whether redirects are followed, and whether
+     * automatic retries are on. Timeouts come from system properties read once, so they are the
+     * same for every client and do not belong in the key.
+     * <p>
+     * A proxy or a DNS override is caller-supplied and unbounded, so those requests get a client of
+     * their own, which the caller closes when the request completes.
+     *
+     * @param execution the execution request
+     * @return the client, and whether it is shared and so must not be closed by the caller
+     * @throws Exception the exception
+     */
+    private static ResolvedHttpClient resolveHttpClient(final HttpExecutionRequest execution) throws Exception {
+        if (StringUtils.isNotBlank(execution.getProxyUrl()) || !execution.getResolvedAddresses().isEmpty()) {
+            return new ResolvedHttpClient(getHttpClient(execution, false), false);
+        }
+        val clientIdentity = Optional.ofNullable(execution.getHttpClient())
+            .map(HttpClient::httpClientFactory)
+            .map(Object.class::cast)
+            .orElse(DEFAULT_CLIENT_IDENTITY);
+        val key = new SharedClientKey(clientIdentity,
+            execution.isRedirectsEnabled(), execution.getMaximumRetryAttempts() > 1);
+        val shared = SHARED_CLIENTS.get(key);
+        if (shared != null) {
+            return new ResolvedHttpClient(shared, true);
+        }
+        if (SHARED_CLIENTS.size() >= MAXIMUM_SHARED_CLIENTS) {
+            LOGGER.warn("Reached [{}] shared HTTP clients; building a dedicated client for this request instead. "
+                + "This is unexpected and suggests HTTP client factories are being created per request.", MAXIMUM_SHARED_CLIENTS);
+            return new ResolvedHttpClient(getHttpClient(execution, false), false);
+        }
+        return new ResolvedHttpClient(SHARED_CLIENTS.computeIfAbsent(key,
+            _ -> FunctionUtils.doUnchecked(() -> getHttpClient(execution, true))), true);
+    }
+
+    private static void closeSharedClients() {
+        SHARED_CLIENTS.values().forEach(HttpUtils::closeQuietly);
+        SHARED_CLIENTS.clear();
+    }
+
+    private static void closeQuietly(final @Nullable CloseableHttpClient client) {
+        if (client != null) {
+            FunctionUtils.doAndHandle(_ -> client.close());
+        }
+    }
+
+    /**
+     * Identifies a client that may be shared between requests. Two requests may use one client when
+     * every input to its construction matches.
+     *
+     * @param clientIdentity   the HTTP client factory supplying TLS material, or a sentinel when none
+     * @param redirectsEnabled whether redirects are followed
+     * @param automaticRetries whether the library's own retry handler is left in place
+     */
+    private record SharedClientKey(Object clientIdentity, boolean redirectsEnabled, boolean automaticRetries) {
+    }
+
+    /**
+     * A client, and whether it belongs to the shared registry. A client that does not must be closed
+     * once the request it was built for completes.
+     *
+     * @param httpClient the client
+     * @param shared     whether the client is shared and must be left open
+     */
+    private record ResolvedHttpClient(CloseableHttpClient httpClient, boolean shared) {
     }
 
     /**
@@ -113,8 +217,9 @@ public class HttpUtils {
      * @param execution http execution request
      * @return http execution request
      */
-    private static CloseableHttpClient getHttpClient(final HttpExecutionRequest execution) throws Exception {
-        val builder = getHttpClientBuilder(execution);
+    private static CloseableHttpClient getHttpClient(final HttpExecutionRequest execution,
+                                                     final boolean shared) throws Exception {
+        val builder = getHttpClientBuilder(execution, shared);
         if (StringUtils.isNotBlank(execution.getProxyUrl())) {
             val proxyEndpoint = new URI(execution.getProxyUrl()).toURL();
             val proxy = new HttpHost(proxyEndpoint.getHost(), proxyEndpoint.getPort());
@@ -231,7 +336,7 @@ public class HttpUtils {
         });
     }
 
-    private HttpClientBuilder getHttpClientBuilder(final HttpExecutionRequest execution) {
+    private HttpClientBuilder getHttpClientBuilder(final HttpExecutionRequest execution, final boolean shared) {
         val requestConfig = RequestConfig.custom();
         requestConfig.setConnectTimeout(CONNECT_TIMEOUT_IN_MILLISECONDS);
         requestConfig.setConnectionRequestTimeout(CONNECTION_REQUEST_TIMEOUT_IN_MILLISECONDS);
@@ -257,19 +362,42 @@ public class HttpUtils {
                 .build())
             .setPoolConcurrencyPolicy(PoolConcurrencyPolicy.STRICT)
             .setConnPoolPolicy(PoolReusePolicy.LIFO)
-            .setDefaultConnectionConfig(ConnectionConfig.custom()
-                .setTimeToLive(CONNECT_TTL_TIMEOUT_IN_MILLISECONDS)
-                .setSocketTimeout(SOCKET_TIMEOUT_IN_MILLISECONDS)
-                .setConnectTimeout(CONNECT_TIMEOUT_IN_MILLISECONDS)
-                .build());
+            .setDefaultConnectionConfig(buildConnectionConfig(shared));
         if (!execution.getResolvedAddresses().isEmpty()) {
             val dnsResolver = new InMemoryDnsResolver();
             execution.getResolvedAddresses().forEach(dnsResolver::add);
             connectionManagerBuilder.setDnsResolver(dnsResolver);
         }
         val connectionManager = connectionManagerBuilder.build();
+        if (shared) {
+            connectionManager.setMaxTotal(MAXIMUM_TOTAL_CONNECTIONS);
+            connectionManager.setDefaultMaxPerRoute(MAXIMUM_CONNECTIONS_PER_ROUTE);
+        }
         builder.setConnectionManager(connectionManager);
         return builder;
+    }
+
+    /**
+     * Builds the connection configuration.
+     * <p>
+     * A shared client keeps its connections between requests, which is the point of sharing them,
+     * and that makes it possible to lease one whose peer has gone away since it was last used --
+     * a restarted service, a load balancer that dropped it. Such a connection is revalidated before
+     * every lease. A client built for a single request cannot have that problem and is not charged
+     * for the check.
+     *
+     * @param shared whether the configuration is for a shared client
+     * @return the connection configuration
+     */
+    private static ConnectionConfig buildConnectionConfig(final boolean shared) {
+        val config = ConnectionConfig.custom()
+            .setTimeToLive(CONNECT_TTL_TIMEOUT_IN_MILLISECONDS)
+            .setSocketTimeout(SOCKET_TIMEOUT_IN_MILLISECONDS)
+            .setConnectTimeout(CONNECT_TIMEOUT_IN_MILLISECONDS);
+        if (shared) {
+            config.setValidateAfterInactivity(Timeout.ofMilliseconds(0));
+        }
+        return config.build();
     }
 
     private static SSLConnectionSocketFactory getSslConnectionSocketFactory(final HttpExecutionRequest execution) {

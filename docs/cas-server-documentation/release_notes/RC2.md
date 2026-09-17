@@ -171,6 +171,7 @@ security have been strengthened across several flows.
 - Metadata query requests now ask for `application/samlmetadata+xml` via the `Accept` header, as the SAML profile for the Metadata Query Protocol requires, and are issued through the CAS HTTP client so they use the deployment's TLS trust store and hostname verifier.
 - The SAML2 metadata health indicator answers from the local metadata backup copy where one exists, instead of reaching out to every service's metadata host on every health check.
 - SAML2 metadata user interface information is resolved once per login attempt rather than twice, and dynamically-resolved entities are cached, so rendering the login page no longer issues a metadata query per request.
+- Outbound HTTP calls now reuse their underlying HTTP client and its connection pool instead of building and discarding one per request, which recovers connection reuse and stops the server accumulating open sockets over time.
 
 ### CAS Protocol
 

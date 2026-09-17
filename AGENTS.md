@@ -141,6 +141,16 @@ Guidance for AI coding agents working in the Apereo CAS source tree.
   for the assertions that do not. That is what the customizer test now does, and it gained the
   policy-permits branch as a second assertion in the process.
 
+- Ports are shared state too, and the trap has a specific shape. `MockWebServer.getRandomPort()`
+  draws from **4000-9999**, so any test that hardcodes a port in that range and depends on nothing
+  listening there is racing every mock server in its category. `HttpUtilsTests.verifyExec` and
+  `verifyBearerToken` did exactly that on 8080 and 8081: they assert that an unreachable proxy
+  yields an error response, and a sibling test's mock server landing on 8080 turns "connection
+  refused" into `200 OK` and inverts the assertion. The symptom is one of two identical tests
+  failing, which is the giveaway that it is timing rather than logic. Those two now use ports above
+  the mock range. Hardcoded 8080/8081 elsewhere in the tree is mostly harmless string-building and
+  serialization; only tests that actually open a connection are exposed.
+
 ## Puppeteer scenario init scripts
 
 - `ci/tests/puppeteer/run.sh` runs a scenario's `initScript` entries with `eval "source ${script}"`, so they execute in the runner's own shell. An `exit` on the success path therefore terminates the whole scenario run, which looks like the scenario dying silently right after the init script's last line of output. Let a successful init script fall off the end, and reserve `exit 1` for the failure path, which is what that exit is there for. `ci/tests/ldap/run-ad-server.sh` still carries an `exit 0` early return for the already-running case and has the same hazard.
@@ -526,10 +536,26 @@ Guidance for AI coding agents working in the Apereo CAS source tree.
 - The parser pool in `CasCoreSamlAutoConfiguration` is properly hardened (doctype disallowed,
   external entities off, secure processing on), so XXE is not the gap. Response size is:
   metadata bodies are read with `IOUtils.toString` with no bound.
-- `HttpUtils.execute` builds a new `CloseableHttpClient` with its own pooling connection manager
-  per call and only the response is ever closed, so every metadata fetch leaks a pool. This is core
-  machinery used across the whole server rather than a SAML concern, and it is still open; do not
-  fold a change to it into a SAML metadata diff.
+- `HttpUtils.execute` used to build a `CloseableHttpClient`, with its own pooling connection
+  manager, per call and never close it. The response handler buffers the entity into a
+  `ByteArrayEntity`, so the connection did return to that pool — and the pool was then dropped with
+  an idle socket in it, no evictor, and nothing that would ever lease from it again, so the socket
+  outlived its TTL. Clients are now reused, keyed on everything that decides their construction:
+  the `HttpClientFactory` identity (a sentinel when the request carries no CAS `HttpClient`),
+  `redirectsEnabled`, and whether automatic retries are left on. Timeouts are static and so are not
+  in the key. Anything with a proxy or DNS overrides still gets a client of its own and is closed
+  when the request finishes; so is anything past the registry bound.
+- Three things follow from that sharing, and all three are load-bearing. Shared clients carry
+  explicit pool limits, because a per-call client had a pool to itself and the library's defaults
+  of 25 total and 5 per route would otherwise become a ceiling. Shared connections revalidate on
+  every lease, because a pooled connection can outlive the server it points at — a restarted
+  service, a rotated load balancer, or a `MockWebServer` a test just closed. And it is only safe to
+  close a client the moment `execute` returns because the handler already buffered the body; a
+  change that streams the response instead would break that.
+- Connection reuse is bounded by `connectionTimeToLive`, which defaults to five seconds
+  (`org.apereo.cas.util.http.HttpUtils.connectionTimeToLive`). Bursts reuse connections; steady
+  low-rate traffic will still reconnect. Raising it is an operator decision, not a CAS default to
+  change quietly.
 - Check MDQ against the SAML profile for the Metadata Query Protocol, not from memory: a compliant
   client MUST send `Accept: application/samlmetadata+xml`. CAS used to put
   `cas.authn.saml-idp.metadata.mdq.supported-content-type` on `Content-Type` of a GET and then send
