@@ -103,6 +103,8 @@ class GitSamlRegisteredServiceMetadataResolverTests extends BaseGitSamlMetadataT
         assertTrue(resolver.supports(service));
         assertTrue(resolver.isAvailable(service));
         assertFalse(resolver.supports(null));
+        assertTrue(resolver.resolve(service).isEmpty());
+        service.setRequireSignedRoot(false);
         val resolvers = resolver.resolve(service);
         assertFalse(resolvers.isEmpty());
         service.setMetadataLocation("https://example.com/endswith.git");
@@ -130,6 +132,7 @@ class GitSamlRegisteredServiceMetadataResolverTests extends BaseGitSamlMetadataT
         service.setName("SAML Service");
         service.setServiceId("^https://.+$");
         service.setMetadataLocation("git://");
+        service.setRequireSignedRoot(false);
         val resolvers = resolver.resolve(service, new CriteriaSet(new EntityIdCriterion(entityId)));
         assertEquals(1, resolvers.size());
     }

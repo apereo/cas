@@ -35,6 +35,7 @@ import org.opensaml.saml.saml2.core.Attribute;
 import org.opensaml.saml.saml2.metadata.EntityDescriptor;
 import org.opensaml.saml.saml2.metadata.IDPSSODescriptor;
 import org.opensaml.saml.saml2.metadata.SPSSODescriptor;
+import org.springframework.core.io.ByteArrayResource;
 import org.springframework.core.io.Resource;
 import java.time.Duration;
 
@@ -239,6 +240,18 @@ public abstract class BaseSamlRegisteredServiceMetadataResolver implements SamlR
         addSignatureValidationFilterIfNeeded(service, signatureValidationFilter, metadataFilterList);
     }
 
+    /**
+     * Build a metadata resolver from a stored metadata document.
+     * <p>
+     * A signature stored with the document is held in a resource that can be read more than once.
+     * Building the signature validation filter checks that the resource exists by reading it, and then
+     * reads it again to decode the certificate or public key; a single-use input stream would be spent
+     * by that check, so the signature would always appear missing and the document would never load.
+     *
+     * @param service          the registered service
+     * @param metadataDocument the metadata document, and its signature if any
+     * @return the metadata resolver, or null if it cannot be built or the signature cannot be verified
+     */
     protected @Nullable AbstractMetadataResolver buildMetadataResolverFrom(final SamlRegisteredService service,
                                                                            final SamlMetadataDocument metadataDocument) {
         try {
@@ -248,7 +261,7 @@ public abstract class BaseSamlRegisteredServiceMetadataResolver implements SamlR
 
             val metadataFilterList = new ArrayList<MetadataFilter>(1);
             if (StringUtils.isNotBlank(metadataDocument.getSignature())) {
-                val signatureResource = ResourceUtils.buildInputStreamResourceFrom(metadataDocument.getSignature(), desc);
+                val signatureResource = new ByteArrayResource(metadataDocument.getSignature().getBytes(StandardCharsets.UTF_8), desc);
                 buildSignatureValidationFilterIfNeeded(service, metadataFilterList, signatureResource);
             }
             configureAndInitializeSingleMetadataResolver(metadataResolver, service, metadataFilterList);

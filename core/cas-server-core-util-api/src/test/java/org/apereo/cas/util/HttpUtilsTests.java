@@ -84,9 +84,8 @@ class HttpUtilsTests {
     @ParameterizedTest
     @ValueSource(booleans = {false, true})
     void verifyOversizedResponseIsNotDrained(final boolean chunked) throws Exception {
-        try (val server = new ServerSocket(0, 1, InetAddress.getLoopbackAddress());
-             val executor = Executors.newVirtualThreadPerTaskExecutor()) {
-            server.setSoTimeout(5000);
+        try (val executor = Executors.newVirtualThreadPerTaskExecutor();
+             val server = new ServerSocket(0, 1, InetAddress.getLoopbackAddress())) {
             val disconnected = executor.submit(() -> {
                 try (val socket = server.accept()) {
                     socket.setSoTimeout(5000);
@@ -106,7 +105,8 @@ class HttpUtilsTests {
             });
             val execution = HttpExecutionRequest.builder()
                 .method(HttpMethod.GET)
-                .url("http://localhost:%s".formatted(server.getLocalPort()))
+                .url(new URI("http", null, server.getInetAddress().getHostAddress(), server.getLocalPort(),
+                    null, null, null).toASCIIString())
                 .maximumResponseSize(16)
                 .build().withoutRetry();
             assertEquals(HttpStatus.SERVICE_UNAVAILABLE.value(), HttpUtils.execute(execution).getCode());

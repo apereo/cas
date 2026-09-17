@@ -85,7 +85,9 @@ class AmazonS3SamlRegisteredServiceMetadataResolverTests {
         val doc = buildDocument(signature);
         val metadataManager = resolver.getMetadataManager().orElseThrow();
         metadataManager.store(doc);
-        assertFalse(resolver.resolve(service).isEmpty());
+        assertTrue(resolver.resolve(service).isEmpty());
+        metadataManager.store(buildDocument());
+        assertEquals(1, resolver.resolve(service).size());
     }
 
     @Test
@@ -160,27 +162,16 @@ class AmazonS3SamlRegisteredServiceMetadataResolverTests {
     }
 
     private static SamlMetadataDocument buildDocument() throws Exception {
-        val signature =
-            """
-                MIICNTCCAZ6gAwIBAgIES343gjANBgkqhkiG9w0BAQUFADBVMQswCQYDVQQGEwJVUzELMAkGA1UE\
-                CAwCQ0ExFjAUBgNVBAcMDU1vdW50YWluIFZpZXcxDTALBgNVBAoMBFdTTzIxEjAQBgNVBAMMCWxv\
-                Y2FsaG9zdDAeFw0xMDAyMTkwNzAyMjZaFw0zNTAyMTMwNzAyMjZaMFUxCzAJBgNVBAYTAlVTMQsw\
-                CQYDVQQIDAJDQTEWMBQGA1UEBwwNTW91bnRhaW4gVmlldzENMAsGA1UECgwEV1NPMjESMBAGA1UE\
-                AwwJbG9jYWxob3N0MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQCUp/oV1vWc8/TkQSiAvTou\
-                sMzOM4asB2iltr2QKozni5aVFu818MpOLZIr8LMnTzWllJvvaA5RAAdpbECb+48FjbBe0hseUdN5\
-                HpwvnH/DW8ZccGvk53I6Orq7hLCv1ZHtuOCokghz/ATrhyPq+QktMfXnRS4HrKGJTzxaCcU7OQID\
-                AQABoxIwEDAOBgNVHQ8BAf8EBAMCBPAwDQYJKoZIhvcNAQEFBQADgYEAW5wPR7cr1LAdq+IrR44i\
-                QlRG5ITCZXY9hI0PygLP2rHANh+PYfTmxbuOnykNGyhM6FjFLbW2uZHQTY1jMrPprjOrmyK5sjJR\
-                O4d1DeGHT/YnIjs9JogRKv4XHECwLtIVdAbIdWHEtVZJyMSktcyysFcvuhPQK8Qc/E/Wq8uHSCo=""";
-        return buildDocument(signature);
-    }
-
-    private static SamlMetadataDocument buildDocument(final String signature) throws Exception {
         return SamlMetadataDocument.builder()
             .id(RandomUtils.nextInt())
             .name("SAMLDocument-%s".formatted(RandomUtils.nextInt()))
-            .signature(signature)
             .value(IOUtils.toString(new ClassPathResource("sp-metadata.xml").getInputStream(), StandardCharsets.UTF_8))
             .build();
+    }
+
+    private static SamlMetadataDocument buildDocument(final String signature) throws Exception {
+        val document = buildDocument();
+        document.setSignature(signature);
+        return document;
     }
 }
