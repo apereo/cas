@@ -26,11 +26,14 @@ const TABS = [
 ];
 
 const PROTOCOL_FIELDS = {
-    OidcRegisteredService: ["#registeredServiceClientId", ".registered-service-client-secret-value"],
-    OAuthRegisteredService: ["#registeredServiceClientId", ".registered-service-client-secret-value"],
+    OidcRegisteredService: ["#registeredServiceClientId", "input.registered-service-client-secret-value"],
+    OAuthRegisteredService: ["#registeredServiceClientId", "input.registered-service-client-secret-value"],
     SamlRegisteredService: ["#registeredServiceMetadataLocation"],
     WSFederationRegisteredService: ["#registeredServiceWsFederationRealm"],
-    CasRegisteredService: ["#registeredServiceSupportedProtocols", "#registeredServiceRedirectUrl"]
+    CasRegisteredService: [
+        {selector: "#registeredServiceSupportedProtocols", advanced: true},
+        {selector: "#registeredServiceRedirectUrl", advanced: true}
+    ]
 };
 
 /**
@@ -155,16 +158,17 @@ async function verifyRegisteredServices(page) {
 }
 
 /**
- * Assert the wizard's fields do not exist until the dialog is opened.
+ * Assert the wizard's dynamically built fields do not exist until the dialog is opened.
+ * The template already renders hidden values for switch buttons before the builders run.
  *
  * @param page the puppeteer page
  */
 async function verifyWizardIsDeferred(page) {
     const built = await page.evaluate(() => ({
         nameField: document.querySelector("#registeredServiceName") !== null,
-        params: document.querySelectorAll("#editServiceWizardForm [data-param-name]").length
+        params: document.querySelectorAll("#editServiceWizardForm [data-param-name]:not(input[type='hidden'][data-switch-btn])").length
     }));
-    await cas.logg(`Before opening the wizard: name field present=${built.nameField}, fields=${built.params}`);
+    await cas.logg(`Before opening the wizard: name field present=${built.nameField}, dynamic fields=${built.params}`);
     assert(built.nameField === false);
     assert(built.params === 0);
 }
@@ -174,8 +178,8 @@ async function verifyWizardIsDeferred(page) {
  *
  * Every section the wizard knows about is checked against whether it should be available for this
  * service type, this advanced-options setting and the deployment's feature catalog; each available
- * section must have a sidebar entry that reveals its panel; and each protocol field must be visible
- * exactly once, inside the Protocol group and not inside another type's section.
+ * section must have a sidebar entry that reveals its panel; and each protocol field must exist
+ * exactly once and be reachable inside the Protocol group when its advanced setting permits it.
  *
  * @param page the puppeteer page
  * @param serviceClass the registered service class to open the wizard for
@@ -198,7 +202,8 @@ async function inspectWizard(page, serviceClass, hideAdvanced) {
             registeredServicePasswordlessPolicy: "PasswordlessAuthn",
             registeredServiceSurrogatePolicy: "SurrogateAuthentication"
         };
-        const expected = entry.protocolFields ?? [];
+        const expected = (entry.protocolFields ?? [])
+            .map((field) => typeof field === "string" ? {selector: field} : field);
         const seen = new Set();
 
         for (const section of RegisteredServiceSections.sections()) {
@@ -230,7 +235,7 @@ async function inspectWizard(page, serviceClass, hideAdvanced) {
             if (!$(section.panel).is(":visible")) {
                 errors.push(`Hidden selected panel: ${section.key}`);
             }
-            for (const selector of expected) {
+            for (const {selector} of expected) {
                 if ($(section.panel).find(selector).is(":visible")) {
                     seen.add(selector);
                     if (RegisteredServiceSections.groupOf(section) !== "Protocol") {
@@ -246,8 +251,15 @@ async function inspectWizard(page, serviceClass, hideAdvanced) {
             });
         }
 
-        for (const selector of expected) {
-            if (!seen.has(selector)) {
+        for (const {selector, advanced} of expected) {
+            if (document.querySelectorAll(`#editServiceWizardForm ${selector}`).length !== 1) {
+                errors.push(`Missing or duplicate protocol field: ${selector}`);
+            }
+            if (entry.hideAdvanced && advanced) {
+                if (seen.has(selector)) {
+                    errors.push(`Visible advanced protocol field: ${selector}`);
+                }
+            } else if (!seen.has(selector)) {
                 errors.push(`Unreachable protocol field: ${selector}`);
             }
         }

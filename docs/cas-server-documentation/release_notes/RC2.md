@@ -172,6 +172,8 @@ security have been strengthened across several flows.
 - The SAML2 metadata health indicator answers from the local metadata backup copy where one exists, instead of reaching out to every service's metadata host on every health check.
 - SAML2 metadata user interface information is resolved once per login attempt rather than twice, and dynamically-resolved entities are cached, so rendering the login page no longer issues a metadata query per request.
 - Outbound HTTP calls now reuse their underlying HTTP client and its connection pool instead of building and discarding one per request, which recovers connection reuse and stops the server accumulating open sockets over time.
+- Service names can no longer resolve per-service identity provider metadata directories outside the configured metadata root. Explicit `idpMetadataLocation` settings remain supported.
+- HTTP response buffering now limits downloads, including decompressed bodies, to 256 MiB by default. The limit can be changed with the `org.apereo.cas.util.http.HttpRequestUtils.maximumResponseSize` system property or overridden per request.
 
 ### CAS Protocol
 

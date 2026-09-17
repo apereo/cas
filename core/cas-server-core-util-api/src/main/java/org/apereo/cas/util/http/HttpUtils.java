@@ -107,9 +107,10 @@ public class HttpUtils {
             val resolvedClient = resolveHttpClient(execution);
             bespokeClient = resolvedClient.shared() ? null : resolvedClient.httpClient();
             val client = resolvedClient.httpClient();
+            val responseHandler = HttpRequestUtils.responseHandler(execution.getMaximumResponseSize());
             return FunctionUtils.doAndRetry((Retryable<HttpResponse>) () -> {
                 LOGGER.trace("Sending HTTP request to [{}]", request.getUri());
-                val res = client.execute(request, HttpRequestUtils.HTTP_CLIENT_RESPONSE_HANDLER);
+                val res = client.execute(request, responseHandler);
                 if (res == null || org.springframework.http.HttpStatus.valueOf(res.getCode()).is5xxServerError()) {
                     throw new HttpRequestExecutionException(res);
                 }

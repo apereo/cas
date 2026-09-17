@@ -225,7 +225,8 @@ public class MongoDbTicketRegistry extends AbstractTicketRegistry {
         }
         criteria.add(buildUnexpiredTicketCriteria());
         val collectionNames = getTicketCollectionNames(ticketCatalog.findTicketDefinition(TicketGrantingTicket.class).stream());
-        return streamTicketDocuments(collectionNames, () -> {
+        return streamTicketDocuments(collectionNames,
+            () -> {
                 val query = buildTicketQuery(criteria);
                 LOGGER.debug("Authenticated sessions query criteria is [{}]", query.getQueryObject());
                 return query;

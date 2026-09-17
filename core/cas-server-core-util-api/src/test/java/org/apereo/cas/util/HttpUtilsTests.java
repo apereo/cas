@@ -5,9 +5,15 @@ import org.apereo.cas.util.http.HttpExecutionRequest;
 import org.apereo.cas.util.http.HttpUtils;
 import org.apereo.cas.util.http.SimpleHttpClientFactoryBean;
 import lombok.val;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.hc.client5.http.impl.classic.CloseableHttpResponse;
+import org.apache.hc.core5.http.HttpEntityContainer;
+import org.apache.hc.core5.http.io.entity.EntityUtils;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
+import org.springframework.core.io.ByteArrayResource;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import static org.junit.jupiter.api.Assertions.*;
@@ -32,6 +38,81 @@ class HttpUtilsTests {
     private static final int UNREACHABLE_PROXY_PORT = 61080;
 
     private static final int UNREACHABLE_TARGET_PORT = 61081;
+
+    @Test
+    void verifyPerRequestResponseSizeLimit() throws Exception {
+        val body = "1234567890123456";
+        try (val webServer = new MockWebServer(HttpStatus.OK, body)) {
+            webServer.start();
+            val execution = HttpExecutionRequest.builder()
+                .method(HttpMethod.GET)
+                .url("http://localhost:%s".formatted(webServer.getPort()))
+                .maximumResponseSize(body.length() - 1)
+                .build().withoutRetry();
+            assertEquals(HttpStatus.SERVICE_UNAVAILABLE.value(), HttpUtils.execute(execution).getCode());
+            val response = HttpUtils.execute(execution.withMaximumResponseSize(body.length()));
+            assertEquals(HttpStatus.OK.value(), response.getCode());
+            assertEquals(body, EntityUtils.toString(((HttpEntityContainer) response).getEntity()));
+            assertEquals(HttpStatus.OK.value(), HttpUtils.execute(execution.withMaximumResponseSize(0)).getCode());
+            assertEquals(3, webServer.getRequestCount());
+        }
+    }
+
+    @Test
+    void verifyDecompressedResponseSizeLimit() throws Exception {
+        val body = "metadata".repeat(128);
+        val output = new ByteArrayOutputStream();
+        try (val gzip = new GZIPOutputStream(output)) {
+            gzip.write(body.getBytes(StandardCharsets.UTF_8));
+        }
+        assertTrue(output.size() < 64);
+        try (val webServer = new MockWebServer(new ByteArrayResource(output.toByteArray()))) {
+            webServer.headers(Map.of("Content-Encoding", "gzip"));
+            webServer.start();
+            val execution = HttpExecutionRequest.builder()
+                .method(HttpMethod.GET)
+                .url("http://localhost:%s".formatted(webServer.getPort()))
+                .maximumResponseSize(64)
+                .build().withoutRetry();
+            assertEquals(HttpStatus.SERVICE_UNAVAILABLE.value(), HttpUtils.execute(execution).getCode());
+            val response = HttpUtils.execute(execution.withMaximumResponseSize(body.length()));
+            assertEquals(HttpStatus.OK.value(), response.getCode());
+            assertEquals(body, EntityUtils.toString(((HttpEntityContainer) response).getEntity()));
+        }
+    }
+
+    @ParameterizedTest
+    @ValueSource(booleans = {false, true})
+    void verifyOversizedResponseIsNotDrained(final boolean chunked) throws Exception {
+        try (val server = new ServerSocket(0, 1, InetAddress.getLoopbackAddress());
+             val executor = Executors.newVirtualThreadPerTaskExecutor()) {
+            server.setSoTimeout(5000);
+            val disconnected = executor.submit(() -> {
+                try (val socket = server.accept()) {
+                    socket.setSoTimeout(5000);
+                    val input = new BufferedReader(new InputStreamReader(socket.getInputStream(), StandardCharsets.US_ASCII));
+                    var line = StringUtils.EMPTY;
+                    do {
+                        line = input.readLine();
+                    } while (StringUtils.isNotEmpty(line));
+                    
+                    val response = chunked
+                        ? "HTTP/1.1 200 OK\r\nTransfer-Encoding: chunked\r\n\r\n11\r\n12345678901234567\r\n"
+                        : "HTTP/1.1 200 OK\r\nContent-Length: 1000000\r\n\r\n";
+                    socket.getOutputStream().write(response.getBytes(StandardCharsets.US_ASCII));
+                    socket.getOutputStream().flush();
+                    return input.read();
+                }
+            });
+            val execution = HttpExecutionRequest.builder()
+                .method(HttpMethod.GET)
+                .url("http://localhost:%s".formatted(server.getLocalPort()))
+                .maximumResponseSize(16)
+                .build().withoutRetry();
+            assertEquals(HttpStatus.SERVICE_UNAVAILABLE.value(), HttpUtils.execute(execution).getCode());
+            assertEquals(-1, disconnected.get(10, TimeUnit.SECONDS));
+        }
+    }
 
 
     @Test
