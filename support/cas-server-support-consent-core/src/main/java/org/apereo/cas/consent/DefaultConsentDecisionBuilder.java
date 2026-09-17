@@ -6,6 +6,7 @@ import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.DigestUtils;
 import org.apereo.cas.util.EncodingUtils;
+import org.apereo.cas.util.RandomUtils;
 import org.apereo.cas.util.crypto.CipherExecutor;
 import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
 import lombok.RequiredArgsConstructor;
@@ -48,6 +49,7 @@ public class DefaultConsentDecisionBuilder implements ConsentDecisionBuilder {
                                  final String principalId,
                                  final Map<String, List<Object>> attributes) {
         val consent = new ConsentDecision();
+        consent.setId(RandomUtils.nextLong(1, Long.MAX_VALUE));
         consent.setPrincipal(principalId);
         consent.setService(service.getId());
         consent.setTenant(service.getTenant());

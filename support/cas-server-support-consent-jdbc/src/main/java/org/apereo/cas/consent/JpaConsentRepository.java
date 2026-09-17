@@ -119,19 +119,10 @@ public class JpaConsentRepository extends BaseConsentRepository implements Dispo
     @Override
     public boolean deleteConsentDecisions(final String principal) {
         return transactionTemplate.execute(_ -> {
-            try {
-                val query = SELECT_QUERY.concat("WHERE r.principal = :principal");
-                val decision = entityManager.createQuery(query, ConsentDecision.class)
-                    .setParameter("principal", principal)
-                    .getSingleResult();
-                entityManager.remove(decision);
-                return true;
-            } catch (final NoResultException e) {
-                LOGGER.debug(e.getMessage(), e);
-            } catch (final Exception e) {
-                LoggingUtils.error(LOGGER, e);
-            }
-            return false;
+            val query = "DELETE FROM " + ENTITY_NAME + " r WHERE r.principal = :principal";
+            return entityManager.createQuery(query)
+                .setParameter("principal", principal)
+                .executeUpdate() > 0;
         });
     }
 

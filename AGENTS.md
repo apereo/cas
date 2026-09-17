@@ -593,15 +593,20 @@ Guidance for AI coding agents working in the Apereo CAS source tree.
 ## Attribute consent review discipline
 
 - Start at `ConsentDecision`, not at a repository. `id` is a primitive `long` with
-  `@GeneratedValue`, so only JPA ever assigns it; `DefaultConsentDecisionBuilder.build`
-  leaves it at `0` for every other store. That single field is the key in four backends:
-  LDAP's `mergeDecision` guards on `id < 0` and then `removeDecision(0)` wipes the user's
-  other decisions, Redis keys on `ConsentDecision:<principal>:<id>`, Mongo maps it to
-  `_id`, and DynamoDB uses it as the table HASH key. Before trusting any consent storage
-  behavior, ask what `id` actually holds on the production path.
-- `BaseConsentRepositoryTests` calls `decision.setId(1/100/200)` before every store, so the
-  shared suite never exercises the id the engine really produces, and no test stores two
-  decisions for one user. Treat "the repository tests pass" as no evidence here.
+  `@GeneratedValue`, so only JPA generates one. That single field is the key in four
+  backends: LDAP merges by it, Redis keys on `ConsentDecision:<principal>:<id>`, Mongo maps
+  it to `_id` by naming convention, and DynamoDB uses it as the table HASH key. It used to
+  stay `0` on every one of them, which collapsed each user (LDAP, Redis) or the whole
+  deployment (Mongo, DynamoDB) onto a single decision. `DefaultConsentDecisionBuilder.build`
+  now assigns a random positive id, JPA still replaces it with a generated one, and LDAP's
+  `mergeDecision` assigns one when `id <= 0`. Anything that creates a `ConsentDecision`
+  outside the builder -- the actuator's `/import`, say -- still arrives with id `0`.
+- `BaseConsentRepositoryTests` used to call `decision.setId(1/100/200)` before every store,
+  which is why the id defect never failed a test. `verifyMultipleDecisionsForPrincipal` now
+  stores builder-produced decisions for two users across two services and then deletes by id
+  and by principal, against every backend; `getOtherUser()` is overridden where the second
+  user must already exist (LDAP). The class holds a `@ResourceLock` because
+  `verifyDeleteRecordsForPrincipal` calls `deleteAll()` on the shared repository.
 - Consent is a gate in the login webflow, not a filter at attribute release.
   `ConsentWebflowConfigurer` prepends `CheckConsentRequiredAction` to the login flow's
   `generateServiceTicket` state; the only other consumer is
@@ -619,16 +624,22 @@ Guidance for AI coding agents working in the Apereo CAS source tree.
   Hibernate `EntityManagerFactory` inside it, then destroys them. Check the multitenant
   path before judging consent performance; the single-tenant path is not representative.
 - Repository lookups must be checked for operator and pattern correctness, not just for
-  the right column names. `DynamoDbConsentFacilitator` matches SERVICE and ID with
+  the right column names. `DynamoDbConsentFacilitator` matched SERVICE and ID with
   `ComparisonOperator.GE` (correct for the date ranges other CAS DynamoDB facilitators
-  use it for, wrong for an equality lookup) over a `scanPaginator`, and
-  `RedisConsentRepository` interpolates the raw principal id into a SCAN glob so a
-  principal containing `*` or `?` reaches other users' decisions.
+  use it for, wrong for an equality lookup); it now uses `EQ`, but every read is still a
+  full `scanPaginator` because `id` is the table's only key. `RedisConsentRepository`
+  interpolated the raw principal into a SCAN glob; it now escapes glob characters and keeps
+  only keys whose remainder is a numeric id, because the `:` delimiter alone lets principal
+  `alice` reach the decisions of `alice:x`. Deleting one decision there is a `DEL` of the
+  exact key rather than a scan.
 - Deletes deserve the same reading as reads. `JpaConsentRepository.deleteConsentDecisions`
-  uses `getSingleResult()` and so silently deletes nothing for any user with more than one
-  decision, and `ChainingConsentRepository` stores to every repository but deletes with
-  `anyMatch`, which stops at the first success. Revocation failing quietly is worse than
-  consent failing loudly.
+  used `getSingleResult()` and so silently deleted nothing for any user with more than one
+  decision; it is a bulk JPQL delete now. `ChainingConsentRepository` -- which is what the
+  `consentRepository` bean always is, wrapping every configured store -- stored to every
+  repository but deleted with `anyMatch`, stopping at the first success; it now asks every
+  repository. `RestfulConsentRepository` sent `id` where the documented contract and the
+  test's own mock server say `decisionId`, so a conforming server read a single revocation
+  as "revoke everything". Revocation failing quietly is worse than consent failing loudly.
 - A decision that will not decipher is fatal, not recoverable:
   `getConsentableAttributesFrom` turns any failure into `IllegalArgumentException`, which
   propagates out of `isConsentRequiredFor` and out of the login flow. Key rotation, or a

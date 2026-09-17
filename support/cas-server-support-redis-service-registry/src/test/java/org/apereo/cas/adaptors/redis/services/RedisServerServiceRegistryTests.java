@@ -17,7 +17,8 @@ import org.springframework.test.context.TestPropertySource;
  */
 @TestPropertySource(properties = {
     "cas.service-registry.redis.host=localhost",
-    "cas.service-registry.redis.port=6379"
+    "cas.service-registry.redis.port=6379",
+    "cas.service-registry.redis.database=1"
 })
 @EnabledIfListeningOnPort(port = 6379)
 @Tag("Redis")

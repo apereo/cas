@@ -48,7 +48,7 @@ public abstract class BaseConsentActivationStrategyTests {
         val registeredService = getRegisteredServiceWithConsentStatus(TriStateBoolean.TRUE);
         val service = CoreAuthenticationTestUtils.getWebApplicationService(registeredService.getServiceId());
         assertTrue(getConsentActivationStrategy().isConsentRequired(service, registeredService,
-            CoreAuthenticationTestUtils.getAuthentication(), new MockHttpServletRequest()));
+            CoreAuthenticationTestUtils.getAuthentication(), new MockHttpServletRequest()).isRequired());
     }
 
     @Test
@@ -56,7 +56,7 @@ public abstract class BaseConsentActivationStrategyTests {
         val registeredService = getRegisteredServiceWithConsentStatus(TriStateBoolean.FALSE);
         val service = CoreAuthenticationTestUtils.getWebApplicationService(registeredService.getServiceId());
         assertFalse(getConsentActivationStrategy().isConsentRequired(service, registeredService,
-            CoreAuthenticationTestUtils.getAuthentication(), new MockHttpServletRequest()));
+            CoreAuthenticationTestUtils.getAuthentication(), new MockHttpServletRequest()).isRequired());
     }
 
     @Test
@@ -64,7 +64,7 @@ public abstract class BaseConsentActivationStrategyTests {
         val registeredService = getRegisteredServiceWithConsentStatus(TriStateBoolean.UNDEFINED);
         val service = CoreAuthenticationTestUtils.getWebApplicationService(registeredService.getServiceId());
         assertTrue(getConsentActivationStrategy().isConsentRequired(service, registeredService,
-            CoreAuthenticationTestUtils.getAuthentication(), new MockHttpServletRequest()));
+            CoreAuthenticationTestUtils.getAuthentication(), new MockHttpServletRequest()).isRequired());
     }
 
     private RegisteredService getRegisteredServiceWithConsentStatus(final TriStateBoolean status) {

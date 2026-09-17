@@ -43,6 +43,8 @@ class DefaultConsentDecisionBuilderTests {
         assertNotNull(consentDecision);
         assertEquals("casuser", consentDecision.getPrincipal());
         assertEquals(consentDecision.getService(), RegisteredServiceTestUtils.getService().getId());
+        assertTrue(consentDecision.getId() > 0);
+        assertNotEquals(consentDecision.getId(), getConsentDecision().getId());
     }
 
     @Test

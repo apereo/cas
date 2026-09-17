@@ -52,7 +52,7 @@ public class CheckConsentRequiredAction extends AbstractConsentAction {
         return eventFactory.event(this, consentEvent);
     }
 
-    protected String determineConsentEvent(final RequestContext requestContext) throws Throwable {
+    protected @Nullable String determineConsentEvent(final RequestContext requestContext) throws Throwable {
         val webService = WebUtils.getService(requestContext);
         val service = this.authenticationRequestServiceSelectionStrategies.resolveService(webService);
         if (service == null) {
@@ -68,13 +68,13 @@ public class CheckConsentRequiredAction extends AbstractConsentAction {
         return isConsentRequired(service, registeredService, authentication, requestContext);
     }
 
-    protected String isConsentRequired(final Service service,
-                                       final RegisteredService registeredService,
-                                       final Authentication authentication,
-                                       final RequestContext requestContext) throws Throwable {
+    protected @Nullable String isConsentRequired(final Service service,
+                                                 final RegisteredService registeredService,
+                                                 final Authentication authentication,
+                                                 final RequestContext requestContext) throws Throwable {
         val request = WebUtils.getHttpServletRequestFromExternalWebflowContext(requestContext);
-        val required = consentActivationStrategy.isConsentRequired(service,
+        val queryResult = consentActivationStrategy.isConsentRequired(service,
             registeredService, authentication, request);
-        return required ? EVENT_ID_CONSENT_REQUIRED : null;
+        return queryResult.isRequired() ? EVENT_ID_CONSENT_REQUIRED : null;
     }
 }

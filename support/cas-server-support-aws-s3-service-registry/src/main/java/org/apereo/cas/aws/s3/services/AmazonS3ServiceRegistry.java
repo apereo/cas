@@ -38,6 +38,8 @@ public class AmazonS3ServiceRegistry extends AbstractServiceRegistry {
      */
     static final String BUCKET_NAME_PREFIX = "cas";
 
+    private static final Pattern REGISTERED_SERVICE_BUCKET_PATTERN = Pattern.compile(BUCKET_NAME_PREFIX + "-.*-\\d+");
+
     private final S3Client s3Client;
 
     private final StringSerializer<RegisteredService> registeredServiceSerializer;
@@ -168,12 +170,32 @@ public class AmazonS3ServiceRegistry extends AbstractServiceRegistry {
         return registeredServiceSerializer.from(object);
     }
 
+    /**
+     * Determine whether a bucket holds a registered service.
+     * <p>
+     * Only buckets named by {@link #determineBucketName(RegisteredService)}, that is {@code cas-<name>-<id>},
+     * belong to this registry. Matching on the {@code cas} prefix alone also claims unrelated buckets that
+     * happen to start with it, such as a SAML metadata bucket, which would then be read as registered services
+     * and emptied and removed by {@link #deleteAll()}.
+     *
+     * @param bucket the bucket
+     * @return true if the bucket holds a registered service
+     */
     private static boolean getRegisteredServiceBucketPredicate(final Bucket bucket) {
-        return bucket.name().startsWith(BUCKET_NAME_PREFIX);
+        return REGISTERED_SERVICE_BUCKET_PATTERN.matcher(bucket.name()).matches();
     }
 
+    /**
+     * Determine whether a bucket holds the registered service with the given identifier.
+     * <p>
+     * The identifier must be the last segment of the bucket name. A bucket whose name merely contains the
+     * identifier, such as the bucket of service {@code 10} when looking for service {@code 1}, does not match.
+     *
+     * @param id the registered service identifier
+     * @return the bucket predicate
+     */
     private static Predicate<Bucket> getRegisteredServiceBucketPredicate(final long id) {
-        return bucket -> bucket.name().startsWith(BUCKET_NAME_PREFIX) && bucket.name().contains(String.valueOf(id));
+        return bucket -> getRegisteredServiceBucketPredicate(bucket) && bucket.name().endsWith("-" + id);
     }
 
     private static String determineBucketName(final RegisteredService registeredService) {

@@ -144,7 +144,7 @@ public class DynamoDbConsentFacilitator {
             DynamoDbQueryBuilder.builder()
                 .key(ColumnNames.SERVICE.getColumnName())
                 .attributeValue(List.of(AttributeValue.builder().s(service.getId()).build()))
-                .operator(ComparisonOperator.GE)
+                .operator(ComparisonOperator.EQ)
                 .build());
         return getRecordsByKeys(query).findFirst().orElse(null);
     }
@@ -166,7 +166,7 @@ public class DynamoDbConsentFacilitator {
             DynamoDbQueryBuilder.builder()
                 .key(ColumnNames.ID.getColumnName())
                 .attributeValue(List.of(AttributeValue.builder().n(String.valueOf(id)).build()))
-                .operator(ComparisonOperator.GE)
+                .operator(ComparisonOperator.EQ)
                 .build());
 
         val results = getRecordsByKeys(keys);

@@ -9,6 +9,7 @@ import org.apereo.cas.util.LoggingUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.apache.commons.lang3.BooleanUtils;
 import org.jspecify.annotations.Nullable;
 
 /**
@@ -28,6 +29,10 @@ public class RedisConsentRepository extends BaseConsentRepository {
     @Serial
     private static final long serialVersionUID = 1234168609139907616L;
 
+    private static final Pattern GLOB_SPECIAL_CHARACTERS = Pattern.compile("([*?\\[\\]\\\\])");
+
+    private static final Pattern DECISION_ID = Pattern.compile("-?\\d+");
+
     private final CasRedisTemplate<String, ConsentDecision> redisTemplate;
 
     @Override
@@ -45,7 +50,7 @@ public class RedisConsentRepository extends BaseConsentRepository {
 
     @Override
     public Collection<? extends ConsentDecision> findConsentDecisions(final String principal) {
-        try (val redisKeys = redisTemplate.scan(CAS_CONSENT_DECISION_PREFIX + principal + ":*")) {
+        try (val redisKeys = scanConsentDecisionKeys(principal)) {
             return redisKeys
                 .map(redisKey -> redisTemplate.boundValueOps(redisKey).get())
                 .filter(Objects::nonNull)
@@ -77,10 +82,7 @@ public class RedisConsentRepository extends BaseConsentRepository {
 
     @Override
     public boolean deleteConsentDecision(final long decisionId, final String principal) {
-        try (val redisKey = redisTemplate.scan(CAS_CONSENT_DECISION_PREFIX + principal + ':' + decisionId)) {
-            val count = redisTemplate.delete(redisKey.collect(Collectors.toSet()));
-            return count != null && count.intValue() > 0;
-        }
+        return BooleanUtils.isTrue(redisTemplate.delete(CAS_CONSENT_DECISION_PREFIX + principal + ':' + decisionId));
     }
 
     @Override
@@ -92,11 +94,26 @@ public class RedisConsentRepository extends BaseConsentRepository {
 
     @Override
     public boolean deleteConsentDecisions(final String principal) {
-        try (val redisKey = redisTemplate.scan(CAS_CONSENT_DECISION_PREFIX + principal + ":*")) {
+        try (val redisKey = scanConsentDecisionKeys(principal)) {
             val count = redisTemplate.delete(redisKey.collect(Collectors.toSet()));
             return count != null && count.intValue() > 0;
         }
     }
 
-    
+    /**
+     * Scan the keys of the consent decisions that belong to the principal.
+     * Keys are {@code ConsentDecision:<principal>:<id>} and the principal is not trusted to be free of
+     * glob or delimiter characters. Its glob characters are escaped so that {@code *}, {@code ?} and
+     * {@code [...]} match themselves, and keys whose remainder after the principal is not a decision id
+     * are dropped, so that principal {@code alice} does not reach the decisions of principal {@code alice:x}.
+     *
+     * @param principal the principal
+     * @return the stream of keys, to be closed by the caller
+     */
+    private Stream<String> scanConsentDecisionKeys(final String principal) {
+        val keyPrefix = CAS_CONSENT_DECISION_PREFIX + principal + ':';
+        val pattern = CAS_CONSENT_DECISION_PREFIX + GLOB_SPECIAL_CHARACTERS.matcher(principal).replaceAll("\\\\$1") + ":*";
+        return redisTemplate.scan(pattern)
+            .filter(key -> key.startsWith(keyPrefix) && DECISION_ID.matcher(key.substring(keyPrefix.length())).matches());
+    }
 }
