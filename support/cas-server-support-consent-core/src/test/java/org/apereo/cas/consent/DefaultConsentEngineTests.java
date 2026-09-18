@@ -79,6 +79,20 @@ class DefaultConsentEngineTests {
     }
 
     @Test
+    void verifyReminderThatCannotBeAppliedRequiresConsent() throws Throwable {
+        val authentication = CoreAuthenticationTestUtils.getAuthentication(UUID.randomUUID().toString());
+        val service = CoreAuthenticationTestUtils.getService();
+        val consentService = RegisteredServiceTestUtils.getRegisteredService("consentService");
+        val policy = new ReturnAllAttributeReleasePolicy();
+        policy.setConsentPolicy(new DefaultRegisteredServiceConsentPolicy());
+        consentService.setAttributeReleasePolicy(policy);
+        assertNotNull(consentEngine.storeConsentDecision(service, consentService,
+            authentication, 1, ChronoUnit.FOREVER, ConsentReminderOptions.ATTRIBUTE_NAME));
+        val result = assertDoesNotThrow(() -> consentEngine.isConsentRequiredFor(service, consentService, authentication));
+        assertTrue(result.isRequired());
+    }
+
+    @Test
     void verifyConsentIsAlwaysRequired() throws Throwable {
         val authentication = CoreAuthenticationTestUtils.getAuthentication(UUID.randomUUID().toString());
         val service = CoreAuthenticationTestUtils.getService();

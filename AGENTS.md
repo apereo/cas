@@ -648,15 +648,30 @@ Guidance for AI coding agents working in the Apereo CAS source tree.
   repository. `RestfulConsentRepository` sent `id` where the documented contract and the
   test's own mock server say `decisionId`, so a conforming server read a single revocation
   as "revoke everything". Revocation failing quietly is worse than consent failing loudly.
-- A decision that will not decipher is fatal, not recoverable:
-  `getConsentableAttributesFrom` turns any failure into `IllegalArgumentException`, which
-  propagates out of `isConsentRequiredFor` and out of the login flow. Key rotation, or a
-  node without the shared `cas.consent.core.crypto` keys, locks the user out instead of
-  re-prompting.
-- `ConfirmConsentAction` parses `option`, `reminder` and `reminderTimeUnit` straight off
-  the request with `Integer.parseInt` / `Long.parseLong` / `ChronoUnit.valueOf` and
-  persists them unvalidated. `ChronoUnit.FOREVER` and `ERAS` parse fine and then throw
-  from `createdDate.plus(...)` on every later login.
+- A decision that will not decipher used to be fatal: `getConsentableAttributesFrom` turned any
+  failure into `IllegalArgumentException`, which propagated out of `isConsentRequiredFor` and out
+  of the login flow, so key rotation or a node without the shared `cas.consent.core.crypto` keys
+  locked the user out. It now logs and returns no attributes, which reads as a mismatch and
+  re-prompts; the new decision is written back with the current keys. Weigh every failure on this
+  path the same way -- the login flow has no recovery for an exception thrown from the consent
+  check, so the question is always whether re-prompting is safe, not whether the error is correct.
+- `ConfirmConsentAction` parsed `option`, `reminder` and `reminderTimeUnit` straight off the request
+  with `Integer.parseInt` / `Long.parseLong` / `ChronoUnit.valueOf` and persisted them unvalidated, so
+  a missing parameter was a 500 on the confirm POST and `ChronoUnit.FOREVER` or `ERAS` parsed fine and
+  then threw from `createdDate.plus(...)` on every later login. Each value now falls back on the
+  configured default, and the pair is rejected unless it can actually be applied to a date -- checked by
+  applying it, since `LocalDateTime.isSupported` accepts `ERAS` and only the ISO era range rejects it.
+  `DefaultConsentEngine.calculateReminderExpirationDate` is the second half of that: a stored reminder
+  that cannot produce a date means consent is required, never an exception, which is what protects
+  decisions that were written before this validation existed or through the actuator's import.
+- `ConsentDecision.createdDate` is a zone-less `LocalDateTime` that one node writes and another compares
+  against its own clock, so it is produced with `ZoneOffset.UTC`, not `ZoneId.systemDefault()`. Before that,
+  the backends disagreed with each other: JPA, Redis, LDAP, DynamoDB and REST keep the wall-clock value
+  verbatim, so a node in another zone read a decision as hours older or newer, while MongoDB was accidentally
+  correct because Spring Data converts `LocalDateTime` through the system zone in both directions and so
+  normalizes to the instant. The reminder units offered in the consent view go down to seconds, so that skew
+  is not academic. `OneTimeToken.issuedDateTime` and the Google Authenticator token repositories still carry
+  the same pattern with second-scale windows.
 - `cas.consent.core.active` defaults to `true`, so adding the module turns consent on for
   every service that releases attributes. Weigh findings about the consent path as if it
   is always on.

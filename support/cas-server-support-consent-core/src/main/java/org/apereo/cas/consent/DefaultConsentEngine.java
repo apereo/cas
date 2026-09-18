@@ -160,13 +160,12 @@ public class DefaultConsentEngine implements ConsentEngine {
         }
 
         LOGGER.debug("Consent is not required yet for [{}]; checking for reminder options", service);
-        val unit = decision.getReminderTimeUnit();
-        val dt = decision.getCreatedDate().plus(decision.getReminder(), unit);
-        val now = LocalDateTime.now(ZoneId.systemDefault());
+        val expirationDate = calculateReminderExpirationDate(decision);
+        val now = LocalDateTime.now(ZoneOffset.UTC);
 
-        LOGGER.debug("Reminder threshold date/time is calculated as [{}]", dt);
-        if (now.isAfter(dt)) {
-            LOGGER.debug("Consent is required based on reminder options given now at [{}] is after [{}]", now, dt);
+        LOGGER.debug("Reminder threshold date/time is calculated as [{}]", expirationDate);
+        if (expirationDate.isEmpty() || now.isAfter(expirationDate.get())) {
+            LOGGER.debug("Consent is required based on reminder options given now at [{}] is after [{}]", now, expirationDate);
             return ConsentQueryResult.required().withService(service)
                 .withConsentDecision(decision).withAuthentication(authentication)
                 .withConsentableAttributes(attributes);
@@ -200,6 +199,26 @@ public class DefaultConsentEngine implements ConsentEngine {
         }
 
         return consentRepository;
+    }
+
+    /**
+     * Calculate the date and time at which the decision's reminder expires.
+     * A stored reminder that cannot produce a date -- a unit such as {@code FOREVER} or {@code ERAS} that
+     * {@link LocalDateTime} cannot apply, or an amount that overflows the calendar -- yields an empty result
+     * rather than an error, so that the user is asked to consent again instead of being locked out of the
+     * login flow on every subsequent attempt.
+     *
+     * @param decision the consent decision
+     * @return the reminder expiration date, or empty when the reminder cannot be applied
+     */
+    protected Optional<LocalDateTime> calculateReminderExpirationDate(final ConsentDecision decision) {
+        try {
+            return Optional.of(decision.getCreatedDate().plus(decision.getReminder(), decision.getReminderTimeUnit()));
+        } catch (final Exception e) {
+            LOGGER.warn("Unable to calculate the consent reminder date for decision [{}] given reminder [{}] and time unit [{}]: [{}]",
+                decision.getId(), decision.getReminder(), decision.getReminderTimeUnit(), e.getMessage());
+            return Optional.empty();
+        }
     }
 
     protected ConsentDecision executeRepositoryOperation(
