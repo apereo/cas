@@ -49,7 +49,9 @@ class DefaultConsentEngineTests {
         val consentService = RegisteredServiceTestUtils.getRegisteredService("consentService");
         consentService.setAttributeReleasePolicy(null);
         assertTrue(consentEngine.resolveConsentableAttributesFrom(authentication, service, consentService).isEmpty());
-        assertFalse(consentEngine.isConsentRequiredFor(service, consentService, authentication).isRequired());
+        val result = consentEngine.isConsentRequiredFor(service, consentService, authentication);
+        assertFalse(result.isRequired());
+        assertNull(result.getConsentableAttributes());
     }
 
     @Test
@@ -91,6 +93,8 @@ class DefaultConsentEngineTests {
         assertNotNull(result);
         assertTrue(result.isRequired());
         assertEquals(decision, result.getConsentDecision());
+        assertNotNull(result.getConsentableAttributes());
+        assertFalse(result.getConsentableAttributes().isEmpty());
     }
 
     @Test

@@ -8,11 +8,11 @@ import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.consent.ConsentActivationStrategy;
 import org.apereo.cas.consent.ConsentEngine;
+import org.apereo.cas.consent.ConsentQueryResult;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.web.support.WebUtils;
 import lombok.val;
-import org.apache.commons.lang3.StringUtils;
 import org.jspecify.annotations.Nullable;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
@@ -44,15 +44,25 @@ public class CheckConsentRequiredAction extends AbstractConsentAction {
 
     @Override
     protected @Nullable Event doExecuteInternal(final RequestContext requestContext) throws Throwable {
-        val consentEvent = determineConsentEvent(requestContext);
-        if (StringUtils.isBlank(consentEvent)) {
+        val queryResult = determineConsentQueryResult(requestContext);
+        if (queryResult == null || queryResult.isIgnored()) {
             return null;
         }
-        prepareConsentForRequestContext(requestContext);
-        return eventFactory.event(this, consentEvent);
+        prepareConsentForRequestContext(requestContext, queryResult);
+        return eventFactory.event(this, EVENT_ID_CONSENT_REQUIRED);
     }
 
-    protected @Nullable String determineConsentEvent(final RequestContext requestContext) throws Throwable {
+    /**
+     * Determine the consent query result for this request.
+     * The result is carried forward rather than reduced to an event, so that the consentable attributes
+     * and the consent decision the consent engine has already resolved can be reused when preparing the
+     * consent view.
+     *
+     * @param requestContext the request context
+     * @return the consent query result, or null when the request carries no service or authentication
+     * @throws Throwable the throwable
+     */
+    protected @Nullable ConsentQueryResult determineConsentQueryResult(final RequestContext requestContext) throws Throwable {
         val webService = WebUtils.getService(requestContext);
         val service = this.authenticationRequestServiceSelectionStrategies.resolveService(webService);
         if (service == null) {
@@ -68,13 +78,11 @@ public class CheckConsentRequiredAction extends AbstractConsentAction {
         return isConsentRequired(service, registeredService, authentication, requestContext);
     }
 
-    protected @Nullable String isConsentRequired(final Service service,
-                                                 final RegisteredService registeredService,
-                                                 final Authentication authentication,
-                                                 final RequestContext requestContext) throws Throwable {
+    protected ConsentQueryResult isConsentRequired(final Service service,
+                                                   final RegisteredService registeredService,
+                                                   final Authentication authentication,
+                                                   final RequestContext requestContext) throws Throwable {
         val request = WebUtils.getHttpServletRequestFromExternalWebflowContext(requestContext);
-        val queryResult = consentActivationStrategy.isConsentRequired(service,
-            registeredService, authentication, request);
-        return queryResult.isRequired() ? EVENT_ID_CONSENT_REQUIRED : null;
+        return consentActivationStrategy.isConsentRequired(service, registeredService, authentication, request);
     }
 }

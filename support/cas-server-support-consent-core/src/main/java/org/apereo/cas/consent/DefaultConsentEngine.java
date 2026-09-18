@@ -146,8 +146,8 @@ public class DefaultConsentEngine implements ConsentEngine {
         val decision = findConsentDecision(service, registeredService, authentication);
         if (decision == null) {
             LOGGER.debug("No consent decision found; thus attribute consent is required");
-            return ConsentQueryResult.required()
-                .withService(service).withAuthentication(authentication);
+            return ConsentQueryResult.required().withService(service)
+                .withAuthentication(authentication).withConsentableAttributes(attributes);
         }
 
         LOGGER.debug("Located consentable attributes for release [{}]", attributes.keySet());
@@ -155,7 +155,8 @@ public class DefaultConsentEngine implements ConsentEngine {
             LOGGER.debug("Consent is required based on past decision [{}] and attribute release policy for [{}]",
                 decision, registeredService.getName());
             return ConsentQueryResult.required().withService(service)
-                .withConsentDecision(decision).withAuthentication(authentication);
+                .withConsentDecision(decision).withAuthentication(authentication)
+                .withConsentableAttributes(attributes);
         }
 
         LOGGER.debug("Consent is not required yet for [{}]; checking for reminder options", service);
@@ -167,12 +168,13 @@ public class DefaultConsentEngine implements ConsentEngine {
         if (now.isAfter(dt)) {
             LOGGER.debug("Consent is required based on reminder options given now at [{}] is after [{}]", now, dt);
             return ConsentQueryResult.required().withService(service)
-                .withConsentDecision(decision).withAuthentication(authentication);
+                .withConsentDecision(decision).withAuthentication(authentication)
+                .withConsentableAttributes(attributes);
         }
 
         LOGGER.debug("Consent is not required for service [{}]", service);
-        return ConsentQueryResult.ignored()
-            .withService(service).withAuthentication(authentication);
+        return ConsentQueryResult.ignored().withService(service)
+            .withAuthentication(authentication).withConsentableAttributes(attributes);
     }
 
     @Override

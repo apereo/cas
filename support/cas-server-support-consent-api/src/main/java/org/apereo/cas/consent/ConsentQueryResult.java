@@ -30,7 +30,13 @@ public class ConsentQueryResult implements Serializable {
     private ConsentDecision consentDecision;
     private Service service;
     private Authentication authentication;
+    private Map<String, List<Object>> consentableAttributes;
 
+    /**
+     * Is consent ignored, i.e. not required for this request.
+     *
+     * @return true/false
+     */
     public boolean isIgnored() {
         return !required;
     }

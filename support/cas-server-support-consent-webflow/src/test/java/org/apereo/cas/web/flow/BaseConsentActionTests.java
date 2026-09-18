@@ -1,6 +1,8 @@
 package org.apereo.cas.web.flow;
 
 import module java.base;
+import org.apereo.cas.authentication.AuthenticationServiceSelectionPlan;
+import org.apereo.cas.authentication.attribute.AttributeDefinitionStore;
 import org.apereo.cas.config.CasConsentCoreAutoConfiguration;
 import org.apereo.cas.config.CasConsentWebflowAutoConfiguration;
 import org.apereo.cas.config.CasCoreAuditAutoConfiguration;
@@ -20,6 +22,7 @@ import org.apereo.cas.config.CasCoreWebflowAutoConfiguration;
 import org.apereo.cas.config.CasPersonDirectoryAutoConfiguration;
 import org.apereo.cas.config.CasRegisteredServicesTestConfiguration;
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.consent.ConsentEngine;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.test.CasTestExtension;
 import org.apereo.cas.util.spring.boot.SpringBootTestAutoConfigurations;
@@ -72,6 +75,18 @@ public abstract class BaseConsentActionTests {
     @Autowired
     @Qualifier(ServicesManager.BEAN_NAME)
     protected ServicesManager servicesManager;
+
+    @Autowired
+    @Qualifier(ConsentEngine.BEAN_NAME)
+    protected ConsentEngine consentEngine;
+
+    @Autowired
+    @Qualifier(AuthenticationServiceSelectionPlan.BEAN_NAME)
+    protected AuthenticationServiceSelectionPlan authenticationRequestServiceSelectionStrategies;
+
+    @Autowired
+    @Qualifier(AttributeDefinitionStore.BEAN_NAME)
+    protected AttributeDefinitionStore attributeDefinitionStore;
 
     @Autowired
     protected ConfigurableApplicationContext applicationContext;

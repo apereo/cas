@@ -615,10 +615,18 @@ Guidance for AI coding agents working in the Apereo CAS source tree.
   never constrains what is released, and any path that issues without the login flow --
   REST protocol tickets, proxy tickets, OIDC refresh/userinfo, the OpenID4VCI
   pre-authorized code grant -- releases attributes with no consent check at all.
-- Follow `ConsentQueryResult`. It carries the decision and the service, and
-  `DefaultConsentActivationStrategy` throws all of that away by returning `.isRequired()`.
-  Each discarded result costs another full `getConsentableAttributes` evaluation (person
-  directory included) and another repository read; a consented login does three of each.
+- Follow `ConsentQueryResult`. It carries the decision, the service and now the resolved
+  consentable attributes, and it used to be thrown away: `ConsentActivationStrategy` returned
+  a bare boolean and `CheckConsentRequiredAction` reduced it to an event, so
+  `prepareConsentForRequestContext` repeated the full `getConsentableAttributes` evaluation
+  (person directory included) and the repository read in the same request. The strategy now
+  returns the result and the action hands it to `prepareConsentForRequestContext`, which
+  resolves nothing when the result carries attributes -- a result built by a custom strategy
+  carries none and still falls back to resolving. What remains per consent interaction is one
+  evaluation and read for the prompt, one of each inside `storeConsentDecision` on confirm,
+  and one more from the `generateServiceTicketAfterConsent` clone that re-runs the check;
+  `getRegisteredServiceForConsent`, and with it the access strategy, still runs twice per
+  prompt. Count these by request before claiming a number.
 - `DefaultConsentEngine.executeRepositoryOperation` calls `toConsentRepository(tenant)` on
   every operation, and `TenantJdbcConsentRepositoryBuilder` builds a DataSource plus a
   Hibernate `EntityManagerFactory` inside it, then destroys them. Check the multitenant
