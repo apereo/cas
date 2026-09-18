@@ -259,6 +259,36 @@ registered-service revision to the service registry and live service cache, whil
 
 {% include imagegallery.html gallery_id="palantir-dashboard" images=page.palantir_images %}
 
+### Attribute Consent
+
+- [Consent decisions](../integration/Attribute-Release-Consent.html) are now assigned a unique identifier when they are created.
+  Only the JDBC store generated one; every other store recorded the decision with an identifier of `0`, which is the key those
+  stores use. LDAP and Redis therefore kept a single decision per user, and MongoDB and DynamoDB kept a single decision for the
+  entire deployment, each new consent silently replacing the one before it. Decisions recorded by earlier versions continue to be honored.
+- [DynamoDB](../integration/Attribute-Release-Consent-Storage-DynamoDb.html) consent lookups now match the service and the decision
+  identifier for equality. They were matched as greater-than-or-equal, so consent granted to one service could answer the check for
+  another, and revoking a single decision removed every decision whose identifier sorted at or above it.
+- [Redis](../integration/Attribute-Release-Consent-Storage-Redis.html) consent lookups now treat the principal as a literal value.
+  Glob characters such as `*` and `?`, and the `:` separator itself, were interpolated into the scan pattern, so a principal
+  identifier that contained them could read and delete decisions that belong to other users.
+- Revoking consent now removes every decision it should. Against the JDBC store, revoking all decisions for a user removed nothing at all once the user had
+  more than one, and when several stores are configured together only the first store that reported success was
+  asked to delete. The [REST](../integration/Attribute-Release-Consent-Storage-REST.html) store now sends the decision identifier as
+  `decisionId`, the parameter its documented contract defines; it previously sent `id`, which a conforming server reads as a request to
+  revoke everything for that user.
+- A consent decision that cannot be deciphered no longer fails the login. Rotating the `cas.consent.core.crypto` keys, or a node that
+  does not have them, produced an error that propagated out of the login flow; such a decision now counts as a mismatch, so the user is
+  asked to consent again and the record is replaced using the current keys.
+- Reminder options submitted with a consent decision are now validated. A missing or unparseable value falls back on the configured
+  default, and a reminder that cannot be applied to a date, such as a negative amount or a time unit of `FOREVER`, is rejected rather
+  than stored and then failing every subsequent login for that user.
+- Consent decisions record their creation date in UTC, so a decision's age is the same on every CAS node whatever time zone each node
+  runs in. Dates shown on the [account profile](../registration/Account-Management-Overview.html) screen are labeled as UTC.
+- Consent is now evaluated once per request. The [activation strategy](../integration/Attribute-Release-Consent-Activation.html) returns
+  the full consent query result, carrying the decision and the consentable attributes, and the login flow reuses it rather than
+  evaluating the attribute release policy and reading the consent store a second time to render the consent screen. Note that a Groovy
+  activation script must now return a `ConsentQueryResult` instead of a boolean.
+
 ### Interrupt Notifications
 
 - Following a link on a [blocking interrupt](../webflow/Webflow-Customization-Interrupt.html) no longer records the interrupt as acknowledged, and a blocking response is never skipped by [interrupt tracking](../webflow/Webflow-Customization-Interrupt-Tracking.html). Tracking cookies are now bound to the principal; cookies issued by earlier versions are ignored, so users may see an acknowledged interrupt once more.
