@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # while sleep 9m; do echo -e '\n=====[ Gradle build is still running ]====='; done &
-export DOCKER_IMAGE="mariadb:12.3.3"
+export DOCKER_IMAGE="mariadb:13.0.2"
 echo "Running MariaDb docker container..."
 docker stop mariadb || true
 docker run --quiet  --rm -p 3306:3306 --rm --name mariadb \
