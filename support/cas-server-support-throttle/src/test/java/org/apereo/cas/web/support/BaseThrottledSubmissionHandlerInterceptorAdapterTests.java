@@ -76,21 +76,23 @@ public abstract class BaseThrottledSubmissionHandlerInterceptorAdapterTests {
     /**
      * Failing slower than the configured threshold rate must be let through, failing faster than it
      * must end in a throttled response, and slowing back down once the throttle is released must be
-     * let through again. Subclasses configure a threshold of three failures per second, so the one
-     * second between the attempts of the first and last legs sits below that rate and the unpaused
-     * attempts of the middle leg sit well above it. That middle leg is polled for rather than
-     * asserted after a fixed number of attempts, because a remote submission store can lag the
-     * writes that feed it.
+     * let through again. Subclasses configure a threshold of three failures over three seconds, so a
+     * submission is turned away only when it lands less than a second after the one before it. That
+     * leaves the middle leg with a full second per attempt to spend on a round trip to a remote
+     * submission store before it stops counting as fast, while the second and a half between the
+     * attempts of the first and last legs stays comfortably the wrong side of the same line. The
+     * middle leg is polled for rather than asserted after a fixed number of attempts, because a
+     * remote store can lag the writes that feed it.
      *
      * @throws Throwable in case of any failure
      */
     @Test
     void verifyThrottle() throws Throwable {
-        failLoop(3, 1000, HttpStatus.SC_UNAUTHORIZED);
+        failLoop(3, 1500, HttpStatus.SC_UNAUTHORIZED);
         await().atMost(Duration.ofSeconds(30))
             .until(() -> login("mog", "badpassword", IP_ADDRESS).getStatus() == HttpStatus.SC_LOCKED);
         assertDoesNotThrow(() -> getThrottle().release());
-        failLoop(3, 1000, HttpStatus.SC_UNAUTHORIZED);
+        failLoop(3, 1500, HttpStatus.SC_UNAUTHORIZED);
     }
 
     public abstract ThrottledSubmissionHandlerInterceptor getThrottle();
