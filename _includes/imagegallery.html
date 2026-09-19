@@ -1,0 +1,30 @@
+{% assign gallery_id = include.gallery_id | default: 'image-gallery' %}
+
+<div class="image-gallery">
+    {% if include.images %}
+    {% for image in include.images %}
+    {% assign image_src = image.src %}
+    {% assign image_alt = image.alt | default: image.title | default: '' %}
+    {% assign image_title = image.title | default: image_alt %}
+
+    <a href="{{ image_src }}"
+       data-lightbox="{{ gallery_id }}"
+       {% if image_title != '' %}data-title="{{ image_title | escape }}"{% endif %}>
+        <img src="{{ image_src }}"
+             alt="{{ image_alt | escape }}"
+             {% if image_title != '' %}title="{{ image_title | escape }}"{% endif %}>
+    </a>
+    {% endfor %}
+    {% elsif include.src %}
+    {% assign image_alt = include.alt | default: '' %}
+    {% assign image_title = include.title | default: image_alt %}
+
+    <a href="{{ include.src }}"
+       data-lightbox="{{ gallery_id }}"
+       {% if image_title != '' %}data-title="{{ image_title | escape }}"{% endif %}>
+        <img src="{{ include.src }}"
+             alt="{{ image_alt | escape }}"
+             {% if image_title != '' %}title="{{ image_title | escape }}"{% endif %}>
+    </a>
+    {% endif %}
+</div>
