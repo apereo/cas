@@ -154,6 +154,7 @@ class CasFeatureEnabledConditionTests {
         "CasFeatureModule.AcceptableUsagePolicy.feature3.enabled=true",
         "CasFeatureModule.AcceptableUsagePolicy.feature4.enabled=true"
     })
+    @ResourceLock("casFeatureModuleCatalog")
     class FeatureMultipleConditionsTests {
         @Autowired
         private ConfigurableApplicationContext applicationContext;
@@ -179,6 +180,12 @@ class CasFeatureEnabledConditionTests {
         @Autowired
         private ConfigurableApplicationContext applicationContext;
 
+        /**
+         * The feature catalog is static, shared by every context in the fork, and this is the only
+         * test that asserts what is absent from it. Its context initializer empties the catalog
+         * before the conditions are evaluated, so the lock it shares with the nested class that
+         * registers feature3 is what keeps that registration from landing in between.
+         */
         @Test
         void verifyOperation() {
             assertTrue(applicationContext.containsBean("selectedBean"));

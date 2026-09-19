@@ -19,7 +19,10 @@ import org.springframework.scheduling.annotation.EnableScheduling;
  */
 @EnableScheduling
 @SpringBootTest(classes = BaseThrottledSubmissionHandlerInterceptorAdapterTests.SharedTestConfiguration.class,
-    properties = "cas.authn.throttle.failure.range-seconds=5"
+    properties = {
+        "cas.authn.throttle.failure.range-seconds=1",
+        "cas.authn.throttle.failure.threshold=3"
+    }
 )
 @Getter
 @Tag("AuthenticationThrottling")

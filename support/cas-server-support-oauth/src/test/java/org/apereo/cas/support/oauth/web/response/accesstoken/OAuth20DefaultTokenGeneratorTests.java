@@ -201,6 +201,16 @@ class OAuth20DefaultTokenGeneratorTests {
             assertThrows(InvalidOAuth20DeviceTokenException.class, () -> oauthTokenGenerator.generate(tokenRequestContext));
         }
 
+        /**
+         * A device code is created with its last-used time set to its creation time, so the very
+         * first poll for it arrives inside the configured refresh interval and is turned away as
+         * too soon. Only once that interval has passed does the generator get as far as reporting
+         * that the user code is still unapproved, which is what this test is about. Polling for
+         * that is sound rather than a disguised pause: a request rejected as too soon leaves the
+         * device code untouched, so retrying does not push the interval out ahead of itself.
+         *
+         * @throws Throwable in case of failure
+         */
         @Test
         void verifyUnapproved() throws Throwable {
             val clientId = "device-client";
@@ -217,7 +227,8 @@ class OAuth20DefaultTokenGeneratorTests {
                 .authentication(RegisteredServiceTestUtils.getAuthentication())
                 .registeredService(getRegisteredService(clientId, "secret"))
                 .build();
-            assertThrows(UnapprovedOAuth20DeviceUserCodeException.class, () -> oauthTokenGenerator.generate(tokenRequestContext));
+            await().atMost(Duration.ofSeconds(30)).untilAsserted(() ->
+                assertThrows(UnapprovedOAuth20DeviceUserCodeException.class, () -> oauthTokenGenerator.generate(tokenRequestContext)));
         }
 
         @Test

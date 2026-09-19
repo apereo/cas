@@ -3,6 +3,7 @@ package org.apereo.cas.git;
 import module java.base;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.support.git.services.BaseGitProperties;
+import org.apereo.cas.configuration.model.support.git.services.GitServiceRegistryProperties;
 import org.apereo.cas.test.CasTestExtension;
 import org.apereo.cas.util.ResourceUtils;
 import lombok.val;
@@ -11,7 +12,6 @@ import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.api.function.Executable;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
@@ -30,12 +30,9 @@ import static org.junit.jupiter.api.Assertions.*;
 @Tag("Git")
 class GitRepositoryBuilderTests {
 
-    @Autowired
-    private CasConfigurationProperties casProperties;
-
     @Test
     void verifyTestPrivateKey() throws Throwable {
-        val props = casProperties.getServiceRegistry().getGit();
+        val props = new GitServiceRegistryProperties();
         props.setRepositoryUrl("git@github.com:mmoayyed/sample-data.git");
         props.setBranchesToClone("master");
         props.setActiveBranch("master");
@@ -51,7 +48,7 @@ class GitRepositoryBuilderTests {
 
     @Test
     void verifyBuild() throws Throwable {
-        val props = casProperties.getServiceRegistry().getGit();
+        val props = new GitServiceRegistryProperties();
         props.setRepositoryUrl("git@github.com:mmoayyed/sample-data.git");
         props.setUsername("casuser");
         props.setPassword("password");
@@ -77,7 +74,7 @@ class GitRepositoryBuilderTests {
      */
     @Test
     void verifyBuildWithFilePrefix() throws Throwable {
-        val props = casProperties.getServiceRegistry().getGit();
+        val props = new GitServiceRegistryProperties();
         props.setRepositoryUrl("https://github.com/mmoayyed/sample-data.git");
         props.setUsername("casuser");
         props.setPassword("password");
@@ -91,7 +88,7 @@ class GitRepositoryBuilderTests {
 
     @Test
     void verifyBuildWithBadBranchAndWithoutExistingDirectory() throws Throwable {
-        val props = casProperties.getServiceRegistry().getGit();
+        val props = new GitServiceRegistryProperties();
         props.setRepositoryUrl("https://github.com/mmoayyed/sample-data.git");
         props.setUsername("casuser");
         props.setPassword("password");
@@ -106,7 +103,7 @@ class GitRepositoryBuilderTests {
     void verifyBuildWithBadBranchButWithExistingDirectory() throws Throwable {
         val directory = FileUtils.getTempDirectoryPath() + File.separator + UUID.randomUUID();
 
-        val props = casProperties.getServiceRegistry().getGit();
+        val props = new GitServiceRegistryProperties();
         props.setRepositoryUrl("https://github.com/mmoayyed/sample-data.git");
         props.setUsername("casuser");
         props.setPassword("password");
@@ -115,7 +112,7 @@ class GitRepositoryBuilderTests {
         val builder = GitRepositoryBuilder.newInstance(props);
         assertDoesNotThrow(builder::build);
 
-        val props2 = casProperties.getServiceRegistry().getGit();
+        val props2 = new GitServiceRegistryProperties();
         props2.setRepositoryUrl("https://github.com/mmoayyed/sample-data.git");
         props2.setUsername("casuser");
         props2.setPassword("password");

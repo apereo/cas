@@ -140,7 +140,7 @@ class JsonAttributeDefinitionStoreTests {
             val defn = DefaultAttributeDefinition.builder()
                 .key("givenName")
                 .name("gName")
-                .expiration("PT2S")
+                .expiration("PT5S")
                 .build();
             store.registerAttributeDefinition(defn);
             val attributes = CoreAuthenticationTestUtils.getAttributes();

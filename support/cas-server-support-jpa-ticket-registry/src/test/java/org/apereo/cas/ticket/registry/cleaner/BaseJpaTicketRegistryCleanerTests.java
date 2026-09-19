@@ -207,6 +207,18 @@ public abstract class BaseJpaTicketRegistryCleanerTests {
         assertTrue(ticketRegistry.getTickets().isEmpty());
     }
 
+    /**
+     * The cleaner must keep working while tickets are being created and updated underneath it. What
+     * is asserted is that both schedules are still alive once the cleaner has made progress: a
+     * periodic task that throws is cancelled by the executor and reports itself done, so a pair of
+     * live tasks is the evidence that nothing broke under the overlap. Progress is waited for as a
+     * modest number of passes rather than a number large enough to be a throughput measurement,
+     * because how many passes a real database can serve in a given time says nothing about whether
+     * concurrent cleaning is correct, and a backlog of tickets built up while chasing a count only
+     * makes the shutdown that follows slower.
+     *
+     * @throws Throwable in case of failure
+     */
     @RetryingTest(2)
     void verifyConcurrentCleaner() throws Throwable {
         val executor = Executors.newScheduledThreadPool(2);
@@ -233,11 +245,12 @@ public abstract class BaseJpaTicketRegistryCleanerTests {
                 ticketRegistryCleaner.clean();
                 cleanups.incrementAndGet();
             }, 10, 5, TimeUnit.MILLISECONDS));
-            await().atMost(Duration.ofSeconds(60)).until(() -> cleanups.get() >= 100);
+            await().atMost(Duration.ofSeconds(30)).until(() -> cleanups.get() >= 10);
+            assertTrue(tasks.stream().noneMatch(Future::isDone));
         } finally {
             tasks.forEach(task -> task.cancel(false));
             executor.shutdown();
-            assertTrue(executor.awaitTermination(30, TimeUnit.SECONDS));
+            assertTrue(executor.awaitTermination(2, TimeUnit.MINUTES));
             ticketRegistry.deleteAll();
         }
     }

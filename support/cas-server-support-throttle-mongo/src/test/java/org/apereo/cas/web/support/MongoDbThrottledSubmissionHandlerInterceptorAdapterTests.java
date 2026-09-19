@@ -27,7 +27,8 @@ import org.springframework.boot.test.context.SpringBootTest;
 },
     properties = {
         "cas.authn.throttle.core.username-parameter=username",
-        "cas.authn.throttle.failure.range-seconds=5",
+        "cas.authn.throttle.failure.range-seconds=1",
+        "cas.authn.throttle.failure.threshold=3",
         "cas.audit.mongo.database-name=throttle",
         "cas.audit.mongo.host=localhost",
         "cas.audit.mongo.port=27017",

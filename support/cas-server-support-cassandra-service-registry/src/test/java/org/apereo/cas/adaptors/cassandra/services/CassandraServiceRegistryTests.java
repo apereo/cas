@@ -9,7 +9,6 @@ import org.apereo.cas.services.ServiceRegistry;
 import org.apereo.cas.test.CasTestExtension;
 import org.apereo.cas.util.junit.EnabledIfListeningOnPort;
 import lombok.Getter;
-import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -57,7 +56,6 @@ class CassandraServiceRegistryTests extends AbstractServiceRegistryTests {
     private ServiceRegistry newServiceRegistry;
 
     @Test
-    @Order(Integer.MAX_VALUE)
     void verifyFailOps() {
         assertNull(newServiceRegistry.save((RegisteredService) null));
         assertFalse(newServiceRegistry.delete(null));

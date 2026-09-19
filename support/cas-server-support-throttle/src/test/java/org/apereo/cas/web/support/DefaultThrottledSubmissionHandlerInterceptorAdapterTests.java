@@ -28,7 +28,8 @@ class DefaultThrottledSubmissionHandlerInterceptorAdapterTests {
         properties = {
             "cas.authn.throttle.core.username-parameter=username",
             "cas.authn.throttle.core.header-name=User-Agent",
-            "cas.authn.throttle.failure.range-seconds=5"
+            "cas.authn.throttle.failure.range-seconds=1",
+            "cas.authn.throttle.failure.threshold=3"
         }
     )
     @Getter
