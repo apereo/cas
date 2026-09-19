@@ -4,11 +4,8 @@ import module java.base;
 import org.apereo.cas.support.saml.BaseSamlIdPConfigurationTests;
 import org.apereo.cas.support.saml.services.idp.metadata.SamlRegisteredServiceMetadataAdaptor;
 import lombok.val;
-import org.junit.jupiter.api.MethodOrderer;
-import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.TestMethodOrder;
 import org.opensaml.messaging.context.MessageContext;
 import org.opensaml.saml.common.SAMLObjectBuilder;
 import org.opensaml.saml.common.xml.SAMLConstants;
@@ -25,10 +22,8 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.2.0
  */
 @Tag("SAML2")
-@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 class SamlIdPHttpRedirectDeflateEncoderTests extends BaseSamlIdPConfigurationTests {
     @Test
-    @Order(1)
     void verify() throws Exception {
         val request = new MockHttpServletRequest();
         val response = new MockHttpServletResponse();

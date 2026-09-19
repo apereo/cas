@@ -11,11 +11,8 @@ import org.apereo.cas.ticket.artifact.SamlArtifactTicketFactory;
 import lombok.val;
 import org.apache.hc.core5.http.HttpStatus;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.MethodOrderer;
-import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.TestMethodOrder;
 import org.opensaml.saml.common.SAMLObjectBuilder;
 import org.opensaml.saml.common.xml.SAMLConstants;
 import org.opensaml.saml.saml2.core.Artifact;
@@ -43,7 +40,6 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
  * @since 6.2.0
  */
 @Tag("SAML2Web")
-@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 @TestPropertySource(properties = "cas.authn.saml-idp.metadata.file-system.location=file:src/test/resources/metadata")
 class SamlIdPSaml1ArtifactResolutionProfileHandlerControllerTests extends BaseSamlIdPConfigurationTests {
     @Autowired
@@ -61,7 +57,6 @@ class SamlIdPSaml1ArtifactResolutionProfileHandlerControllerTests extends BaseSa
     }
 
     @Test
-    @Order(1)
     void verifyOK() throws Exception {
         var builder = (SOAPObjectBuilder) openSamlConfigBean.getBuilderFactory()
             .getBuilder(Envelope.DEFAULT_ELEMENT_NAME);
@@ -96,7 +91,6 @@ class SamlIdPSaml1ArtifactResolutionProfileHandlerControllerTests extends BaseSa
     }
 
     @Test
-    @Order(2)
     void verifyFault() throws Exception {
         var builder = (SOAPObjectBuilder) openSamlConfigBean.getBuilderFactory()
             .getBuilder(Envelope.DEFAULT_ELEMENT_NAME);

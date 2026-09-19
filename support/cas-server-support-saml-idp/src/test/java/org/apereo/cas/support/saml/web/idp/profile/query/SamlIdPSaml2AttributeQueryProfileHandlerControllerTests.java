@@ -11,11 +11,9 @@ import org.apereo.cas.ticket.query.SamlAttributeQueryTicketFactory;
 import lombok.val;
 import org.apache.hc.core5.http.HttpStatus;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.TestMethodOrder;
 import org.opensaml.saml.common.SAMLObjectBuilder;
 import org.opensaml.saml.common.xml.SAMLConstants;
 import org.opensaml.saml.saml2.core.Attribute;
@@ -67,7 +65,6 @@ class SamlIdPSaml2AttributeQueryProfileHandlerControllerTests {
     }
 
     @Nested
-    @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
     @TestPropertySource(properties = "cas.authn.saml-idp.core.attribute-query-profile-enabled=true")
     class DefaultTests extends BaseSamlIdPConfigurationTests {
         @Autowired

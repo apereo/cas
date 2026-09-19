@@ -8,7 +8,6 @@ import org.apereo.cas.test.CasTestExtension;
 import org.apereo.cas.trusted.AbstractMultifactorAuthenticationTrustStorageTests;
 import org.apereo.cas.trusted.util.MultifactorAuthenticationTrustUtils;
 import org.apereo.cas.util.MockRequestContext;
-import org.apereo.cas.util.spring.ApplicationContextProvider;
 import org.apereo.cas.web.flow.CasWebflowConstants;
 import org.apereo.cas.web.support.WebUtils;
 import lombok.val;
@@ -19,8 +18,6 @@ import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.junit.jupiter.api.parallel.Execution;
-import org.junit.jupiter.api.parallel.ExecutionMode;
 import org.springframework.boot.test.context.SpringBootTest;
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -32,7 +29,6 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 @Tag("WebflowMfaActions")
 @ExtendWith(CasTestExtension.class)
-@Execution(ExecutionMode.SAME_THREAD)
 class MultifactorAuthenticationPrepareTrustDeviceViewActionTests {
 
     @SpringBootTest(classes = AbstractMultifactorAuthenticationTrustStorageTests.SharedTestConfiguration.class,
@@ -58,8 +54,6 @@ class MultifactorAuthenticationPrepareTrustDeviceViewActionTests {
 
             val authn = RegisteredServiceTestUtils.getAuthentication("casuser");
             WebUtils.putAuthentication(authn, context);
-
-            ApplicationContextProvider.holdApplicationContext(applicationContext);
         }
 
         @Test
@@ -104,8 +98,6 @@ class MultifactorAuthenticationPrepareTrustDeviceViewActionTests {
 
             val authn = RegisteredServiceTestUtils.getAuthentication(record.getPrincipal());
             WebUtils.putAuthentication(authn, context);
-
-            ApplicationContextProvider.holdApplicationContext(applicationContext);
         }
 
         @Test

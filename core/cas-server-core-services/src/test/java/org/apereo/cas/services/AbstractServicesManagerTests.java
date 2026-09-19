@@ -6,7 +6,6 @@ import org.apereo.cas.authentication.principal.WebApplicationService;
 import org.apereo.cas.util.RandomUtils;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-import org.jooq.lambda.Unchecked;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -171,21 +170,26 @@ public abstract class AbstractServicesManagerTests {
         assertNotNull(servicesManager.findServiceBy(service.getId()));
         assertTrue(isServiceInCache(null, service.getId()));
 
-        val loadingThread = new Thread(Unchecked.runnable(() -> {
-            LOGGER.debug("Loading services manager...");
-            Thread.sleep(1000);
-            servicesManager.load();
-            Thread.sleep(1000);
-            LOGGER.debug("Loaded services manager...");
-        }));
-        loadingThread.start();
+        val loading = new CountDownLatch(1);
+        val reloading = new AtomicBoolean(true);
+        try (val executor = Executors.newVirtualThreadPerTaskExecutor()) {
+            val loader = executor.submit(() -> {
+                loading.countDown();
+                while (reloading.get()) {
+                    servicesManager.load();
+                }
+                return null;
+            });
+            assertTrue(loading.await(30, TimeUnit.SECONDS));
 
-        val testService = RegisteredServiceTestUtils.getService("https://test.edu/path/");
-        IntStream.rangeClosed(1, 5).forEach(i -> {
-            LOGGER.debug("Checking for previously-saved service attempt [{}]", i);
-            assertNotNull(servicesManager.findServiceBy(testService));
-        });
-        loadingThread.join();
+            val testService = RegisteredServiceTestUtils.getService("https://test.edu/path/");
+            IntStream.rangeClosed(1, 5).forEach(i -> {
+                LOGGER.debug("Checking for previously-saved service attempt [{}]", i);
+                assertNotNull(servicesManager.findServiceBy(testService));
+            });
+            reloading.set(false);
+            loader.get(30, TimeUnit.SECONDS);
+        }
     }
 
     protected boolean isServiceInCache(final String serviceId, final long id) {

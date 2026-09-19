@@ -15,8 +15,6 @@ import org.jspecify.annotations.Nullable;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.parallel.Execution;
-import org.junit.jupiter.api.parallel.ExecutionMode;
 import org.springframework.boot.autoconfigure.ImportAutoConfiguration;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.TestPropertySource;
@@ -325,7 +323,6 @@ class OidcVerifiableCredentialOfferEndpointControllerTests {
     }
 
     @Nested
-    @Execution(ExecutionMode.SAME_THREAD)
     @TestPropertySource(properties = {
         "cas.authn.attribute-repository.mapped.people.casuser=eduPersonAffiliation->faculty,name->casuser",
 

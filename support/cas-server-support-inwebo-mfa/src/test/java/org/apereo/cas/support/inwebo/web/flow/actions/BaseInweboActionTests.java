@@ -114,12 +114,7 @@ public abstract class BaseInweboActionTests {
     @TestConfiguration(value = "InweboActionTestConfiguration", proxyBeanMethods = false)
     public static class InweboActionTestConfiguration {
         /**
-         * The Inwebo actions are singletons that capture this bean when the shared context is built,
-         * so a single mock would be stubbed and reset by every test at once. This one forwards each
-         * call to the mock the running test installed for its own thread, which lets the four action
-         * test classes and their methods stub independently and run concurrently. Reflection wraps a
-         * stubbed failure in an {@link InvocationTargetException}, so the cause is rethrown to keep
-         * {@code thenThrow} stubbing behaving as the action under test expects.
+         * Forwards to the mock the running test installed, so tests can stub independently.
          *
          * @return the inwebo service
          */

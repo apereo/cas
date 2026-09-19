@@ -83,7 +83,6 @@ public abstract class BaseThrottledSubmissionHandlerInterceptorAdapterTests {
 
         /* Ensure that slowing down relieves throttle  */
         getThrottle().release();
-        Thread.sleep(1000);
         failLoop(3, 1000, HttpStatus.SC_UNAUTHORIZED);
     }
 
@@ -97,7 +96,7 @@ public abstract class BaseThrottledSubmissionHandlerInterceptorAdapterTests {
         IntStream.range(0, trials).forEach(Unchecked.intConsumer(i -> {
             Thread.sleep(period);
             val status = login("mog", "badpassword", IP_ADDRESS);
-            if (i == trials) {
+            if (i == trials - 1) {
                 assertEquals(expected, status.getStatus());
             }
         }));

@@ -31,8 +31,6 @@ import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.junit.jupiter.api.parallel.Execution;
-import org.junit.jupiter.api.parallel.ExecutionMode;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
@@ -56,7 +54,6 @@ import static org.mockito.Mockito.*;
  * @since 5.0.0
  */
 @Tag("AttributeRelease")
-@Execution(ExecutionMode.SAME_THREAD)
 @ExtendWith(CasTestExtension.class)
 class ReturnAllowedAttributeReleasePolicyTests {
     private static final ObjectMapper MAPPER = JacksonObjectMapperFactory.builder()

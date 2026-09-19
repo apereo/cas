@@ -21,7 +21,6 @@ import lombok.Getter;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.time.StopWatch;
-import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.RepeatedTest;
 import org.junit.jupiter.api.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,6 +30,7 @@ import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Import;
 import org.springframework.test.context.TestPropertySource;
+import static org.awaitility.Awaitility.*;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
@@ -84,18 +84,19 @@ class GoogleCloudFirestoreTicketRegistryTests extends BaseTicketRegistryTests {
 
     @RepeatedTest(1)
     @Tag("TicketRegistryTestWithEncryption")
-    @Order(0)
     void verifyCleanLargeBatch() throws Throwable {
         newTicketRegistry.deleteAll();
+        var lastTicket = (TicketGrantingTicketImpl) null;
         for (var i = 0; i < COUNT; i++) {
             val tgtId = new TicketGrantingTicketIdGenerator(10, StringUtils.EMPTY)
                 .getNewTicketId(TicketGrantingTicket.PREFIX);
-            val tgt = new TicketGrantingTicketImpl(tgtId,
+            lastTicket = new TicketGrantingTicketImpl(tgtId,
                 CoreAuthenticationTestUtils.getAuthentication(),
                 new HardTimeoutExpirationPolicy(1));
-            newTicketRegistry.addTicket(tgt);
+            newTicketRegistry.addTicket(lastTicket);
         }
-        Thread.sleep(Duration.ofSeconds(1));
+        val newestTicket = lastTicket;
+        await().atMost(Duration.ofSeconds(30)).until(newestTicket::isExpired);
         val cleaner = new DefaultTicketRegistryCleaner(LockRepository.noOp(), applicationContext, newTicketRegistry);
 
         val stopwatch = new StopWatch();

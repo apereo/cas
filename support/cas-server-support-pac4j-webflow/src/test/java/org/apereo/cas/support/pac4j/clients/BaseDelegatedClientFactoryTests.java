@@ -8,9 +8,11 @@ import org.apereo.cas.web.BaseDelegatedAuthenticationTests;
 import lombok.val;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.pac4j.core.client.BaseClient;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.context.ConfigurableApplicationContext;
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
@@ -30,26 +32,41 @@ public abstract class BaseDelegatedClientFactoryTests {
     @Qualifier("pac4jDelegatedClientFactory")
     protected DelegatedIdentityProviderFactory delegatedIdentityProviderFactory;
 
+    @Autowired
+    protected ConfigurableApplicationContext applicationContext;
+
     /**
-     * Callers of the factory treat a built provider list as non-null, so concurrent callers that
-     * arrive while a build is already in flight must wait for it rather than be handed nothing.
+     * Concurrent callers must all see the same identity providers. A caller handed a different set
+     * from its peers is the shape of the defect this guards: an empty list reads downstream as
+     * "no identity providers are configured" rather than as a failure.
      *
      * @throws Exception in case the concurrent builds cannot be started or joined
      */
     @Test
-    void verifyConcurrentBuildsNeverYieldNull() throws Exception {
+    void verifyConcurrentBuildsAgree() throws Exception {
+        val sizes = new HashSet<Integer>();
+        for (val clients : buildConcurrently(delegatedIdentityProviderFactory)) {
+            assertNotNull(clients);
+            sizes.add(clients.size());
+        }
+        assertEquals(1, sizes.size(), () -> "Concurrent builds disagreed on the identity providers: " + sizes);
+    }
+
+    protected static List<List<BaseClient>> buildConcurrently(final DelegatedIdentityProviderFactory factory) throws Exception {
         val startGate = new CountDownLatch(1);
         try (val executor = Executors.newVirtualThreadPerTaskExecutor()) {
             val tasks = IntStream.rangeClosed(1, 4)
                 .mapToObj(__ -> executor.submit(() -> {
                     startGate.await();
-                    return delegatedIdentityProviderFactory.build();
+                    return factory.build();
                 }))
                 .toList();
             startGate.countDown();
+            val results = new ArrayList<List<BaseClient>>();
             for (val task : tasks) {
-                assertNotNull(task.get(60, TimeUnit.SECONDS));
+                results.add(task.get(60, TimeUnit.SECONDS));
             }
+            return results;
         }
     }
 }

@@ -29,11 +29,8 @@ import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * This is {@link CASOAuth20TicketValidatorTests}.
- * The OAuth callback URL is a fixed address, so any service another test registers that also
- * matches it competes for the same lookup, and this test needs its own definition to win in order
- * to assert on the attributes that definition releases. It therefore empties the registry, which
- * only stays harmless because the profile below gives this class a context -- and so a services
- * manager -- of its own rather than the one the rest of the OAuth suite shares.
+ * The registry is emptied so this test's service wins the callback URL lookup; the profile keeps
+ * that to a context of its own.
  *
  * @author Misagh Moayyed
  * @since 7.0.0

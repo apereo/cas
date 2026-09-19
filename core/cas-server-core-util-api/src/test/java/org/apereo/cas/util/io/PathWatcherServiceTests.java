@@ -4,9 +4,9 @@ import module java.base;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.io.FileUtils;
-import org.jooq.lambda.Unchecked;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import static org.awaitility.Awaitility.*;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
@@ -52,20 +52,14 @@ class PathWatcherServiceTests {
             LOGGER.debug("[{}] is modified", file2.getName());
         });
 
-        val changeThread = new Thread(Unchecked.runnable(() -> {
-            FileUtils.writeStringToFile(file1, "1", StandardCharsets.UTF_8);
-            FileUtils.writeStringToFile(file2, "2", StandardCharsets.UTF_8);
-            Thread.sleep(10_000);
-        }));
-
         watcher2.start(file1.getName());
         watcher1.start(file2.getName());
 
-        changeThread.start();
-        changeThread.join();
+        FileUtils.writeStringToFile(file1, "1", StandardCharsets.UTF_8);
+        FileUtils.writeStringToFile(file2, "2", StandardCharsets.UTF_8);
 
-        assertTrue(watch1.get());
-        assertTrue(watch2.get());
+        await().atMost(Duration.ofSeconds(30)).until(watch1::get);
+        await().atMost(Duration.ofSeconds(30)).until(watch2::get);
 
         watcher1.destroy();
     }

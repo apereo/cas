@@ -27,8 +27,6 @@ import org.apache.commons.lang3.time.StopWatch;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.junit.jupiter.api.parallel.Execution;
-import org.junit.jupiter.api.parallel.ExecutionMode;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.EnableAspectJAutoProxy;
 import org.springframework.scheduling.annotation.EnableScheduling;
@@ -76,7 +74,6 @@ import static org.junit.jupiter.api.Assertions.*;
 @EnableScheduling
 @Getter
 @EnabledIfListeningOnPort(port = 8000)
-@Execution(ExecutionMode.SAME_THREAD)
 class GoogleAuthenticatorDynamoDbTokenRepositoryTests extends BaseOneTimeTokenRepositoryTests {
     static {
         System.setProperty(SdkSystemSetting.AWS_ACCESS_KEY_ID.property(), "AKIAIPPIGGUNIO74C63Z");

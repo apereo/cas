@@ -8,8 +8,7 @@ import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.junit.jupiter.api.parallel.Execution;
-import org.junit.jupiter.api.parallel.ExecutionMode;
+import org.junit.jupiter.api.parallel.ResourceLock;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.aop.AopAutoConfiguration;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -30,7 +29,6 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 @Tag("Simple")
 @ExtendWith(CasTestExtension.class)
-@Execution(ExecutionMode.SAME_THREAD)
 class CasFeatureEnabledConditionTests {
     @ConditionalOnFeaturesEnabled({
         @ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.AcceptableUsagePolicy, module = "feature3"),
@@ -176,6 +174,7 @@ class CasFeatureEnabledConditionTests {
             + "=CasFeatureModule.AcceptableUsagePolicy.feature1.enabled=true,"
             + "CasFeatureModule.SAMLIdentityProvider.enabled=true")
     @ContextConfiguration(initializers = ClearRegisteredFeaturesInitializer.class)
+    @ResourceLock("casFeatureModuleCatalog")
     class SelectedFeatureConditionsTests {
         @Autowired
         private ConfigurableApplicationContext applicationContext;

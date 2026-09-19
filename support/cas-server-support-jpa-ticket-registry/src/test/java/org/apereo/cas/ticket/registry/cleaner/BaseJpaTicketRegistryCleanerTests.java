@@ -47,6 +47,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.integration.autoconfigure.IntegrationProperties;
 import org.springframework.boot.test.context.SpringBootTest;
+import static org.awaitility.Awaitility.*;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
@@ -227,8 +228,12 @@ public abstract class BaseJpaTicketRegistryCleanerTests {
                     });
                 }
             }, 5, 5, TimeUnit.MILLISECONDS));
-            tasks.add(executor.scheduleAtFixedRate(ticketRegistryCleaner::clean, 10, 5, TimeUnit.MILLISECONDS));
-            Thread.sleep(Duration.ofSeconds(15));
+            val cleanups = new AtomicInteger();
+            tasks.add(executor.scheduleAtFixedRate(() -> {
+                ticketRegistryCleaner.clean();
+                cleanups.incrementAndGet();
+            }, 10, 5, TimeUnit.MILLISECONDS));
+            await().atMost(Duration.ofSeconds(60)).until(() -> cleanups.get() >= 100);
         } finally {
             tasks.forEach(task -> task.cancel(false));
             executor.shutdown();

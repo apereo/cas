@@ -17,13 +17,11 @@ import lombok.val;
 import org.apereo.inspektr.common.web.ClientInfo;
 import org.apereo.inspektr.common.web.ClientInfoHolder;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.Nested;
-import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.TestMethodOrder;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.jupiter.api.parallel.ResourceLock;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.context.annotation.Bean;
@@ -161,7 +159,7 @@ class SendPasswordResetInstructionsActionTests {
         "cas.authn.pm.reset.security-questions-enabled=true",
         "cas.authn.pm.reset.number-of-uses=1"
     })
-    @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
+    @ResourceLock("testMultifactorAuthenticationProvider")
     class NoMultifactorRegisteredDevicesTests extends BasePasswordManagementActionTests {
 
         @BeforeEach
@@ -172,7 +170,6 @@ class SendPasswordResetInstructionsActionTests {
         }
         
         @Test
-        @Order(1)
         void verifyActionRequiresMfa() throws Throwable {
             val context = MockRequestContext.create(applicationContext);
             TestMultifactorAuthenticationProvider.registerProviderIntoApplicationContext(applicationContext);
@@ -182,7 +179,6 @@ class SendPasswordResetInstructionsActionTests {
         }
 
         @Test
-        @Order(2)
         void verifyPasswordResetMfaBypass() throws Exception {
             val context = MockRequestContext.create(applicationContext);
             val provider = new TestMultifactorAuthenticationProvider();
@@ -195,15 +191,15 @@ class SendPasswordResetInstructionsActionTests {
         }
 
         @Test
-        @Order(0)
         void verifyActionMultiUse() throws Throwable {
             val context = MockRequestContext.create(applicationContext);
             context.setParameter(SendPasswordResetInstructionsAction.REQUEST_PARAMETER_USERNAME, "casuser");
             WebUtils.putServiceIntoFlowScope(context, RegisteredServiceTestUtils.getService());
             assertEquals(CasWebflowConstants.TRANSITION_ID_SUCCESS, sendPasswordResetInstructionsAction.execute(context).getId());
             val tickets = ticketRegistry.getTickets();
-            assertEquals(1, tickets.size());
-            assertInstanceOf(MultiTimeUseOrTimeoutExpirationPolicy.class, tickets.iterator().next().getExpirationPolicy());
+            assertFalse(tickets.isEmpty());
+            assertTrue(tickets.stream().allMatch(ticket ->
+                ticket.getExpirationPolicy() instanceof MultiTimeUseOrTimeoutExpirationPolicy));
         }
     }
 

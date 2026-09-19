@@ -12,6 +12,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.test.context.SpringBootTest;
+import static org.awaitility.Awaitility.*;
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
@@ -43,14 +44,10 @@ class ExpiringAttributeDefinitionStoreTests {
             assertFalse(store.getAttributeDefinitionsMap().isEmpty());
             store.registerAttributeDefinitionInSource(defn.withName(NEW_NAME));
 
-            try {
-                Thread.sleep(3000);
+            await().atMost(Duration.ofSeconds(15)).untilAsserted(() -> {
                 assertTrue(store.getAttributeDefinitionsMap().isEmpty());
                 assertTrue(store.locateAttributeDefinitionByName(OLD_NAME).isEmpty());
-            } catch (final InterruptedException e) {
-                Thread.currentThread().interrupt();
-                throw new AssertionError(e);
-            }
+            });
             val definition = store.locateAttributeDefinition("eduPersonPrincipalName").orElseThrow();
             assertEquals(NEW_NAME, definition.getName());
             assertFalse(store.getAttributeDefinitions().isEmpty());

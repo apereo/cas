@@ -68,13 +68,6 @@ class GoogleAuthenticatorServiceTests {
         assertFalse(googleAuth.authorize(key.getKey(), key.getVerificationCode()));
     }
 
-    /**
-     * Both tests set the client info explicitly so neither inherits whatever the other left on a
-     * pooled worker thread; the tenant is resolved from the context path.
-     *
-     * @param contextPath the context path
-     * @return the request
-     */
     private static MockHttpServletRequest clientRequest(final String contextPath) {
         val request = new MockHttpServletRequest();
         request.setRemoteAddr("185.86.151.11");

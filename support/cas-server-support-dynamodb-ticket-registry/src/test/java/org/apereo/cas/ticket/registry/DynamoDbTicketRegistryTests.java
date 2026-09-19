@@ -32,8 +32,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.time.StopWatch;
 import org.junit.jupiter.api.RepeatedTest;
 import org.junit.jupiter.api.Tag;
-import org.junit.jupiter.api.parallel.Execution;
-import org.junit.jupiter.api.parallel.ExecutionMode;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.ImportAutoConfiguration;
@@ -71,7 +69,6 @@ import static org.junit.jupiter.api.Assertions.*;
     })
 @EnabledIfListeningOnPort(port = 8000)
 @Getter
-@Execution(ExecutionMode.SAME_THREAD)
 class DynamoDbTicketRegistryTests extends BaseTicketRegistryTests {
     private static final int COUNT = 250;
 

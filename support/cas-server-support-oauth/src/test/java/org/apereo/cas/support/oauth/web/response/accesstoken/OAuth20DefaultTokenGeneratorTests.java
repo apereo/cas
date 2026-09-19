@@ -34,6 +34,7 @@ import org.springframework.http.HttpMethod;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.test.context.TestPropertySource;
+import static org.awaitility.Awaitility.*;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
@@ -210,7 +211,6 @@ class OAuth20DefaultTokenGeneratorTests {
             token.setUserCode(userCode.getId());
             ticketRegistry.addTicket(userCode);
 
-            Thread.sleep(2000);
             val tokenRequestContext = AccessTokenRequestContext.builder()
                 .responseType(OAuth20ResponseTypes.DEVICE_CODE)
                 .deviceCode(token.getId())
@@ -229,7 +229,6 @@ class OAuth20DefaultTokenGeneratorTests {
             token.setUserCode(userCode.getId());
             ticketRegistry.addTicket(userCode);
 
-            Thread.sleep(2000);
             val holder = AccessTokenRequestContext.builder()
                 .responseType(OAuth20ResponseTypes.DEVICE_CODE)
                 .deviceCode(token.getId())
@@ -248,7 +247,6 @@ class OAuth20DefaultTokenGeneratorTests {
             val userCode = defaultDeviceUserCodeFactory.createDeviceUserCode(token.getService());
             token.setUserCode(userCode.getId());
             ticketRegistry.addTicket(userCode);
-            Thread.sleep(2000);
             val holder = AccessTokenRequestContext.builder()
                 .responseType(OAuth20ResponseTypes.DEVICE_CODE)
                 .deviceCode(token.getId())
@@ -316,18 +314,19 @@ class OAuth20DefaultTokenGeneratorTests {
             assertNotNull(jwt.getIssuedAt());
             assertNotEquals(authentication.getAuthenticationDate().toInstant().toEpochMilli(), jwt.getIssuedAt().getValueInMillis());
             assertNotNull(jwt.getExpirationTime());
-            Thread.sleep(2000);
-            mv = generateAccessTokenResponseAndGetModelAndView(registeredService, authentication, OAuth20GrantTypes.REFRESH_TOKEN);
-            assertTrue(mv.getModel().containsKey(OAuth20Constants.ACCESS_TOKEN));
-            val refreshedAt = mv.getModel().get(OAuth20Constants.ACCESS_TOKEN).toString();
-            val refreshedDecoded = oauthAccessTokenJwtCipherExecutor.decode(refreshedAt).toString();
-            assertNotNull(refreshedDecoded);
-            val refreshedJwt = JwtClaims.parse(refreshedDecoded);
-            assertNotNull(refreshedJwt);
-            assertNotNull(refreshedJwt.getIssuedAt());
-            assertNotEquals(authentication.getAuthenticationDate().toInstant().toEpochMilli(), refreshedJwt.getIssuedAt().getValueInMillis());
-            assertNotNull(refreshedJwt.getExpirationTime());
-            assertNotEquals(jwt.getExpirationTime().getValue(), refreshedJwt.getExpirationTime().getValue());
+            await().atMost(Duration.ofSeconds(30)).untilAsserted(() -> {
+                val refreshed = generateAccessTokenResponseAndGetModelAndView(registeredService, authentication, OAuth20GrantTypes.REFRESH_TOKEN);
+                assertTrue(refreshed.getModel().containsKey(OAuth20Constants.ACCESS_TOKEN));
+                val refreshedAt = refreshed.getModel().get(OAuth20Constants.ACCESS_TOKEN).toString();
+                val refreshedDecoded = oauthAccessTokenJwtCipherExecutor.decode(refreshedAt).toString();
+                assertNotNull(refreshedDecoded);
+                val refreshedJwt = JwtClaims.parse(refreshedDecoded);
+                assertNotNull(refreshedJwt);
+                assertNotNull(refreshedJwt.getIssuedAt());
+                assertNotEquals(authentication.getAuthenticationDate().toInstant().toEpochMilli(), refreshedJwt.getIssuedAt().getValueInMillis());
+                assertNotNull(refreshedJwt.getExpirationTime());
+                assertNotEquals(jwt.getExpirationTime().getValue(), refreshedJwt.getExpirationTime().getValue());
+            });
         }
 
         @Test

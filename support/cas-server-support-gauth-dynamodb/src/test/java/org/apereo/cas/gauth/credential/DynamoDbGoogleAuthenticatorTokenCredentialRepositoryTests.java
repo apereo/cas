@@ -9,8 +9,6 @@ import lombok.Getter;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.junit.jupiter.api.parallel.Execution;
-import org.junit.jupiter.api.parallel.ExecutionMode;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -44,7 +42,6 @@ import software.amazon.awssdk.core.SdkSystemSetting;
 @EnabledIfListeningOnPort(port = 8000)
 @Tag("DynamoDb")
 @ExtendWith(CasTestExtension.class)
-@Execution(ExecutionMode.SAME_THREAD)
 class DynamoDbGoogleAuthenticatorTokenCredentialRepositoryTests extends BaseOneTimeTokenCredentialRepositoryTests {
     static {
         System.setProperty(SdkSystemSetting.AWS_ACCESS_KEY_ID.property(), "AKIAIPPIGGUNIO74C63Z");

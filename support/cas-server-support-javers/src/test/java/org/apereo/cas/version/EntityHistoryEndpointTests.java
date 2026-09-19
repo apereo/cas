@@ -17,8 +17,6 @@ import org.javers.spring.boot.mongo.JaversMongoAutoConfiguration;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.junit.jupiter.api.parallel.Execution;
-import org.junit.jupiter.api.parallel.ExecutionMode;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.ImportAutoConfiguration;
@@ -42,7 +40,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
  * @since 7.1.0
  */
 @Tag("RegisteredService")
-@Execution(ExecutionMode.SAME_THREAD)
 @ExtendWith(CasTestExtension.class)
 @AutoConfigureMockMvc
 @SpringBootTestAutoConfigurations
