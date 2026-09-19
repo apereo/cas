@@ -56,6 +56,23 @@ class CasReentrantLockTests {
     }
 
     @Test
+    void verifyTryLockYieldsNullBeyondTimeout() throws Exception {
+        val lock = new CasReentrantLock();
+        val acquired = new CountDownLatch(1);
+        try (val executor = Executors.newVirtualThreadPerTaskExecutor()) {
+            val holder = executor.submit(() -> lock.executeAndThrow(() -> {
+                acquired.countDown();
+                Thread.sleep(Duration.ofSeconds(6));
+                return "held";
+            }));
+            assertTrue(acquired.await(5, TimeUnit.SECONDS));
+            val contended = executor.submit(() -> lock.tryLock(() -> "contended"));
+            assertNull(contended.get(30, TimeUnit.SECONDS));
+            assertEquals("held", holder.get(30, TimeUnit.SECONDS));
+        }
+    }
+
+    @Test
     void verifyCheckedExecutionReleasesAfterFailure() {
         val lock = new CasReentrantLock();
         assertThrows(RuntimeException.class, () -> lock.executeAndThrow(() -> {

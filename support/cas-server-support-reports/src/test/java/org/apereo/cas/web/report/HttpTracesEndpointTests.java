@@ -9,8 +9,6 @@ import lombok.val;
 import org.jspecify.annotations.Nullable;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.parallel.Execution;
-import org.junit.jupiter.api.parallel.ExecutionMode;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
@@ -34,7 +32,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
  */
 @TestPropertySource(properties = "management.endpoint.httptraces.access=UNRESTRICTED")
 @Tag("ActuatorEndpoint")
-@Execution(ExecutionMode.SAME_THREAD)
 @ImportAutoConfiguration(CasCoreTracingAutoConfiguration.class)
 class HttpTracesEndpointTests extends AbstractCasEndpointTests {
     @Autowired

@@ -10,10 +10,8 @@ import org.apereo.cas.util.RandomUtils;
 import org.apereo.cas.util.junit.EnabledIfListeningOnPort;
 import lombok.Getter;
 import lombok.val;
-import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.TestMethodOrder;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -48,7 +46,6 @@ import static org.mockito.Mockito.*;
 @Tag("AmazonWebServices")
 @ExtendWith(CasTestExtension.class)
 @Getter
-@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 class AmazonS3ServiceRegistryTests extends AbstractServiceRegistryTests {
     @Autowired
     @Qualifier(ServiceRegistry.BEAN_NAME)

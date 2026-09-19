@@ -29,8 +29,9 @@ import java.security.cert.X509Certificate;
  */
 @Slf4j
 public class MockWebServer implements Closeable {
-    private static final int STARTING_PORT_RANGE = 4000;
-    private static final int ENDING_PORT_RANGE = 9999;
+    private static final int STARTING_PORT_RANGE = 21000;
+
+    private static final int ENDING_PORT_RANGE = 24999;
 
     private static final ConcurrentSkipListSet<Integer> ALL_PORTS = new ConcurrentSkipListSet<>();
     private static final ObjectMapper MAPPER = JacksonObjectMapperFactory.builder()

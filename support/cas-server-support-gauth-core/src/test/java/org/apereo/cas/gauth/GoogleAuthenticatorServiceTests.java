@@ -14,8 +14,6 @@ import org.apereo.inspektr.common.web.ClientInfoHolder;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.junit.jupiter.api.parallel.Execution;
-import org.junit.jupiter.api.parallel.ExecutionMode;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -40,7 +38,6 @@ import static org.junit.jupiter.api.Assertions.*;
 })
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @ExtendWith(CasTestExtension.class)
-@Execution(ExecutionMode.SAME_THREAD)
 class GoogleAuthenticatorServiceTests {
     @Autowired
     private CasConfigurationProperties casProperties;
@@ -51,6 +48,7 @@ class GoogleAuthenticatorServiceTests {
 
     @Test
     void verifyOperation() {
+        ClientInfoHolder.setClientInfo(ClientInfo.from(clientRequest("/login")));
         val googleAuth = new DefaultCasGoogleAuthenticator(casProperties, tenantExtractor);
         googleAuth.setCredentialRepository(new DummyCredentialRepository());
         assertNotNull(googleAuth.getCredentialRepository());
@@ -61,17 +59,27 @@ class GoogleAuthenticatorServiceTests {
 
     @Test
     void verifyOperationForTenant() {
-        val request = new MockHttpServletRequest();
-        request.setRemoteAddr("185.86.151.11");
-        request.setLocalAddr("185.88.151.11");
-        request.setContextPath("/tenants/shire/login");
-        ClientInfoHolder.setClientInfo(ClientInfo.from(request));
-
+        ClientInfoHolder.setClientInfo(ClientInfo.from(clientRequest("/tenants/shire/login")));
         val googleAuth = new DefaultCasGoogleAuthenticator(casProperties, tenantExtractor);
         googleAuth.setCredentialRepository(new DummyCredentialRepository());
         assertNotNull(googleAuth.getCredentialRepository());
         val key = googleAuth.createCredentials("casuser");
         assertNotNull(key);
         assertFalse(googleAuth.authorize(key.getKey(), key.getVerificationCode()));
+    }
+
+    /**
+     * Both tests set the client info explicitly so neither inherits whatever the other left on a
+     * pooled worker thread; the tenant is resolved from the context path.
+     *
+     * @param contextPath the context path
+     * @return the request
+     */
+    private static MockHttpServletRequest clientRequest(final String contextPath) {
+        val request = new MockHttpServletRequest();
+        request.setRemoteAddr("185.86.151.11");
+        request.setLocalAddr("185.88.151.11");
+        request.setContextPath(contextPath);
+        return request;
     }
 }

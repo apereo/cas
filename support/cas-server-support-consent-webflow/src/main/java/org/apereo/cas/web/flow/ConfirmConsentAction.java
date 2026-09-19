@@ -129,8 +129,7 @@ public class ConfirmConsentAction extends AbstractConsentAction {
             return false;
         }
         try {
-            LocalDateTime.now(ZoneOffset.UTC).plus(reminder, unit);
-            return true;
+            return LocalDateTime.now(ZoneOffset.UTC).plus(reminder, unit) != null;
         } catch (final Exception e) {
             return false;
         }

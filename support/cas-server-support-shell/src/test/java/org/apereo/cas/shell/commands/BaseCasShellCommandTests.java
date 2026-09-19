@@ -17,6 +17,10 @@ import org.springframework.shell.core.autoconfigure.SpringShellAutoConfiguration
 
 /**
  * This is {@link BaseCasShellCommandTests}.
+ * Interactive mode is off below, so the shared {@code ShellRunner} is the non-interactive one:
+ * a dispatcher over an immutable command registry with no terminal or line reader of its own,
+ * which concurrent callers can share. The commands themselves hold no state, and each test passes
+ * the files it works on as arguments, so there is nothing here that needs serializing.
  *
  * @author Misagh Moayyed
  * @since 6.2.0

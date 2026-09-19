@@ -5,8 +5,9 @@ import org.apereo.cas.util.nativex.CasRuntimeHintsRegistrar;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.parallel.Execution;
-import org.junit.jupiter.api.parallel.ExecutionMode;
+import org.junit.jupiter.api.parallel.ResourceLock;
+import org.junit.jupiter.api.parallel.Resources;
+import org.junitpioneer.jupiter.SetSystemProperty;
 import org.springframework.context.annotation.ConditionContext;
 import org.springframework.core.type.AnnotatedTypeMetadata;
 import static org.junit.jupiter.api.Assertions.*;
@@ -19,17 +20,18 @@ import static org.mockito.Mockito.*;
  * @since 7.0.0
  */
 @Tag("Native")
-@Execution(ExecutionMode.SAME_THREAD)
+@ResourceLock(Resources.SYSTEM_PROPERTIES)
 class CasGraalVMNativeImageDisabledConditionTests {
     @Test
+    @SetSystemProperty(key = CasRuntimeHintsRegistrar.SYSTEM_PROPERTY_SPRING_AOT_PROCESSING, value = "false")
     void verifyNotInNativeImage() {
         val condition = new CasGraalVMNativeImageDisabledCondition();
         assertTrue(condition.getMatchOutcome(mock(ConditionContext.class), mock(AnnotatedTypeMetadata.class)).isMatch());
     }
 
     @Test
+    @SetSystemProperty(key = CasRuntimeHintsRegistrar.SYSTEM_PROPERTY_SPRING_AOT_PROCESSING, value = "true")
     void verifyInNativeImage() {
-        System.setProperty(CasRuntimeHintsRegistrar.SYSTEM_PROPERTY_SPRING_AOT_PROCESSING, "true");
         val condition = new CasGraalVMNativeImageDisabledCondition();
         assertFalse(condition.getMatchOutcome(mock(ConditionContext.class), mock(AnnotatedTypeMetadata.class)).isMatch());
     }

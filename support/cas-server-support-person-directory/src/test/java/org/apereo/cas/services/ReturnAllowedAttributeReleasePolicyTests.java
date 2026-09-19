@@ -27,11 +27,9 @@ import org.apereo.cas.util.RandomUtils;
 import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
 import org.apereo.cas.util.spring.boot.SpringBootTestAutoConfigurations;
 import lombok.val;
-import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.TestMethodOrder;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.api.parallel.Execution;
 import org.junit.jupiter.api.parallel.ExecutionMode;
@@ -157,7 +155,6 @@ class ReturnAllowedAttributeReleasePolicyTests {
             "cas.authn.attribute-repository.core.default-attributes-to-release=cn,mail"
         })
     @EnableConfigurationProperties({CasConfigurationProperties.class, WebProperties.class})
-    @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
     @Nested
     class DefaultTests {
 

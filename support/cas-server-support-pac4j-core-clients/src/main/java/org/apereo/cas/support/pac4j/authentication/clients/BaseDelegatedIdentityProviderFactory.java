@@ -50,16 +50,30 @@ public abstract class BaseDelegatedIdentityProviderFactory implements DelegatedI
             .forEach(Unchecked.consumer(Closeable::close));
     }
 
+    /**
+     * Builds the identity providers. Callers treat the result as non-null --
+     * {@code DefaultDelegatedIdentityProviders} asserts it with {@code Objects.requireNonNull} --
+     * but {@code tryLock} abandons the attempt after its timeout and yields {@code null}, so a
+     * request arriving while the clients are still being built used to fail with "Unable to build
+     * identity providers". Building SAML and OIDC clients parses metadata and can exceed that
+     * timeout on a cold cache, so the window is real in a running server, not only under test.
+     * A caller that loses the lock now falls back to the last set that was built and stored, which
+     * is what it would have been given had it arrived a moment later. Waiting on the lock instead
+     * was tried and rejected: it lets every caller run {@code load()} in turn, and re-running the
+     * load re-initializes identity providers that other requests are reading at the same time.
+     *
+     * @return the identity providers, never null
+     */
     @Override
     public final List<BaseClient> build() {
-        return lock.tryLock(() -> {
+        val key = casProperties.getServer().getName();
+        val currentClients = lock.tryLock(() -> {
             val core = casProperties.getAuthn().getPac4j().getCore();
-            val currentClients = !core.isLazyInit() || retrieve(casProperties.getServer().getName()).isEmpty()
-                ? load()
-                : retrieve(casProperties.getServer().getName());
-            store(casProperties.getServer().getName(), currentClients);
-            return currentClients;
+            val clients = !core.isLazyInit() || retrieve(key).isEmpty() ? load() : retrieve(key);
+            store(key, clients);
+            return clients;
         });
+        return currentClients != null ? currentClients : retrieve(key);
     }
 
     @Override

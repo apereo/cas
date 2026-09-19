@@ -142,14 +142,18 @@ Guidance for AI coding agents working in the Apereo CAS source tree.
   policy-permits branch as a second assertion in the process.
 
 - Ports are shared state too, and the trap has a specific shape. `MockWebServer.getRandomPort()`
-  draws from **4000-9999**, so any test that hardcodes a port in that range and depends on nothing
-  listening there is racing every mock server in its category. `HttpUtilsTests.verifyExec` and
-  `verifyBearerToken` did exactly that on 8080 and 8081: they assert that an unreachable proxy
-  yields an error response, and a sibling test's mock server landing on 8080 turns "connection
-  refused" into `200 OK` and inverts the assertion. The symptom is one of two identical tests
-  failing, which is the giveaway that it is timing rather than logic. Those two now use ports above
-  the mock range. Hardcoded 8080/8081 elsewhere in the tree is mostly harmless string-building and
-  serialization; only tests that actually open a connection are exposed.
+  now draws from **21000-24999**, a band nothing else in the repository binds, and a Checkstyle rule
+  (`reservedMockWebServerPorts`) keeps it that way. It used to draw from 4000-9999, which overlapped
+  about 150 ports the tests and CI containers already use -- 5432, 6379, 8080, 8443, 9042 and 9092
+  among them -- as well as the `${random.int[3000,9000]}` convention test property sources use for
+  their own servers. A test that hardcodes a port inside the mock range and depends on nothing
+  listening there is racing every mock server in its category: `HttpUtilsTests.verifyExec` and
+  `verifyBearerToken` did exactly that on 8080 and 8081, asserting that an unreachable proxy yields
+  an error response, and a sibling test's mock server landing on 8080 turned "connection refused"
+  into `200 OK` and inverted the assertion. The symptom is one of two identical tests failing, which
+  is the giveaway that it is timing rather than logic. Moving the band fixed that class of failure
+  wholesale; hardcoded 8080/8081 elsewhere in the tree is mostly harmless string-building and
+  serialization anyway, and only tests that actually open a connection were ever exposed.
 
 ## Puppeteer scenario init scripts
 

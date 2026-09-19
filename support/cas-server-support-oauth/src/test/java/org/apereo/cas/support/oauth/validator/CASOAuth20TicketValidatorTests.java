@@ -15,8 +15,6 @@ import org.apereo.cas.ticket.tracking.TicketTrackingPolicy;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.parallel.Execution;
-import org.junit.jupiter.api.parallel.ExecutionMode;
 import org.pac4j.core.context.CallContext;
 import org.pac4j.core.profile.BasicUserProfile;
 import org.pac4j.core.profile.factory.ProfileManagerFactory;
@@ -31,12 +29,16 @@ import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * This is {@link CASOAuth20TicketValidatorTests}.
+ * The OAuth callback URL is a fixed address, so any service another test registers that also
+ * matches it competes for the same lookup, and this test needs its own definition to win in order
+ * to assert on the attributes that definition releases. It therefore empties the registry, which
+ * only stays harmless because the profile below gives this class a context -- and so a services
+ * manager -- of its own rather than the one the rest of the OAuth suite shares.
  *
  * @author Misagh Moayyed
  * @since 7.0.0
  */
 @Tag("OAuth")
-@Execution(ExecutionMode.SAME_THREAD)
 class CASOAuth20TicketValidatorTests extends AbstractOAuth20Tests {
     @Autowired
     @Qualifier(TicketTrackingPolicy.BEAN_NAME_SERVICE_TICKET_TRACKING)

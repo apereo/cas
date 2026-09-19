@@ -21,11 +21,9 @@ import lombok.Getter;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.time.StopWatch;
-import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.RepeatedTest;
 import org.junit.jupiter.api.Tag;
-import org.junit.jupiter.api.TestMethodOrder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.ImportAutoConfiguration;
@@ -56,7 +54,6 @@ import static org.mockito.Mockito.*;
     "spring.cloud.gcp.firestore.emulator.enabled=true",
     "spring.cloud.gcp.firestore.host-port=127.0.0.1:9980"
 })
-@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 class GoogleCloudFirestoreTicketRegistryTests extends BaseTicketRegistryTests {
     private static final int COUNT = 100;
 
