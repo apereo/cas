@@ -9,6 +9,7 @@ import lombok.Getter;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.jupiter.api.parallel.ResourceLock;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -40,6 +41,7 @@ import software.amazon.awssdk.core.SdkSystemSetting;
 @EnableScheduling
 @Getter
 @EnabledIfListeningOnPort(port = 8000)
+@ResourceLock("dynamoDbGoogleAuthenticatorCredentialTables")
 @Tag("DynamoDb")
 @ExtendWith(CasTestExtension.class)
 class DynamoDbGoogleAuthenticatorTokenCredentialRepositoryTests extends BaseOneTimeTokenCredentialRepositoryTests {

@@ -23,11 +23,19 @@ class PathWatcherServiceTests {
 
     private FileWatcherService watcher2;
 
-    private static File createTemporaryFile(final String name) throws Exception {
-        val filePath = new File(FileUtils.getTempDirectory(), name);
-        if (filePath.exists()) {
-            FileUtils.deleteQuietly(filePath);
-        }
+    /**
+     * Creates a file inside the given directory. The directory is one this test made for itself,
+     * because the watcher below is pointed at a whole directory rather than a single file: aimed at
+     * the shared temporary directory it would answer to every other test in this JVM that happens to
+     * write there, and the files it expects to find would be named the same as theirs.
+     *
+     * @param directory the directory to create the file in
+     * @param name      the name of the file
+     * @return the created file
+     * @throws Exception in case of failure
+     */
+    private static File createTemporaryFile(final File directory, final String name) throws Exception {
+        val filePath = new File(directory, name);
         val res = filePath.createNewFile();
         if (!res) {
             throw new IllegalStateException("Could not create file " + filePath);
@@ -37,8 +45,9 @@ class PathWatcherServiceTests {
 
     @Test
     void verifyOperation() throws Throwable {
-        val file1 = createTemporaryFile("file1.txt");
-        val file2 = createTemporaryFile("file2.txt");
+        val directory = Files.createTempDirectory("path-watcher").toFile();
+        val file1 = createTemporaryFile(directory, "file1.txt");
+        val file2 = createTemporaryFile(directory, "file2.txt");
 
         val watch1 = new AtomicBoolean();
         watcher1 = new PathWatcherService(file1.getParentFile(), file -> {

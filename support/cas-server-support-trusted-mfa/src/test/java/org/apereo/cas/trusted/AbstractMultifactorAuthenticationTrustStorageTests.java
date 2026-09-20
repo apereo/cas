@@ -119,7 +119,7 @@ public abstract class AbstractMultifactorAuthenticationTrustStorageTests {
         assertFalse(getMfaTrustEngine().get(now).isEmpty());
         assertFalse(getMfaTrustEngine().get(record.getPrincipal(), now).isEmpty());
 
-        getMfaTrustEngine().remove(ZonedDateTime.now(ZoneOffset.UTC).plusMinutes(10));
+        getMfaTrustEngine().remove(record.getRecordKey());
         assertTrue(getMfaTrustEngine().get(record.getPrincipal()).isEmpty());
 
         val second = getMfaTrustEngine().save(getMultifactorAuthenticationTrustRecord());

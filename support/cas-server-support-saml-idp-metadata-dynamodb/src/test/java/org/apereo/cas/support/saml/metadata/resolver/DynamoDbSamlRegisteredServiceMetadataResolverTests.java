@@ -11,6 +11,7 @@ import org.apache.commons.io.IOUtils;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.parallel.ResourceLock;
 import org.junitpioneer.jupiter.RetryingTest;
 import org.opensaml.core.criterion.EntityIdCriterion;
 import org.springframework.core.io.ByteArrayResource;
@@ -23,6 +24,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @author Misagh Moayyed
  * @since 7.2.0
  */
+@ResourceLock("samlIdentityProviderDynamoDbMetadataTable")
 @Tag("DynamoDb")
 @EnabledIfListeningOnPort(port = 8000)
 class DynamoDbSamlRegisteredServiceMetadataResolverTests extends BaseDynamoDbSamlMetadataTests {

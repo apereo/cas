@@ -9,6 +9,7 @@ import lombok.val;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.parallel.ResourceLock;
 import org.springframework.boot.autoconfigure.ImportAutoConfiguration;
 import org.springframework.test.context.TestPropertySource;
 import software.amazon.awssdk.core.SdkSystemSetting;
@@ -27,6 +28,7 @@ import static org.junit.jupiter.api.Assertions.*;
     "cas.authn.mfa.trusted.dynamo-db.local-instance=true",
     "cas.authn.mfa.trusted.dynamo-db.region=us-east-1"
 })
+@ResourceLock("dynamoDbMultifactorTrustTable")
 @Tag("DynamoDb")
 @EnabledIfListeningOnPort(port = 8000)
 class DynamoDbMultifactorAuthenticationTrustStorageTests extends AbstractMultifactorAuthenticationTrustStorageTests {

@@ -1,6 +1,7 @@
 package org.apereo.cas.authentication;
 
 import module java.base;
+import org.apereo.cas.util.RandomUtils;
 import org.apereo.cas.util.jpa.StringToNumberAttributeConverter;
 import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -148,14 +149,17 @@ public class OneTimeTokenAccount implements Serializable, Comparable<OneTimeToke
     }
 
     /**
-     * Assign id if undefined.
+     * Assigns an identifier if one has not been given already. The identifier is drawn at random
+     * rather than taken from the clock: it is the primary key in some of the stores behind this
+     * record, and a clock reading only has millisecond resolution, so two records created in the
+     * same millisecond would share a key and one would silently overwrite the other.
      *
-     * @return the registered service
+     * @return this record, with an identifier assigned
      */
     @CanIgnoreReturnValue
     public OneTimeTokenAccount assignIdIfNecessary() {
         if (getId() <= 0) {
-            setId(System.currentTimeMillis());
+            setId(RandomUtils.nextLong(1, Long.MAX_VALUE));
         }
         return this;
     }
