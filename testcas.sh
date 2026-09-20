@@ -504,7 +504,7 @@ while (( "$#" )); do
                 isDockerOnLinux && ./ci/tests/ldap/run-ldap-server.sh || exit 1
                 task+="testLdap "
                 ;;
-            mongodbmfa)
+            mongodbmfa|mongomfa)
                 isDockerOnLinux && ./ci/tests/mongodb/run-mongodb-server.sh || exit 1
                 isDockerOnLinux && ./ci/tests/mongodb/run-mongodb-server-clustered.sh || exit 1
                 task+="testMongoDbMFA "

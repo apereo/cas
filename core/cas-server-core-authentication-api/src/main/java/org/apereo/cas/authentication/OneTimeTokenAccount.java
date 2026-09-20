@@ -149,6 +149,19 @@ public class OneTimeTokenAccount implements Serializable, Comparable<OneTimeToke
     }
 
     /**
+     * The identifier as text, for the pages that hand it to a browser. The value is a long, and
+     * JavaScript holds numbers as doubles, so anything past the largest integer a double represents
+     * exactly comes back from a script rounded to a different number. Rendered as text it survives
+     * the trip and binds back to a long when the form is submitted.
+     *
+     * @return the identifier as text
+     */
+    @JsonIgnore
+    public String getFormattedId() {
+        return String.valueOf(this.id);
+    }
+
+    /**
      * Assigns an identifier if one has not been given already. The identifier is drawn at random
      * rather than taken from the clock: it is the primary key in some of the stores behind this
      * record, and a clock reading only has millisecond resolution, so two records created in the

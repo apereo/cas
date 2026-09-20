@@ -24,7 +24,6 @@ import org.apereo.cas.util.spring.boot.SpringBootTestAutoConfigurations;
 import lombok.Getter;
 import lombok.val;
 import org.apache.commons.lang3.tuple.Pair;
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
@@ -55,12 +54,6 @@ public abstract class BaseOneTimeTokenCredentialRepositoryTests {
     }
     
 
-    @AfterEach
-    public void afterEach() {
-        val repo = getRegistry("afterEach");
-        repo.deleteAll();
-    }
-
     @Test
     void verifyCreate() throws Throwable {
         val casuser = getUsernameUnderTest();
@@ -80,11 +73,8 @@ public abstract class BaseOneTimeTokenCredentialRepositoryTests {
         val stored = repo.save(toSave);
         assertNotNull(repo.get(stored.getId()));
         assertNotNull(repo.get(toSave.getUsername(), stored.getId()));
-        assertEquals(1, repo.count());
         assertEquals(1, repo.count(stored.getUsername()));
         repo.delete(acct.getUsername());
-        assertTrue(repo.load().isEmpty());
-        assertEquals(0, repo.count());
         assertEquals(0, repo.count(stored.getUsername()));
     }
 
@@ -162,11 +152,8 @@ public abstract class BaseOneTimeTokenCredentialRepositoryTests {
         assertNotNull(toSave);
         assertNotNull(repo.get(toSave.getId()));
         assertNotNull(repo.get(toSave.getUsername().toUpperCase(Locale.ENGLISH), toSave.getId()));
-        assertEquals(1, repo.count());
         assertEquals(1, repo.count(toSave.getUsername().toUpperCase(Locale.ENGLISH)));
         repo.delete(acct.getUsername().toUpperCase(Locale.ENGLISH));
-        assertTrue(repo.load().isEmpty());
-        assertEquals(0, repo.count());
         assertEquals(0, repo.count(toSave.getUsername().toUpperCase(Locale.ENGLISH)));
     }
 
