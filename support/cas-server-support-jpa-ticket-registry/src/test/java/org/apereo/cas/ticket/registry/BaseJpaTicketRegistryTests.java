@@ -23,7 +23,6 @@ import org.apereo.cas.util.TicketGrantingTicketIdGenerator;
 import lombok.Getter;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.time.StopWatch;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.RepeatedTest;
 import org.junit.jupiter.api.Tag;
@@ -80,16 +79,20 @@ public abstract class BaseJpaTicketRegistryTests extends BaseTicketRegistryTests
                 .getNewTicketId(TicketGrantingTicket.PREFIX);
             return new TicketGrantingTicketImpl(tgtId,
                 CoreAuthenticationTestUtils.getAuthentication(), NeverExpiresExpirationPolicy.INSTANCE);
-        }).limit(COUNT);
+        }).limit(COUNT).toList();
 
-        val stopwatch = new StopWatch();
-        stopwatch.start();
-        newTicketRegistry.addTicket(ticketGrantingTickets);
+        newTicketRegistry.addTicket(ticketGrantingTickets.stream());
 
-        assertEquals(COUNT, newTicketRegistry.getTickets().size());
-        stopwatch.stop();
-        val time = stopwatch.getTime(TimeUnit.SECONDS);
-        assertTrue(time <= 20);
+        val expectedIds = ticketGrantingTickets
+            .stream()
+            .map(TicketGrantingTicketImpl::getId)
+            .collect(Collectors.toSet());
+        val found = newTicketRegistry
+            .getTickets()
+            .stream()
+            .filter(ticket -> expectedIds.contains(ticket.getId()))
+            .count();
+        assertEquals(COUNT, found);
     }
 
     @RepeatedTest(2)

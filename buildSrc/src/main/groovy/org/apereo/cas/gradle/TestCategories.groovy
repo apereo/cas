@@ -57,7 +57,7 @@ enum TestCategories {
     Logout(true, true),
     Mail(true, true),
     MariaDb(false, true),
-    Memcached(false, true),
+    Memcached(true, true),
     Metrics(true, true),
     MFA(true, true),
     MFAProvider(true, true),
