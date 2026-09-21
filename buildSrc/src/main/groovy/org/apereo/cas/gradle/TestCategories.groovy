@@ -40,7 +40,7 @@ enum TestCategories {
     Grouper(true, true),
     Hazelcast(false, true),
     Hibernate(false, true),
-    Ignite(false, true),
+    Ignite(true, true),
     Impersonation(true, true),
     InfluxDb(true, true),
     JDBC(false, true),

@@ -155,12 +155,19 @@ public class IgniteTicketRegistry extends AbstractTicketRegistry implements Disp
             .stream()
             .flatMap(definition -> {
                 val sql = "SELECT * FROM %s ORDER BY id ASC LIMIT ? OFFSET ?".formatted(definition.getProperties().getStorageName());
-                try (val rs = ignite.sql().execute(null, sql, criteria.getCount(), criteria.getFrom())) {
-                    return StreamSupport.stream(
-                        Spliterators.spliteratorUnknownSize(rs, Spliterator.ORDERED),
-                        false
-                    );
-                }
+                /*
+                 * This result set is not closed here. The stream returned below is lazy and is read
+                 * by the caller after this method has returned; closing the result set now ends the
+                 * implicit transaction that backs it, and reading from it afterwards fails with
+                 * "transaction is already finished". Closing is handed to the returned stream, which
+                 * the registry's callers wrap in a try-with-resources, and which flatMap closes for
+                 * each definition as it finishes reading it.
+                 */
+                val resultSet = ignite.sql().execute(null, sql, criteria.getCount(), criteria.getFrom());
+                return StreamSupport.stream(
+                    Spliterators.spliteratorUnknownSize(resultSet, Spliterator.ORDERED),
+                    false
+                ).onClose(resultSet::close);
             })
             .map(object -> decodeAndDeserialize(object.bytesValue("ticket")))
             .filter(Objects::nonNull);
@@ -188,19 +195,16 @@ public class IgniteTicketRegistry extends AbstractTicketRegistry implements Disp
     public Stream<? extends Ticket> getSessionsFor(final String principalId) {
         val metadata = ticketCatalog.findTicketDefinition(TicketGrantingTicket.class).orElseThrow();
         val sql = "SELECT * FROM %s where principal=?".formatted(metadata.getProperties().getStorageName());
-        try (val rs = ignite.sql().execute(null, sql, digestIdentifier(principalId))) {
-            val rowStream = StreamSupport.stream(
-                Spliterators.spliteratorUnknownSize(rs, Spliterator.ORDERED),
-                false
-            );
-            return rowStream
-                .map(row -> {
-                    val bytes = row.bytesValue("ticket");
-                    return decodeAndDeserialize(bytes);
-                })
-                .filter(Objects::nonNull)
-                .onClose(rs::close);
+        try (val resultSet = ignite.sql().execute(null, sql, digestIdentifier(principalId))) {
+            val payloads = new ArrayList<byte[]>();
+            resultSet.forEachRemaining(row -> payloads.add(row.bytesValue("ticket")));
+            return decodeTickets(payloads);
         }
+    }
+
+    @Override
+    public long countSessionsFor(final String principalId) {
+        return getSessionsFor(principalId).count();
     }
 
     @Override
@@ -232,19 +236,28 @@ public class IgniteTicketRegistry extends AbstractTicketRegistry implements Disp
         sql.append("1=2);");
         LOGGER.debug("Executing SQL query [{}]", sql);
         val query = sql.toString();
-        try (val rs = ignite.sql().execute(null, query)) {
-            val rowStream = StreamSupport.stream(
-                Spliterators.spliteratorUnknownSize(rs, Spliterator.ORDERED),
-                false
-            );
-            return rowStream
-                .map(row -> {
-                    val bytes = row.bytesValue("ticket");
-                    return decodeAndDeserialize(bytes);
-                })
-                .filter(Objects::nonNull)
-                .onClose(rs::close);
+        try (val resultSet = ignite.sql().execute(null, query)) {
+            val payloads = new ArrayList<byte[]>();
+            resultSet.forEachRemaining(row -> payloads.add(row.bytesValue("ticket")));
+            return decodeTickets(payloads);
         }
+    }
+
+    /**
+     * Decode tickets read out of a result set. The rows are taken out while the result set is still
+     * open and decoded afterwards, which is why this accepts the payloads rather than the rows:
+     * these queries answer for a single principal or attribute query, and their callers do not all
+     * close what they are given. A lazy stream over a closed result set fails with "transaction is
+     * already finished", and one over an open result set leaks it.
+     *
+     * @param payloads the serialized tickets read from the result set
+     * @return the tickets they decode to
+     */
+    protected Stream<? extends Ticket> decodeTickets(final List<byte[]> payloads) {
+        return payloads
+            .stream()
+            .map(this::decodeAndDeserialize)
+            .filter(Objects::nonNull);
     }
 
     /**
