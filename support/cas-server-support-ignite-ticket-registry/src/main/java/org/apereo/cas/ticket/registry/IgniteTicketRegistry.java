@@ -192,6 +192,20 @@ public class IgniteTicketRegistry extends AbstractTicketRegistry implements Disp
     }
 
     @Override
+    public long countTickets() {
+        return ticketCatalog
+            .findAll()
+            .stream()
+            .mapToLong(definition -> {
+                val sql = "SELECT COUNT(id) AS TOTAL FROM " + definition.getProperties().getStorageName();
+                try (val rs = ignite.sql().execute(null, sql)) {
+                    return rs.hasNext() ? rs.next().longValue("TOTAL") : 0;
+                }
+            })
+            .sum();
+    }
+
+    @Override
     public Stream<? extends Ticket> getSessionsFor(final String principalId) {
         val metadata = ticketCatalog.findTicketDefinition(TicketGrantingTicket.class).orElseThrow();
         val sql = "SELECT * FROM %s where principal=?".formatted(metadata.getProperties().getStorageName());

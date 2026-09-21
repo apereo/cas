@@ -209,6 +209,42 @@ public class CassandraTicketRegistry extends AbstractTicketRegistry implements D
             });
     }
 
+    /**
+     * Sessions are found through the secondary index on the principal column, the same one
+     * {@link #deleteTicketsFor(String)} queries. Without this the inherited version selects and
+     * decodes every ticket in every table.
+     *
+     * @param principalId the principal id
+     * @return the sessions held for the principal
+     */
+    @Override
+    public Stream<? extends Ticket> getSessionsFor(final String principalId) {
+        val metadata = ticketCatalog.findTicketDefinition(TicketGrantingTicket.class).orElseThrow();
+        val select = QueryBuilder.selectFrom(properties.getKeyspace(), metadata.getProperties().getStorageName())
+            .all()
+            .whereColumn("principal").isEqualTo(QueryBuilder.literal(digestIdentifier(principalId)))
+            .build()
+            .setConsistencyLevel(DefaultConsistencyLevel.valueOf(properties.getConsistencyLevel()))
+            .setSerialConsistencyLevel(DefaultConsistencyLevel.valueOf(properties.getSerialConsistencyLevel()))
+            .setTimeout(Beans.newDuration(properties.getTimeout()));
+        val rowMapper = new BeanPropertyRowMapper<>(CassandraTicketHolder.class, true);
+        return cassandraSessionFactory.getCqlTemplate()
+            .queryForStream(select, rowMapper)
+            .map(holder -> {
+                val result = deserializeTicket(holder.getData(), holder.getType());
+                return decodeTicket(result);
+            })
+            .filter(Objects::nonNull)
+            .filter(ticket -> !ticket.isExpired());
+    }
+
+    @Override
+    public long countSessionsFor(final String principalId) {
+        try (val sessions = getSessionsFor(principalId)) {
+            return sessions.count();
+        }
+    }
+
     @Override
     public Stream<? extends Ticket> getSessionsWithAttributes(final Map<String, List<Object>> queryAttributes) {
         val metadata = ticketCatalog.findTicketDefinition(TicketGrantingTicket.class).orElseThrow();
