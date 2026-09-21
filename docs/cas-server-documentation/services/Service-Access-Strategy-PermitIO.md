@@ -22,7 +22,7 @@ of the authorization request are taught to CAS using the settings typically defi
   "name" : "test",
   "id" : 1,
   "accessStrategy" : {
-    "@class": "org.apereo.cas.services.PermitRegisteredServiceAccessStrategy",
+    "@class": "org.apereo.cas.permit.PermitRegisteredServiceAccessStrategy",
     "action": "...",
     "resource": "...",
     "apiKey": "...",
