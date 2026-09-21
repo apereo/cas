@@ -58,7 +58,6 @@ class SSOSamlIdPPostProfileHandlerControllerTests extends BaseSamlIdPConfigurati
 
     @BeforeEach
     void beforeEach() {
-        servicesManager.deleteAll();
         samlRegisteredService = getSamlRegisteredServiceFor(false, false,
             false, "https://cassp.example.org");
         servicesManager.save(samlRegisteredService);
@@ -183,8 +182,10 @@ class SSOSamlIdPPostProfileHandlerControllerTests extends BaseSamlIdPConfigurati
 
     @Test
     void verifyPostRequestWithSsoAndAccessStrategy() throws Throwable {
-        samlRegisteredService.setAccessStrategy(new DefaultRegisteredServiceAccessStrategy(Map.of("authnMethod", Set.of("X509"))));
-        servicesManager.save(samlRegisteredService);
+        val strategyService = getSamlRegisteredServiceFor(false, false,
+            false, "https://cassp-strategy.example.org");
+        strategyService.setAccessStrategy(new DefaultRegisteredServiceAccessStrategy(Map.of("authnMethod", Set.of("X509"))));
+        servicesManager.save(strategyService);
 
         val response = new MockHttpServletResponse();
         val request = new MockHttpServletRequest();
@@ -192,7 +193,7 @@ class SSOSamlIdPPostProfileHandlerControllerTests extends BaseSamlIdPConfigurati
         ticketRegistry.addTicket(tgt);
         ticketGrantingTicketCookieGenerator.addCookie(request, response, tgt.getId());
         request.setCookies(response.getCookies());
-        val authnRequest = getAuthnRequest();
+        val authnRequest = getAuthnRequest(strategyService.getServiceId());
         val xml = SamlUtils.transformSamlObject(openSamlConfigBean, authnRequest).toString();
         samlIdPDistributedSessionStore.set(new JEEContext(request, response),
             SamlProtocolConstants.PARAMETER_SAML_RELAY_STATE, "relay-state");
@@ -261,6 +262,10 @@ class SSOSamlIdPPostProfileHandlerControllerTests extends BaseSamlIdPConfigurati
     }
 
     private AuthnRequest getAuthnRequest() {
+        return getAuthnRequest(samlRegisteredService.getServiceId());
+    }
+
+    private AuthnRequest getAuthnRequest(final String entityId) {
         var builder = (SAMLObjectBuilder) openSamlConfigBean.getBuilderFactory()
             .getBuilder(AuthnRequest.DEFAULT_ELEMENT_NAME);
         val authnRequest = (AuthnRequest) Objects.requireNonNull(builder).buildObject();
@@ -268,7 +273,7 @@ class SSOSamlIdPPostProfileHandlerControllerTests extends BaseSamlIdPConfigurati
         builder = (SAMLObjectBuilder) openSamlConfigBean.getBuilderFactory()
             .getBuilder(Issuer.DEFAULT_ELEMENT_NAME);
         val issuer = (Issuer) Objects.requireNonNull(builder).buildObject();
-        issuer.setValue(samlRegisteredService.getServiceId());
+        issuer.setValue(entityId);
         authnRequest.setIssuer(issuer);
         authnRequest.setID(Saml20HexRandomIdGenerator.INSTANCE.getNewString());
         return authnRequest;

@@ -197,15 +197,21 @@ public class JpaTicketRegistry extends AbstractTicketRegistry {
     /**
      * Counted by the indexed query {@link #getSessionsFor(String)} runs, rather than by the inherited
      * version, which reads and decodes every ticket in the table through a cursor it never closes.
+     * <p>
+     * The cursor is consumed inside the transaction because that is what keeps the JDBC connection,
+     * and therefore the result set, open for the length of the traversal. Consuming it outside one
+     * leaves the connection free to return to the pool before the first row is read.
      *
      * @param principalId the principal id
      * @return the number of sessions held for the principal
      */
     @Override
     public long countSessionsFor(final String principalId) {
-        try (val sessions = getSessionsFor(principalId)) {
-            return sessions.count();
-        }
+        return transactionTemplate.execute(_ -> {
+            try (val sessions = getSessionsFor(principalId)) {
+                return sessions.count();
+            }
+        });
     }
 
     @Override

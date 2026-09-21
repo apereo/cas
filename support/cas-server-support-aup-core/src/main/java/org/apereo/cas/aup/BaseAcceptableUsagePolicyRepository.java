@@ -3,6 +3,7 @@ package org.apereo.cas.aup;
 import module java.base;
 import org.apereo.cas.authentication.AuthenticationException;
 import org.apereo.cas.authentication.principal.Principal;
+import org.apereo.cas.configuration.model.support.aup.AcceptableUsagePolicyCoreProperties;
 import org.apereo.cas.configuration.model.support.aup.AcceptableUsagePolicyProperties;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.web.support.WebUtils;
@@ -28,7 +29,12 @@ public abstract class BaseAcceptableUsagePolicyRepository implements AcceptableU
      * Acceptable usage policy properties.
      */
     protected final AcceptableUsagePolicyProperties aupProperties;
-    
+
+    @Override
+    public AcceptableUsagePolicyCoreProperties getPolicyProperties() {
+        return aupProperties.getCore();
+    }
+
     @Override
     public AcceptableUsagePolicyStatus verify(final RequestContext requestContext) throws Throwable {
         val authentication = WebUtils.getAuthentication(requestContext);

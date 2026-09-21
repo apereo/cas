@@ -11,7 +11,6 @@ import lombok.val;
 import net.shibboleth.shared.net.URLBuilder;
 import org.apache.commons.lang3.Strings;
 import org.apache.hc.core5.http.HttpStatus;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.opensaml.saml.common.SAMLException;
@@ -39,14 +38,9 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 @TestPropertySource(properties = "cas.authn.saml-idp.metadata.file-system.location=file:src/test/resources/metadata")
 class SLOSamlIdPRedirectProfileHandlerControllerTests extends BaseSamlIdPConfigurationTests {
 
-    @BeforeEach
-    void initialize() {
-        servicesManager.deleteAll();
-    }
-
     @Test
     void verifyOperationRedirectWithParameter() throws Throwable {
-        val service = getSamlRegisteredServiceFor(false, false, false, "https://cassp.example.org");
+        val service = getSamlRegisteredServiceFor(false, false, false, "https://cassp-logout.example.org");
         service.setLogoutUrl("https://github.com/apereo/cas");
 
         val result = executeTest(service);
