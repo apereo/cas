@@ -50,7 +50,7 @@ identifier, and a name for the intended audience of the identifier.
   "usernameAttributeProvider" : {
     "@class" : "org.apereo.cas.services.AnonymousRegisteredServiceUsernameAttributeProvider",
     "persistentIdGenerator" : {
-      "@class" : "org.apereo.cas.authentication.attribute.ShibbolethCompatiblePersistentIdGenerator",
+      "@class" : "org.apereo.cas.authentication.principal.ShibbolethCompatiblePersistentIdGenerator",
       "salt" : "aGVsbG93b3JsZA==",
       "attribute": ""
     }
