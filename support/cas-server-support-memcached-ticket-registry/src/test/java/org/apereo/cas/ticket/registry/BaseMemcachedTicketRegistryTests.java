@@ -43,13 +43,7 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 /**
- * Shared setup for the memcached ticket registry runs.
- * <p>
- * Whether tickets are encrypted is settled by the application context here rather than installed on
- * the registry before every test: {@code CasMemcachedTicketRegistryAutoConfiguration} builds the
- * cipher once from {@code cas.ticket.registry.memcached.crypto}, and this class says so by
- * overriding {@link #isCipherExecutorOwnedByContext()}. Each concrete subclass carries the tag for
- * the mode its context is configured for.
+ * This is {@link BaseMemcachedTicketRegistryTests}.
  *
  * @author Middleware Services
  * @since 3.0.0

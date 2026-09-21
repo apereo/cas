@@ -37,7 +37,6 @@ import org.apereo.cas.util.RandomUtils;
 import org.apereo.cas.util.crypto.CipherExecutor;
 import org.apereo.cas.util.function.FunctionUtils;
 import lombok.val;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.RepeatedTest;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -60,7 +59,7 @@ import static org.mockito.Mockito.*;
 @SpringBootTest(classes = BaseJpaTicketRegistryTests.SharedTestConfiguration.class,
     properties = {
         "spring.integration.jdbc.initialize-schema=ALWAYS",
-        "cas.ticket.registry.jpa.ddl-auto=create-drop"
+        "cas.ticket.registry.jpa.ddl-auto=update"
     })
 @EnableConfigurationProperties({IntegrationProperties.class, CasConfigurationProperties.class})
 @ExtendWith(CasTestExtension.class)
@@ -90,15 +89,11 @@ public abstract class BaseJpaTicketRegistryCleanerTests {
     @Qualifier(TicketRegistryCleaner.BEAN_NAME)
     private TicketRegistryCleaner ticketRegistryCleaner;
 
-    @BeforeEach
-    void cleanup() {
-        ticketRegistry.deleteAll();
-    }
-
     @Test
     void verifyOperation() throws Throwable {
+        val principal = UUID.randomUUID().toString();
         val tgtFactory = (TicketGrantingTicketFactory) ticketFactory.get(TicketGrantingTicket.class);
-        val tgt = tgtFactory.create(RegisteredServiceTestUtils.getAuthentication(),
+        val tgt = tgtFactory.create(CoreAuthenticationTestUtils.getAuthentication(principal),
             RegisteredServiceTestUtils.getService());
         ticketRegistry.addTicket(tgt);
 
@@ -108,8 +103,8 @@ public abstract class BaseJpaTicketRegistryCleanerTests {
         ticketRegistry.addTicket(st);
         ticketRegistry.updateTicket(tgt);
 
-        assertEquals(1, ticketRegistry.sessionCount());
-        assertEquals(1, ticketRegistry.serviceTicketCount());
+        assertEquals(1, ticketRegistry.countSessionsFor(principal));
+        assertNotNull(ticketRegistry.getTicket(st.getId()));
 
         st.markTicketExpired();
         tgt.markTicketExpired();
@@ -117,10 +112,10 @@ public abstract class BaseJpaTicketRegistryCleanerTests {
         ticketRegistry.updateTicket(st);
         ticketRegistry.updateTicket(tgt);
 
-        assertTrue(ticketRegistryCleaner.clean() > 0);
+        ticketRegistryCleaner.clean();
 
-        assertEquals(0, ticketRegistry.sessionCount());
-        assertEquals(0, ticketRegistry.serviceTicketCount());
+        assertFalse(registryHolds(tgt.getId()));
+        assertFalse(registryHolds(st.getId()));
     }
 
     @Test
@@ -136,21 +131,26 @@ public abstract class BaseJpaTicketRegistryCleanerTests {
 
         ticketRegistry.updateTicket(tgt);
 
+        assertNotNull(ticketRegistry.getTicket(tgt.getId()));
+        assertNotNull(ticketRegistry.getTicket(transientTicket.getId()));
+
         transientTicket.markTicketExpired();
         tgt.markTicketExpired();
 
         ticketRegistry.updateTicket(transientTicket);
         ticketRegistry.updateTicket(tgt);
 
-        assertEquals(2, ticketRegistry.getTickets().size());
-        assertEquals(2, ticketRegistryCleaner.clean());
-        assertTrue(ticketRegistry.getTickets().isEmpty());
+        ticketRegistryCleaner.clean();
+
+        assertFalse(registryHolds(tgt.getId()));
+        assertFalse(registryHolds(transientTicket.getId()));
     }
 
     @RepeatedTest(2)
     void verifyOauthOperation() throws Throwable {
+        val principal = UUID.randomUUID().toString();
         val tgtFactory = (TicketGrantingTicketFactory) ticketFactory.get(TicketGrantingTicket.class);
-        val tgt = tgtFactory.create(RegisteredServiceTestUtils.getAuthentication(),
+        val tgt = tgtFactory.create(CoreAuthenticationTestUtils.getAuthentication(principal),
             RegisteredServiceTestUtils.getService());
         ticketRegistry.addTicket(tgt);
 
@@ -163,7 +163,7 @@ public abstract class BaseJpaTicketRegistryCleanerTests {
         ticketRegistry.addTicket(at);
         ticketRegistry.updateTicket(tgt);
 
-        assertEquals(1, ticketRegistry.sessionCount());
+        assertEquals(1, ticketRegistry.countSessionsFor(principal));
         assertNotNull(ticketRegistry.getTicket(at.getId()));
 
         at.markTicketExpired();
@@ -172,9 +172,9 @@ public abstract class BaseJpaTicketRegistryCleanerTests {
         ticketRegistry.updateTicket(at);
         ticketRegistry.updateTicket(tgt);
 
-        assertEquals(2, ticketRegistryCleaner.clean());
-        assertEquals(0, ticketRegistry.sessionCount());
-        assertNull(ticketRegistry.getTicket(at.getId()));
+        ticketRegistryCleaner.clean();
+        assertFalse(registryHolds(tgt.getId()));
+        assertFalse(registryHolds(at.getId()));
     }
 
     @Test
@@ -194,6 +194,10 @@ public abstract class BaseJpaTicketRegistryCleanerTests {
 
         ticketRegistry.updateTicket(tgt);
 
+        assertNotNull(ticketRegistry.getTicket(tgt.getId()));
+        assertNotNull(ticketRegistry.getTicket(deviceCode.getId()));
+        assertNotNull(ticketRegistry.getTicket(deviceUserCode.getId()));
+
         deviceCode.markTicketExpired();
         deviceUserCode.markTicketExpired();
         tgt.markTicketExpired();
@@ -202,9 +206,11 @@ public abstract class BaseJpaTicketRegistryCleanerTests {
         ticketRegistry.updateTicket(deviceUserCode);
         ticketRegistry.updateTicket(tgt);
 
-        assertEquals(3, ticketRegistry.getTickets().size());
-        assertEquals(3, ticketRegistryCleaner.clean());
-        assertTrue(ticketRegistry.getTickets().isEmpty());
+        ticketRegistryCleaner.clean();
+
+        assertFalse(registryHolds(tgt.getId()));
+        assertFalse(registryHolds(deviceCode.getId()));
+        assertFalse(registryHolds(deviceUserCode.getId()));
     }
 
     /**
@@ -251,8 +257,21 @@ public abstract class BaseJpaTicketRegistryCleanerTests {
             tasks.forEach(task -> task.cancel(false));
             executor.shutdown();
             assertTrue(executor.awaitTermination(2, TimeUnit.MINUTES));
-            ticketRegistry.deleteAll();
         }
+    }
+
+    /**
+     * Whether a row for this identifier is still in the registry. {@code getTicket} cannot answer it:
+     * it filters expired tickets out, so it reports a ticket as gone from the moment it expires,
+     * before the cleaner has touched it. Nor can the cleaner's own return value be asserted on -- it
+     * sweeps the whole registry and reports what it removed, which includes whatever a concurrent
+     * sibling had just expired.
+     *
+     * @param ticketId the ticket identifier
+     * @return true if the registry still holds it
+     */
+    private boolean registryHolds(final String ticketId) {
+        return ticketRegistry.getTickets().stream().anyMatch(ticket -> ticket.getId().equals(ticketId));
     }
 
     private OAuth20Code createOAuthCode() throws Throwable {

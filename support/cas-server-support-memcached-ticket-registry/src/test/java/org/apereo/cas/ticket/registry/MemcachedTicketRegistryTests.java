@@ -3,7 +3,7 @@ package org.apereo.cas.ticket.registry;
 import org.junit.jupiter.api.Tag;
 
 /**
- * Unit test for MemcachedTicketRegistry class, storing tickets as they are.
+ * This is {@link MemcachedTicketRegistryTests}.
  *
  * @author Middleware Services
  * @since 3.0.0

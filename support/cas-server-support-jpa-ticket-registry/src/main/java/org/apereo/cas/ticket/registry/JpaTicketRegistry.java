@@ -357,6 +357,17 @@ public class JpaTicketRegistry extends AbstractTicketRegistry {
         });
     }
 
+    /**
+     * The catalog does not always know the ticket. An encoded ticket is identified by a digest that
+     * carries no prefix, so the lookup finds nothing for one, and
+     * {@code AbstractTicketRegistry.decodeTicket} removes encoded tickets on sight whenever it meets
+     * them with encryption turned off -- which is what a registry does once encryption is disabled
+     * while encrypted tickets are still in the table. That removal must not fail, so an unknown
+     * definition falls through to the plain delete by identifier.
+     *
+     * @param ticketToDelete the ticket to delete
+     * @return the number of rows removed
+     */
     @Override
     public long deleteSingleTicket(final Ticket ticketToDelete) {
         val result = transactionTemplate.execute(transactionStatus -> {
@@ -364,7 +375,7 @@ public class JpaTicketRegistry extends AbstractTicketRegistry {
             var totalCount = 0;
             val md = ticketCatalog.find(ticketToDelete);
 
-            if (md.getProperties().isCascadeRemovals()) {
+            if (md != null && md.getProperties().isCascadeRemovals()) {
                 totalCount = deleteTicketGrantingTickets(encTicketId);
             } else {
                 val sql = String.format("DELETE FROM %s o WHERE o.id = :id", ticketEntityFactory.getEntityName());

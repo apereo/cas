@@ -20,5 +20,6 @@ import org.springframework.test.context.TestPropertySource;
 })
 @EnabledIfListeningOnPort(port = 1433)
 @Tag("MsSqlServer")
+@Tag("TicketRegistryTestWithoutEncryption")
 class MicrosoftSqlServerJpaTicketRegistryTests extends BaseJpaTicketRegistryTests {
 }

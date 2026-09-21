@@ -522,7 +522,7 @@ while (( "$#" )); do
                 isDockerOnLinux && ./ci/tests/mariadb/run-mariadb-server.sh || exit 1
                 task+="testMariaDb "
                 ;;
-            postgres|pg|postgresql)
+            postgres|pg|postgresql|psql)
                 isDockerOnLinux && ./ci/tests/postgres/run-postgres-server.sh || exit 1
                 task+="testPostgres "
                 ;;
