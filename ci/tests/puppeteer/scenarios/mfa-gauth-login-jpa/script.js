@@ -30,6 +30,7 @@ const cas = require("../../cas.js");
     await cas.pressEnter(page);
     await cas.waitForNavigation(page);
     await cas.sleep(1000);
+    await cas.screenshot(page);
     await cas.assertCookie(page);
     await cas.assertPageTitle(page, "CAS - Central Authentication Service Log In Successful");
     await cas.assertInnerText(page, "#content div h2", "Log In Successful");

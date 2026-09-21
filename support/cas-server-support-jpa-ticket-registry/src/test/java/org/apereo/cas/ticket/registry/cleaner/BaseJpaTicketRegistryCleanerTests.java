@@ -59,7 +59,7 @@ import static org.mockito.Mockito.*;
 @SpringBootTest(classes = BaseJpaTicketRegistryTests.SharedTestConfiguration.class,
     properties = {
         "spring.integration.jdbc.initialize-schema=ALWAYS",
-        "cas.ticket.registry.jpa.ddl-auto=update"
+        "cas.ticket.registry.jpa.ddl-auto=create-drop"
     })
 @EnableConfigurationProperties({IntegrationProperties.class, CasConfigurationProperties.class})
 @ExtendWith(CasTestExtension.class)
