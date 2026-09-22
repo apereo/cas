@@ -1,5 +1,24 @@
 # AGENTS.md
 
+## Heimdall / AuthZEN review discipline
+
+- Check the latest OpenID Authorization API final specification and editor's draft. AuthZEN is a PEP/PDP
+  protocol; wallet exchange uses OID4VCI/OID4VP. Treat a verified-presentation-to-policy bridge as a feature.
+- Trace `DefaultAuthorizationPrincipalParser` through `DefaultAuthorizationEngine` and each policy.
+  A valid caller token does not establish PDP audience, PEP permissions or DPoP proof possession;
+  delegated subject ids are legitimate for trusted PEPs and are not inherently impersonation.
+- Match resource type/id and action before granting. The current namespace lookup by AuthZEN resource id
+  can succeed but does not enforce action/type distinctions; never summarize it as always denying.
+- Reserve JDBC authorization parameter names against context/attribute overwrites, and check that policy
+  file deletion removes cached grants. Review both any/all combiners and empty collections.
+- AuthZEN evaluated denials use HTTP 200 with `decision:false`; authentication failures use 401.
+  Discovery/batch/search are separate capabilities, and the specification's example endpoint path is not mandatory.
+- Read shared helpers before reporting leaks: request headers already filter credentials and the request
+  principal is JSON-ignored. Confirm performance severity with evidence; blocking policy parallel streams
+  and unpooled JDBC merit investigation, not an unmeasured claim of outage.
+- There is no dedicated Heimdall Puppeteer coverage; Palantir merely includes the module. The shared nginx
+  authorization example omits namespace, so it cannot establish working endpoint integration.
+
 Guidance for AI coding agents working in the Apereo CAS source tree.
 
 > This repository is for CAS contributors. If the task is deployment/configuration, prefer the WAR overlay approach instead of editing this repo.

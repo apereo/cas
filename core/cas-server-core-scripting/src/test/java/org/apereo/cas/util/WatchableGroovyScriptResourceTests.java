@@ -8,7 +8,6 @@ import org.apache.commons.lang3.ArrayUtils;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.core.io.FileSystemResource;
-import static org.awaitility.Awaitility.*;
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
@@ -26,23 +25,26 @@ class WatchableGroovyScriptResourceTests {
         FileUtils.writeStringToFile(file, """
             def run(final Object... args) {
                 if (args.length > 1) {
-                    new File(args[1] as String).text = 'running'
+                    def release = args[0] as java.util.concurrent.CountDownLatch
+                    def started = args[1] as java.util.concurrent.CountDownLatch
+                    started.countDown()
+                    release.await(30, java.util.concurrent.TimeUnit.SECONDS)
                 }
-                Thread.sleep(args[0] as long)
                 return 'done'
             }
             """.stripIndent(), StandardCharsets.UTF_8);
 
-        val marker = Files.createTempFile("running", ".txt").toFile();
-        assertTrue(marker.delete());
-
+        val release = new CountDownLatch(1);
+        val started = new CountDownLatch(1);
         val scriptFactory = ExecutableCompiledScriptFactory.getExecutableCompiledScriptFactory();
         try (val resource = scriptFactory.fromResource(new FileSystemResource(file), false);
              val executor = Executors.newVirtualThreadPerTaskExecutor()) {
             val holder = executor.submit(() ->
-                resource.execute(new Object[]{2_000L, marker.getAbsolutePath()}, String.class, true));
-            await().atMost(Duration.ofSeconds(30)).until(marker::exists);
+                resource.execute(new Object[]{release, started}, String.class, true));
+            assertTrue(started.await(30, TimeUnit.SECONDS));
             val queued = executor.submit(() -> resource.execute(new Object[]{0L}, String.class, true));
+            assertThrows(TimeoutException.class, () -> queued.get(250, TimeUnit.MILLISECONDS));
+            release.countDown();
             assertEquals("done", holder.get(30, TimeUnit.SECONDS));
             assertEquals("done", queued.get(30, TimeUnit.SECONDS));
         }

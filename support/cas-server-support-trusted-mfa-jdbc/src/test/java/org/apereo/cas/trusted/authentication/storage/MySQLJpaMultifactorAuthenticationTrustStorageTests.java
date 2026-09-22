@@ -3,7 +3,6 @@ package org.apereo.cas.trusted.authentication.storage;
 import module java.base;
 import org.apereo.cas.util.junit.EnabledIfListeningOnPort;
 import org.junit.jupiter.api.Tag;
-import org.junit.jupiter.api.parallel.ResourceLock;
 import org.springframework.test.context.TestPropertySource;
 
 /**
@@ -22,7 +21,6 @@ import org.springframework.test.context.TestPropertySource;
     "cas.authn.mfa.trusted.jpa.dialect=org.hibernate.dialect.MySQLDialect"
 })
 @EnabledIfListeningOnPort(port = 3306)
-@ResourceLock("mySqlMultifactorTrustStorageTables")
 @Tag("MySQL")
 class MySQLJpaMultifactorAuthenticationTrustStorageTests extends JpaMultifactorAuthenticationTrustStorageTests {
 }

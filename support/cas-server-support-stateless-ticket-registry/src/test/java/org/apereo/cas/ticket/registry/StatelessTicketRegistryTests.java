@@ -20,7 +20,6 @@ import lombok.Getter;
 import lombok.val;
 import org.junit.jupiter.api.RepeatedTest;
 import org.junit.jupiter.api.Tag;
-import org.junit.jupiter.api.parallel.ResourceLock;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.ImportAutoConfiguration;
@@ -43,7 +42,6 @@ import static org.junit.jupiter.api.Assertions.*;
     "cas.ticket.registry.stateless.crypto.signing.key=classpath:/private.key",
     "cas.ticket.registry.stateless.crypto.encryption.key=classpath:/public.key"
 })
-@ResourceLock("ticketRegistry:stateless")
 class StatelessTicketRegistryTests extends BaseTicketRegistryTests {
     @Autowired
     @Qualifier(TicketRegistry.BEAN_NAME)

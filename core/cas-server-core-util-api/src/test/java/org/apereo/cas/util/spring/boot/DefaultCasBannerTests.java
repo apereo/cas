@@ -4,8 +4,6 @@ import module java.base;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.parallel.ResourceLock;
-import org.junit.jupiter.api.parallel.Resources;
 import org.junitpioneer.jupiter.SetSystemProperty;
 import org.springframework.mock.env.MockEnvironment;
 import static org.junit.jupiter.api.Assertions.*;
@@ -17,7 +15,6 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.2.0
  */
 @Tag("Simple")
-@ResourceLock(Resources.SYSTEM_PROPERTIES)
 class DefaultCasBannerTests {
     @Test
     void verifyOperation() throws Throwable {

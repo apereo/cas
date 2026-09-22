@@ -313,6 +313,8 @@ public class MockWebServer implements Closeable {
          */
         private static final int BUFFER_SIZE = 2048;
 
+        private static final long CLIENT_CLOSE_TIMEOUT_MILLIS = 200;
+
         @Getter
         private final Map<String, String> headers = new HashMap<>();
 
@@ -410,13 +412,27 @@ public class MockWebServer implements Closeable {
                         writeResponse(socket);
                     }
                     socket.shutdownOutput();
-                    Thread.sleep(200);
+                    awaitClientClose(socket, in);
                 } catch (final SocketException e) {
                     LOGGER.debug("Stopping on socket close: [{}]", e.getMessage(), e);
                     this.running = false;
                 } catch (final Exception e) {
                     LoggingUtils.error(LOGGER, e);
                 }
+            }
+        }
+
+        private static void awaitClientClose(final Socket socket, final Reader in) {
+            try {
+                socket.setSoTimeout((int) CLIENT_CLOSE_TIMEOUT_MILLIS);
+                val deadline = System.nanoTime() + TimeUnit.MILLISECONDS.toNanos(CLIENT_CLOSE_TIMEOUT_MILLIS);
+                val buffer = new char[BUFFER_SIZE];
+                var count = 0;
+                while (count > -1 && System.nanoTime() < deadline) {
+                    count = in.read(buffer);
+                }
+            } catch (final IOException e) {
+                LOGGER.trace("Stopped waiting for the client to close the connection: [{}]", e.getMessage());
             }
         }
 

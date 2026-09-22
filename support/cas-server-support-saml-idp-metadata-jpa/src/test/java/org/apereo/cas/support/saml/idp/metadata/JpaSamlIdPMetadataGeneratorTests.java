@@ -7,6 +7,7 @@ import lombok.val;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.parallel.ResourceLock;
 import org.springframework.core.io.Resource;
 import org.springframework.test.context.TestPropertySource;
 import static org.junit.jupiter.api.Assertions.*;
@@ -17,7 +18,14 @@ import static org.junit.jupiter.api.Assertions.*;
  * @author Misagh Moayyed
  * @since 6.0.0
  */
+/*
+ * There is exactly one global IdP metadata document per database, and every test here either
+ * regenerates it or reads it twice and compares. Both nested classes point at the same database, so
+ * the document cannot be scoped per test; the lock is what keeps one test's regeneration from landing
+ * between another's two reads.
+ */
 @Tag("JDBC")
+@ResourceLock("samlIdPMetadataDocument")
 class JpaSamlIdPMetadataGeneratorTests {
 
     @TestPropertySource(properties = {

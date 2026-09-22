@@ -5,8 +5,6 @@ import org.apereo.cas.util.nativex.CasRuntimeHintsRegistrar;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.parallel.ResourceLock;
-import org.junit.jupiter.api.parallel.Resources;
 import org.junitpioneer.jupiter.SetSystemProperty;
 import org.springframework.context.annotation.ConditionContext;
 import org.springframework.core.type.AnnotatedTypeMetadata;
@@ -20,7 +18,6 @@ import static org.mockito.Mockito.*;
  * @since 7.0.0
  */
 @Tag("Native")
-@ResourceLock(Resources.SYSTEM_PROPERTIES)
 class CasGraalVMNativeImageDisabledConditionTests {
     @Test
     @SetSystemProperty(key = CasRuntimeHintsRegistrar.SYSTEM_PROPERTY_SPRING_AOT_PROCESSING, value = "false")

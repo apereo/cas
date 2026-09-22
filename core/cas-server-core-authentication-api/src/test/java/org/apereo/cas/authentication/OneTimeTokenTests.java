@@ -8,7 +8,6 @@ import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * This is {@link OneTimeTokenTests}.
- * Sleeping for one millisecond because Windows tests fail sometimes, presumably because time is the same.
  *
  * @author Misagh Moayyed
  * @since 6.3.0
@@ -17,10 +16,10 @@ import static org.junit.jupiter.api.Assertions.*;
 class OneTimeTokenTests {
 
     @Test
-    void verifyComparisonWorks() throws Throwable {
+    void verifyComparisonWorks() {
         val otp1 = new OneTimeToken(123456, "casuser").assignIdIfNecessary();
-        Thread.sleep(1);
         val otp2 = new OneTimeToken(123456, "casuser").assignIdIfNecessary();
+        otp2.setIssuedDateTime(otp1.getIssuedDateTime().plusSeconds(1));
         assertEquals(-1, otp1.compareTo(otp2));
         assertNotEquals(0, otp1.getId());
     }

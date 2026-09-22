@@ -6,6 +6,7 @@ import lombok.val;
 import org.apache.commons.io.FileUtils;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import static java.nio.file.StandardWatchEventKinds.ENTRY_MODIFY;
 import static org.awaitility.Awaitility.*;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
@@ -93,6 +94,40 @@ class PathWatcherServiceTests {
             val inOrder = inOrder(mockedKey);
             inOrder.verify(mockedKey, times(1)).pollEvents();
             inOrder.verify(mockedKey, times(1)).reset();
+        }
+    }
+
+    @Test
+    void verifyFailingConsumerDoesNotStopTheWatcher() throws Exception {
+        val directory = Files.createTempDirectory("path-watcher").toFile();
+        try {
+            val file = createTemporaryFile(directory, "watched.json");
+
+            val event = mock(WatchEvent.class);
+            doReturn(ENTRY_MODIFY).when(event).kind();
+            doReturn(file.toPath().getFileName()).when(event).context();
+
+            val key = mock(WatchKey.class);
+            doReturn(List.of(event)).when(key).pollEvents();
+            doReturn(directory.toPath()).when(key).watchable();
+            when(key.reset()).thenReturn(true);
+
+            val takes = new AtomicInteger();
+            val watchService = mock(WatchService.class);
+            when(watchService.take()).thenAnswer(_ -> takes.incrementAndGet() <= 2 ? key : null);
+
+            val calls = new AtomicInteger();
+            try (val service = new PathWatcherService(watchService, _ -> {
+                if (calls.incrementAndGet() == 1) {
+                    throw new IllegalStateException("File is still being written");
+                }
+            })) {
+                service.run();
+            }
+            assertEquals(2, calls.get());
+            verify(key, times(2)).reset();
+        } finally {
+            FileUtils.deleteQuietly(directory);
         }
     }
 }

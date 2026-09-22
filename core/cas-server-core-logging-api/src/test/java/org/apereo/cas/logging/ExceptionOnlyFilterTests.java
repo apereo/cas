@@ -30,25 +30,18 @@ class ExceptionOnlyFilterTests {
         return logFile.length();
     }
 
-    private static void sleep(final int millis) throws Exception {
-        Thread.sleep(millis);
-    }
-
     /**
      * Test that only log messages with Exception pass the {@link ExceptionOnlyFilter} filter.
      * This test implicitly should test generation of
      * META-INF/org/apache/logging/log4j/core/config/plugins/Log4j2Plugins.dat
      * as long as log4j2-test.xml doesn't have packages attribute in root element.
-     * Stopping th log system so file is flushed for size check, sleep also works.
      */
     @Test
-    void verifyOperation() throws Throwable {
+    void verifyOperation() {
         val fileSize = getFileSize();
         LOGGER.error("Testing no exception");
-        sleep(1000);
         assertEquals(fileSize, getFileSize());
         LOGGER.error("Testing with exception", new Exception());
-        sleep(1000);
         assertTrue(getFileSize() > fileSize);
     }
 

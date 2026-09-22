@@ -424,7 +424,8 @@ class RedisServerTicketRegistryTests {
                 .getNewTicketId(TicketGrantingTicket.PREFIX);
             val tgt = new TicketGrantingTicketImpl(tgtId, authentication, new HardTimeoutExpirationPolicy(2));
             ticketRegistry.addTicket(tgt);
-            Thread.sleep(1000);
+            val addedAt = Instant.now(Clock.systemUTC()).getEpochSecond();
+            await().until(() -> Instant.now(Clock.systemUTC()).getEpochSecond() > addedAt);
         }
     }
 
