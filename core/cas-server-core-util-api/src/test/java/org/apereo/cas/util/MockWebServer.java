@@ -448,7 +448,7 @@ public class MockWebServer implements Closeable {
                  * next request routed to this host and port is written to a socket the server has already
                  * closed, which surfaces as NoHttpResponseException rather than as a connection failure.
                  */
-                out.write(header(HttpHeaders.CONNECTION, "close"));
+                out.write(header("Connection", "close"));
                 headers.forEach(Unchecked.biConsumer((key, value) -> out.write(header(key, value))));
                 out.write(SEPARATOR.getBytes(StandardCharsets.UTF_8));
 

@@ -23,7 +23,12 @@ const cas = require("../../cas.js");
     await cas.type(page, "#token", scratchCode);
     await cas.sleep(1000);
     await cas.click(page, "#registerButton");
-    await cas.sleep(1000);
+    /*
+     * The register button posts once over AJAX to have the token checked and then submits the
+     * form for real, so the page that follows arrives after two round trips. Wait for the login
+     * form, which only the token prompt carries, rather than for a fixed interval.
+     */
+    await cas.waitForElement(page, "#fm1");
 
     await cas.type(page, "#token", scratchCodes[1]);
     await cas.sleep(2000);
@@ -31,6 +36,7 @@ const cas = require("../../cas.js");
     await cas.waitForNavigation(page);
     await cas.sleep(1000);
     await cas.screenshot(page);
+    await cas.log(`Login panel: ${await cas.innerTexts(page, "#login")}`);
     await cas.assertCookie(page);
     await cas.assertPageTitle(page, "CAS - Central Authentication Service Log In Successful");
     await cas.assertInnerText(page, "#content div h2", "Log In Successful");
