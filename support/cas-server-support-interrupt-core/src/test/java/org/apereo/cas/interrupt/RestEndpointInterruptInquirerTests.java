@@ -59,7 +59,7 @@ class RestEndpointInterruptInquirerTests {
                 .withContentInclusion(JsonInclude.Include.NON_NULL))
             .build()
             .writeValueAsString(response);
-        this.webServer = new MockWebServer(8888,
+        this.webServer = new MockWebServer(
             new ByteArrayResource(data.getBytes(StandardCharsets.UTF_8), "REST Output"),
             MediaType.APPLICATION_JSON_VALUE);
         this.webServer.start();
@@ -73,7 +73,7 @@ class RestEndpointInterruptInquirerTests {
     @Test
     void verifyResponseCanBeFoundFromRest() throws Throwable {
         val restProps = new RestfulInterruptProperties();
-        restProps.setUrl("http://localhost:8888");
+        restProps.setUrl("http://localhost:%s".formatted(webServer.getPort()));
         val context = MockRequestContext.create(applicationContext);
         context.addHeader("accept-language", "fr");
         val q = new RestEndpointInterruptInquirer(restProps);
@@ -113,7 +113,7 @@ class RestEndpointInterruptInquirerTests {
     @Test
     void verifyBadAttempt() throws Throwable {
         val restProps = new RestfulInterruptProperties();
-        restProps.setUrl("http://localhost:8888");
+        restProps.setUrl("http://localhost:%s".formatted(webServer.getPort()));
         val context = MockRequestContext.create(applicationContext);
         val q = new RestEndpointInterruptInquirer(restProps);
         val response = q.inquire(null,

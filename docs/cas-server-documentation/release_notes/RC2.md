@@ -279,7 +279,7 @@ registered-service revision to the service registry and live service cache, whil
 - A consent decision that cannot be deciphered no longer fails the login. Rotating the `cas.consent.core.crypto` keys, or a node that
   does not have them, produced an error that propagated out of the login flow; such a decision now counts as a mismatch, so the user is
   asked to consent again and the record is replaced using the current keys.
-- Reminder options submitted with a consent decision are now validated. A missing or unparseable value falls back on the configured
+- Reminder options submitted with a consent decision are now validated. A missing or unparsable value falls back on the configured
   default, and a reminder that cannot be applied to a date, such as a negative amount or a time unit of `FOREVER`, is rejected rather
   than stored and then failing every subsequent login for that user.
 - Consent decisions record their creation date in UTC, so a decision's age is the same on every CAS node whatever time zone each node

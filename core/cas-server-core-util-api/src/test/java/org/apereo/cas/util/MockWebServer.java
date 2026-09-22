@@ -442,6 +442,13 @@ public class MockWebServer implements Closeable {
                 out.write(statusLine.getBytes(StandardCharsets.UTF_8));
                 out.write(header("Content-Length", this.resource.contentLength()));
                 out.write(header(HttpHeaders.CONTENT_TYPE, this.contentType));
+                /*
+                 * This worker closes the socket once it has answered, so the connection must not be
+                 * advertised as reusable. Without this, an HTTP/1.1 client keeps it in its pool and the
+                 * next request routed to this host and port is written to a socket the server has already
+                 * closed, which surfaces as NoHttpResponseException rather than as a connection failure.
+                 */
+                out.write(header(HttpHeaders.CONNECTION, "close"));
                 headers.forEach(Unchecked.biConsumer((key, value) -> out.write(header(key, value))));
                 out.write(SEPARATOR.getBytes(StandardCharsets.UTF_8));
 

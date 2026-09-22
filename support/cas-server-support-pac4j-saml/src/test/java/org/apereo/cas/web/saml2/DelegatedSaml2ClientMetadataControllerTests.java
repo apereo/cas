@@ -21,7 +21,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
  * @since 6.2.0
  */
 @ExtendWith(CasTestExtension.class)
-@SpringBootTest(classes = BaseSaml2DelegatedAuthenticationTests.SharedTestConfiguration.class)
+@SpringBootTest(classes = BaseSaml2DelegatedAuthenticationTests.SharedTestConfiguration.class,
+    properties = "cas.authn.pac4j.core.lazy-init=false")
 @Tag("SAML2Web")
 class DelegatedSaml2ClientMetadataControllerTests {
     @Autowired

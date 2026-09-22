@@ -35,8 +35,8 @@ class SamlRegisteredServiceMetadataHealthIndicatorTests extends BaseSamlIdPConfi
     @Test
     void verifyOperation() {
         assertNotNull(samlRegisteredServiceMetadataHealthIndicator);
-        servicesManager.save(SamlIdPTestUtils.getSamlRegisteredService(UUID.randomUUID().toString()));
-        val health = samlRegisteredServiceMetadataHealthIndicator.health();
+        assertNotNull(samlRegisteredServiceMetadataHealthIndicator.health());
+        val health = healthIndicatorFor(SamlIdPTestUtils.getSamlRegisteredService(UUID.randomUUID().toString())).health();
         assertEquals(Status.UP, health.getStatus());
     }
 
@@ -45,24 +45,23 @@ class SamlRegisteredServiceMetadataHealthIndicatorTests extends BaseSamlIdPConfi
         val samlRegisteredService = SamlIdPTestUtils.getSamlRegisteredService(UUID.randomUUID().toString());
         samlRegisteredService.setMetadataLocation("unknown-metadata-location");
 
-        val isolatedServicesManager = mock(ServicesManager.class);
-        when(isolatedServicesManager.findServiceBy(any(Predicate.class)))
-            .thenReturn(List.<RegisteredService>of(samlRegisteredService));
-        val healthIndicator = new SamlRegisteredServiceMetadataHealthIndicator(
-            samlRegisteredServiceMetadataResolvers, isolatedServicesManager);
-
-        val health = healthIndicator.health();
+        val health = healthIndicatorFor(samlRegisteredService).health();
         assertEquals(Status.DOWN, health.getStatus());
     }
 
     @Test
     void verifyFailsOperationWithMultiple() {
-        val samlRegisteredService = SamlIdPTestUtils.getSamlRegisteredService(UUID.randomUUID().toString());
-        samlRegisteredService.setMetadataLocation("unknown-metadata-location");
-        servicesManager.save(samlRegisteredService);
-        servicesManager.save(SamlIdPTestUtils.getSamlRegisteredService(UUID.randomUUID().toString()));
-        val health = samlRegisteredServiceMetadataHealthIndicator.health();
+        val unresolvableService = SamlIdPTestUtils.getSamlRegisteredService(UUID.randomUUID().toString());
+        unresolvableService.setMetadataLocation("unknown-metadata-location");
+        val health = healthIndicatorFor(unresolvableService,
+            SamlIdPTestUtils.getSamlRegisteredService(UUID.randomUUID().toString())).health();
         assertEquals(Status.UP, health.getStatus());
     }
 
+    private SamlRegisteredServiceMetadataHealthIndicator healthIndicatorFor(final RegisteredService... services) {
+        val isolatedServicesManager = mock(ServicesManager.class);
+        when(isolatedServicesManager.findServiceBy(any(Predicate.class))).thenReturn(List.of(services));
+        return new SamlRegisteredServiceMetadataHealthIndicator(
+            samlRegisteredServiceMetadataResolvers, isolatedServicesManager);
+    }
 }

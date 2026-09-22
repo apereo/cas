@@ -82,7 +82,7 @@ enum TestCategories {
     Radius(true, true),
     Redis(false, true),
     RegisteredService(true, true),
-    RestfulApi(false, true),
+    RestfulApi(true, true),
     RestfulApiAuthentication(true, true),
     SAML(true, true),
     SAML1(true, true),
