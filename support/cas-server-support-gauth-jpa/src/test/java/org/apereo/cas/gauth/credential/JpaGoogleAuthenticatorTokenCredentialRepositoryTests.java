@@ -7,7 +7,6 @@ import org.apereo.cas.otp.repository.credentials.OneTimeTokenCredentialRepositor
 import org.apereo.cas.test.CasTestExtension;
 import lombok.Getter;
 import lombok.val;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -46,11 +45,6 @@ class JpaGoogleAuthenticatorTokenCredentialRepositoryTests extends BaseOneTimeTo
     @Qualifier(BaseGoogleAuthenticatorTokenCredentialRepository.BEAN_NAME)
     private OneTimeTokenCredentialRepository registry;
 
-    @BeforeEach
-    void cleanUp() {
-        this.getRegistry().deleteAll();
-    }
-    
     @Test
     void verifyCreateUniqueNames() {
         var acct1 = getAccount("verifyCreateUniqueNames", UUID.randomUUID().toString());

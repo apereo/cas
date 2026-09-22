@@ -27,6 +27,7 @@ import jakarta.persistence.Column;
 import jakarta.persistence.Convert;
 import jakarta.persistence.ElementCollection;
 import jakarta.persistence.Id;
+import jakarta.persistence.Index;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.MappedSuperclass;
 import jakarta.persistence.Transient;
@@ -78,7 +79,8 @@ public class OneTimeTokenAccount implements Serializable, Comparable<OneTimeToke
     private int validationCode;
 
     @ElementCollection(targetClass = BigInteger.class)
-    @CollectionTable(name = TABLE_NAME_SCRATCH_CODES, joinColumns = @JoinColumn(name = "id"))
+    @CollectionTable(name = TABLE_NAME_SCRATCH_CODES, joinColumns = @JoinColumn(name = "id"),
+        indexes = @Index(name = "idx_scratch_codes_id", columnList = "id"))
     @Column(nullable = false, columnDefinition = "VARCHAR(1024)")
     @Builder.Default
     @JsonSetter(nulls = Nulls.AS_EMPTY)
@@ -86,7 +88,8 @@ public class OneTimeTokenAccount implements Serializable, Comparable<OneTimeToke
     private List<Number> scratchCodes = new ArrayList<>();
 
     @ElementCollection(targetClass = String.class)
-    @CollectionTable(name = TABLE_NAME_OTP_PROPERTIES, joinColumns = @JoinColumn(name = "id"))
+    @CollectionTable(name = TABLE_NAME_OTP_PROPERTIES, joinColumns = @JoinColumn(name = "id"),
+        indexes = @Index(name = "idx_otp_properties_id", columnList = "id"))
     @Column(nullable = false, columnDefinition = "VARCHAR(1024)")
     @Builder.Default
     @JsonSetter(nulls = Nulls.AS_EMPTY)
