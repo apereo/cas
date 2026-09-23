@@ -43,7 +43,7 @@ enum TestCategories {
     Ignite(true, true),
     Impersonation(true, true),
     InfluxDb(true, true),
-    JDBC(false, true),
+    JDBC(true, true),
     JDBCMFA(false, true),
     JDBCAuthentication(false, true),
     JMX(true, true),

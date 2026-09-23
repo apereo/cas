@@ -63,6 +63,8 @@ import org.junit.jupiter.api.RepetitionInfo;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.TestInfo;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.jupiter.api.parallel.ResourceAccessMode;
+import org.junit.jupiter.api.parallel.ResourceLock;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.SpringBootConfiguration;
@@ -89,7 +91,16 @@ import static org.junit.jupiter.api.Assumptions.*;
         "cas.ticket.registry.cleaner.schedule.enabled=false"
     })
 @ExtendWith(CasTestExtension.class)
+/*
+ * Almost everything here names its own tickets, principals and services and so can share the registry with
+ * whatever else is running. The two tests that cannot are the ones that empty it: they hold this lock for
+ * writing, everything else holds it for reading, and the two never overlap. Being whole-registry is what
+ * those two test, so there is no way to make them independent by construction.
+ */
+@ResourceLock(value = BaseTicketRegistryTests.TICKET_REGISTRY_RESOURCE, mode = ResourceAccessMode.READ)
 public abstract class BaseTicketRegistryTests {
+
+    protected static final String TICKET_REGISTRY_RESOURCE = "casTicketRegistry";
 
     private static final int TICKETS_IN_REGISTRY = 1;
 
@@ -484,8 +495,10 @@ public abstract class BaseTicketRegistryTests {
     }
 
     @RepeatedTest(2)
+    @ResourceLock(value = TICKET_REGISTRY_RESOURCE, mode = ResourceAccessMode.READ_WRITE)
     void verifyDeleteAllExistingTickets() throws Throwable {
         assumeTrue(canTicketRegistryIterate());
+        ticketRegistry.deleteAll();
         val ticketGrantingTicketId = TestTicketIdentifiers.generate().ticketGrantingTicketId();
         for (var i = 0; i < TICKETS_IN_REGISTRY; i++) {
             ticketRegistry.addTicket(new TicketGrantingTicketImpl(ticketGrantingTicketId + i,
@@ -544,6 +557,7 @@ public abstract class BaseTicketRegistryTests {
     }
 
     @RepeatedTest(2)
+    @ResourceLock(value = TICKET_REGISTRY_RESOURCE, mode = ResourceAccessMode.READ_WRITE)
     void verifyGetTicketsIsZero() throws Throwable {
         ticketRegistry.deleteAll();
         assertEquals(0, ticketRegistry.getTickets().size(), "The size of the empty registry is not zero.");

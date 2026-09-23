@@ -66,4 +66,15 @@ class JpaGoogleAuthenticatorTokenCredentialRepositoryTests extends BaseOneTimeTo
         assertNotNull(acct1);
     }
 
+    @Test
+    void verifyFormattedIdMatchesPersistedId() {
+        val username = UUID.randomUUID().toString();
+        val repo = getRegistry("verifyFormattedIdMatchesPersistedId");
+        repo.save(getAccount("verifyFormattedIdMatchesPersistedId", username));
+        val accounts = repo.get(username);
+        assertEquals(1, accounts.size());
+        val account = accounts.iterator().next();
+        assertTrue(account.getId() > 0);
+        assertEquals(String.valueOf(account.getId()), account.getFormattedId());
+    }
 }

@@ -161,7 +161,7 @@ public class OneTimeTokenAccount implements Serializable, Comparable<OneTimeToke
      */
     @JsonIgnore
     public String getFormattedId() {
-        return String.valueOf(this.id);
+        return String.valueOf(getId());
     }
 
     /**

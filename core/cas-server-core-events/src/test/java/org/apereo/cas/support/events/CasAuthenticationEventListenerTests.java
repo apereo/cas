@@ -127,8 +127,11 @@ class CasAuthenticationEventListenerTests {
         val event = new CasAuthenticationPolicyFailureEvent(this,
             CollectionUtils.wrap("error", new FailedLoginException()), transaction,
             CoreAuthenticationTestUtils.getAuthentication(principalId), null);
-        publishEventAndWaitToProcess(event);
-        assertEquals(1, getEventsForPrincipal().size());
+        applicationContext.publishEvent(event);
+        waitForSpringEventToProcess(2);
+        val eventIds = getEventsForPrincipal().stream().map(CasEvent::getEventId).collect(Collectors.toSet());
+        assertEquals(Set.of(CasAuthenticationPolicyFailureEvent.class.getSimpleName(),
+            CasAuthenticationTransactionFailureEvent.class.getSimpleName()), eventIds);
     }
 
     @Test

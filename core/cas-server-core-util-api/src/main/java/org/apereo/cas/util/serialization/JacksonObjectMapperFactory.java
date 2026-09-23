@@ -181,9 +181,12 @@ public class JacksonObjectMapperFactory {
             .filter(BeanSupplier::isNotProxy)
             .collect(Collectors.toList());
 
-        val effectiveContext = ObjectUtils.getIfNull(applicationContext, ApplicationContextProvider.getApplicationContext());
-        if (effectiveContext != null) {
-            val customizerBeans = effectiveContext.getBeansOfType(JacksonObjectMapperCustomizer.class).values();
+        val effectiveContext = (ConfigurableApplicationContext) ObjectUtils.getIfNull(applicationContext, ApplicationContextProvider.getApplicationContext());
+        if (effectiveContext != null && !effectiveContext.isActive()) {
+            val customizerBeans = FunctionUtils.doAndHandle(
+                    () -> List.copyOf(effectiveContext.getBeansOfType(JacksonObjectMapperCustomizer.class).values()),
+                    e -> List.<JacksonObjectMapperCustomizer>of())
+                .get();
             customizers.addAll(customizerBeans);
         }
         AnnotationAwareOrderComparator.sort(customizers);

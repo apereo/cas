@@ -14,12 +14,14 @@ import org.junit.jupiter.api.extension.ExtensionContext;
  * @since 7.1.0
  */
 public class CasTestExtension implements BeforeAllCallback {
-    @Override
-    public void beforeAll(final ExtensionContext extensionContext) throws Exception {
+    static {
         System.setProperty("spring.main.allow-bean-definition-overriding", "true");
         System.setProperty("spring.main.banner-mode", "off");
         System.setProperty("spring.jmx.enabled", "false");
+    }
 
+    @Override
+    public void beforeAll(final ExtensionContext extensionContext) throws Exception {
         val requestContext = MockRequestContext.create();
         requestContext
             .setRemoteAddr("127.26.152.11")

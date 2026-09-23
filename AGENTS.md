@@ -41,6 +41,7 @@ Guidance for AI coding agents working in the Apereo CAS source tree.
 - Unalias Linux/macOS commands before you run them, specially `tree`, `find`, `grep`, `cat`, etc.
 - From a sandbox that cannot delete files, run read-only git commands with `GIT_OPTIONAL_LOCKS=0` (for example `GIT_OPTIONAL_LOCKS=0 git status`); otherwise git can leave a stale `.git/index.lock` that blocks the user's git.
 - Consider using StringUtils.EMPTY instead of "" for empty strings, and StringUtils.isNotBlank() instead of != null && !isEmpty() for string checks.
+- Do not add unnecessary javadoc. Add javadoc only where a public contract or a non-obvious reason genuinely needs it; record rationale for a change in PLANS.md instead.
 
 ## Workflows that matter here
 

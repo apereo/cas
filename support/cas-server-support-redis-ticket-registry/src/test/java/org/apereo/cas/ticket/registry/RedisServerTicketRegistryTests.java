@@ -44,6 +44,8 @@ import org.junit.jupiter.api.RepeatedTest;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.jupiter.api.parallel.ResourceAccessMode;
+import org.junit.jupiter.api.parallel.ResourceLock;
 import org.junitpioneer.jupiter.RetryingTest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -76,7 +78,9 @@ class RedisServerTicketRegistryTests {
     })
     class WithoutCachingTests extends BaseRedisSentinelTicketRegistryTests {
         @RepeatedTest(2)
+        @ResourceLock(value = TICKET_REGISTRY_RESOURCE, mode = ResourceAccessMode.READ_WRITE)
         void verifyTrackingUsersAndPrefixes() throws Throwable {
+            getNewTicketRegistry().deleteAll();
             val authentication = CoreAuthenticationTestUtils.getAuthentication(UUID.randomUUID().toString());
             val runnable = new Runnable() {
                 @Override
