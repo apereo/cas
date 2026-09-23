@@ -398,14 +398,25 @@ public class JpaTicketRegistry extends AbstractTicketRegistry {
         });
     }
 
+    /*
+     * An OR across two columns can seek neither index, so a single statement could scan the table and take locks
+     * on rows belonging to other sessions. Now each half seeks its own index. Children go first so that no row is left
+     * pointing at a parent that is already gone, and the total returned is unchanged.
+     */
     protected int deleteTicketGrantingTickets(final String ticketId) {
         return transactionTemplate.execute(_ -> {
-            var sql = String.format("DELETE FROM %s t WHERE t.parentId = :id OR t.id = :id", ticketEntityFactory.getEntityName());
-            LOGGER.trace("Creating delete query [{}] for ticket id [{}]", sql, ticketId);
-            var query = entityManager.createQuery(sql);
-            query.setParameter("id", ticketId);
-            return query.executeUpdate();
+            val children = deleteTicketsBy("t.parentId", ticketId);
+            val parent = deleteTicketsBy("t.id", ticketId);
+            return children + parent;
         });
+    }
+
+    private int deleteTicketsBy(final String column, final String ticketId) {
+        val sql = String.format("DELETE FROM %s t WHERE %s = :id", ticketEntityFactory.getEntityName(), column);
+        LOGGER.trace("Creating delete query [{}] for ticket id [{}]", sql, ticketId);
+        val query = entityManager.createQuery(sql);
+        query.setParameter("id", ticketId);
+        return query.executeUpdate();
     }
 
     protected LockModeType getConfiguredLockModeType() {
