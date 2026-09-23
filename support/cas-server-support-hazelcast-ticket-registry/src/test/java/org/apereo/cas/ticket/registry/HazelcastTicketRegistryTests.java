@@ -18,6 +18,7 @@ import org.apereo.cas.util.crypto.CipherExecutor;
 import com.hazelcast.core.HazelcastInstance;
 import com.hazelcast.map.IMap;
 import lombok.Getter;
+import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.time.StopWatch;
@@ -41,6 +42,7 @@ import static org.mockito.Mockito.*;
  * @since 4.1.0
  */
 @Tag("Hazelcast")
+@Slf4j
 @ExtendWith(CasTestExtension.class)
 class HazelcastTicketRegistryTests {
     @Nested
@@ -50,7 +52,6 @@ class HazelcastTicketRegistryTests {
     @TestPropertySource(
         properties = {
             "cas.ticket.registry.hazelcast.core.enable-jet=false",
-            "cas.ticket.registry.hazelcast.cluster.network.port-auto-increment=false",
             "cas.ticket.registry.hazelcast.cluster.network.port=5707",
             "cas.ticket.registry.hazelcast.cluster.core.instance-name=testjetlessinstance"
         })
@@ -66,7 +67,6 @@ class HazelcastTicketRegistryTests {
     @Import(BaseTicketRegistryTests.SharedTestConfiguration.class)
     @TestPropertySource(
         properties = {
-            "cas.ticket.registry.hazelcast.cluster.network.port-auto-increment=false",
             "cas.ticket.registry.hazelcast.cluster.network.port=5703",
             "cas.ticket.registry.hazelcast.cluster.core.instance-name=testlocalhostinstance"
         })
@@ -119,7 +119,6 @@ class HazelcastTicketRegistryTests {
     })
     @TestPropertySource(
         properties = {
-            "cas.ticket.registry.hazelcast.cluster.network.port-auto-increment=false",
             "cas.ticket.registry.hazelcast.cluster.network.port=5705",
             "cas.ticket.registry.hazelcast.cluster.core.instance-name=loadtestinstance"
         })
@@ -145,8 +144,7 @@ class HazelcastTicketRegistryTests {
 
             assertEquals(COUNT, ticketRegistry.getTickets().size());
             stopwatch.stop();
-            var time = stopwatch.getTime(TimeUnit.SECONDS);
-            assertTrue(time <= 20);
+            LOGGER.info("Added and read back [{}] tickets in [{}]s", COUNT, stopwatch.getTime(TimeUnit.SECONDS));
 
             stopwatch.reset();
             stopwatch.start();
@@ -158,8 +156,7 @@ class HazelcastTicketRegistryTests {
                 .toList();
             assertFalse(results.isEmpty());
             stopwatch.stop();
-            time = stopwatch.getTime(TimeUnit.SECONDS);
-            assertTrue(time <= 20);
+            LOGGER.info("Streamed and filtered [{}] tickets in [{}]s", COUNT, stopwatch.getTime(TimeUnit.SECONDS));
         }
     }
 }

@@ -62,7 +62,7 @@ class SamlObjectSignatureValidatorTests extends BaseSamlIdPConfigurationTests {
 
     private void setupTestContextFor(final String spMetadataPath, final String spEntityId) throws Exception {
         val idpMetadata = new File("src/test/resources/metadata/idp-metadata.xml").getCanonicalPath();
-        val keystorePath = new File(FileUtils.getTempDirectory(), "keystore").getCanonicalPath();
+        val keystorePath = new File(FileUtils.getTempDirectory(), "keystore-%s".formatted(UUID.randomUUID())).getCanonicalPath();
         saml2ClientConfiguration = new SAML2Configuration(keystorePath, "changeit", "changeit", idpMetadata);
         saml2ClientConfiguration.setServiceProviderEntityId(spEntityId);
         saml2ClientConfiguration.setServiceProviderMetadataPath(spMetadataPath);

@@ -11,6 +11,7 @@ import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import com.google.common.base.Suppliers;
 import lombok.Builder;
 import lombok.Getter;
+import lombok.extern.slf4j.Slf4j;
 import lombok.SuperBuilder;
 import lombok.val;
 import org.apache.commons.lang3.ObjectUtils;
@@ -59,6 +60,7 @@ import tools.jackson.dataformat.yaml.YAMLMapper;
  */
 @SuperBuilder
 @Getter
+@Slf4j
 public class JacksonObjectMapperFactory {
     /**
      * Providers discovered through the JDK service loader are fixed for the lifetime of the JVM,
@@ -181,13 +183,14 @@ public class JacksonObjectMapperFactory {
             .filter(BeanSupplier::isNotProxy)
             .collect(Collectors.toList());
 
-        val effectiveContext = (ConfigurableApplicationContext) ObjectUtils.getIfNull(applicationContext, ApplicationContextProvider.getApplicationContext());
-        if (effectiveContext != null && !effectiveContext.isActive()) {
-            val customizerBeans = FunctionUtils.doAndHandle(
-                    () -> List.copyOf(effectiveContext.getBeansOfType(JacksonObjectMapperCustomizer.class).values()),
-                    e -> List.<JacksonObjectMapperCustomizer>of())
-                .get();
-            customizers.addAll(customizerBeans);
+        val effectiveContext = ObjectUtils.getIfNull(applicationContext, ApplicationContextProvider.getApplicationContext());
+        if (effectiveContext != null
+            && !(effectiveContext instanceof final ConfigurableApplicationContext context && !context.isActive())) {
+            try {
+                customizers.addAll(effectiveContext.getBeansOfType(JacksonObjectMapperCustomizer.class).values());
+            } catch (final IllegalStateException e) {
+                LOGGER.debug("Application context cannot supply object mapper customizers yet: [{}]", e.getMessage());
+            }
         }
         AnnotationAwareOrderComparator.sort(customizers);
         return customizers;

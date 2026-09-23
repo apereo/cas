@@ -242,6 +242,7 @@ public abstract class BaseTicketRegistryTests {
         }
         assertTrue(ticketRegistry.deleteTicketsFor(originalAuthn.getPrincipal().getId()) > 0);
         val count = ticketRegistry.getTickets().stream().filter(ticket -> ticket instanceof final AuthenticationAwareTicket aat
+                && aat.getAuthentication() != null
                 && aat.getAuthentication().getPrincipal().getId().equals(originalAuthn.getPrincipal().getId()))
             .count();
         assertEquals(0, count);
