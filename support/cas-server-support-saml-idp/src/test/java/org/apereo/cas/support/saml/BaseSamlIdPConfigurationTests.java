@@ -348,7 +348,7 @@ public abstract class BaseSamlIdPConfigurationTests {
     protected SAML2MessageContext buildSamlMessageContext() throws Exception {
         val idpMetadata = new File("src/test/resources/metadata/idp-metadata.xml").getCanonicalPath();
         val keystorePath = new File(FileUtils.getTempDirectory(), "keystore-%s".formatted(UUID.randomUUID())).getCanonicalPath();
-        val spMetadataPath = new File(FileUtils.getTempDirectory(), "sp-metadata.xml").getCanonicalPath();
+        val spMetadataPath = new File(FileUtils.getTempDirectory(), "sp-metadata-%s.xml".formatted(UUID.randomUUID())).getCanonicalPath();
 
         val saml2Configuration = new SAML2Configuration(keystorePath,
             "changeit", "changeit", idpMetadata);
