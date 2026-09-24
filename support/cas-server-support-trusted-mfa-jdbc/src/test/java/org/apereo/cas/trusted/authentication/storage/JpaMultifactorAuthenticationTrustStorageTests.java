@@ -37,6 +37,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @TestPropertySource(properties = {
     "cas.jdbc.show-sql=false",
     "cas.authn.mfa.trusted.jpa.ddl-auto=create-drop",
+    "cas.authn.mfa.trusted.jpa.url=jdbc:hsqldb:mem:trusted-devices;hsqldb.tx=mvcc",
     "cas.authn.mfa.trusted.cleaner.schedule.enabled=false",
     "cas.jdbc.physical-table-names.JpaMultifactorAuthenticationTrustRecord=mfaauthntrustedrec"
 })

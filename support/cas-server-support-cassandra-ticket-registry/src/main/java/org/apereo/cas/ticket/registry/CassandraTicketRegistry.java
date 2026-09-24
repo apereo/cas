@@ -283,9 +283,9 @@ public class CassandraTicketRegistry extends AbstractTicketRegistry implements D
     }
 
     private Collection<CassandraTicketHolder> findCassandraTicketBy(final TicketDefinition definition, final String ticketId) {
-        val builder = QueryBuilder.selectFrom(properties.getKeyspace(), definition.getProperties().getStorageName()).all();
+        var builder = QueryBuilder.selectFrom(properties.getKeyspace(), definition.getProperties().getStorageName()).all();
         if (StringUtils.isNotBlank(ticketId)) {
-            builder.whereColumn("id").isEqualTo(QueryBuilder.literal(ticketId)).limit(1);
+            builder = builder.whereColumn("id").isEqualTo(QueryBuilder.literal(ticketId)).limit(1);
         }
         val select = builder.build()
             .setConsistencyLevel(DefaultConsistencyLevel.valueOf(properties.getConsistencyLevel()))
