@@ -328,18 +328,22 @@ button, a {
 }
 
 .navigation-bar {
-    display: flex;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
     align-items: center;
     gap: 1.5rem;
     min-height: 3.6rem;
-    padding: .4rem 2rem;
+    padding: .4rem max(2rem, calc((100% - 1800px) / 2 + 2rem));
     border-top: 1px solid #ffffff14;
     background: #04263c;
 }
 
 .primary-navigation {
     display: flex;
+    grid-column: 2;
+    min-width: 0;
     align-items: center;
+    justify-content: center;
     gap: 1.35rem;
 }
 
@@ -393,6 +397,7 @@ button, a {
 
 .navigation-tools {
     display: flex;
+    grid-column: 3;
     align-items: center;
     gap: .65rem;
     margin-left: auto;
@@ -582,9 +587,9 @@ button, a {
 /* The guide has three deliberately different densities: index, reading, outline. */
 .docs-shell {
     display: grid;
-    grid-template-columns: 16rem minmax(0, 1fr) 12rem;
+    grid-template-columns: 19rem minmax(0, 1fr) 16rem;
     gap: 2.5rem;
-    max-width: 1680px;
+    max-width: 1800px;
     margin: 0 auto;
     padding: 0 2rem;
 }
@@ -723,8 +728,8 @@ button, a {
 }
 
 .docs-sidebar-hidden .docs-shell {
-    grid-template-columns: minmax(0, 1fr) 12rem;
-    max-width: 1384px;
+    grid-template-columns: minmax(0, 1fr) 16rem;
+    max-width: 1450px;
 }
 
 .docs-sidebar-hidden .docs-sidebar {
@@ -734,6 +739,10 @@ button, a {
 .cas-docs-content {
     min-width: 0;
     padding: 1.8rem 0 3rem;
+}
+
+.cas-docs-content, .cas-docs-content :is(h1, h2, h3, h4, h5, h6, th, td) {
+    text-align: justify;
 }
 
 .page-toolbar {
@@ -1107,6 +1116,7 @@ kbd {
 }
 
 pre {
+    text-align: left;
     white-space: pre;
     overflow-x: auto;
     border-radius: var(--docs-radius);
@@ -1602,8 +1612,8 @@ ul.tab-content > li:not(.active):not(.property-name):not(.property-tab):not(.cas
 }
 
 .docs-home .docs-shell {
-    grid-template-columns: 16rem minmax(0, 1fr);
-    max-width: 1480px;
+    grid-template-columns: 19rem minmax(0, 1fr);
+    max-width: 1530px;
 }
 
 .docs-home.docs-sidebar-hidden .docs-shell {
@@ -2058,7 +2068,7 @@ ul.tab-content > li:not(.active):not(.property-name):not(.property-tab):not(.cas
 @media (min-width: 1600px) {
     .docs-shell {
         gap: 3rem;
-        grid-template-columns: 17rem minmax(0, 1fr) 13rem;
+        grid-template-columns: 21rem minmax(0, 1fr) 17rem;
     }
     .home-intro h1 {
         max-width: 14ch;
@@ -2070,7 +2080,7 @@ ul.tab-content > li:not(.active):not(.property-name):not(.property-tab):not(.cas
 
 @media (max-width: 1250px) {
     .docs-shell, .docs-home .docs-shell {
-        grid-template-columns: 14rem minmax(0, 1fr);
+        grid-template-columns: 17rem minmax(0, 1fr);
         gap: 2rem;
     }
     .docs-toc {
@@ -2102,6 +2112,7 @@ ul.tab-content > li:not(.active):not(.property-name):not(.property-tab):not(.cas
         min-height: 4.7rem;
     }
     .navigation-bar {
+        display: flex;
         flex-wrap: wrap;
         gap: .6rem;
     }
@@ -2112,6 +2123,8 @@ ul.tab-content > li:not(.active):not(.property-name):not(.property-tab):not(.cas
         display: none;
     }
     .primary-navigation {
+        order: 2;
+        flex-basis: 100%;
         gap: .9rem;
     }
     .primary-navigation > a, .primary-navigation .dropdown-toggle {
@@ -2120,7 +2133,7 @@ ul.tab-content > li:not(.active):not(.property-name):not(.property-tab):not(.cas
     .docs-shell, .docs-home .docs-shell {
         padding: 0 1.5rem;
         gap: 1.5rem;
-        grid-template-columns: 12.5rem minmax(0, 1fr);
+        grid-template-columns: 14.5rem minmax(0, 1fr);
     }
     .identity-orbit {
         animation: none;
@@ -2198,7 +2211,6 @@ ul.tab-content > li:not(.active):not(.property-name):not(.property-tab):not(.cas
     .primary-navigation {
         order: 2;
         flex-basis: 100%;
-        justify-content: space-between;
         gap: .7rem;
     }
     .primary-navigation > a, .primary-navigation .dropdown-toggle {

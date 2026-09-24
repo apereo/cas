@@ -230,7 +230,7 @@ public abstract class BaseJpaTicketRegistryCleanerTests {
         val executor = Executors.newScheduledThreadPool(2);
         val tasks = new ArrayList<ScheduledFuture<?>>();
         try {
-            tasks.add(executor.scheduleAtFixedRate(() -> {
+            tasks.add(executor.scheduleWithFixedDelay(() -> {
                 for (var i = 0; i < 5; i++) {
                     FunctionUtils.doUnchecked(_ -> {
                         val tgt = new TicketGrantingTicketImpl(TicketGrantingTicket.PREFIX + '-' + RandomUtils.randomAlphabetic(16),
@@ -245,7 +245,7 @@ public abstract class BaseJpaTicketRegistryCleanerTests {
                         ticketRegistry.updateTicket(tgt);
                     });
                 }
-            }, 5, 5, TimeUnit.MILLISECONDS));
+            }, 5, 50, TimeUnit.MILLISECONDS));
             val cleanups = new AtomicInteger();
             tasks.add(executor.scheduleAtFixedRate(() -> {
                 ticketRegistryCleaner.clean();

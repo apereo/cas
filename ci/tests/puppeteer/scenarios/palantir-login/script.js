@@ -50,7 +50,13 @@ function trackFailures(page) {
     page.on("pageerror", (error) => failures.push(`pageerror: ${error.message}`));
     page.on("console", (message) => {
         if (message.type() === "error") {
-            failures.push(`console: ${message.text()}`);
+            const url = message.location()?.url;
+            failures.push(url ? `console: ${message.text()} [${url}]` : `console: ${message.text()}`);
+        }
+    });
+    page.on("response", (response) => {
+        if (response.status() >= 400) {
+            failures.push(`response: ${response.status()} ${response.request().method()} ${response.url()}`);
         }
     });
     return failures;
@@ -384,6 +390,7 @@ async function verifySettingsDialog(page) {
     await cas.screenshot(page);
     assert(response.status() === 200);
 
+    await page.evaluate(() => window.localStorage.clear());
     response = await cas.goto(page, DASHBOARD_URL);
     await cas.log(`${response.status()} ${response.statusText()}`);
     assert(response.ok());
