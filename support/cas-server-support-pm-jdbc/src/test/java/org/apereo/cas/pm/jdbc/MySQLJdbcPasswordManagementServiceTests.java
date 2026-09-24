@@ -3,6 +3,7 @@ package org.apereo.cas.pm.jdbc;
 import module java.base;
 import org.apereo.cas.util.junit.EnabledIfListeningOnPort;
 import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.parallel.ResourceLock;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.test.context.TestPropertySource;
 
@@ -20,6 +21,7 @@ import org.springframework.test.context.TestPropertySource;
     "cas.authn.pm.jdbc.dialect=org.hibernate.dialect.MySQLDialect"
 })
 @EnabledIfListeningOnPort(port = 3306)
+@ResourceLock("mySqlPasswordManagementTables")
 @Tag("MySQL")
 class MySQLJdbcPasswordManagementServiceTests extends JdbcPasswordManagementServiceTests {
     @Override

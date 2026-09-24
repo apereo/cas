@@ -50,6 +50,14 @@ should be able to take advantage of the established single sign-on session.</p>
 
 {% endtabs %}
      
+## Passive Requests
+
+Requests that do not permit user interaction are never interrupted. This covers CAS `gateway` requests, OpenID Connect
+authorization requests with `prompt=none` and SAML2 authentication requests marked as `IsPassive`. When an interrupt
+is required for such a request, CAS returns to the application without a ticket, the same way it handles a passive
+request that cannot be satisfied: OpenID Connect clients receive `login_required` and SAML2 service providers receive
+a `NoPassive` status. The interrupt is presented on the next interactive request.
+
 Note that as of this writing, interrupt trigger modes are global and cannot be controlled or defined on a per-application basis.
 The construction of the authentication interrupt workflow is burned into the CAS webflow at initialization time and is not
 alterable at runtime depending on the application or the user.

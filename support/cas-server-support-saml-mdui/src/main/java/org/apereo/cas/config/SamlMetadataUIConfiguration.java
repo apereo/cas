@@ -3,6 +3,7 @@ package org.apereo.cas.config;
 import module java.base;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.features.CasFeatureModule;
+import org.apereo.cas.configuration.support.Beans;
 import org.apereo.cas.support.saml.OpenSamlConfigBean;
 import org.apereo.cas.support.saml.SamlUtils;
 import org.apereo.cas.support.saml.mdui.AbstractMetadataResolverAdapter;
@@ -114,6 +115,7 @@ class SamlMetadataUIConfiguration {
 
         val dynaAdapter = new DynamicMetadataResolverAdapter();
         configureAdapter(dynaAdapter, applicationContext, casProperties, openSamlConfigBean);
+        dynaAdapter.setCacheDuration(Beans.newDuration(casProperties.getSamlMetadataUi().getSchedule().getRepeatInterval()));
         return new ChainingMetadataResolverAdapter(CollectionUtils.wrapSet(staticAdapter, dynaAdapter));
     }
 }

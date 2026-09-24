@@ -58,20 +58,20 @@ public class JpaSamlIdPMetadataLocator extends AbstractSamlIdPMetadataLocator {
     }
 
     /**
-     * Build query.
+     * Build a query scoped to the owner of the document.
+     * <p>
+     * Per-service and global documents share one table, distinguished only by {@code appliesTo}, so an
+     * unscoped query is not "the global document" -- it is whichever row the database happens to return
+     * first, which can be a service's own document and, through it, that service's signing and
+     * encryption keys. The global owner has a name of its own, so it is queried by name like any other.
      *
-     * @param registeredService the registered service
+     * @param registeredService the registered service, or empty for the global document
      * @return the typed query
      */
     protected TypedQuery<SamlIdPMetadataDocument> buildQuery(final Optional<SamlRegisteredService> registeredService) {
-        var sql = "SELECT r FROM SamlIdPMetadataDocument r ";
-        if (registeredService.isPresent()) {
-            sql += " WHERE r.appliesTo = :appliesTo";
-        }
-        val query = getEntityManager().createQuery(sql, SamlIdPMetadataDocument.class);
-        if (registeredService.isPresent()) {
-            query.setParameter("appliesTo", getAppliesToFor(registeredService));
-        }
+        val query = getEntityManager().createQuery(
+            "SELECT r FROM SamlIdPMetadataDocument r WHERE r.appliesTo = :appliesTo", SamlIdPMetadataDocument.class);
+        query.setParameter("appliesTo", getAppliesToFor(registeredService));
         return query.setMaxResults(1);
     }
 }

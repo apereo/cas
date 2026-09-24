@@ -15,6 +15,7 @@ import org.apereo.cas.util.CoreTicketUtils;
 import org.apereo.cas.util.MongoDbTicketRegistryFacilitator;
 import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
 import lombok.val;
+import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -22,6 +23,7 @@ import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.DependsOn;
 import org.springframework.context.annotation.Primary;
 import org.springframework.context.annotation.ScopedProxyMode;
 import org.springframework.data.mongodb.core.MongoOperations;
@@ -38,8 +40,24 @@ import org.springframework.data.mongodb.core.MongoTemplate;
 @Configuration(value = "MongoDbTicketRegistryConfiguration", proxyBeanMethods = false)
 class MongoDbTicketRegistryConfiguration {
 
+    @Bean
+    @ConditionalOnMissingBean(name = "mongoDbTicketRegistryInitializer")
+    public InitializingBean mongoDbTicketRegistryInitializer(
+        @Qualifier(TicketCatalog.BEAN_NAME)
+        final TicketCatalog ticketCatalog,
+        @Qualifier("mongoDbTicketRegistryTemplate")
+        final MongoOperations mongoDbTicketRegistryTemplate,
+        final CasConfigurationProperties casProperties) {
+        return () -> {
+            val mongo = casProperties.getTicket().getRegistry().getMongo();
+            new MongoDbTicketRegistryFacilitator(ticketCatalog,
+                mongoDbTicketRegistryTemplate, mongo).createTicketCollections();
+        };
+    }
+
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @Bean
+    @DependsOn("mongoDbTicketRegistryInitializer")
     public TicketRegistry ticketRegistry(
         @Qualifier(TicketCatalog.BEAN_NAME)
         final TicketCatalog ticketCatalog,
@@ -51,9 +69,6 @@ class MongoDbTicketRegistryConfiguration {
         final ConfigurableApplicationContext applicationContext) {
 
         val mongo = casProperties.getTicket().getRegistry().getMongo();
-        new MongoDbTicketRegistryFacilitator(ticketCatalog,
-            mongoDbTicketRegistryTemplate, mongo).createTicketCollections();
-
         val cipher = CoreTicketUtils.newTicketRegistryCipherExecutor(mongo.getCrypto(), "mongo");
         return new MongoDbTicketRegistry(cipher, ticketSerializationManager,
             ticketCatalog, applicationContext, mongoDbTicketRegistryTemplate);

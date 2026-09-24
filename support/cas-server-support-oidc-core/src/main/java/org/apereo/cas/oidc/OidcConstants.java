@@ -206,9 +206,9 @@ public interface OidcConstants {
      */
     String VC_PRESENTATION_RESPONSE_URL = "oidcVcPresentationResponse";
     /**
-     * Oidc VC batch credential url path segment.
+     * OIDC VC presentation result path segment, polled by the relying party that created the request.
      */
-    String VC_BATCH_CREDENTIAL_URL = "oidcVcBatchCredential";
+    String VC_PRESENTATION_RESULT_URL = "oidcVcPresentationResult";
     /**
      * Oidc VC credential type url path segment.
      */
@@ -225,6 +225,34 @@ public interface OidcConstants {
      * Oidc VC nonce url path segment.
      */
     String VC_NONCE_URL = "oidcVcNonce";
+    /**
+     * Credential error response: the credential request is invalid.
+     * OpenID4VCI 1.0 defines its own error codes for the Credential Endpoint; the OAuth codes of the
+     * token endpoint do not apply there.
+     */
+    String VC_ERROR_INVALID_CREDENTIAL_REQUEST = "invalid_credential_request";
+    /**
+     * Credential error response: the issuer does not support the requested credential type.
+     */
+    String VC_ERROR_UNSUPPORTED_CREDENTIAL_TYPE = "unsupported_credential_type";
+    /**
+     * Credential error response: the issuer does not support the requested credential format.
+     */
+    String VC_ERROR_UNSUPPORTED_CREDENTIAL_FORMAT = "unsupported_credential_format";
+    /**
+     * Credential error response: the proof in the credential request is invalid.
+     */
+    String VC_ERROR_INVALID_PROOF = "invalid_proof";
+    /**
+     * Credential error response: the nonce in the proof is invalid or expired. A wallet that sees
+     * this asks the nonce endpoint for a fresh nonce and retries, which is why it has to be
+     * distinguishable from a proof that is wrong for any other reason.
+     */
+    String VC_ERROR_INVALID_NONCE = "invalid_nonce";
+    /**
+     * Credential error response: the issuer denies issuance of the requested credential.
+     */
+    String VC_ERROR_CREDENTIAL_REQUEST_DENIED = "credential_request_denied";
     /**
      * Oidc pushed authorization request url path segment url.
      */

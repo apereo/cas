@@ -108,21 +108,17 @@ class RestPasswordManagementServiceTests {
     @SpringBootTest(classes = SharedTestConfiguration.class,
         properties = {
             "cas.authn.pm.core.enabled=true",
-            "cas.authn.pm.rest.endpoint-url-change=http://localhost:9090",
-            "cas.authn.pm.rest.endpoint-url-security-questions=http://localhost:9090",
-            "cas.authn.pm.rest.endpoint-url-email=http://localhost:9091",
-            "cas.authn.pm.rest.endpoint-url-user=http://localhost:9090",
-            "cas.authn.pm.rest.endpoint-url-phone=http://localhost:9092",
-            "cas.authn.pm.rest.endpoint-url-account-unlock=http://localhost:9092",
+            "cas.authn.pm.rest.endpoint-url-change=https://localhost/change",
+            "cas.authn.pm.rest.endpoint-url-security-questions=https://localhost/questions",
+            "cas.authn.pm.rest.endpoint-url-email=https://localhost/email",
+            "cas.authn.pm.rest.endpoint-url-user=https://localhost/user",
+            "cas.authn.pm.rest.endpoint-url-phone=https://localhost/phone",
+            "cas.authn.pm.rest.endpoint-url-account-unlock=https://localhost/unlock",
             "cas.authn.pm.rest.endpoint-username=username",
             "cas.authn.pm.rest.endpoint-password=password",
             "cas.authn.pm.rest.headers.header1=value1"
         })
     public class BasicOperations {
-        @Autowired
-        @Qualifier(PasswordManagementService.DEFAULT_BEAN_NAME)
-        private PasswordManagementService passwordChangeService;
-
         @Autowired
         @Qualifier("passwordManagementCipherExecutor")
         private CipherExecutor passwordManagementCipherExecutor;
@@ -138,58 +134,70 @@ class RestPasswordManagementServiceTests {
         @Test
         void verifyEmailFound() throws Throwable {
             val data = "casuser@example.org";
-            try (val webServer = new MockWebServer(9091,
+            try (val webServer = new MockWebServer(
                 new ByteArrayResource(data.getBytes(StandardCharsets.UTF_8), "REST Output"),
                 MediaType.APPLICATION_JSON_VALUE)) {
                 webServer.start();
-                val email = this.passwordChangeService.findEmails(PasswordManagementQuery.builder().username("casuser").build());
-                webServer.stop();
+                val props = new CasConfigurationProperties();
+                props.getAuthn().getPm().getRest().setEndpointUrlEmail("http://localhost:" + webServer.getPort());
+                val email = getRestPasswordManagementService(props)
+                    .findEmails(PasswordManagementQuery.builder().username("casuser").build());
                 assertEquals(Set.of(data), email);
             }
 
-            try (val webServer = new MockWebServer(9091, HttpStatus.NO_CONTENT)) {
+            try (val webServer = new MockWebServer(HttpStatus.NO_CONTENT)) {
                 webServer.start();
-                assertTrue(passwordChangeService.findEmails(PasswordManagementQuery.builder().username("casuser").build()).isEmpty());
-                webServer.stop();
+                val props = new CasConfigurationProperties();
+                props.getAuthn().getPm().getRest().setEndpointUrlEmail("http://localhost:" + webServer.getPort());
+                assertTrue(getRestPasswordManagementService(props)
+                    .findEmails(PasswordManagementQuery.builder().username("casuser").build()).isEmpty());
             }
         }
 
         @Test
         void verifyUserFound() throws Throwable {
             val data = "casuser";
-            try (val webServer = new MockWebServer(9090,
+            try (val webServer = new MockWebServer(
                 new ByteArrayResource(data.getBytes(StandardCharsets.UTF_8), "REST Output"),
                 MediaType.APPLICATION_JSON_VALUE)) {
                 webServer.start();
-                val username = this.passwordChangeService.findUsername(PasswordManagementQuery.builder().email("casuser@example.org").build());
-                webServer.stop();
+                val props = new CasConfigurationProperties();
+                props.getAuthn().getPm().getRest().setEndpointUrlUser("http://localhost:" + webServer.getPort());
+                val username = getRestPasswordManagementService(props)
+                    .findUsername(PasswordManagementQuery.builder().email("casuser@example.org").build());
                 assertNotNull(username);
                 assertEquals(data, username);
             }
 
-            try (val webServer = new MockWebServer(9090, HttpStatus.NO_CONTENT)) {
+            try (val webServer = new MockWebServer(HttpStatus.NO_CONTENT)) {
                 webServer.start();
-                assertNull(passwordChangeService.findUsername(PasswordManagementQuery.builder().username("casuser").build()));
-                webServer.stop();
+                val props = new CasConfigurationProperties();
+                props.getAuthn().getPm().getRest().setEndpointUrlUser("http://localhost:" + webServer.getPort());
+                assertNull(getRestPasswordManagementService(props)
+                    .findUsername(PasswordManagementQuery.builder().username("casuser").build()));
             }
         }
 
         @Test
         void verifyPhoneFound() throws Throwable {
             val data = "1234567890";
-            try (val webServer = new MockWebServer(9092,
+            try (val webServer = new MockWebServer(
                 new ByteArrayResource(data.getBytes(StandardCharsets.UTF_8), "REST Output"),
                 MediaType.APPLICATION_JSON_VALUE)) {
                 webServer.start();
-                val ph = this.passwordChangeService.findPhone(PasswordManagementQuery.builder().username("casuser").build());
-                webServer.stop();
+                val props = new CasConfigurationProperties();
+                props.getAuthn().getPm().getRest().setEndpointUrlPhone("http://localhost:" + webServer.getPort());
+                val ph = getRestPasswordManagementService(props)
+                    .findPhone(PasswordManagementQuery.builder().username("casuser").build());
                 assertNotNull(ph);
                 assertEquals(data, ph);
             }
-            try (val webServer = new MockWebServer(9092, HttpStatus.NO_CONTENT)) {
+            try (val webServer = new MockWebServer(HttpStatus.NO_CONTENT)) {
                 webServer.start();
-                assertNull(passwordChangeService.findPhone(PasswordManagementQuery.builder().username("casuser").build()));
-                webServer.stop();
+                val props = new CasConfigurationProperties();
+                props.getAuthn().getPm().getRest().setEndpointUrlPhone("http://localhost:" + webServer.getPort());
+                assertNull(getRestPasswordManagementService(props)
+                    .findPhone(PasswordManagementQuery.builder().username("casuser").build()));
             }
         }
 
@@ -211,13 +219,14 @@ class RestPasswordManagementServiceTests {
                 val questions = passwordService.getSecurityQuestions(PasswordManagementQuery.builder().username("casuser").build());
                 assertFalse(questions.isEmpty());
                 assertTrue(questions.containsKey("question1"));
-                webServer.stop();
             }
 
-            try (val webServer = new MockWebServer(9090, HttpStatus.NO_CONTENT)) {
+            try (val webServer = new MockWebServer(HttpStatus.NO_CONTENT)) {
                 webServer.start();
-                assertTrue(passwordChangeService.getSecurityQuestions(PasswordManagementQuery.builder().username("casuser").build()).isEmpty());
-                webServer.stop();
+                val props = new CasConfigurationProperties();
+                props.getAuthn().getPm().getRest().setEndpointUrlSecurityQuestions("http://localhost:" + webServer.getPort());
+                assertTrue(getRestPasswordManagementService(props)
+                    .getSecurityQuestions(PasswordManagementQuery.builder().username("casuser").build()).isEmpty());
             }
         }
 
@@ -295,14 +304,13 @@ class RestPasswordManagementServiceTests {
 
                 val result = passwordService.change(request);
                 assertTrue(result);
-                webServer.stop();
             }
 
-            try (val webServer = new MockWebServer(9090, HttpStatus.NO_CONTENT)) {
+            try (val webServer = new MockWebServer(HttpStatus.NO_CONTENT)) {
                 webServer.start();
-                val result = passwordChangeService.change(request);
-                assertFalse(result);
-                webServer.stop();
+                val props = new CasConfigurationProperties();
+                props.getAuthn().getPm().getRest().setEndpointUrlChange("http://localhost:" + webServer.getPort());
+                assertFalse(getRestPasswordManagementService(props).change(request));
             }
         }
 

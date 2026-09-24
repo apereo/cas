@@ -6,8 +6,8 @@ import org.jooq.lambda.fi.lang.CheckedRunnable;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
-import org.junit.jupiter.api.parallel.Execution;
-import org.junit.jupiter.api.parallel.ExecutionMode;
+import org.junit.jupiter.api.parallel.ResourceLock;
+import org.junit.jupiter.api.parallel.Resources;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.TestPropertySource;
 import static org.hamcrest.Matchers.hasSize;
@@ -22,7 +22,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
  */
 @TestPropertySource(properties = "management.endpoint.dependencies.access=UNRESTRICTED")
 @Tag("ActuatorEndpoint")
-@Execution(ExecutionMode.SAME_THREAD)
+@ResourceLock(Resources.SYSTEM_PROPERTIES)
 class DependenciesEndpointTests extends AbstractCasEndpointTests {
     private static final String JAVA_CLASS_PATH = "java.class.path";
 

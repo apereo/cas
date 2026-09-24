@@ -38,6 +38,66 @@ class CasReentrantLockTests {
         }
     }
 
+    /**
+     * The holder is released only once the queued caller has been observed to be waiting on it,
+     * so the queuing is established by the latches rather than by how long the holder takes.
+     *
+     * @throws Exception in case the tasks cannot be started or joined
+     */
+    @Test
+    void verifyCheckedExecutionQueuesBehindTheHolder() throws Exception {
+        val lock = new CasReentrantLock();
+        val acquired = new CountDownLatch(1);
+        val release = new CountDownLatch(1);
+        try (val executor = Executors.newVirtualThreadPerTaskExecutor()) {
+            val holder = executor.submit(() -> lock.executeAndThrow(() -> {
+                acquired.countDown();
+                release.await();
+                return "held";
+            }));
+            assertTrue(acquired.await(30, TimeUnit.SECONDS));
+            val queued = executor.submit(() -> lock.executeAndThrow(() -> "queued"));
+            assertThrows(TimeoutException.class, () -> queued.get(250, TimeUnit.MILLISECONDS));
+            release.countDown();
+            assertEquals("held", holder.get(30, TimeUnit.SECONDS));
+            assertEquals("queued", queued.get(30, TimeUnit.SECONDS));
+        }
+    }
+
+    /**
+     * The only wall-clock this test spends is the lock's own acquisition timeout, which is the
+     * behaviour under test; the holder waits on a latch rather than on a duration.
+     *
+     * @throws Exception in case the tasks cannot be started or joined
+     */
+    @Test
+    void verifyTryLockYieldsNullBeyondTimeout() throws Exception {
+        val lock = new CasReentrantLock();
+        val acquired = new CountDownLatch(1);
+        val release = new CountDownLatch(1);
+        try (val executor = Executors.newVirtualThreadPerTaskExecutor()) {
+            val holder = executor.submit(() -> lock.executeAndThrow(() -> {
+                acquired.countDown();
+                release.await();
+                return "held";
+            }));
+            assertTrue(acquired.await(30, TimeUnit.SECONDS));
+            val contended = executor.submit(() -> lock.tryLock(() -> "contended"));
+            assertNull(contended.get(30, TimeUnit.SECONDS));
+            release.countDown();
+            assertEquals("held", holder.get(30, TimeUnit.SECONDS));
+        }
+    }
+
+    @Test
+    void verifyCheckedExecutionReleasesAfterFailure() {
+        val lock = new CasReentrantLock();
+        assertThrows(RuntimeException.class, () -> lock.executeAndThrow(() -> {
+            throw new IOException("test failure");
+        }));
+        assertEquals("released", lock.executeAndThrow(() -> "released"));
+    }
+
     @Test
     void verifyConcurrentExecution() throws Exception {
         val lock = new CasReentrantLock();

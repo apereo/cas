@@ -54,13 +54,13 @@ public class CasCoreEventsAutoConfiguration {
             final MessageSanitizer messageSanitizer,
             final ConfigurableApplicationContext applicationContext,
             @Qualifier(CasEventRepository.BEAN_NAME)
-            final CasEventRepository casEventRepository,
+            final ObjectProvider<CasEventRepository> casEventRepository,
             @Qualifier(LogoutManager.DEFAULT_BEAN_NAME)
-            final LogoutManager logoutManager) {
+            final ObjectProvider<LogoutManager> logoutManager) {
             return BeanSupplier.of(CasAuthenticationEventListener.class)
                 .when(CONDITION.given(applicationContext.getEnvironment()))
-                .supply(() -> new CasAuthenticationAuthenticationEventListener(casEventRepository,
-                    messageSanitizer, geoLocationService.getIfAvailable(), logoutManager))
+                .supply(() -> new CasAuthenticationAuthenticationEventListener(casEventRepository.getObject(),
+                    messageSanitizer, geoLocationService.getIfAvailable(), logoutManager.getObject()))
                 .otherwiseProxy()
                 .get();
         }

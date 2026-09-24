@@ -42,9 +42,6 @@ class APNMessagingNotificationSenderTests {
     void verifyOperation() {
         val id = UUID.randomUUID().toString();
         val principal = CoreAuthenticationTestUtils.getPrincipal(Map.of("registrationToken", List.of(id)));
-        assertDoesNotThrow(() -> {
-            notificationSender.notify(principal, Map.of("title", "Hello", "message", "World"));
-            Thread.sleep(2000);
-        });
+        assertDoesNotThrow(() -> notificationSender.notify(principal, Map.of("title", "Hello", "message", "World")));
     }
 }

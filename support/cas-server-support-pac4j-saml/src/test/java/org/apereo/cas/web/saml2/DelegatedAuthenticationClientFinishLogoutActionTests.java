@@ -16,11 +16,8 @@ import org.apereo.cas.web.flow.DelegationWebflowUtils;
 import org.apereo.cas.web.flow.actions.logout.DelegatedSaml2ClientFinishLogoutAction;
 import org.apereo.cas.web.support.WebUtils;
 import lombok.val;
-import org.junit.jupiter.api.MethodOrderer;
-import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.TestMethodOrder;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.pac4j.core.context.CallContext;
 import org.pac4j.core.credentials.extractor.CredentialsExtractor;
@@ -50,7 +47,6 @@ import static org.mockito.Mockito.*;
 @SpringBootTest(classes = BaseSaml2DelegatedAuthenticationTests.SharedTestConfiguration.class)
 @Tag("Delegation")
 @ExtendWith(CasTestExtension.class)
-@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 class DelegatedAuthenticationClientFinishLogoutActionTests {
     
     @Autowired
@@ -65,7 +61,6 @@ class DelegatedAuthenticationClientFinishLogoutActionTests {
     private ConfigurableApplicationContext applicationContext;
 
     @Test
-    @Order(1)
     void verifyOperationWithRedirect() throws Throwable {
         val context = MockRequestContext.create(applicationContext).withUserAgent().setClientInfo();
         DelegationWebflowUtils.putDelegatedAuthenticationClientName(context, "SAML2Client");
@@ -96,7 +91,6 @@ class DelegatedAuthenticationClientFinishLogoutActionTests {
     }
 
     @Test
-    @Order(1)
     void verifyOperationNoLogoutRedirectUrl() throws Throwable {
         val context = MockRequestContext.create(applicationContext).withUserAgent().setClientInfo();
         DelegationWebflowUtils.putDelegatedAuthenticationClientName(context, "SAML2Client");
@@ -108,7 +102,6 @@ class DelegatedAuthenticationClientFinishLogoutActionTests {
     }
 
     @Test
-    @Order(1)
     void verifyOperationWithRelay() throws Throwable {
         val context = MockRequestContext.create(applicationContext).withUserAgent().setClientInfo();
         context.setParameter(SamlProtocolConstants.PARAMETER_SAML_RELAY_STATE, "SAML2Client");
@@ -117,7 +110,6 @@ class DelegatedAuthenticationClientFinishLogoutActionTests {
     }
 
     @Test
-    @Order(100)
     void verifyOperationFailsWithError() throws Throwable {
         val context = MockRequestContext.create(applicationContext).withUserAgent().setClientInfo();
         context.setParameter(SamlProtocolConstants.PARAMETER_SAML_RELAY_STATE, "SAML2Client");

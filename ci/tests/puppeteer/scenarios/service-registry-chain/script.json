@@ -1,0 +1,35 @@
+{
+  "dependencies": "json-service-registry,yaml-service-registry,reports",
+  "conditions": {
+    "docker": "true"
+  },
+  "properties": [
+    "--cas.server.name=https://localhost:8443",
+    "--cas.server.prefix=${cas.server.name}/cas",
+
+    "--cas.monitor.endpoints.endpoint.defaults.access=ANONYMOUS",
+    "--management.endpoints.web.exposure.include=registeredServices",
+    "--management.endpoints.access.default=UNRESTRICTED",
+
+    "--cas.service-registry.core.init-from-json=false",
+    "--cas.service-registry.json.location=file:${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/services-json",
+    "--cas.service-registry.yaml.location=file:${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/services-yaml"
+  ],
+  "variations": [
+    {
+      "name": "YamlFirst",
+      "properties": [
+        "--cas.service-registry.yaml.order=1",
+        "--cas.service-registry.json.order=2"
+      ]
+    },
+    {
+      "name": "JsonFirst",
+      "properties": [
+        "--cas.service-registry.json.order=1",
+        "--cas.service-registry.yaml.order=2"
+      ]
+    }
+  ],
+  "initScript": "${PWD}/ci/tests/httpbin/run-httpbin-server.sh"
+}

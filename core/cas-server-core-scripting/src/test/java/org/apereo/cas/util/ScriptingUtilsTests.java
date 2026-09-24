@@ -34,7 +34,7 @@ class ScriptingUtilsTests {
         val principal = mock(Principal.class);
         when(principal.getId()).thenReturn("casuser");
         when(authn.getPrincipal()).thenReturn(principal);
-        val result = ScriptingUtils.executeGroovyShellScript(script, Map.of("authentication", authn), String.class);
+        val result = ScriptingUtils.executeGroovyShellScript(script, Map.of("authentication", authn), String.class, true);
         assertTrue(Objects.requireNonNull(result).startsWith("casuser"));
     }
 
@@ -46,13 +46,13 @@ class ScriptingUtilsTests {
     @Test
     void verifyGroovyScriptShellExecution() {
         val script = ScriptingUtils.parseGroovyShellScript("return name");
-        val result = ScriptingUtils.executeGroovyShellScript(script, CollectionUtils.wrap("name", "casuser"), String.class);
+        val result = ScriptingUtils.executeGroovyShellScript(script, CollectionUtils.wrap("name", "casuser"), String.class, true);
         assertEquals("casuser", result);
     }
 
     @Test
     void verifyGroovyExecutionFails() {
-        var result = ScriptingUtils.executeGroovyShellScript(mock(Script.class), CollectionUtils.wrap("name", "casuser"), String.class);
+        var result = ScriptingUtils.executeGroovyShellScript(mock(Script.class), CollectionUtils.wrap("name", "casuser"), String.class, false);
         assertNull(result);
 
         result = ScriptingUtils.executeGroovyScript(mock(Resource.class), "someMethod", String.class);
@@ -86,6 +86,40 @@ class ScriptingUtilsTests {
         assertNull(ScriptingUtils.getObjectInstanceFromGroovyResource(resource,
             ArrayUtils.EMPTY_CLASS_ARRAY, ArrayUtils.EMPTY_OBJECT_ARRAY,
             Map.class));
+    }
+
+    @Test
+    void verifyObjectClassIsCompiledOnceAndRefreshedOnChange() throws Throwable {
+        val file = Files.createTempFile("predicate", ".groovy").toFile();
+        FileUtils.writeStringToFile(file, """
+            class SamplePredicate implements java.util.function.Predicate {
+                boolean test(final Object input) { return true }
+            }
+            """.stripIndent(), StandardCharsets.UTF_8);
+        val resource = new FileSystemResource(file);
+
+        val first = ScriptingUtils.getObjectInstanceFromGroovyResource(resource,
+            ArrayUtils.EMPTY_CLASS_ARRAY, ArrayUtils.EMPTY_OBJECT_ARRAY, Predicate.class);
+        val second = ScriptingUtils.getObjectInstanceFromGroovyResource(resource,
+            ArrayUtils.EMPTY_CLASS_ARRAY, ArrayUtils.EMPTY_OBJECT_ARRAY, Predicate.class);
+        assertNotNull(first);
+        assertNotNull(second);
+        assertNotSame(first, second);
+        assertSame(first.getClass(), second.getClass(), "The groovy class must be compiled once and reused");
+        assertTrue(first.test("anything"));
+
+        FileUtils.writeStringToFile(file, """
+            class SamplePredicate implements java.util.function.Predicate {
+                boolean test(final Object input) { return false }
+            }
+            """.stripIndent(), StandardCharsets.UTF_8);
+        Files.setLastModifiedTime(file.toPath(), FileTime.from(Instant.now().plusSeconds(5)));
+
+        val reloaded = ScriptingUtils.getObjectInstanceFromGroovyResource(resource,
+            ArrayUtils.EMPTY_CLASS_ARRAY, ArrayUtils.EMPTY_OBJECT_ARRAY, Predicate.class);
+        assertNotNull(reloaded);
+        assertNotSame(first.getClass(), reloaded.getClass(), "A modified groovy class must be recompiled");
+        assertFalse(reloaded.test("anything"));
     }
 
     @Test

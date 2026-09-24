@@ -36,23 +36,26 @@ public class OidcVerifiableCredentialDefaultNonceService implements OidcVerifiab
     @Override
     public int remove(final String nonce) {
         return StringUtils.isNotBlank(nonce)
-            ? Objects.requireNonNull(FunctionUtils.doAndHandle(() -> configurationContext.getTicketRegistry().deleteTicket(nonce)))
+            ? Objects.requireNonNullElse(
+                FunctionUtils.doAndHandle(() -> configurationContext.getTicketRegistry().deleteTicket(nonce)), 0)
             : 0;
     }
 
+    /**
+     * Consume the nonce, where the delete itself is the decision rather than a read that precedes it.
+     * The registry discards an expired ticket on lookup and reports how many tickets it actually
+     * removed, so an unknown, expired or already spent nonce counts zero and exactly one of several
+     * concurrent callers can count one. A read beforehand would decide nothing and would cost another
+     * registry round trip on every credential request.
+     *
+     * @param nonce the nonce
+     * @return true if this caller is the one that consumed the nonce
+     */
     @Override
     public boolean consume(final String nonce) {
-        return FunctionUtils.doUnchecked(() -> {
-            if (StringUtils.isBlank(nonce)) {
-                return false;
-            }
-            val ticket = configurationContext.getTicketRegistry().getTicket(nonce);
-            if (ticket == null || ticket.isExpired()) {
-                LOGGER.debug("Nonce [{}] is unknown or has expired", nonce);
-                return false;
-            }
-            return remove(nonce) > 0;
-        });
+        val consumed = remove(nonce) > 0;
+        LOGGER.debug("Nonce [{}] was consumed: [{}]", nonce, consumed);
+        return consumed;
     }
 
     @Override

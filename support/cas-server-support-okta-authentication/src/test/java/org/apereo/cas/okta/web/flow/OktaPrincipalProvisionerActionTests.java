@@ -15,8 +15,6 @@ import com.okta.sdk.client.ClientBuilder;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.parallel.Execution;
-import org.junit.jupiter.api.parallel.ExecutionMode;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.ImportAutoConfiguration;
@@ -42,7 +40,6 @@ import static org.junit.jupiter.api.Assertions.*;
     "cas.authn.okta.provisioning.organization-url=http://localhost:9125"
 })
 @Tag("WebflowActions")
-@Execution(ExecutionMode.SAME_THREAD)
 class OktaPrincipalProvisionerActionTests extends BaseWebflowConfigurerTests {
     @Autowired
     @Qualifier(CasWebflowConstants.ACTION_ID_OKTA_PRINCIPAL_PROVISIONER_ACTION)
@@ -52,34 +49,33 @@ class OktaPrincipalProvisionerActionTests extends BaseWebflowConfigurerTests {
         System.setProperty(ClientBuilder.DEFAULT_CLIENT_TESTING_DISABLE_HTTPS_CHECK_PROPERTY_NAME, "true");
     }
 
+    /**
+     * The Okta organization URL below is a fixed port, so the create and the update path share one
+     * server rather than competing for it: an empty user list drives the create, the canned user
+     * drives the update.
+     *
+     * @throws Throwable in case of failure
+     */
     @Test
-    void verifyCreateOperation() throws Throwable {
+    void verifyOperation() throws Throwable {
         try (val webServer = new MockWebServer(9125, "[]", HttpStatus.OK)) {
             webServer.start();
-            val context = MockRequestContext.create(applicationContext);
-            val username = RandomUtils.randomAlphabetic(8);
-            val principal = RegisteredServiceTestUtils.getPrincipal(username,
-                Map.of("email", List.of("example@google.com"), "firstName", List.of("CAS")));
-            val authentication = RegisteredServiceTestUtils.getAuthentication(principal);
-            WebUtils.putAuthentication(authentication, context);
-            WebUtils.putCredential(context, CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword());
-            assertEquals(CasWebflowConstants.TRANSITION_ID_SUCCESS, oktaPrincipalProvisionerAction.execute(context).getId());
+            assertEquals(CasWebflowConstants.TRANSITION_ID_SUCCESS, provision());
+        }
+
+        try (val webServer = new MockWebServer(9125, new ClassPathResource("okta-user.json"), HttpStatus.OK)) {
+            webServer.start();
+            assertEquals(CasWebflowConstants.TRANSITION_ID_SUCCESS, provision());
         }
     }
 
-    @Test
-    void verifyUpdateOperation() throws Throwable {
-        try (val webServer = new MockWebServer(9125, new ClassPathResource("okta-user.json"), HttpStatus.OK)) {
-            webServer.start();
-            val context = MockRequestContext.create(applicationContext);
-            val username = RandomUtils.randomAlphabetic(8);
-            val principal = RegisteredServiceTestUtils.getPrincipal(username,
-                Map.of("email", List.of("example@google.com"), "firstName", List.of("CAS")));
-            val authentication = RegisteredServiceTestUtils.getAuthentication(principal);
-            WebUtils.putAuthentication(authentication, context);
-            WebUtils.putCredential(context, CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword());
-            assertEquals(CasWebflowConstants.TRANSITION_ID_SUCCESS, oktaPrincipalProvisionerAction.execute(context).getId());
-        }
+    private String provision() throws Throwable {
+        val context = MockRequestContext.create(applicationContext);
+        val principal = RegisteredServiceTestUtils.getPrincipal(RandomUtils.randomAlphabetic(8),
+            Map.of("email", List.of("example@google.com"), "firstName", List.of("CAS")));
+        WebUtils.putAuthentication(RegisteredServiceTestUtils.getAuthentication(principal), context);
+        WebUtils.putCredential(context, CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword());
+        return oktaPrincipalProvisionerAction.execute(context).getId();
     }
 }
 

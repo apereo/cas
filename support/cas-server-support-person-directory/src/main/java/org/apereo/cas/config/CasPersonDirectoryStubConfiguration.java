@@ -12,6 +12,7 @@ import org.apereo.cas.util.spring.beans.BeanCondition;
 import org.apereo.cas.util.spring.beans.BeanContainer;
 import org.apereo.cas.util.spring.beans.BeanSupplier;
 import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
+import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -28,6 +29,7 @@ import org.springframework.context.annotation.ScopedProxyMode;
  * @author Misagh Moayyed
  * @since 7.0.0
  */
+@Slf4j
 @Configuration(value = "CasPersonDirectoryStubConfiguration", proxyBeanMethods = false)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.PersonDirectory, module = "stub")
@@ -45,6 +47,7 @@ class CasPersonDirectoryStubConfiguration {
             if (!stub.getAttributes().isEmpty()) {
                 val dao = PersonAttributeUtils.newStubAttributeRepository(casProperties.getAuthn().getAttributeRepository().getStub());
                 list.add(dao);
+                LOGGER.info("Found and added static attributes [{}] to the list of candidate attribute repositories", stub.getAttributes().keySet());
             }
             val mapped = casProperties.getAuthn().getAttributeRepository().getMapped();
             if (!mapped.getPeople().isEmpty()) {

@@ -42,6 +42,11 @@ public abstract class BaseOneTimeTokenRepositoryTests {
         this.userId = RandomUtils.randomAlphabetic(6);
     }
 
+    /**
+     * Saving a token must make it findable by its user and code. The repository-wide cleaners are
+     * deliberately not called from here: they remove every expired token in the repository, which
+     * is the fixture a sibling test builds on purpose, and this test asserted nothing about them.
+     */
     @Test
     void verifyTokenSave() {
         val otp = getRandomOtp();
@@ -50,8 +55,6 @@ public abstract class BaseOneTimeTokenRepositoryTests {
         assertTrue(oneTimeTokenAuthenticatorTokenRepository.exists(userId, otp));
         val foundToken = oneTimeTokenAuthenticatorTokenRepository.get(userId, otp);
         assertTrue(foundToken.getId() > 0);
-        oneTimeTokenAuthenticatorTokenRepository.clean();
-        googleAuthenticatorTokenRepositoryCleaner.clean();
     }
 
     @RetryingTest(3)
@@ -111,7 +114,7 @@ public abstract class BaseOneTimeTokenRepositoryTests {
     @Test
     void verifyRemoveByCode() {
         val otp = getRandomOtp();
-        val token = new GoogleAuthenticatorToken(otp, "someone");
+        val token = new GoogleAuthenticatorToken(otp, userId);
         oneTimeTokenAuthenticatorTokenRepository.store(token);
         var newToken = oneTimeTokenAuthenticatorTokenRepository.get(token.getUserId(), token.getToken());
         assertNotNull(newToken);
@@ -121,12 +124,16 @@ public abstract class BaseOneTimeTokenRepositoryTests {
         assertNull(newToken);
     }
 
+    /**
+     * The count for a user must reflect what has been stored for that user. It is asserted for a
+     * user of this test's own making rather than for the repository as a whole, because a
+     * repository-wide count answers for every test sharing the repository, and emptying it first to
+     * make that count predictable would take away what those tests are holding.
+     */
     @Test
     void verifySize() {
-        oneTimeTokenAuthenticatorTokenRepository.removeAll();
-        assertEquals(0, oneTimeTokenAuthenticatorTokenRepository.count(), "Repository is not empty");
-        assertEquals(0, oneTimeTokenAuthenticatorTokenRepository.count());
         val uid = UUID.randomUUID().toString();
+        assertEquals(0, oneTimeTokenAuthenticatorTokenRepository.count(uid), "Repository is not empty for user");
         val otp = getRandomOtp();
         val token = new GoogleAuthenticatorToken(otp, uid);
         oneTimeTokenAuthenticatorTokenRepository.store(token);

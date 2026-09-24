@@ -87,8 +87,10 @@ class RedisGoogleAuthenticatorTokenCredentialRepositoryTests extends BaseOneTime
             .name(UUID.randomUUID().toString())
             .build();
         registry.save(toSave);
+        assertEquals(1, registry.count(username));
         registry.delete(username);
-        assertEquals(0, registry.count());
+        assertEquals(0, registry.count(username));
+        assertTrue(registry.get(username).isEmpty());
     }
 
     @Override

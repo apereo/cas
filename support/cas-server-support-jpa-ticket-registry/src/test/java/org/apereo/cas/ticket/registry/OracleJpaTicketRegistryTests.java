@@ -12,7 +12,7 @@ import org.springframework.test.context.TestPropertySource;
  * @since 6.1.0
  */
 @TestPropertySource(properties = {
-    "cas.ticket.registry.jpa.ddl-auto=create-drop",
+    "cas.ticket.registry.jpa.ddl-auto=update",
     "cas.ticket.registry.jpa.user=cas",
     "cas.ticket.registry.jpa.password=cas",
     "cas.ticket.registry.jpa.driver-class=oracle.jdbc.driver.OracleDriver",
@@ -21,5 +21,6 @@ import org.springframework.test.context.TestPropertySource;
 })
 @EnabledIfListeningOnPort(port = 1521)
 @Tag("Oracle")
+@Tag("TicketRegistryTestWithoutEncryption")
 class OracleJpaTicketRegistryTests extends BaseJpaTicketRegistryTests {
 }

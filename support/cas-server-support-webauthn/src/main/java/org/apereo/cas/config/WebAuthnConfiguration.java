@@ -218,10 +218,10 @@ class WebAuthnConfiguration {
         public Cleanable webAuthnDeviceRepositoryCleanerScheduler(
             final ConfigurableApplicationContext applicationContext,
             @Qualifier(WebAuthnCredentialRepository.BEAN_NAME)
-            final WebAuthnCredentialRepository webAuthnCredentialRepository) {
+            final ObjectProvider<WebAuthnCredentialRepository> webAuthnCredentialRepository) {
             return BeanSupplier.of(Cleanable.class)
                 .when(BeanCondition.on("cas.authn.mfa.web-authn.cleaner.schedule.enabled").isTrue().evenIfMissing().given(applicationContext.getEnvironment()))
-                .supply(() -> new WebAuthnDeviceRepositoryCleanerScheduler(webAuthnCredentialRepository))
+                .supply(() -> new WebAuthnDeviceRepositoryCleanerScheduler(webAuthnCredentialRepository.getObject()))
                 .otherwiseProxy()
                 .get();
         }

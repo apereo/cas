@@ -35,4 +35,31 @@ class DynamicMetadataResolverAdapterTests extends AbstractOpenSamlTests {
             assertNotNull(adapter.getEntityDescriptorForEntityId("https://carmenwiki.osu.edu/shibboleth"));
         }
     }
+
+    @Test
+    void verifyResolutionIsCached() throws Throwable {
+        val resource = new UrlResource(new URI("http://localhost:6623/entities/"));
+        val adapter = new DynamicMetadataResolverAdapter(Map.of(resource, new MetadataFilterChain()));
+        adapter.setConfigBean(configBean);
+
+        val entity = IOUtils.toString(new ClassPathResource("metadata.xml").getInputStream(), StandardCharsets.UTF_8);
+        try (val webServer = new MockWebServer(6623,
+            new ByteArrayResource(entity.getBytes(StandardCharsets.UTF_8), "Output"), HttpStatus.OK)) {
+            webServer.start();
+
+            val entityId = "https://carmenwiki.osu.edu/shibboleth";
+            val first = adapter.getEntityDescriptorForEntityId(entityId);
+            assertNotNull(first);
+            val requestsAfterFirst = webServer.getRequestCount();
+
+            assertSame(first, adapter.getEntityDescriptorForEntityId(entityId));
+            assertEquals(requestsAfterFirst, webServer.getRequestCount());
+
+            val unknownEntityId = UUID.randomUUID().toString();
+            assertNull(adapter.getEntityDescriptorForEntityId(unknownEntityId));
+            val requestsAfterMiss = webServer.getRequestCount();
+            assertNull(adapter.getEntityDescriptorForEntityId(unknownEntityId));
+            assertEquals(requestsAfterMiss, webServer.getRequestCount());
+        }
+    }
 }

@@ -11,6 +11,7 @@ import org.apereo.cas.services.ServiceRegistryExecutionPlanConfigurer;
 import org.apereo.cas.services.ServiceRegistryListener;
 import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
 import lombok.val;
+import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
@@ -19,6 +20,7 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.DependsOn;
 import org.springframework.context.annotation.ScopedProxyMode;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.mongodb.core.MongoOperations;
@@ -45,18 +47,30 @@ public class CasMongoDbServiceRegistryAutoConfiguration {
         final CasSSLContext casSslContext) {
         val mongo = casProperties.getServiceRegistry().getMongo();
         val factory = new MongoDbConnectionFactory(casSslContext.getSslContext());
-        val mongoTemplate = factory.buildMongoTemplate(mongo);
-        MongoDbConnectionFactory.createCollection(mongoTemplate, mongo.getCollection(), mongo.isDropCollection());
-        val collection = mongoTemplate.getCollection(mongo.getCollection());
-        val serviceIdIndex = new Index().named("IDX_SERVICE_ID").on("serviceId", Sort.Direction.ASC);
-        val serviceNameIndex = new Index().named("IDX_SERVICE_NAME").on("name", Sort.Direction.ASC);
-        MongoDbConnectionFactory.createOrUpdateIndexes(mongoTemplate, collection, List.of(serviceIdIndex, serviceNameIndex));
-        return mongoTemplate.asMongoTemplate();
+        return factory.buildMongoTemplate(mongo).asMongoTemplate();
+    }
+
+    @Bean
+    @ConditionalOnMissingBean(name = "mongoDbServiceRegistryInitializer")
+    public InitializingBean mongoDbServiceRegistryInitializer(
+        @Qualifier("mongoDbServiceRegistryTemplate")
+        final MongoOperations mongoDbServiceRegistryTemplate,
+        final CasConfigurationProperties casProperties) {
+        return () -> {
+            val mongo = casProperties.getServiceRegistry().getMongo();
+            MongoDbConnectionFactory.createCollection(mongoDbServiceRegistryTemplate, mongo.getCollection(), mongo.isDropCollection());
+            val collection = mongoDbServiceRegistryTemplate.getCollection(mongo.getCollection());
+            val serviceIdIndex = new Index().named("IDX_SERVICE_ID").on("serviceId", Sort.Direction.ASC);
+            val serviceNameIndex = new Index().named("IDX_SERVICE_NAME").on("name", Sort.Direction.ASC);
+            MongoDbConnectionFactory.createOrUpdateIndexes(mongoDbServiceRegistryTemplate, collection,
+                List.of(serviceIdIndex, serviceNameIndex));
+        };
     }
 
     @Bean
     @ConditionalOnMissingBean(name = "mongoDbServiceRegistry")
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+    @DependsOn("mongoDbServiceRegistryInitializer")
     public ServiceRegistry mongoDbServiceRegistry(
         @Qualifier("mongoDbServiceRegistryTemplate")
         final MongoOperations mongoDbServiceRegistryTemplate,
@@ -64,8 +78,12 @@ public class CasMongoDbServiceRegistryAutoConfiguration {
         final CasConfigurationProperties casProperties,
         final ConfigurableApplicationContext applicationContext) {
         val mongo = casProperties.getServiceRegistry().getMongo();
-        return new MongoDbServiceRegistry(applicationContext, mongoDbServiceRegistryTemplate, mongo.getCollection(),
+        val registry = new MongoDbServiceRegistry(applicationContext,
+            mongoDbServiceRegistryTemplate,
+            mongo.getCollection(),
             Optional.ofNullable(serviceRegistryListeners.getIfAvailable()).orElseGet(ArrayList::new));
+        registry.setOrder(mongo.getOrder());
+        return registry;
     }
 
     @Bean

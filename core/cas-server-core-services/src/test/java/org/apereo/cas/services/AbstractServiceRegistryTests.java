@@ -27,13 +27,10 @@ import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.val;
-import org.jooq.lambda.Unchecked;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.MethodOrderer;
-import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.TestMethodOrder;
+import org.junit.jupiter.api.parallel.ResourceLock;
 import org.junitpioneer.jupiter.RetryingTest;
 import org.springframework.boot.SpringBootConfiguration;
 import org.springframework.boot.autoconfigure.ImportAutoConfiguration;
@@ -48,7 +45,7 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 @Getter
 @RequiredArgsConstructor(access = AccessLevel.PROTECTED)
-@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
+@ResourceLock("serviceRegistry")
 public abstract class AbstractServiceRegistryTests {
     public static final int LOAD_SIZE = 1;
 
@@ -93,7 +90,6 @@ public abstract class AbstractServiceRegistryTests {
     }
 
     @RetryingTest(3)
-    @Order(1000)
     void verifyEmptyRegistry() {
         serviceRegistry.deleteAll();
         assertEquals(0, serviceRegistry.load().size(), "Loaded too many");
@@ -517,12 +513,11 @@ public abstract class AbstractServiceRegistryTests {
                 .map(r -> serviceRegistry.save(r))
                 .toList();
 
-            list.forEach(Unchecked.consumer(r2 -> {
-                Thread.sleep(1000);
+            list.forEach(r2 -> {
                 assertTrue(serviceRegistry.delete(r2));
-                Thread.sleep(2000);
-                assertNull(serviceRegistry.findServiceById(r2.getId()));
-            }));
+                await().atMost(Duration.ofSeconds(10))
+                    .untilAsserted(() -> assertNull(serviceRegistry.findServiceById(r2.getId())));
+            });
         });
     }
 

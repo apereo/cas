@@ -24,7 +24,7 @@ public abstract class BaseElementMetadataResolver extends AbstractBatchMetadataR
      *
      * @param metadataRootElement the metadata root element
      */
-    public void setMetadataRootElement(final Element metadataRootElement) {
+    protected void setMetadataRootElement(final Element metadataRootElement) {
         this.metadataRootElement = metadataRootElement;
         try {
             val unmarshaller = getUnmarshallerFactory().ensureUnmarshaller(metadataRootElement);

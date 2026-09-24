@@ -5,6 +5,8 @@ import org.apereo.cas.authentication.credential.BasicIdentifiableCredential;
 import org.apereo.cas.oidc.OidcConfigurationContext;
 import org.apereo.cas.oidc.OidcConstants;
 import org.apereo.cas.oidc.vc.offer.OidcVerifiableCredentialOfferService;
+import org.apereo.cas.oidc.vc.services.OidcVerifiableCredentialPolicyUtils;
+import org.apereo.cas.services.OidcRegisteredService;
 import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.support.oauth.util.OAuth20Utils;
 import org.apereo.cas.support.oauth.web.endpoints.BaseOAuth20Controller;
@@ -105,13 +107,19 @@ public class OidcVerifiableCredentialOfferEndpointController extends BaseOAuth20
         val profile = OAuth20Utils.getAuthenticatedUserProfile(context, getConfigurationContext().getSessionStore());
         LOGGER.debug("Checking credential configuration IDs for [{}]", profile.getId());
 
+        val clientId = profile.getAttribute(OAuth20Constants.CLIENT_ID).toString();
+        val registeredService = OAuth20Utils.getRegisteredOAuthServiceByClientId(
+            getConfigurationContext().getServicesManager(), clientId, OidcRegisteredService.class);
+
         val vcProperties = configurationContext.getCasProperties().getAuthn().getOidc().getVc();
-        val credentialConfigurationIds = vcProperties.getIssuer().getCredentialConfigurations().keySet();
+        val credentialConfigurationIds = OidcVerifiableCredentialPolicyUtils.resolveAllowedCredentialConfigurationIds(
+            registeredService, vcProperties.getIssuer().getCredentialConfigurations().keySet());
         if (credentialConfigurationIds.isEmpty() || !credentialConfigurationIds.containsAll(request.credentialConfigurationIds())) {
+            LOGGER.warn("Client [{}] requested credential configurations [{}] but is only allowed [{}]",
+                clientId, request.credentialConfigurationIds(), credentialConfigurationIds);
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
                 .body(Map.of("error", "Unauthorized credential configuration id requested"));
         }
-        val clientId = profile.getAttribute(OAuth20Constants.CLIENT_ID).toString();
         val person = configurationContext.getPrincipalResolver()
             .resolve(new BasicIdentifiableCredential(request.principal()));
 

@@ -1,13 +1,13 @@
 package org.apereo.cas.util.io;
 
 import module java.base;
+import org.apereo.cas.util.LoggingUtils;
 import org.apereo.cas.util.function.FunctionUtils;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.jooq.lambda.Unchecked;
 import org.jooq.lambda.fi.util.function.CheckedConsumer;
 import org.jspecify.annotations.Nullable;
 import org.springframework.beans.factory.DisposableBean;
@@ -109,7 +109,7 @@ public class PathWatcherService implements WatcherService, Runnable, DisposableB
     }
 
     protected void handleEvent(final WatchKey key) {
-        key.pollEvents().forEach(Unchecked.consumer(event -> {
+        key.pollEvents().forEach(event -> {
             val eventName = event.kind().name();
 
             val ev = (WatchEvent<Path>) event;
@@ -120,14 +120,21 @@ public class PathWatcherService implements WatcherService, Runnable, DisposableB
             val file = fullPath.toFile();
 
             LOGGER.trace("Detected event [{}] on file [{}]", eventName, file);
-            if (eventName.equals(ENTRY_CREATE.name()) && file.exists()) {
-                onCreate.accept(file);
-            } else if (eventName.equals(ENTRY_DELETE.name())) {
-                onDelete.accept(file);
-            } else if (eventName.equals(ENTRY_MODIFY.name()) && file.exists()) {
-                onModify.accept(file);
+            try {
+                if (eventName.equals(ENTRY_CREATE.name()) && file.exists()) {
+                    onCreate.accept(file);
+                } else if (eventName.equals(ENTRY_DELETE.name())) {
+                    onDelete.accept(file);
+                } else if (eventName.equals(ENTRY_MODIFY.name()) && file.exists()) {
+                    onModify.accept(file);
+                }
+            } catch (final Throwable e) {
+                if (e instanceof InterruptedException) {
+                    Thread.currentThread().interrupt();
+                }
+                LoggingUtils.error(LOGGER, "Failed to handle event [%s] on file [%s]".formatted(eventName, file), e);
             }
-        }));
+        });
     }
 
     protected boolean shouldEnableWatchService() {

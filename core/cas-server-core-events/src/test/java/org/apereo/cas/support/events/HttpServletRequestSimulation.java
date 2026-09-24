@@ -3,6 +3,7 @@ package org.apereo.cas.support.events;
 import module java.base;
 import org.apereo.cas.mock.MockTicketGrantingTicket;
 import org.apereo.cas.support.events.ticket.CasTicketGrantingTicketCreatedEvent;
+import lombok.RequiredArgsConstructor;
 import lombok.val;
 import org.apereo.inspektr.common.web.ClientInfo;
 import org.apereo.inspektr.common.web.ClientInfoHolder;
@@ -24,7 +25,8 @@ import jakarta.servlet.http.HttpServletRequest;
  * @author David Malia
  * @since 6.6.6
  */
-public class HttpServletRequestSimulation implements Callable<Integer> {
+@RequiredArgsConstructor
+class HttpServletRequestSimulation implements Callable<Integer> {
 
     /**
      * A constant representing an IP address.
@@ -39,21 +41,10 @@ public class HttpServletRequestSimulation implements Callable<Integer> {
     private final Integer threadNum;
     private final boolean useIP1;
 
+    private final String principalId;
+
     private final ConfigurableApplicationContext applicationContext;
     
-    /**
-     * Create an instance of the HttpServletRequestSimulation callable object.
-     *
-     * @param threadNum          The thread number of the current request.  This is the value that will be returned after call is completed.
-     * @param useIP1             A boolean if set to true will use the constant IP1 for the client/server IP addresses.  Set to false it will use IP2.
-     * @param applicationContext The Spring applicationContext the test is running under.  This is to publish the event to the context.
-     */
-    public HttpServletRequestSimulation(final Integer threadNum, final boolean useIP1, final ConfigurableApplicationContext applicationContext) {
-        this.threadNum = threadNum;
-        this.useIP1 = useIP1;
-        this.applicationContext = applicationContext;
-    }
-
     @Override
     public Integer call() {
         postTGTCreatedEvent();
@@ -76,7 +67,7 @@ public class HttpServletRequestSimulation implements Callable<Integer> {
         }
         request.addHeader(HttpHeaders.USER_AGENT, "test");
         ClientInfoHolder.setClientInfo(ClientInfo.from(request));
-        val tgt = new MockTicketGrantingTicket("casuser");
+        val tgt = new MockTicketGrantingTicket(principalId);
         val event = new CasTicketGrantingTicketCreatedEvent(this, tgt, ClientInfoHolder.getClientInfo());
         applicationContext.publishEvent(event);
     }

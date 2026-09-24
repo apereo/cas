@@ -7,6 +7,7 @@ import lombok.Setter;
 import lombok.experimental.Accessors;
 import lombok.val;
 import org.apache.commons.io.FileUtils;
+import org.springframework.core.Ordered;
 import org.springframework.core.io.FileSystemResource;
 
 /**
@@ -50,6 +51,13 @@ public class GitServiceRegistryProperties extends BaseGitProperties {
      */
     private boolean groupByType = true;
 
+    /**
+     * The execution order of this registry
+     * which will determine its position in a chain
+     * in case multiple registries are defined.
+     */
+    private int order = Ordered.LOWEST_PRECEDENCE;
+    
     public GitServiceRegistryProperties() {
         val location = new FileSystemResource(new File(FileUtils.getTempDirectory(), DEFAULT_CAS_SERVICE_REGISTRY_NAME));
         getCloneDirectory().setLocation(location);

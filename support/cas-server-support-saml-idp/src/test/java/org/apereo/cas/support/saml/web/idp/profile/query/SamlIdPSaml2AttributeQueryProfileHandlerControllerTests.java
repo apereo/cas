@@ -11,11 +11,9 @@ import org.apereo.cas.ticket.query.SamlAttributeQueryTicketFactory;
 import lombok.val;
 import org.apache.hc.core5.http.HttpStatus;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.TestMethodOrder;
 import org.opensaml.saml.common.SAMLObjectBuilder;
 import org.opensaml.saml.common.xml.SAMLConstants;
 import org.opensaml.saml.saml2.core.Attribute;
@@ -67,7 +65,6 @@ class SamlIdPSaml2AttributeQueryProfileHandlerControllerTests {
     }
 
     @Nested
-    @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
     @TestPropertySource(properties = "cas.authn.saml-idp.core.attribute-query-profile-enabled=true")
     class DefaultTests extends BaseSamlIdPConfigurationTests {
         @Autowired
@@ -97,7 +94,8 @@ class SamlIdPSaml2AttributeQueryProfileHandlerControllerTests {
             builder = (SOAPObjectBuilder) openSamlConfigBean.getBuilderFactory()
                 .getBuilder(Body.DEFAULT_ELEMENT_NAME);
             val body = (Body) builder.buildObject();
-            val query = getSignedAttributeQuery(NameIDType.TRANSIENT, "casuser-aq");
+            val nameIdValue = UUID.randomUUID().toString();
+            val query = getSignedAttributeQuery(NameIDType.TRANSIENT, nameIdValue);
             query.getIssuer().setValue(UUID.randomUUID().toString());
             body.getUnknownXMLObjects().add(query);
             envelope.setBody(body);
@@ -106,7 +104,7 @@ class SamlIdPSaml2AttributeQueryProfileHandlerControllerTests {
                 Map.of("cn", List.of("CAS"), "lastName", List.of("Apereo")),
                 Map.of("event-type", List.of("saml1-attr-query")));
             val ticket = samlAttributeQueryTicketFactory.create(
-                "casuser-aq", query, "https://cassp.example.org", ticketGrantingTicket);
+                nameIdValue, query, "https://cassp.example.org", ticketGrantingTicket);
             ticketRegistry.addTicket(ticket);
 
             val xml = SamlUtils.transformSamlObject(openSamlConfigBean, envelope).toString();
@@ -131,7 +129,8 @@ class SamlIdPSaml2AttributeQueryProfileHandlerControllerTests {
             builder = (SOAPObjectBuilder) openSamlConfigBean.getBuilderFactory()
                 .getBuilder(Body.DEFAULT_ELEMENT_NAME);
             val body = (Body) builder.buildObject();
-            val query = getSignedAttributeQuery(NameIDType.TRANSIENT, "casuser-aq");
+            val nameIdValue = UUID.randomUUID().toString();
+            val query = getSignedAttributeQuery(NameIDType.TRANSIENT, nameIdValue);
             body.getUnknownXMLObjects().add(query);
             envelope.setBody(body);
 
@@ -139,7 +138,7 @@ class SamlIdPSaml2AttributeQueryProfileHandlerControllerTests {
                 Map.of("cn", List.of("CAS"), "lastName", List.of("Apereo")),
                 Map.of("event-type", List.of("saml1-attr-query")));
             val ticket = samlAttributeQueryTicketFactory.create(
-                "casuser-aq", query, "https://cassp.example.org", ticketGrantingTicket);
+                nameIdValue, query, "https://cassp.example.org", ticketGrantingTicket);
             ticketRegistry.addTicket(ticket);
 
             val xml = SamlUtils.transformSamlObject(openSamlConfigBean, envelope).toString();
@@ -164,12 +163,13 @@ class SamlIdPSaml2AttributeQueryProfileHandlerControllerTests {
             builder = (SOAPObjectBuilder) openSamlConfigBean.getBuilderFactory()
                 .getBuilder(Body.DEFAULT_ELEMENT_NAME);
             val body = (Body) builder.buildObject();
-            val query = getSignedAttributeQuery(NameIDType.ENCRYPTED, "casuser-aq");
+            val nameIdValue = UUID.randomUUID().toString();
+            val query = getSignedAttributeQuery(NameIDType.ENCRYPTED, nameIdValue);
             body.getUnknownXMLObjects().add(query);
             envelope.setBody(body);
 
             val ticket = samlAttributeQueryTicketFactory.create(
-                "casuser-aq",
+                nameIdValue,
                 query, "https://cassp.example.org",
                 new MockTicketGrantingTicket("casuser",
                     Map.of("cn", List.of("CAS"), "lastName", List.of("Apereo")),

@@ -4,7 +4,6 @@ import module java.base;
 import org.apereo.cas.util.crypto.CipherExecutor;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -23,11 +22,6 @@ public abstract class AbstractYubiKeyAccountRegistryTests {
 
     public abstract CipherExecutor getYubikeyAccountCipherExecutor();
 
-    @BeforeEach
-    void setUp() {
-        getYubiKeyAccountRegistry().deleteAll();
-    }
-
     @Test
     void verifyCipher() {
         val pubKey = getYubiKeyAccountRegistry().getAccountValidator().getTokenPublicId(OTP);
@@ -37,7 +31,7 @@ public abstract class AbstractYubiKeyAccountRegistryTests {
 
     @Test
     void verifyAccountNotRegistered() {
-        assertFalse(isYubiKeyRegisteredFor("missing-user", null));
+        assertFalse(isYubiKeyRegisteredFor(UUID.randomUUID().toString(), null));
     }
 
     @Test
@@ -52,7 +46,8 @@ public abstract class AbstractYubiKeyAccountRegistryTests {
     @Test
     void verifyAccountRegistered() {
         val casuser = UUID.randomUUID().toString();
-        val request1 = YubiKeyDeviceRegistrationRequest.builder().username("casuser2")
+        val otheruser = UUID.randomUUID().toString();
+        val request1 = YubiKeyDeviceRegistrationRequest.builder().username(otheruser)
             .token(OTP).name(UUID.randomUUID().toString()).build();
         assertTrue(registerAccount(request1));
 
@@ -70,8 +65,8 @@ public abstract class AbstractYubiKeyAccountRegistryTests {
 
         getYubiKeyAccountRegistry().delete(casuser);
         assertTrue(getAccount(casuser).isEmpty());
-        getYubiKeyAccountRegistry().deleteAll();
-        assertEquals(0, getAccounts().size());
+        getYubiKeyAccountRegistry().delete(otheruser);
+        assertTrue(getAccount(otheruser).isEmpty());
     }
 
     @Test
@@ -84,15 +79,15 @@ public abstract class AbstractYubiKeyAccountRegistryTests {
             .build();
         assertNotNull(getYubiKeyAccountRegistry().save(account));
         getYubiKeyAccountRegistry().delete(account.getUsername());
-        getYubiKeyAccountRegistry().deleteAll();
+        assertTrue(getAccount(account.getUsername()).isEmpty());
     }
 
     @Test
     void verifyDeviceRemoval() {
-        val username = "casuser-registered-device";
+        val username = UUID.randomUUID().toString();
         for (var i = 0; i < 4; i++) {
             val request = YubiKeyDeviceRegistrationRequest.builder()
-                .username("casuser-registered-device")
+                .username(username)
                 .token(OTP)
                 .name(UUID.randomUUID().toString())
                 .build();
@@ -110,11 +105,12 @@ public abstract class AbstractYubiKeyAccountRegistryTests {
 
     @Test
     void verifyEncryptedAccount() {
-        val request1 = YubiKeyDeviceRegistrationRequest.builder().username("encrypteduser")
+        val encrypteduser = UUID.randomUUID().toString();
+        val request1 = YubiKeyDeviceRegistrationRequest.builder().username(encrypteduser)
             .token(OTP).name(UUID.randomUUID().toString()).build();
         assertTrue(registerAccount(request1));
 
-        assertTrue(isYubiKeyRegisteredFor("encrypteduser",
+        assertTrue(isYubiKeyRegisteredFor(encrypteduser,
             getYubiKeyAccountRegistry().getAccountValidator().getTokenPublicId(OTP)));
     }
 

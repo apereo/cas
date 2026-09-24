@@ -155,15 +155,16 @@ public class OidcHandlerInterceptorAdapter extends OAuth20HandlerInterceptorAdap
     }
 
     /**
-     * Is this a request to create a verifiable credential presentation request?
-     * Only the creation endpoint is matched; wallet lookups that carry a request
-     * identifier in the path remain publicly accessible.
+     * Is this a request to create a verifiable credential presentation request, or to collect its
+     * result? Both belong to the relying party. Wallet lookups that carry a request identifier in the
+     * path remain publicly accessible, which is why the result is addressed by query parameter.
      *
      * @param requestPath the request path
      * @return true/false
      */
     protected boolean isVerifiableCredentialPresentationRequest(final String requestPath) {
-        return doesUriMatchPattern(requestPath, CollectionUtils.wrapList(OidcConstants.VC_PRESENTATION_REQUEST_URL));
+        return doesUriMatchPattern(requestPath, CollectionUtils.wrapList(
+            OidcConstants.VC_PRESENTATION_REQUEST_URL, OidcConstants.VC_PRESENTATION_RESULT_URL));
     }
 
     @Override

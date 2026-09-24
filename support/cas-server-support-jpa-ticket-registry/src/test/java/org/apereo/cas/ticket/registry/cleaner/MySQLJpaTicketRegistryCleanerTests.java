@@ -4,8 +4,6 @@ import module java.base;
 import org.apereo.cas.ticket.registry.TicketRegistryCleaner;
 import org.apereo.cas.util.junit.EnabledIfListeningOnPort;
 import org.junit.jupiter.api.Tag;
-import org.junit.jupiter.api.parallel.Execution;
-import org.junit.jupiter.api.parallel.ExecutionMode;
 import org.springframework.test.context.TestPropertySource;
 
 /**
@@ -23,6 +21,5 @@ import org.springframework.test.context.TestPropertySource;
 })
 @EnabledIfListeningOnPort(port = 3306)
 @Tag("MySQL")
-@Execution(ExecutionMode.SAME_THREAD)
 class MySQLJpaTicketRegistryCleanerTests extends BaseJpaTicketRegistryCleanerTests {
 }

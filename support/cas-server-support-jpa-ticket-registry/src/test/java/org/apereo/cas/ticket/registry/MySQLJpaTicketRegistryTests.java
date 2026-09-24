@@ -3,8 +3,6 @@ package org.apereo.cas.ticket.registry;
 import module java.base;
 import org.apereo.cas.util.junit.EnabledIfListeningOnPort;
 import org.junit.jupiter.api.Tag;
-import org.junit.jupiter.api.parallel.Execution;
-import org.junit.jupiter.api.parallel.ExecutionMode;
 import org.springframework.test.context.TestPropertySource;
 
 /**
@@ -15,7 +13,7 @@ import org.springframework.test.context.TestPropertySource;
  */
 @TestPropertySource(properties = {
     "cas.jdbc.show-sql=false",
-    "cas.ticket.registry.jpa.ddl-auto=create-drop",
+    "cas.ticket.registry.jpa.ddl-auto=update",
     "cas.ticket.registry.jpa.user=root",
     "cas.ticket.registry.jpa.password=password",
     "cas.ticket.registry.jpa.driver-class=com.mysql.cj.jdbc.Driver",
@@ -24,6 +22,6 @@ import org.springframework.test.context.TestPropertySource;
 })
 @EnabledIfListeningOnPort(port = 3306)
 @Tag("MySQL")
-@Execution(ExecutionMode.SAME_THREAD)
+@Tag("TicketRegistryTestWithoutEncryption")
 class MySQLJpaTicketRegistryTests extends BaseJpaTicketRegistryTests {
 }

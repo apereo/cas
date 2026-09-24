@@ -9,8 +9,7 @@ import lombok.val;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.parallel.Execution;
-import org.junit.jupiter.api.parallel.ExecutionMode;
+import org.junit.jupiter.api.parallel.ResourceLock;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.TestPropertySource;
 import tools.jackson.databind.ObjectMapper;
@@ -29,7 +28,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
     "management.endpoints.web.exposure.include=*",
     "management.endpoint.samlIdPRegisteredServiceMetadataCache.access=UNRESTRICTED"
 })
-@Execution(ExecutionMode.SAME_THREAD)
+@ResourceLock("samlIdPRegisteredServiceMetadataCache")
 class SamlRegisteredServiceCachedMetadataEndpointTests extends BaseSamlIdPConfigurationTests {
     private static final ObjectMapper MAPPER = JacksonObjectMapperFactory.builder()
         .build().toObjectMapper();

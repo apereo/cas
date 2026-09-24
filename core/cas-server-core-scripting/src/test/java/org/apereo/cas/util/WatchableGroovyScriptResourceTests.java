@@ -20,6 +20,37 @@ import static org.junit.jupiter.api.Assertions.*;
 class WatchableGroovyScriptResourceTests {
 
     @Test
+    void verifyQueuedExecutionIsNotDroppedWhenScriptIsSlow() throws Throwable {
+        val file = Files.createTempFile("slow", ".groovy").toFile();
+        FileUtils.writeStringToFile(file, """
+            def run(final Object... args) {
+                if (args.length > 1) {
+                    def release = args[0] as java.util.concurrent.CountDownLatch
+                    def started = args[1] as java.util.concurrent.CountDownLatch
+                    started.countDown()
+                    release.await(30, java.util.concurrent.TimeUnit.SECONDS)
+                }
+                return 'done'
+            }
+            """.stripIndent(), StandardCharsets.UTF_8);
+
+        val release = new CountDownLatch(1);
+        val started = new CountDownLatch(1);
+        val scriptFactory = ExecutableCompiledScriptFactory.getExecutableCompiledScriptFactory();
+        try (val resource = scriptFactory.fromResource(new FileSystemResource(file), false);
+             val executor = Executors.newVirtualThreadPerTaskExecutor()) {
+            val holder = executor.submit(() ->
+                resource.execute(new Object[]{release, started}, String.class, true));
+            assertTrue(started.await(30, TimeUnit.SECONDS));
+            val queued = executor.submit(() -> resource.execute(new Object[]{0L}, String.class, true));
+            assertThrows(TimeoutException.class, () -> queued.get(250, TimeUnit.MILLISECONDS));
+            release.countDown();
+            assertEquals("done", holder.get(30, TimeUnit.SECONDS));
+            assertEquals("done", queued.get(30, TimeUnit.SECONDS));
+        }
+    }
+
+    @Test
     void verifyOperation() throws Throwable {
         val file = Files.createTempFile("file", ".groovy").toFile();
         FileUtils.writeStringToFile(file, "println 'hello'", StandardCharsets.UTF_8);
@@ -29,6 +60,5 @@ class WatchableGroovyScriptResourceTests {
             assertDoesNotThrow(() -> resource.execute(ArrayUtils.EMPTY_OBJECT_ARRAY));
         }
         Files.setLastModifiedTime(file.toPath(), FileTime.from(Instant.now()));
-        Thread.sleep(5_000);
     }
 }

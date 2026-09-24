@@ -53,8 +53,10 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
     CasCoreScriptingAutoConfiguration.class,
     CasCoreAutoConfiguration.class,
     CasCoreWebAutoConfiguration.class
-}, properties = "cas.jdbc.show-sql=true"
-)
+}, properties = {
+    "cas.jdbc.show-sql=true",
+    "cas.authn.mfa.gauth.jpa.url=jdbc:hsqldb:mem:gauth-tokens;hsqldb.tx=mvcc"
+})
 @EnableTransactionManagement(proxyTargetClass = false)
 @EnableAspectJAutoProxy(proxyTargetClass = false)
 @EnableScheduling

@@ -3,7 +3,6 @@ package org.apereo.cas.config;
 import module java.base;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.oidc.OidcConfigurationContext;
-import org.apereo.cas.oidc.vc.issuer.nonce.OidcVerifiableCredentialNonceService;
 import org.apereo.cas.oidc.vc.offer.OidcVerifiableCredentialDefaultOfferService;
 import org.apereo.cas.oidc.vc.offer.OidcVerifiableCredentialDefaultTransactionService;
 import org.apereo.cas.oidc.vc.offer.OidcVerifiableCredentialOfferService;
@@ -94,12 +93,7 @@ class OidcVerifiableCredentialsOfferConfiguration {
     @Bean
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @ConditionalOnMissingBean(name = "oidcVerifiableCredentialAccessTokenResponseCustomizer")
-    public OAuth20AccessTokenResponseCustomizer oidcVerifiableCredentialAccessTokenResponseCustomizer(
-        @Qualifier(OidcVerifiableCredentialTransactionService.BEAN_NAME)
-        final OidcVerifiableCredentialTransactionService oidcVerifiableCredentialTransactionService,
-        @Qualifier(OidcVerifiableCredentialNonceService.BEAN_NAME)
-        final OidcVerifiableCredentialNonceService oidcVerifiableCredentialNonceService) {
-        return new OidcVerifiableCredentialAccessTokenResponseCustomizer(
-            oidcVerifiableCredentialNonceService, oidcVerifiableCredentialTransactionService);
+    public OAuth20AccessTokenResponseCustomizer oidcVerifiableCredentialAccessTokenResponseCustomizer() {
+        return new OidcVerifiableCredentialAccessTokenResponseCustomizer();
     }
 }

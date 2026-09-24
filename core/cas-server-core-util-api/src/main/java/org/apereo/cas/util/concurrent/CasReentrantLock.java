@@ -58,6 +58,28 @@ public class CasReentrantLock {
     }
 
     /**
+     * Acquire the lock without a timeout, execute the supplier and release the lock.
+     * Unlike {@link #tryLock(CheckedSupplier)}, this method waits for the lock to
+     * become available and so never reports a result of {@code null} to indicate
+     * that the lock could not be acquired in time.
+     *
+     * @param <T>      the type parameter
+     * @param supplier the supplier
+     * @return the supplied result
+     */
+    public <T> T executeAndThrow(final CheckedSupplier<T> supplier) {
+        lock.lock();
+        try {
+            return supplier.get();
+        } catch (final Throwable e) {
+            LoggingUtils.error(LOGGER, e);
+            throw new RuntimeException(e);
+        } finally {
+            lock.unlock();
+        }
+    }
+
+    /**
      * Acquires the lock if it is not held by another thread within the given
      * waiting time and the current thread has not been
      * {@linkplain Thread#interrupt interrupted}.
@@ -68,6 +90,7 @@ public class CasReentrantLock {
         return FunctionUtils.doAndHandle(
             () -> lock.tryLock(LOCK_TIMEOUT_SECONDS, TimeUnit.SECONDS),
             e -> {
+                LoggingUtils.error(LOGGER, e);
                 Thread.currentThread().interrupt();
                 return false;
             }).get();

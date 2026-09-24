@@ -52,12 +52,19 @@ async function createPublicKey() {
 
     url = "https://localhost:8443/cas/oidc/oidcVcCredential";
 
+    /**
+     * The token response returned authorization details carrying credential identifiers, so
+     * OpenID4VCI 1.0 requires the credential request to use credential_identifier rather than
+     * credential_configuration_id.
+     */
+    const credentialIdentifiers = payload.authorization_details[0].credential_identifiers;
+    assert(Array.isArray(credentialIdentifiers) && credentialIdentifiers.length > 0);
+
     const proof = await createPublicKey();
     const credentialRequest = JSON.stringify({
-        credential_configuration_id: payload.authorization_details[0].credential_configuration_id,
-        proof: {
-            proof_type: "jwt",
-            jwt: proof
+        credential_identifier: credentialIdentifiers[0],
+        proofs: {
+            jwt: [proof]
         }
     });
     await cas.log(`Calling ${url}`);
@@ -66,10 +73,11 @@ async function createPublicKey() {
         "Authorization": `Bearer ${payload.access_token}`
     }, 200, credentialRequest));
     await cas.log(result);
-    assert(result.credential !== undefined);
-    assert(result.format === "dc+sd-jwt");
+    assert(result.credentials.length === 1);
+    assert(result.credential === undefined, "OpenID4VCI 1.0 replaced credential with the credentials array");
+    assert(result.format === undefined, "OpenID4VCI 1.0 carries no format in the credential response");
 
-    const parts = result.credential.split("~");
+    const parts = result.credentials[0].credential.split("~");
     const issuerJwt = parts[0];
     const decoded = await cas.decodeJwt(issuerJwt);
     assert(decoded !== undefined && decoded !== null);

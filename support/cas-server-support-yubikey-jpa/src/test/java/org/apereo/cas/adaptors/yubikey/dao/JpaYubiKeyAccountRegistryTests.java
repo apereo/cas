@@ -31,7 +31,8 @@ import org.springframework.boot.test.context.SpringBootTest;
     "cas.authn.mfa.yubikey.client-id=18423",
     "cas.authn.mfa.yubikey.secret-key=zAIqhjui12mK8x82oe9qzBEb0As=",
     "cas.jdbc.show-sql=false",
-    "cas.authn.mfa.yubikey.jpa.ddl-auto=create-drop"
+    "cas.authn.mfa.yubikey.jpa.ddl-auto=create-drop",
+    "cas.authn.mfa.yubikey.jpa.url=jdbc:hsqldb:mem:yubikey;hsqldb.tx=mvcc"
 })
 @Tag("JDBCMFA")
 @ExtendWith(CasTestExtension.class)

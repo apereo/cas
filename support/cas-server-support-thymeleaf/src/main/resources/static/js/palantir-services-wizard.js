@@ -1,5 +1,53 @@
 let editServiceWizardDialog = undefined;
 
+/**
+ * Deferred construction of the service wizard's fields.
+ *
+ * The wizard is a large form -- a couple of hundred fields across every protocol -- inside a dialog
+ * that starts hidden and that most visits never open. Building it while the page parsed cost every
+ * load that DOM, the MDC components attached to it, a dozen select widgets, and the discovery
+ * profile request its attribute pickers make.
+ *
+ * The markup therefore registers each section's builder here instead of calling it, and the queue
+ * is drained the first time the dialog is opened. Registration order is document order, which is
+ * what decides where each field lands, so the queue is drained in order and awaited: one builder
+ * fetches the OpenID Connect discovery document before it can fill its dropdowns.
+ */
+const palantirWizardFieldBuilders = [];
+let palantirWizardFieldsBuilt = null;
+
+/**
+ * Register a wizard field builder to run when the wizard is first opened.
+ *
+ * @param builder a function that builds one section's fields; may return a promise
+ */
+function palantirWizardField(builder) {
+    palantirWizardFieldBuilders.push(builder);
+}
+
+/**
+ * Build the wizard's fields, once.
+ *
+ * A builder that throws is logged and skipped: one section that cannot be built must not leave the
+ * rest of the wizard empty.
+ *
+ * @returns {Promise<void>} resolved when every registered builder has run
+ */
+function buildRegisteredServiceWizardFields() {
+    if (!palantirWizardFieldsBuilt) {
+        palantirWizardFieldsBuilt = (async () => {
+            for (const builder of palantirWizardFieldBuilders) {
+                try {
+                    await builder();
+                } catch (e) {
+                    console.error("Unable to build a service wizard section:", e);
+                }
+            }
+        })();
+    }
+    return palantirWizardFieldsBuilt;
+}
+
 function validatePattern(button, targetFieldId = "#registeredServiceId") {
     $("#validatePatternDialog").dialog({
         title: "Validate Pattern",
@@ -1056,6 +1104,18 @@ function createRegisteredServiceMultifactorPolicy() {
         title: "Specifies the principal attribute value to match for triggering multifactor authentication."
     });
 
+
+    createInputField({
+        paramType: "org.apereo.cas.services.DefaultRegisteredServiceMultifactorPolicy",
+        cssClasses: "advanced-option",
+        labelTitle: "Principal Attribute Value Bypass",
+        name: "registeredServiceMfaBypassPrincipalAttributeValue",
+        paramName: "multifactorPolicy.bypassPrincipalAttributeValue",
+        required: false,
+        containerId: "editServiceWizardMenuItemMfaPolicy",
+        title: "Specifies the principal attribute value that bypasses multifactor authentication."
+    });
+
     CasDiscoveryProfile.fetchIfNeeded()
         .done(async () => {
             const options = CasDiscoveryProfile.availableAttributes().map(attr => ({
@@ -1074,18 +1134,7 @@ function createRegisteredServiceMultifactorPolicy() {
                 allowCreateOption: true,
                 inclusion: "before"
             });
-    });
-    
-    createInputField({
-        paramType: "org.apereo.cas.services.DefaultRegisteredServiceMultifactorPolicy",
-        cssClasses: "advanced-option",
-        labelTitle: "Principal Attribute Value Bypass",
-        name: "registeredServiceMfaBypassPrincipalAttributeValue",
-        paramName: "multifactorPolicy.bypassPrincipalAttributeValue",
-        required: false,
-        containerId: "editServiceWizardMenuItemMfaPolicy",
-        title: "Specifies the principal attribute value that bypasses multifactor authentication."
-    });
+        });
 
     createInputField({
         paramType: "org.apereo.cas.services.DefaultRegisteredServiceMultifactorPolicy",
@@ -2104,27 +2153,6 @@ function createRegisteredServiceUsernameAttributeProvider() {
         title: "Specifies the static value to be used as the username."
     });
 
-
-    CasDiscoveryProfile.fetchIfNeeded()
-        .done(async () => {
-            const options = CasDiscoveryProfile.availableAttributes().map(attr => ({
-                value: attr,
-                text: attr
-            }));
-            createMultiSelectField({
-                cssClasses: "hide PrincipalAttributeRegisteredServiceUsernameProvider",
-                singleSelect: true,
-                containerId: "registeredServiceUsernameAttributeScopeFieldContainer",
-                labelTitle: "Username Attribute:",
-                paramName: "usernameAttributeProvider.usernameAttribute",
-                title: "Specifies the principal attribute to be used as the username.",
-                options: options,
-                allowCreateOption: true,
-                inclusion: "before"
-            });
-
-        });
-
     if (PalantirDashboardConfiguration.scriptFactoryAvailable()) {
         const scriptInput = createInputField({
             cssClasses: "hide GroovyRegisteredServiceUsernameProvider",
@@ -2151,6 +2179,26 @@ function createRegisteredServiceUsernameAttributeProvider() {
         containerId: "editServiceWizardMenuItemUsernameAttribute",
         title: "Specifies the scope to be appended to the username."
     });
+
+    CasDiscoveryProfile.fetchIfNeeded()
+        .done(async () => {
+            const options = CasDiscoveryProfile.availableAttributes().map(attr => ({
+                value: attr,
+                text: attr
+            }));
+            createMultiSelectField({
+                cssClasses: "hide PrincipalAttributeRegisteredServiceUsernameProvider",
+                singleSelect: true,
+                containerId: "registeredServiceUsernameAttributeScopeFieldContainer",
+                labelTitle: "Username Attribute:",
+                paramName: "usernameAttributeProvider.usernameAttribute",
+                title: "Specifies the principal attribute to be used as the username.",
+                options: options,
+                allowCreateOption: true,
+                inclusion: "before"
+            });
+
+        });
 
     createInputField({
         cssClasses: "DefaultRegisteredServiceUsernameProvider",
@@ -2364,6 +2412,8 @@ function hideAdvancedRegisteredServiceOptions() {
     const value = $("#hideAdvancedOptions").val();
     const className = getLastWord($("#serviceClassType").text());
 
+    localStorage.setItem("hideAdvancedOptionsPreference", value);
+
     if (value === "true" || value === true) {
         hideElements($("form#editServiceWizardForm .advanced-option"));
     } else {
@@ -2386,6 +2436,7 @@ function hideAdvancedRegisteredServiceOptions() {
     if (!CAS_FEATURES.includes("SurrogateAuthentication")) {
         hideElements($("#registeredServiceSurrogatePolicy"));
     }
+    RegisteredServiceSections.refresh();
 }
 
 function toggleJsonEditorVisibility() {
@@ -2407,7 +2458,7 @@ function toggleJsonEditorVisibility() {
         $wizardMenu.removeClass("mmw-45").addClass("w-100");
     }
 
-    $("#editServiceWizardMenu").accordion("refresh");
+    RegisteredServiceSections.refresh();
 }
 
 function generateServiceDefinition() {
@@ -3028,7 +3079,7 @@ function createMultiSelectField(config) {
     }
 
     let settings = {
-        dropdownParent: "body",
+        dropdownParent: $select.closest("#editServiceWizardDialog").length > 0 ? null : "body",
         plugins: ["remove_button"],
         onItemAdd(value, item) {
             generateServiceDefinition();
@@ -3131,7 +3182,7 @@ function createInputField(config) {
         size: 50,
         title: title,
         required: required
-    }).on("input", function () {
+    }).data("tooltip-html", title).on("input", function () {
         const value = $(this).val();
         if (dataType === "date") {
             if (value.length === 0) {
@@ -3421,15 +3472,15 @@ function populateWizardFromServiceDefinition(serviceDefinition) {
             });
         }
 
-        // Fallback: find visible container or first container
+        // Fallback: find a policy-enabled container or the first container
         if (!$container || !$container.length) {
             const $firstKeyInput = $inputs.first();
             $container = $firstKeyInput.closest("[id$='MapContainer']");
 
-            // Try to find a visible container
+            // Inactive sidebar sections may hide an otherwise enabled container
             $inputs.each(function () {
                 const $potentialContainer = $(this).closest("[id$='MapContainer']");
-                if ($potentialContainer.is(":visible") && !$potentialContainer.hasClass("hide")) {
+                if ($potentialContainer.css("display") !== "none" && !$potentialContainer.hasClass("hide")) {
                     $container = $potentialContainer;
                     return false; // break
                 }
@@ -3613,8 +3664,8 @@ function populateWizardFromServiceDefinition(serviceDefinition) {
         $("form#editServiceWizardForm [id$='MapContainer']").each(function () {
             const $container = $(this);
 
-            // Only process visible containers for non-allowedAttributes fields
-            if ($container.hasClass("hide") || !$container.is(":visible")) {
+            // Skip disabled policy containers, including when their sidebar section is inactive
+            if ($container.hasClass("hide") || $container.css("display") === "none") {
                 return;
             }
 
@@ -3710,8 +3761,75 @@ function populateWizardFromServiceDefinition(serviceDefinition) {
     }, 600);
 }
 
-function openRegisteredServiceWizardDialog(existingService = null) {
+/**
+ * Creates the wizard dialog, or hands back the one already created.
+ *
+ * A jQuery UI dialog rather than an MDC one, matching every other dialog in
+ * Palantir. The widget supplies the focus trap, Escape handling, a title bar
+ * and role=dialog, which the hand-written MDC markup did not.
+ *
+ * Called before the Ace editor is attached, because creating the dialog moves
+ * its element to the end of the document and Ace does not enjoy being moved
+ * after the fact.
+ *
+ * @returns {{open: function, close: function}} a handle the shared save handler
+ *          in palantir-services.js can use the same way as the plain editor
+ *          dialog's MDC instance
+ */
+function createRegisteredServiceWizardDialog() {
+    const element = $("#editServiceWizardDialog");
+    if (!element.hasClass("ui-dialog-content")) {
+        element.removeClass("hide").dialog({
+            autoOpen: false,
+            modal: true,
+            closeOnEscape: true,
+            draggable: false,
+            resizable: false,
+            dialogClass: "registered-service-wizard-dialog",
+            close: () => $(window).off("resize.registeredServiceWizard")
+        });
+    }
+    return {
+        open: () => {
+            element.dialog("open");
+            sizeRegisteredServiceWizardDialog();
+            $(window)
+                .off("resize.registeredServiceWizard")
+                .on("resize.registeredServiceWizard", sizeRegisteredServiceWizardDialog);
+        },
+        close: () => element.dialog("close")
+    };
+}
+
+/**
+ * Sizes the wizard dialog to the window, leaving a small margin.
+ *
+ * The editor is a working surface rather than a message, so it takes the whole
+ * window. Ace is told to re-measure afterwards, since it cannot detect a
+ * container resize on its own.
+ */
+function sizeRegisteredServiceWizardDialog() {
+    const element = $("#editServiceWizardDialog");
+    if (!element.hasClass("ui-dialog-content") || !element.dialog("isOpen")) {
+        return;
+    }
+    const margin = 24;
+    element.dialog("option", {
+        width: Math.max(320, $(window).width() - margin * 2),
+        height: Math.max(320, $(window).height() - margin * 2)
+    });
+    element.dialog("option", "position", {my: "center", at: "center", of: window});
+    const editor = ace.edit("wizardServiceEditor");
+    if (editor) {
+        editor.resize(true);
+    }
+}
+
+async function openRegisteredServiceWizardDialog(existingService = null) {
+    await buildRegisteredServiceWizardFields();
+
     function openWizardDialog(serviceClass, serviceData = null) {
+        editServiceWizardDialog = createRegisteredServiceWizardDialog();
         $("#editServiceWizardGeneralContainer").find("input").val("");
         $(".jqueryui-multiselectmenu").each(function () {
             this.tomselect?.clear();
@@ -3729,26 +3847,14 @@ function openRegisteredServiceWizardDialog(existingService = null) {
         $("#serviceClassType").text(serviceClass);
         $("#editServiceWizardForm").data("service-class", serviceClass).data("service-class-name", className);
 
-        $("#editServiceWizardMenu")
-            .accordion({
-                collapsible: true,
-                heightStyle: "content",
-                activate: function (event, ui) {
-                    let idx = $("#editServiceWizardMenu").accordion("option", "active");
-                    if (isNumeric(idx)) {
-                        // console.log(`Saving wizard menu index ${idx}`);
-                        localStorage.setItem("registeredServiceWizardMenuOption", idx);
-                    }
-                }
-            });
+        RegisteredServiceSections.initialize();
 
-        $(`.class-${className}`).show();
-        $("[class*='class-']").not(`.class-${className}`).hide();
+        showElements($("#editServiceWizardForm").find(`.class-${className}`));
+        hideElements($("#editServiceWizardForm [class*='class-']").not(`.class-${className}`).not(".always-show"));
 
-        $("#editServiceWizardMenu").accordion("refresh");
+        RegisteredServiceSections.refresh();
 
         const editServiceWizardDialogElement = document.getElementById("editServiceWizardDialog");
-        editServiceWizardDialog = window.mdc.dialog.MDCDialog.attachTo(editServiceWizardDialogElement);
 
         const isNewService = serviceData === null;
         $(editServiceWizardDialogElement).attr("newService", isNewService);
@@ -3791,6 +3897,7 @@ function openRegisteredServiceWizardDialog(existingService = null) {
         } catch (e) {
             dropdown.selectmenu();
         }
+        dropdown.selectmenu("option", "appendTo", $(editServiceWizardDialogElement).dialog("widget"));
 
         if (serviceData !== null) {
             setTimeout(() => {
@@ -3802,8 +3909,9 @@ function openRegisteredServiceWizardDialog(existingService = null) {
 
         editServiceWizardDialog["open"]();
 
-        const value = $("#hideAdvancedOptions").val();
-        if (value === "false" || value === false) {
+        const savedAdvancedOptionsPref = localStorage.getItem("hideAdvancedOptionsPreference") ?? "true";
+        const currentAdvancedOptionsValue = $("#hideAdvancedOptions").val();
+        if ((savedAdvancedOptionsPref === "true") !== (currentAdvancedOptionsValue === "true")) {
             $("#hideAdvancedOptionsButton").click();
         }
         hideAdvancedRegisteredServiceOptions();
@@ -3831,36 +3939,25 @@ function openRegisteredServiceWizardDialog(existingService = null) {
             $("#registeredServiceIdLabel span.mdc-floating-label").text("Redirect URI");
             $(`h3.class-${className}`).each(function () {
                 const original = $(this).text();
-                const updated = original.replace("/ OpenID Connect ", "");
+                const updated = original.replace(/^(?:OAuth \/ OpenID Connect|OpenID Connect) /, "OAuth ");
                 $(this).text(updated);
             });
-            $("#editServiceWizardMenu").accordion("refresh");
+            RegisteredServiceSections.refresh();
             break;
         case "OidcRegisteredService":
             $("#registeredServiceIdLabel span.mdc-floating-label").text("Redirect URI");
             $(`h3.class-${className}`).each(function () {
                 const original = $(this).text();
-                const updated = original.replace("OAuth / ", "");
+                const updated = original.replace(/^(?:OAuth \/ OpenID Connect|OAuth) /, "OpenID Connect ");
                 $(this).text(updated);
             });
-            $("#editServiceWizardMenu").accordion("refresh");
+            RegisteredServiceSections.refresh();
             createOidcRegisteredServiceFields();
             break;
         }
-        let savedIndex = localStorage.getItem("registeredServiceWizardMenuOption");
-        if (savedIndex !== null && isNumeric(savedIndex)) {
-            savedIndex = Number(savedIndex);
-        } else {
-            savedIndex = 0;
-        }
-
-        const visible = $("#editServiceWizardForm").find(`.ui-accordion-header:eq(${savedIndex})`).is(":visible");
-        if (!visible) {
-            savedIndex = 0;
-        }
-        $("#editServiceWizardMenu").accordion("option", "active", savedIndex);
+        RegisteredServiceSections.refresh();
         setTimeout(function () {
-            $("#editServiceWizardForm input:visible:enabled").first().focus();
+            $("#editServiceWizardForm input[data-param-name]:visible:enabled").first().focus();
         }, 200);
     }
 

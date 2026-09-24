@@ -13,8 +13,8 @@ import org.apereo.cas.jpa.JpaPersistenceProviderContext;
 import org.apereo.cas.util.DigestUtils;
 import org.apereo.cas.util.transforms.PrefixSuffixPrincipalNameTransformer;
 import lombok.val;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,6 +23,7 @@ import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Import;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.test.context.TestPropertySource;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -36,6 +37,7 @@ import static org.mockito.Mockito.*;
  * @since 4.0.0
  */
 @SuppressWarnings("JDBCExecuteWithNonConstantString")
+@TestPropertySource(properties = "database.name=cas-query-encode-authentications")
 @Tag("JDBCAuthentication")
 @Import(QueryAndEncodeDatabaseAuthenticationHandlerTests.DatabaseTestConfiguration.class)
 class QueryAndEncodeDatabaseAuthenticationHandlerTests extends BaseDatabaseAuthenticationHandlerTests {
@@ -79,9 +81,9 @@ class QueryAndEncodeDatabaseAuthenticationHandlerTests extends BaseDatabaseAuthe
             salt.getBytes(StandardCharsets.UTF_8), psw, iter);
     }
 
-    @BeforeEach
-    void initialize() throws Exception {
-        try (val connection = this.dataSource.getConnection()) {
+    @BeforeAll
+    static void createUserAccounts(@Autowired @Qualifier("dataSource") final DataSource dataSource) throws Exception {
+        try (val connection = dataSource.getConnection()) {
             try (val statement = connection.createStatement()) {
                 connection.setAutoCommit(true);
 
@@ -95,9 +97,9 @@ class QueryAndEncodeDatabaseAuthenticationHandlerTests extends BaseDatabaseAuthe
         }
     }
 
-    @AfterEach
-    public void afterEachTest() throws Exception {
-        try (val connection = this.dataSource.getConnection()) {
+    @AfterAll
+    static void deleteUserAccounts(@Autowired @Qualifier("dataSource") final DataSource dataSource) throws Exception {
+        try (val connection = dataSource.getConnection()) {
             try (val statement = connection.createStatement()) {
                 connection.setAutoCommit(true);
                 statement.execute("delete from users;");

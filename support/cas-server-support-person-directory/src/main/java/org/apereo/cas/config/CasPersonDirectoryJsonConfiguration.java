@@ -58,10 +58,7 @@ class CasPersonDirectoryJsonConfiguration {
                             val r = json.getLocation();
                             val dao = new JsonPersonAttributeDao(r);
                             if (ResourceUtils.isFile(r)) {
-                                val watcherService = new FileWatcherService(r.getFile(), file -> {
-                                    Thread.sleep(100);
-                                    dao.init();
-                                });
+                                val watcherService = new FileWatcherService(r.getFile(), _ -> dao.init());
                                 watcherService.start(getClass().getSimpleName());
                                 dao.setResourceWatcherService(watcherService);
                             }
