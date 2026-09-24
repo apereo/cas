@@ -9,6 +9,7 @@ import org.apereo.cas.support.events.dao.AbstractCasEventRepository;
 import org.apereo.cas.support.events.dao.CasEvent;
 import org.apereo.cas.test.CasTestExtension;
 import org.apereo.cas.util.CollectionUtils;
+import org.apereo.cas.util.RandomUtils;
 import org.apereo.cas.util.http.HttpUtils;
 import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
 import org.apereo.cas.util.spring.boot.SpringBootTestAutoConfigurations;
@@ -110,7 +111,7 @@ class CasEventsReportEndpointTests {
     @Test
     void verifyImportOperationAsJson() throws Throwable {
         val event = new CasEvent()
-            .setId(System.currentTimeMillis())
+            .setId(RandomUtils.nextLong(1, Long.MAX_VALUE))
             .setPrincipalId("casuser")
             .setType(CasAuthenticationTransactionFailureEvent.class.getSimpleName())
             .putClientIpAddress("127.0.0.1")
@@ -144,7 +145,7 @@ class CasEventsReportEndpointTests {
         try (val out = new ByteArrayOutputStream(2048);
              val zipStream = new ZipOutputStream(out)) {
             val event = new CasEvent()
-                .setId(System.currentTimeMillis())
+                .setId(RandomUtils.nextLong(1, Long.MAX_VALUE))
                 .setPrincipalId("casuser")
                 .putEventId(UUID.randomUUID().toString())
                 .setType(CasAuthenticationTransactionFailureEvent.class.getSimpleName())

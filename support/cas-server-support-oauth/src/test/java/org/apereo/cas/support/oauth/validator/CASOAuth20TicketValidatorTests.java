@@ -15,8 +15,6 @@ import org.apereo.cas.ticket.tracking.TicketTrackingPolicy;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.parallel.Execution;
-import org.junit.jupiter.api.parallel.ExecutionMode;
 import org.pac4j.core.context.CallContext;
 import org.pac4j.core.profile.BasicUserProfile;
 import org.pac4j.core.profile.factory.ProfileManagerFactory;
@@ -31,12 +29,13 @@ import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * This is {@link CASOAuth20TicketValidatorTests}.
+ * The registry is emptied so this test's service wins the callback URL lookup; the profile keeps
+ * that to a context of its own.
  *
  * @author Misagh Moayyed
  * @since 7.0.0
  */
 @Tag("OAuth")
-@Execution(ExecutionMode.SAME_THREAD)
 class CASOAuth20TicketValidatorTests extends AbstractOAuth20Tests {
     @Autowired
     @Qualifier(TicketTrackingPolicy.BEAN_NAME_SERVICE_TICKET_TRACKING)

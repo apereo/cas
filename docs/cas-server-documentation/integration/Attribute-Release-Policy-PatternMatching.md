@@ -70,7 +70,7 @@ applies the defined pattern and the transformation on each attribute value.
                 groovy {
                     logger.info("Full matched value is ${matched}")
                     def value = matchedGroup1 == 'g1' ? 'group1' : 'group2'
-                    // return a Map. Note the map value must be a collection
+                    // return a Map of attribute names to values
                     return [mem: [value]]
                 }
             '''
@@ -81,6 +81,10 @@ applies the defined pattern and the transformation on each attribute value.
 ```
      
 The final released attribute would be `mem` with values `group1` and `group2`.
+
+The script must return a `Map` of attribute names to values. A single value is released as a
+one-element collection, and entries without a name or without any value are ignored. When more
+than one rule returns the same attribute name, their values are combined.
 
 The following parameters are passed to the script:
 

@@ -6,6 +6,7 @@ import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.RegexUtils;
 import org.apereo.cas.util.nativex.CasRuntimeHintsRegistrar;
 import org.apereo.cas.util.scripting.ExecutableCompiledScriptFactory;
+import org.apereo.cas.util.spring.ApplicationContextProvider;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.SuperBuilder;
@@ -156,15 +157,16 @@ public class RegisteredServiceAccessStrategyEvaluator implements Function<Regist
         for (val requiredValue : requiredValues) {
             if (scriptFactoryInstance.isPresent() && scriptFactoryInstance.get().isInlineScript(requiredValue) && CasRuntimeHintsRegistrar.notInNativeImage()) {
                 val script = scriptFactoryInstance.get().getInlineScript(requiredValue).orElseThrow();
-                try (val executableScript = scriptFactoryInstance.get().fromScript(script)) {
-                    val args = CollectionUtils.<String, Object>wrap(
-                        "principalId", request.getPrincipalId(),
-                        "currentValues", availableValues,
-                        "attributes", request.getAttributes(),
-                        "logger", LOGGER);
-                    executableScript.setBinding(args);
-                    results.add(executableScript.execute(args.values().toArray(), Boolean.class));
-                }
+                val executableScript = ApplicationContextProvider.getScriptResourceCacheManager()
+                    .map(cacheManager -> cacheManager.resolveScriptableResource(script, script))
+                    .orElseGet(() -> scriptFactoryInstance.get().fromScript(script));
+                val args = CollectionUtils.<String, Object>wrap(
+                    "principalId", request.getPrincipalId(),
+                    "currentValues", availableValues,
+                    "attributes", request.getAttributes(),
+                    "logger", LOGGER);
+                executableScript.setBinding(args);
+                results.add(executableScript.execute(args.values().toArray(), Boolean.class));
             } else {
                 val pattern = RegexUtils.createPattern(requiredValue, caseInsensitive ? Pattern.CASE_INSENSITIVE : 0);
                 LOGGER.debug("Checking [{}] against [{}] with pattern [{}] for attribute [{}]",

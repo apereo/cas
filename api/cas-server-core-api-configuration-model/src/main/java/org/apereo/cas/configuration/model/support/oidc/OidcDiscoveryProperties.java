@@ -203,7 +203,19 @@ public class OidcDiscoveryProperties implements Serializable {
      * List of client authentication methods supported by token endpoint.
      */
     private List<String> tokenEndpointAuthMethodsSupported =
-        Stream.of("client_secret_basic", "client_secret_post", "client_secret_jwt", "private_key_jwt", "tls_client_auth").toList();
+        Stream.of("client_secret_basic", "client_secret_post", "client_secret_jwt",
+            "private_key_jwt", "tls_client_auth", "none").toList();
+
+    /**
+     * Signing algorithms supported by the token endpoint for the JWT that authenticates the client
+     * under the {@code private_key_jwt} and {@code client_secret_jwt} authentication methods.
+     * RFC 8414 requires this to be published whenever either method is advertised in
+     * {@link #tokenEndpointAuthMethodsSupported}, and forbids the value {@code none}.
+     */
+    private List<String> tokenEndpointAuthSigningAlgValuesSupported = Stream.of("RS256", "RS384",
+        "RS512", "PS256", "PS384",
+        "PS512", "ES256", "ES384",
+        "ES512", "HS256", "HS384", "HS512").toList();
 
     /**
      * List of PKCE code challenge methods supported.

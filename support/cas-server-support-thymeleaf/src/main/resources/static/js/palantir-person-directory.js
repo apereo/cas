@@ -43,6 +43,7 @@ async function initializePersonDirectoryOperations() {
     attrDefToolbar.innerHTML = attrDefToolbarEntries;
 
     const attributeDefinitionsTable = $("#attributeDefinitionsTable").DataTable({
+        deferRender: true,
         pageLength: 10,
         autoWidth: false,
         columnDefs: [

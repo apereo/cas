@@ -1,8 +1,9 @@
 package org.apereo.cas.audit;
 
 import module java.base;
+import org.apereo.cas.audit.spi.AuditActionContextJsonSerializer;
 import org.apereo.cas.config.CasSupportRestAuditAutoConfiguration;
-import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.configuration.model.core.audit.AuditRestProperties;
 import org.apereo.cas.test.CasTestExtension;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.MockWebServer;
@@ -20,6 +21,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.http.HttpStatus;
 import tools.jackson.databind.ObjectMapper;
@@ -33,7 +35,7 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 @SpringBootTestAutoConfigurations
 @SpringBootTest(classes = CasSupportRestAuditAutoConfiguration.class, properties = {
-    "cas.audit.rest.url=http://localhost:${random.int[3000,9000]}",
+    "cas.audit.rest.url=https://localhost/audit",
     "cas.audit.rest.asynchronous=false"
 })
 @Tag("RestfulApi")
@@ -48,17 +50,16 @@ class RestAuditTrailManagerTests {
     private AuditTrailManager auditTrailManager;
 
     @Autowired
-    private CasConfigurationProperties casProperties;
+    private ConfigurableApplicationContext applicationContext;
 
     @Test
     void verifyRemoval() {
-        val props = casProperties.getAudit().getRest();
-        val port = URI.create(props.getUrl()).getPort();
-        try (val webServer = new MockWebServer(port,
+        assertNotNull(auditTrailManager);
+        try (val webServer = new MockWebServer(
             new ByteArrayResource(ArrayUtils.EMPTY_BYTE_ARRAY), HttpStatus.OK)) {
             webServer.start();
             assertTrue(webServer.isRunning());
-            auditTrailManager.removeAll();
+            managerFor(webServer).removeAll();
         }
     }
 
@@ -69,21 +70,27 @@ class RestAuditTrailManagerTests {
             new ClientInfo("123.456.789.000", "123.456.789.000", "GoogleChrome", "London"));
         val data = MAPPER.writeValueAsString(CollectionUtils.wrapSet(audit));
 
-        val props = casProperties.getAudit().getRest();
-        val port = URI.create(props.getUrl()).getPort();
-        try (val webServer = new MockWebServer(port,
+        try (val webServer = new MockWebServer(
             new ByteArrayResource(data.getBytes(StandardCharsets.UTF_8)), HttpStatus.OK)) {
             webServer.start();
             assertTrue(webServer.isRunning());
-            auditTrailManager.record(audit);
+            val manager = managerFor(webServer);
+            manager.record(audit);
 
             val time = LocalDateTime.now(ZoneOffset.UTC).minusDays(2);
             val criteria = new HashMap<AuditTrailManager.WhereClauseFields, Object>();
             criteria.put(AuditTrailManager.WhereClauseFields.DATE, time);
             criteria.put(AuditTrailManager.WhereClauseFields.PRINCIPAL, "casuser");
             criteria.put(AuditTrailManager.WhereClauseFields.COUNT, "10");
-            val results = auditTrailManager.getAuditRecords(criteria);
+            val results = manager.getAuditRecords(criteria);
             assertFalse(results.isEmpty());
         }
+    }
+
+    private AuditTrailManager managerFor(final MockWebServer webServer) {
+        val properties = new AuditRestProperties();
+        properties.setAsynchronous(false);
+        properties.setUrl("http://localhost:%s".formatted(webServer.getPort()));
+        return new RestAuditTrailManager(new AuditActionContextJsonSerializer(applicationContext), properties);
     }
 }

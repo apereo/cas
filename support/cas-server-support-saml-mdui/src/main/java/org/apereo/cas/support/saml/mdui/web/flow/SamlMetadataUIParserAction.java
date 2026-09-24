@@ -17,6 +17,7 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.jspecify.annotations.Nullable;
+import org.opensaml.saml.saml2.metadata.EntityDescriptor;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 
@@ -54,35 +55,35 @@ public class SamlMetadataUIParserAction extends BaseCasWebflowAction {
             return success();
         }
         LOGGER.debug("Located entity id [{}] from request", entityId);
-        if (MetadataUIUtils.isMetadataFoundForEntityId(metadataAdapter, entityId)) {
-            LOGGER.debug("Metadata is found for entity [{}]", entityId);
-            val registeredService = getRegisteredServiceFromRequest(requestContext);
-            LOGGER.debug("Registered service definition linked to [{}] is found as [{}]", entityId, registeredService);
-            verifyRegisteredService(requestContext, registeredService);
-            loadSamlMetadataIntoRequestContext(requestContext, entityId, registeredService);
-        } else {
-            LOGGER.debug("Metadata is not found for entity [{}] and CAS service registry is consulted for the entity definition", entityId);
-            val registeredService = getRegisteredServiceFromRequest(requestContext, entityId);
-            LOGGER.debug("Registered service definition linked to [{}] is found as [{}]", entityId, registeredService);
-            verifyRegisteredService(requestContext, registeredService);
-            loadSamlMetadataIntoRequestContext(requestContext, entityId, registeredService);
-        }
-
+        val entityDescriptor = metadataAdapter.getEntityDescriptorForEntityId(entityId);
+        val registeredService = entityDescriptor != null
+            ? getRegisteredServiceFromRequest(requestContext)
+            : getRegisteredServiceFromRequest(requestContext, entityId);
+        LOGGER.debug("Registered service definition linked to [{}] is found as [{}]", entityId, registeredService);
+        verifyRegisteredService(requestContext, registeredService);
+        loadSamlMetadataIntoRequestContext(requestContext, entityDescriptor, entityId, registeredService);
         return success();
     }
 
     /**
      * Load saml metadata into request context.
+     * <p>
+     * The entity descriptor is resolved once by the caller and passed in. Resolving it here as well
+     * would double the work of rendering the login page, and for a metadata query that work is an
+     * outbound request driven by a request parameter nobody has authenticated.
      *
      * @param requestContext    the request context
+     * @param entityDescriptor  the entity descriptor already resolved for this entity id, if any
      * @param entityId          the entity id
      * @param registeredService the registered service
      */
-    protected void loadSamlMetadataIntoRequestContext(final RequestContext requestContext, final String entityId,
+    protected void loadSamlMetadataIntoRequestContext(final RequestContext requestContext,
+                                                      final @Nullable EntityDescriptor entityDescriptor,
+                                                      final String entityId,
                                                       final WebBasedRegisteredService registeredService) {
         LOGGER.debug("Locating SAML MDUI for entity [{}]", entityId);
-        val mdui = MetadataUIUtils.locateMetadataUserInterfaceForEntityId(
-            this.metadataAdapter, entityId, registeredService, WebUtils.getHttpServletRequestFromExternalWebflowContext(requestContext));
+        val mdui = MetadataUIUtils.locateMetadataUserInterfaceForEntityId(entityDescriptor, entityId,
+            registeredService, WebUtils.getHttpServletRequestFromExternalWebflowContext(requestContext));
         LOGGER.debug("Located SAML MDUI for entity [{}] as [{}]", entityId, mdui);
         WebUtils.putServiceUserInterfaceMetadata(requestContext, mdui);
     }

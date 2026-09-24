@@ -6,7 +6,6 @@ import org.apereo.cas.trusted.AbstractMultifactorAuthenticationTrustStorageTests
 import org.apereo.cas.trusted.authentication.api.MultifactorAuthenticationTrustRecord;
 import org.apereo.cas.util.junit.EnabledIfListeningOnPort;
 import lombok.val;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.autoconfigure.ImportAutoConfiguration;
@@ -36,29 +35,43 @@ class DynamoDbMultifactorAuthenticationTrustStorageTests extends AbstractMultifa
         System.setProperty(SdkSystemSetting.AWS_SECRET_ACCESS_KEY.property(), "UpigXEQDU1tnxolpXBM8OK8G7/a+goMDTJkQPvxQ");
     }
 
-    @BeforeEach
-    void emptyTrustEngine() {
-        getMfaTrustEngine().getAll().forEach(r -> getMfaTrustEngine().remove(r.getRecordKey()));
+    @Test
+    void verifySetAnExpireByKey() {
+        val principal = UUID.randomUUID().toString();
+        getMfaTrustEngine().save(MultifactorAuthenticationTrustRecord.newInstance(principal,
+            "geography", "fingerprint"));
+        val records = getMfaTrustEngine().get(principal);
+        assertEquals(1, records.size());
+        getMfaTrustEngine().remove(records.stream().findFirst().get().getRecordKey());
+        assertTrue(getMfaTrustEngine().get(principal).isEmpty());
     }
 
     @Test
-    void verifySetAnExpireByKey() {
-        getMfaTrustEngine().save(MultifactorAuthenticationTrustRecord.newInstance("casuser",
-            "geography", "fingerprint"));
-        val records = getMfaTrustEngine().get("casuser");
-        assertEquals(1, records.size());
-        getMfaTrustEngine().remove(records.stream().findFirst().get().getRecordKey());
-        assertTrue(getMfaTrustEngine().get("casuser").isEmpty());
+    void verifyRecordsDoNotReplaceEachOther() {
+        val principal = UUID.randomUUID().toString();
+        val first = getMfaTrustEngine().save(MultifactorAuthenticationTrustRecord.newInstance(principal,
+            "geography", UUID.randomUUID().toString()));
+        val second = getMfaTrustEngine().save(MultifactorAuthenticationTrustRecord.newInstance(principal,
+            "geography", UUID.randomUUID().toString()));
+        assertNotEquals(first.getId(), second.getId());
+        assertEquals(2, getMfaTrustEngine().get(principal).size());
     }
 
     @Test
     void verifyExpireByDate() {
-        val r = MultifactorAuthenticationTrustRecord.newInstance("castest", "geography", "fingerprint");
+        val r = MultifactorAuthenticationTrustRecord.newInstance(UUID.randomUUID().toString(), "geography", "fingerprint");
         val now = ZonedDateTime.now(ZoneOffset.UTC).truncatedTo(ChronoUnit.SECONDS);
         r.setRecordDate(now.minusDays(2));
         getMfaTrustEngine().save(r);
         assertFalse(getMfaTrustEngine().get(r.getPrincipal()).isEmpty());
-        assertEquals(1, getMfaTrustEngine().get(now.minusDays(30)).size());
-        assertEquals(0, getMfaTrustEngine().get(now.minusDays(1)).size());
+        assertEquals(1, countRecordsFor(r.getPrincipal(), now.minusDays(30)));
+        assertEquals(0, countRecordsFor(r.getPrincipal(), now.minusDays(1)));
+    }
+
+    private long countRecordsFor(final String principal, final ZonedDateTime onOrAfterDate) {
+        return getMfaTrustEngine().get(onOrAfterDate)
+            .stream()
+            .filter(record -> principal.equals(record.getPrincipal()))
+            .count();
     }
 }

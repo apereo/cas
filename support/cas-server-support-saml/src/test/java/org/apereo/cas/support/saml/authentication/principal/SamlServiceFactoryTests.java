@@ -131,6 +131,24 @@ class SamlServiceFactoryTests extends AbstractOpenSamlTests {
     }
 
     @Test
+    void verifySoapBodyIsResolvedOncePerRequest() {
+        val request = new MockHttpServletRequest();
+        request.setMethod(HttpMethod.POST.name());
+        request.setParameter(SamlProtocolConstants.CONST_PARAM_TARGET, "test");
+        request.setAttribute(SamlProtocolConstants.PARAMETER_SAML_REQUEST, BODY);
+        request.setRequestURI(SamlProtocolConstants.ENDPOINT_SAML_VALIDATE);
+
+        val service = samlServiceFactory.createService(request);
+        assertNotNull(service.getArtifactId());
+        assertNotNull(service.getRequestId());
+
+        request.removeAttribute(SamlProtocolConstants.PARAMETER_SAML_REQUEST);
+        val again = samlServiceFactory.createService(request);
+        assertEquals(service.getArtifactId(), again.getArtifactId());
+        assertEquals(service.getRequestId(), again.getRequestId());
+    }
+
+    @Test
     void verifyBadBody() {
         val body = "<soap:Envelope xmlns:soap=\"http://schemas.xmlsoap.org/soap/envelope/\" "
             + "xmlns=\"urn:oasis:names:tc:SAML:1.0:protocol\"><soap:Header/><soap:Body>"

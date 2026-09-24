@@ -10,10 +10,11 @@ import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.MockRequestContext;
 import org.apereo.cas.web.support.WebUtils;
 import lombok.val;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestInstance;
 import org.springframework.test.context.TestPropertySource;
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -33,19 +34,27 @@ import static org.junit.jupiter.api.Assertions.*;
     "cas.acceptable-usage-policy.jdbc.sql-update=UPDATE %s SET %s=TRUE WHERE lower(%s)=lower(?)"
 })
 @Tag("JDBC")
+@TestInstance(TestInstance.Lifecycle.PER_CLASS)
 class JdbcAcceptableUsagePolicyRepositoryAdvancedTests extends BaseJdbcAcceptableUsagePolicyRepositoryTests {
-    @BeforeEach
+    private final AtomicInteger identifiers = new AtomicInteger(100);
+
+    /*
+     * The table name is configured above, so it is fixed for the whole class and shared by every method.
+     * Creating and dropping it per method has one method pulling the table out from under another. It is
+     * built once here, empty, and the one test that reads and updates a row inserts that row under its own
+     * mail address.
+     */
+    @BeforeAll
     void initialize() throws SQLException {
         try (val connection = this.acceptableUsagePolicyDataSource.getConnection()) {
             try (val s = connection.createStatement()) {
                 connection.setAutoCommit(true);
                 s.execute("CREATE TABLE users_table (id int primary key, username varchar(255), mail varchar(255), aup boolean)");
-                s.execute("INSERT INTO users_table (id, username, mail, aup) values (100, 'casuser', 'casuser@example.org', false);");
             }
         }
     }
 
-    @AfterEach
+    @AfterAll
     public void cleanup() throws SQLException {
         try (val c = this.acceptableUsagePolicyDataSource.getConnection()) {
             try (val s = c.createStatement()) {
@@ -57,8 +66,10 @@ class JdbcAcceptableUsagePolicyRepositoryAdvancedTests extends BaseJdbcAcceptabl
 
     @Test
     void verifyRepositoryActionWithAdvancedConfig() throws Throwable {
+        val mail = UUID.randomUUID() + "@example.org";
+        addUser(mail);
         verifyRepositoryAction("casuser",
-            CollectionUtils.wrap("aupAccepted", List.of("false"), "email", List.of("casuser@example.org")));
+            CollectionUtils.wrap("aupAccepted", List.of("false"), "email", List.of(mail)));
     }
 
     @Test
@@ -117,6 +128,16 @@ class JdbcAcceptableUsagePolicyRepositoryAdvancedTests extends BaseJdbcAcceptabl
     @Override
     public boolean hasLiveUpdates() {
         return true;
+    }
+
+    private void addUser(final String mail) throws SQLException {
+        try (val connection = this.acceptableUsagePolicyDataSource.getConnection()) {
+            try (val s = connection.createStatement()) {
+                connection.setAutoCommit(true);
+                s.execute("INSERT INTO users_table (id, username, mail, aup) values ("
+                          + identifiers.incrementAndGet() + ", 'casuser', '" + mail + "', false);");
+            }
+        }
     }
 
     private void raiseException(final Map<String, List<Object>> profileAttributes) throws Exception {

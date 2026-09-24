@@ -133,6 +133,7 @@ public class DefaultAuthenticationBuilder implements AuthenticationBuilder {
             .service(service)
             .principal(principal)
             .registeredService(registeredService)
+            .releasingAttributes(principalAttributes)
             .applicationContext(applicationContext)
             .build();
         val principalId = registeredService.getUsernameAttributeProvider().resolveUsername(usernameContext);

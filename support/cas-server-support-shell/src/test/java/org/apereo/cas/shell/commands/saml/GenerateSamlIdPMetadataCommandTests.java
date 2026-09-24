@@ -3,7 +3,6 @@ package org.apereo.cas.shell.commands.saml;
 import module java.base;
 import org.apereo.cas.shell.commands.BaseCasShellCommandTests;
 import lombok.val;
-import org.apache.commons.io.FileUtils;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
@@ -17,8 +16,8 @@ import static org.junit.jupiter.api.Assertions.*;
 @Tag("SHELL")
 class GenerateSamlIdPMetadataCommandTests extends BaseCasShellCommandTests {
     @Test
-    void verifyOperation() {
-        val location = FileUtils.getTempDirectoryPath();
+    void verifyOperation() throws Exception {
+        val location = Files.createTempDirectory("samlidp").toFile().getAbsolutePath();
         assertDoesNotThrow(() -> runShellCommand(() -> "generate-idp-metadata --force=true --metadataLocation="
             + location + " --subjectAltNames=helloworld"));
     }

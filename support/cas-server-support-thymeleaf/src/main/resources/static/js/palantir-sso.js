@@ -143,6 +143,7 @@ async function initializeSsoSessionOperations() {
     const springSessionsById = new Map();
 
     const ssoSessionsTable = $("#ssoSessionsTable").DataTable({
+        deferRender: true,
         pageLength: 10,
         autoWidth: false,
         columnDefs: [

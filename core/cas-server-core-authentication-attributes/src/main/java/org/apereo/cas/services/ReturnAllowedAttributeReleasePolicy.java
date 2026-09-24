@@ -5,6 +5,7 @@ import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.util.nativex.CasRuntimeHintsRegistrar;
 import org.apereo.cas.util.scripting.ExecutableCompiledScriptFactory;
+import org.apereo.cas.util.spring.ApplicationContextProvider;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonSetter;
 import com.fasterxml.jackson.annotation.Nulls;
@@ -83,14 +84,15 @@ public class ReturnAllowedAttributeReleasePolicy extends AbstractRegisteredServi
         val scriptFactory = ExecutableCompiledScriptFactory.findExecutableCompiledScriptFactory();
         if (scriptFactory.isPresent() && scriptFactory.get().isInlineScript(attribute) && CasRuntimeHintsRegistrar.notInNativeImage()) {
             val inlineGroovy = scriptFactory.get().getInlineScript(attribute).orElseThrow();
-            try (val executableScript = scriptFactory.get().fromScript(inlineGroovy)) {
-                val args = CollectionUtils.<String, Object>wrap(
-                    "context", context,
-                    "attributes", resolvedAttributes,
-                    "logger", LOGGER);
-                executableScript.setBinding(args);
-                return FunctionUtils.doUnchecked(() -> executableScript.execute(args.values().toArray(), Map.class));
-            }
+            val executableScript = ApplicationContextProvider.getScriptResourceCacheManager()
+                .map(cacheManager -> cacheManager.resolveScriptableResource(inlineGroovy, inlineGroovy))
+                .orElseGet(() -> scriptFactory.get().fromScript(inlineGroovy));
+            val args = CollectionUtils.<String, Object>wrap(
+                "context", context,
+                "attributes", resolvedAttributes,
+                "logger", LOGGER);
+            executableScript.setBinding(args);
+            return FunctionUtils.doUnchecked(() -> executableScript.execute(args.values().toArray(), Map.class));
         }
         return new HashMap<>();
     }

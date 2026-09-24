@@ -168,7 +168,6 @@ class ProxyValidateControllerTests {
             getCentralAuthenticationService().grantServiceTicket(tId.getId(), service, ctx);
             val sId = getCentralAuthenticationService().grantServiceTicket(tId.getId(), service, null);
 
-            val proxyGrantingTicketsBefore = countProxyGrantingTickets();
             val result = mockMvc.perform(get(CasProtocolConstants.ENDPOINT_PROXY_VALIDATE)
                     .param(CasProtocolConstants.PARAMETER_SERVICE, service.getId())
                     .param(CasProtocolConstants.PARAMETER_TICKET, sId.getId())
@@ -177,7 +176,7 @@ class ProxyValidateControllerTests {
                 .andExpect(status().isOk())
                 .andReturn();
             assertTrue(result.getResponse().getContentAsString().contains("authenticationFailure"));
-            assertEquals(proxyGrantingTicketsBefore, countProxyGrantingTickets(),
+            assertEquals(0, countProxyGrantingTickets(tId.getId()),
                 "A failed validation must not issue a proxy-granting ticket");
         }
     }
@@ -223,7 +222,10 @@ class ProxyValidateControllerTests {
         }
     }
 
-    private long countProxyGrantingTickets() {
-        return ticketRegistry.getTickets(ProxyGrantingTicket.class::isInstance).count();
+    private long countProxyGrantingTickets(final String ticketGrantingTicketId) {
+        try (val tickets = ticketRegistry.getTickets(ticket -> ticket instanceof ProxyGrantingTicket pgt
+            && pgt.getRoot().getId().equals(ticketGrantingTicketId))) {
+            return tickets.count();
+        }
     }
 }

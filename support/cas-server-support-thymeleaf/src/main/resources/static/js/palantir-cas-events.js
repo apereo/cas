@@ -1,6 +1,7 @@
 async function initializeCasEventsOperations() {
     if (CasActuatorEndpoints.events()) {
         const casEventsTable = $("#casEventsTable").DataTable({
+        deferRender: true,
             pageLength: 10,
             autoWidth: false,
             drawCallback: settings => {
@@ -380,6 +381,7 @@ async function initializeAuditEventsOperations() {
         }
 
         auditEventsTable = $("#auditEventsTable").DataTable({
+        deferRender: true,
             pageLength: 10,
             autoWidth: false,
             columns: [

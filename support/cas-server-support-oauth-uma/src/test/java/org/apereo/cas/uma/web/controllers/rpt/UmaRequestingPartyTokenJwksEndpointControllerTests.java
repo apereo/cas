@@ -7,12 +7,11 @@ import lombok.val;
 import org.apache.commons.io.FileUtils;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.parallel.Execution;
-import org.junit.jupiter.api.parallel.ExecutionMode;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
+import org.springframework.test.context.TestPropertySource;
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
@@ -22,31 +21,25 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.3.0
  */
 @Tag("UMA")
-@Execution(ExecutionMode.SAME_THREAD)
+@TestPropertySource(properties = "cas.authn.oauth.uma.requesting-party-token.jwks-file.location=classpath:uma-keystore.jwks")
 class UmaRequestingPartyTokenJwksEndpointControllerTests extends BaseUmaEndpointControllerTests {
     @Test
-    void verifyUnknownFile() throws Throwable {
-        casProperties.getAuthn().getOauth().getUma().getRequestingPartyToken()
-            .getJwksFile().setLocation(new FileSystemResource(new File("/tmp/uma-unknown.jkws")));
-        val result = performUmaRequest(HttpMethod.GET, OAuth20Constants.UMA_JWKS_URL);
-        assertEquals(HttpStatus.NOT_IMPLEMENTED.value(), result.getResponse().getStatus());
-    }
+    void verifyOperation() throws Throwable {
+        val jwksFile = casProperties.getAuthn().getOauth().getUma().getRequestingPartyToken().getJwksFile();
 
-    @Test
-    void verifyBadFile() throws Throwable {
-        val file = Files.createTempFile("uma", ".jwks").toFile();
-        FileUtils.write(file, "@@", StandardCharsets.UTF_8);
-        casProperties.getAuthn().getOauth().getUma().getRequestingPartyToken()
-            .getJwksFile().setLocation(new FileSystemResource(file));
-        val result = performUmaRequest(HttpMethod.GET, OAuth20Constants.UMA_JWKS_URL);
-        assertEquals(HttpStatus.BAD_REQUEST.value(), result.getResponse().getStatus());
-    }
+        val missing = Files.createTempDirectory("uma").resolve("missing.jwks").toFile();
+        jwksFile.setLocation(new FileSystemResource(missing));
+        assertEquals(HttpStatus.NOT_IMPLEMENTED.value(),
+            performUmaRequest(HttpMethod.GET, OAuth20Constants.UMA_JWKS_URL).getResponse().getStatus());
 
-    @Test
-    void verifySuccess() throws Throwable {
-        casProperties.getAuthn().getOauth().getUma().getRequestingPartyToken()
-            .getJwksFile().setLocation(new ClassPathResource("uma-keystore.jwks"));
-        val result = performUmaRequest(HttpMethod.GET, OAuth20Constants.UMA_JWKS_URL);
-        assertEquals(HttpStatus.OK.value(), result.getResponse().getStatus());
+        val malformed = Files.createTempFile("uma", ".jwks").toFile();
+        FileUtils.write(malformed, "@@", StandardCharsets.UTF_8);
+        jwksFile.setLocation(new FileSystemResource(malformed));
+        assertEquals(HttpStatus.BAD_REQUEST.value(),
+            performUmaRequest(HttpMethod.GET, OAuth20Constants.UMA_JWKS_URL).getResponse().getStatus());
+
+        jwksFile.setLocation(new ClassPathResource("uma-keystore.jwks"));
+        assertEquals(HttpStatus.OK.value(),
+            performUmaRequest(HttpMethod.GET, OAuth20Constants.UMA_JWKS_URL).getResponse().getStatus());
     }
 }

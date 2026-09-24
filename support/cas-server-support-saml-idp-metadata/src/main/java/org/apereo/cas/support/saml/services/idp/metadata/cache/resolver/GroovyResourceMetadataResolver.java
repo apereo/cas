@@ -11,6 +11,7 @@ import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.ResourceUtils;
 import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.util.scripting.ExecutableCompiledScriptFactory;
+import org.apereo.cas.util.spring.ApplicationContextProvider;
 import org.apereo.cas.util.spring.SpringExpressionLanguageValueResolver;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -39,10 +40,13 @@ public class GroovyResourceMetadataResolver extends BaseSamlRegisteredServiceMet
         return FunctionUtils.doAndHandle(() -> {
             val metadataLocation = SpringExpressionLanguageValueResolver.getInstance().resolve(service.getMetadataLocation());
             LOGGER.info("Loading SAML metadata via [{}]", metadataLocation);
-            val metadataResource = ResourceUtils.getResourceFrom(metadataLocation);
-            val args = new Object[]{service, this.configBean, this.samlIdPProperties, criteriaSet, LOGGER};
             val scriptFactory = ExecutableCompiledScriptFactory.getExecutableCompiledScriptFactory();
-            val metadataResolver = scriptFactory.fromResource(metadataResource).execute(args, MetadataResolver.class, true);
+            val script = ApplicationContextProvider.getScriptResourceCacheManager()
+                .map(cacheManager -> cacheManager.resolveScriptableResource(metadataLocation, metadataLocation))
+                .orElseGet(() -> FunctionUtils.doUnchecked(
+                    () -> scriptFactory.fromResource(ResourceUtils.getResourceFrom(metadataLocation))));
+            val args = new Object[]{service, this.configBean, this.samlIdPProperties, criteriaSet, LOGGER};
+            val metadataResolver = script.execute(args, MetadataResolver.class, true);
             return CollectionUtils.wrap(metadataResolver);
         }, e -> new ArrayList<MetadataResolver>()).get();
     }

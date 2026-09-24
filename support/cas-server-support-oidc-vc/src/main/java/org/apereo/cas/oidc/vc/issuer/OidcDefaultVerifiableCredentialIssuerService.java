@@ -4,6 +4,7 @@ import org.apereo.cas.oidc.vc.issuer.enc.OidcVerifiableCredentialEncoderFactory;
 import org.apereo.cas.oidc.vc.issuer.proof.OidcVerifiableCredentialProofValidator;
 import lombok.RequiredArgsConstructor;
 import lombok.val;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
@@ -21,14 +22,13 @@ public class OidcDefaultVerifiableCredentialIssuerService implements OidcVerifia
     @Override
     public List<OidcVerifiableCredentialIssuerResponse> issue(final OidcVerifiableCredentialValidationContext context,
                                                               final Set<String> consumedNonces) throws Throwable {
-        val proof = credentialProofValidator.validate(context.credentialRequest(), consumedNonces);
         val configuration = context.resolveConfigurationId();
         val encoder = credentialEncoderFactory.findByConfiguration(configuration);
-        val signedCredential = encoder.encode(context, proof);
-        return List.of(new OidcVerifiableCredentialIssuerResponse(
-            encoder.getFormat(),
-            signedCredential,
-            proof.nonce()
-        ));
+        val responses = new ArrayList<OidcVerifiableCredentialIssuerResponse>();
+        for (val proofJwt : context.resolveProofs()) {
+            val proof = credentialProofValidator.validate(proofJwt, consumedNonces);
+            responses.add(new OidcVerifiableCredentialIssuerResponse(encoder.encode(context, proof)));
+        }
+        return responses;
     }
 }

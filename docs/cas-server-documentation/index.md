@@ -5,7 +5,10 @@ title: CAS - Home
 
 {% include variables.html %}
 
-# Apereo CAS - Identity & Single Sign-On
+<div class="home-intro" markdown="1">
+<div class="eyebrow home-eyebrow">THE OPEN SOURCE IDENTITY PLATFORM</div>
+
+# <span class="home-title-prefix">Apereo CAS - </span><span class="home-title-accent">Identity & Single Sign-On</span>
 
 Welcome to the home of the Apereo Central Authentication Service project, more commonly 
 referred to as CAS. CAS is an enterprise multilingual single sign-on solution and identity provider for the web 
@@ -14,6 +17,18 @@ and attempts to be a comprehensive platform for your authentication and authoriz
 CAS is an open and well-documented authentication protocol. The primary implementation of the protocol is 
 an open-source Java server component by the same name hosted here, with support for a plethora of 
 additional authentication protocols and features.
+
+<div class="identity-orbit" aria-hidden="true">
+    <span class="orbit-ring orbit-ring-one"></span><span class="orbit-ring orbit-ring-two"></span><span class="orbit-ring orbit-ring-three"></span>
+    <span class="orbit-core"><img src="{{basePath}}/images/cas_logo.png" alt="" width="119" height="60"></span><span class="orbit-dot orbit-dot-one"></span><span class="orbit-dot orbit-dot-two"></span><span class="orbit-label">CONNECTED BY IDENTITY</span>
+</div>
+</div>
+
+<nav class="home-paths" aria-label="Start exploring">
+    <a href="planning/Getting-Started.html"><span class="path-number">01 / START HERE</span><strong>Getting Started <span aria-hidden="true">↗</span></strong><span>Plan your CAS deployment</span></a>
+    <a href="protocol/CAS-Protocol.html"><span class="path-number">02 / EXPLORE</span><strong>Protocols <span aria-hidden="true">↗</span></strong><span>Connect applications and identities</span></a>
+    <a href="configuration/Configuration-Management.html"><span class="path-number">03 / MAKE IT YOURS</span><strong>Configuration <span aria-hidden="true">↗</span></strong><span>Find the settings you need</span></a>
+</nav>
 
 ## Feature Summary
 
@@ -62,7 +77,7 @@ CAS development is powered by the following tools, projects and services.
   <div class="col-sm-3 d-flex align-items-stretch">
     <div class="card border-0">
       <a href="https://www.jetbrains.com/idea/">
-      <img src="https://github.com/apereo/cas/assets/1205228/11d83496-1abe-4f5a-b1e2-e313607cd595" class="card-img-top">
+      <img src="https://github.com/apereo/cas/assets/1205228/11d83496-1abe-4f5a-b1e2-e313607cd595" alt="IntelliJ IDEA" loading="lazy" class="card-img-top">
       </a>
       <div class="card-body">
         <p class="card-text">IntelliJ IDE makes development a more productive and enjoyable experience</p>
@@ -72,7 +87,7 @@ CAS development is powered by the following tools, projects and services.
   <div class="col-sm-3 d-flex align-items-stretch">
     <div class="card border-0">
       <a href="https://github.com/spring-projects/spring-boot/">
-      <img src="https://github.com/apereo/cas/assets/1205228/854849e9-1b02-4218-8cf7-a4fa4e2b9aa2" class="card-img-top mt-2 ms-2 pe-4">
+      <img src="https://github.com/apereo/cas/assets/1205228/854849e9-1b02-4218-8cf7-a4fa4e2b9aa2" alt="Spring Boot" loading="lazy" class="card-img-top mt-2 ms-2 pe-4">
       </a>
       <div class="card-body">
         <p class="card-text">Spring Boot is Spring's convention-over-configuration solution for creating production-grade 
@@ -83,8 +98,8 @@ Spring applications.</p>
 
   <div class="col-sm-3 d-flex align-items-stretch">
     <div class="card border-0">
-      <a href="https://www.yourkit.com">
-      <img src="https://github.com/apereo/cas/assets/1205228/81bf79a8-3771-4439-bcb4-34cfbb94467c" class="card-img-top mt-2 ms-2 pe-4">
+      <a class="sponsor-logo-yourkit" href="https://www.yourkit.com">
+      <img src="https://github.com/apereo/cas/assets/1205228/81bf79a8-3771-4439-bcb4-34cfbb94467c" alt="YourKit" loading="lazy" class="card-img-top mt-2 ms-2 pe-4">
       </a>
       <div class="card-body">
         <p class="card-text">
@@ -98,9 +113,9 @@ tools for profiling Java and .NET applications.
 
 <div class="col-sm-3 d-flex align-items-stretch">
     <div class="card border-0">
-      <a href="https://www.gradle.org">
-      <img src="https://github.com/apereo/cas/assets/1205228/2774ecf6-c60c-4a66-9f5c-2fe8baaa7825"
-           style="filter: brightness(300%)" class="card-img-top mt-2 ms-2 pe-4">
+      <a class="sponsor-logo-gradle" href="https://www.gradle.org">
+      <img src="https://github.com/apereo/cas/assets/1205228/2774ecf6-c60c-4a66-9f5c-2fe8baaa7825" alt="Gradle" loading="lazy"
+           class="card-img-top mt-2 ms-2 pe-4">
       </a>
       <div class="card-body">
         <p class="card-text">

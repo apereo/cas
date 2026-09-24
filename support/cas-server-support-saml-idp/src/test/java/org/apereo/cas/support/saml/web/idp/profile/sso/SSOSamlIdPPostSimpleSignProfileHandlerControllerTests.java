@@ -13,11 +13,8 @@ import lombok.val;
 import net.shibboleth.shared.net.URLBuilder;
 import org.apache.commons.lang3.Strings;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.MethodOrderer;
-import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.TestMethodOrder;
 import org.opensaml.saml.common.SAMLObjectBuilder;
 import org.opensaml.saml.common.xml.SAMLConstants;
 import org.opensaml.saml.saml2.core.AuthnRequest;
@@ -37,7 +34,6 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
  * @since 6.2.0
  */
 @Tag("SAML2Web")
-@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 @TestPropertySource(properties = "cas.authn.saml-idp.metadata.file-system.location=file:src/test/resources/metadata")
 class SSOSamlIdPPostSimpleSignProfileHandlerControllerTests extends BaseSamlIdPConfigurationTests {
     private SamlRegisteredService samlRegisteredService;
@@ -50,7 +46,6 @@ class SSOSamlIdPPostSimpleSignProfileHandlerControllerTests extends BaseSamlIdPC
     }
 
     @Test
-    @Order(1)
     void verifyPostSignRequest() throws Throwable {
         val request = new MockHttpServletRequest();
         request.setMethod("POST");
@@ -63,7 +58,6 @@ class SSOSamlIdPPostSimpleSignProfileHandlerControllerTests extends BaseSamlIdPC
     }
 
     @Test
-    @Order(2)
     void verifyRedirectRequest() throws Throwable {
         val request = new MockHttpServletRequest();
         request.setMethod("GET");
@@ -77,7 +71,6 @@ class SSOSamlIdPPostSimpleSignProfileHandlerControllerTests extends BaseSamlIdPC
     }
 
     @Test
-    @Order(2)
     void verifyBadRequest() {
         assertDoesNotThrow(() -> {
             val result = performPostSimpleSignRequest("Text");

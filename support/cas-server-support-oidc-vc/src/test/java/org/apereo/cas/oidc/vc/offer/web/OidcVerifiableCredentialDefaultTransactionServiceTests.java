@@ -76,6 +76,51 @@ class OidcVerifiableCredentialDefaultTransactionServiceTests extends AbstractOid
     }
 
     @Test
+    void verifyPreAuthorizationCodeIsRedeemedOnlyOnce() {
+        val preAuthorizedCode = issuePreAuthorizationCode();
+        assertNotNull(oidcVerifiableCredentialTransactionService.consumePreAuthorizationCode(preAuthorizedCode));
+        assertNull(oidcVerifiableCredentialTransactionService.consumePreAuthorizationCode(preAuthorizedCode));
+        assertNull(oidcVerifiableCredentialTransactionService.fetchPreAuthorizationCode(preAuthorizedCode));
+    }
+
+    @Test
+    void verifyConcurrentRedemptionsProduceOneWinner() throws Throwable {
+        val preAuthorizedCode = issuePreAuthorizationCode();
+        val attempts = 16;
+        val barrier = new CyclicBarrier(attempts);
+        val winners = new AtomicInteger();
+        val tasks = IntStream.range(0, attempts)
+            .<Callable<Void>>mapToObj(_ -> () -> {
+                barrier.await();
+                if (oidcVerifiableCredentialTransactionService.consumePreAuthorizationCode(preAuthorizedCode) != null) {
+                    winners.incrementAndGet();
+                }
+                return null;
+            })
+            .toList();
+        try (val executor = Executors.newVirtualThreadPerTaskExecutor()) {
+            for (val future : executor.invokeAll(tasks)) {
+                future.get();
+            }
+        }
+        assertEquals(1, winners.get());
+    }
+
+    @Test
+    void verifyConsumeUnknownPreAuthorizationCode() {
+        assertNull(oidcVerifiableCredentialTransactionService.consumePreAuthorizationCode("TST-unknown-code"));
+    }
+
+    private String issuePreAuthorizationCode() {
+        val registeredService = getOidcRegisteredService();
+        val ticket = oidcVerifiableCredentialTransactionService.issue(
+            registeredService.getClientId(), "casuser", List.of("VerifiableCredential"));
+        assertNotNull(ticket);
+        val sessionTicket = (TransientSessionTicket) ticketRegistry.getTicket(ticket.getId());
+        return Objects.requireNonNull(sessionTicket.getProperty("preAuthorizedCode", String.class));
+    }
+
+    @Test
     void verifyFetchValidTicket() {
         val registeredService = getOidcRegisteredService();
         val ticket = oidcVerifiableCredentialTransactionService.issue(registeredService.getClientId(), "casuser", List.of("VerifiableCredential"));

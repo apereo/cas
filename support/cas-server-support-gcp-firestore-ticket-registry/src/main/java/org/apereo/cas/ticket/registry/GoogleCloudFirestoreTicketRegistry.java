@@ -14,8 +14,6 @@ import org.apereo.cas.util.LoggingUtils;
 import org.apereo.cas.util.crypto.CipherExecutor;
 import org.apereo.cas.util.function.FunctionUtils;
 import com.google.api.core.ApiFuture;
-import com.google.api.core.ApiFutureCallback;
-import com.google.api.core.ApiFutures;
 import com.google.cloud.firestore.Filter;
 import com.google.cloud.firestore.Firestore;
 import com.google.cloud.firestore.WriteResult;
@@ -102,12 +100,14 @@ public class GoogleCloudFirestoreTicketRegistry extends AbstractTicketRegistry {
                 val references = firestore.collection(collectionName).listDocuments();
                 return StreamSupport.stream(references.spliterator(), false)
                     .map(doc -> FunctionUtils.doUnchecked(() -> doc.get().get()))
-                    .map(doc -> doc.toObject(GoogleCloudFirestoreTicketDocument.class));
+                    .map(doc -> doc.toObject(GoogleCloudFirestoreTicketDocument.class))
+                    .filter(Objects::nonNull);
             })
             .map(doc -> {
                 val ticket = deserializeTicket(doc.getJson(), doc.getType());
                 return decodeTicket(ticket);
             })
+            .filter(Objects::nonNull)
             .filter(ticket -> !ticket.isExpired())
             .collect(Collectors.toSet());
     }
@@ -122,12 +122,14 @@ public class GoogleCloudFirestoreTicketRegistry extends AbstractTicketRegistry {
                 val references = firestore.collection(collectionName).listDocuments();
                 return StreamSupport.stream(references.spliterator(), false)
                     .map(doc -> FunctionUtils.doUnchecked(() -> doc.get().get()))
-                    .map(doc -> doc.toObject(GoogleCloudFirestoreTicketDocument.class));
+                    .map(doc -> doc.toObject(GoogleCloudFirestoreTicketDocument.class))
+                    .filter(Objects::nonNull);
             })
             .map(doc -> {
                 val ticket = deserializeTicket(doc.getJson(), doc.getType());
                 return decodeTicket(ticket);
             })
+            .filter(Objects::nonNull)
             .skip(criteria.getFrom())
             .limit(criteria.getCount());
     }
@@ -136,17 +138,21 @@ public class GoogleCloudFirestoreTicketRegistry extends AbstractTicketRegistry {
     public Ticket updateTicket(final Ticket ticket) {
         FunctionUtils.doAndHandle(_ -> {
             LOGGER.debug("Updating ticket [{}]", ticket.getId());
-            val ticketDocument = buildTicketAsDocument(ticket);
             val metadata = ticketCatalog.find(ticket);
-            LOGGER.trace("Located ticket definition [{}] in the ticket catalog", metadata);
-            val collectionName = getTicketCollectionInstanceByMetadata(metadata);
-            LOGGER.trace("Found collection [{}] linked to ticket [{}]", collectionName, metadata);
+            if (metadata == null) {
+                LOGGER.error("Could not locate ticket definition in the catalog for ticket [{}]", ticket.getId());
+            } else {
+                val ticketDocument = buildTicketAsDocument(ticket);
+                LOGGER.trace("Located ticket definition [{}] in the ticket catalog", metadata);
+                val collectionName = getTicketCollectionInstanceByMetadata(metadata);
+                LOGGER.trace("Found collection [{}] linked to ticket [{}]", collectionName, metadata);
 
-            val writeResult = firestore.collection(collectionName)
-                .document(ticketDocument.getTicketId())
-                .update(ticketDocument.asUpdatableMap())
-                .get();
-            LOGGER.debug("Added ticket [{}] to [{}] @ [{}]", ticket.getId(), collectionName, writeResult.getUpdateTime());
+                val writeResult = firestore.collection(collectionName)
+                    .document(ticketDocument.getTicketId())
+                    .update(ticketDocument.asUpdatableMap())
+                    .get();
+                LOGGER.debug("Added ticket [{}] to [{}] @ [{}]", ticket.getId(), collectionName, writeResult.getUpdateTime());
+            }
         });
         return ticket;
     }
@@ -157,6 +163,10 @@ public class GoogleCloudFirestoreTicketRegistry extends AbstractTicketRegistry {
             val ticketId = digestIdentifier(ticketToDelete.getId());
             LOGGER.debug("Deleting ticket [{}]", ticketId);
             val metadata = ticketCatalog.find(ticketToDelete);
+            if (metadata == null) {
+                LOGGER.error("Could not locate ticket definition in the catalog for ticket [{}]", ticketToDelete.getId());
+                return 0;
+            }
             val collectionName = getTicketCollectionInstanceByMetadata(metadata);
             val updateTime = firestore.collection(collectionName).document(ticketId).delete().get().getUpdateTime();
             LOGGER.debug("Deleted ticket [{}] from [{}] @ [{}]", ticketToDelete.getId(), collectionName, updateTime);
@@ -177,31 +187,27 @@ public class GoogleCloudFirestoreTicketRegistry extends AbstractTicketRegistry {
                     .get();
                 val documents = query.getDocuments();
 
-                val count = new AtomicInteger();
+                /*
+                 * Each write is counted here, on the calling thread, once its future has resolved.
+                 * Counting inside a completion callback instead leaves the tally to whenever the
+                 * callback happens to be dispatched, which is not before this method returns.
+                 */
                 val futures = new ArrayList<ApiFuture<WriteResult>>();
-                try (val bw = firestore.bulkWriter()) {
-                    for (val doc : documents) {
-                        val deleteTask = bw.delete(doc.getReference());
-                        futures.add(deleteTask);
-                        ApiFutures.addCallback(
-                            deleteTask,
-                            new ApiFutureCallback<>() {
-                                @Override
-                                public void onSuccess(final WriteResult r) {
-                                    count.incrementAndGet();
-                                }
-
-                                @Override
-                                public void onFailure(final Throwable t) {
-                                    LoggingUtils.error(LOGGER, t);
-                                }
-                            },
-                            Executors.newVirtualThreadPerTaskExecutor()
-                        );
+                try (val bulkWriter = firestore.bulkWriter()) {
+                    for (val document : documents) {
+                        futures.add(bulkWriter.delete(document.getReference()));
                     }
                 }
-                ApiFutures.allAsList(futures).get();
-                return count.get();
+                return futures
+                    .stream()
+                    .mapToLong(future -> FunctionUtils.doAndHandle(() -> {
+                        future.get();
+                        return 1L;
+                    }, throwable -> {
+                        LoggingUtils.error(LOGGER, throwable);
+                        return 0L;
+                    }).get())
+                    .sum();
             }))
             .sum();
     }
@@ -256,8 +262,10 @@ public class GoogleCloudFirestoreTicketRegistry extends AbstractTicketRegistry {
                 return StreamSupport.stream(spliterator, false);
             }))
             .map(document -> document.toObject(GoogleCloudFirestoreTicketDocument.class))
+            .filter(Objects::nonNull)
             .map(document -> deserializeTicket(document.getJson(), document.getType()))
             .map(this::decodeTicket)
+            .filter(Objects::nonNull)
             .filter(ticket -> !ticket.isExpired());
     }
 
@@ -306,8 +314,10 @@ public class GoogleCloudFirestoreTicketRegistry extends AbstractTicketRegistry {
                 return StreamSupport.stream(spliterator, false);
             }))
             .map(document -> document.toObject(GoogleCloudFirestoreTicketDocument.class))
+            .filter(Objects::nonNull)
             .map(document -> deserializeTicket(document.getJson(), document.getType()))
             .map(this::decodeTicket)
+            .filter(Objects::nonNull)
             .filter(ticket -> !ticket.isExpired());
     }
 

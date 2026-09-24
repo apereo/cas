@@ -67,6 +67,8 @@ public class InterruptWebflowConfigurer extends AbstractCasWebflowConfigurer {
             prependActionsToActionStateExecutionList(flow, ticketCreateState, getInquireInterruptAction());
             createTransitionForState(ticketCreateState, CasWebflowConstants.TRANSITION_ID_INTERRUPT_REQUIRED,
                 CasWebflowConstants.STATE_ID_INTERRUPT_VIEW);
+            createTransitionForState(ticketCreateState, CasWebflowConstants.TRANSITION_ID_GATEWAY,
+                CasWebflowConstants.STATE_ID_GATEWAY_SERVICES_MGMT);
         }
 
         prependActionsToActionStateExecutionList(flow, CasWebflowConstants.STATE_ID_GENERATE_SERVICE_TICKET,
@@ -122,6 +124,7 @@ public class InterruptWebflowConfigurer extends AbstractCasWebflowConfigurer {
         val target = getRealSubmissionState(flow).getTransition(CasWebflowConstants.TRANSITION_ID_SUCCESS).getTargetStateId();
         createTransitionForState(inquireState, CasWebflowConstants.TRANSITION_ID_INTERRUPT_SKIPPED, target);
         createTransitionForState(inquireState, CasWebflowConstants.TRANSITION_ID_INTERRUPT_REQUIRED, CasWebflowConstants.STATE_ID_INTERRUPT_VIEW);
+        createTransitionForState(inquireState, CasWebflowConstants.TRANSITION_ID_GATEWAY, CasWebflowConstants.STATE_ID_GATEWAY_SERVICES_MGMT);
     }
 
     private EvaluateAction getInquireInterruptAction() {

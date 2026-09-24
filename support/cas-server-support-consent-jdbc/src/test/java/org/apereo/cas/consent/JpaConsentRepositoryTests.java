@@ -62,5 +62,8 @@ class JpaConsentRepositoryTests extends BaseConsentRepositoryTests {
         assertEquals(COUNT, repository.findConsentDecisions(principal).size());
         stopwatch.stop();
         assertTrue(stopwatch.getTime(TimeUnit.SECONDS) <= 10);
+
+        assertTrue(repository.deleteConsentDecisions(principal));
+        assertTrue(repository.findConsentDecisions(principal).isEmpty());
     }
 }

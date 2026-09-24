@@ -25,7 +25,6 @@ class SQSAppenderTests {
         assertNotNull(appender);
         assertDoesNotThrow(() -> IntStream.range(1, 20)
             .forEach(idx -> logger.info("Testing [{}]...", idx)));
-        Thread.sleep(5_000);
         appender.stop();
     }
 }

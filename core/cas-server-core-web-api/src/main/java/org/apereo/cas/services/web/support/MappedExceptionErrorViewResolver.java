@@ -49,13 +49,50 @@ public class MappedExceptionErrorViewResolver extends DefaultErrorViewResolver {
                 .stream()
                 .filter(entry -> entry.getKey().isAssignableFrom(exception.getClass())
                     || (rootCause != null && entry.getKey().isAssignableFrom(rootCause.getClass())))
+                .min(Comparator.comparingInt(entry -> inheritanceDistance(entry.getKey(), exception, rootCause)))
                 .map(Map.Entry::getValue)
-                .peek(mv -> mv.getModelMap().putAll(CollectionUtils.wrap(CasWebflowConstants.ATTRIBUTE_ERROR_ROOT_CAUSE_EXCEPTION,
-                    Objects.requireNonNullElse(rootCause, exception))))
-                .findFirst()
+                .map(mv -> {
+                    mv.getModelMap().putAll(CollectionUtils.wrap(CasWebflowConstants.ATTRIBUTE_ERROR_ROOT_CAUSE_EXCEPTION,
+                        Objects.requireNonNullElse(rootCause, exception)));
+                    return mv;
+                })
                 .orElse(defaultModelAndView);
         }
         return defaultModelAndView;
+    }
+
+    /**
+     * How far the thrown exception is from a mapping, counted in superclasses.
+     * <p>
+     * Mappings overlap: {@code UnauthorizedServiceException} is a {@code RootCasException}, so both
+     * match and the specific one has to win. The stream this feeds runs over an immutable map, whose
+     * iteration order is salted per JVM, so taking the first match made the answer -- a 403 or a 400
+     * for the same exception -- depend on which JVM happened to be running.
+     * <p>
+     * A mapping keyed on an interface is not reached by walking superclasses and therefore sorts
+     * last; it still matches, as it did before, but a class mapping is preferred to it.
+     *
+     * @param mapped    the exception class a mapping is keyed on
+     * @param exception the exception that was thrown
+     * @param rootCause its root cause, if any
+     * @return the number of superclasses between the two, or {@link Integer#MAX_VALUE}
+     */
+    private static int inheritanceDistance(final Class<? extends Throwable> mapped,
+                                           final Throwable exception, final Throwable rootCause) {
+        val direct = inheritanceDistance(mapped, exception.getClass());
+        val viaRootCause = rootCause != null ? inheritanceDistance(mapped, rootCause.getClass()) : Integer.MAX_VALUE;
+        return Math.min(direct, viaRootCause);
+    }
+
+    private static int inheritanceDistance(final Class<? extends Throwable> mapped, final Class<?> thrown) {
+        var distance = 0;
+        for (var current = thrown; current != null; current = current.getSuperclass()) {
+            if (current.equals(mapped)) {
+                return distance;
+            }
+            distance++;
+        }
+        return Integer.MAX_VALUE;
     }
 
     public record ErrorContext(HttpServletRequest request, HttpStatus status, Map<String, Object> map) {}

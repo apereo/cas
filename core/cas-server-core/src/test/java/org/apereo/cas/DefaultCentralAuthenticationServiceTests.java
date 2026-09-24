@@ -8,7 +8,10 @@ import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.authentication.PrincipalException;
 import org.apereo.cas.authentication.exceptions.MixedPrincipalException;
 import org.apereo.cas.authentication.principal.AbstractWebApplicationService;
+import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.multitenancy.UnknownTenantException;
+import org.apereo.cas.services.RegisteredServiceAttributeReleasePolicy;
+import org.apereo.cas.services.RegisteredServiceAttributeReleasePolicyContext;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.services.UnauthorizedProxyingException;
@@ -528,6 +531,53 @@ class DefaultCentralAuthenticationServiceTests {
             val assertion = cas.validateServiceTicket(st2Id.getId(), svc);
             val validationSpecification = new DefaultCasProtocolValidationSpecification(mock(ServicesManager.class), input -> true);
             assertTrue(validationSpecification.isSatisfiedBy(assertion, new MockHttpServletRequest()));
+        }
+
+        @Test
+        void verifyAttributeReleasePolicyIsEvaluatedOnceAgainstTheResolvedService() throws Throwable {
+            val attributeName = "recorded-attribute";
+            val attributeValue = "recorded-value";
+            val service = RegisteredServiceTestUtils.getService("https://attribute-release.example.org/app");
+            /*
+             * The required attribute is one only the release policy produces, so a successful
+             * validation proves the released set still reaches the principal that the access
+             * strategy is evaluated against.
+             */
+            val registeredService = RegisteredServiceTestUtils.getRegisteredService(service.getId(),
+                Map.of(attributeName, Set.of(attributeValue)));
+
+            val evaluatedServices = new ArrayList<Service>();
+            val releasePolicy = mock(RegisteredServiceAttributeReleasePolicy.class);
+            when(releasePolicy.getAttributes(any())).thenAnswer(invocation -> {
+                val policyContext = invocation.getArgument(0, RegisteredServiceAttributeReleasePolicyContext.class);
+                evaluatedServices.add(policyContext.getService());
+                /*
+                 * Freshly built and mutable on every call, because callers merge into the map the
+                 * policy hands them.
+                 */
+                val attributes = new LinkedHashMap<String, List<Object>>();
+                attributes.put(attributeName, new ArrayList<>(List.of(attributeValue)));
+                return attributes;
+            });
+            registeredService.setAttributeReleasePolicy(releasePolicy);
+            getServicesManager().save(registeredService);
+
+            val cas = getCentralAuthenticationService();
+            val ctx = CoreAuthenticationTestUtils.getAuthenticationResult(getAuthenticationSystemSupport(), service);
+            val ticketGrantingTicket = cas.createTicketGrantingTicket(ctx);
+            val serviceTicket = cas.grantServiceTicket(ticketGrantingTicket.getId(), service, ctx);
+
+            evaluatedServices.clear();
+            val assertion = cas.validateServiceTicket(serviceTicket.getId(), service);
+            assertNotNull(assertion);
+
+            assertEquals(1, evaluatedServices.size(),
+                "The attribute release policy must be evaluated once per validation, not once per consumer. "
+                + "This service uses a principal-attribute username provider, so it also covers the provider "
+                + "being handed the released attributes rather than recomputing them.");
+            assertEquals(service.getId(), evaluatedServices.getFirst().getId(),
+                "The attribute release policy must be evaluated against the service the ticket was issued for");
+            assertTrue(assertion.getPrimaryAuthentication().getPrincipal().getAttributes().containsKey(attributeName));
         }
     }
 }

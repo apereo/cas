@@ -38,7 +38,14 @@ public enum OAuth20ClientAuthenticationMethods {
     /**
      * Authentication method using mTLS.
      */
-    TLS_CLIENT_AUTH("tls_client_auth");
+    TLS_CLIENT_AUTH("tls_client_auth"),
+
+    /**
+     * No client authentication at all. Used by public clients that hold no credentials, and by
+     * grants that carry their own proof of authorization such as the OpenID4VCI pre-authorized
+     * code, where the request is authenticated by the code itself rather than by the client.
+     */
+    NONE("none");
 
     private final String type;
 

@@ -6,7 +6,6 @@ import org.apereo.cas.test.CasTestExtension;
 import org.apereo.cas.util.junit.EnabledIfListeningOnPort;
 import org.apereo.cas.util.spring.boot.SpringBootTestAutoConfigurations;
 import lombok.Getter;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -40,13 +39,4 @@ class DynamoDbCasEventRepositoryTests extends AbstractCasEventRepositoryTests {
     @Autowired
     @Qualifier(CasEventRepository.BEAN_NAME)
     private CasEventRepository eventRepository;
-
-    @Autowired
-    @Qualifier("dynamoDbCasEventsFacilitator")
-    private DynamoDbCasEventsFacilitator dynamoDbCasEventsFacilitator;
-
-    @BeforeEach
-    void beforeEach() throws Exception {
-        dynamoDbCasEventsFacilitator.deleteAll();
-    }
 }

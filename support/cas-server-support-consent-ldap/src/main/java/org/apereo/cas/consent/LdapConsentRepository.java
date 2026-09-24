@@ -54,9 +54,19 @@ public class LdapConsentRepository extends BaseConsentRepository implements Disp
         return json;
     }
 
+    /**
+     * Merge a decision into the ldap attribute set, replacing any decision with the same id.
+     * A decision without an identifier (id {@code 0} or less) is assigned one first, since
+     * merging by id {@code 0} would otherwise replace every other decision stored without one.
+     *
+     * @param ldapConsent the ldap attribute holding consent decisions
+     * @param decision    the decision
+     * @return the new decision set
+     * @throws Exception the exception
+     */
     private static Set<String> mergeDecision(final LdapAttribute ldapConsent,
                                              final ConsentDecision decision) throws Exception {
-        if (decision.getId() < 0) {
+        if (decision.getId() <= 0) {
             decision.setId(System.currentTimeMillis());
         }
 

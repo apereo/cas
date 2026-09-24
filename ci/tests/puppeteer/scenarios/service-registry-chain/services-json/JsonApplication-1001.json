@@ -1,0 +1,14 @@
+{
+  "@class": "org.apereo.cas.services.CasRegisteredService",
+  "serviceId": "^https://localhost:9859/anything/json.*",
+  "name": "JsonApplication",
+  "id": 1001,
+  "description": "Registered in the JSON service registry",
+  "attributeReleasePolicy": {
+    "@class": "org.apereo.cas.services.ReturnStaticAttributeReleasePolicy",
+    "allowedAttributes": {
+      "@class": "java.util.LinkedHashMap",
+      "registry": [ "java.util.ArrayList", [ "json" ] ]
+    }
+  }
+}

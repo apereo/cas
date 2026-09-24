@@ -9,8 +9,6 @@ import org.apereo.cas.util.MockRequestContext;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.parallel.Execution;
-import org.junit.jupiter.api.parallel.ExecutionMode;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Import;
@@ -26,8 +24,11 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 @Import(BaseWebflowConfigurerTests.SharedTestConfiguration.class)
 @Tag("WebflowAuthenticationActions")
-@TestPropertySource(properties = "cas.authn.passwordless.accounts.simple.casuser=casuser@example.org")
-@Execution(ExecutionMode.SAME_THREAD)
+@TestPropertySource(properties = {
+    "cas.authn.passwordless.accounts.simple.casuser=casuser@example.org",
+    "cas.authn.passwordless.accounts.simple.casuser2=casuser2@example.org",
+    "cas.authn.passwordless.accounts.simple.casuser3=casuser3@example.org"
+})
 class AcceptPasswordlessAuthenticationActionTests extends BasePasswordlessAuthenticationActionTests {
     @Autowired
     @Qualifier(CasWebflowConstants.ACTION_ID_ACCEPT_PASSWORDLESS_AUTHN)
@@ -42,8 +43,8 @@ class AcceptPasswordlessAuthenticationActionTests extends BasePasswordlessAuthen
         val context = MockRequestContext.create(applicationContext);
         context.setFlowExecutionContext(CasWebflowConfigurer.FLOW_ID_LOGIN);
 
-        putAccountInto(context);
-        val token = createToken();
+        putAccountInto(context, "casuser");
+        val token = createToken("casuser");
 
         context.setParameter("token", token.getToken());
 
@@ -56,8 +57,8 @@ class AcceptPasswordlessAuthenticationActionTests extends BasePasswordlessAuthen
         val context = MockRequestContext.create(applicationContext);
         context.setFlowExecutionContext(CasWebflowConfigurer.FLOW_ID_LOGIN);
 
-        putAccountInto(context);
-        createToken();
+        putAccountInto(context, "casuser2");
+        createToken("casuser2");
 
         context.setParameter("token", UUID.randomUUID().toString());
 
@@ -69,24 +70,32 @@ class AcceptPasswordlessAuthenticationActionTests extends BasePasswordlessAuthen
         val context = MockRequestContext.create(applicationContext);
         context.setFlowExecutionContext(CasWebflowConfigurer.FLOW_ID_LOGIN);
 
-        putAccountInto(context);
+        putAccountInto(context, "casuser3");
         assertEquals(CasWebflowConstants.TRANSITION_ID_AUTHENTICATION_FAILURE, acceptPasswordlessAuthenticationAction.execute(context).getId());
     }
 
-    private static PasswordlessUserAccount putAccountInto(final MockRequestContext context) {
+    /**
+     * The token repository is keyed by principal and shared by this class, so each test works on an
+     * account of its own rather than competing for the tokens issued to a single one.
+     *
+     * @param context  the request context
+     * @param username the account to place into the flow
+     * @return the account
+     */
+    private static PasswordlessUserAccount putAccountInto(final MockRequestContext context, final String username) {
         val account = PasswordlessUserAccount.builder()
             .email("email")
             .phone("phone")
-            .username("casuser")
-            .name("casuser")
+            .username(username)
+            .name(username)
             .build();
         PasswordlessWebflowUtils.putPasswordlessAuthenticationAccount(context, account);
         return account;
     }
 
-    private PasswordlessAuthenticationToken createToken() {
-        val passwordlessUserAccount = PasswordlessUserAccount.builder().username("casuser").build();
-        val passwordlessRequest = PasswordlessAuthenticationRequest.builder().username("casuser").build();
+    private PasswordlessAuthenticationToken createToken(final String username) {
+        val passwordlessUserAccount = PasswordlessUserAccount.builder().username(username).build();
+        val passwordlessRequest = PasswordlessAuthenticationRequest.builder().username(username).build();
         val token = passwordlessTokenRepository.createToken(passwordlessUserAccount, passwordlessRequest);
         passwordlessTokenRepository.saveToken(passwordlessUserAccount, passwordlessRequest, token);
         return token;

@@ -17,6 +17,7 @@ import org.apereo.cas.util.spring.beans.BeanCondition;
 import org.apereo.cas.util.spring.beans.BeanSupplier;
 import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
 import lombok.val;
+import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -45,13 +46,13 @@ public class CasServicesStreamingAutoConfiguration {
     public CasServicesRegistryStreamingEventListener casServicesRegistryStreamingEventListener(
         final ConfigurableApplicationContext applicationContext,
         @Qualifier("casRegisteredServiceStreamPublisher")
-        final CasRegisteredServiceStreamPublisher casRegisteredServiceStreamPublisher,
+        final ObjectProvider<CasRegisteredServiceStreamPublisher> casRegisteredServiceStreamPublisher,
         @Qualifier("casRegisteredServiceStreamPublisherIdentifier")
-        final PublisherIdentifier casRegisteredServiceStreamPublisherIdentifier) {
+        final ObjectProvider<PublisherIdentifier> casRegisteredServiceStreamPublisherIdentifier) {
         return BeanSupplier.of(CasServicesRegistryStreamingEventListener.class)
             .when(CONDITION.given(applicationContext.getEnvironment()))
-            .supply(() -> new DefaultCasServicesRegistryStreamingEventListener(casRegisteredServiceStreamPublisher,
-                casRegisteredServiceStreamPublisherIdentifier))
+            .supply(() -> new DefaultCasServicesRegistryStreamingEventListener(casRegisteredServiceStreamPublisher.getObject(),
+                casRegisteredServiceStreamPublisherIdentifier.getObject()))
             .otherwiseProxy()
             .get();
     }

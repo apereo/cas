@@ -7,7 +7,6 @@ import org.apereo.cas.otp.repository.credentials.OneTimeTokenCredentialRepositor
 import org.apereo.cas.test.CasTestExtension;
 import lombok.Getter;
 import lombok.val;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -33,7 +32,8 @@ import static org.junit.jupiter.api.Assertions.*;
     properties = {
         "cas.jdbc.show-sql=true",
         "cas.authn.mfa.gauth.core.scratch-codes.encryption.key=12345678901234567890123456789012",
-        "cas.authn.mfa.gauth.crypto.enabled=false"
+        "cas.authn.mfa.gauth.crypto.enabled=false",
+        "cas.authn.mfa.gauth.jpa.url=jdbc:hsqldb:mem:gauth-credentials;hsqldb.tx=mvcc"
     })
 @EnableTransactionManagement(proxyTargetClass = false)
 @EnableAspectJAutoProxy(proxyTargetClass = false)
@@ -46,11 +46,6 @@ class JpaGoogleAuthenticatorTokenCredentialRepositoryTests extends BaseOneTimeTo
     @Qualifier(BaseGoogleAuthenticatorTokenCredentialRepository.BEAN_NAME)
     private OneTimeTokenCredentialRepository registry;
 
-    @BeforeEach
-    void cleanUp() {
-        this.getRegistry().deleteAll();
-    }
-    
     @Test
     void verifyCreateUniqueNames() {
         var acct1 = getAccount("verifyCreateUniqueNames", UUID.randomUUID().toString());
@@ -72,4 +67,15 @@ class JpaGoogleAuthenticatorTokenCredentialRepositoryTests extends BaseOneTimeTo
         assertNotNull(acct1);
     }
 
+    @Test
+    void verifyFormattedIdMatchesPersistedId() {
+        val username = UUID.randomUUID().toString();
+        val repo = getRegistry("verifyFormattedIdMatchesPersistedId");
+        repo.save(getAccount("verifyFormattedIdMatchesPersistedId", username));
+        val accounts = repo.get(username);
+        assertEquals(1, accounts.size());
+        val account = accounts.iterator().next();
+        assertTrue(account.getId() > 0);
+        assertEquals(String.valueOf(account.getId()), account.getFormattedId());
+    }
 }

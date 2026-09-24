@@ -15,6 +15,7 @@ import org.springframework.boot.autoconfigure.ImportAutoConfiguration;
 import org.springframework.context.annotation.Import;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.webflow.engine.Flow;
+import org.springframework.webflow.engine.TransitionableState;
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
@@ -51,6 +52,8 @@ class InterruptWebflowConfigurerTests {
             assertTrue(flow.containsState(CasWebflowConstants.STATE_ID_FINISHED_INTERRUPT));
             assertTrue(flow.containsState(CasWebflowConstants.STATE_ID_INQUIRE_INTERRUPT));
             assertTrue(flow.containsState(CasWebflowConstants.STATE_ID_INTERRUPT_VIEW));
+            assertGatewayTransitions(flow, CasWebflowConstants.STATE_ID_INQUIRE_INTERRUPT,
+                CasWebflowConstants.STATE_ID_CREATE_TICKET_GRANTING_TICKET, CasWebflowConstants.STATE_ID_GENERATE_SERVICE_TICKET);
         }
     }
 
@@ -71,6 +74,16 @@ class InterruptWebflowConfigurerTests {
             assertTrue(flow.containsState(CasWebflowConstants.STATE_ID_FINISHED_INTERRUPT));
             assertTrue(flow.containsState(CasWebflowConstants.STATE_ID_INQUIRE_INTERRUPT));
             assertTrue(flow.containsState(CasWebflowConstants.STATE_ID_INTERRUPT_VIEW));
+            assertGatewayTransitions(flow, CasWebflowConstants.STATE_ID_INQUIRE_INTERRUPT, CasWebflowConstants.STATE_ID_GENERATE_SERVICE_TICKET);
+        }
+    }
+
+    private static void assertGatewayTransitions(final Flow flow, final String... stateIds) {
+        for (val stateId : stateIds) {
+            val state = (TransitionableState) flow.getState(stateId);
+            val transition = state.getTransition(CasWebflowConstants.TRANSITION_ID_GATEWAY);
+            assertNotNull(transition, () -> "Missing gateway transition for " + stateId);
+            assertEquals(CasWebflowConstants.STATE_ID_GATEWAY_SERVICES_MGMT, transition.getTargetStateId());
         }
     }
 }

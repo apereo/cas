@@ -276,11 +276,6 @@ class OAuth20AccessTokenEndpointControllerTests {
             );
         }
 
-        @BeforeEach
-        void initialize() {
-            ticketRegistry.deleteAll();
-        }
-
         @ParameterizedTest
         @MethodSource("getParameters")
         void verifyClientNoClientId(final OAuthRegisteredService registeredService) throws Throwable {

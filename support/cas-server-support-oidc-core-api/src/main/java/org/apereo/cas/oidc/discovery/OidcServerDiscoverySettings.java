@@ -92,6 +92,9 @@ public class OidcServerDiscoverySettings {
     @JsonProperty("token_endpoint_auth_methods_supported")
     private Set<String> tokenEndpointAuthMethodsSupported;
 
+    @JsonProperty("token_endpoint_auth_signing_alg_values_supported")
+    private Set<String> tokenEndpointAuthSigningAlgValuesSupported;
+
     @JsonProperty("code_challenge_methods_supported")
     private Set<String> codeChallengeMethodsSupported;
 

@@ -19,6 +19,7 @@ import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
 import org.apereo.cas.util.thread.Cleanable;
 import lombok.RequiredArgsConstructor;
 import lombok.val;
+import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -117,11 +118,11 @@ public class CasMongoDbPasswordlessAuthenticationAutoConfiguration {
         @Lazy(false)
         public Cleanable mongoPasswordlessAuthenticationTokenRepositoryCleaner(
             final ConfigurableApplicationContext applicationContext,
-            @Qualifier(PasswordlessTokenRepository.BEAN_NAME) final PasswordlessTokenRepository passwordlessTokenRepository) {
+            @Qualifier(PasswordlessTokenRepository.BEAN_NAME) final ObjectProvider<PasswordlessTokenRepository> passwordlessTokenRepository) {
             return BeanSupplier.of(Cleanable.class)
                 .when(BeanCondition.on("cas.authn.passwordless.tokens.mongo.cleaner.schedule.enabled").isTrue().evenIfMissing()
                     .given(applicationContext.getEnvironment()))
-                .supply(() -> new MongoDbPasswordlessAuthenticationTokenRepositoryCleaner(passwordlessTokenRepository))
+                .supply(() -> new MongoDbPasswordlessAuthenticationTokenRepositoryCleaner(passwordlessTokenRepository.getObject()))
                 .otherwiseProxy()
                 .get();
         }

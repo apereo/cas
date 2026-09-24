@@ -64,16 +64,24 @@ public class ChainingConsentRepository extends BaseConsentRepository implements 
 
     @Override
     public boolean deleteConsentDecision(final long id, final String principal) throws Throwable {
-        return repositories
-            .stream()
-            .anyMatch(Unchecked.predicate(repository -> repository.deleteConsentDecision(id, principal)));
+        var result = false;
+        for (val repo : repositories) {
+            if (repo.deleteConsentDecision(id, principal)) {
+                result = true;
+            }
+        }
+        return result;
     }
 
     @Override
     public boolean deleteConsentDecisions(final String principal) throws Throwable {
-        return repositories
-            .stream()
-            .anyMatch(Unchecked.predicate(repository -> repository.deleteConsentDecisions(principal)));
+        var result = false;
+        for (val repo : repositories) {
+            if (repo.deleteConsentDecisions(principal)) {
+                result = true;
+            }
+        }
+        return result;
     }
 
     @Override

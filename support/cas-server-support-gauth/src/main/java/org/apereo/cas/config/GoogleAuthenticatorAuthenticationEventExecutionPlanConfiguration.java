@@ -273,11 +273,11 @@ class GoogleAuthenticatorAuthenticationEventExecutionPlanConfiguration {
         public Cleanable googleAuthenticatorTokenRepositoryCleaner(
             final ConfigurableApplicationContext applicationContext,
             @Qualifier(OneTimeTokenRepository.BEAN_NAME)
-            final OneTimeTokenRepository repository) {
+            final ObjectProvider<OneTimeTokenRepository> repository) {
             return BeanSupplier.of(Cleanable.class)
                 .when(BeanCondition.on("cas.authn.mfa.gauth.cleaner.schedule.enabled").isTrue().evenIfMissing()
                     .given(applicationContext.getEnvironment()))
-                .supply(() -> new GoogleAuthenticatorTokenRepositoryCleaner(repository))
+                .supply(() -> new GoogleAuthenticatorTokenRepositoryCleaner(repository.getObject()))
                 .otherwiseProxy()
                 .get();
         }

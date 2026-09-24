@@ -10,10 +10,8 @@ import org.apereo.cas.support.saml.services.SamlRegisteredService;
 import org.apereo.cas.util.EncodingUtils;
 import org.apereo.cas.web.flow.CasWebflowConstants;
 import lombok.val;
-import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.TestMethodOrder;
 import org.opensaml.saml.common.SAMLException;
 import org.opensaml.saml.saml2.core.AuthnRequest;
 import org.springframework.http.HttpStatus;
@@ -30,7 +28,6 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
  * @since 6.4.0
  */
 @Tag("SAML2Web")
-@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 @TestPropertySource(properties = "cas.authn.saml-idp.metadata.file-system.location=file:src/test/resources/metadata")
 class SamlIdPProfileHandlerControllerTests extends BaseSamlIdPConfigurationTests {
     @Test

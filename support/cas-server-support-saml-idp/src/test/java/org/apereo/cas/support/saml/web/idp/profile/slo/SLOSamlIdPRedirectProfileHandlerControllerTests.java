@@ -11,12 +11,8 @@ import lombok.val;
 import net.shibboleth.shared.net.URLBuilder;
 import org.apache.commons.lang3.Strings;
 import org.apache.hc.core5.http.HttpStatus;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.MethodOrderer;
-import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.TestMethodOrder;
 import org.opensaml.saml.common.SAMLException;
 import org.opensaml.saml.common.SAMLObjectBuilder;
 import org.opensaml.saml.common.xml.SAMLConstants;
@@ -39,19 +35,12 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
  * @since 6.2.0
  */
 @Tag("SAML2Web")
-@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 @TestPropertySource(properties = "cas.authn.saml-idp.metadata.file-system.location=file:src/test/resources/metadata")
 class SLOSamlIdPRedirectProfileHandlerControllerTests extends BaseSamlIdPConfigurationTests {
 
-    @BeforeEach
-    void initialize() {
-        servicesManager.deleteAll();
-    }
-
     @Test
-    @Order(1)
     void verifyOperationRedirectWithParameter() throws Throwable {
-        val service = getSamlRegisteredServiceFor(false, false, false, "https://cassp.example.org");
+        val service = getSamlRegisteredServiceFor(false, false, false, "https://cassp-logout.example.org");
         service.setLogoutUrl("https://github.com/apereo/cas");
 
         val result = executeTest(service);
@@ -61,7 +50,6 @@ class SLOSamlIdPRedirectProfileHandlerControllerTests extends BaseSamlIdPConfigu
     }
 
     @Test
-    @Order(2)
     void verifyOperationRedirectWithoutParameter() throws Throwable {
         val service = getSamlRegisteredServiceFor(false, false, false, "https://cassp.example.org");
         val result = executeTest(service);
@@ -71,7 +59,6 @@ class SLOSamlIdPRedirectProfileHandlerControllerTests extends BaseSamlIdPConfigu
     }
 
     @Test
-    @Order(3)
     void verifyLogoutResponse() throws Throwable {
         val service = getSamlRegisteredServiceFor(false, false, false, "https://cassp.example.org");
 
@@ -100,7 +87,6 @@ class SLOSamlIdPRedirectProfileHandlerControllerTests extends BaseSamlIdPConfigu
     }
 
     @Test
-    @Order(4)
     void verifyUnsignedLogoutResponseRejected() throws Throwable {
         val service = getSamlRegisteredServiceFor(false, false, false, "https://cassp.example.org");
         servicesManager.save(service);
@@ -112,7 +98,6 @@ class SLOSamlIdPRedirectProfileHandlerControllerTests extends BaseSamlIdPConfigu
     }
 
     @Test
-    @Order(5)
     void verifyLogoutRequestReplayRejected() throws Throwable {
         val service = getSamlRegisteredServiceFor(false, false, false, "https://cassp.example.org");
         executeTest(service, true);
