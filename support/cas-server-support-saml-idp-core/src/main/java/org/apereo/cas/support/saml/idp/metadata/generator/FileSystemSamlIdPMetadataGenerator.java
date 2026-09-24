@@ -122,13 +122,20 @@ public class FileSystemSamlIdPMetadataGenerator extends BaseSamlIdPMetadataGener
 
     @Override
     public void afterPropertiesSet() {
-        FunctionUtils.doUnchecked(u -> generate(Optional.empty()));
+        FunctionUtils.doUnchecked(_ -> initialize());
     }
 
     /**
-     * Initializes a new Generate saml metadata.
+     * Initializes the metadata locator and then generates the identity provider
+     * metadata and its artifacts, when they are found to be absent.
+     * <p>
+     * This is the single initialization callback for this generator. Spring invokes it
+     * via {@link #afterPropertiesSet()}; the bean definition must not also declare this
+     * method as an {@code initMethod}, or metadata initialization would run twice.
+     * It remains public for callers that build this generator outside an application
+     * context, such as the CAS command-line shell.
      *
-     * @throws Exception the exception
+     * @throws Throwable the throwable
      */
     public void initialize() throws Throwable {
         getConfigurationContext().getSamlIdPMetadataLocator().initialize();

@@ -7,6 +7,7 @@ import org.apereo.cas.util.junit.EnabledIfListeningOnPort;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.parallel.ResourceLock;
 import org.springframework.test.context.TestPropertySource;
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -17,6 +18,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 7.2.0
  */
 @EnabledIfListeningOnPort(port = 8000)
+@ResourceLock("samlIdentityProviderDynamoDbMetadataTable")
 @Tag("DynamoDb")
 @TestPropertySource(properties = "cas.authn.saml-idp.metadata.dynamodb.idp-metadata-table-name=saml-idp-metadata")
 class DynamoDbSamlIdPMetadataGeneratorTests extends BaseDynamoDbSamlMetadataTests {

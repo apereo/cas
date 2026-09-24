@@ -1,210 +1,154 @@
-html, body, div, span, applet, object, iframe,
-h1, h2, h3, h4, h5, h6, p, blockquote, pre,
-a, abbr, acronym, address, big, cite, code,
-del, dfn, em, img, ins, kbd, q, s, samp,
-small, strike, strong, sub, sup, tt, var,
-b, u, i, center,
-dl, dt, dd, ol, ul, li,
-fieldset, form, label, legend,
-table, caption, tbody, tfoot, thead, tr, th, td,
-article, aside, canvas, details, embed,
-figure, figcaption, footer, header, hgroup,
-menu, nav, output, ruby, section, summary,
-time, mark, audio, video {
-    margin: 0;
-    padding: 0;
-    border: 0;
-    font-size: 100%;
-    font: inherit;
-    vertical-align: baseline;
+/* Print the guide, including examples, without the website navigation. */
+@page {
+    margin: 18mm;
 }
-/* HTML5 display-role reset for older browsers */
-article, aside, details, figcaption, figure,
-footer, header, hgroup, menu, nav, section {
+
+html, body {
+    background: white !important;
+    color: black !important;
+    font: 11pt/1.6 Georgia, serif;
+}
+
+.site-header, .site-footer, .docs-sidebar, .docs-toc, .page-toolbar, .skip-link, .identity-orbit, .home-paths, .article-end, .header-link, .btn-copy-code, .reading-progress, #docs-status, .DocSearch, .dataTables_filter, .dataTables_length, .dataTables_paginate {
+    display: none !important;
+}
+
+body::before {
+    display: none !important;
+}
+
+.docs-shell, .cas-docs-content {
     display: block;
+    width: 100%;
+    max-width: none;
+    padding: 0;
+    margin: 0;
 }
-body {
-    line-height: 1;
+
+h1, h2, h3, h4, h5, h6 {
+    color: black !important;
+    font-family: Arial, sans-serif;
+    break-after: avoid;
 }
-ol, ul {
-    list-style: none;
+
+h1 {
+    font-size: 25pt;
 }
-blockquote, q {
-    quotes: none;
+
+h2 {
+    font-size: 18pt;
+    margin-top: 1.5em;
 }
-blockquote:before, blockquote:after,
-q:before, q:after {
-    content: '';
-    content: none;
+
+h3 {
+    font-size: 14pt;
 }
-table {
-    border-collapse: collapse;
-    border-spacing: 0;
-}
-body {
-    font-size: 13px;
-    line-height: 1.5;
-    font-family: 'Helvetica Neue', Helvetica, Arial, serif;
-    color: #000;
+
+p, li {
+    orphans: 3;
+    widows: 3;
 }
 
 a {
-    color: #d5000d;
-    font-weight: bold;
+    color: #123d56;
+    text-decoration: underline;
 }
 
-header, footer {
-    display: none;
+img {
+    max-width: 100%;
+    height: auto;
 }
 
-#downloads {
-    display: none;
-}
-#main_content {
-    padding-top: 20px;
-}
-
-code, pre {
-    font-family: Monaco, "Bitstream Vera Sans Mono", "Lucida Console", Terminal;
-    color: #222;
-    margin-bottom: 30px;
-    font-size: 12px;
-}
-
-code {
-    padding: 0 3px;
+pre, code {
+    font: 9pt/1.6 Consolas, monospace;
+    color: black !important;
+    background: white !important;
 }
 
 pre {
-    border: solid 1px #ddd;
-    padding: 20px;
-    overflow: auto;
+    white-space: pre-wrap;
+    overflow-wrap: anywhere;
+    padding: .8em;
+    border: 1px solid #bbb;
 }
+
 pre code {
     padding: 0;
 }
 
-ul, ol, dl {
-    margin-bottom: 20px;
+.highlight, .highlight * {
+    background: white !important;
+    color: black !important;
 }
 
+.highlight pre {
+    border: 0;
+    margin: 0;
+}
 
-/* COMMON STYLES */
+.highlight {
+    border: 1px solid #bbb;
+}
+
+.rouge-gutter {
+    display: none;
+}
 
 table {
     width: 100%;
-    border: 1px solid #ebebeb;
+    border-collapse: collapse;
+    font-size: 9pt;
 }
 
-th {
-    font-weight: 500;
+th, td {
+    padding: .5em;
+    border: 1px solid #bbb;
+    text-align: left;
 }
 
-td {
-    border: 1px solid #ebebeb;
-    text-align: center;
-    font-weight: 300;
+thead {
+    display: table-header-group;
 }
 
-form {
-    background: #f2f2f2;
-    padding: 20px;
-
+.table-scroll {
+    overflow: visible;
 }
 
-
-/* GENERAL ELEMENT TYPE STYLES */
-
-h1 {
-    font-size: 2.8em;
+blockquote, #dev-doc-info {
+    border-left: 3px solid #777;
+    padding: .7em 1em;
 }
 
-h2 {
-    font-size: 22px;
-    font-weight: bold;
-    color: #303030;
-    margin-bottom: 8px;
-}
-
-h3 {
-    color: #d5000d;
-    font-size: 18px;
-    font-weight: bold;
-    margin-bottom: 8px;
-}
-
-h4 {
-    font-size: 16px;
-    color: #303030;
+#dev-doc-title {
     font-weight: bold;
 }
 
-h5 {
-    font-size: 1em;
-    color: #303030;
+.tab, .nav-pills, .nav-tabs {
+    display: none;
 }
 
-h6 {
-    font-size: .8em;
-    color: #303030;
+.tab-content > li, .tab-content > .tab-pane {
+    display: block !important;
+    opacity: 1 !important;
 }
 
-p {
-    font-weight: 300;
-    margin-bottom: 20px;
+.card {
+    break-inside: avoid;
 }
 
-a {
-    text-decoration: none;
+/* Decoration added for the screen should not cost ink. */
+.highlight::before, h2::before, .site-footer::before,
+#cas-docs-container > h1:first-child::before {
+    display: none !important;
 }
 
-p a {
-    font-weight: 400;
+.table-scroll, .highlight, blockquote, .alert, #dev-doc-info, .docs-home .card > a {
+    box-shadow: none !important;
+    background-image: none !important;
 }
 
-blockquote {
-    font-size: 1.6em;
-    border-left: 10px solid #e9e9e9;
-    margin-bottom: 20px;
-    padding: 0 0 0 30px;
+.home-title-accent {
+    -webkit-text-fill-color: black;
+    color: black !important;
+    background: none !important;
 }
-
-ul li {
-    list-style: disc inside;
-    padding-left: 20px;
-}
-
-ol li {
-    list-style: decimal inside;
-    padding-left: 3px;
-}
-
-dl dd {
-    font-style: italic;
-    font-weight: 100;
-}
-
-footer {
-    margin-top: 40px;
-    padding-top: 20px;
-    padding-bottom: 30px;
-    font-size: 13px;
-    color: #aaa;
-}
-
-footer a {
-    color: #666;
-}
-
-/* MISC */
-.clearfix:after {
-    clear: both;
-    content: '.';
-    display: block;
-    visibility: hidden;
-    height: 0;
-}
-
-.clearfix {display: inline-block;}
-* html .clearfix {height: 1%;}
-.clearfix {display: block;}

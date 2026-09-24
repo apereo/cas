@@ -16,7 +16,14 @@ indicate how should underlying changes in the attribute release policy be consid
 engine. Users are also provided the ability to set up reminders in the event 
 that no change is detected in the attribute release policy.
 
-Consent attribute records stored in the configured repository are signed and encrypted.
+Consent attribute records stored in the configured repository are signed and encrypted. Every CAS node must
+share the same keys. A record that can no longer be deciphered, because
+the keys were rotated or because a node does not have them, counts as a mismatch: the user is asked to consent
+again and the record is replaced with one that is encoded using the current keys.
+
+Consent decisions record their creation date in UTC, and reminders are calculated in UTC. This keeps a decision's
+age the same on every CAS node, whatever time zone each node runs in. Dates presented back to the user, such as
+those on the account profile screen, are shown in UTC as well.
 
 Support is enabled by including the following module in the WAR Overlay:
 

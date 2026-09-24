@@ -74,7 +74,6 @@ import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.EnableAspectJAutoProxy;
-import org.springframework.context.annotation.Lazy;
 import org.springframework.context.annotation.ScopedProxyMode;
 import org.springframework.core.Ordered;
 import org.springframework.core.annotation.AnnotationAwareOrderComparator;
@@ -225,7 +224,6 @@ class CasCoreTicketsConfiguration {
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @ConditionalOnMissingBean(name = "messageQueueTicketRegistryReceiver")
-        @Lazy(false)
         public QueueableTicketRegistryMessageReceiver messageQueueTicketRegistryReceiver(
             final ConfigurableApplicationContext applicationContext,
             @Qualifier(TicketRegistry.BEAN_NAME)

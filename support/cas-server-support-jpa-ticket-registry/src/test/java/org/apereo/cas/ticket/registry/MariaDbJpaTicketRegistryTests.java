@@ -13,7 +13,7 @@ import org.springframework.test.context.TestPropertySource;
  */
 @TestPropertySource(properties = {
     "cas.jdbc.show-sql=false",
-    "cas.ticket.registry.jpa.ddl-auto=create-drop",
+    "cas.ticket.registry.jpa.ddl-auto=update",
     "cas.ticket.registry.jpa.user=root",
     "cas.ticket.registry.jpa.password=mypass",
     "cas.ticket.registry.jpa.driver-class=org.mariadb.jdbc.Driver",
@@ -22,6 +22,7 @@ import org.springframework.test.context.TestPropertySource;
 })
 @EnabledIfListeningOnPort(port = 3306)
 @Tag("MariaDb")
+@Tag("TicketRegistryTestWithoutEncryption")
 class MariaDbJpaTicketRegistryTests extends BaseJpaTicketRegistryTests {
 }
 

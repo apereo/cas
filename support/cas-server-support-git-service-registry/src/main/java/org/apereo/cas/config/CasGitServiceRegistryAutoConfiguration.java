@@ -74,11 +74,13 @@ public class CasGitServiceRegistryAutoConfiguration {
                 }
                 locators.add(new DefaultGitRepositoryRegisteredServiceLocator(resourceNamingStrategy,
                     gitServiceRegistryRepositoryInstance.getRepositoryDirectory(), properties));
-                return new GitServiceRegistry(applicationContext, gitServiceRegistryRepositoryInstance,
+                val registry = new GitServiceRegistry(applicationContext, gitServiceRegistryRepositoryInstance,
                     CollectionUtils.wrapList(new RegisteredServiceJsonSerializer(applicationContext),
                         new RegisteredServiceYamlSerializer(applicationContext)),
                     properties.isPushChanges(), properties.getRootDirectory(),
                     Optional.ofNullable(serviceRegistryListeners.getIfAvailable()).orElseGet(ArrayList::new), locators);
+                registry.setOrder(properties.getOrder());
+                return registry;
             })
             .otherwiseProxy()
             .get();

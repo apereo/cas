@@ -2,6 +2,7 @@ package org.apereo.cas.support.events.dao;
 
 import module java.base;
 import org.apereo.cas.authentication.adaptive.geo.GeoLocationRequest;
+import org.apereo.cas.util.RandomUtils;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.google.errorprone.annotations.CanIgnoreReturnValue;
@@ -318,13 +319,17 @@ public class CasEvent implements Serializable {
 
     /**
      * Assign id if undefined.
+     * The identifier is drawn at random rather than taken from the clock, because it is this
+     * record's key in the stores behind it and a clock reading only has millisecond resolution:
+     * two events recorded in the same millisecond would share a key and one would silently
+     * replace the other.
      *
-     * @return the registered service
+     * @return this event, with an identifier assigned
      */
     @CanIgnoreReturnValue
     public CasEvent assignIdIfNecessary() {
         if (getId() <= 0) {
-            setId(System.currentTimeMillis());
+            setId(RandomUtils.nextLong(1, Long.MAX_VALUE));
         }
         return this;
     }

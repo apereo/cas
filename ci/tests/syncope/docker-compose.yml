@@ -29,6 +29,7 @@ services:
       ANONYMOUS_USER: syncope
       ANONYMOUS_KEY: syncope
       SECURITY_AUTHENTICATIONERROR_EXPOSEDETAILS: "true"
+      SECURITY_PRODUCTION_MODE: "false"
   syncope-console:
     depends_on:
       - syncope
@@ -44,3 +45,4 @@ services:
       SERVICE_DISCOVERY_ADDRESS: http://syncope-console:8080/syncope-console/
       ANONYMOUS_USER: syncope
       ANONYMOUS_KEY: syncope
+      SECURITY_PRODUCTION_MODE: "false"

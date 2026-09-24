@@ -1,3 +1,25 @@
+let oidcDiscoveryDocument = null;
+
+/**
+ * Read the OpenID Connect discovery document, once.
+ *
+ * Several panels need the same document -- the issuer label, the OP configuration dialog and the
+ * token request form -- and each of them used to fetch it separately.
+ *
+ * @returns {Promise<object>} the discovery document
+ */
+function fetchOidcDiscoveryDocument() {
+    if (!oidcDiscoveryDocument) {
+        oidcDiscoveryDocument = Promise.resolve(
+            $.get(`${PalantirDashboardConfiguration.casServerPrefix()}/oidc/.well-known/openid-configuration`))
+            .catch(error => {
+                oidcDiscoveryDocument = null;
+                throw error;
+            });
+    }
+    return oidcDiscoveryDocument;
+}
+
 async function initializeCasProtocolOperations() {
     function buildCasProtocolPayload(endpoint, format) {
         const form = document.getElementById("fmCasProtocol");
@@ -50,21 +72,30 @@ function escapeProtocolHtml(str) {
     }[s]));
 }
 
-function switchToConfigurationDynamicSourcesTabFromProtocol() {
+/**
+ * Move to the configuration tab, waiting for it to initialize.
+ *
+ * The tab is built on first activation, so its search and override controls do not exist until
+ * that finishes.
+ *
+ * @returns {Promise<void>} resolved once the configuration tab is ready
+ */
+async function switchToConfigurationDynamicSourcesTabFromProtocol() {
     activateDashboardTab(Tabs.CONFIGURATION.index);
     selectSidebarMenuTab(Tabs.CONFIGURATION.index);
+    await initializeDashboardTab(Tabs.CONFIGURATION);
 }
 
-function showProtocolConfigurationPropertyHelp(propertyName) {
+async function showProtocolConfigurationPropertyHelp(propertyName) {
     if (CasActuatorEndpoints.configurationMetadata()) {
-        switchToConfigurationDynamicSourcesTabFromProtocol();
+        await switchToConfigurationDynamicSourcesTabFromProtocol();
         searchForConfigPropertyButton(propertyName);
     }
 }
 
-function overrideProtocolConfigurationPropertyValue(propertyName, propertyValue) {
+async function overrideProtocolConfigurationPropertyValue(propertyName, propertyValue) {
     if (protocolConfigurationPropertiesMutable()) {
-        switchToConfigurationDynamicSourcesTabFromProtocol();
+        await switchToConfigurationDynamicSourcesTabFromProtocol();
         overrideConfigPropertyValue(propertyName, propertyValue);
     }
 }
@@ -112,7 +143,7 @@ async function initializeSAML1ProtocolOperations() {
             service: service
         }, data => {
             showElements("#saml1ProtocolEditorContainer");
-            const editor = initializeAceEditor("saml1ProtocolEditor", "xml");
+            const editor = initializeAceEditor("saml1ProtocolEditor", "xml", {useWorker: false});
             editor.setReadOnly(true);
             editor.setValue(data.assertion);
             editor.gotoLine(1);
@@ -132,7 +163,7 @@ async function initializeSAML1ProtocolOperations() {
 function showSaml2IdPMetadata() {
     $.get(`${PalantirDashboardConfiguration.casServerPrefix()}/idp/metadata`, response => {
         let oidcOpConfigurationDialog = window.mdc.dialog.MDCDialog.attachTo(document.getElementById("saml2MetadataDialog"));
-        const editor = initializeAceEditor("saml2MetadataDialogEditor", "xml");
+        const editor = initializeAceEditor("saml2MetadataDialogEditor", "xml", {useWorker: false});
         editor.setValue(new XMLSerializer().serializeToString(response));
         editor.gotoLine(1);
         editor.setReadOnly(true);
@@ -265,22 +296,22 @@ function initializeOidcClientSecretRotationOperations() {
 async function initializeOidcProtocolOperations() {
     initializeOidcClientSecretRotationOperations();
     if (CAS_FEATURES.includes("OpenIDConnect")) {
-        $.get(`${PalantirDashboardConfiguration.casServerPrefix()}/oidc/.well-known/openid-configuration`, response => {
+        fetchOidcDiscoveryDocument().then(response => {
             highlightElements();
             $("#oidcIssuer").text(response.issuer);
-        });
+        }).catch(error => console.error("Error fetching data:", error));
 
         $("button[name=oidcOpConfigurationButton]").off().on("click", () => {
             hideBanner();
-            $.get(`${PalantirDashboardConfiguration.casServerPrefix()}/oidc/.well-known/openid-configuration`, response => {
+            fetchOidcDiscoveryDocument().then(response => {
                 let oidcOpConfigurationDialog = window.mdc.dialog.MDCDialog.attachTo(document.getElementById("oidcOpConfigurationDialog"));
                 const editor = initializeAceEditor("oidcOpConfigurationDialogEditor", "json");
                 editor.setValue(JSON.stringify(response, null, 2));
                 editor.gotoLine(1);
                 editor.setReadOnly(true);
                 oidcOpConfigurationDialog["open"]();
-            }).fail((xhr, status, error) => {
-                console.error("Error fetching data:", error);
+            }).catch(xhr => {
+                console.error("Error fetching data:", xhr);
                 displayBanner(xhr);
             });
         });
@@ -367,7 +398,7 @@ async function initializeOidcProtocolOperations() {
                 return {};
             }
 
-            $.get(`${PalantirDashboardConfiguration.casServerPrefix()}/oidc/.well-known/openid-configuration`, oidcConfiguration => {
+            fetchOidcDiscoveryDocument().then(oidcConfiguration => {
 
                 const clientId = $("#oidcProtocolClientId").val();
                 const clientSecret = $("#oidcProtocolClientSecret").val();
@@ -417,8 +448,8 @@ async function initializeOidcProtocolOperations() {
                     }
                 });
 
-            }).fail((xhr, status, error) => {
-                console.error("Error fetching data:", error);
+            }).catch(xhr => {
+                console.error("Error fetching data:", xhr);
                 displayBanner(xhr);
                 hideElements("#oidcProtocolEditorContainer");
             });
@@ -428,6 +459,7 @@ async function initializeOidcProtocolOperations() {
 
         if (CasActuatorEndpoints.env()) {
             const oidcConfigurationPropsTable = $("#oidcConfigurationPropsTable").DataTable({
+        deferRender: true,
                 lengthChange: false,
                 columnDefs: [
                     {
@@ -454,9 +486,10 @@ async function initializeOidcProtocolOperations() {
                             1: `<code>${escapeProtocolHtml(propValue.value)}</code>`,
                             propertyName: propKey,
                             propertyValue: propValue.value
-                        }).draw(false);
+                        });
                     });
                 });
+                oidcConfigurationPropsTable.draw(false);
                 updateNavigationSidebar();
                 showElements("#oidcConfigurationPropsPanel");
             });
@@ -570,7 +603,7 @@ async function initializeSAML2ProtocolOperations() {
                 password: password,
                 entityId: entityId
             }, data => {
-                const editor = initializeAceEditor("saml2ProtocolEditor", "xml");
+                const editor = initializeAceEditor("saml2ProtocolEditor", "xml", {useWorker: false});
                 editor.setReadOnly(true);
                 editor.setValue(new XMLSerializer().serializeToString(data));
                 editor.gotoLine(1);
@@ -601,7 +634,7 @@ async function initializeSAML2ProtocolOperations() {
                     saml2ProtocolEditor.gotoLine(1);
 
                     const logoutRequest = atob(jqXHR.getResponseHeader("LogoutRequest"));
-                    const saml2ProtocolLogoutEditor = initializeAceEditor("saml2ProtocolLogoutEditor", "xml");
+                    const saml2ProtocolLogoutEditor = initializeAceEditor("saml2ProtocolLogoutEditor", "xml", {useWorker: false});
                     saml2ProtocolLogoutEditor.setReadOnly(true);
                     saml2ProtocolLogoutEditor.setValue(logoutRequest);
                     saml2ProtocolLogoutEditor.gotoLine(1);
@@ -663,7 +696,7 @@ async function initializeSAML2ProtocolOperations() {
                     serviceId: $("#saml2MetadataCacheService").val()
                 },
                 success: (response, textStatus, jqXHR) => {
-                    const editor = initializeAceEditor("saml2MetadataCacheEditor", "xml");
+                    const editor = initializeAceEditor("saml2MetadataCacheEditor", "xml", {useWorker: false});
                     editor.setReadOnly(true);
                     for (const [entityId, entry] of Object.entries(response)) {
                         editor.setValue(entry.metadata);
@@ -697,7 +730,7 @@ async function initializeSAML2ProtocolOperations() {
                 }
             });
 
-            const saml2MetadataManagerEntryEditor = initializeAceEditor("saml2MetadataManagerEntryDialogEditor", "xml");
+            const saml2MetadataManagerEntryEditor = initializeAceEditor("saml2MetadataManagerEntryDialogEditor", "xml", {useWorker: false});
             saml2MetadataManagerEntryEditor.setReadOnly(true);
 
             function parseEntityIdFromMetadata(xmlValue) {
@@ -837,7 +870,7 @@ async function initializeSAML2ProtocolOperations() {
                 hideBanner();
                 const selectedManagerName = $("#saml2MetadataManagersSelect option:selected").text();
 
-                const metadataXmlEditor = initializeAceEditor("saml2MetadataUploadXmlEditor", "xml");
+                const metadataXmlEditor = initializeAceEditor("saml2MetadataUploadXmlEditor", "xml", {useWorker: false});
                 metadataXmlEditor.setReadOnly(true);
                 const signatureEditor = initializeAceEditor("saml2MetadataUploadSignatureEditor", "text");
                 signatureEditor.setReadOnly(true);
@@ -983,6 +1016,7 @@ async function initializeSAML2ProtocolOperations() {
 
         if (CasActuatorEndpoints.env()) {
             const saml2ConfigurationPropsTable = $("#saml2ConfigurationPropsTable").DataTable({
+        deferRender: true,
                 lengthChange: false,
                 columnDefs: [
                     {
@@ -1009,9 +1043,10 @@ async function initializeSAML2ProtocolOperations() {
                             1: `<code>${escapeProtocolHtml(propValue.value)}</code>`,
                             propertyName: propKey,
                             propertyValue: propValue.value
-                        }).draw(false);
+                        });
                     });
                 });
+                saml2ConfigurationPropsTable.draw(false);
                 updateNavigationSidebar();
                 showElements("#saml2ConfigurationPropsPanel");
             });

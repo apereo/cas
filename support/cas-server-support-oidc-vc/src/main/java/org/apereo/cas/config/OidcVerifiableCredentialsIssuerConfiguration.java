@@ -19,7 +19,6 @@ import org.apereo.cas.oidc.vc.issuer.web.OidcVerifiableCredentialEndpointControl
 import org.apereo.cas.oidc.vc.issuer.web.OidcVerifiableCredentialIssuerMetadataController;
 import org.apereo.cas.oidc.vc.issuer.web.OidcVerifiableCredentialNonceEndpointController;
 import org.apereo.cas.oidc.vc.issuer.web.OidcVerifiableCredentialTypeMetadataController;
-import org.apereo.cas.oidc.vc.offer.OidcVerifiableCredentialTransactionService;
 import org.apereo.cas.oidc.vc.token.OidcVerifiableCredentialsAccessTokenGeneratorCustomizer;
 import lombok.val;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -156,9 +155,7 @@ class OidcVerifiableCredentialsIssuerConfiguration {
     @Bean
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @ConditionalOnMissingBean(name = "oidcVerifiableCredentialsAccessTokenGeneratorCustomizer")
-    public OidcVerifiableCredentialsAccessTokenGeneratorCustomizer oidcVerifiableCredentialsAccessTokenGeneratorCustomizer(
-        @Qualifier(OidcVerifiableCredentialTransactionService.BEAN_NAME)
-        final OidcVerifiableCredentialTransactionService oidcVerifiableCredentialTransactionService) {
-        return new OidcVerifiableCredentialsAccessTokenGeneratorCustomizer(oidcVerifiableCredentialTransactionService);
+    public OidcVerifiableCredentialsAccessTokenGeneratorCustomizer oidcVerifiableCredentialsAccessTokenGeneratorCustomizer() {
+        return new OidcVerifiableCredentialsAccessTokenGeneratorCustomizer();
     }
 }

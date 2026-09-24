@@ -13,11 +13,8 @@ import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.EncodingUtils;
 import org.apereo.cas.util.http.HttpRequestUtils;
 import lombok.val;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.parallel.Execution;
-import org.junit.jupiter.api.parallel.ExecutionMode;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.test.context.TestPropertySource;
 import static org.junit.jupiter.api.Assertions.*;
@@ -33,14 +30,7 @@ import static org.junit.jupiter.api.Assertions.*;
     "cas.authn.saml-idp.core.entity-id=https://cas.example.org/idp",
     "cas.authn.saml-idp.metadata.file-system.location=${#systemProperties['java.io.tmpdir']}/idp-metadata34"
 })
-@Execution(ExecutionMode.SAME_THREAD)
 class GroovySamlRegisteredServiceAttributeReleasePolicyTests extends BaseSamlIdPConfigurationTests {
-
-    @BeforeEach
-    void setup() {
-        servicesManager.deleteAll();
-        defaultSamlRegisteredServiceCachingMetadataResolver.invalidate();
-    }
 
     @Test
     void verifyUnknownScript() throws Throwable {

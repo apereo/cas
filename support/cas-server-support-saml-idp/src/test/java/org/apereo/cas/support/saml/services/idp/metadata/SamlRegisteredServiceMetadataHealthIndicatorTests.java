@@ -1,19 +1,20 @@
 package org.apereo.cas.support.saml.services.idp.metadata;
 
 import module java.base;
+import org.apereo.cas.services.RegisteredService;
+import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.saml.BaseSamlIdPConfigurationTests;
 import org.apereo.cas.support.saml.SamlIdPTestUtils;
+import org.apereo.cas.support.saml.services.idp.metadata.plan.SamlRegisteredServiceMetadataResolutionPlan;
 import lombok.val;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.parallel.Execution;
-import org.junit.jupiter.api.parallel.ExecutionMode;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.health.contributor.HealthIndicator;
 import org.springframework.boot.health.contributor.Status;
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.*;
 
 /**
  * This is {@link SamlRegisteredServiceMetadataHealthIndicatorTests}.
@@ -22,42 +23,45 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.3.0
  */
 @Tag("SAML2Web")
-@Execution(ExecutionMode.SAME_THREAD)
 class SamlRegisteredServiceMetadataHealthIndicatorTests extends BaseSamlIdPConfigurationTests {
     @Autowired
     @Qualifier("samlRegisteredServiceMetadataHealthIndicator")
     private HealthIndicator samlRegisteredServiceMetadataHealthIndicator;
 
-    @BeforeEach
-    void setup() {
-        this.servicesManager.deleteAll();
-    }
+    @Autowired
+    @Qualifier("samlRegisteredServiceMetadataResolvers")
+    private SamlRegisteredServiceMetadataResolutionPlan samlRegisteredServiceMetadataResolvers;
 
     @Test
     void verifyOperation() {
         assertNotNull(samlRegisteredServiceMetadataHealthIndicator);
-        servicesManager.save(SamlIdPTestUtils.getSamlRegisteredService());
-        val health = samlRegisteredServiceMetadataHealthIndicator.health();
+        assertNotNull(samlRegisteredServiceMetadataHealthIndicator.health());
+        val health = healthIndicatorFor(SamlIdPTestUtils.getSamlRegisteredService(UUID.randomUUID().toString())).health();
         assertEquals(Status.UP, health.getStatus());
     }
 
     @Test
     void verifyFailsOperation() {
-        val samlRegisteredService = SamlIdPTestUtils.getSamlRegisteredService();
+        val samlRegisteredService = SamlIdPTestUtils.getSamlRegisteredService(UUID.randomUUID().toString());
         samlRegisteredService.setMetadataLocation("unknown-metadata-location");
-        servicesManager.save(samlRegisteredService);
-        val health = samlRegisteredServiceMetadataHealthIndicator.health();
+
+        val health = healthIndicatorFor(samlRegisteredService).health();
         assertEquals(Status.DOWN, health.getStatus());
     }
 
     @Test
     void verifyFailsOperationWithMultiple() {
-        val samlRegisteredService = SamlIdPTestUtils.getSamlRegisteredService(UUID.randomUUID().toString());
-        samlRegisteredService.setMetadataLocation("unknown-metadata-location");
-        servicesManager.save(samlRegisteredService);
-        servicesManager.save(SamlIdPTestUtils.getSamlRegisteredService());
-        val health = samlRegisteredServiceMetadataHealthIndicator.health();
+        val unresolvableService = SamlIdPTestUtils.getSamlRegisteredService(UUID.randomUUID().toString());
+        unresolvableService.setMetadataLocation("unknown-metadata-location");
+        val health = healthIndicatorFor(unresolvableService,
+            SamlIdPTestUtils.getSamlRegisteredService(UUID.randomUUID().toString())).health();
         assertEquals(Status.UP, health.getStatus());
     }
 
+    private SamlRegisteredServiceMetadataHealthIndicator healthIndicatorFor(final RegisteredService... services) {
+        val isolatedServicesManager = mock(ServicesManager.class);
+        when(isolatedServicesManager.findServiceBy(any(Predicate.class))).thenReturn(List.of(services));
+        return new SamlRegisteredServiceMetadataHealthIndicator(
+            samlRegisteredServiceMetadataResolvers, isolatedServicesManager);
+    }
 }

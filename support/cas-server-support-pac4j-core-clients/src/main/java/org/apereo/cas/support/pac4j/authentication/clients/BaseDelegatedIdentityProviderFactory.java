@@ -50,15 +50,22 @@ public abstract class BaseDelegatedIdentityProviderFactory implements DelegatedI
             .forEach(Unchecked.consumer(Closeable::close));
     }
 
+    /**
+     * Builds the identity providers. A caller that arrives while another build is in flight waits
+     * for it and is handed its result. Giving up on the lock is not an option here: the cache is
+     * still empty until the build in flight stores into it, and an empty provider list reads
+     * downstream as "no identity providers are configured" rather than as a failure.
+     *
+     * @return the identity providers, never null
+     */
     @Override
     public final List<BaseClient> build() {
-        return lock.tryLock(() -> {
+        val key = casProperties.getServer().getName();
+        return lock.executeAndThrow(() -> {
             val core = casProperties.getAuthn().getPac4j().getCore();
-            val currentClients = !core.isLazyInit() || retrieve(casProperties.getServer().getName()).isEmpty()
-                ? load()
-                : retrieve(casProperties.getServer().getName());
-            store(casProperties.getServer().getName(), currentClients);
-            return currentClients;
+            val clients = !core.isLazyInit() || retrieve(key).isEmpty() ? load() : retrieve(key);
+            store(key, clients);
+            return clients;
         });
     }
 

@@ -59,6 +59,9 @@ class OidcVerifiableCredentialPresentationResponseEndpointControllerTests extend
     private static final String PRESENTATION_RESPONSE_ENDPOINT_URL =
         "/cas/" + OidcConstants.BASE_OIDC_URL + '/' + OidcConstants.VC_PRESENTATION_RESPONSE_URL;
 
+    private static final String PRESENTATION_RESULT_ENDPOINT_URL =
+        "/cas/" + OidcConstants.BASE_OIDC_URL + '/' + OidcConstants.VC_PRESENTATION_RESULT_URL;
+
     private static final String CREDENTIAL_CONFIGURATION_ID = "UniversityDegreeCredential";
 
     private static final String CREDENTIAL_QUERY_ID = "university-degree";
@@ -91,6 +94,48 @@ class OidcVerifiableCredentialPresentationResponseEndpointControllerTests extend
         assertNull(ticketRegistry.getTicket(transaction.ticket().getId()));
 
         assertInvalid(submitPresentation(transaction.ticket().getId(), vpToken));
+    }
+
+    @Test
+    void verifyRelyingPartyCollectsTheOutcomeAndDisclosedClaims() throws Throwable {
+        val transaction = createTransaction();
+        val material = issueCredential();
+
+        fetchResult(transaction.ticket().getId())
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$.status").value("pending"));
+
+        submitPresentation(transaction.ticket().getId(), buildVpToken(bindCredential(material, transaction.nonce())))
+            .andExpect(status().isOk());
+
+        fetchResult(transaction.ticket().getId())
+            .andExpect(status().isOk())
+            .andExpect(header().string(HttpHeaders.CACHE_CONTROL, "no-store"))
+            .andExpect(jsonPath("$.status").value("verified"))
+            .andExpect(jsonPath("$.claims." + CREDENTIAL_QUERY_ID + ".given_name").value("Alice"));
+
+        fetchResult(transaction.ticket().getId()).andExpect(status().isNotFound());
+    }
+
+    @Test
+    void verifyUnknownPresentationResultIsNotFound() throws Throwable {
+        fetchResult("TST-unknown-request").andExpect(status().isNotFound());
+    }
+
+    @Test
+    void verifyPresentationResultRejectsUnauthenticatedClients() throws Throwable {
+        mockMvc.perform(get(PRESENTATION_RESULT_ENDPOINT_URL)
+                .with(withHttpRequestProcessor())
+                .queryParam("requestId", "TST-unknown-request"))
+            .andExpect(status().isUnauthorized());
+    }
+
+    private ResultActions fetchResult(final String requestId) throws Exception {
+        return mockMvc.perform(get(PRESENTATION_RESULT_ENDPOINT_URL)
+            .with(withHttpRequestProcessor())
+            .param(OAuth20Constants.CLIENT_ID, credentialClient.getClientId())
+            .param(OAuth20Constants.CLIENT_SECRET, credentialClient.getClientSecrets().getFirst().getValue())
+            .queryParam("requestId", requestId));
     }
 
     @Test
@@ -150,6 +195,31 @@ class OidcVerifiableCredentialPresentationResponseEndpointControllerTests extend
         assertNotNull(ticketRegistry.getTicket(transaction.ticket().getId(), TransientSessionTicket.class));
     }
 
+    @Test
+    void verifyCredentialWithoutExpirationIsRejected() throws Throwable {
+        val transaction = createTransaction();
+        val material = issueCredential(claims -> claims.unsetClaim("exp"));
+        assertInvalid(submitPresentation(transaction.ticket().getId(),
+            buildVpToken(bindCredential(material, transaction.nonce()))));
+    }
+
+    @Test
+    void verifyForeignIssuerIsRejected() throws Throwable {
+        val transaction = createTransaction();
+        val material = issueCredential(claims -> claims.setIssuer("https://issuer.example.net/oidc"));
+        assertInvalid(submitPresentation(transaction.ticket().getId(),
+            buildVpToken(bindCredential(material, transaction.nonce()))));
+    }
+
+    @Test
+    void verifyCredentialCarryingStatusIsRejected() throws Throwable {
+        val transaction = createTransaction();
+        val material = issueCredential(claims -> claims.setClaim("status",
+            Map.of("status_list", Map.of("idx", 1, "uri", "https://issuer.example.net/statuslist"))));
+        assertInvalid(submitPresentation(transaction.ticket().getId(),
+            buildVpToken(bindCredential(material, transaction.nonce()))));
+    }
+
     private PresentationTransaction createTransaction() throws Throwable {
         val nonce = UUID.randomUUID().toString();
         val claimRequest = new ClaimRequest();
@@ -172,6 +242,11 @@ class OidcVerifiableCredentialPresentationResponseEndpointControllerTests extend
     }
 
     private CredentialMaterial issueCredential() throws Throwable {
+        return issueCredential(claims -> {
+        });
+    }
+
+    private CredentialMaterial issueCredential(final Consumer<JwtClaims> customizer) throws Throwable {
         val holderKey = new ECKeyGenerator(Curve.P_256)
             .keyID("holder-key")
             .generate();
@@ -192,6 +267,7 @@ class OidcVerifiableCredentialPresentationResponseEndpointControllerTests extend
         claims.setStringClaim("credential_configuration_id", CREDENTIAL_CONFIGURATION_ID);
         claims.setClaim("cnf", Map.of("jwk", holderKey.toPublicJWK().toJSONObject()));
         sdObjectBuilder.build().forEach(claims::setClaim);
+        customizer.accept(claims);
 
         val credentialJwt = oidcTokenSigningAndEncryptionService.encode(credentialClient, claims);
         return new CredentialMaterial(holderKey, credentialJwt, List.of(disclosure));

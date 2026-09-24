@@ -220,9 +220,9 @@
 
                 <div class="mdc-layout-grid">
                   <div class="mdc-layout-grid__inner">
-                    <div class="mdc-layout-grid__cell"><canvas id="memoryChart"></canvas></div>
-                    <div class="mdc-layout-grid__cell"><canvas id="statisticsChart"></canvas></div>
-                    <div class="mdc-layout-grid__cell"><canvas id="systemHealthChart"></canvas></div>
+                    <div class="mdc-layout-grid__cell"><canvas id="memoryChart" role="img" aria-label="JVM memory usage"></canvas></div>
+                    <div class="mdc-layout-grid__cell"><canvas id="statisticsChart" role="img" aria-label="Ticket registry statistics"></canvas></div>
+                    <div class="mdc-layout-grid__cell"><canvas id="systemHealthChart" role="img" aria-label="System health indicators"></canvas></div>
                   </div>
 
                     <div id="systemLiveMemoryContainer" class="live-memory-panel hide">
@@ -320,47 +320,47 @@
             <div id="httprequests-tab">
                 <div id="httpRequests" class="text-center">
                     <div class="elevation-surface mdc-elevation--z20">
-                        <div class="text-center">
-                            <sub><i class="mdc-tab__icon mdi mdi-numeric" aria-hidden="true"></i>Count</sub><strong>
-                            <h1 class="pt-3 pr-2 pl-2"><code id="httpRequestsCount">0</code></h1></strong>
-                        </div>
+                        <dl class="text-center palantir-metric">
+                            <dt class="palantir-metric-label"><i class="mdc-tab__icon mdi mdi-numeric" aria-hidden="true"></i>Count</dt>
+                            <dd class="pt-3 pr-2 pl-2 palantir-metric-value"><code id="httpRequestsCount">0</code></dd>
+                        </dl>
                     </div>
                     <div class="elevation-surface mdc-elevation--z20">
-                        <div class="text-center">
-                            <sub><i class="mdc-tab__icon mdi mdi-clock" aria-hidden="true"></i>Total Time</sub><strong>
-                            <h1 class="pt-3 pr-2 pl-2"><code id="httpRequestsTotalTime">0</code></h1></strong>
-                        </div>
+                        <dl class="text-center palantir-metric">
+                            <dt class="palantir-metric-label"><i class="mdc-tab__icon mdi mdi-clock" aria-hidden="true"></i>Total Time</dt>
+                            <dd class="pt-3 pr-2 pl-2 palantir-metric-value"><code id="httpRequestsTotalTime">0</code></dd>
+                        </dl>
                     </div>
                     <div class="elevation-surface mdc-elevation--z20">
-                        <div class="text-center">
-                            <sub><i class="mdc-tab__icon mdi mdi-clock"
-                                    aria-hidden="true"></i>Maximum Time</sub><strong>
-                            <h1 class="pt-3 pr-2 pl-2"><code id="httpRequestsMaxTime">0</code></h1></strong>
-                        </div>
+                        <dl class="text-center palantir-metric">
+                            <dt class="palantir-metric-label"><i class="mdc-tab__icon mdi mdi-clock"
+                                    aria-hidden="true"></i>Maximum Time</dt>
+                            <dd class="pt-3 pr-2 pl-2 palantir-metric-value"><code id="httpRequestsMaxTime">0</code></dd>
+                        </dl>
                     </div>
                     <div class="elevation-surface mdc-elevation--z20">
-                        <div class="text-center">
-                            <sub><i class="mdc-tab__icon mdi mdi-numeric" aria-hidden="true"></i>Active</sub><strong>
-                            <h1 class="pt-3 pr-2 pl-2"><code id="httpRequestsActive">0</code></h1></strong>
-                        </div>
+                        <dl class="text-center palantir-metric">
+                            <dt class="palantir-metric-label"><i class="mdc-tab__icon mdi mdi-numeric" aria-hidden="true"></i>Active</dt>
+                            <dd class="pt-3 pr-2 pl-2 palantir-metric-value"><code id="httpRequestsActive">0</code></dd>
+                        </dl>
                     </div>
                     <div class="elevation-surface mdc-elevation--z20">
-                        <div class="text-center">
-                            <sub><i class="mdc-tab__icon mdi mdi-timer" aria-hidden="true"></i>Duration</sub><strong>
-                            <h1 class="pt-3 pr-2 pl-2"><code id="httpRequestsDuration">0</code></h1></strong>
-                        </div>
+                        <dl class="text-center palantir-metric">
+                            <dt class="palantir-metric-label"><i class="mdc-tab__icon mdi mdi-timer" aria-hidden="true"></i>Duration</dt>
+                            <dd class="pt-3 pr-2 pl-2 palantir-metric-value"><code id="httpRequestsDuration">0</code></dd>
+                        </dl>
                     </div>
                     <hr>
                     <div class="mdc-layout-grid">
                         <div class="mdc-layout-grid__inner">
                             <div class="mdc-layout-grid__cell">
-                                <canvas id="httpRequestResponsesChart"></canvas>
+                                <canvas id="httpRequestResponsesChart" role="img" aria-label="HTTP response codes"></canvas>
                             </div>
                             <div class="mdc-layout-grid__cell">
-                                <canvas id="httpRequestsByUrlChart"></canvas>
+                                <canvas id="httpRequestsByUrlChart" role="img" aria-label="HTTP requests by URL"></canvas>
                             </div>
                             <div class="mdc-layout-grid__cell">
-                                <canvas id="auditEventsChart"></canvas>
+                                <canvas id="auditEventsChart" role="img" aria-label="Audit events"></canvas>
                             </div>
                         </div>
                     </div>

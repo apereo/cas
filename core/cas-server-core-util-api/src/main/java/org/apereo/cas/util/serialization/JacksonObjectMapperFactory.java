@@ -12,6 +12,7 @@ import com.google.common.base.Suppliers;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.SuperBuilder;
+import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -59,6 +60,7 @@ import tools.jackson.dataformat.yaml.YAMLMapper;
  */
 @SuperBuilder
 @Getter
+@Slf4j
 public class JacksonObjectMapperFactory {
     /**
      * Providers discovered through the JDK service loader are fixed for the lifetime of the JVM,
@@ -182,9 +184,13 @@ public class JacksonObjectMapperFactory {
             .collect(Collectors.toList());
 
         val effectiveContext = ObjectUtils.getIfNull(applicationContext, ApplicationContextProvider.getApplicationContext());
-        if (effectiveContext != null) {
-            val customizerBeans = effectiveContext.getBeansOfType(JacksonObjectMapperCustomizer.class).values();
-            customizers.addAll(customizerBeans);
+        if (effectiveContext != null
+            && !(effectiveContext instanceof final ConfigurableApplicationContext context && !context.isActive())) {
+            try {
+                customizers.addAll(effectiveContext.getBeansOfType(JacksonObjectMapperCustomizer.class).values());
+            } catch (final IllegalStateException e) {
+                LOGGER.debug("Application context cannot supply object mapper customizers yet: [{}]", e.getMessage());
+            }
         }
         AnnotationAwareOrderComparator.sort(customizers);
         return customizers;

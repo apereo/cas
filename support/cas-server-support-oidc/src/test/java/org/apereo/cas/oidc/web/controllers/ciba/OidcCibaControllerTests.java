@@ -220,7 +220,6 @@ class OidcCibaControllerTests extends AbstractOidcTests {
 
             val authRequestId = MAPPER.readValue(response, Map.class).get(OidcConstants.AUTH_REQ_ID).toString();
             assertNotNull(authRequestId);
-            Thread.sleep(3000);
 
             val verifyUrl = "/cas/" + OidcConstants.BASE_OIDC_URL + '/' + OidcConstants.CIBA_URL + '/' + registeredService.getClientId() + '/' + authRequestId;
             val result = mockMvc.perform(get(verifyUrl)

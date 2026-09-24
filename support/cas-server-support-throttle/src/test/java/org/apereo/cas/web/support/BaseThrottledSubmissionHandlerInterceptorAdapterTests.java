@@ -28,7 +28,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.hc.core5.http.HttpStatus;
 import org.apereo.inspektr.common.web.ClientInfo;
 import org.apereo.inspektr.common.web.ClientInfoHolder;
-import org.jooq.lambda.Unchecked;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -42,6 +41,7 @@ import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.webflow.execution.Event;
 import jakarta.servlet.http.HttpServletResponse;
+import static org.awaitility.Awaitility.*;
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
@@ -73,35 +73,55 @@ public abstract class BaseThrottledSubmissionHandlerInterceptorAdapterTests {
         ClientInfoHolder.setClientInfo(ClientInfo.from(request));
     }
 
+    /**
+     * Failing slower than the configured threshold rate must be let through, failing faster than it
+     * must end in a throttled response, and slowing back down once the throttle is released must be
+     * let through again. Subclasses configure a threshold of three failures over three seconds, so a
+     * submission is turned away only when it lands less than a second after the one before it. That
+     * leaves the middle leg with a full second per attempt to spend on a round trip to a remote
+     * submission store before it stops counting as fast, while the second and a half between the
+     * attempts of the first and last legs stays comfortably the wrong side of the same line. The
+     * middle leg is polled for rather than asserted after a fixed number of attempts, because a
+     * remote store can lag the writes that feed it.
+     *
+     * @throws Throwable in case of any failure
+     */
     @Test
     void verifyThrottle() throws Throwable {
-        /* Ensure that repeated logins BELOW threshold rate are allowed */
-        failLoop(3, 1000, HttpStatus.SC_UNAUTHORIZED);
-
-        /* Ensure that repeated logins ABOVE threshold rate are throttled */
-        failLoop(3, 200, HttpStatus.SC_LOCKED);
-
-        /* Ensure that slowing down relieves throttle  */
-        getThrottle().release();
-        Thread.sleep(1000);
-        failLoop(3, 1000, HttpStatus.SC_UNAUTHORIZED);
+        failLoop(3, 1500, HttpStatus.SC_UNAUTHORIZED);
+        await().atMost(Duration.ofSeconds(30))
+            .until(() -> login("mog", "badpassword", IP_ADDRESS).getStatus() == HttpStatus.SC_LOCKED);
+        assertDoesNotThrow(() -> getThrottle().release());
+        failLoop(3, 1500, HttpStatus.SC_UNAUTHORIZED);
     }
 
     public abstract ThrottledSubmissionHandlerInterceptor getThrottle();
 
+    /**
+     * Submits the same failing credentials repeatedly and asserts the status of the final attempt.
+     * The pause between attempts is the subject of the test rather than a wait for something to
+     * happen: the throttle decides from the interval between consecutive submissions, so the only
+     * way to present it with a given rate is to submit at that rate. A first submission is made
+     * ahead of the loop because the throttle has nothing to measure an interval against until two
+     * submissions exist, and only the final attempt is asserted because the ones before it are
+     * there to establish the rate rather than to be judged by it.
+     *
+     * @param trials   number of attempts to make once the rate is seeded
+     * @param period   milliseconds to wait ahead of each attempt
+     * @param expected expected status of the final attempt
+     * @throws Exception in case of any failure
+     */
     protected void failLoop(final int trials, final int period, final int expected) throws Exception {
-        /* Seed with something to compare against */
-
         login("mog", "badpassword", IP_ADDRESS);
-
-        IntStream.range(0, trials).forEach(Unchecked.intConsumer(i -> {
+        for (var i = 0; i < trials; i++) {
             Thread.sleep(period);
-            val status = login("mog", "badpassword", IP_ADDRESS);
-            if (i == trials) {
-                assertEquals(expected, status.getStatus());
+            val status = login("mog", "badpassword", IP_ADDRESS).getStatus();
+            if (i == trials - 1) {
+                assertEquals(expected, status, () -> "Unexpected status for submissions made every %sms".formatted(period));
             }
-        }));
+        }
     }
+
     protected MockHttpServletResponse login(final String username, final String password,
                                             final String fromAddress) throws Exception {
         val context = MockRequestContext.create();

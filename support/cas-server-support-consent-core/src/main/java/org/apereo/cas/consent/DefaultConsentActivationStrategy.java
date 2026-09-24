@@ -24,30 +24,30 @@ public class DefaultConsentActivationStrategy implements ConsentActivationStrate
     private final CasConfigurationProperties casProperties;
 
     @Override
-    public boolean isConsentRequired(final Service service, final RegisteredService registeredService,
-                                     final Authentication authentication,
-                                     final HttpServletRequest requestContext) throws Throwable {
+    public ConsentQueryResult isConsentRequired(final Service service, final RegisteredService registeredService,
+                                                final Authentication authentication,
+                                                final HttpServletRequest requestContext) throws Throwable {
         val consentPolicy = registeredService.getAttributeReleasePolicy().getConsentPolicy();
         if (consentPolicy != null) {
             switch (consentPolicy.getStatus()) {
                 case TRUE -> {
                     LOGGER.trace("Attribute consent is enabled for registered service [{}]", registeredService.getName());
-                    return consentEngine.isConsentRequiredFor(service, registeredService, authentication).isRequired();
+                    return consentEngine.isConsentRequiredFor(service, registeredService, authentication);
                 }
                 case FALSE -> {
                     LOGGER.trace("Attribute consent will be skipped as the attribute consent policy for service [{}] "
-                                 + "is disabled for this request", registeredService.getName());
-                    return false;
+                        + "is disabled for this request", registeredService.getName());
+                    return ConsentQueryResult.ignored();
                 }
                 case UNDEFINED -> LOGGER.trace("Attribute consent policy for service [{}] is undefined", registeredService.getName());
             }
         }
         if (casProperties.getConsent().getCore().isActive()) {
             LOGGER.trace("Attribute consent is enabled globally for all requests");
-            return consentEngine.isConsentRequiredFor(service, registeredService, authentication).isRequired();
+            return consentEngine.isConsentRequiredFor(service, registeredService, authentication);
         }
         LOGGER.trace("Attribute consent will be skipped as neither the attribute consent policy for service [{}] "
-                     + "nor the global CAS consent policy are enabled for this request", registeredService.getName());
-        return false;
+            + "nor the global CAS consent policy are enabled for this request", registeredService.getName());
+        return ConsentQueryResult.ignored();
     }
 }

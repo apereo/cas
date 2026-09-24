@@ -46,10 +46,10 @@ public class CasRestServiceRegistryAutoConfiguration {
         return BeanSupplier.of(ServiceRegistry.class)
             .when(CONDITION.given(applicationContext))
             .supply(() -> {
-                val registry = casProperties.getServiceRegistry().getRest();
-                LOGGER.debug("Creating REST-based service registry using endpoint [{}]", registry.getUrl());
+                val properties = casProperties.getServiceRegistry().getRest();
+                LOGGER.debug("Creating REST-based service registry using endpoint [{}]", properties.getUrl());
                 return new RestfulServiceRegistry(applicationContext,
-                    Optional.ofNullable(serviceRegistryListeners.getIfAvailable()).orElseGet(ArrayList::new), registry);
+                    Optional.ofNullable(serviceRegistryListeners.getIfAvailable()).orElseGet(ArrayList::new), properties);
             })
             .otherwiseProxy()
             .get();

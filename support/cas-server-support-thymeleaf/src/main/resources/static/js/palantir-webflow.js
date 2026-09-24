@@ -1,3 +1,37 @@
+let mermaidInitialization = null;
+
+/**
+ * Load and configure the diagram renderer on first use.
+ *
+ * The renderer is the single largest script the dashboard can pull in, and only the authentication
+ * flows panel draws with it, so it is fetched when that panel is first drawn rather than on every
+ * dashboard load.
+ *
+ * @returns {Promise<void>} resolved once the renderer is ready to render
+ */
+function ensureMermaidLoaded() {
+    if (mermaidInitialization) {
+        return mermaidInitialization;
+    }
+    mermaidInitialization = loadPalantirScriptOnce(PalantirDashboardConfiguration.all().mermaidScriptPath)
+        .then(() => mermaid.initialize({
+            startOnLoad: false,
+            securityLevel: "loose",
+            theme: "base",
+            logLevel: 4,
+            themeVariables: {
+                primaryColor: "deepskyblue",
+                secondaryColor: "#73e600",
+                lineColor: "deepskyblue"
+            }
+        }))
+        .catch(error => {
+            mermaidInitialization = null;
+            throw error;
+        });
+    return mermaidInitialization;
+}
+
 async function initializeCasSpringWebflowOperations() {
     function drawFlowStateDiagram() {
         $("#webflowMarkdownContainer").addClass("hide");
@@ -165,6 +199,7 @@ async function initializeCasSpringWebflowOperations() {
 
                 $("#webflowMarkdownContainer").removeClass("hide");
                 $("#webflowMarkdown").empty().text(diagramDefinition);
+                await ensureMermaidLoaded();
                 const {svg, bindFunctions} = await mermaid.render("webflowDiagram", diagramDefinition);
                 const container = document.getElementById("webflowContainer");
                 container.innerHTML = svg;
@@ -180,29 +215,13 @@ async function initializeCasSpringWebflowOperations() {
         });
     }
 
-    if (CasActuatorEndpoints.springWebflow()) {
-        mermaid.initialize({
-            startOnLoad: false,
-            securityLevel: "loose",
-            theme: "base",
-            logLevel: 4,
-            themeVariables: {
-                primaryColor: "deepskyblue",
-                secondaryColor: "#73e600",
-                lineColor: "deepskyblue"
-            }
-        });
+    let flowCatalogLoaded = false;
 
-        $("#webflowFilter").empty().selectmenu({
-            change: (event, data) => {
-                $("#webflowStateFilter").empty();
-                drawFlowStateDiagram();
-            }
-        });
-        $("#webflowStateFilter").empty().selectmenu({
-            change: (event, data) => drawFlowStateDiagram()
-        });
-
+    function loadWebflowCatalog() {
+        if (flowCatalogLoaded) {
+            return;
+        }
+        flowCatalogLoaded = true;
         $.ajax({
             url: `${CasActuatorEndpoints.springWebflow()}`,
             type: "GET",
@@ -223,7 +242,31 @@ async function initializeCasSpringWebflowOperations() {
                 $("#webflowFilter").selectmenu("refresh");
                 drawFlowStateDiagram();
             },
-            error: (xhr, textStatus, errorThrown) => console.error("Error fetching data:", errorThrown)
+            error: (xhr, textStatus, errorThrown) => {
+                flowCatalogLoaded = false;
+                console.error("Error fetching data:", errorThrown);
+            }
         });
+    }
+
+    if (CasActuatorEndpoints.springWebflow()) {
+        $("#webflowFilter").empty().selectmenu({
+            change: (event, data) => {
+                $("#webflowStateFilter").empty();
+                drawFlowStateDiagram();
+            }
+        });
+        $("#webflowStateFilter").empty().selectmenu({
+            change: (event, data) => drawFlowStateDiagram()
+        });
+
+        $("#system-tabs").on("tabsactivate.casWebflow", (event, ui) => {
+            if (ui.newPanel.attr("id") === "caswebflowtab-tab") {
+                loadWebflowCatalog();
+            }
+        });
+        if ($("#caswebflowtab-tab").is(":visible")) {
+            loadWebflowCatalog();
+        }
     }
 }

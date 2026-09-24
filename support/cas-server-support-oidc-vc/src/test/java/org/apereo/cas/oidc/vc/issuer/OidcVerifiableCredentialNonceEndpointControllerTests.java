@@ -8,12 +8,13 @@ import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.autoconfigure.ImportAutoConfiguration;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.TestPropertySource;
 
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.hamcrest.CoreMatchers.*;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 /**
  * This is {@link OidcVerifiableCredentialNonceEndpointControllerTests}.
@@ -35,8 +36,9 @@ class OidcVerifiableCredentialNonceEndpointControllerTests {
                     .with(withHttpRequestProcessor())
                     .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
+                .andExpect(header().string(HttpHeaders.CACHE_CONTROL, containsString("no-store")))
                 .andExpect(jsonPath("$." + OidcConstants.C_NONCE).exists())
-                .andExpect(jsonPath("$." + OidcConstants.C_NONCE_EXPIRES_IN).exists());
+                .andExpect(jsonPath("$." + OidcConstants.C_NONCE_EXPIRES_IN).doesNotExist());
         }
     }
 

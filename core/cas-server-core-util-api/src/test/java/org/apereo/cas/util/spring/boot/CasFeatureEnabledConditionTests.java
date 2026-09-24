@@ -8,8 +8,7 @@ import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.junit.jupiter.api.parallel.Execution;
-import org.junit.jupiter.api.parallel.ExecutionMode;
+import org.junit.jupiter.api.parallel.ResourceLock;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.aop.AopAutoConfiguration;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -30,7 +29,6 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 @Tag("Simple")
 @ExtendWith(CasTestExtension.class)
-@Execution(ExecutionMode.SAME_THREAD)
 class CasFeatureEnabledConditionTests {
     @ConditionalOnFeaturesEnabled({
         @ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.AcceptableUsagePolicy, module = "feature3"),
@@ -156,6 +154,7 @@ class CasFeatureEnabledConditionTests {
         "CasFeatureModule.AcceptableUsagePolicy.feature3.enabled=true",
         "CasFeatureModule.AcceptableUsagePolicy.feature4.enabled=true"
     })
+    @ResourceLock("casFeatureModuleCatalog")
     class FeatureMultipleConditionsTests {
         @Autowired
         private ConfigurableApplicationContext applicationContext;
@@ -176,10 +175,17 @@ class CasFeatureEnabledConditionTests {
             + "=CasFeatureModule.AcceptableUsagePolicy.feature1.enabled=true,"
             + "CasFeatureModule.SAMLIdentityProvider.enabled=true")
     @ContextConfiguration(initializers = ClearRegisteredFeaturesInitializer.class)
+    @ResourceLock("casFeatureModuleCatalog")
     class SelectedFeatureConditionsTests {
         @Autowired
         private ConfigurableApplicationContext applicationContext;
 
+        /**
+         * The feature catalog is static, shared by every context in the fork, and this is the only
+         * test that asserts what is absent from it. Its context initializer empties the catalog
+         * before the conditions are evaluated, so the lock it shares with the nested class that
+         * registers feature3 is what keeps that registration from landing in between.
+         */
         @Test
         void verifyOperation() {
             assertTrue(applicationContext.containsBean("selectedBean"));

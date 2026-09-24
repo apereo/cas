@@ -37,11 +37,29 @@ public class OidcCredentialIssuerMetadata implements Serializable {
     @JsonProperty("nonce_endpoint")
     private String nonceEndpoint;
 
-    @JsonProperty("batch_credential_endpoint")
-    private String batchCredentialEndpoint;
+    @JsonProperty("batch_credential_issuance")
+    private BatchCredentialIssuance batchCredentialIssuance;
 
     @JsonProperty("credential_configurations_supported")
     private Map<String, CredentialConfiguration> credentialConfigurationsSupported;
+
+    /**
+     * Advertises that the credential endpoint accepts several proofs in one request,
+     * and how many. OpenID4VCI 1.0 replaced the batch credential endpoint with this.
+     */
+    @JsonInclude(JsonInclude.Include.NON_EMPTY)
+    @Getter
+    @Setter
+    @NoArgsConstructor
+    @SuperBuilder
+    @Jacksonized
+    public static class BatchCredentialIssuance implements Serializable {
+        @Serial
+        private static final long serialVersionUID = 7169398914160552046L;
+
+        @JsonProperty("batch_size")
+        private int batchSize;
+    }
 
     @JsonInclude(JsonInclude.Include.NON_EMPTY)
     @Getter

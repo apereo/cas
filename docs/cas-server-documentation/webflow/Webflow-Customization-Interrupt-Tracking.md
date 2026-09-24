@@ -17,6 +17,10 @@ and re-interrupt the user if necessary. For example, if the user has been interr
 and interrupt payload has changed since that last notification, CAS may interrupt the user flow again to process
 the most recent version of the interrupt payload.
 
+A tracked interrupt only applies to the principal that acknowledged it. Interrupt responses that block the
+authentication flow are never tracked as acknowledged, even when the user follows one of their links, and are
+presented again on every attempt.
+
 {% include_cached casproperties.html properties="cas.interrupt.cookie" %}
 
 <div class="alert alert-warning">:warning: <strong>Pay Attention</strong><br /> 

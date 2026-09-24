@@ -17,6 +17,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -96,12 +97,12 @@ class SamlIdPGitRegisteredServiceMetadataConfiguration {
     @Lazy(false)
     public Runnable gitSamlRegisteredServiceRepositoryScheduler(
         @Qualifier("gitSamlRegisteredServiceRepositoryInstance")
-        final GitRepository gitSamlRegisteredServiceRepositoryInstance,
+        final ObjectProvider<GitRepository> gitSamlRegisteredServiceRepositoryInstance,
         final ConfigurableApplicationContext applicationContext) {
         return BeanSupplier.of(Runnable.class)
             .when(BeanCondition.on("cas.authn.saml-idp.metadata.git.schedule.enabled")
                 .isTrue().given(applicationContext.getEnvironment()))
-            .supply(() -> new GitSamlRegisteredServiceRepositoryScheduler(gitSamlRegisteredServiceRepositoryInstance))
+            .supply(() -> new GitSamlRegisteredServiceRepositoryScheduler(gitSamlRegisteredServiceRepositoryInstance.getObject()))
             .otherwiseProxy()
             .get();
     }

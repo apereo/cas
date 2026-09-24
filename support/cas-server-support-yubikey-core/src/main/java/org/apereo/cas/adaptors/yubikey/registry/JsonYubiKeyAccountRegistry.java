@@ -49,6 +49,15 @@ public class JsonYubiKeyAccountRegistry extends PermissiveYubiKeyAccountRegistry
         FunctionUtils.doIfNotNull(watcherService, WatcherService::close);
     }
 
+    /**
+     * Loads the accounts held in the given resource. The result is a concurrent map because it
+     * becomes this registry's live state: registrations and removals mutate it while the whole map
+     * is being serialized back to the file, and an ordinary map cannot be read and written at the
+     * same time without corrupting itself or failing the write part way through.
+     *
+     * @param jsonResource the resource holding the accounts
+     * @return the accounts, keyed by username
+     */
     private static Map<String, YubiKeyAccount> getDevicesFromJsonResource(final Resource jsonResource) {
         return FunctionUtils.doUnchecked(() -> {
             if (!ResourceUtils.doesResourceExist(jsonResource)) {
@@ -60,13 +69,14 @@ public class JsonYubiKeyAccountRegistry extends PermissiveYubiKeyAccountRegistry
             if (ResourceUtils.doesResourceExist(jsonResource)) {
                 val file = jsonResource.getFile();
                 if (file.canRead() && file.length() > 0) {
-                    return MAPPER.readValue(file, new TypeReference<>() {
+                    final Map<String, YubiKeyAccount> accounts = MAPPER.readValue(file, new TypeReference<>() {
                     });
+                    return new ConcurrentHashMap<>(accounts);
                 }
             } else {
                 LOGGER.warn("JSON resource @ [{}] does not exist", jsonResource);
             }
-            return new HashMap<>();
+            return new ConcurrentHashMap<>();
         });
     }
 

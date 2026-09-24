@@ -23,12 +23,14 @@ import static org.junit.jupiter.api.Assertions.*;
     "cas.authn.attribute-repository.jdbc[0].column-mappings.attr_name=attr_value",
     "cas.authn.attribute-repository.jdbc[0].sql=SELECT * FROM table_users WHERE {0}",
     "cas.authn.attribute-repository.jdbc[0].username=uid",
+    "cas.authn.attribute-repository.jdbc[0].url=jdbc:hsqldb:mem:jdbc-multirow-attributes",
 
     "cas.authn.attribute-repository.jdbc[1].attributes.nickname=cas_nickname",
     "cas.authn.attribute-repository.jdbc[1].single-row=false",
     "cas.authn.attribute-repository.jdbc[1].column-mappings.attr_name=attr_value",
     "cas.authn.attribute-repository.jdbc[1].sql=SELECT * FROM table_ext_users WHERE {0}",
-    "cas.authn.attribute-repository.jdbc[1].username=uid"
+    "cas.authn.attribute-repository.jdbc[1].username=uid",
+    "cas.authn.attribute-repository.jdbc[1].url=jdbc:hsqldb:mem:jdbc-multirow-attributes"
 })
 @Tag("JDBCAuthentication")
 class JdbcMultiRowAttributeRepositoryTests extends BaseJdbcAttributeRepositoryTests {

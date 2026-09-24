@@ -49,6 +49,16 @@ class FileSystemResourceMetadataResolverTests extends BaseSamlIdPServicesTests {
     }
 
     @Test
+    void verifyResolverFailsClosedWhenSignatureCannotBeRead() throws Throwable {
+        val service = new SamlRegisteredService();
+        service.setName("SignatureRequired");
+        service.setMetadataLocation(METADATA_FILE.getCanonicalPath());
+        service.setMetadataSignatureLocation("file:%s/no-such-certificate-%s.pem"
+            .formatted(FileUtils.getTempDirectory().getCanonicalPath(), UUID.randomUUID()));
+        assertTrue(metadataResolver.resolve(service).isEmpty());
+    }
+
+    @Test
     void verifyResolverSupports() throws Throwable {
         val service = new SamlRegisteredService();
         service.setMetadataLocation(METADATA_FILE.getCanonicalPath());

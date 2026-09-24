@@ -48,12 +48,15 @@ public class CasDynamoDbServiceRegistryAutoConfiguration {
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @ConditionalOnMissingBean(name = "dynamoDbServiceRegistry")
     public ServiceRegistry dynamoDbServiceRegistry(
+        final CasConfigurationProperties casProperties,
         final ConfigurableApplicationContext applicationContext,
         final ObjectProvider<List<ServiceRegistryListener>> serviceRegistryListeners,
         @Qualifier("dynamoDbServiceRegistryFacilitator")
         final DynamoDbServiceRegistryFacilitator dynamoDbServiceRegistryFacilitator) {
-        return new DynamoDbServiceRegistry(applicationContext, dynamoDbServiceRegistryFacilitator,
+        val registry = new DynamoDbServiceRegistry(applicationContext, dynamoDbServiceRegistryFacilitator,
             Optional.ofNullable(serviceRegistryListeners.getIfAvailable()).orElseGet(ArrayList::new));
+        registry.setOrder(casProperties.getServiceRegistry().getDynamoDb().getOrder());
+        return registry;
     }
 
     @Bean

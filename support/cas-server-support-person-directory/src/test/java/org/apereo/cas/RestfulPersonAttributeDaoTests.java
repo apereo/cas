@@ -6,10 +6,11 @@ import org.apereo.cas.authentication.principal.attribute.PersonAttributeDao;
 import org.apereo.cas.test.CasTestExtension;
 import org.apereo.cas.util.MockWebServer;
 import lombok.val;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestInstance;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -34,6 +35,7 @@ import static org.junit.jupiter.api.Assertions.*;
     })
 @Tag("RestfulApi")
 @ExtendWith(CasTestExtension.class)
+@TestInstance(TestInstance.Lifecycle.PER_CLASS)
 class RestfulPersonAttributeDaoTests {
     @Autowired
     @Qualifier(PrincipalResolver.BEAN_NAME_ATTRIBUTE_REPOSITORY)
@@ -41,7 +43,7 @@ class RestfulPersonAttributeDaoTests {
 
     private MockWebServer webServer;
 
-    @BeforeEach
+    @BeforeAll
     void initialize() {
         val data = """
             {
@@ -56,7 +58,7 @@ class RestfulPersonAttributeDaoTests {
         this.webServer.start();
     }
 
-    @AfterEach
+    @AfterAll
     public void cleanup() {
         this.webServer.stop();
     }

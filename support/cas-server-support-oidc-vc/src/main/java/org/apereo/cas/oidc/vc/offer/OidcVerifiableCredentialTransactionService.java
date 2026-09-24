@@ -27,6 +27,11 @@ public interface OidcVerifiableCredentialTransactionService {
     String PROPERTY_TRANSACTION_CODE = "transactionCode";
 
     /**
+     * Ticket property that carries the credential configuration ids the offer covers.
+     */
+    String PROPERTY_CREDENTIAL_CONFIGURATION_IDS = "credentialConfigurationIds";
+
+    /**
      * Issue ticket.
      *
      * @param clientId                   the client id
@@ -53,11 +58,13 @@ public interface OidcVerifiableCredentialTransactionService {
     @Nullable Ticket fetchPreAuthorizationCode(String preAuthorizationCode);
 
     /**
-     * Update pre authorization code.
+     * Redeem a pre-authorization code, atomically, so that only one of several concurrent redemptions
+     * of the same code can succeed. OpenID4VCI 1.0 requires the code to be single use.
      *
      * @param preAuthorizationCode the pre authorization code
+     * @return the consumed ticket, or null when the code is unknown, expired or already redeemed
      */
-    void updatePreAuthorizationCode(Ticket preAuthorizationCode);
+    @Nullable Ticket consumePreAuthorizationCode(String preAuthorizationCode);
 
     /**
      * Validate the transaction code presented against the one bound to the pre-authorization code.

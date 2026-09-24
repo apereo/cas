@@ -60,7 +60,7 @@ public class YubicoJsonMetadataService implements AttestationMetadataSource {
                         }
                     })
                 .filter(Objects::nonNull)
-                .collect(Collectors.toUnmodifiableSet());
+                .collect(Collectors.toSet());
         this.metadataObjects = metadataObjects;
         this.matchers = CollectionUtil.immutableMap(matchers);
     }

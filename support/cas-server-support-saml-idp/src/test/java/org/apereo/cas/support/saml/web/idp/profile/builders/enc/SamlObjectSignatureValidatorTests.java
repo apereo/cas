@@ -62,7 +62,7 @@ class SamlObjectSignatureValidatorTests extends BaseSamlIdPConfigurationTests {
 
     private void setupTestContextFor(final String spMetadataPath, final String spEntityId) throws Exception {
         val idpMetadata = new File("src/test/resources/metadata/idp-metadata.xml").getCanonicalPath();
-        val keystorePath = new File(FileUtils.getTempDirectory(), "keystore").getCanonicalPath();
+        val keystorePath = new File(FileUtils.getTempDirectory(), "keystore-%s".formatted(UUID.randomUUID())).getCanonicalPath();
         saml2ClientConfiguration = new SAML2Configuration(keystorePath, "changeit", "changeit", idpMetadata);
         saml2ClientConfiguration.setServiceProviderEntityId(spEntityId);
         saml2ClientConfiguration.setServiceProviderMetadataPath(spMetadataPath);
@@ -117,7 +117,7 @@ class SamlObjectSignatureValidatorTests extends BaseSamlIdPConfigurationTests {
 
     @Test
     void verifySamlAuthnRequestNotSigned() throws Throwable {
-        val spMetadataPath = new File(FileUtils.getTempDirectory(), "sp-metadata.xml").getCanonicalPath();
+        val spMetadataPath = new File(FileUtils.getTempDirectory(), "sp-metadata-%s.xml".formatted(UUID.randomUUID())).getCanonicalPath();
         setupTestContextFor(spMetadataPath, "cas:example:sp");
         val request = new MockHttpServletRequest();
         val builder = new SAML2AuthnRequestBuilder();
@@ -128,7 +128,7 @@ class SamlObjectSignatureValidatorTests extends BaseSamlIdPConfigurationTests {
 
     @Test
     void verifySamlAuthnRequestSigned() throws Throwable {
-        val spMetadataPath = new File(FileUtils.getTempDirectory(), "sp-metadata.xml").getCanonicalPath();
+        val spMetadataPath = new File(FileUtils.getTempDirectory(), "sp-metadata-%s.xml".formatted(UUID.randomUUID())).getCanonicalPath();
         setupTestContextFor(spMetadataPath, "cas:example:sp");
 
         val request = new MockHttpServletRequest();
@@ -140,7 +140,7 @@ class SamlObjectSignatureValidatorTests extends BaseSamlIdPConfigurationTests {
 
     @Test
     void verifySamlAuthnRequestSignatureRejectsTamperedRequest() throws Throwable {
-        val spMetadataPath = new File(FileUtils.getTempDirectory(), "sp-metadata.xml").getCanonicalPath();
+        val spMetadataPath = new File(FileUtils.getTempDirectory(), "sp-metadata-%s.xml".formatted(UUID.randomUUID())).getCanonicalPath();
         setupTestContextFor(spMetadataPath, "cas:example:sp");
 
         val authnRequest = buildSignedAuthnRequest();
@@ -158,7 +158,7 @@ class SamlObjectSignatureValidatorTests extends BaseSamlIdPConfigurationTests {
 
     @Test
     void verifySamlAuthnRequestRejectsBlockedEmbeddedSignatureAlgorithm() throws Throwable {
-        val spMetadataPath = new File(FileUtils.getTempDirectory(), "sp-metadata.xml").getCanonicalPath();
+        val spMetadataPath = new File(FileUtils.getTempDirectory(), "sp-metadata-%s.xml".formatted(UUID.randomUUID())).getCanonicalPath();
         setupTestContextFor(spMetadataPath, "cas:example:sp");
 
         val authnRequest = buildSignedAuthnRequest();
@@ -187,7 +187,7 @@ class SamlObjectSignatureValidatorTests extends BaseSamlIdPConfigurationTests {
 
     @Test
     void verifySamlAuthnRequestWithoutSig() throws Throwable {
-        val spMetadataPath = new File(FileUtils.getTempDirectory(), "sp-metadata.xml").getCanonicalPath();
+        val spMetadataPath = new File(FileUtils.getTempDirectory(), "sp-metadata-%s.xml".formatted(UUID.randomUUID())).getCanonicalPath();
         setupTestContextFor(spMetadataPath, "cas:example:sp");
 
         val request = new MockHttpServletRequest();

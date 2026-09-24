@@ -49,6 +49,24 @@ class GroovyScriptCacheManagerEndpointTests extends AbstractCasEndpointTests {
     }
     
     @Test
+    void verifyValidationDoesNotRunCompileTimeCode() throws Throwable {
+        val marker = Files.createTempDirectory("cas-validate").resolve("marker.txt");
+        val payload = """
+            @ASTTest(value = { new File('%s').write('executed') })
+            def probe = 1
+            return probe
+            """.stripIndent().formatted(marker.toAbsolutePath().toString().replace('\\', '/'));
+        mockMvc.perform(post("/actuator/groovyCache/resources/validate")
+                .contentType(MediaType.TEXT_PLAIN_VALUE)
+                .accept(MediaType.APPLICATION_JSON)
+                .content(payload)
+            )
+            .andExpect(status().isOk());
+        assertFalse(Files.exists(marker),
+            "Validating a script must not run the AST transformations that the script declares");
+    }
+
+    @Test
     void verifyOperation() throws Throwable {
         val inlineScriptKey = UUID.randomUUID().toString();
         val classpathScriptKey = UUID.randomUUID().toString();

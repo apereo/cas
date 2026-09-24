@@ -263,6 +263,41 @@ function attachPalantirGroovyEditorButton(options = {}) {
     });
 }
 
+const palantirLoadedScripts = new Map();
+
+/**
+ * Load a script once, on demand.
+ *
+ * Large libraries that only one panel needs -- the webflow diagram renderer above all -- are kept
+ * off the dashboard's critical path and fetched the first time that panel is used. Repeat callers
+ * share the first call's promise, so a rapid sequence of clicks loads the file once.
+ *
+ * @param url the script URL to load
+ * @returns {Promise<void>} resolved once the script has executed
+ */
+function loadPalantirScriptOnce(url) {
+    if (!url) {
+        return Promise.reject(new Error("No script URL was provided."));
+    }
+    const loaded = palantirLoadedScripts.get(url);
+    if (loaded) {
+        return loaded;
+    }
+    const loading = new Promise((resolve, reject) => {
+        const script = document.createElement("script");
+        script.src = url;
+        script.async = true;
+        script.addEventListener("load", () => resolve());
+        script.addEventListener("error", () => {
+            palantirLoadedScripts.delete(url);
+            reject(new Error(`Unable to load ${url}`));
+        });
+        document.head.append(script);
+    });
+    palantirLoadedScripts.set(url, loading);
+    return loading;
+}
+
 function hideBanner() {
     notyf.dismissAll();
 }
@@ -467,14 +502,44 @@ function decoratePalantirInputIcons(root = document) {
     root.querySelectorAll?.(selector).forEach(decoratePalantirInputIcon);
 }
 
+/**
+ * Watch for inputs added after load and decorate them, in batches.
+ *
+ * The inputs present at load are decorated by initializePalantirWidgets, panel by panel, as each
+ * tab opens; this observer covers everything created afterwards.
+ *
+ * The observer watches the whole dashboard, and a data table redraw inserts hundreds of nodes at
+ * once. Decorating each node as its mutation record arrives made every redraw pay for one
+ * querySelectorAll per inserted row; the nodes are collected instead and swept once per frame.
+ */
 function initializePalantirInputIcons() {
-    decoratePalantirInputIcons();
-    const observer = new MutationObserver(mutations => mutations.forEach(mutation =>
-        mutation.addedNodes.forEach(node => {
-            if (node.nodeType === Node.ELEMENT_NODE) {
+    const pending = new Set();
+    let sweepScheduled = false;
+
+    const sweep = () => {
+        sweepScheduled = false;
+        const nodes = [...pending];
+        pending.clear();
+        for (const node of nodes) {
+            if (node.isConnected) {
                 decoratePalantirInputIcons(node);
             }
-        })));
+        }
+    };
+
+    const observer = new MutationObserver(mutations => {
+        for (const mutation of mutations) {
+            for (const node of mutation.addedNodes) {
+                if (node.nodeType === Node.ELEMENT_NODE) {
+                    pending.add(node);
+                }
+            }
+        }
+        if (pending.size > 0 && !sweepScheduled) {
+            sweepScheduled = true;
+            requestAnimationFrame(sweep);
+        }
+    });
     observer.observe(document.body, {childList: true, subtree: true});
 }
 
@@ -490,8 +555,10 @@ function isPalantirPollingContextActive(dashboardTab, panelSelector) {
     }
 
     const navigationItem = $(`nav.sidebar-navigation ul li[data-tab-index='${tabIndex}']`);
+    const navigationButton = navigationItem.find(".sidebar-navigation-button");
     if (navigationItem.length === 0 || !navigationItem.is(":visible")
-        || navigationItem.is("[disabled], [aria-disabled='true']") || navigationItem.hasClass("ui-state-disabled")) {
+        || navigationItem.is("[disabled], [aria-disabled='true']") || navigationItem.hasClass("ui-state-disabled")
+        || navigationButton.is("[disabled], [aria-disabled='true']")) {
         return false;
     }
 
@@ -529,55 +596,113 @@ function initializePalantirPollingContext() {
 }
 
 
-function initializeTabs() {
-    $(".jqueryui-tabs").tabs({
-        activate: function () {
-            const tabId = $(this).attr("id");
-            if (tabId) {
-                const active = $(this).tabs("option", "active");
-                const storedTabs = localStorage.getItem("ActiveTabs");
-                const activeTabs = storedTabs ? JSON.parse(storedTabs) : {};
-                activeTabs[tabId] = active;
-                localStorage.setItem("ActiveTabs", JSON.stringify(activeTabs));
-            }
-            notifyPalantirPollingContextChanged();
+/**
+ * Collect the elements matching a selector within a root.
+ *
+ * When the root is the whole document the dashboard's tab panels are skipped: their widgets are
+ * built when that tab is first opened, so building them all at load would be paying for fifteen
+ * panels to show one.
+ *
+ * @param selector the widget selector
+ * @param root the subtree to search
+ * @returns {jQuery} the matching elements
+ */
+function palantirWidgetTargets(selector, root) {
+    const $root = $(root ?? document);
+    const found = $root.find(selector).addBack(selector);
+    return root && root !== document
+        ? found
+        : found.filter((_, element) => !element.closest(".attribute-tab"));
+}
+
+/**
+ * Build the jQuery UI widgets and input decorations inside a subtree.
+ *
+ * Safe to call more than once and on overlapping subtrees: an element that already carries its
+ * widget is left alone.
+ *
+ * @param root the subtree to initialize; the document, minus the tab panels, when omitted
+ */
+function initializePalantirWidgets(root) {
+    if (root === null) {
+        return;
+    }
+    initializeTabs(root);
+    initializeMenus(root);
+    initializeDropDowns(root);
+    initializeDatePickers(root);
+    palantirWidgetTargets("input.mdc-text-field__input", root)
+        .each((_, input) => decoratePalantirInputIcon(input));
+}
+
+function initializeTabs(root) {
+    palantirWidgetTargets(".jqueryui-tabs", root).each(function () {
+        if ($(this).data("ui-tabs")) {
+            return;
         }
-    }).off().on("click", () => updateNavigationSidebar());
-}
-
-function initializeMenus() {
-    $(".jqueryui-menu").menu();
-}
-
-function initializeDropDowns() {
-    $(".jqueryui-selectmenu").selectmenu({
-        width: "360px",
-        change: function (event, ui) {
-            const $select = $(this);
-            const handlerNames = $select.data("change-handler");
-            if (!handlerNames) {
-                return;
-            }
-            for (const handlerName of handlerNames.split(",")) {
-                if (handlerName && handlerName.length > 0 && typeof window[handlerName] === "function") {
-                    const result = window[handlerName]($select, ui);
-                    if (result !== undefined && result === false) {
-                        break;
-                    }
+        $(this).tabs({
+            activate: function () {
+                const tabId = $(this).attr("id");
+                if (tabId) {
+                    const active = $(this).tabs("option", "active");
+                    const storedTabs = localStorage.getItem("ActiveTabs");
+                    const activeTabs = storedTabs ? JSON.parse(storedTabs) : {};
+                    activeTabs[tabId] = active;
+                    localStorage.setItem("ActiveTabs", JSON.stringify(activeTabs));
                 }
+                notifyPalantirPollingContextChanged();
             }
+        }).off().on("click", () => updateNavigationSidebar());
+    });
+}
+
+function initializeMenus(root) {
+    palantirWidgetTargets(".jqueryui-menu", root).each(function () {
+        if (!$(this).data("ui-menu")) {
+            $(this).menu();
         }
     });
 }
 
-function initializeDatePickers() {
-    $("input.jquery-datepicker").datepicker({
-        showAnim: "slideDown",
-        onSelect: function (date, ins) {
-            $(ins).val(date);
-            generateServiceDefinition();
-            $(`#${$(ins).prop("id")}`).prev().find(".mdc-notched-outline__notch").hide();
+function initializeDropDowns(root) {
+    palantirWidgetTargets(".jqueryui-selectmenu", root).each(function () {
+        if ($(this).data("ui-selectmenu")) {
+            return;
         }
+        $(this).selectmenu({
+            width: "360px",
+            change: function (event, ui) {
+                const $select = $(this);
+                const handlerNames = $select.data("change-handler");
+                if (!handlerNames) {
+                    return;
+                }
+                for (const handlerName of handlerNames.split(",")) {
+                    if (handlerName && handlerName.length > 0 && typeof window[handlerName] === "function") {
+                        const result = window[handlerName]($select, ui);
+                        if (result !== undefined && result === false) {
+                            break;
+                        }
+                    }
+                }
+            }
+        });
+    });
+}
+
+function initializeDatePickers(root) {
+    palantirWidgetTargets("input.jquery-datepicker", root).each(function () {
+        if ($(this).data("datepicker")) {
+            return;
+        }
+        $(this).datepicker({
+            showAnim: "slideDown",
+            onSelect: function (date, ins) {
+                $(ins).val(date);
+                generateServiceDefinition();
+                $(`#${$(ins).prop("id")}`).prev().find(".mdc-notched-outline__notch").hide();
+            }
+        });
     });
 }
 
@@ -585,6 +710,9 @@ function initializeTooltips() {
     $(function () {
         $(document).tooltip({
             items: "[title]:not(a)",
+            content: function () {
+                return $(this).data("tooltip-html") ?? $("<div>").text($(this).attr("title")).html();
+            },
             show: {
                 effect: "fade",
                 delay: 800,
@@ -772,5 +900,50 @@ function initializeDataTableContextMenu({table, selector, callback, items, trigg
         },
         items: items,
         callback: (key, options) => callback(key, options.context)
+    });
+}
+
+/**
+ * Corrects the ARIA roles jQuery UI puts on accordions.
+ *
+ * jQuery UI marks accordion headers role="tab" and panels role="tabpanel".
+ * Those roles are only meaningful inside a role="tablist", which an accordion
+ * is not, and role="tab" on an <h3> overrides its heading semantics, so a
+ * screen reader user cannot move through the sections by heading at all.
+ *
+ * This restores what the ARIA authoring practices describe: headers stay
+ * headings and keep aria-expanded and aria-controls, and each panel becomes a
+ * region named by its header. jQuery UI's keyboard handling, roving tab index
+ * and animation are untouched.
+ *
+ * @param element the accordion root element to correct
+ */
+function applyAccordionAccessibility(element) {
+    const accordion = $(element);
+    accordion.children(".ui-accordion-header").removeAttr("role").removeAttr("aria-selected");
+    accordion.children(".ui-accordion-content").attr("role", "region");
+}
+
+/**
+ * Teaches every jQuery UI accordion on the page to correct itself.
+ *
+ * Extending the widget rather than patching each call site covers accordions
+ * created later and the internal refreshes jQuery UI performs when panels are
+ * added or options change. Safe to call more than once.
+ */
+function initializeAccordionAccessibility() {
+    if (typeof $.widget !== "function" || !$.ui?.accordion || $.ui.accordion.prototype.palantirAccessible) {
+        return;
+    }
+    $.widget("ui.accordion", $.ui.accordion, {
+        palantirAccessible: true,
+        _refresh: function () {
+            this._super();
+            applyAccordionAccessibility(this.element);
+        },
+        _toggle: function (data) {
+            this._super(data);
+            applyAccordionAccessibility(this.element);
+        }
     });
 }

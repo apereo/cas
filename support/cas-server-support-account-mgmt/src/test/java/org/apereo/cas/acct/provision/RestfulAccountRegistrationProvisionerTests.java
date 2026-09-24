@@ -4,8 +4,10 @@ import module java.base;
 import org.apereo.cas.acct.AccountRegistrationRequest;
 import org.apereo.cas.config.CasAccountManagementWebflowAutoConfiguration;
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.configuration.model.support.account.provision.RestfulAccountManagementRegistrationProvisioningProperties;
 import org.apereo.cas.test.CasTestExtension;
 import org.apereo.cas.util.MockWebServer;
+import org.apereo.cas.util.http.HttpClient;
 import org.apereo.cas.web.flow.BaseWebflowConfigurerTests;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
@@ -27,39 +29,38 @@ import static org.junit.jupiter.api.Assertions.*;
 @SpringBootTest(classes = {
     CasAccountManagementWebflowAutoConfiguration.class,
     BaseWebflowConfigurerTests.SharedTestConfiguration.class
-}, properties = "cas.account-registration.provisioning.rest.url=http://localhost:${random.int[3000,9000]}")
+}, properties = "cas.account-registration.provisioning.rest.url=https://localhost/provision")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Tag("RestfulApi")
 @ExtendWith(CasTestExtension.class)
 class RestfulAccountRegistrationProvisionerTests {
     @Autowired
-    @Qualifier(AccountRegistrationProvisioner.BEAN_NAME)
-    private AccountRegistrationProvisioner accountMgmtRegistrationProvisioner;
+    @Qualifier(HttpClient.BEAN_NAME_HTTPCLIENT)
+    private HttpClient httpClient;
 
-    @Autowired
-    private CasConfigurationProperties casProperties;
-    
     @Test
     void verifyOperation() throws Throwable {
-        val props = casProperties.getAccountRegistration().getProvisioning().getRest();
-        val port = URI.create(props.getUrl()).getPort();
-        try (val webServer = new MockWebServer(port, HttpStatus.OK)) {
+        try (val webServer = new MockWebServer(HttpStatus.OK)) {
             webServer.start();
             val registrationRequest = new AccountRegistrationRequest(Map.of("username", "casuser"));
-            val results = accountMgmtRegistrationProvisioner.provision(registrationRequest);
+            val results = provisionerFor(webServer).provision(registrationRequest);
             assertTrue(results.isSuccess());
         }
     }
 
     @Test
     void verifyOperationFails() throws Throwable {
-        val props = casProperties.getAccountRegistration().getProvisioning().getRest();
-        val port = URI.create(props.getUrl()).getPort();
-        try (val webServer = new MockWebServer(port, HttpStatus.INTERNAL_SERVER_ERROR)) {
+        try (val webServer = new MockWebServer(HttpStatus.INTERNAL_SERVER_ERROR)) {
             webServer.start();
             val registrationRequest = new AccountRegistrationRequest(Map.of("username", "casuser"));
-            val results = accountMgmtRegistrationProvisioner.provision(registrationRequest);
+            val results = provisionerFor(webServer).provision(registrationRequest);
             assertFalse(results.isSuccess());
         }
+    }
+
+    private AccountRegistrationProvisioner provisionerFor(final MockWebServer webServer) {
+        val properties = new RestfulAccountManagementRegistrationProvisioningProperties();
+        properties.setUrl("http://localhost:%s".formatted(webServer.getPort()));
+        return new RestfulAccountRegistrationProvisioner(httpClient, properties);
     }
 }

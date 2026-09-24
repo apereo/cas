@@ -97,9 +97,20 @@ public abstract class AbstractMultifactorAuthenticationTrustStorageTests {
         return record;
     }
 
+    /**
+     * The date-based removal is aimed at a record that expires minutes from now, so its cutoff
+     * cannot reach the records that sibling tests sharing this storage are relying on. Removal is
+     * then confirmed through the record's principal, which is a fresh identifier per record, rather
+     * than through its id: the in-memory storage never assigns one, so every record it holds has an
+     * id of zero and a lookup by id answers with whichever record a sibling test happens to have
+     * left behind.
+     *
+     * @throws Throwable in case of failure
+     */
     @Test
     void verifyTrustEngine() throws Throwable {
         var record = getMultifactorAuthenticationTrustRecord();
+        record.setExpirationDate(DateTimeUtils.dateOf(ZonedDateTime.now(ZoneOffset.UTC).plusMinutes(5)));
         record = getMfaTrustEngine().save(record);
         assertNotNull(getMfaTrustEngine().get(record.getId()));
         assertFalse(getMfaTrustEngine().getAll().isEmpty());
@@ -108,9 +119,12 @@ public abstract class AbstractMultifactorAuthenticationTrustStorageTests {
         assertFalse(getMfaTrustEngine().get(now).isEmpty());
         assertFalse(getMfaTrustEngine().get(record.getPrincipal(), now).isEmpty());
 
-        getMfaTrustEngine().remove(DateTimeUtils.zonedDateTimeOf(record.getExpirationDate()).plusDays(1));
         getMfaTrustEngine().remove(record.getRecordKey());
-        assertNull(getMfaTrustEngine().get(record.getId()));
+        assertTrue(getMfaTrustEngine().get(record.getPrincipal()).isEmpty());
+
+        val second = getMfaTrustEngine().save(getMultifactorAuthenticationTrustRecord());
+        getMfaTrustEngine().remove(second.getRecordKey());
+        assertTrue(getMfaTrustEngine().get(second.getPrincipal()).isEmpty());
 
         if (mfaTrustEngine instanceof final DisposableBean disposableBean) {
             disposableBean.destroy();

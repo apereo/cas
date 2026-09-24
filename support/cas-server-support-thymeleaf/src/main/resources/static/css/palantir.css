@@ -3637,3 +3637,534 @@ select + span[role="combobox"] {
         flex-direction: column;
     }
 }
+
+/* ==========================================================================
+   Registered service editor — grouped section rail.
+
+   The editor's sections are navigated by the rail below rather than by an
+   accordion: one section is shown at a time, the rest are collapsed into a
+   grouped, filterable list. See palantir-services-sections.js.
+   ========================================================================== */
+
+.registered-service-sections {
+    display: flex;
+    align-items: stretch;
+    gap: 14px;
+    min-height: 0;
+}
+
+.registered-service-sections__nav {
+    flex: 0 0 252px;
+    max-width: 252px;
+    min-height: 0;
+    overflow-y: auto;
+    border: 1px solid #d8dee5;
+    border-radius: 8px;
+    background: #f8fbfd;
+}
+
+.registered-service-sections__panels {
+    flex: 1 1 auto;
+    min-width: 0;
+    min-height: 0;
+    overflow-y: auto;
+    padding-right: 4px;
+}
+
+/* Only the current section is on screen.
+
+   !important is load bearing here. Choosing a service type runs
+   jQuery's .show() over the sections for that type, and because this rule
+   already hides them, jQuery resolves "still hidden" and writes an inline
+   display:block. Without !important every section for the chosen protocol
+   would be visible at once. */
+.registered-service-sections__panels > *:not(.is-current-section) {
+    display: none !important;
+}
+
+.registered-service-sections__panels > h3.is-current-section {
+    margin: 0 0 4px;
+    padding: 0 0 10px;
+    border-bottom: 1px solid #e7ebef;
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: var(--cas-theme-primary, #153E50);
+}
+
+/* ---- rail toolbar ------------------------------------------------------ */
+
+.registered-service-sections__toolbar {
+    position: sticky;
+    top: 0;
+    z-index: 2;
+    padding: 10px 10px 8px;
+    background: #f8fbfd;
+    border-bottom: 1px solid #e7ebef;
+}
+
+.registered-service-sections__search {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    margin: 0;
+    padding: 4px 8px;
+    border: 1px solid #d8dee5;
+    border-radius: 6px;
+    background: #fff;
+    color: #65717d;
+}
+
+.registered-service-sections__search-label {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip: rect(0 0 0 0);
+    clip-path: inset(50%);
+    white-space: nowrap;
+}
+
+.registered-service-sections__search input {
+    flex: 1 1 auto;
+    min-width: 0;
+    border: 0;
+    outline: none;
+    background: transparent;
+    font-family: var(--mdc-typography-font-family);
+    font-size: .85rem;
+    color: #26323d;
+}
+
+.registered-service-sections__controls {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-top: 8px;
+}
+
+.registered-service-sections__count {
+    margin-left: auto;
+    color: #65717d;
+    font-size: .72rem;
+    font-variant-numeric: tabular-nums;
+    white-space: nowrap;
+}
+
+/* ---- groups ------------------------------------------------------------ */
+
+.registered-service-sections__list {
+    padding: 6px 0 10px;
+}
+
+.registered-service-sections__group + .registered-service-sections__group {
+    border-top: 1px solid #e7ebef;
+}
+
+.registered-service-sections__group-heading {
+    margin: 0;
+    font-size: inherit;
+    font-weight: inherit;
+}
+
+.registered-service-sections__group-toggle {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    width: 100%;
+    padding: 7px 10px;
+    border: 0;
+    background: transparent;
+    color: #536471;
+    font-family: var(--mdc-typography-font-family);
+    font-size: .72rem;
+    font-weight: 600;
+    letter-spacing: .07em;
+    text-transform: uppercase;
+    text-align: left;
+    cursor: pointer;
+}
+
+.registered-service-sections__group-toggle:hover {
+    color: var(--cas-theme-primary, #153E50);
+}
+
+.registered-service-sections__group-name {
+    flex: 1 1 auto;
+    min-width: 0;
+}
+
+.registered-service-sections__group-count {
+    color: #90a4ae;
+    font-size: .7rem;
+    font-weight: 400;
+    letter-spacing: 0;
+    font-variant-numeric: tabular-nums;
+}
+
+.registered-service-sections__caret {
+    transition: transform 140ms ease;
+}
+
+.registered-service-sections__group.is-open .registered-service-sections__caret {
+    transform: rotate(90deg);
+}
+
+.registered-service-sections__group-items {
+    display: none;
+    margin: 0;
+    padding: 0 0 6px;
+    list-style: none;
+}
+
+.registered-service-sections__group.is-open .registered-service-sections__group-items {
+    display: block;
+}
+
+/* ---- section links ----------------------------------------------------- */
+
+.registered-service-sections__link {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    width: 100%;
+    padding: 5px 10px 5px 20px;
+    border: 0;
+    border-left: 2px solid transparent;
+    background: transparent;
+    color: #536471;
+    font-family: var(--mdc-typography-font-family);
+    font-size: .82rem;
+    text-align: left;
+    cursor: pointer;
+}
+
+.registered-service-sections__link:hover {
+    background: #e7ebef;
+    color: #26323d;
+}
+
+.registered-service-sections__link.is-selected {
+    border-left-color: var(--cas-theme-primary, #153E50);
+    background: #fff;
+    color: #26323d;
+    font-weight: 600;
+}
+
+.registered-service-sections__link-text {
+    flex: 1 1 auto;
+    min-width: 0;
+}
+
+.registered-service-sections__empty {
+    margin: 0;
+    padding: 16px 12px;
+    color: #65717d;
+    font-size: .82rem;
+}
+
+.palantir-sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip: rect(0 0 0 0);
+    clip-path: inset(50%);
+    white-space: nowrap;
+}
+
+.registered-service-sections__nav :focus-visible,
+.registered-service-sections__panels :focus-visible {
+    outline: 2px solid var(--cas-theme-button-bg-lite, #1e78d0);
+    outline-offset: 1px;
+    border-radius: 4px;
+}
+
+@media (max-width: 900px) {
+    .registered-service-sections {
+        flex-direction: column;
+    }
+
+    .registered-service-sections__nav {
+        flex: 0 0 auto;
+        max-width: none;
+        width: 100%;
+        max-height: 260px;
+    }
+
+    .registered-service-sections__panels {
+        width: 100%;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .registered-service-sections__caret {
+        transition: none;
+    }
+}
+
+/* ==========================================================================
+   Registered service editor — dialog.
+
+   A jQuery UI dialog sized to the window by palantir-services-wizard.js. Every
+   box between the dialog and the two scrolling panes needs an unbroken flex
+   chain with min-height:0, or the panes size to their content and the dialog
+   grows a scrollbar of its own instead.
+   ========================================================================== */
+
+.ui-dialog.registered-service-wizard-dialog .ui-dialog-content {
+    padding: 0;
+    overflow: hidden;
+}
+
+/* Qualified with .ui-dialog-content, which jQuery UI adds only once the dialog
+   has been created, for two reasons.
+
+   Until then the element carries class="hide". An unqualified #id rule outranks
+   .hide, so the whole wizard rendered inline underneath the applications table
+   on page load. Waiting for the widget's own class keeps it hidden until it is
+   really a dialog.
+
+   It also means these layout rules cannot leak onto the element in any other
+   state. */
+#editServiceWizardDialog.ui-dialog-content {
+    display: flex;
+    flex-direction: column;
+    min-height: 0;
+}
+
+.registered-service-wizard {
+    display: flex;
+    flex-direction: column;
+    flex: 1 1 auto;
+    min-height: 0;
+    padding: 12px 16px 0;
+}
+
+.ui-dialog-content #editServiceWizardForm {
+    display: flex;
+    flex-direction: column;
+    flex: 1 1 auto;
+    min-height: 0;
+}
+
+/* The markup carries d-flex, but this is the one box in the chain that has to
+   be a row flex container for the rail, the panel and the JSON editor to take
+   their height from the dialog. Stating it here rather than relying on a
+   utility class from another stylesheet keeps the layout self-contained. */
+.ui-dialog-content #editServiceWizardContainer {
+    display: flex;
+    flex-direction: row;
+    flex: 1 1 auto;
+    min-height: 0;
+    align-items: stretch;
+    gap: 12px;
+}
+
+.ui-dialog-content #editServiceWizardMenu {
+    flex: 1 1 auto;
+    min-height: 0;
+}
+
+.registered-service-wizard__json {
+    display: flex;
+    flex-direction: column;
+    flex: 1 1 auto;
+    min-width: 0;
+    min-height: 0;
+}
+
+/* Beats the h-100 utility the markup carries, which would otherwise pin the
+   editor to the height of a parent that is itself sizing to content. */
+.registered-service-wizard__json > pre.ace-editor {
+    flex: 1 1 auto;
+    min-height: 0;
+    height: auto;
+}
+
+.registered-service-wizard__json > span {
+    flex: none;
+    padding-top: 6px;
+}
+
+/* The plain definition editor is the same kind of dialog as the wizard above and needs the same
+   unbroken flex chain: dialog -> content -> editor pane, every box min-height:0, so the Ace pane
+   takes its height from the window rather than the dialog growing a scrollbar of its own.
+
+   Qualified with .ui-dialog-content for the same reason as the wizard: until jQuery UI creates the
+   dialog the element carries class="hide", and an unqualified #id rule would outrank it and render
+   the editor inline underneath the applications table on page load. */
+#editServiceDialog.ui-dialog-content {
+    display: flex;
+    flex-direction: column;
+    min-height: 0;
+}
+
+.ui-dialog-content #edit-service-dialog-content {
+    display: flex;
+    flex-direction: column;
+    flex: 1 1 auto;
+    min-height: 0;
+    padding: 12px 16px 0;
+}
+
+.ui-dialog-content #serviceEditorContainer {
+    flex: 1 1 auto;
+    min-height: 0;
+    height: auto;
+}
+
+/* Beats the h-100 utility the markup carries, which would otherwise pin the editor to the height
+   of a parent that is itself sizing to content. The width split is left to
+   .palantir-service-definition-editor, which already states its own flex. */
+.ui-dialog-content #serviceEditorContainer > pre.ace-editor {
+    min-height: 0;
+    height: auto;
+}
+
+.registered-service-wizard__actions {
+    flex: none;
+    display: flex;
+    justify-content: flex-end;
+    gap: 8px;
+    padding: 10px 16px;
+    border-top: 1px solid #d8dee5;
+    background: #f8fbfd;
+}
+
+/* ==========================================================================
+   Accessibility
+   ========================================================================== */
+
+/* The rail's label is the accessible name of its button, so it has to stay in
+   the accessibility tree while the rail is collapsed. cas.css hides it with
+   visibility:hidden, which would leave all eighteen buttons nameless until the
+   pointer is over them; opacity plus the rail's own overflow hides it just as
+   well and keeps the name. */
+/* Each of the rail rules below overrides a selector of identical specificity in
+   cas.css. At a tie the later stylesheet wins, and this one is not reliably
+   later, so every selector here carries the nav element to outrank its
+   counterpart whatever the load order turns out to be.
+
+   Getting this wrong is what left both paddings applying at once: the item kept
+   cas.css's 16px/28px and the button added its own on top, so every rail entry
+   was double height and every icon sat 28px right of centre. */
+nav.sidebar-navigation ul li .tooltip {
+    visibility: visible;
+    opacity: 0;
+}
+
+nav.sidebar-navigation:hover ul li .tooltip,
+nav.sidebar-navigation:focus-within ul li .tooltip {
+    visibility: visible;
+    opacity: 1;
+}
+
+/* Keyboard focus should open the rail exactly as hover does. */
+nav.sidebar-navigation:focus-within {
+    width: 260px;
+}
+
+/* The padding moves to the button so the whole row is the click target. The
+   item must give it up, or the two stack. */
+nav.sidebar-navigation ul li {
+    padding: 0;
+}
+
+nav.sidebar-navigation ul li > .sidebar-navigation-button {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    width: 100%;
+    padding: 16px 0 16px 28px;
+    margin: 0;
+    border: 0;
+    background: transparent;
+    color: inherit;
+    font: inherit;
+    text-align: left;
+    cursor: pointer;
+    border-radius: inherit;
+    -webkit-appearance: none;
+    appearance: none;
+}
+
+/* The first tab stop on the dashboard, so a keyboard user can reach the working
+   area without walking the whole rail. */
+.palantir-skip-link {
+    position: absolute;
+    left: 8px;
+    top: -64px;
+    z-index: 10001;
+    padding: 10px 18px;
+    border-radius: 4px;
+    background: var(--cas-theme-primary, #153E50);
+    color: #fff;
+    font-family: var(--mdc-typography-font-family);
+    font-weight: 600;
+    text-decoration: none;
+    transition: top 160ms ease;
+}
+
+.palantir-skip-link:focus {
+    top: 8px;
+    color: #fff;
+}
+
+/* A visible focus indicator wherever a keyboard can land. Several MDC ripple
+   rules drop the outline; this puts it back. */
+#dashboard *:focus-visible,
+.ui-dialog *:focus-visible,
+.palantir-skip-link:focus-visible {
+    outline: 3px solid var(--cas-theme-button-bg-lite, #1e78d0);
+    outline-offset: 2px;
+    border-radius: 4px;
+}
+
+/* The rail is a dark slab, where the ring above would disappear. */
+nav.sidebar-navigation :focus-visible,
+#dashboard nav.sidebar-navigation :focus-visible {
+    outline: 3px solid #7fd6ef;
+    outline-offset: -3px;
+}
+
+/* Metric tiles.
+
+   The HTTP request counters used to be <h1> elements, which put five top-level
+   headings on the System tab and left the page with no real one. They are
+   values, so they are a description list now: <dt> names the measure, <dd>
+   carries it. These rules restore the original visual weight. */
+.palantir-metric {
+    margin: 0;
+}
+
+.palantir-metric-label {
+    display: block;
+    font-size: .8rem;
+    font-weight: 400;
+    color: #65717d;
+}
+
+.palantir-metric-label i {
+    margin-right: .35em;
+}
+
+.palantir-metric-value {
+    display: block;
+    margin: 0;
+    font-size: 2rem;
+    font-weight: 500;
+    line-height: 1.2;
+    color: #26323d;
+}
+
+.palantir-metric-value code {
+    font-family: var(--cas-font-mono, "Monaco", "Menlo", "Consolas", monospace);
+    font-variant-numeric: tabular-nums;
+    color: inherit;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .palantir-skip-link {
+        transition: none;
+    }
+}

@@ -17,13 +17,13 @@ import org.apache.commons.io.IOUtils;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Tag;
-import org.junit.jupiter.api.parallel.Execution;
-import org.junit.jupiter.api.parallel.ExecutionMode;
+import org.junit.jupiter.api.parallel.ResourceLock;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.FileSystemResource;
+import static org.awaitility.Awaitility.*;
 import static org.junit.jupiter.params.provider.Arguments.arguments;
 
 
@@ -35,7 +35,7 @@ import static org.junit.jupiter.params.provider.Arguments.arguments;
  */
 @Slf4j
 @Tag("X509")
-@Execution(ExecutionMode.SAME_THREAD)
+@ResourceLock("mockWebServerPort:8085")
 class CRLDistributionPointRevocationCheckerTests extends BaseCRLRevocationCheckerTests {
 
     /**
@@ -174,7 +174,7 @@ class CRLDistributionPointRevocationCheckerTests extends BaseCRLRevocationChecke
         this.webServer = new MockWebServer(8085, new FileSystemResource(file), "text/plain");
         this.webServer.start();
         LOGGER.debug("Web server listening on port 8085 serving file [{}]", crlFile);
-        Thread.sleep(500);
+        await().atMost(Duration.ofSeconds(30)).until(this.webServer::isRunning);
 
         BaseCRLRevocationCheckerTests.checkCertificate(checker, certFiles, expected);
     }

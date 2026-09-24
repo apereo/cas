@@ -1,0 +1,24 @@
+{
+  "dependencies": "oidc,saml-idp,interrupt-webflow",
+  "conditions": {
+    "docker": "true"
+  },
+  "properties": [
+    "--cas.server.name=https://localhost:8443",
+    "--cas.server.prefix=${cas.server.name}/cas",
+
+    "--cas.interrupt.core.trigger-mode=AFTER_SSO",
+    "--cas.interrupt.json.location=file:${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/accounts.json",
+
+    "--cas.authn.oidc.core.issuer=https://localhost:8443/cas/oidc",
+    "--cas.authn.oidc.jwks.file-system.jwks-file=file:${#systemProperties['java.io.tmpdir']}/keystore.jwks",
+
+    "--cas.authn.saml-idp.core.entity-id=https://cas.apereo.org/saml/idp",
+    "--cas.authn.saml-idp.metadata.file-system.location=file:${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/saml-md",
+
+    "--cas.service-registry.core.init-from-json=true",
+    "--cas.service-registry.json.location=file:${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/services"
+  ],
+  "initScript": "${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/init.sh,${PWD}/ci/tests/httpbin/run-httpbin-server.sh",
+  "readyScript": "${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/ready.sh"
+}

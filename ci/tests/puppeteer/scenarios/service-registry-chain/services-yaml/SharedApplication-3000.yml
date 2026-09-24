@@ -1,0 +1,9 @@
+--- !<org.apereo.cas.services.CasRegisteredService>
+serviceId: "^https://localhost:9859/anything/shared.*"
+name: "SharedApplication"
+id: 3000
+description: "Registered in the YAML service registry"
+attributeReleasePolicy: !<org.apereo.cas.services.ReturnStaticAttributeReleasePolicy>
+  allowedAttributes: !<java.util.HashMap>
+    registry: !<java.util.ArrayList>
+    - "yaml"

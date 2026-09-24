@@ -3,6 +3,7 @@ package org.apereo.cas.support.saml.metadata.resolver;
 import module java.base;
 import org.apereo.cas.util.junit.EnabledIfListeningOnPort;
 import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.parallel.ResourceLock;
 import org.springframework.test.context.TestPropertySource;
 
 /**
@@ -19,6 +20,7 @@ import org.springframework.test.context.TestPropertySource;
     "cas.authn.saml-idp.metadata.jpa.dialect=org.hibernate.dialect.MySQLDialect"
 })
 @EnabledIfListeningOnPort(port = 3306)
+@ResourceLock("samlIdentityProviderJpaMetadataSchema")
 @Tag("MySQL")
 class MySQLJpaSamlRegisteredServiceMetadataResolverTests extends JpaSamlRegisteredServiceMetadataResolverTests {
 }

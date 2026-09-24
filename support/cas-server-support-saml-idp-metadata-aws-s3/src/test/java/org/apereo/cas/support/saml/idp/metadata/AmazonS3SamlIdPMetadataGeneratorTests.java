@@ -18,8 +18,7 @@ import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.junit.jupiter.api.parallel.Execution;
-import org.junit.jupiter.api.parallel.ExecutionMode;
+import org.junit.jupiter.api.parallel.ResourceLock;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -48,7 +47,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @EnabledIfListeningOnPort(port = 4566)
 @Tag("AmazonWebServices")
 @ExtendWith(CasTestExtension.class)
-@Execution(ExecutionMode.SAME_THREAD)
+@ResourceLock("amazonS3SamlIdPMetadataBucket")
 class AmazonS3SamlIdPMetadataGeneratorTests {
     @Autowired
     @Qualifier(SamlIdPMetadataLocator.BEAN_NAME)

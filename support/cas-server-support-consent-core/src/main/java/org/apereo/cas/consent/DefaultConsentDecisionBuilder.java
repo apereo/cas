@@ -6,6 +6,8 @@ import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.DigestUtils;
 import org.apereo.cas.util.EncodingUtils;
+import org.apereo.cas.util.LoggingUtils;
+import org.apereo.cas.util.RandomUtils;
 import org.apereo.cas.util.crypto.CipherExecutor;
 import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
 import lombok.RequiredArgsConstructor;
@@ -38,7 +40,7 @@ public class DefaultConsentDecisionBuilder implements ConsentDecisionBuilder {
     public ConsentDecision update(final ConsentDecision consent, final Map<String, List<Object>> attributes) {
         val encodedNames = buildAndEncodeConsentAttributes(attributes);
         consent.setAttributes(encodedNames);
-        consent.setCreatedDate(LocalDateTime.now(ZoneId.systemDefault()));
+        consent.setCreatedDate(LocalDateTime.now(ZoneOffset.UTC));
         return consent;
     }
 
@@ -48,6 +50,7 @@ public class DefaultConsentDecisionBuilder implements ConsentDecisionBuilder {
                                  final String principalId,
                                  final Map<String, List<Object>> attributes) {
         val consent = new ConsentDecision();
+        consent.setId(RandomUtils.nextLong(1, Long.MAX_VALUE));
         consent.setPrincipal(principalId);
         consent.setService(service.getId());
         consent.setTenant(service.getTenant());
@@ -89,7 +92,11 @@ public class DefaultConsentDecisionBuilder implements ConsentDecisionBuilder {
             val names = EncodingUtils.decodeBase64ToString(result);
             return MAPPER.readValue(JsonValue.readHjson(names).toString(), Map.class);
         } catch (final Exception e) {
-            throw new IllegalArgumentException("Could not serialize attributes for consent decision");
+            LOGGER.warn("Unable to decipher attributes from consent decision [{}] for [{}]. The decision may have been "
+                    + "recorded with a different set of keys defined by [cas.consent.core.crypto]; consent will be required again.",
+                decision.getId(), decision.getPrincipal());
+            LoggingUtils.warn(LOGGER, e);
+            return new HashMap<>();
         }
     }
 

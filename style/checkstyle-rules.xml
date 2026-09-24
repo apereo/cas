@@ -444,6 +444,15 @@
         </module>
 
         <module name="RegexpSinglelineJava">
+            <property name="id" value="reservedMockWebServerPorts"/>
+            <metadata name="net.sf.eclipsecs.core.comment" value="Ports 21000-24999 are reserved for MockWebServer"/>
+            <property name="severity" value="error"/>
+            <property name="format" value="(localhost|127\.0\.0\.1|0\.0\.0\.0):2[1-4][0-9]{3}"/>
+            <property name="message"
+                      value="Ports 21000-24999 are reserved for MockWebServer random allocation. Pick a port outside that band, or let MockWebServer choose one and read it back with getPort()."/>
+        </module>
+
+        <module name="RegexpSinglelineJava">
             <property name="id" value="codeTagJavadocs"/>
             <metadata name="net.sf.eclipsecs.core.comment" value="Consider using {@code} Javadoc instead"/>
             <property name="severity" value="error"/>

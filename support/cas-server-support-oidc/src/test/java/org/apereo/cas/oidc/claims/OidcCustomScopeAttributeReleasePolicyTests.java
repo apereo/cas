@@ -75,6 +75,29 @@ class OidcCustomScopeAttributeReleasePolicyTests extends AbstractOidcTests {
     }
 
     @Test
+    void verifyGroovyMappingRetainsSharedScriptCache() throws Throwable {
+        ApplicationContextProvider.holdApplicationContext(oidcConfigurationContext.getApplicationContext());
+        val cacheManager = ApplicationContextProvider.getScriptResourceCacheManager().orElseThrow();
+        cacheManager.resolveScriptableResource("groovy { return 'unrelated' }", "unrelated");
+        assertFalse(cacheManager.isEmpty());
+
+        val policy = new OidcCustomScopeAttributeReleasePolicy("groups", CollectionUtils.wrap("groups"));
+        policy.setClaimMappings(Map.of("groups", "groovy { return attributes['groups'] }"));
+        val principal = CoreAuthenticationTestUtils.getPrincipal(CollectionUtils.wrap("groups", List.of("admin", "user")));
+        val oidcRegisteredService = getOidcRegisteredService();
+        oidcRegisteredService.setAttributeReleasePolicy(policy);
+
+        val releasePolicyContext = RegisteredServiceAttributeReleasePolicyContext.builder()
+            .registeredService(oidcRegisteredService)
+            .service(CoreAuthenticationTestUtils.getService())
+            .applicationContext(applicationContext)
+            .principal(principal)
+            .build();
+        assertEquals(List.of("admin", "user"), policy.getAttributes(releasePolicyContext).get("groups"));
+        assertFalse(cacheManager.isEmpty(), "Claim mappings must not invalidate the shared Groovy script cache");
+    }
+
+    @Test
     void verifySerialization() {
         val policy = new OidcCustomScopeAttributeReleasePolicy("groups", CollectionUtils.wrap("groups"));
         val chain = new ChainingAttributeReleasePolicy();

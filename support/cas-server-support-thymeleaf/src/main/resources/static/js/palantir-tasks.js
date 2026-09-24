@@ -122,6 +122,7 @@ async function initializeScheduledTasksOperations() {
     }
 
     const threadDumpTable = $("#threadDumpTable").DataTable({
+        deferRender: true,
         pageLength: 10,
         autoWidth: false,
         order: [],
@@ -190,6 +191,7 @@ async function initializeScheduledTasksOperations() {
 
 
     const scheduledtasks = $("#scheduledTasksTable").DataTable({
+        deferRender: true,
         pageLength: 25,
         autoWidth: false,
         order: [[0, "asc"], [1, "asc"]],
@@ -362,42 +364,70 @@ async function initializeScheduledTasksOperations() {
         });
     }
 
-    if (CasActuatorEndpoints.metrics()) {
-        initializeJvmMetrics();
-        setInterval(() => {
-            if (currentActiveTab === Tabs.TASKS.index) {
-                initializeJvmMetrics();
-            }
-        }, palantirSettings().refreshInterval);
-    }
-
-    function fetchThreadDump() {
-        $.get(CasActuatorEndpoints.threadDump(), response => {
+    /**
+     * Read the thread dump once and render both views it feeds.
+     *
+     * The table and the thread-state chart each used to issue their own request for the same
+     * payload, so every refresh dumped the JVM's threads twice.
+     *
+     * @returns {Promise<void>} resolved once both views have been updated
+     */
+    async function refreshThreadDump() {
+        if (!CasActuatorEndpoints.threadDump()) {
+            return;
+        }
+        try {
+            const response = await $.get(CasActuatorEndpoints.threadDump());
             threadDumpTable.clear();
             threadDumpStacks.clear();
+            const threadStates = {};
             for (const thread of response.threads) {
                 threadDumpStacks.set(toThreadStackKey(thread), thread);
                 threadDumpTable.row.add(thread);
+                threadStates[thread.threadState] = (threadStates[thread.threadState] ?? 0) + 1;
             }
             threadDumpTable.draw();
-        }).fail((xhr, status, error) => {
-            console.error("Error fetching data:", error);
+            updateThreadDumpChart(threadStates);
+        } catch (xhr) {
+            console.error("Error fetching thread dump:", xhr);
             displayBanner(xhr);
-        });
+        }
     }
 
+    async function refreshTasksMetrics() {
+        await Promise.all([initializeJvmMetrics(), refreshThreadDump()]);
+    }
 
-    if (CasActuatorEndpoints.threadDump()) {
-        fetchThreadDump();
+    if (CasActuatorEndpoints.metrics() || CasActuatorEndpoints.threadDump()) {
+        await refreshTasksMetrics();
         setInterval(() => {
-            if (currentActiveTab === Tabs.TASKS.index) {
-                fetchThreadDump();
+            if (currentActiveTab === Tabs.TASKS.index && document.visibilityState === "visible") {
+                refreshTasksMetrics();
             }
         }, palantirSettings().refreshInterval);
     }
 }
 
-function initializeJvmMetrics() {
+/**
+ * Render thread-state counts onto the thread dump chart.
+ *
+ * @param threadStates counts keyed by thread state
+ */
+function updateThreadDumpChart(threadStates) {
+    if (!threadDumpChart) {
+        return;
+    }
+    threadDumpChart.data.labels = Object.keys(threadStates);
+    const values = Object.values(threadStates);
+    threadDumpChart.data.datasets[0] = {
+        label: `${values.reduce((sum, value) => sum + value, 0)} Threads`,
+        data: values
+    };
+    threadDumpChart.resize();
+    threadDumpChart.update();
+}
+
+async function initializeJvmMetrics() {
     function fetchJvmThreadMetric(metricName) {
         return new Promise((resolve, reject) =>
             $.get(`${CasActuatorEndpoints.metrics()}/${metricName}`, response => resolve(response.measurements[0].value)).fail((xhr, status, error) => {
@@ -420,45 +450,11 @@ function initializeJvmMetrics() {
         return results.map(result => Number(result));
     }
 
-    async function fetchThreadDump() {
-        return new Promise((resolve, reject) =>
-            $.get(CasActuatorEndpoints.threadDump(), response => {
-                let threadData = {};
-                for (const thread of response.threads) {
-                    if (!threadData[thread.threadState]) {
-                        threadData[thread.threadState] = 0;
-                    }
-                    threadData[thread.threadState] += 1;
-                }
-                resolve(threadData);
-            }).fail((xhr, status, error) => {
-                console.error("Error thread dump:", error);
-                displayBanner(xhr);
-                reject(error);
-            }));
-
+    if (!CasActuatorEndpoints.metrics() || !jvmThreadsChart) {
+        return;
     }
-
-    if (CasActuatorEndpoints.metrics()) {
-        fetchJvmThreadsMetrics()
-            .then(payload => {
-                jvmThreadsChart.data.datasets[0].data = payload;
-                jvmThreadsChart.resize();
-                jvmThreadsChart.update();
-            });
-    }
-
-
-    if (CasActuatorEndpoints.threadDump()) {
-        fetchThreadDump().then(payload => {
-            threadDumpChart.data.labels = Object.keys(payload);
-            const values = Object.values(payload);
-            threadDumpChart.data.datasets[0] = {
-                label: `${values.reduce((sum, value) => sum + value, 0)} Threads`,
-                data: values
-            };
-            threadDumpChart.resize();
-            threadDumpChart.update();
-        });
-    }
+    const payload = await fetchJvmThreadsMetrics();
+    jvmThreadsChart.data.datasets[0].data = payload;
+    jvmThreadsChart.resize();
+    jvmThreadsChart.update();
 }

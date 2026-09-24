@@ -36,7 +36,11 @@ public interface RegisteredServicesEventListener extends CasEventListener {
     void handleEnvironmentChangeEvent(EnvironmentChangeEvent event);
 
     /**
-     * Handle context refreshed event.
+     * Handle context refreshed event. This is the single general lifecycle trigger for the
+     * initial load of the services registry; the JSON-import initializer and the refresh
+     * events above own their own reloads, and no second load is scheduled at application-ready
+     * time. The load is asynchronous and therefore not a readiness guarantee: it blocks
+     * neither the context refresh nor the point at which the server accepts requests.
      *
      * @param event the event
      */

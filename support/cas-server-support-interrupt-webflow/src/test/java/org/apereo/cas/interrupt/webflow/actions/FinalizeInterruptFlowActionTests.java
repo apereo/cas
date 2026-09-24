@@ -41,6 +41,9 @@ class FinalizeInterruptFlowActionTests {
     private ConfigurableApplicationContext applicationContext;
 
     @Autowired
+    private CasConfigurationProperties casProperties;
+
+    @Autowired
     @Qualifier(CasWebflowConstants.ACTION_ID_FINALIZE_INTERRUPT)
     private Action action;
 
@@ -61,6 +64,9 @@ class FinalizeInterruptFlowActionTests {
         InterruptUtils.putInterruptIn(context, interrupt);
         val event = action.execute(context);
         assertEquals(CasWebflowConstants.TRANSITION_ID_SUCCESS, event.getId());
+        assertFalse(WebUtils.getAuthentication(context).containsAttribute(InterruptTrackingEngine.AUTHENTICATION_ATTRIBUTE_FINALIZED_INTERRUPT));
+        assertFalse(WebUtils.isInterruptAuthenticationFlowFinalized(context));
+        assertNull(context.getHttpServletResponse().getCookie(casProperties.getInterrupt().getCookie().getName()));
     }
     
     @Test
@@ -109,5 +115,6 @@ class FinalizeInterruptFlowActionTests {
         assertEquals(CasWebflowConstants.TRANSITION_ID_SUCCESS, event.getId());
         val authn = WebUtils.getAuthentication(context);
         assertTrue(authn.containsAttribute(InterruptTrackingEngine.AUTHENTICATION_ATTRIBUTE_FINALIZED_INTERRUPT));
+        assertNotNull(context.getHttpServletResponse().getCookie(casProperties.getInterrupt().getCookie().getName()));
     }
 }

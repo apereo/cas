@@ -194,11 +194,11 @@ public class CasThrottlingAutoConfiguration {
         public Runnable throttleSubmissionCleaner(
             final ConfigurableApplicationContext applicationContext,
             @Qualifier(AuthenticationThrottlingExecutionPlan.BEAN_NAME)
-            final AuthenticationThrottlingExecutionPlan plan) {
+            final ObjectProvider<AuthenticationThrottlingExecutionPlan> plan) {
             return BeanSupplier.of(Runnable.class)
                 .when(BeanCondition.on("cas.authn.throttle.schedule.enabled").isTrue()
                     .evenIfMissing().given(applicationContext.getEnvironment()))
-                .supply(() -> new InMemoryThrottledSubmissionCleaner(plan))
+                .supply(() -> new InMemoryThrottledSubmissionCleaner(plan.getObject()))
                 .otherwiseProxy()
                 .get();
         }

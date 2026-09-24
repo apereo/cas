@@ -12,8 +12,11 @@ import org.apereo.cas.mfa.simple.ticket.CasSimpleMultifactorAuthenticationTicket
 import org.apereo.cas.test.CasTestExtension;
 import org.apereo.cas.ticket.ExpirationPolicyBuilder;
 import org.apereo.cas.ticket.Ticket;
+import org.apereo.cas.ticket.TicketCatalog;
 import org.apereo.cas.ticket.expiration.NeverExpiresExpirationPolicy;
+import org.apereo.cas.ticket.registry.DefaultTicketRegistry;
 import org.apereo.cas.ticket.registry.TicketRegistry;
+import org.apereo.cas.ticket.serialization.TicketSerializationManager;
 import org.apereo.cas.util.spring.DirectObjectProvider;
 import lombok.AllArgsConstructor;
 import lombok.val;
@@ -21,12 +24,11 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.junit.jupiter.api.parallel.Execution;
-import org.junit.jupiter.api.parallel.ExecutionMode;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.context.ConfigurableApplicationContext;
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
@@ -42,18 +44,26 @@ import static org.junit.jupiter.api.Assertions.*;
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Tag("MFAProvider")
 @ExtendWith(CasTestExtension.class)
-@Execution(ExecutionMode.SAME_THREAD)
 class DefaultCasSimpleMultifactorAuthenticationServiceGenerationTests {
 
     @Autowired
-    @Qualifier(TicketRegistry.BEAN_NAME)
+    @Qualifier(TicketSerializationManager.BEAN_NAME)
+    private TicketSerializationManager ticketSerializationManager;
+
+    @Autowired
+    @Qualifier(TicketCatalog.BEAN_NAME)
+    private TicketCatalog ticketCatalog;
+
+    @Autowired
+    private ConfigurableApplicationContext applicationContext;
+
     private TicketRegistry ticketRegistry;
 
     private CasSimpleMultifactorAuthenticationService customService;
 
     @BeforeEach
     public void setUp() {
-        ticketRegistry.deleteAll();
+        ticketRegistry = new DefaultTicketRegistry(ticketSerializationManager, ticketCatalog, applicationContext);
         val ticketFactory = new MockCasSimpleMultifactorAuthenticationTicketFactory(1);
         customService = new DefaultCasSimpleMultifactorAuthenticationService(ticketRegistry,
             ticketFactory, DirectObjectProvider.empty(), BucketConsumer.permitAll());

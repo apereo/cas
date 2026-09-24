@@ -28,7 +28,8 @@ import static org.junit.jupiter.api.Assertions.*;
     "cas.authn.attribute-repository.jdbc[0].single-row=false",
     "cas.authn.attribute-repository.jdbc[0].column-mappings.attr_name=attr_value",
     "cas.authn.attribute-repository.jdbc[0].sql=SELECT * FROM table_users WHERE {0}",
-    "cas.authn.attribute-repository.jdbc[0].username=uid"
+    "cas.authn.attribute-repository.jdbc[0].username=uid",
+    "cas.authn.attribute-repository.jdbc[0].url=jdbc:hsqldb:mem:jdbc-fetcher-attributes"
 })
 @Tag("JDBCAuthentication")
 class PrincipalAttributeRepositoryFetcherJdbcTests extends BaseJdbcAttributeRepositoryTests {

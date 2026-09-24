@@ -8,7 +8,6 @@ import org.apereo.cas.services.UnauthorizedServiceException;
 import org.apereo.cas.util.MockRequestContext;
 import org.apereo.cas.web.support.WebUtils;
 import lombok.val;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,21 +31,17 @@ class GatewayServicesManagementCheckActionTests extends AbstractWebflowActionsTe
     @Qualifier(ServicesManager.BEAN_NAME)
     private ServicesManager servicesManager;
 
-    @BeforeEach
-    void beforeEach() {
-        servicesManager.deleteAll();
-    }
-
     @Test
     void verifyNoServiceFound() throws Throwable {
         val context = MockRequestContext.create(applicationContext);
-        WebUtils.putServiceIntoFlowScope(context, RegisteredServiceTestUtils.getService("invalid-service-123"));
+        WebUtils.putServiceIntoFlowScope(context, RegisteredServiceTestUtils.getService(UUID.randomUUID().toString()));
         assertThrows(UnauthorizedServiceException.class, () -> this.action.execute(context));
     }
 
     @Test
     void verifyDisabledServiceFound() throws Throwable {
-        val svc22 = RegisteredServiceTestUtils.getRegisteredService("cas-access-disabled");
+        val serviceId = UUID.randomUUID().toString();
+        val svc22 = RegisteredServiceTestUtils.getRegisteredService(serviceId);
         val strategy = new DefaultRegisteredServiceAccessStrategy();
         strategy.setEnabled(false);
         strategy.setUnauthorizedRedirectUrl(new URI("https://www.github.com"));
@@ -54,7 +49,7 @@ class GatewayServicesManagementCheckActionTests extends AbstractWebflowActionsTe
         servicesManager.save(svc22);
 
         val context = MockRequestContext.create(applicationContext);
-        WebUtils.putServiceIntoFlowScope(context, RegisteredServiceTestUtils.getService("cas-access-disabled"));
+        WebUtils.putServiceIntoFlowScope(context, RegisteredServiceTestUtils.getService(serviceId));
         assertThrows(UnauthorizedServiceException.class, () -> this.action.execute(context));
         assertNotNull(WebUtils.getUnauthorizedRedirectUrlFromFlowScope(context));
     }

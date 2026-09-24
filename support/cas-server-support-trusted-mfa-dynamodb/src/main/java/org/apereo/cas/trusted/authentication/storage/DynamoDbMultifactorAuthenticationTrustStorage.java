@@ -4,6 +4,7 @@ import module java.base;
 import org.apereo.cas.configuration.model.support.mfa.trusteddevice.TrustedDevicesMultifactorProperties;
 import org.apereo.cas.trusted.authentication.api.MultifactorAuthenticationTrustRecord;
 import org.apereo.cas.trusted.authentication.api.MultifactorAuthenticationTrustRecordKeyGenerator;
+import org.apereo.cas.util.RandomUtils;
 import org.apereo.cas.util.crypto.CipherExecutor;
 
 /**
@@ -25,6 +26,9 @@ public class DynamoDbMultifactorAuthenticationTrustStorage extends BaseMultifact
 
     @Override
     protected MultifactorAuthenticationTrustRecord saveInternal(final MultifactorAuthenticationTrustRecord record) {
+        if (record.getId() <= 0) {
+            record.setId(RandomUtils.nextLong(1, Long.MAX_VALUE));
+        }
         dynamoDbFacilitator.save(record);
         return record;
     }

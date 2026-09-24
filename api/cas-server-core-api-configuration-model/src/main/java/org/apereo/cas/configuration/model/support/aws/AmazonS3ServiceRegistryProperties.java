@@ -5,6 +5,7 @@ import org.apereo.cas.configuration.support.RequiresModule;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
+import org.springframework.core.Ordered;
 
 /**
  * This is {@link AmazonS3ServiceRegistryProperties}.
@@ -28,4 +29,11 @@ public class AmazonS3ServiceRegistryProperties extends BaseAmazonWebServicesProp
      * access in all AWS Regions. However, path-style URLs will be discontinued in the future.
      */
     private boolean pathStyleEnabled;
+
+    /**
+     * The execution order of this registry
+     * which will determine its position in a chain
+     * in case multiple registries are defined.
+     */
+    private int order = Ordered.LOWEST_PRECEDENCE;
 }
