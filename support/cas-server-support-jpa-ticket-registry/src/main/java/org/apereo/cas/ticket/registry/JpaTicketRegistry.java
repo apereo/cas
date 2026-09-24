@@ -329,6 +329,13 @@ public class JpaTicketRegistry extends AbstractTicketRegistry {
     }
 
     @Override
+    public long countSessionsFor(final String principalId) {
+        return transactionTemplate.execute(_ -> {
+            return super.countSessionsFor(principalId);
+        });
+    }
+    
+    @Override
     public long deleteSingleTicket(final Ticket ticketToDelete) {
         val result = transactionTemplate.execute(transactionStatus -> {
             val encTicketId = digestIdentifier(ticketToDelete.getId());
