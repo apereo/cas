@@ -1,10 +1,13 @@
 package org.apereo.cas.ticket;
 
 import module java.base;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.SuperBuilder;
+import org.jspecify.annotations.Nullable;
 
 /**
  * This is {@link CosmosDbTicketDocument}.
@@ -33,5 +36,7 @@ public class CosmosDbTicketDocument implements Serializable {
 
     private String ticket;
 
-    private long timeToLive;
+    @JsonProperty("ttl")
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    private @Nullable Long timeToLive;
 }

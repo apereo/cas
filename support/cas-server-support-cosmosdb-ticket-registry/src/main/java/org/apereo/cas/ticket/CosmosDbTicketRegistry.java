@@ -12,7 +12,6 @@ import com.azure.cosmos.models.CosmosItemOperation;
 import com.azure.cosmos.models.CosmosItemRequestOptions;
 import com.azure.cosmos.models.CosmosQueryRequestOptions;
 import com.azure.cosmos.models.PartitionKey;
-import com.google.common.collect.Iterables;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
@@ -20,6 +19,7 @@ import org.apache.commons.lang3.tuple.Pair;
 import org.jspecify.annotations.Nullable;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.HttpStatusCode;
 
 /**
  * This is {@link CosmosDbTicketRegistry}.
@@ -35,6 +35,8 @@ public class CosmosDbTicketRegistry extends AbstractTicketRegistry {
      * Partition key.
      */
     public static final String PARTITION_KEY_PREFIX = "prefix";
+
+    private static final int MAX_BULK_ATTEMPTS = 5;
 
     private final List<CosmosContainer> cosmosContainers;
 
@@ -83,9 +85,31 @@ public class CosmosDbTicketRegistry extends AbstractTicketRegistry {
                         .collect(Collectors.toList()))
                     .flatMap(List::stream)
                     .toList();
-                return Iterables.size(pair.getValue().executeBulkOperations(queries));
+                return executeBulkDeletes(container, queries);
             })
             .sum();
+    }
+
+    private static long executeBulkDeletes(final CosmosContainer container, final List<CosmosItemOperation> operations) {
+        var pending = operations;
+        var deleted = 0L;
+        for (var attempt = 0; attempt < MAX_BULK_ATTEMPTS && !pending.isEmpty(); attempt++) {
+            val throttled = new ArrayList<CosmosItemOperation>();
+            for (val result : container.executeBulkOperations(pending)) {
+                val response = result.getResponse();
+                if (response != null && HttpStatusCode.valueOf(response.getStatusCode()).is2xxSuccessful()) {
+                    deleted++;
+                } else if (response != null && response.getStatusCode() == HttpStatus.TOO_MANY_REQUESTS.value()) {
+                    throttled.add(result.getOperation());
+                }
+            }
+            pending = throttled;
+        }
+        if (!pending.isEmpty()) {
+            LOGGER.warn("[{}] ticket(s) in container [{}] could not be deleted after [{}] throttled attempts",
+                pending.size(), container.getId(), MAX_BULK_ATTEMPTS);
+        }
+        return deleted;
     }
 
     @Override
@@ -161,7 +185,7 @@ public class CosmosDbTicketRegistry extends AbstractTicketRegistry {
 
     private CosmosDbTicketDocument getCosmosDbTicketDocument(final Ticket ticket, final TicketDefinition metadata) {
         val encodedTicket = FunctionUtils.doUnchecked(() -> encodeTicket(ticket));
-        val ttl = ticket.getExpirationPolicy().getTimeToLive();
+        val ttl = toItemTimeToLive(ticket.getExpirationPolicy().getTimeToLive());
         return CosmosDbTicketDocument
             .builder()
             .id(encodedTicket.getId())
@@ -171,6 +195,13 @@ public class CosmosDbTicketRegistry extends AbstractTicketRegistry {
             .ticket(ticketSerializationManager.serializeTicket(encodedTicket))
             .prefix(metadata.getPrefix())
             .build();
+    }
+
+    private static @Nullable Long toItemTimeToLive(final @Nullable Long timeToLive) {
+        if (timeToLive == null || timeToLive <= 0) {
+            return null;
+        }
+        return Math.min(timeToLive, Integer.MAX_VALUE);
     }
 
     private CosmosContainer getTicketContainer(final TicketDefinition metadata) {
