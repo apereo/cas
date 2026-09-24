@@ -15,10 +15,10 @@ to take advantage of the Spring JMX features. Invoking JMX operations provided b
 The following *wrapper* components are registered into a JMX infrastructure and sit on top of a well-defined CAS feature, 
 concept or component to provide remote operations or insight:
 
-- A JMX managed resource for the CAS services management facility
-- A JMX managed resource for the CAS ticket registry
-
-Additional wrappers and components will be worked out and added iteratively.
+- Registered services: inventory, lookup, counts and reload.
+- Ticket registry: counts, filtered ticket and session listings, and expired-ticket cleanup.
+- Authentication: registered handlers, multifactor providers and service-specific provider availability.
+- Principal attributes: cache availability and invalidation.
 
 Support is enabled by including the following dependency in the WAR overlay:
 

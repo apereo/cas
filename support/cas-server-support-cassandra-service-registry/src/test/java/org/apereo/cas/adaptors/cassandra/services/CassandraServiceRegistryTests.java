@@ -9,11 +9,8 @@ import org.apereo.cas.services.ServiceRegistry;
 import org.apereo.cas.test.CasTestExtension;
 import org.apereo.cas.util.junit.EnabledIfListeningOnPort;
 import lombok.Getter;
-import org.junit.jupiter.api.MethodOrderer;
-import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.TestMethodOrder;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.DisposableBean;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -47,7 +44,6 @@ import static org.junit.jupiter.api.Assertions.*;
 @EnableScheduling
 @Tag("Cassandra")
 @ExtendWith(CasTestExtension.class)
-@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 @EnabledIfListeningOnPort(port = 9042)
 @Getter
 @TestExecutionListeners({
@@ -60,7 +56,6 @@ class CassandraServiceRegistryTests extends AbstractServiceRegistryTests {
     private ServiceRegistry newServiceRegistry;
 
     @Test
-    @Order(Integer.MAX_VALUE)
     void verifyFailOps() {
         assertNull(newServiceRegistry.save((RegisteredService) null));
         assertFalse(newServiceRegistry.delete(null));

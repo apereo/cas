@@ -3,7 +3,6 @@ package org.apereo.cas.util.http;
 import module java.base;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.MockWebServer;
-import org.apereo.cas.util.RandomUtils;
 import org.apereo.cas.util.junit.EnabledIfListeningOnPort;
 import org.apereo.cas.web.HttpMessage;
 import lombok.val;
@@ -71,20 +70,22 @@ class SimpleHttpClientTests {
 
         @Test
         void verifyMessageSent() throws Throwable {
-            try (val webServer = new MockWebServer(8165,
+            try (val webServer = new MockWebServer(
                 new ByteArrayResource(StringUtils.EMPTY.getBytes(StandardCharsets.UTF_8), "Output"), HttpStatus.OK)) {
                 webServer.start();
-                val result = getHttpClient().sendMessageToEndPoint(new URI("http://localhost:8165").toURL());
+                val result = getHttpClient().sendMessageToEndPoint(
+                    new URI("http://localhost:%s".formatted(webServer.getPort())).toURL());
                 assertNotNull(result);
             }
         }
 
         @Test
         void verifyMessageRefused() throws Throwable {
-            try (val webServer = new MockWebServer(8166,
+            try (val webServer = new MockWebServer(
                 new ByteArrayResource(StringUtils.EMPTY.getBytes(StandardCharsets.UTF_8), "Output"), HttpStatus.INTERNAL_SERVER_ERROR)) {
                 webServer.start();
-                val result = getHttpClient().sendMessageToEndPoint(new URI("http://localhost:8166").toURL());
+                val result = getHttpClient().sendMessageToEndPoint(
+                    new URI("http://localhost:%s".formatted(webServer.getPort())).toURL());
                 assertNull(result);
             }
         }
@@ -125,11 +126,11 @@ class SimpleHttpClientTests {
 
         @Test
         void verifyValidRejected() throws Throwable {
-            val port = RandomUtils.nextInt(7000, 9999);
-            try (val webServer = new MockWebServer(port,
+            try (val webServer = new MockWebServer(
                 new ByteArrayResource(StringUtils.EMPTY.getBytes(StandardCharsets.UTF_8), "Output"), HttpStatus.INTERNAL_SERVER_ERROR)) {
                 webServer.start();
-                val result = getHttpClient().isValidEndPoint(new URI("http://localhost:8099").toURL());
+                val result = getHttpClient().isValidEndPoint(
+                    new URI("http://localhost:%s".formatted(webServer.getPort())).toURL());
                 assertFalse(result);
             }
         }

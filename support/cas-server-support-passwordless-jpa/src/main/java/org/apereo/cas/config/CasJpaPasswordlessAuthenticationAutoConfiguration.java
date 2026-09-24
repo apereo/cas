@@ -19,6 +19,7 @@ import org.apereo.cas.util.thread.Cleanable;
 import lombok.RequiredArgsConstructor;
 import lombok.val;
 import org.springframework.beans.factory.FactoryBean;
+import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -126,11 +127,11 @@ public class CasJpaPasswordlessAuthenticationAutoConfiguration {
         @Lazy(false)
         public Cleanable jpaPasswordlessAuthenticationTokenRepositoryCleaner(
             final ConfigurableApplicationContext applicationContext,
-            @Qualifier(PasswordlessTokenRepository.BEAN_NAME) final PasswordlessTokenRepository passwordlessTokenRepository) {
+            @Qualifier(PasswordlessTokenRepository.BEAN_NAME) final ObjectProvider<PasswordlessTokenRepository> passwordlessTokenRepository) {
             return BeanSupplier.of(Cleanable.class)
                 .when(BeanCondition.on("cas.authn.passwordless.tokens.jpa.cleaner.schedule.enabled").isTrue().evenIfMissing()
                     .given(applicationContext.getEnvironment()))
-                .supply(() -> new JpaPasswordlessAuthenticationTokenRepositoryCleaner(passwordlessTokenRepository))
+                .supply(() -> new JpaPasswordlessAuthenticationTokenRepositoryCleaner(passwordlessTokenRepository.getObject()))
                 .otherwiseProxy()
                 .get();
         }

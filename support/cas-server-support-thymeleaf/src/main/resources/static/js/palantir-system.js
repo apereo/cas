@@ -24,6 +24,9 @@ async function initializeSystemOperations() {
                     .filter(type => type !== "timestamp" && type !== "AUTHORIZATION_FAILURE")
                     .sort();
 
+                if (!auditEventsChart) {
+                    return;
+                }
                 auditEventsChart.data.labels = auditData.map(d => d.timestamp);
                 auditEventsChart.data.datasets = eventTypes.map(type => ({
                     borderWidth: 2,
@@ -72,7 +75,7 @@ async function initializeSystemOperations() {
 
     async function configureHealthChart() {
         function updateHealthChart(response) {
-            if (response.components !== undefined) {
+            if (response.components !== undefined && systemHealthChart) {
                 const payload = {
                     labels: [],
                     data: [],
@@ -124,6 +127,9 @@ async function initializeSystemOperations() {
         if (CasActuatorEndpoints.statistics()) {
             $.get(CasActuatorEndpoints.statistics(), response => {
 
+                if (!statisticsChart) {
+                    return;
+                }
                 const expired = response.expiredTickets;
                 const valid = response.validTickets;
                 statisticsChart.data.datasets[0].data = [valid, expired];
@@ -132,12 +138,34 @@ async function initializeSystemOperations() {
         }
     }
 
+    let systemDataRequest = null;
+
+    /**
+     * Read the info actuator, coalescing concurrent readers onto one request.
+     *
+     * The memory chart and the system information table are refreshed together and both need this
+     * payload; without coalescing each refresh issued the same request twice.
+     *
+     * @param callback invoked with the info payload when it arrives
+     * @returns {Promise<void>} resolved once the callback has run, or immediately when the
+     *     endpoint is unavailable
+     */
     async function fetchSystemData(callback) {
-        if (CasActuatorEndpoints.info()) {
-            $.get(CasActuatorEndpoints.info(), response => callback(response)).fail((xhr, status, error) => {
-                console.error("Error fetching data:", error);
-                displayBanner(xhr);
-            });
+        if (!CasActuatorEndpoints.info()) {
+            return;
+        }
+        if (!systemDataRequest) {
+            systemDataRequest = $.get(CasActuatorEndpoints.info())
+                .fail((xhr, status, error) => {
+                    console.error("Error fetching data:", error);
+                    displayBanner(xhr);
+                })
+                .always(() => queueMicrotask(() => systemDataRequest = null));
+        }
+        try {
+            callback(await systemDataRequest);
+        } catch (e) {
+            console.debug("Unable to read system data", e);
         }
     }
 
@@ -841,6 +869,9 @@ async function initializeSystemOperations() {
                 }
             }
         }
+        if (!httpRequestResponsesChart || !httpRequestsByUrlChart) {
+            return;
+        }
         httpRequestResponsesChart.data.datasets[0].data = httpSuccesses;
         httpRequestResponsesChart.data.datasets[0].label = "Success";
         httpRequestResponsesChart.data.datasets[1].data = httpFailures;
@@ -1323,6 +1354,12 @@ async function initializeSystemOperations() {
             $("#httpTracesErrorsOnly").off("change").on("change", () => renderHttpTraces());
         }
 
+    /**
+     * Read the untagged jvm.memory.used metric, which carries both the aggregate measurement and
+     * the list of memory pool ids in its availableTags. One request answers both questions.
+     *
+     * @returns {Promise<{names: string[]}>} the memory pool ids, empty when unavailable
+     */
     async function getMemoryPoolNames() {
         return new Promise(resolve => {
             $.get(memoryMetricUrl("jvm.memory.used"), response => {
@@ -1784,6 +1821,9 @@ async function initializeSystemOperations() {
             hideElements($("#systemLiveMemoryContainer"));
             return;
         }
+        if (!$("#systemLiveMemoryContainer").is(":visible") && liveMemoryPoolsTable.data().count() > 0) {
+            return;
+        }
 
         const [heapUsed, heapCommitted, heapMax, nonHeapUsed, nonHeapCommitted, nonHeapMax, poolNames] = await Promise.all([
             getMemoryMetricValue("jvm.memory.used", ["area:heap"]),
@@ -1902,6 +1942,9 @@ async function initializeSystemOperations() {
             const free = convertMemoryToGB(response.systemInfo["JVM Free Memory"]);
             const total = convertMemoryToGB(response.systemInfo["JVM Total Memory"]);
 
+            if (!memoryChart) {
+                return;
+            }
             memoryChart.data.datasets[0].data = [maximum, total, free];
             memoryChart.update();
         });
@@ -1929,13 +1972,12 @@ async function initializeSystemOperations() {
             });
         }
         await configureLiveMemory();
-        await configureHeapDumpAnalysis();
-        await refreshHttpRequestMappings();
-        await configureHttpTraces();
-        configureHttpRequestResponses().then(configureAuditEventsChart());
+        await configureHttpRequestResponses();
+        configureAuditEventsChart();
     }
 
     const systemTable = $("#systemTable").DataTable({
+        deferRender: true,
         pageLength: 10,
         autoWidth: false,
         drawCallback: settings => {
@@ -1972,6 +2014,7 @@ async function initializeSystemOperations() {
     });
 
     const httpRequestMappingsTable = $("#httpRequestMappingsTable").DataTable({
+        deferRender: true,
         pageLength: 25,
         autoWidth: false,
         order: [[1, "asc"]],
@@ -2015,6 +2058,7 @@ async function initializeSystemOperations() {
     });
 
     const heapDumpClassesTable = $("#heapDumpClassesTable").DataTable({
+        deferRender: true,
         pageLength: 10,
         autoWidth: false,
         order: [[0, "asc"]],
@@ -2069,6 +2113,7 @@ async function initializeSystemOperations() {
     });
 
     const httpExchangesTable = $("#httpExchangesTable").DataTable({
+        deferRender: true,
         pageLength: 10,
         autoWidth: false,
         order: [[0, "desc"]],
@@ -2141,6 +2186,7 @@ async function initializeSystemOperations() {
     });
 
     const httpTracesTable = $("#httpTracesTable").DataTable({
+        deferRender: true,
         pageLength: 10,
         autoWidth: false,
         order: [[0, "desc"]],
@@ -2226,6 +2272,7 @@ async function initializeSystemOperations() {
     }
 
     const casDependenciesTable = $("#casDependenciesTable").DataTable({
+        deferRender: true,
         pageLength: 10,
         autoWidth: false,
         order: [[1, "asc"]],
@@ -2260,6 +2307,7 @@ async function initializeSystemOperations() {
     });
 
     const casVulnerabilitiesTable = $("#casVulnerabilitiesTable").DataTable({
+        deferRender: true,
         pageLength: 10,
         autoWidth: false,
         order: [[6, "desc"]],
@@ -2314,7 +2362,7 @@ async function initializeSystemOperations() {
         }
     });
 
-    let tabs = new mdc.tabBar.MDCTabBar(document.querySelector("#dashboardTabBar"));
+    const tabs = dashboardTabBar();
 
     async function configureStartupTimeline() {
         if (!CasActuatorEndpoints.startup()) {
@@ -2538,12 +2586,41 @@ async function initializeSystemOperations() {
         }
     });
 
+    let httpRequestMappingsLoaded = false;
+
+    /**
+     * Load the web endpoint mappings the first time that panel is shown.
+     *
+     * The mappings actuator returns every handler registered in the application, which is one of
+     * the largest payloads the dashboard can ask for. It used to be fetched on every System refresh
+     * whether or not anyone was looking at it.
+     *
+     * @returns {Promise<void>} resolved once the mappings have been rendered
+     */
+    async function loadHttpRequestMappings() {
+        if (httpRequestMappingsLoaded) {
+            return;
+        }
+        httpRequestMappingsLoaded = true;
+        await refreshHttpRequestMappings();
+    }
+
     $("#system-tabs").on("tabsactivate", function (event, ui) {
         if (ui.newPanel.attr("id") === "casstartup-tab") {
             configureStartupTimeline();
         }
         if (ui.newPanel.attr("id") === "httptraces-tab") {
             configureHttpTraces();
+        }
+        if (ui.newPanel.attr("id") === "httprequestmappings-tab") {
+            loadHttpRequestMappings();
+        }
+        if (ui.newPanel.attr("id") === "systemstatus-tab") {
+            configureLiveMemory();
+        }
+        if (ui.newPanel.attr("id") === "systeminfo-tab"
+            && $("#system-info-tabs").data("ui-tabs") && $("#system-info-tabs").tabs("option", "active") === 0) {
+            refreshDependencies();
         }
     });
 
@@ -2568,6 +2645,10 @@ async function initializeSystemOperations() {
             if (activeTabs["system-tabs"] === httpTracesTabIndex) {
                 await configureHttpTraces();
             }
+            const mappingsTabIndex = $("#system-tabs ul li a[href='#httprequestmappings-tab']").parent().index();
+            if (activeTabs["system-tabs"] === mappingsTabIndex) {
+                await loadHttpRequestMappings();
+            }
             const systemInfoTabIndex = activeTabs["system-info-tabs"];
             const dependenciesTabIndex = $("#system-info-tabs ul li a[href='#casdependencies-tab']").parent().index();
             if (systemInfoTabIndex === dependenciesTabIndex) {
@@ -2580,23 +2661,28 @@ async function initializeSystemOperations() {
         } catch (e) { /* ignore */ }
     }
 
-    if ($("#system-info-tabs").data("ui-tabs") && $("#system-info-tabs").tabs("option", "active") === 0) {
-        await refreshDependencies();
-    }
 
     setInterval(() => {
-        if (currentActiveTab === Tabs.SYSTEM.index) {
+        if (currentActiveTab === Tabs.SYSTEM.index && document.visibilityState === "visible") {
             configureSystemData();
             configureHealthChart();
             configureStatistics();
         }
     }, palantirSettings().refreshInterval);
 
-    await configureSystemData()
-        .then(configureStatistics())
-        .then(configureHealthChart())
-        .then(configureSystemInfo())
-        .then(configureSystemMetrics());
+    if ($("#systeminfo-tab").is(":visible") && $("#system-info-tabs").data("ui-tabs")
+        && $("#system-info-tabs").tabs("option", "active") === 0) {
+        await refreshDependencies();
+    }
+
+    await configureHeapDumpAnalysis();
+    await Promise.all([
+        configureSystemData(),
+        configureStatistics(),
+        configureHealthChart(),
+        configureSystemInfo(),
+        configureSystemMetrics()
+    ]);
 
     $("button[name=shutdownServerButton]").off().on("click", function () {
         Swal.fire({

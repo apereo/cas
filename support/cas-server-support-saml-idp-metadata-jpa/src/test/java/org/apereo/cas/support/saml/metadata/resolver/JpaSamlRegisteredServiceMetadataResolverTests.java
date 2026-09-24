@@ -10,8 +10,6 @@ import org.apache.commons.io.IOUtils;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.parallel.Execution;
-import org.junit.jupiter.api.parallel.ExecutionMode;
 import org.junitpioneer.jupiter.RetryingTest;
 import org.opensaml.core.criterion.EntityIdCriterion;
 import org.springframework.core.io.ClassPathResource;
@@ -26,7 +24,6 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 @Tag("JDBC")
 @Transactional(transactionManager = "transactionManagerSamlMetadata")
-@Execution(ExecutionMode.SAME_THREAD)
 class JpaSamlRegisteredServiceMetadataResolverTests extends BaseJpaSamlMetadataTests {
 
     @BeforeEach

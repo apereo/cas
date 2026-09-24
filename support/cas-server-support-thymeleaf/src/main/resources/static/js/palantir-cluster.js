@@ -374,7 +374,7 @@ async function initializeClusterTopologyOperations() {
     });
     refreshActiveClusterTab();
     setInterval(() => {
-        if (currentActiveTab === Tabs.CLUSTER.index) {
+        if (currentActiveTab === Tabs.CLUSTER.index && document.visibilityState === "visible") {
             refreshActiveClusterTab();
         }
     }, palantirSettings().refreshInterval);

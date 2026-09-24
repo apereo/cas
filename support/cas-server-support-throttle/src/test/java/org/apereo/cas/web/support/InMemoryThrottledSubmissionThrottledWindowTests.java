@@ -16,6 +16,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.context.annotation.Bean;
 import org.springframework.scheduling.annotation.EnableScheduling;
+import static org.awaitility.Awaitility.*;
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
@@ -60,10 +61,8 @@ class InMemoryThrottledSubmissionThrottledWindowTests
         result = login("casuser", "Mellon", IP_ADDRESS);
         assertEquals(HttpStatus.SC_LOCKED, result.getStatus());
 
-        Thread.sleep(5000);
-
-        result = login("casuser", "Mellon", IP_ADDRESS);
-        assertEquals(HttpStatus.SC_OK, result.getStatus());
+        await().atMost(Duration.ofSeconds(30))
+            .untilAsserted(() -> assertEquals(HttpStatus.SC_OK, login("casuser", "Mellon", IP_ADDRESS).getStatus()));
     }
 
     @TestConfiguration(value = "AuthenticationTestConfiguration", proxyBeanMethods = false)

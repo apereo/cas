@@ -4,9 +4,11 @@ import module java.base;
 import org.apereo.cas.config.CasSurrogateJdbcAuthenticationAutoConfiguration;
 import org.apereo.cas.test.CasTestExtension;
 import lombok.Getter;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
+import lombok.val;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.TestInstance;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -31,6 +33,7 @@ import module java.sql;
 @Getter
 @Tag("JDBC")
 @ExtendWith(CasTestExtension.class)
+@TestInstance(TestInstance.Lifecycle.PER_CLASS)
 class SurrogateJdbcAuthenticationServiceTests extends BaseSurrogateAuthenticationServiceTests {
     @Autowired
     @Qualifier(SurrogateAuthenticationService.BEAN_NAME)
@@ -40,11 +43,9 @@ class SurrogateJdbcAuthenticationServiceTests extends BaseSurrogateAuthenticatio
     @Qualifier("surrogateAuthenticationJdbcDataSource")
     private DataSource surrogateAuthenticationJdbcDataSource;
 
-    private JdbcTemplate jdbcTemplate;
-
-    @BeforeEach
+    @BeforeAll
     void before() {
-        jdbcTemplate = new JdbcTemplate(this.surrogateAuthenticationJdbcDataSource);
+        val jdbcTemplate = new JdbcTemplate(this.surrogateAuthenticationJdbcDataSource);
         jdbcTemplate.execute("drop table surrogate_accounts if exists;");
         jdbcTemplate.execute("create table surrogate_accounts (id int, username varchar(255), surrogateAccount varchar(255));");
         jdbcTemplate.execute("insert into surrogate_accounts values (100, 'casadmin', '" + SurrogateAuthenticationService.WILDCARD_ACCOUNT + "');");
@@ -53,9 +54,9 @@ class SurrogateJdbcAuthenticationServiceTests extends BaseSurrogateAuthenticatio
         jdbcTemplate.execute("insert into surrogate_accounts values (300, 'casuser', 'surrogate3');");
     }
 
-    @AfterEach
+    @AfterAll
     public void after() {
-        jdbcTemplate = new JdbcTemplate(this.surrogateAuthenticationJdbcDataSource);
+        val jdbcTemplate = new JdbcTemplate(this.surrogateAuthenticationJdbcDataSource);
         jdbcTemplate.execute("drop table surrogate_accounts if exists;");
     }
 }

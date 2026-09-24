@@ -72,7 +72,6 @@ import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Lazy;
 import org.springframework.context.annotation.ScopedProxyMode;
 import org.springframework.core.annotation.AnnotationAwareOrderComparator;
 import org.springframework.webflow.definition.registry.FlowDefinitionRegistry;
@@ -97,7 +96,6 @@ public class CasCoreMultifactorAuthenticationWebflowAutoConfiguration {
         @ConditionalOnMissingBean(name = "rankedAuthenticationProviderWebflowEventResolver")
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-        @Lazy(false)
         public CasDelegatingWebflowEventResolver rankedAuthenticationProviderWebflowEventResolver(
             @Qualifier(CasDelegatingWebflowEventResolver.BEAN_NAME_INITIAL_AUTHENTICATION_EVENT_RESOLVER)
             final CasDelegatingWebflowEventResolver initialAuthenticationAttemptWebflowEventResolver,

@@ -77,12 +77,12 @@ public class JdbcAuthorizationPolicy implements ResourceAuthorizationPolicy {
 
     private static MapSqlParameterSource buildMapSqlParameterSource(final AuthorizationRequest request) {
         val parameters = new MapSqlParameterSource();
+        parameters.addValues(request.getContext());
+        parameters.addValues(request.getPrincipal().getAttributes());
         parameters.addValue("method", request.getMethod());
         parameters.addValue("uri", request.getUri());
         parameters.addValue("namespace", request.getNamespace());
         parameters.addValue("principal", request.getPrincipal().getId());
-        parameters.addValues(request.getContext());
-        parameters.addValues(request.getPrincipal().getAttributes());
         return parameters;
     }
 

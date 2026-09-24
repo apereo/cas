@@ -30,6 +30,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.jose4j.jwk.JsonWebKeySet;
+import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -74,10 +75,10 @@ class OidcJwksConfiguration {
         public Runnable oidcJsonWebKeystoreRotationScheduler(
             final ConfigurableApplicationContext applicationContext,
             @Qualifier("oidcJsonWebKeystoreRotationService")
-            final OidcJsonWebKeystoreRotationService oidcJsonWebKeystoreRotationService) {
+            final ObjectProvider<OidcJsonWebKeystoreRotationService> oidcJsonWebKeystoreRotationService) {
             return BeanSupplier.of(Runnable.class)
                 .when(BeanCondition.on("cas.authn.oidc.jwks.rotation.schedule.enabled").isTrue().given(applicationContext.getEnvironment()))
-                .supply(() -> new OidcJsonWebKeystoreRotationScheduler(oidcJsonWebKeystoreRotationService))
+                .supply(() -> new OidcJsonWebKeystoreRotationScheduler(oidcJsonWebKeystoreRotationService.getObject()))
                 .otherwiseProxy()
                 .get();
         }
@@ -89,10 +90,10 @@ class OidcJwksConfiguration {
         public Runnable oidcJsonWebKeystoreRevocationScheduler(
             final ConfigurableApplicationContext applicationContext,
             @Qualifier("oidcJsonWebKeystoreRotationService")
-            final OidcJsonWebKeystoreRotationService oidcJsonWebKeystoreRotationService) {
+            final ObjectProvider<OidcJsonWebKeystoreRotationService> oidcJsonWebKeystoreRotationService) {
             return BeanSupplier.of(Runnable.class)
                 .when(BeanCondition.on("cas.authn.oidc.jwks.revocation.schedule.enabled").isTrue().given(applicationContext.getEnvironment()))
-                .supply(() -> new OidcJsonWebKeystoreRevocationScheduler(oidcJsonWebKeystoreRotationService))
+                .supply(() -> new OidcJsonWebKeystoreRevocationScheduler(oidcJsonWebKeystoreRotationService.getObject()))
                 .otherwiseProxy()
                 .get();
         }

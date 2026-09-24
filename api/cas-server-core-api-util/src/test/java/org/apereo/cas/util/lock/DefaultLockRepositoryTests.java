@@ -32,10 +32,11 @@ class DefaultLockRepositoryTests {
         val container = new Container();
         container.values.put(lockKey, new ArrayList<>());
 
+        val start = new CountDownLatch(1);
         val threads = new ArrayList<Thread>();
         IntStream.range(0, 10).forEach(i -> {
             val thread = new Thread(Unchecked.runnable(() -> {
-                Thread.sleep(250);
+                start.await();
                 repository.execute(lockKey, () -> {
                     container.values.get(lockKey).add(UUID.randomUUID().toString());
                     return null;
@@ -45,6 +46,7 @@ class DefaultLockRepositoryTests {
             threads.add(thread);
             thread.start();
         });
+        start.countDown();
         for (val thread : threads) {
             try {
                 thread.join();

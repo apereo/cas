@@ -38,7 +38,7 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 @SpringBootTest(classes = BaseJpaTicketRegistryTests.SharedTestConfiguration.class, properties = {
     "cas.jdbc.show-sql=false",
-    "cas.ticket.registry.jpa.ddl-auto=create-drop",
+    "cas.ticket.registry.jpa.ddl-auto=update",
     "cas.ticket.registry.jpa.user=root",
     "cas.ticket.registry.jpa.password=mypass",
     "cas.ticket.registry.jpa.driver-class=org.mariadb.jdbc.Driver",

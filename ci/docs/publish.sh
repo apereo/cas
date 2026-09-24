@@ -315,12 +315,12 @@ if [[ $cloneRepository == "true" ]]; then
   rm -Rf "$PWD/gh-pages/$branchVersion/developer"
   mv "$PWD"/docs-latest/javascripts/* "$PWD/gh-pages/javascripts/"
   mv "$PWD"/docs-latest/stylesheets/* "$PWD/gh-pages/stylesheets/"
-  echo "Removing..."
-  rm "$PWD"/gh-pages/stylesheets/*.scss
+  printgreen "Removing..."
+  rm -Rf "$PWD"/gh-pages/stylesheets/*.scss
 
   rm -Rf "$PWD"/docs-latest/_sass
   rm -Rf "$PWD/gh-pages/_sass"
-
+  printgreen "Copying..."
   cp -Rf "$PWD"/docs-includes/* "$PWD/gh-pages/_includes/$branchVersion" &
   cp -Rf "$PWD"/docs-layouts/* "$PWD/gh-pages/_layouts" &
   cp -Rf "$PWD"/docs-includes-site/* "$PWD/gh-pages/_includes" &
@@ -472,7 +472,7 @@ if [[ ${buildDocs} == "true" ]]; then
 
   export RUBY_YJIT_ENABLE=1
   if [[ ${serve} == "true" ]]; then
-    bundle exec jekyll serve --profile --incremental --trace
+    bundle exec jekyll serve --baseurl "" --profile --incremental --trace
   else
     bundle exec jekyll build --incremental --trace
   fi

@@ -24,6 +24,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.support.StaticApplicationContext;
+import static org.awaitility.Awaitility.*;
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
@@ -84,13 +85,12 @@ class CasServicesStreamingKafkaConfigurationTests {
         val clientInfo = ClientInfoHolder.getClientInfo();
         casRegisteredServiceStreamPublisher.publish(registeredService,
             new CasRegisteredServiceSavedEvent(this, registeredService, clientInfo), publisherId);
-        Thread.sleep(3000);
-        assertFalse(registeredServiceDistributedCacheManager.getAll().isEmpty());
+        await().atMost(Duration.ofSeconds(30))
+            .until(() -> !registeredServiceDistributedCacheManager.getAll().isEmpty());
 
         casRegisteredServiceStreamPublisher.publish(registeredService,
             new CasRegisteredServiceDeletedEvent(this, registeredService, clientInfo), publisherId);
 
-        Thread.sleep(2500);
         registeredServiceDistributedCacheManager.clear();
         assertTrue(registeredServiceDistributedCacheManager.getAll().isEmpty());
     }
@@ -108,20 +108,18 @@ class CasServicesStreamingKafkaConfigurationTests {
             .build();
 
         registeredServiceDistributedCacheManager.set(registeredService, cache, true);
-        Thread.sleep(2000);
-
-        assertFalse(registeredServiceDistributedCacheManager.getAll().isEmpty());
+        await().atMost(Duration.ofSeconds(30))
+            .until(() -> !registeredServiceDistributedCacheManager.getAll().isEmpty());
 
         obj = registeredServiceDistributedCacheManager.get(registeredService);
         assertNotNull(obj);
 
-        var c = registeredServiceDistributedCacheManager.findAll(obj1 -> obj1.getValue().equals(registeredService));
-        assertFalse(c.isEmpty());
+        assertFalse(registeredServiceDistributedCacheManager
+            .findAll(obj1 -> obj1.getValue().equals(registeredService)).isEmpty());
 
         registeredServiceDistributedCacheManager.remove(registeredService, cache, true);
-        Thread.sleep(5000);
-        c = registeredServiceDistributedCacheManager.findAll(obj1 -> obj1.getValue().equals(registeredService));
-        assertTrue(c.isEmpty());
+        await().atMost(Duration.ofSeconds(30)).until(() -> registeredServiceDistributedCacheManager
+            .findAll(obj1 -> obj1.getValue().equals(registeredService)).isEmpty());
         registeredServiceDistributedCacheManager.clear();
         assertTrue(registeredServiceDistributedCacheManager.getAll().isEmpty());
     }

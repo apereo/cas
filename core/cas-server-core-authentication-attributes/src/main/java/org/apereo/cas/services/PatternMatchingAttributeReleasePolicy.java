@@ -5,7 +5,9 @@ import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.RegexUtils;
 import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.util.nativex.CasRuntimeHintsRegistrar;
+import org.apereo.cas.util.scripting.ExecutableCompiledScript;
 import org.apereo.cas.util.scripting.ExecutableCompiledScriptFactory;
+import org.apereo.cas.util.spring.ApplicationContextProvider;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -60,6 +62,13 @@ public class PatternMatchingAttributeReleasePolicy extends AbstractRegisteredSer
             .entrySet()
             .stream()
             .filter(entry -> attributes.containsKey(entry.getKey()))
+            .filter(entry -> {
+                if (StringUtils.isBlank(entry.getValue().getTransform())) {
+                    LOGGER.warn("No transformation rule is defined for attribute [{}]; the rule is ignored.", entry.getKey());
+                    return false;
+                }
+                return true;
+            })
             .map(entry -> {
                 val rule = entry.getValue();
                 return CasRuntimeHintsRegistrar.notInNativeImage() && scriptFactory.isPresent()
@@ -71,7 +80,7 @@ public class PatternMatchingAttributeReleasePolicy extends AbstractRegisteredSer
             .collect(Collectors.toMap(
                 Map.Entry::getKey,
                 Map.Entry::getValue,
-                (existing, replacement) -> replacement,
+                CollectionUtils::wrapList,
                 LinkedHashMap::new));
     }
 
@@ -84,40 +93,76 @@ public class PatternMatchingAttributeReleasePolicy extends AbstractRegisteredSer
         val valuePattern = RegexUtils.createPattern(rule.getPattern());
         val attributeValues = attributes.get(entry.getKey());
 
+        val inlineScript = rule.getTransform().trim().stripIndent();
+        val inlineGroovy = scriptFactory.getInlineScript(inlineScript).orElseThrow();
+        val executableScript = ApplicationContextProvider.getScriptResourceCacheManager()
+            .map(cacheManager -> cacheManager.resolveScriptableResource(inlineGroovy, inlineGroovy))
+            .orElseGet(() -> scriptFactory.fromScript(inlineGroovy));
+
         return attributeValues
             .stream()
-            .map(value -> {
-                val matcher = valuePattern.matcher(value.toString());
-                if (!matcher.find()) {
-                    return Map.<String, List<Object>>of();
-                }
-                val matchedValue = matcher.group();
-                val args = CollectionUtils.<String, Object>wrap(
-                    "context", context,
-                    "attributes", attributes,
-                    "matched", matchedValue,
-                    "logger", LOGGER);
-                for (var i = 0; i <= matcher.groupCount(); i++) {
-                    val group = matcher.group(i);
-                    args.put("matchedGroup" + i, group);
-                }
-                val inlineScript = rule.getTransform().trim().stripIndent();
-                val inlineGroovy = scriptFactory.getInlineScript(inlineScript).orElseThrow();
-                try (val executableScript = scriptFactory.fromScript(inlineGroovy)) {
-                    executableScript.setBinding(args);
-                    return FunctionUtils.doUnchecked(() -> {
-                        val result = executableScript.execute(args.values().toArray(), Map.class);
-                        return result != null ? (Map<String, List<Object>>) result : Map.<String, List<Object>>of();
-                    });
-                }
-            })
-            .filter(Objects::nonNull)
+            .map(value -> executeTransformationRule(executableScript, valuePattern, value, attributes, context))
             .flatMap(map -> map.entrySet().stream())
             .collect(Collectors.toMap(
                 Map.Entry::getKey,
                 Map.Entry::getValue,
                 CollectionUtils::wrapList,
                 LinkedHashMap::new));
+    }
+
+    /**
+     * The binding is assigned to the script for the current thread only and is consumed by the
+     * execution that immediately follows it on that same thread, which is what allows the compiled
+     * script to be shared via {@link org.apereo.cas.util.scripting.ScriptResourceCacheManager}.
+     * Assigning a binding here and executing elsewhere would silently discard it.
+     */
+    private static Map<String, List<Object>> executeTransformationRule(
+        final ExecutableCompiledScript executableScript,
+        final Pattern valuePattern,
+        final Object attributeValue,
+        final Map<String, List<Object>> attributes,
+        final RegisteredServiceAttributeReleasePolicyContext context) {
+        val matcher = valuePattern.matcher(attributeValue.toString());
+        if (!matcher.find()) {
+            return Map.of();
+        }
+        val args = CollectionUtils.<String, Object>wrap(
+            "context", context,
+            "attributes", attributes,
+            "matched", matcher.group(),
+            "logger", LOGGER);
+        for (var i = 0; i <= matcher.groupCount(); i++) {
+            args.put("matchedGroup" + i, matcher.group(i));
+        }
+        executableScript.setBinding(args);
+        return FunctionUtils.doUnchecked(() -> normalizeTransformationResult(
+            executableScript.execute(args.values().toArray(), Map.class), attributeValue));
+    }
+
+    /**
+     * Transformation rules are free-form scripts and the attribute map they produce is handed to the
+     * rest of the release chain, which requires non-blank names mapped to collections of values. A
+     * script that returns a single value, a {@code null} value or no usable entry at all must not be
+     * able to corrupt that map or fail the release of every other attribute, so each entry is coerced
+     * into that shape here and dropped when it cannot be.
+     */
+    private static Map<String, List<Object>> normalizeTransformationResult(final Map<?, ?> result,
+                                                                           final Object attributeValue) {
+        if (result == null || result.isEmpty()) {
+            return Map.of();
+        }
+        val normalized = new LinkedHashMap<String, List<Object>>();
+        result.forEach((key, value) -> {
+            val attributeName = Objects.toString(key, StringUtils.EMPTY);
+            val values = CollectionUtils.<Object>wrapList(value);
+            if (StringUtils.isNotBlank(attributeName) && !values.isEmpty()) {
+                normalized.put(attributeName, values);
+            } else {
+                LOGGER.warn("Transformation rule produced an unusable entry [{}] with value [{}] for [{}] and is ignored. "
+                    + "Rules must return a map of attribute names to values.", key, value, attributeValue);
+            }
+        });
+        return normalized;
     }
 
     private static Map<String, List<Object>> buildAttributesForEntry(final Map<String, List<Object>> attributes,

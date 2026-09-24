@@ -12,8 +12,8 @@ import org.jose4j.jwk.JsonWebKeySet;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.parallel.Execution;
-import org.junit.jupiter.api.parallel.ExecutionMode;
+import org.junit.jupiter.api.parallel.ResourceLock;
+import org.junit.jupiter.api.parallel.Resources;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -28,7 +28,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
  * @since 6.2.0
  */
 @Tag("OIDCWeb")
-@Execution(ExecutionMode.SAME_THREAD)
 class OidcDynamicClientRegistrationEndpointControllerTests {
 
     @Nested
@@ -183,6 +182,7 @@ class OidcDynamicClientRegistrationEndpointControllerTests {
         }
 
         @Test
+        @ResourceLock(Resources.SYSTEM_PROPERTIES)
         void verifyJwksKeyIdEvaluatesSystemProperties() throws Throwable {
             val propertyName = "cas.oidc.jwks.leak";
             val propertyValue = UUID.randomUUID().toString();

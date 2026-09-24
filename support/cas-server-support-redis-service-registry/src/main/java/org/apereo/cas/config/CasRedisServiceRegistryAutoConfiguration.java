@@ -82,8 +82,12 @@ public class CasRedisServiceRegistryAutoConfiguration {
         final CasConfigurationProperties casProperties) {
         return BeanSupplier.of(ServiceRegistry.class)
             .when(CONDITION.given(applicationContext.getEnvironment()))
-            .supply(() -> new RedisServiceRegistry(applicationContext, registeredServiceRedisTemplate,
-                Optional.ofNullable(serviceRegistryListeners.getIfAvailable()).orElseGet(ArrayList::new)))
+            .supply(() -> {
+                val registry = new RedisServiceRegistry(applicationContext, registeredServiceRedisTemplate,
+                    Optional.ofNullable(serviceRegistryListeners.getIfAvailable()).orElseGet(ArrayList::new));
+                registry.setOrder(casProperties.getServiceRegistry().getRedis().getOrder());
+                return registry;
+            })
             .otherwiseProxy()
             .get();
 

@@ -4,6 +4,7 @@ import module java.base;
 import org.apereo.cas.config.CasGoogleCloudStorageServiceRegistryAutoConfiguration;
 import org.apereo.cas.services.CasGoogleCloudServiceRegistryMessageReceiver.EventTypes;
 import org.apereo.cas.services.resource.RegisteredServiceResourceNamingStrategy;
+import org.apereo.cas.services.util.RegisteredServiceJsonSerializer;
 import org.apereo.cas.test.CasTestExtension;
 import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.util.junit.EnabledIfListeningOnPort;
@@ -23,6 +24,8 @@ import com.google.cloud.spring.autoconfigure.storage.GcpStorageAutoConfiguration
 import com.google.cloud.spring.autoconfigure.storage.GcpStorageProperties;
 import com.google.cloud.spring.core.GcpProjectIdProvider;
 import com.google.cloud.spring.core.UserAgentHeaderProvider;
+import com.google.cloud.storage.BlobInfo;
+import com.google.cloud.storage.BucketInfo;
 import com.google.cloud.storage.Storage;
 import com.google.cloud.storage.StorageOptions;
 import com.google.protobuf.ByteString;
@@ -31,7 +34,6 @@ import com.google.pubsub.v1.PushConfig;
 import com.google.pubsub.v1.SubscriptionName;
 import com.google.pubsub.v1.TopicName;
 import io.grpc.ManagedChannelBuilder;
-import lombok.Getter;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
@@ -41,7 +43,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.TestConfiguration;
+import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
+import static org.awaitility.Awaitility.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * This is {@link CasGoogleCloudStorageServiceRegistryListenerTests}.
@@ -49,7 +54,6 @@ import org.springframework.context.annotation.Bean;
  * @author Misagh Moayyed
  * @since 8.0.0
  */
-@Getter
 @Tag("GCP")
 @ExtendWith(CasTestExtension.class)
 @SpringBootTest(classes = {
@@ -67,15 +71,18 @@ import org.springframework.context.annotation.Bean;
 @EnabledIfListeningOnPort(port = {8100, 8085})
 class CasGoogleCloudStorageServiceRegistryListenerTests {
     @Autowired
-    @Qualifier(ServiceRegistry.BEAN_NAME)
-    private ServiceRegistry newServiceRegistry;
+    private ConfigurableApplicationContext applicationContext;
+
+    @Autowired
+    @Qualifier("storage")
+    private Storage storage;
+
+    @Autowired
+    @Qualifier(ServicesManager.BEAN_NAME)
+    private CacheableServicesManager servicesManager;
 
     @Autowired
     private GcpStorageProperties gcpStorageProperties;
-
-    @Autowired
-    @Qualifier("googleCloudStorageServiceRegistryListener")
-    private CasGoogleCloudStorageServiceRegistryListener googleCloudStorageServiceRegistryListener;
 
     @Autowired
     @Qualifier("googleCloudTransportChannelProvider")
@@ -87,7 +94,6 @@ class CasGoogleCloudStorageServiceRegistryListenerTests {
 
     @Test
     void verifyOperation() throws Exception {
-        getNewServiceRegistry().deleteAll();
         val topicName = TopicName.of(gcpStorageProperties.getProjectId(),
             CasGoogleCloudStorageServiceRegistryListener.SUBSCRIPTION_NAME);
         val publisher = Publisher.newBuilder(topicName)
@@ -96,14 +102,27 @@ class CasGoogleCloudStorageServiceRegistryListenerTests {
             .build();
 
         val registeredService = RegisteredServiceTestUtils.getRegisteredService(UUID.randomUUID().toString());
-        val savedService = getNewServiceRegistry().save(registeredService);
-        getNewServiceRegistry().load();
+        val bucket = "listener-" + UUID.randomUUID();
+        val name = namingStrategy.build(registeredService, "json");
+        try {
+            storage.create(BucketInfo.of(bucket));
+            val serializer = new RegisteredServiceJsonSerializer(applicationContext);
+            storage.create(BlobInfo.newBuilder(bucket, name).build(),
+                serializer.toString(registeredService).getBytes(StandardCharsets.UTF_8));
 
+            publishEventForType(bucket, name, publisher, EventTypes.OBJECT_FINALIZE);
+            await().atMost(Duration.ofSeconds(10)).untilAsserted(() ->
+                assertEquals(registeredService, servicesManager.getCachedRegisteredServices().get(registeredService.getId())));
 
-        val bucket = GoogleCloudStorageServiceRegistry.determineBucketForRegisteredService(savedService);
-        val name = namingStrategy.build(savedService, "json");
-        publishEventForType(bucket, name, publisher, EventTypes.OBJECT_FINALIZE);
-        publishEventForType(bucket, name, publisher, EventTypes.OBJECT_DELETE);
+            publishEventForType(bucket, name, publisher, EventTypes.OBJECT_DELETE);
+            await().atMost(Duration.ofSeconds(10)).untilAsserted(() ->
+                assertFalse(servicesManager.getCachedRegisteredServices().containsKey(registeredService.getId())));
+        } finally {
+            publisher.shutdown();
+            publisher.awaitTermination(10, TimeUnit.SECONDS);
+            storage.delete(bucket, name);
+            storage.delete(bucket);
+        }
     }
 
     private static void publishEventForType(final String bucket,

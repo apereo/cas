@@ -51,7 +51,7 @@ public class JdbcPasswordManagementService extends BasePasswordManagementService
 
     @Override
     public boolean changeInternal(final PasswordChangeRequest bean) {
-        var result = this.transactionTemplate.execute(action -> {
+        var result = this.transactionTemplate.execute(_ -> {
             val password = passwordEncoder.encode(bean.toPassword());
             val count = this.jdbcTemplate.update(casProperties.getAuthn().getPm().getJdbc().getSqlChangePassword(), password, bean.getUsername());
             return count > 0;
@@ -68,7 +68,7 @@ public class JdbcPasswordManagementService extends BasePasswordManagementService
         }
 
         try {
-            val email = this.transactionTemplate.execute(action -> {
+            val email = this.transactionTemplate.execute(_ -> {
                 val emailAddress = this.jdbcTemplate.queryForObject(queryFindEmail, String.class, query.getUsername());
                 if (StringUtils.isNotBlank(emailAddress) && EmailValidator.getInstance().isValid(emailAddress)) {
                     return emailAddress;
@@ -91,7 +91,7 @@ public class JdbcPasswordManagementService extends BasePasswordManagementService
             return null;
         }
         try {
-            return this.transactionTemplate.execute(action -> {
+            return this.transactionTemplate.execute(_ -> {
                 val phone = this.jdbcTemplate.queryForObject(findPhone, String.class, query.getUsername());
                 if (StringUtils.isNotBlank(phone)) {
                     return phone;
@@ -108,7 +108,7 @@ public class JdbcPasswordManagementService extends BasePasswordManagementService
     @Override
     public String findUsername(final PasswordManagementQuery query) {
         try {
-            return transactionTemplate.execute(action ->
+            return transactionTemplate.execute(_ ->
                 jdbcTemplate.queryForObject(casProperties.getAuthn().getPm().getJdbc().getSqlFindUser(), String.class, query.getEmail()));
         } catch (final EmptyResultDataAccessException e) {
             LOGGER.debug("Email [{}] not found when searching for user", query.getEmail());
@@ -118,7 +118,7 @@ public class JdbcPasswordManagementService extends BasePasswordManagementService
 
     @Override
     public Map<String, String> getSecurityQuestions(final PasswordManagementQuery query) {
-        return this.transactionTemplate.execute(action -> {
+        return this.transactionTemplate.execute(_ -> {
             val sqlSecurityQuestions = casProperties.getAuthn().getPm().getJdbc().getSqlGetSecurityQuestions();
             val map = new HashMap<String, String>();
             val results = jdbcTemplate.queryForList(sqlSecurityQuestions, query.getUsername());
@@ -134,14 +134,17 @@ public class JdbcPasswordManagementService extends BasePasswordManagementService
 
     @Override
     public void updateSecurityQuestions(final PasswordManagementQuery query) {
-        jdbcTemplate.update(casProperties.getAuthn().getPm().getJdbc().getSqlDeleteSecurityQuestions(), query.getUsername());
-        query.getSecurityQuestions().forEach((question, values) -> values.forEach(answer ->
-            jdbcTemplate.update(casProperties.getAuthn().getPm().getJdbc().getSqlUpdateSecurityQuestions(),
-                query.getUsername(), question, answer)));
+        transactionTemplate.executeWithoutResult(_ -> {
+            jdbcTemplate.update(casProperties.getAuthn().getPm().getJdbc().getSqlDeleteSecurityQuestions(), query.getUsername());
+            query.getSecurityQuestions().forEach((question, values) -> values.forEach(answer ->
+                jdbcTemplate.update(casProperties.getAuthn().getPm().getJdbc().getSqlUpdateSecurityQuestions(), query.getUsername(), question, answer)));
+        });
     }
 
     @Override
     public boolean unlockAccount(final Credential credential) {
-        return jdbcTemplate.update(casProperties.getAuthn().getPm().getJdbc().getSqlUnlockAccount(), Boolean.TRUE, credential.getId()) > 0;
+        val result = transactionTemplate.execute(_ ->
+            jdbcTemplate.update(casProperties.getAuthn().getPm().getJdbc().getSqlUnlockAccount(), Boolean.TRUE, credential.getId()) > 0);
+        return BooleanUtils.toBoolean(result);
     }
 }

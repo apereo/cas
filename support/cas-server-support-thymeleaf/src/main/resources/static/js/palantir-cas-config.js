@@ -901,11 +901,15 @@ function initializeGroovyScriptCacheManagerOperations() {
 
     $("#refreshGroovyScriptCacheButton").off().on("click", () => fetchGroovyScriptCacheKeys());
 
-    fetchGroovyScriptCacheKeys();
+    window.fetchGroovyScriptCacheKeys = fetchGroovyScriptCacheKeys;
+    if ($("#groovy-scripting-tab").is(":visible")) {
+        fetchGroovyScriptCacheKeys();
+    }
 }
 
 async function initializeConfigurationOperations() {
     const configurationTable = $("#configurationTable").DataTable({
+        deferRender: true,
         pageLength: 10,
         autoWidth: false,
         columnDefs: [
@@ -993,6 +997,7 @@ async function initializeConfigurationOperations() {
 
     toolbar.innerHTML = toolbarEntries;
     const mutableConfigurationTable = $("#mutableConfigurationTable").DataTable({
+        deferRender: true,
         pageLength: 10,
         autoWidth: false,
         layout: {
@@ -1102,6 +1107,7 @@ async function initializeConfigurationOperations() {
     }
 
     const configPropsTable = $("#configPropsTable").DataTable({
+        deferRender: true,
         pageLength: 10,
         autoWidth: false,
         columnDefs: [
@@ -1168,6 +1174,7 @@ async function initializeConfigurationOperations() {
 
     let springBeansEntries = [];
     const springBeansTable = $("#springBeansTable").DataTable({
+        deferRender: true,
         pageLength: 10,
         autoWidth: false,
         order: [[0, "asc"]],
@@ -1225,21 +1232,31 @@ async function initializeConfigurationOperations() {
     }
 
     $("#springBeansFilter").off("input").on("input", renderSpringBeans);
-    if (CasActuatorEndpoints.beans()) {
+    let springBeansLoaded = false;
+
+    function loadSpringBeans() {
+        if (springBeansLoaded || !CasActuatorEndpoints.beans()) {
+            return;
+        }
+        springBeansLoaded = true;
         $.get(CasActuatorEndpoints.beans(), response => {
             setSpringBeansAvailable();
             springBeansEntries = normalizeSpringBeans(response);
             renderSpringBeans();
         }).fail((xhr, status, error) => {
+            springBeansLoaded = false;
             console.error("Error fetching Spring beans:", error);
             hideSpringBeansTab();
         });
-    } else {
+    }
+
+    if (!CasActuatorEndpoints.beans()) {
         hideSpringBeansTab();
     }
 
     let springConditionsEntries = {positive: [], negative: []};
     const createSpringConditionsTable = (selector, positive) => $(selector).DataTable({
+        deferRender: true,
         pageLength: 10,
         autoWidth: false,
         order: [[0, "asc"]],
@@ -1300,20 +1317,48 @@ async function initializeConfigurationOperations() {
             springConditionsNegativeTable.columns.adjust();
         }
     });
-    if (CasActuatorEndpoints.conditions()) {
+    let springConditionsLoaded = false;
+
+    function loadSpringConditions() {
+        if (springConditionsLoaded || !CasActuatorEndpoints.conditions()) {
+            return;
+        }
+        springConditionsLoaded = true;
         $.get(CasActuatorEndpoints.conditions(), response => {
             setSpringConditionsAvailable();
             springConditionsEntries = normalizeSpringConditions(response);
             renderSpringConditions();
         }).fail((xhr, status, error) => {
+            springConditionsLoaded = false;
             console.error("Error fetching Spring conditions:", error);
             hideSpringConditionsTab();
         });
-    } else {
+    }
+
+    if (!CasActuatorEndpoints.conditions()) {
         hideSpringConditionsTab();
     }
 
     initializeGroovyScriptCacheManagerOperations();
+
+    $("#configuration-tabs").on("tabsactivate.casConfiguration", (event, ui) => {
+        const panelId = ui.newPanel.attr("id");
+        if (panelId === "springbeans-tab") {
+            loadSpringBeans();
+        }
+        if (panelId === "springbeanconditions-tab") {
+            loadSpringConditions();
+        }
+        if (panelId === "groovy-scripting-tab") {
+            window.fetchGroovyScriptCacheKeys?.();
+        }
+    });
+    if ($("#springbeans-tab").is(":visible")) {
+        loadSpringBeans();
+    }
+    if ($("#springbeanconditions-tab").is(":visible")) {
+        loadSpringConditions();
+    }
 
     $("#encryptConfigButton").off().on("click", () => encryptOrDecryptConfig("encrypt"));
     $("#decryptConfigButton").off().on("click", () => encryptOrDecryptConfig("decrypt"));
@@ -1323,6 +1368,7 @@ async function initializeConfigurationOperations() {
         await populateConfigurationNameSelectOptions();
 
         const configSearchResultsTable = $("#configSearchResultsTable").DataTable({
+        deferRender: true,
             pageLength: 10,
             drawCallback: settings => {
                 $("#configSearchResultsTable tr").addClass("mdc-data-table__row");

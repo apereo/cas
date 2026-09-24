@@ -129,7 +129,7 @@ class OidcVerifiableCredentialIssuanceTests extends AbstractOidcTests {
 
         val credentialRequest = new OidcVerifiableCredentialRequest();
         credentialRequest.setCredentialConfigurationId("DriverLicenseCredential");
-        credentialRequest.setProof(buildProof(buildProofJwt(nonce)));
+        credentialRequest.setProofs(buildProofs(buildProofJwt(nonce)));
 
         mockMvc.perform(post(CREDENTIAL_URL)
                 .with(withHttpRequestProcessor())
@@ -187,11 +187,10 @@ class OidcVerifiableCredentialIssuanceTests extends AbstractOidcTests {
             .queryParam(OidcConstants.TX_CODE, txCode);
     }
 
-    private static OidcVerifiableCredentialRequest.Proof buildProof(final String jwt) {
-        val proof = new OidcVerifiableCredentialRequest.Proof();
-        proof.setProofType("jwt");
-        proof.setJwt(jwt);
-        return proof;
+    private static OidcVerifiableCredentialRequest.Proofs buildProofs(final String... jwts) {
+        val proofs = new OidcVerifiableCredentialRequest.Proofs();
+        proofs.setJwt(List.of(jwts));
+        return proofs;
     }
 
     private static String buildProofJwt(final String nonce) throws Exception {

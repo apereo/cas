@@ -13,8 +13,6 @@ import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.junit.jupiter.api.parallel.ResourceAccessMode;
-import org.junit.jupiter.api.parallel.ResourceLock;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -29,7 +27,6 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 @Tag("Authentication")
 @ExtendWith(CasTestExtension.class)
-@ResourceLock(value = "attributeDefinitionStore", mode = ResourceAccessMode.READ_WRITE)
 @SpringBootTestAutoConfigurations
 @SpringBootTest(classes = {
     CasCoreUtilAutoConfiguration.class,

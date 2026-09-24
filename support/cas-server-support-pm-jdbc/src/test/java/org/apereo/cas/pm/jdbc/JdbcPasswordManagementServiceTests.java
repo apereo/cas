@@ -6,9 +6,10 @@ import org.apereo.cas.authentication.credential.UsernamePasswordCredential;
 import org.apereo.cas.pm.PasswordChangeRequest;
 import org.apereo.cas.pm.PasswordManagementQuery;
 import lombok.val;
-import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestInstance;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.transaction.annotation.Transactional;
 import static org.junit.jupiter.api.Assertions.*;
@@ -20,6 +21,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 5.2.0
  */
 @Tag("JDBC")
+@TestInstance(TestInstance.Lifecycle.PER_CLASS)
 class JdbcPasswordManagementServiceTests extends BaseJdbcPasswordManagementServiceTests {
 
     @Test
@@ -56,7 +58,7 @@ class JdbcPasswordManagementServiceTests extends BaseJdbcPasswordManagementServi
 
     @Test
     void verifyUserPasswordChange() throws Throwable {
-        val c = new UsernamePasswordCredential("casuser", "password");
+        val c = new UsernamePasswordCredential(addAccount(), "password");
         val bean = new PasswordChangeRequest();
         bean.setConfirmedPassword("newPassword1".toCharArray());
         bean.setUsername(c.getUsername());
@@ -68,7 +70,7 @@ class JdbcPasswordManagementServiceTests extends BaseJdbcPasswordManagementServi
 
     @Test
     void verifySecurityQuestions() throws Throwable {
-        val query = PasswordManagementQuery.builder().username("casuser").build();
+        val query = PasswordManagementQuery.builder().username(addAccount()).build();
         query.securityQuestion("Q1", "A1");
         passwordChangeService.updateSecurityQuestions(query);
         assertFalse(passwordChangeService.getSecurityQuestions(query).isEmpty());
@@ -80,7 +82,7 @@ class JdbcPasswordManagementServiceTests extends BaseJdbcPasswordManagementServi
         assertTrue(passwordChangeService.unlockAccount(locked));
     }
 
-    @BeforeEach
+    @BeforeAll
     void before() {
         this.jdbcPasswordManagementTransactionTemplate.executeWithoutResult(action -> {
             val jdbcTemplate = new JdbcTemplate(this.jdbcPasswordManagementDataSource);
@@ -96,6 +98,16 @@ class JdbcPasswordManagementServiceTests extends BaseJdbcPasswordManagementServi
                                  + " question varchar(255), answer varchar(255));");
             jdbcTemplate.execute("insert into pm_table_questions values ('casuser', 'question1', 'answer1');");
             jdbcTemplate.execute("insert into pm_table_questions values ('casuser', 'question2', 'answer2');");
+        });
+    }
+
+    private String addAccount() {
+        val userid = UUID.randomUUID().toString();
+        return jdbcPasswordManagementTransactionTemplate.execute(action -> {
+            val jdbcTemplate = new JdbcTemplate(this.jdbcPasswordManagementDataSource);
+            jdbcTemplate.execute("insert into pm_table_accounts values ('" + userid + "', 'password', '"
+                                 + userid + "@example.org', '1234567890', 1);");
+            return userid;
         });
     }
 

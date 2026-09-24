@@ -1,6 +1,7 @@
 package org.apereo.cas.authentication;
 
 import module java.base;
+import org.apereo.cas.util.RandomUtils;
 import org.apereo.cas.util.jpa.StringToNumberAttributeConverter;
 import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -26,6 +27,7 @@ import jakarta.persistence.Column;
 import jakarta.persistence.Convert;
 import jakarta.persistence.ElementCollection;
 import jakarta.persistence.Id;
+import jakarta.persistence.Index;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.MappedSuperclass;
 import jakarta.persistence.Transient;
@@ -77,7 +79,8 @@ public class OneTimeTokenAccount implements Serializable, Comparable<OneTimeToke
     private int validationCode;
 
     @ElementCollection(targetClass = BigInteger.class)
-    @CollectionTable(name = TABLE_NAME_SCRATCH_CODES, joinColumns = @JoinColumn(name = "id"))
+    @CollectionTable(name = TABLE_NAME_SCRATCH_CODES, joinColumns = @JoinColumn(name = "id"),
+        indexes = @Index(name = "idx_scratch_codes_id", columnList = "id"))
     @Column(nullable = false, columnDefinition = "VARCHAR(1024)")
     @Builder.Default
     @JsonSetter(nulls = Nulls.AS_EMPTY)
@@ -85,7 +88,8 @@ public class OneTimeTokenAccount implements Serializable, Comparable<OneTimeToke
     private List<Number> scratchCodes = new ArrayList<>();
 
     @ElementCollection(targetClass = String.class)
-    @CollectionTable(name = TABLE_NAME_OTP_PROPERTIES, joinColumns = @JoinColumn(name = "id"))
+    @CollectionTable(name = TABLE_NAME_OTP_PROPERTIES, joinColumns = @JoinColumn(name = "id"),
+        indexes = @Index(name = "idx_otp_properties_id", columnList = "id"))
     @Column(nullable = false, columnDefinition = "VARCHAR(1024)")
     @Builder.Default
     @JsonSetter(nulls = Nulls.AS_EMPTY)
@@ -148,14 +152,30 @@ public class OneTimeTokenAccount implements Serializable, Comparable<OneTimeToke
     }
 
     /**
-     * Assign id if undefined.
+     * The identifier as text, for the pages that hand it to a browser. The value is a long, and
+     * JavaScript holds numbers as doubles, so anything past the largest integer a double represents
+     * exactly comes back from a script rounded to a different number. Rendered as text it survives
+     * the trip and binds back to a long when the form is submitted.
      *
-     * @return the registered service
+     * @return the identifier as text
+     */
+    @JsonIgnore
+    public String getFormattedId() {
+        return String.valueOf(getId());
+    }
+
+    /**
+     * Assigns an identifier if one has not been given already. The identifier is drawn at random
+     * rather than taken from the clock: it is the primary key in some of the stores behind this
+     * record, and a clock reading only has millisecond resolution, so two records created in the
+     * same millisecond would share a key and one would silently overwrite the other.
+     *
+     * @return this record, with an identifier assigned
      */
     @CanIgnoreReturnValue
     public OneTimeTokenAccount assignIdIfNecessary() {
         if (getId() <= 0) {
-            setId(System.currentTimeMillis());
+            setId(RandomUtils.nextLong(1, Long.MAX_VALUE));
         }
         return this;
     }

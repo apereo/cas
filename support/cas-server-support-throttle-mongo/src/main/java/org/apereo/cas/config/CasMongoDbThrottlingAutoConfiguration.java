@@ -57,12 +57,21 @@ public class CasMongoDbThrottlingAutoConfiguration {
         private static final ObjectMapper MAPPER = JacksonObjectMapperFactory.builder()
             .defaultTypingEnabled(false).build().toObjectMapper();
 
+        /**
+         * Converts a stored audit record. Dates are written out as a full timestamp because the
+         * record's own field is a local date and time: a date alone cannot be read back into one,
+         * and the throttle compares two of these timestamps to decide a submission rate, so the time
+         * of day is the part that matters.
+         *
+         * @param document the stored document
+         * @return the audit record
+         */
         @Override
         public AuditActionContext convert(@NonNull final Document document) {
             return FunctionUtils.doUnchecked(() ->
                 MAPPER.readValue(document.toJson(JsonWriterSettings.builder()
                     .outputMode(JsonMode.RELAXED)
-                    .dateTimeConverter((value, writer) -> writer.writeString(DateTimeUtils.localDateOf(value).toString()))
+                    .dateTimeConverter((value, writer) -> writer.writeString(DateTimeUtils.localDateTimeOf(value).toString()))
                     .build()), AuditActionContext.class));
         }
     }

@@ -1,0 +1,9 @@
+--- !<org.apereo.cas.services.CasRegisteredService>
+serviceId: "^https://localhost:9859/anything/yaml.*"
+name: "YamlApplication"
+id: 2001
+description: "Registered in the YAML service registry"
+attributeReleasePolicy: !<org.apereo.cas.services.ReturnStaticAttributeReleasePolicy>
+  allowedAttributes: !<java.util.HashMap>
+    registry: !<java.util.ArrayList>
+    - "yaml"

@@ -7,7 +7,8 @@ import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.configuration.model.support.jdbc.authn.SearchJdbcAuthenticationProperties;
 import org.apereo.cas.jpa.JpaPersistenceProviderContext;
 import lombok.val;
-import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
@@ -16,6 +17,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Import;
+import org.springframework.test.context.TestPropertySource;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -31,6 +33,7 @@ import static org.mockito.Mockito.*;
  * @since 4.0.0
  */
 @SuppressWarnings("JDBCExecuteWithNonConstantString")
+@TestPropertySource(properties = "database.name=cas-search-authentications")
 @Tag("JDBCAuthentication")
 @Import(SearchModeSearchDatabaseAuthenticationHandlerTests.DatabaseTestConfiguration.class)
 class SearchModeSearchDatabaseAuthenticationHandlerTests extends BaseDatabaseAuthenticationHandlerTests {
@@ -50,8 +53,11 @@ class SearchModeSearchDatabaseAuthenticationHandlerTests extends BaseDatabaseAut
             .setFieldPassword("password").setTableUsers("cassearchusers");
         this.handler = new SearchModeSearchDatabaseAuthenticationHandler(props,
             PrincipalFactoryUtils.newPrincipalFactory(), this.dataSource);
+    }
 
-        try (val connection = this.dataSource.getConnection()) {
+    @BeforeAll
+    static void createUserAccounts(@Autowired @Qualifier("dataSource") final DataSource dataSource) throws Exception {
+        try (val connection = dataSource.getConnection()) {
             try (val statement = connection.createStatement()) {
                 connection.setAutoCommit(true);
 
@@ -63,9 +69,9 @@ class SearchModeSearchDatabaseAuthenticationHandlerTests extends BaseDatabaseAut
         }
     }
 
-    @AfterEach
-    public void afterEachTest() throws Exception {
-        try (val connection = this.dataSource.getConnection()) {
+    @AfterAll
+    static void deleteUserAccounts(@Autowired @Qualifier("dataSource") final DataSource dataSource) throws Exception {
+        try (val connection = dataSource.getConnection()) {
             try (val statement = connection.createStatement()) {
                 connection.setAutoCommit(true);
                 statement.execute("delete from cassearchusers;");

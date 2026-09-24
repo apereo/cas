@@ -14,8 +14,7 @@ import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.junit.jupiter.api.parallel.Execution;
-import org.junit.jupiter.api.parallel.ExecutionMode;
+import org.junit.jupiter.api.parallel.ResourceLock;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -108,7 +107,7 @@ class SyncopePersonAttributeDaoTests {
             "cas.authn.attribute-repository.syncope.search-filter=username=={user}"
         })
     @Nested
-    @Execution(ExecutionMode.SAME_THREAD)
+    @ResourceLock("mockWebServerPort:8095")
     class MockSyncopePersonTests extends BaseSyncopeTests {
         @Autowired
         @Qualifier("syncopePersonAttributeDaos")

@@ -7,10 +7,8 @@ import org.apereo.cas.oidc.scopes.DefaultOidcAttributeReleasePolicyFactory;
 import org.apereo.cas.oidc.services.OidcServiceRegistryListener;
 import org.apereo.cas.support.oauth.services.OAuthRegisteredServiceClientSecret;
 import org.apereo.cas.util.CollectionUtils;
-import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.TestMethodOrder;
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Import;
@@ -24,7 +22,6 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 @Tag("JDBC")
 @Import(JpaServiceRegistryOidcTests.OidcJpaServiceRegistryTestConfiguration.class)
-@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 class JpaServiceRegistryOidcTests extends JpaServiceRegistryTests {
 
     @Test

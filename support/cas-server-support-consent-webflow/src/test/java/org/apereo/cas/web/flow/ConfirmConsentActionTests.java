@@ -30,4 +30,25 @@ class ConfirmConsentActionTests extends BaseConsentActionTests {
         WebUtils.putServiceIntoFlowScope(context, CoreAuthenticationTestUtils.getWebApplicationService("consentService"));
         assertEquals(CasWebflowConstants.TRANSITION_ID_SUCCESS, confirmConsentAction.execute(context).getId());
     }
+
+    @Test
+    void verifyReminderOptionsThatCannotBeApplied() throws Throwable {
+        val context = MockRequestContext.create(applicationContext);
+        context.setParameter("reminder", "not-a-number");
+        context.setParameter("reminderTimeUnit", ChronoUnit.FOREVER.name());
+        context.setParameter("option", "unknown");
+
+        val authentication = CoreAuthenticationTestUtils.getAuthentication(UUID.randomUUID().toString());
+        WebUtils.putAuthentication(authentication, context);
+        val service = CoreAuthenticationTestUtils.getWebApplicationService("consentService");
+        WebUtils.putServiceIntoFlowScope(context, service);
+        assertEquals(CasWebflowConstants.TRANSITION_ID_SUCCESS, confirmConsentAction.execute(context).getId());
+
+        val consentProperties = casProperties.getConsent().getCore();
+        val decision = consentEngine.findConsentDecision(service, servicesManager.findServiceBy(service), authentication);
+        assertNotNull(decision);
+        assertEquals(consentProperties.getReminder(), decision.getReminder().longValue());
+        assertEquals(consentProperties.getReminderTimeUnit(), decision.getReminderTimeUnit());
+        assertEquals(ConsentReminderOptions.ATTRIBUTE_NAME, decision.getOptions());
+    }
 }

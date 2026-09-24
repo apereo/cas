@@ -40,8 +40,8 @@ public class SamlIdPConsentSingleSignOnParticipationStrategy extends SamlIdPSing
         val service = ssoRequest.getAttributeValue(Service.class.getName(), Service.class);
         val registeredService = ssoRequest.getAttributeValue(RegisteredService.class.getName(), RegisteredService.class);
         val authentication = ssoRequest.getAttributeValue(Authentication.class.getName(), Authentication.class);
-        val consentRequired = consentActivationStrategy.isConsentRequired(service, registeredService,
+        val consentResult = consentActivationStrategy.isConsentRequired(service, registeredService,
             authentication, ssoRequest.getHttpServletRequest().orElse(null));
-        return !consentRequired && super.isParticipating(ssoRequest);
+        return consentResult.isIgnored() && super.isParticipating(ssoRequest);
     }
 }

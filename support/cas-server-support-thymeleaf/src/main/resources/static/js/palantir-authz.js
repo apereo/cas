@@ -1200,7 +1200,7 @@ async function initializeHeimdallOperations() {
         reloadHeimdallResourcesTable = fetchHeimdallResources;
 
         setInterval(() => {
-            if (currentActiveTab === Tabs.ACCESS_STRATEGY.index) {
+            if (currentActiveTab === Tabs.ACCESS_STRATEGY.index && document.visibilityState === "visible") {
                 fetchHeimdallResources();
             }
         }, palantirSettings().refreshInterval);

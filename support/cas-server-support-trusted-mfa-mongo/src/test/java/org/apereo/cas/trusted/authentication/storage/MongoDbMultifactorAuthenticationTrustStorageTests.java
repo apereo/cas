@@ -7,7 +7,6 @@ import org.apereo.cas.trusted.authentication.api.MultifactorAuthenticationTrustR
 import org.apereo.cas.util.junit.EnabledIfListeningOnPort;
 import lombok.Getter;
 import lombok.val;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.autoconfigure.ImportAutoConfiguration;
@@ -38,28 +37,25 @@ class MongoDbMultifactorAuthenticationTrustStorageTests extends AbstractMultifac
 
     @Test
     void verifySetAnExpireByKey() {
-        var record = MultifactorAuthenticationTrustRecord.newInstance("casuser", "geography", "fingerprint");
+        val principal = UUID.randomUUID().toString();
+        var record = MultifactorAuthenticationTrustRecord.newInstance(principal, "geography", "fingerprint");
         record = getMfaTrustEngine().save(record);
         assertNotNull(getMfaTrustEngine().get(record.getId()));
-        
-        val records = getMfaTrustEngine().get("casuser");
+
+        val records = getMfaTrustEngine().get(principal);
         assertEquals(1, records.size());
         getMfaTrustEngine().remove(records.stream().findFirst().orElseThrow().getRecordKey());
-        assertTrue(getMfaTrustEngine().get("casuser").isEmpty());
+        assertTrue(getMfaTrustEngine().get(principal).isEmpty());
     }
 
     @Test
     void verifyExpireByDate() {
-        val r = MultifactorAuthenticationTrustRecord.newInstance("castest", "geography", "fingerprint");
+        val principal = UUID.randomUUID().toString();
+        val r = MultifactorAuthenticationTrustRecord.newInstance(principal, "geography", "fingerprint");
         val now = ZonedDateTime.now(ZoneOffset.UTC).truncatedTo(ChronoUnit.SECONDS);
         r.setRecordDate(now.minusDays(2));
         getMfaTrustEngine().save(r);
-        assertEquals(1, getMfaTrustEngine().get(now.minusDays(30)).size());
-        assertEquals(0, getMfaTrustEngine().get(now.minusDays(1)).size());
-    }
-
-    @BeforeEach
-    void emptyTrustEngine() {
-        getMfaTrustEngine().getAll().forEach(r -> getMfaTrustEngine().remove(r.getRecordKey()));
+        assertEquals(1, getMfaTrustEngine().get(principal, now.minusDays(30)).size());
+        assertEquals(0, getMfaTrustEngine().get(principal, now.minusDays(1)).size());
     }
 }

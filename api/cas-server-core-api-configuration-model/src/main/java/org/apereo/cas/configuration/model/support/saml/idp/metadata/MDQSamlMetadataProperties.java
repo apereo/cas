@@ -5,7 +5,6 @@ import org.apereo.cas.configuration.support.RequiresModule;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
-import org.springframework.http.MediaType;
 
 /**
  * This is {@link MDQSamlMetadataProperties}.
@@ -32,9 +31,11 @@ public class MDQSamlMetadataProperties implements Serializable {
     private String basicAuthnPassword;
 
     /**
-     * Supported content types in case the metadata instance is connecting to an MDQ server.
-     * {@link MediaType#TEXT_XML_VALUE} is supported by default.
+     * The media type this instance asks an MDQ server for, sent as the {@code Accept} header.
+     * The SAML profile for the Metadata Query Protocol requires a conforming client to request
+     * {@code application/samlmetadata+xml}, which is the default. Override it only for a server
+     * that serves SAML metadata under a different media type.
      */
-    private String supportedContentType = MediaType.TEXT_XML_VALUE;
+    private String supportedContentType = "application/samlmetadata+xml";
 
 }

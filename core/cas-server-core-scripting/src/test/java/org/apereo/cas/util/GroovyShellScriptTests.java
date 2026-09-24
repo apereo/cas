@@ -3,10 +3,12 @@ package org.apereo.cas.util;
 import module java.base;
 import org.apereo.cas.util.scripting.ExecutableCompiledScript;
 import org.apereo.cas.util.scripting.ExecutableCompiledScriptFactory;
+import groovy.lang.GroovyRuntimeException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.ArrayUtils;
+import org.apache.commons.lang3.tuple.Pair;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
@@ -109,6 +111,98 @@ class GroovyShellScriptTests {
 
     @Nested
     @ClearSystemProperty(key = ExecutableCompiledScriptFactory.SYSTEM_PROPERTY_GROOVY_COMPILE_STATIC)
+    class BindingTests {
+        private static final String SCRIPT = "return binding.variables['principal'] ?: 'none'";
+
+        @Test
+        void verifyBindingIsConsumedByOneExecutionOnly() {
+            val scriptFactory = ExecutableCompiledScriptFactory.getExecutableCompiledScriptFactory();
+            try (val shellScript = scriptFactory.fromScript(SCRIPT)) {
+                shellScript.setBinding(CollectionUtils.wrap("principal", "alice"));
+                assertEquals("alice", shellScript.execute(ArrayUtils.EMPTY_OBJECT_ARRAY, String.class, true));
+                assertEquals("none", shellScript.execute(ArrayUtils.EMPTY_OBJECT_ARRAY, String.class, true));
+            }
+        }
+
+        @Test
+        void verifyRepeatedExecutionWithoutABinding() {
+            val scriptFactory = ExecutableCompiledScriptFactory.getExecutableCompiledScriptFactory();
+            try (val shellScript = scriptFactory.fromScript(SCRIPT)) {
+                for (var i = 0; i < 3; i++) {
+                    assertEquals("none", shellScript.execute(ArrayUtils.EMPTY_OBJECT_ARRAY, String.class, true),
+                        "A cached script executed without a binding must keep producing a result");
+                }
+            }
+        }
+
+        @Test
+        void verifyAbandonedBindingIsNotVisibleToAnotherScript() {
+            val scriptFactory = ExecutableCompiledScriptFactory.getExecutableCompiledScriptFactory();
+            try (val abandoned = scriptFactory.fromScript(SCRIPT);
+                 val unrelated = scriptFactory.fromScript(SCRIPT)) {
+                abandoned.setBinding(CollectionUtils.wrap("principal", "alice"));
+                assertEquals("none", unrelated.execute(ArrayUtils.EMPTY_OBJECT_ARRAY, String.class, true));
+                assertEquals("none", abandoned.execute(ArrayUtils.EMPTY_OBJECT_ARRAY, String.class, true));
+            }
+        }
+
+        @Test
+        void verifyBindingIsNotSharedAcrossConcurrentThreads() throws Exception {
+            val scriptFactory = ExecutableCompiledScriptFactory.getExecutableCompiledScriptFactory();
+            try (val shellScript = scriptFactory.fromScript(SCRIPT)) {
+                val count = 64;
+                val barrier = new CyclicBarrier(count);
+                val results = new ArrayList<Future<Pair<String, String>>>();
+                try (val executor = Executors.newVirtualThreadPerTaskExecutor()) {
+                    for (var i = 0; i < count; i++) {
+                        val expected = "principal-" + i;
+                        results.add(executor.submit(() -> {
+                            barrier.await(60, TimeUnit.SECONDS);
+                            shellScript.setBinding(CollectionUtils.wrap("principal", expected));
+                            return Pair.of(expected, shellScript.execute(ArrayUtils.EMPTY_OBJECT_ARRAY, String.class, true));
+                        }));
+                    }
+                    val observed = new HashSet<String>();
+                    for (val result : results) {
+                        val outcome = result.get(60, TimeUnit.SECONDS);
+                        assertEquals(outcome.getLeft(), outcome.getRight(), "Script observed a binding that belongs to another thread");
+                        observed.add(outcome.getRight());
+                    }
+                    assertEquals(count, observed.size());
+                }
+            }
+        }
+
+        @Test
+        void verifyBindingDoesNotCarryOverBetweenAttemptsOnPooledThreads() throws Exception {
+            val scriptFactory = ExecutableCompiledScriptFactory.getExecutableCompiledScriptFactory();
+            try (val shellScript = scriptFactory.fromScript(SCRIPT)) {
+                val results = new ArrayList<Future<Pair<String, String>>>();
+                try (val executor = Executors.newFixedThreadPool(4)) {
+                    for (var i = 0; i < 200; i++) {
+                        val expected = "principal-" + i;
+                        if (i % 5 == 0) {
+                            results.add(executor.submit(() -> {
+                                shellScript.setBinding(CollectionUtils.wrap("principal", "aborted-" + expected));
+                                return Pair.of("aborted", "aborted");
+                            }));
+                        }
+                        results.add(executor.submit(() -> {
+                            shellScript.setBinding(CollectionUtils.wrap("principal", expected));
+                            return Pair.of(expected, shellScript.execute(ArrayUtils.EMPTY_OBJECT_ARRAY, String.class, true));
+                        }));
+                    }
+                    for (val result : results) {
+                        val outcome = result.get(60, TimeUnit.SECONDS);
+                        assertEquals(outcome.getLeft(), outcome.getRight(), "Script observed a binding left behind by an earlier attempt");
+                    }
+                }
+            }
+        }
+    }
+
+    @Nested
+    @ClearSystemProperty(key = ExecutableCompiledScriptFactory.SYSTEM_PROPERTY_GROOVY_COMPILE_STATIC)
     class DefaultTests {
         @Test
         void verifyExec() {
@@ -130,6 +224,28 @@ class GroovyShellScriptTests {
                     shell.execute(ArrayUtils.EMPTY_OBJECT_ARRAY);
                     shell.execute("run", Void.class, ArrayUtils.EMPTY_OBJECT_ARRAY);
                 });
+                assertNull(shell.execute(ArrayUtils.EMPTY_OBJECT_ARRAY, String.class, false));
+            }
+        }
+
+        @Test
+        void verifyBadScriptIsReportedWhenAskedTo() {
+            val scriptFactory = ExecutableCompiledScriptFactory.getExecutableCompiledScriptFactory();
+            try (val shell = scriptFactory.fromScript("###$$@@@!!!***&&&")) {
+                assertThrows(GroovyRuntimeException.class,
+                    () -> shell.execute(ArrayUtils.EMPTY_OBJECT_ARRAY, String.class, true),
+                    "A caller that asks to fail on error must not be handed a null result");
+            }
+        }
+
+        @Test
+        void verifyFailOnErrorIsHonoredWhenAssigned() {
+            val scriptFactory = ExecutableCompiledScriptFactory.getExecutableCompiledScriptFactory();
+            try (val shell = scriptFactory.fromScript("throw new IllegalArgumentException('failed')")) {
+                assertNull(shell.execute(ArrayUtils.EMPTY_OBJECT_ARRAY, String.class, false));
+                shell.setFailOnError(true);
+                assertThrows(IllegalArgumentException.class, () -> shell.execute(ArrayUtils.EMPTY_OBJECT_ARRAY),
+                    "A failure raised by the script body must reach a caller that assigned failOnError");
             }
         }
     }

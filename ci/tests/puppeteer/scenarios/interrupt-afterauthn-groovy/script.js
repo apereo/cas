@@ -26,6 +26,12 @@ const cas = require("../../cas.js");
     await cas.sleep(2000);
     await cas.logPage(page);
     await cas.assertPageUrlContains(page, "https://localhost:9859/anything/cas");
+
+    await cas.gotoLogin(page);
+    await cas.loginWith(page, "blockuser", "blockuser");
+    await cas.sleep(1000);
+    await cas.assertTextContent(page, "#interruptMessage", "Blocked!");
+    await cas.assertInvisibility(page, "#proceed");
     await cas.gotoLogout(page);
 
     await cas.gotoLogin(page);

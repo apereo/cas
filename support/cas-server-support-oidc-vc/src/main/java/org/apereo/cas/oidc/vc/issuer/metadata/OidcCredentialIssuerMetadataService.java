@@ -36,8 +36,11 @@ public class OidcCredentialIssuerMetadataService {
         metadata.setCredentialIssuer(issuer);
         metadata.setAuthorizationServers(List.of(issuer));
         metadata.setCredentialEndpoint(issuer + '/' + OidcConstants.VC_CREDENTIAL_URL);
-        metadata.setBatchCredentialEndpoint(issuer + '/' + OidcConstants.VC_BATCH_CREDENTIAL_URL);
         metadata.setNonceEndpoint(issuer + '/' + OidcConstants.VC_NONCE_URL);
+        metadata.setBatchCredentialIssuance(OidcCredentialIssuerMetadata.BatchCredentialIssuance
+            .builder()
+            .batchSize(Math.max(1, properties.getVc().getIssuer().getBatchSize()))
+            .build());
 
         val supported = new LinkedHashMap<String, OidcCredentialIssuerMetadata.CredentialConfiguration>();
         val credentialConfigurations = properties.getVc().getIssuer().getCredentialConfigurations();

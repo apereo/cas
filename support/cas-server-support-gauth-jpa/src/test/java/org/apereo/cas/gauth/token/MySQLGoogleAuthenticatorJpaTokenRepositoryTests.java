@@ -3,10 +3,16 @@ package org.apereo.cas.gauth.token;
 import module java.base;
 import org.apereo.cas.util.junit.EnabledIfListeningOnPort;
 import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.parallel.ResourceLock;
 import org.springframework.test.context.TestPropertySource;
 
 /**
  * This is {@link MySQLGoogleAuthenticatorJpaTokenRepositoryTests}.
+ *
+ * This class shares one physical database and one persistence unit with its sibling test for the
+ * credential repository, whose schema generation drops and recreates the tables at startup. The
+ * shared resource keeps the two from running at the same time and pulling the schema out from
+ * under each other.
  *
  * @author Misagh Moayyed
  * @since 6.0.0
@@ -19,6 +25,7 @@ import org.springframework.test.context.TestPropertySource;
     "cas.authn.mfa.gauth.jpa.dialect=org.hibernate.dialect.MySQLDialect"
 })
 @EnabledIfListeningOnPort(port = 3306)
+@ResourceLock("googleAuthenticatorJpaSchema")
 @Tag("MySQL")
 class MySQLGoogleAuthenticatorJpaTokenRepositoryTests extends GoogleAuthenticatorJpaTokenRepositoryTests {
 }

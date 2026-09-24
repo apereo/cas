@@ -39,7 +39,6 @@ class ECPSamlIdPProfileHandlerControllerTests extends BaseSamlIdPConfigurationTe
 
     @BeforeEach
     void beforeEach() {
-        servicesManager.deleteAll();
         samlRegisteredService = getSamlRegisteredServiceFor(false, false,
             false, "https://cassp.example.org");
         servicesManager.save(samlRegisteredService);

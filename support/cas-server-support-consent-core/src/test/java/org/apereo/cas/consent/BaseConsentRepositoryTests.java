@@ -33,6 +33,8 @@ import lombok.Getter;
 import lombok.val;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.jupiter.api.parallel.ResourceAccessMode;
+import org.junit.jupiter.api.parallel.ResourceLock;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringBootConfiguration;
 import org.springframework.boot.autoconfigure.ImportAutoConfiguration;
@@ -50,6 +52,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @SpringBootTest(classes = BaseConsentRepositoryTests.SharedTestConfiguration.class)
 @Getter
 @ExtendWith(CasTestExtension.class)
+@ResourceLock(value = "consentRepository", mode = ResourceAccessMode.READ_WRITE)
 public abstract class BaseConsentRepositoryTests {
     protected static final DefaultConsentDecisionBuilder BUILDER =
         new DefaultConsentDecisionBuilder(CipherExecutor.noOpOfSerializableToString());
@@ -59,6 +62,10 @@ public abstract class BaseConsentRepositoryTests {
     protected static final BaseRegisteredService REG_SVC = RegisteredServiceTestUtils.getRegisteredService(SVC.getId());
 
     protected static final Map<String, List<Object>> ATTR = CollectionUtils.wrap("attribute", List.of("value"));
+
+    protected static final Service SVC2 = RegisteredServiceTestUtils.getService2();
+
+    protected static final BaseRegisteredService REG_SVC2 = RegisteredServiceTestUtils.getRegisteredService(SVC2.getId());
 
     @Autowired
     protected ConfigurableApplicationContext applicationContext;
@@ -114,8 +121,43 @@ public abstract class BaseConsentRepositoryTests {
             assertNull(repo.findConsentDecision(SVC, REG_SVC, CoreAuthenticationTestUtils.getAuthentication(user))));
     }
 
+    @Test
+    void verifyMultipleDecisionsForPrincipal() throws Throwable {
+        val user = getUser();
+        val otherUser = getOtherUser();
+        val repo = getRepository();
+
+        val first = repo.storeConsentDecision(BUILDER.build(SVC, REG_SVC, user, ATTR));
+        val second = repo.storeConsentDecision(BUILDER.build(SVC2, REG_SVC2, user, ATTR));
+        val third = repo.storeConsentDecision(BUILDER.build(SVC, REG_SVC, otherUser, ATTR));
+        assertEquals(3, Stream.of(first.getId(), second.getId(), third.getId()).distinct().count());
+
+        assertEquals(2, repo.findConsentDecisions(user).size());
+        assertEquals(1, repo.findConsentDecisions(otherUser).size());
+        assertEquals(SVC.getId(), repo.findConsentDecision(SVC, REG_SVC, CoreAuthenticationTestUtils.getAuthentication(user)).getService());
+        assertEquals(SVC2.getId(), repo.findConsentDecision(SVC2, REG_SVC2, CoreAuthenticationTestUtils.getAuthentication(user)).getService());
+        assertNull(repo.findConsentDecision(SVC2, REG_SVC2, CoreAuthenticationTestUtils.getAuthentication(otherUser)));
+
+        val fourth = repo.storeConsentDecision(BUILDER.build(SVC2, REG_SVC2, otherUser, ATTR));
+        val removedId = Math.min(third.getId(), fourth.getId());
+        val retained = removedId == third.getId() ? fourth : third;
+        assertTrue(repo.deleteConsentDecision(removedId, otherUser));
+        val remaining = repo.findConsentDecisions(otherUser);
+        assertEquals(1, remaining.size());
+        assertEquals(retained.getService(), remaining.iterator().next().getService());
+
+        assertTrue(repo.deleteConsentDecisions(user));
+        assertNull(repo.findConsentDecision(SVC, REG_SVC, CoreAuthenticationTestUtils.getAuthentication(user)));
+        assertNull(repo.findConsentDecision(SVC2, REG_SVC2, CoreAuthenticationTestUtils.getAuthentication(user)));
+        assertEquals(1, repo.findConsentDecisions(otherUser).size());
+    }
+
     protected String getUser() {
         return RandomUtils.randomAlphanumeric(8);
+    }
+
+    protected String getOtherUser() {
+        return getUser();
     }
 
     @SpringBootTestAutoConfigurations

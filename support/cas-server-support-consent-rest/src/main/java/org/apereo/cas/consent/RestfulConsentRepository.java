@@ -239,7 +239,7 @@ public class RestfulConsentRepository extends BaseConsentRepository {
             headers.put(HttpHeaders.ACCEPT, MediaType.APPLICATION_JSON_VALUE);
             headers.putAll(properties.getHeaders());
             val url = UriComponentsBuilder.fromUriString(resolveUrl())
-                .queryParam("id", decisionId)
+                .queryParam("decisionId", decisionId)
                 .queryParam("principal", principal)
                 .build()
                 .toUriString();

@@ -5,6 +5,7 @@ import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.services.RegisteredService;
+import org.apereo.cas.util.LoggingUtils;
 import org.apereo.cas.util.ResourceUtils;
 import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.util.io.FileWatcherService;
@@ -33,15 +34,19 @@ public class JsonResourceInterruptInquirer extends BaseInterruptInquirer impleme
 
     private final Resource resource;
 
-    private final Map<String, InterruptResponse> interrupts = new ConcurrentHashMap<>();
+    private final AtomicReference<Map<String, InterruptResponse>> interrupts = new AtomicReference<>(Map.of());
 
     private FileWatcherService keystorePatchWatcherService;
 
     public JsonResourceInterruptInquirer(final Resource resource) {
         this.resource = resource;
+        readResourceForInterrupts();
         FunctionUtils.doUnchecked(_ -> {
             if (ResourceUtils.isFile(this.resource)) {
-                keystorePatchWatcherService = new FileWatcherService(resource.getFile(), file -> readResourceForInterrupts());
+                keystorePatchWatcherService = new FileWatcherService(resource.getFile(),
+                    _ -> readResourceForInterrupts(), _ -> readResourceForInterrupts(), _ -> {
+                    });
+                keystorePatchWatcherService.start(getClass().getSimpleName());
             }
         });
     }
@@ -52,13 +57,9 @@ public class JsonResourceInterruptInquirer extends BaseInterruptInquirer impleme
                                              final Service service,
                                              final Credential credential,
                                              final RequestContext requestContext) {
-        readResourceForInterrupts();
         val user = authentication.getPrincipal().getId();
         LOGGER.info("Locating interrupt for user [{}]", user);
-        if (interrupts.containsKey(user)) {
-            return interrupts.get(user);
-        }
-        return InterruptResponse.none();
+        return Objects.requireNonNullElseGet(interrupts.get().get(user), InterruptResponse::none);
     }
 
     @Override
@@ -67,16 +68,16 @@ public class JsonResourceInterruptInquirer extends BaseInterruptInquirer impleme
     }
 
     private void readResourceForInterrupts() {
-        FunctionUtils.doUnchecked(_ -> {
-            this.interrupts.clear();
-            if (ResourceUtils.doesResourceExist(resource)) {
-                try (val reader = new InputStreamReader(resource.getInputStream(), StandardCharsets.UTF_8)) {
-                    val personList = new TypeReference<Map<String, InterruptResponse>>() {
-                    };
-                    val data = (Map) MAPPER.readValue(JsonValue.readHjson(reader).toString(), personList);
-                    this.interrupts.putAll(data);
-                }
-            }
-        });
+        if (!ResourceUtils.doesResourceExist(resource)) {
+            LOGGER.warn("Interrupt resource [{}] cannot be found; keeping the current interrupt definitions", resource);
+            return;
+        }
+        try (val reader = new InputStreamReader(resource.getInputStream(), StandardCharsets.UTF_8)) {
+            val data = MAPPER.readValue(JsonValue.readHjson(reader).toString(), new TypeReference<Map<String, InterruptResponse>>() {
+            });
+            interrupts.set(Map.copyOf(data));
+        } catch (final Exception e) {
+            LoggingUtils.error(LOGGER, "Unable to read interrupt resource [" + resource + "]; keeping the current interrupt definitions", e);
+        }
     }
 }

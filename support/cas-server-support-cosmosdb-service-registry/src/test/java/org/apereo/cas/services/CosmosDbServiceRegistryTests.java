@@ -16,6 +16,7 @@ import org.junit.jupiter.api.parallel.ResourceLock;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
+import static org.awaitility.Awaitility.*;
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
@@ -51,10 +52,9 @@ class CosmosDbServiceRegistryTests extends AbstractServiceRegistryTests {
     private ServiceRegistry newServiceRegistry;
 
     @BeforeEach
-    void deleteAll() throws Exception {
-        Thread.sleep(3000);
+    void deleteAll() {
         newServiceRegistry.deleteAll();
-        assertTrue(newServiceRegistry.load().isEmpty());
+        await().atMost(Duration.ofSeconds(30)).untilAsserted(() -> assertTrue(newServiceRegistry.load().isEmpty()));
     }
 
     @AfterAll

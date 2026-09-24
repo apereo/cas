@@ -54,6 +54,14 @@ import org.springframework.util.ClassUtils;
  */
 @Slf4j
 public class MongoDbConnectionFactory {
+    /**
+     * Replacement used for dots found in map keys when documents are written.
+     * MongoDB reserves the dot as a path separator, so {@link MappingMongoConverter}
+     * escapes it on write. Any query that addresses a map field by path must apply
+     * the same replacement, or it will address a nested document that does not exist.
+     */
+    public static final String MAP_KEY_DOT_REPLACEMENT = "_#_";
+
     private static final Set<String> MONGO_INDEX_KEYS = Set.of("v", "key", "name", "ns");
 
     private static final int DEFAULT_PORT = 27017;
@@ -311,7 +319,7 @@ public class MongoDbConnectionFactory {
         val dbRefResolver = new DefaultDbRefResolver(mongoDbFactory);
         val converter = new MappingMongoConverter(dbRefResolver, mongoMappingContext());
         converter.setCustomConversions(customConversions);
-        converter.setMapKeyDotReplacement("_#_");
+        converter.setMapKeyDotReplacement(MAP_KEY_DOT_REPLACEMENT);
         converter.afterPropertiesSet();
         return converter;
     }
