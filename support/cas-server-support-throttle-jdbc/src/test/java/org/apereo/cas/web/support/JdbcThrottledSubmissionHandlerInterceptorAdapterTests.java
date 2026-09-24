@@ -33,7 +33,8 @@ import org.springframework.mock.web.MockHttpServletRequest;
     "cas.authn.throttle.core.username-parameter=username",
     "cas.authn.throttle.failure.code=AUTHENTICATION_FAILED",
     "cas.authn.throttle.core.username-parameter=username",
-    "cas.authn.throttle.failure.range-seconds=5",
+    "cas.authn.throttle.failure.range-seconds=3",
+    "cas.authn.throttle.failure.threshold=3",
     "cas.audit.jdbc.asynchronous=false"
 })
 @Getter

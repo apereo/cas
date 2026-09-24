@@ -18,8 +18,6 @@ import lombok.val;
 import org.apache.commons.lang3.tuple.Triple;
 import org.apache.hc.core5.http.HttpHeaders;
 import org.jspecify.annotations.Nullable;
-import org.junit.jupiter.api.parallel.Execution;
-import org.junit.jupiter.api.parallel.ExecutionMode;
 import org.pac4j.core.profile.ProfileManager;
 import org.pac4j.core.profile.UserProfile;
 import org.pac4j.jee.context.JEEContext;
@@ -47,7 +45,6 @@ import static org.junit.jupiter.api.Assertions.*;
 @ImportAutoConfiguration(CasOAuthUmaAutoConfiguration.class)
 @TestPropertySource(properties = "cas.authn.oauth.uma.requesting-party-token.jwks-file.location=classpath:uma-keystore.jwks")
 @Slf4j
-@Execution(ExecutionMode.SAME_THREAD)
 @SuppressWarnings("unused")
 public abstract class BaseUmaEndpointControllerTests extends AbstractOAuth20Tests {
     @Autowired

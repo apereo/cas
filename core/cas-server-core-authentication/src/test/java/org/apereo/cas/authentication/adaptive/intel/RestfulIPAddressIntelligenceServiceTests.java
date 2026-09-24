@@ -2,13 +2,12 @@ package org.apereo.cas.authentication.adaptive.intel;
 
 import module java.base;
 import org.apereo.cas.authentication.BaseAuthenticationTests;
-import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.configuration.model.core.authentication.AdaptiveAuthenticationProperties;
+import org.apereo.cas.multitenancy.TenantExtractor;
 import org.apereo.cas.test.CasTestExtension;
 import org.apereo.cas.util.MockRequestContext;
 import org.apereo.cas.util.MockWebServer;
-import org.apereo.cas.util.spring.SpringExpressionLanguageValueResolver;
 import lombok.val;
-import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -18,7 +17,6 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.http.HttpStatus;
-import org.springframework.test.context.TestPropertySource;
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
@@ -29,95 +27,76 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 @Tag("RestfulApi")
 @ExtendWith(CasTestExtension.class)
+@SpringBootTest(classes = BaseAuthenticationTests.SharedTestConfiguration.class,
+    properties = "cas.authn.adaptive.ip-intel.rest.url=https://localhost/ip-intel")
 class RestfulIPAddressIntelligenceServiceTests {
+    @Autowired
+    @Qualifier(IPAddressIntelligenceService.BEAN_NAME)
+    private IPAddressIntelligenceService ipAddressIntelligenceService;
 
-    @SpringBootTest(classes = BaseAuthenticationTests.SharedTestConfiguration.class,
-        properties = {
-            "cas.authn.adaptive.ip-intel.rest.url=http://localhost:${random.int[3000,9999]}",
-            "cas.authn.adaptive.ip-intel.rest.maximum-retry-attempts=0"
-        })
-    abstract static class BaseTests {
-        @Autowired
-        protected CasConfigurationProperties casProperties;
+    @Autowired
+    @Qualifier(TenantExtractor.BEAN_NAME)
+    private TenantExtractor tenantExtractor;
 
-        @Autowired
-        @Qualifier(IPAddressIntelligenceService.BEAN_NAME)
-        protected IPAddressIntelligenceService ipAddressIntelligenceService;
+    @Autowired
+    private ConfigurableApplicationContext applicationContext;
 
-        @Autowired
-        protected ConfigurableApplicationContext applicationContext;
+    @Test
+    void verifyServiceIsResolvedFromConfiguration() {
+        assertInstanceOf(RestfulIPAddressIntelligenceService.class, ipAddressIntelligenceService);
+    }
 
-        protected int resolvePort() throws Exception {
-            val url = casProperties.getAuthn().getAdaptive().getIpIntel().getRest().getUrl();
-            return new URI(SpringExpressionLanguageValueResolver.getInstance().resolve(url)).getPort();
+    @Test
+    void verifyAllowed() throws Throwable {
+        try (val webServer = new MockWebServer(HttpStatus.OK)) {
+            webServer.start();
+            val result = serviceFor(webServer).examine(
+                MockRequestContext.create(applicationContext), "1.2.3.4");
+            assertNotNull(result);
+            assertTrue(result.isAllowed());
         }
     }
 
-    @Nested
-    class AllowedTests extends BaseTests {
-        @Test
-        void verifyOperation() throws Throwable {
-            val port = resolvePort();
-            try (val webServer = new MockWebServer(port, HttpStatus.OK)) {
-                webServer.start();
-
-                val requestContext = MockRequestContext.create(applicationContext);
-                val result = ipAddressIntelligenceService.examine(requestContext, "1.2.3.4");
-                assertNotNull(result);
-                assertTrue(result.isAllowed());
-            }
+    @Test
+    void verifyBanned() throws Throwable {
+        try (val webServer = new MockWebServer(HttpStatus.FORBIDDEN)) {
+            webServer.start();
+            val result = serviceFor(webServer).examine(
+                MockRequestContext.create(applicationContext), "1.2.3.4");
+            assertNotNull(result);
+            assertTrue(result.isBanned());
         }
     }
 
-    @Nested
-    class BannedTests extends BaseTests {
-        @Test
-        void verifyOperation() throws Throwable {
-            val port = resolvePort();
-            try (val webServer = new MockWebServer(port, HttpStatus.FORBIDDEN)) {
-                webServer.start();
-
-                val requestContext = MockRequestContext.create(applicationContext);
-                val result = ipAddressIntelligenceService.examine(requestContext, "1.2.3.4");
-                assertNotNull(result);
-                assertTrue(result.isBanned());
-            }
+    @Test
+    void verifyRanked() throws Throwable {
+        try (val webServer = new MockWebServer(
+            new ByteArrayResource("12.435".getBytes(StandardCharsets.UTF_8)),
+            HttpStatus.PRECONDITION_REQUIRED)) {
+            webServer.start();
+            val result = serviceFor(webServer).examine(
+                MockRequestContext.create(applicationContext), "1.2.3.4");
+            assertNotNull(result);
+            assertTrue(result.isRanked());
         }
     }
 
-    @Nested
-    class RankedTests extends BaseTests {
-        @Test
-        void verifyOperation() throws Throwable {
-            val port = resolvePort();
-            try (val webServer = new MockWebServer(port,
-                new ByteArrayResource("12.435".getBytes(StandardCharsets.UTF_8)),
-                HttpStatus.PRECONDITION_REQUIRED)) {
-                webServer.start();
-
-                val requestContext = MockRequestContext.create(applicationContext);
-                val result = ipAddressIntelligenceService.examine(requestContext, "1.2.3.4");
-                assertNotNull(result);
-                assertTrue(result.isRanked());
-            }
-        }
+    @Test
+    void verifyRejectedIpAddressIsNeverContacted() throws Throwable {
+        val properties = new AdaptiveAuthenticationProperties();
+        properties.getPolicy().setRejectIpAddresses("123\\..*");
+        properties.getIpIntel().getRest().setUrl("https://localhost/ip-intel");
+        val service = new RestfulIPAddressIntelligenceService(tenantExtractor, properties);
+        val result = service.examine(MockRequestContext.create(applicationContext), "123.4.5.6");
+        assertNotNull(result);
+        assertTrue(result.isBanned());
     }
 
-    @Nested
-    @TestPropertySource(properties = "cas.authn.adaptive.policy.reject-ip-addresses=123\\..*")
-    class RejectedTests extends BaseTests {
-        @Test
-        void verifyOperation() throws Throwable {
-            val port = resolvePort();
-            try (val webServer = new MockWebServer(port, HttpStatus.PRECONDITION_REQUIRED)) {
-                webServer.start();
-
-                val requestContext = MockRequestContext.create(applicationContext);
-                val result = ipAddressIntelligenceService.examine(requestContext, "1.2.3.4");
-                assertNotNull(result);
-                assertTrue(result.isBanned());
-            }
-        }
+    private RestfulIPAddressIntelligenceService serviceFor(final MockWebServer webServer) {
+        val properties = new AdaptiveAuthenticationProperties();
+        val rest = properties.getIpIntel().getRest();
+        rest.setUrl("http://localhost:%s".formatted(webServer.getPort()));
+        rest.setMaximumRetryAttempts(0);
+        return new RestfulIPAddressIntelligenceService(tenantExtractor, properties);
     }
-
 }

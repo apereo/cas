@@ -48,6 +48,8 @@ public class OidcServerDiscoverySettingsFactory implements FactoryBean<OidcServe
         discovery.setGrantTypesSupported(new LinkedHashSet<>(discoveryConfig.getGrantTypesSupported()));
         discovery.setTokenEndpointAuthMethodsSupported(
             new LinkedHashSet<>(discoveryConfig.getTokenEndpointAuthMethodsSupported()));
+        discovery.setTokenEndpointAuthSigningAlgValuesSupported(
+            new LinkedHashSet<>(discoveryConfig.getTokenEndpointAuthSigningAlgValuesSupported()));
         discovery.setClaimsParameterSupported(discoveryConfig.isClaimsParameterSupported());
         discovery.setPromptValuesSupported(new LinkedHashSet<>(discoveryConfig.getPromptValuesSupported()));
 

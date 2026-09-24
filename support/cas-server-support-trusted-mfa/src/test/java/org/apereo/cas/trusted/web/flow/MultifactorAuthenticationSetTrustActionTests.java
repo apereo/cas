@@ -17,8 +17,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.junit.jupiter.api.parallel.Execution;
-import org.junit.jupiter.api.parallel.ExecutionMode;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import static org.junit.jupiter.api.Assertions.*;
@@ -32,7 +30,6 @@ import static org.junit.jupiter.api.Assertions.*;
 @SpringBootTest(classes = AbstractMultifactorAuthenticationTrustStorageTests.SharedTestConfiguration.class)
 @Tag("WebflowMfaActions")
 @ExtendWith(CasTestExtension.class)
-@Execution(ExecutionMode.SAME_THREAD)
 class MultifactorAuthenticationSetTrustActionTests extends AbstractMultifactorAuthenticationTrustStorageTests {
 
     @Autowired
@@ -95,8 +92,7 @@ class MultifactorAuthenticationSetTrustActionTests extends AbstractMultifactorAu
     void verifyNoDeviceName() throws Throwable {
         val context = getMockRequestContext();
         assertEquals(CasWebflowConstants.TRANSITION_ID_SUCCESS, mfaSetTrustAction.execute(context).getId());
-        val record = mfaTrustEngine.get("casuser-setdevice");
-        assertTrue(record.isEmpty());
+        assertTrue(mfaTrustEngine.get(getPrincipal(context)).isEmpty());
     }
 
     @Test
@@ -107,8 +103,7 @@ class MultifactorAuthenticationSetTrustActionTests extends AbstractMultifactorAu
         MultifactorAuthenticationTrustUtils.putMultifactorAuthenticationTrustRecord(context, bean);
 
         assertEquals(CasWebflowConstants.TRANSITION_ID_SUCCESS, mfaSetTrustAction.execute(context).getId());
-        val record = mfaTrustEngine.get("casuser-setdevice");
-        assertTrue(record.isEmpty());
+        assertTrue(mfaTrustEngine.get(getPrincipal(context)).isEmpty());
         val authn = WebUtils.getAuthentication(context);
         assertTrue(authn.containsAttribute(
             casProperties.getAuthn().getMfa().getTrusted().getCore().getAuthenticationContextAttribute()));
@@ -125,8 +120,12 @@ class MultifactorAuthenticationSetTrustActionTests extends AbstractMultifactorAu
         context.withUserAgent();
         context.setClientInfo();
         
-        val authn = RegisteredServiceTestUtils.getAuthentication("casuser-setdevice");
+        val authn = RegisteredServiceTestUtils.getAuthentication(UUID.randomUUID().toString());
         WebUtils.putAuthentication(authn, context);
         return context;
+    }
+
+    private static String getPrincipal(final MockRequestContext context) {
+        return WebUtils.getAuthentication(context).getPrincipal().getId();
     }
 }

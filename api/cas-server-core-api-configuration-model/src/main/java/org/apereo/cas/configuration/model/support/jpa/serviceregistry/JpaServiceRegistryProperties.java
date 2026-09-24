@@ -7,6 +7,7 @@ import org.apereo.cas.configuration.support.RequiresModule;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
+import org.springframework.core.Ordered;
 
 /**
  * Configuration properties class for JPA service registry.
@@ -29,6 +30,13 @@ public class JpaServiceRegistryProperties extends AbstractJpaProperties {
     @RequiredProperty
     private boolean enabled = true;
 
+    /**
+     * The execution order of this registry
+     * which will determine its position in a chain
+     * in case multiple registries are defined.
+     */
+    private int order = Ordered.LOWEST_PRECEDENCE;
+    
     public JpaServiceRegistryProperties() {
         setUrl("jdbc:hsqldb:mem:cas-service-registry");
     }

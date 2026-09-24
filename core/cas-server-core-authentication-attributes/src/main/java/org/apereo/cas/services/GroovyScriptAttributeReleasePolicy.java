@@ -13,6 +13,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.apache.commons.lang3.ObjectUtils;
 
 
 /**
@@ -53,12 +54,7 @@ public class GroovyScriptAttributeReleasePolicy extends AbstractRegisteredServic
         final Map<String, List<Object>> attributes) {
         val args = new Object[]{attributes, LOGGER, context.getPrincipal(), context.getRegisteredService()};
         val result = (Map<String, List<Object>>) script.execute(args, Map.class, false);
-        if (result != null) {
-            LOGGER.debug("Attribute release policy returned attributes [{}] from script [{}]", result, groovyScript);
-        } else {
-            LOGGER.warn("Attribute release policy script [{}] returned null", groovyScript);
-        }
-        return result;
+        return ObjectUtils.getIfNull(result, new HashMap<>());
     }
 
     @Override

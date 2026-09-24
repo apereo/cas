@@ -49,7 +49,9 @@ class DefaultConsentEngineTests {
         val consentService = RegisteredServiceTestUtils.getRegisteredService("consentService");
         consentService.setAttributeReleasePolicy(null);
         assertTrue(consentEngine.resolveConsentableAttributesFrom(authentication, service, consentService).isEmpty());
-        assertFalse(consentEngine.isConsentRequiredFor(service, consentService, authentication).isRequired());
+        val result = consentEngine.isConsentRequiredFor(service, consentService, authentication);
+        assertFalse(result.isRequired());
+        assertNull(result.getConsentableAttributes());
     }
 
     @Test
@@ -77,6 +79,20 @@ class DefaultConsentEngineTests {
     }
 
     @Test
+    void verifyReminderThatCannotBeAppliedRequiresConsent() throws Throwable {
+        val authentication = CoreAuthenticationTestUtils.getAuthentication(UUID.randomUUID().toString());
+        val service = CoreAuthenticationTestUtils.getService();
+        val consentService = RegisteredServiceTestUtils.getRegisteredService("consentService");
+        val policy = new ReturnAllAttributeReleasePolicy();
+        policy.setConsentPolicy(new DefaultRegisteredServiceConsentPolicy());
+        consentService.setAttributeReleasePolicy(policy);
+        assertNotNull(consentEngine.storeConsentDecision(service, consentService,
+            authentication, 1, ChronoUnit.FOREVER, ConsentReminderOptions.ATTRIBUTE_NAME));
+        val result = assertDoesNotThrow(() -> consentEngine.isConsentRequiredFor(service, consentService, authentication));
+        assertTrue(result.isRequired());
+    }
+
+    @Test
     void verifyConsentIsAlwaysRequired() throws Throwable {
         val authentication = CoreAuthenticationTestUtils.getAuthentication(UUID.randomUUID().toString());
         val service = CoreAuthenticationTestUtils.getService();
@@ -91,6 +107,8 @@ class DefaultConsentEngineTests {
         assertNotNull(result);
         assertTrue(result.isRequired());
         assertEquals(decision, result.getConsentDecision());
+        assertNotNull(result.getConsentableAttributes());
+        assertFalse(result.getConsentableAttributes().isEmpty());
     }
 
     @Test

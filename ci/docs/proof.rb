@@ -47,7 +47,9 @@ options = {
     %r{localhost},
     %r{/cas/development/$},
     %r{\Ahttps?://(?:[^/]+\.)?refeds\.org(?:/.*)?\z},
-    %r{\Ahttps?://apereo\.slack\.com(?:/.*)?\z}
+    %r{\Ahttps?://apereo\.slack\.com(?:/.*)?\z},
+    %r{\Ahttps?://fonts\.gstatic\.com(?:/.*)?\z},
+    %r{\Ahttps?://fonts\.googleapis\.com(?:/.*)?\z}
   ],
   :verbose => true
 }

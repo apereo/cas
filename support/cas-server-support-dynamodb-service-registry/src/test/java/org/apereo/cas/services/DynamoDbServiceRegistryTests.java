@@ -5,9 +5,7 @@ import org.apereo.cas.config.CasDynamoDbServiceRegistryAutoConfiguration;
 import org.apereo.cas.test.CasTestExtension;
 import org.apereo.cas.util.junit.EnabledIfListeningOnPort;
 import lombok.Getter;
-import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.Tag;
-import org.junit.jupiter.api.TestMethodOrder;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -34,7 +32,6 @@ import software.amazon.awssdk.core.SdkSystemSetting;
 @ExtendWith(CasTestExtension.class)
 @EnabledIfListeningOnPort(port = 8000)
 @Getter
-@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 class DynamoDbServiceRegistryTests extends AbstractServiceRegistryTests {
 
     static {

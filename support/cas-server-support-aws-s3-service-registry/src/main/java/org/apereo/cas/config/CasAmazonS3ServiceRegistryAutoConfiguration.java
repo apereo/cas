@@ -52,11 +52,15 @@ public class CasAmazonS3ServiceRegistryAutoConfiguration {
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @ConditionalOnMissingBean(name = "amazonS3ServiceRegistry")
     public ServiceRegistry amazonS3ServiceRegistry(
+        final CasConfigurationProperties casProperties,
         final ObjectProvider<List<ServiceRegistryListener>> serviceRegistryListeners,
         @Qualifier("amazonS3ServiceRegistryClient")
         final S3Client amazonS3ServiceRegistryClient, final ConfigurableApplicationContext applicationContext) {
-        return new AmazonS3ServiceRegistry(applicationContext,
-            Optional.ofNullable(serviceRegistryListeners.getIfAvailable()).orElseGet(ArrayList::new), amazonS3ServiceRegistryClient);
+        val registry = new AmazonS3ServiceRegistry(applicationContext,
+            Optional.ofNullable(serviceRegistryListeners.getIfAvailable()).orElseGet(ArrayList::new),
+            amazonS3ServiceRegistryClient);
+        registry.setOrder(casProperties.getServiceRegistry().getAmazonS3().getOrder());
+        return registry;
     }
 
     @Bean

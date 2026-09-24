@@ -71,6 +71,18 @@ if ((attributes.get('entitlement') as List).contains('admin')) {
 }
 ```
 
+## Script Execution
+
+A compiled script is cached and shared by every request that uses it, and CAS runs one execution of that
+script at a time. An execution that arrives while the script is busy waits for its turn rather than being
+abandoned, so a script that performs slow work such as an HTTP call or a directory lookup becomes a
+bottleneck for every request that depends on it. Keep scripts short, and give any remote call its own
+timeout.
+
+Variables that CAS passes to an *inline* script belong to the request that supplied them. They are visible
+only to that execution and are discarded once it completes, which means a script cannot observe the
+variables of an earlier or concurrent request.
+
 ## Actuator Endpoints
 
 The following endpoints are provided by CAS:

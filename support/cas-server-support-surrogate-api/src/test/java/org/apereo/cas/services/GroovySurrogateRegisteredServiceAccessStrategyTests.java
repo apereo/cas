@@ -57,6 +57,18 @@ class GroovySurrogateRegisteredServiceAccessStrategyTests {
     }
 
     @Test
+    void verifyScriptIsBuiltOnceAcrossRequests() throws Throwable {
+        val strategy = new GroovySurrogateRegisteredServiceAccessStrategy();
+        strategy.setGroovyScript("classpath:/surrogate-access.groovy");
+        assertTrue(executeStrategy("casuser-enabled", true, strategy));
+        val executableScript = strategy.getExecutableScript();
+        assertNotNull(executableScript);
+        assertTrue(executeStrategy("casuser-enabled", true, strategy));
+        assertSame(executableScript, strategy.getExecutableScript(),
+            "The groovy script must be compiled once rather than on every authorization request");
+    }
+
+    @Test
     void verifyNoSurrogateSession() throws Throwable {
         val strategy = new GroovySurrogateRegisteredServiceAccessStrategy();
         strategy.setGroovyScript("classpath:/surrogate-access.groovy");

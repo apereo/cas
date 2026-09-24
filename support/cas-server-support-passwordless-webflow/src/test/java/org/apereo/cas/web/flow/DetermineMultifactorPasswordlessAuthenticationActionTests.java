@@ -8,12 +8,9 @@ import org.apereo.cas.authentication.mfa.TestMultifactorAuthenticationProvider;
 import org.apereo.cas.configuration.support.TriStateBoolean;
 import org.apereo.cas.util.MockRequestContext;
 import lombok.val;
-import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.Nested;
-import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.TestMethodOrder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.TestConfiguration;
@@ -48,7 +45,6 @@ class DetermineMultifactorPasswordlessAuthenticationActionTests {
         "cas.authn.passwordless.accounts.simple.casuser=casuser@example.org",
         "cas.authn.passwordless.core.multifactor-authentication-activated=true"
     })
-    @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
     @Nested
     class WithoutMultifactorAuthenticationTrigger extends BasePasswordlessAuthenticationActionTests {
 
@@ -78,7 +74,6 @@ class DetermineMultifactorPasswordlessAuthenticationActionTests {
         "cas.authn.passwordless.core.multifactor-authentication-activated=true",
         "cas.authn.mfa.triggers.global.global-provider-id=" + TestMultifactorAuthenticationProvider.ID
     })
-    @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
     @Nested
     class WithMultifactorAuthenticationTrigger extends BasePasswordlessAuthenticationActionTests {
         @Autowired
@@ -86,7 +81,6 @@ class DetermineMultifactorPasswordlessAuthenticationActionTests {
         private Action determineMultifactorPasswordlessAuthenticationAction;
 
         @Test
-        @Order(1)
         void verifyUserMfaActionDisabled() throws Throwable {
             val ctx = new StaticApplicationContext();
             ctx.refresh();
@@ -107,24 +101,6 @@ class DetermineMultifactorPasswordlessAuthenticationActionTests {
         }
 
         @Test
-        @Order(2)
-        void verifyUserMfaActionNoProvider() throws Throwable {
-            val context = MockRequestContext.create(applicationContext);
-            context.setFlowExecutionContext(CasWebflowConfigurer.FLOW_ID_LOGIN);
-
-            val account = PasswordlessUserAccount.builder()
-                .email("email")
-                .phone("phone")
-                .username("casuser")
-                .name("casuser")
-                .multifactorAuthenticationEligible(TriStateBoolean.TRUE)
-                .build();
-            PasswordlessWebflowUtils.putPasswordlessAuthenticationAccount(context, account);
-            assertEquals(CasWebflowConstants.TRANSITION_ID_SUCCESS, determineMultifactorPasswordlessAuthenticationAction.execute(context).getId());
-        }
-
-        @Test
-        @Order(3)
         void verifyUserMissing() throws Throwable {
             val context = MockRequestContext.create(applicationContext);
             context.setFlowExecutionContext(CasWebflowConfigurer.FLOW_ID_LOGIN);
@@ -132,7 +108,6 @@ class DetermineMultifactorPasswordlessAuthenticationActionTests {
         }
 
         @Test
-        @Order(4)
         void verifyUserHasNoContactInfo() throws Throwable {
             val context = MockRequestContext.create(applicationContext);
 
@@ -144,7 +119,6 @@ class DetermineMultifactorPasswordlessAuthenticationActionTests {
         }
 
         @Test
-        @Order(100)
         void verifyAction() throws Throwable {
             TestMultifactorAuthenticationProvider.registerProviderIntoApplicationContext(applicationContext);
 
@@ -161,6 +135,40 @@ class DetermineMultifactorPasswordlessAuthenticationActionTests {
         }
     }
 
+    /**
+     * The trigger here names a provider that nothing registers, so this case no longer depends on
+     * the shared context still being free of an {@code mfa-dummy} bean that a sibling test adds.
+     * The distinct trigger id also gives this class a context of its own.
+     */
+    @Import(BaseWebflowConfigurerTests.SharedTestConfiguration.class)
+    @TestPropertySource(properties = {
+        "cas.authn.passwordless.accounts.simple.casuser=casuser@example.org",
+        "cas.authn.passwordless.core.multifactor-authentication-activated=true",
+        "cas.authn.mfa.triggers.global.global-provider-id=mfa-unregistered"
+    })
+    @Nested
+    class WithUnresolvableMultifactorAuthenticationTrigger extends BasePasswordlessAuthenticationActionTests {
+        @Autowired
+        @Qualifier(CasWebflowConstants.ACTION_ID_DETERMINE_PASSWORDLESS_MULTIFACTOR_AUTHN)
+        private Action determineMultifactorPasswordlessAuthenticationAction;
+
+        @Test
+        void verifyUserMfaActionNoProvider() throws Throwable {
+            val context = MockRequestContext.create(applicationContext);
+            context.setFlowExecutionContext(CasWebflowConfigurer.FLOW_ID_LOGIN);
+
+            val account = PasswordlessUserAccount.builder()
+                .email("email")
+                .phone("phone")
+                .username("casuser")
+                .name("casuser")
+                .multifactorAuthenticationEligible(TriStateBoolean.TRUE)
+                .build();
+            PasswordlessWebflowUtils.putPasswordlessAuthenticationAccount(context, account);
+            assertEquals(CasWebflowConstants.TRANSITION_ID_SUCCESS, determineMultifactorPasswordlessAuthenticationAction.execute(context).getId());
+        }
+    }
+
     @Import(BaseWebflowConfigurerTests.SharedTestConfiguration.class)
     @TestPropertySource(properties = {
         "cas.authn.attribute-repository.stub.attributes.groupMembership=adopters",
@@ -171,7 +179,6 @@ class DetermineMultifactorPasswordlessAuthenticationActionTests {
         "cas.authn.mfa.triggers.principal.global-principal-attribute-name-triggers=groupMembership",
         "cas.authn.mfa.triggers.principal.global-principal-attribute-value-regex=adopters"
     })
-    @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
     @Nested
     class WithPrincipalMultifactorAuthenticationTrigger extends BasePasswordlessAuthenticationActionTests {
         @Autowired

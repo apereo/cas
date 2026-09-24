@@ -18,8 +18,7 @@ import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.parallel.Execution;
-import org.junit.jupiter.api.parallel.ExecutionMode;
+import org.junit.jupiter.api.parallel.ResourceLock;
 import org.opensaml.core.criterion.EntityIdCriterion;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -47,7 +46,7 @@ import static org.junit.jupiter.api.Assertions.*;
 })
 @Slf4j
 @Tag("Git")
-@Execution(ExecutionMode.SAME_THREAD)
+@ResourceLock("gitSamlMetadataRepository")
 class GitSamlRegisteredServiceMetadataResolverTests extends BaseGitSamlMetadataTests {
     @Autowired
     @Qualifier("gitSamlRegisteredServiceRepositoryScheduler")
@@ -103,6 +102,8 @@ class GitSamlRegisteredServiceMetadataResolverTests extends BaseGitSamlMetadataT
         assertTrue(resolver.supports(service));
         assertTrue(resolver.isAvailable(service));
         assertFalse(resolver.supports(null));
+        assertTrue(resolver.resolve(service).isEmpty());
+        service.setRequireSignedRoot(false);
         val resolvers = resolver.resolve(service);
         assertFalse(resolvers.isEmpty());
         service.setMetadataLocation("https://example.com/endswith.git");
@@ -130,6 +131,7 @@ class GitSamlRegisteredServiceMetadataResolverTests extends BaseGitSamlMetadataT
         service.setName("SAML Service");
         service.setServiceId("^https://.+$");
         service.setMetadataLocation("git://");
+        service.setRequireSignedRoot(false);
         val resolvers = resolver.resolve(service, new CriteriaSet(new EntityIdCriterion(entityId)));
         assertEquals(1, resolvers.size());
     }

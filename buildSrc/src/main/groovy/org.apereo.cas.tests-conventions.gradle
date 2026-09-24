@@ -82,6 +82,9 @@ tasks.withType(Test).configureEach {
     ignoreFailures = providers.systemProperty('ignoreTestFailures').present
     forkEvery = 500
 
+    systemProperty('spring.test.context.cache.maxSize',
+        providers.systemProperty('testContextCacheSize').orElse('64').get())
+
     def defaultParallelForks = Math.max(1, (Runtime.runtime.availableProcessors() / 2).intValue())
     maxParallelForks = project.ext.has('testMaxParallelForks')
         ? project.ext.testMaxParallelForks as int

@@ -51,7 +51,13 @@ public class GroovyRegisteredServiceAccessStrategyActivationCriteria implements 
     @Override
     public boolean shouldActivate(final RegisteredServiceAccessStrategyRequest request) throws Throwable {
         initializeWatchableScriptIfNeeded();
-        return getGroovyAttributeValue(request);
+        val result = getGroovyAttributeValue(request);
+        if (result == null) {
+            throw new IllegalStateException(
+                "Groovy script [%s] produced no result to decide whether the access strategy should activate"
+                    .formatted(groovyScript));
+        }
+        return result;
     }
 
     protected Boolean getGroovyAttributeValue(final RegisteredServiceAccessStrategyRequest request) throws Throwable {

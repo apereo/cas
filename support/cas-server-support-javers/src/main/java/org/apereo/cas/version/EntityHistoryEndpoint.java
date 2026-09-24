@@ -2,6 +2,7 @@ package org.apereo.cas.version;
 
 import module java.base;
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.RegisteredServiceAccessStrategyUtils;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.web.BaseCasRestActuatorEndpoint;
@@ -18,6 +19,7 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 
 /**
  * This is {@link EntityHistoryEndpoint}.
@@ -54,6 +56,35 @@ public class EntityHistoryEndpoint extends BaseCasRestActuatorEndpoint {
         val registeredService = servicesManager.getObject().findServiceBy(id);
         RegisteredServiceAccessStrategyUtils.ensureServiceAccessIsAllowed(registeredService);
         return objectVersionRepository.getObject().getHistory(registeredService);
+    }
+
+    /**
+     * Restore a historical service revision.
+     *
+     * @param id the service id
+     * @param version the historical revision id
+     * @return the restored service, or not found if the revision does not belong to this service
+     */
+    @PostMapping(path = "/registeredServices/{id}/restore/{version}", produces = MediaType.APPLICATION_JSON_VALUE)
+    @Operation(summary = "Restore a registered service from history", parameters = {
+        @Parameter(description = "The service numeric id", name = "id", required = true, in = ParameterIn.PATH),
+        @Parameter(description = "The revision id returned by the service history", name = "version", required = true, in = ParameterIn.PATH)
+    })
+    public ResponseEntity<RegisteredService> restoreServiceById(@PathVariable final long id,
+                                                               @PathVariable final String version) {
+        val manager = servicesManager.getObject();
+        val registeredService = manager.findServiceBy(id);
+        RegisteredServiceAccessStrategyUtils.ensureServiceAccessIsAllowed(registeredService);
+        return objectVersionRepository.getObject().getHistory(registeredService)
+            .stream()
+            .filter(revision -> revision.id().equals(version))
+            .map(HistoricalEntity::entity)
+            .filter(RegisteredService.class::isInstance)
+            .map(RegisteredService.class::cast)
+            .filter(service -> service.getId() == id)
+            .findFirst()
+            .map(service -> ResponseEntity.ok(manager.save(service)))
+            .orElseGet(() -> ResponseEntity.notFound().build());
     }
 
     /**

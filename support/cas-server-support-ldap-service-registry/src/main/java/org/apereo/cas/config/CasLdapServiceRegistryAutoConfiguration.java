@@ -69,9 +69,11 @@ public class CasLdapServiceRegistryAutoConfiguration {
                 val connectionFactory = LdapUtils.newLdaptiveConnectionFactory(ldap);
                 LOGGER.debug("Configured LDAP service registry search filter to [{}] and load filter to [{}]",
                     ldap.getSearchFilter(), ldap.getLoadFilter());
-                return new LdapServiceRegistry(connectionFactory, ldapServiceRegistryMapper,
+                val registry = new LdapServiceRegistry(connectionFactory, ldapServiceRegistryMapper,
                     ldap, applicationContext,
                     Optional.ofNullable(serviceRegistryListeners.getIfAvailable()).orElseGet(ArrayList::new));
+                registry.setOrder(ldap.getOrder());
+                return registry;
             })
             .otherwiseProxy()
             .get();

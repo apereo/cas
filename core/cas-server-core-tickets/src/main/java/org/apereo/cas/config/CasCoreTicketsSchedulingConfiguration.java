@@ -14,6 +14,7 @@ import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
 import org.apereo.cas.util.spring.boot.ConditionalOnMatchingHostname;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -47,7 +48,6 @@ class CasCoreTicketsSchedulingConfiguration {
     @ConditionalOnMissingBean(name = TicketRegistryCleaner.BEAN_NAME)
     @Bean
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-    @Lazy(false)
     public TicketRegistryCleaner ticketRegistryCleaner(
         final CasConfigurationProperties casProperties,
         @Qualifier(LockRepository.BEAN_NAME) final LockRepository lockRepository,
@@ -63,13 +63,13 @@ class CasCoreTicketsSchedulingConfiguration {
     @Lazy(false)
     public Runnable ticketRegistryCleanerScheduler(
         final ConfigurableApplicationContext applicationContext,
-        @Qualifier(TicketRegistryCleaner.BEAN_NAME) final TicketRegistryCleaner ticketRegistryCleaner) {
+        @Qualifier(TicketRegistryCleaner.BEAN_NAME) final ObjectProvider<TicketRegistryCleaner> ticketRegistryCleaner) {
         return BeanSupplier.of(Runnable.class)
             .when(BeanCondition.on("cas.ticket.registry.cleaner.schedule.enabled").isTrue()
                 .evenIfMissing().given(applicationContext.getEnvironment()))
             .supply(() -> {
                 LOGGER.debug("Ticket registry cleaner is enabled to run on schedule.");
-                return new TicketRegistryCleanerScheduler(ticketRegistryCleaner);
+                return new TicketRegistryCleanerScheduler(ticketRegistryCleaner.getObject());
             })
             .otherwiseProxy(_ -> LOGGER.info("Ticket registry cleaner is not enabled to run on schedule. "
                 + "Expired tickets are not forcefully cleaned by CAS. It is up to the ticket registry itself to "

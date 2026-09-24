@@ -15,6 +15,7 @@ import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.services.resource.AbstractResourceBasedServiceRegistry;
 import org.apereo.cas.services.util.RegisteredServiceJsonSerializer;
 import org.apereo.cas.util.CollectionUtils;
+import org.apereo.cas.util.DigestUtils;
 import org.apereo.cas.util.ResourceUtils;
 import org.apereo.cas.util.io.WatcherService;
 import org.apereo.cas.util.spring.beans.BeanCondition;
@@ -24,6 +25,7 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.jooq.lambda.Unchecked;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -111,16 +113,12 @@ class CasServiceRegistryInitializationConfiguration {
     static class CasServiceRegistryEmbeddedConfiguration {
         private static Resource getServiceRegistryInitializerServicesDirectoryResource(
             final CasConfigurationProperties casProperties,
-            final ConfigurableApplicationContext applicationContext) {
+            final ConfigurableApplicationContext applicationContext) throws IOException {
             val registry = casProperties.getServiceRegistry().getJson();
             if (ResourceUtils.doesResourceExist(registry.getLocation())
                 || (ResourceUtils.isJarResource(registry.getLocation()) && !registry.isUsingDefaultLocation())) {
                 LOGGER.debug("Using JSON service registry location [{}] for embedded service definitions", registry.getLocation());
                 return registry.getLocation();
-            }
-            val parent = new File(FileUtils.getTempDirectory(), "cas");
-            if (!parent.mkdirs() && !parent.exists()) {
-                LOGGER.warn("Unable to create folder [{}]", parent);
             }
             val baseName = FilenameUtils.getBaseName(registry.getLocation().getFilename());
             val patterns = Arrays.stream(applicationContext.getEnvironment().getActiveProfiles())
@@ -131,9 +129,36 @@ class CasServiceRegistryInitializationConfiguration {
                 patterns.add("classpath*:/services/*.json");
             }
             LOGGER.debug("Patterns to scan for embedded service definitions: [{}]", patterns);
+
+            val parent = getEmbeddedServicesDirectory(applicationContext, patterns);
             ResourceUtils.exportResources(applicationContext, parent, patterns);
             LOGGER.debug("Using service registry location [{}] for embedded service definitions", parent);
             return new FileSystemResource(parent);
+        }
+
+        /**
+         * Embedded definitions are materialized under the system temporary directory, which is shared by
+         * every CAS process and test running on the host. Keying the directory to this application context
+         * prevents one deployment from loading definitions another deployment exported, and emptying it on
+         * every export drops definitions that have since been removed from the classpath.
+         *
+         * @param applicationContext the application context
+         * @param patterns           the resolved location patterns describing what is about to be exported
+         * @return the directory to export embedded service definitions into
+         * @throws IOException the io exception
+         */
+        private static File getEmbeddedServicesDirectory(final ConfigurableApplicationContext applicationContext,
+                                                         final List<String> patterns) throws IOException {
+            val identity = String.join(",", patterns)
+                + '|' + applicationContext.getApplicationName()
+                + '|' + Objects.toString(System.getProperty("java.class.path"), StringUtils.EMPTY);
+            val parent = new File(FileUtils.getTempDirectory(), "cas/" + DigestUtils.sha256(identity));
+            if (parent.isDirectory()) {
+                FileUtils.cleanDirectory(parent);
+            } else if (!parent.mkdirs() && !parent.exists()) {
+                LOGGER.warn("Unable to create folder [{}]", parent);
+            }
+            return parent;
         }
 
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)

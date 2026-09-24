@@ -55,7 +55,7 @@ import static org.junit.jupiter.api.Assertions.*;
         "cas.authn.jdbc.query[0].user=sa",
         "cas.authn.jdbc.query[0].password=",
         "cas.authn.jdbc.query[0].driver-class=org.hsqldb.jdbcDriver",
-        "cas.authn.jdbc.query[0].url=jdbc:hsqldb:mem:cas-hsql-authn-db",
+        "cas.authn.jdbc.query[0].url=jdbc:hsqldb:mem:cas-hsql-authn-config-db",
         "cas.authn.jdbc.query[0].dialect=org.hibernate.dialect.HSQLDialect",
         "cas.authn.jdbc.query[0].field-password=psw",
 
@@ -64,7 +64,7 @@ import static org.junit.jupiter.api.Assertions.*;
         "cas.authn.jdbc.bind[0].name=BindHandler",
         "cas.authn.jdbc.bind[0].order=1000",
         "cas.authn.jdbc.bind[0].driver-class=org.hsqldb.jdbcDriver",
-        "cas.authn.jdbc.bind[0].url=jdbc:hsqldb:mem:cas-hsql-authn-db",
+        "cas.authn.jdbc.bind[0].url=jdbc:hsqldb:mem:cas-hsql-authn-config-db",
         "cas.authn.jdbc.bind[0].dialect=org.hibernate.dialect.HSQLDialect"
     })
 @Tag("JDBCAuthentication")

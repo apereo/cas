@@ -40,7 +40,8 @@ public class OidcVerifiableCredentialJwtVcJsonLdEncoder extends BaseOidcVerifiab
             jwtClaims.setStringClaim("client_id", context.accessToken().getClientId());
             jwtClaims.setStringClaim("credential_configuration_id", configurationId);
             
-            val now = Instant.now(Clock.systemUTC());
+            val validFrom = Instant.ofEpochSecond(jwtClaims.getIssuedAt().getValue());
+            val validUntil = Instant.ofEpochSecond(jwtClaims.getExpirationTime().getValue());
             val credentialSubject = new LinkedHashMap<String, Object>();
             credentialSubject.put("id", principal.getId());
             credentialSubject.putAll(verifiableClaims);
@@ -54,10 +55,10 @@ public class OidcVerifiableCredentialJwtVcJsonLdEncoder extends BaseOidcVerifiab
             jwtClaims.setStringListClaim("type", List.of("VerifiableCredential", configuration.getScope()));
             jwtClaims.setClaim("credentialSubject", credentialSubject);
             jwtClaims.setStringClaim("issuer", issuer);
-            jwtClaims.setStringClaim("validFrom", now.toString());
-            jwtClaims.setStringClaim("validUntil", now.plus(CLAIM_VALIDITY_IN_MINUTES, ChronoUnit.MINUTES).toString());
-            jwtClaims.setClaim("iat", now.getEpochSecond());
-            jwtClaims.setClaim("nbf", now.getEpochSecond());
+            jwtClaims.setStringClaim("validFrom", validFrom.toString());
+            jwtClaims.setStringClaim("validUntil", validUntil.toString());
+            jwtClaims.setClaim("iat", validFrom.getEpochSecond());
+            jwtClaims.setClaim("nbf", validFrom.getEpochSecond());
 
             verifiableClaims.forEach(jwtClaims::setClaim);
         });

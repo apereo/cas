@@ -54,12 +54,50 @@ async function importServices() {
     }
 }
 
+async function verifyHistoryRestore() {
+    const headers = {"Accept": "application/json", "Content-Type": "application/json"};
+    const historyUrl = `${ACTUATOR_URL}/entityHistory/registeredServices/1`;
+    const history = JSON.parse(await cas.doRequest(historyUrl, "GET", headers));
+    assert(history.length > 0);
+    const original = history[0];
+    const service = JSON.parse(await cas.doRequest(`${BASE_URL}/1`, "GET", headers));
+    service.description = "Updated service before restoring history";
+    service.attributeReleasePolicy = {"@class": "org.apereo.cas.services.DenyAllAttributeReleasePolicy"};
+    await cas.doRequest(`${BASE_URL}/import`, "POST", headers, 201, JSON.stringify(service));
+
+    const updated = JSON.parse(await cas.doRequest(`${BASE_URL}/1`, "GET", headers));
+    assert.strictEqual(updated.description, service.description);
+    assert.strictEqual(updated.attributeReleasePolicy["@class"], service.attributeReleasePolicy["@class"]);
+
+    const otherHistory = JSON.parse(await cas.doRequest(`${ACTUATOR_URL}/entityHistory/registeredServices/2`, "GET", headers));
+    await cas.doRequest(`${historyUrl}/restore/${encodeURIComponent(otherHistory[0].id)}`, "POST", headers, 404);
+    await cas.doRequest(`${historyUrl}/restore/unknown`, "POST", headers, 404);
+    assert.deepStrictEqual(JSON.parse(await cas.doRequest(`${BASE_URL}/1`, "GET", headers)), updated);
+
+    const restored = JSON.parse(await cas.doRequest(`${historyUrl}/restore/${encodeURIComponent(original.id)}`, "POST", headers));
+    assert.strictEqual(restored.id, 1);
+    assert.strictEqual(restored.description, original.entity.description);
+    assert.deepStrictEqual(restored.attributeReleasePolicy, original.entity.attributeReleasePolicy);
+
+    await fetchServices();
+    const reloaded = JSON.parse(await cas.doRequest(`${BASE_URL}/1`, "GET", headers));
+    assert.deepStrictEqual(reloaded, restored);
+
+    const restoredHistory = JSON.parse(await cas.doRequest(historyUrl, "GET", headers));
+    assert.strictEqual(restoredHistory.length, history.length + 2);
+    assert.notStrictEqual(restoredHistory[0].id, original.id);
+    assert.strictEqual(restoredHistory[0].entity.description, original.entity.description);
+    assert.strictEqual(restoredHistory[1].entity.description, updated.description);
+    assert(restoredHistory.some((revision) => revision.id === original.id));
+}
+
 (async () => {
     let failed = false;
     try {
         const mysql = await cas.dockerContainer("mysql-server");
 
         await importServices();
+        await verifyHistoryRestore();
         await fetchServices();
 
         await cas.log("Pausing MySQL docker container");

@@ -6,6 +6,7 @@ import org.apereo.cas.configuration.support.RequiresModule;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
+import org.springframework.core.Ordered;
 
 /**
  * This is {@link LdapServiceRegistryProperties}.
@@ -47,6 +48,13 @@ public class LdapServiceRegistryProperties extends AbstractLdapSearchProperties 
      */
     private String loadFilter = "(objectClass=%s)";
 
+    /**
+     * The execution order of this registry
+     * which will determine its position in a chain
+     * in case multiple registries are defined.
+     */
+    private int order = Ordered.LOWEST_PRECEDENCE;
+    
     public LdapServiceRegistryProperties() {
         setSearchFilter("(%s={0})");
     }

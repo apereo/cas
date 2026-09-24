@@ -16,10 +16,10 @@ import org.apereo.cas.util.spring.boot.SpringBootTestAutoConfigurations;
 import org.apereo.cas.web.flow.resolver.CasWebflowEventResolver;
 import org.apereo.cas.web.support.WebUtils;
 import lombok.val;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.junit.jupiter.api.parallel.Execution;
-import org.junit.jupiter.api.parallel.ExecutionMode;
+import org.mockito.Answers;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -46,19 +46,17 @@ import static org.mockito.Mockito.*;
         "cas.authn.mfa.inwebo.service-id=7046"
     })
 @ExtendWith(CasTestExtension.class)
-@Execution(ExecutionMode.SAME_THREAD)
 public abstract class BaseInweboActionTests {
-
     protected static final String LOGIN = "jerome@casinthecloud.com";
 
     protected static final String SESSION_ID = "12454312154564321";
+
+    private static final ThreadLocal<InweboService> INWEBO_SERVICE = new ThreadLocal<>();
 
     private static final String DEVICE_NAME = "my device";
 
     protected MockRequestContext requestContext;
 
-    @Autowired
-    @Qualifier("inweboService")
     protected InweboService service;
 
     protected CasWebflowEventResolver resolver;
@@ -81,9 +79,15 @@ public abstract class BaseInweboActionTests {
 
     @BeforeEach
     void setUp() throws Exception {
+        this.service = mock(InweboService.class);
+        INWEBO_SERVICE.set(this.service);
         this.requestContext = MockRequestContext.create(applicationContext);
-        reset(this.service);
         setAuthenticationInContext(LOGIN);
+    }
+
+    @AfterEach
+    void tearDown() {
+        INWEBO_SERVICE.remove();
     }
 
     protected void setAuthenticationInContext(final String id) {
@@ -109,9 +113,24 @@ public abstract class BaseInweboActionTests {
 
     @TestConfiguration(value = "InweboActionTestConfiguration", proxyBeanMethods = false)
     public static class InweboActionTestConfiguration {
+        /**
+         * Forwards to the mock the running test installed, so tests can stub independently.
+         *
+         * @return the inwebo service
+         */
         @Bean
         public InweboService inweboService() {
-            return mock(InweboService.class);
+            return mock(InweboService.class, withSettings().defaultAnswer(invocation -> {
+                val delegate = INWEBO_SERVICE.get();
+                if (delegate == null) {
+                    return Answers.RETURNS_DEFAULTS.answer(invocation);
+                }
+                try {
+                    return invocation.getMethod().invoke(delegate, invocation.getArguments());
+                } catch (final InvocationTargetException e) {
+                    throw e.getCause();
+                }
+            }));
         }
     }
 }

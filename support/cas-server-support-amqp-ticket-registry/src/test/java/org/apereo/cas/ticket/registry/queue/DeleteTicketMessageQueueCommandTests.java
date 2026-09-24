@@ -8,7 +8,6 @@ import org.apereo.cas.ticket.registry.pubsub.commands.DeleteTicketMessageQueueCo
 import org.apereo.cas.util.PublisherIdentifier;
 import org.apereo.cas.util.junit.EnabledIfListeningOnPort;
 import lombok.val;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
@@ -22,11 +21,6 @@ import static org.junit.jupiter.api.Assertions.*;
 @EnabledIfListeningOnPort(port = 5672)
 @Tag("AMQP")
 class DeleteTicketMessageQueueCommandTests extends AbstractTicketMessageQueueCommandTests {
-
-    @BeforeEach
-    void setup() {
-        ticketRegistry.deleteAll();
-    }
 
     @Test
     void verifyDeleteTicket() throws Throwable {

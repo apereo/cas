@@ -9,8 +9,6 @@ import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.parallel.Execution;
-import org.junit.jupiter.api.parallel.ExecutionMode;
 import org.springframework.boot.autoconfigure.ImportAutoConfiguration;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.http.HttpStatus;
@@ -26,26 +24,27 @@ import static org.junit.jupiter.api.Assertions.*;
 @Tag("RestfulApiAuthentication")
 @TestPropertySource(properties = "cas.authn.mfa.web-authn.rest.url=http://localhost:${random.int[3000,9000]}")
 @ImportAutoConfiguration(CasRestfulWebAuthnAutoConfiguration.class)
-@Execution(ExecutionMode.SAME_THREAD)
 class RestfulWebAuthnCredentialRepositoryTests extends BaseWebAuthnCredentialRepositoryTests {
 
+    /**
+     * The REST endpoint is a single port assigned to this context, so every stub below binds the
+     * same one and they run in sequence rather than competing for it.
+     *
+     * @throws Throwable in case of failure
+     */
     @Test
     @Override
     protected void verifyOperation() throws Throwable {
         assertRegistrationIsFound();
         assertRegistrationBadStatus();
         assertRegistrationBadInput();
-    }
-
-    @Test
-    void verifyLoadOperation() throws Throwable {
         assertLoadIsFound();
         assertLoadBadStatus();
         assertLoadBadInput();
+        assertAllRegistrationsRemoved();
     }
 
-    @Test
-    void verifyUpdate() {
+    private void assertAllRegistrationsRemoved() {
         val props = casProperties.getAuthn().getMfa().getWebAuthn().getRest();
         val port = URI.create(props.getUrl()).getPort();
         try (val webServer = new MockWebServer(port, HttpStatus.OK)) {

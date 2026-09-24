@@ -25,6 +25,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
+import static org.awaitility.Awaitility.*;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
@@ -86,13 +87,14 @@ class ExpiringPrincipalAttributesRepositoryTests {
             var repoAttrs = repository.getAttributes(context);
             assertEquals(1, repoAttrs.size());
             assertTrue(repoAttrs.containsKey(MAIL));
-            Thread.sleep(1_000);
             repository.setMergingStrategy(PrincipalAttributesCoreProperties.MergingStrategyTypes.REPLACE);
             repository.setAttributeRepositoryIds(Set.of("Stub"));
-            repoAttrs = repository.getAttributes(context);
-            assertEquals(1, repoAttrs.size());
-            assertFalse(repoAttrs.containsKey("uid"));
-            assertEquals("final@school.com", repoAttrs.get(MAIL).getFirst());
+            await().atMost(Duration.ofSeconds(10)).untilAsserted(() -> {
+                val attributes = repository.getAttributes(context);
+                assertEquals(1, attributes.size());
+                assertFalse(attributes.containsKey("uid"));
+                assertEquals("final@school.com", attributes.get(MAIL).getFirst());
+            });
 
         }
 

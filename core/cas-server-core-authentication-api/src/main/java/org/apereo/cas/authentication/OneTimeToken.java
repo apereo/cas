@@ -1,6 +1,7 @@
 package org.apereo.cas.authentication;
 
 import module java.base;
+import org.apereo.cas.util.RandomUtils;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import com.google.errorprone.annotations.CanIgnoreReturnValue;
@@ -64,14 +65,17 @@ public class OneTimeToken implements Serializable, Comparable<OneTimeToken> {
     }
 
     /**
-     * Assign id if undefined.
+     * Assigns an identifier if one has not been given already. The identifier is drawn at random
+     * rather than taken from the clock: it is the primary key in some of the stores behind this
+     * record, and a clock reading only has millisecond resolution, so two records created in the
+     * same millisecond would share a key and one would silently overwrite the other.
      *
-     * @return the registered service
+     * @return this record, with an identifier assigned
      */
     @CanIgnoreReturnValue
     public OneTimeToken assignIdIfNecessary() {
         if (getId() <= 0) {
-            setId(System.currentTimeMillis());
+            setId(RandomUtils.nextLong(1, Long.MAX_VALUE));
         }
         return this;
     }

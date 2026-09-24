@@ -12,13 +12,13 @@ import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.junit.jupiter.api.parallel.Execution;
-import org.junit.jupiter.api.parallel.ExecutionMode;
+import org.junit.jupiter.api.parallel.ResourceLock;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.core.Ordered;
 import org.springframework.test.context.ActiveProfiles;
+import static org.awaitility.Awaitility.*;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
@@ -28,12 +28,12 @@ import static org.mockito.Mockito.*;
  */
 @Tag("RegisteredService")
 @ExtendWith(CasTestExtension.class)
-@Execution(ExecutionMode.SAME_THREAD)
 class DefaultServicesManagerTests {
 
     @Nested
     @SpringBootTest(classes = BaseAutoConfigurationTests.SharedTestConfiguration.class,
         properties = "cas.service-registry.core.index-services=false")
+    @ResourceLock("servicesManager:no-indexing")
     class NoIndexingTests extends AbstractServicesManagerTests {
         @Test
         void verifyQuerying() {
@@ -61,6 +61,7 @@ class DefaultServicesManagerTests {
 
     @Nested
     @SpringBootTest(classes = BaseAutoConfigurationTests.SharedTestConfiguration.class)
+    @ResourceLock("servicesManager:default")
     class DefaultTests extends AbstractServicesManagerTests {
         @Test
         void verifyOperation() {
@@ -175,18 +176,15 @@ class DefaultServicesManagerTests {
         }
 
         @Test
-        void verifySaveAndRemoveFromCache() throws InterruptedException {
+        void verifySaveAndRemoveFromCache() {
             val registeredService = new CasRegisteredService();
             registeredService.setId(RandomUtils.nextLong());
             registeredService.setName(UUID.randomUUID().toString());
             registeredService.setServiceId(registeredService.getName());
             assertFalse(isServiceInCache(null, registeredService.getId()));
             this.servicesManager.save(registeredService);
-            assertTrue(isServiceInCache(null, registeredService.getId()));
-            Thread.sleep(1_000);
-            assertTrue(isServiceInCache(null, registeredService.getId()));
-            Thread.sleep(5_000);
-            assertTrue(isServiceInCache(null, registeredService.getId()));
+            await().during(Duration.ofSeconds(1)).atMost(Duration.ofSeconds(5))
+                .until(() -> isServiceInCache(null, registeredService.getId()));
         }
 
         @Test
@@ -205,6 +203,7 @@ class DefaultServicesManagerTests {
 
     @Nested
     @SpringBootTest(classes = BaseAutoConfigurationTests.SharedTestConfiguration.class)
+    @ResourceLock("servicesManager:default")
     class IndexableTests {
         @Autowired
         @Qualifier(ServicesManager.BEAN_NAME)
@@ -240,6 +239,7 @@ class DefaultServicesManagerTests {
     @Nested
     @SpringBootTest(classes = BaseAutoConfigurationTests.SharedTestConfiguration.class,
         properties = "cas.service-registry.cache.cache-size=0")
+    @ResourceLock("servicesManager:no-cache")
     class NoCacheTests extends AbstractServicesManagerTests {
     }
 
@@ -247,6 +247,7 @@ class DefaultServicesManagerTests {
     @Nested
     @SpringBootTest(classes = BaseAutoConfigurationTests.SharedTestConfiguration.class)
     @ActiveProfiles({"prod1", "qa1"})
+    @ResourceLock("servicesManager:environment")
     class EnvironmentTests extends AbstractServicesManagerTests {
 
         @Test

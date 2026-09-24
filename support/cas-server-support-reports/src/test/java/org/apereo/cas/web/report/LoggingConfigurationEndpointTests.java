@@ -7,11 +7,8 @@ import lombok.val;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.MethodOrderer;
-import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.TestMethodOrder;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.TestPropertySource;
@@ -32,7 +29,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 })
 @Tag("ActuatorEndpoint")
 @Slf4j
-@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 class LoggingConfigurationEndpointTests extends AbstractCasEndpointTests {
     private static final ObjectMapper MAPPER = JacksonObjectMapperFactory.builder()
         .build().toObjectMapper();
@@ -47,7 +43,6 @@ class LoggingConfigurationEndpointTests extends AbstractCasEndpointTests {
     }
 
     @Test
-    @Order(1)
     void verifyOperation() throws Throwable {
         val body = MAPPER.readValue(mockMvc.perform(get("/actuator/loggingConfig")
             .contentType(MediaType.APPLICATION_FORM_URLENCODED)
@@ -58,7 +53,6 @@ class LoggingConfigurationEndpointTests extends AbstractCasEndpointTests {
     }
 
     @Test
-    @Order(10)
     void verifyStreamOperation() throws Throwable {
         LOGGER.warn("This is a test warning");
         val entries = MAPPER.readValue(mockMvc.perform(get("/actuator/loggingConfig/stream")

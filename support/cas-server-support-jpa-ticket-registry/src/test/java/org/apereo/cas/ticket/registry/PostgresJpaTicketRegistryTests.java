@@ -20,5 +20,6 @@ import org.springframework.test.context.TestPropertySource;
 })
 @EnabledIfListeningOnPort(port = 5432)
 @Tag("Postgres")
+@Tag("TicketRegistryTestWithoutEncryption")
 class PostgresJpaTicketRegistryTests extends BaseJpaTicketRegistryTests {
 }

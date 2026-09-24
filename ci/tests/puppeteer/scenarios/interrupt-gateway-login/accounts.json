@@ -1,0 +1,7 @@
+{
+  "casuser" : {
+    "message" : "Please review the updated terms of use",
+    "ssoEnabled" : true,
+    "interrupt" : true
+  }
+}

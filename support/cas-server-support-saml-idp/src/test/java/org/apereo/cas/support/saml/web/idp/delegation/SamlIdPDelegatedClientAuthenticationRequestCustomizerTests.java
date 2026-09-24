@@ -2,10 +2,13 @@ package org.apereo.cas.support.saml.web.idp.delegation;
 
 import module java.base;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
+import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.pac4j.client.DelegatedClientAuthenticationRequestCustomizer;
 import org.apereo.cas.services.DefaultRegisteredServiceAccessStrategy;
 import org.apereo.cas.services.DefaultRegisteredServiceDelegatedAuthenticationPolicy;
+import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
+import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.saml.BaseSamlIdPConfigurationTests;
 import org.apereo.cas.support.saml.SamlIdPConstants;
 import org.apereo.cas.support.saml.SamlIdPTestUtils;
@@ -35,6 +38,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.*;
 
 /**
  * This is {@link SamlIdPDelegatedClientAuthenticationRequestCustomizerTests}.
@@ -93,6 +97,17 @@ class SamlIdPDelegatedClientAuthenticationRequestCustomizerTests extends BaseSam
         assertTrue(customizer.isAuthorized(webContext, saml2Client, webApplicationService, requestContext));
     }
 
+    /**
+     * An authentication request that scopes authentication to some other identity provider must not
+     * authorize this client. That denial then falls through to the delegated authentication policy of
+     * whichever service definition the services manager resolves, and every registered service carries
+     * a default policy that permits undefined providers, so the outcome of the fallback is decided
+     * entirely by what the registry happens to contain. Asserting it against the shared registry would
+     * mean depending on no sibling test in this Spring context having saved a catch-all service
+     * definition, which this test cannot hold on its own; both fallback outcomes are therefore asserted
+     * against an isolated services manager. The assertions that do not reach the fallback continue to
+     * use the wired customizer.
+     */
     @Test
     void verifyAuthorization() throws Throwable {
         val saml2Client = buildMockSaml2Client();
@@ -111,13 +126,31 @@ class SamlIdPDelegatedClientAuthenticationRequestCustomizerTests extends BaseSam
         assertTrue(customizer.isAuthorized(webContext, saml2Client, webApplicationService, requestContext));
 
         setAuthnRequestFor(webContext, UUID.randomUUID().toString());
-        assertFalse(customizer.isAuthorized(webContext, saml2Client, webApplicationService, requestContext));
+        assertFalse(customizerResolving(null)
+            .isAuthorized(webContext, saml2Client, webApplicationService, requestContext));
+        val permittingService = RegisteredServiceTestUtils.getRegisteredService(webApplicationService.getId());
+        assertTrue(customizerResolving(permittingService)
+            .isAuthorized(webContext, saml2Client, webApplicationService, requestContext));
 
-        
         setAuthnRequestFor(webContext, saml2Client.getIdentityProviderResolvedEntityId());
         assertTrue(customizer.isAuthorized(webContext, saml2Client, webApplicationService, requestContext));    
         assertDoesNotThrow(() -> customizer.customize(saml2Client, webContext, requestContext));
         assertTrue(customizer.isAuthorized(webContext, new FormClient(), webApplicationService, requestContext));
+    }
+
+    /**
+     * Builds a customizer whose service lookups resolve to the given service definition, or to nothing
+     * when it is null, so that the delegated authentication policy fallback can be asserted without
+     * depending on the contents of the registry shared by this Spring context.
+     *
+     * @param registeredService the service definition to resolve, or null to resolve none
+     * @return the customizer
+     */
+    private DelegatedClientAuthenticationRequestCustomizer customizerResolving(final RegisteredService registeredService) {
+        val isolatedServicesManager = mock(ServicesManager.class);
+        when(isolatedServicesManager.findServiceBy(any(Service.class))).thenReturn(registeredService);
+        return new SamlIdPDelegatedClientAuthenticationRequestCustomizer(
+            samlIdPDistributedSessionStore, openSamlConfigBean, isolatedServicesManager, casProperties);
     }
 
     private void storeRequest(final AuthnRequest authnRequest, final JEEContext webContext) throws Exception {
@@ -137,11 +170,11 @@ class SamlIdPDelegatedClientAuthenticationRequestCustomizerTests extends BaseSam
 
         var builder = (SAMLObjectBuilder) openSamlConfigBean.getBuilderFactory()
             .getBuilder(Scoping.DEFAULT_ELEMENT_NAME);
-        val scoping = (Scoping) builder.buildObject(Scoping.DEFAULT_ELEMENT_NAME);
+        val scoping = (Scoping) Objects.requireNonNull(builder).buildObject(Scoping.DEFAULT_ELEMENT_NAME);
 
         builder = (SAMLObjectBuilder) openSamlConfigBean.getBuilderFactory()
             .getBuilder(IDPList.DEFAULT_ELEMENT_NAME);
-        val idpList = (IDPList) builder.buildObject(IDPList.DEFAULT_ELEMENT_NAME);
+        val idpList = (IDPList) Objects.requireNonNull(builder).buildObject(IDPList.DEFAULT_ELEMENT_NAME);
 
         Arrays.stream(allowedIdps).forEach(idp -> {
             val idpEntry = (IDPEntry) openSamlConfigBean.getBuilderFactory()

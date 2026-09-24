@@ -72,7 +72,7 @@ class MultiRowJdbcPersonAttributeDaoTests {
 
     @BeforeEach
     void setup() throws Exception {
-        testDataSource = JpaBeans.newDataSource("org.hsqldb.jdbcDriver", "sa", StringUtils.EMPTY, "jdbc:hsqldb:mem:cas");
+        testDataSource = JpaBeans.newDataSource("org.hsqldb.jdbcDriver", "sa", StringUtils.EMPTY, "jdbc:hsqldb:mem:" + UUID.randomUUID());
         setUpSchema();
     }
 

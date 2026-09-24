@@ -22,6 +22,11 @@
 
     "--cas.authn.oidc.vc.offer.transaction-code-enabled=false",
 
+    "--cas.authn.oidc.discovery.token-endpoint-auth-methods-supported=none,client_secret_basic,client_secret_post",
+
+    "--cas.server.tomcat.rewrite-valve.location=file:${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/rewrite.config",
+    "--cas.server.tomcat.rewrite-valve.valve-type=ENGINE",
+
     "--cas.authn.oidc.core.accepted-issuers-pattern=.*",
     "--cas.authn.oidc.core.issuer=http://host.docker.internal:8080/cas/oidc",
     "--cas.authn.oidc.jwks.file-system.jwks-file=file:${#systemProperties['java.io.tmpdir']}/keystore.jwks",

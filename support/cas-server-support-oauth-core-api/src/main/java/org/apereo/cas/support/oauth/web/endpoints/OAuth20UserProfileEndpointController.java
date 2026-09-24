@@ -99,7 +99,7 @@ public class OAuth20UserProfileEndpointController<T extends OAuth20Configuration
 
         try {
             validateAccessToken(accessTokenResult.getKey(), accessTokenTicket, request, response);
-            validateProofOfPossession(request, response, accessTokenTicket);
+            validateProofOfPossession(request, response, accessTokenResult.getKey(), accessTokenTicket);
             updateAccessTokenUsage(accessTokenTicket);
             val map = getConfigurationContext().getUserProfileDataCreator().createFrom(accessTokenTicket);
             return getConfigurationContext().getUserProfileViewRenderer().render(map, accessTokenTicket, response);
@@ -109,14 +109,40 @@ public class OAuth20UserProfileEndpointController<T extends OAuth20Configuration
         }
     }
 
+    /**
+     * Verify the DPoP proof, when the access token is sender-constrained. This is a resource request,
+     * not a token request, so the proof is bound to the presented token through its {@code ath} claim
+     * as RFC 9449, section 7.1 requires; verifying it as a token request would check neither that
+     * binding nor the confirmation recorded when the token was issued.
+     *
+     * @param request              the request
+     * @param response             the response
+     * @param presentedAccessToken the access token exactly as the client presented it
+     * @param accessTokenTicket    the access token ticket
+     * @throws Throwable the throwable
+     */
     protected void validateProofOfPossession(final HttpServletRequest request, final HttpServletResponse response,
+                                             final String presentedAccessToken,
                                              final OAuth20AccessToken accessTokenTicket) throws Throwable {
         val webContext = new JEEContext(request, response);
-        configurationContext.getProofOfPossessionValidator().validate(webContext, accessTokenTicket);
+        configurationContext.getProofOfPossessionValidator()
+            .validateProtectedResourceRequest(webContext, presentedAccessToken, accessTokenTicket);
     }
 
+    /**
+     * Hook for protocol-specific checks on the presented access token. The token is passed exactly as
+     * the client presented it, which is what a DPoP {@code ath} claim hashes; the decoded identifier
+     * is of no use for that.
+     *
+     * @param accessTokenId the access token as presented
+     * @param accessToken   the access token ticket
+     * @param request       the request
+     * @param response      the response
+     * @throws Throwable the throwable
+     */
     protected void validateAccessToken(final String accessTokenId, final OAuth20AccessToken accessToken,
-                                       final HttpServletRequest request, final HttpServletResponse response) {
+                                       final HttpServletRequest request,
+                                       final HttpServletResponse response) throws Throwable {
     }
 
     protected void updateAccessTokenUsage(final OAuth20AccessToken accessTokenTicket) throws Exception {

@@ -146,11 +146,11 @@ class MultifactorAuthnTrustConfiguration {
         @Lazy(false)
         public Cleanable mfaTrustStorageCleaner(
             final ConfigurableApplicationContext applicationContext,
-            @Qualifier(MultifactorAuthenticationTrustStorage.BEAN_NAME) final MultifactorAuthenticationTrustStorage mfaTrustEngine) {
+            @Qualifier(MultifactorAuthenticationTrustStorage.BEAN_NAME) final ObjectProvider<MultifactorAuthenticationTrustStorage> mfaTrustEngine) {
             return BeanSupplier.of(Cleanable.class)
                 .when(BeanCondition.on("cas.authn.mfa.trusted.cleaner.schedule.enabled").isTrue().evenIfMissing()
                     .given(applicationContext.getEnvironment()))
-                .supply(() -> new MultifactorAuthenticationTrustStorageCleaner(mfaTrustEngine))
+                .supply(() -> new MultifactorAuthenticationTrustStorageCleaner(mfaTrustEngine.getObject()))
                 .otherwiseProxy()
                 .get();
         }

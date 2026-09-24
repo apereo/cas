@@ -12,8 +12,6 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.parallel.Execution;
-import org.junit.jupiter.api.parallel.ExecutionMode;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.MediaType;
@@ -33,7 +31,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
  */
 @TestPropertySource(properties = "management.endpoint.ssoSessions.access=UNRESTRICTED")
 @Tag("ActuatorEndpoint")
-@Execution(ExecutionMode.SAME_THREAD)
 class SingleSignOnSessionsEndpointTests extends AbstractCasEndpointTests {
     protected static final ObjectMapper MAPPER = JacksonObjectMapperFactory.builder()
         .defaultTypingEnabled(false).build().toObjectMapper();
@@ -46,9 +43,18 @@ class SingleSignOnSessionsEndpointTests extends AbstractCasEndpointTests {
     @Qualifier(TicketRegistry.BEAN_NAME)
     private TicketRegistry ticketRegistry;
 
+    private String username;
+
+    /**
+     * Every request below is scoped to this principal, and the session it seeds is removed by
+     * principal too, so the report and the removals never reach another test's sessions.
+     *
+     * @throws Throwable in case of failure
+     */
     @BeforeEach
     void setup() throws Throwable {
-        val result = CoreAuthenticationTestUtils.getAuthenticationResult();
+        username = UUID.randomUUID().toString();
+        val result = CoreAuthenticationTestUtils.getAuthenticationResult(CoreAuthenticationTestUtils.getAuthentication(username));
         val tgt = centralAuthenticationService.createTicketGrantingTicket(result);
         val st = centralAuthenticationService.grantServiceTicket(tgt.getId(),
             RegisteredServiceTestUtils.getService(), result);
@@ -57,10 +63,9 @@ class SingleSignOnSessionsEndpointTests extends AbstractCasEndpointTests {
 
     @AfterEach
     public void teardown() throws Exception {
-        mockMvc.perform(delete("/actuator/ssoSessions")
+        mockMvc.perform(delete("/actuator/ssoSessions/users/{username}", username)
                 .contentType(MediaType.APPLICATION_FORM_URLENCODED)
                 .accept(MediaType.APPLICATION_JSON)
-                .queryParam("type", SingleSignOnSessionsEndpoint.SsoSessionReportOptions.ALL.getType())
             )
             .andExpect(status().isOk());
     }
@@ -70,7 +75,7 @@ class SingleSignOnSessionsEndpointTests extends AbstractCasEndpointTests {
         mockMvc.perform(get("/actuator/ssoSessions")
                 .contentType(MediaType.APPLICATION_FORM_URLENCODED)
                 .accept(MediaType.APPLICATION_JSON)
-                .queryParam("username", CoreAuthenticationTestUtils.CONST_USERNAME)
+                .queryParam("username", username)
             )
             .andExpect(status().isOk())
             .andExpect(jsonPath("$.length()", greaterThan(0)));
@@ -83,14 +88,14 @@ class SingleSignOnSessionsEndpointTests extends AbstractCasEndpointTests {
             .andExpect(jsonPath("$.status").exists())
             .andExpect(jsonPath("$.ticketGrantingTicket").exists());
 
-        val authResult = CoreAuthenticationTestUtils.getAuthenticationResult();
+        val authResult = CoreAuthenticationTestUtils.getAuthenticationResult(CoreAuthenticationTestUtils.getAuthentication(username));
         val tgt = centralAuthenticationService.createTicketGrantingTicket(authResult);
         assertNotNull(tgt);
 
         mockMvc.perform(delete("/actuator/ssoSessions")
                 .contentType(MediaType.APPLICATION_FORM_URLENCODED)
                 .accept(MediaType.APPLICATION_JSON)
-                .queryParam("type", SingleSignOnSessionsEndpoint.SsoSessionReportOptions.ALL.getType())
+                .queryParam("username", username)
             )
             .andExpect(status().isOk())
             .andExpect(jsonPath("$.length()", greaterThan(0)));
@@ -102,7 +107,7 @@ class SingleSignOnSessionsEndpointTests extends AbstractCasEndpointTests {
         mockMvc.perform(delete("/actuator/ssoSessions")
                 .contentType(MediaType.APPLICATION_FORM_URLENCODED)
                 .accept(MediaType.APPLICATION_JSON)
-                .queryParam("username", CoreAuthenticationTestUtils.CONST_USERNAME)
+                .queryParam("username", username)
             )
             .andExpect(status().isOk())
             .andExpect(jsonPath("$..status").exists())
@@ -116,6 +121,7 @@ class SingleSignOnSessionsEndpointTests extends AbstractCasEndpointTests {
                     .contentType(MediaType.APPLICATION_FORM_URLENCODED)
                     .accept(MediaType.APPLICATION_JSON)
                     .queryParam("type", SingleSignOnSessionsEndpoint.SsoSessionReportOptions.ALL.getType())
+                    .queryParam("username", username)
                 )
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.length()", greaterThan(0)))
@@ -133,23 +139,22 @@ class SingleSignOnSessionsEndpointTests extends AbstractCasEndpointTests {
                 .accept(MediaType.APPLICATION_JSON)
             )
             .andExpect(status().isOk())
-            .andExpect(status().isOk())
             .andExpect(jsonPath("$.status").exists())
             .andExpect(jsonPath("$.ticketGrantingTicket").exists());
 
         mockMvc.perform(delete("/actuator/ssoSessions")
                 .contentType(MediaType.APPLICATION_FORM_URLENCODED)
                 .accept(MediaType.APPLICATION_JSON)
-                .queryParam("type", SingleSignOnSessionsEndpoint.SsoSessionReportOptions.ALL.getType())
+                .queryParam("username", username)
             )
             .andExpect(status().isOk())
-            .andExpect(jsonPath("$.status").exists())
+            .andExpect(jsonPath("$.deleted").exists())
             .andExpect(jsonPath("$.length()", equalTo(1)));
     }
 
     @Test
     void verifyProxies() throws Throwable {
-        val tgt = new MockTicketGrantingTicket("casuser");
+        val tgt = new MockTicketGrantingTicket(username);
         tgt.setProxiedBy(RegisteredServiceTestUtils.getService(UUID.randomUUID().toString()));
         ticketRegistry.addTicket(tgt);
 
@@ -157,14 +162,16 @@ class SingleSignOnSessionsEndpointTests extends AbstractCasEndpointTests {
                 .contentType(MediaType.APPLICATION_FORM_URLENCODED)
                 .accept(MediaType.APPLICATION_JSON)
                 .queryParam("type", SingleSignOnSessionsEndpoint.SsoSessionReportOptions.ALL.getType())
+                .queryParam("username", username)
             )
             .andExpect(status().isOk())
-            .andExpect(jsonPath("$.length()", equalTo(2)));
+            .andExpect(jsonPath("$.activeSsoSessions.length()", equalTo(2)));
 
         mockMvc.perform(get("/actuator/ssoSessions")
                 .contentType(MediaType.APPLICATION_FORM_URLENCODED)
                 .accept(MediaType.APPLICATION_JSON)
                 .queryParam("type", SingleSignOnSessionsEndpoint.SsoSessionReportOptions.PROXIED.getType())
+                .queryParam("username", username)
             )
             .andExpect(status().isOk())
             .andExpect(jsonPath("$.activeSsoSessions.length()", equalTo(1)));
@@ -173,6 +180,7 @@ class SingleSignOnSessionsEndpointTests extends AbstractCasEndpointTests {
                 .contentType(MediaType.APPLICATION_FORM_URLENCODED)
                 .accept(MediaType.APPLICATION_JSON)
                 .queryParam("type", SingleSignOnSessionsEndpoint.SsoSessionReportOptions.DIRECT.getType())
+                .queryParam("username", username)
             )
             .andExpect(status().isOk())
             .andExpect(jsonPath("$.activeSsoSessions.length()", equalTo(1)));

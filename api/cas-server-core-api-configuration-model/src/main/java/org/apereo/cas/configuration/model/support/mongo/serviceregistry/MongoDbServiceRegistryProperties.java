@@ -6,6 +6,7 @@ import org.apereo.cas.configuration.support.RequiresModule;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
+import org.springframework.core.Ordered;
 
 /**
  * Configuration properties class mongodb service registry.
@@ -22,6 +23,13 @@ public class MongoDbServiceRegistryProperties extends SingleCollectionMongoDbPro
     @Serial
     private static final long serialVersionUID = -227092724742371662L;
 
+    /**
+     * The execution order of this registry
+     * which will determine its position in a chain
+     * in case multiple registries are defined.
+     */
+    private int order = Ordered.LOWEST_PRECEDENCE;
+    
     public MongoDbServiceRegistryProperties() {
         setCollection("cas-service-registry");
     }

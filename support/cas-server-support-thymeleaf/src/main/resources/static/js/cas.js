@@ -636,11 +636,26 @@ function handleScopeApproval(approvalKey, recordKey, dbName) {
     });
 }
 
-function initializeAceEditor(id, mode = "json") {
+/**
+ * Build an Ace editor.
+ *
+ * Pass useWorker: false for an editor that only displays content. Setting a mode otherwise starts
+ * a background web worker that re-parses the whole document on every change and on a timer; for a
+ * read-only view of server-generated content that only produces annotations nobody can act on, and
+ * on a large document -- SAML metadata above all -- it is the most expensive thing on the page.
+ * Disabling it before the mode is set stops the worker being spawned at all.
+ *
+ * @param id the element id to attach to
+ * @param mode the Ace mode name, without the "ace/mode/" prefix
+ * @param useWorker whether the mode's background syntax worker should run
+ * @returns the Ace editor
+ */
+function initializeAceEditor(id, mode = "json", {useWorker = true} = {}) {
     ace.require("ace/ext/language_tools");
     const beautify = ace.require("ace/ext/beautify");
     const editor = ace.edit(id);
     editor.setTheme("ace/theme/cobalt");
+    editor.session.setUseWorker(useWorker);
     editor.session.setMode(`ace/mode/${mode}`);
     editor.session.setUseWrapMode(true);
     editor.session.setTabSize(4);

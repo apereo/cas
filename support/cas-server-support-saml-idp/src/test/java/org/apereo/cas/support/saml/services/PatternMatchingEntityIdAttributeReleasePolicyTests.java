@@ -6,14 +6,9 @@ import org.apereo.cas.services.RegisteredServiceAttributeReleasePolicyContext;
 import org.apereo.cas.support.saml.BaseSamlIdPConfigurationTests;
 import org.apereo.cas.support.saml.SamlIdPTestUtils;
 import org.apereo.cas.util.CollectionUtils;
-import org.apereo.cas.util.spring.ApplicationContextProvider;
 import lombok.val;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.MethodOrderer;
-import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.TestMethodOrder;
 import org.springframework.test.context.TestPropertySource;
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -24,17 +19,9 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 5.3.0
  */
 @Tag("SAMLAttributes")
-@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 @TestPropertySource(properties = "cas.authn.saml-idp.metadata.file-system.location=${#systemProperties['java.io.tmpdir']}/saml3382")
 class PatternMatchingEntityIdAttributeReleasePolicyTests extends BaseSamlIdPConfigurationTests {
-    @BeforeEach
-    void setup() {
-        servicesManager.deleteAll();
-        ApplicationContextProvider.holdApplicationContext(applicationContext);
-    }
-
     @Test
-    @Order(1)
     void verifyPatternDoesNotMatch() throws Throwable {
         val filter = new PatternMatchingEntityIdAttributeReleasePolicy();
         filter.setAllowedAttributes(CollectionUtils.wrapList("uid"));
@@ -51,7 +38,6 @@ class PatternMatchingEntityIdAttributeReleasePolicyTests extends BaseSamlIdPConf
     }
 
     @Test
-    @Order(2)
     void verifyPatternDoesNotMatchAndReversed() throws Throwable {
         val filter = new PatternMatchingEntityIdAttributeReleasePolicy();
         filter.setAllowedAttributes(CollectionUtils.wrapList("cn"));
@@ -70,7 +56,6 @@ class PatternMatchingEntityIdAttributeReleasePolicyTests extends BaseSamlIdPConf
     }
 
     @Test
-    @Order(3)
     void verifyPatternDoesMatch() throws Throwable {
         val filter = new PatternMatchingEntityIdAttributeReleasePolicy();
         filter.setEntityIds("https://sp.+");

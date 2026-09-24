@@ -43,6 +43,10 @@ class DefaultConsentDecisionBuilderTests {
         assertNotNull(consentDecision);
         assertEquals("casuser", consentDecision.getPrincipal());
         assertEquals(consentDecision.getService(), RegisteredServiceTestUtils.getService().getId());
+        assertTrue(consentDecision.getId() > 0);
+        assertNotEquals(consentDecision.getId(), getConsentDecision().getId());
+        assertTrue(Duration.between(consentDecision.getCreatedDate(),
+            LocalDateTime.now(ZoneOffset.UTC)).abs().toMinutes() < 1);
     }
 
     @Test
@@ -50,10 +54,25 @@ class DefaultConsentDecisionBuilderTests {
         val consentDecision = new ConsentDecision();
         consentDecision.setPrincipal("casuser");
         consentDecision.setService(RegisteredServiceTestUtils.getService().getId());
-        assertThrows(IllegalArgumentException.class,
-            () -> consentDecisionBuilder.getConsentableAttributesFrom(consentDecision));
+        assertTrue(consentDecisionBuilder.getConsentableAttributesFrom(consentDecision).isEmpty());
+        assertTrue(consentDecisionBuilder.doesAttributeReleaseRequireConsent(consentDecision,
+            CollectionUtils.wrap("attr1", List.of("value1"))));
         assertThrows(IllegalArgumentException.class,
             () -> consentDecisionBuilder.update(consentDecision, null));
+    }
+
+    @Test
+    void verifyDecisionRecordedWithOtherKeys() {
+        val decision = new DefaultConsentDecisionBuilder(CipherExecutor.noOpOfSerializableToString())
+            .build(RegisteredServiceTestUtils.getService(),
+                RegisteredServiceTestUtils.getRegisteredService("test"),
+                "casuser", CollectionUtils.wrap("attr1", List.of("value1")));
+
+        val otherKeys = new DefaultConsentDecisionBuilder(
+            new AttributeReleaseConsentCipherExecutor(null, null, "A128CBC-HS256", 512, 256));
+        assertTrue(otherKeys.getConsentableAttributesFrom(decision).isEmpty());
+        assertTrue(otherKeys.doesAttributeReleaseRequireConsent(decision,
+            CollectionUtils.wrap("attr1", List.of("value1"))));
     }
 
     @Test

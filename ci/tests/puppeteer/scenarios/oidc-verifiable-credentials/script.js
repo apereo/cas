@@ -55,7 +55,7 @@ async function createPublicKey() {
             "Content-Type": "application/json"
         }, (res) => {
             assert(res.data.c_nonce !== undefined);
-            assert(res.data.c_nonce_expires_in !== undefined);
+            assert(res.data.c_nonce_expires_in === undefined, "OpenID4VCI 1.0 nonce responses carry only c_nonce");
             return res.data.c_nonce;
         }, (error) => {
             throw `Operation failed: ${error}`;
@@ -130,8 +130,7 @@ async function createPublicKey() {
         "Authorization": `Basic ${btoa("client:secret")}`
     }, (res) => {
         assert(res.data.access_token !== undefined);
-        assert(res.data.c_nonce !== undefined);
-        assert(res.data.c_nonce_expires_in !== undefined);
+        assert(res.data.c_nonce === undefined, "OpenID4VCI 1.0 moved the proof challenge to the nonce endpoint");
         return res.data.access_token;
     }, (error) => {
         throw `Operation failed: ${error}`;
@@ -144,9 +143,8 @@ async function createPublicKey() {
     const proof = await createPublicKey();
     const credentialRequest = JSON.stringify({
         credential_configuration_id: "myorg",
-        proof: {
-            proof_type: "jwt",
-            jwt: proof
+        proofs: {
+            jwt: [proof]
         }
     });
     const result = JSON.parse(await cas.doRequest(url, "POST", {
@@ -154,10 +152,11 @@ async function createPublicKey() {
         "Authorization": `Bearer ${accessToken}`
     }, 200, credentialRequest));
     await cas.log(result);
-    assert(result.credential !== undefined);
-    assert(result.format === "dc+sd-jwt");
+    assert(result.credentials.length === 1);
+    assert(result.credential === undefined, "OpenID4VCI 1.0 replaced credential with the credentials array");
+    assert(result.format === undefined, "OpenID4VCI 1.0 carries no format in the credential response");
 
-    const parts = result.credential.split("~");
+    const parts = result.credentials[0].credential.split("~");
     const issuerJwt = parts[0];
     const decoded = await cas.decodeJwt(issuerJwt);
     assert(decoded !== undefined && decoded !== null);
@@ -170,4 +169,7 @@ async function createPublicKey() {
     assert(decoded.roles.includes("user"));
     assert(decoded.roles.includes("admin"));
     assert(decoded.student_id === undefined);
+
+    await cas.log(`Credential issued at ${decoded.iat} and expires at ${decoded.exp}`);
+    assert(decoded.exp - decoded.iat === 30 * 24 * 60 * 60);
 })();

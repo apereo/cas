@@ -112,12 +112,9 @@ class DefaultTicketRegistryTests {
             val ticketGrantingTicket = new TicketGrantingTicketImpl(TestTicketIdentifiers.generate().ticketGrantingTicketId(),
                     originalAuthn, new HardTimeoutExpirationPolicy(1));
             registry.addTicket(ticketGrantingTicket);
-            Thread.sleep(1500);
             val tgtId = ticketGrantingTicket.getId();
-            val tgt = registry.getTicket(tgtId);
-            assertNull(tgt);
-            val internalTgt = registry.getMapInstance().get(tgtId);
-            assertNull(internalTgt);
+            await().atMost(Duration.ofSeconds(10)).untilAsserted(() -> assertNull(registry.getTicket(tgtId)));
+            assertNull(registry.getMapInstance().get(tgtId));
             verify(applicationContext).publishEvent(any(CasRequestSingleLogoutEvent.class));
             verify(applicationContext).publishEvent(any(CasTicketGrantingTicketDestroyedEvent.class));
         }
@@ -165,12 +162,9 @@ class DefaultTicketRegistryTests {
             val ticketGrantingTicket = new TicketGrantingTicketImpl(BaseTicketRegistryTests.TestTicketIdentifiers.generate().ticketGrantingTicketId(),
                     originalAuthn, new HardTimeoutExpirationPolicy(1));
             registry.addTicket(ticketGrantingTicket);
-            Thread.sleep(1500);
             val tgtId = ticketGrantingTicket.getId();
-            val tgt = registry.getTicket(tgtId);
-            assertNull(tgt);
-            val internalTgt = registry.getMapInstance().get(tgtId);
-            assertNull(internalTgt);
+            await().atMost(Duration.ofSeconds(10)).untilAsserted(() -> assertNull(registry.getTicket(tgtId)));
+            assertNull(registry.getMapInstance().get(tgtId));
             await().atMost(3, TimeUnit.SECONDS).untilAsserted(() -> assertTrue(LogoutManagerTestConfiguration.getNbCalls() > 0));
         }
     }

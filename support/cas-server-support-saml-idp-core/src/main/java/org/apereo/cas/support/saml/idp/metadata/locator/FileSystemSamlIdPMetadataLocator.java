@@ -15,6 +15,7 @@ import lombok.val;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.jspecify.annotations.Nullable;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.core.io.Resource;
 
@@ -108,9 +109,9 @@ public class FileSystemSamlIdPMetadataLocator extends AbstractSamlIdPMetadataLoc
             val samlRegisteredService = registeredService.get();
             val serviceDirectory = StringUtils.isNotBlank(samlRegisteredService.getIdpMetadataLocation())
                 ? ResourceUtils.getRawResourceFrom(SpringExpressionLanguageValueResolver.getInstance().resolve(samlRegisteredService.getIdpMetadataLocation())).getFile()
-                : new File(this.metadataLocation, getAppliesToFor(registeredService));
+                : resolveServiceMetadataDirectory(registeredService);
             LOGGER.debug("Metadata directory location for [{}] is [{}]", samlRegisteredService.getName(), serviceDirectory);
-            if (serviceDirectory.exists()) {
+            if (serviceDirectory != null && serviceDirectory.exists()) {
                 val artifact = new File(serviceDirectory, artifactName);
                 LOGGER.trace("Artifact location for [{}] and [{}] is [{}]", artifactName, samlRegisteredService.getName(), artifact);
                 if (artifact.exists()) {
@@ -130,6 +131,36 @@ public class FileSystemSamlIdPMetadataLocator extends AbstractSamlIdPMetadataLoc
             FileUtils.deleteQuietly(resource.getFile());
         }
         return ResourceUtils.toFileSystemResource(resource.getFile());
+    }
+
+    /**
+     * Resolves the directory holding a service's own identity provider metadata artifacts.
+     * <p>
+     * That directory is named after the service, and the name is carried into the path verbatim.
+     * A service name is operator-supplied and has never been validated as a path component, so one
+     * containing {@code ..} walks out of the metadata location and has CAS load signing or
+     * encryption key material from wherever it lands. The name itself is deliberately left alone --
+     * nothing in CAS generates these directories, deployments provision them by hand, and renaming
+     * or hashing the segment would orphan every one that already exists -- so what is enforced is
+     * containment: the resolved directory has to sit inside the metadata location.
+     * <p>
+     * A name that does not is ignored rather than rejected outright, which lands the caller on the
+     * global artifacts, the same as any service that has no directory of its own.
+     *
+     * @param registeredService the registered service
+     * @return the directory, or null when it does not resolve inside the metadata location
+     * @throws IOException the exception
+     */
+    protected @Nullable File resolveServiceMetadataDirectory(final Optional<SamlRegisteredService> registeredService) throws IOException {
+        val owner = getAppliesToFor(registeredService);
+        val metadataRoot = this.metadataLocation.getCanonicalFile().toPath();
+        val serviceDirectory = new File(this.metadataLocation, owner).getCanonicalFile().toPath();
+        if (!serviceDirectory.startsWith(metadataRoot)) {
+            LOGGER.warn("Metadata directory [{}] resolved for [{}] falls outside the metadata location [{}] "
+                + "and will be ignored.", serviceDirectory, owner, metadataRoot);
+            return null;
+        }
+        return serviceDirectory.toFile();
     }
 
     protected void initializeMetadataDirectory() {

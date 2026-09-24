@@ -6,6 +6,8 @@ import org.apereo.cas.config.CasRedisTicketRegistryAutoConfiguration;
 import org.apereo.cas.redis.core.CasRedisTemplate;
 import org.apereo.cas.ticket.registry.RedisTicketRegistry.CasRedisTemplates;
 import lombok.Getter;
+import org.junit.jupiter.api.parallel.ResourceAccessMode;
+import org.junit.jupiter.api.parallel.ResourceLock;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.ImportAutoConfiguration;
@@ -25,6 +27,7 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 })
 @EnableTransactionManagement(proxyTargetClass = false)
 @EnableAspectJAutoProxy(proxyTargetClass = false)
+@ResourceLock(value = BaseTicketRegistryTests.TICKET_REGISTRY_RESOURCE, mode = ResourceAccessMode.READ_WRITE)
 @Getter
 public abstract class BaseRedisSentinelTicketRegistryTests extends BaseTicketRegistryTests {
     @Autowired

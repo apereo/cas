@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.actuate.autoconfigure.endpoint.web.CorsEndpointProperties;
 import org.springframework.boot.actuate.autoconfigure.endpoint.web.WebEndpointProperties;
 import org.springframework.boot.actuate.autoconfigure.web.server.ManagementPortType;
+import org.springframework.boot.actuate.endpoint.EndpointAccessResolver;
 import org.springframework.boot.actuate.endpoint.EndpointFilter;
 import org.springframework.boot.actuate.endpoint.EndpointsSupplier;
 import org.springframework.boot.actuate.endpoint.ExposableEndpoint;
@@ -89,10 +90,11 @@ class CasCoreActuatorsConfiguration {
     public RestActuatorEndpointHandlerMapping restControllerEndpointHandlerMapping(
         @Qualifier("restControllerEndpointDiscoverer")
         final EndpointsSupplier<RestActuatorControllerEndpoint> restEndpointsSupplier,
-        final CorsEndpointProperties corsProperties, final WebEndpointProperties webEndpointProperties) {
+        final CorsEndpointProperties corsProperties, final WebEndpointProperties webEndpointProperties,
+        final EndpointAccessResolver endpointAccessResolver) {
         val endpointMapping = new EndpointMapping(webEndpointProperties.getBasePath());
         return new RestActuatorEndpointHandlerMapping(endpointMapping, restEndpointsSupplier.getEndpoints(),
-            corsProperties.toCorsConfiguration());
+            corsProperties.toCorsConfiguration(), endpointAccessResolver);
     }
     
     private static boolean shouldRegisterLinksMapping(

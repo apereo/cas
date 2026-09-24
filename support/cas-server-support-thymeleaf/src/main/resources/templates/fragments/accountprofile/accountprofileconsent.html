@@ -84,7 +84,7 @@
                     <td class="mdc-data-table__cell"><code th:utext="${entry.service}">Value</code></td>
                     <td class="mdc-data-table__cell" th:utext="${entry.attributes}">Value</td>
                     <td class="mdc-data-table__cell"
-                        th:utext="${#temporals.format(entry.createdDateTime, 'MMMM dd, yyyy HH:nn:ss')}">Value
+                        th:utext="${#temporals.format(entry.createdDateTime, 'MMMM dd, yyyy HH:nn:ss') + ' UTC'}">Value
                     </td>
                     <td class="mdc-data-table__cell" th:utext="#{${entry.options}}">Value
                     </td>
