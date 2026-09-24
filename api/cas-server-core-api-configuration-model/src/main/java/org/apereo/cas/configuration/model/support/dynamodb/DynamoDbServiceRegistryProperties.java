@@ -5,6 +5,7 @@ import org.apereo.cas.configuration.support.RequiresModule;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
+import org.springframework.core.Ordered;
 
 /**
  * This is {@link DynamoDbServiceRegistryProperties}.
@@ -25,4 +26,11 @@ public class DynamoDbServiceRegistryProperties extends AbstractDynamoDbPropertie
      * The table name used and created by CAS to hold service definitions in DynamoDb.
      */
     private String tableName = "DynamoDbCasServices";
+
+    /**
+     * The execution order of this registry
+     * which will determine its position in a chain
+     * in case multiple registries are defined.
+     */
+    private int order = Ordered.LOWEST_PRECEDENCE;
 }

@@ -18,6 +18,8 @@ import org.apache.hc.core5.http.HttpVersion;
 import org.apache.hc.core5.http.io.HttpClientResponseHandler;
 import org.apache.hc.core5.http.io.entity.ByteArrayEntity;
 import org.apache.hc.core5.http.message.BasicClassicHttpResponse;
+import org.apache.hc.core5.io.CloseMode;
+import org.apache.hc.core5.io.ModalCloseable;
 import org.jspecify.annotations.Nullable;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
@@ -38,28 +40,19 @@ import jakarta.servlet.http.HttpServletResponse;
 public class HttpRequestUtils {
     
     /**
-     * HTTP client response handler that simply returns the classic HTTP response.
-     * This is useful for cases where you want to handle the response without any additional processing.
+     * Number of bytes read from a response body before the read is abandoned, unless the request
+     * asks for a different bound. Every response this class hands back is buffered in memory in
+     * full, so without a ceiling the size of a response is decided by whoever is answering, and a
+     * server that keeps sending takes the heap with it. Overridable through the
+     * {@code org.apereo.cas.util.http.HttpRequestUtils.maximumResponseSize} system property, in the
+     * same way this package resolves its timeouts. The default is deliberately generous: it is
+     * meant to bound a runaway response, not to police a legitimately large one such as a SAML
+     * federation aggregate.
      */
-    public static final HttpClientResponseHandler<ClassicHttpResponse> HTTP_CLIENT_RESPONSE_HANDLER = response -> {
-        val result = new BasicClassicHttpResponse(response.getCode(), response.getReasonPhrase());
-        result.setHeaders(response.getHeaders());
-        result.setLocale(ObjectUtils.getIfNull(response.getLocale(), Locale.getDefault()));
-        result.setVersion(ObjectUtils.getIfNull(response.getVersion(), HttpVersion.HTTP_1_1));
+    private static final long DEFAULT_MAXIMUM_RESPONSE_SIZE = resolveDefaultMaximumResponseSize();
 
-        val entity = response.getEntity();
-        if (entity != null) {
-            try (val output = new ByteArrayOutputStream()) {
-                entity.writeTo(output);
-                val contentTypeHeader = response.getFirstHeader(HttpHeaders.CONTENT_TYPE);
-                val contentType = contentTypeHeader != null ? contentTypeHeader.getValue() : ContentType.APPLICATION_JSON.getMimeType();
-                result.setEntity(new ByteArrayEntity(output.toByteArray(), ContentType.parseLenient(contentType)));
-            }
-        }
+    private static final int COPY_BUFFER_SIZE = 8192;
 
-        return result;
-    };
-    
     private static final int GEO_LOC_LONG_INDEX = 1;
 
     private static final int GEO_LOC_ACCURACY_INDEX = 2;
@@ -67,6 +60,90 @@ public class HttpRequestUtils {
     private static final int GEO_LOC_TIME_INDEX = 3;
 
     private static final int PING_URL_TIMEOUT = 3_000;
+
+    /**
+     * HTTP client response handler that simply returns the classic HTTP response.
+     * This is useful for cases where you want to handle the response without any additional processing.
+     */
+    public static final HttpClientResponseHandler<ClassicHttpResponse> HTTP_CLIENT_RESPONSE_HANDLER =
+        responseHandler(DEFAULT_MAXIMUM_RESPONSE_SIZE);
+
+    /**
+     * Builds a response handler that buffers the response body, refusing to read beyond the given
+     * number of bytes. The executing client owns entity cleanup. Failed downloads are closed
+     * immediately so graceful stream cleanup cannot drain an oversized or endless response.
+     *
+     * @param maximumResponseSize the ceiling in bytes; a value of zero or less means the default
+     * @return the response handler
+     */
+    public static HttpClientResponseHandler<ClassicHttpResponse> responseHandler(final long maximumResponseSize) {
+        val maximumSize = maximumResponseSize > 0 ? maximumResponseSize : DEFAULT_MAXIMUM_RESPONSE_SIZE;
+        return response -> {
+            val result = new BasicClassicHttpResponse(response.getCode(), response.getReasonPhrase());
+            result.setHeaders(response.getHeaders());
+            result.setLocale(ObjectUtils.getIfNull(response.getLocale(), Locale.getDefault()));
+            result.setVersion(ObjectUtils.getIfNull(response.getVersion(), HttpVersion.HTTP_1_1));
+
+            val entity = response.getEntity();
+            if (entity != null) {
+                try (val output = new ByteArrayOutputStream()) {
+                    try {
+                        if (entity.getContentLength() > maximumSize) {
+                            throw new IOException("Response body of %s bytes exceeds the maximum permitted size of %s bytes"
+                                .formatted(entity.getContentLength(), maximumSize));
+                        }
+                        copyBounded(entity.getContent(), output, maximumSize);
+                    } catch (final IOException e) {
+                        if (response instanceof final ModalCloseable closeable) {
+                            closeable.close(CloseMode.IMMEDIATE);
+                        }
+                        throw e;
+                    }
+                    val contentTypeHeader = response.getFirstHeader(HttpHeaders.CONTENT_TYPE);
+                    val contentType = contentTypeHeader != null ? contentTypeHeader.getValue() : ContentType.APPLICATION_JSON.getMimeType();
+                    result.setEntity(new ByteArrayEntity(output.toByteArray(), ContentType.parseLenient(contentType)));
+                }
+            }
+
+            return result;
+        };
+    }
+
+    private static long resolveDefaultMaximumResponseSize() {
+        val configured = System.getProperty(HttpRequestUtils.class.getName() + ".maximumResponseSize");
+        val maximumSize = Long.parseLong(StringUtils.defaultIfBlank(configured, "268435456"));
+        if (maximumSize <= 0) {
+            throw new IllegalArgumentException("The default maximum HTTP response size must be positive");
+        }
+        return maximumSize;
+    }
+
+    /**
+     * Copies the body across, counting as it goes so that a response with no declared length, or a
+     * dishonest one, still cannot buffer past the ceiling. At most one additional byte is read
+     * to distinguish a response at the limit from an oversized response.
+     *
+     * @param input       the response body
+     * @param output      the buffer to fill
+     * @param maximumSize the ceiling in bytes
+     * @throws IOException when the body runs past the ceiling
+     */
+    private static void copyBounded(final InputStream input, final OutputStream output,
+                                    final long maximumSize) throws IOException {
+        val buffer = new byte[COPY_BUFFER_SIZE];
+        var total = 0L;
+        while (total < maximumSize) {
+            val count = input.read(buffer, 0, (int) Math.min(buffer.length, maximumSize - total));
+            if (count < 0) {
+                return;
+            }
+            output.write(buffer, 0, count);
+            total += count;
+        }
+        if (input.read() != -1) {
+            throw new IOException("Response body exceeds the maximum permitted size of %s bytes".formatted(maximumSize));
+        }
+    }
 
     /**
      * Gets http servlet request from request attributes.

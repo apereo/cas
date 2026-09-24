@@ -76,7 +76,7 @@ public class WatchableGroovyScriptResource implements ExecutableCompiledScript {
 
     @Override
     public <T> @Nullable T execute(final Object[] args, final Class<T> clazz, final boolean failOnError) {
-        return lock.tryLock(() -> {
+        return lock.executeAndThrow(() -> {
             try {
                 LOGGER.trace("Beginning to execute script [{}]", this);
                 return compiledScript != null
@@ -100,7 +100,7 @@ public class WatchableGroovyScriptResource implements ExecutableCompiledScript {
      */
     public <T> @Nullable T execute(final String methodName, final Class<T> clazz, final boolean failOnError,
                          final Object... args) {
-        return lock.tryLock(() -> {
+        return lock.executeAndThrow(() -> {
             try {
                 LOGGER.trace("Beginning to execute script [{}]", this);
                 return compiledScript != null
@@ -118,11 +118,6 @@ public class WatchableGroovyScriptResource implements ExecutableCompiledScript {
             LOGGER.trace("Shutting down watcher service for [{}]", this.resource);
             this.watcherService.close();
         }
-    }
-
-    @Override
-    public @Nullable Object compileScript() {
-        return ScriptingUtils.parseGroovyScript(this.resource, false);
     }
 
     private void compileScriptResource(final Resource script) {

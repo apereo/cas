@@ -14,11 +14,14 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.EnumSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.core.io.ByteArrayResource;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import tools.jackson.databind.DeserializationFeature;
 import tools.jackson.databind.cfg.EnumFeature;
@@ -56,7 +59,7 @@ class RestEndpointInterruptInquirerTests {
                 .withContentInclusion(JsonInclude.Include.NON_NULL))
             .build()
             .writeValueAsString(response);
-        this.webServer = new MockWebServer(8888,
+        this.webServer = new MockWebServer(
             new ByteArrayResource(data.getBytes(StandardCharsets.UTF_8), "REST Output"),
             MediaType.APPLICATION_JSON_VALUE);
         this.webServer.start();
@@ -70,7 +73,7 @@ class RestEndpointInterruptInquirerTests {
     @Test
     void verifyResponseCanBeFoundFromRest() throws Throwable {
         val restProps = new RestfulInterruptProperties();
-        restProps.setUrl("http://localhost:8888");
+        restProps.setUrl("http://localhost:%s".formatted(webServer.getPort()));
         val context = MockRequestContext.create(applicationContext);
         context.addHeader("accept-language", "fr");
         val q = new RestEndpointInterruptInquirer(restProps);
@@ -86,10 +89,31 @@ class RestEndpointInterruptInquirerTests {
         assertEquals(getClass().getSimpleName(), response.getMessage());
     }
 
+    @ParameterizedTest
+    @EnumSource(value = HttpStatus.class, names = {"BAD_REQUEST", "NOT_FOUND", "INTERNAL_SERVER_ERROR"})
+    void verifyErrorResponseDoesNotInterrupt(final HttpStatus status) throws Throwable {
+        val body = """
+            {"status": %s, "error": "%s", "path": "/"}
+            """.formatted(status.value(), status.getReasonPhrase());
+        try (val errorServer = new MockWebServer(body, status)) {
+            errorServer.start();
+            val restProps = new RestfulInterruptProperties();
+            restProps.setUrl("http://localhost:%s".formatted(errorServer.getPort()));
+            val context = MockRequestContext.create(applicationContext);
+            val response = new RestEndpointInterruptInquirer(restProps).inquire(
+                CoreAuthenticationTestUtils.getAuthentication("casuser"),
+                CoreAuthenticationTestUtils.getRegisteredService(),
+                CoreAuthenticationTestUtils.getService(),
+                CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword(),
+                context);
+            assertFalse(response.isInterrupt());
+        }
+    }
+
     @Test
     void verifyBadAttempt() throws Throwable {
         val restProps = new RestfulInterruptProperties();
-        restProps.setUrl("http://localhost:8888");
+        restProps.setUrl("http://localhost:%s".formatted(webServer.getPort()));
         val context = MockRequestContext.create(applicationContext);
         val q = new RestEndpointInterruptInquirer(restProps);
         val response = q.inquire(null,

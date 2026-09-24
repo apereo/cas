@@ -3,12 +3,14 @@ package org.apereo.cas.ticket.registry;
 import module java.base;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.config.CasGoogleCloudPubSubTicketRegistryAutoConfiguration;
+import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.apereo.cas.ticket.TicketGrantingTicketImpl;
 import org.apereo.cas.ticket.expiration.NeverExpiresExpirationPolicy;
 import org.apereo.cas.ticket.registry.pubsub.commands.AddTicketMessageQueueCommand;
 import org.apereo.cas.ticket.registry.pubsub.commands.BaseMessageQueueCommand;
 import org.apereo.cas.ticket.registry.pubsub.queue.QueueableTicketRegistryMessageReceiver;
 import org.apereo.cas.util.PublisherIdentifier;
+import org.apereo.cas.util.TicketGrantingTicketIdGenerator;
 import org.apereo.cas.util.junit.EnabledIfListeningOnPort;
 import com.google.api.gax.core.NoCredentialsProvider;
 import com.google.api.gax.grpc.GrpcTransportChannel;
@@ -28,6 +30,7 @@ import com.google.pubsub.v1.Topic;
 import io.grpc.ManagedChannelBuilder;
 import lombok.Getter;
 import lombok.val;
+import org.apache.commons.lang3.StringUtils;
 import org.junit.jupiter.api.RepeatedTest;
 import org.junit.jupiter.api.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -42,11 +45,23 @@ import static org.mockito.Mockito.*;
 
 /**
  * This is {@link GoogleCloudPubSubTicketRegistryTests}.
+ * <p>
+ * Encryption is settled here by the context rather than being written onto the registry bean before
+ * every test method: the bean is shared, so methods running side by side would otherwise disagree
+ * about the keys in force and could not read back what they wrote. Unlike the other registries this
+ * one is not split into an encrypted and an unencrypted run, because the topic and subscription
+ * names are fixed constants: two contexts would share one subscription, which Pub/Sub load-balances,
+ * so each would take delivery of messages meant for the other. The single run is the encrypted one,
+ * which also covers the encrypted message envelope in {@link GoogleCloudPubSubMessageConverter} —
+ * the converter and the registry share one cipher bean, so nothing exercised it while the cipher was
+ * being swapped on the registry alone.
  *
  * @author Misagh Moayyed
  * @since 7.0.0
  */
 @Tag("GCP")
+@Tag("TicketRegistryTestWithEncryption")
+@Tag("SkipClearingTicketRegistry")
 @Import(GoogleCloudPubSubTicketRegistryTests.GoogleCloudTestConfiguration.class)
 @ImportAutoConfiguration({
     GcpContextAutoConfiguration.class,
@@ -64,7 +79,9 @@ import static org.mockito.Mockito.*;
 
     "spring.cloud.gcp.pubsub.health.lag-threshold=5",
     "spring.cloud.gcp.pubsub.health.backlog-threshold=3",
-    "spring.cloud.gcp.pubsub.health.look-up-interval=2"
+    "spring.cloud.gcp.pubsub.health.look-up-interval=2",
+
+    "cas.ticket.registry.in-memory.crypto.enabled=true"
 })
 @EnabledIfListeningOnPort(port = 8085)
 class GoogleCloudPubSubTicketRegistryTests extends BaseTicketRegistryTests {
@@ -80,8 +97,12 @@ class GoogleCloudPubSubTicketRegistryTests extends BaseTicketRegistryTests {
     @Qualifier("messageQueueTicketRegistryReceiver")
     private QueueableTicketRegistryMessageReceiver messageQueueTicketRegistryReceiver;
 
+    @Override
+    protected boolean isCipherExecutorOwnedByContext() {
+        return true;
+    }
+
     @RepeatedTest(1)
-    @Tag("DisableTicketRegistryTestWithEncryption")
     void verifyConverter() {
         val cmd = new AddTicketMessageQueueCommand(new PublisherIdentifier(),
             new TicketGrantingTicketImpl(UUID.randomUUID().toString(),
@@ -93,7 +114,6 @@ class GoogleCloudPubSubTicketRegistryTests extends BaseTicketRegistryTests {
     }
 
     @RepeatedTest(1)
-    @Tag("DisableTicketRegistryTestWithEncryption")
     void verifyTicketConsumer() throws Throwable {
         val objectToSend = new AddTicketMessageQueueCommand(new PublisherIdentifier(),
             new TicketGrantingTicketImpl(UUID.randomUUID().toString(),
@@ -118,6 +138,44 @@ class GoogleCloudPubSubTicketRegistryTests extends BaseTicketRegistryTests {
 
         when(message.getProjectSubscriptionName()).thenReturn(null);
         assertDoesNotThrow(() -> cmd.accept(message));
+    }
+
+    /**
+     * Removing every session held for one principal must leave none behind for that principal.
+     * The inherited version empties the registry and asserts it reports nothing at all, which
+     * can only be true of a registry no other test is using.
+     *
+     * @throws Throwable in case of failure
+     */
+    @Override
+    @RepeatedTest(2)
+    void verifyGetTicketsIsZero() throws Throwable {
+        val principal = UUID.randomUUID().toString();
+        addSessionFor(principal);
+        getNewTicketRegistry().deleteTicketsFor(principal);
+        assertEquals(0, getNewTicketRegistry().countSessionsFor(principal));
+    }
+
+    /**
+     * Removal reports how many it removed. Asked for one principal rather than for the whole
+     * registry, which the inherited version empties and counts.
+     *
+     * @throws Throwable in case of failure
+     */
+    @Override
+    @RepeatedTest(2)
+    void verifyDeleteAllExistingTickets() throws Throwable {
+        val principal = UUID.randomUUID().toString();
+        addSessionFor(principal);
+        assertEquals(1, getNewTicketRegistry().deleteTicketsFor(principal));
+        assertEquals(0, getNewTicketRegistry().countSessionsFor(principal));
+    }
+
+    private void addSessionFor(final String principal) throws Throwable {
+        val ticketGrantingTicketId = new TicketGrantingTicketIdGenerator(10, StringUtils.EMPTY)
+            .getNewTicketId(TicketGrantingTicket.PREFIX);
+        getNewTicketRegistry().addTicket(new TicketGrantingTicketImpl(ticketGrantingTicketId,
+            CoreAuthenticationTestUtils.getAuthentication(principal), NeverExpiresExpirationPolicy.INSTANCE));
     }
 
     @TestConfiguration(value = "GoogleCloudPubSubTestConfiguration", proxyBeanMethods = false)

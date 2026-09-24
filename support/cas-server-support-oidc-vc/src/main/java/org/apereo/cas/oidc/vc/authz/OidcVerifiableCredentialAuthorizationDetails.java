@@ -10,6 +10,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.SuperBuilder;
 import lombok.ToString;
+import lombok.val;
 
 /**
  * This is {@link OidcVerifiableCredentialAuthorizationDetails}.
@@ -39,6 +40,26 @@ public class OidcVerifiableCredentialAuthorizationDetails implements Serializabl
     private String credentialConfigurationId;
 
     /**
+     * Identifiers the wallet must then present as {@code credential_identifier} at the credential
+     * endpoint. CAS issues the credential configuration id itself as the identifier.
+     */
+    @JsonProperty("credential_identifiers")
+    private List<String> credentialIdentifiers;
+
+    /**
+     * Requested authorization details of type {@code openid_credential}, unfiltered.
+     *
+     * @param authorizationDetails the authorization details
+     * @return the list
+     */
+    public static List<OidcVerifiableCredentialAuthorizationDetails> parse(final String authorizationDetails) {
+        return JsonUtils.parseAsList(authorizationDetails, OidcVerifiableCredentialAuthorizationDetails.class)
+            .stream()
+            .filter(details -> details.getType().equals(OidcVerifiableCredentialAuthorizationDetails.TYPE))
+            .collect(Collectors.toList());
+    }
+
+    /**
      * Construct list of authz details.
      *
      * @param authorizationDetails     the authorization details
@@ -47,10 +68,11 @@ public class OidcVerifiableCredentialAuthorizationDetails implements Serializabl
      */
     public static List<OidcVerifiableCredentialAuthorizationDetails> from(
         final String authorizationDetails, final Set<String> credentialConfigurations) {
-        return JsonUtils.parseAsList(authorizationDetails, OidcVerifiableCredentialAuthorizationDetails.class)
+        val authorized = parse(authorizationDetails)
             .stream()
-            .filter(details -> details.getType().equals(OidcVerifiableCredentialAuthorizationDetails.TYPE))
             .filter(details -> credentialConfigurations.contains(details.getCredentialConfigurationId()))
             .collect(Collectors.toList());
+        authorized.forEach(details -> details.setCredentialIdentifiers(List.of(details.getCredentialConfigurationId())));
+        return authorized;
     }
 }

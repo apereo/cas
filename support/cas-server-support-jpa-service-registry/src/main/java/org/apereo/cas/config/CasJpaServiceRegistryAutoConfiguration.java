@@ -216,15 +216,20 @@ public class CasJpaServiceRegistryAutoConfiguration {
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @ConditionalOnMissingBean(name = "jpaServiceRegistry")
         public ServiceRegistry jpaServiceRegistry(
+            final CasConfigurationProperties casProperties,
             final ConfigurableApplicationContext applicationContext,
             final ObjectProvider<List<ServiceRegistryListener>> serviceRegistryListeners,
             @Qualifier("jdbcServiceRegistryTransactionTemplate")
             final TransactionOperations jdbcServiceRegistryTransactionTemplate) {
             return BeanSupplier.of(ServiceRegistry.class)
                 .when(CONDITION.given(applicationContext.getEnvironment()))
-                .supply(() -> new JpaServiceRegistry(applicationContext,
-                    Optional.ofNullable(serviceRegistryListeners.getIfAvailable()).orElseGet(ArrayList::new),
-                    jdbcServiceRegistryTransactionTemplate))
+                .supply(() -> {
+                    val registry = new JpaServiceRegistry(applicationContext,
+                        Optional.ofNullable(serviceRegistryListeners.getIfAvailable()).orElseGet(ArrayList::new),
+                        jdbcServiceRegistryTransactionTemplate);
+                    registry.setOrder(casProperties.getServiceRegistry().getJpa().getOrder());
+                    return registry;
+                })
                 .otherwiseProxy()
                 .get();
         }

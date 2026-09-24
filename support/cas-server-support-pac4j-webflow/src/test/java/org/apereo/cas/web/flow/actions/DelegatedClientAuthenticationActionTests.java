@@ -31,8 +31,7 @@ import lombok.val;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.parallel.Execution;
-import org.junit.jupiter.api.parallel.ExecutionMode;
+import org.junit.jupiter.api.parallel.ResourceLock;
 import org.pac4j.core.util.Pac4jConstants;
 import org.pac4j.jee.context.JEEContext;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -106,7 +105,7 @@ class DelegatedClientAuthenticationActionTests {
     }
 
     @Nested
-    @Execution(ExecutionMode.SAME_THREAD)
+    @ResourceLock("delegatedIdentityProviders")
     class DefaultTests extends BaseDelegatedClientAuthenticationActionTests {
         @Test
         void verifyStartAuthenticationNoService() throws Throwable {

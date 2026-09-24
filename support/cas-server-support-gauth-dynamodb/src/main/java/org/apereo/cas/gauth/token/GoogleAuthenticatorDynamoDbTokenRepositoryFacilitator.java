@@ -236,9 +236,11 @@ public class GoogleAuthenticatorDynamoDbTokenRepositoryFacilitator {
     }
 
     /**
-     * Remove from.
+     * Removes every token recorded before the given time. The comparison is against the token's
+     * creation time and it selects what is older, which is what expiry means; selecting what is
+     * newer would delete the tokens still inside their window and leave the expired ones behind.
      *
-     * @param time the time
+     * @param time the cutoff; tokens created before it are removed
      */
     public void removeFrom(final LocalDateTime time) {
         val epoch = time.toEpochSecond(ZoneOffset.UTC);
@@ -247,7 +249,7 @@ public class GoogleAuthenticatorDynamoDbTokenRepositoryFacilitator {
                 DynamoDbQueryBuilder.builder()
                     .key(ColumnNames.CREATION_TIME.getColumnName())
                     .attributeValue(List.of(AttributeValue.builder().n(String.valueOf(epoch)).build()))
-                    .operator(ComparisonOperator.GE)
+                    .operator(ComparisonOperator.LT)
                     .build());
         val records = getRecordsByKeys(query);
 

@@ -12,6 +12,7 @@ import org.junit.jupiter.api.Test;
 import org.pac4j.saml.client.SAML2Client;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.FileSystemResource;
+import static org.awaitility.Awaitility.*;
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
@@ -37,8 +38,12 @@ class SamlIdentityProviderEntityParserTests {
         FileUtils.writeStringToFile(file, content, StandardCharsets.UTF_8);
         val parser = new SamlIdentityProviderEntityParser(new FileSystemResource(file));
         assertFalse(parser.resolveEntities(context.getHttpServletRequest(), context.getHttpServletResponse()).isEmpty());
-        Files.setLastModifiedTime(file.toPath(), FileTime.from(Instant.now()));
-        Thread.sleep(8_000);
+        val renamedEntityId = "https://idp.example.org/idp/renamed";
+        FileUtils.writeStringToFile(file,
+            content.replace("https://idp.shibboleth.net/idp/shibboleth", renamedEntityId), StandardCharsets.UTF_8);
+        await().atMost(Duration.ofSeconds(30)).untilAsserted(() -> assertTrue(
+            parser.resolveEntities(context.getHttpServletRequest(), context.getHttpServletResponse())
+                .stream().anyMatch(entity -> renamedEntityId.equals(entity.getEntityID()))));
         parser.destroy();
     }
 

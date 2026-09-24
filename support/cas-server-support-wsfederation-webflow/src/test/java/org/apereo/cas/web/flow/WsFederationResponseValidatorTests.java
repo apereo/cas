@@ -13,12 +13,10 @@ import org.apereo.cas.util.MockRequestContext;
 import org.apereo.cas.util.spring.beans.BeanContainer;
 import lombok.val;
 import org.apache.commons.io.IOUtils;
-import org.junit.jupiter.api.MethodOrderer;
-import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.TestMethodOrder;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.jupiter.api.parallel.ResourceLock;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -47,8 +45,8 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
         "cas.authn.wsfed[0].identity-attribute=upn"
     })
 @AutoConfigureMockMvc
-@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 @SuppressWarnings("removal")
+@ResourceLock("wsFederationHelperClock")
 class WsFederationResponseValidatorTests {
     @Autowired
     @Qualifier("wsFederationResponseValidator")
@@ -78,7 +76,6 @@ class WsFederationResponseValidatorTests {
     private MockMvc mockMvc;
 
     @Test
-    @Order(2)
     void verifyOperation() throws Throwable {
         val zdt = ZonedDateTime.of(2014, 2, 26, 22, 51, 10, 0, ZoneOffset.UTC);
         val clock = Clock.fixed(zdt.toInstant(), ZoneOffset.UTC);
@@ -89,8 +86,8 @@ class WsFederationResponseValidatorTests {
     }
 
     @Test
-    @Order(1)
     void verifyFailedOperation() throws Throwable {
+        wsFederationHelper.setClock(Clock.systemUTC());
         val context = prepareContext();
         assertThrows(IllegalArgumentException.class, () -> wsFederationResponseValidator.validateWsFederationAuthenticationRequest(context));
     }

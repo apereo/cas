@@ -6,8 +6,6 @@ import org.apereo.cas.uma.web.controllers.BaseUmaEndpointControllerTests;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.parallel.Execution;
-import org.junit.jupiter.api.parallel.ExecutionMode;
 import org.pac4j.core.profile.ProfileManager;
 import org.pac4j.jee.context.JEEContext;
 import org.springframework.http.HttpMethod;
@@ -21,7 +19,6 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.0.0
  */
 @Tag("UMA")
-@Execution(ExecutionMode.SAME_THREAD)
 class UmaFindResourceSetRegistrationEndpointControllerTests extends BaseUmaEndpointControllerTests {
     
     @Test

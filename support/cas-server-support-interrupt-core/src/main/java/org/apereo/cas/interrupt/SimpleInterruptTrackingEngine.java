@@ -13,6 +13,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
+import org.jspecify.annotations.Nullable;
 import org.springframework.webflow.execution.RequestContext;
 import tools.jackson.databind.ObjectMapper;
 
@@ -40,7 +41,8 @@ public class SimpleInterruptTrackingEngine implements InterruptTrackingEngine {
         val httpResponse = WebUtils.getHttpServletResponseFromExternalWebflowContext(requestContext);
         val authentication = WebUtils.getAuthentication(requestContext);
         authentication.addAttribute(AUTHENTICATION_ATTRIBUTE_FINALIZED_INTERRUPT, Boolean.TRUE);
-        val cookieValue = EncodingUtils.encodeBase64(MAPPER.writeValueAsString(response));
+        val tracked = new TrackedInterrupt(authentication.getPrincipal().getId(), response);
+        val cookieValue = EncodingUtils.encodeBase64(MAPPER.writeValueAsString(tracked));
         LOGGER.debug("Storing interrupt response as base64 cookie [{}]", cookieValue);
 
         if (casProperties.getInterrupt().getCookie().isAutoConfigureCookiePath()) {
@@ -66,9 +68,13 @@ public class SimpleInterruptTrackingEngine implements InterruptTrackingEngine {
             val httpRequest = WebUtils.getHttpServletRequestFromExternalWebflowContext(requestContext);
             val cookieValue = casCookieBuilder.retrieveCookieValue(httpRequest);
             LOGGER.debug("Retrieved interrupt cookie value [{}]", cookieValue);
-            return StringUtils.isNotBlank(cookieValue)
-                ? Optional.ofNullable(MAPPER.readValue(EncodingUtils.decodeBase64ToString(cookieValue), InterruptResponse.class))
-                : Optional.<InterruptResponse>empty();
+            val authentication = WebUtils.getAuthentication(requestContext);
+            if (StringUtils.isBlank(cookieValue) || authentication == null) {
+                return Optional.<InterruptResponse>empty();
+            }
+            val tracked = MAPPER.readValue(EncodingUtils.decodeBase64ToString(cookieValue), TrackedInterrupt.class);
+            return Optional.ofNullable(tracked.response())
+                .filter(_ -> authentication.getPrincipal().getId().equals(tracked.principal()));
         }, e -> Optional.<InterruptResponse>empty()).apply(requestContext);
     }
 
@@ -82,5 +88,14 @@ public class SimpleInterruptTrackingEngine implements InterruptTrackingEngine {
                         || (authentication != null && authentication.containsAttribute(AUTHENTICATION_ATTRIBUTE_FINALIZED_INTERRUPT));
                 }, e -> false)
             .apply(requestContext);
+    }
+
+    /**
+     * Interrupt response tracked for the principal that finalized it.
+     *
+     * @param principal the principal id
+     * @param response  the interrupt response
+     */
+    public record TrackedInterrupt(@Nullable String principal, @Nullable InterruptResponse response) {
     }
 }

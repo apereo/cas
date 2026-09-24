@@ -41,6 +41,6 @@ class DefaultConsentActivationStrategyDisabledTests {
             CoreAuthenticationTestUtils.getService(),
             registeredService,
             CoreAuthenticationTestUtils.getAuthentication(),
-            new MockHttpServletRequest()));
+            new MockHttpServletRequest()).isRequired());
     }
 }

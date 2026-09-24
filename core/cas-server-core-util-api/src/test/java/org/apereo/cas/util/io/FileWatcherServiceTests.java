@@ -23,8 +23,17 @@ class FileWatcherServiceTests {
 
     private FileWatcherService watcher2;
 
+    /**
+     * Creates the file to be watched under a name of its own. The temporary directory is shared with
+     * every other test running in this JVM, so a fixed name there is a name another test class can
+     * be creating and deleting at the same moment.
+     *
+     * @param name the base name of the file
+     * @return the created file
+     * @throws Exception in case of failure
+     */
     private static File createFile(final String name) throws Exception {
-        val path1 = new File(FileUtils.getTempDirectory(), name);
+        val path1 = new File(FileUtils.getTempDirectory(), "%s-%s".formatted(UUID.randomUUID(), name));
         val res = path1.createNewFile();
         if (res) {
             LOGGER.debug("Created JSON resource @ [{}]", path1);

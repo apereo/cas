@@ -9,6 +9,7 @@ import org.apereo.cas.support.oauth.services.OAuthRegisteredService;
 import org.apereo.cas.support.oauth.util.OAuth20Utils;
 import org.apereo.cas.support.oauth.web.endpoints.BaseOAuth20Controller;
 import org.apereo.cas.ticket.TransientSessionTicket;
+import org.apereo.cas.ticket.TransientSessionTicketFactory;
 import org.apereo.cas.util.LoggingUtils;
 import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
 import org.apereo.cas.vc.presentation.OidcVerifiableCredentialPresentationRequestEndpointController.OidcVerifiableCredentialPresentationRequest.ClaimRequest;
@@ -64,6 +65,8 @@ public class OidcVerifiableCredentialPresentationResponseEndpointController exte
 
     private static final Set<String> KEY_BINDING_ALGORITHMS = Set.of("ES256", "ES384", "ES512");
 
+    private static final String STATUS_VERIFIED = "verified";
+
     private static final Duration CLOCK_SKEW = Duration.ofSeconds(30);
 
     private static final int MAX_DISCLOSURE_DEPTH = 64;
@@ -103,10 +106,11 @@ public class OidcVerifiableCredentialPresentationResponseEndpointController exte
             val credentials = (List<CredentialRequest>) transientSessionTicket.getProperty("credentials", List.class);
             require(credentials != null && !credentials.isEmpty(), "Presentation transaction has no credential query");
 
-            validatePresentation(vpToken, credentials, nonce, transientSessionTicket);
-            configurationContext.getTicketRegistry().deleteTicket(transientSessionTicket);
-            
-            return buildResponse(HttpStatus.OK, Map.of("status", "verified"));
+            val disclosedClaims = validatePresentation(vpToken, credentials, nonce, transientSessionTicket);
+            require(configurationContext.getTicketRegistry().deleteTicket(transientSessionTicket) > 0,
+                "Presentation transaction was consumed concurrently");
+            recordPresentationResult(transientSessionTicket.getId(), disclosedClaims);
+            return buildResponse(HttpStatus.OK, Map.of("status", STATUS_VERIFIED));
         } catch (final Throwable throwable) {
             LoggingUtils.warn(LOGGER, throwable);
             return buildResponse(HttpStatus.BAD_REQUEST,
@@ -116,7 +120,35 @@ public class OidcVerifiableCredentialPresentationResponseEndpointController exte
         }
     }
 
-    private void validatePresentation(final String vpToken,
+    /**
+     * Record the outcome so that the relying party that created the request can collect it. The wallet
+     * posts its presentation to this endpoint and is told whether it verified, but the relying party
+     * is not party to that exchange at all; without a record it has no way to learn either the outcome
+     * or the claims that were disclosed to it.
+     *
+     * @param requestId       the presentation request id
+     * @param disclosedClaims the disclosed claims, keyed by credential query id
+     * @throws Exception the exception
+     */
+    protected void recordPresentationResult(final String requestId,
+                                            final Map<String, Map<String, Object>> disclosedClaims) throws Exception {
+        val factory = (TransientSessionTicketFactory) configurationContext.getTicketFactory().get(TransientSessionTicket.class);
+        val resultTicket = factory.create(resolvePresentationResultId(requestId),
+            Map.of("status", STATUS_VERIFIED, "claims", disclosedClaims));
+        configurationContext.getTicketRegistry().addTicket(resultTicket);
+    }
+
+    /**
+     * Identifier under which the outcome of a presentation request is recorded.
+     *
+     * @param requestId the presentation request id
+     * @return the result ticket id
+     */
+    public static String resolvePresentationResultId(final String requestId) {
+        return TransientSessionTicketFactory.normalizeTicketId(requestId + "-result");
+    }
+
+    private Map<String, Map<String, Object>> validatePresentation(final String vpToken,
                                       final List<CredentialRequest> credentials,
                                       final String nonce,
                                       final TransientSessionTicket transientSessionTicket) throws Throwable {
@@ -133,6 +165,7 @@ public class OidcVerifiableCredentialPresentationResponseEndpointController exte
                 "Credential query ids must be unique");
         }
 
+        val disclosedClaims = new LinkedHashMap<String, Map<String, Object>>();
         val presentationResults = readJsonObject(vpToken);
         require(presentationResults.keySet().equals(credentialQueries.keySet()),
             "Presentation results do not satisfy the credential query");
@@ -144,11 +177,13 @@ public class OidcVerifiableCredentialPresentationResponseEndpointController exte
             val presentation = ((List<?>) presentations).getFirst();
             require(presentation instanceof final String value && !value.isBlank(),
                 "Credential presentation is invalid");
-            validateSdJwtPresentation((String) presentation, entry.getValue(), nonce, transientSessionTicket);
+            disclosedClaims.put(entry.getKey(),
+                validateSdJwtPresentation((String) presentation, entry.getValue(), nonce, transientSessionTicket));
         }
+        return disclosedClaims;
     }
 
-    private void validateSdJwtPresentation(final String presentation,
+    private Map<String, Object> validateSdJwtPresentation(final String presentation,
                                            final CredentialRequest credentialQuery,
                                            final String nonce,
                                            final TransientSessionTicket transientSessionTicket) throws Throwable {
@@ -181,7 +216,8 @@ public class OidcVerifiableCredentialPresentationResponseEndpointController exte
             configurationContext.getServicesManager(), clientId);
         require(registeredService != null, "Credential client is not registered");
         verifyCredentialSignature(credentialJwt, registeredService);
-        validateTimeClaims(encodedClaims, false, null);
+        require(encodedClaims.containsKey("exp"), "Credential has no expiration time");
+        validateTimeClaims(encodedClaims, true, null);
         require(!encodedClaims.containsKey("status"), "Credential status validation is not supported");
 
         val cnf = encodedClaims.get("cnf");
@@ -192,8 +228,10 @@ public class OidcVerifiableCredentialPresentationResponseEndpointController exte
 
         val disclosedClaims = decodeDisclosures(encodedClaims, sdJwt.getDisclosures(), sdJwt.getHashAlgorithm());
         validateRequestedClaims(disclosedClaims, credentialQuery.getClaims());
-        val expectedAudience = "redirect_uri:" + configuredIssuer + '/' + OidcConstants.VC_PRESENTATION_RESPONSE_URL;
+        val expectedAudience = OidcVerifiableCredentialPresentationRequestEndpointController
+            .resolveClientIdentifier(configurationContext.getCasProperties());
         validateKeyBindingJwt(sdJwt, holderJwk, nonce, expectedAudience, transientSessionTicket);
+        return disclosedClaims;
     }
 
     private CredentialConfiguration resolveCredentialConfiguration(final String credentialType, final String issuer) {

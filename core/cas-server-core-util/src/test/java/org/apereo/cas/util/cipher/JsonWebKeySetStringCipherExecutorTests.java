@@ -40,7 +40,6 @@ class JsonWebKeySetStringCipherExecutorTests {
             val token = cipher.encode("Misagh");
             assertEquals("Misagh", cipher.decode(token));
             Files.setLastModifiedTime(keystoreFile.toPath(), FileTime.from(Instant.now()));
-            Thread.sleep(5_000);
             cipher.destroy();
         }
     }

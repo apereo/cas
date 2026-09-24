@@ -4,6 +4,7 @@ import module java.base;
 import org.apereo.cas.config.CasOidcVerifiableCredentialsAutoConfiguration;
 import org.apereo.cas.oidc.AbstractOidcTests;
 import org.apereo.cas.oidc.OidcConstants;
+import org.apereo.cas.oidc.vc.services.DefaultRegisteredServiceOidcVerifiableCredentialsPolicy;
 import org.apereo.cas.services.OidcRegisteredService;
 import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.support.oauth.OAuth20GrantTypes;
@@ -14,8 +15,6 @@ import org.jspecify.annotations.Nullable;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.parallel.Execution;
-import org.junit.jupiter.api.parallel.ExecutionMode;
 import org.springframework.boot.autoconfigure.ImportAutoConfiguration;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.TestPropertySource;
@@ -94,8 +93,11 @@ class OidcVerifiableCredentialOfferEndpointControllerTests {
                 .andExpect(jsonPath("$." + OAuth20Constants.ACCESS_TOKEN).exists())
                 .andExpect(jsonPath("$." + OAuth20Constants.TOKEN_TYPE).exists())
                 .andExpect(jsonPath("$." + OAuth20Constants.EXPIRES_IN).exists())
-                .andExpect(jsonPath("$." + OidcConstants.C_NONCE).exists())
-                .andExpect(jsonPath("$." + OidcConstants.C_NONCE_EXPIRES_IN).exists());
+                .andExpect(jsonPath("$." + OidcConstants.C_NONCE).doesNotExist())
+                .andExpect(jsonPath("$." + OidcConstants.C_NONCE_EXPIRES_IN).doesNotExist());
+
+            mockMvc.perform(tokenExchange(registeredService, preAuthorizedCode, txCode))
+                .andExpect(status().is4xxClientError());
         }
 
         private String createOfferTransaction(final OidcRegisteredService registeredService) throws Exception {
@@ -202,6 +204,81 @@ class OidcVerifiableCredentialOfferEndpointControllerTests {
     }
 
     @Nested
+    @TestPropertySource(properties = {
+        "cas.authn.oidc.vc.issuer.credential-configurations.EmployeeCredential.format=DC_SD_JWT",
+        "cas.authn.oidc.vc.issuer.credential-configurations.EmployeeCredential.scope=Employee"
+    })
+    class CredentialsPolicyTests extends BaseTests {
+        @Test
+        void verifyPolicyNarrowsServiceToItsOwnCredentialTypes() throws Exception {
+            val registeredService = getOidcRegisteredService(UUID.randomUUID().toString());
+            registeredService.setVerifiableCredentialsPolicy(
+                new DefaultRegisteredServiceOidcVerifiableCredentialsPolicy(Set.of("UniversityDegreeCredential")));
+            servicesManager.save(registeredService);
+
+            performOfferTransaction(registeredService, "UniversityDegreeCredential")
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.transactionId").exists());
+
+            performOfferTransaction(registeredService, "EmployeeCredential")
+                .andExpect(status().isUnauthorized())
+                .andExpect(jsonPath("$.error").exists());
+
+            performOfferTransaction(registeredService, "UniversityDegreeCredential", "EmployeeCredential")
+                .andExpect(status().isUnauthorized())
+                .andExpect(jsonPath("$.error").exists());
+        }
+
+        @Test
+        void verifyPolicyWithoutCredentialTypesAllowsEverything() throws Exception {
+            val registeredService = getOidcRegisteredService(UUID.randomUUID().toString());
+            registeredService.setVerifiableCredentialsPolicy(
+                new DefaultRegisteredServiceOidcVerifiableCredentialsPolicy());
+            servicesManager.save(registeredService);
+
+            performOfferTransaction(registeredService, "UniversityDegreeCredential", "EmployeeCredential")
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.transactionId").exists());
+        }
+
+        @Test
+        void verifyUndefinedPolicyAllowsEverything() throws Exception {
+            val registeredService = getOidcRegisteredService(UUID.randomUUID().toString());
+            assertNull(registeredService.getVerifiableCredentialsPolicy());
+            servicesManager.save(registeredService);
+
+            performOfferTransaction(registeredService, "UniversityDegreeCredential", "EmployeeCredential")
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.transactionId").exists());
+        }
+
+        @Test
+        void verifyPolicyCannotWidenBeyondWhatTheIssuerPublishes() throws Exception {
+            val registeredService = getOidcRegisteredService(UUID.randomUUID().toString());
+            registeredService.setVerifiableCredentialsPolicy(
+                new DefaultRegisteredServiceOidcVerifiableCredentialsPolicy(Set.of("NonExistentCredential")));
+            servicesManager.save(registeredService);
+
+            performOfferTransaction(registeredService, "NonExistentCredential")
+                .andExpect(status().isUnauthorized())
+                .andExpect(jsonPath("$.error").exists());
+        }
+
+        private ResultActions performOfferTransaction(final OidcRegisteredService registeredService,
+                                                      final String... credentialConfigurationIds) throws Exception {
+            val requestBody = MAPPER.writeValueAsString(
+                Map.of("principal", "casuser",
+                    "credentialConfigurationIds", List.of(credentialConfigurationIds)));
+            return mockMvc.perform(post(TRANSACTIONS_URL)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(requestBody)
+                .with(withHttpRequestProcessor())
+                .param(OAuth20Constants.CLIENT_ID, registeredService.getClientId())
+                .param(OAuth20Constants.CLIENT_SECRET, registeredService.getClientSecrets().getFirst().getValue()));
+        }
+    }
+
+    @Nested
     @TestPropertySource(properties = "cas.authn.oidc.vc.offer.transaction-code-enabled=false")
     class TransactionCodeDisabledTests extends BaseTests {
         @Test
@@ -246,7 +323,6 @@ class OidcVerifiableCredentialOfferEndpointControllerTests {
     }
 
     @Nested
-    @Execution(ExecutionMode.SAME_THREAD)
     @TestPropertySource(properties = {
         "cas.authn.attribute-repository.mapped.people.casuser=eduPersonAffiliation->faculty,name->casuser",
 

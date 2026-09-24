@@ -7,8 +7,6 @@ import org.apereo.cas.util.CollectionUtils;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.parallel.Execution;
-import org.junit.jupiter.api.parallel.ExecutionMode;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import static org.junit.jupiter.api.Assertions.*;
@@ -20,7 +18,6 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.0.0
  */
 @Tag("UMA")
-@Execution(ExecutionMode.SAME_THREAD)
 class UmaUpdatePolicyForResourceSetEndpointControllerTests extends BaseUmaEndpointControllerTests {
     @Test
     void verifyOperation() throws Throwable {

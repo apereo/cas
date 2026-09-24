@@ -247,18 +247,18 @@ public class DefaultCentralAuthenticationService extends AbstractCentralAuthenti
                 CollectionUtils.wrap(CoreAuthenticationUtils.isRememberMeAuthentication(authentication)));
 
             val finalAuthentication = builder.build();
-            val releasePolicyContext = RegisteredServiceAttributeReleasePolicyContext.builder()
-                .registeredService(registeredService)
-                .service(service)
-                .applicationContext(configurationContext.getApplicationContext())
-                .principal(principal)
-                .build();
-            val policyAttributes = registeredService.getAttributeReleasePolicy().getAttributes(releasePolicyContext);
+            /*
+             * The attribute release policy is evaluated once, against the resolved service. The
+             * principal carried by the final authentication is built from exactly those attributes,
+             * so merging it below is what puts the released set into the principal the access
+             * strategy sees; evaluating the policy a second time here would only repeat that work,
+             * and doing so against the unresolved service would let a service-aware policy decide
+             * access on a different service than the one the attributes are released to.
+             */
             val merger = CoreAuthenticationUtils.getAttributeMerger(PrincipalAttributesCoreProperties.MergingStrategyTypes.MULTIVALUED);
             var accessAttributes = CoreAuthenticationUtils.mergeAttributes(principal.getAttributes(), authentication.getAttributes(), merger);
             accessAttributes = CoreAuthenticationUtils.mergeAttributes(accessAttributes, finalAuthentication.getPrincipal().getAttributes(), merger);
             accessAttributes = CoreAuthenticationUtils.mergeAttributes(accessAttributes, finalAuthentication.getAttributes(), merger);
-            accessAttributes = CoreAuthenticationUtils.mergeAttributes(accessAttributes, policyAttributes, merger);
             val accessPrincipal = configurationContext.getPrincipalFactory().createPrincipal(principal.getId(), accessAttributes);
 
             enforceRegisteredServiceAccess(selectedService, registeredService, accessPrincipal);

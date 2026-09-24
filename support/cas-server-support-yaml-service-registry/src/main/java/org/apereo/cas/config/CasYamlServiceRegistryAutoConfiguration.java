@@ -58,6 +58,7 @@ public class CasYamlServiceRegistryAutoConfiguration {
             if (registry.getYaml().isWatcherEnabled()) {
                 yaml.enableDefaultWatcherService();
             }
+            yaml.setOrder(registry.getYaml().getOrder());
             return yaml;
         }
 

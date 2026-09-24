@@ -34,6 +34,16 @@ public class MongoDbThrottledSubmissionHandlerInterceptorAdapter extends Abstrac
         this.collectionName = collectionName;
     }
 
+    /**
+     * Determines whether the submission rate for this client has passed the configured threshold,
+     * by comparing the two most recent audit records for it. The client address is matched through
+     * the audit record's embedded client info, which is where it is stored; a top-level field of
+     * that name does not exist, and matching on one silently returns no records at all, which reads
+     * downstream as a client that has never failed.
+     *
+     * @param request the request
+     * @return true if the submission rate exceeds the configured threshold
+     */
     @Override
     public boolean exceedsThreshold(final HttpServletRequest request) {
         val clientInfo = ClientInfoHolder.getClientInfo();
@@ -41,7 +51,7 @@ public class MongoDbThrottledSubmissionHandlerInterceptorAdapter extends Abstrac
 
         val throttle = getConfigurationContext().getCasProperties().getAuthn().getThrottle();
         val query = new Query()
-            .addCriteria(Criteria.where("clientIpAddress").is(remoteAddress)
+            .addCriteria(Criteria.where("clientInfo.clientIpAddress").is(remoteAddress)
                 .and("principal").is(getUsernameParameterFromRequest(request))
                 .and("actionPerformed").is(throttle.getFailure().getCode())
                 .and("applicationCode").is(throttle.getCore().getAppCode())

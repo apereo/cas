@@ -12,6 +12,7 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.springframework.core.io.ClassPathResource;
+import static org.awaitility.Awaitility.*;
 import static org.junit.jupiter.params.provider.Arguments.arguments;
 import static org.mockito.Mockito.*;
 
@@ -113,8 +114,8 @@ class ResourceCRLRevocationCheckerTests extends BaseCRLRevocationCheckerTests {
     public void checkCertificate(final ResourceCRLRevocationChecker checker, final String[] certFiles,
                                  final GeneralSecurityException expected) throws Exception {
         checker.init();
-        Thread.sleep(1500);
-        BaseCRLRevocationCheckerTests.checkCertificate(checker, certFiles, expected);
+        await().atMost(Duration.ofSeconds(30))
+            .untilAsserted(() -> BaseCRLRevocationCheckerTests.checkCertificate(checker, certFiles, expected));
         checker.destroy();
     }
 }

@@ -10,7 +10,6 @@ import org.apereo.cas.test.CasTestExtension;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.MockWebServer;
 import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
-import lombok.Getter;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
@@ -36,35 +35,37 @@ import static org.junit.jupiter.api.Assertions.*;
     CasSurrogateRestAuthenticationAutoConfiguration.class,
     BaseSurrogateAuthenticationServiceTests.SharedTestConfiguration.class
 },
-    properties = "cas.authn.surrogate.rest.url=http://localhost:${random.int[3000,9000]}")
-@Getter
+    properties = "cas.authn.surrogate.rest.url=https://localhost/surrogates")
 class SurrogateRestAuthenticationServiceTests extends BaseSurrogateAuthenticationServiceTests {
     private static final ObjectMapper MAPPER = JacksonObjectMapperFactory.builder().build().toObjectMapper();
 
     @Autowired
     private ConfigurableApplicationContext applicationContext;
-    
+
     @Autowired
     @Qualifier(SurrogateAuthenticationService.BEAN_NAME)
     private SurrogateAuthenticationService service;
 
     @Autowired
-    private CasConfigurationProperties casProperties;
-
-    @Autowired
     @Qualifier(RegisteredServicePrincipalAccessStrategyEnforcer.BEAN_NAME)
     private RegisteredServicePrincipalAccessStrategyEnforcer principalAccessStrategyEnforcer;
+
+    private SurrogateAuthenticationService serviceUnderTest;
+
+    @Override
+    public SurrogateAuthenticationService getService() {
+        return serviceUnderTest != null ? serviceUnderTest : service;
+    }
     
     @Override
     @Test
     void verifyUserAllowedToProxy() throws Throwable {
-        val props = casProperties.getAuthn().getSurrogate().getRest();
-        val port = URI.create(props.getUrl()).getPort();
-        var data = MAPPER.writeValueAsString(CollectionUtils.wrapList("casuser", "otheruser"));
-        try (val webServer = new MockWebServer(port,
+        val data = MAPPER.writeValueAsString(CollectionUtils.wrapList("casuser", "otheruser"));
+        try (val webServer = new MockWebServer(
             new ByteArrayResource(data.getBytes(StandardCharsets.UTF_8), "REST Output"), MediaType.APPLICATION_JSON_VALUE)) {
             webServer.start();
             assertTrue(webServer.isRunning());
+            this.serviceUnderTest = restServiceFor(webServer);
             assertUserIsAllowedToProxy();
         }
     }
@@ -72,13 +73,12 @@ class SurrogateRestAuthenticationServiceTests extends BaseSurrogateAuthenticatio
     @Override
     @Test
     void verifyUserNotAllowedToProxy() throws Throwable {
-        val props = casProperties.getAuthn().getSurrogate().getRest();
-        val port = URI.create(props.getUrl()).getPort();
-        var data = MAPPER.writeValueAsString(CollectionUtils.wrapList());
-        try (val webServer = new MockWebServer(port,
+        val data = MAPPER.writeValueAsString(CollectionUtils.wrapList());
+        try (val webServer = new MockWebServer(
             new ByteArrayResource(data.getBytes(StandardCharsets.UTF_8), "REST Output"), MediaType.APPLICATION_JSON_VALUE)) {
             webServer.start();
             assertTrue(webServer.isRunning());
+            this.serviceUnderTest = restServiceFor(webServer);
             assertUserIsNotAllowedToProxy();
         }
     }
@@ -86,13 +86,12 @@ class SurrogateRestAuthenticationServiceTests extends BaseSurrogateAuthenticatio
     @Override
     @Test
     void verifyWildcard() throws Throwable {
-        val props = casProperties.getAuthn().getSurrogate().getRest();
-        val port = URI.create(props.getUrl()).getPort();
-        var data = MAPPER.writeValueAsString(CollectionUtils.wrapList(SurrogateAuthenticationService.WILDCARD_ACCOUNT));
-        try (val webServer = new MockWebServer(port,
+        val data = MAPPER.writeValueAsString(CollectionUtils.wrapList(SurrogateAuthenticationService.WILDCARD_ACCOUNT));
+        try (val webServer = new MockWebServer(
             new ByteArrayResource(data.getBytes(StandardCharsets.UTF_8), "REST Output"), MediaType.APPLICATION_JSON_VALUE)) {
             webServer.start();
             assertTrue(webServer.isRunning());
+            this.serviceUnderTest = restServiceFor(webServer);
             assertWildcardImpersonation();
         }
     }
@@ -121,6 +120,12 @@ class SurrogateRestAuthenticationServiceTests extends BaseSurrogateAuthenticatio
              */
             assertTrue(result);
         }
+    }
+
+    private SurrogateRestAuthenticationService restServiceFor(final MockWebServer webServer) {
+        val props = new CasConfigurationProperties();
+        props.getAuthn().getSurrogate().getRest().setUrl("http://localhost:%s".formatted(webServer.getPort()));
+        return new SurrogateRestAuthenticationService(servicesManager, props, principalAccessStrategyEnforcer, applicationContext);
     }
 
     @Test

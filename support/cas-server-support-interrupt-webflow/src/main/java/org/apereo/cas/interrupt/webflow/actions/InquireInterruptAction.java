@@ -1,6 +1,7 @@
 package org.apereo.cas.interrupt.webflow.actions;
 
 import module java.base;
+import org.apereo.cas.CasProtocolConstants;
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.interrupt.InterruptInquirer;
@@ -55,7 +56,8 @@ public class InquireInterruptAction extends BaseCasWebflowAction {
             val currentResponse = interruptTrackingEngine.forCurrentRequest(requestContext);
             if (currentResponse.isPresent()) {
                 val interruptResponse = inquire(requestContext);
-                if (interruptResponse.isPresent() && interruptResponse.get().equals(currentResponse.get())) {
+                if (interruptResponse.isPresent() && !interruptResponse.get().isBlock()
+                    && interruptResponse.get().equals(currentResponse.get())) {
                     LOGGER.debug("Authentication event has already finalized interrupt. Skipping...");
                     return getInterruptSkippedEvent();
                 }
@@ -73,6 +75,10 @@ public class InquireInterruptAction extends BaseCasWebflowAction {
 
         return inquire(requestContext)
             .map(interruptResponse -> {
+                if (isGatewayRequest(requestContext)) {
+                    LOGGER.debug("Interrupt [{}] requires user interaction, which a gateway request does not permit", interruptResponse);
+                    return eventFactory.event(this, CasWebflowConstants.TRANSITION_ID_GATEWAY);
+                }
                 LOGGER.debug("Interrupt inquiry is required since inquirer produced a response [{}]", interruptResponse);
                 InterruptUtils.putInterruptIn(requestContext, interruptResponse);
                 InterruptUtils.putInterruptTriggerMode(requestContext, casProperties.getInterrupt().getCore().getTriggerMode());
@@ -139,6 +145,11 @@ public class InquireInterruptAction extends BaseCasWebflowAction {
     protected boolean isInterruptInquiryForcedFor(final WebBasedRegisteredService registeredService) {
         return casProperties.getInterrupt().getCore().isForceExecution()
             || (registeredService != null && registeredService.getWebflowInterruptPolicy().getForceExecution().isTrue());
+    }
+
+    protected boolean isGatewayRequest(final RequestContext requestContext) {
+        return WebUtils.getService(requestContext) != null
+            && WebUtils.getRequestParameterOrAttribute(requestContext, CasProtocolConstants.PARAMETER_GATEWAY).isPresent();
     }
 
     private Event getInterruptSkippedEvent() {

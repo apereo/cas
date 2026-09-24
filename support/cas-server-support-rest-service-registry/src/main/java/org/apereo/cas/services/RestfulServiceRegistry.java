@@ -40,6 +40,7 @@ public class RestfulServiceRegistry extends AbstractServiceRegistry {
         super(applicationContext, serviceRegistryListeners);
         this.properties = properties;
         this.serializer = new RegisteredServiceJsonSerializer(applicationContext);
+        setOrder(properties.getOrder());
     }
 
     private static Map<String, String> getRequestHeaders(final RestfulServiceRegistryProperties properties) {

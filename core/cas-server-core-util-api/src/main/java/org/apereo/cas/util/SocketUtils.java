@@ -12,6 +12,8 @@ import lombok.val;
  */
 @UtilityClass
 public class SocketUtils {
+    private static final int CONNECT_TIMEOUT_MILLIS = 2_000;
+
     /**
      * Is tcp port available.
      *
@@ -19,12 +21,11 @@ public class SocketUtils {
      * @return true/false
      */
     public static boolean isTcpPortAvailable(final int port) {
-        try (val serverSocket = new ServerSocket()) {
-            serverSocket.setReuseAddress(false);
-            serverSocket.bind(new InetSocketAddress(InetAddress.getByName("localhost"), port), 1);
-            return true;
-        } catch (final Exception ex) {
+        try (val socket = new Socket()) {
+            socket.connect(new InetSocketAddress(InetAddress.getByName("localhost"), port), CONNECT_TIMEOUT_MILLIS);
             return false;
+        } catch (final Exception ex) {
+            return true;
         }
     }
 }

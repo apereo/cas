@@ -46,10 +46,11 @@ class ZookeeperLockRegistryTests {
         val container = new Container();
         container.values.put(lockKey, new ArrayList<>());
 
+        val startGate = new CountDownLatch(1);
         val threads = new ArrayList<Thread>();
         IntStream.range(0, 10).forEach(i -> {
             val thread = new Thread(Unchecked.runnable(() -> {
-                Thread.sleep(250);
+                startGate.await();
                 casTicketRegistryLockRepository.execute(lockKey, () -> {
                     container.values.get(lockKey).add(UUID.randomUUID().toString());
                     return null;
@@ -59,6 +60,7 @@ class ZookeeperLockRegistryTests {
             threads.add(thread);
             thread.start();
         });
+        startGate.countDown();
         for (val thread : threads) {
             try {
                 thread.join();

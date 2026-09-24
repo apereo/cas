@@ -38,4 +38,10 @@ public class OidcVerifiableCredentialsProperties implements Serializable {
      */
     @NestedConfigurationProperty
     private OidcVerifiableCredentialsOfferProperties offer = new OidcVerifiableCredentialsOfferProperties();
+
+    /**
+     * OIDC verifiable presentation settings.
+     */
+    @NestedConfigurationProperty
+    private OidcVerifiableCredentialsPresentationProperties presentation = new OidcVerifiableCredentialsPresentationProperties();
 }

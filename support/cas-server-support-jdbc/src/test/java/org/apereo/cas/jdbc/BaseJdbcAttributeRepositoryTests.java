@@ -12,8 +12,9 @@ import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.test.CasTestExtension;
 import lombok.Cleanup;
 import lombok.val;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.TestInstance;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
@@ -30,6 +31,7 @@ import org.springframework.context.ConfigurableApplicationContext;
  */
 @SpringBootTest(classes = CasJdbcAuthenticationConfigurationTests.SharedTestConfiguration.class)
 @ExtendWith(CasTestExtension.class)
+@TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public abstract class BaseJdbcAttributeRepositoryTests {
     @Autowired
     @Qualifier(PrincipalResolver.BEAN_NAME_ATTRIBUTE_REPOSITORY)
@@ -53,7 +55,7 @@ public abstract class BaseJdbcAttributeRepositoryTests {
     @Qualifier(AttributeRepositoryResolver.BEAN_NAME)
     protected AttributeRepositoryResolver attributeRepositoryResolver;
 
-    @BeforeEach
+    @BeforeAll
     void setupDatabase() throws Exception {
         MockitoAnnotations.openMocks(this).close();
         val jdbc = casProperties.getAuthn().getAttributeRepository().getJdbc();
@@ -71,7 +73,7 @@ public abstract class BaseJdbcAttributeRepositoryTests {
     public void prepareDatabaseTable(final Statement statement) throws Exception {
     }
 
-    @AfterEach
+    @AfterAll
     public void cleanup() throws Exception {
         if (dataSource != null) {
             @Cleanup

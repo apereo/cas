@@ -34,6 +34,7 @@ import org.springframework.http.HttpMethod;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.test.context.TestPropertySource;
+import static org.awaitility.Awaitility.*;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
@@ -200,6 +201,16 @@ class OAuth20DefaultTokenGeneratorTests {
             assertThrows(InvalidOAuth20DeviceTokenException.class, () -> oauthTokenGenerator.generate(tokenRequestContext));
         }
 
+        /**
+         * A device code is created with its last-used time set to its creation time, so the very
+         * first poll for it arrives inside the configured refresh interval and is turned away as
+         * too soon. Only once that interval has passed does the generator get as far as reporting
+         * that the user code is still unapproved, which is what this test is about. Polling for
+         * that is sound rather than a disguised pause: a request rejected as too soon leaves the
+         * device code untouched, so retrying does not push the interval out ahead of itself.
+         *
+         * @throws Throwable in case of failure
+         */
         @Test
         void verifyUnapproved() throws Throwable {
             val clientId = "device-client";
@@ -210,14 +221,14 @@ class OAuth20DefaultTokenGeneratorTests {
             token.setUserCode(userCode.getId());
             ticketRegistry.addTicket(userCode);
 
-            Thread.sleep(2000);
             val tokenRequestContext = AccessTokenRequestContext.builder()
                 .responseType(OAuth20ResponseTypes.DEVICE_CODE)
                 .deviceCode(token.getId())
                 .authentication(RegisteredServiceTestUtils.getAuthentication())
                 .registeredService(getRegisteredService(clientId, "secret"))
                 .build();
-            assertThrows(UnapprovedOAuth20DeviceUserCodeException.class, () -> oauthTokenGenerator.generate(tokenRequestContext));
+            await().atMost(Duration.ofSeconds(30)).untilAsserted(() ->
+                assertThrows(UnapprovedOAuth20DeviceUserCodeException.class, () -> oauthTokenGenerator.generate(tokenRequestContext)));
         }
 
         @Test
@@ -229,7 +240,6 @@ class OAuth20DefaultTokenGeneratorTests {
             token.setUserCode(userCode.getId());
             ticketRegistry.addTicket(userCode);
 
-            Thread.sleep(2000);
             val holder = AccessTokenRequestContext.builder()
                 .responseType(OAuth20ResponseTypes.DEVICE_CODE)
                 .deviceCode(token.getId())
@@ -248,7 +258,6 @@ class OAuth20DefaultTokenGeneratorTests {
             val userCode = defaultDeviceUserCodeFactory.createDeviceUserCode(token.getService());
             token.setUserCode(userCode.getId());
             ticketRegistry.addTicket(userCode);
-            Thread.sleep(2000);
             val holder = AccessTokenRequestContext.builder()
                 .responseType(OAuth20ResponseTypes.DEVICE_CODE)
                 .deviceCode(token.getId())
@@ -316,18 +325,19 @@ class OAuth20DefaultTokenGeneratorTests {
             assertNotNull(jwt.getIssuedAt());
             assertNotEquals(authentication.getAuthenticationDate().toInstant().toEpochMilli(), jwt.getIssuedAt().getValueInMillis());
             assertNotNull(jwt.getExpirationTime());
-            Thread.sleep(2000);
-            mv = generateAccessTokenResponseAndGetModelAndView(registeredService, authentication, OAuth20GrantTypes.REFRESH_TOKEN);
-            assertTrue(mv.getModel().containsKey(OAuth20Constants.ACCESS_TOKEN));
-            val refreshedAt = mv.getModel().get(OAuth20Constants.ACCESS_TOKEN).toString();
-            val refreshedDecoded = oauthAccessTokenJwtCipherExecutor.decode(refreshedAt).toString();
-            assertNotNull(refreshedDecoded);
-            val refreshedJwt = JwtClaims.parse(refreshedDecoded);
-            assertNotNull(refreshedJwt);
-            assertNotNull(refreshedJwt.getIssuedAt());
-            assertNotEquals(authentication.getAuthenticationDate().toInstant().toEpochMilli(), refreshedJwt.getIssuedAt().getValueInMillis());
-            assertNotNull(refreshedJwt.getExpirationTime());
-            assertNotEquals(jwt.getExpirationTime().getValue(), refreshedJwt.getExpirationTime().getValue());
+            await().atMost(Duration.ofSeconds(30)).untilAsserted(() -> {
+                val refreshed = generateAccessTokenResponseAndGetModelAndView(registeredService, authentication, OAuth20GrantTypes.REFRESH_TOKEN);
+                assertTrue(refreshed.getModel().containsKey(OAuth20Constants.ACCESS_TOKEN));
+                val refreshedAt = refreshed.getModel().get(OAuth20Constants.ACCESS_TOKEN).toString();
+                val refreshedDecoded = oauthAccessTokenJwtCipherExecutor.decode(refreshedAt).toString();
+                assertNotNull(refreshedDecoded);
+                val refreshedJwt = JwtClaims.parse(refreshedDecoded);
+                assertNotNull(refreshedJwt);
+                assertNotNull(refreshedJwt.getIssuedAt());
+                assertNotEquals(authentication.getAuthenticationDate().toInstant().toEpochMilli(), refreshedJwt.getIssuedAt().getValueInMillis());
+                assertNotNull(refreshedJwt.getExpirationTime());
+                assertNotEquals(jwt.getExpirationTime().getValue(), refreshedJwt.getExpirationTime().getValue());
+            });
         }
 
         @Test

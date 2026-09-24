@@ -26,7 +26,6 @@ import org.springframework.context.ConfigurableApplicationContext;
  * @since 3.3
  * @deprecated Since 7.0.0
  */
-@SuppressWarnings("FutureReturnValueIgnored")
 @Slf4j
 @Deprecated(since = "7.0.0")
 public class MemcachedTicketRegistry extends AbstractTicketRegistry implements DisposableBean {
@@ -50,7 +49,10 @@ public class MemcachedTicketRegistry extends AbstractTicketRegistry implements D
         LOGGER.debug("Updating ticket [{}]", ticket);
         val clientFromPool = getClientFromPool();
         try {
-            clientFromPool.replace(Objects.requireNonNull(ticket).getId(), getTimeout(ticketToUpdate), ticket);
+            val ticketId = Objects.requireNonNull(ticket).getId();
+            if (!awaitCompletion(clientFromPool.replace(ticketId, getTimeout(ticketToUpdate), ticket))) {
+                LOGGER.warn("Memcached did not accept the update of ticket [{}]", ticketId);
+            }
         } catch (final Exception e) {
             LOGGER.error("Failed updating [{}]", ticket);
             LoggingUtils.error(LOGGER, e);
@@ -66,7 +68,10 @@ public class MemcachedTicketRegistry extends AbstractTicketRegistry implements D
         try {
             val ticket = encodeTicket(ticketToAdd);
             LOGGER.trace("Adding ticket [{}]", ticket);
-            clientFromPool.set(Objects.requireNonNull(ticket).getId(), getTimeout(ticketToAdd), ticket);
+            val ticketId = Objects.requireNonNull(ticket).getId();
+            if (!awaitCompletion(clientFromPool.set(ticketId, getTimeout(ticketToAdd), ticket))) {
+                LOGGER.warn("Memcached did not accept ticket [{}]", ticketId);
+            }
         } catch (final Exception e) {
             LOGGER.error("Failed adding [{}]", ticketToAdd);
             LoggingUtils.error(LOGGER, e);
@@ -87,7 +92,9 @@ public class MemcachedTicketRegistry extends AbstractTicketRegistry implements D
         val clientFromPool = getClientFromPool();
         val ticketId = digestIdentifier(ticketToDelete.getId());
         try {
-            clientFromPool.delete(ticketId);
+            if (!awaitCompletion(clientFromPool.delete(ticketId))) {
+                LOGGER.debug("Memcached held no entry for ticket [{}] to remove", ticketId);
+            }
         } catch (final Exception e) {
             LOGGER.error("Ticket not found or is already removed. Failed deleting [{}]", ticketId);
             LoggingUtils.error(LOGGER, e);
@@ -147,6 +154,24 @@ public class MemcachedTicketRegistry extends AbstractTicketRegistry implements D
             return THIRTY_DAYS_IN_SECONDS;
         }
         return ttl.intValue();
+    }
+
+    /**
+     * Memcached writes are queued on the client's I/O thread, so {@code set}, {@code replace} and
+     * {@code delete} return before the server has seen the operation. A read that follows can then be
+     * answered from before the write -- which is what CAS does whenever it issues a ticket and the
+     * ticket is fetched immediately afterwards, and what a pooled client makes worse, since the read
+     * may travel over a different connection than the write and carries no ordering against it.
+     * <p>
+     * Waiting on the operation is what orders the two. The wait is bounded by the client's own
+     * configured operation timeout rather than by anything set here.
+     *
+     * @param operation the pending memcached operation
+     * @return true if the server accepted it
+     * @throws Exception if the wait is interrupted or the operation fails
+     */
+    private static boolean awaitCompletion(final Future<Boolean> operation) throws Exception {
+        return operation != null && Boolean.TRUE.equals(operation.get());
     }
 
     private MemcachedClientIF getClientFromPool() {

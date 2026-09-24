@@ -10,14 +10,15 @@ import org.apereo.cas.support.saml.SamlProtocolConstants;
 import org.apereo.cas.support.saml.services.idp.metadata.SamlRegisteredServiceMetadataAdaptor;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.EncodingUtils;
+import org.apereo.cas.util.RandomUtils;
 import lombok.val;
 import org.apache.hc.core5.net.URIBuilder;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.core.Ordered;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
+import org.springframework.test.context.TestPropertySource;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 import static org.junit.jupiter.api.Assertions.*;
@@ -32,6 +33,8 @@ import static org.mockito.Mockito.*;
  */
 @Tag("SAML2")
 @SuppressWarnings("InlineFormatString")
+@TestPropertySource(properties =
+    "cas.authn.saml-idp.metadata.file-system.location=${#systemProperties['java.io.tmpdir']}/idp-metadata-locator")
 class SamlIdPServicesManagerRegisteredServiceLocatorTests extends BaseSamlIdPConfigurationTests {
     private static final String SAML_AUTHN_REQUEST1 = "<?xml version=\"1.0\" encoding=\"UTF-8\"?><saml2p:AuthnRequest "
                                                       + "xmlns:saml2p=\"urn:oasis:names:tc:SAML:2.0:protocol\" AssertionConsumerServiceURL=\"http://localhost:8081/callback"
@@ -55,22 +58,18 @@ class SamlIdPServicesManagerRegisteredServiceLocatorTests extends BaseSamlIdPCon
                                                       + "1DyKRtN++i+lnLxTO5bQEe9SGx/iltDwdbQTj20E3SW8qrhuNt+1bL3FZa/iafrK9F+H+2ftLvbrTqlR2UQy10NVfKA2LMWFX2ZeFBh"
                                                       + "DiS4Bug6W2ty5aB6nYu9iHAKZCFrZ3wGtthxPQynDNeU95iF1Xcoh2Us7uLJrlscfE6j58X61U7PJCx8N4Lg876cOnHP8U7x+kdyxFxfb/9e2Z/AA==";
 
-    @BeforeEach
-    void setup() {
-        servicesManager.deleteAll();
-    }
-
     @Test
     void verifyInCommonAggregateWithCallback() throws Throwable {
+        val entityId = "https://mocky.io";
         val callbackUrl = "http://localhost:8443/cas" + SamlIdPConstants.ENDPOINT_SAML2_SSO_PROFILE_CALLBACK;
 
         val service0 = RegisteredServiceTestUtils.getRegisteredService(callbackUrl + ".*");
         service0.setEvaluationOrder(0);
 
-        val service1 = getSamlRegisteredServiceFor("https://sp.testshib.org/shibboleth-sp");
+        val service1 = getSamlRegisteredServiceFor(entityId);
         service1.setEvaluationOrder(100);
 
-        val service2 = getSamlRegisteredServiceFor(".+");
+        val service2 = getSamlRegisteredServiceFor(".*mocky\\.io");
         service2.setMetadataLocation("https://mdq.incommon.org/entities");
         service2.setEvaluationOrder(1000);
 
@@ -79,7 +78,7 @@ class SamlIdPServicesManagerRegisteredServiceLocatorTests extends BaseSamlIdPCon
 
         Collections.sort(candidateServices);
 
-        val url = new URIBuilder(callbackUrl + "?entityId=https://sp.testshib.org/shibboleth-sp");
+        val url = new URIBuilder(callbackUrl + "?entityId=" + entityId);
         val request = new MockHttpServletRequest();
         request.setRequestURI(callbackUrl);
         url.getQueryParams().forEach(param -> request.addParameter(param.getName(), param.getValue()));
@@ -196,14 +195,15 @@ class SamlIdPServicesManagerRegisteredServiceLocatorTests extends BaseSamlIdPCon
 
     @Test
     void verifyReverseOperation() {
-        val service1 = RegisteredServiceTestUtils.getRegisteredService(".+");
+        val entityId = "https://noenc.example.org";
+        val service1 = RegisteredServiceTestUtils.getRegisteredService(entityId);
         service1.setEvaluationOrder(9);
 
-        val service2 = getSamlRegisteredServiceFor(false, false, false, ".+");
+        val service2 = getSamlRegisteredServiceFor(false, false, false, entityId);
         service2.setEvaluationOrder(10);
 
         servicesManager.save(service1, service2);
-        val service = webApplicationServiceFactory.createService("https://sp.testshib.org/shibboleth-sp");
+        val service = webApplicationServiceFactory.createService(entityId);
 
         val samlRequest = EncodingUtils.encodeBase64(String.format(SAML_AUTHN_REQUEST1, service.getId()));
         service.setAttributes(Map.of(SamlProtocolConstants.PARAMETER_SAML_REQUEST, List.of(samlRequest)));
@@ -224,11 +224,11 @@ class SamlIdPServicesManagerRegisteredServiceLocatorTests extends BaseSamlIdPCon
     @Test
     void verifyEntityIDFilter() {
         try (val mockFacade = mockStatic(SamlRegisteredServiceMetadataAdaptor.class)) {
-            val service1 = getSamlRegisteredServiceFor(false, false, false, "urn:abc:def.+");
+            val service1 = getSamlRegisteredServiceFor(false, false, false, "urn:abc:%s.+".formatted(RandomUtils.randomAlphabetic(8)));
             service1.setEvaluationOrder(9);
             servicesManager.save(service1);
             mockFacade.when(() -> SamlRegisteredServiceMetadataAdaptor.get(any(), any(), anyString())).thenCallRealMethod();
-            val entityID = "https://sp.testshib.org/shibboleth-sp";
+            val entityID = "https://cassp.example.org";
             val service = webApplicationServiceFactory.createService(entityID);
             val samlRequest = EncodingUtils.encodeBase64(String.format(SAML_AUTHN_REQUEST1, entityID));
             service.setAttributes(Map.of(SamlProtocolConstants.PARAMETER_SAML_REQUEST, List.of(samlRequest)));
@@ -237,7 +237,7 @@ class SamlIdPServicesManagerRegisteredServiceLocatorTests extends BaseSamlIdPCon
             assertNull(res1);
 
             mockFacade.verify(() -> SamlRegisteredServiceMetadataAdaptor.get(any(), eq(service1), anyString()), never());
-            val service2 = getSamlRegisteredServiceFor(false, false, false, ".+");
+            val service2 = getSamlRegisteredServiceFor(false, false, false, entityID);
             service2.setEvaluationOrder(10);
             servicesManager.save(service2);
 
@@ -251,11 +251,14 @@ class SamlIdPServicesManagerRegisteredServiceLocatorTests extends BaseSamlIdPCon
     void verifyMatchWithEncodedParam() {
         try (val mockFacade = mockStatic(SamlRegisteredServiceMetadataAdaptor.class)) {
 
-            val service1 = getSamlRegisteredServiceFor(".*app.samlclient.edu.*/sp");
+            val host = "%s.samlclient.edu".formatted(RandomUtils.randomAlphabetic(8));
+            val entityId = "https://%s:9443/sp".formatted(host);
+
+            val service1 = getSamlRegisteredServiceFor(".*%s.*/sp".formatted(host));
             service1.setEvaluationOrder(4);
             servicesManager.save(service1);
 
-            val service2 = getSamlRegisteredServiceFor("4464.+");
+            val service2 = getSamlRegisteredServiceFor("%s.+".formatted(RandomUtils.randomAlphabetic(8)));
             service2.setMetadataLocation("http://localhost:9428/entities/{0}");
             service2.setEvaluationOrder(1000);
             servicesManager.save(service2);
@@ -264,8 +267,8 @@ class SamlIdPServicesManagerRegisteredServiceLocatorTests extends BaseSamlIdPCon
                 .thenCallRealMethod();
 
             val service = mock(WebApplicationService.class);
-            when(service.getId()).thenReturn("https://sso.cas.edu/cas?entityId=https%3A%2F%2Fapp.samlclient.edu%3A9443%2Fsp");
-            when(service.getAttributes()).thenReturn(Map.of("entityId", List.of("https://app.samlclient.edu:9443/sp")));
+            when(service.getId()).thenReturn("https://sso.cas.edu/cas?entityId=https%%3A%%2F%%2F%s%%3A9443%%2Fsp".formatted(host));
+            when(service.getAttributes()).thenReturn(Map.of("entityId", List.of(entityId)));
 
             val res1 = servicesManager.findServiceBy(service);
             assertNull(res1);
@@ -279,14 +282,15 @@ class SamlIdPServicesManagerRegisteredServiceLocatorTests extends BaseSamlIdPCon
     void verifyNoSamlService() {
         try (val mockFacade = mockStatic(SamlRegisteredServiceMetadataAdaptor.class)) {
 
-            val service1 = RegisteredServiceTestUtils.getRegisteredService(".*app.samlclient.edu.*/sp");
+            val host = "%s.samlclient.edu".formatted(RandomUtils.randomAlphabetic(8));
+            val service1 = RegisteredServiceTestUtils.getRegisteredService(".*%s.*/sp".formatted(host));
             service1.setEvaluationOrder(4);
             servicesManager.save(service1);
 
             mockFacade.when(() -> SamlRegisteredServiceMetadataAdaptor.get(any(), any(), anyString()))
                 .thenCallRealMethod();
 
-            val service = RegisteredServiceTestUtils.getService("app.samlclient.edu");
+            val service = RegisteredServiceTestUtils.getService(host);
             val res1 = servicesManager.findServiceBy(service);
             assertNull(res1);
         }
@@ -294,16 +298,16 @@ class SamlIdPServicesManagerRegisteredServiceLocatorTests extends BaseSamlIdPCon
 
     @Test
     void verifyWithSelectionStrategy() throws Throwable {
-        val prefix = "http://localhost:8443/cas";
+        val prefix = "http://localhost:8444/cas";
         val callbackUrl = prefix + SamlIdPConstants.ENDPOINT_SAML2_SSO_PROFILE_CALLBACK;
 
         val service0 = RegisteredServiceTestUtils.getRegisteredService(callbackUrl + ".*");
         service0.setEvaluationOrder(0);
 
-        val service1 = getSamlRegisteredServiceFor("https://sp.testshib.org/shibboleth-sp");
+        val service1 = getSamlRegisteredServiceFor("https://mockypost.io");
         service1.setEvaluationOrder(100);
 
-        val service2 = getSamlRegisteredServiceFor(".+");
+        val service2 = getSamlRegisteredServiceFor(".*mockypost\\.io");
         service2.setMetadataLocation("https://example.org");
         service2.setEvaluationOrder(1000);
 
@@ -312,7 +316,7 @@ class SamlIdPServicesManagerRegisteredServiceLocatorTests extends BaseSamlIdPCon
 
         Collections.sort(candidateServices);
 
-        val url = new URIBuilder(callbackUrl + "?entityId=https%3A%2F%2Fsp.testshib.org%2Fshibboleth-sp");
+        val url = new URIBuilder(callbackUrl + "?entityId=https%3A%2F%2Fmockypost.io");
         val request = new MockHttpServletRequest();
         request.setRequestURI(callbackUrl);
         url.getQueryParams().forEach(param -> request.addParameter(param.getName(), param.getValue()));

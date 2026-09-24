@@ -14,8 +14,6 @@ import lombok.val;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.parallel.Execution;
-import org.junit.jupiter.api.parallel.ExecutionMode;
 import org.pac4j.core.util.Pac4jConstants;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -32,7 +30,6 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.2.0
  */
 @Tag("WebflowAuthenticationActions")
-@Execution(ExecutionMode.SAME_THREAD)
 class PasswordlessDetermineDelegatedAuthenticationActionTests {
     @Nested
     @Import(BaseWebflowConfigurerTests.SharedTestConfiguration.class)

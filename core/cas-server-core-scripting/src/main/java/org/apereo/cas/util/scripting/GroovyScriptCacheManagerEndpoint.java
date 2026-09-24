@@ -138,7 +138,7 @@ public class GroovyScriptCacheManagerEndpoint extends BaseCasRestActuatorEndpoin
      * @return the response entity
      * @throws Exception the exception
      */
-    @Operation(summary = "Parse and compile the given inline script")
+    @Operation(summary = "Parse and validate the syntax of the given inline script")
     @PostMapping(path = "/resources/validate", consumes = MediaType.TEXT_PLAIN_VALUE)
     public ResponseEntity validate(@RequestBody final String script) throws Exception {
         return FunctionUtils.doAndHandle(() -> {
@@ -149,10 +149,8 @@ public class GroovyScriptCacheManagerEndpoint extends BaseCasRestActuatorEndpoin
                     resourceToUse = matcher.group(1);
                 }
             }
-            val scriptFactory = ExecutableCompiledScriptFactory.getExecutableCompiledScriptFactory();
-            return Optional.ofNullable(scriptFactory.fromScript(resourceToUse).compileScript())
-                .map(result -> ResponseEntity.status(HttpStatus.OK).build())
-                .orElseGet(() -> ResponseEntity.status(HttpStatus.BAD_REQUEST).build());
+            ScriptingUtils.validateGroovyScript(resourceToUse);
+            return ResponseEntity.status(HttpStatus.OK).build();
         }, e -> ResponseEntity.status(HttpStatus.BAD_REQUEST).body(CollectionUtils.wrap("error", e.getMessage()))).get();
     }
 }

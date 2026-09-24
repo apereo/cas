@@ -45,8 +45,14 @@ public class ConsentDecision implements Serializable {
     @Column(nullable = false)
     private String service;
 
+    /**
+     * Date and time at which this decision was recorded, in UTC.
+     * The field carries no zone of its own and is compared against the current time when the reminder
+     * is evaluated, so it must be produced in UTC for every CAS node to agree on a decision's age
+     * regardless of the time zone the node runs in.
+     */
     @Column(nullable = false)
-    private LocalDateTime createdDate = LocalDateTime.now(ZoneId.systemDefault());
+    private LocalDateTime createdDate = LocalDateTime.now(ZoneOffset.UTC);
 
     @Column(nullable = false)
     private ConsentReminderOptions options = ConsentReminderOptions.ATTRIBUTE_NAME;

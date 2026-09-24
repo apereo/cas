@@ -3,8 +3,11 @@ package org.apereo.cas.support.saml.mdui;
 import module java.base;
 import org.apereo.cas.util.EncodingUtils;
 import org.apereo.cas.util.LoggingUtils;
+import org.apereo.cas.util.concurrent.CasReentrantLock;
 import org.apereo.cas.util.http.HttpExecutionRequest;
 import org.apereo.cas.util.http.HttpUtils;
+import com.github.benmanes.caffeine.cache.Cache;
+import com.github.benmanes.caffeine.cache.Caffeine;
 import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -30,6 +33,11 @@ import org.springframework.http.HttpMethod;
 @Slf4j
 @NoArgsConstructor
 public class DynamicMetadataResolverAdapter extends AbstractMetadataResolverAdapter {
+    private static final long MAXIMUM_CACHED_ENTITIES = 1_000;
+
+    private final CasReentrantLock lock = new CasReentrantLock();
+
+    private Cache<String, Optional<EntityDescriptor>> entityDescriptorCache = buildCache(Duration.ofMinutes(2));
 
     /**
      * Instantiates a new static metadata resolver adapter.
@@ -40,10 +48,31 @@ public class DynamicMetadataResolverAdapter extends AbstractMetadataResolverAdap
         super(metadataResources);
     }
 
+    /**
+     * Sets how long a resolved entity descriptor, or the absence of one, is reused before this
+     * adapter queries the metadata server again.
+     *
+     * @param duration the cache duration
+     */
+    public void setCacheDuration(final Duration duration) {
+        this.entityDescriptorCache = buildCache(duration);
+    }
+
     @Override
     public EntityDescriptor getEntityDescriptorForEntityId(final String entityId) {
-        buildMetadataResolverAggregate(entityId);
-        return super.getEntityDescriptorForEntityId(entityId);
+        return entityDescriptorCache
+            .get(entityId, id -> lock.execute(() -> {
+                buildMetadataResolverAggregate(id);
+                return Optional.ofNullable(super.getEntityDescriptorForEntityId(id));
+            }))
+            .orElse(null);
+    }
+
+    private static Cache<String, Optional<EntityDescriptor>> buildCache(final Duration duration) {
+        return Caffeine.newBuilder()
+            .maximumSize(MAXIMUM_CACHED_ENTITIES)
+            .expireAfterWrite(duration)
+            .build();
     }
 
     @Override

@@ -6,14 +6,9 @@ import org.apereo.cas.test.CasTestExtension;
 import org.apereo.cas.util.RandomUtils;
 import lombok.Getter;
 import lombok.val;
-import org.junit.jupiter.api.MethodOrderer;
-import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.TestMethodOrder;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.junit.jupiter.api.parallel.ResourceAccessMode;
-import org.junit.jupiter.api.parallel.ResourceLock;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -29,8 +24,6 @@ import static org.junit.jupiter.api.Assertions.*;
 @Getter
 @Tag("MFA")
 @ExtendWith(CasTestExtension.class)
-@ResourceLock(value = "repository", mode = ResourceAccessMode.READ_WRITE)
-@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 class CachingOneTimeTokenRepositoryTests extends BaseOneTimeTokenRepositoryTests {
 
     @Autowired
@@ -38,13 +31,12 @@ class CachingOneTimeTokenRepositoryTests extends BaseOneTimeTokenRepositoryTests
     private OneTimeTokenRepository repository;
 
     @Test
-    @Order(1)
     void verifyTokenSave() {
         val casuser = UUID.randomUUID().toString();
-        val token = new OneTimeToken(123456, casuser);
+        val token = new OneTimeToken(RandomUtils.nextInt(100_000, 999_999), casuser);
         repository.store(token);
         assertNull(repository.store(token));
-        val anotherToken = new OneTimeToken(654321, casuser);
+        val anotherToken = new OneTimeToken(RandomUtils.nextInt(100_000, 999_999), casuser);
         assertNotNull(repository.store(anotherToken));
         assertEquals(2, repository.count(casuser));
         repository.clean();
@@ -54,11 +46,10 @@ class CachingOneTimeTokenRepositoryTests extends BaseOneTimeTokenRepositoryTests
         repository.remove(token.getToken());
         repository.remove(casuser, token.getToken());
         assertNull(repository.get(casuser, token.getToken()));
-        assertEquals(0, repository.count());
+        assertEquals(0, repository.count(casuser));
     }
 
     @Test
-    @Order(2)
     void verifyParallelOtpRequests() throws Exception {
         val otp = new OneTimeToken(RandomUtils.nextInt(100_000, 999_999), UUID.randomUUID().toString());
         try (val pool = Executors.newVirtualThreadPerTaskExecutor()) {
@@ -83,15 +74,13 @@ class CachingOneTimeTokenRepositoryTests extends BaseOneTimeTokenRepositoryTests
     }
 
     @Test
-    @Order(100)
     void verifyOperation() {
         val id = UUID.randomUUID().toString();
         val token = new OneTimeToken(RandomUtils.nextInt(), id);
         repository.store(token);
         repository.remove(token.getUserId(), token.getToken());
         assertFalse(repository.exists(token.getUserId(), token.getToken()));
-        repository.removeAll();
-        assertEquals(0, repository.count());
+        assertEquals(0, repository.count(id));
     }
 
 }

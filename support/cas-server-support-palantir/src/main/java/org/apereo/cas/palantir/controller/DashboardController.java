@@ -50,10 +50,30 @@ import jakarta.servlet.http.HttpServletRequest;
 @RequiredArgsConstructor
 @Tag(name = "Palantir")
 public class DashboardController extends AbstractController {
+    /**
+     * Registered service types are discovered with a full ClassGraph scan of the CAS namespace,
+     * and the answer cannot change while the JVM is running. Holding it in a static supplier keeps
+     * the scan off the request path, where it previously ran once per dashboard page view.
+     */
+    private static final Supplier<Map<String, String>> SUPPORTED_SERVICE_DEFINITIONS =
+        memoize(DashboardController::scanSupportedServiceDefinitions);
+
+    /**
+     * Service properties are the constants of an enum; resolving them once avoids rebuilding the
+     * same list on every render.
+     */
+    private static final Supplier<List<String>> SERVICE_PROPERTIES =
+        memoize(() -> Arrays.stream(RegisteredServiceProperty.RegisteredServiceProperties.values())
+            .map(RegisteredServiceProperty.RegisteredServiceProperties::name)
+            .toList());
+
     private final CasConfigurationProperties casProperties;
     private final EndpointLinksResolver endpointLinksResolver;
     private final WebEndpointProperties webEndpointProperties;
     private final ConfigurableApplicationContext applicationContext;
+
+    private final Supplier<Map<String, List<String>>> exampleServiceDefinitions =
+        memoize(Unchecked.supplier(() -> loadExampleServiceDefinitions(SUPPORTED_SERVICE_DEFINITIONS.get().keySet())));
 
     /**
      * Dashboard home page explicitly defined.
@@ -106,17 +126,15 @@ public class DashboardController extends AbstractController {
             .map(entry -> Pair.of(entry.getKey(), casProperties.getServer().getPrefix() + entry.getValue().getHref()))
             .collect(Collectors.toMap(Pair::getKey, Pair::getValue));
         mav.addObject("actuatorEndpoints", actuatorEndpoints);
-        val serviceDefinitions = loadSupportedServiceDefinitions();
-        mav.addObject("supportedServiceTypes", serviceDefinitions);
-        mav.addObject("serviceDefinitions", loadExampleServiceDefinitions(serviceDefinitions.keySet()));
+        mav.addObject("supportedServiceTypes", SUPPORTED_SERVICE_DEFINITIONS.get());
+        mav.addObject("serviceDefinitions", exampleServiceDefinitions.get());
         mav.addObject("availableMultifactorProviders", MultifactorAuthenticationUtils.getAvailableMultifactorAuthenticationProviders(applicationContext).keySet());
         mav.addObject("scriptFactoryAvailable", CasRuntimeHintsRegistrar.notInNativeImage()
             && ExecutableCompiledScriptFactory.findExecutableCompiledScriptFactory().isPresent());
 
         val mutablePropertySources = CasCoreConfigurationUtils.getMutablePropertySources(applicationContext);
         mav.addObject("mutablePropertySources", mutablePropertySources.stream().map(MutablePropertySource::getName).toList());
-        mav.addObject("serviceProperties", Arrays.stream(RegisteredServiceProperty.RegisteredServiceProperties.values())
-            .map(RegisteredServiceProperty.RegisteredServiceProperties::name).toList());
+        mav.addObject("serviceProperties", SERVICE_PROPERTIES.get());
         return mav;
     }
 
@@ -127,7 +145,23 @@ public class DashboardController extends AbstractController {
             .anyMatch(grantedAuthority -> Objects.equals(grantedAuthority.getAuthority(), "ROLE_ADMIN"));
     }
 
-    private static Map<String, String> loadSupportedServiceDefinitions() {
+    /**
+     * Wrap a supplier so the delegate runs on first use and its result is reused afterwards.
+     *
+     * Two callers racing on a cold context may each compute the value, which is harmless here
+     * because every delegate is a pure scan of a fixed classpath; the point is that the scan leaves
+     * the request path once a value has been published.
+     *
+     * @param delegate the supplier whose result is computed once and reused
+     * @param <T>      the supplied type
+     * @return a supplier that caches the delegate's first result
+     */
+    private static <T> Supplier<T> memoize(final Supplier<T> delegate) {
+        val holder = new AtomicReference<T>();
+        return () -> holder.updateAndGet(cached -> cached != null ? cached : delegate.get());
+    }
+
+    private static Map<String, String> scanSupportedServiceDefinitions() {
         val subTypes = ReflectionUtils.findSubclassesInPackage(BaseRegisteredService.class, CentralAuthenticationService.NAMESPACE);
         return subTypes
             .stream()

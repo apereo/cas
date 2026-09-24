@@ -22,6 +22,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.hc.core5.http.HttpEntityContainer;
 import org.apache.hc.core5.http.HttpResponse;
 import org.apache.hc.core5.http.io.entity.EntityUtils;
+import org.jspecify.annotations.Nullable;
 import org.opensaml.core.criterion.EntityIdCriterion;
 import org.opensaml.saml.metadata.resolver.impl.AbstractMetadataResolver;
 import org.springframework.http.HttpHeaders;
@@ -57,35 +58,39 @@ public class MetadataQueryProtocolMetadataResolver extends UrlResourceMetadataRe
     }
 
     @Override
-    protected AbstractMetadataResolver getMetadataResolverFromResponse(final HttpResponse response, final File backupFile) throws Exception {
-        if (!HttpStatus.valueOf(response.getCode()).is2xxSuccessful()) {
+    protected AbstractMetadataResolver getMetadataResolverFromResponse(final @Nullable HttpResponse response,
+                                                                       final File backupFile) throws Exception {
+        val status = response != null ? HttpStatus.resolve(response.getCode()) : null;
+        if (status == null || !status.is2xxSuccessful()) {
             if (Files.exists(backupFile.toPath())) {
+                LOGGER.warn("MDQ server did not return metadata with status [{}]. CAS will fall back onto "
+                    + "the metadata backup file at [{}], which may be out of date.", status, backupFile);
                 return new InMemoryResourceMetadataResolver(backupFile, this.configBean);
             }
             throw new SamlException("Unable to get entity from MDQ server and a backup file does not exist.");
         }
         val entity = ((HttpEntityContainer) response).getEntity();
         val result = IOUtils.toString(entity.getContent(), StandardCharsets.UTF_8);
-        val path = backupFile.toPath();
-        LOGGER.trace("Writing metadata to file at [{}]", path);
-        try (val output = Files.newBufferedWriter(path, StandardCharsets.UTF_8)) {
-            IOUtils.write(result, output);
-            output.flush();
-            StreamSupport.stream(path.getFileSystem().getFileStores().spliterator(), false)
-                .filter(store -> store.supportsFileAttributeView(UserDefinedFileAttributeView.class))
-                .forEach(store -> setFileAttribute(response, backupFile));
-        }
+        writeMetadataToBackupFile(result, backupFile);
+        setFileAttribute(response, backupFile);
         EntityUtils.consume(entity);
         return new InMemoryResourceMetadataResolver(backupFile, configBean);
     }
 
+    /**
+     * {@inheritDoc}
+     * <p>
+     * A null or server-error response is only fatal when there is nothing to fall back onto.
+     * When the metadata backup file exists, this returns null so that the resolution can
+     * continue and serve the last known good copy, rather than taking the service offline
+     * for as long as the MDQ server is unreachable.
+     */
     @Override
-    protected HttpResponse fetchMetadata(final SamlRegisteredService service,
-                                         final String metadataLocation, final CriteriaSet criteriaSet, final File backupFile) {
+    protected @Nullable HttpResponse fetchMetadata(final SamlRegisteredService service,
+                                                   final String metadataLocation, final CriteriaSet criteriaSet, final File backupFile) {
         val metadata = samlIdPProperties.getMetadata().getMdq();
         val headers = new LinkedHashMap<String, String>();
-        headers.put(HttpHeaders.CONTENT_TYPE, metadata.getSupportedContentType());
-        headers.put(HttpHeaders.ACCEPT, "*/*");
+        headers.put(HttpHeaders.ACCEPT, metadata.getSupportedContentType());
         val path = backupFile.toPath();
         FunctionUtils.doAndHandle(p -> {
             if (Files.exists(path)) {
@@ -101,9 +106,18 @@ public class MetadataQueryProtocolMetadataResolver extends UrlResourceMetadataRe
             .url(metadataLocation)
             .headers(headers)
             .proxyUrl(service.getMetadataProxyLocation())
+            .httpClient(httpClient)
+            .maximumRetryAttempts(samlIdPProperties.getMetadata().getCore().getMaximumRetryAttempts())
             .build();
         val response = HttpUtils.execute(exec);
-        if (response == null || HttpStatus.resolve(response.getCode()).is5xxServerError()) {
+        val status = response != null ? HttpStatus.resolve(response.getCode()) : null;
+        if (status == null || status.is5xxServerError()) {
+            HttpUtils.close(response);
+            if (backupFile.exists() && backupFile.canRead()) {
+                LOGGER.warn("Unable to fetch metadata from [{}]. CAS will fall back onto the metadata "
+                    + "backup file at [{}].", metadataLocation, backupFile);
+                return null;
+            }
             LOGGER.error("Unable to fetch metadata from [{}]", metadataLocation);
             throw UnauthorizedServiceException.denied("Rejected: %s".formatted(metadataLocation));
         }

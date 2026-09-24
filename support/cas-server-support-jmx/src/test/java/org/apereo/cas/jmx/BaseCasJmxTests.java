@@ -12,8 +12,12 @@ import org.apereo.cas.config.CasCoreUtilAutoConfiguration;
 import org.apereo.cas.config.CasCoreWebAutoConfiguration;
 import org.apereo.cas.config.CasJmxAutoConfiguration;
 import org.apereo.cas.util.spring.boot.SpringBootTestAutoConfigurations;
+import org.springframework.beans.factory.config.BeanPostProcessor;
 import org.springframework.boot.SpringBootConfiguration;
 import org.springframework.boot.autoconfigure.ImportAutoConfiguration;
+import org.springframework.context.annotation.Bean;
+import org.springframework.jmx.export.annotation.AnnotationMBeanExporter;
+import javax.management.MBeanServerFactory;
 
 /**
  * This is {@link BaseCasJmxTests}.
@@ -37,5 +41,17 @@ public abstract class BaseCasJmxTests {
     })
     @SpringBootConfiguration(proxyBeanMethods = false)
     public static class SharedTestConfiguration {
+        @Bean
+        public static BeanPostProcessor jmxTestMBeanServerConfigurer() {
+            return new BeanPostProcessor() {
+                @Override
+                public Object postProcessBeforeInitialization(final Object bean, final String beanName) {
+                    if (bean instanceof final AnnotationMBeanExporter exporter) {
+                        exporter.setServer(MBeanServerFactory.newMBeanServer());
+                    }
+                    return bean;
+                }
+            };
+        }
     }
 }

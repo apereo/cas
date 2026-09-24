@@ -11,6 +11,7 @@ import org.apache.logging.log4j.core.Logger;
 import org.apache.logging.log4j.message.Message;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import static org.awaitility.Awaitility.*;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
@@ -24,14 +25,14 @@ import static org.mockito.Mockito.*;
 @Slf4j
 class ExceptionOnlyFilterTests {
 
-    private static long getFileSize() {
-        var logFile = FileUtils.getFile("build/slf4j-exceptions.log");
+    private static File getLogFile() {
+        val logFile = FileUtils.getFile("build/slf4j-exceptions.log");
         assertTrue(logFile.exists(), "Log file not found");
-        return logFile.length();
+        return logFile;
     }
 
-    private static void sleep(final int millis) throws Exception {
-        Thread.sleep(millis);
+    private static long getFileSize() {
+        return getLogFile().length();
     }
 
     /**
@@ -39,17 +40,16 @@ class ExceptionOnlyFilterTests {
      * This test implicitly should test generation of
      * META-INF/org/apache/logging/log4j/core/config/plugins/Log4j2Plugins.dat
      * as long as log4j2-test.xml doesn't have packages attribute in root element.
-     * Stopping th log system so file is flushed for size check, sleep also works.
      */
     @Test
-    void verifyOperation() throws Throwable {
+    void verifyOperation() throws Exception {
         val fileSize = getFileSize();
         LOGGER.error("Testing no exception");
-        sleep(1000);
-        assertEquals(fileSize, getFileSize());
         LOGGER.error("Testing with exception", new Exception());
-        sleep(1000);
-        assertTrue(getFileSize() > fileSize);
+        await().atMost(Duration.of(5, ChronoUnit.SECONDS)).until(() -> getFileSize() > fileSize);
+        val contents = FileUtils.readFileToString(getLogFile(), StandardCharsets.UTF_8);
+        assertFalse(contents.contains("Testing no exception"));
+        assertTrue(contents.contains("Testing with exception"));
     }
 
     @Test

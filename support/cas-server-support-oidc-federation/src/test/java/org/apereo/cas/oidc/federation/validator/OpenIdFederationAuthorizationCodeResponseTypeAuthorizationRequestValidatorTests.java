@@ -11,6 +11,7 @@ import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.oauth.services.OAuthRegisteredService;
 import org.apereo.cas.support.oauth.validator.authorization.OAuth20AuthorizationRequestValidator;
 import lombok.val;
+import org.apache.commons.lang3.StringUtils;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,6 +24,11 @@ import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * This is {@link OpenIdFederationAuthorizationCodeResponseTypeAuthorizationRequestValidatorTests}.
+ * <p>
+ * The {@code OIDCWeb} category runs test methods concurrently against one shared
+ * {@link ServicesManager}, so no test here may clear the registry wholesale: doing so deletes the
+ * services its siblings have just saved. Each test works with a client id of its own instead, which
+ * is all the assertions actually depend on.
  *
  * @author Jerome LELEU
  * @since 8.1.0
@@ -40,7 +46,6 @@ class OpenIdFederationAuthorizationCodeResponseTypeAuthorizationRequestValidator
 
     @Test
     void verifyMissingServiceGetsResolvedAndSaved() throws Throwable {
-        clearOAuthRegisteredServices();
         val clientId = "https://rp-missing-" + UUID.randomUUID() + ".example.org";
 
         val registeredService = resolveByClientId(clientId);
@@ -49,33 +54,30 @@ class OpenIdFederationAuthorizationCodeResponseTypeAuthorizationRequestValidator
         assertEquals("resolved-service", registeredService.getName());
         assertTrue(servicesManager.getAllServicesOfType(OAuthRegisteredService.class)
             .stream()
-            .anyMatch(service -> service.getClientId().equals(clientId)));
+            .anyMatch(service -> clientId.equals(service.getClientId())));
     }
 
     @Test
     void verifyMissingServiceWithBlankClientIdIsIgnored() throws Throwable {
-        clearOAuthRegisteredServices();
         val registeredService = resolveByClientId("   ");
         assertNull(registeredService);
         assertFalse(servicesManager.getAllServicesOfType(OAuthRegisteredService.class)
             .stream()
-            .anyMatch(service -> service.getClientId().isBlank()));
+            .anyMatch(service -> StringUtils.isBlank(service.getClientId())));
     }
 
     @Test
     void verifyMissingServiceWhenResolverReturnsNoServiceIsIgnored() throws Throwable {
-        clearOAuthRegisteredServices();
         val clientId = "https://rp-unresolved-" + UUID.randomUUID() + ".example.org";
         val registeredService = resolveByClientId(clientId);
         assertNull(registeredService);
         assertFalse(servicesManager.getAllServicesOfType(OAuthRegisteredService.class)
             .stream()
-            .anyMatch(service -> service.getClientId().equals(clientId)));
+            .anyMatch(service -> clientId.equals(service.getClientId())));
     }
 
     @Test
     void verifyTemporaryServiceNearExpirationGetsRefreshed() throws Throwable {
-        clearOAuthRegisteredServices();
         val clientId = "https://rp-refresh-" + UUID.randomUUID() + ".example.org";
         val existingService = buildOidcRegisteredService(clientId, "old-service");
         existingService.setExpirationPolicy(new DefaultRegisteredServiceExpirationPolicy(true,
@@ -91,18 +93,16 @@ class OpenIdFederationAuthorizationCodeResponseTypeAuthorizationRequestValidator
 
     @Test
     void verifyMissingServiceWithNonFederatedEntityIdIsIgnored() throws Throwable {
-        clearOAuthRegisteredServices();
         val clientId = "rp-non-federated-" + UUID.randomUUID();
         val registeredService = resolveByClientId(clientId);
         assertNull(registeredService);
         assertFalse(servicesManager.getAllServicesOfType(OAuthRegisteredService.class)
             .stream()
-            .anyMatch(service -> service.getClientId().equals(clientId)));
+            .anyMatch(service -> clientId.equals(service.getClientId())));
     }
 
     @Test
     void verifyTemporaryServiceWithFarExpirationIsNotRefreshed() throws Throwable {
-        clearOAuthRegisteredServices();
         val clientId = "https://rp-refresh-" + UUID.randomUUID() + ".example.org";
         val existingService = buildOidcRegisteredService(clientId, "old-service");
         existingService.setExpirationPolicy(new DefaultRegisteredServiceExpirationPolicy(true,
@@ -117,7 +117,6 @@ class OpenIdFederationAuthorizationCodeResponseTypeAuthorizationRequestValidator
 
     @Test
     void verifyServiceWithoutTemporaryFlagIsNotRefreshed() throws Throwable {
-        clearOAuthRegisteredServices();
         val clientId = "https://rp-refresh-" + UUID.randomUUID() + ".example.org";
         val existingService = buildOidcRegisteredService(clientId, "old-service");
         existingService.setExpirationPolicy(new DefaultRegisteredServiceExpirationPolicy(true,
@@ -126,11 +125,6 @@ class OpenIdFederationAuthorizationCodeResponseTypeAuthorizationRequestValidator
         val registeredService = resolveByClientId(clientId);
         assertNotNull(registeredService);
         assertEquals("old-service", registeredService.getName());
-    }
-
-    private void clearOAuthRegisteredServices() {
-        val services = new ArrayList<>(servicesManager.getAllServicesOfType(OAuthRegisteredService.class));
-        services.forEach(servicesManager::delete);
     }
 
     private OAuthRegisteredService resolveByClientId(final String clientId) throws Throwable {

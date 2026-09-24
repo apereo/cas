@@ -60,6 +60,15 @@ class OidcVerifiableCredentialDefaultNonceServiceTests extends AbstractOidcTests
     }
 
     @Test
+    void verifyExpiredNonceIsNotConsumed() {
+        val nonce = oidcVerifiableCredentialNonceService.create();
+        val ticket = ticketRegistry.getTicket(nonce.value());
+        assertNotNull(ticket);
+        ticket.markTicketExpired();
+        assertFalse(oidcVerifiableCredentialNonceService.consume(nonce.value()));
+    }
+
+    @Test
     void verifyConsumingAnUnknownNonceFails() {
         assertFalse(oidcVerifiableCredentialNonceService.consume("TST-unknown-nonce-value"));
         assertFalse(oidcVerifiableCredentialNonceService.consume(null));

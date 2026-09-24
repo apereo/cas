@@ -58,13 +58,13 @@ import org.apache.commons.lang3.StringUtils;
 import org.jooq.lambda.Unchecked;
 import org.jspecify.annotations.Nullable;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.RepeatedTest;
 import org.junit.jupiter.api.RepetitionInfo;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.TestInfo;
-import org.junit.jupiter.api.TestMethodOrder;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.jupiter.api.parallel.ResourceAccessMode;
+import org.junit.jupiter.api.parallel.ResourceLock;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.SpringBootConfiguration;
@@ -91,8 +91,16 @@ import static org.junit.jupiter.api.Assumptions.*;
         "cas.ticket.registry.cleaner.schedule.enabled=false"
     })
 @ExtendWith(CasTestExtension.class)
-@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
+/*
+ * Almost everything here names its own tickets, principals and services and so can share the registry with
+ * whatever else is running. The two tests that cannot are the ones that empty it: they hold this lock for
+ * writing, everything else holds it for reading, and the two never overlap. Being whole-registry is what
+ * those two test, so there is no way to make them independent by construction.
+ */
+@ResourceLock(value = BaseTicketRegistryTests.TICKET_REGISTRY_RESOURCE, mode = ResourceAccessMode.READ)
 public abstract class BaseTicketRegistryTests {
+
+    protected static final String TICKET_REGISTRY_RESOURCE = "casTicketRegistry";
 
     private static final int TICKETS_IN_REGISTRY = 1;
 
@@ -158,17 +166,34 @@ public abstract class BaseTicketRegistryTests {
             if (!info.getTags().contains("SkipClearingTicketRegistry")) {
                 ticketRegistry.deleteAll();
             }
-            setUpEncryption();
+            if (!isCipherExecutorOwnedByContext()) {
+                setUpEncryption();
+            }
         }
+    }
+
+    /**
+     * Whether this registry's cipher is settled by the application context rather than installed
+     * here. Installing it here rebuilds a cipher with fresh random keys before every test method
+     * and writes it onto the registry bean, which is shared: concurrent methods then disagree about
+     * the keys in force and cannot read back what they wrote. A registry whose crypto comes from
+     * its own configuration says so by overriding this, and is left alone.
+     *
+     * @return true if the context configures the cipher, false to install one per test
+     */
+    protected boolean isCipherExecutorOwnedByContext() {
+        return false;
     }
 
     @RepeatedTest(2)
     @Transactional(transactionManager = TicketRegistry.TICKET_TRANSACTION_MANAGER, readOnly = false)
     void verifyTicketsWithAuthnAttributes() throws Throwable {
         assumeTrue(canTicketRegistryIterate());
+        val commonName = RandomUtils.randomAlphabetic(8);
+        val authnContext = RandomUtils.randomAlphabetic(8);
         val authn = CoreAuthenticationTestUtils.getAuthentication(
-            Map.of("cn", List.of("cn1", "cn2"), "givenName", List.of("g1", "g2"),
-                "authn-context", List.of("mfa-example")));
+            Map.of("cn", List.of("cn1", commonName), "givenName", List.of("g1", "g2"),
+                "authn-context", List.of(authnContext)));
         val tgt1 = new TicketGrantingTicketImpl(TestTicketIdentifiers.generate().ticketGrantingTicketId(),
             authn, NeverExpiresExpirationPolicy.INSTANCE);
         ticketRegistry.addTicket(tgt1);
@@ -177,8 +202,8 @@ public abstract class BaseTicketRegistryTests {
             CoreAuthenticationTestUtils.getAuthentication(), NeverExpiresExpirationPolicy.INSTANCE);
         ticketRegistry.addTicket(tgt2);
 
-        val queryAttributes = Map.<String, List<Object>>of("cn", List.of("cn2", "cn1000"),
-            "authn-context", List.of("mfa-example", "mfa-one"));
+        val queryAttributes = Map.<String, List<Object>>of("cn", List.of(commonName, "cn1000"),
+            "authn-context", List.of(authnContext, "mfa-one"));
         val tickets = ticketRegistry.getSessionsWithAttributes(queryAttributes).toList();
         assertEquals(1, tickets.size());
         assertTrue(tickets.contains(tgt1));
@@ -217,6 +242,7 @@ public abstract class BaseTicketRegistryTests {
         }
         assertTrue(ticketRegistry.deleteTicketsFor(originalAuthn.getPrincipal().getId()) > 0);
         val count = ticketRegistry.getTickets().stream().filter(ticket -> ticket instanceof final AuthenticationAwareTicket aat
+                && aat.getAuthentication() != null
                 && aat.getAuthentication().getPrincipal().getId().equals(originalAuthn.getPrincipal().getId()))
             .count();
         assertEquals(0, count);
@@ -449,6 +475,8 @@ public abstract class BaseTicketRegistryTests {
     void verifyCountingTicketsForService() throws Throwable {
         assumeTrue(canTicketRegistryIterate());
         val authentication = CoreAuthenticationTestUtils.getAuthentication(UUID.randomUUID().toString());
+        val countedService = RegisteredServiceTestUtils.getService("https://%s.example.org".formatted(RandomUtils.randomAlphabetic(8)));
+        val otherService = RegisteredServiceTestUtils.getService("https://%s.example.org".formatted(RandomUtils.randomAlphabetic(8)));
         for (var i = 0; i < 10; i++) {
             val tgt = new TicketGrantingTicketImpl(
                 TICKET_GRANTING_TICKET_ID_GENERATOR.getNewTicketId(TicketGrantingTicket.PREFIX),
@@ -458,18 +486,20 @@ public abstract class BaseTicketRegistryTests {
             val foundTgt = ticketRegistry.getTicket(addedTicket.getId(), TicketGrantingTicket.class);
             assertNotNull(foundTgt);
 
-            val service = i % 2 == 0 ? RegisteredServiceTestUtils.getService() : RegisteredServiceTestUtils.getService2();
+            val service = i % 2 == 0 ? countedService : otherService;
             val serviceTicket = foundTgt.grantServiceTicket("ST-%s".formatted(RandomUtils.generateSecureRandomId()),
                 service, NeverExpiresExpirationPolicy.INSTANCE, false, serviceTicketSessionTrackingPolicy);
             ticketRegistry.updateTicket(foundTgt);
             ticketRegistry.addTicket(serviceTicket);
         }
-        assertEquals(5, ticketRegistry.countTicketsFor(RegisteredServiceTestUtils.getService()));
+        assertEquals(5, ticketRegistry.countTicketsFor(countedService));
     }
 
     @RepeatedTest(2)
+    @ResourceLock(value = TICKET_REGISTRY_RESOURCE, mode = ResourceAccessMode.READ_WRITE)
     void verifyDeleteAllExistingTickets() throws Throwable {
         assumeTrue(canTicketRegistryIterate());
+        ticketRegistry.deleteAll();
         val ticketGrantingTicketId = TestTicketIdentifiers.generate().ticketGrantingTicketId();
         for (var i = 0; i < TICKETS_IN_REGISTRY; i++) {
             ticketRegistry.addTicket(new TicketGrantingTicketImpl(ticketGrantingTicketId + i,
@@ -528,11 +558,19 @@ public abstract class BaseTicketRegistryTests {
     }
 
     @RepeatedTest(2)
-    void verifyGetTicketsIsZero() {
+    @ResourceLock(value = TICKET_REGISTRY_RESOURCE, mode = ResourceAccessMode.READ_WRITE)
+    void verifyGetTicketsIsZero() throws Throwable {
         ticketRegistry.deleteAll();
         assertEquals(0, ticketRegistry.getTickets().size(), "The size of the empty registry is not zero.");
     }
 
+    /**
+     * Every ticket added here must come back from a retrieval of all tickets. What is asserted is
+     * that they are present, not that they are the only ones present: the registry answers for
+     * every test sharing it, so counting its contents would be counting theirs too.
+     *
+     * @throws Throwable in case of failure
+     */
     @RepeatedTest(2)
     void verifyGetTicketsFromRegistryEqualToTicketsAdded() throws Throwable {
         assumeTrue(canTicketRegistryIterate());
@@ -542,7 +580,8 @@ public abstract class BaseTicketRegistryTests {
         for (var i = 0; i < TICKETS_IN_REGISTRY; i++) {
             val ticketGrantingTicket = new TicketGrantingTicketImpl(ticketGrantingTicketId + '-' + i,
                 CoreAuthenticationTestUtils.getAuthentication(), NeverExpiresExpirationPolicy.INSTANCE);
-            val st = ticketGrantingTicket.grantServiceTicket("ST-" + i,
+            val st = ticketGrantingTicket.grantServiceTicket(
+                TestTicketIdentifiers.generate().serviceTicketId() + '-' + i,
                 RegisteredServiceTestUtils.getService(),
                 NeverExpiresExpirationPolicy.INSTANCE, false, serviceTicketSessionTrackingPolicy);
             tickets.add(ticketGrantingTicket);
@@ -552,14 +591,20 @@ public abstract class BaseTicketRegistryTests {
         }
 
         val ticketRegistryTickets = ticketRegistry.getTickets();
-        assertEquals(tickets.size(), ticketRegistryTickets.size(), "The size of the registry is not the same as the collection.");
-
         tickets.stream().filter(ticket -> !ticketRegistryTickets.contains(ticket))
             .forEach(ticket -> {
                 throw new AssertionError("Ticket " + ticket + " was not found in retrieval of collection of all tickets.");
             });
     }
 
+    /**
+     * The counts the registry reports must match what was added. They are asked for by principal
+     * and by service rather than for the registry as a whole, because a whole-registry count
+     * answers for every test sharing it. A fresh principal and service are minted on each attempt
+     * so that a retry counts only its own tickets rather than adding to what the last attempt left.
+     *
+     * @throws Throwable in case of failure
+     */
     @RepeatedTest(1)
     @Tag("DisableTicketRegistryTestWithEncryption")
     void verifyTicketCountsEqualToTicketsAdded() throws Throwable {
@@ -571,12 +616,15 @@ public abstract class BaseTicketRegistryTests {
             public @Nullable Object execute() throws Throwable {
                 ticketGrantingTickets.clear();
                 serviceTickets.clear();
+                val principal = UUID.randomUUID().toString();
+                val service = RegisteredServiceTestUtils.getService("https://%s.example.org".formatted(RandomUtils.randomAlphabetic(8)));
                 for (var i = 0; i < TICKETS_IN_REGISTRY; i++) {
-                    val auth = CoreAuthenticationTestUtils.getAuthentication();
-                    val service = RegisteredServiceTestUtils.getService();
-                    val ticketGrantingTicket = new TicketGrantingTicketImpl(TicketGrantingTicket.PREFIX + '-' + i,
+                    val auth = CoreAuthenticationTestUtils.getAuthentication(principal);
+                    val ticketGrantingTicket = new TicketGrantingTicketImpl(
+                        TestTicketIdentifiers.generate().ticketGrantingTicketId() + '-' + i,
                         auth, NeverExpiresExpirationPolicy.INSTANCE);
-                    val st = ticketGrantingTicket.grantServiceTicket("ST-" + i,
+                    val st = ticketGrantingTicket.grantServiceTicket(
+                        TestTicketIdentifiers.generate().serviceTicketId() + '-' + i,
                         service, NeverExpiresExpirationPolicy.INSTANCE, false, serviceTicketSessionTrackingPolicy);
                     ticketGrantingTickets.add(ticketGrantingTicket);
                     serviceTickets.add(st);
@@ -586,13 +634,13 @@ public abstract class BaseTicketRegistryTests {
                     await().untilAsserted(() -> assertNotNull(ticketRegistry.getTicket(addedServiceTicket.getId())));
                 }
                 await().untilAsserted(() -> {
-                    val sessionCount = ticketRegistry.sessionCount();
+                    val sessionCount = ticketRegistry.countSessionsFor(principal);
                     assertEquals(ticketGrantingTickets.size(), sessionCount,
                         () -> "The sessionCount " + sessionCount + " is not the same as the collection " + ticketGrantingTickets.size());
                 });
 
                 await().untilAsserted(() -> {
-                    val ticketCount = ticketRegistry.serviceTicketCount();
+                    val ticketCount = ticketRegistry.countTicketsFor(service);
                     assertEquals(serviceTickets.size(), ticketCount,
                         () -> "The serviceTicketCount " + ticketCount + " is not the same as the collection " + serviceTickets.size());
                 });
@@ -611,11 +659,14 @@ public abstract class BaseTicketRegistryTests {
 
         val service = RegisteredServiceTestUtils.getService("TGT_DELETE_TEST");
 
-        val st1 = tgt.grantServiceTicket("ST-11", service,
+        val firstId = TestTicketIdentifiers.generate().serviceTicketId();
+        val secondId = TestTicketIdentifiers.generate().serviceTicketId();
+        val thirdId = TestTicketIdentifiers.generate().serviceTicketId();
+        val st1 = tgt.grantServiceTicket(firstId, service,
             NeverExpiresExpirationPolicy.INSTANCE, false, serviceTicketSessionTrackingPolicy);
-        val st2 = tgt.grantServiceTicket("ST-21", service,
+        val st2 = tgt.grantServiceTicket(secondId, service,
             NeverExpiresExpirationPolicy.INSTANCE, false, serviceTicketSessionTrackingPolicy);
-        val st3 = tgt.grantServiceTicket("ST-31", service,
+        val st3 = tgt.grantServiceTicket(thirdId, service,
             NeverExpiresExpirationPolicy.INSTANCE, false, serviceTicketSessionTrackingPolicy);
 
         ticketRegistry.addTicket(st1);
@@ -623,18 +674,18 @@ public abstract class BaseTicketRegistryTests {
         ticketRegistry.addTicket(st3);
 
         assertNotNull(ticketRegistry.getTicket(ticketGrantingTicketId + '1', TicketGrantingTicket.class));
-        assertNotNull(ticketRegistry.getTicket("ST-11", ServiceTicket.class));
-        assertNotNull(ticketRegistry.getTicket("ST-21", ServiceTicket.class));
-        assertNotNull(ticketRegistry.getTicket("ST-31", ServiceTicket.class));
+        assertNotNull(ticketRegistry.getTicket(firstId, ServiceTicket.class));
+        assertNotNull(ticketRegistry.getTicket(secondId, ServiceTicket.class));
+        assertNotNull(ticketRegistry.getTicket(thirdId, ServiceTicket.class));
 
         ticketRegistry.updateTicket(tgt);
 
         assertSame(4, ticketRegistry.deleteTicket(tgt.getId()));
 
         assertThrows(InvalidTicketException.class, () -> ticketRegistry.getTicket(ticketGrantingTicketId + '1', TicketGrantingTicket.class));
-        assertThrows(InvalidTicketException.class, () -> ticketRegistry.getTicket("ST-11", ServiceTicket.class));
-        assertThrows(InvalidTicketException.class, () -> ticketRegistry.getTicket("ST-21", ServiceTicket.class));
-        assertThrows(InvalidTicketException.class, () -> ticketRegistry.getTicket("ST-31", ServiceTicket.class));
+        assertThrows(InvalidTicketException.class, () -> ticketRegistry.getTicket(firstId, ServiceTicket.class));
+        assertThrows(InvalidTicketException.class, () -> ticketRegistry.getTicket(secondId, ServiceTicket.class));
+        assertThrows(InvalidTicketException.class, () -> ticketRegistry.getTicket(thirdId, ServiceTicket.class));
     }
 
     @RepeatedTest(2)

@@ -40,7 +40,7 @@ function printHelp() {
     printf "\n👷 Usage: ${CYAN}./testcas.sh${ENDCOLOR}\n\t--category [category1,category2,...]\n\t[--help]\n\t[--test TestClass]\n\t[--ignore-failures]\n\t[--no-watch]\n\t[--no-wrapper]\n\t[--no-retry]\n\t[--debug]\n\t[--no-parallel]\n\t[--dry-run][--info]\n\t[--with-coverage]\n\t[--no-build-cache] \n"
     printf "\n👷 To see what test categories are available, use:\n"
     printf "\t${GREEN}./gradlew -q testCategories${ENDCOLOR}\n"
-    printf "\n👷 You can pass '${GREEN}changed${ENDCOLOR}' for thhe category to only run affected tests based on the current changeset.\n"
+    printf "\n👷 You can pass '${GREEN}changed${ENDCOLOR}' for the category to only run affected tests based on the current changeset.\n"
     echo -e "👷 Please see the test script for details."
 }
 
@@ -168,7 +168,12 @@ while (( "$#" )); do
              category+="${tag} "
           done
           formatted=$(printf '%s\n' "$category" | awk '{ for (i = 1; i <= NF; i++) print "  - " $i }')
-          printf "👷 ${GREEN}Test categories for current changeset are:\n${formatted} ${ENDCOLOR}\n\n"
+          if [[ -z "$category" ]]; then
+            printf "👷 ${RED}No test categories were detected for the current changeset. Have you modified tests?${ENDCOLOR}\n\n"
+            exit 0
+          else
+            printf "👷 ${GREEN}Test categories for current changeset are:\n${formatted} ${ENDCOLOR}\n\n"
+          fi
         fi
 
         for item in $(echo "$category" | sed "s/,/ /g")
@@ -499,7 +504,7 @@ while (( "$#" )); do
                 isDockerOnLinux && ./ci/tests/ldap/run-ldap-server.sh || exit 1
                 task+="testLdap "
                 ;;
-            mongodbmfa)
+            mongodbmfa|mongomfa)
                 isDockerOnLinux && ./ci/tests/mongodb/run-mongodb-server.sh || exit 1
                 isDockerOnLinux && ./ci/tests/mongodb/run-mongodb-server-clustered.sh || exit 1
                 task+="testMongoDbMFA "
@@ -517,7 +522,7 @@ while (( "$#" )); do
                 isDockerOnLinux && ./ci/tests/mariadb/run-mariadb-server.sh || exit 1
                 task+="testMariaDb "
                 ;;
-            postgres|pg|postgresql)
+            postgres|pg|postgresql|psql)
                 isDockerOnLinux && ./ci/tests/postgres/run-postgres-server.sh || exit 1
                 task+="testPostgres "
                 ;;

@@ -5,6 +5,7 @@ import org.apereo.cas.oidc.AbstractOidcTests;
 import org.apereo.cas.oidc.OidcConstants;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import static org.hamcrest.Matchers.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
@@ -42,6 +43,25 @@ class OidcWellKnownEndpointControllerTests extends AbstractOidcTests {
                 .with(withHttpRequestProcessor()))
             .andExpect(status().isOk())
             .andExpect(jsonPath("$.issuer").exists());
+    }
+
+    /**
+     * RFC 8414 requires token_endpoint_auth_signing_alg_values_supported to be published whenever
+     * private_key_jwt or client_secret_jwt is advertised, and forbids the value none as a signing
+     * algorithm. Clients that enforce this refuse to use the authorization server at all when it
+     * is missing. Separately, none is advertised as an authentication *method*, which is how a
+     * client with no credentials -- a wallet redeeming a pre-authorized code, say -- learns that
+     * the token endpoint will accept it.
+     */
+    @Test
+    void verifyTokenEndpointAuthSigningAlgValues() throws Exception {
+        mockMvc.perform(get("/cas/oidc/" + OidcConstants.WELL_KNOWN_OPENID_CONFIGURATION_URL)
+                .with(withHttpRequestProcessor()))
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$.token_endpoint_auth_methods_supported").value(hasItem("private_key_jwt")))
+            .andExpect(jsonPath("$.token_endpoint_auth_methods_supported").value(hasItem("none")))
+            .andExpect(jsonPath("$.token_endpoint_auth_signing_alg_values_supported").value(hasItem("RS256")))
+            .andExpect(jsonPath("$.token_endpoint_auth_signing_alg_values_supported").value(not(hasItem("none"))));
     }
 
     @Test

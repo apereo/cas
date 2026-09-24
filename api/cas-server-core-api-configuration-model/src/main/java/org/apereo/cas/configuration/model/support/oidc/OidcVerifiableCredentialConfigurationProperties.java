@@ -1,6 +1,7 @@
 package org.apereo.cas.configuration.model.support.oidc;
 
 import module java.base;
+import org.apereo.cas.configuration.support.DurationCapable;
 import org.apereo.cas.configuration.support.RequiresModule;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -30,6 +31,15 @@ public class OidcVerifiableCredentialConfigurationProperties implements Serializ
      * to determine how the credential request and response should be processed.
      */
     private CredentialConfigurationFormats format = CredentialConfigurationFormats.DC_SD_JWT;
+
+    /**
+     * Length of time for which a credential issued by this configuration remains valid.
+     * The value controls the {@code exp} claim of the issued credential, and the
+     * {@code validUntil} property for credential formats that carry one. Wallets store
+     * credentials long after issuance, so this must outlive the issuance exchange itself.
+     */
+    @DurationCapable
+    private String credentialValidity = "P30D";
 
     /**
      * OAuth scope associated with this credential configuration.

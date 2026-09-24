@@ -30,14 +30,15 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 public abstract class AbstractCasEventRepositoryTests {
 
+    /**
+     * Every assertion below is scoped to the principal this test invents, so the repository may
+     * hold whatever its sibling tests have saved.
+     */
     @Test
     protected void verifyLoadOps() {
         val eventRepository = getEventRepository();
         eventRepository.withTransaction(Unchecked.consumer(_ -> {
-            eventRepository.removeAll();
-
-            val dto1 = getCasEvent("example1");
-
+            val dto1 = getCasEvent(UUID.randomUUID().toString());
             eventRepository.save(dto1);
             val dt = ZonedDateTime.now(ZoneOffset.UTC).minusMonths(12);
             val loaded = eventRepository.load(dt);
@@ -58,29 +59,27 @@ public abstract class AbstractCasEventRepositoryTests {
     protected void verifySave() {
         val eventRepository = getEventRepository();
         eventRepository.withTransaction(Unchecked.consumer(_ -> {
-            eventRepository.removeAll();
+            val principal = UUID.randomUUID().toString();
 
-            val dto1 = getCasEvent("casuser");
+            val dto1 = getCasEvent(principal);
             eventRepository.save(dto1);
 
-            val dto2 = getCasEvent("casuser");
+            val dto2 = getCasEvent(principal);
             eventRepository.save(dto2);
 
             assertNotNull(CasEvent.from(dto1));
             assertNotNull(CasEvent.from(dto2));
-            
-            val col = eventRepository.load().toList();
-            assertEquals(2, col.size());
 
             assertNotEquals(dto2.getEventId(), dto1.getEventId(), "Created event IDs are equal but they should not be");
 
-            val load2 = eventRepository.load();
-            val loadedEvents = load2.map(CasEvent::getEventId).distinct().toList();
+            val events = eventRepository.getEventsForPrincipal(principal).toList();
+            assertEquals(2, events.size());
+
+            val loadedEvents = events.stream().map(CasEvent::getEventId).distinct().toList();
             assertTrue(loadedEvents.stream().anyMatch(dto1.getEventId()::equals));
             assertTrue(loadedEvents.stream().anyMatch(dto2.getEventId()::equals));
 
-            val load3 = eventRepository.load();
-            load3.forEach(event -> {
+            events.forEach(event -> {
                 assertFalse(event.getProperties().isEmpty());
                 if (event.getEventId().equals(dto1.getEventId())) {
                     assertEquals(dto1.getType(), event.getType());

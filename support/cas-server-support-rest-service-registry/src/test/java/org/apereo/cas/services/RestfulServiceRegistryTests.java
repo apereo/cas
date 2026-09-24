@@ -13,9 +13,7 @@ import org.apereo.cas.web.CasWebSecurityConfigurer;
 import lombok.Getter;
 import lombok.val;
 import org.apache.commons.lang3.math.NumberUtils;
-import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.Tag;
-import org.junit.jupiter.api.TestMethodOrder;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -60,7 +58,6 @@ import tools.jackson.databind.ObjectMapper;
 @Tag("RestfulApi")
 @ExtendWith(CasTestExtension.class)
 @Getter
-@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 class RestfulServiceRegistryTests extends AbstractServiceRegistryTests {
     private static final ObjectMapper MAPPER = JacksonObjectMapperFactory.builder()
         .defaultTypingEnabled(true).build().toObjectMapper();
