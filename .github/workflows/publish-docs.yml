@@ -19,6 +19,12 @@ env:
 
 on:
   workflow_dispatch:
+    inputs:
+      proofRead:
+        description: "Proof-read the documentation (links, include fragments) before publishing"
+        type: boolean
+        required: false
+        default: true
   push:
     branches:
       - master
@@ -102,8 +108,10 @@ jobs:
           mongoimport --version
       - name: Publish Documentation
         uses: nick-fields/retry@v4
+        env:
+          DOCS_PROOF_READ: ${{ github.event.inputs.proofRead || vars.DOCS_PROOF_READ || 'true' }}
         with:
           timeout_minutes: 55
           max_attempts: 2
           shell: bash
-          command: ./ci/docs/publish.sh --branch ${{ env.DOCS_BRANCH }}
+          command: ./ci/docs/publish.sh --branch ${{ env.DOCS_BRANCH }} --proof-read "$DOCS_PROOF_READ"
