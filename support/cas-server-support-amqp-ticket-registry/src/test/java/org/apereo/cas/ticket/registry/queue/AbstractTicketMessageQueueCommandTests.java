@@ -13,10 +13,12 @@ import org.apereo.cas.config.CasCoreUtilAutoConfiguration;
 import org.apereo.cas.config.CasCoreWebAutoConfiguration;
 import org.apereo.cas.config.CasPersonDirectoryAutoConfiguration;
 import org.apereo.cas.test.CasTestExtension;
-import org.apereo.cas.ticket.registry.TicketRegistry;
+import org.apereo.cas.ticket.TicketCatalog;
+import org.apereo.cas.ticket.registry.DefaultTicketRegistry;
 import org.apereo.cas.ticket.registry.pubsub.QueueableTicketRegistry;
 import org.apereo.cas.ticket.serialization.TicketSerializationManager;
 import org.apereo.cas.util.spring.boot.SpringBootTestAutoConfigurations;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -56,13 +58,20 @@ import org.springframework.context.ConfigurableApplicationContext;
 @ExtendWith(CasTestExtension.class)
 public abstract class AbstractTicketMessageQueueCommandTests {
     @Autowired
-    @Qualifier(TicketRegistry.BEAN_NAME)
-    protected QueueableTicketRegistry ticketRegistry;
-
-    @Autowired
     @Qualifier(TicketSerializationManager.BEAN_NAME)
     protected TicketSerializationManager ticketSerializationManager;
 
     @Autowired
+    @Qualifier(TicketCatalog.BEAN_NAME)
+    protected TicketCatalog ticketCatalog;
+
+    @Autowired
     protected ConfigurableApplicationContext applicationContext;
+
+    protected QueueableTicketRegistry ticketRegistry;
+
+    @BeforeEach
+    void initializeTicketRegistry() {
+        ticketRegistry = new DefaultTicketRegistry(ticketSerializationManager, ticketCatalog, applicationContext);
+    }
 }

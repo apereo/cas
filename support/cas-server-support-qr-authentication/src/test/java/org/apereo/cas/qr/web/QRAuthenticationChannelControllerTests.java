@@ -17,8 +17,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.junit.jupiter.api.parallel.Execution;
-import org.junit.jupiter.api.parallel.ExecutionMode;
+import org.junit.jupiter.api.parallel.ResourceLock;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -42,7 +41,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @Tag("Web")
 @ExtendWith(CasTestExtension.class)
 @SpringBootTest(classes = BaseQRAuthenticationTokenValidatorServiceTests.SharedTestConfiguration.class)
-@Execution(ExecutionMode.SAME_THREAD)
+@ResourceLock("qrAuthenticationBrokerChannel")
 class QRAuthenticationChannelControllerTests {
     private static final ObjectMapper MAPPER = JacksonObjectMapperFactory.builder()
         .defaultTypingEnabled(false).build().toObjectMapper();
@@ -125,9 +124,9 @@ class QRAuthenticationChannelControllerTests {
         val deviceId = UUID.randomUUID().toString();
         val token = String.format("{\"token\": \"%s\"}", jwt);
         val messages = sendAndCaptureBrokerMessages(token, channelId, deviceId);
-        val result = findMessageByDestination(messages, "/topic/accept").orElse(null);
+        val result = findMessageByDestination(messages, "/qrtopic/%s/verify".formatted(channelId)).orElse(null);
         assertNotNull(result);
-        assertEquals("false", new String((byte[]) result.getPayload(), StandardCharsets.UTF_8));
+        assertEquals("cas.authn.qr.fail", readPayload(result).get("error"));
     }
 
     @Test
@@ -139,8 +138,9 @@ class QRAuthenticationChannelControllerTests {
         assertNotNull(noHeaderReply);
         assertEquals("false", new String((byte[]) noHeaderReply.getPayload(), StandardCharsets.UTF_8));
 
-        messages = sendAndCaptureBrokerMessages("{}", UUID.randomUUID().toString(), null);
-        assertTrue(findMessageByDestinationStartingWith(messages, QRAuthenticationConstants.QR_SIMPLE_BROKER_DESTINATION_PREFIX).isEmpty());
+        val channelId = UUID.randomUUID().toString();
+        messages = sendAndCaptureBrokerMessages("{}", channelId, null);
+        assertTrue(findMessageByDestination(messages, "/qrtopic/%s/verify".formatted(channelId)).isEmpty());
         val missingDeviceReply = findMessageByDestination(messages, "/topic/accept").orElse(null);
         assertNotNull(missingDeviceReply);
         assertEquals("false", new String((byte[]) missingDeviceReply.getPayload(), StandardCharsets.UTF_8));
@@ -150,33 +150,22 @@ class QRAuthenticationChannelControllerTests {
                                                           @Nullable final String channelId,
                                                           @Nullable final String deviceId) throws Exception {
         val brokerMessages = new CopyOnWriteArrayList<Message<?>>();
-        val latch = new CountDownLatch(1);
+        val handled = new CountDownLatch(1);
         val interceptor = new ChannelInterceptor() {
             @Override
             public Message<?> preSend(final Message<?> message, final MessageChannel channel) {
                 brokerMessages.add(message);
-                latch.countDown();
+                if ("/topic/accept".equals(StompHeaderAccessor.wrap(message).getDestination())) {
+                    handled.countDown();
+                }
                 return message;
             }
         };
         brokerChannel.addInterceptor(interceptor);
         try {
             clientInboundChannel.send(buildMessage(payload, channelId, deviceId));
-            latch.await(1, TimeUnit.SECONDS);
-            var attempts = 0;
-            var stableCount = 0;
-            var previousSize = brokerMessages.size();
-            while (attempts < 30 && stableCount < 5) {
-                TimeUnit.MILLISECONDS.sleep(100);
-                val currentSize = brokerMessages.size();
-                if (currentSize == previousSize) {
-                    stableCount++;
-                } else {
-                    stableCount = 0;
-                    previousSize = currentSize;
-                }
-                attempts++;
-            }
+            assertTrue(handled.await(30, TimeUnit.SECONDS),
+                "Timed out waiting for the controller to answer on /topic/accept");
             return List.copyOf(brokerMessages);
         } finally {
             brokerChannel.removeInterceptor(interceptor);

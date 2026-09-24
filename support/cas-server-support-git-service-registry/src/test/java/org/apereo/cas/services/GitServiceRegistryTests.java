@@ -21,10 +21,8 @@ import org.eclipse.jgit.api.Git;
 import org.eclipse.jgit.api.errors.JGitInternalException;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.TestMethodOrder;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -52,7 +50,6 @@ import static org.mockito.Mockito.*;
 @Tag("Git")
 @ExtendWith(CasTestExtension.class)
 @Getter
-@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 class GitServiceRegistryTests extends AbstractServiceRegistryTests {
 
     @Autowired

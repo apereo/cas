@@ -5,12 +5,14 @@ import org.apereo.cas.configuration.model.support.saml.idp.SamlIdPProperties;
 import org.apereo.cas.support.saml.SamlException;
 import org.apereo.cas.support.saml.services.BaseSamlIdPServicesTests;
 import org.apereo.cas.support.saml.services.SamlRegisteredService;
+import org.apereo.cas.util.MockWebServer;
 import org.apereo.cas.util.RandomUtils;
 import lombok.val;
 import org.apache.commons.io.FileUtils;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.springframework.core.io.ClassPathResource;
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
@@ -72,6 +74,25 @@ class MetadataQueryProtocolMetadataResolverTests extends BaseSamlIdPServicesTest
         assertFalse(results.isEmpty());
         assertTrue(resolver.isAvailable(service));
         assertTrue(resolver.supports(service));
+    }
+
+    @Test
+    void verifyResolverFallsBackToBackupWhenMdqIsUnreachable() throws Throwable {
+        val props = new SamlIdPProperties();
+        props.getMetadata().getFileSystem().setLocation(fileSystemMetadataPath);
+        val resolver = new MetadataQueryProtocolMetadataResolver(httpClient, props, openSamlConfigBean);
+        val service = new SamlRegisteredService();
+        service.setId(RandomUtils.nextLong());
+        service.setName(RandomUtils.randomAlphabetic(12));
+        service.setServiceId("https://mockypost.io");
+
+        try (val webServer = new MockWebServer(new ClassPathResource("sample-metadata.xml"))) {
+            webServer.start();
+            service.setMetadataLocation("http://localhost:%s/entities/{0}".formatted(webServer.getPort()));
+            assertFalse(resolver.resolve(service).isEmpty());
+        }
+        assertFalse(resolver.resolve(service).isEmpty(),
+            "MDQ resolution must fall back onto the metadata backup file when the MDQ server is unreachable");
     }
 
     @Test

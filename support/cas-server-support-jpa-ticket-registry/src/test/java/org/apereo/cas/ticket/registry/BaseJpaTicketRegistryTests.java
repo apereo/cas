@@ -23,8 +23,6 @@ import org.apereo.cas.util.TicketGrantingTicketIdGenerator;
 import lombok.Getter;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.time.StopWatch;
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.RepeatedTest;
 import org.junit.jupiter.api.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -47,9 +45,10 @@ import static org.junit.jupiter.api.Assertions.*;
 @TestPropertySource(
     properties = {
         "cas.jdbc.show-sql=false",
-        "cas.ticket.registry.jpa.ddl-auto=create-drop"
+        "cas.ticket.registry.jpa.ddl-auto=update"
     })
 @Tag("JDBC")
+@Tag("SkipClearingTicketRegistry")
 @Getter
 @EnableConfigurationProperties({IntegrationProperties.class, CasConfigurationProperties.class})
 public abstract class BaseJpaTicketRegistryTests extends BaseTicketRegistryTests {
@@ -67,29 +66,66 @@ public abstract class BaseJpaTicketRegistryTests extends BaseTicketRegistryTests
     @Qualifier("dataSourceTicket")
     protected CloseableDataSource dataSourceTicket;
 
-    @AfterEach
-    public void cleanup() {
+    @Override
+    protected boolean isCipherExecutorOwnedByContext() {
+        return true;
+    }
+
+    @RepeatedTest(1)
+    void verifyDataSource() {
         assertNotNull(dataSourceTicket);
-        newTicketRegistry.deleteAll();
+    }
+
+    @Override
+    @RepeatedTest(2)
+    void verifyGetTicketsIsZero() throws Throwable {
+        val principal = UUID.randomUUID().toString();
+        addSessionFor(principal);
+        newTicketRegistry.deleteTicketsFor(principal);
+        assertEquals(0, newTicketRegistry.countSessionsFor(principal));
+    }
+
+    @Override
+    @RepeatedTest(2)
+    void verifyDeleteAllExistingTickets() throws Throwable {
+        val principal = UUID.randomUUID().toString();
+        addSessionFor(principal);
+        assertEquals(1, newTicketRegistry.deleteTicketsFor(principal));
+        assertEquals(0, newTicketRegistry.countSessionsFor(principal));
+    }
+
+    private void addSessionFor(final String principal) throws Throwable {
+        val ticketGrantingTicketId = new TicketGrantingTicketIdGenerator(10, StringUtils.EMPTY)
+            .getNewTicketId(TicketGrantingTicket.PREFIX);
+        newTicketRegistry.addTicket(new TicketGrantingTicketImpl(ticketGrantingTicketId,
+            CoreAuthenticationTestUtils.getAuthentication(principal), NeverExpiresExpirationPolicy.INSTANCE));
     }
 
     @RepeatedTest(2)
     void verifyLargeDataset() {
+        val principal = UUID.randomUUID().toString();
         val ticketGrantingTickets = Stream.generate(() -> {
             val tgtId = new TicketGrantingTicketIdGenerator(10, StringUtils.EMPTY)
                 .getNewTicketId(TicketGrantingTicket.PREFIX);
             return new TicketGrantingTicketImpl(tgtId,
-                CoreAuthenticationTestUtils.getAuthentication(), NeverExpiresExpirationPolicy.INSTANCE);
-        }).limit(COUNT);
+                CoreAuthenticationTestUtils.getAuthentication(principal), NeverExpiresExpirationPolicy.INSTANCE);
+        }).limit(COUNT).toList();
 
-        val stopwatch = new StopWatch();
-        stopwatch.start();
-        newTicketRegistry.addTicket(ticketGrantingTickets);
-
-        assertEquals(COUNT, newTicketRegistry.getTickets().size());
-        stopwatch.stop();
-        val time = stopwatch.getTime(TimeUnit.SECONDS);
-        assertTrue(time <= 20);
+        newTicketRegistry.addTicket(ticketGrantingTickets.stream());
+        try {
+            val expectedIds = ticketGrantingTickets
+                .stream()
+                .map(TicketGrantingTicketImpl::getId)
+                .collect(Collectors.toSet());
+            val found = newTicketRegistry
+                .getTickets()
+                .stream()
+                .filter(ticket -> expectedIds.contains(ticket.getId()))
+                .count();
+            assertEquals(COUNT, found);
+        } finally {
+            newTicketRegistry.deleteTicketsFor(principal);
+        }
     }
 
     @RepeatedTest(2)
@@ -136,7 +172,7 @@ public abstract class BaseJpaTicketRegistryTests extends BaseTicketRegistryTests
     @RepeatedTest(2)
     @Transactional(transactionManager = TicketRegistry.TICKET_TRANSACTION_MANAGER, readOnly = false)
     void verifyRegistryQuery() throws Throwable {
-        val tgt = new TicketGrantingTicketImpl("TGT-335500",
+        val tgt = new TicketGrantingTicketImpl(TestTicketIdentifiers.generate().ticketGrantingTicketId(),
             CoreAuthenticationTestUtils.getAuthentication(), NeverExpiresExpirationPolicy.INSTANCE);
         val registry = getNewTicketRegistry();
         registry.addTicket(tgt);

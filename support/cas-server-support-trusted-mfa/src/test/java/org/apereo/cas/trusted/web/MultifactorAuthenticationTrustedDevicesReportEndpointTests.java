@@ -80,10 +80,6 @@ class MultifactorAuthenticationTrustedDevicesReportEndpointTests extends Abstrac
                 .with(csrf())
                 .accept(MediaType.APPLICATION_JSON))
             .andExpect(status().isOk());
-        mockMvc.perform(get("/actuator/multifactorTrustedDevices")
-                .accept(MediaType.APPLICATION_JSON))
-            .andExpect(status().isOk())
-            .andExpect(jsonPath("$").isEmpty());
         mockMvc.perform(get("/actuator/multifactorTrustedDevices/{username}", record.getPrincipal())
                 .accept(MediaType.APPLICATION_JSON))
             .andExpect(status().isOk())

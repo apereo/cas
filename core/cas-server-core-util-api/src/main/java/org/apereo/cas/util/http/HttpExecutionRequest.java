@@ -50,6 +50,13 @@ public class HttpExecutionRequest {
     @Builder.Default
     private final int maximumRetryAttempts = 3;
 
+    /**
+     * Maximum buffered response size in bytes. Zero or less uses the global default from
+     * {@code org.apereo.cas.util.http.HttpRequestUtils.maximumResponseSize} (256 MiB).
+     */
+    @Builder.Default
+    private final long maximumResponseSize = 0;
+
     @Builder.Default
     private final Map<String, String> parameters = new LinkedHashMap<>();
 

@@ -11,8 +11,8 @@ import org.apereo.cas.configuration.model.support.jdbc.authn.QueryJdbcAuthentica
 import org.apereo.cas.jpa.JpaPersistenceProviderContext;
 import org.apereo.cas.util.RandomUtils;
 import lombok.val;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,6 +21,7 @@ import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Import;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.test.context.TestPropertySource;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -37,6 +38,7 @@ import static org.mockito.Mockito.*;
  * @since 4.0.0
  */
 @SuppressWarnings("JDBCExecuteWithNonConstantString")
+@TestPropertySource(properties = "database.name=cas-query-authentications")
 @Tag("JDBCAuthentication")
 @Import(QueryDatabaseAuthenticationHandlerTests.DatabaseTestConfiguration.class)
 class QueryDatabaseAuthenticationHandlerTests extends BaseDatabaseAuthenticationHandlerTests {
@@ -53,8 +55,8 @@ class QueryDatabaseAuthenticationHandlerTests extends BaseDatabaseAuthentication
             "user%d".formatted(i), "psw%d".formatted(i), expired, disabled, "123456789");
     }
 
-    @BeforeEach
-    void initialize() throws Exception {
+    @BeforeAll
+    static void createUserAccounts(@Autowired @Qualifier("dataSource") final DataSource dataSource) throws Exception {
         try (val connection = dataSource.getConnection()) {
             try (val statement = connection.createStatement()) {
                 connection.setAutoCommit(true);
@@ -69,15 +71,12 @@ class QueryDatabaseAuthenticationHandlerTests extends BaseDatabaseAuthentication
         }
     }
 
-    @AfterEach
-    public void afterEachTest() throws Exception {
-        try (val c = this.dataSource.getConnection()) {
+    @AfterAll
+    static void deleteUserAccounts(@Autowired @Qualifier("dataSource") final DataSource dataSource) throws Exception {
+        try (val c = dataSource.getConnection()) {
             try (val s = c.createStatement()) {
                 c.setAutoCommit(true);
-
-                for (var i = 0; i < 5; i++) {
-                    s.execute("delete from casusers;");
-                }
+                s.execute("delete from casusers;");
             }
         }
     }

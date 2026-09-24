@@ -1,14 +1,13 @@
 package org.apereo.cas.oidc.vc.issuer;
 
-import module java.base;
-import org.apereo.cas.configuration.model.support.oidc.OidcVerifiableCredentialConfigurationProperties.CredentialConfigurationFormats;
-import org.jspecify.annotations.Nullable;
-
 /**
- * This is {@link OidcVerifiableCredentialIssuerResponse}.
+ * This is {@link OidcVerifiableCredentialIssuerResponse}, a single credential produced for a
+ * single proof of possession. OpenID4VCI 1.0 carries no format on the wire; the format is that
+ * of the credential configuration the wallet asked for.
  *
  * @author Misagh Moayyed
+ * @param credential the issued credential
  * @since 8.1.0
  */
-public record OidcVerifiableCredentialIssuerResponse(CredentialConfigurationFormats format, String credential, @Nullable String nonce) {
+public record OidcVerifiableCredentialIssuerResponse(String credential) {
 }

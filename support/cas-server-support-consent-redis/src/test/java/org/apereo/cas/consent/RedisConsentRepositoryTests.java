@@ -52,5 +52,24 @@ class RedisConsentRepositoryTests extends BaseConsentRepositoryTests {
         assertFalse(repo.deleteConsentDecision(-1, UUID.randomUUID().toString()));
     }
 
+    @Test
+    void verifyPrincipalIsMatchedLiterally() throws Throwable {
+        val repo = getRepository();
+        val user = getUser();
+        val nestedUser = user + ":nested";
+        assertNotNull(repo.storeConsentDecision(BUILDER.build(SVC, REG_SVC, user, ATTR)));
+        assertNotNull(repo.storeConsentDecision(BUILDER.build(SVC, REG_SVC, nestedUser, ATTR)));
 
+        assertEquals(1, repo.findConsentDecisions(user).size());
+        assertEquals(1, repo.findConsentDecisions(nestedUser).size());
+        assertTrue(repo.findConsentDecisions(user.substring(0, 4) + '*').isEmpty());
+        assertTrue(repo.findConsentDecisions(user.substring(0, 7) + '?').isEmpty());
+        assertTrue(repo.findConsentDecisions('[' + user.substring(0, 1) + ']' + user.substring(1)).isEmpty());
+        assertFalse(repo.deleteConsentDecisions(user.substring(0, 4) + '*'));
+        assertEquals(1, repo.findConsentDecisions(user).size());
+
+        assertTrue(repo.deleteConsentDecisions(user));
+        assertTrue(repo.findConsentDecisions(user).isEmpty());
+        assertEquals(1, repo.findConsentDecisions(nestedUser).size());
+    }
 }

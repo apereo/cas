@@ -7,6 +7,7 @@ import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.consent.CasConsentableAttribute;
 import org.apereo.cas.consent.ConsentEngine;
+import org.apereo.cas.consent.ConsentQueryResult;
 import org.apereo.cas.consent.ConsentReminderOptions;
 import org.apereo.cas.consent.ConsentableAttributeBuilder;
 import org.apereo.cas.services.RegisteredService;
@@ -58,14 +59,30 @@ public abstract class AbstractConsentAction extends BaseCasWebflowAction {
         });
     }
 
-    protected void prepareConsentForRequestContext(final RequestContext requestContext) throws Throwable {
+    /**
+     * Prepare the consent view for the request context.
+     * The consentable attributes and the consent decision are taken from {@code queryResult} when the
+     * consent engine has already resolved them, since resolving them again would repeat a full attribute
+     * release policy evaluation and another consent repository read for the same request. A query result
+     * that carries no attributes, such as one produced by a custom activation strategy, is resolved here.
+     *
+     * @param requestContext the request context
+     * @param queryResult    the consent query result that decided consent is required
+     * @throws Throwable the throwable
+     */
+    protected void prepareConsentForRequestContext(final RequestContext requestContext,
+                                                   final ConsentQueryResult queryResult) throws Throwable {
         val consentProperties = casProperties.getConsent().getCore();
 
         val originalService = WebUtils.getService(requestContext);
         val service = authenticationRequestServiceSelectionStrategies.resolveService(originalService);
         val registeredService = getRegisteredServiceForConsent(requestContext, service);
         val authentication = WebUtils.getAuthentication(requestContext);
-        val attributes = consentEngine.resolveConsentableAttributesFrom(authentication, service, registeredService);
+
+        val resolvedByConsentEngine = queryResult.getConsentableAttributes() != null;
+        val attributes = resolvedByConsentEngine
+            ? queryResult.getConsentableAttributes()
+            : consentEngine.resolveConsentableAttributesFrom(authentication, service, registeredService);
         val flowScope = requestContext.getFlowScope();
 
         prepareConsentableAttributes(attributes, requestContext);
@@ -73,7 +90,9 @@ public abstract class AbstractConsentAction extends BaseCasWebflowAction {
         WebUtils.putPrincipal(requestContext, authentication.getPrincipal());
         WebUtils.putServiceIntoFlashScope(requestContext, service);
 
-        val decision = consentEngine.findConsentDecision(service, registeredService, authentication);
+        val decision = resolvedByConsentEngine
+            ? queryResult.getConsentDecision()
+            : consentEngine.findConsentDecision(service, registeredService, authentication);
         flowScope.put("option", Optional.ofNullable(decision)
             .map(consentDecision -> consentDecision.getOptions().getValue())
             .orElseGet(ConsentReminderOptions.ATTRIBUTE_NAME::getValue));

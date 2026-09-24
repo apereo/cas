@@ -18,7 +18,6 @@
     <script type="text/javascript" th:src="@{#{webjars.sweet-alert.js}}"></script>
     <script type="text/javascript" th:src="@{#{webjars.notyf.js}}"></script>
     <script type="text/javascript" th:src="@{#{webjars.jsyaml.js}}"></script>
-    <script type="text/javascript" th:src="@{#{webjars.mermaid.js}}"></script>
     <script type="text/javascript" th:src="@{#{webjars.hotkeys.js}}"></script>
     <script type="text/javascript" th:src="@{#{webjars.tomselect.js}}"></script>
 
@@ -46,7 +45,8 @@
                 scriptFactoryAvailable: /*[[${scriptFactoryAvailable}]]*/,
                 mutablePropertySources: mutablePropertySources,
                 mutablePropertySourcesAvailable: mutablePropertySources.length > 0,
-                trumbowygIconsPath: /*[[@{#{webjars.trumbowyg.icons}}]]*/ ""
+                trumbowygIconsPath: /*[[@{#{webjars.trumbowyg.icons}}]]*/ "",
+                mermaidScriptPath: /*[[@{#{webjars.mermaid.js}}]]*/ ""
             });
         })();
         /*]]>*/
@@ -79,6 +79,7 @@
     <script type="text/javascript" th:src="@{/js/palantir-cas-events.js}"></script>
     <script type="text/javascript" th:src="@{/js/palantir-hotkeys.js}"></script>
     <script type="text/javascript" th:src="@{/js/palantir-services.js}"></script>
+    <script type="text/javascript" th:src="@{/js/palantir-services-sections.js}"></script>
     <script type="text/javascript" th:src="@{/js/palantir-services-wizard.js}"></script>
     <script type="text/javascript" th:src="@{/js/palantir-services-wizard-cas.js}"></script>
     <script type="text/javascript" th:src="@{/js/palantir-services-wizard-oauth.js}"></script>
@@ -92,13 +93,15 @@
 
 <main class="container mt-3 mb-3">
     <div layout:fragment="content" id="dashboard" class="d-none">
+        <a class="palantir-skip-link" href="#palantirMainPanel">Skip to main content</a>
+        <h1 class="palantir-sr-only">Palantir dashboard</h1>
         <script type="text/javascript" th:src="@{#{webjars.jqueryui.js}}"></script>
         <script type="text/javascript" th:src="@{#{webjars.trumbowyg.js}}"></script>
         <script type="text/javascript" th:src="@{#{webjars.contextmenu.js}}"></script>
         <script type="text/javascript" th:src="@{#{webjars.contextmenu.position.js}}"></script>
         
         <div th:replace="~{fragments/palantir/navigationsidebar :: main}"/>
-        <div class="mdc-card p-2 m-1" style="min-height: 100vh;">
+        <div class="mdc-card p-2 m-1" id="palantirMainPanel" tabindex="-1" style="min-height: 100vh;">
             <div th:replace="~{fragments/palantir/dashboardtabs :: main}"/>
             <div th:replace="~{fragments/palantir/servicestab :: main}"/>
             <div th:if="${isRoleAdmin}" th:replace="~{fragments/palantir/systemtab :: main}"/>

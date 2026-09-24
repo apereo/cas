@@ -186,6 +186,35 @@ public class JpaTicketRegistry extends AbstractTicketRegistry {
     }
 
     @Override
+    public long countTickets() {
+        return transactionTemplate.execute(_ -> {
+            val sql = String.format("SELECT COUNT(t.id) FROM %s t", ticketEntityFactory.getEntityName());
+            val query = entityManager.createQuery(sql);
+            return countToLong(query.getSingleResult());
+        });
+    }
+
+    /**
+     * Counted by the indexed query {@link #getSessionsFor(String)} runs, rather than by the inherited
+     * version, which reads and decodes every ticket in the table through a cursor it never closes.
+     * <p>
+     * The cursor is consumed inside the transaction because that is what keeps the JDBC connection,
+     * and therefore the result set, open for the length of the traversal. Consuming it outside one
+     * leaves the connection free to return to the pool before the first row is read.
+     *
+     * @param principalId the principal id
+     * @return the number of sessions held for the principal
+     */
+    @Override
+    public long countSessionsFor(final String principalId) {
+        return transactionTemplate.execute(_ -> {
+            try (val sessions = getSessionsFor(principalId)) {
+                return sessions.count();
+            }
+        });
+    }
+
+    @Override
     public Stream<? extends Ticket> getTicketsFor(final Service service) {
         val sql = String.format("SELECT t FROM %s t WHERE t.service=:service", ticketEntityFactory.getEntityName());
         val query = entityManager.createQuery(sql, ticketEntityFactory.getType()).setParameter("service", service.getId());
@@ -328,6 +357,17 @@ public class JpaTicketRegistry extends AbstractTicketRegistry {
         });
     }
 
+    /**
+     * The catalog does not always know the ticket. An encoded ticket is identified by a digest that
+     * carries no prefix, so the lookup finds nothing for one, and
+     * {@code AbstractTicketRegistry.decodeTicket} removes encoded tickets on sight whenever it meets
+     * them with encryption turned off -- which is what a registry does once encryption is disabled
+     * while encrypted tickets are still in the table. That removal must not fail, so an unknown
+     * definition falls through to the plain delete by identifier.
+     *
+     * @param ticketToDelete the ticket to delete
+     * @return the number of rows removed
+     */
     @Override
     public long countSessionsFor(final String principalId) {
         return transactionTemplate.execute(_ -> {
@@ -342,7 +382,7 @@ public class JpaTicketRegistry extends AbstractTicketRegistry {
             var totalCount = 0;
             val md = ticketCatalog.find(ticketToDelete);
 
-            if (md.getProperties().isCascadeRemovals()) {
+            if (md != null && md.getProperties().isCascadeRemovals()) {
                 totalCount = deleteTicketGrantingTickets(encTicketId);
             } else {
                 val sql = String.format("DELETE FROM %s o WHERE o.id = :id", ticketEntityFactory.getEntityName());
@@ -365,14 +405,25 @@ public class JpaTicketRegistry extends AbstractTicketRegistry {
         });
     }
 
+    /*
+     * An OR across two columns can seek neither index, so a single statement could scan the table and take locks
+     * on rows belonging to other sessions. Now each half seeks its own index. Children go first so that no row is left
+     * pointing at a parent that is already gone, and the total returned is unchanged.
+     */
     protected int deleteTicketGrantingTickets(final String ticketId) {
         return transactionTemplate.execute(_ -> {
-            var sql = String.format("DELETE FROM %s t WHERE t.parentId = :id OR t.id = :id", ticketEntityFactory.getEntityName());
-            LOGGER.trace("Creating delete query [{}] for ticket id [{}]", sql, ticketId);
-            var query = entityManager.createQuery(sql);
-            query.setParameter("id", ticketId);
-            return query.executeUpdate();
+            val children = deleteTicketsBy("t.parentId", ticketId);
+            val parent = deleteTicketsBy("t.id", ticketId);
+            return children + parent;
         });
+    }
+
+    private int deleteTicketsBy(final String column, final String ticketId) {
+        val sql = String.format("DELETE FROM %s t WHERE %s = :id", ticketEntityFactory.getEntityName(), column);
+        LOGGER.trace("Creating delete query [{}] for ticket id [{}]", sql, ticketId);
+        val query = entityManager.createQuery(sql);
+        query.setParameter("id", ticketId);
+        return query.executeUpdate();
     }
 
     protected LockModeType getConfiguredLockModeType() {

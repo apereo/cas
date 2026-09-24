@@ -93,7 +93,7 @@ function removeIdentityProvider(idp, type) {
 
 function configureSaml2ClientMetadataButtons() {
     async function showSamlMetadata(payload) {
-        const saml2Editor = initializeAceEditor("delegatedClientsSaml2Editor", "xml");
+        const saml2Editor = initializeAceEditor("delegatedClientsSaml2Editor", "xml", {useWorker: false});
         saml2Editor.setReadOnly(true);
 
         function simplePrettyXml(xml) {

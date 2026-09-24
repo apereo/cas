@@ -12,7 +12,9 @@ import org.apereo.cas.support.oauth.util.OAuth20Utils;
 import org.apereo.cas.support.oauth.web.endpoints.OAuth20ConfigurationContext;
 import org.apereo.cas.support.oauth.web.response.accesstoken.ext.AccessTokenRequestContext;
 import org.apereo.cas.support.oauth.web.response.accesstoken.ext.BaseAccessTokenGrantRequestExtractor;
+import org.apereo.cas.ticket.InvalidTicketException;
 import org.apereo.cas.ticket.TransientSessionTicket;
+import org.apereo.cas.util.function.FunctionUtils;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
@@ -60,7 +62,9 @@ public class AccessTokenPreAuthorizedCodeGrantRequestExtractor<T extends OAuth20
 
         val scopes = requestParameterResolver.resolveRequestScopes(webContext);
         val givenCode = requestParameterResolver.resolveRequestParameter(webContext, OidcConstants.PRE_AUTHORIZED_CODE).orElseThrow();
-        val preAuthorizationCode = Objects.requireNonNull((TransientSessionTicket) transactionService.fetchPreAuthorizationCode(givenCode));
+
+        val preAuthorizationCode = (TransientSessionTicket) transactionService.consumePreAuthorizationCode(givenCode);
+        FunctionUtils.throwIf(preAuthorizationCode == null, () -> new InvalidTicketException(givenCode));
         val clientId = preAuthorizationCode.getPropertyAsString(OAuth20Constants.CLIENT_ID);
         val registeredService = OAuth20Utils.getRegisteredOAuthServiceByClientId(
             configurationContext.getServicesManager(), Objects.requireNonNull(clientId));
@@ -83,7 +87,7 @@ public class AccessTokenPreAuthorizedCodeGrantRequestExtractor<T extends OAuth20
         val authentication = configurationContext.getAuthenticationBuilder()
             .build(userProfile, Objects.requireNonNull(registeredService), webContext, service);
 
-        return AccessTokenRequestContext
+        val tokenRequestContext = AccessTokenRequestContext
             .builder()
             .scopes(scopes)
             .grantType(getGrantType())
@@ -93,5 +97,12 @@ public class AccessTokenPreAuthorizedCodeGrantRequestExtractor<T extends OAuth20
             .authentication(authentication)
             .preAuthorizationCode(preAuthorizationCode.getId())
             .build();
+        val credentialConfigurationIds = preAuthorizationCode.getProperty(
+            OidcVerifiableCredentialTransactionService.PROPERTY_CREDENTIAL_CONFIGURATION_IDS, List.class);
+        if (credentialConfigurationIds != null && !credentialConfigurationIds.isEmpty()) {
+            tokenRequestContext.getParameters().put(
+                OidcVerifiableCredentialTransactionService.PROPERTY_CREDENTIAL_CONFIGURATION_IDS, credentialConfigurationIds);
+        }
+        return tokenRequestContext;
     }
 }

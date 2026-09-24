@@ -28,6 +28,7 @@ import org.apereo.inspektr.audit.support.MaxAgeWhereClauseMatchCriteria;
 import org.apereo.inspektr.audit.support.WhereClauseMatchCriteria;
 import org.jooq.lambda.Unchecked;
 import org.springframework.beans.factory.FactoryBean;
+import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -232,11 +233,11 @@ public class CasJdbcAuditAutoConfiguration {
         @Lazy(false)
         public Cleanable inspektrAuditTrailCleaner(
             final ConfigurableApplicationContext applicationContext,
-            @Qualifier("jdbcAuditTrailManager") final AuditTrailManager jdbcAuditTrailManager) {
+            @Qualifier("jdbcAuditTrailManager") final ObjectProvider<AuditTrailManager> jdbcAuditTrailManager) {
             return BeanSupplier.of(Cleanable.class)
                 .when(BeanCondition.on("cas.audit.jdbc.schedule.enabled").isTrue().evenIfMissing()
                     .given(applicationContext.getEnvironment()))
-                .supply(() -> new JdbcAuditTrailCleaner(jdbcAuditTrailManager))
+                .supply(() -> new JdbcAuditTrailCleaner(jdbcAuditTrailManager.getObject()))
                 .otherwiseProxy()
                 .get();
         }

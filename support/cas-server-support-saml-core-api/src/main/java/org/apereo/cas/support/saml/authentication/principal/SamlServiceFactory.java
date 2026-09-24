@@ -27,6 +27,8 @@ public class SamlServiceFactory extends AbstractServiceFactory<SamlService> {
 
     private static final Namespace NAMESPACE_SAML1 = Namespace.getNamespace("urn:oasis:names:tc:SAML:1.0:protocol");
 
+    private static final String ATTRIBUTE_SAML_REQUEST_DETAILS = SamlServiceFactory.class.getName() + ".samlRequestDetails";
+
     public SamlServiceFactory(final TenantExtractor tenantExtractor,
                               final UrlValidator urlValidator) {
         super(tenantExtractor, urlValidator);
@@ -48,12 +50,11 @@ public class SamlServiceFactory extends AbstractServiceFactory<SamlService> {
         if (StringUtils.hasText(requestBody)) {
             request.setAttribute(SamlProtocolConstants.PARAMETER_SAML_REQUEST, requestBody);
         }
-        val requestChild = getRequestDocumentElement(requestBody);
-        val artifactId = getArtifactIdFromRequest(requestChild);
-        val requestId = getRequestIdFromRequest(requestChild);
-        LOGGER.trace("Extracted ArtifactId: [{}]. Extracted Request Id: [{}]", artifactId, requestId);
+        val requestDetails = getSamlRequestDetails(request, requestBody);
+        LOGGER.trace("Extracted ArtifactId: [{}]. Extracted Request Id: [{}]",
+            requestDetails.artifactId(), requestDetails.requestId());
 
-        val samlService = new SamlService(id, service, artifactId, requestId);
+        val samlService = new SamlService(id, service, requestDetails.artifactId(), requestDetails.requestId());
         samlService.setSource(SamlProtocolConstants.CONST_PARAM_TARGET);
         return samlService;
     }
@@ -86,6 +87,28 @@ public class SamlServiceFactory extends AbstractServiceFactory<SamlService> {
             LOGGER.trace("Could not obtain the saml request body from the http request", e);
         }
         return null;
+    }
+
+    /**
+     * Resolve the artifact and request identifiers carried by the SOAP body, parsing it at most once
+     * per request. This factory is consulted several times while a single request is handled, by
+     * request filters and interceptors, by the validation controller and again while the response
+     * view is rendered, and the body cannot change in between, so the outcome of the parse is kept
+     * on the request next to the body itself.
+     *
+     * @param request     the request being handled
+     * @param requestBody the SOAP body, which may be absent
+     * @return the identifiers found in the body, each of which may be null
+     */
+    private static SamlRequestDetails getSamlRequestDetails(final HttpServletRequest request, final String requestBody) {
+        if (request.getAttribute(ATTRIBUTE_SAML_REQUEST_DETAILS) instanceof final SamlRequestDetails cached) {
+            LOGGER.trace("Reusing SAML request details already resolved for this request");
+            return cached;
+        }
+        val requestChild = getRequestDocumentElement(requestBody);
+        val requestDetails = new SamlRequestDetails(getArtifactIdFromRequest(requestChild), getRequestIdFromRequest(requestChild));
+        request.setAttribute(ATTRIBUTE_SAML_REQUEST_DETAILS, requestDetails);
+        return requestDetails;
     }
 
     private static Element getRequestDocumentElement(final String requestBody) {
@@ -132,5 +155,8 @@ public class SamlServiceFactory extends AbstractServiceFactory<SamlService> {
             return null;
         }
         return artifactElement.getValue().trim();
+    }
+
+    private record SamlRequestDetails(String artifactId, String requestId) {
     }
 }

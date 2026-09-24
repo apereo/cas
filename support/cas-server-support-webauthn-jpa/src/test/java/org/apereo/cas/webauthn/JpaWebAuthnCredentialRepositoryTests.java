@@ -19,7 +19,8 @@ import org.springframework.test.context.TestPropertySource;
     "cas.authn.mfa.web-authn.crypto.signing.key=xTjUNTiL1kybVd6j0D_vJlIuQ8_1wojpiEUd_daKTvlmQpCOmQ99RRimAXfBi0niX4Z_rduthbLXGnNaeUhqLw",
     "cas.authn.mfa.web-authn.crypto.encryption.key=8W_Z0NGvZd094MJAS-XfepaCtRXnrqTFrlp90GXG8Ok",
     "cas.authn.mfa.web-authn.crypto.alg=" + ContentEncryptionAlgorithmIdentifiers.AES_128_CBC_HMAC_SHA_256,
-    "cas.jdbc.show-sql=false"
+    "cas.jdbc.show-sql=false",
+    "cas.authn.mfa.web-authn.jpa.url=jdbc:hsqldb:mem:webauthn;hsqldb.tx=mvcc"
 })
 @Tag("JDBCMFA")
 @ImportAutoConfiguration({CasJpaWebAuthnAutoConfiguration.class, CasHibernateJpaAutoConfiguration.class})

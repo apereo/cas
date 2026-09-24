@@ -8,8 +8,11 @@ import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.io.TempDir;
+import org.springframework.core.io.ByteArrayResource;
 import org.springframework.core.io.FileSystemResource;
 import tools.jackson.databind.ObjectMapper;
+import static org.awaitility.Awaitility.*;
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
@@ -57,5 +60,59 @@ class JsonResourceInterruptInquirerTests {
         assertTrue(response.getData().containsKey("field2"));
 
         inquirer.destroy();
+    }
+
+    @Test
+    void verifyConcurrentInquiriesUseLoadedDefinitions() throws Throwable {
+        val json = MAPPER.writeValueAsString(Map.of("casuser", new InterruptResponse("Blocked", true, false)));
+        val reads = new AtomicInteger();
+        val resource = new ByteArrayResource(json.getBytes(StandardCharsets.UTF_8), "Interrupts") {
+            @Override
+            public InputStream getInputStream() throws IOException {
+                reads.incrementAndGet();
+                return super.getInputStream();
+            }
+        };
+        val inquirer = new JsonResourceInterruptInquirer(resource);
+        val readsAfterLoad = reads.get();
+        assertTrue(readsAfterLoad > 0);
+        try (val executor = Executors.newVirtualThreadPerTaskExecutor()) {
+            val results = executor.invokeAll(IntStream.range(0, 50)
+                .<Callable<InterruptResponse>>mapToObj(_ -> () -> inquire(inquirer, "casuser"))
+                .toList());
+            for (val result : results) {
+                assertTrue(result.get().isBlock());
+            }
+        }
+        assertEquals(readsAfterLoad, reads.get());
+    }
+
+    @Test
+    void verifyFileChangesAreApplied(@TempDir final Path directory) {
+        val jsonFile = directory.resolve("interrupts.json").toFile();
+        MAPPER.writeValue(jsonFile, Map.of("casuser", new InterruptResponse("First")));
+        val inquirer = new JsonResourceInterruptInquirer(new FileSystemResource(jsonFile));
+        try {
+            assertTrue(inquire(inquirer, "casuser").isInterrupt());
+            MAPPER.writeValue(jsonFile, Map.of("otheruser", new InterruptResponse("Second")));
+            await().atMost(Duration.ofSeconds(10)).untilAsserted(() -> {
+                assertTrue(inquire(inquirer, "otheruser").isInterrupt());
+                assertFalse(inquire(inquirer, "casuser").isInterrupt());
+            });
+        } finally {
+            inquirer.destroy();
+        }
+    }
+
+    private static InterruptResponse inquire(final InterruptInquirer inquirer, final String username) {
+        try {
+            return inquirer.inquire(CoreAuthenticationTestUtils.getAuthentication(username),
+                CoreAuthenticationTestUtils.getRegisteredService(),
+                CoreAuthenticationTestUtils.getService(),
+                CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword(),
+                new MockRequestContext());
+        } catch (final Throwable e) {
+            throw new RuntimeException(e);
+        }
     }
 }

@@ -11,8 +11,6 @@ import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.junit.jupiter.api.parallel.Execution;
-import org.junit.jupiter.api.parallel.ExecutionMode;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -35,7 +33,6 @@ import static org.springframework.http.HttpStatus.OK;
 })
 @Tag("SMS")
 @ExtendWith(CasTestExtension.class)
-@Execution(ExecutionMode.SAME_THREAD)
 class ClickatellSmsSenderTests {
     @Autowired
     @Qualifier(SmsSender.BEAN_NAME)
@@ -91,12 +88,10 @@ class ClickatellSmsSenderTests {
             + "\"accepted\": \"false\""
             + '}';
 
-        val props = casProperties.getSmsProvider().getClickatell();
-        val port = URI.create(props.getServerUrl()).getPort();
-        try (val webServer = new MockWebServer(port,
-            new ByteArrayResource(data.getBytes(UTF_8), "Output"), OK)) {
+        try (val webServer = new MockWebServer(new ByteArrayResource(data.getBytes(UTF_8), "Output"), OK)) {
             webServer.start();
-            assertFalse(smsSender.send("123-456-7890", "123-456-7890", "TEST"));
+            val sender = new ClickatellSmsSender("DEMO_TOKEN", "http://localhost:" + webServer.getPort());
+            assertFalse(sender.send("123-456-7890", "123-456-7890", "TEST"));
         }
     }
 
@@ -108,12 +103,10 @@ class ClickatellSmsSenderTests {
             + ']'
             + '}';
 
-        val props = casProperties.getSmsProvider().getClickatell();
-        val port = URI.create(props.getServerUrl()).getPort();
-        try (val webServer = new MockWebServer(port,
-            new ByteArrayResource(data.getBytes(UTF_8), "Output"), OK)) {
+        try (val webServer = new MockWebServer(new ByteArrayResource(data.getBytes(UTF_8), "Output"), OK)) {
             webServer.start();
-            assertFalse(smsSender.send("123-456-7890", "123-456-7890", "TEST"));
+            val sender = new ClickatellSmsSender("DEMO_TOKEN", "http://localhost:" + webServer.getPort());
+            assertFalse(sender.send("123-456-7890", "123-456-7890", "TEST"));
         }
     }
 
@@ -125,23 +118,19 @@ class ClickatellSmsSenderTests {
             + ']'
             + '}';
 
-        val props = casProperties.getSmsProvider().getClickatell();
-        val port = URI.create(props.getServerUrl()).getPort();
-        try (val webServer = new MockWebServer(port,
-            new ByteArrayResource(data.getBytes(UTF_8), "Output"), OK)) {
+        try (val webServer = new MockWebServer(new ByteArrayResource(data.getBytes(UTF_8), "Output"), OK)) {
             webServer.start();
-            assertFalse(smsSender.send("123-456-7890", "123-456-7890", "TEST"));
+            val sender = new ClickatellSmsSender("DEMO_TOKEN", "http://localhost:" + webServer.getPort());
+            assertFalse(sender.send("123-456-7890", "123-456-7890", "TEST"));
         }
     }
 
     @Test
     void verifyBadSmsSender() throws Throwable {
-        val props = casProperties.getSmsProvider().getClickatell();
-        val port = URI.create(props.getServerUrl()).getPort();
-        try (val webServer = new MockWebServer(port,
-            new ByteArrayResource("{}".getBytes(UTF_8), "Output"), OK)) {
+        try (val webServer = new MockWebServer(new ByteArrayResource("{}".getBytes(UTF_8), "Output"), OK)) {
             webServer.start();
-            assertFalse(smsSender.send("123-456-7890", "123-456-7890", "TEST"));
+            val sender = new ClickatellSmsSender("DEMO_TOKEN", "http://localhost:" + webServer.getPort());
+            assertFalse(sender.send("123-456-7890", "123-456-7890", "TEST"));
         }
     }
 }

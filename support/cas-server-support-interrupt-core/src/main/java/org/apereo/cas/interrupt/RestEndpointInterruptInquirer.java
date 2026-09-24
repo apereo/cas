@@ -22,6 +22,7 @@ import org.apache.hc.core5.http.HttpResponse;
 import org.hjson.JsonValue;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
+import org.springframework.http.HttpStatusCode;
 import org.springframework.http.MediaType;
 import org.springframework.webflow.execution.RequestContext;
 import tools.jackson.databind.ObjectMapper;
@@ -77,8 +78,12 @@ public class RestEndpointInterruptInquirer extends BaseInterruptInquirer {
                 .headers(headers)
                 .build();
             response = HttpUtils.execute(exec);
-            if (response != null && ((HttpEntityContainer) response).getEntity() != null) {
-                try (val content = ((HttpEntityContainer) response).getEntity().getContent()) {
+            if (response != null && !HttpStatusCode.valueOf(response.getCode()).is2xxSuccessful()) {
+                LOGGER.warn("Interrupt endpoint [{}] returned status [{}]; no interrupt is produced", restProperties.getUrl(), response.getCode());
+                return InterruptResponse.none();
+            }
+            if (response instanceof final HttpEntityContainer container && container.getEntity() != null) {
+                try (val content = container.getEntity().getContent()) {
                     val result = IOUtils.toString(content, StandardCharsets.UTF_8);
                     return MAPPER.readValue(JsonValue.readHjson(result).toString(), InterruptResponse.class);
                 }

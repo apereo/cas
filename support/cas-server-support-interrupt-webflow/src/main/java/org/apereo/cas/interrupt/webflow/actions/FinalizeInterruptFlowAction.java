@@ -52,6 +52,10 @@ public class FinalizeInterruptFlowAction extends BaseCasWebflowAction {
                 LOGGER.warn("Link [{}] is not valid and is not part of the interrupt response", link);
                 throw UnauthorizedServiceException.denied("Rejected");
             }
+            if (response.isBlock()) {
+                LOGGER.debug("Following link [{}] of a blocking interrupt does not finalize the interrupt", link);
+                return success();
+            }
         }
         
         val authentication = WebUtils.getAuthentication(requestContext);

@@ -44,8 +44,6 @@ import org.junit.jupiter.api.RepeatedTest;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.junit.jupiter.api.parallel.Execution;
-import org.junit.jupiter.api.parallel.ExecutionMode;
 import org.junitpioneer.jupiter.RetryingTest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -363,8 +361,7 @@ class RedisServerTicketRegistryTests {
         "cas.ticket.registry.redis.crypto.enabled=true"
     })
     @ExtendWith(CasTestExtension.class)
-    @Execution(ExecutionMode.SAME_THREAD)
-    class RecentSessionsTests {
+        class RecentSessionsTests {
         @Autowired
         @Qualifier(TicketRegistry.BEAN_NAME)
         private TicketRegistry ticketRegistry;
@@ -427,7 +424,8 @@ class RedisServerTicketRegistryTests {
                 .getNewTicketId(TicketGrantingTicket.PREFIX);
             val tgt = new TicketGrantingTicketImpl(tgtId, authentication, new HardTimeoutExpirationPolicy(2));
             ticketRegistry.addTicket(tgt);
-            Thread.sleep(1000);
+            val addedAt = Instant.now(Clock.systemUTC()).getEpochSecond();
+            await().until(() -> Instant.now(Clock.systemUTC()).getEpochSecond() > addedAt);
         }
     }
 

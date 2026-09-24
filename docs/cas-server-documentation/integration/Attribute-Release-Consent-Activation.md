@@ -68,12 +68,15 @@ qualifies for consent. Path to the script is defined via CAS configuration prope
 The script itself may be designed as such:
 
 ```groovy
-import org.apereo.cas.util.model.TriStateBoolean
+import org.apereo.cas.configuration.support.*
+import org.apereo.cas.consent.*
 
 def run(Object[] args) {
     def (consentEngine,casProperties,service,registeredService,authentication,request,logger) = args
     logger.debug("Activating consent for ${registeredService.name}")
-    return true;
+    // calculate whether consent is required for the service and return the result
+    def required = false
+    return required ? ConsentQueryResult.required() : ConsentQueryResult.ignored()
 }
 ```
 

@@ -2,10 +2,8 @@ package org.apereo.cas.consent;
 
 import module java.base;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
-import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.config.CasConsentLdapAutoConfiguration;
 import org.apereo.cas.configuration.CasConfigurationProperties;
-import org.apereo.cas.services.BaseRegisteredService;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.test.CasTestExtension;
 import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
@@ -56,10 +54,6 @@ public abstract class BaseLdapConsentRepositoryTests extends BaseConsentReposito
 
     private static final String USER2_DN = "cn=casuser2,ou=people,dc=example,dc=org";
 
-    private static final Service SVC2 = RegisteredServiceTestUtils.getService2();
-
-    private static final BaseRegisteredService REG_SVC2 = RegisteredServiceTestUtils.getRegisteredService(SVC2.getId());
-
     private static final String DEF_FILTER = "(objectClass=*)";
 
     @Autowired
@@ -72,6 +66,11 @@ public abstract class BaseLdapConsentRepositoryTests extends BaseConsentReposito
     @Override
     protected String getUser() {
         return USER_CN;
+    }
+
+    @Override
+    protected String getOtherUser() {
+        return USER2_CN;
     }
 
     @AfterEach

@@ -5,7 +5,6 @@ import org.apereo.cas.configuration.model.support.mongo.ticketregistry.MongoDbTi
 import org.apereo.cas.mongo.MongoDbConnectionFactory;
 import org.apereo.cas.ticket.TicketCatalog;
 import org.apereo.cas.ticket.TicketDefinition;
-import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.apereo.cas.ticket.registry.MongoDbTicketDocument;
 import com.mongodb.client.MongoCollection;
 import lombok.RequiredArgsConstructor;
@@ -44,7 +43,9 @@ public class MongoDbTicketRegistryFacilitator {
     private final MongoDbTicketRegistryProperties properties;
     
     /**
-     * Create ticket collections.
+     * Create ticket collections. This honors {@code drop-collection} and {@code drop-indexes},
+     * both of which destroy data, so it must be invoked exactly once per application context and
+     * never from a refresh-scoped bean that is rebuilt on every configuration refresh.
      */
     public void createTicketCollections() {
         val definitions = ticketCatalog.findAll();
@@ -75,15 +76,13 @@ public class MongoDbTicketRegistryFacilitator {
                 expectedIndexes.add(ticketIdIndex);
             }
 
-            if (ticket.getApiClass().equals(TicketGrantingTicket.class)) {
-                if (properties.getIndexes().isEmpty() || properties.getIndexes().contains(INDEX_NAME_PRINCIPAL)) {
-                    val principalIdIndex = new Index()
-                        .on(MongoDbTicketDocument.FIELD_NAME_PRINCIPAL, Sort.Direction.ASC)
-                        .named(INDEX_NAME_PRINCIPAL);
-                    expectedIndexes.add(principalIdIndex);
-                }
+            if (properties.getIndexes().isEmpty() || properties.getIndexes().contains(INDEX_NAME_PRINCIPAL)) {
+                val principalIdIndex = new Index()
+                    .on(MongoDbTicketDocument.FIELD_NAME_PRINCIPAL, Sort.Direction.ASC)
+                    .named(INDEX_NAME_PRINCIPAL);
+                expectedIndexes.add(principalIdIndex);
             }
-            
+
             if (properties.getIndexes().isEmpty() || properties.getIndexes().contains(INDEX_NAME_EXPIRATION)) {
                 val expireIndex = new Index()
                     .named(INDEX_NAME_EXPIRATION)

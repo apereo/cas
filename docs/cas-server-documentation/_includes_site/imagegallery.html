@@ -9,6 +9,7 @@
 
     <a href="{{ image_src }}"
        data-lightbox="{{ gallery_id }}"
+       aria-label="{{ image_title | default: 'View image' | escape }}"
        {% if image_title != '' %}data-title="{{ image_title | escape }}"{% endif %}>
         <img src="{{ image_src }}"
              alt="{{ image_alt | escape }}"
@@ -21,6 +22,7 @@
 
     <a href="{{ include.src }}"
        data-lightbox="{{ gallery_id }}"
+       aria-label="{{ image_title | default: 'View image' | escape }}"
        {% if image_title != '' %}data-title="{{ image_title | escape }}"{% endif %}>
         <img src="{{ include.src }}"
              alt="{{ image_alt | escape }}"

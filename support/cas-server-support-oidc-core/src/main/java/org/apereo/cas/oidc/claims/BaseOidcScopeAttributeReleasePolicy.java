@@ -78,17 +78,15 @@ public abstract class BaseOidcScopeAttributeReleasePolicy extends AbstractRegist
             if (scriptFactoryInstance.isPresent()
                 && CasRuntimeHintsRegistrar.notInNativeImage()
                 && scriptFactoryInstance.get().isScript(mappedAttr)) {
-                
                 LOGGER.trace("Locating attribute value via script [{}] for definition [{}]", mappedAttr, claim);
-                try (val cacheManager = ApplicationContextProvider.getScriptResourceCacheManager()
-                    .orElseThrow(() -> new IllegalArgumentException("No groovy script cache manager is available to execute claim mappings"))) {
-                    val scriptResource = cacheManager.resolveScriptableResource(mappedAttr, mappedAttr);
-                    val args = CollectionUtils.<String, Object>wrap("attributes", resolvedAttributes, "context", context, "claim", claim, "logger", LOGGER);
-                    scriptResource.setBinding(args);
-                    val result = scriptResource.execute(args.values().toArray(), Object.class);
-                    LOGGER.debug("Mapped attribute [{}] to [{}] from script", claim, result);
-                    return Pair.of(claim, result);
-                }
+                val cacheManager = ApplicationContextProvider.getScriptResourceCacheManager()
+                    .orElseThrow(() -> new IllegalArgumentException("No groovy script cache manager is available to execute claim mappings"));
+                val scriptResource = cacheManager.resolveScriptableResource(mappedAttr, mappedAttr);
+                val args = CollectionUtils.<String, Object>wrap("attributes", resolvedAttributes, "context", context, "claim", claim, "logger", LOGGER);
+                scriptResource.setBinding(args);
+                val result = scriptResource.execute(args.values().toArray(), Object.class);
+                LOGGER.debug("Mapped attribute [{}] to [{}] from script", claim, result);
+                return Pair.of(claim, result);
             }
 
             if (resolvedAttributes.containsKey(mappedAttr)) {

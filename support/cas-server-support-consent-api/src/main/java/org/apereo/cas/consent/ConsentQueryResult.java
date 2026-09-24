@@ -6,6 +6,7 @@ import org.apereo.cas.authentication.principal.Service;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
+import lombok.SuperBuilder;
 import lombok.ToString;
 import lombok.With;
 
@@ -20,6 +21,7 @@ import lombok.With;
 @AllArgsConstructor
 @Getter
 @With
+@SuperBuilder
 public class ConsentQueryResult implements Serializable {
     @Serial
     private static final long serialVersionUID = 742133551083867719L;
@@ -28,7 +30,17 @@ public class ConsentQueryResult implements Serializable {
     private ConsentDecision consentDecision;
     private Service service;
     private Authentication authentication;
+    private Map<String, List<Object>> consentableAttributes;
 
+    /**
+     * Is consent ignored, i.e. not required for this request.
+     *
+     * @return true/false
+     */
+    public boolean isIgnored() {
+        return !required;
+    }
+    
     static ConsentQueryResult ignored() {
         return ConsentQueryResult.of(false);
     }

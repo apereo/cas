@@ -9,8 +9,7 @@ import lombok.Getter;
 import lombok.val;
 import org.junit.jupiter.api.RepeatedTest;
 import org.junit.jupiter.api.Tag;
-import org.junit.jupiter.api.parallel.Execution;
-import org.junit.jupiter.api.parallel.ExecutionMode;
+import org.junit.jupiter.api.parallel.ResourceLock;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.ImportAutoConfiguration;
@@ -36,7 +35,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @Tag("Pulsar")
 @EnabledIfListeningOnPort(port = 6650)
 @Getter
-@Execution(ExecutionMode.SAME_THREAD)
+@ResourceLock("ticketRegistry:pulsar")
 class PulsarTicketRegistryTests extends BaseTicketRegistryTests {
     @Autowired
     @Qualifier(TicketRegistry.BEAN_NAME)

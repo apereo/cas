@@ -14,6 +14,9 @@ This strategy reaches out to a static JSON resource that contains a map of
 usernames linked to various interrupt policies. This option is most 
 useful during development, testing and demos.
 
+The resource is loaded once at startup. A file-based resource is also watched for changes and reloaded
+automatically; if an updated file cannot be read or parsed, the previously loaded policies remain in effect.
+
 ```json
 {
   "casuser" : {

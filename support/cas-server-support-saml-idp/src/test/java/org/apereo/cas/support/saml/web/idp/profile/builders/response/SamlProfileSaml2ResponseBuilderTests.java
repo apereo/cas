@@ -13,8 +13,6 @@ import org.apereo.cas.web.support.WebUtils;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.parallel.Execution;
-import org.junit.jupiter.api.parallel.ExecutionMode;
 import org.opensaml.saml.common.xml.SAMLConstants;
 import org.opensaml.saml.saml2.core.AttributeQuery;
 import org.opensaml.saml.saml2.core.AuthnRequest;
@@ -44,7 +42,6 @@ import static org.mockito.Mockito.*;
     "cas.tgc.crypto.enabled=false",
     "cas.authn.saml-idp.core.attribute-query-profile-enabled=true"
 })
-@Execution(ExecutionMode.SAME_THREAD)
 class SamlProfileSaml2ResponseBuilderTests extends BaseSamlIdPConfigurationTests {
 
     @Test

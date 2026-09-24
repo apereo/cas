@@ -4,9 +4,10 @@ import module java.base;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.io.FileUtils;
-import org.jooq.lambda.Unchecked;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import static java.nio.file.StandardWatchEventKinds.ENTRY_MODIFY;
+import static org.awaitility.Awaitility.*;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
@@ -23,11 +24,19 @@ class PathWatcherServiceTests {
 
     private FileWatcherService watcher2;
 
-    private static File createTemporaryFile(final String name) throws Exception {
-        val filePath = new File(FileUtils.getTempDirectory(), name);
-        if (filePath.exists()) {
-            FileUtils.deleteQuietly(filePath);
-        }
+    /**
+     * Creates a file inside the given directory. The directory is one this test made for itself,
+     * because the watcher below is pointed at a whole directory rather than a single file: aimed at
+     * the shared temporary directory it would answer to every other test in this JVM that happens to
+     * write there, and the files it expects to find would be named the same as theirs.
+     *
+     * @param directory the directory to create the file in
+     * @param name      the name of the file
+     * @return the created file
+     * @throws Exception in case of failure
+     */
+    private static File createTemporaryFile(final File directory, final String name) throws Exception {
+        val filePath = new File(directory, name);
         val res = filePath.createNewFile();
         if (!res) {
             throw new IllegalStateException("Could not create file " + filePath);
@@ -37,8 +46,9 @@ class PathWatcherServiceTests {
 
     @Test
     void verifyOperation() throws Throwable {
-        val file1 = createTemporaryFile("file1.txt");
-        val file2 = createTemporaryFile("file2.txt");
+        val directory = Files.createTempDirectory("path-watcher").toFile();
+        val file1 = createTemporaryFile(directory, "file1.txt");
+        val file2 = createTemporaryFile(directory, "file2.txt");
 
         val watch1 = new AtomicBoolean();
         watcher1 = new PathWatcherService(file1.getParentFile(), file -> {
@@ -52,20 +62,14 @@ class PathWatcherServiceTests {
             LOGGER.debug("[{}] is modified", file2.getName());
         });
 
-        val changeThread = new Thread(Unchecked.runnable(() -> {
-            FileUtils.writeStringToFile(file1, "1", StandardCharsets.UTF_8);
-            FileUtils.writeStringToFile(file2, "2", StandardCharsets.UTF_8);
-            Thread.sleep(10_000);
-        }));
-
         watcher2.start(file1.getName());
         watcher1.start(file2.getName());
 
-        changeThread.start();
-        changeThread.join();
+        FileUtils.writeStringToFile(file1, "1", StandardCharsets.UTF_8);
+        FileUtils.writeStringToFile(file2, "2", StandardCharsets.UTF_8);
 
-        assertTrue(watch1.get());
-        assertTrue(watch2.get());
+        await().atMost(Duration.ofSeconds(30)).until(watch1::get);
+        await().atMost(Duration.ofSeconds(30)).until(watch2::get);
 
         watcher1.destroy();
     }
@@ -90,6 +94,40 @@ class PathWatcherServiceTests {
             val inOrder = inOrder(mockedKey);
             inOrder.verify(mockedKey, times(1)).pollEvents();
             inOrder.verify(mockedKey, times(1)).reset();
+        }
+    }
+
+    @Test
+    void verifyFailingConsumerDoesNotStopTheWatcher() throws Exception {
+        val directory = Files.createTempDirectory("path-watcher").toFile();
+        try {
+            val file = createTemporaryFile(directory, "watched.json");
+
+            val event = mock(WatchEvent.class);
+            doReturn(ENTRY_MODIFY).when(event).kind();
+            doReturn(file.toPath().getFileName()).when(event).context();
+
+            val key = mock(WatchKey.class);
+            doReturn(List.of(event)).when(key).pollEvents();
+            doReturn(directory.toPath()).when(key).watchable();
+            when(key.reset()).thenReturn(true);
+
+            val takes = new AtomicInteger();
+            val watchService = mock(WatchService.class);
+            when(watchService.take()).thenAnswer(_ -> takes.incrementAndGet() <= 2 ? key : null);
+
+            val calls = new AtomicInteger();
+            try (val service = new PathWatcherService(watchService, _ -> {
+                if (calls.incrementAndGet() == 1) {
+                    throw new IllegalStateException("File is still being written");
+                }
+            })) {
+                service.run();
+            }
+            assertEquals(2, calls.get());
+            verify(key, times(2)).reset();
+        } finally {
+            FileUtils.deleteQuietly(directory);
         }
     }
 }

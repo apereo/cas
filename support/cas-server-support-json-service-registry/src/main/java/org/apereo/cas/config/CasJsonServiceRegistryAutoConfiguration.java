@@ -58,6 +58,7 @@ public class CasJsonServiceRegistryAutoConfiguration {
         if (registry.getJson().isWatcherEnabled()) {
             json.enableDefaultWatcherService();
         }
+        json.setOrder(registry.getJson().getOrder());
         return json;
     }
 

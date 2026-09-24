@@ -1,6 +1,7 @@
 package org.apereo.cas.aup;
 
 import module java.base;
+import org.apereo.cas.configuration.model.support.aup.AcceptableUsagePolicyCoreProperties;
 import org.apereo.cas.services.WebBasedRegisteredService;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.spring.ApplicationContextProvider;
@@ -82,6 +83,22 @@ public interface AcceptableUsagePolicyRepository extends Serializable {
     boolean submit(RequestContext requestContext) throws Throwable;
 
     /**
+     * The acceptable usage policy settings that apply to this repository.
+     * <p>
+     * Implementations built with their own settings override this, so that the answer comes from
+     * the application context that built the repository. The fallback below reads whichever context
+     * was registered statically last, which under parallel execution need not be that one.
+     *
+     * @return the core acceptable usage policy settings
+     */
+    default AcceptableUsagePolicyCoreProperties getPolicyProperties() {
+        return ApplicationContextProvider.getCasConfigurationProperties()
+            .orElseThrow()
+            .getAcceptableUsagePolicy()
+            .getCore();
+    }
+
+    /**
      * Fetch policy as optional.
      *
      * @param requestContext the request context
@@ -122,10 +139,7 @@ public interface AcceptableUsagePolicyRepository extends Serializable {
             return registeredService.getAcceptableUsagePolicy().getMessageCode();
         }
 
-        val aupProperties = ApplicationContextProvider.getCasConfigurationProperties()
-            .orElseThrow()
-            .getAcceptableUsagePolicy()
-            .getCore();
+        val aupProperties = getPolicyProperties();
         if (StringUtils.isBlank(aupProperties.getAupPolicyTermsAttributeName())) {
             return null;
         }
