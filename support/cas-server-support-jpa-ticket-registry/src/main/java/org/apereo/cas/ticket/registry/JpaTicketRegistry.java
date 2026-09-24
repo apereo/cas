@@ -356,25 +356,7 @@ public class JpaTicketRegistry extends AbstractTicketRegistry {
             return countToLong(query.getSingleResult());
         });
     }
-
-    /**
-     * The catalog does not always know the ticket. An encoded ticket is identified by a digest that
-     * carries no prefix, so the lookup finds nothing for one, and
-     * {@code AbstractTicketRegistry.decodeTicket} removes encoded tickets on sight whenever it meets
-     * them with encryption turned off -- which is what a registry does once encryption is disabled
-     * while encrypted tickets are still in the table. That removal must not fail, so an unknown
-     * definition falls through to the plain delete by identifier.
-     *
-     * @param ticketToDelete the ticket to delete
-     * @return the number of rows removed
-     */
-    @Override
-    public long countSessionsFor(final String principalId) {
-        return transactionTemplate.execute(_ -> {
-            return super.countSessionsFor(principalId);
-        });
-    }
-
+    
     @Override
     public long deleteSingleTicket(final Ticket ticketToDelete) {
         val result = transactionTemplate.execute(transactionStatus -> {
