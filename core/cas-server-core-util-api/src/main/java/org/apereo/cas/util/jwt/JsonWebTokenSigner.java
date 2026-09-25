@@ -91,17 +91,6 @@ public class JsonWebTokenSigner {
             jws.setKey(key);
             FunctionUtils.doIfNotNull(this.keyId, jws::setKeyIdHeaderValue);
         }
-        EncodingUtils.extractPublicKeyFrom(jws.getKey()).ifPresent(publicKey -> {
-            if (publicKey instanceof final RSAPublicKey rsa) {
-                jws.setJwkHeader(new RsaJsonWebKey(rsa));
-            }
-            if (publicKey instanceof final ECPublicKey ec) {
-                jws.setJwkHeader(new EllipticCurveJsonWebKey(ec));
-            }
-            if (publicKey instanceof final EdECPublicKey edec) {
-                jws.setJwkHeader(new OctetKeyPairJsonWebKey(edec));
-            }
-        });
         headers.forEach((header, value) -> jws.setHeader(header, value.toString()));
         LOGGER.trace("Signing ID token with key id header value [{}] and algorithm header value [{}]",
             jws.getKeyIdHeaderValue(), jws.getAlgorithmHeaderValue());
