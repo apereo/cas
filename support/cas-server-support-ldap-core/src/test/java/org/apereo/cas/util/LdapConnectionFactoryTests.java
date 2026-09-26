@@ -11,6 +11,7 @@ import org.apache.logging.log4j.core.config.Property;
 import org.apache.logging.log4j.core.layout.PatternLayout;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.parallel.Isolated;
 import org.ldaptive.ConnectionConfig;
 import org.ldaptive.ConnectionFactory;
 import org.ldaptive.DeleteOperation;
@@ -20,6 +21,7 @@ import org.ldaptive.FilterTemplate;
 import org.ldaptive.LdapEntry;
 import org.ldaptive.LdapException;
 import org.ldaptive.ResultCode;
+import static org.awaitility.Awaitility.*;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
@@ -30,6 +32,7 @@ import static org.mockito.Mockito.*;
  * @since 8.0.0
  */
 @Tag("Ldap")
+@Isolated
 class LdapConnectionFactoryTests {
 
     @Test
@@ -55,11 +58,11 @@ class LdapConnectionFactoryTests {
             try (val wrapper = new LdapConnectionFactory(connectionFactory)) {
                 assertThrows(LdapException.class, () -> wrapper.executeSearchOperation("dc=example,dc=org", filter, 0, "cn"));
             }
-            assertTrue(appender.getEvents().stream().anyMatch(event ->
+            await().untilAsserted(() -> assertTrue(appender.getEvents().stream().anyMatch(event ->
                 event.getLevel().isMoreSpecificThan(Level.WARN)
                     && event.getMessage().getFormattedMessage().contains("LDAP search operation failed")
                     && event.getMessage().getFormattedMessage().contains("dc=example,dc=org")
-                    && event.getMessage().getFormattedMessage().contains("INVALID_CREDENTIALS")));
+                    && event.getMessage().getFormattedMessage().contains("INVALID_CREDENTIALS"))));
         } finally {
             loggerConfig.removeAppender(appender.getName());
             appender.stop();
@@ -92,8 +95,8 @@ class LdapConnectionFactoryTests {
                 assertFalse(wrapper.executeDeleteOperation(entry));
             }
 
-            assertTrue(appender.getEvents().stream()
-                .anyMatch(event -> event.getLevel().isMoreSpecificThan(Level.WARN)));
+            await().untilAsserted(() -> assertTrue(appender.getEvents().stream()
+                .anyMatch(event -> event.getLevel().isMoreSpecificThan(Level.WARN))));
         } finally {
             loggerConfig.removeAppender(appender.getName());
             appender.stop();

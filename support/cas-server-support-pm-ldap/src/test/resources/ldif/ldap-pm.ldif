@@ -21,3 +21,14 @@ objectClass: inetOrgPerson
 objectClass: person
 cn: invalid
 sn: invalid
+
+dn: cn=caspmquestions,ou=people,dc=example,dc=org
+objectClass: organizationalRole
+objectClass: inetOrgPerson
+objectClass: person
+objectClass: account
+cn: caspmquestions
+userPassword: 123456
+sn: CasPasswordManagementQuestions
+uid: CasPasswordManagementQuestions
+mail: caspmquestions@example.org

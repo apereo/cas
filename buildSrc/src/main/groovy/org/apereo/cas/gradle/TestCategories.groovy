@@ -51,7 +51,7 @@ enum TestCategories {
     Pulsar(true, true),
     LdapAttributes(true, true),
     LdapAuthentication(true, true),
-    Ldap(false, true),
+    Ldap(true, true),
     LdapServices(true, true),
     LdapRepository(true, true),
     Logout(true, true),
