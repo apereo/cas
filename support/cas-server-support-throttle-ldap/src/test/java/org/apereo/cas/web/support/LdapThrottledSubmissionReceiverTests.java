@@ -10,6 +10,7 @@ import lombok.val;
 import org.apereo.inspektr.common.web.ClientInfo;
 import org.apereo.inspektr.common.web.ClientInfoHolder;
 import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -52,13 +53,17 @@ class LdapThrottledSubmissionReceiverTests {
     
     @BeforeAll
     public static void bootstrap() throws Exception {
-        ClientInfoHolder.setClientInfo(ClientInfo.from(new MockHttpServletRequest()));
         val localhost = new LDAPConnection("localhost", LDAP_PORT,
             "cn=admin,dc=example,dc=org", "P@ssw0rd");
         LdapIntegrationTestsOperations.populateEntries(localhost,
             new ClassPathResource("ldif/openldap-throttle.ldif").getInputStream(),
             "ou=people,dc=example,dc=org",
             new BindConnectionInitializer("cn=admin,dc=example,dc=org", new Credential("P@ssw0rd")));
+    }
+
+    @BeforeEach
+    void setClientInfo() {
+        ClientInfoHolder.setClientInfo(ClientInfo.from(new MockHttpServletRequest()));
     }
 
     @Test

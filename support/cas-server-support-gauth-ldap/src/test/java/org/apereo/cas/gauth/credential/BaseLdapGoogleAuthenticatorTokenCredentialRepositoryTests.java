@@ -22,7 +22,7 @@ import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.otp.repository.credentials.OneTimeTokenCredentialRepository;
 import org.apereo.cas.util.spring.boot.SpringBootTestAutoConfigurations;
 import lombok.Getter;
-import org.junit.jupiter.api.BeforeEach;
+import lombok.val;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.SpringBootConfiguration;
@@ -43,9 +43,12 @@ public abstract class BaseLdapGoogleAuthenticatorTokenCredentialRepositoryTests 
     @Autowired
     private CasConfigurationProperties casProperties;
 
-    @BeforeEach
-    void cleanUp() {
-        getRegistry().deleteAll();
+    protected static String getOrganizationalUnitLdif(final String baseDn) {
+        val ou = baseDn.substring("ou=".length(), baseDn.indexOf(','));
+        return String.format("dn: %s%n"
+            + "objectClass: top%n"
+            + "objectClass: organizationalUnit%n"
+            + "ou: %s%n", baseDn, ou);
     }
 
     @SpringBootTestAutoConfigurations

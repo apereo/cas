@@ -16,6 +16,8 @@ public class ConfigurationMetadataClassSourceLocator {
 
     private static final Pattern GENERIC_TYPED_CLASS = Pattern.compile("\\w+<(\\w+)>");
 
+    private static final Map<List<String>, Map<String, ClassInfo>> CLASSES_BY_SIMPLE_NAME = new ConcurrentHashMap<>();
+
     private static ConfigurationMetadataClassSourceLocator INSTANCE;
 
     private final Map<String, Class> cachedPropertiesClasses = new HashMap<>();
@@ -68,17 +70,28 @@ public class ConfigurationMetadataClassSourceLocator {
         return clz;
     }
 
+    /**
+     * Find the first class, in name order, whose simple name matches ignoring case.
+     * Each package list is scanned once: the generator looks up hundreds of names
+     * (primitives such as {@code boolean} included), and a scan per lookup dominated its run time.
+     *
+     * @param simpleName  the simple name
+     * @param packageName the packages to look in
+     * @return the class, if any
+     */
     static Optional<Class<?>> findClassBySimpleNameInPackage(final String simpleName, final String... packageName) {
-        try (val scanResult = new ClassGraph()
-            .acceptPackages(packageName)
-            .enableClassInfo()
-            .scan()) {
+        val index = CLASSES_BY_SIMPLE_NAME.computeIfAbsent(List.of(packageName),
+            ConfigurationMetadataClassSourceLocator::indexClassesBySimpleName);
+        return Optional.ofNullable(index.get(simpleName.toLowerCase(Locale.ROOT))).map(ClassInfo::loadClass);
+    }
 
-            return scanResult.getAllClasses()
-                .stream()
-                .filter(classInfo -> classInfo.getSimpleName().equalsIgnoreCase(simpleName))
-                .findFirst()
-                .map(ClassInfo::loadClass);
-        }
+    private static Map<String, ClassInfo> indexClassesBySimpleName(final List<String> packageNames) {
+        val scanResult = new ClassGraph()
+            .acceptPackages(packageNames.toArray(String[]::new))
+            .enableClassInfo()
+            .scan();
+        val index = new HashMap<String, ClassInfo>();
+        scanResult.getAllClasses().forEach(classInfo -> index.putIfAbsent(classInfo.getSimpleName().toLowerCase(Locale.ROOT), classInfo));
+        return index;
     }
 }

@@ -10,6 +10,7 @@ import lombok.val;
 import org.apereo.inspektr.common.web.ClientInfo;
 import org.apereo.inspektr.common.web.ClientInfoHolder;
 import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.ldaptive.BindConnectionInitializer;
@@ -45,13 +46,17 @@ class LdapPasswordManagementServiceTests extends BaseLdapPasswordManagementServi
 
     @BeforeAll
     public static void bootstrap() throws Exception {
-        ClientInfoHolder.setClientInfo(ClientInfo.from(new MockHttpServletRequest()));
         val localhost = new LDAPConnection("localhost", LDAP_PORT,
             "cn=Directory Manager", "password");
         LdapIntegrationTestsOperations.populateEntries(localhost,
             new ClassPathResource("ldif/ldap-pm.ldif").getInputStream(),
             "ou=people,dc=example,dc=org",
             new BindConnectionInitializer("cn=Directory Manager", new Credential("password")));
+    }
+
+    @BeforeEach
+    void setClientInfo() {
+        ClientInfoHolder.setClientInfo(ClientInfo.from(new MockHttpServletRequest()));
     }
 
     @Test
@@ -113,7 +118,7 @@ class LdapPasswordManagementServiceTests extends BaseLdapPasswordManagementServi
 
     @Test
     void verifySecurityQuestions() throws Throwable {
-        val query = PasswordManagementQuery.builder().username("caspm").build();
+        val query = PasswordManagementQuery.builder().username("caspmquestions").build();
         query.securityQuestion("Q1", "A1");
         query.securityQuestion("Q2", "A2");
         passwordChangeService.updateSecurityQuestions(query);

@@ -6,7 +6,6 @@ import org.apereo.cas.support.saml.BaseRedisSamlMetadataTests;
 import org.apereo.cas.support.saml.services.idp.metadata.SamlIdPMetadataDocument;
 import org.apereo.cas.util.junit.EnabledIfListeningOnPort;
 import lombok.val;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,14 +31,6 @@ class RedisSamlIdPMetadataLocatorTests extends BaseRedisSamlMetadataTests {
     @Autowired
     @Qualifier("redisSamlIdPMetadataTemplate")
     protected CasRedisTemplate<String, SamlIdPMetadataDocument> redisSamlIdPMetadataTemplate;
-
-    @BeforeEach
-    void setup() {
-        val key = RedisSamlIdPMetadataLocator.CAS_PREFIX + '*';
-        try (val keys = redisSamlIdPMetadataTemplate.scan(key, 0L)) {
-            redisSamlIdPMetadataTemplate.delete(keys.collect(Collectors.toSet()));
-        }
-    }
 
     @Test
     void verifySigningKeyWithoutService() throws Throwable {

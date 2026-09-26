@@ -31,12 +31,13 @@ class ConcurrentThrottledSubmissionsStoreTests {
     @Test
     void verifyOperation() {
         val key = UUID.randomUUID().toString();
-        throttleSubmissionStore.put(ThrottledSubmission.builder().key(key).build());
+        throttleSubmissionStore.put(ThrottledSubmission.builder().key(key)
+            .expiration(ZonedDateTime.now(Clock.systemUTC()).plusMinutes(1)).build());
         assertNotNull(throttleSubmissionStore.get(key));
-        assertEquals(1, throttleSubmissionStore.entries().count());
+        assertEquals(1, throttleSubmissionStore.entries().filter(entry -> entry.getKey().equals(key)).count());
         throttleSubmissionStore.removeIf(entry -> entry.getKey().equals(key));
         throttleSubmissionStore.remove(key);
-        assertEquals(0, throttleSubmissionStore.entries().count());
+        assertEquals(0, throttleSubmissionStore.entries().filter(entry -> entry.getKey().equals(key)).count());
     }
 
     @Test

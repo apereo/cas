@@ -25,9 +25,12 @@ import org.springframework.test.context.TestPropertySource;
     "cas.ticket.registry.redis.sentinel.node[0]=localhost:26379",
     "cas.ticket.registry.redis.sentinel.node[1]=localhost:26380",
     "cas.ticket.registry.redis.sentinel.node[2]=localhost:26381",
-    "cas.ticket.registry.redis.timeout=5000"
+    "cas.ticket.registry.redis.timeout=5000",
+    "cas.ticket.registry.redis.crypto.encryption.key=BXRiSBWJcRksTizjdaCoLw",
+    "cas.ticket.registry.redis.crypto.signing.key=cAPyoHMrOMWrwydOXzBA-ufZQM-TilnLjbRgMQWlUlwFmy07bOtAgCIdNBma3c5P4ae_JV6n1OpOAYqSh2NkmQ"
 })
 @EnabledIfListeningOnPort(port = 6379)
 @Tag("Redis")
+@Tag("TicketRegistryTestWithEncryption")
 class RedisSentinelServerTicketRegistryTests extends BaseRedisSentinelTicketRegistryTests {
 }

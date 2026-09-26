@@ -51,14 +51,14 @@ public class RedisAuditTrailManager extends AbstractAuditTrailManager {
             : DEFAULT_MAX_AUDIT_RECORDS_TO_FETCH;
         
         try (val keys = whereClause.containsKey(WhereClauseFields.PRINCIPAL)
-            ? getAuditRedisKeys(whereClause.get(WhereClauseFields.PRINCIPAL).toString(), count)
-            : getAuditRedisKeys(count)) {
+            ? getAuditRedisKeys(whereClause.get(WhereClauseFields.PRINCIPAL).toString(), -1)
+            : getAuditRedisKeys(-1)) {
             return keys
-                .limit(count)
                 .map(redisKey -> redisTemplate.boundValueOps(redisKey).get())
                 .filter(Objects::nonNull)
                 .map(AuditActionContext.class::cast)
                 .filter(audit -> audit.getWhenActionWasPerformed().isAfter(localDate))
+                .limit(count)
                 .collect(Collectors.toList());
         }
     }

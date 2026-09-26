@@ -53,9 +53,12 @@ class HazelcastTicketRegistryTests {
         properties = {
             "cas.ticket.registry.hazelcast.core.enable-jet=false",
             "cas.ticket.registry.hazelcast.cluster.network.port=5707",
-            "cas.ticket.registry.hazelcast.cluster.core.instance-name=testjetlessinstance"
+            "cas.ticket.registry.hazelcast.cluster.network.tcpip-enabled=false",
+            "cas.ticket.registry.hazelcast.cluster.core.instance-name=testjetlessinstance",
+            "cas.ticket.registry.hazelcast.crypto.enabled=false"
         })
-    class JetlessTests extends BaseTicketRegistryTests {
+    @Tag("TicketRegistryTestWithoutEncryption")
+    class JetlessTests extends BaseHazelcastTicketRegistryTests {
         @Autowired
         @Qualifier(TicketRegistry.BEAN_NAME)
         private TicketRegistry newTicketRegistry;
@@ -68,9 +71,12 @@ class HazelcastTicketRegistryTests {
     @TestPropertySource(
         properties = {
             "cas.ticket.registry.hazelcast.cluster.network.port=5703",
-            "cas.ticket.registry.hazelcast.cluster.core.instance-name=testlocalhostinstance"
+            "cas.ticket.registry.hazelcast.cluster.network.tcpip-enabled=false",
+            "cas.ticket.registry.hazelcast.cluster.core.instance-name=testlocalhostinstance",
+            "cas.ticket.registry.hazelcast.crypto.enabled=true"
         })
-    class DefaultTests extends BaseTicketRegistryTests {
+    @Tag("TicketRegistryTestWithEncryption")
+    class DefaultTests extends BaseHazelcastTicketRegistryTests {
         @Autowired
         @Qualifier(TicketRegistry.BEAN_NAME)
         private TicketRegistry newTicketRegistry;
@@ -120,6 +126,7 @@ class HazelcastTicketRegistryTests {
     @TestPropertySource(
         properties = {
             "cas.ticket.registry.hazelcast.cluster.network.port=5705",
+            "cas.ticket.registry.hazelcast.cluster.network.tcpip-enabled=false",
             "cas.ticket.registry.hazelcast.cluster.core.instance-name=loadtestinstance"
         })
     class LoadTests {

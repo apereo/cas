@@ -86,6 +86,8 @@ jobs:
           distribution: ${{ env.JDK_DISTRIBUTION }}
       - name: Setup Gradle
         uses: gradle/actions/setup-gradle@v6
+        with:
+          gradle-home-cache-excludes: caches/build-cache-1
       - name: Initialize
         run: ls ./ci && find ./ci -type f -name "*.sh" -exec chmod +x "{}" \; && ./ci/init-build.sh
 
@@ -112,6 +114,8 @@ jobs:
           cache: 'gradle'
       - name: Setup Gradle
         uses: gradle/actions/setup-gradle@v6
+        with:
+          gradle-home-cache-excludes: caches/build-cache-1
       - name: Print Scenarios
         uses: nick-fields/retry@v4
         with:
@@ -153,6 +157,8 @@ jobs:
           distribution: ${{ env.JDK_DISTRIBUTION }}
       - name: Setup Gradle
         uses: gradle/actions/setup-gradle@v6
+        with:
+          gradle-home-cache-excludes: caches/build-cache-1
       - name: Initialize
         run: find ./ci -type f -name "*.sh" -exec chmod +x "{}" \;
       - name: Configure CI
@@ -211,6 +217,8 @@ jobs:
           cache: 'gradle'
       - name: Setup Gradle
         uses: gradle/actions/setup-gradle@v6
+        with:
+          gradle-home-cache-excludes: caches/build-cache-1
       - name: Initialize
         run: find ./ci -type f -name "*.sh" -exec chmod +x "{}" \;
       - name: Configure CI
@@ -270,6 +278,8 @@ jobs:
           cache: 'gradle'
       - name: Setup Gradle
         uses: gradle/actions/setup-gradle@v6
+        with:
+          gradle-home-cache-excludes: caches/build-cache-1
       - name: Initialize
         run: find ./ci -type f -name "*.sh" -exec chmod +x "{}" \;
       - name: Configure CI

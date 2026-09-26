@@ -157,7 +157,8 @@ final class CasBuildSettings {
     }
 
     static boolean isJavadocRequested(final Gradle gradle, final Project project) {
-        !gradle.startParameter.excludedTaskNames.contains("javadoc")
+        def excluded = gradle.startParameter.excludedTaskNames
+        !excluded.contains("javadoc") && !excluded.contains(":javadoc")
                 && (isTaskRequested(project, 'javadoc')
                 || isTaskRequested(project, 'aggregateJavadocsIntoJar'))
     }

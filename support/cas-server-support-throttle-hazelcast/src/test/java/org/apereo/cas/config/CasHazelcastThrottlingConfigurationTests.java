@@ -34,8 +34,9 @@ import static org.junit.jupiter.api.Assertions.*;
     CasHazelcastThrottlingAutoConfiguration.class
 },
     properties = {
-        "cas.authn.throttle.hazelcast.cluster.network.port-auto-increment=false",
         "cas.authn.throttle.hazelcast.cluster.network.port=5710",
+        "cas.authn.throttle.hazelcast.cluster.network.tcpip-enabled=false",
+        "cas.ticket.registry.hazelcast.cluster.network.tcpip-enabled=false",
         "cas.authn.throttle.hazelcast.cluster.core.instance-name=throttlehzstore"
     })
 @Tag("Hazelcast")

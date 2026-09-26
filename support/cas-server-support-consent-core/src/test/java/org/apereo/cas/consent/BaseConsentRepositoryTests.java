@@ -110,7 +110,6 @@ public abstract class BaseConsentRepositoryTests {
     void verifyDeleteRecordsForPrincipal() throws Throwable {
         val user = getUser();
         val repo = getRepository();
-        repo.deleteAll();
         val decision = BUILDER.build(SVC, REG_SVC, user, ATTR);
 
         decision.setId(200);

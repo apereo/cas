@@ -30,6 +30,7 @@ import static org.junit.jupiter.api.Assertions.*;
     CasServicesStreamingAutoConfiguration.class
 }, properties = {
     "cas.service-registry.stream.hazelcast.config.cluster.core.instance-name=servicesRegistryStream",
+    "cas.service-registry.stream.hazelcast.config.cluster.network.tcpip-enabled=false",
     "cas.service-registry.stream.core.enabled=true"
 })
 class CasServicesStreamingHazelcastConfigurationTests {

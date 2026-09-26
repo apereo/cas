@@ -220,7 +220,7 @@ For a list of all other options and more comprehensive documentation, please see
 
 ## Deployments
 
-If your deployment strategy ultimately uses an [embedded container](../installation/Configuring-Servlet-Container.html#embedded), 
+If your deployment strategy ultimately uses an [embedded container](../installation/Configuring-Servlet-Container.html), 
 you can pass along the location of the JAAS configuration file in form of a system property as such:
 
 ```bash

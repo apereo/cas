@@ -15,10 +15,33 @@ function printyellow() {
   printf "⚠️  ${YELLOW}$1${ENDCOLOR}\n"
 }
 
+phaseStartedAt=$SECONDS
+phaseTimings=()
+
+function recordPhase() {
+  phaseTimings+=("$1 $((SECONDS - phaseStartedAt))s")
+  phaseStartedAt=$SECONDS
+}
+
+function reportPhases() {
+  recordPhase "remaining"
+  local summary
+  summary=$(printf '%s, ' "${phaseTimings[@]}")
+  summary="${summary%, }, total ${SECONDS}s"
+  printgreen "Documentation build timing: ${summary}"
+  if [[ "$CI" == "true" ]]; then
+    echo "::notice title=Documentation build timing::${summary}"
+  fi
+}
+
 function publishConfigurationMetadata() {
   local metadataFile="$1"
   local casVersion="$2"
 
+  if [[ "$uploadMetadata" != "true" ]]; then
+    printyellow "Configuration metadata upload is turned off; skipping configuration metadata publication."
+    return 0
+  fi
   if [[ -z "${CAS_MODULE_METADATA_MONGODB_URL:-}" ]]; then
     printyellow "MongoDB settings are not defined; skipping configuration metadata publication."
     return 0
@@ -28,7 +51,7 @@ function publishConfigurationMetadata() {
     return 0
   fi
   if [[ "$thirdParty" != "true" ]]; then
-    printyellow "Third-party configuration metadata is disabled; skipping incomplete MongoDB publication."
+    printyellow "Third-party configuration metadata is disabled; skipping incomplete upload & publication."
     return 0
   fi
 
@@ -73,17 +96,39 @@ function publishConfigurationMetadata() {
   printgreen "Uploaded combined configuration metadata to MongoDB collection $collectionName"
 }
 
+# Returns 0 when all links pass, 3 when internal links, images or scripts are broken,
+# 4 when only external links failed, and 1 when the proofer itself could not run.
 function validateProjectDocumentation() {
-  ruby $PWD/ci/docs/proof.rb
+  local proofLog="$PWD/html-proofer.log"
+  DOCS_PROOF_EXTERNAL="$proofExternal" \
+    BUNDLE_GEMFILE="${BUNDLE_GEMFILE:-$PWD/gh-pages/Gemfile}" \
+    bundle exec ruby "$PWD/ci/docs/proof.rb" 2>&1 | tee "$proofLog"
 
-  retVal=$?
-  if [[ ${retVal} -eq 0 ]]; then
+  local result=${PIPESTATUS[0]}
+  if [[ ${result} -eq 0 ]]; then
     printgreen "HTML Proofer found no bad links."
     return 0
-  else
-    printred "HTML Proofer found bad links."
-    return 1
   fi
+
+  local level="error" title="HTML Proofer failures"
+  case ${result} in
+  3) printred "HTML Proofer found broken internal links, images or scripts." ;;
+  4)
+    printyellow "HTML Proofer found broken external links only."
+    level="warning"
+    title="External link failures"
+    ;;
+  *)
+    printred "HTML Proofer failed to run (exit code ${result})."
+    result=1
+    ;;
+  esac
+  if [[ "$CI" == "true" ]]; then
+    local failures
+    failures=$(grep -A 3 '^\* ' "$proofLog" | grep -v '^--$' | head -60 | sed ':a;N;$!ba;s/%/%25/g;s/\n/%0A/g')
+    echo "::${level} title=${title}::${failures:-see the job log}"
+  fi
+  return ${result}
 }
 
 
@@ -97,6 +142,8 @@ propFilter=".+"
 generateData=true
 audit=true
 proofRead=true
+proofExternal=true
+externalLinkFailures=false
 actuators=true
 thirdParty=true
 serviceProps=true
@@ -107,6 +154,7 @@ buildFeatures=true
 shellCommands=true
 dependencyVersions=true
 userinterface=true
+uploadMetadata=true
 
 serve=false
 
@@ -130,16 +178,17 @@ while (("$#")); do
     printgreen "Generating documentation for property filter: ${propFilter}"
     serve=true
     proofRead=false
-    audit=false
-    actuators=false
-    thirdParty=false
-    serviceProps=false
+    audit=true
+    actuators=true
+    thirdParty=true
+    serviceProps=true
     publishDocs=false
     buildDocs=true
-    buildFeatures=false
-    shellCommands=false
-    dependencyVersions=false
+    buildFeatures=true
+    shellCommands=true
+    dependencyVersions=true
     userinterface=true
+    uploadMetadata=false
     ;;
   --branch)
     branchVersion=$2
@@ -151,6 +200,10 @@ while (("$#")); do
     ;;
   --proof-read|--validate)
     proofRead=$2
+    shift 2
+    ;;
+  --proof-external)
+    proofExternal=$2
     shift 2
     ;;
   --publish)
@@ -205,6 +258,10 @@ while (("$#")); do
     buildFeatures=$2
     shift 2
     ;;
+  --skip-upload)
+    uploadMetadata=false
+    shift 1
+    ;;
   *)
     shift
     ;;
@@ -235,6 +292,7 @@ printgreen "Build: \t\t${buildDocs}"
 printgreen "Serve: \t\t${serve}"
 printgreen "Generate Data: \t${generateData}"
 printgreen "Validate: \t\t${proofRead}"
+printgreen "External Links: \t${proofExternal}"
 printgreen "Publish: \t\t${publishDocs}"
 printgreen "Filter: \t\t${propFilter}"
 printgreen "Actuators: \t\t${actuators}"
@@ -245,8 +303,12 @@ printgreen "Features: \t\t${buildFeatures}"
 printgreen "Shell: \t\t${shellCommands}"
 printgreen "Audit: \t\t${audit}"
 printgreen "UI: \t\t\t${userinterface}"
+printgreen "Upload(s): \t\t${uploadMetadata}"
 printgreen "Ruby Version: \t$(ruby -v)"
 echo "-------------------------------------------------------"
+
+trap reportPhases EXIT
+recordPhase "setup"
 
 cloneRepository=false
 if [[ $clone == "true" ]]; then
@@ -281,8 +343,13 @@ if [[ $cloneRepository == "true" ]]; then
   printgreen "Cloning ${REPOSITORY_NAME}'s [gh-pages] branch..."
   [[ -d "$PWD/gh-pages" ]] && rm -Rf "$PWD/gh-pages"
   mkdir -p "$PWD/gh-pages"
-  git clone --single-branch --depth 1 --branch gh-pages \
+  git clone --single-branch --depth 1 --branch gh-pages --no-checkout \
     --filter=blob:none --no-tags --quiet "${REPOSITORY_ADDR}" "$PWD/gh-pages"
+  printgreen "Checking out the shared site files and $branchVersion only..."
+  git -C "$PWD/gh-pages" sparse-checkout set --no-cone \
+    '/*' '!/*/' '/_includes/' '/_layouts/' '/stylesheets/' '/javascripts/' \
+    '/images/' '/assets/' '/developer/' "/$branchVersion/"
+  git -C "$PWD/gh-pages" checkout --quiet gh-pages
 
   printgreen "Removing previous documentation from $branchVersion..."
   rm -Rf "$PWD/gh-pages/$branchVersion" >/dev/null
@@ -306,6 +373,10 @@ if [[ $cloneRepository == "true" ]]; then
   mv "$PWD/docs-latest/404.md" "$PWD/gh-pages"
   mv "$PWD/docs-latest/_config.yml" "$PWD/gh-pages"
   rm -f "$PWD/gh-pages/Gemfile.lock"
+  [[ -f "$PWD/docs-latest/Gemfile.lock" ]] && mv "$PWD/docs-latest/Gemfile.lock" "$PWD/gh-pages"
+  rm -Rf "$PWD/docs-latest/.bundle"
+  rm -Rf "$PWD/gh-pages/_plugins"
+  mv "$PWD/docs-latest/_plugins" "$PWD/gh-pages/_plugins"
 
   cp -Rf "$PWD"/docs-latest/* "$PWD/gh-pages/$branchVersion"
   if [[ $branchVersion == "development" ]]; then
@@ -334,22 +405,26 @@ if [[ $cloneRepository == "true" ]]; then
   printgreen "Copied project documentation to $PWD/gh-pages/..."
   # exit 1
 fi
+recordPhase "clone"
 
 if [[ $generateData == "true" ]]; then
-  docgen="docs/cas-server-documentation-processor/build/libs/casdocsgen.jar"
+  # The generator runs from Gradle's runtime classpath (an argument file) instead of a ~1 GB boot jar,
+  # and its compile skips Error Prone/NullAway: the class files are the same, only the static analysis is dropped.
+  docgen="docs/cas-server-documentation-processor/build/casdocsgen.args"
   printgreen "Generating documentation site data..."
   if [[ ! -f "$docgen" ]]; then
     ./gradlew :docs:cas-server-documentation-processor:jsonDependencies \
-      :docs:cas-server-documentation-processor:build $GRADLE_BUILD_OPTIONS
-    if [ $? -eq 1 ]; then
+      :docs:cas-server-documentation-processor:docsGeneratorArguments \
+      $GRADLE_BUILD_OPTIONS ${DOCS_GENERATOR_GRADLE_OPTIONS--DskipErrorProneCompiler=true}
+    if [ $? -ne 0 ] || [[ ! -s "$docgen" ]]; then
       printred "Unable to build the documentation processor. Aborting..."
       exit 1
     fi
   fi
-  chmod +x ${docgen}
+  recordPhase "gradle"
   dataDir=$(echo "$branchVersion" | sed 's/\.//g')
   printgreen "Generating documentation data at $PWD/gh-pages/_data/$dataDir with filter $propFilter..."
-  java -jar ${docgen} -d "$PWD/gh-pages/_data" -v "$dataDir" -r "$PWD" \
+  java "@${docgen}" -d "$PWD/gh-pages/_data" -v "$dataDir" -r "$PWD" \
     -f "$propFilter" -a "$actuators" -tp "$thirdParty" \
     -sp "$serviceProps" -ft "$buildFeatures" -csh "$shellCommands" \
     -aud "$audit" -ver "$dependencyVersions" -ui "$userinterface"
@@ -408,6 +483,7 @@ else
   printgreen "Skipping documentation data generation..."
   rm -Rf "$PWD/gh-pages/_data"
 fi
+recordPhase "data"
 
 if [[ $proofRead == "true" ]]; then
   printgreen "Looking for badly named include fragments..."
@@ -450,31 +526,37 @@ else
   printgreen "Skipping validation of documentation links..."
 fi
 
+recordPhase "fragments"
+
 if [[ ${buildDocs} == "true" ]]; then
   pushd .
 
   if [[ "$CI" == "true" ]]; then
-    printgreen "Moving jekyll artifacts into $PWD/gh-pages/ directory"
-    mv "$PWD"/jekyll/.jekyll-cache "$PWD/gh-pages/"
-    mv "$PWD"/jekyll/.jekyll-metadata "$PWD/gh-pages/"
-    rm -Rf "$PWD"/jekyll
+    if [[ -d "$PWD/jekyll/.jekyll-cache" ]]; then
+      printgreen "Restoring the Jekyll cache into $PWD/gh-pages/"
+      mv "$PWD/jekyll/.jekyll-cache" "$PWD/gh-pages/"
+    fi
+    rm -Rf "$PWD/jekyll"
   fi
 
   cd "$PWD/gh-pages" || exit
   ruby --version
 
-  printgreen "Installing documentation dependencies..."
-  bundle config set force_ruby_platform true
-  bundle install
+  if bundle check >/dev/null 2>&1; then
+    printgreen "Documentation dependencies are already installed"
+  else
+    printgreen "Installing documentation dependencies..."
+    bundle install
+  fi
   printgreen "Building documentation site for $branchVersion with data at $PWD/gh-pages/_data"
   echo -n "Starting at " && date
-  jekyll --version
+  bundle exec jekyll --version
 
   export RUBY_YJIT_ENABLE=1
   if [[ ${serve} == "true" ]]; then
     bundle exec jekyll serve --baseurl "" --profile --incremental --trace
   else
-    bundle exec jekyll build --incremental --trace
+    bundle exec jekyll build --trace
   fi
   retVal=$?
 
@@ -486,53 +568,53 @@ if [[ ${buildDocs} == "true" ]]; then
   popd
 
   if [[ "$CI" == "true" ]]; then
-    echo "Moving jekyll build artifacts into $PWD/jekyll"
     mkdir -p "$PWD/jekyll"
-    mv "$PWD"/gh-pages/.jekyll-cache "$PWD"/jekyll/
-    mv "$PWD"/gh-pages/.jekyll-metadata "$PWD"/jekyll/
-    printgreen "Jekyll cache is now at $PWD/jekyll/"
-    ls -al "$PWD/jekyll/"
+    if [[ -d "$PWD/gh-pages/.jekyll-cache" ]]; then
+      mv "$PWD/gh-pages/.jekyll-cache" "$PWD/jekyll/"
+      printgreen "Jekyll cache is now at $PWD/jekyll/ ($(du -sh "$PWD/jekyll/.jekyll-cache" | cut -f1))"
+    fi
   else
-    printyellow "Deleting jekyll build directory"
+    printyellow "Deleting Jekyll build directory"
     rm -Rf "$PWD"/jekyll/
   fi
 fi
+
+recordPhase "Jekyll"
 
 if [[ $proofRead == "true" ]]; then
   printgreen "Validating documentation links..."
   validateProjectDocumentation
   retVal=$?
-  if [[ ${retVal} -eq 1 ]]; then
+  if [[ ${retVal} -eq 4 ]]; then
+    printyellow "Documentation will still be published; the job reports the external link failures at the end."
+    externalLinkFailures=true
+    retVal=0
+  elif [[ ${retVal} -ne 0 ]]; then
     printred "Failed to validate documentation."
     exit ${retVal}
   fi
 fi
 
+recordPhase "proofread"
+
 pushd .
 cd "$PWD/gh-pages" || exit
 
 if [[ $clone == "true" ]]; then
-  rm -Rf .jekyll-cache .jekyll-metadata .sass-cache "$branchVersion/build"
-  rm -Rf "$branchVersion/build"
+  rm -Rf .jekyll-cache .jekyll-metadata .sass-cache "$branchVersion/build" _plugins
   printgreen "Configuring git repository settings..."
-  rm -Rf .git
-  git init
-  git config init.defaultBranch master
-  git remote add origin "${REPOSITORY_ADDR}"
   git config user.email "cas@apereo.org"
   git config user.name "CAS"
   git config core.fileMode false
-
-  printgreen "Checking out gh-pages branch..."
-  git switch gh-pages 2>/dev/null || git switch -c gh-pages 2>/dev/null
-  printgreen "Configuring tracking branches for repository..."
-  git branch -u origin/gh-pages
 
   rm -Rf "./$branchVersion"
   mv "_site/$branchVersion" .
   touch "$branchVersion/.nojekyll"
   rm -Rf _site
   rm -Rf _data
+
+  printgreen "Starting a new single-commit history on top of the cloned objects..."
+  git checkout --quiet --orphan gh-pages-publish
 fi
 
 if [ -z "$GH_PAGES_TOKEN" ] && [ "${GITHUB_REPOSITORY}" != "${REPOSITORY_NAME}" ]; then
@@ -540,6 +622,7 @@ if [ -z "$GH_PAGES_TOKEN" ] && [ "${GITHUB_REPOSITORY}" != "${REPOSITORY_NAME}" 
   if [[ $clone == "true" ]]; then
     popd
     rm -Rf "$PWD/gh-pages"
+    [[ $externalLinkFailures == "true" ]] && exit 4
     exit 0
   fi
 elif [[ "${publishDocs}" == "true" ]]; then
@@ -556,7 +639,7 @@ elif [[ "${publishDocs}" == "true" ]]; then
   git status
 
   printgreen "Pushing changes to upstream..."
-  git push -fq origin gh-pages
+  git push -fq origin HEAD:gh-pages
   retVal=$?
   if [[ ${retVal} -eq 1 ]]; then
     printred "Failed to push documentation."
@@ -564,6 +647,7 @@ elif [[ "${publishDocs}" == "true" ]]; then
   fi
   printgreen "Pushed upstream to origin/gh-pages..."
   retVal=$?
+  recordPhase "publish"
 else
   printyellow "Skipping documentation push to remote repository..."
 fi
@@ -576,6 +660,10 @@ fi
 
 if [[ ${retVal} -eq 0 ]]; then
   printgreen "Done processing documentation to $branchVersion."
+  if [[ $externalLinkFailures == "true" ]]; then
+    printred "External link checks failed; see the HTML Proofer output above."
+    exit 4
+  fi
   exit 0
 else
   printred "Failed to process documentation."

@@ -61,6 +61,24 @@ The collection of end-to-end [browser tests based on Puppeteer](../../developer/
 and scenarios. At the moment, total number of jobs stands at approximately `556` distinct scenarios. The overall
 test coverage of the CAS codebase is approximately `94%`.
 
+### JSpecify & NullAway
+
+CAS codebase is now annotated with [JSpecify](https://jspecify.dev/) annotations to indicate nullness contracts on method parameters,
+return types and fields. We will gradually extend the coverage of such annotations across the entire codebase in future releases
+and will integrate the Gradle build tool with tools such as [NullAway](https://github.com/uber/NullAway) to prevent nullness contract violations
+during compile time.
+
+### Spring Boot 4.2
+
+CAS is now built on top of Spring Boot `4.2.x`. This is an in-progress ongoing minor platform upgrade that
+affects almost all aspects of the codebase including many of the third-party core libraries used by CAS
+as well as some CAS functionality.
+
+Please refer to the [Spring Boot Wiki](https://github.com/spring-projects/spring-boot/wiki/Spring-Boot-4.2-Release-Notes)
+for more information on the changes and updates in this release. The biggest change to CAS would be support for AMQP 1.0.
 
 ## Other Stuff
-              
+
+- A large number of dependencies and libraries have been updated to their latest versions.
+- Almost all CAS unit tests are internally reworked to allow maximum parallelization and speed up the overall test execution time.
+- CAS documentation has been redesigned to allow easier discovery of content and a better mobile-friendly experience. The collection of properties rendered for each CAS feature are also redesigned to allow better search, filtering and discovery.

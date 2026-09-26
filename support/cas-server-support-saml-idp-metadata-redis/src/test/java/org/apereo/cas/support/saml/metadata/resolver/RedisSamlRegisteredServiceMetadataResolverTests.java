@@ -4,11 +4,11 @@ import module java.base;
 import org.apereo.cas.support.saml.BaseRedisSamlMetadataTests;
 import org.apereo.cas.support.saml.services.SamlRegisteredService;
 import org.apereo.cas.support.saml.services.idp.metadata.SamlMetadataDocument;
+import org.apereo.cas.util.RandomUtils;
 import org.apereo.cas.util.junit.EnabledIfListeningOnPort;
 import lombok.val;
 import net.shibboleth.shared.resolver.CriteriaSet;
 import org.apache.commons.io.IOUtils;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.opensaml.core.criterion.EntityIdCriterion;
@@ -31,58 +31,62 @@ import static org.junit.jupiter.api.Assertions.*;
 @Tag("Redis")
 @EnabledIfListeningOnPort(port = 6379)
 class RedisSamlRegisteredServiceMetadataResolverTests extends BaseRedisSamlMetadataTests {
-    @BeforeEach
-    void setup() {
-        val metadataManager = resolver.getMetadataManager().orElseThrow();
-        metadataManager.removeAll();
+    private static final String DEFAULT_ENTITY_ID = "https://carmenwiki.osu.edu/shibboleth";
+
+    private static String randomEntityId() {
+        return "https://%s.example.org/shibboleth".formatted(RandomUtils.randomAlphabetic(8));
+    }
+
+    private static SamlMetadataDocument documentFor(final String entityId) throws Exception {
+        val metadata = IOUtils.toString(new ClassPathResource("sp-metadata.xml").getInputStream(), StandardCharsets.UTF_8);
+        return SamlMetadataDocument.builder()
+            .name(RandomUtils.randomAlphabetic(8))
+            .value(metadata.replace(DEFAULT_ENTITY_ID, entityId))
+            .build();
     }
 
     @Test
     void verifyResolver() throws Throwable {
-        val res = new ClassPathResource("sp-metadata.xml");
-        val md = new SamlMetadataDocument();
-        md.setName("SP");
-        md.setValue(IOUtils.toString(res.getInputStream(), StandardCharsets.UTF_8));
-
+        val entityId = randomEntityId();
         val metadataManager = resolver.getMetadataManager().orElseThrow();
-        metadataManager.store(md);
+        metadataManager.store(documentFor(entityId));
 
         val service = new SamlRegisteredService();
         service.setName("SAML Service");
-        service.setServiceId("https://carmenwiki.osu.edu/shibboleth");
+        service.setServiceId("^https://.+$");
         service.setDescription("Testing");
         service.setMetadataLocation("redis://");
         assertTrue(resolver.supports(service));
         assertTrue(resolver.isAvailable(service));
-        val resolvers = resolver.resolve(service);
+        assertFalse(resolver.resolve(service).isEmpty());
+        val resolvers = resolver.resolve(service, new CriteriaSet(new EntityIdCriterion(entityId)));
         assertEquals(1, resolvers.size());
     }
 
     @Test
     void verifyFailsResolver() throws Throwable {
+        val entityId = randomEntityId();
         val res = new ByteArrayResource("bad-data".getBytes(StandardCharsets.UTF_8));
         val md = new SamlMetadataDocument();
-        md.setName("SP");
-        md.setEntityId("https://carmenwiki.osu.edu/shibboleth");
+        md.setName(RandomUtils.randomAlphabetic(8));
+        md.setEntityId(entityId);
         md.setValue(IOUtils.toString(res.getInputStream(), StandardCharsets.UTF_8));
         val metadataManager = resolver.getMetadataManager().orElseThrow();
         metadataManager.store(md);
 
         val service = new SamlRegisteredService();
         service.setName("SAML Service");
-        service.setServiceId("https://carmenwiki.osu.edu/shibboleth");
-        val resolvers = resolver.resolve(service);
+        service.setServiceId(entityId);
+        val resolvers = resolver.resolve(service, new CriteriaSet(new EntityIdCriterion(entityId)));
         assertTrue(resolvers.isEmpty());
     }
 
     @Test
     void verifyEntityIdCriterionSelectsMetadataDocument() throws Throwable {
-        val entityId = "https://carmenwiki.osu.edu/shibboleth";
-        val metadata = IOUtils.toString(new ClassPathResource("sp-metadata.xml").getInputStream(), StandardCharsets.UTF_8);
+        val entityId = randomEntityId();
         val metadataManager = resolver.getMetadataManager().orElseThrow();
-        metadataManager.store(SamlMetadataDocument.builder().name("SP").value(metadata).build());
-        metadataManager.store(SamlMetadataDocument.builder().name("Other")
-            .value(metadata.replace(entityId, "https://other.example.org")).build());
+        metadataManager.store(documentFor(entityId));
+        metadataManager.store(documentFor(randomEntityId()));
 
         val service = new SamlRegisteredService();
         service.setName("SAML Service");
@@ -100,27 +104,18 @@ class RedisSamlRegisteredServiceMetadataResolverTests extends BaseRedisSamlMetad
     @Test
     void verifyLoad() throws Throwable {
         val metadataManager = resolver.getMetadataManager().orElseThrow();
-        assertTrue(metadataManager.load().isEmpty());
-
-        val res = new ClassPathResource("sp-metadata.xml");
-        val md = new SamlMetadataDocument();
-        md.setName("SP");
-        md.setValue(IOUtils.toString(res.getInputStream(), StandardCharsets.UTF_8));
+        val md = documentFor(randomEntityId());
+        assertTrue(metadataManager.load().stream().noneMatch(doc -> md.getName().equals(doc.getName())));
         metadataManager.store(md);
 
-        val documents = metadataManager.load();
+        val documents = metadataManager.load().stream().filter(doc -> md.getName().equals(doc.getName())).toList();
         assertEquals(1, documents.size());
-        assertEquals("SP", documents.getFirst().getName());
     }
 
     @Test
     void verifyFindById() throws Throwable {
         val metadataManager = resolver.getMetadataManager().orElseThrow();
-        val res = new ClassPathResource("sp-metadata.xml");
-        val md = new SamlMetadataDocument();
-        md.setName("SP");
-        md.setValue(IOUtils.toString(res.getInputStream(), StandardCharsets.UTF_8));
-        val storedDocument = metadataManager.store(md);
+        val storedDocument = metadataManager.store(documentFor(randomEntityId()));
 
         val found = metadataManager.findById(storedDocument.getId());
         assertTrue(found.isPresent());
@@ -131,43 +126,33 @@ class RedisSamlRegisteredServiceMetadataResolverTests extends BaseRedisSamlMetad
     @Test
     void verifyFindByName() throws Throwable {
         val metadataManager = resolver.getMetadataManager().orElseThrow();
-        val res = new ClassPathResource("sp-metadata.xml");
-        val md = new SamlMetadataDocument();
-        md.setName("SP");
-        md.setValue(IOUtils.toString(res.getInputStream(), StandardCharsets.UTF_8));
+        val md = documentFor(randomEntityId());
         metadataManager.store(md);
 
-        val found = metadataManager.findByName("SP");
+        val found = metadataManager.findByName(md.getName());
         assertTrue(found.isPresent());
-        assertEquals("SP", found.get().getName());
-        assertTrue(metadataManager.findByName("Unknown").isEmpty());
+        assertEquals(md.getName(), found.get().getName());
+        assertTrue(metadataManager.findByName(UUID.randomUUID().toString()).isEmpty());
     }
 
     @Test
     void verifyRemoveById() throws Throwable {
         val metadataManager = resolver.getMetadataManager().orElseThrow();
-        val res = new ClassPathResource("sp-metadata.xml");
-        val md = new SamlMetadataDocument();
-        md.setName("SP");
-        md.setValue(IOUtils.toString(res.getInputStream(), StandardCharsets.UTF_8));
-        val storedDocument = metadataManager.store(md);
+        val storedDocument = metadataManager.store(documentFor(randomEntityId()));
 
         metadataManager.removeById(storedDocument.getId());
         assertTrue(metadataManager.findById(storedDocument.getId()).isEmpty());
-        assertTrue(metadataManager.load().isEmpty());
+        assertTrue(metadataManager.load().stream().noneMatch(doc -> storedDocument.getName().equals(doc.getName())));
     }
 
     @Test
     void verifyRemoveByName() throws Throwable {
         val metadataManager = resolver.getMetadataManager().orElseThrow();
-        val res = new ClassPathResource("sp-metadata.xml");
-        val md = new SamlMetadataDocument();
-        md.setName("SP");
-        md.setValue(IOUtils.toString(res.getInputStream(), StandardCharsets.UTF_8));
+        val md = documentFor(randomEntityId());
         metadataManager.store(md);
 
-        metadataManager.removeByName("SP");
-        assertTrue(metadataManager.findByName("SP").isEmpty());
-        assertTrue(metadataManager.load().isEmpty());
+        metadataManager.removeByName(md.getName());
+        assertTrue(metadataManager.findByName(md.getName()).isEmpty());
+        assertTrue(metadataManager.load().stream().noneMatch(doc -> md.getName().equals(doc.getName())));
     }
 }
