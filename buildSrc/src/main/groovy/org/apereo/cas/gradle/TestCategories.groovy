@@ -80,7 +80,7 @@ enum TestCategories {
     PasswordOps(true, true),
     Postgres(true, true),
     Radius(true, true),
-    Redis(false, true),
+    Redis(true, true),
     RegisteredService(true, true),
     RestfulApi(true, true),
     RestfulApiAuthentication(true, true),

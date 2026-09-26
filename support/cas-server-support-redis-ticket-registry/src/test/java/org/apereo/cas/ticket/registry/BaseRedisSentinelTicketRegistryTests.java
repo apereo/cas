@@ -6,14 +6,15 @@ import org.apereo.cas.config.CasRedisTicketRegistryAutoConfiguration;
 import org.apereo.cas.redis.core.CasRedisTemplate;
 import org.apereo.cas.ticket.registry.RedisTicketRegistry.CasRedisTemplates;
 import lombok.Getter;
-import org.junit.jupiter.api.parallel.ResourceAccessMode;
-import org.junit.jupiter.api.parallel.ResourceLock;
+import org.junit.jupiter.api.RepeatedTest;
+import org.junit.jupiter.api.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.ImportAutoConfiguration;
 import org.springframework.boot.health.contributor.HealthIndicator;
 import org.springframework.context.annotation.EnableAspectJAutoProxy;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
+import static org.junit.jupiter.api.Assumptions.*;
 
 /**
  * Common class of Unit test for {@link RedisTicketRegistry} class.
@@ -27,7 +28,7 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 })
 @EnableTransactionManagement(proxyTargetClass = false)
 @EnableAspectJAutoProxy(proxyTargetClass = false)
-@ResourceLock(value = BaseTicketRegistryTests.TICKET_REGISTRY_RESOURCE, mode = ResourceAccessMode.READ_WRITE)
+@Tag("SkipClearingTicketRegistry")
 @Getter
 public abstract class BaseRedisSentinelTicketRegistryTests extends BaseTicketRegistryTests {
     @Autowired
@@ -46,5 +47,32 @@ public abstract class BaseRedisSentinelTicketRegistryTests extends BaseTicketReg
     @Qualifier("casRedisTemplates")
     private CasRedisTemplates casRedisTemplates;
 
+    @Override
+    protected boolean isCipherExecutorOwnedByContext() {
+        return true;
+    }
 
+    /**
+     * Whether this class has a Redis keyspace to itself and runs its methods one at a time, which is
+     * what the tests that empty or count the whole registry need. Classes sharing a keyspace skip them.
+     *
+     * @return true if the keyspace is not shared
+     */
+    protected boolean isRegistryIsolated() {
+        return false;
+    }
+
+    @Override
+    @RepeatedTest(2)
+    void verifyGetTicketsIsZero() throws Throwable {
+        assumeTrue(isRegistryIsolated());
+        super.verifyGetTicketsIsZero();
+    }
+
+    @Override
+    @RepeatedTest(2)
+    void verifyDeleteAllExistingTickets() throws Throwable {
+        assumeTrue(isRegistryIsolated());
+        super.verifyDeleteAllExistingTickets();
+    }
 }

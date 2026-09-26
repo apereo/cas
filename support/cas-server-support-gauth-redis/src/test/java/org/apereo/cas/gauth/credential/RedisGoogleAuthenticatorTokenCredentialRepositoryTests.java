@@ -138,7 +138,9 @@ class RedisGoogleAuthenticatorTokenCredentialRepositoryTests extends BaseOneTime
                         .name(UUID.randomUUID().toString())
                         .build();
                 })
-            .limit(1000);
+            .limit(1000)
+            .toList();
+        val usernames = allAccounts.stream().map(OneTimeTokenAccount::getUsername).collect(Collectors.toSet());
         executedTimedOperation("Adding accounts", _ -> allAccounts.forEach(registry::save));
         executedTimedOperation("Getting accounts",
             Unchecked.consumer(_ -> {
@@ -147,7 +149,11 @@ class RedisGoogleAuthenticatorTokenCredentialRepositoryTests extends BaseOneTime
             }));
 
         val accountsStream = executedTimedOperation("Getting accounts in bulk",
-            Unchecked.supplier(() -> registry.load()));
+            Unchecked.supplier(() -> registry.load()
+                .stream()
+                .filter(acct -> usernames.contains(acct.getUsername()))
+                .toList()));
+        assertEquals(allAccounts.size(), accountsStream.size());
         executedTimedOperation("Getting accounts individually",
             Unchecked.consumer(_ -> accountsStream.forEach(acct -> assertNotNull(registry.get(acct.getId())))));
         executedTimedOperation("Getting accounts individually for users",
