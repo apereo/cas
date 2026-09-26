@@ -21,7 +21,7 @@ on:
   workflow_dispatch:
     inputs:
       proofRead:
-        description: "Proof-read the documentation (links, include fragments) before publishing"
+        description: "Proof Read Links"
         type: boolean
         required: false
         default: true

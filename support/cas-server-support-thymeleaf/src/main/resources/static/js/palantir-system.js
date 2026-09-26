@@ -1935,6 +1935,19 @@ async function initializeSystemOperations() {
         }
     }
 
+    async function fetchAvailableMetricNames() {
+        if (!CasActuatorEndpoints.metrics()) {
+            return new Set();
+        }
+        return new Promise(resolve => {
+            $.get(CasActuatorEndpoints.metrics(), response => resolve(new Set(response.names ?? [])))
+                .fail((xhr, status, error) => {
+                    console.debug("Unable to fetch metric names", error);
+                    resolve(new Set());
+                });
+        });
+    }
+
     async function configureSystemData() {
         await fetchSystemData(response => {
 
@@ -1949,7 +1962,8 @@ async function initializeSystemOperations() {
             memoryChart.update();
         });
 
-        if (CasActuatorEndpoints.metrics()) {
+        const availableMetrics = await fetchAvailableMetricNames();
+        if (availableMetrics.has("http.server.requests")) {
             $.get(`${CasActuatorEndpoints.metrics()}/http.server.requests`, response => {
                 let count = response.measurements[0].value;
                 let totalTime = response.measurements[1].value.toFixed(2);
@@ -1961,6 +1975,8 @@ async function initializeSystemOperations() {
                 console.error("Error fetching data:", error);
                 displayBanner(xhr);
             });
+        }
+        if (availableMetrics.has("http.server.requests.active")) {
             $.get(`${CasActuatorEndpoints.metrics()}/http.server.requests.active`, response => {
                 let active = response.measurements[0].value;
                 let duration = response.measurements[1].value.toFixed(2);
