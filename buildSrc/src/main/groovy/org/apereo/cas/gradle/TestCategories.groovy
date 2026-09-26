@@ -14,7 +14,7 @@ enum TestCategories {
     AuthenticationHandler(true, true),
     AuthenticationPolicy(true, true),
     AuthenticationMetadata(true, true),
-    AuthenticationThrottling(false, true),
+    AuthenticationThrottling(true, true),
     Authorization(true, true),
     Azure(false, true),
     CAS(true, true),
