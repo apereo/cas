@@ -53,6 +53,20 @@ dependencies {
     }
 }
 
+tasks.register('docsGeneratorArguments') {
+    description = "Writes a java argument file that runs the generator from the runtime classpath, without packaging a boot jar."
+    def runtimeClasspath = sourceSets.main.runtimeClasspath
+    def mainClass = project.ext.mainClassName
+    def argumentsFile = layout.buildDirectory.file("casdocsgen.args")
+    inputs.files(runtimeClasspath)
+    inputs.property("mainClass", mainClass)
+    outputs.file(argumentsFile)
+    doLast {
+        def quote = { String value -> '"' + value.replace('\\', '\\\\').replace('"', '\\"') + '"' }
+        argumentsFile.get().asFile.text = ["-cp", quote(runtimeClasspath.asPath), mainClass].join(System.lineSeparator()) + System.lineSeparator()
+    }
+}
+
 tasks.register('jsonDependencies') {
     mustRunAfter(build)
     it.notCompatibleWithConfigurationCache("Task is not compatible with configuration cache")

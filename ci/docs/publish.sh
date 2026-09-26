@@ -303,7 +303,7 @@ printgreen "Features: \t\t${buildFeatures}"
 printgreen "Shell: \t\t${shellCommands}"
 printgreen "Audit: \t\t${audit}"
 printgreen "UI: \t\t\t${userinterface}"
-printgreen "Upload(s): \t${uploadMetadata}"
+printgreen "Upload(s): \t\t${uploadMetadata}"
 printgreen "Ruby Version: \t$(ruby -v)"
 echo "-------------------------------------------------------"
 
@@ -408,21 +408,23 @@ fi
 recordPhase "clone"
 
 if [[ $generateData == "true" ]]; then
-  docgen="docs/cas-server-documentation-processor/build/libs/casdocsgen.jar"
+  # The generator runs from Gradle's runtime classpath (an argument file) instead of a ~1 GB boot jar,
+  # and its compile skips Error Prone/NullAway: the class files are the same, only the static analysis is dropped.
+  docgen="docs/cas-server-documentation-processor/build/casdocsgen.args"
   printgreen "Generating documentation site data..."
   if [[ ! -f "$docgen" ]]; then
     ./gradlew :docs:cas-server-documentation-processor:jsonDependencies \
-      :docs:cas-server-documentation-processor:build $GRADLE_BUILD_OPTIONS
-    if [ $? -eq 1 ]; then
+      :docs:cas-server-documentation-processor:docsGeneratorArguments \
+      $GRADLE_BUILD_OPTIONS ${DOCS_GENERATOR_GRADLE_OPTIONS--DskipErrorProneCompiler=true}
+    if [ $? -ne 0 ] || [[ ! -s "$docgen" ]]; then
       printred "Unable to build the documentation processor. Aborting..."
       exit 1
     fi
   fi
   recordPhase "gradle"
-  chmod +x ${docgen}
   dataDir=$(echo "$branchVersion" | sed 's/\.//g')
   printgreen "Generating documentation data at $PWD/gh-pages/_data/$dataDir with filter $propFilter..."
-  java -jar ${docgen} -d "$PWD/gh-pages/_data" -v "$dataDir" -r "$PWD" \
+  java "@${docgen}" -d "$PWD/gh-pages/_data" -v "$dataDir" -r "$PWD" \
     -f "$propFilter" -a "$actuators" -tp "$thirdParty" \
     -sp "$serviceProps" -ft "$buildFeatures" -csh "$shellCommands" \
     -aud "$audit" -ver "$dependencyVersions" -ui "$userinterface"
