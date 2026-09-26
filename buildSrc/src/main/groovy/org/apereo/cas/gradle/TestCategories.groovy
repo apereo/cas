@@ -1,7 +1,7 @@
 package org.apereo.cas.gradle
 
 enum TestCategories {
-    ActiveDirectory(false, true),
+    ActiveDirectory(true, true),
     ActuatorEndpoint(true, true),
     AmazonWebServices(true, true),
     AMQP(true, true),

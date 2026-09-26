@@ -7,7 +7,7 @@ import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.inspektr.common.web.ClientInfo;
 import org.apereo.inspektr.common.web.ClientInfoHolder;
-import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.mock.web.MockHttpServletRequest;
@@ -43,8 +43,8 @@ import static org.junit.jupiter.api.Assertions.*;
 @EnabledIfListeningOnPort(port = 10636)
 class ActiveDirectoryPasswordManagementServiceTests extends BaseLdapPasswordManagementServiceTests {
 
-    @BeforeAll
-        public static void bootstrap() {
+    @BeforeEach
+    void setClientInfo() {
         ClientInfoHolder.setClientInfo(ClientInfo.from(new MockHttpServletRequest()));
     }
 
