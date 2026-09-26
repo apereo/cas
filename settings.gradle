@@ -11,21 +11,6 @@ ext.isCiServer = System.getenv().containsKey("CI")
 ext.githubPackageRegistryUser = System.getenv("GH_PACKAGE_REGISTRY_USER")
 ext.githubPackageRegistryPassword = System.getenv("GH_PACKAGE_REGISTRY_TOKEN")
 
-/*
-    CodeQL extracts Java only from compilations it observes, so under a CodeQL traced build
-    every JavaCompile task must run: never restored from (or stored in) the build cache.
-    All other tasks keep using the local and Develocity remote caches.
- */
-def codeqlTracedBuild = System.getenv().keySet().any { it == "CODEQL_RUNNER" || it.startsWith("CODEQL_EXTRACTOR_JAVA_") }
-if (codeqlTracedBuild) {
-    gradle.beforeProject { project ->
-        project.tasks.withType(JavaCompile).configureEach {
-            outputs.cacheIf("CodeQL must observe every Java compilation") { false }
-            outputs.upToDateWhen { false }
-        }
-    }
-}
-
 buildCache {
     local { enabled = true }
     remote(develocity.buildCache) {
