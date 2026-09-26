@@ -1,0 +1,616 @@
+<!DOCTYPE html>
+<html lang="en" data-bs-theme="dark">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="color-scheme" content="light dark">
+    
+    
+    
+
+
+
+
+
+
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    <meta name="description" content="Release Notes. Technical guides for Apereo CAS: enterprise identity, authentication, single sign-on and access management.">
+    <meta name="robots" content="index,follow">
+    <meta name="theme-color" content="#06304a">
+    <link rel="canonical" href="https://apereo.github.io/cas/development/release_notes/RC2.html">
+    <meta property="og:type" content="website">
+    <meta property="og:locale" content="en_US">
+    <meta property="og:site_name" content="Apereo CAS Documentation">
+    <meta property="og:title" content="CAS - Release Notes">
+    <meta property="og:description" content="Release Notes. Technical guides for Apereo CAS: enterprise identity, authentication, single sign-on and access management.">
+    <meta property="og:url" content="https://apereo.github.io/cas/development/release_notes/RC2.html">
+    <meta property="og:image" content="https://apereo.github.io/cas/images/cas_logo.png">
+    <meta property="og:image:alt" content="Apereo CAS">
+    <meta name="twitter:card" content="summary">
+    <meta name="twitter:title" content="CAS - Release Notes">
+    <meta name="twitter:description" content="Release Notes. Technical guides for Apereo CAS: enterprise identity, authentication, single sign-on and access management.">
+    <meta name="twitter:image" content="https://apereo.github.io/cas/images/cas_logo.png">
+
+    
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "TechArticle",
+      "headline": "Release Notes",
+      "description": "Release Notes. Technical guides for Apereo CAS: enterprise identity, authentication, single sign-on and access management.",
+      "url": "https://apereo.github.io/cas/development/release_notes/RC2.html",
+      "inLanguage": "en",
+      "isPartOf": {"@type": "WebSite", "name": "Apereo CAS Documentation",
+                   "url": "https://apereo.github.io/cas/"},
+      "author": {"@type": "Organization", "name": "Apereo Foundation", "url": "https://www.apereo.org/"},
+      "publisher": {"@type": "Organization", "name": "Apereo Foundation", "url": "https://www.apereo.org/"}
+    }
+    </script>
+    
+
+    <script>
+        ((i, s, o, g, r, a, m) => {
+            i['GoogleAnalyticsObject'] = r;
+            i[r] = i[r] || function () {
+                (i[r].q = i[r].q || []).push(arguments)
+            }, i[r].l = 1 * new Date();
+            a = s.createElement(o),
+                m = s.getElementsByTagName(o)[0];
+            a.async = 1;
+            a.src = g;
+            m.parentNode.insertBefore(a, m)
+        })(window, document, 'script', 'https://www.google-analytics.com/analytics.js', 'ga');
+
+        ga('create', 'UA-83384532-2', 'auto');
+        ga('send', 'pageview');
+
+    </script>
+
+    <script>
+        function readThemePreference() {
+            try {
+                return localStorage.getItem('cas-docs-theme') || 'system';
+            } catch (error) {
+                return 'system';
+            }
+        }
+
+        function systemTheme() {
+            return window.matchMedia && window.matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark';
+        }
+
+        function resolveTheme(preference) {
+            return preference === 'dark' || preference === 'light' ? preference : systemTheme();
+        }
+
+        function changeTheme(theme) {
+            if (theme !== 'dark' && theme !== 'light') {
+                return;
+            }
+
+            if (document.documentElement.getAttribute('data-bs-theme') !== theme) {
+                document.documentElement.setAttribute('data-bs-theme', theme);
+            }
+        }
+
+        (() => {
+            let preference = readThemePreference();
+            if (preference !== 'dark' && preference !== 'light') {
+                preference = 'system';
+
+            }
+
+            changeTheme(resolveTheme(preference));
+
+            if (window.matchMedia) {
+                window.matchMedia('(prefers-color-scheme: light)').addEventListener('change', () => {
+                    if (readThemePreference() !== 'system') {
+                        return;
+                    }
+                    const theme = systemTheme();
+                    changeTheme(theme);
+                });
+            }
+        })();
+    </script>
+
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v6.5.2/css/all.css"/>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@docsearch/css@3"/>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/lightbox2/2.11.5/css/lightbox.min.css" />
+    
+    
+    <link rel="stylesheet" type="text/css" media="screen" href='/cas/stylesheets/site.css'>
+    <link rel="stylesheet" type="text/css" media="print" href='/cas/stylesheets/site-print.css'>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,400..700;1,9..40,400..500&family=JetBrains+Mono:wght@400;500;700&family=Manrope:wght@400..800&family=Newsreader:ital,opsz,wght@1,6..72,400..600&display=swap" rel="stylesheet">
+    <link href="https://cdn.datatables.net/1.11.5/css/jquery.dataTables.min.css" rel="stylesheet">
+
+    <title>CAS - Release Notes · Apereo CAS Documentation</title>
+
+</head>
+
+<body class="">
+    <a class="skip-link" href="#cas-docs-container">Skip to content</a>
+    <header class="site-header">
+        <div class="masthead">
+            <a class="cas-brand" href="../../index.html" aria-label="Apereo CAS home">
+                <img class="brand-logo" src="/cas/images/cas_logo.png" width="119" height="60" alt="CAS">
+                <span class="brand-caption">APEREO<span>Documentation</span></span>
+            </a>
+            <div class="brand-mission">
+                <p>Enterprise Identity for All Earthlings and Beyond</p>
+                <span>Identity, Single Sign-On and Access Management</span>
+            </div>
+            <a id="forkme_banner" href="https://github.com/apereo/cas"><i class="fab fa-github" aria-hidden="true"></i><span>View on GitHub</span><span aria-hidden="true">↗</span></a>
+        </div>
+        <div class="navigation-bar">
+            
+            <button onclick="navigateSidebar()" id="sidebarNavButton" class="icon-button" type="button" aria-controls="sidebar" aria-expanded="true" aria-label="Toggle documentation navigation">
+                <i class="fa fa-bars" aria-hidden="true"></i><span>Explore docs</span>
+            </button>
+            
+            <nav class="primary-navigation" aria-label="Main navigation">
+                <a href="../../index.html">Home</a>
+                <a href="https://github.com/apereo/cas/releases">Releases</a>
+                <a href="../../Support.html">Support</a>
+                <a href="../../Mailing-Lists.html">Mailing Lists</a>
+                <div class="dropdown">
+                    <button class="dropdown-toggle" type="button" id="cas-versions" data-bs-toggle="dropdown" aria-expanded="false">Versions</button>
+                    <div class="dropdown-menu" aria-labelledby="cas-versions">
+                        
+                        <a class="dropdown-item" href="/cas/development/">Development</a>
+                        
+                        <a class="dropdown-item" href="/cas/8.0.x/">v8.0.x</a>
+                        
+                        <a class="dropdown-item" href="/cas/7.3.x/">v7.3.x</a>
+                        
+                    </div>
+                </div>
+                <a href="https://apereo.github.io" target="_blank" rel="noopener">Blog <span aria-hidden="true">↗</span><span class="visually-hidden"> (opens in a new tab)</span></a>
+            </nav>
+            <div class="navigation-tools">
+                <div id="searchField"></div>
+                <button id="themeToggle" class="icon-button" type="button" onclick="toggleDarkMode()" aria-label="Toggle color theme" title="Toggle color theme"><i class="fa fa-circle-half-stroke" aria-hidden="true"></i></button>
+            </div>
+        </div>
+        <div class="reading-progress" aria-hidden="true"><span id="readingProgress"></span></div>
+    </header>
+
+    <div class="docs-shell">
+        
+        <aside id="sidebar" class="docs-sidebar" aria-label="Documentation navigation">
+    <div class="sidebar-heading"><span class="eyebrow">THE DOCUMENTATION</span><span class="sidebar-symbol" aria-hidden="true">✳</span></div>
+    <nav id="sidebar-navigation" aria-label="Documentation topics"></nav>
+    <noscript><p>Browse the <a href="/cas/development/sidebar.html">documentation index</a>.</p></noscript>
+</aside>
+
+        
+        <main class="cas-docs-content">
+            
+            <div class="page-toolbar">
+                <nav id="docsNavBar" aria-label="Breadcrumb"></nav>
+                <div id="toolbarIcons" role="group" aria-label="Page tools"></div>
+            </div>
+            
+            
+            <aside id="dev-doc-info" aria-labelledby="dev-doc-title">
+                <span class="development-marker" aria-hidden="true"></span>
+                <div>
+                    <p id="dev-doc-title">WORKERS AHEAD!</p>
+                    <p>You are viewing the <strong>development</strong> documentation for the Apereo CAS server. <strong>The
+                        functionality presented here <a href="https://github.com/apereo/cas/milestones">is not officially released yet</a></strong>.
+                        This is a work in progress and will be continually updated as development moves forward.
+                        <strong>You are most encouraged to test the changes presented.</strong>
+                    </p>
+                </div>
+            </aside>
+            
+            <article id="cas-docs-container" tabindex="-1">
+                
+<h1 id="810-rc2-release-notes">8.1.0-RC2 Release Notes</h1>
+
+<p>We strongly recommend that you take advantage of the release candidates as they come out. Waiting for a <code class="language-plaintext highlighter-rouge">GA</code> release is only going to set
+you up for unpleasant surprises. A <code class="language-plaintext highlighter-rouge">GA</code> is <a href="https://apereo.github.io/2017/03/08/the-myth-of-ga-rel/">a tag and nothing more</a>. Note
+that CAS releases are <em>strictly</em> time-based releases; they are not scheduled or based on specific benchmarks,
+statistics or completion of features. To gain confidence in a particular
+release, it is strongly recommended that you start early by experimenting with release candidates and/or follow-up snapshots.</p>
+
+<h2 id="apereo-membership">Apereo Membership</h2>
+
+<p>If you benefit from Apereo CAS as free and open-source software, we invite you
+to <a href="https://www.apereo.org/content/apereo-membership">join the Apereo Foundation</a>
+and financially support the project at a capacity that best suits your deployment. Note that all development activity is performed
+<em>almost exclusively</em> on a voluntary basis with no expectations, commitments or strings attached. Having the financial means to better
+sustain engineering activities will allow the developer community to allocate <em>dedicated and committed</em> time for long-term support,
+maintenance and release planning, especially when it comes to addressing critical and security issues in a timely manner.</p>
+
+<h2 id="get-involved">Get Involved</h2>
+
+<ul>
+  <li>Start your CAS deployment today. Try out features and <a href="/cas/Mailing-Lists.html">share feedback</a>.</li>
+  <li>Better yet, <a href="/cas/developer/Contributor-Guidelines.html">contribute patches</a>.</li>
+  <li>Suggest and apply documentation improvements.</li>
+</ul>
+
+<h2 id="resources">Resources</h2>
+
+<ul>
+  <li><a href="https://github.com/apereo/cas/milestones">Release Schedule</a></li>
+  <li><a href="/cas/developer/Release-Policy.html">Release Policy</a></li>
+</ul>
+
+<h2 id="system-requirements">System Requirements</h2>
+
+<p>The JDK baseline requirement for this CAS release is and <strong>MUST</strong> be JDK <code class="language-plaintext highlighter-rouge">25</code>. All compatible distributions
+such as Amazon Corretto, Zulu, Eclipse Temurin, etc should work and are implicitly supported.</p>
+
+<h2 id="new--noteworthy">New &amp; Noteworthy</h2>
+
+<p>The following items are new improvements and enhancements presented in this release.</p>
+
+<h3 id="openrewrite-recipes">OpenRewrite Recipes</h3>
+
+<p>CAS continues to produce and publish <a href="https://docs.openrewrite.org/">OpenRewrite</a> recipes that allow the project to upgrade installations
+in place from one version to the next. <a href="../installation/OpenRewrite-Upgrade-Recipes.html">See this guide</a> to learn more.</p>
+
+<h3 id="graal-vm-native-images">Graal VM Native Images</h3>
+
+<p>A CAS server installation and deployment process can be tuned to build and run
+as a <a href="../installation/GraalVM-NativeImage-Installation.html">Graal VM native image</a>. We continue to polish native runtime hints.
+The collection of end-to-end <a href="../../developer/Test-Process.html">browser tests based on Puppeteer</a> have selectively switched
+to build and verify Graal VM native images and we plan to extend the coverage to all such scenarios in the coming releases.</p>
+
+<h3 id="testing-strategy">Testing Strategy</h3>
+
+<p>The collection of end-to-end <a href="../../developer/Test-Process.html">browser tests based on Puppeteer</a> continue to grow to cover more use cases
+and scenarios. At the moment, total number of jobs stands at approximately <code class="language-plaintext highlighter-rouge">556</code> distinct scenarios. The overall
+test coverage of the CAS codebase is approximately <code class="language-plaintext highlighter-rouge">94%</code>.</p>
+
+<h3 id="java-27">Java 27</h3>
+
+<p>CAS may be built and run using Java <code class="language-plaintext highlighter-rouge">27</code> and the build process has been updated to use 
+the latest Java <code class="language-plaintext highlighter-rouge">27</code> features and capabilities. Please note that this is only a preparatory step for future 
+releases and the baseline requirement will remain as it was.</p>
+
+<h3 id="gradle-98">Gradle 9.8</h3>
+
+<p>CAS is now built with Gradle <code class="language-plaintext highlighter-rouge">9.8</code> and the build process has been updated to use the
+latest Gradle features and capabilities.</p>
+
+<h3 id="spring-boot-42">Spring Boot 4.2</h3>
+
+<p>CAS is now built on top of Spring Boot <code class="language-plaintext highlighter-rouge">4.2.x</code>. This is an in-progress ongoing minor platform upgrade that
+affects almost all aspects of the codebase including many of the third-party core libraries used by CAS
+as well as some CAS functionality.</p>
+
+<p>Please refer to the <a href="https://github.com/spring-projects/spring-boot/wiki/Spring-Boot-4.2-Release-Notes">Spring Boot Wiki</a>
+for more information on the changes and updates in this release. The biggest change to CAS would be support for AMQP 1.0.</p>
+
+<p>REST password management, trusted-device storage, Clickatell SMS and Spring Boot Admin registration now use Spring’s
+<code class="language-plaintext highlighter-rouge">RestClient</code> in place of deprecated <code class="language-plaintext highlighter-rouge">RestTemplate</code> APIs.</p>
+
+<h3 id="jspecify--nullaway">JSpecify &amp; NullAway</h3>
+
+<p>CAS codebase is now annotated with <a href="https://jspecify.dev/">JSpecify</a> annotations to indicate nullness contracts on method parameters,
+return types and fields. We will gradually extend the coverage of such annotations across the entire codebase in future releases
+and will integrate the Gradle build tool with tools such as <a href="https://github.com/uber/NullAway">NullAway</a> to prevent nullness contract violations
+during compile time.</p>
+
+<h3 id="openid-connect-verifiable-credentials">OpenID Connect Verifiable Credentials</h3>
+
+<p>Several improvements are now available for <a href="../authentication/OIDC-Authentication-Verifiable-Credentials.html">OpenID Connect with Verifiable Credentials</a>:</p>
+
+<ul>
+  <li>CAS may require specific principal attributes to determine eligibility before a credential offer transaction can be created for a principal.</li>
+  <li>Pre-authorization codes are now also properly updated and removed from the ticket registry after a credential offer transaction is completed once the ticket is expired.</li>
+  <li>Access tokens used for credential issuance are now bound to the credential configuration id when the token is minted; this is then enforced when the token is used to request credentials.</li>
+  <li>Transaction-code requirements are enforced during token exchange.</li>
+  <li>A pre-authorized code is now redeemed atomically, before the access token is minted, rather than being marked used afterwards. Previously two concurrent exchanges of the same code could each receive an access token, since the code was only updated once the token already existed. OpenID4VCI requires the code to be single use.</li>
+  <li>Credential batch issuance is limited and capped at a predefined limit.</li>
+  <li>OpenID Connect discovery now advertises <code class="language-plaintext highlighter-rouge">none</code> among <code class="language-plaintext highlighter-rouge">token_endpoint_auth_methods_supported</code>, and <code class="language-plaintext highlighter-rouge">none</code> is understood as a client authentication method. CAS already accepted unauthenticated token requests for grants that carry their own proof of authorization, such as the OpenID4VCI pre-authorized code, but never said so; a client with no credentials had no way to discover that and would choose a method it could not satisfy.</li>
+  <li>OpenID Connect discovery now publishes <code class="language-plaintext highlighter-rouge">token_endpoint_auth_signing_alg_values_supported</code>. <a href="https://www.rfc-editor.org/rfc/rfc8414">RFC 8414</a> requires this whenever <code class="language-plaintext highlighter-rouge">private_key_jwt</code> or <code class="language-plaintext highlighter-rouge">client_secret_jwt</code> appears in <code class="language-plaintext highlighter-rouge">token_endpoint_auth_methods_supported</code>, which CAS advertises by default, and clients that enforce the requirement previously refused to use the authorization server at all. The published list is configurable and, as the specification requires, excludes <code class="language-plaintext highlighter-rouge">none</code>.</li>
+  <li>Credential issuance now speaks the finalized OpenID4VCI 1.0 wire format rather than draft 13. The credential request takes <code class="language-plaintext highlighter-rouge">proofs</code> (plural) and accepts <code class="language-plaintext highlighter-rouge">credential_identifier</code>; the credential response is a <code class="language-plaintext highlighter-rouge">credentials</code> array and no longer carries <code class="language-plaintext highlighter-rouge">format</code>. The separate batch credential endpoint is removed, since a batch is now one request carrying several proofs, and the issuer metadata advertises <code class="language-plaintext highlighter-rouge">batch_credential_issuance</code> instead of <code class="language-plaintext highlighter-rouge">batch_credential_endpoint</code>. The proof challenge is no longer returned from the token endpoint, and the nonce endpoint returns <code class="language-plaintext highlighter-rouge">c_nonce</code> alone.</li>
+  <li>The outcome of a <a href="../authentication/OIDC-Authentication-Verifiable-Credentials.html#verifiable-presentations">verifiable presentation</a> now reaches the relying party that asked for it. Previously the wallet was told whether its presentation verified and the transaction was deleted, leaving the relying party with no way to learn the result or the disclosed claims. A new <code class="language-plaintext highlighter-rouge">oidcVcPresentationResult</code> endpoint, protected by the same client authentication as the request creation endpoint, reports <code class="language-plaintext highlighter-rouge">pending</code> until the wallet answers and then delivers the outcome together with the disclosed claims, once.</li>
+  <li>Verifiable presentation requests are now delivered the way OpenID4VP requires. A request made under the <code class="language-plaintext highlighter-rouge">redirect_uri</code> client identifier prefix cannot be signed, and a request URI must serve a signed request object, so CAS now carries the whole authorization request by value in the wallet deep link and no longer offers a request URI in that mode. Setting <code class="language-plaintext highlighter-rouge">cas.authn.oidc.vc.presentation.client-identifier-prefix</code> to <code class="language-plaintext highlighter-rouge">X509_SAN_DNS</code> signs the request object and serves it by reference as <code class="language-plaintext highlighter-rouge">application/oauth-authz-req+jwt</code>. Previously CAS advertised a request URI that returned a plain JSON document.</li>
+  <li>The credential endpoint now behaves as an OAuth protected resource. A missing, unknown or expired access token is answered with <code class="language-plaintext highlighter-rouge">401</code> and a <code class="language-plaintext highlighter-rouge">WWW-Authenticate</code> challenge in the scheme the wallet used, rather than <code class="language-plaintext highlighter-rouge">400 invalid_request</code>. Other failures now carry the credential error codes OpenID4VCI defines, such as <code class="language-plaintext highlighter-rouge">invalid_credential_request</code>, <code class="language-plaintext highlighter-rouge">unsupported_credential_type</code>, <code class="language-plaintext highlighter-rouge">credential_request_denied</code>, <code class="language-plaintext highlighter-rouge">invalid_proof</code> and <code class="language-plaintext highlighter-rouge">invalid_nonce</code>, instead of a single opaque <code class="language-plaintext highlighter-rouge">invalid_request</code>. The split between <code class="language-plaintext highlighter-rouge">invalid_proof</code> and <code class="language-plaintext highlighter-rouge">invalid_nonce</code> is what lets a wallet tell a stale nonce, which it can recover from by fetching a new one, from a proof it cannot fix.</li>
+  <li>The authorization-code flow for verifiable credentials no longer ignores confidential clients or requests without PKCE. The response builder previously claimed the request only when the client had no secret <em>and</em> sent a code challenge; every other client had its <code class="language-plaintext highlighter-rouge">authorization_details</code> quietly dropped, and the failure surfaced much later as a refusal at the credential endpoint. OpenID4VCI 1.0 only recommends PKCE and places no restriction on confidential clients. A credential the client cannot be granted is now reported as <code class="language-plaintext highlighter-rouge">invalid_authorization_details</code> per <a href="https://www.rfc-editor.org/rfc/rfc9396">RFC 9396</a> rather than dropped.</li>
+  <li>Credential types are now <a href="../authentication/OIDC-Authentication-Verifiable-Credentials.html#authorized-credential-types">authorized per service</a>. Previously the offer endpoint and the authorization-details filter only checked that a credential configuration id existed in <code class="language-plaintext highlighter-rouge">cas.authn.oidc.vc.issuer.credential-configurations</code>, so any registered client could obtain any credential the deployment defined. An OpenID Connect service can now carry a <code class="language-plaintext highlighter-rouge">verifiableCredentialsPolicy</code> naming the credential configuration ids it may obtain, enforced when an offer transaction is created, when authorization details become an authorization code, and again at the credential endpoint when the token is spent. A service with no policy, or a policy that names no credential types, may obtain everything the issuer publishes, so existing deployments are unaffected.</li>
+  <li>A service’s verifiable credentials policy may also narrow the algorithms its credentials are signed with, through <code class="language-plaintext highlighter-rouge">credentialSigningAlgValuesSupported</code>. Like the credential types on the same policy it can only narrow: the effective set is the intersection with what the credential configuration advertises.</li>
+  <li>Verifiable credentials are no longer signed as if they were ID tokens. A credential was passed to the ID token signing service, so a client with <code class="language-plaintext highlighter-rouge">encryptIdToken</code> received a JWE rather than an SD-JWT, <code class="language-plaintext highlighter-rouge">signIdToken=false</code> produced an unsigned credential, and the algorithm came from the client’s <code class="language-plaintext highlighter-rouge">idTokenSigningAlg</code> instead of the advertised <code class="language-plaintext highlighter-rouge">credential-signing-alg-values-supported</code> which CAS’s own verifier then rejected. Credentials are now always signed, never encrypted, and use the first advertised algorithm the issuer key can perform, with the advertised list enforced as the permitted set.</li>
+  <li>Issued credentials now honor a configurable lifetime per credential configuration, <code class="language-plaintext highlighter-rouge">cas.authn.oidc.vc.issuer.credential-configurations[].credential-validity</code>, which defaults to thirty days. Previously every credential expired five minutes after issuance, which left it unusable by the time a wallet had stored it.</li>
+</ul>
+
+<h3 id="oauth-and-openid-connect">OAuth and OpenID Connect</h3>
+
+<p><a href="../protocol/OAuth-Protocol.html">OAuth</a> and <a href="../authentication/OIDC-Authentication.html">OpenID Connect</a>
+security have been strengthened across several flows.</p>
+
+<ul>
+  <li>Client assertions now require matching subject, issuer, and client identifiers.</li>
+  <li>JWT IDs are tracked through the shared ticket registry to prevent replay across clustered deployments.</li>
+  <li>Device and CIBA polling are bound to the authenticated client and completed poll-mode requests are consumed.</li>
+  <li>Dynamic client key registrations are memory-bounded.</li>
+  <li><a href="../authentication/OAuth-ProtocolFlow-TokenExchange.html">Token exchanges</a> are now authorized against the authenticated requesting client, and exchanged tokens cannot gain scopes beyond those granted to the subject token and allowed for the requesting client.</li>
+  <li>Client secrets are now compared and enforced using a case sensitive strategy.</li>
+  <li>Token introspection reports tokens from other clients as inactive, while revocation only affects the requesting client’s tokens and no longer reveals whether other tokens exist.</li>
+  <li><a href="../authentication/OIDC-Authentication-DPoP.html">DPoP-bound access tokens</a> can now be spent. CAS answers the token request with <code class="language-plaintext highlighter-rouge">token_type: DPoP</code> whenever a proof accompanies it, but protected resources recognized the <code class="language-plaintext highlighter-rouge">Bearer</code> authorization scheme alone, so a client following <a href="https://www.rfc-editor.org/rfc/rfc9449">RFC 9449</a> section 7.1 and presenting the token as <code class="language-plaintext highlighter-rouge">Authorization: DPoP ...</code> was told the token was missing. The userinfo, JWKS registration and credential endpoints now accept either scheme.</li>
+  <li>DPoP proofs are now verified at protected resources through a single <code class="language-plaintext highlighter-rouge">validateProtectedResourceRequest</code> operation on the proof-of-possession validator. The credential endpoint previously accepted a DPoP-bound access token on presentation alone, which left the sender constraint doing nothing; it now answers a missing or invalid proof with <code class="language-plaintext highlighter-rouge">401</code> and <code class="language-plaintext highlighter-rouge">WWW-Authenticate: DPoP error="invalid_dpop_proof"</code>. The userinfo endpoint keeps the same checks but no longer runs the token endpoint’s verifier over a resource request in addition to the correct one, and the resource-side check now includes the single-use <code class="language-plaintext highlighter-rouge">jti</code> check.</li>
+  <li>DPoP proof validation no longer takes the client identifier from the unauthenticated <code class="language-plaintext highlighter-rouge">client_id</code> request parameter. The identifier is resolved from the authenticated profile first, then from the access token, and only then from the request, which matters for grants that carry their own proof of authorization rather than client credentials, such as the OpenID4VCI pre-authorized code. Validation also no longer overwrites the profile identifier when that identifier belongs to the subject rather than the client.</li>
+  <li>Single-use checking for DPOP proofs is now enforced using the CAS ticket registry. Furthermore, DPOP requests are no longer treated as a form of client authentication and now sit on top of existing client authentication approaches such as client ID and client secret for confidential clients or PKCE.</li>
+  <li><a href="../protocol/OAuth-UMA-Protocol.html">User-Managed Access</a> resources and policies are now bound to both the authenticated client and resource owner. New resource registrations also receive non-sequential, server-assigned identifiers.</li>
+</ul>
+
+<h3 id="webauthn-multifactor-authentication">WebAuthn Multifactor Authentication</h3>
+
+<p><a href="../mfa/FIDO2-WebAuthn-Authentication.html">FIDO2 WebAuthn</a> multifactor authentication receives the following improvements:</p>
+
+<ul>
+  <li>Authentication and QR session proofs are now principal-bound and single-use, and configured user verification is enforced for assertions.</li>
+  <li>Credential and user-handle resolution now avoids repeated repository-wide scans.</li>
+</ul>
+
+<h3 id="duo-multifactor-authentication">Duo Multifactor Authentication</h3>
+
+<p><a href="../mfa/DuoSecurity-Authentication.html">Duo Security</a> multifactor authentication receives the following improvements:</p>
+
+<ul>
+  <li>REST passcodes now require completed primary authentication, and Universal Prompt callbacks validate browser-session state before restoring the flow.</li>
+  <li>Duo Auth and Admin API clients now reuse outbound connection pools across requests.</li>
+</ul>
+
+<h3 id="saml2-identity-provider">SAML2 Identity Provider</h3>
+
+<p><a href="../authentication/Configuring-SAML2-Authentication.html">SAML2 identity provider</a> support receives the following improvements:</p>
+
+<ul>
+  <li>Presented SAML2 authentication request signatures are now validated independently of the metadata signing requirement. Only a successfully validated signature may authorize an assertion consumer service URL that is not registered in service provider metadata.</li>
+  <li>IdP-initiated SSO now also requires a caller-provided <code class="language-plaintext highlighter-rouge">shire</code> to match a POST assertion consumer service registered in metadata.</li>
+  <li>Inbound encrypted SAML2 identifiers now use CAS’s matching IdP encryption certificate and private key for decryption.</li>
+  <li>Signature algorithm inclusion and exclusion policies are now enforced consistently across all inbound SAML bindings.</li>
+  <li>The <code class="language-plaintext highlighter-rouge">Address</code> field of the SAML2 <code class="language-plaintext highlighter-rouge">SubjectConfirmationData</code> is now populated with the requester’s IP address when possible.</li>
+  <li>SAML2 metadata cache entries are now isolated by registered service and resolved without scanning unrelated cached resolvers.</li>
+  <li>SAML2 authentication request session entries are updated per session and consumed after callback correlation, avoiding controller-wide serialization and retained replicated-session state.</li>
+  <li>Storage-backed SAML2 metadata resolution now uses the requested entity ID to limit document lookups and resolver rebuilds.</li>
+  <li>SAML2 SOAP attribute queries and artifact resolutions now require independently validated signatures, message freshness, destinations, and replay protection; artifact tickets are relying-party bound and consumed atomically.</li>
+  <li><a href="../installation/Configuring-SAML2-Logout.html">SAML2 single logout</a> now validates request freshness and replay, fully authenticates and correlates logout responses, and generates actuator logout requests with the correct IdP issuer and service-provider destination.</li>
+  <li><a href="../installation/Configuring-SAML2-DynamicMetadata.html#per-service">Identity provider metadata</a> is now resolved atomically, so concurrent requests can no longer observe a metadata document, or the signing and encryption credentials that belong to it, that was installed on behalf of a different registered service.</li>
+  <li>A <a href="../installation/SAML2-ServiceProvider-Metadata.html#default">service provider metadata backup file</a> is no longer deleted ahead of a download attempt, and is used as a fallback when the remote metadata source or MDQ server cannot be reached, so a momentary outage there no longer takes the service offline.</li>
+  <li>A service that defines a metadata signature location now fails to load its metadata when that certificate cannot be read, rather than loading the metadata unverified.</li>
+  <li>Downloaded service provider metadata is written to its backup file in a single step, so services that share one metadata location can no longer read a partially written document.</li>
+  <li>The JDBC and MongoDB identity provider metadata stores now scope the global document lookup to the global owner, so a service’s own document and keys can no longer answer in its place.</li>
+  <li>Metadata query requests now ask for <code class="language-plaintext highlighter-rouge">application/samlmetadata+xml</code> via the <code class="language-plaintext highlighter-rouge">Accept</code> header, as the SAML profile for the Metadata Query Protocol requires, and are issued through the CAS HTTP client so they use the deployment’s TLS trust store and hostname verifier.</li>
+  <li>The SAML2 metadata health indicator answers from the local metadata backup copy where one exists, instead of reaching out to every service’s metadata host on every health check.</li>
+  <li>SAML2 metadata user interface information is resolved once per login attempt rather than twice, and dynamically-resolved entities are cached, so rendering the login page no longer issues a metadata query per request.</li>
+  <li>Outbound HTTP calls now reuse their underlying HTTP client and its connection pool instead of building and discarding one per request, which recovers connection reuse and stops the server accumulating open sockets over time.</li>
+  <li>Service names can no longer resolve per-service identity provider metadata directories outside the configured metadata root. Explicit <code class="language-plaintext highlighter-rouge">idpMetadataLocation</code> settings remain supported.</li>
+  <li>HTTP response buffering now limits downloads, including decompressed bodies, to 256 MiB by default. The limit can be changed with the <code class="language-plaintext highlighter-rouge">org.apereo.cas.util.http.HttpRequestUtils.maximumResponseSize</code> system property or overridden per request.</li>
+</ul>
+
+<h3 id="cas-protocol">CAS Protocol</h3>
+
+<ul>
+  <li>The CAS <code class="language-plaintext highlighter-rouge">1.0</code> <a href="../ux/User-Interface-Views-CASv1.html">validation response</a> is line-delimited and carries no escaping mechanism.
+Principal identifiers and rendered attribute lines are now stripped of line breaks, so a value that contains a newline
+can no longer forge additional lines in the response.</li>
+  <li>A <a href="../authentication/Configuring-Proxy-Authentication.html#use-case">proxy-granting ticket</a> is now issued only after the service ticket, the validation specification and the
+authentication context have all been accepted. The <code class="language-plaintext highlighter-rouge">pgtUrl</code> callback used to be contacted and the proxy-granting
+ticket minted before any of those checks ran, so presenting a leaked service ticket could drive an outbound request
+and leave an unused proxy-granting ticket behind even though validation went on to fail.</li>
+  <li>Validation responses now use the protocol’s own error codes for two cases that previously reported something else.
+A ticket that fails the validation specification without a <code class="language-plaintext highlighter-rouge">renew</code> request 
+is reported as <code class="language-plaintext highlighter-rouge">INVALID_TICKET_SPEC</code> rather than <code class="language-plaintext highlighter-rouge">INVALID_TICKET</code>, and an
+unexpected failure during validation is reported as <code class="language-plaintext highlighter-rouge">INTERNAL_ERROR</code> rather than <code class="language-plaintext highlighter-rouge">INVALID_REQUEST</code>, which stays
+reserved for a request that is missing required parameters. A ticket that did not come from an initial login while
+<code class="language-plaintext highlighter-rouge">renew</code> was requested continues to be reported as <code class="language-plaintext highlighter-rouge">INVALID_TICKET</code>, as the protocol specifies.</li>
+  <li>Attribute names are now sanitized into valid XML names before they are rendered as elements in the CAS <code class="language-plaintext highlighter-rouge">2.0</code>/<code class="language-plaintext highlighter-rouge">3.0</code>
+validation response, and proxy URLs in <code class="language-plaintext highlighter-rouge">&lt;cas:proxy&gt;</code> are XML-escaped. Previously an attribute name was only stripped
+of spaces and a proxy URL was written out verbatim, so either could carry markup or quoting characters into the
+response. Note that a name containing characters that are not legal in an XML name — a colon, for instance — now
+renders with those characters replaced by an underscore; such a name previously produced a response that was not
+well-formed XML.</li>
+  <li>The SAML <code class="language-plaintext highlighter-rouge">1.1</code> <a href="../protocol/SAML-v1-Protocol.html">validation response</a> now sets <code class="language-plaintext highlighter-rouge">Recipient</code> to the service URL the
+response is intended for, and reserves <code class="language-plaintext highlighter-rouge">InResponseTo</code> for the <code class="language-plaintext highlighter-rouge">RequestID</code> of the request being answered, omitting it
+when the caller did not send one. <code class="language-plaintext highlighter-rouge">InResponseTo</code> previously carried the hostname of the <code class="language-plaintext highlighter-rouge">TARGET</code> service unless a
+<code class="language-plaintext highlighter-rouge">RequestID</code> happened to be present, and <code class="language-plaintext highlighter-rouge">Recipient</code> was never set at all, so a relying party had no way to bind the
+response to its own request or endpoint.</li>
+  <li>The <code class="language-plaintext highlighter-rouge">renew</code> parameter presented to the <a href="../protocol/CAS-Protocol.html">CAS protocol</a> validation endpoints is now
+evaluated per request. Validation specifications are shared components and the requested value used to be assigned
+onto them for the duration of a request, which allowed a concurrent validation request to reset it. A service ticket
+that was not issued from a new login can no longer satisfy a <code class="language-plaintext highlighter-rouge">renew=true</code> validation because of another request that
+happened to be in flight at the same time.</li>
+</ul>
+
+<h3 id="views-and-themes">Views and Themes</h3>
+
+<ul>
+  <li>The <a href="../ux/User-Interface-Views-External.html">REST-based view resolver</a> no longer forwards credential-bearing request
+headers, such as <code class="language-plaintext highlighter-rouge">Cookie</code>, <code class="language-plaintext highlighter-rouge">Authorization</code> and <code class="language-plaintext highlighter-rouge">Proxy-Authorization</code>, to the external template endpoint.</li>
+  <li>Every resolved theme name is now matched against a real
+<a href="../ux/User-Interface-Customization-Themes-Static.html">theme definition</a> before it is honored, no matter how the
+name was chosen. A name without a matching <code class="language-plaintext highlighter-rouge">[theme].properties</code> file, either at the root of a configured template
+prefix or at the root of the classpath, is ignored and the next resolver in the chain applies. This closes a gap
+where names taken from a request header, cookie or session value were used without any check, and it makes the
+<a href="../ux/User-Interface-Customization-Themes-Groovy.html">Groovy</a> and
+<a href="../ux/User-Interface-Customization-Themes-REST.html">REST</a> theme sources hold to the same contract as every other
+theme: a script or endpoint that returns a name with no theme definition behind it now falls back to the default
+theme rather than selecting a theme that does not exist.</li>
+  <li>A service theme is now resolved once per request rather than once per template lookup, so service resolution, access
+strategy evaluation and theme file lookups no longer repeat for every fragment rendered on a page.</li>
+  <li><a href="../ux/User-Interface-Thymeleaf.html">Thymeleaf template caching</a> now takes effect. The chaining template resolver previously declared every resolution
+non-cacheable regardless of <code class="language-plaintext highlighter-rouge">spring.thymeleaf.cache</code>, so each page and each fragment was re-resolved and re-parsed on
+every request. Resolutions are now cached per the configured setting, except for those produced by a theme-aware
+resolver: those map one template name to different files depending on the request’s theme, and Thymeleaf’s cache key
+does not carry the theme, so they remain non-cacheable. Deployments with no themed template overrides cache every
+template; deployments with themed overrides cache everything except the overridden templates.</li>
+</ul>
+
+<h3 id="ldap-integrations">LDAP Integrations</h3>
+
+<ul>
+  <li><a href="../authentication/Surrogate-Authentication-Storage-LDAP.html">Surrogate authentication</a>, <a href="../integration/Delegate-Authentication-ProfileSelection.html">delegated authentication profile selection</a>, <a href="../webflow/Webflow-Customization-AUP-LDAP.html">acceptable usage policy</a> and <a href="../password_management/Password-Management.html">password management</a> now build their LDAP connection pools once and reuse them across requests.</li>
+  <li>LDAP connection pools are now addressed by the directory and base DN they serve, so multiple configuration blocks that point at the same server no longer collapse onto a single set of connection settings.</li>
+  <li>Surrogate search filters that do not reference the impersonated account are now rejected, as such a filter is unable to restrict the accounts a user may impersonate.</li>
+</ul>
+
+<h3 id="mongodb-integrations">MongoDB Integrations</h3>
+
+<ul>
+  <li>A <a href="../configuration/Configuration-Management-Reload.html">configuration refresh</a> no longer drops MongoDB collections. <code class="language-plaintext highlighter-rouge">drop-collection</code> and <code class="language-plaintext highlighter-rouge">drop-indexes</code> describe what happens at startup, but a refresh of the <a href="../ticketing/MongoDb-Ticket-Registry.html">MongoDB ticket registry</a> or <a href="../services/MongoDb-Service-Management.html">service registry</a> re-ran them and destroyed live tickets or registered services. Collection and index creation still runs on refresh, as it is repeatable.</li>
+  <li>The MongoDB ticket registry no longer reports a storage failure as a missing ticket. Adding, updating or fetching a ticket now surfaces the underlying failure instead of logging it and carrying on, so a database outage, an oversized document or a ticket definition missing from the catalog can no longer look like a successful login followed by an invalid ticket.</li>
+  <li>Result limits are now applied by MongoDB rather than after the fact, so paging through tickets and querying the ticket registry no longer fetch and deserialize whole collections only to discard them. Cursors opened across several collections are now closed even when the caller stops reading early, and collections shared by more than one ticket definition are read and counted once.</li>
+  <li>An <code class="language-plaintext highlighter-rouge">IDX_PRINCIPAL</code> index is now created on every ticket collection. Queries by principal, such as removing all tickets issued to a user, run against all collections while only the ticket-granting ticket collection carried the index.</li>
+  <li>Querying single sign-on sessions by an attribute whose name contains a dot now matches. Such names are escaped when the document is written, and the query did not apply the same escaping.</li>
+</ul>
+
+<h3 id="jmx-management">JMX Management</h3>
+
+<p><a href="../integration/JMX-Integration.html">JMX management</a> now includes service reload and lookup, ticket and session
+counts with filtered listings, expired-ticket cleanup, authentication and MFA diagnostics, and principal attribute
+cache invalidation. Service listings also release backend resources correctly.</p>
+
+<h3 id="palantir">Palantir</h3>
+
+<p>The OpenID Connect service wizard now includes an advanced verifiable credentials policy section for allowed credential types and signing algorithms.</p>
+
+<p>The <a href="../services/Configuring-Service-Version-History.html">service history endpoint</a> can now restore a selected
+registered-service revision to the service registry and live service cache, while retaining its history.
+<a href="../installation/Admin-Dashboard.html">Palantir</a> offers a <strong>Restore Version</strong> action in the revision table’s context menu under <strong>View Change History</strong>.</p>
+
+<div class="image-gallery">
+    
+    
+    
+    
+    
+
+    <a href="img_14.png" data-lightbox="palantir-dashboard" aria-label="Palantir history version restore view" data-title="Palantir history version restore view">
+        <img src="img_14.png" alt="Palantir history version restore view" title="Palantir history version restore view" />
+    </a>
+    
+    
+</div>
+
+<h3 id="attribute-consent">Attribute Consent</h3>
+
+<ul>
+  <li><a href="../integration/Attribute-Release-Consent.html">Consent decisions</a> are now assigned a unique identifier when they are created.
+Only the JDBC store generated one; every other store recorded the decision with an identifier of <code class="language-plaintext highlighter-rouge">0</code>, which is the key those
+stores use. LDAP and Redis therefore kept a single decision per user, and MongoDB and DynamoDB kept a single decision for the
+entire deployment, each new consent silently replacing the one before it. Decisions recorded by earlier versions continue to be honored.</li>
+  <li><a href="../integration/Attribute-Release-Consent-Storage-DynamoDb.html">DynamoDB</a> consent lookups now match the service and the decision
+identifier for equality. They were matched as greater-than-or-equal, so consent granted to one service could answer the check for
+another, and revoking a single decision removed every decision whose identifier sorted at or above it.</li>
+  <li><a href="../integration/Attribute-Release-Consent-Storage-Redis.html">Redis</a> consent lookups now treat the principal as a literal value.
+Glob characters such as <code class="language-plaintext highlighter-rouge">*</code> and <code class="language-plaintext highlighter-rouge">?</code>, and the <code class="language-plaintext highlighter-rouge">:</code> separator itself, were interpolated into the scan pattern, so a principal
+identifier that contained them could read and delete decisions that belong to other users.</li>
+  <li>Revoking consent now removes every decision it should. Against the JDBC store, revoking all decisions for a user removed nothing at all once the user had
+more than one, and when several stores are configured together only the first store that reported success was
+asked to delete. The <a href="../integration/Attribute-Release-Consent-Storage-REST.html">REST</a> store now sends the decision identifier as
+<code class="language-plaintext highlighter-rouge">decisionId</code>, the parameter its documented contract defines; it previously sent <code class="language-plaintext highlighter-rouge">id</code>, which a conforming server reads as a request to
+revoke everything for that user.</li>
+  <li>A consent decision that cannot be deciphered no longer fails the login. Rotating the <code class="language-plaintext highlighter-rouge">cas.consent.core.crypto</code> keys, or a node that
+does not have them, produced an error that propagated out of the login flow; such a decision now counts as a mismatch, so the user is
+asked to consent again and the record is replaced using the current keys.</li>
+  <li>Reminder options submitted with a consent decision are now validated. A missing or unparsable value falls back on the configured
+default, and a reminder that cannot be applied to a date, such as a negative amount or a time unit of <code class="language-plaintext highlighter-rouge">FOREVER</code>, is rejected rather
+than stored and then failing every subsequent login for that user.</li>
+  <li>Consent decisions record their creation date in UTC, so a decision’s age is the same on every CAS node whatever time zone each node
+runs in. Dates shown on the <a href="../registration/Account-Management-Overview.html">account profile</a> screen are labeled as UTC.</li>
+  <li>Consent is now evaluated once per request. The <a href="../integration/Attribute-Release-Consent-Activation.html">activation strategy</a> returns
+the full consent query result, carrying the decision and the consentable attributes, and the login flow reuses it rather than
+evaluating the attribute release policy and reading the consent store a second time to render the consent screen. Note that a Groovy
+activation script must now return a <code class="language-plaintext highlighter-rouge">ConsentQueryResult</code> instead of a boolean.</li>
+</ul>
+
+<h3 id="interrupt-notifications">Interrupt Notifications</h3>
+
+<ul>
+  <li>Following a link on a <a href="../webflow/Webflow-Customization-Interrupt.html">blocking interrupt</a> no longer records the interrupt as acknowledged, and a blocking response is never skipped by <a href="../webflow/Webflow-Customization-Interrupt-Tracking.html">interrupt tracking</a>. Tracking cookies are now bound to the principal; cookies issued by earlier versions are ignored, so users may see an acknowledged interrupt once more.</li>
+  <li>Interrupt notifications no longer render during passive requests (CAS <code class="language-plaintext highlighter-rouge">gateway</code>, OpenID Connect <code class="language-plaintext highlighter-rouge">prompt=none</code>, SAML2 <code class="language-plaintext highlighter-rouge">IsPassive</code>); CAS returns to the application without a ticket instead, as required by the respective specifications.</li>
+  <li><a href="../webflow/Webflow-Customization-Interrupt-JSON.html">JSON interrupt notifications</a> now load their policies once and reload file changes atomically, so concurrent logins can no longer skip an interrupt while the file is being re-read.</li>
+  <li><a href="../webflow/Webflow-Customization-Interrupt-REST.html">REST interrupt notifications</a> now read the response payload only for successful status codes; error responses no longer interrupt every login with a generic message.</li>
+</ul>
+
+<h3 id="groovy-scripting">Groovy Scripting</h3>
+
+<ul>
+  <li><a href="../integration/Apache-Groovy-Scripting.html">Groovy scripts</a> no longer abandon an execution when the script is already busy on another thread. Previously a script that stayed busy for more than five seconds caused queued executions to return no result at all, which could silently skip a multifactor authentication trigger or an acceptable usage policy check. Executions now wait for their turn.</li>
+  <li>Bindings assigned to an inline <code class="language-plaintext highlighter-rouge">groovy { ... }</code> script are now scoped to the assigning thread and to a single execution, so variables belonging to one request can no longer be observed by the next execution of that script or by an unrelated script.</li>
+  <li>An inline <code class="language-plaintext highlighter-rouge">groovy { ... }</code> script that is executed without variables, such as a scripted multifactor authentication trigger, now keeps working past its first execution. The script’s variables were previously reset to an immutable map once it had run, so every later execution failed internally and produced no result.</li>
+  <li><a href="../authentication/OIDC-Authentication-Claims-Mapping.html#mapping-claims-per-service">OpenID Connect claim mappings</a> defined as scripts no longer discard the shared Groovy script cache after every claim. Compiled scripts, and the reloading of scripts as their files change, are now retained across token requests.</li>
+  <li>Inline scripts used by <a href="../integration/Attribute-Release-Policy-InlineGroovy.html">allowed attributes</a>, pattern-matching attribute transformations and service access strategy required attributes are compiled once and served from the script cache. Previously each of these compiled a fresh script for every attribute on every request.</li>
+  <li>The <a href="../authentication/Surrogate-Authentication.html">surrogate access strategy</a> and <a href="../installation/Configuring-SAML2-DynamicMetadata-Groovy.html">Groovy SAML2 metadata resolution</a> no longer compile their script, and register a new file watcher, on every request.</li>
+  <li>The multifactor authentication <a href="../mfa/Configuring-Multifactor-Authentication-Triggers-PrincipalAttribute-PerApplication.html">principal attribute predicate</a> compiles its Groovy class once and recompiles it only after the file changes, instead of on every authentication attempt.</li>
+  <li>A Groovy script that fails to compile, or that throws while running, now reports that failure to the CAS component which asked for it rather than reporting no result at all. Components designed to carry on without a script result, such as mapped attribute release and the Groovy username provider, keep their existing behavior.</li>
+  <li>A Groovy access strategy activation criteria that produces no result now fails the request with an explanation. Previously it raised an unexplained error, and treating the missing result as an inactive criteria would have granted access without evaluating the service’s required attributes.</li>
+</ul>
+
+<h2 id="other-stuff">Other Stuff</h2>
+
+<ul>
+  <li>CAS <a href="../monitoring/Monitoring-Statistics.html#actuator-endpoints">actuator endpoints</a> that are built on Spring MVC request mappings now honor <code class="language-plaintext highlighter-rouge">management.endpoint.&lt;id&gt;.access</code>. A <code class="language-plaintext highlighter-rouge">READ_ONLY</code> declaration registers only the endpoint’s read mappings, so its <code class="language-plaintext highlighter-rouge">POST</code>, <code class="language-plaintext highlighter-rouge">PUT</code>, <code class="language-plaintext highlighter-rouge">PATCH</code> and <code class="language-plaintext highlighter-rouge">DELETE</code> mappings are no longer reachable, and a <code class="language-plaintext highlighter-rouge">NONE</code> declaration registers no mappings at all.</li>
+  <li><a href="../logging/Logging-Cloudwatch.html">CloudWatch logging</a> now avoids recursive logging initialization when reporting appender startup or delivery failures.</li>
+  <li>Authentication history, theme caching and CloudWatch shutdown now use concurrent collections and explicit coordination in place of Java monitor locking.</li>
+  <li>Several optimizations are in place to assist with faster startup time, allowing for more components to be lazily initialized.</li>
+  <li>A large number of dependencies and libraries have been updated to their latest versions.</li>
+</ul>
+
+            </article>
+            <div class="article-end" aria-hidden="true"><span></span><span>CAS</span><span></span></div>
+        </main>
+        
+        <aside class="docs-toc" aria-label="On this page">
+    <nav id="pageContents" aria-label="Table of contents">
+        <p class="eyebrow">ON THIS PAGE</p>
+        <ul class="section-nav"></ul>
+    </nav>
+    <a class="toc-top" href="#cas-docs-container">Back to top <span aria-hidden="true">↑</span></a>
+</aside>
+
+        
+    </div>
+
+    <footer class="site-footer">
+        <a class="footer-brand" href="../../index.html">APEREO <strong>CAS</strong></a>
+        <p>CAS is supported by the <a href="https://www.apereo.org/">Apereo Foundation</a>.</p>
+        <a href="#cas-docs-container">Back to top <span aria-hidden="true">↑</span></a>
+    </footer>
+    <div id="docs-status" class="visually-hidden" role="status" aria-live="polite"></div>
+
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.min.js"></script>
+
+    <script src="https://cdn.jsdelivr.net/npm/tether@2.0.0/dist/js/tether.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.11/clipboard.min.js"></script>
+
+    <script src='/cas/javascripts/URI.js'></script>
+    <script src='/cas/javascripts/site.js'></script>
+
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@docsearch/js@3"></script>
+    <script type="text/javascript" src="https://cdn.datatables.net/1.11.5/js/jquery.dataTables.min.js"></script>
+    <script type="text/javascript" src="https://code.jquery.com/ui/1.13.1/jquery-ui.js"></script>
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/lightbox2/2.11.5/js/lightbox.min.js"></script>
+
+    <script>
+        let pageSection = "Planning";
+        let siteUrl = "https://apereo.github.io";
+        let basePath = "/cas";
+
+        
+    </script>
+</body>
+
+</html>

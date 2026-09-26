@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html lang="en" data-bs-theme="dark">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="color-scheme" content="light dark">
+    
+    
+    
+
+
+
+
+
+
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    <meta name="description" content="CAS REST Protocol. Technical guides for Apereo CAS: enterprise identity, authentication, single sign-on and access management.">
+    <meta name="robots" content="index,follow">
+    <meta name="theme-color" content="#06304a">
+    <link rel="canonical" href="https://apereo.github.io/cas/development/protocol/REST-Protocol-TicketStatus.html">
+    <meta property="og:type" content="website">
+    <meta property="og:locale" content="en_US">
+    <meta property="og:site_name" content="Apereo CAS Documentation">
+    <meta property="og:title" content="CAS - CAS REST Protocol">
+    <meta property="og:description" content="CAS REST Protocol. Technical guides for Apereo CAS: enterprise identity, authentication, single sign-on and access management.">
+    <meta property="og:url" content="https://apereo.github.io/cas/development/protocol/REST-Protocol-TicketStatus.html">
+    <meta property="og:image" content="https://apereo.github.io/cas/images/cas_logo.png">
+    <meta property="og:image:alt" content="Apereo CAS">
+    <meta name="twitter:card" content="summary">
+    <meta name="twitter:title" content="CAS - CAS REST Protocol">
+    <meta name="twitter:description" content="CAS REST Protocol. Technical guides for Apereo CAS: enterprise identity, authentication, single sign-on and access management.">
+    <meta name="twitter:image" content="https://apereo.github.io/cas/images/cas_logo.png">
+
+    
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "TechArticle",
+      "headline": "CAS REST Protocol",
+      "description": "CAS REST Protocol. Technical guides for Apereo CAS: enterprise identity, authentication, single sign-on and access management.",
+      "url": "https://apereo.github.io/cas/development/protocol/REST-Protocol-TicketStatus.html",
+      "inLanguage": "en",
+      "isPartOf": {"@type": "WebSite", "name": "Apereo CAS Documentation",
+                   "url": "https://apereo.github.io/cas/"},
+      "author": {"@type": "Organization", "name": "Apereo Foundation", "url": "https://www.apereo.org/"},
+      "publisher": {"@type": "Organization", "name": "Apereo Foundation", "url": "https://www.apereo.org/"}
+    }
+    </script>
+    
+
+    <script>
+        ((i, s, o, g, r, a, m) => {
+            i['GoogleAnalyticsObject'] = r;
+            i[r] = i[r] || function () {
+                (i[r].q = i[r].q || []).push(arguments)
+            }, i[r].l = 1 * new Date();
+            a = s.createElement(o),
+                m = s.getElementsByTagName(o)[0];
+            a.async = 1;
+            a.src = g;
+            m.parentNode.insertBefore(a, m)
+        })(window, document, 'script', 'https://www.google-analytics.com/analytics.js', 'ga');
+
+        ga('create', 'UA-83384532-2', 'auto');
+        ga('send', 'pageview');
+
+    </script>
+
+    <script>
+        function readThemePreference() {
+            try {
+                return localStorage.getItem('cas-docs-theme') || 'system';
+            } catch (error) {
+                return 'system';
+            }
+        }
+
+        function systemTheme() {
+            return window.matchMedia && window.matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark';
+        }
+
+        function resolveTheme(preference) {
+            return preference === 'dark' || preference === 'light' ? preference : systemTheme();
+        }
+
+        function changeTheme(theme) {
+            if (theme !== 'dark' && theme !== 'light') {
+                return;
+            }
+
+            if (document.documentElement.getAttribute('data-bs-theme') !== theme) {
+                document.documentElement.setAttribute('data-bs-theme', theme);
+            }
+        }
+
+        (() => {
+            let preference = readThemePreference();
+            if (preference !== 'dark' && preference !== 'light') {
+                preference = 'system';
+
+            }
+
+            changeTheme(resolveTheme(preference));
+
+            if (window.matchMedia) {
+                window.matchMedia('(prefers-color-scheme: light)').addEventListener('change', () => {
+                    if (readThemePreference() !== 'system') {
+                        return;
+                    }
+                    const theme = systemTheme();
+                    changeTheme(theme);
+                });
+            }
+        })();
+    </script>
+
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v6.5.2/css/all.css"/>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@docsearch/css@3"/>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/lightbox2/2.11.5/css/lightbox.min.css" />
+    
+    
+    <link rel="stylesheet" type="text/css" media="screen" href='/cas/stylesheets/site.css'>
+    <link rel="stylesheet" type="text/css" media="print" href='/cas/stylesheets/site-print.css'>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,400..700;1,9..40,400..500&family=JetBrains+Mono:wght@400;500;700&family=Manrope:wght@400..800&family=Newsreader:ital,opsz,wght@1,6..72,400..600&display=swap" rel="stylesheet">
+    <link href="https://cdn.datatables.net/1.11.5/css/jquery.dataTables.min.css" rel="stylesheet">
+
+    <title>CAS - CAS REST Protocol · Apereo CAS Documentation</title>
+
+</head>
+
+<body class="">
+    <a class="skip-link" href="#cas-docs-container">Skip to content</a>
+    <header class="site-header">
+        <div class="masthead">
+            <a class="cas-brand" href="../../index.html" aria-label="Apereo CAS home">
+                <img class="brand-logo" src="/cas/images/cas_logo.png" width="119" height="60" alt="CAS">
+                <span class="brand-caption">APEREO<span>Documentation</span></span>
+            </a>
+            <div class="brand-mission">
+                <p>Enterprise Identity for All Earthlings and Beyond</p>
+                <span>Identity, Single Sign-On and Access Management</span>
+            </div>
+            <a id="forkme_banner" href="https://github.com/apereo/cas"><i class="fab fa-github" aria-hidden="true"></i><span>View on GitHub</span><span aria-hidden="true">↗</span></a>
+        </div>
+        <div class="navigation-bar">
+            
+            <button onclick="navigateSidebar()" id="sidebarNavButton" class="icon-button" type="button" aria-controls="sidebar" aria-expanded="true" aria-label="Toggle documentation navigation">
+                <i class="fa fa-bars" aria-hidden="true"></i><span>Explore docs</span>
+            </button>
+            
+            <nav class="primary-navigation" aria-label="Main navigation">
+                <a href="../../index.html">Home</a>
+                <a href="https://github.com/apereo/cas/releases">Releases</a>
+                <a href="../../Support.html">Support</a>
+                <a href="../../Mailing-Lists.html">Mailing Lists</a>
+                <div class="dropdown">
+                    <button class="dropdown-toggle" type="button" id="cas-versions" data-bs-toggle="dropdown" aria-expanded="false">Versions</button>
+                    <div class="dropdown-menu" aria-labelledby="cas-versions">
+                        
+                        <a class="dropdown-item" href="/cas/development/">Development</a>
+                        
+                        <a class="dropdown-item" href="/cas/8.0.x/">v8.0.x</a>
+                        
+                        <a class="dropdown-item" href="/cas/7.3.x/">v7.3.x</a>
+                        
+                    </div>
+                </div>
+                <a href="https://apereo.github.io" target="_blank" rel="noopener">Blog <span aria-hidden="true">↗</span><span class="visually-hidden"> (opens in a new tab)</span></a>
+            </nav>
+            <div class="navigation-tools">
+                <div id="searchField"></div>
+                <button id="themeToggle" class="icon-button" type="button" onclick="toggleDarkMode()" aria-label="Toggle color theme" title="Toggle color theme"><i class="fa fa-circle-half-stroke" aria-hidden="true"></i></button>
+            </div>
+        </div>
+        <div class="reading-progress" aria-hidden="true"><span id="readingProgress"></span></div>
+    </header>
+
+    <div class="docs-shell">
+        
+        <aside id="sidebar" class="docs-sidebar" aria-label="Documentation navigation">
+    <div class="sidebar-heading"><span class="eyebrow">THE DOCUMENTATION</span><span class="sidebar-symbol" aria-hidden="true">✳</span></div>
+    <nav id="sidebar-navigation" aria-label="Documentation topics"></nav>
+    <noscript><p>Browse the <a href="/cas/development/sidebar.html">documentation index</a>.</p></noscript>
+</aside>
+
+        
+        <main class="cas-docs-content">
+            
+            <div class="page-toolbar">
+                <nav id="docsNavBar" aria-label="Breadcrumb"></nav>
+                <div id="toolbarIcons" role="group" aria-label="Page tools"></div>
+            </div>
+            
+            
+            <aside id="dev-doc-info" aria-labelledby="dev-doc-title">
+                <span class="development-marker" aria-hidden="true"></span>
+                <div>
+                    <p id="dev-doc-title">WORKERS AHEAD!</p>
+                    <p>You are viewing the <strong>development</strong> documentation for the Apereo CAS server. <strong>The
+                        functionality presented here <a href="https://github.com/apereo/cas/milestones">is not officially released yet</a></strong>.
+                        This is a work in progress and will be continually updated as development moves forward.
+                        <strong>You are most encouraged to test the changes presented.</strong>
+                    </p>
+                </div>
+            </aside>
+            
+            <article id="cas-docs-container" tabindex="-1">
+                
+<p>Verify the status of an obtained ticket to make sure it still is valid
+and has not yet expired.</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+</pre></td><td class="rouge-code"><pre>GET /cas/v1/tickets/TGT-fdsjfsdfjkalfewrihfdhfaie HTTP/1.0
+</pre></td></tr></tbody></table></code></pre></div></div>
+
+<h2 id="successful-response">Successful Response</h2>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+</pre></td><td class="rouge-code"><pre>200 OK
+</pre></td></tr></tbody></table></code></pre></div></div>
+
+<h2 id="unsuccessful-response">Unsuccessful Response</h2>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+</pre></td><td class="rouge-code"><pre>404 NOT FOUND
+</pre></td></tr></tbody></table></code></pre></div></div>
+
+            </article>
+            <div class="article-end" aria-hidden="true"><span></span><span>CAS</span><span></span></div>
+        </main>
+        
+        <aside class="docs-toc" aria-label="On this page">
+    <nav id="pageContents" aria-label="Table of contents">
+        <p class="eyebrow">ON THIS PAGE</p>
+        <ul class="section-nav"></ul>
+    </nav>
+    <a class="toc-top" href="#cas-docs-container">Back to top <span aria-hidden="true">↑</span></a>
+</aside>
+
+        
+    </div>
+
+    <footer class="site-footer">
+        <a class="footer-brand" href="../../index.html">APEREO <strong>CAS</strong></a>
+        <p>CAS is supported by the <a href="https://www.apereo.org/">Apereo Foundation</a>.</p>
+        <a href="#cas-docs-container">Back to top <span aria-hidden="true">↑</span></a>
+    </footer>
+    <div id="docs-status" class="visually-hidden" role="status" aria-live="polite"></div>
+
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.min.js"></script>
+
+    <script src="https://cdn.jsdelivr.net/npm/tether@2.0.0/dist/js/tether.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.11/clipboard.min.js"></script>
+
+    <script src='/cas/javascripts/URI.js'></script>
+    <script src='/cas/javascripts/site.js'></script>
+
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@docsearch/js@3"></script>
+    <script type="text/javascript" src="https://cdn.datatables.net/1.11.5/js/jquery.dataTables.min.js"></script>
+    <script type="text/javascript" src="https://code.jquery.com/ui/1.13.1/jquery-ui.js"></script>
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/lightbox2/2.11.5/js/lightbox.min.js"></script>
+
+    <script>
+        let pageSection = "Protocols";
+        let siteUrl = "https://apereo.github.io";
+        let basePath = "/cas";
+
+        
+    </script>
+</body>
+
+</html>

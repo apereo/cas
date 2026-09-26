@@ -1,0 +1,505 @@
+<!DOCTYPE html>
+<html lang="en" data-bs-theme="dark">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="color-scheme" content="light dark">
+    
+    
+    
+
+
+
+
+
+
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    <meta name="description" content="OS Service Deployment. Technical guides for Apereo CAS: enterprise identity, authentication, single sign-on and access management.">
+    <meta name="robots" content="index,follow">
+    <meta name="theme-color" content="#06304a">
+    <link rel="canonical" href="https://apereo.github.io/cas/development/installation/Configuring-Deployment-System-Service.html">
+    <meta property="og:type" content="website">
+    <meta property="og:locale" content="en_US">
+    <meta property="og:site_name" content="Apereo CAS Documentation">
+    <meta property="og:title" content="CAS - OS Service Deployment">
+    <meta property="og:description" content="OS Service Deployment. Technical guides for Apereo CAS: enterprise identity, authentication, single sign-on and access management.">
+    <meta property="og:url" content="https://apereo.github.io/cas/development/installation/Configuring-Deployment-System-Service.html">
+    <meta property="og:image" content="https://apereo.github.io/cas/images/cas_logo.png">
+    <meta property="og:image:alt" content="Apereo CAS">
+    <meta name="twitter:card" content="summary">
+    <meta name="twitter:title" content="CAS - OS Service Deployment">
+    <meta name="twitter:description" content="OS Service Deployment. Technical guides for Apereo CAS: enterprise identity, authentication, single sign-on and access management.">
+    <meta name="twitter:image" content="https://apereo.github.io/cas/images/cas_logo.png">
+
+    
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "TechArticle",
+      "headline": "OS Service Deployment",
+      "description": "OS Service Deployment. Technical guides for Apereo CAS: enterprise identity, authentication, single sign-on and access management.",
+      "url": "https://apereo.github.io/cas/development/installation/Configuring-Deployment-System-Service.html",
+      "inLanguage": "en",
+      "isPartOf": {"@type": "WebSite", "name": "Apereo CAS Documentation",
+                   "url": "https://apereo.github.io/cas/"},
+      "author": {"@type": "Organization", "name": "Apereo Foundation", "url": "https://www.apereo.org/"},
+      "publisher": {"@type": "Organization", "name": "Apereo Foundation", "url": "https://www.apereo.org/"}
+    }
+    </script>
+    
+
+    <script>
+        ((i, s, o, g, r, a, m) => {
+            i['GoogleAnalyticsObject'] = r;
+            i[r] = i[r] || function () {
+                (i[r].q = i[r].q || []).push(arguments)
+            }, i[r].l = 1 * new Date();
+            a = s.createElement(o),
+                m = s.getElementsByTagName(o)[0];
+            a.async = 1;
+            a.src = g;
+            m.parentNode.insertBefore(a, m)
+        })(window, document, 'script', 'https://www.google-analytics.com/analytics.js', 'ga');
+
+        ga('create', 'UA-83384532-2', 'auto');
+        ga('send', 'pageview');
+
+    </script>
+
+    <script>
+        function readThemePreference() {
+            try {
+                return localStorage.getItem('cas-docs-theme') || 'system';
+            } catch (error) {
+                return 'system';
+            }
+        }
+
+        function systemTheme() {
+            return window.matchMedia && window.matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark';
+        }
+
+        function resolveTheme(preference) {
+            return preference === 'dark' || preference === 'light' ? preference : systemTheme();
+        }
+
+        function changeTheme(theme) {
+            if (theme !== 'dark' && theme !== 'light') {
+                return;
+            }
+
+            if (document.documentElement.getAttribute('data-bs-theme') !== theme) {
+                document.documentElement.setAttribute('data-bs-theme', theme);
+            }
+        }
+
+        (() => {
+            let preference = readThemePreference();
+            if (preference !== 'dark' && preference !== 'light') {
+                preference = 'system';
+
+            }
+
+            changeTheme(resolveTheme(preference));
+
+            if (window.matchMedia) {
+                window.matchMedia('(prefers-color-scheme: light)').addEventListener('change', () => {
+                    if (readThemePreference() !== 'system') {
+                        return;
+                    }
+                    const theme = systemTheme();
+                    changeTheme(theme);
+                });
+            }
+        })();
+    </script>
+
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v6.5.2/css/all.css"/>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@docsearch/css@3"/>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/lightbox2/2.11.5/css/lightbox.min.css" />
+    
+    
+    <link rel="stylesheet" type="text/css" media="screen" href='/cas/stylesheets/site.css'>
+    <link rel="stylesheet" type="text/css" media="print" href='/cas/stylesheets/site-print.css'>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,400..700;1,9..40,400..500&family=JetBrains+Mono:wght@400;500;700&family=Manrope:wght@400..800&family=Newsreader:ital,opsz,wght@1,6..72,400..600&display=swap" rel="stylesheet">
+    <link href="https://cdn.datatables.net/1.11.5/css/jquery.dataTables.min.css" rel="stylesheet">
+
+    <title>CAS - OS Service Deployment · Apereo CAS Documentation</title>
+
+</head>
+
+<body class="">
+    <a class="skip-link" href="#cas-docs-container">Skip to content</a>
+    <header class="site-header">
+        <div class="masthead">
+            <a class="cas-brand" href="../../index.html" aria-label="Apereo CAS home">
+                <img class="brand-logo" src="/cas/images/cas_logo.png" width="119" height="60" alt="CAS">
+                <span class="brand-caption">APEREO<span>Documentation</span></span>
+            </a>
+            <div class="brand-mission">
+                <p>Enterprise Identity for All Earthlings and Beyond</p>
+                <span>Identity, Single Sign-On and Access Management</span>
+            </div>
+            <a id="forkme_banner" href="https://github.com/apereo/cas"><i class="fab fa-github" aria-hidden="true"></i><span>View on GitHub</span><span aria-hidden="true">↗</span></a>
+        </div>
+        <div class="navigation-bar">
+            
+            <button onclick="navigateSidebar()" id="sidebarNavButton" class="icon-button" type="button" aria-controls="sidebar" aria-expanded="true" aria-label="Toggle documentation navigation">
+                <i class="fa fa-bars" aria-hidden="true"></i><span>Explore docs</span>
+            </button>
+            
+            <nav class="primary-navigation" aria-label="Main navigation">
+                <a href="../../index.html">Home</a>
+                <a href="https://github.com/apereo/cas/releases">Releases</a>
+                <a href="../../Support.html">Support</a>
+                <a href="../../Mailing-Lists.html">Mailing Lists</a>
+                <div class="dropdown">
+                    <button class="dropdown-toggle" type="button" id="cas-versions" data-bs-toggle="dropdown" aria-expanded="false">Versions</button>
+                    <div class="dropdown-menu" aria-labelledby="cas-versions">
+                        
+                        <a class="dropdown-item" href="/cas/development/">Development</a>
+                        
+                        <a class="dropdown-item" href="/cas/8.0.x/">v8.0.x</a>
+                        
+                        <a class="dropdown-item" href="/cas/7.3.x/">v7.3.x</a>
+                        
+                    </div>
+                </div>
+                <a href="https://apereo.github.io" target="_blank" rel="noopener">Blog <span aria-hidden="true">↗</span><span class="visually-hidden"> (opens in a new tab)</span></a>
+            </nav>
+            <div class="navigation-tools">
+                <div id="searchField"></div>
+                <button id="themeToggle" class="icon-button" type="button" onclick="toggleDarkMode()" aria-label="Toggle color theme" title="Toggle color theme"><i class="fa fa-circle-half-stroke" aria-hidden="true"></i></button>
+            </div>
+        </div>
+        <div class="reading-progress" aria-hidden="true"><span id="readingProgress"></span></div>
+    </header>
+
+    <div class="docs-shell">
+        
+        <aside id="sidebar" class="docs-sidebar" aria-label="Documentation navigation">
+    <div class="sidebar-heading">
+<span class="eyebrow">THE DOCUMENTATION</span><span class="sidebar-symbol" aria-hidden="true">✳</span>
+</div>
+    <nav id="sidebar-navigation" aria-label="Documentation topics"></nav>
+    <noscript><p>Browse the <a href="/cas/development/sidebar.html">documentation index</a>.</p></noscript>
+</aside>
+
+        
+        <main class="cas-docs-content">
+            
+            <div class="page-toolbar">
+                <nav id="docsNavBar" aria-label="Breadcrumb"></nav>
+                <div id="toolbarIcons" role="group" aria-label="Page tools"></div>
+            </div>
+            
+            
+            <aside id="dev-doc-info" aria-labelledby="dev-doc-title">
+                <span class="development-marker" aria-hidden="true"></span>
+                <div>
+                    <p id="dev-doc-title">WORKERS AHEAD!</p>
+                    <p>You are viewing the <strong>development</strong> documentation for the Apereo CAS server. <strong>The
+                        functionality presented here <a href="https://github.com/apereo/cas/milestones">is not officially released yet</a></strong>.
+                        This is a work in progress and will be continually updated as development moves forward.
+                        <strong>You are most encouraged to test the changes presented.</strong>
+                    </p>
+                </div>
+            </aside>
+            
+            <article id="cas-docs-container" tabindex="-1">
+                
+<h1 id="os-service-deployment">OS Service Deployment</h1>
+
+<p>CAS can be easily started as Unix/Linux services using either <code class="language-plaintext highlighter-rouge">init.d</code> or <code class="language-plaintext highlighter-rouge">systemd</code>. Windows support is also made available 
+via an external daemon. Note that most if not all of the below strategies attempt to run CAS via an embedded
+servlet container whose configuration is <a href="Configuring-Servlet-Container.html#embedded">explained here</a>.</p>
+
+<ul id="osserviceopts" class="tab" data-tab="683de2fa-b42a-4634-9d58-92ed50fc8e42" data-name="osserviceopts">
+  
+      <li class="active" id="osserviceopts-init-d-service">
+          <a href="#">init.d Service </a>
+      </li>
+  
+      <li id="osserviceopts-system-d-service">
+          <a href="#">system.d Service </a>
+      </li>
+  
+      <li id="osserviceopts-upstart">
+          <a href="#">Upstart </a>
+      </li>
+  
+      <li id="osserviceopts--i-class--fa-fa-windows-px-1----i-windows-service">
+          <a href="#"><i class="fa fa-windows px-1"></i>Windows Service </a>
+      </li>
+  
+</ul>
+<ul class="tab-content" id="683de2fa-b42a-4634-9d58-92ed50fc8e42" data-name="osserviceopts">
+  
+      <li class="active">
+<p>If CAS is built and run as <a href="Configuring-Servlet-Container.html">a fully executable web application</a>,
+then it can be used as an <code class="language-plaintext highlighter-rouge">init.d</code> service. <code class="language-plaintext highlighter-rouge">symlink</code> the web application file to <code class="language-plaintext highlighter-rouge">init.d</code>
+to support the standard <code class="language-plaintext highlighter-rouge">start</code>, <code class="language-plaintext highlighter-rouge">stop</code>, <code class="language-plaintext highlighter-rouge">restart</code> and <code class="language-plaintext highlighter-rouge">status</code> commands.</p>
+
+<p>The configuration built into CAS allows it to interact with the OS system configuration as such:</p>
+
+<ul>
+  <li>Start the service as the user that owns the jar file</li>
+  <li>Track CAS web applications’ PID using <code class="language-plaintext highlighter-rouge">/var/run/cas/cas.pid</code>
+</li>
+  <li>Write console logs to <code class="language-plaintext highlighter-rouge">/var/log/cas.log</code>
+</li>
+</ul>
+
+<p>To install CAS as an <code class="language-plaintext highlighter-rouge">init.d</code> service create a symlink:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr>
+<td class="rouge-gutter gl"><pre class="lineno">1
+2
+</pre></td>
+<td class="rouge-code"><pre><span class="nb">sudo ln</span> <span class="nt">-s</span> /path/to/cas.war /etc/init.d/cas
+service cas start
+</pre></td>
+</tr></tbody></table></code></pre></div></div>
+
+<p>You can also flag the application to start automatically using your standard operating system tools. For example, on Debian:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr>
+<td class="rouge-gutter gl"><pre class="lineno">1
+</pre></td>
+<td class="rouge-code"><pre>update-rc.d myapp defaults &lt;priority&gt;
+</pre></td>
+</tr></tbody></table></code></pre></div></div>
+
+<h2 id="security">Security</h2>
+
+<p>When executed as <code class="language-plaintext highlighter-rouge">root</code>, as is the case when <code class="language-plaintext highlighter-rouge">root</code> is being used to start an <code class="language-plaintext highlighter-rouge">init.d</code> service, the CAS default
+executable script will run the web application as the user which owns the web application file. You should <strong>never</strong>
+run CAS as <code class="language-plaintext highlighter-rouge">root</code> so the web application file should never be owned by <code class="language-plaintext highlighter-rouge">root</code>. Instead, create a specific user to run
+CAS and use <code class="language-plaintext highlighter-rouge">chown</code> to make it the owner of the file. For example:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr>
+<td class="rouge-gutter gl"><pre class="lineno">1
+</pre></td>
+<td class="rouge-code"><pre><span class="nb">chown </span>bootapp:bootapp /path/to/cas.war
+</pre></td>
+</tr></tbody></table></code></pre></div></div>
+
+<p>You may also take steps to prevent the modification of the CAS web application file. Firstly, configure
+its permissions so that it cannot be written and can only be read or executed by its owner:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr>
+<td class="rouge-gutter gl"><pre class="lineno">1
+</pre></td>
+<td class="rouge-code"><pre><span class="nb">chmod </span>500 /path/to/cas.war
+</pre></td>
+</tr></tbody></table></code></pre></div></div>
+
+<p>Additionally, you should also take steps to limit the damage if the CAS web application or
+the account that’s running it is compromised. If an attacker does gain access, they could make the web application
+file writable and change its contents. One way to protect against this is to make it immutable using <code class="language-plaintext highlighter-rouge">chattr</code>:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr>
+<td class="rouge-gutter gl"><pre class="lineno">1
+</pre></td>
+<td class="rouge-code"><pre><span class="nb">sudo </span>chattr +i /path/to/cas.war
+</pre></td>
+</tr></tbody></table></code></pre></div></div>
+
+<p>This will prevent any user, including <code class="language-plaintext highlighter-rouge">root</code>, from modifying the file.</p>
+
+</li>
+  
+      <li>
+<p>To install CAS as a <code class="language-plaintext highlighter-rouge">systemd</code> service create a script named <code class="language-plaintext highlighter-rouge">cas.service</code> using the following example and place it in <code class="language-plaintext highlighter-rouge">/etc/systemd/system</code> directory:</p>
+
+<div class="language-ini highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr>
+<td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+</pre></td>
+<td class="rouge-code"><pre><span class="nn">[Unit]</span><span class="w">
+</span><span class="py">Description</span><span class="p">=</span><span class="s">CAS</span>
+<span class="py">After</span><span class="p">=</span><span class="s">syslog.target</span>
+<span class="w">
+</span><span class="nn">[Service]</span><span class="w">
+</span><span class="py">User</span><span class="p">=</span><span class="s">bootapp</span>
+<span class="py">ExecStart</span><span class="p">=</span><span class="s">/path/to/cas.war</span>
+<span class="py">SuccessExitStatus</span><span class="p">=</span><span class="s">143</span>
+<span class="w">
+</span><span class="nn">[Install]</span><span class="w">
+</span><span class="py">WantedBy</span><span class="p">=</span><span class="s">multi-user.target</span>
+</pre></td>
+</tr></tbody></table></code></pre></div></div>
+
+<div class="alert alert-info">
+<img class="emoji" title=":information_source:" alt=":information_source:" src="https://github.githubassets.com/images/icons/emoji/unicode/2139.png" height="20" width="20"> <strong>Not So Fast</strong><p>Remember to change the <code>Description</code>, 
+<code>User</code> and <code>ExecStart</code> fields for your deployment.</p>
+</div>
+
+<p>The user that runs the CAS web application, PID file and console log file are managed by <code class="language-plaintext highlighter-rouge">systemd</code> itself and therefore must be
+configured using appropriate fields in <code class="language-plaintext highlighter-rouge">service</code> script. Consult the <code class="language-plaintext highlighter-rouge">systemd</code> unit configuration 
+manual for more details.</p>
+
+<p>To flag the application to start automatically on system boot use the following command:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr>
+<td class="rouge-gutter gl"><pre class="lineno">1
+</pre></td>
+<td class="rouge-code"><pre>systemctl <span class="nb">enable </span>cas.service
+</pre></td>
+</tr></tbody></table></code></pre></div></div>
+
+<p>Refer to <code class="language-plaintext highlighter-rouge">man systemctl</code> for more details.</p>
+
+</li>
+  
+      <li>
+<p><a href="https://upstart.ubuntu.com/">Upstart</a> is an event-based service manager, a potential replacement for the System V init that offers more control on the behavior of the
+different daemons. When using Ubuntu you probably have it installed and configured already (check if there are any jobs with a name starting with <code class="language-plaintext highlighter-rouge">cas</code> in <code class="language-plaintext highlighter-rouge">/etc/init</code>).</p>
+
+<p>We create a job <code class="language-plaintext highlighter-rouge">cas.conf</code> to start the CAS web application:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr>
+<td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+</pre></td>
+<td class="rouge-code"><pre><span class="c"># Place in /home/{user}/.config/cas</span>
+description <span class="s2">"CAS web application"</span>
+<span class="c"># attempt service restart if stops abruptly</span>
+respawn
+<span class="nb">exec </span>java <span class="nt">-jar</span> /path/to/cas.war
+</pre></td>
+</tr></tbody></table></code></pre></div></div>
+
+<p>Now run <code class="language-plaintext highlighter-rouge">start cas</code> and your service will start. Upstart offers many job configuration options
+and you can find <a href="https://upstart.ubuntu.com/cookbook/">most of them here</a>.</p>
+
+</li>
+  
+      <li>
+<p>CAS may be started as a Windows service using <a href="https://github.com/kohsuke/winsw">winsw</a>.</p>
+
+<p>Winsw provides programmatic means to <code class="language-plaintext highlighter-rouge">install/uninstall/start/stop</code> a service. In addition, it may 
+be used to run any kind of executable as a service under Windows.</p>
+
+<p>Once you have downloaded the Winsw binaries, the <code class="language-plaintext highlighter-rouge">cas.xml</code> configuration file that 
+defines our Windows service should look like this:</p>
+
+<div class="language-xml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr>
+<td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+8
+</pre></td>
+<td class="rouge-code"><pre><span class="nt">&lt;service&gt;</span>
+    <span class="nt">&lt;id&gt;</span>cas<span class="nt">&lt;/id&gt;</span>
+    <span class="nt">&lt;name&gt;</span>CAS<span class="nt">&lt;/name&gt;</span>
+    <span class="nt">&lt;description&gt;</span>CAS web application.<span class="nt">&lt;/description&gt;</span>
+    <span class="nt">&lt;executable&gt;</span>java<span class="nt">&lt;/executable&gt;</span>
+    <span class="nt">&lt;arguments&gt;</span>-Xmx2048m -jar "path\to\cas.war"<span class="nt">&lt;/arguments&gt;</span>
+    <span class="nt">&lt;logmode&gt;</span>rotate<span class="nt">&lt;/logmode&gt;</span>
+<span class="nt">&lt;/service&gt;</span>
+</pre></td>
+</tr></tbody></table></code></pre></div></div>
+
+<p>Finally, you have to rename the <code class="language-plaintext highlighter-rouge">winsw.exe</code> to <code class="language-plaintext highlighter-rouge">cas.exe</code> so that its name matches with 
+the <code class="language-plaintext highlighter-rouge">cas.xml</code> configuration file. Thereafter you can install the service like so:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr>
+<td class="rouge-gutter gl"><pre class="lineno">1
+</pre></td>
+<td class="rouge-code"><pre>cas.exe <span class="nb">install</span>
+</pre></td>
+</tr></tbody></table></code></pre></div></div>
+
+<p>Similarly, you may use <code class="language-plaintext highlighter-rouge">uninstall</code>, <code class="language-plaintext highlighter-rouge">start</code>, <code class="language-plaintext highlighter-rouge">stop</code>, etc.</p>
+
+<p>Refer to <a href="https://github.com/snicoll-scratches/spring-boot-daemon">this example</a> to learn more.</p>
+
+<p>CAS web applications may also be started as Windows service using <a href="http://commons.apache.org/proper/commons-daemon/procrun.html">Procrun</a>
+of the <a href="http://commons.apache.org/daemon/index.html">Apache Commons Daemon project</a>. Procrun is a set of
+applications that allow Windows users to wrap Java applications as Windows services. Such a service may be set
+to start automatically when the machine boots and will continue to run without any user being logged on.</p>
+
+</li>
+  
+</ul>
+
+
+            </article>
+            <div class="article-end" aria-hidden="true">
+<span></span><span>CAS</span><span></span>
+</div>
+        </main>
+        
+        <aside class="docs-toc" aria-label="On this page">
+    <nav id="pageContents" aria-label="Table of contents">
+        <p class="eyebrow">ON THIS PAGE</p>
+        <ul class="section-nav"></ul>
+    </nav>
+    <a class="toc-top" href="#cas-docs-container">Back to top <span aria-hidden="true">↑</span></a>
+</aside>
+
+        
+    </div>
+
+    <footer class="site-footer">
+        <a class="footer-brand" href="../../index.html">APEREO <strong>CAS</strong></a>
+        <p>CAS is supported by the <a href="https://www.apereo.org/">Apereo Foundation</a>.</p>
+        <a href="#cas-docs-container">Back to top <span aria-hidden="true">↑</span></a>
+    </footer>
+    <div id="docs-status" class="visually-hidden" role="status" aria-live="polite"></div>
+
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.min.js"></script>
+
+    <script src="https://cdn.jsdelivr.net/npm/tether@2.0.0/dist/js/tether.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.11/clipboard.min.js"></script>
+
+    <script src="/cas/javascripts/URI.js"></script>
+    <script src="/cas/javascripts/site.js"></script>
+
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@docsearch/js@3"></script>
+    <script type="text/javascript" src="https://cdn.datatables.net/1.11.5/js/jquery.dataTables.min.js"></script>
+    <script type="text/javascript" src="https://code.jquery.com/ui/1.13.1/jquery-ui.js"></script>
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/lightbox2/2.11.5/js/lightbox.min.js"></script>
+
+    <script>
+        let pageSection = "Installation";
+        let siteUrl = "https://apereo.github.io";
+        let basePath = "/cas";
+
+        
+    </script>
+</body>
+
+</html>

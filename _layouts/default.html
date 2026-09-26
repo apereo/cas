@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="en" data-bs-theme="dark">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="color-scheme" content="light dark">
+    {% capture lvl %}{{ page.url | append:'index.html' | split:'/' | size }}{% endcapture %}
+    {% capture relative %}{% for i in (3..lvl) %}../{% endfor %}{% endcapture %}
+    {% include variables.html %}
+    {% assign versionArray = "development,8.0.x,7.3.x" | split:"," %}
+    {% assign navigationVersion = version %}
+    {% if version == 'developer' or version contains '.html' or version == empty %}{% assign navigationVersion = 'development' %}{% endif %}
+    {% assign showNavigation = true %}
+    {% if page.navigationBar == false or page.navigationBar == "false" %}{% assign showNavigation = false %}{% endif %}
+    {% assign defaultDescription = page.title | remove: "CAS - " | append: ". " | append: site.description %}
+    {% assign pageDescription = page.description | default: page.excerpt | default: defaultDescription | strip_html | normalize_whitespace | truncate: 160 %}
+    {% assign canonicalUrl = site.url | append: basePath | append: page.url | replace: 'index.html', '' %}
+    {% capture socialImage %}{{ site.url }}{{ basePath }}/images/cas_logo.png{% endcapture %}
+    <meta name="description" content="{{ pageDescription | escape }}">
+    <meta name="robots" content="{{ page.robots | default: 'index,follow' | escape }}">
+    <meta name="theme-color" content="#06304a">
+    <link rel="canonical" href="{{ canonicalUrl | escape }}">
+    <meta property="og:type" content="website">
+    <meta property="og:locale" content="en_US">
+    <meta property="og:site_name" content="Apereo CAS Documentation">
+    <meta property="og:title" content="{{ page.title | escape }}">
+    <meta property="og:description" content="{{ pageDescription | escape }}">
+    <meta property="og:url" content="{{ canonicalUrl | escape }}">
+    <meta property="og:image" content="{{ socialImage | escape }}">
+    <meta property="og:image:alt" content="Apereo CAS">
+    <meta name="twitter:card" content="summary">
+    <meta name="twitter:title" content="{{ page.title | escape }}">
+    <meta name="twitter:description" content="{{ pageDescription | escape }}">
+    <meta name="twitter:image" content="{{ socialImage | escape }}">
+
+    {% if page.title == 'CAS - Home' %}
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "WebSite",
+      "name": "Apereo CAS Documentation",
+      "url": {{ canonicalUrl | jsonify }},
+      "description": {{ pageDescription | jsonify }},
+      "publisher": {"@type": "Organization", "name": "Apereo Foundation", "url": "https://www.apereo.org/"}
+    }
+    </script>
+    {% else %}
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "TechArticle",
+      "headline": {{ page.title | remove: "CAS - " | jsonify }},
+      "description": {{ pageDescription | jsonify }},
+      "url": {{ canonicalUrl | jsonify }},
+      "inLanguage": "en",
+      "isPartOf": {"@type": "WebSite", "name": "Apereo CAS Documentation",
+                   "url": {{ site.url | append: basePath | append: "/" | jsonify }}},
+      "author": {"@type": "Organization", "name": "Apereo Foundation", "url": "https://www.apereo.org/"},
+      "publisher": {"@type": "Organization", "name": "Apereo Foundation", "url": "https://www.apereo.org/"}
+    }
+    </script>
+    {% endif %}
+
+    <script>
+        ((i, s, o, g, r, a, m) => {
+            i['GoogleAnalyticsObject'] = r;
+            i[r] = i[r] || function () {
+                (i[r].q = i[r].q || []).push(arguments)
+            }, i[r].l = 1 * new Date();
+            a = s.createElement(o),
+                m = s.getElementsByTagName(o)[0];
+            a.async = 1;
+            a.src = g;
+            m.parentNode.insertBefore(a, m)
+        })(window, document, 'script', 'https://www.google-analytics.com/analytics.js', 'ga');
+
+        ga('create', 'UA-83384532-2', 'auto');
+        ga('send', 'pageview');
+
+    </script>
+
+    <script>
+        function readThemePreference() {
+            try {
+                return localStorage.getItem('cas-docs-theme') || 'system';
+            } catch (error) {
+                return 'system';
+            }
+        }
+
+        function systemTheme() {
+            return window.matchMedia && window.matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark';
+        }
+
+        function resolveTheme(preference) {
+            return preference === 'dark' || preference === 'light' ? preference : systemTheme();
+        }
+
+        function changeTheme(theme) {
+            if (theme !== 'dark' && theme !== 'light') {
+                return;
+            }
+
+            if (document.documentElement.getAttribute('data-bs-theme') !== theme) {
+                document.documentElement.setAttribute('data-bs-theme', theme);
+            }
+        }
+
+        (() => {
+            let preference = readThemePreference();
+            if (preference !== 'dark' && preference !== 'light') {
+                preference = 'system';
+
+            }
+
+            changeTheme(resolveTheme(preference));
+
+            if (window.matchMedia) {
+                window.matchMedia('(prefers-color-scheme: light)').addEventListener('change', () => {
+                    if (readThemePreference() !== 'system') {
+                        return;
+                    }
+                    const theme = systemTheme();
+                    changeTheme(theme);
+                });
+            }
+        })();
+    </script>
+
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v6.5.2/css/all.css"/>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@docsearch/css@3"/>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/lightbox2/2.11.5/css/lightbox.min.css" />
+    
+    
+    <link rel="stylesheet" type="text/css" media="screen" href='{{basePath}}/stylesheets/site.css'>
+    <link rel="stylesheet" type="text/css" media="print" href='{{basePath}}/stylesheets/site-print.css'>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,400..700;1,9..40,400..500&family=JetBrains+Mono:wght@400;500;700&family=Manrope:wght@400..800&family=Newsreader:ital,opsz,wght@1,6..72,400..600&display=swap" rel="stylesheet">
+    <link href="https://cdn.datatables.net/1.11.5/css/jquery.dataTables.min.css" rel="stylesheet">
+
+    <title>{{ page.title | escape }} · Apereo CAS Documentation</title>
+
+</head>
+
+<body class="{% if page.title == 'CAS - Home' %}docs-home{% endif %}{% unless showNavigation %} docs-standalone{% endunless %}">
+    <a class="skip-link" href="#cas-docs-container">Skip to content</a>
+    <header class="site-header">
+        <div class="masthead">
+            <a class="cas-brand" href="{{ relative }}index.html" aria-label="Apereo CAS home">
+                <img class="brand-logo" src="{{basePath}}/images/cas_logo.png" width="119" height="60" alt="CAS">
+                <span class="brand-caption">APEREO<span>Documentation</span></span>
+            </a>
+            <div class="brand-mission">
+                <p>Enterprise Identity for All Earthlings and Beyond</p>
+                <span>Identity, Single Sign-On and Access Management</span>
+            </div>
+            <a id="forkme_banner" href="https://github.com/apereo/cas"><i class="fab fa-github" aria-hidden="true"></i><span>View on GitHub</span><span aria-hidden="true">↗</span></a>
+        </div>
+        <div class="navigation-bar">
+            {% if showNavigation %}
+            <button onclick="navigateSidebar()" id="sidebarNavButton" class="icon-button" type="button" aria-controls="sidebar" aria-expanded="true" aria-label="Toggle documentation navigation">
+                <i class="fa fa-bars" aria-hidden="true"></i><span>Explore docs</span>
+            </button>
+            {% endif %}
+            <nav class="primary-navigation" aria-label="Main navigation">
+                <a href="{{ relative }}index.html"{% if page.title == 'CAS - Home' %} aria-current="page"{% endif %}>Home</a>
+                <a href="https://github.com/apereo/cas/releases">Releases</a>
+                <a href="{{ relative }}Support.html">Support</a>
+                <a href="{{ relative }}Mailing-Lists.html">Mailing Lists</a>
+                <div class="dropdown">
+                    <button class="dropdown-toggle" type="button" id="cas-versions" data-bs-toggle="dropdown" aria-expanded="false">Versions</button>
+                    <div class="dropdown-menu" aria-labelledby="cas-versions">
+                        {% for ver in versionArray %}
+                        <a class="dropdown-item" href="/cas/{{ ver }}/">{% if ver == 'development' %}Development{% else %}v{{ ver }}{% endif %}</a>
+                        {% endfor %}
+                    </div>
+                </div>
+                <a href="https://apereo.github.io" target="_blank" rel="noopener">Blog <span aria-hidden="true">↗</span><span class="visually-hidden"> (opens in a new tab)</span></a>
+            </nav>
+            <div class="navigation-tools">
+                <div id="searchField"></div>
+                <button id="themeToggle" class="icon-button" type="button" onclick="toggleDarkMode()" aria-label="Toggle color theme" title="Toggle color theme"><i class="fa fa-circle-half-stroke" aria-hidden="true"></i></button>
+            </div>
+        </div>
+        <div class="reading-progress" aria-hidden="true"><span id="readingProgress"></span></div>
+    </header>
+
+    <div class="docs-shell">
+        {% if showNavigation %}
+        {% include_cached sidebar.html version=navigationVersion basePath=basePath %}
+        {% endif %}
+        <main class="cas-docs-content">
+            {% if showNavigation %}
+            <div class="page-toolbar">
+                <nav id="docsNavBar" aria-label="Breadcrumb"></nav>
+                <div id="toolbarIcons" role="group" aria-label="Page tools"></div>
+            </div>
+            {% endif %}
+            {% if version == "development" %}
+            <aside id="dev-doc-info" aria-labelledby="dev-doc-title">
+                <span class="development-marker" aria-hidden="true"></span>
+                <div>
+                    <p id="dev-doc-title">WORKERS AHEAD!</p>
+                    <p>You are viewing the <strong>development</strong> documentation for the Apereo CAS server. <strong>The
+                        functionality presented here <a href="https://github.com/apereo/cas/milestones">is not officially released yet</a></strong>.
+                        This is a work in progress and will be continually updated as development moves forward.
+                        <strong>You are most encouraged to test the changes presented.</strong>
+                    </p>
+                </div>
+            </aside>
+            {% endif %}
+            <article id="cas-docs-container" tabindex="-1">
+                {{ content }}
+            </article>
+            <div class="article-end" aria-hidden="true"><span></span><span>CAS</span><span></span></div>
+        </main>
+        {% if showNavigation %}
+        {% include_cached page_toc.html %}
+        {% endif %}
+    </div>
+
+    <footer class="site-footer">
+        <a class="footer-brand" href="{{ relative }}index.html">APEREO <strong>CAS</strong></a>
+        <p>CAS is supported by the <a href="https://www.apereo.org/">Apereo Foundation</a>.</p>
+        <a href="#cas-docs-container">Back to top <span aria-hidden="true">↑</span></a>
+    </footer>
+    <div id="docs-status" class="visually-hidden" role="status" aria-live="polite"></div>
+
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.min.js"></script>
+
+    <script src="https://cdn.jsdelivr.net/npm/tether@2.0.0/dist/js/tether.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.11/clipboard.min.js"></script>
+
+    <script src='{{basePath}}/javascripts/URI.js'></script>
+    <script src='{{basePath}}/javascripts/site.js'></script>
+
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@docsearch/js@3"></script>
+    <script type="text/javascript" src="https://cdn.datatables.net/1.11.5/js/jquery.dataTables.min.js"></script>
+    <script type="text/javascript" src="https://code.jquery.com/ui/1.13.1/jquery-ui.js"></script>
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/lightbox2/2.11.5/js/lightbox.min.js"></script>
+
+    <script>
+        let pageSection = {{ page.category | jsonify }};
+        let siteUrl = {{ site.url | jsonify }};
+        let basePath = {{ basePath | jsonify }};
+
+        {% if page.navigationBar == false %}
+        $(".docs-toc").remove();
+        {% endif %}
+    </script>
+</body>
+
+</html>

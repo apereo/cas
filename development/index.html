@@ -1,0 +1,389 @@
+<!DOCTYPE html>
+<html lang="en" data-bs-theme="dark">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="color-scheme" content="light dark">
+    
+    
+    
+
+
+
+
+
+
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    <meta name="description" content="Home. Technical guides for Apereo CAS: enterprise identity, authentication, single sign-on and access management.">
+    <meta name="robots" content="index,follow">
+    <meta name="theme-color" content="#06304a">
+    <link rel="canonical" href="https://apereo.github.io/cas/development/">
+    <meta property="og:type" content="website">
+    <meta property="og:locale" content="en_US">
+    <meta property="og:site_name" content="Apereo CAS Documentation">
+    <meta property="og:title" content="CAS - Home">
+    <meta property="og:description" content="Home. Technical guides for Apereo CAS: enterprise identity, authentication, single sign-on and access management.">
+    <meta property="og:url" content="https://apereo.github.io/cas/development/">
+    <meta property="og:image" content="https://apereo.github.io/cas/images/cas_logo.png">
+    <meta property="og:image:alt" content="Apereo CAS">
+    <meta name="twitter:card" content="summary">
+    <meta name="twitter:title" content="CAS - Home">
+    <meta name="twitter:description" content="Home. Technical guides for Apereo CAS: enterprise identity, authentication, single sign-on and access management.">
+    <meta name="twitter:image" content="https://apereo.github.io/cas/images/cas_logo.png">
+
+    
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "WebSite",
+      "name": "Apereo CAS Documentation",
+      "url": "https://apereo.github.io/cas/development/",
+      "description": "Home. Technical guides for Apereo CAS: enterprise identity, authentication, single sign-on and access management.",
+      "publisher": {"@type": "Organization", "name": "Apereo Foundation", "url": "https://www.apereo.org/"}
+    }
+    </script>
+    
+
+    <script>
+        ((i, s, o, g, r, a, m) => {
+            i['GoogleAnalyticsObject'] = r;
+            i[r] = i[r] || function () {
+                (i[r].q = i[r].q || []).push(arguments)
+            }, i[r].l = 1 * new Date();
+            a = s.createElement(o),
+                m = s.getElementsByTagName(o)[0];
+            a.async = 1;
+            a.src = g;
+            m.parentNode.insertBefore(a, m)
+        })(window, document, 'script', 'https://www.google-analytics.com/analytics.js', 'ga');
+
+        ga('create', 'UA-83384532-2', 'auto');
+        ga('send', 'pageview');
+
+    </script>
+
+    <script>
+        function readThemePreference() {
+            try {
+                return localStorage.getItem('cas-docs-theme') || 'system';
+            } catch (error) {
+                return 'system';
+            }
+        }
+
+        function systemTheme() {
+            return window.matchMedia && window.matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark';
+        }
+
+        function resolveTheme(preference) {
+            return preference === 'dark' || preference === 'light' ? preference : systemTheme();
+        }
+
+        function changeTheme(theme) {
+            if (theme !== 'dark' && theme !== 'light') {
+                return;
+            }
+
+            if (document.documentElement.getAttribute('data-bs-theme') !== theme) {
+                document.documentElement.setAttribute('data-bs-theme', theme);
+            }
+        }
+
+        (() => {
+            let preference = readThemePreference();
+            if (preference !== 'dark' && preference !== 'light') {
+                preference = 'system';
+
+            }
+
+            changeTheme(resolveTheme(preference));
+
+            if (window.matchMedia) {
+                window.matchMedia('(prefers-color-scheme: light)').addEventListener('change', () => {
+                    if (readThemePreference() !== 'system') {
+                        return;
+                    }
+                    const theme = systemTheme();
+                    changeTheme(theme);
+                });
+            }
+        })();
+    </script>
+
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v6.5.2/css/all.css"/>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@docsearch/css@3"/>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/lightbox2/2.11.5/css/lightbox.min.css" />
+    
+    
+    <link rel="stylesheet" type="text/css" media="screen" href='/cas/stylesheets/site.css'>
+    <link rel="stylesheet" type="text/css" media="print" href='/cas/stylesheets/site-print.css'>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,400..700;1,9..40,400..500&family=JetBrains+Mono:wght@400;500;700&family=Manrope:wght@400..800&family=Newsreader:ital,opsz,wght@1,6..72,400..600&display=swap" rel="stylesheet">
+    <link href="https://cdn.datatables.net/1.11.5/css/jquery.dataTables.min.css" rel="stylesheet">
+
+    <title>CAS - Home · Apereo CAS Documentation</title>
+
+</head>
+
+<body class="docs-home">
+    <a class="skip-link" href="#cas-docs-container">Skip to content</a>
+    <header class="site-header">
+        <div class="masthead">
+            <a class="cas-brand" href="../index.html" aria-label="Apereo CAS home">
+                <img class="brand-logo" src="/cas/images/cas_logo.png" width="119" height="60" alt="CAS">
+                <span class="brand-caption">APEREO<span>Documentation</span></span>
+            </a>
+            <div class="brand-mission">
+                <p>Enterprise Identity for All Earthlings and Beyond</p>
+                <span>Identity, Single Sign-On and Access Management</span>
+            </div>
+            <a id="forkme_banner" href="https://github.com/apereo/cas"><i class="fab fa-github" aria-hidden="true"></i><span>View on GitHub</span><span aria-hidden="true">↗</span></a>
+        </div>
+        <div class="navigation-bar">
+            
+            <button onclick="navigateSidebar()" id="sidebarNavButton" class="icon-button" type="button" aria-controls="sidebar" aria-expanded="true" aria-label="Toggle documentation navigation">
+                <i class="fa fa-bars" aria-hidden="true"></i><span>Explore docs</span>
+            </button>
+            
+            <nav class="primary-navigation" aria-label="Main navigation">
+                <a href="../index.html" aria-current="page">Home</a>
+                <a href="https://github.com/apereo/cas/releases">Releases</a>
+                <a href="../Support.html">Support</a>
+                <a href="../Mailing-Lists.html">Mailing Lists</a>
+                <div class="dropdown">
+                    <button class="dropdown-toggle" type="button" id="cas-versions" data-bs-toggle="dropdown" aria-expanded="false">Versions</button>
+                    <div class="dropdown-menu" aria-labelledby="cas-versions">
+                        
+                        <a class="dropdown-item" href="/cas/development/">Development</a>
+                        
+                        <a class="dropdown-item" href="/cas/8.0.x/">v8.0.x</a>
+                        
+                        <a class="dropdown-item" href="/cas/7.3.x/">v7.3.x</a>
+                        
+                    </div>
+                </div>
+                <a href="https://apereo.github.io" target="_blank" rel="noopener">Blog <span aria-hidden="true">↗</span><span class="visually-hidden"> (opens in a new tab)</span></a>
+            </nav>
+            <div class="navigation-tools">
+                <div id="searchField"></div>
+                <button id="themeToggle" class="icon-button" type="button" onclick="toggleDarkMode()" aria-label="Toggle color theme" title="Toggle color theme"><i class="fa fa-circle-half-stroke" aria-hidden="true"></i></button>
+            </div>
+        </div>
+        <div class="reading-progress" aria-hidden="true"><span id="readingProgress"></span></div>
+    </header>
+
+    <div class="docs-shell">
+        
+        <aside id="sidebar" class="docs-sidebar" aria-label="Documentation navigation">
+    <div class="sidebar-heading"><span class="eyebrow">THE DOCUMENTATION</span><span class="sidebar-symbol" aria-hidden="true">✳</span></div>
+    <nav id="sidebar-navigation" aria-label="Documentation topics"></nav>
+    <noscript><p>Browse the <a href="/cas/development/sidebar.html">documentation index</a>.</p></noscript>
+</aside>
+
+        
+        <main class="cas-docs-content">
+            
+            <div class="page-toolbar">
+                <nav id="docsNavBar" aria-label="Breadcrumb"></nav>
+                <div id="toolbarIcons" role="group" aria-label="Page tools"></div>
+            </div>
+            
+            
+            <aside id="dev-doc-info" aria-labelledby="dev-doc-title">
+                <span class="development-marker" aria-hidden="true"></span>
+                <div>
+                    <p id="dev-doc-title">WORKERS AHEAD!</p>
+                    <p>You are viewing the <strong>development</strong> documentation for the Apereo CAS server. <strong>The
+                        functionality presented here <a href="https://github.com/apereo/cas/milestones">is not officially released yet</a></strong>.
+                        This is a work in progress and will be continually updated as development moves forward.
+                        <strong>You are most encouraged to test the changes presented.</strong>
+                    </p>
+                </div>
+            </aside>
+            
+            <article id="cas-docs-container" tabindex="-1">
+                
+<div class="home-intro">
+  <div class="eyebrow home-eyebrow">THE OPEN SOURCE IDENTITY PLATFORM</div>
+
+  <h1 id="apereo-cas---identity--single-sign-on"><span class="home-title-prefix">Apereo CAS - </span><span class="home-title-accent">Identity &amp; Single Sign-On</span></h1>
+
+  <p>Welcome to the home of the Apereo Central Authentication Service project, more commonly 
+referred to as CAS. CAS is an enterprise multilingual single sign-on solution and identity provider for the web 
+and attempts to be a comprehensive platform for your authentication and authorization needs.</p>
+
+  <p>CAS is an open and well-documented authentication protocol. The primary implementation of the protocol is 
+an open-source Java server component by the same name hosted here, with support for a plethora of 
+additional authentication protocols and features.</p>
+
+  <div class="identity-orbit" aria-hidden="true">
+    <span class="orbit-ring orbit-ring-one"></span><span class="orbit-ring orbit-ring-two"></span><span class="orbit-ring orbit-ring-three"></span>
+    <span class="orbit-core"><img src="/cas/images/cas_logo.png" alt="" width="119" height="60" /></span><span class="orbit-dot orbit-dot-one"></span><span class="orbit-dot orbit-dot-two"></span><span class="orbit-label">CONNECTED BY IDENTITY</span>
+</div>
+</div>
+
+<nav class="home-paths" aria-label="Start exploring">
+    <a href="planning/Getting-Started.html"><span class="path-number">01 / START HERE</span><strong>Getting Started <span aria-hidden="true">↗</span></strong><span>Plan your CAS deployment</span></a>
+    <a href="protocol/CAS-Protocol.html"><span class="path-number">02 / EXPLORE</span><strong>Protocols <span aria-hidden="true">↗</span></strong><span>Connect applications and identities</span></a>
+    <a href="configuration/Configuration-Management.html"><span class="path-number">03 / MAKE IT YOURS</span><strong>Configuration <span aria-hidden="true">↗</span></strong><span>Find the settings you need</span></a>
+</nav>
+
+<h2 id="feature-summary">Feature Summary</h2>
+
+<p>The following items include a summary of features and technologies presented by the CAS project:</p>
+
+<ul>
+  <li><a href="webflow/Webflow-Customization.html">Spring Webflow</a>/Spring Boot <a href="planning/Architecture.html">Java server component</a>.</li>
+  <li><a href="authentication/Configuring-Authentication-Components.html">Pluggable authentication support</a> (<a href="authentication/LDAP-Authentication.html">LDAP</a>, 
+<a href="authentication/Database-Authentication.html">Database</a>, <a href="authentication/X509-Authentication.html">X.509</a>, <a href="authentication/SPNEGO-Authentication.html">SPNEGO</a>, 
+<a href="authentication/JAAS-Authentication.html">JAAS</a>, <a href="authentication/JWT-Authentication.html">JWT</a>, 
+<a href="mfa/RADIUS-Authentication.html">RADIUS</a>, <a href="authentication/MongoDb-Authentication.html">MongoDb</a>, etc)</li>
+  <li>Support for multiple protocols (<a href="protocol/CAS-Protocol.html">CAS</a>, <a href="protocol/SAML-v1-Protocol.html">SAML v1</a>, <a href="authentication/Configuring-SAML2-Authentication.html">SAML v2</a>, <a href="protocol/WS-Federation-Protocol.html">WS-Federation</a>,
+<a href="protocol/OAuth-Protocol.html">OAuth2</a>, <a href="protocol/OIDC-Protocol.html">OpenID Connect</a>, <a href="protocol/REST-Protocol.html">REST</a>)</li>
+  <li>Support for <a href="mfa/Configuring-Multifactor-Authentication.html">multifactor authentication</a> via a variety of 
+providers (<a href="mfa/DuoSecurity-Authentication.html">Duo Security</a>, <a href="mfa/FIDO2-WebAuthn-Authentication.html">FIDO2 WebAuthN</a>, <a href="mfa/GoogleAuthenticator-Authentication.html">Google Authenticator</a>, <a href="mfa/Inwebo-Authentication.html">Inwebo</a>, etc.)</li>
+  <li>Support for <a href="integration/Delegate-Authentication.html">delegated authentication</a> to external identity providers such as <a href="integration/ADFS-Integration.html">ADFS</a>, Facebook, Twitter, SAML2 IdPs, OIDC OPs, etc.</li>
+  <li>Built-in support for <a href="password_management/Password-Management.html">password management</a>, <a href="webflow/Webflow-Customization-Interrupt.html">notifications</a>, <a href="webflow/Webflow-Customization-AUP.html">terms of use</a> and <a href="authentication/Surrogate-Authentication.html">impersonation</a>.</li>
+  <li>Support for <a href="integration/Attribute-Release.html">attribute release</a> including <a href="integration/Attribute-Release-Consent.html">user consent</a>.</li>
+  <li><a href="monitoring/Monitoring-Statistics.html">Monitor and track</a> application and system behavior, <a href="monitoring/Configuring-Metrics.html">statistics and metrics</a> in real-time.</li>
+  <li>Manage and review <a href="audits/Audits.html">audits</a> and <a href="logging/Logging.html">logs</a> centrally, and publish data to a variety of downstream systems.</li>
+  <li>Manage and register <a href="services/Service-Management.html">client applications and services</a> with specific authentication policies.</li>
+  <li><a href="integration/CAS-Clients.html">Cross-platform client support</a> (Java, .NET, PHP, Perl, Apache, etc).</li>
+  <li>Built-in integrations with <a href="integration/Configuring-SAML-SP-Integrations.html">many SAML2 service providers</a>.</li>
+  <li>Support for many other types of integrations, such as <a href="integration/SCIM-Provisioning.html">SCIM</a>, <a href="integration/Configuring-Google-reCAPTCHA.html">reCAPTCHA</a>, 
+<a href="integration/Swagger-Integration.html">Swagger</a>, etc.</li>
+</ul>
+
+<h2 id="contribute">Contribute</h2>
+
+<p>To learn how to contribute to the project, <a href="/cas/developer/Contributor-Guidelines.html">please see this guide</a>.</p>
+
+<h2 id="getting-started">Getting Started</h2>
+
+<p>We recommend reading the following documentation in order to plan and execute a CAS deployment.</p>
+
+<ul>
+  <li><a href="planning/Architecture.html">Architecture</a></li>
+  <li><a href="planning/Getting-Started.html">Getting Started</a></li>
+  <li><a href="planning/Installation-Requirements.html">Installation Requirements</a></li>
+  <li><a href="installation/WAR-Overlay-Installation.html">Installation</a></li>
+  <li><a href="https://apereo.github.io">Blog</a></li>
+  <li><a href="https://github.com/apereo/cas/milestones">Release Schedule</a></li>
+</ul>
+
+<h2 id="powered-by">Powered By</h2>
+
+<p>CAS development is powered by the following tools, projects and services.</p>
+
+<div class="row">
+  <div class="col-sm-3 d-flex align-items-stretch">
+    <div class="card border-0">
+      <a href="https://www.jetbrains.com/idea/">
+      <img src="https://github.com/apereo/cas/assets/1205228/11d83496-1abe-4f5a-b1e2-e313607cd595" alt="IntelliJ IDEA" loading="lazy" class="card-img-top" />
+      </a>
+      <div class="card-body">
+        <p class="card-text">IntelliJ IDE makes development a more productive and enjoyable experience</p>
+      </div>
+    </div>
+  </div>
+  <div class="col-sm-3 d-flex align-items-stretch">
+    <div class="card border-0">
+      <a href="https://github.com/spring-projects/spring-boot/">
+      <img src="https://github.com/apereo/cas/assets/1205228/854849e9-1b02-4218-8cf7-a4fa4e2b9aa2" alt="Spring Boot" loading="lazy" class="card-img-top mt-2 ms-2 pe-4" />
+      </a>
+      <div class="card-body">
+        <p class="card-text">Spring Boot is Spring's convention-over-configuration solution for creating production-grade 
+Spring applications.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="col-sm-3 d-flex align-items-stretch">
+    <div class="card border-0">
+      <a class="sponsor-logo-yourkit" href="https://www.yourkit.com">
+      <img src="https://github.com/apereo/cas/assets/1205228/81bf79a8-3771-4439-bcb4-34cfbb94467c" alt="YourKit" loading="lazy" class="card-img-top mt-2 ms-2 pe-4" />
+      </a>
+      <div class="card-body">
+        <p class="card-text">
+        YourKit, LLC is the creator of <a href="https://www.yourkit.com/java/profiler/">YourKit Java Profiler</a> 
+and <a href="https://www.yourkit.com/.net/profiler/">YourKit .NET Profiler</a>, innovative and intelligent 
+tools for profiling Java and .NET applications.
+        </p>
+      </div>
+    </div>
+  </div>
+
+<div class="col-sm-3 d-flex align-items-stretch">
+    <div class="card border-0">
+      <a class="sponsor-logo-gradle" href="https://www.gradle.org">
+      <img src="https://github.com/apereo/cas/assets/1205228/2774ecf6-c60c-4a66-9f5c-2fe8baaa7825" alt="Gradle" loading="lazy" class="card-img-top mt-2 ms-2 pe-4" />
+      </a>
+      <div class="card-body">
+        <p class="card-text">
+        Gradle Build Tool is a fast, dependable, and adaptable open-source build automation tool with an elegant and extensible declarative build language. 
+From mobile apps to microservices, from small startups to big enterprises, Gradle helps teams build, automate and deliver better software, faster.
+        </p>
+      </div>
+    </div>
+  </div>
+</div>
+
+            </article>
+            <div class="article-end" aria-hidden="true"><span></span><span>CAS</span><span></span></div>
+        </main>
+        
+        <aside class="docs-toc" aria-label="On this page">
+    <nav id="pageContents" aria-label="Table of contents">
+        <p class="eyebrow">ON THIS PAGE</p>
+        <ul class="section-nav"></ul>
+    </nav>
+    <a class="toc-top" href="#cas-docs-container">Back to top <span aria-hidden="true">↑</span></a>
+</aside>
+
+        
+    </div>
+
+    <footer class="site-footer">
+        <a class="footer-brand" href="../index.html">APEREO <strong>CAS</strong></a>
+        <p>CAS is supported by the <a href="https://www.apereo.org/">Apereo Foundation</a>.</p>
+        <a href="#cas-docs-container">Back to top <span aria-hidden="true">↑</span></a>
+    </footer>
+    <div id="docs-status" class="visually-hidden" role="status" aria-live="polite"></div>
+
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.min.js"></script>
+
+    <script src="https://cdn.jsdelivr.net/npm/tether@2.0.0/dist/js/tether.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.11/clipboard.min.js"></script>
+
+    <script src='/cas/javascripts/URI.js'></script>
+    <script src='/cas/javascripts/site.js'></script>
+
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@docsearch/js@3"></script>
+    <script type="text/javascript" src="https://cdn.datatables.net/1.11.5/js/jquery.dataTables.min.js"></script>
+    <script type="text/javascript" src="https://code.jquery.com/ui/1.13.1/jquery-ui.js"></script>
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/lightbox2/2.11.5/js/lightbox.min.js"></script>
+
+    <script>
+        let pageSection = null;
+        let siteUrl = "https://apereo.github.io";
+        let basePath = "/cas";
+
+        
+    </script>
+</body>
+
+</html>

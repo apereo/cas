@@ -1,0 +1,154 @@
+/* Print the guide, including examples, without the website navigation. */
+@page {
+    margin: 18mm;
+}
+
+html, body {
+    background: white !important;
+    color: black !important;
+    font: 11pt/1.6 Georgia, serif;
+}
+
+.site-header, .site-footer, .docs-sidebar, .docs-toc, .page-toolbar, .skip-link, .identity-orbit, .home-paths, .article-end, .header-link, .btn-copy-code, .reading-progress, #docs-status, .DocSearch, .dataTables_filter, .dataTables_length, .dataTables_paginate {
+    display: none !important;
+}
+
+body::before {
+    display: none !important;
+}
+
+.docs-shell, .cas-docs-content {
+    display: block;
+    width: 100%;
+    max-width: none;
+    padding: 0;
+    margin: 0;
+}
+
+h1, h2, h3, h4, h5, h6 {
+    color: black !important;
+    font-family: Arial, sans-serif;
+    break-after: avoid;
+}
+
+h1 {
+    font-size: 25pt;
+}
+
+h2 {
+    font-size: 18pt;
+    margin-top: 1.5em;
+}
+
+h3 {
+    font-size: 14pt;
+}
+
+p, li {
+    orphans: 3;
+    widows: 3;
+}
+
+a {
+    color: #123d56;
+    text-decoration: underline;
+}
+
+img {
+    max-width: 100%;
+    height: auto;
+}
+
+pre, code {
+    font: 9pt/1.6 Consolas, monospace;
+    color: black !important;
+    background: white !important;
+}
+
+pre {
+    white-space: pre-wrap;
+    overflow-wrap: anywhere;
+    padding: .8em;
+    border: 1px solid #bbb;
+}
+
+pre code {
+    padding: 0;
+}
+
+.highlight, .highlight * {
+    background: white !important;
+    color: black !important;
+}
+
+.highlight pre {
+    border: 0;
+    margin: 0;
+}
+
+.highlight {
+    border: 1px solid #bbb;
+}
+
+.rouge-gutter {
+    display: none;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 9pt;
+}
+
+th, td {
+    padding: .5em;
+    border: 1px solid #bbb;
+    text-align: left;
+}
+
+thead {
+    display: table-header-group;
+}
+
+.table-scroll {
+    overflow: visible;
+}
+
+blockquote, #dev-doc-info {
+    border-left: 3px solid #777;
+    padding: .7em 1em;
+}
+
+#dev-doc-title {
+    font-weight: bold;
+}
+
+.tab, .nav-pills, .nav-tabs {
+    display: none;
+}
+
+.tab-content > li, .tab-content > .tab-pane {
+    display: block !important;
+    opacity: 1 !important;
+}
+
+.card {
+    break-inside: avoid;
+}
+
+/* Decoration added for the screen should not cost ink. */
+.highlight::before, h2::before, .site-footer::before,
+#cas-docs-container > h1:first-child::before {
+    display: none !important;
+}
+
+.table-scroll, .highlight, blockquote, .alert, #dev-doc-info, .docs-home .card > a {
+    box-shadow: none !important;
+    background-image: none !important;
+}
+
+.home-title-accent {
+    -webkit-text-fill-color: black;
+    color: black !important;
+    background: none !important;
+}
