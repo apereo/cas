@@ -51,7 +51,7 @@ class RedisModulesOperationsTests {
             val command = LettuceRedisModulesOperations.newRediSearchCommands(props, CasSSLContext.disabled());
             val indexName = UUID.randomUUID().toString();
             val result = command.ftCreate(indexName,
-                List.of(TextFieldArgs.<String>builder().name("name").build(), NumericFieldArgs.<String>builder().name("id").build()));
+                List.of(TextFieldArgs.builder().name("name").build(), NumericFieldArgs.builder().name("id").build()));
             assertEquals("OK", result);
             assertTrue(command.ftList().contains(indexName));
         }

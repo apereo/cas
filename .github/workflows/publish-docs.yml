@@ -25,6 +25,13 @@ on:
         type: boolean
         required: false
         default: true
+      proofReadExternal:
+        description: "Check External Links"
+        type: boolean
+        required: false
+        default: false
+  schedule:
+    - cron: '17 6 * * 1'
   push:
     branches:
       - master
@@ -42,7 +49,7 @@ concurrency:
 
 jobs:
   trigger-ci:
-    if: ${{ (github.event_name == 'push' || github.event_name == 'workflow_dispatch' || contains(github.event.pull_request.labels.*.name, 'CI')) }}
+    if: ${{ (github.event_name == 'push' || github.event_name == 'workflow_dispatch' || github.event_name == 'schedule' || contains(github.event.pull_request.labels.*.name, 'CI')) }}
     runs-on: ubuntu-latest
     steps:
       - name: Trigger CI
@@ -62,6 +69,8 @@ jobs:
           distribution: ${{ env.JDK_DISTRIBUTION }}
       - name: Setup Gradle
         uses: gradle/actions/setup-gradle@v6
+        with:
+          gradle-home-cache-excludes: caches/build-cache-1
       - name: Initialize
         run: ls ./ci && find ./ci -type f -name "*.sh" -exec chmod +x "{}" \; && ./ci/init-build.sh
 
@@ -71,6 +80,9 @@ jobs:
     runs-on: ubuntu-latest
     needs: [initialize]
     continue-on-error: false
+    env:
+      BUNDLE_GEMFILE: ${{ github.workspace }}/docs/cas-server-documentation/Gemfile
+      DOCS_PROOF_EXTERNAL: ${{ (github.event_name == 'schedule' || github.event.inputs.proofReadExternal == 'true' || vars.DOCS_PROOF_EXTERNAL == 'true') && 'true' || 'false' }}
     steps:
       - name: Checkout
         uses: actions/checkout@v7
@@ -83,21 +95,30 @@ jobs:
           distribution: ${{ env.JDK_DISTRIBUTION }}
       - name: Setup Gradle
         uses: gradle/actions/setup-gradle@v6
+        with:
+          gradle-home-cache-excludes: caches/build-cache-1
       - name: Initialize
         run: find ./ci -type f -name "*.sh" -exec chmod +x "{}" \; && ./ci/init-build.sh
       - name: Set up Ruby
         uses: ruby/setup-ruby@v1
         with:
           ruby-version: ${{ env.RUBY_VERSION }}
-      - name: Install Ruby gems
-        run: gem install bundler
+          bundler-cache: true
       - name: Setup Jekyll Cache
         uses: actions/cache@v6.1.0
         with:
-          path: |
-            jekyll/.jekyll-metadata
-            jekyll/.jekyll-cache
-          key: ${{ runner.os }}-${{ github.repository }}
+          path: jekyll/.jekyll-cache
+          key: jekyll-${{ runner.os }}-${{ env.RUBY_VERSION }}-${{ hashFiles('docs/cas-server-documentation/Gemfile') }}-${{ github.run_id }}
+          restore-keys: |
+            jekyll-${{ runner.os }}-${{ env.RUBY_VERSION }}-${{ hashFiles('docs/cas-server-documentation/Gemfile') }}-
+      - name: Restore External Link Cache
+        if: ${{ env.DOCS_PROOF_EXTERNAL == 'true' }}
+        uses: actions/cache/restore@v6.1.0
+        with:
+          path: build/htmlproofer
+          key: htmlproofer-${{ github.run_id }}
+          restore-keys: |
+            htmlproofer-
       - name: Install MongoDB tools
         if: ${{ github.event_name != 'pull_request' && env.CAS_MODULE_METADATA_MONGODB_URL != '' }}
         run: |
@@ -113,5 +134,14 @@ jobs:
         with:
           timeout_minutes: 55
           max_attempts: 2
+          # publish.sh exits 1 for failures worth another attempt (clone, build, push);
+          # 3 (broken internal links) and 4 (broken external links) fail at once.
+          retry_on_exit_code: 1
           shell: bash
-          command: ./ci/docs/publish.sh --branch ${{ env.DOCS_BRANCH }} --proof-read "$DOCS_PROOF_READ"
+          command: ./ci/docs/publish.sh --branch ${{ env.DOCS_BRANCH }} --proof-read "$DOCS_PROOF_READ" --proof-external "$DOCS_PROOF_EXTERNAL"
+      - name: Save External Link Cache
+        if: ${{ always() && env.DOCS_PROOF_EXTERNAL == 'true' && hashFiles('build/htmlproofer/cache.json') != '' }}
+        uses: actions/cache/save@v6.1.0
+        with:
+          path: build/htmlproofer
+          key: htmlproofer-${{ github.run_id }}

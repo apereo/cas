@@ -44,6 +44,7 @@ import org.junit.jupiter.api.RepeatedTest;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.jupiter.api.parallel.ResourceLock;
 import org.junitpioneer.jupiter.RetryingTest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -69,14 +70,24 @@ class RedisServerTicketRegistryTests {
         "cas.ticket.registry.redis.queue-identifier=cas-node-100",
         "cas.ticket.registry.redis.host=localhost",
         "cas.ticket.registry.redis.port=6379",
+        "cas.ticket.registry.redis.database=3",
         "cas.ticket.registry.redis.cache.cache-size=0",
         "cas.ticket.registry.redis.enable-redis-search=false",
-        "cas.ticket.registry.redis.crypto.encryption.key=AZ5y4I9qzKPYUVNL2Td4RMbpg6Z-ldui8VEFg8hsj1M",
+        "CasFeatureModule.TicketRegistry.redis-messaging.enabled=false",
+        "cas.ticket.registry.redis.crypto.encryption.key=BXRiSBWJcRksTizjdaCoLw",
         "cas.ticket.registry.redis.crypto.signing.key=cAPyoHMrOMWrwydOXzBA-ufZQM-TilnLjbRgMQWlUlwFmy07bOtAgCIdNBma3c5P4ae_JV6n1OpOAYqSh2NkmQ"
     })
+    @Tag("TicketRegistryTestWithEncryption")
+    @ResourceLock("redisTicketRegistryDatabase3")
     class WithoutCachingTests extends BaseRedisSentinelTicketRegistryTests {
+        @Override
+        protected boolean isRegistryIsolated() {
+            return true;
+        }
+
         @RepeatedTest(2)
         void verifyTrackingUsersAndPrefixes() throws Throwable {
+            getNewTicketRegistry().deleteAll();
             val authentication = CoreAuthenticationTestUtils.getAuthentication(UUID.randomUUID().toString());
             val runnable = new Runnable() {
                 @Override
@@ -150,12 +161,19 @@ class RedisServerTicketRegistryTests {
         "cas.ticket.registry.redis.queue-identifier=cas-node-100",
         "cas.ticket.registry.redis.host=localhost",
         "cas.ticket.registry.redis.port=6379",
+        "cas.ticket.registry.redis.database=4",
         "cas.ticket.registry.redis.enable-redis-search=false",
-        "cas.ticket.registry.redis.crypto.encryption.key=AZ5y4I9qzKPYUVNL2Td4RMbpg6Z-ldui8VEFg8hsj1M",
+        "CasFeatureModule.TicketRegistry.redis-messaging.enabled=false",
+        "cas.ticket.registry.redis.crypto.encryption.key=BXRiSBWJcRksTizjdaCoLw",
         "cas.ticket.registry.redis.crypto.signing.key=cAPyoHMrOMWrwydOXzBA-ufZQM-TilnLjbRgMQWlUlwFmy07bOtAgCIdNBma3c5P4ae_JV6n1OpOAYqSh2NkmQ"
     })
+    @Tag("TicketRegistryTestWithEncryption")
+    @ResourceLock("redisTicketRegistryDatabase4")
     class WithoutRedisModulesTests extends BaseRedisSentinelTicketRegistryTests {
-
+        @Override
+        protected boolean isRegistryIsolated() {
+            return true;
+        }
     }
 
     @Nested
@@ -167,9 +185,10 @@ class RedisServerTicketRegistryTests {
         "cas.ticket.registry.redis.pool.max-active=20",
         "cas.ticket.registry.redis.pool.enabled=true",
         "cas.ticket.registry.redis.crypto.enabled=true",
-        "cas.ticket.registry.redis.crypto.encryption.key=AZ5y4I9qzKPYUVNL2Td4RMbpg6Z-ldui8VEFg8hsj1M",
+        "cas.ticket.registry.redis.crypto.encryption.key=BXRiSBWJcRksTizjdaCoLw",
         "cas.ticket.registry.redis.crypto.signing.key=cAPyoHMrOMWrwydOXzBA-ufZQM-TilnLjbRgMQWlUlwFmy07bOtAgCIdNBma3c5P4ae_JV6n1OpOAYqSh2NkmQ"
     })
+    @Tag("TicketRegistryTestWithEncryption")
     class DefaultTests extends BaseRedisSentinelTicketRegistryTests {
 
         private static final int COUNT = 50;
@@ -188,7 +207,10 @@ class RedisServerTicketRegistryTests {
             getNewTicketRegistry().addTicket(tgt);
 
             val cacheKey = getNewTicketRegistry().digestIdentifier(tgt.getId());
-            assertNotNull(redisTicketRegistryCache.getIfPresent(cacheKey));
+            await().untilAsserted(() -> {
+                assertNotNull(getNewTicketRegistry().getTicket(tgt.getId()));
+                assertNotNull(redisTicketRegistryCache.getIfPresent(cacheKey));
+            });
 
             val deleted = getNewTicketRegistry().deleteTicketsFor(authentication.getPrincipal().getId());
             assertTrue(deleted > 0);
@@ -205,16 +227,21 @@ class RedisServerTicketRegistryTests {
                         .getNewTicketId(TicketGrantingTicket.PREFIX);
                     return new TicketGrantingTicketImpl(tgtId, authentication, NeverExpiresExpirationPolicy.INSTANCE);
                 })
-                .limit(COUNT);
+                .limit(COUNT)
+                .toList();
+            val ticketIds = ticketGrantingTicketToAdd.stream().map(Ticket::getId).collect(Collectors.toSet());
             executedTimedOperation("Adding tickets in bulk",
-                Unchecked.consumer(_ -> getNewTicketRegistry().addTicket(ticketGrantingTicketToAdd)));
+                Unchecked.consumer(_ -> getNewTicketRegistry().addTicket(ticketGrantingTicketToAdd.stream())));
             executedTimedOperation("Getting tickets",
                 Unchecked.consumer(_ -> {
                     val tickets = getNewTicketRegistry().getTickets();
                     assertFalse(tickets.isEmpty());
                 }));
             val ticketStream = executedTimedOperation("Getting tickets in bulk",
-                Unchecked.supplier(() -> getNewTicketRegistry().stream()));
+                Unchecked.supplier(() -> getNewTicketRegistry().stream()
+                    .filter(ticket -> ticketIds.contains(ticket.getId()))
+                    .toList()));
+            assertEquals(COUNT, ticketStream.size());
             executedTimedOperation("Getting tickets individually",
                 Unchecked.consumer(_ -> ticketStream.forEach(ticket -> assertNotNull(getNewTicketRegistry().getTicket(ticket.getId())))));
 
@@ -324,11 +351,12 @@ class RedisServerTicketRegistryTests {
         "cas.ticket.registry.redis.pool.max-wait=PT10S",
         "cas.ticket.registry.redis.pool.enabled=true",
         "cas.ticket.registry.redis.host=localhost",
-        "cas.ticket.registry.redis.port=6379",
-        "cas.ticket.registry.redis.crypto.encryption.key=AZ5y4I9qzKPYUVNL2Td4RMbpg6Z-ldui8VEFg8hsj1M",
-        "cas.ticket.registry.redis.crypto.signing.key=cAPyoHMrOMWrwydOXzBA-ufZQM-TilnLjbRgMQWlUlwFmy07bOtAgCIdNBma3c5P4ae_JV6n1OpOAYqSh2NkmQ",
+        "cas.ticket.registry.redis.port=16389",
+        "cas.ticket.registry.redis.crypto.enabled=false",
         "CasFeatureModule.TicketRegistry.redis-messaging.enabled=false"
     })
+    @Tag("TicketRegistryTestWithoutEncryption")
+    @EnabledIfListeningOnPort(port = 16389)
     class NoMessagingTests extends BaseRedisSentinelTicketRegistryTests {
 
         @RepeatedTest(2)
@@ -358,10 +386,12 @@ class RedisServerTicketRegistryTests {
         "cas.ticket.registry.redis.port=6379",
         "cas.ticket.registry.redis.pool.max-active=20",
         "cas.ticket.registry.redis.pool.enabled=true",
-        "cas.ticket.registry.redis.crypto.enabled=true"
+        "cas.ticket.registry.redis.crypto.enabled=true",
+        "cas.ticket.registry.redis.crypto.encryption.key=BXRiSBWJcRksTizjdaCoLw",
+        "cas.ticket.registry.redis.crypto.signing.key=cAPyoHMrOMWrwydOXzBA-ufZQM-TilnLjbRgMQWlUlwFmy07bOtAgCIdNBma3c5P4ae_JV6n1OpOAYqSh2NkmQ"
     })
     @ExtendWith(CasTestExtension.class)
-        class RecentSessionsTests {
+    class RecentSessionsTests {
         @Autowired
         @Qualifier(TicketRegistry.BEAN_NAME)
         private TicketRegistry ticketRegistry;
@@ -438,7 +468,9 @@ class RedisServerTicketRegistryTests {
         }, properties = {
         "cas.ticket.tgt.core.service-tracking-policy=MOST_RECENT",
         "cas.ticket.registry.redis.host=localhost",
-        "cas.ticket.registry.redis.port=6379"
+        "cas.ticket.registry.redis.port=6379",
+        "cas.ticket.registry.redis.database=5",
+        "cas.ticket.registry.redis.enable-redis-search=false"
     })
     @ExtendWith(CasTestExtension.class)
     class ConcurrentAddTicketGrantingTicketTests {
@@ -501,7 +533,9 @@ class RedisServerTicketRegistryTests {
         }, properties = {
         "cas.ticket.tgt.core.service-tracking-policy=ALL",
         "cas.ticket.registry.redis.host=localhost",
-        "cas.ticket.registry.redis.port=6379"
+        "cas.ticket.registry.redis.port=6379",
+        "cas.ticket.registry.redis.database=6",
+        "cas.ticket.registry.redis.enable-redis-search=false"
     })
     @ExtendWith(CasTestExtension.class)
     class ConcurrentAddProxyTicketTests {
@@ -587,7 +621,9 @@ class RedisServerTicketRegistryTests {
             "cas.ticket.tgt.core.service-tracking-policy=MOST_RECENT",
             "cas.ticket.registry.redis.host=localhost",
             "cas.ticket.registry.redis.port=6379",
-            "cas.slo.disabled=true"
+            "cas.slo.disabled=true",
+            "cas.ticket.registry.redis.crypto.encryption.key=BXRiSBWJcRksTizjdaCoLw",
+            "cas.ticket.registry.redis.crypto.signing.key=cAPyoHMrOMWrwydOXzBA-ufZQM-TilnLjbRgMQWlUlwFmy07bOtAgCIdNBma3c5P4ae_JV6n1OpOAYqSh2NkmQ"
         })
     @ExtendWith(CasTestExtension.class)
     class DisabledSloTests {

@@ -16,6 +16,7 @@ import org.apache.commons.io.IOUtils;
 import org.apereo.inspektr.common.web.ClientInfo;
 import org.apereo.inspektr.common.web.ClientInfoHolder;
 import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -62,7 +63,6 @@ class LdapDelegatedClientAuthenticationCredentialResolverTests {
 
     @BeforeAll
     public static void bootstrap() throws Throwable {
-        ClientInfoHolder.setClientInfo(ClientInfo.from(new MockHttpServletRequest()));
         @Cleanup
         val localhost = new LDAPConnection("localhost", LDAP_PORT, "cn=Directory Manager", "password");
         val ldif = IOUtils.toString(new ClassPathResource("ldap-pac4j.ldif").getInputStream(), StandardCharsets.UTF_8)
@@ -70,6 +70,11 @@ class LdapDelegatedClientAuthenticationCredentialResolverTests {
         LdapIntegrationTestsOperations.populateEntries(localhost,
             new ByteArrayInputStream(ldif.getBytes(StandardCharsets.UTF_8)),
             "ou=people,dc=example,dc=org");
+    }
+
+    @BeforeEach
+    void setClientInfo() {
+        ClientInfoHolder.setClientInfo(ClientInfo.from(new MockHttpServletRequest()));
     }
 
     @Test

@@ -18,6 +18,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.ImportAutoConfiguration;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.TestPropertySource;
+import static org.awaitility.Awaitility.*;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
@@ -33,7 +34,9 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @Tag("Redis")
 @TestPropertySource(properties = {
     "management.endpoint.redisTicketsCache.access=UNRESTRICTED",
-    "cas.ticket.registry.core.enable-locking=false"
+    "cas.ticket.registry.core.enable-locking=false",
+    "cas.ticket.registry.redis.crypto.encryption.key=BXRiSBWJcRksTizjdaCoLw",
+    "cas.ticket.registry.redis.crypto.signing.key=cAPyoHMrOMWrwydOXzBA-ufZQM-TilnLjbRgMQWlUlwFmy07bOtAgCIdNBma3c5P4ae_JV6n1OpOAYqSh2NkmQ"
 })
 @Tag("ActuatorEndpoint")
 @ImportAutoConfiguration({
@@ -52,10 +55,12 @@ class RedisTicketRegistryCacheEndpointTests extends AbstractCasEndpointTests {
         val ticket = new TicketGrantingTicketImpl(generator.getNewTicketId(TicketGrantingTicket.PREFIX),
             originalAuthn, NeverExpiresExpirationPolicy.INSTANCE);
         ticketRegistry.addTicket(ticket);
-        mockMvc.perform(get("/actuator/redisTicketsCache/{ticketId}", ticket.getId())
-                .accept(MediaType.APPLICATION_JSON))
-            .andExpect(status().isOk());
-        assertNotNull(ticketRegistry.getTicket(ticket.getId()));
+        await().untilAsserted(() -> {
+            assertNotNull(ticketRegistry.getTicket(ticket.getId()));
+            mockMvc.perform(get("/actuator/redisTicketsCache/{ticketId}", ticket.getId())
+                    .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk());
+        });
 
         mockMvc.perform(delete("/actuator/redisTicketsCache/{ticketId}", ticket.getId())
                 .with(csrf())

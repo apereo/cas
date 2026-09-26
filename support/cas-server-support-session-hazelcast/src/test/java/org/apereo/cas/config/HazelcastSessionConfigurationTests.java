@@ -23,8 +23,8 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 @SpringBootTestAutoConfigurations
 @SpringBootTest(classes = CasHazelcastSessionAutoConfiguration.class, properties = {
-    "cas.webflow.session.server.hazelcast.cluster.network.port-auto-increment=false",
     "cas.webflow.session.server.hazelcast.cluster.network.port=5709",
+    "cas.webflow.session.server.hazelcast.cluster.network.tcpip-enabled=false",
     "cas.webflow.session.server.hazelcast.cluster.core.instance-name=hzsessioninstance"
 })
 @Tag("Hazelcast")

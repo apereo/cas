@@ -322,7 +322,7 @@ function responsiveImages() {
 }
 
 function responsiveTables() {
-  $('#cas-docs-container table').not('.rouge-table, .highlight table').each(function () {
+  $('#cas-docs-container table').not('.rouge-table, .highlight table, .cas-op-params table').each(function () {
     $(this).addClass('table');
     if (!this.closest('.table-scroll') && !this.classList.contains('cas-datatable')) {
       $(this).wrap('<div class="table-scroll" role="region" aria-label="Scrollable table" tabindex="0"></div>');
@@ -345,79 +345,6 @@ function generateOverlay(artifactId, type) {
     <input type='hidden' name='type' value='${type}' /> 
   </form>`);
   $("#overlayform").submit();
-}
-
-function copyPropertyConfig(link) {
-  const $td = $(link).closest("td");
-
-  const propertyName = $.trim($td.find("li.property-name code").text());
-
-  const $descriptionP = $td.find("div.property-description p").first();
-
-  const descriptionHtml = $descriptionP.html() || "";
-  const description = descriptionHtml
-      .replace(/<br\s*\/?>/gi, "\n")
-      .replace(/<[^>]+>/g, "")
-      .trim();
-
-  let commentLines = description
-      .split(/\r?\n/)
-      .map(function (line) {
-        return $.trim(line);
-      })
-      .filter(Boolean);
-
-  const $followingUl = $descriptionP.next("ul");
-
-  if ($followingUl.length) {
-    $followingUl.find("li").each(function () {
-      const itemText = $.trim($(this).text());
-
-      if (itemText) {
-        itemText
-            .split(/\r?\n/)
-            .map(function (line) {
-              return $.trim(line);
-            })
-            .filter(Boolean)
-            .forEach(function (line, index) {
-              commentLines.push(`${index === 0 ? "- " : "  "}${line}`);
-            });
-      }
-    });
-  }
-
-  const comment = commentLines
-      .map(function (line) {
-        return `# ${line}`;
-      })
-      .join("\n");
-
-  const textToCopy = `${comment}\n${propertyName}`;
-
-  navigator.clipboard.writeText(textToCopy)
-      .then(function () {
-        const $status = $(link).siblings(".copy-status");
-
-        $status
-            .stop(true, true)
-            .text("Copied!")
-            .fadeIn(150)
-            .delay(1000)
-            .fadeOut(150);
-      })
-      .catch(function (err) {
-        console.error("Failed to copy:", err);
-
-        const $status = $(link).siblings(".copy-status");
-
-        $status
-            .stop(true, true)
-            .text("Copy failed")
-            .fadeIn(150)
-            .delay(1000)
-            .fadeOut(150);
-      });
 }
 
 function showOverlay(artifactId, type) {
@@ -581,6 +508,8 @@ $(document).ready(() => {
       "lengthMenu": [ 5, 10, 15, 25, 50],
       "pageLength": pageLength
     });
+    initializeCasProperties();
+    initializeCasActuators();
 
     let popoverTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="popover"]'));
     let popoverList = popoverTriggerList.map(popoverTriggerEl => new bootstrap.Popover(popoverTriggerEl))
@@ -825,3 +754,463 @@ $(() => {
   window.addEventListener('resize', schedule, {passive: true});
   update();
 });
+
+const CAS_PROPERTY_FORMATS = {properties: '.properties', yaml: 'YAML', env: 'Env vars'};
+const CAS_PROPERTY_FORMAT_KEY = 'cas-docs-property-format';
+
+function readCasPropertyFormat() {
+  try {
+    const format = localStorage.getItem(CAS_PROPERTY_FORMAT_KEY);
+    return CAS_PROPERTY_FORMATS[format] ? format : 'properties';
+  } catch (error) {
+    return 'properties';
+  }
+}
+
+function writeCasPropertyFormat(format) {
+  try {
+    localStorage.setItem(CAS_PROPERTY_FORMAT_KEY, format);
+    return true;
+  } catch (error) {
+    return false;
+  }
+}
+
+function casPropertyEnvironmentVariable(name) {
+  return name
+    .replace(/\[(\d+)]/g, '_$1_')
+    .replace(/\./g, '_')
+    .replace(/-/g, '')
+    .replace(/_+/g, '_')
+    .replace(/^_|_$/g, '')
+    .toUpperCase();
+}
+
+function casPropertyValue(row) {
+  const value = row.dataset.default;
+  return value === '' ? '...' : value;
+}
+
+function casPropertyYaml(rows) {
+  const tree = {};
+  rows.forEach(row => {
+    let node = tree;
+    const segments = row.dataset.name.split('.');
+    segments.forEach((segment, index) => {
+      if (index === segments.length - 1) {
+        node[segment] = casPropertyValue(row);
+      } else {
+        node[segment] = typeof node[segment] === 'object' ? node[segment] : {};
+        node = node[segment];
+      }
+    });
+  });
+  const lines = [];
+  const walk = (node, depth) => Object.entries(node).forEach(([key, value]) => {
+    if (typeof value === 'object') {
+      lines.push(`${'  '.repeat(depth)}${key}:`);
+      walk(value, depth + 1);
+    } else {
+      lines.push(`${'  '.repeat(depth)}${key}: "${value.replace(/"/g, '\\"')}"`);
+    }
+  });
+  walk(tree, 0);
+  return lines.join('\n');
+}
+
+function casPropertySnippet(rows, format, withComments) {
+  if (format === 'yaml') {
+    return casPropertyYaml(rows);
+  }
+  return rows.map(row => {
+    const line = format === 'env'
+      ? `${casPropertyEnvironmentVariable(row.dataset.name)}=${casPropertyValue(row)}`
+      : `${row.dataset.name}=${casPropertyValue(row)}`;
+    const summary = row.querySelector('.cas-property-summary')?.textContent.trim();
+    return withComments && summary ? `# ${summary}\n${line}` : line;
+  }).join(withComments ? '\n\n' : '\n');
+}
+
+function casPropertyPrefix(names) {
+  if (names.length < 2) {
+    return '';
+  }
+  const split = names.map(name => name.split('.'));
+  const prefix = [];
+  for (let i = 0; ; i++) {
+    const segment = split[0][i];
+    if (segment === undefined || split.some(parts => parts[i] !== segment || parts.length <= i + 1)) {
+      break;
+    }
+    prefix.push(segment);
+  }
+  return prefix.length > 1 ? `${prefix.join('.')}.` : '';
+}
+
+function casPropertyGroupTitle(group) {
+  if (group === '') {
+    return 'General';
+  }
+  return group.replace(/\[\d+]/g, '').replace(/[-.]/g, ' ').replace(/\b\w/g, letter => letter.toUpperCase());
+}
+
+function renderCasPropertyUsage(row) {
+  const usage = row.querySelector('.cas-property-usage');
+  if (!usage) {
+    return;
+  }
+  const format = readCasPropertyFormat();
+  const name = row.dataset.name;
+  usage.querySelector('code').textContent = casPropertySnippet([row], format, false);
+  const hints = [];
+  if (row.hasAttribute('data-duration')) {
+    hints.push('<i class="fa fa-clock" aria-hidden="true"></i><span>Accepts <code>java.time.Duration</code> values such as <code>PT20S</code>, <code>PT15M</code>, <code>PT10H</code> or <code>P2DT3H4M</code>. <code>0</code> or <code>never</code> means zero; blank, <code>-1</code> or <code>infinite</code> means unending.</span>');
+  }
+  if (row.hasAttribute('data-regex')) {
+    hints.push('<i class="fa fa-asterisk" aria-hidden="true"></i><span>Accepts a regular expression, evaluated with <code>java.util.regex.Pattern</code>.</span>');
+  }
+  const alternatives = [];
+  if (format !== 'env') {
+    alternatives.push(`<code>${casPropertyEnvironmentVariable(name)}</code> as an environment variable`);
+  }
+  alternatives.push(`<code>-D${name}=…</code> as a system property`, `<code>--${name}=…</code> on the command line`);
+  hints.push(`<i class="fa fa-terminal" aria-hidden="true"></i><span>Also settable as ${alternatives.join(', ')}.</span>`);
+  usage.querySelector('.cas-property-hints').innerHTML = hints.map(hint => `<p>${hint}</p>`).join('');
+}
+
+function toggleCasProperty(row, open) {
+  const head = row.querySelector('.cas-property-head');
+  const detail = row.querySelector('.cas-property-detail');
+  const expanded = open ?? head.getAttribute('aria-expanded') !== 'true';
+  head.setAttribute('aria-expanded', String(expanded));
+  row.classList.toggle('open', expanded);
+  detail.hidden = !expanded;
+  if (expanded) {
+    renderCasPropertyUsage(row);
+  }
+}
+
+function applyCasPropertyFilter(block) {
+  const filter = block.dataset.filter || 'all';
+  const query = (block.querySelector('.cas-properties-search input')?.value || '').trim().toLowerCase();
+  let visible = 0;
+  block.querySelectorAll(':scope > .cas-properties-list > .cas-properties-group').forEach(group => {
+    let shown = 0;
+    group.querySelectorAll(':scope > .cas-property').forEach(row => {
+      const matchesFilter = filter === 'all'
+        || row.dataset.kind === filter
+        || (filter === 'duration' && row.hasAttribute('data-duration'))
+        || (filter === 'deprecated' && row.hasAttribute('data-deprecated'));
+      const matchesQuery = query === '' || row.dataset.search.includes(query);
+      row.hidden = !(matchesFilter && matchesQuery);
+      shown += row.hidden ? 0 : 1;
+    });
+    group.hidden = shown === 0;
+    visible += shown;
+  });
+  const empty = block.querySelector(':scope > .cas-properties-empty');
+  if (empty) {
+    empty.hidden = visible > 0;
+  }
+  const copy = block.querySelector('.cas-properties-copy span');
+  if (copy) {
+    copy.textContent = casPropertyCopyLabel(block);
+  }
+}
+
+function casPropertyCopyLabel(block) {
+  const scope = (block.dataset.filter || 'all') === 'all' && block.querySelector('.cas-property[data-kind="required"]') ? 'required' : 'shown';
+  return `Copy ${scope} as ${CAS_PROPERTY_FORMATS[readCasPropertyFormat()]}`;
+}
+
+function casPropertiesToCopy(block) {
+  const rows = [...block.querySelectorAll(':scope > .cas-properties-list .cas-property:not([hidden])')];
+  if ((block.dataset.filter || 'all') === 'all') {
+    const required = rows.filter(row => row.dataset.kind === 'required');
+    return required.length ? required : rows;
+  }
+  return rows;
+}
+
+function enhanceCasProperties(block) {
+  if (block.dataset.enhanced === 'true') {
+    return;
+  }
+  const list = block.querySelector(':scope > .cas-properties-list');
+  const rows = list ? [...list.querySelectorAll(':scope > .cas-property')] : [];
+  if (rows.length === 0) {
+    return;
+  }
+  block.dataset.enhanced = 'true';
+  block.classList.add('cas-properties-enhanced');
+  const thirdPartyOnly = rows.every(row => row.dataset.kind === 'thirdparty');
+  block.classList.toggle('cas-properties-thirdparty-only', thirdPartyOnly);
+
+  const casNames = rows.filter(row => row.dataset.kind !== 'thirdparty').map(row => row.dataset.name);
+  const isContainer = name => casNames.some(other => other !== name && (other.startsWith(`${name}.`) || other.startsWith(`${name}[`)));
+  const prefix = casPropertyPrefix(casNames.filter(name => !isContainer(name)));
+  const groups = new Map();
+  rows.forEach(row => {
+    const name = row.dataset.name;
+    let group;
+    let relative = name;
+    if (row.dataset.kind === 'thirdparty' || prefix === '' || !name.startsWith(prefix)) {
+      const segments = name.split('.');
+      group = row.dataset.kind === 'thirdparty' ? `~${segments.slice(0, 2).join('.')}` : '';
+    } else {
+      relative = name.substring(prefix.length);
+      const segments = relative.split('.');
+      group = segments.length > 1 ? segments[0] : '';
+    }
+    const code = row.querySelector('.cas-property-name');
+    code.title = name;
+    if (relative !== name) {
+      const local = group === '' ? relative : relative.substring(group.length + 1);
+      code.innerHTML = `${group === '' ? '' : `<span class="cas-property-parent">${group}.</span>`}${local}`;
+    }
+    const description = row.querySelector('.cas-property-description');
+    const summary = row.querySelector('.cas-property-summary');
+    if (description && summary && description.textContent.trim() === summary.textContent.trim()) {
+      description.hidden = true;
+    }
+    row.dataset.search = `${name} ${row.dataset.default} ${description?.textContent || ''}`.toLowerCase();
+
+    const head = row.querySelector('.cas-property-head');
+    head.setAttribute('role', 'button');
+    head.tabIndex = 0;
+    head.setAttribute('aria-expanded', 'false');
+    head.insertAdjacentHTML('beforeend', '<i class="cas-property-chevron" aria-hidden="true"></i>');
+    const detail = row.querySelector('.cas-property-detail');
+    detail.hidden = true;
+    detail.insertAdjacentHTML('beforeend', `
+      <div class="cas-property-usage">
+        <div class="cas-property-snippet"><pre><code></code></pre><button type="button" class="cas-property-copy"><i class="fa fa-copy" aria-hidden="true"></i><span>Copy</span></button></div>
+        <div class="cas-property-hints"></div>
+      </div>`);
+
+    if (!groups.has(group)) {
+      groups.set(group, []);
+    }
+    groups.get(group).push(row);
+  });
+
+  const ordered = [...groups.entries()].sort(([a], [b]) => {
+    const rank = key => key === '' ? 0 : key.startsWith('~') ? 2 : 1;
+    return rank(a) - rank(b) || a.localeCompare(b);
+  });
+  list.replaceChildren(...ordered.map(([group, members]) => {
+    const section = document.createElement('div');
+    section.className = 'cas-properties-group';
+    const heading = document.createElement('div');
+    heading.className = 'cas-properties-group-heading';
+    heading.innerHTML = `${casPropertyGroupTitle(group.replace(/^~/, ''))}<span>${members.length}</span>`;
+    section.append(heading, ...members);
+    return section;
+  }));
+
+  const count = (predicate) => rows.filter(predicate).length;
+  const chips = [
+    ['all', 'All', rows.length],
+    ['required', 'Required', count(row => row.dataset.kind === 'required')],
+    ['optional', 'Optional', count(row => row.dataset.kind === 'optional')],
+    ['thirdparty', 'Third party', count(row => row.dataset.kind === 'thirdparty')],
+    ['duration', 'Duration', count(row => row.hasAttribute('data-duration'))],
+    ['deprecated', 'Deprecated', count(row => row.hasAttribute('data-deprecated'))]
+  ].filter(([key, , total]) => key === 'all' || (total > 0 && total < rows.length));
+
+  const format = readCasPropertyFormat();
+  const searchable = rows.length > 5 && !block.classList.contains('cas-properties-compact');
+  const toolbar = document.createElement('div');
+  toolbar.className = 'cas-properties-toolbar';
+  toolbar.innerHTML = `
+    ${searchable ? `<label class="cas-properties-search"><i class="fa fa-magnifying-glass" aria-hidden="true"></i><input type="search" placeholder="Filter ${rows.length} settings by name, value or description" aria-label="Filter settings"></label>` : ''}
+    <div class="cas-properties-format" role="group" aria-label="Show settings as">${Object.entries(CAS_PROPERTY_FORMATS).map(([key, label]) =>
+      `<button type="button" data-format="${key}" aria-pressed="${key === format}">${label}</button>`).join('')}</div>
+    ${chips.length > 1 ? `<div class="cas-properties-filters" role="group" aria-label="Show">${chips.map(([key, label, total]) =>
+      `<button type="button" class="cas-properties-filter" data-filter="${key}" aria-pressed="${key === 'all'}">${label}<b>${total}</b></button>`).join('')}</div>` : ''}`;
+
+  const header = document.createElement('div');
+  header.className = 'cas-properties-header';
+  header.innerHTML = `<span>${prefix ? `Keys below are relative to <code>${prefix}</code>` : `${rows.length}${thirdPartyOnly ? ' third-party' : ''} setting${rows.length === 1 ? '' : 's'}`}</span>
+    <button type="button" class="cas-properties-copy"><i class="fa fa-copy" aria-hidden="true"></i><span></span></button>`;
+
+  const empty = document.createElement('p');
+  empty.className = 'cas-properties-empty';
+  empty.hidden = true;
+  empty.textContent = 'No settings match this filter.';
+
+  block.insertBefore(toolbar, list);
+  block.insertBefore(header, list);
+  list.after(empty);
+  applyCasPropertyFilter(block);
+}
+
+function copyCasPropertyText(text, button) {
+  const label = button.querySelector('span');
+  const original = label.textContent;
+  navigator.clipboard.writeText(text).then(() => {
+    label.textContent = 'Copied';
+    document.getElementById('docs-status').textContent = 'Copied to clipboard';
+  }).catch(() => {
+    label.textContent = 'Copy failed';
+  }).finally(() => setTimeout(() => {
+    label.textContent = original;
+  }, 1200));
+}
+
+function applyCasPropertyFormat(format) {
+  writeCasPropertyFormat(format);
+  document.querySelectorAll('.cas-properties-format button, .cas-actuator-format button').forEach(button =>
+    button.setAttribute('aria-pressed', String(button.dataset.format === format)));
+  document.querySelectorAll('.cas-property.open').forEach(renderCasPropertyUsage);
+  document.querySelectorAll('.cas-properties-copy span').forEach(label =>
+    label.textContent = casPropertyCopyLabel(label.closest('.cas-properties')));
+  document.querySelectorAll('.cas-actuator-snippet').forEach(snippet => {
+    snippet.hidden = snippet.dataset.format !== format;
+  });
+}
+
+function initializeCasProperties() {
+  document.querySelectorAll('.cas-properties').forEach(enhanceCasProperties);
+
+  document.addEventListener('click', event => {
+    const target = event.target;
+    const format = target.closest('.cas-properties-format button, .cas-actuator-format button');
+    if (format) {
+      applyCasPropertyFormat(format.dataset.format);
+      return;
+    }
+    const filter = target.closest('.cas-properties-filter');
+    if (filter) {
+      const block = filter.closest('.cas-properties');
+      block.dataset.filter = filter.dataset.filter;
+      block.querySelectorAll('.cas-properties-filter').forEach(button =>
+        button.setAttribute('aria-pressed', String(button === filter)));
+      applyCasPropertyFilter(block);
+      return;
+    }
+    const copy = target.closest('.cas-property-copy');
+    if (copy) {
+      copyCasPropertyText(copy.closest('.cas-property-snippet').querySelector('code').textContent, copy);
+      return;
+    }
+    const copyAll = target.closest('.cas-properties-copy');
+    if (copyAll) {
+      const block = copyAll.closest('.cas-properties');
+      copyCasPropertyText(casPropertySnippet(casPropertiesToCopy(block), readCasPropertyFormat(), true), copyAll);
+      return;
+    }
+    const head = target.closest('.cas-properties-enhanced .cas-property-head');
+    if (head && !target.closest('a')) {
+      toggleCasProperty(head.closest('.cas-property'));
+    }
+  });
+
+  document.addEventListener('keydown', event => {
+    const head = event.target.closest?.('.cas-properties-enhanced .cas-property-head');
+    if (head && (event.key === 'Enter' || event.key === ' ')) {
+      event.preventDefault();
+      toggleCasProperty(head.closest('.cas-property'));
+    }
+  });
+
+  document.addEventListener('input', event => {
+    if (event.target.matches('.cas-properties-search input')) {
+      applyCasPropertyFilter(event.target.closest('.cas-properties'));
+    }
+  });
+}
+
+function toggleCasOperation(operation, open) {
+  const expand = open ?? !operation.classList.contains('open');
+  operation.classList.toggle('open', expand);
+  operation.querySelector('.cas-op-row').setAttribute('aria-expanded', String(expand));
+  operation.querySelector('.cas-op-detail').hidden = !expand;
+}
+
+function selectCasActuatorTab(block, name) {
+  block.querySelectorAll('.cas-actuator-tab').forEach(tab => tab.setAttribute('aria-selected', String(tab.dataset.tab === name)));
+  block.querySelectorAll('.cas-actuator-panel').forEach(panel => {
+    panel.hidden = panel.dataset.tab !== name;
+  });
+}
+
+function applyCasActuatorFilter(section) {
+  const text = (section.querySelector('.cas-actuator-search input')?.value || '').trim().toLowerCase();
+  const method = section.querySelector('.cas-actuator-method[aria-pressed="true"]')?.dataset.method || '';
+  section.querySelectorAll('.cas-op').forEach(operation => {
+    operation.hidden = (method !== '' && operation.dataset.method !== method)
+      || (text !== '' && !operation.dataset.text.includes(text));
+  });
+}
+
+function openCasOperationFromHash() {
+  if (!location.hash.startsWith('#actuator-')) {
+    return;
+  }
+  const operation = document.getElementById(decodeURIComponent(location.hash.substring(1)));
+  if (operation?.classList.contains('cas-op')) {
+    toggleCasOperation(operation, true);
+    operation.scrollIntoView({block: 'start'});
+  }
+}
+
+function initializeCasActuators() {
+  if (!document.querySelector('.cas-actuators')) {
+    return;
+  }
+  const format = readCasPropertyFormat();
+  document.querySelectorAll('.cas-actuator-format button').forEach(button =>
+    button.setAttribute('aria-pressed', String(button.dataset.format === format)));
+  document.querySelectorAll('.cas-actuator-snippet').forEach(snippet => {
+    snippet.hidden = snippet.dataset.format !== format;
+  });
+
+  document.addEventListener('click', event => {
+    const target = event.target;
+    const row = target.closest('.cas-op-row');
+    if (row) {
+      toggleCasOperation(row.closest('.cas-op'));
+      return;
+    }
+    const tab = target.closest('.cas-actuator-tab');
+    if (tab) {
+      selectCasActuatorTab(tab.closest('.cas-actuators'), tab.dataset.tab);
+      return;
+    }
+    const goto = target.closest('.cas-actuator-goto');
+    if (goto) {
+      const block = goto.closest('.cas-actuators');
+      selectCasActuatorTab(block, goto.dataset.tab);
+      block.querySelector('.cas-actuator-shared').scrollIntoView({behavior: 'smooth', block: 'start'});
+      return;
+    }
+    const choice = target.closest('.cas-actuator-choice button');
+    if (choice) {
+      const group = choice.closest('.cas-actuator-choice').dataset.group;
+      const panel = choice.closest('.cas-actuator-panel');
+      choice.closest('.cas-actuator-choice').querySelectorAll('button').forEach(button =>
+        button.setAttribute('aria-pressed', String(button === choice)));
+      panel.querySelectorAll(`.cas-actuator-choice-panel[data-group="${group}"]`).forEach(option => {
+        option.hidden = option.dataset.choice !== choice.dataset.choice;
+      });
+      return;
+    }
+    const method = target.closest('.cas-actuator-method');
+    if (method) {
+      const section = method.closest('.cas-actuator');
+      section.querySelectorAll('.cas-actuator-method').forEach(button =>
+        button.setAttribute('aria-pressed', String(button === method)));
+      applyCasActuatorFilter(section);
+    }
+  });
+
+  document.addEventListener('input', event => {
+    if (event.target.matches('.cas-actuator-search input')) {
+      applyCasActuatorFilter(event.target.closest('.cas-actuator'));
+    }
+  });
+
+  window.addEventListener('hashchange', openCasOperationFromHash);
+  openCasOperationFromHash();
+}

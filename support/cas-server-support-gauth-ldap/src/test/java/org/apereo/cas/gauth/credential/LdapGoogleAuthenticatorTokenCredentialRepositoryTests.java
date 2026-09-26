@@ -23,7 +23,7 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 @SpringBootTest(classes = BaseLdapGoogleAuthenticatorTokenCredentialRepositoryTests.SharedTestConfiguration.class,
     properties = {
         "cas.authn.mfa.gauth.ldap.ldap-url=ldap://localhost:10389",
-        "cas.authn.mfa.gauth.ldap.base-dn=ou=people,dc=example,dc=org",
+        "cas.authn.mfa.gauth.ldap.base-dn=ou=gauth,dc=example,dc=org",
         "cas.authn.mfa.gauth.ldap.search-filter=cn={0}",
         "cas.authn.mfa.gauth.ldap.account-attribute-name=description",
         "cas.authn.mfa.gauth.ldap.bind-dn=cn=Directory Manager",
@@ -42,8 +42,11 @@ class LdapGoogleAuthenticatorTokenCredentialRepositoryTests extends BaseLdapGoog
         @Cleanup
         val connection = new LDAPConnection("localhost", 10389, "cn=Directory Manager", "password");
         val bindInit = new BindConnectionInitializer("cn=Directory Manager", new Credential("password"));
+        val baseDn = getCasProperties().getAuthn().getMfa().getGauth().getLdap().getBaseDn();
+        val ou = new ByteArrayInputStream(getOrganizationalUnitLdif(baseDn).getBytes(StandardCharsets.UTF_8));
+        LdapIntegrationTestsOperations.populateEntries(connection, ou, baseDn, bindInit);
         val rs = new ByteArrayInputStream(getLdif(uid).getBytes(StandardCharsets.UTF_8));
-        LdapIntegrationTestsOperations.populateEntries(connection, rs, "ou=people,dc=example,dc=org", bindInit);
+        LdapIntegrationTestsOperations.populateEntries(connection, rs, baseDn, bindInit);
 
         return uid;
     }

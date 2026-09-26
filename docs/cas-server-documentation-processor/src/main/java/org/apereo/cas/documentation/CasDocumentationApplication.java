@@ -9,7 +9,6 @@ import org.apereo.cas.metadata.ConfigurationMetadataCatalogQuery;
 import org.apereo.cas.services.RegisteredServiceProperty;
 import org.apereo.cas.shell.commands.CasShellCommand;
 import org.apereo.cas.util.RandomUtils;
-import org.apereo.cas.util.ReflectionUtils;
 import org.apereo.cas.util.RegexUtils;
 import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
 import org.apereo.cas.web.BaseCasRestActuatorEndpoint;
@@ -176,19 +175,21 @@ public class CasDocumentationApplication {
             exportThemeProperties(projectRootDirectory, dataPath);
         }
 
-        var actuators = cmd.getOptionValue("actuators", "true");
-        if (Strings.CI.equals("true", actuators)) {
-            exportActuatorEndpoints(dataPath);
-        }
-
-        var features = cmd.getOptionValue("features", "true");
-        if (Strings.CI.equals("true", features)) {
-            exportFeatureToggles(dataPath);
-        }
-
-        var shell = cmd.getOptionValue("shell", "true");
-        if (Strings.CI.equals("true", shell)) {
-            exportCommandlineShell(dataPath);
+        var actuators = Strings.CI.equals("true", cmd.getOptionValue("actuators", "true"));
+        var features = Strings.CI.equals("true", cmd.getOptionValue("features", "true"));
+        var shell = Strings.CI.equals("true", cmd.getOptionValue("shell", "true"));
+        if (actuators || features || shell) {
+            try (var classIndex = new CasDocumentationClassIndex("org")) {
+                if (actuators) {
+                    exportActuatorEndpoints(dataPath, classIndex);
+                }
+                if (features) {
+                    exportFeatureToggles(dataPath, classIndex);
+                }
+                if (shell) {
+                    exportCommandlineShell(dataPath, classIndex);
+                }
+            }
         }
 
         var audit = cmd.getOptionValue("audit", "true");
@@ -244,7 +245,7 @@ public class CasDocumentationApplication {
         }
     }
 
-    private static void exportCommandlineShell(final File dataPath) {
+    private static void exportCommandlineShell(final File dataPath, final CasDocumentationClassIndex classIndex) {
         var parentPath = new File(dataPath, "shell");
         if (parentPath.exists()) {
             FileUtils.deleteQuietly(parentPath);
@@ -252,7 +253,7 @@ public class CasDocumentationApplication {
         if (!parentPath.mkdirs()) {
             LOGGER.debug("Unable to create directory [{}]", parentPath);
         }
-        var subTypes = ReflectionUtils.findSubclassesInPackage(CasShellCommand.class, CasShellCommand.NAMESPACE);
+        var subTypes = classIndex.findSubclassesInPackage(CasShellCommand.class, CasShellCommand.NAMESPACE);
         var properties = new ArrayList<Map<?, ?>>();
 
         subTypes.forEach(clazz -> {
@@ -323,7 +324,7 @@ public class CasDocumentationApplication {
         return description;
     }
 
-    private static void exportFeatureToggles(final File dataPath) {
+    private static void exportFeatureToggles(final File dataPath, final CasDocumentationClassIndex classIndex) {
         var parentPath = new File(dataPath, "features");
         if (parentPath.exists()) {
             FileUtils.deleteQuietly(parentPath);
@@ -332,7 +333,7 @@ public class CasDocumentationApplication {
             LOGGER.debug("Unable to create directory");
         }
 
-        var subTypes = ReflectionUtils.findClassesWithAnnotationsInPackage(List.of(),
+        var subTypes = classIndex.findClassesWithAnnotationsInPackage(
             List.of(ConditionalOnFeatureEnabled.class), CentralAuthenticationService.NAMESPACE);
         var properties = new ArrayList<Map<?, ?>>();
 
@@ -400,7 +401,7 @@ public class CasDocumentationApplication {
         return null;
     }
 
-    private static void exportActuatorEndpoints(final File dataPath) {
+    private static void exportActuatorEndpoints(final File dataPath, final CasDocumentationClassIndex classIndex) {
         var parentPath = new File(dataPath, "actuators");
         if (parentPath.exists()) {
             FileUtils.deleteQuietly(parentPath);
@@ -410,15 +411,15 @@ public class CasDocumentationApplication {
         }
 
         LOGGER.info("Checking REST endpoints...");
-        var subTypes = ReflectionUtils.findClassesWithAnnotationsInPackage(List.of(RestControllerEndpoint.class), "org");
+        var subTypes = classIndex.findClassesWithAnnotationsInPackage(List.of(RestControllerEndpoint.class), "org");
         collectRestActuators(subTypes, parentPath, RestControllerEndpoint.class);
 
 
-        var restActuators = ReflectionUtils.findSubclassesInPackage(BaseCasRestActuatorEndpoint.class, "org.apereo.cas");
+        var restActuators = classIndex.findSubclassesInPackage(BaseCasRestActuatorEndpoint.class, "org.apereo.cas");
         collectRestActuators(restActuators, parentPath, Endpoint.class);
 
         LOGGER.info("Checking endpoints...");
-        subTypes = ReflectionUtils.findClassesWithAnnotationsInPackage(List.of(), List.of(Endpoint.class), "org");
+        subTypes = classIndex.findClassesWithAnnotationsInPackage(List.of(Endpoint.class), "org");
         subTypes.forEach(clazz -> {
             var properties = new ArrayList<Map<?, ?>>();
             var endpoint = getEndpoint(clazz);

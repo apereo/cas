@@ -11,9 +11,11 @@ import io.lettuce.core.RedisURI;
 import io.lettuce.core.api.sync.RediSearchCommands;
 import io.lettuce.core.cluster.ClusterClientOptions;
 import io.lettuce.core.cluster.RedisClusterClient;
+import io.lettuce.core.search.FieldValue;
 import io.lettuce.core.search.SearchReply;
 import io.lettuce.core.search.arguments.CreateArgs;
 import io.lettuce.core.search.arguments.FieldArgs;
+import io.lettuce.core.search.arguments.SearchArgs;
 import io.lettuce.core.search.arguments.TextFieldArgs;
 import lombok.RequiredArgsConstructor;
 import lombok.val;
@@ -27,30 +29,45 @@ import org.springframework.util.StringUtils;
  */
 @RequiredArgsConstructor
 public class LettuceRedisModulesOperations implements RedisModulesOperations {
-    private final RediSearchCommands<String, String> rediSearchCommands;
+    private static final long SEARCH_RESULTS_PAGE_SIZE = 1000;
+
+    private final RediSearchCommands<String> rediSearchCommands;
 
     @Override
     public void createIndexes(final String indexName, final String prefix,
                               final List<String> fields) {
 
-        val options = CreateArgs.<String, String>builder()
+        val options = CreateArgs.builder()
             .withPrefix(prefix)
             .maxTextFields()
             .build();
         val createIndex = rediSearchCommands.ftList().parallelStream().noneMatch(indexName::equalsIgnoreCase);
         if (createIndex) {
             val indexFields = fields.stream()
-                .<FieldArgs<String>>map(field -> TextFieldArgs.<String>builder().name(field).build())
+                .<FieldArgs>map(field -> TextFieldArgs.builder().name(field).build())
                 .toList();
-            rediSearchCommands.ftCreate(indexName, options, indexFields);
+            try {
+                rediSearchCommands.ftCreate(indexName, options, indexFields);
+            } catch (final RedisCommandExecutionException e) {
+                if (e.getMessage() == null || !e.getMessage().contains("Index already exists")) {
+                    throw e;
+                }
+                LOGGER.debug("Search index [{}] was created concurrently by another client", indexName);
+            }
         }
     }
 
     @Override
     public Stream<Map<String, String>> search(final String searchIndexName, final String query) {
-        val results = rediSearchCommands.ftSearch(searchIndexName, query).getResults();
-        return results.parallelStream().map(SearchReply.SearchResult::getFields);
+        var reply = rediSearchCommands.ftSearch(searchIndexName, query, limitResultsTo(SEARCH_RESULTS_PAGE_SIZE));
+        if (reply.getCount() > reply.getResults().size()) {
+            reply = rediSearchCommands.ftSearch(searchIndexName, query, limitResultsTo(reply.getCount()));
+        }
+        return reply.getResults().parallelStream().map(LettuceRedisModulesOperations::toFieldValues);
+    }
 
+    private static SearchArgs<String> limitResultsTo(final long count) {
+        return SearchArgs.<String>builder().limit(0, count).build();
     }
 
     /**
@@ -61,7 +78,7 @@ public class LettuceRedisModulesOperations implements RedisModulesOperations {
      * @return the optional
      * @throws Exception the exception
      */
-    public static RediSearchCommands<String, String> newRediSearchCommands(
+    public static RediSearchCommands<String> newRediSearchCommands(
         final BaseRedisProperties redis, final CasSSLContext casSslContext) throws Exception {
 
         if (redis.getCluster() != null && !redis.getCluster().getNodes().isEmpty()) {
@@ -101,7 +118,17 @@ public class LettuceRedisModulesOperations implements RedisModulesOperations {
         return commands;
     }
 
-    private static void verifyRedisSearchSupport(final RediSearchCommands<String, String> commands) {
+    private static Map<String, String> toFieldValues(final SearchReply.SearchResult<String> result) {
+        val fields = new LinkedHashMap<String, String>();
+        result.getFields().forEach((name, value) -> {
+            if (value != null && !value.isNull()) {
+                fields.put(name, value.getKind() == FieldValue.Kind.SCALAR ? value.asString() : value.toString());
+            }
+        });
+        return fields;
+    }
+
+    private static void verifyRedisSearchSupport(final RediSearchCommands<String> commands) {
         try {
             commands.ftList();
         } catch (final RedisCommandExecutionException e) {
@@ -112,7 +139,7 @@ public class LettuceRedisModulesOperations implements RedisModulesOperations {
         }
     }
 
-    private static RediSearchCommands<String, String> newClusterRediSearchCommands(
+    private static RediSearchCommands<String> newClusterRediSearchCommands(
         final BaseRedisProperties redis, final CasSSLContext casSslContext) throws Exception {
         val redisUris = redis.getCluster()
             .getNodes()

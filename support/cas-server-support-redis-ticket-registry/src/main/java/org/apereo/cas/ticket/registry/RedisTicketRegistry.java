@@ -241,7 +241,8 @@ public class RedisTicketRegistry extends AbstractTicketRegistry implements Clean
                         return decodeTicket(ticket);
                     })
                     .filter(Objects::nonNull)
-                    .filter(ticket -> !ticket.isExpired());
+                    .filter(ticket -> !ticket.isExpired())
+                    .filter(ticket -> isTicketForService(ticket, service));
             })
             .findFirst()
             .orElseGet(() -> (Stream<Ticket>) super.getTicketsFor(service));
@@ -399,10 +400,10 @@ public class RedisTicketRegistry extends AbstractTicketRegistry implements Clean
             .map(command -> {
                 val criteria = new ArrayList<String>();
                 queryAttributes.forEach((key, value) -> value.forEach(queryValue -> {
-                    val escapedValue = isCipherExecutorEnabled()
-                        ? digestIdentifier(queryValue.toString())
-                        : Strings.CI.replace(queryValue.toString(), "-", "\\-");
-                    criteria.add(String.format("(%s%s*%s)", digestIdentifier(key), isCipherExecutorEnabled() ? " " : "_", escapedValue));
+                    val criterion = isCipherExecutorEnabled()
+                        ? String.format("%s *%s", digestIdentifier(key), digestIdentifier(queryValue.toString()))
+                        : toSearchTerm(key, queryValue.toString());
+                    criteria.add('(' + criterion + ')');
                 }));
                 val query = String.format("(%s) @%s:%s", String.join("|", criteria),
                     RedisTicketDocument.FIELD_NAME_PREFIX, TicketGrantingTicket.PREFIX);
@@ -437,6 +438,7 @@ public class RedisTicketRegistry extends AbstractTicketRegistry implements Clean
                     })
                     .filter(Objects::nonNull)
                     .filter(ticket -> !ticket.isExpired())
+                    .filter(ticket -> isTicketForService(ticket, service))
                     .count();
             })
             .findFirst()
@@ -574,11 +576,37 @@ public class RedisTicketRegistry extends AbstractTicketRegistry implements Clean
             .entrySet()
             .stream()
             .map(entry -> {
-                val entryValues = (List) entry.getValue();
-                val valueList = entryValues.parallelStream().map(Object::toString).collect(Collectors.joining(","));
-                return entry.getKey() + (isCipherExecutorEnabled() ? " " : "_") + valueList;
+                val entryValues = (List<Object>) entry.getValue();
+                if (isCipherExecutorEnabled()) {
+                    val valueList = entryValues.parallelStream().map(Object::toString).collect(Collectors.joining(","));
+                    return entry.getKey() + ' ' + valueList;
+                }
+                return entryValues.stream()
+                    .map(value -> toSearchTerm(entry.getKey(), value.toString()))
+                    .collect(Collectors.joining(","));
             })
             .collect(Collectors.joining(","));
+    }
+
+    private static boolean isTicketForService(final Ticket ticket, final Service service) {
+        return ticket instanceof final ServiceAwareTicket serviceAwareTicket
+            && serviceAwareTicket.getService() != null
+            && serviceAwareTicket.getService().getId().equals(service.getId());
+    }
+
+    private static String toSearchTerm(final String key, final String value) {
+        return escapeSearchTerm(key) + '_' + escapeSearchTerm(value);
+    }
+
+    private static String escapeSearchTerm(final String text) {
+        val builder = new StringBuilder(text.length());
+        text.codePoints().forEach(codePoint -> {
+            if (!Character.isLetterOrDigit(codePoint) && codePoint != '_') {
+                builder.append('\\');
+            }
+            builder.appendCodePoint(codePoint);
+        });
+        return builder.toString();
     }
 
     private boolean isRedisSearchAvailable() {
