@@ -31,9 +31,6 @@ develocity {
         tag(System.getProperty("os.name"))
         tag(System.getProperty("os.arch"))
         tag(Boolean.valueOf(System.getProperty("PTS_ENABLED")) ? "PTS_ENABLED" : "PTS_DISABLED")
-        if (codeqlTracedBuild) {
-            tag("CODEQL")
-        }
     }
 }
 
