@@ -1,9 +1,9 @@
 @import url(pygment_material.css);
 
 /* CAS: deep ocean blue, clear cyan, and generous space for technical reading.
-   Three type roles carry the whole site: Manrope sets structure, DM Sans carries
-   the prose, JetBrains Mono holds every piece of code, and Newsreader appears
-   only where the page is allowed to speak rather than instruct. */
+   Four type roles carry the whole site: Newsreader sets every heading, Manrope sets
+   structure (navigation, labels, buttons), DM Sans carries the prose, and
+   JetBrains Mono holds every piece of code. */
 :root {
     color-scheme: light;
     --docs-bg: #f6f9fc;
@@ -33,6 +33,7 @@
     --font-body: 'DM Sans', system-ui, sans-serif;
     --font-mono: 'JetBrains Mono', 'SFMono-Regular', Consolas, 'Liberation Mono', monospace;
     --font-editorial: 'Newsreader', Georgia, serif;
+    --font-heading: 'Newsreader', Georgia, 'Times New Roman', serif;
     --bs-body-bg: var(--docs-bg);
     --bs-body-color: var(--docs-text);
     --bs-heading-color: var(--docs-heading);
@@ -944,11 +945,14 @@ button, a {
     outline-offset: 8px;
 }
 
+/* Headings use a high-contrast display serif at light weights; optical sizing
+   keeps the small levels sturdy while the large ones get fine hairlines. */
 h1, h2, h3, h4, h5, h6 {
     color: var(--docs-heading);
-    font-family: var(--font-display);
-    font-weight: 700;
-    line-height: 1.3;
+    font-family: var(--font-heading);
+    font-optical-sizing: auto;
+    font-weight: 400;
+    line-height: 1.22;
     text-align: left;
     text-wrap: balance;
 }
@@ -956,10 +960,11 @@ h1, h2, h3, h4, h5, h6 {
 h1 {
     position: relative;
     margin: 0 0 1.45rem;
-    font-size: clamp(2rem, 3vw, 2.95rem);
-    font-weight: 800;
-    letter-spacing: -.045em;
-    line-height: 1.12;
+    font-size: clamp(2.3rem, 3.5vw, 3.35rem);
+    font-weight: 350;
+    letter-spacing: -.032em;
+    word-spacing: -.04em;
+    line-height: 1.08;
 }
 
 /* A short gradient meridian above each page title, drawn once. */
@@ -978,8 +983,8 @@ h2 {
     margin: 3.1rem 0 1.15rem;
     padding-top: 1.6rem;
     border-top: 1px solid var(--docs-line);
-    font-size: 1.58rem;
-    letter-spacing: -.035em;
+    font-size: 1.85rem;
+    letter-spacing: -.022em;
 }
 
 h2::before {
@@ -994,22 +999,24 @@ h2::before {
 
 h3 {
     margin: 2.1rem 0 .9rem;
-    font-size: 1.2rem;
-    letter-spacing: -.025em;
+    font-size: 1.42rem;
+    font-weight: 450;
+    letter-spacing: -.015em;
 }
 
 h4 {
-    font-size: 1.03rem;
+    font-size: 1.2rem;
     margin: 1.7rem 0 .75rem;
-    letter-spacing: -.012em;
+    font-weight: 500;
+    letter-spacing: -.005em;
 }
 
 h5, h6 {
-    font-size: .95rem;
+    font-size: .98rem;
     margin: 1.5rem 0 .75rem;
     color: var(--docs-muted);
-    font-weight: 800;
-    letter-spacing: .04em;
+    font-weight: 600;
+    letter-spacing: .06em;
     text-transform: uppercase;
 }
 
@@ -1576,13 +1583,12 @@ ul.tab-content > li:not(.active):not(.property-name):not(.property-tab):not(.cas
 }
 
 /* Display type and brief motion are reserved for the homepage. */
-/* The title runs as one line of mixed type: the project name set in the display
-   grotesque, the promise set in an editorial italic, joined by the dash the
-   heading already carried. */
+/* The title runs as one line: the project name set upright, the promise set in
+   the same serif's italic, joined by the dash the heading already carried. */
 .home-title-prefix {
-    font-weight: 800;
-    font-size: .84em;
-    letter-spacing: -.04em;
+    font-weight: 350;
+    font-size: .9em;
+    letter-spacing: -.03em;
     color: var(--docs-heading);
 }
 
@@ -1734,8 +1740,8 @@ ul.tab-content > li:not(.active):not(.property-name):not(.property-tab):not(.cas
     grid-row: 2;
     align-self: center;
     max-width: 15ch;
-    font-size: clamp(2.6rem, 4vw, 4.35rem);
-    letter-spacing: -.055em;
+    font-size: clamp(2.8rem, 4.4vw, 4.6rem);
+    letter-spacing: -.035em;
     margin-bottom: 1.6rem;
 }
 
@@ -2321,10 +2327,10 @@ ul.tab-content > li:not(.active):not(.property-name):not(.property-tab):not(.cas
         margin-bottom: 1.7rem;
     }
     h1 {
-        font-size: 2.2rem;
+        font-size: 2.35rem;
     }
     h2 {
-        font-size: 1.45rem;
+        font-size: 1.6rem;
     }
     .home-intro h1 {
         font-size: 2.7rem;
@@ -2805,6 +2811,7 @@ ul.tab-content > li:not(.active):not(.property-name):not(.property-tab):not(.cas
 
 .cas-property-description > p, .cas-property-description > div {
     margin: 0 0 .5rem;
+    text-align: justify;
 }
 
 .cas-property-description ul, .cas-property-description ol {

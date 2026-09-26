@@ -84,7 +84,7 @@ tasks.register('jsonDependencies') {
             .toList()
         def jsonFile = new File(project.layout.buildDirectory.getAsFile().get(), "dependencies.json")
         def output = new groovy.json.JsonBuilder(results).toPrettyString();
-        jsonFile.delete()
-        jsonFile << output
+        jsonFile.parentFile.mkdirs()
+        jsonFile.text = output
     }
 }
