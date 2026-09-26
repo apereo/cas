@@ -38,7 +38,7 @@ enum TestCategories {
     GroovyMfa(true, true),
     GroovyServices(true, true),
     Grouper(true, true),
-    Hazelcast(false, true),
+    Hazelcast(true, true),
     Hibernate(true, true),
     Ignite(true, true),
     Impersonation(true, true),

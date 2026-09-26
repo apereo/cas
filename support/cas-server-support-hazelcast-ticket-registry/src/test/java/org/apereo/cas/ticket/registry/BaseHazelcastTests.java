@@ -43,7 +43,8 @@ import org.springframework.boot.test.context.SpringBootTest;
 },
     properties = {
         "cas.ticket.registry.hazelcast.cluster.core.instance-name=samplelocalhostinstance-${random.value}",
-        "cas.ticket.registry.hazelcast.cluster.network.port=5702"
+        "cas.ticket.registry.hazelcast.cluster.network.port=5702",
+        "cas.ticket.registry.hazelcast.cluster.network.tcpip-enabled=false"
     })
 @Tag("Hazelcast")
 @ExtendWith(CasTestExtension.class)
