@@ -38,6 +38,14 @@ import static org.junit.jupiter.api.Assertions.*;
 @Getter
 @ExtendWith(CasTestExtension.class)
 public abstract class BaseLdapServiceRegistryTests extends AbstractServiceRegistryTests {
+    @Autowired
+    @Qualifier("ldapServiceRegistry")
+    private ServiceRegistry newServiceRegistry;
+
+    @Autowired
+    @Qualifier("ldapServiceRegistryMapper")
+    private LdapRegisteredServiceMapper ldapServiceRegistryMapper;
+
     @BeforeAll
     public static void bootstrap() throws Exception {
         @Cleanup
@@ -47,13 +55,6 @@ public abstract class BaseLdapServiceRegistryTests extends AbstractServiceRegist
             new ByteArrayInputStream(ldif.getBytes(StandardCharsets.UTF_8)), "dc=example,dc=org");
     }
 
-    @Autowired
-    @Qualifier("ldapServiceRegistry")
-    private ServiceRegistry newServiceRegistry;
-
-    @Autowired
-    @Qualifier("ldapServiceRegistryMapper")
-    private LdapRegisteredServiceMapper ldapServiceRegistryMapper;
 
 
     @Test
