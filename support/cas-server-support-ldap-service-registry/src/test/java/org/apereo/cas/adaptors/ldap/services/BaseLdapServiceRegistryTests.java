@@ -1,14 +1,18 @@
 package org.apereo.cas.adaptors.ldap.services;
 
 import module java.base;
+import org.apereo.cas.adaptors.ldap.LdapIntegrationTestsOperations;
 import org.apereo.cas.config.CasLdapServiceRegistryAutoConfiguration;
 import org.apereo.cas.services.AbstractServiceRegistryTests;
 import org.apereo.cas.services.CasRegisteredService;
 import org.apereo.cas.services.RegisteredServiceDefinition;
 import org.apereo.cas.services.ServiceRegistry;
 import org.apereo.cas.test.CasTestExtension;
+import com.unboundid.ldap.sdk.LDAPConnection;
+import lombok.Cleanup;
 import lombok.Getter;
 import lombok.val;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,11 +33,19 @@ import static org.junit.jupiter.api.Assertions.*;
     AbstractServiceRegistryTests.SharedTestConfiguration.class
 }, properties = {
     "cas.service-registry.ldap.ldap-url=ldap://localhost:10389",
-    "cas.service-registry.ldap.base-dn=dc=example,dc=org"
+    "cas.service-registry.ldap.base-dn=ou=services,dc=example,dc=org"
 })
 @Getter
 @ExtendWith(CasTestExtension.class)
 public abstract class BaseLdapServiceRegistryTests extends AbstractServiceRegistryTests {
+    @BeforeAll
+    public static void bootstrap() throws Exception {
+        @Cleanup
+        val localhost = new LDAPConnection("localhost", 10389, "cn=Directory Manager", "password");
+        val ldif = "dn: ou=services,dc=example,dc=org%nobjectClass: top%nobjectClass: organizationalUnit%nou: services%n".formatted();
+        LdapIntegrationTestsOperations.populateEntries(localhost,
+            new ByteArrayInputStream(ldif.getBytes(StandardCharsets.UTF_8)), "dc=example,dc=org");
+    }
 
     @Autowired
     @Qualifier("ldapServiceRegistry")
