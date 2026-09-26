@@ -96,23 +96,39 @@ function publishConfigurationMetadata() {
   printgreen "Uploaded combined configuration metadata to MongoDB collection $collectionName"
 }
 
+# Returns 0 when all links pass, 3 when internal links, images or scripts are broken,
+# 4 when only external links failed, and 1 when the proofer itself could not run.
 function validateProjectDocumentation() {
   local proofLog="$PWD/html-proofer.log"
-  BUNDLE_GEMFILE="${BUNDLE_GEMFILE:-$PWD/gh-pages/Gemfile}" bundle exec ruby "$PWD/ci/docs/proof.rb" 2>&1 | tee "$proofLog"
+  DOCS_PROOF_EXTERNAL="$proofExternal" \
+    BUNDLE_GEMFILE="${BUNDLE_GEMFILE:-$PWD/gh-pages/Gemfile}" \
+    bundle exec ruby "$PWD/ci/docs/proof.rb" 2>&1 | tee "$proofLog"
 
-  retVal=${PIPESTATUS[0]}
-  if [[ ${retVal} -eq 0 ]]; then
+  local result=${PIPESTATUS[0]}
+  if [[ ${result} -eq 0 ]]; then
     printgreen "HTML Proofer found no bad links."
     return 0
-  else
-    printred "HTML Proofer found bad links."
-    if [[ "$CI" == "true" ]]; then
-      local failures
-      failures=$(grep -A 3 '^\* ' "$proofLog" | grep -v '^--$' | head -60 | sed ':a;N;$!ba;s/%/%25/g;s/\n/%0A/g')
-      echo "::error title=HTML Proofer failures::${failures:-see the job log}"
-    fi
-    return 1
   fi
+
+  local level="error" title="HTML Proofer failures"
+  case ${result} in
+  3) printred "HTML Proofer found broken internal links, images or scripts." ;;
+  4)
+    printyellow "HTML Proofer found broken external links only."
+    level="warning"
+    title="External link failures"
+    ;;
+  *)
+    printred "HTML Proofer failed to run (exit code ${result})."
+    result=1
+    ;;
+  esac
+  if [[ "$CI" == "true" ]]; then
+    local failures
+    failures=$(grep -A 3 '^\* ' "$proofLog" | grep -v '^--$' | head -60 | sed ':a;N;$!ba;s/%/%25/g;s/\n/%0A/g')
+    echo "::${level} title=${title}::${failures:-see the job log}"
+  fi
+  return ${result}
 }
 
 
@@ -126,6 +142,8 @@ propFilter=".+"
 generateData=true
 audit=true
 proofRead=true
+proofExternal=true
+externalLinkFailures=false
 actuators=true
 thirdParty=true
 serviceProps=true
@@ -182,6 +200,10 @@ while (("$#")); do
     ;;
   --proof-read|--validate)
     proofRead=$2
+    shift 2
+    ;;
+  --proof-external)
+    proofExternal=$2
     shift 2
     ;;
   --publish)
@@ -270,6 +292,7 @@ printgreen "Build: \t\t${buildDocs}"
 printgreen "Serve: \t\t${serve}"
 printgreen "Generate Data: \t${generateData}"
 printgreen "Validate: \t\t${proofRead}"
+printgreen "External Links: \t${proofExternal}"
 printgreen "Publish: \t\t${publishDocs}"
 printgreen "Filter: \t\t${propFilter}"
 printgreen "Actuators: \t\t${actuators}"
@@ -560,7 +583,11 @@ if [[ $proofRead == "true" ]]; then
   printgreen "Validating documentation links..."
   validateProjectDocumentation
   retVal=$?
-  if [[ ${retVal} -eq 1 ]]; then
+  if [[ ${retVal} -eq 4 ]]; then
+    printyellow "Documentation will still be published; the job reports the external link failures at the end."
+    externalLinkFailures=true
+    retVal=0
+  elif [[ ${retVal} -ne 0 ]]; then
     printred "Failed to validate documentation."
     exit ${retVal}
   fi
@@ -593,6 +620,7 @@ if [ -z "$GH_PAGES_TOKEN" ] && [ "${GITHUB_REPOSITORY}" != "${REPOSITORY_NAME}" 
   if [[ $clone == "true" ]]; then
     popd
     rm -Rf "$PWD/gh-pages"
+    [[ $externalLinkFailures == "true" ]] && exit 4
     exit 0
   fi
 elif [[ "${publishDocs}" == "true" ]]; then
@@ -630,6 +658,10 @@ fi
 
 if [[ ${retVal} -eq 0 ]]; then
   printgreen "Done processing documentation to $branchVersion."
+  if [[ $externalLinkFailures == "true" ]]; then
+    printred "External link checks failed; see the HTML Proofer output above."
+    exit 4
+  fi
   exit 0
 else
   printred "Failed to process documentation."
