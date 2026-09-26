@@ -62,6 +62,8 @@ jobs:
           distribution: ${{ env.JDK_DISTRIBUTION }}
       - name: Setup Gradle
         uses: gradle/actions/setup-gradle@v6
+        with:
+          gradle-home-cache-excludes: caches/build-cache-1
       - name: Initialize
         run: ls ./ci && find ./ci -type f -name "*.sh" -exec chmod +x "{}" \; && ./ci/init-build.sh
 
@@ -73,7 +75,6 @@ jobs:
     continue-on-error: false
     env:
       BUNDLE_GEMFILE: ${{ github.workspace }}/docs/cas-server-documentation/Gemfile
-      BUNDLE_FORCE_RUBY_PLATFORM: "true"
     steps:
       - name: Checkout
         uses: actions/checkout@v7
@@ -86,6 +87,8 @@ jobs:
           distribution: ${{ env.JDK_DISTRIBUTION }}
       - name: Setup Gradle
         uses: gradle/actions/setup-gradle@v6
+        with:
+          gradle-home-cache-excludes: caches/build-cache-1
       - name: Initialize
         run: find ./ci -type f -name "*.sh" -exec chmod +x "{}" \; && ./ci/init-build.sh
       - name: Set up Ruby

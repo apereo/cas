@@ -1,7 +1,6 @@
 <!-- fragment:keep -->
-{%- assign propertyCatalog = site.data[siteDataVersion] -%}
-{%- assign casPropertyResults = propertyCatalog | cas_properties: include.properties, include.includes, include.excludes -%}
-{%- assign thirdPartyPropertyResults = propertyCatalog | cas_third_party_properties: include.thirdParty, include.thirdPartyExactMatch, include.thirdPartyStartsWith, include.excludes -%}
+{%- assign casPropertyResults = site.data[siteDataVersion] | cas_properties: include.properties, include.includes, include.excludes -%}
+{%- assign thirdPartyPropertyResults = site.data[siteDataVersion] | cas_third_party_properties: include.thirdParty, include.thirdPartyExactMatch, include.thirdPartyStartsWith, include.excludes -%}
 {%- assign propertyResults = casPropertyResults | concat: thirdPartyPropertyResults | uniq -%}
 {%- assign includeRsaKeys = include.includeRsaKeys -%}
 {%- assign displayEmailServers = include.displayEmailServers | default: "true" -%}

@@ -742,7 +742,7 @@ button, a {
 }
 
 .cas-docs-content, .cas-docs-content :is(h1, h2, h3, h4, h5, h6, th, td) {
-    text-align: justify;
+    text-align: start;
 }
 
 .page-toolbar {
@@ -1017,16 +1017,11 @@ p {
     margin: 0 0 1.2rem;
 }
 
-#cas-docs-container > p, #cas-docs-container > ul, #cas-docs-container > ol {
-    max-width: 78ch;
-}
-
 /* The opening paragraph of a guide sets the pace for everything under it. */
 #cas-docs-container > h1:first-child + p {
     font-size: 1.075rem;
     line-height: 1.75;
     color: var(--docs-muted);
-    max-width: 68ch;
 }
 
 #cas-docs-container li {
@@ -2993,4 +2988,74 @@ ul.tab-content > li:not(.active):not(.property-name):not(.property-tab):not(.cas
     .cas-properties-header {
         flex-wrap: wrap;
     }
+}
+
+/* Actuator endpoints: one framed list, one row per endpoint. */
+.cas-endpoints {
+    --bs-accordion-bg: var(--docs-surface);
+    --bs-accordion-color: var(--docs-text);
+    --bs-accordion-border-color: var(--docs-line);
+    --bs-accordion-border-radius: var(--docs-radius);
+    --bs-accordion-inner-border-radius: calc(var(--docs-radius) - 1px);
+    --bs-accordion-btn-color: var(--docs-heading);
+    --bs-accordion-btn-bg: var(--docs-surface);
+    --bs-accordion-active-color: var(--docs-heading);
+    --bs-accordion-active-bg: var(--docs-soft);
+    --bs-accordion-btn-focus-box-shadow: 0 0 0 3px var(--docs-accent-soft);
+    --bs-accordion-btn-padding-x: 1rem;
+    --bs-accordion-btn-padding-y: .7rem;
+    --bs-accordion-body-padding-x: 1rem;
+    --bs-accordion-body-padding-y: .9rem;
+    margin: 1.2rem 0 1.6rem;
+    box-shadow: var(--docs-shadow);
+    border-radius: var(--docs-radius);
+}
+
+.cas-endpoints .accordion-button {
+    gap: .85rem;
+    min-height: 3rem;
+    font-size: .9rem;
+}
+
+.cas-endpoints .accordion-button:not(.collapsed) {
+    box-shadow: inset 0 -1px 0 var(--docs-line);
+}
+
+.cas-endpoint-method {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: .35rem;
+    min-width: 5.6rem;
+    padding: .38rem .6rem;
+    font-size: .72rem;
+    letter-spacing: .04em;
+}
+
+.cas-endpoints .cas-endpoint-path {
+    min-width: 0;
+    padding: 0;
+    border: 0;
+    background: none;
+    color: var(--docs-heading);
+    font-size: .86rem;
+    overflow-wrap: anywhere;
+}
+
+.cas-endpoints .cas-endpoint-owner {
+    flex: none;
+    width: 2.2rem;
+    height: auto;
+    margin: 0;
+    color: var(--docs-muted);
+    box-shadow: none;
+    border: 0;
+}
+
+.cas-endpoints i.cas-endpoint-owner {
+    width: auto;
+}
+
+.cas-endpoints .accordion-body > p:last-of-type {
+    margin-bottom: 0;
 }

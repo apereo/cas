@@ -1,8 +1,7 @@
 {%- assign property = include.property -%}
-{%- assign propertySummary = property.shortDescription | default: property.description | strip_html | strip | truncate: 220 -%}
 <div class="cas-property" data-kind="{{ property.kind }}" data-name="{{ property.displayName | escape }}" data-default="{{ property.defaultText | escape }}"{% if property.duration %} data-duration{% endif %}{% if property.regexPattern %} data-regex{% endif %}{% if property.expressionLanguage %} data-spel{% endif %}{% if property.deprecationLevel.size > 0 %} data-deprecated{% endif %}>
     <div class="cas-property-head">
-        <div class="cas-property-key"><code class="cas-property-name">{{ property.displayName }}</code><span class="cas-property-summary">{{ propertySummary }}</span></div>
+        <div class="cas-property-key"><code class="cas-property-name">{{ property.displayName }}</code><span class="cas-property-summary">{{ property.summaryText }}</span></div>
         <div class="cas-property-default">{% if property.defaultText != "" %}<code>{{ property.defaultText | escape }}</code>{% else %}<span>no default</span>{% endif %}</div>
         <div class="cas-property-tags">
             {%- if property.kind == "required" -%}<span class="cas-property-tag cas-property-tag-required"><i class="fa fa-asterisk" aria-hidden="true"></i>Required</span>{%- endif -%}

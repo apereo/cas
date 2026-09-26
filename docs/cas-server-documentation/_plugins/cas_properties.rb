@@ -1,3 +1,5 @@
+require "cgi"
+
 # Looks up CAS and third-party configuration properties in the generated site data once per build,
 # instead of scanning every catalog entry in Liquid for every property block on every page.
 module Jekyll
@@ -23,11 +25,21 @@ module Jekyll
       def description_html(text)
         html = text.to_s.gsub(/\{@(?:code|link|linkplain|value)\s+([^}]*)\}/) { "<code>#{Regexp.last_match(1).strip}</code>" }
         html = html.gsub(%r{&lt;(/?(?:#{INLINE_TAGS.join("|")}))(\s[^&]*)?&gt;}i) { "<#{Regexp.last_match(1)}#{Regexp.last_match(2)}>" }
+        html = html.gsub(%r{<(/?)([a-z][\w-]*)([^<>]*)>|[<>]}i) do |match|
+          tag = Regexp.last_match(2)
+          tag && INLINE_TAGS.include?(tag.downcase) ? match : CGI.escapeHTML(match)
+        end
         html = html.gsub(/\s*\n\s*/, " ")
         html.split(%r{\s*<\s*/?\s*p\s*/?\s*>\s*}i).map(&:strip).reject(&:empty?).map do |segment|
           segment = segment.gsub(%r{<li>(.*?)(?:</li>)?\s*(?=<li>|</ul>|</ol>|\z)}mi) { "<li>#{Regexp.last_match(1).strip}</li>" }
           segment.match?(BLOCK_TAG) ? "<div>#{segment}</div>" : "<p>#{segment}</p>"
         end.join
+      end
+
+      def summary_text(text, length = 220)
+        plain = CGI.unescapeHTML(description_html(text).gsub(/<[^>]+>/, " ")).squeeze(" ").strip
+        plain = "#{plain[0, length - 3].rstrip}..." if plain.length > length
+        CGI.escapeHTML(plain)
       end
 
       private
@@ -62,7 +74,8 @@ module Jekyll
           "displayName" => entry["name"].gsub("[]", "[0]"),
           "displayType" => type.gsub(/\b[a-z][a-z0-9_]*\./, "").gsub("$", "."),
           "defaultText" => entry["defaultValue"].nil? ? "" : entry["defaultValue"].to_s,
-          "descriptionHtml" => description_html(entry["description"])
+          "descriptionHtml" => description_html(entry["description"]),
+          "summaryText" => summary_text(entry["shortDescription"].to_s.strip.empty? ? entry["description"] : entry["shortDescription"])
         )
       end
     end

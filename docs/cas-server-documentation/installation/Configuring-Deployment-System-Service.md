@@ -9,7 +9,7 @@ category: Installation
 
 CAS can be easily started as Unix/Linux services using either `init.d` or `systemd`. Windows support is also made available 
 via an external daemon. Note that most if not all of the below strategies attempt to run CAS via an embedded
-servlet container whose configuration is [explained here](Configuring-Servlet-Container.html#embedded).
+servlet container whose configuration is [explained here](Configuring-Servlet-Container.html).
     
 {% tabs osserviceopts %}
       

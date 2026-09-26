@@ -15,10 +15,33 @@ function printyellow() {
   printf "⚠️  ${YELLOW}$1${ENDCOLOR}\n"
 }
 
+phaseStartedAt=$SECONDS
+phaseTimings=()
+
+function recordPhase() {
+  phaseTimings+=("$1 $((SECONDS - phaseStartedAt))s")
+  phaseStartedAt=$SECONDS
+}
+
+function reportPhases() {
+  recordPhase "remaining"
+  local summary
+  summary=$(printf '%s, ' "${phaseTimings[@]}")
+  summary="${summary%, }, total ${SECONDS}s"
+  printgreen "Documentation build timing: ${summary}"
+  if [[ "$CI" == "true" ]]; then
+    echo "::notice title=Documentation build timing::${summary}"
+  fi
+}
+
 function publishConfigurationMetadata() {
   local metadataFile="$1"
   local casVersion="$2"
 
+  if [[ "$uploadMetadata" != "true" ]]; then
+    printyellow "Configuration metadata upload is turned off; skipping configuration metadata publication."
+    return 0
+  fi
   if [[ -z "${CAS_MODULE_METADATA_MONGODB_URL:-}" ]]; then
     printyellow "MongoDB settings are not defined; skipping configuration metadata publication."
     return 0
@@ -28,7 +51,7 @@ function publishConfigurationMetadata() {
     return 0
   fi
   if [[ "$thirdParty" != "true" ]]; then
-    printyellow "Third-party configuration metadata is disabled; skipping incomplete MongoDB publication."
+    printyellow "Third-party configuration metadata is disabled; skipping incomplete upload & publication."
     return 0
   fi
 
@@ -74,14 +97,20 @@ function publishConfigurationMetadata() {
 }
 
 function validateProjectDocumentation() {
-  BUNDLE_GEMFILE="${BUNDLE_GEMFILE:-$PWD/gh-pages/Gemfile}" bundle exec ruby "$PWD/ci/docs/proof.rb"
+  local proofLog="$PWD/html-proofer.log"
+  BUNDLE_GEMFILE="${BUNDLE_GEMFILE:-$PWD/gh-pages/Gemfile}" bundle exec ruby "$PWD/ci/docs/proof.rb" 2>&1 | tee "$proofLog"
 
-  retVal=$?
+  retVal=${PIPESTATUS[0]}
   if [[ ${retVal} -eq 0 ]]; then
     printgreen "HTML Proofer found no bad links."
     return 0
   else
     printred "HTML Proofer found bad links."
+    if [[ "$CI" == "true" ]]; then
+      local failures
+      failures=$(grep -A 3 '^\* ' "$proofLog" | grep -v '^--$' | head -60 | sed ':a;N;$!ba;s/%/%25/g;s/\n/%0A/g')
+      echo "::error title=HTML Proofer failures::${failures:-see the job log}"
+    fi
     return 1
   fi
 }
@@ -107,6 +136,7 @@ buildFeatures=true
 shellCommands=true
 dependencyVersions=true
 userinterface=true
+uploadMetadata=true
 
 serve=false
 
@@ -130,16 +160,17 @@ while (("$#")); do
     printgreen "Generating documentation for property filter: ${propFilter}"
     serve=true
     proofRead=false
-    audit=false
-    actuators=false
-    thirdParty=false
-    serviceProps=false
+    audit=true
+    actuators=true
+    thirdParty=true
+    serviceProps=true
     publishDocs=false
     buildDocs=true
-    buildFeatures=false
-    shellCommands=false
-    dependencyVersions=false
+    buildFeatures=true
+    shellCommands=true
+    dependencyVersions=true
     userinterface=true
+    uploadMetadata=false
     ;;
   --branch)
     branchVersion=$2
@@ -205,6 +236,10 @@ while (("$#")); do
     buildFeatures=$2
     shift 2
     ;;
+  --skip-upload)
+    uploadMetadata=false
+    shift 1
+    ;;
   *)
     shift
     ;;
@@ -245,8 +280,12 @@ printgreen "Features: \t\t${buildFeatures}"
 printgreen "Shell: \t\t${shellCommands}"
 printgreen "Audit: \t\t${audit}"
 printgreen "UI: \t\t\t${userinterface}"
+printgreen "Upload(s): \t${uploadMetadata}"
 printgreen "Ruby Version: \t$(ruby -v)"
 echo "-------------------------------------------------------"
+
+trap reportPhases EXIT
+recordPhase "setup"
 
 cloneRepository=false
 if [[ $clone == "true" ]]; then
@@ -343,6 +382,7 @@ if [[ $cloneRepository == "true" ]]; then
   printgreen "Copied project documentation to $PWD/gh-pages/..."
   # exit 1
 fi
+recordPhase "clone"
 
 if [[ $generateData == "true" ]]; then
   docgen="docs/cas-server-documentation-processor/build/libs/casdocsgen.jar"
@@ -355,6 +395,7 @@ if [[ $generateData == "true" ]]; then
       exit 1
     fi
   fi
+  recordPhase "gradle"
   chmod +x ${docgen}
   dataDir=$(echo "$branchVersion" | sed 's/\.//g')
   printgreen "Generating documentation data at $PWD/gh-pages/_data/$dataDir with filter $propFilter..."
@@ -417,6 +458,7 @@ else
   printgreen "Skipping documentation data generation..."
   rm -Rf "$PWD/gh-pages/_data"
 fi
+recordPhase "data"
 
 if [[ $proofRead == "true" ]]; then
   printgreen "Looking for badly named include fragments..."
@@ -459,6 +501,8 @@ else
   printgreen "Skipping validation of documentation links..."
 fi
 
+recordPhase "fragments"
+
 if [[ ${buildDocs} == "true" ]]; then
   pushd .
 
@@ -477,7 +521,6 @@ if [[ ${buildDocs} == "true" ]]; then
     printgreen "Documentation dependencies are already installed"
   else
     printgreen "Installing documentation dependencies..."
-    bundle config set force_ruby_platform true
     bundle install
   fi
   printgreen "Building documentation site for $branchVersion with data at $PWD/gh-pages/_data"
@@ -511,6 +554,8 @@ if [[ ${buildDocs} == "true" ]]; then
   fi
 fi
 
+recordPhase "jekyll"
+
 if [[ $proofRead == "true" ]]; then
   printgreen "Validating documentation links..."
   validateProjectDocumentation
@@ -520,6 +565,8 @@ if [[ $proofRead == "true" ]]; then
     exit ${retVal}
   fi
 fi
+
+recordPhase "proofread"
 
 pushd .
 cd "$PWD/gh-pages" || exit
@@ -570,6 +617,7 @@ elif [[ "${publishDocs}" == "true" ]]; then
   fi
   printgreen "Pushed upstream to origin/gh-pages..."
   retVal=$?
+  recordPhase "publish"
 else
   printyellow "Skipping documentation push to remote repository..."
 fi

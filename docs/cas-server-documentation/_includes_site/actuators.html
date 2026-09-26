@@ -98,7 +98,7 @@ properties="cas.monitor.endpoints.form-login-enabled,cas.monitor.endpoints.endpo
 {%- capture casModuleReference -%}{% include_cached casmodule.html group="org.apereo.cas" module=casmodule id=actuatorEndpointRandomNumber %}{%- endcapture -%}
 {%- endif %}
 
-<div class="accordion" id="{{ actuatorEndpointRandomNumber }}">
+<div class="accordion cas-endpoints" id="{{ actuatorEndpointRandomNumber }}">
     {%- assign showClass = "show" -%}
 
     {%- for endpoint in endpoints -%}
@@ -118,56 +118,36 @@ properties="cas.monitor.endpoints.form-login-enabled,cas.monitor.endpoints.endpo
     | remove: rbrace
     | remove: lbrace -%}
 
-    <span class="accordion-header" id="heading{{key}}">
-        <button {% if showClass contains "show" %} class="accordion-button" {% else %}
-            class="accordion-button collapsed" {% endif %} type="button" data-bs-toggle="collapse"
-            data-bs-target="#collapse{{key}}" {% if showClass contains "show" %}aria-expanded="true" {% endif %}
-            style="height: 40px; padding-top: 30px; border-radius: 6px;" aria-controls="collapse{{key}}">
-            <table style="border: none;">
-                <tr>
-                    <td style="width: 6%; border-bottom:none;">
-
-                        {%- if cfg.method == "DELETE" -%}
-                        <span class="badge bg-danger">
-                            {%- elsif cfg.method == "GET" -%}
-                            <span class="badge bg-primary">
-                                {%- elsif cfg.method == "POST" -%}
-                                <span class="badge bg-success">
-                                    {%- else -%}
-                                    <span class="badge bg-secondary">
-                                        {%- endif -%}
-
-                                        {%- if cfg.casEndpoint == true -%}
-                                        <i class="fas fa-copyright"></i>
-                                        {%- else -%}
-                                        <i class="fab fa-codepen"></i>
-                                        {%- endif -%}
-                                        &nbsp;
-                                        {{ cfg.method }}
-                                    </span>
-                    </td>
-                    <td style="border-bottom:none;"><span><code>/cas/actuator/{{ cfg.path }}</code>
-                            <sup>
-                                {%- if cfg.casEndpoint == true -%}
-                                <img class="undecorated img-fluid" width="42px" src="../../images/cas-sm.png"
-                                     data-bs-toggle="tooltip" data-bs-placment="top" data-bs-html="true"
-                                     title="This endpoint is owned, provided and controlled by CAS."
-                                     class="fas fa-copyright">
-                                {%- else -%}
-                                <i data-bs-toggle="tooltip" data-bs-placment="top" data-bs-html="true"
-                                   title="This endpoint is provided by a third-party framework to CAS."
-                                   class="fa fa-code"></i>
-                                {%- endif -%}
-                            </sup>
-                        </span></td>
-                </tr>
-            </table>
+    {%- case cfg.method -%}
+    {%- when "DELETE" -%}{%- assign methodClass = "bg-danger" -%}
+    {%- when "GET" -%}{%- assign methodClass = "bg-primary" -%}
+    {%- when "POST" -%}{%- assign methodClass = "bg-success" -%}
+    {%- else -%}{%- assign methodClass = "bg-secondary" -%}
+    {%- endcase -%}
+    <div class="accordion-item cas-endpoint">
+    <div class="accordion-header" id="heading{{key}}">
+        <button class="accordion-button{% unless showClass contains "show" %} collapsed{% endunless %}" type="button"
+                data-bs-toggle="collapse" data-bs-target="#collapse{{key}}"
+                aria-expanded="{% if showClass contains "show" %}true{% else %}false{% endif %}" aria-controls="collapse{{key}}">
+            <span class="badge cas-endpoint-method {{ methodClass }}">
+                {%- if cfg.casEndpoint == true -%}<i class="fas fa-copyright" aria-hidden="true"></i>{%- else -%}<i class="fab fa-codepen" aria-hidden="true"></i>{%- endif -%}
+                {{ cfg.method }}
+            </span>
+            <code class="cas-endpoint-path">/cas/actuator/{{ cfg.path }}</code>
+            {%- if cfg.casEndpoint == true -%}
+            <img class="undecorated cas-endpoint-owner" width="42" src="../../images/cas-sm.png" alt="CAS"
+                 data-bs-toggle="tooltip" data-bs-placement="top"
+                 title="This endpoint is owned, provided and controlled by CAS.">
+            {%- else -%}
+            <i class="fa fa-code cas-endpoint-owner" data-bs-toggle="tooltip" data-bs-placement="top"
+               title="This endpoint is provided by a third-party framework to CAS."></i>
+            {%- endif -%}
         </button>
-    </span>
+    </div>
 
     <div id="collapse{{key}}" class="accordion-collapse collapse {{ showClass }}" aria-labelledby="heading{{key}}"
          data-bs-parent="#{{ actuatorEndpointRandomNumber }}">
-        <div class="accordion-body card card-body">
+        <div class="accordion-body">
             {% assign io="" %}
 
             {%- if cfg.returnType.size > 0 -%}
@@ -211,7 +191,6 @@ properties="cas.monitor.endpoints.form-login-enabled,cas.monitor.endpoints.endpo
                 {%- endif -%}
             </p>
 
-            <p>
 
 
             <div class="modal fade" id="{{key}}ModalConfig" tabindex="-1" aria-hidden="true">
@@ -581,8 +560,8 @@ management.endpoints.web.path-mapping.health=healthcheck
                     $(elementId).click();
                 })
             </script>
-            </p>
         </div>
+    </div>
     </div>
 
     {%- assign showClass = "" -%}
