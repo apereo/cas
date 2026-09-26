@@ -492,7 +492,7 @@ while (( "$#" )); do
                 isDockerOnLinux && ./ci/tests/ldap/run-ldap-server.sh || exit 1
                 task+="testLdapRepository "
                 ;;
-            ldapauthentication|ldapauthn)
+            ldapauthentication|ldapauthn|ldapauth)
                 isDockerOnLinux && ./ci/tests/ldap/run-ldap-server.sh || exit 1
                 task+="testLdapAuthentication "
                 ;;

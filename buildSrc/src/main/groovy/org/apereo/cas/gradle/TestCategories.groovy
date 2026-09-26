@@ -50,7 +50,7 @@ enum TestCategories {
     Kafka(true, true),
     Pulsar(true, true),
     LdapAttributes(true, true),
-    LdapAuthentication(false, true),
+    LdapAuthentication(true, true),
     Ldap(false, true),
     LdapServices(true, true),
     LdapRepository(true, true),
