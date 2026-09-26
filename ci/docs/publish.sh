@@ -574,12 +574,12 @@ if [[ ${buildDocs} == "true" ]]; then
       printgreen "Jekyll cache is now at $PWD/jekyll/ ($(du -sh "$PWD/jekyll/.jekyll-cache" | cut -f1))"
     fi
   else
-    printyellow "Deleting jekyll build directory"
+    printyellow "Deleting Jekyll build directory"
     rm -Rf "$PWD"/jekyll/
   fi
 fi
 
-recordPhase "jekyll"
+recordPhase "Jekyll"
 
 if [[ $proofRead == "true" ]]; then
   printgreen "Validating documentation links..."

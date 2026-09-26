@@ -1,477 +1,61 @@
-{%- assign min = 1 -%}
-{%- assign max = 999999 -%}
-{%- assign diff = max | minus: min -%}
-{%- assign rbrace = "}" -%}
-{%- assign lbrace = "{" -%}
-{%- assign actuatorEndpointRandomNumber = include.endpoints | remove: "," | truncate: 50, '' -%}
-{%- assign endpoints = include.endpoints | split: "," -%}
-{% capture troubleshooting %}
-```xml
-<Logger name="org.pac4j" level="debug" additivity="false">
-    <AppenderRef ref="console" />
-    <AppenderRef ref="file" />
-</Logger>
-<Logger name="org.springframework.security" level="debug" additivity="false">
-    <AppenderRef ref="console" />
-    <AppenderRef ref="file" />
-</Logger>
-```
-{% endcapture %}
+{%- assign actuatorIds = include.endpoints | split: "," -%}
+{%- assign actuatorBlockId = include.endpoints | remove: "," | remove: " " | truncate: 50, '' | prepend: "actuators-" -%}
+{%- assign actuatorOperationCount = 0 -%}
+{%- assign actuatorPackages = "" | split: "" -%}
+{%- for actuatorId in actuatorIds -%}
+{%- assign actuatorOperations = site.data[siteDataVersion] | cas_actuator_operations: actuatorId -%}
+{%- assign actuatorOperationCount = actuatorOperationCount | plus: actuatorOperations.size -%}
+{%- assign actuatorOperationPackages = actuatorOperations | map: "ownerPackage" -%}
+{%- assign actuatorPackages = actuatorPackages | concat: actuatorOperationPackages -%}
+{%- endfor -%}
+{%- if actuatorOperationCount > 0 -%}
+{%- assign actuatorPackages = actuatorPackages | uniq | sort -%}
+{%- assign actuatorIdList = actuatorIds | join: "," -%}
 
 {%- capture endpointprops -%}{% include_cached thirdpartyproperties.html
-disablePagination="true"
 disableSearch="true"
-id=actuatorEndpointRandomNumber
 disableNotes="true"
 thirdPartyStartsWith="management.endpoints,management.health,management.endpoint.health" %}
 {%- endcapture -%}
 
 {%- capture basicauthprops -%}{% include_cached thirdpartyproperties.html
-disablePagination="true"
 disableSearch="true"
 disableNotes="true"
-id=actuatorEndpointRandomNumber
-forcePropertyTabsOnClick="true"
 thirdPartyStartsWith="spring.security.user" %}
 {%- endcapture -%}
 
-{%- capture jdbcauthprops -%}{% include_cached casproperties.html
-disableSearch="true"
-id=actuatorEndpointRandomNumber
-disablePagination="true"
-disableNotes="true"
-forcePropertyTabsOnClick="true"
-properties="cas.monitor.endpoints.jdbc" %}
-{%- endcapture -%}
-<div style="display:none" id="jdbcauthpropReference">
-    {{ jdbcauthprops | markdownify }}
-</div>
-
-{%- capture ldapauthprops -%}{% include_cached casproperties.html
-disableSearch="true"
-id=actuatorEndpointRandomNumber
-disablePagination="true"
-disableNotes="true"
-forcePropertyTabsOnClick="true"
-properties="cas.monitor.endpoints.ldap" %}
-{%- endcapture -%}
-<div style="display:none" id="ldapauthpropReference">
-    {{ ldapauthprops | markdownify }}
-</div>
-
-{%- capture jaasauthprops -%}{% include_cached casproperties.html
-disableSearch="true"
-id=actuatorEndpointRandomNumber
-disablePagination="true"
-disableNotes="true"
-forcePropertyTabsOnClick="true"
-properties="cas.monitor.endpoints.jaas" %}
-{%- endcapture -%}
-<div style="display:none" id="jaasauthpropReference">
-    {{ jaasauthprops | markdownify }}
-</div>
-
-
-{%- capture jsonauthprops -%}{% include_cached casproperties.html
-disableSearch="true"
-id=actuatorEndpointRandomNumber
-disablePagination="true"
-disableNotes="true"
-forcePropertyTabsOnClick="true"
-properties="cas.monitor.endpoints.json" %}
-{%- endcapture -%}
-<div style="display:none" id="jsonauthpropReference">
-    {{ jsonauthprops | markdownify }}
-</div>
-
-{%- capture casendpointsconfigprops -%}{% include_cached casproperties.html
-disableSearch="true"
-id=actuatorEndpointRandomNumber
-disablePagination="true"
-disableNotes="true"
-forcePropertyTabsOnClick="true"
-properties="cas.monitor.endpoints.form-login-enabled,cas.monitor.endpoints.endpoint" %}
-{%- endcapture -%}
+{%- capture jdbcauthprops -%}{% include_cached casproperties.html disableSearch="true" disableNotes="true" intro="false"
+properties="cas.monitor.endpoints.jdbc" %}{%- endcapture -%}
+{%- capture ldapauthprops -%}{% include_cached casproperties.html disableSearch="true" disableNotes="true" intro="false"
+properties="cas.monitor.endpoints.ldap" %}{%- endcapture -%}
+{%- capture jaasauthprops -%}{% include_cached casproperties.html disableSearch="true" disableNotes="true" intro="false"
+properties="cas.monitor.endpoints.jaas" %}{%- endcapture -%}
+{%- capture jsonauthprops -%}{% include_cached casproperties.html disableSearch="true" disableNotes="true" intro="false"
+properties="cas.monitor.endpoints.json" %}{%- endcapture -%}
+{%- capture casendpointsconfigprops -%}{% include_cached casproperties.html disableSearch="true" disableNotes="true" intro="false"
+properties="cas.monitor.endpoints.form-login-enabled,cas.monitor.endpoints.endpoint" %}{%- endcapture -%}
+{%- if actuatorIds.size == 1 -%}
+{%- assign casendpointsconfigprops = casendpointsconfigprops | replace: "[key]", actuatorIds[0] -%}
+{%- endif -%}
 
 {%- if include.casModule.size > 0 -%}
-{%- assign casmodule = include.casModule -%}
-{%- capture casModuleReference -%}{% include_cached casmodule.html group="org.apereo.cas" module=casmodule id=actuatorEndpointRandomNumber %}{%- endcapture -%}
-{%- endif %}
+{%- capture casModuleReference -%}{% include_cached casmodule.html group="org.apereo.cas" module=include.casModule %}{%- endcapture -%}
+{%- endif -%}
 
-<div class="accordion cas-endpoints" id="{{ actuatorEndpointRandomNumber }}">
-    {%- assign showClass = "show" -%}
+{%- capture actuatorLogging -%}
+```xml
+{% for actuatorPackage in actuatorPackages %}<Logger name="{{ actuatorPackage }}" level="debug" additivity="false">
+    <AppenderRef ref="console" />
+    <AppenderRef ref="file" />
+</Logger>
+{% endfor %}<Logger name="org.springframework.security" level="debug" additivity="false">
+    <AppenderRef ref="console" />
+    <AppenderRef ref="file" />
+</Logger>
+```
+{%- endcapture -%}
 
-    {%- for endpoint in endpoints -%}
-
-    {%- for configblock in site.data[siteDataVersion].actuators[endpoint] -%}
-    {%- assign config = configblock[1] | sort: "method" -%}
-
-    {%- for cfg in config -%}
-
-    {%- assign key = cfg.path
-    | append: cfg.method
-    | remove: "["
-    | remove: "]"
-    | remove: '"'
-    | remove: '/'
-    | remove: '$'
-    | remove: rbrace
-    | remove: lbrace -%}
-
-    {%- case cfg.method -%}
-    {%- when "DELETE" -%}{%- assign methodClass = "bg-danger" -%}
-    {%- when "GET" -%}{%- assign methodClass = "bg-primary" -%}
-    {%- when "POST" -%}{%- assign methodClass = "bg-success" -%}
-    {%- else -%}{%- assign methodClass = "bg-secondary" -%}
-    {%- endcase -%}
-    <div class="accordion-item cas-endpoint">
-    <div class="accordion-header" id="heading{{key}}">
-        <button class="accordion-button{% unless showClass contains "show" %} collapsed{% endunless %}" type="button"
-                data-bs-toggle="collapse" data-bs-target="#collapse{{key}}"
-                aria-expanded="{% if showClass contains "show" %}true{% else %}false{% endif %}" aria-controls="collapse{{key}}">
-            <span class="badge cas-endpoint-method {{ methodClass }}">
-                {%- if cfg.casEndpoint == true -%}<i class="fas fa-copyright" aria-hidden="true"></i>{%- else -%}<i class="fab fa-codepen" aria-hidden="true"></i>{%- endif -%}
-                {{ cfg.method }}
-            </span>
-            <code class="cas-endpoint-path">/cas/actuator/{{ cfg.path }}</code>
-            {%- if cfg.casEndpoint == true -%}
-            <img class="undecorated cas-endpoint-owner" width="42" src="../../images/cas-sm.png" alt="CAS"
-                 data-bs-toggle="tooltip" data-bs-placement="top"
-                 title="This endpoint is owned, provided and controlled by CAS.">
-            {%- else -%}
-            <i class="fa fa-code cas-endpoint-owner" data-bs-toggle="tooltip" data-bs-placement="top"
-               title="This endpoint is provided by a third-party framework to CAS."></i>
-            {%- endif -%}
-        </button>
-    </div>
-
-    <div id="collapse{{key}}" class="accordion-collapse collapse {{ showClass }}" aria-labelledby="heading{{key}}"
-         data-bs-parent="#{{ actuatorEndpointRandomNumber }}">
-        <div class="accordion-body">
-            {% assign io="" %}
-
-            {%- if cfg.returnType.size > 0 -%}
-            {%- assign io = "Return Type: <code>" | append: cfg.returnType | append: "</code><p>" -%}
-            {%- endif -%}
-
-            {%- if cfg.consumes.size > 0 -%}
-            {%- assign io = io | append: "Content Type: <code>" | append: cfg.consumes | append: "</code><p>" -%}
-            {%- endif -%}
-
-            {%- if cfg.produces.size > 0 -%}
-            {%- assign io = io | append: "Accept: <code>" | append: cfg.produces | append: "</code><p>" -%}
-            {%- endif -%}
-
-            {%- if cfg.deprecated == true -%}
-            {%- assign io = io | append: "Deprecated<p>" -%}
-            {%- endif -%}
-
-            {%- assign io = io | append: "Signature: <code>" | append: cfg.signature | markdownify | append: "</code><p>" -%}
-
-            {%- assign io = io | append: "Owner: <code>" | append: cfg.owner | append: "</code><p>" -%}
-
-            <p class="small text-left">
-                <a tabindex="0" class="btn btn-sm btn-info" role="button" data-bs-toggle="popover" data-bs-trigger="hover"
-                   title="Input & Output" data-bs-html="true" data-bs-content='{{io}}'>
-                    <i aria-hidden="true" class="fa fa-question"></i>
-                </a>
-                <a tabindex="0" title="Endpoint Details" class="btn btn-sm btn-success" role="button"
-                   data-bs-toggle="modal" data-bs-target="#{{key}}ModalConfig">
-                    <i aria-hidden="true" class="fa fa-book-open"></i>
-                </a>
-                &nbsp;
-                {%- if cfg.summary.size > 0 -%}
-                {{cfg.summary}}
-                {%- else -%}
-                {%- unless cfg.casEndpoint == true -%}
-                There is no documentation available for this endpoint. The functionality presented here is provided to
-                CAS via a third-party library or framework, which provides no documentation as part of endpoint definition's
-                metadata.
-                {% endunless -%}
-                {%- endif -%}
-            </p>
-
-
-
-            <div class="modal fade" id="{{key}}ModalConfig" tabindex="-1" aria-hidden="true">
-                <div class="modal-dialog modal-dialog-centered modal-xl modal-dialog-scrollable">
-                    <div class="modal-content">
-                        <div class="modal-header">
-                            <h4 class="modal-title">Endpoint Details: <code>{{ cfg.path }}</code></h4>
-                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                        </div>
-                        <div class="modal-body">
-
-                            <ul class="nav nav-tabs">
-                                <li class="nav-item">
-                                    <a class="nav-link active" data-bs-toggle='tab'
-                                       href="#endpointintro{{ key }}">Overview</a>
-                                </li>
-
-
-                                <li class="nav-item">
-                                    <a class="nav-link" data-bs-toggle='tab' href="#casendppointprops{{ key }}">Configuration</a>
-                                </li>
-
-                                <li class="nav-item">
-                                    <a class="nav-link" data-bs-toggle='tab'
-                                       href="#thirdpartyendpointprops{{ key }}">Third Party</a>
-                                </li>
-                                {%- if cfg.name == "health" -%}
-                                <li class="nav-item">
-                                    <a class="nav-link" data-bs-toggle='tab'
-                                       href="#healthendpointinfo{{ key }}">Health</a>
-                                </li>
-                                {%- endif -%}
-                                <li class="nav-item">
-                                    <a class="nav-link" data-bs-toggle='tab'
-                                       href="#endpointsecurity{{ key }}">Security</a>
-                                </li>
-                                <li class="nav-item">
-                                    <a class="nav-link" data-bs-toggle='tab'
-                                       href="#endpointtroubleshooting{{ key }}">Troubleshooting</a>
-                                </li>
-                            </ul>
-
-                            <div class='tab-content'>
-                                <div class="tab-pane fade active show" id="endpointintro{{key}}">
-                                    <br />
-                                    {%- assign allQueryParams="" -%}
-                                    {%- if cfg.parameters.size > 0 -%}
-                                    <h5>Endpoint Parameters</h5>
-                                    <ul>
-                                        {% for param in cfg.parameters -%}
-                                            {%- assign paramName = param.name | replace: "()", "" -%}
-                                            <li>
-                                                {%- if param.required == true -%}
-                                                {%- assign paramTitle = "Parameter is required." -%}
-                                                {%- else -%}
-                                                {%- assign paramTitle = "Parameter is optional." -%}
-                                                {%- endif -%}
-
-                                                {%- if param.selector == true -%}
-                                                    {%- assign paramTitle = paramTitle | append: " This parameter must be specified as a path variable." -%}
-                                                {%- elsif param.header == true -%}
-                                                    {%- assign paramTitle = paramTitle | append: " This parameter must be specified as a request header." -%}
-                                                {%- elsif param.query == true -%}
-                                                    {%- assign paramTitle = paramTitle | append: " This parameter can be specified as a query parameter." -%}
-                                                    {%- assign allQueryParams = allQueryParams | append: paramName | append: "=...&" -%}
-                                                {%- endif -%}
-                                                <i class="fas fa-info-circle" data-bs-toggle="tooltip"
-                                                   data-bs-placment="top" data-bs-html="true"
-                                                   title="{{ paramTitle }}"></i>
-                                                <code>{{ paramName }} ({{ param.type }})</code>
-                                                {%- if param.description.size > 0 -%}: <span>{{ param.description }}</span>{%- endif -%}
-                                            </li>
-                                        {%- endfor -%}
-                                    </ul>
-                                    {%- endif -%}
-
-
-                                    <div>
-                                        <p>Once the endpoint is available, here is an example of how you could use it with <code>curl</code>: </p>
-{% capture curlrequest %}
-```bash
-curl -k -u "username:password" \
--X {{ cfg.method }} \
--X "Content-Type: {{ cfg.consumes[0] | default: 'application/json' }}" \
--X "Accept: {{ cfg.produces[0] | default: 'application/json' }}" \
-"https://sso.example.org/cas/actuator/{{ cfg.path }}?{{ allQueryParams }}"
-```{% endcapture %}
-{{ curlrequest | markdownify }}
-                                    </div>
-
-                                    <p>CAS, being a Spring-Boot application at heart, includes a number of endpoints to help you monitor and manage the server when it’s pushed to production. You can choose to manage and monitor the deployment using HTTP endpoints, referred to as actuators.</p>
-                                    <p>
-                                        In essence, actuator endpoints bring production-ready features to CAS. Monitoring a running CAS instance, gathering metrics, understanding traffic or the state of our database becomes trivial with such endpoints. The main benefit of these endpoints is that we can get production grade tools without having to actually implement these features ourselves. Actuators are mainly used to expose operational information about the running application – <code>health</code>, <code>metrics</code>, etc. These are HTTP endpoints or JMX beans to enable us to interact with it.
-                                    </p>
-
-                                    <p>
-                                        Actuator endpoints are presented by CAS in two categories:
-                                    <ul>
-                                        <li>Those that are owned and defined by the CAS project.</li>
-                                        <li>Those that are owned and defined by third-party projects, frameworks and libraries such as Spring Boot.</li>
-                                    </ul>
-                                    </p>
-
-                                    {%- if cfg.name == "status" -%}
-                                    <div class="alert alert-warning">:warning: <strong>Obtaining Health Info</strong><p>Note
-                                        that <code>/status</code> endpoint is kept mostly
-                                        as a legacy endpoint. If you wish to obtain health status of each monitor
-                                        in detail, we recommend the <code>/actuator/health</code> endpoint instead.</p></div>
-                                    {%- endif -%}
-
-                                    <div class="alert alert-info">:information_source: <strong>Exposed Endpoints</strong><p>
-                                        Note that by default the only endpoints exposed over the web
-                                        are <code>info</code>, <code>status</code>, <code>health</code> and <code>configurationMetadata</code>.
-                                        Other endpoints need to be explicitly <strong>enabled and then
-                                        exposed over the web</strong> in CAS settings in order to allow access.
-                                    </p></div>
-
-                                    {%- if cfg.name == "metrics" -%}
-                                    <p>
-                                        Navigating to this endpoint displays a list of available meter names. You can drill down to view information about a
-                                        particular meter by providing its name as a selector, e.g. <code>/metrics/jvm.memory.max</code>. The name you use here should match the name used in the code, not the name after it has been naming-convention normalized for a monitoring system it is shipped to.
-
-                                        You can also add any number of <code>tag=KEY:VALUE</code> query parameters to the end of the URL to dimensionally drill
-                                        down on a meter, e.g. <code>/metrics/jvm.memory.max?tag=area:nonheap</code>`
-
-                                        The reported measurements are the sum of the statistics of all meters
-                                        matching the meter name and any tags that have been applied.
-                                        So in the example above, the returned "Value" statistic is the sum of the maximum memory footprints of "Code Cache",
-                                        "Compressed Class Space", and "Metaspace" areas of the heap. If you just wanted to see the maximum size for the "Metaspace",
-                                        you could add an additional <code>tag=id:Metaspace</code>, i.e. <code>/metrics/jvm.memory.max?tag=area:nonheap&tag=id:Metaspace</code>.
-                                    </p>
-                                    {%- endif -%}
-
-                                </div>
-
-
-                                <div class='tab-pane fade' id='casendppointprops{{ key }}'>
-                                    <br />
-
-                                    {%- if include.casModule.size > 0 -%}
-                                    <p>This endpoint, <code>{{cfg.path}}</code> can be turned
-                                        on by including the following dependency in the WAR overlay:</p>
-
-                                    <div id="casmoduleplaceholder{{ key }}">
-                                        {{ casModuleReference | markdownify }}
-                                    </div>
-                                    {%- endif -%}
-
-
-                                    <p>To enable and expose an actuator endpoint:</p>
-{% capture epc %}
-
-```properties
-management.endpoint.{{ cfg.name }}.access=UNRESTRICTED
-management.endpoints.web.exposure.include={{ cfg.name }}
-
-# Choose the proper security access level...
-# cas.monitor.endpoints.endpoint.{{ cfg.name }}.access=PERMIT
-```{% endcapture %}
-                                    <div>
-{{ epc | markdownify }}
-                                    </div>
-
-                                    <div id="casEndpointConfigPropsDiv">
-                                        {{ casendpointsconfigprops | replace: "[key]", cfg.name | markdownify }}
-
-                                    </div>
-
-                                    <p>
-                                        Endpoints may be mapped to custom arbitrary endpoints. For example,
-                                        to remap the <code>health</code> endpoint to <code>healthcheck</code>,
-                                        specify the following settings:
-
-{% capture health %}
-```properties
-management.endpoints.web.path-mapping.health=healthcheck
-```{% endcapture %}
-                                        <span>
-{{ health | markdownify }}
-</span>
-                                    </p>
-
-                                </div>
-                                <div class="tab-pane fade" id="thirdpartyendpointprops{{ key }}">
-                                    {{ endpointprops | markdownify }}
-                                </div>
-
-                                {%- if cfg.name == "health" -%}
-
-                                <br/>
-
-                                {%- capture healthendpointinfo -%}{% include_cached {{ version }}/health-actuator-configuration.md healthIndicators=include.healthIndicators %}
-                                {% endcapture -%}
-
-                                <div class="tab-pane fade" id="healthendpointinfo{{ key }}">
-                                    <div>
-                                        {{ healthendpointinfo | markdownify }}
-                                    </div>
-                                </div>
-                                {%- endif -%}
-
-                                <div class='tab-pane fade' id='endpointsecurity{{ key }}'>
-                                    <br/>
-                                    <div id="endpointsecurityInner{{ key }}">
-
-                                        <script>
-                                            function collapseSecurityPanels{{ key }}(el) {
-                                                $('#collapseSecurityDiv{{ key }} div.collapse').removeClass('show');
-                                                document.getElementById(`${el}{{ key }}`)
-                                                    .addEventListener('shown.bs.collapse', () => {
-                                                        let elementId = `.modal-body #${el}{{ key }} .nav-item a.nav-link:first`;
-                                                        $(elementId).addClass("active")
-                                                        $(elementId).click();
-                                                    });
-                                            }
-                                        </script>
-
-                                        <button class="btn btn-primary btn-sm" type="button" data-bs-toggle="collapse"
-                                                data-bs-target="#collapseSecurityBasicAuth{{ key}}"
-                                                onclick="collapseSecurityPanels{{ key }}('collapseSecurityBasicAuth');"
-                                                aria-expanded="false" aria-controls="collapseSecurityBasicAuth{{ key }}">
-                                            Basic Authentication
-                                        </button>
-                                        <button class="btn btn-primary btn-sm" type="button" data-bs-toggle="collapse"
-                                                data-bs-target="#collapseSecurityJaas{{ key}}"
-                                                onclick="collapseSecurityPanels{{ key }}('collapseSecurityJaas');"
-                                                aria-expanded="false" aria-controls="collapseSecurityJaas{{ key }}">
-                                            JAAS Authentication
-                                        </button>
-                                        <button class="btn btn-primary btn-sm" type="button" data-bs-toggle="collapse"
-                                                data-bs-target="#collapseSecurityLdap{{ key}}"
-                                                onclick="collapseSecurityPanels{{ key }}('collapseSecurityLdap');"
-                                                aria-expanded="false" aria-controls="collapseSecurityLdap{{ key }}">
-                                            LDAP Authentication
-                                        </button>
-                                        <button class="btn btn-primary btn-sm" type="button" data-bs-toggle="collapse"
-                                                data-bs-target="#collapseSecurityJdbc{{ key}}"
-                                                onclick="collapseSecurityPanels{{ key }}('collapseSecurityJdbc');"
-                                                aria-expanded="false" aria-controls="collapseSecurityJdbc{{ key }}">
-                                            JDBC Authentication
-                                        </button>
-                                        <button class="btn btn-primary btn-sm" type="button" data-bs-toggle="collapse"
-                                                data-bs-target="#collapseSecurityJson{{ key}}"
-                                                onclick="collapseSecurityPanels{{ key }}('collapseSecurityJson');"
-                                                aria-expanded="false" aria-controls="collapseSecurityJson{{ key }}">
-                                            JSON Authentication
-                                        </button>
-                                        <br />
-                                    </div>
-                                    <br/>
-
-                                    <div id="collapseSecurityDiv{{ key }}">
-                                        <div class="collapse" id="collapseSecurityBasicAuth{{ key }}">
-                                            <div class="card card-body">
-                                                {{ basicauthprops | markdownify }}
-
-                                                <p>For basic authentication, the default username is <code>casuser</code>. The password may be automatically generated at startup and displayed in CAS logs if it is left undefined in CAS settings. Additional sources may also be defined that would authenticate the request via JAAS, LDAP, JDBC, etc. </p>
-                                            </div>
-                                        </div>
-
-                                        <div class="collapse" id="collapseSecurityJdbc{{ key }}">
-                                            <div class="card card-body" id="placeholderSecurityJdbc{{ key }}">
-                                            </div>
-                                        </div>
-
-                                        <div class="collapse" id="collapseSecurityLdap{{ key }}">
-                                            <div class="card card-body" id="placeholderSecurityLdap{{ key }}">
-                                            </div>
-                                        </div>
-
-                                        <div class="collapse" id="collapseSecurityJaas{{ key }}">
-                                            <div class="card card-body" id="placeholderSecurityJaas{{ key }}">
-                                            </div>
-                                        </div>
-                                        <div class="collapse" id="collapseSecurityJson{{ key }}">
-
-                                            <p>
-                                                This option allows you to define a static list of users, passwords along with their role in a JSON file.
-                                                The JSON file should be formatted as follows:
-
-{% capture jsonauthfile %}
+{%- capture actuatorJsonUsers -%}
 ```json
 [
     {
@@ -480,94 +64,224 @@ management.endpoints.web.path-mapping.health=healthcheck
         "authorities": [ "ROLE_ADMIN" ]
     }
 ]
-```{% endcapture %}
-<span>{{ jsonauthfile | markdownify }}</span>
+```
+{%- endcapture -%}
 
-                                                <p>Supported password encoding schemes are:
-                                                    <code>{sha512}</code>, <code>{sha256}</code>, <code>{bcrypt}</code>,
-                                                    <code>{noop}</code>, <code>{pbkdf2}</code>, <code>{scrypt}</code>,
-                                                    <code>{argon2}</code>.
-                                                </p>
-                                            </p>
-
-                                            <div class="card card-body" id="placeholderSecurityJson{{ key }}">
-                                            </div>
-                                        </div>
-                                    </div>
-
-
-                                    <p>
-                                        Once endpoints are enabled and exposed, the security of all provided endpoints
-                                        is handled
-                                        by the <a href="https://spring.io/projects/spring-security">Spring Security</a>
-                                        project.
-                                        Protection and access to each endpoint
-                                        is controlled via CAS settings individually such that you may
-                                        decide a specific security level and method of authentication for each endpoint
-                                        independently.
-
-                                    <ul>
-                                        <li>If CAS is configured to <strong>NOT</strong> enforce endpoint security
-                                            rules, then
-                                            all endpoints are considered sensitive and require authentication, typically
-                                            handled
-                                            via basic authentication with master credentials defined in CAS settings.
-                                        </li>
-
-                                        <li>If CAS is configured to enforce endpoint security rules, then each
-                                            endpoint may be tagged with a specific security rule allowing access via
-                                            authorized IP addresses,
-                                            basic credentials, roles and attributes, etc. </li>
-                                    </ul>
-
-                                    <div class="alert alert-info">:information_source: <strong>Defaults</strong><p>
-                                        There is a special endpoint named <code>defaults</code> which serves as a shortcut that
-                                        controls the security of all endpoints, if left undefined in CAS settings.
-                                    </p></div>
-
-                                    </p>
-                                </div>
-
-                                <div class="tab-pane fade" id="endpointtroubleshooting{{ key }}">
-                                    <br/>
-                                    <p>To enable additional logging, configure the log4j configuration file to add the
-                                        following levels:</p>
-                                    {{ troubleshooting | markdownify }}
-                                </div>
-                            </div>
-                        </div>
+{%- capture actuatorPathMapping -%}
+```properties
+management.endpoints.web.path-mapping.health=healthcheck
+```
+{%- endcapture %}
+{::nomarkdown}
+<div class="cas-actuators" id="{{ actuatorBlockId }}">
+{%- for actuatorId in actuatorIds -%}
+{%- assign actuatorOperations = site.data[siteDataVersion] | cas_actuator_operations: actuatorId -%}
+{%- if actuatorOperations.size > 0 -%}
+{%- assign actuatorGets = actuatorOperations | where: "method", "GET" -%}
+{%- assign actuatorPosts = actuatorOperations | where: "method", "POST" -%}
+{%- assign actuatorDeletes = actuatorOperations | where: "method", "DELETE" -%}
+{%- assign actuatorOwnedByCas = actuatorOperations | where: "casEndpoint", true -%}
+<section class="cas-actuator" data-actuator="{{ actuatorId }}">
+    <header class="cas-actuator-head">
+        <div class="cas-actuator-title">
+            <div class="cas-actuator-id"><i class="fa fa-plug" aria-hidden="true"></i><code>{{ actuatorId }}</code></div>
+            <div class="cas-actuator-chips">
+                {%- if actuatorOwnedByCas.size > 0 -%}
+                <span class="cas-actuator-chip cas-actuator-chip-cas" title="This endpoint is owned, provided and controlled by CAS."><i class="fa fa-copyright" aria-hidden="true"></i>CAS endpoint</span>
+                {%- else -%}
+                <span class="cas-actuator-chip" title="This endpoint is provided to CAS by a third-party framework such as Spring Boot."><i class="fa fa-cubes" aria-hidden="true"></i>Third-party endpoint</span>
+                {%- endif -%}
+                <span class="cas-actuator-chip"><i class="fa fa-layer-group" aria-hidden="true"></i>{{ actuatorOperations.size }} operation{% if actuatorOperations.size != 1 %}s{% endif %}</span>
+                {%- assign actuatorExposed = actuatorId | cas_actuator_exposed_by_default -%}
+                {%- if actuatorExposed -%}
+                <span class="cas-actuator-chip cas-actuator-chip-ok"><i class="fa fa-eye" aria-hidden="true"></i>Exposed by default</span>
+                {%- else -%}
+                <span class="cas-actuator-chip cas-actuator-chip-warn"><i class="fa fa-eye-slash" aria-hidden="true"></i>Not exposed by default</span>
+                {%- endif -%}
+                {%- if include.casModule.size > 0 -%}
+                <span class="cas-actuator-chip"><i class="fa fa-cube" aria-hidden="true"></i>{{ include.casModule }}</span>
+                {%- endif -%}
+            </div>
+        </div>
+        <div class="cas-actuator-actions">
+            <button type="button" class="cas-actuator-goto" data-tab="enable"><i class="fa fa-toggle-on" aria-hidden="true"></i>Enable &amp; expose</button>
+            <button type="button" class="cas-actuator-goto" data-tab="security"><i class="fa fa-shield-halved" aria-hidden="true"></i>Security</button>
+            <button type="button" class="cas-actuator-goto" data-tab="troubleshooting"><i class="fa fa-bug" aria-hidden="true"></i>Troubleshoot</button>
+        </div>
+    </header>
+    {%- if actuatorOperations.size > 4 -%}
+    <div class="cas-actuator-toolbar">
+        <label class="cas-actuator-search"><i class="fa fa-magnifying-glass" aria-hidden="true"></i><span class="visually-hidden">Filter operations</span><input type="search" placeholder="Filter operations by path or description"></label>
+        <div class="cas-actuator-methods" role="group" aria-label="Filter by HTTP method">
+            <button type="button" class="cas-actuator-method" data-method="" aria-pressed="true">All<b>{{ actuatorOperations.size }}</b></button>
+            {%- if actuatorGets.size > 0 -%}<button type="button" class="cas-actuator-method" data-method="GET" aria-pressed="false">GET<b>{{ actuatorGets.size }}</b></button>{%- endif -%}
+            {%- if actuatorPosts.size > 0 -%}<button type="button" class="cas-actuator-method" data-method="POST" aria-pressed="false">POST<b>{{ actuatorPosts.size }}</b></button>{%- endif -%}
+            {%- if actuatorDeletes.size > 0 -%}<button type="button" class="cas-actuator-method" data-method="DELETE" aria-pressed="false">DELETE<b>{{ actuatorDeletes.size }}</b></button>{%- endif -%}
+        </div>
+        <span class="cas-actuator-base">base path <code>/cas/actuator/</code></span>
+    </div>
+    {%- endif -%}
+    <div class="cas-actuator-ops">
+        {%- for op in actuatorOperations -%}
+        <div class="cas-op" id="{{ op.anchor }}" data-method="{{ op.method }}" data-text="{{ op.searchText | escape }}">
+            <button type="button" class="cas-op-row" aria-expanded="false" aria-controls="{{ op.anchor }}-detail">
+                <span class="cas-op-method cas-op-method-{{ op.methodClass }}">{{ op.method }}</span>
+                <span class="cas-op-path">{{ op.pathHtml }}</span>
+                <span class="cas-op-summary">{{ op.summary | escape }}</span>
+                <span class="cas-op-meta">
+                    {%- if op.deprecated -%}<span class="cas-actuator-chip cas-actuator-chip-warn">Deprecated</span>{%- endif -%}
+                    {%- if op.params.size > 0 -%}<span class="cas-actuator-chip"><i class="fa fa-sliders" aria-hidden="true"></i>{{ op.params.size }} param{% if op.params.size != 1 %}s{% endif %}</span>
+                    {%- else -%}<span class="cas-actuator-chip">no params</span>{%- endif -%}
+                </span>
+                <i class="fa fa-chevron-down cas-op-chevron" aria-hidden="true"></i>
+            </button>
+            <div class="cas-op-detail" id="{{ op.anchor }}-detail" hidden>
+                <div class="cas-op-info">
+                    {%- if op.params.size > 0 -%}
+                    <div class="cas-op-label">Parameters</div>
+                    <div class="cas-op-params">
+                        <table>
+                            <thead><tr><th>Name</th><th>In</th><th>Type</th><th>Description</th></tr></thead>
+                            <tbody>
+                            {%- for param in op.params -%}
+                            <tr>
+                                <td><code>{{ param.name | escape }}</code>{% if param.required %}<span class="cas-op-required">required</span>{% endif %}</td>
+                                <td>{{ param.in }}</td>
+                                <td>{% if param.type.size > 0 %}<code>{{ param.type | escape }}</code>{% else %}<span class="cas-op-none">&ndash;</span>{% endif %}</td>
+                                <td>{{ param.description | escape }}{% if param.defaultText.size > 0 %} <span class="cas-op-none">Default: <code>{{ param.defaultText | escape }}</code></span>{% endif %}</td>
+                            </tr>
+                            {%- endfor -%}
+                            </tbody>
+                        </table>
                     </div>
+                    {%- endif -%}
+                    <div class="cas-op-label">Response</div>
+                    <dl class="cas-op-facts">
+                        <dt>Returns</dt><dd>{% if op.returnType.size > 0 %}<code>{{ op.returnType | escape }}</code>{% else %}<span class="cas-op-none">nothing</span>{% endif %}</dd>
+                        {%- if op.producesText.size > 0 -%}<dt>Produces</dt><dd><code>{{ op.producesText | escape }}</code></dd>{%- endif -%}
+                        {%- if op.consumesText.size > 0 -%}<dt>Consumes</dt><dd><code>{{ op.consumesText | escape }}</code></dd>{%- endif -%}
+                        {%- if op.signatureShort.size > 0 -%}<dt>Java method</dt><dd><code title="{{ op.signature | escape }}">{{ op.signatureShort | escape }}</code></dd>{%- endif -%}
+                        {%- if op.ownerShort.size > 0 -%}<dt>Defined in</dt><dd><code title="{{ op.owner | escape }}">{{ op.ownerShort | escape }}</code></dd>{%- endif -%}
+                    </dl>
+                </div>
+                <div class="cas-op-example">
+                    <div class="cas-op-label">Example request <a class="cas-op-link" href="#{{ op.anchor }}" aria-label="Link to this operation"><i class="fa fa-link" aria-hidden="true"></i></a></div>
+                    {%- capture opCurl -%}
+```bash
+{{ op.curl }}
+```
+{%- endcapture -%}
+                    {{ opCurl | markdownify }}
                 </div>
             </div>
+        </div>
+        {%- endfor -%}
+    </div>
+</section>
+{%- endif -%}
+{%- endfor -%}
 
-            <script>
-                document.getElementById('{{key}}ModalConfig').addEventListener('shown.bs.modal', event => {
-                    let content = $("#jdbcauthpropReference").html();
-                    $("#placeholderSecurityJdbc{{ key }}").html(content);
+<div class="cas-actuator-shared">
+    <div class="cas-actuator-tabs" role="tablist" aria-label="Endpoint setup">
+        <button type="button" role="tab" class="cas-actuator-tab" data-tab="enable" aria-selected="true" aria-controls="{{ actuatorBlockId }}-enable">Enable &amp; expose</button>
+        <button type="button" role="tab" class="cas-actuator-tab" data-tab="security" aria-selected="false" aria-controls="{{ actuatorBlockId }}-security">Security</button>
+        {%- if actuatorIds contains "health" -%}
+        <button type="button" role="tab" class="cas-actuator-tab" data-tab="health" aria-selected="false" aria-controls="{{ actuatorBlockId }}-health">Health</button>
+        {%- endif -%}
+        <button type="button" role="tab" class="cas-actuator-tab" data-tab="settings" aria-selected="false" aria-controls="{{ actuatorBlockId }}-settings">Settings</button>
+        <button type="button" role="tab" class="cas-actuator-tab" data-tab="thirdparty" aria-selected="false" aria-controls="{{ actuatorBlockId }}-thirdparty">Spring Boot settings</button>
+        <button type="button" role="tab" class="cas-actuator-tab" data-tab="troubleshooting" aria-selected="false" aria-controls="{{ actuatorBlockId }}-troubleshooting">Troubleshooting</button>
+    </div>
 
-                    content = $("#ldapauthpropReference").html();
-                    $("#placeholderSecurityLdap{{ key }}").html(content);
-
-                    content = $("#jaasauthpropReference").html();
-                    $("#placeholderSecurityJaas{{ key }}").html(content);
-
-                    content = $("#jsonauthpropReference").html();
-                    $("#placeholderSecurityJson{{ key }}").html(content);
-
-                    let elementId = "#casEndpointConfigPropsDiv .nav-item a.nav-link:first";
-                    console.log(`Selecting configuration tab via ${elementId}`);
-                    $(elementId).addClass("active");
-                    $(elementId).click();
-                })
-            </script>
+    <div class="cas-actuator-panel" role="tabpanel" id="{{ actuatorBlockId }}-enable" data-tab="enable">
+        {%- if include.casModule.size > 0 -%}
+        <div class="cas-actuator-step">
+            <span class="cas-actuator-step-number">1</span>
+            <div class="cas-actuator-step-body">
+                <p>Include the module that provides {% if actuatorIds.size == 1 %}this endpoint{% else %}these endpoints{% endif %} in the WAR overlay:</p>
+                {{ casModuleReference | markdownify }}
+            </div>
+        </div>
+        {%- endif -%}
+        <div class="cas-actuator-step">
+            <span class="cas-actuator-step-number">{% if include.casModule.size > 0 %}2{% else %}1{% endif %}</span>
+            <div class="cas-actuator-step-body">
+                <p>Turn {% if actuatorIds.size == 1 %}the endpoint{% else %}the endpoints{% endif %} on and expose {% if actuatorIds.size == 1 %}it{% else %}them{% endif %} over the web.
+                    One entry covers every operation. By default only <code>info</code>, <code>health</code> and <code>status</code> are exposed.</p>
+                {%- include cas-actuator-snippet.html kind="enable" ids=actuatorIds -%}
+            </div>
+        </div>
+        <div class="cas-actuator-note">
+            <p>Endpoints may be mapped to other paths. For example, to serve <code>health</code> at <code>healthcheck</code>:</p>
+            {{ actuatorPathMapping | markdownify }}
         </div>
     </div>
+
+    <div class="cas-actuator-panel" role="tabpanel" id="{{ actuatorBlockId }}-security" data-tab="security" hidden>
+        <p>Once exposed, every call goes through <a href="https://spring.io/projects/spring-security">Spring Security</a>,
+            and CAS decides access per endpoint. Without a rule, the special <code>defaults</code> endpoint applies, which denies access.</p>
+        <div class="cas-actuator-label">Who may call {% if actuatorIds.size == 1 %}it{% else %}them{% endif %}</div>
+        <div class="cas-actuator-choice" role="group" aria-label="Access rule" data-group="rule">
+            <button type="button" data-choice="authenticated" aria-pressed="true">Authenticated</button>
+            <button type="button" data-choice="role" aria-pressed="false">Role</button>
+            <button type="button" data-choice="ip" aria-pressed="false">IP address</button>
+            <button type="button" data-choice="permit" aria-pressed="false">Anyone</button>
+        </div>
+        {%- assign actuatorRules = "authenticated,role,ip,permit" | split: "," -%}
+        {%- for actuatorRule in actuatorRules -%}
+        <div class="cas-actuator-choice-panel" data-group="rule" data-choice="{{ actuatorRule }}"{% unless forloop.first %} hidden{% endunless %}>
+            {%- include cas-actuator-snippet.html kind="security" rule=actuatorRule ids=actuatorIds -%}
+        </div>
+        {%- endfor -%}
+
+        <div class="cas-actuator-label">Where credentials are checked</div>
+        <div class="cas-actuator-choice" role="group" aria-label="Credential source" data-group="source">
+            <button type="button" data-choice="basic" aria-pressed="true">Basic</button>
+            <button type="button" data-choice="jaas" aria-pressed="false">JAAS</button>
+            <button type="button" data-choice="ldap" aria-pressed="false">LDAP</button>
+            <button type="button" data-choice="jdbc" aria-pressed="false">JDBC</button>
+            <button type="button" data-choice="json" aria-pressed="false">JSON</button>
+        </div>
+        <div class="cas-actuator-choice-panel" data-group="source" data-choice="basic">
+            <p>A single user defined in CAS settings. If the name and password are left undefined, CAS generates them at startup.</p>
+            {{ basicauthprops | markdownify }}
+        </div>
+        <div class="cas-actuator-choice-panel" data-group="source" data-choice="jaas" hidden>{{ jaasauthprops | markdownify }}</div>
+        <div class="cas-actuator-choice-panel" data-group="source" data-choice="ldap" hidden>{{ ldapauthprops | markdownify }}</div>
+        <div class="cas-actuator-choice-panel" data-group="source" data-choice="jdbc" hidden>{{ jdbcauthprops | markdownify }}</div>
+        <div class="cas-actuator-choice-panel" data-group="source" data-choice="json" hidden>
+            <p>A static list of users, passwords and roles in a JSON file.
+                Supported password encodings are <code>{sha512}</code>, <code>{sha256}</code>, <code>{bcrypt}</code>,
+                <code>{noop}</code>, <code>{pbkdf2}</code>, <code>{scrypt}</code> and <code>{argon2}</code>.</p>
+            {{ actuatorJsonUsers | markdownify }}
+            {{ jsonauthprops | markdownify }}
+        </div>
     </div>
 
-    {%- assign showClass = "" -%}
-    {%- endfor -%}
-    {%- endfor -%}
-    {%- endfor -%}
-</div>
+    {%- if actuatorIds contains "health" -%}
+    {%- capture healthendpointinfo -%}{% include_cached {{ version }}/health-actuator-configuration.md healthIndicators=include.healthIndicators %}{%- endcapture -%}
+    <div class="cas-actuator-panel" role="tabpanel" id="{{ actuatorBlockId }}-health" data-tab="health" hidden>
+        {{ healthendpointinfo | markdownify }}
+    </div>
+    {%- endif -%}
 
-<br />
+    <div class="cas-actuator-panel" role="tabpanel" id="{{ actuatorBlockId }}-settings" data-tab="settings" hidden>
+        {{ casendpointsconfigprops | markdownify }}
+    </div>
+
+    <div class="cas-actuator-panel" role="tabpanel" id="{{ actuatorBlockId }}-thirdparty" data-tab="thirdparty" hidden>
+        {{ endpointprops | markdownify }}
+    </div>
+
+    <div class="cas-actuator-panel" role="tabpanel" id="{{ actuatorBlockId }}-troubleshooting" data-tab="troubleshooting" hidden>
+        <ul class="cas-actuator-checks">
+            <li><code>404</code>: the endpoint is not enabled or not exposed; check the <em>Enable &amp; expose</em> tab.</li>
+            <li><code>401</code> or <code>403</code>: the access rule or the credentials rejected the call; check the <em>Security</em> tab.</li>
+        </ul>
+        <p>For more detail, raise these log levels in the log4j configuration:</p>
+        {{ actuatorLogging | markdownify }}
+    </div>
+</div>
+</div>
+{:/nomarkdown}
+{%- endif -%}

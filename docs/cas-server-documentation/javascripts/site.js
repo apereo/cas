@@ -322,7 +322,7 @@ function responsiveImages() {
 }
 
 function responsiveTables() {
-  $('#cas-docs-container table').not('.rouge-table, .highlight table').each(function () {
+  $('#cas-docs-container table').not('.rouge-table, .highlight table, .cas-op-params table').each(function () {
     $(this).addClass('table');
     if (!this.closest('.table-scroll') && !this.classList.contains('cas-datatable')) {
       $(this).wrap('<div class="table-scroll" role="region" aria-label="Scrollable table" tabindex="0"></div>');
@@ -509,6 +509,7 @@ $(document).ready(() => {
       "pageLength": pageLength
     });
     initializeCasProperties();
+    initializeCasActuators();
 
     let popoverTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="popover"]'));
     let popoverList = popoverTriggerList.map(popoverTriggerEl => new bootstrap.Popover(popoverTriggerEl))
@@ -1057,19 +1058,26 @@ function copyCasPropertyText(text, button) {
   }, 1200));
 }
 
+function applyCasPropertyFormat(format) {
+  writeCasPropertyFormat(format);
+  document.querySelectorAll('.cas-properties-format button, .cas-actuator-format button').forEach(button =>
+    button.setAttribute('aria-pressed', String(button.dataset.format === format)));
+  document.querySelectorAll('.cas-property.open').forEach(renderCasPropertyUsage);
+  document.querySelectorAll('.cas-properties-copy span').forEach(label =>
+    label.textContent = casPropertyCopyLabel(label.closest('.cas-properties')));
+  document.querySelectorAll('.cas-actuator-snippet').forEach(snippet => {
+    snippet.hidden = snippet.dataset.format !== format;
+  });
+}
+
 function initializeCasProperties() {
   document.querySelectorAll('.cas-properties').forEach(enhanceCasProperties);
 
   document.addEventListener('click', event => {
     const target = event.target;
-    const format = target.closest('.cas-properties-format button');
+    const format = target.closest('.cas-properties-format button, .cas-actuator-format button');
     if (format) {
-      writeCasPropertyFormat(format.dataset.format);
-      document.querySelectorAll('.cas-properties-format button').forEach(button =>
-        button.setAttribute('aria-pressed', String(button.dataset.format === format.dataset.format)));
-      document.querySelectorAll('.cas-property.open').forEach(renderCasPropertyUsage);
-      document.querySelectorAll('.cas-properties-copy span').forEach(label =>
-        label.textContent = casPropertyCopyLabel(label.closest('.cas-properties')));
+      applyCasPropertyFormat(format.dataset.format);
       return;
     }
     const filter = target.closest('.cas-properties-filter');
@@ -1111,4 +1119,98 @@ function initializeCasProperties() {
       applyCasPropertyFilter(event.target.closest('.cas-properties'));
     }
   });
+}
+
+function toggleCasOperation(operation, open) {
+  const expand = open ?? !operation.classList.contains('open');
+  operation.classList.toggle('open', expand);
+  operation.querySelector('.cas-op-row').setAttribute('aria-expanded', String(expand));
+  operation.querySelector('.cas-op-detail').hidden = !expand;
+}
+
+function selectCasActuatorTab(block, name) {
+  block.querySelectorAll('.cas-actuator-tab').forEach(tab => tab.setAttribute('aria-selected', String(tab.dataset.tab === name)));
+  block.querySelectorAll('.cas-actuator-panel').forEach(panel => {
+    panel.hidden = panel.dataset.tab !== name;
+  });
+}
+
+function applyCasActuatorFilter(section) {
+  const text = (section.querySelector('.cas-actuator-search input')?.value || '').trim().toLowerCase();
+  const method = section.querySelector('.cas-actuator-method[aria-pressed="true"]')?.dataset.method || '';
+  section.querySelectorAll('.cas-op').forEach(operation => {
+    operation.hidden = (method !== '' && operation.dataset.method !== method)
+      || (text !== '' && !operation.dataset.text.includes(text));
+  });
+}
+
+function openCasOperationFromHash() {
+  if (!location.hash.startsWith('#actuator-')) {
+    return;
+  }
+  const operation = document.getElementById(decodeURIComponent(location.hash.substring(1)));
+  if (operation?.classList.contains('cas-op')) {
+    toggleCasOperation(operation, true);
+    operation.scrollIntoView({block: 'start'});
+  }
+}
+
+function initializeCasActuators() {
+  if (!document.querySelector('.cas-actuators')) {
+    return;
+  }
+  const format = readCasPropertyFormat();
+  document.querySelectorAll('.cas-actuator-format button').forEach(button =>
+    button.setAttribute('aria-pressed', String(button.dataset.format === format)));
+  document.querySelectorAll('.cas-actuator-snippet').forEach(snippet => {
+    snippet.hidden = snippet.dataset.format !== format;
+  });
+
+  document.addEventListener('click', event => {
+    const target = event.target;
+    const row = target.closest('.cas-op-row');
+    if (row) {
+      toggleCasOperation(row.closest('.cas-op'));
+      return;
+    }
+    const tab = target.closest('.cas-actuator-tab');
+    if (tab) {
+      selectCasActuatorTab(tab.closest('.cas-actuators'), tab.dataset.tab);
+      return;
+    }
+    const goto = target.closest('.cas-actuator-goto');
+    if (goto) {
+      const block = goto.closest('.cas-actuators');
+      selectCasActuatorTab(block, goto.dataset.tab);
+      block.querySelector('.cas-actuator-shared').scrollIntoView({behavior: 'smooth', block: 'start'});
+      return;
+    }
+    const choice = target.closest('.cas-actuator-choice button');
+    if (choice) {
+      const group = choice.closest('.cas-actuator-choice').dataset.group;
+      const panel = choice.closest('.cas-actuator-panel');
+      choice.closest('.cas-actuator-choice').querySelectorAll('button').forEach(button =>
+        button.setAttribute('aria-pressed', String(button === choice)));
+      panel.querySelectorAll(`.cas-actuator-choice-panel[data-group="${group}"]`).forEach(option => {
+        option.hidden = option.dataset.choice !== choice.dataset.choice;
+      });
+      return;
+    }
+    const method = target.closest('.cas-actuator-method');
+    if (method) {
+      const section = method.closest('.cas-actuator');
+      section.querySelectorAll('.cas-actuator-method').forEach(button =>
+        button.setAttribute('aria-pressed', String(button === method)));
+      applyCasActuatorFilter(section);
+    }
+  });
+
+  document.addEventListener('input', event => {
+    if (event.target.matches('.cas-actuator-search input')) {
+      applyCasActuatorFilter(event.target.closest('.cas-actuator'));
+    }
+  });
+
+  window.addEventListener('hashchange', openCasOperationFromHash);
+  openCasOperationFromHash();
 }
