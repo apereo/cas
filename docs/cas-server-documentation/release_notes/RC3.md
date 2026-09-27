@@ -94,6 +94,9 @@ for released versions is unaffected. Notable changes include:
   of how they are written (property names, environment variables or pasted assignments), supports exact name matches,
   searches names or descriptions, filters CAS or third-party and deprecated settings, and keeps the search in the page address so results can be shared.
 - Pressing <kbd>Shift</kbd> twice on any documentation page opens a quick search for configuration settings.
+- [Feature toggles](../configuration/Configuration-Feature-Toggles.html) are grouped by area and can be searched or filtered
+  to those that are off by default. Each feature can be expanded to show its modules, their default state, the auto-configuration
+  classes they control and a link to the relevant documentation, and every toggle can be copied as `.properties`, YAML or environment variables.
 
 ## Other Stuff
 
