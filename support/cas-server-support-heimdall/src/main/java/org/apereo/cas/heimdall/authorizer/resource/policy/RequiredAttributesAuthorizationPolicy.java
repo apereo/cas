@@ -48,11 +48,11 @@ public class RequiredAttributesAuthorizationPolicy implements ResourceAuthorizat
         val principalAttributes = request.getPrincipal().getAttributes();
         return getAttributes()
             .entrySet()
-            .parallelStream()
+            .stream()
             .filter(entry -> principalAttributes.containsKey(entry.getKey()))
             .filter(entry -> {
                 val attributeValues = CollectionUtils.toCollection(principalAttributes.get(entry.getKey()));
-                return entry.getValue().parallelStream().anyMatch(value -> RegexUtils.findFirst(value, attributeValues).isPresent());
+                return entry.getValue().stream().anyMatch(value -> RegexUtils.findFirst(value, attributeValues).isPresent());
             })
             .findAny()
             .map(entry -> AuthorizationResult.granted("OK"))

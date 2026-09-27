@@ -24,7 +24,7 @@ public class DefaultResourceAuthorizer implements ResourceAuthorizer {
 
     protected boolean enforceAnyPolicy(final AuthorizationRequest request, final AuthorizableResource resource) {
         return resource.getPolicies()
-            .parallelStream()
+            .stream()
             .map(Unchecked.function(policy -> policy.evaluate(resource, request)))
             .anyMatch(AuthorizationResult::authorized);
     }
@@ -32,7 +32,7 @@ public class DefaultResourceAuthorizer implements ResourceAuthorizer {
     protected boolean enforceAllPolicies(final AuthorizationRequest request,
                                          final AuthorizableResource resource) {
         return resource.getPolicies()
-            .parallelStream()
+            .stream()
             .map(Unchecked.function(policy -> policy.evaluate(resource, request)))
             .allMatch(AuthorizationResult::authorized);
     }

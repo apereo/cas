@@ -505,7 +505,8 @@ function addHeimdallPolicy(policy = null) {
         {key: "url", label: "JDBC URL", placeholder: "jdbc:postgresql://localhost/cas"},
         {key: "username", label: "Username"},
         {key: "password", label: "Password", type: "password"},
-        {key: "query", label: "SQL Query", placeholder: "select authorized from ..."}
+        {key: "query", label: "SQL Query", placeholder: "select authorized from ..."},
+        {key: "dataSourceName", label: "Data Source Bean Name", placeholder: "Optional; derived from the URL and username"}
     ]));
     const policyBody = $("<div>", {id: policyBodyId, class: "heimdall-policy-card-body"});
     card.children(".heimdall-policy-fields").appendTo(policyBody);
@@ -653,7 +654,7 @@ function prefillHeimdallPolicyMap(card, key, value, multipleValues = false) {
 
 function prefillHeimdallPolicy(card, policy, policyType) {
     for (const key of ["script", "groupField", "attributeDefinition", "roleName", "issuer", "url", "method",
-        "apiUrl", "storeId", "token", "relation", "userType", "username", "password", "query"]) {
+        "apiUrl", "storeId", "token", "relation", "userType", "username", "password", "query", "dataSourceName"]) {
         setHeimdallPolicyField(card, key, policy[key]);
     }
     for (const key of ["groups", "acrs", "amrs", "audience", "scopes"]) {
@@ -741,7 +742,7 @@ function buildHeimdallPolicy(card) {
             copy(key);
         }
     } else if (type === "JdbcAuthorizationPolicy") {
-        for (const key of ["url", "username", "password", "query"]) {
+        for (const key of ["url", "username", "password", "query", "dataSourceName"]) {
             copy(key);
         }
     }

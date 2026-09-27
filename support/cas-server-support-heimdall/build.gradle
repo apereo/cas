@@ -54,7 +54,8 @@ dependencies {
     runtimeOnly project(":support:cas-server-support-jdbc-drivers")
     
     testImplementation libraries.grouper
-
+    testImplementation libraries.hikaricp
+    
     testImplementation project(":support:cas-server-support-person-directory")
     testImplementation project(":support:cas-server-support-webconfig")
     

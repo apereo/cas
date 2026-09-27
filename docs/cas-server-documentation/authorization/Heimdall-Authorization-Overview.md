@@ -527,8 +527,15 @@ The following settings are available:
 | `url`      | <sup>[1]</sup> The database connection string, i.e. `jdbc:mysql://localhost:3306/cas`     |
 | `username` | <sup>[1]</sup> The username when building a database connection.                          |
 | `password` | <sup>[1]</sup> The password when building a database connection.                          |
+| `dataSourceName` | Optional name of the data source bean to use; see below.                              |
 
 <sub><i>[1] This field supports the [Spring Expression Language](../configuration/Configuration-Spring-Expressions.html) syntax.</i></sub>
+
+The policy looks up its data source as a bean in the application context, named `dataSourceName` when defined or
+`heimdallJdbcDataSource-<hash>` derived from the URL and username otherwise. When no such bean exists, CAS creates a
+connection pool with default settings that keeps no idle connections, registers it under that name, and shares it
+across all policies with the same name until CAS shuts down. A deployment may define its own data source bean with that
+name to control pooling.
 
 The SQL query is preprocessed to receive the following named parameters:
 

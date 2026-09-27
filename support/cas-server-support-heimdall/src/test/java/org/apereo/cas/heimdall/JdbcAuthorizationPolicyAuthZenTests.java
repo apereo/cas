@@ -2,15 +2,14 @@ package org.apereo.cas.heimdall;
 
 import module java.base;
 import org.apereo.cas.heimdall.authorizer.resource.AuthorizableResource;
-import org.apereo.cas.heimdall.authorizer.resource.policy.JdbcAuthorizationPolicy;
 import org.apereo.cas.heimdall.authzen.AuthZenAction;
 import org.apereo.cas.heimdall.authzen.AuthZenResource;
 import org.apereo.cas.heimdall.authzen.AuthZenSubject;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
 import lombok.val;
-import org.apache.commons.lang3.StringUtils;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.springframework.context.support.GenericApplicationContext;
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
@@ -24,10 +23,9 @@ class JdbcAuthorizationPolicyAuthZenTests {
 
     @Test
     void verifyAuthZenParameters() throws Throwable {
-        val policy = new JdbcAuthorizationPolicy()
-            .setUrl("jdbc:hsqldb:mem:" + UUID.randomUUID())
-            .setUsername("sa")
-            .setPassword(StringUtils.EMPTY)
+        val applicationContext = new GenericApplicationContext();
+        applicationContext.refresh();
+        val policy = JdbcAuthorizationPolicyDataSourceTests.newPolicy("jdbc:hsqldb:mem:" + UUID.randomUUID(), applicationContext)
             .setQuery("""
                 SELECT authorized FROM heimdall_grants
                 WHERE subject_type = :subjectType AND subject_id = :subjectId
@@ -61,6 +59,7 @@ class JdbcAuthorizationPolicyAuthZenTests {
                 AuthZenResource.builder().type("account").id("456").build())).authorized());
         } finally {
             template.getJdbcOperations().execute("SHUTDOWN");
+            applicationContext.close();
         }
     }
 }

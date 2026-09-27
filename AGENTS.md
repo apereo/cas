@@ -29,6 +29,13 @@
   context and attributes, so they already win; an overwrite claim there was a false finding. Check that policy
   file deletion removes cached grants. `enforceAllPolicies=false` means any one policy grants (`anyMatch`), and an
   empty policy list denies before either combiner runs.
+- JDBC policies resolve their `DataSource` by bean name (`dataSourceName`, else `heimdallJdbcDataSource-<sha256(url|username)>`)
+  and register a `JpaBeans.newPoolingDataSource` pool (Hikari defaults, `minimumIdle=0`) through
+  `GenericApplicationContext.registerBean` under a lock, so Spring closes it on shutdown. Never cache a pool on a
+  policy instance (policies are rebuilt on every file reload) and never use `registerSingleton` for closeable beans:
+  Spring gives registered singletons no destruction callbacks. Tests override `resolveApplicationContext()` with a
+  local context rather than relying on the static `ApplicationContextProvider`, which parallel tests share.
+- Policies evaluate sequentially; do not reintroduce `parallelStream()` (blocking policies starve `commonPool`).
 - Palantir rebuilds resources from a fixed field list (`heimdallResourceForStorage`) and re-saves the whole
   namespace; any new `AuthorizableResource` field must be added there or an edit silently drops it.
 - AuthZEN evaluated denials use HTTP 200 with `decision:false`; authentication failures use 401.
