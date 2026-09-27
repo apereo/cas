@@ -574,6 +574,23 @@ class HeimdallAuthorizationControllerTests {
     }
 
     @Test
+    void verifyAuthZenIgnoresUnknownFields() throws Throwable {
+        val body = """
+            {
+              "subject": {"type": "user", "id": "casperson", "unknown": 1},
+              "resource": {"type": "entity", "id": "7240d0db", "unknown": true},
+              "action": {"name": "can_read", "properties": {"method": "GET"}},
+              "context": {"time": "2026-01-01T00:00:00Z"},
+              "future_field": {"name": "value"}
+            }
+            """;
+        mockMvc.perform(post("/heimdall/authzen").contentType(MediaType.APPLICATION_JSON).content(body)
+                .header(HttpHeaders.AUTHORIZATION, clientCredentials()))
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$.decision").value(true));
+    }
+
+    @Test
     void verifyAuthZenPublicClientIsRejected() throws Throwable {
         val registeredService = newOidcRegisteredService("heimdall-" + UUID.randomUUID());
         servicesManager.save(registeredService);

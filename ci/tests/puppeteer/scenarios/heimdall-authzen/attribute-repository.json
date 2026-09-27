@@ -1,0 +1,15 @@
+{
+  "casuser": {
+    "memberOf": [ "editors" ]
+  },
+  "alice": {
+    "memberOf": [ "readers" ]
+  },
+  "bob": {
+    "memberOf": [ "editors" ]
+  },
+  "carol": {
+    "memberOf": [ "editors" ],
+    "status": [ "suspended" ]
+  }
+}

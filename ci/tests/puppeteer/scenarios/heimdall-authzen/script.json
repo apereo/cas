@@ -1,0 +1,27 @@
+{
+  "dependencies": "heimdall,oauth-webflow,throttle",
+
+  "properties": [
+    "--cas.server.name=https://localhost:8443",
+    "--cas.server.prefix=${cas.server.name}/cas",
+
+    "--cas.service-registry.core.init-from-json=true",
+    "--cas.service-registry.json.location=file:${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/services",
+
+    "--cas.heimdall.json.location=file:${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/policies",
+
+    "--cas.authn.attribute-repository.json[0].location=file:${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/attribute-repository.json",
+    "--cas.authn.attribute-repository.json[0].id=HeimdallSubjects",
+
+    "--cas.authn.throttle.failure.threshold=2",
+    "--cas.authn.throttle.failure.range-seconds=3",
+    "--cas.authn.throttle.failure.code=AUTHENTICATION_FAILED",
+    "--cas.authn.throttle.schedule.start-delay=PT60S",
+
+    "--management.endpoints.web.exposure.include=heimdall",
+    "--management.endpoint.heimdall.access=UNRESTRICTED",
+    "--cas.monitor.endpoints.endpoint.heimdall.access=ANONYMOUS",
+
+    "--logging.level.org.apereo.cas.heimdall=debug"
+  ]
+}

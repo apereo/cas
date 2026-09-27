@@ -15,8 +15,10 @@
   access; `HeimdallRegisteredServiceAccessStrategy` (alone or chained) can refuse it. DPoP and `x509_digest`
   certificate bindings are enforced. On AuthZEN, Basic means `client_id:client_secret` (reject clients without secrets:
   `DefaultOAuth20ClientSecretValidator.validate` returns true when none is defined); on `/heimdall/authorize` it
-  stays CAS user credentials, split on the first colon. Both endpoints are throttled via `HeimdallThrottledRequestFilter`
-  (it claims only 200/401 responses, since the throttle interceptor counts every non-2xx response as a failure).
+  stays CAS user credentials, split on the first colon. Both endpoints are throttled; `HeimdallThrottledHandlerInterceptor`
+  forwards only 401s to the throttle interceptors' post-processing. A `ThrottledRequestFilter` cannot limit what
+  counts: the default `httpPost()` filter claims every POST and the plan combines filters with `anyMatch`, and the
+  interceptors record every non-2xx response (twice: `postHandle` and `afterCompletion`).
   Create registry-backed single-use markers through the `TicketFactory` (TST factory, custom `ExpirationPolicy` in
   a *mutable* properties map: `buildExpirationPolicy` removes that key, so `Map.of` throws), never by instantiating
   ticket implementations.
@@ -34,8 +36,11 @@
 - Read shared helpers before reporting leaks: request headers already filter credentials and the request
   principal is JSON-ignored. Confirm performance severity with evidence; blocking policy parallel streams
   and unpooled JDBC merit investigation, not an unmeasured claim of outage.
-- There is no dedicated Heimdall Puppeteer coverage; Palantir merely includes the module. The shared nginx
-  authorization example omits namespace, so it cannot establish working endpoint integration.
+- Puppeteer scenario `heimdall-authzen` covers the AuthZEN endpoint end to end (decisions across namespaces,
+  id patterns, deny-wins, empty policies, `X-Request-ID`, unknown fields, 400/401, the Heimdall access strategy,
+  client-credential and bearer PEPs, the legacy endpoint, the actuator and throttling). It also enables throttling,
+  so keep 401-producing steps at least one throttle window apart. Palantir scenarios only check that tabs load,
+  and the shared nginx `/authorize` example is not exercised by any scenario.
 
 Guidance for AI coding agents working in the Apereo CAS source tree.
 

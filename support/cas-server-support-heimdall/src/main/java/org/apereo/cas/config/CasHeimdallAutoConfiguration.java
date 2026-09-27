@@ -6,6 +6,7 @@ import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.features.CasFeatureModule;
 import org.apereo.cas.heimdall.HeimdallAuthorizationController;
 import org.apereo.cas.heimdall.HeimdallAuthorizationEndpoint;
+import org.apereo.cas.heimdall.HeimdallThrottledHandlerInterceptor;
 import org.apereo.cas.heimdall.HeimdallThrottledRequestFilter;
 import org.apereo.cas.heimdall.authorizer.DefaultResourceAuthorizer;
 import org.apereo.cas.heimdall.authorizer.ResourceAuthorizer;
@@ -178,7 +179,8 @@ public class CasHeimdallAutoConfiguration {
                 @Override
                 public void addInterceptors(final @NonNull InterceptorRegistry registry) {
                     authenticationThrottlingExecutionPlan.ifAvailable(plan -> {
-                        val handler = new RefreshableHandlerInterceptor(plan::getAuthenticationThrottleInterceptors);
+                        val handler = new HeimdallThrottledHandlerInterceptor(
+                            new RefreshableHandlerInterceptor(plan::getAuthenticationThrottleInterceptors));
                         registry.addInterceptor(handler).order(0).addPathPatterns(HeimdallThrottledRequestFilter.ENDPOINTS);
                     });
                 }

@@ -1,0 +1,67 @@
+{
+  "@class": "org.apereo.cas.heimdall.authorizer.resource.AuthorizableResources",
+  "resources": [
+    "java.util.ArrayList",
+    [
+      {
+        "@class": "org.apereo.cas.heimdall.authorizer.resource.AuthorizableResource",
+        "id": 1,
+        "resourceType": "document",
+        "resourceIdPattern": "doc-[0-9]+",
+        "actions": [
+          "java.util.HashSet",
+          [
+            "can_read"
+          ]
+        ],
+        "policies": [
+          "java.util.ArrayList",
+          [
+            {
+              "@class": "org.apereo.cas.heimdall.authorizer.resource.policy.RequiredAttributesAuthorizationPolicy",
+              "attributes": {
+                "@class": "java.util.HashMap",
+                "memberOf": [
+                  "java.util.HashSet",
+                  [
+                    "(readers|editors)"
+                  ]
+                ]
+              }
+            }
+          ]
+        ]
+      },
+      {
+        "@class": "org.apereo.cas.heimdall.authorizer.resource.AuthorizableResource",
+        "id": 2,
+        "resourceType": "document",
+        "resourceIdPattern": "doc-[0-9]+",
+        "actions": [
+          "java.util.HashSet",
+          [
+            "can_write"
+          ]
+        ],
+        "policies": [
+          "java.util.ArrayList",
+          [
+            {
+              "@class": "org.apereo.cas.heimdall.authorizer.resource.policy.RequiredAttributesAuthorizationPolicy",
+              "attributes": {
+                "@class": "java.util.HashMap",
+                "memberOf": [
+                  "java.util.HashSet",
+                  [
+                    "editors"
+                  ]
+                ]
+              }
+            }
+          ]
+        ]
+      }
+    ]
+  ],
+  "namespace": "DOCUMENTS"
+}

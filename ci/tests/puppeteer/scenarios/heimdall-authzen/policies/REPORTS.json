@@ -1,0 +1,20 @@
+{
+  "@class": "org.apereo.cas.heimdall.authorizer.resource.AuthorizableResources",
+  "resources": [
+    "java.util.ArrayList",
+    [
+      {
+        "@class": "org.apereo.cas.heimdall.authorizer.resource.AuthorizableResource",
+        "id": 1,
+        "resourceType": "report",
+        "actions": [
+          "java.util.HashSet",
+          [
+            "can_read"
+          ]
+        ]
+      }
+    ]
+  ],
+  "namespace": "REPORTS"
+}

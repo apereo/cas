@@ -6,6 +6,7 @@ import org.apereo.cas.heimdall.authzen.AuthZenAction;
 import org.apereo.cas.heimdall.authzen.AuthZenResource;
 import org.apereo.cas.heimdall.authzen.AuthZenSubject;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -23,6 +24,7 @@ import org.springframework.validation.annotation.Validated;
  * @since 7.2.0
  */
 @Data
+@JsonIgnoreProperties(ignoreUnknown = true)
 @NoArgsConstructor
 @Validated
 @ToString

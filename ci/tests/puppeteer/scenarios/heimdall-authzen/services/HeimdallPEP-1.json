@@ -1,0 +1,9 @@
+{
+  "@class": "org.apereo.cas.support.oauth.services.OAuthRegisteredService",
+  "clientId": "heimdall-pep",
+  "clientSecret": "pep:s3cret",
+  "serviceId": "^https://pep.example.org/.*",
+  "name": "HeimdallPEP",
+  "id": 1,
+  "supportedGrantTypes": [ "java.util.HashSet", [ "client_credentials" ] ]
+}

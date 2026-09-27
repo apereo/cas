@@ -20,22 +20,13 @@ class HeimdallThrottledRequestFilterTests {
 
     @ParameterizedTest
     @CsvSource({
-        "POST,/cas/heimdall/authorize,200,true",
-        "POST,/cas/heimdall/authorize,401,true",
-        "POST,/cas/heimdall/authorize,403,false",
-        "POST,/cas/heimdall/authorize,404,false",
-        "POST,/cas/heimdall/authorize,400,false",
-        "GET,/cas/heimdall/authorize,200,false",
-        "POST,/cas/heimdall/authzen,200,true",
-        "POST,/cas/heimdall/authzen,401,true",
-        "POST,/cas/heimdall/authzen,400,false",
-        "POST,/cas/heimdall/authzen,500,false",
-        "POST,/cas/heimdall/other,401,false"
+        "POST,/cas/heimdall/authorize,true",
+        "POST,/cas/heimdall/authzen,true",
+        "GET,/cas/heimdall/authorize,false",
+        "POST,/cas/heimdall/other,false"
     })
-    void verifyOperation(final String method, final String uri, final int status, final boolean supported) {
+    void verifyOperation(final String method, final String uri, final boolean supported) {
         val request = new MockHttpServletRequest(method, uri);
-        val response = new MockHttpServletResponse();
-        response.setStatus(status);
-        assertEquals(supported, new HeimdallThrottledRequestFilter().supports(request, response));
+        assertEquals(supported, new HeimdallThrottledRequestFilter().supports(request, new MockHttpServletResponse()));
     }
 }
