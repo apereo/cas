@@ -6,7 +6,6 @@ import org.apereo.cas.heimdall.AuthorizationResponse;
 import org.apereo.cas.heimdall.authorizer.ResourceAuthorizer;
 import org.apereo.cas.heimdall.authorizer.repository.AuthorizableResourceRepository;
 import org.apereo.cas.heimdall.authorizer.resource.AuthorizableResource;
-import io.micrometer.common.util.StringUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.val;
 
@@ -23,6 +22,9 @@ public class DefaultAuthorizationEngine implements AuthorizationEngine {
 
     @Override
     public AuthorizationResponse authorize(final AuthorizationRequest request) {
+        if (request.getPrincipal() == null) {
+            return AuthorizationResponse.unauthorized("No authorization principal could be resolved");
+        }
         val resources = findResources(request);
         if (resources.isEmpty()) {
             return AuthorizationResponse.notFound("No authorizable resource can be found");
@@ -40,10 +42,9 @@ public class DefaultAuthorizationEngine implements AuthorizationEngine {
     }
 
     private List<AuthorizableResource> findResources(final AuthorizationRequest request) {
-        if (StringUtils.isBlank(request.getNamespace())) {
-            return repository.find(request.getResource().getId());
+        if (request.isAuthZen()) {
+            return repository.find(request.getResource(), request.getAction());
         }
-        val resource = repository.find(request);
-        return resource.map(List::of).orElseGet(List::of);
+        return repository.find(request).map(List::of).orElseGet(List::of);
     }
 }

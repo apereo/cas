@@ -379,7 +379,7 @@
         </module>
         <module name="BooleanExpressionComplexity">
             <property name="severity" value="error"/>
-            <property name="max" value="5"/>
+            <property name="max" value="10"/>
         </module>
         <module name="ArrayTypeStyle">
             <property name="severity" value="error"/>

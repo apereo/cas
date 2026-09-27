@@ -83,6 +83,13 @@ public class JdbcAuthorizationPolicy implements ResourceAuthorizationPolicy {
         parameters.addValue("uri", request.getUri());
         parameters.addValue("namespace", request.getNamespace());
         parameters.addValue("principal", request.getPrincipal().getId());
+        if (request.isAuthZen()) {
+            parameters.addValue("subjectType", request.getSubject().getType());
+            parameters.addValue("subjectId", request.getSubject().getId());
+            parameters.addValue("resourceType", request.getResource().getType());
+            parameters.addValue("resourceId", request.getResource().getId());
+            parameters.addValue("action", request.getAction().getName());
+        }
         return parameters;
     }
 

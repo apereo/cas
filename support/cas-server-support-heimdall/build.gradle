@@ -16,6 +16,7 @@ dependencies {
     api project(":api:cas-server-core-api-ticket")
 
     implementation libraries.jose4j
+    implementation libraries.pac4jcore
     implementation libraries.nimbus
     implementation libraries.springsecurityweb
     implementation libraries.springsecurityconfig
@@ -33,6 +34,7 @@ dependencies {
     implementation project(":core:cas-server-core-rest-api")
     implementation project(":core:cas-server-core-webflow-api")
     implementation project(":core:cas-server-core-authentication-api")
+    implementation project(":core:cas-server-core-authentication-throttle")
     implementation project(":core:cas-server-core-authentication-mfa-api")
     implementation project(":core:cas-server-core-services-authentication")
     implementation project(":core:cas-server-core-logout-api")

@@ -83,12 +83,7 @@ public class OpenFGAAuthorizationPolicy implements ResourceAuthorizationPolicy {
             val store = Strings.CI.removeEnd(SpringExpressionLanguageValueResolver.getInstance().resolve(this.storeId), "/");
             val fgaApiUrl = String.format("%s/stores/%s/check", url, store);
 
-            val checkEntity = AuthorizationRequestEntity.builder()
-                .object(request.getNamespace() + ':' + request.getMethod() + ':' + request.getUri())
-                .relation(StringUtils.defaultIfBlank(SpringExpressionLanguageValueResolver.getInstance().resolve(this.relation), "owner"))
-                .user(StringUtils.defaultIfBlank(this.userType, "user") + ':' + request.getPrincipal().getId())
-                .build()
-                .toJson();
+            val checkEntity = buildAuthorizationRequestEntity(request).toJson();
             val exec = HttpExecutionRequest.builder()
                 .method(HttpMethod.POST)
                 .url(fgaApiUrl)
@@ -114,6 +109,22 @@ public class OpenFGAAuthorizationPolicy implements ResourceAuthorizationPolicy {
             HttpUtils.close(response);
         }
         return AuthorizationResult.denied("Denied");
+    }
+
+    private AuthorizationRequestEntity buildAuthorizationRequestEntity(final AuthorizationRequest request) {
+        val configuredRelation = SpringExpressionLanguageValueResolver.getInstance().resolve(this.relation);
+        if (request.isAuthZen()) {
+            return AuthorizationRequestEntity.builder()
+                .object(request.getResource().getType() + ':' + request.getResource().getId())
+                .relation(StringUtils.defaultIfBlank(configuredRelation, request.getAction().getName()))
+                .user(StringUtils.defaultIfBlank(this.userType, request.getSubject().getType()) + ':' + request.getPrincipal().getId())
+                .build();
+        }
+        return AuthorizationRequestEntity.builder()
+            .object(request.getNamespace() + ':' + request.getMethod() + ':' + request.getUri())
+            .relation(StringUtils.defaultIfBlank(configuredRelation, "owner"))
+            .user(StringUtils.defaultIfBlank(this.userType, "user") + ':' + request.getPrincipal().getId())
+            .build();
     }
 
     @SuperBuilder

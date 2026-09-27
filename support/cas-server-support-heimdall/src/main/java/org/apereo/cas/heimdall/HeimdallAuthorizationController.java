@@ -1,6 +1,7 @@
 package org.apereo.cas.heimdall;
 
 import module java.base;
+import org.apereo.cas.heimdall.authzen.AuthZenResponse;
 import org.apereo.cas.heimdall.engine.AuthorizationEngine;
 import org.apereo.cas.heimdall.engine.AuthorizationPrincipalParser;
 import org.apereo.cas.util.LoggingUtils;
@@ -12,7 +13,10 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.apache.commons.lang3.StringUtils;
+import org.pac4j.jee.context.JEEContext;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.util.Assert;
@@ -21,6 +25,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 
 /**
@@ -43,6 +48,8 @@ public class HeimdallAuthorizationController {
      */
     public static final String BASE_URL = "/heimdall";
 
+    private static final String REQUEST_ID_HEADER = "X-Request-ID";
+
     private final AuthorizationEngine authorizationEngine;
     private final AuthorizationPrincipalParser principalParser;
 
@@ -51,10 +58,11 @@ public class HeimdallAuthorizationController {
      *
      * @param authorizationRequest the authorization request
      * @param request              the request
+     * @param response             the response
      * @return the response entity
      */
     @PostMapping("/authzen")
-    @Operation(summary = "Authorize request via OpenID Connect AuthZen API",
+    @Operation(summary = "Authorize request via OpenID AuthZEN API",
         requestBody = @io.swagger.v3.oas.annotations.parameters.RequestBody(
             required = true,
             description = "AuthZenRequest JSON payload",
@@ -64,23 +72,41 @@ public class HeimdallAuthorizationController {
             )
         ))
     public ResponseEntity authzen(
-        @RequestBody
-        final @Valid AuthorizationRequest authorizationRequest,
-        final HttpServletRequest request) {
+        @RequestBody final @Valid AuthorizationRequest authorizationRequest,
+        final HttpServletRequest request, final HttpServletResponse response) {
 
+        val requestId = request.getHeader(REQUEST_ID_HEADER);
+        if (StringUtils.isNotBlank(requestId)) {
+            response.setHeader(REQUEST_ID_HEADER, requestId);
+        }
         try {
-            Assert.notNull(authorizationRequest.getSubject(), "Method cannot be null");
-            Assert.notNull(authorizationRequest.getAction(), "URI cannot be null");
-            Assert.notNull(authorizationRequest.getResource(), "Namespace cannot be null");
-            Assert.notNull(authorizationRequest.getContext(), "Context cannot be null");
-            
-            val requestToAuthorize = prepareAuthorizationRequest(authorizationRequest, request);
+            Assert.notNull(authorizationRequest.getSubject(), "Subject is required");
+            Assert.hasText(authorizationRequest.getSubject().getId(), "Subject id is required");
+            Assert.hasText(authorizationRequest.getSubject().getType(), "Subject type is required");
+            Assert.notNull(authorizationRequest.getAction(), "Action is required");
+            Assert.hasText(authorizationRequest.getAction().getName(), "Action name is required");
+            Assert.notNull(authorizationRequest.getResource(), "Resource is required");
+            Assert.hasText(authorizationRequest.getResource().getId(), "Resource id is required");
+            Assert.hasText(authorizationRequest.getResource().getType(), "Resource type is required");
+            Assert.notNull(authorizationRequest.getContext(), "Context must be an object");
+        } catch (final IllegalArgumentException e) {
+            return ResponseEntity.badRequest().body(Map.of("message", e.getMessage()));
+        }
+
+        var requestToAuthorize = AuthorizationRequest.builder().build();
+        try {
+            requestToAuthorize = prepareAuthorizationRequest(authorizationRequest, request, response);
+        } catch (final Throwable e) {
+            LOGGER.debug("AuthZEN caller authentication failed", e);
+            return unauthenticated();
+        }
+        try {
             requestToAuthorize.log();
-            val authorizationResponse = authorizationEngine.authorize(requestToAuthorize);
-            return buildResponse(authorizationResponse);
+            val decision = authorizationEngine.authorize(requestToAuthorize);
+            return ResponseEntity.ok(AuthZenResponse.builder().decision(decision.getDecision()).build());
         } catch (final Throwable e) {
             LoggingUtils.error(LOGGER, e);
-            return buildResponse(AuthorizationResponse.unauthorized(e.getMessage()));
+            return ResponseEntity.internalServerError().build();
         }
     }
 
@@ -90,6 +116,7 @@ public class HeimdallAuthorizationController {
      *
      * @param authorizationRequest the authorization request
      * @param request              the request
+     * @param response             the response
      * @return the response entity
      */
     @PostMapping("/authorize")
@@ -103,17 +130,30 @@ public class HeimdallAuthorizationController {
             )
         ))
     public ResponseEntity authorize(
-        @RequestBody
-        final @Valid AuthorizationRequest authorizationRequest,
-        final HttpServletRequest request) {
+        @RequestBody final @Valid AuthorizationRequest authorizationRequest,
+        final HttpServletRequest request, final HttpServletResponse response) {
 
+        if (authorizationRequest.getSubject() != null || authorizationRequest.getResource() != null || authorizationRequest.getAction() != null) {
+            val body = Map.of("message", "Subject, resource and action belong to AuthZEN requests; use %s/authzen".formatted(BASE_URL));
+            return ResponseEntity.badRequest().body(body);
+        }
+        var requestToAuthorize = AuthorizationRequest.builder().build();
         try {
             Assert.notNull(authorizationRequest.getMethod(), "Method cannot be null");
             Assert.notNull(authorizationRequest.getUri(), "URI cannot be null");
             Assert.notNull(authorizationRequest.getNamespace(), "Namespace cannot be null");
             Assert.notNull(authorizationRequest.getContext(), "Context cannot be null");
-
-            val requestToAuthorize = prepareAuthorizationRequest(authorizationRequest, request);
+        } catch (final IllegalArgumentException e) {
+            LoggingUtils.error(LOGGER, e);
+            return buildResponse(AuthorizationResponse.unauthorized(e.getMessage()));
+        }
+        try {
+            requestToAuthorize = prepareAuthorizationRequest(authorizationRequest, request, response);
+        } catch (final Throwable e) {
+            LOGGER.debug("Heimdall caller authentication failed", e);
+            return unauthenticated();
+        }
+        try {
             requestToAuthorize.log();
             val authorizationResponse = authorizationEngine.authorize(requestToAuthorize);
             return buildResponse(authorizationResponse);
@@ -123,11 +163,18 @@ public class HeimdallAuthorizationController {
         }
     }
 
+    private static ResponseEntity unauthenticated() {
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+            .header(HttpHeaders.WWW_AUTHENTICATE, "Bearer", "DPoP", "Basic realm=\"Heimdall\"")
+            .build();
+    }
+
     private AuthorizationRequest prepareAuthorizationRequest(final AuthorizationRequest authorizationRequest,
-                                                             final HttpServletRequest request) throws Throwable {
+                                                             final HttpServletRequest request,
+                                                             final HttpServletResponse response) throws Throwable {
         val authorizationHeader = Objects.requireNonNull(request.getHeader(HttpHeaders.AUTHORIZATION));
         Assert.hasText(authorizationHeader, "Authorization header cannot be blank");
-        val principal = principalParser.parse(authorizationHeader, authorizationRequest);
+        val principal = principalParser.parse(authorizationHeader, authorizationRequest, new JEEContext(request, response));
         val headers = HttpRequestUtils.getRequestHeaders(request);
         val requestToAuthorize = authorizationRequest.withPrincipal(principal);
         requestToAuthorize.getContext().putAll((Map) headers);

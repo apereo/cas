@@ -2,6 +2,7 @@ package org.apereo.cas.configuration.model.support.heimdall;
 
 import module java.base;
 import org.apereo.cas.configuration.model.SpringResourceProperties;
+import org.apereo.cas.configuration.support.DurationCapable;
 import org.apereo.cas.configuration.support.RequiresModule;
 import lombok.Getter;
 import lombok.Setter;
@@ -29,4 +30,12 @@ public class HeimdallAuthorizationProperties implements Serializable {
      */
     @NestedConfigurationProperty
     private SpringResourceProperties json = new SpringResourceProperties();
+
+    /**
+     * Maximum lifetime of a JWT bearer assertion presented to Heimdall, measured
+     * between its {@code iat} and {@code exp} claims. Such assertions must also carry
+     * a {@code jti} claim and are accepted only once.
+     */
+    @DurationCapable
+    private String jwtAssertionMaxLifetime = "PT5M";
 }

@@ -99,6 +99,29 @@ The CAS documentation site has received a visual and functional overhaul. Notabl
 - The documentation build and validation time is significantly reduced and changes are now published up to `75%` faster. External links are checked on a weekly schedule
   rather than on every change, and broken external links no longer block publishing.
 
+### Heimdall AuthZEN
+
+[Heimdall](../authorization/Heimdall-Authorization-Overview.html) AuthZEN support is reworked to follow the
+[AuthZEN Authorization API 1.0](https://openid.net/specs/authorization-api-1_0.html) specification:
+
+- The AuthZEN `resource.id` now identifies the resource instance rather than a policy namespace. AuthZEN requests are matched
+  against resources in all namespaces by their new `resourceType`, `actions` and optional `resourceIdPattern` fields, and all matching resources must grant access.
+  Existing AuthZEN resources must define these fields, or AuthZEN requests are denied; requests to `/heimdall/authorize` are unaffected.
+- Evaluated denials return `200` with `"decision": false`, malformed requests `400`, and failed caller authentication `401`. The `X-Request-ID` header is echoed.
+- Tokens must be issued to a registered OAuth or OpenID Connect application whose access strategy allows access, and
+  a new Heimdall access strategy can prevent an application from calling Heimdall. DPoP-bound and certificate-bound tokens
+  now require their proof. On the AuthZEN endpoint, `Basic` credentials are the `client_id:client_secret` of a registered application
+  rather than CAS user credentials.
+- JWT bearer assertions must carry `jti` and `iat` claims, are accepted once, and may not live longer than
+  `cas.heimdall.jwt-assertion-max-lifetime` (five minutes by default).
+- Failed caller authentication on `/heimdall/authorize` now returns `401` instead of `403`. Failed caller authentication on both
+  Heimdall endpoints is subject to authentication throttling.
+- A resource with no policies now denies access instead of granting it, and the REST policy no longer sends the resource's policies to its endpoint.
+- A resource that does not set `enforceAllPolicies` is now granted when any one of its policies grants access, as documented;
+  previously every policy had to grant. Set `enforceAllPolicies` to `true` on resources that rely on the old behavior.
+- JDBC and OpenFGA policies receive the AuthZEN subject, resource and action. Palantir can edit the AuthZEN fields
+  of a resource and configure the Heimdall access strategy.
+
 ## Other Stuff
 
 - A large number of dependencies and libraries have been updated to their latest versions.

@@ -47,5 +47,15 @@ public class AuthorizationRequest extends BaseHeimdallEntity {
 
     @JsonIgnore
     private Principal principal;
+
+    /**
+     * Whether this is an AuthZEN request, which carries a subject, a resource and an action.
+     *
+     * @return true if subject, resource and action are all present
+     */
+    @JsonIgnore
+    public boolean isAuthZen() {
+        return subject != null && resource != null && action != null;
+    }
 }
 

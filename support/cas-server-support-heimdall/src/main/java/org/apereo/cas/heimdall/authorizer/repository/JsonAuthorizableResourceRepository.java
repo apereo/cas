@@ -4,13 +4,14 @@ import module java.base;
 import org.apereo.cas.heimdall.AuthorizationRequest;
 import org.apereo.cas.heimdall.authorizer.resource.AuthorizableResource;
 import org.apereo.cas.heimdall.authorizer.resource.AuthorizableResources;
+import org.apereo.cas.util.LoggingUtils;
 import org.apereo.cas.util.RegexUtils;
-import org.apereo.cas.util.function.FunctionUtils;
+import org.apereo.cas.util.concurrent.CasReentrantLock;
 import org.apereo.cas.util.io.PathWatcherService;
 import org.apereo.cas.util.io.WatcherService;
 import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
+import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-import org.apache.commons.io.FileUtils;
 import org.hjson.JsonValue;
 import org.springframework.util.Assert;
 import tools.jackson.databind.ObjectMapper;
@@ -21,31 +22,33 @@ import tools.jackson.databind.ObjectMapper;
  * @author Misagh Moayyed
  * @since 7.2.0
  */
+@Slf4j
 public class JsonAuthorizableResourceRepository implements AuthorizableResourceRepository {
     private static final ObjectMapper MAPPER = JacksonObjectMapperFactory.builder()
         .defaultTypingEnabled(true).build().toObjectMapper();
 
-    private final Map<String, List<AuthorizableResource>> resources = new ConcurrentHashMap<>();
-
+    private volatile Map<String, List<AuthorizableResource>> resources = Map.of();
+    private final Map<Path, AuthorizableResources> documents = new LinkedHashMap<>();
+    private final Map<Path, WatcherService> watchers = new LinkedHashMap<>();
+    private final CasReentrantLock lock = new CasReentrantLock();
     private final File directory;
-    private final WatcherService watcherService;
 
     public JsonAuthorizableResourceRepository(final File directory) {
-        this.directory = directory;
+        this.directory = directory.getAbsoluteFile();
         Assert.isTrue(directory.isDirectory(), "JSON directory location must be a valid directory");
-        loadJsonResources();
-        this.watcherService = new PathWatcherService(directory.toPath(),
-            this::loadJsonResourceFrom, this::loadJsonResourceFrom, this::loadJsonResourceFrom);
-        this.watcherService.start(getClass().getSimpleName());
+        lock.executeAndThrow(() -> {
+            loadDirectory(this.directory.toPath());
+            return null;
+        });
     }
 
     @Override
     public Optional<AuthorizableResource> find(final AuthorizationRequest request) {
-        if (resources.containsKey(request.getNamespace())) {
-            val authorizableResources = resources.get(request.getNamespace());
+        val authorizableResources = find(request.getNamespace());
+        if (!authorizableResources.isEmpty()) {
             return authorizableResources
                 .stream()
-                .filter(r -> RegexUtils.find(r.getPattern(), request.getUri()))
+                .filter(r -> r.getPattern() != null && RegexUtils.find(r.getPattern(), request.getUri()))
                 .filter(r -> "*".equalsIgnoreCase(r.getMethod()) || RegexUtils.find(r.getMethod(), request.getMethod()))
                 .findFirst();
         }
@@ -54,20 +57,18 @@ public class JsonAuthorizableResourceRepository implements AuthorizableResourceR
 
     @Override
     public List<AuthorizableResource> find(final String namespace) {
-        return List.copyOf(resources.get(namespace));
+        return namespace == null ? List.of() : resources.getOrDefault(namespace, List.of());
     }
 
     @Override
     public Optional<AuthorizableResource> find(final String namespace, final long id) {
-        val results = resources.get(namespace);
+        val results = find(namespace);
         return results.stream().filter(r -> r.getId() == id).findFirst();
     }
 
     @Override
     public AuthorizableResources store(final AuthorizableResources resource) {
-        val created = createAuthorizableResources(resource);
-        resources.put(created.getNamespace(), created.getResources());
-        return created;
+        return lock.executeAndThrow(() -> createAuthorizableResources(resource));
     }
 
     @Override
@@ -77,34 +78,104 @@ public class JsonAuthorizableResourceRepository implements AuthorizableResourceR
 
     @Override
     public void destroy() {
-        this.watcherService.close();
+        lock.execute(() -> {
+            watchers.values().forEach(WatcherService::close);
+            watchers.clear();
+        });
     }
 
-    private void loadJsonResources() {
-        val jsonFiles = FileUtils.listFiles(directory, new String[]{"json"}, true);
-        for (val jsonFile : jsonFiles) {
-            loadJsonResourceFrom(jsonFile);
+    /**
+     * Watch every directory that contributes policies, including directories created after startup.
+     * The caller holds the repository lock while installing watchers and publishing snapshots.
+     *
+     * @param path the directory
+     * @throws IOException if the directory cannot be listed
+     */
+    private void loadDirectory(final Path path) throws IOException {
+        if (!watchers.containsKey(path)) {
+            val watcher = new PathWatcherService(path, this::reload, this::reload, this::reload);
+            watchers.put(path, watcher);
+            watcher.start(getClass().getSimpleName());
+        }
+        try (val entries = Files.list(path)) {
+            for (val entry : entries.toList()) {
+                if (Files.isDirectory(entry) && !Files.isSymbolicLink(entry)) {
+                    loadDirectory(entry);
+                } else if (entry.toString().endsWith(".json")) {
+                    loadJsonResourceFrom(entry);
+                }
+            }
         }
     }
 
-    private void loadJsonResourceFrom(final File jsonFile) {
-        FunctionUtils.doAndHandle(_ -> {
-            try (val reader = new FileReader(jsonFile, StandardCharsets.UTF_8)) {
-                val json = JsonValue.readHjson(reader).toString();
-                val loadedResource = MAPPER.readValue(json, AuthorizableResources.class);
-                resources.put(loadedResource.getNamespace(), loadedResource.getResources());
+    /**
+     * Reconcile the current file state, so delayed delete events cannot remove a replacement file.
+     * Every event also drops documents whose files are gone: a polling watch service (macOS) never
+     * reports a file that was created and deleted between two polls.
+     *
+     * @param file the changed file or directory
+     */
+    private void reload(final File file) {
+        lock.executeAndThrow(() -> {
+            val path = file.toPath().toAbsolutePath().normalize();
+            if (Files.isDirectory(path) && !Files.isSymbolicLink(path)) {
+                loadDirectory(path);
+            } else if (!Files.exists(path)) {
+                watchers.entrySet().removeIf(entry -> {
+                    if (entry.getKey().startsWith(path)) {
+                        entry.getValue().close();
+                        return true;
+                    }
+                    return false;
+                });
+            } else if (path.toString().endsWith(".json")) {
+                loadJsonResourceFrom(path);
             }
+            documents.keySet().removeIf(key -> !Files.exists(key));
+            publishResources();
+            return null;
         });
     }
 
-    private AuthorizableResources createAuthorizableResources(final AuthorizableResources resources) {
-        return FunctionUtils.doUnchecked(() -> {
-            val json = MAPPER.writeValueAsString(resources);
-            val jsonFile = new File(directory, resources.getNamespace() + ".json");
-            try (val reader = new FileWriter(jsonFile, StandardCharsets.UTF_8)) {
-                reader.write(json);
+    private void loadJsonResourceFrom(final Path path) {
+        try (val reader = Files.newBufferedReader(path, StandardCharsets.UTF_8)) {
+            val loadedResource = MAPPER.readValue(JsonValue.readHjson(reader).toString(), AuthorizableResources.class);
+            Assert.hasText(loadedResource.getNamespace(), "Policy namespace is required");
+            documents.put(path, loadedResource);
+        } catch (final Exception e) {
+            documents.remove(path);
+            LoggingUtils.error(LOGGER, e);
+        }
+        publishResources();
+    }
+
+    /**
+     * Atomically replace the namespace index; conflicting namespace owners fail closed.
+     */
+    private void publishResources() {
+        val snapshot = new HashMap<String, List<AuthorizableResource>>();
+        documents.values().forEach(document -> snapshot.merge(document.getNamespace(),
+            List.copyOf(document.getResources()), (first, second) -> List.of()));
+        resources = Map.copyOf(snapshot);
+    }
+
+    private AuthorizableResources createAuthorizableResources(final AuthorizableResources resources) throws IOException {
+        Assert.hasText(resources.getNamespace(), "Policy namespace is required");
+        val root = directory.toPath().toAbsolutePath().normalize();
+        val target = root.resolve(resources.getNamespace() + ".json").normalize();
+        Assert.isTrue(root.equals(target.getParent()), "Policy namespace must be a file name");
+        val temporary = Files.createTempFile(root, "heimdall-", ".tmp");
+        try {
+            Files.writeString(temporary, MAPPER.writeValueAsString(resources), StandardCharsets.UTF_8);
+            try {
+                Files.move(temporary, target, StandardCopyOption.ATOMIC_MOVE, StandardCopyOption.REPLACE_EXISTING);
+            } catch (final AtomicMoveNotSupportedException e) {
+                Files.move(temporary, target, StandardCopyOption.REPLACE_EXISTING);
             }
+            loadJsonResourceFrom(target);
             return resources;
-        });
+        } finally {
+            Files.deleteIfExists(temporary);
+        }
     }
 }

@@ -1,0 +1,17 @@
+{
+  "@class": "org.apereo.cas.heimdall.authorizer.resource.AuthorizableResources",
+  "resources": [
+    "java.util.ArrayList",
+    [
+      {
+        "@class": "org.apereo.cas.heimdall.authorizer.resource.AuthorizableResource",
+        "id": 484536250,
+        "pattern": "/api/unguarded",
+        "method": "POST",
+        "resourceType": "unguarded",
+        "actions": [ "java.util.HashSet", [ "can_read" ] ]
+      }
+    ]
+  ],
+  "namespace": "API_UNGUARDED"
+}

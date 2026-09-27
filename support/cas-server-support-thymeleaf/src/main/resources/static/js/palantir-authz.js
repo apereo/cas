@@ -277,10 +277,31 @@ function heimdallResourceForStorage(resource) {
     if (resource.method) {
         normalized.method = resource.method;
     }
+    if (resource.resourceType) {
+        normalized.resourceType = resource.resourceType;
+    }
+    if (resource.resourceIdPattern) {
+        normalized.resourceIdPattern = resource.resourceIdPattern;
+    }
+    const actions = heimdallExtractArray(resource.actions);
+    if (actions.length > 0) {
+        normalized.actions = actions;
+    }
     if (resource.properties && Object.keys(resource.properties).length > 0) {
         normalized.properties = heimdallPlainMap(resource.properties);
     }
     return normalized;
+}
+
+function renderHeimdallAuthZenMapping(resource) {
+    if (!resource.resourceType) {
+        return "N/A";
+    }
+    const actions = heimdallExtractArray(resource.actions).map(action => `<code>${escapeHeimdallHtml(action)}</code>`);
+    const idPattern = resource.resourceIdPattern
+        ? ` <span title="Resource ID pattern">(<code>${escapeHeimdallHtml(resource.resourceIdPattern)}</code>)</span>`
+        : "";
+    return `<code>${escapeHeimdallHtml(resource.resourceType)}</code>${idPattern}: ${actions.length > 0 ? actions.join(", ") : "N/A"}`;
 }
 
 function heimdallTextField({id, label, type = "text", title = "", required = false, value = ""}) {
@@ -785,6 +806,18 @@ function buildHeimdallResourcePayload() {
     if (method) {
         resource.method = method;
     }
+    const resourceType = $("#heimdallResourceType").val()?.trim();
+    const resourceIdPattern = $("#heimdallResourceIdPattern").val()?.trim();
+    const actions = heimdallCsv($("#heimdallResourceActions").val());
+    if (resourceType) {
+        resource.resourceType = resourceType;
+    }
+    if (resourceIdPattern) {
+        resource.resourceIdPattern = resourceIdPattern;
+    }
+    if (actions.length > 0) {
+        resource.actions = actions;
+    }
 
     const properties = getHeimdallResourceProperties();
     if (Object.keys(properties).length > 0) {
@@ -869,6 +902,9 @@ function prefillHeimdallResourceDialog(resource) {
     $("#heimdallResourceId").val(resource.id);
     $("#heimdallResourcePattern").val(resource.pattern ?? "");
     $("#heimdallResourceMethod").val(resource.method ?? "");
+    $("#heimdallResourceType").val(resource.resourceType ?? "");
+    $("#heimdallResourceIdPattern").val(resource.resourceIdPattern ?? "");
+    $("#heimdallResourceActions").val(heimdallExtractArray(resource.actions).join(","));
     setHeimdallSwitchState("heimdallEnforceAllPolicies", resource.enforceAllPolicies === true);
     prefillHeimdallResourceProperties(resource.properties);
     const preservedPolicies = [];
@@ -917,6 +953,18 @@ function newHeimdallResource(prefillData = null, options = {}) {
     }));
     controls.append(heimdallTextField({
         id: "heimdallResourceMethod", label: "HTTP Method Pattern", title: "HTTP method regular expression, or * for all; optional for AuthZEN."
+    }));
+    controls.append(heimdallTextField({
+        id: "heimdallResourceType", label: "AuthZEN Resource Type",
+        title: "Exact AuthZEN resource type that selects this resource; leave blank if AuthZEN requests should not match."
+    }));
+    controls.append(heimdallTextField({
+        id: "heimdallResourceActions", label: "AuthZEN Actions",
+        title: "Comma-separated AuthZEN action names, such as can_read,can_write."
+    }));
+    controls.append(heimdallTextField({
+        id: "heimdallResourceIdPattern", label: "AuthZEN Resource ID Pattern",
+        title: "Optional regular expression that must match the entire AuthZEN resource id."
     }));
     controls.append(enforceAllToggle);
     controls.append('<div id="heimdallResourcePropertiesContainer"></div>');
@@ -1147,7 +1195,7 @@ async function initializeHeimdallOperations() {
                     if (last !== group) {
                         $(rows).eq(i).before(
                             `<tr style='font-weight: bold; background-color:var(--cas-theme-primary); color:var(--mdc-text-button-label-text-color);'>
-                                            <td colspan="3">Namespace: ${escapeHeimdallHtml(group)}</td>
+                                            <td colspan="4">Namespace: ${escapeHeimdallHtml(group)}</td>
                                         </tr>`.trim());
                         last = group;
                     }
@@ -1183,7 +1231,8 @@ async function initializeHeimdallOperations() {
                             1: `${resource.id ?? "N/A"}`,
                             2: `<code>${escapeHeimdallHtml(resource.pattern ?? "N/A")}</code>`,
                             3: renderHeimdallHttpMethod(resource.method),
-                            4: renderHeimdallPolicyEnforcement(resource.enforceAllPolicies === true),
+                            4: renderHeimdallAuthZenMapping(resource),
+                            5: renderHeimdallPolicyEnforcement(resource.enforceAllPolicies === true),
                             namespace: key,
                             resourceId: resource.id
                         });

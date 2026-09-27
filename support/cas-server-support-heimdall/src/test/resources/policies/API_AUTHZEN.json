@@ -6,6 +6,8 @@
       {
         "@class": "org.apereo.cas.heimdall.authorizer.resource.AuthorizableResource",
         "id": 284536250,
+        "resourceType": "entity",
+        "actions": [ "java.util.HashSet", [ "can_read" ] ],
         "policies": [ "java.util.ArrayList", [
           {
             "@class": "org.apereo.cas.heimdall.authorizer.resource.policy.RequiredAttributesAuthorizationPolicy",
@@ -15,8 +17,24 @@
             }
           }
         ]]
+      },
+      {
+        "@class": "org.apereo.cas.heimdall.authorizer.resource.AuthorizableResource",
+        "id": 284536251,
+        "resourceType": "document",
+        "resourceIdPattern": "doc-9[0-9]*",
+        "actions": [ "java.util.HashSet", [ "can_read" ] ],
+        "policies": [ "java.util.ArrayList", [
+          {
+            "@class": "org.apereo.cas.heimdall.authorizer.resource.policy.RejectedAttributesAuthorizationPolicy",
+            "attributes" : {
+              "@class" : "java.util.HashMap",
+              "eduPersonAffiliation" : [ "java.util.HashSet", [ ".*developer.*" ] ]
+            }
+          }
+        ]]
       }
     ]
   ],
-  "namespace": "authzen_resource"
+  "namespace": "API_AUTHZEN"
 }

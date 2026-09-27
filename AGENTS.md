@@ -7,10 +7,28 @@
 - Trace `DefaultAuthorizationPrincipalParser` through `DefaultAuthorizationEngine` and each policy.
   A valid caller token does not establish PDP audience, PEP permissions or DPoP proof possession;
   delegated subject ids are legitimate for trusted PEPs and are not inherently impersonation.
-- Match resource type/id and action before granting. The current namespace lookup by AuthZEN resource id
-  can succeed but does not enforce action/type distinctions; never summarize it as always denying.
-- Reserve JDBC authorization parameter names against context/attribute overwrites, and check that policy
-  file deletion removes cached grants. Review both any/all combiners and empty collections.
+- An AuthZEN `resource.id` names the resource instance, never a policy namespace. AuthZEN requests
+  (`AuthorizationRequest.isAuthZen()`: subject, resource and action all present) match `resourceType`, `actions` and an
+  optional full-match `resourceIdPattern` across every namespace, and every match must grant. Normal requests
+  keep namespace + URI pattern + method and `/heimdall/authorize` rejects AuthZEN fields, which keeps the paths apart.
+- Callers authenticate with tokens issued to a registered OAuth/OIDC service whose access strategy allows
+  access; `HeimdallRegisteredServiceAccessStrategy` (alone or chained) can refuse it. DPoP and `x509_digest`
+  certificate bindings are enforced. On AuthZEN, Basic means `client_id:client_secret` (reject clients without secrets:
+  `DefaultOAuth20ClientSecretValidator.validate` returns true when none is defined); on `/heimdall/authorize` it
+  stays CAS user credentials, split on the first colon. Both endpoints are throttled via `HeimdallThrottledRequestFilter`
+  (it claims only 200/401 responses, since the throttle interceptor counts every non-2xx response as a failure).
+  Create registry-backed single-use markers through the `TicketFactory` (TST factory, custom `ExpirationPolicy` in
+  a *mutable* properties map: `buildExpirationPolicy` removes that key, so `Map.of` throws), never by instantiating
+  ticket implementations.
+- macOS JDKs use a polling `WatchService` (2s): a file created and deleted between two polls produces no event.
+  Watcher-driven caches must reconcile against the file system on every event rather than trust event kinds. JWT assertions need `jti`/`iat`, are single-use,
+  and share the token endpoint's audiences on purpose. A resource without policies denies.
+- JDBC trusted parameters (`principal`, `method`, `uri`, `namespace` and the AuthZEN names) are added after
+  context and attributes, so they already win; an overwrite claim there was a false finding. Check that policy
+  file deletion removes cached grants. `enforceAllPolicies=false` means any one policy grants (`anyMatch`), and an
+  empty policy list denies before either combiner runs.
+- Palantir rebuilds resources from a fixed field list (`heimdallResourceForStorage`) and re-saves the whole
+  namespace; any new `AuthorizableResource` field must be added there or an edit silently drops it.
 - AuthZEN evaluated denials use HTTP 200 with `decision:false`; authentication failures use 401.
   Discovery/batch/search are separate capabilities, and the specification's example endpoint path is not mandatory.
 - Read shared helpers before reporting leaks: request headers already filter credentials and the request
@@ -147,6 +165,7 @@ Guidance for AI coding agents working in the Apereo CAS source tree.
 
 ## Parallel test execution and shared registries
 
+- Initialize shared pac4j clients with `DelegatedIdentityProviders.initialize(client)`, never a bare `client.init()`: pac4j returns immediately, uninitialized, while another thread is initializing the same instance. The helper waits lock-free on `isInitializing()`.
 - Most categories in `buildSrc/.../TestCategories.groovy` are declared parallel, and JUnit's default mode there is `concurrent` for classes *and* methods, so sibling `@Test` methods in one class run at the same time against the same Spring context. A test that clears a shared registry wholesale -- `servicesManager.getAllServicesOfType(...).forEach(servicesManager::delete)` in a setup step, say -- deletes what its siblings just saved, and the failure surfaces in whichever method lost the race rather than in the one that did the clearing.
 - The symptom to recognize: a test asserting on a service it saved itself gets the value that belongs to the "service was missing" code path. `OpenIdFederationAuthorizationCodeResponseTypeAuthorizationRequestValidatorTests` failed exactly that way, reporting `expected: <old-service> but was: <new-service>`, because another method's clear removed the saved service and the validator then resolved a fresh one.
 - Isolate by identifier, not by emptying the registry: give each test a UUID-bearing client id and assert only on that id. `@Execution(ExecutionMode.SAME_THREAD)` fixes the within-class case but not another class sharing the context, so prefer removing the global mutation.
