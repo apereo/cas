@@ -590,6 +590,64 @@ class HeimdallAuthorizationControllerTests {
             .andExpect(jsonPath("$.decision").value(true));
     }
 
+    @ParameterizedTest
+    @CsvSource({"user,true", "service,false"})
+    void verifyAuthZenSubjectTypeResolution(final String subjectType, final boolean decision) throws Throwable {
+        val request = authZenRequest().withSubject(AuthZenSubject.builder().type(subjectType).id("casperson").build());
+        mockMvc.perform(post("/heimdall/authzen").contentType(MediaType.APPLICATION_JSON).content(request.toJson())
+                .header(HttpHeaders.AUTHORIZATION, clientCredentials()))
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$.decision").value(decision));
+    }
+
+    @ParameterizedTest
+    @CsvSource({"Finance,true", "Sales,false"})
+    void verifyAuthZenSubjectProperties(final String department, final boolean decision) throws Throwable {
+        val request = authZenRequest()
+            .withSubject(AuthZenSubject.builder().type("service").id("billing-api").properties(Map.of("department", department)).build())
+            .withResource(AuthZenResource.builder().type("invoice").id("inv-1").build());
+        mockMvc.perform(post("/heimdall/authzen").contentType(MediaType.APPLICATION_JSON).content(request.toJson())
+                .header(HttpHeaders.AUTHORIZATION, clientCredentials()))
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$.decision").value(decision));
+    }
+
+    @Test
+    void verifyAuthZenContextIgnoresHttpHeaders() throws Throwable {
+        val request = authZenRequest().withResource(AuthZenResource.builder().type("channel").id("c-1").build());
+        mockMvc.perform(post("/heimdall/authzen").contentType(MediaType.APPLICATION_JSON)
+                .content(request.withContext(new HashMap<>(Map.of("channel", "web"))).toJson())
+                .header("channel", "api")
+                .header(HttpHeaders.AUTHORIZATION, clientCredentials()))
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$.decision").value(true));
+        mockMvc.perform(post("/heimdall/authzen").contentType(MediaType.APPLICATION_JSON)
+                .content(request.toJson())
+                .header("channel", "web")
+                .header(HttpHeaders.AUTHORIZATION, clientCredentials()))
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$.decision").value(false));
+    }
+
+    @Test
+    void verifyLegacyContextHeaders() throws Throwable {
+        val credentials = "Basic " + EncodingUtils.encodeBase64("casuser:resusac");
+        val request = AuthorizationRequest.builder().namespace("API_QUALIFIED").method("POST").uri("/api/headers").build();
+        mockMvc.perform(post("/heimdall/authorize").contentType(MediaType.APPLICATION_JSON).content(request.toJson())
+                .header("X-Original-URI", "/api/protected")
+                .header(HttpHeaders.AUTHORIZATION, credentials))
+            .andExpect(status().isOk());
+        mockMvc.perform(post("/heimdall/authorize").contentType(MediaType.APPLICATION_JSON)
+                .content(request.withContext(new HashMap<>(Map.of("X-Original-URI", "/api/elsewhere"))).toJson())
+                .header("X-Original-URI", "/api/protected")
+                .header(HttpHeaders.AUTHORIZATION, credentials))
+            .andExpect(status().isForbidden());
+        mockMvc.perform(post("/heimdall/authorize").contentType(MediaType.APPLICATION_JSON)
+                .content(request.withUri("/api/protocol").toJson())
+                .header(HttpHeaders.AUTHORIZATION, credentials))
+            .andExpect(status().isForbidden());
+    }
+
     @Test
     void verifyAuthZenPublicClientIsRejected() throws Throwable {
         val registeredService = newOidcRegisteredService("heimdall-" + UUID.randomUUID());

@@ -149,7 +149,17 @@ The authorization header value can be *one* of the following:
 
 Claims or attributes from all token types are extracted and attached to the final principal, which is then
 passed to the authorization policy engine to make decisions. However, when using the AuthZEN protocol
-CAS will attempt to resolve claims and attributes based on the `subject` ID in the authorization request.
+CAS will attempt to resolve claims and attributes based on the `subject` ID in the authorization request, but only for
+the `user` subject type. Subjects of any other type, such as services
+or devices, are evaluated by their identifier and the properties supplied in the request without any lookup.
+
+The request `context` of an AuthZEN request is exactly what the caller sends. For `/heimdall/authorize`, the HTTP request headers
+are also added to the `context`, except for credential and protocol headers such as `Authorization`, `Cookie`, `Host`
+and `Content-Type`; entries sent in the request body take precedence over headers with the same name.
+
+The claims-based policies (required scopes, ACR, AMR, audience and issuer) evaluate the principal's attributes. For
+AuthZEN requests, where the principal describes the subject rather than a token, use the qualified names of the
+required attributes policy (for example `subject.properties.acr` or `context.acr`) instead.
 
 Tokens are further subject to the following rules:
 
@@ -361,11 +371,28 @@ An authorization policy that checks for the **presence** of required attributes 
 }
 ```
 
+Attribute names refer to the principal's attributes, except for the following qualified names that read the authorization request:
+
+| Name                           | Value                                                             |
+|--------------------------------|-------------------------------------------------------------------|
+| `subject.id`, `subject.type`   | The AuthZEN subject identifier and type.                          |
+| `resource.id`, `resource.type` | The AuthZEN resource identifier and type.                         |
+| `action.name`                  | The AuthZEN action name.                                          |
+| `subject.properties.<name>`    | A property of the AuthZEN subject, as supplied by the caller.     |
+| `resource.properties.<name>`   | A property of the AuthZEN resource, as supplied by the caller.    |
+| `action.properties.<name>`     | A property of the AuthZEN action, as supplied by the caller.      |
+| `context.<name>`               | An entry of the request `context`.                                |
+
+For example, `"subject.properties.department" : [ "java.util.HashSet", [ "^Finance$" ] ]` requires the caller to describe
+the subject as a member of the finance department. Properties are never merged into principal attributes, so a caller
+cannot override attributes that CAS resolves for the subject.
+
 {% endtab %}
 
 {% tab heimdallauthzpolicies Rejected Attributes %}
 
-An authorization policy that checks for the **absence** of indicated attributes in the authorization principal's profile:
+An authorization policy that checks for the **absence** of indicated attributes in the authorization principal's profile,
+using the same attribute names as the required attributes policy:
 
 ```json
 {

@@ -71,6 +71,30 @@ async function verifyDecisions(bearer) {
     await assertDecision(PEP_CREDENTIALS, evaluation("bob", "report", "r-1", "can_read"), false, "Resource without policies");
 }
 
+async function verifySubjectsAndContext() {
+    await cas.log("Verifying subject types, qualified attribute names and request context");
+    const invoice = (department) => ({
+        subject: {type: "service", id: "billing-api", properties: {department: department}},
+        resource: {type: "invoice", id: "inv-1"},
+        action: {name: "can_read"}
+    });
+    await assertDecision(PEP_CREDENTIALS, invoice("Finance"), true, "Service subject by its properties");
+    await assertDecision(PEP_CREDENTIALS, invoice("Sales"), false, "Service subject with other properties");
+
+    const service = evaluation("bob", "document", "doc-1", "can_write");
+    service.subject.type = "service";
+    await assertDecision(PEP_CREDENTIALS, service, false, "Non-user subject is not resolved from the directory");
+
+    const channel = evaluation("alice", "channel", "c-1", "can_read");
+    channel.context = {channel: "web"};
+    let result = await post(AUTHZEN_URL, channel, {"Authorization": PEP_CREDENTIALS, "channel": "api"}, 200);
+    assert.equal(JSON.parse(result.content).decision, true, "HTTP headers must not override the request context");
+    delete channel.context;
+    result = await post(AUTHZEN_URL, channel, {"Authorization": PEP_CREDENTIALS, "channel": "web"}, 200);
+    assert.equal(JSON.parse(result.content).decision, false, "HTTP headers must not become request context");
+    await cas.logg("Request context comes only from the request body");
+}
+
 async function verifyProtocol() {
     await cas.log("Verifying request identifiers, forward compatibility and malformed requests");
     const requestId = crypto.randomUUID();
@@ -149,6 +173,7 @@ async function verifyResourcesEndpoint() {
 (async () => {
     const bearer = await fetchPepAccessToken();
     await verifyDecisions(bearer);
+    await verifySubjectsAndContext();
     await verifyProtocol();
     await verifyLegacyEndpoint(bearer);
     await verifyResourcesEndpoint();

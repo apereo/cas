@@ -1,0 +1,69 @@
+{
+  "@class": "org.apereo.cas.heimdall.authorizer.resource.AuthorizableResources",
+  "resources": [
+    "java.util.ArrayList",
+    [
+      {
+        "@class": "org.apereo.cas.heimdall.authorizer.resource.AuthorizableResource",
+        "id": 684536250,
+        "resourceType": "invoice",
+        "actions": [ "java.util.HashSet", [ "can_read" ] ],
+        "policies": [ "java.util.ArrayList", [
+          {
+            "@class": "org.apereo.cas.heimdall.authorizer.resource.policy.RequiredAttributesAuthorizationPolicy",
+            "attributes" : {
+              "@class" : "java.util.HashMap",
+              "subject.properties.department" : [ "java.util.HashSet", [ "^Finance$" ] ]
+            }
+          }
+        ]]
+      },
+      {
+        "@class": "org.apereo.cas.heimdall.authorizer.resource.AuthorizableResource",
+        "id": 684536251,
+        "resourceType": "channel",
+        "actions": [ "java.util.HashSet", [ "can_read" ] ],
+        "policies": [ "java.util.ArrayList", [
+          {
+            "@class": "org.apereo.cas.heimdall.authorizer.resource.policy.RequiredAttributesAuthorizationPolicy",
+            "attributes" : {
+              "@class" : "java.util.HashMap",
+              "context.channel" : [ "java.util.HashSet", [ "^web$" ] ]
+            }
+          }
+        ]]
+      },
+      {
+        "@class": "org.apereo.cas.heimdall.authorizer.resource.AuthorizableResource",
+        "id": 684536252,
+        "pattern": "/api/headers",
+        "method": "POST",
+        "policies": [ "java.util.ArrayList", [
+          {
+            "@class": "org.apereo.cas.heimdall.authorizer.resource.policy.RequiredAttributesAuthorizationPolicy",
+            "attributes" : {
+              "@class" : "java.util.HashMap",
+              "context.X-Original-URI" : [ "java.util.HashSet", [ "^/api/protected$" ] ]
+            }
+          }
+        ]]
+      },
+      {
+        "@class": "org.apereo.cas.heimdall.authorizer.resource.AuthorizableResource",
+        "id": 684536253,
+        "pattern": "/api/protocol",
+        "method": "POST",
+        "policies": [ "java.util.ArrayList", [
+          {
+            "@class": "org.apereo.cas.heimdall.authorizer.resource.policy.RequiredAttributesAuthorizationPolicy",
+            "attributes" : {
+              "@class" : "java.util.HashMap",
+              "context.Content-Type" : [ "java.util.HashSet", [ ".+" ] ]
+            }
+          }
+        ]]
+      }
+    ]
+  ],
+  "namespace": "API_QUALIFIED"
+}

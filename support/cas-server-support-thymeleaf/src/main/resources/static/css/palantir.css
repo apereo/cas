@@ -3056,6 +3056,20 @@ select + span[role="combobox"] {
     min-width: min(100%, 12rem);
 }
 
+#registeredServiceHeimdallResourcePropertyKeyMapContainer .mdc-notched-outline,
+.heimdall-authorization-map-host [data-mapped-input-row="true"] .mdc-notched-outline,
+.heimdall-policy-map-host [data-mapped-input-row="true"] .mdc-notched-outline {
+    padding-right: 0 !important;
+}
+
+#registeredServiceHeimdallResourcePropertyKeyMapContainer .mdc-text-field__input,
+.heimdall-authorization-map-host [data-mapped-input-row="true"] .mdc-text-field__input,
+.heimdall-policy-map-host [data-mapped-input-row="true"] .mdc-text-field__input {
+    min-width: 0;
+    width: 100%;
+    text-overflow: ellipsis;
+}
+
 #registeredServiceHeimdallResourcePropertyKeyMapContainer .mdc-button--inline-row,
 .heimdall-authorization-map-host .mdc-button--inline-row,
 .heimdall-policy-map-host .mdc-button--inline-row {

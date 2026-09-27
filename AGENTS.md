@@ -36,6 +36,11 @@
   Spring gives registered singletons no destruction callbacks. Tests override `resolveApplicationContext()` with a
   local context rather than relying on the static `ApplicationContextProvider`, which parallel tests share.
 - Policies evaluate sequentially; do not reintroduce `parallelStream()` (blocking policies starve `commonPool`).
+- AuthZEN subjects are resolved through the principal resolver only for subject type `user` (hardcoded);
+  other types become a bare principal. Policies read request data through
+  `AuthorizationRequest.resolveAttributeValues` (qualified `subject.*`, `resource.*`, `action.*`, `context.*` names);
+  never merge caller-supplied properties into principal attributes, which would let a PEP override the directory.
+  AuthZEN `context` is body-only; `/heimdall/authorize` adds non-protocol headers with `putIfAbsent`.
 - Palantir rebuilds resources from a fixed field list (`heimdallResourceForStorage`) and re-saves the whole
   namespace; any new `AuthorizableResource` field must be added there or an edit silently drops it.
 - AuthZEN evaluated denials use HTTP 200 with `decision:false`; authentication failures use 401.

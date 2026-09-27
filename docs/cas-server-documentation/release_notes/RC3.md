@@ -119,6 +119,9 @@ The CAS documentation site has received a visual and functional overhaul. Notabl
 - A resource with no policies now denies access instead of granting it, and the REST policy no longer sends the resource's policies to its endpoint.
 - [JDBC policies](../authorization/Heimdall-Authorization-Overview.html) use a shared connection pool, registered as an application context bean and optionally named via `dataSourceName`,
   instead of opening a new database connection for every decision. Policies are evaluated in order rather than on the shared thread pool.
+- AuthZEN subjects are resolved from CAS attribute repositories only for the `user` subject type. Required and rejected attribute policies accept qualified names such as `subject.properties.department`,
+  `resource.properties.owner`, `action.properties.method` and `context.channel`. HTTP request headers are no longer added to the
+  AuthZEN request context; on `/heimdall/authorize` they no longer override body entries or include protocol headers.
 - A resource that does not set `enforceAllPolicies` is now granted when any one of its policies grants access, as documented;
   previously every policy had to grant. Set `enforceAllPolicies` to `true` on resources that rely on the old behavior.
 - [JDBC and OpenFGA policies](../authorization/Heimdall-Authorization-Overview.html) receive the AuthZEN subject, resource and action. [Palantir](../installation/Admin-Dashboard.html) can edit the AuthZEN fields

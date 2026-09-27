@@ -4,7 +4,6 @@ import module java.base;
 import org.apereo.cas.heimdall.AuthorizationRequest;
 import org.apereo.cas.heimdall.authorizer.AuthorizationResult;
 import org.apereo.cas.heimdall.authorizer.resource.AuthorizableResource;
-import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.RegexUtils;
 import com.fasterxml.jackson.annotation.JsonSetter;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
@@ -45,14 +44,13 @@ public class RequiredAttributesAuthorizationPolicy implements ResourceAuthorizat
 
     @Override
     public AuthorizationResult evaluate(final AuthorizableResource resource, final AuthorizationRequest request) {
-        val principalAttributes = request.getPrincipal().getAttributes();
         return getAttributes()
             .entrySet()
             .stream()
-            .filter(entry -> principalAttributes.containsKey(entry.getKey()))
             .filter(entry -> {
-                val attributeValues = CollectionUtils.toCollection(principalAttributes.get(entry.getKey()));
-                return entry.getValue().stream().anyMatch(value -> RegexUtils.findFirst(value, attributeValues).isPresent());
+                val attributeValues = request.resolveAttributeValues(entry.getKey());
+                return !attributeValues.isEmpty()
+                    && entry.getValue().stream().anyMatch(value -> RegexUtils.findFirst(value, attributeValues).isPresent());
             })
             .findAny()
             .map(entry -> AuthorizationResult.granted("OK"))

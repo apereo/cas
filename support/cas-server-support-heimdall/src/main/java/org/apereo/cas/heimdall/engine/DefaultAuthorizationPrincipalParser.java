@@ -72,6 +72,8 @@ import java.security.cert.X509Certificate;
 public class DefaultAuthorizationPrincipalParser implements AuthorizationPrincipalParser {
     private static final String X509_CERTIFICATE_REQUEST_ATTRIBUTE = "jakarta.servlet.request.X509Certificate";
 
+    private static final String RESOLVED_SUBJECT_TYPE = "user";
+
     protected final TicketRegistry ticketRegistry;
     protected final CasConfigurationProperties casProperties;
     protected final ObjectProvider<JwtBuilder> accessTokenJwtBuilder;
@@ -96,9 +98,12 @@ public class DefaultAuthorizationPrincipalParser implements AuthorizationPrincip
         val claims = parseAuthorizationHeader(authorizationHeader, authorizationRequest, webContext);
         val principalAttributes = new HashMap(claims.getClaims());
         principalAttributes.put(HttpHeaders.AUTHORIZATION, authorizationHeader);
-        if (authorizationRequest.getSubject() != null) {
-            val credential = new BasicIdentifiableCredential(authorizationRequest.getSubject().getId());
-            return authenticationSystemSupport.getPrincipalResolver().resolve(credential);
+        val subject = authorizationRequest.getSubject();
+        if (subject != null) {
+            if (RESOLVED_SUBJECT_TYPE.equals(subject.getType())) {
+                return authenticationSystemSupport.getPrincipalResolver().resolve(new BasicIdentifiableCredential(subject.getId()));
+            }
+            return PrincipalFactoryUtils.newPrincipalFactory().createPrincipal(subject.getId());
         }
         return PrincipalFactoryUtils.newPrincipalFactory().createPrincipal(claims.getSubject(), principalAttributes);
     }

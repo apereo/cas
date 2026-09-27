@@ -363,7 +363,7 @@ function heimdallPolicyFieldGroup(policyIndex, policyTypes, fields) {
                 "data-policy-map-field": field.key,
                 "data-policy-map-label": field.label,
                 "data-policy-map-multiple": field.multiple === true
-            })
+            }).data("policy-map-hint", field.hint)
             : field.kind === "textarea"
             ? heimdallTextArea({id: id, label: field.label, title: field.title, rows: field.rows})
             : field.kind === "select"
@@ -471,7 +471,11 @@ function addHeimdallPolicy(policy = null) {
     ]));
     card.append(heimdallPolicyFieldGroup(policyIndex,
         ["RequiredAttributesAuthorizationPolicy", "RejectedAttributesAuthorizationPolicy"], [
-            {key: "attributes", label: "Attributes", kind: "map", multiple: true}
+            {
+                key: "attributes", label: "Attributes", kind: "map", multiple: true,
+                hint: "Keys are principal attribute names, or request values such as <code>subject.properties.department</code>, "
+                    + "<code>resource.properties.owner</code>, <code>action.properties.method</code> or <code>context.channel</code>."
+            }
         ]));
     card.append(heimdallPolicyFieldGroup(policyIndex, ["RequiredACRAuthorizationPolicy"], [
         {key: "acrs", label: "Required ACR Values", placeholder: "mfa, .*", title: "Comma-separated regular expressions."}
@@ -525,6 +529,16 @@ function addHeimdallPolicy(policy = null) {
             cssClasses: "heimdall-policy-map",
             onChangeCallback: generateHeimdallResourcePayload
         });
+        const hint = host.data("policy-map-hint");
+        if (hint) {
+            const hintElement = $("<p>", {class: "text-muted small mt-0 mb-2 heimdall-policy-map-hint"}).html(hint);
+            const header = host.find("h3").first();
+            if (header.length > 0) {
+                header.after(hintElement);
+            } else {
+                host.prepend(hintElement);
+            }
+        }
     });
     showHeimdallPolicyFields(card);
 

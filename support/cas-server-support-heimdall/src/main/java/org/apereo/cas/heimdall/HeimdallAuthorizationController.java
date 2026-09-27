@@ -50,6 +50,9 @@ public class HeimdallAuthorizationController {
 
     private static final String REQUEST_ID_HEADER = "X-Request-ID";
 
+    private static final Set<String> PROTOCOL_HEADERS = Set.of("accept", "accept-encoding", "connection", "content-length",
+        "content-type", "dpop", "host", "keep-alive", "te", "transfer-encoding", "upgrade");
+
     private final AuthorizationEngine authorizationEngine;
     private final AuthorizationPrincipalParser principalParser;
 
@@ -175,9 +178,15 @@ public class HeimdallAuthorizationController {
         val authorizationHeader = Objects.requireNonNull(request.getHeader(HttpHeaders.AUTHORIZATION));
         Assert.hasText(authorizationHeader, "Authorization header cannot be blank");
         val principal = principalParser.parse(authorizationHeader, authorizationRequest, new JEEContext(request, response));
-        val headers = HttpRequestUtils.getRequestHeaders(request);
         val requestToAuthorize = authorizationRequest.withPrincipal(principal);
-        requestToAuthorize.getContext().putAll((Map) headers);
+        if (!requestToAuthorize.isAuthZen()) {
+            val context = (Map<String, Object>) requestToAuthorize.getContext();
+            HttpRequestUtils.getRequestHeaders(request).forEach((name, value) -> {
+                if (!PROTOCOL_HEADERS.contains(name.toLowerCase(Locale.ENGLISH))) {
+                    context.putIfAbsent(name, value);
+                }
+            });
+        }
         return requestToAuthorize;
     }
 
