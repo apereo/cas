@@ -41,7 +41,6 @@ class OAuth20RevocationRequestValidatorTests extends AbstractOAuth20Tests {
 
     @BeforeEach
     void before() throws Throwable {
-        servicesManager.deleteAll();
         supportingService = RequestValidatorTestUtils.getService(
             RegisteredServiceTestUtils.CONST_TEST_URL,
             UUID.randomUUID().toString(),

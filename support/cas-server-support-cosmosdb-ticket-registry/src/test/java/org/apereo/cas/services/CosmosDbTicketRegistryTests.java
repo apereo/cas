@@ -42,7 +42,8 @@ import static org.junit.jupiter.api.Assertions.*;
     "cas.ticket.registry.cosmos-db.key=${#environmentVariables['COSMOS_DB_KEY']}",
     "cas.ticket.registry.cosmos-db.database=CasTicketRegistryDb",
     "cas.ticket.registry.cosmos-db.database-throughput=1000",
-    "cas.ticket.registry.cosmos-db.max-retry-attempts-on-throttled-requests=5",
+    "cas.ticket.registry.cosmos-db.max-retry-attempts-on-throttled-requests=10",
+    "cas.ticket.registry.cosmos-db.max-retry-wait-time=PT60S",
     "cas.ticket.registry.cosmos-db.indexing-mode=CONSISTENT"
 })
 @ResourceLock("cosmosdb-tickets")
