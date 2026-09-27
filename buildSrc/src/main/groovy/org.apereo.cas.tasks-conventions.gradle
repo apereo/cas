@@ -82,7 +82,7 @@ configurations {
         canBeConsumed = true
         visible = false
         outgoing.artifact(layout.buildDirectory.dir('.')) {
-            builtBy(testTasks)
+            builtBy(testTasks.matching { testTask -> testTask.enabled })
         }
     }
     aggregateCoverageClassDirectoriesElements {

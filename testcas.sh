@@ -71,7 +71,6 @@ dryRun=""
 info=""
 gradleCmd="./gradlew"
 flags="--configure-on-demand --build-cache -x javadoc -x check --quiet -DskipNestedConfigMetadataGen=true "
-coverageTask=""
 
 while (( "$#" )); do
     case "$1" in
@@ -94,15 +93,6 @@ while (( "$#" )); do
         ;;
     --with-coverage)
         flags+=" -DenableJacocoAgent=true "
-        currentDir=`pwd`
-        case "${currentDir}" in
-            *api*|*core*|*support*|*webapp*)
-                coverageTask="jacocoTestReport --stacktrace"
-                ;;
-            *)
-                coverageTask="jacocoRootReport --stacktrace"
-                ;;
-        esac
         shift
         ;;
     --info)
@@ -590,15 +580,15 @@ while (( "$#" )); do
     esac
 done
 
-if [[ -z "$task" ]] && [[ -z "$coverageTask" ]]; then
+if [[ -z "$task" ]]; then
   printHelp
   exit 1
 fi
 
-cmd="$gradleCmd ${GREEN}$task $tests${ENDCOLOR}${flags}${debug}${dryRun}${info}${parallel}${GREEN}$coverageTask${ENDCOLOR}"
+cmd="$gradleCmd ${GREEN}$task $tests${ENDCOLOR}${flags}${debug}${dryRun}${info}${parallel}"
 printf "👷 ${cmd} \n"
 echo
-cmd="$gradleCmd $task $tests $flags ${debug} ${parallel} ${dryRun} ${info} ${coverageTask}"
+cmd="$gradleCmd $task $tests $flags ${debug} ${parallel} ${dryRun} ${info}"
 eval "$cmd"
 retVal=$?
 echo -e "***************************************************************************************"

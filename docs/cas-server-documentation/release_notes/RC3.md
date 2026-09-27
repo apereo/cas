@@ -75,12 +75,11 @@ affects almost all aspects of the codebase including many of the third-party cor
 as well as some CAS functionality.
 
 Please refer to the [Spring Boot Wiki](https://github.com/spring-projects/spring-boot/wiki/Spring-Boot-4.2-Release-Notes)
-for more information on the changes and updates in this release. The biggest change to CAS would be support for AMQP 1.0.
+for more information on the changes and updates in this release. 
 
 ### Documentation
 
-The CAS documentation for the development branch received a visual and functional overhaul. Documentation
-for released versions is unaffected. Notable changes include:
+The CAS documentation site has received a visual and functional overhaul. Notable changes include:
 
 - A refreshed theme with light and dark modes, a serif typeface for headings, a monospaced sidebar, and
   quiet icons for recurring sections such as configuration, actuator endpoints and troubleshooting.
@@ -97,11 +96,11 @@ for released versions is unaffected. Notable changes include:
 - [Feature toggles](../configuration/Configuration-Feature-Toggles.html) are grouped by area and can be searched or filtered
   to those that are off by default. Each feature can be expanded to show its modules, their default state, the auto-configuration
   classes they control and a link to the relevant documentation, and every toggle can be copied as `.properties`, YAML or environment variables.
+- The documentation build and validation time is significantly reduced and changes are now published up to `75%` faster. External links are checked on a weekly schedule
+  rather than on every change, and broken external links no longer block publishing.
 
 ## Other Stuff
 
-- The documentation build and publishing process is considerably faster and less fragile. External links are checked on a weekly schedule
-  rather than on every change, and broken external links no longer block publishing.
 - A large number of dependencies and libraries have been updated to their latest versions.
 - Almost all CAS unit tests are internally reworked to allow maximum parallelization and speed up the overall test execution time.
 

@@ -57,9 +57,9 @@ TestCategories.values().each { testCategory ->
                 if (coverageEnabled && !project.path.contains(':docs')) {
                     jacoco {
                         dumpOnExit = true
+                        includes = ['org.apereo.*']
                         excludes = excludedFilesFromTestCoverage
                         destinationFile = jacocoTestExecutionResultsFile
-                        classDumpDir = layout.buildDirectory.dir('jacoco/classpathdumps').get().asFile
                     }
                 }
                 jvmArgs += "-javaagent:${configurations.jvmAgents.asPath}"
