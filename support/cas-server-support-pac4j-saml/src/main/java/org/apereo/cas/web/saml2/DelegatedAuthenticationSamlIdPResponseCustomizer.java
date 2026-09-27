@@ -38,7 +38,7 @@ public class DelegatedAuthenticationSamlIdPResponseCustomizer implements SamlIdP
                 .filter(SAML2Client.class::isInstance)
                 .map(SAML2Client.class::cast)
                 .ifPresent(client -> {
-                    client.init();
+                    DelegatedIdentityProviders.initialize(client);
                     assertion.getAuthnStatements().forEach(authnStatement -> {
                         val authnContext = authnStatement.getAuthnContext();
                         val authority = builder.newSamlObject(AuthenticatingAuthority.class);

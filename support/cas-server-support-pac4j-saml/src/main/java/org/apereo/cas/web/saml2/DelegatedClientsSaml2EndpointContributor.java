@@ -1,6 +1,7 @@
 package org.apereo.cas.web.saml2;
 
 import module java.base;
+import org.apereo.cas.pac4j.client.DelegatedIdentityProviders;
 import org.apereo.cas.support.pac4j.authentication.clients.DelegatedClientsEndpointContributor;
 import org.apereo.cas.util.CollectionUtils;
 import lombok.val;
@@ -25,7 +26,7 @@ public class DelegatedClientsSaml2EndpointContributor implements DelegatedClient
     @Override
     public Map<String, Object> contribute(final BaseClient client) {
         val saml2Client = (SAML2Client) client;
-        saml2Client.init();
+        DelegatedIdentityProviders.initialize(saml2Client);
         val configuration = saml2Client.getConfiguration();
         var identityProviderEntityId = configuration.getIdentityProviderEntityId();
         if (StringUtils.isBlank(identityProviderEntityId)) {

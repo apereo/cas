@@ -4,6 +4,7 @@ import module java.base;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.authentication.principal.WebApplicationService;
 import org.apereo.cas.authentication.principal.provision.DelegatedAuthenticationFailureException;
+import org.apereo.cas.pac4j.client.DelegatedIdentityProviders;
 import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.util.spring.beans.BeanSupplier;
 import org.apereo.cas.web.DelegatedClientIdentityProviderConfiguration;
@@ -109,12 +110,7 @@ public class DefaultDelegatedClientIdentityProviderConfigurationProducer impleme
     }
 
     /**
-     * Initializes the identity provider, waiting for an initialization already in flight rather than
-     * competing with it. A pac4j client asked to initialize while another thread is initializing the
-     * same instance returns at once without doing anything and without waiting, which would leave
-     * this method reporting a perfectly good provider as unusable. The client's own monitor is what
-     * pac4j holds for the whole of its initialization, so taking it first turns that race into a
-     * wait, and the second check means the thread that waited does not initialize again.
+     * Initializes the identity provider, waiting for an initialization already in flight.
      *
      * @param client  the identity provider to initialize
      * @param context the request context
@@ -125,11 +121,7 @@ public class DefaultDelegatedClientIdentityProviderConfigurationProducer impleme
             val currentService = WebUtils.getService(context);
             LOGGER.trace("Initializing client [{}] with request parameters [{}] and service [{}]",
                 client, context.getRequestParameters(), currentService);
-            synchronized (client) {
-                if (!client.isInitialized()) {
-                    client.init();
-                }
-            }
+            DelegatedIdentityProviders.initialize(client);
         }
         FunctionUtils.throwIf(!client.isInitialized(), DelegatedAuthenticationFailureException::new);
     }

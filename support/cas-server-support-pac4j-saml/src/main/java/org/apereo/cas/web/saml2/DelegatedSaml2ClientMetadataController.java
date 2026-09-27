@@ -46,7 +46,7 @@ public class DelegatedSaml2ClientMetadataController extends AbstractController {
     private static ResponseEntity<String> getSaml2ClientServiceProviderMetadataResponseEntity(final SAML2Client saml2Client) {
         val headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_XML);
-        saml2Client.init();
+        DelegatedIdentityProviders.initialize(saml2Client);
         val md = saml2Client.getServiceProviderMetadataResolver().getMetadata();
         return new ResponseEntity<>(md, headers, HttpStatus.OK);
     }
@@ -137,7 +137,7 @@ public class DelegatedSaml2ClientMetadataController extends AbstractController {
     private ResponseEntity<String> getSaml2ClientIdentityProviderMetadataResponseEntity(final SAML2Client saml2Client) {
         val headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_XML);
-        saml2Client.init();
+        DelegatedIdentityProviders.initialize(saml2Client);
         val identityProviderMetadataResolver = saml2Client.getIdentityProviderMetadataResolver();
         identityProviderMetadataResolver.resolve(true);
         val entity = identityProviderMetadataResolver.getEntityDescriptorElement();
