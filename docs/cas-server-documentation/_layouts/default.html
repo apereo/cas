@@ -145,7 +145,7 @@
 
 </head>
 
-<body class="{% if page.title == 'CAS - Home' %}docs-home{% endif %}{% unless showNavigation %} docs-standalone{% endunless %}">
+<body class="{% if page.title == 'CAS - Home' %}docs-home{% endif %}{% unless showNavigation %} docs-standalone{% endunless %}" data-docs-base="{{ basePath }}" data-docs-version="{{ navigationVersion }}" data-docs-build="{{ site.time | date: '%Y%m%d%H%M%S' }}">
     <a class="skip-link" href="#cas-docs-container">Skip to content</a>
     <header class="site-header">
         <div class="masthead">
@@ -182,6 +182,7 @@
             </nav>
             <div class="navigation-tools">
                 <div id="searchField"></div>
+                <button id="settingsSearchButton" class="icon-button" type="button" aria-label="Search configuration settings (press Shift twice)" title="Search configuration settings (Shift Shift)"><i class="fa fa-sliders" aria-hidden="true"></i></button>
                 <button id="themeToggle" class="icon-button" type="button" onclick="toggleDarkMode()" aria-label="Toggle color theme" title="Toggle color theme"><i class="fa fa-circle-half-stroke" aria-hidden="true"></i></button>
             </div>
         </div>

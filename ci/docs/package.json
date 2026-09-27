@@ -1,6 +1,5 @@
 {
   "dependencies": {
-    "lunr": "^2.3.9",
     "js-yaml": "^5.0.0"
   }
 }

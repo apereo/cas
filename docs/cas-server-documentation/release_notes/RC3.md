@@ -77,8 +77,28 @@ as well as some CAS functionality.
 Please refer to the [Spring Boot Wiki](https://github.com/spring-projects/spring-boot/wiki/Spring-Boot-4.2-Release-Notes)
 for more information on the changes and updates in this release. The biggest change to CAS would be support for AMQP 1.0.
 
+### Documentation
+
+The CAS documentation for the development branch received a visual and functional overhaul. Documentation
+for released versions is unaffected. Notable changes include:
+
+- A refreshed theme with light and dark modes, a serif typeface for headings, a monospaced sidebar, and
+  quiet icons for recurring sections such as configuration, actuator endpoints and troubleshooting.
+- Configuration settings are presented as a searchable, filterable reference list. Each setting can be expanded
+  to show its description, type, default value and deprecation status, and copied as `.properties`, YAML or
+  environment variables. The chosen format is remembered across pages.
+- Actuator endpoints are grouped by endpoint, with each operation listing its parameters, response and a working `curl`
+  example inline. Instructions to enable, expose and secure the endpoint along with related settings and
+  troubleshooting notes are shown once per endpoint rather than once per operation, which makes pages considerably lighter.
+- The [configuration properties](../configuration/Configuration-Properties.html) search is rewritten. It matches setting names regardless
+  of how they are written (property names, environment variables or pasted assignments), supports exact name matches,
+  searches names or descriptions, filters CAS or third-party and deprecated settings, and keeps the search in the page address so results can be shared.
+- Pressing <kbd>Shift</kbd> twice on any documentation page opens a quick search for configuration settings.
+
 ## Other Stuff
 
+- The documentation build and publishing process is considerably faster and less fragile. External links are checked on a weekly schedule
+  rather than on every change, and broken external links no longer block publishing.
 - A large number of dependencies and libraries have been updated to their latest versions.
 - Almost all CAS unit tests are internally reworked to allow maximum parallelization and speed up the overall test execution time.
-- CAS documentation has been redesigned to allow easier discovery of content and a better mobile-friendly experience. The collection of properties rendered for each CAS feature are also redesigned to allow better search, filtering and discovery.
+
