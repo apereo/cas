@@ -64,7 +64,7 @@ public class HeimdallAuthorizationController {
     private static final String REQUEST_ID_HEADER = "X-Request-ID";
 
     private static final Set<String> PROTOCOL_HEADERS = Set.of("accept", "accept-encoding", "connection", "content-length",
-        "content-type", "dpop", "host", "keep-alive", "te", "transfer-encoding", "upgrade");
+        "content-type", "dpop", "host", "keep-alive", "transfer-encoding", "upgrade");
 
     private final AuthorizationEngine authorizationEngine;
     private final AuthorizationPrincipalParser principalParser;

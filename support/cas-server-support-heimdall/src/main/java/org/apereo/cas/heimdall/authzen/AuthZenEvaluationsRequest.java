@@ -57,7 +57,7 @@ public class AuthZenEvaluationsRequest implements Serializable {
         val selectedContext = ObjectUtils.getIfNull(evaluation.getContext(), this.context);
         val effectiveContext = selectedContext == null
             ? new HashMap<String, Object>()
-            : new HashMap<String, Object>(selectedContext);
+            : new HashMap<>(selectedContext);
         return AuthorizationRequest.builder()
             .subject(ObjectUtils.getIfNull(evaluation.getSubject(), subject))
             .resource(ObjectUtils.getIfNull(evaluation.getResource(), resource))

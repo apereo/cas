@@ -906,3 +906,29 @@ Guidance for AI coding agents working in the Apereo CAS source tree.
   fronting proxies often cap a header at 8-16KB; that is deployment configuration, documented on the Duo page.
 - Scenario `mfa-duo-universal-login-storage-fails` covers both halves: storage broken with cookies falling back to a full
   Duo login, and storage plus script cookies broken showing the error panel.
+
+## Stateless ticket registry review discipline
+
+- The ticket id is the ticket: `StatelessTicketRegistry` deflates, AES-GCM encrypts (signing off, which is fine for GCM)
+  and base64url-encodes a compact string. `TicketCompactor.DELIMITER` is `,` and `parse` splits on it without escaping
+  or an element-count check, so every appended field that a caller or external IdP can influence (service path segment
+  via `getShortenedId`, OAuth `code_challenge`, principal id, TST property values) is an injection point. Review new
+  compactors for this first; `validate` only logs on length.
+- There is no delete: `deleteSingleTicket` is the base no-op, so `deleteTicket(...)` returns 0 and nothing is ever
+  consumed. Code that treats `delete > 0` as the single-use decision fails closed here; code that uses a deterministic
+  TST id as a replay marker (`TransientSessionTicketFactory.normalizeTicketId`: DPoP, client assertions, Heimdall)
+  never finds it and fails open. Callers must use the ticket `addTicket` returns: the stored id is re-encoded.
+- `TransientSessionTicketCompactor.expand` creates a new TST (new random id) and stringifies properties, so only flat
+  string properties survive; object-valued TSTs (Duo `TICKET_REGISTRY` state, VC transactions) do not.
+- Maintainer decision: the stateless registry stays 100% stateless, in the spirit of the Shibboleth IdP client-side
+  storage. Never propose a server-side replay, nonce or single-use store as the fix for anything here; fixes must be
+  expressible in the ticket or client storage itself (encoding, binding, lifetimes, key versioning).
+- Exploitability of delimiter injection through the service depends on the registered pattern: only the first path
+  segment reaches the compact form, so a pattern that pins that segment followed by `/` blocks it, while
+  `^(https|imaps)://.*` or `^https://host/.*` do not. ST principal ids are appended raw (PT/PGT base64url them).
+- The stateless SSO session has no TGC cookie: `SendTicketGrantingTicketAction` writes the TGT to browser storage
+  (default `LOCAL`), the login flow reads it back through the read-storage page on every entry, and expiration is a
+  fixed instant only (no idle timeout).
+- Scenarios `stateless-ticket-registry`, `stateless-ticket-registry-saml2-idp`, `oauth2-login-stateless`,
+  `oidc-login-stateless`, `mfa-duo-universal-login-stateless`, `ticket-validation-casv3-pgt-stateless` cover happy
+  paths only; none covers VC/VP, DPoP, private_key_jwt, replay or delimiter input.

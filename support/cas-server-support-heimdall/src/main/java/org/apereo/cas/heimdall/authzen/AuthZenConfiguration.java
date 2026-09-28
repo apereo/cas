@@ -7,10 +7,10 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 /**
  * AuthZEN policy decision point metadata.
  *
+ * @author Misagh Moayyed
  * @param policyDecisionPoint      the policy decision point identifier
  * @param accessEvaluationEndpoint the access evaluation endpoint
  * @param accessEvaluationsEndpoint the access evaluations endpoint
- * @author Misagh Moayyed
  * @since 8.1.0
  */
 @JsonInclude(JsonInclude.Include.NON_EMPTY)
