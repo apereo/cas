@@ -53,7 +53,12 @@
   (`HeimdallAuthZenConfigurationController`). The spec inserts the well-known segment after the host
   (`/.well-known/authzen-configuration/cas/heimdall`), outside the CAS context: deployments need a proxy or ENGINE
   rewrite-valve rule, as in the `heimdall-authzen` scenario's `rewrite.config`. `policy_decision_point` must equal the
-  identifier the PEP started from. List only endpoints that exist (no evaluations/search yet).
+  identifier the PEP started from. List only endpoints that exist (no search yet).
+- AuthZEN evaluations (`/heimdall/authzen/evaluations`): top-level subject/resource/action/context are defaults that an
+  entry replaces per key. Authenticate the caller once (`authenticateAuthZenCaller`), then `resolveSubject` per entry;
+  never call `parse` per entry (it would consume single-use JWT assertions). Per-entry failures are `decision:false` with
+  `context.error.{status,message}` (no exception text for 500s); short-circuit semantics omit the remaining entries;
+  no/empty `evaluations` falls back to the single evaluation. Evaluations run sequentially.
 - AuthZEN evaluated denials use HTTP 200 with `decision:false`; authentication failures use 401.
   Discovery/batch/search are separate capabilities, and the specification's example endpoint path is not mandatory.
 - Read shared helpers before reporting leaks: request headers already filter credentials and the request
@@ -242,6 +247,7 @@ Guidance for AI coding agents working in the Apereo CAS source tree.
 ## Puppeteer scenario init scripts
 
 - `ci/tests/puppeteer/run.sh` runs a scenario's `initScript` entries with `eval "source ${script}"`, so they execute in the runner's own shell. An `exit` on the success path therefore terminates the whole scenario run, which looks like the scenario dying silently right after the init script's last line of output. Let a successful init script fall off the end, and reserve `exit 1` for the failure path, which is what that exit is there for. `ci/tests/ldap/run-ad-server.sh` still carries an `exit 0` early return for the already-running case and has the same hazard.
+- Init scripts are sourced, so `set -e`, `set -u` or `pipefail` in one would stay on for the rest of `run.sh`; 17 scenarios source such a script, and a leaked `set -e` made a failing test exit `run.sh` at its first attempt with code 1 (whole-script retry) instead of 5 after its in-process attempts. `run.sh` turns those options off after each init script, so do not rely on them persisting.
 - Prefer polling the service's own port over a container health check, and dump `docker compose logs` on the failure path: an unhealthy container tells you nothing, while the service's logs say why it would not start.
 - In CI, `run.sh` launches the Gradle build (`bootWar`, or `bootJar` for starter scenarios; native keeps `build` + `nativeCompile`) in the background and runs npm install, ESLint, bootstrap and init scripts while it builds, waiting on the build process only before launching the CAS instance that needs it. Init and bootstrap scripts must therefore never depend on the built artifact, and a fixed `sleep` in them now runs while the build competes for CPU, so poll instead. `PUPPETEER_BUILD_OVERLAP=false` restores the sequential order. `PUPPETEER_BUILD_CTR` is the build timeout in minutes, measured from launch.
 - Scenario matrix jobs in `functional-tests.yml` restore the Gradle User Home with `cache-read-only: true` and do not set `cache: 'gradle'` on `setup-java`; saving from every one of the ~560 jobs cost ~12 s each and churned the Actions cache, and the two actions caching the same directory conflict.

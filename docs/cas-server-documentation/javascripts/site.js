@@ -672,6 +672,133 @@ window.addEventListener('load', () => {
   });
 });
 
+// The homepage promise is retyped in place: it holds, erases back to the product
+// name, then types a random phrase. Screen readers get the original title only.
+const CAS_HOME_TITLE_PHRASES = [
+  'For Every Galaxy In Between',
+  'Across the Known Universe',
+  'From Here to the Outer Rim',
+  'From Localhost to the Edge of the Galaxy',
+  'Because Aliens Need SSO Too',
+  'No Matter Which Planet You Log In From',
+  'Even for Carbon-Based Lifeforms',
+  'Securing Every Corner of the Cosmos',
+  'Across the Multiverse',
+  'No Matter Your Solar System',
+  'For Life, Liberty, and the Pursuit of Root Access',
+  'Where No Session Token Has Gone Before',
+  'Connecting Everyone Except the Guy Still on Internet Explorer',
+  "Authenticating Humans, Bots, and Your Family's Smart Fridge",
+  'Keeping the Hackers Out and the Coffee Brewing'
+];
+
+function initializeHomeTitle() {
+  const title = document.querySelector('.docs-home .home-intro h1');
+  const prefix = title?.querySelector('.home-title-prefix');
+  const accent = title?.querySelector('.home-title-accent');
+  if (!prefix || !accent) {
+    return;
+  }
+  const spoken = document.createElement('span');
+  spoken.className = 'visually-hidden';
+  spoken.textContent = title.textContent.replace(/\s+/g, ' ').trim();
+  prefix.setAttribute('aria-hidden', 'true');
+  accent.setAttribute('aria-hidden', 'true');
+  title.prepend(spoken);
+  Array.from(title.childNodes)
+    .filter(node => node.nodeType === Node.TEXT_NODE && !node.textContent.trim())
+    .forEach(node => node.remove());
+  const original = accent.textContent.trim();
+  accent.textContent = original;
+
+  const animate = !window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  if (animate) {
+    const cursor = document.createElement('span');
+    cursor.className = 'home-title-cursor';
+    cursor.setAttribute('aria-hidden', 'true');
+    accent.after(cursor);
+  }
+
+  // The product name never wraps: shrink the title if it does not fit (e.g. a wider
+  // fallback font), then reserve the height of the tallest phrase so the page never jumps.
+  const layout = () => {
+    title.style.fontSize = '';
+    const available = title.clientWidth;
+    const needed = prefix.scrollWidth;
+    if (needed > available) {
+      const size = parseFloat(getComputedStyle(title).fontSize);
+      title.style.fontSize = `${Math.floor(size * available / needed * 100) / 100}px`;
+    }
+    if (!animate) {
+      return;
+    }
+    const probe = title.cloneNode(true);
+    probe.removeAttribute('id');
+    probe.setAttribute('aria-hidden', 'true');
+    Object.assign(probe.style, {
+      position: 'absolute', visibility: 'hidden', pointerEvents: 'none',
+      left: '0', top: '0', width: `${title.getBoundingClientRect().width}px`, minHeight: '0'
+    });
+    title.parentElement.append(probe);
+    const probeAccent = probe.querySelector('.home-title-accent');
+    let tallest = 0;
+    [original, ...CAS_HOME_TITLE_PHRASES].forEach(phrase => {
+      probeAccent.textContent = phrase;
+      tallest = Math.max(tallest, probe.getBoundingClientRect().height);
+    });
+    probe.remove();
+    title.style.minHeight = `${Math.ceil(tallest)}px`;
+  };
+  (document.fonts?.ready ?? Promise.resolve()).then(layout);
+  let lastWidth = 0;
+  new ResizeObserver(entries => {
+    const width = Math.round(entries[0].contentRect.width);
+    if (width !== lastWidth) {
+      lastWidth = width;
+      layout();
+    }
+  }).observe(title);
+
+  if (!animate) {
+    return;
+  }
+  let bag = [];
+  let previous = original;
+  const nextPhrase = () => {
+    if (!bag.length) {
+      bag = CAS_HOME_TITLE_PHRASES.filter(phrase => phrase !== previous);
+      for (let i = bag.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [bag[i], bag[j]] = [bag[j], bag[i]];
+      }
+    }
+    previous = bag.pop();
+    return previous;
+  };
+  const wait = ms => new Promise(resolve => setTimeout(resolve, ms));
+  const run = async () => {
+    await wait(1000);
+    for (;;) {
+      title.classList.add('home-title-typing');
+      while (accent.textContent.length) {
+        accent.textContent = accent.textContent.slice(0, -1);
+        await wait(35);
+      }
+      await wait(420);
+      const target = nextPhrase();
+      for (let i = 1; i <= target.length; i++) {
+        accent.textContent = target.slice(0, i);
+        await wait(55 + Math.random() * 50);
+      }
+      title.classList.remove('home-title-typing');
+      await wait(2900);
+    }
+  };
+  run();
+}
+
+$(initializeHomeTitle);
+
 // Reveal only decorative homepage cards; technical content remains immediately visible.
 $(() => {
   if (!document.body.classList.contains('docs-home')
