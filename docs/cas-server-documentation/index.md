@@ -8,7 +8,7 @@ title: CAS - Home
 <div class="home-intro" markdown="1">
 <div class="eyebrow home-eyebrow">THE OPEN SOURCE IDENTITY PLATFORM</div>
 
-# <span class="home-title-prefix">Apereo CAS&nbsp;- Enterprise Authentication</span> <span class="home-title-accent">for All Earthlings and Beyond</span>
+# <span class="home-title-prefix">Apereo CAS&nbsp;- Enterprise Authentication</span> <span class="home-title-accent">For All Earthlings and Beyond</span>
 
 Welcome to the home of the Apereo Central Authentication Service project, more commonly 
 referred to as CAS. CAS is an enterprise multilingual single sign-on solution and identity provider for the web 

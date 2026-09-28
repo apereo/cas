@@ -126,10 +126,13 @@ The CAS documentation site has received a visual and functional overhaul. Notabl
 - A resource that does not set `enforceAllPolicies` is now granted when any one of its policies grants access, as documented;
   previously every policy had to grant. Set `enforceAllPolicies` to `true` on resources that rely on the old behavior.
   In that mode, a policy that fails with an error no longer prevents a later policy from granting access.
-- Heimdall supports the AuthZEN [access evaluations API](../authorization/Heimdall-Authorization-Overview.html) at
+- Heimdall supports the AuthZEN [access evaluations API](../authorization/Heimdall-Authorization-Overview.html#access-evaluations) at
   `/heimdall/authzen/evaluations`, with the `execute_all`, `deny_on_first_deny` and `permit_on_first_permit` semantics.
-- Heimdall publishes AuthZEN [policy decision point metadata](../authorization/Heimdall-Authorization-Overview.html) at
-  `/heimdall/.well-known/authzen-configuration`; the well-known location defined by the specification needs a rewrite rule.
+- Heimdall publishes AuthZEN [policy decision point metadata](../authorization/Heimdall-Authorization-Overview.html#policy-decision-point-metadata) at
+  `/heimdall/.well-known/authzen-configuration`; the well-known location defined by the specification needs a
+  [rewrite rule](../installation/Servlet-Container-Embedded-Tomcat-RewriteValve.html).
+- Denied AuthZEN decisions carry a [decision context](../authorization/Heimdall-Authorization-Overview.html#decision-context)
+  with a `reason` code.
 - [JDBC and OpenFGA policies](../authorization/Heimdall-Authorization-Overview.html) receive the AuthZEN subject, resource and action. [Palantir](../installation/Admin-Dashboard.html) can edit the AuthZEN fields
   of a resource and configure the Heimdall access strategy.
 

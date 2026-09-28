@@ -1,9 +1,5 @@
 const CONST_CURRENT_VER = "development";
 
-function isDocumentationSiteViewedLocally() {
-  return location.href.startsWith("http://localhost:4000");
-}
-
 function generateNavigationBarAndCrumbs() {
   const navigation = document.getElementById('docsNavBar');
   if (!navigation) {
@@ -12,7 +8,7 @@ function generateNavigationBarAndCrumbs() {
   const crumbs = document.createElement('ol');
   crumbs.className = 'breadcrumb';
   const segments = location.pathname.split('/').filter(Boolean);
-  const start = isDocumentationSiteViewedLocally() ? 0 : 1;
+  const start = 1;
   segments.slice(start).forEach((segment, index, items) => {
     const item = document.createElement('li');
     const current = index === items.length - 1;
@@ -33,21 +29,11 @@ function generateNavigationBarAndCrumbs() {
 
 function getActiveDocumentationVersionInView(returnBlankIfNoVersion) {
   let currentVersion = CONST_CURRENT_VER;
-  let href = location.href;
-  let index = isDocumentationSiteViewedLocally() ? href.indexOf("4000/") : -1;
-
-  if (index === -1) {
-    const uri = new URI(document.location);
-
-    if (uri.filename() !== uri.segment(1) && uri.segment(1) !== "developer") {
-      currentVersion = uri.segment(1);
-    } else if (returnBlankIfNoVersion) {
-      return "";
-    }
-  } else {
-    href = href.substring(index + 5);
-    index = href.indexOf("/");
-    currentVersion = href.substring(0, index);
+  const uri = new URI(document.location);
+  if (uri.filename() !== uri.segment(1) && uri.segment(1) !== "developer") {
+    currentVersion = uri.segment(1);
+  } else if (returnBlankIfNoVersion) {
+    return "";
   }
   return currentVersion;
 }
@@ -57,7 +43,7 @@ function loadSidebarForActiveVersion() {
   if (!document.getElementById('sidebar')) {
     return;
   }
-  let prefix = isDocumentationSiteViewedLocally() ? "/" : "/cas/";
+  let prefix = "/cas/";
   $.get(`${prefix + getActiveDocumentationVersionInView()}/sidebar.html`, data => {
     const menu = $(data);
 
@@ -183,8 +169,6 @@ function generateSidebarLinksForActiveVersion() {
     
     if (href.includes("#")) {
       href = href.substring(href.indexOf("#"));
-    } else if (isDocumentationSiteViewedLocally() && href.includes("http://localhost")) {
-      href = href.replace("/cas", "");
     }
     $(this).attr('href', href);
   });
@@ -214,7 +198,7 @@ function generateToolbarIcons() {
   let segments = uri.segment();
   let page = "";
 
-  for (let i = isDocumentationSiteViewedLocally() ? 0 : 1; i < segments.length; i++) {
+  for (let i = 1; i < segments.length; i++) {
     page += `${segments[i]}/`;
   }
   let editablePage = page.replace(".html", ".md");
@@ -225,11 +209,11 @@ function generateToolbarIcons() {
   }
 
 
-  let href = location.href.replace("https://apereo.github.io/cas", "http://localhost:4000");
+  let href = location.href.replace("https://apereo.github.io", "http://localhost:4000");
   $('#toolbarIcons').append(`<a href='${href}'><i class='fab fa-codepen' aria-hidden='true'></i><span class='visually-hidden'>See this page running on localhost</span></a>`);
 
   if (activeVersion !== CONST_CURRENT_VER && activeVersion !== "") {
-    let prefix = isDocumentationSiteViewedLocally() ? "/" : "/cas/";
+    let prefix = "/cas/";
     let linkToDev = prefix + page.replace(activeVersion, CONST_CURRENT_VER).replace("//", "/");
     linkToDev = linkToDev.replace("html/", "html");
 
@@ -675,7 +659,7 @@ window.addEventListener('load', () => {
 // The homepage promise is retyped in place: it holds, erases back to the product
 // name, then types a random phrase. Screen readers get the original title only.
 const CAS_HOME_TITLE_PHRASES = [
-  'For Every Galaxy In Between',
+  'For Every Galaxy in Between',
   'Across the Known Universe',
   'From Here to the Outer Rim',
   'From Localhost to the Edge of the Galaxy',
@@ -689,7 +673,17 @@ const CAS_HOME_TITLE_PHRASES = [
   'Where No Session Token Has Gone Before',
   'Connecting Everyone Except the Guy Still on Internet Explorer',
   "Authenticating Humans, Bots, and Your Family's Smart Fridge",
-  'Keeping the Hackers Out and the Coffee Brewing'
+  'Keeping the Hackers Out and the Coffee Brewing',
+  "\"123456\" Isn't an Enterprise Security Strategy",
+  'Zero Trust, Maximum Coffee',
+  'No Time for 40 Different Passwords',
+  'Securing Access for All and the Toaster on VLAN 3',
+  "Sticky Notes on Your Monitor Isn't an Identity Provider",
+  'Connecting Your Entire Stack With Very Little Attitude',
+  'Because Nobody Likes Security Awareness Training',
+  'Because Sticky Notes Are for Groceries',
+  'Keep Calm and Authenticate On',
+  'For People Who Hate Passwords'
 ];
 
 function initializeHomeTitle() {
@@ -782,7 +776,7 @@ function initializeHomeTitle() {
       title.classList.add('home-title-typing');
       while (accent.textContent.length) {
         accent.textContent = accent.textContent.slice(0, -1);
-        await wait(35);
+        await wait(18);
       }
       await wait(420);
       const target = nextPhrase();

@@ -91,7 +91,19 @@ async function verifyEvaluations() {
     };
     const all = await evaluations(batch);
     assert.deepEqual(all.evaluations.map((entry) => entry.decision), [true, false, true, false]);
+    assert.equal(all.evaluations[0].context, undefined);
+    assert.equal(all.evaluations[1].context.reason, "policy_denied");
     assert.equal(all.evaluations[3].context.error.status, 400);
+
+    const reasons = await evaluations({
+        subject: {type: "user", id: "bob"},
+        action: {name: "can_read"},
+        evaluations: [
+            {resource: {type: "folder", id: "f-1"}},
+            {resource: {type: "report", id: "r-1"}}
+        ]
+    });
+    assert.deepEqual(reasons.evaluations.map((entry) => entry.context.reason), ["no_matching_resource", "no_policies"]);
 
     const denyOnFirstDeny = await evaluations({...batch, options: {evaluations_semantic: "deny_on_first_deny"}});
     assert.deepEqual(denyOnFirstDeny.evaluations.map((entry) => entry.decision), [true, false]);

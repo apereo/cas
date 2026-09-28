@@ -743,9 +743,22 @@ function waitForCasInstance() {
   local startedAt=${SECONDS}
   local url
   local exitCode
+  local remaining
+  local probeTimeoutArgs
   for url in "$@"; do
     printcyan "Checking healthcheck url: ${url}"
-    until curl -I -k --connect-timeout 10 --max-time 30 --output /dev/null --silent --fail "${url}"; do
+    while true; do
+      probeTimeoutArgs=()
+      if (( PUPPETEER_STARTUP_TIMEOUT > 0 )); then
+        remaining=$((PUPPETEER_STARTUP_TIMEOUT - (SECONDS - startedAt)))
+        if (( remaining < 1 )); then
+          remaining=1
+        fi
+        probeTimeoutArgs=(--max-time "${remaining}")
+      fi
+      if curl -I -k --connect-timeout 10 "${probeTimeoutArgs[@]}" --output /dev/null --silent --fail "${url}"; then
+        break
+      fi
       if [[ -n "${pid}" ]] && ! kill -0 "${pid}" >/dev/null 2>&1; then
         wait "${pid}"
         exitCode=$?

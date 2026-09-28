@@ -119,7 +119,7 @@ via a `POST`. Once the request is evaluated, the typical response may match the 
 The `subject`, `resource` and `action` objects are required, along with `subject.type`, `subject.id`, `resource.type`,
 `resource.id` and `action.name`. A request that is missing any of these is rejected with a `400` status code, and a caller that
 cannot be authenticated receives a `401` status code. A request that is evaluated and denied receives a `200` status code with
-`"decision": false`. If the request carries an `X-Request-ID` header, the same value is returned in the response.
+`"decision": false` and a [decision context](#decision-context). If the request carries an `X-Request-ID` header, the same value is returned in the response.
 
 Note that `resource.id` identifies the resource instance being accessed, such as a specific account or document,
 and is not the name of a policy namespace. AuthZEN requests are matched against authorizable resources in *every* namespace
@@ -127,7 +127,42 @@ using their `resourceType`, `actions` and optional `resourceIdPattern` fields; t
 are ignored for AuthZEN requests. Likewise, the `/heimdall/authorize` endpoint rejects requests that carry AuthZEN `subject`,
 `resource` or `action` fields with a `400` status code.
 
-#### Access Evaluations
+See [AuthZEN](#authzen) for the [decision context](#decision-context), [access evaluations](#access-evaluations)
+and [policy decision point metadata](#policy-decision-point-metadata).
+
+{% endtab %}
+
+{% endtabs %}
+
+## AuthZEN
+
+The following capabilities are specific to the [AuthZEN](https://openid.net/specs/authorization-api-1_0.html) protocol.
+
+### Decision Context
+
+A denied decision carries a `context` with a `reason` code that tells the policy enforcement point why access was denied:
+
+```json
+{
+  "decision": false,
+  "context": {
+    "reason": "policy_denied"
+  }
+}
+```
+
+| Reason                 | Description                                                                 |
+|------------------------|-----------------------------------------------------------------------------|
+| `no_matching_resource` | No authorizable resource matches the resource type, action and resource id. |
+| `no_policies`          | A matching resource defines no authorization policies.                      |
+| `policy_denied`        | The authorization policies of a matching resource denied access.            |
+| `subject_unresolved`   | No principal could be resolved for the subject.                             |
+
+A granted decision carries no `context`. The reason names the stage of the evaluation that denied access, never the policy
+or the attributes involved, so that callers learn nothing about how policies are built; the details are logged by CAS at
+the `DEBUG` level for the `org.apereo.cas.heimdall` package.
+
+### Access Evaluations
 
 Several requests can be evaluated in one call to `/heimdall/authzen/evaluations` via a `POST`. The top-level `subject`, `resource`,
 `action` and `context` are defaults for each entry of `evaluations`, and any of them set on an entry replaces the default:
@@ -167,8 +202,15 @@ are still evaluated. The following `evaluations_semantic` values are supported:
 | `permit_on_first_permit` | Stop at the first permit; the decisions up to and including it are returned.          |
 
 A request without `evaluations`, or with an empty list, is evaluated as a single access evaluation and receives a single decision.
+Denied entries carry the same [decision context](#decision-context) as single evaluations.
 
-#### Policy Decision Point Metadata
+### Search
+
+The optional AuthZEN search APIs for subjects, resources and actions are not supported yet, and may be worked out in the future.
+Most Heimdall policies evaluate a single request, such as attribute, REST, JDBC or Groovy policies, rather than store the relationships
+a search would enumerate.
+
+### Policy Decision Point Metadata
 
 The policy decision point is identified by `${cas.server.prefix}/heimdall`, for example `https://sso.example.org/cas/heimdall`,
 and publishes its [metadata](https://openid.net/specs/authorization-api-1_0.html#name-policy-decision-point-metadata)
@@ -192,10 +234,6 @@ The valve must be registered on the engine which sees requests before a web appl
 ```bash
 RewriteRule ^/\.well-known/authzen-configuration(/.+)$ $1/.well-known/authzen-configuration [L]
 ```
-
-{% endtab %}
-
-{% endtabs %}
 
 ## Authorization Principal
        

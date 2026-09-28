@@ -497,6 +497,7 @@ button, a {
    of them, or hit titles keep their light-mode ink on a dark card. */
 .DocSearch {
     --docsearch-primary-color: var(--docs-accent);
+    --docsearch-highlight-color: var(--docs-accent);
     --docsearch-text-color: var(--docs-heading);
     --docsearch-muted-color: var(--docs-muted);
     --docsearch-searchbox-background: var(--docs-soft);
@@ -526,6 +527,11 @@ button, a {
 
 .DocSearch-Hit-title {
     color: var(--docs-heading);
+}
+
+/* Bootstrap pads <mark>; inside hit titles that splits a word around the match. */
+.DocSearch-Hits mark {
+    padding: 0;
 }
 
 /* The selected hit is a tinted card with an accent edge rather than a solid
