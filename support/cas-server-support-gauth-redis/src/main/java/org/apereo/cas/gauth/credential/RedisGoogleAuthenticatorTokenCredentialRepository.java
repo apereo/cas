@@ -143,6 +143,17 @@ public class RedisGoogleAuthenticatorTokenCredentialRepository extends BaseGoogl
     @Override
     public void delete(final long id) {
         val accountKey = RedisCompositeKey.forAccounts().withAccount(id).toKeyPattern();
+        val account = casRedisTemplates.getAccountsRedisTemplate().boundValueOps(accountKey).get();
+        if (account != null) {
+            val principalKey = RedisCompositeKey.forPrincipals().withPrincipal(account).toKeyPattern();
+            LOGGER.trace("Removing account [{}] from principal key [{}]", id, principalKey);
+            val principalOps = casRedisTemplates.getPrincipalsRedisTemplate().boundSetOps(principalKey);
+            Optional.ofNullable(principalOps.members())
+                .stream()
+                .flatMap(Set::stream)
+                .filter(value -> value.getId() == id)
+                .forEach(principalOps::remove);
+        }
         casRedisTemplates.getAccountsRedisTemplate().delete(accountKey);
     }
 

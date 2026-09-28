@@ -93,6 +93,32 @@ class RedisGoogleAuthenticatorTokenCredentialRepositoryTests extends BaseOneTime
         assertTrue(registry.get(username).isEmpty());
     }
 
+    @Test
+    void verifyDeleteById() {
+        val username = UUID.randomUUID().toString();
+        val first = registry.save(OneTimeTokenAccount.builder()
+            .username(username)
+            .secretKey("secret")
+            .validationCode(143211)
+            .scratchCodes(CollectionUtils.wrapList(1, 2, 3, 4, 5, 6))
+            .name(UUID.randomUUID().toString())
+            .build());
+        val second = registry.save(OneTimeTokenAccount.builder()
+            .username(username)
+            .secretKey("secret")
+            .validationCode(143212)
+            .scratchCodes(CollectionUtils.wrapList(1, 2, 3, 4, 5, 6))
+            .name(UUID.randomUUID().toString())
+            .build());
+        assertEquals(2, registry.count(username));
+        registry.delete(first.getId());
+        assertEquals(1, registry.count(username));
+        assertNull(registry.get(first.getId()));
+        assertNull(registry.get(username, first.getId()));
+        assertNotNull(registry.get(username, second.getId()));
+        assertEquals(second.getId(), registry.get(username).iterator().next().getId());
+    }
+
     @Override
     @RetryingTest(2)
     void verifySaveAndUpdate() {
