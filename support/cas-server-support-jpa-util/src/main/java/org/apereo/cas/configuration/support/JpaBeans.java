@@ -64,6 +64,28 @@ public class JpaBeans {
     }
 
     /**
+     * New Hikari connection pool with Hikari's defaults, except that no idle connections are kept:
+     * connections are opened on demand and retire after the default idle timeout, so a rarely
+     * used pool holds nothing. The pool starts on the first connection request.
+     *
+     * @param driverClass the driver class
+     * @param username    the username
+     * @param password    the password
+     * @param url         the url
+     * @return the data source
+     */
+    public CloseableDataSource newPoolingDataSource(final String driverClass, final String username,
+                                                    final String password, final String url) {
+        val bean = new HikariDataSource();
+        FunctionUtils.doIfNotBlank(driverClass, _ -> bean.setDriverClassName(driverClass));
+        bean.setJdbcUrl(url);
+        bean.setUsername(username);
+        bean.setPassword(password);
+        bean.setMinimumIdle(0);
+        return new DefaultCloseableDataSource(bean);
+    }
+    
+    /**
      * New simple data source.
      *
      * @param driverClass the driver class
@@ -83,7 +105,7 @@ public class JpaBeans {
             return ds;
         });
     }
-
+    
     /**
      * Get new data source, from JNDI lookup or created via direct configuration
      * of Hikari pool.

@@ -9,6 +9,7 @@ import org.apereo.cas.authentication.principal.DelegatedClientAuthenticationCred
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.logout.slo.SingleLogoutContinuation;
 import org.apereo.cas.pac4j.client.DelegatedClientAuthenticationFailureEvaluator;
+import org.apereo.cas.pac4j.client.DelegatedIdentityProviders;
 import org.apereo.cas.services.UnauthorizedServiceException;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.LoggingUtils;
@@ -266,7 +267,7 @@ public class DelegatedClientAuthenticationAction extends AbstractAuthenticationA
             throw UnauthorizedServiceException.denied("Denied: %s".formatted(clientName));
         }
         val client = (BaseClient) clientResult.get();
-        client.init();
+        DelegatedIdentityProviders.initialize(client);
         return client;
     }
 

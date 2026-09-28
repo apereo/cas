@@ -55,7 +55,7 @@ class CASOAuth20TicketValidatorTests extends AbstractOAuth20Tests {
         releasePolicy.setAuthorizedToReleaseAuthenticationAttributes(true);
         registeredService.setAttributeReleasePolicy(releasePolicy);
         registeredService.setMatchingStrategy(new LiteralRegisteredServiceMatchingStrategy());
-        servicesManager.deleteAll();
+        registeredService.setEvaluationOrder(Integer.MIN_VALUE);
         servicesManager.save(registeredService);
 
         val mockRequest = new MockHttpServletRequest(HttpMethod.GET.name(), CONTEXT + OAuth20Constants.AUTHORIZE_URL);

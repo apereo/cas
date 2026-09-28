@@ -2,7 +2,10 @@ package org.apereo.cas.heimdall.authorizer.resource;
 
 import module java.base;
 import org.apereo.cas.heimdall.authorizer.resource.policy.ResourceAuthorizationPolicy;
+import org.apereo.cas.heimdall.authzen.AuthZenAction;
+import org.apereo.cas.heimdall.authzen.AuthZenResource;
 import org.apereo.cas.util.serialization.PatternJsonDeserializer;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonSetter;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
@@ -42,6 +45,14 @@ public class AuthorizableResource implements Serializable {
 
     private String method;
 
+    private String resourceType;
+
+    @JsonDeserialize(using = PatternJsonDeserializer.class)
+    private Pattern resourceIdPattern;
+
+    @JsonSetter(nulls = Nulls.AS_EMPTY)
+    private Set<String> actions = new HashSet<>();
+
     @JsonSetter(nulls = Nulls.AS_EMPTY)
     private List<ResourceAuthorizationPolicy> policies = new ArrayList<>();
 
@@ -49,4 +60,22 @@ public class AuthorizableResource implements Serializable {
     private Map<String, Object> properties = new HashMap<>();
 
     private boolean enforceAllPolicies;
+
+    /**
+     * Whether this resource carries policies for the given AuthZEN resource and action.
+     * The resource type and action name must match exactly; when a resource id pattern is defined,
+     * it must match the entire resource id.
+     *
+     * @param resource the AuthZEN resource
+     * @param action   the AuthZEN action
+     * @return true if this resource applies
+     */
+    @JsonIgnore
+    public boolean supports(final AuthZenResource resource, final AuthZenAction action) {
+        return resource != null
+            && action != null
+            && resourceType != null && resourceType.equals(resource.getType())
+            && actions.contains(action.getName())
+            && (resourceIdPattern == null || (resource.getId() != null && resourceIdPattern.matcher(resource.getId()).matches()));
+    }
 }

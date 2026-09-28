@@ -4,6 +4,8 @@ import module java.base;
 import org.apereo.cas.heimdall.AuthorizationRequest;
 import org.apereo.cas.heimdall.authorizer.resource.AuthorizableResource;
 import org.apereo.cas.heimdall.authorizer.resource.AuthorizableResources;
+import org.apereo.cas.heimdall.authzen.AuthZenAction;
+import org.apereo.cas.heimdall.authzen.AuthZenResource;
 import org.springframework.beans.factory.DisposableBean;
 
 /**
@@ -45,6 +47,22 @@ public interface AuthorizableResourceRepository extends DisposableBean {
      * @return the list
      */
     List<AuthorizableResource> find(String namespace);
+
+    /**
+     * Find resources in every namespace that support the AuthZEN resource and action.
+     *
+     * @param resource the AuthZEN resource
+     * @param action   the AuthZEN action
+     * @return the matching resources
+     */
+    default List<AuthorizableResource> find(final AuthZenResource resource, final AuthZenAction action) {
+        return findAll()
+            .values()
+            .stream()
+            .flatMap(List::stream)
+            .filter(entry -> entry.supports(resource, action))
+            .toList();
+    }
 
     /**
      * Find resource for namespace by id.

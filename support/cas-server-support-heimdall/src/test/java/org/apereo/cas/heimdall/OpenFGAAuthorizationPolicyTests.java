@@ -3,7 +3,11 @@ package org.apereo.cas.heimdall;
 import module java.base;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.heimdall.authorizer.repository.AuthorizableResourceRepository;
+import org.apereo.cas.heimdall.authorizer.resource.AuthorizableResource;
 import org.apereo.cas.heimdall.authorizer.resource.policy.OpenFGAAuthorizationPolicy;
+import org.apereo.cas.heimdall.authzen.AuthZenAction;
+import org.apereo.cas.heimdall.authzen.AuthZenResource;
+import org.apereo.cas.heimdall.authzen.AuthZenSubject;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.test.CasTestExtension;
 import org.apereo.cas.util.CollectionUtils;
@@ -63,6 +67,25 @@ class OpenFGAAuthorizationPolicyTests {
             webServer.start();
             strategy.setApiUrl("http://localhost:%s".formatted(webServer.getPort()));
             assertEquals(allowed, strategy.evaluate(resource, authzRequest).authorized());
+        }
+    }
+
+    @ParameterizedTest
+    @ValueSource(booleans = {true, false})
+    void verifyAuthZenOperation(final boolean allowed) {
+        val mapper = JacksonObjectMapperFactory.builder().defaultTypingEnabled(false).build().toObjectMapper();
+        val strategy = new OpenFGAAuthorizationPolicy();
+        strategy.setStoreId("01GFTZWEZZMAM0NHQQZWE6AN3H");
+        val authzRequest = AuthorizationRequest.builder()
+            .subject(AuthZenSubject.builder().type("user").id("casuser").build())
+            .resource(AuthZenResource.builder().type("document").id("doc-1").build())
+            .action(AuthZenAction.builder().name("can_read").build())
+            .build()
+            .withPrincipal(RegisteredServiceTestUtils.getPrincipal("casuser"));
+        try (val webServer = new MockWebServer(mapper.writeValueAsString(CollectionUtils.wrap("allowed", allowed)))) {
+            webServer.start();
+            strategy.setApiUrl("http://localhost:%s".formatted(webServer.getPort()));
+            assertEquals(allowed, strategy.evaluate(new AuthorizableResource(), authzRequest).authorized());
         }
     }
 

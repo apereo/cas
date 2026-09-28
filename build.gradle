@@ -284,9 +284,9 @@ if (CasBuildSettings.isTaskRequested(project, 'jacocoRootReport')
                 .withPathSensitivity(PathSensitivity.RELATIVE)
 
         reports {
-            html.required.set(true)
+            html.required.set(!ci)
             xml.required.set(true)
-            csv.required.set(true)
+            csv.required.set(!ci)
         }
 
         additionalSourceDirs.setFrom(coverageSourceDirs)

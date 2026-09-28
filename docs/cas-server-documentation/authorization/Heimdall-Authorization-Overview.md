@@ -82,7 +82,7 @@ Typical responses include `200`, `401` or `403`.
 
 {% tab authorizationrequest AuthZEN %}
 
-Heimdall also supports the OpenID Connect AuthZEN Access Evaluation API. Using this strategy, the authorization
+Heimdall also supports the OpenID [AuthZEN Authorization API 1.0](https://openid.net/specs/authorization-api-1_0.html) Access Evaluation API. Using this strategy, the authorization
 request is composed of the following entities:
 
 ```json
@@ -116,6 +116,17 @@ via a `POST`. Once the request is evaluated, the typical response may match the 
 }
 ```
 
+The `subject`, `resource` and `action` objects are required, along with `subject.type`, `subject.id`, `resource.type`,
+`resource.id` and `action.name`. A request that is missing any of these is rejected with a `400` status code, and a caller that
+cannot be authenticated receives a `401` status code. A request that is evaluated and denied receives a `200` status code with
+`"decision": false`. If the request carries an `X-Request-ID` header, the same value is returned in the response.
+
+Note that `resource.id` identifies the resource instance being accessed, such as a specific account or document,
+and is not the name of a policy namespace. AuthZEN requests are matched against authorizable resources in *every* namespace
+using their `resourceType`, `actions` and optional `resourceIdPattern` fields; the URI pattern, method and namespace fields
+are ignored for AuthZEN requests. Likewise, the `/heimdall/authorize` endpoint rejects requests that carry AuthZEN `subject`,
+`resource` or `action` fields with a `400` status code.
+
 {% endtab %}
 
 {% endtabs %}
@@ -133,10 +144,54 @@ The authorization header value can be *one* of the following:
 - An **opaque access token** (i.e. `AT-1-...`), passed as a `Bearer` token, produced by CAS when acting an [OAuth](../authentication/OAuth-Authentication.html) or [OpenID Connect](../authentication/OIDC-Authentication.html) identity provider.
 - A **JWT bearer token** passed as a `Bearer` token and one that follows the semantics of the [JWT Authorization grant](../authentication/OIDC-Authentication-JWT-Bearer.html).
 - A valid base64-encoded `username:password`, passed as a `Basic` token, that can be accepted by the CAS authentication engine.
+  For AuthZEN requests, `Basic` credentials are instead the `client_id:client_secret` of an OAuth or OpenID Connect application
+  registered with CAS; CAS user credentials are rejected there.
 
 Claims or attributes from all token types are extracted and attached to the final principal, which is then
-passed to the authorization policy engine to make decisions. However, when using OpenID Connect ID AuthZEN protocol
-CAS will attempt to resolve claims and attributes based on the `subject` ID in the authorization request.
+passed to the authorization policy engine to make decisions. However, when using the AuthZEN protocol
+CAS will attempt to resolve claims and attributes based on the `subject` ID in the authorization request, but only for
+the `user` subject type. Subjects of any other type, such as services
+or devices, are evaluated by their identifier and the properties supplied in the request without any lookup.
+
+The request `context` of an AuthZEN request is exactly what the caller sends. For `/heimdall/authorize`, the HTTP request headers
+are also added to the `context`, except for credential and protocol headers such as `Authorization`, `Cookie`, `Host`
+and `Content-Type`; entries sent in the request body take precedence over headers with the same name.
+
+The claims-based policies (required scopes, ACR, AMR, audience and issuer) evaluate the principal's attributes. For
+AuthZEN requests, where the principal describes the subject rather than a token, use the qualified names of the
+required attributes policy (for example `subject.properties.acr` or `context.acr`) instead.
+
+Tokens are further subject to the following rules:
+
+- The token must be issued to an OAuth or OpenID Connect application that is registered with CAS and whose access strategy allows access.
+- A token that is bound to a key via [DPoP](../authentication/OIDC-Authentication-DPoP.html) must be presented using the `DPoP`
+  authorization scheme along with a valid DPoP proof for the Heimdall endpoint; it is rejected when presented as a `Bearer` token.
+- A token that is bound to a client certificate via mutual TLS is only accepted when the same client certificate is presented on the request.
+- A JWT bearer token must carry `jti` and `iat` claims, may be presented only once, and its lifetime between `iat` and `exp`
+  may not exceed a configurable maximum that defaults to five minutes.
+
+When [authentication throttling](../authentication/Configuring-Authentication-Throttling.html) is enabled, failed caller
+authentication attempts (`401`) on `/heimdall/authorize` and `/heimdall/authzen` are throttled; authorization denials
+and malformed requests are not counted.
+
+Applications can be individually prevented from calling Heimdall with their tokens using a dedicated access strategy:
+
+```json
+{
+  "@class": "org.apereo.cas.services.OidcRegisteredService",
+  "clientId": "client",
+  "serviceId": "^https://app.example.org/.+",
+  "name": "Sample",
+  "id": 1,
+  "accessStrategy": {
+    "@class": "org.apereo.cas.heimdall.services.HeimdallRegisteredServiceAccessStrategy",
+    "allowed": false
+  }
+}
+```
+
+The Heimdall access strategy may also be used as part of a chain of access strategies. Applications without this
+access strategy are allowed to call Heimdall, as long as their access strategy allows access.
         
 ## Authorization Resources
 
@@ -177,9 +232,9 @@ that operate on patterns, you may want to ensure that the most specific policies
 <p>Remember that the file name is mostly irrelevant. While we recommend reasonable naming conventions,
 the <code>namespace</code> field inside the policy is really the piece that determines its owner.</p></div>
 
-<div class="alert alert-info">:information_source: <strong>AuthZEN Namespace</strong>
-<p>Please note that when using the AuthZEN protocol, the authorization resource's <code>namespace</code> field is 
-expected to be set to the resource ID field for relevant resources and policies to be found and activated.</p></div>
+<div class="alert alert-info">:information_source: <strong>AuthZEN Resources</strong>
+<p>An AuthZEN request is matched against resources in all namespaces. When more than one resource matches the request,
+every matching resource must grant access for the decision to be allowed.</p></div>
 
 The authorization policies owned by the indicated namespace and resource support the following elements:
 
@@ -188,11 +243,30 @@ The authorization policies owned by the indicated namespace and resource support
 | `id`                 | Unique numeric identifier for this resource.                                                                             |
 | `pattern`            | <sup>[1]</sup> The URI regular expression pattern that describes the resource or API endpoint.                           |
 | `method`             | <sup>[1]</sup> The HTTP method (as a regular expression pattern, or `*` for all) that is allowed to access the resource. |
-| `policies`           | A list of policies that are attached to the resource to allow or deny access.                                            |
-| `enforceAllPolicies` | Whether all policies must be consulted to authorize the request. Default is `false`.                                     |
+| `policies`           | A list of policies that are attached to the resource to allow or deny access. A resource without policies denies access.  |
+| `enforceAllPolicies` | Whether all policies must grant access. When `false`, the default, any one policy granting access is enough. |
 | `properties`         | Arbitrary key-value pairs attached to the resource for advanced decision making.                                         |
+| `resourceType`       | <sup>[2]</sup> The AuthZEN resource type, matched exactly against `resource.type`.                                        |
+| `actions`            | <sup>[2]</sup> The set of AuthZEN action names, one of which must match `action.name` exactly.                            |
+| `resourceIdPattern`  | <sup>[2]</sup> Optional regular expression that must match the entire AuthZEN `resource.id`; all ids match when undefined. |
 
 <sub><i>[1] This field is not necessary when using the AuthZEN protocol.</i></sub>
+<sub><i>[2] This field is only used by the AuthZEN protocol; a resource without a `resourceType` never matches AuthZEN requests.</i></sub>
+
+For example, the following resource grants AuthZEN `can_read` and `can_write` requests for documents whose id starts with `doc-`:
+
+```json
+{
+  "@class": "org.apereo.cas.heimdall.authorizer.resource.AuthorizableResource",
+  "id": 2,
+  "resourceType": "document",
+  "resourceIdPattern": "doc-.+",
+  "actions": [ "java.util.HashSet", [ "can_read", "can_write" ] ],
+  "policies": [ "java.util.ArrayList", [
+      {}
+  ]]
+}
+```
 
 ### Custom
 
@@ -297,11 +371,28 @@ An authorization policy that checks for the **presence** of required attributes 
 }
 ```
 
+Attribute names refer to the principal's attributes, except for the following qualified names that read the authorization request:
+
+| Name                           | Value                                                             |
+|--------------------------------|-------------------------------------------------------------------|
+| `subject.id`, `subject.type`   | The AuthZEN subject identifier and type.                          |
+| `resource.id`, `resource.type` | The AuthZEN resource identifier and type.                         |
+| `action.name`                  | The AuthZEN action name.                                          |
+| `subject.properties.<name>`    | A property of the AuthZEN subject, as supplied by the caller.     |
+| `resource.properties.<name>`   | A property of the AuthZEN resource, as supplied by the caller.    |
+| `action.properties.<name>`     | A property of the AuthZEN action, as supplied by the caller.      |
+| `context.<name>`               | An entry of the request `context`.                                |
+
+For example, `"subject.properties.department" : [ "java.util.HashSet", [ "^Finance$" ] ]` requires the caller to describe
+the subject as a member of the finance department. Properties are never merged into principal attributes, so a caller
+cannot override attributes that CAS resolves for the subject.
+
 {% endtab %}
 
 {% tab heimdallauthzpolicies Rejected Attributes %}
 
-An authorization policy that checks for the **absence** of indicated attributes in the authorization principal's profile:
+An authorization policy that checks for the **absence** of indicated attributes in the authorization principal's profile,
+using the same attribute names as the required attributes policy:
 
 ```json
 {
@@ -396,7 +487,7 @@ An authorization policy can be outsources to a REST API that can make decisions 
 }
 ```
     
-- The request body will contain a map to present the `request` and the `resource` JSON payloads.
+- The request body will contain a map to present the `request` and the `resource` JSON payloads. The `resource` excludes its policies.
 - Authorized requests are expected to receive a `200` response code.
 - The `url` and header values can be constructed using the [Spring Expression Language](../configuration/Configuration-Spring-Expressions.html)
 
@@ -433,6 +524,9 @@ The `object` field in the API request is composed of the following elements:
 $REQUEST_NAMESPACE + ':' + $REQUEST_METHOD + ':' + $REQUEST_URI
 ```
 
+For AuthZEN requests, the `object` field is composed of `$RESOURCE_TYPE + ':' + $RESOURCE_ID`, the `relation` defaults
+to the AuthZEN action name, and the `userType` defaults to the AuthZEN subject type.
+
 <sub><i>[1] This field supports the [Spring Expression Language](../configuration/Configuration-Spring-Expressions.html) syntax.</i></sub>
 
 {% endtab %}
@@ -460,8 +554,15 @@ The following settings are available:
 | `url`      | <sup>[1]</sup> The database connection string, i.e. `jdbc:mysql://localhost:3306/cas`     |
 | `username` | <sup>[1]</sup> The username when building a database connection.                          |
 | `password` | <sup>[1]</sup> The password when building a database connection.                          |
+| `dataSourceName` | Optional name of the data source bean to use; see below.                              |
 
 <sub><i>[1] This field supports the [Spring Expression Language](../configuration/Configuration-Spring-Expressions.html) syntax.</i></sub>
+
+The policy looks up its data source as a bean in the application context, named `dataSourceName` when defined or
+`heimdallJdbcDataSource-<hash>` derived from the URL and username otherwise. When no such bean exists, CAS creates a
+connection pool with default settings that keeps no idle connections, registers it under that name, and shares it
+across all policies with the same name until CAS shuts down. A deployment may define its own data source bean with that
+name to control pooling.
 
 The SQL query is preprocessed to receive the following named parameters:
 
@@ -470,8 +571,10 @@ The SQL query is preprocessed to receive the following named parameters:
 - `namespace` from the authorization request.
 - `principal` from the authorization request.
 
+For AuthZEN requests, the query also receives `subjectType`, `subjectId`, `resourceType`, `resourceId` and `action`.
+
 Furthermore, all context attributes from the authorization request as well as all principal attributes are passed as named parameters
-and can be used and referenced in the query.
+and can be used and referenced in the query. Context and principal attributes cannot replace any of the named parameters listed above.
 
 {% endtab %}
 

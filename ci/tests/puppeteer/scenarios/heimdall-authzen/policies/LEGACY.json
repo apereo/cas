@@ -1,0 +1,32 @@
+{
+  "@class": "org.apereo.cas.heimdall.authorizer.resource.AuthorizableResources",
+  "resources": [
+    "java.util.ArrayList",
+    [
+      {
+        "@class": "org.apereo.cas.heimdall.authorizer.resource.AuthorizableResource",
+        "id": 1,
+        "pattern": "/api/legacy",
+        "method": "POST",
+        "policies": [
+          "java.util.ArrayList",
+          [
+            {
+              "@class": "org.apereo.cas.heimdall.authorizer.resource.policy.RequiredAttributesAuthorizationPolicy",
+              "attributes": {
+                "@class": "java.util.HashMap",
+                "memberOf": [
+                  "java.util.HashSet",
+                  [
+                    "editors"
+                  ]
+                ]
+              }
+            }
+          ]
+        ]
+      }
+    ]
+  ],
+  "namespace": "LEGACY"
+}

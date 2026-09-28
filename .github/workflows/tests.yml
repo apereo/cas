@@ -144,9 +144,13 @@ jobs:
           shell: bash
           command: |
             chmod +x ./testcas.sh
+            coverage=""
+            if [[ "${{ github.event_name }}" != "pull_request" ]]; then
+              coverage="--with-coverage"
+            fi
             if [[ "${{ github.event_name }}" == "schedule" ]] && [[ "${{ github.event.schedule }}" == "0 10 * * *" ]]; then
               echo "Running tests without PTS mode"
-              ./testcas.sh --no-watch --category ${{ matrix.category }} --events FAILED --no-pts --with-coverage
+              ./testcas.sh --no-watch --category ${{ matrix.category }} --events FAILED --no-pts $coverage
             else 
               if [[ "${{ github.event_name }}" == "push" ]] || [[ "${{ github.event_name }}" == "schedule" ]]; then
                 ptsMode="REMAINING_TESTS";
@@ -154,63 +158,33 @@ jobs:
                 ptsMode="RELEVANT_TESTS";
               fi
               echo "Running tests with PTS mode: $ptsMode"
-              ./testcas.sh --no-watch --category ${{ matrix.category }} --events FAILED --pts $ptsMode --with-coverage
+              ./testcas.sh --no-watch --category ${{ matrix.category }} --events FAILED --pts $ptsMode $coverage
             fi
-      - name: Check Coverage Report
-        if: github.event_name == 'push' || github.event_name == 'workflow_dispatch' || github.event_name == 'schedule'
+      - name: Collect Coverage Data
+        if: github.event_name != 'pull_request'
         run: |
-          xml_files=$(find build/reports -type f -name "*.xml")
-          if [ -z "$xml_files" ]; then
-            echo "No coverage XML files found"
+          find . -path ./.gradle -prune -o -path '*/build/jacoco/*.exec' -print > coverage-data.txt
+          if [[ -s coverage-data.txt ]]; then
+            tar -czf "jacoco-${{ matrix.category }}.tar.gz" -T coverage-data.txt
+            echo "Collected $(wc -l < coverage-data.txt) coverage data files"
           else
-            printf '%s\n' "$xml_files"
+            echo "No coverage data files found"
           fi
-      - name: Upload to SonarCloud
-        if: env.SONARCLOUD_TOKEN != null && (github.event_name == 'push' || github.event_name == 'workflow_dispatch' || github.event_name == 'schedule')
-        continue-on-error: true
-        run: |
-          coverageReport="$PWD/build/reports/jacoco/jacocoRootReport/jacocoRootReport.xml"
-          echo "Uploading coverage report to SonarCloud from $coverageReport"
-          ./gradlew sonar --build-cache --configure-on-demand \
-            --no-daemon -DskipAot=true -q --parallel --no-isolated-projects \
-            -x javadoc -x test -DskipNestedConfigMetadataGen=true \
-            -PsonarOrganization="${{ github.repository_owner }}" \
-            -Dsonar.coverage.jacoco.xmlReportPaths="$coverageReport"
-      - name: "Upload to Codecov"
-        uses: "codecov/codecov-action@v7"
-        continue-on-error: true
-        if: env.CODECOV_TOKEN != null && (github.event_name == 'push' || github.event_name == 'workflow_dispatch' || github.event_name == 'schedule')
+      - name: Upload Coverage Data
+        uses: actions/upload-artifact@v7
+        if: github.event_name != 'pull_request'
         with:
-          token: ${{ env.CODECOV_TOKEN }}
-          files: ./build/reports/jacoco/jacocoRootReport/jacocoRootReport.xml
-          flags: ${{ matrix.category }}
-          name: ${{ matrix.category }}
-          verbose: true
-          fail_ci_if_error: false
-      - name: Upload to Coveralls
-        uses: coverallsapp/github-action@v2
-        continue-on-error: true
-        with:
-          github-token: ${{ secrets.GITHUB_TOKEN }}
-          file: ./build/reports/jacoco/jacocoRootReport/jacocoRootReport.xml
-          format: jacoco
-          parallel: true
-          build-number: ${{ github.run_id }}-${{ github.run_attempt }}
-          debug: true
-      - name: Upload Coverage Report
-        uses: "actions/upload-artifact@v7"
-        if: github.event_name == 'push' || github.event_name == 'workflow_dispatch' || github.event_name == 'schedule'
-        with:
-          name: "cas-tests-${{ matrix.category }}.coverage"
-          path: "./build/reports/jacoco/jacocoRootReport/jacocoRootReport.xml"
+          name: "cas-tests-${{ matrix.category }}.jacoco"
+          path: "jacoco-${{ matrix.category }}.tar.gz"
+          if-no-files-found: ignore
+          retention-days: 3
+          overwrite: true
   ##########################################################################
 
   coverage:
     runs-on: ubuntu-latest
     needs: [ tests ]
-    if: (github.event_name == 'push' || github.event_name == 'workflow_dispatch' || github.event_name == 'schedule')
-    outputs:
-      coverage-files: ${{ steps.coverage-files.outputs.coverage-files }}
+    if: ${{ !cancelled() && needs.tests.result != 'skipped' && (github.event_name == 'push' || github.event_name == 'workflow_dispatch' || github.event_name == 'schedule') }}
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v7
@@ -225,29 +199,61 @@ jobs:
         uses: gradle/actions/setup-gradle@v6
         with:
           gradle-home-cache-excludes: caches/build-cache-1
-      - name: Collect Coverage Files
-        id: coverage-files
+      - name: Initialize
+        run: find ./ci -type f -name "*.sh" -exec chmod +x "{}" \; && ./ci/init-build.sh
+        shell: bash
+      - name: Download Coverage Data
+        uses: actions/download-artifact@v8
+        with:
+          pattern: "cas-tests-*.jacoco"
+          path: coverage-data
+          merge-multiple: true
+      - name: Build Coverage Report
         run: |
-          mapfile -t files < <(find "$PWD" -type f -name 'jacocoRootReport.xml')
-          printf '%s\n' "${files[@]}"
-          coverage_reports=$(IFS=,; printf '%s' "${files[*]}")
-          echo "COVERAGE_REPORTS=$coverage_reports" >> "$GITHUB_ENV"
-      - name: Upload Coverage to Codacy
-        continue-on-error: true
-        env:
-          CODACY_PROJECT_TOKEN: ${{ secrets.CODACY_PROJECT_TOKEN }}
-          CODACY_REPORTER_OPTIONS: --http-timeout 60000 --num-retries 8 --sleep-time 15000
-        run: |
-          IFS=',' read -r -a reports <<< "${{ env.COVERAGE_REPORTS }}"
-          for report in "${reports[@]}"; do
-            echo "Uploading coverage report: $report"
-            bash <(curl -Ls https://coverage.codacy.com/get.sh) report -r "$report" --partial
+          shopt -s nullglob
+          archives=(coverage-data/jacoco-*.tar.gz)
+          echo "Extracting ${#archives[@]} coverage data archives"
+          for archive in "${archives[@]}"; do
+            tar -xzf "$archive"
           done
-          bash <(curl -Ls https://coverage.codacy.com/get.sh) final
-      - name: Finish Coveralls
+          ./gradlew jacocoRootReport --build-cache --configure-on-demand --no-daemon --parallel \
+            -x javadoc -x check -DskipNestedConfigMetadataGen=true --quiet
+          echo "COVERAGE_REPORT=$PWD/build/reports/jacoco/jacocoRootReport/jacocoRootReport.xml" >> "$GITHUB_ENV"
+      - name: Upload Coverage Report
+        uses: actions/upload-artifact@v7
+        with:
+          name: "cas-tests.coverage"
+          path: ${{ env.COVERAGE_REPORT }}
+      - name: Upload to SonarCloud
+        if: env.SONARCLOUD_TOKEN != null
+        continue-on-error: true
+        run: |
+          echo "Uploading coverage report to SonarCloud from $COVERAGE_REPORT"
+          ./gradlew sonar --build-cache --configure-on-demand \
+            --no-daemon -DskipAot=true -q --parallel --no-isolated-projects \
+            -x javadoc -x test -DskipNestedConfigMetadataGen=true \
+            -PsonarOrganization="${{ github.repository_owner }}" \
+            -Dsonar.coverage.jacoco.xmlReportPaths="$COVERAGE_REPORT"
+      - name: "Upload to Codecov"
+        uses: "codecov/codecov-action@v7"
+        continue-on-error: true
+        if: env.CODECOV_TOKEN != null
+        with:
+          token: ${{ env.CODECOV_TOKEN }}
+          files: ${{ env.COVERAGE_REPORT }}
+          verbose: true
+          fail_ci_if_error: false
+      - name: Upload to Coveralls
         uses: coverallsapp/github-action@v2
+        continue-on-error: true
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
-          parallel-finished: true
+          file: ${{ env.COVERAGE_REPORT }}
+          format: jacoco
           build-number: ${{ github.run_id }}-${{ github.run_attempt }}
-          debug: true
+      - name: Upload Coverage to Codacy
+        if: env.CODACY_PROJECT_TOKEN != null
+        continue-on-error: true
+        env:
+          CODACY_REPORTER_OPTIONS: --http-timeout 60000 --num-retries 8 --sleep-time 15000
+        run: bash <(curl -Ls https://coverage.codacy.com/get.sh) report -r "$COVERAGE_REPORT"

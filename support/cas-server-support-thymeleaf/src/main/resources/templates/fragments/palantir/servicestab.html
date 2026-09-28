@@ -654,6 +654,11 @@
                                                         title='When enabled, attribute matching is performed in a case-insensitive manner',
                                                         label='#Case Insensitive', cssClass='pt-2 DefaultRegisteredServiceAccessStrategy',
                                                         dataAttrs='param-skip-false=true,param-name=accessStrategy.caseInsensitive')}"/>
+
+                                                  <div th:replace="~{fragments/switchbutton :: switchbutton (id='accessStrategyHeimdallAllowed',
+                                                        title='Determine if tokens issued to this OAuth or OpenID Connect application may authenticate calls to the Heimdall authorization endpoints',
+                                                        label='#Allowed to Call Heimdall', selected=true, cssClass='pt-3 hide HeimdallRegisteredServiceAccessStrategy',
+                                                        dataAttrs='param-skip-true=true,param-name=accessStrategy.allowed')}"/>
                                               </div>
 
                                               <h3 data-section-group="Access & Authentication" class="advanced-option">Authentication Policy</h3>

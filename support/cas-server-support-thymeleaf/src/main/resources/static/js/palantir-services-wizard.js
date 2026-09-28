@@ -1302,6 +1302,14 @@ function createRegisteredServiceAccessStrategy() {
                         text: "SCIM"
                     }]
                     : []
+            ),
+            ...(
+                CAS_FEATURES.includes("Authorization")
+                    ? [{
+                        value: "org.apereo.cas.heimdall.services.HeimdallRegisteredServiceAccessStrategy",
+                        text: "HEIMDALL"
+                    }]
+                    : []
             )
         ],
         helpText: "Specifies the access strategy for the registered service.",

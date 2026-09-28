@@ -3,6 +3,7 @@ package org.apereo.cas.web.flow.actions;
 import module java.base;
 import org.apereo.cas.audit.AuditableContext;
 import org.apereo.cas.authentication.principal.provision.DelegatedAuthenticationFailureException;
+import org.apereo.cas.pac4j.client.DelegatedIdentityProviders;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.RegisteredServiceProperty.RegisteredServiceProperties;
 import org.apereo.cas.services.RegisteredServiceProperty.RegisteredServicePropertyGroups;
@@ -134,22 +135,13 @@ public class DelegatedClientAuthenticationRedirectAction extends BaseCasWebflowA
     }
 
     /**
-     * Initializes the identity provider, waiting for an initialization already in flight rather than
-     * competing with it. A pac4j client asked to initialize while another thread is initializing the
-     * same instance returns at once without doing anything and without waiting, so two logins that
-     * arrive together against a freshly started server would see one of them fail. The client's own
-     * monitor is what pac4j holds for the whole of its initialization, so taking it first turns that
-     * race into a wait, and the check inside means the thread that waited does not initialize again.
+     * Initializes the identity provider, waiting for an initialization already in flight.
      *
      * @param client the identity provider to initialize
      * @throws Throwable if the provider cannot be initialized
      */
     protected void initializeClientIdentityProvider(final IndirectClient client) throws Throwable {
-        synchronized (client) {
-            if (!client.isInitialized()) {
-                client.init();
-            }
-        }
+        DelegatedIdentityProviders.initialize(client);
         FunctionUtils.throwIf(!client.isInitialized(), DelegatedAuthenticationFailureException::new);
     }
 

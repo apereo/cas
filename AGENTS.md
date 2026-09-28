@@ -7,17 +7,52 @@
 - Trace `DefaultAuthorizationPrincipalParser` through `DefaultAuthorizationEngine` and each policy.
   A valid caller token does not establish PDP audience, PEP permissions or DPoP proof possession;
   delegated subject ids are legitimate for trusted PEPs and are not inherently impersonation.
-- Match resource type/id and action before granting. The current namespace lookup by AuthZEN resource id
-  can succeed but does not enforce action/type distinctions; never summarize it as always denying.
-- Reserve JDBC authorization parameter names against context/attribute overwrites, and check that policy
-  file deletion removes cached grants. Review both any/all combiners and empty collections.
+- An AuthZEN `resource.id` names the resource instance, never a policy namespace. AuthZEN requests
+  (`AuthorizationRequest.isAuthZen()`: subject, resource and action all present) match `resourceType`, `actions` and an
+  optional full-match `resourceIdPattern` across every namespace, and every match must grant. Normal requests
+  keep namespace + URI pattern + method and `/heimdall/authorize` rejects AuthZEN fields, which keeps the paths apart.
+- Callers authenticate with tokens issued to a registered OAuth/OIDC service whose access strategy allows
+  access; `HeimdallRegisteredServiceAccessStrategy` (alone or chained) can refuse it. DPoP and `x509_digest`
+  certificate bindings are enforced. On AuthZEN, Basic means `client_id:client_secret` (reject clients without secrets:
+  `DefaultOAuth20ClientSecretValidator.validate` returns true when none is defined); on `/heimdall/authorize` it
+  stays CAS user credentials, split on the first colon. Both endpoints are throttled; `HeimdallThrottledHandlerInterceptor`
+  forwards only 401s to the throttle interceptors' post-processing. A `ThrottledRequestFilter` cannot limit what
+  counts: the default `httpPost()` filter claims every POST and the plan combines filters with `anyMatch`, and the
+  interceptors record every non-2xx response (twice: `postHandle` and `afterCompletion`).
+  Create registry-backed single-use markers through the `TicketFactory` (TST factory, custom `ExpirationPolicy` in
+  a *mutable* properties map: `buildExpirationPolicy` removes that key, so `Map.of` throws), never by instantiating
+  ticket implementations.
+- macOS JDKs use a polling `WatchService` (2s): a file created and deleted between two polls produces no event.
+  Watcher-driven caches must reconcile against the file system on every event rather than trust event kinds. JWT assertions need `jti`/`iat`, are single-use,
+  and share the token endpoint's audiences on purpose. A resource without policies denies.
+- JDBC trusted parameters (`principal`, `method`, `uri`, `namespace` and the AuthZEN names) are added after
+  context and attributes, so they already win; an overwrite claim there was a false finding. Check that policy
+  file deletion removes cached grants. `enforceAllPolicies=false` means any one policy grants (`anyMatch`), and an
+  empty policy list denies before either combiner runs.
+- JDBC policies resolve their `DataSource` by bean name (`dataSourceName`, else `heimdallJdbcDataSource-<sha256(url|username)>`)
+  and register a `JpaBeans.newPoolingDataSource` pool (Hikari defaults, `minimumIdle=0`) through
+  `GenericApplicationContext.registerBean` under a lock, so Spring closes it on shutdown. Never cache a pool on a
+  policy instance (policies are rebuilt on every file reload) and never use `registerSingleton` for closeable beans:
+  Spring gives registered singletons no destruction callbacks. Tests override `resolveApplicationContext()` with a
+  local context rather than relying on the static `ApplicationContextProvider`, which parallel tests share.
+- Policies evaluate sequentially; do not reintroduce `parallelStream()` (blocking policies starve `commonPool`).
+- AuthZEN subjects are resolved through the principal resolver only for subject type `user` (hardcoded);
+  other types become a bare principal. Policies read request data through
+  `AuthorizationRequest.resolveAttributeValues` (qualified `subject.*`, `resource.*`, `action.*`, `context.*` names);
+  never merge caller-supplied properties into principal attributes, which would let a PEP override the directory.
+  AuthZEN `context` is body-only; `/heimdall/authorize` adds non-protocol headers with `putIfAbsent`.
+- Palantir rebuilds resources from a fixed field list (`heimdallResourceForStorage`) and re-saves the whole
+  namespace; any new `AuthorizableResource` field must be added there or an edit silently drops it.
 - AuthZEN evaluated denials use HTTP 200 with `decision:false`; authentication failures use 401.
   Discovery/batch/search are separate capabilities, and the specification's example endpoint path is not mandatory.
 - Read shared helpers before reporting leaks: request headers already filter credentials and the request
   principal is JSON-ignored. Confirm performance severity with evidence; blocking policy parallel streams
   and unpooled JDBC merit investigation, not an unmeasured claim of outage.
-- There is no dedicated Heimdall Puppeteer coverage; Palantir merely includes the module. The shared nginx
-  authorization example omits namespace, so it cannot establish working endpoint integration.
+- Puppeteer scenario `heimdall-authzen` covers the AuthZEN endpoint end to end (decisions across namespaces,
+  id patterns, deny-wins, empty policies, `X-Request-ID`, unknown fields, 400/401, the Heimdall access strategy,
+  client-credential and bearer PEPs, the legacy endpoint, the actuator and throttling). It also enables throttling,
+  so keep 401-producing steps at least one throttle window apart. Palantir scenarios only check that tabs load,
+  and the shared nginx `/authorize` example is not exercised by any scenario.
 
 Guidance for AI coding agents working in the Apereo CAS source tree.
 
@@ -98,6 +133,7 @@ Guidance for AI coding agents working in the Apereo CAS source tree.
 - Treat authentication, tickets, webflow, logout, MFA, and crypto as security-sensitive areas. Match existing CAS utilities and flows instead of introducing parallel mechanisms.
 - Keep diffs surgical: this codebase already has strong patterns, so the fastest path is usually “copy the nearest module family pattern and adapt it” rather than inventing a new abstraction.
 - Documentation pages on gh-pages are pre-rendered per version, but they load the stylesheet and script from the shared site root, and every publish overwrites those root files. The current design ships as `stylesheets/site.css`, `stylesheets/site-print.css` and `javascripts/site.js`; the root `stylesheet.css`, `print.css` and `main.js` belong to the released versions' old markup. A redesign that changes page markup must use new asset names, never replace the ones older versions link.
+- Unit-test matrix jobs (`tests.yml`) record JaCoCo data only (`testcas.sh --with-coverage` only turns on the agent) and upload the `.exec` files; the single `coverage` job builds `jacocoRootReport` and does every Sonar/Codecov/Coveralls/Codacy upload. Do not move `jacocoRootReport` or `sonar` back into the matrix: the root report compiles all ~430 projects and Sonar re-analyses the whole code base, which is what made each category job 17 minutes instead of 7.
 - Every `gradle/actions/setup-gradle` step sets `gradle-home-cache-excludes: caches/build-cache-1`; the local build cache duplicated the Develocity remote cache and alone filled the repository's 10 GB Actions cache, evicting everything else within the hour. Keep it on new setup-gradle steps.
 - The CodeQL job (`analysis.yml`) runs with Develocity and the remote cache, but `settings.gradle` makes every `JavaCompile` task non-cacheable and never up to date whenever CodeQL tracing env vars are present (`CODEQL_RUNNER`, `CODEQL_EXTRACTOR_JAVA_*`). CodeQL only extracts code it sees compiled, so a compile restored from cache empties the scan. Do not remove this, and do not add `JavaCompile` output caching that bypasses it.
 - The documentation data generator (`docs/cas-server-documentation-processor`) runs as `java @build/casdocsgen.args ...`, an argument file written by its `docsGeneratorArguments` task from `sourceSets.main.runtimeClasspath`; `publish.sh` no longer builds the ~1 GB `casdocsgen.jar` boot jar. Its Gradle run adds `-DskipErrorProneCompiler=true` (override with `DOCS_GENERATOR_GRADLE_OPTIONS`, an empty value restores Error Prone). It still needs every CAS module compiled: actuators, feature toggles and shell commands are found by ClassGraph scans of the runtime classpath, and third-party settings come from the dependencies' metadata. Those lookups go through `CasDocumentationClassIndex`, one ClassGraph scan of `org` shared by the exporters; add new class lookups there rather than calling `ReflectionUtils`, which scans the whole classpath on every call.
@@ -105,6 +141,7 @@ Guidance for AI coding agents working in the Apereo CAS source tree.
 - Actuator endpoint blocks (`_includes_site/actuators.html`) take their operations from the `cas_actuator_operations` filter in `_plugins/cas_actuators.rb` (sorted, parameters normalized, curl built there), and settings snippets from `cas_actuator_enable_snippet` / `cas_actuator_security_snippet` via `cas-actuator-snippet.html` in all three formats. Per operation, render only what differs (parameters, response, example); setup, security, settings and troubleshooting are rendered once per include in the shared tabs. The operations table is excluded from `responsiveTables()`.
 - Settings search: `ci/docs/index.js` writes `assets/data/<version>/index.json` as `{generated, docs}` (no lunr index; each doc carries name, short type, description, default, kind required/optional/thirdparty, module, duration, deprecation). `site.js` searches it directly (`searchCasSettings`, shared by the Configuration Properties page and the Shift-Shift palette); the page state lives in the URL (`?q=&exact=1&scope=name&kind=cas|thirdparty&deprecated=hide`). The layout exposes `data-docs-base`, `data-docs-version` and `data-docs-build` on `<body>` for these URLs.
 - Feature toggles (`Configuration-Feature-Toggles.md`) render through `_includes_site/cas-feature-toggles.html` from the `cas_feature_catalog` filter in `_plugins/cas_features.rb`, which derives feature and module from the `CasFeatureModule.<Feature>[.<module>].enabled` property, groups features by area and links docs only when the target page exists for that version. Add title overrides, groups or docs links there, not in the include. The environment variable form maps both `.` and `-` to `_` (`CasFeatureEnabledCondition` reads through `Environment.getProperty`), unlike the relaxed-binding form used for regular settings.
+- Module dependency tabs (`_includes_site/casmodule.html`, included through `include_cached`) are plain Bootstrap tabs: no inline script, the default tab and pane are chosen together in Liquid, and pane ids use the full coordinates plus the variant options. Do not add per-include scripts or truncated ids; either one lets the selected tab and the visible pane drift apart.
 - Section heading icons come from `CAS_SECTION_ICONS` in `site.js` and apply only to direct `h2` children of the article whose id is in that map; add an entry there rather than icons in markdown.
 - In the development docs, `site.js` wraps every table inside `#cas-docs-container` in a framed `.table-scroll` card, so do not use `<table>` for layout inside components (buttons, headers, badges); use flex markup instead.
 - Documentation property blocks get their settings from the `cas_properties` / `cas_third_party_properties` filters in `docs/cas-server-documentation/_plugins/cas_properties.rb`; do not loop over `site.data` in Liquid for this, it scans ~14k entries per block. Liquid `assign` inside an include writes to the page scope, so a `casproperties` include nested inside another block's panels must pass `topics="false"` (and usually `intro="false"`) or it resets the outer block's state. Their output is wrapped in `{::nomarkdown}`, so include them at the start of a line in markdown or pass the capture through `markdownify` (with `|`, not `||`). Catalog descriptions carry raw `<`/`>` (for example `management.endpoint.<id>.access`); the plugin escapes every tag outside `INLINE_TAGS` into `descriptionHtml` / `summaryText`, so print those fields and never unescape descriptions in Liquid: one stray tag inside the actuator modal makes kramdown drop the closing tags and everything after it on the page.
@@ -145,6 +182,7 @@ Guidance for AI coding agents working in the Apereo CAS source tree.
 
 ## Parallel test execution and shared registries
 
+- Initialize shared pac4j clients with `DelegatedIdentityProviders.initialize(client)`, never a bare `client.init()`: pac4j returns immediately, uninitialized, while another thread is initializing the same instance. The helper waits lock-free on `isInitializing()`.
 - Most categories in `buildSrc/.../TestCategories.groovy` are declared parallel, and JUnit's default mode there is `concurrent` for classes *and* methods, so sibling `@Test` methods in one class run at the same time against the same Spring context. A test that clears a shared registry wholesale -- `servicesManager.getAllServicesOfType(...).forEach(servicesManager::delete)` in a setup step, say -- deletes what its siblings just saved, and the failure surfaces in whichever method lost the race rather than in the one that did the clearing.
 - The symptom to recognize: a test asserting on a service it saved itself gets the value that belongs to the "service was missing" code path. `OpenIdFederationAuthorizationCodeResponseTypeAuthorizationRequestValidatorTests` failed exactly that way, reporting `expected: <old-service> but was: <new-service>`, because another method's clear removed the saved service and the validator then resolved a fresh one.
 - Isolate by identifier, not by emptying the registry: give each test a UUID-bearing client id and assert only on that id. `@Execution(ExecutionMode.SAME_THREAD)` fixes the within-class case but not another class sharing the context, so prefer removing the global mutation.

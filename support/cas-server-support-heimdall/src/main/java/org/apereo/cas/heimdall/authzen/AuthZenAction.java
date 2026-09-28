@@ -1,6 +1,7 @@
 package org.apereo.cas.heimdall.authzen;
 
 import module java.base;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -17,6 +18,7 @@ import org.springframework.validation.annotation.Validated;
  * @since 7.3.0
  */
 @Data
+@JsonIgnoreProperties(ignoreUnknown = true)
 @NoArgsConstructor
 @Validated
 @ToString
@@ -29,4 +31,5 @@ public class AuthZenAction implements Serializable {
     private static final long serialVersionUID = -2288573141680320570L;
 
     private String name;
+    private Map<String, Object> properties;
 }

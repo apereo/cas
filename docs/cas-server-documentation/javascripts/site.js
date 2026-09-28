@@ -422,6 +422,12 @@ function initializePage() {
         searchParameters: { 'facetFilters': filters },
         debug: true
       });
+      const searchButton = document.querySelector('#searchField .DocSearch-Button');
+      if (searchButton) {
+        const shortcut = /Mac|iPhone|iPad/.test(navigator.platform) ? '\u2318K' : 'Ctrl+K';
+        searchButton.setAttribute('aria-label', `Search the documentation (${shortcut})`);
+        searchButton.title = `Search the documentation (${shortcut})`;
+      }
     }
 }
 

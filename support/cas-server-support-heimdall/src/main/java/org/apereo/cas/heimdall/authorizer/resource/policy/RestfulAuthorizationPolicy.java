@@ -24,6 +24,7 @@ import lombok.val;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import tools.jackson.databind.ObjectMapper;
+import tools.jackson.databind.node.ObjectNode;
 
 /**
  * This is {@link RestfulAuthorizationPolicy}.
@@ -64,7 +65,9 @@ public class RestfulAuthorizationPolicy implements ResourceAuthorizationPolicy {
 
     @Override
     public AuthorizationResult evaluate(final AuthorizableResource resource, final AuthorizationRequest request) throws Throwable {
-        val entity = Map.of("resource", resource, "request", request);
+        val resourceWithoutPolicies = (ObjectNode) MAPPER.valueToTree(resource);
+        resourceWithoutPolicies.remove("policies");
+        val entity = Map.of("resource", resourceWithoutPolicies, "request", request);
         val finalHeaders = headers
             .entrySet()
             .stream()

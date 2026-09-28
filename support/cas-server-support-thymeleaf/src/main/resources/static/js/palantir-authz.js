@@ -277,10 +277,31 @@ function heimdallResourceForStorage(resource) {
     if (resource.method) {
         normalized.method = resource.method;
     }
+    if (resource.resourceType) {
+        normalized.resourceType = resource.resourceType;
+    }
+    if (resource.resourceIdPattern) {
+        normalized.resourceIdPattern = resource.resourceIdPattern;
+    }
+    const actions = heimdallExtractArray(resource.actions);
+    if (actions.length > 0) {
+        normalized.actions = actions;
+    }
     if (resource.properties && Object.keys(resource.properties).length > 0) {
         normalized.properties = heimdallPlainMap(resource.properties);
     }
     return normalized;
+}
+
+function renderHeimdallAuthZenMapping(resource) {
+    if (!resource.resourceType) {
+        return "N/A";
+    }
+    const actions = heimdallExtractArray(resource.actions).map(action => `<code>${escapeHeimdallHtml(action)}</code>`);
+    const idPattern = resource.resourceIdPattern
+        ? ` <span title="Resource ID pattern">(<code>${escapeHeimdallHtml(resource.resourceIdPattern)}</code>)</span>`
+        : "";
+    return `<code>${escapeHeimdallHtml(resource.resourceType)}</code>${idPattern}: ${actions.length > 0 ? actions.join(", ") : "N/A"}`;
 }
 
 function heimdallTextField({id, label, type = "text", title = "", required = false, value = ""}) {
@@ -342,7 +363,7 @@ function heimdallPolicyFieldGroup(policyIndex, policyTypes, fields) {
                 "data-policy-map-field": field.key,
                 "data-policy-map-label": field.label,
                 "data-policy-map-multiple": field.multiple === true
-            })
+            }).data("policy-map-hint", field.hint)
             : field.kind === "textarea"
             ? heimdallTextArea({id: id, label: field.label, title: field.title, rows: field.rows})
             : field.kind === "select"
@@ -450,7 +471,11 @@ function addHeimdallPolicy(policy = null) {
     ]));
     card.append(heimdallPolicyFieldGroup(policyIndex,
         ["RequiredAttributesAuthorizationPolicy", "RejectedAttributesAuthorizationPolicy"], [
-            {key: "attributes", label: "Attributes", kind: "map", multiple: true}
+            {
+                key: "attributes", label: "Attributes", kind: "map", multiple: true,
+                hint: "Keys are principal attribute names, or request values such as <code>subject.properties.department</code>, "
+                    + "<code>resource.properties.owner</code>, <code>action.properties.method</code> or <code>context.channel</code>."
+            }
         ]));
     card.append(heimdallPolicyFieldGroup(policyIndex, ["RequiredACRAuthorizationPolicy"], [
         {key: "acrs", label: "Required ACR Values", placeholder: "mfa, .*", title: "Comma-separated regular expressions."}
@@ -484,7 +509,8 @@ function addHeimdallPolicy(policy = null) {
         {key: "url", label: "JDBC URL", placeholder: "jdbc:postgresql://localhost/cas"},
         {key: "username", label: "Username"},
         {key: "password", label: "Password", type: "password"},
-        {key: "query", label: "SQL Query", placeholder: "select authorized from ..."}
+        {key: "query", label: "SQL Query", placeholder: "select authorized from ..."},
+        {key: "dataSourceName", label: "Data Source Bean Name", placeholder: "Optional; derived from the URL and username"}
     ]));
     const policyBody = $("<div>", {id: policyBodyId, class: "heimdall-policy-card-body"});
     card.children(".heimdall-policy-fields").appendTo(policyBody);
@@ -503,6 +529,16 @@ function addHeimdallPolicy(policy = null) {
             cssClasses: "heimdall-policy-map",
             onChangeCallback: generateHeimdallResourcePayload
         });
+        const hint = host.data("policy-map-hint");
+        if (hint) {
+            const hintElement = $("<p>", {class: "text-muted small mt-0 mb-2 heimdall-policy-map-hint"}).html(hint);
+            const header = host.find("h3").first();
+            if (header.length > 0) {
+                header.after(hintElement);
+            } else {
+                host.prepend(hintElement);
+            }
+        }
     });
     showHeimdallPolicyFields(card);
 
@@ -632,7 +668,7 @@ function prefillHeimdallPolicyMap(card, key, value, multipleValues = false) {
 
 function prefillHeimdallPolicy(card, policy, policyType) {
     for (const key of ["script", "groupField", "attributeDefinition", "roleName", "issuer", "url", "method",
-        "apiUrl", "storeId", "token", "relation", "userType", "username", "password", "query"]) {
+        "apiUrl", "storeId", "token", "relation", "userType", "username", "password", "query", "dataSourceName"]) {
         setHeimdallPolicyField(card, key, policy[key]);
     }
     for (const key of ["groups", "acrs", "amrs", "audience", "scopes"]) {
@@ -720,7 +756,7 @@ function buildHeimdallPolicy(card) {
             copy(key);
         }
     } else if (type === "JdbcAuthorizationPolicy") {
-        for (const key of ["url", "username", "password", "query"]) {
+        for (const key of ["url", "username", "password", "query", "dataSourceName"]) {
             copy(key);
         }
     }
@@ -784,6 +820,18 @@ function buildHeimdallResourcePayload() {
     }
     if (method) {
         resource.method = method;
+    }
+    const resourceType = $("#heimdallResourceType").val()?.trim();
+    const resourceIdPattern = $("#heimdallResourceIdPattern").val()?.trim();
+    const actions = heimdallCsv($("#heimdallResourceActions").val());
+    if (resourceType) {
+        resource.resourceType = resourceType;
+    }
+    if (resourceIdPattern) {
+        resource.resourceIdPattern = resourceIdPattern;
+    }
+    if (actions.length > 0) {
+        resource.actions = actions;
     }
 
     const properties = getHeimdallResourceProperties();
@@ -869,6 +917,9 @@ function prefillHeimdallResourceDialog(resource) {
     $("#heimdallResourceId").val(resource.id);
     $("#heimdallResourcePattern").val(resource.pattern ?? "");
     $("#heimdallResourceMethod").val(resource.method ?? "");
+    $("#heimdallResourceType").val(resource.resourceType ?? "");
+    $("#heimdallResourceIdPattern").val(resource.resourceIdPattern ?? "");
+    $("#heimdallResourceActions").val(heimdallExtractArray(resource.actions).join(","));
     setHeimdallSwitchState("heimdallEnforceAllPolicies", resource.enforceAllPolicies === true);
     prefillHeimdallResourceProperties(resource.properties);
     const preservedPolicies = [];
@@ -917,6 +968,18 @@ function newHeimdallResource(prefillData = null, options = {}) {
     }));
     controls.append(heimdallTextField({
         id: "heimdallResourceMethod", label: "HTTP Method Pattern", title: "HTTP method regular expression, or * for all; optional for AuthZEN."
+    }));
+    controls.append(heimdallTextField({
+        id: "heimdallResourceType", label: "AuthZEN Resource Type",
+        title: "Exact AuthZEN resource type that selects this resource; leave blank if AuthZEN requests should not match."
+    }));
+    controls.append(heimdallTextField({
+        id: "heimdallResourceActions", label: "AuthZEN Actions",
+        title: "Comma-separated AuthZEN action names, such as can_read,can_write."
+    }));
+    controls.append(heimdallTextField({
+        id: "heimdallResourceIdPattern", label: "AuthZEN Resource ID Pattern",
+        title: "Optional regular expression that must match the entire AuthZEN resource id."
     }));
     controls.append(enforceAllToggle);
     controls.append('<div id="heimdallResourcePropertiesContainer"></div>');
@@ -1147,7 +1210,7 @@ async function initializeHeimdallOperations() {
                     if (last !== group) {
                         $(rows).eq(i).before(
                             `<tr style='font-weight: bold; background-color:var(--cas-theme-primary); color:var(--mdc-text-button-label-text-color);'>
-                                            <td colspan="3">Namespace: ${escapeHeimdallHtml(group)}</td>
+                                            <td colspan="4">Namespace: ${escapeHeimdallHtml(group)}</td>
                                         </tr>`.trim());
                         last = group;
                     }
@@ -1183,7 +1246,8 @@ async function initializeHeimdallOperations() {
                             1: `${resource.id ?? "N/A"}`,
                             2: `<code>${escapeHeimdallHtml(resource.pattern ?? "N/A")}</code>`,
                             3: renderHeimdallHttpMethod(resource.method),
-                            4: renderHeimdallPolicyEnforcement(resource.enforceAllPolicies === true),
+                            4: renderHeimdallAuthZenMapping(resource),
+                            5: renderHeimdallPolicyEnforcement(resource.enforceAllPolicies === true),
                             namespace: key,
                             resourceId: resource.id
                         });
