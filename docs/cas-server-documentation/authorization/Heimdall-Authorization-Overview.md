@@ -127,6 +127,47 @@ using their `resourceType`, `actions` and optional `resourceIdPattern` fields; t
 are ignored for AuthZEN requests. Likewise, the `/heimdall/authorize` endpoint rejects requests that carry AuthZEN `subject`,
 `resource` or `action` fields with a `400` status code.
 
+#### Access Evaluations
+
+Several requests can be evaluated in one call to `/heimdall/authzen/evaluations` via a `POST`. The top-level `subject`, `resource`,
+`action` and `context` are defaults for each entry of `evaluations`, and any of them set on an entry replaces the default:
+
+```json
+{
+  "subject": { "type": "user", "id": "alice@acmecorp.com" },
+  "action": { "name": "can_read" },
+  "options": { "evaluations_semantic": "execute_all" },
+  "evaluations": [
+    { "resource": { "type": "document", "id": "1" } },
+    { "resource": { "type": "document", "id": "2" }, "action": { "name": "can_edit" } }
+  ]
+}
+```
+
+The response lists the decisions in the order of the requested evaluations:
+
+```json
+{
+  "evaluations": [
+    { "decision": true },
+    { "decision": false }
+  ]
+}
+```
+
+The caller is authenticated once for the whole request, so a single-use JWT bearer assertion covers every evaluation.
+An entry that is missing a required field, or that cannot be evaluated, is denied with an error in its `context`, for example
+`{"decision": false, "context": {"error": {"status": 400, "message": "Resource id is required"}}}`, while the other entries
+are still evaluated. The following `evaluations_semantic` values are supported:
+
+| Value                    | Description                                                                           |
+|--------------------------|---------------------------------------------------------------------------------------|
+| `execute_all`            | Default. Evaluate every entry and return every decision.                              |
+| `deny_on_first_deny`     | Stop at the first denial or error; the decisions up to and including it are returned. |
+| `permit_on_first_permit` | Stop at the first permit; the decisions up to and including it are returned.          |
+
+A request without `evaluations`, or with an empty list, is evaluated as a single access evaluation and receives a single decision.
+
 #### Policy Decision Point Metadata
 
 The policy decision point is identified by `${cas.server.prefix}/heimdall`, for example `https://sso.example.org/cas/heimdall`,
@@ -136,7 +177,8 @@ at `/cas/heimdall/.well-known/authzen-configuration`:
 ```json
 {
   "policy_decision_point": "https://sso.example.org/cas/heimdall",
-  "access_evaluation_endpoint": "https://sso.example.org/cas/heimdall/authzen"
+  "access_evaluation_endpoint": "https://sso.example.org/cas/heimdall/authzen",
+  "access_evaluations_endpoint": "https://sso.example.org/cas/heimdall/authzen/evaluations"
 }
 ```
 

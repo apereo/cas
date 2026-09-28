@@ -11,6 +11,7 @@ import org.apereo.cas.authentication.principal.PrincipalFactoryUtils;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.support.Beans;
 import org.apereo.cas.heimdall.AuthorizationRequest;
+import org.apereo.cas.heimdall.authzen.AuthZenSubject;
 import org.apereo.cas.heimdall.services.HeimdallRegisteredServiceAccessStrategy;
 import org.apereo.cas.oidc.OidcConstants;
 import org.apereo.cas.oidc.jwks.OidcJsonWebKeyCacheKey;
@@ -95,21 +96,30 @@ public class DefaultAuthorizationPrincipalParser implements AuthorizationPrincip
     @Override
     public @Nullable Principal parse(final String authorizationHeader, final AuthorizationRequest authorizationRequest,
                                      final @Nullable WebContext webContext) throws Throwable {
-        val claims = parseAuthorizationHeader(authorizationHeader, authorizationRequest, webContext);
-        val principalAttributes = new HashMap(claims.getClaims());
-        principalAttributes.put(HttpHeaders.AUTHORIZATION, authorizationHeader);
+        val claims = parseAuthorizationHeader(authorizationHeader, authorizationRequest.isAuthZen(), webContext);
         val subject = authorizationRequest.getSubject();
         if (subject != null) {
-            if (RESOLVED_SUBJECT_TYPE.equals(subject.getType())) {
-                return authenticationSystemSupport.getPrincipalResolver().resolve(new BasicIdentifiableCredential(subject.getId()));
-            }
-            return PrincipalFactoryUtils.newPrincipalFactory().createPrincipal(subject.getId());
+            return resolveSubject(subject);
         }
+        val principalAttributes = new HashMap(claims.getClaims());
+        principalAttributes.put(HttpHeaders.AUTHORIZATION, authorizationHeader);
         return PrincipalFactoryUtils.newPrincipalFactory().createPrincipal(claims.getSubject(), principalAttributes);
     }
 
-    protected JWTClaimsSet parseAuthorizationHeader(final String authorizationHeader,
-                                                    final AuthorizationRequest authorizationRequest,
+    @Override
+    public void authenticateAuthZenCaller(final String authorizationHeader, final @Nullable WebContext webContext) throws Throwable {
+        parseAuthorizationHeader(authorizationHeader, true, webContext);
+    }
+
+    @Override
+    public @Nullable Principal resolveSubject(final AuthZenSubject subject) throws Throwable {
+        if (RESOLVED_SUBJECT_TYPE.equals(subject.getType())) {
+            return authenticationSystemSupport.getPrincipalResolver().resolve(new BasicIdentifiableCredential(subject.getId()));
+        }
+        return PrincipalFactoryUtils.newPrincipalFactory().createPrincipal(subject.getId());
+    }
+
+    protected JWTClaimsSet parseAuthorizationHeader(final String authorizationHeader, final boolean authZen,
                                                     final @Nullable WebContext webContext) throws Throwable {
         if (Strings.CI.startsWith(authorizationHeader, "Basic ")) {
             val credentials = EncodingUtils.decodeBase64ToString(Strings.CI.removeStart(authorizationHeader, "Basic ").trim());
@@ -117,7 +127,7 @@ public class DefaultAuthorizationPrincipalParser implements AuthorizationPrincip
                 () -> new AuthenticationException("Basic credentials must be formatted as id:secret"));
             val id = StringUtils.substringBefore(credentials, ":");
             val secret = StringUtils.substringAfter(credentials, ":");
-            return authorizationRequest.isAuthZen()
+            return authZen
                 ? buildClaimSetFromClientCredentials(id, secret)
                 : buildClaimSetFromAuthentication(id, secret);
         }

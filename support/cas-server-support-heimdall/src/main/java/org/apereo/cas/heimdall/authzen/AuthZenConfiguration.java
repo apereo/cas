@@ -9,11 +9,13 @@ import com.fasterxml.jackson.annotation.JsonProperty;
  *
  * @param policyDecisionPoint      the policy decision point identifier
  * @param accessEvaluationEndpoint the access evaluation endpoint
+ * @param accessEvaluationsEndpoint the access evaluations endpoint
  * @author Misagh Moayyed
  * @since 8.1.0
  */
 @JsonInclude(JsonInclude.Include.NON_EMPTY)
 public record AuthZenConfiguration(
     @JsonProperty("policy_decision_point") String policyDecisionPoint,
-    @JsonProperty("access_evaluation_endpoint") String accessEvaluationEndpoint) implements Serializable {
+    @JsonProperty("access_evaluation_endpoint") String accessEvaluationEndpoint,
+    @JsonProperty("access_evaluations_endpoint") String accessEvaluationsEndpoint) implements Serializable {
 }

@@ -1106,7 +1106,9 @@ ${BUILD_SCRIPT:+ $BUILD_SCRIPT}${DAEMON:+ $DAEMON} \
         printgreen "Running initialization script: ${script}"
         chmod +x "${script}"
         eval "source ${script}"
-        if [[ $? -ne 0 ]]; then
+        initScriptResult=$?
+        set +e +u +o pipefail
+        if [[ ${initScriptResult} -ne 0 ]]; then
           printred "Initialization script [${script}] failed."
           exit 1
         fi

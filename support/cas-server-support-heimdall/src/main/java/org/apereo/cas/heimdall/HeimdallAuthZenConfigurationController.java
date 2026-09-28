@@ -46,6 +46,8 @@ public class HeimdallAuthZenConfigurationController {
     public AuthZenConfiguration configuration() {
         val policyDecisionPoint = StringUtils.removeEnd(casProperties.getServer().getPrefix(), "/")
             + HeimdallAuthorizationController.BASE_URL;
-        return new AuthZenConfiguration(policyDecisionPoint, policyDecisionPoint + HeimdallAuthorizationController.AUTHZEN_PATH);
+        return new AuthZenConfiguration(policyDecisionPoint,
+            policyDecisionPoint + HeimdallAuthorizationController.AUTHZEN_PATH,
+            policyDecisionPoint + HeimdallAuthorizationController.AUTHZEN_EVALUATIONS_PATH);
     }
 }

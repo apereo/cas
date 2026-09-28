@@ -698,9 +698,119 @@ class HeimdallAuthorizationControllerTests {
             .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
             .andExpect(jsonPath("$.policy_decision_point").value(policyDecisionPoint))
             .andExpect(jsonPath("$.access_evaluation_endpoint").value(policyDecisionPoint + "/authzen"))
-            .andExpect(jsonPath("$.access_evaluations_endpoint").doesNotExist())
+            .andExpect(jsonPath("$.access_evaluations_endpoint").value(policyDecisionPoint + "/authzen/evaluations"))
             .andExpect(jsonPath("$.search_subject_endpoint").doesNotExist())
             .andExpect(jsonPath("$.capabilities").doesNotExist());
+    }
+
+    @Test
+    void verifyAuthZenEvaluations() throws Throwable {
+        val body = """
+            {
+              "subject": {"type": "user", "id": "casperson"},
+              "action": {"name": "can_read"},
+              "context": {"channel": "web"},
+              "evaluations": [
+                {"resource": {"type": "entity", "id": "1"}},
+                {"resource": {"type": "document", "id": "doc-9"}},
+                {"action": {"name": "can_write"}, "resource": {"type": "entity", "id": "1"}},
+                {"resource": {"type": "entity"}},
+                {"subject": {"type": "user", "id": "casuser"}, "resource": {"type": "entity", "id": "2"}}
+              ]
+            }
+            """;
+        val requestId = UUID.randomUUID().toString();
+        mockMvc.perform(authZenEvaluationsRequest(body, clientCredentials()).header("X-Request-ID", requestId))
+            .andExpect(status().isOk())
+            .andExpect(header().string("X-Request-ID", requestId))
+            .andExpect(jsonPath("$.evaluations.length()").value(5))
+            .andExpect(jsonPath("$.evaluations[0].decision").value(true))
+            .andExpect(jsonPath("$.evaluations[1].decision").value(false))
+            .andExpect(jsonPath("$.evaluations[2].decision").value(false))
+            .andExpect(jsonPath("$.evaluations[3].decision").value(false))
+            .andExpect(jsonPath("$.evaluations[3].context.error.status").value(400))
+            .andExpect(jsonPath("$.evaluations[4].decision").value(true));
+    }
+
+    @ParameterizedTest
+    @CsvSource({"deny_on_first_deny,2,false", "permit_on_first_permit,2,true", "execute_all,3,true"})
+    void verifyAuthZenEvaluationsSemantics(final String semantic, final int count, final boolean last) throws Throwable {
+        val first = "deny_on_first_deny".equals(semantic) ? "entity" : "document";
+        val second = "deny_on_first_deny".equals(semantic) ? "document" : "entity";
+        val body = """
+            {
+              "subject": {"type": "user", "id": "casperson"},
+              "action": {"name": "can_read"},
+              "options": {"evaluations_semantic": "%s"},
+              "evaluations": [
+                {"resource": {"type": "%s", "id": "doc-9"}},
+                {"resource": {"type": "%s", "id": "doc-9"}},
+                {"resource": {"type": "entity", "id": "3"}}
+              ]
+            }
+            """.formatted(semantic, first, second);
+        mockMvc.perform(authZenEvaluationsRequest(body, clientCredentials()))
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$.evaluations.length()").value(count))
+            .andExpect(jsonPath("$.evaluations[%s].decision".formatted(count - 1)).value(last));
+    }
+
+    @Test
+    void verifyAuthZenEvaluationsWithoutEntries() throws Throwable {
+        val body = """
+            {
+              "subject": {"type": "user", "id": "casperson"},
+              "action": {"name": "can_read"},
+              "resource": {"type": "entity", "id": "1"},
+              "evaluations": []
+            }
+            """;
+        mockMvc.perform(authZenEvaluationsRequest(body, clientCredentials()))
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$.decision").value(true))
+            .andExpect(jsonPath("$.evaluations").doesNotExist());
+        mockMvc.perform(authZenEvaluationsRequest(body.replace("\"id\": \"1\"", "\"id\": \"\""), clientCredentials()))
+            .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    void verifyAuthZenEvaluationsFailures() throws Throwable {
+        val body = """
+            {
+              "subject": {"type": "user", "id": "casperson"},
+              "action": {"name": "can_read"},
+              "evaluations": [{"resource": {"type": "entity", "id": "1"}}]
+            }
+            """;
+        mockMvc.perform(post("/heimdall/authzen/evaluations").contentType(MediaType.APPLICATION_JSON).content(body))
+            .andExpect(status().isUnauthorized())
+            .andExpect(header().exists(HttpHeaders.WWW_AUTHENTICATE));
+        mockMvc.perform(authZenEvaluationsRequest(body, "Basic " + EncodingUtils.encodeBase64("casuser:resusac")))
+            .andExpect(status().isUnauthorized());
+        val unknownSemantic = body.replace("\"evaluations\":", "\"options\": {\"evaluations_semantic\": \"unknown\"}, \"evaluations\":");
+        mockMvc.perform(authZenEvaluationsRequest(unknownSemantic, clientCredentials()))
+            .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    void verifyAuthZenEvaluationsConsumeAssertionOnce() throws Throwable {
+        val registeredService = newAssertionClient();
+        val assertion = "Bearer " + signAssertion(registeredService, assertionClaims(registeredService, Duration.ofMinutes(2)));
+        val body = """
+            {
+              "subject": {"type": "user", "id": "casperson"},
+              "action": {"name": "can_read"},
+              "evaluations": [
+                {"resource": {"type": "entity", "id": "1"}},
+                {"resource": {"type": "entity", "id": "2"}}
+              ]
+            }
+            """;
+        mockMvc.perform(authZenEvaluationsRequest(body, assertion))
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$.evaluations[0].decision").value(true))
+            .andExpect(jsonPath("$.evaluations[1].decision").value(true));
+        mockMvc.perform(authZenEvaluationsRequest(body, assertion)).andExpect(status().isUnauthorized());
     }
 
     @Test
@@ -863,6 +973,12 @@ class HeimdallAuthorizationControllerTests {
             .subject(AuthZenSubject.builder().id("casperson").type("user").build())
             .resource(AuthZenResource.builder().id("7240d0db").type("entity").build())
             .action(AuthZenAction.builder().name("can_read").build()).build();
+    }
+
+    private static MockHttpServletRequestBuilder authZenEvaluationsRequest(final String body, final String authorizationHeader) {
+        return post("/heimdall/authzen/evaluations").contentType(MediaType.APPLICATION_JSON)
+            .content(body)
+            .header(HttpHeaders.AUTHORIZATION, authorizationHeader);
     }
 
     private static MockHttpServletRequestBuilder authZenRequest(final String authorizationHeader) {
