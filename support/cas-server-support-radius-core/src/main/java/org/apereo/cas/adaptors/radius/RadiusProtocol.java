@@ -2,6 +2,7 @@ package org.apereo.cas.adaptors.radius;
 
 import module java.base;
 import lombok.Getter;
+import lombok.RequiredArgsConstructor;
 
 /**
  * RADIUS protocol enumeration.
@@ -10,6 +11,7 @@ import lombok.Getter;
  * @since 4.0.0
  */
 @Getter
+@RequiredArgsConstructor
 public enum RadiusProtocol {
 
     /**
@@ -61,13 +63,4 @@ public enum RadiusProtocol {
      * The name.
      */
     private final String name;
-
-    /**
-     * Instantiates a new radius protocol.
-     *
-     * @param name the name
-     */
-    RadiusProtocol(final String name) {
-        this.name = name;
-    }
 }

@@ -1260,7 +1260,7 @@ ${BUILD_SCRIPT:+ $BUILD_SCRIPT}${DAEMON:+ $DAEMON} \
               runArgs="${runArgs} -XX:AOTCache=${aotCasDirectory}/cas.aot"
               casArtifactToRun="${aotCasDirectory}/cas.${projectType}"
               rm -Rf ${PWD}/*.jfr
-              sleep 6
+              sleep 2
             else
               printcyan "The scenario ${scenarioName} will run without AOT"
             fi

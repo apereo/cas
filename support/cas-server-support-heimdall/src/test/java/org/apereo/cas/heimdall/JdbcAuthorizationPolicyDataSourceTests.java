@@ -6,6 +6,7 @@ import org.apereo.cas.configuration.support.CloseableDataSource;
 import org.apereo.cas.configuration.support.JpaBeans;
 import org.apereo.cas.heimdall.authorizer.resource.policy.JdbcAuthorizationPolicy;
 import com.zaxxer.hikari.HikariDataSource;
+import lombok.Cleanup;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.junit.jupiter.api.Tag;
@@ -56,44 +57,37 @@ class JdbcAuthorizationPolicyDataSourceTests {
 
     @Test
     void verifyNamedDataSourceIsUsed() throws Throwable {
+        @Cleanup
         val applicationContext = new GenericApplicationContext();
         applicationContext.refresh();
-        try {
-            val url = "jdbc:hsqldb:mem:" + UUID.randomUUID();
-            val dataSource = JpaBeans.newDataSource("org.hsqldb.jdbcDriver", "sa", StringUtils.EMPTY, url);
-            applicationContext.registerBean("heimdallCustomDataSource", DataSource.class, () -> dataSource);
-            val policy = newPolicy(url, applicationContext).setDataSourceName("heimdallCustomDataSource");
-            assertSame(dataSource, policy.buildJdbcTemplate().getJdbcTemplate().getDataSource());
-            assertEquals(1, applicationContext.getBeanNamesForType(DataSource.class).length);
-        } finally {
-            applicationContext.close();
-        }
+        val url = "jdbc:hsqldb:mem:" + UUID.randomUUID();
+        val dataSource = JpaBeans.newDataSource("org.hsqldb.jdbcDriver", "sa", StringUtils.EMPTY, url);
+        applicationContext.registerBean("heimdallCustomDataSource", DataSource.class, () -> dataSource);
+        val policy = newPolicy(url, applicationContext).setDataSourceName("heimdallCustomDataSource");
+        assertSame(dataSource, policy.buildJdbcTemplate().getJdbcTemplate().getDataSource());
+        assertEquals(1, applicationContext.getBeanNamesForType(DataSource.class).length);
     }
 
     @Test
     void verifyQueryTimeout() throws Throwable {
+        @Cleanup
         val applicationContext = new GenericApplicationContext();
         applicationContext.refresh();
-        try {
-            val url = "jdbc:hsqldb:mem:" + UUID.randomUUID();
-            assertEquals(5, newPolicy(url, applicationContext).buildJdbcTemplate().getJdbcTemplate().getQueryTimeout());
-            assertEquals(30, newPolicy(url, applicationContext).setQueryTimeout("PT30S").buildJdbcTemplate().getJdbcTemplate().getQueryTimeout());
-            assertEquals(1, newPolicy(url, applicationContext).setQueryTimeout("PT0.2S").buildJdbcTemplate().getJdbcTemplate().getQueryTimeout());
-            assertEquals(0, newPolicy(url, applicationContext).setQueryTimeout("0").buildJdbcTemplate().getJdbcTemplate().getQueryTimeout());
-            assertEquals(0, newPolicy(url, applicationContext).setQueryTimeout(null).buildJdbcTemplate().getJdbcTemplate().getQueryTimeout());
-            assertEquals(0, newPolicy(url, applicationContext).setQueryTimeout("INFINITE").buildJdbcTemplate().getJdbcTemplate().getQueryTimeout());
-        } finally {
-            applicationContext.close();
-        }
+        val url = "jdbc:hsqldb:mem:" + UUID.randomUUID();
+        assertEquals(5, newPolicy(url, applicationContext).buildJdbcTemplate().getJdbcTemplate().getQueryTimeout());
+        assertEquals(30, newPolicy(url, applicationContext).setQueryTimeout("PT30S").buildJdbcTemplate().getJdbcTemplate().getQueryTimeout());
+        assertEquals(1, newPolicy(url, applicationContext).setQueryTimeout("PT0.2S").buildJdbcTemplate().getJdbcTemplate().getQueryTimeout());
+        assertEquals(0, newPolicy(url, applicationContext).setQueryTimeout("0").buildJdbcTemplate().getJdbcTemplate().getQueryTimeout());
+        assertEquals(0, newPolicy(url, applicationContext).setQueryTimeout(null).buildJdbcTemplate().getJdbcTemplate().getQueryTimeout());
+        assertEquals(0, newPolicy(url, applicationContext).setQueryTimeout("INFINITE").buildJdbcTemplate().getJdbcTemplate().getQueryTimeout());
     }
 
     @Test
     void verifyPoolWithoutApplicationContext() throws Throwable {
         val template = newPolicy("jdbc:hsqldb:mem:" + UUID.randomUUID(), null).buildJdbcTemplate();
-        try {
-            assertEquals(1, template.getJdbcTemplate().queryForObject("VALUES (1)", Integer.class));
-        } finally {
-            ((CloseableDataSource) template.getJdbcTemplate().getDataSource()).close();
-        }
+        @Cleanup
+        val dataSource = (CloseableDataSource) template.getJdbcTemplate().getDataSource();
+        assertNotNull(dataSource);
+        assertEquals(1, template.getJdbcTemplate().queryForObject("VALUES (1)", Integer.class));
     }
 }
