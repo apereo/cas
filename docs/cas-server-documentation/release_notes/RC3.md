@@ -137,6 +137,13 @@ by [RFC 8705](https://www.rfc-editor.org/rfc/rfc8705#section-3.1): the base64url
 Previously, it was computed from the certificate's public key and was not encoded as specified. Certificate-bound tokens issued
 before the upgrade carry the old value and are no longer accepted by resource servers that verify the binding.
 
+### Authentication Throttling
+
+[Authentication throttling](../authentication/Configuring-Authentication-Throttling-Failure.html) now records a failed attempt only
+when the response status is `401`, once per request. Previously, any response other than `200`, `201` or `302`, such as a malformed
+request (`400`), an authorization denial (`403`), a missing resource (`404`) or a server error (`500`), was counted as a failed login,
+and failures were recorded twice. Failed SAML2 ECP authentication attempts, which answer with a SOAP fault, are now counted as well.
+
 ## Other Stuff
 
 - A large number of dependencies and libraries have been updated to their latest versions.

@@ -108,6 +108,7 @@ exports.refreshPage = async (page, url = "https://localhost:8443/cas/login") => 
 };
 
 exports.newBrowser = async (options) => {
+    await CHROMIUM_PREPARED;
     let retry = 0;
     const maxRetries = 5;
     while (retry < maxRetries) {
@@ -1397,9 +1398,16 @@ exports.createZipFile = async (file, callback) => {
 };
 
 exports.unzipFile = async (file, targetDirectory) =>
-    fs.createReadStream(file)
-        .pipe(unzipper.Extract({path: targetDirectory}))
-        .on("close", () => this.log(`Files unzipped successfully @ ${targetDirectory}`));
+    new Promise((resolve, reject) => {
+        fs.createReadStream(file)
+            .on("error", reject)
+            .pipe(unzipper.Extract({path: targetDirectory}))
+            .on("error", reject)
+            .on("close", async () => {
+                await this.log(`Files unzipped successfully @ ${targetDirectory}`);
+                resolve();
+            });
+    });
 
 exports.prepareChromium = async () => {
     await this.log(`Chromium directory: ${CHROMIUM_USER_DATA_DIR}`);
@@ -1413,4 +1421,5 @@ exports.prepareChromium = async () => {
 };
 
 this.asciiart("Apereo CAS - Puppeteer");
-this.prepareChromium();
+const CHROMIUM_PREPARED = this.prepareChromium();
+CHROMIUM_PREPARED.catch(() => {});
