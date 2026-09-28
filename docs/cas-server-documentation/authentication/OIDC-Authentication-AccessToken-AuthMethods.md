@@ -79,6 +79,10 @@ The following parameters are supported:
 | `tlsClientAuthSanUri`    | The expected uniformResourceIdentifier SAN entry in the certificate.                                              |
 | `tlsClientAuthSanIp`     | The expected iPAddress SAN entry in the certificate in either for IPv4 or IPv6.                                   |
 | `tlsClientAuthSanEmail`  | The expected rfc822Name SAN entry in the certificate.                                                             |
+
+Access tokens issued to a client that authenticates with mutual TLS are bound to its certificate, as described
+in [RFC 8705](https://www.rfc-editor.org/rfc/rfc8705#section-3). JWT access tokens and introspection responses carry
+the certificate thumbprint in the `cnf` claim as `x5t#S256`, the base64url-encoded SHA-256 hash of the DER-encoded certificate.
                
 ### SPIFFE
 

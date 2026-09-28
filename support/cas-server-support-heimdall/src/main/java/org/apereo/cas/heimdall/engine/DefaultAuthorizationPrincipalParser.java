@@ -180,7 +180,7 @@ public class DefaultAuthorizationPrincipalParser implements AuthorizationPrincip
     protected boolean isBoundClientCertificatePresented(final WebContext webContext, final String certificateDigest) {
         return webContext.getRequestAttribute(X509_CERTIFICATE_REQUEST_ATTRIBUTE, X509Certificate[].class)
             .filter(certificates -> certificates.length > 0)
-            .map(certificates -> EncodingUtils.encodeBase64(DigestUtils.digest("SHA-256", certificates[0].getPublicKey().getEncoded())))
+            .map(certificates -> OAuth20Utils.computeCertificateThumbprint(certificates[0]))
             .filter(digest -> MessageDigest.isEqual(digest.getBytes(StandardCharsets.UTF_8), certificateDigest.getBytes(StandardCharsets.UTF_8)))
             .isPresent();
     }

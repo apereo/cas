@@ -30,9 +30,9 @@ import org.apereo.cas.ticket.idtoken.IdTokenGeneratorService;
 import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.token.JwtBuilder;
 import org.apereo.cas.util.DateTimeUtils;
-import org.apereo.cas.util.DigestUtils;
 import org.apereo.cas.util.EncodingUtils;
 import org.apereo.cas.util.MockWebServer;
+import org.apereo.cas.util.RandomUtils;
 import com.github.benmanes.caffeine.cache.LoadingCache;
 import com.nimbusds.jose.JWSAlgorithm;
 import com.nimbusds.jose.jwk.Curve;
@@ -769,9 +769,8 @@ class HeimdallAuthorizationControllerTests {
 
     @Test
     void verifyCertificateBoundAccessToken() throws Throwable {
-        val generator = KeyPairGenerator.getInstance("EC");
-        val boundKey = generator.generateKeyPair().getPublic();
-        val digest = EncodingUtils.encodeBase64(DigestUtils.digest("SHA-256", boundKey.getEncoded()));
+        val boundEncoding = RandomUtils.randomAlphanumeric(64).getBytes(StandardCharsets.UTF_8);
+        val digest = Base64.getUrlEncoder().withoutPadding().encodeToString(MessageDigest.getInstance("SHA-256").digest(boundEncoding));
         val principal = RegisteredServiceTestUtils.getPrincipal(UUID.randomUUID().toString(), Map.of("memberOf", List.of("admin")));
         val authentication = RegisteredServiceTestUtils.getAuthentication(principal,
             Map.of(OAuth20Constants.X509_CERTIFICATE_DIGEST, List.of(digest)));
@@ -779,9 +778,9 @@ class HeimdallAuthorizationControllerTests {
         ticketRegistry.addTicket(token);
         val body = AuthorizationRequest.builder().namespace("API_USERS").uri("/api/users").method("POST").build().toJson();
         val boundCertificate = mock(X509Certificate.class);
-        when(boundCertificate.getPublicKey()).thenReturn(boundKey);
+        when(boundCertificate.getEncoded()).thenReturn(boundEncoding);
         val otherCertificate = mock(X509Certificate.class);
-        when(otherCertificate.getPublicKey()).thenReturn(generator.generateKeyPair().getPublic());
+        when(otherCertificate.getEncoded()).thenReturn(RandomUtils.randomAlphanumeric(64).getBytes(StandardCharsets.UTF_8));
         try {
             mockMvc.perform(post("/heimdall/authorize").contentType(MediaType.APPLICATION_JSON).content(body)
                     .header(HttpHeaders.AUTHORIZATION, "Bearer " + token.getId()))

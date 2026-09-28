@@ -24,6 +24,7 @@ import org.apereo.cas.util.crypto.CertUtils;
 import org.apereo.cas.util.crypto.CipherExecutor;
 import org.apereo.cas.util.http.HttpUtils;
 import org.apereo.cas.web.cookie.CasCookieBuilder;
+import com.nimbusds.jose.util.X509CertUtils;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.hc.core5.http.HttpStatus;
@@ -150,7 +151,7 @@ class OAuth20AccessTokenEndpointControllerTests {
                     .headers(HttpUtils.createBasicAuthHeaders(service.getClientId(), service.getClientSecrets().getFirst().getValue()))
                 )
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.cnf.x5t#S256").exists())
+                .andExpect(jsonPath("$.cnf.x5t#S256").value(X509CertUtils.computeSHA256Thumbprint(certificate).toString()))
                 .andReturn();
 
         }

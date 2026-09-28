@@ -4,6 +4,8 @@ import module java.base;
 import org.apereo.cas.heimdall.AuthorizationRequest;
 import org.apereo.cas.heimdall.authorizer.resource.AuthorizableResource;
 import org.apereo.cas.heimdall.authorizer.resource.AuthorizableResources;
+import org.apereo.cas.heimdall.authzen.AuthZenAction;
+import org.apereo.cas.heimdall.authzen.AuthZenResource;
 import org.apereo.cas.util.LoggingUtils;
 import org.apereo.cas.util.RegexUtils;
 import org.apereo.cas.util.concurrent.CasReentrantLock;
@@ -27,7 +29,7 @@ public class JsonAuthorizableResourceRepository implements AuthorizableResourceR
     private static final ObjectMapper MAPPER = JacksonObjectMapperFactory.builder()
         .defaultTypingEnabled(true).build().toObjectMapper();
 
-    private volatile Map<String, List<AuthorizableResource>> resources = Map.of();
+    private volatile ResourceIndex index = new ResourceIndex(Map.of(), Map.of());
     private final Map<Path, AuthorizableResources> documents = new LinkedHashMap<>();
     private final Map<Path, WatcherService> watchers = new LinkedHashMap<>();
     private final CasReentrantLock lock = new CasReentrantLock();
@@ -57,7 +59,19 @@ public class JsonAuthorizableResourceRepository implements AuthorizableResourceR
 
     @Override
     public List<AuthorizableResource> find(final String namespace) {
-        return namespace == null ? List.of() : resources.getOrDefault(namespace, List.of());
+        return namespace == null ? List.of() : index.byNamespace().getOrDefault(namespace, List.of());
+    }
+
+    @Override
+    public List<AuthorizableResource> find(final AuthZenResource resource, final AuthZenAction action) {
+        if (resource == null || resource.getType() == null) {
+            return List.of();
+        }
+        return index.byResourceType()
+            .getOrDefault(resource.getType(), List.of())
+            .stream()
+            .filter(entry -> entry.supports(resource, action))
+            .toList();
     }
 
     @Override
@@ -73,7 +87,7 @@ public class JsonAuthorizableResourceRepository implements AuthorizableResourceR
 
     @Override
     public Map<String, List<AuthorizableResource>> findAll() {
-        return Map.copyOf(resources);
+        return index.byNamespace();
     }
 
     @Override
@@ -150,13 +164,24 @@ public class JsonAuthorizableResourceRepository implements AuthorizableResourceR
     }
 
     /**
-     * Atomically replace the namespace index; conflicting namespace owners fail closed.
+     * Atomically replace the namespace and AuthZEN resource type indexes; conflicting namespace owners fail closed.
      */
     private void publishResources() {
-        val snapshot = new HashMap<String, List<AuthorizableResource>>();
-        documents.values().forEach(document -> snapshot.merge(document.getNamespace(),
+        val byNamespace = new HashMap<String, List<AuthorizableResource>>();
+        documents.values().forEach(document -> byNamespace.merge(document.getNamespace(),
             List.copyOf(document.getResources()), (first, second) -> List.of()));
-        resources = Map.copyOf(snapshot);
+        val byResourceType = new HashMap<String, List<AuthorizableResource>>();
+        byNamespace.values()
+            .stream()
+            .flatMap(List::stream)
+            .filter(resource -> resource.getResourceType() != null)
+            .forEach(resource -> byResourceType.computeIfAbsent(resource.getResourceType(), type -> new ArrayList<>()).add(resource));
+        byResourceType.replaceAll((type, entries) -> List.copyOf(entries));
+        index = new ResourceIndex(Map.copyOf(byNamespace), Map.copyOf(byResourceType));
+    }
+
+    private record ResourceIndex(Map<String, List<AuthorizableResource>> byNamespace,
+                                 Map<String, List<AuthorizableResource>> byResourceType) {
     }
 
     private AuthorizableResources createAuthorizableResources(final AuthorizableResources resources) throws IOException {

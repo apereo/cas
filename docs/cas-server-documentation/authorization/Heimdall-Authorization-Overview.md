@@ -238,20 +238,25 @@ every matching resource must grant access for the decision to be allowed.</p></d
 
 The authorization policies owned by the indicated namespace and resource support the following elements:
 
-| Field                | Description                                                                                                              |
-|----------------------|--------------------------------------------------------------------------------------------------------------------------|
-| `id`                 | Unique numeric identifier for this resource.                                                                             |
-| `pattern`            | <sup>[1]</sup> The URI regular expression pattern that describes the resource or API endpoint.                           |
-| `method`             | <sup>[1]</sup> The HTTP method (as a regular expression pattern, or `*` for all) that is allowed to access the resource. |
-| `policies`           | A list of policies that are attached to the resource to allow or deny access. A resource without policies denies access.  |
-| `enforceAllPolicies` | Whether all policies must grant access. When `false`, the default, any one policy granting access is enough. |
-| `properties`         | Arbitrary key-value pairs attached to the resource for advanced decision making.                                         |
-| `resourceType`       | <sup>[2]</sup> The AuthZEN resource type, matched exactly against `resource.type`.                                        |
-| `actions`            | <sup>[2]</sup> The set of AuthZEN action names, one of which must match `action.name` exactly.                            |
+| Field                | Description                                                                                                                |
+|----------------------|----------------------------------------------------------------------------------------------------------------------------|
+| `id`                 | Unique numeric identifier for this resource.                                                                               |
+| `pattern`            | <sup>[1]</sup> The URI regular expression pattern that describes the resource or API endpoint.                             |
+| `method`             | <sup>[1]</sup> The HTTP method (as a regular expression pattern, or `*` for all) that is allowed to access the resource.   |
+| `policies`           | A list of policies that are attached to the resource to allow or deny access. A resource without policies denies access.   |
+| `enforceAllPolicies` | Whether all policies must grant access. When `false`, the default, any one policy granting access is enough.               |
+| `properties`         | Arbitrary key-value pairs attached to the resource for advanced decision making.                                           |
+| `resourceType`       | <sup>[2]</sup> The AuthZEN resource type, matched exactly against `resource.type`.                                         |
+| `actions`            | <sup>[2]</sup> The set of AuthZEN action names, one of which must match `action.name` exactly.                             |
 | `resourceIdPattern`  | <sup>[2]</sup> Optional regular expression that must match the entire AuthZEN `resource.id`; all ids match when undefined. |
 
 <sub><i>[1] This field is not necessary when using the AuthZEN protocol.</i></sub>
 <sub><i>[2] This field is only used by the AuthZEN protocol; a resource without a `resourceType` never matches AuthZEN requests.</i></sub>
+
+Policies are evaluated in the order they are defined. When `enforceAllPolicies` is `true`, evaluation stops at the first
+policy that denies access or fails with an error. Otherwise, a policy that fails, for example because its database or
+REST endpoint is unavailable, is logged and skipped so that a later policy can still grant access. If no policy grants
+access and at least one policy failed, the request fails with an error rather than a denial.
 
 For example, the following resource grants AuthZEN `can_read` and `can_write` requests for documents whose id starts with `doc-`:
 
@@ -548,13 +553,14 @@ The query is expected to return an `authorized` column of a `boolean` type.
 
 The following settings are available:
 
-| Parameter  | Description                                                                               |
-|------------|-------------------------------------------------------------------------------------------|
-| `query`    | The SQL query that is executed. Supports named parameters such as `parameter`. See below. |
-| `url`      | <sup>[1]</sup> The database connection string, i.e. `jdbc:mysql://localhost:3306/cas`     |
-| `username` | <sup>[1]</sup> The username when building a database connection.                          |
-| `password` | <sup>[1]</sup> The password when building a database connection.                          |
-| `dataSourceName` | Optional name of the data source bean to use; see below.                              |
+| Parameter        | Description                                                                               |
+|------------------|-------------------------------------------------------------------------------------------|
+| `query`          | The SQL query that is executed. Supports named parameters such as `parameter`. See below. |
+| `url`            | <sup>[1]</sup> The database connection string, i.e. `jdbc:mysql://localhost:3306/cas`     |
+| `username`       | <sup>[1]</sup> The username when building a database connection.                          |
+| `password`       | <sup>[1]</sup> The password when building a database connection.                          |
+| `dataSourceName` | Optional name of the data source bean to use; see below.                                  |
+| `queryTimeout`   | Maximum time the query may run, i.e. `PT5S` (default). `0` or `INFINITE` disables it.     |
 
 <sub><i>[1] This field supports the [Spring Expression Language](../configuration/Configuration-Spring-Expressions.html) syntax.</i></sub>
 
@@ -563,6 +569,15 @@ The policy looks up its data source as a bean in the application context, named 
 connection pool with default settings that keeps no idle connections, registers it under that name, and shares it
 across all policies with the same name until CAS shuts down. A deployment may define its own data source bean with that
 name to control pooling.
+
+<div class="alert alert-info">:information_source: <strong>Note</strong><p>The connection pool is keyed by the URL and
+username only. A policy that changes only its <code>password</code> keeps using the existing pool, and its connections
+keep the old password until CAS restarts. To rotate a password without a restart, give the policy a new
+<code>dataSourceName</code>, or define and manage the data source bean yourself.</p></div>
+
+A query that runs longer than `queryTimeout` is cancelled and the policy fails. A request that fails is not
+authorized: the legacy endpoint returns `403` and the AuthZEN endpoint returns `500`. The timeout applies to the query only; waiting for a free
+pooled connection follows the pool's own connection timeout.
 
 The SQL query is preprocessed to receive the following named parameters:
 

@@ -71,6 +71,23 @@ class JdbcAuthorizationPolicyDataSourceTests {
     }
 
     @Test
+    void verifyQueryTimeout() throws Throwable {
+        val applicationContext = new GenericApplicationContext();
+        applicationContext.refresh();
+        try {
+            val url = "jdbc:hsqldb:mem:" + UUID.randomUUID();
+            assertEquals(5, newPolicy(url, applicationContext).buildJdbcTemplate().getJdbcTemplate().getQueryTimeout());
+            assertEquals(30, newPolicy(url, applicationContext).setQueryTimeout("PT30S").buildJdbcTemplate().getJdbcTemplate().getQueryTimeout());
+            assertEquals(1, newPolicy(url, applicationContext).setQueryTimeout("PT0.2S").buildJdbcTemplate().getJdbcTemplate().getQueryTimeout());
+            assertEquals(0, newPolicy(url, applicationContext).setQueryTimeout("0").buildJdbcTemplate().getJdbcTemplate().getQueryTimeout());
+            assertEquals(0, newPolicy(url, applicationContext).setQueryTimeout(null).buildJdbcTemplate().getJdbcTemplate().getQueryTimeout());
+            assertEquals(0, newPolicy(url, applicationContext).setQueryTimeout("INFINITE").buildJdbcTemplate().getJdbcTemplate().getQueryTimeout());
+        } finally {
+            applicationContext.close();
+        }
+    }
+
+    @Test
     void verifyPoolWithoutApplicationContext() throws Throwable {
         val template = newPolicy("jdbc:hsqldb:mem:" + UUID.randomUUID(), null).buildJdbcTemplate();
         try {

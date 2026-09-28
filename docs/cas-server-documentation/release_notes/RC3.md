@@ -118,14 +118,24 @@ The CAS documentation site has received a visual and functional overhaul. Notabl
   Heimdall endpoints is subject to [authentication throttling](../authentication/Configuring-Authentication-Throttling-Failure.html).
 - A resource with no policies now denies access instead of granting it, and the REST policy no longer sends the resource's policies to its endpoint.
 - [JDBC policies](../authorization/Heimdall-Authorization-Overview.html) use a shared connection pool, registered as an application context bean and optionally named via `dataSourceName`,
-  instead of opening a new database connection for every decision. Policies are evaluated in order rather than on the shared thread pool.
+  instead of opening a new database connection for every decision. Queries time out after `queryTimeout` (five seconds by default).
+  Policies are evaluated in order rather than on the shared thread pool.
 - AuthZEN subjects are resolved from CAS attribute repositories only for the `user` subject type. Required and rejected attribute policies accept qualified names such as `subject.properties.department`,
   `resource.properties.owner`, `action.properties.method` and `context.channel`. HTTP request headers are no longer added to the
   AuthZEN request context; on `/heimdall/authorize` they no longer override body entries or include protocol headers.
 - A resource that does not set `enforceAllPolicies` is now granted when any one of its policies grants access, as documented;
   previously every policy had to grant. Set `enforceAllPolicies` to `true` on resources that rely on the old behavior.
+  In that mode, a policy that fails with an error no longer prevents a later policy from granting access.
 - [JDBC and OpenFGA policies](../authorization/Heimdall-Authorization-Overview.html) receive the AuthZEN subject, resource and action. [Palantir](../installation/Admin-Dashboard.html) can edit the AuthZEN fields
   of a resource and configure the Heimdall access strategy.
+
+### Certificate-Bound Access Tokens
+
+The certificate thumbprint that CAS records for [mutual TLS client authentication](../authentication/OIDC-Authentication-AccessToken-AuthMethods.html)
+and emits as the `cnf` `x5t#S256` claim of access tokens and introspection responses is now computed as specified
+by [RFC 8705](https://www.rfc-editor.org/rfc/rfc8705#section-3.1): the base64url-encoded SHA-256 hash of the DER-encoded certificate.
+Previously, it was computed from the certificate's public key and was not encoded as specified. Certificate-bound tokens issued
+before the upgrade carry the old value and are no longer accepted by resource servers that verify the binding.
 
 ## Other Stuff
 

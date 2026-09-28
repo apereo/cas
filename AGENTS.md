@@ -13,7 +13,8 @@
   keep namespace + URI pattern + method and `/heimdall/authorize` rejects AuthZEN fields, which keeps the paths apart.
 - Callers authenticate with tokens issued to a registered OAuth/OIDC service whose access strategy allows
   access; `HeimdallRegisteredServiceAccessStrategy` (alone or chained) can refuse it. DPoP and `x509_digest`
-  certificate bindings are enforced. On AuthZEN, Basic means `client_id:client_secret` (reject clients without secrets:
+  certificate bindings are enforced. `x509_digest` is the RFC 8705 `x5t#S256` thumbprint (base64url SHA-256 of the
+  DER certificate); compute it only with `OAuth20Utils.computeCertificateThumbprint` so issuer and verifiers agree. On AuthZEN, Basic means `client_id:client_secret` (reject clients without secrets:
   `DefaultOAuth20ClientSecretValidator.validate` returns true when none is defined); on `/heimdall/authorize` it
   stays CAS user credentials, split on the first colon. Both endpoints are throttled; `HeimdallThrottledHandlerInterceptor`
   forwards only 401s to the throttle interceptors' post-processing. A `ThrottledRequestFilter` cannot limit what
@@ -27,14 +28,18 @@
   and share the token endpoint's audiences on purpose. A resource without policies denies.
 - JDBC trusted parameters (`principal`, `method`, `uri`, `namespace` and the AuthZEN names) are added after
   context and attributes, so they already win; an overwrite claim there was a false finding. Check that policy
-  file deletion removes cached grants. `enforceAllPolicies=false` means any one policy grants (`anyMatch`), and an
-  empty policy list denies before either combiner runs.
+  file deletion removes cached grants. `enforceAllPolicies=false` means any one policy grants: a failing policy is
+  logged and skipped, and failures are rethrown only when nothing grants (never turn them into a silent deny).
+  `enforceAllPolicies=true` stops at the first denial or failure. An empty policy list denies before either runs.
 - JDBC policies resolve their `DataSource` by bean name (`dataSourceName`, else `heimdallJdbcDataSource-<sha256(url|username)>`)
   and register a `JpaBeans.newPoolingDataSource` pool (Hikari defaults, `minimumIdle=0`) through
   `GenericApplicationContext.registerBean` under a lock, so Spring closes it on shutdown. Never cache a pool on a
   policy instance (policies are rebuilt on every file reload) and never use `registerSingleton` for closeable beans:
-  Spring gives registered singletons no destruction callbacks. Tests override `resolveApplicationContext()` with a
+  Spring gives registered singletons no destruction callbacks. The pool key ignores the password (a rotated password
+  needs a new `dataSourceName` or a restart; documented). `queryTimeout` (default `PT5S`) is set on the `JdbcTemplate`. Tests override `resolveApplicationContext()` with a
   local context rather than relying on the static `ApplicationContextProvider`, which parallel tests share.
+- `JsonAuthorizableResourceRepository` publishes one immutable `ResourceIndex` (by namespace and by AuthZEN
+  `resourceType`) per reload; AuthZEN lookups use the type index, so keep both maps in the same snapshot.
 - Policies evaluate sequentially; do not reintroduce `parallelStream()` (blocking policies starve `commonPool`).
 - AuthZEN subjects are resolved through the principal resolver only for subject type `user` (hardcoded);
   other types become a bare principal. Policies read request data through

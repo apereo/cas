@@ -347,47 +347,6 @@ function generateOverlay(artifactId, type) {
   $("#overlayform").submit();
 }
 
-function showOverlay(artifactId, type) {
-  let id = artifactId.replace("cas-server-", "");
-  $("#overlaydialog").remove();
-  
-  let iframe = $('<iframe>', {
-    src: `https://getcas.apereo.org/ui?dependencies=webapp-tomcat,${id}`,
-    id:  'overlayframe',
-    title: 'CAS Initializr',
-    frameborder: 0,
-    scrolling: 'no'
-  }).css({
-    width: '100%',
-    height: '100%',
-    border: 'none'
-  });
-
-  let dialogConfig = {
-    title: `CAS Initializr with ${artifactId}`,
-    width: 800,
-    height: 600,
-    modal: true,
-    resizable: true,
-    draggable: true,
-    autoOpen: false,
-    closeText: 'Close',
-    closeOnEscape: true,
-    show: {
-      effect: 'fade',
-      duration: 500
-    },
-    hide: {
-      effect: 'fade',
-      duration: 500
-    }
-  };
-  $('body').append("<div id='overlaydialog'></div>");
-  $(document).on("click", e => $("#overlaydialog").dialog("destroy"));
-
-  $("#overlaydialog").append(iframe).dialog(dialogConfig).dialog('open');
-}
-
 function initializePage() {
     new ClipboardJS('.copy-button');
 
