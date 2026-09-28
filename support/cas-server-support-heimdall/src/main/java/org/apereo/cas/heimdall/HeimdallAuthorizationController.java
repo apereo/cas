@@ -48,6 +48,11 @@ public class HeimdallAuthorizationController {
      */
     public static final String BASE_URL = "/heimdall";
 
+    /**
+     * The AuthZEN access evaluation path, relative to {@link #BASE_URL}.
+     */
+    public static final String AUTHZEN_PATH = "/authzen";
+
     private static final String REQUEST_ID_HEADER = "X-Request-ID";
 
     private static final Set<String> PROTOCOL_HEADERS = Set.of("accept", "accept-encoding", "connection", "content-length",
@@ -64,7 +69,7 @@ public class HeimdallAuthorizationController {
      * @param response             the response
      * @return the response entity
      */
-    @PostMapping("/authzen")
+    @PostMapping(AUTHZEN_PATH)
     @Operation(summary = "Authorize request via OpenID AuthZEN API",
         requestBody = @io.swagger.v3.oas.annotations.parameters.RequestBody(
             required = true,

@@ -4,6 +4,7 @@ import module java.base;
 import org.apereo.cas.authentication.AuthenticationSystemSupport;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.features.CasFeatureModule;
+import org.apereo.cas.heimdall.HeimdallAuthZenConfigurationController;
 import org.apereo.cas.heimdall.HeimdallAuthorizationController;
 import org.apereo.cas.heimdall.HeimdallAuthorizationEndpoint;
 import org.apereo.cas.heimdall.HeimdallThrottledRequestFilter;
@@ -93,6 +94,13 @@ public class CasHeimdallAutoConfiguration {
         @Qualifier("heimdallAuthorizationEngine")
         final AuthorizationEngine heimdallAuthorizationEngine) {
         return new HeimdallAuthorizationController(heimdallAuthorizationEngine, authorizationPrincipalParser);
+    }
+
+    @Bean
+    @ConditionalOnMissingBean(name = "heimdallAuthZenConfigurationController")
+    public HeimdallAuthZenConfigurationController heimdallAuthZenConfigurationController(
+        final CasConfigurationProperties casProperties) {
+        return new HeimdallAuthZenConfigurationController(casProperties);
     }
 
     @Bean

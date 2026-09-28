@@ -49,6 +49,11 @@
   AuthZEN `context` is body-only; `/heimdall/authorize` adds non-protocol headers with `putIfAbsent`.
 - Palantir rebuilds resources from a fixed field list (`heimdallResourceForStorage`) and re-saves the whole
   namespace; any new `AuthorizableResource` field must be added there or an edit silently drops it.
+- AuthZEN PDP metadata: the identifier is `<prefix>/heimdall`, served at `/cas/heimdall/.well-known/authzen-configuration`
+  (`HeimdallAuthZenConfigurationController`). The spec inserts the well-known segment after the host
+  (`/.well-known/authzen-configuration/cas/heimdall`), outside the CAS context: deployments need a proxy or ENGINE
+  rewrite-valve rule, as in the `heimdall-authzen` scenario's `rewrite.config`. `policy_decision_point` must equal the
+  identifier the PEP started from. List only endpoints that exist (no evaluations/search yet).
 - AuthZEN evaluated denials use HTTP 200 with `decision:false`; authentication failures use 401.
   Discovery/batch/search are separate capabilities, and the specification's example endpoint path is not mandatory.
 - Read shared helpers before reporting leaks: request headers already filter credentials and the request

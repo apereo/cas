@@ -127,6 +127,30 @@ using their `resourceType`, `actions` and optional `resourceIdPattern` fields; t
 are ignored for AuthZEN requests. Likewise, the `/heimdall/authorize` endpoint rejects requests that carry AuthZEN `subject`,
 `resource` or `action` fields with a `400` status code.
 
+#### Policy Decision Point Metadata
+
+The policy decision point is identified by `${cas.server.prefix}/heimdall`, for example `https://sso.example.org/cas/heimdall`,
+and publishes its [metadata](https://openid.net/specs/authorization-api-1_0.html#name-policy-decision-point-metadata)
+at `/cas/heimdall/.well-known/authzen-configuration`:
+
+```json
+{
+  "policy_decision_point": "https://sso.example.org/cas/heimdall",
+  "access_evaluation_endpoint": "https://sso.example.org/cas/heimdall/authzen"
+}
+```
+
+The specification locates metadata by inserting `/.well-known/authzen-configuration` between the host and the path of
+the policy decision point identifier, so a policy enforcement point asks for
+`https://sso.example.org/.well-known/authzen-configuration/cas/heimdall`. That path lies outside the CAS web application
+context, and must be rewritten by the proxy that fronts CAS or by the
+[embedded Apache Tomcat rewrite valve](../installation/Servlet-Container-Embedded-Tomcat-RewriteValve.html) if that is the container you are using. 
+The valve must be registered on the engine which sees requests before a web application context is selected, with a rewrite configuration such as:
+
+```bash
+RewriteRule ^/\.well-known/authzen-configuration(/.+)$ $1/.well-known/authzen-configuration [L]
+```
+
 {% endtab %}
 
 {% endtabs %}

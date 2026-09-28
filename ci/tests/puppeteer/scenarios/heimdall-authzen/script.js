@@ -95,6 +95,25 @@ async function verifySubjectsAndContext() {
     await cas.logg("Request context comes only from the request body");
 }
 
+async function verifyMetadata() {
+    await cas.log("Verifying policy decision point metadata");
+    const policyDecisionPoint = `${BASE_URL}/heimdall`;
+    const wellKnown = "https://localhost:8443/.well-known/authzen-configuration/cas/heimdall";
+    const metadata = JSON.parse(await cas.doRequest(wellKnown, "GET", {"Accept": "application/json"}, 200));
+    assert.equal(metadata.policy_decision_point, policyDecisionPoint, "PDP identifier must match the discovery URL");
+    assert.equal(metadata.access_evaluation_endpoint, AUTHZEN_URL);
+    assert.equal(metadata.access_evaluations_endpoint, undefined);
+    assert.equal(metadata.search_subject_endpoint, undefined);
+
+    const direct = JSON.parse(await cas.doRequest(`${policyDecisionPoint}/.well-known/authzen-configuration`,
+        "GET", {"Accept": "application/json"}, 200));
+    assert.deepEqual(direct, metadata);
+
+    const result = await post(metadata.access_evaluation_endpoint, evaluation("alice", "document", "doc-1", "can_read"),
+        {"Authorization": PEP_CREDENTIALS}, 200);
+    assert.equal(JSON.parse(result.content).decision, true);
+}
+
 async function verifyProtocol() {
     await cas.log("Verifying request identifiers, forward compatibility and malformed requests");
     const requestId = crypto.randomUUID();
@@ -171,6 +190,7 @@ async function verifyResourcesEndpoint() {
 }
 
 (async () => {
+    await verifyMetadata();
     const bearer = await fetchPepAccessToken();
     await verifyDecisions(bearer);
     await verifySubjectsAndContext();

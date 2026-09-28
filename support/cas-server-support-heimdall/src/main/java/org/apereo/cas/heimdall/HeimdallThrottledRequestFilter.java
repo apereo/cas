@@ -20,7 +20,7 @@ public class HeimdallThrottledRequestFilter implements ThrottledRequestFilter {
      */
     public static final List<String> ENDPOINTS = List.of(
         HeimdallAuthorizationController.BASE_URL + "/authorize",
-        HeimdallAuthorizationController.BASE_URL + "/authzen");
+        HeimdallAuthorizationController.BASE_URL + HeimdallAuthorizationController.AUTHZEN_PATH);
 
     @Override
     public boolean supports(final HttpServletRequest request, final HttpServletResponse response) {

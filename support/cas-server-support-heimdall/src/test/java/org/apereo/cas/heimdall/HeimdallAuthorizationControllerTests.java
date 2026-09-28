@@ -691,6 +691,19 @@ class HeimdallAuthorizationControllerTests {
     }
 
     @Test
+    void verifyAuthZenConfiguration() throws Throwable {
+        val policyDecisionPoint = casProperties.getServer().getPrefix() + "/heimdall";
+        mockMvc.perform(get("/heimdall/.well-known/authzen-configuration").accept(MediaType.APPLICATION_JSON))
+            .andExpect(status().isOk())
+            .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
+            .andExpect(jsonPath("$.policy_decision_point").value(policyDecisionPoint))
+            .andExpect(jsonPath("$.access_evaluation_endpoint").value(policyDecisionPoint + "/authzen"))
+            .andExpect(jsonPath("$.access_evaluations_endpoint").doesNotExist())
+            .andExpect(jsonPath("$.search_subject_endpoint").doesNotExist())
+            .andExpect(jsonPath("$.capabilities").doesNotExist());
+    }
+
+    @Test
     void verifyAuthZenRequestIdIsEchoed() throws Throwable {
         val requestId = UUID.randomUUID().toString();
         mockMvc.perform(post("/heimdall/authzen").contentType(MediaType.APPLICATION_JSON).content(authZenRequest().toJson())
