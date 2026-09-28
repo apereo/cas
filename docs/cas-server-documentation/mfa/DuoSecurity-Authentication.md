@@ -77,6 +77,21 @@ key value. Instead, it requires a *client id* and *client secret*, which
 are known and taught CAS using the integration key and secret key
 configuration settings. You will need to get your integration key, secret key, and API
 hostname from Duo Security when you register CAS as a protected application.
+
+### Session Storage
+
+Before redirecting to Duo Security, CAS must keep the state of the authentication flow so it can be
+restored when Duo Security redirects back. By default (`BROWSER_STORAGE`), that state is signed and encrypted and
+handed to the browser, which keeps it in its local storage. If local storage is unavailable, blocked or full,
+CAS falls back to keeping the same payload in a set of cookies instead, split into chunks named `CasBrowserStorage_*`
+and scoped to the CAS context path. Those cookies are removed as soon as the Duo Security response is processed.
+The login fails only when the browser accepts neither local storage nor cookies. Alternatively, the state
+may be kept in the ticket registry (`TICKET_REGISTRY`), which requires no browser storage at all.
+
+<div class="alert alert-info">:information_source: <strong>Cookie Size</strong><p>The fallback cookies carry
+the whole authentication flow state and may add up to tens of kilobytes, sent on every request to CAS until the Duo Security
+response is processed. CAS itself accepts large request headers, but proxies and load balancers in front of CAS
+often limit request headers to 8 or 16 kilobytes by default and must be adjusted to allow the larger <code>Cookie</code> header.</p></div>
  
 ## Non-Browser MFA
 

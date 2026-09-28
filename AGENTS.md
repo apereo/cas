@@ -259,6 +259,7 @@ Guidance for AI coding agents working in the Apereo CAS source tree.
 - Prefer polling the service's own port over a container health check, and dump `docker compose logs` on the failure path: an unhealthy container tells you nothing, while the service's logs say why it would not start.
 - In CI, `run.sh` launches the Gradle build (`bootWar`, or `bootJar` for starter scenarios; native keeps `build` + `nativeCompile`) in the background and runs npm install, ESLint, bootstrap and init scripts while it builds, waiting on the build process only before launching the CAS instance that needs it. Init and bootstrap scripts must therefore never depend on the built artifact, and a fixed `sleep` in them now runs while the build competes for CPU, so poll instead. `PUPPETEER_BUILD_OVERLAP=false` restores the sequential order. `PUPPETEER_BUILD_CTR` is the build timeout in minutes, measured from launch.
 - Scenario matrix jobs in `functional-tests.yml` restore the Gradle User Home with `cache-read-only: true` and do not set `cache: 'gradle'` on `setup-java`; saving from every one of the ~560 jobs cost ~12 s each and churned the Actions cache, and the two actions caching the same directory conflict.
+- The matrix jobs cache the Node.js install under `${{ runner.tool_cache }}/node/<NODE_VERSION_REQUIRED>` with a key that is that exact version, restored before `setup-node` and saved only from the default branch on a miss. A version change in `NODE_CURRENT` or a scenario's `requirements.nodejs` is a new key, so `setup-node` downloads the instructed version; keep those values exact versions (a range would never match the cached directory) and do not add `check-latest`.
 - Instances whose resolved dependencies are identical share one build: `run.sh` builds only the first instance of each dependency set and copies its artifact to the others. Only instance-specific `dependencies` cause another build. Instances still start one after another, because several multi-instance scenarios need instance 1 up before instance 2 starts (Spring Boot Admin client registration, passive service-registry replication, cas2cas delegation).
 - `run.sh` exit codes carry meaning for the `Run Tests` retry (`retry_on_exit_code: 1`): 1 is a setup failure worth another attempt (init scripts, containers, npm), 2 a failed build, 3 a build that exceeded `PUPPETEER_BUILD_CTR`, 4 a CAS instance that exited or did not answer its health check within `PUPPETEER_STARTUP_TIMEOUT` seconds (300 in CI, unlimited locally; a single probe may use the whole remaining budget, since some login pages take ~30 s to render, e.g. `thymeleaf-templates-rest` before its template server is up), and 5 a scenario script that still failed after its in-process attempts (3 in CI, against the running server). 2-5 fail at once; a whole-script retry cannot fix them and repeats the build and startup. Keep new failure paths on 1 only if a rerun can help.
 
@@ -885,3 +886,23 @@ Guidance for AI coding agents working in the Apereo CAS source tree.
 - `MongoDbTicketRegistryTests` clears the whole registry in `@BeforeEach` while JUnit runs its
   methods concurrently, so any new test there must assert on identifiers it created itself (a UUID
   principal or attribute value) rather than on registry-wide counts.
+
+## Browser storage cookie fallback
+
+- `BROWSER_STORAGE` state (Duo Universal Prompt, SAML IdP, stateless ticket registry, account profile) goes through the
+  shared `storage/casBrowserStorageWriteView` and `ReadView`, which call `writeToBrowserStorage` / `readFromBrowserStorage`
+  in `cas.js`. When local or session storage throws or is unavailable, the payload is written to chunked cookies
+  (`CasBrowserStorage_<context>_<i>` plus a `_n` count cookie, Secure on https, `SameSite=Lax`, host-only, path = CAS
+  context path from `casBrowserStorageCookiePath` in `fragments/scripts.html`). The read view merges them (cookies win,
+  since a successful storage write clears the cookie copy) and posts the usual `browserStorage` parameter, so no server
+  read path changed. The login fails only when cookies are refused too.
+- The context segment of the cookie name is encoded identically in `cas.js` (`encodeBrowserStorageCookieToken`) and in
+  `WebUtils.removeBrowserStorageCookies`: keep `A-Z a-z 0-9 - . ~`, percent-encode every other UTF-8 byte, so `_` is an
+  unambiguous separator. Change both together.
+- Do not clear the cookies on read generically: the stateless ticket registry reads its TGT payload on every login.
+  Single-use consumers clear their own context server-side (Duo does, in `DuoSecurityUniversalPromptValidateLoginAction`);
+  logout and the 422 page clear all of them.
+- The Duo payload is the serialized, encrypted flow state, likely tens of KB and 10+ cookies (not yet measured in a run). CAS accepts 500KB headers, but
+  fronting proxies often cap a header at 8-16KB; that is deployment configuration, documented on the Duo page.
+- Scenario `mfa-duo-universal-login-storage-fails` covers both halves: storage broken with cookies falling back to a full
+  Duo login, and storage plus script cookies broken showing the error panel.

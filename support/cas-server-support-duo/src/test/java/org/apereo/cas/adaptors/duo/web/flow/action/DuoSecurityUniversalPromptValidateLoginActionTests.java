@@ -46,6 +46,7 @@ import org.springframework.test.context.TestPropertySource;
 import org.springframework.webflow.engine.State;
 import org.springframework.webflow.execution.Action;
 import tools.jackson.databind.ObjectMapper;
+import jakarta.servlet.http.Cookie;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
@@ -162,6 +163,12 @@ class DuoSecurityUniversalPromptValidateLoginActionTests {
                 .orElseThrow()
                 .getSessionAttributes(webContext);
 
+            val chunkCookie = BrowserStorage.COOKIE_NAME_PREFIX + storage.getContext() + "_0";
+            val countCookie = BrowserStorage.COOKIE_NAME_PREFIX + storage.getContext() + "_n";
+            val otherCookie = BrowserStorage.COOKIE_NAME_PREFIX + storage.getContext() + "Other_0";
+            context.getHttpServletRequest().setCookies(new Cookie(chunkCookie, "chunk"),
+                new Cookie(countCookie, "1"), new Cookie(otherCookie, "other"));
+
             val code = UUID.randomUUID().toString();
             context.setParameter(DuoSecurityUniversalPromptValidateLoginAction.REQUEST_PARAMETER_CODE, code);
             context.setParameter(BrowserStorage.PARAMETER_BROWSER_STORAGE, payload);
@@ -177,6 +184,12 @@ class DuoSecurityUniversalPromptValidateLoginActionTests {
             assertNotNull(WebUtils.getAuthentication(context));
             assertNotNull(WebUtils.getRegisteredService(context));
             assertNotNull(WebUtils.getAuthenticationResult(context));
+
+            val response = context.getHttpServletResponse();
+            assertEquals(0, Objects.requireNonNull(response.getCookie(chunkCookie)).getMaxAge());
+            assertEquals("/", Objects.requireNonNull(response.getCookie(chunkCookie)).getPath());
+            assertEquals(0, Objects.requireNonNull(response.getCookie(countCookie)).getMaxAge());
+            assertNull(response.getCookie(otherCookie));
         }
     }
 

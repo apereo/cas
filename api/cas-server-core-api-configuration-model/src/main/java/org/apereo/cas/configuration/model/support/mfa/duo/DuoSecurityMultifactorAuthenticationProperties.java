@@ -128,6 +128,8 @@ public class DuoSecurityMultifactorAuthenticationProperties extends BaseMultifac
      * collected as part of Duo flows and requests
      * that are kept by the local storage, or should be replicated
      * across the cluster using the ticket registry.
+     * When browser storage is selected and the browser cannot use local storage,
+     * the same payload is kept in cookies instead.
      * Note that {@link SessionStorageTypes#HTTP} is not applicable here.
      */
     private SessionStorageTypes sessionStorageType = SessionStorageTypes.BROWSER_STORAGE;
