@@ -725,8 +725,11 @@ class HeimdallAuthorizationControllerTests {
             .andExpect(header().string("X-Request-ID", requestId))
             .andExpect(jsonPath("$.evaluations.length()").value(5))
             .andExpect(jsonPath("$.evaluations[0].decision").value(true))
+            .andExpect(jsonPath("$.evaluations[0].context").doesNotExist())
             .andExpect(jsonPath("$.evaluations[1].decision").value(false))
+            .andExpect(jsonPath("$.evaluations[1].context.reason").value("policy_denied"))
             .andExpect(jsonPath("$.evaluations[2].decision").value(false))
+            .andExpect(jsonPath("$.evaluations[2].context.reason").value("no_matching_resource"))
             .andExpect(jsonPath("$.evaluations[3].decision").value(false))
             .andExpect(jsonPath("$.evaluations[3].context.error.status").value(400))
             .andExpect(jsonPath("$.evaluations[4].decision").value(true));
@@ -811,6 +814,29 @@ class HeimdallAuthorizationControllerTests {
             .andExpect(jsonPath("$.evaluations[0].decision").value(true))
             .andExpect(jsonPath("$.evaluations[1].decision").value(true));
         mockMvc.perform(authZenEvaluationsRequest(body, assertion)).andExpect(status().isUnauthorized());
+    }
+
+    @ParameterizedTest
+    @CsvSource({
+        "entity,7240d0db,can_read,",
+        "document,doc-9,can_read,policy_denied",
+        "entity,7240d0db,can_write,no_matching_resource",
+        "unguarded,anything,can_read,no_policies"
+    })
+    void verifyAuthZenDecisionContext(final String type, final String id, final String action,
+                                      final @Nullable String reason) throws Throwable {
+        val request = authZenRequest()
+            .withResource(AuthZenResource.builder().type(type).id(id).build())
+            .withAction(AuthZenAction.builder().name(action).build());
+        val result = mockMvc.perform(post("/heimdall/authzen").contentType(MediaType.APPLICATION_JSON).content(request.toJson())
+                .header(HttpHeaders.AUTHORIZATION, clientCredentials()))
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$.decision").value(reason == null));
+        if (reason == null) {
+            result.andExpect(jsonPath("$.context").doesNotExist());
+        } else {
+            result.andExpect(jsonPath("$.context.reason").value(reason));
+        }
     }
 
     @Test
@@ -967,6 +993,12 @@ class HeimdallAuthorizationControllerTests {
             ticketRegistry.deleteTicket(token.getId());
         }
     }
+
+    private static MockHttpServletRequestBuilder authZenRequest(final String authorizationHeader) {
+        return post("/heimdall/authzen").contentType(MediaType.APPLICATION_JSON)
+            .content(authZenRequest().toJson())
+            .header(HttpHeaders.AUTHORIZATION, authorizationHeader);
+    }
     
     private static AuthorizationRequest authZenRequest() {
         return AuthorizationRequest.builder()
@@ -978,12 +1010,6 @@ class HeimdallAuthorizationControllerTests {
     private static MockHttpServletRequestBuilder authZenEvaluationsRequest(final String body, final String authorizationHeader) {
         return post("/heimdall/authzen/evaluations").contentType(MediaType.APPLICATION_JSON)
             .content(body)
-            .header(HttpHeaders.AUTHORIZATION, authorizationHeader);
-    }
-
-    private static MockHttpServletRequestBuilder authZenRequest(final String authorizationHeader) {
-        return post("/heimdall/authzen").contentType(MediaType.APPLICATION_JSON)
-            .content(authZenRequest().toJson())
             .header(HttpHeaders.AUTHORIZATION, authorizationHeader);
     }
 

@@ -1,6 +1,7 @@
 package org.apereo.cas.heimdall.engine;
 
 import module java.base;
+import org.apereo.cas.heimdall.AuthorizationDecisionReason;
 import org.apereo.cas.heimdall.AuthorizationRequest;
 import org.apereo.cas.heimdall.AuthorizationResponse;
 import org.apereo.cas.heimdall.authorizer.ResourceAuthorizer;
@@ -23,18 +24,22 @@ public class DefaultAuthorizationEngine implements AuthorizationEngine {
     @Override
     public AuthorizationResponse authorize(final AuthorizationRequest request) {
         if (request.getPrincipal() == null) {
-            return AuthorizationResponse.unauthorized("No authorization principal could be resolved");
+            return AuthorizationResponse.unauthorized("No authorization principal could be resolved")
+                .setReason(AuthorizationDecisionReason.SUBJECT_UNRESOLVED);
         }
         val resources = findResources(request);
         if (resources.isEmpty()) {
-            return AuthorizationResponse.notFound("No authorizable resource can be found");
+            return AuthorizationResponse.notFound("No authorizable resource can be found")
+                .setReason(AuthorizationDecisionReason.NO_MATCHING_RESOURCE);
         }
 
         for (val resource : resources) {
             for (val authorizer : authorizers) {
                 val result = authorizer.evaluate(request, resource);
                 if (!result.authorized()) {
-                    return AuthorizationResponse.unauthorized(result.reason());
+                    return AuthorizationResponse.unauthorized(result.reason()).setReason(resource.getPolicies().isEmpty()
+                        ? AuthorizationDecisionReason.NO_POLICIES
+                        : AuthorizationDecisionReason.POLICY_DENIED);
                 }
             }
         }

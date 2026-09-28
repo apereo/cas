@@ -49,7 +49,7 @@ public interface AuthorizationPrincipalParser {
      * @param webContext          the HTTP context
      * @throws Throwable when authentication fails
      */
-    default void authenticateAuthZenCaller(final String authorizationHeader, final WebContext webContext) throws Throwable {
+    default void authenticateCaller(final String authorizationHeader, final WebContext webContext) throws Throwable {
         throw new UnsupportedOperationException("Authenticating AuthZEN callers is not supported by " + getClass().getSimpleName());
     }
 

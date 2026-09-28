@@ -107,7 +107,7 @@ public class DefaultAuthorizationPrincipalParser implements AuthorizationPrincip
     }
 
     @Override
-    public void authenticateAuthZenCaller(final String authorizationHeader, final @Nullable WebContext webContext) throws Throwable {
+    public void authenticateCaller(final String authorizationHeader, final @Nullable WebContext webContext) throws Throwable {
         parseAuthorizationHeader(authorizationHeader, true, webContext);
     }
 

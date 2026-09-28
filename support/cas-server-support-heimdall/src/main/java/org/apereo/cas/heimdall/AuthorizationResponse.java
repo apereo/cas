@@ -1,6 +1,7 @@
 package org.apereo.cas.heimdall;
 
 import module java.base;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.Builder;
 import lombok.Data;
@@ -34,6 +35,9 @@ public class AuthorizationResponse extends BaseHeimdallEntity {
 
     @JsonInclude(JsonInclude.Include.NON_EMPTY)
     private String message;
+
+    @JsonIgnore
+    private AuthorizationDecisionReason reason;
 
     public boolean getDecision() {
         return status.is2xxSuccessful();

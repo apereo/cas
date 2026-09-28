@@ -53,6 +53,18 @@ public class AuthZenEvaluationsRequest implements Serializable {
         return toAuthorizationRequest(new AuthZenEvaluation());
     }
 
+    private AuthorizationRequest toAuthorizationRequest(final AuthZenEvaluation evaluation) {
+        val effectiveContext = context == null
+            ? new HashMap<>()
+            : new HashMap<>(ObjectUtils.getIfNull(evaluation.getContext(), this.context));
+        return AuthorizationRequest.builder()
+            .subject(ObjectUtils.getIfNull(evaluation.getSubject(), subject))
+            .resource(ObjectUtils.getIfNull(evaluation.getResource(), resource))
+            .action(ObjectUtils.getIfNull(evaluation.getAction(), action))
+            .context(effectiveContext)
+            .build();
+    }
+
     /**
      * One authorization request per evaluation, in order, with the top-level defaults applied.
      *
@@ -73,15 +85,5 @@ public class AuthZenEvaluationsRequest implements Serializable {
         return options == null || options.getEvaluationsSemantic() == null
             ? AuthZenEvaluationsSemantic.EXECUTE_ALL
             : options.getEvaluationsSemantic();
-    }
-
-    private AuthorizationRequest toAuthorizationRequest(final AuthZenEvaluation evaluation) {
-        val context = ObjectUtils.getIfNull(evaluation.getContext(), this.context);
-        return AuthorizationRequest.builder()
-            .subject(ObjectUtils.getIfNull(evaluation.getSubject(), subject))
-            .resource(ObjectUtils.getIfNull(evaluation.getResource(), resource))
-            .action(ObjectUtils.getIfNull(evaluation.getAction(), action))
-            .context(context == null ? new HashMap<>() : new HashMap<>(context))
-            .build();
     }
 }

@@ -107,8 +107,7 @@ public class HeimdallAuthorizationController {
         }
         try {
             requestToAuthorize.log();
-            val decision = authorizationEngine.authorize(requestToAuthorize);
-            return ResponseEntity.ok(AuthZenResponse.builder().decision(decision.getDecision()).build());
+            return ResponseEntity.ok(toAuthZenResponse(authorizationEngine.authorize(requestToAuthorize)));
         } catch (final Throwable e) {
             LoggingUtils.error(LOGGER, e);
             return ResponseEntity.internalServerError().build();
@@ -145,7 +144,7 @@ public class HeimdallAuthorizationController {
         try {
             val authorizationHeader = Objects.requireNonNull(request.getHeader(HttpHeaders.AUTHORIZATION));
             Assert.hasText(authorizationHeader, "Authorization header cannot be blank");
-            principalParser.authenticateAuthZenCaller(authorizationHeader, new JEEContext(request, response));
+            principalParser.authenticateCaller(authorizationHeader, new JEEContext(request, response));
         } catch (final Throwable e) {
             LOGGER.debug("AuthZEN caller authentication failed", e);
             return unauthenticated();
@@ -225,11 +224,19 @@ public class HeimdallAuthorizationController {
             val principal = principalParser.resolveSubject(authorizationRequest.getSubject());
             val requestToAuthorize = authorizationRequest.withPrincipal(principal);
             requestToAuthorize.log();
-            return AuthZenResponse.builder().decision(authorizationEngine.authorize(requestToAuthorize).getDecision()).build();
+            return toAuthZenResponse(authorizationEngine.authorize(requestToAuthorize));
         } catch (final Throwable e) {
             LoggingUtils.error(LOGGER, e);
             return failedEvaluation(HttpStatus.INTERNAL_SERVER_ERROR, "Evaluation failed");
         }
+    }
+
+    private static AuthZenResponse toAuthZenResponse(final AuthorizationResponse authorizationResponse) {
+        val builder = AuthZenResponse.builder().decision(authorizationResponse.getDecision());
+        if (!authorizationResponse.getDecision() && authorizationResponse.getReason() != null) {
+            builder.context(Map.of("reason", authorizationResponse.getReason().getCode()));
+        }
+        return builder.build();
     }
 
     private static AuthZenResponse failedEvaluation(final HttpStatus status, final String message) {
