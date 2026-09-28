@@ -2055,12 +2055,20 @@ ul.tab-content > li:not(.active):not(.property-name):not(.property-tab):not(.cas
     color: var(--docs-accent);
 }
 
+/* Sponsor cards share one size: equal columns, and every row as tall as the tallest. */
 .docs-home .row {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    grid-auto-rows: 1fr;
     row-gap: 1rem;
 }
 
 .docs-home .row > div {
-    width: 50%;
+    width: auto;
+}
+
+.docs-home .row > div > .card {
+    width: 100%;
 }
 
 .docs-home .card {
@@ -2420,8 +2428,8 @@ ul.tab-content > li:not(.active):not(.property-name):not(.property-tab):not(.cas
     .primary-navigation > a, .primary-navigation .dropdown-toggle {
         font-size: .63rem;
     }
-    .docs-home .row > div {
-        width: 100%;
+    .docs-home .row {
+        grid-template-columns: minmax(0, 1fr);
     }
     .home-paths a {
         grid-template-columns: 1fr;

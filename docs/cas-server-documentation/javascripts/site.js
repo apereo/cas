@@ -791,7 +791,7 @@ function initializeHomeTitle() {
         await wait(55 + Math.random() * 50);
       }
       title.classList.remove('home-title-typing');
-      await wait(2900);
+      await wait(4400);
     }
   };
   run();
