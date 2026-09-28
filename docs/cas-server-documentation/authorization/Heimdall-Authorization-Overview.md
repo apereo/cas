@@ -147,6 +147,13 @@ The authorization header value can be *one* of the following:
   For AuthZEN requests, `Basic` credentials are instead the `client_id:client_secret` of an OAuth or OpenID Connect application
   registered with CAS; CAS user credentials are rejected there.
 
+<div class="alert alert-warning">:warning: <strong>Usage Warning</strong><p>On <code>/heimdall/authorize</code>,
+<code>Basic</code> credentials go through a complete CAS authentication on every request: the authentication handlers
+verify the password (for example, an LDAP bind or a deliberately slow password hash), and the attempt is audited,
+throttled and may count toward account lockout like any other login. Behind a gateway that asks Heimdall about every
+API call, this means one full login per call, and the user's password travels with every request. Prefer access
+tokens for gateways, and keep <code>Basic</code> for low-volume callers.</p></div>
+
 Claims or attributes from all token types are extracted and attached to the final principal, which is then
 passed to the authorization policy engine to make decisions. However, when using the AuthZEN protocol
 CAS will attempt to resolve claims and attributes based on the `subject` ID in the authorization request, but only for
@@ -594,6 +601,43 @@ and can be used and referenced in the query. Context and principal attributes ca
 {% endtab %}
 
 {% endtabs %}
+
+## Gateway Example
+
+An nginx reverse proxy can act as the policy enforcement point with its `auth_request` module, sending each request
+to `/heimdall/authorize` before passing it upstream:
+
+```nginx
+map $request_uri $heimdall_unsafe_uri {
+    default     0;
+    '~["\\\\]'  1;
+}
+
+server {
+    location /api {
+        if ($heimdall_unsafe_uri) {
+            return 400;
+        }
+        auth_request /authorize;
+        proxy_pass https://api.example.org;
+    }
+
+    location = /authorize {
+        internal;
+        proxy_method POST;
+        proxy_pass_request_body off;
+        proxy_pass https://sso.example.org/cas/heimdall/authorize;
+        proxy_set_header Content-Type application/json;
+        proxy_set_body '{"namespace": "API_EXAMPLE", "method": "$request_method", "uri": "$request_uri", "context": {"client_ip": "$remote_addr"}}';
+    }
+}
+```
+
+The subrequest carries the client's headers, including `Authorization`, and must use `POST`; see the warning above
+about `Basic` credentials behind a gateway. nginx does not escape
+variables in the request body, so the `map` rejects URIs that contain quotes or backslashes, which could otherwise
+change the namespace or other fields. `auth_request` allows the request on a `2xx` response and refuses it on `401`
+or `403`; any other status, such as `404` when no resource matches, becomes a `500`.
 
 ## Actuator Endpoints
 

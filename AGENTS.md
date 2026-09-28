@@ -19,7 +19,8 @@
   stays CAS user credentials, split on the first colon. Both endpoints are throttled; `HeimdallThrottledHandlerInterceptor`
   forwards only 401s to the throttle interceptors' post-processing. A `ThrottledRequestFilter` cannot limit what
   counts: the default `httpPost()` filter claims every POST and the plan combines filters with `anyMatch`, and the
-  interceptors record every non-2xx response (twice: `postHandle` and `afterCompletion`).
+  interceptors record every non-2xx response (twice: `postHandle` and `afterCompletion`; harmless for decisions,
+  since stores keep the latest failure per key or read the authentication audit trail).
   Create registry-backed single-use markers through the `TicketFactory` (TST factory, custom `ExpirationPolicy` in
   a *mutable* properties map: `buildExpirationPolicy` removes that key, so `Map.of` throws), never by instantiating
   ticket implementations.
@@ -56,8 +57,12 @@
 - Puppeteer scenario `heimdall-authzen` covers the AuthZEN endpoint end to end (decisions across namespaces,
   id patterns, deny-wins, empty policies, `X-Request-ID`, unknown fields, 400/401, the Heimdall access strategy,
   client-credential and bearer PEPs, the legacy endpoint, the actuator and throttling). It also enables throttling,
-  so keep 401-producing steps at least one throttle window apart. Palantir scenarios only check that tabs load,
-  and the shared nginx `/authorize` example is not exercised by any scenario.
+  so keep 401-producing steps at least one throttle window apart. Palantir scenarios only check that tabs load.
+- Scenario `heimdall-nginx` drives the shared nginx config (`ci/tests/nginx`) as a PEP: `/api` uses `auth_request`
+  against `/heimdall/authorize`. The subrequest must set `proxy_method POST` (it is a GET otherwise) and send a
+  `namespace`; nginx does not escape variables in `proxy_set_body`, so URIs with `"` or `\` are rejected by a `map`.
+  `auth_request` maps any status other than 2xx/401/403 (such as Heimdall's 404) to 500. Validate edits with a local
+  `nginx -t` and stub upstreams; the config resolves `host.docker.internal` at load time.
 
 Guidance for AI coding agents working in the Apereo CAS source tree.
 
@@ -233,6 +238,10 @@ Guidance for AI coding agents working in the Apereo CAS source tree.
 
 - `ci/tests/puppeteer/run.sh` runs a scenario's `initScript` entries with `eval "source ${script}"`, so they execute in the runner's own shell. An `exit` on the success path therefore terminates the whole scenario run, which looks like the scenario dying silently right after the init script's last line of output. Let a successful init script fall off the end, and reserve `exit 1` for the failure path, which is what that exit is there for. `ci/tests/ldap/run-ad-server.sh` still carries an `exit 0` early return for the already-running case and has the same hazard.
 - Prefer polling the service's own port over a container health check, and dump `docker compose logs` on the failure path: an unhealthy container tells you nothing, while the service's logs say why it would not start.
+- In CI, `run.sh` launches the Gradle build (`bootWar`, or `bootJar` for starter scenarios; native keeps `build` + `nativeCompile`) in the background and runs npm install, ESLint, bootstrap and init scripts while it builds, waiting on the build process only before launching the CAS instance that needs it. Init and bootstrap scripts must therefore never depend on the built artifact, and a fixed `sleep` in them now runs while the build competes for CPU, so poll instead. `PUPPETEER_BUILD_OVERLAP=false` restores the sequential order. `PUPPETEER_BUILD_CTR` is the build timeout in minutes, measured from launch.
+- Scenario matrix jobs in `functional-tests.yml` restore the Gradle User Home with `cache-read-only: true` and do not set `cache: 'gradle'` on `setup-java`; saving from every one of the ~560 jobs cost ~12 s each and churned the Actions cache, and the two actions caching the same directory conflict.
+- Instances whose resolved dependencies are identical share one build: `run.sh` builds only the first instance of each dependency set and copies its artifact to the others. Only instance-specific `dependencies` cause another build. Instances still start one after another, because several multi-instance scenarios need instance 1 up before instance 2 starts (Spring Boot Admin client registration, passive service-registry replication, cas2cas delegation).
+- `run.sh` exit codes carry meaning for the `Run Tests` retry (`retry_on_exit_code: 1`): 1 is a setup failure worth another attempt (init scripts, containers, npm), 2 a failed build, 3 a build that exceeded `PUPPETEER_BUILD_CTR`, 4 a CAS instance that exited or did not answer its health check within `PUPPETEER_STARTUP_TIMEOUT` seconds (300 in CI, unlimited locally), and 5 a scenario script that still failed after its in-process attempts (3 in CI, against the running server). 2-5 fail at once; a whole-script retry cannot fix them and repeats the build and startup. Keep new failure paths on 1 only if a rerun can help.
 
 ## OpenID Connect discovery metadata
 

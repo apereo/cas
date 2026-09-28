@@ -15,6 +15,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.experimental.Accessors;
 import lombok.val;
+import org.jspecify.annotations.Nullable;
 import jakarta.persistence.Transient;
 
 /**
@@ -44,7 +45,7 @@ public class GroovyRegisteredServiceAccessStrategy extends BaseRegisteredService
     private transient ExecutableCompiledScript watchableScript;
 
     @Override
-    public boolean isServiceAccessAllowed(final RegisteredService registeredService, final Service service) {
+    public boolean isServiceAccessAllowed(@Nullable final RegisteredService registeredService, @Nullable final Service service) {
         try {
             buildGroovyAccessStrategyInstanceIfNeeded();
             return Boolean.TRUE.equals(watchableScript.execute("isServiceAccessAllowed", Boolean.class, registeredService, service));
@@ -54,7 +55,7 @@ public class GroovyRegisteredServiceAccessStrategy extends BaseRegisteredService
     }
 
     @Override
-    public boolean isServiceAccessAllowedForSso(final RegisteredService registeredService) {
+    public boolean isServiceAccessAllowedForSso(@Nullable final RegisteredService registeredService) {
         try {
             buildGroovyAccessStrategyInstanceIfNeeded();
             return Boolean.TRUE.equals(watchableScript.execute("isServiceAccessAllowedForSso", Boolean.class, registeredService));
@@ -64,7 +65,7 @@ public class GroovyRegisteredServiceAccessStrategy extends BaseRegisteredService
     }
 
     @Override
-    public boolean authorizeRequest(final RegisteredServiceAccessStrategyRequest request) {
+    public boolean authorizeRequest(@Nullable final RegisteredServiceAccessStrategyRequest request) {
         try {
             buildGroovyAccessStrategyInstanceIfNeeded();
             return Boolean.TRUE.equals(watchableScript.execute("authorizeRequest", Boolean.class, request));
