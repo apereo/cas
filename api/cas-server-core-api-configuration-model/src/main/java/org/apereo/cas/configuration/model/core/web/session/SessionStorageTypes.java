@@ -17,6 +17,7 @@ public enum SessionStorageTypes {
      * Authentication requests, and other session data collected as part of authentication protocol flows and requests
      * are kept in the client browser's session storage, signed and encrypted. All interactions
      * require client-side read/write operations to restore the session from the browser.
+     * Browsers that cannot use local or session storage keep the same payload in cookies instead.
      */
     BROWSER_STORAGE,
     /**

@@ -2,6 +2,7 @@ package org.apereo.cas.heimdall.authzen;
 
 import module java.base;
 import org.apereo.cas.heimdall.BaseHeimdallEntity;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -32,5 +33,6 @@ public class AuthZenResponse extends BaseHeimdallEntity {
 
     private boolean decision;
     @Builder.Default
+    @JsonInclude(JsonInclude.Include.NON_EMPTY)
     private Map<String, ?> context = new HashMap<>();
 }

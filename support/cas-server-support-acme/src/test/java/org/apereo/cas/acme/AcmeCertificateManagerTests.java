@@ -1,6 +1,7 @@
 package org.apereo.cas.acme;
 
 import module java.base;
+import lombok.Getter;
 import lombok.val;
 import org.apache.commons.io.FileUtils;
 import org.junit.jupiter.api.AfterEach;
@@ -81,15 +82,11 @@ class AcmeCertificateManagerTests extends BaseAcmeTests {
         @Serial
         private static final long serialVersionUID = -5555468598931902011L;
 
+        @Getter
         private Status status = Status.INVALID;
 
         MockHttp01Challenge() {
             super(mock(Login.class), JSON.parse("{\"url\":\"https://url\"}"));
-        }
-
-        @Override
-        public Status getStatus() {
-            return status;
         }
 
         @Override

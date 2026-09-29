@@ -1,0 +1,8 @@
+{
+  "casuser": {
+    "memberOf": [ "editors" ]
+  },
+  "alice": {
+    "memberOf": [ "readers" ]
+  }
+}

@@ -1,5 +1,7 @@
 package org.apereo.cas.support.inwebo.service.soap.generated;
 import module java.base;
+import lombok.Getter;
+import lombok.Setter;
 import jakarta.xml.bind.annotation.XmlAccessType;
 import jakarta.xml.bind.annotation.XmlAccessorType;
 import jakarta.xml.bind.annotation.XmlElement;
@@ -55,11 +57,14 @@ import jakarta.xml.bind.annotation.XmlType;
     "activationStatus",
     "count"
 })
+@Getter
 public class LoginSearchResult {
 
+    @Setter
     @XmlElement(required = true, nillable = true)
     protected String err;
 
+    @Setter
     protected int n;
 
     @XmlElement(required = true, nillable = true)
@@ -98,45 +103,8 @@ public class LoginSearchResult {
     @XmlElement(name = "activation_status", required = true, nillable = true)
     protected List<Long> activationStatus;
 
+    @Setter
     protected long count;
-
-    /**
-     * Obtient la valeur de la propriété err.
-     *
-     * @return possible object is
-     * {@link String }
-     */
-    public String getErr() {
-        return err;
-    }
-
-    /**
-     * Définit la valeur de la propriété err.
-     *
-     * @param value allowed object is
-     *              {@link String }
-     */
-    public void setErr(final String value) {
-        this.err = value;
-    }
-
-    /**
-     * Obtient la valeur de la propriété n.
-     *
-     * @return the n property
-     */
-    public int getN() {
-        return n;
-    }
-
-    /**
-     * Définit la valeur de la propriété n.
-     *
-     * @param value the n property
-     */
-    public void setN(final int value) {
-        this.n = value;
-    }
 
     /**
      * Gets the value of the id property.
@@ -484,24 +452,6 @@ public class LoginSearchResult {
             activationStatus = new ArrayList<>();
         }
         return this.activationStatus;
-    }
-
-    /**
-     * Obtient la valeur de la propriété count.
-     *
-     * @return the count
-     */
-    public long getCount() {
-        return count;
-    }
-
-    /**
-     * Définit la valeur de la propriété count.
-     *
-     * @param value the count
-     */
-    public void setCount(final long value) {
-        this.count = value;
     }
 
 }

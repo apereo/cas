@@ -377,6 +377,8 @@ form button i.mdi {
 
 .bgimage {
     background-image: var(--bg-image);
+    background-size: cover;
+    background-position: center;
 }
 
 .cas-footer {

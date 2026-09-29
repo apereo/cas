@@ -10,8 +10,6 @@ import org.apereo.cas.support.oauth.services.OAuthRegisteredService;
 import org.apereo.cas.support.oauth.util.OAuth20Utils;
 import org.apereo.cas.support.oauth.web.OAuth20RequestParameterResolver;
 import org.apereo.cas.util.CollectionUtils;
-import org.apereo.cas.util.DigestUtils;
-import org.apereo.cas.util.EncodingUtils;
 import org.apereo.cas.util.RegexUtils;
 import org.apereo.cas.util.function.FunctionUtils;
 import lombok.RequiredArgsConstructor;
@@ -60,8 +58,7 @@ public class OAuth20X509Authenticator implements Authenticator {
         if (result.isPresent()) {
             val profile = result.get().getUserProfile();
             val certificate = ((X509Credentials) credentials).getCertificate();
-            val digest = EncodingUtils.encodeBase64(DigestUtils.digest("SHA-256", certificate.getPublicKey().getEncoded()));
-            profile.addAttribute(OAuth20Constants.X509_CERTIFICATE_DIGEST, digest);
+            profile.addAttribute(OAuth20Constants.X509_CERTIFICATE_DIGEST, OAuth20Utils.computeCertificateThumbprint(certificate));
             profile.addAttribute(AuthenticationManager.AUTHENTICATION_METHOD_ATTRIBUTE, "X.509");
             profile.addAttribute(OAuth20Constants.CLIENT_ID, registeredService.getClientId());
 

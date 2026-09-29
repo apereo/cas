@@ -54,13 +54,7 @@
 
                 try {
                     const browserStorage = /*[[${browserStorage}]]*/ ;
-                    let success;
-                    if (browserStorage.storageType === 'SESSION') {
-                        success = writeToSessionStorage(browserStorage);
-                    } else {
-                        success = writeToLocalStorage(browserStorage);
-                    }
-                    if (success) {
+                    if (writeToBrowserStorage(browserStorage)) {
                         let url = browserStorage.destinationUrl;
                         if (url !== undefined && url !== "" && url !== null) {
                             window.location.href = url;
@@ -68,7 +62,7 @@
                             document.getElementById("fm1").submit();
                         }
                     } else {
-                        handleError("Failed to write to browser storage. Storage may be full, unavailable, or blocked by the browser.");
+                        handleError("Failed to write to browser storage or cookies. Both may be full, unavailable, or blocked by the browser.");
                     }
                 } catch (e) {
                     handleError(e);

@@ -1,6 +1,8 @@
 package org.apereo.cas.support.inwebo.service.soap.generated;
 
 import module java.base;
+import lombok.Getter;
+import lombok.Setter;
 import org.apache.commons.lang3.StringUtils;
 import jakarta.xml.bind.annotation.XmlAccessType;
 import jakarta.xml.bind.annotation.XmlAccessorType;
@@ -43,6 +45,8 @@ import jakarta.xml.bind.annotation.XmlType;
     "sort"
 })
 @XmlRootElement(name = "loginSearch")
+@Getter
+@Setter
 public class LoginSearch {
 
     protected long userid;
@@ -59,133 +63,5 @@ public class LoginSearch {
     protected long nmax;
 
     protected long sort;
-
-    /**
-     * Obtient la valeur de la propriété userid.
-     *
-     * @return the user id
-     */
-    public long getUserid() {
-        return userid;
-    }
-
-    /**
-     * Définit la valeur de la propriété userid.
-     *
-     * @param value the user id
-     */
-    public void setUserid(final long value) {
-        this.userid = value;
-    }
-
-    /**
-     * Obtient la valeur de la propriété serviceid.
-     *
-     * @return the service id
-     */
-    public long getServiceid() {
-        return serviceid;
-    }
-
-    /**
-     * Définit la valeur de la propriété serviceid.
-     *
-     * @param value the service id
-     */
-    public void setServiceid(final long value) {
-        this.serviceid = value;
-    }
-
-    /**
-     * Obtient la valeur de la propriété loginname.
-     *
-     * @return possible object is
-     * {@link String }
-     */
-    public String getLoginname() {
-        return loginname;
-    }
-
-    /**
-     * Définit la valeur de la propriété loginname.
-     *
-     * @param value allowed object is
-     *              {@link String }
-     */
-    public void setLoginname(final String value) {
-        this.loginname = value;
-    }
-
-    /**
-     * Obtient la valeur de la propriété exactmatch.
-     *
-     * @return whether we want an exact match
-     */
-    public long getExactmatch() {
-        return exactmatch;
-    }
-
-    /**
-     * Définit la valeur de la propriété exactmatch.
-     *
-     * @param value the exact match
-     */
-    public void setExactmatch(final long value) {
-        this.exactmatch = value;
-    }
-
-    /**
-     * Obtient la valeur de la propriété offset.
-     *
-     * @return the offset
-     */
-    public long getOffset() {
-        return offset;
-    }
-
-    /**
-     * Définit la valeur de la propriété offset.
-     *
-     * @param value the offset
-     */
-    public void setOffset(final long value) {
-        this.offset = value;
-    }
-
-    /**
-     * Obtient la valeur de la propriété nmax.
-     *
-     * @return the number max of results
-     */
-    public long getNmax() {
-        return nmax;
-    }
-
-    /**
-     * Définit la valeur de la propriété nmax.
-     *
-     * @param value the max
-     */
-    public void setNmax(final long value) {
-        this.nmax = value;
-    }
-
-    /**
-     * Obtient la valeur de la propriété sort.
-     *
-     * @return the sort
-     */
-    public long getSort() {
-        return sort;
-    }
-
-    /**
-     * Définit la valeur de la propriété sort.
-     *
-     * @param value the sort
-     */
-    public void setSort(final long value) {
-        this.sort = value;
-    }
 
 }

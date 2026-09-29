@@ -10,6 +10,9 @@
 
     "--cas.heimdall.json.location=file:${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/policies",
 
+    "--cas.server.tomcat.rewrite-valve.location=file:${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/rewrite.config",
+    "--cas.server.tomcat.rewrite-valve.valve-type=ENGINE",
+
     "--cas.authn.attribute-repository.json[0].location=file:${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/attribute-repository.json",
     "--cas.authn.attribute-repository.json[0].id=HeimdallSubjects",
 

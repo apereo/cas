@@ -157,14 +157,4 @@ public class DefaultRegisteredServiceAccessStrategy extends BaseRegisteredServic
         }
         return activationCriteria.isAllowIfInactive();
     }
-
-    /**
-     * Expose underlying attributes for auditing purposes.
-     *
-     * @return required attributes
-     */
-    @Override
-    public Map<String, Set<String>> getRequiredAttributes() {
-        return requiredAttributes;
-    }
 }

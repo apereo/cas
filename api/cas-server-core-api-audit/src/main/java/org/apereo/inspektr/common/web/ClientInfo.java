@@ -7,6 +7,8 @@ import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
+import lombok.experimental.Accessors;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.text.StringEscapeUtils;
@@ -25,6 +27,8 @@ import jakarta.servlet.http.HttpServletRequest;
 @EqualsAndHashCode
 @NoArgsConstructor
 @AllArgsConstructor
+@Setter
+@Accessors(chain = true)
 public class ClientInfo implements Serializable {
     @Serial
     private static final long serialVersionUID = 7492721606084356617L;
@@ -137,119 +141,12 @@ public class ClientInfo implements Serializable {
     }
 
     /**
-     * Sets headers.
-     *
-     * @param headers the headers
-     * @return the headers
-     */
-    @CanIgnoreReturnValue
-    public ClientInfo setHeaders(final Map<String, String> headers) {
-        this.headers = headers;
-        return this;
-    }
-
-    /**
-     * Sets server ip address.
-     *
-     * @param serverIpAddress the server ip address
-     * @return the server ip address
-     */
-    @CanIgnoreReturnValue
-    public ClientInfo setServerIpAddress(final String serverIpAddress) {
-        this.serverIpAddress = serverIpAddress;
-        return this;
-    }
-
-    /**
-     * Sets client ip address.
-     *
-     * @param clientIpAddress the client ip address
-     * @return the client ip address
-     */
-    @CanIgnoreReturnValue
-    public ClientInfo setClientIpAddress(final String clientIpAddress) {
-        this.clientIpAddress = clientIpAddress;
-        return this;
-    }
-
-    /**
-     * Sets geo location.
-     *
-     * @param geoLocation the geo location
-     * @return the geo location
-     */
-    @CanIgnoreReturnValue
-    public ClientInfo setGeoLocation(final String geoLocation) {
-        this.geoLocation = geoLocation;
-        return this;
-    }
-
-    /**
-     * Sets user agent.
-     *
-     * @param userAgent the user agent
-     * @return the user agent
-     */
-    @CanIgnoreReturnValue
-    public ClientInfo setUserAgent(final String userAgent) {
-        this.userAgent = userAgent;
-        return this;
-    }
-
-    /**
-     * Sets tenant.
-     *
-     * @param tenant the tenant
-     * @return the tenant id
-     */
-    @CanIgnoreReturnValue
-    public ClientInfo setTenant(final @Nullable String tenant) {
-        this.tenant = tenant;
-        return this;
-    }
-
-    /**
-     * Sets device fingerprint.
-     *
-     * @param value the fingerprint
-     * @return the device fingerprint
-     */
-    @CanIgnoreReturnValue
-    public ClientInfo setDeviceFingerprint(final String value) {
-        this.deviceFingerprint = value;
-        return this;
-    }
-
-    /**
-     * Sets locale.
-     *
-     * @param locale the locale
-     * @return the locale
-     */
-    @CanIgnoreReturnValue
-    public ClientInfo setLocale(final Locale locale) {
-        this.locale = locale;
-        return this;
-    }
-
-    /**
      * Gets extra info.
      *
      * @return the extra info
      */
     public Map<String, ? extends Serializable> getExtraInfo() {
         return Map.copyOf(extraInfo);
-    }
-
-    /**
-     * Sets extra info.
-     *
-     * @param extraInfo the extra info
-     */
-    @CanIgnoreReturnValue
-    public ClientInfo setExtraInfo(final Map<String, Serializable> extraInfo) {
-        this.extraInfo = extraInfo;
-        return this;
     }
 
     /**

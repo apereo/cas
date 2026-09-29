@@ -4,9 +4,9 @@ import module java.base;
 import org.apereo.cas.authentication.AuthenticationSystemSupport;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.features.CasFeatureModule;
+import org.apereo.cas.heimdall.HeimdallAuthZenConfigurationController;
 import org.apereo.cas.heimdall.HeimdallAuthorizationController;
 import org.apereo.cas.heimdall.HeimdallAuthorizationEndpoint;
-import org.apereo.cas.heimdall.HeimdallThrottledHandlerInterceptor;
 import org.apereo.cas.heimdall.HeimdallThrottledRequestFilter;
 import org.apereo.cas.heimdall.authorizer.DefaultResourceAuthorizer;
 import org.apereo.cas.heimdall.authorizer.ResourceAuthorizer;
@@ -97,6 +97,13 @@ public class CasHeimdallAutoConfiguration {
     }
 
     @Bean
+    @ConditionalOnMissingBean(name = "heimdallAuthZenConfigurationController")
+    public HeimdallAuthZenConfigurationController heimdallAuthZenConfigurationController(
+        final CasConfigurationProperties casProperties) {
+        return new HeimdallAuthZenConfigurationController(casProperties);
+    }
+
+    @Bean
     @ConditionalOnMissingBean(name = "heimdallAuthorizationEngine")
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     public AuthorizationEngine heimdallAuthorizationEngine(
@@ -179,8 +186,7 @@ public class CasHeimdallAutoConfiguration {
                 @Override
                 public void addInterceptors(final @NonNull InterceptorRegistry registry) {
                     authenticationThrottlingExecutionPlan.ifAvailable(plan -> {
-                        val handler = new HeimdallThrottledHandlerInterceptor(
-                            new RefreshableHandlerInterceptor(plan::getAuthenticationThrottleInterceptors));
+                        val handler = new RefreshableHandlerInterceptor(plan::getAuthenticationThrottleInterceptors);
                         registry.addInterceptor(handler).order(0).addPathPatterns(HeimdallThrottledRequestFilter.ENDPOINTS);
                     });
                 }

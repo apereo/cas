@@ -1,0 +1,19 @@
+{
+  "dependencies": "heimdall,oauth-webflow",
+  "conditions": {
+    "docker": "true"
+  },
+  "properties": [
+    "--cas.server.name=https://localhost:8443",
+    "--cas.server.prefix=${cas.server.name}/cas",
+
+    "--cas.authn.accept.users=casuser::Mellon,alice::Mellon",
+    "--cas.authn.attribute-repository.json[0].location=file:${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/attribute-repository.json",
+    "--cas.authn.attribute-repository.json[0].id=HeimdallUsers",
+
+    "--cas.heimdall.json.location=file:${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/policies",
+
+    "--logging.level.org.apereo.cas.heimdall=debug"
+  ],
+  "initScript": "${PWD}/ci/tests/nginx/run-nginx-server.sh,${PWD}/ci/tests/httpbin/run-httpbin-server.sh"
+}

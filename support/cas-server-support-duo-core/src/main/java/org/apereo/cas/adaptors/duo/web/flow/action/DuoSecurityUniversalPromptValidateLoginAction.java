@@ -137,6 +137,9 @@ public class DuoSecurityUniversalPromptValidateLoginAction extends DuoSecurityAu
             }
         } catch (final Throwable e) {
             LoggingUtils.warn(LOGGER, e);
+        } finally {
+            WebUtils.removeBrowserStorageCookies(WebUtils.getHttpServletRequestFromExternalWebflowContext(requestContext),
+                WebUtils.getHttpServletResponseFromExternalWebflowContext(requestContext), sessionStore.getBrowserStorageContextKey());
         }
         return eventFactory.event(this, CasWebflowConstants.TRANSITION_ID_ERROR);
     }

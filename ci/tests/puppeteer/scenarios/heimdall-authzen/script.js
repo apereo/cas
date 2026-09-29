@@ -4,6 +4,7 @@ const cas = require("../../cas.js");
 const BASE_URL = "https://localhost:8443/cas";
 const AUTHZEN_URL = `${BASE_URL}/heimdall/authzen`;
 const AUTHORIZE_URL = `${BASE_URL}/heimdall/authorize`;
+const EVALUATIONS_URL = `${BASE_URL}/heimdall/authzen/evaluations`;
 const PEP_CREDENTIALS = `Basic ${btoa("heimdall-pep:pep:s3cret")}`;
 const THROTTLE_WINDOW = 4000;
 
@@ -71,6 +72,53 @@ async function verifyDecisions(bearer) {
     await assertDecision(PEP_CREDENTIALS, evaluation("bob", "report", "r-1", "can_read"), false, "Resource without policies");
 }
 
+async function evaluations(request, status = 200) {
+    const result = await post(EVALUATIONS_URL, request, {"Authorization": PEP_CREDENTIALS}, status);
+    return status === 200 ? JSON.parse(result.content) : undefined;
+}
+
+async function verifyEvaluations() {
+    await cas.log("Evaluating a batch of access requests with shared defaults");
+    const batch = {
+        subject: {type: "user", id: "alice"},
+        action: {name: "can_read"},
+        evaluations: [
+            {resource: {type: "document", id: "doc-1"}},
+            {resource: {type: "document", id: "doc-2"}, action: {name: "can_write"}},
+            {resource: {type: "document", id: "doc-3"}, subject: {type: "user", id: "bob"}, action: {name: "can_write"}},
+            {resource: {type: "document"}}
+        ]
+    };
+    const all = await evaluations(batch);
+    assert.deepEqual(all.evaluations.map((entry) => entry.decision), [true, false, true, false]);
+    assert.equal(all.evaluations[0].context, undefined);
+    assert.equal(all.evaluations[1].context.reason, "policy_denied");
+    assert.equal(all.evaluations[3].context.error.status, 400);
+
+    const reasons = await evaluations({
+        subject: {type: "user", id: "bob"},
+        action: {name: "can_read"},
+        evaluations: [
+            {resource: {type: "folder", id: "f-1"}},
+            {resource: {type: "report", id: "r-1"}}
+        ]
+    });
+    assert.deepEqual(reasons.evaluations.map((entry) => entry.context.reason), ["no_matching_resource", "no_policies"]);
+
+    const denyOnFirstDeny = await evaluations({...batch, options: {evaluations_semantic: "deny_on_first_deny"}});
+    assert.deepEqual(denyOnFirstDeny.evaluations.map((entry) => entry.decision), [true, false]);
+
+    const permitOnFirstPermit = await evaluations({...batch, evaluations: batch.evaluations.slice(1),
+        options: {evaluations_semantic: "permit_on_first_permit"}});
+    assert.deepEqual(permitOnFirstPermit.evaluations.map((entry) => entry.decision), [false, true]);
+
+    const single = await evaluations({...evaluation("alice", "document", "doc-1", "can_read"), evaluations: []});
+    assert.equal(single.decision, true);
+    assert.equal(single.evaluations, undefined);
+
+    await evaluations({...batch, options: {evaluations_semantic: "unknown"}}, 400);
+}
+
 async function verifySubjectsAndContext() {
     await cas.log("Verifying subject types, qualified attribute names and request context");
     const invoice = (department) => ({
@@ -93,6 +141,25 @@ async function verifySubjectsAndContext() {
     result = await post(AUTHZEN_URL, channel, {"Authorization": PEP_CREDENTIALS, "channel": "web"}, 200);
     assert.equal(JSON.parse(result.content).decision, false, "HTTP headers must not become request context");
     await cas.logg("Request context comes only from the request body");
+}
+
+async function verifyMetadata() {
+    await cas.log("Verifying policy decision point metadata");
+    const policyDecisionPoint = `${BASE_URL}/heimdall`;
+    const wellKnown = "https://localhost:8443/.well-known/authzen-configuration/cas/heimdall";
+    const metadata = JSON.parse(await cas.doRequest(wellKnown, "GET", {"Accept": "application/json"}, 200));
+    assert.equal(metadata.policy_decision_point, policyDecisionPoint, "PDP identifier must match the discovery URL");
+    assert.equal(metadata.access_evaluation_endpoint, AUTHZEN_URL);
+    assert.equal(metadata.access_evaluations_endpoint, EVALUATIONS_URL);
+    assert.equal(metadata.search_subject_endpoint, undefined);
+
+    const direct = JSON.parse(await cas.doRequest(`${policyDecisionPoint}/.well-known/authzen-configuration`,
+        "GET", {"Accept": "application/json"}, 200));
+    assert.deepEqual(direct, metadata);
+
+    const result = await post(metadata.access_evaluation_endpoint, evaluation("alice", "document", "doc-1", "can_read"),
+        {"Authorization": PEP_CREDENTIALS}, 200);
+    assert.equal(JSON.parse(result.content).decision, true);
 }
 
 async function verifyProtocol() {
@@ -171,8 +238,10 @@ async function verifyResourcesEndpoint() {
 }
 
 (async () => {
+    await verifyMetadata();
     const bearer = await fetchPepAccessToken();
     await verifyDecisions(bearer);
+    await verifyEvaluations();
     await verifySubjectsAndContext();
     await verifyProtocol();
     await verifyLegacyEndpoint(bearer);

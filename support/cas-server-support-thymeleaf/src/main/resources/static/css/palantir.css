@@ -3056,6 +3056,14 @@ select + span[role="combobox"] {
     min-width: min(100%, 12rem);
 }
 
+.heimdall-policy-map-host [data-mapped-input-row="true"] > .mdc-text-field:first-of-type {
+    flex-grow: 3;
+}
+
+.heimdall-policy-map-host [data-mapped-input-row="true"] > .mdc-text-field:nth-of-type(2) {
+    flex-grow: 2;
+}
+
 #registeredServiceHeimdallResourcePropertyKeyMapContainer .mdc-notched-outline,
 .heimdall-authorization-map-host [data-mapped-input-row="true"] .mdc-notched-outline,
 .heimdall-policy-map-host [data-mapped-input-row="true"] .mdc-notched-outline {

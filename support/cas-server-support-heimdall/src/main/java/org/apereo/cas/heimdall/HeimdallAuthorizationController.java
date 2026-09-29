@@ -1,6 +1,9 @@
 package org.apereo.cas.heimdall;
 
 import module java.base;
+import org.apereo.cas.heimdall.authzen.AuthZenEvaluationsRequest;
+import org.apereo.cas.heimdall.authzen.AuthZenEvaluationsResponse;
+import org.apereo.cas.heimdall.authzen.AuthZenEvaluationsSemantic;
 import org.apereo.cas.heimdall.authzen.AuthZenResponse;
 import org.apereo.cas.heimdall.engine.AuthorizationEngine;
 import org.apereo.cas.heimdall.engine.AuthorizationPrincipalParser;
@@ -48,10 +51,20 @@ public class HeimdallAuthorizationController {
      */
     public static final String BASE_URL = "/heimdall";
 
+    /**
+     * The AuthZEN access evaluation path, relative to {@link #BASE_URL}.
+     */
+    public static final String AUTHZEN_PATH = "/authzen";
+
+    /**
+     * The AuthZEN access evaluations path, relative to {@link #BASE_URL}.
+     */
+    public static final String AUTHZEN_EVALUATIONS_PATH = AUTHZEN_PATH + "/evaluations";
+
     private static final String REQUEST_ID_HEADER = "X-Request-ID";
 
     private static final Set<String> PROTOCOL_HEADERS = Set.of("accept", "accept-encoding", "connection", "content-length",
-        "content-type", "dpop", "host", "keep-alive", "te", "transfer-encoding", "upgrade");
+        "content-type", "dpop", "host", "keep-alive", "transfer-encoding", "upgrade");
 
     private final AuthorizationEngine authorizationEngine;
     private final AuthorizationPrincipalParser principalParser;
@@ -64,7 +77,7 @@ public class HeimdallAuthorizationController {
      * @param response             the response
      * @return the response entity
      */
-    @PostMapping("/authzen")
+    @PostMapping(AUTHZEN_PATH)
     @Operation(summary = "Authorize request via OpenID AuthZEN API",
         requestBody = @io.swagger.v3.oas.annotations.parameters.RequestBody(
             required = true,
@@ -78,20 +91,9 @@ public class HeimdallAuthorizationController {
         @RequestBody final @Valid AuthorizationRequest authorizationRequest,
         final HttpServletRequest request, final HttpServletResponse response) {
 
-        val requestId = request.getHeader(REQUEST_ID_HEADER);
-        if (StringUtils.isNotBlank(requestId)) {
-            response.setHeader(REQUEST_ID_HEADER, requestId);
-        }
+        echoRequestId(request, response);
         try {
-            Assert.notNull(authorizationRequest.getSubject(), "Subject is required");
-            Assert.hasText(authorizationRequest.getSubject().getId(), "Subject id is required");
-            Assert.hasText(authorizationRequest.getSubject().getType(), "Subject type is required");
-            Assert.notNull(authorizationRequest.getAction(), "Action is required");
-            Assert.hasText(authorizationRequest.getAction().getName(), "Action name is required");
-            Assert.notNull(authorizationRequest.getResource(), "Resource is required");
-            Assert.hasText(authorizationRequest.getResource().getId(), "Resource id is required");
-            Assert.hasText(authorizationRequest.getResource().getType(), "Resource type is required");
-            Assert.notNull(authorizationRequest.getContext(), "Context must be an object");
+            validateAuthZenRequest(authorizationRequest);
         } catch (final IllegalArgumentException e) {
             return ResponseEntity.badRequest().body(Map.of("message", e.getMessage()));
         }
@@ -105,14 +107,60 @@ public class HeimdallAuthorizationController {
         }
         try {
             requestToAuthorize.log();
-            val decision = authorizationEngine.authorize(requestToAuthorize);
-            return ResponseEntity.ok(AuthZenResponse.builder().decision(decision.getDecision()).build());
+            return ResponseEntity.ok(toAuthZenResponse(authorizationEngine.authorize(requestToAuthorize)));
         } catch (final Throwable e) {
             LoggingUtils.error(LOGGER, e);
             return ResponseEntity.internalServerError().build();
         }
     }
 
+
+    /**
+     * AuthZEN access evaluations API: evaluates several requests, sharing top-level defaults, with one
+     * caller authentication. Without evaluations, the request behaves as a single access evaluation.
+     *
+     * @param evaluationsRequest the evaluations request
+     * @param request            the request
+     * @param response           the response
+     * @return the response entity
+     */
+    @PostMapping(AUTHZEN_EVALUATIONS_PATH)
+    @Operation(summary = "Authorize a batch of requests via OpenID AuthZEN API",
+        requestBody = @io.swagger.v3.oas.annotations.parameters.RequestBody(
+            required = true,
+            description = "AuthZEN access evaluations JSON payload",
+            content = @Content(
+                mediaType = MediaType.APPLICATION_JSON_VALUE,
+                schema = @Schema(implementation = AuthZenEvaluationsRequest.class)
+            )
+        ))
+    public ResponseEntity evaluations(
+        @RequestBody final AuthZenEvaluationsRequest evaluationsRequest,
+        final HttpServletRequest request, final HttpServletResponse response) {
+        if (evaluationsRequest.getEvaluations().isEmpty()) {
+            return authzen(evaluationsRequest.toAuthorizationRequest(), request, response);
+        }
+        echoRequestId(request, response);
+        try {
+            val authorizationHeader = Objects.requireNonNull(request.getHeader(HttpHeaders.AUTHORIZATION));
+            Assert.hasText(authorizationHeader, "Authorization header cannot be blank");
+            principalParser.authenticateCaller(authorizationHeader, new JEEContext(request, response));
+        } catch (final Throwable e) {
+            LOGGER.debug("AuthZEN caller authentication failed", e);
+            return unauthenticated();
+        }
+        val semantic = evaluationsRequest.getEvaluationsSemantic();
+        val decisions = new ArrayList<AuthZenResponse>();
+        for (val authorizationRequest : evaluationsRequest.toAuthorizationRequests()) {
+            val decision = evaluate(authorizationRequest);
+            decisions.add(decision);
+            if ((semantic == AuthZenEvaluationsSemantic.DENY_ON_FIRST_DENY && !decision.isDecision())
+                || (semantic == AuthZenEvaluationsSemantic.PERMIT_ON_FIRST_PERMIT && decision.isDecision())) {
+                break;
+            }
+        }
+        return ResponseEntity.ok(new AuthZenEvaluationsResponse(decisions));
+    }
 
     /**
      * Authorize response entity.
@@ -163,6 +211,57 @@ public class HeimdallAuthorizationController {
         } catch (final Throwable e) {
             LoggingUtils.error(LOGGER, e);
             return buildResponse(AuthorizationResponse.unauthorized(e.getMessage()));
+        }
+    }
+
+    private AuthZenResponse evaluate(final AuthorizationRequest authorizationRequest) {
+        try {
+            validateAuthZenRequest(authorizationRequest);
+        } catch (final IllegalArgumentException e) {
+            return failedEvaluation(HttpStatus.BAD_REQUEST, e.getMessage());
+        }
+        try {
+            val principal = principalParser.resolveSubject(authorizationRequest.getSubject());
+            val requestToAuthorize = authorizationRequest.withPrincipal(principal);
+            requestToAuthorize.log();
+            return toAuthZenResponse(authorizationEngine.authorize(requestToAuthorize));
+        } catch (final Throwable e) {
+            LoggingUtils.error(LOGGER, e);
+            return failedEvaluation(HttpStatus.INTERNAL_SERVER_ERROR, "Evaluation failed");
+        }
+    }
+
+    private static AuthZenResponse toAuthZenResponse(final AuthorizationResponse authorizationResponse) {
+        val builder = AuthZenResponse.builder().decision(authorizationResponse.getDecision());
+        if (!authorizationResponse.getDecision() && authorizationResponse.getReason() != null) {
+            builder.context(Map.of("reason", authorizationResponse.getReason().getCode()));
+        }
+        return builder.build();
+    }
+
+    private static AuthZenResponse failedEvaluation(final HttpStatus status, final String message) {
+        return AuthZenResponse.builder()
+            .decision(false)
+            .context(Map.of("error", Map.of("status", status.value(), "message", message)))
+            .build();
+    }
+
+    private static void validateAuthZenRequest(final AuthorizationRequest authorizationRequest) {
+        Assert.notNull(authorizationRequest.getSubject(), "Subject is required");
+        Assert.hasText(authorizationRequest.getSubject().getId(), "Subject id is required");
+        Assert.hasText(authorizationRequest.getSubject().getType(), "Subject type is required");
+        Assert.notNull(authorizationRequest.getAction(), "Action is required");
+        Assert.hasText(authorizationRequest.getAction().getName(), "Action name is required");
+        Assert.notNull(authorizationRequest.getResource(), "Resource is required");
+        Assert.hasText(authorizationRequest.getResource().getId(), "Resource id is required");
+        Assert.hasText(authorizationRequest.getResource().getType(), "Resource type is required");
+        Assert.notNull(authorizationRequest.getContext(), "Context must be an object");
+    }
+
+    private static void echoRequestId(final HttpServletRequest request, final HttpServletResponse response) {
+        val requestId = request.getHeader(REQUEST_ID_HEADER);
+        if (StringUtils.isNotBlank(requestId)) {
+            response.setHeader(REQUEST_ID_HEADER, requestId);
         }
     }
 

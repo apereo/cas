@@ -61,16 +61,23 @@ The script itself may be designed as such by overriding the needed operations wh
 ```groovy
 import org.apereo.cas.services.*
 import org.apereo.cas.authentication.principal.*
+import org.slf4j.*
+import groovy.transform.*
+
+@Field def logger = LoggerFactory.getLogger("GroovyServiceAccessStrategy")
 
 def isServiceAccessAllowed(RegisteredService registeredService, Service service) {
+    logger.info("Checking access for ${registeredService} and service ${service}")
     registeredService != null
 }
 
 def isServiceAccessAllowedForSso(RegisteredService registeredService) {
+    logger.info("Checking SSO access for ${registeredService}")
     registeredService != null
 }
 
 def authorizeRequest(RegisteredServiceAccessStrategyRequest request) {
+    logger.info("Principal ${request.principalId}, attributes ${request.attributes} and service ${request.service}")
     request.service != null
 }
 ```

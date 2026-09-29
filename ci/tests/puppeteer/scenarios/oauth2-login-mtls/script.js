@@ -1,6 +1,7 @@
 const assert = require("assert");
 const cas = require("../../cas.js");
 const https = require("https");
+const crypto = require("crypto");
 const fs = require("fs");
 const path = require("path");
 
@@ -80,9 +81,14 @@ async function verifyFlowWithSpiffe() {
         {
             "Content-Type": "application/x-www-form-urlencoded"
         },
-        (res) => {
+        async (res) => {
             const accessToken = res.data.access_token;
             assert(accessToken !== undefined);
+
+            const certificate = new crypto.X509Certificate(fs.readFileSync(path.join(__dirname, "/svid.pem")));
+            const thumbprint = crypto.createHash("sha256").update(certificate.raw).digest("base64url");
+            const claims = await cas.decodeJwt(accessToken);
+            assert(claims.cnf["x5t#S256"] === thumbprint);
 
             const params = new URLSearchParams();
             params.append("access_token", accessToken);

@@ -2,6 +2,7 @@ package org.apereo.cas.consent;
 
 import module java.base;
 import lombok.Getter;
+import lombok.RequiredArgsConstructor;
 
 /**
  * This is {@link ConsentReminderOptions}.
@@ -10,6 +11,7 @@ import lombok.Getter;
  * @since 5.2.0
  */
 @Getter
+@RequiredArgsConstructor
 public enum ConsentReminderOptions {
     /**
      * Always ask for consent.
@@ -27,10 +29,6 @@ public enum ConsentReminderOptions {
     ATTRIBUTE_VALUE(2);
 
     private final int value;
-
-    ConsentReminderOptions(final int value) {
-        this.value = value;
-    }
 
     /**
      * Value of consent options.

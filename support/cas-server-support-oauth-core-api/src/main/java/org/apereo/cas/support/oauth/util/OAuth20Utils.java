@@ -18,6 +18,8 @@ import org.apereo.cas.ticket.OAuth20Token;
 import org.apereo.cas.ticket.accesstoken.OAuth20AccessToken;
 import org.apereo.cas.token.JwtBuilder;
 import org.apereo.cas.util.CollectionUtils;
+import org.apereo.cas.util.DigestUtils;
+import org.apereo.cas.util.EncodingUtils;
 import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
 import org.apereo.cas.web.flow.CasWebflowConstants;
@@ -39,6 +41,7 @@ import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.view.json.JacksonJsonView;
 import tools.jackson.databind.json.JsonMapper;
 import jakarta.servlet.http.HttpServletResponse;
+import java.security.cert.X509Certificate;
 
 /**
  * This class has some useful methods to output data in plain text,
@@ -456,5 +459,16 @@ public class OAuth20Utils {
         }
         val header = JwtBuilder.parseHeader(token);
         return (String) header.getCustomParam(OAuth20Constants.CLIENT_ID);
+    }
+
+    /**
+     * Compute the certificate thumbprint for certificate-bound tokens per RFC 8705,
+     * which is the base64url-encoded SHA-256 hash of the DER-encoded certificate.
+     *
+     * @param certificate the certificate
+     * @return the thumbprint
+     */
+    public static String computeCertificateThumbprint(final X509Certificate certificate) {
+        return FunctionUtils.doUnchecked(() -> EncodingUtils.encodeUrlSafeBase64(DigestUtils.rawDigest("SHA-256", certificate.getEncoded())));
     }
 }

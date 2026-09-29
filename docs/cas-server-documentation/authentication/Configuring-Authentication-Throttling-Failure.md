@@ -19,6 +19,11 @@ rate, which is a time in seconds between two failures. The following properties 
 * `threshold` - Number of failed login attempts.
 * `rangeSeconds` - Period of time in seconds.
 
+A request counts as a failed attempt when its response has the status `401`, which is how CAS endpoints
+answer a failed authentication; endpoints that must answer with another status, such as SAML2 ECP with a SOAP fault,
+mark the request as a failed attempt explicitly. Other responses, such as malformed requests (`400`),
+authorization denials (`403`), missing resources (`404`) or server errors (`500`), are not counted.
+
 A failure rate of more than 1 per 3 seconds is indicative of an automated authentication attempt, which is a
 reasonable basis for throttling policy. Regardless of policy care should be 
 taken to weigh security against access;

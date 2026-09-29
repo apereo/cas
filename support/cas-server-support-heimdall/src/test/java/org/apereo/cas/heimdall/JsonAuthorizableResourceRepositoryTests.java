@@ -318,6 +318,28 @@ class JsonAuthorizableResourceRepositoryTests {
         }
     }
 
+    @Test
+    void verifyAuthZenResourceTypeIndexFollowsUpdates(final @TempDir Path directory) {
+        val repository = new JsonAuthorizableResourceRepository(directory.toFile());
+        try {
+            val read = AuthZenAction.builder().name("can_read").build();
+            val document = AuthZenResource.builder().type("document").id("doc-1").build();
+            repository.store(authZenDocument("indexed", null));
+            repository.store(policyDocument("untyped"));
+            assertEquals(1, repository.find(document, read).size());
+
+            val replacement = authZenDocument("indexed", null);
+            replacement.getResources().getFirst().setResourceType("folder");
+            repository.store(replacement);
+            assertTrue(repository.find(document, read).isEmpty());
+            assertEquals(1, repository.find(document.withType("folder"), read).size());
+            assertTrue(repository.find(AuthZenResource.builder().id("doc-1").build(), read).isEmpty());
+            assertTrue(repository.find(null, read).isEmpty());
+        } finally {
+            repository.destroy();
+        }
+    }
+
     private static AuthorizableResources authZenDocument(final String namespace, final String resourceIdPattern) {
         val document = new AuthorizableResources();
         document.setNamespace(namespace);

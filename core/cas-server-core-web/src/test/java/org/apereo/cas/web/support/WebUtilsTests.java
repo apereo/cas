@@ -21,9 +21,11 @@ import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockHttpServletRequest;
+import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.webflow.engine.Flow;
 import org.springframework.webflow.test.MockFlowExecutionContext;
 import org.springframework.webflow.test.MockFlowSession;
+import jakarta.servlet.http.Cookie;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
@@ -155,6 +157,30 @@ class WebUtilsTests {
 
         parameters = WebUtils.getHttpRequestParametersFromRequestBody(context1.getHttpServletRequest());
         assertTrue(parameters.isEmpty());
+    }
+
+    @Test
+    void verifyRemoveBrowserStorageCookies() {
+        val request = new MockHttpServletRequest();
+        request.setContextPath("/cas");
+        request.setSecure(true);
+        val prefix = BrowserStorage.COOKIE_NAME_PREFIX + "Duo%20Context%5F1%C3%A9_";
+        request.setCookies(new Cookie(prefix + '0', "chunk"), new Cookie(prefix + 'n', "1"),
+            new Cookie(BrowserStorage.COOKIE_NAME_PREFIX + "Duo%20Context%5F1%C3%A9X_0", "other"),
+            new Cookie("TGC", "tgc"));
+        val response = new MockHttpServletResponse();
+        WebUtils.removeBrowserStorageCookies(request, response, "Duo Context_1\u00e9");
+        assertEquals(2, response.getCookies().length);
+        Arrays.stream(response.getCookies()).forEach(cookie -> {
+            assertTrue(cookie.getName().startsWith(prefix));
+            assertEquals(0, cookie.getMaxAge());
+            assertEquals("/cas", cookie.getPath());
+            assertTrue(cookie.getSecure());
+        });
+
+        val emptyResponse = new MockHttpServletResponse();
+        WebUtils.removeBrowserStorageCookies(new MockHttpServletRequest(), emptyResponse, "Duo");
+        assertEquals(0, emptyResponse.getCookies().length);
     }
 
     @Test

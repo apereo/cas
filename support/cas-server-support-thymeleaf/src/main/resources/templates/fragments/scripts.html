@@ -17,6 +17,7 @@
 <script th:inline="javascript">
     const rememberUsername = /*[[${#cas.theme('cas.login-form.remember-username.enabled')}]]*/
     const trackGeoLocation = /*[[${trackGeoLocation}]]*/ === "true";
+    const casBrowserStorageCookiePath = /*[[@{/}]]*/ "/";
     
     if (typeof resourceLoadedSuccessfully === "function") {
         resourceLoadedSuccessfully();

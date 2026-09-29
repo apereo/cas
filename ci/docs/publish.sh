@@ -554,7 +554,8 @@ if [[ ${buildDocs} == "true" ]]; then
 
   export RUBY_YJIT_ENABLE=1
   if [[ ${serve} == "true" ]]; then
-    bundle exec jekyll serve --baseurl "" --profile --incremental --trace
+    printgreen "Serving the documentation at http://localhost:4000/cas/${branchVersion}/"
+    bundle exec jekyll serve --profile --incremental --trace
   else
     bundle exec jekyll build --trace
   fi

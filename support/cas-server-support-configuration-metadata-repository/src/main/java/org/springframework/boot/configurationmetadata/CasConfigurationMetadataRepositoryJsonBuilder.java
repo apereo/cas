@@ -2,6 +2,8 @@ package org.springframework.boot.configurationmetadata;
 
 import module java.base;
 import com.google.errorprone.annotations.CanIgnoreReturnValue;
+import lombok.AccessLevel;
+import lombok.RequiredArgsConstructor;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 
@@ -13,16 +15,13 @@ import org.apache.commons.lang3.StringUtils;
  * @author Misagh Moayyed
  * @since 6.0.0
  */
+@RequiredArgsConstructor(access = AccessLevel.PACKAGE)
 public class CasConfigurationMetadataRepositoryJsonBuilder {
     private final JsonReader reader = new JsonReader();
 
     private final List<SimpleConfigurationMetadataRepository> repositories = new ArrayList<>();
 
     private final Charset defaultCharset;
-
-    CasConfigurationMetadataRepositoryJsonBuilder(final Charset defaultCharset) {
-        this.defaultCharset = defaultCharset;
-    }
 
     private static void addValueHints(final ConfigurationMetadataProperty property, final ConfigurationMetadataHint hint) {
         property.getHints().getValueHints().addAll(hint.getValueHints());

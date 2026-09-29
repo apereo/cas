@@ -13,12 +13,14 @@
   keep namespace + URI pattern + method and `/heimdall/authorize` rejects AuthZEN fields, which keeps the paths apart.
 - Callers authenticate with tokens issued to a registered OAuth/OIDC service whose access strategy allows
   access; `HeimdallRegisteredServiceAccessStrategy` (alone or chained) can refuse it. DPoP and `x509_digest`
-  certificate bindings are enforced. On AuthZEN, Basic means `client_id:client_secret` (reject clients without secrets:
+  certificate bindings are enforced. `x509_digest` is the RFC 8705 `x5t#S256` thumbprint (base64url SHA-256 of the
+  DER certificate); compute it only with `OAuth20Utils.computeCertificateThumbprint` so issuer and verifiers agree. On AuthZEN, Basic means `client_id:client_secret` (reject clients without secrets:
   `DefaultOAuth20ClientSecretValidator.validate` returns true when none is defined); on `/heimdall/authorize` it
   stays CAS user credentials, split on the first colon. Both endpoints are throttled; `HeimdallThrottledHandlerInterceptor`
   forwards only 401s to the throttle interceptors' post-processing. A `ThrottledRequestFilter` cannot limit what
   counts: the default `httpPost()` filter claims every POST and the plan combines filters with `anyMatch`, and the
-  interceptors record every non-2xx response (twice: `postHandle` and `afterCompletion`).
+  interceptors record every non-2xx response (twice: `postHandle` and `afterCompletion`; harmless for decisions,
+  since stores keep the latest failure per key or read the authentication audit trail).
   Create registry-backed single-use markers through the `TicketFactory` (TST factory, custom `ExpirationPolicy` in
   a *mutable* properties map: `buildExpirationPolicy` removes that key, so `Map.of` throws), never by instantiating
   ticket implementations.
@@ -27,14 +29,18 @@
   and share the token endpoint's audiences on purpose. A resource without policies denies.
 - JDBC trusted parameters (`principal`, `method`, `uri`, `namespace` and the AuthZEN names) are added after
   context and attributes, so they already win; an overwrite claim there was a false finding. Check that policy
-  file deletion removes cached grants. `enforceAllPolicies=false` means any one policy grants (`anyMatch`), and an
-  empty policy list denies before either combiner runs.
+  file deletion removes cached grants. `enforceAllPolicies=false` means any one policy grants: a failing policy is
+  logged and skipped, and failures are rethrown only when nothing grants (never turn them into a silent deny).
+  `enforceAllPolicies=true` stops at the first denial or failure. An empty policy list denies before either runs.
 - JDBC policies resolve their `DataSource` by bean name (`dataSourceName`, else `heimdallJdbcDataSource-<sha256(url|username)>`)
   and register a `JpaBeans.newPoolingDataSource` pool (Hikari defaults, `minimumIdle=0`) through
   `GenericApplicationContext.registerBean` under a lock, so Spring closes it on shutdown. Never cache a pool on a
   policy instance (policies are rebuilt on every file reload) and never use `registerSingleton` for closeable beans:
-  Spring gives registered singletons no destruction callbacks. Tests override `resolveApplicationContext()` with a
+  Spring gives registered singletons no destruction callbacks. The pool key ignores the password (a rotated password
+  needs a new `dataSourceName` or a restart; documented). `queryTimeout` (default `PT5S`) is set on the `JdbcTemplate`. Tests override `resolveApplicationContext()` with a
   local context rather than relying on the static `ApplicationContextProvider`, which parallel tests share.
+- `JsonAuthorizableResourceRepository` publishes one immutable `ResourceIndex` (by namespace and by AuthZEN
+  `resourceType`) per reload; AuthZEN lookups use the type index, so keep both maps in the same snapshot.
 - Policies evaluate sequentially; do not reintroduce `parallelStream()` (blocking policies starve `commonPool`).
 - AuthZEN subjects are resolved through the principal resolver only for subject type `user` (hardcoded);
   other types become a bare principal. Policies read request data through
@@ -43,6 +49,20 @@
   AuthZEN `context` is body-only; `/heimdall/authorize` adds non-protocol headers with `putIfAbsent`.
 - Palantir rebuilds resources from a fixed field list (`heimdallResourceForStorage`) and re-saves the whole
   namespace; any new `AuthorizableResource` field must be added there or an edit silently drops it.
+- AuthZEN PDP metadata: the identifier is `<prefix>/heimdall`, served at `/cas/heimdall/.well-known/authzen-configuration`
+  (`HeimdallAuthZenConfigurationController`). The spec inserts the well-known segment after the host
+  (`/.well-known/authzen-configuration/cas/heimdall`), outside the CAS context: deployments need a proxy or ENGINE
+  rewrite-valve rule, as in the `heimdall-authzen` scenario's `rewrite.config`. `policy_decision_point` must equal the
+  identifier the PEP started from. List only endpoints that exist (no search yet).
+- AuthZEN decision context: denials carry `context.reason` from `AuthorizationDecisionReason` (set by the engine:
+  `subject_unresolved`, `no_matching_resource`, `no_policies`, `policy_denied`); grants carry no context. Never put
+  policy names, attribute names or messages in it; details go to DEBUG logs. Search (R5) and the OID4VP wallet bridge
+  (R7) are deferred and noted as future work in the Heimdall and verifiable credentials docs.
+- AuthZEN evaluations (`/heimdall/authzen/evaluations`): top-level subject/resource/action/context are defaults that an
+  entry replaces per key. Authenticate the caller once (`authenticateCaller`), then `resolveSubject` per entry;
+  never call `parse` per entry (it would consume single-use JWT assertions). Per-entry failures are `decision:false` with
+  `context.error.{status,message}` (no exception text for 500s); short-circuit semantics omit the remaining entries;
+  no/empty `evaluations` falls back to the single evaluation. Evaluations run sequentially.
 - AuthZEN evaluated denials use HTTP 200 with `decision:false`; authentication failures use 401.
   Discovery/batch/search are separate capabilities, and the specification's example endpoint path is not mandatory.
 - Read shared helpers before reporting leaks: request headers already filter credentials and the request
@@ -51,8 +71,12 @@
 - Puppeteer scenario `heimdall-authzen` covers the AuthZEN endpoint end to end (decisions across namespaces,
   id patterns, deny-wins, empty policies, `X-Request-ID`, unknown fields, 400/401, the Heimdall access strategy,
   client-credential and bearer PEPs, the legacy endpoint, the actuator and throttling). It also enables throttling,
-  so keep 401-producing steps at least one throttle window apart. Palantir scenarios only check that tabs load,
-  and the shared nginx `/authorize` example is not exercised by any scenario.
+  so keep 401-producing steps at least one throttle window apart. Palantir scenarios only check that tabs load.
+- Scenario `heimdall-nginx` drives the shared nginx config (`ci/tests/nginx`) as a PEP: `/api` uses `auth_request`
+  against `/heimdall/authorize`. The subrequest must set `proxy_method POST` (it is a GET otherwise) and send a
+  `namespace`; nginx does not escape variables in `proxy_set_body`, so URIs with `"` or `\` are rejected by a `map`.
+  `auth_request` maps any status other than 2xx/401/403 (such as Heimdall's 404) to 500. Validate edits with a local
+  `nginx -t` and stub upstreams; the config resolves `host.docker.internal` at load time.
 
 Guidance for AI coding agents working in the Apereo CAS source tree.
 
@@ -76,6 +100,9 @@ Guidance for AI coding agents working in the Apereo CAS source tree.
 - Unalias Linux/macOS commands before you run them, specially `tree`, `find`, `grep`, `cat`, etc.
 - From a sandbox that cannot delete files, run read-only git commands with `GIT_OPTIONAL_LOCKS=0` (for example `GIT_OPTIONAL_LOCKS=0 git status`); otherwise git can leave a stale `.git/index.lock` that blocks the user's git.
 - Consider using StringUtils.EMPTY instead of "" for empty strings, and StringUtils.isNotBlank() instead of != null && !isEmpty() for string checks.
+- Keep overloaded methods (same name, any parameters or visibility) next to each other, with no other method between
+  them; Checkstyle's `OverloadMethodsDeclarationOrder` fails the build otherwise. Check this when adding a method whose
+  name already exists in the class or interface, including private helpers.
 - Do not add unnecessary javadoc. Add javadoc only where a public contract or a non-obvious reason genuinely needs it; record rationale for a change in PLANS.md instead.
 
 ## Workflows that matter here
@@ -142,6 +169,7 @@ Guidance for AI coding agents working in the Apereo CAS source tree.
 - Settings search: `ci/docs/index.js` writes `assets/data/<version>/index.json` as `{generated, docs}` (no lunr index; each doc carries name, short type, description, default, kind required/optional/thirdparty, module, duration, deprecation). `site.js` searches it directly (`searchCasSettings`, shared by the Configuration Properties page and the Shift-Shift palette); the page state lives in the URL (`?q=&exact=1&scope=name&kind=cas|thirdparty&deprecated=hide`). The layout exposes `data-docs-base`, `data-docs-version` and `data-docs-build` on `<body>` for these URLs.
 - Feature toggles (`Configuration-Feature-Toggles.md`) render through `_includes_site/cas-feature-toggles.html` from the `cas_feature_catalog` filter in `_plugins/cas_features.rb`, which derives feature and module from the `CasFeatureModule.<Feature>[.<module>].enabled` property, groups features by area and links docs only when the target page exists for that version. Add title overrides, groups or docs links there, not in the include. The environment variable form maps both `.` and `-` to `_` (`CasFeatureEnabledCondition` reads through `Environment.getProperty`), unlike the relaxed-binding form used for regular settings.
 - Module dependency tabs (`_includes_site/casmodule.html`, included through `include_cached`) are plain Bootstrap tabs: no inline script, the default tab and pane are chosen together in Liquid, and pane ids use the full coordinates plus the variant options. Do not add per-include scripts or truncated ids; either one lets the selected tab and the visible pane drift apart.
+- Local serving (`publish.sh --serve true`) keeps the configured `baseurl: /cas`, so the site answers at `http://localhost:4000/cas/<version>/` exactly like production. `variables.html` always sets `basePath` to `/cas` and `site.js` has no localhost path branches; do not reintroduce `--baseurl ""` or localhost-specific paths.
 - Section heading icons come from `CAS_SECTION_ICONS` in `site.js` and apply only to direct `h2` children of the article whose id is in that map; add an entry there rather than icons in markdown.
 - In the development docs, `site.js` wraps every table inside `#cas-docs-container` in a framed `.table-scroll` card, so do not use `<table>` for layout inside components (buttons, headers, badges); use flex markup instead.
 - Documentation property blocks get their settings from the `cas_properties` / `cas_third_party_properties` filters in `docs/cas-server-documentation/_plugins/cas_properties.rb`; do not loop over `site.data` in Liquid for this, it scans ~14k entries per block. Liquid `assign` inside an include writes to the page scope, so a `casproperties` include nested inside another block's panels must pass `topics="false"` (and usually `intro="false"`) or it resets the outer block's state. Their output is wrapped in `{::nomarkdown}`, so include them at the start of a line in markdown or pass the capture through `markdownify` (with `|`, not `||`). Catalog descriptions carry raw `<`/`>` (for example `management.endpoint.<id>.access`); the plugin escapes every tag outside `INLINE_TAGS` into `descriptionHtml` / `summaryText`, so print those fields and never unescape descriptions in Liquid: one stray tag inside the actuator modal makes kramdown drop the closing tags and everything after it on the page.
@@ -227,7 +255,13 @@ Guidance for AI coding agents working in the Apereo CAS source tree.
 ## Puppeteer scenario init scripts
 
 - `ci/tests/puppeteer/run.sh` runs a scenario's `initScript` entries with `eval "source ${script}"`, so they execute in the runner's own shell. An `exit` on the success path therefore terminates the whole scenario run, which looks like the scenario dying silently right after the init script's last line of output. Let a successful init script fall off the end, and reserve `exit 1` for the failure path, which is what that exit is there for. `ci/tests/ldap/run-ad-server.sh` still carries an `exit 0` early return for the already-running case and has the same hazard.
+- Init scripts are sourced, so `set -e`, `set -u` or `pipefail` in one would stay on for the rest of `run.sh`; 17 scenarios source such a script, and a leaked `set -e` made a failing test exit `run.sh` at its first attempt with code 1 (whole-script retry) instead of 5 after its in-process attempts. `run.sh` turns those options off after each init script, so do not rely on them persisting.
 - Prefer polling the service's own port over a container health check, and dump `docker compose logs` on the failure path: an unhealthy container tells you nothing, while the service's logs say why it would not start.
+- In CI, `run.sh` launches the Gradle build (`bootWar`, or `bootJar` for starter scenarios; native keeps `build` + `nativeCompile`) in the background and runs npm install, ESLint, bootstrap and init scripts while it builds, waiting on the build process only before launching the CAS instance that needs it. Init and bootstrap scripts must therefore never depend on the built artifact, and a fixed `sleep` in them now runs while the build competes for CPU, so poll instead. `PUPPETEER_BUILD_OVERLAP=false` restores the sequential order. `PUPPETEER_BUILD_CTR` is the build timeout in minutes, measured from launch.
+- Scenario matrix jobs in `functional-tests.yml` restore the Gradle User Home with `cache-read-only: true` and do not set `cache: 'gradle'` on `setup-java`; saving from every one of the ~560 jobs cost ~12 s each and churned the Actions cache, and the two actions caching the same directory conflict.
+- The matrix jobs cache the Node.js install under `${{ runner.tool_cache }}/node/<NODE_VERSION_REQUIRED>` with a key that is that exact version, restored before `setup-node` and saved only from the default branch on a miss. A version change in `NODE_CURRENT` or a scenario's `requirements.nodejs` is a new key, so `setup-node` downloads the instructed version; keep those values exact versions (a range would never match the cached directory) and do not add `check-latest`.
+- Instances whose resolved dependencies are identical share one build: `run.sh` builds only the first instance of each dependency set and copies its artifact to the others. Only instance-specific `dependencies` cause another build. Instances still start one after another, because several multi-instance scenarios need instance 1 up before instance 2 starts (Spring Boot Admin client registration, passive service-registry replication, cas2cas delegation).
+- `run.sh` exit codes carry meaning for the `Run Tests` retry (`retry_on_exit_code: 1`): 1 is a setup failure worth another attempt (init scripts, containers, npm), 2 a failed build, 3 a build that exceeded `PUPPETEER_BUILD_CTR`, 4 a CAS instance that exited or did not answer its health check within `PUPPETEER_STARTUP_TIMEOUT` seconds (300 in CI, unlimited locally; a single probe may use the whole remaining budget, since some login pages take ~30 s to render, e.g. `thymeleaf-templates-rest` before its template server is up), and 5 a scenario script that still failed after its in-process attempts (3 in CI, against the running server). 2-5 fail at once; a whole-script retry cannot fix them and repeats the build and startup. Keep new failure paths on 1 only if a rerun can help.
 
 ## OpenID Connect discovery metadata
 
@@ -852,3 +886,49 @@ Guidance for AI coding agents working in the Apereo CAS source tree.
 - `MongoDbTicketRegistryTests` clears the whole registry in `@BeforeEach` while JUnit runs its
   methods concurrently, so any new test there must assert on identifiers it created itself (a UUID
   principal or attribute value) rather than on registry-wide counts.
+
+## Browser storage cookie fallback
+
+- `BROWSER_STORAGE` state (Duo Universal Prompt, SAML IdP, stateless ticket registry, account profile) goes through the
+  shared `storage/casBrowserStorageWriteView` and `ReadView`, which call `writeToBrowserStorage` / `readFromBrowserStorage`
+  in `cas.js`. When local or session storage throws or is unavailable, the payload is written to chunked cookies
+  (`CasBrowserStorage_<context>_<i>` plus a `_n` count cookie, Secure on https, `SameSite=Lax`, host-only, path = CAS
+  context path from `casBrowserStorageCookiePath` in `fragments/scripts.html`). The read view merges them (cookies win,
+  since a successful storage write clears the cookie copy) and posts the usual `browserStorage` parameter, so no server
+  read path changed. The login fails only when cookies are refused too.
+- The context segment of the cookie name is encoded identically in `cas.js` (`encodeBrowserStorageCookieToken`) and in
+  `WebUtils.removeBrowserStorageCookies`: keep `A-Z a-z 0-9 - . ~`, percent-encode every other UTF-8 byte, so `_` is an
+  unambiguous separator. Change both together.
+- Do not clear the cookies on read generically: the stateless ticket registry reads its TGT payload on every login.
+  Single-use consumers clear their own context server-side (Duo does, in `DuoSecurityUniversalPromptValidateLoginAction`);
+  logout and the 422 page clear all of them.
+- The Duo payload is the serialized, encrypted flow state, likely tens of KB and 10+ cookies (not yet measured in a run). CAS accepts 500KB headers, but
+  fronting proxies often cap a header at 8-16KB; that is deployment configuration, documented on the Duo page.
+- Scenario `mfa-duo-universal-login-storage-fails` covers both halves: storage broken with cookies falling back to a full
+  Duo login, and storage plus script cookies broken showing the error panel.
+
+## Stateless ticket registry review discipline
+
+- The ticket id is the ticket: `StatelessTicketRegistry` deflates, AES-GCM encrypts (signing off, which is fine for GCM)
+  and base64url-encodes a compact string. `TicketCompactor.DELIMITER` is `,` and `parse` splits on it without escaping
+  or an element-count check, so every appended field that a caller or external IdP can influence (service path segment
+  via `getShortenedId`, OAuth `code_challenge`, principal id, TST property values) is an injection point. Review new
+  compactors for this first; `validate` only logs on length.
+- There is no delete: `deleteSingleTicket` is the base no-op, so `deleteTicket(...)` returns 0 and nothing is ever
+  consumed. Code that treats `delete > 0` as the single-use decision fails closed here; code that uses a deterministic
+  TST id as a replay marker (`TransientSessionTicketFactory.normalizeTicketId`: DPoP, client assertions, Heimdall)
+  never finds it and fails open. Callers must use the ticket `addTicket` returns: the stored id is re-encoded.
+- `TransientSessionTicketCompactor.expand` creates a new TST (new random id) and stringifies properties, so only flat
+  string properties survive; object-valued TSTs (Duo `TICKET_REGISTRY` state, VC transactions) do not.
+- Maintainer decision: the stateless registry stays 100% stateless, in the spirit of the Shibboleth IdP client-side
+  storage. Never propose a server-side replay, nonce or single-use store as the fix for anything here; fixes must be
+  expressible in the ticket or client storage itself (encoding, binding, lifetimes, key versioning).
+- Exploitability of delimiter injection through the service depends on the registered pattern: only the first path
+  segment reaches the compact form, so a pattern that pins that segment followed by `/` blocks it, while
+  `^(https|imaps)://.*` or `^https://host/.*` do not. ST principal ids are appended raw (PT/PGT base64url them).
+- The stateless SSO session has no TGC cookie: `SendTicketGrantingTicketAction` writes the TGT to browser storage
+  (default `LOCAL`), the login flow reads it back through the read-storage page on every entry, and expiration is a
+  fixed instant only (no idle timeout).
+- Scenarios `stateless-ticket-registry`, `stateless-ticket-registry-saml2-idp`, `oauth2-login-stateless`,
+  `oidc-login-stateless`, `mfa-duo-universal-login-stateless`, `ticket-validation-casv3-pgt-stateless` cover happy
+  paths only; none covers VC/VP, DPoP, private_key_jwt, replay or delimiter input.

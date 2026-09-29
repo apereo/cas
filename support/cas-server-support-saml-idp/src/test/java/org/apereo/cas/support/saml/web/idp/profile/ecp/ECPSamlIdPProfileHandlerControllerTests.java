@@ -6,6 +6,7 @@ import org.apereo.cas.support.saml.SamlIdPConstants;
 import org.apereo.cas.support.saml.SamlUtils;
 import org.apereo.cas.support.saml.services.SamlRegisteredService;
 import org.apereo.cas.util.http.HttpUtils;
+import org.apereo.cas.web.support.ThrottledSubmissionHandlerInterceptor;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.hc.core5.http.HttpStatus;
@@ -62,6 +63,7 @@ class ECPSamlIdPProfileHandlerControllerTests extends BaseSamlIdPConfigurationTe
         assertEquals(HttpStatus.SC_OK, result.getResponse().getStatus());
         assertNotNull(result.getRequest().getAttribute(SamlIdPConstants.REQUEST_ATTRIBUTE_ERROR));
         assertNotNull(result.getRequest().getAttribute(FaultString.class.getSimpleName()));
+        assertTrue(ThrottledSubmissionHandlerInterceptor.isAuthenticationFailure(result.getRequest()));
     }
 
     @Test
@@ -84,6 +86,7 @@ class ECPSamlIdPProfileHandlerControllerTests extends BaseSamlIdPConfigurationTe
         assertEquals(HttpStatus.SC_OK, result.getResponse().getStatus());
         assertNotNull(result.getRequest().getAttribute(SamlIdPConstants.REQUEST_ATTRIBUTE_ERROR));
         assertNotNull(result.getRequest().getAttribute(FaultString.class.getSimpleName()));
+        assertFalse(ThrottledSubmissionHandlerInterceptor.isAuthenticationFailure(result.getRequest()));
     }
 
     private MvcResult performEcpRequest(final String xml, final HttpHeaders headers) throws Exception {

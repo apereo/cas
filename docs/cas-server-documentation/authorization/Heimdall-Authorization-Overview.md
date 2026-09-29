@@ -119,7 +119,7 @@ via a `POST`. Once the request is evaluated, the typical response may match the 
 The `subject`, `resource` and `action` objects are required, along with `subject.type`, `subject.id`, `resource.type`,
 `resource.id` and `action.name`. A request that is missing any of these is rejected with a `400` status code, and a caller that
 cannot be authenticated receives a `401` status code. A request that is evaluated and denied receives a `200` status code with
-`"decision": false`. If the request carries an `X-Request-ID` header, the same value is returned in the response.
+`"decision": false` and a [decision context](#decision-context). If the request carries an `X-Request-ID` header, the same value is returned in the response.
 
 Note that `resource.id` identifies the resource instance being accessed, such as a specific account or document,
 and is not the name of a policy namespace. AuthZEN requests are matched against authorizable resources in *every* namespace
@@ -127,9 +127,113 @@ using their `resourceType`, `actions` and optional `resourceIdPattern` fields; t
 are ignored for AuthZEN requests. Likewise, the `/heimdall/authorize` endpoint rejects requests that carry AuthZEN `subject`,
 `resource` or `action` fields with a `400` status code.
 
+See [AuthZEN](#authzen) for the [decision context](#decision-context), [access evaluations](#access-evaluations)
+and [policy decision point metadata](#policy-decision-point-metadata).
+
 {% endtab %}
 
 {% endtabs %}
+
+## AuthZEN
+
+The following capabilities are specific to the [AuthZEN](https://openid.net/specs/authorization-api-1_0.html) protocol.
+
+### Decision Context
+
+A denied decision carries a `context` with a `reason` code that tells the policy enforcement point why access was denied:
+
+```json
+{
+  "decision": false,
+  "context": {
+    "reason": "policy_denied"
+  }
+}
+```
+
+| Reason                 | Description                                                                 |
+|------------------------|-----------------------------------------------------------------------------|
+| `no_matching_resource` | No authorizable resource matches the resource type, action and resource id. |
+| `no_policies`          | A matching resource defines no authorization policies.                      |
+| `policy_denied`        | The authorization policies of a matching resource denied access.            |
+| `subject_unresolved`   | No principal could be resolved for the subject.                             |
+
+A granted decision carries no `context`. The reason names the stage of the evaluation that denied access, never the policy
+or the attributes involved, so that callers learn nothing about how policies are built; the details are logged by CAS at
+the `DEBUG` level for the `org.apereo.cas.heimdall` package.
+
+### Access Evaluations
+
+Several requests can be evaluated in one call to `/heimdall/authzen/evaluations` via a `POST`. The top-level `subject`, `resource`,
+`action` and `context` are defaults for each entry of `evaluations`, and any of them set on an entry replaces the default:
+
+```json
+{
+  "subject": { "type": "user", "id": "alice@acmecorp.com" },
+  "action": { "name": "can_read" },
+  "options": { "evaluations_semantic": "execute_all" },
+  "evaluations": [
+    { "resource": { "type": "document", "id": "1" } },
+    { "resource": { "type": "document", "id": "2" }, "action": { "name": "can_edit" } }
+  ]
+}
+```
+
+The response lists the decisions in the order of the requested evaluations:
+
+```json
+{
+  "evaluations": [
+    { "decision": true },
+    { "decision": false }
+  ]
+}
+```
+
+The caller is authenticated once for the whole request, so a single-use JWT bearer assertion covers every evaluation.
+An entry that is missing a required field, or that cannot be evaluated, is denied with an error in its `context`, for example
+`{"decision": false, "context": {"error": {"status": 400, "message": "Resource id is required"}}}`, while the other entries
+are still evaluated. The following `evaluations_semantic` values are supported:
+
+| Value                    | Description                                                                           |
+|--------------------------|---------------------------------------------------------------------------------------|
+| `execute_all`            | Default. Evaluate every entry and return every decision.                              |
+| `deny_on_first_deny`     | Stop at the first denial or error; the decisions up to and including it are returned. |
+| `permit_on_first_permit` | Stop at the first permit; the decisions up to and including it are returned.          |
+
+A request without `evaluations`, or with an empty list, is evaluated as a single access evaluation and receives a single decision.
+Denied entries carry the same [decision context](#decision-context) as single evaluations.
+
+### Search
+
+The optional AuthZEN search APIs for subjects, resources and actions are not supported yet, and may be worked out in the future.
+Most Heimdall policies evaluate a single request, such as attribute, REST, JDBC or Groovy policies, rather than store the relationships
+a search would enumerate.
+
+### Policy Decision Point Metadata
+
+The policy decision point is identified by `${cas.server.prefix}/heimdall`, for example `https://sso.example.org/cas/heimdall`,
+and publishes its [metadata](https://openid.net/specs/authorization-api-1_0.html#name-policy-decision-point-metadata)
+at `/cas/heimdall/.well-known/authzen-configuration`:
+
+```json
+{
+  "policy_decision_point": "https://sso.example.org/cas/heimdall",
+  "access_evaluation_endpoint": "https://sso.example.org/cas/heimdall/authzen",
+  "access_evaluations_endpoint": "https://sso.example.org/cas/heimdall/authzen/evaluations"
+}
+```
+
+The specification locates metadata by inserting `/.well-known/authzen-configuration` between the host and the path of
+the policy decision point identifier, so a policy enforcement point asks for
+`https://sso.example.org/.well-known/authzen-configuration/cas/heimdall`. That path lies outside the CAS web application
+context, and must be rewritten by the proxy that fronts CAS or by the
+[embedded Apache Tomcat rewrite valve](../installation/Servlet-Container-Embedded-Tomcat-RewriteValve.html) if that is the container you are using. 
+The valve must be registered on the engine which sees requests before a web application context is selected, with a rewrite configuration such as:
+
+```bash
+RewriteRule ^/\.well-known/authzen-configuration(/.+)$ $1/.well-known/authzen-configuration [L]
+```
 
 ## Authorization Principal
        
@@ -146,6 +250,13 @@ The authorization header value can be *one* of the following:
 - A valid base64-encoded `username:password`, passed as a `Basic` token, that can be accepted by the CAS authentication engine.
   For AuthZEN requests, `Basic` credentials are instead the `client_id:client_secret` of an OAuth or OpenID Connect application
   registered with CAS; CAS user credentials are rejected there.
+
+<div class="alert alert-warning">:warning: <strong>Usage Warning</strong><p>On <code>/heimdall/authorize</code>,
+<code>Basic</code> credentials go through a complete CAS authentication on every request: the authentication handlers
+verify the password (for example, an LDAP bind or a deliberately slow password hash), and the attempt is audited,
+throttled and may count toward account lockout like any other login. Behind a gateway that asks Heimdall about every
+API call, this means one full login per call, and the user's password travels with every request. Prefer access
+tokens for gateways, and keep <code>Basic</code> for low-volume callers.</p></div>
 
 Claims or attributes from all token types are extracted and attached to the final principal, which is then
 passed to the authorization policy engine to make decisions. However, when using the AuthZEN protocol
@@ -238,20 +349,25 @@ every matching resource must grant access for the decision to be allowed.</p></d
 
 The authorization policies owned by the indicated namespace and resource support the following elements:
 
-| Field                | Description                                                                                                              |
-|----------------------|--------------------------------------------------------------------------------------------------------------------------|
-| `id`                 | Unique numeric identifier for this resource.                                                                             |
-| `pattern`            | <sup>[1]</sup> The URI regular expression pattern that describes the resource or API endpoint.                           |
-| `method`             | <sup>[1]</sup> The HTTP method (as a regular expression pattern, or `*` for all) that is allowed to access the resource. |
-| `policies`           | A list of policies that are attached to the resource to allow or deny access. A resource without policies denies access.  |
-| `enforceAllPolicies` | Whether all policies must grant access. When `false`, the default, any one policy granting access is enough. |
-| `properties`         | Arbitrary key-value pairs attached to the resource for advanced decision making.                                         |
-| `resourceType`       | <sup>[2]</sup> The AuthZEN resource type, matched exactly against `resource.type`.                                        |
-| `actions`            | <sup>[2]</sup> The set of AuthZEN action names, one of which must match `action.name` exactly.                            |
+| Field                | Description                                                                                                                |
+|----------------------|----------------------------------------------------------------------------------------------------------------------------|
+| `id`                 | Unique numeric identifier for this resource.                                                                               |
+| `pattern`            | <sup>[1]</sup> The URI regular expression pattern that describes the resource or API endpoint.                             |
+| `method`             | <sup>[1]</sup> The HTTP method (as a regular expression pattern, or `*` for all) that is allowed to access the resource.   |
+| `policies`           | A list of policies that are attached to the resource to allow or deny access. A resource without policies denies access.   |
+| `enforceAllPolicies` | Whether all policies must grant access. When `false`, the default, any one policy granting access is enough.               |
+| `properties`         | Arbitrary key-value pairs attached to the resource for advanced decision making.                                           |
+| `resourceType`       | <sup>[2]</sup> The AuthZEN resource type, matched exactly against `resource.type`.                                         |
+| `actions`            | <sup>[2]</sup> The set of AuthZEN action names, one of which must match `action.name` exactly.                             |
 | `resourceIdPattern`  | <sup>[2]</sup> Optional regular expression that must match the entire AuthZEN `resource.id`; all ids match when undefined. |
 
 <sub><i>[1] This field is not necessary when using the AuthZEN protocol.</i></sub>
 <sub><i>[2] This field is only used by the AuthZEN protocol; a resource without a `resourceType` never matches AuthZEN requests.</i></sub>
+
+Policies are evaluated in the order they are defined. When `enforceAllPolicies` is `true`, evaluation stops at the first
+policy that denies access or fails with an error. Otherwise, a policy that fails, for example because its database or
+REST endpoint is unavailable, is logged and skipped so that a later policy can still grant access. If no policy grants
+access and at least one policy failed, the request fails with an error rather than a denial.
 
 For example, the following resource grants AuthZEN `can_read` and `can_write` requests for documents whose id starts with `doc-`:
 
@@ -548,13 +664,14 @@ The query is expected to return an `authorized` column of a `boolean` type.
 
 The following settings are available:
 
-| Parameter  | Description                                                                               |
-|------------|-------------------------------------------------------------------------------------------|
-| `query`    | The SQL query that is executed. Supports named parameters such as `parameter`. See below. |
-| `url`      | <sup>[1]</sup> The database connection string, i.e. `jdbc:mysql://localhost:3306/cas`     |
-| `username` | <sup>[1]</sup> The username when building a database connection.                          |
-| `password` | <sup>[1]</sup> The password when building a database connection.                          |
-| `dataSourceName` | Optional name of the data source bean to use; see below.                              |
+| Parameter        | Description                                                                               |
+|------------------|-------------------------------------------------------------------------------------------|
+| `query`          | The SQL query that is executed. Supports named parameters such as `parameter`. See below. |
+| `url`            | <sup>[1]</sup> The database connection string, i.e. `jdbc:mysql://localhost:3306/cas`     |
+| `username`       | <sup>[1]</sup> The username when building a database connection.                          |
+| `password`       | <sup>[1]</sup> The password when building a database connection.                          |
+| `dataSourceName` | Optional name of the data source bean to use; see below.                                  |
+| `queryTimeout`   | Maximum time the query may run, i.e. `PT5S` (default). `0` or `INFINITE` disables it.     |
 
 <sub><i>[1] This field supports the [Spring Expression Language](../configuration/Configuration-Spring-Expressions.html) syntax.</i></sub>
 
@@ -563,6 +680,15 @@ The policy looks up its data source as a bean in the application context, named 
 connection pool with default settings that keeps no idle connections, registers it under that name, and shares it
 across all policies with the same name until CAS shuts down. A deployment may define its own data source bean with that
 name to control pooling.
+
+<div class="alert alert-info">:information_source: <strong>Note</strong><p>The connection pool is keyed by the URL and
+username only. A policy that changes only its <code>password</code> keeps using the existing pool, and its connections
+keep the old password until CAS restarts. To rotate a password without a restart, give the policy a new
+<code>dataSourceName</code>, or define and manage the data source bean yourself.</p></div>
+
+A query that runs longer than `queryTimeout` is cancelled and the policy fails. A request that fails is not
+authorized: the legacy endpoint returns `403` and the AuthZEN endpoint returns `500`. The timeout applies to the query only; waiting for a free
+pooled connection follows the pool's own connection timeout.
 
 The SQL query is preprocessed to receive the following named parameters:
 
@@ -579,6 +705,43 @@ and can be used and referenced in the query. Context and principal attributes ca
 {% endtab %}
 
 {% endtabs %}
+
+## Gateway Example
+
+An nginx reverse proxy can act as the policy enforcement point with its `auth_request` module, sending each request
+to `/heimdall/authorize` before passing it upstream:
+
+```nginx
+map $request_uri $heimdall_unsafe_uri {
+    default     0;
+    '~["\\\\]'  1;
+}
+
+server {
+    location /api {
+        if ($heimdall_unsafe_uri) {
+            return 400;
+        }
+        auth_request /authorize;
+        proxy_pass https://api.example.org;
+    }
+
+    location = /authorize {
+        internal;
+        proxy_method POST;
+        proxy_pass_request_body off;
+        proxy_pass https://sso.example.org/cas/heimdall/authorize;
+        proxy_set_header Content-Type application/json;
+        proxy_set_body '{"namespace": "API_EXAMPLE", "method": "$request_method", "uri": "$request_uri", "context": {"client_ip": "$remote_addr"}}';
+    }
+}
+```
+
+The subrequest carries the client's headers, including `Authorization`, and must use `POST`; see the warning above
+about `Basic` credentials behind a gateway. nginx does not escape
+variables in the request body, so the `map` rejects URIs that contain quotes or backslashes, which could otherwise
+change the namespace or other fields. `auth_request` allows the request on a `2xx` response and refuses it on `401`
+or `403`; any other status, such as `404` when no resource matches, becomes a `500`.
 
 ## Actuator Endpoints
 
