@@ -473,6 +473,179 @@ function isStorageAvailable(type) {
     }
 }
 
+const CAS_BROWSER_STORAGE_COOKIE_PREFIX = "CasBrowserStorage_";
+const CAS_BROWSER_STORAGE_COOKIE_COUNT_SUFFIX = "_n";
+const CAS_BROWSER_STORAGE_COOKIE_CHUNK_LENGTH = 3800;
+const CAS_BROWSER_STORAGE_COOKIE_MAX_CHUNKS = 40;
+
+function browserStorageCookiePath(path) {
+    let cookiePath = path;
+    if (cookiePath === undefined || cookiePath === null) {
+        cookiePath = typeof casBrowserStorageCookiePath === "string" ? casBrowserStorageCookiePath : "/";
+    }
+    cookiePath = cookiePath.split(";")[0].replace(/\/+$/, "");
+    return cookiePath === "" ? "/" : cookiePath;
+}
+
+function encodeBrowserStorageCookieToken(value) {
+    return Array.from(new TextEncoder().encode(value))
+        .map(b => /[A-Za-z0-9.~-]/.test(String.fromCharCode(b))
+            ? String.fromCharCode(b)
+            : `%${b.toString(16).toUpperCase().padStart(2, "0")}`)
+        .join("");
+}
+
+function browserStorageCookieName(context, suffix) {
+    return `${CAS_BROWSER_STORAGE_COOKIE_PREFIX}${encodeBrowserStorageCookieToken(context)}_${suffix}`;
+}
+
+function setBrowserStorageCookie(name, value, path, maxAge) {
+    let cookie = `${name}=${value}; Path=${path}; SameSite=Lax`;
+    if (window.location.protocol === "https:") {
+        cookie += "; Secure";
+    }
+    if (typeof maxAge === "number") {
+        cookie += `; Max-Age=${maxAge}`;
+    }
+    document.cookie = cookie;
+}
+
+function readBrowserStorageCookies() {
+    const cookies = {};
+    let allCookies;
+    try {
+        allCookies = document.cookie;
+    } catch (e) {
+        console.error(`Browser does not support cookies: ${e}`);
+        return cookies;
+    }
+    (allCookies ?? "").split(";").forEach(entry => {
+        const index = entry.indexOf("=");
+        if (index > 0) {
+            const name = entry.substring(0, index).trim();
+            if (name.startsWith(CAS_BROWSER_STORAGE_COOKIE_PREFIX)) {
+                cookies[name] = entry.substring(index + 1).trim();
+            }
+        }
+    });
+    return cookies;
+}
+
+function splitIntoBrowserStorageCookieChunks(value, maxLength) {
+    const chunks = [];
+    let remaining = value;
+    while (remaining.length > 0) {
+        let size = Math.min(remaining.length, maxLength);
+        let encoded;
+        do {
+            const code = remaining.charCodeAt(size - 1);
+            if (size > 1 && size < remaining.length && code >= 0xD800 && code <= 0xDBFF) {
+                size--;
+            }
+            encoded = encodeURIComponent(remaining.substring(0, size));
+            if (encoded.length > maxLength) {
+                size = Math.max(1, Math.floor(size * maxLength / encoded.length));
+            }
+        } while (encoded.length > maxLength);
+        chunks.push(encoded);
+        remaining = remaining.substring(size);
+    }
+    return chunks;
+}
+
+function writeToCookieStorage(browserStorage, path) {
+    const cookiePath = browserStorageCookiePath(path);
+    const payload = browserStorage.payload ?? "";
+    try {
+        clearCookieStorage(cookiePath, browserStorage.context);
+        const chunks = splitIntoBrowserStorageCookieChunks(payload, CAS_BROWSER_STORAGE_COOKIE_CHUNK_LENGTH);
+        if (chunks.length > CAS_BROWSER_STORAGE_COOKIE_MAX_CHUNKS) {
+            console.error(`Browser storage payload needs ${chunks.length} cookies, which exceeds the limit of ${CAS_BROWSER_STORAGE_COOKIE_MAX_CHUNKS}`);
+            return false;
+        }
+        chunks.forEach((chunk, index) =>
+            setBrowserStorageCookie(browserStorageCookieName(browserStorage.context, index), chunk, cookiePath));
+        setBrowserStorageCookie(browserStorageCookieName(browserStorage.context, "n"), `${chunks.length}`, cookiePath);
+        if (readFromCookieStorage()[browserStorage.context] === payload) {
+            console.info(`Stored ${payload.length} characters in ${chunks.length} cookie(s) under key ${browserStorage.context} at path ${cookiePath}`);
+            return true;
+        }
+        console.error(`Browser did not accept the cookies for key ${browserStorage.context}`);
+    } catch (e) {
+        console.error(`Failed to write to cookies: ${e}`);
+    }
+    clearCookieStorage(cookiePath, browserStorage.context);
+    return false;
+}
+
+function readFromCookieStorage() {
+    const cookies = readBrowserStorageCookies();
+    const payload = {};
+    Object.keys(cookies)
+        .filter(name => name.endsWith(CAS_BROWSER_STORAGE_COOKIE_COUNT_SUFFIX))
+        .forEach(countName => {
+            try {
+                const encodedContext = countName.substring(CAS_BROWSER_STORAGE_COOKIE_PREFIX.length,
+                    countName.length - CAS_BROWSER_STORAGE_COOKIE_COUNT_SUFFIX.length);
+                const count = Number(cookies[countName]);
+                if (!Number.isInteger(count) || count < 0 || count > CAS_BROWSER_STORAGE_COOKIE_MAX_CHUNKS) {
+                    return;
+                }
+                let value = "";
+                for (let index = 0; index < count; index++) {
+                    const chunk = cookies[`${CAS_BROWSER_STORAGE_COOKIE_PREFIX}${encodedContext}_${index}`];
+                    if (chunk === undefined) {
+                        return;
+                    }
+                    value += decodeURIComponent(chunk);
+                }
+                payload[decodeURIComponent(encodedContext)] = value;
+            } catch (e) {
+                console.error(`Failed to read cookie ${countName}: ${e}`);
+            }
+        });
+    return payload;
+}
+
+function clearCookieStorage(path, context) {
+    const cookiePath = browserStorageCookiePath(path);
+    const prefix = context === undefined || context === null
+        ? CAS_BROWSER_STORAGE_COOKIE_PREFIX
+        : `${CAS_BROWSER_STORAGE_COOKIE_PREFIX}${encodeBrowserStorageCookieToken(context)}_`;
+    Object.keys(readBrowserStorageCookies())
+        .filter(name => name.startsWith(prefix))
+        .forEach(name => setBrowserStorageCookie(name, "", cookiePath, 0));
+}
+
+function writeToBrowserStorage(browserStorage, path) {
+    let success = false;
+    try {
+        success = browserStorage.storageType === "SESSION"
+            ? writeToSessionStorage(browserStorage)
+            : writeToLocalStorage(browserStorage);
+    } catch (e) {
+        console.error(`Failed to write to browser storage: ${e}`);
+    }
+    if (success) {
+        clearCookieStorage(path, browserStorage.context);
+        return true;
+    }
+    console.warn("Browser storage is unavailable; falling back to cookies");
+    return writeToCookieStorage(browserStorage, path);
+}
+
+function readFromBrowserStorage(browserStorage) {
+    let payload = null;
+    try {
+        payload = browserStorage.storageType === "SESSION"
+            ? readFromSessionStorage()
+            : readFromLocalStorage();
+    } catch (e) {
+        console.error(`Failed to read from browser storage: ${e}`);
+    }
+    return Object.assign(payload ?? {}, readFromCookieStorage());
+}
+
 function loginFormSubmission() {
     return true;
 }

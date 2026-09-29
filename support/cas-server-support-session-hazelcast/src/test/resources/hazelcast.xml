@@ -6,7 +6,6 @@
 
   To learn how to configure Hazelcast, please see the schema at
   https://hazelcast.com/schema/config/hazelcast-config-3.12.xsd
-  or the Reference Manual at https://hazelcast.org/documentation/
 -->
 
 <!--suppress XmlDefaultAttributeValue -->

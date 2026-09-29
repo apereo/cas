@@ -3,6 +3,7 @@ package org.apereo.cas.support.oauth.authenticator;
 import module java.base;
 import org.apereo.cas.adaptors.x509.authentication.CasX509Certificate;
 import org.apereo.cas.support.oauth.OAuth20Constants;
+import com.nimbusds.jose.util.X509CertUtils;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
@@ -38,6 +39,8 @@ public class OAuth20X509AuthenticatorTests extends BaseOAuth20AuthenticatorTests
         val ctx = new JEEContext(request, new MockHttpServletResponse());
         authenticator.validate(new CallContext(ctx, new JEESessionStore()), credentials);
         assertNotNull(credentials.getUserProfile());
+        assertEquals(X509CertUtils.computeSHA256Thumbprint(certificate).toString(),
+            credentials.getUserProfile().getAttribute(OAuth20Constants.X509_CERTIFICATE_DIGEST));
     }
 
     @Test

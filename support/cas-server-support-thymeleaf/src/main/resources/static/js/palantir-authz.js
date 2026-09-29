@@ -510,7 +510,8 @@ function addHeimdallPolicy(policy = null) {
         {key: "username", label: "Username"},
         {key: "password", label: "Password", type: "password"},
         {key: "query", label: "SQL Query", placeholder: "select authorized from ..."},
-        {key: "dataSourceName", label: "Data Source Bean Name", placeholder: "Optional; derived from the URL and username"}
+        {key: "dataSourceName", label: "Data Source Bean Name", placeholder: "Optional; derived from the URL and username"},
+        {key: "queryTimeout", label: "Query Timeout", placeholder: "PT5S"}
     ]));
     const policyBody = $("<div>", {id: policyBodyId, class: "heimdall-policy-card-body"});
     card.children(".heimdall-policy-fields").appendTo(policyBody);
@@ -668,7 +669,7 @@ function prefillHeimdallPolicyMap(card, key, value, multipleValues = false) {
 
 function prefillHeimdallPolicy(card, policy, policyType) {
     for (const key of ["script", "groupField", "attributeDefinition", "roleName", "issuer", "url", "method",
-        "apiUrl", "storeId", "token", "relation", "userType", "username", "password", "query", "dataSourceName"]) {
+        "apiUrl", "storeId", "token", "relation", "userType", "username", "password", "query", "dataSourceName", "queryTimeout"]) {
         setHeimdallPolicyField(card, key, policy[key]);
     }
     for (const key of ["groups", "acrs", "amrs", "audience", "scopes"]) {
@@ -756,7 +757,7 @@ function buildHeimdallPolicy(card) {
             copy(key);
         }
     } else if (type === "JdbcAuthorizationPolicy") {
-        for (const key of ["url", "username", "password", "query", "dataSourceName"]) {
+        for (const key of ["url", "username", "password", "query", "dataSourceName", "queryTimeout"]) {
             copy(key);
         }
     }
@@ -776,7 +777,7 @@ function getHeimdallResourceProperties() {
 }
 
 function setHeimdallMappedFieldValue(input, value) {
-    input.val(value);
+    input.val(value).attr("title", value);
     if (String(value).length > 0) {
         const textField = input.closest(".mdc-text-field");
         textField.addClass("mdc-text-field--label-floating");
@@ -1069,6 +1070,9 @@ function newHeimdallResource(prefillData = null, options = {}) {
                 generateHeimdallResourcePayload();
             });
             dialog.on("input change", "input:not([type='hidden']), textarea", generateHeimdallResourcePayload);
+            dialog.on("input change", "[data-mapped-input-row='true'] input", function () {
+                $(this).attr("title", $(this).val());
+            });
 
             cas.init("#newHeimdallResourceDialog");
             cas.init(".heimdall-resource-dialog .ui-dialog-buttonpane");

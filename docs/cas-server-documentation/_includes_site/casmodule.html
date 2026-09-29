@@ -31,9 +31,8 @@
             <a class='nav-link dropdown-toggle' data-bs-toggle='dropdown' href='#' role='button' aria-expanded='false'>Resources<span class='caret'></span>
             </a>
             <div class='dropdown-menu'>
-                <a class='dropdown-item' href="javascript:showOverlay('{{include.module}}', 'cas-overlay');">Show in CAS Initializr</a>
+                <a class='dropdown-item' href="https://getcas.apereo.org/ui?dependencies=webapp-tomcat,{{ include.module | remove_first: 'cas-server-' }}" target="_blank" rel="noopener">Show in CAS Initializr <span aria-hidden="true">↗</span><span class="visually-hidden"> (opens in a new tab)</span></a>
                 <a class='dropdown-item' href="javascript:generateOverlay('{{include.module}}', 'cas-overlay');">Generate CAS Server WAR Overlay</a>
-                <a class='dropdown-item' href="javascript:generateOverlay('{{include.module}}', 'cas-config-server-overlay');">Generate CAS Configuration Server WAR Overlay</a>
             </div>
         </li>
     </ul>
@@ -105,7 +104,7 @@ dependencies {
 ```groovy
 dependencies {
     /*
-        The following platform references should be included automatically and are listed here for reference only.
+        The following platform references are included automatically and are listed for reference only.
 
         implementation enforcedPlatform("org.apereo.cas:cas-server-support-bom:${project.'cas.version'}")
         implementation platform(org.springframework.boot.gradle.plugin.SpringBootPlugin.BOM_COORDINATES)

@@ -1,6 +1,7 @@
 package org.apereo.cas.web.flow.actions;
 
 import module java.base;
+import lombok.experimental.UtilityClass;
 import lombok.val;
 import org.springframework.binding.message.MessageBuilder;
 import org.springframework.binding.message.Severity;
@@ -12,6 +13,7 @@ import org.springframework.webflow.execution.RequestContext;
  * @author Misagh Moayyed
  * @since 7.0.0
  */
+@UtilityClass
 public class PopulateMessageContextAction {
 
     public static class Warning extends ConsumerExecutionAction {

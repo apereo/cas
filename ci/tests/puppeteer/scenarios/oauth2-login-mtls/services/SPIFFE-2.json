@@ -8,6 +8,7 @@
   "attributeReleasePolicy" : {
     "@class" : "org.apereo.cas.services.ReturnAllowedAttributeReleasePolicy"
   },
+  "jwtAccessToken": true,
   "tokenEndpointAuthenticationMethod": "tls_client_auth",
   "tlsClientAuthSubjectDn": "(.+)",
   "supportedGrantTypes": [ "java.util.HashSet", [ "client_credentials" ] ]

@@ -18,7 +18,6 @@ import org.apereo.inspektr.common.web.ClientInfoHolder;
 import org.jspecify.annotations.NonNull;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.http.HttpStatus;
-import org.springframework.web.servlet.ModelAndView;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
@@ -74,15 +73,13 @@ public abstract class AbstractThrottledSubmissionHandlerInterceptorAdapter
     }
 
     @Override
-    public final void postHandle(final @NonNull HttpServletRequest request, final @NonNull HttpServletResponse response,
-                                 final @NonNull Object handler, final ModelAndView modelAndView) {
+    public void afterCompletion(final @NonNull HttpServletRequest request, final @NonNull HttpServletResponse response,
+                                final @NonNull Object handler, final Exception e) {
         if (isRequestIgnoredForThrottling(request, response)) {
             LOGGER.trace("Skipping authentication throttling for requests; no filters support it.");
             return;
         }
-
-        val recordEvent = shouldResponseBeRecordedAsFailure(response);
-        if (recordEvent) {
+        if (shouldResponseBeRecordedAsFailure(request, response)) {
             LOGGER.debug("Recording submission failure for request URI [{}]", request.getRequestURI());
             recordSubmissionFailure(request);
         } else {
@@ -91,23 +88,14 @@ public abstract class AbstractThrottledSubmissionHandlerInterceptorAdapter
         }
     }
 
-    @Override
-    public void afterCompletion(final @NonNull HttpServletRequest request, final @NonNull HttpServletResponse response,
-                                final @NonNull Object handler, final Exception e) {
-        if (!isRequestIgnoredForThrottling(request, response) && shouldResponseBeRecordedAsFailure(response)) {
-            recordSubmissionFailure(request);
-        }
-    }
-
     protected boolean throttleRequest(final HttpServletRequest request, final HttpServletResponse response) {
         val executor = configurationContext.getThrottledRequestExecutor();
         return executor != null && executor.throttle(request, response);
     }
 
-    protected boolean shouldResponseBeRecordedAsFailure(final HttpServletResponse response) {
-        val status = response.getStatus();
-        return status != HttpStatus.CREATED.value()
-            && status != HttpStatus.OK.value() && status != HttpStatus.FOUND.value();
+    protected boolean shouldResponseBeRecordedAsFailure(final HttpServletRequest request, final HttpServletResponse response) {
+        return response.getStatus() == HttpStatus.UNAUTHORIZED.value()
+            || ThrottledSubmissionHandlerInterceptor.isAuthenticationFailure(request);
     }
 
     protected void recordThrottle(final HttpServletRequest request) {

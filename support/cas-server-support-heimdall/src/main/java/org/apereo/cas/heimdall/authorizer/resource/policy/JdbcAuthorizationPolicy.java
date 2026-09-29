@@ -2,6 +2,7 @@ package org.apereo.cas.heimdall.authorizer.resource.policy;
 
 import module java.base;
 import module java.sql;
+import org.apereo.cas.configuration.support.Beans;
 import org.apereo.cas.configuration.support.CloseableDataSource;
 import org.apereo.cas.configuration.support.ExpressionLanguageCapable;
 import org.apereo.cas.configuration.support.JpaBeans;
@@ -66,6 +67,8 @@ public class JdbcAuthorizationPolicy implements ResourceAuthorizationPolicy {
 
     private String dataSourceName;
 
+    private String queryTimeout = "PT5S";
+
     @JsonIgnore
     private transient NamedParameterJdbcTemplate jdbcTemplate;
 
@@ -85,7 +88,25 @@ public class JdbcAuthorizationPolicy implements ResourceAuthorizationPolicy {
      * @return the named parameter jdbc template
      */
     public NamedParameterJdbcTemplate buildJdbcTemplate() {
-        return FunctionUtils.doUnchecked(() -> new NamedParameterJdbcTemplate(resolveDataSource()));
+        return FunctionUtils.doUnchecked(() -> {
+            val template = new NamedParameterJdbcTemplate(resolveDataSource());
+            template.getJdbcTemplate().setQueryTimeout(resolveQueryTimeoutSeconds());
+            return template;
+        });
+    }
+
+    /**
+     * Resolve the query timeout in seconds, rounding a positive sub-second timeout up to one second.
+     * A blank, zero, negative or infinite timeout falls back to the driver default.
+     *
+     * @return the query timeout in seconds
+     */
+    protected int resolveQueryTimeoutSeconds() {
+        if (Beans.isNeverDurable(queryTimeout) || Beans.isInfinitelyDurable(queryTimeout)) {
+            return 0;
+        }
+        val timeout = Beans.newDuration(queryTimeout);
+        return timeout.isPositive() ? Math.clamp(timeout.toSeconds(), 1, Integer.MAX_VALUE) : 0;
     }
 
     /**

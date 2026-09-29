@@ -289,6 +289,10 @@ button, a {
     margin: 0;
 }
 
+.brand-mission-accent {
+    color: #8adff8;
+}
+
 .brand-mission > span {
     font-size: .69rem;
     letter-spacing: .04em;
@@ -493,6 +497,7 @@ button, a {
    of them, or hit titles keep their light-mode ink on a dark card. */
 .DocSearch {
     --docsearch-primary-color: var(--docs-accent);
+    --docsearch-highlight-color: var(--docs-accent);
     --docsearch-text-color: var(--docs-heading);
     --docsearch-muted-color: var(--docs-muted);
     --docsearch-searchbox-background: var(--docs-soft);
@@ -522,6 +527,11 @@ button, a {
 
 .DocSearch-Hit-title {
     color: var(--docs-heading);
+}
+
+/* Bootstrap pads <mark>; inside hit titles that splits a word around the match. */
+.DocSearch-Hits mark {
+    padding: 0;
 }
 
 /* The selected hit is a tinted card with an accent edge rather than a solid
@@ -1596,11 +1606,41 @@ ul.tab-content > li:not(.active):not(.property-name):not(.property-tab):not(.cas
     color: var(--docs-heading);
 }
 
+/* The product name always holds one line; the promise starts on the next one. */
+.home-intro .home-title-prefix {
+    display: block;
+    white-space: nowrap;
+}
+
 .home-title-accent {
     background: linear-gradient(100deg, var(--docs-accent-strong) 5%, var(--docs-cyan));
     -webkit-background-clip: text;
     background-clip: text;
     color: transparent;
+    -webkit-box-decoration-break: clone;
+    box-decoration-break: clone;
+}
+
+/* The promise is retyped in place (see initializeHomeTitle in site.js). */
+.home-title-cursor {
+    display: inline-block;
+    width: .5em;
+    height: .78em;
+    margin-left: .08em;
+    vertical-align: -.04em;
+    background: var(--docs-cyan);
+    opacity: .85;
+    animation: home-title-cursor-blink 1.06s steps(1) infinite;
+}
+
+.home-title-typing .home-title-cursor {
+    animation: none;
+}
+
+@keyframes home-title-cursor-blink {
+    50% {
+        opacity: 0;
+    }
 }
 
 .primary-navigation > a {
@@ -1698,7 +1738,11 @@ ul.tab-content > li:not(.active):not(.property-name):not(.property-tab):not(.cas
 .home-intro {
     display: grid;
     grid-template-columns: minmax(0, 1fr) minmax(10rem, 30%);
+    /* eyebrow, title, two paragraphs, then a flexible row that absorbs the orbit's
+       extra height so the paragraphs keep their own spacing. */
+    grid-template-rows: auto auto auto auto 1fr;
     column-gap: 2rem;
+    container-type: inline-size;
     position: relative;
     overflow: clip;
     padding: 1rem 0 .5rem;
@@ -1733,22 +1777,24 @@ ul.tab-content > li:not(.active):not(.property-name):not(.property-tab):not(.cas
     background: currentColor;
 }
 
+/* The title spans the whole row and is sized to it, so the product name fits
+   on one line at every width; site.js shrinks it further if a fallback font is wider. */
 .home-intro h1 {
-    grid-column: 1;
+    grid-column: 1 / -1;
     grid-row: 2;
-    align-self: center;
-    max-width: 15ch;
-    font-size: clamp(2.8rem, 4.4vw, 4.6rem);
+    font-size: min(4.4rem, 5.8cqi);
     letter-spacing: -.035em;
     margin-bottom: 1.6rem;
 }
 
 .home-intro > p {
-    grid-column: 1 / -1;
+    grid-column: 1;
     position: relative;
     max-width: 66ch;
     font-size: 1.02rem;
     line-height: 1.8;
+    text-align: justify;
+    hyphens: auto;
 }
 
 .home-intro > p:first-of-type {
@@ -1759,6 +1805,7 @@ ul.tab-content > li:not(.active):not(.property-name):not(.property-tab):not(.cas
 }
 
 .identity-orbit {
+    container-type: inline-size;
     animation: orbit-arrive 3.5s cubic-bezier(.2, .65, .3, 1) both;
     position: absolute;
     z-index: -1;
@@ -1776,14 +1823,14 @@ ul.tab-content > li:not(.active):not(.property-name):not(.property-tab):not(.cas
 .home-intro .identity-orbit {
     position: relative;
     grid-column: 2;
-    grid-row: 2;
-    align-self: center;
+    grid-row: 3 / 6;
+    align-self: start;
     justify-self: center;
     inset: auto;
     width: 86%;
     height: auto;
     aspect-ratio: 1;
-    margin: 1rem 0 2.5rem;
+    margin: -2.5rem 0 2.5rem;
 }
 
 .orbit-ring {
@@ -1860,11 +1907,16 @@ ul.tab-content > li:not(.active):not(.property-name):not(.property-tab):not(.cas
     height: .4rem;
 }
 
+/* Centered under the orbit on screen: the label turns back the orbit's -22deg
+   from the orbit's center, then drops by the radius (50cqi of the orbit). */
 .orbit-label {
     position: absolute;
-    bottom: -2.1rem;
-    left: 3rem;
-    transform: rotate(22deg);
+    top: 50%;
+    left: 0;
+    width: 100%;
+    text-align: center;
+    transform-origin: 50% 0;
+    transform: rotate(22deg) translateY(calc(50cqi + 1.1rem));
     color: var(--docs-muted);
     font-size: .47rem;
     font-weight: 700;
@@ -2009,12 +2061,20 @@ ul.tab-content > li:not(.active):not(.property-name):not(.property-tab):not(.cas
     color: var(--docs-accent);
 }
 
+/* Sponsor cards share one size: equal columns, and every row as tall as the tallest. */
 .docs-home .row {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    grid-auto-rows: 1fr;
     row-gap: 1rem;
 }
 
 .docs-home .row > div {
-    width: 50%;
+    width: auto;
+}
+
+.docs-home .row > div > .card {
+    width: 100%;
 }
 
 .docs-home .card {
@@ -2147,9 +2207,6 @@ ul.tab-content > li:not(.active):not(.property-name):not(.property-tab):not(.cas
     .docs-home .docs-shell {
         grid-template-columns: 21rem minmax(0, 1fr);
     }
-    .home-intro h1 {
-        max-width: 14ch;
-    }
     .identity-orbit {
         right: 1rem;
     }
@@ -2211,9 +2268,6 @@ ul.tab-content > li:not(.active):not(.property-name):not(.property-tab):not(.cas
     }
     .home-intro > p:first-of-type {
         padding-right: 0;
-    }
-    .home-intro h1 {
-        max-width: 12ch;
     }
     .home-paths {
         gap: .5rem;
@@ -2323,10 +2377,6 @@ ul.tab-content > li:not(.active):not(.property-name):not(.property-tab):not(.cas
     h2 {
         font-size: 1.6rem;
     }
-    .home-intro h1 {
-        font-size: 2.7rem;
-        max-width: 12ch;
-    }
     .home-eyebrow {
         font-size: .52rem;
     }
@@ -2384,11 +2434,8 @@ ul.tab-content > li:not(.active):not(.property-name):not(.property-tab):not(.cas
     .primary-navigation > a, .primary-navigation .dropdown-toggle {
         font-size: .63rem;
     }
-    .docs-home .row > div {
-        width: 100%;
-    }
-    .home-intro h1 {
-        font-size: 2.3rem;
+    .docs-home .row {
+        grid-template-columns: minmax(0, 1fr);
     }
     .home-paths a {
         grid-template-columns: 1fr;
@@ -2423,6 +2470,9 @@ ul.tab-content > li:not(.active):not(.property-name):not(.property-tab):not(.cas
     .home-title-accent {
         color: CanvasText;
         background: none;
+    }
+    .home-title-cursor {
+        background: CanvasText;
     }
     .home-paths a, .icon-button, .nav-link.active {
         border: 1px solid ButtonText;

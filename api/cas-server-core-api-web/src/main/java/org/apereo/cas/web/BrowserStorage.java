@@ -15,6 +15,11 @@ public interface BrowserStorage extends Serializable {
      * session storage key to track data.
      */
     String PARAMETER_BROWSER_STORAGE = "browserStorage";
+
+    /**
+     * Prefix of the cookies written by {@code cas.js} when the browser cannot use local or session storage.
+     */
+    String COOKIE_NAME_PREFIX = "CasBrowserStorage_";
     
     /**
      * Gets payload.

@@ -1,5 +1,7 @@
 package org.apereo.cas.support.inwebo.service.soap.generated;
 import module java.base;
+import lombok.Getter;
+import lombok.Setter;
 import org.apache.commons.lang3.StringUtils;
 import jakarta.xml.bind.annotation.XmlAccessType;
 import jakarta.xml.bind.annotation.XmlAccessorType;
@@ -28,29 +30,11 @@ import jakarta.xml.bind.annotation.XmlType;
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = StringUtils.EMPTY, propOrder = "loginSearchReturn")
 @XmlRootElement(name = "loginSearchResponse")
+@Getter
+@Setter
 public class LoginSearchResponse {
 
     @XmlElement(required = true)
     protected LoginSearchResult loginSearchReturn;
-
-    /**
-     * Obtient la valeur de la propriété loginSearchReturn.
-     *
-     * @return possible object is
-     * {@link LoginSearchResult }
-     */
-    public LoginSearchResult getLoginSearchReturn() {
-        return loginSearchReturn;
-    }
-
-    /**
-     * Définit la valeur de la propriété loginSearchReturn.
-     *
-     * @param value allowed object is
-     *              {@link LoginSearchResult }
-     */
-    public void setLoginSearchReturn(final LoginSearchResult value) {
-        this.loginSearchReturn = value;
-    }
 
 }

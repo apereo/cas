@@ -9,7 +9,7 @@ import jakarta.servlet.http.HttpServletResponse;
 /**
  * Subjects caller authentication on the Heimdall endpoints to authentication throttling, which covers guessing
  * of CAS user passwords on {@code /heimdall/authorize} and of client secrets on {@code /heimdall/authzen}.
- * Which responses count as failures is decided by {@link HeimdallThrottledHandlerInterceptor}.
+ * Only failed caller authentication ({@code 401}) is recorded; denials and malformed requests are not.
  *
  * @author Misagh Moayyed
  * @since 8.1.0
@@ -20,7 +20,8 @@ public class HeimdallThrottledRequestFilter implements ThrottledRequestFilter {
      */
     public static final List<String> ENDPOINTS = List.of(
         HeimdallAuthorizationController.BASE_URL + "/authorize",
-        HeimdallAuthorizationController.BASE_URL + "/authzen");
+        HeimdallAuthorizationController.BASE_URL + HeimdallAuthorizationController.AUTHZEN_PATH,
+        HeimdallAuthorizationController.BASE_URL + HeimdallAuthorizationController.AUTHZEN_EVALUATIONS_PATH);
 
     @Override
     public boolean supports(final HttpServletRequest request, final HttpServletResponse response) {

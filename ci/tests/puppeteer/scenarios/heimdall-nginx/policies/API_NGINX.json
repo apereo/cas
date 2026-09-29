@@ -1,0 +1,45 @@
+{
+  "@class": "org.apereo.cas.heimdall.authorizer.resource.AuthorizableResources",
+  "resources": [
+    "java.util.ArrayList",
+    [
+      {
+        "@class": "org.apereo.cas.heimdall.authorizer.resource.AuthorizableResource",
+        "id": 1,
+        "pattern": "^/api/documents",
+        "method": "GET",
+        "policies": [
+          "java.util.ArrayList",
+          [
+            {
+              "@class": "org.apereo.cas.heimdall.authorizer.resource.policy.RequiredAttributesAuthorizationPolicy",
+              "attributes": {
+                "@class": "java.util.HashMap",
+                "memberOf": [ "java.util.HashSet", [ "readers", "editors" ] ]
+              }
+            }
+          ]
+        ]
+      },
+      {
+        "@class": "org.apereo.cas.heimdall.authorizer.resource.AuthorizableResource",
+        "id": 2,
+        "pattern": "^/api/documents",
+        "method": "POST|PUT|DELETE",
+        "policies": [
+          "java.util.ArrayList",
+          [
+            {
+              "@class": "org.apereo.cas.heimdall.authorizer.resource.policy.RequiredAttributesAuthorizationPolicy",
+              "attributes": {
+                "@class": "java.util.HashMap",
+                "memberOf": [ "java.util.HashSet", [ "editors" ] ]
+              }
+            }
+          ]
+        ]
+      }
+    ]
+  ],
+  "namespace": "API_NGINX"
+}

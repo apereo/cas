@@ -75,7 +75,8 @@ GET https://sso.example.org/.well-known/oauth-authorization-server/cas/oidc
 
 CAS is normally deployed under the `/cas` context path, so neither request reaches the
 application at all and the servlet container answers with its own `404`. Route them onto the
-paths CAS serves, either in the proxy that fronts CAS or with the embedded Tomcat rewrite valve.
+paths CAS serves, either in the proxy that fronts CAS or with the
+[embedded Tomcat rewrite valve](../installation/Servlet-Container-Embedded-Tomcat-RewriteValve.html).
 The valve must be registered on the engine, which runs before a context is selected.
 
 The rewrite rule would be similar to:
@@ -303,6 +304,12 @@ OpenID Federation and no Token Status List, so credentials issued elsewhere are 
 
 This is a trust policy rather than a protocol limitation: OpenID4VP leaves issuer trust to the verifier,
 noting that "Verifiers must verify that the issuer of a received presentation is trusted on their own".
+
+<div class="alert alert-info">:information_source: <strong>Note</strong><p>Verified presentations are not connected to
+<a href="../authorization/Heimdall-Authorization-Overview.html">Heimdall</a> authorization yet. Passing the claims of a verified
+presentation to AuthZEN requests as subject properties, so that authorization policies can decide on them, may be supported
+in the future. Until then, a relying party can send the disclosed claims it collected as <code>subject.properties</code>
+of its AuthZEN requests.</p></div>
 
 ## Authorized Credential Types
 

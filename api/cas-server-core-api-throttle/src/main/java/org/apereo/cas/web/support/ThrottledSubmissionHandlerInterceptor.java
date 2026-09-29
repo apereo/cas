@@ -22,6 +22,31 @@ public interface ThrottledSubmissionHandlerInterceptor extends AsyncHandlerInter
     String BEAN_NAME = "authenticationThrottle";
 
     /**
+     * Request attribute that marks a failed authentication attempt whose response is not a {@code 401}.
+     */
+    String REQUEST_ATTRIBUTE_AUTHENTICATION_FAILURE = "casThrottledAuthenticationFailure";
+
+    /**
+     * Mark the request as a failed authentication attempt, for endpoints that must answer a failed
+     * attempt with a status other than {@code 401}, such as a SOAP fault.
+     *
+     * @param request the request
+     */
+    static void markAuthenticationFailure(final HttpServletRequest request) {
+        request.setAttribute(REQUEST_ATTRIBUTE_AUTHENTICATION_FAILURE, Boolean.TRUE);
+    }
+
+    /**
+     * Whether the request was marked as a failed authentication attempt.
+     *
+     * @param request the request
+     * @return true if marked
+     */
+    static boolean isAuthenticationFailure(final HttpServletRequest request) {
+        return Boolean.TRUE.equals(request.getAttribute(REQUEST_ATTRIBUTE_AUTHENTICATION_FAILURE));
+    }
+
+    /**
      * No op throttled submission handler interceptor.
      *
      * @return the throttled submission handler interceptor

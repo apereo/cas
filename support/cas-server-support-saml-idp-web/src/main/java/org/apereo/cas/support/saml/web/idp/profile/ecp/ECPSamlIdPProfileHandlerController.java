@@ -14,6 +14,7 @@ import org.apereo.cas.support.saml.web.idp.profile.builders.SamlProfileBuilderCo
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.LoggingUtils;
 import org.apereo.cas.util.function.FunctionUtils;
+import org.apereo.cas.web.support.ThrottledSubmissionHandlerInterceptor;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.extern.slf4j.Slf4j;
@@ -103,6 +104,7 @@ public class ECPSamlIdPProfileHandlerController extends AbstractSamlIdPProfileHa
                 authenticationContext, Optional.of(casAssertion), context.getBinding(), null);
         } catch (final AuthenticationException e) {
             LoggingUtils.error(LOGGER, e);
+            ThrottledSubmissionHandlerInterceptor.markAuthenticationFailure(context.getHttpRequest());
             val error = e.getHandlerErrors().values()
                 .stream()
                 .map(Throwable::getMessage)

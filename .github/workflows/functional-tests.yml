@@ -159,16 +159,30 @@ jobs:
         uses: gradle/actions/setup-gradle@v6
         with:
           gradle-home-cache-excludes: caches/build-cache-1
+          cache-read-only: true
       - name: Initialize
         run: find ./ci -type f -name "*.sh" -exec chmod +x "{}" \;
       - name: Configure CI
         run: source ./ci/tests/puppeteer/configure-ci.sh ${{matrix.scenario}}
+      - name: Restore Node.js
+        id: restore-nodejs
+        uses: actions/cache/restore@v6.1.0
+        with:
+          path: ${{ runner.tool_cache }}/node/${{ env.NODE_VERSION_REQUIRED }}
+          key: nodejs-${{ runner.os }}-${{ runner.arch }}-${{ env.NODE_VERSION_REQUIRED }}
       - name: Set up Nodejs
         uses: actions/setup-node@v7
         with:
           node-version: ${{ env.NODE_VERSION_REQUIRED }}
           cache: 'npm'
           cache-dependency-path: ./ci/tests/puppeteer/package.json
+      - name: Save Node.js
+        if: ${{ steps.restore-nodejs.outputs.cache-hit != 'true' && github.ref == 'refs/heads/master' }}
+        continue-on-error: true
+        uses: actions/cache/save@v6.1.0
+        with:
+          path: ${{ runner.tool_cache }}/node/${{ env.NODE_VERSION_REQUIRED }}
+          key: nodejs-${{ runner.os }}-${{ runner.arch }}-${{ env.NODE_VERSION_REQUIRED }}
       - name: AppArmor User Namespace Restrictions
         run: echo 0 | sudo tee /proc/sys/kernel/apparmor_restrict_unprivileged_userns
       - name: Set up Gum
@@ -178,6 +192,7 @@ jobs:
         with:
           max_attempts: ${{ env.MAX_ATTEMPTS }}
           retry_on: error
+          retry_on_exit_code: 1
           timeout_minutes: ${{ env.RETRY_MINUTES }}
           shell: bash
           command: |
@@ -214,22 +229,34 @@ jobs:
         with:
           java-version: ${{ env.JDK_CURRENT }}
           distribution: ${{ env.JDK_DISTRIBUTION }}
-          cache: 'gradle'
       - name: Setup Gradle
         uses: gradle/actions/setup-gradle@v6
         with:
           gradle-home-cache-excludes: caches/build-cache-1
+          cache-read-only: true
       - name: Initialize
         run: find ./ci -type f -name "*.sh" -exec chmod +x "{}" \;
       - name: Configure CI
         run: source ./ci/tests/puppeteer/configure-ci.sh ${{matrix.scenario}}
+      - name: Restore Node.js
+        id: restore-nodejs
+        uses: actions/cache/restore@v6.1.0
+        with:
+          path: ${{ runner.tool_cache }}/node/${{ env.NODE_VERSION_REQUIRED }}
+          key: nodejs-${{ runner.os }}-${{ runner.arch }}-${{ env.NODE_VERSION_REQUIRED }}
       - name: Set up Nodejs
         uses: actions/setup-node@v7
         with:
           node-version: ${{ env.NODE_VERSION_REQUIRED }}
-          check-latest: true
           cache: 'npm'
           cache-dependency-path: ./ci/tests/puppeteer/package.json
+      - name: Save Node.js
+        if: ${{ steps.restore-nodejs.outputs.cache-hit != 'true' && github.ref == 'refs/heads/master' }}
+        continue-on-error: true
+        uses: actions/cache/save@v6.1.0
+        with:
+          path: ${{ runner.tool_cache }}/node/${{ env.NODE_VERSION_REQUIRED }}
+          key: nodejs-${{ runner.os }}-${{ runner.arch }}-${{ env.NODE_VERSION_REQUIRED }}
       - name: AppArmor User Namespace Restrictions
         run: echo 0 | sudo tee /proc/sys/kernel/apparmor_restrict_unprivileged_userns
       - name: Set up Gum
@@ -239,6 +266,7 @@ jobs:
         with:
           max_attempts: ${{ env.MAX_ATTEMPTS }}
           retry_on: error
+          retry_on_exit_code: 1
           timeout_minutes: ${{ env.RETRY_MINUTES }}
           shell: bash
           command: |
@@ -275,22 +303,34 @@ jobs:
         with:
           java-version: ${{ env.JDK_CURRENT }}
           distribution: ${{ env.JDK_DISTRIBUTION }}
-          cache: 'gradle'
       - name: Setup Gradle
         uses: gradle/actions/setup-gradle@v6
         with:
           gradle-home-cache-excludes: caches/build-cache-1
+          cache-read-only: true
       - name: Initialize
         run: find ./ci -type f -name "*.sh" -exec chmod +x "{}" \;
       - name: Configure CI
         run: source ./ci/tests/puppeteer/configure-ci.sh ${{matrix.scenario}}
+      - name: Restore Node.js
+        id: restore-nodejs
+        uses: actions/cache/restore@v6.1.0
+        with:
+          path: ${{ runner.tool_cache }}/node/${{ env.NODE_VERSION_REQUIRED }}
+          key: nodejs-${{ runner.os }}-${{ runner.arch }}-${{ env.NODE_VERSION_REQUIRED }}
       - name: Set up Nodejs
         uses: actions/setup-node@v7
         with:
           node-version: ${{ env.NODE_VERSION_REQUIRED }}
-          check-latest: true
           cache: 'npm'
           cache-dependency-path: ./ci/tests/puppeteer/package.json
+      - name: Save Node.js
+        if: ${{ steps.restore-nodejs.outputs.cache-hit != 'true' && github.ref == 'refs/heads/master' }}
+        continue-on-error: true
+        uses: actions/cache/save@v6.1.0
+        with:
+          path: ${{ runner.tool_cache }}/node/${{ env.NODE_VERSION_REQUIRED }}
+          key: nodejs-${{ runner.os }}-${{ runner.arch }}-${{ env.NODE_VERSION_REQUIRED }}
       - name: AppArmor User Namespace Restrictions
         run: echo 0 | sudo tee /proc/sys/kernel/apparmor_restrict_unprivileged_userns
       - name: Set up Gum
@@ -300,6 +340,7 @@ jobs:
         with:
           max_attempts: ${{ env.MAX_ATTEMPTS }}
           retry_on: error
+          retry_on_exit_code: 1
           timeout_minutes: ${{ env.RETRY_MINUTES }}
           shell: bash
           command: |
