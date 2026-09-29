@@ -29,6 +29,11 @@ public class WebAuthnRelatedOriginsController extends AbstractController {
 
     private final Set<String> origins;
 
+    /**
+     * Related origins endpoint.
+     *
+     * @return the response entity
+     */
     @GetMapping(value = ENDPOINT_RELATED_ORIGINS, produces = MediaType.APPLICATION_JSON_VALUE)
     @Operation(summary = "Related origins that may use the relying party identifier")
     public ResponseEntity<Map<String, Set<String>>> relatedOrigins() {

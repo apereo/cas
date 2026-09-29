@@ -70,7 +70,10 @@ class OAuth20CodeCompactorTests extends AbstractOAuth20Tests {
                 "clientid-code", Map.of(), OAuth20ResponseTypes.CODE, OAuth20GrantTypes.AUTHORIZATION_CODE),
             Arguments.of(service, authentication,
                 tgt, Set.of(), null, null,
-                "clientid", Map.of(), OAuth20ResponseTypes.ID_TOKEN, OAuth20GrantTypes.CLIENT_CREDENTIALS)
+                "clientid", Map.of(), OAuth20ResponseTypes.ID_TOKEN, OAuth20GrantTypes.CLIENT_CREDENTIALS),
+            Arguments.of(service, RegisteredServiceTestUtils.getAuthentication("CN=Jane Doe,OU=Staff:Faculty,O=Example"),
+                tgt, Set.of("openid,profile", "email|phone", "offline#access"), "challenge,1:2#3|4", "S256",
+                "client,id:1", Map.of(), OAuth20ResponseTypes.CODE, OAuth20GrantTypes.AUTHORIZATION_CODE)
         );
     }
 }

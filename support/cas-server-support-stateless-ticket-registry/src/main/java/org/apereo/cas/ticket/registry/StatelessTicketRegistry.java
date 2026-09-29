@@ -2,9 +2,11 @@ package org.apereo.cas.ticket.registry;
 
 import module java.base;
 import org.apereo.cas.monitor.Monitorable;
+import org.apereo.cas.ticket.AbstractTicket;
 import org.apereo.cas.ticket.Ticket;
 import org.apereo.cas.ticket.TicketCatalog;
 import org.apereo.cas.ticket.TicketDefinition;
+import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.apereo.cas.ticket.UniqueTicketIdGenerator;
 import org.apereo.cas.ticket.expiration.FixedInstantExpirationPolicy;
 import org.apereo.cas.ticket.serialization.TicketSerializationManager;
@@ -52,6 +54,9 @@ public class StatelessTicketRegistry extends AbstractTicketRegistry {
             val ticketCompactor = findTicketCompactor(metadata);
             LOGGER.trace("Raw compacted ticket to expand is [{}]", ticketContent);
             val ticketObject = ticketCompactor.expand(ticketContent);
+            if (ticketObject instanceof TicketGrantingTicket && ticketObject instanceof final AbstractTicket expandedTicket) {
+                expandedTicket.setId(ticketId);
+            }
             if (ticketObject != null && predicate.test(ticketObject)) {
                 ticketObject.markTicketStateless();
                 return ticketObject;

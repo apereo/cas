@@ -85,7 +85,8 @@ public class CreatePasswordlessAuthenticationTokenAction extends BasePasswordles
             return success(token);
         }
         LOGGER.error("Failed to send passwordless token to [{}]", user.getUsername());
-        WebUtils.addErrorMessageToContext(requestContext, "passwordless.error.token.delivery");
+        WebUtils.addErrorMessageToContext(requestContext, "passwordless.error.token.delivery",
+            "CAS was unable to send you a token. Please try again later or contact your administrator.");
         return error();
     }
 

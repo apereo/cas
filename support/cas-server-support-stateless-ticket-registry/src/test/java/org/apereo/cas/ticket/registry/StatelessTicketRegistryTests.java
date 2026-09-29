@@ -1,11 +1,14 @@
 package org.apereo.cas.ticket.registry;
 
 import module java.base;
+import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.config.CasStatelessTicketRegistryAutoConfiguration;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.ticket.AuthenticationAwareTicket;
 import org.apereo.cas.ticket.RenewableServiceTicket;
+import org.apereo.cas.ticket.ServiceAwareTicket;
+import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.apereo.cas.ticket.TicketGrantingTicketImpl;
 import org.apereo.cas.ticket.TransientSessionTicket;
 import org.apereo.cas.ticket.TransientSessionTicketFactory;
@@ -82,7 +85,8 @@ class StatelessTicketRegistryTests extends BaseTicketRegistryTests {
         assertTrue(addedTicketGrantingTicket.isStateless());
         val foundTicketGrantingTicket = newTicketRegistry.getTicket(addedTicketGrantingTicket.getId());
         assertNotNull(foundTicketGrantingTicket);
-        assertEquals(tgt, foundTicketGrantingTicket);
+        assertEquals(addedTicketGrantingTicket.getId(), foundTicketGrantingTicket.getId());
+        assertEquals(tgt.getAuthentication().getPrincipal(), ((AuthenticationAwareTicket) foundTicketGrantingTicket).getAuthentication().getPrincipal());
 
         val service = RegisteredServiceTestUtils.getService("https://apereo.github.io/cas");
         service.getAttributes().putAll(attributes);
@@ -109,6 +113,54 @@ class StatelessTicketRegistryTests extends BaseTicketRegistryTests {
         val transientTicket = transientFactory.create(service);
         val addedTicket = newTicketRegistry.addTicket(transientTicket);
         assertNotNull(newTicketRegistry.getTicket(addedTicket.getId()));
+    }
+
+    @RepeatedTest(2)
+    void verifyTicketGrantingTicketIsFoundByItsStatelessId() throws Throwable {
+        val tgt = new TicketGrantingTicketImpl(TestTicketIdentifiers.generate().ticketGrantingTicketId(),
+            RegisteredServiceTestUtils.getAuthentication(UUID.randomUUID().toString()), new TicketGrantingTicketExpirationPolicy(5000, 2000));
+        val addedTicket = newTicketRegistry.addTicket(tgt);
+        val foundTicket = newTicketRegistry.getTicket(addedTicket.getId(), TicketGrantingTicket.class);
+        assertEquals(addedTicket.getId(), foundTicket.getId());
+        assertEquals(foundTicket.getId(), newTicketRegistry.getTicket(foundTicket.getId()).getId());
+
+        var ticketId = addedTicket.getId();
+        for (var update = 0; update < 3; update++) {
+            val updatedTicket = newTicketRegistry.updateTicket(newTicketRegistry.getTicket(ticketId, TicketGrantingTicket.class));
+            assertTrue(updatedTicket.getId().length() < addedTicket.getId().length() * 2);
+            ticketId = updatedTicket.getId();
+        }
+        assertEquals(ticketId, newTicketRegistry.getTicket(ticketId, TicketGrantingTicket.class).getId());
+    }
+
+    @RepeatedTest(2)
+    void verifyServiceTicketFieldsCannotBeInjectedThroughService() throws Exception {
+        val service = RegisteredServiceTestUtils.getService(
+            "https://app.example.org/app,0,victim:InjectedHandler:InjectedCredential,0/callback");
+        val retrievedTicket = grantAndRetrieveServiceTicket("mallory", service);
+        assertNotNull(retrievedTicket);
+        assertEquals("mallory", ((AuthenticationAwareTicket) retrievedTicket).getAuthentication().getPrincipal().getId());
+        assertTrue(retrievedTicket.isFromNewLogin());
+        assertEquals(service.getShortenedId(), ((ServiceAwareTicket) retrievedTicket).getService().getId());
+    }
+
+    @RepeatedTest(2)
+    void verifyServiceTicketForDistinguishedNamePrincipal() throws Exception {
+        val principalId = "CN=Jane Doe,OU=Staff:Faculty,O=Example";
+        val retrievedTicket = grantAndRetrieveServiceTicket(principalId, RegisteredServiceTestUtils.getService("https://apereo.github.io/cas"));
+        assertNotNull(retrievedTicket);
+        assertEquals(principalId, ((AuthenticationAwareTicket) retrievedTicket).getAuthentication().getPrincipal().getId());
+    }
+
+    private RenewableServiceTicket grantAndRetrieveServiceTicket(final String principalId,
+                                                                 final Service service) throws Exception {
+        val authentication = RegisteredServiceTestUtils.getAuthentication(RegisteredServiceTestUtils.getPrincipal(principalId));
+        val ticketGrantingTicket = new TicketGrantingTicketImpl(TestTicketIdentifiers.generate().ticketGrantingTicketId(),
+            authentication, new TicketGrantingTicketExpirationPolicy(5000, 2000));
+        val serviceTicket = ticketGrantingTicket.grantServiceTicket(UUID.randomUUID().toString(), service,
+            new MultiTimeUseOrTimeoutExpirationPolicy.ServiceTicketExpirationPolicy(1, 100), false, TicketTrackingPolicy.noOp());
+        val addedServiceTicket = newTicketRegistry.addTicket(serviceTicket);
+        return (RenewableServiceTicket) newTicketRegistry.getTicket(addedServiceTicket.getId());
     }
 
     @RepeatedTest(2)

@@ -31,7 +31,7 @@ public class TransientSessionTicketCompactor implements TicketCompactor<Transien
     public String compact(final StringBuilder builder, final Ticket ticket) throws Exception {
         val transientTicket = (TransientSessionTicket) ticket;
         builder.append(DELIMITER).append(transientTicket.getService() != null
-            ? transientTicket.getService().getShortenedId() : StringUtils.EMPTY);
+            ? TicketCompactor.encodeValue(transientTicket.getService().getShortenedId()) : StringUtils.EMPTY);
         
         val properties = transientTicket.getProperties()
             .entrySet()
@@ -40,8 +40,9 @@ public class TransientSessionTicketCompactor implements TicketCompactor<Transien
                 val values = CollectionUtils.toCollection(entry.getValue())
                     .stream()
                     .map(Object::toString)
+                    .map(TicketCompactor::encodeValue)
                     .collect(Collectors.joining(";"));
-                return entry.getKey() + '=' + values;
+                return TicketCompactor.encodeValue(entry.getKey()) + '=' + values;
             })
             .reduce((s1, s2) -> s1 + '|' + s2)
             .orElse(StringUtils.EMPTY);
@@ -56,16 +57,17 @@ public class TransientSessionTicketCompactor implements TicketCompactor<Transien
 
     @Override
     public Ticket expand(final String ticketId) throws Throwable {
-        val structure = parse(ticketId);
+        val structure = parse(ticketId, 4);
         val transientSessionTicketFactory = (TransientSessionTicketFactory) ticketFactory.getObject().get(getTicketType());
-        val url = structure.ticketElements().get(CompactTicketIndexes.SERVICE.getIndex());
+        val url = TicketCompactor.decodeValue(structure.ticketElements().get(CompactTicketIndexes.SERVICE.getIndex()));
         val service = StringUtils.isNotBlank(url) ? serviceFactory.createService(url) : null;
         val properties = new HashMap<>();
         val compressProperties = structure.ticketElements().get(3);
-        val keyValueProps = Splitter.on("|").splitToList(compressProperties);
+        val keyValueProps = Splitter.on("|").omitEmptyStrings().splitToList(compressProperties);
         for (val keyValue : keyValueProps) {
-            val key = StringUtils.substringBefore(keyValue, "=");
-            val values = Splitter.on(";").splitToList(StringUtils.substringAfter(keyValue, "="));
+            val key = TicketCompactor.decodeValue(StringUtils.substringBefore(keyValue, "="));
+            val values = Splitter.on(";").splitToList(StringUtils.substringAfter(keyValue, "="))
+                .stream().map(TicketCompactor::decodeValue).toList();
             if (!values.isEmpty()) {
                 properties.put(key, values.size() == 1 ? values.getFirst() : values);
             }

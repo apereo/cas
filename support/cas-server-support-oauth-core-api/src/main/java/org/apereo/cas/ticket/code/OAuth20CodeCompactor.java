@@ -22,6 +22,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.ObjectProvider;
+import org.springframework.util.Assert;
 
 /**
  * This is {@link OAuth20CodeCompactor}.
@@ -41,11 +42,11 @@ public class OAuth20CodeCompactor implements TicketCompactor<OAuth20Code> {
     @Override
     public String compact(final StringBuilder builder, final Ticket ticket) throws Exception {
         val code = (OAuth20Code) ticket;
-        builder.append(DELIMITER).append(code.getService().getShortenedId());
-        builder.append(DELIMITER).append(code.getClientId());
-        builder.append(DELIMITER).append(String.join("|", code.getScopes()));
-        builder.append(DELIMITER).append(StringUtils.defaultString(code.getCodeChallenge()));
-        builder.append(DELIMITER).append(StringUtils.defaultString(code.getCodeChallengeMethod()));
+        builder.append(DELIMITER).append(TicketCompactor.encodeValue(code.getService().getShortenedId()));
+        builder.append(DELIMITER).append(TicketCompactor.encodeValue(code.getClientId()));
+        builder.append(DELIMITER).append(TicketCompactor.encodeValues(code.getScopes()));
+        builder.append(DELIMITER).append(TicketCompactor.encodeValue(code.getCodeChallenge()));
+        builder.append(DELIMITER).append(TicketCompactor.encodeValue(code.getCodeChallengeMethod()));
         builder.append(DELIMITER).append(code.getResponseType() != null ? code.getResponseType().ordinal() : OAuth20ResponseTypes.CODE.ordinal());
         builder.append(DELIMITER).append(code.getGrantType() != null ? code.getGrantType().ordinal() : OAuth20GrantTypes.AUTHORIZATION_CODE.ordinal());
         builder.append(compactAuthenticationAttempt(code).toString());
@@ -59,14 +60,12 @@ public class OAuth20CodeCompactor implements TicketCompactor<OAuth20Code> {
 
     @Override
     public Ticket expand(final String ticketId) throws Throwable {
-        val structure = parse(ticketId);
-        val service = serviceFactory.createService(structure.ticketElements().get(CompactTicketIndexes.SERVICE.getIndex()));
-        val clientId = structure.ticketElements().get(3);
-        val scopes = StringUtils.isNotBlank(structure.ticketElements().get(4))
-            ? Splitter.on("|").splitToList(structure.ticketElements().get(4))
-            : new HashSet<String>();
-        val codeChallenge = StringUtils.trimToNull(structure.ticketElements().get(5));
-        val codeChallengeMethod = StringUtils.trimToNull(structure.ticketElements().get(6));
+        val structure = parse(ticketId, 10);
+        val service = serviceFactory.createService(TicketCompactor.decodeValue(structure.ticketElements().get(CompactTicketIndexes.SERVICE.getIndex())));
+        val clientId = TicketCompactor.decodeValue(structure.ticketElements().get(3));
+        val scopes = TicketCompactor.decodeValues(structure.ticketElements().get(4));
+        val codeChallenge = StringUtils.trimToNull(TicketCompactor.decodeValue(structure.ticketElements().get(5)));
+        val codeChallengeMethod = StringUtils.trimToNull(TicketCompactor.decodeValue(structure.ticketElements().get(6)));
 
         val responseType = OAuth20ResponseTypes.values()[Integer.parseInt(structure.ticketElements().get(7))];
         val grantType = OAuth20GrantTypes.values()[Integer.parseInt(structure.ticketElements().get(8))];
@@ -82,9 +81,10 @@ public class OAuth20CodeCompactor implements TicketCompactor<OAuth20Code> {
 
     protected Authentication expandAuthentication(final PrincipalFactory principalFactory, final CompactTicket structure) throws Throwable {
         val authenticationData = Splitter.on(":").splitToList(structure.ticketElements().get(9));
-        val principal = principalFactory.createPrincipal(authenticationData.getFirst());
-        val handlers = Arrays.stream(authenticationData.get(1).split("#")).collect(Collectors.toSet());
-        val credentialTypes = Arrays.stream(authenticationData.get(2).split("#")).collect(Collectors.toSet());
+        Assert.isTrue(authenticationData.size() == 3, "Invalid compact authentication");
+        val principal = principalFactory.createPrincipal(TicketCompactor.decodeValue(authenticationData.getFirst()));
+        val handlers = new HashSet<>(TicketCompactor.decodeValues(authenticationData.get(1)));
+        val credentialTypes = new HashSet<>(TicketCompactor.decodeValues(authenticationData.get(2)));
 
         return DefaultAuthenticationBuilder
             .newInstance()
@@ -101,10 +101,10 @@ public class OAuth20CodeCompactor implements TicketCompactor<OAuth20Code> {
         val authentication = code.getAuthentication();
         val builder = new StringBuilder();
         if (authentication != null) {
-            val handlers = String.join("#", authentication.getSuccesses().keySet());
-            val principalId = authentication.getPrincipal().getId();
-            val credentialTypes = authentication.getCredentials().stream()
-                .map(credential -> credential.getClass().getSimpleName()).collect(Collectors.joining("#"));
+            val handlers = TicketCompactor.encodeValues(authentication.getSuccesses().keySet());
+            val principalId = TicketCompactor.encodeValue(authentication.getPrincipal().getId());
+            val credentialTypes = TicketCompactor.encodeValues(authentication.getCredentials().stream()
+                .map(credential -> credential.getClass().getSimpleName()).toList());
             builder.append(DELIMITER).append(principalId).append(':').append(handlers).append(':').append(credentialTypes);
         }
         return builder;

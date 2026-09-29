@@ -213,6 +213,7 @@ Guidance for AI coding agents working in the Apereo CAS source tree.
 - Initialize shared pac4j clients with `DelegatedIdentityProviders.initialize(client)`, never a bare `client.init()`: pac4j returns immediately, uninitialized, while another thread is initializing the same instance. The helper waits lock-free on `isInitializing()`.
 - Most categories in `buildSrc/.../TestCategories.groovy` are declared parallel, and JUnit's default mode there is `concurrent` for classes *and* methods, so sibling `@Test` methods in one class run at the same time against the same Spring context. A test that clears a shared registry wholesale -- `servicesManager.getAllServicesOfType(...).forEach(servicesManager::delete)` in a setup step, say -- deletes what its siblings just saved, and the failure surfaces in whichever method lost the race rather than in the one that did the clearing.
 - The symptom to recognize: a test asserting on a service it saved itself gets the value that belongs to the "service was missing" code path. `OpenIdFederationAuthorizationCodeResponseTypeAuthorizationRequestValidatorTests` failed exactly that way, reporting `expected: <old-service> but was: <new-service>`, because another method's clear removed the saved service and the validator then resolved a fresh one.
+- Never add `@Execution(ExecutionMode.SAME_THREAD)` to a test class; rework the test to isolate its own state instead.
 - Isolate by identifier, not by emptying the registry: give each test a UUID-bearing client id and assert only on that id. `@Execution(ExecutionMode.SAME_THREAD)` fixes the within-class case but not another class sharing the context, so prefer removing the global mutation.
 - Write registry predicates as `expected.equals(service.getClientId())` rather than the reverse: once the registry is no longer cleared, entries from other tests flow through the same stream.
 - The mirror image of that symptom is a test asserting a *negative* that only holds while the registry
@@ -910,10 +911,10 @@ Guidance for AI coding agents working in the Apereo CAS source tree.
 ## Stateless ticket registry review discipline
 
 - The ticket id is the ticket: `StatelessTicketRegistry` deflates, AES-GCM encrypts (signing off, which is fine for GCM)
-  and base64url-encodes a compact string. `TicketCompactor.DELIMITER` is `,` and `parse` splits on it without escaping
-  or an element-count check, so every appended field that a caller or external IdP can influence (service path segment
-  via `getShortenedId`, OAuth `code_challenge`, principal id, TST property values) is an injection point. Review new
-  compactors for this first; `validate` only logs on length.
+  and base64url-encodes a compact string of `,`-separated fields. Every variable field (service shortened id, principal
+  id, handlers, credential types, client id, scopes, `code_challenge`, TST keys and values, device codes) goes through
+  `TicketCompactor.encodeValue`/`encodeValues` (unpadded base64url, `#` between list values) and `expand` uses
+  `parse(ticketId, expectedCount)`. New compactors must do the same; only fixed numeric/flag fields may be written raw.
 - There is no delete: `deleteSingleTicket` is the base no-op, so `deleteTicket(...)` returns 0 and nothing is ever
   consumed. Code that treats `delete > 0` as the single-use decision fails closed here; code that uses a deterministic
   TST id as a replay marker (`TransientSessionTicketFactory.normalizeTicketId`: DPoP, client assertions, Heimdall)
@@ -923,12 +924,50 @@ Guidance for AI coding agents working in the Apereo CAS source tree.
 - Maintainer decision: the stateless registry stays 100% stateless, in the spirit of the Shibboleth IdP client-side
   storage. Never propose a server-side replay, nonce or single-use store as the fix for anything here; fixes must be
   expressible in the ticket or client storage itself (encoding, binding, lifetimes, key versioning).
-- Exploitability of delimiter injection through the service depends on the registered pattern: only the first path
-  segment reaches the compact form, so a pattern that pins that segment followed by `/` blocks it, while
-  `^(https|imaps)://.*` or `^https://host/.*` do not. ST principal ids are appended raw (PT/PGT base64url them).
-- The stateless SSO session has no TGC cookie: `SendTicketGrantingTicketAction` writes the TGT to browser storage
-  (default `LOCAL`), the login flow reads it back through the read-storage page on every entry, and expiration is a
-  fixed instant only (no idle timeout).
+- Changing a compact layout invalidates in-flight stateless tickets of that type issued before the upgrade; say so in
+  the release notes. `StatelessTicketRegistryTests.verifyServiceTicketFieldsCannotBeInjectedThroughService` and
+  `verifyServiceTicketForDistinguishedNamePrincipal` guard the encoding.
+- The stateless TGT is carried by the TGC exactly as with any other registry: `SendTicketGrantingTicketAction` sets the
+  TGC with the (compacted, encrypted) TGT id, and the TGC value manager signs and encrypts it as usual. Maintainer rule:
+  use the existing TGC behavior unchanged; no parallel cookies, bindings, digests or browser-storage copies of the TGT,
+  and no stateless-only webflow wiring for the SSO session. Browser storage remains for Duo and the SAML IdP only.
+- `getTicket(id).getId()` must equal `id` for a ticket-granting ticket, as with every other registry: callers such as
+  `InitialFlowSetupAction` put `ticket.getId()` into scope and look it up again. The stateless registry sets the expanded
+  TGT's id to the stateless id; `TicketGrantingTicketCompactor.compact` swaps in a short stand-in id while serializing an
+  expanded TGT so updates do not nest the previous id. Other ticket types keep their expanded ids (device user codes, for
+  instance, carry meaning).
+- Expanded TGTs keep their original expiration policy with `lastTimeUsed` frozen at creation, so an idle timeout acts
+  as a cap from login time. A sliding idle timeout was built and rejected by the maintainer; do not reintroduce it.
 - Scenarios `stateless-ticket-registry`, `stateless-ticket-registry-saml2-idp`, `oauth2-login-stateless`,
   `oidc-login-stateless`, `mfa-duo-universal-login-stateless`, `ticket-validation-casv3-pgt-stateless` cover happy
   paths only; none covers VC/VP, DPoP, private_key_jwt, replay or delimiter input.
+
+## Passwordless authentication review discipline
+
+- `AcceptPasswordlessAuthenticationAction` must not compare tokens itself. The submitted token goes to the
+  `AuthenticationManager` as a `OneTimePasswordCredential`, so wrong tokens are audited (`AUTHENTICATION_FAILED`, principal =
+  username); an earlier version compared first and only authenticated a match, which left failed guesses unaudited.
+- The same credential is authenticated more than once per login: by the action, again by `DefaultCasDelegatingWebflowEventResolver`
+  (it re-authenticates whatever credential is in the flow), and a third time by `ServiceTicketRequestWebflowEventResolver` when an
+  SSO session exists. So the handler must not consume the token. The action consumes it after `super.doExecuteInternal` returns a
+  non-failure event and before any ticket exists (the resolver only puts the result builder; the TGT is created in a later state),
+  and treats `deleteToken(...) == false` as a lost race. Removing the credential from the flow to avoid re-authentication breaks the
+  SSO/renew path, which then resolves the principal from the existing session.
+- View-state entry actions run on every re-entry. `STATE_ID_PASSWORDLESS_DISPLAY` creates and sends a token on entry, and the
+  accept failure transition re-enters it, so any change to the failure path changes how many emails/SMS a guess costs.
+- The MFA branch replacing the token is by design: there MFA is the only factor, and deployments either disable device
+  registration or put it behind MFA. Do not report `DetermineMultifactorPasswordlessAuthenticationAction` building a
+  credential-less authentication as a bypass.
+- View-state entry action results are ignored, so the create-token action returning `error()` does not change the flow; what it
+  does decide is whether a token is stored. `emailToken`/`smsToken` report true only for an actual delivery.
+- Token repositories must agree on the `PasswordlessTokenRepository` contract: `findToken` returns only unexpired tokens,
+  `deleteToken` removes the token `findToken` returned and returns true only for the caller that removed it (affected rows,
+  `getDeletedCount()`, `Map.remove`, a `2xx` from REST), and `clean()` removes expired rows. The encoded record is written before
+  the store assigns an id, so `findToken` sets the id from the stored entity (`withId`); the id inside the decoded record is null. The existing
+  `verifyCleaner` tests in the JPA and Mongo modules asserted that `clean()` removes a live token, i.e. they encoded the inverted
+  query; they now assert the contract. `clean()` is global, so keep exactly one test per class calling it and give every other
+  test a live token of its own.
+- `PasswordlessTokenAuthenticationHandler.supports` accepts any `OneTimePasswordCredential` subclass (Duo passcodes included)
+  because it is registered globally; check the credential type hierarchy before widening or relying on it.
+- When reviewing wallet/passkey integration, check against the current WebAuthn Level 3 Recommendation and the W3C Digital
+  Credentials API plus OpenID4VP 1.0 (DC API response modes) rather than older drafts.

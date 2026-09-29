@@ -28,6 +28,7 @@ import lombok.val;
 import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.ObjectProvider;
+import org.springframework.util.Assert;
 
 /**
  * This is {@link ServiceTicketCompactor}.
@@ -46,9 +47,9 @@ public class ServiceTicketCompactor implements TicketCompactor<ServiceTicket> {
     @Override
     public String compact(final StringBuilder builder, final Ticket ticket) throws Exception {
         if (ticket instanceof final ServiceAwareTicket sat && Objects.nonNull(sat.getService())) {
-            builder.append(DELIMITER).append(StringUtils.defaultString(sat.getService().getShortenedId()));
+            builder.append(DELIMITER).append(TicketCompactor.encodeValue(StringUtils.defaultString(sat.getService().getShortenedId())));
         } else {
-            builder.append(DELIMITER).append('*');
+            builder.append(DELIMITER).append(TicketCompactor.encodeValue("*"));
         }
         if (ticket instanceof final RenewableServiceTicket rst) {
             builder.append(DELIMITER).append(BooleanUtils.toString(rst.isFromNewLogin(), "1", "0"));
@@ -59,7 +60,7 @@ public class ServiceTicketCompactor implements TicketCompactor<ServiceTicket> {
         if (ticket instanceof final AuthenticationAwareTicket aat) {
             builder.append(compactAuthenticationAttempt(aat).toString());
         } else {
-            builder.append(DELIMITER).append('*').append(DELIMITER).append('0');
+            builder.append(DELIMITER).append(':').append(':').append(DELIMITER).append('0');
         }
         return builder.toString();
     }
@@ -71,9 +72,9 @@ public class ServiceTicketCompactor implements TicketCompactor<ServiceTicket> {
 
     @Override
     public Ticket expand(final String ticketId) throws Throwable {
-        val structure = parse(ticketId);
+        val structure = parse(ticketId, 6);
 
-        val service = serviceFactory.createService(structure.ticketElements().get(CompactTicketIndexes.SERVICE.getIndex()));
+        val service = serviceFactory.createService(TicketCompactor.decodeValue(structure.ticketElements().get(CompactTicketIndexes.SERVICE.getIndex())));
         val credentialsProvided = BooleanUtils.toBoolean(structure.ticketElements().get(3));
         val authentication = expandAuthentication(principalFactory, structure);
         val serviceTicketFactory = (ServiceTicketFactory) ticketFactory.getObject().get(getTicketType());
@@ -87,10 +88,10 @@ public class ServiceTicketCompactor implements TicketCompactor<ServiceTicket> {
         val authentication = authenticationAwareTicket.getAuthentication();
         val builder = new StringBuilder();
         if (authentication != null) {
-            val handlers = String.join("#", authentication.getSuccesses().keySet());
-            val principalId = authentication.getPrincipal().getId();
-            val credentialTypes = authentication.getCredentials().stream()
-                .map(credential -> credential.getClass().getSimpleName()).collect(Collectors.joining("#"));
+            val handlers = TicketCompactor.encodeValues(authentication.getSuccesses().keySet());
+            val principalId = TicketCompactor.encodeValue(authentication.getPrincipal().getId());
+            val credentialTypes = TicketCompactor.encodeValues(authentication.getCredentials().stream()
+                .map(credential -> credential.getClass().getSimpleName()).toList());
             builder.append(DELIMITER).append(principalId).append(':').append(handlers).append(':').append(credentialTypes);
 
             val rememberMe = BooleanUtils.toString(CoreAuthenticationUtils.isRememberMeAuthentication(authentication), "1", "0");
@@ -101,9 +102,10 @@ public class ServiceTicketCompactor implements TicketCompactor<ServiceTicket> {
 
     protected Authentication expandAuthentication(final PrincipalFactory principalFactory, final CompactTicket structure) throws Throwable {
         val authenticationData = Splitter.on(":").splitToList(structure.ticketElements().get(4));
-        val principal = principalFactory.createPrincipal(authenticationData.getFirst());
-        val handlers = Arrays.stream(authenticationData.get(1).split("#")).collect(Collectors.toSet());
-        val credentialTypes = Arrays.stream(authenticationData.get(2).split("#")).collect(Collectors.toSet());
+        Assert.isTrue(authenticationData.size() == 3, "Invalid compact authentication");
+        val principal = principalFactory.createPrincipal(TicketCompactor.decodeValue(authenticationData.getFirst()));
+        val handlers = new HashSet<>(TicketCompactor.decodeValues(authenticationData.get(1)));
+        val credentialTypes = new HashSet<>(TicketCompactor.decodeValues(authenticationData.get(2)));
         val rememberMe = BooleanUtils.toBoolean(structure.ticketElements().get(5));
 
         return DefaultAuthenticationBuilder

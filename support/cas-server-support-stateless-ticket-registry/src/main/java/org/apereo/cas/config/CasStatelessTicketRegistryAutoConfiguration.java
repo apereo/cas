@@ -26,10 +26,6 @@ import org.apereo.cas.ticket.serialization.TicketSerializationManager;
 import org.apereo.cas.util.CoreTicketUtils;
 import org.apereo.cas.util.crypto.CipherExecutor;
 import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
-import org.apereo.cas.web.flow.CasWebflowConfigurer;
-import org.apereo.cas.web.flow.CasWebflowConstants;
-import org.apereo.cas.web.flow.CasWebflowExecutionPlanConfigurer;
-import org.apereo.cas.web.flow.StatelessTicketRegistryWebflowConfigurer;
 import lombok.val;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -40,8 +36,6 @@ import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.context.annotation.ScopedProxyMode;
-import org.springframework.webflow.definition.registry.FlowDefinitionRegistry;
-import org.springframework.webflow.engine.builder.support.FlowBuilderServices;
 
 /**
  * This is {@link CasStatelessTicketRegistryAutoConfiguration}.
@@ -82,29 +76,6 @@ public class CasStatelessTicketRegistryAutoConfiguration {
         final ConfigurableApplicationContext applicationContext) {
         return new StatelessTicketRegistry(statelessTicketRegistryCipherExecutor, ticketSerializationManager, ticketCatalog,
             applicationContext, ticketCompactors);
-    }
-
-    @Bean
-    @ConditionalOnMissingBean(name = "statelessTicketRegistryWebflowExecutionPlanConfigurer")
-    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-    public CasWebflowExecutionPlanConfigurer statelessTicketRegistryWebflowExecutionPlanConfigurer(
-        @Qualifier("statelessTicketRegistryWebflowConfigurer")
-        final CasWebflowConfigurer surrogateWebflowConfigurer) {
-        return plan -> plan.registerWebflowConfigurer(surrogateWebflowConfigurer);
-    }
-
-    @ConditionalOnMissingBean(name = "statelessTicketRegistryWebflowConfigurer")
-    @Bean
-    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-    public CasWebflowConfigurer statelessTicketRegistryWebflowConfigurer(
-        @Qualifier(CasWebflowConstants.BEAN_NAME_FLOW_BUILDER_SERVICES)
-        final FlowBuilderServices flowBuilderServices,
-        @Qualifier(CasWebflowConstants.BEAN_NAME_FLOW_DEFINITION_REGISTRY)
-        final FlowDefinitionRegistry flowDefinitionRegistry,
-        final CasConfigurationProperties casProperties,
-        final ConfigurableApplicationContext applicationContext) {
-        return new StatelessTicketRegistryWebflowConfigurer(flowBuilderServices,
-            flowDefinitionRegistry, applicationContext, casProperties);
     }
 
     @ConditionalOnMissingBean(name = "ticketGrantingTicketCompactor")

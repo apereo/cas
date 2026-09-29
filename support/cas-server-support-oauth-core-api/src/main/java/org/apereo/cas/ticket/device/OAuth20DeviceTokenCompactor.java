@@ -30,9 +30,9 @@ public class OAuth20DeviceTokenCompactor implements TicketCompactor<OAuth20Devic
     @Override
     public String compact(final StringBuilder builder, final Ticket ticket) throws Exception {
         val code = (OAuth20DeviceToken) ticket;
-        builder.append(DELIMITER).append(code.getService().getShortenedId());
-        builder.append(DELIMITER).append(code.getUserCode());
-        builder.append(DELIMITER).append(StringUtils.defaultIfBlank(code.getClientId(), code.getService().getId()));
+        builder.append(DELIMITER).append(TicketCompactor.encodeValue(code.getService().getShortenedId()));
+        builder.append(DELIMITER).append(TicketCompactor.encodeValue(code.getUserCode()));
+        builder.append(DELIMITER).append(TicketCompactor.encodeValue(StringUtils.defaultIfBlank(code.getClientId(), code.getService().getId())));
         return builder.toString();
     }
 
@@ -43,10 +43,10 @@ public class OAuth20DeviceTokenCompactor implements TicketCompactor<OAuth20Devic
 
     @Override
     public Ticket expand(final String ticketId) throws Throwable {
-        val structure = parse(ticketId);
-        val service = serviceFactory.createService(structure.ticketElements().get(CompactTicketIndexes.SERVICE.getIndex()));
-        val userCode = structure.ticketElements().get(3);
-        val clientId = structure.ticketElements().size() > 4 ? structure.ticketElements().get(4) : service.getId();
+        val structure = parse(ticketId, 5);
+        val service = serviceFactory.createService(TicketCompactor.decodeValue(structure.ticketElements().get(CompactTicketIndexes.SERVICE.getIndex())));
+        val userCode = TicketCompactor.decodeValue(structure.ticketElements().get(3));
+        val clientId = TicketCompactor.decodeValue(structure.ticketElements().get(4));
         val codeFactory = (OAuth20DeviceTokenFactory) ticketFactory.getObject().get(getTicketType());
         val code = codeFactory.createDeviceCode(service, new ArrayList<>(), clientId);
         code.setUserCode(StringUtils.trimToNull(userCode));

@@ -178,10 +178,22 @@ related origin requests, so passkeys can be used from origins whose domain diffe
 After a successful authentication, CAS reports the user's accepted passkeys and current account details to the
 browser through the Signal API, and passkey autofill checks `getClientCapabilities()` where the browser offers it.
 
+### Stateless Ticket Registry
+
+With the [stateless ticket registry](../ticketing/Stateless-Ticket-Registry.html), the ticket-granting ticket is now carried by the
+ticket-granting cookie, like with any other ticket registry, instead of being kept in browser storage. The single sign-on session
+therefore follows the ticket-granting cookie settings, and login pages no longer render a browser storage page before the login form.
+The `cas.ticket.registry.stateless.storage-type` setting no longer applies and is removed.
+
+Field values inside stateless tickets (such as the service, principal, scopes or PKCE challenge) are now encoded, so values that
+contain separator characters, like distinguished names, round-trip correctly. Service tickets, OAuth tokens (including refresh tokens) and
+transient tickets issued before the upgrade can no longer be read; ticket-granting tickets are not affected.
+
 ## Other Stuff
 
 - A large number of dependencies and libraries have been updated to their latest versions.
 - Almost all CAS unit tests are internally reworked to allow maximum parallelization and speed up the overall test execution time.
 - [Delegated authentication](../integration/Delegate-Authentication.html) no longer fails intermittently when concurrent requests reach an identity provider that is still being initialized, typically right after startup. Such requests now wait for the initialization in progress instead of failing, which also affects [SAML2 identity providers](../integration/Delegate-Authentication-SAML2.html) when building SAML2 responses, metadata and logout requests.
 - [WebAuthn](../mfa/FIDO2-WebAuthn-Authentication.html) authentication pages now send the CSRF token rendered by CAS instead of reading it from the `XSRF-TOKEN` cookie, which failed with `403` whenever the page could not read that cookie.
-
+- Browser storage used by [Duo Security](../mfa/DuoSecurity-Authentication.html) and the [SAML2 identity provider](../authentication/Configuring-SAML2-Authentication.html) now falls back to cookies when the browser cannot use local or session storage.
+- CAS now logs a warning when a cookie it writes, such as the ticket-granting cookie, is larger than the 4 KB that browsers are guaranteed to accept.

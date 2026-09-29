@@ -318,7 +318,8 @@ public abstract class BaseTicketRegistryTests {
             NeverExpiresExpirationPolicy.INSTANCE));
         val ticket = ticketRegistry.getTicket(addedTicket.getId(), TicketGrantingTicket.class);
         assertNotNull(ticket, () -> "Ticket is null. useEncryption[" + useEncryption + ']');
-        assertEquals(ticketGrantingTicketId, ticket.getId(), () -> "Ticket IDs don't match. useEncryption[" + useEncryption + ']');
+        assertEquals(addedTicket.isStateless() ? addedTicket.getId() : ticketGrantingTicketId, ticket.getId(),
+            () -> "Ticket IDs don't match. useEncryption[" + useEncryption + ']');
     }
 
     @RepeatedTest(2)
@@ -416,7 +417,8 @@ public abstract class BaseTicketRegistryTests {
             NeverExpiresExpirationPolicy.INSTANCE));
         val ticket = ticketRegistry.getTicket(added.getId());
         assertNotNull(ticket, () -> "Ticket is null. useEncryption[" + useEncryption + ']');
-        assertEquals(ticketGrantingTicketId, ticket.getId(), () -> "Ticket IDs don't match. useEncryption[" + useEncryption + ']');
+        assertEquals(added.isStateless() ? added.getId() : ticketGrantingTicketId, ticket.getId(),
+            () -> "Ticket IDs don't match. useEncryption[" + useEncryption + ']');
     }
 
     /**
@@ -434,7 +436,8 @@ public abstract class BaseTicketRegistryTests {
         val addedTicket = ticketRegistry.addTicket(addTicket);
         val ticket = ticketRegistry.getTicket(addedTicket.getId());
         assertNotNull(ticket, () -> "Ticket is null. useEncryption[" + useEncryption + ']');
-        assertEquals(ticketGrantingTicketId, ticket.getId(), () -> "Ticket IDs don't match. useEncryption[" + useEncryption + ']');
+        assertEquals(addedTicket.isStateless() ? addedTicket.getId() : ticketGrantingTicketId, ticket.getId(),
+            () -> "Ticket IDs don't match. useEncryption[" + useEncryption + ']');
     }
 
     @RepeatedTest(2)

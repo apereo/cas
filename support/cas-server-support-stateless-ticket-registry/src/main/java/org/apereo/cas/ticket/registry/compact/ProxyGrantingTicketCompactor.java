@@ -21,12 +21,12 @@ import org.apereo.cas.ticket.proxy.ProxyGrantingTicket;
 import org.apereo.cas.ticket.proxy.ProxyGrantingTicketFactory;
 import org.apereo.cas.ticket.registry.TicketCompactor;
 import org.apereo.cas.util.DateTimeUtils;
-import org.apereo.cas.util.EncodingUtils;
 import com.google.common.base.Splitter;
 import lombok.RequiredArgsConstructor;
 import lombok.val;
 import org.apache.commons.lang3.BooleanUtils;
 import org.springframework.beans.factory.ObjectProvider;
+import org.springframework.util.Assert;
 
 /**
  * This is {@link ProxyGrantingTicketCompactor}.
@@ -43,7 +43,7 @@ public class ProxyGrantingTicketCompactor implements TicketCompactor<ProxyGranti
     @Override
     public String compact(final StringBuilder builder, final Ticket ticket) throws Exception {
         val proxyGrantingTicket = (ProxyGrantingTicket) ticket;
-        builder.append(DELIMITER).append(proxyGrantingTicket.getProxiedBy().getShortenedId());
+        builder.append(DELIMITER).append(TicketCompactor.encodeValue(proxyGrantingTicket.getProxiedBy().getShortenedId()));
         builder.append(compactAuthenticationAttempt(proxyGrantingTicket).toString());
         return builder.toString();
     }
@@ -55,11 +55,11 @@ public class ProxyGrantingTicketCompactor implements TicketCompactor<ProxyGranti
 
     @Override
     public Ticket expand(final String ticketId) throws Throwable {
-        val structure = parse(ticketId);
+        val structure = parse(ticketId, 5);
         val proxyGrantingTicketFactory = (ProxyGrantingTicketFactory) ticketFactory.getObject().get(getTicketType());
         val authentication = expandAuthentication(principalFactory, structure);
         val serviceTicketFactory = (ServiceTicketFactory) ticketFactory.getObject().get(ServiceTicket.class);
-        val service = serviceFactory.createService(structure.ticketElements().get(CompactTicketIndexes.SERVICE.getIndex()));
+        val service = serviceFactory.createService(TicketCompactor.decodeValue(structure.ticketElements().get(CompactTicketIndexes.SERVICE.getIndex())));
         val serviceTicket = serviceTicketFactory.create(service, authentication, false, ServiceTicket.class);
         
         val proxyGrantingTicket = proxyGrantingTicketFactory.create(serviceTicket, authentication);
@@ -71,10 +71,10 @@ public class ProxyGrantingTicketCompactor implements TicketCompactor<ProxyGranti
 
     protected Authentication expandAuthentication(final PrincipalFactory principalFactory, final CompactTicket structure) throws Throwable {
         val authenticationData = Splitter.on(":").splitToList(structure.ticketElements().get(3));
-        val principalId = new String(EncodingUtils.decodeUrlSafeBase64(authenticationData.getFirst()), StandardCharsets.UTF_8);
-        val principal = principalFactory.createPrincipal(principalId);
-        val handlers = Arrays.stream(authenticationData.get(1).split("#")).collect(Collectors.toSet());
-        val credentialTypes = Arrays.stream(authenticationData.get(2).split("#")).collect(Collectors.toSet());
+        Assert.isTrue(authenticationData.size() == 3, "Invalid compact authentication");
+        val principal = principalFactory.createPrincipal(TicketCompactor.decodeValue(authenticationData.getFirst()));
+        val handlers = new HashSet<>(TicketCompactor.decodeValues(authenticationData.get(1)));
+        val credentialTypes = new HashSet<>(TicketCompactor.decodeValues(authenticationData.get(2)));
         val rememberMe = BooleanUtils.toBoolean(structure.ticketElements().get(4));
 
         return DefaultAuthenticationBuilder
@@ -93,10 +93,10 @@ public class ProxyGrantingTicketCompactor implements TicketCompactor<ProxyGranti
         val authentication = authenticationAwareTicket.getAuthentication();
         val builder = new StringBuilder();
         if (authentication != null) {
-            val handlers = String.join("#", authentication.getSuccesses().keySet());
-            val principalId = EncodingUtils.encodeUrlSafeBase64(authentication.getPrincipal().getId());
-            val credentialTypes = authentication.getCredentials().stream()
-                .map(credential -> credential.getClass().getSimpleName()).collect(Collectors.joining("#"));
+            val handlers = TicketCompactor.encodeValues(authentication.getSuccesses().keySet());
+            val principalId = TicketCompactor.encodeValue(authentication.getPrincipal().getId());
+            val credentialTypes = TicketCompactor.encodeValues(authentication.getCredentials().stream()
+                .map(credential -> credential.getClass().getSimpleName()).toList());
             builder.append(DELIMITER).append(principalId).append(':').append(handlers).append(':').append(credentialTypes);
             builder.append(DELIMITER).append(BooleanUtils.toString(CoreAuthenticationUtils.isRememberMeAuthentication(authentication), "1", "0"));
         }

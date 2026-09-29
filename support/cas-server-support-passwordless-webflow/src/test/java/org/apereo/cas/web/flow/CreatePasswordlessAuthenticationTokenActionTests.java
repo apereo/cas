@@ -136,7 +136,7 @@ class CreatePasswordlessAuthenticationTokenActionTests extends BasePasswordlessA
     }
 
     private MockRequestContext prepareContext(final String username) throws Exception {
-        val context = MockRequestContext.create(applicationContext);
+        val context = MockRequestContext.create(applicationContext).withDefaultMessageContext();
         val account = PasswordlessUserAccount.builder()
             .username(username)
             .email(username + "@example.org")

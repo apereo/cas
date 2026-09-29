@@ -30,10 +30,10 @@ public class OAuth20DeviceUserCodeCompactor implements TicketCompactor<OAuth20De
     @Override
     public String compact(final StringBuilder builder, final Ticket ticket) throws Exception {
         val code = (OAuth20DeviceUserCode) ticket;
-        builder.append(DELIMITER).append(code.getService().getShortenedId());
+        builder.append(DELIMITER).append(TicketCompactor.encodeValue(code.getService().getShortenedId()));
         val approved = BooleanUtils.toString(code.isUserCodeApproved(), "1", "0");
         builder.append(DELIMITER).append(approved);
-        builder.append(DELIMITER).append(ticket.getId());
+        builder.append(DELIMITER).append(TicketCompactor.encodeValue(ticket.getId()));
         return builder.toString();
     }
 
@@ -44,11 +44,11 @@ public class OAuth20DeviceUserCodeCompactor implements TicketCompactor<OAuth20De
 
     @Override
     public Ticket expand(final String ticketId) {
-        val structure = parse(ticketId);
+        val structure = parse(ticketId, 5);
         val codeFactory = (OAuth20DeviceUserCodeFactory) ticketFactory.getObject().get(getTicketType());
-        val service = serviceFactory.createService(structure.ticketElements().get(CompactTicketIndexes.SERVICE.getIndex()));
+        val service = serviceFactory.createService(TicketCompactor.decodeValue(structure.ticketElements().get(CompactTicketIndexes.SERVICE.getIndex())));
         val isApproved = BooleanUtils.toBoolean(structure.ticketElements().get(3));
-        val id = structure.ticketElements().get(4);
+        val id = TicketCompactor.decodeValue(structure.ticketElements().get(4));
         val userCode = codeFactory.createDeviceUserCode(id, service);
         userCode.setUserCodeApproved(isApproved);
         userCode.setExpirationPolicy(new FixedInstantExpirationPolicy(structure.expirationTime()));
