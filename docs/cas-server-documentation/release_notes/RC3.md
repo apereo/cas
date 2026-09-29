@@ -120,18 +120,18 @@ The CAS documentation site has received a visual and functional overhaul. Notabl
 - [JDBC policies](../authorization/Heimdall-Authorization-Overview.html) use a shared connection pool, registered as an application context bean and optionally named via `dataSourceName`,
   instead of opening a new database connection for every decision. Queries time out after `queryTimeout` (five seconds by default).
   Policies are evaluated in order rather than on the shared thread pool.
-- AuthZEN subjects are resolved from CAS attribute repositories only for the `user` subject type. Required and rejected attribute policies accept qualified names such as `subject.properties.department`,
+- AuthZEN subjects are resolved from CAS [attribute repositories](../integration/Attribute-Resolution.html) only for the `user` subject type. Required and rejected attribute policies accept qualified names such as `subject.properties.department`,
   `resource.properties.owner`, `action.properties.method` and `context.channel`. HTTP request headers are no longer added to the
   AuthZEN request context; on `/heimdall/authorize` they no longer override body entries or include protocol headers.
 - A resource that does not set `enforceAllPolicies` is now granted when any one of its policies grants access, as documented;
   previously every policy had to grant. Set `enforceAllPolicies` to `true` on resources that rely on the old behavior.
   In that mode, a policy that fails with an error no longer prevents a later policy from granting access.
-- Heimdall supports the AuthZEN [access evaluations API](../authorization/Heimdall-Authorization-Overview.html#access-evaluations) at
+- Heimdall supports the AuthZEN [access evaluations API](../authorization/Heimdall-Authorization-Overview.html) at
   `/heimdall/authzen/evaluations`, with the `execute_all`, `deny_on_first_deny` and `permit_on_first_permit` semantics.
-- Heimdall publishes AuthZEN [policy decision point metadata](../authorization/Heimdall-Authorization-Overview.html#policy-decision-point-metadata) at
+- Heimdall publishes AuthZEN [policy decision point metadata](../authorization/Heimdall-Authorization-Overview.html) at
   `/heimdall/.well-known/authzen-configuration`; the well-known location defined by the specification needs a
   [rewrite rule](../installation/Servlet-Container-Embedded-Tomcat-RewriteValve.html).
-- Denied AuthZEN decisions carry a [decision context](../authorization/Heimdall-Authorization-Overview.html#decision-context)
+- Denied AuthZEN decisions carry a [decision context](../authorization/Heimdall-Authorization-Overview.html)
   with a `reason` code.
 - [JDBC and OpenFGA policies](../authorization/Heimdall-Authorization-Overview.html) receive the AuthZEN subject, resource and action. [Palantir](../installation/Admin-Dashboard.html) can edit the AuthZEN fields
   of a resource and configure the Heimdall access strategy.
@@ -140,7 +140,7 @@ The CAS documentation site has received a visual and functional overhaul. Notabl
 
 The certificate thumbprint that CAS records for [mutual TLS client authentication](../authentication/OIDC-Authentication-AccessToken-AuthMethods.html)
 and emits as the `cnf` `x5t#S256` claim of access tokens and introspection responses is now computed as specified
-by [RFC 8705](https://www.rfc-editor.org/rfc/rfc8705#section-3.1): the base64url-encoded SHA-256 hash of the DER-encoded certificate.
+by [RFC 8705](https://www.rfc-editor.org/rfc/rfc8705): the base64url-encoded SHA-256 hash of the DER-encoded certificate.
 Previously, it was computed from the certificate's public key and was not encoded as specified. Certificate-bound tokens issued
 before the upgrade carry the old value and are no longer accepted by resource servers that verify the binding.
 
@@ -154,20 +154,25 @@ and failures were recorded twice. Failed SAML2 ECP authentication attempts, whic
 ### Passwordless Authentication
 
 [Passwordless authentication](../authentication/Passwordless-Authentication.html) tokens are now single-use under concurrent submissions,
-and every submitted token, including a wrong one, goes through the authentication manager and is recorded in the audit log. Tokens kept in
+and every submitted token, including a wrong one, goes through the authentication manager and is recorded in the [audit log](../audits/Audits.html). Tokens kept in
 [JPA](../authentication/Passwordless-Authentication-Tokens-JPA.html) or [MongoDb](../authentication/Passwordless-Authentication-Tokens-MongoDb.html)
 are now removed once used, and their cleaner removes expired tokens; it used to remove the valid ones. MongoDb and
 [REST](../authentication/Passwordless-Authentication-Tokens-Rest.html) stores no longer return expired tokens, and a REST endpoint must answer
-a single-token `DELETE` with a `2xx` status only when it removed the token. A token that could not be delivered by email or SMS is no longer
+a single-token `DELETE` with a `2xx` status only when it removed the token. A token that could not be delivered by [email or SMS](../authentication/Passwordless-Authentication-Notifications.html) is no longer
 stored and the user is told so, while a failure in one channel no longer discards a token the other one delivered. Submitted tokens now
 arrive as a dedicated `PasswordlessTokenCredential`, which is the only credential the passwordless authentication handler accepts; other
 one-time password credentials, such as Duo Security passcodes, are no longer checked against the passwordless token store, and the
 recorded credential type changes accordingly. The token field is now a plain text field marked
 as `one-time-code`, so browsers and phones can fill in the code. A wrong token no longer causes a new token to be issued and sent.
 
+When [WebAuthn primary authentication](../mfa/FIDO2-WebAuthn-Authentication.html) is allowed, the passwordless username field offers discoverable passkeys
+from the browser's autofill menu (WebAuthn conditional mediation) where the browser supports it, and the [passwordless selection menu](../authentication/Passwordless-Authentication-UserSelectionMenu.html)
+offers a passkey option. Both hand the passkey assertion to the existing WebAuthn primary authentication flow.
+
 ## Other Stuff
 
 - A large number of dependencies and libraries have been updated to their latest versions.
 - Almost all CAS unit tests are internally reworked to allow maximum parallelization and speed up the overall test execution time.
 - [Delegated authentication](../integration/Delegate-Authentication.html) no longer fails intermittently when concurrent requests reach an identity provider that is still being initialized, typically right after startup. Such requests now wait for the initialization in progress instead of failing, which also affects [SAML2 identity providers](../integration/Delegate-Authentication-SAML2.html) when building SAML2 responses, metadata and logout requests.
+- [WebAuthn](../mfa/FIDO2-WebAuthn-Authentication.html) authentication pages now send the CSRF token rendered by CAS instead of reading it from the `XSRF-TOKEN` cookie, which failed with `403` whenever the page could not read that cookie.
 

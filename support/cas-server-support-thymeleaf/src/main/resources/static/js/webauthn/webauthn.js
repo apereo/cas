@@ -637,6 +637,44 @@ function authenticate(username = null, getRequest = getAuthenticateRequest) {
     });
 }
 
+async function isConditionalMediationAvailable() {
+    try {
+        return window.PublicKeyCredential !== undefined
+            && typeof window.PublicKeyCredential.isConditionalMediationAvailable === "function"
+            && await window.PublicKeyCredential.isConditionalMediationAvailable();
+    } catch (err) {
+        console.error("Unable to determine support for conditional mediation", err);
+        return false;
+    }
+}
+
+/**
+ * Authenticate with a discoverable passkey and submit the resulting session token with the given form.
+ * The request is made before anyone is authenticated, so it carries no allowed credentials and the
+ * passkey that answers decides who logs in. With mediation set to "conditional", the browser offers
+ * passkeys from the autofill menu of an input whose autocomplete attribute ends with "webauthn",
+ * and the returned promise stays pending until the user picks one.
+ */
+async function authenticateWithPasskey(form, mediation = undefined) {
+    const urls = await getWebAuthnUrls();
+    const params = await getAuthenticateRequest(urls, null);
+    const request = params.request;
+    const options = {
+        publicKey: webauthn.decodePublicKeyCredentialRequestOptions(request.publicKeyCredentialRequestOptions)
+    };
+    if (mediation !== undefined) {
+        options.mediation = mediation;
+    }
+    const credential = await navigator.credentials.get(options);
+    const finishUrl = `${window.location.origin}${contextPath}${params.actions.finish}`;
+    const data = await submitResponse(finishUrl, request, webauthn.responseToObject(credential));
+    if (data && data.success && data.sessionToken) {
+        $(form).find("input[name=token]").val(data.sessionToken);
+        $(form).submit();
+    }
+    return data;
+}
+
 function init() {
     hideDeviceInfo();
     return false;
