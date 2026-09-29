@@ -48,7 +48,9 @@ public class MongoDbPasswordlessTokenRepository extends BasePasswordlessTokenRep
     public Optional<PasswordlessAuthenticationToken> findToken(final String username) {
         val query = new Query().addCriteria(Criteria.where("username").is(hashUsername(username)));
         val authnToken = mongoTemplate.findOne(query, MongoDbPasswordlessAuthenticationEntity.class, properties.getCollection());
-        return Optional.ofNullable(authnToken).map(token -> decodePasswordlessAuthenticationToken(token.getRecord()));
+        return Optional.ofNullable(authnToken)
+            .map(token -> decodePasswordlessAuthenticationToken(token.getRecord()).withId(token.getId()))
+            .filter(token -> !token.isExpired());
     }
 
     private static String hashUsername(final String username) {
@@ -62,10 +64,11 @@ public class MongoDbPasswordlessTokenRepository extends BasePasswordlessTokenRep
     }
 
     @Override
-    public void deleteToken(final PasswordlessAuthenticationToken token) {
+    public boolean deleteToken(final PasswordlessAuthenticationToken token) {
         val query = new Query().addCriteria(Criteria.where("username").is(hashUsername(token.getUsername())).and("id").is(token.getId()));
         val result = mongoTemplate.remove(query, MongoDbPasswordlessAuthenticationEntity.class, properties.getCollection());
         LOGGER.debug("Removed [{}] token record(s)", result.getDeletedCount());
+        return result.getDeletedCount() > 0;
     }
 
     @Override
@@ -86,8 +89,8 @@ public class MongoDbPasswordlessTokenRepository extends BasePasswordlessTokenRep
     @Override
     public void clean() {
         val now = ZonedDateTime.now(ZoneOffset.UTC);
-        LOGGER.debug("Cleaning expired records with an expiration date greater than or equal to [{}]", now);
-        val query = new Query().addCriteria(Criteria.where("expirationDate").gte(now));
+        LOGGER.debug("Cleaning expired records with an expiration date up to [{}]", now);
+        val query = new Query().addCriteria(Criteria.where("expirationDate").lte(now));
         mongoTemplate.remove(query, MongoDbPasswordlessAuthenticationEntity.class, properties.getCollection());
     }
 

@@ -669,16 +669,16 @@ const CAS_HOME_TITLE_PHRASES = [
   'Securing Every Corner of the Cosmos',
   'Across the Multiverse',
   'No Matter Your Solar System',
-  'For Life, Liberty, and the Pursuit of Root Access',
+  'For Liberty and Pursuit of Root Access',
   'Where No Session Token Has Gone Before',
   'Connecting Everyone Except the Guy Still on Internet Explorer',
-  "Authenticating Humans, Bots, and Your Family's Smart Fridge",
+  "Authenticating Humans, and Your Family's Smart Fridge",
   'Keeping the Hackers Out and the Coffee Brewing',
   "\"123456\" Isn't an Enterprise Security Strategy",
   'Zero Trust, Maximum Coffee',
   'No Time for 40 Different Passwords',
   'Securing Access for All and the Toaster on VLAN 3',
-  "Sticky Notes on Your Monitor Isn't an Identity Provider",
+  "Sticky Notes on Your Monitor Isn't Security",
   'Connecting Your Entire Stack With Very Little Attitude',
   'Because Nobody Likes Security Awareness Training',
   'Because Sticky Notes Are for Groceries',
@@ -1654,7 +1654,7 @@ function openCasSettingsPalette() {
           <kbd>Esc</kbd>
         </label>
         <ul id="cas-settings-palette-results" class="cas-settings-palette-results" role="listbox"></ul>
-        <p class="cas-settings-palette-footer"><span><kbd>↑</kbd><kbd>↓</kbd> choose</span><span><kbd>Enter</kbd> open</span><span>Shift Shift anywhere</span><a href="${casSettingsLocation(CAS_SETTINGS_PAGE)}">All settings</a></p>
+        <p class="cas-settings-palette-footer"><span><kbd>↑</kbd><kbd>↓</kbd> choose</span><span><kbd>Enter</kbd> open</span><span>Activate with <kbd>Shift</kbd><kbd>Shift</kbd></span><a href="${casSettingsLocation(CAS_SETTINGS_PAGE)}">All settings</a></p>
       </form>`;
     document.body.append(dialog);
     const input = dialog.querySelector('input');

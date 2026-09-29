@@ -8,6 +8,7 @@ import org.hibernate.annotations.UuidGenerator;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
+import jakarta.persistence.Index;
 import jakarta.persistence.Table;
 
 /**
@@ -17,7 +18,10 @@ import jakarta.persistence.Table;
  * @since 6.2.0
  */
 @Entity
-@Table(name = "PasswordlessAuthenticationToken")
+@Table(name = "PasswordlessAuthenticationToken", indexes = {
+    @Index(name = "idx_passwordless_username", columnList = "username"),
+    @Index(name = "idx_passwordless_exp_date", columnList = "EXP_DATE")
+})
 @Getter
 @SuperBuilder
 @NoArgsConstructor

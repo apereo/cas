@@ -49,6 +49,31 @@ class MongoDbPasswordlessTokenRepositoryTests extends BaseMongoDbPasswordlessTes
 
         passwordlessTokenRepository.clean();
 
+        assertTrue(passwordlessTokenRepository.findToken(uid).isPresent());
+    }
+
+    @Test
+    void verifyTokenFoundIsConsumed() {
+        val uid = UUID.randomUUID().toString();
+        saveToken(uid, ZonedDateTime.now(ZoneOffset.UTC).plusMinutes(5));
+        val found = passwordlessTokenRepository.findToken(uid).orElseThrow();
+        assertTrue(passwordlessTokenRepository.deleteToken(found));
+        assertFalse(passwordlessTokenRepository.deleteToken(found));
         assertTrue(passwordlessTokenRepository.findToken(uid).isEmpty());
+    }
+
+    @Test
+    void verifyExpiredTokenIsNotFound() {
+        val uid = UUID.randomUUID().toString();
+        saveToken(uid, ZonedDateTime.now(ZoneOffset.UTC).minusMinutes(5));
+        assertTrue(passwordlessTokenRepository.findToken(uid).isEmpty());
+    }
+
+    private void saveToken(final String uid, final ZonedDateTime expirationDate) {
+        val passwordlessUserAccount = PasswordlessUserAccount.builder().username(uid).build();
+        val passwordlessRequest = PasswordlessAuthenticationRequest.builder().username(uid).build();
+        val token = passwordlessTokenRepository.createToken(passwordlessUserAccount, passwordlessRequest)
+            .withExpirationDate(expirationDate);
+        passwordlessTokenRepository.saveToken(passwordlessUserAccount, passwordlessRequest, token);
     }
 }

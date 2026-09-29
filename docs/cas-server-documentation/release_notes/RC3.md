@@ -151,6 +151,20 @@ when the response status is `401`, once per request. Previously, any response ot
 request (`400`), an authorization denial (`403`), a missing resource (`404`) or a server error (`500`), was counted as a failed login,
 and failures were recorded twice. Failed SAML2 ECP authentication attempts, which answer with a SOAP fault, are now counted as well.
 
+### Passwordless Authentication
+
+[Passwordless authentication](../authentication/Passwordless-Authentication.html) tokens are now single-use under concurrent submissions,
+and every submitted token, including a wrong one, goes through the authentication manager and is recorded in the audit log. Tokens kept in
+[JPA](../authentication/Passwordless-Authentication-Tokens-JPA.html) or [MongoDb](../authentication/Passwordless-Authentication-Tokens-MongoDb.html)
+are now removed once used, and their cleaner removes expired tokens; it used to remove the valid ones. MongoDb and
+[REST](../authentication/Passwordless-Authentication-Tokens-Rest.html) stores no longer return expired tokens, and a REST endpoint must answer
+a single-token `DELETE` with a `2xx` status only when it removed the token. A token that could not be delivered by email or SMS is no longer
+stored and the user is told so, while a failure in one channel no longer discards a token the other one delivered. Submitted tokens now
+arrive as a dedicated `PasswordlessTokenCredential`, which is the only credential the passwordless authentication handler accepts; other
+one-time password credentials, such as Duo Security passcodes, are no longer checked against the passwordless token store, and the
+recorded credential type changes accordingly. The token field is now a plain text field marked
+as `one-time-code`, so browsers and phones can fill in the code.
+
 ## Other Stuff
 
 - A large number of dependencies and libraries have been updated to their latest versions.
