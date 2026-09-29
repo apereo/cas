@@ -7,7 +7,7 @@
 # a failure to start shows up as the wallet's own logs instead of an opaque unhealthy status.
 services:
   wallet-api2:
-    image: waltid/wallet-api2:1.0.0
+    image: waltid/wallet-api2:1.1.0
     container_name: waltid-wallet-api2
     restart: unless-stopped
     ports:
