@@ -19,6 +19,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.webflow.execution.Action;
+import org.springframework.webflow.execution.Event;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.*;
@@ -91,6 +92,28 @@ class CreatePasswordlessAuthenticationTokenActionTests extends BasePasswordlessA
         assertTrue(passwordlessTokenRepository.findToken(username).isPresent());
         assertFalse(context.getMessageContext().hasErrorMessages());
         verify(communicationsManager).sms(any(SmsRequest.class));
+    }
+
+    @Test
+    void verifyTokenNotReissuedAfterFailedAttempt() throws Throwable {
+        val communicationsManager = mock(CommunicationsManager.class);
+        when(communicationsManager.isMailSenderDefined()).thenReturn(true);
+        when(communicationsManager.isSmsSenderDefined()).thenReturn(true);
+        val action = new CreatePasswordlessAuthenticationTokenAction(casProperties, passwordlessTokenRepository,
+            communicationsManager, multifactorTriggerSelectionStrategy, passwordlessPrincipalFactory,
+            authenticationSystemSupport, tenantExtractor);
+
+        val username = "casuser-" + UUID.randomUUID();
+        val account = PasswordlessUserAccount.builder().username(username).build();
+        val request = PasswordlessAuthenticationRequest.builder().username(username).build();
+        val issued = passwordlessTokenRepository.saveToken(account, request, passwordlessTokenRepository.createToken(account, request));
+
+        val context = prepareContext(username);
+        context.setCurrentEvent(new Event(this, CasWebflowConstants.TRANSITION_ID_AUTHENTICATION_FAILURE));
+        assertEquals(CasWebflowConstants.TRANSITION_ID_SUCCESS, action.execute(context).getId());
+        assertEquals(issued.getToken(), passwordlessTokenRepository.findToken(username).orElseThrow().getToken());
+        verify(communicationsManager, never()).email(any());
+        verify(communicationsManager, never()).sms(any(SmsRequest.class));
     }
 
     private MockRequestContext prepareContext(final String username) throws Exception {

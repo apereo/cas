@@ -56,8 +56,19 @@ public class CreatePasswordlessAuthenticationTokenAction extends BasePasswordles
     @Override
     protected @Nullable Event doExecuteInternal(final RequestContext requestContext) {
         val user = Objects.requireNonNull(PasswordlessWebflowUtils.getPasswordlessAuthenticationAccount(requestContext, PasswordlessUserAccount.class));
+        if (isFailedAttempt(requestContext)) {
+            LOGGER.debug("Passwordless token for [{}] is not issued again after a failed attempt", user.getUsername());
+            return success();
+        }
         val passwordlessRequest = PasswordlessWebflowUtils.getPasswordlessAuthenticationRequest(requestContext, PasswordlessAuthenticationRequest.class);
         return createAndSendPasswordlessToken(requestContext, user, passwordlessRequest);
+    }
+
+    protected boolean isFailedAttempt(final RequestContext requestContext) {
+        return Optional.ofNullable(requestContext.getCurrentEvent())
+            .map(Event::getId)
+            .filter(CasWebflowConstants.TRANSITION_ID_AUTHENTICATION_FAILURE::equals)
+            .isPresent();
     }
 
     protected Event createAndSendPasswordlessToken(final RequestContext requestContext, final PasswordlessUserAccount user,

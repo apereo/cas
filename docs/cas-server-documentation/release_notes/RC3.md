@@ -163,7 +163,7 @@ stored and the user is told so, while a failure in one channel no longer discard
 arrive as a dedicated `PasswordlessTokenCredential`, which is the only credential the passwordless authentication handler accepts; other
 one-time password credentials, such as Duo Security passcodes, are no longer checked against the passwordless token store, and the
 recorded credential type changes accordingly. The token field is now a plain text field marked
-as `one-time-code`, so browsers and phones can fill in the code.
+as `one-time-code`, so browsers and phones can fill in the code. A wrong token no longer causes a new token to be issued and sent.
 
 ## Other Stuff
 
