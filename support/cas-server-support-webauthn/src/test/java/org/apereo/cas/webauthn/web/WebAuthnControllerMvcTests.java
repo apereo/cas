@@ -79,6 +79,9 @@ class WebAuthnControllerMvcTests {
     @Autowired
     private SecurityProperties securityProperties;
 
+    @Autowired
+    private CasConfigurationProperties casProperties;
+
     private MockMvc mvc;
 
     @BeforeEach
@@ -121,6 +124,14 @@ class WebAuthnControllerMvcTests {
         mvc.perform(get("/cas/actuator/env")
                 .with(httpBasic(securityProperties.getUser().getName(), securityProperties.getUser().getPassword())))
             .andExpect(status().isOk());
+    }
+
+    @Test
+    void verifyRelatedOriginsEndpoint() throws Throwable {
+        mvc.perform(get("/cas" + WebAuthnRelatedOriginsController.ENDPOINT_RELATED_ORIGINS))
+            .andExpect(status().isOk())
+            .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
+            .andExpect(jsonPath("$.origins[0]").value(casProperties.getServer().getName()));
     }
 
     @Test

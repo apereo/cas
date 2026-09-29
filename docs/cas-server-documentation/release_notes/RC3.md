@@ -171,6 +171,13 @@ When [WebAuthn primary authentication](../authentication/Passwordless-Authentica
 from the browser's autofill menu (WebAuthn conditional mediation) where the browser supports it, and the [passwordless selection menu](../authentication/Passwordless-Authentication-UserSelectionMenu.html)
 offers a passkey option. Both hand the passkey assertion to the existing WebAuthn primary authentication flow.
 
+### WebAuthn Level 3
+
+[FIDO2 WebAuthn](../mfa/FIDO2-WebAuthn-Authentication.html) publishes its origins at `/.well-known/webauthn` for
+related origin requests, so passkeys can be used from origins whose domain differs from the relying party identifier.
+After a successful authentication, CAS reports the user's accepted passkeys and current account details to the
+browser through the Signal API, and passkey autofill checks `getClientCapabilities()` where the browser offers it.
+
 ## Other Stuff
 
 - A large number of dependencies and libraries have been updated to their latest versions.

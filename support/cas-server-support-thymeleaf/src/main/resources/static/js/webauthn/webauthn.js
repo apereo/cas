@@ -450,6 +450,9 @@ function finishCeremony(response) {
     const finishUrl = `${window.location.origin}${contextPath}${urls.finish}`;
     return submitResponse(finishUrl, request, response)
         .then((data) => {
+            if (request.publicKeyCredentialRequestOptions) {
+                signalPasskeyState(request, data);
+            }
             if (data && data.success) {
                 setStatus(statusStrings.success);
             } else {
@@ -639,8 +642,16 @@ function authenticate(username = null, getRequest = getAuthenticateRequest) {
 
 async function isConditionalMediationAvailable() {
     try {
-        return window.PublicKeyCredential !== undefined
-            && typeof window.PublicKeyCredential.isConditionalMediationAvailable === "function"
+        if (window.PublicKeyCredential === undefined) {
+            return false;
+        }
+        if (typeof window.PublicKeyCredential.getClientCapabilities === "function") {
+            const capabilities = await window.PublicKeyCredential.getClientCapabilities();
+            if (capabilities.conditionalGet !== undefined) {
+                return capabilities.conditionalGet === true;
+            }
+        }
+        return typeof window.PublicKeyCredential.isConditionalMediationAvailable === "function"
             && await window.PublicKeyCredential.isConditionalMediationAvailable();
     } catch (err) {
         console.error("Unable to determine support for conditional mediation", err);
@@ -655,6 +666,43 @@ async function isConditionalMediationAvailable() {
  * passkeys from the autofill menu of an input whose autocomplete attribute ends with "webauthn",
  * and the returned promise stays pending until the user picks one.
  */
+/**
+ * Tell the browser, through the WebAuthn Signal API, which passkeys CAS still accepts for the user
+ * who just authenticated and what the user's current name is, so that passkeys removed from CAS
+ * stop being offered and renamed accounts show up to date. Browsers without the Signal API ignore this.
+ */
+function signalPasskeyState(request, data) {
+    const registrations = data && data.success ? data.registrations : undefined;
+    if (window.PublicKeyCredential === undefined || !registrations || registrations.length === 0) {
+        return;
+    }
+    const rpId = request.publicKeyCredentialRequestOptions.rpId;
+    const user = registrations[0].userIdentity;
+    if (!rpId || !user) {
+        return;
+    }
+    const report = err => console.debug("WebAuthn signal was not delivered", err);
+    try {
+        if (typeof PublicKeyCredential.signalAllAcceptedCredentials === "function") {
+            PublicKeyCredential.signalAllAcceptedCredentials({
+                rpId,
+                userId: user.id,
+                allAcceptedCredentialIds: registrations.map(reg => reg.credential.credentialId)
+            }).catch(report);
+        }
+        if (typeof PublicKeyCredential.signalCurrentUserDetails === "function") {
+            PublicKeyCredential.signalCurrentUserDetails({
+                rpId,
+                userId: user.id,
+                name: user.name,
+                displayName: user.displayName
+            }).catch(report);
+        }
+    } catch (err) {
+        report(err);
+    }
+}
+
 async function authenticateWithPasskey(form, mediation = undefined) {
     const urls = await getWebAuthnUrls();
     const params = await getAuthenticateRequest(urls, null);
@@ -668,6 +716,7 @@ async function authenticateWithPasskey(form, mediation = undefined) {
     const credential = await navigator.credentials.get(options);
     const finishUrl = `${window.location.origin}${contextPath}${params.actions.finish}`;
     const data = await submitResponse(finishUrl, request, webauthn.responseToObject(credential));
+    signalPasskeyState(request, data);
     if (data && data.success && data.sessionToken) {
         $(form).find("input[name=token]").val(data.sessionToken);
         $(form).submit();

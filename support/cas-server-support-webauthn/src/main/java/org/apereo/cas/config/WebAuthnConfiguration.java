@@ -42,6 +42,7 @@ import org.apereo.cas.webauthn.storage.JsonResourceWebAuthnCredentialRepository;
 import org.apereo.cas.webauthn.storage.WebAuthnCredentialRepository;
 import org.apereo.cas.webauthn.web.BaseWebAuthnController;
 import org.apereo.cas.webauthn.web.WebAuthnController;
+import org.apereo.cas.webauthn.web.WebAuthnRelatedOriginsController;
 import org.apereo.cas.webauthn.web.WebAuthnQRCodeController;
 import org.apereo.cas.webauthn.web.WebAuthnRegisteredDevicesEndpoint;
 import com.google.errorprone.annotations.CanIgnoreReturnValue;
@@ -285,11 +286,7 @@ class WebAuthnConfiguration {
                 .name(StringUtils.defaultIfBlank(webAuthn.getRelyingPartyName(), "CAS"))
                 .build();
 
-            val origins = new LinkedHashSet<String>();
-            origins.add(serverName);
-            if (StringUtils.isNotBlank(webAuthn.getAllowedOrigins())) {
-                origins.addAll(org.springframework.util.StringUtils.commaDelimitedListToSet(webAuthn.getAllowedOrigins()));
-            }
+            val origins = WebAuthnConfiguration.webAuthnOrigins(casProperties);
 
             val conveyance = AttestationConveyancePreference.valueOf(webAuthn.getAttestationConveyancePreference().toUpperCase(Locale.ENGLISH));
             val appId = new AppId(StringUtils.defaultIfBlank(webAuthn.getApplicationId(), serverName));
@@ -493,6 +490,13 @@ class WebAuthnConfiguration {
                 return new WebAuthnRegisteredDevicesEndpoint(casProperties, applicationContext, webAuthnCredentialRepository);
             }
 
+            @ConditionalOnMissingBean(name = "webAuthnRelatedOriginsController")
+            @Bean
+            @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+            public WebAuthnRelatedOriginsController webAuthnRelatedOriginsController(final CasConfigurationProperties casProperties) {
+                return new WebAuthnRelatedOriginsController(WebAuthnConfiguration.webAuthnOrigins(casProperties));
+            }
+
             @ConditionalOnMissingBean(name = "webAuthnController")
             @Bean
             @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
@@ -603,12 +607,24 @@ class WebAuthnConfiguration {
                                 .matcher(BaseWebAuthnController.BASE_ENDPOINT_WEBAUTHN + WebAuthnQRCodeController.ENDPOINT_QR_VERIFY + "/**");
                             customizer.requestMatchers(regEndpoints)
                                 .access(new WebExpressionAuthorizationManager("hasRole('USER') and isAuthenticated()"));
-                            customizer.requestMatchers(authEndpoints, qrAuthEndpoints).permitAll();
+                            val relatedOrigins = PathPatternRequestMatcher.withDefaults()
+                                .matcher(HttpMethod.GET, WebAuthnRelatedOriginsController.ENDPOINT_RELATED_ORIGINS);
+                            customizer.requestMatchers(authEndpoints, qrAuthEndpoints, relatedOrigins).permitAll();
                         });
                         return this;
                     }
                 };
             }
         }
+    }
+
+    static Set<String> webAuthnOrigins(final CasConfigurationProperties casProperties) {
+        val origins = new LinkedHashSet<String>();
+        origins.add(casProperties.getServer().getName());
+        val allowedOrigins = casProperties.getAuthn().getMfa().getWebAuthn().getCore().getAllowedOrigins();
+        if (StringUtils.isNotBlank(allowedOrigins)) {
+            origins.addAll(org.springframework.util.StringUtils.commaDelimitedListToSet(allowedOrigins));
+        }
+        return origins;
     }
 }

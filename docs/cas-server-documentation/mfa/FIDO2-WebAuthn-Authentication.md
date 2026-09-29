@@ -57,3 +57,31 @@ as part of the typical multifactor authentication.
 
 The same passkeys are also offered by [passwordless authentication](../authentication/Passwordless-Authentication-Passkeys.html),
 from the autofill menu of its username field and from its selection menu.
+
+## Related Origins
+
+A passkey is bound to the relying party identifier (`cas.authn.mfa.web-authn.core.relying-party-id`, or the host of the
+CAS server name). When CAS is reached from origins whose domain differs from that identifier, list them under
+`cas.authn.mfa.web-authn.core.allowed-origins`. CAS accepts assertions from those origins and publishes them for
+[WebAuthn related origin requests](https://www.w3.org/TR/webauthn-3/#sctn-related-origins) at `/.well-known/webauthn`:
+
+```json
+{ "origins": [ "https://sso.example.org", "https://login.example.co.uk" ] }
+```
+
+Browsers fetch this document from `https://<relying party identifier>/.well-known/webauthn`, at the root of the host
+and outside the CAS context path, and they only honor a limited number of distinct registrable domains in it. When CAS
+runs under a context path such as `/cas`, route the document onto the path CAS serves, either in the proxy that fronts
+CAS or with the [embedded Tomcat rewrite valve](../installation/Servlet-Container-Embedded-Tomcat-RewriteValve.html)
+registered on the engine:
+
+```
+RewriteRule ^/\.well-known/webauthn$ /cas/.well-known/webauthn [L]
+```
+
+## Signal API
+
+After a successful WebAuthn authentication, CAS uses the [WebAuthn Signal API](https://www.w3.org/TR/webauthn-3/#sctn-signal-methods),
+where the browser supports it, to report the passkeys it still accepts for the user and the user's current name and
+display name. Password managers and platform authenticators can then stop offering passkeys that were removed from
+CAS and show the account as it is named in CAS. Browsers without the Signal API ignore this.
