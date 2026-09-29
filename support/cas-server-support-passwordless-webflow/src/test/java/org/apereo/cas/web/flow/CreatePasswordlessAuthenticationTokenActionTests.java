@@ -15,6 +15,7 @@ import org.apereo.cas.util.MockRequestContext;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.mockito.ArgumentCaptor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.test.context.TestPropertySource;
@@ -114,6 +115,24 @@ class CreatePasswordlessAuthenticationTokenActionTests extends BasePasswordlessA
         assertEquals(issued.getToken(), passwordlessTokenRepository.findToken(username).orElseThrow().getToken());
         verify(communicationsManager, never()).email(any());
         verify(communicationsManager, never()).sms(any(SmsRequest.class));
+    }
+
+    @Test
+    void verifySmsEndsWithOriginBoundCode() throws Throwable {
+        val communicationsManager = mock(CommunicationsManager.class);
+        when(communicationsManager.isSmsSenderDefined()).thenReturn(true);
+        when(communicationsManager.sms(any(SmsRequest.class))).thenReturn(true);
+        val action = new CreatePasswordlessAuthenticationTokenAction(casProperties, passwordlessTokenRepository,
+            communicationsManager, multifactorTriggerSelectionStrategy, passwordlessPrincipalFactory,
+            authenticationSystemSupport, tenantExtractor);
+
+        val username = "casuser-" + UUID.randomUUID();
+        assertEquals(CasWebflowConstants.TRANSITION_ID_SUCCESS, action.execute(prepareContext(username)).getId());
+        val token = passwordlessTokenRepository.findToken(username).orElseThrow().getToken();
+        val captor = ArgumentCaptor.forClass(SmsRequest.class);
+        verify(communicationsManager).sms(captor.capture());
+        val host = URI.create(casProperties.getServer().getName()).getHost();
+        assertEquals("Your token is %s\n\n@%s #%s".formatted(token, host, token), captor.getValue().getText());
     }
 
     private MockRequestContext prepareContext(final String username) throws Exception {

@@ -96,11 +96,12 @@ public class CreatePasswordlessAuthenticationTokenAction extends BasePasswordles
             val passwordlessProperties = casProperties.getAuthn().getPasswordless();
             return FunctionUtils.doUnchecked(() -> {
                 val smsProperties = passwordlessProperties.getTokens().getSms();
-                val text = SmsBodyBuilder.builder()
+                val body = SmsBodyBuilder.builder()
                     .properties(smsProperties)
                     .parameters(Map.of("token", token.getToken()))
                     .build()
                     .get();
+                val text = appendOriginBoundCode(body, token);
                 val smsRequest = SmsRequest
                     .builder()
                     .from(smsProperties.getFrom())
@@ -111,6 +112,14 @@ public class CreatePasswordlessAuthenticationTokenAction extends BasePasswordles
             });
         }
         return false;
+    }
+
+    protected String appendOriginBoundCode(final String text, final PasswordlessAuthenticationToken token) {
+        val host = FunctionUtils.doUnchecked(() -> new URI(casProperties.getServer().getName()).getHost());
+        if (StringUtils.isBlank(host)) {
+            return text;
+        }
+        return "%s\n\n@%s #%s".formatted(StringUtils.stripEnd(text, null), host, token.getToken());
     }
 
     protected boolean emailToken(final RequestContext requestContext, final PasswordlessUserAccount user,

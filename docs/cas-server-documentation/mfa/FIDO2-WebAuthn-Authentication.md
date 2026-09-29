@@ -54,3 +54,6 @@ memory on the authenticator, instead of encrypted and stored on the relying part
 [Device registration](FIDO2-WebAuthn-Authentication-Registration.html) can occur out of band using 
 available CAS APIs, or by allowing users to pass through the registration flow
 as part of the typical multifactor authentication. 
+
+The same passkeys are also offered by [passwordless authentication](../authentication/Passwordless-Authentication-Passkeys.html),
+from the autofill menu of its username field and from its selection menu.

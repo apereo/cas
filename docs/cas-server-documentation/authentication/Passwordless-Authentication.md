@@ -36,7 +36,8 @@ Passwordless authentication can also be activated using [QR Code Authentication]
 allowing end users to login by scanning a QR code using a mobile device.
 
 Passwordless authentication can also be achieved via [FIDO2 WebAuthn](../mfa/FIDO2-WebAuthn-Authentication.html) which lets users 
-verify their identities without passwords and login using FIDO2-enabled devices.
+verify their identities without passwords and login using FIDO2-enabled devices. When WebAuthn is allowed to act as a primary
+authentication strategy, the passwordless flow itself [offers passkeys](Passwordless-Authentication-Passkeys.html).
 
 ## Overview
 

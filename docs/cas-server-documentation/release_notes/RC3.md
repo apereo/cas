@@ -164,8 +164,10 @@ arrive as a dedicated `PasswordlessTokenCredential`, which is the only credentia
 one-time password credentials, such as Duo Security passcodes, are no longer checked against the passwordless token store, and the
 recorded credential type changes accordingly. The token field is now a plain text field marked
 as `one-time-code`, so browsers and phones can fill in the code. A wrong token no longer causes a new token to be issued and sent.
+SMS messages now end with an [origin-bound one-time code](../authentication/Passwordless-Authentication-Notifications.html) line
+(`@host #token`), which the token page reads through the WebOTP API where available.
 
-When [WebAuthn primary authentication](../mfa/FIDO2-WebAuthn-Authentication.html) is allowed, the passwordless username field offers discoverable passkeys
+When [WebAuthn primary authentication](../authentication/Passwordless-Authentication-Passkeys.html) is allowed, the passwordless username field offers discoverable passkeys
 from the browser's autofill menu (WebAuthn conditional mediation) where the browser supports it, and the [passwordless selection menu](../authentication/Passwordless-Authentication-UserSelectionMenu.html)
 offers a passkey option. Both hand the passkey assertion to the existing WebAuthn primary authentication flow.
 
