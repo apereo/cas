@@ -177,6 +177,14 @@ offers a passkey option. Both hand the passkey assertion to the existing WebAuth
 related origin requests, so passkeys can be used from origins whose domain differs from the relying party identifier.
 After a successful authentication, CAS reports the user's accepted passkeys and current account details to the
 browser through the Signal API, and passkey autofill checks `getClientCapabilities()` where the browser offers it.
+Registration and authentication requests carry the user-agent hints set in `cas.authn.mfa.web-authn.core.hints`, and each
+registration records whether the authenticator reported a discoverable credential (`credProps`). When an assertion fails
+because the owning account no longer holds the passkey, the response says so and the browser is told to stop offering it
+(`signalUnknownCredential`). WebAuthn pages now use the browser's JSON serialization (`parseCreationOptionsFromJSON`,
+`parseRequestOptionsFromJSON`, `toJSON()`) and no longer override the configured attestation conveyance preference with
+`direct`; browsers without this WebAuthn Level 3 support can no longer use WebAuthn in CAS.
+CAS also publishes `/.well-known/passkey-endpoints` so password managers can link users to the pages where passkeys are
+created and managed; by default both point to the account profile's multifactor devices panel when account management is enabled.
 
 ### Stateless Ticket Registry
 
@@ -199,6 +207,8 @@ like distinguished names, round-trip correctly. Other changes:
   the ticket-granting ticket is read, the same way they already were during ticket validation, which keeps the ticket-granting cookie small.
   Attributes that only authentication handlers produce, such as claims from Duo Security or delegated authentication, are no longer
   available to single sign-on decisions unless an attribute repository produces them as well.
+- The ticket-granting ticket keeps only its authentication and is created through the ticket-granting ticket factory when read.
+  It expires at the end of its maximum lifetime; an idle timeout configured for it is not enforced.
 
 Stateless tickets issued before the upgrade can no longer be read, so users sign in again and OAuth clients need new tokens.
 Custom `TicketCompactor` implementations must move to `compactFields` and `parse(ticket, count)`.

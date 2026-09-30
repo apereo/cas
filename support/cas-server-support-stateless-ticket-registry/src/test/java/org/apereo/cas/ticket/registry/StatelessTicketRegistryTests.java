@@ -222,7 +222,6 @@ class StatelessTicketRegistryTests extends BaseTicketRegistryTests {
         val expandedTicket = newTicketRegistry.getTicket(updatedTicket.getId(), TicketGrantingTicket.class);
         assertTrue(expandedTicket.getServices().isEmpty());
         assertTrue(expandedTicket.getDescendantTickets().isEmpty());
-        assertEquals(1, expandedTicket.getCountOfUses());
         assertEquals(tgt.getCreationTime().toEpochSecond(), expandedTicket.getCreationTime().toEpochSecond());
         assertEquals(tgt.getAuthentication().getPrincipal(), expandedTicket.getAuthentication().getPrincipal());
         assertTrue(updatedTicket.getId().length() < addedTicket.getId().length() * 3 / 2);
@@ -242,7 +241,11 @@ class StatelessTicketRegistryTests extends BaseTicketRegistryTests {
         val addedTicket = newTicketRegistry.addTicket(tgt);
         assertTrue(addedTicket.getId().length() < 4096);
 
-        val expandedAuthentication = newTicketRegistry.getTicket(addedTicket.getId(), TicketGrantingTicket.class).getAuthentication();
+        val expandedTicket = newTicketRegistry.getTicket(addedTicket.getId(), TicketGrantingTicket.class);
+        assertEquals(tgt.getCreationTime().toEpochSecond(), expandedTicket.getCreationTime().toEpochSecond());
+        assertEquals(tgt.getExpirationPolicy().toMaximumExpirationTime(tgt).toEpochSecond(),
+            expandedTicket.getExpirationPolicy().toMaximumExpirationTime(expandedTicket).toEpochSecond());
+        val expandedAuthentication = expandedTicket.getAuthentication();
         val expandedPrincipal = expandedAuthentication.getPrincipal();
         assertEquals(principal.getId(), expandedPrincipal.getId());
         assertFalse(expandedPrincipal.containsAttribute("nickname"));

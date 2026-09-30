@@ -1,6 +1,7 @@
 package org.apereo.cas.config;
 
 import module java.base;
+import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.authentication.principal.PrincipalResolver;
 import org.apereo.cas.authentication.principal.ServiceFactory;
@@ -11,6 +12,7 @@ import org.apereo.cas.configuration.features.CasFeatureModule;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.ticket.Ticket;
 import org.apereo.cas.ticket.TicketCatalog;
+import org.apereo.cas.ticket.TicketFactory;
 import org.apereo.cas.ticket.registry.NoOpTicketRegistryCleaner;
 import org.apereo.cas.ticket.registry.ShortenedServiceMatchingStrategy;
 import org.apereo.cas.ticket.registry.StatelessTicketRegistry;
@@ -25,6 +27,7 @@ import org.apereo.cas.ticket.registry.compact.TransientSessionTicketCompactor;
 import org.apereo.cas.ticket.serialization.TicketSerializationManager;
 import org.apereo.cas.util.CoreTicketUtils;
 import org.apereo.cas.util.crypto.CipherExecutor;
+import org.apereo.cas.util.serialization.BaseJacksonSerializer;
 import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
 import lombok.val;
 import org.springframework.beans.factory.ObjectProvider;
@@ -84,9 +87,11 @@ public class CasStatelessTicketRegistryAutoConfiguration {
     public TicketCompactor ticketGrantingTicketCompactor(
         @Qualifier(PrincipalResolver.BEAN_NAME_PRINCIPAL_RESOLVER)
         final ObjectProvider<PrincipalResolver> principalResolver,
-        @Qualifier(TicketSerializationManager.BEAN_NAME)
-        final TicketSerializationManager ticketSerializationManager) {
-        return new TicketGrantingTicketCompactor(ticketSerializationManager, principalResolver);
+        @Qualifier(TicketFactory.BEAN_NAME)
+        final ObjectProvider<TicketFactory> ticketFactory,
+        final ConfigurableApplicationContext applicationContext) {
+        val serializer = BaseJacksonSerializer.forType(applicationContext, Authentication.class);
+        return new TicketGrantingTicketCompactor(ticketFactory, principalResolver, serializer);
     }
 
     @ConditionalOnMissingBean(name = "proxyGrantingTicketCompactor")
