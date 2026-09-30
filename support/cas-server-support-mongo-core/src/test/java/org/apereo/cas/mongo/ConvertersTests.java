@@ -1,13 +1,22 @@
 package org.apereo.cas.mongo;
 
 import module java.base;
+import org.apereo.cas.authentication.OneTimeTokenAccount;
+import org.apereo.cas.configuration.model.support.mongo.SingleCollectionMongoDbProperties;
+import org.apereo.cas.util.cipher.JasyptNumberCipherExecutor;
+import com.mongodb.MongoClientSettings;
+import com.mongodb.client.MongoClient;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
+import org.bson.BsonDocument;
+import org.bson.BsonDocumentWriter;
 import org.bson.BsonReader;
 import org.bson.BsonTimestamp;
 import org.bson.BsonWriter;
+import org.bson.Document;
 import org.bson.codecs.DecoderContext;
 import org.bson.codecs.EncoderContext;
+import org.bson.codecs.configuration.CodecRegistries;
 import org.bson.codecs.configuration.CodecRegistry;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
@@ -46,4 +55,34 @@ class ConvertersTests {
         assertNotNull(codec.getEncoderClass());
     }
 
+    @Test
+    void verifyEncryptedScratchCodesAreEncodable() {
+        val properties = new SingleCollectionMongoDbProperties();
+        properties.setDatabaseName("cas");
+        val mongoTemplate = new MongoDbConnectionFactory().buildMongoTemplate(mock(MongoClient.class), properties);
+
+        val cipher = new JasyptNumberCipherExecutor(UUID.randomUUID().toString(), "scratchCodes");
+        val scratchCode = 12345678;
+        val account = OneTimeTokenAccount.builder()
+            .username("casuser")
+            .name("casuser")
+            .secretKey(UUID.randomUUID().toString())
+            .validationCode(123456)
+            .scratchCodes(new ArrayList<>(List.of(cipher.encode(scratchCode))))
+            .build();
+        assertInstanceOf(BigInteger.class, account.getScratchCodes().getFirst());
+
+        val document = new Document();
+        mongoTemplate.getConverter().write(account, document);
+
+        val codecRegistry = CodecRegistries.fromRegistries(
+            CodecRegistries.fromProviders(new BaseConverters.ZonedDateTimeCodecProvider()),
+            MongoClientSettings.getDefaultCodecRegistry());
+        assertDoesNotThrow(() -> codecRegistry.get(Document.class)
+            .encode(new BsonDocumentWriter(new BsonDocument()), document, EncoderContext.builder().build()));
+        assertInstanceOf(String.class, document.getList("scratchCodes", Object.class).getFirst());
+
+        val readAccount = mongoTemplate.getConverter().read(OneTimeTokenAccount.class, document);
+        assertEquals(scratchCode, cipher.decode(readAccount.getScratchCodes().getFirst()).intValue());
+    }
 }
