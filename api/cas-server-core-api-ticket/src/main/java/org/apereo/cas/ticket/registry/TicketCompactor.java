@@ -6,10 +6,8 @@ import org.apereo.cas.ticket.Ticket;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.val;
-import org.jspecify.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.util.StringUtils;
 
 /**
  * This is {@link TicketCompactor}.
@@ -23,91 +21,39 @@ public interface TicketCompactor<T extends Ticket> {
      */
     Logger LOGGER = LoggerFactory.getLogger(TicketCompactor.class);
 
-
-    /**
-     * Delimiter character to separate fields in the compacted ticket.
-     */
-    String DELIMITER = ",";
-
-    /**
-     * Delimiter character to separate multiple values inside a single field.
-     */
-    String VALUE_DELIMITER = "#";
-
-    /**
-     * Encode a single value so it cannot contain any of the delimiters.
-     *
-     * @param value the value
-     * @return the encoded value
-     */
-    static String encodeValue(final @Nullable String value) {
-        return value == null ? "" : Base64.getUrlEncoder().withoutPadding().encodeToString(value.getBytes(StandardCharsets.UTF_8));
-    }
-
-    /**
-     * Encode values into a single field.
-     *
-     * @param values the values
-     * @return the encoded field
-     */
-    static String encodeValues(final Collection<?> values) {
-        return values.stream().map(String::valueOf).map(TicketCompactor::encodeValue).collect(Collectors.joining(VALUE_DELIMITER));
-    }
-
-    /**
-     * Decode a single value.
-     *
-     * @param value the value
-     * @return the decoded value
-     */
-    static String decodeValue(final String value) {
-        return new String(Base64.getUrlDecoder().decode(value), StandardCharsets.UTF_8);
-    }
-
-    /**
-     * Decode a field into its values.
-     *
-     * @param values the encoded field
-     * @return the decoded values
-     */
-    static List<String> decodeValues(final String values) {
-        return Arrays.stream(values.split(VALUE_DELIMITER)).filter(value -> !value.isEmpty()).map(TicketCompactor::decodeValue).toList();
-    }
-
     /**
      * Expand ticket.
      *
-     * @param ticketId the ticket id
+     * @param compactTicket the compact ticket
      * @return the ticket
      * @throws Throwable the throwable
      */
-    Ticket expand(String ticketId) throws Throwable;
+    Ticket expand(String compactTicket) throws Throwable;
 
     /**
-     * Compact ticket.
+     * Compact ticket. The creation and expiration times are always the first two fields.
      *
      * @param ticket the ticket
-     * @return the string
+     * @return the compact ticket
      * @throws Exception the exception
      */
     default String compact(final Ticket ticket) throws Exception {
-        val creationTime = ticket.getCreationTime().toEpochSecond();
-        val expirationTime = ticket.getExpirationPolicy().toMaximumExpirationTime(ticket).toEpochSecond();
-        val builder = new StringBuilder(String.format("%s%s%s", creationTime, DELIMITER, expirationTime));
-        return compact(builder, ticket);
+        val fields = new ArrayList<String>();
+        fields.add(String.valueOf(ticket.getCreationTime().toEpochSecond()));
+        fields.add(String.valueOf(ticket.getExpirationPolicy().toMaximumExpirationTime(ticket).toEpochSecond()));
+        compactFields(fields, ticket);
+        return CompactTicketCodec.encode(fields);
     }
 
     /**
-     * Compact string from a builder.
+     * Add the fields specific to this ticket type.
      *
-     * @param compactBuilder the compact builder
-     * @param ticket         the ticket
-     * @return the string
+     * @param fields the fields
+     * @param ticket the ticket
      * @throws Exception the exception
      */
     @SuppressWarnings("UnusedVariable")
-    default String compact(final StringBuilder compactBuilder, final Ticket ticket) throws Exception {
-        return compactBuilder.toString();
+    default void compactFields(final List<String> fields, final Ticket ticket) throws Exception {
     }
 
     /**
@@ -127,32 +73,31 @@ public interface TicketCompactor<T extends Ticket> {
     }
 
     /**
-     * Parse common ticket structure.
+     * Whether the expanded ticket keeps the id it carries,
+     * instead of the id it was looked up by.
      *
-     * @param ticketId the ticket id
-     * @return the common ticket structure
+     * @return true or false
      */
-    default CompactTicket parse(final String ticketId) {
-        val ticketElements = List.of(StringUtils.commaDelimitedListToStringArray(ticketId));
-        val creationTimeInSeconds = Instant.ofEpochSecond(Long.parseLong(ticketElements.get(CompactTicketIndexes.CREATION_TIME.getIndex())));
-        val expirationTimeInSeconds = Instant.ofEpochSecond(Long.parseLong(ticketElements.get(CompactTicketIndexes.EXPIRATION_TIME.getIndex())));
-        return new CompactTicket(ticketElements, creationTimeInSeconds, expirationTimeInSeconds);
+    default boolean isTicketIdRetained() {
+        return false;
     }
 
     /**
-     * Parse common ticket structure and verify the number of fields.
+     * Parse the compact ticket and verify the number of fields.
      *
-     * @param ticketId      the ticket id
+     * @param compactTicket the compact ticket
      * @param expectedCount the expected number of fields
      * @return the common ticket structure
      */
-    default CompactTicket parse(final String ticketId, final int expectedCount) {
-        val structure = parse(ticketId);
-        if (structure.ticketElements().size() != expectedCount) {
+    default CompactTicket parse(final String compactTicket, final int expectedCount) {
+        val ticketElements = CompactTicketCodec.decode(compactTicket);
+        if (ticketElements.size() != expectedCount) {
             throw new IllegalArgumentException("Compact ticket has %s fields instead of %s"
-                .formatted(structure.ticketElements().size(), expectedCount));
+                .formatted(ticketElements.size(), expectedCount));
         }
-        return structure;
+        val creationTime = Instant.ofEpochSecond(Long.parseLong(ticketElements.get(CompactTicketIndexes.CREATION_TIME.getIndex())));
+        val expirationTime = Instant.ofEpochSecond(Long.parseLong(ticketElements.get(CompactTicketIndexes.EXPIRATION_TIME.getIndex())));
+        return new CompactTicket(List.copyOf(ticketElements), creationTime, expirationTime);
     }
 
     /**
@@ -193,5 +138,24 @@ public interface TicketCompactor<T extends Ticket> {
     }
 
     record CompactTicket(List<String> ticketElements, Instant creationTime, Instant expirationTime) {
+        /**
+         * Field at the given position.
+         *
+         * @param index the index
+         * @return the field
+         */
+        public String get(final int index) {
+            return ticketElements.get(index);
+        }
+
+        /**
+         * Field at the given position.
+         *
+         * @param index the index
+         * @return the field
+         */
+        public String get(final CompactTicketIndexes index) {
+            return get(index.getIndex());
+        }
     }
 }

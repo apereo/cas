@@ -910,34 +910,44 @@ Guidance for AI coding agents working in the Apereo CAS source tree.
 
 ## Stateless ticket registry review discipline
 
-- The ticket id is the ticket: `StatelessTicketRegistry` deflates, AES-GCM encrypts (signing off, which is fine for GCM)
-  and base64url-encodes a compact string of `,`-separated fields. Every variable field (service shortened id, principal
-  id, handlers, credential types, client id, scopes, `code_challenge`, TST keys and values, device codes) goes through
-  `TicketCompactor.encodeValue`/`encodeValues` (unpadded base64url, `#` between list values) and `expand` uses
-  `parse(ticketId, expectedCount)`. New compactors must do the same; only fixed numeric/flag fields may be written raw.
+- The ticket id is the ticket: prefix + base64url(AES-GCM(header + compact string)). The header is one byte for raw or
+  raw-deflated (whichever is smaller), then the length and bytes of the prefix the ticket was issued under; reads reject
+  a prefix mismatch, since the prefix outside the ciphertext picks the compactor and some layouts have the same field
+  count (AT/RT, PT/PGT). The compact string is `CompactTicketCodec`: `1;` then `<length>:<value>` per
+  field, lists nested the same way, so values are never escaped. Store enums by `name()`, never by ordinal. Compactors add fields in `compactFields` and read them
+  with `parse(value, exactCount)`; bump `CompactTicketCodec.VERSION` when a layout changes, and say in the release notes
+  that tickets issued before the upgrade are unreadable.
+- Authentication in ST, PT, PGT and OAuth tickets is `CompactTicketAuthentication` (core-tickets-api): principal id,
+  authentication date, handlers, credential types, remember-me. Attributes are not kept (documented caveat).
+- `expand` builds ticket objects directly (`ServiceTicketImpl`, `OAuth20DefaultCode`, ...). Do not go back to the ticket
+  factories there: they generate (and may encrypt) an id and look up the registered service for an expiration policy
+  that expansion overwrites anyway.
+- The TGT compact form is the TGT JSON of a copy with a constant id and no `services`, `proxyGrantingTickets` or
+  `descendantTickets`; updates of those never reach the TGC anyway, and single logout is documented as unsupported.
+- No local decode cache: expanded tickets are mutable per request, the crypto and inflate cost is small next to the JSON
+  parse, and a cache is server-side state.
 - There is no delete: `deleteSingleTicket` is the base no-op, so `deleteTicket(...)` returns 0 and nothing is ever
   consumed. Code that treats `delete > 0` as the single-use decision fails closed here; code that uses a deterministic
   TST id as a replay marker (`TransientSessionTicketFactory.normalizeTicketId`: DPoP, client assertions, Heimdall)
   never finds it and fails open. Callers must use the ticket `addTicket` returns: the stored id is re-encoded.
-- `TransientSessionTicketCompactor.expand` creates a new TST (new random id) and stringifies properties, so only flat
-  string properties survive; object-valued TSTs (Duo `TICKET_REGISTRY` state, VC transactions) do not.
+- `TransientSessionTicketCompactor` stringifies properties, so only flat string properties survive; object-valued TSTs
+  (Duo `TICKET_REGISTRY` state, VC transactions) do not.
 - Maintainer decision: the stateless registry stays 100% stateless, in the spirit of the Shibboleth IdP client-side
   storage. Never propose a server-side replay, nonce or single-use store as the fix for anything here; fixes must be
   expressible in the ticket or client storage itself (encoding, binding, lifetimes, key versioning).
-- Changing a compact layout invalidates in-flight stateless tickets of that type issued before the upgrade; say so in
-  the release notes. `StatelessTicketRegistryTests.verifyServiceTicketFieldsCannotBeInjectedThroughService` and
-  `verifyServiceTicketForDistinguishedNamePrincipal` guard the encoding.
+- `CompactTicketCodecTests`, `StatelessTicketRegistryTests.verifyServiceTicketFieldsCannotBeInjectedThroughService`,
+  `verifyServiceTicketForDistinguishedNamePrincipal` and `verifyExpandedTicketsCarryTheirStatelessIds` guard the format.
 - The stateless TGT is carried by the TGC exactly as with any other registry: `SendTicketGrantingTicketAction` sets the
   TGC with the (compacted, encrypted) TGT id, and the TGC value manager signs and encrypts it as usual. Maintainer rule:
   use the existing TGC behavior unchanged; no parallel cookies, bindings, digests or browser-storage copies of the TGT,
   and no stateless-only webflow wiring for the SSO session. Browser storage remains for Duo and the SAML IdP only.
-- `getTicket(id).getId()` must equal `id` for a ticket-granting ticket, as with every other registry: callers such as
-  `InitialFlowSetupAction` put `ticket.getId()` into scope and look it up again. The stateless registry sets the expanded
-  TGT's id to the stateless id; `TicketGrantingTicketCompactor.compact` swaps in a short stand-in id while serializing an
-  expanded TGT so updates do not nest the previous id. Other ticket types keep their expanded ids (device user codes, for
-  instance, carry meaning).
+- `getTicket(id).getId()` must equal `id`, as with every other registry: callers such as `InitialFlowSetupAction` put
+  `ticket.getId()` into scope and look it up again. The stateless registry sets every expanded ticket's id to the id it was
+  looked up by, unless the compactor's `isTicketIdRetained()` is true (device user codes, whose id is the user code). No
+  compact layout may contain the ticket's own id, or updates nest the previous id.
 - Expanded TGTs keep their original expiration policy with `lastTimeUsed` frozen at creation, so an idle timeout acts
-  as a cap from login time. A sliding idle timeout was built and rejected by the maintainer; do not reintroduce it.
+  as a cap from login time. Maintainer: no idle timeout and no single use, by design; a sliding idle timeout was built and
+  rejected, do not reintroduce it. Non-happy paths are reviewed last.
 - Scenarios `stateless-ticket-registry`, `stateless-ticket-registry-saml2-idp`, `oauth2-login-stateless`,
   `oidc-login-stateless`, `mfa-duo-universal-login-stateless`, `ticket-validation-casv3-pgt-stateless` cover happy
   paths only; none covers VC/VP, DPoP, private_key_jwt, replay or delimiter input.

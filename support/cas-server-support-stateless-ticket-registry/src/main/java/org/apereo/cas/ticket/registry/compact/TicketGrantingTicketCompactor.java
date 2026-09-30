@@ -1,38 +1,31 @@
 package org.apereo.cas.ticket.registry.compact;
 
 import module java.base;
-import org.apereo.cas.ticket.AbstractTicket;
 import org.apereo.cas.ticket.Ticket;
 import org.apereo.cas.ticket.TicketGrantingTicket;
-import org.apereo.cas.ticket.UniqueTicketIdGenerator;
+import org.apereo.cas.ticket.TicketGrantingTicketImpl;
 import org.apereo.cas.ticket.registry.TicketCompactor;
 import org.apereo.cas.ticket.serialization.TicketSerializationManager;
-import org.apereo.cas.util.DigestUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.val;
 
 /**
  * This is {@link TicketGrantingTicketCompactor}.
+ * The ticket is kept as the serialized form of a copy that carries no id, since the id is the compact ticket itself,
+ * and none of the maps that track granted tickets, since the stateless registry does not track single sign-on sessions.
  *
  * @author Misagh Moayyed
  * @since 7.0.0
  */
 @RequiredArgsConstructor
 public class TicketGrantingTicketCompactor implements TicketCompactor<TicketGrantingTicket> {
+    private static final int TICKET_INDEX = 2;
+
     private final TicketSerializationManager ticketSerializationManager;
 
     @Override
-    public String compact(final Ticket ticket) {
-        if (ticket.isStateless() && ticket instanceof final AbstractTicket expandedTicket) {
-            val encodedId = expandedTicket.getId();
-            expandedTicket.setId(ticket.getPrefix() + UniqueTicketIdGenerator.SEPARATOR + DigestUtils.sha256(encodedId));
-            try {
-                return ticketSerializationManager.serializeTicket(ticket);
-            } finally {
-                expandedTicket.setId(encodedId);
-            }
-        }
-        return ticketSerializationManager.serializeTicket(ticket);
+    public void compactFields(final List<String> fields, final Ticket ticket) {
+        fields.add(ticketSerializationManager.serializeTicket(toSessionTicket(ticket)));
     }
 
     @Override
@@ -41,7 +34,24 @@ public class TicketGrantingTicketCompactor implements TicketCompactor<TicketGran
     }
 
     @Override
-    public Ticket expand(final String ticketId) {
-        return ticketSerializationManager.deserializeTicket(ticketId, getTicketType());
+    public Ticket expand(final String compactTicket) {
+        val structure = parse(compactTicket, TICKET_INDEX + 1);
+        return ticketSerializationManager.deserializeTicket(structure.get(TICKET_INDEX), getTicketType());
+    }
+
+    private static Ticket toSessionTicket(final Ticket ticket) {
+        if (ticket.getClass() != TicketGrantingTicketImpl.class) {
+            return ticket;
+        }
+        val source = (TicketGrantingTicketImpl) ticket;
+        val sessionTicket = new TicketGrantingTicketImpl(TicketGrantingTicket.PREFIX,
+            source.getAuthentication(), source.getExpirationPolicy());
+        sessionTicket.setCreationTime(source.getCreationTime());
+        sessionTicket.setLastTimeUsed(source.getLastTimeUsed());
+        sessionTicket.setPreviousTimeUsed(source.getPreviousTimeUsed());
+        sessionTicket.setCountOfUses(source.getCountOfUses());
+        sessionTicket.setTenantId(source.getTenantId());
+        sessionTicket.setProperties(new HashMap<>(source.getProperties()));
+        return sessionTicket;
     }
 }

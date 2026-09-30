@@ -1824,10 +1824,8 @@ class CasOAuth20Configuration {
                 @Qualifier(PrincipalFactory.BEAN_NAME)
                 final PrincipalFactory principalFactory,
                 @Qualifier(WebApplicationService.BEAN_NAME_FACTORY)
-                final ServiceFactory serviceFactory,
-                @Qualifier(TicketFactory.BEAN_NAME)
-                final ObjectProvider<TicketFactory> ticketFactory) {
-                return new OAuth20CodeCompactor(ticketFactory, serviceFactory, principalFactory);
+                final ServiceFactory serviceFactory) {
+                return new OAuth20CodeCompactor(serviceFactory, principalFactory);
             }
 
             @Bean
@@ -1837,10 +1835,8 @@ class CasOAuth20Configuration {
                 @Qualifier(PrincipalFactory.BEAN_NAME)
                 final PrincipalFactory principalFactory,
                 @Qualifier(WebApplicationService.BEAN_NAME_FACTORY)
-                final ServiceFactory serviceFactory,
-                @Qualifier(TicketFactory.BEAN_NAME)
-                final ObjectProvider<TicketFactory> ticketFactory) {
-                return new OAuth20AccessTokenCompactor(ticketFactory, serviceFactory, principalFactory);
+                final ServiceFactory serviceFactory) {
+                return new OAuth20AccessTokenCompactor(serviceFactory, principalFactory);
             }
 
             @Bean
@@ -1850,10 +1846,8 @@ class CasOAuth20Configuration {
                 @Qualifier(PrincipalFactory.BEAN_NAME)
                 final PrincipalFactory principalFactory,
                 @Qualifier(WebApplicationService.BEAN_NAME_FACTORY)
-                final ServiceFactory serviceFactory,
-                @Qualifier(TicketFactory.BEAN_NAME)
-                final ObjectProvider<TicketFactory> ticketFactory) {
-                return new OAuth20RefreshTokenCompactor(ticketFactory, serviceFactory, principalFactory);
+                final ServiceFactory serviceFactory) {
+                return new OAuth20RefreshTokenCompactor(serviceFactory, principalFactory);
             }
 
             @Bean
@@ -1861,10 +1855,8 @@ class CasOAuth20Configuration {
             @ConditionalOnMissingBean(name = "oauth20DeviceTokenTicketCompactor")
             public TicketCompactor<OAuth20DeviceToken> oauth20DeviceTokenTicketCompactor(
                 @Qualifier(WebApplicationService.BEAN_NAME_FACTORY)
-                final ServiceFactory serviceFactory,
-                @Qualifier(TicketFactory.BEAN_NAME)
-                final ObjectProvider<TicketFactory> ticketFactory) {
-                return new OAuth20DeviceTokenCompactor(ticketFactory, serviceFactory);
+                final ServiceFactory serviceFactory) {
+                return new OAuth20DeviceTokenCompactor(serviceFactory);
             }
 
             @Bean
@@ -1872,10 +1864,8 @@ class CasOAuth20Configuration {
             @ConditionalOnMissingBean(name = "oauth20DeviceUserCodeTicketCompactor")
             public TicketCompactor<OAuth20DeviceUserCode> oauth20DeviceUserCodeTicketCompactor(
                 @Qualifier(WebApplicationService.BEAN_NAME_FACTORY)
-                final ServiceFactory serviceFactory,
-                @Qualifier(TicketFactory.BEAN_NAME)
-                final ObjectProvider<TicketFactory> ticketFactory) {
-                return new OAuth20DeviceUserCodeCompactor(ticketFactory, serviceFactory);
+                final ServiceFactory serviceFactory) {
+                return new OAuth20DeviceUserCodeCompactor(serviceFactory);
             }
         }
     }

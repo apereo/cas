@@ -471,7 +471,7 @@ public abstract class BaseTicketRegistryTests {
             : ticketRegistry.getTicket(tgt.getId(), TicketGrantingTicket.class);
         assertInstanceOf(TicketGrantingTicket.class, tgtResult);
         services = tgtResult.getServices();
-        assertEquals(Set.of(serviceTicketId), services.keySet());
+        assertEquals(updatedTgt.isStateless() ? Set.of() : Set.of(serviceTicketId), services.keySet());
     }
 
     @RepeatedTest(2)

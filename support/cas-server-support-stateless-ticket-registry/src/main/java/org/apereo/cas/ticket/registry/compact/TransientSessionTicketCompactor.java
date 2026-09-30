@@ -3,51 +3,41 @@ package org.apereo.cas.ticket.registry.compact;
 import module java.base;
 import org.apereo.cas.authentication.principal.ServiceFactory;
 import org.apereo.cas.ticket.Ticket;
-import org.apereo.cas.ticket.TicketFactory;
 import org.apereo.cas.ticket.TransientSessionTicket;
-import org.apereo.cas.ticket.TransientSessionTicketFactory;
+import org.apereo.cas.ticket.TransientSessionTicketImpl;
 import org.apereo.cas.ticket.expiration.FixedInstantExpirationPolicy;
+import org.apereo.cas.ticket.registry.CompactTicketCodec;
 import org.apereo.cas.ticket.registry.TicketCompactor;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.DateTimeUtils;
-import com.google.common.base.Splitter;
 import lombok.RequiredArgsConstructor;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.beans.factory.ObjectProvider;
 
 /**
  * This is {@link TransientSessionTicketCompactor}.
+ * Properties are kept as strings; a single value is restored as a string, several values as a list.
  *
  * @author Misagh Moayyed
  * @since 7.0.0
  */
 @RequiredArgsConstructor
 public class TransientSessionTicketCompactor implements TicketCompactor<TransientSessionTicket> {
-    private final ObjectProvider<TicketFactory> ticketFactory;
+    private static final int PROPERTIES_INDEX = 3;
+
     private final ServiceFactory serviceFactory;
 
     @Override
-    public String compact(final StringBuilder builder, final Ticket ticket) throws Exception {
+    public void compactFields(final List<String> fields, final Ticket ticket) throws Exception {
         val transientTicket = (TransientSessionTicket) ticket;
-        builder.append(DELIMITER).append(transientTicket.getService() != null
-            ? TicketCompactor.encodeValue(transientTicket.getService().getShortenedId()) : StringUtils.EMPTY);
-        
-        val properties = transientTicket.getProperties()
-            .entrySet()
-            .stream()
-            .map(entry -> {
-                val values = CollectionUtils.toCollection(entry.getValue())
-                    .stream()
-                    .map(Object::toString)
-                    .map(TicketCompactor::encodeValue)
-                    .collect(Collectors.joining(";"));
-                return TicketCompactor.encodeValue(entry.getKey()) + '=' + values;
-            })
-            .reduce((s1, s2) -> s1 + '|' + s2)
-            .orElse(StringUtils.EMPTY);
-        builder.append(DELIMITER).append(properties);
-        return builder.toString();
+        val service = transientTicket.getService();
+        fields.add(service != null ? StringUtils.defaultString(service.getShortenedId()) : StringUtils.EMPTY);
+        val properties = new ArrayList<String>();
+        transientTicket.getProperties().forEach((key, value) -> {
+            properties.add(key);
+            properties.add(CompactTicketCodec.encodeValues(CollectionUtils.toCollection(value)));
+        });
+        fields.add(CompactTicketCodec.encodeValues(properties));
     }
 
     @Override
@@ -56,24 +46,27 @@ public class TransientSessionTicketCompactor implements TicketCompactor<Transien
     }
 
     @Override
-    public Ticket expand(final String ticketId) throws Throwable {
-        val structure = parse(ticketId, 4);
-        val transientSessionTicketFactory = (TransientSessionTicketFactory) ticketFactory.getObject().get(getTicketType());
-        val url = TicketCompactor.decodeValue(structure.ticketElements().get(CompactTicketIndexes.SERVICE.getIndex()));
+    @SuppressWarnings("NullAway")
+    public Ticket expand(final String compactTicket) throws Throwable {
+        val structure = parse(compactTicket, PROPERTIES_INDEX + 1);
+        val url = structure.get(CompactTicketIndexes.SERVICE);
         val service = StringUtils.isNotBlank(url) ? serviceFactory.createService(url) : null;
-        val properties = new HashMap<>();
-        val compressProperties = structure.ticketElements().get(3);
-        val keyValueProps = Splitter.on("|").omitEmptyStrings().splitToList(compressProperties);
-        for (val keyValue : keyValueProps) {
-            val key = TicketCompactor.decodeValue(StringUtils.substringBefore(keyValue, "="));
-            val values = Splitter.on(";").splitToList(StringUtils.substringAfter(keyValue, "="))
-                .stream().map(TicketCompactor::decodeValue).toList();
+        val properties = new HashMap<String, Serializable>();
+        val entries = CompactTicketCodec.decodeValues(structure.get(PROPERTIES_INDEX));
+        if (entries.size() % 2 != 0) {
+            throw new IllegalArgumentException("Invalid transient ticket properties");
+        }
+        for (var index = 0; index < entries.size(); index += 2) {
+            val values = CompactTicketCodec.decodeValues(entries.get(index + 1));
             if (!values.isEmpty()) {
-                properties.put(key, values.size() == 1 ? values.getFirst() : values);
+                properties.put(entries.get(index), values.size() == 1 ? values.getFirst() : new ArrayList<>(values));
             }
         }
-        val transientTicket = transientSessionTicketFactory.create(service, properties);
-        transientTicket.setExpirationPolicy(new FixedInstantExpirationPolicy(structure.expirationTime()));
+        val transientTicket = new TransientSessionTicketImpl(TransientSessionTicket.PREFIX,
+            new FixedInstantExpirationPolicy(structure.expirationTime()), service, properties);
+        if (service != null) {
+            transientTicket.setTenantId(service.getTenant());
+        }
         transientTicket.setCreationTime(DateTimeUtils.zonedDateTimeOf(structure.creationTime()));
         return transientTicket;
     }

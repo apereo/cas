@@ -185,9 +185,19 @@ ticket-granting cookie, like with any other ticket registry, instead of being ke
 therefore follows the ticket-granting cookie settings, and login pages no longer render a browser storage page before the login form.
 The `cas.ticket.registry.stateless.storage-type` setting no longer applies and is removed.
 
-Field values inside stateless tickets (such as the service, principal, scopes or PKCE challenge) are now encoded, so values that
-contain separator characters, like distinguished names, round-trip correctly. Service tickets, OAuth tokens (including refresh tokens) and
-transient tickets issued before the upgrade can no longer be read; ticket-granting tickets are not affected.
+Stateless tickets now use a versioned format in which every field is length-prefixed, so values that contain separator characters,
+like distinguished names, round-trip correctly. Other changes:
+
+- Tickets are compressed only when that makes them smaller.
+- Each ticket is bound to the ticket type it was issued as, so changing its prefix (for example, presenting an access token
+  as a refresh token, or a proxy ticket as a proxy-granting ticket) no longer yields a valid ticket.
+- OAuth response and grant types are stored by name, so reordering them in a later release does not change existing tokens.
+- Expanding a ticket no longer goes through the ticket factories, which skips id generation and service registry lookups.
+- An expanded ticket keeps the id it was looked up by, and its authentication keeps the original authentication date.
+- The ticket-granting ticket no longer carries its own id or the tickets it has granted, which the stateless registry does not track.
+
+Stateless tickets issued before the upgrade can no longer be read, so users sign in again and OAuth clients need new tokens.
+Custom `TicketCompactor` implementations must move to `compactFields` and `parse(ticket, count)`.
 
 ## Other Stuff
 
