@@ -200,6 +200,11 @@ created and managed; by default both point to the account profile when account m
 - A wallet that declines a [verifiable presentation](../authentication/OIDC-Authentication-Verifiable-Credentials.html#verifiable-presentations)
   request can now say so: its error response is accepted, answered as OpenID4VP requires, and reported to the relying party
   as an `error` outcome. Previously it was rejected and the relying party kept seeing `pending` until the request expired.
+- Issuer metadata describes each credential format as OpenID4VCI 1.0 requires: `jwt_vc_json` and `jwt_vc_json-ld` configurations
+  publish `credential_definition` instead of `vct`. JSON-LD credentials no longer reference a context document CAS never served,
+  and a configuration without a scope no longer issues a `null` credential type.
+- CAS publishes JWT VC Issuer Metadata at `/.well-known/jwt-vc-issuer`, so verifiers other than CAS can find the keys that sign
+  the credentials it issues. Deployments under a context path should add `jwt-vc-issuer` to the well-known rewrite rule.
 - Attribute values with a leading zero, such as postal codes, are issued as text. Previously they were read as octal numbers,
   so `0123` was issued as `83` and `08` failed issuance.
 

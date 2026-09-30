@@ -14,6 +14,7 @@ import org.apereo.cas.support.oauth.util.OAuth20Utils;
 import org.apereo.cas.util.jwt.JsonWebTokenSigner;
 import lombok.RequiredArgsConstructor;
 import lombok.val;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.jooq.lambda.fi.util.function.CheckedConsumer;
 import org.jose4j.jwk.EllipticCurveJsonWebKey;
@@ -30,7 +31,27 @@ import org.jose4j.jwt.NumericDate;
  */
 @RequiredArgsConstructor
 public abstract class BaseOidcVerifiableCredentialEncoder implements OidcVerifiableCredentialEncoder {
+    /**
+     * Base context of the W3C Verifiable Credentials Data Model 2.0. It defines an {@code @vocab}, so the terms of
+     * a credential that uses no further context remain processable as JSON-LD.
+     */
+    public static final String VCDM_V2_CONTEXT = "https://www.w3.org/ns/credentials/v2";
+
     protected final OidcConfigurationContext configurationContext;
+    /**
+     * Types of a W3C verifiable credential issued for a credential configuration: {@code VerifiableCredential} and
+     * the configuration's scope, or its id when it has no scope. The issuer metadata publishes the same list as
+     * {@code credential_definition.type}, which is how a wallet matches the credential to its configuration.
+     *
+     * @param configurationId the credential configuration id
+     * @param configuration   the credential configuration
+     * @return the credential types
+     */
+    public static List<String> resolveCredentialTypes(final String configurationId,
+                                                      final OidcVerifiableCredentialConfigurationProperties configuration) {
+        return List.of("VerifiableCredential", StringUtils.defaultIfBlank(configuration.getScope(), configurationId));
+    }
+
 
     /**
      * Length of time an issued credential remains valid, per credential configuration.

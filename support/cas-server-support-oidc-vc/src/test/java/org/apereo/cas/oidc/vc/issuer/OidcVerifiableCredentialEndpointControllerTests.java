@@ -25,9 +25,11 @@ import com.nimbusds.jose.JWSHeader;
 import com.nimbusds.jose.JWSSigner;
 import com.nimbusds.jose.crypto.ECDSASigner;
 import com.nimbusds.jose.crypto.RSASSASigner;
+import com.nimbusds.jose.crypto.RSASSAVerifier;
 import com.nimbusds.jose.jwk.Curve;
 import com.nimbusds.jose.jwk.ECKey;
 import com.nimbusds.jose.jwk.JWK;
+import com.nimbusds.jose.jwk.JWKSet;
 import com.nimbusds.jose.jwk.OctetKeyPair;
 import com.nimbusds.jose.jwk.RSAKey;
 import com.nimbusds.jose.jwk.gen.ECKeyGenerator;
@@ -289,6 +291,28 @@ class OidcVerifiableCredentialEndpointControllerTests {
             assertEquals("02134", claims.getClaim("postal_code"));
             assertEquals("08", claims.getClaim("badge"));
             assertEquals(95.5, assertInstanceOf(Number.class, claims.getClaim("score")).doubleValue());
+        }
+
+        @Test
+        void verifyW3cCredentialsMatchTheirPublishedDefinition() throws Throwable {
+            val metadata = oidcCredentialIssuerMetadataService.build().getCredentialConfigurationsSupported();
+
+            val jsonLdDefinition = metadata.get("jsonld").getCredentialDefinition();
+            val jsonLd = issueCredentialClaims("jsonld");
+            assertEquals(List.of("https://www.w3.org/ns/credentials/v2"), jsonLd.getStringListClaim("@context"));
+            assertEquals(jsonLdDefinition.getContext(), jsonLd.getStringListClaim("@context"));
+            assertEquals(List.of("VerifiableCredential", "EmployeeCredential"), jsonLd.getStringListClaim("type"));
+            assertEquals(jsonLdDefinition.getType(), jsonLd.getStringListClaim("type"));
+            assertNull(metadata.get("jsonld").getVct());
+
+            val employeeDefinition = metadata.get("employee").getCredentialDefinition();
+            val employee = issueCredentialClaims("employee");
+            assertEquals(employeeDefinition.getType(), assertInstanceOf(Map.class, employee.getClaim("vc")).get("type"));
+            assertNull(employeeDefinition.getContext());
+            assertNull(metadata.get("employee").getVct());
+
+            assertNull(metadata.get("myorg").getCredentialDefinition());
+            assertNotNull(metadata.get("myorg").getVct());
         }
 
         @Test
@@ -564,6 +588,25 @@ class OidcVerifiableCredentialEndpointControllerTests {
     @TestPropertySource(properties =
         "cas.authn.oidc.vc.issuer.credential-configurations.myorg.credential-signing-alg-values-supported=RS256,PS256")
     class CredentialSigningTests extends BaseTests {
+
+        @Test
+        void verifyThirdPartyCanVerifyTheCredentialThroughJwtVcIssuerMetadata() throws Throwable {
+            val credential = issueCredentialJwt(service -> service.setDescription("Third-party verification"));
+            val issuerMetadata = MAPPER.readValue(mockMvc.perform(
+                    get("/cas/" + OidcConstants.BASE_OIDC_URL + '/' + OidcConstants.WELL_KNOWN_JWT_VC_ISSUER_URL)
+                        .with(withHttpRequestProcessor()))
+                .andExpect(status().isOk())
+                .andReturn().getResponse().getContentAsString(), Map.class);
+            assertEquals(credential.getJWTClaimsSet().getIssuer(), issuerMetadata.get("issuer"));
+            assertEquals(CREDENTIAL_ISSUER + '/' + OidcConstants.JWKS_URL, issuerMetadata.get("jwks_uri"));
+
+            val keys = JWKSet.parse(mockMvc.perform(get("/cas/" + OidcConstants.BASE_OIDC_URL + '/' + OidcConstants.JWKS_URL)
+                    .with(withHttpRequestProcessor()))
+                .andExpect(status().isOk())
+                .andReturn().getResponse().getContentAsString());
+            val signingKey = assertInstanceOf(RSAKey.class, keys.getKeyByKeyId(credential.getHeader().getKeyID()));
+            assertTrue(credential.verify(new RSASSAVerifier(signingKey)));
+        }
 
         @Test
         void verifyCredentialIsSignedEvenWhenTheClientDisablesIdTokenSigning() throws Throwable {

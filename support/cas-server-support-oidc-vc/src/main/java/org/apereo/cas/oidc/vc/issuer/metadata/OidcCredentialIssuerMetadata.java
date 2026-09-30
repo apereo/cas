@@ -64,6 +64,23 @@ public class OidcCredentialIssuerMetadata implements Serializable {
     @JsonInclude(JsonInclude.Include.NON_EMPTY)
     @Getter
     @Setter
+    @NoArgsConstructor
+    @SuperBuilder
+    @Jacksonized
+    public static class CredentialDefinition implements Serializable {
+        @Serial
+        private static final long serialVersionUID = 3316840958171736511L;
+
+        @JsonProperty("@context")
+        private List<String> context;
+
+        @JsonProperty("type")
+        private List<String> type;
+    }
+
+    @JsonInclude(JsonInclude.Include.NON_EMPTY)
+    @Getter
+    @Setter
     public static class CredentialConfiguration implements Serializable {
         @Serial
         private static final long serialVersionUID = 7169398914160552045L;
@@ -76,6 +93,9 @@ public class OidcCredentialIssuerMetadata implements Serializable {
 
         @JsonProperty("vct")
         private String vct;
+
+        @JsonProperty("credential_definition")
+        private CredentialDefinition credentialDefinition;
 
         @JsonProperty("cryptographic_binding_methods_supported")
         private List<String> cryptographicBindingMethodsSupported = Stream.of("jwk").toList();

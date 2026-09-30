@@ -73,6 +73,18 @@ GET https://sso.example.org/.well-known/openid-credential-issuer/cas/oidc
 GET https://sso.example.org/.well-known/oauth-authorization-server/cas/oidc
 ```
 
+Verifiers other than CAS locate the keys that sign issued credentials the same way, through the
+[JWT VC Issuer Metadata](https://datatracker.ietf.org/doc/draft-ietf-oauth-sd-jwt-vc/) at
+`https://sso.example.org/.well-known/jwt-vc-issuer/cas/oidc`, which names the issuer and points to the
+OpenID Connect JWKS:
+
+```json
+{
+  "issuer": "https://sso.example.org/cas/oidc",
+  "jwks_uri": "https://sso.example.org/cas/oidc/jwks"
+}
+```
+
 CAS is normally deployed under the `/cas` context path, so neither request reaches the
 application at all and the servlet container answers with its own `404`. Route them onto the
 paths CAS serves, either in the proxy that fronts CAS or with the
@@ -82,7 +94,7 @@ The valve must be registered on the engine, which runs before a context is selec
 The rewrite rule would be similar to:
 
 ```
-RewriteRule ^/\.well-known/(openid-credential-issuer|oauth-authorization-server|openid-configuration)(/.+)$ $2/.well-known/$1 [L]
+RewriteRule ^/\.well-known/(openid-credential-issuer|oauth-authorization-server|openid-configuration|jwt-vc-issuer)(/.+)$ $2/.well-known/$1 [L]
 ```
 
 Naming the documents explicitly, rather than matching every well-known path, leaves unrelated
@@ -392,6 +404,35 @@ code, the nonce or the access token used to obtain it.
 
 Claim values come from principal attributes. A value that reads as a number, such as `95.5`, is issued as a
 number; one whose number would not read back the same way, such as `02134`, is issued as text exactly as released.
+
+## Credential Formats
+
+Each credential configuration is described in the issuer metadata the way its format requires. A
+`dc+sd-jwt` configuration publishes its `vct`. A `jwt_vc_json` configuration publishes a
+`credential_definition` with the credential `type`, and a `jwt_vc_json-ld` configuration adds its
+`@context`. The type is `VerifiableCredential` plus the configuration's `scope`, or its id when no scope
+is set, and the context is the W3C Verifiable Credentials Data Model 2.0 base context alone, whose
+vocabulary covers the credential's claims. Issued credentials carry exactly what the metadata publishes:
+
+```json
+{
+  "credential_configurations_supported": {
+    "employee": {
+      "format": "jwt_vc_json-ld",
+      "scope": "EmployeeCredential",
+      "credential_definition": {
+        "@context": [
+          "https://www.w3.org/ns/credentials/v2"
+        ],
+        "type": [
+          "VerifiableCredential",
+          "EmployeeCredential"
+        ]
+      }
+    }
+  }
+}
+```
 
 ## Credential Signing
 

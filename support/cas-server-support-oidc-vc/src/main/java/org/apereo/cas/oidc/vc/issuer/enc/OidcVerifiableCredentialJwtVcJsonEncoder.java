@@ -44,7 +44,7 @@ public class OidcVerifiableCredentialJwtVcJsonEncoder extends BaseOidcVerifiable
             credentialSubject.putAll(verifiableClaims);
             val vc = new LinkedHashMap<String, Object>();
             vc.put("@context", List.of("https://www.w3.org/2018/credentials/v1"));
-            vc.put("type", List.of("VerifiableCredential", configuration.getScope()));
+            vc.put("type", resolveCredentialTypes(configurationId, configuration));
             vc.put("credentialSubject", credentialSubject);
             jwtClaims.setClaim("vc", vc);
 

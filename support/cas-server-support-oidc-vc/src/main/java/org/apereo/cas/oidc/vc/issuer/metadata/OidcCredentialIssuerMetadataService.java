@@ -4,6 +4,7 @@ import module java.base;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.support.oidc.OidcVerifiableCredentialConfigurationProperties;
 import org.apereo.cas.oidc.OidcConstants;
+import org.apereo.cas.oidc.vc.issuer.enc.BaseOidcVerifiableCredentialEncoder;
 import org.apereo.cas.oidc.vc.issuer.metadata.CredentialConfigurationDisplay.CredentialConfigurationDisplayLogo;
 import org.apereo.cas.oidc.vc.issuer.metadata.OidcCredentialConfigurationTypeMetadata.ClaimMetadata;
 import org.apereo.cas.oidc.vc.issuer.metadata.OidcCredentialIssuerMetadata.ClaimMetadata.ClaimDisplay;
@@ -48,7 +49,17 @@ public class OidcCredentialIssuerMetadataService {
             val cfg = new OidcCredentialIssuerMetadata.CredentialConfiguration();
             cfg.setFormat(value.getFormat().getValue());
             cfg.setScope(value.getScope());
-            cfg.setVct(issuer + '/' + OidcConstants.VC_CREDENTIAL_TYPE_URL + '/' + key);
+            if (value.getFormat() == OidcVerifiableCredentialConfigurationProperties.CredentialConfigurationFormats.DC_SD_JWT) {
+                cfg.setVct(issuer + '/' + OidcConstants.VC_CREDENTIAL_TYPE_URL + '/' + key);
+            } else {
+                cfg.setCredentialDefinition(OidcCredentialIssuerMetadata.CredentialDefinition
+                    .builder()
+                    .context(value.getFormat() == OidcVerifiableCredentialConfigurationProperties.CredentialConfigurationFormats.JWT_VC_JSON_LD
+                        ? List.of(BaseOidcVerifiableCredentialEncoder.VCDM_V2_CONTEXT)
+                        : null)
+                    .type(BaseOidcVerifiableCredentialEncoder.resolveCredentialTypes(key, value))
+                    .build());
+            }
             cfg.setCryptographicBindingMethodsSupported(value.getCryptographicBindingMethodsSupported());
             cfg.setCredentialSigningAlgValuesSupported(value.getCredentialSigningAlgValuesSupported());
 

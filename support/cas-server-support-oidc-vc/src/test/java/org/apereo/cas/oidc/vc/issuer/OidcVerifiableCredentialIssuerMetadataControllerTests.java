@@ -26,7 +26,10 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
     "cas.authn.oidc.vc.issuer.credential-configurations.myorg.claims.given_name.mandatory=true",
     "cas.authn.oidc.vc.issuer.credential-configurations.myorg.claims.family_name.mandatory=true",
     "cas.authn.oidc.vc.issuer.credential-configurations.myorg.claims.email.mandatory=false",
-    "cas.authn.oidc.vc.issuer.credential-configurations.myorg.claims.student_id.mandatory=true"
+    "cas.authn.oidc.vc.issuer.credential-configurations.myorg.claims.student_id.mandatory=true",
+    "cas.authn.oidc.vc.issuer.credential-configurations.employee.format=JWT_VC_JSON",
+    "cas.authn.oidc.vc.issuer.credential-configurations.employee.scope=EmployeeCredential",
+    "cas.authn.oidc.vc.issuer.credential-configurations.badge.format=JWT_VC_JSON_LD"
 })
 class OidcVerifiableCredentialIssuerMetadataControllerTests extends AbstractOidcTests {
 
@@ -45,6 +48,32 @@ class OidcVerifiableCredentialIssuerMetadataControllerTests extends AbstractOidc
             .andExpect(jsonPath("$.credential_configurations_supported").exists())
             .andExpect(jsonPath("$.batch_credential_issuance.batch_size").isNumber())
             .andExpect(jsonPath("$.batch_credential_endpoint").doesNotExist());
+    }
+
+    @Test
+    void verifyMetadataDescribesEachFormatItsOwnWay() throws Throwable {
+        mockMvc.perform(get(METADATA_ENDPOINT_URL)
+                .with(withHttpRequestProcessor()))
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$.credential_configurations_supported.myorg.vct").exists())
+            .andExpect(jsonPath("$.credential_configurations_supported.myorg.credential_definition").doesNotExist())
+            .andExpect(jsonPath("$.credential_configurations_supported.employee.vct").doesNotExist())
+            .andExpect(jsonPath("$.credential_configurations_supported.employee.credential_definition.type[0]").value("VerifiableCredential"))
+            .andExpect(jsonPath("$.credential_configurations_supported.employee.credential_definition.type[1]").value("EmployeeCredential"))
+            .andExpect(jsonPath("$.credential_configurations_supported.employee.credential_definition['@context']").doesNotExist())
+            .andExpect(jsonPath("$.credential_configurations_supported.badge.vct").doesNotExist())
+            .andExpect(jsonPath("$.credential_configurations_supported.badge.credential_definition['@context'][0]")
+                .value("https://www.w3.org/ns/credentials/v2"))
+            .andExpect(jsonPath("$.credential_configurations_supported.badge.credential_definition.type[1]").value("badge"));
+    }
+
+    @Test
+    void verifyJwtVcIssuerMetadata() throws Throwable {
+        mockMvc.perform(get("/cas/" + OidcConstants.BASE_OIDC_URL + '/' + OidcConstants.WELL_KNOWN_JWT_VC_ISSUER_URL)
+                .with(withHttpRequestProcessor()))
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$.issuer").value(casProperties.getAuthn().getOidc().getCore().getIssuer()))
+            .andExpect(jsonPath("$.jwks_uri").value(casProperties.getAuthn().getOidc().getCore().getIssuer() + '/' + OidcConstants.JWKS_URL));
     }
 
     @Test

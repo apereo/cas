@@ -46,13 +46,10 @@ public class OidcVerifiableCredentialJwtVcJsonLdEncoder extends BaseOidcVerifiab
             credentialSubject.put("id", principal.getId());
             credentialSubject.putAll(verifiableClaims);
 
-            jwtClaims.setStringListClaim("@context", List.of(
-                "https://www.w3.org/ns/credentials/v2",
-                issuer + "/contexts/" + configuration.getScope() + "-v1.jsonld"
-            ));
+            jwtClaims.setStringListClaim("@context", List.of(VCDM_V2_CONTEXT));
 
             jwtClaims.setStringClaim("id", "urn:uuid:" + jwtClaims.getJwtId());
-            jwtClaims.setStringListClaim("type", List.of("VerifiableCredential", configuration.getScope()));
+            jwtClaims.setStringListClaim("type", resolveCredentialTypes(configurationId, configuration));
             jwtClaims.setClaim("credentialSubject", credentialSubject);
             jwtClaims.setStringClaim("issuer", issuer);
             jwtClaims.setStringClaim("validFrom", validFrom.toString());
