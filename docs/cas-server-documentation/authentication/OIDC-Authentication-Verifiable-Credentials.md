@@ -277,6 +277,13 @@ also include the `openid` scope if the wallet wishes to authenticate the end-use
 as part of the token response. The wallet exchanges the authorization code at the token endpoint to obtain 
 an access token that is specifically authorized for credential issuance. 
 
+Instead of authorization details, the wallet may request a credential by the `scope` its credential configuration
+publishes in the issuer metadata, for example `scope=openid UniversityDegree`. Every granted scope that belongs to a
+credential configuration authorizes that configuration, narrowed by the service's verifiable credentials policy.
+These scopes are accepted and advertised in `scopes_supported` without being listed among the discovery scopes.
+The token response then carries no credential identifiers, so the credential request names the configuration with
+`credential_configuration_id`. A wallet may use both mechanisms in one authorization request.
+
 ## Pre-Authorized Code Flow
 
 In pre-authorized code flows, CAS or a trusted backend prepares the issuance transaction
@@ -312,8 +319,19 @@ GET /oidc/oidcVcPresentationResult?requestId=...
 
 This endpoint requires the same client authentication as the request creation endpoint. It answers
 `{"status": "pending"}` while the wallet has not responded, and once it has, `{"status": "verified"}`
-together with the claims that were disclosed, keyed by credential query id. The outcome is delivered
-once and then removed, so a second poll reports `404`, as does a request that expired unanswered.
+together with the claims that were disclosed, keyed by credential query id. A wallet that declines or
+cannot answer posts an error response instead, which is recorded as the outcome:
+
+```json
+{
+  "status": "error",
+  "error": "access_denied",
+  "error_description": "The user declined"
+}
+```
+
+The outcome is delivered once and then removed, so a second poll reports `404`, as does a request that
+expired unanswered.
 
 CAS as a verifier trusts only itself. A presented credential is accepted when its `iss` is this
 deployment's own issuer, its `vct` resolves to one of the credential configurations above, and its

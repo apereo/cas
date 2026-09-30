@@ -30,6 +30,7 @@ import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.apache.commons.lang3.StringUtils;
 import org.jose4j.jwk.JsonWebKey;
 import org.jspecify.annotations.Nullable;
 import org.springframework.http.CacheControl;
@@ -67,6 +68,8 @@ public class OidcVerifiableCredentialPresentationResponseEndpointController exte
 
     private static final String STATUS_VERIFIED = "verified";
 
+    private static final String STATUS_ERROR = "error";
+
     private static final Duration CLOCK_SKEW = Duration.ofSeconds(30);
 
     private static final int MAX_DISCLOSURE_DEPTH = 64;
@@ -77,10 +80,16 @@ public class OidcVerifiableCredentialPresentationResponseEndpointController exte
     }
 
     /**
-     * Handle response response entity.
+     * Handle the wallet's authorization response. It carries either a {@code vp_token} or, per OpenID4VP 1.0
+     * section 8.2, an authorization error response ({@code error}, optionally {@code error_description}) when
+     * the wallet declines or cannot answer. An error response still settles the transaction: it is consumed,
+     * recorded as the outcome the relying party collects, and answered with {@code 200} and a JSON object as the
+     * specification requires, so the relying party is not left polling a request that will never be answered.
      *
-     * @param vpToken the vp token
-     * @param state   the state
+     * @param vpToken          the vp token
+     * @param error            the error code of an authorization error response
+     * @param errorDescription the error description of an authorization error response
+     * @param state            the state
      * @return the response entity
      */
     @PostMapping(value = {
@@ -89,27 +98,45 @@ public class OidcVerifiableCredentialPresentationResponseEndpointController exte
     }, consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     @Operation(summary = "Handle response for presentation request", parameters = {
         @Parameter(name = "vp_token", description = "The verifiable presentation token"),
+        @Parameter(name = OAuth20Constants.ERROR, description = "The error code, when the wallet answers with an error response"),
+        @Parameter(name = OAuth20Constants.ERROR_DESCRIPTION, description = "The error description of an error response"),
         @Parameter(name = "state", description = "The state parameter returned from the request")
     })
     public ResponseEntity<Map<String, Object>> handleResponse(
-        @RequestParam("vp_token") final String vpToken,
+        @RequestParam(value = "vp_token", required = false) final @Nullable String vpToken,
+        @RequestParam(value = OAuth20Constants.ERROR, required = false) final @Nullable String error,
+        @RequestParam(value = OAuth20Constants.ERROR_DESCRIPTION, required = false) final @Nullable String errorDescription,
         @RequestParam final String state) {
 
         try {
-            require(!vpToken.isBlank() && !state.isBlank(), "Presentation response parameters cannot be blank");
+            require(StringUtils.isBlank(vpToken) != StringUtils.isBlank(error) && !state.isBlank(),
+                "Presentation response must carry a state and either a VP token or an error");
             val transientSessionTicket = configurationContext.getTicketRegistry().getTicket(state, TransientSessionTicket.class);
             require(transientSessionTicket != null && !transientSessionTicket.isExpired(), "Presentation transaction is invalid");
             require(state.equals(transientSessionTicket.getPropertyAsString("state")), "Presentation state does not match");
+
+            if (StringUtils.isNotBlank(error)) {
+                require(configurationContext.getTicketRegistry().deleteTicket(transientSessionTicket) > 0,
+                    "Presentation transaction was consumed concurrently");
+                val outcome = new LinkedHashMap<String, Object>();
+                outcome.put("status", STATUS_ERROR);
+                outcome.put(OAuth20Constants.ERROR, error);
+                if (StringUtils.isNotBlank(errorDescription)) {
+                    outcome.put(OAuth20Constants.ERROR_DESCRIPTION, errorDescription);
+                }
+                recordPresentationResult(transientSessionTicket.getId(), outcome);
+                return buildResponse(HttpStatus.OK, Map.of());
+            }
 
             val nonce = transientSessionTicket.getPropertyAsString("nonce");
             require(nonce != null && !nonce.isBlank(), "Presentation transaction has no nonce");
             val credentials = (List<CredentialRequest>) transientSessionTicket.getProperty("credentials", List.class);
             require(credentials != null && !credentials.isEmpty(), "Presentation transaction has no credential query");
 
-            val disclosedClaims = validatePresentation(vpToken, credentials, nonce, transientSessionTicket);
+            val disclosedClaims = validatePresentation(Objects.requireNonNull(vpToken), credentials, nonce, transientSessionTicket);
             require(configurationContext.getTicketRegistry().deleteTicket(transientSessionTicket) > 0,
                 "Presentation transaction was consumed concurrently");
-            recordPresentationResult(transientSessionTicket.getId(), disclosedClaims);
+            recordPresentationResult(transientSessionTicket.getId(), Map.of("status", STATUS_VERIFIED, "claims", disclosedClaims));
             return buildResponse(HttpStatus.OK, Map.of("status", STATUS_VERIFIED));
         } catch (final Throwable throwable) {
             LoggingUtils.warn(LOGGER, throwable);
@@ -126,15 +153,16 @@ public class OidcVerifiableCredentialPresentationResponseEndpointController exte
      * is not party to that exchange at all; without a record it has no way to learn either the outcome
      * or the claims that were disclosed to it.
      *
-     * @param requestId       the presentation request id
-     * @param disclosedClaims the disclosed claims, keyed by credential query id
+     * @param requestId the presentation request id
+     * @param outcome   the outcome: a {@code status} of {@code verified} with the disclosed claims keyed by
+     *                  credential query id, or of {@code error} with the wallet's {@code error} and
+     *                  {@code error_description}
      * @throws Exception the exception
      */
     protected void recordPresentationResult(final String requestId,
-                                            final Map<String, Map<String, Object>> disclosedClaims) throws Exception {
+                                            final Map<String, Object> outcome) throws Exception {
         val factory = (TransientSessionTicketFactory) configurationContext.getTicketFactory().get(TransientSessionTicket.class);
-        val resultTicket = factory.create(resolvePresentationResultId(requestId),
-            Map.of("status", STATUS_VERIFIED, "claims", disclosedClaims));
+        val resultTicket = factory.create(resolvePresentationResultId(requestId), outcome);
         configurationContext.getTicketRegistry().addTicket(resultTicket);
     }
 

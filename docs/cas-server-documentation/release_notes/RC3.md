@@ -194,6 +194,12 @@ created and managed; by default both point to the account profile when account m
   as an `x5c` certificate or a `did:jwk` key identifier, and Ed25519 (`EdDSA`) keys are accepted.
 - Authorization server metadata advertises `pre-authorized_grant_anonymous_access_supported` whenever the pre-authorized code
   grant is supported, so wallets without a client registration know they may redeem a pre-authorized code.
+- A wallet may request a credential in the authorization code flow by the `scope` its credential configuration publishes,
+  as OpenID4VCI 1.0 allows, instead of authorization details. Such scopes were previously dropped unless listed among the
+  discovery scopes, and the resulting token was refused at the credential endpoint.
+- A wallet that declines a [verifiable presentation](../authentication/OIDC-Authentication-Verifiable-Credentials.html#verifiable-presentations)
+  request can now say so: its error response is accepted, answered as OpenID4VP requires, and reported to the relying party
+  as an `error` outcome. Previously it was rejected and the relying party kept seeing `pending` until the request expired.
 - Attribute values with a leading zero, such as postal codes, are issued as text. Previously they were read as octal numbers,
   so `0123` was issued as `83` and `08` failed issuance.
 

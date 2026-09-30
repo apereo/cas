@@ -18,6 +18,8 @@ Support is enabled by including the following dependency in the WAR overlay:
 
 {% include_cached casmodule.html group="org.apereo.cas" module="cas-server-support-stateless-ticket-registry" %}
 
+{% include_cached casproperties.html properties="cas.ticket.registry.stateless" %}
+
 ## Features
 
 - No centralized backend storage or caching technology is required to be present, configured, installed, managed, maintained, tuned, etc.

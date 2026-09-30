@@ -170,7 +170,8 @@ public class OidcVerifiableCredentialPresentationRequestEndpointController exten
      * The wallet posts its presentation to the response endpoint and is told there whether it verified.
      * The relying party that created the request is not party to that exchange, so this is where it
      * learns the outcome and the claims that were disclosed to it. A request that has not been answered
-     * yet reports {@code pending}; one that was answered and collected, or that expired, is gone.
+     * yet reports {@code pending}; one the wallet declined reports {@code error} with the wallet's
+     * {@code error} and {@code error_description}; one that was answered and collected, or that expired, is gone.
      *
      * @param requestId    the request id returned when the presentation request was created
      * @param httpRequest  the http request
@@ -192,9 +193,20 @@ public class OidcVerifiableCredentialPresentationRequestEndpointController exten
         val result = FunctionUtils.doAndHandle(
             () -> configurationContext.getTicketRegistry().getTicket(resultId, TransientSessionTicket.class));
         if (result != null && !result.isExpired()) {
-            val body = Map.<String, Object>of(
-                "status", Objects.requireNonNull(result.getPropertyAsString("status")),
-                "claims", Objects.requireNonNullElseGet(result.getProperty("claims", Map.class), Map::of));
+            val body = new LinkedHashMap<String, Object>();
+            body.put("status", Objects.requireNonNull(result.getPropertyAsString("status")));
+            val claims = result.getProperty("claims", Map.class);
+            if (claims != null) {
+                body.put("claims", claims);
+            }
+            val error = result.getPropertyAsString(OAuth20Constants.ERROR);
+            if (error != null) {
+                body.put(OAuth20Constants.ERROR, error);
+            }
+            val errorDescription = result.getPropertyAsString(OAuth20Constants.ERROR_DESCRIPTION);
+            if (errorDescription != null) {
+                body.put(OAuth20Constants.ERROR_DESCRIPTION, errorDescription);
+            }
             FunctionUtils.doAndHandle(_ -> configurationContext.getTicketRegistry().deleteTicket(result));
             return ResponseEntity.ok().cacheControl(CacheControl.noStore()).body(body);
         }

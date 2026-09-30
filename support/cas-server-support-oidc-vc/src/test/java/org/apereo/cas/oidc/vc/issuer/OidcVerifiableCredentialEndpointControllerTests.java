@@ -14,6 +14,8 @@ import org.apereo.cas.services.OidcRegisteredService;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.support.oauth.OAuth20GrantTypes;
+import org.apereo.cas.support.oauth.web.response.accesstoken.OAuth20AccessTokenGeneratorCustomizer;
+import org.apereo.cas.support.oauth.web.response.accesstoken.ext.AccessTokenRequestContext;
 import org.apereo.cas.ticket.accesstoken.OAuth20AccessToken;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
@@ -872,6 +874,49 @@ class OidcVerifiableCredentialEndpointControllerTests {
 
     @Nested
     class ServiceCredentialPolicyTests extends BaseTests {
+        @Autowired
+        @Qualifier("oidcVerifiableCredentialsAccessTokenGeneratorCustomizer")
+        private OAuth20AccessTokenGeneratorCustomizer oidcVerifiableCredentialsAccessTokenGeneratorCustomizer;
+
+        @Test
+        void verifyGrantedScopeRequestsItsCredentialConfigurations() {
+            val registeredService = getOidcRegisteredService(UUID.randomUUID().toString());
+            registeredService.setVerifiableCredentialsPolicy(
+                new DefaultRegisteredServiceOidcVerifiableCredentialsPolicy(Set.of("employee")));
+            val context = AccessTokenRequestContext.builder()
+                .grantType(OAuth20GrantTypes.AUTHORIZATION_CODE)
+                .registeredService(registeredService)
+                .scopes(Set.of("openid", "EmployeeCredential", "UniversityIDCredential"))
+                .build();
+            val accessToken = mock(OAuth20AccessToken.class);
+            oidcVerifiableCredentialsAccessTokenGeneratorCustomizer.customize(context, accessToken);
+            verify(accessToken).setCredentialConfigurationIds(List.of("employee"));
+
+            val unscopedToken = mock(OAuth20AccessToken.class);
+            oidcVerifiableCredentialsAccessTokenGeneratorCustomizer.customize(context.withScopes(Set.of("openid")), unscopedToken);
+            verify(unscopedToken, never()).setCredentialConfigurationIds(anyList());
+        }
+
+        @Test
+        void verifyScopeAuthorizedTokenIssuesOnlyItsCredentialConfigurations() throws Throwable {
+            val clientId = UUID.randomUUID().toString();
+            servicesManager.save(getOidcRegisteredService(clientId));
+            val accessToken = createOAuth20AccessToken(clientId);
+            when(accessToken.getGrantType()).thenReturn(OAuth20GrantTypes.AUTHORIZATION_CODE);
+            when(accessToken.getCredentialConfigurationIds()).thenReturn(List.of("employee"));
+
+            performCredentialRequest(accessToken, "employee")
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.credentials[0].credential").exists());
+            performCredentialRequest(accessToken, "myorg")
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.error").value(OidcConstants.VC_ERROR_CREDENTIAL_REQUEST_DENIED));
+
+            when(accessToken.getCredentialConfigurationIds()).thenReturn(List.of());
+            performCredentialRequest(accessToken, "employee")
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.error").value(OidcConstants.VC_ERROR_CREDENTIAL_REQUEST_DENIED));
+        }
 
         @Test
         void verifyPolicyDeniesACredentialTypeTheTokenOtherwiseAuthorizes() throws Throwable {

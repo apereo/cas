@@ -118,6 +118,38 @@ class OidcVerifiableCredentialPresentationResponseEndpointControllerTests extend
     }
 
     @Test
+    void verifyWalletErrorResponseSettlesTheTransaction() throws Throwable {
+        val transaction = createTransaction();
+        submitError(transaction.ticket().getId(), "access_denied")
+            .andExpect(status().isOk())
+            .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
+            .andExpect(header().string(HttpHeaders.CACHE_CONTROL, "no-store"))
+            .andExpect(content().string("{}"));
+        assertNull(ticketRegistry.getTicket(transaction.ticket().getId()));
+
+        fetchResult(transaction.ticket().getId())
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$.status").value("error"))
+            .andExpect(jsonPath("$.error").value("access_denied"))
+            .andExpect(jsonPath("$.error_description").value("The user declined"))
+            .andExpect(jsonPath("$.claims").doesNotExist());
+
+        assertInvalid(submitError(transaction.ticket().getId(), "access_denied"));
+    }
+
+    @Test
+    void verifyResponseWithPresentationAndErrorIsRejected() throws Throwable {
+        val transaction = createTransaction();
+        assertInvalid(mockMvc.perform(post(PRESENTATION_RESPONSE_ENDPOINT_URL)
+            .with(withHttpRequestProcessor())
+            .contentType(MediaType.APPLICATION_FORM_URLENCODED)
+            .param("vp_token", "{}")
+            .param(OAuth20Constants.ERROR, "access_denied")
+            .param("state", transaction.ticket().getId())));
+        assertNotNull(ticketRegistry.getTicket(transaction.ticket().getId()));
+    }
+
+    @Test
     void verifyUnknownPresentationResultIsNotFound() throws Throwable {
         fetchResult("TST-unknown-request").andExpect(status().isNotFound());
     }
@@ -311,6 +343,15 @@ class OidcVerifiableCredentialPresentationResponseEndpointControllerTests extend
             .with(withHttpRequestProcessor())
             .contentType(MediaType.APPLICATION_FORM_URLENCODED)
             .param("vp_token", vpToken)
+            .param("state", state));
+    }
+
+    private ResultActions submitError(final String state, final String error) throws Exception {
+        return mockMvc.perform(post(PRESENTATION_RESPONSE_ENDPOINT_URL)
+            .with(withHttpRequestProcessor())
+            .contentType(MediaType.APPLICATION_FORM_URLENCODED)
+            .param(OAuth20Constants.ERROR, error)
+            .param(OAuth20Constants.ERROR_DESCRIPTION, "The user declined")
             .param("state", state));
     }
 

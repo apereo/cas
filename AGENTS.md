@@ -216,6 +216,13 @@ Guidance for AI coding agents working in the Apereo CAS source tree.
   `EncodingUtils.verifyJwsSignature(EncodingUtils.newJsonWebKey(okp.toPublicJWK().toJSONString()).getKey(), jws)` after checking the
   header algorithm is `EdDSA`; in tests, generate keys with `KeyPairGenerator.getInstance("Ed25519")` and sign with jose4j
   (`JsonWebSignature`, `AlgorithmIdentifiers.EDDSA`, `PublicJsonWebKey.Factory.newPublicJwk(publicKey)` for a `jwk` header).
+- `OidcRequestParameterResolver` drops every requested scope that is not supported, so a scope CAS must honour has to be
+  part of `OidcServerDiscoverySettingsFactory.resolveScopesSupported`, which also feeds `scopes_supported`. Credential
+  configuration scopes are added there; scope-granted credential configurations are recorded on the access token by
+  `OidcVerifiableCredentialsAccessTokenGeneratorCustomizer` (authorization code and refresh grants), narrowed by the service
+  policy, and the credential endpoint combines them with authorization details.
+- The OID4VP response URI takes `vp_token` or `error` (never both) with `state`; an error response is consumed, answered
+  `200` with `{}`, and recorded as `{"status":"error","error":...,"error_description":...}` for `oidcVcPresentationResult`.
 - Turning attribute text into numbers: `NumberUtils.createNumber` decodes a leading zero as octal. Only convert when the
   `createBigDecimal(text).toPlainString()` round trip returns the same text; no hand-written regular expressions for this.
 - What is worth checking in that code is consistency between the two halves: the verifier should require everything the issuer always emits. `exp` was optional at verification while issuance always stamps it, which let a credential that never expires through.
