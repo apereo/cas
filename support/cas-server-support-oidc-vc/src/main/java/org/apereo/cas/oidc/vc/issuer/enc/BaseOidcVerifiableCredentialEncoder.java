@@ -57,12 +57,29 @@ public abstract class BaseOidcVerifiableCredentialEncoder implements OidcVerifia
             }
             if (rawValue != null) {
                 val claimValue = rawValue.size() == 1 ? rawValue.getFirst() : rawValue;
-                claims.put(claimName, !(claimValue instanceof Number) && NumberUtils.isParsable(claimValue.toString())
-                    ? NumberUtils.createNumber(claimValue.toString())
-                    : claimValue);
+                claims.put(claimName, toClaimValue(claimValue));
             }
         });
         return claims;
+    }
+
+    /**
+     * Value of a claim as it is issued. Attribute values usually arrive as text, so text that is a number is issued
+     * as a number, but only when the decimal reading of that number gives back the same text. A leading zero would
+     * otherwise be read as octal by {@link NumberUtils#createNumber(String)}, turning {@code 0123} into {@code 83}
+     * and failing on {@code 08}; such values, like postal codes and identifiers, are issued as text instead.
+     *
+     * @param value the attribute value
+     * @return the claim value
+     */
+    protected Object toClaimValue(final Object value) {
+        if (value instanceof Number) {
+            return value;
+        }
+        val text = value.toString();
+        return NumberUtils.isParsable(text) && NumberUtils.createBigDecimal(text).toPlainString().equals(text)
+            ? NumberUtils.createNumber(text)
+            : value;
     }
 
     protected OidcVerifiableCredentialConfigurationProperties resolveConfiguration(final String configurationId) {

@@ -93,6 +93,7 @@ Guidance for AI coding agents working in the Apereo CAS source tree.
 ## Conventions you should match
 
 - Java 25 is required (`gradle.properties`); many sources use `import module java.base;`, Lombok `val`, and package-level `@NullMarked` via `package-info.java`.
+- Lombok `val` cannot infer generic poly expressions: `val x = Objects.requireNonNullElse(list, List.of())` (or `...ElseGet(list, List::of)`) becomes `Object`. Assign the plain call to `val` and null-check separately, or declare the type.
 - Spring config classes generally use `@AutoConfiguration` or `@Configuration(proxyBeanMethods = false)`, `@EnableConfigurationProperties(CasConfigurationProperties.class)`, `@ConditionalOnFeatureEnabled`, and bean methods with `@RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)` plus `@ConditionalOnMissingBean`. See `support/cas-server-support-token-core/.../TokenCoreConfiguration.java`.
 - Configuration model classes usually live under `api/.../configuration/model/**`, use Lombok accessors, and carry `@RequiresModule(name = "...")`; example: `LdapAuthorizationProperties`.
 - Tests are organized by JUnit tags, not by the plain Gradle `test` task. The shared `buildSrc` test conventions disable `test` and generate tasks like `testAuthentication`, `testTickets`, etc. from `@Tag(...)` values found in `*Tests.java`.
@@ -206,11 +207,21 @@ Guidance for AI coding agents working in the Apereo CAS source tree.
 - An unread field on a registered service is a finding, not a feature. `verifiableCredentialsPolicy` and `DefaultRegisteredServiceOidcVerifiableCredentialsPolicy` both existed and shipped in the schema while nothing in CAS ever called `getVerifiableCredentialsPolicy`, which reads from the outside exactly like an enforced authorization control. When a policy type exists, grep for its getter before assuming it does anything.
 - An empty policy means "no opinion", not "deny everything". Authorization policies here default open when unconfigured, because they are added to deployments that were already working; a policy that denied by default would break every existing service on upgrade.
 - CAS is both issuer and verifier here, and the verifier only trusts CAS-issued credentials: `iss` must equal the local issuer, `vct` must map to a local configuration, the signature is checked against CAS's own keystore, and a `status` claim is refused rather than ignored. That is a trust policy, not a defect -- OpenID4VP leaves issuer trust to the verifier ("Verifiers must verify that the issuer of a received presentation is trusted on their own"), and a verifier that cannot evaluate revocation must fail closed. Do not report it as a compliance gap. Widening it means external issuer trust, `x5c`, DID resolution, OpenID Federation and Token Status List fetching, which is a feature with its own configuration surface, not a fix.
+- Proof validation takes the credential configuration id (`OidcVerifiableCredentialProofValidator.validate(proof, configurationId, nonces)`)
+  and enforces that configuration's `proof-signing-alg-values-supported` and `cryptographic-binding-methods-supported`; the
+  one-argument overload names no configuration and accepts anything verifiable, which is what the unit tests rely on. Holder keys come
+  from `jwk` (a stray `kid` next to it is ignored), `x5c` (leaf key only, validity checked) or a `did:jwk` `kid`.
+- CAS does not depend on Google Tink, so never use Nimbus `Ed25519Verifier`, `Ed25519Signer`, `OctetKeyPairGenerator` or the
+  X25519 classes, in main code or tests; they fail without it. Verify EdDSA with
+  `EncodingUtils.verifyJwsSignature(EncodingUtils.newJsonWebKey(okp.toPublicJWK().toJSONString()).getKey(), jws)` after checking the
+  header algorithm is `EdDSA`; in tests, generate keys with `KeyPairGenerator.getInstance("Ed25519")` and sign with jose4j
+  (`JsonWebSignature`, `AlgorithmIdentifiers.EDDSA`, `PublicJsonWebKey.Factory.newPublicJwk(publicKey)` for a `jwk` header).
+- Turning attribute text into numbers: `NumberUtils.createNumber` decodes a leading zero as octal. Only convert when the
+  `createBigDecimal(text).toPlainString()` round trip returns the same text; no hand-written regular expressions for this.
 - What is worth checking in that code is consistency between the two halves: the verifier should require everything the issuer always emits. `exp` was optional at verification while issuance always stamps it, which let a credential that never expires through.
 - Check every authorization path the metadata advertises end to end. Each credential configuration publishes a `scope`, which tells a wallet it may use scope-based authorization (OpenID4VCI 5.1.2), but the credential endpoint only honours pre-authorized tokens and `authorization_details`; EUDI's issuance library favours scopes. A metadata field is a promise to wallets, not decoration.
 - Metadata is per format: `vct` belongs to `dc+sd-jwt` only, while `jwt_vc_json` and `jwt_vc_json-ld` need `credential_definition` (Appendix A.1). Check what each encoder references, too: a JSON-LD `@context` URL CAS never serves breaks any processing verifier.
 - A credential is only portable if a third party can find the issuer key. SD-JWT VC resolves it through `/.well-known/jwt-vc-issuer` (inserted before the issuer path, like the other well-known documents) or an `x5c` header; CAS verifying its own credentials in puppeteer proves nothing about that.
-- Never coerce attribute strings with `NumberUtils.createNumber`: it decodes a leading zero as octal ("0123" becomes 83) and throws on "08", which corrupts postal codes and identifiers or fails issuance.
 - Wallets differ mostly at the edges: proof keys by `jwk`, `kid` (did:key, did:jwk) or `x5c`, EdDSA vs ES256, `redirect_uri` vs `x509_san_dns`/`x509_hash`, `direct_post` vs `direct_post.jwt`. The walt.id scenario pins P-256, `jwk` and `redirect_uri`, so it cannot catch regressions in the others.
 
 ## Parallel test execution and shared registries
@@ -1028,6 +1039,6 @@ Guidance for AI coding agents working in the Apereo CAS source tree.
 - `/.well-known/passkey-endpoints` follows the W3C Passkey Endpoints Working Draft (Jan 2026): 200, `application/json`, no
   redirect, `{}` allowed. CAS has no direct URL into WebAuthn registration, so the defaults point at the plain account
   profile (`/account`), never at a panel fragment such as `#divMfaRegisteredAccounts`, and only when
-  `webAuthnAccountProfileWebflowConfigurer` exists (account management enabled); check bean presence rather than
-  re-reading `CasFeatureModule` properties.
+  `CasFeatureModule.FeatureCatalog.AccountManagement.isRegistered()`. `WebAuthnControllerMvcTests` enables account
+  management, so its wired document carries both URLs; `{}` only appears with the feature off.
 - JSON examples pasted into the documentation are pretty-printed (one member per line, two-space indent), never minified.

@@ -103,6 +103,10 @@ list is narrowed, keep `none` in it; without it a wallet picks one of the creden
 sees instead and the exchange is rejected, because the wallet has
 no client registration to authenticate with.
 
+For the same reason the authorization server metadata advertises `pre-authorized_grant_anonymous_access_supported`
+as `true` whenever the pre-authorized code grant is listed in `grant_types_supported`. A wallet that finds no such
+value assumes `false` and may refuse to redeem the code without a `client_id` it does not have.
+
 ### Credential Endpoint
 
 Issues a verifiable credential to the wallet once the access token, proof, and requested
@@ -131,10 +135,24 @@ The endpoint body is expected as:
 {
   "credential_configuration_id": "myorg",
   "proofs": {
-    "jwt": ["eyJ0eXAiOiJvcGVuaWQ0dmNpL..."]
+    "jwt": [
+      "eyJ0eXAiOiJvcGVuaWQ0dmNpL..."
+    ]
   }
 }
 ```
+
+Each proof must be signed with one of the `proof-signing-alg-values-supported` of the requested credential
+configuration and name the holder key by one of its `cryptographic-binding-methods-supported`:
+
+| Proof header | Binding method | Holder key                                                                                      |
+|--------------|----------------|-------------------------------------------------------------------------------------------------|
+| `jwk`        | `jwk`          | The key itself. A `kid` sent alongside it is ignored.                                           |
+| `x5c`        | `jwk`          | The public key of the first certificate, which must be within its validity period.              |
+| `kid`        | `did:jwk`      | The key encoded in the `did:jwk` DID URL. Other DID methods cannot be resolved and are refused. |
+
+RSA, EC and Ed25519 (`EdDSA`) keys are accepted. A proof that does not satisfy the configuration is answered
+with `invalid_proof`. The defaults are `ES256` and `RS256` with the `jwk` binding method.
 
 There is no separate batch credential endpoint. A batch is a single credential request carrying
 several proofs, and the response holds one credential per proof, all of the same credential
@@ -146,7 +164,9 @@ The response is:
 ```json
 {
   "credentials": [
-    {"credential": "eyJhbGciOiJSUzI1NiIs..."}
+    {
+      "credential": "eyJhbGciOiJSUzI1NiIs..."
+    }
   ]
 }
 ```
@@ -351,6 +371,9 @@ issued credential, and the `validUntil` property for formats that carry one. A w
 credential long after the issuance exchange has finished, so this period describes the useful
 life of the credential itself and is unrelated to the lifetime of the offer, the pre-authorized
 code, the nonce or the access token used to obtain it.
+
+Claim values come from principal attributes. A value that reads as a number, such as `95.5`, is issued as a
+number; one whose number would not read back the same way, such as `02134`, is issued as text exactly as released.
 
 ## Credential Signing
 

@@ -186,6 +186,17 @@ because the owning account no longer holds the passkey, the response says so and
 CAS also publishes `/.well-known/passkey-endpoints` so password managers can link users to the pages where passkeys are
 created and managed; by default both point to the account profile when account management is enabled.
 
+### OpenID Connect Verifiable Credentials
+
+- Credential proofs now follow what each [credential configuration](../authentication/OIDC-Authentication-Verifiable-Credentials.html)
+  advertises: a proof signed with an algorithm outside `proof-signing-alg-values-supported`, or naming its key by a binding
+  method outside `cryptographic-binding-methods-supported`, is refused with `invalid_proof`. Holder keys may now also be given
+  as an `x5c` certificate or a `did:jwk` key identifier, and Ed25519 (`EdDSA`) keys are accepted.
+- Authorization server metadata advertises `pre-authorized_grant_anonymous_access_supported` whenever the pre-authorized code
+  grant is supported, so wallets without a client registration know they may redeem a pre-authorized code.
+- Attribute values with a leading zero, such as postal codes, are issued as text. Previously they were read as octal numbers,
+  so `0123` was issued as `83` and `08` failed issuance.
+
 ### Stateless Ticket Registry
 
 With the [stateless ticket registry](../ticketing/Stateless-Ticket-Registry.html), the ticket-granting ticket is now carried by the
@@ -226,4 +237,6 @@ authentication. See the stateless ticket registry documentation for details.
 - [Delegated authentication](../integration/Delegate-Authentication.html) no longer fails intermittently when concurrent requests reach an identity provider that is still being initialized, typically right after startup. Such requests now wait for the initialization in progress instead of failing, which also affects [SAML2 identity providers](../integration/Delegate-Authentication-SAML2.html) when building SAML2 responses, metadata and logout requests.
 - [WebAuthn](../mfa/FIDO2-WebAuthn-Authentication.html) authentication pages now send the CSRF token rendered by CAS instead of reading it from the `XSRF-TOKEN` cookie, which failed with `403` whenever the page could not read that cookie.
 - Browser storage used by [Duo Security](../mfa/DuoSecurity-Authentication.html) and the [SAML2 identity provider](../authentication/Configuring-SAML2-Authentication.html) now falls back to cookies when the browser cannot use local or session storage.
+- Ed25519 keys presented to the [OpenID Connect](../authentication/OIDC-Authentication.html) client JWKS registration endpoint are now
+  verified with the JDK's own EdDSA support. Verification previously relied on Google Tink, which CAS does not ship, so such registrations failed at runtime.
 - CAS now logs a warning when a cookie it writes, such as the ticket-granting cookie, is larger than the 4 KB that browsers are guaranteed to accept.

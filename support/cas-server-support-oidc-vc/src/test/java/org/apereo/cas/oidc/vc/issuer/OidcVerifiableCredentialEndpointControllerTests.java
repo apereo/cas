@@ -7,6 +7,7 @@ import org.apereo.cas.oidc.AbstractOidcTests;
 import org.apereo.cas.oidc.OidcConstants;
 import org.apereo.cas.oidc.vc.issuer.metadata.OidcCredentialIssuerMetadataService;
 import org.apereo.cas.oidc.vc.issuer.nonce.OidcVerifiableCredentialNonceService;
+import org.apereo.cas.oidc.vc.issuer.proof.OidcVerifiableCredentialProofException;
 import org.apereo.cas.oidc.vc.issuer.proof.OidcVerifiableCredentialProofValidator;
 import org.apereo.cas.oidc.vc.services.DefaultRegisteredServiceOidcVerifiableCredentialsPolicy;
 import org.apereo.cas.services.OidcRegisteredService;
@@ -19,13 +20,17 @@ import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
 import com.nimbusds.jose.JOSEObjectType;
 import com.nimbusds.jose.JWSAlgorithm;
 import com.nimbusds.jose.JWSHeader;
+import com.nimbusds.jose.JWSSigner;
 import com.nimbusds.jose.crypto.ECDSASigner;
 import com.nimbusds.jose.crypto.RSASSASigner;
 import com.nimbusds.jose.jwk.Curve;
 import com.nimbusds.jose.jwk.ECKey;
+import com.nimbusds.jose.jwk.JWK;
+import com.nimbusds.jose.jwk.OctetKeyPair;
 import com.nimbusds.jose.jwk.RSAKey;
 import com.nimbusds.jose.jwk.gen.ECKeyGenerator;
 import com.nimbusds.jose.jwk.gen.RSAKeyGenerator;
+import com.nimbusds.jose.util.Base64URL;
 import com.nimbusds.jwt.JWTClaimsSet;
 import com.nimbusds.jwt.SignedJWT;
 import com.nimbusds.oauth2.sdk.dpop.DefaultDPoPProofFactory;
@@ -33,12 +38,16 @@ import com.nimbusds.oauth2.sdk.dpop.JWKThumbprintConfirmation;
 import com.nimbusds.oauth2.sdk.token.DPoPAccessToken;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
+import org.jose4j.jwk.PublicJsonWebKey;
+import org.jose4j.jws.AlgorithmIdentifiers;
+import org.jose4j.jws.JsonWebSignature;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.ImportAutoConfiguration;
+import org.springframework.core.io.ClassPathResource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
@@ -68,6 +77,8 @@ class OidcVerifiableCredentialEndpointControllerTests {
         "cas.authn.attribute-repository.stub.attributes.active=true",
         "cas.authn.attribute-repository.stub.attributes.score=95.5",
         "cas.authn.attribute-repository.stub.attributes.roles=admin,user",
+        "cas.authn.attribute-repository.stub.attributes.postal_code=02134",
+        "cas.authn.attribute-repository.stub.attributes.badge=08",
 
         "cas.authn.oidc.vc.issuer.credential-configurations.myorg.format=DC_SD_JWT",
         "cas.authn.oidc.vc.issuer.credential-configurations.myorg.scope=UniversityIDCredential",
@@ -90,6 +101,11 @@ class OidcVerifiableCredentialEndpointControllerTests {
         "cas.authn.oidc.vc.issuer.credential-configurations.employee.claims.given_name.mandatory=true",
         "cas.authn.oidc.vc.issuer.credential-configurations.employee.claims.family_name.mandatory=true",
         "cas.authn.oidc.vc.issuer.credential-configurations.employee.claims.email.mandatory=false",
+        "cas.authn.oidc.vc.issuer.credential-configurations.employee.claims.score.mandatory=false",
+        "cas.authn.oidc.vc.issuer.credential-configurations.employee.claims.postal_code.mandatory=false",
+        "cas.authn.oidc.vc.issuer.credential-configurations.employee.claims.badge.mandatory=false",
+        "cas.authn.oidc.vc.issuer.credential-configurations.employee.proof-signing-alg-values-supported=ES256,RS256,EdDSA",
+        "cas.authn.oidc.vc.issuer.credential-configurations.employee.cryptographic-binding-methods-supported=jwk,did:jwk",
 
         "cas.authn.oidc.vc.issuer.credential-configurations.jsonld.format=JWT_VC_JSON_LD",
         "cas.authn.oidc.vc.issuer.credential-configurations.jsonld.scope=EmployeeCredential",
@@ -189,6 +205,36 @@ class OidcVerifiableCredentialEndpointControllerTests {
             return signedJwt.serialize();
         }
 
+        protected String buildProofJwt(final JWSHeader header, final JWSSigner signer) throws Exception {
+            val claims = new JWTClaimsSet.Builder()
+                .jwtID(UUID.randomUUID().toString())
+                .audience(CREDENTIAL_ISSUER)
+                .subject("casuser")
+                .issueTime(new Date())
+                .claim("nonce", oidcVerifiableCredentialNonceService.create().value())
+                .build();
+            val signedJwt = new SignedJWT(header, claims);
+            signedJwt.sign(signer);
+            return signedJwt.serialize();
+        }
+
+        protected String buildEdDsaProofJwt(final PublicKey holderKey, final PrivateKey signingKey) throws Exception {
+            val claims = new JWTClaimsSet.Builder()
+                .jwtID(UUID.randomUUID().toString())
+                .audience(CREDENTIAL_ISSUER)
+                .subject("casuser")
+                .issueTime(new Date())
+                .claim("nonce", oidcVerifiableCredentialNonceService.create().value())
+                .build();
+            val jws = new JsonWebSignature();
+            jws.setPayload(claims.toString());
+            jws.setAlgorithmHeaderValue(AlgorithmIdentifiers.EDDSA);
+            jws.setHeader("typ", PROOF_JWT_TYPE.getType());
+            jws.setJwkHeader(PublicJsonWebKey.Factory.newPublicJwk(holderKey));
+            jws.setKey(signingKey);
+            return jws.getCompactSerialization();
+        }
+
         protected String buildValidRsaProofJwt() throws Exception {
             return buildProofJwt(generateRsaHolderKey(), CREDENTIAL_ISSUER, new Date());
         }
@@ -233,6 +279,14 @@ class OidcVerifiableCredentialEndpointControllerTests {
         void verifyIssuedCredentialHonorsConfiguredValidity() throws Throwable {
             val claims = issueCredentialClaims("employee");
             assertCredentialValidity(claims, Duration.ofDays(7));
+        }
+
+        @Test
+        void verifyNumericLookingAttributesAreIssuedAsReleased() throws Throwable {
+            val claims = issueCredentialClaims("employee");
+            assertEquals("02134", claims.getClaim("postal_code"));
+            assertEquals("08", claims.getClaim("badge"));
+            assertEquals(95.5, assertInstanceOf(Number.class, claims.getClaim("score")).doubleValue());
         }
 
         @Test
@@ -694,6 +748,27 @@ class OidcVerifiableCredentialEndpointControllerTests {
                     .content(MAPPER.writeValueAsString(buildRequestFor("NoSuchCredential"))))
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.error").value(OidcConstants.VC_ERROR_UNSUPPORTED_CREDENTIAL_TYPE));
+        }
+
+        @Test
+        void verifyProofAlgorithmNotAdvertisedIsInvalidProof() throws Throwable {
+            val clientId = UUID.randomUUID().toString();
+            servicesManager.save(getOidcRegisteredService(clientId));
+            val accessToken = createOAuth20AccessToken(clientId);
+
+            val holderKey = generateRsaHolderKey();
+            val header = new JWSHeader.Builder(JWSAlgorithm.RS384).type(PROOF_JWT_TYPE).jwk(holderKey.toPublicJWK()).build();
+            val request = new OidcVerifiableCredentialRequest();
+            request.setCredentialConfigurationId("myorg");
+            request.setProofs(buildProofs(buildProofJwt(header, new RSASSASigner(holderKey))));
+
+            mockMvc.perform(post(CREDENTIAL_ENDPOINT_URL)
+                    .with(withHttpRequestProcessor())
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken.getId())
+                    .content(MAPPER.writeValueAsString(request)))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.error").value(OidcConstants.VC_ERROR_INVALID_PROOF));
         }
 
         @Test
@@ -1408,6 +1483,61 @@ class OidcVerifiableCredentialEndpointControllerTests {
             assertNotNull(result.jwtId());
             assertEquals("casuser", result.subject());
             assertNotNull(result.holderJwk());
+        }
+
+        @Test
+        void verifyProofAlgorithmMustBeAdvertisedByTheConfiguration() throws Throwable {
+            val holderKey = generateRsaHolderKey();
+            val header = new JWSHeader.Builder(JWSAlgorithm.RS384).type(PROOF_JWT_TYPE).jwk(holderKey.toPublicJWK()).build();
+            val exception = assertThrows(OidcVerifiableCredentialProofException.class,
+                () -> oidcVerifiableCredentialProofValidator.validate(buildProofJwt(header, new RSASSASigner(holderKey)), "myorg", new HashSet<>()));
+            assertEquals(OidcConstants.VC_ERROR_INVALID_PROOF, exception.getError());
+            assertNotNull(oidcVerifiableCredentialProofValidator.validate(buildProofJwt(header, new RSASSASigner(holderKey))));
+        }
+
+        @Test
+        void verifyEdDsaProofWhenAdvertised() throws Throwable {
+            val holderKey = KeyPairGenerator.getInstance("Ed25519").generateKeyPair();
+            val result = oidcVerifiableCredentialProofValidator.validate(
+                buildEdDsaProofJwt(holderKey.getPublic(), holderKey.getPrivate()), "employee", new HashSet<>());
+            val expectedKey = JWK.parse(PublicJsonWebKey.Factory.newPublicJwk(holderKey.getPublic()).toJson());
+            assertEquals(expectedKey.computeThumbprint(), assertInstanceOf(OctetKeyPair.class, result.holderJwk()).computeThumbprint());
+            assertThrows(OidcVerifiableCredentialProofException.class, () -> oidcVerifiableCredentialProofValidator.validate(
+                buildEdDsaProofJwt(holderKey.getPublic(), holderKey.getPrivate()), "myorg", new HashSet<>()));
+            val otherKey = KeyPairGenerator.getInstance("Ed25519").generateKeyPair();
+            assertThrows(OidcVerifiableCredentialProofException.class, () -> oidcVerifiableCredentialProofValidator.validate(
+                buildEdDsaProofJwt(holderKey.getPublic(), otherKey.getPrivate()), "employee", new HashSet<>()));
+        }
+
+        @Test
+        void verifyDidJwkProofWhenAdvertised() throws Throwable {
+            val holderKey = generateEcHolderKey();
+            val didUrl = "did:jwk:" + Base64URL.encode(holderKey.toPublicJWK().toJSONString()) + "#0";
+            val header = new JWSHeader.Builder(JWSAlgorithm.ES256).type(PROOF_JWT_TYPE).keyID(didUrl).build();
+            val result = oidcVerifiableCredentialProofValidator.validate(
+                buildProofJwt(header, new ECDSASigner(holderKey)), "employee", new HashSet<>());
+            assertEquals(holderKey.toPublicJWK().computeThumbprint(), result.holderJwk().computeThumbprint());
+            assertThrows(OidcVerifiableCredentialProofException.class,
+                () -> oidcVerifiableCredentialProofValidator.validate(buildProofJwt(header, new ECDSASigner(holderKey)), "myorg", new HashSet<>()));
+
+            val unresolvable = new JWSHeader.Builder(JWSAlgorithm.ES256).type(PROOF_JWT_TYPE)
+                .keyID("did:key:zDnaerDaTF5BXEavCrfRZEk316dpbLsfPDZ3WJ5hRTPFU2169").build();
+            assertThrows(OidcVerifiableCredentialProofException.class,
+                () -> oidcVerifiableCredentialProofValidator.validate(buildProofJwt(unresolvable, new ECDSASigner(holderKey))));
+        }
+
+        @Test
+        void verifyX5cProofBindsTheCertificateKey() throws Throwable {
+            val holderKey = ECKey.parse(new ClassPathResource("vc-holder-x5c-jwk.json").getContentAsString(StandardCharsets.UTF_8));
+            val header = new JWSHeader.Builder(JWSAlgorithm.ES256).type(PROOF_JWT_TYPE).x509CertChain(holderKey.getX509CertChain()).build();
+            val result = oidcVerifiableCredentialProofValidator.validate(
+                buildProofJwt(header, new ECDSASigner(holderKey)), "myorg", new HashSet<>());
+            assertEquals(holderKey.toPublicJWK().computeThumbprint(), result.holderJwk().computeThumbprint());
+            assertNull(result.holderJwk().getX509CertChain());
+
+            val ambiguous = new JWSHeader.Builder(header).jwk(holderKey.toPublicJWK()).build();
+            assertThrows(OidcVerifiableCredentialProofException.class,
+                () -> oidcVerifiableCredentialProofValidator.validate(buildProofJwt(ambiguous, new ECDSASigner(holderKey)), "myorg", new HashSet<>()));
         }
 
         @Test

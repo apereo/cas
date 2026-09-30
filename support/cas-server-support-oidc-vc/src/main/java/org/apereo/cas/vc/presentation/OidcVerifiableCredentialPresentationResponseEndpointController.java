@@ -10,15 +10,15 @@ import org.apereo.cas.support.oauth.util.OAuth20Utils;
 import org.apereo.cas.support.oauth.web.endpoints.BaseOAuth20Controller;
 import org.apereo.cas.ticket.TransientSessionTicket;
 import org.apereo.cas.ticket.TransientSessionTicketFactory;
+import org.apereo.cas.util.EncodingUtils;
 import org.apereo.cas.util.LoggingUtils;
 import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
 import org.apereo.cas.vc.presentation.OidcVerifiableCredentialPresentationRequestEndpointController.OidcVerifiableCredentialPresentationRequest.ClaimRequest;
 import org.apereo.cas.vc.presentation.OidcVerifiableCredentialPresentationRequestEndpointController.OidcVerifiableCredentialPresentationRequest.CredentialRequest;
 import com.authlete.sd.Disclosure;
 import com.authlete.sd.SDJWT;
-import com.nimbusds.jose.JWSVerifier;
+import com.nimbusds.jose.JWSAlgorithm;
 import com.nimbusds.jose.crypto.ECDSAVerifier;
-import com.nimbusds.jose.crypto.Ed25519Verifier;
 import com.nimbusds.jose.crypto.RSASSAVerifier;
 import com.nimbusds.jose.jwk.ECKey;
 import com.nimbusds.jose.jwk.JWK;
@@ -447,13 +447,14 @@ public class OidcVerifiableCredentialPresentationResponseEndpointController exte
     }
 
     private static boolean verify(final SignedJWT signedJwt, final JWK jwk) throws Exception {
-        val verifier = switch (jwk) {
-            case final ECKey ecKey -> new ECDSAVerifier(ecKey.toPublicJWK());
-            case final RSAKey rsaKey -> new RSASSAVerifier(rsaKey.toPublicJWK());
-            case final OctetKeyPair octetKeyPair -> new Ed25519Verifier(octetKeyPair.toPublicJWK());
+        return switch (jwk) {
+            case final ECKey ecKey -> signedJwt.verify(new ECDSAVerifier(ecKey.toPublicJWK()));
+            case final RSAKey rsaKey -> signedJwt.verify(new RSASSAVerifier(rsaKey.toPublicJWK()));
+            case final OctetKeyPair octetKeyPair -> JWSAlgorithm.EdDSA.equals(signedJwt.getHeader().getAlgorithm())
+                && EncodingUtils.verifyJwsSignature(EncodingUtils.newJsonWebKey(
+                    octetKeyPair.toPublicJWK().toJSONString()).getKey(), signedJwt.serialize()) != null;
             default -> throw new IllegalArgumentException("JWK type is not supported");
         };
-        return signedJwt.verify((JWSVerifier) verifier);
     }
 
     private static void validateTimeClaims(final Map<String, Object> claims,

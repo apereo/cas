@@ -4,6 +4,8 @@ import module java.base;
 import org.apereo.cas.authentication.MultifactorAuthenticationProvider;
 import org.apereo.cas.authentication.mfa.TestMultifactorAuthenticationProvider;
 import org.apereo.cas.oidc.AbstractOidcTests;
+import org.apereo.cas.support.oauth.OAuth20GrantTypes;
+import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.TestConfiguration;
@@ -53,5 +55,13 @@ class OidcServerDiscoverySettingsFactoryTests extends AbstractOidcTests {
         assertNotNull(oidcServerDiscoverySettings.getUserinfoEndpoint());
         assertNotNull(oidcServerDiscoverySettings.getIssuer());
         assertNotNull(oidcServerDiscoverySettings.getJwksUri());
+    }
+
+    @Test
+    void verifyPreAuthorizedGrantAnonymousAccessFollowsGrantType() {
+        assertTrue(oidcServerDiscoverySettings.isPreAuthorizedGrantAnonymousAccessSupported());
+        val settings = new OidcServerDiscoverySettings(oidcServerDiscoverySettings.getIssuer());
+        settings.setGrantTypesSupported(Set.of(OAuth20GrantTypes.AUTHORIZATION_CODE.getType()));
+        assertFalse(settings.isPreAuthorizedGrantAnonymousAccessSupported());
     }
 }

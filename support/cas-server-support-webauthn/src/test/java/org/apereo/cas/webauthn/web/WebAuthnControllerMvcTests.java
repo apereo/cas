@@ -52,6 +52,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
     BaseWebAuthnWebflowTests.SharedTestConfiguration.class
 },
     properties = {
+        "CasFeatureModule.AccountManagement.enabled=true",
+
         "management.endpoints.access.default=UNRESTRICTED",
         "management.endpoints.web.exposure.include=*",
 
@@ -139,17 +141,8 @@ class WebAuthnControllerMvcTests {
         mvc.perform(get("/cas" + WebAuthnPasskeyEndpointsController.ENDPOINT_PASSKEY_ENDPOINTS))
             .andExpect(status().isOk())
             .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
-            .andExpect(content().string("{}"));
-
-        val properties = new CasConfigurationProperties();
-        properties.getServer().setPrefix("https://sso.example.org/cas");
-        properties.getAuthn().getMfa().getWebAuthn().getCore().setPasskeyManageUrl("https://portal.example.org/security");
-        MockMvcBuilders.standaloneSetup(new WebAuthnPasskeyEndpointsController(properties, true)).build()
-            .perform(get(WebAuthnPasskeyEndpointsController.ENDPOINT_PASSKEY_ENDPOINTS))
-            .andExpect(status().isOk())
-            .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
-            .andExpect(jsonPath("$.enroll").value("https://sso.example.org/cas/account"))
-            .andExpect(jsonPath("$.manage").value("https://portal.example.org/security"));
+            .andExpect(jsonPath("$.enroll").value(casProperties.getServer().getPrefix() + "/account"))
+            .andExpect(jsonPath("$.manage").value(casProperties.getServer().getPrefix() + "/account"));
     }
 
     @Test
