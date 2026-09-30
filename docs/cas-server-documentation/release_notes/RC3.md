@@ -195,9 +195,19 @@ like distinguished names, round-trip correctly. Other changes:
 - Expanding a ticket no longer goes through the ticket factories, which skips id generation and service registry lookups.
 - An expanded ticket keeps the id it was looked up by, and its authentication keeps the original authentication date.
 - The ticket-granting ticket no longer carries its own id or the tickets it has granted, which the stateless registry does not track.
+- The ticket-granting ticket no longer carries principal attributes. They are fetched from attribute repositories again each time
+  the ticket-granting ticket is read, the same way they already were during ticket validation, which keeps the ticket-granting cookie small.
+  Attributes that only authentication handlers produce, such as claims from Duo Security or delegated authentication, are no longer
+  available to single sign-on decisions unless an attribute repository produces them as well.
 
 Stateless tickets issued before the upgrade can no longer be read, so users sign in again and OAuth clients need new tokens.
 Custom `TicketCompactor` implementations must move to `compactFields` and `parse(ticket, count)`.
+
+The ticket-granting cookie can now be encrypted without being signed, using `cas.tgc.crypto.signing-enabled=false` (signing stays
+on while a signing key is defined). The cookie encryption is authenticated, so this keeps tamper detection and makes the cookie
+about a quarter smaller. This is recommended with the stateless ticket registry, where the cookie carries the
+ticket-granting ticket and can otherwise exceed the `4096` bytes browsers accept, for example after Duo Security multifactor
+authentication. See the stateless ticket registry documentation for details.
 
 ## Other Stuff
 

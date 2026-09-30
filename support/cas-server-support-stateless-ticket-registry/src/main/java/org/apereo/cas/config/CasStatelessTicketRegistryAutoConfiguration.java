@@ -2,6 +2,7 @@ package org.apereo.cas.config;
 
 import module java.base;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
+import org.apereo.cas.authentication.principal.PrincipalResolver;
 import org.apereo.cas.authentication.principal.ServiceFactory;
 import org.apereo.cas.authentication.principal.ServiceMatchingStrategy;
 import org.apereo.cas.authentication.principal.WebApplicationService;
@@ -26,6 +27,7 @@ import org.apereo.cas.util.CoreTicketUtils;
 import org.apereo.cas.util.crypto.CipherExecutor;
 import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
 import lombok.val;
+import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -80,9 +82,11 @@ public class CasStatelessTicketRegistryAutoConfiguration {
     @Bean
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     public TicketCompactor ticketGrantingTicketCompactor(
+        @Qualifier(PrincipalResolver.BEAN_NAME_PRINCIPAL_RESOLVER)
+        final ObjectProvider<PrincipalResolver> principalResolver,
         @Qualifier(TicketSerializationManager.BEAN_NAME)
         final TicketSerializationManager ticketSerializationManager) {
-        return new TicketGrantingTicketCompactor(ticketSerializationManager);
+        return new TicketGrantingTicketCompactor(ticketSerializationManager, principalResolver);
     }
 
     @ConditionalOnMissingBean(name = "proxyGrantingTicketCompactor")

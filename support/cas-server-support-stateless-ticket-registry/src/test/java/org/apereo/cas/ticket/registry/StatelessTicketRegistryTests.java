@@ -1,7 +1,11 @@
 package org.apereo.cas.ticket.registry;
 
 import module java.base;
+import org.apereo.cas.BaseCasCoreTests;
 import org.apereo.cas.authentication.Authentication;
+import org.apereo.cas.authentication.DefaultAuthenticationBuilder;
+import org.apereo.cas.authentication.DefaultAuthenticationHandlerExecutionResult;
+import org.apereo.cas.authentication.credential.UsernamePasswordCredential;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.config.CasStatelessTicketRegistryAutoConfiguration;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
@@ -42,7 +46,10 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 @Tag("Tickets")
 @Tag("TicketRegistryTestWithoutEncryption")
-@Import(BaseWebflowConfigurerTests.SharedTestConfiguration.class)
+@Import({
+    BaseWebflowConfigurerTests.SharedTestConfiguration.class,
+    BaseCasCoreTests.SharedTestConfiguration.PrincipalResolutionTestConfiguration.class
+})
 @ImportAutoConfiguration(CasStatelessTicketRegistryAutoConfiguration.class)
 @Getter
 @TestPropertySource(properties = {
@@ -219,6 +226,31 @@ class StatelessTicketRegistryTests extends BaseTicketRegistryTests {
         assertEquals(tgt.getCreationTime().toEpochSecond(), expandedTicket.getCreationTime().toEpochSecond());
         assertEquals(tgt.getAuthentication().getPrincipal(), expandedTicket.getAuthentication().getPrincipal());
         assertTrue(updatedTicket.getId().length() < addedTicket.getId().length() * 3 / 2);
+    }
+
+    @RepeatedTest(2)
+    void verifyTicketGrantingTicketResolvesPrincipalAttributes() throws Exception {
+        val principal = RegisteredServiceTestUtils.getPrincipal(UUID.randomUUID().toString(),
+            new HashMap<>(Map.<String, List<Object>>of("nickname", List.of(RandomUtils.randomAlphabetic(8192)))));
+        val authentication = DefaultAuthenticationBuilder
+            .newInstance(RegisteredServiceTestUtils.getAuthentication(principal, new HashMap<>(Map.<String, List<Object>>of("authnContext", List.of("mfa-simple")))))
+            .addSuccess("principalHandler", new DefaultAuthenticationHandlerExecutionResult("principalHandler",
+                new UsernamePasswordCredential(), principal, new ArrayList<>()))
+            .build();
+        val tgt = new TicketGrantingTicketImpl(TestTicketIdentifiers.generate().ticketGrantingTicketId(),
+            authentication, new TicketGrantingTicketExpirationPolicy(5000, 2000));
+        val addedTicket = newTicketRegistry.addTicket(tgt);
+        assertTrue(addedTicket.getId().length() < 4096);
+
+        val expandedAuthentication = newTicketRegistry.getTicket(addedTicket.getId(), TicketGrantingTicket.class).getAuthentication();
+        val expandedPrincipal = expandedAuthentication.getPrincipal();
+        assertEquals(principal.getId(), expandedPrincipal.getId());
+        assertFalse(expandedPrincipal.containsAttribute("nickname"));
+        assertEquals(List.of("cas@apereo.org"), expandedPrincipal.getAttributes().get("mail"));
+        assertEquals(List.of("mfa-simple"), expandedAuthentication.getAttributes().get("authnContext"));
+        assertEquals(authentication.getSuccesses().keySet(), expandedAuthentication.getSuccesses().keySet());
+        assertEquals(1, expandedAuthentication.getCredentials().size());
+        assertTrue(Objects.requireNonNull(expandedAuthentication.getSuccesses().get("principalHandler").getPrincipal()).getAttributes().isEmpty());
     }
 
     private List<Ticket> newTicketsOfEveryType(final Authentication authentication) throws Throwable {

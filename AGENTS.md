@@ -941,12 +941,23 @@ Guidance for AI coding agents working in the Apereo CAS source tree.
   TGC with the (compacted, encrypted) TGT id, and the TGC value manager signs and encrypts it as usual. Maintainer rule:
   use the existing TGC behavior unchanged; no parallel cookies, bindings, digests or browser-storage copies of the TGT,
   and no stateless-only webflow wiring for the SSO session. Browser storage remains for Duo and the SAML IdP only.
+- Browsers drop cookies over 4096 bytes, and a Duo TGT makes the default (encrypted and signed) TGC about 4.3 KB. The
+  documented remedy is `cas.tgc.crypto.signing-enabled=false` (TGC crypto uses
+  `EncryptionOptionalSigningOptionalJwtCryptographyProperties`): the JWE is `dir` + `A256CBC-HS512`, already authenticated,
+  and dropping the JWS layer saves about a quarter. A defined `cas.tgc.crypto.signing.key` keeps signing on
+  (`BaseStringCipherExecutor`). Scenario `mfa-duo-universal-login-stateless` runs with it.
+- `TicketGrantingTicketCompactor` does not keep principal attributes when the principal is a `SimplePrincipal` (top-level
+  and handler-result principals; credentials, authentication attributes and other principal types stay). On expand it
+  re-resolves them through `defaultPrincipalResolver` with a `BasicIdentifiableCredential` of the principal id, keeping
+  that id, like `DefaultCentralAuthenticationService.rebuildStatelessTicketPrincipal` does for service tickets. So SSO-time
+  decisions only see attribute-repository attributes; handler-only attributes (Duo, delegated claims) are gone by design.
 - `getTicket(id).getId()` must equal `id`, as with every other registry: callers such as `InitialFlowSetupAction` put
   `ticket.getId()` into scope and look it up again. The stateless registry sets every expanded ticket's id to the id it was
   looked up by, unless the compactor's `isTicketIdRetained()` is true (device user codes, whose id is the user code). No
   compact layout may contain the ticket's own id, or updates nest the previous id.
 - Expanded TGTs keep their original expiration policy with `lastTimeUsed` frozen at creation, so an idle timeout acts
-  as a cap from login time. Maintainer: no idle timeout and no single use, by design; a sliding idle timeout was built and
+  as a cap from login time. Maintainer: no idle timeout, no single use and no revocation, by design (deployment trade-offs,
+  as with the Shibboleth IdP); keys are created or copied by hand, as with any registry. A sliding idle timeout was built and
   rejected, do not reintroduce it. Non-happy paths are reviewed last.
 - Scenarios `stateless-ticket-registry`, `stateless-ticket-registry-saml2-idp`, `oauth2-login-stateless`,
   `oidc-login-stateless`, `mfa-duo-universal-login-stateless`, `ticket-validation-casv3-pgt-stateless` cover happy

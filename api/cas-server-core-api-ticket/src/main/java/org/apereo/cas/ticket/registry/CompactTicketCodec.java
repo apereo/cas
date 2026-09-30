@@ -3,6 +3,7 @@ package org.apereo.cas.ticket.registry;
 import module java.base;
 import lombok.experimental.UtilityClass;
 import lombok.val;
+import org.apache.commons.lang3.StringUtils;
 import org.jspecify.annotations.Nullable;
 
 /**
@@ -59,7 +60,7 @@ public class CompactTicketCodec {
      */
     public static String encodeValues(final Collection<?> values) {
         val builder = new StringBuilder();
-        values.forEach(value -> append(builder, Objects.toString(value, "")));
+        values.forEach(value -> append(builder, Objects.toString(value, StringUtils.EMPTY)));
         return builder.toString();
     }
 
@@ -74,7 +75,7 @@ public class CompactTicketCodec {
     }
 
     private static void append(final StringBuilder builder, final @Nullable String value) {
-        val field = Objects.toString(value, "");
+        val field = Objects.toString(value, StringUtils.EMPTY);
         builder.append(field.length()).append(LENGTH_SEPARATOR).append(field);
     }
 

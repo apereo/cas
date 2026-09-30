@@ -51,6 +51,27 @@ might be missing or acts dysfunctional, please investigate, isolate, verify and 
 - Increase the expiration policy of service tickets to be around `30` seconds to allow for decryption operations to decode tickets in time.
 - Assign names to all authentication handlers, and preferably short, concise names.
 - Use shorter URLs for applications, especially those that use the CAS protocol. This will help minimize the size of the generated service tickets.
+- Turn off ticket-granting cookie signing and keep its encryption, to keep the cookie within browser limits. 
+
+## Ticket-granting Cookie Size
+
+The ticket-granting cookie carries the entire stateless ticket-granting ticket, including the authenticated principal id,
+the credentials, and the authentication attributes. Principal attributes are not kept in the ticket, as noted below.
+The size of the cookie grows with the number and size of the authentication attributes and credentials, and multifactor authentication providers
+such as Duo Security can add many of their own. Browsers only guarantee cookies of up to `4096` bytes and silently drop
+larger ones, in which case every request asks the user to sign in again. CAS logs a warning when the cookie exceeds this size:
+
+```bash
+WARN <Cookie [TGC] is [4436] bytes, larger than the [4096] bytes browsers are guaranteed to accept...>
+```
+
+You may turn off cookie signing and keep cookie encryption, which makes the cookie about a quarter smaller:
+
+{% include_cached casproperties.html properties="cas.tgc.crypto" %}
+
+<div class="alert alert-warning">:warning: <strong>Signing Key</strong><p>Signing remains active as long as
+the signing key is defined. Remove the signing key to turn signing off, and do not turn off cookie encryption.
+</p></div>
 
 ## Caveats
 
@@ -68,8 +89,9 @@ you should examine and understand the security trade-offs carefully before you d
 - Generated tickets are generally controlled to be no larger than `256` characters. You *might* need to adjust your servlet container of choice to allow for larger form/response header sizes. Likewise, you must ensure your applications, particularly those that deal with CAS or OpenID Connect protocols are OK with somewhat larger and longer ticket and token sizes.
 - Super long application URLs that might negatively influence the size of the generated service ticket are compressed using a pre-defined modest shortening technique, which in turn is taken into account by a specialized ticket validation strategy. For best results, and this is true for all CAS-supported protocols, it is recommended that applications use shorter URLs.
 - To minimize the length of the generated tickets, tickets are only encrypted.
-- The single sign-on session is tracked by the ticket-granting cookie as usual, which carries the stateless ticket-granting ticket itself, signed and encrypted. You *might* need to adjust your servlet container and any proxy in front of CAS to allow the larger cookie.
-- **Important:** All attributes produced and collected during the first leg of the authentication transaction will be lost and ignored during back-channel ticket validation attempts. Such attempts instruct CAS to fetch all attributes from configured attribute repositories once more. In other words, if your attributes are only produced once during the authentication transaction by an authentication handler and family, you must also configure [an attribute repository](../integration/Attribute-Resolution.html) to fetch the attributes yet again during ticket validation operations.
+- The single sign-on session is tracked by the ticket-granting cookie as usual, which carries the stateless ticket-granting ticket itself. Browsers only guarantee cookies of up to `4096` bytes and silently drop larger ones, which ends the single sign-on session.
+- **Important:** Principal attributes produced and collected during the first leg of the authentication transaction are not kept in any ticket. The ticket-granting ticket keeps the principal id, and CAS fetches all principal attributes from configured attribute repositories once more every time the ticket-granting ticket is read, such as when single sign-on sessions are established for applications, and again during back-channel ticket validation attempts. As a result, single sign-on decisions such as multifactor authentication triggers, access strategies and single sign-on participation policies that are based on principal attributes, as well as attribute release, only see attributes that the attribute repositories produce. In other words, if your attributes are only produced once during the authentication transaction by an authentication handler and family, such as claims from delegated authentication or multifactor authentication providers, you must also configure [an attribute repository](../integration/Attribute-Resolution.html) to fetch the attributes yet again. Authentication attributes are kept as they are. Principals that are not simple principals, such as those produced by surrogate authentication, keep their attributes in the ticket-granting ticket.
+- Every read of the ticket-granting ticket queries the configured attribute repositories. Make sure attribute repositories can handle the additional load, and consider caching their results where appropriate. If principal resolution fails with an error, the ticket-granting ticket is treated as missing and the user is asked to sign in again. Attribute repositories that do not respond may instead produce no attributes, depending on their configuration.
 - In the absence of a central backend storage service, back-channel single logout operations are not supported. Likewise, all operations that ask for active single sign-on sessions or anything that in general deals with tracking single sign-on sessions is out of scope and unlikely to be supported. You will lose the ability to determine whether a user is logged in and as a result will be unable to administratively terminate a user's session.
 
 
