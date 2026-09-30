@@ -211,6 +211,31 @@ public abstract class BaseConverters {
     }
 
     /**
+     * The type Big integer to string converter.
+     */
+    @WritingConverter
+    public static class BigIntegerToStringConverter implements Converter<BigInteger, String> {
+        @Override
+        public String convert(final BigInteger source) {
+            return source.toString();
+        }
+    }
+
+    /**
+     * The type String to big integer converter.
+     */
+    @ReadingConverter
+    static class StringToBigIntegerConverter implements Converter<String, BigInteger> {
+        @Override
+        public BigInteger convert(final String source) {
+            if (StringUtils.isBlank(source)) {
+                return null;
+            }
+            return new BigInteger(source);
+        }
+    }
+
+    /**
      * The type BsonTimestamp to date converter.
      */
     public static class BsonTimestampToDateConverter implements Converter<BsonTimestamp, Date> {

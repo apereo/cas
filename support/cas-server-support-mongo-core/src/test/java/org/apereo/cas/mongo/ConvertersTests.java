@@ -33,6 +33,9 @@ class ConvertersTests {
         assertNotNull(new BaseConverters.BsonTimestampToDateConverter().convert(new BsonTimestamp()));
         assertNotNull(new BaseConverters.BsonTimestampToStringConverter().convert(new BsonTimestamp()));
         assertNotNull(new BaseConverters.ZonedDateTimeTransformer().transform(ZonedDateTime.now(Clock.systemUTC())));
+        assertNull(new BaseConverters.StringToBigIntegerConverter().convert(StringUtils.EMPTY));
+        assertEquals(BigInteger.TEN.toString(), new BaseConverters.BigIntegerToStringConverter().convert(BigInteger.TEN));
+        assertEquals(BigInteger.TEN, new BaseConverters.StringToBigIntegerConverter().convert(BigInteger.TEN.toString()));
         val codec = new BaseConverters.ZonedDateTimeCodecProvider().get(ZonedDateTime.class, mock(CodecRegistry.class));
         assertNotNull(codec);
 
