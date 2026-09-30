@@ -42,6 +42,7 @@ import org.apereo.cas.webauthn.storage.JsonResourceWebAuthnCredentialRepository;
 import org.apereo.cas.webauthn.storage.WebAuthnCredentialRepository;
 import org.apereo.cas.webauthn.web.BaseWebAuthnController;
 import org.apereo.cas.webauthn.web.WebAuthnController;
+import org.apereo.cas.webauthn.web.WebAuthnPasskeyEndpointsController;
 import org.apereo.cas.webauthn.web.WebAuthnQRCodeController;
 import org.apereo.cas.webauthn.web.WebAuthnRegisteredDevicesEndpoint;
 import org.apereo.cas.webauthn.web.WebAuthnRelatedOriginsController;
@@ -496,6 +497,15 @@ class WebAuthnConfiguration {
                 return new WebAuthnRelatedOriginsController(WebAuthnUtils.determineAllowedOrigins(casProperties));
             }
 
+            @ConditionalOnMissingBean(name = "webAuthnPasskeyEndpointsController")
+            @Bean
+            @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+            public WebAuthnPasskeyEndpointsController webAuthnPasskeyEndpointsController(
+                final ConfigurableApplicationContext applicationContext,
+                final CasConfigurationProperties casProperties) {
+                return new WebAuthnPasskeyEndpointsController(casProperties);
+            }
+
             @ConditionalOnMissingBean(name = "webAuthnController")
             @Bean
             @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
@@ -608,7 +618,9 @@ class WebAuthnConfiguration {
                                 .access(new WebExpressionAuthorizationManager("hasRole('USER') and isAuthenticated()"));
                             val relatedOrigins = PathPatternRequestMatcher.withDefaults()
                                 .matcher(HttpMethod.GET, WebAuthnRelatedOriginsController.ENDPOINT_RELATED_ORIGINS);
-                            customizer.requestMatchers(authEndpoints, qrAuthEndpoints, relatedOrigins).permitAll();
+                            val passkeyEndpoints = PathPatternRequestMatcher.withDefaults()
+                                .matcher(HttpMethod.GET, WebAuthnPasskeyEndpointsController.ENDPOINT_PASSKEY_ENDPOINTS);
+                            customizer.requestMatchers(authEndpoints, qrAuthEndpoints, relatedOrigins, passkeyEndpoints).permitAll();
                         });
                         return this;
                     }

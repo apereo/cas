@@ -184,7 +184,7 @@ because the owning account no longer holds the passkey, the response says so and
 `parseRequestOptionsFromJSON`, `toJSON()`) and no longer override the configured attestation conveyance preference with
 `direct`; browsers without this WebAuthn Level 3 support can no longer use WebAuthn in CAS.
 CAS also publishes `/.well-known/passkey-endpoints` so password managers can link users to the pages where passkeys are
-created and managed; by default both point to the account profile's multifactor devices panel when account management is enabled.
+created and managed; by default both point to the account profile when account management is enabled.
 
 ### Stateless Ticket Registry
 

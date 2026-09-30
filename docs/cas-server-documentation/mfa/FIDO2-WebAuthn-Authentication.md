@@ -66,7 +66,12 @@ CAS server name). When CAS is reached from origins whose domain differs from tha
 [WebAuthn related origin requests](https://www.w3.org/TR/webauthn-3/#sctn-related-origins) at `/.well-known/webauthn`:
 
 ```json
-{ "origins": [ "https://sso.example.org", "https://login.example.co.uk" ] }
+{
+  "origins": [
+    "https://sso.example.org",
+    "https://login.example.co.uk"
+  ]
+}
 ```
 
 Browsers fetch this document from `https://<relying party identifier>/.well-known/webauthn`, at the root of the host
@@ -77,6 +82,28 @@ registered on the engine:
 
 ```
 RewriteRule ^/\.well-known/webauthn$ /cas/.well-known/webauthn [L]
+```
+
+## Passkey Endpoints
+
+CAS publishes the [passkey endpoints metadata](https://www.w3.org/TR/passkey-endpoints/) at
+`/.well-known/passkey-endpoints`, which password managers and passkey providers read to send users to the pages
+where passkeys are created (`enroll`) and managed (`manage`):
+
+```json
+{
+  "enroll": "https://sso.example.org/cas/account",
+  "manage": "https://sso.example.org/cas/account"
+}
+```
+
+Each URL is taken from CAS settings. When one is not set and [account management](../registration/Account-Management-Overview.html) is enabled, it points to the
+account profile, where WebAuthn devices are listed and registered; otherwise it is left out,
+and an empty document still tells clients that CAS supports passkeys. Like the related origins document, clients fetch it from
+the root of the relying party identifier's host, so route it onto the CAS context path the same way:
+
+```
+RewriteRule ^/\.well-known/passkey-endpoints$ /cas/.well-known/passkey-endpoints [L]
 ```
 
 ## Signal API

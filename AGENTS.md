@@ -207,6 +207,11 @@ Guidance for AI coding agents working in the Apereo CAS source tree.
 - An empty policy means "no opinion", not "deny everything". Authorization policies here default open when unconfigured, because they are added to deployments that were already working; a policy that denied by default would break every existing service on upgrade.
 - CAS is both issuer and verifier here, and the verifier only trusts CAS-issued credentials: `iss` must equal the local issuer, `vct` must map to a local configuration, the signature is checked against CAS's own keystore, and a `status` claim is refused rather than ignored. That is a trust policy, not a defect -- OpenID4VP leaves issuer trust to the verifier ("Verifiers must verify that the issuer of a received presentation is trusted on their own"), and a verifier that cannot evaluate revocation must fail closed. Do not report it as a compliance gap. Widening it means external issuer trust, `x5c`, DID resolution, OpenID Federation and Token Status List fetching, which is a feature with its own configuration surface, not a fix.
 - What is worth checking in that code is consistency between the two halves: the verifier should require everything the issuer always emits. `exp` was optional at verification while issuance always stamps it, which let a credential that never expires through.
+- Check every authorization path the metadata advertises end to end. Each credential configuration publishes a `scope`, which tells a wallet it may use scope-based authorization (OpenID4VCI 5.1.2), but the credential endpoint only honours pre-authorized tokens and `authorization_details`; EUDI's issuance library favours scopes. A metadata field is a promise to wallets, not decoration.
+- Metadata is per format: `vct` belongs to `dc+sd-jwt` only, while `jwt_vc_json` and `jwt_vc_json-ld` need `credential_definition` (Appendix A.1). Check what each encoder references, too: a JSON-LD `@context` URL CAS never serves breaks any processing verifier.
+- A credential is only portable if a third party can find the issuer key. SD-JWT VC resolves it through `/.well-known/jwt-vc-issuer` (inserted before the issuer path, like the other well-known documents) or an `x5c` header; CAS verifying its own credentials in puppeteer proves nothing about that.
+- Never coerce attribute strings with `NumberUtils.createNumber`: it decodes a leading zero as octal ("0123" becomes 83) and throws on "08", which corrupts postal codes and identifiers or fails issuance.
+- Wallets differ mostly at the edges: proof keys by `jwk`, `kid` (did:key, did:jwk) or `x5c`, EdDSA vs ES256, `redirect_uri` vs `x509_san_dns`/`x509_hash`, `direct_post` vs `direct_post.jwt`. The walt.id scenario pins P-256, `jwk` and `redirect_uri`, so it cannot catch regressions in the others.
 
 ## Parallel test execution and shared registries
 
@@ -946,17 +951,19 @@ Guidance for AI coding agents working in the Apereo CAS source tree.
   `EncryptionOptionalSigningOptionalJwtCryptographyProperties`): the JWE is `dir` + `A256CBC-HS512`, already authenticated,
   and dropping the JWS layer saves about a quarter. A defined `cas.tgc.crypto.signing.key` keeps signing on
   (`BaseStringCipherExecutor`). Scenario `mfa-duo-universal-login-stateless` runs with it.
-- `TicketGrantingTicketCompactor` does not keep principal attributes when the principal is a `SimplePrincipal` (top-level
-  and handler-result principals; credentials, authentication attributes and other principal types stay). On expand it
-  re-resolves them through `defaultPrincipalResolver` with a `BasicIdentifiableCredential` of the principal id, keeping
-  that id, like `DefaultCentralAuthenticationService.rebuildStatelessTicketPrincipal` does for service tickets. So SSO-time
-  decisions only see attribute-repository attributes; handler-only attributes (Duo, delegated claims) are gone by design.
+- `TicketGrantingTicketCompactor` keeps only the TGT's authentication (typed JSON via `AuthenticationStringSerializer`),
+  with principal attributes removed from the principal and the handler-result principals. On expand it always re-resolves
+  them through `defaultPrincipalResolver` with a `BasicIdentifiableCredential` of the principal id, keeping that id (like
+  `DefaultCentralAuthenticationService.rebuildStatelessTicketPrincipal`; attribute repository results are cached), and
+  creates the TGT through the `TicketGrantingTicketFactory`, then sets the creation time and a `FixedInstantExpirationPolicy`
+  from the compact fields. Maintainer: no ticket impl classes and no hand-built tickets in compactors; use the factories.
+  SSO-time decisions only see attribute-repository attributes; handler-only attributes (Duo, delegated claims) are gone.
 - `getTicket(id).getId()` must equal `id`, as with every other registry: callers such as `InitialFlowSetupAction` put
   `ticket.getId()` into scope and look it up again. The stateless registry sets every expanded ticket's id to the id it was
   looked up by, unless the compactor's `isTicketIdRetained()` is true (device user codes, whose id is the user code). No
   compact layout may contain the ticket's own id, or updates nest the previous id.
-- Expanded TGTs keep their original expiration policy with `lastTimeUsed` frozen at creation, so an idle timeout acts
-  as a cap from login time. Maintainer: no idle timeout, no single use and no revocation, by design (deployment trade-offs,
+- Expanded TGTs get a `FixedInstantExpirationPolicy` at the original policy's maximum expiration time, so an idle
+  timeout is not enforced. Maintainer: no idle timeout, no single use and no revocation, by design (deployment trade-offs,
   as with the Shibboleth IdP); keys are created or copied by hand, as with any registry. A sliding idle timeout was built and
   rejected, do not reintroduce it. Non-happy paths are reviewed last.
 - Scenarios `stateless-ticket-registry`, `stateless-ticket-registry-saml2-idp`, `oauth2-login-stateless`,
@@ -992,3 +999,35 @@ Guidance for AI coding agents working in the Apereo CAS source tree.
   because it is registered globally; check the credential type hierarchy before widening or relying on it.
 - When reviewing wallet/passkey integration, check against the current WebAuthn Level 3 Recommendation and the W3C Digital
   Credentials API plus OpenID4VP 1.0 (DC API response modes) rather than older drafts.
+
+## FIDO2 WebAuthn / passkeys review discipline
+
+- Review against WebAuthn Level 3 (W3C Recommendation, 2026) and the Yubico `webauthn-server-core` version in
+  `gradle/libs.versions.toml`; the ceremony logic lives in the vendored `com.yubico.core.WebAuthnServer`, the browser side in
+  `support/cas-server-support-thymeleaf/.../static/js/webauthn/webauthn.js`.
+- Already present, do not re-report: related origins (`/.well-known/webauthn`), conditional mediation on the passwordless
+  user-id view, `signalAllAcceptedCredentials`/`signalCurrentUserDetails`, session-bound challenges, and the MFA handler's
+  check that the asserted user handle maps to the in-progress principal.
+- Yubico enforces UV only when the request says `REQUIRED`; `userVerificationRequirement` unset means UV is not checked.
+- The library copies `backupEligible`/`backupState`/transports only if the repository returns them from `lookup` and
+  `getCredentialIdsForUsername`, and it can only store transports the browser sent (`response.transports`).
+- All WebAuthn puppeteer registration scenarios set `allow-untrusted-attestation=true`; the defaults reject `none`
+  attestation, which synced passkey providers return. Keep that in mind before calling a scenario representative of defaults.
+- `allow-untrusted-attestation` and `user-verification-requirement` are operator decisions: do not change their defaults;
+  set them explicitly in tests and scenarios. UV `REQUIRED` needs a `ctap2` virtual authenticator (`cas.js` defaults to `u2f`).
+- Yubico requests `credProps` on every registration by itself; read the answer from `RegistrationResult.isDiscoverable()`.
+- `webauthn.js` uses the native `PublicKeyCredential.parse*OptionsFromJSON` and `toJSON()` with no fallback. Yubico parses
+  with `FAIL_ON_UNKNOWN_PROPERTIES=true`; `toJSON()` output passes only because `publicKey`/`publicKeyAlgorithm` are ignored
+  and `authenticatorData` is `@JsonIgnore`d, so check Yubico's `@JsonCreator`s before sending any new client field.
+- `signalUnknownCredential` is destructive (Chrome's virtual authenticator deletes the passkey). Report
+  `unknownCredential` only from the owning account's registrations (user handle, else request username), never from the
+  node-local credential index in `BaseWebAuthnCredentialRepository`, which lags other nodes by up to a minute.
+- Verification here: Maven Central is blocked, so check Yubico APIs by cloning `github.com/Yubico/java-webauthn-server` at the
+  version in `libs.versions.toml`. `webauthn.js` is too deep to stage; copy it under the ignored `build/` folder, stage that,
+  and exercise it in Playwright's Chromium with a CDP virtual authenticator.
+- `/.well-known/passkey-endpoints` follows the W3C Passkey Endpoints Working Draft (Jan 2026): 200, `application/json`, no
+  redirect, `{}` allowed. CAS has no direct URL into WebAuthn registration, so the defaults point at the plain account
+  profile (`/account`), never at a panel fragment such as `#divMfaRegisteredAccounts`, and only when
+  `webAuthnAccountProfileWebflowConfigurer` exists (account management enabled); check bean presence rather than
+  re-reading `CasFeatureModule` properties.
+- JSON examples pasted into the documentation are pretty-printed (one member per line, two-space indent), never minified.

@@ -35,6 +35,8 @@ also offers a passkey option that asks the browser for a passkey with its own pr
   Registration takes place during [WebAuthn multifactor authentication](../mfa/FIDO2-WebAuthn-Authentication.html)
   or through the [device registration](../mfa/FIDO2-WebAuthn-Authentication-Registration.html) APIs.
 - The passkey decides who logs in. A username typed on the passwordless page does not restrict which passkey may answer.
+- Passkey providers that sync passkeys across devices, such as iCloud Keychain, Google Password Manager, 1Password or
+  Bitwarden, usually register passkeys without attestation. Such registrations are rejected unless untrusted attestation is allowed via CAS settings.
 
 <div class="alert alert-warning">:warning: <strong>User Verification</strong><p>
 A passkey that logs the user in on its own should also verify the user with a PIN or biometric. Unless
