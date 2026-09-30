@@ -3,7 +3,9 @@ package org.apereo.cas.gauth.credential;
 import module java.base;
 import org.apereo.cas.authentication.OneTimeTokenAccount;
 import org.apereo.cas.config.CasGoogleAuthenticatorRedisAutoConfiguration;
+import org.apereo.cas.gauth.RedisCompositeKey;
 import org.apereo.cas.otp.repository.credentials.OneTimeTokenCredentialRepository;
+import org.apereo.cas.redis.core.CasRedisTemplate;
 import org.apereo.cas.test.CasTestExtension;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.RandomUtils;
@@ -53,6 +55,14 @@ class RedisGoogleAuthenticatorTokenCredentialRepositoryTests extends BaseOneTime
     @Autowired
     @Qualifier(BaseGoogleAuthenticatorTokenCredentialRepository.BEAN_NAME)
     private OneTimeTokenCredentialRepository registry;
+
+    @Autowired
+    @Qualifier("redisAccountsGoogleAuthenticatorTemplate")
+    private CasRedisTemplate<String, OneTimeTokenAccount> redisAccountsGoogleAuthenticatorTemplate;
+
+    @Autowired
+    @Qualifier("redisPrincipalsGoogleAuthenticatorTemplate")
+    private CasRedisTemplate<String, OneTimeTokenAccount> redisPrincipalsGoogleAuthenticatorTemplate;
     
     @Test
     void verifySave() {
@@ -117,6 +127,23 @@ class RedisGoogleAuthenticatorTokenCredentialRepositoryTests extends BaseOneTime
         assertNull(registry.get(username, first.getId()));
         assertNotNull(registry.get(username, second.getId()));
         assertEquals(second.getId(), registry.get(username).iterator().next().getId());
+    }
+
+    @Test
+    void verifyAlreadyDeletedDevicesWithCount() {
+        val username = UUID.randomUUID().toString();
+        saveAlreadyDeletedDevice(username);
+        assertEquals(0, registry.count(username));
+        assertEquals(0, countPrincipalEntries(username));
+    }
+
+    @Test
+    void verifyAlreadyDeletedDevicesWithGet() {
+        val username = UUID.randomUUID().toString();
+        val account = saveAlreadyDeletedDevice(username);
+        assertTrue(registry.get(username).isEmpty());
+        assertEquals(0, countPrincipalEntries(username));
+        assertNull(registry.get(username, account.getId()));
     }
 
     @Override
@@ -184,6 +211,24 @@ class RedisGoogleAuthenticatorTokenCredentialRepositoryTests extends BaseOneTime
             Unchecked.consumer(_ -> accountsStream.forEach(acct -> assertNotNull(registry.get(acct.getId())))));
         executedTimedOperation("Getting accounts individually for users",
             Unchecked.consumer(_ -> accountsStream.forEach(acct -> assertNotNull(registry.get(acct.getUsername())))));
+    }
+
+    private OneTimeTokenAccount saveAlreadyDeletedDevice(final String username) {
+        val account = registry.save(OneTimeTokenAccount.builder()
+            .username(username)
+            .secretKey("secret")
+            .validationCode(143211)
+            .scratchCodes(CollectionUtils.wrapList(1, 2, 3, 4, 5, 6))
+            .name(UUID.randomUUID().toString())
+            .build());
+        redisAccountsGoogleAuthenticatorTemplate.delete(RedisCompositeKey.forAccounts().withAccount(account.getId()).toKeyPattern());
+        assertEquals(1, countPrincipalEntries(username));
+        return account;
+    }
+
+    private long countPrincipalEntries(final String username) {
+        val principalKey = RedisCompositeKey.forPrincipals().withPrincipal(username).toKeyPattern();
+        return Objects.requireNonNull(redisPrincipalsGoogleAuthenticatorTemplate.boundSetOps(principalKey).size());
     }
 
     private static <T> T executedTimedOperation(final String name, final Supplier<T> operation) {
