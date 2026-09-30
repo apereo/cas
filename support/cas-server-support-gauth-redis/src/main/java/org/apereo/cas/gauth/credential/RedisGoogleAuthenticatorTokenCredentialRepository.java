@@ -55,11 +55,8 @@ public class RedisGoogleAuthenticatorTokenCredentialRepository extends BaseGoogl
 
     @Override
     public Collection<? extends OneTimeTokenAccount> get(final String username) {
-        val redisAccountKey = RedisCompositeKey.forPrincipals().withPrincipal(username).toKeyPattern();
-        val accounts = casRedisTemplates.getPrincipalsRedisTemplate().boundSetOps(redisAccountKey).members();
-        return Objects.requireNonNull(accounts)
+        return getPrincipalAccounts(username)
             .stream()
-            .filter(Objects::nonNull)
             .map(this::decode)
             .filter(Objects::nonNull)
             .collect(Collectors.toList());
@@ -165,9 +162,27 @@ public class RedisGoogleAuthenticatorTokenCredentialRepository extends BaseGoogl
 
     @Override
     public long count(final String username) {
-        val redisKeyPattern = RedisCompositeKey.forPrincipals().withPrincipal(username).toKeyPattern();
-        val members = casRedisTemplates.getPrincipalsRedisTemplate().boundSetOps(redisKeyPattern).members();
-        return members != null ? members.size() : 0;
+        return getPrincipalAccounts(username).size();
+    }
+
+    protected List<OneTimeTokenAccount> getPrincipalAccounts(final String username) {
+        val principalKey = RedisCompositeKey.forPrincipals().withPrincipal(username).toKeyPattern();
+        val principalOps = casRedisTemplates.getPrincipalsRedisTemplate().boundSetOps(principalKey);
+        val principalAccounts = Optional.ofNullable(principalOps.members()).orElseGet(Set::of);
+        val remainingAccounts = new ArrayList<OneTimeTokenAccount>();
+        for (val account : principalAccounts) {
+            if (account == null) {
+                continue;
+            }
+            val accountKey = RedisCompositeKey.forAccounts().withAccount(account).toKeyPattern();
+            if (Boolean.TRUE.equals(casRedisTemplates.getAccountsRedisTemplate().hasKey(accountKey))) {
+                remainingAccounts.add(account);
+            } else {
+                LOGGER.debug("Removing account [{}] from principal key [{}] since this account no longer exists", account.getId(), principalKey);
+                principalOps.remove(account);
+            }
+        }
+        return remainingAccounts;
     }
 
     @Data
