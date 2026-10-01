@@ -267,3 +267,4 @@ authentication. See the stateless ticket registry documentation for details.
 - Ed25519 keys presented to the [OpenID Connect](../authentication/OIDC-Authentication.html) client JWKS registration endpoint are now
   verified with the JDK's own EdDSA support. Verification previously relied on Google Tink, which CAS does not ship, so such registrations failed at runtime.
 - CAS now logs a warning when a cookie it writes, such as the ticket-granting cookie, is larger than the 4 KB that browsers are guaranteed to accept.
+- MongoDb integration tests have now switched to using MongoDb `9.x`.
