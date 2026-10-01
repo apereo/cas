@@ -36,8 +36,6 @@ public class OidcVerifiableCredentialJwtVcJsonEncoder extends BaseOidcVerifiable
 
         return sign(principal.getId(), context, proof, jwtClaims -> {
             jwtClaims.setStringClaim("sub", principal.getId());
-            jwtClaims.setStringClaim("client_id", context.accessToken().getClientId());
-            jwtClaims.setStringClaim("credential_configuration_id", configurationId);
 
             val credentialSubject = new LinkedHashMap<String, Object>();
             credentialSubject.put("id", principal.getId());

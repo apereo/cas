@@ -392,7 +392,7 @@ public class OidcVerifiableCredentialPresentationRequestEndpointController exten
             credential.getClaims() == null ? List.of() : credential.getClaims();
         val optionalClaims = claims.stream().anyMatch(claim -> !claim.isRequired());
         val claimQueries = IntStream.range(0, claims.size())
-            .mapToObj(index -> OidcVerifiableCredentialDCQL.DCQLCredentialClaimRequest.builder()
+            .<OidcVerifiableCredentialDCQL.DCQLCredentialClaimRequest>mapToObj(index -> OidcVerifiableCredentialDCQL.DCQLCredentialClaimRequest.builder()
                 .id(optionalClaims ? CLAIM_ID_PREFIX + index : null)
                 .path(claims.get(index).getPath())
                 .build())

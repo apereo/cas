@@ -9,7 +9,6 @@ import org.apereo.cas.oidc.OidcConstants;
 import org.apereo.cas.oidc.vc.issuer.OidcVerifiableCredentialValidationContext;
 import org.apereo.cas.oidc.vc.issuer.proof.OidcVerifiableCredentialProofValidator;
 import org.apereo.cas.services.OidcRegisteredService;
-import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.support.oauth.util.OAuth20Utils;
 import org.apereo.cas.util.jwt.JsonWebTokenSigner;
 import lombok.RequiredArgsConstructor;
@@ -172,7 +171,6 @@ public abstract class BaseOidcVerifiableCredentialEncoder implements OidcVerifia
             .algorithm(resolveSigningAlgorithm(configuration, signingKey, registeredService))
             .allowedAlgorithms(new LinkedHashSet<>(resolveSupportedSigningAlgorithms(configuration, registeredService)))
             .mediaType(getFormat().getValue())
-            .headers(Map.of(OAuth20Constants.CLIENT_ID, registeredService.getClientId()))
             .build()
             .sign(claims);
     }

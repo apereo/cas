@@ -4,8 +4,8 @@ import module java.base;
 import org.apereo.cas.configuration.model.support.oidc.OidcVerifiableCredentialConfigurationProperties;
 import org.apereo.cas.oidc.OidcConfigurationContext;
 import org.apereo.cas.oidc.OidcConstants;
+import org.apereo.cas.services.OidcRegisteredService;
 import org.apereo.cas.support.oauth.OAuth20Constants;
-import org.apereo.cas.support.oauth.services.OAuthRegisteredService;
 import org.apereo.cas.support.oauth.util.OAuth20Utils;
 import org.apereo.cas.support.oauth.web.endpoints.BaseOAuth20Controller;
 import org.apereo.cas.ticket.TransientSessionTicket;
@@ -97,6 +97,10 @@ public class OidcVerifiableCredentialPresentationResponseEndpointController exte
 
     private static final int MAX_DISCLOSURE_DEPTH = 64;
 
+    private static final int MAX_ERROR_LENGTH = 128;
+
+    private static final int MAX_ERROR_DESCRIPTION_LENGTH = 1024;
+
     public OidcVerifiableCredentialPresentationResponseEndpointController(
         final OidcConfigurationContext configurationContext) {
         super(configurationContext);
@@ -143,9 +147,9 @@ public class OidcVerifiableCredentialPresentationResponseEndpointController exte
                     "Presentation transaction was consumed concurrently");
                 val outcome = new LinkedHashMap<String, Object>();
                 outcome.put("status", STATUS_ERROR);
-                outcome.put(OAuth20Constants.ERROR, error);
+                outcome.put(OAuth20Constants.ERROR, StringUtils.truncate(error, MAX_ERROR_LENGTH));
                 if (StringUtils.isNotBlank(errorDescription)) {
-                    outcome.put(OAuth20Constants.ERROR_DESCRIPTION, errorDescription);
+                    outcome.put(OAuth20Constants.ERROR_DESCRIPTION, StringUtils.truncate(errorDescription, MAX_ERROR_DESCRIPTION_LENGTH));
                 }
                 return buildResponse(HttpStatus.OK, recordPresentationResult(transientSessionTicket, outcome));
             }
@@ -282,11 +286,7 @@ public class OidcVerifiableCredentialPresentationResponseEndpointController exte
         val configurationId = encodedClaims.get("credential_configuration_id");
         require(configurationId == null || credentialConfiguration.id().equals(configurationId),
             "Credential configuration does not match its type");
-        val clientId = requiredStringClaim(encodedClaims, "client_id");
-        val registeredService = OAuth20Utils.getRegisteredOAuthServiceByClientId(
-            configurationContext.getServicesManager(), clientId);
-        require(registeredService != null, "Credential client is not registered");
-        verifyCredentialSignature(credentialJwt, registeredService);
+        verifyCredentialSignature(credentialJwt);
         require(encodedClaims.containsKey("exp"), "Credential has no expiration time");
         validateTimeClaims(encodedClaims, true, null);
         require(!encodedClaims.containsKey("status"), "Credential status validation is not supported");
@@ -319,10 +319,20 @@ public class OidcVerifiableCredentialPresentationResponseEndpointController exte
             .orElseThrow(() -> new IllegalArgumentException("Credential type is not configured"));
     }
 
-    private void verifyCredentialSignature(final SignedJWT credentialJwt,
-                                           final OAuthRegisteredService registeredService) throws Throwable {
+    /**
+     * Verify the credential against the issuer key its {@code kid} names. Credentials do not say which client
+     * they were issued to, which would let every verifier correlate the holder with that relying party, so the
+     * key is looked up in CAS's signing keystore by key id, the same way a third-party verifier finds it through
+     * the JWT VC Issuer Metadata. A credential without a {@code kid} is checked against the default signing key.
+     *
+     * @param credentialJwt the issuer-signed credential JWT
+     * @throws Throwable the throwable
+     */
+    private void verifyCredentialSignature(final SignedJWT credentialJwt) throws Throwable {
+        val keySelector = new OidcRegisteredService();
+        keySelector.setJwksKeyId(credentialJwt.getHeader().getKeyID());
         val signingKey = configurationContext.getIdTokenSigningAndEncryptionService()
-            .getJsonWebKeySigningKey(Optional.of(registeredService));
+            .getJsonWebKeySigningKey(Optional.of(keySelector));
         require(signingKey != null && signingKey.getPublicKey() != null, "Credential issuer has no signing key");
         val jwk = JWK.parse(signingKey.toJson(JsonWebKey.OutputControlLevel.PUBLIC_ONLY));
         require(verify(credentialJwt, jwk), "Credential JWT signature is invalid");
@@ -559,7 +569,7 @@ public class OidcVerifiableCredentialPresentationResponseEndpointController exte
             return false;
         }
         val publicKey = (PublicKey) EncodingUtils.newJsonWebKey(jwk.toPublicJWK().toJSONString()).getKey();
-        val signature = Signature.getInstance("Ed25519");
+        val signature = java.security.Signature.getInstance("Ed25519");
         signature.initVerify(publicKey);
         signature.update(signedJwt.getSigningInput());
         return signature.verify(signedJwt.getSignature().decode());

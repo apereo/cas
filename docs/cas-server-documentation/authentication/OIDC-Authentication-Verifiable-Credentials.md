@@ -59,7 +59,8 @@ This endpoint generally advertises:
 - The nonce endpoint, when supported.
 - Supported credential configurations.
 - Supported formats and signing algorithms.
-- 
+- How wallets should present the issuer (`display`: name, language and logo), taken from
+  `cas.authn.oidc.vc.issuer.display`; without it wallets show the issuer as unnamed.
 #### Metadata Location
 
 OpenID4VCI locates the credential issuer metadata by inserting `/.well-known/openid-credential-issuer`
@@ -220,9 +221,23 @@ The endpoint body is expected to be:
 ```json
 {
   "principal": "...",
-  "credentialConfigurationIds": ["..."]
+  "credentialConfigurationIds": [
+    "..."
+  ]
 }
 ```
+
+The response carries the offer URI and the deep link a wallet opens, typically rendered as a QR code:
+
+```json
+{
+  "transactionId": "...",
+  "credentialOfferUri": "https://sso.example.org/cas/oidc/oidcVcCredentialOffer/...",
+  "credentialOfferLink": "openid-credential-offer://?credential_offer_uri=https%3A%2F%2Fsso.example.org%2Fcas%2Foidc%2FoidcVcCredentialOffer%2F...",
+  "txCode": "..."
+}
+```
+
 This endpoint is intended for trusted callers such as:
 
 - Administrative tools
@@ -489,6 +504,8 @@ vocabulary covers the credential's claims. Issued credentials carry exactly what
 
 After claims are collected and validated, CAS signs the credential with its own issuer key, selected the
 same way as for other OpenID Connect artifacts and honoring the service's `jwksKeyId` when one is set.
+The credential names that key with `kid` and does not say which client it was issued to, so verifiers
+cannot correlate the holder with the relying party; CAS as a verifier finds the key by `kid` as well.
 
 A credential is not an ID token, and the relying party's ID token settings do not apply to it. The
 algorithm is the first entry of the credential configuration's `credential-signing-alg-values-supported`

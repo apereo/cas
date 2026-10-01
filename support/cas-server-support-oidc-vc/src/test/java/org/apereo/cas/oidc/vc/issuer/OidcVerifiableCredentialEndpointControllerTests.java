@@ -313,6 +313,11 @@ class OidcVerifiableCredentialEndpointControllerTests {
 
             assertNull(metadata.get("myorg").getCredentialDefinition());
             assertNotNull(metadata.get("myorg").getVct());
+
+            for (val claims : List.of(jsonLd, employee)) {
+                assertNull(claims.getClaim(OAuth20Constants.CLIENT_ID));
+                assertNull(claims.getClaim("credential_configuration_id"));
+            }
         }
 
         @Test
@@ -606,6 +611,10 @@ class OidcVerifiableCredentialEndpointControllerTests {
                 .andReturn().getResponse().getContentAsString());
             val signingKey = assertInstanceOf(RSAKey.class, keys.getKeyByKeyId(credential.getHeader().getKeyID()));
             assertTrue(credential.verify(new RSASSAVerifier(signingKey)));
+
+            assertNull(credential.getHeader().getCustomParam(OAuth20Constants.CLIENT_ID));
+            assertNull(credential.getJWTClaimsSet().getClaim(OAuth20Constants.CLIENT_ID));
+            assertNull(credential.getJWTClaimsSet().getClaim("credential_configuration_id"));
         }
 
         @Test

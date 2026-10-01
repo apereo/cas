@@ -212,6 +212,11 @@ created and managed; by default both point to the account profile when account m
   only to the client that created the request.
 - Claims marked `"required": false` in a presentation request are now optional: they are requested through DCQL
   `claim_sets` and may be withheld. Previously the flag was ignored and every claim was required.
+- Issuer metadata can describe the issuer for wallets via `cas.authn.oidc.vc.issuer.display` (name, language, logo).
+- Credential offer transactions also return the `openid-credential-offer://` deep link for the offer.
+- Issued credentials no longer carry `client_id` (claim or header) or `credential_configuration_id`, which revealed to
+  every verifier which relying party requested the credential; CAS verifies its own credentials by the key's `kid`.
+- A wallet's error response is stored bounded: `error` to 128 characters and `error_description` to 1024.
 - Attribute values with a leading zero, such as postal codes, are issued as text. Previously they were read as octal numbers,
   so `0123` was issued as `83` and `08` failed issuance.
 

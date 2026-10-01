@@ -145,6 +145,22 @@ class OidcVerifiableCredentialPresentationResponseEndpointControllerTests extend
     }
 
     @Test
+    void verifyWalletErrorIsStoredBounded() throws Throwable {
+        val transaction = createTransaction();
+        mockMvc.perform(post(PRESENTATION_RESPONSE_ENDPOINT_URL)
+                .with(withHttpRequestProcessor())
+                .contentType(MediaType.APPLICATION_FORM_URLENCODED)
+                .param(OAuth20Constants.ERROR, "e".repeat(5000))
+                .param(OAuth20Constants.ERROR_DESCRIPTION, "d".repeat(5000))
+                .param("state", transaction.ticket().getId()))
+            .andExpect(status().isOk());
+        fetchResult(transaction.ticket().getId())
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$.error").value("e".repeat(128)))
+            .andExpect(jsonPath("$.error_description").value("d".repeat(1024)));
+    }
+
+    @Test
     void verifyResponseWithPresentationAndErrorIsRejected() throws Throwable {
         val transaction = createTransaction();
         assertInvalid(mockMvc.perform(post(PRESENTATION_RESPONSE_ENDPOINT_URL)
@@ -399,8 +415,6 @@ class OidcVerifiableCredentialPresentationResponseEndpointControllerTests extend
         claims.setJwtId(UUID.randomUUID().toString());
         claims.setStringClaim("typ", "dc+sd-jwt");
         claims.setStringClaim("vct", credentialType());
-        claims.setStringClaim("client_id", CREDENTIAL_CLIENT_ID);
-        claims.setStringClaim("credential_configuration_id", CREDENTIAL_CONFIGURATION_ID);
         claims.setClaim("cnf", Map.of("jwk", holderKey.toPublicJWK().toJSONObject()));
         sdObjectBuilder.build().forEach(claims::setClaim);
         customizer.accept(claims);
@@ -428,7 +442,7 @@ class OidcVerifiableCredentialPresentationResponseEndpointControllerTests extend
         val header = Base64URL.encode("{\"alg\":\"%s\",\"typ\":\"kb+jwt\"}".formatted(algorithm));
         val payload = Base64URL.encode(keyBindingClaims(material, nonce).toString());
         val signingInput = header + "." + payload;
-        val signature = Signature.getInstance("Ed25519");
+        val signature = java.security.Signature.getInstance("Ed25519");
         signature.initSign(holderKey.getPrivate());
         signature.update(signingInput.getBytes(StandardCharsets.US_ASCII));
         val bindingJwt = signingInput + '.' + Base64URL.encode(signature.sign());

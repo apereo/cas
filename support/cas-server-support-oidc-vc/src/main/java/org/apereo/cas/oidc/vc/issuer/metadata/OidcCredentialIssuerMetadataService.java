@@ -3,6 +3,7 @@ package org.apereo.cas.oidc.vc.issuer.metadata;
 import module java.base;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.support.oidc.OidcVerifiableCredentialConfigurationProperties;
+import org.apereo.cas.configuration.model.support.oidc.OidcVerifiableCredentialsIssuerProperties;
 import org.apereo.cas.oidc.OidcConstants;
 import org.apereo.cas.oidc.vc.issuer.enc.BaseOidcVerifiableCredentialEncoder;
 import org.apereo.cas.oidc.vc.issuer.metadata.CredentialConfigurationDisplay.CredentialConfigurationDisplayLogo;
@@ -38,6 +39,7 @@ public class OidcCredentialIssuerMetadataService {
         metadata.setAuthorizationServers(List.of(issuer));
         metadata.setCredentialEndpoint(issuer + '/' + OidcConstants.VC_CREDENTIAL_URL);
         metadata.setNonceEndpoint(issuer + '/' + OidcConstants.VC_NONCE_URL);
+        metadata.setDisplay(buildIssuerDisplays(properties.getVc().getIssuer().getDisplay()));
         metadata.setBatchCredentialIssuance(OidcCredentialIssuerMetadata.BatchCredentialIssuance
             .builder()
             .batchSize(Math.max(1, properties.getVc().getIssuer().getBatchSize()))
@@ -93,6 +95,25 @@ public class OidcCredentialIssuerMetadataService {
 
         metadata.setCredentialConfigurationsSupported(supported);
         return metadata;
+    }
+
+    private static List<CredentialConfigurationDisplay> buildIssuerDisplays(
+        final List<OidcVerifiableCredentialsIssuerProperties.IssuerDisplay> issuerDisplays) {
+        return issuerDisplays
+            .stream()
+            .map(entry -> {
+                val display = new CredentialConfigurationDisplay();
+                display.setName(entry.getName());
+                display.setLocale(entry.getLocale());
+                if (StringUtils.isNotBlank(entry.getLogo())) {
+                    display.setLogo(CredentialConfigurationDisplayLogo.builder()
+                        .uri(entry.getLogo())
+                        .altText(StringUtils.defaultIfBlank(entry.getLogoAltText(), entry.getName()))
+                        .build());
+                }
+                return display;
+            })
+            .toList();
     }
 
     private static List<CredentialConfigurationDisplay> buildCredentialConfigurationDisplays(

@@ -29,7 +29,12 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
     "cas.authn.oidc.vc.issuer.credential-configurations.myorg.claims.student_id.mandatory=true",
     "cas.authn.oidc.vc.issuer.credential-configurations.employee.format=JWT_VC_JSON",
     "cas.authn.oidc.vc.issuer.credential-configurations.employee.scope=EmployeeCredential",
-    "cas.authn.oidc.vc.issuer.credential-configurations.badge.format=JWT_VC_JSON_LD"
+    "cas.authn.oidc.vc.issuer.credential-configurations.badge.format=JWT_VC_JSON_LD",
+    "cas.authn.oidc.vc.issuer.display[0].name=Example University",
+    "cas.authn.oidc.vc.issuer.display[0].locale=en-US",
+    "cas.authn.oidc.vc.issuer.display[0].logo=https://university.example.org/logo.png",
+    "cas.authn.oidc.vc.issuer.display[1].name=Beispieluniversität",
+    "cas.authn.oidc.vc.issuer.display[1].locale=de-DE"
 })
 class OidcVerifiableCredentialIssuerMetadataControllerTests extends AbstractOidcTests {
 
@@ -65,6 +70,19 @@ class OidcVerifiableCredentialIssuerMetadataControllerTests extends AbstractOidc
             .andExpect(jsonPath("$.credential_configurations_supported.badge.credential_definition['@context'][0]")
                 .value("https://www.w3.org/ns/credentials/v2"))
             .andExpect(jsonPath("$.credential_configurations_supported.badge.credential_definition.type[1]").value("badge"));
+    }
+
+    @Test
+    void verifyIssuerDisplay() throws Throwable {
+        mockMvc.perform(get(METADATA_ENDPOINT_URL)
+                .with(withHttpRequestProcessor()))
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$.display[0].name").value("Example University"))
+            .andExpect(jsonPath("$.display[0].locale").value("en-US"))
+            .andExpect(jsonPath("$.display[0].logo.uri").value("https://university.example.org/logo.png"))
+            .andExpect(jsonPath("$.display[0].logo.alt_text").value("Example University"))
+            .andExpect(jsonPath("$.display[1].locale").value("de-DE"))
+            .andExpect(jsonPath("$.display[1].logo").doesNotExist());
     }
 
     @Test

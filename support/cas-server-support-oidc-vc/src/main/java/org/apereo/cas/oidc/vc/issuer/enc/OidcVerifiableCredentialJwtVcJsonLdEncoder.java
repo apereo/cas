@@ -37,8 +37,6 @@ public class OidcVerifiableCredentialJwtVcJsonLdEncoder extends BaseOidcVerifiab
 
         return sign(principal.getId(), context, proof, jwtClaims -> {
             jwtClaims.setStringClaim("sub", principal.getId());
-            jwtClaims.setStringClaim("client_id", context.accessToken().getClientId());
-            jwtClaims.setStringClaim("credential_configuration_id", configurationId);
             
             val validFrom = Instant.ofEpochSecond(jwtClaims.getIssuedAt().getValue());
             val validUntil = Instant.ofEpochSecond(jwtClaims.getExpirationTime().getValue());
