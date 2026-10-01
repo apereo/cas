@@ -224,6 +224,7 @@ Guidance for AI coding agents working in the Apereo CAS source tree.
   policy, and the credential endpoint combines them with authorization details.
 - OID4VP key binding algorithms live in `OidcVerifiableCredentialPresentationResponseEndpointController.KEY_BINDING_ALGORITHMS_SUPPORTED`, which also feeds `kb-jwt_alg_values`; `sd-jwt_alg_values` comes from the `dc+sd-jwt` configurations. OpenID4VP wants fully specified identifiers (`Ed25519`, not `EdDSA`); Ed25519 key binding is verified with the JDK `Signature` so both header values work. `alg_values` is not defined for `dc+sd-jwt`.
 - Issued credentials carry no `client_id` or `credential_configuration_id` (claim or header): they reveal the relying party to every verifier. CAS's verifier finds the issuer key by `kid` (an `OidcRegisteredService` key selector with `jwksKeyId` set, through `getJsonWebKeySigningKey`), the same key the JWKS publishes.
+- Issued credentials carry the signing key's `x5c` (from the keystore JWK, via `JsonWebTokenSigner.certificateChain`) without a trailing self-signed trust anchor (HAIP 1.0 section 6.1.1); the `X509_SAN_DNS` request object does the same (section 5). Both go through `CertUtils.withoutTrustAnchor`. A key with no chain sends no `x5c`; test keystores have none, so `vc-issuer-x5c.jwks` (EC P-256 leaf for `sso.example.org` + root, valid to 2126) exists for that. Under `import module java.base`, import `java.security.cert.X509Certificate` explicitly (`javax.security.cert` clashes).
 - Presentation transactions carry `clientId` (and `redirectUri` for same-device); results carry `clientId` and `responseCode`. `oidcVcPresentationResult` answers `404` to any other client or to a missing/wrong `response_code`. Test transactions built by hand must set `clientId`, or results cannot be collected.
 - DCQL has no `required` per claim: optional claims become claim `id`s plus `claim_sets` (all, then required; or each alone when none is required), and the verifier requires the required claims or, when all are optional, at least one.
 - The OID4VP response URI takes `vp_token` or `error` (never both) with `state`; an error response is consumed, answered
@@ -960,7 +961,9 @@ Guidance for AI coding agents working in the Apereo CAS source tree.
   TST id as a replay marker (`TransientSessionTicketFactory.normalizeTicketId`: DPoP, client assertions, Heimdall)
   never finds it and fails open. Callers must use the ticket `addTicket` returns: the stored id is re-encoded.
 - `TransientSessionTicketCompactor` stringifies properties, so only flat string properties survive; object-valued TSTs
-  (Duo `TICKET_REGISTRY` state, VC transactions) do not.
+  (Duo `TICKET_REGISTRY` state, VC transactions) do not. It keeps the full service id: flows resume with that service
+  (delegation back to the SAML2 IdP callback with `srid`/`entityId`), so `getShortenedId` is only for tickets that are
+  validated against a presented service (ST, PT, PGT, OAuth).
 - Maintainer decision: the stateless registry stays 100% stateless, in the spirit of the Shibboleth IdP client-side
   storage. Never propose a server-side replay, nonce or single-use store as the fix for anything here; fixes must be
   expressible in the ticket or client storage itself (encoding, binding, lifetimes, key versioning).
@@ -975,12 +978,16 @@ Guidance for AI coding agents working in the Apereo CAS source tree.
   `EncryptionOptionalSigningOptionalJwtCryptographyProperties`): the JWE is `dir` + `A256CBC-HS512`, already authenticated,
   and dropping the JWS layer saves about a quarter. A defined `cas.tgc.crypto.signing.key` keeps signing on
   (`BaseStringCipherExecutor`). Scenario `mfa-duo-universal-login-stateless` runs with it.
-- `TicketGrantingTicketCompactor` keeps only the TGT's authentication (typed JSON via `AuthenticationStringSerializer`),
+- `TicketGrantingTicketCompactor` keeps only the TGT's authentication (typed JSON via `BaseJacksonSerializer.forType`),
   with principal attributes removed from the principal and the handler-result principals. On expand it always re-resolves
   them through `defaultPrincipalResolver` with a `BasicIdentifiableCredential` of the principal id, keeping that id (like
   `DefaultCentralAuthenticationService.rebuildStatelessTicketPrincipal`; attribute repository results are cached), and
   creates the TGT through the `TicketGrantingTicketFactory`, then sets the creation time and a `FixedInstantExpirationPolicy`
   from the compact fields. Maintainer: no ticket impl classes and no hand-built tickets in compactors; use the factories.
+  Every compactor (core and OAuth) takes an `ObjectProvider<TicketFactory>` (the OAuth factories depend on the ticket
+  registry) and creates the ticket through its factory with a null parent ticket, then sets the creation time and a
+  `FixedInstantExpirationPolicy`. Proxy-granting and proxy tickets go through a service ticket created by the service
+  ticket factory. Factories look up registered services on every expansion; expected.
   SSO-time decisions only see attribute-repository attributes; handler-only attributes (Duo, delegated claims) are gone.
 - `getTicket(id).getId()` must equal `id`, as with every other registry: callers such as `InitialFlowSetupAction` put
   `ticket.getId()` into scope and look it up again. The stateless registry sets every expanded ticket's id to the id it was
@@ -993,6 +1000,20 @@ Guidance for AI coding agents working in the Apereo CAS source tree.
 - Scenarios `stateless-ticket-registry`, `stateless-ticket-registry-saml2-idp`, `oauth2-login-stateless`,
   `oidc-login-stateless`, `mfa-duo-universal-login-stateless`, `ticket-validation-casv3-pgt-stateless` cover happy
   paths only; none covers VC/VP, DPoP, private_key_jwt, replay or delimiter input.
+- Scenario `stateless-ticket-registry-load` combines interrupt notifications, the SAML2 identity provider, OIDC, proxy
+  tickets and delegation to the simplesamlphp SAML2 IdP, checks unhappy paths (tampered or forged tickets and cookies,
+  expired and reused service tickets, cookie replay after logout, attribute-based access at single sign-on) and runs a load
+  over plain HTTP (`STATELESS_LOAD_ITERATIONS`, `STATELESS_LOAD_CONCURRENCY`, `STATELESS_LOAD_BROWSERS`). Simple MFA is not
+  supported by the stateless registry (no CASMFA compactor; a stateless id cannot be typed), so it is not in the scenario.
+- Maintainer: callers that hand a ticket id to a browser or another party read it from the ticket `addTicket` returns;
+  the registry does not change the ticket passed in, and reading the ticket back after adding it was rejected (cost,
+  type-specific code). Fix call sites as scenarios need them, not all at once. Delegation: the webflow manager keeps the
+  built transient ticket in the flow (it carries the request properties) and hands the stored ticket to
+  `DelegatedClientSessionManager.trackIdentifier(WebContext, Ticket, Client)` and the CAS client session key. Still
+  open: Duo with ticket-registry session storage, password reset, account registration and others not in the scenarios.
+- Scenarios that start an external SAML2 IdP from `readyScript` (after CAS is up) must call `/cas/sp/idp/metadata`
+  before the first delegated login: the pac4j client failed to load the IdP metadata at startup, and redirecting to it
+  fails with a `NullPointerException` in `ChainingMetadataResolver.setResolvers` until that endpoint forces a reload.
 
 ## Passwordless authentication review discipline
 

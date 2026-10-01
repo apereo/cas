@@ -120,10 +120,13 @@ class StatelessTicketRegistryTests extends BaseTicketRegistryTests {
     @RepeatedTest(2)
     void verifyTransientTickets() throws Throwable {
         val transientFactory = (TransientSessionTicketFactory) ticketFactory.get(TransientSessionTicket.class);
-        val service = RegisteredServiceTestUtils.getService("https://apereo.github.io/cas");
+        val service = RegisteredServiceTestUtils.getService("https://localhost:8443/cas/idp/profile/SAML2/Callback?srid="
+            + UUID.randomUUID() + "&entityId=" + URLEncoder.encode("https://sp.example.org/metadata/sp", StandardCharsets.UTF_8));
         val transientTicket = transientFactory.create(service);
         val addedTicket = newTicketRegistry.addTicket(transientTicket);
-        assertNotNull(newTicketRegistry.getTicket(addedTicket.getId()));
+        val foundTicket = (TransientSessionTicket) newTicketRegistry.getTicket(addedTicket.getId());
+        assertNotNull(foundTicket);
+        assertEquals(service.getId(), Objects.requireNonNull(foundTicket.getService()).getId());
     }
 
     @RepeatedTest(2)

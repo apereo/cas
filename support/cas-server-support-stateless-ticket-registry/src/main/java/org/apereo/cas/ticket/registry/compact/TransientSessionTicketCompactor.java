@@ -19,6 +19,8 @@ import org.springframework.beans.factory.ObjectProvider;
 /**
  * This is {@link TransientSessionTicketCompactor}.
  * Properties are kept as strings; a single value is restored as a string, several values as a list.
+ * The service is kept in full rather than shortened, since flows resume with it, such as delegated authentication
+ * returning to the SAML2 identity provider callback with its query parameters.
  *
  * @author Misagh Moayyed
  * @since 7.0.0
@@ -35,7 +37,7 @@ public class TransientSessionTicketCompactor implements TicketCompactor<Transien
     public void compactFields(final List<String> fields, final Ticket ticket) throws Exception {
         val transientTicket = (TransientSessionTicket) ticket;
         val service = transientTicket.getService();
-        fields.add(service != null ? StringUtils.defaultString(service.getShortenedId()) : StringUtils.EMPTY);
+        fields.add(service != null ? StringUtils.defaultString(service.getId()) : StringUtils.EMPTY);
         val properties = new ArrayList<String>();
         transientTicket.getProperties().forEach((key, value) -> {
             properties.add(key);
