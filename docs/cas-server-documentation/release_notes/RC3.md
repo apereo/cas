@@ -205,6 +205,13 @@ created and managed; by default both point to the account profile when account m
   and a configuration without a scope no longer issues a `null` credential type.
 - CAS publishes JWT VC Issuer Metadata at `/.well-known/jwt-vc-issuer`, so verifiers other than CAS can find the keys that sign
   the credentials it issues. Deployments under a context path should add `jwt-vc-issuer` to the well-known rewrite rule.
+- The verifier accepts RSA and Ed25519 holder keys in addition to EC keys, advertises those key binding algorithms,
+  and advertises the signing algorithms of its `dc+sd-jwt` credential configurations instead of a fixed list.
+- A presentation request may carry a registered `redirect_uri` for a same-device flow: the wallet is sent back to it
+  with a `response_code`, which the relying party must present to collect the outcome. Outcomes are now released
+  only to the client that created the request.
+- Claims marked `"required": false` in a presentation request are now optional: they are requested through DCQL
+  `claim_sets` and may be withheld. Previously the flag was ignored and every claim was required.
 - Attribute values with a leading zero, such as postal codes, are issued as text. Previously they were read as octal numbers,
   so `0123` was issued as `83` and `08` failed issuance.
 

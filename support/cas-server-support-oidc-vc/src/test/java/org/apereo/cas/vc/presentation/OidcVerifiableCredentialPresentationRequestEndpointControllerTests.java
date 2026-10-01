@@ -163,14 +163,76 @@ class OidcVerifiableCredentialPresentationRequestEndpointControllerTests {
                 assertInstanceOf(Map.class, credential.get("meta")).get("vct_values"));
             val claims = assertInstanceOf(List.class, credential.get("claims"));
             assertEquals(List.of("given_name"), assertInstanceOf(Map.class, claims.getFirst()).get("path"));
+            assertNull(assertInstanceOf(Map.class, claims.getFirst()).get("id"));
+            assertNull(credential.get("claim_sets"));
 
             val clientMetadata = MAPPER.readValue(parameters.get("client_metadata"), Map.class);
             assertEquals("Apereo CAS", clientMetadata.get("client_name"));
             val vpFormats = assertInstanceOf(Map.class, clientMetadata.get("vp_formats_supported"));
             val sdJwtFormat = assertInstanceOf(Map.class, vpFormats.get("dc+sd-jwt"));
-            assertEquals(List.of("ES256", "ES384", "ES512"), sdJwtFormat.get("alg_values"));
-            assertEquals(List.of("ES256", "ES384", "ES512"), sdJwtFormat.get("sd-jwt_alg_values"));
-            assertEquals(List.of("ES256", "ES384", "ES512"), sdJwtFormat.get("kb-jwt_alg_values"));
+            assertNull(sdJwtFormat.get("alg_values"));
+            assertEquals(List.of("ES256", "RS256"), sdJwtFormat.get("sd-jwt_alg_values"));
+            assertEquals(OidcVerifiableCredentialPresentationResponseEndpointController.KEY_BINDING_ALGORITHMS_SUPPORTED,
+                sdJwtFormat.get("kb-jwt_alg_values"));
+
+            assertEquals(getOidcRegisteredService().getClientId(),
+                ticket.getPropertyAsString(OidcVerifiableCredentialPresentationResponseEndpointController.PROPERTY_CLIENT_ID));
+            assertNull(ticket.getPropertyAsString(OidcVerifiableCredentialPresentationResponseEndpointController.PROPERTY_REDIRECT_URI));
+        }
+
+        @Test
+        void verifyOptionalClaimsAreRequestedThroughClaimSets() {
+            val required = new ClaimRequest();
+            required.setPath(List.of("given_name"));
+            val optional = new ClaimRequest();
+            optional.setPath(List.of("email"));
+            optional.setRequired(false);
+
+            val credential = new CredentialRequest();
+            credential.setId("university-degree");
+            credential.setFormat("dc+sd-jwt");
+            credential.setClaims(List.of(required, optional));
+            val query = OidcVerifiableCredentialPresentationRequestEndpointController.toCredentialQuery(credential);
+            assertEquals(List.of("claim-0", "claim-1"), query.getClaims().stream().map(claim -> claim.getId()).toList());
+            assertEquals(List.of(List.of("claim-0", "claim-1"), List.of("claim-0")), query.getClaimSets());
+
+            required.setRequired(false);
+            val allOptional = OidcVerifiableCredentialPresentationRequestEndpointController.toCredentialQuery(credential);
+            assertEquals(List.of(List.of("claim-0", "claim-1"), List.of("claim-0"), List.of("claim-1")), allOptional.getClaimSets());
+
+            credential.setClaims(null);
+            val noClaims = OidcVerifiableCredentialPresentationRequestEndpointController.toCredentialQuery(credential);
+            assertTrue(noClaims.getClaims().isEmpty());
+            assertTrue(noClaims.getClaimSets().isEmpty());
+        }
+
+        @Test
+        void verifyRedirectUriMustBeRegisteredForTheClient() throws Throwable {
+            val request = buildPresentationRequest();
+            request.setRedirectUri("https://attacker.example.net/callback");
+            mockMvc.perform(post(PRESENTATION_REQUEST_ENDPOINT_URL)
+                    .with(withHttpRequestProcessor())
+                    .param(OAuth20Constants.CLIENT_ID, getOidcRegisteredService().getClientId())
+                    .param(OAuth20Constants.CLIENT_SECRET, getOidcRegisteredService().getClientSecrets().getFirst().getValue())
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .content(MAPPER.writeValueAsString(request)))
+                .andExpect(status().isBadRequest());
+
+            request.setRedirectUri("https://oauth.example.org/callback");
+            val responseBody = mockMvc.perform(post(PRESENTATION_REQUEST_ENDPOINT_URL)
+                    .with(withHttpRequestProcessor())
+                    .param(OAuth20Constants.CLIENT_ID, getOidcRegisteredService().getClientId())
+                    .param(OAuth20Constants.CLIENT_SECRET, getOidcRegisteredService().getClientSecrets().getFirst().getValue())
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .content(MAPPER.writeValueAsString(request)))
+                .andExpect(status().isOk())
+                .andReturn()
+                .getResponse()
+                .getContentAsString();
+            val response = MAPPER.readValue(responseBody, OidcVerifiableCredentialPresentationResponse.class);
+            val ticket = ticketRegistry.getTicket(response.getRequestId(), TransientSessionTicket.class);
+            assertEquals("https://oauth.example.org/callback",
+                ticket.getPropertyAsString(OidcVerifiableCredentialPresentationResponseEndpointController.PROPERTY_REDIRECT_URI));
         }
 
         @Test

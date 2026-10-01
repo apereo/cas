@@ -7,6 +7,7 @@ import org.apereo.cas.configuration.model.support.oidc.OidcVerifiableCredentials
 import org.apereo.cas.oidc.OidcConfigurationContext;
 import org.apereo.cas.oidc.OidcConstants;
 import org.apereo.cas.support.oauth.OAuth20Constants;
+import org.apereo.cas.support.oauth.util.OAuth20Utils;
 import org.apereo.cas.support.oauth.web.endpoints.BaseOAuth20Controller;
 import org.apereo.cas.ticket.TransientSessionTicket;
 import org.apereo.cas.ticket.TransientSessionTicketFactory;
@@ -35,6 +36,7 @@ import org.jose4j.jws.JsonWebSignature;
 import org.jose4j.jwt.JwtClaims;
 import org.jose4j.jwt.NumericDate;
 import org.jspecify.annotations.Nullable;
+import org.pac4j.jee.context.JEEContext;
 import org.springframework.http.CacheControl;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -81,6 +83,8 @@ public class OidcVerifiableCredentialPresentationRequestEndpointController exten
     private static final String STATIC_DISCOVERY_AUDIENCE = "https://self-issued.me/v2";
 
     private static final int SUBJECT_ALTERNATIVE_NAME_DNS = 2;
+
+    private static final String CLAIM_ID_PREFIX = "claim-";
 
     private static final ObjectMapper MAPPER = JacksonObjectMapperFactory.builder()
         .defaultTypingEnabled(false).minimal(true).build().toObjectMapper();
@@ -172,8 +176,11 @@ public class OidcVerifiableCredentialPresentationRequestEndpointController exten
      * learns the outcome and the claims that were disclosed to it. A request that has not been answered
      * yet reports {@code pending}; one the wallet declined reports {@code error} with the wallet's
      * {@code error} and {@code error_description}; one that was answered and collected, or that expired, is gone.
+     * Only the client that created the request may collect it, and a same-device outcome also requires the
+     * {@code response_code} the wallet delivered to the relying party's redirect URI; anything else is {@code 404}.
      *
      * @param requestId    the request id returned when the presentation request was created
+     * @param responseCode the response code delivered to the relying party's redirect URI, for a same-device flow
      * @param httpRequest  the http request
      * @param httpResponse the http response
      * @return the response entity
@@ -183,16 +190,27 @@ public class OidcVerifiableCredentialPresentationRequestEndpointController exten
         "/**/" + OidcConstants.VC_PRESENTATION_RESULT_URL
     }, produces = MediaType.APPLICATION_JSON_VALUE)
     @Operation(summary = "Collect the outcome of an OIDC verifiable credential presentation request",
-        parameters = @Parameter(name = "requestId", description = "The presentation request id"))
+        parameters = {
+            @Parameter(name = "requestId", description = "The presentation request id"),
+            @Parameter(name = "response_code", description = "The response code the wallet delivered to the relying party's redirect URI")
+        })
     public ResponseEntity<Map<String, Object>> fetchResult(
         @RequestParam("requestId") final String requestId,
+        @RequestParam(value = "response_code", required = false) final @Nullable String responseCode,
         final HttpServletRequest httpRequest,
         final HttpServletResponse httpResponse) {
 
+        val clientId = resolveAuthenticatedClientId(httpRequest, httpResponse);
         val resultId = OidcVerifiableCredentialPresentationResponseEndpointController.resolvePresentationResultId(requestId);
         val result = FunctionUtils.doAndHandle(
             () -> configurationContext.getTicketRegistry().getTicket(resultId, TransientSessionTicket.class));
         if (result != null && !result.isExpired()) {
+            val ticketClientId = result.getPropertyAsString(OidcVerifiableCredentialPresentationResponseEndpointController.PROPERTY_CLIENT_ID);
+            var ticketResponseCode = result.getPropertyAsString(OidcVerifiableCredentialPresentationResponseEndpointController.PROPERTY_RESPONSE_CODE);
+            if (!ticketClientId.equals(clientId) || !isResponseCodeValid(ticketResponseCode, responseCode)) {
+                LOGGER.warn("Client [{}] may not collect the outcome of presentation request [{}]", ticketClientId, requestId);
+                return ResponseEntity.notFound().build();
+            }
             val body = new LinkedHashMap<String, Object>();
             body.put("status", Objects.requireNonNull(result.getPropertyAsString("status")));
             val claims = result.getProperty("claims", Map.class);
@@ -213,8 +231,23 @@ public class OidcVerifiableCredentialPresentationRequestEndpointController exten
         val pending = FunctionUtils.doAndHandle(
             () -> configurationContext.getTicketRegistry().getTicket(requestId, TransientSessionTicket.class));
         return pending != null && !pending.isExpired()
+            && clientId.equals(pending.getPropertyAsString(OidcVerifiableCredentialPresentationResponseEndpointController.PROPERTY_CLIENT_ID))
             ? ResponseEntity.ok().cacheControl(CacheControl.noStore()).body(Map.of("status", "pending"))
             : ResponseEntity.notFound().build();
+    }
+
+    /**
+     * A same-device outcome is released only against the response code the wallet delivered to the relying
+     * party's redirect URI; a cross-device outcome carries no code and needs none.
+     *
+     * @param expectedResponseCode the response code recorded with the outcome, if any
+     * @param responseCode         the response code presented
+     * @return true if the outcome may be released
+     */
+    protected static boolean isResponseCodeValid(final @Nullable String expectedResponseCode,
+                                                 final @Nullable String responseCode) {
+        return expectedResponseCode == null || (responseCode != null
+            && MessageDigest.isEqual(expectedResponseCode.getBytes(StandardCharsets.UTF_8), responseCode.getBytes(StandardCharsets.UTF_8)));
     }
 
     /**
@@ -237,12 +270,25 @@ public class OidcVerifiableCredentialPresentationRequestEndpointController exten
         final HttpServletRequest httpRequest,
         final HttpServletResponse httpResponse) throws Throwable {
 
+        val clientId = resolveAuthenticatedClientId(httpRequest, httpResponse);
+        val redirectUri = request.getRedirectUri();
+        if (StringUtils.isNotBlank(redirectUri)) {
+            val registeredService = OAuth20Utils.getRegisteredOAuthServiceByClientId(configurationContext.getServicesManager(), clientId);
+            if (registeredService == null || redirectUri.contains("#") || !OAuth20Utils.checkCallbackValid(registeredService, redirectUri)) {
+                throw new IllegalArgumentException("Redirect URI %s is not registered for client %s".formatted(redirectUri, clientId));
+            }
+        }
+
         val factory = (TransientSessionTicketFactory) configurationContext.getTicketFactory().get(TransientSessionTicket.class);
         val transientSessionTicket = factory.create(CollectionUtils.wrap(
             "nonce", UUID.randomUUID().toString(),
             "credentials", request.getCredentials()
         ));
         transientSessionTicket.putProperty("state", transientSessionTicket.getId());
+        transientSessionTicket.putProperty(OidcVerifiableCredentialPresentationResponseEndpointController.PROPERTY_CLIENT_ID, clientId);
+        if (StringUtils.isNotBlank(redirectUri)) {
+            transientSessionTicket.putProperty(OidcVerifiableCredentialPresentationResponseEndpointController.PROPERTY_REDIRECT_URI, redirectUri);
+        }
         val addedTicket = (TransientSessionTicket) configurationContext.getTicketRegistry().addTicket(transientSessionTicket);
 
         val parameters = buildAuthorizationRequestParameters(addedTicket);
@@ -287,9 +333,8 @@ public class OidcVerifiableCredentialPresentationRequestEndpointController exten
             .vpFormatsSupported(Map.of(
                 OidcVerifiableCredentialConfigurationProperties.CredentialConfigurationFormats.DC_SD_JWT.getValue(),
                 OidcVerifiableCredentialPresentationClientMetadata.VpFormat.builder()
-                    .algValues(List.of("ES256", "ES384", "ES512"))
-                    .sdJwtAlgValues(List.of("ES256", "ES384", "ES512"))
-                    .kbJwtAlgValues(List.of("ES256", "ES384", "ES512"))
+                    .sdJwtAlgValues(resolveCredentialSigningAlgorithms())
+                    .kbJwtAlgValues(OidcVerifiableCredentialPresentationResponseEndpointController.KEY_BINDING_ALGORITHMS_SUPPORTED)
                     .build()
             ))
             .build();
@@ -298,21 +343,7 @@ public class OidcVerifiableCredentialPresentationRequestEndpointController exten
             Objects.requireNonNull(transientSessionTicket.getProperty("credentials", List.class));
         val dcqlCredentials = credentials
             .stream()
-            .map(credential -> OidcVerifiableCredentialDCQL
-                .builder()
-                .id(credential.getId())
-                .format(credential.getFormat())
-                .meta(OidcVerifiableCredentialDCQL.Meta.builder()
-                    .vctValues(credential.getVctValues())
-                    .build())
-                .claims(credential.getClaims()
-                    .stream()
-                    .<OidcVerifiableCredentialDCQL.DCQLCredentialClaimRequest>map(claim ->
-                        OidcVerifiableCredentialDCQL.DCQLCredentialClaimRequest.builder()
-                            .path(claim.getPath()).build())
-                    .toList()
-                )
-                .build())
+            .map(OidcVerifiableCredentialPresentationRequestEndpointController::toCredentialQuery)
             .toList();
 
         val parameters = new LinkedHashMap<String, Object>();
@@ -325,6 +356,85 @@ public class OidcVerifiableCredentialPresentationRequestEndpointController exten
         parameters.put("dcql_query", MAPPER.convertValue(Map.of("credentials", dcqlCredentials), Map.class));
         parameters.put("client_metadata", MAPPER.convertValue(clientMetadata, Map.class));
         return parameters;
+    }
+
+    /**
+     * Credential signing algorithms the verifier accepts, advertised as {@code sd-jwt_alg_values}: those of the
+     * {@code dc+sd-jwt} credential configurations, since a presented credential is checked against the
+     * configuration its {@code vct} names.
+     *
+     * @return the credential signing algorithms
+     */
+    protected List<String> resolveCredentialSigningAlgorithms() {
+        return configurationContext.getCasProperties().getAuthn().getOidc().getVc().getIssuer().getCredentialConfigurations()
+            .values()
+            .stream()
+            .filter(configuration -> configuration.getFormat()
+                == OidcVerifiableCredentialConfigurationProperties.CredentialConfigurationFormats.DC_SD_JWT)
+            .flatMap(configuration -> configuration.getCredentialSigningAlgValuesSupported().stream())
+            .distinct()
+            .toList();
+    }
+
+    /**
+     * DCQL credential query for one requested credential. DCQL has no per-claim {@code required} flag: when some
+     * claims are optional, every claim gets an {@code id} and {@code claim_sets} lists the acceptable combinations
+     * in order of preference, all claims first and then the required ones alone. When none is required, each claim
+     * on its own is an option after the full set. Without optional claims the query lists the claims only, which
+     * requests all of them.
+     *
+     * @param credential the requested credential
+     * @return the credential query
+     */
+    protected static OidcVerifiableCredentialDCQL toCredentialQuery(
+        final OidcVerifiableCredentialPresentationRequest.CredentialRequest credential) {
+        final List<OidcVerifiableCredentialPresentationRequest.ClaimRequest> claims =
+            credential.getClaims() == null ? List.of() : credential.getClaims();
+        val optionalClaims = claims.stream().anyMatch(claim -> !claim.isRequired());
+        val claimQueries = IntStream.range(0, claims.size())
+            .mapToObj(index -> OidcVerifiableCredentialDCQL.DCQLCredentialClaimRequest.builder()
+                .id(optionalClaims ? CLAIM_ID_PREFIX + index : null)
+                .path(claims.get(index).getPath())
+                .build())
+            .toList();
+        val claimSets = new ArrayList<List<String>>();
+        if (optionalClaims) {
+            val allClaims = IntStream.range(0, claims.size()).mapToObj(index -> CLAIM_ID_PREFIX + index).toList();
+            val requiredClaims = IntStream.range(0, claims.size())
+                .filter(index -> claims.get(index).isRequired())
+                .mapToObj(index -> CLAIM_ID_PREFIX + index)
+                .toList();
+            claimSets.add(allClaims);
+            if (requiredClaims.isEmpty()) {
+                allClaims.forEach(claimId -> claimSets.add(List.of(claimId)));
+            } else {
+                claimSets.add(requiredClaims);
+            }
+        }
+        return OidcVerifiableCredentialDCQL
+            .builder()
+            .id(credential.getId())
+            .format(credential.getFormat())
+            .meta(OidcVerifiableCredentialDCQL.Meta.builder()
+                .vctValues(credential.getVctValues())
+                .build())
+            .claims(claimQueries)
+            .claimSets(claimSets)
+            .build();
+    }
+
+    /**
+     * The client that authenticated to call this endpoint.
+     *
+     * @param httpRequest  the http request
+     * @param httpResponse the http response
+     * @return the client id
+     */
+    protected String resolveAuthenticatedClientId(final HttpServletRequest httpRequest, final HttpServletResponse httpResponse) {
+        val profile = OAuth20Utils.getAuthenticatedUserProfile(new JEEContext(httpRequest, httpResponse),
+            configurationContext.getSessionStore());
+        val clientId = profile.getAttribute(OAuth20Constants.CLIENT_ID);
+        return clientId != null ? clientId.toString() : profile.getId();
     }
 
     /**
@@ -445,6 +555,13 @@ public class OidcVerifiableCredentialPresentationRequestEndpointController exten
         @Valid
         @JsonProperty("credentials")
         private List<CredentialRequest> credentials;
+
+        /**
+         * Relying party page the wallet returns the user agent to on the same device, carrying the response code
+         * needed to collect the outcome. It must be registered for the client creating the request.
+         */
+        @JsonProperty("redirect_uri")
+        private String redirectUri;
 
         @JsonInclude(JsonInclude.Include.NON_EMPTY)
         @Getter
@@ -620,6 +737,12 @@ public class OidcVerifiableCredentialPresentationRequestEndpointController exten
         private Meta meta;
 
         /**
+         * Acceptable combinations of claim ids, in order of preference.
+         */
+        @JsonProperty("claim_sets")
+        private List<List<String>> claimSets;
+
+        /**
          * Requested claims.
          */
         private List<DCQLCredentialClaimRequest> claims;
@@ -649,6 +772,11 @@ public class OidcVerifiableCredentialPresentationRequestEndpointController exten
         public static class DCQLCredentialClaimRequest implements Serializable {
             @Serial
             private static final long serialVersionUID = 1103934733451522730L;
+
+            /**
+             * Claim id, referenced from {@code claim_sets}.
+             */
+            private String id;
 
             /**
              * Claim path, e.g. ["given_name"] or ["address","street"].

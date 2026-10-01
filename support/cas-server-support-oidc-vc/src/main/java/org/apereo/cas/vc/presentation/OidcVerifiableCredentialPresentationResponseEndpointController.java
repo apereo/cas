@@ -12,12 +12,12 @@ import org.apereo.cas.ticket.TransientSessionTicket;
 import org.apereo.cas.ticket.TransientSessionTicketFactory;
 import org.apereo.cas.util.EncodingUtils;
 import org.apereo.cas.util.LoggingUtils;
+import org.apereo.cas.util.RandomUtils;
 import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
 import org.apereo.cas.vc.presentation.OidcVerifiableCredentialPresentationRequestEndpointController.OidcVerifiableCredentialPresentationRequest.ClaimRequest;
 import org.apereo.cas.vc.presentation.OidcVerifiableCredentialPresentationRequestEndpointController.OidcVerifiableCredentialPresentationRequest.CredentialRequest;
 import com.authlete.sd.Disclosure;
 import com.authlete.sd.SDJWT;
-import com.nimbusds.jose.JWSAlgorithm;
 import com.nimbusds.jose.crypto.ECDSAVerifier;
 import com.nimbusds.jose.crypto.RSASSAVerifier;
 import com.nimbusds.jose.jwk.ECKey;
@@ -64,7 +64,30 @@ public class OidcVerifiableCredentialPresentationResponseEndpointController exte
 
     private static final Set<String> CREDENTIAL_JWT_TYPES = Set.of("dc+sd-jwt", "vc+sd-jwt");
 
-    private static final Set<String> KEY_BINDING_ALGORITHMS = Set.of("ES256", "ES384", "ES512");
+    /**
+     * Key binding JWT algorithms the verifier accepts and advertises as {@code kb-jwt_alg_values}. OpenID4VP 1.0
+     * asks for fully specified identifiers, so Ed25519 is advertised as {@code Ed25519}; a key binding JWT that
+     * still says {@code EdDSA} is accepted for an Ed25519 holder key as well.
+     */
+    public static final List<String> KEY_BINDING_ALGORITHMS_SUPPORTED = List.of(
+        "ES256", "ES384", "ES512", "RS256", "RS384", "RS512", "PS256", "PS384", "PS512", "Ed25519");
+
+    /**
+     * Transaction property naming the client that created the presentation request.
+     */
+    public static final String PROPERTY_CLIENT_ID = "clientId";
+
+    /**
+     * Transaction property holding the relying party's same-device redirect URI.
+     */
+    public static final String PROPERTY_REDIRECT_URI = "redirectUri";
+
+    /**
+     * Result property holding the response code the relying party must present to collect the outcome.
+     */
+    public static final String PROPERTY_RESPONSE_CODE = "responseCode";
+
+    private static final Set<String> EDWARDS_CURVE_ALGORITHMS = Set.of("Ed25519", "EdDSA");
 
     private static final String STATUS_VERIFIED = "verified";
 
@@ -124,8 +147,7 @@ public class OidcVerifiableCredentialPresentationResponseEndpointController exte
                 if (StringUtils.isNotBlank(errorDescription)) {
                     outcome.put(OAuth20Constants.ERROR_DESCRIPTION, errorDescription);
                 }
-                recordPresentationResult(transientSessionTicket.getId(), outcome);
-                return buildResponse(HttpStatus.OK, Map.of());
+                return buildResponse(HttpStatus.OK, recordPresentationResult(transientSessionTicket, outcome));
             }
 
             val nonce = transientSessionTicket.getPropertyAsString("nonce");
@@ -136,8 +158,10 @@ public class OidcVerifiableCredentialPresentationResponseEndpointController exte
             val disclosedClaims = validatePresentation(Objects.requireNonNull(vpToken), credentials, nonce, transientSessionTicket);
             require(configurationContext.getTicketRegistry().deleteTicket(transientSessionTicket) > 0,
                 "Presentation transaction was consumed concurrently");
-            recordPresentationResult(transientSessionTicket.getId(), Map.of("status", STATUS_VERIFIED, "claims", disclosedClaims));
-            return buildResponse(HttpStatus.OK, Map.of("status", STATUS_VERIFIED));
+            val walletResponse = new LinkedHashMap<String, Object>();
+            walletResponse.put("status", STATUS_VERIFIED);
+            walletResponse.putAll(recordPresentationResult(transientSessionTicket, Map.of("status", STATUS_VERIFIED, "claims", disclosedClaims)));
+            return buildResponse(HttpStatus.OK, walletResponse);
         } catch (final Throwable throwable) {
             LoggingUtils.warn(LOGGER, throwable);
             return buildResponse(HttpStatus.BAD_REQUEST,
@@ -152,18 +176,37 @@ public class OidcVerifiableCredentialPresentationResponseEndpointController exte
      * posts its presentation to this endpoint and is told whether it verified, but the relying party
      * is not party to that exchange at all; without a record it has no way to learn either the outcome
      * or the claims that were disclosed to it.
+     * <p>
+     * The record is bound to the client that created the request. When that client asked for a same-device
+     * flow, a fresh response code is recorded with it and handed to the wallet inside the relying party's
+     * {@code redirect_uri}, per OpenID4VP 1.0 section 8.2; the outcome is then only released against that code,
+     * so it reaches the browser the wallet returned to rather than whoever holds the request id.
      *
-     * @param requestId the presentation request id
-     * @param outcome   the outcome: a {@code status} of {@code verified} with the disclosed claims keyed by
-     *                  credential query id, or of {@code error} with the wallet's {@code error} and
-     *                  {@code error_description}
+     * @param transaction the presentation transaction
+     * @param outcome     the outcome: a {@code status} of {@code verified} with the disclosed claims keyed by
+     *                    credential query id, or of {@code error} with the wallet's {@code error} and
+     *                    {@code error_description}
+     * @return the parameters to return to the wallet, carrying {@code redirect_uri} for a same-device flow
      * @throws Exception the exception
      */
-    protected void recordPresentationResult(final String requestId,
-                                            final Map<String, Object> outcome) throws Exception {
+    protected Map<String, Object> recordPresentationResult(final TransientSessionTicket transaction,
+                                                           final Map<String, Object> outcome) throws Exception {
+        val result = new LinkedHashMap<String, Object>(outcome);
+        val clientId = transaction.getPropertyAsString(PROPERTY_CLIENT_ID);
+        if (clientId != null) {
+            result.put(PROPERTY_CLIENT_ID, clientId);
+        }
+        val walletResponse = new LinkedHashMap<String, Object>();
+        val redirectUri = transaction.getPropertyAsString(PROPERTY_REDIRECT_URI);
+        if (StringUtils.isNotBlank(redirectUri)) {
+            val responseCode = RandomUtils.generateSecureRandomId();
+            result.put(PROPERTY_RESPONSE_CODE, responseCode);
+            walletResponse.put(OAuth20Constants.REDIRECT_URI, redirectUri + "#response_code=" + responseCode);
+        }
         val factory = (TransientSessionTicketFactory) configurationContext.getTicketFactory().get(TransientSessionTicket.class);
-        val resultTicket = factory.create(resolvePresentationResultId(requestId), outcome);
+        val resultTicket = factory.create(resolvePresentationResultId(transaction.getId()), result);
         configurationContext.getTicketRegistry().addTicket(resultTicket);
+        return walletResponse;
     }
 
     /**
@@ -295,7 +338,8 @@ public class OidcVerifiableCredentialPresentationResponseEndpointController exte
                 && "kb+jwt".equals(bindingJwt.getHeader().getType().toString()),
             "Key binding JWT type is invalid");
         val algorithm = bindingJwt.getHeader().getAlgorithm();
-        require(algorithm != null && KEY_BINDING_ALGORITHMS.contains(algorithm.getName()),
+        require(algorithm != null && (KEY_BINDING_ALGORITHMS_SUPPORTED.contains(algorithm.getName())
+                || EDWARDS_CURVE_ALGORITHMS.contains(algorithm.getName())),
             "Key binding JWT algorithm is not allowed");
         require(verify(bindingJwt, holderJwk), "Key binding JWT signature is invalid");
 
@@ -407,17 +451,33 @@ public class OidcVerifiableCredentialPresentationResponseEndpointController exte
         };
     }
 
+    /**
+     * Check the disclosed claims against the claim query. Required claims must all be disclosed. Claims marked
+     * as not required are requested through DCQL {@code claim_sets}, so the wallet may withhold them; when every
+     * claim is optional, at least one of them must be disclosed, since each is offered as an option of its own.
+     *
+     * @param disclosedClaims the disclosed claims
+     * @param claimRequests   the claim query
+     */
     private static void validateRequestedClaims(final Map<String, Object> disclosedClaims,
-                                                final List<ClaimRequest> claimRequests) {
-        if (claimRequests == null) {
+                                                final @Nullable List<ClaimRequest> claimRequests) {
+        if (claimRequests == null || claimRequests.isEmpty()) {
             return;
         }
         for (val claimRequest : claimRequests) {
             require(claimRequest != null && claimRequest.getPath() != null && !claimRequest.getPath().isEmpty()
                     && claimRequest.getPath().stream().allMatch(path -> path != null && !path.isBlank()),
                 "Credential claim query is invalid");
-            require(hasClaimPath(disclosedClaims, claimRequest.getPath()),
-                "Credential does not contain a requested claim");
+        }
+        val requiredClaims = claimRequests.stream().filter(ClaimRequest::isRequired).toList();
+        if (requiredClaims.isEmpty()) {
+            require(claimRequests.stream().anyMatch(claimRequest -> hasClaimPath(disclosedClaims, claimRequest.getPath())),
+                "Credential does not contain any of the requested claims");
+        } else {
+            for (val claimRequest : requiredClaims) {
+                require(hasClaimPath(disclosedClaims, claimRequest.getPath()),
+                    "Credential does not contain a requested claim");
+            }
         }
     }
 
@@ -478,11 +538,31 @@ public class OidcVerifiableCredentialPresentationResponseEndpointController exte
         return switch (jwk) {
             case final ECKey ecKey -> signedJwt.verify(new ECDSAVerifier(ecKey.toPublicJWK()));
             case final RSAKey rsaKey -> signedJwt.verify(new RSASSAVerifier(rsaKey.toPublicJWK()));
-            case final OctetKeyPair octetKeyPair -> JWSAlgorithm.EdDSA.equals(signedJwt.getHeader().getAlgorithm())
-                && EncodingUtils.verifyJwsSignature(EncodingUtils.newJsonWebKey(
-                    octetKeyPair.toPublicJWK().toJSONString()).getKey(), signedJwt.serialize()) != null;
+            case final OctetKeyPair octetKeyPair -> verifyEdwardsCurveSignature(signedJwt, octetKeyPair);
             default -> throw new IllegalArgumentException("JWK type is not supported");
         };
+    }
+
+    /**
+     * Verify an Ed25519 signature with the JDK. Both the fully specified {@code Ed25519} and the older
+     * {@code EdDSA} header values are accepted; neither Nimbus (which needs Google Tink) nor jose4j (which only
+     * knows {@code EdDSA}) covers both.
+     *
+     * @param signedJwt the signed JWT
+     * @param jwk       the Ed25519 public key
+     * @return true if the signature verifies
+     * @throws Exception the exception
+     */
+    private static boolean verifyEdwardsCurveSignature(final SignedJWT signedJwt, final OctetKeyPair jwk) throws Exception {
+        val algorithm = signedJwt.getHeader().getAlgorithm();
+        if (algorithm == null || !EDWARDS_CURVE_ALGORITHMS.contains(algorithm.getName())) {
+            return false;
+        }
+        val publicKey = (PublicKey) EncodingUtils.newJsonWebKey(jwk.toPublicJWK().toJSONString()).getKey();
+        val signature = Signature.getInstance("Ed25519");
+        signature.initVerify(publicKey);
+        signature.update(signedJwt.getSigningInput());
+        return signature.verify(signedJwt.getSignature().decode());
     }
 
     private static void validateTimeClaims(final Map<String, Object> claims,

@@ -323,13 +323,64 @@ presentation request, and CAS returns a deep link the wallet can open, usually r
 
 {% include_cached casproperties.html properties="cas.authn.oidc.vc.presentation" %}
 
+The relying party creates the request with:
+
+```bash
+POST /oidc/oidcVcPresentationRequest
+```
+
+```json
+{
+  "credentials": [
+    {
+      "id": "university-degree",
+      "format": "dc+sd-jwt",
+      "vct_values": [
+        "https://sso.example.org/cas/oidc/oidcVcCredentialType/UniversityDegreeCredential"
+      ],
+      "claims": [
+        {
+          "path": [
+            "given_name"
+          ]
+        },
+        {
+          "path": [
+            "email"
+          ],
+          "required": false
+        }
+      ]
+    }
+  ],
+  "redirect_uri": "https://app.example.org/presentation/callback"
+}
+```
+
+Claims are required unless marked otherwise. DCQL has no per-claim flag, so optional claims are expressed
+with `claim_sets`: every claim first, then the required ones alone, or each optional claim on its own when
+none is required. The wallet returns the first combination it can satisfy, and CAS accepts any of them.
+
+Wallets may bind credentials to EC, RSA or Ed25519 keys. CAS advertises and accepts the key binding
+algorithms `ES256`, `ES384`, `ES512`, `RS256`, `RS384`, `RS512`, `PS256`, `PS384`, `PS512` and `Ed25519`
+(also accepted as `EdDSA`), and advertises the signing algorithms of its `dc+sd-jwt` credential
+configurations for the credential itself.
+
+The optional `redirect_uri` enables a same-device flow and must be registered for the client creating the
+request. After the wallet answers, CAS sends it to that URI with a fresh `response_code` in the fragment,
+as OpenID4VP recommends against session fixation, and releases the outcome only when the relying party
+presents that code. Without a `redirect_uri`, as in a cross-device flow with a QR code, the relying party
+polls for the outcome instead.
+
 The relying party that created the request collects the outcome from:
 
 ```bash
-GET /oidc/oidcVcPresentationResult?requestId=...
+GET /oidc/oidcVcPresentationResult?requestId=...&response_code=...
 ```
 
-This endpoint requires the same client authentication as the request creation endpoint. It answers
+This endpoint requires the same client authentication as the request creation endpoint, and only the
+client that created the request may collect its outcome; any other client, or a same-device request
+without its `response_code`, gets `404`. It answers
 `{"status": "pending"}` while the wallet has not responded, and once it has, `{"status": "verified"}`
 together with the claims that were disclosed, keyed by credential query id. A wallet that declines or
 cannot answer posts an error response instead, which is recorded as the outcome:
