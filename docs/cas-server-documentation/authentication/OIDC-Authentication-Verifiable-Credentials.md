@@ -387,6 +387,11 @@ as OpenID4VP recommends against session fixation, and releases the outcome only 
 presents that code. Without a `redirect_uri`, as in a cross-device flow with a QR code, the relying party
 polls for the outcome instead.
 
+With `cas.authn.oidc.vc.presentation.client-identifier-prefix` set to `X509_SAN_DNS`, the request object is
+signed and served by reference. The signing key must carry an `x5c` certificate chain whose leaf names the
+issuer host as a DNS subject alternative name. The request carries that chain in its `x5c` header without a
+trailing self-signed trust anchor, as HAIP 1.0 requires; HAIP also requires the leaf not to be self-signed.
+
 The relying party that created the request collects the outcome from:
 
 ```bash
@@ -512,6 +517,12 @@ algorithm is the first entry of the credential configuration's `credential-signi
 that the issuer's signing key can perform, so the order of that list is a preference the deployment
 expresses, and that list is also the permitted set, so no other algorithm can be used. This is what keeps
 issuance consistent with the issuer metadata and with what a verifier, CAS included, accepts.
+
+When the issuer signing key in the keystore carries an `x5c` certificate chain, the credential carries it as
+its `x5c` header, leaf certificate first, as HAIP 1.0 requires, so a verifier can take the issuer key from the
+leaf and validate the chain against its trust list. A trailing self-signed certificate is treated as the trust
+anchor and left out, as HAIP requires; HAIP also requires the leaf not to be self-signed. A key without a chain
+produces credentials without `x5c`.
 
 A service may narrow the algorithms used for its own credentials through its verifiable credentials
 policy:

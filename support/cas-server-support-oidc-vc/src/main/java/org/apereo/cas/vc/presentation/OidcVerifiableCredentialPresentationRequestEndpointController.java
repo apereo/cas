@@ -13,6 +13,7 @@ import org.apereo.cas.ticket.TransientSessionTicket;
 import org.apereo.cas.ticket.TransientSessionTicketFactory;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.LoggingUtils;
+import org.apereo.cas.util.crypto.CertUtils;
 import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
 import com.fasterxml.jackson.annotation.JsonInclude;
@@ -480,7 +481,8 @@ public class OidcVerifiableCredentialPresentationRequestEndpointController exten
     /**
      * A wallet authenticates an {@code x509_san_dns} verifier by matching the client identifier
      * against a DNS subject alternative name in the leaf certificate. Failing here produces a
-     * configuration error rather than a request object every wallet silently rejects.
+     * configuration error rather than a request object every wallet silently rejects. The chain is
+     * returned without its trust anchor, which HAIP 1.0 (section 5) forbids in the request's {@code x5c}.
      *
      * @param signingKey the signing key
      * @param dnsName    the DNS name taken from the client identifier
@@ -503,7 +505,7 @@ public class OidcVerifiableCredentialPresentationRequestEndpointController exten
             throw new IllegalStateException(("The leaf certificate of the OpenID Connect signing key has no "
                 + "dNSName subject alternative name matching [%s]").formatted(dnsName));
         }
-        return certificateChain;
+        return CertUtils.withoutTrustAnchor(certificateChain);
     }
 
     /**

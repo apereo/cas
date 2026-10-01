@@ -10,6 +10,7 @@ import org.apereo.cas.oidc.vc.issuer.OidcVerifiableCredentialValidationContext;
 import org.apereo.cas.oidc.vc.issuer.proof.OidcVerifiableCredentialProofValidator;
 import org.apereo.cas.services.OidcRegisteredService;
 import org.apereo.cas.support.oauth.util.OAuth20Utils;
+import org.apereo.cas.util.crypto.CertUtils;
 import org.apereo.cas.util.jwt.JsonWebTokenSigner;
 import lombok.RequiredArgsConstructor;
 import lombok.val;
@@ -21,6 +22,7 @@ import org.jose4j.jwk.PublicJsonWebKey;
 import org.jose4j.jwk.RsaJsonWebKey;
 import org.jose4j.jwt.JwtClaims;
 import org.jose4j.jwt.NumericDate;
+import java.security.cert.X509Certificate;
 
 /**
  * This is {@link BaseOidcVerifiableCredentialEncoder}.
@@ -149,7 +151,8 @@ public abstract class BaseOidcVerifiableCredentialEncoder implements OidcVerifia
      * {@code credentialSigningAlgValuesSupported} rather than the client's {@code idTokenSigningAlg},
      * so that what the issuer produces is what the issuer metadata advertises and what a verifier,
      * including this one, will accept. The advertised list is also handed to the signer as its
-     * permitted set, so an algorithm outside it cannot be used by accident.
+     * permitted set, so an algorithm outside it cannot be used by accident. When the signing key carries
+     * a certificate chain, it is sent as the {@code x5c} header (see {@link #resolveCertificateChain(PublicJsonWebKey)}).
      *
      * @param claims            the claims
      * @param configurationId   the credential configuration id
@@ -171,8 +174,23 @@ public abstract class BaseOidcVerifiableCredentialEncoder implements OidcVerifia
             .algorithm(resolveSigningAlgorithm(configuration, signingKey, registeredService))
             .allowedAlgorithms(new LinkedHashSet<>(resolveSupportedSigningAlgorithms(configuration, registeredService)))
             .mediaType(getFormat().getValue())
+            .certificateChain(resolveCertificateChain(signingKey))
             .build()
             .sign(claims);
+    }
+
+    /**
+     * Certificate chain sent as the credential's {@code x5c} header, taken from the issuer signing key's
+     * own {@code x5c}. HAIP 1.0 requires an X.509 chain on issued credentials and forbids the trust anchor in
+     * it, so a trailing self-signed certificate is left out unless it is the only one; the SD-JWT VC verifier
+     * then takes the issuer key from the leaf. A key without a chain produces no header, and verifiers keep
+     * resolving the key by {@code kid} through the issuer's JWKS or JWT VC issuer metadata.
+     *
+     * @param signingKey the issuer signing key
+     * @return the certificate chain, leaf first, possibly empty
+     */
+    protected List<X509Certificate> resolveCertificateChain(final PublicJsonWebKey signingKey) {
+        return CertUtils.withoutTrustAnchor(signingKey.getCertificateChain());
     }
 
     /**

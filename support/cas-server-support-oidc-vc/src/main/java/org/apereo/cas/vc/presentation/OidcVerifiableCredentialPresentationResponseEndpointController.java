@@ -53,17 +53,6 @@ import tools.jackson.databind.ObjectMapper;
 @Tag(name = "OpenID Connect")
 @Slf4j
 public class OidcVerifiableCredentialPresentationResponseEndpointController extends BaseOAuth20Controller<OidcConfigurationContext> {
-    private static final ObjectMapper MAPPER = JacksonObjectMapperFactory.builder()
-        .defaultTypingEnabled(false)
-        .minimal(true)
-        .jsonFactory(JsonFactory.builder()
-            .enable(StreamReadFeature.STRICT_DUPLICATE_DETECTION)
-            .build())
-        .build()
-        .toObjectMapper();
-
-    private static final Set<String> CREDENTIAL_JWT_TYPES = Set.of("dc+sd-jwt", "vc+sd-jwt");
-
     /**
      * Key binding JWT algorithms the verifier accepts and advertises as {@code kb-jwt_alg_values}. OpenID4VP 1.0
      * asks for fully specified identifiers, so Ed25519 is advertised as {@code Ed25519}; a key binding JWT that
@@ -86,7 +75,18 @@ public class OidcVerifiableCredentialPresentationResponseEndpointController exte
      * Result property holding the response code the relying party must present to collect the outcome.
      */
     public static final String PROPERTY_RESPONSE_CODE = "responseCode";
+    
+    private static final ObjectMapper MAPPER = JacksonObjectMapperFactory.builder()
+        .defaultTypingEnabled(false)
+        .minimal(true)
+        .jsonFactory(JsonFactory.builder()
+            .enable(StreamReadFeature.STRICT_DUPLICATE_DETECTION)
+            .build())
+        .build()
+        .toObjectMapper();
 
+    private static final Set<String> CREDENTIAL_JWT_TYPES = Set.of("dc+sd-jwt", "vc+sd-jwt");
+    
     private static final Set<String> EDWARDS_CURVE_ALGORITHMS = Set.of("Ed25519", "EdDSA");
 
     private static final String STATUS_VERIFIED = "verified";

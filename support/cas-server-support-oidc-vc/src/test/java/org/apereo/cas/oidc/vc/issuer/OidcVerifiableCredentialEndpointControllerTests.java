@@ -24,6 +24,7 @@ import com.nimbusds.jose.JWSAlgorithm;
 import com.nimbusds.jose.JWSHeader;
 import com.nimbusds.jose.JWSSigner;
 import com.nimbusds.jose.crypto.ECDSASigner;
+import com.nimbusds.jose.crypto.ECDSAVerifier;
 import com.nimbusds.jose.crypto.RSASSASigner;
 import com.nimbusds.jose.crypto.RSASSAVerifier;
 import com.nimbusds.jose.jwk.Curve;
@@ -35,6 +36,7 @@ import com.nimbusds.jose.jwk.RSAKey;
 import com.nimbusds.jose.jwk.gen.ECKeyGenerator;
 import com.nimbusds.jose.jwk.gen.RSAKeyGenerator;
 import com.nimbusds.jose.util.Base64URL;
+import com.nimbusds.jose.util.X509CertUtils;
 import com.nimbusds.jwt.JWTClaimsSet;
 import com.nimbusds.jwt.SignedJWT;
 import com.nimbusds.oauth2.sdk.dpop.DefaultDPoPProofFactory;
@@ -267,6 +269,31 @@ class OidcVerifiableCredentialEndpointControllerTests {
             ticketRegistry.addTicket(Objects.requireNonNull(accessToken.getTicketGrantingTicket()));
             ticketRegistry.addTicket(accessToken);
             return accessToken;
+        }
+
+        protected SignedJWT issueCredentialJwt(final Consumer<OidcRegisteredService> customizer) throws Throwable {
+            val clientId = UUID.randomUUID().toString();
+            val registeredService = getOidcRegisteredService(clientId);
+            customizer.accept(registeredService);
+            servicesManager.save(registeredService);
+
+            val accessToken = createOAuth20AccessToken(clientId);
+            val request = new OidcVerifiableCredentialRequest();
+            request.setCredentialConfigurationId("myorg");
+            request.setProofs(buildProofs(buildValidRsaProofJwt()));
+
+            val response = mockMvc.perform(post(CREDENTIAL_ENDPOINT_URL)
+                    .with(withHttpRequestProcessor())
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken.getId())
+                    .content(MAPPER.writeValueAsString(request)))
+                .andExpect(status().isOk())
+                .andReturn()
+                .getResponse()
+                .getContentAsString();
+            val credentials = assertInstanceOf(List.class, MAPPER.readValue(response, Map.class).get("credentials"));
+            val credential = assertInstanceOf(Map.class, credentials.getFirst()).get("credential").toString();
+            return SignedJWT.parse(StringUtils.substringBefore(credential, "~"));
         }
     }
 
@@ -685,30 +712,29 @@ class OidcVerifiableCredentialEndpointControllerTests {
             });
             assertEquals(JWSAlgorithm.RS256, unrestricted.getHeader().getAlgorithm());
         }
+    }
 
-        private SignedJWT issueCredentialJwt(final Consumer<OidcRegisteredService> customizer) throws Throwable {
-            val clientId = UUID.randomUUID().toString();
-            val registeredService = getOidcRegisteredService(clientId);
-            customizer.accept(registeredService);
-            servicesManager.save(registeredService);
+    /**
+     * HAIP 1.0: a signing key with an X.509 chain puts it in the credential's {@code x5c} header,
+     * leaf first and without the trust anchor.
+     */
+    @Nested
+    @TestPropertySource(properties = "cas.authn.oidc.jwks.file-system.jwks-file=classpath:vc-issuer-x5c.jwks")
+    class CredentialCertificateChainTests extends BaseTests {
+        @Test
+        void verifyCertificateChainWithoutTrustAnchor() throws Throwable {
+            val credential = issueCredentialJwt(service -> service.setDescription("Certificate chain"));
+            val issuerKey = assertInstanceOf(ECKey.class, JWKSet.load(
+                new ClassPathResource("vc-issuer-x5c.jwks").getInputStream()).getKeyByKeyId("vc-issuer"));
+            assertEquals(2, issuerKey.getParsedX509CertChain().size());
 
-            val accessToken = createOAuth20AccessToken(clientId);
-            val request = new OidcVerifiableCredentialRequest();
-            request.setCredentialConfigurationId("myorg");
-            request.setProofs(buildProofs(buildValidRsaProofJwt()));
-
-            val response = mockMvc.perform(post(CREDENTIAL_ENDPOINT_URL)
-                    .with(withHttpRequestProcessor())
-                    .contentType(MediaType.APPLICATION_JSON)
-                    .header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken.getId())
-                    .content(MAPPER.writeValueAsString(request)))
-                .andExpect(status().isOk())
-                .andReturn()
-                .getResponse()
-                .getContentAsString();
-            val credentials = assertInstanceOf(List.class, MAPPER.readValue(response, Map.class).get("credentials"));
-            val credential = assertInstanceOf(Map.class, credentials.getFirst()).get("credential").toString();
-            return SignedJWT.parse(StringUtils.substringBefore(credential, "~"));
+            assertEquals(JWSAlgorithm.ES256, credential.getHeader().getAlgorithm());
+            assertEquals(issuerKey.getKeyID(), credential.getHeader().getKeyID());
+            val chain = credential.getHeader().getX509CertChain();
+            assertEquals(1, chain.size());
+            val leaf = X509CertUtils.parse(chain.getFirst().decode());
+            assertEquals(issuerKey.getParsedX509CertChain().getFirst(), leaf);
+            assertTrue(credential.verify(new ECDSAVerifier((ECPublicKey) leaf.getPublicKey())));
         }
     }
 

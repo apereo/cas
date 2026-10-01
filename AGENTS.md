@@ -93,6 +93,7 @@ Guidance for AI coding agents working in the Apereo CAS source tree.
 ## Conventions you should match
 
 - Java 25 is required (`gradle.properties`); many sources use `import module java.base;`, Lombok `val`, and package-level `@NullMarked` via `package-info.java`.
+- `import module java.base` makes `Signature` ambiguous (`java.security.Signature` vs `java.lang.classfile.Signature`); write `java.security.Signature`. Mapping to a `@SuperBuilder` result (`IntStream.mapToObj(i -> X.builder()...build())`) infers a capture type; give the stream a type witness (`.<X>mapToObj(...)`).
 - Lombok `val` cannot infer generic poly expressions: `val x = Objects.requireNonNullElse(list, List.of())` (or `...ElseGet(list, List::of)`) becomes `Object`. Assign the plain call to `val` and null-check separately, or declare the type.
 - Spring config classes generally use `@AutoConfiguration` or `@Configuration(proxyBeanMethods = false)`, `@EnableConfigurationProperties(CasConfigurationProperties.class)`, `@ConditionalOnFeatureEnabled`, and bean methods with `@RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)` plus `@ConditionalOnMissingBean`. See `support/cas-server-support-token-core/.../TokenCoreConfiguration.java`.
 - Configuration model classes usually live under `api/.../configuration/model/**`, use Lombok accessors, and carry `@RequiresModule(name = "...")`; example: `LdapAuthorizationProperties`.
@@ -222,6 +223,7 @@ Guidance for AI coding agents working in the Apereo CAS source tree.
   `OidcVerifiableCredentialsAccessTokenGeneratorCustomizer` (authorization code and refresh grants), narrowed by the service
   policy, and the credential endpoint combines them with authorization details.
 - OID4VP key binding algorithms live in `OidcVerifiableCredentialPresentationResponseEndpointController.KEY_BINDING_ALGORITHMS_SUPPORTED`, which also feeds `kb-jwt_alg_values`; `sd-jwt_alg_values` comes from the `dc+sd-jwt` configurations. OpenID4VP wants fully specified identifiers (`Ed25519`, not `EdDSA`); Ed25519 key binding is verified with the JDK `Signature` so both header values work. `alg_values` is not defined for `dc+sd-jwt`.
+- Issued credentials carry no `client_id` or `credential_configuration_id` (claim or header): they reveal the relying party to every verifier. CAS's verifier finds the issuer key by `kid` (an `OidcRegisteredService` key selector with `jwksKeyId` set, through `getJsonWebKeySigningKey`), the same key the JWKS publishes.
 - Presentation transactions carry `clientId` (and `redirectUri` for same-device); results carry `clientId` and `responseCode`. `oidcVcPresentationResult` answers `404` to any other client or to a missing/wrong `response_code`. Test transactions built by hand must set `clientId`, or results cannot be collected.
 - DCQL has no `required` per claim: optional claims become claim `id`s plus `claim_sets` (all, then required; or each alone when none is required), and the verifier requires the required claims or, when all are optional, at least one.
 - The OID4VP response URI takes `vp_token` or `error` (never both) with `state`; an error response is consumed, answered

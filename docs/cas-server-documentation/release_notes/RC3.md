@@ -219,6 +219,10 @@ created and managed; by default both point to the account profile when account m
 - A wallet's error response is stored bounded: `error` to 128 characters and `error_description` to 1024.
 - Attribute values with a leading zero, such as postal codes, are issued as text. Previously they were read as octal numbers,
   so `0123` was issued as `83` and `08` failed issuance.
+- Issued credentials carry the issuer signing key's certificate chain as the `x5c` header, without the trust anchor,
+  as HAIP 1.0 requires, when the key in the keystore has one.
+- Signed presentation request objects (`X509_SAN_DNS`) no longer include the trust anchor in their `x5c` header,
+  as HAIP 1.0 requires.
 
 ### Stateless Ticket Registry
 

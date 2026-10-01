@@ -14,11 +14,17 @@ import org.apereo.cas.vc.presentation.OidcVerifiableCredentialPresentationReques
 import org.apereo.cas.vc.presentation.OidcVerifiableCredentialPresentationRequestEndpointController.OidcVerifiableCredentialPresentationRequest.CredentialRequest;
 import org.apereo.cas.vc.presentation.OidcVerifiableCredentialPresentationRequestEndpointController.OidcVerifiableCredentialPresentationResponse;
 import com.google.common.base.Splitter;
+import com.nimbusds.jose.crypto.ECDSAVerifier;
+import com.nimbusds.jose.jwk.ECKey;
+import com.nimbusds.jose.jwk.JWKSet;
+import com.nimbusds.jose.util.X509CertUtils;
+import com.nimbusds.jwt.SignedJWT;
 import lombok.val;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.autoconfigure.ImportAutoConfiguration;
+import org.springframework.core.io.ClassPathResource;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.TestPropertySource;
 import tools.jackson.databind.ObjectMapper;
@@ -292,6 +298,37 @@ class OidcVerifiableCredentialPresentationRequestEndpointControllerTests {
                 .getContentAsString();
             assertTrue(response.contains("certificate chain"),
                 () -> "Expected a configuration error about the signing certificate chain but got " + response);
+        }
+    }
+
+    /**
+     * HAIP 1.0 section 5: the request object's {@code x5c} carries the chain without its trust anchor.
+     */
+    @Nested
+    @TestPropertySource(properties = {
+        "cas.authn.oidc.vc.presentation.client-identifier-prefix=X509_SAN_DNS",
+        "cas.authn.oidc.jwks.file-system.jwks-file=classpath:vc-issuer-x5c.jwks"
+    })
+    class SignedRequestCertificateChainTests extends BaseTests {
+        @Test
+        void verifyRequestObjectCertificateChainWithoutTrustAnchor() throws Throwable {
+            val ticket = createPresentationTransaction(UUID.randomUUID().toString(), UUID.randomUUID().toString());
+            val requestObject = SignedJWT.parse(mockMvc.perform(get(PRESENTATION_REQUEST_ENDPOINT_URL + '/' + ticket.getId())
+                    .with(withHttpRequestProcessor()))
+                .andExpect(status().isOk())
+                .andReturn()
+                .getResponse()
+                .getContentAsString());
+            val issuerKey = assertInstanceOf(ECKey.class, JWKSet.load(
+                new ClassPathResource("vc-issuer-x5c.jwks").getInputStream()).getKeyByKeyId("vc-issuer"));
+            assertEquals(2, issuerKey.getParsedX509CertChain().size());
+
+            assertEquals("oauth-authz-req+jwt", requestObject.getHeader().getType().toString());
+            val chain = requestObject.getHeader().getX509CertChain();
+            assertEquals(1, chain.size());
+            val leaf = X509CertUtils.parse(chain.getFirst().decode());
+            assertEquals(issuerKey.getParsedX509CertChain().getFirst(), leaf);
+            assertTrue(requestObject.verify(new ECDSAVerifier((ECPublicKey) leaf.getPublicKey())));
         }
     }
 }
