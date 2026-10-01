@@ -18,7 +18,7 @@ function runscript {
     return 0;
 }
 
-export DOCKER_IMAGE="mongo:8.3"
+export DOCKER_IMAGE="mongo:9.0"
 printgreen "Running MongoDb docker container..."
 docker stop mongodb-server || true && docker rm mongodb-server || true
 docker run --quiet --rm -d \
