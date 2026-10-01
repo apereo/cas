@@ -107,6 +107,8 @@ public class MongoDbConnectionFactory {
         mongoConverters.add(new BaseConverters.BsonTimestampToDateConverter());
         mongoConverters.add(new BaseConverters.ZonedDateTimeToStringConverter());
         mongoConverters.add(new BaseConverters.StringToZonedDateTimeConverter());
+        mongoConverters.add(new BaseConverters.BigIntegerToStringConverter());
+        mongoConverters.add(new BaseConverters.StringToBigIntegerConverter());
         mongoConverters.addAll(Jsr310Converters.getConvertersToRegister());
 
         this.customConversions = new MongoCustomConversions(mongoConverters);
