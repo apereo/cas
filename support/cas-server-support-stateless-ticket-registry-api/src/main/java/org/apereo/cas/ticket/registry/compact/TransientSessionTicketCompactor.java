@@ -7,8 +7,6 @@ import org.apereo.cas.ticket.TicketFactory;
 import org.apereo.cas.ticket.TransientSessionTicket;
 import org.apereo.cas.ticket.TransientSessionTicketFactory;
 import org.apereo.cas.ticket.expiration.FixedInstantExpirationPolicy;
-import org.apereo.cas.ticket.registry.CompactTicketCodec;
-import org.apereo.cas.ticket.registry.TicketCompactor;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.DateTimeUtils;
 import lombok.RequiredArgsConstructor;

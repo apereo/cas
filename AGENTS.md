@@ -268,6 +268,14 @@ Guidance for AI coding agents working in the Apereo CAS source tree.
   for the assertions that do not. That is what the customizer test now does, and it gained the
   policy-permits branch as a second assertion in the process.
 
+- A clear can sit in an abstract base class, out of sight of the class that fails. `BaseThemeTests` emptied
+  the services registry in a `@BeforeEach`, which ran before every method of every subclass, and two subclasses
+  in different files (`RegisteredServiceThemeResolverTests.ExampleThemeTests`,
+  `ChainingThemeResolverTests.ThemeDefinitionTests`) share one context. The symptom is the resolver's fallback
+  (`expected: <some-theme> but was: <example>`, the default theme) instead of the value on the test's own
+  service. A test that empties the registry to prove a result is remembered (`verifyThemeIsResolvedOncePerRequest`)
+  proves the same thing by deleting only its own service.
+
 - Ports are shared state too, and the trap has a specific shape. `MockWebServer.getRandomPort()`
   now draws from **21000-24999**, a band nothing else in the repository binds, and a Checkstyle rule
   (`reservedMockWebServerPorts`) keeps it that way. It used to draw from 4000-9999, which overlapped
@@ -947,13 +955,20 @@ Guidance for AI coding agents working in the Apereo CAS source tree.
   field, lists nested the same way, so values are never escaped. Store enums by `name()`, never by ordinal. Compactors add fields in `compactFields` and read them
   with `parse(value, exactCount)`; bump `CompactTicketCodec.VERSION` when a layout changes, and say in the release notes
   that tickets issued before the upgrade are unreadable.
-- Authentication in ST, PT, PGT and OAuth tickets is `CompactTicketAuthentication` (core-tickets-api): principal id,
-  authentication date, handlers, credential types, remember-me. Attributes are not kept (documented caveat).
-- `expand` builds ticket objects directly (`ServiceTicketImpl`, `OAuth20DefaultCode`, ...). Do not go back to the ticket
-  factories there: they generate (and may encrypt) an id and look up the registered service for an expiration policy
-  that expansion overwrites anyway.
-- The TGT compact form is the TGT JSON of a copy with a constant id and no `services`, `proxyGrantingTickets` or
-  `descendantTickets`; updates of those never reach the TGC anyway, and single logout is documented as unsupported.
+- Module layout: `TicketCompactor`, `CompactTicketCodec`, `CompactTicketAuthentication` and the core compactors live in
+  `org.apereo.cas.ticket.registry.compact`, with `StatelessTicketRegistry` and `ShortenedServiceMatchingStrategy`, in
+  `support/cas-server-support-stateless-ticket-registry-api`; the `stateless-ticket-registry` module keeps the
+  auto-configuration. Modules that ship their own compactors (OAuth core, Simple MFA core) depend on the API module
+  `compileOnly`, so their stateless bean configurations carry `@ConditionalOnClass(StatelessTicketRegistry.class)` next to
+  the feature condition (the feature is enabled by default, so without the class check every deployment without the
+  stateless module fails to start). Native hints for compactors: `CasStatelessTicketRegistryRuntimeHints` in the API module.
+- Authentication in ST, PT, PGT and OAuth tickets is `CompactTicketAuthentication`: principal id, authentication date,
+  handlers, credential types, remember-me and the retained authentication attributes (`clientName`, MFA context,
+  trusted device) as text. Other attributes are not kept (documented caveat).
+- `expand` creates tickets through the ticket factories, then sets the creation time and a
+  `FixedInstantExpirationPolicy`; the registry then sets the id it was looked up by.
+- The TGT compact form is its authentication only, as typed JSON with principal attributes stripped; updates of
+  `services`, `proxyGrantingTickets` or `descendantTickets` never reach the TGC, and single logout is documented as unsupported.
 - No local decode cache: expanded tickets are mutable per request, the crypto and inflate cost is small next to the JSON
   parse, and a cache is server-side state.
 - There is no delete: `deleteSingleTicket` is the base no-op, so `deleteTicket(...)` returns 0 and nothing is ever
@@ -1003,14 +1018,33 @@ Guidance for AI coding agents working in the Apereo CAS source tree.
 - Scenario `stateless-ticket-registry-load` combines interrupt notifications, the SAML2 identity provider, OIDC, proxy
   tickets and delegation to the simplesamlphp SAML2 IdP, checks unhappy paths (tampered or forged tickets and cookies,
   expired and reused service tickets, cookie replay after logout, attribute-based access at single sign-on) and runs a load
-  over plain HTTP (`STATELESS_LOAD_ITERATIONS`, `STATELESS_LOAD_CONCURRENCY`, `STATELESS_LOAD_BROWSERS`). Simple MFA is not
-  supported by the stateless registry (no CASMFA compactor; a stateless id cannot be typed), so it is not in the scenario.
+  over plain HTTP (`STATELESS_LOAD_ITERATIONS`, `STATELESS_LOAD_CONCURRENCY`, `STATELESS_LOAD_BROWSERS`). It also runs
+  Simple MFA by email (mockmock mail server from `init.sh`): a code typed in another user's flow and a wrong code fail,
+  the right code passes, single sign-on does not ask again; replicated sessions are on for OAuth and pac4j.
+- Simple MFA with the stateless registry (maintainer: short code typed, stateless id held by the flow).
+  `CasSimpleMultifactorAuthenticationService.store` returns the stored ticket; the send-token and verify-email actions
+  put its id on the flow credential (`CasSimpleMultifactorTokenCredential.ticketId`; the view binds `token` only). Read the
+  credential from the flow scope, not `WebUtils.getCredential`, which returns null while the token is still blank.
+  Lookup loads the ticket by that id and compares the typed code in constant time with
+  `CasSimpleMultifactorAuthenticationTicket.getCode` (`code` property, else the id); with no id, or on mismatch, the code
+  is looked up as a ticket id, which keeps the stateful behavior (another principal submitting a code burns it, as
+  `simple-mfa-login` expects). `CasSimpleMultifactorAuthenticationTicketCompactor` keeps service, code and principal id.
+  The token endpoint answers with the stored id. Tokens are not single-use with the stateless registry; the collision
+  check in `generate` and the wrong-code fallback each log a warning from the stateless registry's failed decode.
 - Maintainer: callers that hand a ticket id to a browser or another party read it from the ticket `addTicket` returns;
   the registry does not change the ticket passed in, and reading the ticket back after adding it was rejected (cost,
   type-specific code). Fix call sites as scenarios need them, not all at once. Delegation: the webflow manager keeps the
   built transient ticket in the flow (it carries the request properties) and hands the stored ticket to
   `DelegatedClientSessionManager.trackIdentifier(WebContext, Ticket, Client)` and the CAS client session key. Still
   open: Duo with ticket-registry session storage, password reset, account registration and others not in the scenarios.
+- Session stores on the ticket registry (pac4j `TicketRegistrySessionStore`, Spring Session
+  `TicketRegistrySessionRepository`) keep only text properties, since the transient ticket compactor stringifies values:
+  other values go in as base64 Java serialization text, times as ISO-8601. The session cookie (and the Spring Session id)
+  follow the id of the ticket the registry returns on add and update. With the stateless registry the whole session
+  rides in that cookie, so keep sessions small; the session ticket expires at a fixed instant from its creation.
+  pac4j saves the request to resume as a `FoundAction`/`OkAction` (exceptions); the pac4j store serializes exceptions
+  without their stack trace, which otherwise pushes the session cookie past 4096 bytes and the browser drops it (the
+  OAuth callback then lands on the redirect URI without a code). The load scenario fails on any oversized cookie.
 - Scenarios that start an external SAML2 IdP from `readyScript` (after CAS is up) must call `/cas/sp/idp/metadata`
   before the first delegated login: the pac4j client failed to load the IdP metadata at startup, and redirecting to it
   fails with a `NullPointerException` in `ChainingMetadataResolver.setResolvers` until that endpoint forces a reload.
@@ -1076,3 +1110,18 @@ Guidance for AI coding agents working in the Apereo CAS source tree.
   `CasFeatureModule.FeatureCatalog.AccountManagement.isRegistered()`. `WebAuthnControllerMvcTests` enables account
   management, so its wired document carries both URLs; `{}` only appears with the feature off.
 - JSON examples pasted into the documentation are pretty-printed (one member per line, two-space indent), never minified.
+
+## Queue-backed ticket registries (Kafka, AMQP, Pulsar, GCP Pub/Sub)
+
+- Each node keeps its own copy of the registry and broadcasts every change, so the consuming side must be
+  one consumer group, queue or subscription *per node*, named from the node's `PublisherIdentifier`
+  (`cas.ticket.registry.core.queue-identifier`, random when unset). A name shared by the nodes turns the
+  broadcast into load balancing: each change reaches one node. The AMQP registry (a queue per identifier) and
+  the Kafka service registry stream (`groupId` = identifier) do it right, and the Kafka ticket registry now
+  consumes in `<group-id>-<queue-identifier>`. Pulsar (`subscription-name`) and GCP Pub/Sub
+  (`<topic>Subscription`) still share one name across nodes and have no two-instance scenario.
+- The symptom is a two-instance puppeteer scenario that fails about half its CI runs, with every in-process
+  attempt of a failing run failing alike: partitions are assigned once when the instances start and the
+  attempts reuse the running servers. `ci/tests/kafka/docker-compose.yml` sets `KAFKA_NUM_PARTITIONS=1`, so in
+  a shared group a single consumer owns each topic, and a ticket never reaches the other node, which then
+  rejects the TGC and clears it.

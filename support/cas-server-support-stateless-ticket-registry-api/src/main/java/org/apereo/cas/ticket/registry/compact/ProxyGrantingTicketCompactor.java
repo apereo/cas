@@ -10,8 +10,6 @@ import org.apereo.cas.ticket.TicketFactory;
 import org.apereo.cas.ticket.expiration.FixedInstantExpirationPolicy;
 import org.apereo.cas.ticket.proxy.ProxyGrantingTicket;
 import org.apereo.cas.ticket.proxy.ProxyGrantingTicketFactory;
-import org.apereo.cas.ticket.registry.CompactTicketAuthentication;
-import org.apereo.cas.ticket.registry.TicketCompactor;
 import org.apereo.cas.util.DateTimeUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.val;
@@ -34,11 +32,13 @@ public class ProxyGrantingTicketCompactor implements TicketCompactor<ProxyGranti
 
     private final PrincipalFactory principalFactory;
 
+    private final Collection<String> retainedAuthenticationAttributes;
+
     @Override
     public void compactFields(final List<String> fields, final Ticket ticket) throws Exception {
         val proxyGrantingTicket = (ProxyGrantingTicket) ticket;
         fields.add(StringUtils.defaultString(proxyGrantingTicket.getProxiedBy().getShortenedId()));
-        CompactTicketAuthentication.compact(fields, proxyGrantingTicket.getAuthentication());
+        CompactTicketAuthentication.compact(fields, proxyGrantingTicket.getAuthentication(), retainedAuthenticationAttributes);
     }
 
     @Override

@@ -5,7 +5,7 @@ import org.apereo.cas.authentication.principal.ServiceFactory;
 import org.apereo.cas.ticket.Ticket;
 import org.apereo.cas.ticket.TicketFactory;
 import org.apereo.cas.ticket.expiration.FixedInstantExpirationPolicy;
-import org.apereo.cas.ticket.registry.TicketCompactor;
+import org.apereo.cas.ticket.registry.compact.TicketCompactor;
 import org.apereo.cas.util.DateTimeUtils;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;

@@ -11,6 +11,7 @@ const PROTECTED_SERVICE = "https://localhost:9859/anything/protected";
 const RESTRICTED_SERVICE = "https://localhost:9859/anything/restricted";
 const PROXY_SERVICE = "https://localhost:9859/anything/proxy";
 const PROXIED_SERVICE = "https://localhost:9859/anything/sample";
+const MFA_SERVICE = "https://localhost:9859/anything/mfa";
 const SAML_SP = "http://localhost:9443/simplesaml/module.php/core/authenticate.php?as=default-sp";
 const OIDC_CLIENT_ID = "client";
 const OIDC_CLIENT_SECRET = "secret";
@@ -36,6 +37,7 @@ class CookieJar {
     store(setCookies = []) {
         for (const setCookie of setCookies) {
             const [pair, ...attributes] = setCookie.split(";");
+            assert(pair.length < MAX_COOKIE_SIZE, `Cookie ${pair.split("=")[0]} is ${pair.length} bytes`);
             const separator = pair.indexOf("=");
             const name = pair.substring(0, separator).trim();
             const value = pair.substring(separator + 1).trim();
@@ -229,6 +231,11 @@ async function assertTicketGrantingCookieSize(page) {
     const size = cookie.name.length + cookie.value.length;
     await cas.log(`Ticket-granting cookie size is ${size} bytes`);
     assert(size < MAX_COOKIE_SIZE, `Ticket-granting cookie is ${size} bytes`);
+    for (const sessionCookie of cookies.filter((candidate) => candidate.name.startsWith("DISSESSION"))) {
+        const sessionCookieSize = sessionCookie.name.length + sessionCookie.value.length;
+        await cas.log(`Session cookie ${sessionCookie.name} size is ${sessionCookieSize} bytes`);
+        assert(sessionCookieSize < MAX_COOKIE_SIZE, `Session cookie ${sessionCookie.name} is ${sessionCookieSize} bytes`);
+    }
     return cookie;
 }
 
@@ -276,8 +283,23 @@ async function verifyBlockedInterruptNotification(context) {
     await cas.assertMissingParameter(page, "ticket");
 }
 
+function watchCookieSizes(page) {
+    const oversized = [];
+    page.on("response", (response) => {
+        const header = response.headers()["set-cookie"];
+        for (const setCookie of header ? header.split("\n") : []) {
+            const pair = setCookie.split(";")[0];
+            if (pair.length >= MAX_COOKIE_SIZE) {
+                oversized.push(`${pair.split("=")[0]} is ${pair.length} bytes, set by ${response.url()}`);
+            }
+        }
+    });
+    return oversized;
+}
+
 async function verifySamlIdentityProviderWithOidc(context, username) {
     const page = await cas.newPage(context);
+    const oversizedCookies = watchCookieSizes(page);
     await cas.goto(page, SAML_SP);
     await cas.sleep(2000);
     await cas.loginWith(page, username, "Mellon");
@@ -291,6 +313,7 @@ async function verifySamlIdentityProviderWithOidc(context, username) {
     await cas.goto(page, `${CAS_PREFIX}/oidc/authorize?response_type=code&client_id=${OIDC_CLIENT_ID}`
         + `&scope=openid%20profile&redirect_uri=${OIDC_REDIRECT_URI}&state=${state}`);
     await cas.sleep(2000);
+    assert.deepEqual(oversizedCookies, [], "Browsers drop cookies of 4096 bytes or more");
     await cas.assertPageUrlStartsWith(page, OIDC_REDIRECT_URI);
     const code = await cas.assertParameter(page, "code");
     const tokens = await exchangeAuthorizationCode(code);
@@ -326,6 +349,7 @@ async function verifyDelegatedSamlIdentityProvider(context) {
     assert.equal(validation.authenticationSuccess.attributes.organization[0], "apereo");
     assert.equal(validation.authenticationSuccess.attributes.credentialType[0], "ClientCredential");
     assert.equal(validation.authenticationSuccess.attributes.authenticationMethod[0], "DelegatedClientAuthenticationHandler");
+    assert.equal(validation.authenticationSuccess.attributes.clientName[0], "SAML2Client");
 }
 
 async function verifyUnhappyPaths(context) {
@@ -513,6 +537,54 @@ async function verifyExpiredServiceTickets() {
     }
 }
 
+async function verifySimpleMultifactorAuthentication(context, browser) {
+    const page = await cas.newPage(context);
+    await cas.gotoLogin(page, MFA_SERVICE);
+    await cas.loginWith(page, "loaduser1", "Mellon");
+    await cas.sleep(2000);
+    await cas.assertVisibility(page, "#token");
+    const code = await cas.extractFromEmail(browser);
+
+    await cas.log("A code is only accepted in the login flow that sent it");
+    const otherContext = await browser.createBrowserContext();
+    try {
+        const otherPage = await cas.newPage(otherContext);
+        await cas.gotoLogin(otherPage, MFA_SERVICE);
+        await cas.loginWith(otherPage, "loaduser2", "Mellon");
+        await cas.sleep(2000);
+        await cas.assertVisibility(otherPage, "#token");
+        await cas.type(otherPage, "#token", code);
+        await cas.submitForm(otherPage, "#fm1");
+        await cas.sleep(1000);
+        await cas.assertTextContentStartsWith(otherPage, "div .banner-danger p", "Multifactor authentication attempt has failed");
+    } finally {
+        await otherContext.close();
+    }
+
+    await cas.log("A wrong code is rejected");
+    await cas.type(page, "#token", "CASMFA-000000");
+    await cas.submitForm(page, "#fm1");
+    await cas.sleep(1000);
+    await cas.assertTextContentStartsWith(page, "div .banner-danger p", "Multifactor authentication attempt has failed");
+
+    await cas.type(page, "#token", code);
+    await cas.submitForm(page, "#fm1");
+    await cas.sleep(2000);
+    const ticket = await cas.assertTicketParameter(page);
+    const validation = await validateTicket(MFA_SERVICE, ticket);
+    assert.equal(validation.authenticationSuccess.user, "loaduser1");
+    assert(validation.authenticationSuccess.attributes.authnContextClass.includes("mfa-simple"), JSON.stringify(validation));
+    await assertTicketGrantingCookieSize(page);
+
+    await cas.log("Single sign-on must not ask for the code again");
+    await cas.gotoLogin(page, MFA_SERVICE);
+    await cas.sleep(2000);
+    const ssoTicket = await cas.assertTicketParameter(page);
+    const ssoValidation = await validateTicket(MFA_SERVICE, ssoTicket);
+    assert(ssoValidation.authenticationSuccess.attributes.authnContextClass.includes("mfa-simple"), JSON.stringify(ssoValidation));
+    await cas.gotoLogout(page);
+}
+
 async function verifyHealth() {
     const health = await request("GET", `${CAS_PREFIX}/actuator/health`);
     await cas.log(`Health after load (${health.status}): ${health.body}`);
@@ -523,11 +595,13 @@ async function verifyHealth() {
 
 (async () => {
     const browser = await cas.newBrowser(cas.browserOptions());
+    let failed = false;
     const steps = [
         ["Interrupt notification with single sign-on", verifyInterruptNotification],
         ["Blocking interrupt notification", verifyBlockedInterruptNotification],
         ["SAML2 identity provider with OpenID Connect single sign-on", (context) => verifySamlIdentityProviderWithOidc(context, "loaduser0")],
         ["Delegation to an external SAML2 identity provider", verifyDelegatedSamlIdentityProvider],
+        ["Simple multifactor authentication", (context) => verifySimpleMultifactorAuthentication(context, browser)],
         ["Unhappy paths", verifyUnhappyPaths]
     ];
     try {
@@ -549,10 +623,18 @@ async function verifyHealth() {
         await runLoad();
         await verifyExpiredServiceTickets();
         await verifyHealth();
+    } catch (e) {
+        failed = true;
+        throw e;
     } finally {
+        await cas.log("Closing connections and the browser");
         HTTPS_AGENT.destroy();
         HTTP_AGENT.destroy();
         await cas.removeDirectoryOrFile(path.join(__dirname, "/saml-md"));
         await cas.closeBrowser(browser);
+        if (!failed) {
+            await cas.logg("Scenario completed");
+            await process.exit(0);
+        }
     }
 })();

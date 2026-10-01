@@ -1,4 +1,4 @@
-package org.apereo.cas.ticket.registry;
+package org.apereo.cas.ticket.registry.compact;
 
 import module java.base;
 import org.apereo.cas.ticket.EncodedTicket;

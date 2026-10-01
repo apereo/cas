@@ -13,7 +13,6 @@ import org.apereo.cas.ticket.TicketFactory;
 import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.apereo.cas.ticket.TicketGrantingTicketFactory;
 import org.apereo.cas.ticket.expiration.FixedInstantExpirationPolicy;
-import org.apereo.cas.ticket.registry.TicketCompactor;
 import org.apereo.cas.util.DateTimeUtils;
 import org.apereo.cas.util.serialization.StringSerializer;
 import lombok.RequiredArgsConstructor;

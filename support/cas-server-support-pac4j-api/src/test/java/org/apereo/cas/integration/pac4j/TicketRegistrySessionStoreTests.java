@@ -5,7 +5,9 @@ import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.multitenancy.TenantExtractor;
 import org.apereo.cas.pac4j.TicketRegistrySessionStore;
 import org.apereo.cas.test.CasTestExtension;
+import org.apereo.cas.ticket.Ticket;
 import org.apereo.cas.ticket.TicketFactory;
+import org.apereo.cas.ticket.TransientSessionTicket;
 import org.apereo.cas.ticket.TransientSessionTicketFactory;
 import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.web.cookie.CasCookieBuilder;
@@ -19,6 +21,8 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.pac4j.core.context.WebContext;
 import org.pac4j.core.context.session.SessionStore;
+import org.pac4j.core.exception.http.FoundAction;
+import org.pac4j.core.util.Pac4jConstants;
 import org.pac4j.jee.context.JEEContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -29,6 +33,7 @@ import org.springframework.mock.web.MockHttpServletResponse;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.*;
 
 /**
  * This is {@link TicketRegistrySessionStoreTests}.
@@ -141,6 +146,42 @@ class TicketRegistrySessionStoreTests {
         assertTrue(value.isEmpty());
 
         assertTrue(sessionStore.getSessionId(webContext, false).isPresent());
+    }
+
+    @Test
+    void verifySavedRequestIsStoredWithoutStackTrace() {
+        val action = new FoundAction("https://localhost:8443/cas/oidc/authorize?client_id=client&redirect_uri=https://localhost:9859/anything");
+        sessionStore.set(webContext, Pac4jConstants.REQUESTED_URL, action);
+        val restored = (FoundAction) sessionStore.get(webContext, Pac4jConstants.REQUESTED_URL).orElseThrow();
+        assertEquals(action.getLocation(), restored.getLocation());
+        assertEquals(0, restored.getStackTrace().length);
+    }
+
+    @Test
+    void verifySerializableValues() {
+        val values = new ArrayList<>(List.of("first", "second"));
+        sessionStore.set(webContext, "values", values);
+        sessionStore.set(webContext, "text", "rO0AB-looking text");
+        assertEquals(values, sessionStore.get(webContext, "values").orElseThrow());
+        assertEquals("rO0AB-looking text", sessionStore.get(webContext, "text").orElseThrow());
+    }
+
+    @Test
+    void verifyCookieFollowsUpdatedTicket() throws Throwable {
+        val factory = (TransientSessionTicketFactory) ticketFactory.get(TransientSessionTicket.class);
+        val storedTicket = factory.create("stored", new HashMap<>());
+        val updatedTicket = mock(Ticket.class);
+        when(updatedTicket.getId()).thenReturn("TST-updated");
+        val registry = mock(TicketRegistry.class);
+        when(registry.getTicket(storedTicket.getId(), TransientSessionTicket.class)).thenReturn(storedTicket);
+        when(registry.updateTicket(any())).thenReturn(updatedTicket);
+
+        val store = new TicketRegistrySessionStore(registry, ticketFactory, cookieGenerator);
+        store.buildFromTrackableSession(webContext, storedTicket.getId());
+        store.set(webContext, "attribute", "value");
+        assertEquals("TST-updated", store.getTrackableSession(webContext).orElseThrow());
+        val cookieValue = cookieGenerator.getCasCookieValueManager().obtainCookieValue(getDistributedSessionCookie().getValue(), request);
+        assertEquals("TST-updated", cookieValue);
     }
 
     private static final class NoSerializable {

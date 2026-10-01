@@ -1,5 +1,5 @@
 {
-  "dependencies": "stateless-ticket-registry,saml-idp,oidc,pac4j-webflow,pac4j-saml,interrupt-webflow,reports",
+  "dependencies": "stateless-ticket-registry,saml-idp,oidc,pac4j-webflow,pac4j-saml,interrupt-webflow,simple-mfa,reports",
   "conditions": {
     "docker": "true"
   },
@@ -18,6 +18,15 @@
 
     "--cas.ticket.st.time-to-kill-in-seconds=20",
 
+    "--spring.mail.host=localhost",
+    "--spring.mail.port=25000",
+    "--cas.authn.attribute-repository.stub.attributes.mail=casuser@example.org",
+    "--cas.authn.mfa.simple.token.core.time-to-kill-in-seconds=60",
+    "--cas.authn.mfa.simple.mail.html=false",
+    "--cas.authn.mfa.simple.mail.from=cas@example.com",
+    "--cas.authn.mfa.simple.mail.subject=Token",
+    "--cas.authn.mfa.simple.mail.text=${token}",
+
     "--cas.tgc.crypto.alg=A128CBC-HS256",
     "--cas.tgc.crypto.encryption.key=u696jJnPvm1DHLR7yVCSKMMzzoPoFxJZW4-MP1CkM5w",
     "--cas.tgc.crypto.signing-enabled=false",
@@ -34,8 +43,12 @@
 
     "--cas.authn.oidc.core.issuer=${cas.server.prefix}/oidc",
     "--cas.authn.oidc.jwks.file-system.jwks-file=file:${#systemProperties['java.io.tmpdir']}/keystore.jwks",
-    "--cas.authn.oauth.session-replication.replicate-sessions=false",
+    "--cas.authn.oauth.session-replication.replicate-sessions=true",
+    "--cas.authn.oauth.session-replication.cookie.crypto.enabled=true",
     "--cas.authn.oauth.core.user-profile-view-type=FLAT",
+
+    "--cas.authn.pac4j.core.session-replication.replicate-sessions=true",
+    "--cas.authn.pac4j.core.session-replication.cookie.crypto.enabled=true",
 
     "--cas.authn.pac4j.saml[0].keystore-password=pac4j-demo-passwd",
     "--cas.authn.pac4j.saml[0].private-key-password=pac4j-demo-passwd",

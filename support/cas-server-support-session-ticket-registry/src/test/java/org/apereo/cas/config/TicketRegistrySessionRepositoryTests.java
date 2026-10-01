@@ -2,13 +2,21 @@ package org.apereo.cas.config;
 
 import module java.base;
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.session.TicketRegistrySessionRepository;
 import org.apereo.cas.test.CasTestExtension;
+import org.apereo.cas.ticket.InvalidTicketException;
+import org.apereo.cas.ticket.Ticket;
+import org.apereo.cas.ticket.TicketFactory;
+import org.apereo.cas.ticket.TransientSessionTicket;
+import org.apereo.cas.ticket.registry.TicketRegistry;
+import org.apereo.cas.util.spring.DirectObjectProvider;
 import org.apereo.cas.util.spring.boot.SpringBootTestAutoConfigurations;
 import org.apereo.cas.web.CasWebSecurityConfigurer;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.ArgumentCaptor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -23,6 +31,8 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 import jakarta.servlet.http.HttpSession;
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
@@ -76,6 +86,10 @@ class TicketRegistrySessionRepositoryTests {
     @Qualifier("sessionRepository")
     private FindByIndexNameSessionRepository<MapSession> sessionRepository;
 
+    @Autowired
+    @Qualifier(TicketFactory.BEAN_NAME)
+    private TicketFactory ticketFactory;
+
     @Test
     void verifySaveOperation() throws Exception {
         mockMvc.perform(get("/session/set"))
@@ -111,6 +125,41 @@ class TicketRegistrySessionRepositoryTests {
         mockMvc.perform(get("/actuator/sessions/" + mapSession.getId()))
             .andExpect(status().isOk());
 
+    }
+
+    @Test
+    void verifySessionFollowsStoredTicket() throws Throwable {
+        val registry = mock(TicketRegistry.class);
+        when(registry.getTicket(anyString(), eq(TransientSessionTicket.class))).thenThrow(new InvalidTicketException("TST-missing"));
+        val addedTicket = mock(Ticket.class);
+        when(addedTicket.getId()).thenReturn("TST-stored");
+        when(registry.addTicket(any(Ticket.class))).thenReturn(addedTicket);
+        val repository = new TicketRegistrySessionRepository(new DirectObjectProvider<>(registry), new DirectObjectProvider<>(ticketFactory));
+
+        val session = new MapSession();
+        session.setAttribute("roles", new ArrayList<>(List.of("admin")));
+        repository.save(session);
+        assertEquals("TST-stored", session.getId());
+
+        val captor = ArgumentCaptor.forClass(Ticket.class);
+        verify(registry).addTicket(captor.capture());
+        val storedTicket = (TransientSessionTicket) captor.getValue();
+        assertTrue(storedTicket.getProperties().values().stream().filter(Objects::nonNull).allMatch(String.class::isInstance));
+
+        doReturn(storedTicket).when(registry).getTicket("TST-stored", TransientSessionTicket.class);
+        val foundSession = Objects.requireNonNull(repository.findById("TST-stored"));
+        assertEquals(List.of("admin"), foundSession.getAttribute("roles"));
+        assertEquals(session.getCreationTime(), foundSession.getCreationTime());
+        assertEquals(session.getLastAccessedTime(), foundSession.getLastAccessedTime());
+
+        val updatedTicket = mock(Ticket.class);
+        when(updatedTicket.getId()).thenReturn("TST-updated");
+        when(registry.updateTicket(any(Ticket.class))).thenReturn(updatedTicket);
+        session.setAttribute("roles", new ArrayList<>(List.of("auditor")));
+        repository.save(session);
+        assertEquals("TST-updated", session.getId());
+        verify(registry).updateTicket(storedTicket);
+        assertEquals(List.of("auditor"), Objects.requireNonNull(repository.findById("TST-stored")).getAttribute("roles"));
     }
 
     @TestConfiguration(proxyBeanMethods = false)

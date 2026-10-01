@@ -16,12 +16,13 @@ import org.apereo.cas.ticket.TicketFactory;
 import org.apereo.cas.ticket.registry.NoOpTicketRegistryCleaner;
 import org.apereo.cas.ticket.registry.ShortenedServiceMatchingStrategy;
 import org.apereo.cas.ticket.registry.StatelessTicketRegistry;
-import org.apereo.cas.ticket.registry.TicketCompactor;
 import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.ticket.registry.TicketRegistryCleaner;
+import org.apereo.cas.ticket.registry.compact.CompactTicketAuthentication;
 import org.apereo.cas.ticket.registry.compact.ProxyGrantingTicketCompactor;
 import org.apereo.cas.ticket.registry.compact.ProxyTicketCompactor;
 import org.apereo.cas.ticket.registry.compact.ServiceTicketCompactor;
+import org.apereo.cas.ticket.registry.compact.TicketCompactor;
 import org.apereo.cas.ticket.registry.compact.TicketGrantingTicketCompactor;
 import org.apereo.cas.ticket.registry.compact.TransientSessionTicketCompactor;
 import org.apereo.cas.ticket.serialization.TicketSerializationManager;
@@ -98,39 +99,45 @@ public class CasStatelessTicketRegistryAutoConfiguration {
     @Bean
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     public TicketCompactor proxyGrantingTicketCompactor(
+        final CasConfigurationProperties casProperties,
         @Qualifier(TicketFactory.BEAN_NAME)
         final ObjectProvider<TicketFactory> ticketFactory,
         @Qualifier(PrincipalFactory.BEAN_NAME)
         final PrincipalFactory principalFactory,
         @Qualifier(WebApplicationService.BEAN_NAME_FACTORY)
         final ServiceFactory serviceFactory) {
-        return new ProxyGrantingTicketCompactor(ticketFactory, serviceFactory, principalFactory);
+        return new ProxyGrantingTicketCompactor(ticketFactory, serviceFactory, principalFactory,
+            CompactTicketAuthentication.getRetainedAuthenticationAttributes(casProperties));
     }
 
     @ConditionalOnMissingBean(name = "serviceTicketCompactor")
     @Bean
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     public TicketCompactor serviceTicketCompactor(
+        final CasConfigurationProperties casProperties,
         @Qualifier(TicketFactory.BEAN_NAME)
         final ObjectProvider<TicketFactory> ticketFactory,
         @Qualifier(PrincipalFactory.BEAN_NAME)
         final PrincipalFactory principalFactory,
         @Qualifier(WebApplicationService.BEAN_NAME_FACTORY)
         final ServiceFactory serviceFactory) {
-        return new ServiceTicketCompactor(ticketFactory, serviceFactory, principalFactory);
+        return new ServiceTicketCompactor(ticketFactory, serviceFactory, principalFactory,
+            CompactTicketAuthentication.getRetainedAuthenticationAttributes(casProperties));
     }
 
     @ConditionalOnMissingBean(name = "proxyTicketCompactor")
     @Bean
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     public TicketCompactor proxyTicketCompactor(
+        final CasConfigurationProperties casProperties,
         @Qualifier(TicketFactory.BEAN_NAME)
         final ObjectProvider<TicketFactory> ticketFactory,
         @Qualifier(PrincipalFactory.BEAN_NAME)
         final PrincipalFactory principalFactory,
         @Qualifier(WebApplicationService.BEAN_NAME_FACTORY)
         final ServiceFactory serviceFactory) {
-        return new ProxyTicketCompactor(ticketFactory, serviceFactory, principalFactory);
+        return new ProxyTicketCompactor(ticketFactory, serviceFactory, principalFactory,
+            CompactTicketAuthentication.getRetainedAuthenticationAttributes(casProperties));
     }
 
     @ConditionalOnMissingBean(name = "transientTicketCompactor")

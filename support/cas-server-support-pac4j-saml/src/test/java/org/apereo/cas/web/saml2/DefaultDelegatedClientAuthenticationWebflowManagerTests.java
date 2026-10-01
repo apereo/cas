@@ -144,7 +144,7 @@ class DefaultDelegatedClientAuthenticationWebflowManagerTests {
         val storedTicket = mock(Ticket.class);
         when(storedTicket.getId()).thenReturn(storedTicketId);
         val registry = mock(TicketRegistry.class);
-        when(registry.addTicket(any())).thenReturn(storedTicket);
+        when(registry.addTicket(any(Ticket.class))).thenReturn(storedTicket);
 
         val managerContext = spy(configurationContext);
         doReturn(registry).when(managerContext).getTicketRegistry();

@@ -170,7 +170,7 @@ class WebAuthnControllerMvcTests {
                                      final boolean withBasicAuth,
                                      final int expectedStatus) throws Exception {
         val csrfToken = getCsrfToken(request);
-        var builder = post("/cas/" + WebAuthnController.BASE_ENDPOINT_WEBAUTHN + endpoint)
+        var builder = post("/cas/" + BaseWebAuthnController.BASE_ENDPOINT_WEBAUTHN + endpoint)
             .session((MockHttpSession) request.getSession());
         val cookies = response.getCookies();
         if (cookies != null && cookies.length > 0) {

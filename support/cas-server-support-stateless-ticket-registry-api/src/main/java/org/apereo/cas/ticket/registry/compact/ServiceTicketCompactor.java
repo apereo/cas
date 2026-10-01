@@ -12,8 +12,6 @@ import org.apereo.cas.ticket.ServiceTicketFactory;
 import org.apereo.cas.ticket.Ticket;
 import org.apereo.cas.ticket.TicketFactory;
 import org.apereo.cas.ticket.expiration.FixedInstantExpirationPolicy;
-import org.apereo.cas.ticket.registry.CompactTicketAuthentication;
-import org.apereo.cas.ticket.registry.TicketCompactor;
 import org.apereo.cas.util.DateTimeUtils;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -40,6 +38,8 @@ public class ServiceTicketCompactor implements TicketCompactor<ServiceTicket> {
 
     private final PrincipalFactory principalFactory;
 
+    private final Collection<String> retainedAuthenticationAttributes;
+
     @Getter
     private long maximumTicketLength = 256;
 
@@ -49,7 +49,7 @@ public class ServiceTicketCompactor implements TicketCompactor<ServiceTicket> {
         fields.add(StringUtils.defaultString(serviceTicket.getService().getShortenedId()));
         val fromNewLogin = ticket instanceof final RenewableServiceTicket rst && rst.isFromNewLogin();
         fields.add(BooleanUtils.toString(fromNewLogin, "1", "0"));
-        CompactTicketAuthentication.compact(fields, ((AuthenticationAwareTicket) ticket).getAuthentication());
+        CompactTicketAuthentication.compact(fields, ((AuthenticationAwareTicket) ticket).getAuthentication(), retainedAuthenticationAttributes);
     }
 
     @Override

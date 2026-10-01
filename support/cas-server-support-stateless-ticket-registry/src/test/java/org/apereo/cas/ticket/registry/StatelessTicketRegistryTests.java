@@ -24,6 +24,7 @@ import org.apereo.cas.ticket.expiration.BaseDelegatingExpirationPolicy;
 import org.apereo.cas.ticket.expiration.MultiTimeUseOrTimeoutExpirationPolicy;
 import org.apereo.cas.ticket.expiration.RememberMeDelegatingExpirationPolicy;
 import org.apereo.cas.ticket.expiration.TicketGrantingTicketExpirationPolicy;
+import org.apereo.cas.ticket.registry.compact.CompactTicketAuthentication;
 import org.apereo.cas.ticket.tracking.TicketTrackingPolicy;
 import org.apereo.cas.util.RandomUtils;
 import org.apereo.cas.web.flow.BaseWebflowConfigurerTests;
@@ -168,7 +169,9 @@ class StatelessTicketRegistryTests extends BaseTicketRegistryTests {
 
     @RepeatedTest(2)
     void verifyExpandedTicketsCarryTheirStatelessIds() throws Throwable {
-        val authentication = RegisteredServiceTestUtils.getAuthentication(UUID.randomUUID().toString());
+        val authentication = RegisteredServiceTestUtils.getAuthentication(RegisteredServiceTestUtils.getPrincipal(UUID.randomUUID().toString()),
+            new HashMap<>(Map.<String, List<Object>>of(CompactTicketAuthentication.CLIENT_NAME_ATTRIBUTE, List.of("SAML2Client"),
+                "authnContextClass", List.of("mfa-duo"), "unrelated", List.of("dropped"))));
         val tickets = newTicketsOfEveryType(authentication);
         val transientTicket = (TransientSessionTicket) tickets.getLast();
 
@@ -187,6 +190,11 @@ class StatelessTicketRegistryTests extends BaseTicketRegistryTests {
                 assertEquals(authentication.getAuthenticationDate().toEpochSecond(),
                     expandedAuthentication.getAuthenticationDate().toEpochSecond());
                 assertEquals(authentication.getSuccesses().keySet(), expandedAuthentication.getSuccesses().keySet());
+                assertEquals(List.of("SAML2Client"), expandedAuthentication.getAttributes().get(CompactTicketAuthentication.CLIENT_NAME_ATTRIBUTE));
+                assertEquals(List.of("mfa-duo"), expandedAuthentication.getAttributes().get("authnContextClass"));
+                if (!(foundTicket instanceof TicketGrantingTicket)) {
+                    assertFalse(expandedAuthentication.getAttributes().containsKey("unrelated"));
+                }
             }
         }
         val foundTransientTicket = (TransientSessionTicket) newTicketRegistry.getTicket(newTicketRegistry.addTicket(transientTicket).getId());

@@ -1,6 +1,7 @@
 package org.apereo.cas.ticket.registry;
 
 import module java.base;
+import org.apereo.cas.ticket.registry.compact.CompactTicketCodec;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.junit.jupiter.api.Tag;

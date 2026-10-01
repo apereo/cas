@@ -8,9 +8,9 @@ import org.apereo.cas.support.oauth.OAuth20ResponseTypes;
 import org.apereo.cas.ticket.Ticket;
 import org.apereo.cas.ticket.TicketFactory;
 import org.apereo.cas.ticket.expiration.FixedInstantExpirationPolicy;
-import org.apereo.cas.ticket.registry.CompactTicketAuthentication;
-import org.apereo.cas.ticket.registry.CompactTicketCodec;
-import org.apereo.cas.ticket.registry.TicketCompactor;
+import org.apereo.cas.ticket.registry.compact.CompactTicketAuthentication;
+import org.apereo.cas.ticket.registry.compact.CompactTicketCodec;
+import org.apereo.cas.ticket.registry.compact.TicketCompactor;
 import org.apereo.cas.util.DateTimeUtils;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -25,7 +25,6 @@ import org.springframework.beans.factory.ObjectProvider;
  * @since 7.1.0
  */
 @RequiredArgsConstructor
-@SuppressWarnings("EnumOrdinal")
 public class OAuth20CodeCompactor implements TicketCompactor<OAuth20Code> {
     private static final int CLIENT_ID_INDEX = 3;
 
@@ -47,6 +46,8 @@ public class OAuth20CodeCompactor implements TicketCompactor<OAuth20Code> {
 
     private final PrincipalFactory principalFactory;
 
+    private final Collection<String> retainedAuthenticationAttributes;
+
     @Getter
     private long maximumTicketLength = 384;
 
@@ -60,7 +61,7 @@ public class OAuth20CodeCompactor implements TicketCompactor<OAuth20Code> {
         fields.add(StringUtils.defaultString(code.getCodeChallengeMethod()));
         fields.add(Objects.requireNonNullElse(code.getResponseType(), OAuth20ResponseTypes.CODE).name());
         fields.add(Objects.requireNonNullElse(code.getGrantType(), OAuth20GrantTypes.AUTHORIZATION_CODE).name());
-        CompactTicketAuthentication.compact(fields, code.getAuthentication());
+        CompactTicketAuthentication.compact(fields, code.getAuthentication(), retainedAuthenticationAttributes);
     }
 
     @Override

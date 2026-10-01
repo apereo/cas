@@ -7,7 +7,8 @@ import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.support.oauth.OAuth20GrantTypes;
 import org.apereo.cas.support.oauth.OAuth20ResponseTypes;
-import org.apereo.cas.ticket.registry.TicketCompactor;
+import org.apereo.cas.ticket.registry.compact.CompactTicketAuthentication;
+import org.apereo.cas.ticket.registry.compact.TicketCompactor;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -49,6 +50,7 @@ class OAuth20AccessTokenCompactorTests extends AbstractOAuth20Tests {
         assertEquals(result.getResponseType(), token.getResponseType());
         assertEquals(result.getGrantType(), token.getGrantType());
         assertEquals(result.getAuthentication().getPrincipal(), token.getAuthentication().getPrincipal());
+        assertEquals(List.of("SAML2Client"), result.getAuthentication().getAttributes().get(CompactTicketAuthentication.CLIENT_NAME_ATTRIBUTE));
         assertEquals(token.getCreationTime().toEpochSecond(), result.getCreationTime().toEpochSecond());
         assertEquals(token.getExpirationPolicy().toMaximumExpirationTime(token).toEpochSecond(),
             result.getExpirationPolicy().toMaximumExpirationTime(result).toEpochSecond());
@@ -56,7 +58,8 @@ class OAuth20AccessTokenCompactorTests extends AbstractOAuth20Tests {
 
     static Stream<Arguments> codeProvider() {
         val service = RegisteredServiceTestUtils.getService("https://code.oauth.org");
-        val authentication = RegisteredServiceTestUtils.getAuthentication();
+        val authentication = RegisteredServiceTestUtils.getAuthentication(RegisteredServiceTestUtils.getPrincipal("casuser"),
+            new HashMap<>(Map.of(CompactTicketAuthentication.CLIENT_NAME_ATTRIBUTE, List.of("SAML2Client"))));
         return Stream.of(
             Arguments.of(service, authentication,
                 Set.of("Scope1", "Scope2"), "clientid-code",
