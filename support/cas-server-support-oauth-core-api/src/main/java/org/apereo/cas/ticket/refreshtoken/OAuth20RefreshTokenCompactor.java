@@ -6,6 +6,7 @@ import org.apereo.cas.authentication.principal.ServiceFactory;
 import org.apereo.cas.support.oauth.OAuth20GrantTypes;
 import org.apereo.cas.support.oauth.OAuth20ResponseTypes;
 import org.apereo.cas.ticket.Ticket;
+import org.apereo.cas.ticket.TicketFactory;
 import org.apereo.cas.ticket.expiration.FixedInstantExpirationPolicy;
 import org.apereo.cas.ticket.registry.CompactTicketAuthentication;
 import org.apereo.cas.ticket.registry.CompactTicketCodec;
@@ -15,6 +16,7 @@ import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.ObjectProvider;
 
 /**
  * This is {@link OAuth20RefreshTokenCompactor}.
@@ -34,6 +36,8 @@ public class OAuth20RefreshTokenCompactor implements TicketCompactor<OAuth20Refr
     private static final int GRANT_TYPE_INDEX = 6;
 
     private static final int AUTHENTICATION_INDEX = 7;
+
+    private final ObjectProvider<TicketFactory> ticketFactory;
 
     private final ServiceFactory serviceFactory;
 
@@ -65,12 +69,12 @@ public class OAuth20RefreshTokenCompactor implements TicketCompactor<OAuth20Refr
         val authentication = CompactTicketAuthentication.expand(principalFactory, structure.ticketElements(), AUTHENTICATION_INDEX);
         val responseType = OAuth20ResponseTypes.valueOf(structure.get(RESPONSE_TYPE_INDEX));
         val grantType = OAuth20GrantTypes.valueOf(structure.get(GRANT_TYPE_INDEX));
-        val refreshToken = new OAuth20DefaultRefreshToken(OAuth20RefreshToken.PREFIX, service, authentication,
-            new FixedInstantExpirationPolicy(structure.expirationTime()), null,
+        val factory = (OAuth20RefreshTokenFactory) ticketFactory.getObject().get(getTicketType());
+        val refreshToken = factory.create(service, authentication, null,
             CompactTicketCodec.decodeValues(structure.get(SCOPES_INDEX)), structure.get(CLIENT_ID_INDEX),
             null, new HashMap<>(), responseType, grantType);
-        refreshToken.setTenantId(service.getTenant());
         refreshToken.setCreationTime(DateTimeUtils.zonedDateTimeOf(structure.creationTime()));
+        refreshToken.setExpirationPolicy(new FixedInstantExpirationPolicy(structure.expirationTime()));
         return refreshToken;
     }
 }

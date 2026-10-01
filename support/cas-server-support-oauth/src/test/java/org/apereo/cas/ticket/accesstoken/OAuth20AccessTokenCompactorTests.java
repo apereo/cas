@@ -49,6 +49,9 @@ class OAuth20AccessTokenCompactorTests extends AbstractOAuth20Tests {
         assertEquals(result.getResponseType(), token.getResponseType());
         assertEquals(result.getGrantType(), token.getGrantType());
         assertEquals(result.getAuthentication().getPrincipal(), token.getAuthentication().getPrincipal());
+        assertEquals(token.getCreationTime().toEpochSecond(), result.getCreationTime().toEpochSecond());
+        assertEquals(token.getExpirationPolicy().toMaximumExpirationTime(token).toEpochSecond(),
+            result.getExpirationPolicy().toMaximumExpirationTime(result).toEpochSecond());
     }
 
     static Stream<Arguments> codeProvider() {

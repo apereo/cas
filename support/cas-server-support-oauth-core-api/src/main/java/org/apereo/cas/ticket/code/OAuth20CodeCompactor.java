@@ -6,6 +6,7 @@ import org.apereo.cas.authentication.principal.ServiceFactory;
 import org.apereo.cas.support.oauth.OAuth20GrantTypes;
 import org.apereo.cas.support.oauth.OAuth20ResponseTypes;
 import org.apereo.cas.ticket.Ticket;
+import org.apereo.cas.ticket.TicketFactory;
 import org.apereo.cas.ticket.expiration.FixedInstantExpirationPolicy;
 import org.apereo.cas.ticket.registry.CompactTicketAuthentication;
 import org.apereo.cas.ticket.registry.CompactTicketCodec;
@@ -15,6 +16,7 @@ import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.ObjectProvider;
 
 /**
  * This is {@link OAuth20CodeCompactor}.
@@ -38,6 +40,8 @@ public class OAuth20CodeCompactor implements TicketCompactor<OAuth20Code> {
     private static final int GRANT_TYPE_INDEX = 8;
 
     private static final int AUTHENTICATION_INDEX = 9;
+
+    private final ObjectProvider<TicketFactory> ticketFactory;
 
     private final ServiceFactory serviceFactory;
 
@@ -71,14 +75,14 @@ public class OAuth20CodeCompactor implements TicketCompactor<OAuth20Code> {
         val authentication = CompactTicketAuthentication.expand(principalFactory, structure.ticketElements(), AUTHENTICATION_INDEX);
         val responseType = OAuth20ResponseTypes.valueOf(structure.get(RESPONSE_TYPE_INDEX));
         val grantType = OAuth20GrantTypes.valueOf(structure.get(GRANT_TYPE_INDEX));
-        val code = new OAuth20DefaultCode(OAuth20Code.PREFIX, service, authentication,
-            new FixedInstantExpirationPolicy(structure.expirationTime()), null,
+        val factory = (OAuth20CodeFactory) ticketFactory.getObject().get(getTicketType());
+        val code = factory.create(service, authentication, null,
             CompactTicketCodec.decodeValues(structure.get(SCOPES_INDEX)),
             StringUtils.trimToNull(structure.get(CODE_CHALLENGE_INDEX)),
             StringUtils.trimToNull(structure.get(CODE_CHALLENGE_METHOD_INDEX)),
             structure.get(CLIENT_ID_INDEX), new HashMap<>(), responseType, grantType);
-        code.setTenantId(service.getTenant());
         code.setCreationTime(DateTimeUtils.zonedDateTimeOf(structure.creationTime()));
+        code.setExpirationPolicy(new FixedInstantExpirationPolicy(structure.expirationTime()));
         return code;
     }
 }

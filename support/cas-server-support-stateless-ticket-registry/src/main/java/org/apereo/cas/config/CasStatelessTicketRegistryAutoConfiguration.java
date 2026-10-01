@@ -98,42 +98,50 @@ public class CasStatelessTicketRegistryAutoConfiguration {
     @Bean
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     public TicketCompactor proxyGrantingTicketCompactor(
+        @Qualifier(TicketFactory.BEAN_NAME)
+        final ObjectProvider<TicketFactory> ticketFactory,
         @Qualifier(PrincipalFactory.BEAN_NAME)
         final PrincipalFactory principalFactory,
         @Qualifier(WebApplicationService.BEAN_NAME_FACTORY)
         final ServiceFactory serviceFactory) {
-        return new ProxyGrantingTicketCompactor(serviceFactory, principalFactory);
+        return new ProxyGrantingTicketCompactor(ticketFactory, serviceFactory, principalFactory);
     }
 
     @ConditionalOnMissingBean(name = "serviceTicketCompactor")
     @Bean
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     public TicketCompactor serviceTicketCompactor(
+        @Qualifier(TicketFactory.BEAN_NAME)
+        final ObjectProvider<TicketFactory> ticketFactory,
         @Qualifier(PrincipalFactory.BEAN_NAME)
         final PrincipalFactory principalFactory,
         @Qualifier(WebApplicationService.BEAN_NAME_FACTORY)
         final ServiceFactory serviceFactory) {
-        return new ServiceTicketCompactor(serviceFactory, principalFactory);
+        return new ServiceTicketCompactor(ticketFactory, serviceFactory, principalFactory);
     }
 
     @ConditionalOnMissingBean(name = "proxyTicketCompactor")
     @Bean
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     public TicketCompactor proxyTicketCompactor(
+        @Qualifier(TicketFactory.BEAN_NAME)
+        final ObjectProvider<TicketFactory> ticketFactory,
         @Qualifier(PrincipalFactory.BEAN_NAME)
         final PrincipalFactory principalFactory,
         @Qualifier(WebApplicationService.BEAN_NAME_FACTORY)
         final ServiceFactory serviceFactory) {
-        return new ProxyTicketCompactor(serviceFactory, principalFactory);
+        return new ProxyTicketCompactor(ticketFactory, serviceFactory, principalFactory);
     }
 
     @ConditionalOnMissingBean(name = "transientTicketCompactor")
     @Bean
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     public TicketCompactor transientTicketCompactor(
+        @Qualifier(TicketFactory.BEAN_NAME)
+        final ObjectProvider<TicketFactory> ticketFactory,
         @Qualifier(WebApplicationService.BEAN_NAME_FACTORY)
         final ServiceFactory serviceFactory) {
-        return new TransientSessionTicketCompactor(serviceFactory);
+        return new TransientSessionTicketCompactor(ticketFactory, serviceFactory);
     }
 
     @Bean

@@ -3,8 +3,9 @@ package org.apereo.cas.ticket.registry.compact;
 import module java.base;
 import org.apereo.cas.authentication.principal.ServiceFactory;
 import org.apereo.cas.ticket.Ticket;
+import org.apereo.cas.ticket.TicketFactory;
 import org.apereo.cas.ticket.TransientSessionTicket;
-import org.apereo.cas.ticket.TransientSessionTicketImpl;
+import org.apereo.cas.ticket.TransientSessionTicketFactory;
 import org.apereo.cas.ticket.expiration.FixedInstantExpirationPolicy;
 import org.apereo.cas.ticket.registry.CompactTicketCodec;
 import org.apereo.cas.ticket.registry.TicketCompactor;
@@ -13,6 +14,7 @@ import org.apereo.cas.util.DateTimeUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.ObjectProvider;
 
 /**
  * This is {@link TransientSessionTicketCompactor}.
@@ -24,6 +26,8 @@ import org.apache.commons.lang3.StringUtils;
 @RequiredArgsConstructor
 public class TransientSessionTicketCompactor implements TicketCompactor<TransientSessionTicket> {
     private static final int PROPERTIES_INDEX = 3;
+
+    private final ObjectProvider<TicketFactory> ticketFactory;
 
     private final ServiceFactory serviceFactory;
 
@@ -62,12 +66,10 @@ public class TransientSessionTicketCompactor implements TicketCompactor<Transien
                 properties.put(entries.get(index), values.size() == 1 ? values.getFirst() : new ArrayList<>(values));
             }
         }
-        val transientTicket = new TransientSessionTicketImpl(TransientSessionTicket.PREFIX,
-            new FixedInstantExpirationPolicy(structure.expirationTime()), service, properties);
-        if (service != null) {
-            transientTicket.setTenantId(service.getTenant());
-        }
+        val factory = (TransientSessionTicketFactory<?>) ticketFactory.getObject().get(getTicketType());
+        val transientTicket = factory.create(service, properties);
         transientTicket.setCreationTime(DateTimeUtils.zonedDateTimeOf(structure.creationTime()));
+        transientTicket.setExpirationPolicy(new FixedInstantExpirationPolicy(structure.expirationTime()));
         return transientTicket;
     }
 }

@@ -3,6 +3,7 @@ package org.apereo.cas.ticket.device;
 import module java.base;
 import org.apereo.cas.authentication.principal.ServiceFactory;
 import org.apereo.cas.ticket.Ticket;
+import org.apereo.cas.ticket.TicketFactory;
 import org.apereo.cas.ticket.expiration.FixedInstantExpirationPolicy;
 import org.apereo.cas.ticket.registry.TicketCompactor;
 import org.apereo.cas.util.DateTimeUtils;
@@ -11,6 +12,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.val;
 import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.ObjectProvider;
 
 /**
  * This is {@link OAuth20DeviceUserCodeCompactor}.
@@ -24,6 +26,8 @@ public class OAuth20DeviceUserCodeCompactor implements TicketCompactor<OAuth20De
     private static final int APPROVED_INDEX = 3;
 
     private static final int USER_CODE_INDEX = 4;
+
+    private final ObjectProvider<TicketFactory> ticketFactory;
 
     private final ServiceFactory serviceFactory;
 
@@ -52,11 +56,11 @@ public class OAuth20DeviceUserCodeCompactor implements TicketCompactor<OAuth20De
     public Ticket expand(final String compactTicket) {
         val structure = parse(compactTicket, USER_CODE_INDEX + 1);
         val service = Objects.requireNonNull(serviceFactory.createService(structure.get(CompactTicketIndexes.SERVICE)));
-        val userCode = new OAuth20DefaultDeviceUserCode(structure.get(USER_CODE_INDEX), service,
-            new FixedInstantExpirationPolicy(structure.expirationTime()));
+        val factory = (OAuth20DeviceUserCodeFactory) ticketFactory.getObject().get(getTicketType());
+        val userCode = factory.createDeviceUserCode(structure.get(USER_CODE_INDEX), service);
         userCode.setUserCodeApproved(BooleanUtils.toBoolean(structure.get(APPROVED_INDEX)));
-        userCode.setTenantId(service.getTenant());
         userCode.setCreationTime(DateTimeUtils.zonedDateTimeOf(structure.creationTime()));
+        userCode.setExpirationPolicy(new FixedInstantExpirationPolicy(structure.expirationTime()));
         return userCode;
     }
 }

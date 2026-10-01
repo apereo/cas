@@ -3,6 +3,7 @@ package org.apereo.cas.ticket.device;
 import module java.base;
 import org.apereo.cas.authentication.principal.ServiceFactory;
 import org.apereo.cas.ticket.Ticket;
+import org.apereo.cas.ticket.TicketFactory;
 import org.apereo.cas.ticket.expiration.FixedInstantExpirationPolicy;
 import org.apereo.cas.ticket.registry.TicketCompactor;
 import org.apereo.cas.util.DateTimeUtils;
@@ -10,6 +11,7 @@ import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.ObjectProvider;
 
 /**
  * This is {@link OAuth20DeviceTokenCompactor}.
@@ -22,6 +24,8 @@ public class OAuth20DeviceTokenCompactor implements TicketCompactor<OAuth20Devic
     private static final int USER_CODE_INDEX = 3;
 
     private static final int CLIENT_ID_INDEX = 4;
+
+    private final ObjectProvider<TicketFactory> ticketFactory;
 
     private final ServiceFactory serviceFactory;
 
@@ -45,11 +49,11 @@ public class OAuth20DeviceTokenCompactor implements TicketCompactor<OAuth20Devic
     public Ticket expand(final String compactTicket) throws Throwable {
         val structure = parse(compactTicket, CLIENT_ID_INDEX + 1);
         val service = Objects.requireNonNull(serviceFactory.createService(structure.get(CompactTicketIndexes.SERVICE)));
-        val code = new OAuth20DefaultDeviceToken(OAuth20DeviceToken.PREFIX, service,
-            new FixedInstantExpirationPolicy(structure.expirationTime()), new ArrayList<>(), structure.get(CLIENT_ID_INDEX));
+        val factory = (OAuth20DeviceTokenFactory) ticketFactory.getObject().get(getTicketType());
+        val code = factory.createDeviceCode(service, new ArrayList<>(), structure.get(CLIENT_ID_INDEX));
         code.setUserCode(StringUtils.trimToNull(structure.get(USER_CODE_INDEX)));
-        code.setTenantId(service.getTenant());
         code.setCreationTime(DateTimeUtils.zonedDateTimeOf(structure.creationTime()));
+        code.setExpirationPolicy(new FixedInstantExpirationPolicy(structure.expirationTime()));
         return code;
     }
 }

@@ -3,12 +3,11 @@ package org.apereo.cas.ticket.registry.compact;
 import module java.base;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.authentication.principal.ServiceFactory;
-import org.apereo.cas.ticket.ProxyGrantingTicketImpl;
-import org.apereo.cas.ticket.ProxyTicketImpl;
 import org.apereo.cas.ticket.Ticket;
+import org.apereo.cas.ticket.TicketFactory;
 import org.apereo.cas.ticket.expiration.FixedInstantExpirationPolicy;
-import org.apereo.cas.ticket.proxy.ProxyGrantingTicket;
 import org.apereo.cas.ticket.proxy.ProxyTicket;
+import org.apereo.cas.ticket.proxy.ProxyTicketFactory;
 import org.apereo.cas.ticket.registry.CompactTicketAuthentication;
 import org.apereo.cas.ticket.registry.TicketCompactor;
 import org.apereo.cas.util.DateTimeUtils;
@@ -16,6 +15,7 @@ import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.ObjectProvider;
 
 /**
  * This is {@link ProxyTicketCompactor}.
@@ -26,6 +26,8 @@ import org.apache.commons.lang3.StringUtils;
 @RequiredArgsConstructor
 public class ProxyTicketCompactor implements TicketCompactor<ProxyTicket> {
     private static final int AUTHENTICATION_INDEX = 3;
+
+    private final ObjectProvider<TicketFactory> ticketFactory;
 
     private final ServiceFactory serviceFactory;
 
@@ -51,18 +53,17 @@ public class ProxyTicketCompactor implements TicketCompactor<ProxyTicket> {
         val structure = parse(compactTicket, AUTHENTICATION_INDEX + CompactTicketAuthentication.FIELD_COUNT);
         val service = Objects.requireNonNull(serviceFactory.createService(structure.get(CompactTicketIndexes.SERVICE)));
         val authentication = CompactTicketAuthentication.expand(principalFactory, structure.ticketElements(), AUTHENTICATION_INDEX);
-        val expirationPolicy = new FixedInstantExpirationPolicy(structure.expirationTime());
         val creationTime = DateTimeUtils.zonedDateTimeOf(structure.creationTime());
+        val factory = ticketFactory.getObject();
 
-        val proxyGrantingTicket = new ProxyGrantingTicketImpl(ProxyGrantingTicket.PROXY_GRANTING_TICKET_PREFIX,
-            service, null, authentication, expirationPolicy);
-        proxyGrantingTicket.setTenantId(service.getTenant());
+        val proxyGrantingTicket = ProxyGrantingTicketCompactor.newProxyGrantingTicket(factory, service, authentication);
         proxyGrantingTicket.setCreationTime(creationTime);
+        proxyGrantingTicket.setExpirationPolicy(new FixedInstantExpirationPolicy(structure.expirationTime()));
 
-        val proxyTicket = new ProxyTicketImpl(ProxyTicket.PROXY_TICKET_PREFIX, proxyGrantingTicket, service, false, expirationPolicy);
-        proxyTicket.setAuthentication(authentication);
-        proxyTicket.setTenantId(service.getTenant());
+        val proxyTicketFactory = (ProxyTicketFactory<?>) factory.get(getTicketType());
+        val proxyTicket = proxyTicketFactory.create(proxyGrantingTicket, service);
         proxyTicket.setCreationTime(creationTime);
+        proxyTicket.setExpirationPolicy(new FixedInstantExpirationPolicy(structure.expirationTime()));
         return proxyTicket;
     }
 }

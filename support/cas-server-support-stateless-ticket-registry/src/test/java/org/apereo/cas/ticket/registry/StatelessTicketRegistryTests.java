@@ -175,6 +175,9 @@ class StatelessTicketRegistryTests extends BaseTicketRegistryTests {
             assertNotNull(foundTicket, () -> "Ticket not found: " + ticket.getPrefix());
             assertEquals(addedTicket.getId(), foundTicket.getId());
             assertEquals(ticket.getCreationTime().toEpochSecond(), foundTicket.getCreationTime().toEpochSecond());
+            assertEquals(ticket.getExpirationPolicy().toMaximumExpirationTime(ticket).toEpochSecond(),
+                foundTicket.getExpirationPolicy().toMaximumExpirationTime(foundTicket).toEpochSecond());
+            assertEquals(ticket.getClass(), foundTicket.getClass());
             if (foundTicket instanceof final AuthenticationAwareTicket authenticationAware && authenticationAware.getAuthentication() != null) {
                 val expandedAuthentication = authenticationAware.getAuthentication();
                 assertEquals(authentication.getPrincipal().getId(), expandedAuthentication.getPrincipal().getId());

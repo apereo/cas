@@ -1821,51 +1821,61 @@ class CasOAuth20Configuration {
             @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
             @ConditionalOnMissingBean(name = "oauth20CodeTicketCompactor")
             public TicketCompactor<OAuth20Code> oauth20CodeTicketCompactor(
+                @Qualifier(TicketFactory.BEAN_NAME)
+                final ObjectProvider<TicketFactory> ticketFactory,
                 @Qualifier(PrincipalFactory.BEAN_NAME)
                 final PrincipalFactory principalFactory,
                 @Qualifier(WebApplicationService.BEAN_NAME_FACTORY)
                 final ServiceFactory serviceFactory) {
-                return new OAuth20CodeCompactor(serviceFactory, principalFactory);
+                return new OAuth20CodeCompactor(ticketFactory, serviceFactory, principalFactory);
             }
 
             @Bean
             @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
             @ConditionalOnMissingBean(name = "oauth20AccessTokenTicketCompactor")
             public TicketCompactor<OAuth20AccessToken> oauth20AccessTokenTicketCompactor(
+                @Qualifier(TicketFactory.BEAN_NAME)
+                final ObjectProvider<TicketFactory> ticketFactory,
                 @Qualifier(PrincipalFactory.BEAN_NAME)
                 final PrincipalFactory principalFactory,
                 @Qualifier(WebApplicationService.BEAN_NAME_FACTORY)
                 final ServiceFactory serviceFactory) {
-                return new OAuth20AccessTokenCompactor(serviceFactory, principalFactory);
+                return new OAuth20AccessTokenCompactor(ticketFactory, serviceFactory, principalFactory);
             }
 
             @Bean
             @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
             @ConditionalOnMissingBean(name = "oauth20RefreshTokenTicketCompactor")
             public TicketCompactor<OAuth20RefreshToken> oauth20RefreshTokenTicketCompactor(
+                @Qualifier(TicketFactory.BEAN_NAME)
+                final ObjectProvider<TicketFactory> ticketFactory,
                 @Qualifier(PrincipalFactory.BEAN_NAME)
                 final PrincipalFactory principalFactory,
                 @Qualifier(WebApplicationService.BEAN_NAME_FACTORY)
                 final ServiceFactory serviceFactory) {
-                return new OAuth20RefreshTokenCompactor(serviceFactory, principalFactory);
+                return new OAuth20RefreshTokenCompactor(ticketFactory, serviceFactory, principalFactory);
             }
 
             @Bean
             @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
             @ConditionalOnMissingBean(name = "oauth20DeviceTokenTicketCompactor")
             public TicketCompactor<OAuth20DeviceToken> oauth20DeviceTokenTicketCompactor(
+                @Qualifier(TicketFactory.BEAN_NAME)
+                final ObjectProvider<TicketFactory> ticketFactory,
                 @Qualifier(WebApplicationService.BEAN_NAME_FACTORY)
                 final ServiceFactory serviceFactory) {
-                return new OAuth20DeviceTokenCompactor(serviceFactory);
+                return new OAuth20DeviceTokenCompactor(ticketFactory, serviceFactory);
             }
 
             @Bean
             @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
             @ConditionalOnMissingBean(name = "oauth20DeviceUserCodeTicketCompactor")
             public TicketCompactor<OAuth20DeviceUserCode> oauth20DeviceUserCodeTicketCompactor(
+                @Qualifier(TicketFactory.BEAN_NAME)
+                final ObjectProvider<TicketFactory> ticketFactory,
                 @Qualifier(WebApplicationService.BEAN_NAME_FACTORY)
                 final ServiceFactory serviceFactory) {
-                return new OAuth20DeviceUserCodeCompactor(serviceFactory);
+                return new OAuth20DeviceUserCodeCompactor(ticketFactory, serviceFactory);
             }
         }
     }
