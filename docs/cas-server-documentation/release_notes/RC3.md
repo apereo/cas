@@ -248,9 +248,6 @@ like distinguished names, round-trip correctly. Other changes:
 - The ticket-granting ticket keeps only its authentication and is created through the ticket-granting ticket factory when read.
   It expires at the end of its maximum lifetime; an idle timeout configured for it is not enforced.
 
-Stateless tickets issued before the upgrade can no longer be read, so users sign in again and OAuth clients need new tokens.
-Custom `TicketCompactor` implementations must move to `compactFields` and `parse(ticket, count)`.
-
 The ticket-granting cookie can now be encrypted without being signed, using `cas.tgc.crypto.signing-enabled=false` (signing stays
 on while a signing key is defined). The cookie encryption is authenticated, so this keeps tamper detection and makes the cookie
 about a quarter smaller. This is recommended with the stateless ticket registry, where the cookie carries the

@@ -976,7 +976,7 @@ Guidance for AI coding agents working in the Apereo CAS source tree.
   TST id as a replay marker (`TransientSessionTicketFactory.normalizeTicketId`: DPoP, client assertions, Heimdall)
   never finds it and fails open. Callers must use the ticket `addTicket` returns: the stored id is re-encoded.
 - `TransientSessionTicketCompactor` stringifies properties, so only flat string properties survive; object-valued TSTs
-  (Duo `TICKET_REGISTRY` state, VC transactions) do not. It keeps the full service id: flows resume with that service
+  (VC transactions) do not. It keeps the full service id: flows resume with that service
   (delegation back to the SAML2 IdP callback with `srid`/`entityId`), so `getShortenedId` is only for tickets that are
   validated against a presented service (ST, PT, PGT, OAuth).
 - Maintainer decision: the stateless registry stays 100% stateless, in the spirit of the Shibboleth IdP client-side
@@ -1036,7 +1036,11 @@ Guidance for AI coding agents working in the Apereo CAS source tree.
   type-specific code). Fix call sites as scenarios need them, not all at once. Delegation: the webflow manager keeps the
   built transient ticket in the flow (it carries the request properties) and hands the stored ticket to
   `DelegatedClientSessionManager.trackIdentifier(WebContext, Ticket, Client)` and the CAS client session key. Still
-  open: Duo with ticket-registry session storage, password reset, account registration and others not in the scenarios.
+  open: password reset, account registration and others not in the scenarios.
+- Duo `TICKET_REGISTRY` session storage is unsupported with the stateless registry (maintainer decision: document only,
+  no code). The TST holds the whole flow (authentication, result builder, all webflow scopes) as objects, Duo's SDK
+  rejects a `state` over 1024 characters, and the Duo webflow is wired at startup by storage type, so a runtime fallback
+  onto browser storage does not work (no `restore` transition, no storage write). Users must set `BROWSER_STORAGE`.
 - Session stores on the ticket registry (pac4j `TicketRegistrySessionStore`, Spring Session
   `TicketRegistrySessionRepository`) keep only text properties, since the transient ticket compactor stringifies values:
   other values go in as base64 Java serialization text, times as ISO-8601. The default in-memory registry hands the
