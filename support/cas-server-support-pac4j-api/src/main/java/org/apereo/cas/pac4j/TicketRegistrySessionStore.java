@@ -5,7 +5,9 @@ import org.apereo.cas.ticket.TicketFactory;
 import org.apereo.cas.ticket.TransientSessionTicket;
 import org.apereo.cas.ticket.TransientSessionTicketFactory;
 import org.apereo.cas.ticket.registry.TicketRegistry;
+import org.apereo.cas.util.EncodingUtils;
 import org.apereo.cas.util.function.FunctionUtils;
+import org.apereo.cas.util.serialization.SerializationUtils;
 import org.apereo.cas.web.cookie.CasCookieBuilder;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -17,6 +19,9 @@ import org.pac4j.jee.context.JEEContext;
 
 /**
  * This is {@link TicketRegistrySessionStore}.
+ * Values other than strings are kept as serialized text, so ticket registries that only keep text
+ * properties, such as the stateless ticket registry, keep them intact. The session cookie carries
+ * the id of the ticket as stored by the registry, and is issued again when an update gives the ticket a new id.
  *
  * @author Misagh Moayyed
  * @author Jerome LELEU
@@ -28,6 +33,8 @@ import org.pac4j.jee.context.JEEContext;
 @Deprecated(since = "7.3.0", forRemoval = true)
 public class TicketRegistrySessionStore implements SessionStore {
     private static final String SESSION_ID_IN_REQUEST_ATTRIBUTE = "sessionIdInRequestAttribute";
+
+    private static final String SERIALIZED_VALUE_PREFIX = "rO0AB";
 
     private final TicketRegistry ticketRegistry;
 
@@ -49,7 +56,7 @@ public class TicketRegistrySessionStore implements SessionStore {
         if (ticket == null) {
             return Optional.empty();
         }
-        return Optional.ofNullable(ticket.getProperties().get(key));
+        return Optional.ofNullable(ticket.getProperties().get(key)).map(TicketRegistrySessionStore::decodeValue);
     }
 
     @Override
@@ -62,8 +69,10 @@ public class TicketRegistrySessionStore implements SessionStore {
         });
 
         val properties = new HashMap<String, Serializable>();
-        if (value instanceof final Serializable serializable) {
-            properties.put(key, serializable);
+        if (value instanceof final String text) {
+            properties.put(key, text);
+        } else if (value instanceof final Serializable serializable) {
+            properties.put(key, serializeValue(serializable));
         } else if (value != null) {
             LOGGER.warn("Object value [{}] assigned to [{}] is not serializable and may not be part of the ticket [{}]", value, key, sessionId);
         }
@@ -94,7 +103,36 @@ public class TicketRegistrySessionStore implements SessionStore {
         FunctionUtils.doUnchecked(_ -> {
             val updatedTicket = ticketRegistry.updateTicket(ticket);
             context.setRequestAttribute(SESSION_ID_IN_REQUEST_ATTRIBUTE, updatedTicket.getId());
+            if (!updatedTicket.getId().equals(ticket.getId())) {
+                val webContext = (JEEContext) context;
+                cookieGenerator.addCookie(webContext.getNativeRequest(), webContext.getNativeResponse(), updatedTicket.getId());
+            }
         });
+    }
+
+    /**
+     * Serialize a value as text. Exceptions, such as the redirection actions pac4j saves to resume a request,
+     * are stored without their stack trace: it is useless once the request is restored, and with ticket registries
+     * that keep the whole session in its id, such as the stateless ticket registry, it makes the session cookie
+     * far larger than browsers accept, so the cookie and the saved request are dropped.
+     *
+     * @param value the value
+     * @return the serialized text
+     */
+    private static String serializeValue(final Serializable value) {
+        if (value instanceof final Throwable throwable) {
+            throwable.setStackTrace(new StackTraceElement[0]);
+        }
+        return SerializationUtils.serializeBase64(value);
+    }
+
+    private static Object decodeValue(final Object value) {
+        if (value instanceof final String text && text.startsWith(SERIALIZED_VALUE_PREFIX)) {
+            return FunctionUtils.doAndHandle(
+                () -> SerializationUtils.deserialize(EncodingUtils.decodeBase64(text), Serializable.class),
+                _ -> text).get();
+        }
+        return value;
     }
 
     @Override

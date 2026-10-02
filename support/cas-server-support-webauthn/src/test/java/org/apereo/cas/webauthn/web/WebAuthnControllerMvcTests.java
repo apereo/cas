@@ -52,6 +52,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
     BaseWebAuthnWebflowTests.SharedTestConfiguration.class
 },
     properties = {
+        "CasFeatureModule.AccountManagement.enabled=true",
+
         "management.endpoints.access.default=UNRESTRICTED",
         "management.endpoints.web.exposure.include=*",
 
@@ -78,6 +80,9 @@ class WebAuthnControllerMvcTests {
 
     @Autowired
     private SecurityProperties securityProperties;
+
+    @Autowired
+    private CasConfigurationProperties casProperties;
 
     private MockMvc mvc;
 
@@ -124,6 +129,23 @@ class WebAuthnControllerMvcTests {
     }
 
     @Test
+    void verifyRelatedOriginsEndpoint() throws Throwable {
+        mvc.perform(get("/cas" + WebAuthnRelatedOriginsController.ENDPOINT_RELATED_ORIGINS))
+            .andExpect(status().isOk())
+            .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
+            .andExpect(jsonPath("$.origins[0]").value(casProperties.getServer().getName()));
+    }
+
+    @Test
+    void verifyPasskeyEndpointsDocument() throws Throwable {
+        mvc.perform(get("/cas" + WebAuthnPasskeyEndpointsController.ENDPOINT_PASSKEY_ENDPOINTS))
+            .andExpect(status().isOk())
+            .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
+            .andExpect(jsonPath("$.enroll").value(casProperties.getServer().getPrefix() + "/account"))
+            .andExpect(jsonPath("$.manage").value(casProperties.getServer().getPrefix() + "/account"));
+    }
+
+    @Test
     void verifyAuthenticationEndpoint() throws Throwable {
         executeRequest(WebAuthnController.WEBAUTHN_ENDPOINT_AUTHENTICATE, new MockHttpServletRequest(), new MockHttpServletResponse(), false, HttpStatus.SC_FORBIDDEN);
         executeRequest(WebAuthnController.WEBAUTHN_ENDPOINT_AUTHENTICATE, new MockHttpServletRequest(), new MockHttpServletResponse(), true, HttpStatus.SC_FORBIDDEN);
@@ -148,7 +170,7 @@ class WebAuthnControllerMvcTests {
                                      final boolean withBasicAuth,
                                      final int expectedStatus) throws Exception {
         val csrfToken = getCsrfToken(request);
-        var builder = post("/cas/" + WebAuthnController.BASE_ENDPOINT_WEBAUTHN + endpoint)
+        var builder = post("/cas/" + BaseWebAuthnController.BASE_ENDPOINT_WEBAUTHN + endpoint)
             .session((MockHttpSession) request.getSession());
         val cookies = response.getCookies();
         if (cookies != null && cookies.length > 0) {

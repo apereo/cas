@@ -18,6 +18,8 @@ Support is enabled by including the following dependency in the WAR overlay:
 
 {% include_cached casmodule.html group="org.apereo.cas" module="cas-server-support-stateless-ticket-registry" %}
 
+{% include_cached casproperties.html properties="cas.ticket.registry.stateless" %}
+
 ## Features
 
 - No centralized backend storage or caching technology is required to be present, configured, installed, managed, maintained, tuned, etc.
@@ -51,6 +53,27 @@ might be missing or acts dysfunctional, please investigate, isolate, verify and 
 - Increase the expiration policy of service tickets to be around `30` seconds to allow for decryption operations to decode tickets in time.
 - Assign names to all authentication handlers, and preferably short, concise names.
 - Use shorter URLs for applications, especially those that use the CAS protocol. This will help minimize the size of the generated service tickets.
+- Turn off ticket-granting cookie signing and keep its encryption, to keep the cookie within browser limits. 
+
+## Ticket-granting Cookie Size
+
+The ticket-granting cookie carries the entire stateless ticket-granting ticket, including the authenticated principal id,
+the credentials, and the authentication attributes. Principal attributes are not kept in the ticket, as noted below.
+The size of the cookie grows with the number and size of the authentication attributes and credentials, and multifactor authentication providers
+such as Duo Security can add many of their own. Browsers only guarantee cookies of up to `4096` bytes and silently drop
+larger ones, in which case every request asks the user to sign in again. CAS logs a warning when the cookie exceeds this size:
+
+```bash
+WARN <Cookie [TGC] is [4436] bytes, larger than the [4096] bytes browsers are guaranteed to accept...>
+```
+
+You may turn off cookie signing and keep cookie encryption, which makes the cookie about a quarter smaller:
+
+{% include_cached casproperties.html properties="cas.tgc.crypto" %}
+
+<div class="alert alert-warning">:warning: <strong>Signing Key</strong><p>Signing remains active as long as
+the signing key is defined. Remove the signing key to turn signing off, and do not turn off cookie encryption.
+</p></div>
 
 ## Caveats
 
@@ -63,12 +86,19 @@ around generated tickets or the inability to manage one's single sign-on session
 you should examine and understand the security trade-offs carefully before you decide to use this option, or any option for that matter.
 </p></div>
 
-- The expiration policies for all generated tickets are set to ignore re-usability or idle/inactivity limits, and are set to *only* enforce an expiration instant.
+- Tickets are not single-use. A service ticket, proxy ticket or OAuth authorization code can be validated or exchanged again and again until it expires, unlike what the CAS protocol and OAuth2 specifications require, so keep their expiration short. Expiration policies ignore usage counts and *only* enforce an expiration instant; the ticket-granting ticket expires at the end of its maximum lifetime, and any idle timeout configured for it is not enforced.
+- Issued tickets cannot be revoked. Logging out removes the ticket-granting cookie from the browser, but a copy of that cookie remains valid until the ticket-granting ticket expires. Likewise, revoking an OAuth access or refresh token has no effect before it expires.
 - Generated tickets are generally controlled to be no larger than `256` characters. You *might* need to adjust your servlet container of choice to allow for larger form/response header sizes. Likewise, you must ensure your applications, particularly those that deal with CAS or OpenID Connect protocols are OK with somewhat larger and longer ticket and token sizes.
 - Super long application URLs that might negatively influence the size of the generated service ticket are compressed using a pre-defined modest shortening technique, which in turn is taken into account by a specialized ticket validation strategy. For best results, and this is true for all CAS-supported protocols, it is recommended that applications use shorter URLs.
 - To minimize the length of the generated tickets, tickets are only encrypted.
-- The end user's browser session management features are heavily employed in all stateless ticket exchanges. The browser must be able to support i.e. local/session storage, or at least cookies, which CAS falls back onto when browser storage is unavailable.
-- **Important:** All attributes produced and collected during the first leg of the authentication transaction will be lost and ignored during back-channel ticket validation attempts. Such attempts instruct CAS to fetch all attributes from configured attribute repositories once more. In other words, if your attributes are only produced once during the authentication transaction by an authentication handler and family, you must also configure [an attribute repository](../integration/Attribute-Resolution.html) to fetch the attributes yet again during ticket validation operations.
+- The single sign-on session is tracked by the ticket-granting cookie as usual, which carries the stateless ticket-granting ticket itself. Browsers only guarantee cookies of up to `4096` bytes and silently drop larger ones, which ends the single sign-on session.
+- **Important:** Principal attributes produced and collected during the first leg of the authentication transaction are not kept in any ticket. The ticket-granting ticket keeps the principal id, and CAS fetches all principal attributes from configured attribute repositories once more every time the ticket-granting ticket is read, such as when single sign-on sessions are established for applications, and again during back-channel ticket validation attempts. As a result, single sign-on decisions such as multifactor authentication triggers, access strategies and single sign-on participation policies that are based on principal attributes, as well as attribute release, only see attributes that the attribute repositories produce. In other words, if your attributes are only produced once during the authentication transaction by an authentication handler and family, such as claims from delegated authentication or multifactor authentication providers, you must also configure [an attribute repository](../integration/Attribute-Resolution.html) to fetch the attributes yet again. The ticket-granting ticket keeps its authentication attributes as they are; service tickets, proxy tickets and OAuth or OpenID Connect tokens only carry the authentication method, the successful authentication handlers, the credential types, remember-me, the delegated identity provider name (`clientName`) and the multifactor authentication context and trusted device attributes, kept as text. Other authentication attributes are not released during ticket validation. Principals that do not accept new attributes, such as those produced by surrogate authentication, keep the attributes they were created with.
+- Every read of the ticket-granting ticket asks the configured attribute repositories for principal attributes. Results are cached for a period of time so most reads do not reach the repositories. If principal resolution fails with an error, the ticket-granting ticket is treated as missing and the user is asked to sign in again. Attribute repositories that do not respond may instead produce no attributes, depending on their configuration.
+- Sessions kept in the ticket registry, such as replicated sessions for delegated authentication or OAuth and OpenID Connect, or HTTP sessions stored in the ticket registry, travel in their session cookie as stateless tickets. They expire at a fixed instant after they are created, and since the whole session is in the cookie, it must stay well under `4096` bytes.
+- [Pushed authorization requests](../authentication/OIDC-Authentication-PAR.html) are kept in the `request_uri` returned to the client, which is therefore a few hundred to a few thousand characters long and travels in the authorization URL. Like other tickets, a `request_uri` is not single-use and can be used again until it expires.
+- [Delegated authentication](../integration/Delegate-Authentication.html) to SAML2 identity providers sends the id of the ticket that tracks the authentication request as the SAML2 `RelayState`. With this registry, that id is the ticket itself, which is far longer than the 80 bytes the SAML2 bindings specification allows for `RelayState`. Identity providers that enforce this limit reject the request or return a different `RelayState`, and the response can no longer be matched to its request. Verify that your identity providers accept longer `RelayState` values before using delegated SAML2 authentication with this registry.
+- [Simple multifactor authentication](../mfa/Simple-Multifactor-Authentication.html) tokens are stored as stateless tickets while the user still receives and types the short code. The webflow keeps the stored token and checks the code against it, so a code is only accepted in the login flow that sent it. Tokens are not removed after use and stay valid until they expire. Tokens obtained from the REST endpoint are returned as stateless tickets, so the full ticket id, and not a short code, must be presented to validate them.
+- [Duo Security](../mfa/DuoSecurity-Authentication.html) session storage in the ticket registry (`TICKET_REGISTRY`) is not supported. The ticket that keeps the state of the authentication flow is sent to Duo Security as the `state` of the request, and with this registry that ticket carries the whole flow state, which does not fit in the `1024` characters Duo Security accepts. Set the Duo Security session storage type to `BROWSER_STORAGE`, which is the default.
 - In the absence of a central backend storage service, back-channel single logout operations are not supported. Likewise, all operations that ask for active single sign-on sessions or anything that in general deals with tracking single sign-on sessions is out of scope and unlikely to be supported. You will lose the ability to determine whether a user is logged in and as a result will be unable to administratively terminate a user's session.
 
 

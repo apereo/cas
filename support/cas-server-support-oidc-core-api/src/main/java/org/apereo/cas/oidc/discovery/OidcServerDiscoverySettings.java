@@ -2,6 +2,7 @@ package org.apereo.cas.oidc.discovery;
 
 import module java.base;
 import org.apereo.cas.oidc.OidcConstants;
+import org.apereo.cas.support.oauth.OAuth20GrantTypes;
 import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -236,6 +237,19 @@ public class OidcServerDiscoverySettings {
     @JsonProperty("frontchannel_logout_session_supported")
     public boolean isFrontchannelLogoutSessionSupported() {
         return isFrontchannelLogoutSupported();
+    }
+
+    /**
+     * Whether a token request with a pre-authorized code may omit {@code client_id}, per OpenID4VCI 1.0
+     * section 12.3; the default a wallet assumes when this is missing is {@code false}. CAS takes the client
+     * from the credential offer that issued the code, never from the token request, so anonymous access is
+     * supported exactly when the pre-authorized code grant is.
+     *
+     * @return true if anonymous pre-authorized code redemption is supported
+     */
+    @JsonProperty("pre-authorized_grant_anonymous_access_supported")
+    public boolean isPreAuthorizedGrantAnonymousAccessSupported() {
+        return grantTypesSupported != null && grantTypesSupported.contains(OAuth20GrantTypes.PRE_AUTHORIZED_CODE.getType());
     }
 
     /**

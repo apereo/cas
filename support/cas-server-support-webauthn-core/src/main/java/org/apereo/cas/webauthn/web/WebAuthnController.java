@@ -175,7 +175,10 @@ public class WebAuthnController extends BaseWebAuthnController {
 
     /**
      * Finish authentication and create response entity.
+     * A failure carries {@code unknownCredential} so the browser can be told, through the WebAuthn
+     * Signal API, to stop offering a passkey that is no longer registered.
      *
+     * @param request      the request
      * @param responseJson the response json
      * @return the response entity
      * @throws Exception the exception
@@ -186,13 +189,14 @@ public class WebAuthnController extends BaseWebAuthnController {
         final HttpServletRequest request,
         @RequestBody final String responseJson) throws Exception {
         val result = server.finishAuthentication(request, responseJson);
-        if (result.isRight()) {
-            val sessionToken = result.right().orElseThrow().getSessionToken();
-            val session = server.getSessionManager().getSession(request, sessionToken)
-                .orElseThrow(() -> new IllegalStateException("Session not found for the given session token"));
-            LOGGER.debug("Found valid session token [{}] to finish off authentication", session.getBase64());
+        if (result.isLeft()) {
+            return ResponseEntity.badRequest().body(result.left().orElseThrow());
         }
-        return finishResponse(result, responseJson);
+        val authentication = result.right().orElseThrow();
+        val session = server.getSessionManager().getSession(request, authentication.getSessionToken())
+            .orElseThrow(() -> new IllegalStateException("Session not found for the given session token"));
+        LOGGER.debug("Found valid session token [{}] to finish off authentication", session.getBase64());
+        return finishResponse(Either.right(authentication), responseJson);
     }
 
     @RequiredArgsConstructor

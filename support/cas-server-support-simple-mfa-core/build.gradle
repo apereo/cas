@@ -7,6 +7,7 @@ dependencies {
 
     compileOnly project(":support:cas-server-support-surrogate-api")
     compileOnly project(":support:cas-server-support-surrogate-core")
+    compileOnly project(":support:cas-server-support-stateless-ticket-registry-api")
 
     implementation project(":support:cas-server-support-otp-mfa")
     implementation project(":support:cas-server-support-trusted-mfa-core")
@@ -27,6 +28,7 @@ dependencies {
 
     testImplementation project(":support:cas-server-support-person-directory")
     testImplementation project(":support:cas-server-support-trusted-mfa")
+    
     compileOnly project(":core:cas-server-core-rest-api")
 
     testImplementation project(":core:cas-server-core-tickets")

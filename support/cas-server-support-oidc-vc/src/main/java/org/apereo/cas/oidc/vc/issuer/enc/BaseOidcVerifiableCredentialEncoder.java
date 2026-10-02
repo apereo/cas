@@ -9,11 +9,12 @@ import org.apereo.cas.oidc.OidcConstants;
 import org.apereo.cas.oidc.vc.issuer.OidcVerifiableCredentialValidationContext;
 import org.apereo.cas.oidc.vc.issuer.proof.OidcVerifiableCredentialProofValidator;
 import org.apereo.cas.services.OidcRegisteredService;
-import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.support.oauth.util.OAuth20Utils;
+import org.apereo.cas.util.crypto.CertUtils;
 import org.apereo.cas.util.jwt.JsonWebTokenSigner;
 import lombok.RequiredArgsConstructor;
 import lombok.val;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.jooq.lambda.fi.util.function.CheckedConsumer;
 import org.jose4j.jwk.EllipticCurveJsonWebKey;
@@ -21,6 +22,7 @@ import org.jose4j.jwk.PublicJsonWebKey;
 import org.jose4j.jwk.RsaJsonWebKey;
 import org.jose4j.jwt.JwtClaims;
 import org.jose4j.jwt.NumericDate;
+import java.security.cert.X509Certificate;
 
 /**
  * This is {@link BaseOidcVerifiableCredentialEncoder}.
@@ -30,7 +32,27 @@ import org.jose4j.jwt.NumericDate;
  */
 @RequiredArgsConstructor
 public abstract class BaseOidcVerifiableCredentialEncoder implements OidcVerifiableCredentialEncoder {
+    /**
+     * Base context of the W3C Verifiable Credentials Data Model 2.0. It defines an {@code @vocab}, so the terms of
+     * a credential that uses no further context remain processable as JSON-LD.
+     */
+    public static final String VCDM_V2_CONTEXT = "https://www.w3.org/ns/credentials/v2";
+
     protected final OidcConfigurationContext configurationContext;
+    /**
+     * Types of a W3C verifiable credential issued for a credential configuration: {@code VerifiableCredential} and
+     * the configuration's scope, or its id when it has no scope. The issuer metadata publishes the same list as
+     * {@code credential_definition.type}, which is how a wallet matches the credential to its configuration.
+     *
+     * @param configurationId the credential configuration id
+     * @param configuration   the credential configuration
+     * @return the credential types
+     */
+    public static List<String> resolveCredentialTypes(final String configurationId,
+                                                      final OidcVerifiableCredentialConfigurationProperties configuration) {
+        return List.of("VerifiableCredential", StringUtils.defaultIfBlank(configuration.getScope(), configurationId));
+    }
+
 
     /**
      * Length of time an issued credential remains valid, per credential configuration.
@@ -57,12 +79,29 @@ public abstract class BaseOidcVerifiableCredentialEncoder implements OidcVerifia
             }
             if (rawValue != null) {
                 val claimValue = rawValue.size() == 1 ? rawValue.getFirst() : rawValue;
-                claims.put(claimName, !(claimValue instanceof Number) && NumberUtils.isParsable(claimValue.toString())
-                    ? NumberUtils.createNumber(claimValue.toString())
-                    : claimValue);
+                claims.put(claimName, toClaimValue(claimValue));
             }
         });
         return claims;
+    }
+
+    /**
+     * Value of a claim as it is issued. Attribute values usually arrive as text, so text that is a number is issued
+     * as a number, but only when the decimal reading of that number gives back the same text. A leading zero would
+     * otherwise be read as octal by {@link NumberUtils#createNumber(String)}, turning {@code 0123} into {@code 83}
+     * and failing on {@code 08}; such values, like postal codes and identifiers, are issued as text instead.
+     *
+     * @param value the attribute value
+     * @return the claim value
+     */
+    protected Object toClaimValue(final Object value) {
+        if (value instanceof Number) {
+            return value;
+        }
+        val text = value.toString();
+        return NumberUtils.isParsable(text) && NumberUtils.createBigDecimal(text).toPlainString().equals(text)
+            ? NumberUtils.createNumber(text)
+            : value;
     }
 
     protected OidcVerifiableCredentialConfigurationProperties resolveConfiguration(final String configurationId) {
@@ -112,7 +151,8 @@ public abstract class BaseOidcVerifiableCredentialEncoder implements OidcVerifia
      * {@code credentialSigningAlgValuesSupported} rather than the client's {@code idTokenSigningAlg},
      * so that what the issuer produces is what the issuer metadata advertises and what a verifier,
      * including this one, will accept. The advertised list is also handed to the signer as its
-     * permitted set, so an algorithm outside it cannot be used by accident.
+     * permitted set, so an algorithm outside it cannot be used by accident. When the signing key carries
+     * a certificate chain, it is sent as the {@code x5c} header (see {@link #resolveCertificateChain(PublicJsonWebKey)}).
      *
      * @param claims            the claims
      * @param configurationId   the credential configuration id
@@ -134,9 +174,23 @@ public abstract class BaseOidcVerifiableCredentialEncoder implements OidcVerifia
             .algorithm(resolveSigningAlgorithm(configuration, signingKey, registeredService))
             .allowedAlgorithms(new LinkedHashSet<>(resolveSupportedSigningAlgorithms(configuration, registeredService)))
             .mediaType(getFormat().getValue())
-            .headers(Map.of(OAuth20Constants.CLIENT_ID, registeredService.getClientId()))
+            .certificateChain(resolveCertificateChain(signingKey))
             .build()
             .sign(claims);
+    }
+
+    /**
+     * Certificate chain sent as the credential's {@code x5c} header, taken from the issuer signing key's
+     * own {@code x5c}. HAIP 1.0 requires an X.509 chain on issued credentials and forbids the trust anchor in
+     * it, so a trailing self-signed certificate is left out unless it is the only one; the SD-JWT VC verifier
+     * then takes the issuer key from the leaf. A key without a chain produces no header, and verifiers keep
+     * resolving the key by {@code kid} through the issuer's JWKS or JWT VC issuer metadata.
+     *
+     * @param signingKey the issuer signing key
+     * @return the certificate chain, leaf first, possibly empty
+     */
+    protected List<X509Certificate> resolveCertificateChain(final PublicJsonWebKey signingKey) {
+        return CertUtils.withoutTrustAnchor(signingKey.getCertificateChain());
     }
 
     /**

@@ -1,6 +1,8 @@
 package org.apereo.cas.oidc.web;
 
 import module java.base;
+import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.configuration.model.support.oidc.OidcVerifiableCredentialConfigurationProperties;
 import org.apereo.cas.oidc.AbstractOidcTests;
 import org.apereo.cas.oidc.OidcConstants;
 import org.apereo.cas.support.oauth.OAuth20Constants;
@@ -12,6 +14,7 @@ import org.pac4j.jee.context.JEEContext;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.*;
 
 /**
  * This is {@link DefaultOidcRequestParameterResolverTests}.
@@ -21,6 +24,22 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 @Tag("OIDC")
 class DefaultOidcRequestParameterResolverTests extends AbstractOidcTests {
+    @Test
+    void verifyCredentialConfigurationScopeIsKept() {
+        val properties = new CasConfigurationProperties();
+        val configuration = new OidcVerifiableCredentialConfigurationProperties();
+        configuration.setScope("UniversityDegree");
+        properties.getAuthn().getOidc().getVc().getIssuer().getCredentialConfigurations().put("degree", configuration);
+        val jwtBuilder = mock(JwtBuilder.class);
+        when(jwtBuilder.getCasProperties()).thenReturn(properties);
+
+        val request = new MockHttpServletRequest();
+        request.addParameter(OAuth20Constants.SCOPE, "openid UniversityDegree UnknownScope");
+        val scopes = new OidcRequestParameterResolver(jwtBuilder)
+            .resolveRequestScopes(new JEEContext(request, new MockHttpServletResponse()));
+        assertEquals(Set.of(OidcConstants.StandardScopes.OPENID.getScope(), "UniversityDegree"), scopes);
+    }
+
     @Test
     void verifySignedJwtWithClientId() throws Throwable {
         val registeredService = getOidcRegisteredService("client");

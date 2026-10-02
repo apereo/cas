@@ -3,7 +3,7 @@ package org.apereo.cas.web.saml2;
 import module java.base;
 import org.apereo.cas.support.pac4j.authentication.clients.DelegatedClientSessionManager;
 import org.apereo.cas.support.saml.SamlProtocolConstants;
-import org.apereo.cas.ticket.TransientSessionTicket;
+import org.apereo.cas.ticket.Ticket;
 import org.apereo.cas.web.flow.DelegatedClientAuthenticationConfigurationContext;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -26,7 +26,7 @@ public class DelegatedClientSaml2SessionManager implements DelegatedClientSessio
     private final ObjectProvider<DelegatedClientAuthenticationConfigurationContext> contextProvider;
 
     @Override
-    public void trackIdentifier(final WebContext webContext, final TransientSessionTicket ticket, final Client client) {
+    public void trackIdentifier(final WebContext webContext, final Ticket ticket, final Client client) {
         contextProvider.getObject().getSessionStore().set(webContext,
             SAML2StateGenerator.SAML_RELAY_STATE_ATTRIBUTE, ticket.getId());
     }

@@ -53,8 +53,6 @@ public class OidcVerifiableCredentialDcSdJwtEncoder extends BaseOidcVerifiableCr
             });
             sdBuilder.build().forEach(jwtClaims::setClaim);
             jwtClaims.setStringClaim("sub", principal.getId());
-            jwtClaims.setStringClaim("client_id", context.accessToken().getClientId());
-            jwtClaims.setStringClaim("credential_configuration_id", configurationId);
         });
         return new SDJWT(signedClaims, disclosures).toString();
     }

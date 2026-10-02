@@ -24,7 +24,13 @@ public class CredentialRegistration {
     RegisteredCredential credential;
 
     Attestation attestationMetadata;
-    
+
+    /**
+     * Whether the authenticator reported, through the {@code credProps} extension, that it created a
+     * discoverable credential; {@code null} when the client did not report it.
+     */
+    Boolean discoverable;
+
     public String getUsername() {
         return userIdentity.getName();
     }
