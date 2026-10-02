@@ -95,6 +95,18 @@ public interface Principal extends Serializable {
         return this;
     }
 
+    /**
+     * Without attributes principal.
+     *
+     * @return the principal
+     */
+    @CanIgnoreReturnValue
+    @JsonIgnore
+    default Principal withoutAttributes() {
+        return withAttributes(new HashMap<>());
+    }
+
+    
     @CanIgnoreReturnValue
     @JsonIgnore
     default Principal getOwner() {

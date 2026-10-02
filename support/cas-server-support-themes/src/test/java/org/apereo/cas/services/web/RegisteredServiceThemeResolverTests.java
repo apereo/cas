@@ -64,7 +64,7 @@ class RegisteredServiceThemeResolverTests {
             val strategy = new DefaultRegisteredServiceAccessStrategy(false, true);
             registeredService.setAccessStrategy(strategy);
             servicesManager.save(registeredService);
-            val service = RegisteredServiceTestUtils.getService();
+            val service = RegisteredServiceTestUtils.getService(registeredService.getServiceId());
             WebUtils.putServiceIntoFlowScope(context, service);
             assertEquals("example", themeResolver.resolveThemeName(context.getHttpServletRequest()));
         }
@@ -76,7 +76,7 @@ class RegisteredServiceThemeResolverTests {
             registeredService.setTheme(null);
             servicesManager.save(registeredService);
 
-            val service = RegisteredServiceTestUtils.getService();
+            val service = RegisteredServiceTestUtils.getService(registeredService.getServiceId());
             WebUtils.putServiceIntoFlowScope(context, service);
             assertEquals("example", themeResolver.resolveThemeName(context.getHttpServletRequest()));
         }
@@ -126,7 +126,7 @@ class RegisteredServiceThemeResolverTests {
             assertEquals("custom-theme", themeResolver.resolveThemeName(request));
             assertEquals("custom-theme", request.getAttribute("theme"));
 
-            servicesManager.deleteAll();
+            servicesManager.delete(registeredService);
             assertEquals("custom-theme", themeResolver.resolveThemeName(request));
         }
 

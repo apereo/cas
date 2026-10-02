@@ -67,6 +67,7 @@ class PasswordlessAuthenticationWebflowConfigurerTests extends BaseWebflowConfig
         assertNotNull(state);
         state = (TransitionableState) flow.getState(CasWebflowConstants.STATE_ID_PASSWORDLESS_GET_USERID);
         assertNotNull(state);
+        assertNull(state.getTransition(CasWebflowConstants.TRANSITION_ID_VALIDATE));
         state = (TransitionableState) flow.getState(CasWebflowConstants.STATE_ID_PASSWORDLESS_VERIFY_ACCOUNT);
         assertNotNull(state);
         state = (TransitionableState) flow.getState(CasWebflowConstants.STATE_ID_PASSWORDLESS_DETERMINE_MFA);

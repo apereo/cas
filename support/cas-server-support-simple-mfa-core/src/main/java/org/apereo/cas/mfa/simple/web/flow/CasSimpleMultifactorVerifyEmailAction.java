@@ -110,7 +110,8 @@ public class CasSimpleMultifactorVerifyEmailAction extends AbstractMultifactorAu
     }
 
     protected void storeToken(final RequestContext requestContext, final CasSimpleMultifactorAuthenticationTicket token) throws Throwable {
-        multifactorAuthenticationService.store(token);
+        val storedToken = multifactorAuthenticationService.store(token);
         MultifactorAuthenticationWebflowUtils.putSimpleMultifactorAuthenticationToken(requestContext, token);
+        CasSimpleMultifactorSendTokenAction.trackStoredToken(requestContext, storedToken);
     }
 }

@@ -57,6 +57,19 @@ class RestfulPasswordlessTokenRepositoryTests extends BasePasswordlessUserAccoun
     }
 
     @Test
+    void verifyFindExpiredToken() {
+        val token = createToken("casuser").withExpirationDate(ZonedDateTime.now(ZoneOffset.UTC).minusMinutes(5));
+        try (val webServer = new MockWebServer(
+            new ByteArrayResource(StringUtils.EMPTY.getBytes(StandardCharsets.UTF_8), "REST Output"),
+            MediaType.APPLICATION_JSON_VALUE)) {
+            webServer.start();
+            val passwordless = repositoryFor(webServer);
+            webServer.responseBody(passwordless.encodeToken(token));
+            assertTrue(passwordless.findToken("casuser").isEmpty());
+        }
+    }
+
+    @Test
     void verifyFindTokenFails() {
         try (val webServer = new MockWebServer(
             new ByteArrayResource("token".getBytes(StandardCharsets.UTF_8), "REST Output"),
@@ -90,7 +103,7 @@ class RestfulPasswordlessTokenRepositoryTests extends BasePasswordlessUserAccoun
             MediaType.APPLICATION_JSON_VALUE)) {
             webServer.start();
             val passwordless = repositoryFor(webServer);
-            passwordless.deleteToken(PasswordlessAuthenticationToken.builder().token("123456").username("casuser").build());
+            assertTrue(passwordless.deleteToken(PasswordlessAuthenticationToken.builder().token("123456").username("casuser").build()));
             passwordless.deleteTokens("casuser");
         }
     }

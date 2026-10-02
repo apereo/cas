@@ -12,6 +12,7 @@ import org.apereo.cas.impl.BasePasswordlessUserAccountStoreTests;
 import org.apereo.cas.impl.token.InMemoryPasswordlessTokenRepository;
 import org.apereo.cas.util.crypto.CipherExecutor;
 import lombok.val;
+import org.apache.commons.lang3.StringUtils;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
@@ -58,18 +59,35 @@ class PasswordlessTokenAuthenticationHandlerTests {
             token = repository.saveToken(passwordlessUserAccount, passwordlessRequest, token);
             val handler = new PasswordlessTokenAuthenticationHandler(null,
                 PrincipalFactoryUtils.newPrincipalFactory(), 0, repository);
-            val credential = new OneTimePasswordCredential(uid, token.getToken());
+            val credential = new PasswordlessTokenCredential(uid, token.getToken());
             credential.setCredentialMetadata(new BasicCredentialMetadata(credential));
             assertNotNull(handler.authenticate(credential, mock(Service.class)));
 
             assertThrows(FailedLoginException.class,
-                () -> handler.authenticate(new OneTimePasswordCredential("1", "2"), mock(Service.class)));
+                () -> handler.authenticate(new PasswordlessTokenCredential("1", "2"), mock(Service.class)));
             assertThrows(FailedLoginException.class,
-                () -> handler.authenticate(new OneTimePasswordCredential(credential.getId(), "123456"), mock(Service.class)));
+                () -> handler.authenticate(new PasswordlessTokenCredential(credential.getId(), "123456"), mock(Service.class)));
 
             assertTrue(handler.supports(credential));
             assertTrue(handler.supports(credential.getCredentialMetadata().getCredentialClass()));
             assertFalse(handler.supports(new UsernamePasswordCredential()));
+            assertFalse(handler.supports(new OneTimePasswordCredential(uid, token.getToken())));
+            assertFalse(handler.supports(OneTimePasswordCredential.class));
+        }
+
+        @Test
+        void verifyBlankStoredTokenFails() {
+            val repository = new InMemoryPasswordlessTokenRepository(60, CipherExecutor.noOpOfSerializableToString());
+            val uid = UUID.randomUUID().toString();
+            val passwordlessUserAccount = PasswordlessUserAccount.builder().username(uid).build();
+            val passwordlessRequest = PasswordlessAuthenticationRequest.builder().username(uid).build();
+            val token = repository.createToken(passwordlessUserAccount, passwordlessRequest).withToken(StringUtils.EMPTY);
+            repository.saveToken(passwordlessUserAccount, passwordlessRequest, token);
+            val handler = new PasswordlessTokenAuthenticationHandler(null,
+                PrincipalFactoryUtils.newPrincipalFactory(), 0, repository);
+            val credential = new PasswordlessTokenCredential(uid, "123456");
+            credential.setCredentialMetadata(new BasicCredentialMetadata(credential));
+            assertThrows(FailedLoginException.class, () -> handler.authenticate(credential, mock(Service.class)));
         }
     }
 }

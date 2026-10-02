@@ -46,3 +46,4 @@ The above account allows CAS to choose between the following options:
 - [Delegated authentication](../integration/Delegate-Authentication.html) via the `ExternalIdP` identity provider.
 - [Multifactor authentication](../mfa/Configuring-Multifactor-Authentication.html).
 - Passwordless [token-based authentication](Passwordless-Authentication.html).
+- [Passkeys](Passwordless-Authentication-Passkeys.html), when WebAuthn is allowed to act as a primary authentication strategy.

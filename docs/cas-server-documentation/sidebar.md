@@ -187,6 +187,7 @@ layout: null
         *   [Delegation](/cas/{{ version }}/authentication/Passwordless-Authentication-Delegation.html)
         *   [Multifactor Authentication](/cas/{{ version }}/authentication/Passwordless-Authentication-MFA.html)
         *   [Selection Menu](/cas/{{ version }}/authentication/Passwordless-Authentication-UserSelectionMenu.html)
+        *   [Passkeys](/cas/{{ version }}/authentication/Passwordless-Authentication-Passkeys.html)
         *   [Google reCAPTCHA](/cas/{{ version }}/authentication/Passwordless-Authentication-Recaptcha.html)
         *   [Per Application](/cas/{{ version }}/authentication/Passwordless-Authentication-PerApplication.html)
         *   [Accounts](#passwordlessauthnaccts)

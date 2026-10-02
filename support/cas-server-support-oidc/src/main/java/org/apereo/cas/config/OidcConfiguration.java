@@ -62,6 +62,8 @@ import org.apereo.cas.oidc.ticket.OidcCibaRequestExpirationPolicyBuilder;
 import org.apereo.cas.oidc.ticket.OidcCibaRequestFactory;
 import org.apereo.cas.oidc.ticket.OidcDefaultCibaRequestFactory;
 import org.apereo.cas.oidc.ticket.OidcDefaultPushedAuthorizationRequestFactory;
+import org.apereo.cas.oidc.ticket.OidcPushedAuthorizationRequest;
+import org.apereo.cas.oidc.ticket.OidcPushedAuthorizationRequestCompactor;
 import org.apereo.cas.oidc.ticket.OidcPushedAuthorizationRequestExpirationPolicyBuilder;
 import org.apereo.cas.oidc.ticket.OidcPushedAuthorizationRequestFactory;
 import org.apereo.cas.oidc.ticket.OidcTicketCatalogConfigurer;
@@ -118,8 +120,10 @@ import org.apereo.cas.ticket.TicketFactoryExecutionPlanConfigurer;
 import org.apereo.cas.ticket.UniqueTicketIdGenerator;
 import org.apereo.cas.ticket.accesstoken.OAuth20JwtBuilder;
 import org.apereo.cas.ticket.idtoken.IdTokenGeneratorService;
+import org.apereo.cas.ticket.registry.StatelessTicketRegistry;
 import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.ticket.registry.TicketRegistrySupport;
+import org.apereo.cas.ticket.registry.compact.TicketCompactor;
 import org.apereo.cas.token.JwtBuilder;
 import org.apereo.cas.util.HostNameBasedUniqueTicketIdGenerator;
 import org.apereo.cas.util.cipher.BaseStringCipherExecutor;
@@ -161,6 +165,7 @@ import org.springframework.beans.factory.FactoryBean;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.AutoConfigureOrder;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
@@ -1270,4 +1275,24 @@ class OidcConfiguration {
         }
     }
 
+    @Configuration(value = "OidcStatelessTicketsConfiguration", proxyBeanMethods = false)
+    @EnableConfigurationProperties(CasConfigurationProperties.class)
+    @ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.TicketRegistry, module = "stateless")
+    @ConditionalOnClass(StatelessTicketRegistry.class)
+    static class OidcStatelessTicketsConfiguration {
+        @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+        @ConditionalOnMissingBean(name = "oidcPushedAuthorizationRequestTicketCompactor")
+        public TicketCompactor<OidcPushedAuthorizationRequest> oidcPushedAuthorizationRequestTicketCompactor(
+            @Qualifier(TicketFactory.BEAN_NAME)
+            final ObjectProvider<TicketFactory> ticketFactory,
+            @Qualifier(WebApplicationService.BEAN_NAME_FACTORY)
+            final ServiceFactory serviceFactory,
+            @Qualifier(PrincipalFactory.BEAN_NAME)
+            final PrincipalFactory principalFactory,
+            @Qualifier(ServicesManager.BEAN_NAME)
+            final ServicesManager servicesManager) {
+            return new OidcPushedAuthorizationRequestCompactor(ticketFactory, serviceFactory, principalFactory, servicesManager);
+        }
+    }
 }

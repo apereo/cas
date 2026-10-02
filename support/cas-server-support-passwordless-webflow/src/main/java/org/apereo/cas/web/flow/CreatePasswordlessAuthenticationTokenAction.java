@@ -56,8 +56,19 @@ public class CreatePasswordlessAuthenticationTokenAction extends BasePasswordles
     @Override
     protected @Nullable Event doExecuteInternal(final RequestContext requestContext) {
         val user = Objects.requireNonNull(PasswordlessWebflowUtils.getPasswordlessAuthenticationAccount(requestContext, PasswordlessUserAccount.class));
+        if (isFailedAttempt(requestContext)) {
+            LOGGER.debug("Passwordless token for [{}] is not issued again after a failed attempt", user.getUsername());
+            return success();
+        }
         val passwordlessRequest = PasswordlessWebflowUtils.getPasswordlessAuthenticationRequest(requestContext, PasswordlessAuthenticationRequest.class);
         return createAndSendPasswordlessToken(requestContext, user, passwordlessRequest);
+    }
+
+    protected boolean isFailedAttempt(final RequestContext requestContext) {
+        return Optional.ofNullable(requestContext.getCurrentEvent())
+            .map(Event::getId)
+            .filter(CasWebflowConstants.TRANSITION_ID_AUTHENTICATION_FAILURE::equals)
+            .isPresent();
     }
 
     protected Event createAndSendPasswordlessToken(final RequestContext requestContext, final PasswordlessUserAccount user,
@@ -65,8 +76,8 @@ public class CreatePasswordlessAuthenticationTokenAction extends BasePasswordles
         val token = passwordlessTokenRepository.createToken(user, passwordlessRequest);
         communicationsManager.validate();
 
-        val emailSent = emailToken(requestContext, user, token);
-        val smsSent = smsToken(requestContext, user, token);
+        val emailSent = Boolean.TRUE.equals(FunctionUtils.doAndHandle(() -> emailToken(requestContext, user, token)));
+        val smsSent = Boolean.TRUE.equals(FunctionUtils.doAndHandle(() -> smsToken(requestContext, user, token)));
         if (emailSent || smsSent) {
             LOGGER.info("Storing passwordless token for [{}]", user.getUsername());
             passwordlessTokenRepository.deleteTokens(user.getUsername());
@@ -74,6 +85,8 @@ public class CreatePasswordlessAuthenticationTokenAction extends BasePasswordles
             return success(token);
         }
         LOGGER.error("Failed to send passwordless token to [{}]", user.getUsername());
+        WebUtils.addErrorMessageToContext(requestContext, "passwordless.error.token.delivery",
+            "CAS was unable to send you a token. Please try again later or contact your administrator.");
         return error();
     }
 
@@ -82,13 +95,14 @@ public class CreatePasswordlessAuthenticationTokenAction extends BasePasswordles
                             final PasswordlessAuthenticationToken token) {
         if (communicationsManager.isSmsSenderDefined() && StringUtils.isNotBlank(user.getPhone())) {
             val passwordlessProperties = casProperties.getAuthn().getPasswordless();
-            FunctionUtils.doUnchecked(() -> {
+            return FunctionUtils.doUnchecked(() -> {
                 val smsProperties = passwordlessProperties.getTokens().getSms();
-                val text = SmsBodyBuilder.builder()
+                val body = SmsBodyBuilder.builder()
                     .properties(smsProperties)
                     .parameters(Map.of("token", token.getToken()))
                     .build()
                     .get();
+                val text = appendOriginBoundCode(body, token);
                 val smsRequest = SmsRequest
                     .builder()
                     .from(smsProperties.getFrom())
@@ -98,7 +112,15 @@ public class CreatePasswordlessAuthenticationTokenAction extends BasePasswordles
                 return communicationsManager.sms(smsRequest);
             });
         }
-        return true;
+        return false;
+    }
+
+    protected String appendOriginBoundCode(final String text, final PasswordlessAuthenticationToken token) {
+        val host = FunctionUtils.doUnchecked(() -> new URI(casProperties.getServer().getName()).getHost());
+        if (StringUtils.isBlank(host)) {
+            return text;
+        }
+        return "%s\n\n@%s #%s".formatted(StringUtils.stripEnd(text, null), host, token.getToken());
     }
 
     protected boolean emailToken(final RequestContext requestContext, final PasswordlessUserAccount user,
@@ -124,6 +146,6 @@ public class CreatePasswordlessAuthenticationTokenAction extends BasePasswordles
                 .build();
             return communicationsManager.email(emailRequest).isSuccess();
         }
-        return true;
+        return false;
     }
 }

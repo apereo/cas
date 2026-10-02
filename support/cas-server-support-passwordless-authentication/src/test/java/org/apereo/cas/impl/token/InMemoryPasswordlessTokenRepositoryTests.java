@@ -38,7 +38,8 @@ class InMemoryPasswordlessTokenRepositoryTests extends BasePasswordlessUserAccou
         val savedToken = passwordlessTokenRepository.saveToken(passwordlessUserAccount, passwordlessRequest, token);
         assertTrue(passwordlessTokenRepository.findToken(CAS_USER).isPresent());
 
-        passwordlessTokenRepository.deleteToken(savedToken);
+        assertTrue(passwordlessTokenRepository.deleteToken(savedToken));
+        assertFalse(passwordlessTokenRepository.deleteToken(savedToken));
         assertTrue(passwordlessTokenRepository.findToken(CAS_USER).isEmpty());
     }
 }

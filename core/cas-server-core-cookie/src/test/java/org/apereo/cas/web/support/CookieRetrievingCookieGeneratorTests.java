@@ -116,6 +116,19 @@ class CookieRetrievingCookieGeneratorTests {
     }
 
     @Test
+    void verifyOversizedCookieIsStillWritten() {
+        val cookieValueManager = new NoOpCookieValueManager(tenantExtractor);
+        val gen = CookieUtils.buildCookieRetrievingGenerator(cookieValueManager, getCookieGenerationContext("/cas"));
+        val response = new MockHttpServletResponse();
+        val value = "tgc-value-".repeat(500);
+        gen.addCookie(new MockHttpServletRequest(), response, value);
+        val header = response.getHeader("Set-Cookie");
+        assertNotNull(header);
+        assertTrue(header.length() > 4096);
+        assertTrue(header.contains(value));
+    }
+
+    @Test
     void verifyRemoveAllDoesNotEchoCookieValue() {
         val request = new MockHttpServletRequest();
         val cookieValueManager = new NoOpCookieValueManager(tenantExtractor);

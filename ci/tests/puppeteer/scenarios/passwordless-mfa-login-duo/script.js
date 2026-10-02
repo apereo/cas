@@ -13,6 +13,7 @@ const cas = require("../../cas.js");
     await cas.sleep(63000);
     await cas.screenshot(page);
     await cas.assertVisibility(page, "#token");
+    await cas.assertVisibility(page, "#passwordlessMessages");
     await cas.sleep(1000);
     
     await cas.closeBrowser(browser);

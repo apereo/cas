@@ -155,7 +155,10 @@ class OidcVerifiableCredentialOfferEndpointControllerTests {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.transactionId").exists())
                 .andExpect(jsonPath("$.txCode").exists())
-                .andExpect(jsonPath("$.credentialOfferUri").exists());
+                .andExpect(jsonPath("$.credentialOfferUri").exists())
+                .andExpect(jsonPath("$.credentialOfferLink").value(org.hamcrest.Matchers.startsWith(
+                    "openid-credential-offer://?credential_offer_uri=" + URLEncoder.encode(
+                        casProperties.getServer().getPrefix() + '/' + OidcConstants.BASE_OIDC_URL + '/', StandardCharsets.UTF_8))));
         }
 
         @Test

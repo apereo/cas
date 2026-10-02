@@ -1,0 +1,19 @@
+{
+  "dependencies": "passwordless-webflow,webauthn",
+  "properties": [
+    "--cas.server.name=https://localhost:8443",
+    "--cas.server.prefix=${cas.server.name}/cas",
+
+    "--cas.authn.passwordless.accounts.json.location=file:${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/accounts.json",
+
+    "--cas.authn.mfa.triggers.authentication.global-authentication-attribute-name-triggers=credentialType",
+    "--cas.authn.mfa.triggers.authentication.global-authentication-attribute-value-regex=UsernamePasswordCredential",
+    "--cas.authn.mfa.web-authn.core.allow-untrusted-attestation=true",
+    "--cas.authn.mfa.web-authn.core.qr-code-authentication-enabled=false",
+    "--cas.authn.mfa.web-authn.core.allowed-origins=https://localhost:8443",
+    "--cas.authn.mfa.web-authn.core.application-id=https://localhost:8443",
+    "--cas.authn.mfa.web-authn.core.relying-party-name=CAS WebAuthn Demo",
+    "--cas.authn.mfa.web-authn.core.allow-primary-authentication=true",
+    "--cas.authn.mfa.web-authn.core.user-verification-requirement=REQUIRED"
+  ]
+}

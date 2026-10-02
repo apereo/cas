@@ -8,6 +8,7 @@ import org.apereo.cas.configuration.model.support.mfa.simple.CasSimpleMultifacto
 import org.apereo.cas.mfa.simple.CasSimpleMultifactorAuthenticationProvider;
 import org.apereo.cas.mfa.simple.CasSimpleMultifactorTokenCommunicationStrategy;
 import org.apereo.cas.mfa.simple.CasSimpleMultifactorTokenCommunicationStrategy.TokenSharingStrategyOptions;
+import org.apereo.cas.mfa.simple.CasSimpleMultifactorTokenCredential;
 import org.apereo.cas.mfa.simple.ticket.CasSimpleMultifactorAuthenticationTicket;
 import org.apereo.cas.mfa.simple.validation.CasSimpleMultifactorAuthenticationService;
 import org.apereo.cas.multitenancy.TenantExtractor;
@@ -323,9 +324,26 @@ public class CasSimpleMultifactorSendTokenAction extends AbstractMultifactorAuth
     }
 
     protected void storeToken(final RequestContext requestContext, final CasSimpleMultifactorAuthenticationTicket token) throws Throwable {
-        multifactorAuthenticationService.store(token);
+        val storedToken = multifactorAuthenticationService.store(token);
         WebUtils.addInfoMessageToContext(requestContext, MESSAGE_MFA_TOKEN_SENT);
         MultifactorAuthenticationWebflowUtils.putSimpleMultifactorAuthenticationToken(requestContext, token);
+        trackStoredToken(requestContext, storedToken);
+    }
+
+    /**
+     * Keep the id the token was stored under on the flow credential, so the code the user types
+     * is checked against that ticket. The credential is read from the flow scope directly: when the token
+     * is sent, the user has not typed a code yet, and {@link WebUtils#getCredential(RequestContext)}
+     * ignores credentials without an id.
+     *
+     * @param requestContext the request context
+     * @param storedToken    the token as stored by the registry
+     */
+    public static void trackStoredToken(final RequestContext requestContext, final Ticket storedToken) {
+        val credential = WebUtils.getCredentialFrom(requestContext);
+        if (credential instanceof final CasSimpleMultifactorTokenCredential csmt) {
+            csmt.setTicketId(storedToken.getId());
+        }
     }
 
     protected CasSimpleMultifactorAuthenticationTicket getOrCreateToken(final RequestContext requestContext, final Principal principal) {
