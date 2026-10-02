@@ -7,6 +7,7 @@ import org.apereo.cas.support.oauth.OAuth20GrantTypes;
 import org.apereo.cas.support.oauth.OAuth20ResponseTypes;
 import org.apereo.cas.support.oauth.util.OAuth20Utils;
 import org.apereo.cas.support.oauth.validator.authorization.OAuth20AuthorizationRequestValidator;
+import org.apereo.cas.support.oauth.web.endpoints.OAuth20ConfigurationContext;
 import org.apereo.cas.support.oauth.web.response.accesstoken.ext.AccessTokenGrantRequestExtractor;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.RegexUtils;
@@ -55,11 +56,14 @@ public class OAuth20HandlerInterceptorAdapter implements AsyncHandlerInterceptor
 
     private final ObjectProvider<OAuth20RequestParameterResolver> requestParameterResolver;
 
+    private final ObjectProvider<OAuth20ConfigurationContext> configurationContext;
+
     @Override
     public boolean preHandle(
         final HttpServletRequest request,
         final HttpServletResponse response,
         final Object handler) throws Exception {
+        configurationContext.ifAvailable(context -> context.configureSessionReplicationCookiePath(request));
         if (requestRequiresAuthentication(request, response)) {
             return requiresAuthenticationAccessTokenInterceptor.getObject().preHandle(request, response, handler);
         }

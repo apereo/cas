@@ -90,6 +90,10 @@ class TicketRegistrySessionRepositoryTests {
     @Qualifier(TicketFactory.BEAN_NAME)
     private TicketFactory ticketFactory;
 
+    @Autowired
+    @Qualifier(TicketRegistry.BEAN_NAME)
+    private TicketRegistry ticketRegistry;
+
     @Test
     void verifySaveOperation() throws Exception {
         mockMvc.perform(get("/session/set"))
@@ -160,6 +164,28 @@ class TicketRegistrySessionRepositoryTests {
         assertEquals("TST-updated", session.getId());
         verify(registry).updateTicket(storedTicket);
         assertEquals(List.of("auditor"), Objects.requireNonNull(repository.findById("TST-stored")).getAttribute("roles"));
+    }
+
+    @Test
+    void verifySaveKeepsPropertiesOfSharedTicket() throws Throwable {
+        val session = new MapSession();
+        session.setAttribute("roles", new ArrayList<>(List.of("admin")));
+        session.setAttribute("locale", "en");
+        sessionRepository.save(session);
+
+        val ticket = ticketRegistry.getTicket(session.getId(), TransientSessionTicket.class);
+        val propertyNames = Set.copyOf(ticket.getProperties().keySet());
+
+        val loadedSession = Objects.requireNonNull(sessionRepository.findById(session.getId()));
+        loadedSession.removeAttribute("locale");
+        loadedSession.setAttribute("theme", "dark");
+        sessionRepository.save(loadedSession);
+        assertEquals(propertyNames, ticket.getProperties().keySet());
+
+        val foundSession = Objects.requireNonNull(sessionRepository.findById(loadedSession.getId()));
+        assertEquals(Set.of("roles", "theme"), foundSession.getAttributeNames());
+        assertEquals(List.of("admin"), foundSession.getAttribute("roles"));
+        assertEquals("dark", foundSession.getAttribute("theme"));
     }
 
     @TestConfiguration(proxyBeanMethods = false)

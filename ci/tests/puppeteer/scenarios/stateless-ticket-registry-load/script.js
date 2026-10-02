@@ -23,6 +23,7 @@ const LOAD_CONCURRENCY = parseInt(process.env.STATELESS_LOAD_CONCURRENCY ?? "20"
 const BROWSER_CONCURRENCY = parseInt(process.env.STATELESS_LOAD_BROWSERS ?? "4", 10);
 const SERVICE_TICKET_TIME_TO_KILL_SECONDS = 20;
 const MAX_COOKIE_SIZE = 4096;
+const BROWSER_CLOSE_TIMEOUT_MS = 30000;
 const pendingExpirations = [];
 const USER_AGENT = "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) StatelessLoad/1.0";
 
@@ -537,6 +538,52 @@ async function verifyExpiredServiceTickets() {
     }
 }
 
+async function pushAuthorizationRequest(state, nonce) {
+    const credentials = Buffer.from(`${OIDC_CLIENT_ID}:${OIDC_CLIENT_SECRET}`).toString("base64");
+    const response = await request("POST", `${CAS_PREFIX}/oidc/oidcPushAuthorize`, {
+        body: new URLSearchParams({
+            client_id: OIDC_CLIENT_ID,
+            redirect_uri: OIDC_REDIRECT_URI,
+            scope: "openid",
+            response_type: "code",
+            state,
+            nonce
+        }).toString(),
+        headers: {
+            "Content-Type": "application/x-www-form-urlencoded",
+            "Authorization": `Basic ${credentials}`
+        }
+    });
+    assert.equal(response.status, 201, response.body);
+    return JSON.parse(response.body).request_uri;
+}
+
+async function verifyPushedAuthorizationRequest(context) {
+    const state = crypto.randomUUID();
+    const requestUri = await pushAuthorizationRequest(state, crypto.randomUUID());
+    await cas.log(`Pushed authorization request URI is ${requestUri.length} characters`);
+    assert(requestUri.startsWith("OPAR-"), requestUri);
+
+    const page = await cas.newPage(context);
+    await cas.goto(page, `${CAS_PREFIX}/oidc/authorize?client_id=${OIDC_CLIENT_ID}&request_uri=${encodeURIComponent(requestUri)}`);
+    await cas.sleep(1000);
+    await cas.loginWith(page, "loaduser3", "Mellon");
+    await cas.sleep(2000);
+    await cas.assertPageUrlStartsWith(page, OIDC_REDIRECT_URI);
+    assert.equal(await cas.assertParameter(page, "state"), state);
+    const code = await cas.assertParameter(page, "code");
+    const tokens = await exchangeAuthorizationCode(code);
+    assert.equal(tokens.status, 200, JSON.stringify(tokens.body));
+    const profile = await fetchUserProfile(tokens.body.access_token);
+    assert.equal(profile.body.sub, "loaduser3");
+
+    await cas.log("A tampered request URI is rejected");
+    await cas.goto(page, `${CAS_PREFIX}/oidc/authorize?client_id=${OIDC_CLIENT_ID}&request_uri=${encodeURIComponent(tamper(requestUri))}`);
+    await cas.sleep(1000);
+    assert(!page.url().startsWith(OIDC_REDIRECT_URI), page.url());
+    await cas.gotoLogout(page);
+}
+
 async function verifySimpleMultifactorAuthentication(context, browser) {
     const page = await cas.newPage(context);
     await cas.gotoLogin(page, MFA_SERVICE);
@@ -593,6 +640,27 @@ async function verifyHealth() {
     assert.equal(loginPage.status, 200);
 }
 
+async function closeBrowser(browser) {
+    let timer = undefined;
+    const timedOut = new Promise((resolve) => {
+        timer = setTimeout(() => resolve(false), BROWSER_CLOSE_TIMEOUT_MS);
+        timer.unref();
+    });
+    const closed = cas.closeBrowser(browser)
+        .then(() => true)
+        .catch(async (error) => {
+            await cas.logr(`Closing the browser failed: ${error}`);
+            return true;
+        });
+    const completed = await Promise.race([closed, timedOut]);
+    clearTimeout(timer);
+    if (completed) {
+        await cas.logg("The browser is closed");
+    } else {
+        await cas.logr(`The browser did not close within ${BROWSER_CLOSE_TIMEOUT_MS}ms`);
+    }
+}
+
 (async () => {
     const browser = await cas.newBrowser(cas.browserOptions());
     let failed = false;
@@ -602,6 +670,7 @@ async function verifyHealth() {
         ["SAML2 identity provider with OpenID Connect single sign-on", (context) => verifySamlIdentityProviderWithOidc(context, "loaduser0")],
         ["Delegation to an external SAML2 identity provider", verifyDelegatedSamlIdentityProvider],
         ["Simple multifactor authentication", (context) => verifySimpleMultifactorAuthentication(context, browser)],
+        ["Pushed authorization request", verifyPushedAuthorizationRequest],
         ["Unhappy paths", verifyUnhappyPaths]
     ];
     try {
@@ -627,11 +696,11 @@ async function verifyHealth() {
         failed = true;
         throw e;
     } finally {
-        await cas.log("Closing connections and the browser");
+        await cas.logg("Closing connections and the browser");
         HTTPS_AGENT.destroy();
         HTTP_AGENT.destroy();
         await cas.removeDirectoryOrFile(path.join(__dirname, "/saml-md"));
-        await cas.closeBrowser(browser);
+        await closeBrowser(browser);
         if (!failed) {
             await cas.logg("Scenario completed");
             await process.exit(0);

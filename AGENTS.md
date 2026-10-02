@@ -1039,12 +1039,23 @@ Guidance for AI coding agents working in the Apereo CAS source tree.
   open: Duo with ticket-registry session storage, password reset, account registration and others not in the scenarios.
 - Session stores on the ticket registry (pac4j `TicketRegistrySessionStore`, Spring Session
   `TicketRegistrySessionRepository`) keep only text properties, since the transient ticket compactor stringifies values:
-  other values go in as base64 Java serialization text, times as ISO-8601. The session cookie (and the Spring Session id)
+  other values go in as base64 Java serialization text, times as ISO-8601. The default in-memory registry hands the
+  same ticket instance to concurrent requests, so never add or remove keys of a stored ticket's properties map while
+  saving a session: Spring Session keeps a fixed set of properties (all attributes under one `attributes` property)
+  and only replaces their values. The session cookie (and the Spring Session id)
   follow the id of the ticket the registry returns on add and update. With the stateless registry the whole session
   rides in that cookie, so keep sessions small; the session ticket expires at a fixed instant from its creation.
   pac4j saves the request to resume as a `FoundAction`/`OkAction` (exceptions); the pac4j store serializes exceptions
   without their stack trace, which otherwise pushes the session cookie past 4096 bytes and the browser drops it (the
   OAuth callback then lands on the redirect URI without a code). The load scenario fails on any oversized cookie.
+- PAR on the stateless registry: `OidcPushedAuthorizationRequestCompactor` (oidc-core-api) keeps a slim form of the
+  request context (maintainer choice over the serialized request); the PAR authentication keeps its principal id, date
+  and all attributes as text, since the authorize step merges those attributes into the user's authentication. The
+  registered service is looked up again by client id; client credentials are dropped from the parameters; the client's
+  pac4j profile is not kept. `request_uri` is read from the ticket `addTicket` returns.
+- The OAuth replicated session cookie path is configured in `OAuth20HandlerInterceptorAdapter.preHandle`
+  (`OAuth20ConfigurationContext.configureSessionReplicationCookiePath`) before the pac4j security interceptor can write
+  the cookie; configuring it only in the controllers left a `Path=/` cookie from the first request after startup.
 - Scenarios that start an external SAML2 IdP from `readyScript` (after CAS is up) must call `/cas/sp/idp/metadata`
   before the first delegated login: the pac4j client failed to load the IdP metadata at startup, and redirecting to it
   fails with a `NullPointerException` in `ChainingMetadataResolver.setResolvers` until that endpoint forces a reload.
