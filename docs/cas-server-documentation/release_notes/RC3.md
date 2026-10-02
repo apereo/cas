@@ -180,7 +180,8 @@ browser through the Signal API, and passkey autofill checks `getClientCapabiliti
 Registration and authentication requests carry the user-agent hints set in `cas.authn.mfa.web-authn.core.hints`, and each
 registration records whether the authenticator reported a discoverable credential (`credProps`). When an assertion fails
 because the owning account no longer holds the passkey, the response says so and the browser is told to stop offering it
-(`signalUnknownCredential`). WebAuthn pages now use the browser's JSON serialization (`parseCreationOptionsFromJSON`,
+(`signalUnknownCredential`); the account profile does the same as soon as a passkey is deleted, which also covers the
+account's last passkey. WebAuthn pages now use the browser's JSON serialization (`parseCreationOptionsFromJSON`,
 `parseRequestOptionsFromJSON`, `toJSON()`) and no longer override the configured attestation conveyance preference with
 `direct`; browsers without this WebAuthn Level 3 support can no longer use WebAuthn in CAS.
 CAS also publishes `/.well-known/passkey-endpoints` so password managers can link users to the pages where passkeys are

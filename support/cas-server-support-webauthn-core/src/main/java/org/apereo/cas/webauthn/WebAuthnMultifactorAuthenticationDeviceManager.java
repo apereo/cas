@@ -28,7 +28,9 @@ public class WebAuthnMultifactorAuthenticationDeviceManager implements Multifact
 
     private final RegistrationStorage webAuthnCredentialRepository;
     private final ObjectProvider<MultifactorAuthenticationProvider> multifactorAuthenticationProvider;
-    
+
+    private final String relyingPartyId;
+
     @Override
     public List<MultifactorAuthenticationRegisteredDevice> findRegisteredDevices(final Principal principal) {
         val registrations = webAuthnCredentialRepository.getRegistrationsByUsername(principal.getId());
@@ -56,7 +58,9 @@ public class WebAuthnMultifactorAuthenticationDeviceManager implements Multifact
     /**
      * Map a registration to a registered device. When attestation metadata names no device, the passkey provider known
      * by the registration's AAGUID gives the model. A provider with an icon also adds the {@code icon} detail, the path
-     * of the icon endpoint rather than the image itself, since registered devices are kept in the flow state.
+     * of the icon endpoint rather than the image itself, since registered devices are kept in the flow state. The
+     * {@code relyingPartyId} detail lets the account profile tell the browser, through the WebAuthn Signal API, that
+     * a deleted credential is no longer recognized, so that it stops being offered even when it was the account's last.
      *
      * @param acct the registration
      * @return the registered device
@@ -68,6 +72,7 @@ public class WebAuthnMultifactorAuthenticationDeviceManager implements Multifact
         val passkeyProvider = WebAuthnUtils.getPasskeyProvider(acct.getAaguid());
         val details = new LinkedHashMap<String, Object>();
         details.put("providerId", multifactorAuthenticationProvider.getObject().getId());
+        details.put("relyingPartyId", relyingPartyId);
         passkeyProvider.filter(provider -> provider.icon() != null)
             .ifPresent(provider -> details.put("icon", WebAuthnController.getPasskeyProviderIconPath(acct.getAaguid())));
         return FunctionUtils.doUnchecked(() -> MultifactorAuthenticationRegisteredDevice

@@ -1119,6 +1119,10 @@ Guidance for AI coding agents working in the Apereo CAS source tree.
 - `signalUnknownCredential` is destructive (Chrome's virtual authenticator deletes the passkey). Report
   `unknownCredential` only from the owning account's registrations (user handle, else request username), never from the
   node-local credential index in `BaseWebAuthnCredentialRepository`, which lags other nodes by up to a minute.
+  User handles are random and resolve only through the account's registrations, so after the last passkey is deleted a
+  login with it cannot be traced to an account; the account profile therefore signals on delete, from the device detail
+  `relyingPartyId` (`WebAuthnUtils.determineRelyingPartyId` in the config module) and the device id (the credential id).
+  Chrome's `u2f` virtual authenticators ignore signals; use `ctap2` (resident or not) to assert a signal in puppeteer.
 - Verification here: Maven Central is blocked, so check Yubico APIs by cloning `github.com/Yubico/java-webauthn-server` at the
   version in `libs.versions.toml`. `webauthn.js` is too deep to stage; copy it under the ignored `build/` folder, stage that,
   and exercise it in Playwright's Chromium with a CDP virtual authenticator. After `device_commit_files`, check the file on

@@ -40,7 +40,10 @@ const cas = require("../../cas.js");
     await cas.assertPageUrlStartsWith(page, "https://localhost:9859/anything/1");
     await cas.sleep(2000);
     await cas.assertInnerTextContains(page, "pre", "OC-1-");
-    await cas.assertInnerTextContains(page, "pre", "DISSESSIONOauthOidcServerSupport");
+    const sessionCookies = (await page.cookies("https://localhost:8443/cas/oidc/oidcAuthorize"))
+        .filter((cookie) => cookie.name === "DISSESSIONOauthOidcServerSupport");
+    assert(sessionCookies.length > 0, "No replicated OAuth session cookie");
+    assert(sessionCookies.every((cookie) => cookie.path === "/cas/"), JSON.stringify(sessionCookies));
 
     await cas.gotoLogout(page);
     await cas.assertPageUrlStartsWith(page, "https://localhost:8444/cas/logout");

@@ -283,7 +283,7 @@ class WebAuthnConfiguration {
             val serverName = casProperties.getServer().getName();
             val defaultRelyingPartyId = RelyingPartyIdentity
                 .builder()
-                .id(StringUtils.defaultIfBlank(webAuthn.getRelyingPartyId(), new URI(serverName).toURL().getHost()))
+                .id(WebAuthnUtils.determineRelyingPartyId(casProperties))
                 .name(StringUtils.defaultIfBlank(webAuthn.getRelyingPartyName(), "CAS"))
                 .build();
 
@@ -435,12 +435,13 @@ class WebAuthnConfiguration {
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public MultifactorAuthenticationDeviceManager webAuthnMultifactorAuthenticationDeviceManager(
+            final CasConfigurationProperties casProperties,
             @Qualifier("webAuthnMultifactorAuthenticationProvider")
             final ObjectProvider<MultifactorAuthenticationProvider> webAuthnMultifactorAuthenticationProvider,
             @Qualifier("webAuthnCredentialRepository")
             final WebAuthnCredentialRepository webAuthnCredentialRepository) {
             return new WebAuthnMultifactorAuthenticationDeviceManager(
-                webAuthnCredentialRepository, webAuthnMultifactorAuthenticationProvider);
+                webAuthnCredentialRepository, webAuthnMultifactorAuthenticationProvider, WebAuthnUtils.determineRelyingPartyId(casProperties));
         }
 
         @Configuration(value = "WebAuthnMultifactorProviderConfiguration", proxyBeanMethods = false)

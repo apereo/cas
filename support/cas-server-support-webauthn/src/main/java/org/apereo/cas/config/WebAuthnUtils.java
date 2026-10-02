@@ -29,4 +29,15 @@ class WebAuthnUtils {
         }
         return origins;
     }
+
+    /**
+     * Relying party id: the configured one, or else the host of the CAS server name.
+     *
+     * @param casProperties the cas properties
+     * @return the relying party id
+     */
+    static String determineRelyingPartyId(final CasConfigurationProperties casProperties) {
+        val relyingPartyId = casProperties.getAuthn().getMfa().getWebAuthn().getCore().getRelyingPartyId();
+        return StringUtils.defaultIfBlank(relyingPartyId, URI.create(casProperties.getServer().getName()).getHost());
+    }
 }

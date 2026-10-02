@@ -34,7 +34,10 @@ import static org.junit.jupiter.api.Assertions.*;
 @Tag("WebflowMfaActions")
 @ExtendWith(CasTestExtension.class)
 @SpringBootTest(classes = BaseWebAuthnWebflowTests.SharedTestConfiguration.class,
-    properties = "CasFeatureModule.AccountManagement.enabled=true")
+    properties = {
+        "CasFeatureModule.AccountManagement.enabled=true",
+        "cas.server.name=https://sso.example.org:8443"
+    })
 class WebAuthnMultifactorDeviceProviderActionTests {
     @Autowired
     @Qualifier(CasWebflowConstants.ACTION_ID_ACCOUNT_PROFILE_WEBAUTHN_MFA_DEVICE_PROVIDER)
@@ -77,5 +80,6 @@ class WebAuthnMultifactorDeviceProviderActionTests {
         val device = devices.iterator().next();
         assertEquals("Google Password Manager", device.getModel());
         assertEquals("/webauthn/passkey-providers/ea9b8d66-4d01-1d21-3ce4-b6b48cb575d4/icon", device.getDetails().get("icon"));
+        assertEquals("sso.example.org", device.getDetails().get("relyingPartyId"));
     }
 }

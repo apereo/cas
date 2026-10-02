@@ -7,7 +7,10 @@ const cas = require("../../cas.js");
     const browser = await cas.newBrowser(cas.browserOptions());
     const page = await cas.newPage(browser);
 
-    const virtualAuthenticator = await cas.createWebAuthnVirtualAuthenticator(page);
+    const virtualAuthenticator = await cas.createWebAuthnVirtualAuthenticator(page, "ctap2");
+    const storedCredentials = async () => (await virtualAuthenticator.client.send("WebAuthn.getCredentials", {
+        authenticatorId: virtualAuthenticator.authenticator.authenticatorId
+    })).credentials;
 
     await cas.gotoLogin(page);
 
@@ -43,6 +46,16 @@ const cas = require("../../cas.js");
     await cas.assertInnerText(page, "#mfaDevicesTable tbody tr td:first-child", "Web Authn");
     await cas.assertInnerText(page, "#mfaDevicesTable tbody tr td:nth-child(3)", deviceName);
     await cas.sleep(2000);
+    assert((await storedCredentials()).length === 1);
+
+    await cas.click(page, "#linkMfaRegisteredAccounts");
+    await cas.sleep(1000);
+    await cas.click(page, "#mfaDevicesTable button[name=deleteMfaDevice]");
+    await cas.sleep(3000);
+    await cas.click(page, "#linkMfaRegisteredAccounts");
+    await cas.sleep(1000);
+    await cas.assertInnerTextContains(page, "#mfaDevicesTable", "No data available");
+    assert((await storedCredentials()).length === 0, "Deleting the last passkey should tell the browser to stop offering it");
 
     await cas.removeWebAuthnVirtualAuthenticator(virtualAuthenticator);
     
