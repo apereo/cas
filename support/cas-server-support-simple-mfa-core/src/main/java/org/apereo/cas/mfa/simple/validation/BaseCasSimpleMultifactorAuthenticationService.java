@@ -5,12 +5,15 @@ import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.mfa.simple.CasSimpleMultifactorAuthenticationConstants;
 import org.apereo.cas.mfa.simple.CasSimpleMultifactorTokenCredential;
 import org.apereo.cas.mfa.simple.ticket.CasSimpleMultifactorAuthenticationTicket;
+import org.apereo.cas.ticket.InvalidTicketException;
 import org.apereo.cas.ticket.UniqueTicketIdGenerator;
 import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.util.function.FunctionUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.apache.commons.lang3.StringUtils;
+import org.jspecify.annotations.Nullable;
 
 /**
  * This is {@link BaseCasSimpleMultifactorAuthenticationService}.
@@ -23,10 +26,37 @@ import lombok.val;
 public abstract class BaseCasSimpleMultifactorAuthenticationService implements CasSimpleMultifactorAuthenticationService {
     protected final TicketRegistry ticketRegistry;
 
+    /**
+     * Find the ticket for the code in the credential. When the credential carries the id the token was stored under
+     * and that ticket's code matches, that ticket is used; registries that store tokens under another id, such as
+     * the stateless ticket registry, are only found this way. Otherwise, the code is looked up as a ticket id.
+     *
+     * @param credential the credential
+     * @return the ticket
+     */
     @Override
     public CasSimpleMultifactorAuthenticationTicket getMultifactorAuthenticationTicket(final CasSimpleMultifactorTokenCredential credential) {
         val tokenId = normalize(credential.getId());
+        val ticketId = credential.getTicketId();
+        if (StringUtils.isNotBlank(ticketId) && !ticketId.equals(tokenId)) {
+            val storedTicket = findStoredTicket(ticketId);
+            if (storedTicket != null && MessageDigest.isEqual(
+                CasSimpleMultifactorAuthenticationTicket.getCode(storedTicket).getBytes(StandardCharsets.UTF_8),
+                tokenId.getBytes(StandardCharsets.UTF_8))) {
+                return storedTicket;
+            }
+            LOGGER.debug("Code does not match the token stored as [{}]", ticketId);
+        }
         return ticketRegistry.getTicket(tokenId, CasSimpleMultifactorAuthenticationTicket.class);
+    }
+
+    private @Nullable CasSimpleMultifactorAuthenticationTicket findStoredTicket(final String ticketId) {
+        try {
+            return ticketRegistry.getTicket(ticketId, CasSimpleMultifactorAuthenticationTicket.class);
+        } catch (final InvalidTicketException e) {
+            LOGGER.debug("Token stored as [{}] cannot be found", ticketId);
+            return null;
+        }
     }
 
     protected Principal validateTokenForPrincipal(final Principal resolvedPrincipal, final CasSimpleMultifactorAuthenticationTicket acct)

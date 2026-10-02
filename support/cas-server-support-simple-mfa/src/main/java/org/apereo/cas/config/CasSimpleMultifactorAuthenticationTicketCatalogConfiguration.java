@@ -1,18 +1,28 @@
 package org.apereo.cas.config;
 
 import module java.base;
+import org.apereo.cas.authentication.principal.PrincipalFactory;
+import org.apereo.cas.authentication.principal.ServiceFactory;
+import org.apereo.cas.authentication.principal.WebApplicationService;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.features.CasFeatureModule;
 import org.apereo.cas.mfa.simple.ticket.CasSimpleMultifactorAuthenticationTicket;
+import org.apereo.cas.mfa.simple.ticket.CasSimpleMultifactorAuthenticationTicketCompactor;
 import org.apereo.cas.mfa.simple.ticket.CasSimpleMultifactorAuthenticationTicketImpl;
 import org.apereo.cas.ticket.BaseTicketCatalogConfigurer;
 import org.apereo.cas.ticket.ExpirationPolicyBuilder;
 import org.apereo.cas.ticket.TicketCatalog;
 import org.apereo.cas.ticket.TicketCatalogConfigurer;
+import org.apereo.cas.ticket.TicketFactory;
+import org.apereo.cas.ticket.registry.StatelessTicketRegistry;
+import org.apereo.cas.ticket.registry.compact.TicketCompactor;
 import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
@@ -49,5 +59,24 @@ class CasSimpleMultifactorAuthenticationTicketCatalogConfiguration {
                 registerTicketDefinition(plan, definition);
             }
         };
+    }
+
+    @Configuration(value = "CasSimpleMultifactorAuthenticationStatelessTicketsConfiguration", proxyBeanMethods = false)
+    @EnableConfigurationProperties(CasConfigurationProperties.class)
+    @ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.TicketRegistry, module = "stateless")
+    @ConditionalOnClass(StatelessTicketRegistry.class)
+    static class CasSimpleMultifactorAuthenticationStatelessTicketsConfiguration {
+        @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+        @ConditionalOnMissingBean(name = "casSimpleMultifactorAuthenticationTicketCompactor")
+        public TicketCompactor<CasSimpleMultifactorAuthenticationTicket> casSimpleMultifactorAuthenticationTicketCompactor(
+            @Qualifier(TicketFactory.BEAN_NAME)
+            final ObjectProvider<TicketFactory> ticketFactory,
+            @Qualifier(WebApplicationService.BEAN_NAME_FACTORY)
+            final ServiceFactory serviceFactory,
+            @Qualifier("casSimpleMultifactorPrincipalFactory")
+            final PrincipalFactory casSimpleMultifactorPrincipalFactory) {
+            return new CasSimpleMultifactorAuthenticationTicketCompactor(ticketFactory, serviceFactory, casSimpleMultifactorPrincipalFactory);
+        }
     }
 }

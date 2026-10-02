@@ -93,6 +93,8 @@ Guidance for AI coding agents working in the Apereo CAS source tree.
 ## Conventions you should match
 
 - Java 25 is required (`gradle.properties`); many sources use `import module java.base;`, Lombok `val`, and package-level `@NullMarked` via `package-info.java`.
+- `import module java.base` makes `Signature` ambiguous (`java.security.Signature` vs `java.lang.classfile.Signature`); write `java.security.Signature`. Mapping to a `@SuperBuilder` result (`IntStream.mapToObj(i -> X.builder()...build())`) infers a capture type; give the stream a type witness (`.<X>mapToObj(...)`).
+- Lombok `val` cannot infer generic poly expressions: `val x = Objects.requireNonNullElse(list, List.of())` (or `...ElseGet(list, List::of)`) becomes `Object`. Assign the plain call to `val` and null-check separately, or declare the type.
 - Spring config classes generally use `@AutoConfiguration` or `@Configuration(proxyBeanMethods = false)`, `@EnableConfigurationProperties(CasConfigurationProperties.class)`, `@ConditionalOnFeatureEnabled`, and bean methods with `@RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)` plus `@ConditionalOnMissingBean`. See `support/cas-server-support-token-core/.../TokenCoreConfiguration.java`.
 - Configuration model classes usually live under `api/.../configuration/model/**`, use Lombok accessors, and carry `@RequiresModule(name = "...")`; example: `LdapAuthorizationProperties`.
 - Tests are organized by JUnit tags, not by the plain Gradle `test` task. The shared `buildSrc` test conventions disable `test` and generate tasks like `testAuthentication`, `testTickets`, etc. from `@Tag(...)` values found in `*Tests.java`.
@@ -206,13 +208,41 @@ Guidance for AI coding agents working in the Apereo CAS source tree.
 - An unread field on a registered service is a finding, not a feature. `verifiableCredentialsPolicy` and `DefaultRegisteredServiceOidcVerifiableCredentialsPolicy` both existed and shipped in the schema while nothing in CAS ever called `getVerifiableCredentialsPolicy`, which reads from the outside exactly like an enforced authorization control. When a policy type exists, grep for its getter before assuming it does anything.
 - An empty policy means "no opinion", not "deny everything". Authorization policies here default open when unconfigured, because they are added to deployments that were already working; a policy that denied by default would break every existing service on upgrade.
 - CAS is both issuer and verifier here, and the verifier only trusts CAS-issued credentials: `iss` must equal the local issuer, `vct` must map to a local configuration, the signature is checked against CAS's own keystore, and a `status` claim is refused rather than ignored. That is a trust policy, not a defect -- OpenID4VP leaves issuer trust to the verifier ("Verifiers must verify that the issuer of a received presentation is trusted on their own"), and a verifier that cannot evaluate revocation must fail closed. Do not report it as a compliance gap. Widening it means external issuer trust, `x5c`, DID resolution, OpenID Federation and Token Status List fetching, which is a feature with its own configuration surface, not a fix.
+- Proof validation takes the credential configuration id (`OidcVerifiableCredentialProofValidator.validate(proof, configurationId, nonces)`)
+  and enforces that configuration's `proof-signing-alg-values-supported` and `cryptographic-binding-methods-supported`; the
+  one-argument overload names no configuration and accepts anything verifiable, which is what the unit tests rely on. Holder keys come
+  from `jwk` (a stray `kid` next to it is ignored), `x5c` (leaf key only, validity checked) or a `did:jwk` `kid`.
+- CAS does not depend on Google Tink, so never use Nimbus `Ed25519Verifier`, `Ed25519Signer`, `OctetKeyPairGenerator` or the
+  X25519 classes, in main code or tests; they fail without it. Verify EdDSA with
+  `EncodingUtils.verifyJwsSignature(EncodingUtils.newJsonWebKey(okp.toPublicJWK().toJSONString()).getKey(), jws)` after checking the
+  header algorithm is `EdDSA`; in tests, generate keys with `KeyPairGenerator.getInstance("Ed25519")` and sign with jose4j
+  (`JsonWebSignature`, `AlgorithmIdentifiers.EDDSA`, `PublicJsonWebKey.Factory.newPublicJwk(publicKey)` for a `jwk` header).
+- `OidcRequestParameterResolver` drops every requested scope that is not supported, so a scope CAS must honour has to be
+  part of `OidcServerDiscoverySettingsFactory.resolveScopesSupported`, which also feeds `scopes_supported`. Credential
+  configuration scopes are added there; scope-granted credential configurations are recorded on the access token by
+  `OidcVerifiableCredentialsAccessTokenGeneratorCustomizer` (authorization code and refresh grants), narrowed by the service
+  policy, and the credential endpoint combines them with authorization details.
+- OID4VP key binding algorithms live in `OidcVerifiableCredentialPresentationResponseEndpointController.KEY_BINDING_ALGORITHMS_SUPPORTED`, which also feeds `kb-jwt_alg_values`; `sd-jwt_alg_values` comes from the `dc+sd-jwt` configurations. OpenID4VP wants fully specified identifiers (`Ed25519`, not `EdDSA`); Ed25519 key binding is verified with the JDK `Signature` so both header values work. `alg_values` is not defined for `dc+sd-jwt`.
+- Issued credentials carry no `client_id` or `credential_configuration_id` (claim or header): they reveal the relying party to every verifier. CAS's verifier finds the issuer key by `kid` (an `OidcRegisteredService` key selector with `jwksKeyId` set, through `getJsonWebKeySigningKey`), the same key the JWKS publishes.
+- Issued credentials carry the signing key's `x5c` (from the keystore JWK, via `JsonWebTokenSigner.certificateChain`) without a trailing self-signed trust anchor (HAIP 1.0 section 6.1.1); the `X509_SAN_DNS` request object does the same (section 5). Both go through `CertUtils.withoutTrustAnchor`. A key with no chain sends no `x5c`; test keystores have none, so `vc-issuer-x5c.jwks` (EC P-256 leaf for `sso.example.org` + root, valid to 2126) exists for that. Under `import module java.base`, import `java.security.cert.X509Certificate` explicitly (`javax.security.cert` clashes).
+- Presentation transactions carry `clientId` (and `redirectUri` for same-device); results carry `clientId` and `responseCode`. `oidcVcPresentationResult` answers `404` to any other client or to a missing/wrong `response_code`. Test transactions built by hand must set `clientId`, or results cannot be collected.
+- DCQL has no `required` per claim: optional claims become claim `id`s plus `claim_sets` (all, then required; or each alone when none is required), and the verifier requires the required claims or, when all are optional, at least one.
+- The OID4VP response URI takes `vp_token` or `error` (never both) with `state`; an error response is consumed, answered
+  `200` with `{}`, and recorded as `{"status":"error","error":...,"error_description":...}` for `oidcVcPresentationResult`.
+- Turning attribute text into numbers: `NumberUtils.createNumber` decodes a leading zero as octal. Only convert when the
+  `createBigDecimal(text).toPlainString()` round trip returns the same text; no hand-written regular expressions for this.
 - What is worth checking in that code is consistency between the two halves: the verifier should require everything the issuer always emits. `exp` was optional at verification while issuance always stamps it, which let a credential that never expires through.
+- Check every authorization path the metadata advertises end to end. Each credential configuration publishes a `scope`, which tells a wallet it may use scope-based authorization (OpenID4VCI 5.1.2), but the credential endpoint only honours pre-authorized tokens and `authorization_details`; EUDI's issuance library favours scopes. A metadata field is a promise to wallets, not decoration.
+- Metadata is per format: `vct` belongs to `dc+sd-jwt` only, while `jwt_vc_json` and `jwt_vc_json-ld` need `credential_definition` (Appendix A.1). The type list and the JSON-LD context come from `BaseOidcVerifiableCredentialEncoder.resolveCredentialTypes` and `VCDM_V2_CONTEXT`, which both the metadata service and the encoders use; keep it that way so metadata and credential cannot drift. Never reference a JSON-LD context CAS does not serve; the VCDM 2.0 base context's `@vocab` already covers custom terms.
+- A credential is only portable if a third party can find the issuer key. CAS publishes `/.well-known/jwt-vc-issuer` (`issuer` + the OIDC `jwks_uri`, which carries the credential signing key under the `kid` in the credential header); it needs the same host-level rewrite as the other well-known documents. There is still no `x5c` on credentials, which HAIP requires. CAS verifying its own credentials in puppeteer proves nothing about third-party verification.
+- Wallets differ mostly at the edges: proof keys by `jwk`, `kid` (did:key, did:jwk) or `x5c`, EdDSA vs ES256, `redirect_uri` vs `x509_san_dns`/`x509_hash`, `direct_post` vs `direct_post.jwt`. The walt.id scenario pins P-256, `jwk` and `redirect_uri`, so it cannot catch regressions in the others.
 
 ## Parallel test execution and shared registries
 
 - Initialize shared pac4j clients with `DelegatedIdentityProviders.initialize(client)`, never a bare `client.init()`: pac4j returns immediately, uninitialized, while another thread is initializing the same instance. The helper waits lock-free on `isInitializing()`.
 - Most categories in `buildSrc/.../TestCategories.groovy` are declared parallel, and JUnit's default mode there is `concurrent` for classes *and* methods, so sibling `@Test` methods in one class run at the same time against the same Spring context. A test that clears a shared registry wholesale -- `servicesManager.getAllServicesOfType(...).forEach(servicesManager::delete)` in a setup step, say -- deletes what its siblings just saved, and the failure surfaces in whichever method lost the race rather than in the one that did the clearing.
 - The symptom to recognize: a test asserting on a service it saved itself gets the value that belongs to the "service was missing" code path. `OpenIdFederationAuthorizationCodeResponseTypeAuthorizationRequestValidatorTests` failed exactly that way, reporting `expected: <old-service> but was: <new-service>`, because another method's clear removed the saved service and the validator then resolved a fresh one.
+- Never add `@Execution(ExecutionMode.SAME_THREAD)` to a test class; rework the test to isolate its own state instead.
 - Isolate by identifier, not by emptying the registry: give each test a UUID-bearing client id and assert only on that id. `@Execution(ExecutionMode.SAME_THREAD)` fixes the within-class case but not another class sharing the context, so prefer removing the global mutation.
 - Write registry predicates as `expected.equals(service.getClientId())` rather than the reverse: once the registry is no longer cleared, entries from other tests flow through the same stream.
 - The mirror image of that symptom is a test asserting a *negative* that only holds while the registry
@@ -238,6 +268,14 @@ Guidance for AI coding agents working in the Apereo CAS source tree.
   for the assertions that do not. That is what the customizer test now does, and it gained the
   policy-permits branch as a second assertion in the process.
 
+- A clear can sit in an abstract base class, out of sight of the class that fails. `BaseThemeTests` emptied
+  the services registry in a `@BeforeEach`, which ran before every method of every subclass, and two subclasses
+  in different files (`RegisteredServiceThemeResolverTests.ExampleThemeTests`,
+  `ChainingThemeResolverTests.ThemeDefinitionTests`) share one context. The symptom is the resolver's fallback
+  (`expected: <some-theme> but was: <example>`, the default theme) instead of the value on the test's own
+  service. A test that empties the registry to prove a result is remembered (`verifyThemeIsResolvedOncePerRequest`)
+  proves the same thing by deleting only its own service.
+
 - Ports are shared state too, and the trap has a specific shape. `MockWebServer.getRandomPort()`
   now draws from **21000-24999**, a band nothing else in the repository binds, and a Checkstyle rule
   (`reservedMockWebServerPorts`) keeps it that way. It used to draw from 4000-9999, which overlapped
@@ -258,6 +296,7 @@ Guidance for AI coding agents working in the Apereo CAS source tree.
 - Init scripts are sourced, so `set -e`, `set -u` or `pipefail` in one would stay on for the rest of `run.sh`; 17 scenarios source such a script, and a leaked `set -e` made a failing test exit `run.sh` at its first attempt with code 1 (whole-script retry) instead of 5 after its in-process attempts. `run.sh` turns those options off after each init script, so do not rely on them persisting.
 - Prefer polling the service's own port over a container health check, and dump `docker compose logs` on the failure path: an unhealthy container tells you nothing, while the service's logs say why it would not start.
 - In CI, `run.sh` launches the Gradle build (`bootWar`, or `bootJar` for starter scenarios; native keeps `build` + `nativeCompile`) in the background and runs npm install, ESLint, bootstrap and init scripts while it builds, waiting on the build process only before launching the CAS instance that needs it. Init and bootstrap scripts must therefore never depend on the built artifact, and a fixed `sleep` in them now runs while the build competes for CPU, so poll instead. `PUPPETEER_BUILD_OVERLAP=false` restores the sequential order. `PUPPETEER_BUILD_CTR` is the build timeout in minutes, measured from launch.
+- A container answering HTTP is not a container ready for setup calls. Apache Syncope's Tomcat answers `/syncope/` several seconds before its content loader populates the empty Master domain, and admin REST calls made in that window fail with `AuthorizationDeniedException` (seen once the build overlapped the init scripts and slowed startup). `ci/tests/syncope/run-syncope-server.sh` therefore waits for `Started SyncopeCoreApplication` in the container log; readiness waits in other init scripts should likewise key off the application's own started signal, bounded, with `exit 1` on timeout.
 - Scenario matrix jobs in `functional-tests.yml` restore the Gradle User Home with `cache-read-only: true` and do not set `cache: 'gradle'` on `setup-java`; saving from every one of the ~560 jobs cost ~12 s each and churned the Actions cache, and the two actions caching the same directory conflict.
 - The matrix jobs cache the Node.js install under `${{ runner.tool_cache }}/node/<NODE_VERSION_REQUIRED>` with a key that is that exact version, restored before `setup-node` and saved only from the default branch on a miss. A version change in `NODE_CURRENT` or a scenario's `requirements.nodejs` is a new key, so `setup-node` downloads the instructed version; keep those values exact versions (a range would never match the cached directory) and do not add `check-latest`.
 - Instances whose resolved dependencies are identical share one build: `run.sh` builds only the first instance of each dependency set and copies its artifact to the others. Only instance-specific `dependencies` cause another build. Instances still start one after another, because several multi-instance scenarios need instance 1 up before instance 2 starts (Spring Boot Admin client registration, passive service-registry replication, cas2cas delegation).
@@ -909,26 +948,195 @@ Guidance for AI coding agents working in the Apereo CAS source tree.
 
 ## Stateless ticket registry review discipline
 
-- The ticket id is the ticket: `StatelessTicketRegistry` deflates, AES-GCM encrypts (signing off, which is fine for GCM)
-  and base64url-encodes a compact string. `TicketCompactor.DELIMITER` is `,` and `parse` splits on it without escaping
-  or an element-count check, so every appended field that a caller or external IdP can influence (service path segment
-  via `getShortenedId`, OAuth `code_challenge`, principal id, TST property values) is an injection point. Review new
-  compactors for this first; `validate` only logs on length.
+- The ticket id is the ticket: prefix + base64url(AES-GCM(header + compact string)). The header is one byte for raw or
+  raw-deflated (whichever is smaller), then the length and bytes of the prefix the ticket was issued under; reads reject
+  a prefix mismatch, since the prefix outside the ciphertext picks the compactor and some layouts have the same field
+  count (AT/RT, PT/PGT). The compact string is `CompactTicketCodec`: `1;` then `<length>:<value>` per
+  field, lists nested the same way, so values are never escaped. Store enums by `name()`, never by ordinal. Compactors add fields in `compactFields` and read them
+  with `parse(value, exactCount)`; bump `CompactTicketCodec.VERSION` when a layout changes, and say in the release notes
+  that tickets issued before the upgrade are unreadable.
+- Module layout: `TicketCompactor`, `CompactTicketCodec`, `CompactTicketAuthentication` and the core compactors live in
+  `org.apereo.cas.ticket.registry.compact`, with `StatelessTicketRegistry` and `ShortenedServiceMatchingStrategy`, in
+  `support/cas-server-support-stateless-ticket-registry-api`; the `stateless-ticket-registry` module keeps the
+  auto-configuration. Modules that ship their own compactors (OAuth core, Simple MFA core) depend on the API module
+  `compileOnly`, so their stateless bean configurations carry `@ConditionalOnClass(StatelessTicketRegistry.class)` next to
+  the feature condition (the feature is enabled by default, so without the class check every deployment without the
+  stateless module fails to start). Native hints for compactors: `CasStatelessTicketRegistryRuntimeHints` in the API module.
+- Authentication in ST, PT, PGT and OAuth tickets is `CompactTicketAuthentication`: principal id, authentication date,
+  handlers, credential types, remember-me and the retained authentication attributes (`clientName`, MFA context,
+  trusted device) as text. Other attributes are not kept (documented caveat).
+- `expand` creates tickets through the ticket factories, then sets the creation time and a
+  `FixedInstantExpirationPolicy`; the registry then sets the id it was looked up by.
+- The TGT compact form is its authentication only, as typed JSON with principal attributes stripped; updates of
+  `services`, `proxyGrantingTickets` or `descendantTickets` never reach the TGC, and single logout is documented as unsupported.
+- No local decode cache: expanded tickets are mutable per request, the crypto and inflate cost is small next to the JSON
+  parse, and a cache is server-side state.
 - There is no delete: `deleteSingleTicket` is the base no-op, so `deleteTicket(...)` returns 0 and nothing is ever
   consumed. Code that treats `delete > 0` as the single-use decision fails closed here; code that uses a deterministic
   TST id as a replay marker (`TransientSessionTicketFactory.normalizeTicketId`: DPoP, client assertions, Heimdall)
   never finds it and fails open. Callers must use the ticket `addTicket` returns: the stored id is re-encoded.
-- `TransientSessionTicketCompactor.expand` creates a new TST (new random id) and stringifies properties, so only flat
-  string properties survive; object-valued TSTs (Duo `TICKET_REGISTRY` state, VC transactions) do not.
+- `TransientSessionTicketCompactor` stringifies properties, so only flat string properties survive; object-valued TSTs
+  (VC transactions) do not. It keeps the full service id: flows resume with that service
+  (delegation back to the SAML2 IdP callback with `srid`/`entityId`), so `getShortenedId` is only for tickets that are
+  validated against a presented service (ST, PT, PGT, OAuth).
 - Maintainer decision: the stateless registry stays 100% stateless, in the spirit of the Shibboleth IdP client-side
   storage. Never propose a server-side replay, nonce or single-use store as the fix for anything here; fixes must be
   expressible in the ticket or client storage itself (encoding, binding, lifetimes, key versioning).
-- Exploitability of delimiter injection through the service depends on the registered pattern: only the first path
-  segment reaches the compact form, so a pattern that pins that segment followed by `/` blocks it, while
-  `^(https|imaps)://.*` or `^https://host/.*` do not. ST principal ids are appended raw (PT/PGT base64url them).
-- The stateless SSO session has no TGC cookie: `SendTicketGrantingTicketAction` writes the TGT to browser storage
-  (default `LOCAL`), the login flow reads it back through the read-storage page on every entry, and expiration is a
-  fixed instant only (no idle timeout).
+- `CompactTicketCodecTests`, `StatelessTicketRegistryTests.verifyServiceTicketFieldsCannotBeInjectedThroughService`,
+  `verifyServiceTicketForDistinguishedNamePrincipal` and `verifyExpandedTicketsCarryTheirStatelessIds` guard the format.
+- The stateless TGT is carried by the TGC exactly as with any other registry: `SendTicketGrantingTicketAction` sets the
+  TGC with the (compacted, encrypted) TGT id, and the TGC value manager signs and encrypts it as usual. Maintainer rule:
+  use the existing TGC behavior unchanged; no parallel cookies, bindings, digests or browser-storage copies of the TGT,
+  and no stateless-only webflow wiring for the SSO session. Browser storage remains for Duo and the SAML IdP only.
+- Browsers drop cookies over 4096 bytes, and a Duo TGT makes the default (encrypted and signed) TGC about 4.3 KB. The
+  documented remedy is `cas.tgc.crypto.signing-enabled=false` (TGC crypto uses
+  `EncryptionOptionalSigningOptionalJwtCryptographyProperties`): the JWE is `dir` + `A256CBC-HS512`, already authenticated,
+  and dropping the JWS layer saves about a quarter. A defined `cas.tgc.crypto.signing.key` keeps signing on
+  (`BaseStringCipherExecutor`). Scenario `mfa-duo-universal-login-stateless` runs with it.
+- `TicketGrantingTicketCompactor` keeps only the TGT's authentication (typed JSON via `BaseJacksonSerializer.forType`),
+  with principal attributes removed from the principal and the handler-result principals. On expand it always re-resolves
+  them through `defaultPrincipalResolver` with a `BasicIdentifiableCredential` of the principal id, keeping that id (like
+  `DefaultCentralAuthenticationService.rebuildStatelessTicketPrincipal`; attribute repository results are cached), and
+  creates the TGT through the `TicketGrantingTicketFactory`, then sets the creation time and a `FixedInstantExpirationPolicy`
+  from the compact fields. Maintainer: no ticket impl classes and no hand-built tickets in compactors; use the factories.
+  Every compactor (core and OAuth) takes an `ObjectProvider<TicketFactory>` (the OAuth factories depend on the ticket
+  registry) and creates the ticket through its factory with a null parent ticket, then sets the creation time and a
+  `FixedInstantExpirationPolicy`. Proxy-granting and proxy tickets go through a service ticket created by the service
+  ticket factory. Factories look up registered services on every expansion; expected.
+  SSO-time decisions only see attribute-repository attributes; handler-only attributes (Duo, delegated claims) are gone.
+- `getTicket(id).getId()` must equal `id`, as with every other registry: callers such as `InitialFlowSetupAction` put
+  `ticket.getId()` into scope and look it up again. The stateless registry sets every expanded ticket's id to the id it was
+  looked up by, unless the compactor's `isTicketIdRetained()` is true (device user codes, whose id is the user code). No
+  compact layout may contain the ticket's own id, or updates nest the previous id.
+- Expanded TGTs get a `FixedInstantExpirationPolicy` at the original policy's maximum expiration time, so an idle
+  timeout is not enforced. Maintainer: no idle timeout, no single use and no revocation, by design (deployment trade-offs,
+  as with the Shibboleth IdP); keys are created or copied by hand, as with any registry. A sliding idle timeout was built and
+  rejected, do not reintroduce it. Non-happy paths are reviewed last.
 - Scenarios `stateless-ticket-registry`, `stateless-ticket-registry-saml2-idp`, `oauth2-login-stateless`,
   `oidc-login-stateless`, `mfa-duo-universal-login-stateless`, `ticket-validation-casv3-pgt-stateless` cover happy
   paths only; none covers VC/VP, DPoP, private_key_jwt, replay or delimiter input.
+- Scenario `stateless-ticket-registry-load` combines interrupt notifications, the SAML2 identity provider, OIDC, proxy
+  tickets and delegation to the simplesamlphp SAML2 IdP, checks unhappy paths (tampered or forged tickets and cookies,
+  expired and reused service tickets, cookie replay after logout, attribute-based access at single sign-on) and runs a load
+  over plain HTTP (`STATELESS_LOAD_ITERATIONS`, `STATELESS_LOAD_CONCURRENCY`, `STATELESS_LOAD_BROWSERS`). It also runs
+  Simple MFA by email (mockmock mail server from `init.sh`): a code typed in another user's flow and a wrong code fail,
+  the right code passes, single sign-on does not ask again; replicated sessions are on for OAuth and pac4j.
+- Simple MFA with the stateless registry (maintainer: short code typed, stateless id held by the flow).
+  `CasSimpleMultifactorAuthenticationService.store` returns the stored ticket; the send-token and verify-email actions
+  put its id on the flow credential (`CasSimpleMultifactorTokenCredential.ticketId`; the view binds `token` only). Read the
+  credential from the flow scope, not `WebUtils.getCredential`, which returns null while the token is still blank.
+  Lookup loads the ticket by that id and compares the typed code in constant time with
+  `CasSimpleMultifactorAuthenticationTicket.getCode` (`code` property, else the id); with no id, or on mismatch, the code
+  is looked up as a ticket id, which keeps the stateful behavior (another principal submitting a code burns it, as
+  `simple-mfa-login` expects). `CasSimpleMultifactorAuthenticationTicketCompactor` keeps service, code and principal id.
+  The token endpoint answers with the stored id. Tokens are not single-use with the stateless registry; the collision
+  check in `generate` and the wrong-code fallback each log a warning from the stateless registry's failed decode.
+- Maintainer: callers that hand a ticket id to a browser or another party read it from the ticket `addTicket` returns;
+  the registry does not change the ticket passed in, and reading the ticket back after adding it was rejected (cost,
+  type-specific code). Fix call sites as scenarios need them, not all at once. Delegation: the webflow manager keeps the
+  built transient ticket in the flow (it carries the request properties) and hands the stored ticket to
+  `DelegatedClientSessionManager.trackIdentifier(WebContext, Ticket, Client)` and the CAS client session key. Still
+  open: password reset, account registration and others not in the scenarios.
+- Duo `TICKET_REGISTRY` session storage is unsupported with the stateless registry (maintainer decision: document only,
+  no code). The TST holds the whole flow (authentication, result builder, all webflow scopes) as objects, Duo's SDK
+  rejects a `state` over 1024 characters, and the Duo webflow is wired at startup by storage type, so a runtime fallback
+  onto browser storage does not work (no `restore` transition, no storage write). Users must set `BROWSER_STORAGE`.
+- Session stores on the ticket registry (pac4j `TicketRegistrySessionStore`, Spring Session
+  `TicketRegistrySessionRepository`) keep only text properties, since the transient ticket compactor stringifies values:
+  other values go in as base64 Java serialization text, times as ISO-8601. The default in-memory registry hands the
+  same ticket instance to concurrent requests, so never add or remove keys of a stored ticket's properties map while
+  saving a session: Spring Session keeps a fixed set of properties (all attributes under one `attributes` property)
+  and only replaces their values. The session cookie (and the Spring Session id)
+  follow the id of the ticket the registry returns on add and update. With the stateless registry the whole session
+  rides in that cookie, so keep sessions small; the session ticket expires at a fixed instant from its creation.
+  pac4j saves the request to resume as a `FoundAction`/`OkAction` (exceptions); the pac4j store serializes exceptions
+  without their stack trace, which otherwise pushes the session cookie past 4096 bytes and the browser drops it (the
+  OAuth callback then lands on the redirect URI without a code). The load scenario fails on any oversized cookie.
+- PAR on the stateless registry: `OidcPushedAuthorizationRequestCompactor` (oidc-core-api) keeps a slim form of the
+  request context (maintainer choice over the serialized request); the PAR authentication keeps its principal id, date
+  and all attributes as text, since the authorize step merges those attributes into the user's authentication. The
+  registered service is looked up again by client id; client credentials are dropped from the parameters; the client's
+  pac4j profile is not kept. `request_uri` is read from the ticket `addTicket` returns.
+- The OAuth replicated session cookie path is configured in `OAuth20HandlerInterceptorAdapter.preHandle`
+  (`OAuth20ConfigurationContext.configureSessionReplicationCookiePath`) before the pac4j security interceptor can write
+  the cookie; configuring it only in the controllers left a `Path=/` cookie from the first request after startup.
+- Scenarios that start an external SAML2 IdP from `readyScript` (after CAS is up) must call `/cas/sp/idp/metadata`
+  before the first delegated login: the pac4j client failed to load the IdP metadata at startup, and redirecting to it
+  fails with a `NullPointerException` in `ChainingMetadataResolver.setResolvers` until that endpoint forces a reload.
+
+## Passwordless authentication review discipline
+
+- `AcceptPasswordlessAuthenticationAction` must not compare tokens itself. The submitted token goes to the
+  `AuthenticationManager` as a `OneTimePasswordCredential`, so wrong tokens are audited (`AUTHENTICATION_FAILED`, principal =
+  username); an earlier version compared first and only authenticated a match, which left failed guesses unaudited.
+- The same credential is authenticated more than once per login: by the action, again by `DefaultCasDelegatingWebflowEventResolver`
+  (it re-authenticates whatever credential is in the flow), and a third time by `ServiceTicketRequestWebflowEventResolver` when an
+  SSO session exists. So the handler must not consume the token. The action consumes it after `super.doExecuteInternal` returns a
+  non-failure event and before any ticket exists (the resolver only puts the result builder; the TGT is created in a later state),
+  and treats `deleteToken(...) == false` as a lost race. Removing the credential from the flow to avoid re-authentication breaks the
+  SSO/renew path, which then resolves the principal from the existing session.
+- View-state entry actions run on every re-entry. `STATE_ID_PASSWORDLESS_DISPLAY` creates and sends a token on entry, and the
+  accept failure transition re-enters it, so any change to the failure path changes how many emails/SMS a guess costs.
+- The MFA branch replacing the token is by design: there MFA is the only factor, and deployments either disable device
+  registration or put it behind MFA. Do not report `DetermineMultifactorPasswordlessAuthenticationAction` building a
+  credential-less authentication as a bypass.
+- View-state entry action results are ignored, so the create-token action returning `error()` does not change the flow; what it
+  does decide is whether a token is stored. `emailToken`/`smsToken` report true only for an actual delivery.
+- Token repositories must agree on the `PasswordlessTokenRepository` contract: `findToken` returns only unexpired tokens,
+  `deleteToken` removes the token `findToken` returned and returns true only for the caller that removed it (affected rows,
+  `getDeletedCount()`, `Map.remove`, a `2xx` from REST), and `clean()` removes expired rows. The encoded record is written before
+  the store assigns an id, so `findToken` sets the id from the stored entity (`withId`); the id inside the decoded record is null. The existing
+  `verifyCleaner` tests in the JPA and Mongo modules asserted that `clean()` removes a live token, i.e. they encoded the inverted
+  query; they now assert the contract. `clean()` is global, so keep exactly one test per class calling it and give every other
+  test a live token of its own.
+- `PasswordlessTokenAuthenticationHandler.supports` accepts any `OneTimePasswordCredential` subclass (Duo passcodes included)
+  because it is registered globally; check the credential type hierarchy before widening or relying on it.
+- When reviewing wallet/passkey integration, check against the current WebAuthn Level 3 Recommendation and the W3C Digital
+  Credentials API plus OpenID4VP 1.0 (DC API response modes) rather than older drafts.
+
+## FIDO2 WebAuthn / passkeys review discipline
+
+- Review against WebAuthn Level 3 (W3C Recommendation, 2026) and the Yubico `webauthn-server-core` version in
+  `gradle/libs.versions.toml`; the ceremony logic lives in the vendored `com.yubico.core.WebAuthnServer`, the browser side in
+  `support/cas-server-support-thymeleaf/.../static/js/webauthn/webauthn.js`.
+- Already present, do not re-report: related origins (`/.well-known/webauthn`), conditional mediation on the passwordless
+  user-id view, `signalAllAcceptedCredentials`/`signalCurrentUserDetails`, session-bound challenges, and the MFA handler's
+  check that the asserted user handle maps to the in-progress principal.
+- Yubico enforces UV only when the request says `REQUIRED`; `userVerificationRequirement` unset means UV is not checked.
+- The library copies `backupEligible`/`backupState`/transports only if the repository returns them from `lookup` and
+  `getCredentialIdsForUsername`, and it can only store transports the browser sent (`response.transports`).
+- All WebAuthn puppeteer registration scenarios set `allow-untrusted-attestation=true`; the defaults reject `none`
+  attestation, which synced passkey providers return. Keep that in mind before calling a scenario representative of defaults.
+- `allow-untrusted-attestation` and `user-verification-requirement` are operator decisions: do not change their defaults;
+  set them explicitly in tests and scenarios. UV `REQUIRED` needs a `ctap2` virtual authenticator (`cas.js` defaults to `u2f`).
+- Yubico requests `credProps` on every registration by itself; read the answer from `RegistrationResult.isDiscoverable()`.
+- `webauthn.js` uses the native `PublicKeyCredential.parse*OptionsFromJSON` and `toJSON()` with no fallback. Yubico parses
+  with `FAIL_ON_UNKNOWN_PROPERTIES=true`; `toJSON()` output passes only because `publicKey`/`publicKeyAlgorithm` are ignored
+  and `authenticatorData` is `@JsonIgnore`d, so check Yubico's `@JsonCreator`s before sending any new client field.
+- `signalUnknownCredential` is destructive (Chrome's virtual authenticator deletes the passkey). Report
+  `unknownCredential` only from the owning account's registrations (user handle, else request username), never from the
+  node-local credential index in `BaseWebAuthnCredentialRepository`, which lags other nodes by up to a minute.
+- Verification here: Maven Central is blocked, so check Yubico APIs by cloning `github.com/Yubico/java-webauthn-server` at the
+  version in `libs.versions.toml`. `webauthn.js` is too deep to stage; copy it under the ignored `build/` folder, stage that,
+  and exercise it in Playwright's Chromium with a CDP virtual authenticator.
+- `/.well-known/passkey-endpoints` follows the W3C Passkey Endpoints Working Draft (Jan 2026): 200, `application/json`, no
+  redirect, `{}` allowed. CAS has no direct URL into WebAuthn registration, so the defaults point at the plain account
+  profile (`/account`), never at a panel fragment such as `#divMfaRegisteredAccounts`, and only when
+  `CasFeatureModule.FeatureCatalog.AccountManagement.isRegistered()`. `WebAuthnControllerMvcTests` enables account
+  management, so its wired document carries both URLs; `{}` only appears with the feature off.
+- JSON examples pasted into the documentation are pretty-printed (one member per line, two-space indent), never minified.
+
+## Queue-backed ticket registries (Kafka, AMQP, Pulsar, GCP Pub/Sub)
+
+- Each node keeps its own copy of the registry and broadcasts every change, so the consuming side must be
+  one consumer group, queue or subscription *per node*, named from the node's `PublisherIdentifier`
+  (`cas.ticket.registry.core.queue-identifier`, random when unset). A name shared by the nodes turns the
+  broadcast into load balancing: each change reaches one node. The AMQP registry (a queue per identifier) and
+  the Kafka service registry stream (`groupId` = identifier) do it right, and the Kafka ticket registry now
+  consumes in `<group-id>-<queue-identifier>`. Pulsar (`subscription-name`) and GCP Pub/Sub
+  (`<topic>Subscription`) still share one name across nodes and have no two-instance scenario.
+- The symptom is a two-instance puppeteer scenario that fails about half its CI runs, with every in-process
+  attempt of a failing run failing alike: partitions are assigned once when the instances start and the
+  attempts reuse the running servers. `ci/tests/kafka/docker-compose.yml` sets `KAFKA_NUM_PARTITIONS=1`, so in
+  a shared group a single consumer owns each topic, and a ticket never reaches the other node, which then
+  rejects the TGC and clears it.

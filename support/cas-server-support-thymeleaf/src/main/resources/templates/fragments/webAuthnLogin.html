@@ -233,7 +233,7 @@
         </form>
 
         <script type="text/javascript" th:inline="javascript">
-            const csrfToken = getCookie('XSRF-TOKEN');
+            const csrfToken = $("#authnCsrfToken").val() || getCookie('XSRF-TOKEN');
 
             /*<![CDATA[*/
             let QRCodeAuthentication = /*[[${QRCodeAuthentication}]]*/;

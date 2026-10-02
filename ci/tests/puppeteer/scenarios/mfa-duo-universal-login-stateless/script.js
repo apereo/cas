@@ -18,9 +18,9 @@ const assert = require("assert");
         const ticket = await cas.assertTicketParameter(page);
         await cas.gotoLogin(page);
         await cas.assertInnerText(page, "#content div h2", "Log In Successful");
+        await cas.assertCookie(page);
         const localStorageData = await cas.readLocalStorage(page);
         const browserStorage = JSON.parse(localStorageData["CAS"]);
-        assert(browserStorage.CasBrowserStorageContext !== undefined);
         assert(browserStorage.DuoSecuritySessionContext !== undefined);
         await cas.closeBrowser(browser);
 

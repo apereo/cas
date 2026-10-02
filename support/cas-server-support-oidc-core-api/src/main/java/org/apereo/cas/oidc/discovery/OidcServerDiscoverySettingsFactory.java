@@ -4,9 +4,11 @@ import module java.base;
 import org.apereo.cas.authentication.MultifactorAuthenticationProvider;
 import org.apereo.cas.authentication.MultifactorAuthenticationUtils;
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.configuration.model.support.oidc.OidcVerifiableCredentialConfigurationProperties;
 import org.apereo.cas.oidc.issuer.OidcIssuerService;
 import lombok.RequiredArgsConstructor;
 import lombok.val;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.FactoryBean;
 import org.springframework.context.ConfigurableApplicationContext;
 
@@ -38,7 +40,7 @@ public class OidcServerDiscoverySettingsFactory implements FactoryBean<OidcServe
         val discoveryConfig = oidc.getDiscovery();
 
         discovery.setClaimsSupported(new LinkedHashSet<>(discoveryConfig.getClaims()));
-        discovery.setScopesSupported(new LinkedHashSet<>(discoveryConfig.getScopes()));
+        discovery.setScopesSupported(new LinkedHashSet<>(resolveScopesSupported(casProperties)));
         discovery.setResponseTypesSupported(new LinkedHashSet<>(discoveryConfig.getResponseTypesSupported()));
         discovery.setResponseModesSupported(new LinkedHashSet<>(discoveryConfig.getResponseModesSupported()));
         discovery.setSubjectTypesSupported(new LinkedHashSet<>(discoveryConfig.getSubjectTypes()));
@@ -118,6 +120,25 @@ public class OidcServerDiscoverySettingsFactory implements FactoryBean<OidcServe
         discovery.setBackchannelAuthenticationRequestSigningAlgValuesSupported(new LinkedHashSet<>(discoveryConfig.getBackchannelAuthenticationRequestSigningAlgValuesSupported()));
 
         return discovery;
+    }
+
+    /**
+     * Scopes CAS supports: the configured discovery scopes, plus the {@code scope} of every verifiable credential
+     * configuration. OpenID4VCI 1.0 section 5.1.2 lets a wallet request a credential by that scope instead of
+     * authorization details, so the scope is advertised and kept when an authorization request carries it, rather
+     * than having to be repeated among the discovery scopes.
+     *
+     * @param casProperties the CAS properties
+     * @return the supported scopes
+     */
+    public static List<String> resolveScopesSupported(final CasConfigurationProperties casProperties) {
+        val oidc = casProperties.getAuthn().getOidc();
+        val credentialScopes = oidc.getVc().getIssuer().getCredentialConfigurations()
+            .values()
+            .stream()
+            .map(OidcVerifiableCredentialConfigurationProperties::getScope)
+            .filter(StringUtils::isNotBlank);
+        return Stream.concat(oidc.getDiscovery().getScopes().stream(), credentialScopes).distinct().toList();
     }
 
     @Override

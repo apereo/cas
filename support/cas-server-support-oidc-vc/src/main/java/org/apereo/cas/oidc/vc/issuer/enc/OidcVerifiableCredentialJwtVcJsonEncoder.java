@@ -36,15 +36,13 @@ public class OidcVerifiableCredentialJwtVcJsonEncoder extends BaseOidcVerifiable
 
         return sign(principal.getId(), context, proof, jwtClaims -> {
             jwtClaims.setStringClaim("sub", principal.getId());
-            jwtClaims.setStringClaim("client_id", context.accessToken().getClientId());
-            jwtClaims.setStringClaim("credential_configuration_id", configurationId);
 
             val credentialSubject = new LinkedHashMap<String, Object>();
             credentialSubject.put("id", principal.getId());
             credentialSubject.putAll(verifiableClaims);
             val vc = new LinkedHashMap<String, Object>();
             vc.put("@context", List.of("https://www.w3.org/2018/credentials/v1"));
-            vc.put("type", List.of("VerifiableCredential", configuration.getScope()));
+            vc.put("type", resolveCredentialTypes(configurationId, configuration));
             vc.put("credentialSubject", credentialSubject);
             jwtClaims.setClaim("vc", vc);
 

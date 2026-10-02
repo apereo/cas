@@ -38,6 +38,8 @@ import jakarta.servlet.http.HttpServletResponse;
 @Getter
 @RequiredArgsConstructor
 public class CookieRetrievingCookieGenerator implements Serializable, CasCookieBuilder {
+    private static final int MAXIMUM_COOKIE_LENGTH = 4096;
+
     @Serial
     private static final long serialVersionUID = -4926982428809856313L;
 
@@ -212,6 +214,11 @@ public class CookieRetrievingCookieGenerator implements Serializable, CasCookieB
         }
         val value = Strings.CI.removeEnd(builder.toString(), ";");
         LOGGER.trace("Adding cookie header as [{}]", value);
+        val cookieLength = value.getBytes(StandardCharsets.UTF_8).length;
+        if (cookieLength > MAXIMUM_COOKIE_LENGTH) {
+            LOGGER.warn("Cookie [{}] is [{}] bytes, larger than the [{}] bytes browsers are guaranteed to accept, and may be dropped by the browser",
+                cookie.getName(), cookieLength, MAXIMUM_COOKIE_LENGTH);
+        }
         val setCookieHeaders = response.getHeaders("Set-Cookie");
         response.setHeader("Set-Cookie", value);
         setCookieHeaders.stream()

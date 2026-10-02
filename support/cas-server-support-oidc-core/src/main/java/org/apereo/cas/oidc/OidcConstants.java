@@ -324,6 +324,10 @@ public interface OidcConstants {
      */
     String WELL_KNOWN_OPENID_CREDENTIAL_ISSUER_URL = WELL_KNOWN_URL + "/openid-credential-issuer";
     /**
+     * .well-known/jwt-vc-issuer path url, the JWT VC Issuer Metadata of SD-JWT VC.
+     */
+    String WELL_KNOWN_JWT_VC_ISSUER_URL = WELL_KNOWN_URL + "/jwt-vc-issuer";
+    /**
      * .well-known/oauth-authorization-server path url.
      */
     String WELL_KNOWN_OAUTH_AUTHORIZATION_SERVER_URL = WELL_KNOWN_URL + "/oauth-authorization-server";

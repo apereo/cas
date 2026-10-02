@@ -4,7 +4,7 @@ import module java.base;
 import org.apereo.cas.AbstractOAuth20Tests;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
-import org.apereo.cas.ticket.registry.TicketCompactor;
+import org.apereo.cas.ticket.registry.compact.TicketCompactor;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.params.ParameterizedTest;

@@ -59,6 +59,7 @@ import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.MessageSource;
 import org.springframework.scheduling.TaskScheduler;
+import jakarta.servlet.http.HttpServletRequest;
 
 /**
  * This is {@link OAuth20ConfigurationContext}.
@@ -193,5 +194,19 @@ public class OAuth20ConfigurationContext {
                 });
         }
         return ticketGrantingTicket;
+    }
+
+    /**
+     * Set the path of the replicated session cookie from the request context path, when sessions are replicated
+     * and the cookie path is configured automatically. This must happen before anything writes the cookie, such as
+     * the security interceptor that saves the requested URL, or the first cookie is issued with the default path.
+     *
+     * @param request the request
+     */
+    public void configureSessionReplicationCookiePath(final HttpServletRequest request) {
+        val replication = casProperties.getAuthn().getOauth().getSessionReplication();
+        if (replication.isReplicateSessions() && replication.getCookie().isAutoConfigureCookiePath()) {
+            CookieUtils.configureCookiePath(request, oauthDistributedSessionCookieGenerator);
+        }
     }
 }
