@@ -47,7 +47,12 @@ async function createPublicKey() {
     
     let url = "https://localhost:9859/anything/sample1";
     await cas.logg(`Trying with URL ${url}`);
-    const payload = await getPayload(page, url, "client", "secret");
+    const payload = await getPayload(page, url, "client", [
+        {
+            "type": "openid_credential",
+            "credential_configuration_id": "myorg"
+        }
+    ], "openid");
     await cas.closeBrowser(browser);
 
     url = "https://localhost:8443/cas/oidc/oidcVcCredential";
@@ -91,23 +96,40 @@ async function createPublicKey() {
     assert(decoded.roles.includes("user"));
     assert(decoded.roles.includes("admin"));
     assert(decoded.student_id === undefined);
+
+    await cas.log("Requesting the credential by its scope instead of authorization details");
+    const scopedBrowser = await cas.newBrowser(cas.browserOptions());
+    const scopedPage = await cas.newPage(scopedBrowser);
+    const scopedPayload = await getPayload(scopedPage, "https://localhost:9859/anything/sample1",
+        "client", undefined, "openid SystemCredential");
+    await cas.closeBrowser(scopedBrowser);
+    assert(scopedPayload.authorization_details === undefined);
+
+    const scopedResult = JSON.parse(await cas.doRequest(url, "POST", {
+        "Content-Type": "application/json",
+        "Authorization": `Bearer ${scopedPayload.access_token}`
+    }, 200, JSON.stringify({
+        credential_configuration_id: "myorg",
+        proofs: {
+            jwt: [await createPublicKey()]
+        }
+    })));
+    await cas.log(scopedResult);
+    assert(scopedResult.credentials.length === 1);
+    const scopedCredential = await cas.decodeJwt(scopedResult.credentials[0].credential.split("~")[0]);
+    assert(scopedCredential.given_name === "CAS");
 })();
 
-async function getPayload(page, redirectUri, clientId) {
+async function getPayload(page, redirectUri, clientId, authorizationDetails, scope) {
     const codeChallenge = "cwr1RXW4wcqyi0Eq9h1tD2tliFRYf36HMqG0lumwCtE";
     const codeVerifier = "zkuyfY0CcG1yuVojREYwtbnpjOsOleD.OWkBpNVTHKyABMJ0ly_ZKTeOi."
         + "STPvshXsHyShcyAzm6z4ThKr2Y91RKFLvmOkJEiBhaSzIp~YHH3wkrzlB6m~y8h~td_pPg";
 
-    const authorization = [
-        {
-            "type": "openid_credential",
-            "credential_configuration_id": "myorg"
-        }
-    ];
-
     let url = "https://localhost:8443/cas/oidc/authorize";
-    url += `?response_type=code&client_id=${clientId}&scope=openid&redirect_uri=${redirectUri}`;
-    url += `&authorization_details=${encodeURIComponent(JSON.stringify(authorization))}&issuer_state=abcdefg1234567890`;
+    url += `?response_type=code&client_id=${clientId}&scope=${encodeURIComponent(scope)}&redirect_uri=${redirectUri}`;
+    if (authorizationDetails !== undefined) {
+        url += `&authorization_details=${encodeURIComponent(JSON.stringify(authorizationDetails))}`;
+    }
     url += `&code_challenge=${codeChallenge}&code_challenge_method=S256&issuer_state=abcdefg1234567890`;
 
     await cas.goto(page, url);

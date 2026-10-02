@@ -29,6 +29,8 @@ dependencies {
     implementation project(":support:cas-server-support-oauth-api")
     implementation project(":support:cas-server-support-oauth-services")
 
+    compileOnly project(":support:cas-server-support-stateless-ticket-registry-api")
+    
     testImplementation project(":core:cas-server-core-audit")
     testImplementation project(":core:cas-server-core-util")
     testImplementation project(":core:cas-server-core-scripting")

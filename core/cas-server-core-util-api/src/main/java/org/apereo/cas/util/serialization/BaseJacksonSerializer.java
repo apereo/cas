@@ -247,4 +247,17 @@ public abstract class BaseJacksonSerializer<T> implements StringSerializer<T> {
         return typeWriter;
     }
 
+    /**
+     * Serializer for base jackson serializer.
+     *
+     * @param applicationContext the application context
+     * @param typeToSerialize    the type to serialize
+     * @return the base jackson serializer
+     */
+    public static BaseJacksonSerializer forType(final ConfigurableApplicationContext applicationContext, final Class typeToSerialize) {
+        return new BaseJacksonSerializer(MINIMAL_PRETTY_PRINTER, applicationContext, typeToSerialize) {
+            @Serial
+            private static final long serialVersionUID = 6455532317616062411L;
+        };
+    }
 }

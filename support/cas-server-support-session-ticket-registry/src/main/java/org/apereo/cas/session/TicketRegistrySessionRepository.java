@@ -2,6 +2,7 @@ package org.apereo.cas.session;
 
 import module java.base;
 import org.apereo.cas.ticket.InvalidTicketException;
+import org.apereo.cas.ticket.Ticket;
 import org.apereo.cas.ticket.TicketFactory;
 import org.apereo.cas.ticket.TransientSessionTicket;
 import org.apereo.cas.ticket.TransientSessionTicketFactory;
@@ -11,7 +12,6 @@ import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.util.serialization.SerializationUtils;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-import org.apache.commons.lang3.tuple.Pair;
 import org.jspecify.annotations.NonNull;
 import org.jspecify.annotations.Nullable;
 import org.springframework.beans.factory.ObjectProvider;
@@ -26,6 +26,13 @@ import org.springframework.transaction.annotation.Transactional;
 
 /**
  * This is {@link TicketRegistrySessionRepository}.
+ * Sessions are kept as transient tickets whose properties are all text: times as ISO-8601 instants and
+ * all session attributes serialized together as text under a single property, so ticket registries that only keep text
+ * properties, such as the stateless ticket registry, keep them intact. A session always has the same set of properties,
+ * so saving a session only replaces their values and never adds or removes properties of a ticket that a registry, such as
+ * the default in-memory registry, may be handing out to concurrent requests at the same time.
+ * After a session is saved, its id becomes the id of the ticket as stored by the registry,
+ * so the session cookie carries an id the registry can find.
  *
  * @author Misagh Moayyed
  * @since 7.3.0
@@ -33,6 +40,8 @@ import org.springframework.transaction.annotation.Transactional;
 @Slf4j
 @Transactional(transactionManager = TicketRegistry.TICKET_TRANSACTION_MANAGER)
 public class TicketRegistrySessionRepository extends MapSessionRepository implements FindByIndexNameSessionRepository<MapSession> {
+    private static final String ATTRIBUTES_PROPERTY = "attributes";
+
     private final IndexResolver<Session> indexResolver = new DelegatingIndexResolver<>(new PrincipalNameIndexResolver<>());
 
     private final ObjectProvider<TicketRegistry> ticketRegistry;
@@ -52,19 +61,26 @@ public class TicketRegistrySessionRepository extends MapSessionRepository implem
                 deleteById(session.getOriginalId());
             }
             val ticketId = TransientSessionTicketFactory.normalizeTicketId(session.getId());
-            try {
-                val currentTicket = ticketRegistry.getObject().getTicket(ticketId, TransientSessionTicket.class);
-                currentTicket.getProperties().putAll(convertSessionAttributes(session));
-                LOGGER.trace("Updating session [{}] with properties [{}]", currentTicket.getId(), currentTicket);
-                ticketRegistry.getObject().updateTicket(currentTicket);
-            } catch (final InvalidTicketException e) {
-                val factory = (TransientSessionTicketFactory) ticketFactory.getObject().get(TransientSessionTicket.class);
-                val properties = convertSessionAttributes(session);
-                val ticket = factory.create(ticketId, properties);
-                LOGGER.trace("Saving session [{}] with properties [{}]", ticket.getId(), ticket);
-                ticketRegistry.getObject().addTicket(ticket);
+            val storedTicket = storeSession(session, ticketId);
+            if (!storedTicket.getId().equals(ticketId)) {
+                LOGGER.trace("Session [{}] is stored as [{}]", ticketId, storedTicket.getId());
+                session.setId(storedTicket.getId());
             }
         });
+    }
+
+    private Ticket storeSession(final MapSession session, final String ticketId) throws Exception {
+        try {
+            val currentTicket = ticketRegistry.getObject().getTicket(ticketId, TransientSessionTicket.class);
+            currentTicket.getProperties().putAll(convertSessionAttributes(session));
+            LOGGER.trace("Updating session [{}] with properties [{}]", currentTicket.getId(), currentTicket);
+            return Objects.requireNonNull(ticketRegistry.getObject().updateTicket(currentTicket), () -> "Unable to update session " + ticketId);
+        } catch (final InvalidTicketException e) {
+            val factory = (TransientSessionTicketFactory) ticketFactory.getObject().get(TransientSessionTicket.class);
+            val ticket = factory.create(ticketId, convertSessionAttributes(session));
+            LOGGER.trace("Saving session [{}] with properties [{}]", ticket.getId(), ticket);
+            return Objects.requireNonNull(ticketRegistry.getObject().addTicket(ticket), () -> "Unable to store session " + ticketId);
+        }
     }
 
     @Override
@@ -82,16 +98,24 @@ public class TicketRegistrySessionRepository extends MapSessionRepository implem
 
     private static @NonNull MapSession convertTicketToSession(final TransientSessionTicket ticket) {
         val newSession = new MapSession(ticket.getId());
-        newSession.setCreationTime(ticket.getProperty("creationTime", Instant.class));
-        newSession.setLastAccessedTime(ticket.getProperty("lastAccessedTime", Instant.class));
-        val sessionAttributes = ticket.getProperty("attributes", Map.class);
-        Objects.requireNonNull(sessionAttributes).forEach((key, value) -> {
-            val decoded = EncodingUtils.decodeBase64(value.toString());
-            val attributeValue = SerializationUtils.deserialize(decoded, Serializable.class);
-            newSession.setAttribute(key.toString(), attributeValue);
-        });
-        LOGGER.trace("Found session [{}] with attributes [{}]", newSession.getId(), sessionAttributes);
+        newSession.setCreationTime(toInstant(ticket.getProperties().get("creationTime")));
+        newSession.setLastAccessedTime(toInstant(ticket.getProperties().get("lastAccessedTime")));
+        val attributes = ticket.getProperties().get(ATTRIBUTES_PROPERTY);
+        if (attributes != null) {
+            val decoded = EncodingUtils.decodeBase64(attributes.toString());
+            val sessionAttributes = (Map<String, Serializable>) SerializationUtils.deserialize(decoded, Map.class);
+            sessionAttributes.forEach(newSession::setAttribute);
+        }
+        LOGGER.trace("Found session [{}] with attributes [{}]", newSession.getId(), newSession.getAttributeNames());
         return newSession;
+    }
+
+    private static Instant toInstant(final @Nullable Object value) {
+        return switch (value) {
+            case final Instant instant -> instant;
+            case null -> Instant.now();
+            default -> Instant.parse(value.toString());
+        };
     }
 
     @Override
@@ -115,8 +139,8 @@ public class TicketRegistrySessionRepository extends MapSessionRepository implem
 
     private Map<String, Object> convertSessionAttributes(final MapSession session) {
         val properties = new LinkedHashMap<String, Object>();
-        properties.put("lastAccessedTime", session.getLastAccessedTime());
-        properties.put("creationTime", session.getCreationTime());
+        properties.put("lastAccessedTime", session.getLastAccessedTime().toString());
+        properties.put("creationTime", session.getCreationTime().toString());
         properties.put("originalId", session.getOriginalId());
         properties.put("id", session.getId());
 
@@ -125,15 +149,14 @@ public class TicketRegistrySessionRepository extends MapSessionRepository implem
             .get(FindByIndexNameSessionRepository.PRINCIPAL_NAME_INDEX_NAME);
         properties.put(FindByIndexNameSessionRepository.PRINCIPAL_NAME_INDEX_NAME, principalName);
 
-        val sessionAttributes = session.getAttributeNames()
-            .stream()
-            .map(name -> {
-                val value = (Serializable) session.getAttribute(name);
-                return value == null ? null : Pair.of(name, SerializationUtils.serializeBase64(value));
-            })
-            .filter(Objects::nonNull)
-            .collect(Collectors.toMap(Pair::getKey, Pair::getValue));
-        properties.put("attributes", sessionAttributes);
+        val sessionAttributes = new LinkedHashMap<String, Serializable>();
+        session.getAttributeNames().forEach(name -> {
+            val value = (Serializable) session.getAttribute(name);
+            if (value != null) {
+                sessionAttributes.put(name, value);
+            }
+        });
+        properties.put(ATTRIBUTES_PROPERTY, SerializationUtils.serializeBase64(sessionAttributes));
         return properties;
     }
 }

@@ -19,17 +19,15 @@ import com.nimbusds.jose.JWSHeader;
 import com.nimbusds.jose.JWSObject;
 import com.nimbusds.jose.Payload;
 import com.nimbusds.jose.crypto.ECDSASigner;
-import com.nimbusds.jose.crypto.Ed25519Signer;
 import com.nimbusds.jose.crypto.RSASSASigner;
 import com.nimbusds.jose.jwk.Curve;
 import com.nimbusds.jose.jwk.ECKey;
-import com.nimbusds.jose.jwk.OctetKeyPair;
 import com.nimbusds.jose.jwk.RSAKey;
-import com.nimbusds.jose.jwk.gen.OctetKeyPairGenerator;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
+import org.jose4j.jwk.PublicJsonWebKey;
 import org.jose4j.jws.AlgorithmIdentifiers;
-import org.jspecify.annotations.Nullable;
+import org.jose4j.jws.JsonWebSignature;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -87,6 +85,28 @@ class OidcJwksRegistrationEndpointControllerTests extends AbstractOidcTests {
             .andExpect(status().isUnauthorized());
     }
 
+    @Test
+    void verifyEd25519ProofSignedByAnotherKeyIsRefused() throws Throwable {
+        val registeredService = getOidcRegisteredService();
+        registeredService.setClientId(UUID.randomUUID().toString());
+        servicesManager.save(registeredService);
+
+        val accessToken = getAccessToken(registeredService.getClientId());
+        when(accessToken.getScopes()).thenReturn(Set.of(OidcConstants.CLIENT_JWKS_REGISTRATION_SCOPE));
+        ticketRegistry.addTicket(accessToken);
+
+        val presentedKey = KeyPairGenerator.getInstance("Ed25519").generateKeyPair();
+        val signingKey = KeyPairGenerator.getInstance("Ed25519").generateKeyPair();
+        val proof = buildEdDsaRegistrationProof(presentedKey.getPublic(), signingKey.getPrivate());
+
+        mockMvc.perform(post("/cas/oidc/" + OidcConstants.JWKS_URL + "/clients")
+                .contentType(MediaType.APPLICATION_JSON_VALUE)
+                .queryParam(OAuth20Constants.TOKEN, accessToken.getId())
+                .content(new ClientJwksRegistrationRequest(proof).toJson())
+                .with(withHttpRequestProcessor()))
+            .andExpect(status().isUnauthorized());
+    }
+
     @ParameterizedTest
     @ValueSource(strings = {"Ed25519", "EC", "RSA"})
     void verifyChallengeWithAccessToken(final String algorithm) throws Throwable {
@@ -133,19 +153,8 @@ class OidcJwksRegistrationEndpointControllerTests extends AbstractOidcTests {
             default -> throw new IllegalArgumentException("Unsupported algorithm: " + algorithm);
         };
 
-        val jwt = switch (signingAlg) {
-            case AlgorithmIdentifiers.EDDSA -> {
-                val header = new JWSHeader.Builder(JWSAlgorithm.EdDSA)
-                    .keyID(jkt)
-                    .jwk(Objects.requireNonNull(proof.keyPair()).toPublicJWK())
-                    .build();
-                val jws = new JWSObject(header, new Payload(claims.toJson()));
-                jws.sign(new Ed25519Signer(Objects.requireNonNull(proof.keyPair())));
-                yield jws.serialize().getBytes(StandardCharsets.UTF_8);
-            }
-            default -> EncodingUtils.signJws(new BasicIdentifiableKey(jkt, proof.privateKey()),
-                claims.toJson().getBytes(StandardCharsets.UTF_8), Map.of(), signingAlg);
-        };
+        val jwt = EncodingUtils.signJws(new BasicIdentifiableKey(jkt, proof.privateKey()),
+            claims.toJson().getBytes(StandardCharsets.UTF_8), Map.of(), signingAlg);
 
         val credentials = new UsernamePasswordCredentials(
             OAuth20Constants.CLIENT_ASSERTION_TYPE_JWT_BEARER,
@@ -197,18 +206,21 @@ class OidcJwksRegistrationEndpointControllerTests extends AbstractOidcTests {
             return new Proof(jws.serialize(), keyPair.getPublic(), keyPair.getPrivate());
         }
         if ("Ed25519".equalsIgnoreCase(algorithm)) {
-            val jwk = new OctetKeyPairGenerator(Curve.Ed25519).generate();
-            val publicJwk = jwk.toPublicJWK();
-            val header = new JWSHeader.Builder(JWSAlgorithm.EdDSA)
-                .jwk(publicJwk)
-                .type(new JOSEObjectType("register-key+jws"))
-                .build();
-            val jws = new JWSObject(header, new Payload("test"));
-            jws.sign(new Ed25519Signer(jwk));
-            return new Proof(jws.serialize(), jwk);
+            val keyPair = KeyPairGenerator.getInstance(algorithm).generateKeyPair();
+            return new Proof(buildEdDsaRegistrationProof(keyPair.getPublic(), keyPair.getPrivate()), keyPair.getPublic(), keyPair.getPrivate());
         }
 
         throw new IllegalArgumentException("Unsupported algorithm: " + algorithm);
+    }
+
+    private static String buildEdDsaRegistrationProof(final PublicKey presentedKey, final PrivateKey signingKey) throws Exception {
+        val jws = new JsonWebSignature();
+        jws.setPayload("test");
+        jws.setAlgorithmHeaderValue(AlgorithmIdentifiers.EDDSA);
+        jws.setHeader("typ", "register-key+jws");
+        jws.setJwkHeader(PublicJsonWebKey.Factory.newPublicJwk(presentedKey));
+        jws.setKey(signingKey);
+        return jws.getCompactSerialization();
     }
 
     private Authenticator getAuthenticator() {
@@ -216,14 +228,6 @@ class OidcJwksRegistrationEndpointControllerTests extends AbstractOidcTests {
         return client.getAuthenticator();
     }
 
-    private record Proof(String proof, @Nullable PublicKey publicKey,
-        @Nullable PrivateKey privateKey, @Nullable OctetKeyPair keyPair) {
-        Proof(final String proof, final OctetKeyPair keyPair) {
-            this(proof, null, null, keyPair);
-        }
-
-        Proof(final String proof, final PublicKey publicKey, final PrivateKey privateKey) {
-            this(proof, publicKey, privateKey, null);
-        }
+    private record Proof(String proof, PublicKey publicKey, PrivateKey privateKey) {
     }
 }

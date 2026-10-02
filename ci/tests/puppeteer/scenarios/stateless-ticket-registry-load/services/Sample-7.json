@@ -1,0 +1,14 @@
+{
+  "@class" : "org.apereo.cas.services.CasRegisteredService",
+  "serviceId" : "^https://localhost:9859/anything/mfa.*",
+  "name" : "Simple MFA",
+  "id" : 7,
+  "evaluationOrder" : 7,
+  "attributeReleasePolicy" : {
+    "@class" : "org.apereo.cas.services.ReturnAllAttributeReleasePolicy"
+  },
+  "multifactorPolicy" : {
+    "@class" : "org.apereo.cas.services.DefaultRegisteredServiceMultifactorPolicy",
+    "multifactorAuthenticationProviders" : [ "java.util.LinkedHashSet", [ "mfa-simple" ] ]
+  }
+}

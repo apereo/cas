@@ -60,4 +60,36 @@ public class OidcVerifiableCredentialIssuerMetadataController extends BaseOAuth2
         val body = metadataService.build();
         return ResponseEntity.ok().body(body);
     }
+
+    /**
+     * JWT VC Issuer Metadata, as defined by SD-JWT VC: where a verifier other than CAS finds the keys that sign
+     * the credentials CAS issues. Its {@code issuer} equals the {@code iss} of every credential, and its
+     * {@code jwks_uri} is the OpenID Connect JWKS, which publishes the credential signing keys under the {@code kid}
+     * each credential names. A verifier locates this document by inserting {@code /.well-known/jwt-vc-issuer}
+     * between the host and the path of {@code iss}, so a deployment under a context path routes it the same way as
+     * the credential issuer metadata.
+     *
+     * @param request  the request
+     * @param response the response
+     * @return the response entity
+     */
+    @GetMapping(value = {
+        '/' + OidcConstants.BASE_OIDC_URL + '/' + OidcConstants.WELL_KNOWN_JWT_VC_ISSUER_URL,
+        "/**/" + OidcConstants.WELL_KNOWN_JWT_VC_ISSUER_URL
+    }, produces = MediaType.APPLICATION_JSON_VALUE)
+    @Operation(summary = "Handle JWT VC issuer metadata request",
+        description = "Publishes where verifiers find the keys that sign issued verifiable credentials")
+    public ResponseEntity handleJwtVcIssuerMetadata(final HttpServletRequest request,
+                                                    final HttpServletResponse response) {
+        val webContext = new JEEContext(request, response);
+        if (!getConfigurationContext().getIssuerService().validateIssuer(webContext, List.of(OidcConstants.WELL_KNOWN_JWT_VC_ISSUER_URL))) {
+            LOGGER.warn("CAS cannot accept the request given the issuer is invalid.");
+            val body = OAuth20Utils.getErrorResponseBody(OAuth20Constants.INVALID_REQUEST, "Invalid issuer");
+            return ResponseEntity.badRequest().body(body);
+        }
+        val body = new LinkedHashMap<String, Object>();
+        body.put("issuer", getConfigurationContext().getCasProperties().getAuthn().getOidc().getCore().getIssuer());
+        body.put("jwks_uri", getConfigurationContext().getDiscoverySettings().getJwksUri());
+        return ResponseEntity.ok().body(body);
+    }
 }

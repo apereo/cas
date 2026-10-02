@@ -4,10 +4,8 @@ import module java.base;
 import org.apereo.cas.configuration.support.TriStateBoolean;
 import org.apereo.cas.monitor.Monitorable;
 import org.apereo.cas.support.events.sso.CasSingleSignOnSessionCreatedEvent;
-import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.web.cookie.CasCookieBuilder;
-import org.apereo.cas.web.flow.CasWebflowConstants;
 import org.apereo.cas.web.flow.SingleSignOnParticipationRequest;
 import org.apereo.cas.web.flow.SingleSignOnParticipationStrategy;
 import org.apereo.cas.web.flow.actions.BaseCasWebflowAction;
@@ -20,7 +18,6 @@ import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.inspektr.common.web.ClientInfoHolder;
 import org.jspecify.annotations.Nullable;
-import org.springframework.webflow.core.collection.LocalAttributeMap;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 
@@ -86,10 +83,6 @@ public class SendTicketGrantingTicketAction extends BaseCasWebflowAction {
 
     protected Event createSingleSignOnCookie(final RequestContext requestContext, final String ticketGrantingTicketId) {
         val ticketGrantingTicket = ticketRegistry.getTicket(ticketGrantingTicketId);
-        if (ticketGrantingTicket.isStateless()) {
-            return result(CasWebflowConstants.TRANSITION_ID_WRITE_BROWSER_STORAGE,
-                new LocalAttributeMap<>(TicketGrantingTicket.class.getName(), ticketGrantingTicketId));
-        }
         val request = WebUtils.getHttpServletRequestFromExternalWebflowContext(requestContext);
         val response = WebUtils.getHttpServletResponseFromExternalWebflowContext(requestContext);
         val rememberMeAuthentication = CookieRetrievingCookieGenerator.isRememberMeAuthentication(requestContext);

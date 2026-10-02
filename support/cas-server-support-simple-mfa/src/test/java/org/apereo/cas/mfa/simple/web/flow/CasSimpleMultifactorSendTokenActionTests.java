@@ -140,6 +140,19 @@ class CasSimpleMultifactorSendTokenActionTests {
         }
 
         @Test
+        void verifyFlowCredentialKeepsStoredTokenId() throws Throwable {
+            val context = buildRequestContextFor("casuser");
+            val credential = new CasSimpleMultifactorTokenCredential();
+            context.getFlowScope().put(CasWebflowConstants.VAR_ID_CREDENTIAL, credential);
+            val theToken = executeTokenRequest(context).getKey();
+            assertEquals(theToken, credential.getTicketId());
+
+            credential.setToken(theToken);
+            assertNotNull(authenticationHandler.authenticate(credential, mock(Service.class)));
+            assertNull(ticketRegistry.getTicket(theToken));
+        }
+
+        @Test
         void verifyFailsForUser() throws Throwable {
             val theToken1 = createToken("casuser1");
             assertNotNull(theToken1);

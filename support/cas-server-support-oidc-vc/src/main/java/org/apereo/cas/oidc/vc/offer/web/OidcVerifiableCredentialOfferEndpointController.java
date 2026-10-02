@@ -143,6 +143,8 @@ public class OidcVerifiableCredentialOfferEndpointController extends BaseOAuth20
         val body = new LinkedHashMap<String, Object>();
         body.put("transactionId", transactionId);
         body.put("credentialOfferUri", offerUri);
+        body.put("credentialOfferLink", "openid-credential-offer://?credential_offer_uri="
+            + URLEncoder.encode(offerUri, StandardCharsets.UTF_8));
         val transactionCode = offer.getGrants().getPreAuthorizedCodeGrant().getTransactionCode();
         FunctionUtils.doIfNotNull(transactionCode, _ -> body.put("txCode", transactionCode.getValue()));
         return ResponseEntity.ok(body);

@@ -9,8 +9,8 @@ import org.apereo.cas.services.RegisteredServiceContact;
 import org.apereo.cas.util.function.FunctionUtils;
 import com.nimbusds.oauth2.sdk.GrantType;
 import com.nimbusds.oauth2.sdk.ResponseType;
+import com.nimbusds.openid.connect.sdk.federation.entities.CommonFederationClaimsSet;
 import com.nimbusds.openid.connect.sdk.federation.entities.EntityID;
-import com.nimbusds.openid.connect.sdk.federation.entities.EntityStatementClaimsSet;
 import com.nimbusds.openid.connect.sdk.federation.entities.EntityType;
 import com.nimbusds.openid.connect.sdk.federation.trust.TrustChainResolver;
 import com.nimbusds.openid.connect.sdk.rp.OIDCClientMetadata;
@@ -148,7 +148,7 @@ public class OidcFederationDefaultTrustChainResolver implements OidcFederationTr
             val metadataPolicy = chain.resolveCombinedMetadataPolicy(EntityType.OPENID_RELYING_PARTY);
 
             val claims = chain.getLeafConfiguration().getSignedStatement().getJWTClaimsSet();
-            val metadata = (Map) claims.getClaim(EntityStatementClaimsSet.METADATA_CLAIM_NAME);
+            val metadata = (Map) claims.getClaim(CommonFederationClaimsSet.METADATA_CLAIM_NAME);
             val rawRp = new JSONObject((Map) metadata.get(EntityType.OPENID_RELYING_PARTY.getValue()));
             val clientMetadataJson = metadataPolicy.apply(rawRp);
             return Optional.of(new TrustChainMetadata(OIDCClientMetadata.parse(clientMetadataJson), chain.resolveExpirationTime()));

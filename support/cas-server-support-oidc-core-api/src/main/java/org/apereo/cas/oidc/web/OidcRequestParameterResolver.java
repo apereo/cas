@@ -1,6 +1,7 @@
 package org.apereo.cas.oidc.web;
 
 import module java.base;
+import org.apereo.cas.oidc.discovery.OidcServerDiscoverySettingsFactory;
 import org.apereo.cas.support.oauth.web.DefaultOAuth20RequestParameterResolver;
 import org.apereo.cas.token.JwtBuilder;
 import org.pac4j.core.context.WebContext;
@@ -18,7 +19,7 @@ public class OidcRequestParameterResolver extends DefaultOAuth20RequestParameter
 
     @Override
     protected List<String> getSupportedScopes(final WebContext context) {
-        return jwtBuilder.getCasProperties().getAuthn().getOidc().getDiscovery().getScopes();
+        return OidcServerDiscoverySettingsFactory.resolveScopesSupported(jwtBuilder.getCasProperties());
     }
 
     @Override

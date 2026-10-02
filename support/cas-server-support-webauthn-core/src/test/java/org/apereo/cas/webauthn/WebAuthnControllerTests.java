@@ -28,11 +28,15 @@ import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.security.authentication.TestingAuthenticationToken;
+import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 /**
  * This is {@link WebAuthnControllerTests}.
@@ -82,12 +86,23 @@ class WebAuthnControllerTests {
 
         val server = mock(WebAuthnServer.class);
         when(server.getSessionManager()).thenReturn(sessionManager);
-        val controller = new WebAuthnController(server);
-        val request = new MockHttpServletRequest();
+        val mockMvc = MockMvcBuilders.standaloneSetup(new WebAuthnController(server)).build();
+        val finishRequest = post("/webauthn/authenticate/finish")
+            .contentType(MediaType.APPLICATION_JSON)
+            .accept(MediaType.APPLICATION_JSON)
+            .content("{}");
 
-        when(server.finishAuthentication(any(), any())).thenReturn(Either.left(List.of("fails")));
-        var result = controller.finishAuthentication(request, "casuser");
-        assertEquals(HttpStatus.BAD_REQUEST, result.getStatusCode());
+        when(server.finishAuthentication(any(), any()))
+            .thenReturn(Either.left(new WebAuthnServer.AuthenticationFailure(List.of("fails"), true)));
+        mockMvc.perform(finishRequest)
+            .andExpect(status().isBadRequest())
+            .andExpect(jsonPath("$.messages[0]").value("fails"))
+            .andExpect(jsonPath("$.unknownCredential").value(true));
+
+        when(server.finishAuthentication(any(), any())).thenReturn(Either.left(WebAuthnServer.AuthenticationFailure.of("fails")));
+        mockMvc.perform(finishRequest)
+            .andExpect(status().isBadRequest())
+            .andExpect(jsonPath("$.unknownCredential").value(false));
 
         val registration = CredentialRegistration.builder()
             .registrationTime(Instant.now(Clock.systemUTC()))
@@ -136,8 +151,10 @@ class WebAuthnControllerTests {
 
         when(sessionManager.getSession(any(), any())).thenReturn(Optional.of(sessionToken));
         when(server.finishAuthentication(any(), any())).thenReturn(Either.right(authnResult));
-        result = controller.finishAuthentication(request, "casuser");
-        assertEquals(HttpStatus.OK, result.getStatusCode());
+        mockMvc.perform(finishRequest)
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$.success").value(true))
+            .andExpect(jsonPath("$.username").value("casuser"));
     }
 
     @Test

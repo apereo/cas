@@ -120,18 +120,18 @@ The CAS documentation site has received a visual and functional overhaul. Notabl
 - [JDBC policies](../authorization/Heimdall-Authorization-Overview.html) use a shared connection pool, registered as an application context bean and optionally named via `dataSourceName`,
   instead of opening a new database connection for every decision. Queries time out after `queryTimeout` (five seconds by default).
   Policies are evaluated in order rather than on the shared thread pool.
-- AuthZEN subjects are resolved from CAS attribute repositories only for the `user` subject type. Required and rejected attribute policies accept qualified names such as `subject.properties.department`,
+- AuthZEN subjects are resolved from CAS [attribute repositories](../integration/Attribute-Resolution.html) only for the `user` subject type. Required and rejected attribute policies accept qualified names such as `subject.properties.department`,
   `resource.properties.owner`, `action.properties.method` and `context.channel`. HTTP request headers are no longer added to the
   AuthZEN request context; on `/heimdall/authorize` they no longer override body entries or include protocol headers.
 - A resource that does not set `enforceAllPolicies` is now granted when any one of its policies grants access, as documented;
   previously every policy had to grant. Set `enforceAllPolicies` to `true` on resources that rely on the old behavior.
   In that mode, a policy that fails with an error no longer prevents a later policy from granting access.
-- Heimdall supports the AuthZEN [access evaluations API](../authorization/Heimdall-Authorization-Overview.html#access-evaluations) at
+- Heimdall supports the AuthZEN [access evaluations API](../authorization/Heimdall-Authorization-Overview.html) at
   `/heimdall/authzen/evaluations`, with the `execute_all`, `deny_on_first_deny` and `permit_on_first_permit` semantics.
-- Heimdall publishes AuthZEN [policy decision point metadata](../authorization/Heimdall-Authorization-Overview.html#policy-decision-point-metadata) at
+- Heimdall publishes AuthZEN [policy decision point metadata](../authorization/Heimdall-Authorization-Overview.html) at
   `/heimdall/.well-known/authzen-configuration`; the well-known location defined by the specification needs a
   [rewrite rule](../installation/Servlet-Container-Embedded-Tomcat-RewriteValve.html).
-- Denied AuthZEN decisions carry a [decision context](../authorization/Heimdall-Authorization-Overview.html#decision-context)
+- Denied AuthZEN decisions carry a [decision context](../authorization/Heimdall-Authorization-Overview.html)
   with a `reason` code.
 - [JDBC and OpenFGA policies](../authorization/Heimdall-Authorization-Overview.html) receive the AuthZEN subject, resource and action. [Palantir](../installation/Admin-Dashboard.html) can edit the AuthZEN fields
   of a resource and configure the Heimdall access strategy.
@@ -140,7 +140,7 @@ The CAS documentation site has received a visual and functional overhaul. Notabl
 
 The certificate thumbprint that CAS records for [mutual TLS client authentication](../authentication/OIDC-Authentication-AccessToken-AuthMethods.html)
 and emits as the `cnf` `x5t#S256` claim of access tokens and introspection responses is now computed as specified
-by [RFC 8705](https://www.rfc-editor.org/rfc/rfc8705#section-3.1): the base64url-encoded SHA-256 hash of the DER-encoded certificate.
+by [RFC 8705](https://www.rfc-editor.org/rfc/rfc8705): the base64url-encoded SHA-256 hash of the DER-encoded certificate.
 Previously, it was computed from the certificate's public key and was not encoded as specified. Certificate-bound tokens issued
 before the upgrade carry the old value and are no longer accepted by resource servers that verify the binding.
 
@@ -151,9 +151,117 @@ when the response status is `401`, once per request. Previously, any response ot
 request (`400`), an authorization denial (`403`), a missing resource (`404`) or a server error (`500`), was counted as a failed login,
 and failures were recorded twice. Failed SAML2 ECP authentication attempts, which answer with a SOAP fault, are now counted as well.
 
+### Passwordless Authentication
+
+[Passwordless authentication](../authentication/Passwordless-Authentication.html) tokens are now single-use under concurrent submissions,
+and every submitted token, including a wrong one, goes through the authentication manager and is recorded in the [audit log](../audits/Audits.html). Tokens kept in
+[JPA](../authentication/Passwordless-Authentication-Tokens-JPA.html) or [MongoDb](../authentication/Passwordless-Authentication-Tokens-MongoDb.html)
+are now removed once used, and their cleaner removes expired tokens; it used to remove the valid ones. MongoDb and
+[REST](../authentication/Passwordless-Authentication-Tokens-Rest.html) stores no longer return expired tokens, and a REST endpoint must answer
+a single-token `DELETE` with a `2xx` status only when it removed the token. A token that could not be delivered by [email or SMS](../authentication/Passwordless-Authentication-Notifications.html) is no longer
+stored and the user is told so, while a failure in one channel no longer discards a token the other one delivered. Submitted tokens now
+arrive as a dedicated `PasswordlessTokenCredential`, which is the only credential the passwordless authentication handler accepts; other
+one-time password credentials, such as Duo Security passcodes, are no longer checked against the passwordless token store, and the
+recorded credential type changes accordingly. The token field is now a plain text field marked
+as `one-time-code`, so browsers and phones can fill in the code. A wrong token no longer causes a new token to be issued and sent.
+SMS messages now end with an [origin-bound one-time code](../authentication/Passwordless-Authentication-Notifications.html) line
+(`@host #token`), which the token page reads through the WebOTP API where available.
+
+When [WebAuthn primary authentication](../authentication/Passwordless-Authentication-Passkeys.html) is allowed, the passwordless username field offers discoverable passkeys
+from the browser's autofill menu (WebAuthn conditional mediation) where the browser supports it, and the [passwordless selection menu](../authentication/Passwordless-Authentication-UserSelectionMenu.html)
+offers a passkey option. Both hand the passkey assertion to the existing WebAuthn primary authentication flow.
+
+### WebAuthn Level 3
+
+[FIDO2 WebAuthn](../mfa/FIDO2-WebAuthn-Authentication.html) publishes its origins at `/.well-known/webauthn` for
+related origin requests, so passkeys can be used from origins whose domain differs from the relying party identifier.
+After a successful authentication, CAS reports the user's accepted passkeys and current account details to the
+browser through the Signal API, and passkey autofill checks `getClientCapabilities()` where the browser offers it.
+Registration and authentication requests carry the user-agent hints set in `cas.authn.mfa.web-authn.core.hints`, and each
+registration records whether the authenticator reported a discoverable credential (`credProps`). When an assertion fails
+because the owning account no longer holds the passkey, the response says so and the browser is told to stop offering it
+(`signalUnknownCredential`). WebAuthn pages now use the browser's JSON serialization (`parseCreationOptionsFromJSON`,
+`parseRequestOptionsFromJSON`, `toJSON()`) and no longer override the configured attestation conveyance preference with
+`direct`; browsers without this WebAuthn Level 3 support can no longer use WebAuthn in CAS.
+CAS also publishes `/.well-known/passkey-endpoints` so password managers can link users to the pages where passkeys are
+created and managed; by default both point to the account profile when account management is enabled.
+
+### OpenID Connect Verifiable Credentials
+
+- Credential proofs now follow what each [credential configuration](../authentication/OIDC-Authentication-Verifiable-Credentials.html)
+  advertises: a proof signed with an algorithm outside `proof-signing-alg-values-supported`, or naming its key by a binding
+  method outside `cryptographic-binding-methods-supported`, is refused with `invalid_proof`. Holder keys may now also be given
+  as an `x5c` certificate or a `did:jwk` key identifier, and Ed25519 (`EdDSA`) keys are accepted.
+- Authorization server metadata advertises `pre-authorized_grant_anonymous_access_supported` whenever the pre-authorized code
+  grant is supported, so wallets without a client registration know they may redeem a pre-authorized code.
+- A wallet may request a credential in the authorization code flow by the `scope` its credential configuration publishes,
+  as OpenID4VCI 1.0 allows, instead of authorization details. Such scopes were previously dropped unless listed among the
+  discovery scopes, and the resulting token was refused at the credential endpoint.
+- A wallet that declines a [verifiable presentation](../authentication/OIDC-Authentication-Verifiable-Credentials.html#verifiable-presentations)
+  request can now say so: its error response is accepted, answered as OpenID4VP requires, and reported to the relying party
+  as an `error` outcome. Previously it was rejected and the relying party kept seeing `pending` until the request expired.
+- Issuer metadata describes each credential format as OpenID4VCI 1.0 requires: `jwt_vc_json` and `jwt_vc_json-ld` configurations
+  publish `credential_definition` instead of `vct`. JSON-LD credentials no longer reference a context document CAS never served,
+  and a configuration without a scope no longer issues a `null` credential type.
+- CAS publishes JWT VC Issuer Metadata at `/.well-known/jwt-vc-issuer`, so verifiers other than CAS can find the keys that sign
+  the credentials it issues. Deployments under a context path should add `jwt-vc-issuer` to the well-known rewrite rule.
+- The verifier accepts RSA and Ed25519 holder keys in addition to EC keys, advertises those key binding algorithms,
+  and advertises the signing algorithms of its `dc+sd-jwt` credential configurations instead of a fixed list.
+- A presentation request may carry a registered `redirect_uri` for a same-device flow: the wallet is sent back to it
+  with a `response_code`, which the relying party must present to collect the outcome. Outcomes are now released
+  only to the client that created the request.
+- Claims marked `"required": false` in a presentation request are now optional: they are requested through DCQL
+  `claim_sets` and may be withheld. Previously the flag was ignored and every claim was required.
+- Issuer metadata can describe the issuer for wallets via `cas.authn.oidc.vc.issuer.display` (name, language, logo).
+- Credential offer transactions also return the `openid-credential-offer://` deep link for the offer.
+- Issued credentials no longer carry `client_id` (claim or header) or `credential_configuration_id`, which revealed to
+  every verifier which relying party requested the credential; CAS verifies its own credentials by the key's `kid`.
+- A wallet's error response is stored bounded: `error` to 128 characters and `error_description` to 1024.
+- Attribute values with a leading zero, such as postal codes, are issued as text. Previously they were read as octal numbers,
+  so `0123` was issued as `83` and `08` failed issuance.
+- Issued credentials carry the issuer signing key's certificate chain as the `x5c` header, without the trust anchor,
+  as HAIP 1.0 requires, when the key in the keystore has one.
+- Signed presentation request objects (`X509_SAN_DNS`) no longer include the trust anchor in their `x5c` header,
+  as HAIP 1.0 requires.
+
+### Stateless Ticket Registry
+
+With the [stateless ticket registry](../ticketing/Stateless-Ticket-Registry.html), the ticket-granting ticket is now carried by the
+ticket-granting cookie, like with any other ticket registry, instead of being kept in browser storage. The single sign-on session
+therefore follows the ticket-granting cookie settings, and login pages no longer render a browser storage page before the login form.
+The `cas.ticket.registry.stateless.storage-type` setting no longer applies and is removed.
+
+Stateless tickets now use a versioned format in which every field is length-prefixed, so values that contain separator characters,
+like distinguished names, round-trip correctly. Other changes:
+
+- Tickets are compressed only when that makes them smaller.
+- Each ticket is bound to the ticket type it was issued as, so changing its prefix (for example, presenting an access token
+  as a refresh token, or a proxy ticket as a proxy-granting ticket) no longer yields a valid ticket.
+- OAuth response and grant types are stored by name, so reordering them in a later release does not change existing tokens.
+- Expanding a ticket no longer goes through the ticket factories, which skips id generation and service registry lookups.
+- An expanded ticket keeps the id it was looked up by, and its authentication keeps the original authentication date.
+- The ticket-granting ticket no longer carries its own id or the tickets it has granted, which the stateless registry does not track.
+- The ticket-granting ticket no longer carries principal attributes. They are fetched from attribute repositories again each time
+  the ticket-granting ticket is read, the same way they already were during ticket validation, which keeps the ticket-granting cookie small.
+  Attributes that only authentication handlers produce, such as claims from Duo Security or delegated authentication, are no longer
+  available to single sign-on decisions unless an attribute repository produces them as well.
+- The ticket-granting ticket keeps only its authentication and is created through the ticket-granting ticket factory when read.
+  It expires at the end of its maximum lifetime; an idle timeout configured for it is not enforced.
+
+The ticket-granting cookie can now be encrypted without being signed, using `cas.tgc.crypto.signing-enabled=false` (signing stays
+on while a signing key is defined). The cookie encryption is authenticated, so this keeps tamper detection and makes the cookie
+about a quarter smaller. This is recommended with the stateless ticket registry, where the cookie carries the
+ticket-granting ticket and can otherwise exceed the `4096` bytes browsers accept, for example after Duo Security multifactor
+authentication. See the stateless ticket registry documentation for details.
+
 ## Other Stuff
 
 - A large number of dependencies and libraries have been updated to their latest versions.
 - Almost all CAS unit tests are internally reworked to allow maximum parallelization and speed up the overall test execution time.
 - [Delegated authentication](../integration/Delegate-Authentication.html) no longer fails intermittently when concurrent requests reach an identity provider that is still being initialized, typically right after startup. Such requests now wait for the initialization in progress instead of failing, which also affects [SAML2 identity providers](../integration/Delegate-Authentication-SAML2.html) when building SAML2 responses, metadata and logout requests.
-
+- [WebAuthn](../mfa/FIDO2-WebAuthn-Authentication.html) authentication pages now send the CSRF token rendered by CAS instead of reading it from the `XSRF-TOKEN` cookie, which failed with `403` whenever the page could not read that cookie.
+- Browser storage used by [Duo Security](../mfa/DuoSecurity-Authentication.html) and the [SAML2 identity provider](../authentication/Configuring-SAML2-Authentication.html) now falls back to cookies when the browser cannot use local or session storage.
+- Ed25519 keys presented to the [OpenID Connect](../authentication/OIDC-Authentication.html) client JWKS registration endpoint are now
+  verified with the JDK's own EdDSA support. Verification previously relied on Google Tink, which CAS does not ship, so such registrations failed at runtime.
+- CAS now logs a warning when a cookie it writes, such as the ticket-granting cookie, is larger than the 4 KB that browsers are guaranteed to accept.
+- MongoDb integration tests have now switched to using MongoDb `9.x`.

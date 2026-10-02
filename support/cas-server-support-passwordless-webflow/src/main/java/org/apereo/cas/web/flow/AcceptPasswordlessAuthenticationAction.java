@@ -8,8 +8,8 @@ import org.apereo.cas.api.PasswordlessUserAccount;
 import org.apereo.cas.api.PasswordlessUserAccountStore;
 import org.apereo.cas.authentication.AuthenticationException;
 import org.apereo.cas.authentication.AuthenticationSystemSupport;
+import org.apereo.cas.authentication.PasswordlessTokenCredential;
 import org.apereo.cas.authentication.adaptive.AdaptiveAuthenticationPolicy;
-import org.apereo.cas.authentication.credential.OneTimePasswordCredential;
 import org.apereo.cas.impl.token.PasswordlessAuthenticationToken;
 import org.apereo.cas.util.LoggingUtils;
 import org.apereo.cas.util.spring.beans.BeanSupplier;
@@ -57,16 +57,15 @@ public class AcceptPasswordlessAuthenticationAction extends AbstractAuthenticati
     protected @Nullable Event doExecuteInternal(final RequestContext requestContext) throws Throwable {
         val passwordlessUserAccount = Objects.requireNonNull(PasswordlessWebflowUtils.getPasswordlessAuthenticationAccount(requestContext, PasswordlessUserAccount.class));
         try {
-            val token = requestContext.getRequestParameters().getRequired("token");
-            val passwordlessToken = passwordlessTokenRepository.findToken(passwordlessUserAccount.getUsername())
-                .orElseThrow(() -> new AuthenticationException("Unable to find passwordless token for " + passwordlessUserAccount.getUsername()));
-            if (passwordlessToken.getToken().equalsIgnoreCase(token)) {
-                handlePasswordlessAuthenticationAttempt(requestContext, passwordlessUserAccount, passwordlessToken);
-                val finalEvent = super.doExecuteInternal(requestContext);
-                passwordlessTokenRepository.deleteToken(passwordlessToken);
-                return finalEvent;
+            val providedToken = requestContext.getRequestParameters().getRequired("token");
+            val passwordlessToken = passwordlessTokenRepository.findToken(passwordlessUserAccount.getUsername()).orElse(null);
+            handlePasswordlessAuthenticationAttempt(requestContext, passwordlessUserAccount, providedToken, passwordlessToken);
+            val finalEvent = super.doExecuteInternal(requestContext);
+            if (finalEvent != null && !CasWebflowConstants.TRANSITION_ID_AUTHENTICATION_FAILURE.equals(finalEvent.getId())
+                && !passwordlessTokenRepository.deleteToken(Objects.requireNonNull(passwordlessToken))) {
+                throw new AuthenticationException("Passwordless token for " + passwordlessUserAccount.getUsername() + " has already been used");
             }
-            throw new AuthenticationException("Provided token " + token + " is not issued by and does not belong to " + passwordlessUserAccount.getUsername());
+            return finalEvent;
         } catch (final Throwable e) {
             LoggingUtils.error(LOGGER, e);
             val attributes = new LocalAttributeMap<>();
@@ -81,10 +80,13 @@ public class AcceptPasswordlessAuthenticationAction extends AbstractAuthenticati
     }
 
     protected void handlePasswordlessAuthenticationAttempt(final RequestContext requestContext, final PasswordlessUserAccount principal,
-                                                           final PasswordlessAuthenticationToken token) throws Throwable {
-        val credential = new OneTimePasswordCredential(principal.getUsername(), token.getToken());
+                                                           final String providedToken,
+                                                           @Nullable final PasswordlessAuthenticationToken passwordlessToken) throws Throwable {
+        val credential = new PasswordlessTokenCredential(principal.getUsername(), providedToken);
         val service = WebUtils.getService(requestContext);
         var authenticationResultBuilder = authenticationSystemSupport.handleInitialAuthenticationTransaction(service, credential);
+        val token = Optional.ofNullable(passwordlessToken)
+            .orElseThrow(() -> new AuthenticationException("Unable to find passwordless token for " + principal.getUsername()));
 
         val applicationContext = requestContext.getActiveFlow().getApplicationContext();
         val processors = BeanFactoryUtils.beansOfTypeIncludingAncestors(applicationContext, PasswordlessAuthenticationPreProcessor.class).values()
