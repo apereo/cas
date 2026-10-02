@@ -14,11 +14,17 @@ import org.apereo.cas.vc.presentation.OidcVerifiableCredentialPresentationReques
 import org.apereo.cas.vc.presentation.OidcVerifiableCredentialPresentationRequestEndpointController.OidcVerifiableCredentialPresentationRequest.CredentialRequest;
 import org.apereo.cas.vc.presentation.OidcVerifiableCredentialPresentationRequestEndpointController.OidcVerifiableCredentialPresentationResponse;
 import com.google.common.base.Splitter;
+import com.nimbusds.jose.crypto.ECDSAVerifier;
+import com.nimbusds.jose.jwk.ECKey;
+import com.nimbusds.jose.jwk.JWKSet;
+import com.nimbusds.jose.util.X509CertUtils;
+import com.nimbusds.jwt.SignedJWT;
 import lombok.val;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.autoconfigure.ImportAutoConfiguration;
+import org.springframework.core.io.ClassPathResource;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.TestPropertySource;
 import tools.jackson.databind.ObjectMapper;
@@ -163,14 +169,76 @@ class OidcVerifiableCredentialPresentationRequestEndpointControllerTests {
                 assertInstanceOf(Map.class, credential.get("meta")).get("vct_values"));
             val claims = assertInstanceOf(List.class, credential.get("claims"));
             assertEquals(List.of("given_name"), assertInstanceOf(Map.class, claims.getFirst()).get("path"));
+            assertNull(assertInstanceOf(Map.class, claims.getFirst()).get("id"));
+            assertNull(credential.get("claim_sets"));
 
             val clientMetadata = MAPPER.readValue(parameters.get("client_metadata"), Map.class);
             assertEquals("Apereo CAS", clientMetadata.get("client_name"));
             val vpFormats = assertInstanceOf(Map.class, clientMetadata.get("vp_formats_supported"));
             val sdJwtFormat = assertInstanceOf(Map.class, vpFormats.get("dc+sd-jwt"));
-            assertEquals(List.of("ES256", "ES384", "ES512"), sdJwtFormat.get("alg_values"));
-            assertEquals(List.of("ES256", "ES384", "ES512"), sdJwtFormat.get("sd-jwt_alg_values"));
-            assertEquals(List.of("ES256", "ES384", "ES512"), sdJwtFormat.get("kb-jwt_alg_values"));
+            assertNull(sdJwtFormat.get("alg_values"));
+            assertEquals(List.of("ES256", "RS256"), sdJwtFormat.get("sd-jwt_alg_values"));
+            assertEquals(OidcVerifiableCredentialPresentationResponseEndpointController.KEY_BINDING_ALGORITHMS_SUPPORTED,
+                sdJwtFormat.get("kb-jwt_alg_values"));
+
+            assertEquals(getOidcRegisteredService().getClientId(),
+                ticket.getPropertyAsString(OidcVerifiableCredentialPresentationResponseEndpointController.PROPERTY_CLIENT_ID));
+            assertNull(ticket.getPropertyAsString(OidcVerifiableCredentialPresentationResponseEndpointController.PROPERTY_REDIRECT_URI));
+        }
+
+        @Test
+        void verifyOptionalClaimsAreRequestedThroughClaimSets() {
+            val required = new ClaimRequest();
+            required.setPath(List.of("given_name"));
+            val optional = new ClaimRequest();
+            optional.setPath(List.of("email"));
+            optional.setRequired(false);
+
+            val credential = new CredentialRequest();
+            credential.setId("university-degree");
+            credential.setFormat("dc+sd-jwt");
+            credential.setClaims(List.of(required, optional));
+            val query = OidcVerifiableCredentialPresentationRequestEndpointController.toCredentialQuery(credential);
+            assertEquals(List.of("claim-0", "claim-1"), query.getClaims().stream().map(claim -> claim.getId()).toList());
+            assertEquals(List.of(List.of("claim-0", "claim-1"), List.of("claim-0")), query.getClaimSets());
+
+            required.setRequired(false);
+            val allOptional = OidcVerifiableCredentialPresentationRequestEndpointController.toCredentialQuery(credential);
+            assertEquals(List.of(List.of("claim-0", "claim-1"), List.of("claim-0"), List.of("claim-1")), allOptional.getClaimSets());
+
+            credential.setClaims(null);
+            val noClaims = OidcVerifiableCredentialPresentationRequestEndpointController.toCredentialQuery(credential);
+            assertTrue(noClaims.getClaims().isEmpty());
+            assertTrue(noClaims.getClaimSets().isEmpty());
+        }
+
+        @Test
+        void verifyRedirectUriMustBeRegisteredForTheClient() throws Throwable {
+            val request = buildPresentationRequest();
+            request.setRedirectUri("https://attacker.example.net/callback");
+            mockMvc.perform(post(PRESENTATION_REQUEST_ENDPOINT_URL)
+                    .with(withHttpRequestProcessor())
+                    .param(OAuth20Constants.CLIENT_ID, getOidcRegisteredService().getClientId())
+                    .param(OAuth20Constants.CLIENT_SECRET, getOidcRegisteredService().getClientSecrets().getFirst().getValue())
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .content(MAPPER.writeValueAsString(request)))
+                .andExpect(status().isBadRequest());
+
+            request.setRedirectUri("https://oauth.example.org/callback");
+            val responseBody = mockMvc.perform(post(PRESENTATION_REQUEST_ENDPOINT_URL)
+                    .with(withHttpRequestProcessor())
+                    .param(OAuth20Constants.CLIENT_ID, getOidcRegisteredService().getClientId())
+                    .param(OAuth20Constants.CLIENT_SECRET, getOidcRegisteredService().getClientSecrets().getFirst().getValue())
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .content(MAPPER.writeValueAsString(request)))
+                .andExpect(status().isOk())
+                .andReturn()
+                .getResponse()
+                .getContentAsString();
+            val response = MAPPER.readValue(responseBody, OidcVerifiableCredentialPresentationResponse.class);
+            val ticket = ticketRegistry.getTicket(response.getRequestId(), TransientSessionTicket.class);
+            assertEquals("https://oauth.example.org/callback",
+                ticket.getPropertyAsString(OidcVerifiableCredentialPresentationResponseEndpointController.PROPERTY_REDIRECT_URI));
         }
 
         @Test
@@ -230,6 +298,37 @@ class OidcVerifiableCredentialPresentationRequestEndpointControllerTests {
                 .getContentAsString();
             assertTrue(response.contains("certificate chain"),
                 () -> "Expected a configuration error about the signing certificate chain but got " + response);
+        }
+    }
+
+    /**
+     * HAIP 1.0 section 5: the request object's {@code x5c} carries the chain without its trust anchor.
+     */
+    @Nested
+    @TestPropertySource(properties = {
+        "cas.authn.oidc.vc.presentation.client-identifier-prefix=X509_SAN_DNS",
+        "cas.authn.oidc.jwks.file-system.jwks-file=classpath:vc-issuer-x5c.jwks"
+    })
+    class SignedRequestCertificateChainTests extends BaseTests {
+        @Test
+        void verifyRequestObjectCertificateChainWithoutTrustAnchor() throws Throwable {
+            val ticket = createPresentationTransaction(UUID.randomUUID().toString(), UUID.randomUUID().toString());
+            val requestObject = SignedJWT.parse(mockMvc.perform(get(PRESENTATION_REQUEST_ENDPOINT_URL + '/' + ticket.getId())
+                    .with(withHttpRequestProcessor()))
+                .andExpect(status().isOk())
+                .andReturn()
+                .getResponse()
+                .getContentAsString());
+            val issuerKey = assertInstanceOf(ECKey.class, JWKSet.load(
+                new ClassPathResource("vc-issuer-x5c.jwks").getInputStream()).getKeyByKeyId("vc-issuer"));
+            assertEquals(2, issuerKey.getParsedX509CertChain().size());
+
+            assertEquals("oauth-authz-req+jwt", requestObject.getHeader().getType().toString());
+            val chain = requestObject.getHeader().getX509CertChain();
+            assertEquals(1, chain.size());
+            val leaf = X509CertUtils.parse(chain.getFirst().decode());
+            assertEquals(issuerKey.getParsedX509CertChain().getFirst(), leaf);
+            assertTrue(requestObject.verify(new ECDSAVerifier((ECPublicKey) leaf.getPublicKey())));
         }
     }
 }

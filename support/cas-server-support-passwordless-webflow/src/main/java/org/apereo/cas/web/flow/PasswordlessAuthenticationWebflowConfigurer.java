@@ -13,6 +13,7 @@ import org.springframework.webflow.definition.registry.FlowDefinitionRegistry;
 import org.springframework.webflow.engine.ActionState;
 import org.springframework.webflow.engine.Flow;
 import org.springframework.webflow.engine.Transition;
+import org.springframework.webflow.engine.ViewState;
 import org.springframework.webflow.engine.builder.support.FlowBuilderServices;
 
 /**
@@ -50,6 +51,7 @@ public class PasswordlessAuthenticationWebflowConfigurer extends AbstractCasWebf
         viewState.getRenderActionList().add(createEvaluateAction(CasWebflowConstants.ACTION_ID_PASSWORDLESS_PREPARE_SELECTION_MENU));
         createTransitionForState(viewState, CasWebflowConstants.TRANSITION_ID_ERROR, CasWebflowConstants.STATE_ID_PASSWORDLESS_GET_USERID);
         createTransitionForState(viewState, CasWebflowConstants.TRANSITION_ID_SUBMIT, CasWebflowConstants.STATE_ID_PASSWORDLESS_ACCEPT_SELECTION_MENU);
+        createTransitionForPasskeyAuthentication(viewState);
 
         val acceptState = createActionState(flow, CasWebflowConstants.STATE_ID_PASSWORDLESS_ACCEPT_SELECTION_MENU,
             CasWebflowConstants.ACTION_ID_PASSWORDLESS_ACCEPT_SELECTION_MENU);
@@ -164,5 +166,23 @@ public class PasswordlessAuthenticationWebflowConfigurer extends AbstractCasWebf
             "passwordless/casPasswordlessGetUserIdView");
         createTransitionForState(viewState, CasWebflowConstants.TRANSITION_ID_SUBMIT,
             CasWebflowConstants.STATE_ID_PASSWORDLESS_VERIFY_ACCOUNT);
+        createTransitionForPasskeyAuthentication(viewState);
+    }
+
+    /**
+     * Passkeys are handled by the WebAuthn primary authentication states, which the WebAuthn webflow
+     * adds to the login flow only when primary authentication is allowed. The WebAuthn CSRF token is
+     * populated again on every render, as the WebAuthn views do, since the token and its cookie set
+     * when the flow started may no longer match by the time this view is shown.
+     *
+     * @param viewState the view state that may submit a passkey assertion
+     */
+    protected void createTransitionForPasskeyAuthentication(final ViewState viewState) {
+        if (casProperties.getAuthn().getMfa().getWebAuthn().getCore().isAllowPrimaryAuthentication()) {
+            createTransitionForState(viewState, CasWebflowConstants.TRANSITION_ID_VALIDATE, CasWebflowConstants.STATE_ID_WEBAUTHN_VALIDATE);
+            if (applicationContext.containsBean(CasWebflowConstants.ACTION_ID_WEBAUTHN_POPULATE_CSRF_TOKEN)) {
+                viewState.getRenderActionList().add(createEvaluateAction(CasWebflowConstants.ACTION_ID_WEBAUTHN_POPULATE_CSRF_TOKEN));
+            }
+        }
     }
 }

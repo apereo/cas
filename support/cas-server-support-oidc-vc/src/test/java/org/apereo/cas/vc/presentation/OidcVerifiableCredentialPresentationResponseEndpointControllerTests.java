@@ -18,14 +18,21 @@ import com.authlete.sd.SDObjectBuilder;
 import com.nimbusds.jose.JOSEObjectType;
 import com.nimbusds.jose.JWSAlgorithm;
 import com.nimbusds.jose.JWSHeader;
+import com.nimbusds.jose.JWSSigner;
 import com.nimbusds.jose.crypto.ECDSASigner;
+import com.nimbusds.jose.crypto.RSASSASigner;
 import com.nimbusds.jose.jwk.Curve;
 import com.nimbusds.jose.jwk.ECKey;
 import com.nimbusds.jose.jwk.gen.ECKeyGenerator;
+import com.nimbusds.jose.jwk.gen.RSAKeyGenerator;
+import com.nimbusds.jose.util.Base64URL;
 import com.nimbusds.jwt.JWTClaimsSet;
 import com.nimbusds.jwt.SignedJWT;
 import lombok.val;
+import org.jose4j.jwk.JsonWebKey;
+import org.jose4j.jwk.PublicJsonWebKey;
 import org.jose4j.jwt.JwtClaims;
+import org.jspecify.annotations.Nullable;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
@@ -118,6 +125,54 @@ class OidcVerifiableCredentialPresentationResponseEndpointControllerTests extend
     }
 
     @Test
+    void verifyWalletErrorResponseSettlesTheTransaction() throws Throwable {
+        val transaction = createTransaction();
+        submitError(transaction.ticket().getId(), "access_denied")
+            .andExpect(status().isOk())
+            .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
+            .andExpect(header().string(HttpHeaders.CACHE_CONTROL, "no-store"))
+            .andExpect(content().string("{}"));
+        assertNull(ticketRegistry.getTicket(transaction.ticket().getId()));
+
+        fetchResult(transaction.ticket().getId())
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$.status").value("error"))
+            .andExpect(jsonPath("$.error").value("access_denied"))
+            .andExpect(jsonPath("$.error_description").value("The user declined"))
+            .andExpect(jsonPath("$.claims").doesNotExist());
+
+        assertInvalid(submitError(transaction.ticket().getId(), "access_denied"));
+    }
+
+    @Test
+    void verifyWalletErrorIsStoredBounded() throws Throwable {
+        val transaction = createTransaction();
+        mockMvc.perform(post(PRESENTATION_RESPONSE_ENDPOINT_URL)
+                .with(withHttpRequestProcessor())
+                .contentType(MediaType.APPLICATION_FORM_URLENCODED)
+                .param(OAuth20Constants.ERROR, "e".repeat(5000))
+                .param(OAuth20Constants.ERROR_DESCRIPTION, "d".repeat(5000))
+                .param("state", transaction.ticket().getId()))
+            .andExpect(status().isOk());
+        fetchResult(transaction.ticket().getId())
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$.error").value("e".repeat(128)))
+            .andExpect(jsonPath("$.error_description").value("d".repeat(1024)));
+    }
+
+    @Test
+    void verifyResponseWithPresentationAndErrorIsRejected() throws Throwable {
+        val transaction = createTransaction();
+        assertInvalid(mockMvc.perform(post(PRESENTATION_RESPONSE_ENDPOINT_URL)
+            .with(withHttpRequestProcessor())
+            .contentType(MediaType.APPLICATION_FORM_URLENCODED)
+            .param("vp_token", "{}")
+            .param(OAuth20Constants.ERROR, "access_denied")
+            .param("state", transaction.ticket().getId())));
+        assertNotNull(ticketRegistry.getTicket(transaction.ticket().getId()));
+    }
+
+    @Test
     void verifyUnknownPresentationResultIsNotFound() throws Throwable {
         fetchResult("TST-unknown-request").andExpect(status().isNotFound());
     }
@@ -131,11 +186,96 @@ class OidcVerifiableCredentialPresentationResponseEndpointControllerTests extend
     }
 
     private ResultActions fetchResult(final String requestId) throws Exception {
-        return mockMvc.perform(get(PRESENTATION_RESULT_ENDPOINT_URL)
+        return fetchResult(requestId, credentialClient, null);
+    }
+
+    private ResultActions fetchResult(final String requestId, final OidcRegisteredService client,
+                                      final @Nullable String responseCode) throws Exception {
+        val request = get(PRESENTATION_RESULT_ENDPOINT_URL)
             .with(withHttpRequestProcessor())
-            .param(OAuth20Constants.CLIENT_ID, credentialClient.getClientId())
-            .param(OAuth20Constants.CLIENT_SECRET, credentialClient.getClientSecrets().getFirst().getValue())
-            .queryParam("requestId", requestId));
+            .param(OAuth20Constants.CLIENT_ID, client.getClientId())
+            .param(OAuth20Constants.CLIENT_SECRET, client.getClientSecrets().getFirst().getValue())
+            .queryParam("requestId", requestId);
+        if (responseCode != null) {
+            request.queryParam("response_code", responseCode);
+        }
+        return mockMvc.perform(request);
+    }
+
+    @Test
+    void verifyOutcomeIsReleasedOnlyToTheCreatingClient() throws Throwable {
+        val transaction = createTransaction();
+        val otherClient = (OidcRegisteredService) servicesManager.save(getOidcRegisteredService("other-presentation-client",
+            "https://other\\.example\\.org/.*", true, false));
+        fetchResult(transaction.ticket().getId(), otherClient, null).andExpect(status().isNotFound());
+
+        submitPresentation(transaction.ticket().getId(), buildVpToken(bindCredential(issueCredential(), transaction.nonce())))
+            .andExpect(status().isOk());
+        fetchResult(transaction.ticket().getId(), otherClient, null).andExpect(status().isNotFound());
+        fetchResult(transaction.ticket().getId()).andExpect(status().isOk()).andExpect(jsonPath("$.status").value("verified"));
+    }
+
+    @Test
+    void verifySameDeviceOutcomeRequiresTheResponseCode() throws Throwable {
+        val transaction = createTransaction(List.of(claimRequest("given_name", true)), "https://wallet.example.org/callback");
+        val walletResponse = MAPPER.readValue(submitPresentation(transaction.ticket().getId(),
+                buildVpToken(bindCredential(issueCredential(), transaction.nonce())))
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$.status").value("verified"))
+            .andReturn().getResponse().getContentAsString(), Map.class);
+        val redirectUri = walletResponse.get(OAuth20Constants.REDIRECT_URI).toString();
+        assertTrue(redirectUri.startsWith("https://wallet.example.org/callback#response_code="));
+        val responseCode = redirectUri.substring(redirectUri.indexOf('=') + 1);
+        assertFalse(responseCode.isBlank());
+
+        fetchResult(transaction.ticket().getId()).andExpect(status().isNotFound());
+        fetchResult(transaction.ticket().getId(), credentialClient, responseCode + "x").andExpect(status().isNotFound());
+        fetchResult(transaction.ticket().getId(), credentialClient, responseCode)
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$.status").value("verified"))
+            .andExpect(jsonPath("$.responseCode").doesNotExist())
+            .andExpect(jsonPath("$.clientId").doesNotExist());
+    }
+
+    @Test
+    void verifyOptionalClaimsMayBeWithheld() throws Throwable {
+        val withOptionalEmail = createTransaction(List.of(claimRequest("given_name", true), claimRequest("email", false)), null);
+        submitPresentation(withOptionalEmail.ticket().getId(),
+                buildVpToken(bindCredential(issueCredential(), withOptionalEmail.nonce())))
+            .andExpect(status().isOk());
+
+        val allOptional = createTransaction(List.of(claimRequest("email", false), claimRequest("given_name", false)), null);
+        submitPresentation(allOptional.ticket().getId(), buildVpToken(bindCredential(issueCredential(), allOptional.nonce())))
+            .andExpect(status().isOk());
+
+        val noneDisclosed = createTransaction(List.of(claimRequest("email", false)), null);
+        assertInvalid(submitPresentation(noneDisclosed.ticket().getId(),
+            buildVpToken(bindCredential(issueCredential(), noneDisclosed.nonce()))));
+    }
+
+    @Test
+    void verifyRsaAndEd25519HolderKeysAreAccepted() throws Throwable {
+        val rsaHolderKey = new RSAKeyGenerator(2048).generate();
+        val rsaTransaction = createTransaction();
+        val rsaCredential = issueCredential(claims -> claims.setClaim("cnf", Map.of("jwk", rsaHolderKey.toPublicJWK().toJSONObject())));
+        submitPresentation(rsaTransaction.ticket().getId(),
+                buildVpToken(bindCredential(rsaCredential, rsaTransaction.nonce(), JWSAlgorithm.RS256, new RSASSASigner(rsaHolderKey))))
+            .andExpect(status().isOk());
+
+        val edHolderKey = KeyPairGenerator.getInstance("Ed25519").generateKeyPair();
+        val edPublicJwk = PublicJsonWebKey.Factory.newPublicJwk(edHolderKey.getPublic())
+            .toParams(JsonWebKey.OutputControlLevel.PUBLIC_ONLY);
+        val edCredential = issueCredential(claims -> claims.setClaim("cnf", Map.of("jwk", edPublicJwk)));
+        for (val algorithm : List.of("Ed25519", "EdDSA")) {
+            val edTransaction = createTransaction();
+            submitPresentation(edTransaction.ticket().getId(),
+                    buildVpToken(bindCredentialWithEd25519(edCredential, edTransaction.nonce(), algorithm, edHolderKey)))
+                .andExpect(status().isOk());
+        }
+
+        val mismatched = createTransaction();
+        assertInvalid(submitPresentation(mismatched.ticket().getId(),
+            buildVpToken(bindCredentialWithEd25519(edCredential, mismatched.nonce(), "ES256", edHolderKey))));
     }
 
     @Test
@@ -221,24 +361,36 @@ class OidcVerifiableCredentialPresentationResponseEndpointControllerTests extend
     }
 
     private PresentationTransaction createTransaction() throws Throwable {
-        val nonce = UUID.randomUUID().toString();
-        val claimRequest = new ClaimRequest();
-        claimRequest.setPath(List.of("given_name"));
-        claimRequest.setRequired(true);
+        return createTransaction(List.of(claimRequest("given_name", true)), null);
+    }
 
+    private PresentationTransaction createTransaction(final List<ClaimRequest> claimRequests,
+                                                      final @Nullable String redirectUri) throws Throwable {
+        val nonce = UUID.randomUUID().toString();
         val credentialRequest = new CredentialRequest();
         credentialRequest.setId(CREDENTIAL_QUERY_ID);
         credentialRequest.setFormat("dc+sd-jwt");
         credentialRequest.setVctValues(List.of(credentialType()));
-        credentialRequest.setClaims(List.of(claimRequest));
+        credentialRequest.setClaims(claimRequests);
 
         val factory = (TransientSessionTicketFactory) defaultTicketFactory.get(TransientSessionTicket.class);
         val ticket = factory.create(CollectionUtils.wrap(
             "nonce", nonce,
             "credentials", List.of(credentialRequest)));
         ticket.putProperty("state", ticket.getId());
+        ticket.putProperty(OidcVerifiableCredentialPresentationResponseEndpointController.PROPERTY_CLIENT_ID, credentialClient.getClientId());
+        if (redirectUri != null) {
+            ticket.putProperty(OidcVerifiableCredentialPresentationResponseEndpointController.PROPERTY_REDIRECT_URI, redirectUri);
+        }
         ticketRegistry.addTicket(ticket);
         return new PresentationTransaction(ticket, nonce);
+    }
+
+    private static ClaimRequest claimRequest(final String name, final boolean required) {
+        val claimRequest = new ClaimRequest();
+        claimRequest.setPath(List.of(name));
+        claimRequest.setRequired(required);
+        return claimRequest;
     }
 
     private CredentialMaterial issueCredential() throws Throwable {
@@ -263,8 +415,6 @@ class OidcVerifiableCredentialPresentationResponseEndpointControllerTests extend
         claims.setJwtId(UUID.randomUUID().toString());
         claims.setStringClaim("typ", "dc+sd-jwt");
         claims.setStringClaim("vct", credentialType());
-        claims.setStringClaim("client_id", CREDENTIAL_CLIENT_ID);
-        claims.setStringClaim("credential_configuration_id", CREDENTIAL_CONFIGURATION_ID);
         claims.setClaim("cnf", Map.of("jwk", holderKey.toPublicJWK().toJSONObject()));
         sdObjectBuilder.build().forEach(claims::setClaim);
         customizer.accept(claims);
@@ -274,19 +424,39 @@ class OidcVerifiableCredentialPresentationResponseEndpointControllerTests extend
     }
 
     private String bindCredential(final CredentialMaterial material, final String nonce) throws Exception {
+        return bindCredential(material, nonce, JWSAlgorithm.ES256, new ECDSASigner(material.holderKey()));
+    }
+
+    private String bindCredential(final CredentialMaterial material, final String nonce,
+                                  final JWSAlgorithm algorithm, final JWSSigner signer) throws Exception {
+        val header = new JWSHeader.Builder(algorithm)
+            .type(new JOSEObjectType("kb+jwt"))
+            .build();
+        val bindingJwt = new SignedJWT(header, keyBindingClaims(material, nonce));
+        bindingJwt.sign(signer);
+        return new SDJWT(material.credentialJwt(), material.disclosures(), bindingJwt.serialize()).toString();
+    }
+
+    private String bindCredentialWithEd25519(final CredentialMaterial material, final String nonce,
+                                             final String algorithm, final KeyPair holderKey) throws Exception {
+        val header = Base64URL.encode("{\"alg\":\"%s\",\"typ\":\"kb+jwt\"}".formatted(algorithm));
+        val payload = Base64URL.encode(keyBindingClaims(material, nonce).toString());
+        val signingInput = header + "." + payload;
+        val signature = java.security.Signature.getInstance("Ed25519");
+        signature.initSign(holderKey.getPrivate());
+        signature.update(signingInput.getBytes(StandardCharsets.US_ASCII));
+        val bindingJwt = signingInput + '.' + Base64URL.encode(signature.sign());
+        return new SDJWT(material.credentialJwt(), material.disclosures(), bindingJwt).toString();
+    }
+
+    private JWTClaimsSet keyBindingClaims(final CredentialMaterial material, final String nonce) {
         val unboundSdJwt = new SDJWT(material.credentialJwt(), material.disclosures());
-        val claims = new JWTClaimsSet.Builder()
+        return new JWTClaimsSet.Builder()
             .issueTime(new Date())
             .audience(verifierClientId())
             .claim("nonce", nonce)
             .claim("sd_hash", unboundSdJwt.getSDHash())
             .build();
-        val header = new JWSHeader.Builder(JWSAlgorithm.ES256)
-            .type(new JOSEObjectType("kb+jwt"))
-            .build();
-        val bindingJwt = new SignedJWT(header, claims);
-        bindingJwt.sign(new ECDSASigner(material.holderKey()));
-        return new SDJWT(material.credentialJwt(), material.disclosures(), bindingJwt.serialize()).toString();
     }
 
     private static String tamperSignature(final String jwt) {
@@ -311,6 +481,15 @@ class OidcVerifiableCredentialPresentationResponseEndpointControllerTests extend
             .with(withHttpRequestProcessor())
             .contentType(MediaType.APPLICATION_FORM_URLENCODED)
             .param("vp_token", vpToken)
+            .param("state", state));
+    }
+
+    private ResultActions submitError(final String state, final String error) throws Exception {
+        return mockMvc.perform(post(PRESENTATION_RESPONSE_ENDPOINT_URL)
+            .with(withHttpRequestProcessor())
+            .contentType(MediaType.APPLICATION_FORM_URLENCODED)
+            .param(OAuth20Constants.ERROR, error)
+            .param(OAuth20Constants.ERROR_DESCRIPTION, "The user declined")
             .param("state", state));
     }
 

@@ -20,6 +20,8 @@ const cas = require("../../cas.js");
     await cas.assertInnerText(page, "#login h3", "Provide Token");
     await cas.assertInnerTextStartsWith(page, "#login p", "Please provide the security token sent to you");
     await cas.assertVisibility(page, "#token");
+    await cas.attributeValue(page, "#token", "autocomplete", "one-time-code");
+    await cas.attributeValue(page, "#token", "type", "text");
 
     const code = await cas.extractFromEmail(browser);
 

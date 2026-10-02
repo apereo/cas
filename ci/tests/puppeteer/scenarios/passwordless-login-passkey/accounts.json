@@ -1,0 +1,10 @@
+{
+  "@class" : "java.util.LinkedHashMap",
+  "casuser" : {
+    "@class" : "org.apereo.cas.api.PasswordlessUserAccount",
+    "username": "casuser",
+    "name" : "CAS",
+    "allowSelectionMenu": true,
+    "requestPassword": true
+  }
+}

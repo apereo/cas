@@ -4,6 +4,7 @@ import module java.base;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.services.UnauthorizedServiceException;
 import org.apereo.cas.support.pac4j.authentication.clients.DelegatedClientSessionManager;
+import org.apereo.cas.ticket.Ticket;
 import org.apereo.cas.ticket.TransientSessionTicket;
 import org.apereo.cas.ticket.TransientSessionTicketFactory;
 import org.apereo.cas.util.LoggingUtils;
@@ -43,14 +44,15 @@ public class DefaultDelegatedClientAuthenticationWebflowManager implements Deleg
     @Override
     public TransientSessionTicket store(final RequestContext requestContext,
                                         final JEEContext webContext, final Client client) throws Throwable {
-        val ticket = storeDelegatedClientAuthenticationRequest(webContext, requestContext, client);
+        val ticket = buildDelegatedClientAuthenticationRequest(webContext, requestContext, client);
+        val storedTicket = storeDelegatedClientAuthenticationRequest(webContext, ticket);
         rememberSelectedClientIfNecessary(webContext, client);
 
         if (client instanceof final CasClient instance) {
-            trackSessionIdForCasClient(webContext, ticket, instance);
+            trackSessionIdForCasClient(webContext, storedTicket, instance);
         } else {
             val builders = getDelegatedClientSessionManagers(client);
-            builders.parallelStream().forEach(builder -> builder.trackIdentifier(webContext, ticket, client));
+            builders.parallelStream().forEach(builder -> builder.trackIdentifier(webContext, storedTicket, client));
         }
         return ticket;
     }
@@ -66,13 +68,13 @@ public class DefaultDelegatedClientAuthenticationWebflowManager implements Deleg
         }));
         return service;
     }
-    
-    protected void trackSessionIdForCasClient(final WebContext webContext, final TransientSessionTicket ticket,
+
+    protected void trackSessionIdForCasClient(final WebContext webContext, final Ticket ticket,
                                               final CasClient casClient) {
         configContext.getSessionStore().set(webContext, CAS_CLIENT_ID_SESSION_KEY, ticket.getId());
     }
 
-    protected TransientSessionTicket storeDelegatedClientAuthenticationRequest(
+    protected TransientSessionTicket buildDelegatedClientAuthenticationRequest(
         final JEEContext webContext, final RequestContext requestContext, final Client client) throws Throwable {
         val originalService = Optional.ofNullable(configContext.getArgumentExtractor().extractService(webContext.getNativeRequest()))
             .orElseGet(() -> WebUtils.getService(requestContext));
@@ -84,11 +86,6 @@ public class DefaultDelegatedClientAuthenticationWebflowManager implements Deleg
         val transientFactory = (TransientSessionTicketFactory) configContext.getTicketFactory().get(TransientSessionTicket.class);
         val ticket = transientFactory.create(originalService, properties);
 
-        LOGGER.debug("Storing delegated authentication request ticket [{}] for service [{}] with properties [{}]",
-            ticket.getId(), ticket.getService(), ticket.getProperties());
-        configContext.getTicketRegistry().addTicket(ticket);
-        webContext.setRequestAttribute(PARAMETER_CLIENT_ID, ticket.getId());
-
         if (properties.containsKey(RedirectionActionBuilder.ATTRIBUTE_FORCE_AUTHN)) {
             webContext.setRequestAttribute(RedirectionActionBuilder.ATTRIBUTE_FORCE_AUTHN, true);
         }
@@ -96,6 +93,28 @@ public class DefaultDelegatedClientAuthenticationWebflowManager implements Deleg
             webContext.setRequestAttribute(RedirectionActionBuilder.ATTRIBUTE_PASSIVE, true);
         }
         return ticket;
+    }
+
+    /**
+     * Store the delegated authentication request in the ticket registry.
+     * The identifier handed to the identity provider and kept in the session is the id
+     * of the ticket the registry returns, which may differ from the id of the ticket that was built,
+     * as with the stateless ticket registry. The ticket that was built is the one kept in the flow,
+     * since it carries the request properties.
+     *
+     * @param webContext the web context
+     * @param ticket     the ticket
+     * @return the stored ticket
+     * @throws Exception the exception
+     */
+    protected Ticket storeDelegatedClientAuthenticationRequest(final JEEContext webContext,
+                                                               final TransientSessionTicket ticket) throws Exception {
+        LOGGER.debug("Storing delegated authentication request ticket [{}] for service [{}] with properties [{}]",
+            ticket.getId(), ticket.getService(), ticket.getProperties());
+        val storedTicket = Objects.requireNonNull(configContext.getTicketRegistry().addTicket(ticket),
+            "Unable to store the delegated authentication request ticket");
+        webContext.setRequestAttribute(PARAMETER_CLIENT_ID, storedTicket.getId());
+        return storedTicket;
     }
 
     private List<DelegatedClientAuthenticationWebflowStateContributor> getWebflowStateContributors() {
@@ -118,7 +137,7 @@ public class DefaultDelegatedClientAuthenticationWebflowManager implements Deleg
         AnnotationAwareOrderComparator.sort(builders);
         return builders;
     }
-    
+
     protected void rememberSelectedClientIfNecessary(final JEEContext webContext, final Client client) {
         val cookieProps = configContext.getCasProperties().getAuthn().getPac4j().getCookie();
         if (cookieProps.isEnabled()) {

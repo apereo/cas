@@ -14,6 +14,7 @@ import org.apache.commons.io.IOUtils;
 import org.apache.hc.core5.http.HttpEntityContainer;
 import org.apache.hc.core5.http.HttpResponse;
 import org.springframework.http.HttpMethod;
+import org.springframework.http.HttpStatus;
 
 /**
  * This is {@link RestfulPasswordlessTokenRepository}.
@@ -53,7 +54,7 @@ public class RestfulPasswordlessTokenRepository extends BasePasswordlessTokenRep
                 try (val content = ((HttpEntityContainer) response).getEntity().getContent()) {
                     val token = IOUtils.toString(content, StandardCharsets.UTF_8);
                     val result = decodePasswordlessAuthenticationToken(token);
-                    return Optional.of(result);
+                    return Optional.of(result).filter(tk -> !tk.isExpired());
                 }
             }
         } catch (final Exception e) {
@@ -86,7 +87,7 @@ public class RestfulPasswordlessTokenRepository extends BasePasswordlessTokenRep
     }
 
     @Override
-    public void deleteToken(final PasswordlessAuthenticationToken token) {
+    public boolean deleteToken(final PasswordlessAuthenticationToken token) {
         HttpResponse response = null;
         try {
             val parameters = new HashMap<String, String>();
@@ -102,6 +103,7 @@ public class RestfulPasswordlessTokenRepository extends BasePasswordlessTokenRep
                 .parameters(parameters)
                 .build();
             response = HttpUtils.execute(exec);
+            return response != null && HttpStatus.valueOf(response.getCode()).is2xxSuccessful();
         } finally {
             HttpUtils.close(response);
         }

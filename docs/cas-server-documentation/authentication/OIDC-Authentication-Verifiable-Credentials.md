@@ -59,7 +59,8 @@ This endpoint generally advertises:
 - The nonce endpoint, when supported.
 - Supported credential configurations.
 - Supported formats and signing algorithms.
-- 
+- How wallets should present the issuer (`display`: name, language and logo), taken from
+  `cas.authn.oidc.vc.issuer.display`; without it wallets show the issuer as unnamed.
 #### Metadata Location
 
 OpenID4VCI locates the credential issuer metadata by inserting `/.well-known/openid-credential-issuer`
@@ -73,6 +74,18 @@ GET https://sso.example.org/.well-known/openid-credential-issuer/cas/oidc
 GET https://sso.example.org/.well-known/oauth-authorization-server/cas/oidc
 ```
 
+Verifiers other than CAS locate the keys that sign issued credentials the same way, through the
+[JWT VC Issuer Metadata](https://datatracker.ietf.org/doc/draft-ietf-oauth-sd-jwt-vc/) at
+`https://sso.example.org/.well-known/jwt-vc-issuer/cas/oidc`, which names the issuer and points to the
+OpenID Connect JWKS:
+
+```json
+{
+  "issuer": "https://sso.example.org/cas/oidc",
+  "jwks_uri": "https://sso.example.org/cas/oidc/jwks"
+}
+```
+
 CAS is normally deployed under the `/cas` context path, so neither request reaches the
 application at all and the servlet container answers with its own `404`. Route them onto the
 paths CAS serves, either in the proxy that fronts CAS or with the
@@ -82,7 +95,7 @@ The valve must be registered on the engine, which runs before a context is selec
 The rewrite rule would be similar to:
 
 ```
-RewriteRule ^/\.well-known/(openid-credential-issuer|oauth-authorization-server|openid-configuration)(/.+)$ $2/.well-known/$1 [L]
+RewriteRule ^/\.well-known/(openid-credential-issuer|oauth-authorization-server|openid-configuration|jwt-vc-issuer)(/.+)$ $2/.well-known/$1 [L]
 ```
 
 Naming the documents explicitly, rather than matching every well-known path, leaves unrelated
@@ -102,6 +115,10 @@ authentication methods supported for the token endpoint by default for this reas
 list is narrowed, keep `none` in it; without it a wallet picks one of the credentialed methods it
 sees instead and the exchange is rejected, because the wallet has
 no client registration to authenticate with.
+
+For the same reason the authorization server metadata advertises `pre-authorized_grant_anonymous_access_supported`
+as `true` whenever the pre-authorized code grant is listed in `grant_types_supported`. A wallet that finds no such
+value assumes `false` and may refuse to redeem the code without a `client_id` it does not have.
 
 ### Credential Endpoint
 
@@ -131,10 +148,24 @@ The endpoint body is expected as:
 {
   "credential_configuration_id": "myorg",
   "proofs": {
-    "jwt": ["eyJ0eXAiOiJvcGVuaWQ0dmNpL..."]
+    "jwt": [
+      "eyJ0eXAiOiJvcGVuaWQ0dmNpL..."
+    ]
   }
 }
 ```
+
+Each proof must be signed with one of the `proof-signing-alg-values-supported` of the requested credential
+configuration and name the holder key by one of its `cryptographic-binding-methods-supported`:
+
+| Proof header | Binding method | Holder key                                                                                      |
+|--------------|----------------|-------------------------------------------------------------------------------------------------|
+| `jwk`        | `jwk`          | The key itself. A `kid` sent alongside it is ignored.                                           |
+| `x5c`        | `jwk`          | The public key of the first certificate, which must be within its validity period.              |
+| `kid`        | `did:jwk`      | The key encoded in the `did:jwk` DID URL. Other DID methods cannot be resolved and are refused. |
+
+RSA, EC and Ed25519 (`EdDSA`) keys are accepted. A proof that does not satisfy the configuration is answered
+with `invalid_proof`. The defaults are `ES256` and `RS256` with the `jwk` binding method.
 
 There is no separate batch credential endpoint. A batch is a single credential request carrying
 several proofs, and the response holds one credential per proof, all of the same credential
@@ -146,7 +177,9 @@ The response is:
 ```json
 {
   "credentials": [
-    {"credential": "eyJhbGciOiJSUzI1NiIs..."}
+    {
+      "credential": "eyJhbGciOiJSUzI1NiIs..."
+    }
   ]
 }
 ```
@@ -188,9 +221,23 @@ The endpoint body is expected to be:
 ```json
 {
   "principal": "...",
-  "credentialConfigurationIds": ["..."]
+  "credentialConfigurationIds": [
+    "..."
+  ]
 }
 ```
+
+The response carries the offer URI and the deep link a wallet opens, typically rendered as a QR code:
+
+```json
+{
+  "transactionId": "...",
+  "credentialOfferUri": "https://sso.example.org/cas/oidc/oidcVcCredentialOffer/...",
+  "credentialOfferLink": "openid-credential-offer://?credential_offer_uri=https%3A%2F%2Fsso.example.org%2Fcas%2Foidc%2FoidcVcCredentialOffer%2F...",
+  "txCode": "..."
+}
+```
+
 This endpoint is intended for trusted callers such as:
 
 - Administrative tools
@@ -257,6 +304,13 @@ also include the `openid` scope if the wallet wishes to authenticate the end-use
 as part of the token response. The wallet exchanges the authorization code at the token endpoint to obtain 
 an access token that is specifically authorized for credential issuance. 
 
+Instead of authorization details, the wallet may request a credential by the `scope` its credential configuration
+publishes in the issuer metadata, for example `scope=openid UniversityDegree`. Every granted scope that belongs to a
+credential configuration authorizes that configuration, narrowed by the service's verifiable credentials policy.
+These scopes are accepted and advertised in `scopes_supported` without being listed among the discovery scopes.
+The token response then carries no credential identifiers, so the credential request names the configuration with
+`credential_configuration_id`. A wallet may use both mechanisms in one authorization request.
+
 ## Pre-Authorized Code Flow
 
 In pre-authorized code flows, CAS or a trusted backend prepares the issuance transaction
@@ -284,16 +338,83 @@ presentation request, and CAS returns a deep link the wallet can open, usually r
 
 {% include_cached casproperties.html properties="cas.authn.oidc.vc.presentation" %}
 
+The relying party creates the request with:
+
+```bash
+POST /oidc/oidcVcPresentationRequest
+```
+
+```json
+{
+  "credentials": [
+    {
+      "id": "university-degree",
+      "format": "dc+sd-jwt",
+      "vct_values": [
+        "https://sso.example.org/cas/oidc/oidcVcCredentialType/UniversityDegreeCredential"
+      ],
+      "claims": [
+        {
+          "path": [
+            "given_name"
+          ]
+        },
+        {
+          "path": [
+            "email"
+          ],
+          "required": false
+        }
+      ]
+    }
+  ],
+  "redirect_uri": "https://app.example.org/presentation/callback"
+}
+```
+
+Claims are required unless marked otherwise. DCQL has no per-claim flag, so optional claims are expressed
+with `claim_sets`: every claim first, then the required ones alone, or each optional claim on its own when
+none is required. The wallet returns the first combination it can satisfy, and CAS accepts any of them.
+
+Wallets may bind credentials to EC, RSA or Ed25519 keys. CAS advertises and accepts the key binding
+algorithms `ES256`, `ES384`, `ES512`, `RS256`, `RS384`, `RS512`, `PS256`, `PS384`, `PS512` and `Ed25519`
+(also accepted as `EdDSA`), and advertises the signing algorithms of its `dc+sd-jwt` credential
+configurations for the credential itself.
+
+The optional `redirect_uri` enables a same-device flow and must be registered for the client creating the
+request. After the wallet answers, CAS sends it to that URI with a fresh `response_code` in the fragment,
+as OpenID4VP recommends against session fixation, and releases the outcome only when the relying party
+presents that code. Without a `redirect_uri`, as in a cross-device flow with a QR code, the relying party
+polls for the outcome instead.
+
+With `cas.authn.oidc.vc.presentation.client-identifier-prefix` set to `X509_SAN_DNS`, the request object is
+signed and served by reference. The signing key must carry an `x5c` certificate chain whose leaf names the
+issuer host as a DNS subject alternative name. The request carries that chain in its `x5c` header without a
+trailing self-signed trust anchor, as HAIP 1.0 requires; HAIP also requires the leaf not to be self-signed.
+
 The relying party that created the request collects the outcome from:
 
 ```bash
-GET /oidc/oidcVcPresentationResult?requestId=...
+GET /oidc/oidcVcPresentationResult?requestId=...&response_code=...
 ```
 
-This endpoint requires the same client authentication as the request creation endpoint. It answers
+This endpoint requires the same client authentication as the request creation endpoint, and only the
+client that created the request may collect its outcome; any other client, or a same-device request
+without its `response_code`, gets `404`. It answers
 `{"status": "pending"}` while the wallet has not responded, and once it has, `{"status": "verified"}`
-together with the claims that were disclosed, keyed by credential query id. The outcome is delivered
-once and then removed, so a second poll reports `404`, as does a request that expired unanswered.
+together with the claims that were disclosed, keyed by credential query id. A wallet that declines or
+cannot answer posts an error response instead, which is recorded as the outcome:
+
+```json
+{
+  "status": "error",
+  "error": "access_denied",
+  "error_description": "The user declined"
+}
+```
+
+The outcome is delivered once and then removed, so a second poll reports `404`, as does a request that
+expired unanswered.
 
 CAS as a verifier trusts only itself. A presented credential is accepted when its `iss` is this
 deployment's own issuer, its `vct` resolves to one of the credential configurations above, and its
@@ -352,16 +473,56 @@ credential long after the issuance exchange has finished, so this period describ
 life of the credential itself and is unrelated to the lifetime of the offer, the pre-authorized
 code, the nonce or the access token used to obtain it.
 
+Claim values come from principal attributes. A value that reads as a number, such as `95.5`, is issued as a
+number; one whose number would not read back the same way, such as `02134`, is issued as text exactly as released.
+
+## Credential Formats
+
+Each credential configuration is described in the issuer metadata the way its format requires. A
+`dc+sd-jwt` configuration publishes its `vct`. A `jwt_vc_json` configuration publishes a
+`credential_definition` with the credential `type`, and a `jwt_vc_json-ld` configuration adds its
+`@context`. The type is `VerifiableCredential` plus the configuration's `scope`, or its id when no scope
+is set, and the context is the W3C Verifiable Credentials Data Model 2.0 base context alone, whose
+vocabulary covers the credential's claims. Issued credentials carry exactly what the metadata publishes:
+
+```json
+{
+  "credential_configurations_supported": {
+    "employee": {
+      "format": "jwt_vc_json-ld",
+      "scope": "EmployeeCredential",
+      "credential_definition": {
+        "@context": [
+          "https://www.w3.org/ns/credentials/v2"
+        ],
+        "type": [
+          "VerifiableCredential",
+          "EmployeeCredential"
+        ]
+      }
+    }
+  }
+}
+```
+
 ## Credential Signing
 
 After claims are collected and validated, CAS signs the credential with its own issuer key, selected the
 same way as for other OpenID Connect artifacts and honoring the service's `jwksKeyId` when one is set.
+The credential names that key with `kid` and does not say which client it was issued to, so verifiers
+cannot correlate the holder with the relying party; CAS as a verifier finds the key by `kid` as well.
 
 A credential is not an ID token, and the relying party's ID token settings do not apply to it. The
 algorithm is the first entry of the credential configuration's `credential-signing-alg-values-supported`
 that the issuer's signing key can perform, so the order of that list is a preference the deployment
 expresses, and that list is also the permitted set, so no other algorithm can be used. This is what keeps
 issuance consistent with the issuer metadata and with what a verifier, CAS included, accepts.
+
+When the issuer signing key in the keystore carries an `x5c` certificate chain, the credential carries it as
+its `x5c` header, leaf certificate first, as HAIP 1.0 requires, so a verifier can take the issuer key from the
+leaf and validate the chain against its trust list. A trailing self-signed certificate is treated as the trust
+anchor and left out, as HAIP requires; HAIP also requires the leaf not to be self-signed. A key without a chain
+produces credentials without `x5c`.
 
 A service may narrow the algorithms used for its own credentials through its verifiable credentials
 policy:

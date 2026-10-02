@@ -91,6 +91,22 @@ public class WebAuthnMultifactorAuthenticationCoreProperties implements Serializ
     private String allowedOrigins;
 
     /**
+     * URL of the page where a user creates a passkey for the account, published as {@code enroll}
+     * in the passkey endpoints document at {@code /.well-known/passkey-endpoints}, so that password managers
+     * can send users straight to it. If unset and account management is enabled, the multifactor devices panel
+     * of the account profile is used; otherwise no enrollment page is published.
+     */
+    private String passkeyEnrollUrl;
+
+    /**
+     * URL of the page where a user manages the account's passkeys, published as {@code manage}
+     * in the passkey endpoints document at {@code /.well-known/passkey-endpoints}. If unset and account
+     * management is enabled, the multifactor devices panel of the account profile is used; otherwise no
+     * management page is published.
+     */
+    private String passkeyManageUrl;
+
+    /**
      * If false finish registration op will only allow
      * registrations where the attestation signature can be linked to a trusted attestation root. This excludes self
      * attestation and none attestation. Regardless of the value of this option, invalid attestation
@@ -180,6 +196,20 @@ public class WebAuthnMultifactorAuthenticationCoreProperties implements Serializ
      * to the configured requirement.</p>
      */
     private String userVerificationRequirement;
+
+    /**
+     * User-agent hints, in descending order of preference, sent with registration and authentication requests
+     * to guide the browser towards the kind of authenticator to offer first.
+     * <p>Hints do not restrict which authenticator may be used, and where they conflict with the authenticator
+     * attachment, browsers that support them follow the hints.</p>
+     * <ul>
+     *   <li>{@code security-key}: a physical security key, such as a USB or NFC key.</li>
+     *   <li>{@code client-device}: an authenticator on the device in use, such as the platform passkey manager.</li>
+     *   <li>{@code hybrid}: a phone or other general-purpose device, usually reached by scanning a QR code.</li>
+     * </ul>
+     * <p>If unset, no hints are sent.</p>
+     */
+    private List<String> hints = new ArrayList<>();
 
     public WebAuthnMultifactorAuthenticationCoreProperties() {
         trustSource.getTrustedDeviceMetadata().setLocation(new ClassPathResource("webauthn-metadata.json"));

@@ -196,26 +196,24 @@ public class OidcVerifiableCredentialEndpointController extends BaseOAuth20Contr
 
     /**
      * Credential configurations the access token is allowed to request. Tokens issued through the
-     * pre-authorized code flow carry the identifiers directly, while the authorization code flow
-     * records them as authorization details attached to the token.
+     * pre-authorized code flow, or through the authorization code flow with a credential configuration's
+     * scope, carry the identifiers directly; authorization details attached to the token add theirs. A wallet
+     * may use both in one request, so the two are combined.
      *
      * @param accessToken the access token
      * @return the authorized credential configuration ids, never null
      */
     protected List<String> resolveAuthorizedCredentialConfigurationIds(final OAuth20AccessToken accessToken) {
-        val configurationIds = accessToken.getCredentialConfigurationIds();
-        if (configurationIds != null && !configurationIds.isEmpty()) {
-            return List.copyOf(configurationIds);
+        val configurationIds = new ArrayList<String>();
+        val grantedConfigurationIds = accessToken.getCredentialConfigurationIds();
+        if (grantedConfigurationIds != null) {
+            configurationIds.addAll(grantedConfigurationIds);
         }
         val authorizationDetails = accessToken.getAuthorizationDetails();
-        if (authorizationDetails == null) {
-            return List.of();
+        if (authorizationDetails != null) {
+            authorizationDetails.forEach(details -> configurationIds.add(toCredentialConfigurationId(details)));
         }
-        return authorizationDetails
-            .stream()
-            .map(OidcVerifiableCredentialEndpointController::toCredentialConfigurationId)
-            .filter(StringUtils::isNotBlank)
-            .toList();
+        return configurationIds.stream().filter(StringUtils::isNotBlank).distinct().toList();
     }
 
     private static String toCredentialConfigurationId(final Serializable authorizationDetails) {
@@ -339,7 +337,9 @@ public class OidcVerifiableCredentialEndpointController extends BaseOAuth20Contr
 
     protected boolean validateAccessToken(@Nullable final OAuth20AccessToken accessToken) {
         return accessToken != null && !accessToken.isExpired()
-            && (accessToken.getGrantType() == OAuth20GrantTypes.PRE_AUTHORIZED_CODE || accessToken.hasAuthorizationDetails());
+            && (accessToken.getGrantType() == OAuth20GrantTypes.PRE_AUTHORIZED_CODE
+            || accessToken.hasAuthorizationDetails()
+            || !resolveAuthorizedCredentialConfigurationIds(accessToken).isEmpty());
     }
 
     /**

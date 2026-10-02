@@ -2,7 +2,7 @@ package org.apereo.cas.configuration.model.support.cookie;
 
 import module java.base;
 import org.apereo.cas.configuration.model.core.util.EncryptionJwtCryptoProperties;
-import org.apereo.cas.configuration.model.core.util.EncryptionJwtSigningJwtCryptographyProperties;
+import org.apereo.cas.configuration.model.core.util.EncryptionOptionalSigningOptionalJwtCryptographyProperties;
 import org.apereo.cas.configuration.model.core.util.SigningJwtCryptoProperties;
 import org.apereo.cas.configuration.support.DurationCapable;
 import org.apereo.cas.configuration.support.RequiresModule;
@@ -43,7 +43,7 @@ public class TicketGrantingCookieProperties extends PinnableCookieProperties {
      * Crypto settings that determine how the cookie should be signed and encrypted.
      */
     @NestedConfigurationProperty
-    private EncryptionJwtSigningJwtCryptographyProperties crypto = new EncryptionJwtSigningJwtCryptographyProperties();
+    private EncryptionOptionalSigningOptionalJwtCryptographyProperties crypto = new EncryptionOptionalSigningOptionalJwtCryptographyProperties();
 
     public TicketGrantingCookieProperties() {
         setName("TGC");

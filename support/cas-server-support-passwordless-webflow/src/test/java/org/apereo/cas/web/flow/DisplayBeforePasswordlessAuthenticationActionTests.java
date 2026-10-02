@@ -45,7 +45,7 @@ class DisplayBeforePasswordlessAuthenticationActionTests extends BasePasswordles
     static class PasswordlessAuthenticationActionTestConfiguration {
         @Bean
         public SmsSender smsSender() {
-            return MockSmsSender.withMessage("Your token is \\d+");
+            return MockSmsSender.withMessage("Your token is (\\d+)\\n\\n@\\S+ #\\1");
         }
     }
     

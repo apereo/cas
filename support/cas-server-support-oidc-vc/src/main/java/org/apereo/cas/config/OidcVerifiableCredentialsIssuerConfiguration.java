@@ -155,7 +155,8 @@ class OidcVerifiableCredentialsIssuerConfiguration {
     @Bean
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @ConditionalOnMissingBean(name = "oidcVerifiableCredentialsAccessTokenGeneratorCustomizer")
-    public OidcVerifiableCredentialsAccessTokenGeneratorCustomizer oidcVerifiableCredentialsAccessTokenGeneratorCustomizer() {
-        return new OidcVerifiableCredentialsAccessTokenGeneratorCustomizer();
+    public OidcVerifiableCredentialsAccessTokenGeneratorCustomizer oidcVerifiableCredentialsAccessTokenGeneratorCustomizer(
+        final CasConfigurationProperties casProperties) {
+        return new OidcVerifiableCredentialsAccessTokenGeneratorCustomizer(casProperties);
     }
 }

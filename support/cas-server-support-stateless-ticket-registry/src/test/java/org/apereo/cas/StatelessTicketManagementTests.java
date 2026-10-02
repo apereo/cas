@@ -15,7 +15,7 @@ import org.apereo.cas.ticket.Ticket;
 import org.apereo.cas.ticket.TicketGrantingTicketImpl;
 import org.apereo.cas.ticket.TransientSessionTicketImpl;
 import org.apereo.cas.ticket.expiration.NeverExpiresExpirationPolicy;
-import org.apereo.cas.ticket.registry.TicketCompactor;
+import org.apereo.cas.ticket.registry.compact.TicketCompactor;
 import org.apereo.cas.ticket.tracking.TicketTrackingPolicy;
 import org.apereo.cas.util.crypto.CipherExecutor;
 import lombok.val;

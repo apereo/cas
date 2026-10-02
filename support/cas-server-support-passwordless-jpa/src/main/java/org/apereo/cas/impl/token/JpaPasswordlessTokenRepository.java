@@ -52,7 +52,7 @@ public class JpaPasswordlessTokenRepository extends BasePasswordlessTokenReposit
                 return Optional.empty();
             }
             LOGGER.debug("Located token [{}]", authnToken);
-            return Optional.of(authnToken);
+            return Optional.of(authnToken.withId(token.getId()));
         }
         return Optional.empty();
     }
@@ -65,12 +65,12 @@ public class JpaPasswordlessTokenRepository extends BasePasswordlessTokenReposit
     }
 
     @Override
-    public void deleteToken(final PasswordlessAuthenticationToken token) {
+    public boolean deleteToken(final PasswordlessAuthenticationToken token) {
         val query = DELETE_QUERY.concat(" WHERE t.username = :username AND t.id = :id");
-        entityManager.createQuery(query)
+        return entityManager.createQuery(query)
             .setParameter(QUERY_PARAM_USERNAME, token.getUsername())
             .setParameter("id", token.getId())
-            .executeUpdate();
+            .executeUpdate() > 0;
     }
 
     @Override
@@ -93,7 +93,7 @@ public class JpaPasswordlessTokenRepository extends BasePasswordlessTokenReposit
     public void clean() {
         val now = ZonedDateTime.now(ZoneOffset.UTC);
         LOGGER.debug("Cleaning expired records with an expiration date of [{}]", now);
-        val query = DELETE_QUERY.concat(" WHERE t.expirationDate >= :expirationDate");
+        val query = DELETE_QUERY.concat(" WHERE t.expirationDate <= :expirationDate");
         entityManager.createQuery(query)
             .setParameter("expirationDate", now)
             .executeUpdate();

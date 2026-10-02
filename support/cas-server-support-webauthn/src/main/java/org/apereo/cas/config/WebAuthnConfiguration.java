@@ -42,8 +42,10 @@ import org.apereo.cas.webauthn.storage.JsonResourceWebAuthnCredentialRepository;
 import org.apereo.cas.webauthn.storage.WebAuthnCredentialRepository;
 import org.apereo.cas.webauthn.web.BaseWebAuthnController;
 import org.apereo.cas.webauthn.web.WebAuthnController;
+import org.apereo.cas.webauthn.web.WebAuthnPasskeyEndpointsController;
 import org.apereo.cas.webauthn.web.WebAuthnQRCodeController;
 import org.apereo.cas.webauthn.web.WebAuthnRegisteredDevicesEndpoint;
+import org.apereo.cas.webauthn.web.WebAuthnRelatedOriginsController;
 import com.google.errorprone.annotations.CanIgnoreReturnValue;
 import com.yubico.core.DefaultSessionManager;
 import com.yubico.core.InMemoryRegistrationStorage;
@@ -285,12 +287,7 @@ class WebAuthnConfiguration {
                 .name(StringUtils.defaultIfBlank(webAuthn.getRelyingPartyName(), "CAS"))
                 .build();
 
-            val origins = new LinkedHashSet<String>();
-            origins.add(serverName);
-            if (StringUtils.isNotBlank(webAuthn.getAllowedOrigins())) {
-                origins.addAll(org.springframework.util.StringUtils.commaDelimitedListToSet(webAuthn.getAllowedOrigins()));
-            }
-
+            val origins = WebAuthnUtils.determineAllowedOrigins(casProperties);
             val conveyance = AttestationConveyancePreference.valueOf(webAuthn.getAttestationConveyancePreference().toUpperCase(Locale.ENGLISH));
             val appId = new AppId(StringUtils.defaultIfBlank(webAuthn.getApplicationId(), serverName));
             val relyingParty = RelyingParty.builder()
@@ -493,6 +490,22 @@ class WebAuthnConfiguration {
                 return new WebAuthnRegisteredDevicesEndpoint(casProperties, applicationContext, webAuthnCredentialRepository);
             }
 
+            @ConditionalOnMissingBean(name = "webAuthnRelatedOriginsController")
+            @Bean
+            @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+            public WebAuthnRelatedOriginsController webAuthnRelatedOriginsController(final CasConfigurationProperties casProperties) {
+                return new WebAuthnRelatedOriginsController(WebAuthnUtils.determineAllowedOrigins(casProperties));
+            }
+
+            @ConditionalOnMissingBean(name = "webAuthnPasskeyEndpointsController")
+            @Bean
+            @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+            public WebAuthnPasskeyEndpointsController webAuthnPasskeyEndpointsController(
+                final ConfigurableApplicationContext applicationContext,
+                final CasConfigurationProperties casProperties) {
+                return new WebAuthnPasskeyEndpointsController(casProperties);
+            }
+
             @ConditionalOnMissingBean(name = "webAuthnController")
             @Bean
             @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
@@ -603,7 +616,11 @@ class WebAuthnConfiguration {
                                 .matcher(BaseWebAuthnController.BASE_ENDPOINT_WEBAUTHN + WebAuthnQRCodeController.ENDPOINT_QR_VERIFY + "/**");
                             customizer.requestMatchers(regEndpoints)
                                 .access(new WebExpressionAuthorizationManager("hasRole('USER') and isAuthenticated()"));
-                            customizer.requestMatchers(authEndpoints, qrAuthEndpoints).permitAll();
+                            val relatedOrigins = PathPatternRequestMatcher.withDefaults()
+                                .matcher(HttpMethod.GET, WebAuthnRelatedOriginsController.ENDPOINT_RELATED_ORIGINS);
+                            val passkeyEndpoints = PathPatternRequestMatcher.withDefaults()
+                                .matcher(HttpMethod.GET, WebAuthnPasskeyEndpointsController.ENDPOINT_PASSKEY_ENDPOINTS);
+                            customizer.requestMatchers(authEndpoints, qrAuthEndpoints, relatedOrigins, passkeyEndpoints).permitAll();
                         });
                         return this;
                     }

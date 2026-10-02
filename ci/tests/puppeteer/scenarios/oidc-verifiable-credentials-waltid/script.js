@@ -85,10 +85,10 @@ async function startVerifiableCredentialFlowForConfiguration(wallet, ...configur
     await cas.logg(`Starting verifiable credential flow for ${configurationIds}`);
 
     const transaction = await createVerifiableCredentialTransaction(configurationIds);
-    const offerUrl =
-        `openid-credential-offer://?${new URLSearchParams({
-            credential_offer_uri: transaction.credentialOfferUri
-        })}`;
+    const offerUrl = transaction.credentialOfferLink;
+    assert(offerUrl === `openid-credential-offer://?${new URLSearchParams({
+        credential_offer_uri: transaction.credentialOfferUri
+    })}`, "CAS must return the wallet deep link for the offer");
     await cas.logg(`Credential offer request: ${offerUrl}`);
 
     /**

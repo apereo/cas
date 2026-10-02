@@ -35,10 +35,12 @@ public class KafkaTicketRegistryProperties extends BaseKafkaProperties {
     private boolean autoCreateTopics = true;
 
     /**
-     * In Kafka, a group ID is a unique identifier for a group of consumers.
-     * Consumers within the same group share the same group ID. The group
-     * ID is used to coordinate the consumption of messages
-     * from Kafka topics. Here are some key points about group IDs
+     * Prefix of the consumer group each CAS node uses to consume ticket registry messages.
+     * Every node keeps its own copy of the registry and must receive every change, so the
+     * group is completed with the node's queue identifier ({@code cas.ticket.registry.core.queue-identifier},
+     * or a random value when that is not set) and no two nodes share a group. Nodes that share
+     * a group split the topic partitions between them, so each change would reach only one of them.
+     * Setting the queue identifier keeps a node's group, and its committed offsets, stable across restarts.
      */
     private String groupId = "cas-ticket-registry";
 

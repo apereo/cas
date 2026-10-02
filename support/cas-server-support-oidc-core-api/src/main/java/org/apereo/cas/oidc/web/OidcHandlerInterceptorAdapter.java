@@ -7,6 +7,7 @@ import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.oauth.validator.authorization.OAuth20AuthorizationRequestValidator;
 import org.apereo.cas.support.oauth.web.OAuth20HandlerInterceptorAdapter;
 import org.apereo.cas.support.oauth.web.OAuth20RequestParameterResolver;
+import org.apereo.cas.support.oauth.web.endpoints.OAuth20ConfigurationContext;
 import org.apereo.cas.support.oauth.web.response.accesstoken.ext.AccessTokenGrantRequestExtractor;
 import org.apereo.cas.util.CollectionUtils;
 import lombok.extern.slf4j.Slf4j;
@@ -45,10 +46,11 @@ public class OidcHandlerInterceptorAdapter extends OAuth20HandlerInterceptorAdap
         final ObjectProvider<ServicesManager> servicesManager,
         final ObjectProvider<SessionStore> sessionStore,
         final ObjectProvider<List<OAuth20AuthorizationRequestValidator>> oauthAuthorizationRequestValidators,
-        final ObjectProvider<OAuth20RequestParameterResolver> oauthRequestParameterResolver) {
+        final ObjectProvider<OAuth20RequestParameterResolver> oauthRequestParameterResolver,
+        final ObjectProvider<OAuth20ConfigurationContext> configurationContext) {
         super(requiresAuthenticationAccessTokenInterceptor, requiresAuthenticationAuthorizeInterceptor,
             accessTokenGrantRequestExtractors, servicesManager, sessionStore, oauthAuthorizationRequestValidators,
-            oauthRequestParameterResolver);
+            oauthRequestParameterResolver, configurationContext);
 
         this.requiresAuthenticationDynamicRegistrationInterceptor = requiresAuthenticationDynamicRegistrationInterceptor;
         this.casProperties = casProperties;
