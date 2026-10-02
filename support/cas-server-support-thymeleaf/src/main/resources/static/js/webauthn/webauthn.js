@@ -252,6 +252,19 @@ function showDeviceInfo(params) {
     $("#residentKeysPanel").hide();
 }
 
+/**
+ * Show the device that was just registered: the device named by attestation metadata when there is one, otherwise
+ * the passkey provider that CAS recognizes from the authenticator's AAGUID, and the credential nickname as a last resort.
+ */
+function showRegisteredDevice(data) {
+    const metadata = data.registration.attestationMetadata;
+    const provider = data.passkeyProvider || {};
+    showDeviceInfo(extend(
+        extend({displayName: provider.name, imageUrl: provider.icon}, metadata ? metadata.deviceProperties : {}),
+        {nickname: data.registration.credentialNickname}
+    ));
+}
+
 function resetDisplays() {
     /*
     showRequest(null);
@@ -416,16 +429,7 @@ function register(username, displayName, credentialNickname, csrfToken,
             // console.log(`data: ${JSON.stringify(data)}`);
             clearMessages();
             if (data.registration) {
-                const nicknameInfo = {nickname: data.registration.credentialNickname};
-
-                if (data.registration && data.registration.attestationMetadata) {
-                    showDeviceInfo(extend(
-                        data.registration.attestationMetadata.deviceProperties,
-                        nicknameInfo
-                    ));
-                } else {
-                    showDeviceInfo(nicknameInfo);
-                }
+                showRegisteredDevice(data);
 
                 if (!data.attestationTrusted) {
                     addMessage("Attestation cannot be trusted.");

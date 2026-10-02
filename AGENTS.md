@@ -1121,7 +1121,8 @@ Guidance for AI coding agents working in the Apereo CAS source tree.
   node-local credential index in `BaseWebAuthnCredentialRepository`, which lags other nodes by up to a minute.
 - Verification here: Maven Central is blocked, so check Yubico APIs by cloning `github.com/Yubico/java-webauthn-server` at the
   version in `libs.versions.toml`. `webauthn.js` is too deep to stage; copy it under the ignored `build/` folder, stage that,
-  and exercise it in Playwright's Chromium with a CDP virtual authenticator.
+  and exercise it in Playwright's Chromium with a CDP virtual authenticator. After `device_commit_files`, check the file on
+  the device (size or a grep): one commit reported success while the device kept the old content.
 - `/.well-known/passkey-endpoints` follows the W3C Passkey Endpoints Working Draft (Jan 2026): 200, `application/json`, no
   redirect, `{}` allowed. CAS has no direct URL into WebAuthn registration, so the defaults point at the plain account
   profile (`/account`), never at a panel fragment such as `#divMfaRegisteredAccounts`, and only when
@@ -1139,11 +1140,14 @@ Guidance for AI coding agents working in the Apereo CAS source tree.
   only for records stored before BE was kept. Transports live on `CredentialRegistration` and go out through
   `getCredentialIdsForUsername`. Chrome's CDP virtual authenticator sets BE/BS via `defaultBackupEligibility`/`defaultBackupState`.
 - Provider names: `CredentialRegistration.aaguid` (UUID string, absent for the all-zero AAGUID) is set at registration
-  only; older records cannot recover it. `webauthn-passkey-providers.json` is a names-only snapshot of
-  `passkeydeveloper/passkey-authenticator-aaguids` `aaguid.json` (no icons; upstream has no license file and may empty
-  the list), refreshed with `jq 'map_values({name})'` and kept pretty-printed. The device manager uses it only when
-  attestation metadata names no device. Chrome's virtual authenticators send unlisted or zero AAGUIDs, so scenarios
-  cannot show a provider name.
+  only; older records cannot recover it. `webauthn-passkey-providers.json` is a snapshot of
+  `passkeydeveloper/passkey-authenticator-aaguids` `aaguid.json` (name, `icon_light`, `icon_dark`; upstream has no
+  license file and may empty the list; icons are provider logos the list publishes for RP display), refreshed with
+  `jq 'with_entries(.key |= ascii_downcase) | map_values({name, icon_light, icon_dark} | with_entries(select(.value != null)))'`
+  and kept pretty-printed. `WebAuthnUtils.getPasskeyProvider` keeps only SVG data URIs (light first). The device
+  manager uses the name only when attestation metadata names no device; `SuccessfulRegistrationResult.passkeyProvider`
+  carries name and icon to the registration page. Chrome's virtual authenticators send unlisted or zero AAGUIDs, so
+  scenarios cannot show a provider name.
 - `#device-icon` on the registration and login pages only has an image when attestation metadata supplies `imageUrl`
   (the bundled Yubico list, remote PNGs); `showDeviceInfo` hides it otherwise or when the image fails to load.
 

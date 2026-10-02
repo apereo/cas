@@ -3,6 +3,7 @@ package com.yubico.core;
 import module java.base;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.webauthn.WebAuthnUtils;
+import org.apereo.cas.webauthn.WebAuthnUtils.PasskeyProvider;
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.databind.JsonSerializer;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -47,6 +48,7 @@ import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.jooq.lambda.Unchecked;
 import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
 import jakarta.servlet.http.HttpServletRequest;
 import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
@@ -338,6 +340,8 @@ public class WebAuthnServer {
 
         ByteArray sessionToken;
 
+        @Nullable PasskeyProvider passkeyProvider;
+
         public SuccessfulRegistrationResult(final RegistrationRequest request,
                                             final RegistrationResponse response,
                                             final CredentialRegistration registration,
@@ -355,6 +359,7 @@ public class WebAuthnServer {
             this.authData = response.credential().getResponse().getParsedAuthenticatorData();
             this.username = request.username();
             this.sessionToken = sessionToken;
+            this.passkeyProvider = WebAuthnUtils.getPasskeyProvider(registration.getAaguid()).orElse(null);
             this.success = true;
         }
 
@@ -504,7 +509,6 @@ public class WebAuthnServer {
                 }));
     }
 
-
     private CredentialRegistration addRegistration(
         final UserIdentity userIdentity,
         final Optional<String> nickname,
@@ -527,5 +531,4 @@ public class WebAuthnServer {
         userStorage.addRegistrationByUsername(userIdentity.getName(), reg);
         return reg;
     }
-
 }

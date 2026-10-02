@@ -127,6 +127,9 @@ class WebAuthnServerTests {
         val result = server.finishRegistration(new MockHttpServletRequest(), responseJson);
         assertTrue(result.isRight(), () -> String.join(",", result.left().orElseThrow()));
         assertTrue(result.right().orElseThrow().isAttestationTrusted());
+        val passkeyProvider = result.right().orElseThrow().getPasskeyProvider();
+        assertEquals("Google Password Manager", passkeyProvider.name());
+        assertTrue(passkeyProvider.icon().startsWith("data:image/svg+xml;base64,"));
         verify(storage).addRegistrationByUsername(eq("casuser"),
             argThat((CredentialRegistration registration) -> Boolean.TRUE.equals(registration.getDiscoverable())
                 && registration.getCredential().isBackupEligible().orElse(Boolean.FALSE)

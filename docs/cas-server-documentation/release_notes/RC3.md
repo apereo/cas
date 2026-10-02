@@ -191,7 +191,8 @@ Each registration now keeps the authenticator's backup eligibility and backup st
 a passkey whose backup eligibility changes is rejected, as WebAuthn Level 3 requires. The transports recorded at
 registration are sent back with the credentials CAS lists to the browser, so it can reach each authenticator directly.
 Registrations also keep the authenticator's AAGUID, and the account profile names passkeys by provider (for example
-*Google Password Manager* or *1Password*) when the attestation does not name the device.
+*Google Password Manager* or *1Password*) when the attestation does not name the device; the registration page shows
+that name and the provider's icon once a passkey is registered.
 
 ### OpenID Connect Verifiable Credentials
 

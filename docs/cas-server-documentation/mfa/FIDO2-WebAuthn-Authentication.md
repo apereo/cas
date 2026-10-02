@@ -119,5 +119,6 @@ Each registration keeps the AAGUID that identifies the authenticator or passkey 
 attestation does not name the device, which is the case for synced passkeys, the
 [account profile](../registration/Account-Management-Overview.html) shows the provider name, such as
 *Google Password Manager*, *1Password* or *Apple Passwords*, from a bundled snapshot of the community
-[passkey provider AAGUID list](https://github.com/passkeydeveloper/passkey-authenticator-aaguids). Providers that send
-an all-zero AAGUID, and devices registered before CAS kept the AAGUID, stay unnamed.
+[passkey provider AAGUID list](https://github.com/passkeydeveloper/passkey-authenticator-aaguids). The registration
+page shows the same name, with the provider's icon from that list, right after a passkey is registered. Providers that
+send an all-zero AAGUID, and devices registered before CAS kept the AAGUID, stay unnamed.

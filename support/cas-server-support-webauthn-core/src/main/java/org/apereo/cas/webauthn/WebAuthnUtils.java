@@ -14,6 +14,7 @@ import com.yubico.webauthn.data.ByteArray;
 import lombok.experimental.UtilityClass;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.Strings;
 import org.jspecify.annotations.Nullable;
 import org.springframework.core.io.ClassPathResource;
 
@@ -62,15 +63,34 @@ public class WebAuthnUtils {
     }
 
     /**
-     * Name of the passkey provider, such as a password manager or platform authenticator, that uses the given
-     * AAGUID, taken from the bundled snapshot of the community passkey provider AAGUID list.
+     * Passkey provider, such as a password manager or platform authenticator, that uses the given AAGUID,
+     * taken from the bundled snapshot of the community passkey provider AAGUID list.
+     *
+     * @param aaguid the AAGUID as a UUID string
+     * @return the passkey provider
+     */
+    public static Optional<PasskeyProvider> getPasskeyProvider(final @Nullable String aaguid) {
+        return Optional.ofNullable(aaguid)
+            .map(id -> PasskeyProviders.PROVIDERS.get(id.toLowerCase(Locale.ROOT)));
+    }
+
+    /**
+     * Name of the passkey provider that uses the given AAGUID.
      *
      * @param aaguid the AAGUID as a UUID string
      * @return the provider name
      */
     public static Optional<String> getPasskeyProviderName(final @Nullable String aaguid) {
-        return Optional.ofNullable(aaguid)
-            .map(id -> PasskeyProviders.NAMES.get(id.toLowerCase(Locale.ROOT)));
+        return getPasskeyProvider(aaguid).map(PasskeyProvider::name);
+    }
+
+    /**
+     * Passkey provider known by its AAGUID.
+     *
+     * @param name the provider name for display
+     * @param icon the provider icon as an SVG data URI, for light backgrounds when the list offers one
+     */
+    public record PasskeyProvider(String name, @Nullable String icon) {
     }
 
     @JsonDeserialize(builder = CredentialRegistration.CredentialRegistrationBuilder.class)
@@ -90,28 +110,36 @@ public class WebAuthnUtils {
     }
 
     private static final class PasskeyProviders {
-        private static final Map<String, String> NAMES = load();
+        private static final String SVG_DATA_URI = "data:image/svg+xml;base64,";
+
+        private static final Map<String, PasskeyProvider> PROVIDERS = load();
 
         /**
-         * Load provider names keyed by AAGUID from {@code webauthn-passkey-providers.json}, a names-only snapshot of
+         * Load passkey providers keyed by AAGUID from {@code webauthn-passkey-providers.json}, a snapshot of
          * <a href="https://github.com/passkeydeveloper/passkey-authenticator-aaguids">passkey-authenticator-aaguids</a>.
+         * The light icon is preferred over the dark one, and only SVG data URIs are kept, so the page never
+         * fetches an icon from elsewhere.
          *
-         * @return the provider names
+         * @return the passkey providers
          */
-        private static Map<String, String> load() {
+        private static Map<String, PasskeyProvider> load() {
             try (val input = new ClassPathResource("webauthn-passkey-providers.json").getInputStream()) {
                 val entries = MAPPER.readValue(input, new TypeReference<Map<String, Map<String, String>>>() {
                 });
-                val names = new HashMap<String, String>();
+                val providers = new HashMap<String, PasskeyProvider>();
                 entries.forEach((aaguid, entry) -> {
                     val name = entry.get("name");
                     if (StringUtils.isNotBlank(name)) {
-                        names.put(aaguid.toLowerCase(Locale.ROOT), name);
+                        val icon = Stream.of(entry.get("icon_light"), entry.get("icon_dark"))
+                            .filter(value -> Strings.CS.startsWith(value, SVG_DATA_URI))
+                            .findFirst()
+                            .orElse(null);
+                        providers.put(aaguid.toLowerCase(Locale.ROOT), new PasskeyProvider(name, icon));
                     }
                 });
-                return Map.copyOf(names);
+                return Map.copyOf(providers);
             } catch (final Exception e) {
-                throw new IllegalStateException("Unable to load passkey provider names", e);
+                throw new IllegalStateException("Unable to load passkey providers", e);
             }
         }
     }

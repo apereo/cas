@@ -8,6 +8,7 @@ import org.apereo.cas.ticket.InvalidTicketException;
 import org.apereo.cas.ticket.Ticket;
 import org.apereo.cas.ticket.TicketFactory;
 import org.apereo.cas.ticket.TransientSessionTicket;
+import org.apereo.cas.ticket.TransientSessionTicketFactory;
 import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.util.spring.DirectObjectProvider;
 import org.apereo.cas.util.spring.boot.SpringBootTestAutoConfigurations;
@@ -173,7 +174,7 @@ class TicketRegistrySessionRepositoryTests {
         session.setAttribute("locale", "en");
         sessionRepository.save(session);
 
-        val ticket = ticketRegistry.getTicket(session.getId(), TransientSessionTicket.class);
+        val ticket = ticketRegistry.getTicket(TransientSessionTicketFactory.normalizeTicketId(session.getId()), TransientSessionTicket.class);
         val propertyNames = Set.copyOf(ticket.getProperties().keySet());
 
         val loadedSession = Objects.requireNonNull(sessionRepository.findById(session.getId()));
