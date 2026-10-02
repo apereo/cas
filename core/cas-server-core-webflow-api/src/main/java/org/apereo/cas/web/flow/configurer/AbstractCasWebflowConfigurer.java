@@ -94,7 +94,6 @@ import org.springframework.webflow.expression.spel.ScopeSearchingPropertyAccesso
 @ToString(of = "name")
 public abstract class AbstractCasWebflowConfigurer implements CasWebflowConfigurer {
 
-
     /**
      * Flow builder services.
      */

@@ -262,9 +262,8 @@ public class WebAuthnServer {
                         registrationRequest,
                         registrationResponse,
                         addRegistration(
-                            registrationRequest.publicKeyCredentialCreationOptions().getUser().toBuilder()
-                                .name(registrationRequest.username())
-                                .build(),
+                            registrationRequest.publicKeyCredentialCreationOptions().getUser(),
+                            registrationRequest.username(),
                             determineCredentialNickname(registrationRequest, registration),
                             registration
                         ),
@@ -496,6 +495,8 @@ public class WebAuthnServer {
 
         ByteArray sessionToken;
 
+        @Nullable PasskeyProvider passkeyProvider;
+
         public SuccessfulAuthenticationResult(final AssertionRequestWrapper request, final AssertionResponse response,
                                               final Collection<CredentialRegistration> registrations,
                                               final String username, final ByteArray sessionToken) {
@@ -505,8 +506,26 @@ public class WebAuthnServer {
                 registrations,
                 response.credential().getResponse().getParsedAuthenticatorData(),
                 username,
-                sessionToken
+                sessionToken,
+                findPasskeyProvider(registrations, response.credential().getId())
             );
+        }
+
+        /**
+         * Passkey provider of the registration whose credential answered the assertion.
+         *
+         * @param registrations the registrations of the user
+         * @param credentialId  the id of the credential that answered
+         * @return the passkey provider, or null when unknown
+         */
+        private static @Nullable PasskeyProvider findPasskeyProvider(final Collection<CredentialRegistration> registrations,
+                                                                     final ByteArray credentialId) {
+            return registrations.stream()
+                .filter(registration -> registration.getCredential() != null
+                    && credentialId.equals(registration.getCredential().getCredentialId()))
+                .findFirst()
+                .flatMap(registration -> WebAuthnUtils.getPasskeyProvider(registration.getAaguid()))
+                .orElse(null);
         }
     }
 
@@ -569,13 +588,26 @@ public class WebAuthnServer {
         }
     }
 
+    /**
+     * Add the registration for the principal. The user entity given to the authenticator may carry another name, the
+     * username typed at login for a passkey upgrade; the registration keeps the principal id as the user name and
+     * remembers that other name, so that later signals to the browser keep the name the password manager knows.
+     *
+     * @param userEntity the user entity given to the authenticator
+     * @param username   the principal id that owns the registration
+     * @param nickname   the nickname
+     * @param result     the registration result
+     * @return the credential registration
+     */
     private CredentialRegistration addRegistration(
-        final UserIdentity userIdentity,
+        final UserIdentity userEntity,
+        final String username,
         final Optional<String> nickname,
         final RegistrationResult result) {
-
+        val userIdentity = userEntity.toBuilder().name(username).build();
         return addRegistration(
             userIdentity,
+            Optional.of(userEntity.getName()).filter(name -> !name.equals(username)),
             nickname,
             RegisteredCredential.builder()
                 .credentialId(result.getKeyId().getId())
@@ -602,6 +634,7 @@ public class WebAuthnServer {
 
     private CredentialRegistration addRegistration(
         final UserIdentity userIdentity,
+        final Optional<String> userEntityName,
         final Optional<String> nickname,
         final RegisteredCredential credential,
         final SortedSet<AuthenticatorTransport> transports,
@@ -617,6 +650,7 @@ public class WebAuthnServer {
             .attestationMetadata(attestationMetadata.orElse(null))
             .discoverable(discoverable.orElse(null))
             .aaguid(aaguid.orElse(null))
+            .userEntityName(userEntityName.orElse(null))
             .build();
         LOGGER.debug("Adding registration: user: [{}], nickname: [{}], credential: [{}]", userIdentity, nickname, credential);
         userStorage.addRegistrationByUsername(userIdentity.getName(), reg);

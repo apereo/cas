@@ -265,6 +265,19 @@ function showRegisteredDevice(data) {
     ));
 }
 
+/**
+ * Show the device whose credential answered the authentication: the device named by attestation metadata when there
+ * is one, otherwise the passkey provider that CAS recognizes from the authenticator's AAGUID, and the credential
+ * nickname as a last resort.
+ */
+function showAuthenticatedDevice(data) {
+    const credentialId = data.response && data.response.credential ? data.response.credential.id : undefined;
+    const registration = (data.registrations || []).find(reg => reg.credential && reg.credential.credentialId === credentialId);
+    if (registration) {
+        showRegisteredDevice({registration, passkeyProvider: data.passkeyProvider});
+    }
+}
+
 function resetDisplays() {
     /*
     showRequest(null);
@@ -524,14 +537,10 @@ function authenticate(username = null, getRequest = getAuthenticateRequest) {
                     if (deviceProperties) {
                         addDeviceAttributeAsRow("Device Id", deviceProperties.deviceId);
                         addDeviceAttributeAsRow("Device Name", deviceProperties.displayName);
-
-                        showDeviceInfo({
-                            "displayName": deviceProperties.displayName,
-                            "imageUrl": deviceProperties.imageUrl
-                        })
                     }
                 }
             });
+            showAuthenticatedDevice(data);
 
             $("#authnButton").hide();
 
@@ -593,7 +602,9 @@ async function isConditionalMediationAvailable() {
  * Tell the browser, through the WebAuthn Signal API, what CAS knows about the passkey that answered.
  * When CAS reports the credential as unknown, the browser is asked to stop offering it. After a successful
  * authentication, the browser learns which passkeys CAS still accepts for the user and what the user's current
- * name is, so that passkeys removed from CAS stop being offered and renamed accounts show up to date.
+ * name is, so that passkeys removed from CAS stop being offered and renamed accounts show up to date. The name is the
+ * one the passkey was created with when that differs from the principal id, such as the username typed at login for a
+ * passkey upgrade, so that the password manager keeps showing the name it knows.
  * Browsers without the Signal API ignore this.
  */
 function signalPasskeyState(request, data, credential) {
@@ -628,10 +639,11 @@ function signalPasskeyState(request, data, credential) {
             }).catch(report);
         }
         if (typeof PublicKeyCredential.signalCurrentUserDetails === "function") {
+            const used = credential ? registrations.find(reg => reg.credential && reg.credential.credentialId === credential.id) : undefined;
             PublicKeyCredential.signalCurrentUserDetails({
                 rpId,
                 userId: user.id,
-                name: user.name,
+                name: (used && used.userEntityName) || user.name,
                 displayName: user.displayName
             }).catch(report);
         }

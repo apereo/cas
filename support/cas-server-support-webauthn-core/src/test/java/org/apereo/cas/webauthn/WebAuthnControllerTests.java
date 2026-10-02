@@ -32,6 +32,7 @@ import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.security.authentication.TestingAuthenticationToken;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
+import static org.hamcrest.Matchers.containsString;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
@@ -81,7 +82,6 @@ class WebAuthnControllerTests {
     @Test
     void verifyFinishAuthentication() throws Throwable {
         val sessionManager = mock(SessionManager.class);
-        val authn = RegisteredServiceTestUtils.getAuthentication();
 
         val server = mock(WebAuthnServer.class);
         when(server.getSessionManager()).thenReturn(sessionManager);
@@ -106,7 +106,7 @@ class WebAuthnControllerTests {
         val registration = CredentialRegistration.builder()
             .registrationTime(Instant.now(Clock.systemUTC()))
             .credential(RegisteredCredential.builder()
-                .credentialId(ByteArray.fromBase64Url(authn.getPrincipal().getId()))
+                .credentialId(ByteArray.fromBase64Url("ibE9wQddsF806g8uL9hDzgwLJipKhS9esD07Jmj0N98"))
                 .userHandle(ByteArray.fromBase64Url(RandomUtils.randomAlphabetic(8)))
                 .publicKeyCose(ByteArray.fromBase64Url(RandomUtils.randomAlphabetic(8)))
                 .build())
@@ -115,6 +115,7 @@ class WebAuthnControllerTests {
                 .displayName("CAS")
                 .id(ByteArray.fromBase64Url(RandomUtils.randomAlphabetic(8)))
                 .build())
+            .aaguid("ea9b8d66-4d01-1d21-3ce4-b6b48cb575d4")
             .build();
 
         val publicKeyRequest = PublicKeyCredentialRequestOptions.builder()
@@ -153,7 +154,21 @@ class WebAuthnControllerTests {
         mockMvc.perform(finishRequest)
             .andExpect(status().isOk())
             .andExpect(jsonPath("$.success").value(true))
-            .andExpect(jsonPath("$.username").value("casuser"));
+            .andExpect(jsonPath("$.username").value("casuser"))
+            .andExpect(jsonPath("$.passkeyProvider.name").value("Google Password Manager"));
+    }
+
+    @Test
+    void verifyPasskeyProviderIcon() throws Throwable {
+        val mockMvc = MockMvcBuilders.standaloneSetup(new WebAuthnController(mock(WebAuthnServer.class))).build();
+        mockMvc.perform(get("/webauthn/passkey-providers/ea9b8d66-4d01-1d21-3ce4-b6b48cb575d4/icon"))
+            .andExpect(status().isOk())
+            .andExpect(content().contentTypeCompatibleWith("image/svg+xml"))
+            .andExpect(header().string("X-Content-Type-Options", "nosniff"))
+            .andExpect(header().string("Content-Security-Policy", containsString("sandbox")))
+            .andExpect(content().string(containsString("<svg")));
+        mockMvc.perform(get("/webauthn/passkey-providers/" + UUID.randomUUID() + "/icon"))
+            .andExpect(status().isNotFound());
     }
 
     @Test

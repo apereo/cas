@@ -1,6 +1,7 @@
 package org.apereo.cas.webauthn.web;
 
 import module java.base;
+import org.apereo.cas.webauthn.WebAuthnUtils;
 import com.yubico.core.WebAuthnServer;
 import com.yubico.data.AssertionRequestWrapper;
 import com.yubico.data.RegistrationRequest;
@@ -19,8 +20,11 @@ import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.jooq.lambda.Unchecked;
 import org.jspecify.annotations.NonNull;
+import org.springframework.http.CacheControl;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -51,7 +55,14 @@ public class WebAuthnController extends BaseWebAuthnController {
      */
     public static final String WEBAUTHN_ENDPOINT_AUTHENTICATE = "/authenticate";
 
+    /**
+     * Passkey provider icon endpoint.
+     */
+    public static final String WEBAUTHN_ENDPOINT_PASSKEY_PROVIDER_ICON = "/passkey-providers/{aaguid}/icon";
+
     private static final String WEBAUTHN_ENDPOINT_FINISH = "/finish";
+
+    private static final MediaType SVG = MediaType.valueOf("image/svg+xml");
 
 
     private final WebAuthnServer server;
@@ -205,6 +216,40 @@ public class WebAuthnController extends BaseWebAuthnController {
             .orElseThrow(() -> new IllegalStateException("Session not found for the given session token"));
         LOGGER.debug("Found valid session token [{}] to finish off authentication", session.getBase64());
         return finishResponse(Either.right(authentication), responseJson);
+    }
+
+    /**
+     * Icon of the passkey provider known by the given AAGUID, served from the bundled passkey provider list so that
+     * pages can show it without carrying the image around. The SVG comes from a third-party list, so it is served
+     * sandboxed and may not be sniffed as anything else; browsers draw it without running scripts when it is shown
+     * as an image.
+     *
+     * @param aaguid the AAGUID as a UUID string
+     * @return the SVG icon, or not found
+     */
+    @GetMapping(value = WEBAUTHN_ENDPOINT_PASSKEY_PROVIDER_ICON)
+    @Operation(summary = "Passkey provider icon",
+        parameters = @Parameter(name = "aaguid", in = ParameterIn.PATH, required = true, description = "Authenticator AAGUID"))
+    public ResponseEntity<byte[]> passkeyProviderIcon(@PathVariable("aaguid") final String aaguid) {
+        return WebAuthnUtils.getPasskeyProvider(aaguid)
+            .flatMap(WebAuthnUtils.PasskeyProvider::iconSvg)
+            .map(icon -> ResponseEntity.ok()
+                .contentType(SVG)
+                .cacheControl(CacheControl.maxAge(Duration.ofDays(1)))
+                .header("Content-Security-Policy", "default-src 'none'; style-src 'unsafe-inline'; sandbox")
+                .header("X-Content-Type-Options", "nosniff")
+                .body(icon))
+            .orElseGet(() -> ResponseEntity.notFound().build());
+    }
+
+    /**
+     * Path of the icon of the passkey provider known by the given AAGUID, relative to the CAS context.
+     *
+     * @param aaguid the AAGUID as a UUID string
+     * @return the icon path
+     */
+    public static String getPasskeyProviderIconPath(final String aaguid) {
+        return BASE_ENDPOINT_WEBAUTHN + WEBAUTHN_ENDPOINT_PASSKEY_PROVIDER_ICON.replace("{aaguid}", aaguid);
     }
 
     @RequiredArgsConstructor

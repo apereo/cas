@@ -620,7 +620,9 @@ class WebAuthnConfiguration {
                                 .matcher(HttpMethod.GET, WebAuthnRelatedOriginsController.ENDPOINT_RELATED_ORIGINS);
                             val passkeyEndpoints = PathPatternRequestMatcher.withDefaults()
                                 .matcher(HttpMethod.GET, WebAuthnPasskeyEndpointsController.ENDPOINT_PASSKEY_ENDPOINTS);
-                            customizer.requestMatchers(authEndpoints, qrAuthEndpoints, relatedOrigins, passkeyEndpoints).permitAll();
+                            val passkeyProviderIcons = PathPatternRequestMatcher.withDefaults()
+                                .matcher(HttpMethod.GET, BaseWebAuthnController.BASE_ENDPOINT_WEBAUTHN + "/passkey-providers/*/icon");
+                            customizer.requestMatchers(authEndpoints, qrAuthEndpoints, relatedOrigins, passkeyEndpoints, passkeyProviderIcons).permitAll();
                         });
                         return this;
                     }

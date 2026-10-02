@@ -74,6 +74,8 @@ class WebAuthnMultifactorDeviceProviderActionTests {
         assertNull(webAuthnDeviceProviderAction.execute(context));
         val devices = MultifactorAuthenticationWebflowUtils.getMultifactorAuthenticationRegisteredDevices(context);
         assertEquals(1, devices.size());
-        assertEquals("Google Password Manager", devices.iterator().next().getModel());
+        val device = devices.iterator().next();
+        assertEquals("Google Password Manager", device.getModel());
+        assertEquals("/webauthn/passkey-providers/ea9b8d66-4d01-1d21-3ce4-b6b48cb575d4/icon", device.getDetails().get("icon"));
     }
 }

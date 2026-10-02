@@ -123,8 +123,12 @@
                         <td class="mdc-data-table__cell" th:utext="${entry.name}">Value</td>
                         <td class="mdc-data-table__cell" th:title="${entry.type}"
                             th:utext="*{entry.type}?: 'N/A'">Value</td>
-                        <td class="mdc-data-table__cell" th:title="${entry.model}"
-                            th:utext="*{entry.model}?: 'N/A'">Value</td>
+                        <td class="mdc-data-table__cell" th:title="${entry.model}">
+                            <img th:if="${entry.details != null && entry.details['icon'] != null}"
+                                 th:src="@{${entry.details['icon']}}" alt="" aria-hidden="true"
+                                 width="20" height="20" class="me-1" style="vertical-align: text-bottom"/>
+                            <span th:utext="*{entry.model}?: 'N/A'">Value</span>
+                        </td>
                         <td class="mdc-data-table__cell" th:title="${entry.number}"
                             th:utext="*{entry.number}?: 'N/A'">Value</td>
                         <td class="mdc-data-table__cell">

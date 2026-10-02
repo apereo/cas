@@ -142,6 +142,7 @@ class WebAuthnServerTests {
                 && registration.getCredential().isBackedUp().orElse(Boolean.FALSE)
                 && "ea9b8d66-4d01-1d21-3ce4-b6b48cb575d4".equals(registration.getAaguid())
                 && "casuser".equals(registration.getUserIdentity().getName())
+                && Objects.equals(conditional ? "Typed@Example.org" : null, registration.getUserEntityName())
                 && (conditional ? "Google Password Manager" : "passkey").equals(registration.getCredentialNickname())));
         verify(relyingParty).finishRegistration(argThat((FinishRegistrationOptions finish) -> finish.isConditionalCreate() == conditional));
         assertTrue(WebAuthnUtils.toAaguid(new ByteArray(new byte[16])).isEmpty());

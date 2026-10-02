@@ -6,6 +6,7 @@ import org.apereo.cas.authentication.device.MultifactorAuthenticationDeviceManag
 import org.apereo.cas.authentication.device.MultifactorAuthenticationRegisteredDevice;
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.util.function.FunctionUtils;
+import org.apereo.cas.webauthn.web.WebAuthnController;
 import com.fasterxml.jackson.databind.ObjectWriter;
 import com.yubico.core.RegistrationStorage;
 import com.yubico.data.CredentialRegistration;
@@ -52,22 +53,35 @@ public class WebAuthnMultifactorAuthenticationDeviceManager implements Multifact
         return List.of("Web Authn");
     }
 
+    /**
+     * Map a registration to a registered device. When attestation metadata names no device, the passkey provider known
+     * by the registration's AAGUID gives the model. A provider with an icon also adds the {@code icon} detail, the path
+     * of the icon endpoint rather than the image itself, since registered devices are kept in the flow state.
+     *
+     * @param acct the registration
+     * @return the registered device
+     */
     protected MultifactorAuthenticationRegisteredDevice mapWebAuthnAccount(final CredentialRegistration acct) {
         val attestation = Optional.ofNullable(acct.getAttestationMetadata()).orElseGet(Attestation::empty);
         val vendor = attestation.getVendorProperties().orElseGet(Map::of);
         val device = attestation.getDeviceProperties().orElseGet(Map::of);
+        val passkeyProvider = WebAuthnUtils.getPasskeyProvider(acct.getAaguid());
+        val details = new LinkedHashMap<String, Object>();
+        details.put("providerId", multifactorAuthenticationProvider.getObject().getId());
+        passkeyProvider.filter(provider -> provider.icon() != null)
+            .ifPresent(provider -> details.put("icon", WebAuthnController.getPasskeyProviderIconPath(acct.getAaguid())));
         return FunctionUtils.doUnchecked(() -> MultifactorAuthenticationRegisteredDevice
             .builder()
             .id(acct.getCredential().getCredentialId().getBase64Url())
             .name(acct.getCredentialNickname())
             .type(vendor.get("name"))
             .model(Optional.ofNullable(device.get("displayName"))
-                .or(() -> WebAuthnUtils.getPasskeyProviderName(acct.getAaguid()))
+                .or(() -> passkeyProvider.map(WebAuthnUtils.PasskeyProvider::name))
                 .orElse(null))
             .lastUsedDateTime(acct.getRegistrationTime().toString())
             .payload(OBJECT_WRITER.writeValueAsString(acct))
             .source(getSource().getFirst())
-            .details(Map.of("providerId", multifactorAuthenticationProvider.getObject().getId()))
+            .details(details)
             .build());
     }
 }

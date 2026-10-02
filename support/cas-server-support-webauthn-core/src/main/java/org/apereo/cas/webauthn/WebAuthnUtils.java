@@ -29,6 +29,8 @@ import org.springframework.core.io.ClassPathResource;
 public class WebAuthnUtils {
     private static final int AAGUID_LENGTH = 16;
 
+    private static final String SVG_DATA_URI = "data:image/svg+xml;base64,";
+
     private static final ObjectMapper MAPPER = JacksonCodecs
         .json()
         .addMixIn(CredentialRegistration.class, CredentialRegistrationMixin.class)
@@ -92,6 +94,14 @@ public class WebAuthnUtils {
      * @param icon the provider icon as an SVG data URI, for light backgrounds when the list offers one
      */
     public record PasskeyProvider(String name, @Nullable String icon) {
+        /**
+         * The icon as SVG markup, decoded from its data URI.
+         *
+         * @return the SVG bytes, when the provider has an icon
+         */
+        public Optional<byte[]> iconSvg() {
+            return Optional.ofNullable(icon).map(value -> Base64.getDecoder().decode(value.substring(SVG_DATA_URI.length())));
+        }
     }
 
     @JsonDeserialize(builder = CredentialRegistration.CredentialRegistrationBuilder.class)
@@ -111,8 +121,6 @@ public class WebAuthnUtils {
     }
 
     private static final class PasskeyProviders {
-        private static final String SVG_DATA_URI = "data:image/svg+xml;base64,";
-
         private static final Map<String, PasskeyProvider> PROVIDERS = load();
 
         /**

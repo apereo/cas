@@ -37,6 +37,13 @@ public class CredentialRegistration {
      */
     String aaguid;
 
+    /**
+     * Name given to the authenticator for the WebAuthn user entity when it differs from the principal id, such as the
+     * username typed at login for a passkey upgrade, so that the password manager can keep showing that name;
+     * {@code null} when the authenticator was given the principal id.
+     */
+    String userEntityName;
+
     public String getUsername() {
         return userIdentity.getName();
     }

@@ -191,11 +191,12 @@ Each registration now keeps the authenticator's backup eligibility and backup st
 a passkey whose backup eligibility changes is rejected, as WebAuthn Level 3 requires. The transports recorded at
 registration are sent back with the credentials CAS lists to the browser, so it can reach each authenticator directly.
 Registrations also keep the authenticator's AAGUID, and the account profile names passkeys by provider (for example
-*Google Password Manager* or *1Password*) when the attestation does not name the device; the registration page shows
-that name and the provider's icon once a passkey is registered.
+*Google Password Manager* or *1Password*) with the provider's icon when the attestation does not name the device; the
+registration and login pages show that name and icon for the passkey just registered or used.
 A new passkey upgrade, turned on with `cas.authn.mfa.web-authn.core.passkey-upgrade-enabled` alongside primary authentication
 and untrusted attestation, shows a short page after a password login that lets the browser's password manager create a
-passkey for the account on its own (WebAuthn conditional create), then continues as usual.
+passkey for the account on its own (WebAuthn conditional create), then continues as usual. Such passkeys keep the typed
+username as their name when CAS later reports account details through the Signal API.
 
 ### OpenID Connect Verifiable Credentials
 
