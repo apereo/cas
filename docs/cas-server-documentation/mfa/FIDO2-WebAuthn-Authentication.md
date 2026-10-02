@@ -112,3 +112,12 @@ After a successful WebAuthn authentication, CAS uses the [WebAuthn Signal API](h
 where the browser supports it, to report the passkeys it still accepts for the user and the user's current name and
 display name. Password managers and platform authenticators can then stop offering passkeys that were removed from
 CAS and show the account as it is named in CAS. Browsers without the Signal API ignore this.
+
+## Passkey Provider Names
+
+Each registration keeps the AAGUID that identifies the authenticator or passkey provider that created it. When the
+attestation does not name the device, which is the case for synced passkeys, the
+[account profile](../registration/Account-Management-Overview.html) shows the provider name, such as
+*Google Password Manager*, *1Password* or *Apple Passwords*, from a bundled snapshot of the community
+[passkey provider AAGUID list](https://github.com/passkeydeveloper/passkey-authenticator-aaguids). Providers that send
+an all-zero AAGUID, and devices registered before CAS kept the AAGUID, stay unnamed.

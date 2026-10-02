@@ -2,6 +2,7 @@ package com.yubico.core;
 
 import module java.base;
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.webauthn.WebAuthnUtils;
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.databind.JsonSerializer;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -490,6 +491,7 @@ public class WebAuthnServer {
                 .build(),
             result.getKeyId().getTransports().orElseGet(TreeSet::new),
             result.isDiscoverable(),
+            WebAuthnUtils.toAaguid(result.getAaguid()),
             result
                 .getAttestationTrustPath()
                 .flatMap(x5c -> x5c.stream().findFirst())
@@ -509,6 +511,7 @@ public class WebAuthnServer {
         final RegisteredCredential credential,
         final SortedSet<AuthenticatorTransport> transports,
         final Optional<Boolean> discoverable,
+        final Optional<String> aaguid,
         final Optional<Attestation> attestationMetadata) {
         val reg = CredentialRegistration.builder()
             .userIdentity(userIdentity)
@@ -518,6 +521,7 @@ public class WebAuthnServer {
             .transports(transports)
             .attestationMetadata(attestationMetadata.orElse(null))
             .discoverable(discoverable.orElse(null))
+            .aaguid(aaguid.orElse(null))
             .build();
         LOGGER.debug("Adding registration: user: [{}], nickname: [{}], credential: [{}]", userIdentity, nickname, credential);
         userStorage.addRegistrationByUsername(userIdentity.getName(), reg);

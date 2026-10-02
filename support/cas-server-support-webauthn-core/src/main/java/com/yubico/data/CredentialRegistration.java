@@ -31,6 +31,12 @@ public class CredentialRegistration {
      */
     Boolean discoverable;
 
+    /**
+     * AAGUID of the authenticator or passkey provider that created the credential, as a lowercase UUID string;
+     * {@code null} when the authenticator did not identify itself.
+     */
+    String aaguid;
+
     public String getUsername() {
         return userIdentity.getName();
     }

@@ -190,6 +190,8 @@ When WebAuthn primary authentication is allowed, the default registration button
 Each registration now keeps the authenticator's backup eligibility and backup state, which are updated on every login;
 a passkey whose backup eligibility changes is rejected, as WebAuthn Level 3 requires. The transports recorded at
 registration are sent back with the credentials CAS lists to the browser, so it can reach each authenticator directly.
+Registrations also keep the authenticator's AAGUID, and the account profile names passkeys by provider (for example
+*Google Password Manager* or *1Password*) when the attestation does not name the device.
 
 ### OpenID Connect Verifiable Credentials
 
@@ -264,6 +266,7 @@ authentication. See the [stateless ticket registry documentation](../ticketing/S
 - A large number of dependencies and libraries have been updated to their latest versions.
 - Almost all CAS unit tests are internally reworked to allow maximum parallelization and speed up the overall test execution time.
 - [Delegated authentication](../integration/Delegate-Authentication.html) no longer fails intermittently when concurrent requests reach an identity provider that is still being initialized, typically right after startup. Such requests now wait for the initialization in progress instead of failing, which also affects [SAML2 identity providers](../integration/Delegate-Authentication-SAML2.html) when building SAML2 responses, metadata and logout requests.
+- [WebAuthn](../mfa/FIDO2-WebAuthn-Authentication.html) registration and login pages no longer show a broken image when the device has no icon in its attestation metadata, and fall back to the credential nickname for the device name.
 - [WebAuthn](../mfa/FIDO2-WebAuthn-Authentication.html) pages now report browsers that cannot run them; the support check was never applied, and it no longer requires a platform authenticator.
 - [WebAuthn](../mfa/FIDO2-WebAuthn-Authentication.html) authentication pages now send the CSRF token rendered by CAS instead of reading it from the `XSRF-TOKEN` cookie, which failed with `403` whenever the page could not read that cookie.
 - Browser storage used by [Duo Security](../mfa/DuoSecurity-Authentication.html) and the [SAML2 identity provider](../authentication/Configuring-SAML2-Authentication.html) now falls back to cookies when the browser cannot use local or session storage.

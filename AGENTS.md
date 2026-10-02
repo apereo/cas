@@ -1138,6 +1138,14 @@ Guidance for AI coding agents working in the Apereo CAS source tree.
   return the stored credential as is, so never rebuild it field by field; `updateSignatureCount` refreshes BS and fills BE
   only for records stored before BE was kept. Transports live on `CredentialRegistration` and go out through
   `getCredentialIdsForUsername`. Chrome's CDP virtual authenticator sets BE/BS via `defaultBackupEligibility`/`defaultBackupState`.
+- Provider names: `CredentialRegistration.aaguid` (UUID string, absent for the all-zero AAGUID) is set at registration
+  only; older records cannot recover it. `webauthn-passkey-providers.json` is a names-only snapshot of
+  `passkeydeveloper/passkey-authenticator-aaguids` `aaguid.json` (no icons; upstream has no license file and may empty
+  the list), refreshed with `jq 'map_values({name})'` and kept pretty-printed. The device manager uses it only when
+  attestation metadata names no device. Chrome's virtual authenticators send unlisted or zero AAGUIDs, so scenarios
+  cannot show a provider name.
+- `#device-icon` on the registration and login pages only has an image when attestation metadata supplies `imageUrl`
+  (the bundled Yubico list, remote PNGs); `showDeviceInfo` hides it otherwise or when the image fails to load.
 
 ## Queue-backed ticket registries (Kafka, AMQP, Pulsar, GCP Pub/Sub)
 

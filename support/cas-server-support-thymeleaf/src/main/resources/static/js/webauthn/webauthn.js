@@ -231,10 +231,20 @@ function hideDeviceInfo() {
     $("#registerDiscoverableCredentialButton").show();
 }
 
+/**
+ * Show the registered or authenticated device. The icon comes from attestation metadata and is shown only when
+ * that metadata provides one and it loads; otherwise the browser would draw a broken-image placeholder. Without a
+ * device name from the metadata, the credential nickname is shown instead.
+ */
 function showDeviceInfo(params) {
     $("#device-info").show();
-    $("#device-name").text(params.displayName);
-    $("#device-icon").attr("src", params.imageUrl);
+    $("#device-name").text(params.displayName || params.nickname || "");
+    const icon = $("#device-icon");
+    if (params.imageUrl) {
+        icon.off("error").one("error", () => icon.hide()).attr("src", params.imageUrl).show();
+    } else {
+        icon.removeAttr("src").hide();
+    }
     $("#registerButton").hide();
     $("#deviceNamePanel").hide();
 

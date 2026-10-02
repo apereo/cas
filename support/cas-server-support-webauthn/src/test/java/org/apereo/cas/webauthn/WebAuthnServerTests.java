@@ -107,6 +107,7 @@ class WebAuthnServerTests {
         when(registrationResult.isDiscoverable()).thenReturn(Optional.of(Boolean.TRUE));
         when(registrationResult.isBackupEligible()).thenReturn(Boolean.TRUE);
         when(registrationResult.isBackedUp()).thenReturn(Boolean.TRUE);
+        when(registrationResult.getAaguid()).thenReturn(ByteArray.fromHex("ea9b8d664d011d213ce4b6b48cb575d4"));
         val relyingParty = mock(RelyingParty.class);
         when(relyingParty.finishRegistration(any())).thenReturn(registrationResult);
         when(relyingParty.isAllowUntrustedAttestation()).thenReturn(Boolean.TRUE);
@@ -129,7 +130,9 @@ class WebAuthnServerTests {
         verify(storage).addRegistrationByUsername(eq("casuser"),
             argThat((CredentialRegistration registration) -> Boolean.TRUE.equals(registration.getDiscoverable())
                 && registration.getCredential().isBackupEligible().orElse(Boolean.FALSE)
-                && registration.getCredential().isBackedUp().orElse(Boolean.FALSE)));
+                && registration.getCredential().isBackedUp().orElse(Boolean.FALSE)
+                && "ea9b8d66-4d01-1d21-3ce4-b6b48cb575d4".equals(registration.getAaguid())));
+        assertTrue(WebAuthnUtils.toAaguid(new ByteArray(new byte[16])).isEmpty());
     }
 
     @Test

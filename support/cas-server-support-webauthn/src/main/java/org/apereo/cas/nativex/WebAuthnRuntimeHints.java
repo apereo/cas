@@ -135,5 +135,6 @@ public class WebAuthnRuntimeHints implements CasRuntimeHintsRegistrar {
             ExtensionDescriptor.class,
             ExtensionDescriptor.ExtensionDescriptorBuilder.class
         ));
+        hints.resources().registerPattern("webauthn-passkey-providers.json");
     }
 }

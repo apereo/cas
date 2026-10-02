@@ -67,10 +67,13 @@ class WebAuthnMultifactorDeviceProviderActionTests {
                     .publicKeyCose(ByteArray.fromBase64Url(RandomUtils.randomAlphabetic(8)))
                     .build())
                 .attestationMetadata(Attestation.builder().metadataIdentifier(UUID.randomUUID().toString()).build())
+                .aaguid("ea9b8d66-4d01-1d21-3ce4-b6b48cb575d4")
                 .registrationTime(Instant.EPOCH)
                 .build());
 
         assertNull(webAuthnDeviceProviderAction.execute(context));
-        assertEquals(1, MultifactorAuthenticationWebflowUtils.getMultifactorAuthenticationRegisteredDevices(context).size());
+        val devices = MultifactorAuthenticationWebflowUtils.getMultifactorAuthenticationRegisteredDevices(context);
+        assertEquals(1, devices.size());
+        assertEquals("Google Password Manager", devices.iterator().next().getModel());
     }
 }
