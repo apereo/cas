@@ -9,6 +9,7 @@ import org.apereo.cas.support.oauth.validator.authorization.OAuth20Authorization
 import org.apereo.cas.support.oauth.web.OAuth20HandlerInterceptorAdapter;
 import org.apereo.cas.support.oauth.web.OAuth20RequestParameterResolver;
 import org.apereo.cas.support.oauth.web.OAuth20TicketGrantingTicketAwareSecurityLogic;
+import org.apereo.cas.support.oauth.web.endpoints.OAuth20ConfigurationContext;
 import org.apereo.cas.support.oauth.web.response.accesstoken.ext.AccessTokenGrantRequestExtractor;
 import org.apereo.cas.throttle.AuthenticationThrottlingExecutionPlan;
 import org.apereo.cas.ticket.registry.TicketRegistry;
@@ -86,7 +87,8 @@ class CasOAuth20ThrottleConfiguration {
             final ObjectProvider<List<OAuth20AuthorizationRequestValidator>> oauthAuthorizationRequestValidators,
             final ObjectProvider<List<AccessTokenGrantRequestExtractor>> accessTokenGrantRequestExtractors,
             @Qualifier("oauthDistributedSessionStore") final ObjectProvider<SessionStore> oauthDistributedSessionStore,
-            @Qualifier(ServicesManager.BEAN_NAME) final ObjectProvider<ServicesManager> servicesManager) {
+            @Qualifier(ServicesManager.BEAN_NAME) final ObjectProvider<ServicesManager> servicesManager,
+            @Qualifier(OAuth20ConfigurationContext.BEAN_NAME) final ObjectProvider<OAuth20ConfigurationContext> oauthConfigurationContext) {
             return new OAuth20HandlerInterceptorAdapter(
                 requiresAuthenticationAccessTokenInterceptor,
                 requiresAuthenticationAuthorizeInterceptor,
@@ -94,7 +96,8 @@ class CasOAuth20ThrottleConfiguration {
                 servicesManager,
                 oauthDistributedSessionStore,
                 oauthAuthorizationRequestValidators,
-                oauthRequestParameterResolver);
+                oauthRequestParameterResolver,
+                oauthConfigurationContext);
         }
 
         @Bean

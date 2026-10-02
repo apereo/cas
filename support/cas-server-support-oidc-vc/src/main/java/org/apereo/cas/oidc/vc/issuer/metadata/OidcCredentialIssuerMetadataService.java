@@ -3,7 +3,9 @@ package org.apereo.cas.oidc.vc.issuer.metadata;
 import module java.base;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.support.oidc.OidcVerifiableCredentialConfigurationProperties;
+import org.apereo.cas.configuration.model.support.oidc.OidcVerifiableCredentialsIssuerProperties;
 import org.apereo.cas.oidc.OidcConstants;
+import org.apereo.cas.oidc.vc.issuer.enc.BaseOidcVerifiableCredentialEncoder;
 import org.apereo.cas.oidc.vc.issuer.metadata.CredentialConfigurationDisplay.CredentialConfigurationDisplayLogo;
 import org.apereo.cas.oidc.vc.issuer.metadata.OidcCredentialConfigurationTypeMetadata.ClaimMetadata;
 import org.apereo.cas.oidc.vc.issuer.metadata.OidcCredentialIssuerMetadata.ClaimMetadata.ClaimDisplay;
@@ -37,6 +39,7 @@ public class OidcCredentialIssuerMetadataService {
         metadata.setAuthorizationServers(List.of(issuer));
         metadata.setCredentialEndpoint(issuer + '/' + OidcConstants.VC_CREDENTIAL_URL);
         metadata.setNonceEndpoint(issuer + '/' + OidcConstants.VC_NONCE_URL);
+        metadata.setDisplay(buildIssuerDisplays(properties.getVc().getIssuer().getDisplay()));
         metadata.setBatchCredentialIssuance(OidcCredentialIssuerMetadata.BatchCredentialIssuance
             .builder()
             .batchSize(Math.max(1, properties.getVc().getIssuer().getBatchSize()))
@@ -48,7 +51,17 @@ public class OidcCredentialIssuerMetadataService {
             val cfg = new OidcCredentialIssuerMetadata.CredentialConfiguration();
             cfg.setFormat(value.getFormat().getValue());
             cfg.setScope(value.getScope());
-            cfg.setVct(issuer + '/' + OidcConstants.VC_CREDENTIAL_TYPE_URL + '/' + key);
+            if (value.getFormat() == OidcVerifiableCredentialConfigurationProperties.CredentialConfigurationFormats.DC_SD_JWT) {
+                cfg.setVct(issuer + '/' + OidcConstants.VC_CREDENTIAL_TYPE_URL + '/' + key);
+            } else {
+                cfg.setCredentialDefinition(OidcCredentialIssuerMetadata.CredentialDefinition
+                    .builder()
+                    .context(value.getFormat() == OidcVerifiableCredentialConfigurationProperties.CredentialConfigurationFormats.JWT_VC_JSON_LD
+                        ? List.of(BaseOidcVerifiableCredentialEncoder.VCDM_V2_CONTEXT)
+                        : null)
+                    .type(BaseOidcVerifiableCredentialEncoder.resolveCredentialTypes(key, value))
+                    .build());
+            }
             cfg.setCryptographicBindingMethodsSupported(value.getCryptographicBindingMethodsSupported());
             cfg.setCredentialSigningAlgValuesSupported(value.getCredentialSigningAlgValuesSupported());
 
@@ -82,6 +95,25 @@ public class OidcCredentialIssuerMetadataService {
 
         metadata.setCredentialConfigurationsSupported(supported);
         return metadata;
+    }
+
+    private static List<CredentialConfigurationDisplay> buildIssuerDisplays(
+        final List<OidcVerifiableCredentialsIssuerProperties.IssuerDisplay> issuerDisplays) {
+        return issuerDisplays
+            .stream()
+            .map(entry -> {
+                val display = new CredentialConfigurationDisplay();
+                display.setName(entry.getName());
+                display.setLocale(entry.getLocale());
+                if (StringUtils.isNotBlank(entry.getLogo())) {
+                    display.setLogo(CredentialConfigurationDisplayLogo.builder()
+                        .uri(entry.getLogo())
+                        .altText(StringUtils.defaultIfBlank(entry.getLogoAltText(), entry.getName()))
+                        .build());
+                }
+                return display;
+            })
+            .toList();
     }
 
     private static List<CredentialConfigurationDisplay> buildCredentialConfigurationDisplays(

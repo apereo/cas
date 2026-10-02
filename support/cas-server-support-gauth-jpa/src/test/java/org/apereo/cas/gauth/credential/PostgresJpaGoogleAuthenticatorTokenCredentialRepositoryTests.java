@@ -12,7 +12,6 @@ import org.springframework.test.context.TestPropertySource;
  * @since 6.0.0
  */
 @TestPropertySource(properties = {
-    "cas.authn.mfa.gauth.jpa.ddl-auto=create-drop",
     "cas.authn.mfa.gauth.jpa.user=postgres",
     "cas.authn.mfa.gauth.jpa.password=password",
     "cas.authn.mfa.gauth.jpa.driver-class=org.postgresql.Driver",

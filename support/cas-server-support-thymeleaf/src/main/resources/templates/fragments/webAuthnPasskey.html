@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no"/>
+    <title>Passkey Fragment</title>
+    <link href="../../static/css/cas.css" rel="stylesheet" th:remove="tag"/>
+</head>
+
+<body>
+<main class="container mt-3 mb-3">
+    <div th:fragment="webAuthnPasskey">
+        <script type="text/javascript" th:src="@{#{webjars.text-encoding.js}}"></script>
+        <script type="text/javascript" th:src="@{#{webjars.text-encoding-indexes.js}}"></script>
+        <script type="text/javascript" th:src="@{#{webjars.whatwg-fetch.js}}"></script>
+        <script type="text/javascript" th:src="@{#{webjars.base64.js}}"></script>
+
+        <form method="POST" id="webauthnPasskeyForm" class="fm-v clearfix" th:action="@{/login}">
+            <input type="hidden" name="_eventId" value="validate"/>
+            <input type="hidden" name="token"/>
+            <input type="hidden" name="geolocation"/>
+            <input type="hidden" id="passkeyCsrfToken" th:if="${_csrf}" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
+            <input type="hidden" name="execution" th:value="${flowExecutionKey}"/>
+        </form>
+
+        <script type="text/javascript" th:inline="javascript">
+            /*<![CDATA[*/
+            const contextPath = (/*[[@{/}]]*/ '/').slice(0, -1);
+            /*]]>*/
+            const csrfToken = $("#passkeyCsrfToken").val() || getCookie('XSRF-TOKEN');
+            console.log(`Using CSRF token for passkeys: ${csrfToken}`);
+        </script>
+        <script th:src="@{/js/webauthn/webauthn.js}"></script>
+    </div>
+</main>
+</body>
+
+</html>

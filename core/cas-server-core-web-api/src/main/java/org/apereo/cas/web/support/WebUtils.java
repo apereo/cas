@@ -431,6 +431,20 @@ public class WebUtils {
     }
 
     /**
+     * Gets credential from.
+     *
+     * @param context the context
+     * @return the credential from
+     */
+    public @Nullable Credential getCredentialFrom(final RequestContext context) {
+        return Optional.ofNullable((Credential) context.getRequestScope().get(PARAMETER_CREDENTIAL))
+            .or(() -> Optional.ofNullable((Credential) context.getFlashScope().get(PARAMETER_CREDENTIAL)))
+            .or(() -> Optional.ofNullable((Credential) context.getFlowScope().get(PARAMETER_CREDENTIAL)))
+            .or(() -> Optional.ofNullable((Credential) context.getConversationScope().get(PARAMETER_CREDENTIAL)))
+            .orElse(null);
+    }
+    
+    /**
      * Gets credential.
      *
      * @param <T>     the type parameter
@@ -450,7 +464,7 @@ public class WebUtils {
         }
         return (T) credential;
     }
-
+    
     /**
      * Gets credential from the context.
      *

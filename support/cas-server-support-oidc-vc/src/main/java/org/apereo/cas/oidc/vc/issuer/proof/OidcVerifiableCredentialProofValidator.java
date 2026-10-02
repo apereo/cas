@@ -15,14 +15,18 @@ public interface OidcVerifiableCredentialProofValidator {
     /**
      * Validate verifiable credential proof result.
      *
-     * @param proofJwt       the compact serialization of the proof JWT
-     * @param consumedNonces nonces already consumed while handling the current credential request. A request
-     *                       carrying several proofs legitimately presents one nonce for all of them, so a
-     *                       nonce recorded here is accepted again without being consumed a second time.
+     * @param proofJwt        the compact serialization of the proof JWT
+     * @param configurationId the credential configuration the proof is presented for, whose advertised proof
+     *                        signing algorithms and cryptographic binding methods the proof must use; null
+     *                        accepts any key and algorithm the validator can verify
+     * @param consumedNonces  nonces already consumed while handling the current credential request. A request
+     *                        carrying several proofs legitimately presents one nonce for all of them, so a
+     *                        nonce recorded here is accepted again without being consumed a second time.
      * @return the verifiable credential proof result
      * @throws Exception the exception
      */
-    VerifiableCredentialProofResult validate(String proofJwt, Set<String> consumedNonces) throws Exception;
+    VerifiableCredentialProofResult validate(String proofJwt, @Nullable String configurationId,
+                                             Set<String> consumedNonces) throws Exception;
 
     /**
      * Validate verifiable credential proof result.
@@ -32,7 +36,7 @@ public interface OidcVerifiableCredentialProofValidator {
      * @throws Exception the exception
      */
     default VerifiableCredentialProofResult validate(final String proofJwt) throws Exception {
-        return validate(proofJwt, new HashSet<>());
+        return validate(proofJwt, null, new HashSet<>());
     }
 
     record VerifiableCredentialProofResult(

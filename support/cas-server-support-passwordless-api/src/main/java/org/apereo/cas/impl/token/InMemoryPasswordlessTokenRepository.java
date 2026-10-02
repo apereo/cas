@@ -42,8 +42,8 @@ public class InMemoryPasswordlessTokenRepository extends BasePasswordlessTokenRe
     }
 
     @Override
-    public void deleteToken(final PasswordlessAuthenticationToken token) {
-        deleteTokens(token.getUsername());
+    public boolean deleteToken(final PasswordlessAuthenticationToken token) {
+        return storage.asMap().remove(token.getUsername()) != null;
     }
 
     @Override

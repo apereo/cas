@@ -10,7 +10,6 @@ import org.apereo.cas.ticket.Ticket;
 import org.apereo.cas.ticket.accesstoken.OAuth20AccessToken;
 import org.apereo.cas.ticket.refreshtoken.OAuth20RefreshToken;
 import org.apereo.cas.web.AbstractController;
-import org.apereo.cas.web.support.CookieUtils;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -54,12 +53,7 @@ public abstract class BaseOAuth20Controller<T extends OAuth20ConfigurationContex
     }
 
     protected void ensureSessionReplicationIsAutoconfiguredIfNeedBe(final HttpServletRequest request) {
-        val replicationProps = getConfigurationContext().getCasProperties().getAuthn().getOauth().getSessionReplication();
-        val cookieAutoconfigured = replicationProps.getCookie().isAutoConfigureCookiePath();
-        if (replicationProps.isReplicateSessions() && cookieAutoconfigured) {
-            val cookieBuilder = getConfigurationContext().getOauthDistributedSessionCookieGenerator();
-            CookieUtils.configureCookiePath(request, cookieBuilder);
-        }
+        getConfigurationContext().configureSessionReplicationCookiePath(request);
     }
 
     protected boolean isRequestAuthenticated(final ProfileManager manager, final WebContext context,

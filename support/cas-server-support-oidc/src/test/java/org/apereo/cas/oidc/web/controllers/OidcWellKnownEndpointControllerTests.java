@@ -3,6 +3,7 @@ package org.apereo.cas.oidc.web.controllers;
 import module java.base;
 import org.apereo.cas.oidc.AbstractOidcTests;
 import org.apereo.cas.oidc.OidcConstants;
+import org.apereo.cas.support.oauth.OAuth20GrantTypes;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import static org.hamcrest.Matchers.*;
@@ -62,6 +63,15 @@ class OidcWellKnownEndpointControllerTests extends AbstractOidcTests {
             .andExpect(jsonPath("$.token_endpoint_auth_methods_supported").value(hasItem("none")))
             .andExpect(jsonPath("$.token_endpoint_auth_signing_alg_values_supported").value(hasItem("RS256")))
             .andExpect(jsonPath("$.token_endpoint_auth_signing_alg_values_supported").value(not(hasItem("none"))));
+    }
+
+    @Test
+    void verifyPreAuthorizedGrantAnonymousAccessIsAdvertised() throws Exception {
+        mockMvc.perform(get("/cas/oidc/" + OidcConstants.WELL_KNOWN_OAUTH_AUTHORIZATION_SERVER_URL)
+                .with(withHttpRequestProcessor()))
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$.grant_types_supported").value(hasItem(OAuth20GrantTypes.PRE_AUTHORIZED_CODE.getType())))
+            .andExpect(jsonPath("$['pre-authorized_grant_anonymous_access_supported']").value(true));
     }
 
     @Test

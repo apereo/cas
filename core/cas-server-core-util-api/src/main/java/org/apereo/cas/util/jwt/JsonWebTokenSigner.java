@@ -13,6 +13,7 @@ import org.jooq.lambda.Unchecked;
 import org.jose4j.jwa.AlgorithmConstraints;
 import org.jose4j.jws.JsonWebSignature;
 import org.jose4j.jwt.JwtClaims;
+import java.security.cert.X509Certificate;
 
 /**
  * This is {@link JsonWebTokenSigner}.
@@ -44,6 +45,9 @@ public class JsonWebTokenSigner {
     @Builder.Default
     private final Set<String> allowedAlgorithms = new LinkedHashSet<>();
 
+    @Builder.Default
+    private final List<X509Certificate> certificateChain = new ArrayList<>();
+
     /**
      * Sign byte array.
      *
@@ -70,6 +74,15 @@ public class JsonWebTokenSigner {
         }).get();
     }
 
+    /**
+     * Sign the payload. A non-empty certificate chain is set as the protected {@code x5c} header,
+     * leaf certificate first, so the verifier can take the signing key from it.
+     *
+     * @param payload the payload
+     * @param encoded whether the payload is already base64url-encoded
+     * @return the compact serialization
+     * @throws Exception the exception
+     */
     private String sign(final String payload, final boolean encoded) throws Exception {
         val jws = new JsonWebSignature();
         if (encoded) {
@@ -87,6 +100,9 @@ public class JsonWebTokenSigner {
         } else {
             jws.setKey(key);
             FunctionUtils.doIfNotNull(this.keyId, jws::setKeyIdHeaderValue);
+        }
+        if (!certificateChain.isEmpty()) {
+            jws.setCertificateChainHeaderValue(certificateChain.toArray(X509Certificate[]::new));
         }
         headers.forEach((header, value) -> jws.setHeader(header, value.toString()));
         LOGGER.trace("Signing ID token with key id header value [{}] and algorithm header value [{}]",

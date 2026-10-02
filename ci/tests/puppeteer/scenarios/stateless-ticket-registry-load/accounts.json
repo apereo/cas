@@ -1,0 +1,22 @@
+{
+  "casuser" : {
+    "message" : "We interrupted your login",
+    "links" : {
+      "Go to Apereo" : "https://www.apereo.org"
+    },
+    "ssoEnabled" : true,
+    "interrupt" : true,
+    "data" : {
+      "field1" : [ "value1", "value2" ]
+    }
+  },
+  "casblock" : {
+    "message" : "You are blocked",
+    "links" : {
+      "Go to Apereo" : "https://www.apereo.org"
+    },
+    "ssoEnabled" : false,
+    "interrupt" : true,
+    "block" : true
+  }
+}

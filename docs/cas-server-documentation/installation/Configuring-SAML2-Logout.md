@@ -14,8 +14,8 @@ when they log out of one service.
 
 The following endpoints in CAS support SAML2 SLO operations:
 
-| Endpoint                          | Description                                 |
-|-----------------------------------|---------------------------------------------|
+| Endpoint                          | Description                                   |
+|-----------------------------------|-----------------------------------------------|
 | `/idp/profile/SAML2/POST/SLO`     | Handles SLO requests for `POST` bindings.     |
 | `/idp/profile/SAML2/Redirect/SLO` | Handles SLO requests for `Redirect` bindings. |
              

@@ -34,6 +34,7 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
         "cas.authn.mfa.gauth.mongo.password=secret",
         "cas.authn.mfa.gauth.mongo.authentication-database-name=admin",
         "cas.authn.mfa.gauth.mongo.database-name=gauth-token-credential",
+        "cas.authn.mfa.gauth.core.scratch-codes.encryption.key=12345678901234567890123456789012",
         "cas.authn.mfa.gauth.crypto.enabled=false"
     })
 @EnableTransactionManagement(proxyTargetClass = false)

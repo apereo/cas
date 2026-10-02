@@ -1,12 +1,6 @@
 package org.apereo.cas.ticket.refreshtoken;
 
 import module java.base;
-import org.apereo.cas.authentication.Authentication;
-import org.apereo.cas.authentication.AuthenticationHandler;
-import org.apereo.cas.authentication.AuthenticationManager;
-import org.apereo.cas.authentication.Credential;
-import org.apereo.cas.authentication.DefaultAuthenticationBuilder;
-import org.apereo.cas.authentication.DefaultAuthenticationHandlerExecutionResult;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.authentication.principal.ServiceFactory;
 import org.apereo.cas.support.oauth.OAuth20GrantTypes;
@@ -14,9 +8,10 @@ import org.apereo.cas.support.oauth.OAuth20ResponseTypes;
 import org.apereo.cas.ticket.Ticket;
 import org.apereo.cas.ticket.TicketFactory;
 import org.apereo.cas.ticket.expiration.FixedInstantExpirationPolicy;
-import org.apereo.cas.ticket.registry.TicketCompactor;
+import org.apereo.cas.ticket.registry.compact.CompactTicketAuthentication;
+import org.apereo.cas.ticket.registry.compact.CompactTicketCodec;
+import org.apereo.cas.ticket.registry.compact.TicketCompactor;
 import org.apereo.cas.util.DateTimeUtils;
-import com.google.common.base.Splitter;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.val;
@@ -30,27 +25,38 @@ import org.springframework.beans.factory.ObjectProvider;
  * @since 7.1.0
  */
 @RequiredArgsConstructor
-@SuppressWarnings("EnumOrdinal")
 public class OAuth20RefreshTokenCompactor implements TicketCompactor<OAuth20RefreshToken> {
+    private static final int CLIENT_ID_INDEX = 3;
+
+    private static final int SCOPES_INDEX = 4;
+
+    private static final int RESPONSE_TYPE_INDEX = 5;
+
+    private static final int GRANT_TYPE_INDEX = 6;
+
+    private static final int AUTHENTICATION_INDEX = 7;
+
     private final ObjectProvider<TicketFactory> ticketFactory;
+
     private final ServiceFactory serviceFactory;
+
     private final PrincipalFactory principalFactory;
+
+    private final Collection<String> retainedAuthenticationAttributes;
 
     @Getter
     private long maximumTicketLength = 256;
 
     @Override
-    public String compact(final StringBuilder builder, final Ticket ticket) throws Exception {
+    public void compactFields(final List<String> fields, final Ticket ticket) throws Exception {
         val refreshToken = (OAuth20RefreshToken) ticket;
-        builder.append(DELIMITER).append(refreshToken.getService().getShortenedId());
-        builder.append(DELIMITER).append(refreshToken.getClientId());
-        builder.append(DELIMITER).append(String.join("|", refreshToken.getScopes()));
-        builder.append(DELIMITER).append(refreshToken.getResponseType() != null ? refreshToken.getResponseType().ordinal() : OAuth20ResponseTypes.CODE.ordinal());
-        builder.append(DELIMITER).append(refreshToken.getGrantType() != null ? refreshToken.getGrantType().ordinal() : OAuth20GrantTypes.AUTHORIZATION_CODE.ordinal());
-        builder.append(compactAuthenticationAttempt(refreshToken).toString());
-        return builder.toString();
+        fields.add(StringUtils.defaultString(refreshToken.getService().getShortenedId()));
+        fields.add(StringUtils.defaultString(refreshToken.getClientId()));
+        fields.add(CompactTicketCodec.encodeValues(refreshToken.getScopes()));
+        fields.add(Objects.requireNonNullElse(refreshToken.getResponseType(), OAuth20ResponseTypes.CODE).name());
+        fields.add(Objects.requireNonNullElse(refreshToken.getGrantType(), OAuth20GrantTypes.AUTHORIZATION_CODE).name());
+        CompactTicketAuthentication.compact(fields, refreshToken.getAuthentication(), retainedAuthenticationAttributes);
     }
-
 
     @Override
     public Class<OAuth20RefreshToken> getTicketType() {
@@ -58,50 +64,18 @@ public class OAuth20RefreshTokenCompactor implements TicketCompactor<OAuth20Refr
     }
 
     @Override
-    public Ticket expand(final String ticketId) throws Throwable {
-        val structure = parse(ticketId);
-        val service = serviceFactory.createService(structure.ticketElements().get(CompactTicketIndexes.SERVICE.getIndex()));
-        val clientId = structure.ticketElements().get(3);
-        val scopes = StringUtils.isNotBlank(structure.ticketElements().get(4))
-            ? Splitter.on("|").splitToList(structure.ticketElements().get(4))
-            : new HashSet<String>();
-        val responseType = OAuth20ResponseTypes.values()[Integer.parseInt(structure.ticketElements().get(5))];
-        val grantType = OAuth20GrantTypes.values()[Integer.parseInt(structure.ticketElements().get(6))];
-        val authentication = expandAuthentication(principalFactory, structure);
-        val refreshTokenFactory = (OAuth20RefreshTokenFactory) ticketFactory.getObject().get(getTicketType());
-        val accessToken = refreshTokenFactory.create(service, authentication, null, scopes, clientId,
-            null, Map.of(), responseType, grantType);
-        accessToken.setExpirationPolicy(new FixedInstantExpirationPolicy(structure.expirationTime()));
-        accessToken.setCreationTime(DateTimeUtils.zonedDateTimeOf(structure.creationTime()));
-        return accessToken;
-    }
-
-    protected Authentication expandAuthentication(final PrincipalFactory principalFactory, final CompactTicket structure) throws Throwable {
-        val authenticationData = Splitter.on(":").splitToList(structure.ticketElements().get(7));
-        val principal = principalFactory.createPrincipal(authenticationData.getFirst());
-        val handlers = Arrays.stream(authenticationData.get(1).split("#")).collect(Collectors.toSet());
-        val credentialTypes = Arrays.stream(authenticationData.get(2).split("#")).collect(Collectors.toSet());
-        return DefaultAuthenticationBuilder
-            .newInstance()
-            .setPrincipal(principal)
-            .addAttribute(Credential.CREDENTIAL_TYPE_ATTRIBUTE, credentialTypes)
-            .addAttribute(AuthenticationHandler.SUCCESSFUL_AUTHENTICATION_HANDLERS, handlers)
-            .setSuccesses(handlers.stream().collect(Collectors.toMap(Function.identity(),
-                name -> new DefaultAuthenticationHandlerExecutionResult(name, principal))))
-            .addAttribute(AuthenticationManager.AUTHENTICATION_METHOD_ATTRIBUTE, handlers)
-            .build();
-    }
-
-    protected StringBuilder compactAuthenticationAttempt(final OAuth20RefreshToken refreshToken) {
-        val authentication = refreshToken.getAuthentication();
-        val builder = new StringBuilder();
-        if (authentication != null) {
-            val handlers = String.join("#", authentication.getSuccesses().keySet());
-            val principalId = authentication.getPrincipal().getId();
-            val credentialTypes = authentication.getCredentials().stream()
-                .map(credential -> credential.getClass().getSimpleName()).collect(Collectors.joining("#"));
-            builder.append(DELIMITER).append(principalId).append(':').append(handlers).append(':').append(credentialTypes);
-        }
-        return builder;
+    public Ticket expand(final String compactTicket) throws Throwable {
+        val structure = parse(compactTicket, AUTHENTICATION_INDEX + CompactTicketAuthentication.FIELD_COUNT);
+        val service = Objects.requireNonNull(serviceFactory.createService(structure.get(CompactTicketIndexes.SERVICE)));
+        val authentication = CompactTicketAuthentication.expand(principalFactory, structure.ticketElements(), AUTHENTICATION_INDEX);
+        val responseType = OAuth20ResponseTypes.valueOf(structure.get(RESPONSE_TYPE_INDEX));
+        val grantType = OAuth20GrantTypes.valueOf(structure.get(GRANT_TYPE_INDEX));
+        val factory = (OAuth20RefreshTokenFactory) ticketFactory.getObject().get(getTicketType());
+        val refreshToken = factory.create(service, authentication, null,
+            CompactTicketCodec.decodeValues(structure.get(SCOPES_INDEX)), structure.get(CLIENT_ID_INDEX),
+            null, new HashMap<>(), responseType, grantType);
+        refreshToken.setCreationTime(DateTimeUtils.zonedDateTimeOf(structure.creationTime()));
+        refreshToken.setExpirationPolicy(new FixedInstantExpirationPolicy(structure.expirationTime()));
+        return refreshToken;
     }
 }

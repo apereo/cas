@@ -29,4 +29,38 @@ public class OidcVerifiableCredentialsIssuerProperties implements Serializable {
      * Supported credential configurations keyed by identifier.
      */
     private Map<String, OidcVerifiableCredentialConfigurationProperties> credentialConfigurations = new LinkedHashMap<>();
+
+    /**
+     * How wallets present this credential issuer, one entry per language. Published as the {@code display}
+     * of the credential issuer metadata; wallets show the issuer as unnamed without it.
+     */
+    private List<IssuerDisplay> display = new ArrayList<>();
+
+    @Getter
+    @Setter
+    @Accessors(chain = true)
+    public static class IssuerDisplay implements Serializable {
+        @Serial
+        private static final long serialVersionUID = 4475921187209741203L;
+
+        /**
+         * Language of this display, as a BCP 47 language tag such as {@code en-US}.
+         */
+        private String locale;
+
+        /**
+         * Display name of the credential issuer.
+         */
+        private String name;
+
+        /**
+         * URL of the credential issuer's logo.
+         */
+        private String logo;
+
+        /**
+         * Alternative text for the logo; defaults to the display name.
+         */
+        private String logoAltText;
+    }
 }

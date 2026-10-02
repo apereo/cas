@@ -47,11 +47,13 @@ public interface PasswordlessTokenRepository {
     void deleteTokens(String username);
 
     /**
-     * Delete token.
+     * Delete token. The token is single-use, and only the caller that actually removed it
+     * may treat it as redeemed.
      *
      * @param token the token
+     * @return true if this call removed the token
      */
-    void deleteToken(PasswordlessAuthenticationToken token);
+    boolean deleteToken(PasswordlessAuthenticationToken token);
 
 
     /**

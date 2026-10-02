@@ -10,8 +10,8 @@ import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.authentication.principal.ServiceFactory;
 import org.apereo.cas.authentication.principal.WebApplicationService;
 import org.apereo.cas.configuration.CasConfigurationProperties;
-import org.apereo.cas.mfa.simple.ticket.CasSimpleMultifactorAuthenticationTicket;
 import org.apereo.cas.mfa.simple.validation.CasSimpleMultifactorAuthenticationService;
+import org.apereo.cas.ticket.Ticket;
 import org.apereo.cas.util.EncodingUtils;
 import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.web.BaseCasRestActuatorEndpoint;
@@ -89,13 +89,12 @@ public class CasSimpleMultifactorAuthenticationEndpoint extends BaseCasRestActua
         return new UsernamePasswordCredential(basicAuthCredentials.getFirst(), basicAuthCredentials.get(1));
     }
 
-    protected CasSimpleMultifactorAuthenticationTicket createAndStoreToken(final Service givenService,
-                                                                           final Authentication authentication) throws Throwable {
+    protected Ticket createAndStoreToken(final Service givenService,
+                                         final Authentication authentication) throws Throwable {
         val principal = authentication.getPrincipal();
         val mfaService = applicationContext.getBean(CasSimpleMultifactorAuthenticationService.BEAN_NAME, CasSimpleMultifactorAuthenticationService.class);
         val token = mfaService.generate(principal, givenService);
-        mfaService.store(token);
-        return token;
+        return mfaService.store(token);
     }
 
     protected Service extractService(final String service) {

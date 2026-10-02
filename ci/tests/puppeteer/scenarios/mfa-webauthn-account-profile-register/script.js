@@ -1,3 +1,4 @@
+const assert = require("assert");
 const cas = require("../../cas.js");
 
 (async () => {
@@ -13,9 +14,13 @@ const cas = require("../../cas.js");
     await cas.loginWith(page);
     await cas.sleep(1000);
 
-    await cas.goto(page, "https://localhost:8443/cas/account");
-    await cas.sleep(1000);
+    const endpoints = JSON.parse(await cas.doRequest("https://localhost:8443/cas/.well-known/passkey-endpoints",
+        "GET", {"Accept": "application/json"}, 200));
+    assert(endpoints.enroll === "https://localhost:8443/cas/account");
+    assert(endpoints.manage === endpoints.enroll);
 
+    await cas.goto(page, endpoints.manage);
+    await cas.sleep(1000);
     await cas.click(page, "#linkMfaRegisteredAccounts");
     await cas.assertInnerTextContains(page, "#mfaDevicesTable", "No data available");
     await cas.sleep(1000);

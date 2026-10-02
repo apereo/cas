@@ -49,10 +49,11 @@ public class OidcPushedAuthorizationRequestUriResponseBuilder extends BaseOAuth2
         val factory = (OidcPushedAuthorizationRequestFactory) configurationContext.getTicketFactory().get(OidcPushedAuthorizationRequest.class);
         val uri = factory.create(holder);
         LOGGER.debug("Generated pushed authorization URI code: [{}]", uri);
-        configurationContext.getTicketRegistry().addTicket(uri);
+        val storedUri = Objects.requireNonNull(configurationContext.getTicketRegistry().addTicket(uri),
+            () -> "Unable to store pushed authorization request " + uri.getId());
         val parameters = new HashMap<String, String>();
         parameters.put(OAuth20Constants.EXPIRES_IN, String.valueOf(uri.getExpirationPolicy().getTimeToLive()));
-        parameters.put(OidcConstants.REQUEST_URI, uri.getId());
+        parameters.put(OidcConstants.REQUEST_URI, storedUri.getId());
         LOGGER.debug("Pushed authorization request verification successful for client [{}] with redirect uri [{}]", holder.getClientId(), holder.getRedirectUri());
         return authorizationModelAndViewBuilder.build(holder.getRegisteredService(), holder.getResponseMode(),
             holder.getRedirectUri(), parameters);

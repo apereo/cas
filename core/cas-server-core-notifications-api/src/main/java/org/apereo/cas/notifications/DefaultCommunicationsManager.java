@@ -105,7 +105,7 @@ public class DefaultCommunicationsManager implements CommunicationsManager {
         if (!isNotificationSenderDefined()) {
             LOGGER.info("CAS will not send notifications because providers are undefined to handle messages");
         }
-        if (!isNotificationSenderDefined()) {
+        if (!isPhoneOperatorDefined()) {
             LOGGER.info("CAS will not make phone calls because providers are undefined to handle phone operations");
         }
         return isMailSenderDefined() || isSmsSenderDefined() || isNotificationSenderDefined() || isPhoneOperatorDefined();

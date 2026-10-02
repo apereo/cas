@@ -7,6 +7,7 @@
   "properties": [
     "--cas.server.name=https://localhost:8443",
     "--cas.server.prefix=${cas.server.name}/cas",
+    "--cas.tgc.crypto.signing-enabled=false",
     
     "--cas.authn.accept.users=duocode::Mellon",
     "--cas.authn.mfa.duo[0].account-status-enabled=true",

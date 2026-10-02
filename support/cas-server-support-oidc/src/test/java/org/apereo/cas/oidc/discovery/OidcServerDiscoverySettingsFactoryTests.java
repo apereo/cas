@@ -3,7 +3,11 @@ package org.apereo.cas.oidc.discovery;
 import module java.base;
 import org.apereo.cas.authentication.MultifactorAuthenticationProvider;
 import org.apereo.cas.authentication.mfa.TestMultifactorAuthenticationProvider;
+import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.configuration.model.support.oidc.OidcVerifiableCredentialConfigurationProperties;
 import org.apereo.cas.oidc.AbstractOidcTests;
+import org.apereo.cas.support.oauth.OAuth20GrantTypes;
+import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.TestConfiguration;
@@ -53,5 +57,28 @@ class OidcServerDiscoverySettingsFactoryTests extends AbstractOidcTests {
         assertNotNull(oidcServerDiscoverySettings.getUserinfoEndpoint());
         assertNotNull(oidcServerDiscoverySettings.getIssuer());
         assertNotNull(oidcServerDiscoverySettings.getJwksUri());
+    }
+
+    @Test
+    void verifyCredentialConfigurationScopesAreSupported() {
+        val properties = new CasConfigurationProperties();
+        val configuration = new OidcVerifiableCredentialConfigurationProperties();
+        configuration.setScope("UniversityDegree");
+        properties.getAuthn().getOidc().getVc().getIssuer().getCredentialConfigurations().put("degree", configuration);
+        properties.getAuthn().getOidc().getVc().getIssuer().getCredentialConfigurations()
+            .put("unscoped", new OidcVerifiableCredentialConfigurationProperties());
+
+        val scopes = OidcServerDiscoverySettingsFactory.resolveScopesSupported(properties);
+        assertTrue(scopes.containsAll(properties.getAuthn().getOidc().getDiscovery().getScopes()));
+        assertTrue(scopes.contains("UniversityDegree"));
+        assertEquals(properties.getAuthn().getOidc().getDiscovery().getScopes().size() + 1, scopes.size());
+    }
+
+    @Test
+    void verifyPreAuthorizedGrantAnonymousAccessFollowsGrantType() {
+        assertTrue(oidcServerDiscoverySettings.isPreAuthorizedGrantAnonymousAccessSupported());
+        val settings = new OidcServerDiscoverySettings(oidcServerDiscoverySettings.getIssuer());
+        settings.setGrantTypesSupported(Set.of(OAuth20GrantTypes.AUTHORIZATION_CODE.getType()));
+        assertFalse(settings.isPreAuthorizedGrantAnonymousAccessSupported());
     }
 }
