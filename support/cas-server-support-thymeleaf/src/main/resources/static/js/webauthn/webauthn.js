@@ -133,23 +133,18 @@ function rejectIfNotSuccess(response) {
 }
 
 /**
- * Checks if the browser supports WebAuthn.
+ * Checks if the browser supports WebAuthn as these pages use it, including the WebAuthn Level 3 JSON
+ * serialization of credential options. This is a synchronous check so that callers can test its result
+ * directly; whether a platform authenticator exists is not checked, since security keys and phones work too.
  */
-async function isBrowserSupported(requirePlatformAuthenticator = true) {
-    if (!window.PublicKeyCredential) {
+function isBrowserSupported() {
+    const supported = window.PublicKeyCredential !== undefined
+        && typeof PublicKeyCredential.parseCreationOptionsFromJSON === "function"
+        && typeof PublicKeyCredential.parseRequestOptionsFromJSON === "function";
+    if (!supported) {
         console.error("WebAuthn is not supported in this browser.");
-        return false;
     }
-
-    if (requirePlatformAuthenticator) {
-        try {
-            return await PublicKeyCredential.isUserVerifyingPlatformAuthenticatorAvailable();
-        } catch (error) {
-            console.error("Error checking for platform authenticator:", error);
-            return false;
-        }
-    }
-    return true;
+    return supported;
 }
 
 function updateSession(response) {

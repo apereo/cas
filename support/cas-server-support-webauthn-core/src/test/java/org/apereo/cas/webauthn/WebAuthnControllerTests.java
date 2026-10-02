@@ -30,7 +30,6 @@ import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockHttpServletRequest;
-import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.security.authentication.TestingAuthenticationToken;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import static org.junit.jupiter.api.Assertions.*;
@@ -160,7 +159,8 @@ class WebAuthnControllerTests {
     @Test
     void verifyStartRegistration() throws Throwable {
         val server = mock(WebAuthnServer.class);
-        val controller = new WebAuthnController(server);
+        when(server.determineResidentKeyRequirement(false)).thenReturn(ResidentKeyRequirement.PREFERRED);
+        val mockMvc = MockMvcBuilders.standaloneSetup(new WebAuthnController(server)).build();
 
         val publicKeyCredential = PublicKeyCredentialCreationOptions.builder()
             .rp(new RelyingPartyIdentity.RelyingPartyIdentityBuilder.MandatoryStages()
@@ -182,19 +182,20 @@ class WebAuthnControllerTests {
         when(server.startRegistration(any(), anyString(), any(), any(), any(ResidentKeyRequirement.class), any()))
             .thenReturn(Either.right(registrationRequest));
 
-        val request = new MockHttpServletRequest();
-        val response = new MockHttpServletResponse();
-
-        val authenticatedPrincipal = new TestingAuthenticationToken("casuser", List.of());
-        var result = controller.startRegistration("displayName",
-            "nickName", false, "sessionToken",
-            authenticatedPrincipal, request, response);
-        assertEquals(HttpStatus.OK, result.getStatusCode());
+        val registerRequest = post("/webauthn/register")
+            .principal(new TestingAuthenticationToken("casuser", List.of()))
+            .accept(MediaType.APPLICATION_JSON)
+            .param("displayName", "displayName")
+            .param("credentialNickname", "nickName")
+            .param("requireResidentKey", "false")
+            .param("sessionToken", "sessionToken");
+        mockMvc.perform(registerRequest)
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$.success").value(true));
+        verify(server).startRegistration(any(), eq("casuser"), any(), any(), eq(ResidentKeyRequirement.PREFERRED), any());
 
         when(server.startRegistration(any(), anyString(), any(), any(), any(ResidentKeyRequirement.class), any())).thenReturn(Either.left("failed"));
-        result = controller.startRegistration("displayName", "nickName", false,
-            "sessionToken", authenticatedPrincipal, request, response);
-        assertEquals(HttpStatus.BAD_REQUEST, result.getStatusCode());
+        mockMvc.perform(registerRequest).andExpect(status().isBadRequest());
     }
 
     @Test

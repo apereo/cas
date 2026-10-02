@@ -184,7 +184,9 @@ because the owning account no longer holds the passkey, the response says so and
 `parseRequestOptionsFromJSON`, `toJSON()`) and no longer override the configured attestation conveyance preference with
 `direct`; browsers without this WebAuthn Level 3 support can no longer use WebAuthn in CAS.
 CAS also publishes `/.well-known/passkey-endpoints` so password managers can link users to the pages where passkeys are
-created and managed; by default both point to the account profile when account management is enabled.
+created and managed; by default both point to the [account profile](../registration/Account-Management-Overview.html) when account management is enabled.
+When WebAuthn primary authentication is allowed, the default registration button now asks for a discoverable credential
+(`residentKey=preferred`), so passkeys registered with it can also log in on their own.
 
 ### OpenID Connect Verifiable Credentials
 
@@ -194,17 +196,17 @@ created and managed; by default both point to the account profile when account m
   as an `x5c` certificate or a `did:jwk` key identifier, and Ed25519 (`EdDSA`) keys are accepted.
 - Authorization server metadata advertises `pre-authorized_grant_anonymous_access_supported` whenever the pre-authorized code
   grant is supported, so wallets without a client registration know they may redeem a pre-authorized code.
-- A wallet may request a credential in the authorization code flow by the `scope` its credential configuration publishes,
+- A wallet may request a credential in the [authorization code flow](../authentication/OIDC-Authentication-Verifiable-Credentials.html) by the `scope` its credential configuration publishes,
   as OpenID4VCI 1.0 allows, instead of authorization details. Such scopes were previously dropped unless listed among the
   discovery scopes, and the resulting token was refused at the credential endpoint.
-- A wallet that declines a [verifiable presentation](../authentication/OIDC-Authentication-Verifiable-Credentials.html#verifiable-presentations)
+- A wallet that declines a [verifiable presentation](../authentication/OIDC-Authentication-Verifiable-Credentials.html)
   request can now say so: its error response is accepted, answered as OpenID4VP requires, and reported to the relying party
   as an `error` outcome. Previously it was rejected and the relying party kept seeing `pending` until the request expired.
 - Issuer metadata describes each credential format as OpenID4VCI 1.0 requires: `jwt_vc_json` and `jwt_vc_json-ld` configurations
   publish `credential_definition` instead of `vct`. JSON-LD credentials no longer reference a context document CAS never served,
   and a configuration without a scope no longer issues a `null` credential type.
 - CAS publishes JWT VC Issuer Metadata at `/.well-known/jwt-vc-issuer`, so verifiers other than CAS can find the keys that sign
-  the credentials it issues. Deployments under a context path should add `jwt-vc-issuer` to the well-known rewrite rule.
+  the credentials it issues. Deployments under a context path should add `jwt-vc-issuer` to the [well-known rewrite rule](../installation/Servlet-Container-Embedded-Tomcat-RewriteValve.html).
 - The verifier accepts RSA and Ed25519 holder keys in addition to EC keys, advertises those key binding algorithms,
   and advertises the signing algorithms of its `dc+sd-jwt` credential configurations instead of a fixed list.
 - A presentation request may carry a registered `redirect_uri` for a same-device flow: the wallet is sent back to it
@@ -228,7 +230,7 @@ created and managed; by default both point to the account profile when account m
 
 With the [stateless ticket registry](../ticketing/Stateless-Ticket-Registry.html), the ticket-granting ticket is now carried by the
 ticket-granting cookie, like with any other ticket registry, instead of being kept in browser storage. The single sign-on session
-therefore follows the ticket-granting cookie settings, and login pages no longer render a browser storage page before the login form.
+therefore follows the [ticket-granting cookie settings](../authentication/Configuring-SSO-Cookie.html), and login pages no longer render a browser storage page before the login form.
 The `cas.ticket.registry.stateless.storage-type` setting no longer applies and is removed.
 
 Stateless tickets now use a versioned format in which every field is length-prefixed, so values that contain separator characters,
@@ -246,22 +248,23 @@ like distinguished names, round-trip correctly. Other changes:
   Attributes that only authentication handlers produce, such as claims from Duo Security or delegated authentication, are no longer
   available to single sign-on decisions unless an attribute repository produces them as well.
 - The ticket-granting ticket keeps only its authentication and is created through the ticket-granting ticket factory when read.
-  It expires at the end of its maximum lifetime; an idle timeout configured for it is not enforced.
+  It expires at the end of its maximum lifetime; an [idle timeout](../ticketing/Configuring-Ticket-Expiration-Policy-TGT.html) configured for it is not enforced.
 
 The ticket-granting cookie can now be encrypted without being signed, using `cas.tgc.crypto.signing-enabled=false` (signing stays
 on while a signing key is defined). The cookie encryption is authenticated, so this keeps tamper detection and makes the cookie
 about a quarter smaller. This is recommended with the stateless ticket registry, where the cookie carries the
 ticket-granting ticket and can otherwise exceed the `4096` bytes browsers accept, for example after Duo Security multifactor
-authentication. See the stateless ticket registry documentation for details.
+authentication. See the [stateless ticket registry documentation](../ticketing/Stateless-Ticket-Registry.html) for details.
 
 ## Other Stuff
 
 - A large number of dependencies and libraries have been updated to their latest versions.
 - Almost all CAS unit tests are internally reworked to allow maximum parallelization and speed up the overall test execution time.
 - [Delegated authentication](../integration/Delegate-Authentication.html) no longer fails intermittently when concurrent requests reach an identity provider that is still being initialized, typically right after startup. Such requests now wait for the initialization in progress instead of failing, which also affects [SAML2 identity providers](../integration/Delegate-Authentication-SAML2.html) when building SAML2 responses, metadata and logout requests.
+- [WebAuthn](../mfa/FIDO2-WebAuthn-Authentication.html) pages now report browsers that cannot run them; the support check was never applied, and it no longer requires a platform authenticator.
 - [WebAuthn](../mfa/FIDO2-WebAuthn-Authentication.html) authentication pages now send the CSRF token rendered by CAS instead of reading it from the `XSRF-TOKEN` cookie, which failed with `403` whenever the page could not read that cookie.
 - Browser storage used by [Duo Security](../mfa/DuoSecurity-Authentication.html) and the [SAML2 identity provider](../authentication/Configuring-SAML2-Authentication.html) now falls back to cookies when the browser cannot use local or session storage.
-- Ed25519 keys presented to the [OpenID Connect](../authentication/OIDC-Authentication.html) client JWKS registration endpoint are now
+- Ed25519 keys presented to the OpenID Connect [client JWKS registration endpoint](../authentication/OIDC-Authentication-JWKS-Clients.html) are now
   verified with the JDK's own EdDSA support. Verification previously relied on Google Tink, which CAS does not ship, so such registrations failed at runtime.
 - CAS now logs a warning when a cookie it writes, such as the ticket-granting cookie, is larger than the 4 KB that browsers are guaranteed to accept.
 - MongoDb integration tests have now switched to using MongoDb `9.x`.

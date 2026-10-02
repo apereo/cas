@@ -65,6 +65,24 @@ public class WebAuthnServer {
     private final SessionManager sessionManager;
     private final CasConfigurationProperties casProperties;
 
+    /**
+     * Resident key requirement for a registration. A discoverable credential is required when the user asks for one;
+     * otherwise one is preferred when WebAuthn may be used for primary authentication, so that the credential can also
+     * serve as a passkey, and discouraged when WebAuthn is only a second factor, which keeps resident key slots on
+     * security keys free.
+     *
+     * @param discoverableCredentialRequested whether the user asked for a discoverable credential
+     * @return the resident key requirement
+     */
+    public ResidentKeyRequirement determineResidentKeyRequirement(final boolean discoverableCredentialRequested) {
+        if (discoverableCredentialRequested) {
+            return ResidentKeyRequirement.REQUIRED;
+        }
+        return casProperties.getAuthn().getMfa().getWebAuthn().getCore().isAllowPrimaryAuthentication()
+            ? ResidentKeyRequirement.PREFERRED
+            : ResidentKeyRequirement.DISCOURAGED;
+    }
+
     public Either<String, RegistrationRequest> startRegistration(
         final HttpServletRequest request,
         @NonNull final String username,

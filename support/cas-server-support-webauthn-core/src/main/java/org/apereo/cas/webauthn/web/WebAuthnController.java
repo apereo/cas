@@ -6,7 +6,6 @@ import com.yubico.data.AssertionRequestWrapper;
 import com.yubico.data.RegistrationRequest;
 import com.yubico.util.Either;
 import com.yubico.webauthn.data.ByteArray;
-import com.yubico.webauthn.data.ResidentKeyRequirement;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.enums.ParameterIn;
@@ -127,9 +126,7 @@ public class WebAuthnController extends BaseWebAuthnController {
             authenticatedPrincipal.getName(),
             Optional.of(displayName),
             Optional.ofNullable(credentialNickname),
-            requireResidentKey
-                ? ResidentKeyRequirement.REQUIRED
-                : ResidentKeyRequirement.DISCOURAGED,
+            server.determineResidentKeyRequirement(requireResidentKey),
             Optional.ofNullable(sessionTokenBase64).map(Unchecked.function(ByteArray::fromBase64Url)));
 
         if (result.isRight()) {

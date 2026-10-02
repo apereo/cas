@@ -153,6 +153,9 @@ Guidance for AI coding agents working in the Apereo CAS source tree.
 - Honor explicit verification boundaries. If the user asks not to run tests, do not invoke tests or Gradle tasks; perform static review such as `git diff --check` and clearly report what was not run.
 - For release-bound security work, add one brief, user-facing note to the appropriate security/protocol section of the requested release-notes file after the implementation is complete.
 - For all changes, cross check with puppeteer scenarios and make sure they continue to pass and are adjusted correctly.
+- When the work is done, end the hand-off with a ready-to-use commit message covering only the uncommitted changes
+  (`git --no-optional-locks status`): a conventional subject (`fix:`, `feat:`, ... as in `git log`) and a short body.
+  The maintainer commits; do not commit yourself.
 
 ## Practical boundaries
 
@@ -1125,6 +1128,11 @@ Guidance for AI coding agents working in the Apereo CAS source tree.
   `CasFeatureModule.FeatureCatalog.AccountManagement.isRegistered()`. `WebAuthnControllerMvcTests` enables account
   management, so its wired document carries both URLs; `{}` only appears with the feature off.
 - JSON examples pasted into the documentation are pretty-printed (one member per line, two-space indent), never minified.
+- Resident key: the discoverable button asks `REQUIRED`; the default button asks `PREFERRED` only when
+  `allow-primary-authentication` is on (`WebAuthnServer.determineResidentKeyRequirement`), so MFA-only deployments do not
+  spend security-key slots. `passwordless-login-passkey` registers with the default button to cover this.
+- `isBrowserSupported()` in `webauthn.js` is synchronous on purpose (call sites test it directly) and must not require a
+  platform authenticator: headless Chrome's virtual authenticators and security-key users would fail it.
 
 ## Queue-backed ticket registries (Kafka, AMQP, Pulsar, GCP Pub/Sub)
 

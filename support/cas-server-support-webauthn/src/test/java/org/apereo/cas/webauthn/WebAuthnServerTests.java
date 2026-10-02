@@ -129,6 +129,19 @@ class WebAuthnServerTests {
     }
 
     @Test
+    void verifyResidentKeyRequirement() {
+        val properties = new CasConfigurationProperties();
+        val server = new WebAuthnServer(mock(RegistrationStorage.class), newWebAuthnCache(), newWebAuthnCache(),
+            mock(RelyingParty.class), mock(SessionManager.class), properties);
+        assertEquals(ResidentKeyRequirement.REQUIRED, server.determineResidentKeyRequirement(true));
+        assertEquals(ResidentKeyRequirement.DISCOURAGED, server.determineResidentKeyRequirement(false));
+
+        properties.getAuthn().getMfa().getWebAuthn().getCore().setAllowPrimaryAuthentication(true);
+        assertEquals(ResidentKeyRequirement.REQUIRED, server.determineResidentKeyRequirement(true));
+        assertEquals(ResidentKeyRequirement.PREFERRED, server.determineResidentKeyRequirement(false));
+    }
+
+    @Test
     void verifyFailedAssertionReportsUnknownCredential() throws Throwable {
         val storage = mock(RegistrationStorage.class);
         val assertionRequests = WebAuthnServerTests.<AssertionRequestWrapper>newWebAuthnCache();

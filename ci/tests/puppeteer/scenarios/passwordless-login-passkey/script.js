@@ -19,7 +19,7 @@ async function registerPasskey(page) {
     await page.click("#credentialNickname", {clickCount: 3});
     await cas.pressBackspace(page);
     await page.type("#credentialNickname", "mydevice");
-    await cas.click(page, "#registerDiscoverableCredentialButton");
+    await cas.click(page, "#registerButton");
     await cas.sleep(5000);
     await cas.click(page, "#authnButton");
     await cas.sleep(5000);
