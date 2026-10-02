@@ -1146,17 +1146,23 @@ Guidance for AI coding agents working in the Apereo CAS source tree.
   `jq 'with_entries(.key |= ascii_downcase) | map_values({name, icon_light, icon_dark} | with_entries(select(.value != null)))'`
   and kept pretty-printed. `WebAuthnUtils.getPasskeyProvider` keeps only SVG data URIs (light first). The device
   manager uses the name only when attestation metadata names no device; `SuccessfulRegistrationResult.passkeyProvider`
-  carries name and icon to the registration page. Chrome's virtual authenticators send unlisted or zero AAGUIDs, so
-  scenarios cannot show a provider name.
+  carries name and icon to the registration page, `SuccessfulAuthenticationResult.passkeyProvider` (the credential just
+  used) to the login page. The account profile gets the icon as the device detail `icon` holding the path of
+  `GET /webauthn/passkey-providers/{aaguid}/icon` (permitAll, sandboxed CSP, `nosniff`), never the data URI: devices
+  live in flow scope and webflow execution state is client-side, so data URIs would bloat every request. Chrome's
+  virtual authenticators send unlisted or zero AAGUIDs, so scenarios cannot show a provider name.
 - `#device-icon` on the registration and login pages only has an image when attestation metadata supplies `imageUrl`
-  (the bundled Yubico list, remote PNGs); `showDeviceInfo` hides it otherwise or when the image fails to load.
+  (the bundled Yubico list, remote PNGs) or the passkey provider has an icon; `showDeviceInfo` hides it otherwise or
+  when the image fails to load.
 - Passkey upgrade (conditional create): states exist only when `passkey-upgrade-enabled`, `allow-primary-authentication`
   and `allow-untrusted-attestation` are all on (no warning otherwise, by design); `startConditionalRegistration` re-checks
   them. The check action reads the login flow's own `flowScope.credential` (MFA subflows write request/conversation scope,
   which `WebUtils.getCredential` would return) and requires a `UsernamePasswordCredential` in the authentication.
-  `user.name` is the typed username but the stored `userIdentity.name` is always the principal id; `excludeCredentials`
-  is rebuilt from the principal id. Headless Chrome reports `conditionalCreate`; with a CDP virtual authenticator the
-  conditional `create()` never settles, so the page continues on its timeout (5 s); with none it rejects at once.
+  `user.name` is the typed username but the stored `userIdentity.name` is always the principal id; the typed name is kept
+  in `CredentialRegistration.userEntityName` (null when equal) so `signalCurrentUserDetails` sends the name of the
+  credential just used instead of renaming the passkey. `excludeCredentials` is rebuilt from the principal id.
+  Headless Chrome reports `conditionalCreate`; with a CDP virtual authenticator the conditional `create()` never settles,
+  so the page continues on its timeout (5 s); with none it rejects at once.
 - Screenshots of themed views without a running CAS: stage the template, `cas.css`, logo and background via `build/`,
   install `normalize.css`, `bootstrap` (grid), `material-components-web`, `@mdi/font` from npm at the versions in
   `libs.versions.toml`, rebuild the layout shell (header, `.bgimage` main, footer) and capture with Playwright.
