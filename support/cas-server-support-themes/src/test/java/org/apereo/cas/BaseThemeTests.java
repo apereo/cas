@@ -17,7 +17,6 @@ import org.apereo.cas.config.CasThemesAutoConfiguration;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.util.spring.boot.SpringBootTestAutoConfigurations;
 import org.apereo.cas.web.theme.ThemeResolver;
-import org.junit.jupiter.api.BeforeEach;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.SpringBootConfiguration;
@@ -41,11 +40,6 @@ public abstract class BaseThemeTests {
 
     @Autowired
     protected ConfigurableApplicationContext applicationContext;
-    
-    @BeforeEach
-    void setup() {
-        servicesManager.deleteAll();
-    }
 
     @SpringBootTestAutoConfigurations
     @ImportAutoConfiguration({

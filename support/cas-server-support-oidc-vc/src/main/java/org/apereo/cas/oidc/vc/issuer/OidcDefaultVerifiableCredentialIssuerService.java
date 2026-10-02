@@ -26,7 +26,7 @@ public class OidcDefaultVerifiableCredentialIssuerService implements OidcVerifia
         val encoder = credentialEncoderFactory.findByConfiguration(configuration);
         val responses = new ArrayList<OidcVerifiableCredentialIssuerResponse>();
         for (val proofJwt : context.resolveProofs()) {
-            val proof = credentialProofValidator.validate(proofJwt, consumedNonces);
+            val proof = credentialProofValidator.validate(proofJwt, configuration, consumedNonces);
             responses.add(new OidcVerifiableCredentialIssuerResponse(encoder.encode(context, proof)));
         }
         return responses;

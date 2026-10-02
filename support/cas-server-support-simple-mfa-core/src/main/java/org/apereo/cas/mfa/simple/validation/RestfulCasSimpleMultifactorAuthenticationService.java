@@ -8,6 +8,7 @@ import org.apereo.cas.mfa.simple.CasSimpleMultifactorAuthenticationConstants;
 import org.apereo.cas.mfa.simple.CasSimpleMultifactorTokenCredential;
 import org.apereo.cas.mfa.simple.ticket.CasSimpleMultifactorAuthenticationTicket;
 import org.apereo.cas.mfa.simple.ticket.CasSimpleMultifactorAuthenticationTicketFactory;
+import org.apereo.cas.ticket.Ticket;
 import org.apereo.cas.ticket.TicketFactory;
 import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.util.CollectionUtils;
@@ -94,7 +95,7 @@ public class RestfulCasSimpleMultifactorAuthenticationService extends BaseCasSim
     }
 
     @Override
-    public void store(final CasSimpleMultifactorAuthenticationTicket token) throws Exception {
+    public Ticket store(final CasSimpleMultifactorAuthenticationTicket token) throws Exception {
         HttpResponse response = null;
         try (val writer = new StringWriter()) {
             MAPPER.writer().with(new MinimalPrettyPrinter()).writeValue(writer, token);
@@ -115,6 +116,7 @@ public class RestfulCasSimpleMultifactorAuthenticationService extends BaseCasSim
             if (HttpStatus.valueOf(statusCode).isError()) {
                 throw new FailedLoginException("Unable to validate multifactor credential with status " + statusCode);
             }
+            return token;
         } finally {
             HttpUtils.close(response);
         }

@@ -2,7 +2,7 @@ package org.apereo.cas.pac4j.web;
 
 import module java.base;
 import org.apereo.cas.support.pac4j.authentication.clients.DelegatedClientSessionManager;
-import org.apereo.cas.ticket.TransientSessionTicket;
+import org.apereo.cas.ticket.Ticket;
 import org.apereo.cas.web.flow.DelegatedClientAuthenticationConfigurationContext;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -35,7 +35,7 @@ public class DelegatedClientOidcSessionManager implements DelegatedClientSession
     private final ObjectProvider<DelegatedClientAuthenticationConfigurationContext> contextProvider;
 
     @Override
-    public void trackIdentifier(final WebContext webContext, final TransientSessionTicket ticket, final Client client) {
+    public void trackIdentifier(final WebContext webContext, final Ticket ticket, final Client client) {
         if (client instanceof final OAuth20Client instance) {
             trackSessionIdForOAuth20Client(webContext, instance, ticket);
         }
@@ -67,13 +67,13 @@ public class DelegatedClientOidcSessionManager implements DelegatedClientSession
     }
 
     protected void trackSessionIdForOidcClient(final WebContext webContext, final OidcClient client,
-                                               final TransientSessionTicket ticket) {
+                                               final Ticket ticket) {
         getSessionStore().set(webContext, OIDC_CLIENT_ID_SESSION_KEY, ticket.getId());
     }
 
     protected void trackSessionIdForOAuth20Client(final WebContext webContext,
                                                   final OAuth20Client client,
-                                                  final TransientSessionTicket ticket) {
+                                                  final Ticket ticket) {
         getSessionStore().set(webContext, OAUTH20_CLIENT_ID_SESSION_KEY, ticket.getId());
     }
 }

@@ -6,6 +6,7 @@ import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.mfa.simple.CasSimpleMultifactorAuthenticationConstants;
 import org.apereo.cas.mfa.simple.CasSimpleMultifactorTokenCredential;
 import org.apereo.cas.mfa.simple.ticket.CasSimpleMultifactorAuthenticationTicket;
+import org.apereo.cas.ticket.Ticket;
 
 /**
  * This is {@link CasSimpleMultifactorAuthenticationService}.
@@ -32,11 +33,14 @@ public interface CasSimpleMultifactorAuthenticationService {
 
     /**
      * Store the token in the underlying storage, as necessary.
+     * Callers that hand the token's id to anyone else use the id of the returned ticket,
+     * which may differ from the given token's id.
      *
      * @param token the token
-     * @throws Exception the exception
+     * @return the ticket as stored
+     * @throws Throwable the throwable
      */
-    void store(CasSimpleMultifactorAuthenticationTicket token) throws Throwable;
+    Ticket store(CasSimpleMultifactorAuthenticationTicket token) throws Throwable;
 
     /**
      * Validate MFA the credential.

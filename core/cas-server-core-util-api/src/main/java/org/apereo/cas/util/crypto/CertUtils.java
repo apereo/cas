@@ -87,6 +87,25 @@ public class CertUtils {
     }
 
     /**
+     * Certificate chain without its trust anchor, as sent in an {@code x5c} header: a trailing
+     * self-issued certificate is dropped unless it is the only one, since a lone certificate is
+     * the signer itself.
+     *
+     * @param certificateChain the certificate chain, leaf first; may be null
+     * @return the chain without the trust anchor, possibly empty
+     */
+    public static List<X509Certificate> withoutTrustAnchor(final List<X509Certificate> certificateChain) {
+        if (certificateChain == null || certificateChain.isEmpty()) {
+            return List.of();
+        }
+        val last = certificateChain.getLast();
+        val selfIssued = last.getSubjectX500Principal().equals(last.getIssuerX500Principal());
+        return certificateChain.size() > 1 && selfIssued
+            ? List.copyOf(certificateChain.subList(0, certificateChain.size() - 1))
+            : List.copyOf(certificateChain);
+    }
+
+    /**
      * Gets a certificate factory for creating X.509 artifacts.
      *
      * @return X509 certificate factory.

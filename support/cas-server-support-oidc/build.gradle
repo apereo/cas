@@ -49,7 +49,8 @@ dependencies {
     implementation project(":core:cas-server-core-notifications-api")
 
     compileOnly project(":support:cas-server-support-discovery-profile-core")
-
+    compileOnly project(":support:cas-server-support-stateless-ticket-registry-api")
+    
     implementation libraries.pac4jcore
     implementation libraries.pac4jcas
     implementation libraries.springsecurityconfig
@@ -74,8 +75,6 @@ dependencies {
     testImplementation project(":core:cas-server-core-services")
     testImplementation project(":core:cas-server-core-logging")
     testImplementation project(":core:cas-server-core-scripting")
-
-
     
     testImplementation project(":support:cas-server-support-themes")
     testImplementation project(":support:cas-server-support-thymeleaf")
@@ -90,6 +89,7 @@ dependencies {
     testImplementation project(":support:cas-server-support-validation")
     testImplementation project(":support:cas-server-support-account-mgmt")
     testImplementation project(":support:cas-server-support-json-service-registry")
+    testImplementation project(":support:cas-server-support-stateless-ticket-registry-api")
     
     testImplementation project(path: ":core:cas-server-core", configuration: "tests")
     testImplementation project(path: ":core:cas-server-core-authentication", configuration: "tests")

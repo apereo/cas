@@ -110,6 +110,7 @@ public class WebAuthnServer {
                             .residentKey(residentKeyRequirement)
                             .build()
                         )
+                        .hints(properties.getCore().getHints())
                         .build()
                 ),
                 Optional.of(sessionManager.createSession(request, registrationUserId.getId()))
@@ -193,7 +194,8 @@ public class WebAuthnServer {
         if (username.isPresent() && !userStorage.userExists(username.get())) {
             return Either.left(List.of("The username %s is not registered.".formatted(username.get())));
         }
-        val userVerificationRequirementProperty = casProperties.getAuthn().getMfa().getWebAuthn().getCore().getUserVerificationRequirement();
+        val core = casProperties.getAuthn().getMfa().getWebAuthn().getCore();
+        val userVerificationRequirementProperty = core.getUserVerificationRequirement();
         val userVerificationRequirement = StringUtils.isNotBlank(userVerificationRequirementProperty)
             ? UserVerificationRequirement.valueOf(userVerificationRequirementProperty.toUpperCase(Locale.ROOT))
             : null;
@@ -202,26 +204,37 @@ public class WebAuthnServer {
             relyingParty.startAssertion(StartAssertionOptions.builder()
                 .username(username)
                 .userVerification(userVerificationRequirement)
+                .hints(core.getHints())
                 .build())
         );
         assertRequestStorage.put(request, assertionRequest.getRequestId(), assertionRequest);
         return Either.right(assertionRequest);
     }
 
-    public Either<List<String>, SuccessfulAuthenticationResult> finishAuthentication(final HttpServletRequest request, final String responseJson) {
+    /**
+     * Finish authentication.
+     * <p>A failed assertion is reported as an unknown credential when the account that owns it, identified by the
+     * user handle in the assertion or else by the username of the request, no longer holds the credential, so the
+     * browser can stop offering it through the WebAuthn Signal API.</p>
+     *
+     * @param request      the request
+     * @param responseJson the response json
+     * @return the authentication result, or the failure
+     */
+    public Either<AuthenticationFailure, SuccessfulAuthenticationResult> finishAuthentication(final HttpServletRequest request, final String responseJson) {
         final AssertionResponse assertionResponse;
         try {
             assertionResponse = OBJECT_MAPPER.readValue(responseJson, AssertionResponse.class);
         } catch (final Exception e) {
             LOGGER.debug("Failed to decode response object", e);
-            return Either.left(List.of("Assertion failed!", "Failed to decode response object.", e.getMessage()));
+            return Either.left(AuthenticationFailure.of("Assertion failed!", "Failed to decode response object.", e.getMessage()));
         }
 
         val assertionRequestWrapper = assertRequestStorage.getIfPresent(request, assertionResponse.requestId());
         assertRequestStorage.invalidate(request, assertionResponse.requestId());
 
         if (assertionRequestWrapper == null) {
-            return Either.left(List.of("Assertion failed!", "No such assertion in progress."));
+            return Either.left(AuthenticationFailure.of("Assertion failed!", "No such assertion in progress."));
         } else {
             try {
                 val assertionResult = relyingParty.finishAssertion(
@@ -254,15 +267,34 @@ public class WebAuthnServer {
                         )
                     );
                 } else {
-                    return Either.left(List.of("Assertion failed: Invalid assertion."));
+                    return Either.left(AuthenticationFailure.of("Assertion failed: Invalid assertion."));
                 }
             } catch (final AssertionFailedException e) {
                 LOGGER.warn("Assertion failed", e);
-                return Either.left(List.of("Assertion failed", e.getMessage()));
+                return Either.left(new AuthenticationFailure(List.of("Assertion failed", e.getMessage()),
+                    isUnknownCredential(assertionRequestWrapper, assertionResponse)));
             } catch (final Exception e) {
                 LOGGER.error("Assertion failed", e);
-                return Either.left(List.of("Assertion failed unexpectedly; this is likely a bug.", e.getMessage()));
+                return Either.left(AuthenticationFailure.of("Assertion failed unexpectedly; this is likely a bug.", e.getMessage()));
             }
+        }
+    }
+
+    /**
+     * Failed authentication.
+     *
+     * @param messages          the messages describing the failure
+     * @param unknownCredential whether the asserted credential is no longer registered to its account
+     */
+    public record AuthenticationFailure(List<String> messages, boolean unknownCredential) {
+        /**
+         * Failure that does not concern an unknown credential.
+         *
+         * @param messages the messages
+         * @return the authentication failure
+         */
+        public static AuthenticationFailure of(final String... messages) {
+            return new AuthenticationFailure(List.of(messages), false);
         }
     }
 
@@ -397,6 +429,31 @@ public class WebAuthnServer {
         }
     }
 
+    /**
+     * Whether the asserted credential is no longer registered to the account that owns it. The owner is the account
+     * of the user handle in the assertion, or else the username of the request; the answer is read from that
+     * account's registrations rather than from the repository's credential index, which may lag behind other nodes.
+     * Nothing is reported when the owner cannot be found, since a credential the repository merely does not know
+     * yet must never be signalled as unknown.
+     *
+     * @param assertionRequest  the assertion request
+     * @param assertionResponse the assertion response
+     * @return true if the owning account no longer holds the credential
+     */
+    private boolean isUnknownCredential(final AssertionRequestWrapper assertionRequest, final AssertionResponse assertionResponse) {
+        try {
+            val credential = assertionResponse.credential();
+            return credential.getResponse().getUserHandle()
+                .flatMap(userStorage::getUsernameForUserHandle)
+                .or(assertionRequest::getUsername)
+                .map(username -> userStorage.getRegistrationByUsernameAndCredentialId(username, credential.getId()).isEmpty())
+                .orElse(Boolean.FALSE);
+        } catch (final Exception e) {
+            LOGGER.warn("Unable to determine whether the asserted credential is still registered", e);
+            return false;
+        }
+    }
+
     private CredentialRegistration addRegistration(
         final UserIdentity userIdentity,
         final Optional<String> nickname,
@@ -412,6 +469,7 @@ public class WebAuthnServer {
                 .signatureCount(result.getSignatureCount())
                 .build(),
             result.getKeyId().getTransports().orElseGet(TreeSet::new),
+            result.isDiscoverable(),
             result
                 .getAttestationTrustPath()
                 .flatMap(x5c -> x5c.stream().findFirst())
@@ -430,6 +488,7 @@ public class WebAuthnServer {
         final Optional<String> nickname,
         final RegisteredCredential credential,
         final SortedSet<AuthenticatorTransport> transports,
+        final Optional<Boolean> discoverable,
         final Optional<Attestation> attestationMetadata) {
         val reg = CredentialRegistration.builder()
             .userIdentity(userIdentity)
@@ -438,6 +497,7 @@ public class WebAuthnServer {
             .credential(credential)
             .transports(transports)
             .attestationMetadata(attestationMetadata.orElse(null))
+            .discoverable(discoverable.orElse(null))
             .build();
         LOGGER.debug("Adding registration: user: [{}], nickname: [{}], credential: [{}]", userIdentity, nickname, credential);
         userStorage.addRegistrationByUsername(userIdentity.getName(), reg);
