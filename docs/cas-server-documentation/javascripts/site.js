@@ -1,5 +1,36 @@
 const CONST_CURRENT_VER = "development";
 
+const CAS_SIDEBAR_ICONS = {
+    "#planning": "compass",
+    "#casinstallation": "download",
+    "#casdashboard": "gauge-high",
+    "#casconfigmgmt": "sliders",
+    "#casauthentication": "user-check",
+    "#casauthorization": "shield-halved",
+    "#multitenancy": "building",
+    "#delegationauthn": "share-nodes",
+    "#casattributes": "id-card",
+    "#mfaauthn": "user-shield",
+    "#ssoandslo": "right-left",
+    "#pswmgmt": "key",
+    "#ticketingconfig": "ticket",
+    "#service_management": "layer-group",
+    "#protocols": "diagram-project",
+    "#surrogacy": "masks-theater",
+    "#acctregistration": "user-plus",
+    "#logs_audits": "file-lines",
+    "#monitoroverview": "chart-line",
+    "#user_interface": "desktop",
+    "#aup": "clipboard-check",
+    "#interrupt_notifications": "hand",
+    "#webflowmgmt": "route",
+    "#highavailability": "server",
+    "#casnotifications": "bell",
+    "#appintegration": "plug",
+    "#developer": "code",
+    "#projectpolicy": "folder-open"
+};
+
 function generateNavigationBarAndCrumbs() {
     const navigation = document.getElementById("docsNavBar");
     if (!navigation) {
@@ -61,8 +92,11 @@ function loadSidebarForActiveVersion() {
 
             topLevel.each(function () {
                 const el = $(this);
-                //console.log("Top level: " + el);
                 sidebarTopNav(el);
+                const icon = CAS_SIDEBAR_ICONS[el.attr("href")];
+                if (icon) {
+                    el.prepend(`<i class="fa fa-${icon} cas-sidebar-icon" aria-hidden="true"></i>`);
+                }
             });
 
             topLevelUl.each(function () {
@@ -600,6 +634,47 @@ window.addEventListener("load", () => {
 /***********************
  * Tabs
  **********************/
+
+const CAS_TAB_ICONS = {
+    "Apache Maven": "file-code",
+    "Gradle": "gears",
+    "BOM - Spring": "layer-group",
+    "BOM - Gradle": "layer-group",
+    "Resources": "folder-open",
+    "Properties": "sliders",
+    "YAML": "file-code",
+    "JSON": "code",
+    "Groovy": "file-code",
+    "Java": "code",
+    "REST": "globe",
+    "Notes": "circle-info",
+    "Enable & expose": "power-off",
+    "Security": "shield-halved",
+    "Health": "heart-pulse",
+    "Settings": "sliders",
+    "Spring Boot settings": "sliders",
+    "Troubleshooting": "bug"
+};
+
+function decorateTabIcons() {
+    document.querySelectorAll("#cas-docs-container .nav-tabs .nav-link, #cas-docs-container .nav-pills .nav-link, #cas-docs-container ul.tab > li > a, #cas-docs-container .cas-actuator-tab").forEach(tab => {
+        const icons = Array.from(tab.querySelectorAll("i[class*='fa-']"));
+        const icon = CAS_TAB_ICONS[tab.textContent.trim()];
+        if (!icons.length && icon) {
+            const mark = document.createElement("i");
+            mark.className = `fa fa-${icon}`;
+            icons.push(mark);
+        }
+        icons.forEach(mark => {
+            mark.classList.remove("px-1");
+            mark.classList.add("cas-tab-icon");
+            mark.setAttribute("aria-hidden", "true");
+        });
+        tab.prepend(...icons);
+    });
+}
+
+decorateTabIcons();
 
 window.addEventListener("load", () => {
     document.querySelectorAll("ul.tab[data-tab]").forEach((tabList, group) => {

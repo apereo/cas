@@ -1133,6 +1133,11 @@ Guidance for AI coding agents working in the Apereo CAS source tree.
   spend security-key slots. `passwordless-login-passkey` registers with the default button to cover this.
 - `isBrowserSupported()` in `webauthn.js` is synchronous on purpose (call sites test it directly) and must not require a
   platform authenticator: headless Chrome's virtual authenticators and security-key users would fail it.
+- Backup flags live on the stored `RegisteredCredential` (`backupEligible`/`backupState`, deprecated-experimental in Yubico
+  2.9 but stable in WebAuthn Level 3); Yubico rejects an assertion whose BE differs from a stored BE. `lookup`/`lookupAll`
+  return the stored credential as is, so never rebuild it field by field; `updateSignatureCount` refreshes BS and fills BE
+  only for records stored before BE was kept. Transports live on `CredentialRegistration` and go out through
+  `getCredentialIdsForUsername`. Chrome's CDP virtual authenticator sets BE/BS via `defaultBackupEligibility`/`defaultBackupState`.
 
 ## Queue-backed ticket registries (Kafka, AMQP, Pulsar, GCP Pub/Sub)
 

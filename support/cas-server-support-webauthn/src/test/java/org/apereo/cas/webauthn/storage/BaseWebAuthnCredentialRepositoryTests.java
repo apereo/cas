@@ -9,6 +9,7 @@ import org.apereo.cas.webauthn.web.flow.BaseWebAuthnWebflowTests;
 import com.yubico.data.CredentialRegistration;
 import com.yubico.webauthn.AssertionResult;
 import com.yubico.webauthn.RegisteredCredential;
+import com.yubico.webauthn.data.AuthenticatorTransport;
 import com.yubico.webauthn.data.ByteArray;
 import com.yubico.webauthn.data.UserIdentity;
 import lombok.val;
@@ -64,10 +65,13 @@ public abstract class BaseWebAuthnCredentialRepositoryTests {
     @Test
     protected void verifyOperation() throws Throwable {
         val id = getUsername();
-        val registration = getCredentialRegistration(id.toLowerCase(Locale.ENGLISH));
+        val registration = getCredentialRegistration(id.toLowerCase(Locale.ENGLISH))
+            .withTransports(new TreeSet<>(Set.of(AuthenticatorTransport.USB, AuthenticatorTransport.HYBRID)));
 
         assertTrue(webAuthnCredentialRepository.addRegistrationByUsername(id.toLowerCase(Locale.ENGLISH), registration));
-        assertFalse(webAuthnCredentialRepository.getCredentialIdsForUsername(id.toUpperCase(Locale.ENGLISH)).isEmpty());
+        val descriptors = webAuthnCredentialRepository.getCredentialIdsForUsername(id.toUpperCase(Locale.ENGLISH));
+        assertEquals(1, descriptors.size());
+        assertEquals(Optional.of(registration.getTransports()), descriptors.iterator().next().getTransports());
 
         val ba = ByteArray.fromBase64Url(id);
         val newRegistration = webAuthnCredentialRepository.getRegistrationByUsernameAndCredentialId(id.toUpperCase(Locale.ENGLISH), ba);
@@ -77,7 +81,7 @@ public abstract class BaseWebAuthnCredentialRepositoryTests {
         assertFalse(webAuthnCredentialRepository.getRegistrationsByUsername(id.toUpperCase(Locale.ENGLISH)).isEmpty());
         assertFalse(webAuthnCredentialRepository.getUserHandleForUsername(id.toUpperCase(Locale.ENGLISH)).isEmpty());
         assertFalse(webAuthnCredentialRepository.getUsernameForUserHandle(ba).isEmpty());
-        assertFalse(webAuthnCredentialRepository.lookup(ba, ba).isEmpty());
+        assertTrue(webAuthnCredentialRepository.lookup(ba, ba).orElseThrow().isBackupEligible().isEmpty());
         assertTrue(webAuthnCredentialRepository.lookup(ba, ByteArray.fromBase64Url(RandomUtils.randomAlphabetic(8))).isEmpty());
         assertFalse(webAuthnCredentialRepository.lookupAll(ba).isEmpty());
         assertTrue(webAuthnCredentialRepository.stream().findAny().isPresent());
@@ -93,8 +97,15 @@ public abstract class BaseWebAuthnCredentialRepositoryTests {
         when(result.getSignatureCount()).thenReturn(1L);
         when(result.getUsername()).thenReturn(id);
         when(result.getCredentialId()).thenReturn(ba);
+        when(result.isBackupEligible()).thenReturn(Boolean.TRUE);
+        when(result.isBackedUp()).thenReturn(Boolean.TRUE);
 
         webAuthnCredentialRepository.updateSignatureCount(result);
+        val updated = webAuthnCredentialRepository.lookup(ba, ba).orElseThrow();
+        assertEquals(1L, updated.getSignatureCount());
+        assertEquals(Optional.of(Boolean.TRUE), updated.isBackupEligible());
+        assertEquals(Optional.of(Boolean.TRUE), updated.isBackedUp());
+        assertEquals(Optional.of(Boolean.TRUE), webAuthnCredentialRepository.lookupAll(ba).iterator().next().isBackedUp());
 
         webAuthnCredentialRepository.removeAllRegistrations(id.toUpperCase(Locale.ENGLISH));
         webAuthnCredentialRepository.removeRegistrationByUsername(id.toUpperCase(Locale.ENGLISH), registration);

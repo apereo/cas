@@ -485,6 +485,8 @@ public class WebAuthnServer {
                 .userHandle(userIdentity.getId())
                 .publicKeyCose(result.getPublicKeyCose())
                 .signatureCount(result.getSignatureCount())
+                .backupEligible(result.isBackupEligible())
+                .backupState(result.isBackedUp())
                 .build(),
             result.getKeyId().getTransports().orElseGet(TreeSet::new),
             result.isDiscoverable(),

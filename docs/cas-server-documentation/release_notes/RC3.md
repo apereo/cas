@@ -187,6 +187,9 @@ CAS also publishes `/.well-known/passkey-endpoints` so password managers can lin
 created and managed; by default both point to the [account profile](../registration/Account-Management-Overview.html) when account management is enabled.
 When WebAuthn primary authentication is allowed, the default registration button now asks for a discoverable credential
 (`residentKey=preferred`), so passkeys registered with it can also log in on their own.
+Each registration now keeps the authenticator's backup eligibility and backup state, which are updated on every login;
+a passkey whose backup eligibility changes is rejected, as WebAuthn Level 3 requires. The transports recorded at
+registration are sent back with the credentials CAS lists to the browser, so it can reach each authenticator directly.
 
 ### OpenID Connect Verifiable Credentials
 

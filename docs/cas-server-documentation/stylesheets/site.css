@@ -681,6 +681,14 @@ button, a {
     font-size: .78rem;
 }
 
+#sidebarTopics .cas-sidebar-icon {
+    width: 1.1em;
+    margin-inline-end: .55rem;
+    text-align: center;
+    color: var(--docs-accent);
+    opacity: .75;
+}
+
 #sidebarTopics a:hover {
     background: var(--docs-soft);
     color: var(--docs-accent);
@@ -1486,6 +1494,12 @@ hr {
 }
 
 /* Existing Bootstrap and Jekyll tabs retain their content and selection behavior. */
+.cas-tab-icon {
+    width: 1.1em;
+    margin-inline-end: .4rem;
+    text-align: center;
+}
+
 .nav-tabs, .nav-pills, .tab {
     gap: .2rem;
     border-bottom: 1px solid var(--docs-line);

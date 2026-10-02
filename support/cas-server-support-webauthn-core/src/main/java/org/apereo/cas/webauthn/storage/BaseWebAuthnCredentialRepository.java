@@ -105,6 +105,13 @@ public abstract class BaseWebAuthnCredentialRepository implements WebAuthnCreden
         return true;
     }
 
+    /**
+     * Record the outcome of a successful assertion: the signature counter, the current backup state, and, for a
+     * credential registered before its backup eligibility was recorded, the backup eligibility it reports now, which
+     * may not change afterwards.
+     *
+     * @param result the assertion result
+     */
     @Override
     public void updateSignatureCount(final AssertionResult result) {
         val username = result.getUsername();
@@ -113,19 +120,33 @@ public abstract class BaseWebAuthnCredentialRepository implements WebAuthnCreden
                 result.getCredential().getCredentialId(), username)));
         val registrations = getRegistrationsByUsername(username);
         registrations.remove(registration);
-        registrations.add(registration.withCredential(registration.getCredential().toBuilder()
+        val credential = registration.getCredential();
+        registrations.add(registration.withCredential(credential.toBuilder()
             .signatureCount(result.getSignatureCount())
+            .backupEligible(credential.isBackupEligible().orElseGet(result::isBackupEligible))
+            .backupState(result.isBackedUp())
             .build()));
         update(username, new HashSet<>(registrations));
     }
 
+    /**
+     * Credential descriptors for the user, carrying the transports recorded at registration so that the
+     * browser knows how to reach each authenticator.
+     *
+     * @param username the username
+     * @return the credential descriptors
+     */
     @Override
     public Set<PublicKeyCredentialDescriptor> getCredentialIdsForUsername(final String username) {
         return getRegistrationsByUsername(username).stream()
-            .map(registration -> PublicKeyCredentialDescriptor
-                .builder()
-                .id(registration.getCredential().getCredentialId())
-                .build())
+            .map(registration -> {
+                val transports = registration.getTransports();
+                return PublicKeyCredentialDescriptor
+                    .builder()
+                    .id(registration.getCredential().getCredentialId())
+                    .transports(transports == null || transports.isEmpty() ? null : transports)
+                    .build();
+            })
             .collect(Collectors.toSet());
     }
 
@@ -152,12 +173,7 @@ public abstract class BaseWebAuthnCredentialRepository implements WebAuthnCreden
             .filter(credReg -> userHandle.equals(credReg.getCredential().getUserHandle()))
             .findAny();
 
-        return registration.flatMap(reg -> Optional.of(RegisteredCredential.builder()
-            .credentialId(reg.getCredential().getCredentialId())
-            .userHandle(reg.getCredential().getUserHandle())
-            .publicKeyCose(reg.getCredential().getPublicKeyCose())
-            .signatureCount(reg.getCredential().getSignatureCount())
-            .build()));
+        return registration.map(CredentialRegistration::getCredential);
     }
 
     @Override
@@ -167,12 +183,7 @@ public abstract class BaseWebAuthnCredentialRepository implements WebAuthnCreden
             .flatMap(username -> getRegistrationsByUsername(username).stream())
             .filter(Objects::nonNull)
             .filter(reg -> reg.getCredential().getCredentialId().equals(credentialId))
-            .map(reg -> RegisteredCredential.builder()
-                .credentialId(reg.getCredential().getCredentialId())
-                .userHandle(reg.getCredential().getUserHandle())
-                .publicKeyCose(reg.getCredential().getPublicKeyCose())
-                .signatureCount(reg.getCredential().getSignatureCount())
-                .build())
+            .map(CredentialRegistration::getCredential)
             .collect(Collectors.toSet());
     }
 
