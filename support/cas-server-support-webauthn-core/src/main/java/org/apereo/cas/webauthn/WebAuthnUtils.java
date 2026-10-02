@@ -27,6 +27,7 @@ import org.springframework.core.io.ClassPathResource;
  */
 @UtilityClass
 public class WebAuthnUtils {
+    private static final int AAGUID_LENGTH = 16;
 
     private static final ObjectMapper MAPPER = JacksonCodecs
         .json()
@@ -55,7 +56,7 @@ public class WebAuthnUtils {
      * @return the AAGUID as a UUID string
      */
     public static Optional<String> toAaguid(final @Nullable ByteArray aaguid) {
-        if (aaguid == null || aaguid.size() != 16 || aaguid.equals(new ByteArray(new byte[16]))) {
+        if (aaguid == null || aaguid.size() != AAGUID_LENGTH || aaguid.equals(new ByteArray(new byte[AAGUID_LENGTH]))) {
             return Optional.empty();
         }
         val buffer = ByteBuffer.wrap(aaguid.getBytes());

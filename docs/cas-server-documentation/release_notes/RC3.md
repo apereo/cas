@@ -193,6 +193,9 @@ registration are sent back with the credentials CAS lists to the browser, so it 
 Registrations also keep the authenticator's AAGUID, and the account profile names passkeys by provider (for example
 *Google Password Manager* or *1Password*) when the attestation does not name the device; the registration page shows
 that name and the provider's icon once a passkey is registered.
+A new passkey upgrade, turned on with `cas.authn.mfa.web-authn.core.passkey-upgrade-enabled` alongside primary authentication
+and untrusted attestation, shows a short page after a password login that lets the browser's password manager create a
+passkey for the account on its own (WebAuthn conditional create), then continues as usual.
 
 ### OpenID Connect Verifiable Credentials
 

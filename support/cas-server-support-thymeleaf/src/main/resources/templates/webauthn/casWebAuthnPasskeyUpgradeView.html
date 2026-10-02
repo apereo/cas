@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="~{layout}">
+
+<head>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no"/>
+    <title>Web AuthN Passkey Upgrade View</title>
+    <link href="../../static/css/cas.css" rel="stylesheet" th:remove="tag"/>
+
+    <script type="text/javascript" th:src="@{#{webjars.base64.js}}"></script>
+    <script type="text/javascript" th:inline="javascript">
+        /*<![CDATA[*/
+        const contextPath = (/*[[@{/}]]*/ '/').slice(0, -1);
+        /*]]>*/
+    </script>
+    <script th:src="@{/js/webauthn/webauthn.js}"></script>
+</head>
+
+<body>
+<main class="container mt-3 mb-3">
+    <div layout:fragment="content" id="passkeyUpgrade">
+        <div id="passkeyUpgradePanel" style="max-width: 40rem"
+             class="d-flex justify-content-center flex-column align-items-center mdc-card card p-4 m-auto w-100">
+            <span class="mdi mdi-fingerprint mdi-48px" style="color: var(--cas-theme-primary)" aria-hidden="true"></span>
+            <h2 id="passkeyUpgradeTitle" class="text-center" th:utext="#{screen.authentication.webauthn.upgrade.title}">
+                Finishing your sign-in
+            </h2>
+
+            <div id="passkeyUpgradeProgress" role="progressbar"
+                 class="mdc-linear-progress mdc-linear-progress--indeterminate my-3"
+                 th:attr="aria-label=#{screen.authentication.webauthn.upgrade.title}">
+                <div class="mdc-linear-progress__buffer">
+                    <div class="mdc-linear-progress__buffer-bar"></div>
+                    <div class="mdc-linear-progress__buffer-dots"></div>
+                </div>
+                <div class="mdc-linear-progress__bar mdc-linear-progress__primary-bar">
+                    <span class="mdc-linear-progress__bar-inner"></span>
+                </div>
+                <div class="mdc-linear-progress__bar mdc-linear-progress__secondary-bar">
+                    <span class="mdc-linear-progress__bar-inner"></span>
+                </div>
+            </div>
+
+            <div aria-live="polite">
+                <p id="passkeyUpgradeDescription" class="text-center" th:utext="#{screen.authentication.webauthn.upgrade.desc}">
+                    Please wait while CAS completes your sign-in.
+                </p>
+                <div id="passkeyUpgradeNote" class="banner banner-info d-flex align-items-start my-3 pe-3" role="note">
+                    <span class="mdi mdi-key-chain-variant mdi-24px me-2" aria-hidden="true"></span>
+                    <p class="banner-message" th:utext="#{screen.authentication.webauthn.upgrade.passkey}">
+                        Your browser or password manager may offer to save a passkey for this account.
+                    </p>
+                </div>
+                <p id="passkeyUpgradeKeepOpen" class="text-center text-muted small"
+                   th:utext="#{screen.authentication.webauthn.upgrade.keepopen}">
+                    Please do not close or refresh this window.
+                </p>
+                <p id="passkeyUpgradeSlow" class="text-center" style="display: none"
+                   th:utext="#{screen.authentication.webauthn.upgrade.slow}">
+                    This is taking longer than expected.
+                </p>
+            </div>
+
+            <form method="POST" id="passkeyUpgradeForm" th:action="@{/login}">
+                <input type="hidden" name="execution" th:value="${flowExecutionKey}"/>
+                <input type="hidden" name="_eventId" value="continue"/>
+                <noscript>
+                    <button class="mdc-button mdc-button--raised btn btn-primary" type="submit">
+                        <span class="mdc-button__label" th:text="#{screen.authentication.webauthn.upgrade.continue}">Continue</span>
+                    </button>
+                </noscript>
+                <button id="passkeyUpgradeContinue" class="mdc-button mdc-button--raised btn btn-primary"
+                        type="submit" style="display: none">
+                    <span class="mdc-button__label" th:text="#{screen.authentication.webauthn.upgrade.continue}">Continue</span>
+                </button>
+            </form>
+            <input type="hidden" id="passkeyUpgradeCsrfToken" th:if="${_csrf}" th:value="${_csrf.token}"/>
+        </div>
+
+        <script type="text/javascript" th:inline="javascript">
+            /*<![CDATA[*/
+            const csrfToken = $("#passkeyUpgradeCsrfToken").val();
+            const passkeyUpgradeUsername = /*[[${passkeyUpgradeUsername}]]*/ "";
+            const passkeyUpgradeDisplayName = /*[[${passkeyUpgradeDisplayName}]]*/ "";
+            /*]]>*/
+            setTimeout(() => {
+                $("#passkeyUpgradeSlow").show();
+                $("#passkeyUpgradeContinue").show();
+            }, 8000);
+            upgradeToPasskey($("#passkeyUpgradeForm"), passkeyUpgradeUsername, passkeyUpgradeDisplayName);
+        </script>
+    </div>
+</main>
+</body>
+</html>

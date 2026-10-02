@@ -142,6 +142,16 @@ public class WebAuthnMultifactorAuthenticationCoreProperties implements Serializ
     private boolean allowPrimaryAuthentication;
 
     /**
+     * Offer a passkey right after a password login: CAS shows a short page that asks the browser's password manager
+     * to create a passkey for the account on its own (WebAuthn conditional create), then continues as usual.
+     * Browsers and password managers that do not support it continue immediately.
+     * <p>Takes effect only when {@code allow-primary-authentication} and {@code allow-untrusted-attestation}
+     * are also enabled, since such passkeys come without attestation and are meant for passkey login;
+     * otherwise this setting is ignored.</p>
+     */
+    private boolean passkeyUpgradeEnabled;
+
+    /**
      * When enabled, allows the user/system to accept multiple accounts
      * and device registrations per user, allowing one to switch between
      * or register new devices/accounts automatically.

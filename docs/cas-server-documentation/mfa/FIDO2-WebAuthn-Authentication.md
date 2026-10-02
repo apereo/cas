@@ -122,3 +122,27 @@ attestation does not name the device, which is the case for synced passkeys, the
 [passkey provider AAGUID list](https://github.com/passkeydeveloper/passkey-authenticator-aaguids). The registration
 page shows the same name, with the provider's icon from that list, right after a passkey is registered. Providers that
 send an all-zero AAGUID, and devices registered before CAS kept the AAGUID, stay unnamed.
+
+## Passkey Upgrades
+
+CAS can offer a passkey to users who sign in with a username and password, without a separate enrollment step, using
+[WebAuthn conditional create](https://www.w3.org/TR/webauthn-3/#dom-credentialmediationrequirement-conditional).
+Right after the password login, CAS shows a short intermediate page that asks the browser to create a passkey for the account. If
+the browser's password manager has just filled in the password for that account, it may create the passkey on its own,
+usually with no prompt; otherwise the request fails silently. Either way the page continues to the application within
+a few seconds, and browsers that do not support conditional create continue immediately.
+
+<div class="alert alert-info">:information_source: <strong>Passkey Upgrades</strong><p>
+Passkey upgrades must be explicitly enabled in CAS configuration. Then, note that this feature also only takes effect when
+WebAuthn is allowed for primary authentication and when untrusted attestation is allowed. Review CAS settings to 
+ensure all features are correctly enabled.
+</p></div>
+
+The intermediate page is shown only when the login was completed with a password typed in that login, and the account may register
+another device: it has no device yet, or multiple registration is turned on. The
+passkey is named after the username that was typed, so that the password manager can match it with the saved password,
+and it belongs to the authenticated principal. It is listed with its provider's name, such as *Google Password Manager*,
+or as *Passkey*. 
+
+Conditional create is supported by recent versions of Chrome with Google Password Manager and Safari
+with iCloud Keychain, and by many third-party password managers.

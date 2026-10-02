@@ -1187,6 +1187,16 @@ public interface CasWebflowConstants {
     String STATE_ID_WEBAUTHN_SAVE_REGISTRATION = "saveRegistrationWebAuthn";
 
     /**
+     * State id 'checkPasskeyUpgradeWebAuthn'.
+     */
+    String STATE_ID_WEBAUTHN_CHECK_PASSKEY_UPGRADE = "checkPasskeyUpgradeWebAuthn";
+
+    /**
+     * State id 'viewPasskeyUpgradeWebAuthn'.
+     */
+    String STATE_ID_WEBAUTHN_VIEW_PASSKEY_UPGRADE = "viewPasskeyUpgradeWebAuthn";
+
+    /**
      * State id 'initPasswordReset'.
      */
     String STATE_ID_INIT_PASSWORD_RESET = "initPasswordReset";
@@ -1375,6 +1385,11 @@ public interface CasWebflowConstants {
      * The view id 'casWebAuthnQRCodeVerifyDoneView'.
      */
     String VIEW_ID_WEBAUTHN_QRCODE_VERIFY_DONE = "webauthn/casWebAuthnQRCodeVerifyDoneView";
+
+    /**
+     * The view id 'casWebAuthnPasskeyUpgradeView'.
+     */
+    String VIEW_ID_WEBAUTHN_PASSKEY_UPGRADE = "webauthn/casWebAuthnPasskeyUpgradeView";
 
     /*
      ****************************************
@@ -2045,6 +2060,11 @@ public interface CasWebflowConstants {
      * Action id 'webAuthnStartRegistrationAction .
      */
     String ACTION_ID_WEB_AUTHN_START_REGISTRATION = "webAuthnStartRegistrationAction";
+
+    /**
+     * Action id 'webAuthnCheckPasskeyUpgradeAction'.
+     */
+    String ACTION_ID_WEBAUTHN_CHECK_PASSKEY_UPGRADE = "webAuthnCheckPasskeyUpgradeAction";
 
     /**
      * Action id 'tokenAuthenticationAction .

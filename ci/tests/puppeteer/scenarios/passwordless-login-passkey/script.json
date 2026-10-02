@@ -14,6 +14,8 @@
     "--cas.authn.mfa.web-authn.core.application-id=https://localhost:8443",
     "--cas.authn.mfa.web-authn.core.relying-party-name=CAS WebAuthn Demo",
     "--cas.authn.mfa.web-authn.core.allow-primary-authentication=true",
-    "--cas.authn.mfa.web-authn.core.user-verification-requirement=REQUIRED"
+    "--cas.authn.mfa.web-authn.core.user-verification-requirement=REQUIRED",
+    "--cas.authn.mfa.web-authn.core.multiple-device-registration-enabled=true",
+    "--cas.authn.mfa.web-authn.core.passkey-upgrade-enabled=true"
   ]
 }

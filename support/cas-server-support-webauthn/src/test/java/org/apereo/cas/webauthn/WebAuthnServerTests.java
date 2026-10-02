@@ -12,8 +12,10 @@ import com.yubico.data.AssertionRequestWrapper;
 import com.yubico.data.CredentialRegistration;
 import com.yubico.data.RegistrationRequest;
 import com.yubico.webauthn.AssertionRequest;
+import com.yubico.webauthn.FinishRegistrationOptions;
 import com.yubico.webauthn.RegistrationResult;
 import com.yubico.webauthn.RelyingParty;
+import com.yubico.webauthn.data.AttestationConveyancePreference;
 import com.yubico.webauthn.data.AuthenticatorAttachment;
 import com.yubico.webauthn.data.ByteArray;
 import com.yubico.webauthn.data.PublicKeyCredentialCreationOptions;
@@ -30,6 +32,8 @@ import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -85,19 +89,21 @@ class WebAuthnServerTests {
         return new ByteArray(value.getBytes(StandardCharsets.UTF_8)).getBase64Url();
     }
 
-    @Test
-    void verifyRegistrationRecordsDiscoverableCredential() throws Throwable {
+    @ParameterizedTest
+    @ValueSource(booleans = {false, true})
+    void verifyRegistrationRecordsDiscoverableCredential(final boolean conditional) throws Throwable {
         val storage = mock(RegistrationStorage.class);
         val registrationRequests = WebAuthnServerTests.<RegistrationRequest>newWebAuthnCache();
         val requestId = SessionManager.generateRandom(16);
         val options = PublicKeyCredentialCreationOptions.builder()
             .rp(RelyingPartyIdentity.builder().id("localhost").name("CAS").build())
-            .user(UserIdentity.builder().name("casuser").displayName("CAS").id(SessionManager.generateRandom(32)).build())
+            .user(UserIdentity.builder().name(conditional ? "Typed@Example.org" : "casuser")
+                .displayName("CAS").id(SessionManager.generateRandom(32)).build())
             .challenge(SessionManager.generateRandom(32))
             .pubKeyCredParams(List.of(PublicKeyCredentialParameters.ES256))
             .build();
-        when(registrationRequests.getIfPresent(any(), eq(requestId)))
-            .thenReturn(new RegistrationRequest("casuser", Optional.of("passkey"), requestId, options, Optional.empty()));
+        when(registrationRequests.getIfPresent(any(), eq(requestId))).thenReturn(new RegistrationRequest("casuser",
+            conditional ? Optional.empty() : Optional.of("passkey"), requestId, options, Optional.empty(), conditional));
 
         val credentialId = SessionManager.generateRandom(16);
         val registrationResult = mock(RegistrationResult.class);
@@ -134,8 +140,13 @@ class WebAuthnServerTests {
             argThat((CredentialRegistration registration) -> Boolean.TRUE.equals(registration.getDiscoverable())
                 && registration.getCredential().isBackupEligible().orElse(Boolean.FALSE)
                 && registration.getCredential().isBackedUp().orElse(Boolean.FALSE)
-                && "ea9b8d66-4d01-1d21-3ce4-b6b48cb575d4".equals(registration.getAaguid())));
+                && "ea9b8d66-4d01-1d21-3ce4-b6b48cb575d4".equals(registration.getAaguid())
+                && "casuser".equals(registration.getUserIdentity().getName())
+                && (conditional ? "Google Password Manager" : "passkey").equals(registration.getCredentialNickname())));
+        verify(relyingParty).finishRegistration(argThat((FinishRegistrationOptions finish) -> finish.isConditionalCreate() == conditional));
         assertTrue(WebAuthnUtils.toAaguid(new ByteArray(new byte[16])).isEmpty());
+        assertTrue(server.startConditionalRegistration(new MockHttpServletRequest(), "casuser",
+            Optional.of("Typed@Example.org"), Optional.of("CAS")).isLeft());
     }
 
     @Test
@@ -194,7 +205,7 @@ class WebAuthnServerTests {
     abstract static class BaseWebAuthnServerStartRegistrationTests {
         @Autowired
         @Qualifier("webAuthnServer")
-        private WebAuthnServer webAuthnServer;
+        protected WebAuthnServer webAuthnServer;
 
         protected abstract AuthenticatorAttachment expectedAuthenticatorAttachment();
 
@@ -266,9 +277,30 @@ class WebAuthnServerTests {
             "cas.server.name=https://localhost:8443",
             "cas.authn.mfa.web-authn.core.authenticator-attachment=PLATFORM",
             "cas.authn.mfa.web-authn.core.user-verification-requirement=REQUIRED",
-            "cas.authn.mfa.web-authn.core.hints=client-device,hybrid"
+            "cas.authn.mfa.web-authn.core.hints=client-device,hybrid",
+            "cas.authn.mfa.web-authn.core.passkey-upgrade-enabled=true",
+            "cas.authn.mfa.web-authn.core.allow-primary-authentication=true",
+            "cas.authn.mfa.web-authn.core.allow-untrusted-attestation=true"
         })
     class WebAuthnServerStartRegistrationPlatformRequiredTests extends BaseWebAuthnServerStartRegistrationTests {
+        @Test
+        void verifyConditionalRegistration() {
+            val username = UUID.randomUUID().toString();
+            val result = webAuthnServer.startConditionalRegistration(new MockHttpServletRequest(), username,
+                Optional.of("Typed@Example.org"), Optional.of("CAS User"));
+            assertTrue(result.isRight());
+            val registration = result.right().orElseThrow();
+            assertTrue(registration.conditional());
+            assertEquals(username, registration.username());
+            val options = registration.publicKeyCredentialCreationOptions();
+            assertEquals("Typed@Example.org", options.getUser().getName());
+            assertEquals(AttestationConveyancePreference.NONE, options.getAttestation());
+            val selection = options.getAuthenticatorSelection().orElseThrow();
+            assertEquals(ResidentKeyRequirement.REQUIRED, selection.getResidentKey().orElseThrow());
+            assertEquals(UserVerificationRequirement.PREFERRED, selection.getUserVerification().orElseThrow());
+            assertTrue(selection.getAuthenticatorAttachment().isEmpty());
+        }
+
         @Override
         protected List<String> expectedHints() {
             return List.of("client-device", "hybrid");

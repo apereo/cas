@@ -1,6 +1,17 @@
+const assert = require("assert");
 const cas = require("../../cas.js");
 
 async function registerPasskey(page) {
+    let passkeyUpgradeShown = false;
+    page.on("response", async (response) => {
+        if (response.request().resourceType() === "document" && response.ok()) {
+            const body = await response.text().catch(() => "");
+            if (body.includes("passkeyUpgradePanel")) {
+                passkeyUpgradeShown = true;
+            }
+        }
+    });
+
     await cas.gotoLogin(page);
     await cas.attributeValue(page, "#username", "autocomplete", "username webauthn");
     await cas.type(page, "#username", "casuser");
@@ -24,6 +35,9 @@ async function registerPasskey(page) {
     await cas.click(page, "#authnButton");
     await cas.sleep(5000);
     await cas.assertCookie(page);
+    await cas.sleep(5000);
+    assert(passkeyUpgradeShown, "The passkey upgrade page should follow the password login");
+    await cas.assertInnerTextStartsWith(page, "#content div p", "You, casuser, have successfully logged in");
     await cas.gotoLogout(page);
 }
 

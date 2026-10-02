@@ -668,6 +668,57 @@ async function authenticateWithPasskey(form, mediation = undefined) {
     return data;
 }
 
+/**
+ * Offer a passkey to the user who just signed in with a password (WebAuthn conditional create). Where the browser
+ * reports the conditionalCreate capability, CAS starts a conditional registration named after the username typed at
+ * login, and the password manager that filled that password may create a passkey without a prompt; it refuses
+ * silently otherwise. Whatever happens, including errors and a ceremony that does not finish within the timeout,
+ * the given form is submitted so that the login continues.
+ */
+async function upgradeToPasskey(form, username, displayName, timeout = 5000) {
+    try {
+        if (isBrowserSupported() && typeof PublicKeyCredential.getClientCapabilities === "function") {
+            const capabilities = await PublicKeyCredential.getClientCapabilities();
+            if (capabilities.conditionalCreate === true) {
+                const urls = await getWebAuthnUrls();
+                const headers = {};
+                if (csrfToken !== undefined && csrfToken !== null) {
+                    headers["X-CSRF-TOKEN"] = csrfToken;
+                }
+                const response = await fetch(urls.register, {
+                    method: "POST",
+                    headers: headers,
+                    body: new URLSearchParams({
+                        username,
+                        displayName,
+                        conditional: true,
+                        requireResidentKey: true
+                    })
+                });
+                const data = await response.json();
+                if (data.success) {
+                    const controller = new AbortController();
+                    const timer = setTimeout(() => controller.abort(), timeout);
+                    try {
+                        const credential = await navigator.credentials.create({
+                            publicKey: webauthn.decodePublicKeyCredentialCreationOptions(data.request.publicKeyCredentialCreationOptions),
+                            mediation: "conditional",
+                            signal: controller.signal
+                        });
+                        const finishUrl = `${window.location.origin}${contextPath}${data.actions.finish}`;
+                        await submitResponse(finishUrl, data.request, webauthn.responseToObject(credential));
+                    } finally {
+                        clearTimeout(timer);
+                    }
+                }
+            }
+        }
+    } catch (err) {
+        console.debug("Passkey upgrade did not complete", err);
+    }
+    $(form).submit();
+}
+
 function init() {
     hideDeviceInfo();
     return false;

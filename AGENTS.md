@@ -1150,6 +1150,17 @@ Guidance for AI coding agents working in the Apereo CAS source tree.
   scenarios cannot show a provider name.
 - `#device-icon` on the registration and login pages only has an image when attestation metadata supplies `imageUrl`
   (the bundled Yubico list, remote PNGs); `showDeviceInfo` hides it otherwise or when the image fails to load.
+- Passkey upgrade (conditional create): states exist only when `passkey-upgrade-enabled`, `allow-primary-authentication`
+  and `allow-untrusted-attestation` are all on (no warning otherwise, by design); `startConditionalRegistration` re-checks
+  them. The check action reads the login flow's own `flowScope.credential` (MFA subflows write request/conversation scope,
+  which `WebUtils.getCredential` would return) and requires a `UsernamePasswordCredential` in the authentication.
+  `user.name` is the typed username but the stored `userIdentity.name` is always the principal id; `excludeCredentials`
+  is rebuilt from the principal id. Headless Chrome reports `conditionalCreate`; with a CDP virtual authenticator the
+  conditional `create()` never settles, so the page continues on its timeout (5 s); with none it rejects at once.
+- Screenshots of themed views without a running CAS: stage the template, `cas.css`, logo and background via `build/`,
+  install `normalize.css`, `bootstrap` (grid), `material-components-web`, `@mdi/font` from npm at the versions in
+  `libs.versions.toml`, rebuild the layout shell (header, `.bgimage` main, footer) and capture with Playwright.
+  The layout's `div#content` carries a shadow, so narrow cards use another fragment id.
 
 ## Queue-backed ticket registries (Kafka, AMQP, Pulsar, GCP Pub/Sub)
 

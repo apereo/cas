@@ -88,6 +88,10 @@ public class WebAuthnController extends BaseWebAuthnController {
      * @param credentialNickname     the credential nickname
      * @param requireResidentKey     the require resident key
      * @param sessionTokenBase64     the session token base 64
+     * @param conditional            whether to start a conditional create registration (passkey upgrade), whose
+     *                               WebAuthn user entity is named after {@code username}, the username typed at login;
+     *                               the registration still belongs to the authenticated principal
+     * @param username               the username typed at login, for a conditional create registration
      * @param authenticatedPrincipal the authenticated principal
      * @param request                the request
      * @param response               the response
@@ -100,7 +104,9 @@ public class WebAuthnController extends BaseWebAuthnController {
             @Parameter(name = "displayName", in = ParameterIn.QUERY, required = true, description = "Display name"),
             @Parameter(name = "credentialNickname", in = ParameterIn.QUERY, required = false, description = "Credential nickname"),
             @Parameter(name = "requireResidentKey", in = ParameterIn.QUERY, required = false, description = "Require resident key"),
-            @Parameter(name = "sessionToken", in = ParameterIn.QUERY, required = false, description = "Session token")
+            @Parameter(name = "sessionToken", in = ParameterIn.QUERY, required = false, description = "Session token"),
+            @Parameter(name = "conditional", in = ParameterIn.QUERY, required = false, description = "Conditional create (passkey upgrade)"),
+            @Parameter(name = "username", in = ParameterIn.QUERY, required = false, description = "Username typed at login")
         },
         requestBody = @io.swagger.v3.oas.annotations.parameters.RequestBody(
             required = true,
@@ -116,18 +122,23 @@ public class WebAuthnController extends BaseWebAuthnController {
         @RequestParam(value = "credentialNickname", required = false, defaultValue = StringUtils.EMPTY) final String credentialNickname,
         @RequestParam(value = "requireResidentKey", required = false) final boolean requireResidentKey,
         @RequestParam(value = "sessionToken", required = false, defaultValue = StringUtils.EMPTY) final String sessionTokenBase64,
+        @RequestParam(value = "conditional", required = false) final boolean conditional,
+        @RequestParam(value = "username", required = false, defaultValue = StringUtils.EMPTY) final String username,
         final Principal authenticatedPrincipal,
         final HttpServletRequest request,
         final HttpServletResponse response)
         throws Exception {
 
-        val result = server.startRegistration(
-            request,
-            authenticatedPrincipal.getName(),
-            Optional.of(displayName),
-            Optional.ofNullable(credentialNickname),
-            server.determineResidentKeyRequirement(requireResidentKey),
-            Optional.ofNullable(sessionTokenBase64).map(Unchecked.function(ByteArray::fromBase64Url)));
+        val result = conditional
+            ? server.startConditionalRegistration(request, authenticatedPrincipal.getName(),
+                Optional.of(username).filter(StringUtils::isNotBlank), Optional.of(displayName))
+            : server.startRegistration(
+                request,
+                authenticatedPrincipal.getName(),
+                Optional.of(displayName),
+                Optional.ofNullable(credentialNickname),
+                server.determineResidentKeyRequirement(requireResidentKey),
+                Optional.ofNullable(sessionTokenBase64).map(Unchecked.function(ByteArray::fromBase64Url)));
 
         if (result.isRight()) {
             return startResponse(new StartRegistrationResponse(result.right().orElseThrow()));

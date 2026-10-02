@@ -194,6 +194,17 @@ class WebAuthnControllerTests {
             .andExpect(jsonPath("$.success").value(true));
         verify(server).startRegistration(any(), eq("casuser"), any(), any(), eq(ResidentKeyRequirement.PREFERRED), any());
 
+        when(server.startConditionalRegistration(any(), anyString(), any(), any())).thenReturn(Either.right(registrationRequest));
+        mockMvc.perform(post("/webauthn/register")
+                .principal(new TestingAuthenticationToken("casuser", List.of()))
+                .accept(MediaType.APPLICATION_JSON)
+                .param("displayName", "displayName")
+                .param("conditional", "true")
+                .param("username", "CasUser@example.org"))
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$.success").value(true));
+        verify(server).startConditionalRegistration(any(), eq("casuser"), eq(Optional.of("CasUser@example.org")), eq(Optional.of("displayName")));
+
         when(server.startRegistration(any(), anyString(), any(), any(), any(ResidentKeyRequirement.class), any())).thenReturn(Either.left("failed"));
         mockMvc.perform(registerRequest).andExpect(status().isBadRequest());
     }

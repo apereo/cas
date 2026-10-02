@@ -28,6 +28,7 @@ import org.apereo.cas.webauthn.storage.WebAuthnCredentialRepository;
 import org.apereo.cas.webauthn.web.flow.WebAuthnAccountCheckRegistrationAction;
 import org.apereo.cas.webauthn.web.flow.WebAuthnAccountSaveRegistrationAction;
 import org.apereo.cas.webauthn.web.flow.WebAuthnAuthenticationWebflowAction;
+import org.apereo.cas.webauthn.web.flow.WebAuthnCheckPasskeyUpgradeAction;
 import org.apereo.cas.webauthn.web.flow.WebAuthnMultifactorWebflowConfigurer;
 import org.apereo.cas.webauthn.web.flow.WebAuthnPopulateCsrfTokenAction;
 import org.apereo.cas.webauthn.web.flow.WebAuthnStartAuthenticationAction;
@@ -285,6 +286,21 @@ class WebAuthnWebflowConfiguration {
             return BeanSupplier.of(Action.class)
                 .when(CONDITION.given(applicationContext.getEnvironment()))
                 .supply(() -> new WebAuthnAccountCheckRegistrationAction(webAuthnCredentialRepository, tenantExtractor))
+                .otherwise(() -> ConsumerExecutionAction.NONE)
+                .get();
+        }
+
+        @ConditionalOnMissingBean(name = CasWebflowConstants.ACTION_ID_WEBAUTHN_CHECK_PASSKEY_UPGRADE)
+        @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+        public Action webAuthnCheckPasskeyUpgradeAction(
+            final CasConfigurationProperties casProperties,
+            final ConfigurableApplicationContext applicationContext,
+            @Qualifier(WebAuthnCredentialRepository.BEAN_NAME)
+            final RegistrationStorage webAuthnCredentialRepository) {
+            return BeanSupplier.of(Action.class)
+                .when(CONDITION.given(applicationContext.getEnvironment()))
+                .supply(() -> new WebAuthnCheckPasskeyUpgradeAction(webAuthnCredentialRepository, casProperties))
                 .otherwise(() -> ConsumerExecutionAction.NONE)
                 .get();
         }

@@ -11,6 +11,8 @@ import lombok.val;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.util.StringUtils;
 import org.springframework.webflow.definition.registry.FlowDefinitionRegistry;
+import org.springframework.webflow.engine.Flow;
+import org.springframework.webflow.engine.Transition;
 import org.springframework.webflow.engine.builder.support.FlowBuilderServices;
 
 /**
@@ -115,6 +117,42 @@ public class WebAuthnMultifactorWebflowConfigurer extends AbstractCasMultifactor
 
             createTransitionForState(validateAction,
                 CasWebflowConstants.TRANSITION_ID_FINALIZE, CasWebflowConstants.STATE_ID_REAL_SUBMIT);
+
+            if (webAuthn.getCore().isPasskeyUpgradeEnabled() && webAuthn.getCore().isAllowUntrustedAttestation()) {
+                createPasskeyUpgradeStates(flow);
+            }
+        }
+    }
+
+    /**
+     * Offer a passkey upgrade once the single sign-on session exists and before CAS continues to the service.
+     * Every path from sending the ticket-granting ticket to the service check, the regular one, the one through
+     * browser storage and the one through authentication warnings, goes through the upgrade check, which shows the
+     * upgrade page only after a password login; the page always continues to the service check.
+     *
+     * @param flow the login flow
+     */
+    protected void createPasskeyUpgradeStates(final Flow flow) {
+        val checkState = createActionState(flow, CasWebflowConstants.STATE_ID_WEBAUTHN_CHECK_PASSKEY_UPGRADE,
+            CasWebflowConstants.ACTION_ID_WEBAUTHN_CHECK_PASSKEY_UPGRADE);
+        createTransitionForState(checkState, CasWebflowConstants.TRANSITION_ID_YES, CasWebflowConstants.STATE_ID_WEBAUTHN_VIEW_PASSKEY_UPGRADE);
+        createTransitionForState(checkState, CasWebflowConstants.TRANSITION_ID_NO, CasWebflowConstants.STATE_ID_SERVICE_CHECK);
+
+        val upgradeView = createViewState(flow, CasWebflowConstants.STATE_ID_WEBAUTHN_VIEW_PASSKEY_UPGRADE,
+            CasWebflowConstants.VIEW_ID_WEBAUTHN_PASSKEY_UPGRADE);
+        upgradeView.getEntryActionList().addAll(
+            createEvaluateAction(CasWebflowConstants.ACTION_ID_POPULATE_SECURITY_CONTEXT),
+            createEvaluateAction(CasWebflowConstants.ACTION_ID_WEBAUTHN_POPULATE_CSRF_TOKEN));
+        createTransitionForState(upgradeView, CasWebflowConstants.TRANSITION_ID_CONTINUE, CasWebflowConstants.STATE_ID_SERVICE_CHECK);
+
+        val sendTicketGrantingTicket = getState(flow, CasWebflowConstants.STATE_ID_SEND_TICKET_GRANTING_TICKET);
+        createTransitionForState(sendTicketGrantingTicket, CasWebflowConstants.TRANSITION_ID_SUCCESS, checkState.getId(), true);
+        val writeBrowserStorage = getState(flow, CasWebflowConstants.STATE_ID_BROWSER_STORAGE_WRITE);
+        createTransitionForState(writeBrowserStorage, CasWebflowConstants.TRANSITION_ID_CONTINUE, checkState.getId(), true);
+        val proceedFromWarnings = getState(flow, CasWebflowConstants.STATE_ID_PROCEED_FROM_AUTHENTICATION_WARNINGS_VIEW);
+        if (proceedFromWarnings != null && getDefaultTransitionFor(proceedFromWarnings) instanceof final Transition transition) {
+            proceedFromWarnings.getTransitionSet().remove(transition);
+            createStateDefaultTransition(proceedFromWarnings, checkState.getId());
         }
     }
 }
