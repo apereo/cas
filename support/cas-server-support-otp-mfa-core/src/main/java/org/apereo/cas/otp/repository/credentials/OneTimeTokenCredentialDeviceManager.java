@@ -34,9 +34,18 @@ public class OneTimeTokenCredentialDeviceManager implements MultifactorAuthentic
             .collect(Collectors.toList());
     }
 
+    /**
+     * Remove the device only when it belongs to the principal. The device id comes from the caller,
+     * typically a request parameter, so it is looked up among the principal's own devices first;
+     * an id that belongs to another user, or to no one, is ignored.
+     *
+     * @param principal the principal that owns the device
+     * @param deviceId  the device id
+     */
     @Override
     public void removeRegisteredDevice(final Principal principal, final String deviceId) {
-        repository.delete(Long.parseLong(deviceId));
+        Optional.ofNullable(repository.get(principal.getId(), Long.parseLong(deviceId)))
+            .ifPresent(account -> repository.delete(account.getId()));
     }
 
     protected MultifactorAuthenticationRegisteredDevice mapAccount(final OneTimeTokenAccount acct) {

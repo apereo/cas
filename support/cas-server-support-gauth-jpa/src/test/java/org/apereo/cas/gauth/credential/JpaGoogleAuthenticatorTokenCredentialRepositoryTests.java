@@ -32,7 +32,7 @@ import static org.junit.jupiter.api.Assertions.*;
     properties = {
         "cas.jdbc.show-sql=true",
         "cas.authn.mfa.gauth.core.scratch-codes.encryption.key=12345678901234567890123456789012",
-        "cas.authn.mfa.gauth.crypto.enabled=false",
+        "cas.authn.mfa.gauth.crypto.enabled=true",
         "cas.authn.mfa.gauth.jpa.url=jdbc:hsqldb:mem:gauth-credentials;hsqldb.tx=mvcc"
     })
 @EnableTransactionManagement(proxyTargetClass = false)
@@ -65,6 +65,29 @@ class JpaGoogleAuthenticatorTokenCredentialRepositoryTests extends BaseOneTimeTo
 
         acct1 = repo.save(acct1);
         assertNotNull(acct1);
+    }
+
+    @Test
+    void verifyUpdateOfFetchedAccountKeepsSecretsAndProperties() {
+        val username = UUID.randomUUID().toString();
+        val repo = getRegistry("verifyUpdateOfFetchedAccountKeepsSecretsAndProperties");
+        val account = repo.create(username);
+        val secret = account.getSecretKey();
+        val scratchCodes = account.getScratchCodes().stream().map(Number::intValue).sorted().toList();
+        val id = repo.save(account).getId();
+
+        assertEquals(secret, repo.get(id).getSecretKey());
+        assertNull(repo.get(UUID.randomUUID().toString(), id));
+
+        val owned = repo.get(username, id);
+        assertEquals(secret, owned.getSecretKey());
+        owned.getProperties().add("verified");
+        repo.update(owned);
+
+        val updated = repo.get(username, id);
+        assertEquals(secret, updated.getSecretKey());
+        assertEquals(scratchCodes, updated.getScratchCodes().stream().map(Number::intValue).sorted().toList());
+        assertEquals(List.of("verified"), updated.getProperties());
     }
 
     @Test

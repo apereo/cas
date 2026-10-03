@@ -304,3 +304,8 @@ authentication. See the [stateless ticket registry documentation](../ticketing/S
   verified with the JDK's own EdDSA support. Verification previously relied on Google Tink, which CAS does not ship, so such registrations failed at runtime.
 - CAS now logs a warning when a cookie it writes, such as the ticket-granting cookie, is larger than the 4 KB that browsers are guaranteed to accept.
 - MongoDb integration tests have now switched to using MongoDb `9.x`.
+- [Google Authenticator](../mfa/GoogleAuthenticator-Authentication.html) devices can only be removed or confirmed by the user that owns them;
+  a device id that belongs to another user is now refused.
+- Google Authenticator device repositories: removing a device or a user from DynamoDB no longer removes other records with it; registering
+  or updating a device in LDAP no longer replaces the user's other devices; and removing or confirming a device with JPA works again
+  and no longer re-encrypts the device secret when encryption is enabled.

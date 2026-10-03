@@ -62,6 +62,20 @@ class GoogleAuthenticatorTokenCredentialRepositoryEndpointTests extends Abstract
     }
 
     @Test
+    void verifyDeviceManagerIgnoresDevicesOfOtherUsers() {
+        val acct = registry.create(UUID.randomUUID().toString());
+        registry.save(acct);
+        val owner = RegisteredServiceTestUtils.getPrincipal(acct.getUsername());
+        val deviceManager = googleAuthenticatorMultifactorAuthenticationProvider.getDeviceManager();
+        val device = deviceManager.findRegisteredDevices(owner).getFirst();
+
+        val otherUser = RegisteredServiceTestUtils.getPrincipal(UUID.randomUUID().toString());
+        deviceManager.removeRegisteredDevice(otherUser, device.getId());
+        assertTrue(deviceManager.hasRegisteredDevices(owner));
+        assertNotNull(registry.get(acct.getUsername(), Long.parseLong(device.getId())));
+    }
+
+    @Test
     void verifyOperation() throws Throwable {
         val acct = registry.create(UUID.randomUUID().toString());
         val toSave = GoogleAuthenticatorAccount.builder()

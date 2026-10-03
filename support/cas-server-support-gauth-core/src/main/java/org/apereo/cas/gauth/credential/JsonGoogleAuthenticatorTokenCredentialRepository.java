@@ -59,7 +59,6 @@ public class JsonGoogleAuthenticatorTokenCredentialRepository extends BaseGoogle
             .stream()
             .filter(ac -> ac.getId() == id)
             .findFirst()
-            .map(this::decode)
             .orElse(null));
     }
 

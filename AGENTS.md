@@ -1232,6 +1232,10 @@ Guidance for AI coding agents working in the Apereo CAS source tree.
 - `count()` means devices in Redis, JPA, Mongo and DynamoDB, but users in InMemory, JSON and LDAP; check which a caller assumes.
 - A repository read that fails must not look like "no devices": `OneTimeTokenAccountCheckRegistrationAction` sends empty or null results to enrollment (REST returns null, JSON returns empty on errors).
 - When testing deletes or updates, store devices for two users and two devices per user, and assert the others survive; single-user tests hid the DynamoDB `GE` filter and the LDAP update bug.
+- To make a range-filter bug visible in a DynamoDB delete test, pick keys that a wrong comparison would sweep up: the kept user's name sorts after the deleted one ("z…" vs "a…"), and the kept device ids are larger than the deleted id. Random UUIDs alone pass by luck half the time.
+- DynamoDB tables keyed by `id` should delete with `DeleteItem` on that key, not a scan followed by deletes.
+- Webflow actions and device managers that take a device id from the request must load it with the owner-scoped `get(principal.getId(), id)` and act only on what that returns. Unscoped `get(id)` / `delete(id)` are for the actuator and internal paths.
+- Every repository read returns a decoded copy (JPA detaches before decoding); `update()` must persist `properties`, which the verification flags of the delete and confirm actions live in.
 
 ## Google Authenticator Redis repository
 

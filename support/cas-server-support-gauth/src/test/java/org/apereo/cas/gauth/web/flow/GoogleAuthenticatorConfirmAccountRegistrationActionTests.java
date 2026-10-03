@@ -67,6 +67,28 @@ class GoogleAuthenticatorConfirmAccountRegistrationActionTests {
     }
 
     @Test
+    void verifyConfirmDeviceOfAnotherUser() throws Throwable {
+        val context = MockRequestContext.create(applicationContext);
+        val acct = GoogleAuthenticatorAccount
+            .builder()
+            .username(UUID.randomUUID().toString())
+            .name(UUID.randomUUID().toString())
+            .secretKey(UUID.randomUUID().toString())
+            .validationCode(123456)
+            .scratchCodes(List.of(287345))
+            .properties(new ArrayList<>(List.of(GoogleAuthenticatorConfirmAccountRegistrationAction.ACCOUNT_PROPERTY_REGISTRATION_VERIFIED)))
+            .build();
+        val accountId = googleAuthenticatorAccountRegistry.save(acct).getId();
+
+        WebUtils.putAuthentication(RegisteredServiceTestUtils.getAuthentication(UUID.randomUUID().toString()), context);
+        context.setParameter(OneTimeTokenAccountConfirmSelectionRegistrationAction.REQUEST_PARAMETER_ACCOUNT_ID, String.valueOf(accountId));
+        context.setParameter(OneTimeTokenAccountSaveRegistrationAction.REQUEST_PARAMETER_VALIDATE, "false");
+        assertThrows(FailedLoginException.class, () -> action.execute(context));
+        assertTrue(googleAuthenticatorAccountRegistry.get(accountId).getProperties()
+            .contains(GoogleAuthenticatorConfirmAccountRegistrationAction.ACCOUNT_PROPERTY_REGISTRATION_VERIFIED));
+    }
+
+    @Test
     void verifyOperation() throws Throwable {
         val context = MockRequestContext.create(applicationContext);
         var acct = GoogleAuthenticatorAccount

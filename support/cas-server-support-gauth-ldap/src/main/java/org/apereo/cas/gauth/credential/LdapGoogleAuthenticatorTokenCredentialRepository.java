@@ -149,7 +149,7 @@ public class LdapGoogleAuthenticatorTokenCredentialRepository
             }, () -> existingAccounts.add(account));
 
             val accountsToSave = existingAccounts.stream()
-                .map(acct -> encode(account))
+                .map(this::encode)
                 .filter(Objects::nonNull)
                 .map(acct -> mapToJson(CollectionUtils.wrapArrayList(acct)))
                 .collect(Collectors.toSet());

@@ -35,16 +35,27 @@ public class GoogleAuthenticatorDeleteAccountAction extends BaseCasWebflowAction
     private final OneTimeTokenCredentialRepository repository;
     private final OneTimeTokenCredentialValidator<GoogleAuthenticatorTokenCredential, GoogleAuthenticatorToken> validator;
 
+    /**
+     * Verify or carry out the removal of one of the authenticated user's devices. The account id is a
+     * request parameter, so the account is looked up among the authenticated principal's own devices;
+     * a request without an authentication, or for a device that belongs to another user, is refused.
+     *
+     * @param requestContext the request context
+     * @return the event
+     * @throws Throwable when the removal is not authorized
+     */
     @Override
     protected @Nullable Event doExecuteInternal(final RequestContext requestContext) throws Throwable {
         val requestParameters = requestContext.getRequestParameters();
         val accountId = requestParameters.getRequired(OneTimeTokenAccountConfirmSelectionRegistrationAction.REQUEST_PARAMETER_ACCOUNT_ID, Long.class);
         val validate = requestParameters.getBoolean(OneTimeTokenAccountSaveRegistrationAction.REQUEST_PARAMETER_VALIDATE);
-        val account = repository.get(accountId);
+        val authentication = WebUtils.getAuthentication(requestContext);
+        val account = Optional.ofNullable(authentication)
+            .map(auth -> repository.get(auth.getPrincipal().getId(), accountId))
+            .orElseThrow(() -> new FailedLoginException("Unauthorized account removal attempt " + accountId));
 
         if (BooleanUtils.isTrue(validate)) {
             val token = requestParameters.getRequired(GoogleAuthenticatorSaveRegistrationAction.REQUEST_PARAMETER_TOKEN, String.class);
-            val authentication = WebUtils.getAuthentication(requestContext);
             val principal = authentication.getPrincipal().getId();
             LOGGER.debug("Validating account [{}] with token [{}] for principal [{}]", accountId, token, principal);
             val tokenCredential = new GoogleAuthenticatorTokenCredential(token, accountId);

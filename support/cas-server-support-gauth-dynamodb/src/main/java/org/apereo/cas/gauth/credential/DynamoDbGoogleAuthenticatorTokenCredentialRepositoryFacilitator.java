@@ -177,7 +177,7 @@ public class DynamoDbGoogleAuthenticatorTokenCredentialRepositoryFacilitator {
             DynamoDbQueryBuilder.builder()
                 .key(ColumnNames.USERID.getColumnName())
                 .attributeValue(List.of(AttributeValue.builder().s(username.toLowerCase(Locale.ENGLISH)).build()))
-                .operator(ComparisonOperator.GE)
+                .operator(ComparisonOperator.EQ)
                 .build());
         val records = getRecordsByKeys(query);
 
@@ -194,29 +194,20 @@ public class DynamoDbGoogleAuthenticatorTokenCredentialRepositoryFacilitator {
     }
 
     /**
-     * Remove.
+     * Remove the record with the given identifier. The identifier is the table's hash key,
+     * so the record is deleted by key and no other record is read or touched.
      *
      * @param id the id
      */
     public void remove(final long id) {
-        val query = List.of(
-            DynamoDbQueryBuilder.builder()
-                .key(ColumnNames.ID.getColumnName())
-                .attributeValue(List.of(AttributeValue.builder().n(String.valueOf(id)).build()))
-                .operator(ComparisonOperator.GE)
-                .build());
-        val records = getRecordsByKeys(query);
-
-        records.forEach(record -> {
-            val del = DeleteItemRequest.builder()
-                .tableName(dynamoDbProperties.getTableName())
-                .key(CollectionUtils.wrap(
-                    ColumnNames.ID.getColumnName(), AttributeValue.builder().n(String.valueOf(record.getId())).build()))
-                .build();
-            LOGGER.debug("Submitting delete request [{}] for [{}]", del, record.getId());
-            val res = amazonDynamoDBClient.deleteItem(del);
-            LOGGER.debug("Delete request came back with result [{}]", res);
-        });
+        val del = DeleteItemRequest.builder()
+            .tableName(dynamoDbProperties.getTableName())
+            .key(CollectionUtils.wrap(
+                ColumnNames.ID.getColumnName(), AttributeValue.builder().n(String.valueOf(id)).build()))
+            .build();
+        LOGGER.debug("Submitting delete request [{}] for [{}]", del, id);
+        val res = amazonDynamoDBClient.deleteItem(del);
+        LOGGER.debug("Delete request came back with result [{}]", res);
     }
 
     /**
