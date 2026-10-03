@@ -40,6 +40,7 @@ public class InMemoryGoogleAuthenticatorTokenCredentialRepository extends BaseGo
             .flatMap(List::stream)
             .filter(ac -> ac.getId() == id)
             .findFirst()
+            .map(this::decode)
             .orElse(null));
     }
 
@@ -62,14 +63,21 @@ public class InMemoryGoogleAuthenticatorTokenCredentialRepository extends BaseGo
         return Objects.requireNonNull(result, () -> "Unable to read accounts for " + userName);
     }
 
+    /**
+     * Save the account, replacing a stored account with the same id rather than adding a duplicate.
+     *
+     * @param account the account
+     * @return the encoded account as stored
+     */
     @Override
     public OneTimeTokenAccount save(final OneTimeTokenAccount account) {
         account.assignIdIfNecessary();
         return lock.tryLock(() -> {
             val encoded = encode(account);
-            val records = accounts.getOrDefault(account.getUsername().trim().toLowerCase(Locale.ENGLISH), new ArrayList<>());
+            val records = accounts.getOrDefault(encoded.getUsername(), new ArrayList<>());
+            records.removeIf(rec -> rec.getId() == encoded.getId());
             records.add(encoded);
-            accounts.put(account.getUsername(), records);
+            accounts.put(encoded.getUsername(), records);
             return encoded;
         });
     }
@@ -84,10 +92,10 @@ public class InMemoryGoogleAuthenticatorTokenCredentialRepository extends BaseGo
                     .filter(rec -> rec.getId() == account.getId())
                     .findFirst()
                     .ifPresent(act -> {
-                        act.setSecretKey(account.getSecretKey());
-                        act.setScratchCodes(account.getScratchCodes());
-                        act.setValidationCode(account.getValidationCode());
-                        act.setProperties(account.getProperties());
+                        act.setSecretKey(encoded.getSecretKey());
+                        act.setScratchCodes(encoded.getScratchCodes());
+                        act.setValidationCode(encoded.getValidationCode());
+                        act.setProperties(new ArrayList<>(encoded.getProperties()));
                     });
             }
             return encoded;
@@ -111,7 +119,7 @@ public class InMemoryGoogleAuthenticatorTokenCredentialRepository extends BaseGo
 
     @Override
     public long count() {
-        return lock.tryLock(accounts::size);
+        return lock.tryLock(() -> accounts.values().stream().mapToLong(List::size).sum());
     }
 
     @Override
@@ -121,7 +129,7 @@ public class InMemoryGoogleAuthenticatorTokenCredentialRepository extends BaseGo
 
     @Override
     public Collection<? extends OneTimeTokenAccount> load() {
-        return lock.tryLock(() -> accounts.values().stream().flatMap(List::stream).collect(Collectors.toList()));
+        return lock.tryLock(() -> accounts.values().stream().flatMap(List::stream).map(this::decode).collect(Collectors.toList()));
     }
 
     private boolean contains(final String username) {

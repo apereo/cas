@@ -63,9 +63,9 @@ public class JsonGoogleAuthenticatorTokenCredentialRepository extends BaseGoogle
     }
 
     /**
-     * Fetch the accounts registered for the user. A missing or empty file means no accounts; a file that cannot be
-     * read or parsed, or a lock that cannot be acquired, is raised as an error instead, because an empty result sends
-     * the user to device registration.
+     * Fetch the accounts registered for the user. A missing file, an empty file or an empty JSON object means no
+     * accounts; a file that cannot be read or parsed, or a lock that cannot be acquired, is raised as an error instead,
+     * because an empty result sends the user to device registration.
      *
      * @param username the username
      * @return the accounts registered for the user
@@ -78,7 +78,8 @@ public class JsonGoogleAuthenticatorTokenCredentialRepository extends BaseGoogle
                 return new ArrayList<>();
             }
             val file = location.getFile();
-            if (file.length() <= 0) {
+            val content = Files.readString(file.toPath(), StandardCharsets.UTF_8).trim();
+            if (content.isEmpty() || "{}".equals(content)) {
                 LOGGER.debug("JSON account repository file location [{}] is empty.", file);
                 return new ArrayList<>();
             }
@@ -98,6 +99,7 @@ public class JsonGoogleAuthenticatorTokenCredentialRepository extends BaseGoogle
                     .values()
                     .stream()
                     .flatMap(List::stream)
+                    .map(this::decode)
                     .collect(Collectors.toList());
             } catch (final Exception e) {
                 LoggingUtils.error(LOGGER, e);
@@ -117,6 +119,7 @@ public class JsonGoogleAuthenticatorTokenCredentialRepository extends BaseGoogle
                     accounts.size(), account.getUsername());
                 val encoded = encode(account);
                 val records = accounts.getOrDefault(account.getUsername().trim().toLowerCase(Locale.ENGLISH), new ArrayList<>());
+                records.removeIf(rec -> rec.getId() == encoded.getId());
                 records.add(encoded);
                 accounts.put(account.getUsername().trim().toLowerCase(Locale.ENGLISH), records);
                 writeAccountsToJsonRepository(accounts);
@@ -183,7 +186,7 @@ public class JsonGoogleAuthenticatorTokenCredentialRepository extends BaseGoogle
     public long count() {
         return lock.tryLock(() -> {
             val accounts = readAccountsFromJsonRepository();
-            return accounts.size();
+            return accounts.values().stream().mapToLong(List::size).sum();
         });
     }
 

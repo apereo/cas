@@ -684,15 +684,13 @@ function killPendingCasBuild() {
 function copyCasServerArtifact() {
   local instance="$1"
   local casServerArtifact="${casServerArtifacts[$instance]}"
-  if [[ "${NATIVE_BUILD}" == "false" ]]; then
-    cp "${casWebApplicationFile}" "${casServerArtifact}"
-    if [ $? -eq 1 ]; then
+  if [[ "${NATIVE_BUILD}" == "false" && "${NATIVE_RUN}" == "false" ]]; then
+    if ! cp "${casWebApplicationFile}" "${casServerArtifact}"; then
       printred "Unable to build or locate the CAS web application file. Aborting test..."
       exit 1
     fi
   elif [[ ${instances} -gt 1 ]]; then
-    cp "${targetArtifact}" "${casServerArtifact}"
-    if [ $? -eq 1 ]; then
+    if ! cp "${targetArtifact}" "${casServerArtifact}"; then
       printred "Unable to build or locate the CAS native image. Aborting test..."
       exit 1
     fi
@@ -964,7 +962,7 @@ function buildAndRun() {
         fi
 
         WEBAPP_PROJECT=":webapp:cas-server-webapp${serverType:+-$serverType}"
-        if [[ "${NATIVE_BUILD}" == "true" ]]; then
+        if [[ "${NATIVE_BUILD}" == "true" || "${NATIVE_RUN}" == "true" ]]; then
           BUILD_TASKS="${WEBAPP_PROJECT}:build"
         elif [[ "${projectType}" == "jar" ]]; then
           BUILD_TASKS="${WEBAPP_PROJECT}:bootJar"
@@ -975,7 +973,7 @@ function buildAndRun() {
           BUILD_TASKS="${WEBAPP_PROJECT}:dependencyInsight --configuration runtimeClasspath --dependency $DEP_INSIGHT $BUILD_TASKS"
         fi
 
-        if [[ "${NATIVE_BUILD}" == "true" ]]; then
+        if [[ "${NATIVE_BUILD}" == "true" || "${NATIVE_RUN}" == "true" ]]; then
           BUILD_TASKS="${BUILD_TASKS} ${WEBAPP_PROJECT}:nativeCompile -DaotSpringActiveProfiles=none"
         fi
 

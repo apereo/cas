@@ -140,6 +140,6 @@ class GoogleAuthenticatorConfirmAccountRegistrationActionTests {
 
         context.setParameter(OneTimeTokenAccountSaveRegistrationAction.REQUEST_PARAMETER_VALIDATE, "false");
         assertEquals(CasWebflowConstants.TRANSITION_ID_SUCCESS, action.execute(context).getId());
-        assertTrue(acct.getProperties().isEmpty());
+        assertTrue(googleAuthenticatorAccountRegistry.get(acct.getId()).getProperties().isEmpty());
     }
 }

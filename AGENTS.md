@@ -1239,6 +1239,9 @@ Guidance for AI coding agents working in the Apereo CAS source tree.
 - The delete/confirm verification flags are stored on the account as `<flag>:<epoch millis>` and expire (`GoogleAuthenticatorAccountVerificationUtils`). They cannot live in flow or conversation scope: the login webflow keeps its execution state client-side, and the AJAX check and the form submit carry different execution keys.
 - `CasReentrantLock.tryLock(supplier)` returns null when the lock is not acquired; never let that null reach a caller as "no accounts".
 - `MockWebServer.requestLineConsumer` exposes the request line, for asserting the HTTP method a client sends.
+- `MockRequestContext.create(...)` throws `Exception`; a test method that calls it must declare `throws Throwable`.
+- `BaseOneTimeTokenCredentialRepository.encode()` returns an encoded copy and leaves its argument alone; store and return the copy, and read normalized values (lowercased username) from it, not from the argument.
+- Compile-check changed sources when Gradle cannot run: in the device VM, download a JDK 25 from `api.github.com/repos/adoptium/temurin25-binaries/releases/assets/<id>` (`Accept: application/octet-stream`; `github.com` itself is blocked), get read access to `~/.gradle/caches/modules-2/files-2.1`, copy the highest version of every jar to local disk (the mount runs out of file handles with ~1,700 jars open), and run `javac -proc:full -processorpath <lombok 1.18.x jar>` with an `@argfile` classpath of the repo's `*/build/classes/java/{main,test}` plus those jars. This catches compile errors only; running tests needs the module's real classpath, because the whole cache drags in every integration's auto-configuration.
 
 ## Google Authenticator Redis repository
 

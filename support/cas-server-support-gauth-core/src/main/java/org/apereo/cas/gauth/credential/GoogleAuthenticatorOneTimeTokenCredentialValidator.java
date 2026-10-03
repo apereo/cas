@@ -34,6 +34,20 @@ public class GoogleAuthenticatorOneTimeTokenCredentialValidator implements
 
     private final OneTimeTokenCredentialRepository credentialRepository;
 
+    /**
+     * Remove a used scratch code from the account. The account gets a new list rather than having its own list changed,
+     * since the list an account carries is not always modifiable.
+     *
+     * @param account the account
+     * @param code    the scratch code that was used
+     */
+    private static void removeScratchCode(final OneTimeTokenAccount account, final int code) {
+        account.setScratchCodes(account.getScratchCodes()
+            .stream()
+            .filter(scratchCode -> scratchCode.intValue() != code)
+            .collect(Collectors.toList()));
+    }
+
     private static boolean isCredentialAssignedToAccount(final GoogleAuthenticatorTokenCredential credential,
                                                          final OneTimeTokenAccount account) {
         return credential.getAccountId() == null || credential.getAccountId() == account.getId();
@@ -90,7 +104,7 @@ public class GoogleAuthenticatorOneTimeTokenCredentialValidator implements
         val authorized = googleAuthenticatorInstance.authorize(account.getSecretKey(), token);
         if (!authorized && account.getScratchCodes().stream().map(Number::intValue).toList().contains(token)) {
             LOGGER.debug("Token [{}] is a valid scratch code for account [{}]", token, account);
-            account.getScratchCodes().removeIf(code -> code.intValue() == token);
+            removeScratchCode(account, token);
             credentialRepository.update(account);
             return true;
         }
@@ -113,7 +127,7 @@ public class GoogleAuthenticatorOneTimeTokenCredentialValidator implements
             .map(GoogleAuthenticatorAccount.class::cast)
             .peek(acct -> {
                 LOGGER.info("Using scratch code [{}] to authenticate user [{}]. Scratch code will be removed", otp, uid);
-                acct.getScratchCodes().removeIf(token -> token.intValue() == otp);
+                removeScratchCode(acct, otp);
                 credentialRepository.update(acct);
             })
             .findFirst();

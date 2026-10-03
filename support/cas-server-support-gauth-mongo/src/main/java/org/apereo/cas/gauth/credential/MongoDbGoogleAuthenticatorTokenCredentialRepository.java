@@ -21,6 +21,13 @@ import org.springframework.data.mongodb.core.query.Query;
 @ToString
 @Getter
 public class MongoDbGoogleAuthenticatorTokenCredentialRepository extends BaseGoogleAuthenticatorTokenCredentialRepository {
+    /**
+     * Usernames are matched ignoring case but not accents. Primary strength would also ignore accents, so
+     * {@code jose} and {@code josé} would share devices. Case is still ignored because documents written before
+     * usernames were stored lowercased may hold mixed-case names.
+     */
+    private static final Collation USERNAME_COLLATION = Collation.of(Locale.ENGLISH).strength(Collation.ComparisonLevel.secondary());
+
     private final MongoOperations mongoTemplate;
 
     private final String collectionName;
@@ -40,7 +47,7 @@ public class MongoDbGoogleAuthenticatorTokenCredentialRepository extends BaseGoo
     public OneTimeTokenAccount get(final long id) {
         val query = new Query();
         query.addCriteria(Criteria.where("id").is(id))
-            .collation(Collation.of(Locale.ENGLISH).strength(Collation.ComparisonLevel.primary()));
+            .collation(USERNAME_COLLATION);
         val r = this.mongoTemplate.findOne(query, GoogleAuthenticatorAccount.class, this.collectionName);
         return Optional.ofNullable(r).map(this::decode).orElse(null);
     }
@@ -49,7 +56,7 @@ public class MongoDbGoogleAuthenticatorTokenCredentialRepository extends BaseGoo
     public OneTimeTokenAccount get(final String username, final long id) {
         val query = new Query();
         query.addCriteria(Criteria.where("username").is(username.trim()).and("id").is(id))
-            .collation(Collation.of(Locale.ENGLISH).strength(Collation.ComparisonLevel.primary()));
+            .collation(USERNAME_COLLATION);
         val r = this.mongoTemplate.findOne(query, GoogleAuthenticatorAccount.class, this.collectionName);
         return Optional.ofNullable(r).map(this::decode).orElse(null);
     }
@@ -58,7 +65,7 @@ public class MongoDbGoogleAuthenticatorTokenCredentialRepository extends BaseGoo
     public Collection<? extends OneTimeTokenAccount> get(final String username) {
         val query = new Query();
         query.addCriteria(Criteria.where("username").is(username.trim()))
-            .collation(Collation.of(Locale.ENGLISH).strength(Collation.ComparisonLevel.primary()));
+            .collation(USERNAME_COLLATION);
         val r = this.mongoTemplate.find(query, GoogleAuthenticatorAccount.class, this.collectionName);
         return decode(r);
     }
@@ -93,7 +100,7 @@ public class MongoDbGoogleAuthenticatorTokenCredentialRepository extends BaseGoo
     public void delete(final String username) {
         val query = new Query();
         query.addCriteria(Criteria.where("username").is(username.trim()))
-            .collation(Collation.of(Locale.ENGLISH).strength(Collation.ComparisonLevel.primary()));
+            .collation(USERNAME_COLLATION);
         this.mongoTemplate.remove(query, GoogleAuthenticatorAccount.class, this.collectionName);
     }
 
@@ -101,7 +108,7 @@ public class MongoDbGoogleAuthenticatorTokenCredentialRepository extends BaseGoo
     public void delete(final long id) {
         val query = new Query();
         query.addCriteria(Criteria.where("id").is(id))
-            .collation(Collation.of(Locale.ENGLISH).strength(Collation.ComparisonLevel.primary()));
+            .collation(USERNAME_COLLATION);
         this.mongoTemplate.remove(query, GoogleAuthenticatorAccount.class, this.collectionName);
     }
 
@@ -116,7 +123,7 @@ public class MongoDbGoogleAuthenticatorTokenCredentialRepository extends BaseGoo
     public long count(final String username) {
         val query = new Query();
         query.addCriteria(Criteria.where("username").is(username.trim()))
-            .collation(Collation.of(Locale.ENGLISH).strength(Collation.ComparisonLevel.primary()));
+            .collation(USERNAME_COLLATION);
         return this.mongoTemplate.count(query, GoogleAuthenticatorAccount.class, this.collectionName);
     }
 }

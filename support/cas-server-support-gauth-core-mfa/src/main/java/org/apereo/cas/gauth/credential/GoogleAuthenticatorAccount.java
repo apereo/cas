@@ -35,6 +35,9 @@ public class GoogleAuthenticatorAccount extends OneTimeTokenAccount {
             .scratchCodes(acct.getScratchCodes())
             .registrationDate(acct.getRegistrationDate())
             .source(acct.getSource())
+            .tenant(acct.getTenant())
+            .lastUsedDateTime(acct.getLastUsedDateTime())
+            .properties(new ArrayList<>(acct.getProperties()))
             .build();
     }
 

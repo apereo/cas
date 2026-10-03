@@ -204,7 +204,10 @@ and failures were recorded twice. Failed SAML2 ECP authentication attempts, whic
   *Google Password Manager* or *1Password*) with the provider's icon when the attestation does not name the device; the
   registration and login pages show that name and icon for the passkey just registered or used.
 - A new [passkey upgrade](../mfa/FIDO2-WebAuthn-Authentication.html), turned on with
-  `cas.authn.mfa.web-authn.core.passkey-upgrade-enabled` alongside primary authentication and untrusted attestation, shows a short page after a password login that lets the browser's password manager create a passkey for the account on its own (WebAuthn conditional create), then continues as usual. Such passkeys keep the typed username as their name when CAS later reports account details through the Signal API.
+  `cas.authn.mfa.web-authn.core.passkey-upgrade-enabled` alongside primary authentication and untrusted attestation,
+  shows a short page after a password login that lets the browser's password manager create a passkey for the account on
+  its own (WebAuthn conditional create), then continues as usual. Such passkeys keep the typed username as their name
+  when CAS later reports account details through the Signal API.
 
 ### OpenID Connect Verifiable Credentials
 
@@ -248,12 +251,14 @@ and failures were recorded twice. Failed SAML2 ECP authentication attempts, whic
   logs a warning.
 - Refresh tokens keep the authorization details of the authorization code they were issued for, so access tokens obtained
   by refreshing may still request the credentials those details granted. Previously only scope-based grants survived a refresh.
-- Verifiable presentation responses can be encrypted (`direct_post.jwt`), as the High Assurance Interoperability Profile
-  requires, with `cas.authn.oidc.vc.presentation.response-mode=DIRECT_POST_JWT` or per request with `"response_mode": "direct_post.jwt"`:
-  each request carries its own ephemeral `ECDH-ES` key, and presentations sent in the clear are refused.
+- [Verifiable presentation responses](../authentication/OIDC-Authentication-Verifiable-Credentials.html) can be
+  encrypted (`direct_post.jwt`), as the High Assurance Interoperability Profile requires, with
+  `cas.authn.oidc.vc.presentation.response-mode=DIRECT_POST_JWT` or per request with `"response_mode":
+  "direct_post.jwt"`: each request carries its own ephemeral `ECDH-ES` key, and presentations sent in the clear are
+  refused.
 - Verifiable presentation requests may identify CAS with the `x509_hash` client identifier prefix, which the High Assurance
   Interoperability Profile requires of verifiers that sign requests: `cas.authn.oidc.vc.presentation.client-identifier-prefix=X509_HASH`.
-- Verifiable presentations may be requested through the [W3C Digital Credentials API](../authentication/OIDC-Authentication-Verifiable-Credentials.html#digital-credentials-api)
+- Verifiable presentations may be requested through the [W3C Digital Credentials API](../authentication/OIDC-Authentication-Verifiable-Credentials.html)
   with the `dc_api` and `dc_api.jwt` response modes: CAS builds the request the relying party page passes to the browser, and
   verifies what the page posts back, bound to the page's origin.
 
@@ -306,10 +311,21 @@ authentication. See the [stateless ticket registry documentation](../ticketing/S
 - MongoDb integration tests have now switched to using MongoDb `9.x`.
 - [Google Authenticator](../mfa/GoogleAuthenticator-Authentication.html) devices can only be removed or confirmed by the user that owns them;
   a device id that belongs to another user is now refused.
-- Google Authenticator device repositories: removing a device or a user from DynamoDB no longer removes other records with it; registering
-  or updating a device in LDAP no longer replaces the user's other devices; and removing or confirming a device with JPA works again
-  and no longer re-encrypts the device secret when encryption is enabled.
+- Google Authenticator device repositories: removing a device or a user from
+  [DynamoDB](../mfa/GoogleAuthenticator-Authentication-Registration-DynamoDb.html) no longer removes other records with
+  it; registering or updating a device in [LDAP](../mfa/GoogleAuthenticator-Authentication-Registration-LDAP.html) no
+  longer replaces the user's other devices; and removing or confirming a device with
+  [JPA](../mfa/GoogleAuthenticator-Authentication-Registration-JPA.html) works again and no longer re-encrypts the
+  device secret when encryption is enabled.
 - Google Authenticator device removal and confirmation now expire if not completed within a few minutes of the code being verified.
   The [REST device repository](../mfa/GoogleAuthenticator-Authentication-Registration-Rest.html) now sends deletions as `DELETE`
   and includes the device `id` and `properties` when saving. A REST or JSON repository that cannot be read now fails the login
   instead of offering device registration, and LDAP removes the right device when several users' device ids share leading digits.
+- More Google Authenticator repository fixes:
+  [MongoDB](../mfa/GoogleAuthenticator-Authentication-Registration-MongoDb.html) no longer treats usernames that differ
+  only by accents (such as `jose` and `josé`) as the same user; the tenant of a device is kept when it is registered and
+  stored, including in DynamoDB and JPA; DynamoDB stores encrypted scratch codes and an emptied list of scratch codes;
+  saving a device no longer alters the object passed in; and every repository now counts devices rather than users and
+  replaces a device saved twice instead of storing a duplicate.
+- [WebAuthn](../mfa/FIDO2-WebAuthn-Authentication.html) falls back to the cached FIDO metadata BLOB when downloading a fresh one
+  fails at startup, for example when the FIDO metadata service rate-limits the request, instead of failing to start.

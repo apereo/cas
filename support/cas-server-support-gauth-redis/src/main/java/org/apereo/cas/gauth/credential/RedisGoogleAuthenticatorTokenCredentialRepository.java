@@ -90,7 +90,7 @@ public class RedisGoogleAuthenticatorTokenCredentialRepository extends BaseGoogl
 
         val redisAccountKey = RedisCompositeKey.forAccounts().withAccount(encodedAccount).toKeyPattern();
         LOGGER.trace("Saving account [{}] using key [{}]", encodedAccount, redisAccountKey);
-        casRedisTemplates.getAccountsRedisTemplate().boundValueOps(redisAccountKey).set(account);
+        casRedisTemplates.getAccountsRedisTemplate().boundValueOps(redisAccountKey).set(encodedAccount);
 
         val redisPrincipalKey = RedisCompositeKey.forPrincipals().withPrincipal(encodedAccount).toKeyPattern();
         LOGGER.trace("Saving principal [{}] using key [{}]", encodedAccount, redisPrincipalKey);

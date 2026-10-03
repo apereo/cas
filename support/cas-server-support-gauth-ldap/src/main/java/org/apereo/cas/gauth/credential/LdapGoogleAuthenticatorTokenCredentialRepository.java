@@ -116,6 +116,14 @@ public class LdapGoogleAuthenticatorTokenCredentialRepository
         return update(account.assignIdIfNecessary());
     }
 
+    /**
+     * Store the account in the user's entry, keeping the entry's other accounts. All of them are written back as a
+     * single JSON array value, because some directories keep only one value of the account attribute; Active
+     * Directory, for example, treats {@code description} as single-valued on user objects.
+     *
+     * @param account the account
+     * @return the account
+     */
     @Override
     public OneTimeTokenAccount update(final OneTimeTokenAccount account) {
         if (account.getId() < 0) {
@@ -148,12 +156,7 @@ public class LdapGoogleAuthenticatorTokenCredentialRepository
                 ac.setProperties(account.getProperties());
             }, () -> existingAccounts.add(account));
 
-            val accountsToSave = existingAccounts.stream()
-                .map(this::encode)
-                .filter(Objects::nonNull)
-                .map(acct -> mapToJson(CollectionUtils.wrapArrayList(acct)))
-                .collect(Collectors.toSet());
-            executeModifyOperation(accountsToSave, entry);
+            updateAccounts(existingAccounts, entry);
         }
         return account;
     }
@@ -183,9 +186,21 @@ public class LdapGoogleAuthenticatorTokenCredentialRepository
         }
     }
 
+    /**
+     * Count the stored accounts, that is the devices, across all entries; an entry can hold several.
+     *
+     * @return the number of accounts
+     */
     @Override
     public long count() {
-        return locateLdapEntriesForAll().size();
+        return locateLdapEntriesForAll()
+            .stream()
+            .map(entry -> entry.getAttribute(ldapProperties.getAccountAttributeName()))
+            .filter(Objects::nonNull)
+            .flatMap(attribute -> attribute.getStringValues().stream())
+            .map(LdapGoogleAuthenticatorTokenCredentialRepository::mapFromJson)
+            .mapToLong(List::size)
+            .sum();
     }
 
     @Override

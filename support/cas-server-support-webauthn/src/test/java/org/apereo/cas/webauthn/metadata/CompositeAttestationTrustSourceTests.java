@@ -27,6 +27,8 @@ import static org.junit.jupiter.api.Assertions.*;
 @SpringBootTest(classes = BaseWebAuthnWebflowTests.SharedTestConfiguration.class,
     properties = {
         "cas.authn.mfa.web-authn.core.trust-source.fido.legal-header=" + WebAuthnMultifactorAttestationTrustSourceFidoProperties.DEFAULT_LEGAL_HEADER,
+        "cas.authn.mfa.web-authn.core.trust-source.fido.blob-cache-file=${java.io.tmpdir}/cas-webauthn-fido-blob.cache",
+        "cas.authn.mfa.web-authn.core.trust-source.fido.trust-root-cache-file=${java.io.tmpdir}/cas-webauthn-fido-trust-root.cache",
         "cas.authn.mfa.web-authn.core.allowed-origins=https://localhost:8443",
         "cas.authn.mfa.web-authn.core.application-id=https://localhost:8443",
         "cas.authn.mfa.web-authn.core.relying-party-name=CAS WebAuthn Demo",

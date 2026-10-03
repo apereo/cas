@@ -28,21 +28,27 @@ public abstract class BaseOneTimeTokenCredentialRepository implements OneTimeTok
 
     private final TenantExtractor tenantExtractor;
 
+    private final Map<String, CipherExecutor> tenantTokenCredentialCiphers = new ConcurrentHashMap<>();
+
     /**
-     * Encode.
+     * Encode a copy of the account for storage: the secret and scratch codes are encrypted and the username is
+     * normalized. The given account is left untouched, so a caller can keep using it, or save it again, without
+     * its values being encrypted a second time.
      *
      * @param account the account
-     * @return the one time token account
+     * @return the encoded copy
      */
     protected OneTimeTokenAccount encode(final OneTimeTokenAccount account) {
-        account.setSecretKey(toTokenCredentialCipherExecutor(account).encode(account.getSecretKey()).toString());
+        val encoded = account.clone();
+        encoded.setSecretKey(toTokenCredentialCipherExecutor(account).encode(account.getSecretKey()).toString());
         val scratchCodesCipherExecutor = toScratchCodesCipherExecutor(account);
-        account.setScratchCodes(account.getScratchCodes()
+        encoded.setScratchCodes(account.getScratchCodes()
             .stream()
             .map(code -> FunctionUtils.doAndHandle(() -> scratchCodesCipherExecutor.encode(code), t -> code).get())
             .collect(Collectors.toList()));
-        account.setUsername(account.getUsername().trim().toLowerCase(Locale.ENGLISH));
-        return account;
+        encoded.setProperties(new ArrayList<>(account.getProperties()));
+        encoded.setUsername(account.getUsername().trim().toLowerCase(Locale.ENGLISH));
+        return encoded;
     }
 
 
@@ -69,6 +75,15 @@ public abstract class BaseOneTimeTokenCredentialRepository implements OneTimeTok
         return newAccount;
     }
 
+    /**
+     * The cipher for the account's secret: the tenant's own, when the tenant configures Google Authenticator,
+     * otherwise the global one. A tenant's cipher is built once and reused for the same settings. Building a new one
+     * on every call breaks decoding when the tenant leaves the keys blank, since each instance then generates its own
+     * keys and cannot read what another instance encoded.
+     *
+     * @param account the account
+     * @return the cipher
+     */
     private CipherExecutor toTokenCredentialCipherExecutor(final OneTimeTokenAccount account) {
         if (StringUtils.isNotBlank(account.getTenant())) {
             val tenantDefinition = tenantExtractor.getTenantsManager().findTenant(account.getTenant()).orElseThrow();
@@ -76,9 +91,13 @@ public abstract class BaseOneTimeTokenCredentialRepository implements OneTimeTok
             if (bindingContext.containsBindingFor(GoogleAuthenticatorMultifactorProperties.class)) {
                 val properties = bindingContext.value();
                 val crypto = properties.getAuthn().getMfa().getGauth().getCrypto();
-                return crypto.isEnabled()
-                    ? CipherExecutorUtils.newStringCipherExecutor(crypto, OneTimeTokenAccountCipherExecutor.class)
-                    : CipherExecutor.noOp();
+                if (!crypto.isEnabled()) {
+                    return CipherExecutor.noOp();
+                }
+                val cacheKey = String.join("|", account.getTenant(), crypto.getEncryption().getKey(),
+                    crypto.getSigning().getKey(), crypto.getAlg(), crypto.getStrategyType());
+                return tenantTokenCredentialCiphers.computeIfAbsent(cacheKey,
+                    _ -> CipherExecutorUtils.newStringCipherExecutor(crypto, OneTimeTokenAccountCipherExecutor.class));
             }
         }
         return tokenCredentialCipher;

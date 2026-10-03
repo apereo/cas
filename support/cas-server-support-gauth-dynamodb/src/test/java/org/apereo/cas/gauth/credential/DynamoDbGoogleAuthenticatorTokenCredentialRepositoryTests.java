@@ -55,6 +55,31 @@ class DynamoDbGoogleAuthenticatorTokenCredentialRepositoryTests extends BaseOneT
     @Qualifier(BaseGoogleAuthenticatorTokenCredentialRepository.BEAN_NAME)
     private OneTimeTokenCredentialRepository registry;
 
+    @Autowired
+    @Qualifier("googleAuthenticatorTokenCredentialRepositoryFacilitator")
+    private DynamoDbGoogleAuthenticatorTokenCredentialRepositoryFacilitator facilitator;
+
+    @Test
+    void verifyScratchCodesAndTenantRoundTrip() {
+        val username = UUID.randomUUID().toString();
+        val wideCode = new BigInteger("123456789012345678901234567890123456789012345678901234567890");
+        val account = registry.create(username);
+        account.setScratchCodes(new ArrayList<>(List.of(wideCode)));
+        val id = registry.save(account).getId();
+        assertEquals(List.of(wideCode), registry.get(username, id).getScratchCodes());
+
+        val withoutCodes = registry.get(username, id);
+        withoutCodes.setScratchCodes(new ArrayList<>());
+        registry.update(withoutCodes);
+        assertTrue(registry.get(username, id).getScratchCodes().isEmpty());
+
+        val tenantAccount = registry.create(UUID.randomUUID().toString());
+        tenantAccount.assignIdIfNecessary();
+        tenantAccount.setTenant("shire");
+        facilitator.store(tenantAccount);
+        assertEquals("shire", facilitator.find(tenantAccount.getId()).getTenant());
+    }
+
     @Test
     void verifyDeletesLeaveOtherAccounts() {
         val removedUser = "a" + UUID.randomUUID();

@@ -106,6 +106,20 @@ class InMemoryGoogleAuthenticatorTokenCredentialRepositoryTests {
         public OneTimeTokenCredentialRepository getRegistry(final String testName) {
             return repoMap.computeIfAbsent(testName, name -> this.getRegistry());
         }
+
+        @Test
+        void verifyCountsDevicesAndReplacesOnSave() {
+            val repo = getRegistry();
+            val first = repo.create("casuser");
+            repo.save(first);
+            repo.save(repo.create("casuser"));
+            repo.save(repo.create(UUID.randomUUID().toString()));
+            assertEquals(3, repo.count());
+            repo.save(first);
+            assertEquals(2, repo.count("casuser"));
+            assertEquals(3, repo.count());
+            assertEquals(3, repo.load().size());
+        }
     }
 
 
@@ -128,8 +142,10 @@ class InMemoryGoogleAuthenticatorTokenCredentialRepositoryTests {
             val casuser = UUID.randomUUID().toString();
             val account = googleAuthenticatorAccountRegistry.create(casuser);
             account.setTenant("shire");
+            assertEquals("shire", GoogleAuthenticatorAccount.from(account).getTenant());
             val stored = googleAuthenticatorAccountRegistry.save(account);
             assertNotNull(googleAuthenticatorAccountRegistry.get(stored.getId()));
+            assertEquals("shire", googleAuthenticatorAccountRegistry.get(stored.getId()).getTenant());
         }
     }
 }

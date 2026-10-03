@@ -16,6 +16,7 @@ import org.apereo.cas.authentication.principal.PrincipalFactoryUtils;
 import org.apereo.cas.authentication.principal.PrincipalResolver;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.features.CasFeatureModule;
+import org.apereo.cas.configuration.model.support.mfa.webauthn.WebAuthnMultifactorAttestationTrustSourceFidoProperties;
 import org.apereo.cas.logout.SessionTerminationHandler;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.ticket.TicketFactory;
@@ -58,6 +59,7 @@ import com.yubico.data.AssertionRequestWrapper;
 import com.yubico.data.RegistrationRequest;
 import com.yubico.fido.metadata.FidoMetadataDownloader;
 import com.yubico.fido.metadata.FidoMetadataService;
+import com.yubico.fido.metadata.MetadataBLOB;
 import com.yubico.webauthn.RelyingParty;
 import com.yubico.webauthn.attestation.AttestationTrustSource;
 import com.yubico.webauthn.attestation.MetadataObject;
@@ -157,7 +159,7 @@ class WebAuthnConfiguration {
 
                         LOGGER.debug("Starting to refresh/download FIDO metadata blob from [{}] and caching it at [{}]",
                             fidoProperties.getMetadataBlobUrl(), fidoProperties.getBlobCacheFile());
-                        val blob = downloader.refreshBlob();
+                        val blob = refreshFidoMetadataBlob(downloader, fidoProperties);
                         val fidoService = FidoMetadataService.builder()
                             .useBlob(blob)
                             .build();
@@ -167,6 +169,30 @@ class WebAuthnConfiguration {
                 }))
                 .otherwiseProxy()
                 .get();
+        }
+        /**
+         * Download the FIDO metadata BLOB, falling back to the cached copy when the download fails, for example when
+         * the metadata service rate-limits the request. The cached copy is only used while it is still valid; without
+         * a usable cache the failure is raised as before.
+         *
+         * @param downloader     the downloader
+         * @param fidoProperties the FIDO trust source settings
+         * @return the metadata BLOB
+         * @throws Exception when neither a download nor the cache yields a valid BLOB
+         */
+        private static MetadataBLOB refreshFidoMetadataBlob(final FidoMetadataDownloader downloader,
+                                                            final WebAuthnMultifactorAttestationTrustSourceFidoProperties fidoProperties) throws Exception {
+            try {
+                return downloader.refreshBlob();
+            } catch (final IOException e) {
+                val cacheFile = fidoProperties.getBlobCacheFile();
+                if (cacheFile == null || cacheFile.length() <= 0) {
+                    throw e;
+                }
+                LOGGER.warn("Unable to download FIDO metadata blob from [{}]: [{}]. Using the cached blob at [{}]",
+                    fidoProperties.getMetadataBlobUrl(), e.getMessage(), cacheFile);
+                return downloader.loadCachedBlob();
+            }
         }
     }
 

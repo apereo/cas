@@ -104,15 +104,15 @@ public class JpaGoogleAuthenticatorTokenCredentialRepository extends BaseGoogleA
     public OneTimeTokenAccount update(final OneTimeTokenAccount account) {
         val ac = entityManager.find(JpaGoogleAuthenticatorAccount.class, account.getId());
         if (ac != null) {
-            ac.setValidationCode(account.getValidationCode());
-            ac.setScratchCodes(account.getScratchCodes()
+            val encoded = encode(account);
+            ac.setValidationCode(encoded.getValidationCode());
+            ac.setScratchCodes(encoded.getScratchCodes()
                 .stream()
-                .map(code -> BigInteger.valueOf(code.longValue()))
+                .map(code -> new BigInteger(code.toString()))
                 .collect(Collectors.toList()));
-            ac.setSecretKey(account.getSecretKey());
-            ac.setProperties(new ArrayList<>(account.getProperties()));
-            val encoded = encode(ac);
-            return entityManager.merge(encoded);
+            ac.setSecretKey(encoded.getSecretKey());
+            ac.setProperties(new ArrayList<>(encoded.getProperties()));
+            return entityManager.merge(ac);
         }
         return null;
     }

@@ -41,21 +41,27 @@ public class DynamoDbGoogleAuthenticatorTokenCredentialRepositoryFacilitator {
         val validationCode = Integer.parseInt(item.get(ColumnNames.VALIDATION_CODE.getColumnName()).n());
         val name = item.get(ColumnNames.NAME.getColumnName()).s();
         val secret = item.get(ColumnNames.SECRET.getColumnName()).s();
-        val scratchCodes = item.get(ColumnNames.SCRATCH_CODES.getColumnName()).ss();
+        val scratchCodes = item.containsKey(ColumnNames.SCRATCH_CODES.getColumnName())
+            ? item.get(ColumnNames.SCRATCH_CODES.getColumnName()).ss()
+            : List.<String>of();
         val properties = item.containsKey(ColumnNames.PROPERTIES.getColumnName())
-            ? item.get(ColumnNames.PROPERTIES.getColumnName()).ss()
+            ? new ArrayList<>(item.get(ColumnNames.PROPERTIES.getColumnName()).ss())
             : new ArrayList<String>();
         val registrationTime = DateTimeUtils.zonedDateTimeOf(Long.parseLong(item.get(ColumnNames.REGISTRATION_DATE.getColumnName()).n()));
-        return GoogleAuthenticatorAccount.builder()
+        val account = GoogleAuthenticatorAccount.builder()
             .id(id)
             .name(name)
             .registrationDate(registrationTime)
-            .scratchCodes(scratchCodes.stream().map(Integer::valueOf).collect(Collectors.toList()))
+            .scratchCodes(scratchCodes.stream().map(BigInteger::new).collect(Collectors.<Number>toList()))
             .secretKey(secret)
             .username(userId)
             .validationCode(validationCode)
             .properties(properties)
             .build();
+        if (item.containsKey(ColumnNames.TENANT.getColumnName())) {
+            account.setTenant(item.get(ColumnNames.TENANT.getColumnName()).s());
+        }
+        return account;
     }
 
     private static Map<String, AttributeValue> buildTableAttributeValuesMap(final OneTimeTokenAccount record) {
@@ -63,8 +69,13 @@ public class DynamoDbGoogleAuthenticatorTokenCredentialRepositoryFacilitator {
         values.put(ColumnNames.NAME.getColumnName(), AttributeValue.builder().s(String.valueOf(record.getName())).build());
         values.put(ColumnNames.USERID.getColumnName(), AttributeValue.builder().s(record.getUsername().toLowerCase(Locale.ENGLISH)).build());
         values.put(ColumnNames.SECRET.getColumnName(), AttributeValue.builder().s(String.valueOf(record.getSecretKey())).build());
-        values.put(ColumnNames.SCRATCH_CODES.getColumnName(), AttributeValue.builder()
-            .ss(record.getScratchCodes().stream().map(String::valueOf).collect(Collectors.toList())).build());
+        if (!record.getScratchCodes().isEmpty()) {
+            values.put(ColumnNames.SCRATCH_CODES.getColumnName(), AttributeValue.builder()
+                .ss(record.getScratchCodes().stream().map(String::valueOf).collect(Collectors.toList())).build());
+        }
+        if (record.getTenant() != null && !record.getTenant().isBlank()) {
+            values.put(ColumnNames.TENANT.getColumnName(), AttributeValue.builder().s(record.getTenant()).build());
+        }
 
         if (!record.getProperties().isEmpty()) {
             values.put(ColumnNames.PROPERTIES.getColumnName(), AttributeValue.builder().ss(record.getProperties()).build());
@@ -282,7 +293,11 @@ public class DynamoDbGoogleAuthenticatorTokenCredentialRepositoryFacilitator {
         /**
          * name column.
          */
-        NAME("name");
+        NAME("name"),
+        /**
+         * tenant column.
+         */
+        TENANT("tenant");
 
         private final String columnName;
     }

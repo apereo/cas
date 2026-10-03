@@ -178,6 +178,22 @@ public abstract class BaseOneTimeTokenCredentialRepositoryTests {
         assertEquals(PLAIN_SECRET, acct.getSecretKey());
     }
 
+    @Test
+    void verifySaveLeavesAccountUntouched() throws Throwable {
+        val username = getUsernameUnderTest();
+        val repo = getRegistry("verifySaveLeavesAccountUntouched");
+        val account = repo.create(username);
+        val secret = account.getSecretKey();
+        val scratchCodes = account.getScratchCodes().stream().map(Number::intValue).sorted().toList();
+        val id = repo.save(account).getId();
+
+        assertEquals(secret, account.getSecretKey());
+        assertEquals(scratchCodes, account.getScratchCodes().stream().map(Number::intValue).sorted().toList());
+        assertEquals(secret, repo.get(id).getSecretKey());
+        assertEquals(secret, repo.get(username, id).getSecretKey());
+        assertEquals(scratchCodes, repo.get(username, id).getScratchCodes().stream().map(Number::intValue).sorted().toList());
+    }
+
     public OneTimeTokenCredentialRepository getRegistry(final String testName) {
         return getRegistry();
     }
