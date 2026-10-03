@@ -153,51 +153,58 @@ and failures were recorded twice. Failed SAML2 ECP authentication attempts, whic
 
 ### Passwordless Authentication
 
-[Passwordless authentication](../authentication/Passwordless-Authentication.html) tokens are now single-use under concurrent submissions,
-and every submitted token, including a wrong one, goes through the authentication manager and is recorded in the [audit log](../audits/Audits.html). Tokens kept in
-[JPA](../authentication/Passwordless-Authentication-Tokens-JPA.html) or [MongoDb](../authentication/Passwordless-Authentication-Tokens-MongoDb.html)
-are now removed once used, and their cleaner removes expired tokens; it used to remove the valid ones. MongoDb and
-[REST](../authentication/Passwordless-Authentication-Tokens-Rest.html) stores no longer return expired tokens, and a REST endpoint must answer
-a single-token `DELETE` with a `2xx` status only when it removed the token. A token that could not be delivered by [email or SMS](../authentication/Passwordless-Authentication-Notifications.html) is no longer
-stored and the user is told so, while a failure in one channel no longer discards a token the other one delivered. Submitted tokens now
-arrive as a dedicated `PasswordlessTokenCredential`, which is the only credential the passwordless authentication handler accepts; other
-one-time password credentials, such as Duo Security passcodes, are no longer checked against the passwordless token store, and the
-recorded credential type changes accordingly. The token field is now a plain text field marked
-as `one-time-code`, so browsers and phones can fill in the code. A wrong token no longer causes a new token to be issued and sent.
-SMS messages now end with an [origin-bound one-time code](../authentication/Passwordless-Authentication-Notifications.html) line
-(`@host #token`), which the token page reads through the WebOTP API where available.
-
-When [WebAuthn primary authentication](../authentication/Passwordless-Authentication-Passkeys.html) is allowed, the passwordless username field offers discoverable passkeys
-from the browser's autofill menu (WebAuthn conditional mediation) where the browser supports it, and the [passwordless selection menu](../authentication/Passwordless-Authentication-UserSelectionMenu.html)
-offers a passkey option. Both hand the passkey assertion to the existing WebAuthn primary authentication flow.
+- [Passwordless authentication](../authentication/Passwordless-Authentication.html) tokens are now single-use under
+  concurrent submissions, and every submitted token, including a wrong one, goes through the authentication manager and
+  is recorded in the [audit log](../audits/Audits.html).
+- Tokens kept in [JPA](../authentication/Passwordless-Authentication-Tokens-JPA.html) or
+  [MongoDb](../authentication/Passwordless-Authentication-Tokens-MongoDb.html) are now removed once used, and their
+  cleaner removes expired tokens; it used to remove the valid ones.
+- MongoDb and [REST](../authentication/Passwordless-Authentication-Tokens-Rest.html) stores no longer return expired
+  tokens, and a REST endpoint must answer a single-token `DELETE` with a `2xx` status only when it removed the token.
+- A token that could not be delivered by
+  [email or SMS](../authentication/Passwordless-Authentication-Notifications.html) is no longer stored and the user is
+  told so, while a failure in one channel no longer discards a token the other one delivered.
+- Submitted tokens now arrive as a dedicated `PasswordlessTokenCredential`, which is the only credential the
+  passwordless authentication handler accepts; other one-time password credentials, such as Duo Security passcodes, are
+  no longer checked against the passwordless token store, and the recorded credential type changes accordingly.
+- The token field is now a plain text field marked as `one-time-code`, so browsers and phones can fill in the code. A
+  wrong token no longer causes a new token to be issued and sent.
+- SMS messages now end with an
+  [origin-bound one-time code](../authentication/Passwordless-Authentication-Notifications.html) line (`@host #token`),
+  which the token page reads through the WebOTP API where available.
+- When [WebAuthn primary authentication](../authentication/Passwordless-Authentication-Passkeys.html) is allowed, the
+  passwordless username field offers discoverable passkeys from the browser's autofill menu (WebAuthn conditional
+  mediation) where the browser supports it, and the
+  [passwordless selection menu](../authentication/Passwordless-Authentication-UserSelectionMenu.html) offers a passkey
+  option. Both hand the passkey assertion to the existing WebAuthn primary authentication flow.
 
 ### WebAuthn Level 3
 
-[FIDO2 WebAuthn](../mfa/FIDO2-WebAuthn-Authentication.html) publishes its origins at `/.well-known/webauthn` for
-related origin requests, so passkeys can be used from origins whose domain differs from the relying party identifier.
-After a successful authentication, CAS reports the user's accepted passkeys and current account details to the
-browser through the Signal API, and passkey autofill checks `getClientCapabilities()` where the browser offers it.
-Registration and authentication requests carry the user-agent hints set in `cas.authn.mfa.web-authn.core.hints`, and each
-registration records whether the authenticator reported a discoverable credential (`credProps`). When an assertion fails
-because the owning account no longer holds the passkey, the response says so and the browser is told to stop offering it
-(`signalUnknownCredential`); the account profile does the same as soon as a passkey is deleted, which also covers the
-account's last passkey. WebAuthn pages now use the browser's JSON serialization (`parseCreationOptionsFromJSON`,
-`parseRequestOptionsFromJSON`, `toJSON()`) and no longer override the configured attestation conveyance preference with
-`direct`; browsers without this WebAuthn Level 3 support can no longer use WebAuthn in CAS.
-CAS also publishes `/.well-known/passkey-endpoints` so password managers can link users to the pages where passkeys are
-created and managed; by default both point to the [account profile](../registration/Account-Management-Overview.html) when account management is enabled.
-When WebAuthn primary authentication is allowed, the default registration button now asks for a discoverable credential
-(`residentKey=preferred`), so passkeys registered with it can also log in on their own.
-Each registration now keeps the authenticator's backup eligibility and backup state, which are updated on every login;
-a passkey whose backup eligibility changes is rejected, as WebAuthn Level 3 requires. The transports recorded at
-registration are sent back with the credentials CAS lists to the browser, so it can reach each authenticator directly.
-Registrations also keep the authenticator's AAGUID, and the account profile names passkeys by provider (for example
-*Google Password Manager* or *1Password*) with the provider's icon when the attestation does not name the device; the
-registration and login pages show that name and icon for the passkey just registered or used.
-A new passkey upgrade, turned on with `cas.authn.mfa.web-authn.core.passkey-upgrade-enabled` alongside primary authentication
-and untrusted attestation, shows a short page after a password login that lets the browser's password manager create a
-passkey for the account on its own (WebAuthn conditional create), then continues as usual. Such passkeys keep the typed
-username as their name when CAS later reports account details through the Signal API.
+- [FIDO2 WebAuthn](../mfa/FIDO2-WebAuthn-Authentication.html) publishes its origins at `/.well-known/webauthn` for
+  related origin requests, so passkeys can be used from origins whose domain differs from the relying party identifier.
+- After a successful authentication, CAS reports the user's accepted passkeys and current account details to the browser
+  through the Signal API, and passkey autofill checks `getClientCapabilities()` where the browser offers it.
+- Registration and authentication requests carry the user-agent hints set in `cas.authn.mfa.web-authn.core.hints`, and
+  each registration records whether the authenticator reported a discoverable credential (`credProps`).
+- When an assertion fails because the owning account no longer holds the passkey, the response says so and the browser
+  is told to stop offering it (`signalUnknownCredential`); the account profile does the same as soon as a passkey is
+  deleted, which also covers the account's last passkey.
+- WebAuthn pages now use the browser's JSON serialization (`parseCreationOptionsFromJSON`,
+  `parseRequestOptionsFromJSON`, `toJSON()`) and no longer override the configured attestation conveyance preference
+  with `direct`; browsers without this WebAuthn Level 3 support can no longer use WebAuthn in CAS.
+- CAS also publishes `/.well-known/passkey-endpoints` so password managers can link users to the pages where passkeys
+  are created and managed; by default both point to the
+  [account profile](../registration/Account-Management-Overview.html) when account management is enabled.
+- When WebAuthn primary authentication is allowed, the default registration button now asks for a discoverable
+  credential (`residentKey=preferred`), so passkeys registered with it can also log in on their own.
+- Each registration now keeps the authenticator's backup eligibility and backup state, which are updated on every login;
+  a passkey whose backup eligibility changes is rejected, as WebAuthn Level 3 requires. The transports recorded at
+  registration are sent back with the credentials CAS lists to the browser, so it can reach each authenticator directly.
+- Registrations also keep the authenticator's AAGUID, and the account profile names passkeys by provider (for example
+  *Google Password Manager* or *1Password*) with the provider's icon when the attestation does not name the device; the
+  registration and login pages show that name and icon for the passkey just registered or used.
+- A new [passkey upgrade](../mfa/FIDO2-WebAuthn-Authentication.html), turned on with
+  `cas.authn.mfa.web-authn.core.passkey-upgrade-enabled` alongside primary authentication and untrusted attestation, shows a short page after a password login that lets the browser's password manager create a passkey for the account on its own (WebAuthn conditional create), then continues as usual. Such passkeys keep the typed username as their name when CAS later reports account details through the Signal API.
 
 ### OpenID Connect Verifiable Credentials
 
@@ -254,7 +261,7 @@ like distinguished names, round-trip correctly. Other changes:
 - Expanding a ticket no longer goes through the ticket factories, which skips id generation and service registry lookups.
 - An expanded ticket keeps the id it was looked up by, and its authentication keeps the original authentication date.
 - The ticket-granting ticket no longer carries its own id or the tickets it has granted, which the stateless registry does not track.
-- The ticket-granting ticket no longer carries principal attributes. They are fetched from attribute repositories again each time
+- The ticket-granting ticket no longer carries principal attributes. They are fetched from [attribute repositories](../integration/Attribute-Resolution.html) again each time
   the ticket-granting ticket is read, the same way they already were during ticket validation, which keeps the ticket-granting cookie small.
   Attributes that only authentication handlers produce, such as claims from Duo Security or delegated authentication, are no longer
   available to single sign-on decisions unless an attribute repository produces them as well.
