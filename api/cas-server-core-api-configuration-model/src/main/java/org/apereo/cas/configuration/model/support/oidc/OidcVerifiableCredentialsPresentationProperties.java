@@ -35,6 +35,16 @@ public class OidcVerifiableCredentialsPresentationProperties implements Serializ
      */
     private ClientIdentifierPrefixes clientIdentifierPrefix = ClientIdentifierPrefixes.REDIRECT_URI;
 
+    /**
+     * How the wallet delivers its authorization response, expressed as an OpenID4VP response mode.
+     * <p>
+     * {@code DIRECT_POST} posts the response in the clear. {@code DIRECT_POST_JWT} has the wallet encrypt it
+     * to a key CAS generates for each request and publishes in the request's client metadata, as the
+     * OpenID4VC High Assurance Interoperability Profile requires; a presentation that arrives unencrypted is
+     * then refused, while an unencrypted error response is still accepted from a wallet that cannot encrypt.
+     */
+    private ResponseModes responseMode = ResponseModes.DIRECT_POST;
+
     @RequiredArgsConstructor
     @Getter
     @ToString(includeFieldNames = false, of = "value")
@@ -52,6 +62,24 @@ public class OidcVerifiableCredentialsPresentationProperties implements Serializ
          * serve a request object when it does not, rather than producing one that wallets silently reject.
          */
         X509_SAN_DNS("x509_san_dns");
+
+        private final String value;
+    }
+
+    @RequiredArgsConstructor
+    @Getter
+    @ToString(includeFieldNames = false, of = "value")
+    public enum ResponseModes {
+        /**
+         * The wallet posts the response parameters unencrypted to the response URI.
+         */
+        DIRECT_POST("direct_post"),
+        /**
+         * The wallet posts the response as an encrypted JWT, in the {@code response} parameter, to the response URI.
+         * The key is an ephemeral {@code P-256} key for {@code ECDH-ES} that CAS generates for each request; the
+         * content may be encrypted with {@code A128GCM} or {@code A256GCM}.
+         */
+        DIRECT_POST_JWT("direct_post.jwt");
 
         private final String value;
     }

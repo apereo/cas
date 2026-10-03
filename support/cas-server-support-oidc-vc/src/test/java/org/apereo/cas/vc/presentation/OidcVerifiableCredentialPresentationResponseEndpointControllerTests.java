@@ -29,9 +29,14 @@ import com.nimbusds.jose.util.Base64URL;
 import com.nimbusds.jwt.JWTClaimsSet;
 import com.nimbusds.jwt.SignedJWT;
 import lombok.val;
+import org.jose4j.jwe.ContentEncryptionAlgorithmIdentifiers;
+import org.jose4j.jwe.JsonWebEncryption;
+import org.jose4j.jwe.KeyManagementAlgorithmIdentifiers;
+import org.jose4j.jwk.EcJwkGenerator;
 import org.jose4j.jwk.JsonWebKey;
 import org.jose4j.jwk.PublicJsonWebKey;
 import org.jose4j.jwt.JwtClaims;
+import org.jose4j.keys.EllipticCurves;
 import org.jspecify.annotations.Nullable;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
@@ -178,6 +183,59 @@ class OidcVerifiableCredentialPresentationResponseEndpointControllerTests extend
             .andExpect(status().isOk())
             .andExpect(jsonPath("$.error").value("e".repeat(128)))
             .andExpect(jsonPath("$.error_description").value("d".repeat(1024)));
+    }
+
+    @Test
+    void verifyEncryptedPresentation() throws Throwable {
+        val transaction = createTransaction();
+        val key = requireEncryptedResponse(transaction);
+        val material = issueCredential();
+        val vpToken = buildVpToken(bindCredential(material, transaction.nonce()));
+
+        assertInvalid(submitPresentation(transaction.ticket().getId(), vpToken));
+        assertNotNull(ticketRegistry.getTicket(transaction.ticket().getId()));
+
+        submitEncryptedResponse(encryptResponse(key, ContentEncryptionAlgorithmIdentifiers.AES_256_GCM,
+            Map.of("vp_token", MAPPER.readValue(vpToken, Map.class), OAuth20Constants.STATE, transaction.ticket().getId())))
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$.status").value("verified"));
+        assertNull(ticketRegistry.getTicket(transaction.ticket().getId()));
+    }
+
+    @Test
+    void verifyEncryptedResponseMustMatchItsRequest() throws Throwable {
+        val transaction = createTransaction();
+        val key = requireEncryptedResponse(transaction);
+        val other = createTransaction();
+        val vpToken = MAPPER.readValue(buildVpToken(bindCredential(issueCredential(), transaction.nonce())), Map.class);
+
+        assertInvalid(submitEncryptedResponse(encryptResponse(key, ContentEncryptionAlgorithmIdentifiers.AES_128_GCM,
+            Map.of("vp_token", vpToken, OAuth20Constants.STATE, other.ticket().getId()))));
+        assertInvalid(mockMvc.perform(post(PRESENTATION_RESPONSE_ENDPOINT_URL)
+            .with(withHttpRequestProcessor())
+            .contentType(MediaType.APPLICATION_FORM_URLENCODED)
+            .param("response", encryptResponse(key, ContentEncryptionAlgorithmIdentifiers.AES_128_GCM,
+                Map.of("vp_token", vpToken, OAuth20Constants.STATE, transaction.ticket().getId())))
+            .param(OAuth20Constants.STATE, other.ticket().getId())));
+        assertInvalid(submitEncryptedResponse(encryptResponse(requireEncryptedResponse(other),
+            ContentEncryptionAlgorithmIdentifiers.AES_128_GCM,
+            Map.of("vp_token", vpToken, OAuth20Constants.STATE, other.ticket().getId())).replaceFirst("^[^.]+", "e30")));
+        assertNotNull(ticketRegistry.getTicket(transaction.ticket().getId()));
+    }
+
+    @Test
+    void verifyErrorResponseWhenEncryptionIsRequested() throws Throwable {
+        val transaction = createTransaction();
+        val key = requireEncryptedResponse(transaction);
+        submitError(transaction.ticket().getId(), "access_denied").andExpect(status().isOk());
+        submitEncryptedResponse(encryptResponse(key, ContentEncryptionAlgorithmIdentifiers.AES_128_GCM,
+            Map.of(OAuth20Constants.ERROR, "access_denied", OAuth20Constants.STATE, transaction.ticket().getId())))
+            .andExpect(status().isOk());
+        ticketRegistry.deleteTicket(transaction.ticket().getId());
+        fetchResult(transaction.ticket().getId())
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$.status").value("error"))
+            .andExpect(jsonPath("$.error").value("access_denied"));
     }
 
     @Test
@@ -494,6 +552,34 @@ class OidcVerifiableCredentialPresentationResponseEndpointControllerTests extend
             .andExpect(jsonPath("$.error").value(OAuth20Constants.INVALID_REQUEST))
             .andExpect(jsonPath("$.error_description")
                 .value("The presentation response could not be validated"));
+    }
+
+    private PublicJsonWebKey requireEncryptedResponse(final PresentationTransaction transaction) throws Exception {
+        val key = EcJwkGenerator.generateJwk(EllipticCurves.P256);
+        key.setKeyId(transaction.ticket().getId());
+        key.setAlgorithm(KeyManagementAlgorithmIdentifiers.ECDH_ES);
+        transaction.ticket().putProperty(OidcVerifiableCredentialPresentationResponseEndpointController.PROPERTY_RESPONSE_ENCRYPTION_KEY,
+            key.toJson(JsonWebKey.OutputControlLevel.INCLUDE_PRIVATE));
+        ticketRegistry.updateTicket(transaction.ticket());
+        return key;
+    }
+
+    private static String encryptResponse(final PublicJsonWebKey key, final String contentEncryption,
+                                          final Map<String, Object> parameters) throws Exception {
+        val jwe = new JsonWebEncryption();
+        jwe.setAlgorithmHeaderValue(KeyManagementAlgorithmIdentifiers.ECDH_ES);
+        jwe.setEncryptionMethodHeaderParameter(contentEncryption);
+        jwe.setKeyIdHeaderValue(key.getKeyId());
+        jwe.setKey(key.getPublicKey());
+        jwe.setPayload(MAPPER.writeValueAsString(parameters));
+        return jwe.getCompactSerialization();
+    }
+
+    private ResultActions submitEncryptedResponse(final String response) throws Exception {
+        return mockMvc.perform(post(PRESENTATION_RESPONSE_ENDPOINT_URL)
+            .with(withHttpRequestProcessor())
+            .contentType(MediaType.APPLICATION_FORM_URLENCODED)
+            .param("response", response));
     }
 
     private ResultActions submitPresentation(final String state, final String vpToken) throws Exception {

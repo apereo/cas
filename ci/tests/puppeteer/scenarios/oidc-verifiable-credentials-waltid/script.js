@@ -113,10 +113,17 @@ async function startVerifiableCredentialFlowForConfiguration(wallet, ...configur
     return received.credentialIds;
 }
 
-async function startVerifiableCredentialPresentationFlow(wallet) {
-    await cas.logg("Starting verifiable credential presentation flow");
+/**
+ * The relying party picks the response mode per request. With direct_post.jwt the wallet encrypts
+ * its response (ECDH-ES) to the ephemeral P-256 key CAS publishes in the request's client metadata,
+ * as OpenID4VP 1.0 section 8.3 and HAIP 1.0 section 5 describe, and posts it as a single response
+ * parameter; CAS refuses a presentation sent in the clear for such a request.
+ */
+async function startVerifiableCredentialPresentationFlow(wallet, responseMode) {
+    await cas.logg(`Starting verifiable credential presentation flow with response mode ${responseMode}`);
 
     const credentialRequest = {
+        "response_mode": responseMode,
         "credentials": [
             {
                 "id": "myorg",
@@ -161,7 +168,7 @@ async function startVerifiableCredentialPresentationFlow(wallet) {
     assert(responseUri.endsWith("/oidcVcPresentationResponse"));
     assert(authorizationRequest.get("client_id") === `redirect_uri:${responseUri}`);
     assert(authorizationRequest.get("response_type") === "vp_token");
-    assert(authorizationRequest.get("response_mode") === "direct_post");
+    assert(authorizationRequest.get("response_mode") === responseMode);
     assert(authorizationRequest.get("nonce") !== null);
     assert(authorizationRequest.get("state") === presentation.request_id);
     const dcqlQuery = JSON.parse(authorizationRequest.get("dcql_query"));
@@ -169,6 +176,19 @@ async function startVerifiableCredentialPresentationFlow(wallet) {
     assert(dcqlQuery.credentials[0].format === "dc+sd-jwt");
     const clientMetadata = JSON.parse(authorizationRequest.get("client_metadata"));
     assert(clientMetadata.vp_formats_supported["dc+sd-jwt"] !== undefined);
+    if (responseMode === "direct_post.jwt") {
+        assert(clientMetadata.jwks.keys.length === 1);
+        const encryptionKey = clientMetadata.jwks.keys[0];
+        assert(encryptionKey.kty === "EC");
+        assert(encryptionKey.crv === "P-256");
+        assert(encryptionKey.alg === "ECDH-ES");
+        assert(encryptionKey.use === "enc");
+        assert(encryptionKey.kid === presentation.request_id);
+        assert(encryptionKey.d === undefined, "The private key must never leave CAS");
+        assert(clientMetadata.encrypted_response_enc_values_supported.includes("A256GCM"));
+    } else {
+        assert(clientMetadata.jwks === undefined);
+    }
 
     const result = await walletRequest(`/wallet/${wallet.walletId}/credentials/present`, "POST",
         {requestUrl: presentation.authorization_request, keyId: wallet.keyId});
@@ -192,7 +212,9 @@ async function startVerifiableCredentialPresentationFlow(wallet) {
     const wallet = await createWallet();
     await startVerifiableCredentialFlowForConfiguration(wallet, "myorg");
     await cas.separator();
-    await startVerifiableCredentialPresentationFlow(wallet);
+    await startVerifiableCredentialPresentationFlow(wallet, "direct_post");
+    await cas.separator();
+    await startVerifiableCredentialPresentationFlow(wallet, "direct_post.jwt");
     await cas.separator();
     await startVerifiableCredentialFlowForConfiguration(wallet, "employee");
     await cas.separator();

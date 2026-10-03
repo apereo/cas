@@ -227,6 +227,15 @@ Guidance for AI coding agents working in the Apereo CAS source tree.
   policy, and the credential endpoint combines them with authorization details.
 - OID4VP key binding algorithms live in `OidcVerifiableCredentialPresentationResponseEndpointController.KEY_BINDING_ALGORITHMS_SUPPORTED`, which also feeds `kb-jwt_alg_values`; `sd-jwt_alg_values` comes from the `dc+sd-jwt` configurations. OpenID4VP wants fully specified identifiers (`Ed25519`, not `EdDSA`); Ed25519 key binding is verified with the JDK `Signature` so both header values work. `alg_values` is not defined for `dc+sd-jwt`.
 - Issued credentials carry no `client_id` or `credential_configuration_id` (claim or header): they reveal the relying party to every verifier. CAS's verifier finds the issuer key by `kid` (an `OidcRegisteredService` key selector with `jwksKeyId` set, through `getJsonWebKeySigningKey`), the same key the JWKS publishes.
+- Authorization details follow RFC 9396 through refresh: `OAuth20Utils.getAuthorizationDetails(token)` reads them from the
+  code or refresh token being exchanged, the access token factory and `OAuth20DefaultTokenGenerator.generateRefreshToken`
+  use it, and the code, access token and refresh token compactors keep them through `OAuth20Utils.to/fromCompactAuthorizationDetails`.
+- `direct_post.jwt` (opt-in `response-mode=DIRECT_POST_JWT`, maintainer decision): the request transaction keeps a
+  per-request P-256 `ECDH-ES` private JWK (`PROPERTY_RESPONSE_ENCRYPTION_KEY`) whose `kid` is the request id, so the
+  response endpoint finds the request from the JWE header before decrypting; the decrypted `state` must equal the `kid`.
+  Encryption-requested transactions refuse plaintext presentations but accept plaintext errors (OID4VP 1.0 section 8.3.1).
+  The presentation request may carry `response_mode`; the setting is a floor (a request may add encryption, never drop it).
+  Scenario `oidc-verifiable-credentials-waltid` presents once per mode; walt.id encrypts to the first usable ECDH-ES JWK.
 - A wallet's OID4VP error response is unauthenticated, so it never ends a request (maintainer decision): it is recorded
   under `resolvePresentationErrorId`, apart from the verified outcome (`resolvePresentationResultId`), the request stays
   open until it expires, and `oidcVcPresentationResult` answers `pending` while the request lives, then the error. A
@@ -327,6 +336,11 @@ Guidance for AI coding agents working in the Apereo CAS source tree.
 - Leave no `.git/index.lock` behind. `git status` and `git diff` take that lock to refresh the index, and in a remote environment that cannot delete files the lock survives the command and blocks every subsequent git operation the maintainer runs. Read git state with `git --no-optional-locks status` / `git --no-optional-locks diff`, which never takes it, and before finishing check `ls .git/*.lock` and clear anything left. If deletion is refused, request it rather than leaving the repository wedged.
 - The remote shell has no git identity. To bring a contributor's PR onto a local branch, fetch each non-merge commit as a patch from `https://api.github.com/repos/apereo/cas/commits/<sha>` with `Accept: application/vnd.github.patch` and apply it with `git -c user.name=... -c user.email=... am --3way`, which keeps the contributor as author. Skip the "Merge branch 'master'" commits; the local branch is cut from master already.
 - Gradle may be unavailable in a sandboxed or remote review environment because the wrapper cannot download its distribution. When that happens, say the verification was not run instead of implying a test result, and fall back to static review such as `git diff --check` and targeted reading.
+- Maintainer: run Checkstyle on every changed Java file before handing work off, even without Gradle. Use the version in
+  `gradle/libs.versions.toml` (`checkstyle-<version>-all.jar` from the Checkstyle GitHub releases; 14.x needs Java 21+) as
+  `java -Dcheckstyle.suppressions.file=style/checkstyle-suppressions.xml -Dcheckstyle.importcontrol.file=style/import-control.xml
+  -jar checkstyle.jar -c style/checkstyle-rules.xml <files>`. When the workspace JDK is older, tar the files and `style/` into
+  `build/` (deletable without asking) and run it where Java 21 is available.
 
 
 ## LDAP review discipline

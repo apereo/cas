@@ -248,6 +248,9 @@ and failures were recorded twice. Failed SAML2 ECP authentication attempts, whic
   logs a warning.
 - Refresh tokens keep the authorization details of the authorization code they were issued for, so access tokens obtained
   by refreshing may still request the credentials those details granted. Previously only scope-based grants survived a refresh.
+- Verifiable presentation responses can be encrypted (`direct_post.jwt`), as the High Assurance Interoperability Profile
+  requires, with `cas.authn.oidc.vc.presentation.response-mode=DIRECT_POST_JWT` or per request with `"response_mode": "direct_post.jwt"`:
+  each request carries its own ephemeral `ECDH-ES` key, and presentations sent in the clear are refused.
 
 ### Stateless Ticket Registry
 

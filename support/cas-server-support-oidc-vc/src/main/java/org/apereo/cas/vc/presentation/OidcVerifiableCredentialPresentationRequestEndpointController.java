@@ -3,6 +3,7 @@ package org.apereo.cas.vc.presentation;
 import module java.base;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.support.oidc.OidcVerifiableCredentialConfigurationProperties;
+import org.apereo.cas.configuration.model.support.oidc.OidcVerifiableCredentialsPresentationProperties;
 import org.apereo.cas.configuration.model.support.oidc.OidcVerifiableCredentialsPresentationProperties.ClientIdentifierPrefixes;
 import org.apereo.cas.oidc.OidcConfigurationContext;
 import org.apereo.cas.oidc.OidcConstants;
@@ -30,12 +31,18 @@ import lombok.extern.jackson.Jacksonized;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
+import org.jose4j.jwe.KeyManagementAlgorithmIdentifiers;
+import org.jose4j.jwk.EcJwkGenerator;
 import org.jose4j.jwk.EllipticCurveJsonWebKey;
+import org.jose4j.jwk.JsonWebKey;
+import org.jose4j.jwk.JsonWebKeySet;
 import org.jose4j.jwk.PublicJsonWebKey;
+import org.jose4j.jwk.Use;
 import org.jose4j.jws.AlgorithmIdentifiers;
 import org.jose4j.jws.JsonWebSignature;
 import org.jose4j.jwt.JwtClaims;
 import org.jose4j.jwt.NumericDate;
+import org.jose4j.keys.EllipticCurves;
 import org.jspecify.annotations.Nullable;
 import org.pac4j.jee.context.JEEContext;
 import org.springframework.http.CacheControl;
@@ -322,6 +329,10 @@ public class OidcVerifiableCredentialPresentationRequestEndpointController exten
         if (StringUtils.isNotBlank(redirectUri)) {
             transientSessionTicket.putProperty(OidcVerifiableCredentialPresentationResponseEndpointController.PROPERTY_REDIRECT_URI, redirectUri);
         }
+        if (resolveResponseMode(request) == OidcVerifiableCredentialsPresentationProperties.ResponseModes.DIRECT_POST_JWT) {
+            transientSessionTicket.putProperty(OidcVerifiableCredentialPresentationResponseEndpointController.PROPERTY_RESPONSE_ENCRYPTION_KEY,
+                generateResponseEncryptionKey(transientSessionTicket.getId()));
+        }
         val addedTicket = (TransientSessionTicket) configurationContext.getTicketRegistry().addTicket(transientSessionTicket);
 
         val parameters = buildAuthorizationRequestParameters(addedTicket);
@@ -346,6 +357,48 @@ public class OidcVerifiableCredentialPresentationRequestEndpointController exten
         );
     }
 
+    /**
+     * Response mode for a request: the one the relying party names in the request, or else the configured one. The
+     * configured mode is a floor: a request may ask for an encrypted response where the deployment does not require
+     * one, but cannot drop encryption where it does, and an unknown mode is refused.
+     *
+     * @param request the presentation request
+     * @return the response mode
+     */
+    protected OidcVerifiableCredentialsPresentationProperties.ResponseModes resolveResponseMode(
+        final OidcVerifiableCredentialPresentationRequest request) {
+        val configured = configurationContext.getCasProperties().getAuthn().getOidc().getVc().getPresentation().getResponseMode();
+        if (StringUtils.isBlank(request.getResponseMode())) {
+            return configured;
+        }
+        val requested = Arrays.stream(OidcVerifiableCredentialsPresentationProperties.ResponseModes.values())
+            .filter(mode -> mode.getValue().equals(request.getResponseMode()))
+            .findFirst()
+            .orElseThrow(() -> new IllegalArgumentException("Response mode %s is not supported".formatted(request.getResponseMode())));
+        if (configured == OidcVerifiableCredentialsPresentationProperties.ResponseModes.DIRECT_POST_JWT
+            && requested != OidcVerifiableCredentialsPresentationProperties.ResponseModes.DIRECT_POST_JWT) {
+            throw new IllegalArgumentException("Response mode %s is not allowed: responses must be encrypted".formatted(requested.getValue()));
+        }
+        return requested;
+    }
+
+    /**
+     * Ephemeral key the wallet encrypts its response to, generated for one request as HAIP 1.0 requires: a
+     * {@code P-256} key for {@code ECDH-ES}. Its key id is the request id, which the wallet repeats in the JWE
+     * header, so the response endpoint can find the request, and the key, before it can read the response.
+     *
+     * @param requestId the presentation request id
+     * @return the private JWK as JSON
+     * @throws Exception the exception
+     */
+    protected String generateResponseEncryptionKey(final String requestId) throws Exception {
+        val key = EcJwkGenerator.generateJwk(EllipticCurves.P256);
+        key.setKeyId(requestId);
+        key.setUse(Use.ENCRYPTION);
+        key.setAlgorithm(KeyManagementAlgorithmIdentifiers.ECDH_ES);
+        return key.toJson(JsonWebKey.OutputControlLevel.INCLUDE_PRIVATE);
+    }
+
     protected boolean isRequestObjectSigned() {
         return configurationContext.getCasProperties().getAuthn().getOidc().getVc()
             .getPresentation().getClientIdentifierPrefix() != ClientIdentifierPrefixes.REDIRECT_URI;
@@ -358,19 +411,31 @@ public class OidcVerifiableCredentialPresentationRequestEndpointController exten
      *
      * @param transientSessionTicket the presentation transaction
      * @return the authorization request parameters
+     * @throws Exception the exception
      */
-    protected Map<String, Object> buildAuthorizationRequestParameters(final TransientSessionTicket transientSessionTicket) {
+    protected Map<String, Object> buildAuthorizationRequestParameters(final TransientSessionTicket transientSessionTicket) throws Exception {
         val casProperties = configurationContext.getCasProperties();
-        val clientMetadata = OidcVerifiableCredentialPresentationClientMetadata.builder()
-            .clientName("Apereo CAS")
-            .vpFormatsSupported(Map.of(
-                OidcVerifiableCredentialConfigurationProperties.CredentialConfigurationFormats.DC_SD_JWT.getValue(),
-                OidcVerifiableCredentialPresentationClientMetadata.VpFormat.builder()
-                    .sdJwtAlgValues(resolveCredentialSigningAlgorithms())
-                    .kbJwtAlgValues(OidcVerifiableCredentialPresentationResponseEndpointController.KEY_BINDING_ALGORITHMS_SUPPORTED)
-                    .build()
-            ))
-            .build();
+        val responseEncryptionKey = transientSessionTicket.getPropertyAsString(
+            OidcVerifiableCredentialPresentationResponseEndpointController.PROPERTY_RESPONSE_ENCRYPTION_KEY);
+        final OidcVerifiableCredentialPresentationClientMetadata.OidcVerifiableCredentialPresentationClientMetadataBuilder<?, ?> clientMetadataBuilder =
+            OidcVerifiableCredentialPresentationClientMetadata.builder()
+                .clientName("Apereo CAS")
+                .vpFormatsSupported(Map.of(
+                    OidcVerifiableCredentialConfigurationProperties.CredentialConfigurationFormats.DC_SD_JWT.getValue(),
+                    OidcVerifiableCredentialPresentationClientMetadata.VpFormat.builder()
+                        .sdJwtAlgValues(resolveCredentialSigningAlgorithms())
+                        .kbJwtAlgValues(OidcVerifiableCredentialPresentationResponseEndpointController.KEY_BINDING_ALGORITHMS_SUPPORTED)
+                        .build()
+                ));
+        if (StringUtils.isNotBlank(responseEncryptionKey)) {
+            val publicKey = PublicJsonWebKey.Factory.newPublicJwk(responseEncryptionKey)
+                .toParams(JsonWebKey.OutputControlLevel.PUBLIC_ONLY);
+            clientMetadataBuilder
+                .jwks(Map.of(JsonWebKeySet.JWK_SET_MEMBER_NAME, List.of(publicKey)))
+                .encryptedResponseEncValuesSupported(
+                    OidcVerifiableCredentialPresentationResponseEndpointController.RESPONSE_ENCRYPTION_ALGORITHMS_SUPPORTED);
+        }
+        val clientMetadata = clientMetadataBuilder.build();
 
         val credentials = (List<OidcVerifiableCredentialPresentationRequest.CredentialRequest>)
             Objects.requireNonNull(transientSessionTicket.getProperty("credentials", List.class));
@@ -382,7 +447,9 @@ public class OidcVerifiableCredentialPresentationRequestEndpointController exten
         val parameters = new LinkedHashMap<String, Object>();
         parameters.put(OAuth20Constants.CLIENT_ID, resolveClientIdentifier(casProperties));
         parameters.put(OAuth20Constants.RESPONSE_TYPE, "vp_token");
-        parameters.put(OAuth20Constants.RESPONSE_MODE, "direct_post");
+        parameters.put(OAuth20Constants.RESPONSE_MODE, StringUtils.isNotBlank(responseEncryptionKey)
+            ? OidcVerifiableCredentialsPresentationProperties.ResponseModes.DIRECT_POST_JWT.getValue()
+            : OidcVerifiableCredentialsPresentationProperties.ResponseModes.DIRECT_POST.getValue());
         parameters.put("response_uri", resolveResponseUri(casProperties));
         parameters.put(OAuth20Constants.NONCE, Objects.requireNonNull(transientSessionTicket.getPropertyAsString("nonce")));
         parameters.put(OAuth20Constants.STATE, Objects.requireNonNull(transientSessionTicket.getPropertyAsString("state")));
@@ -603,6 +670,13 @@ public class OidcVerifiableCredentialPresentationRequestEndpointController exten
         @JsonProperty("redirect_uri")
         private String redirectUri;
 
+        /**
+         * Response mode the wallet must use, {@code direct_post} or {@code direct_post.jwt}; the configured one when
+         * absent. A request may ask for encryption but cannot drop it when the deployment requires it.
+         */
+        @JsonProperty("response_mode")
+        private String responseMode;
+
         @JsonInclude(JsonInclude.Include.NON_EMPTY)
         @Getter
         @Setter
@@ -722,6 +796,18 @@ public class OidcVerifiableCredentialPresentationRequestEndpointController exten
 
         @JsonProperty("tos_uri")
         private URI termsOfServiceUri;
+
+        /**
+         * Public keys the wallet may encrypt its response to.
+         */
+        @JsonProperty("jwks")
+        private Map<String, Object> jwks;
+
+        /**
+         * Content encryption algorithms the verifier accepts for an encrypted response.
+         */
+        @JsonProperty("encrypted_response_enc_values_supported")
+        private List<String> encryptedResponseEncValuesSupported;
 
         @JsonInclude(JsonInclude.Include.NON_EMPTY)
         @Getter

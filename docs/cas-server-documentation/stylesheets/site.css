@@ -678,7 +678,7 @@ button, a {
 #sidebarTopics > li > a {
     color: var(--docs-heading);
     font-weight: 600;
-    font-size: .78rem;
+    font-size: .90rem;
 }
 
 #sidebarTopics .cas-sidebar-icon {

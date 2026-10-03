@@ -60,7 +60,8 @@ This endpoint generally advertises:
 - Supported credential configurations.
 - Supported formats and signing algorithms.
 - How wallets should present the issuer (`display`: name, language and logo), taken from
-  `cas.authn.oidc.vc.issuer.display`; without it wallets show the issuer as unnamed.
+  issuer display settings in CAS configuration; without it wallets show the issuer as unnamed.
+
 #### Metadata Location
 
 OpenID4VCI locates the credential issuer metadata by inserting `/.well-known/openid-credential-issuer`
@@ -170,7 +171,7 @@ with `invalid_proof`. The defaults are `ES256` and `RS256` with the `jwk` bindin
 There is no separate batch credential endpoint. A batch is a single credential request carrying
 several proofs, and the response holds one credential per proof, all of the same credential
 configuration. How many proofs are accepted is advertised as `batch_credential_issuance` in the
-issuer metadata and controlled by `cas.authn.oidc.vc.issuer.batch-size`.
+issuer metadata and controlled by a batch size limit defined in CAS configuration.
 
 The response is:
 
@@ -395,7 +396,43 @@ as OpenID4VP recommends against session fixation, and releases the outcome only 
 presents that code. Without a `redirect_uri`, as in a cross-device flow with a QR code, the relying party
 polls for the outcome instead.
 
-With `cas.authn.oidc.vc.presentation.client-identifier-prefix` set to `X509_SAN_DNS`, the request object is
+With response mode set to `DIRECT_POST_JWT`, the wallet encrypts its response, as
+the [OpenID4VC High Assurance Interoperability Profile](https://openid.net/specs/openid4vc-high-assurance-interoperability-profile-1_0-final.html)
+requires. CAS generates an ephemeral `P-256` key for each request and publishes it in the request's client metadata, along
+with the content encryption algorithms it accepts:
+
+```json
+{
+  "jwks": {
+    "keys": [
+      {
+        "kty": "EC",
+        "crv": "P-256",
+        "kid": "TST-1-...",
+        "use": "enc",
+        "alg": "ECDH-ES",
+        "x": "...",
+        "y": "..."
+      }
+    ]
+  },
+  "encrypted_response_enc_values_supported": [
+    "A128GCM",
+    "A256GCM"
+  ]
+}
+```
+
+The wallet then posts a single `response` parameter: a JWE, encrypted with `ECDH-ES` to that key and naming it with `kid`,
+whose payload holds `vp_token` and `state`. A presentation posted in the clear is refused for such a request; an error
+response in the clear is still accepted from a wallet that cannot encrypt, as OpenID4VP allows. The default,
+`DIRECT_POST`, posts the response unencrypted.
+
+A relying party may also choose per request by adding `"response_mode": "direct_post.jwt"` (or `"direct_post"`) to the
+presentation request. The setting acts as a floor: a request may ask for an encrypted response where the deployment
+does not require one, but asking for `direct_post` where `DIRECT_POST_JWT` is configured is refused.
+
+With client identifier prefix set to `X509_SAN_DNS`, the request object is
 signed and served by reference. The signing key must carry an `x5c` certificate chain whose leaf names the
 issuer host as a DNS subject alternative name. The request carries that chain in its `x5c` header without a
 trailing self-signed trust anchor, as HAIP 1.0 requires. HAIP also requires the leaf not to be self-signed; a

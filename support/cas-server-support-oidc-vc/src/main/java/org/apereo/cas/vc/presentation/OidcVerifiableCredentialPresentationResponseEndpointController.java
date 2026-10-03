@@ -31,7 +31,12 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
+import org.jose4j.jwa.AlgorithmConstraints;
+import org.jose4j.jwe.ContentEncryptionAlgorithmIdentifiers;
+import org.jose4j.jwe.JsonWebEncryption;
+import org.jose4j.jwe.KeyManagementAlgorithmIdentifiers;
 import org.jose4j.jwk.JsonWebKey;
+import org.jose4j.jwk.PublicJsonWebKey;
 import org.jspecify.annotations.Nullable;
 import org.springframework.http.CacheControl;
 import org.springframework.http.HttpHeaders;
@@ -75,6 +80,19 @@ public class OidcVerifiableCredentialPresentationResponseEndpointController exte
      * Result property holding the response code the relying party must present to collect the outcome.
      */
     public static final String PROPERTY_RESPONSE_CODE = "responseCode";
+
+    /**
+     * Transaction property holding the private JWK the wallet encrypts its response to, when the request asked for an
+     * encrypted response.
+     */
+    public static final String PROPERTY_RESPONSE_ENCRYPTION_KEY = "responseEncryptionKey";
+
+    /**
+     * Content encryption algorithms accepted for encrypted responses and advertised as
+     * {@code encrypted_response_enc_values_supported}, as HAIP 1.0 requires.
+     */
+    public static final List<String> RESPONSE_ENCRYPTION_ALGORITHMS_SUPPORTED = List.of(
+        ContentEncryptionAlgorithmIdentifiers.AES_128_GCM, ContentEncryptionAlgorithmIdentifiers.AES_256_GCM);
     
     private static final ObjectMapper MAPPER = JacksonObjectMapperFactory.builder()
         .defaultTypingEnabled(false)
@@ -114,7 +132,12 @@ public class OidcVerifiableCredentialPresentationResponseEndpointController exte
      * who saw the request's {@code state} could otherwise cancel it. The request stays open until it expires, a
      * later valid presentation takes precedence, and the relying party only sees the error once the request has
      * expired unanswered.
+     * <p>
+     * When the request asked for an encrypted response ({@code direct_post.jwt}, OpenID4VP 1.0 section 8.3.1), the
+     * parameters arrive inside the JWE posted as {@code response} and a presentation in the clear is refused; a wallet
+     * that cannot encrypt may still post an error response in the clear.
      *
+     * @param response         the encrypted response, for {@code direct_post.jwt}
      * @param vpToken          the vp token
      * @param error            the error code of an authorization error response
      * @param errorDescription the error description of an authorization error response
@@ -126,30 +149,43 @@ public class OidcVerifiableCredentialPresentationResponseEndpointController exte
         "/**/" + OidcConstants.VC_PRESENTATION_RESPONSE_URL
     }, consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     @Operation(summary = "Handle response for presentation request", parameters = {
+        @Parameter(name = "response", description = "The encrypted response, when the request asked for direct_post.jwt"),
         @Parameter(name = "vp_token", description = "The verifiable presentation token"),
         @Parameter(name = OAuth20Constants.ERROR, description = "The error code, when the wallet answers with an error response"),
         @Parameter(name = OAuth20Constants.ERROR_DESCRIPTION, description = "The error description of an error response"),
         @Parameter(name = "state", description = "The state parameter returned from the request")
     })
     public ResponseEntity<Map<String, Object>> handleResponse(
+        @RequestParam(value = "response", required = false) final @Nullable String response,
         @RequestParam(value = "vp_token", required = false) final @Nullable String vpToken,
         @RequestParam(value = OAuth20Constants.ERROR, required = false) final @Nullable String error,
         @RequestParam(value = OAuth20Constants.ERROR_DESCRIPTION, required = false) final @Nullable String errorDescription,
-        @RequestParam final String state) {
+        @RequestParam(value = OAuth20Constants.STATE, required = false) final @Nullable String state) {
 
         try {
-            require(StringUtils.isBlank(vpToken) != StringUtils.isBlank(error) && !state.isBlank(),
+            require(StringUtils.isBlank(response) || StringUtils.isAllBlank(vpToken, error, errorDescription, state),
+                "An encrypted presentation response must carry its parameters inside the response");
+            val authorizationResponse = StringUtils.isNotBlank(response)
+                ? decryptAuthorizationResponse(response)
+                : new AuthorizationResponse(vpToken, error, errorDescription, state, false);
+            val presentedState = authorizationResponse.state();
+            require(StringUtils.isBlank(authorizationResponse.vpToken()) != StringUtils.isBlank(authorizationResponse.error())
+                    && StringUtils.isNotBlank(presentedState),
                 "Presentation response must carry a state and either a VP token or an error");
-            val transientSessionTicket = configurationContext.getTicketRegistry().getTicket(state, TransientSessionTicket.class);
+            val transientSessionTicket = configurationContext.getTicketRegistry().getTicket(presentedState, TransientSessionTicket.class);
             require(transientSessionTicket != null && !transientSessionTicket.isExpired(), "Presentation transaction is invalid");
-            require(state.equals(transientSessionTicket.getPropertyAsString("state")), "Presentation state does not match");
+            require(presentedState.equals(transientSessionTicket.getPropertyAsString("state")), "Presentation state does not match");
+            require(authorizationResponse.encrypted() || StringUtils.isNotBlank(authorizationResponse.error())
+                    || transientSessionTicket.getPropertyAsString(PROPERTY_RESPONSE_ENCRYPTION_KEY) == null,
+                "Presentation transaction requires an encrypted response");
 
-            if (StringUtils.isNotBlank(error)) {
+            if (StringUtils.isNotBlank(authorizationResponse.error())) {
                 val outcome = new LinkedHashMap<String, Object>();
                 outcome.put("status", STATUS_ERROR);
-                outcome.put(OAuth20Constants.ERROR, StringUtils.truncate(error, MAX_ERROR_LENGTH));
-                if (StringUtils.isNotBlank(errorDescription)) {
-                    outcome.put(OAuth20Constants.ERROR_DESCRIPTION, StringUtils.truncate(errorDescription, MAX_ERROR_DESCRIPTION_LENGTH));
+                outcome.put(OAuth20Constants.ERROR, StringUtils.truncate(authorizationResponse.error(), MAX_ERROR_LENGTH));
+                if (StringUtils.isNotBlank(authorizationResponse.errorDescription())) {
+                    outcome.put(OAuth20Constants.ERROR_DESCRIPTION,
+                        StringUtils.truncate(authorizationResponse.errorDescription(), MAX_ERROR_DESCRIPTION_LENGTH));
                 }
                 return buildResponse(HttpStatus.OK, recordPresentationResult(transientSessionTicket, outcome,
                     resolvePresentationErrorId(transientSessionTicket.getId())));
@@ -160,7 +196,8 @@ public class OidcVerifiableCredentialPresentationResponseEndpointController exte
             val credentials = (List<CredentialRequest>) transientSessionTicket.getProperty("credentials", List.class);
             require(credentials != null && !credentials.isEmpty(), "Presentation transaction has no credential query");
 
-            val disclosedClaims = validatePresentation(Objects.requireNonNull(vpToken), credentials, nonce, transientSessionTicket);
+            val disclosedClaims = validatePresentation(Objects.requireNonNull(authorizationResponse.vpToken()),
+                credentials, nonce, transientSessionTicket);
             require(configurationContext.getTicketRegistry().deleteTicket(transientSessionTicket) > 0,
                 "Presentation transaction was consumed concurrently");
             val walletResponse = new LinkedHashMap<String, Object>();
@@ -175,6 +212,46 @@ public class OidcVerifiableCredentialPresentationResponseEndpointController exte
                     "The presentation response could not be validated")
             );
         }
+    }
+
+    /**
+     * Decrypt a {@code direct_post.jwt} response: an unsigned JWT encrypted with {@code ECDH-ES} to the
+     * key generated for the request, whose response parameters are its top-level members (OpenID4VP 1.0 section 8.3).
+     * The JWE {@code kid} names the request, which holds the key; the decrypted {@code state} must name the same request.
+     * A {@code vp_token} given as a JSON object is handed on serialized, as it would arrive in the clear.
+     *
+     * @param response the JWE
+     * @return the authorization response
+     * @throws Exception the exception
+     */
+    protected AuthorizationResponse decryptAuthorizationResponse(final String response) throws Exception {
+        val jwe = new JsonWebEncryption();
+        jwe.setCompactSerialization(response);
+        val keyId = jwe.getKeyIdHeaderValue();
+        require(StringUtils.isNotBlank(keyId), "Encrypted presentation response names no key");
+        val transaction = configurationContext.getTicketRegistry().getTicket(keyId, TransientSessionTicket.class);
+        require(transaction != null && !transaction.isExpired(), "Presentation transaction is invalid");
+        val encryptionKey = transaction.getPropertyAsString(PROPERTY_RESPONSE_ENCRYPTION_KEY);
+        require(StringUtils.isNotBlank(encryptionKey), "Presentation transaction did not ask for an encrypted response");
+
+        jwe.setAlgorithmConstraints(new AlgorithmConstraints(AlgorithmConstraints.ConstraintType.PERMIT,
+            KeyManagementAlgorithmIdentifiers.ECDH_ES));
+        jwe.setContentEncryptionAlgorithmConstraints(new AlgorithmConstraints(AlgorithmConstraints.ConstraintType.PERMIT,
+            RESPONSE_ENCRYPTION_ALGORITHMS_SUPPORTED.toArray(String[]::new)));
+        jwe.setKey(PublicJsonWebKey.Factory.newPublicJwk(encryptionKey).getPrivateKey());
+        val payload = MAPPER.readValue(jwe.getPayload(), Map.class);
+
+        val state = Objects.toString(payload.get(OAuth20Constants.STATE), null);
+        require(keyId.equals(state), "Encrypted presentation response does not match its request");
+        val presentation = payload.get("vp_token");
+        String vpToken = null;
+        if (presentation instanceof final String value) {
+            vpToken = value;
+        } else if (presentation != null) {
+            vpToken = MAPPER.writeValueAsString(presentation);
+        }
+        return new AuthorizationResponse(vpToken, Objects.toString(payload.get(OAuth20Constants.ERROR), null),
+            Objects.toString(payload.get(OAuth20Constants.ERROR_DESCRIPTION), null), state, true);
     }
 
     /**
@@ -666,5 +743,18 @@ public class OidcVerifiableCredentialPresentationResponseEndpointController exte
 
     private record CredentialConfiguration(String id,
         OidcVerifiableCredentialConfigurationProperties configuration) {
+    }
+
+    /**
+     * Authorization response parameters, as posted in the clear or decrypted from a {@code direct_post.jwt} response.
+     *
+     * @param vpToken          the vp token
+     * @param error            the error code
+     * @param errorDescription the error description
+     * @param state            the state
+     * @param encrypted        whether the response was encrypted
+     */
+    protected record AuthorizationResponse(@Nullable String vpToken, @Nullable String error, @Nullable String errorDescription,
+                                           @Nullable String state, boolean encrypted) {
     }
 }

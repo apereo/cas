@@ -20,6 +20,8 @@ import com.nimbusds.jose.jwk.JWKSet;
 import com.nimbusds.jose.util.X509CertUtils;
 import com.nimbusds.jwt.SignedJWT;
 import lombok.val;
+import org.jose4j.jwk.JsonWebKey;
+import org.jose4j.jwk.PublicJsonWebKey;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
@@ -27,6 +29,7 @@ import org.springframework.boot.autoconfigure.ImportAutoConfiguration;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.TestPropertySource;
+import org.springframework.test.web.servlet.ResultActions;
 import tools.jackson.databind.ObjectMapper;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
@@ -79,13 +82,22 @@ class OidcVerifiableCredentialPresentationRequestEndpointControllerTests {
         "cas.authn.oidc.vc.issuer.credential-configurations.UniversityDegreeCredential.scope=UniversityDegree"
     })
     abstract static class BaseTests extends AbstractOidcTests {
+        protected ResultActions performPresentationRequest(final OidcVerifiableCredentialPresentationRequest request) throws Exception {
+            return mockMvc.perform(post(PRESENTATION_REQUEST_ENDPOINT_URL)
+                .with(withHttpRequestProcessor())
+                .param(OAuth20Constants.CLIENT_ID, getOidcRegisteredService().getClientId())
+                .param(OAuth20Constants.CLIENT_SECRET, getOidcRegisteredService().getClientSecrets().getFirst().getValue())
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(MAPPER.writeValueAsString(request)));
+        }
+
         protected OidcVerifiableCredentialPresentationResponse createPresentationRequest() throws Exception {
-            val responseBody = mockMvc.perform(post(PRESENTATION_REQUEST_ENDPOINT_URL)
-                    .with(withHttpRequestProcessor())
-                    .param(OAuth20Constants.CLIENT_ID, getOidcRegisteredService().getClientId())
-                    .param(OAuth20Constants.CLIENT_SECRET, getOidcRegisteredService().getClientSecrets().getFirst().getValue())
-                    .contentType(MediaType.APPLICATION_JSON)
-                    .content(MAPPER.writeValueAsString(buildPresentationRequest())))
+            return createPresentationRequest(buildPresentationRequest());
+        }
+
+        protected OidcVerifiableCredentialPresentationResponse createPresentationRequest(
+            final OidcVerifiableCredentialPresentationRequest request) throws Exception {
+            val responseBody = performPresentationRequest(request)
                 .andExpect(status().isOk())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
                 .andReturn()
@@ -139,6 +151,19 @@ class OidcVerifiableCredentialPresentationRequestEndpointControllerTests {
         }
 
         @Test
+        void verifyRequestMayAskForAnEncryptedResponse() throws Throwable {
+            val encryptedRequest = buildPresentationRequest();
+            encryptedRequest.setResponseMode("direct_post.jwt");
+            val encrypted = parseQueryParameters(URI.create(createPresentationRequest(encryptedRequest).getAuthorizationRequest()));
+            assertEquals("direct_post.jwt", encrypted.get(OAuth20Constants.RESPONSE_MODE));
+            assertTrue(encrypted.get("client_metadata").contains("jwks"));
+
+            val unknownRequest = buildPresentationRequest();
+            unknownRequest.setResponseMode("fragment");
+            performPresentationRequest(unknownRequest).andExpect(status().isBadRequest());
+        }
+
+        @Test
         void verifyAuthorizationRequestCarriesEveryParameterByValue() throws Throwable {
             val response = createPresentationRequest();
             assertTrue(response.getRequestId().startsWith(TransientSessionTicket.PREFIX));
@@ -153,6 +178,7 @@ class OidcVerifiableCredentialPresentationRequestEndpointControllerTests {
             assertEquals("direct_post", parameters.get(OAuth20Constants.RESPONSE_MODE));
             assertEquals(getResponseUri(), parameters.get("response_uri"));
             assertEquals(response.getRequestId(), parameters.get(OAuth20Constants.STATE));
+            assertFalse(parameters.get("client_metadata").contains("jwks"));
 
             val ticket = ticketRegistry.getTicket(response.getRequestId(), TransientSessionTicket.class);
             assertNotNull(ticket);
@@ -247,6 +273,46 @@ class OidcVerifiableCredentialPresentationRequestEndpointControllerTests {
             mockMvc.perform(get(PRESENTATION_REQUEST_ENDPOINT_URL + '/' + ticket.getId())
                     .with(withHttpRequestProcessor()))
                 .andExpect(status().isNotFound());
+        }
+    }
+
+    /**
+     * HAIP 1.0 section 5: the wallet encrypts its response ({@code direct_post.jwt}) to an ephemeral key generated for
+     * each request and published in its client metadata.
+     */
+    @Nested
+    @TestPropertySource(properties = "cas.authn.oidc.vc.presentation.response-mode=DIRECT_POST_JWT")
+    class EncryptedResponseTests extends BaseTests {
+        @Test
+        void verifyEphemeralResponseEncryptionKey() throws Throwable {
+            val response = createPresentationRequest();
+            val parameters = parseQueryParameters(URI.create(response.getAuthorizationRequest()));
+            assertEquals("direct_post.jwt", parameters.get(OAuth20Constants.RESPONSE_MODE));
+            val clientMetadata = MAPPER.readValue(parameters.get("client_metadata"), Map.class);
+            assertEquals(List.of("A128GCM", "A256GCM"), clientMetadata.get("encrypted_response_enc_values_supported"));
+            val keys = assertInstanceOf(List.class, assertInstanceOf(Map.class, clientMetadata.get("jwks")).get("keys"));
+            assertEquals(1, keys.size());
+            val key = assertInstanceOf(Map.class, keys.getFirst());
+            assertEquals("EC", key.get("kty"));
+            assertEquals("P-256", key.get("crv"));
+            assertEquals("ECDH-ES", key.get("alg"));
+            assertEquals("enc", key.get("use"));
+            assertEquals(response.getRequestId(), key.get("kid"));
+            assertFalse(key.containsKey("d"));
+
+            val ticket = ticketRegistry.getTicket(response.getRequestId(), TransientSessionTicket.class);
+            assertNotNull(ticket);
+            val privateKey = PublicJsonWebKey.Factory.newPublicJwk(Objects.requireNonNull(ticket.getPropertyAsString(
+                OidcVerifiableCredentialPresentationResponseEndpointController.PROPERTY_RESPONSE_ENCRYPTION_KEY)));
+            assertNotNull(privateKey.getPrivateKey());
+            assertEquals(key.get("x"), privateKey.toParams(JsonWebKey.OutputControlLevel.PUBLIC_ONLY).get("x"));
+
+            val other = parseQueryParameters(URI.create(createPresentationRequest().getAuthorizationRequest()));
+            assertNotEquals(parameters.get("client_metadata"), other.get("client_metadata"));
+
+            val plainRequest = buildPresentationRequest();
+            plainRequest.setResponseMode("direct_post");
+            performPresentationRequest(plainRequest).andExpect(status().isBadRequest());
         }
     }
 
