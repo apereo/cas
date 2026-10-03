@@ -251,6 +251,8 @@ and failures were recorded twice. Failed SAML2 ECP authentication attempts, whic
 - Verifiable presentation responses can be encrypted (`direct_post.jwt`), as the High Assurance Interoperability Profile
   requires, with `cas.authn.oidc.vc.presentation.response-mode=DIRECT_POST_JWT` or per request with `"response_mode": "direct_post.jwt"`:
   each request carries its own ephemeral `ECDH-ES` key, and presentations sent in the clear are refused.
+- Verifiable presentation requests may identify CAS with the `x509_hash` client identifier prefix, which the High Assurance
+  Interoperability Profile requires of verifiers that sign requests: `cas.authn.oidc.vc.presentation.client-identifier-prefix=X509_HASH`.
 
 ### Stateless Ticket Registry
 

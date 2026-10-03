@@ -397,4 +397,40 @@ class OidcVerifiableCredentialPresentationRequestEndpointControllerTests {
             assertTrue(requestObject.verify(new ECDSAVerifier((ECPublicKey) leaf.getPublicKey())));
         }
     }
+
+    /**
+     * OpenID4VP 1.0 section 5.9.3 and HAIP 1.0 section 5: under {@code x509_hash} the client identifier is the
+     * base64url-encoded SHA-256 hash of the DER-encoded leaf certificate that signs the request object.
+     */
+    @Nested
+    @TestPropertySource(properties = {
+        "cas.authn.oidc.vc.presentation.client-identifier-prefix=X509_HASH",
+        "cas.authn.oidc.jwks.file-system.jwks-file=classpath:vc-issuer-x5c.jwks"
+    })
+    class X509HashRequestTests extends BaseTests {
+        @Test
+        void verifyClientIdentifierIsTheLeafCertificateHash() throws Throwable {
+            val leaf = assertInstanceOf(ECKey.class, JWKSet.load(new ClassPathResource("vc-issuer-x5c.jwks").getInputStream())
+                .getKeyByKeyId("vc-issuer")).getParsedX509CertChain().getFirst();
+            val clientId = "x509_hash:" + X509CertUtils.computeSHA256Thumbprint(leaf);
+
+            val response = createPresentationRequest();
+            assertNotNull(response.getRequestUri());
+            val parameters = parseQueryParameters(URI.create(response.getAuthorizationRequest()));
+            assertEquals(clientId, parameters.get(OAuth20Constants.CLIENT_ID));
+
+            val requestObject = SignedJWT.parse(mockMvc.perform(get(PRESENTATION_REQUEST_ENDPOINT_URL + '/' + response.getRequestId())
+                    .with(withHttpRequestProcessor()))
+                .andExpect(status().isOk())
+                .andReturn()
+                .getResponse()
+                .getContentAsString());
+            assertEquals(clientId, requestObject.getJWTClaimsSet().getStringClaim(OAuth20Constants.CLIENT_ID));
+            assertEquals(clientId, requestObject.getJWTClaimsSet().getIssuer());
+            val chain = requestObject.getHeader().getX509CertChain();
+            assertEquals(1, chain.size());
+            assertEquals(leaf, X509CertUtils.parse(chain.getFirst().decode()));
+            assertTrue(requestObject.verify(new ECDSAVerifier((ECPublicKey) leaf.getPublicKey())));
+        }
+    }
 }

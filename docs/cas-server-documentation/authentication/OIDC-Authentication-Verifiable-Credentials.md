@@ -438,6 +438,11 @@ issuer host as a DNS subject alternative name. The request carries that chain in
 trailing self-signed trust anchor, as HAIP 1.0 requires. HAIP also requires the leaf not to be self-signed; a
 self-signed leaf is accepted with a warning in the logs.
 
+With the client identifier prefix set to `X509_HASH`, which HAIP requires of verifiers that sign their requests, the
+request object is signed and served by reference the same way, and the client identifier is `x509_hash:` followed by
+the base64url-encoded SHA-256 hash of the DER-encoded leaf certificate, so the leaf needs no particular name. The
+signing key must still carry an `x5c` certificate chain.
+
 The relying party that created the request collects the outcome from:
 
 ```bash

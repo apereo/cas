@@ -31,7 +31,9 @@ public class OidcVerifiableCredentialsPresentationProperties implements Serializ
      * request URI is offered. {@code X509_SAN_DNS} signs the request object with the CAS
      * OpenID Connect signing key and requires that key to carry a certificate chain whose
      * leaf certificate holds a {@code dNSName} subject alternative name matching the host
-     * of the verifier; only then can the request object be served by reference.
+     * of the verifier; only then can the request object be served by reference. {@code X509_HASH}, which the
+     * OpenID4VC High Assurance Interoperability Profile requires, signs the request object the same way and
+     * identifies CAS by the hash of the leaf certificate, so the certificate needs no particular name.
      */
     private ClientIdentifierPrefixes clientIdentifierPrefix = ClientIdentifierPrefixes.REDIRECT_URI;
 
@@ -61,7 +63,12 @@ public class OidcVerifiableCredentialsPresentationProperties implements Serializ
          * certificate holds a {@code dNSName} subject alternative name matching the host of the verifier. CAS refuses to
          * serve a request object when it does not, rather than producing one that wallets silently reject.
          */
-        X509_SAN_DNS("x509_san_dns");
+        X509_SAN_DNS("x509_san_dns"),
+        /**
+         * The client identifier is the base64url-encoded SHA-256 hash of the DER-encoded leaf certificate used to
+         * sign the request object. It requires the CAS OIDC signing key to carry a certificate chain.
+         */
+        X509_HASH("x509_hash");
 
         private final String value;
     }

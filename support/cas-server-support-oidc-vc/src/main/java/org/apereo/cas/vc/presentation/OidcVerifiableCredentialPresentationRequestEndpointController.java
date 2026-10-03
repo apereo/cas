@@ -106,18 +106,41 @@ public class OidcVerifiableCredentialPresentationRequestEndpointController exten
      * The client identifier CAS presents to wallets as the verifier, carrying the OpenID4VP
      * client identifier prefix that tells the wallet how to authenticate it. The wallet echoes
      * this value as the key binding audience, so the presentation response endpoint resolves
-     * the expected audience through this same method.
+     * the expected audience through this same method. Under {@code x509_hash} it is the
+     * base64url-encoded SHA-256 hash of the DER-encoded leaf certificate of the OpenID Connect
+     * signing key (OpenID4VP 1.0 section 5.9.3).
      *
-     * @param casProperties the CAS properties
+     * @param configurationContext the configuration context
      * @return the client identifier
      */
-    public static String resolveClientIdentifier(final CasConfigurationProperties casProperties) {
+    public static String resolveClientIdentifier(final OidcConfigurationContext configurationContext) {
+        val casProperties = configurationContext.getCasProperties();
         val responseUri = resolveResponseUri(casProperties);
         val prefix = casProperties.getAuthn().getOidc().getVc().getPresentation().getClientIdentifierPrefix();
-        val identifier = prefix == ClientIdentifierPrefixes.X509_SAN_DNS
-            ? URI.create(responseUri).getHost()
-            : responseUri;
+        val identifier = switch (prefix) {
+            case X509_SAN_DNS -> URI.create(responseUri).getHost();
+            case X509_HASH -> OAuth20Utils.computeCertificateThumbprint(resolveCertificateChain(FunctionUtils.doUnchecked(
+                () -> configurationContext.getIdTokenSigningAndEncryptionService().getJsonWebKeySigningKey(Optional.empty()))).getFirst());
+            case REDIRECT_URI -> responseUri;
+        };
         return prefix.getValue() + ':' + identifier;
+    }
+
+    /**
+     * Certificate chain of the OpenID Connect signing key, which both {@code x509} client identifier prefixes need
+     * to sign the request object. Failing here produces a configuration error rather than a request object every
+     * wallet silently rejects.
+     *
+     * @param signingKey the signing key
+     * @return the certificate chain, leaf first
+     */
+    protected static List<X509Certificate> resolveCertificateChain(final @Nullable PublicJsonWebKey signingKey) {
+        val certificateChain = signingKey == null ? null : signingKey.getCertificateChain();
+        if (certificateChain == null || certificateChain.isEmpty()) {
+            throw new IllegalStateException("The OpenID Connect signing key carries no certificate chain, which the "
+                + "x509 client identifier prefixes require");
+        }
+        return certificateChain;
     }
 
     /**
@@ -445,7 +468,7 @@ public class OidcVerifiableCredentialPresentationRequestEndpointController exten
             .toList();
 
         val parameters = new LinkedHashMap<String, Object>();
-        parameters.put(OAuth20Constants.CLIENT_ID, resolveClientIdentifier(casProperties));
+        parameters.put(OAuth20Constants.CLIENT_ID, resolveClientIdentifier(configurationContext));
         parameters.put(OAuth20Constants.RESPONSE_TYPE, "vp_token");
         parameters.put(OAuth20Constants.RESPONSE_MODE, StringUtils.isNotBlank(responseEncryptionKey)
             ? OidcVerifiableCredentialsPresentationProperties.ResponseModes.DIRECT_POST_JWT.getValue()
@@ -554,7 +577,7 @@ public class OidcVerifiableCredentialPresentationRequestEndpointController exten
         Objects.requireNonNull(signingKey.getPrivateKey(), "The OpenID Connect signing key has no private key");
 
         val clientId = parameters.get(OAuth20Constants.CLIENT_ID).toString();
-        val certificateChain = verifyCertificateChain(signingKey, StringUtils.substringAfter(clientId, ":"));
+        val certificateChain = verifyCertificateChain(signingKey, clientId);
 
         val claims = new JwtClaims();
         parameters.forEach(claims::setClaim);
@@ -578,32 +601,33 @@ public class OidcVerifiableCredentialPresentationRequestEndpointController exten
     }
 
     /**
-     * A wallet authenticates an {@code x509_san_dns} verifier by matching the client identifier
-     * against a DNS subject alternative name in the leaf certificate. Failing here produces a
-     * configuration error rather than a request object every wallet silently rejects. The chain is
-     * returned without its trust anchor, which HAIP 1.0 (section 5) forbids in the request's {@code x5c}.
-     * A self-signed leaf is accepted with a warning: HAIP forbids it, but wallets outside HAIP may accept it.
+     * Certificate chain sent in the request object's {@code x5c}. A wallet authenticates an {@code x509_san_dns}
+     * verifier by matching the client identifier against a DNS subject alternative name in the leaf certificate, and an
+     * {@code x509_hash} verifier by matching it against the hash of the leaf certificate, which the client identifier
+     * was computed from. A name that does not match produces a configuration error rather than a request object every
+     * wallet silently rejects. The chain is returned without its trust anchor, which HAIP 1.0 (section 5) forbids in the
+     * request's {@code x5c}. A self-signed leaf is accepted with a warning: HAIP forbids it, but wallets outside HAIP may
+     * accept it.
      *
      * @param signingKey the signing key
-     * @param dnsName    the DNS name taken from the client identifier
+     * @param clientId   the client identifier, with its prefix
      * @return the certificate chain
      * @throws Exception the exception
      */
     protected List<X509Certificate> verifyCertificateChain(final PublicJsonWebKey signingKey,
-                                                           final String dnsName) throws Exception {
-        val certificateChain = signingKey.getCertificateChain();
-        if (certificateChain == null || certificateChain.isEmpty()) {
-            throw new IllegalStateException("The OpenID Connect signing key carries no certificate chain, "
-                + "which the %s client identifier prefix requires".formatted(ClientIdentifierPrefixes.X509_SAN_DNS.getValue()));
-        }
-        val subjectAlternativeNames = certificateChain.getFirst().getSubjectAlternativeNames();
-        val matched = subjectAlternativeNames != null && subjectAlternativeNames
-            .stream()
-            .filter(name -> name.size() == 2 && Integer.valueOf(SUBJECT_ALTERNATIVE_NAME_DNS).equals(name.getFirst()))
-            .anyMatch(name -> dnsName.equalsIgnoreCase(Objects.toString(name.getLast(), null)));
-        if (!matched) {
-            throw new IllegalStateException(("The leaf certificate of the OpenID Connect signing key has no "
-                + "dNSName subject alternative name matching [%s]").formatted(dnsName));
+                                                           final String clientId) throws Exception {
+        val certificateChain = resolveCertificateChain(signingKey);
+        if (clientId.startsWith(ClientIdentifierPrefixes.X509_SAN_DNS.getValue() + ':')) {
+            val dnsName = StringUtils.substringAfter(clientId, ":");
+            val subjectAlternativeNames = certificateChain.getFirst().getSubjectAlternativeNames();
+            val matched = subjectAlternativeNames != null && subjectAlternativeNames
+                .stream()
+                .filter(name -> name.size() == 2 && Integer.valueOf(SUBJECT_ALTERNATIVE_NAME_DNS).equals(name.getFirst()))
+                .anyMatch(name -> dnsName.equalsIgnoreCase(Objects.toString(name.getLast(), null)));
+            if (!matched) {
+                throw new IllegalStateException(("The leaf certificate of the OpenID Connect signing key has no "
+                    + "dNSName subject alternative name matching [%s]").formatted(dnsName));
+            }
         }
         if (CertUtils.isSelfIssued(certificateChain.getFirst())) {
             LOGGER.warn("The request object signing certificate [{}] is self-signed. HAIP 1.0 requires it to be issued by "
