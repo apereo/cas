@@ -82,22 +82,28 @@ public class InMemoryGoogleAuthenticatorTokenCredentialRepository extends BaseGo
         });
     }
 
+    /**
+     * Update the stored account with the same id, or add the account when none is stored,
+     * so that every backend treats an update of a missing device as an insert.
+     *
+     * @param account the account
+     * @return the encoded account as stored
+     */
     @Override
     public OneTimeTokenAccount update(final OneTimeTokenAccount account) {
         return lock.tryLock(() -> {
             val encoded = encode(account);
-            if (accounts.containsKey(account.getUsername().toLowerCase(Locale.ENGLISH).trim())) {
-                val records = accounts.get(account.getUsername().toLowerCase(Locale.ENGLISH).trim());
-                records.stream()
-                    .filter(rec -> rec.getId() == account.getId())
-                    .findFirst()
-                    .ifPresent(act -> {
-                        act.setSecretKey(encoded.getSecretKey());
-                        act.setScratchCodes(encoded.getScratchCodes());
-                        act.setValidationCode(encoded.getValidationCode());
-                        act.setProperties(new ArrayList<>(encoded.getProperties()));
-                    });
-            }
+            val records = accounts.computeIfAbsent(encoded.getUsername(), _ -> new ArrayList<>());
+            records.stream()
+                .filter(rec -> rec.getId() == encoded.getId())
+                .findFirst()
+                .ifPresentOrElse(act -> {
+                    act.setSecretKey(encoded.getSecretKey());
+                    act.setScratchCodes(encoded.getScratchCodes());
+                    act.setValidationCode(encoded.getValidationCode());
+                    act.setProperties(new ArrayList<>(encoded.getProperties()));
+                    act.setLastUsedDateTime(encoded.getLastUsedDateTime());
+                }, () -> records.add(encoded));
             return encoded;
         });
     }

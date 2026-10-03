@@ -113,6 +113,15 @@ class GoogleAuthenticatorDeleteAccountActionTests {
     }
 
     @Test
+    void verifyDeleteWithInvalidDeviceId() throws Throwable {
+        val context = MockRequestContext.create(applicationContext);
+        WebUtils.putAuthentication(RegisteredServiceTestUtils.getAuthentication(UUID.randomUUID().toString()), context);
+        context.setParameter(OneTimeTokenAccountConfirmSelectionRegistrationAction.REQUEST_PARAMETER_ACCOUNT_ID, "not-a-number");
+        context.setParameter(OneTimeTokenAccountSaveRegistrationAction.REQUEST_PARAMETER_VALIDATE, "false");
+        assertThrows(FailedLoginException.class, () -> action.execute(context));
+    }
+
+    @Test
     void verifyOperation() throws Throwable {
         val context = MockRequestContext.create(applicationContext);
         var acct = GoogleAuthenticatorAccount
@@ -137,6 +146,8 @@ class GoogleAuthenticatorDeleteAccountActionTests {
 
         acct = (GoogleAuthenticatorAccount) googleAuthenticatorAccountRegistry.get(acct.getId());
         assertTrue(acct.getProperties().getFirst().startsWith(GoogleAuthenticatorDeleteAccountAction.ACCOUNT_PROPERTY_REMOVAL_VERIFIED + ':'));
+        assertTrue(acct.getScratchCodes().isEmpty());
+        assertNotNull(acct.getLastUsedDateTime());
 
         context.setParameter(OneTimeTokenAccountSaveRegistrationAction.REQUEST_PARAMETER_VALIDATE, "false");
         assertEquals(CasWebflowConstants.TRANSITION_ID_SUCCESS, action.execute(context).getId());

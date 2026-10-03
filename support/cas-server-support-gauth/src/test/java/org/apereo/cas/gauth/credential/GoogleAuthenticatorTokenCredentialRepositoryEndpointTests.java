@@ -73,6 +73,9 @@ class GoogleAuthenticatorTokenCredentialRepositoryEndpointTests extends Abstract
         deviceManager.removeRegisteredDevice(otherUser, device.getId());
         assertTrue(deviceManager.hasRegisteredDevices(owner));
         assertNotNull(registry.get(acct.getUsername(), Long.parseLong(device.getId())));
+
+        assertDoesNotThrow(() -> deviceManager.removeRegisteredDevice(owner, "not-a-number"));
+        assertTrue(deviceManager.hasRegisteredDevices(owner));
     }
 
     @Test

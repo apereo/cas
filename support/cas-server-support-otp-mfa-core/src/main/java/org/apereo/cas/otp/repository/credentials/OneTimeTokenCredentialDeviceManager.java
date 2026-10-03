@@ -7,6 +7,7 @@ import org.apereo.cas.authentication.device.MultifactorAuthenticationDeviceManag
 import org.apereo.cas.authentication.device.MultifactorAuthenticationRegisteredDevice;
 import org.apereo.cas.authentication.principal.Principal;
 import lombok.RequiredArgsConstructor;
+import org.apache.commons.lang3.math.NumberUtils;
 import org.springframework.beans.factory.ObjectProvider;
 
 /**
@@ -37,14 +38,15 @@ public class OneTimeTokenCredentialDeviceManager implements MultifactorAuthentic
     /**
      * Remove the device only when it belongs to the principal. The device id comes from the caller,
      * typically a request parameter, so it is looked up among the principal's own devices first;
-     * an id that belongs to another user, or to no one, is ignored.
+     * an id that belongs to another user, or to no one, is ignored. An id that is not a number is read as zero,
+     * which no device carries, and is ignored too.
      *
      * @param principal the principal that owns the device
      * @param deviceId  the device id
      */
     @Override
     public void removeRegisteredDevice(final Principal principal, final String deviceId) {
-        Optional.ofNullable(repository.get(principal.getId(), Long.parseLong(deviceId)))
+        Optional.ofNullable(repository.get(principal.getId(), NumberUtils.toLong(deviceId)))
             .ifPresent(account -> repository.delete(account.getId()));
     }
 

@@ -131,27 +131,32 @@ public class JsonGoogleAuthenticatorTokenCredentialRepository extends BaseGoogle
         });
     }
 
+    /**
+     * Update the stored account with the same id, or add the account when none is stored,
+     * so that every backend treats an update of a missing device as an insert.
+     *
+     * @param account the account
+     * @return the encoded account as stored, or null if the repository could not be written
+     */
     @Override
     public OneTimeTokenAccount update(final OneTimeTokenAccount account) {
         return lock.tryLock(() -> {
             try {
                 val accounts = readAccountsFromJsonRepository();
-                if (accounts.containsKey(account.getUsername().trim().toLowerCase(Locale.ENGLISH))) {
-                    val records = accounts.get(account.getUsername().trim().toLowerCase(Locale.ENGLISH));
-                    return records.stream()
-                        .filter(rec -> rec.getId() == account.getId())
-                        .findFirst()
-                        .map(act -> {
-                            val encoded = encode(account);
-                            act.setSecretKey(encoded.getSecretKey());
-                            act.setScratchCodes(encoded.getScratchCodes());
-                            act.setValidationCode(encoded.getValidationCode());
-                            act.setProperties(encoded.getProperties());
-                            writeAccountsToJsonRepository(accounts);
-                            return encoded;
-                        })
-                        .orElse(null);
-                }
+                val encoded = encode(account);
+                val records = accounts.computeIfAbsent(encoded.getUsername(), _ -> new ArrayList<>());
+                records.stream()
+                    .filter(rec -> rec.getId() == encoded.getId())
+                    .findFirst()
+                    .ifPresentOrElse(act -> {
+                        act.setSecretKey(encoded.getSecretKey());
+                        act.setScratchCodes(encoded.getScratchCodes());
+                        act.setValidationCode(encoded.getValidationCode());
+                        act.setProperties(encoded.getProperties());
+                        act.setLastUsedDateTime(encoded.getLastUsedDateTime());
+                    }, () -> records.add(encoded));
+                writeAccountsToJsonRepository(accounts);
+                return encoded;
             } catch (final Exception e) {
                 LoggingUtils.error(LOGGER, e);
             }
@@ -198,11 +203,27 @@ public class JsonGoogleAuthenticatorTokenCredentialRepository extends BaseGoogle
         });
     }
 
+    /**
+     * Write the accounts to a temporary file next to the repository file and move it over the repository file
+     * in one atomic step, so that a failed or interrupted write never leaves a truncated file behind.
+     * The lock only covers this JVM; the JSON repository is not meant to be shared by several CAS nodes.
+     *
+     * @param accounts the accounts to write
+     */
     private void writeAccountsToJsonRepository(final Map<String, List<OneTimeTokenAccount>> accounts) {
         FunctionUtils.doUnchecked(_ -> {
-            if (location.getFile() != null) {
-                LOGGER.debug("Saving [{}] google authenticator accounts to JSON file at [{}]", accounts.size(), location.getFile());
-                serializer.to(location.getFile(), accounts);
+            val file = location.getFile();
+            if (file != null) {
+                val path = file.toPath();
+                val target = Files.exists(path) ? path.toRealPath() : path.toAbsolutePath();
+                LOGGER.debug("Saving [{}] google authenticator accounts to JSON file at [{}]", accounts.size(), target);
+                val temp = Files.createTempFile(target.getParent(), target.getFileName().toString(), ".tmp");
+                try {
+                    serializer.to(temp.toFile(), accounts);
+                    Files.move(temp, target, StandardCopyOption.REPLACE_EXISTING, StandardCopyOption.ATOMIC_MOVE);
+                } finally {
+                    Files.deleteIfExists(temp);
+                }
             }
         });
     }

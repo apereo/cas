@@ -327,5 +327,10 @@ authentication. See the [stateless ticket registry documentation](../ticketing/S
   stored, including in DynamoDB and JPA; DynamoDB stores encrypted scratch codes and an emptied list of scratch codes;
   saving a device no longer alters the object passed in; and every repository now counts devices rather than users and
   replaces a device saved twice instead of storing a duplicate.
+- Google Authenticator devices now record when they were last used, in every repository. Updating a device that is not
+  stored now adds it in every repository. A code used to verify a device removal or confirmation is no longer restored
+  afterwards. A device id that is not a number is refused instead of failing with a server error. The
+  [JSON repository](../mfa/GoogleAuthenticator-Authentication-Registration-JSON.html) replaces its file in one atomic step
+  and is documented as single-node.
 - [WebAuthn](../mfa/FIDO2-WebAuthn-Authentication.html) falls back to the cached FIDO metadata BLOB when downloading a fresh one
   fails at startup, for example when the FIDO metadata service rate-limits the request, instead of failing to start.

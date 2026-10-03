@@ -154,6 +154,7 @@ public class LdapGoogleAuthenticatorTokenCredentialRepository
                 ac.setScratchCodes(account.getScratchCodes());
                 ac.setSecretKey(account.getSecretKey());
                 ac.setProperties(account.getProperties());
+                ac.setLastUsedDateTime(account.getLastUsedDateTime());
             }, () -> existingAccounts.add(account));
 
             updateAccounts(existingAccounts, entry);

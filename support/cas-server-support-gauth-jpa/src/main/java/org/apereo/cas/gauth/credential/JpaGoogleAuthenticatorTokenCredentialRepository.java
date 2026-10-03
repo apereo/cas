@@ -100,21 +100,32 @@ public class JpaGoogleAuthenticatorTokenCredentialRepository extends BaseGoogleA
         return entityManager.merge(encoded);
     }
 
+    /**
+     * Update the stored account with the same id, or insert the account when none is stored,
+     * so that every backend treats an update of a missing device as an insert. The database assigns
+     * the id of an inserted device: merging an entity whose generated id is not in the table fails.
+     *
+     * @param account the account
+     * @return the encoded account as stored
+     */
     @Override
     public OneTimeTokenAccount update(final OneTimeTokenAccount account) {
         val ac = entityManager.find(JpaGoogleAuthenticatorAccount.class, account.getId());
-        if (ac != null) {
-            val encoded = encode(account);
-            ac.setValidationCode(encoded.getValidationCode());
-            ac.setScratchCodes(encoded.getScratchCodes()
-                .stream()
-                .map(code -> new BigInteger(code.toString()))
-                .collect(Collectors.toList()));
-            ac.setSecretKey(encoded.getSecretKey());
-            ac.setProperties(new ArrayList<>(encoded.getProperties()));
-            return entityManager.merge(ac);
+        if (ac == null) {
+            val created = JpaGoogleAuthenticatorAccount.from(account);
+            created.setId(0);
+            return entityManager.merge(encode(created));
         }
-        return null;
+        val encoded = encode(account);
+        ac.setValidationCode(encoded.getValidationCode());
+        ac.setScratchCodes(encoded.getScratchCodes()
+            .stream()
+            .map(code -> new BigInteger(code.toString()))
+            .collect(Collectors.toList()));
+        ac.setSecretKey(encoded.getSecretKey());
+        ac.setProperties(new ArrayList<>(encoded.getProperties()));
+        ac.setLastUsedDateTime(encoded.getLastUsedDateTime());
+        return entityManager.merge(ac);
     }
 
     @Override

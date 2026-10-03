@@ -231,6 +231,7 @@ class RestGoogleAuthenticatorTokenCredentialRepositoryTests {
             val repo = buildRepositoryInstance(props);
 
             val account = repo.create(UUID.randomUUID().toString());
+            account.setLastUsedDateTime(ZonedDateTime.now(ZoneOffset.UTC).toString());
             val entity = MAPPER.writeValueAsString(account);
 
             val capturedHeaders = new HashMap<String, String>();
@@ -248,6 +249,7 @@ class RestGoogleAuthenticatorTokenCredentialRepositoryTests {
             assertNotNull(capturedHeaders.get("scratchCodes"));
             assertEquals(String.valueOf(savedAccount.getId()), capturedHeaders.get("id"));
             assertNotNull(capturedHeaders.get("properties"));
+            assertEquals(account.getLastUsedDateTime(), capturedHeaders.get("lastUsedDateTime"));
         }
     }
 

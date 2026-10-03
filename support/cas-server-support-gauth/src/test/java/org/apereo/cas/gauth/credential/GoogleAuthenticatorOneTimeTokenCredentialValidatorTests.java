@@ -83,6 +83,7 @@ class GoogleAuthenticatorOneTimeTokenCredentialValidatorTests {
 
         val cred = new GoogleAuthenticatorTokenCredential("123456", acct.getId());
         assertNotNull(validator.validate(CoreAuthenticationTestUtils.getAuthentication(acct.getUsername()), cred));
+        assertNotNull(googleAuthenticatorAccountRegistry.get(acct.getId()).getLastUsedDateTime());
     }
 
     @Test
@@ -93,6 +94,7 @@ class GoogleAuthenticatorOneTimeTokenCredentialValidatorTests {
         val cred = new GoogleAuthenticatorTokenCredential("834251", acct.getId());
         assertNotNull(validator.validate(CoreAuthenticationTestUtils.getAuthentication(acct.getUsername()), cred));
         assertTrue(googleAuthenticatorAccountRegistry.get(acct.getId()).getScratchCodes().isEmpty());
+        assertNotNull(googleAuthenticatorAccountRegistry.get(acct.getId()).getLastUsedDateTime());
     }
 
     @Test

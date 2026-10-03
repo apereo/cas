@@ -215,6 +215,7 @@ public class RestGoogleAuthenticatorTokenCredentialRepository extends BaseGoogle
             headers.put("id", String.valueOf(account.getId()));
             headers.put("properties", String.join(",", account.getProperties()));
             Optional.ofNullable(account.getTenant()).filter(tenant -> !tenant.isBlank()).ifPresent(tenant -> headers.put("tenant", tenant));
+            Optional.ofNullable(account.getLastUsedDateTime()).filter(time -> !time.isBlank()).ifPresent(time -> headers.put("lastUsedDateTime", time));
             val codes = account.getScratchCodes()
                 .stream()
                 .map(Number::toString)

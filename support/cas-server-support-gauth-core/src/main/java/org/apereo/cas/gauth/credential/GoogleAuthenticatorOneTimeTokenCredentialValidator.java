@@ -83,8 +83,21 @@ public class GoogleAuthenticatorOneTimeTokenCredentialValidator implements
         val result = getAuthorizedAccountForToken(tokenCredential, accounts)
             .or(() -> getAuthorizedScratchCodeForToken(tokenCredential, authentication, accounts));
         return result
-            .map(acct -> new GoogleAuthenticatorToken(otp, uid))
+            .map(acct -> {
+                recordLastUsed(acct);
+                return new GoogleAuthenticatorToken(otp, uid);
+            })
             .orElse(null);
+    }
+
+    /**
+     * Record the time the device authorized a token, so the device list can show when it was last used.
+     *
+     * @param account the device that authorized the token
+     */
+    protected void recordLastUsed(final OneTimeTokenAccount account) {
+        account.setLastUsedDateTime(ZonedDateTime.now(ZoneOffset.UTC).toString());
+        credentialRepository.update(account);
     }
 
     @Override

@@ -88,6 +88,9 @@ class JsonGoogleAuthenticatorTokenCredentialRepositoryTests extends BaseOneTimeT
         assertEquals(1, repo.count());
         repo.delete(account.getUsername());
         assertTrue(repo.load().isEmpty());
+        try (val leftovers = Files.list(file.toPath().getParent())) {
+            assertTrue(leftovers.noneMatch(path -> path.getFileName().toString().startsWith(file.getName()) && path.toString().endsWith(".tmp")));
+        }
     }
 
     @Test

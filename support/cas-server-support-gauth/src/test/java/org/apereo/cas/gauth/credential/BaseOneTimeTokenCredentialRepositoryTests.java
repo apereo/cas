@@ -194,6 +194,28 @@ public abstract class BaseOneTimeTokenCredentialRepositoryTests {
         assertEquals(scratchCodes, repo.get(username, id).getScratchCodes().stream().map(Number::intValue).sorted().toList());
     }
 
+    @Test
+    void verifyUpdateInsertsMissingDeviceAndKeepsLastUsedTime() throws Throwable {
+        val username = getUsernameUnderTest();
+        val repo = getRegistry("verifyUpdateInsertsMissingDeviceAndKeepsLastUsedTime");
+        val account = repo.create(username).assignIdIfNecessary();
+        val firstUse = ZonedDateTime.now(ZoneOffset.UTC).toString();
+        account.setLastUsedDateTime(firstUse);
+        repo.update(account);
+
+        assertEquals(1, repo.count(username));
+        val inserted = repo.get(username).iterator().next();
+        assertEquals(account.getSecretKey(), inserted.getSecretKey());
+        assertEquals(firstUse, inserted.getLastUsedDateTime());
+
+        val nextUse = ZonedDateTime.now(ZoneOffset.UTC).plusMinutes(1).toString();
+        inserted.setLastUsedDateTime(nextUse);
+        repo.update(inserted);
+        assertEquals(1, repo.count(username));
+        assertEquals(nextUse, repo.get(username, inserted.getId()).getLastUsedDateTime());
+        repo.delete(username);
+    }
+
     public OneTimeTokenCredentialRepository getRegistry(final String testName) {
         return getRegistry();
     }

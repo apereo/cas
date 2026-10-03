@@ -61,6 +61,9 @@ public class DynamoDbGoogleAuthenticatorTokenCredentialRepositoryFacilitator {
         if (item.containsKey(ColumnNames.TENANT.getColumnName())) {
             account.setTenant(item.get(ColumnNames.TENANT.getColumnName()).s());
         }
+        if (item.containsKey(ColumnNames.LAST_USED_DATE_TIME.getColumnName())) {
+            account.setLastUsedDateTime(item.get(ColumnNames.LAST_USED_DATE_TIME.getColumnName()).s());
+        }
         return account;
     }
 
@@ -75,6 +78,9 @@ public class DynamoDbGoogleAuthenticatorTokenCredentialRepositoryFacilitator {
         }
         if (record.getTenant() != null && !record.getTenant().isBlank()) {
             values.put(ColumnNames.TENANT.getColumnName(), AttributeValue.builder().s(record.getTenant()).build());
+        }
+        if (record.getLastUsedDateTime() != null && !record.getLastUsedDateTime().isBlank()) {
+            values.put(ColumnNames.LAST_USED_DATE_TIME.getColumnName(), AttributeValue.builder().s(record.getLastUsedDateTime()).build());
         }
 
         if (!record.getProperties().isEmpty()) {
@@ -297,7 +303,11 @@ public class DynamoDbGoogleAuthenticatorTokenCredentialRepositoryFacilitator {
         /**
          * tenant column.
          */
-        TENANT("tenant");
+        TENANT("tenant"),
+        /**
+         * last used date/time column.
+         */
+        LAST_USED_DATE_TIME("lastUsedDateTime");
 
         private final String columnName;
     }

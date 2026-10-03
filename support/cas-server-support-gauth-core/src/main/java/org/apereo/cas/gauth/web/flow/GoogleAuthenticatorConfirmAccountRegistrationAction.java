@@ -1,6 +1,7 @@
 package org.apereo.cas.gauth.web.flow;
 
 import module java.base;
+import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.OneTimeTokenAccount;
 import org.apereo.cas.gauth.credential.GoogleAuthenticatorTokenCredential;
 import org.apereo.cas.gauth.token.GoogleAuthenticatorToken;
@@ -14,6 +15,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.BooleanUtils;
+import org.apache.commons.lang3.math.NumberUtils;
 import org.jspecify.annotations.Nullable;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
@@ -48,12 +50,10 @@ public class GoogleAuthenticatorConfirmAccountRegistrationAction extends BaseCas
     @Override
     protected @Nullable Event doExecuteInternal(final RequestContext requestContext) throws Throwable {
         val requestParameters = requestContext.getRequestParameters();
-        val accountId = requestParameters.getRequired(OneTimeTokenAccountConfirmSelectionRegistrationAction.REQUEST_PARAMETER_ACCOUNT_ID, Long.class);
+        val accountId = NumberUtils.toLong(requestParameters.getRequired(OneTimeTokenAccountConfirmSelectionRegistrationAction.REQUEST_PARAMETER_ACCOUNT_ID));
         val validate = requestParameters.getBoolean(OneTimeTokenAccountSaveRegistrationAction.REQUEST_PARAMETER_VALIDATE);
         val authentication = WebUtils.getAuthentication(requestContext);
-        val account = Optional.ofNullable(authentication)
-            .map(auth -> repository.get(auth.getPrincipal().getId(), accountId))
-            .orElseThrow(() -> new FailedLoginException("Unauthorized account registration attempt for id " + accountId));
+        val account = findAccount(authentication, accountId);
         if (BooleanUtils.isTrue(validate)) {
             val token = requestParameters.getRequired(GoogleAuthenticatorSaveRegistrationAction.REQUEST_PARAMETER_TOKEN, String.class);
             val principal = authentication.getPrincipal().getId();
@@ -62,7 +62,7 @@ public class GoogleAuthenticatorConfirmAccountRegistrationAction extends BaseCas
             val validatedToken = validator.validate(authentication, tokenCredential);
             if (validatedToken != null) {
                 LOGGER.debug("Validated OTP token [{}] successfully for [{}]", validatedToken, principal);
-                accountRegistrationVerified(requestContext, account);
+                accountRegistrationVerified(requestContext, findAccount(authentication, accountId));
                 return success();
             }
             LOGGER.warn("Authorization of OTP token [{}] has failed", token);
@@ -76,6 +76,23 @@ public class GoogleAuthenticatorConfirmAccountRegistrationAction extends BaseCas
 
         accountRegistrationUnverified(requestContext, account);
         return success();
+    }
+
+    /**
+     * Find the device among the authenticated user's own devices. An identifier that is not a number
+     * arrives here as zero, which no device carries, so it is refused like any device the user does not own.
+     * The device is looked up again once the token is validated, since validation may have changed it
+     * (a used scratch code, the last-used time), and the verification flag must not undo those changes.
+     *
+     * @param authentication the authentication, if any
+     * @param accountId      the account id
+     * @return the account
+     * @throws FailedLoginException when the user has no such device
+     */
+    private OneTimeTokenAccount findAccount(@Nullable final Authentication authentication, final long accountId) throws FailedLoginException {
+        return Optional.ofNullable(authentication)
+            .map(auth -> repository.get(auth.getPrincipal().getId(), accountId))
+            .orElseThrow(() -> new FailedLoginException("Unauthorized account registration attempt for id " + accountId));
     }
 
     protected void accountRegistrationVerified(final RequestContext requestContext, final OneTimeTokenAccount account) {
