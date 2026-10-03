@@ -3,6 +3,7 @@ package org.apereo.cas.oidc.vc.offer;
 import module java.base;
 import org.apereo.cas.ticket.Ticket;
 import org.apereo.cas.ticket.TransientSessionTicket;
+import org.apereo.cas.util.CollectionUtils;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.jspecify.annotations.Nullable;
@@ -59,7 +60,8 @@ public interface OidcVerifiableCredentialTransactionService {
 
     /**
      * Redeem a pre-authorization code, atomically, so that only one of several concurrent redemptions
-     * of the same code can succeed. OpenID4VCI 1.0 requires the code to be single use.
+     * of the same code can succeed. OpenID4VCI 1.0 requires the code to be single use. A registry that
+     * cannot delete, the stateless registry, cannot honor that: there the code is redeemable until it expires.
      *
      * @param preAuthorizationCode the pre authorization code
      * @return the consumed ticket, or null when the code is unknown, expired or already redeemed
@@ -84,5 +86,19 @@ public interface OidcVerifiableCredentialTransactionService {
             && MessageDigest.isEqual(
             expected.getBytes(StandardCharsets.UTF_8),
             providedTransactionCode.getBytes(StandardCharsets.UTF_8));
+    }
+
+    /**
+     * Credential configuration ids carried by a transaction or pre-authorization code. Read as a collection, since a
+     * compact ticket gives a single-entry list back as its only value.
+     *
+     * @param ticket the transaction or pre-authorization code
+     * @return the credential configuration ids
+     */
+    static List<String> getCredentialConfigurationIds(final TransientSessionTicket ticket) {
+        return CollectionUtils.toCollection(ticket.getProperties().get(PROPERTY_CREDENTIAL_CONFIGURATION_IDS))
+            .stream()
+            .map(Object::toString)
+            .toList();
     }
 }

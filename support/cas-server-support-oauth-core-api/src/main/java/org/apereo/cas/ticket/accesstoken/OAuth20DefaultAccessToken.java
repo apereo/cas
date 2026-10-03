@@ -41,6 +41,7 @@ public class OAuth20DefaultAccessToken extends BaseOAuth20Token implements OAuth
     private String token;
 
     @Getter
+    @Setter
     @JsonInclude(JsonInclude.Include.NON_EMPTY)
     private List<? extends Serializable> authorizationDetails;
     

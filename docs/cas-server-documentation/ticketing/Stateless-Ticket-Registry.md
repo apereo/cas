@@ -41,6 +41,8 @@ The above features do come with a number of caveats and limitations. See below.
   - [Token Exchange](../authentication/OAuth-ProtocolFlow-TokenExchange.html)
 - [OpenID Connect Protocol](../protocol/OIDC-Protocol.html) is supported with the following exceptions: 
   - [DPoP](../authentication/OIDC-Authentication-DPoP.html)
+  - [Verifiable presentations](../authentication/OIDC-Authentication-Verifiable-Credentials.html#verifiable-presentations);
+    the issuance of [verifiable credentials](../authentication/OIDC-Authentication-Verifiable-Credentials.html) is supported.
 
 <div class="alert alert-info">:information_source: <strong>What About...?</strong><p>
 Remember that not all CAS modules and features that interact with the ticket registry to create, update, fetch or remove tickets are supported.
@@ -86,7 +88,7 @@ around generated tickets or the inability to manage one's single sign-on session
 you should examine and understand the security trade-offs carefully before you decide to use this option, or any option for that matter.
 </p></div>
 
-- Tickets are not single-use. A service ticket, proxy ticket or OAuth authorization code can be validated or exchanged again and again until it expires, unlike what the CAS protocol and OAuth2 specifications require, so keep their expiration short. Expiration policies ignore usage counts and *only* enforce an expiration instant; the ticket-granting ticket expires at the end of its maximum lifetime, and any idle timeout configured for it is not enforced.
+- Tickets are not single-use. A service ticket, proxy ticket, OAuth authorization code, or a pre-authorized code or credential nonce of verifiable credentials can be validated, exchanged or used again and again until it expires, unlike what the CAS protocol and OAuth2 specifications require, so keep their expiration short. Expiration policies ignore usage counts and *only* enforce an expiration instant; the ticket-granting ticket expires at the end of its maximum lifetime, and any idle timeout configured for it is not enforced.
 - Issued tickets cannot be revoked. Logging out removes the ticket-granting cookie from the browser, but a copy of that cookie remains valid until the ticket-granting ticket expires. Likewise, revoking an OAuth access or refresh token has no effect before it expires.
 - Generated tickets are generally controlled to be no larger than `256` characters. You *might* need to adjust your servlet container of choice to allow for larger form/response header sizes. Likewise, you must ensure your applications, particularly those that deal with CAS or OpenID Connect protocols are OK with somewhat larger and longer ticket and token sizes.
 - Super long application URLs that might negatively influence the size of the generated service ticket are compressed using a pre-defined modest shortening technique, which in turn is taken into account by a specialized ticket validation strategy. For best results, and this is true for all CAS-supported protocols, it is recommended that applications use shorter URLs.

@@ -70,6 +70,13 @@ public interface OAuth20AccessToken extends OAuth20Token, ServiceAwareTicket {
     List<? extends Serializable> getAuthorizationDetails();
 
     /**
+     * Sets authorization details.
+     *
+     * @param authorizationDetails the authorization details
+     */
+    void setAuthorizationDetails(List<? extends Serializable> authorizationDetails);
+
+    /**
      * Has authorization details.
      *
      * @return true/false

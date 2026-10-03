@@ -13,6 +13,7 @@ import org.apereo.cas.support.oauth.util.OAuth20Utils;
 import org.apereo.cas.util.crypto.CertUtils;
 import org.apereo.cas.util.jwt.JsonWebTokenSigner;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
@@ -31,6 +32,7 @@ import java.security.cert.X509Certificate;
  * @since 8.1.0
  */
 @RequiredArgsConstructor
+@Slf4j
 public abstract class BaseOidcVerifiableCredentialEncoder implements OidcVerifiableCredentialEncoder {
     /**
      * Base context of the W3C Verifiable Credentials Data Model 2.0. It defines an {@code @vocab}, so the terms of
@@ -184,13 +186,21 @@ public abstract class BaseOidcVerifiableCredentialEncoder implements OidcVerifia
      * own {@code x5c}. HAIP 1.0 requires an X.509 chain on issued credentials and forbids the trust anchor in
      * it, so a trailing self-signed certificate is left out unless it is the only one; the SD-JWT VC verifier
      * then takes the issuer key from the leaf. A key without a chain produces no header, and verifiers keep
-     * resolving the key by {@code kid} through the issuer's JWKS or JWT VC issuer metadata.
+     * resolving the key by {@code kid} through the issuer's JWKS or JWT VC issuer metadata. A self-signed
+     * signing certificate is still sent, with a warning, since HAIP 1.0 requires the signer to be issued by a
+     * trust anchor and wallets following it may refuse the credential.
      *
      * @param signingKey the issuer signing key
      * @return the certificate chain, leaf first, possibly empty
      */
     protected List<X509Certificate> resolveCertificateChain(final PublicJsonWebKey signingKey) {
-        return CertUtils.withoutTrustAnchor(signingKey.getCertificateChain());
+        val certificateChain = CertUtils.withoutTrustAnchor(signingKey.getCertificateChain());
+        if (!certificateChain.isEmpty() && CertUtils.isSelfIssued(certificateChain.getFirst())) {
+            LOGGER.warn("The credential signing certificate [{}] is self-signed. HAIP 1.0 requires it to be issued by a "
+                + "trust anchor, and wallets that follow HAIP may refuse credentials signed with it.",
+                certificateChain.getFirst().getSubjectX500Principal().getName());
+        }
+        return certificateChain;
     }
 
     /**

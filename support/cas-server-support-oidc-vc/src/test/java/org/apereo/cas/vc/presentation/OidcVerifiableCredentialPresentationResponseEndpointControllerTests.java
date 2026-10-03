@@ -125,23 +125,42 @@ class OidcVerifiableCredentialPresentationResponseEndpointControllerTests extend
     }
 
     @Test
-    void verifyWalletErrorResponseSettlesTheTransaction() throws Throwable {
+    void verifyWalletErrorIsReportedOnceTheRequestExpires() throws Throwable {
         val transaction = createTransaction();
         submitError(transaction.ticket().getId(), "access_denied")
             .andExpect(status().isOk())
             .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
             .andExpect(header().string(HttpHeaders.CACHE_CONTROL, "no-store"))
             .andExpect(content().string("{}"));
-        assertNull(ticketRegistry.getTicket(transaction.ticket().getId()));
+        assertNotNull(ticketRegistry.getTicket(transaction.ticket().getId()));
+        fetchResult(transaction.ticket().getId())
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$.status").value("pending"));
 
+        ticketRegistry.deleteTicket(transaction.ticket().getId());
         fetchResult(transaction.ticket().getId())
             .andExpect(status().isOk())
             .andExpect(jsonPath("$.status").value("error"))
             .andExpect(jsonPath("$.error").value("access_denied"))
             .andExpect(jsonPath("$.error_description").value("The user declined"))
             .andExpect(jsonPath("$.claims").doesNotExist());
-
+        fetchResult(transaction.ticket().getId()).andExpect(status().isNotFound());
         assertInvalid(submitError(transaction.ticket().getId(), "access_denied"));
+    }
+
+    @Test
+    void verifyPresentationTakesPrecedenceOverWalletError() throws Throwable {
+        val transaction = createTransaction();
+        val material = issueCredential();
+        submitError(transaction.ticket().getId(), "access_denied").andExpect(status().isOk());
+
+        submitPresentation(transaction.ticket().getId(), buildVpToken(bindCredential(material, transaction.nonce())))
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$.status").value("verified"));
+        fetchResult(transaction.ticket().getId())
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$.status").value("verified"));
+        fetchResult(transaction.ticket().getId()).andExpect(status().isNotFound());
     }
 
     @Test
@@ -154,6 +173,7 @@ class OidcVerifiableCredentialPresentationResponseEndpointControllerTests extend
                 .param(OAuth20Constants.ERROR_DESCRIPTION, "d".repeat(5000))
                 .param("state", transaction.ticket().getId()))
             .andExpect(status().isOk());
+        ticketRegistry.deleteTicket(transaction.ticket().getId());
         fetchResult(transaction.ticket().getId())
             .andExpect(status().isOk())
             .andExpect(jsonPath("$.error").value("e".repeat(128)))

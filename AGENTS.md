@@ -227,7 +227,11 @@ Guidance for AI coding agents working in the Apereo CAS source tree.
   policy, and the credential endpoint combines them with authorization details.
 - OID4VP key binding algorithms live in `OidcVerifiableCredentialPresentationResponseEndpointController.KEY_BINDING_ALGORITHMS_SUPPORTED`, which also feeds `kb-jwt_alg_values`; `sd-jwt_alg_values` comes from the `dc+sd-jwt` configurations. OpenID4VP wants fully specified identifiers (`Ed25519`, not `EdDSA`); Ed25519 key binding is verified with the JDK `Signature` so both header values work. `alg_values` is not defined for `dc+sd-jwt`.
 - Issued credentials carry no `client_id` or `credential_configuration_id` (claim or header): they reveal the relying party to every verifier. CAS's verifier finds the issuer key by `kid` (an `OidcRegisteredService` key selector with `jwksKeyId` set, through `getJsonWebKeySigningKey`), the same key the JWKS publishes.
-- Issued credentials carry the signing key's `x5c` (from the keystore JWK, via `JsonWebTokenSigner.certificateChain`) without a trailing self-signed trust anchor (HAIP 1.0 section 6.1.1); the `X509_SAN_DNS` request object does the same (section 5). Both go through `CertUtils.withoutTrustAnchor`. A key with no chain sends no `x5c`; test keystores have none, so `vc-issuer-x5c.jwks` (EC P-256 leaf for `sso.example.org` + root, valid to 2126) exists for that. Under `import module java.base`, import `java.security.cert.X509Certificate` explicitly (`javax.security.cert` clashes).
+- A wallet's OID4VP error response is unauthenticated, so it never ends a request (maintainer decision): it is recorded
+  under `resolvePresentationErrorId`, apart from the verified outcome (`resolvePresentationResultId`), the request stays
+  open until it expires, and `oidcVcPresentationResult` answers `pending` while the request lives, then the error. A
+  verified outcome wins and discards the error when collected.
+- Issued credentials carry the signing key's `x5c` (from the keystore JWK, via `JsonWebTokenSigner.certificateChain`) without a trailing self-signed trust anchor (HAIP 1.0 section 6.1.1); the `X509_SAN_DNS` request object does the same (section 5). Both go through `CertUtils.withoutTrustAnchor`. A self-signed signer (`CertUtils.isSelfIssued` on the leaf) is accepted with a warning (maintainer decision), not refused. A key with no chain sends no `x5c`; test keystores have none, so `vc-issuer-x5c.jwks` (EC P-256 leaf for `sso.example.org` + root, valid to 2126) exists for that. Under `import module java.base`, import `java.security.cert.X509Certificate` explicitly (`javax.security.cert` clashes).
 - Presentation transactions carry `clientId` (and `redirectUri` for same-device); results carry `clientId` and `responseCode`. `oidcVcPresentationResult` answers `404` to any other client or to a missing/wrong `response_code`. Test transactions built by hand must set `clientId`, or results cannot be collected.
 - DCQL has no `required` per claim: optional claims become claim `id`s plus `claim_sets` (all, then required; or each alone when none is required), and the verifier requires the required claims or, when all are optional, at least one.
 - The OID4VP response URI takes `vp_token` or `error` (never both) with `state`; an error response is consumed, answered
@@ -321,6 +325,7 @@ Guidance for AI coding agents working in the Apereo CAS source tree.
 ## Environment limits
 
 - Leave no `.git/index.lock` behind. `git status` and `git diff` take that lock to refresh the index, and in a remote environment that cannot delete files the lock survives the command and blocks every subsequent git operation the maintainer runs. Read git state with `git --no-optional-locks status` / `git --no-optional-locks diff`, which never takes it, and before finishing check `ls .git/*.lock` and clear anything left. If deletion is refused, request it rather than leaving the repository wedged.
+- The remote shell has no git identity. To bring a contributor's PR onto a local branch, fetch each non-merge commit as a patch from `https://api.github.com/repos/apereo/cas/commits/<sha>` with `Accept: application/vnd.github.patch` and apply it with `git -c user.name=... -c user.email=... am --3way`, which keeps the contributor as author. Skip the "Merge branch 'master'" commits; the local branch is cut from master already.
 - Gradle may be unavailable in a sandboxed or remote review environment because the wrapper cannot download its distribution. When that happens, say the verification was not run instead of implying a test result, and fall back to static review such as `git diff --check` and targeted reading.
 
 
@@ -978,8 +983,9 @@ Guidance for AI coding agents working in the Apereo CAS source tree.
   consumed. Code that treats `delete > 0` as the single-use decision fails closed here; code that uses a deterministic
   TST id as a replay marker (`TransientSessionTicketFactory.normalizeTicketId`: DPoP, client assertions, Heimdall)
   never finds it and fails open. Callers must use the ticket `addTicket` returns: the stored id is re-encoded.
-- `TransientSessionTicketCompactor` stringifies properties, so only flat string properties survive; object-valued TSTs
-  (VC transactions) do not. It keeps the full service id: flows resume with that service
+- `TransientSessionTicketCompactor` stringifies properties, so only flat string properties survive, and a one-element list
+  comes back as a plain string (read list properties with `CollectionUtils.toCollection`); object-valued TSTs
+  (VP transactions and results) do not. It keeps the full service id: flows resume with that service
   (delegation back to the SAML2 IdP callback with `srid`/`entityId`), so `getShortenedId` is only for tickets that are
   validated against a presented service (ST, PT, PGT, OAuth).
 - Maintainer decision: the stateless registry stays 100% stateless, in the spirit of the Shibboleth IdP client-side
@@ -1007,6 +1013,14 @@ Guidance for AI coding agents working in the Apereo CAS source tree.
   `FixedInstantExpirationPolicy`. Proxy-granting and proxy tickets go through a service ticket created by the service
   ticket factory. Factories look up registered services on every expansion; expected.
   SSO-time decisions only see attribute-repository attributes; handler-only attributes (Duo, delegated claims) are gone.
+- VC issuance works statelessly (maintainer decision): `OAuth20CodeCompactor` keeps `authorizationDetails` and
+  `OAuth20AccessTokenCompactor` keeps `credentialConfigurationIds` and `authorizationDetails`, both as untyped JSON that
+  expands to maps (`OidcVerifiableCredentialEndpointController` reads `credential_configuration_id` from either form). The
+  pre-authorized code and the c_nonce are not single use there: `consumePreAuthorizationCode` returns a stateless code
+  without deleting it, and the nonce service accepts a valid stateless nonce when the delete finds nothing. Offer
+  transactions reference the stored code id, the nonce endpoint returns the stored id, the offer service reads a stateless
+  transaction back by id, and the token response customizer reads a stateless access token back for `authorization_details`.
+  VP is unsupported there. `OidcVerifiableCredentialIssuanceTests.StatelessTicketRegistryTests` covers the issuance.
 - `getTicket(id).getId()` must equal `id`, as with every other registry: callers such as `InitialFlowSetupAction` put
   `ticket.getId()` into scope and look it up again. The stateless registry sets every expanded ticket's id to the id it was
   looked up by, unless the compactor's `isTicketIdRetained()` is true (device user codes, whose id is the user code). No
@@ -1186,3 +1200,10 @@ Guidance for AI coding agents working in the Apereo CAS source tree.
   attempts reuse the running servers. `ci/tests/kafka/docker-compose.yml` sets `KAFKA_NUM_PARTITIONS=1`, so in
   a shared group a single consumer owns each topic, and a ticket never reaches the other node, which then
   rejects the TGC and clears it.
+
+## Google Authenticator Redis repository
+
+- Accounts live twice: the record at `CAS_TOKEN_ACCOUNT:<id>` and a copy as a member of the set `CAS_TOKEN_PRINCIPAL:<username>`. `get(username)`, `count(username)` and OTP validation read the set, not the record, so a delete that removes only the record leaves a device that is still listed and still validates.
+- Reads must not repair the index. A read that removes set members whose record "does not exist" acts on whatever the read saw; with `read-from` sending reads to replicas, and the record and the set on different cluster slots, a lagging replica makes a live device look orphaned and the removal on the primary is permanent. Repair belongs on the explicit `delete(id)`: when the record is missing the owner is unknown, so it scans `CAS_TOKEN_PRINCIPAL:*` in batches and removes members with that id.
+- Remove set members by the raw bytes Redis returned (`executePipelined(..., RedisSerializer.byteArray())` then `sRem`), not by re-serializing a deserialized account; the value serializer is LZ4 over JDK serialization, and a removal only matches if the bytes are identical.
+- Spring Data Redis pipelining works on Lettuce cluster connections (`LettuceClusterConnection` does not override `openPipeline`) and key `SCAN` spans all nodes, so pipelines and scans here are cluster-safe.

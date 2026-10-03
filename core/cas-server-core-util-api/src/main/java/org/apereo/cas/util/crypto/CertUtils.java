@@ -98,11 +98,20 @@ public class CertUtils {
         if (certificateChain == null || certificateChain.isEmpty()) {
             return List.of();
         }
-        val last = certificateChain.getLast();
-        val selfIssued = last.getSubjectX500Principal().equals(last.getIssuerX500Principal());
-        return certificateChain.size() > 1 && selfIssued
+        return certificateChain.size() > 1 && isSelfIssued(certificateChain.getLast())
             ? List.copyOf(certificateChain.subList(0, certificateChain.size() - 1))
             : List.copyOf(certificateChain);
+    }
+
+    /**
+     * Whether the certificate is self-issued, its subject and issuer being the same name, as a trust
+     * anchor or a self-signed certificate is.
+     *
+     * @param certificate the certificate
+     * @return true if self-issued
+     */
+    public static boolean isSelfIssued(final X509Certificate certificate) {
+        return certificate.getSubjectX500Principal().equals(certificate.getIssuerX500Principal());
     }
 
     /**

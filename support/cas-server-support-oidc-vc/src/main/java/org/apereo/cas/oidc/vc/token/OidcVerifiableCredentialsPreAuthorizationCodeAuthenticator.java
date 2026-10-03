@@ -49,7 +49,7 @@ public class OidcVerifiableCredentialsPreAuthorizationCodeAuthenticator implemen
 
                 val providedTxCode = requestParameterResolver.resolveRequestParameter(ctx.webContext(), OidcConstants.TX_CODE).orElse(null);
                 val principalId = preAuthorizationCode.getPropertyAsString("principalId");
-                val credentialConfigurationIds = preAuthorizationCode.getProperty("credentialConfigurationIds", List.class);
+                val credentialConfigurationIds = OidcVerifiableCredentialTransactionService.getCredentialConfigurationIds(preAuthorizationCode);
                 val clientId = preAuthorizationCode.getPropertyAsString(OAuth20Constants.CLIENT_ID);
 
                 if (transactionService.getObject().isTransactionCodeValid(preAuthorizationCode, providedTxCode)) {

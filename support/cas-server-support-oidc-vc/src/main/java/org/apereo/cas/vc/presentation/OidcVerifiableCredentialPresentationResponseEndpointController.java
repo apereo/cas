@@ -109,9 +109,11 @@ public class OidcVerifiableCredentialPresentationResponseEndpointController exte
     /**
      * Handle the wallet's authorization response. It carries either a {@code vp_token} or, per OpenID4VP 1.0
      * section 8.2, an authorization error response ({@code error}, optionally {@code error_description}) when
-     * the wallet declines or cannot answer. An error response still settles the transaction: it is consumed,
-     * recorded as the outcome the relying party collects, and answered with {@code 200} and a JSON object as the
-     * specification requires, so the relying party is not left polling a request that will never be answered.
+     * the wallet declines or cannot answer. An error response is answered with {@code 200} and a JSON object as the
+     * specification requires and recorded, but it does not end the request: nothing authenticates it, so anyone
+     * who saw the request's {@code state} could otherwise cancel it. The request stays open until it expires, a
+     * later valid presentation takes precedence, and the relying party only sees the error once the request has
+     * expired unanswered.
      *
      * @param vpToken          the vp token
      * @param error            the error code of an authorization error response
@@ -143,15 +145,14 @@ public class OidcVerifiableCredentialPresentationResponseEndpointController exte
             require(state.equals(transientSessionTicket.getPropertyAsString("state")), "Presentation state does not match");
 
             if (StringUtils.isNotBlank(error)) {
-                require(configurationContext.getTicketRegistry().deleteTicket(transientSessionTicket) > 0,
-                    "Presentation transaction was consumed concurrently");
                 val outcome = new LinkedHashMap<String, Object>();
                 outcome.put("status", STATUS_ERROR);
                 outcome.put(OAuth20Constants.ERROR, StringUtils.truncate(error, MAX_ERROR_LENGTH));
                 if (StringUtils.isNotBlank(errorDescription)) {
                     outcome.put(OAuth20Constants.ERROR_DESCRIPTION, StringUtils.truncate(errorDescription, MAX_ERROR_DESCRIPTION_LENGTH));
                 }
-                return buildResponse(HttpStatus.OK, recordPresentationResult(transientSessionTicket, outcome));
+                return buildResponse(HttpStatus.OK, recordPresentationResult(transientSessionTicket, outcome,
+                    resolvePresentationErrorId(transientSessionTicket.getId())));
             }
 
             val nonce = transientSessionTicket.getPropertyAsString("nonce");
@@ -164,7 +165,8 @@ public class OidcVerifiableCredentialPresentationResponseEndpointController exte
                 "Presentation transaction was consumed concurrently");
             val walletResponse = new LinkedHashMap<String, Object>();
             walletResponse.put("status", STATUS_VERIFIED);
-            walletResponse.putAll(recordPresentationResult(transientSessionTicket, Map.of("status", STATUS_VERIFIED, "claims", disclosedClaims)));
+            walletResponse.putAll(recordPresentationResult(transientSessionTicket,
+                Map.of("status", STATUS_VERIFIED, "claims", disclosedClaims), resolvePresentationResultId(transientSessionTicket.getId())));
             return buildResponse(HttpStatus.OK, walletResponse);
         } catch (final Throwable throwable) {
             LoggingUtils.warn(LOGGER, throwable);
@@ -184,17 +186,21 @@ public class OidcVerifiableCredentialPresentationResponseEndpointController exte
      * The record is bound to the client that created the request. When that client asked for a same-device
      * flow, a fresh response code is recorded with it and handed to the wallet inside the relying party's
      * {@code redirect_uri}, per OpenID4VP 1.0 section 8.2; the outcome is then only released against that code,
-     * so it reaches the browser the wallet returned to rather than whoever holds the request id.
+     * so it reaches the browser the wallet returned to rather than whoever holds the request id. A verified
+     * outcome and an error are recorded under different identifiers, so an error can never replace a verified
+     * outcome; a later error replaces an earlier one.
      *
      * @param transaction the presentation transaction
      * @param outcome     the outcome: a {@code status} of {@code verified} with the disclosed claims keyed by
      *                    credential query id, or of {@code error} with the wallet's {@code error} and
      *                    {@code error_description}
+     * @param resultId    the identifier the outcome is recorded under
      * @return the parameters to return to the wallet, carrying {@code redirect_uri} for a same-device flow
      * @throws Exception the exception
      */
     protected Map<String, Object> recordPresentationResult(final TransientSessionTicket transaction,
-                                                           final Map<String, Object> outcome) throws Exception {
+                                                           final Map<String, Object> outcome,
+                                                           final String resultId) throws Exception {
         val result = new LinkedHashMap<String, Object>(outcome);
         val clientId = transaction.getPropertyAsString(PROPERTY_CLIENT_ID);
         if (clientId != null) {
@@ -208,7 +214,8 @@ public class OidcVerifiableCredentialPresentationResponseEndpointController exte
             walletResponse.put(OAuth20Constants.REDIRECT_URI, redirectUri + "#response_code=" + responseCode);
         }
         val factory = (TransientSessionTicketFactory) configurationContext.getTicketFactory().get(TransientSessionTicket.class);
-        val resultTicket = factory.create(resolvePresentationResultId(transaction.getId()), result);
+        val resultTicket = factory.create(resultId, result);
+        configurationContext.getTicketRegistry().deleteTicket(resultId);
         configurationContext.getTicketRegistry().addTicket(resultTicket);
         return walletResponse;
     }
@@ -221,6 +228,16 @@ public class OidcVerifiableCredentialPresentationResponseEndpointController exte
      */
     public static String resolvePresentationResultId(final String requestId) {
         return TransientSessionTicketFactory.normalizeTicketId(requestId + "-result");
+    }
+
+    /**
+     * Identifier under which a wallet's error response to a presentation request is recorded.
+     *
+     * @param requestId the presentation request id
+     * @return the error ticket id
+     */
+    public static String resolvePresentationErrorId(final String requestId) {
+        return TransientSessionTicketFactory.normalizeTicketId(requestId + "-error");
     }
 
     private Map<String, Map<String, Object>> validatePresentation(final String vpToken,

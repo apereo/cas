@@ -97,9 +97,8 @@ public class AccessTokenPreAuthorizedCodeGrantRequestExtractor<T extends OAuth20
             .authentication(authentication)
             .preAuthorizationCode(preAuthorizationCode.getId())
             .build();
-        val credentialConfigurationIds = preAuthorizationCode.getProperty(
-            OidcVerifiableCredentialTransactionService.PROPERTY_CREDENTIAL_CONFIGURATION_IDS, List.class);
-        if (credentialConfigurationIds != null && !credentialConfigurationIds.isEmpty()) {
+        val credentialConfigurationIds = OidcVerifiableCredentialTransactionService.getCredentialConfigurationIds(preAuthorizationCode);
+        if (!credentialConfigurationIds.isEmpty()) {
             tokenRequestContext.getParameters().put(
                 OidcVerifiableCredentialTransactionService.PROPERTY_CREDENTIAL_CONFIGURATION_IDS, credentialConfigurationIds);
         }

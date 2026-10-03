@@ -219,7 +219,8 @@ and failures were recorded twice. Failed SAML2 ECP authentication attempts, whic
   discovery scopes, and the resulting token was refused at the credential endpoint.
 - A wallet that declines a [verifiable presentation](../authentication/OIDC-Authentication-Verifiable-Credentials.html)
   request can now say so: its error response is accepted, answered as OpenID4VP requires, and reported to the relying party
-  as an `error` outcome. Previously it was rejected and the relying party kept seeing `pending` until the request expired.
+  as an `error` outcome once the request expires. Since nothing authenticates an error response, it does not end the request,
+  and a valid presentation that arrives before the request expires takes precedence. Previously error responses were rejected.
 - Issuer metadata describes each credential format as OpenID4VCI 1.0 requires: `jwt_vc_json` and `jwt_vc_json-ld` configurations
   publish `credential_definition` instead of `vct`. JSON-LD credentials no longer reference a context document CAS never served,
   and a configuration without a scope no longer issues a `null` credential type.
@@ -243,6 +244,8 @@ and failures were recorded twice. Failed SAML2 ECP authentication attempts, whic
   as HAIP 1.0 requires, when the key in the keystore has one.
 - Signed presentation request objects (`X509_SAN_DNS`) no longer include the trust anchor in their `x5c` header,
   as HAIP 1.0 requires.
+- A self-signed credential or request object signing certificate, which HAIP 1.0 forbids, is still used but now
+  logs a warning.
 
 ### Stateless Ticket Registry
 
@@ -267,6 +270,10 @@ like distinguished names, round-trip correctly. Other changes:
   available to single sign-on decisions unless an attribute repository produces them as well.
 - The ticket-granting ticket keeps only its authentication and is created through the ticket-granting ticket factory when read.
   It expires at the end of its maximum lifetime; an [idle timeout](../ticketing/Configuring-Ticket-Expiration-Policy-TGT.html) configured for it is not enforced.
+- [Verifiable credentials](../authentication/OIDC-Authentication-Verifiable-Credentials.html) can be issued: OAuth authorization codes
+  keep their authorization details, access tokens keep their credential configurations and authorization details, and the
+  credential offer and nonce endpoints hand out the stored ids. The pre-authorized code and nonces are not single use there.
+  Verifiable presentations are not supported.
 
 The ticket-granting cookie can now be encrypted without being signed, using `cas.tgc.crypto.signing-enabled=false` (signing stays
 on while a signing key is defined). The cookie encryption is authenticated, so this keeps tamper detection and makes the cookie

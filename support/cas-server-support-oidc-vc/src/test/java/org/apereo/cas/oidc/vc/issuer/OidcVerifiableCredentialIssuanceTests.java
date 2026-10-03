@@ -2,6 +2,7 @@ package org.apereo.cas.oidc.vc.issuer;
 
 import module java.base;
 import org.apereo.cas.config.CasOidcVerifiableCredentialsAutoConfiguration;
+import org.apereo.cas.config.CasStatelessTicketRegistryAutoConfiguration;
 import org.apereo.cas.oidc.AbstractOidcTests;
 import org.apereo.cas.oidc.OidcConstants;
 import org.apereo.cas.support.oauth.OAuth20Constants;
@@ -17,12 +18,14 @@ import com.nimbusds.jose.jwk.gen.RSAKeyGenerator;
 import com.nimbusds.jwt.JWTClaimsSet;
 import com.nimbusds.jwt.SignedJWT;
 import lombok.val;
+import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.autoconfigure.ImportAutoConfiguration;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.TestPropertySource;
+import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
 import tools.jackson.databind.ObjectMapper;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
@@ -70,7 +73,7 @@ class OidcVerifiableCredentialIssuanceTests extends AbstractOidcTests {
         val registeredService = getOidcRegisteredService(UUID.randomUUID().toString());
         servicesManager.save(registeredService);
 
-        val preAuthorizedCode = createOfferAndFetchPreAuthorizedCode(
+        val preAuthorizedCode = createOfferAndFetchPreAuthorizedCode(mockMvc,
             registeredService.getClientId(), registeredService.getClientSecrets().getFirst().getValue(),
             "casuser", List.of("UniversityDegreeCredential"));
 
@@ -89,10 +92,10 @@ class OidcVerifiableCredentialIssuanceTests extends AbstractOidcTests {
         val registeredService = getOidcRegisteredService(UUID.randomUUID().toString());
         servicesManager.save(registeredService);
 
-        val transaction = createOfferTransaction(
+        val transaction = createOfferTransaction(mockMvc,
             registeredService.getClientId(), registeredService.getClientSecrets().getFirst().getValue(),
             "casuser", List.of("UniversityDegreeCredential"));
-        val preAuthorizedCode = fetchPreAuthorizedCode(transaction.transactionId());
+        val preAuthorizedCode = fetchPreAuthorizedCode(mockMvc, transaction.transactionId());
 
         mockMvc.perform(tokenExchangeRequest(registeredService.getClientId(),
                 registeredService.getClientSecrets().getFirst().getValue(), preAuthorizedCode, transaction.txCode()))
@@ -109,10 +112,10 @@ class OidcVerifiableCredentialIssuanceTests extends AbstractOidcTests {
         val registeredService = getOidcRegisteredService(UUID.randomUUID().toString());
         servicesManager.save(registeredService);
 
-        val transaction = createOfferTransaction(
+        val transaction = createOfferTransaction(mockMvc,
             registeredService.getClientId(), registeredService.getClientSecrets().getFirst().getValue(),
             "casuser", List.of("UniversityDegreeCredential"));
-        val preAuthorizedCode = fetchPreAuthorizedCode(transaction.transactionId());
+        val preAuthorizedCode = fetchPreAuthorizedCode(mockMvc, transaction.transactionId());
 
         val tokenResponseBody = mockMvc.perform(tokenExchangeRequest(registeredService.getClientId(),
                 registeredService.getClientSecrets().getFirst().getValue(), preAuthorizedCode, transaction.txCode()))
@@ -139,8 +142,69 @@ class OidcVerifiableCredentialIssuanceTests extends AbstractOidcTests {
             .andExpect(status().is4xxClientError());
     }
 
-    private OfferTransaction createOfferTransaction(final String clientId, final String clientSecret,
-                                                    final String principal, final List<String> credentialConfigurationIds) throws Exception {
+    /**
+     * The stateless registry cannot delete, so the pre-authorized code and the nonce are not single use there;
+     * everything else the issuance needs must survive being encoded into the tickets themselves.
+     */
+    @Nested
+    @ImportAutoConfiguration({
+        CasOidcVerifiableCredentialsAutoConfiguration.class,
+        CasStatelessTicketRegistryAutoConfiguration.class
+    })
+    class StatelessTicketRegistryTests extends AbstractOidcTests {
+        @Test
+        void verifyPreAuthorizedCodeIssuance() throws Exception {
+            val registeredService = getOidcRegisteredService(UUID.randomUUID().toString());
+            servicesManager.save(registeredService);
+            val clientSecret = registeredService.getClientSecrets().getFirst().getValue();
+
+            val transaction = createOfferTransaction(mockMvc, registeredService.getClientId(), clientSecret,
+                "casuser", List.of("UniversityDegreeCredential"));
+            val preAuthorizedCode = fetchPreAuthorizedCode(mockMvc, transaction.transactionId());
+
+            val tokenResponseBody = mockMvc.perform(tokenExchangeRequest(registeredService.getClientId(),
+                    clientSecret, preAuthorizedCode, transaction.txCode()))
+                .andExpect(status().isOk())
+                .andReturn().getResponse().getContentAsString();
+            val accessToken = JsonPath.read(tokenResponseBody, "$." + OAuth20Constants.ACCESS_TOKEN).toString();
+            mockMvc.perform(tokenExchangeRequest(registeredService.getClientId(),
+                    clientSecret, preAuthorizedCode, transaction.txCode()))
+                .andExpect(status().isOk());
+
+            val nonceResponseBody = mockMvc.perform(post(NONCE_URL)
+                    .with(withHttpRequestProcessor())
+                    .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andReturn().getResponse().getContentAsString();
+            val nonce = JsonPath.read(nonceResponseBody, "$." + OidcConstants.C_NONCE).toString();
+
+            val credentialRequest = new OidcVerifiableCredentialRequest();
+            credentialRequest.setCredentialConfigurationId("UniversityDegreeCredential");
+            for (var attempt = 0; attempt < 2; attempt++) {
+                credentialRequest.setProofs(buildProofs(buildProofJwt(nonce)));
+                mockMvc.perform(post(CREDENTIAL_URL)
+                        .with(withHttpRequestProcessor())
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken)
+                        .content(MAPPER.writeValueAsString(credentialRequest)))
+                    .andExpect(status().isOk())
+                    .andExpect(jsonPath("$.credentials[0].credential").exists());
+            }
+
+            credentialRequest.setCredentialConfigurationId("DriverLicenseCredential");
+            credentialRequest.setProofs(buildProofs(buildProofJwt(nonce)));
+            mockMvc.perform(post(CREDENTIAL_URL)
+                    .with(withHttpRequestProcessor())
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken)
+                    .content(MAPPER.writeValueAsString(credentialRequest)))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.error").value(OidcConstants.VC_ERROR_CREDENTIAL_REQUEST_DENIED));
+        }
+    }
+
+    private static OfferTransaction createOfferTransaction(final MockMvc mockMvc, final String clientId, final String clientSecret,
+                                                           final String principal, final List<String> credentialConfigurationIds) throws Exception {
         val requestBody = MAPPER.writeValueAsString(
             Map.of("principal", principal, "credentialConfigurationIds", credentialConfigurationIds));
         val responseBody = mockMvc.perform(post(TRANSACTIONS_URL)
@@ -156,7 +220,7 @@ class OidcVerifiableCredentialIssuanceTests extends AbstractOidcTests {
             JsonPath.read(responseBody, "$.txCode").toString());
     }
 
-    private String fetchPreAuthorizedCode(final String transactionId) throws Exception {
+    private static String fetchPreAuthorizedCode(final MockMvc mockMvc, final String transactionId) throws Exception {
         val responseBody = mockMvc.perform(get(OFFER_URL + '/' + transactionId)
                 .contentType(MediaType.APPLICATION_JSON)
                 .with(withHttpRequestProcessor()))
@@ -166,10 +230,10 @@ class OidcVerifiableCredentialIssuanceTests extends AbstractOidcTests {
             "$.grants.['urn:ietf:params:oauth:grant-type:pre-authorized_code'].pre-authorized_code").toString();
     }
 
-    private String createOfferAndFetchPreAuthorizedCode(final String clientId, final String clientSecret,
-                                                        final String principal, final List<String> credentialConfigurationIds) throws Exception {
-        val transaction = createOfferTransaction(clientId, clientSecret, principal, credentialConfigurationIds);
-        return fetchPreAuthorizedCode(transaction.transactionId());
+    private static String createOfferAndFetchPreAuthorizedCode(final MockMvc mockMvc, final String clientId, final String clientSecret,
+                                                               final String principal, final List<String> credentialConfigurationIds) throws Exception {
+        val transaction = createOfferTransaction(mockMvc, clientId, clientSecret, principal, credentialConfigurationIds);
+        return fetchPreAuthorizedCode(mockMvc, transaction.transactionId());
     }
 
     private record OfferTransaction(String transactionId, String txCode) {

@@ -60,10 +60,9 @@ public class OidcVerifiableCredentialDefaultTransactionService implements OidcVe
             val preAuthorizationCode = transientFactory.create(codeProperties);
             val transaction = transientFactory.create(properties);
 
-            transaction.putProperty("preAuthorizedCode", preAuthorizationCode.getId());
             preAuthorizationCode.putProperty("transactionId", transaction.getId());
-
-            configurationContext.getTicketRegistry().addTicket(preAuthorizationCode);
+            val storedPreAuthorizationCode = configurationContext.getTicketRegistry().addTicket(preAuthorizationCode);
+            transaction.putProperty("preAuthorizedCode", storedPreAuthorizationCode.getId());
             return configurationContext.getTicketRegistry().addTicket(transaction);
         });
     }
@@ -87,6 +86,10 @@ public class OidcVerifiableCredentialDefaultTransactionService implements OidcVe
             if (ticket == null || ticket.isExpired()) {
                 LOGGER.debug("Pre-authorized code [{}] is unknown or has expired", preAuthorizationCode);
                 return null;
+            }
+            if (ticket.isStateless()) {
+                LOGGER.debug("Pre-authorized code [{}] is stateless and stays redeemable until it expires", preAuthorizationCode);
+                return ticket;
             }
             if (configurationContext.getTicketRegistry().deleteTicket(ticket) == 0) {
                 LOGGER.debug("Pre-authorized code [{}] was redeemed", preAuthorizationCode);

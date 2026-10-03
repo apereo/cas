@@ -21,9 +21,21 @@ public class OidcVerifiableCredentialDefaultOfferService implements OidcVerifiab
     private final OidcConfigurationContext configurationContext;
     private final OidcVerifiableCredentialTransactionService transactionService;
 
+    /**
+     * Create the offer from the stored transaction. A registry that encodes tickets, the stateless registry,
+     * stores an encoded ticket rather than the transaction itself, so the transaction is read back by its id.
+     *
+     * @param clientId                   the client id
+     * @param principalId                the principal id
+     * @param credentialConfigurationIds the credential configuration ids
+     * @return the credential offer
+     */
     @Override
     public OidcVerifiableCredentialOffer create(final String clientId, final String principalId, final List<String> credentialConfigurationIds) {
-        val transaction = (TransientSessionTicket) transactionService.issue(clientId, principalId, credentialConfigurationIds);
+        val storedTransaction = Objects.requireNonNull(transactionService.issue(clientId, principalId, credentialConfigurationIds));
+        val transaction = storedTransaction instanceof final TransientSessionTicket transientTicket
+            ? transientTicket
+            : (TransientSessionTicket) transactionService.fetch(storedTransaction.getId());
         return buildCredentialOffer(Objects.requireNonNull(transaction));
     }
 
@@ -37,7 +49,7 @@ public class OidcVerifiableCredentialDefaultOfferService implements OidcVerifiab
     }
 
     private @NonNull OidcVerifiableCredentialOffer buildCredentialOffer(final TransientSessionTicket transaction) {
-        val credentialConfigurationIds = transaction.getProperty("credentialConfigurationIds", List.class);
+        val credentialConfigurationIds = OidcVerifiableCredentialTransactionService.getCredentialConfigurationIds(transaction);
         val issuer = configurationContext.getCasProperties().getAuthn().getOidc().getCore().getIssuer();
 
         val transactionCode = Objects.requireNonNull(transaction)

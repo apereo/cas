@@ -15,6 +15,7 @@ import org.apereo.cas.support.oauth.validator.token.OAuth20TokenRequestValidator
 import org.apereo.cas.support.oauth.web.endpoints.OAuth20ConfigurationContext;
 import org.apereo.cas.support.oauth.web.response.accesstoken.ext.AccessTokenGrantRequestExtractor;
 import org.apereo.cas.support.oauth.web.response.accesstoken.response.OAuth20AccessTokenResponseCustomizer;
+import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -93,7 +94,9 @@ class OidcVerifiableCredentialsOfferConfiguration {
     @Bean
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @ConditionalOnMissingBean(name = "oidcVerifiableCredentialAccessTokenResponseCustomizer")
-    public OAuth20AccessTokenResponseCustomizer oidcVerifiableCredentialAccessTokenResponseCustomizer() {
-        return new OidcVerifiableCredentialAccessTokenResponseCustomizer();
+    public OAuth20AccessTokenResponseCustomizer oidcVerifiableCredentialAccessTokenResponseCustomizer(
+        @Qualifier(TicketRegistry.BEAN_NAME)
+        final ObjectProvider<TicketRegistry> ticketRegistry) {
+        return new OidcVerifiableCredentialAccessTokenResponseCustomizer(ticketRegistry);
     }
 }

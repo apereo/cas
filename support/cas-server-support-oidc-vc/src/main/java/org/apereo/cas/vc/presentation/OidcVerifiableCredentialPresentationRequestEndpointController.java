@@ -175,8 +175,11 @@ public class OidcVerifiableCredentialPresentationRequestEndpointController exten
      * The wallet posts its presentation to the response endpoint and is told there whether it verified.
      * The relying party that created the request is not party to that exchange, so this is where it
      * learns the outcome and the claims that were disclosed to it. A request that has not been answered
-     * yet reports {@code pending}; one the wallet declined reports {@code error} with the wallet's
-     * {@code error} and {@code error_description}; one that was answered and collected, or that expired, is gone.
+     * yet reports {@code pending}. A wallet's error response does not end the request, since nothing
+     * authenticates it: the request reports {@code pending} until it expires, and only then {@code error} with
+     * the wallet's {@code error} and {@code error_description}, unless a valid presentation arrived meanwhile,
+     * which takes precedence and discards the error. An outcome that was collected, or a request that expired
+     * unanswered, is gone.
      * Only the client that created the request may collect it, and a same-device outcome also requires the
      * {@code response_code} the wallet delivered to the relying party's redirect URI; anything else is {@code 404}.
      *
@@ -202,39 +205,68 @@ public class OidcVerifiableCredentialPresentationRequestEndpointController exten
         final HttpServletResponse httpResponse) {
 
         val clientId = resolveAuthenticatedClientId(httpRequest, httpResponse);
-        val resultId = OidcVerifiableCredentialPresentationResponseEndpointController.resolvePresentationResultId(requestId);
-        val result = FunctionUtils.doAndHandle(
-            () -> configurationContext.getTicketRegistry().getTicket(resultId, TransientSessionTicket.class));
-        if (result != null && !result.isExpired()) {
-            val ticketClientId = result.getPropertyAsString(OidcVerifiableCredentialPresentationResponseEndpointController.PROPERTY_CLIENT_ID);
-            var ticketResponseCode = result.getPropertyAsString(OidcVerifiableCredentialPresentationResponseEndpointController.PROPERTY_RESPONSE_CODE);
-            if (!ticketClientId.equals(clientId) || !isResponseCodeValid(ticketResponseCode, responseCode)) {
-                LOGGER.warn("Client [{}] may not collect the outcome of presentation request [{}]", ticketClientId, requestId);
-                return ResponseEntity.notFound().build();
-            }
-            val body = new LinkedHashMap<String, Object>();
-            body.put("status", Objects.requireNonNull(result.getPropertyAsString("status")));
-            val claims = result.getProperty("claims", Map.class);
-            if (claims != null) {
-                body.put("claims", claims);
-            }
-            val error = result.getPropertyAsString(OAuth20Constants.ERROR);
-            if (error != null) {
-                body.put(OAuth20Constants.ERROR, error);
-            }
-            val errorDescription = result.getPropertyAsString(OAuth20Constants.ERROR_DESCRIPTION);
-            if (errorDescription != null) {
-                body.put(OAuth20Constants.ERROR_DESCRIPTION, errorDescription);
-            }
-            FunctionUtils.doAndHandle(_ -> configurationContext.getTicketRegistry().deleteTicket(result));
-            return ResponseEntity.ok().cacheControl(CacheControl.noStore()).body(body);
+        val errorId = OidcVerifiableCredentialPresentationResponseEndpointController.resolvePresentationErrorId(requestId);
+        val result = findPresentationOutcome(
+            OidcVerifiableCredentialPresentationResponseEndpointController.resolvePresentationResultId(requestId));
+        if (result != null) {
+            FunctionUtils.doAndHandle(_ -> configurationContext.getTicketRegistry().deleteTicket(errorId));
+            return collectPresentationOutcome(result, clientId, requestId, responseCode);
         }
         val pending = FunctionUtils.doAndHandle(
             () -> configurationContext.getTicketRegistry().getTicket(requestId, TransientSessionTicket.class));
-        return pending != null && !pending.isExpired()
-            && clientId.equals(pending.getPropertyAsString(OidcVerifiableCredentialPresentationResponseEndpointController.PROPERTY_CLIENT_ID))
-            ? ResponseEntity.ok().cacheControl(CacheControl.noStore()).body(Map.of("status", "pending"))
+        if (pending != null && !pending.isExpired()) {
+            return clientId.equals(pending.getPropertyAsString(OidcVerifiableCredentialPresentationResponseEndpointController.PROPERTY_CLIENT_ID))
+                ? ResponseEntity.ok().cacheControl(CacheControl.noStore()).body(Map.of("status", "pending"))
+                : ResponseEntity.notFound().build();
+        }
+        val error = findPresentationOutcome(errorId);
+        return error != null
+            ? collectPresentationOutcome(error, clientId, requestId, responseCode)
             : ResponseEntity.notFound().build();
+    }
+
+    private @Nullable TransientSessionTicket findPresentationOutcome(final String outcomeId) {
+        val outcome = FunctionUtils.doAndHandle(
+            () -> configurationContext.getTicketRegistry().getTicket(outcomeId, TransientSessionTicket.class));
+        return outcome != null && !outcome.isExpired() ? outcome : null;
+    }
+
+    /**
+     * Release a recorded outcome to the client that created the request, against the response code for a
+     * same-device flow, and remove it so it is delivered once.
+     *
+     * @param outcome      the recorded outcome
+     * @param clientId     the authenticated client id
+     * @param requestId    the presentation request id
+     * @param responseCode the response code presented, if any
+     * @return the response entity
+     */
+    protected ResponseEntity<Map<String, Object>> collectPresentationOutcome(final TransientSessionTicket outcome,
+                                                                              final String clientId,
+                                                                              final String requestId,
+                                                                              final @Nullable String responseCode) {
+        val ticketClientId = outcome.getPropertyAsString(OidcVerifiableCredentialPresentationResponseEndpointController.PROPERTY_CLIENT_ID);
+        val ticketResponseCode = outcome.getPropertyAsString(OidcVerifiableCredentialPresentationResponseEndpointController.PROPERTY_RESPONSE_CODE);
+        if (!clientId.equals(ticketClientId) || !isResponseCodeValid(ticketResponseCode, responseCode)) {
+            LOGGER.warn("Client [{}] may not collect the outcome of presentation request [{}]", clientId, requestId);
+            return ResponseEntity.notFound().build();
+        }
+        val body = new LinkedHashMap<String, Object>();
+        body.put("status", Objects.requireNonNull(outcome.getPropertyAsString("status")));
+        val claims = outcome.getProperty("claims", Map.class);
+        if (claims != null) {
+            body.put("claims", claims);
+        }
+        val error = outcome.getPropertyAsString(OAuth20Constants.ERROR);
+        if (error != null) {
+            body.put(OAuth20Constants.ERROR, error);
+        }
+        val errorDescription = outcome.getPropertyAsString(OAuth20Constants.ERROR_DESCRIPTION);
+        if (errorDescription != null) {
+            body.put(OAuth20Constants.ERROR_DESCRIPTION, errorDescription);
+        }
+        FunctionUtils.doAndHandle(_ -> configurationContext.getTicketRegistry().deleteTicket(outcome));
+        return ResponseEntity.ok().cacheControl(CacheControl.noStore()).body(body);
     }
 
     /**
@@ -483,6 +515,7 @@ public class OidcVerifiableCredentialPresentationRequestEndpointController exten
      * against a DNS subject alternative name in the leaf certificate. Failing here produces a
      * configuration error rather than a request object every wallet silently rejects. The chain is
      * returned without its trust anchor, which HAIP 1.0 (section 5) forbids in the request's {@code x5c}.
+     * A self-signed leaf is accepted with a warning: HAIP forbids it, but wallets outside HAIP may accept it.
      *
      * @param signingKey the signing key
      * @param dnsName    the DNS name taken from the client identifier
@@ -504,6 +537,11 @@ public class OidcVerifiableCredentialPresentationRequestEndpointController exten
         if (!matched) {
             throw new IllegalStateException(("The leaf certificate of the OpenID Connect signing key has no "
                 + "dNSName subject alternative name matching [%s]").formatted(dnsName));
+        }
+        if (CertUtils.isSelfIssued(certificateChain.getFirst())) {
+            LOGGER.warn("The request object signing certificate [{}] is self-signed. HAIP 1.0 requires it to be issued by "
+                + "a trust anchor, and wallets that follow HAIP may refuse the request.",
+                certificateChain.getFirst().getSubjectX500Principal().getName());
         }
         return CertUtils.withoutTrustAnchor(certificateChain);
     }

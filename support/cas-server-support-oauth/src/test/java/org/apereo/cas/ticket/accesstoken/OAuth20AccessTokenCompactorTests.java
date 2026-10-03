@@ -39,6 +39,11 @@ class OAuth20AccessTokenCompactorTests extends AbstractOAuth20Tests {
         servicesManager.save(registeredService);
         val token = defaultAccessTokenFactory.create(service,
             authentication, scopes, clientId, responseType, grantType);
+        token.setCredentialConfigurationIds(List.of("UniversityDegreeCredential"));
+        val authorizationDetails = List.of(new LinkedHashMap<String, Object>(Map.of("type", "openid_credential",
+            "credential_configuration_id", "UniversityDegreeCredential",
+            "credential_identifiers", List.of("UniversityDegreeCredential"))));
+        token.setAuthorizationDetails(authorizationDetails);
         assertSame(OAuth20AccessToken.class, oauth20AccessTokenTicketCompactor.getTicketType());
         val compacted = oauth20AccessTokenTicketCompactor.compact(token);
         assertNotNull(compacted);
@@ -49,6 +54,8 @@ class OAuth20AccessTokenCompactorTests extends AbstractOAuth20Tests {
 
         assertEquals(result.getResponseType(), token.getResponseType());
         assertEquals(result.getGrantType(), token.getGrantType());
+        assertEquals(List.of("UniversityDegreeCredential"), result.getCredentialConfigurationIds());
+        assertEquals(authorizationDetails, result.getAuthorizationDetails());
         assertEquals(result.getAuthentication().getPrincipal(), token.getAuthentication().getPrincipal());
         assertEquals(List.of("SAML2Client"), result.getAuthentication().getAttributes().get(CompactTicketAuthentication.CLIENT_NAME_ATTRIBUTE));
         assertEquals(token.getCreationTime().toEpochSecond(), result.getCreationTime().toEpochSecond());

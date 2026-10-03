@@ -331,6 +331,11 @@ The pre-authorized code is single use, as OpenID4VCI requires. It is redeemed an
 access token is minted, so of several concurrent exchanges of the same code exactly one succeeds and the
 rest are refused; the issuance transaction is removed along with it.
 
+The [stateless ticket registry](../ticketing/Stateless-Ticket-Registry.html) cannot delete anything, so
+there the pre-authorized code and the nonces handed out by the nonce endpoint are not single use: each
+stays usable until it expires, which departs from OpenID4VCI. Keep their expiration short. Verifiable
+presentations are not supported with that registry.
+
 ## Verifiable Presentations
 
 CAS can also act as a verifier and ask a wallet to present a credential. A relying party creates a
@@ -390,7 +395,8 @@ polls for the outcome instead.
 With `cas.authn.oidc.vc.presentation.client-identifier-prefix` set to `X509_SAN_DNS`, the request object is
 signed and served by reference. The signing key must carry an `x5c` certificate chain whose leaf names the
 issuer host as a DNS subject alternative name. The request carries that chain in its `x5c` header without a
-trailing self-signed trust anchor, as HAIP 1.0 requires; HAIP also requires the leaf not to be self-signed.
+trailing self-signed trust anchor, as HAIP 1.0 requires. HAIP also requires the leaf not to be self-signed; a
+self-signed leaf is accepted with a warning in the logs.
 
 The relying party that created the request collects the outcome from:
 
@@ -403,7 +409,10 @@ client that created the request may collect its outcome; any other client, or a 
 without its `response_code`, gets `404`. It answers
 `{"status": "pending"}` while the wallet has not responded, and once it has, `{"status": "verified"}`
 together with the claims that were disclosed, keyed by credential query id. A wallet that declines or
-cannot answer posts an error response instead, which is recorded as the outcome:
+cannot answer posts an error response instead. Nothing authenticates that response, so anyone who saw the
+request could send one; it is recorded but does not end the request. The request keeps reporting `pending`
+until it expires, a valid presentation that arrives meanwhile takes precedence, and only a request that
+expired without one reports the error:
 
 ```json
 {
@@ -521,7 +530,8 @@ issuance consistent with the issuer metadata and with what a verifier, CAS inclu
 When the issuer signing key in the keystore carries an `x5c` certificate chain, the credential carries it as
 its `x5c` header, leaf certificate first, as HAIP 1.0 requires, so a verifier can take the issuer key from the
 leaf and validate the chain against its trust list. A trailing self-signed certificate is treated as the trust
-anchor and left out, as HAIP requires; HAIP also requires the leaf not to be self-signed. A key without a chain
+anchor and left out, as HAIP requires. HAIP also requires the leaf not to be self-signed; a self-signed signing
+certificate is still sent, and CAS logs a warning since wallets that follow HAIP may refuse it. A key without a chain
 produces credentials without `x5c`.
 
 A service may narrow the algorithms used for its own credentials through its verifiable credentials

@@ -34,6 +34,8 @@ class CertUtilsTests {
         assertEquals(List.of(root), CertUtils.withoutTrustAnchor(List.of(root)));
         assertTrue(CertUtils.withoutTrustAnchor(List.of()).isEmpty());
         assertTrue(CertUtils.withoutTrustAnchor(null).isEmpty());
+        assertTrue(CertUtils.isSelfIssued(root));
+        assertFalse(CertUtils.isSelfIssued(leaf));
     }
 
     private static X509Certificate mockCertificate(final String subject, final String issuer) {
