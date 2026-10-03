@@ -130,20 +130,36 @@ class RedisGoogleAuthenticatorTokenCredentialRepositoryTests extends BaseOneTime
     }
 
     @Test
-    void verifyAlreadyDeletedDevicesWithCount() {
+    void verifyDeleteByIdWithoutAccountRecord() {
         val username = UUID.randomUUID().toString();
-        saveAlreadyDeletedDevice(username);
-        assertEquals(0, registry.count(username));
-        assertEquals(0, countPrincipalEntries(username));
-    }
+        val leftover = saveAlreadyDeletedDevice(username);
+        val remaining = registry.save(OneTimeTokenAccount.builder()
+            .username(username)
+            .secretKey("secret")
+            .validationCode(143212)
+            .scratchCodes(CollectionUtils.wrapList(1, 2, 3, 4, 5, 6))
+            .name(UUID.randomUUID().toString())
+            .build());
+        val otherUsername = UUID.randomUUID().toString();
+        val other = registry.save(OneTimeTokenAccount.builder()
+            .username(otherUsername)
+            .secretKey("secret")
+            .validationCode(143213)
+            .scratchCodes(CollectionUtils.wrapList(1, 2, 3, 4, 5, 6))
+            .name(UUID.randomUUID().toString())
+            .build());
 
-    @Test
-    void verifyAlreadyDeletedDevicesWithGet() {
-        val username = UUID.randomUUID().toString();
-        val account = saveAlreadyDeletedDevice(username);
-        assertTrue(registry.get(username).isEmpty());
-        assertEquals(0, countPrincipalEntries(username));
-        assertNull(registry.get(username, account.getId()));
+        assertEquals(2, registry.count(username));
+        assertNotNull(registry.get(username, leftover.getId()));
+        assertEquals(2, countPrincipalEntries(username));
+
+        registry.delete(leftover.getId());
+        assertEquals(1, registry.count(username));
+        assertEquals(1, countPrincipalEntries(username));
+        assertNull(registry.get(username, leftover.getId()));
+        assertNotNull(registry.get(username, remaining.getId()));
+        assertEquals(1, registry.count(otherUsername));
+        assertNotNull(registry.get(otherUsername, other.getId()));
     }
 
     @Override

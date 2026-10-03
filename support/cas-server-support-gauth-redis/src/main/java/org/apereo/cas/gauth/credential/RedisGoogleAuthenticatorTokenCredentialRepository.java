@@ -14,6 +14,7 @@ import lombok.val;
 import org.jspecify.annotations.Nullable;
 import org.springframework.data.redis.core.RedisCallback;
 import org.springframework.data.redis.core.ScanOptions;
+import org.springframework.data.redis.serializer.RedisSerializer;
 
 /**
  * This is {@link RedisGoogleAuthenticatorTokenCredentialRepository}.
@@ -25,6 +26,7 @@ import org.springframework.data.redis.core.ScanOptions;
 @ToString
 @Getter
 public class RedisGoogleAuthenticatorTokenCredentialRepository extends BaseGoogleAuthenticatorTokenCredentialRepository {
+    private static final int PRINCIPAL_KEYS_BATCH_SIZE = 500;
 
     private final CasRedisTemplates casRedisTemplates;
 
@@ -55,8 +57,11 @@ public class RedisGoogleAuthenticatorTokenCredentialRepository extends BaseGoogl
 
     @Override
     public Collection<? extends OneTimeTokenAccount> get(final String username) {
-        return getPrincipalAccounts(username)
+        val redisAccountKey = RedisCompositeKey.forPrincipals().withPrincipal(username).toKeyPattern();
+        val accounts = casRedisTemplates.getPrincipalsRedisTemplate().boundSetOps(redisAccountKey).members();
+        return Objects.requireNonNull(accounts)
             .stream()
+            .filter(Objects::nonNull)
             .map(this::decode)
             .filter(Objects::nonNull)
             .collect(Collectors.toList());
@@ -137,21 +142,33 @@ public class RedisGoogleAuthenticatorTokenCredentialRepository extends BaseGoogl
         casRedisTemplates.getPrincipalsRedisTemplate().delete(redisKeyPattern);
     }
 
+    /**
+     * Delete the account record and its entry in the owner's principal set.
+     * When the account record exists, it names the owner, so only that principal set is inspected.
+     * When the record is already gone, the entry may still be in a principal set: before this was fixed,
+     * deleting a device removed the record but left the set entry behind. The owner cannot be
+     * determined from the id alone, so all principal sets are scanned in batches and any entry with
+     * this id is removed. This repair happens only here, on an explicit delete of that id; reads never
+     * modify the principal sets.
+     *
+     * @param id the account id
+     */
     @Override
     public void delete(final long id) {
         val accountKey = RedisCompositeKey.forAccounts().withAccount(id).toKeyPattern();
         val account = casRedisTemplates.getAccountsRedisTemplate().boundValueOps(accountKey).get();
         if (account != null) {
             val principalKey = RedisCompositeKey.forPrincipals().withPrincipal(account).toKeyPattern();
-            LOGGER.trace("Removing account [{}] from principal key [{}]", id, principalKey);
-            val principalOps = casRedisTemplates.getPrincipalsRedisTemplate().boundSetOps(principalKey);
-            Optional.ofNullable(principalOps.members())
-                .stream()
-                .flatMap(Set::stream)
-                .filter(value -> value.getId() == id)
-                .forEach(principalOps::remove);
+            removePrincipalEntries(List.of(principalKey), id, List.of(accountKey));
+        } else {
+            LOGGER.debug("Account [{}] has no record; scanning principal keys for entries left behind", id);
+            val principalKeyPattern = RedisCompositeKey.forPrincipals().toKeyPattern();
+            try (val principalKeys = casRedisTemplates.getPrincipalsRedisTemplate().scan(principalKeyPattern)) {
+                principalKeys
+                    .gather(Gatherers.windowFixed(PRINCIPAL_KEYS_BATCH_SIZE))
+                    .forEach(batch -> removePrincipalEntries(batch, id, List.of()));
+            }
         }
-        casRedisTemplates.getAccountsRedisTemplate().delete(accountKey);
     }
 
     @Override
@@ -162,27 +179,53 @@ public class RedisGoogleAuthenticatorTokenCredentialRepository extends BaseGoogl
 
     @Override
     public long count(final String username) {
-        return getPrincipalAccounts(username).size();
+        val redisKeyPattern = RedisCompositeKey.forPrincipals().withPrincipal(username).toKeyPattern();
+        return Objects.requireNonNullElse(casRedisTemplates.getPrincipalsRedisTemplate().boundSetOps(redisKeyPattern).size(), 0L);
     }
 
-    protected List<OneTimeTokenAccount> getPrincipalAccounts(final String username) {
-        val principalKey = RedisCompositeKey.forPrincipals().withPrincipal(username).toKeyPattern();
-        val principalOps = casRedisTemplates.getPrincipalsRedisTemplate().boundSetOps(principalKey);
-        val principalAccounts = Optional.ofNullable(principalOps.members()).orElseGet(Set::of);
-        val remainingAccounts = new ArrayList<OneTimeTokenAccount>();
-        for (val account : principalAccounts) {
-            if (account == null) {
-                continue;
-            }
-            val accountKey = RedisCompositeKey.forAccounts().withAccount(account).toKeyPattern();
-            if (Boolean.TRUE.equals(casRedisTemplates.getAccountsRedisTemplate().hasKey(accountKey))) {
-                remainingAccounts.add(account);
-            } else {
-                LOGGER.debug("Removing account [{}] from principal key [{}] since this account no longer exists", account.getId(), principalKey);
-                principalOps.remove(account);
+    /**
+     * Remove every member of the given principal sets that belongs to the account id, and delete the given keys.
+     * This costs two round trips however many keys are given: one pipeline reads all sets, and a second
+     * removes the matching members and deletes the keys. Members are read and removed as the raw bytes Redis
+     * holds, so the removal matches the stored member exactly rather than depending on a deserialized copy
+     * serializing back to the same bytes. Removals run before the deletes, so a set entry is never left
+     * pointing at a deleted account record.
+     *
+     * @param principalKeys the principal keys whose sets are inspected
+     * @param id            the account id whose entries are removed
+     * @param keysToDelete  the keys to delete once the entries are removed
+     */
+    private void removePrincipalEntries(final List<String> principalKeys, final long id, final List<String> keysToDelete) {
+        val principalsTemplate = casRedisTemplates.getPrincipalsRedisTemplate();
+        val valueSerializer = Objects.requireNonNull(principalsTemplate.getValueSerializer());
+        val principalSets = principalsTemplate.executePipelined((RedisCallback<Object>) connection -> {
+            principalKeys.forEach(key -> connection.setCommands().sMembers(key.getBytes(StandardCharsets.UTF_8)));
+            return null;
+        }, RedisSerializer.byteArray());
+
+        val removals = new LinkedHashMap<String, byte[][]>();
+        for (var index = 0; index < principalKeys.size(); index++) {
+            if (principalSets.get(index) instanceof Collection<?> members) {
+                val matches = members.stream()
+                    .map(byte[].class::cast)
+                    .filter(member -> valueSerializer.deserialize(member) instanceof OneTimeTokenAccount account && account.getId() == id)
+                    .toArray(byte[][]::new);
+                if (matches.length > 0) {
+                    removals.put(principalKeys.get(index), matches);
+                }
             }
         }
-        return remainingAccounts;
+
+        if (!removals.isEmpty() || !keysToDelete.isEmpty()) {
+            principalsTemplate.executePipelined((RedisCallback<Object>) connection -> {
+                removals.forEach((principalKey, members) -> {
+                    LOGGER.debug("Removing account [{}] from principal key [{}]", id, principalKey);
+                    connection.setCommands().sRem(principalKey.getBytes(StandardCharsets.UTF_8), members);
+                });
+                keysToDelete.forEach(key -> connection.keyCommands().del(key.getBytes(StandardCharsets.UTF_8)));
+                return null;
+            });
+        }
     }
 
     @Data
