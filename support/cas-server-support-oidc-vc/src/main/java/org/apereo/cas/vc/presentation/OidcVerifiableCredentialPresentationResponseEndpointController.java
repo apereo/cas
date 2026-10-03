@@ -18,6 +18,7 @@ import org.apereo.cas.vc.presentation.OidcVerifiableCredentialPresentationReques
 import org.apereo.cas.vc.presentation.OidcVerifiableCredentialPresentationRequestEndpointController.OidcVerifiableCredentialPresentationRequest.CredentialRequest;
 import com.authlete.sd.Disclosure;
 import com.authlete.sd.SDJWT;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.nimbusds.jose.crypto.ECDSAVerifier;
 import com.nimbusds.jose.crypto.RSASSAVerifier;
 import com.nimbusds.jose.jwk.ECKey;
@@ -44,10 +45,13 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import tools.jackson.core.StreamReadFeature;
 import tools.jackson.core.json.JsonFactory;
 import tools.jackson.databind.ObjectMapper;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 
 /**
  * This is {@link OidcVerifiableCredentialPresentationResponseEndpointController}.
@@ -88,6 +92,16 @@ public class OidcVerifiableCredentialPresentationResponseEndpointController exte
     public static final String PROPERTY_RESPONSE_ENCRYPTION_KEY = "responseEncryptionKey";
 
     /**
+     * Transaction property holding the OpenID4VP response mode the request asked the wallet to use.
+     */
+    public static final String PROPERTY_RESPONSE_MODE = "responseMode";
+
+    /**
+     * Transaction property holding the origin of the relying party page, for a Digital Credentials API request.
+     */
+    public static final String PROPERTY_ORIGIN = "origin";
+
+    /**
      * Content encryption algorithms accepted for encrypted responses and advertised as
      * {@code encrypted_response_enc_values_supported}, as HAIP 1.0 requires.
      */
@@ -116,6 +130,8 @@ public class OidcVerifiableCredentialPresentationResponseEndpointController exte
     private static final int MAX_DISCLOSURE_DEPTH = 64;
 
     private static final int MAX_ERROR_LENGTH = 128;
+
+    private static final String DIGITAL_CREDENTIALS_AUDIENCE_PREFIX = "origin:";
 
     private static final int MAX_ERROR_DESCRIPTION_LENGTH = 1024;
 
@@ -166,7 +182,7 @@ public class OidcVerifiableCredentialPresentationResponseEndpointController exte
             require(StringUtils.isBlank(response) || StringUtils.isAllBlank(vpToken, error, errorDescription, state),
                 "An encrypted presentation response must carry its parameters inside the response");
             val authorizationResponse = StringUtils.isNotBlank(response)
-                ? decryptAuthorizationResponse(response)
+                ? decryptAuthorizationResponse(response, true)
                 : new AuthorizationResponse(vpToken, error, errorDescription, state, false);
             val presentedState = authorizationResponse.state();
             require(StringUtils.isBlank(authorizationResponse.vpToken()) != StringUtils.isBlank(authorizationResponse.error())
@@ -178,6 +194,8 @@ public class OidcVerifiableCredentialPresentationResponseEndpointController exte
             require(authorizationResponse.encrypted() || StringUtils.isNotBlank(authorizationResponse.error())
                     || transientSessionTicket.getPropertyAsString(PROPERTY_RESPONSE_ENCRYPTION_KEY) == null,
                 "Presentation transaction requires an encrypted response");
+            require(transientSessionTicket.getPropertyAsString(PROPERTY_ORIGIN) == null,
+                "A Digital Credentials API request is answered through the relying party, not the response URI");
 
             if (StringUtils.isNotBlank(authorizationResponse.error())) {
                 val outcome = new LinkedHashMap<String, Object>();
@@ -191,15 +209,7 @@ public class OidcVerifiableCredentialPresentationResponseEndpointController exte
                     resolvePresentationErrorId(transientSessionTicket.getId())));
             }
 
-            val nonce = transientSessionTicket.getPropertyAsString("nonce");
-            require(nonce != null && !nonce.isBlank(), "Presentation transaction has no nonce");
-            val credentials = (List<CredentialRequest>) transientSessionTicket.getProperty("credentials", List.class);
-            require(credentials != null && !credentials.isEmpty(), "Presentation transaction has no credential query");
-
-            val disclosedClaims = validatePresentation(Objects.requireNonNull(authorizationResponse.vpToken()),
-                credentials, nonce, transientSessionTicket);
-            require(configurationContext.getTicketRegistry().deleteTicket(transientSessionTicket) > 0,
-                "Presentation transaction was consumed concurrently");
+            val disclosedClaims = verifyPresentation(Objects.requireNonNull(authorizationResponse.vpToken()), transientSessionTicket);
             val walletResponse = new LinkedHashMap<String, Object>();
             walletResponse.put("status", STATUS_VERIFIED);
             walletResponse.putAll(recordPresentationResult(transientSessionTicket,
@@ -218,13 +228,16 @@ public class OidcVerifiableCredentialPresentationResponseEndpointController exte
      * Decrypt a {@code direct_post.jwt} response: an unsigned JWT encrypted with {@code ECDH-ES} to the
      * key generated for the request, whose response parameters are its top-level members (OpenID4VP 1.0 section 8.3).
      * The JWE {@code kid} names the request, which holds the key; the decrypted {@code state} must name the same request.
+     * A Digital Credentials API response carries no {@code state}; the request the key belongs to is then returned as the
+     * state, for the caller to match against the request it expects.
      * A {@code vp_token} given as a JSON object is handed on serialized, as it would arrive in the clear.
      *
-     * @param response the JWE
+     * @param response      the JWE
+     * @param stateRequired whether the decrypted response must carry the request's {@code state}
      * @return the authorization response
      * @throws Exception the exception
      */
-    protected AuthorizationResponse decryptAuthorizationResponse(final String response) throws Exception {
+    protected AuthorizationResponse decryptAuthorizationResponse(final String response, final boolean stateRequired) throws Exception {
         val jwe = new JsonWebEncryption();
         jwe.setCompactSerialization(response);
         val keyId = jwe.getKeyIdHeaderValue();
@@ -242,16 +255,104 @@ public class OidcVerifiableCredentialPresentationResponseEndpointController exte
         val payload = MAPPER.readValue(jwe.getPayload(), Map.class);
 
         val state = Objects.toString(payload.get(OAuth20Constants.STATE), null);
-        require(keyId.equals(state), "Encrypted presentation response does not match its request");
-        val presentation = payload.get("vp_token");
-        String vpToken = null;
-        if (presentation instanceof final String value) {
-            vpToken = value;
-        } else if (presentation != null) {
-            vpToken = MAPPER.writeValueAsString(presentation);
+        require(keyId.equals(state) || (!stateRequired && state == null), "Encrypted presentation response does not match its request");
+        return new AuthorizationResponse(toVpToken(payload.get("vp_token")), Objects.toString(payload.get(OAuth20Constants.ERROR), null),
+            Objects.toString(payload.get(OAuth20Constants.ERROR_DESCRIPTION), null), keyId, true);
+    }
+
+    /**
+     * Verify a presentation returned through the W3C Digital Credentials API (OpenID4VP 1.0 Appendix A). The wallet
+     * answers the relying party page, not CAS, so the relying party posts what the API returned, as
+     * {@code {"request_id": ..., "data": ...}}, authenticated as the client that created the request. {@code data}
+     * holds the {@code vp_token}, or for {@code dc_api.jwt} the encrypted {@code response}, which must be encrypted to
+     * this request's key. The presentation must be bound to {@code origin:} and the origin of the page. The outcome is
+     * answered directly and the request is consumed; wallet errors surface on the page and are not posted here.
+     *
+     * @param response     the Digital Credentials API response
+     * @param httpRequest  the http request
+     * @param httpResponse the http response
+     * @return the response entity
+     */
+    @PostMapping(value = {
+        '/' + OidcConstants.BASE_OIDC_URL + '/' + OidcConstants.VC_PRESENTATION_RESULT_URL,
+        "/**/" + OidcConstants.VC_PRESENTATION_RESULT_URL
+    }, consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+    @Operation(summary = "Verify a presentation returned through the Digital Credentials API")
+    public ResponseEntity<Map<String, Object>> handleDigitalCredentialsResponse(
+        @RequestBody final DigitalCredentialsResponse response,
+        final HttpServletRequest httpRequest,
+        final HttpServletResponse httpResponse) {
+        try {
+            val clientId = OidcVerifiableCredentialPresentationRequestEndpointController.resolveAuthenticatedClientId(
+                configurationContext, httpRequest, httpResponse);
+            require(StringUtils.isNotBlank(response.requestId()) && response.data() != null,
+                "Digital Credentials API response must name its request and carry the returned data");
+            val transaction = configurationContext.getTicketRegistry().getTicket(response.requestId(), TransientSessionTicket.class);
+            require(transaction != null && !transaction.isExpired(), "Presentation transaction is invalid");
+            require(clientId.equals(transaction.getPropertyAsString(PROPERTY_CLIENT_ID)), "Presentation request belongs to another client");
+            require(transaction.getPropertyAsString(PROPERTY_ORIGIN) != null,
+                "Presentation request was not made for the Digital Credentials API");
+
+            val vpToken = readDigitalCredentialsPresentation(transaction, response.data());
+            require(StringUtils.isNotBlank(vpToken), "Presentation response carries no VP token");
+            val disclosedClaims = verifyPresentation(Objects.requireNonNull(vpToken), transaction);
+            return buildResponse(HttpStatus.OK, Map.of("status", STATUS_VERIFIED, "claims", disclosedClaims));
+        } catch (final Throwable throwable) {
+            LoggingUtils.warn(LOGGER, throwable);
+            return buildResponse(HttpStatus.BAD_REQUEST,
+                OAuth20Utils.getErrorResponseBody(OAuth20Constants.INVALID_REQUEST,
+                    "The presentation response could not be validated"));
         }
-        return new AuthorizationResponse(vpToken, Objects.toString(payload.get(OAuth20Constants.ERROR), null),
-            Objects.toString(payload.get(OAuth20Constants.ERROR_DESCRIPTION), null), state, true);
+    }
+
+    /**
+     * The {@code vp_token} in the data the Digital Credentials API returned: in the clear, or for {@code dc_api.jwt}
+     * inside the encrypted {@code response}, which must be encrypted to this request's key.
+     *
+     * @param transaction the presentation transaction
+     * @param data        the returned data
+     * @return the vp token, as JSON
+     * @throws Exception the exception
+     */
+    protected @Nullable String readDigitalCredentialsPresentation(final TransientSessionTicket transaction,
+                                                                  final Map<String, Object> data) throws Exception {
+        if (transaction.getPropertyAsString(PROPERTY_RESPONSE_ENCRYPTION_KEY) == null) {
+            require(!data.containsKey("response"), "Presentation transaction did not ask for an encrypted response");
+            return toVpToken(data.get("vp_token"));
+        }
+        require(data.get("response") instanceof String && !data.containsKey("vp_token"),
+            "Presentation transaction requires an encrypted response");
+        val decrypted = decryptAuthorizationResponse(data.get("response").toString(), false);
+        require(transaction.getId().equals(decrypted.state()), "Encrypted presentation response does not match its request");
+        return decrypted.vpToken();
+    }
+
+    /**
+     * Validate the presentation against the request and consume the request, so a presentation answers it once.
+     *
+     * @param vpToken                the vp token, as JSON
+     * @param transientSessionTicket the presentation transaction
+     * @return the disclosed claims, keyed by credential query id
+     * @throws Throwable the throwable
+     */
+    protected Map<String, Map<String, Object>> verifyPresentation(final String vpToken,
+                                                                  final TransientSessionTicket transientSessionTicket) throws Throwable {
+        val nonce = transientSessionTicket.getPropertyAsString("nonce");
+        require(nonce != null && !nonce.isBlank(), "Presentation transaction has no nonce");
+        val credentials = (List<CredentialRequest>) transientSessionTicket.getProperty("credentials", List.class);
+        require(credentials != null && !credentials.isEmpty(), "Presentation transaction has no credential query");
+        val disclosedClaims = validatePresentation(vpToken, credentials, nonce, transientSessionTicket);
+        require(configurationContext.getTicketRegistry().deleteTicket(transientSessionTicket) > 0,
+            "Presentation transaction was consumed concurrently");
+        return disclosedClaims;
+    }
+
+    private static @Nullable String toVpToken(final @Nullable Object presentation) {
+        return switch (presentation) {
+            case null -> null;
+            case final String value -> value;
+            default -> MAPPER.writeValueAsString(presentation);
+        };
     }
 
     /**
@@ -393,9 +494,11 @@ public class OidcVerifiableCredentialPresentationResponseEndpointController exte
 
         val disclosedClaims = decodeDisclosures(encodedClaims, sdJwt.getDisclosures(), sdJwt.getHashAlgorithm());
         validateRequestedClaims(disclosedClaims, credentialQuery.getClaims());
-        val expectedAudience = OidcVerifiableCredentialPresentationRequestEndpointController
-            .resolveClientIdentifier(configurationContext);
-        validateKeyBindingJwt(sdJwt, holderJwk, nonce, expectedAudience, transientSessionTicket);
+        val origin = transientSessionTicket.getPropertyAsString(PROPERTY_ORIGIN);
+        final List<String> expectedAudiences = origin != null
+            ? List.of(DIGITAL_CREDENTIALS_AUDIENCE_PREFIX + origin, DIGITAL_CREDENTIALS_AUDIENCE_PREFIX + origin + '/')
+            : List.of(OidcVerifiableCredentialPresentationRequestEndpointController.resolveClientIdentifier(configurationContext));
+        validateKeyBindingJwt(sdJwt, holderJwk, nonce, expectedAudiences, transientSessionTicket);
         return disclosedClaims;
     }
 
@@ -435,7 +538,7 @@ public class OidcVerifiableCredentialPresentationResponseEndpointController exte
     private static void validateKeyBindingJwt(final SDJWT sdJwt,
                                               final JWK holderJwk,
                                               final String nonce,
-                                              final String expectedAudience,
+                                              final List<String> expectedAudiences,
                                               final TransientSessionTicket transientSessionTicket) throws Exception {
         val bindingJwt = parseSignedJwt(sdJwt.getBindingJwt());
         require(bindingJwt.getHeader().getType() != null
@@ -452,7 +555,8 @@ public class OidcVerifiableCredentialPresentationResponseEndpointController exte
         require(constantTimeEquals(sdJwt.getSDHash(), requiredStringClaim(claims, "sd_hash")),
             "Key binding SD-JWT hash does not match");
 
-        require(readAudience(claims).equals(List.of(expectedAudience)), "Key binding audience does not match");
+        val audience = readAudience(claims);
+        require(audience.size() == 1 && expectedAudiences.contains(audience.getFirst()), "Key binding audience does not match");
 
         val creationTime = transientSessionTicket.getCreationTime();
         require(creationTime != null, "Presentation transaction has no creation time");
@@ -756,5 +860,16 @@ public class OidcVerifiableCredentialPresentationResponseEndpointController exte
      */
     protected record AuthorizationResponse(@Nullable String vpToken, @Nullable String error, @Nullable String errorDescription,
                                            @Nullable String state, boolean encrypted) {
+    }
+
+    /**
+     * What the relying party posts after the Digital Credentials API returned: the request it made and the API's
+     * {@code data} object.
+     *
+     * @param requestId the presentation request id
+     * @param data      the data the Digital Credentials API returned
+     */
+    public record DigitalCredentialsResponse(@JsonProperty("request_id") @Nullable String requestId,
+                                             @JsonProperty("data") @Nullable Map<String, Object> data) implements Serializable {
     }
 }

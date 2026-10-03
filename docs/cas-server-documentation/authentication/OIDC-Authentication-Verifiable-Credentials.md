@@ -443,6 +443,60 @@ request object is signed and served by reference the same way, and the client id
 the base64url-encoded SHA-256 hash of the DER-encoded leaf certificate, so the leaf needs no particular name. The
 signing key must still carry an `x5c` certificate chain.
 
+### Digital Credentials API
+
+A relying party may instead ask the wallet through the
+[W3C Digital Credentials API](https://www.w3.org/TR/digital-credentials/), as OpenID4VP 1.0 Appendix A describes, by
+setting `"response_mode"` to `dc_api` or `dc_api.jwt` (encrypted, as the High Assurance Interoperability Profile
+requires) and naming the origin of its page in the presentation request:
+
+```json
+{
+  "credentials": [
+    {
+      "id": "university-degree",
+      "format": "dc+sd-jwt",
+      "vct_values": [
+        "https://sso.example.org/cas/oidc/oidcVcCredentialType/UniversityDegreeCredential"
+      ],
+      "claims": [
+        {
+          "path": [
+            "given_name"
+          ]
+        }
+      ]
+    }
+  ],
+  "response_mode": "dc_api.jwt",
+  "origin": "https://app.example.org"
+}
+```
+
+The origin must be accepted by the client's registered redirect URIs (as `https://app.example.org/`), since the wallet
+binds the presentation to it. CAS answers with a `digital_credentials_request` for the page to pass, as is, as a
+request to `navigator.credentials.get({digital: {requests: [...]}})`. It is unsigned (`openid4vp-v1-unsigned`) under the
+`REDIRECT_URI` client identifier prefix, and signed (`openid4vp-v1-signed`, with `expected_origins`) under an `x509`
+prefix. The page then posts what the API returned, with the request id, to the result endpoint, authenticated as the
+client that created the request:
+
+```bash
+POST /oidc/oidcVcPresentationResult
+```
+
+```json
+{
+  "request_id": "TST-1-...",
+  "data": {
+    "response": "eyJhbGciOiJFQ0RILUVTIiwi..."
+  }
+}
+```
+
+For `dc_api` the data holds the `vp_token` instead of the encrypted `response`. CAS verifies the presentation, which
+must be bound to `origin:` followed by the origin of the page, and answers with the outcome right away, as the result
+endpoint would; the request is consumed. Errors the wallet reports reach the page through the API and are not posted.
+
 The relying party that created the request collects the outcome from:
 
 ```bash

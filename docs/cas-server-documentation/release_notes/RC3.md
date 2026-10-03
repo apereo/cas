@@ -253,6 +253,9 @@ and failures were recorded twice. Failed SAML2 ECP authentication attempts, whic
   each request carries its own ephemeral `ECDH-ES` key, and presentations sent in the clear are refused.
 - Verifiable presentation requests may identify CAS with the `x509_hash` client identifier prefix, which the High Assurance
   Interoperability Profile requires of verifiers that sign requests: `cas.authn.oidc.vc.presentation.client-identifier-prefix=X509_HASH`.
+- Verifiable presentations may be requested through the [W3C Digital Credentials API](../authentication/OIDC-Authentication-Verifiable-Credentials.html#digital-credentials-api)
+  with the `dc_api` and `dc_api.jwt` response modes: CAS builds the request the relying party page passes to the browser, and
+  verifies what the page posts back, bound to the page's origin.
 
 ### Stateless Ticket Registry
 

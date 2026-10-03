@@ -90,6 +90,10 @@ public class OidcVerifiableCredentialPresentationRequestEndpointController exten
      */
     private static final String STATIC_DISCOVERY_AUDIENCE = "https://self-issued.me/v2";
 
+    private static final String DIGITAL_CREDENTIALS_PROTOCOL_UNSIGNED = "openid4vp-v1-unsigned";
+
+    private static final String DIGITAL_CREDENTIALS_PROTOCOL_SIGNED = "openid4vp-v1-signed";
+
     private static final int SUBJECT_ALTERNATIVE_NAME_DNS = 2;
 
     private static final String CLAIM_ID_PREFIX = "claim-";
@@ -334,6 +338,8 @@ public class OidcVerifiableCredentialPresentationRequestEndpointController exten
         final HttpServletResponse httpResponse) throws Throwable {
 
         val clientId = resolveAuthenticatedClientId(httpRequest, httpResponse);
+        val responseMode = resolveResponseMode(request);
+        val origin = responseMode.isDigitalCredentialsApi() ? verifyOrigin(request, clientId) : null;
         val redirectUri = request.getRedirectUri();
         if (StringUtils.isNotBlank(redirectUri)) {
             val registeredService = OAuth20Utils.getRegisteredOAuthServiceByClientId(configurationContext.getServicesManager(), clientId);
@@ -352,13 +358,28 @@ public class OidcVerifiableCredentialPresentationRequestEndpointController exten
         if (StringUtils.isNotBlank(redirectUri)) {
             transientSessionTicket.putProperty(OidcVerifiableCredentialPresentationResponseEndpointController.PROPERTY_REDIRECT_URI, redirectUri);
         }
-        if (resolveResponseMode(request) == OidcVerifiableCredentialsPresentationProperties.ResponseModes.DIRECT_POST_JWT) {
+        transientSessionTicket.putProperty(OidcVerifiableCredentialPresentationResponseEndpointController.PROPERTY_RESPONSE_MODE,
+            responseMode.getValue());
+        if (origin != null) {
+            transientSessionTicket.putProperty(OidcVerifiableCredentialPresentationResponseEndpointController.PROPERTY_ORIGIN, origin);
+        }
+        if (responseMode.isEncrypted()) {
             transientSessionTicket.putProperty(OidcVerifiableCredentialPresentationResponseEndpointController.PROPERTY_RESPONSE_ENCRYPTION_KEY,
                 generateResponseEncryptionKey(transientSessionTicket.getId()));
         }
         val addedTicket = (TransientSessionTicket) configurationContext.getTicketRegistry().addTicket(transientSessionTicket);
 
         val parameters = buildAuthorizationRequestParameters(addedTicket);
+        if (responseMode.isDigitalCredentialsApi()) {
+            return ResponseEntity.ok(
+                OidcVerifiableCredentialPresentationResponse
+                    .builder()
+                    .requestId(addedTicket.getId())
+                    .digitalCredentialsRequest(buildDigitalCredentialsRequest(parameters, addedTicket))
+                    .expiresIn(transientSessionTicket.getExpirationPolicy().getTimeToLive())
+                    .build()
+            );
+        }
         final String requestUri = isRequestObjectSigned()
             ? configurationContext.getCasProperties().getAuthn().getOidc().getCore().getIssuer()
               + '/' + OidcConstants.VC_PRESENTATION_REQUEST_URL + '/' + addedTicket.getId()
@@ -382,8 +403,8 @@ public class OidcVerifiableCredentialPresentationRequestEndpointController exten
 
     /**
      * Response mode for a request: the one the relying party names in the request, or else the configured one. The
-     * configured mode is a floor: a request may ask for an encrypted response where the deployment does not require
-     * one, but cannot drop encryption where it does, and an unknown mode is refused.
+     * configured mode is a floor for encryption: a request may ask for an encrypted response where the deployment does
+     * not require one, but cannot drop encryption where it does, and an unknown mode is refused.
      *
      * @param request the presentation request
      * @return the response mode
@@ -398,11 +419,55 @@ public class OidcVerifiableCredentialPresentationRequestEndpointController exten
             .filter(mode -> mode.getValue().equals(request.getResponseMode()))
             .findFirst()
             .orElseThrow(() -> new IllegalArgumentException("Response mode %s is not supported".formatted(request.getResponseMode())));
-        if (configured == OidcVerifiableCredentialsPresentationProperties.ResponseModes.DIRECT_POST_JWT
-            && requested != OidcVerifiableCredentialsPresentationProperties.ResponseModes.DIRECT_POST_JWT) {
+        if (configured.isEncrypted() && !requested.isEncrypted()) {
             throw new IllegalArgumentException("Response mode %s is not allowed: responses must be encrypted".formatted(requested.getValue()));
         }
         return requested;
+    }
+
+    /**
+     * Origin of the relying party page that calls the Digital Credentials API. The wallet binds the presentation to it,
+     * so CAS only accepts an origin the client's registered redirect URIs accept (as {@code origin/}): otherwise a
+     * client could have CAS verify presentations bound to someone else's site. A same-device {@code redirect_uri} has
+     * no meaning here, since the answer returns to the page.
+     *
+     * @param request  the presentation request
+     * @param clientId the authenticated client id
+     * @return the origin, without a trailing slash
+     */
+    protected String verifyOrigin(final OidcVerifiableCredentialPresentationRequest request, final String clientId) {
+        val origin = StringUtils.removeEnd(StringUtils.trimToEmpty(request.getOrigin()), "/");
+        val uri = StringUtils.isBlank(origin) ? null : URI.create(origin);
+        if (uri == null || uri.getScheme() == null || uri.getHost() == null || StringUtils.isNotBlank(uri.getRawPath())
+            || uri.getRawQuery() != null || uri.getRawFragment() != null || uri.getRawUserInfo() != null) {
+            throw new IllegalArgumentException("The Digital Credentials API needs the origin of the relying party page");
+        }
+        if (StringUtils.isNotBlank(request.getRedirectUri())) {
+            throw new IllegalArgumentException("A redirect URI cannot be used with the Digital Credentials API");
+        }
+        val registeredService = OAuth20Utils.getRegisteredOAuthServiceByClientId(configurationContext.getServicesManager(), clientId);
+        if (registeredService == null || !OAuth20Utils.checkCallbackValid(registeredService, origin + '/')) {
+            throw new IllegalArgumentException("Origin %s is not registered for client %s".formatted(origin, clientId));
+        }
+        return origin;
+    }
+
+    /**
+     * Request the relying party page passes to {@code navigator.credentials.get()} (OpenID4VP 1.0 Appendix A). An
+     * unsigned request carries the parameters themselves; with an {@code x509} client identifier prefix the request is
+     * signed and carried as {@code request}.
+     *
+     * @param parameters             the authorization request parameters
+     * @param transientSessionTicket the presentation transaction
+     * @return the protocol and data of the Digital Credentials API request
+     * @throws Throwable the throwable
+     */
+    protected Map<String, Object> buildDigitalCredentialsRequest(final Map<String, Object> parameters,
+                                                                 final TransientSessionTicket transientSessionTicket) throws Throwable {
+        return isRequestObjectSigned()
+            ? Map.of("protocol", DIGITAL_CREDENTIALS_PROTOCOL_SIGNED,
+                "data", Map.of("request", signAuthorizationRequest(parameters, transientSessionTicket)))
+            : Map.of("protocol", DIGITAL_CREDENTIALS_PROTOCOL_UNSIGNED, "data", parameters);
     }
 
     /**
@@ -430,7 +495,9 @@ public class OidcVerifiableCredentialPresentationRequestEndpointController exten
     /**
      * Build the OpenID4VP authorization request parameters for a presentation transaction.
      * The same parameters are carried by value in the deep link or signed into a request
-     * object, so that both delivery modes describe an identical request.
+     * object, so that both delivery modes describe an identical request. A Digital Credentials API request
+     * (OpenID4VP 1.0 Appendix A) carries no {@code response_uri} or {@code state}, since the answer returns to the
+     * relying party page, and no {@code client_id} unless it is signed, in which case it lists {@code expected_origins}.
      *
      * @param transientSessionTicket the presentation transaction
      * @return the authorization request parameters
@@ -468,14 +535,26 @@ public class OidcVerifiableCredentialPresentationRequestEndpointController exten
             .toList();
 
         val parameters = new LinkedHashMap<String, Object>();
-        parameters.put(OAuth20Constants.CLIENT_ID, resolveClientIdentifier(configurationContext));
+        final String responseMode = Objects.requireNonNullElseGet(
+            transientSessionTicket.getPropertyAsString(OidcVerifiableCredentialPresentationResponseEndpointController.PROPERTY_RESPONSE_MODE),
+            () -> StringUtils.isNotBlank(responseEncryptionKey)
+                ? OidcVerifiableCredentialsPresentationProperties.ResponseModes.DIRECT_POST_JWT.getValue()
+                : OidcVerifiableCredentialsPresentationProperties.ResponseModes.DIRECT_POST.getValue());
+        val origin = transientSessionTicket.getPropertyAsString(OidcVerifiableCredentialPresentationResponseEndpointController.PROPERTY_ORIGIN);
+        if (origin == null || isRequestObjectSigned()) {
+            parameters.put(OAuth20Constants.CLIENT_ID, resolveClientIdentifier(configurationContext));
+        }
         parameters.put(OAuth20Constants.RESPONSE_TYPE, "vp_token");
-        parameters.put(OAuth20Constants.RESPONSE_MODE, StringUtils.isNotBlank(responseEncryptionKey)
-            ? OidcVerifiableCredentialsPresentationProperties.ResponseModes.DIRECT_POST_JWT.getValue()
-            : OidcVerifiableCredentialsPresentationProperties.ResponseModes.DIRECT_POST.getValue());
-        parameters.put("response_uri", resolveResponseUri(casProperties));
+        parameters.put(OAuth20Constants.RESPONSE_MODE, responseMode);
+        if (origin == null) {
+            parameters.put("response_uri", resolveResponseUri(casProperties));
+        } else if (isRequestObjectSigned()) {
+            parameters.put("expected_origins", List.of(origin));
+        }
         parameters.put(OAuth20Constants.NONCE, Objects.requireNonNull(transientSessionTicket.getPropertyAsString("nonce")));
-        parameters.put(OAuth20Constants.STATE, Objects.requireNonNull(transientSessionTicket.getPropertyAsString("state")));
+        if (origin == null) {
+            parameters.put(OAuth20Constants.STATE, Objects.requireNonNull(transientSessionTicket.getPropertyAsString("state")));
+        }
         parameters.put("dcql_query", MAPPER.convertValue(Map.of("credentials", dcqlCredentials), Map.class));
         parameters.put("client_metadata", MAPPER.convertValue(clientMetadata, Map.class));
         return parameters;
@@ -554,6 +633,19 @@ public class OidcVerifiableCredentialPresentationRequestEndpointController exten
      * @return the client id
      */
     protected String resolveAuthenticatedClientId(final HttpServletRequest httpRequest, final HttpServletResponse httpResponse) {
+        return resolveAuthenticatedClientId(configurationContext, httpRequest, httpResponse);
+    }
+
+    /**
+     * The client that authenticated to call a relying party endpoint of the verifier.
+     *
+     * @param configurationContext the configuration context
+     * @param httpRequest          the http request
+     * @param httpResponse         the http response
+     * @return the client id
+     */
+    public static String resolveAuthenticatedClientId(final OidcConfigurationContext configurationContext,
+                                                      final HttpServletRequest httpRequest, final HttpServletResponse httpResponse) {
         val profile = OAuth20Utils.getAuthenticatedUserProfile(new JEEContext(httpRequest, httpResponse),
             configurationContext.getSessionStore());
         val clientId = profile.getAttribute(OAuth20Constants.CLIENT_ID);
@@ -701,6 +793,13 @@ public class OidcVerifiableCredentialPresentationRequestEndpointController exten
         @JsonProperty("response_mode")
         private String responseMode;
 
+        /**
+         * Origin of the relying party page that calls the Digital Credentials API, required for {@code dc_api} and
+         * {@code dc_api.jwt}. The client's registered redirect URIs must accept it.
+         */
+        @JsonProperty("origin")
+        private String origin;
+
         @JsonInclude(JsonInclude.Include.NON_EMPTY)
         @Getter
         @Setter
@@ -781,6 +880,13 @@ public class OidcVerifiableCredentialPresentationRequestEndpointController exten
          */
         @JsonProperty("authorization_request")
         private String authorizationRequest;
+
+        /**
+         * Request to pass to {@code navigator.credentials.get()} as a digital credential request, with its
+         * {@code protocol} and {@code data}, for the Digital Credentials API response modes.
+         */
+        @JsonProperty("digital_credentials_request")
+        private Map<String, Object> digitalCredentialsRequest;
 
         /**
          * Lifetime of the request in seconds.

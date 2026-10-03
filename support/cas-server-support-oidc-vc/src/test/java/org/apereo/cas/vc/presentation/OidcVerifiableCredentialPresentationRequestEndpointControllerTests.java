@@ -151,6 +151,44 @@ class OidcVerifiableCredentialPresentationRequestEndpointControllerTests {
         }
 
         @Test
+        void verifyDigitalCredentialsApiRequest() throws Throwable {
+            val request = buildPresentationRequest();
+            request.setResponseMode("dc_api.jwt");
+            request.setOrigin("https://oauth.example.org/");
+            val response = createPresentationRequest(request);
+            assertNull(response.getAuthorizationRequest());
+            assertNull(response.getRequestUri());
+            val digitalCredentialsRequest = response.getDigitalCredentialsRequest();
+            assertEquals("openid4vp-v1-unsigned", digitalCredentialsRequest.get("protocol"));
+            val data = assertInstanceOf(Map.class, digitalCredentialsRequest.get("data"));
+            assertEquals("dc_api.jwt", data.get(OAuth20Constants.RESPONSE_MODE));
+            assertEquals("vp_token", data.get(OAuth20Constants.RESPONSE_TYPE));
+            assertNotNull(data.get(OAuth20Constants.NONCE));
+            assertNotNull(data.get("dcql_query"));
+            assertFalse(data.containsKey(OAuth20Constants.CLIENT_ID));
+            assertFalse(data.containsKey("response_uri"));
+            assertFalse(data.containsKey(OAuth20Constants.STATE));
+            assertFalse(data.containsKey("expected_origins"));
+            val clientMetadata = assertInstanceOf(Map.class, data.get("client_metadata"));
+            assertNotNull(clientMetadata.get("jwks"));
+
+            val ticket = ticketRegistry.getTicket(response.getRequestId(), TransientSessionTicket.class);
+            assertNotNull(ticket);
+            assertEquals("https://oauth.example.org",
+                ticket.getPropertyAsString(OidcVerifiableCredentialPresentationResponseEndpointController.PROPERTY_ORIGIN));
+
+            request.setOrigin("https://attacker.example.com");
+            performPresentationRequest(request).andExpect(status().isBadRequest());
+            request.setOrigin("https://oauth.example.org/path");
+            performPresentationRequest(request).andExpect(status().isBadRequest());
+            request.setOrigin(null);
+            performPresentationRequest(request).andExpect(status().isBadRequest());
+            request.setOrigin("https://oauth.example.org");
+            request.setRedirectUri("https://oauth.example.org/callback");
+            performPresentationRequest(request).andExpect(status().isBadRequest());
+        }
+
+        @Test
         void verifyRequestMayAskForAnEncryptedResponse() throws Throwable {
             val encryptedRequest = buildPresentationRequest();
             encryptedRequest.setResponseMode("direct_post.jwt");
@@ -431,6 +469,27 @@ class OidcVerifiableCredentialPresentationRequestEndpointControllerTests {
             assertEquals(1, chain.size());
             assertEquals(leaf, X509CertUtils.parse(chain.getFirst().decode()));
             assertTrue(requestObject.verify(new ECDSAVerifier((ECPublicKey) leaf.getPublicKey())));
+        }
+
+        @Test
+        void verifySignedDigitalCredentialsApiRequest() throws Throwable {
+            val leaf = assertInstanceOf(ECKey.class, JWKSet.load(new ClassPathResource("vc-issuer-x5c.jwks").getInputStream())
+                .getKeyByKeyId("vc-issuer")).getParsedX509CertChain().getFirst();
+            val request = buildPresentationRequest();
+            request.setResponseMode("dc_api");
+            request.setOrigin("https://oauth.example.org");
+            val digitalCredentialsRequest = createPresentationRequest(request).getDigitalCredentialsRequest();
+            assertEquals("openid4vp-v1-signed", digitalCredentialsRequest.get("protocol"));
+            val data = assertInstanceOf(Map.class, digitalCredentialsRequest.get("data"));
+            val requestObject = SignedJWT.parse(data.get("request").toString());
+            assertEquals("oauth-authz-req+jwt", requestObject.getHeader().getType().toString());
+            assertTrue(requestObject.verify(new ECDSAVerifier((ECPublicKey) leaf.getPublicKey())));
+            val claims = requestObject.getJWTClaimsSet();
+            assertEquals("x509_hash:" + X509CertUtils.computeSHA256Thumbprint(leaf), claims.getStringClaim(OAuth20Constants.CLIENT_ID));
+            assertEquals(List.of("https://oauth.example.org"), claims.getStringListClaim("expected_origins"));
+            assertEquals("dc_api", claims.getStringClaim(OAuth20Constants.RESPONSE_MODE));
+            assertNull(claims.getClaim("response_uri"));
+            assertNull(claims.getClaim(OAuth20Constants.STATE));
         }
     }
 }

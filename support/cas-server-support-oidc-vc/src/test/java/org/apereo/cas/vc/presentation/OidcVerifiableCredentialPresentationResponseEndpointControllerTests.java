@@ -80,6 +80,10 @@ class OidcVerifiableCredentialPresentationResponseEndpointControllerTests extend
 
     private static final String CREDENTIAL_CLIENT_ID = "presentation-client";
 
+    private static final String DIGITAL_CREDENTIALS_ORIGIN = "https://wallet.example.org";
+
+    private static final String DIGITAL_CREDENTIALS_AUDIENCE = "origin:" + DIGITAL_CREDENTIALS_ORIGIN;
+
     private OidcRegisteredService credentialClient;
 
     @BeforeEach
@@ -236,6 +240,45 @@ class OidcVerifiableCredentialPresentationResponseEndpointControllerTests extend
             .andExpect(status().isOk())
             .andExpect(jsonPath("$.status").value("error"))
             .andExpect(jsonPath("$.error").value("access_denied"));
+    }
+
+    @Test
+    void verifyDigitalCredentialsApiPresentation() throws Throwable {
+        val transaction = createDigitalCredentialsTransaction("dc_api");
+        val material = issueCredential();
+        val vpToken = buildVpToken(bindCredential(material, transaction.nonce(), DIGITAL_CREDENTIALS_AUDIENCE));
+
+        assertInvalid(submitPresentation(transaction.ticket().getId(), vpToken));
+        assertInvalid(submitDigitalCredentialsResponse(transaction.ticket().getId(),
+            Map.of("vp_token", MAPPER.readValue(buildVpToken(bindCredential(material, transaction.nonce())), Map.class)), credentialClient));
+        assertInvalid(submitDigitalCredentialsResponse(transaction.ticket().getId(),
+            Map.of("vp_token", MAPPER.readValue(vpToken, Map.class)), getOidcRegisteredService()));
+        assertNotNull(ticketRegistry.getTicket(transaction.ticket().getId()));
+
+        submitDigitalCredentialsResponse(transaction.ticket().getId(), Map.of("vp_token", MAPPER.readValue(vpToken, Map.class)), credentialClient)
+            .andExpect(status().isOk())
+            .andExpect(header().string(HttpHeaders.CACHE_CONTROL, "no-store"))
+            .andExpect(jsonPath("$.status").value("verified"))
+            .andExpect(jsonPath("$.claims." + CREDENTIAL_QUERY_ID + ".given_name").value("Alice"));
+        assertNull(ticketRegistry.getTicket(transaction.ticket().getId()));
+        assertInvalid(submitDigitalCredentialsResponse(transaction.ticket().getId(),
+            Map.of("vp_token", MAPPER.readValue(vpToken, Map.class)), credentialClient));
+    }
+
+    @Test
+    void verifyEncryptedDigitalCredentialsApiPresentation() throws Throwable {
+        val transaction = createDigitalCredentialsTransaction("dc_api.jwt");
+        val key = requireEncryptedResponse(transaction);
+        val vpToken = MAPPER.readValue(buildVpToken(bindCredential(issueCredential(), transaction.nonce(), DIGITAL_CREDENTIALS_AUDIENCE)), Map.class);
+
+        assertInvalid(submitDigitalCredentialsResponse(transaction.ticket().getId(), Map.of("vp_token", vpToken), credentialClient));
+        assertInvalid(submitEncryptedResponse(encryptResponse(key, ContentEncryptionAlgorithmIdentifiers.AES_256_GCM,
+            Map.of("vp_token", vpToken, OAuth20Constants.STATE, transaction.ticket().getId()))));
+
+        submitDigitalCredentialsResponse(transaction.ticket().getId(), Map.of("response",
+                encryptResponse(key, ContentEncryptionAlgorithmIdentifiers.AES_256_GCM, Map.of("vp_token", vpToken))), credentialClient)
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$.status").value("verified"));
     }
 
     @Test
@@ -505,6 +548,15 @@ class OidcVerifiableCredentialPresentationResponseEndpointControllerTests extend
         return bindCredential(material, nonce, JWSAlgorithm.ES256, new ECDSASigner(material.holderKey()));
     }
 
+    private String bindCredential(final CredentialMaterial material, final String nonce, final String audience) throws Exception {
+        val header = new JWSHeader.Builder(JWSAlgorithm.ES256)
+            .type(new JOSEObjectType("kb+jwt"))
+            .build();
+        val bindingJwt = new SignedJWT(header, keyBindingClaims(material, nonce, audience));
+        bindingJwt.sign(new ECDSASigner(material.holderKey()));
+        return new SDJWT(material.credentialJwt(), material.disclosures(), bindingJwt.serialize()).toString();
+    }
+
     private String bindCredential(final CredentialMaterial material, final String nonce,
                                   final JWSAlgorithm algorithm, final JWSSigner signer) throws Exception {
         val header = new JWSHeader.Builder(algorithm)
@@ -528,10 +580,14 @@ class OidcVerifiableCredentialPresentationResponseEndpointControllerTests extend
     }
 
     private JWTClaimsSet keyBindingClaims(final CredentialMaterial material, final String nonce) {
+        return keyBindingClaims(material, nonce, verifierClientId());
+    }
+
+    private JWTClaimsSet keyBindingClaims(final CredentialMaterial material, final String nonce, final String audience) {
         val unboundSdJwt = new SDJWT(material.credentialJwt(), material.disclosures());
         return new JWTClaimsSet.Builder()
             .issueTime(new Date())
-            .audience(verifierClientId())
+            .audience(audience)
             .claim("nonce", nonce)
             .claim("sd_hash", unboundSdJwt.getSDHash())
             .build();
@@ -573,6 +629,24 @@ class OidcVerifiableCredentialPresentationResponseEndpointControllerTests extend
         jwe.setKey(key.getPublicKey());
         jwe.setPayload(MAPPER.writeValueAsString(parameters));
         return jwe.getCompactSerialization();
+    }
+
+    private PresentationTransaction createDigitalCredentialsTransaction(final String responseMode) throws Throwable {
+        val transaction = createTransaction();
+        transaction.ticket().putProperty(OidcVerifiableCredentialPresentationResponseEndpointController.PROPERTY_RESPONSE_MODE, responseMode);
+        transaction.ticket().putProperty(OidcVerifiableCredentialPresentationResponseEndpointController.PROPERTY_ORIGIN, DIGITAL_CREDENTIALS_ORIGIN);
+        ticketRegistry.updateTicket(transaction.ticket());
+        return transaction;
+    }
+
+    private ResultActions submitDigitalCredentialsResponse(final String requestId, final Map<String, Object> data,
+                                                           final OidcRegisteredService client) throws Exception {
+        return mockMvc.perform(post(PRESENTATION_RESULT_ENDPOINT_URL)
+            .with(withHttpRequestProcessor())
+            .param(OAuth20Constants.CLIENT_ID, client.getClientId())
+            .param(OAuth20Constants.CLIENT_SECRET, client.getClientSecrets().getFirst().getValue())
+            .contentType(MediaType.APPLICATION_JSON)
+            .content(MAPPER.writeValueAsString(Map.of("request_id", requestId, "data", data))));
     }
 
     private ResultActions submitEncryptedResponse(final String response) throws Exception {

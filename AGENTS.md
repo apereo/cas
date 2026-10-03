@@ -230,6 +230,15 @@ Guidance for AI coding agents working in the Apereo CAS source tree.
 - Authorization details follow RFC 9396 through refresh: `OAuth20Utils.getAuthorizationDetails(token)` reads them from the
   code or refresh token being exchanged, the access token factory and `OAuth20DefaultTokenGenerator.generateRefreshToken`
   use it, and the code, access token and refresh token compactors keep them through `OAuth20Utils.to/fromCompactAuthorizationDetails`.
+- Digital Credentials API (maintainer decisions): the RP page drives `navigator.credentials.get()`; the presentation request
+  carries `response_mode` `dc_api`/`dc_api.jwt` and `origin` (accepted when `checkCallbackValid(service, origin + "/")`); the
+  answer is `digital_credentials_request` (unsigned under `redirect_uri`, signed with `expected_origins` under an x509 prefix);
+  the RP posts `{request_id, data}` to `POST oidcVcPresentationResult` (client-authenticated by the interceptor's path match).
+  The key binding audience is always `origin:<origin>` (with or without a trailing slash); DC transactions carry `PROPERTY_ORIGIN`
+  and are refused at the response URI. Encrypted DC responses carry no `state`; the JWE `kid` must be the request id.
+- `x509_hash` client identifier (`ClientIdentifierPrefixes.X509_HASH`): `OAuth20Utils.computeCertificateThumbprint` of the
+  OIDC signing key's leaf certificate. `resolveClientIdentifier(OidcConfigurationContext)` serves both the request and the
+  key binding audience check; both x509 prefixes need the key's chain (`resolveCertificateChain`), only `x509_san_dns` a SAN.
 - `direct_post.jwt` (opt-in `response-mode=DIRECT_POST_JWT`, maintainer decision): the request transaction keeps a
   per-request P-256 `ECDH-ES` private JWK (`PROPERTY_RESPONSE_ENCRYPTION_KEY`) whose `kid` is the request id, so the
   response endpoint finds the request from the JWE header before decrypting; the decrypted `state` must equal the `kid`.
@@ -1214,6 +1223,15 @@ Guidance for AI coding agents working in the Apereo CAS source tree.
   attempts reuse the running servers. `ci/tests/kafka/docker-compose.yml` sets `KAFKA_NUM_PARTITIONS=1`, so in
   a shared group a single consumer owns each topic, and a ticket never reaches the other node, which then
   rejects the TGC and clears it.
+
+## Google Authenticator credential repositories (all backends)
+
+- Review every backend against the same contract, with crypto on: `cas.authn.mfa.gauth.crypto.enabled` defaults to `true`, but every puppeteer scenario and the repository tests turn it off, so undecoded returns and double encryption never show up in CI.
+- A device delete must be scoped to its owner. WebAuthn, YubiKey and Duo device managers delete by username and id; `OneTimeTokenCredentialDeviceManager` and `GoogleAuthenticatorDeleteAccountAction` delete by id alone, and ids are guessable (JPA sequence; `currentTimeMillis` before 42bcde1).
+- `BaseOneTimeTokenCredentialRepository.encode()` mutates its argument. Never pass an object you will keep or save again; JPA `get(id)` and InMemory `get(id)` return stored, undecoded instances, and updating them double-encrypts.
+- `count()` means devices in Redis, JPA, Mongo and DynamoDB, but users in InMemory, JSON and LDAP; check which a caller assumes.
+- A repository read that fails must not look like "no devices": `OneTimeTokenAccountCheckRegistrationAction` sends empty or null results to enrollment (REST returns null, JSON returns empty on errors).
+- When testing deletes or updates, store devices for two users and two devices per user, and assert the others survive; single-user tests hid the DynamoDB `GE` filter and the LDAP update bug.
 
 ## Google Authenticator Redis repository
 

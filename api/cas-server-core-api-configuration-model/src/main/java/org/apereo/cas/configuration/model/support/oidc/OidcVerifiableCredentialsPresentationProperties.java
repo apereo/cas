@@ -44,6 +44,9 @@ public class OidcVerifiableCredentialsPresentationProperties implements Serializ
      * to a key CAS generates for each request and publishes in the request's client metadata, as the
      * OpenID4VC High Assurance Interoperability Profile requires; a presentation that arrives unencrypted is
      * then refused, while an unencrypted error response is still accepted from a wallet that cannot encrypt.
+     * {@code DC_API} and {@code DC_API_JWT} answer through the W3C Digital Credentials API instead, and need the
+     * relying party to name the origin of its page in every request. The setting is a floor for encryption: a
+     * request may name another mode, but cannot drop encryption where the setting requires it.
      */
     private ResponseModes responseMode = ResponseModes.DIRECT_POST;
 
@@ -86,8 +89,35 @@ public class OidcVerifiableCredentialsPresentationProperties implements Serializ
          * The key is an ephemeral {@code P-256} key for {@code ECDH-ES} that CAS generates for each request; the
          * content may be encrypted with {@code A128GCM} or {@code A256GCM}.
          */
-        DIRECT_POST_JWT("direct_post.jwt");
+        DIRECT_POST_JWT("direct_post.jwt"),
+        /**
+         * The wallet answers through the W3C Digital Credentials API to the relying party's page, which hands the
+         * answer to CAS. The relying party names the origin of its page in each presentation request.
+         */
+        DC_API("dc_api"),
+        /**
+         * As {@code DC_API}, with the answer encrypted as for {@code DIRECT_POST_JWT}, as HAIP requires.
+         */
+        DC_API_JWT("dc_api.jwt");
 
         private final String value;
+
+        /**
+         * Whether the wallet encrypts its response in this mode.
+         *
+         * @return true/false
+         */
+        public boolean isEncrypted() {
+            return value.endsWith(".jwt");
+        }
+
+        /**
+         * Whether the wallet answers through the Digital Credentials API in this mode.
+         *
+         * @return true/false
+         */
+        public boolean isDigitalCredentialsApi() {
+            return value.startsWith("dc_api");
+        }
     }
 }
