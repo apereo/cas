@@ -21,6 +21,7 @@ import org.apereo.cas.config.CasOneTimeTokenAuthenticationAutoConfiguration;
 import org.apereo.cas.config.CasPersonDirectoryAutoConfiguration;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.otp.repository.credentials.OneTimeTokenCredentialRepository;
+import org.apereo.cas.util.RandomUtils;
 import org.apereo.cas.util.spring.boot.SpringBootTestAutoConfigurations;
 import lombok.Getter;
 import lombok.val;
@@ -69,6 +70,25 @@ public abstract class BaseLdapGoogleAuthenticatorTokenCredentialRepositoryTests 
         assertEquals(123456, registry.get(username, firstId).getValidationCode());
         assertEquals(firstSecret, registry.get(username, firstId).getSecretKey());
         assertEquals(secondSecret, registry.get(username, secondId).getSecretKey());
+    }
+
+    @Test
+    void verifyDeleteByIdAmongSimilarIds() throws Throwable {
+        val otherUsername = getUsernameUnderTest();
+        val username = getUsernameUnderTest();
+        val id = RandomUtils.nextLong(1, Long.MAX_VALUE / 100);
+        val otherId = id * 10 + 1;
+
+        val other = registry.create(otherUsername);
+        other.setId(otherId);
+        registry.save(other);
+        val account = registry.create(username);
+        account.setId(id);
+        registry.save(account);
+
+        registry.delete(id);
+        assertNull(registry.get(username, id));
+        assertNotNull(registry.get(otherUsername, otherId));
     }
 
     protected static String getOrganizationalUnitLdif(final String baseDn) {

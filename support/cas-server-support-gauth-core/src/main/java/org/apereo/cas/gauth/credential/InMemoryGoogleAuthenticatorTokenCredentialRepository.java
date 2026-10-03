@@ -43,15 +43,23 @@ public class InMemoryGoogleAuthenticatorTokenCredentialRepository extends BaseGo
             .orElse(null));
     }
 
+    /**
+     * Fetch the accounts registered for the user. A lock that cannot be acquired is raised as an error rather than
+     * reported as "no accounts", because an empty result sends the user to device registration.
+     *
+     * @param userName the username
+     * @return the accounts registered for the user
+     */
     @Override
     public Collection<? extends OneTimeTokenAccount> get(final String userName) {
-        return lock.tryLock(() -> {
+        val result = lock.<Collection<? extends OneTimeTokenAccount>>tryLock(() -> {
             if (contains(userName)) {
                 val account = accounts.get(userName.toLowerCase(Locale.ENGLISH).trim());
                 return decode(account);
             }
             return new ArrayList<>();
         });
+        return Objects.requireNonNull(result, () -> "Unable to read accounts for " + userName);
     }
 
     @Override

@@ -309,3 +309,7 @@ authentication. See the [stateless ticket registry documentation](../ticketing/S
 - Google Authenticator device repositories: removing a device or a user from DynamoDB no longer removes other records with it; registering
   or updating a device in LDAP no longer replaces the user's other devices; and removing or confirming a device with JPA works again
   and no longer re-encrypts the device secret when encryption is enabled.
+- Google Authenticator device removal and confirmation now expire if not completed within a few minutes of the code being verified.
+  The [REST device repository](../mfa/GoogleAuthenticator-Authentication-Registration-Rest.html) now sends deletions as `DELETE`
+  and includes the device `id` and `properties` when saving. A REST or JSON repository that cannot be read now fails the login
+  instead of offering device registration, and LDAP removes the right device when several users' device ids share leading digits.

@@ -1236,6 +1236,9 @@ Guidance for AI coding agents working in the Apereo CAS source tree.
 - DynamoDB tables keyed by `id` should delete with `DeleteItem` on that key, not a scan followed by deletes.
 - Webflow actions and device managers that take a device id from the request must load it with the owner-scoped `get(principal.getId(), id)` and act only on what that returns. Unscoped `get(id)` / `delete(id)` are for the actuator and internal paths.
 - Every repository read returns a decoded copy (JPA detaches before decoding); `update()` must persist `properties`, which the verification flags of the delete and confirm actions live in.
+- The delete/confirm verification flags are stored on the account as `<flag>:<epoch millis>` and expire (`GoogleAuthenticatorAccountVerificationUtils`). They cannot live in flow or conversation scope: the login webflow keeps its execution state client-side, and the AJAX check and the form submit carry different execution keys.
+- `CasReentrantLock.tryLock(supplier)` returns null when the lock is not acquired; never let that null reach a caller as "no accounts".
+- `MockWebServer.requestLineConsumer` exposes the request line, for asserting the HTTP method a client sends.
 
 ## Google Authenticator Redis repository
 

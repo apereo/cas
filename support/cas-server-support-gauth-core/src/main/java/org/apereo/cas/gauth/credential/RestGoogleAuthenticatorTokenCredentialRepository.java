@@ -18,6 +18,7 @@ import org.apache.commons.lang3.Strings;
 import org.apache.hc.core5.http.HttpEntityContainer;
 import org.apache.hc.core5.http.HttpResponse;
 import org.hjson.JsonValue;
+import org.jspecify.annotations.Nullable;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
@@ -128,43 +129,32 @@ public class RestGoogleAuthenticatorTokenCredentialRepository extends BaseGoogle
         return null;
     }
 
+    /**
+     * Fetch the accounts registered for the user. A {@code 404} means the user has no accounts; any other failure
+     * is raised rather than reported as "no accounts", because an empty result sends the user to device registration.
+     *
+     * @param username the username
+     * @return the accounts registered for the user
+     */
     @Override
     public Collection<? extends OneTimeTokenAccount> get(final String username) {
         val rest = gauth.getRest();
-        HttpResponse response = null;
-        try {
-            val headers = CollectionUtils.<String, String>wrap(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE, "username", username);
-            headers.putAll(rest.getHeaders());
-
-            val exec = HttpExecutionRequest.builder()
-                .basicAuthPassword(rest.getBasicAuthPassword())
-                .basicAuthUsername(rest.getBasicAuthUsername())
-                .method(HttpMethod.GET)
-                .url(rest.getUrl())
-                .headers(headers)
-                .build();
-            response = HttpUtils.execute(exec);
-
-            if (response != null) {
-                val status = HttpStatus.valueOf(response.getCode());
-                if (status.is2xxSuccessful()) {
-                    try (val contis = ((HttpEntityContainer) response).getEntity().getContent()) {
-                        val content = IOUtils.toString(contis, StandardCharsets.UTF_8);
-                        if (content != null) {
-                            val values = new TypeReference<List<GoogleAuthenticatorAccount>>() {
-                            };
-                            val result = MAPPER.readValue(JsonValue.readHjson(content).toString(), values);
-                            return decode(Objects.requireNonNull(result));
-                        }
-                    }
-                }
-            }
-        } catch (final Exception e) {
-            LoggingUtils.error(LOGGER, e);
-        } finally {
-            HttpUtils.close(response);
+        val headers = CollectionUtils.<String, String>wrap(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE, "username", username);
+        headers.putAll(rest.getHeaders());
+        val exec = HttpExecutionRequest.builder()
+            .basicAuthPassword(rest.getBasicAuthPassword())
+            .basicAuthUsername(rest.getBasicAuthUsername())
+            .method(HttpMethod.GET)
+            .url(rest.getUrl())
+            .headers(headers)
+            .build();
+        val content = fetchRequiredContent(exec, username);
+        if (content == null) {
+            return new ArrayList<>();
         }
-        return null;
+        val values = new TypeReference<List<GoogleAuthenticatorAccount>>() {
+        };
+        return decode(Objects.requireNonNull(MAPPER.readValue(JsonValue.readHjson(content).toString(), values)));
     }
 
     @Override
@@ -222,6 +212,8 @@ public class RestGoogleAuthenticatorTokenCredentialRepository extends BaseGoogle
             headers.put("validationCode", String.valueOf(account.getValidationCode()));
             headers.put("secretKey", account.getSecretKey());
             headers.put("name", account.getName());
+            headers.put("id", String.valueOf(account.getId()));
+            headers.put("properties", String.join(",", account.getProperties()));
             val codes = account.getScratchCodes()
                 .stream()
                 .map(Number::toString)
@@ -263,7 +255,7 @@ public class RestGoogleAuthenticatorTokenCredentialRepository extends BaseGoogle
             val exec = HttpExecutionRequest.builder()
                 .basicAuthPassword(rest.getBasicAuthPassword())
                 .basicAuthUsername(rest.getBasicAuthUsername())
-                .method(HttpMethod.GET)
+                .method(HttpMethod.DELETE)
                 .url(rest.getUrl())
                 .headers(rest.getHeaders())
                 .build();
@@ -285,7 +277,7 @@ public class RestGoogleAuthenticatorTokenCredentialRepository extends BaseGoogle
             val exec = HttpExecutionRequest.builder()
                 .basicAuthPassword(rest.getBasicAuthPassword())
                 .basicAuthUsername(rest.getBasicAuthUsername())
-                .method(HttpMethod.GET)
+                .method(HttpMethod.DELETE)
                 .url(rest.getUrl())
                 .headers(headers)
                 .build();
@@ -305,7 +297,7 @@ public class RestGoogleAuthenticatorTokenCredentialRepository extends BaseGoogle
             val exec = HttpExecutionRequest.builder()
                 .basicAuthPassword(rest.getBasicAuthPassword())
                 .basicAuthUsername(rest.getBasicAuthUsername())
-                .method(HttpMethod.GET)
+                .method(HttpMethod.DELETE)
                 .url(rest.getUrl())
                 .headers(headers)
                 .build();
@@ -350,41 +342,52 @@ public class RestGoogleAuthenticatorTokenCredentialRepository extends BaseGoogle
         return 0;
     }
 
+    /**
+     * Count the accounts registered for the user. A {@code 404} counts as zero; any other failure is raised, since
+     * a zero count lets the user register another device.
+     *
+     * @param username the username
+     * @return the number of accounts registered for the user
+     */
     @Override
     public long count(final String username) {
         val rest = gauth.getRest();
+        val headers = CollectionUtils.<String, String>wrap(
+            HttpHeaders.ACCEPT, MediaType.APPLICATION_JSON_VALUE, "username", username);
+        headers.putAll(rest.getHeaders());
+        val countUrl = Strings.CI.appendIfMissing(rest.getUrl(), "/").concat("count");
+        val exec = HttpExecutionRequest.builder()
+            .basicAuthPassword(rest.getBasicAuthPassword())
+            .basicAuthUsername(rest.getBasicAuthUsername())
+            .method(HttpMethod.GET)
+            .url(countUrl)
+            .headers(headers)
+            .build();
+        val content = fetchRequiredContent(exec, username);
+        return content == null ? 0 : MAPPER.readValue(JsonValue.readHjson(content).toString(), Long.class);
+    }
+
+    private @Nullable String fetchRequiredContent(final HttpExecutionRequest exec, final String username) {
         HttpResponse response = null;
         try {
-            val headers = CollectionUtils.<String, String>wrap(
-                HttpHeaders.ACCEPT, MediaType.APPLICATION_JSON_VALUE, "username", username);
-            headers.putAll(rest.getHeaders());
-
-            val countUrl = Strings.CI.appendIfMissing(rest.getUrl(), "/").concat("count");
-            val exec = HttpExecutionRequest.builder()
-                .basicAuthPassword(rest.getBasicAuthPassword())
-                .basicAuthUsername(rest.getBasicAuthUsername())
-                .method(HttpMethod.GET)
-                .url(countUrl)
-                .headers(headers)
-                .build();
-
             response = HttpUtils.execute(exec);
-            if (response != null) {
-                val status = HttpStatus.valueOf(response.getCode());
-                if (status.is2xxSuccessful()) {
-                    try (val contis = ((HttpEntityContainer) response).getEntity().getContent()) {
-                        val content = IOUtils.toString(contis, StandardCharsets.UTF_8);
-                        if (content != null) {
-                            return MAPPER.readValue(JsonValue.readHjson(content).toString(), Long.class);
-                        }
-                    }
-                }
+            if (response == null) {
+                throw new IllegalStateException("No response from %s for %s".formatted(exec.getUrl(), username));
             }
-        } catch (final Exception e) {
-            LoggingUtils.error(LOGGER, e);
+            val status = HttpStatus.valueOf(response.getCode());
+            if (status == HttpStatus.NOT_FOUND) {
+                return null;
+            }
+            if (!status.is2xxSuccessful()) {
+                throw new IllegalStateException("Request to %s for %s failed with status %s".formatted(exec.getUrl(), username, status));
+            }
+            try (val content = ((HttpEntityContainer) response).getEntity().getContent()) {
+                return IOUtils.toString(content, StandardCharsets.UTF_8);
+            }
+        } catch (final IOException e) {
+            throw new UncheckedIOException(e);
         } finally {
             HttpUtils.close(response);
         }
-        return 0;
     }
 }

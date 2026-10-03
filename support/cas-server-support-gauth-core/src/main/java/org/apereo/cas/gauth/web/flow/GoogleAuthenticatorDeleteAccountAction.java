@@ -33,6 +33,7 @@ public class GoogleAuthenticatorDeleteAccountAction extends BaseCasWebflowAction
     public static final String ACCOUNT_PROPERTY_REMOVAL_VERIFIED = "removalVerified";
 
     private final OneTimeTokenCredentialRepository repository;
+    
     private final OneTimeTokenCredentialValidator<GoogleAuthenticatorTokenCredential, GoogleAuthenticatorToken> validator;
 
     /**
@@ -80,11 +81,11 @@ public class GoogleAuthenticatorDeleteAccountAction extends BaseCasWebflowAction
     }
 
     protected void accountRemovalVerified(final RequestContext requestContext, final OneTimeTokenAccount account) {
-        account.getProperties().add(ACCOUNT_PROPERTY_REMOVAL_VERIFIED);
+        GoogleAuthenticatorAccountVerificationUtils.markVerified(account, ACCOUNT_PROPERTY_REMOVAL_VERIFIED);
         repository.update(account);
     }
 
     protected boolean isAccountRemovalVerified(final RequestContext requestContext, final OneTimeTokenAccount account) {
-        return account.getProperties().contains(ACCOUNT_PROPERTY_REMOVAL_VERIFIED);
+        return GoogleAuthenticatorAccountVerificationUtils.isVerified(account, ACCOUNT_PROPERTY_REMOVAL_VERIFIED);
     }
 }

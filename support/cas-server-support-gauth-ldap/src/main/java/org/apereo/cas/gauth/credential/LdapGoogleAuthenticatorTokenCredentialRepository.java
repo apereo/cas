@@ -278,11 +278,33 @@ public class LdapGoogleAuthenticatorTokenCredentialRepository
             val response = connectionFactory.executeSearchOperation(ldapProperties.getBaseDn(),
                 filter, ldapProperties.getPageSize(), ldapProperties.getAccountAttributeName());
             if (LdapUtils.containsResultEntry(response)) {
-                val entry = response.getEntry();
+                val entry = response.getEntries()
+                    .stream()
+                    .filter(candidate -> containsAccount(candidate, id))
+                    .findFirst()
+                    .orElse(null);
                 LOGGER.debug("Located LDAP entry [{}]", entry);
                 return entry;
             }
             return null;
         });
+    }
+
+    /**
+     * Whether the entry stores an account with the given id. The search filter can only match the id as a substring
+     * of the stored JSON, so it also matches entries whose accounts have longer ids that start with the same digits;
+     * this check keeps only the entry that really holds the account.
+     *
+     * @param entry the LDAP entry
+     * @param id    the account id
+     * @return true if the entry stores the account
+     */
+    private boolean containsAccount(final LdapEntry entry, final long id) {
+        val attribute = entry.getAttribute(ldapProperties.getAccountAttributeName());
+        return attribute != null && attribute.getStringValues()
+            .stream()
+            .map(LdapGoogleAuthenticatorTokenCredentialRepository::mapFromJson)
+            .flatMap(List::stream)
+            .anyMatch(account -> account.getId() == id);
     }
 }

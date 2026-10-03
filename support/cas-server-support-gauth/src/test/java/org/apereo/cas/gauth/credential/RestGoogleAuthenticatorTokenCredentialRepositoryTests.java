@@ -53,9 +53,9 @@ class RestGoogleAuthenticatorTokenCredentialRepositoryTests {
             webServer.start();
             assertNull(repo.get("casuser", 1));
             assertNull(repo.get(1));
-            assertNull(repo.get("casuser"));
+            assertThrows(RuntimeException.class, () -> repo.get("casuser"));
             assertEquals(0, repo.count());
-            assertEquals(0, repo.count("casuser"));
+            assertThrows(RuntimeException.class, () -> repo.count("casuser"));
             assertNull(repo.update(null));
         }
     }
@@ -82,12 +82,40 @@ class RestGoogleAuthenticatorTokenCredentialRepositoryTests {
             val props = new GoogleAuthenticatorMultifactorProperties();
             props.getRest().setUrl("http://localhost:" + webServer.getPort());
             val repo = buildRepositoryInstance(props);
+            val requestLines = new CopyOnWriteArrayList<String>();
+            webServer.requestLineConsumer(requestLines::add);
 
             assertDoesNotThrow(() -> {
                 repo.delete("casuser");
                 repo.delete(12345);
                 repo.deleteAll();
             });
+            assertEquals(3, requestLines.size());
+            assertTrue(requestLines.stream().allMatch(line -> line.startsWith("DELETE ")));
+        }
+    }
+
+    @Test
+    void verifyGetByUserWithoutAccounts() {
+        try (val webServer = new MockWebServer(HttpStatus.NOT_FOUND)) {
+            val props = new GoogleAuthenticatorMultifactorProperties();
+            props.getRest().setUrl("http://localhost:" + webServer.getPort());
+            val repo = buildRepositoryInstance(props);
+            webServer.start();
+            assertTrue(repo.get("casuser").isEmpty());
+            assertEquals(0, repo.count("casuser"));
+        }
+    }
+
+    @Test
+    void verifyGetByUserFailsClosed() {
+        try (val webServer = new MockWebServer(HttpStatus.INTERNAL_SERVER_ERROR)) {
+            val props = new GoogleAuthenticatorMultifactorProperties();
+            props.getRest().setUrl("http://localhost:" + webServer.getPort());
+            val repo = buildRepositoryInstance(props);
+            webServer.start();
+            assertThrows(RuntimeException.class, () -> repo.get("casuser"));
+            assertThrows(RuntimeException.class, () -> repo.count("casuser"));
         }
     }
 
@@ -218,6 +246,8 @@ class RestGoogleAuthenticatorTokenCredentialRepositoryTests {
             assertEquals(account.getSecretKey(), capturedHeaders.get("secretKey"));
             assertEquals(String.valueOf(account.getValidationCode()), capturedHeaders.get("validationCode"));
             assertNotNull(capturedHeaders.get("scratchCodes"));
+            assertEquals(String.valueOf(savedAccount.getId()), capturedHeaders.get("id"));
+            assertNotNull(capturedHeaders.get("properties"));
         }
     }
 

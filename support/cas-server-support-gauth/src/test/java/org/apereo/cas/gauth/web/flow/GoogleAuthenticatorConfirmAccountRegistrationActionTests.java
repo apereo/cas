@@ -89,6 +89,30 @@ class GoogleAuthenticatorConfirmAccountRegistrationActionTests {
     }
 
     @Test
+    void verifyConfirmWithExpiredVerification() throws Throwable {
+        val context = MockRequestContext.create(applicationContext);
+        val expiredAt = Instant.now(Clock.systemUTC())
+            .minus(GoogleAuthenticatorAccountVerificationUtils.VERIFICATION_LIFETIME.multipliedBy(2)).toEpochMilli();
+        val acct = GoogleAuthenticatorAccount
+            .builder()
+            .username(UUID.randomUUID().toString())
+            .name(UUID.randomUUID().toString())
+            .secretKey(UUID.randomUUID().toString())
+            .validationCode(123456)
+            .scratchCodes(List.of(387345))
+            .properties(new ArrayList<>(List.of(
+                GoogleAuthenticatorConfirmAccountRegistrationAction.ACCOUNT_PROPERTY_REGISTRATION_VERIFIED,
+                GoogleAuthenticatorConfirmAccountRegistrationAction.ACCOUNT_PROPERTY_REGISTRATION_VERIFIED + ':' + expiredAt)))
+            .build();
+        val accountId = googleAuthenticatorAccountRegistry.save(acct).getId();
+
+        WebUtils.putAuthentication(RegisteredServiceTestUtils.getAuthentication(acct.getUsername()), context);
+        context.setParameter(OneTimeTokenAccountConfirmSelectionRegistrationAction.REQUEST_PARAMETER_ACCOUNT_ID, String.valueOf(accountId));
+        context.setParameter(OneTimeTokenAccountSaveRegistrationAction.REQUEST_PARAMETER_VALIDATE, "false");
+        assertThrows(FailedLoginException.class, () -> action.execute(context));
+    }
+
+    @Test
     void verifyOperation() throws Throwable {
         val context = MockRequestContext.create(applicationContext);
         var acct = GoogleAuthenticatorAccount
@@ -112,7 +136,7 @@ class GoogleAuthenticatorConfirmAccountRegistrationActionTests {
         assertEquals(CasWebflowConstants.TRANSITION_ID_SUCCESS, action.execute(context).getId());
 
         acct = (GoogleAuthenticatorAccount) googleAuthenticatorAccountRegistry.get(acct.getId());
-        assertEquals(GoogleAuthenticatorConfirmAccountRegistrationAction.ACCOUNT_PROPERTY_REGISTRATION_VERIFIED, acct.getProperties().getFirst());
+        assertTrue(acct.getProperties().getFirst().startsWith(GoogleAuthenticatorConfirmAccountRegistrationAction.ACCOUNT_PROPERTY_REGISTRATION_VERIFIED + ':'));
 
         context.setParameter(OneTimeTokenAccountSaveRegistrationAction.REQUEST_PARAMETER_VALIDATE, "false");
         assertEquals(CasWebflowConstants.TRANSITION_ID_SUCCESS, action.execute(context).getId());

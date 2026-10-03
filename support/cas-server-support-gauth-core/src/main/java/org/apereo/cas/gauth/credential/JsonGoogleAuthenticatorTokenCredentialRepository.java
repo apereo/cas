@@ -62,34 +62,32 @@ public class JsonGoogleAuthenticatorTokenCredentialRepository extends BaseGoogle
             .orElse(null));
     }
 
+    /**
+     * Fetch the accounts registered for the user. A missing or empty file means no accounts; a file that cannot be
+     * read or parsed, or a lock that cannot be acquired, is raised as an error instead, because an empty result sends
+     * the user to device registration.
+     *
+     * @param username the username
+     * @return the accounts registered for the user
+     */
     @Override
     public Collection<? extends OneTimeTokenAccount> get(final String username) {
-        return lock.tryLock(() -> {
-            try {
-                if (!location.getFile().exists()) {
-                    LOGGER.warn("JSON account repository file [{}] is not found.", location.getFile());
-                    return new ArrayList<>();
-                }
-
-                if (location.getFile().length() <= 0) {
-                    LOGGER.debug("JSON account repository file location [{}] is empty.", location.getFile());
-                    return new ArrayList<>();
-                }
-                val map = serializer.from(location.getFile());
-                if (map == null) {
-                    LOGGER.debug("JSON account repository file [{}] is empty.", location.getFile());
-                    return new ArrayList<>();
-                }
-
-                val account = map.get(username.trim().toLowerCase(Locale.ENGLISH));
-                if (account != null) {
-                    return decode(account);
-                }
-            } catch (final Exception e) {
-                LoggingUtils.error(LOGGER, e);
+        val accounts = lock.<Collection<? extends OneTimeTokenAccount>>tryLock(() -> {
+            if (!location.exists()) {
+                LOGGER.warn("JSON account repository [{}] is not found.", location);
+                return new ArrayList<>();
             }
-            return new ArrayList<>();
+            val file = location.getFile();
+            if (file.length() <= 0) {
+                LOGGER.debug("JSON account repository file location [{}] is empty.", file);
+                return new ArrayList<>();
+            }
+            val map = Objects.requireNonNull(serializer.from(file),
+                () -> "Unable to parse JSON account repository file %s".formatted(file));
+            val account = map.get(username.trim().toLowerCase(Locale.ENGLISH));
+            return account != null ? decode(account) : new ArrayList<>();
         });
+        return Objects.requireNonNull(accounts, () -> "Unable to read accounts for %s from %s".formatted(username, location));
     }
 
     @Override

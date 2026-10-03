@@ -31,9 +31,9 @@ public class GoogleAuthenticatorConfirmAccountRegistrationAction extends BaseCas
      * Account property indicating account registration is now verified.
      */
     public static final String ACCOUNT_PROPERTY_REGISTRATION_VERIFIED = "registrationVerified";
-
     
     private final OneTimeTokenCredentialRepository repository;
+
     private final OneTimeTokenCredentialValidator<GoogleAuthenticatorTokenCredential, GoogleAuthenticatorToken> validator;
 
     /**
@@ -79,16 +79,16 @@ public class GoogleAuthenticatorConfirmAccountRegistrationAction extends BaseCas
     }
 
     protected void accountRegistrationVerified(final RequestContext requestContext, final OneTimeTokenAccount account) {
-        account.getProperties().add(ACCOUNT_PROPERTY_REGISTRATION_VERIFIED);
+        GoogleAuthenticatorAccountVerificationUtils.markVerified(account, ACCOUNT_PROPERTY_REGISTRATION_VERIFIED);
         repository.update(account);
     }
 
     protected void accountRegistrationUnverified(final RequestContext requestContext, final OneTimeTokenAccount account) {
-        account.getProperties().remove(ACCOUNT_PROPERTY_REGISTRATION_VERIFIED);
+        GoogleAuthenticatorAccountVerificationUtils.clearVerification(account, ACCOUNT_PROPERTY_REGISTRATION_VERIFIED);
         repository.update(account);
     }
 
     protected boolean isAccountRegistrationVerified(final RequestContext requestContext, final OneTimeTokenAccount account) {
-        return account.getProperties().contains(ACCOUNT_PROPERTY_REGISTRATION_VERIFIED);
+        return GoogleAuthenticatorAccountVerificationUtils.isVerified(account, ACCOUNT_PROPERTY_REGISTRATION_VERIFIED);
     }
 }

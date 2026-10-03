@@ -257,6 +257,10 @@ public class MockWebServer implements Closeable {
         this.worker.setHeadersConsumer(consumer);
     }
 
+    public void requestLineConsumer(final Consumer<String> consumer) {
+        this.worker.setRequestLineConsumer(consumer);
+    }
+
     public int getRequestCount() {
         return this.worker.getRequestCounter().get();
     }
@@ -337,6 +341,9 @@ public class MockWebServer implements Closeable {
         @Setter
         private Consumer<Map<String, String>> headersConsumer;
 
+        @Setter
+        private Consumer<String> requestLineConsumer;
+
         @Getter
         private final AtomicInteger requestCounter = new AtomicInteger(0);
 
@@ -392,7 +399,12 @@ public class MockWebServer implements Closeable {
                     val givenHeaders = new HashMap<String, String>();
                     val in = new BufferedReader(new InputStreamReader(socket.getInputStream(), StandardCharsets.UTF_8));
                     var line = StringUtils.EMPTY;
+                    var requestLine = true;
                     while ((line = in.readLine()) != null && !line.isEmpty()) {
+                        if (requestLine && requestLineConsumer != null) {
+                            requestLineConsumer.accept(line);
+                        }
+                        requestLine = false;
                         if (line.contains(":")) {
                             val name = line.substring(0, line.indexOf(':')).trim();
                             val value = line.substring(line.indexOf(':') + 1).trim();

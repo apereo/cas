@@ -90,6 +90,14 @@ class JsonGoogleAuthenticatorTokenCredentialRepositoryTests extends BaseOneTimeT
     }
 
     @Test
+    void verifyUnreadableFileFailsClosed() throws Throwable {
+        val file = Files.createTempFile("account", ".json").toFile();
+        FileUtils.writeStringToFile(file, "{ not json", StandardCharsets.UTF_8);
+        val repo = buildRepositoryInstance(new FileSystemResource(file));
+        assertThrows(RuntimeException.class, () -> repo.get("casuser"));
+    }
+
+    @Test
     void verifyBadResource() throws Throwable {
         val repo = buildRepositoryInstance(new UrlResource(URI.create("http://localhost:8080")));
         assertTrue(repo.get("casuser").isEmpty());
