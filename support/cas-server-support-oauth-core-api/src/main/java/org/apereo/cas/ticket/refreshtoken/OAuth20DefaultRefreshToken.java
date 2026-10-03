@@ -8,10 +8,12 @@ import org.apereo.cas.support.oauth.OAuth20ResponseTypes;
 import org.apereo.cas.ticket.BaseOAuth20Token;
 import org.apereo.cas.ticket.ExpirationPolicy;
 import org.apereo.cas.ticket.Ticket;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonSetter;
 import com.fasterxml.jackson.annotation.Nulls;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 /**
  * An OAuth refresh token implementation.
@@ -31,6 +33,10 @@ public class OAuth20DefaultRefreshToken extends BaseOAuth20Token implements OAut
      */
     @JsonSetter(nulls = Nulls.AS_EMPTY)
     private final Set<String> accessTokens = new HashSet<>();
+
+    @Setter
+    @JsonInclude(JsonInclude.Include.NON_EMPTY)
+    private List<? extends Serializable> authorizationDetails = new ArrayList<>();
 
     public OAuth20DefaultRefreshToken(final String id, final Service service,
                                       final Authentication authentication,

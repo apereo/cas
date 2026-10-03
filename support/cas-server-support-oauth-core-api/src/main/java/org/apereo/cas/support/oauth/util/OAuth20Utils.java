@@ -15,7 +15,10 @@ import org.apereo.cas.support.oauth.OAuth20ResponseTypes;
 import org.apereo.cas.support.oauth.services.OAuthRegisteredService;
 import org.apereo.cas.support.oauth.web.response.accesstoken.OAuth20TokenGeneratedResult;
 import org.apereo.cas.ticket.OAuth20Token;
+import org.apereo.cas.ticket.Ticket;
 import org.apereo.cas.ticket.accesstoken.OAuth20AccessToken;
+import org.apereo.cas.ticket.code.OAuth20Code;
+import org.apereo.cas.ticket.refreshtoken.OAuth20RefreshToken;
 import org.apereo.cas.token.JwtBuilder;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.DigestUtils;
@@ -39,6 +42,7 @@ import org.pac4j.core.profile.UserProfile;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.view.json.JacksonJsonView;
+import tools.jackson.core.type.TypeReference;
 import tools.jackson.databind.json.JsonMapper;
 import jakarta.servlet.http.HttpServletResponse;
 import java.security.cert.X509Certificate;
@@ -55,6 +59,9 @@ import java.security.cert.X509Certificate;
 public class OAuth20Utils {
     private static final JsonMapper MAPPER = JacksonObjectMapperFactory.builder()
         .singleArrayElementUnwrapped(true).build().toJsonMapper();
+
+    private static final JsonMapper UNTYPED_MAPPER = JacksonObjectMapperFactory.builder()
+        .defaultTypingEnabled(false).build().toJsonMapper();
 
     /**
      * Write to the output this error.
@@ -470,5 +477,46 @@ public class OAuth20Utils {
      */
     public static String computeCertificateThumbprint(final X509Certificate certificate) {
         return FunctionUtils.doUnchecked(() -> EncodingUtils.encodeUrlSafeBase64(DigestUtils.rawDigest("SHA-256", certificate.getEncoded())));
+    }
+
+    /**
+     * Authorization details a token was granted with, per RFC 9396: those an authorization code carries, or a
+     * refresh token carries from the code it was issued for. Other tokens contribute none.
+     *
+     * @param token the token being exchanged, if any
+     * @return the authorization details, never null
+     */
+    public static List<? extends Serializable> getAuthorizationDetails(@Nullable final Ticket token) {
+        final List<? extends Serializable> authorizationDetails = switch (token) {
+            case final OAuth20Code code -> code.getAuthorizationDetails();
+            case final OAuth20RefreshToken refreshToken -> refreshToken.getAuthorizationDetails();
+            case null, default -> null;
+        };
+        return authorizationDetails == null ? new ArrayList<>() : authorizationDetails;
+    }
+
+    /**
+     * Authorization details as untyped JSON for a compact ticket, or an empty string when there are none.
+     *
+     * @param authorizationDetails the authorization details
+     * @return the compact value
+     */
+    public static String toCompactAuthorizationDetails(@Nullable final List<? extends Serializable> authorizationDetails) {
+        return authorizationDetails == null || authorizationDetails.isEmpty()
+            ? StringUtils.EMPTY
+            : UNTYPED_MAPPER.writeValueAsString(authorizationDetails);
+    }
+
+    /**
+     * Authorization details read back from a compact ticket, each as a map of its JSON members.
+     *
+     * @param value the compact value
+     * @return the authorization details, never null
+     */
+    public static List<? extends Serializable> fromCompactAuthorizationDetails(@Nullable final String value) {
+        return StringUtils.isBlank(value)
+            ? new ArrayList<>()
+            : UNTYPED_MAPPER.readValue(value, new TypeReference<ArrayList<LinkedHashMap<String, Object>>>() {
+            });
     }
 }

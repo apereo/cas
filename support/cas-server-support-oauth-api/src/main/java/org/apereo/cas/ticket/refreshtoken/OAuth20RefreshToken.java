@@ -34,4 +34,19 @@ public interface OAuth20RefreshToken extends OAuth20Token, ServiceAwareTicket {
     default Set<String> getAccessTokens() {
         return new HashSet<>();
     }
+
+    /**
+     * Authorization details of the code this refresh token was issued for (RFC 9396), carried over to the
+     * access tokens it is exchanged for.
+     *
+     * @return the authorization details
+     */
+    List<? extends Serializable> getAuthorizationDetails();
+
+    /**
+     * Sets authorization details.
+     *
+     * @param authorizationDetails the authorization details
+     */
+    void setAuthorizationDetails(List<? extends Serializable> authorizationDetails);
 }

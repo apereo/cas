@@ -15,6 +15,7 @@ import org.apereo.cas.support.oauth.OAuth20GrantTypes;
 import org.apereo.cas.support.oauth.OAuth20ResponseTypes;
 import org.apereo.cas.support.oauth.profile.OAuth20ProfileScopeToAttributesFilter;
 import org.apereo.cas.support.oauth.services.OAuthRegisteredService;
+import org.apereo.cas.support.oauth.util.OAuth20Utils;
 import org.apereo.cas.support.oauth.validator.token.device.InvalidOAuth20DeviceTokenException;
 import org.apereo.cas.support.oauth.validator.token.device.ThrottledOAuth20DeviceUserCodeApprovalException;
 import org.apereo.cas.support.oauth.validator.token.device.UnapprovedOAuth20DeviceUserCodeException;
@@ -328,6 +329,15 @@ public class OAuth20DefaultTokenGenerator implements OAuth20TokenGenerator {
         }
     }
     
+    /**
+     * Generate a refresh token for the access token. It keeps the authorization details of the code or refresh
+     * token being exchanged (RFC 9396), so that access tokens it is later exchanged for are granted them again.
+     *
+     * @param tokenRequestContext the token request context
+     * @param accessTokenId       the access token id
+     * @return the refresh token
+     * @throws Throwable the throwable
+     */
     protected Ticket generateRefreshToken(final AccessTokenRequestContext tokenRequestContext,
                                           final String accessTokenId) throws Throwable {
         LOGGER.debug("Creating refresh token for [{}]", tokenRequestContext.getService());
@@ -345,7 +355,8 @@ public class OAuth20DefaultTokenGenerator implements OAuth20TokenGenerator {
             tokenRequestContext.getClaims(),
             tokenRequestContext.getResponseType(),
             tokenRequestContext.getGrantType());
-        
+        refreshToken.setAuthorizationDetails(OAuth20Utils.getAuthorizationDetails(tokenRequestContext.getToken()));
+
         if (refreshToken.getExpirationPolicy().getTimeToLive() > 0) {
             LOGGER.debug("Adding refresh token [{}] to the registry", refreshToken);
             val addedRefreshToken = addTicketToRegistry(refreshToken, ticketGrantingTicket);

@@ -259,7 +259,7 @@ When used for verifiable credential issuance, this endpoint may:
 
 - Accept the `pre-authorized_code` grant.
 - Require a `tx_code`.
-- Return a `c_nonce`.
+- Return the `authorization_details` the token was granted, with their `credential_identifiers`.
 - Produce an access token that is scoped to credential issuance.
 
 Example request:
@@ -286,7 +286,7 @@ to the same key.
 
 In practical terms, the flow is:
 
-- The wallet asks CAS for a fresh c_nonce from the nonce endpoint, or receives one from the token endpoint.
+- The wallet asks CAS for a fresh c_nonce from the nonce endpoint; the token endpoint never returns one.
 - The wallet builds its proof and includes that nonce.
 - CAS checks that the nonce matches one it issued, is still fresh, and has not already been used.
 - CAS consumes it so the same proof cannot be replayed.
@@ -311,6 +311,9 @@ These scopes are accepted and advertised in `scopes_supported` without being lis
 The token response then carries no credential identifiers, so the credential request names the configuration with
 `credential_configuration_id`. A wallet may use both mechanisms in one authorization request.
 
+A refresh token issued in this flow keeps the authorization details of its code, as RFC 9396 describes, so access
+tokens obtained with it may request the same credentials; scopes are honored as before.
+
 ## Pre-Authorized Code Flow
 
 In pre-authorized code flows, CAS or a trusted backend prepares the issuance transaction
@@ -323,7 +326,7 @@ The general flow is:
 - CAS returns a wallet-facing `credential_offer_uri`.
 - The wallet resolves the offer.
 - The wallet exchanges the pre-authorized code at the token endpoint.
-- CAS returns an access token, and optionally a c_nonce.
+- CAS returns an access token.
 - The wallet calls the credential endpoint with the access token and proof.
 - CAS validates the request and issues the credential.
 

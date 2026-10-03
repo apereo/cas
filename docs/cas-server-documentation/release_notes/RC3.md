@@ -246,6 +246,8 @@ and failures were recorded twice. Failed SAML2 ECP authentication attempts, whic
   as HAIP 1.0 requires.
 - A self-signed credential or request object signing certificate, which HAIP 1.0 forbids, is still used but now
   logs a warning.
+- Refresh tokens keep the authorization details of the authorization code they were issued for, so access tokens obtained
+  by refreshing may still request the credentials those details granted. Previously only scope-based grants survived a refresh.
 
 ### Stateless Ticket Registry
 

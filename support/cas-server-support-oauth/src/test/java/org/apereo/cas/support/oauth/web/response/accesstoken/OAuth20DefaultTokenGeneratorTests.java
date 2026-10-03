@@ -352,6 +352,9 @@ class OAuth20DefaultTokenGeneratorTests {
             val authentication = RegisteredServiceTestUtils.getAuthentication("casuser");
             val refreshToken = OAuth20TestUtils.getRefreshToken(registeredService.getServiceId(), registeredService.getClientId());
             when(refreshToken.getScopes()).thenReturn(Set.of("email", "openid"));
+            val authorizationDetails = List.of(new LinkedHashMap<String, Object>(Map.of("type", "openid_credential",
+                "credential_configuration_id", "UniversityDegreeCredential")));
+            doReturn(authorizationDetails).when(refreshToken).getAuthorizationDetails();
             ticketRegistry.addTicket(refreshToken);
 
             val context = AccessTokenRequestContext.builder()
@@ -373,6 +376,8 @@ class OAuth20DefaultTokenGeneratorTests {
             val ticket2 = response.getAccessToken().get();
             assertInstanceOf(OAuth20AccessToken.class, ticket2);
             assertEquals(Set.of("email"), ((OAuth20Token) ticket2).getScopes());
+            assertEquals(authorizationDetails, ((OAuth20RefreshToken) ticket).getAuthorizationDetails());
+            assertEquals(authorizationDetails, ((OAuth20AccessToken) ticket2).getAuthorizationDetails());
         }
 
         @Test

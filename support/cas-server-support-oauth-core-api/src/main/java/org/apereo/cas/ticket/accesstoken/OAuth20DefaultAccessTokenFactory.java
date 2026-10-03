@@ -13,7 +13,6 @@ import org.apereo.cas.ticket.ExpirationPolicy;
 import org.apereo.cas.ticket.ExpirationPolicyBuilder;
 import org.apereo.cas.ticket.Ticket;
 import org.apereo.cas.ticket.UniqueTicketIdGenerator;
-import org.apereo.cas.ticket.code.OAuth20Code;
 import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.ticket.tracking.TicketTrackingPolicy;
 import org.apereo.cas.token.JwtBuilder;
@@ -79,13 +78,7 @@ public class OAuth20DefaultAccessTokenFactory implements OAuth20AccessTokenFacto
         val accessTokenId = generateAccessTokenId(service, authentication);
         val exchangedToken = Optional.ofNullable(token).map(Ticket::getId).orElse(null);
 
-        val authorizationDetails = Optional.ofNullable(token)
-            .filter(OAuth20Code.class::isInstance)
-            .map(OAuth20Code.class::cast)
-            .filter(code -> Objects.nonNull(code.getAuthorizationDetails()))
-            .filter(code -> !code.getAuthorizationDetails().isEmpty())
-            .map(OAuth20Code::getAuthorizationDetails)
-            .orElseGet(ArrayList::new);
+        val authorizationDetails = OAuth20Utils.getAuthorizationDetails(token);
 
         val accessToken = new OAuth20DefaultAccessToken(accessTokenId, service, authentication,
             expirationPolicyToUse, ticketGrantingTicket, exchangedToken, scopes,
