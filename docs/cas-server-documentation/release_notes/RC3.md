@@ -337,5 +337,9 @@ authentication. See the [stateless ticket registry documentation](../ticketing/S
   the table (CAS adds the index at startup; create it yourself if table creation on startup is turned off), and counts
   without reading records back. [MongoDB](../mfa/GoogleAuthenticator-Authentication-Registration-MongoDb.html) creates
   an index on usernames with the collation its lookups use.
+- Google Authenticator [LDAP](../mfa/GoogleAuthenticator-Authentication-Registration-LDAP.html) device lookups by id no
+  longer read every entry, and saving or removing a device no longer decrypts and re-encrypts the user's other devices.
+  [Redis](../mfa/GoogleAuthenticator-Authentication-Registration-Redis.html) loads all devices with batched `MGET`
+  instead of one request per device, and saving a device no longer decrypts the user's other devices.
 - [WebAuthn](../mfa/FIDO2-WebAuthn-Authentication.html) falls back to the cached FIDO metadata BLOB when downloading a fresh one
   fails at startup, for example when the FIDO metadata service rate-limits the request, instead of failing to start.

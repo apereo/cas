@@ -191,6 +191,9 @@ class RedisGoogleAuthenticatorTokenCredentialRepositoryTests extends BaseOneTime
             assertEquals(validationCode2, s2.getValidationCode());
             assertEquals("newSecret", s2.getSecretKey());
         });
+        assertEquals(1, countPrincipalEntries(username));
+        assertEquals("newSecret", registry.get(tokenAccount.getId()).getSecretKey());
+        assertEquals("newSecret", registry.get(username, tokenAccount.getId()).getSecretKey());
     }
 
     @Test
@@ -223,6 +226,7 @@ class RedisGoogleAuthenticatorTokenCredentialRepositoryTests extends BaseOneTime
                 .filter(acct -> usernames.contains(acct.getUsername()))
                 .toList()));
         assertEquals(allAccounts.size(), accountsStream.size());
+        assertTrue(registry.count() >= allAccounts.size());
         executedTimedOperation("Getting accounts individually",
             Unchecked.consumer(_ -> accountsStream.forEach(acct -> assertNotNull(registry.get(acct.getId())))));
         executedTimedOperation("Getting accounts individually for users",

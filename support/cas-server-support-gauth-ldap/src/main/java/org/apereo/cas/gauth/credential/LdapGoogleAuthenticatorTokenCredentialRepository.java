@@ -71,32 +71,35 @@ public class LdapGoogleAuthenticatorTokenCredentialRepository
         });
     }
 
+    /**
+     * Find the account by id. The entry that holds it is located with the id search rather than by reading every
+     * entry, and only the matching account is decoded.
+     *
+     * @param id the account id
+     * @return the decoded account, or null when there is none
+     */
     @Override
     public @Nullable OneTimeTokenAccount get(final long id) {
-        return load().stream().filter(acct -> acct.getId() == id).findFirst().orElse(null);
+        return Optional.ofNullable(searchLdapAccountsBy(id))
+            .flatMap(entry -> findStoredAccount(entry, id))
+            .map(this::decode)
+            .orElse(null);
     }
 
     @Override
     public @Nullable OneTimeTokenAccount get(final String username, final long id) {
-        return get(username).stream().filter(acct -> acct.getId() == id).findFirst().orElse(null);
+        return Optional.ofNullable(locateLdapEntryFor(username))
+            .flatMap(entry -> findStoredAccount(entry, id))
+            .map(this::decode)
+            .orElse(null);
     }
 
     @Override
     public Collection<? extends OneTimeTokenAccount> get(final String username) {
         val entry = locateLdapEntryFor(username);
         if (entry != null) {
-            val accounts = entry.getAttribute(ldapProperties.getAccountAttributeName());
-            if (accounts != null) {
-                LOGGER.debug("Located accounts for [{}] at attribute [{}]", username,
-                    ldapProperties.getAccountAttributeName());
-                return accounts.getStringValues()
-                    .stream()
-                    .map(LdapGoogleAuthenticatorTokenCredentialRepository::mapFromJson)
-                    .filter(Objects::nonNull)
-                    .flatMap(List::stream)
-                    .map(this::decode)
-                    .collect(Collectors.toList());
-            }
+            LOGGER.debug("Located accounts for [{}] at attribute [{}]", username, ldapProperties.getAccountAttributeName());
+            return readStoredAccounts(entry).stream().map(this::decode).collect(Collectors.toList());
         }
         return new ArrayList<>();
     }
@@ -117,9 +120,11 @@ public class LdapGoogleAuthenticatorTokenCredentialRepository
     }
 
     /**
-     * Store the account in the user's entry, keeping the entry's other accounts. All of them are written back as a
-     * single JSON array value, because some directories keep only one value of the account attribute; Active
-     * Directory, for example, treats {@code description} as single-valued on user objects.
+     * Store the account in the user's entry, keeping the entry's other accounts. Only the given account is encoded;
+     * the entry's other accounts are written back exactly as they were stored. The account replaces a stored account
+     * with the same id, or is added. All of them are written back as a single JSON array value, because some
+     * directories keep only one value of the account attribute; Active Directory, for example, treats
+     * {@code description} as single-valued on user objects.
      *
      * @param account the account
      * @return the account
@@ -130,35 +135,12 @@ public class LdapGoogleAuthenticatorTokenCredentialRepository
             account.setId(RandomUtils.nextLong());
         }
         LOGGER.debug("Storing account [{}]", account);
-        val entry = locateLdapEntryFor(account.getUsername());
-        val ldapAttribute = Objects.requireNonNull(entry,
-                () -> String.format("Unable to locate LDAP entry for %s", account.getUsername()))
-            .getAttribute(ldapProperties.getAccountAttributeName());
-
-        if (ldapAttribute == null || ldapAttribute.getStringValues().isEmpty()) {
-            LOGGER.debug("Adding new account for LDAP entry [{}]", entry);
-            updateAccount(account, entry);
-        } else {
-            val existingAccounts = ldapAttribute.getStringValues()
-                .stream()
-                .map(LdapGoogleAuthenticatorTokenCredentialRepository::mapFromJson)
-                .filter(Objects::nonNull)
-                .flatMap(List::stream)
-                .map(this::decode)
-                .collect(Collectors.toSet());
-            val matchingAccount = existingAccounts.stream()
-                .filter(acct -> acct.getId() == account.getId())
-                .findFirst();
-            matchingAccount.ifPresentOrElse(ac -> {
-                ac.setValidationCode(account.getValidationCode());
-                ac.setScratchCodes(account.getScratchCodes());
-                ac.setSecretKey(account.getSecretKey());
-                ac.setProperties(account.getProperties());
-                ac.setLastUsedDateTime(account.getLastUsedDateTime());
-            }, () -> existingAccounts.add(account));
-
-            updateAccounts(existingAccounts, entry);
-        }
+        val entry = Objects.requireNonNull(locateLdapEntryFor(account.getUsername()),
+            () -> String.format("Unable to locate LDAP entry for %s", account.getUsername()));
+        val accounts = readStoredAccounts(entry);
+        accounts.removeIf(stored -> stored.getId() == account.getId());
+        accounts.add(encode(account));
+        writeStoredAccounts(accounts, entry);
         return account;
     }
 
@@ -177,18 +159,24 @@ public class LdapGoogleAuthenticatorTokenCredentialRepository
         }
     }
 
+    /**
+     * Remove the account from the entry that holds it; the entry's other accounts are written back as stored.
+     *
+     * @param id the account id
+     */
     @Override
     public void delete(final long id) {
         val entry = searchLdapAccountsBy(id);
         if (entry != null) {
-            val accounts = mapAccountsFromLdapEntries(List.of(entry));
+            val accounts = readStoredAccounts(entry);
             accounts.removeIf(device -> device.getId() == id);
-            updateAccounts(accounts, entry);
+            writeStoredAccounts(accounts, entry);
         }
     }
 
     /**
      * Count the stored accounts, that is the devices, across all entries; an entry can hold several.
+     * Accounts are counted as stored, without being decoded.
      *
      * @return the number of accounts
      */
@@ -196,17 +184,15 @@ public class LdapGoogleAuthenticatorTokenCredentialRepository
     public long count() {
         return locateLdapEntriesForAll()
             .stream()
-            .map(entry -> entry.getAttribute(ldapProperties.getAccountAttributeName()))
-            .filter(Objects::nonNull)
-            .flatMap(attribute -> attribute.getStringValues().stream())
-            .map(LdapGoogleAuthenticatorTokenCredentialRepository::mapFromJson)
-            .mapToLong(List::size)
+            .mapToLong(entry -> readStoredAccounts(entry).size())
             .sum();
     }
 
     @Override
     public long count(final String username) {
-        return get(username).size();
+        return Optional.ofNullable(locateLdapEntryFor(username))
+            .map(entry -> readStoredAccounts(entry).size())
+            .orElse(0);
     }
 
     @Override
@@ -214,30 +200,43 @@ public class LdapGoogleAuthenticatorTokenCredentialRepository
         connectionFactory.close();
     }
 
-    private void updateAccount(final OneTimeTokenAccount account, final LdapEntry entry) {
-        updateAccounts(List.of(account), entry);
+    /**
+     * Write the stored, already encoded, accounts back to the entry as a single JSON array value.
+     *
+     * @param accounts the encoded accounts
+     * @param entry    the entry
+     */
+    private void writeStoredAccounts(final Collection<OneTimeTokenAccount> accounts, final LdapEntry entry) {
+        val entries = new LinkedHashSet<String>();
+        entries.add(mapToJson(accounts));
+        executeModifyOperation(entries, entry);
     }
 
-    private void updateAccounts(final Collection<OneTimeTokenAccount> accounts, final LdapEntry entry) {
-        val results = accounts.stream().map(this::encode).collect(Collectors.toList());
-        val json = mapToJson(results);
-        val entries = new LinkedHashSet<String>();
-        entries.add(json);
-        executeModifyOperation(entries, entry);
+    /**
+     * Read the accounts stored in the entry as they are stored, that is encoded, from every value of the account
+     * attribute. The returned list can be changed and written back with {@link #writeStoredAccounts(Collection, LdapEntry)}.
+     *
+     * @param entry the entry
+     * @return the encoded accounts
+     */
+    private List<OneTimeTokenAccount> readStoredAccounts(final LdapEntry entry) {
+        return Optional.ofNullable(entry.getAttribute(ldapProperties.getAccountAttributeName()))
+            .stream()
+            .flatMap(attribute -> attribute.getStringValues().stream())
+            .map(LdapGoogleAuthenticatorTokenCredentialRepository::mapFromJson)
+            .filter(Objects::nonNull)
+            .flatMap(List::stream)
+            .collect(Collectors.toCollection(ArrayList::new));
+    }
+
+    private Optional<OneTimeTokenAccount> findStoredAccount(final LdapEntry entry, final long id) {
+        return readStoredAccounts(entry).stream().filter(account -> account.getId() == id).findFirst();
     }
 
     private List<OneTimeTokenAccount> mapAccountsFromLdapEntries(final Collection<LdapEntry> entries) {
         return entries
             .stream()
-            .map(e -> e.getAttribute(ldapProperties.getAccountAttributeName()))
-            .filter(Objects::nonNull)
-            .map(attr -> attr.getStringValues()
-                .stream()
-                .map(LdapGoogleAuthenticatorTokenCredentialRepository::mapFromJson)
-                .filter(Objects::nonNull)
-                .flatMap(List::stream)
-                .map(this::decode)
-                .collect(Collectors.toSet()))
+            .map(entry -> readStoredAccounts(entry).stream().map(this::decode).collect(Collectors.toSet()))
             .flatMap(Set::stream)
             .collect(Collectors.toList());
     }
@@ -316,11 +315,6 @@ public class LdapGoogleAuthenticatorTokenCredentialRepository
      * @return true if the entry stores the account
      */
     private boolean containsAccount(final LdapEntry entry, final long id) {
-        val attribute = entry.getAttribute(ldapProperties.getAccountAttributeName());
-        return attribute != null && attribute.getStringValues()
-            .stream()
-            .map(LdapGoogleAuthenticatorTokenCredentialRepository::mapFromJson)
-            .flatMap(List::stream)
-            .anyMatch(account -> account.getId() == id);
+        return findStoredAccount(entry, id).isPresent();
     }
 }
