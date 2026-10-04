@@ -88,6 +88,7 @@ jobs:
         uses: gradle/actions/setup-gradle@v6
         with:
           gradle-home-cache-excludes: caches/build-cache-1
+          cache-encryption-key: ${{ secrets.GRADLE_ENCRYPTION_KEY }}
       - name: Initialize
         run: ls ./ci && find ./ci -type f -name "*.sh" -exec chmod +x "{}" \; && ./ci/init-build.sh
 
@@ -98,9 +99,9 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 10
     outputs:
-      scenarios255: ${{ steps.get-scenarios255.outputs.scenarios255 }}
-      scenarios511: ${{ steps.get-scenarios511.outputs.scenarios511 }}
-      scenarios766: ${{ steps.get-scenarios766.outputs.scenarios766 }}
+      scenarios255: ${{ steps.get-scenarios.outputs.scenarios255 }}
+      scenarios511: ${{ steps.get-scenarios.outputs.scenarios511 }}
+      scenarios766: ${{ steps.get-scenarios.outputs.scenarios766 }}
     steps:
       - name: Checkout
         uses: actions/checkout@v7
@@ -111,28 +112,29 @@ jobs:
         with:
           java-version: ${{ env.JDK_CURRENT }}
           distribution: ${{ env.JDK_DISTRIBUTION }}
-          cache: 'gradle'
       - name: Setup Gradle
         uses: gradle/actions/setup-gradle@v6
         with:
           gradle-home-cache-excludes: caches/build-cache-1
-      - name: Print Scenarios
+          cache-encryption-key: ${{ secrets.GRADLE_ENCRYPTION_KEY }}
+      - name: List Scenarios
         uses: nick-fields/retry@v4
         with:
           max_attempts: ${{ env.MAX_ATTEMPTS }}
           retry_on: error
           timeout_minutes: ${{ env.RETRY_MINUTES }}
           shell: bash
-          command: ./gradlew --build-cache --configure-on-demand --no-daemon -q puppeteerScenarios | jq
-      - id: get-scenarios255
-        name: Get Scenarios 0-255
-        run: echo "scenarios255=$(./gradlew --build-cache --configure-on-demand --no-daemon -q puppeteerScenarios -PpuppeteerScenariosFrom=0 -PpuppeteerScenariosTo=255)" >> "$GITHUB_OUTPUT"
-      - id: get-scenarios511
-        name: Get Scenarios 255-511
-        run: echo "scenarios511=$(./gradlew --build-cache --configure-on-demand --no-daemon -q puppeteerScenarios -PpuppeteerScenariosFrom=255 -PpuppeteerScenariosTo=511)" >> "$GITHUB_OUTPUT"
-      - id: get-scenarios766
-        name: Get Scenarios 511-766
-        run: echo "scenarios766=$(./gradlew --build-cache --configure-on-demand --no-daemon -q puppeteerScenarios -PpuppeteerScenariosFrom=511 -PpuppeteerScenariosTo=766)" >> "$GITHUB_OUTPUT"
+          command: ./gradlew --build-cache --configure-on-demand -q puppeteerScenarios > "$RUNNER_TEMP/puppeteer-scenarios.json"
+      - id: get-scenarios
+        name: Split Scenarios
+        shell: bash
+        run: |
+          jq . "$RUNNER_TEMP/puppeteer-scenarios.json"
+          {
+            echo "scenarios255=$(jq -c '.[0:255]' "$RUNNER_TEMP/puppeteer-scenarios.json")"
+            echo "scenarios511=$(jq -c '.[255:511]' "$RUNNER_TEMP/puppeteer-scenarios.json")"
+            echo "scenarios766=$(jq -c '.[511:766]' "$RUNNER_TEMP/puppeteer-scenarios.json")"
+          } >> "$GITHUB_OUTPUT"
 
   ##########################################################################
   puppeteer-tests-255:
@@ -159,6 +161,7 @@ jobs:
         uses: gradle/actions/setup-gradle@v6
         with:
           gradle-home-cache-excludes: caches/build-cache-1
+          cache-encryption-key: ${{ secrets.GRADLE_ENCRYPTION_KEY }}
           cache-read-only: true
       - name: Initialize
         run: find ./ci -type f -name "*.sh" -exec chmod +x "{}" \;
@@ -233,6 +236,7 @@ jobs:
         uses: gradle/actions/setup-gradle@v6
         with:
           gradle-home-cache-excludes: caches/build-cache-1
+          cache-encryption-key: ${{ secrets.GRADLE_ENCRYPTION_KEY }}
           cache-read-only: true
       - name: Initialize
         run: find ./ci -type f -name "*.sh" -exec chmod +x "{}" \;
@@ -307,6 +311,7 @@ jobs:
         uses: gradle/actions/setup-gradle@v6
         with:
           gradle-home-cache-excludes: caches/build-cache-1
+          cache-encryption-key: ${{ secrets.GRADLE_ENCRYPTION_KEY }}
           cache-read-only: true
       - name: Initialize
         run: find ./ci -type f -name "*.sh" -exec chmod +x "{}" \;

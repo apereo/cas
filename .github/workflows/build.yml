@@ -3,7 +3,7 @@ name: Build
 env:
   JAVA_OPTS: "-Xms512m -Xmx6048m -Xss128m -XX:ReservedCodeCacheSize=512m -server"
   GRADLE_OPTS: "-Xms512m -Xmx6048m -Xss128m -XX:ReservedCodeCacheSize=512m -server"
-  GRADLE_BUILD_OPTIONS: "--stacktrace --no-daemon -x check -x test -x javadoc --configure-on-demand --max-workers=8 "
+  GRADLE_BUILD_OPTIONS: "--stacktrace -x check -x test -x javadoc --configure-on-demand --max-workers=8 "
   TERM: xterm-256color
   GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
   GH_PACKAGE_REGISTRY_USER: ${{ secrets.GH_PACKAGE_REGISTRY_USER }}
@@ -73,6 +73,7 @@ jobs:
         uses: gradle/actions/setup-gradle@v6
         with:
           gradle-home-cache-excludes: caches/build-cache-1
+          cache-encryption-key: ${{ secrets.GRADLE_ENCRYPTION_KEY }}
       - name: Initialize
         run: ls ./ci && find ./ci -type f -name "*.sh" -exec chmod +x "{}" \; && ./ci/init-build.sh
 
@@ -96,6 +97,7 @@ jobs:
         uses: gradle/actions/setup-gradle@v6
         with:
           gradle-home-cache-excludes: caches/build-cache-1
+          cache-encryption-key: ${{ secrets.GRADLE_ENCRYPTION_KEY }}
       - name: Initialize
         run: ls ./ci && find ./ci -type f -name "*.sh" -exec chmod +x "{}" \; && ./ci/init-build.sh
       - name: Build with JDK ${{ env.JDK_CURRENT }}
@@ -131,6 +133,7 @@ jobs:
         uses: gradle/actions/setup-gradle@v6
         with:
           gradle-home-cache-excludes: caches/build-cache-1
+          cache-encryption-key: ${{ secrets.GRADLE_ENCRYPTION_KEY }}
       - name: Initialize
         run: find ./ci -type f -name "*.sh" -exec chmod +x "{}" \; && ./ci/init-build.sh
         shell: bash
@@ -158,7 +161,6 @@ jobs:
           distribution: 'graalvm'
           java-version: 'latest-ea'
           github-token: ${{ secrets.GITHUB_TOKEN }}
-          cache: 'gradle'
           set-java-home: 'true'
       - name: GraalVM Versions
         run: |
@@ -170,6 +172,7 @@ jobs:
         uses: gradle/actions/setup-gradle@v6
         with:
           gradle-home-cache-excludes: caches/build-cache-1
+          cache-encryption-key: ${{ secrets.GRADLE_ENCRYPTION_KEY }}
       - name: Initialize
         run: find ./ci -type f -name "*.sh" -exec chmod +x "{}" \; && ./ci/init-build.sh
       - name: Build with Gradle

@@ -535,8 +535,6 @@ function prepareScenario() {
   if [[ "${CI}" == "true" ]]; then
     printgreen "DEBUG flag is turned off while running CI"
     DEBUG=""
-    printgreen "Gradle daemon is turned off while running CI"
-    DAEMON="--no-daemon"
 
     printgreen "Creating configuration directories.."
     sudo mkdir -p /etc/cas/config

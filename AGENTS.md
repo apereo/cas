@@ -97,7 +97,7 @@ Guidance for AI coding agents working in the Apereo CAS source tree.
 - Lombok `val` cannot infer generic poly expressions: `val x = Objects.requireNonNullElse(list, List.of())` (or `...ElseGet(list, List::of)`) becomes `Object`. Assign the plain call to `val` and null-check separately, or declare the type.
 - Spring config classes generally use `@AutoConfiguration` or `@Configuration(proxyBeanMethods = false)`, `@EnableConfigurationProperties(CasConfigurationProperties.class)`, `@ConditionalOnFeatureEnabled`, and bean methods with `@RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)` plus `@ConditionalOnMissingBean`. See `support/cas-server-support-token-core/.../TokenCoreConfiguration.java`.
 - Configuration model classes usually live under `api/.../configuration/model/**`, use Lombok accessors, and carry `@RequiresModule(name = "...")`; example: `LdapAuthorizationProperties`.
-- Tests are organized by JUnit tags, not by the plain Gradle `test` task. The shared `buildSrc` test conventions disable `test` and generate tasks like `testAuthentication`, `testTickets`, etc. from `@Tag(...)` values found in `*Tests.java`.
+- Tests are organized by JUnit tags, not by the plain Gradle `test` task. The shared `buildSrc` test conventions disable `test` and register tasks like `testAuthentication` and `testTickets` for the tags discovered by `TestCategoryTagsValueSource` in `*Tests.java`. Both root category selectors and module-qualified category tasks execute tests; the plain `test` task never does.
 - Related test scenarios are often grouped with `@Nested`; example: `support/cas-server-support-token-core/.../JwtBuilderTests.java`.
 - Unalias Linux/macOS commands before you run them, specially `tree`, `find`, `grep`, `cat`, etc.
 - From a sandbox that cannot delete files, run read-only git commands with `GIT_OPTIONAL_LOCKS=0` (for example `GIT_OPTIONAL_LOCKS=0 git status`); otherwise git can leave a stale `.git/index.lock` that blocks the user's git.
@@ -121,12 +121,24 @@ Guidance for AI coding agents working in the Apereo CAS source tree.
   ```
 - Run one module or one class directly when narrowing a change:
   ```bash
-  ./gradlew :core:cas-server-core-authentication:test --tests "*AuthenticationHandlerTests"
+  ./gradlew :core:cas-server-core-authentication:testAuthenticationHandler --tests "*AcceptUsersAuthenticationHandlerTests"
   ```
-- Compile the tree without the expensive checks when you only need a fast validation pass:
+- Compile production sources without assembling archives or compiling tests when you only need a fast validation pass:
   ```bash
-  ./gradlew build --parallel -x test -x javadoc -x check
+  ./gradlew classes --parallel
+  ./gradlew :support:cas-server-support-json-service-registry:classes
   ```
+  Use `assemble` for artifacts and `testClasses` explicitly for test compilation. Ordinary `assemble` does not depend on
+  `testJar`; non-minimal publishing and consumers of the `tests` configuration still build it on demand.
+- Gradle 9.8.0 enables build caching, the configuration cache, parallel execution and Isolated Projects here.
+  Isolated Projects configures every project on a cache miss and ignores configuration on demand. Compare representative
+  scoped commands before changing either setting. User-home `gradle.properties` overrides the repository's JVM settings.
+- Test category discovery runs inside `TestCategoryTagsValueSource`: only its sorted tag list is a configuration input.
+  Implementation edits retain the cached graph; adding/removing categories invalidates it. Do not move source reads back
+  into the convention script or restore the old `.gradle/cas-test-tags` fingerprint cache.
+- An IDE `JetGradlePlugin` error about `setExcludedTaskNames` comes from the IDE integration, not category discovery.
+  Use `--no-isolated-projects` for the affected IDE invocation until that integration supports Isolated Projects; keep
+  configuration caching enabled and do not disable Isolated Projects globally to hide an IDE-only violation.
 - Many `./testcas.sh` categories shell out to `ci/tests/**/run-*.sh` and require Docker on Linux; the script will refuse those categories when that prerequisite is missing.
 
 ## Security-sensitive change discipline
@@ -166,8 +178,18 @@ Guidance for AI coding agents working in the Apereo CAS source tree.
 - Keep diffs surgical: this codebase already has strong patterns, so the fastest path is usually “copy the nearest module family pattern and adapt it” rather than inventing a new abstraction.
 - Documentation pages on gh-pages are pre-rendered per version, but they load the stylesheet and script from the shared site root, and every publish overwrites those root files. The current design ships as `stylesheets/site.css`, `stylesheets/site-print.css` and `javascripts/site.js`; the root `stylesheet.css`, `print.css` and `main.js` belong to the released versions' old markup. A redesign that changes page markup must use new asset names, never replace the ones older versions link.
 - Unit-test matrix jobs (`tests.yml`) record JaCoCo data only (`testcas.sh --with-coverage` only turns on the agent) and upload the `.exec` files; the single `coverage` job builds `jacocoRootReport` and does every Sonar/Codecov/Coveralls/Codacy upload. Do not move `jacocoRootReport` or `sonar` back into the matrix: the root report compiles all ~430 projects and Sonar re-analyses the whole code base, which is what made each category job 17 minutes instead of 7.
-- Every `gradle/actions/setup-gradle` step sets `gradle-home-cache-excludes: caches/build-cache-1`; the local build cache duplicated the Develocity remote cache and alone filled the repository's 10 GB Actions cache, evicting everything else within the hour. Keep it on new setup-gradle steps.
-- The CodeQL job (`analysis.yml`) runs with Develocity and the remote cache, but `settings.gradle` makes every `JavaCompile` task non-cacheable and never up to date whenever CodeQL tracing env vars are present (`CODEQL_RUNNER`, `CODEQL_EXTRACTOR_JAVA_*`). CodeQL only extracts code it sees compiled, so a compile restored from cache empties the scan. Do not remove this, and do not add `JavaCompile` output caching that bypasses it.
+- Every `gradle/actions/setup-gradle` step sets `gradle-home-cache-excludes: caches/build-cache-1` and
+  `cache-encryption-key: ${{ secrets.GRADLE_ENCRYPTION_KEY }}`. Preserve both: the local build cache duplicates Develocity
+  outputs, and the encryption key enables saving/restoring the project configuration cache. Fork PRs without this secret
+  can still build, but cannot restore the encrypted configuration cache. Do not layer `setup-java` or GraalVM Gradle
+  caching over `setup-gradle` in the same job.
+- CI permits Gradle daemon reuse within a job; `ci/init-build.sh` must not append a disabling user-home property.
+  Release, documentation and scenario scripts preserve daemon reuse across their Gradle invocations. CodeQL keeps
+  `--no-daemon` for compiler tracing. Test categories and Puppeteer scenarios are fetched once per discovery
+  job; print the captured result and split scenario JSON with `jq`, preserving the existing matrix boundaries.
+- The CodeQL job (`analysis.yml`) applies `--no-build-cache --rerun-tasks` after its shared build options so traced
+  compilation actually runs. The current `settings.gradle` has no CodeQL-specific `JavaCompile` cache guard. Preserve
+  these workflow flags: CodeQL only extracts compilations it observes, so restored or up-to-date outputs empty the scan.
 - The documentation data generator (`docs/cas-server-documentation-processor`) runs as `java @build/casdocsgen.args ...`, an argument file written by its `docsGeneratorArguments` task from `sourceSets.main.runtimeClasspath`; `publish.sh` no longer builds the ~1 GB `casdocsgen.jar` boot jar. Its Gradle run adds `-DskipErrorProneCompiler=true` (override with `DOCS_GENERATOR_GRADLE_OPTIONS`, an empty value restores Error Prone). It still needs every CAS module compiled: actuators, feature toggles and shell commands are found by ClassGraph scans of the runtime classpath, and third-party settings come from the dependencies' metadata. Those lookups go through `CasDocumentationClassIndex`, one ClassGraph scan of `org` shared by the exporters; add new class lookups there rather than calling `ReflectionUtils`, which scans the whole classpath on every call.
 - `ci/docs/publish.sh` exit codes carry meaning for the workflow retry (`retry_on_exit_code: 1`): 1 is a failure worth another attempt, 3 is broken internal links/images/scripts (fails at once, nothing is published), 4 is broken external links only (the site is published first, then the job fails). Keep new failure paths on 1 unless a rerun cannot help. External links are checked only on the weekly schedule or when asked (`--proof-external`, the `proofReadExternal` input or `vars.DOCS_PROOF_EXTERNAL`), with successful results cached for 7 days in `build/htmlproofer`.
 - Actuator endpoint blocks (`_includes_site/actuators.html`) take their operations from the `cas_actuator_operations` filter in `_plugins/cas_actuators.rb` (sorted, parameters normalized, curl built there), and settings snippets from `cas_actuator_enable_snippet` / `cas_actuator_security_snippet` via `cas-actuator-snippet.html` in all three formats. Per operation, render only what differs (parameters, response, example); setup, security, settings and troubleshooting are rendered once per include in the shared tabs. The operations table is excluded from `responsiveTables()`.

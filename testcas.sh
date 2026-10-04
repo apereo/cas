@@ -40,7 +40,7 @@ function printHelp() {
     printf "\n👷 Usage: ${CYAN}./testcas.sh${ENDCOLOR}\n\t--category [category1,category2,...]\n\t[--help]\n\t[--test TestClass]\n\t[--ignore-failures]\n\t[--no-watch]\n\t[--no-wrapper]\n\t[--no-retry]\n\t[--debug]\n\t[--no-parallel]\n\t[--dry-run][--info]\n\t[--with-coverage]\n\t[--no-build-cache] \n"
     printf "\n👷 To see what test categories are available, use:\n"
     printf "\t${GREEN}./gradlew -q testCategories${ENDCOLOR}\n"
-    printf "\n👷 You can pass '${GREEN}changed${ENDCOLOR}' for the category to only run affected tests based on the current changeset.\n"
+    printf "\n👷 You can pass '${GREEN}changed${ENDCOLOR}' for the category to run categories found in changed test-source files.\n"
     echo -e "👷 Please see the test script for details."
 }
 
@@ -55,6 +55,7 @@ function collectChangedCategories() {
     } |
       sort -u |
       while IFS= read -r file; do
+        [[ "$file" == */src/test/java/*Tests.java ]] || continue
         [[ -f "$file" ]] || continue
 
         grep -hoE '@Tag[[:space:]]*\([[:space:]]*"[^"]+"' "$file" || true
