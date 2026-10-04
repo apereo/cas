@@ -332,5 +332,10 @@ authentication. See the [stateless ticket registry documentation](../ticketing/S
   afterwards. A device id that is not a number is refused instead of failing with a server error. The
   [JSON repository](../mfa/GoogleAuthenticator-Authentication-Registration-JSON.html) replaces its file in one atomic step
   and is documented as single-node.
+- Faster Google Authenticator lookups: [DynamoDB](../mfa/GoogleAuthenticator-Authentication-Registration-DynamoDb.html)
+  reads a device by key and finds a user's devices through a new `useridIndex` global secondary index instead of scanning
+  the table (CAS adds the index at startup; create it yourself if table creation on startup is turned off), and counts
+  without reading records back. [MongoDB](../mfa/GoogleAuthenticator-Authentication-Registration-MongoDb.html) creates
+  an index on usernames with the collation its lookups use.
 - [WebAuthn](../mfa/FIDO2-WebAuthn-Authentication.html) falls back to the cached FIDO metadata BLOB when downloading a fresh one
   fails at startup, for example when the FIDO metadata service rate-limits the request, instead of failing to start.

@@ -1250,6 +1250,9 @@ Guidance for AI coding agents working in the Apereo CAS source tree.
 - The VM test runner's copied build dirs go stale once Misagh commits: recompile every Java file touched by the commits of the current work (`git diff --name-only <first commit>^ HEAD`) plus the uncommitted ones, not just `git status`.
 - A webflow action that validates a GAuth token and then updates the device must read the device again after validation: the validator updates its own copy (used scratch code, last-used time), and updating an older copy undoes that.
 - Use `git --no-optional-locks` for every read-only git command in the device VM; a plain `git status` leaves `.git/index.lock` behind there.
+- DynamoDB-backed tests can run in the device VM against moto: `pip3 install --user "moto[server]"` works there (Maven Central and MongoDB downloads do not), then start `~/.local/bin/moto_server -p 8000` and run the suite in the same `device_bash` call. It is not DynamoDB Local, so CI can still differ.
+- `DynamoDbTableUtils.createTable(..., globalSecondaryIndexes)` creates GSIs with a new table and adds missing ones to an existing table with `UpdateTable`; pass every GSI key attribute in the attribute definitions.
+- MongoDB: a query with a collation uses only indexes with the same collation. Give such an index an explicit name, so it does not clash with a plain index on the same field. Avoid `MongoDbConnectionFactory.createOrUpdateIndexes` for collated indexes: the server returns the collation expanded, the options never compare equal, and the index is dropped and rebuilt at every startup.
 
 ## Google Authenticator Redis repository
 
