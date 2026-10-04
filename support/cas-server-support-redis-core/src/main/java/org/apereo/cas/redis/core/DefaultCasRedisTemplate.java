@@ -13,9 +13,18 @@ import org.springframework.data.redis.core.ScanOptions;
  * @since 6.5.0
  */
 public class DefaultCasRedisTemplate<K, V> extends RedisTemplate<K, V> implements CasRedisTemplate<K, V> {
+    /**
+     * Find the keys that match the pattern with {@code SCAN}. The scan stream is closed when done, which closes the
+     * cursor and returns its connection; with a connection pool, a connection that is never returned is lost to the pool.
+     *
+     * @param pattern the pattern
+     * @return the keys
+     */
     @Override
     public Set<K> keys(final K pattern) {
-        return scan(pattern.toString()).collect(Collectors.toSet());
+        try (val keys = scan(pattern.toString())) {
+            return keys.collect(Collectors.toSet());
+        }
     }
 
     @Override
@@ -40,18 +49,24 @@ public class DefaultCasRedisTemplate<K, V> extends RedisTemplate<K, V> implement
         return resultingStream;
     }
 
+    /**
+     * Count the keys that match the pattern with {@code SCAN}, closing the cursor and returning its connection when done.
+     *
+     * @param pattern the pattern
+     * @return the number of keys
+     */
     @Override
     public long count(final String pattern) {
         val scanOptions = ScanOptions.scanOptions().match(pattern);
         val connection = Objects.requireNonNull(getConnectionFactory()).getConnection();
         val cursor = connection.keyCommands().scan(scanOptions.build());
-        return StreamSupport
-            .stream(Spliterators.spliteratorUnknownSize(cursor, Spliterator.ORDERED), false)
+        try (val keys = StreamSupport.stream(Spliterators.spliteratorUnknownSize(cursor, Spliterator.ORDERED), false)
             .onClose(() -> {
                 IOUtils.closeQuietly(cursor);
                 connection.close();
-            })
-            .count();
+            })) {
+            return keys.count();
+        }
     }
     
     @Override

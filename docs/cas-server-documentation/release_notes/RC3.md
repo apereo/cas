@@ -341,5 +341,10 @@ authentication. See the [stateless ticket registry documentation](../ticketing/S
   longer read every entry, and saving or removing a device no longer decrypts and re-encrypts the user's other devices.
   [Redis](../mfa/GoogleAuthenticator-Authentication-Registration-Redis.html) loads all devices with batched `MGET`
   instead of one request per device, and saving a device no longer decrypts the user's other devices.
+- The Google Authenticator [JPA repository](../mfa/GoogleAuthenticator-Authentication-Registration-JPA.html) can now save
+  a device whose id is not already in the database, such as one imported through the actuator endpoint; the database
+  assigns it a new id. Removing a user's devices is now a single bulk delete.
+- Redis-backed counts and key lookups, such as the ticket and service registry counts, now return their connection when
+  done. With connection pooling enabled, every call used to keep a pooled connection until the pool ran out.
 - [WebAuthn](../mfa/FIDO2-WebAuthn-Authentication.html) falls back to the cached FIDO metadata BLOB when downloading a fresh one
   fails at startup, for example when the FIDO metadata service rate-limits the request, instead of failing to start.

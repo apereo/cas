@@ -10,6 +10,7 @@ import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.springframework.data.redis.connection.lettuce.LettuceConnectionFactory;
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
@@ -129,6 +130,28 @@ class RedisObjectFactoryTests {
         props.getCluster().setMaxRedirects(3);
         val connection = RedisObjectFactory.newRedisConnectionFactory(props, true, CasSSLContext.disabled());
         assertNotNull(connection);
+    }
+
+    @Test
+    void verifyScanCountAndKeysReleaseConnections() throws Throwable {
+        val props = new BaseRedisProperties().setHost("localhost").setPort(6379);
+        props.getPool().setEnabled(true);
+        props.getPool().setMaxActive(1);
+        props.getPool().setMaxWait("PT2S");
+        val factory = (LettuceConnectionFactory) RedisObjectFactory.newRedisConnectionFactory(props, true, CasSSLContext.disabled());
+        try {
+            val template = RedisObjectFactory.<String, String>newRedisTemplate(factory);
+            template.initialize();
+            val key = "cas-scan-" + UUID.randomUUID();
+            template.opsForValue().set(key, "value");
+            for (var i = 0; i < 3; i++) {
+                assertEquals(1, template.count(key));
+                assertEquals(Set.of(key), template.keys(key));
+            }
+            template.delete(key);
+        } finally {
+            factory.destroy();
+        }
     }
 
     @Test

@@ -93,17 +93,24 @@ public class JpaGoogleAuthenticatorTokenCredentialRepository extends BaseGoogleA
             .collect(Collectors.toList());
     }
 
+    /**
+     * Save the account, replacing the stored account with the same id. An account whose id is not in the table, such as
+     * one imported from another repository, is inserted and gets an id from the database, since merging an entity whose
+     * generated id is not in the table fails.
+     *
+     * @param account the account
+     * @return the encoded account as stored
+     */
     @Override
     public OneTimeTokenAccount save(final OneTimeTokenAccount account) {
-        val ac = JpaGoogleAuthenticatorAccount.from(account);
-        val encoded = encode(ac);
-        return entityManager.merge(encoded);
+        val stored = account.getId() > 0 && entityManager.find(JpaGoogleAuthenticatorAccount.class, account.getId()) != null;
+        return insertOrReplace(account, stored);
     }
 
     /**
      * Update the stored account with the same id, or insert the account when none is stored,
      * so that every backend treats an update of a missing device as an insert. The database assigns
-     * the id of an inserted device: merging an entity whose generated id is not in the table fails.
+     * the id of an inserted device, as in {@link #save(OneTimeTokenAccount)}.
      *
      * @param account the account
      * @return the encoded account as stored
@@ -112,9 +119,7 @@ public class JpaGoogleAuthenticatorTokenCredentialRepository extends BaseGoogleA
     public OneTimeTokenAccount update(final OneTimeTokenAccount account) {
         val ac = entityManager.find(JpaGoogleAuthenticatorAccount.class, account.getId());
         if (ac == null) {
-            val created = JpaGoogleAuthenticatorAccount.from(account);
-            created.setId(0);
-            return entityManager.merge(encode(created));
+            return insertOrReplace(account, false);
         }
         val encoded = encode(account);
         ac.setValidationCode(encoded.getValidationCode());
@@ -134,11 +139,18 @@ public class JpaGoogleAuthenticatorTokenCredentialRepository extends BaseGoogleA
         entityManager.createQuery("DELETE FROM " + ENTITY_NAME).executeUpdate();
     }
 
+    /**
+     * Delete the user's accounts with one bulk delete rather than loading and removing them one by one.
+     * Hibernate also deletes the rows of the accounts' collection tables, such as scratch codes and properties.
+     *
+     * @param username the username
+     */
     @Override
     public void delete(final String username) {
-        val acct = fetchAccounts(username);
-        acct.forEach(entityManager::remove);
-        LOGGER.debug("Deleted account record for [{}]", username);
+        val count = entityManager.createQuery("DELETE FROM " + ENTITY_NAME + " r WHERE r.username = :username")
+            .setParameter("username", username.toLowerCase(Locale.ENGLISH).trim())
+            .executeUpdate();
+        LOGGER.debug("Deleted [{}] account record(s) for [{}]", count, username);
     }
 
     @Override
@@ -167,6 +179,14 @@ public class JpaGoogleAuthenticatorTokenCredentialRepository extends BaseGoogleA
             .getSingleResult();
         LOGGER.debug("Counted [{}] record(s) for [{}]", count, username);
         return count.longValue();
+    }
+
+    private OneTimeTokenAccount insertOrReplace(final OneTimeTokenAccount account, final boolean stored) {
+        val entity = JpaGoogleAuthenticatorAccount.from(account);
+        if (!stored) {
+            entity.setId(0);
+        }
+        return entityManager.merge(encode(entity));
     }
 
     private OneTimeTokenAccount detachAndDecode(final JpaGoogleAuthenticatorAccount account) {
